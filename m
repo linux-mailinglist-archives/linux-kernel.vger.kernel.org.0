@@ -2,180 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E354451EFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 01:14:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DAB651F08
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 01:16:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728249AbfFXXOR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 19:14:17 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:51293 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726486AbfFXXOQ (ORCPT
+        id S1728358AbfFXXQf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 19:16:35 -0400
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:59024 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726486AbfFXXQf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 19:14:16 -0400
-Received: from 79.184.254.216.ipv4.supernova.orange.pl (79.184.254.216) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.267)
- id 8612bd51ee35b0e6; Tue, 25 Jun 2019 01:14:13 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     "Robert R. Howell" <RHowell@uwyo.edu>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        "lenb@kernel.org" <lenb@kernel.org>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH] ACPI / LPSS: Don't skip late system PM ops for hibernate on BYT/CHT
-Date:   Tue, 25 Jun 2019 01:14:13 +0200
-Message-ID: <1935381.LvnFHGipmV@kreacher>
-In-Reply-To: <b02ef915-faf5-635d-bf2f-92dd10d274b1@redhat.com>
-References: <20190403054352.30120-1-kai.heng.feng@canonical.com> <2830645.pXxymQ5XCC@kreacher> <b02ef915-faf5-635d-bf2f-92dd10d274b1@redhat.com>
+        Mon, 24 Jun 2019 19:16:35 -0400
+Received: from dread.disaster.area (pa49-195-139-63.pa.nsw.optusnet.com.au [49.195.139.63])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 8564B149D6D;
+        Tue, 25 Jun 2019 09:16:30 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92)
+        (envelope-from <david@fromorbit.com>)
+        id 1hfYBH-0000af-3Z; Tue, 25 Jun 2019 09:15:23 +1000
+Date:   Tue, 25 Jun 2019 09:15:23 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 07/12] xfs: don't preallocate a transaction for file size
+ updates
+Message-ID: <20190624231523.GC7777@dread.disaster.area>
+References: <20190624055253.31183-1-hch@lst.de>
+ <20190624055253.31183-8-hch@lst.de>
+ <20190624161720.GQ5387@magnolia>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190624161720.GQ5387@magnolia>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=D+Q3ErZj c=1 sm=1 tr=0 cx=a_idp_d
+        a=fNT+DnnR6FjB+3sUuX8HHA==:117 a=fNT+DnnR6FjB+3sUuX8HHA==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=dq6fvYVFJ5YA:10
+        a=7-415B0cAAAA:8 a=oLq8ofgPWqtQ5Z905GkA:9 a=6BQrOku7L8tHAI1q:21
+        a=BwSqpppzWO7tify-:21 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday, June 24, 2019 12:51:33 PM CEST Hans de Goede wrote:
-> Hi Rafael,
+On Mon, Jun 24, 2019 at 09:17:20AM -0700, Darrick J. Wong wrote:
+> On Mon, Jun 24, 2019 at 07:52:48AM +0200, Christoph Hellwig wrote:
+> > We have historically decided that we want to preallocate the xfs_trans
+> > structure at writeback time so that we don't have to allocate on in
+> > the I/O completion handler.  But we treat unwrittent extent and COW
+> > fork conversions different already, which proves that the transaction
+> > allocations in the end I/O handler are not a problem.  Removing the
+> > preallocation gets rid of a lot of corner case code, and also ensures
+> > we only allocate one and log a transaction when actually required,
+> > as the ioend merging can reduce the number of actual i_size updates
+> > significantly.
 > 
-> <snip>
-> 
-> > Sorry for the long delay.
-> > 
-> > I haven't dropped this issue on the floor, I hope that you are still able to follow up here.
-> > 
-> > Can you please test the appended patch instead of the previous one?
-> > 
-> > I have found some inconsistencies in the handling of hibernation in the ACPI PM domain
-> > and the LPSS driver that should be covered by this patch.
-> 
-> I know this is just a testing patch for now, but still I've given it
-> a quick look, some comments inline.
-> 
-> > ---
-> >   drivers/acpi/acpi_lpss.c |   63 +++++++++++++++++++++++++++++++++++------------
-> >   drivers/acpi/device_pm.c |   30 ++++++++++++++++++++--
-> >   include/linux/acpi.h     |    4 ++
-> >   3 files changed, 79 insertions(+), 18 deletions(-)
-> > 
-> > Index: linux-pm/drivers/acpi/device_pm.c
-> > ===================================================================
-> > --- linux-pm.orig/drivers/acpi/device_pm.c
-> > +++ linux-pm/drivers/acpi/device_pm.c
-> > @@ -1171,6 +1171,32 @@ int acpi_subsys_thaw_noirq(struct device
-> >   	return pm_generic_thaw_noirq(dev);
-> >   }
-> >   EXPORT_SYMBOL_GPL(acpi_subsys_thaw_noirq);
-> > +
-> > +/**
-> > + * acpi_subsys_restore_noirq - Run the device driver's "noirq" restore callback.
-> > + * @dev: Device to handle.
-> > + */
-> > +int acpi_subsys_restore_noirq(struct device *dev)
-> > +{
-> > +	/* This is analogous to what acpi_subsys_resune_noirq() does. */
-> > +	if (dev_pm_smart_suspend_and_suspended(dev))
-> > +		pm_runtime_set_active(dev);
-> > +
-> > +	return pm_generic_restore_noirq(dev);
-> > +}
-> > +EXPORT_SYMBOL_GPL(acpi_subsys_restore_noirq);
-> > +
-> > +/**
-> > + * acpi_subsys_restore_early - Restore device using ACPI.
-> > + * @dev: Device to restore.
-> > + */
-> > +int acpi_subsys_restore_early(struct device *dev)
-> > +{
-> > +	int ret = acpi_dev_resume(dev);
-> > +	return ret ? ret : pm_generic_restore_early(dev);
-> > +}
-> > +EXPORT_SYMBOL_GPL(acpi_subsys_restore_early);
-> > +
-> >   #endif /* CONFIG_PM_SLEEP */
-> >   
-> >   static struct dev_pm_domain acpi_general_pm_domain = {
-> > @@ -1192,8 +1218,8 @@ static struct dev_pm_domain acpi_general
-> >   		.poweroff = acpi_subsys_suspend,
-> >   		.poweroff_late = acpi_subsys_suspend_late,
-> >   		.poweroff_noirq = acpi_subsys_suspend_noirq,
-> > -		.restore_noirq = acpi_subsys_resume_noirq,
-> > -		.restore_early = acpi_subsys_resume_early,
-> > +		.restore_noirq = acpi_subsys_restore_noirq,
-> > +		.restore_early = acpi_subsys_restore_early,
-> >   #endif
-> >   	},
-> >   };
-> > Index: linux-pm/drivers/acpi/acpi_lpss.c
-> > ===================================================================
-> > --- linux-pm.orig/drivers/acpi/acpi_lpss.c
-> > +++ linux-pm/drivers/acpi/acpi_lpss.c
-> > @@ -1069,36 +1069,67 @@ static int acpi_lpss_suspend_noirq(struc
-> >   	return acpi_subsys_suspend_noirq(dev);
-> >   }
-> >   
-> > -static int acpi_lpss_do_resume_early(struct device *dev)
-> > +static int acpi_lpss_resume_noirq(struct device *dev)
-> >   {
-> > -	int ret = acpi_lpss_resume(dev);
-> > +	struct lpss_private_data *pdata = acpi_driver_data(ACPI_COMPANION(dev));
-> > +
-> > +	/* Follow acpi_subsys_resune_noirq(). */
-> > +	if (dev_pm_may_skip_resume(dev))
-> > +		return 0;
-> > +
-> > +	if (dev_pm_smart_suspend_and_suspended(dev))
-> > +		pm_runtime_set_active(dev);
-> >   
-> > -	return ret ? ret : pm_generic_resume_early(dev);
-> > +	if (pdata->dev_desc->resume_from_noirq) {
-> > +		int ret = acpi_lpss_resume(dev);
-> > +		if (ret)
-> > +			return ret;
-> > +	}
-> > +
-> > +	return pm_generic_resume_noirq(dev);
-> >   }
-> 
-> Hmm, normally acpi_lpss_resume runs at resume_early time, AFAIK
-> the order of resume callbacks calling is: resume_noirq, resume_early, resume
-> 
-> So normally our call order is:
-> 
-> ---noirq-phase---
-> pm_generic_resume_noirq()
-> ---early-phase---
-> acpi_lpss_resume()
-> pm_generic_resume_early()
-> 
-> My patch adding the resume_from_noirq flag, move the calling of
-> acpi_lpss_resume() to the resume_noirq phase (if the flag is
-> set) but kept the generic order, so the call order with the
-> flag set currently is:
-> 
-> ---noirq-phase---
-> pm_generic_resume_noirq()
-> acpi_lpss_resume()
-> ---early-phase---
-> pm_generic_resume_early()
-> 
-> So the order of the 3 calls relative to each other did not change.
-> 
-> You are changing this to:
-> 
-> ---noirq-phase---
-> acpi_lpss_resume()
-> pm_generic_resume_noirq()
-> ---early-phase---
-> pm_generic_resume_early()
-> 
-> So now when the flag is set acpi_lpss_resume() runs before
-> pm_generic_resume_noirq(). Is this intentional ?
+> That's what I thought when I wrote the ioend merging patches, but IIRC
+> Dave objected on the grounds that most file writes are trivial file
+> extending writes and therefore we should leave this alone to avoid
+> slowing down the ioend path even if it came at a cost of cancelling a
+> lot of empty transactions.
 
-Kind of yes, but this is two patches in one. :-)
+The issue is stuff like extracting a tarball, where we might write a
+hundred thousand files and they are all written in a single IO. i.e.
+there is no IO completion merging at all.
 
-The ordering change should really be a separate patch IMO.
+> I wasn't 100% convinced it mattered but ran out of time in the
+> development window and never got around to researching if it made any
+> difference.
 
+Yeah, it's not all that simple :/
 
+In these cases, we always have to allocate a transaction for every
+file being written. If we do it before we submit the IO, then all
+the transactions are allocated from the single writeback context. If
+we don't have log space, data writeback pauses while the tail of the
+AIL is pushed, metadata writeback occurs, and then the transaction
+allocation for data writeback is woken, and data writeback
+submission continues. It's fairly orderly, and we don't end up
+trying to write back data while we are doing bulk metadata flushing
+from the AIL.
 
+If we delay the transaction allocation to the ioend context and we
+are low on log space, we end up blocking a kworker on a transaction
+allocation which then has to wait for metadata writeback. The
+kworker infrastructure will then issue the next ioend work, which
+then blocks on transaction allocation. Delayed allocation can cause
+thousands of small file IOs to be inflight at the same time due to
+intra-file contiguous allocation and IO merging in the block layer,
+hence we can have thousands of individual IO completions that
+require transaction allocation to be completed.
+
+> So, uh, how much of a hit do we take for having to allocate a
+> transaction for a file size extension?  Particularly since we can
+> combine those things now?
+
+Unless we are out of log space, the transaction allocation and free
+should be largely uncontended and so it's just a small amount of CPU
+usage. i.e it's a slab allocation/free and then lockless space
+reservation/free. If we are out of log space, then we sleep waiting
+for space - the issue really comes down to where it is better to
+sleep in that case....
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
