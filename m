@@ -2,113 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0BB950238
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 08:25:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B346350249
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 08:29:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727715AbfFXGY4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 02:24:56 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:46314 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727266AbfFXGYx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 02:24:53 -0400
-Received: by mail-pg1-f194.google.com with SMTP id v9so6512131pgr.13;
-        Sun, 23 Jun 2019 23:24:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=0IvJHoD0x6Z/N31hvvGGVGsE7+bjH2MX+F9HjOeromU=;
-        b=NZyt9A/FB82vZiEifdr4Gx0xRekMuZIHBVLc2U4ciy49oyXnteKcbU3xAWpZIH2Oi0
-         QqUJZ+arQh/RT94jLsK6IWOt4GUGUOl4w1VMPgcoxBf14CzYX6lJk+ZOXkdCGqc+EG6w
-         TFi44c4Dd8PW752R9KlLakLU49Wz9A2M/qfAG8wALOpUyS8gGbt2FyWyal3iRntzcWco
-         ApVGW8Sy6mQeBzPTpyejshIpszTRZzop41iqenSASYj/tKxS5cI2BrtMuutB0zvoc5bI
-         Bpz+yoZ5CbAZwxdqiz2Np+SzSIRNXE2EJ8lzuDwyFG+HDB0VhGxZwcbpPfjRvXukzUPy
-         goMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=0IvJHoD0x6Z/N31hvvGGVGsE7+bjH2MX+F9HjOeromU=;
-        b=DKzuBrCv82+ZPM/15q+iML71BkEdnTvwOHBNzlJgsR6E0T9O6I76K8RRjHQ4XXtH2V
-         /Ds9EvUhXYn3AZ5fd36p16T7lA4HUaVMxsSFbOR2gtTe+KvxgdE6o4dFSLQWMqOt2yWH
-         r4UpxTujwVS0du+Dz837f12YxAignvVsvwQ/lFbVoVr+uAhgtrPRISDt6axVVUPMcCcv
-         IVLhdRVs0hISuau7bLZpLx+EHo2hZYthqcbsvhwe/vbDLET2aRYJRDcwiEViHrJBx2gE
-         LTPWhQAqRXfhLul2FLg902FFA2ueoh+cshXWTE87H0dN69NHhc1RQsXVwjrCbQbL246T
-         +d5w==
-X-Gm-Message-State: APjAAAXIZbg/qNiMrd3rQ79GDUawYCgD+I4ugxtnBFC+RM+w75bKzhzH
-        z41oMw2wlFzch2oOZUWDd9byb0MD
-X-Google-Smtp-Source: APXvYqxTzWCohtq7uhbcpUGfCJQdaCRM5/dDC1t+UWjKV1bWOZDk0wItx04vbN7k1hGgnsy6X7/wDA==
-X-Received: by 2002:a63:4641:: with SMTP id v1mr25070516pgk.347.1561357492003;
-        Sun, 23 Jun 2019 23:24:52 -0700 (PDT)
-Received: from prsriva-ThinkPad-P50s.hsd1.wa.comcast.net ([2601:602:9c01:c794:e00a:1dbc:5f62:b8ea])
-        by smtp.gmail.com with ESMTPSA id 191sm2641620pfu.177.2019.06.23.23.24.51
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sun, 23 Jun 2019 23:24:51 -0700 (PDT)
-From:   Prakhar Srivastava <prsriva02@gmail.com>
-To:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     zohar@linux.ibm.com, roberto.sassu@huawei.com, vgoyal@redhat.com,
-        Prakhar Srivastava <prsriva02@gmail.com>
-Subject: [PATCH V10 3/3] KEXEC: Call ima_kexec_cmdline to measure the boot command line args
-Date:   Sun, 23 Jun 2019 23:23:31 -0700
-Message-Id: <20190624062331.388-4-prsriva02@gmail.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190624062331.388-1-prsriva02@gmail.com>
-References: <20190624062331.388-1-prsriva02@gmail.com>
+        id S1726657AbfFXG3T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 02:29:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34076 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726334AbfFXG3T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 02:29:19 -0400
+Received: from localhost (unknown [106.201.35.23])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2FA1D20679;
+        Mon, 24 Jun 2019 06:29:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561357758;
+        bh=2TQRe3QkhnUJy/2JQY1vTTVylzKrx/xWJfWzJ6o3RiE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rGBMJXhwNue1MqIZfA88N+ylezEMzckRFHzw/Z9skTub1kEKtlDyEG+sZgNExhJlH
+         2iLgT3nAdnk4c4Tx8Rzztj/3X2uNeZXtc93wuY/0IMPn6xARWj6DrZNcswpQ1r8f3y
+         ALZlKuGj2kms+tMtZJ/fbUijendUriAkh9lZEurI=
+Date:   Mon, 24 Jun 2019 11:56:09 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Sameer Pujar <spujar@nvidia.com>
+Cc:     dan.j.williams@intel.com, tiwai@suse.com, jonathanh@nvidia.com,
+        dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+        sharadg@nvidia.com, rlokhande@nvidia.com, dramesh@nvidia.com,
+        mkumard@nvidia.com
+Subject: Re: [PATCH] [RFC] dmaengine: add fifo_size member
+Message-ID: <20190624062609.GV2962@vkoul-mobl>
+References: <20190502122506.GP3845@vkoul-mobl.Dlink>
+ <3368d1e1-0d7f-f602-5b96-a978fcf4d91b@nvidia.com>
+ <20190504102304.GZ3845@vkoul-mobl.Dlink>
+ <ce0e9c0b-b909-54ae-9086-a1f0f6be903c@nvidia.com>
+ <20190506155046.GH3845@vkoul-mobl.Dlink>
+ <b7e28e73-7214-f1dc-866f-102410c88323@nvidia.com>
+ <20190613044352.GC9160@vkoul-mobl.Dlink>
+ <09929edf-ddec-b70e-965e-cbc9ba4ffe6a@nvidia.com>
+ <20190618043308.GJ2962@vkoul-mobl>
+ <23474b74-3c26-3083-be21-4de7731a0e95@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <23474b74-3c26-3083-be21-4de7731a0e95@nvidia.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-During soft reboot(kexec_file_load) boot command line
-arguments are not measured.
+On 20-06-19, 15:59, Sameer Pujar wrote:
 
-Call ima hook ima_kexec_cmdline to measure the boot command line
-arguments into IMA measurement list.
+> > > > So can you explain me what is the difference here that the peripheral
+> > > > cannot configure and use burst size with passing fifo depth?
+> > > Say for example FIFO_THRESHOLD is programmed as 16 WORDS, BURST_SIZE as 8
+> > > WORDS.
+> > > ADMAIF does not push data to AHUB(operation [2]) till threshold of 16 WORDS
+> > > is
+> > > reached in ADMAIF FIFO. Hence 2 burst transfers are needed to reach the
+> > > threshold.
+> > > As mentioned earlier, threshold here is to just indicate when data transfer
+> > > can happen
+> > > to AHUB modules.
+> > So we have ADMA and AHUB and peripheral. You are talking to AHUB and that
+> > is _not_ peripheral and if I have guess right the fifo depth is for AHUB
+> > right?
+> Yes the communication is between ADMA and AHUB. ADMAIF is the interface
+> between
+> ADMA and AHUB. ADMA channel sending data to AHUB pairs with ADMAIF TX
+> channel.
+> Similary ADMA channel receiving data from AHUB pairs with ADMAIF RX channel.
+> FIFO DEPTH we are talking is about each ADMAIF TX/RX channel and it is
+> configurable.
+> DMA transfers happen to/from ADMAIF FIFOs and whenever data(per WORD) is
+> popped/pushed
+> out of ADMAIF to/from AHUB, asseration is made to ADMA. ADMA keeps counters
+> based on
+> these assertions. By knowing FIFO DEPTH and these counters, ADMA knows when
+> to wait or
+> when to transfer data.
 
-- call ima_kexec_cmdline from kexec_file_load.
-- move the call ima_add_kexec_buffer after the cmdline
-args have been measured.
+Where does ADMAIF driver reside in kernel, who configures it for normal
+dma txns..?
 
-Signed-off-by: Prakhar Srivastava <prsriva02@gmail.com>
-Reviewed-by: James Morris <jamorris@linux.microsoft.com>
-Acked-by: Dave Young <dyoung@redhat.com>
----
- kernel/kexec_file.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+Also it wold have helped the long discussion if that part was made clear
+rather than talking about peripheral all this time :(
 
-diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-index 072b6ee55e3f..b0c724e5d86c 100644
---- a/kernel/kexec_file.c
-+++ b/kernel/kexec_file.c
-@@ -198,9 +198,6 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
- 		return ret;
- 	image->kernel_buf_len = size;
- 
--	/* IMA needs to pass the measurement list to the next kernel. */
--	ima_add_kexec_buffer(image);
--
- 	/* Call arch image probe handlers */
- 	ret = arch_kexec_kernel_image_probe(image, image->kernel_buf,
- 					    image->kernel_buf_len);
-@@ -241,8 +238,14 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
- 			ret = -EINVAL;
- 			goto out;
- 		}
-+
-+		ima_kexec_cmdline(image->cmdline_buf,
-+				  image->cmdline_buf_len - 1);
- 	}
- 
-+	/* IMA needs to pass the measurement list to the next kernel. */
-+	ima_add_kexec_buffer(image);
-+
- 	/* Call arch image load handlers */
- 	ldata = arch_kexec_kernel_image_load(image);
- 
 -- 
-2.19.1
-
+~Vinod
