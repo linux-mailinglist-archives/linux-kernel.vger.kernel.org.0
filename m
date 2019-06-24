@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D64650711
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:06:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 130495064F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 11:58:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729634AbfFXKEK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 06:04:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35548 "EHLO mail.kernel.org"
+        id S1728869AbfFXJ5v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 05:57:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56004 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729626AbfFXKEH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 06:04:07 -0400
+        id S1726453AbfFXJ5r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 05:57:47 -0400
 Received: from localhost (f4.8f.5177.ip4.static.sl-reverse.com [119.81.143.244])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A256721537;
-        Mon, 24 Jun 2019 10:04:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 54949208CA;
+        Mon, 24 Jun 2019 09:57:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561370647;
-        bh=d37ICMBKvoimNiAqVg+adZ7Qd5e54zOXaNlzOgph3Rw=;
+        s=default; t=1561370266;
+        bh=ZDcPbPhpv7QesIOP6V8A3EIB5GehUV5YQtLVz9w1g38=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QEDSP2vq0RxmgArWXKx423bBsUV4ZSjuPpqoZQ7F05BVjwwtP4jUkCjUPLT55xp6Y
-         exFR7UmweYorB/IC78SmPLtTWFKjPbtL0Vz2Qg3gjnZdZs2hEeXSw+HFwxGT6vQWyw
-         M1o6VUhLq6zICxvpjPdYeJcLAsRMABP9YJEaRXhM=
+        b=0JCLZg8JnTuLcW6rO0GvILwvAfmzaXROraATpwkXrRH+ZO+D4NDvpOhpNpZ975Xim
+         CJE6u6AoLTxfb67DS2IEN0ll9RzhQLNzZHJEdj1CXunis8gnScEDe7m0MlKm7AmXFq
+         2pNq30Cbst3UsviCAjEPrxOuseCSc9ZpVvDg8QdY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Helge Deller <deller@gmx.de>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 38/90] parisc: Fix compiler warnings in float emulation code
+        stable@vger.kernel.org,
+        "Pierre-Loup A. Griffais" <pgriffais@valvesoftware.com>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.14 10/51] Input: uinput - add compat ioctl number translation for UI_*_FF_UPLOAD
 Date:   Mon, 24 Jun 2019 17:56:28 +0800
-Message-Id: <20190624092316.796169695@linuxfoundation.org>
+Message-Id: <20190624092307.611971368@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190624092313.788773607@linuxfoundation.org>
-References: <20190624092313.788773607@linuxfoundation.org>
+In-Reply-To: <20190624092305.919204959@linuxfoundation.org>
+References: <20190624092305.919204959@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,50 +45,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 6b98d9134e14f5ef4bcf64b27eedf484ed19a1ec ]
+From: Andrey Smirnov <andrew.smirnov@gmail.com>
 
-Avoid such compiler warnings:
-arch/parisc/math-emu/cnv_float.h:71:27: warning: ‘<<’ in boolean context, did you mean ‘<’ ? [-Wint-in-bool-context]
-     ((Dintp1(dint_valueA) << 33 - SGL_EXP_LENGTH) || Dintp2(dint_valueB))
-arch/parisc/math-emu/fcnvxf.c:257:6: note: in expansion of macro ‘Dint_isinexact_to_sgl’
-  if (Dint_isinexact_to_sgl(srcp1,srcp2)) {
+commit 7c7da40da1640ce6814dab1e8031b44e19e5a3f6 upstream.
 
-Signed-off-by: Helge Deller <deller@gmx.de>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+In the case of compat syscall ioctl numbers for UI_BEGIN_FF_UPLOAD and
+UI_END_FF_UPLOAD need to be adjusted before being passed on
+uinput_ioctl_handler() since code built with -m32 will be passing
+slightly different values. Extend the code already covering
+UI_SET_PHYS to cover UI_BEGIN_FF_UPLOAD and UI_END_FF_UPLOAD as well.
+
+Reported-by: Pierre-Loup A. Griffais <pgriffais@valvesoftware.com>
+Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/parisc/math-emu/cnv_float.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/input/misc/uinput.c |   22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
 
-diff --git a/arch/parisc/math-emu/cnv_float.h b/arch/parisc/math-emu/cnv_float.h
-index 933423fa5144..b0db61188a61 100644
---- a/arch/parisc/math-emu/cnv_float.h
-+++ b/arch/parisc/math-emu/cnv_float.h
-@@ -60,19 +60,19 @@
-     ((exponent < (SGL_P - 1)) ?				\
-      (Sall(sgl_value) << (SGL_EXP_LENGTH + 1 + exponent)) : FALSE)
+--- a/drivers/input/misc/uinput.c
++++ b/drivers/input/misc/uinput.c
+@@ -1012,13 +1012,31 @@ static long uinput_ioctl(struct file *fi
  
--#define Int_isinexact_to_sgl(int_value)	(int_value << 33 - SGL_EXP_LENGTH)
-+#define Int_isinexact_to_sgl(int_value)	((int_value << 33 - SGL_EXP_LENGTH) != 0)
+ #ifdef CONFIG_COMPAT
  
- #define Sgl_roundnearest_from_int(int_value,sgl_value)			\
-     if (int_value & 1<<(SGL_EXP_LENGTH - 2))   /* round bit */		\
--    	if ((int_value << 34 - SGL_EXP_LENGTH) || Slow(sgl_value))	\
-+	if (((int_value << 34 - SGL_EXP_LENGTH) != 0) || Slow(sgl_value)) \
- 		Sall(sgl_value)++
+-#define UI_SET_PHYS_COMPAT	_IOW(UINPUT_IOCTL_BASE, 108, compat_uptr_t)
++/*
++ * These IOCTLs change their size and thus their numbers between
++ * 32 and 64 bits.
++ */
++#define UI_SET_PHYS_COMPAT		\
++	_IOW(UINPUT_IOCTL_BASE, 108, compat_uptr_t)
++#define UI_BEGIN_FF_UPLOAD_COMPAT	\
++	_IOWR(UINPUT_IOCTL_BASE, 200, struct uinput_ff_upload_compat)
++#define UI_END_FF_UPLOAD_COMPAT		\
++	_IOW(UINPUT_IOCTL_BASE, 201, struct uinput_ff_upload_compat)
  
- #define Dint_isinexact_to_sgl(dint_valueA,dint_valueB)		\
--    ((Dintp1(dint_valueA) << 33 - SGL_EXP_LENGTH) || Dintp2(dint_valueB))
-+    (((Dintp1(dint_valueA) << 33 - SGL_EXP_LENGTH) != 0) || Dintp2(dint_valueB))
+ static long uinput_compat_ioctl(struct file *file,
+ 				unsigned int cmd, unsigned long arg)
+ {
+-	if (cmd == UI_SET_PHYS_COMPAT)
++	switch (cmd) {
++	case UI_SET_PHYS_COMPAT:
+ 		cmd = UI_SET_PHYS;
++		break;
++	case UI_BEGIN_FF_UPLOAD_COMPAT:
++		cmd = UI_BEGIN_FF_UPLOAD;
++		break;
++	case UI_END_FF_UPLOAD_COMPAT:
++		cmd = UI_END_FF_UPLOAD;
++		break;
++	}
  
- #define Sgl_roundnearest_from_dint(dint_valueA,dint_valueB,sgl_value)	\
-     if (Dintp1(dint_valueA) & 1<<(SGL_EXP_LENGTH - 2)) 			\
--    	if ((Dintp1(dint_valueA) << 34 - SGL_EXP_LENGTH) ||		\
-+	if (((Dintp1(dint_valueA) << 34 - SGL_EXP_LENGTH) != 0) ||	\
-     	Dintp2(dint_valueB) || Slow(sgl_value)) Sall(sgl_value)++
- 
- #define Dint_isinexact_to_dbl(dint_value) 	\
--- 
-2.20.1
-
+ 	return uinput_ioctl_handler(file, cmd, arg, compat_ptr(arg));
+ }
 
 
