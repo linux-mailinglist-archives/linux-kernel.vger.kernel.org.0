@@ -2,142 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E918851015
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 17:15:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3346851027
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 17:19:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730384AbfFXPP0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 11:15:26 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:44227 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727454AbfFXPPZ (ORCPT
+        id S1729197AbfFXPTF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 11:19:05 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:42533 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726414AbfFXPTF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 11:15:25 -0400
-Received: by mail-ed1-f66.google.com with SMTP id k8so22244046edr.11
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 08:15:24 -0700 (PDT)
+        Mon, 24 Jun 2019 11:19:05 -0400
+Received: by mail-ot1-f68.google.com with SMTP id l15so13874512otn.9
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 08:19:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=tb/fwXJIPZBkB2w8y3N+xp6qDheDapQLagvbQVmWBxs=;
-        b=hKivaIYvCcbw0ygV6Kz/ud/MoCDO10N8kdFBEYqhIMh4ZVCmzkU5sNxig8oy6ZYXyO
-         DaxcwQ0dkrrDxCs+vYrQatvN8v7AZbUi+4VwFuHZnNzOD1wtZ8Y54yY17uaAJEGQ6PcN
-         yRxIyk/1RryQNYcrfRh4XEPNBhwjPu1A6L+5MulFzYjeDc/0xxkYjzHAmbGMJ5NKWyA9
-         UkUGsfw18XOL+7K9WbelemLiJ3LthA+M0veyhFrPVt6CR8IQFI15s1KBKIOSa3dsDjT8
-         uBxf4Mz5ND81hGRaKlV6YbyHwMOiqyw7I9U54xVYEi2z/yawXzgiyOpuhmO7EF3adB03
-         IU2w==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vGAZaIMWrZDEIWanvXMbB1hgAeVc7diLVZDQfS9ghPc=;
+        b=Fss0sMaGJF3Y4FoyVnJKt9/yDLgJeUdWrZvaCo+g5PpQm8xGB3qmJWzr0j1BFfcJ7T
+         2iVZKoJPb7fBWLfcv4ZHSNa4DdPDkzEY4tTE2wZgot97mWs9so/DP/O6Dq/a78hlcIAZ
+         ppU7ArJYxlOw8ppWDdI1+PYV5wprBv3DC1SuY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tb/fwXJIPZBkB2w8y3N+xp6qDheDapQLagvbQVmWBxs=;
-        b=fOInSqGMUsEjZa7JiwBAwD33mzssPd9IipnO7t0pMxKZ/WOnnVK5b5ZPLR9WU0mfoB
-         s3iGfeLqIdfmi3I+kAeaXPKSOQF4krEFcIyWbt9Gml2TNkH+O+DdIaUm9ffv5Vx02+Rh
-         Unf5GLtjp4njiOhHtqCnljw2CCboWrG2C0mVgf8MtVIqTwdP6XzorW5jOXVXiieKSuw2
-         oTK9lz5YoA4qHOCkwLGrsco1NqiB9JV6goiwvqSzXjDVdd1RNIVYOxa85IJfGzJd43Aj
-         4A2g9dS5BGL88bwdP4uHKO3upasHs0PbhE6hrjvTRrbM3MaB1LR/qsxz1CgNrJip6yg4
-         Q6jw==
-X-Gm-Message-State: APjAAAXCJQf0+V1K/VeCsNg9VNfBEtuhzbw7Mql+1fYkZMUq2Z/mLuzE
-        U2BQ0zaLQ4PBAf9R1ew3FgJ57A==
-X-Google-Smtp-Source: APXvYqz2rk4utKNukeyBdZl2ORALqkVcwVPb1q4qGRLCaAP8B6P/6LhMQuSx+7vkAKVkB7JktYIaZQ==
-X-Received: by 2002:a17:906:85d4:: with SMTP id i20mr20687001ejy.256.1561389324273;
-        Mon, 24 Jun 2019 08:15:24 -0700 (PDT)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id f2sm873444ejb.41.2019.06.24.08.15.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Jun 2019 08:15:23 -0700 (PDT)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id A98AF1043B3; Mon, 24 Jun 2019 18:15:28 +0300 (+03)
-Date:   Mon, 24 Jun 2019 18:15:28 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Song Liu <songliubraving@fb.com>
-Cc:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "matthew.wilcox@oracle.com" <matthew.wilcox@oracle.com>,
-        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
-        Kernel Team <Kernel-team@fb.com>,
-        "william.kucharski@oracle.com" <william.kucharski@oracle.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "hdanton@sina.com" <hdanton@sina.com>
-Subject: Re: [PATCH v7 5/6] mm,thp: add read-only THP support for (non-shmem)
- FS
-Message-ID: <20190624151528.fnz3hvlnyvea3ytn@box>
-References: <20190623054749.4016638-1-songliubraving@fb.com>
- <20190623054749.4016638-6-songliubraving@fb.com>
- <20190624124746.7evd2hmbn3qg3tfs@box>
- <52BDA50B-7CBF-4333-9D15-0C17FD04F6ED@fb.com>
- <20190624142747.chy5s3nendxktm3l@box>
- <C3161C66-5044-44E6-92F4-BBAD42EDF4E2@fb.com>
- <20190624145453.u4ej3e4ktyyqjite@box>
- <5BE23F34-B611-496B-9277-A09C9CC784B1@fb.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vGAZaIMWrZDEIWanvXMbB1hgAeVc7diLVZDQfS9ghPc=;
+        b=PeTLbhSAjWb0o2lxSpJlZQVSvtkWHAdfXTDV13Ot+9MS0kX7VDs7qQzmA/62qVtWCh
+         +BG3TS8VdO5FsNooLxrPO5zTcSkkXzq/f9RfNk//31fpLa6aGBSqt947wG0fOixfnWGY
+         w/e0i9mTY8ZZ+eNpkWBM6jf1Le49BZUvXVKe4yJ9a812diup9DHEYb3g+O4fBNxs4feF
+         xNIWbu2Mwy4gdHRmEvhTc+k3+u622ybQrMokT2xa5dDIa9ygt/BRk37wa37aHFejbWaM
+         rPAdK6dLu5HG2uJfVRsH/L8+Mr5OXuvQh0Djpc9+4nCSGYShYGRFq8gdBoUeEAzT8CnP
+         4P4Q==
+X-Gm-Message-State: APjAAAU20c2P3iQyRjHZBmqlDphDUAeN6yaMnshScA7YQuftJjkgawF6
+        bgNDC9JjMVJVJ14MKv6/yhDL7qDWkGA=
+X-Google-Smtp-Source: APXvYqyL8OZi7PqpyFBoE8v/r6F62d+fcdpo9WErNSqJufZPugzvieWis4Dstqw4KWikiYKjIQg/zw==
+X-Received: by 2002:a9d:529:: with SMTP id 38mr13895681otw.145.1561389543817;
+        Mon, 24 Jun 2019 08:19:03 -0700 (PDT)
+Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com. [209.85.167.179])
+        by smtp.gmail.com with ESMTPSA id x128sm4460819oig.54.2019.06.24.08.19.02
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Mon, 24 Jun 2019 08:19:03 -0700 (PDT)
+Received: by mail-oi1-f179.google.com with SMTP id a128so10083377oib.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 08:19:02 -0700 (PDT)
+X-Received: by 2002:aca:bd43:: with SMTP id n64mr10336864oif.148.1561389542365;
+ Mon, 24 Jun 2019 08:19:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5BE23F34-B611-496B-9277-A09C9CC784B1@fb.com>
-User-Agent: NeoMutt/20180716
+References: <201906220821.144PfQAY%lkp@intel.com> <20190622005547.GA65190@lkp-kbuild08>
+In-Reply-To: <20190622005547.GA65190@lkp-kbuild08>
+From:   Nick Crews <ncrews@chromium.org>
+Date:   Mon, 24 Jun 2019 09:18:51 -0600
+X-Gmail-Original-Message-ID: <CAHX4x848FRQD9Fy9G88RsCgWtZFF3pugx7ZmKmY+STF2wwTN=A@mail.gmail.com>
+Message-ID: <CAHX4x848FRQD9Fy9G88RsCgWtZFF3pugx7ZmKmY+STF2wwTN=A@mail.gmail.com>
+Subject: Re: [PATCH] platform/chrome: cros_ec_lpc: fix stream_open.cocci warnings
+To:     kbuild test robot <lkp@intel.com>
+Cc:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        kbuild-all@01.org, Ezequiel Garcia <ezequiel@collabora.com>,
+        Benson Leung <bleung@chromium.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 03:04:21PM +0000, Song Liu wrote:
-> 
-> 
-> > On Jun 24, 2019, at 7:54 AM, Kirill A. Shutemov <kirill@shutemov.name> wrote:
-> > 
-> > On Mon, Jun 24, 2019 at 02:42:13PM +0000, Song Liu wrote:
-> >> 
-> >> 
-> >>> On Jun 24, 2019, at 7:27 AM, Kirill A. Shutemov <kirill@shutemov.name> wrote:
-> >>> 
-> >>> On Mon, Jun 24, 2019 at 02:01:05PM +0000, Song Liu wrote:
-> >>>>>> @@ -1392,6 +1403,23 @@ static void collapse_file(struct mm_struct *mm,
-> >>>>>> 				result = SCAN_FAIL;
-> >>>>>> 				goto xa_unlocked;
-> >>>>>> 			}
-> >>>>>> +		} else if (!page || xa_is_value(page)) {
-> >>>>>> +			xas_unlock_irq(&xas);
-> >>>>>> +			page_cache_sync_readahead(mapping, &file->f_ra, file,
-> >>>>>> +						  index, PAGE_SIZE);
-> >>>>>> +			lru_add_drain();
-> >>>>> 
-> >>>>> Why?
-> >>>> 
-> >>>> isolate_lru_page() is likely to fail if we don't drain the pagevecs. 
-> >>> 
-> >>> Please add a comment.
-> >> 
-> >> Will do. 
-> >> 
-> >>> 
-> >>>>>> +			page = find_lock_page(mapping, index);
-> >>>>>> +			if (unlikely(page == NULL)) {
-> >>>>>> +				result = SCAN_FAIL;
-> >>>>>> +				goto xa_unlocked;
-> >>>>>> +			}
-> >>>>>> +		} else if (!PageUptodate(page)) {
-> >>>>> 
-> >>>>> Maybe we should try wait_on_page_locked() here before give up?
-> >>>> 
-> >>>> Are you referring to the "if (!PageUptodate(page))" case? 
-> >>> 
-> >>> Yes.
-> >> 
-> >> I think this case happens when another thread is reading the page in. 
-> >> I could not think of a way to trigger this condition for testing. 
-> >> 
-> >> On the other hand, with current logic, we will retry the page on the 
-> >> next scan, so I guess this is OK. 
-> > 
-> > What I meant that calling wait_on_page_locked() on !PageUptodate() page
-> > will likely make it up-to-date and we don't need to SCAN_FAIL the attempt.
-> > 
-> 
-> Yeah, I got the point. My only concern is that I don't know how to 
-> reliably trigger this case for testing. I can try to trigger it. But I 
-> don't know whether it will happen easily. 
+I applied this in the new version as well.
 
-Atrifically slowing down IO should do the trick.
-
--- 
- Kirill A. Shutemov
+On Fri, Jun 21, 2019 at 6:55 PM kbuild test robot <lkp@intel.com> wrote:
+>
+> From: kbuild test robot <lkp@intel.com>
+>
+> drivers/platform/chrome/wilco_ec/event.c:270:1-17: WARNING: event_fops: .read() has stream semantic; safe to change nonseekable_open -> stream_open.
+>
+> Generated by: scripts/coccinelle/api/stream_open.cocci
+>
+> Fixes: 22c040fa21b6 ("platform/chrome: cros_ec_lpc: Choose Microchip EC at runtime")
+> Signed-off-by: kbuild test robot <lkp@intel.com>
+> ---
+>
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform/linux.git for-next
+> head:   9eecd07b34507de9d6a9c264d13d30e1ee5fabe8
+> commit: 22c040fa21b604b9b3d88645e108fb2f0a74474b [21/22] platform/chrome: cros_ec_lpc: Choose Microchip EC at runtime
+>
+> Please take the patch only if it's a positive warning. Thanks!
+>
+>  event.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> --- a/drivers/platform/chrome/wilco_ec/event.c
+> +++ b/drivers/platform/chrome/wilco_ec/event.c
+> @@ -267,7 +267,7 @@ static int event_open(struct inode *inod
+>
+>         /* Increase refcount on device so dev_data is not freed */
+>         get_device(&dev_data->dev);
+> -       nonseekable_open(inode, filp);
+> +       stream_open(inode, filp);
+>         filp->private_data = dev_data;
+>
+>         return 0;
