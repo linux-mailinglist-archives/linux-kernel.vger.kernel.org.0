@@ -2,96 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3034851E28
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 00:22:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 175CB51E01
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 00:13:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727414AbfFXWWH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 18:22:07 -0400
-Received: from mga02.intel.com ([134.134.136.20]:2527 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726321AbfFXWWH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 18:22:07 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jun 2019 15:22:06 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,413,1557212400"; 
-   d="scan'208";a="161734930"
-Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
-  by fmsmga008.fm.intel.com with ESMTP; 24 Jun 2019 15:22:05 -0700
-Date:   Mon, 24 Jun 2019 15:12:24 -0700
-From:   Fenghua Yu <fenghua.yu@intel.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        H Peter Anvin <hpa@zytor.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Subject: Re: [PATCH v5 2/5] x86/umwait: Initialize umwait control values
-Message-ID: <20190624221224.GA245468@romley-ivt3.sc.intel.com>
-References: <1560994438-235698-1-git-send-email-fenghua.yu@intel.com>
- <1560994438-235698-3-git-send-email-fenghua.yu@intel.com>
- <alpine.DEB.2.21.1906232038421.32342@nanos.tec.linutronix.de>
+        id S1726950AbfFXWNY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 18:13:24 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:37602 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726402AbfFXWNY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 18:13:24 -0400
+Received: by mail-lj1-f195.google.com with SMTP id 131so14159943ljf.4
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 15:13:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=E6ucUb/4G6TX7U6IlvaXO7Noph77Huv96zwgj/iVbk4=;
+        b=Mdb29tXw/X8t1nTGw1Tb/az/GIy3MBpx/mG9kBd3XormoeMtZIiNk11sY5SclYB087
+         C4XYpgkY6bBM5A1LgC+8ChSE8+hNnU/P6pDAwmHzzKztl4+9pGlxydZkItv+oZMfKfUh
+         eJoCleDb/9fpZjoJJW99YaiZgFBCS5YnLl40mGgfl3C4X9D6QqPNnu7BJnshXGGDg+vm
+         R9XtYGNyVdy5alZNZIwaHwAsmqrVCzdLhDdeMEh2Ulfg3Jz1LQqx08VSyPa0eGTuvAF1
+         oBpQjRHm08vzaaolL5N3HfBcXBSaJidGyvBdAS7/ByxXCq4MsuGqdIGvpYxc4v4J+wRy
+         o7Uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=E6ucUb/4G6TX7U6IlvaXO7Noph77Huv96zwgj/iVbk4=;
+        b=Ez1dIGqRX+uBqWKS6m46kfE43MgXyx9N5jw1Pfo3veJ4ETYQOUDpSvsfKllHCdIcAP
+         mYfQlnTXaD4BguApyFWL4K9pXf96eZAeNYN0uTk2e3808oNaGN/1Et4nwF5j4lxqTF99
+         ndJc7jzOpGCOEGJgyBdvMQNuE8bi/nwxu9eqrs/3aQxIniJLia/CNm5yYPCvkxBbTEhP
+         khWHcnE4uURdUVxuXudDNvVtERrjr7Uw2jmhlS37LRvF8F1AZGlaWP+pNvd9ICqZ90ha
+         x0lx4WN5uTtWzBAOPAtn5NyZAT1c1dNpWl9A6LDbiqFibZKkMnGi5If32Hez1iJh5VrV
+         pI4w==
+X-Gm-Message-State: APjAAAWOne5Jh8xZ+Iu7VcfoJzd8ofhdTstkh8MNDgdkTa0j6ALmKAgR
+        l4AXkh/rRzlm/Ht/LarmKehq0kXsH4S2HSZuSaRnsw==
+X-Google-Smtp-Source: APXvYqzuILOmlRlfzB4LigJuOFz6xkIbsL4hLOVKc/1qZByIgUnbCmOIDWO1UqiLgRGGrL9IShuXg3gaJHpmgCB46gU=
+X-Received: by 2002:a2e:8195:: with SMTP id e21mr59447382ljg.62.1561414402129;
+ Mon, 24 Jun 2019 15:13:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1906232038421.32342@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20190624215649.8939-1-robh@kernel.org> <20190624215649.8939-11-robh@kernel.org>
+In-Reply-To: <20190624215649.8939-11-robh@kernel.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 25 Jun 2019 00:13:10 +0200
+Message-ID: <CACRpkdYKE=zLJhmTeTWYGRCQNt3K8+rNNqsp5UDa2d31GG6Y2g@mail.gmail.com>
+Subject: Re: [PATCH v2 10/15] dt-bindings: display: Convert tpo,tpg110 panel
+ to DT schema
+To:     Rob Herring <robh@kernel.org>
+Cc:     "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 12:39:05AM +0200, Thomas Gleixner wrote:
-> On Wed, 19 Jun 2019, Fenghua Yu wrote:
-> >  
-> > +#define MSR_IA32_UMWAIT_CONTROL			0xe1
-> > +#define MSR_IA32_UMWAIT_CONTROL_C02_DISABLED	BIT(0)
-> > +#define MSR_IA32_UMWAIT_CONTROL_MAX_TIME	0xfffffffc
-> 
-> Errm, no! That's not maxtime, that's the time field mask in the
-> MSR. Throughout the code you use that as a mask, which is not really
-> obvious.
-> 
-> > +	(((max_time) & MSR_IA32_UMWAIT_CONTROL_MAX_TIME) |		\
-> 
-> and later on:
-> 
-> 	if (max_time & ~MSR_IA32_UMWAIT_CONTROL_MAX_TIME)
-> 
-> What? How is anyone supposed to understand that?
-> 
-> 	if (max_time & ~MSR_IA32_UMWAIT_CONTROL_TIME_MASK)
-> 
-> makes it entirely clear that the value is not allowed to have any bits
-> outside of the mask set.
-> 
-> > +
-> > +#define UMWAIT_C02_ENABLED	(0 & MSR_IA32_UMWAIT_CONTROL_C02_DISABLED)
-> 
-> The AND is there for maximal confusion of the reader?
-> 
-> > +/*
-> > + * On resume, set up IA32_UMWAIT_CONTROL MSR on BP which is the only active
-> > + * CPU at this time. Setting up the MSR on APs when they are re-added later
-> > + * using CPU hotplug.
-> > + * The MSR on BP is supposed not to be changed during suspend and thus it's
-> > + * unnecessary to set it again during resume from suspend. But at this point
-> > + * we don't know resume is from suspend or hibernation. To simplify the
-> > + * situation, just set up the MSR on resume from suspend.
-> 
-> We also do not trust any firmware by default whatever it is supposed to do.
+On Mon, Jun 24, 2019 at 11:59 PM Rob Herring <robh@kernel.org> wrote:
 
-Thank you very much for pointing out and fixing all the issues and merging
-the patches into the tip tree!
+> Convert the tpo,tpg110 panel binding to DT schema.
+>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Sam Ravnborg <sam@ravnborg.org>
+> Cc: Maxime Ripard <maxime.ripard@bootlin.com>
+> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Cc: dri-devel@lists.freedesktop.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
 
-I test the tip tree and everything works fine.
+Awesome, fixed up the MAINATINERS entry and applied and
+pushed for DRM next with my Reviewed-by.
 
--Fenghua
-
-
+Yours,
+Linus Walleij
