@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 618AB507A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:12:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 78E49507CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:13:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730508AbfFXKIq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 06:08:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41568 "EHLO mail.kernel.org"
+        id S1730622AbfFXKKP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 06:10:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41706 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730427AbfFXKIS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 06:08:18 -0400
+        id S1730434AbfFXKIU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 06:08:20 -0400
 Received: from localhost (f4.8f.5177.ip4.static.sl-reverse.com [119.81.143.244])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 21D3E20645;
-        Mon, 24 Jun 2019 10:08:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CDA0C2089F;
+        Mon, 24 Jun 2019 10:08:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561370897;
-        bh=ezO5yLMJGnrFA3fN1O4sVPCh+wPHOuyiO1HbuN/43eQ=;
+        s=default; t=1561370900;
+        bh=InnUAcskl1+Nq8HujBZuuO9oVUwRKPIL3VUFQVlFKk8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qcz0DaGxyyyL6em2X0WjbyYzZ/rQzxv3nIOeQTEDZDeZ9frd+3farRw6vQ8yFoHU+
-         DEvZKpJN2jzS91u+n6QQP5Vesu7qBiuMMpatPz5jTbSEXYyK50A9x0Di8CRjbdBhb6
-         khSLk4PjpG7C0qL/by96Sog8VjgNZ2mw2v43sgf0=
+        b=v3U5ysA1VK5fDL+uHbRMIGDo+RYoHST4c8srAPY2HrrGBpJOKAOElM6n6gUzdC/8J
+         qu81Z4Gcu79av5HryD+gAjkGK3/z36IGFGrMNRe0ML2EIb9NBeQdy/RXv10dNMAYsU
+         F3/nOEDBOf+eNVugWbnINPzG1gpg3LNkMYV529Oo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Joao Pinto <jpinto@synopsys.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        Alexey Brodkin <abrodkin@synopsys.com>,
-        Jose Abreu <joabreu@synopsys.com>,
+        stable@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Paul Burton <paul.burton@mips.com>, linux-mips@vger.kernel.org,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 042/121] ARC: [plat-hsdk]: Add missing FIFO size entry in GMAC node
-Date:   Mon, 24 Jun 2019 17:56:14 +0800
-Message-Id: <20190624092322.935152321@linuxfoundation.org>
+Subject: [PATCH 5.1 043/121] MIPS: mark ginvt() as __always_inline
+Date:   Mon, 24 Jun 2019 17:56:15 +0800
+Message-Id: <20190624092322.981619939@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190624092320.652599624@linuxfoundation.org>
 References: <20190624092320.652599624@linuxfoundation.org>
@@ -49,37 +47,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 4c70850aeb2e40016722cd1abd43c679666d3ca0 ]
+[ Upstream commit 6074c33c6b2eabc70867ef76d57ca256e9ea9da7 ]
 
-Add the binding for RX/TX fifo size of GMAC node.
+To meet the 'i' (immediate) constraint for the asm operands,
+this function must be always inlined.
 
-Cc: Joao Pinto <jpinto@synopsys.com>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Vineet Gupta <vgupta@synopsys.com>
-Tested-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Acked-by: Alexey Brodkin <abrodkin@synopsys.com>
-Signed-off-by: Jose Abreu <joabreu@synopsys.com>
-Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Cc: linux-mips@vger.kernel.org
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arc/boot/dts/hsdk.dts | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/mips/include/asm/ginvt.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arc/boot/dts/hsdk.dts b/arch/arc/boot/dts/hsdk.dts
-index 699f372b2a6f..6219b372e9c1 100644
---- a/arch/arc/boot/dts/hsdk.dts
-+++ b/arch/arc/boot/dts/hsdk.dts
-@@ -196,6 +196,9 @@
- 			mac-address = [00 00 00 00 00 00]; /* Filled in by U-Boot */
- 			dma-coherent;
+diff --git a/arch/mips/include/asm/ginvt.h b/arch/mips/include/asm/ginvt.h
+index 49c6dbe37338..6eb7c2b94dc7 100644
+--- a/arch/mips/include/asm/ginvt.h
++++ b/arch/mips/include/asm/ginvt.h
+@@ -19,7 +19,7 @@ _ASM_MACRO_1R1I(ginvt, rs, type,
+ # define _ASM_SET_GINV
+ #endif
  
-+			tx-fifo-depth = <4096>;
-+			rx-fifo-depth = <4096>;
-+
- 			mdio {
- 				#address-cells = <1>;
- 				#size-cells = <0>;
+-static inline void ginvt(unsigned long addr, enum ginvt_type type)
++static __always_inline void ginvt(unsigned long addr, enum ginvt_type type)
+ {
+ 	asm volatile(
+ 		".set	push\n"
 -- 
 2.20.1
 
