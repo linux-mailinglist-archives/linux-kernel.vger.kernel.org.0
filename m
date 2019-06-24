@@ -2,132 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF28150959
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:59:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F9A750972
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 13:08:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729556AbfFXK7c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 06:59:32 -0400
-Received: from mail-vk1-f196.google.com ([209.85.221.196]:45136 "EHLO
-        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728918AbfFXK7b (ORCPT
+        id S1729722AbfFXLIJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 07:08:09 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:33402 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727732AbfFXLIC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 06:59:31 -0400
-Received: by mail-vk1-f196.google.com with SMTP id e83so2642788vke.12
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 03:59:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XCwcD7XLjs4QJVO2Vvl3xOs3JgJGbqS6a9JuvllBGjA=;
-        b=M+sAyGUAO1nbrpYJFpcoZGhnbDisLD0MRfM5qeuHHFfWR8pcGyndCJ/+yVidJwJEQo
-         /Lkvcu7v60ZLUEFSOd1nQWoO2P+g4UIad+iPZyj/oVKnTC9WVKOhrXagW9DK4CHnQV2C
-         d4z9VBN2JAH5krvx7ll64enj3Rk5ntTbhj3F5ag5T8xu5Tpc2PiFEKeyvtk+YVyf+yUY
-         ZEQ70u3l/bndP7JXf7w1LrdtNiVaI1K2AwH5sfXj4Qxu+rhG+51ycS+5T8RHLs3z6yXG
-         5ZoWNZ4xuyZOOT6EewHuuYgaE3MZ/Kd6aAajr2wSpNuDCmG7FXuWPBBc3HwY0qybHkPz
-         IqhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XCwcD7XLjs4QJVO2Vvl3xOs3JgJGbqS6a9JuvllBGjA=;
-        b=YtmjCmGKIhnJC0fX4yyrpZR9AlwfKoc6KrfjVgpEZNMris3tqfepbj6lTf9It28y88
-         k+90MAK3spIh5uPChG8D5UbSslX34GJW+0czcFesVcXnFz2QdaHf1IxWigGJWjkB4LBJ
-         nd9vF1kWTcH3MAwZ8cQ9bB2rNhEcJq5q3qtXnBPZ0KvgnwG6aIpfotRDo1iOQi2WNKfl
-         dWK86W0wh6LSGQif0rTIXpGm7HvCDjs/DLtt04OEywSUbuFnKTu1XdOVrEuUKQzGjd/u
-         2V/G0cTF32mc1uWFFslcUilVwny+aJhA1lAH2l/6l11nO1pMsEGDBUHexvbtOkBVvxs/
-         X/Xw==
-X-Gm-Message-State: APjAAAV31uYNxj9gRVQ9A4YRLZpM7RdUedReYF2gMysMB0v2fONuRB5q
-        qlytLYqzyvBNUjs3Igo1vsxVqzlurbuaV2MPjvw8757fRos=
-X-Google-Smtp-Source: APXvYqwzHREeoVrhXN3ra3YAtFVodCkeZ/L/8NKc/AjjPywx+f+rdelcxz5eHGeNcLNZvq3ejDZ+Qfe5kTtOS+X3uAU=
-X-Received: by 2002:a1f:50c1:: with SMTP id e184mr13989651vkb.86.1561373970631;
- Mon, 24 Jun 2019 03:59:30 -0700 (PDT)
+        Mon, 24 Jun 2019 07:08:02 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5OAxFgd066809;
+        Mon, 24 Jun 2019 05:59:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1561373955;
+        bh=xj6qPp/mhLO8O/bD0ogOLiG7+uM+u74/DU37aW5o1M4=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=y8arNI920qA2FKw6lZyuxo6SNGGd/H26cY8TI4eWFeTba/3B3cQr9GiCAbIzNc87J
+         olZsV+bILard07rOsP64e2IbDPEUBPA3qrJyGOl4Wsf5RPXSDQbhpYqomrQJByWfiL
+         a2iU0rWNgvYJrLv7Qb9aFVUhYbSFRfgTEm9ZKVYk=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5OAxFHW008896
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 24 Jun 2019 05:59:15 -0500
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 24
+ Jun 2019 05:59:14 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Mon, 24 Jun 2019 05:59:14 -0500
+Received: from [172.24.190.89] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5OAxBkM108281;
+        Mon, 24 Jun 2019 05:59:11 -0500
+Subject: Re: [PATCH v3] mtd: spi-nor: fix nor->addr_width when its value
+ configured from SFDP does not match the actual width
+To:     <Tudor.Ambarus@microchip.com>, <liu.xiang6@zte.com.cn>,
+        <linux-mtd@lists.infradead.org>
+CC:     <bbrezillon@kernel.org>, <richard@nod.at>,
+        <linux-kernel@vger.kernel.org>, <marek.vasut@gmail.com>,
+        <liuxiang_1999@126.com>, <computersforpeace@gmail.com>,
+        <dwmw2@infradead.org>, <nagasure@xilinx.com>
+References: <1554018157-10860-1-git-send-email-liu.xiang6@zte.com.cn>
+ <5ffc9e32-ff69-9819-7bfd-ad9f793bb629@microchip.com>
+From:   Vignesh Raghavendra <vigneshr@ti.com>
+Message-ID: <aea913e6-d168-32dd-1913-f1796905f98e@ti.com>
+Date:   Mon, 24 Jun 2019 16:29:56 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
-References: <cover.1553086065.git.amit.kucheria@linaro.org> <9108372823aba9288b98b1c8a003c21b578d1e13.1553086065.git.amit.kucheria@linaro.org>
-In-Reply-To: <9108372823aba9288b98b1c8a003c21b578d1e13.1553086065.git.amit.kucheria@linaro.org>
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-Date:   Mon, 24 Jun 2019 16:29:19 +0530
-Message-ID: <CAHLCerMr30LWt3QcoYVF9gyHjkmO5acTDV-39N6ZO22feYi9=Q@mail.gmail.com>
-Subject: Re: [PATCHv3 21/23] arm64: dts: qcom: qcs404: Add tsens controller
-To:     LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Zhang Rui <rui.zhang@intel.com>
-Cc:     "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <5ffc9e32-ff69-9819-7bfd-ad9f793bb629@microchip.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 20, 2019 at 6:50 PM Amit Kucheria <amit.kucheria@linaro.org> wrote:
->
-> qcs404 has a single TSENS IP block with 10 sensors. The calibration data
-> is stored in an eeprom (qfprom) that is accessed through the nvmem
-> framework. We add the qfprom node to allow the tsens sensors to be
-> calibrated correctly.
->
-> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-
-Hi Bjorn,
-
-Could you please pick this patch and patch 22 in this series if you
-have no other review comments? I can resend these separately if
-required.
-
-The driver (drivers/thermal/qcom/tsens-v1.c) was merged and only these
-DT changes are pending.
-
-Regards,
-Amit
 
 
-> ---
->  arch/arm64/boot/dts/qcom/qcs404.dtsi | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-> index e8fd26633d57..7881792980b8 100644
-> --- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-> @@ -259,6 +259,16 @@
->                         reg = <0x00060000 0x6000>;
->                 };
->
-> +               qfprom: qfprom@a4000 {
-> +                       compatible = "qcom,qfprom";
-> +                       reg = <0x000a4000 0x1000>;
-> +                       #address-cells = <1>;
-> +                       #size-cells = <1>;
-> +                       tsens_caldata: caldata@d0 {
-> +                               reg = <0x1f8 0x14>;
-> +                       };
-> +               };
-> +
->                 rng: rng@e3000 {
->                         compatible = "qcom,prng-ee";
->                         reg = <0x000e3000 0x1000>;
-> @@ -266,6 +276,16 @@
->                         clock-names = "core";
->                 };
->
-> +               tsens: thermal-sensor@4a9000 {
-> +                       compatible = "qcom,qcs404-tsens", "qcom,tsens-v1";
-> +                       reg = <0x004a9000 0x1000>, /* TM */
-> +                             <0x004a8000 0x1000>; /* SROT */
-> +                       nvmem-cells = <&tsens_caldata>;
-> +                       nvmem-cell-names = "calib";
-> +                       #qcom,sensors = <10>;
-> +                       #thermal-sensor-cells = <1>;
-> +               };
-> +
->                 tlmm: pinctrl@1000000 {
->                         compatible = "qcom,qcs404-pinctrl";
->                         reg = <0x01000000 0x200000>,
-> --
-> 2.17.1
->
+On 22/06/19 5:19 PM, Tudor.Ambarus@microchip.com wrote:
+> Hi, Liu,
+> 
+> On 03/31/2019 10:42 AM, Liu Xiang wrote:
+> 
+>> Some is25lp256 get BFPT_DWORD1_ADDRESS_BYTES_3_ONLY from BFPT table for
+>> address width. But in actual fact the flash can support 4-byte address.
+>> So we should fix it.
+> 
+> It's better to be imperative. Substitute "So we should fix it" with something
+> like "Use a post bfpt fixup hook to overwrite the address width advertised by
+> the BFPT".
+> 
+>>
+> 
+> We'll need a fixes tag here.> Suggested-by: Boris Brezillon <bbrezillon@kernel.org>
+>> Suggested-by: Vignesh Raghavendra <vigneshr@ti.com>
+> 
+> When? If they didn't explicitly suggested this approach, lets drop the S-b tags.
+> 
+
+IIRC, this was actually Boris's patch. No need for my S-b tag me :)
+
+Regards
+Vignesh
+
+>> Signed-off-by: Liu Xiang <liu.xiang6@zte.com.cn>
+>> ---
+>>
+>> Changes in v3:
+>>  add a fixup for is25lp256 to solve the address width problem.
+>>
+>>  drivers/mtd/spi-nor/spi-nor.c | 25 ++++++++++++++++++++++++-
+>>  1 file changed, 24 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
+>> index 6e13bbd..d252a66 100644
+>> --- a/drivers/mtd/spi-nor/spi-nor.c
+>> +++ b/drivers/mtd/spi-nor/spi-nor.c
+>> @@ -1682,6 +1682,28 @@ static int sr2_bit7_quad_enable(struct spi_nor *nor)
+>>  		.flags = SPI_NOR_NO_FR | SPI_S3AN,
+>>  
+>>  static int
+>> +is25lp256_post_bfpt_fixups(struct spi_nor *nor,
+>> +			   const struct sfdp_parameter_header *bfpt_header,
+>> +			   const struct sfdp_bfpt *bfpt,
+>> +			   struct spi_nor_flash_parameter *params)
+>> +{
+>> +	/*
+>> +	 * IS25LP256 supports 4B opcodes.
+>> +	 * Unfortunately, some devices get BFPT_DWORD1_ADDRESS_BYTES_3_ONLY
+>                             ^ which devices, did you get a list from issi?
+> 
+>> +	 * from BFPT table for address width. We should fix it.
+> 
+> How about "IS25LP256 supports 4B opcodes, but the BFPT advertises a
+> BFPT_DWORD1_ADDRESS_BYTES_3_ONLY address width. Overwrite the address width
+> advertised by the BFPT."
+> 
+>> +	 */
+>> +	if ((bfpt->dwords[BFPT_DWORD(1)] & BFPT_DWORD1_ADDRESS_BYTES_MASK) ==
+>> +		BFPT_DWORD1_ADDRESS_BYTES_3_ONLY)
+>> +		nor->addr_width = 4;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static struct spi_nor_fixups is25lp256_fixups = {
+> 
+> Naga will use "is25lp256_fixups" for the is25wp256 too, but it's not the case to
+> change the name yet. All good here.
+> 
+> I really want to have this in next, can I have an update in the next few days?
+> 
+> Cheers,
+> ta
+> 
+
+-- 
+Regards
+Vignesh
