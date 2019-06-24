@@ -2,344 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1964250D49
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 16:08:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 568A450D4F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 16:09:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730008AbfFXOIz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 10:08:55 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:23078 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725562AbfFXOIy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 10:08:54 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C99E83082B68;
-        Mon, 24 Jun 2019 14:08:48 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-57.rdu2.redhat.com [10.10.120.57])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 09286600D1;
-        Mon, 24 Jun 2019 14:08:45 +0000 (UTC)
-Subject: [PATCH 00/25] VFS: Introduce filesystem information query syscall
- [ver #14]
-From:   David Howells <dhowells@redhat.com>
-To:     viro@zeniv.linux.org.uk
-Cc:     dhowells@redhat.com, raven@themaw.net, mszeredi@redhat.com,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Mon, 24 Jun 2019 15:08:45 +0100
-Message-ID: <156138532485.25627.7459410522109581052.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
-MIME-Version: 1.0
+        id S1731799AbfFXOJN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 10:09:13 -0400
+Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:43886 "EHLO
+        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731756AbfFXOJM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 10:09:12 -0400
+Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
+        by mx0a-00128a01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5OE8ZFb004224;
+        Mon, 24 Jun 2019 10:08:48 -0400
+Received: from nam05-dm3-obe.outbound.protection.outlook.com (mail-dm3nam05lp2057.outbound.protection.outlook.com [104.47.49.57])
+        by mx0a-00128a01.pphosted.com with ESMTP id 2t9e63dupf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Mon, 24 Jun 2019 10:08:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=analog.onmicrosoft.com; s=selector1-analog-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tbtYM6TFQdOxKuLzKw5MOPPqicJtbW7agMipMrUmpEE=;
+ b=Aw1qVF90vKKQBnGt21mkS05mR2Y4HUbMwTxOnlJx+RiaLXcNkMdraFmpxoLH9BuIH2JBeRijUsHLdfrMbiWaSpjMPmkfTfiOc2g17wSMTM+NzL9cyiR6xGwtgqjwO8dRBik7OqRdymW5QuuIjpBIImVJetTqvhCDaEeiH7MY2Ps=
+Received: from DM6PR03MB3658.namprd03.prod.outlook.com (20.176.85.151) by
+ DM6PR03MB4412.namprd03.prod.outlook.com (20.178.25.89) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2008.13; Mon, 24 Jun 2019 14:08:46 +0000
+Received: from DM6PR03MB3658.namprd03.prod.outlook.com
+ ([fe80::3d04:7ea3:14e6:de91]) by DM6PR03MB3658.namprd03.prod.outlook.com
+ ([fe80::3d04:7ea3:14e6:de91%7]) with mapi id 15.20.2008.014; Mon, 24 Jun 2019
+ 14:08:46 +0000
+From:   "Caprioru, Mircea" <Mircea.Caprioru@analog.com>
+To:     "robh+dt@kernel.org" <robh+dt@kernel.org>
+CC:     "lars@metafoo.de" <lars@metafoo.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Popa, Stefan Serban" <StefanSerban.Popa@analog.com>,
+        "jic23@kernel.org" <jic23@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "Hennerich, Michael" <Michael.Hennerich@analog.com>,
+        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH V3 4/5] dt-bindings: iio: adc: Convert ad7124
+ documentation to YAML
+Thread-Topic: [PATCH V3 4/5] dt-bindings: iio: adc: Convert ad7124
+ documentation to YAML
+Thread-Index: AQHVKmQnaX7c8Zkm3k6sgnGGJOqaBKaq0qgAgAAFKwA=
+Date:   Mon, 24 Jun 2019 14:08:46 +0000
+Message-ID: <6d9ae527d98c77812d5d261419db3e1ddd5e0e2e.camel@analog.com>
+References: <20190624080845.18537-1-mircea.caprioru@analog.com>
+         <20190624080845.18537-4-mircea.caprioru@analog.com>
+         <CAL_JsqJY_bO7EQa=Sfqs8Prwj483Q8Xs0+eX+HZyGsyr-4p-oQ@mail.gmail.com>
+In-Reply-To: <CAL_JsqJY_bO7EQa=Sfqs8Prwj483Q8Xs0+eX+HZyGsyr-4p-oQ@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [137.71.226.54]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 5b438869-c3c2-42a6-3a6c-08d6f8ad794e
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DM6PR03MB4412;
+x-ms-traffictypediagnostic: DM6PR03MB4412:
+x-ld-processed: eaa689b4-8f87-40e0-9c6f-7228de4d754a,ExtAddr
+x-microsoft-antispam-prvs: <DM6PR03MB4412648EA90994299E985C1581E00@DM6PR03MB4412.namprd03.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:1091;
+x-forefront-prvs: 007814487B
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(136003)(346002)(396003)(366004)(39860400002)(54534003)(199004)(189003)(2616005)(68736007)(8936002)(2906002)(316002)(186003)(4326008)(81156014)(81166006)(3846002)(86362001)(8676002)(54906003)(66066001)(102836004)(53546011)(6506007)(26005)(229853002)(76176011)(6116002)(99286004)(53936002)(36756003)(66946007)(66476007)(66556008)(64756008)(66446008)(76116006)(73956011)(91956017)(6436002)(25786009)(6486002)(118296001)(6512007)(71190400001)(71200400001)(486006)(6246003)(5660300002)(14454004)(305945005)(478600001)(446003)(72206003)(256004)(11346002)(476003)(7736002)(14444005);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR03MB4412;H:DM6PR03MB3658.namprd03.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: analog.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: EIuw3d45G2dYf1vgG8YcAa+RlsJgnpv64iEGHIub1r/jy93mM2Pb1hxPCIqYzU2qGd/KJ9XgBdTBge4a7EpPFULoCG6pTSC8wz81O4J9vAiv/uew7wBHb8M5+VWf7JQixp7GYUB1RiYwCs6oHxRBhpo6pAbDkkVYhI6qSwdzCoYvnXKLags2Ed1B5y3+fn/4aaicLyixnBYSSanraiHfC5VRv8JL9HjNTBpMtnkrRfa9nQMqKj3IHodAa4ZIeb5JO0VCe5WBC35+/vFiZp7SmTLXASQXatTnfqRpLx8NkvpRT2TvvX6xJUjwKJbiklOg0+DhSQvb04YojYONLZHFw3vb9BKeu1PbUKSTtSi3+Pz6U5GvubAzVVoPLZu9E7IwTEhZbCM+sTjxidHESXSpjbTsca+yMbu1KOtU2doH5hg=
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Mon, 24 Jun 2019 14:08:54 +0000 (UTC)
+Content-ID: <9548103C6EA45F488CC1EB5B5F0929A9@namprd03.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: analog.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5b438869-c3c2-42a6-3a6c-08d6f8ad794e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jun 2019 14:08:46.5945
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Mircea.Caprioru@analog.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR03MB4412
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-24_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906240116
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-Hi Al,
-
-Here are a set of patches that adds a syscall, fsinfo(), that allows
-attributes of a filesystem/superblock to be queried.  Attribute values are
-of four basic types:
-
- (1) Version dependent-length structure (size defined by type).
-
- (2) Variable-length string (up to PAGE_SIZE).
-
- (3) Array of fixed-length structures (up to INT_MAX size).
-
- (4) Opaque blob (up to INT_MAX size).
-
-Attributes can have multiple values in up to two dimensions and all the
-values of a particular attribute must have the same type.
-
-Note that the attribute values *are* allowed to vary between dentries
-within a single superblock, depending on the specific dentry that you're
-looking at.
-
-I've tried to make the interface as light as possible, so integer/enum
-attribute selector rather than string and the core does all the allocation
-and extensibility support work rather than leaving that to the filesystems.
-That means that for the first two attribute types, sb->s_op->fsinfo() may
-assume that the provided buffer is always present and always big enough.
-
-Further, this removes the possibility of the filesystem gaining access to the
-userspace buffer.
-
-
-fsinfo() allows a variety of information to be retrieved about a filesystem
-and the mount topology:
-
- (1) General superblock attributes:
-
-      - The amount of space/free space in a filesystem (as statfs()).
-      - Filesystem identifiers (UUID, volume label, device numbers, ...)
-      - The limits on a filesystem's capabilities
-      - Information on supported statx fields and attributes and IOC flags.
-      - A variety single-bit flags indicating supported capabilities.
-      - Timestamp resolution and range.
-      - Sources (as per mount(2), but fsconfig() allows multiple sources).
-      - In-filesystem filename format information.
-      - Filesystem parameters ("mount -o xxx"-type things).
-      - LSM parameters (again "mount -o xxx"-type things).
-
- (2) Filesystem-specific superblock attributes:
-
-      - Server names and addresses.
-      - Cell name.
-
- (3) Filesystem configuration metadata attributes:
-
-      - Filesystem parameter type descriptions.
-      - Name -> parameter mappings.
-      - Simple enumeration name -> value mappings.
-
- (4) Mount topology:
-
-      - General information about a mount object.
-      - Mount device name(s).
-      - Children of a mount object and their relative paths.
-
- (5) Information about what the fsinfo() syscall itself supports, including
-     the number of attibutes supported and the number of capability bits
-     supported.
-
-
-The system is extensible:
-
- (1) New attributes can be added.  There is no requirement that a
-     filesystem implement every attribute.  Note that the core VFS keeps a
-     table of types and sizes so it can handle future extensibility rather
-     than delegating this to the filesystems.
-
- (2) Version length-dependent structure attributes can be made larger and
-     have additional information tacked on the end, provided it keeps the
-     layout of the existing fields.  If an older process asks for a shorter
-     structure, it will only be given the bits it asks for.  If a newer
-     process asks for a longer structure on an older kernel, the extra
-     space will be set to 0.  In all cases, the size of the data actually
-     available is returned.
-
-     In essence, the size of a structure is that structure's version: a
-     smaller size is an earlier version and a later version includes
-     everything that the earlier version did.
-
- (3) New single-bit capability flags can be added.  This is a structure-typed
-     attribute and, as such, (2) applies.  Any bits you wanted but the kernel
-     doesn't support are automatically set to 0.
-
-If a filesystem-specific attribute is added, it should just take up the next
-number in the enumeration.  Currently, I do not intend that the number space
-should be subdivided between interested parties.
-
-
-fsinfo() may be called like the following, for example:
-
-	struct fsinfo_params params = {
-		.at_flags	= AT_SYMLINK_NOFOLLOW,
-		.request	= FSINFO_ATTR_SERVER_ADDRESS;
-		.Nth		= 2;
-		.Mth		= 1;
-	};
-	struct fsinfo_server_address address;
-
-	len = fsinfo(AT_FDCWD, "/afs/grand.central.org/doc", &params,
-		     &address, sizeof(address));
-
-The above example would query a network filesystem, such as AFS or NFS, and
-ask what the 2nd address (Mth) of the 3rd server (Nth) that the superblock is
-using is.  Whereas:
-
-	struct fsinfo_params params = {
-		.at_flags	= AT_SYMLINK_NOFOLLOW,
-		.request	= FSINFO_ATTR_CELL_NAME;
-	};
-	char cell_name[256];
-
-	len = fsinfo(AT_FDCWD, "/afs/grand.central.org/doc", &params,
-		     &cell_name, sizeof(cell_name));
-
-would retrieve the name of an AFS cell as a string.
-
-fsinfo() can also be used to query a context from fsopen() or fspick():
-
-	fd = fsopen("ext4", 0);
-	struct fsinfo_params params = {
-		.request	= FSINFO_ATTR_PARAM_DESCRIPTION;
-	};
-	struct fsinfo_param_description desc;
-	fsinfo(fd, NULL, &params, &desc, sizeof(desc));
-
-even if that context doesn't currently have a superblock attached (though if
-there's no superblock attached, only filesystem-specific things like parameter
-descriptions can be accessed).
-
-The patches can be found here also:
-
-	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git
-
-on branch:
-
-	fsinfo
-
-
-===================
-SIGNIFICANT CHANGES
-===================
-
- ver #14:
-
- (*) Increase to 128-bit the fields for number of blocks and files in the
-     filesystem and also the max file size and max inode number fields.
-
- (*) Increase to 64-bit the fields for max hard links and max xattr body
-     length.
-
- (*) Provide struct fsinfo_timestamp_one to represent the characteristics
-     of a single timestamp and move the range into it.  FAT, for example,
-     has different ranges for different timestamps.  Each timestamp is then
-     represented by one of these structs.
-
- (*) Don't expose MS_* flags (such as MS_RDONLY) through this interface as
-     they ought to be considered deprecated; instead anyone who wants them
-     should parse FSINFO_ATTR_PARAMETERS for the string equivalents.
-
- (*) Add a flag, AT_FSINFO_FROM_FSOPEN, to indicate that the fd being
-     accessed is from fsopen()/fspick() and that fsinfo() should look
-     inside and access the filesystem referred to by the fs_context.
-
- (*) If the filesystem implements FSINFO_ATTR_PARAMETERS for itself, don't
-     automatically include flags for the SB_* bits that are normally
-     rendered by, say, /proc/mounts (such as SB_RDONLY).  Rather, a helper
-     is provided that the filesystem must call with an appropriately
-     wangled s_flags.
-
- (*) Drop the NFS fsinfo patch for now as NFS fs_context support is
-     unlikely to get upstream in the upcoming merge window.
-
- ver #13:
-
- (*) Provided a "fixed-struct array" type so that the list of children of a
-     mount and all their change counters can be read atomically.
-
- (*) Additional filesystem examples.
-
- (*) Documented the API.
-
- ver #12:
-
- (*) Rename ->get_fsinfo() to ->fsinfo().
-
- (*) Pass the path through to to ->fsinfo() as it's needed for NFS to
-     retrocalculate the source name.
-
- (*) Indicated which is the source parameter in the param-description
-     attribute.
-
- (*) Dropped the realm attribute.
-
-David
----
-David Howells (17):
-      vfs: syscall: Add fsinfo() to query filesystem information
-      fsinfo: Add syscalls to other arches
-      vfs: Allow fsinfo() to query what's in an fs_context
-      vfs: Allow fsinfo() to be used to query an fs parameter description
-      vfs: Implement parameter value retrieval with fsinfo()
-      fsinfo: Implement retrieval of LSM parameters with fsinfo()
-      vfs: Introduce a non-repeating system-unique superblock ID
-      vfs: Allow fsinfo() to look up a mount object by ID
-      vfs: Add mount notification count
-      vfs: Allow mount information to be queried by fsinfo()
-      vfs: fsinfo sample: Mount listing program
-      fsinfo: Add API documentation
-      hugetlbfs: Add support for fsinfo()
-      kernfs, cgroup: Add fsinfo support
-      fsinfo: Support SELinux superblock parameter retrieval
-      fsinfo: Support Smack superblock parameter retrieval
-      afs: Support fsinfo()
-
-Ian Kent (8):
-      fsinfo: proc - add sb operation fsinfo()
-      fsinfo: autofs - add sb operation fsinfo()
-      fsinfo: shmem - add tmpfs sb operation fsinfo()
-      fsinfo: devpts - add sb operation fsinfo()
-      fsinfo: pstore - add sb operation fsinfo()
-      fsinfo: debugfs - add sb operation fsinfo()
-      fsinfo: bpf - add sb operation fsinfo()
-      fsinfo: ufs - add sb operation fsinfo()
-
-
- Documentation/filesystems/fsinfo.rst        |  596 ++++++++++++++++++
- arch/alpha/kernel/syscalls/syscall.tbl      |    1 
- arch/arm/tools/syscall.tbl                  |    1 
- arch/arm64/include/asm/unistd.h             |    2 
- arch/ia64/kernel/syscalls/syscall.tbl       |    1 
- arch/m68k/kernel/syscalls/syscall.tbl       |    1 
- arch/microblaze/kernel/syscalls/syscall.tbl |    1 
- arch/mips/kernel/syscalls/syscall_n32.tbl   |    1 
- arch/mips/kernel/syscalls/syscall_n64.tbl   |    1 
- arch/mips/kernel/syscalls/syscall_o32.tbl   |    1 
- arch/parisc/kernel/syscalls/syscall.tbl     |    1 
- arch/powerpc/kernel/syscalls/syscall.tbl    |    1 
- arch/s390/kernel/syscalls/syscall.tbl       |    1 
- arch/sh/kernel/syscalls/syscall.tbl         |    1 
- arch/sparc/kernel/syscalls/syscall.tbl      |    1 
- arch/x86/entry/syscalls/syscall_32.tbl      |    1 
- arch/x86/entry/syscalls/syscall_64.tbl      |    1 
- arch/xtensa/kernel/syscalls/syscall.tbl     |    1 
- fs/Kconfig                                  |    7 
- fs/Makefile                                 |    1 
- fs/afs/internal.h                           |    1 
- fs/afs/super.c                              |  180 +++++-
- fs/autofs/inode.c                           |   64 ++
- fs/d_path.c                                 |    2 
- fs/debugfs/inode.c                          |   38 +
- fs/devpts/inode.c                           |   43 +
- fs/fsinfo.c                                 |  877 +++++++++++++++++++++++++++
- fs/hugetlbfs/inode.c                        |   57 ++
- fs/internal.h                               |   11 
- fs/kernfs/mount.c                           |   20 +
- fs/mount.h                                  |   22 +
- fs/namespace.c                              |  307 +++++++++
- fs/proc/inode.c                             |   37 +
- fs/pstore/inode.c                           |   32 +
- fs/statfs.c                                 |    2 
- fs/super.c                                  |   24 +
- fs/ufs/super.c                              |   58 ++
- include/linux/fs.h                          |    8 
- include/linux/fsinfo.h                      |   70 ++
- include/linux/kernfs.h                      |    4 
- include/linux/lsm_hooks.h                   |   13 
- include/linux/security.h                    |   11 
- include/linux/syscalls.h                    |    4 
- include/uapi/asm-generic/unistd.h           |    4 
- include/uapi/linux/fcntl.h                  |    3 
- include/uapi/linux/fsinfo.h                 |  319 ++++++++++
- kernel/bpf/inode.c                          |   25 +
- kernel/cgroup/cgroup-v1.c                   |   44 +
- kernel/cgroup/cgroup.c                      |   19 +
- kernel/sys_ni.c                             |    1 
- mm/shmem.c                                  |   72 ++
- samples/vfs/Makefile                        |    9 
- samples/vfs/test-fs-query.c                 |  138 ++++
- samples/vfs/test-fsinfo.c                   |  682 +++++++++++++++++++++
- samples/vfs/test-mntinfo.c                  |  241 +++++++
- security/security.c                         |   12 
- security/selinux/hooks.c                    |   41 +
- security/selinux/include/security.h         |    2 
- security/selinux/ss/services.c              |   49 ++
- security/smack/smack_lsm.c                  |   43 +
- 60 files changed, 4202 insertions(+), 9 deletions(-)
- create mode 100644 Documentation/filesystems/fsinfo.rst
- create mode 100644 fs/fsinfo.c
- create mode 100644 include/linux/fsinfo.h
- create mode 100644 include/uapi/linux/fsinfo.h
- create mode 100644 samples/vfs/test-fs-query.c
- create mode 100644 samples/vfs/test-fsinfo.c
- create mode 100644 samples/vfs/test-mntinfo.c
-
+T24gTW9uLCAyMDE5LTA2LTI0IGF0IDA3OjUwIC0wNjAwLCBSb2IgSGVycmluZyB3cm90ZToNCj4g
+W0V4dGVybmFsXQ0KPiANCj4gDQo+IE9uIE1vbiwgSnVuIDI0LCAyMDE5IGF0IDI6MDkgQU0gTWly
+Y2VhIENhcHJpb3J1DQo+IDxtaXJjZWEuY2FwcmlvcnVAYW5hbG9nLmNvbT4gd3JvdGU6DQo+ID4g
+DQo+ID4gQ29udmVydCBBRDcxMjQgYmluZGluZ3MgZG9jdW1lbnRhdGlvbiB0byBZQU1MIGZvcm1h
+dC4NCj4gPiANCj4gPiBTaWduZWQtb2ZmLWJ5OiBNaXJjZWEgQ2FwcmlvcnUgPG1pcmNlYS5jYXBy
+aW9ydUBhbmFsb2cuY29tPg0KPiA+IC0tLQ0KPiA+IA0KPiA+IENoYW5nZWxvZyB2MjoNCj4gPiAt
+IG1vZGlmaWVkIFNQRFggbGljZW5zZSB0byBHUEwtMi4wIE9SIEJTRC0yLUNsYXVzZQ0KPiA+IC0g
+YWRkZWQgcmVnZXggZm9yIGEgcmFuZ2UgZnJvbSAwIHRvIDE1DQo+ID4gLSBhZGRlZCBtaW5pbXVt
+IGFuZCBtYXhpbXVtIGNvbnN0cmFpbnRzIGZvciByZWcgcHJvcGVydHkNCj4gPiAtIHNldCB0eXBl
+IGFuZCByYW5nZSBvZiB2YWx1ZXMgZm9yIGFkaSxyZWZlcmVuY2Utc2VsZWN0IHByb3BlcnR5DQo+
+ID4gLSB1c2VkIGl0ZW1zIGZvciBkaWZmLWNoYW5uZWxzIHByb3BlcnR5DQo+ID4gLSBzZXQgYmlw
+b2xhciwgYWRpLGJ1ZmZlcmVkLXBvc2l0aXZlIGFuZCBuZWdhdGl2ZSB0byB0eXBlOiBib29sZWFu
+DQo+ID4gDQo+ID4gQ2hhbmdlbG9nIHYzOg0KPiA+IC0gbW92ZWQgYWRpLGJ1ZmZlcmVkLXBvc2l0
+aXZlIGFuZCBuZWdhdGl2ZSBwcm9wZXJ0aWVzIHRvIG93biBjb21taXQNCj4gPiANCj4gPiAgLi4u
+L2JpbmRpbmdzL2lpby9hZGMvYWRpLGFkNzEyNC55YW1sICAgICAgICAgIHwgMTQ0DQo+ID4gKysr
+KysrKysrKysrKysrKysrDQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCAxNDQgaW5zZXJ0aW9ucygrKQ0K
+PiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQNCj4gPiBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmlu
+ZGluZ3MvaWlvL2FkYy9hZGksYWQ3MTI0LnlhbWwNCj4gDQo+IFRoZSBzdWJqZWN0IHNheXMgJ0Nv
+bnZlcnQnLCBidXQgd2hlcmUncyB0aGUgcmVtb3ZhbCBvZiB0aGUgb2xkDQo+IGJpbmRpbmc/DQo+
+IA0KPiBSb2INCg0KWW91IGFyZSByaWdodCBJIHdhcyBub3Qgc3VyZSBpZiBJIHNob3VsZCBhbHNv
+IHJlbW92ZSB0aGUgb2xkIGJpbmRpbmcuDQpJJ2xsIGRvIGEgdjQgdG8gZGVsZXRlIGl0IGluIHRo
+aXMgcGF0Y2guDQoNClRoYW5rcywNCk1pcmNlYQ0K
