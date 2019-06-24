@@ -2,157 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5982E517F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 18:03:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BEF19517FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 18:06:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731514AbfFXQDx convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 24 Jun 2019 12:03:53 -0400
-Received: from mailoutvs28.siol.net ([185.57.226.219]:43075 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727282AbfFXQDw (ORCPT
+        id S1731561AbfFXQGE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 12:06:04 -0400
+Received: from sonic315-53.consmr.mail.ne1.yahoo.com ([66.163.190.179]:39393
+        "EHLO sonic315-53.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727082AbfFXQGD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 12:03:52 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id 856D25217DD;
-        Mon, 24 Jun 2019 18:03:47 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at psrvmta11.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta11.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id 5-irDH8c65qw; Mon, 24 Jun 2019 18:03:47 +0200 (CEST)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id 191D3521B78;
-        Mon, 24 Jun 2019 18:03:47 +0200 (CEST)
-Received: from jernej-laptop.localnet (cpe-86-58-52-202.static.triera.net [86.58.52.202])
-        (Authenticated sender: jernej.skrabec@siol.net)
-        by mail.siol.net (Postfix) with ESMTPA id DB4C25217DD;
-        Mon, 24 Jun 2019 18:03:45 +0200 (CEST)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Andrzej Hajda <a.hajda@samsung.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        "Laurent.pinchart@ideasonboard.com" 
-        <Laurent.pinchart@ideasonboard.com>,
-        "narmstrong@baylibre.com" <narmstrong@baylibre.com>,
-        "khilman@baylibre.com" <khilman@baylibre.com>,
-        "zhengyang@rock-chips.com" <zhengyang@rock-chips.com>,
-        "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>,
-        "hjc@rock-chips.com" <hjc@rock-chips.com>,
-        "heiko@sntech.de" <heiko@sntech.de>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/4] drm/sun4i: Enable DRM InfoFrame support on H6
-Date:   Mon, 24 Jun 2019 18:03:45 +0200
-Message-ID: <44611965.cJa5QBey4U@jernej-laptop>
-In-Reply-To: <CAGb2v67FF3k9wZu7K+Z5yKFFeh8A_4iuEXfh+tO65UvVRfY-sA@mail.gmail.com>
-References: <VI1PR03MB420621617DDEAB3596700DE0AC1C0@VI1PR03MB4206.eurprd03.prod.outlook.com> <3f9e51d5-8ca5-a439-943c-26de92dd52fe@samsung.com> <CAGb2v67FF3k9wZu7K+Z5yKFFeh8A_4iuEXfh+tO65UvVRfY-sA@mail.gmail.com>
+        Mon, 24 Jun 2019 12:06:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1561392362; bh=Wn45IEVQxjYS/KJ/AenupJ6pixj3tpnk+IQw8lNF8Cw=; h=Date:From:Reply-To:Subject:References:From:Subject; b=adz+9T8AOWQF7cpX3UIJFgDbsGa0lPQOJBD2UMxhhLU92GhZPeqNH9sniYqhQQ0dF0VUlc5Hr9P2z/tzlClgzme+/T7j6wgLNIMLpXvZaEyw1ssSgi3HQLMINJhm9QaGM+XSPb0nqXs1GaaAkl7CJ/qm5Lz2ZklTt+sl3OTGU1CYYKW6BBAkVGjb+YnkNYcI1VWYvlJvXUfuy6Kzz57gfT38X0V/oc0FVnIQh2mmSr3sdch+ySho62hc6FEc4tABm9NOulo5eXZ9aRQwghL3vPpJlSs+cYGI5lPfUqRQ/LCDL5jms4dpIaHvUa0PjD5gY+9h5EuIMderXfJuJY4s2A==
+X-YMail-OSG: df8Hr4sVM1nQAOpsedsGwDE93k9EQHaKbpTdkv_ZjEX4z1dWIMJB.F5LPIDCwlA
+ oZkPEFARJ0MnvZD_16HqBhebnBIpi7eGlh1xFVbmkXTSBr2qcKJ7KaXflKDpchCDebw5vcOr46p0
+ oYwZEz4iUaG4G0wno3lYXbReJov.Gj459w95GB2bZGEhB2i.YyG1_RpEhZizN_bsjwX877V1B6XP
+ cbdLGYCxQkYsO9G6Wu9neppUaB_OrGnbDHJHNPy3498BHWaL2eexOy8M2nikzdYOKq0VWeqePK0o
+ mjncJLrwM4P536YZml58mgCuk0tkN_XXdYKEzlPGd2H52n9aLgo3sfZ.tC5L93kS9UFilrgKjEsQ
+ geJCPMs1yMGR..amYJTKJRNvvLBXFas.lFO9kxa.1f4tP9HVzCtBveYs5A.Mzidki60bgvE16_WG
+ 8c9or4W37PsKe.6hzeRd7HmK7N1NXuZ.wuZ41adqn6FOdMqBX1QFe6t._zlDS3Ixmu30tliUNqWc
+ J5aSrqjOm3MaJl2HNt97vjQKCMzzj9Iq35ufJWjZdC1_3zE3h3jNdU9FaoArhweNXOpXYitQTtel
+ 6If7PBPXBRPaPL_aVl2shjqbaG_KmBymOcZNb3b3p6u_8GWd3Q2TBwEY0yRo9BibDD.hob.ekkJg
+ OWdGJwzU2VVPC7ueXJaQ2mRmmbLAOLlls2OLxubIwH8xI_1dzKLRwoMWFeCf6wSzEWbC8h4.V991
+ fev5fAOQzEx6vNPQy61og_vjs0saS7NoM3AYblP2dTEiP6Ba8RjXf4ztYYfbd05lEKM38vyDtAwR
+ s5BzoSx8hXQBpf93_JLoWxyY2NnAOjL6ukyjiM6Li.hwrMRazWn9ie81UwZKcNM7_Stk9ScteAoG
+ S_jHGzU7KZtsCdTkCJEdntY2_gFOI8Uh3zDTz3vISBuBNkhbKdzVuqB1WAYHA2osYKBbonobPkW.
+ j_DWgjtpt2ftKCyo.EVVxrErJr5oAWwk34L6VQwbN8kJNHaTCKzY_s8VvZ5.mVkhZ4vzlclAQEEU
+ 33ZcpxesVzATdBk8LSVdu6HO7abscZ2P2MG7Sct0I8W4lw3QNMvbYE6wYqJxNOMdP8_FKfNcGIch
+ LmLadgkXm8D3rJsC1k_f955FgEp47WUdTqvlD8e5cren4SjXMAjpGHZtUOdY2fPYk66d933onKdq
+ bcDTc0PVd7jMYBKetqEHRc5CIrAwcCxWbframCstMBLQfoVlpGj_ajwTachApW38xM2G15Nhv7ZO
+ 5Xub.Is.KC0vU0eHMjd5HjrI-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.ne1.yahoo.com with HTTP; Mon, 24 Jun 2019 16:06:02 +0000
+Date:   Mon, 24 Jun 2019 16:04:01 +0000 (UTC)
+From:   "ij49 ." <ij49@gajdm.org.in>
+Reply-To: "ij49 ." <ij49@gajdm.org.in>
+Message-ID: <1179155815.1171075.1561392241619@mail.yahoo.com>
+Subject: 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+References: <1179155815.1171075.1561392241619.ref@mail.yahoo.com>
+X-Mailer: WebService/1.1.13837 YahooMailBasic Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dne ponedeljek, 24. junij 2019 ob 17:56:30 CEST je Chen-Yu Tsai napisal(a):
-> On Mon, Jun 24, 2019 at 11:49 PM Andrzej Hajda <a.hajda@samsung.com> wrote:
-> > On 24.06.2019 17:05, Jernej Škrabec wrote:
-> > > Dne ponedeljek, 24. junij 2019 ob 17:03:31 CEST je Andrzej Hajda 
-napisal(a):
-> > >> On 26.05.2019 23:20, Jonas Karlman wrote:
-> > >>> This patch enables Dynamic Range and Mastering InfoFrame on H6.
-> > >>> 
-> > >>> Cc: Maxime Ripard <maxime.ripard@bootlin.com>
-> > >>> Cc: Jernej Skrabec <jernej.skrabec@siol.net>
-> > >>> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
-> > >>> ---
-> > >>> 
-> > >>>  drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c | 2 ++
-> > >>>  drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h | 1 +
-> > >>>  2 files changed, 3 insertions(+)
-> > >>> 
-> > >>> diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
-> > >>> b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c index
-> > >>> 39d8509d96a0..b80164dd8ad8
-> > >>> 100644
-> > >>> --- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
-> > >>> +++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
-> > >>> @@ -189,6 +189,7 @@ static int sun8i_dw_hdmi_bind(struct device *dev,
-> > >>> struct device *master,>
-> > >>> 
-> > >>>     sun8i_hdmi_phy_init(hdmi->phy);
-> > >>>     
-> > >>>     plat_data->mode_valid = hdmi->quirks->mode_valid;
-> > >>> 
-> > >>> +   plat_data->drm_infoframe = hdmi->quirks->drm_infoframe;
-> > >>> 
-> > >>>     sun8i_hdmi_phy_set_ops(hdmi->phy, plat_data);
-> > >>>     
-> > >>>     platform_set_drvdata(pdev, hdmi);
-> > >>> 
-> > >>> @@ -255,6 +256,7 @@ static const struct sun8i_dw_hdmi_quirks
-> > >>> sun8i_a83t_quirks = {>
-> > >>> 
-> > >>>  static const struct sun8i_dw_hdmi_quirks sun50i_h6_quirks = {
-> > >>>  
-> > >>>     .mode_valid = sun8i_dw_hdmi_mode_valid_h6,
-> > >>> 
-> > >>> +   .drm_infoframe = true,
-> > >>> 
-> > >>>  };
-> > >>>  
-> > >>>  static const struct of_device_id sun8i_dw_hdmi_dt_ids[] = {
-> > >>> 
-> > >>> diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-> > >>> b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h index
-> > >>> 720c5aa8adc1..2a0ec08ee236
-> > >>> 100644
-> > >>> --- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-> > >>> +++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-> > >>> @@ -178,6 +178,7 @@ struct sun8i_dw_hdmi_quirks {
-> > >>> 
-> > >>>     enum drm_mode_status (*mode_valid)(struct drm_connector
-> > > 
-> > > *connector,
-> > > 
-> > >>>                                        const struct
-> > > 
-> > > drm_display_mode *mode);
-> > > 
-> > >>>     unsigned int set_rate : 1;
-> > >>> 
-> > >>> +   unsigned int drm_infoframe : 1;
-> > >> 
-> > >> Again, drm_infoframe suggests it contains inforframe, but in fact it
-> > >> just informs infoframe can be used, so again my suggestion
-> > >> use_drm_infoframe.
-> > >> 
-> > >> Moreover bool type seems more appropriate here.
-> > > 
-> > > checkpatch will give warning if bool is used.
-> > 
-> > Then I would say "fix/ignore checkpatch" :)
-> > 
-> > But maybe there is a reason.
-> 
-> Here's an old one from Linus: https://lkml.org/lkml/2013/9/1/154
-> 
-> I'd say that bool in a struct is a waste of space compared to a 1 bit
-> bitfield, especially when there already are other bitfields in the same
-> struct.
-> > Anyway I've tested and I do not see the warning, could you elaborate it.
-> 
-> Maybe checkpatch.pl --strict?
+I am in the military unit here in Afghanistan, we have some amount of funds that we want to move out of the country. My partners and I need a good partner someone we can trust. It is risk free and legal. Reply to this email: hornbeckmajordennis635@gmail.com
 
-It seems they removed that check:
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?
-id=7967656ffbfa493f5546c0f1
-
-After reading that block of text, I'm not sure what would be prefered way for 
-this case.
-
-Best regards,
-Jernej
-
-
-
-
+Regards,
+Major Dennis Hornbeck.
