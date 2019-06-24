@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3AF8507F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:13:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F80F5068D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:01:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729370AbfFXKFw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 06:05:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37838 "EHLO mail.kernel.org"
+        id S1729217AbfFXJ73 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 05:59:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58556 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729989AbfFXKFs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 06:05:48 -0400
+        id S1728307AbfFXJ71 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 05:59:27 -0400
 Received: from localhost (f4.8f.5177.ip4.static.sl-reverse.com [119.81.143.244])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 77AA72145D;
-        Mon, 24 Jun 2019 10:05:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DF65A21743;
+        Mon, 24 Jun 2019 09:59:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561370746;
-        bh=VUru6ZPh216BdAHCYLYH+RFIWY6SIvlGVpx5BvcCHi4=;
+        s=default; t=1561370366;
+        bh=6g+BXHLJZ+tzue6Mqf2BwDRwE3tkWzWC/AvmyVLte5g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=p3ZDZUG63WzkZCfoo34Mwn1pGhB3nOf8+t+UM5IOxkmVH/cqH6lwhJAploQHhPIIC
-         Ky4b+p5c1zqDYAK5Jn1NwUjk2UHBbYBWwqbWHWNNdpe8AB//+gKv5xEM8BQznG7VRO
-         7cIDO5BhSDq9C6dYy+f0ItoZxJ1mMCpWJIv5X+XA=
+        b=ASWTey1ov78jZo8FAQ4FpxSFZB/aS5VUtE5/RPZBUz99gx/zeh4KMzk6GAzK5+SMZ
+         kCZboJE4iIU1gg+cHupwP7V0S8e0JM3fd5DsY3/M30/Uw9fsktUTIxQrwc7IXLX8KW
+         Oib8ZZHWeOa38t7jhsaE+rRD8M4mp3KwuSLTgPcE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Faiz Abbas <faiz_abbas@ti.com>,
-        Tony Lindgren <tony@atomide.com>
-Subject: [PATCH 4.19 75/90] ARM: dts: dra76x: Update MMC2_HS200_MANUAL1 iodelay values
+        stable@vger.kernel.org, Steve French <stfrench@microsoft.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Pavel Shilovsky <pshilov@microsoft.com>
+Subject: [PATCH 4.14 47/51] SMB3: retry on STATUS_INSUFFICIENT_RESOURCES instead of failing write
 Date:   Mon, 24 Jun 2019 17:57:05 +0800
-Message-Id: <20190624092318.900771558@linuxfoundation.org>
+Message-Id: <20190624092311.273502308@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190624092313.788773607@linuxfoundation.org>
-References: <20190624092313.788773607@linuxfoundation.org>
+In-Reply-To: <20190624092305.919204959@linuxfoundation.org>
+References: <20190624092305.919204959@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,84 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Faiz Abbas <faiz_abbas@ti.com>
+From: Steve French <stfrench@microsoft.com>
 
-commit c3c0b70cd3f801bded7a548198ee1c9851a0ca82 upstream.
+commit 8d526d62db907e786fd88948c75d1833d82bd80e upstream.
 
-Update the MMC2_HS200_MANUAL1 iodelay values to match with the latest
-dra76x data manual[1]. The new iodelay values will have better marginality
-and should prevent issues in corner cases.
+Some servers such as Windows 10 will return STATUS_INSUFFICIENT_RESOURCES
+as the number of simultaneous SMB3 requests grows (even though the client
+has sufficient credits).  Return EAGAIN on STATUS_INSUFFICIENT_RESOURCES
+so that we can retry writes which fail with this status code.
 
-Also this particular pinctrl-array is using spaces instead of tabs for
-spacing between the values and the comments. Fix this as well.
+This (for example) fixes large file copies to Windows 10 on fast networks.
 
-[1] http://www.ti.com/lit/ds/symlink/dra76p.pdf
-
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
-[tony@atomide.com: updated description with a bit more info]
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+CC: Stable <stable@vger.kernel.org>
+Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/boot/dts/dra76x-mmc-iodelay.dtsi |   40 +++++++++++++++---------------
- 1 file changed, 20 insertions(+), 20 deletions(-)
+ fs/cifs/smb2maperror.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arm/boot/dts/dra76x-mmc-iodelay.dtsi
-+++ b/arch/arm/boot/dts/dra76x-mmc-iodelay.dtsi
-@@ -22,7 +22,7 @@
-  *
-  * Datamanual Revisions:
-  *
-- * DRA76x Silicon Revision 1.0: SPRS993A, Revised July 2017
-+ * DRA76x Silicon Revision 1.0: SPRS993E, Revised December 2018
-  *
-  */
- 
-@@ -169,25 +169,25 @@
- 	/* Corresponds to MMC2_HS200_MANUAL1 in datamanual */
- 	mmc2_iodelay_hs200_conf: mmc2_iodelay_hs200_conf {
- 		pinctrl-pin-array = <
--			0x190 A_DELAY_PS(384) G_DELAY_PS(0)       /* CFG_GPMC_A19_OEN */
--			0x194 A_DELAY_PS(0) G_DELAY_PS(174)       /* CFG_GPMC_A19_OUT */
--			0x1a8 A_DELAY_PS(410) G_DELAY_PS(0)       /* CFG_GPMC_A20_OEN */
--			0x1ac A_DELAY_PS(85) G_DELAY_PS(0)        /* CFG_GPMC_A20_OUT */
--			0x1b4 A_DELAY_PS(468) G_DELAY_PS(0)       /* CFG_GPMC_A21_OEN */
--			0x1b8 A_DELAY_PS(139) G_DELAY_PS(0)       /* CFG_GPMC_A21_OUT */
--			0x1c0 A_DELAY_PS(676) G_DELAY_PS(0)       /* CFG_GPMC_A22_OEN */
--			0x1c4 A_DELAY_PS(69) G_DELAY_PS(0)        /* CFG_GPMC_A22_OUT */
--			0x1d0 A_DELAY_PS(1062) G_DELAY_PS(154)	  /* CFG_GPMC_A23_OUT */
--			0x1d8 A_DELAY_PS(640) G_DELAY_PS(0)       /* CFG_GPMC_A24_OEN */
--			0x1dc A_DELAY_PS(0) G_DELAY_PS(0)         /* CFG_GPMC_A24_OUT */
--			0x1e4 A_DELAY_PS(356) G_DELAY_PS(0)       /* CFG_GPMC_A25_OEN */
--			0x1e8 A_DELAY_PS(0) G_DELAY_PS(0)         /* CFG_GPMC_A25_OUT */
--			0x1f0 A_DELAY_PS(579) G_DELAY_PS(0)       /* CFG_GPMC_A26_OEN */
--			0x1f4 A_DELAY_PS(0) G_DELAY_PS(0)         /* CFG_GPMC_A26_OUT */
--			0x1fc A_DELAY_PS(435) G_DELAY_PS(0)       /* CFG_GPMC_A27_OEN */
--			0x200 A_DELAY_PS(36) G_DELAY_PS(0)        /* CFG_GPMC_A27_OUT */
--			0x364 A_DELAY_PS(759) G_DELAY_PS(0)       /* CFG_GPMC_CS1_OEN */
--			0x368 A_DELAY_PS(72) G_DELAY_PS(0)        /* CFG_GPMC_CS1_OUT */
-+			0x190 A_DELAY_PS(384) G_DELAY_PS(0)	/* CFG_GPMC_A19_OEN */
-+			0x194 A_DELAY_PS(350) G_DELAY_PS(174)	/* CFG_GPMC_A19_OUT */
-+			0x1a8 A_DELAY_PS(410) G_DELAY_PS(0)	/* CFG_GPMC_A20_OEN */
-+			0x1ac A_DELAY_PS(335) G_DELAY_PS(0)	/* CFG_GPMC_A20_OUT */
-+			0x1b4 A_DELAY_PS(468) G_DELAY_PS(0)	/* CFG_GPMC_A21_OEN */
-+			0x1b8 A_DELAY_PS(339) G_DELAY_PS(0)	/* CFG_GPMC_A21_OUT */
-+			0x1c0 A_DELAY_PS(676) G_DELAY_PS(0)	/* CFG_GPMC_A22_OEN */
-+			0x1c4 A_DELAY_PS(219) G_DELAY_PS(0)	/* CFG_GPMC_A22_OUT */
-+			0x1d0 A_DELAY_PS(1062) G_DELAY_PS(154)	/* CFG_GPMC_A23_OUT */
-+			0x1d8 A_DELAY_PS(640) G_DELAY_PS(0)	/* CFG_GPMC_A24_OEN */
-+			0x1dc A_DELAY_PS(150) G_DELAY_PS(0)	/* CFG_GPMC_A24_OUT */
-+			0x1e4 A_DELAY_PS(356) G_DELAY_PS(0)	/* CFG_GPMC_A25_OEN */
-+			0x1e8 A_DELAY_PS(150) G_DELAY_PS(0)	/* CFG_GPMC_A25_OUT */
-+			0x1f0 A_DELAY_PS(579) G_DELAY_PS(0)	/* CFG_GPMC_A26_OEN */
-+			0x1f4 A_DELAY_PS(200) G_DELAY_PS(0)	/* CFG_GPMC_A26_OUT */
-+			0x1fc A_DELAY_PS(435) G_DELAY_PS(0)	/* CFG_GPMC_A27_OEN */
-+			0x200 A_DELAY_PS(236) G_DELAY_PS(0)	/* CFG_GPMC_A27_OUT */
-+			0x364 A_DELAY_PS(759) G_DELAY_PS(0)	/* CFG_GPMC_CS1_OEN */
-+			0x368 A_DELAY_PS(372) G_DELAY_PS(0)	/* CFG_GPMC_CS1_OUT */
- 	      >;
- 	};
- 
+--- a/fs/cifs/smb2maperror.c
++++ b/fs/cifs/smb2maperror.c
+@@ -456,7 +456,7 @@ static const struct status_to_posix_erro
+ 	{STATUS_FILE_INVALID, -EIO, "STATUS_FILE_INVALID"},
+ 	{STATUS_ALLOTTED_SPACE_EXCEEDED, -EIO,
+ 	"STATUS_ALLOTTED_SPACE_EXCEEDED"},
+-	{STATUS_INSUFFICIENT_RESOURCES, -EREMOTEIO,
++	{STATUS_INSUFFICIENT_RESOURCES, -EAGAIN,
+ 				"STATUS_INSUFFICIENT_RESOURCES"},
+ 	{STATUS_DFS_EXIT_PATH_FOUND, -EIO, "STATUS_DFS_EXIT_PATH_FOUND"},
+ 	{STATUS_DEVICE_DATA_ERROR, -EIO, "STATUS_DEVICE_DATA_ERROR"},
 
 
