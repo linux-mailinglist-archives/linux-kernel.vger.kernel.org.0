@@ -2,100 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05F9151DF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 00:08:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3034851E28
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 00:22:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726846AbfFXWIg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 18:08:36 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:33550 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726599AbfFXWIf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 18:08:35 -0400
-Received: by mail-ot1-f68.google.com with SMTP id i4so15379359otk.0;
-        Mon, 24 Jun 2019 15:08:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4iGRYLuRVzU9YzxqK6jPghJ0dUfb/GOU2YwLj9C9w2k=;
-        b=RNcFy/0uSvwaxnUUc70zCSSrriH1l1vXjMt2Xo7uPCjaW3BGZGGzh2lMypb2YdoXaf
-         9+K1LT4hQJpd7o612iT2ud9ovmSHUpW8Ol8UO8UAJutJhqIvo6JYSxyUlBREq0bmg08i
-         Vtyh0VglSpG7whXr00x96tp4yMZzIceGHKmh5QZ4j3Hq2jyl2xmcphZwMxHVmI37lrbU
-         u7ZdSmYu1OVUvqFgFrteglJwiIv7lWy7Ze/TATtFyDFJjJq/XYz0WZNI4V3OmF63bWXF
-         RB5PCARpBRg5+TUMMdSp/XnVXU73ym0lw9SBe+RQ8uabopvUjLC3LPm90smFOmnWg/a7
-         0oaA==
-X-Gm-Message-State: APjAAAXqCfh+Aci3GlXycTrsKo0iazsK8wUvyB5SEz77rPSMKeydO0HY
-        zjN+CVzRUx9kzwzPjv5XpiXimEibClTaj2s7rsg=
-X-Google-Smtp-Source: APXvYqwgzCf5b4E6QZBa9WMG2t/ihRyD3pwVSm4UHJaeDdPUJynzus7tlNl3NtRerTvrfgtAyOk/8J4fnig5t+KEUgI=
-X-Received: by 2002:a9d:6a4b:: with SMTP id h11mr18253366otn.266.1561414115009;
- Mon, 24 Jun 2019 15:08:35 -0700 (PDT)
+        id S1727414AbfFXWWH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 18:22:07 -0400
+Received: from mga02.intel.com ([134.134.136.20]:2527 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726321AbfFXWWH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 18:22:07 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jun 2019 15:22:06 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,413,1557212400"; 
+   d="scan'208";a="161734930"
+Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
+  by fmsmga008.fm.intel.com with ESMTP; 24 Jun 2019 15:22:05 -0700
+Date:   Mon, 24 Jun 2019 15:12:24 -0700
+From:   Fenghua Yu <fenghua.yu@intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        H Peter Anvin <hpa@zytor.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+Subject: Re: [PATCH v5 2/5] x86/umwait: Initialize umwait control values
+Message-ID: <20190624221224.GA245468@romley-ivt3.sc.intel.com>
+References: <1560994438-235698-1-git-send-email-fenghua.yu@intel.com>
+ <1560994438-235698-3-git-send-email-fenghua.yu@intel.com>
+ <alpine.DEB.2.21.1906232038421.32342@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-References: <20190624131715.1857-1-daniel.lezcano@linaro.org> <20190624131715.1857-2-daniel.lezcano@linaro.org>
-In-Reply-To: <20190624131715.1857-2-daniel.lezcano@linaro.org>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Tue, 25 Jun 2019 00:08:24 +0200
-Message-ID: <CAJZ5v0hMGMETyJyLxCKxiGOojAhmJ+Crioj7Gw_2wA+YUAS9QQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] thermal/drivers/cpu_cooling: Unregister with the policy
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Amit Daniel Kachhap <amit.kachhap@gmail.com>,
-        Javi Merino <javi.merino@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Keerthy <j-keerthy@ti.com>,
-        "open list:CPU FREQUENCY DRIVERS - ARM BIG LITTLE" 
-        <linux-pm@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:TI BANDGAP AND THERMAL DRIVER" 
-        <linux-omap@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1906232038421.32342@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-) On Mon, Jun 24, 2019 at 3:17 PM Daniel Lezcano
-<daniel.lezcano@linaro.org> wrote:
->
-> Currently the function cpufreq_cooling_register() returns a cooling
-> device pointer which is used back as a pointer to call the function
-> cpufreq_cooling_unregister(). Even if it is correct, it would make
-> sense to not leak the structure inside a cpufreq driver and keep the
-> code thermal code self-encapsulate. Moreover, that forces to add an
-> extra variable in each driver using this function.
+On Mon, Jun 24, 2019 at 12:39:05AM +0200, Thomas Gleixner wrote:
+> On Wed, 19 Jun 2019, Fenghua Yu wrote:
+> >  
+> > +#define MSR_IA32_UMWAIT_CONTROL			0xe1
+> > +#define MSR_IA32_UMWAIT_CONTROL_C02_DISABLED	BIT(0)
+> > +#define MSR_IA32_UMWAIT_CONTROL_MAX_TIME	0xfffffffc
+> 
+> Errm, no! That's not maxtime, that's the time field mask in the
+> MSR. Throughout the code you use that as a mask, which is not really
+> obvious.
+> 
+> > +	(((max_time) & MSR_IA32_UMWAIT_CONTROL_MAX_TIME) |		\
+> 
+> and later on:
+> 
+> 	if (max_time & ~MSR_IA32_UMWAIT_CONTROL_MAX_TIME)
+> 
+> What? How is anyone supposed to understand that?
+> 
+> 	if (max_time & ~MSR_IA32_UMWAIT_CONTROL_TIME_MASK)
+> 
+> makes it entirely clear that the value is not allowed to have any bits
+> outside of the mask set.
+> 
+> > +
+> > +#define UMWAIT_C02_ENABLED	(0 & MSR_IA32_UMWAIT_CONTROL_C02_DISABLED)
+> 
+> The AND is there for maximal confusion of the reader?
+> 
+> > +/*
+> > + * On resume, set up IA32_UMWAIT_CONTROL MSR on BP which is the only active
+> > + * CPU at this time. Setting up the MSR on APs when they are re-added later
+> > + * using CPU hotplug.
+> > + * The MSR on BP is supposed not to be changed during suspend and thus it's
+> > + * unnecessary to set it again during resume from suspend. But at this point
+> > + * we don't know resume is from suspend or hibernation. To simplify the
+> > + * situation, just set up the MSR on resume from suspend.
+> 
+> We also do not trust any firmware by default whatever it is supposed to do.
 
-[cut]
+Thank you very much for pointing out and fixing all the issues and merging
+the patches into the tip tree!
 
-> @@ -667,9 +667,9 @@ static int imx_thermal_register_legacy_cooling(struct imx_thermal_data *data)
->         np = of_get_cpu_node(data->policy->cpu, NULL);
->
->         if (!np || !of_find_property(np, "#cooling-cells", NULL)) {
-> -               data->cdev = cpufreq_cooling_register(data->policy);
-> -               if (IS_ERR(data->cdev)) {
-> -                       ret = PTR_ERR(data->cdev);
-> +               cdev = cpufreq_cooling_register(data->policy);
+I test the tip tree and everything works fine.
 
-It looks like after the changes in this patch the only reason for
-returning (struct thermal_cooling_device *) from
-cpufreq_cooling_register() is error checking, but it would be much
-more straightforward to return int for this purpose.
+-Fenghua
 
-Moreover, that would prevent the callers of it from doing incorrect
-things with the returned pointers (like using it to unregister the
-cooling device).
 
-> +               if (IS_ERR(cdev)) {
-> +                       ret = PTR_ERR(cdev);
->                         cpufreq_cpu_put(data->policy);
->                         return ret;
->                 }
