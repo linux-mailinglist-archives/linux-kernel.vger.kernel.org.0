@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D08F4506A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:01:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F25950866
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:19:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728744AbfFXKAZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 06:00:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58768 "EHLO mail.kernel.org"
+        id S1730862AbfFXKRC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 06:17:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54558 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728620AbfFXJ7f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 05:59:35 -0400
+        id S1729631AbfFXKRA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 06:17:00 -0400
 Received: from localhost (f4.8f.5177.ip4.static.sl-reverse.com [119.81.143.244])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C6CA02146F;
-        Mon, 24 Jun 2019 09:59:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DDAC6205C9;
+        Mon, 24 Jun 2019 10:16:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561370374;
-        bh=Owqbj2H+u1qefjgnGqlAEbY8nwPaQN5M1XZLbuJd03A=;
+        s=default; t=1561371419;
+        bh=tsibFGeCM9kozJlvLSct5i3Ff8kYIeVStbM5u+Zsugk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bLHSqFOSlAETTRJqTf6tyP1JayxJdS3SnWx1vb3qvJboN8NYrmx8gTIOYcVGKKSge
-         LjXwuC8eXkeZbjI0Th2Ia/ZEFuJagfGpmzvsuqJjfoUngGt58fsespTVT9GqZf9Mmd
-         UMJE/uOOx+BFoTnwMFJCUbz3xF0rgLA+nBPvZN3U=
+        b=rRPqB0n0pQd1J7od2DZhHu0r+760h2ayiLWDkyxw9SLIaoVWdA7E1IXPAlFlOMxUZ
+         j07B7tdvd8QVaUhDtasBEv7G64PXDaJjQKOKoAVJt2wM2cCIz7o8nAJgEQ6geOwLsc
+         7xb3igBR/Puu+VcxLn7U/CIuXGitv4lOdg0nEM/s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yu Wang <yyuwang@codeaurora.org>,
-        Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 4.14 50/51] mac80211: handle deauthentication/disassociation from TDLS peer
+        stable@vger.kernel.org, ShihPo Hung <shihpo.hung@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        linux-riscv@lists.infradead.org
+Subject: [PATCH 5.1 096/121] riscv: mm: synchronize MMU after pte change
 Date:   Mon, 24 Jun 2019 17:57:08 +0800
-Message-Id: <20190624092311.499360810@linuxfoundation.org>
+Message-Id: <20190624092325.659180675@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190624092305.919204959@linuxfoundation.org>
-References: <20190624092305.919204959@linuxfoundation.org>
+In-Reply-To: <20190624092320.652599624@linuxfoundation.org>
+References: <20190624092320.652599624@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,117 +46,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yu Wang <yyuwang@codeaurora.org>
+From: ShihPo Hung <shihpo.hung@sifive.com>
 
-commit 79c92ca42b5a3e0ea172ea2ce8df8e125af237da upstream.
+commit bf587caae305ae3b4393077fb22c98478ee55755 upstream.
 
-When receiving a deauthentication/disassociation frame from a TDLS
-peer, a station should not disconnect the current AP, but only
-disable the current TDLS link if it's enabled.
+Because RISC-V compliant implementations can cache invalid entries
+in TLB, an SFENCE.VMA is necessary after changes to the page table.
+This patch adds an SFENCE.vma for the vmalloc_fault path.
 
-Without this change, a TDLS issue can be reproduced by following the
-steps as below:
-
-1. STA-1 and STA-2 are connected to AP, bidirection traffic is running
-   between STA-1 and STA-2.
-2. Set up TDLS link between STA-1 and STA-2, stay for a while, then
-   teardown TDLS link.
-3. Repeat step #2 and monitor the connection between STA and AP.
-
-During the test, one STA may send a deauthentication/disassociation
-frame to another, after TDLS teardown, with reason code 6/7, which
-means: Class 2/3 frame received from nonassociated STA.
-
-On receive this frame, the receiver STA will disconnect the current
-AP and then reconnect. It's not a expected behavior, purpose of this
-frame should be disabling the TDLS link, not the link with AP.
-
+Signed-off-by: ShihPo Hung <shihpo.hung@sifive.com>
+[paul.walmsley@sifive.com: reversed tab->whitespace conversion,
+ wrapped comment lines]
+Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
+Cc: Palmer Dabbelt <palmer@sifive.com>
+Cc: Albert Ou <aou@eecs.berkeley.edu>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>
+Cc: linux-riscv@lists.infradead.org
 Cc: stable@vger.kernel.org
-Signed-off-by: Yu Wang <yyuwang@codeaurora.org>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/mac80211/ieee80211_i.h |    3 +++
- net/mac80211/mlme.c        |   12 +++++++++++-
- net/mac80211/tdls.c        |   23 +++++++++++++++++++++++
- 3 files changed, 37 insertions(+), 1 deletion(-)
+ arch/riscv/mm/fault.c |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
---- a/net/mac80211/ieee80211_i.h
-+++ b/net/mac80211/ieee80211_i.h
-@@ -2150,6 +2150,9 @@ void ieee80211_tdls_cancel_channel_switc
- 					  const u8 *addr);
- void ieee80211_teardown_tdls_peers(struct ieee80211_sub_if_data *sdata);
- void ieee80211_tdls_chsw_work(struct work_struct *wk);
-+void ieee80211_tdls_handle_disconnect(struct ieee80211_sub_if_data *sdata,
-+				      const u8 *peer, u16 reason);
-+const char *ieee80211_get_reason_code_string(u16 reason_code);
+--- a/arch/riscv/mm/fault.c
++++ b/arch/riscv/mm/fault.c
+@@ -29,6 +29,7 @@
  
- extern const struct ethtool_ops ieee80211_ethtool_ops;
+ #include <asm/pgalloc.h>
+ #include <asm/ptrace.h>
++#include <asm/tlbflush.h>
  
---- a/net/mac80211/mlme.c
-+++ b/net/mac80211/mlme.c
-@@ -2744,7 +2744,7 @@ static void ieee80211_rx_mgmt_auth(struc
- #define case_WLAN(type) \
- 	case WLAN_REASON_##type: return #type
- 
--static const char *ieee80211_get_reason_code_string(u16 reason_code)
-+const char *ieee80211_get_reason_code_string(u16 reason_code)
- {
- 	switch (reason_code) {
- 	case_WLAN(UNSPECIFIED);
-@@ -2809,6 +2809,11 @@ static void ieee80211_rx_mgmt_deauth(str
- 	if (len < 24 + 2)
+ /*
+  * This routine handles page faults.  It determines the address and the
+@@ -281,6 +282,18 @@ vmalloc_fault:
+ 		pte_k = pte_offset_kernel(pmd_k, addr);
+ 		if (!pte_present(*pte_k))
+ 			goto no_context;
++
++		/*
++		 * The kernel assumes that TLBs don't cache invalid
++		 * entries, but in RISC-V, SFENCE.VMA specifies an
++		 * ordering constraint, not a cache flush; it is
++		 * necessary even after writing invalid entries.
++		 * Relying on flush_tlb_fix_spurious_fault would
++		 * suffice, but the extra traps reduce
++		 * performance. So, eagerly SFENCE.VMA.
++		 */
++		local_flush_tlb_page(addr);
++
  		return;
- 
-+	if (!ether_addr_equal(mgmt->bssid, mgmt->sa)) {
-+		ieee80211_tdls_handle_disconnect(sdata, mgmt->sa, reason_code);
-+		return;
-+	}
-+
- 	if (ifmgd->associated &&
- 	    ether_addr_equal(mgmt->bssid, ifmgd->associated->bssid)) {
- 		const u8 *bssid = ifmgd->associated->bssid;
-@@ -2858,6 +2863,11 @@ static void ieee80211_rx_mgmt_disassoc(s
- 
- 	reason_code = le16_to_cpu(mgmt->u.disassoc.reason_code);
- 
-+	if (!ether_addr_equal(mgmt->bssid, mgmt->sa)) {
-+		ieee80211_tdls_handle_disconnect(sdata, mgmt->sa, reason_code);
-+		return;
-+	}
-+
- 	sdata_info(sdata, "disassociated from %pM (Reason: %u=%s)\n",
- 		   mgmt->sa, reason_code,
- 		   ieee80211_get_reason_code_string(reason_code));
---- a/net/mac80211/tdls.c
-+++ b/net/mac80211/tdls.c
-@@ -1988,3 +1988,26 @@ void ieee80211_tdls_chsw_work(struct wor
  	}
- 	rtnl_unlock();
  }
-+
-+void ieee80211_tdls_handle_disconnect(struct ieee80211_sub_if_data *sdata,
-+				      const u8 *peer, u16 reason)
-+{
-+	struct ieee80211_sta *sta;
-+
-+	rcu_read_lock();
-+	sta = ieee80211_find_sta(&sdata->vif, peer);
-+	if (!sta || !sta->tdls) {
-+		rcu_read_unlock();
-+		return;
-+	}
-+	rcu_read_unlock();
-+
-+	tdls_dbg(sdata, "disconnected from TDLS peer %pM (Reason: %u=%s)\n",
-+		 peer, reason,
-+		 ieee80211_get_reason_code_string(reason));
-+
-+	ieee80211_tdls_oper_request(&sdata->vif, peer,
-+				    NL80211_TDLS_TEARDOWN,
-+				    WLAN_REASON_TDLS_TEARDOWN_UNREACHABLE,
-+				    GFP_ATOMIC);
-+}
 
 
