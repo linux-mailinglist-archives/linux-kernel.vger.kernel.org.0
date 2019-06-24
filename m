@@ -2,103 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72E9650991
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 13:16:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81BA05099F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 13:19:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728871AbfFXLQH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 07:16:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57760 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728657AbfFXLQH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 07:16:07 -0400
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4ED1020449;
-        Mon, 24 Jun 2019 11:16:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561374966;
-        bh=LFqck4CeV3jBrl7Yqgi21ZqUHc7BseQ2I38AyrN4b3s=;
+        id S1729174AbfFXLTH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 07:19:07 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:60808 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727953AbfFXLTH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 07:19:07 -0400
+Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id BFAF6323;
+        Mon, 24 Jun 2019 13:19:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1561375144;
+        bh=B6Kyd/rtGoZ/rniG3OdECkB1xfXOxJ86TGPqPhSRnd0=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=XSvX2o0P97KVpBlCPX61upv01HnSc9kZCztiFA3NLNpGco45CIh/rZ67XWlja2EVr
-         vksn2UCldeO7t0n/lzFgMDLAb+ugyZ8v5hdUSmooKB4SZEXomTxQOY3AJWcU1Zq7VW
-         ethUEz3+FgM9Le+Eh4bevMMllLhxj6571CK2n9Jk=
-Date:   Mon, 24 Jun 2019 12:16:01 +0100
-From:   Will Deacon <will@kernel.org>
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     Ard Biesheuvel <ard.biesheuvel@arm.com>,
-        linux-arm-kernel@lists.infradead.org, marc.zyngier@arm.com,
-        mark.rutland@arm.com, linux-kernel@vger.kernel.org,
-        Nadav Amit <namit@vmware.com>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        James Morse <james.morse@arm.com>
-Subject: Re: [PATCH 0/4] arm64: wire up VM_FLUSH_RESET_PERMS
-Message-ID: <20190624111600.b7e5kkfvuszj6522@willie-the-truck>
-References: <20190523102256.29168-1-ard.biesheuvel@arm.com>
- <20190528100413.GA20809@fuggles.cambridge.arm.com>
+        b=UZF7L0OtkFEm3c6C+yr3wAtoXGqgyjsN+/jO8N8+hVRxpmtdm0UeHhiq9u/KmNJ53
+         tf5FCstcqBXEsD1X9/2hGyciTHm324pnEmUb6nl1k81izWnQWdxWrOro6z+BInLdNX
+         RsH6bRzDPzqY1b5vj7Nmpm6VW2dI+bpQdY6UkrM4=
+Date:   Mon, 24 Jun 2019 14:16:36 +0300
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     Jonas Karlman <jonas@kwiboo.se>,
+        "a.hajda@samsung.com" <a.hajda@samsung.com>,
+        "jernej.skrabec@siol.net" <jernej.skrabec@siol.net>,
+        "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        "khilman@baylibre.com" <khilman@baylibre.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "wens@csie.org" <wens@csie.org>,
+        "zhengyang@rock-chips.com" <zhengyang@rock-chips.com>
+Subject: Re: [PATCH 0/4] drm/bridge: dw-hdmi: Add support for HDR metadata
+Message-ID: <20190624111636.GB5737@pendragon.ideasonboard.com>
+References: <VI1PR03MB420621617DDEAB3596700DE0AC1C0@VI1PR03MB4206.eurprd03.prod.outlook.com>
+ <085dc3be-20e5-b2fe-4c02-bf4a4d1473da@baylibre.com>
+ <20190621090125.GX12905@phenom.ffwll.local>
+ <20190623233017.GI6124@pendragon.ideasonboard.com>
+ <58243243-fbd8-e67b-a050-baa9757be43e@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190528100413.GA20809@fuggles.cambridge.arm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <58243243-fbd8-e67b-a050-baa9757be43e@baylibre.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 28, 2019 at 11:04:20AM +0100, Will Deacon wrote:
-> On Thu, May 23, 2019 at 11:22:52AM +0100, Ard Biesheuvel wrote:
-> > Wire up the code introduced in v5.2 to manage the permissions
-> > of executable vmalloc regions (and their linear aliases) more
-> > strictly.
-> > 
-> > One of the things that came up in the internal discussion is
-> > whether non-x86 architectures have any benefit at all from the
-> > lazy vunmap feature, and whether it would perhaps be better to
-> > implement eager vunmap instead.
-> > 
-> > Cc: Nadav Amit <namit@vmware.com>
-> > Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > Cc: Will Deacon <will.deacon@arm.com>
-> > Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> > Cc: James Morse <james.morse@arm.com>
-> > 
-> > Ard Biesheuvel (4):
-> >   arm64: module: create module allocations without exec permissions
-> >   arm64/mm: wire up CONFIG_ARCH_HAS_SET_DIRECT_MAP
-> >   arm64/kprobes: set VM_FLUSH_RESET_PERMS on kprobe instruction pages
-> >   arm64: bpf: do not allocate executable memory
-> > 
-> >  arch/arm64/Kconfig                  |  1 +
-> >  arch/arm64/include/asm/cacheflush.h |  3 ++
-> >  arch/arm64/kernel/module.c          |  4 +-
-> >  arch/arm64/kernel/probes/kprobes.c  |  4 +-
-> >  arch/arm64/mm/pageattr.c            | 48 ++++++++++++++++----
-> >  arch/arm64/net/bpf_jit_comp.c       |  2 +-
-> >  mm/vmalloc.c                        | 11 -----
-> >  7 files changed, 50 insertions(+), 23 deletions(-)
+Hi Neil,
+
+On Mon, Jun 24, 2019 at 10:19:34AM +0200, Neil Armstrong wrote:
+> Hi Daniel, Laurent, Andrzej,
 > 
-> Thanks, this all looks good to me. I can get pick this up for 5.2 if
-> Rick's fixes [1] land soon enough.
+> On 24/06/2019 01:30, Laurent Pinchart wrote:
+> > On Fri, Jun 21, 2019 at 11:01:25AM +0200, Daniel Vetter wrote:
+> >> On Thu, Jun 20, 2019 at 04:40:12PM +0200, Neil Armstrong wrote:
+> >>> Hi Andrzej,
+> >>>
+> >>> Gentle ping, could you review the dw-hdmi changes here ?
+> >>
+> >> btw not sure you absolutely need review from Andrzej, we're currently a
+> >> bit undersupplied with bridge reviewers I think ... Better to ramp up
+> >> more.
+> > 
+> > I try to review DRM bridge patches when possible, but dw-hdmi is a
+> > special case. I was told by the supplier of an SoC datasheet that
+> > contains the HDMI encoder IP core documentation that Synopsys required
+> > them to route all contributions made based on that documentation through
+> > Synopsys' internal legal review before publishing them. I thus decided
+> > to not contribute to the driver anymore, at least for areas that require
+> > access to documentation.
+> 
+> I'd like to propose myself as co-maintainer of the DRM bridge subsystem if
+> everybody agrees, following the excellent work Laurent and Andrzej did.
+> I have a very little knowledge of DSI, & other bridge drivers, but I'll do
+> my best.
+> 
+> For the dw-hdmi driver, we have a big roadmap including :
+> - HDR (this patchset)
+> - HDCP 1/2
+> - YUV420, YUV422, YUV44, 10bit/12bit/16bit HDMI output
+> - Enhanced audio support and ELD notification to ASoC
+> ...
 
-Bah, I missed these landing in -rc5 and I think it's a bit too late for
-us to take this for 5.2. now particularly with our limited ability to
-fix any late regressions that might arise.
+You're more than welcome as a DRM bridge maintainer, especially given
+that you have just volunteered to implement bridge states and format
+negotiation, right ? ;-)
 
-In which case, Catalin, please can you take these for 5.3? You might run
-into some testing failures with for-next/core due to the late of Rick's
-fixes, but linux-next should be alright and I don't think you'll get any
-conflicts.
+> Having a more active maintainer/reviewer team would be needed, at least for
+> the dw-hdmi bridge.
+> 
+> I'll also propose Jonas Karlman <jonas@kwiboo.se> as reviewer since he is very
+> active for the multimedia support on RockChip, Allwinner and Amlogic SoCs.
+> I'll also propose Jernej Skrabec@siol.net <jernej.skrabec@siol.net>, if he wants,
+> as reviewer since he is very active on the Allwinner SoCs side.
+> 
+> >>> On 26/05/2019 23:18, Jonas Karlman wrote:
+> >>>> Add support for HDR metadata using the hdr_output_metadata connector property,
+> >>>> configure Dynamic Range and Mastering InfoFrame accordingly.
+> >>>>
+> >>>> A drm_infoframe flag is added to dw_hdmi_plat_data that platform drivers
+> >>>> can use to signal when Dynamic Range and Mastering infoframes is supported.
+> >>>> This flag is needed because Amlogic GXBB and GXL report same DW-HDMI version,
+> >>>> and only GXL support DRM InfoFrame.
+> >>>>
+> >>>> The first patch add functionality to configure DRM InfoFrame based on the
+> >>>> hdr_output_metadata connector property.
+> >>>>
+> >>>> The remaining patches sets the drm_infoframe flag on some SoCs supporting
+> >>>> Dynamic Range and Mastering InfoFrame.
+> >>>>
+> >>>> Note that this was based on top of drm-misc-next and Neil Armstrong's
+> >>>> "drm/meson: Add support for HDMI2.0 YUV420 4k60" series at [1]
+> >>>>
+> >>>> [1] https://patchwork.freedesktop.org/series/58725/#rev2
+> >>>>
+> >>>> Jonas Karlman (4):
+> >>>>   drm/bridge: dw-hdmi: Add Dynamic Range and Mastering InfoFrame support
+> >>>>   drm/rockchip: Enable DRM InfoFrame support on RK3328 and RK3399
+> >>>>   drm/meson: Enable DRM InfoFrame support on GXL, GXM and G12A
+> >>>>   drm/sun4i: Enable DRM InfoFrame support on H6
+> >>>>
+> >>>>  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c   | 109 ++++++++++++++++++++
+> >>>>  drivers/gpu/drm/bridge/synopsys/dw-hdmi.h   |  37 +++++++
+> >>>>  drivers/gpu/drm/meson/meson_dw_hdmi.c       |   5 +
+> >>>>  drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c |   2 +
+> >>>>  drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c       |   2 +
+> >>>>  drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h       |   1 +
+> >>>>  include/drm/bridge/dw_hdmi.h                |   1 +
+> >>>>  7 files changed, 157 insertions(+)
 
-Acked-by: Will Deacon <will@kernel.org>
+-- 
+Regards,
 
-Ard: are you ok with that?
-
-Thanks,
-
-Will
+Laurent Pinchart
