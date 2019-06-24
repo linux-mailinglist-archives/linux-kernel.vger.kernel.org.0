@@ -2,90 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3ADE24FF1D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 04:09:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 20B124FF27
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 04:13:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726956AbfFXCJP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 22:09:15 -0400
-Received: from mx.socionext.com ([202.248.49.38]:38521 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726694AbfFXCJO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 22:09:14 -0400
-Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
-  by mx.socionext.com with ESMTP; 24 Jun 2019 11:09:12 +0900
-Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
-        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id EE073180088;
-        Mon, 24 Jun 2019 11:09:12 +0900 (JST)
-Received: from 10.213.24.1 (10.213.24.1) by m-FILTER with ESMTP; Mon, 24 Jun 2019 11:09:12 +0900
-Received: from SOC-EX01V.e01.socionext.com (10.213.24.21) by
- SOC-EX01V.e01.socionext.com (10.213.24.21) with Microsoft SMTP Server (TLS)
- id 15.0.995.29; Mon, 24 Jun 2019 11:09:11 +0900
-Received: from SOC-EX01V.e01.socionext.com ([10.213.24.21]) by
- SOC-EX01V.e01.socionext.com ([10.213.24.21]) with mapi id 15.00.0995.028;
- Mon, 24 Jun 2019 11:09:11 +0900
-From:   <orito.takao@socionext.com>
-To:     <ulf.hansson@linaro.org>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>
-CC:     <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <masami.hiramatsu@linaro.org>,
-        <jaswinder.singh@linaro.org>, <sugaya.taichi@socionext.com>,
-        <kasai.kazuhiro@socionext.com>, <kanematsu.shinji@socionext.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: mmc: add DT bindings for Milbeaut SD
- controller
-Thread-Topic: [PATCH v2 1/2] dt-bindings: mmc: add DT bindings for Milbeaut SD
- controller
-Thread-Index: AQHVFsjKlX0FEPEPP0y84mvB/ydCMqapnyyA
-Date:   Mon, 24 Jun 2019 02:09:10 +0000
-Message-ID: <20190624110901.50EF.F0D17A80@socionext.com>
-References: <1559208131-426-1-git-send-email-orito.takao@socionext.com>
-In-Reply-To: <1559208131-426-1-git-send-email-orito.takao@socionext.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Becky! ver. 2.74.02 [ja] (Unregistered)
-x-originating-ip: [10.213.24.1]
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-ID: <C9EDB484AEAF9B43A83E9452CF7C3FEB@socionext.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+        id S1726925AbfFXCNK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 22:13:10 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:53127 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726849AbfFXCNK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Jun 2019 22:13:10 -0400
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20190624021306epoutp015982f94b7bc6e2a0f05f632c06f94c27~rAKC9VSqu0940109401epoutp01H
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 02:13:06 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20190624021306epoutp015982f94b7bc6e2a0f05f632c06f94c27~rAKC9VSqu0940109401epoutp01H
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1561342386;
+        bh=Bjxv0RRUWPDBM+vlsvLdx6BQWrwtvpQPL5LR7DGLxjw=;
+        h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
+        b=hzjpX5+9hx/a1tdVMF8nJlqTy4AoOattbUJB3gjjl2g9E4cDDgyE9EZSCiKyYCk+j
+         AAxsgbzscgkEwuqqh8zB5aSwmHq5Hbw1hY7hQdcmF4cgc1m7EqhAuZDv3vU7K8i5Lx
+         O9AvXL2KfXmItk6fZhNotQzX4qzE3540oCxuNXuo=
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.155]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20190624021301epcas1p32614991eb0c0533de1d556cbf4945e11~rAJ_vt4kw0385803858epcas1p3A;
+        Mon, 24 Jun 2019 02:13:01 +0000 (GMT)
+X-AuditID: b6c32a38-5cbff700000010a1-02-5d10319df346
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        D9.4A.04257.D91301D5; Mon, 24 Jun 2019 11:12:45 +0900 (KST)
+Mime-Version: 1.0
+Subject: RE: [PATCH v1 01/11] PM / devfreq: tegra30: Change irq type to
+ unsigned int
+Reply-To: myungjoo.ham@samsung.com
+From:   MyungJoo Ham <myungjoo.ham@samsung.com>
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>
+CC:     "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+In-Reply-To: <20190623214658.11680-2-digetx@gmail.com>
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <20190624021245epcms1p5366dd98904dac95625dc2deb4b649cb1@epcms1p5>
+Date:   Mon, 24 Jun 2019 11:12:45 +0900
+X-CMS-MailID: 20190624021245epcms1p5366dd98904dac95625dc2deb4b649cb1
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRj285ydHZfLz2n1YWXrQBeFpUedHStDSGJQghFUWDIPeprD3diZ
+        KytIUqk0zUIr5qUsI9PCC16ms5QZRZlFiYWEJd3MUrtohFjUtjOxf8/38Lzv87zv95KY7DIR
+        QmoNFs5sYHUUIcHb+8IUiioapkaOl9PMy5kxEdPw/R1g8m1XcWbgxISYGeyqJJjp4nuAOT1j
+        I5jZrmqcKbn9nEjwU9lHaoGq0zYiVhXnTRGqktZ6oJpuCU0WpWRtyeTYDM4s5wzpxgytQRNP
+        7dit3qZWxkbSCjqO2UjJDayei6cSdyYrtmt1rkCU3Mrqsl1UMsvzVMTWLWZjtoWTZxp5SzzF
+        mTJ0pjjTBp7V89kGzYZ0o34THRkZpXQJ07Iyx2YLRKZx38ODde+JXNDoWwj8SARjUF7BW8KN
+        ZdAO0IXRfYWAJKUwEP2xB7npILgHnSmxAUFCodzhu5jAR6BTo+0enoAK1NY0ghcCCRkM5wC6
+        0/lO5H5gsBOgqdY3YsFMii6d/IALeDnquNHmqfaDsejRi1PeQEvQcMOkeB5/vX8ZCDgYFbwe
+        wAQciEZnHWC+z6Wyv96eR9GLi9fEbmME8wEqbijziiLQ46qHnimlMAl9cvzyYByuQd+c173F
+        iej0UJHIjTG4CnVMVmLuTWAwDDV2RQiS1ahzrgoIksVo6ucZ0fxc9ur33vxrkdNR682/AvVf
+        rPFmVqGzM+WYsMWbAHU046VAblvYte0/Y9uC8RWA1YOlnInXazieNsX8/7stwHOc4YwddD/Z
+        6QSQBJS/FDYFpMpErJXP0TsBIjEqWOqv80+VSTPYnCOc2ag2Z+s43gmUrvnPYSFL0o2uUzdY
+        1LQyKjo6momhY5U0TS2TqhcNH5BBDWvhsjjOxJnn63xJv5BcEBy0SSKRfbM23uofqa7T3teG
+        Nj/tt35pOb+4rHZ2fXivpXSiyOiYHIxS1ZT77F33O+djwLFDnxVvQ7ldn5Z2/6ocL5qx90w/
+        S8Ff6VoqHMPyvocpuWUXjgds7H/c8yCh4od9haYmxzDUdnK5JDVtQmrVjoUm1Ww+mNTb7uMT
+        s3L/KgrnM1k6HDPz7D9DtmwasgMAAA==
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20190623214841epcas5p161cceab51cb10d5146e57d49a696d5e5
+References: <20190623214658.11680-2-digetx@gmail.com>
+        <20190623214658.11680-1-digetx@gmail.com>
+        <CGME20190623214841epcas5p161cceab51cb10d5146e57d49a696d5e5@epcms1p5>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQpIZWxsbw0KDQpEb2VzIGFueW9uZSBoYXZlIGFueSBjb21tZW50cyBvbiB0aGlzID8NCg0KPiBB
-ZGQgdGhlIGRldmljZS10cmVlIGJpbmRpbmcgZG9jdW1lbnRhdGlvbiBmb3IgTWlsYmVhdXQgU0RI
-Q0kgZHJpdmVyLg0KPiANCj4gU2lnbmVkLW9mZi1ieTogVGFrYW8gT3JpdG8gPG9yaXRvLnRha2Fv
-QHNvY2lvbmV4dC5jb20+DQo+IC0tLQ0KPiAgLi4uL2RldmljZXRyZWUvYmluZGluZ3MvbW1jL3Nk
-aGNpLW1pbGJlYXV0LnR4dCAgICAgfCAzMiArKysrKysrKysrKysrKysrKysrKysrDQo+ICAxIGZp
-bGUgY2hhbmdlZCwgMzIgaW5zZXJ0aW9ucygrKQ0KPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IERvY3Vt
-ZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9tbWMvc2RoY2ktbWlsYmVhdXQudHh0DQo+IA0K
-PiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21tYy9zZGhj
-aS1taWxiZWF1dC50eHQgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbW1jL3Nk
-aGNpLW1pbGJlYXV0LnR4dA0KPiBuZXcgZmlsZSBtb2RlIDEwMDY0NA0KPiBpbmRleCAwMDAwMDAw
-Li42MDYzMTE2DQo+IC0tLSAvZGV2L251bGwNCj4gKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0
-cmVlL2JpbmRpbmdzL21tYy9zZGhjaS1taWxiZWF1dC50eHQNCj4gQEAgLTAsMCArMSwzMiBAQA0K
-PiArKiBTT0NJT05FWFQgTWlsYmVhdXQgU0RIQ0kgY29udHJvbGxlcg0KPiArDQo+ICtUaGlzIGZp
-bGUgZG9jdW1lbnRzIGRpZmZlcmVuY2VzIGJldHdlZW4gdGhlIGNvcmUgcHJvcGVydGllcyBpbiBt
-bWMudHh0DQo+ICthbmQgdGhlIHByb3BlcnRpZXMgdXNlZCBieSB0aGUgc2RoY2lfbWlsYmVhdXQg
-ZHJpdmVyLg0KPiArDQo+ICtSZXF1aXJlZCBwcm9wZXJ0aWVzOg0KPiArLSBjb21wYXRpYmxlOiAi
-c29jaW9uZXh0LG1pbGJlYXV0LW0xMHYtc2RoY2ktMy4wIg0KPiArLSBjbG9ja3M6IE11c3QgY29u
-dGFpbiBhbiBlbnRyeSBmb3IgZWFjaCBlbnRyeSBpbiBjbG9jay1uYW1lcy4gSXQgaXMgYQ0KPiAr
-ICBsaXN0IG9mIHBoYW5kbGVzIGFuZCBjbG9jay1zcGVjaWZpZXIgcGFpcnMuDQo+ICsgIFNlZSAu
-Li9jbG9ja3MvY2xvY2stYmluZGluZ3MudHh0IGZvciBkZXRhaWxzLg0KPiArLSBjbG9jay1uYW1l
-czogU2hvdWxkIGNvbnRhaW4gdGhlIGZvbGxvd2luZyB0d28gZW50cmllczoNCj4gKwkiaWZhY2Ui
-IC0gY2xvY2sgdXNlZCBmb3Igc2RoY2kgaW50ZXJmYWNlDQo+ICsJImNvcmUiICAtIGNvcmUgY2xv
-Y2sgZm9yIHNkaGNpIGNvbnRyb2xsZXINCj4gKy0gdm1tYy1zdXBwbHk6IGEgcGhhbmRsZSBvZiBh
-IGZpeGVkIEdQSU8gcmVndWxhdG9yDQo+ICsNCj4gK09wdGlvbmFsIHByb3BlcnRpZXM6DQo+ICst
-IGZ1aml0c3UsY21kLWRhdC1kZWxheS1zZWxlY3Q6IGJvb2xlYW4gcHJvcGVydHkgaW5kaWNhdGlu
-ZyB0aGF0IHRoaXMgaG9zdA0KPiArICByZXF1aXJlcyB0aGUgQ01EX0RBVF9ERUxBWSBjb250cm9s
-IHRvIGJlIGVuYWJsZWQuDQo+ICsNCj4gK0V4YW1wbGU6DQo+ICsJc2RoY2kzOiBtbWNAMWIwMTAw
-MDAgew0KPiArCQljb21wYXRpYmxlID0gInNvY2lvbmV4dCxtaWxiZWF1dC1tMTB2LXNkaGNpLTMu
-MCI7DQo+ICsJCXJlZyA9IDwweDFiMDEwMDAwIDB4MTAwMDA+Ow0KPiArCQlpbnRlcnJ1cHRzID0g
-PDAgMjY1IDB4ND47DQo+ICsJCXZvbHRhZ2UtcmFuZ2VzID0gPDMzMDAgMzMwMD47DQo+ICsJCWJ1
-cy13aWR0aCA9IDw0PjsNCj4gKwkJY2xvY2tzID0gPCZjbGsgNz4sIDwmYWhiX2Nsaz47DQo+ICsJ
-CWNsb2NrLW5hbWVzID0gImNvcmUiLCAiaWZhY2UiOw0KPiArCQljYXAtc2Rpby1pcnE7DQo+ICsJ
-CXZtbWMtc3VwcGx5ID0gPCZ2Y2Nfc2RoY2kzPjsNCj4gKwkJZnVqaXRzdSxjbWQtZGF0LWRlbGF5
-LXNlbGVjdDsNCj4gKwl9Ow0KPiAtLSANCj4gMS45LjENCj4gDQoNClRoYW5rcw0KT3JpdG8NCg0K
-LS0gDQpUYWthbyBPcml0byA8b3JpdG8udGFrYW9Ac29jaW9uZXh0LmNvbT4NCg==
+>IRQ numbers are always positive, hence the corresponding variable should
+>be unsigned to keep types consistent. This is a minor change that cleans
+>up code a tad more.
+>
+>Suggested-by: Thierry Reding <thierry.reding@gmail.com>
+>Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+
+Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+
+
+Cheers,
+MyungJoo
