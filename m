@@ -2,625 +2,207 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6110250B96
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 15:14:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5143350BA0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 15:15:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730904AbfFXNOV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 09:14:21 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:32934 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730789AbfFXNOO (ORCPT
+        id S1729059AbfFXNPF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 09:15:05 -0400
+Received: from rout5.hes.trendmicro.com ([54.219.188.5]:50625 "EHLO
+        rout5.hes.trendmicro.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728286AbfFXNPF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 09:14:14 -0400
-Received: by mail-wr1-f66.google.com with SMTP id n9so13925589wru.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 06:14:12 -0700 (PDT)
+        Mon, 24 Jun 2019 09:15:05 -0400
+X-Greylist: delayed 7963 seconds by postgrey-1.27 at vger.kernel.org; Mon, 24 Jun 2019 09:15:05 EDT
+Received: from 0.0.0.0_hes.trendmicro.com (unknown [10.64.10.43])
+        by rout5.hes.trendmicro.com (Postfix) with SMTP id 5059AEFC08E;
+        Mon, 24 Jun 2019 13:15:04 +0000 (UTC)
+Received: from IND01-BO1-obe.outbound.protection.outlook.com (unknown [104.47.101.53])
+        by relay1.hes.trendmicro.com (TrendMicro Hosted Email Security) with ESMTPS id 2CEB1AFA016;
+        Mon, 24 Jun 2019 13:15:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=yBdG0H/gCIPYYVGR+KCWLaRLenPfJFEX87fC2jx+ebM=;
-        b=103W7Ezz8Sq+vjdhV7/0AMmHmATQ8Axg+/Sjz2XF4O45/GLCJDNA94qGb8bDaYymyP
-         518Zlfce/3WhtK81xGqxRMU3GORSFzELrmvNeii1uxeqLL6iEEYt5Bkale0XLr28EPw+
-         XtNGb0vBv/DtdHahfFLDkYjzdNFvah82GVVR/1+C16FPfHfAdiWPSIH5HUdHFS2fv7KX
-         oT/O8cftxqkYaNnZmUqq1y5+XrNg9PiGXAQzlK9Awb82RJhuOH4Beh+rngt7XULX80Nv
-         U8M1Y68Uk+OkNvuGTO5sMoh7H6EWK0nbIjyQoJjA0+pnTB4iw95S6D0coaDe383Ixz0+
-         nr7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=yBdG0H/gCIPYYVGR+KCWLaRLenPfJFEX87fC2jx+ebM=;
-        b=dqKPOtaHOcZaw/9ZVx3YhQsJL3V0Xo+auCWqurNR9SIMlKQTkSYyZ3GrrnD1cc/1Pw
-         fchMDrMVZWKCLyLbBddRbfmLWVcmtXy2CGxidVPzRIVFHyRNVzfDyOpcEZZ+hhN3gcKx
-         F7PwP+Oj7rAWhbb4X5IDWNe81Tav+1Zk3K68BXA2dzzngl2eUS9F1oeC3IgXILACqlJ9
-         MDl3H2JEyQBtvYSUkwEzvdvfH8d0gn4zUsRyOho85FqmaQ3QHcx5w3/0fy6dQ7W8AYqL
-         d9BX+5L7ZZ8LVszIp9ol4YuexZup6Tg4eiGdhRTT2hy5aYLLw90Qmmb2NZe5ElLy2tzU
-         rPKA==
-X-Gm-Message-State: APjAAAXuC7lSA0kO+wgwUxbsdmqcSQ3tcfrk/ulVezD3RzwnQyc5LhwD
-        l+NOD094QRZEsaM7n67gLLNN0zrNjBM=
-X-Google-Smtp-Source: APXvYqxBnZi7cHHbvwgMl/dOyfWdsF7yYlN7c4coAtWJC9wtSZmLj0VYNpoISuq8wjy2ZpGntKvdyw==
-X-Received: by 2002:a5d:5286:: with SMTP id c6mr97995676wrv.118.1561382051388;
-        Mon, 24 Jun 2019 06:14:11 -0700 (PDT)
-Received: from localhost.localdomain (amontpellier-652-1-281-69.w109-210.abo.wanadoo.fr. [109.210.96.69])
-        by smtp.gmail.com with ESMTPSA id y2sm9535526wrl.4.2019.06.24.06.14.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Jun 2019 06:14:10 -0700 (PDT)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Sekhar Nori <nsekhar@ti.com>, David Lechner <david@lechnology.com>,
-        Kevin Hilman <khilman@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 10/10] ARM: davinci: remove legacy timer support
-Date:   Mon, 24 Jun 2019 15:13:51 +0200
-Message-Id: <20190624131351.3732-11-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190624131351.3732-1-brgl@bgdev.pl>
-References: <20190624131351.3732-1-brgl@bgdev.pl>
+ d=thinciit.onmicrosoft.com; s=selector2-thinciit-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=iEImW3tUpclzTo2H754MGpuYvjYlu6DJpOOKgm0FJH0=;
+ b=a6YqemI1KCtgo4eJGAj0C6MsyhXMCmOLvogDietaruxb6V873pBUDlB23/9c3AaBlEPKBbZlvhyM5JqTuzFqdQSs+NmVvG6nxrScf+EnO8eaQp76gslrLVUqSIQN7HTuzwbo6QKUB5r4lxlCWc4Dr0O9cNEFWI+a636q5ZyLRhI=
+Received: from BMXPR01MB0759.INDPRD01.PROD.OUTLOOK.COM (10.174.217.139) by
+ BMXPR01MB2152.INDPRD01.PROD.OUTLOOK.COM (20.178.168.139) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2008.16; Mon, 24 Jun 2019 13:14:59 +0000
+Received: from BMXPR01MB0759.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::9a2:6d6:3674:cfe4]) by BMXPR01MB0759.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::9a2:6d6:3674:cfe4%2]) with mapi id 15.20.1987.014; Mon, 24 Jun 2019
+ 13:14:59 +0000
+From:   Matt Redfearn <matt.redfearn@thinci.com>
+To:     Andrzej Hajda <a.hajda@samsung.com>,
+        Philippe CORNU <philippe.cornu@st.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+CC:     Archit Taneja <architt@codeaurora.org>,
+        David Airlie <airlied@linux.ie>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Matthew Redfearn <matthew.redfearn@thinci.com>,
+        Yannick FERTRE <yannick.fertre@st.com>,
+        Nickey Yang <nickey.yang@rock-chips.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Subject: Re: [PATCH v2] drm/bridge/synopsys: dsi: Allow VPG to be enabled via
+ debugfs
+Thread-Topic: [PATCH v2] drm/bridge/synopsys: dsi: Allow VPG to be enabled via
+ debugfs
+Thread-Index: AQHU/y0X85i6EeTE0U60zrEiE1o5cqZZawCAgFGPLICAAAvBgIAAGVWA
+Date:   Mon, 24 Jun 2019 13:14:59 +0000
+Message-ID: <8759164e-9bb9-dac8-68ff-bb93df984b6c@thinci.com>
+References: <20190430081646.23845-1-matt.redfearn@thinci.com>
+ <0832ec0c-cf21-7b43-17a7-dbe54513453c@st.com>
+ <CGME20190624110224epcas3p45442d82c6f6c3e99311334c2603b9143@epcas3p4.samsung.com>
+ <fd4f3c69-5bbd-a7ac-983c-4aa9a2a2313e@thinci.com>
+ <d73e0df8-761d-380c-17f3-f3cbb737c677@samsung.com>
+In-Reply-To: <d73e0df8-761d-380c-17f3-f3cbb737c677@samsung.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: DB6PR05CA0020.eurprd05.prod.outlook.com
+ (2603:10a6:6:14::33) To BMXPR01MB0759.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:b00:13::11)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=matthew.redfearn@thinci.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [87.242.198.86]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 7ecada44-c6b8-4d15-350c-08d6f8a5f54a
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BMXPR01MB2152;
+x-ms-traffictypediagnostic: BMXPR01MB2152:
+x-ms-exchange-purlcount: 1
+x-microsoft-antispam-prvs: <BMXPR01MB21528FE2836B14348EF4882BF1E00@BMXPR01MB2152.INDPRD01.PROD.OUTLOOK.COM>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 007814487B
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39840400004)(346002)(136003)(376002)(366004)(51914003)(189003)(199004)(66446008)(66556008)(66476007)(478600001)(66066001)(5660300002)(2616005)(64756008)(5024004)(53546011)(52116002)(76176011)(386003)(305945005)(6246003)(14444005)(6512007)(3846002)(6116002)(14454004)(256004)(31686004)(6306002)(966005)(25786009)(53936002)(7736002)(54906003)(73956011)(99286004)(4326008)(68736007)(71190400001)(110136005)(71200400001)(2906002)(6506007)(6486002)(229853002)(66946007)(31696002)(8936002)(486006)(6436002)(36756003)(316002)(8676002)(26005)(186003)(81166006)(446003)(81156014)(11346002)(102836004)(476003);DIR:OUT;SFP:1102;SCL:1;SRVR:BMXPR01MB2152;H:BMXPR01MB0759.INDPRD01.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: thinci.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 6BatjTHhNq0yobgPj8B2bviGojy5myo8Kb3XofAhiV1LqiofcUKb8+CFJpeekVdXQMqjzObQoztCt7AaJ15DnjowWcTsQqGH/l/2Ha765PQ+1/hKIlflF7gqpqMBCPssmZcNJK3OlaWHg0TNkEB8UTACOV7hTzVfkvdahJ+WVhLCJnIxvUu8pOoRoGls0IzAJQbanFyNQXWxMer0CMFH4ReBMrQUqIRM58xMA2J4qgLxa760CYNs+2bagff9/ER1bEUQSfoFlbJwpsPqpR+mMTkU94cAKAXqmgj7eMK8IsgzROckVRZTi7ygOYsMEZhzr3aQ8jbRnLMNwjbHL37oR2w6ZUM+beADwNtjJ7TfpV2d/JPrH91SIHHYAZKa2IAdeOlrBKWunUgUdIzuFrR3yWHx09GGrRvgF7w3ekWZV28=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <29F7025E3786EA469FB1DB1FCB994053@INDPRD01.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: thinci.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7ecada44-c6b8-4d15-350c-08d6f8a5f54a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jun 2019 13:14:59.0549
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 9d1c3c89-8615-4064-88a7-bb1a8537c779
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: matthew.redfearn@thinci.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BMXPR01MB2152
+X-TMASE-Version: StarCloud-1.3-8.2.1013-24708.007
+X-TMASE-Result: 10--20.898800-4.000000
+X-TMASE-MatchedRID: gjZGo2H/wj/mLzc6AOD8DfHkpkyUphL9FK2R34l7CK1IXJo+eGm+FCvz
+        6n8ktwf/FYJTPqa5nBCugmHX/LLuylrSDeyzIgwoGMURfhQkELLhwsEcDDUFFj8fBHJpFUzVZSz
+        W4l9VtK2Y3nI9nuhyRq+GiaAH1lEUcyn09m+qqw5mPsTq8ee41kupr1fvkyppV4i674aSi3xnkE
+        suGK0jP9ttEvq88DOw0w28kwy4mJ2cQSVlSLHS6gPZZctd3P4BjWP6asaL88U4WKr1PmPdtZJAF
+        oLbeMln8qwX7mwx2576G/rXI1fsLGymsXpN1zOACesU3iPiNCyZ2scyRQcer4oij12xHbPu33pX
+        Y2CsQeJcoXDiEo69o2DjlAC3n4bDc3eYMKyaPyRtawJSSsDgSaLwP+jjbL9KjzQKv3NY6iHZULV
+        BYooo+t52cu5YqzrPri8AYtl46rNhKq67QCdeJv9XRIMLUOjQOHhqIXe4IzYVO5ChMqIWZGNoke
+        yvFnLMrY81Gk+qTQV+NZ4lfSsps4f1OcQR3MIT0gVVXNgaM0pZDL1gLmoa/PoA9r2LThYYKrauX
+        d3MZDUD/dHyT/Xh7Q==
+X-TM-Deliver-Signature: 553B78098EF0E098AD66C6B4C4A54C58
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-
-All platforms have now been switched to the new clocksource driver.
-Remove the old code and various no longer needed bits and pieces.
-
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Reviewed-by: David Lechner <david@lechnology.com>
----
- arch/arm/mach-davinci/Makefile              |   3 +-
- arch/arm/mach-davinci/devices-da8xx.c       |   1 -
- arch/arm/mach-davinci/devices.c             |  19 -
- arch/arm/mach-davinci/include/mach/common.h |  17 -
- arch/arm/mach-davinci/include/mach/time.h   |  33 --
- arch/arm/mach-davinci/time.c                | 400 --------------------
- 6 files changed, 1 insertion(+), 472 deletions(-)
- delete mode 100644 arch/arm/mach-davinci/include/mach/time.h
- delete mode 100644 arch/arm/mach-davinci/time.c
-
-diff --git a/arch/arm/mach-davinci/Makefile b/arch/arm/mach-davinci/Makefile
-index f76a8482784f..d9af8c0c0b87 100644
---- a/arch/arm/mach-davinci/Makefile
-+++ b/arch/arm/mach-davinci/Makefile
-@@ -5,8 +5,7 @@
- #
- 
- # Common objects
--obj-y 					:= time.o serial.o usb.o \
--					   common.o sram.o
-+obj-y 					:= serial.o usb.o common.o sram.o
- 
- obj-$(CONFIG_DAVINCI_MUX)		+= mux.o
- 
-diff --git a/arch/arm/mach-davinci/devices-da8xx.c b/arch/arm/mach-davinci/devices-da8xx.c
-index 2d69e704f7f6..feb206bdf6e1 100644
---- a/arch/arm/mach-davinci/devices-da8xx.c
-+++ b/arch/arm/mach-davinci/devices-da8xx.c
-@@ -21,7 +21,6 @@
- #include <mach/common.h>
- #include <mach/cputype.h>
- #include <mach/da8xx.h>
--#include <mach/time.h>
- 
- #include "asp.h"
- #include "cpuidle.h"
-diff --git a/arch/arm/mach-davinci/devices.c b/arch/arm/mach-davinci/devices.c
-index 3e447d468845..d912d62a0eca 100644
---- a/arch/arm/mach-davinci/devices.c
-+++ b/arch/arm/mach-davinci/devices.c
-@@ -17,7 +17,6 @@
- #include <mach/hardware.h>
- #include <mach/cputype.h>
- #include <mach/mux.h>
--#include <mach/time.h>
- 
- #include "davinci.h"
- #include "irqs.h"
-@@ -303,21 +302,3 @@ int davinci_gpio_register(struct resource *res, int size, void *pdata)
- 	davinci_gpio_device.dev.platform_data = pdata;
- 	return platform_device_register(&davinci_gpio_device);
- }
--
--/*-------------------------------------------------------------------------*/
--
--/*-------------------------------------------------------------------------*/
--
--struct davinci_timer_instance davinci_timer_instance[2] = {
--	{
--		.base		= DAVINCI_TIMER0_BASE,
--		.bottom_irq	= DAVINCI_INTC_IRQ(IRQ_TINT0_TINT12),
--		.top_irq	= DAVINCI_INTC_IRQ(IRQ_TINT0_TINT34),
--	},
--	{
--		.base		= DAVINCI_TIMER1_BASE,
--		.bottom_irq	= DAVINCI_INTC_IRQ(IRQ_TINT1_TINT12),
--		.top_irq	= DAVINCI_INTC_IRQ(IRQ_TINT1_TINT34),
--	},
--};
--
-diff --git a/arch/arm/mach-davinci/include/mach/common.h b/arch/arm/mach-davinci/include/mach/common.h
-index 9526e5da0d33..139b83de011d 100644
---- a/arch/arm/mach-davinci/include/mach/common.h
-+++ b/arch/arm/mach-davinci/include/mach/common.h
-@@ -22,22 +22,6 @@
- #define DAVINCI_INTC_START		NR_IRQS
- #define DAVINCI_INTC_IRQ(_irqnum)	(DAVINCI_INTC_START + (_irqnum))
- 
--void davinci_timer_init(struct clk *clk);
--
--struct davinci_timer_instance {
--	u32		base;
--	u32		bottom_irq;
--	u32		top_irq;
--	unsigned long	cmp_off;
--	unsigned int	cmp_irq;
--};
--
--struct davinci_timer_info {
--	struct davinci_timer_instance	*timers;
--	unsigned int			clockevent_id;
--	unsigned int			clocksource_id;
--};
--
- struct davinci_gpio_controller;
- 
- /*
-@@ -58,7 +42,6 @@ struct davinci_soc_info {
- 	u32				pinmux_base;
- 	const struct mux_config		*pinmux_pins;
- 	unsigned long			pinmux_pins_num;
--	struct davinci_timer_info	*timer_info;
- 	int				gpio_type;
- 	u32				gpio_base;
- 	unsigned			gpio_num;
-diff --git a/arch/arm/mach-davinci/include/mach/time.h b/arch/arm/mach-davinci/include/mach/time.h
-deleted file mode 100644
-index ba913736990f..000000000000
---- a/arch/arm/mach-davinci/include/mach/time.h
-+++ /dev/null
-@@ -1,33 +0,0 @@
--/*
-- * Local header file for DaVinci time code.
-- *
-- * Author: Kevin Hilman, MontaVista Software, Inc. <source@mvista.com>
-- *
-- * 2007 (c) MontaVista Software, Inc. This file is licensed under
-- * the terms of the GNU General Public License version 2. This program
-- * is licensed "as is" without any warranty of any kind, whether express
-- * or implied.
-- */
--#ifndef __ARCH_ARM_MACH_DAVINCI_TIME_H
--#define __ARCH_ARM_MACH_DAVINCI_TIME_H
--
--#define DAVINCI_TIMER1_BASE		(IO_PHYS + 0x21800)
--
--enum {
--	T0_BOT,
--	T0_TOP,
--	T1_BOT,
--	T1_TOP,
--	NUM_TIMERS
--};
--
--#define IS_TIMER1(id)		(id & 0x2)
--#define IS_TIMER0(id)		(!IS_TIMER1(id))
--#define IS_TIMER_TOP(id)	((id & 0x1))
--#define IS_TIMER_BOT(id)	(!IS_TIMER_TOP(id))
--
--#define ID_TO_TIMER(id)		(IS_TIMER1(id) != 0)
--
--extern struct davinci_timer_instance davinci_timer_instance[];
--
--#endif /* __ARCH_ARM_MACH_DAVINCI_TIME_H */
-diff --git a/arch/arm/mach-davinci/time.c b/arch/arm/mach-davinci/time.c
-deleted file mode 100644
-index 740410a3bb6a..000000000000
---- a/arch/arm/mach-davinci/time.c
-+++ /dev/null
-@@ -1,400 +0,0 @@
--/*
-- * DaVinci timer subsystem
-- *
-- * Author: Kevin Hilman, MontaVista Software, Inc. <source@mvista.com>
-- *
-- * 2007 (c) MontaVista Software, Inc. This file is licensed under
-- * the terms of the GNU General Public License version 2. This program
-- * is licensed "as is" without any warranty of any kind, whether express
-- * or implied.
-- */
--#include <linux/kernel.h>
--#include <linux/init.h>
--#include <linux/types.h>
--#include <linux/interrupt.h>
--#include <linux/clocksource.h>
--#include <linux/clockchips.h>
--#include <linux/io.h>
--#include <linux/clk.h>
--#include <linux/err.h>
--#include <linux/of.h>
--#include <linux/platform_device.h>
--#include <linux/sched_clock.h>
--
--#include <asm/mach/irq.h>
--#include <asm/mach/time.h>
--
--#include <mach/cputype.h>
--#include <mach/hardware.h>
--#include <mach/time.h>
--
--static struct clock_event_device clockevent_davinci;
--static unsigned int davinci_clock_tick_rate;
--
--/*
-- * This driver configures the 2 64-bit count-up timers as 4 independent
-- * 32-bit count-up timers used as follows:
-- */
--
--enum {
--	TID_CLOCKEVENT,
--	TID_CLOCKSOURCE,
--};
--
--/* Timer register offsets */
--#define PID12			0x0
--#define TIM12			0x10
--#define TIM34			0x14
--#define PRD12			0x18
--#define PRD34			0x1c
--#define TCR			0x20
--#define TGCR			0x24
--#define WDTCR			0x28
--
--/* Offsets of the 8 compare registers */
--#define	CMP12_0			0x60
--#define	CMP12_1			0x64
--#define	CMP12_2			0x68
--#define	CMP12_3			0x6c
--#define	CMP12_4			0x70
--#define	CMP12_5			0x74
--#define	CMP12_6			0x78
--#define	CMP12_7			0x7c
--
--/* Timer register bitfields */
--#define TCR_ENAMODE_DISABLE          0x0
--#define TCR_ENAMODE_ONESHOT          0x1
--#define TCR_ENAMODE_PERIODIC         0x2
--#define TCR_ENAMODE_MASK             0x3
--
--#define TGCR_TIMMODE_SHIFT           2
--#define TGCR_TIMMODE_64BIT_GP        0x0
--#define TGCR_TIMMODE_32BIT_UNCHAINED 0x1
--#define TGCR_TIMMODE_64BIT_WDOG      0x2
--#define TGCR_TIMMODE_32BIT_CHAINED   0x3
--
--#define TGCR_TIM12RS_SHIFT           0
--#define TGCR_TIM34RS_SHIFT           1
--#define TGCR_RESET                   0x0
--#define TGCR_UNRESET                 0x1
--#define TGCR_RESET_MASK              0x3
--
--struct timer_s {
--	char *name;
--	unsigned int id;
--	unsigned long period;
--	unsigned long opts;
--	unsigned long flags;
--	void __iomem *base;
--	unsigned long tim_off;
--	unsigned long prd_off;
--	unsigned long enamode_shift;
--	struct irqaction irqaction;
--};
--static struct timer_s timers[];
--
--/* values for 'opts' field of struct timer_s */
--#define TIMER_OPTS_DISABLED		0x01
--#define TIMER_OPTS_ONESHOT		0x02
--#define TIMER_OPTS_PERIODIC		0x04
--#define TIMER_OPTS_STATE_MASK		0x07
--
--#define TIMER_OPTS_USE_COMPARE		0x80000000
--#define USING_COMPARE(t)		((t)->opts & TIMER_OPTS_USE_COMPARE)
--
--static char *id_to_name[] = {
--	[T0_BOT]	= "timer0_0",
--	[T0_TOP]	= "timer0_1",
--	[T1_BOT]	= "timer1_0",
--	[T1_TOP]	= "timer1_1",
--};
--
--static int timer32_config(struct timer_s *t)
--{
--	u32 tcr;
--	struct davinci_soc_info *soc_info = &davinci_soc_info;
--
--	if (USING_COMPARE(t)) {
--		struct davinci_timer_instance *dtip =
--				soc_info->timer_info->timers;
--		int event_timer = ID_TO_TIMER(timers[TID_CLOCKEVENT].id);
--
--		/*
--		 * Next interrupt should be the current time reg value plus
--		 * the new period (using 32-bit unsigned addition/wrapping
--		 * to 0 on overflow).  This assumes that the clocksource
--		 * is setup to count to 2^32-1 before wrapping around to 0.
--		 */
--		__raw_writel(__raw_readl(t->base + t->tim_off) + t->period,
--			t->base + dtip[event_timer].cmp_off);
--	} else {
--		tcr = __raw_readl(t->base + TCR);
--
--		/* disable timer */
--		tcr &= ~(TCR_ENAMODE_MASK << t->enamode_shift);
--		__raw_writel(tcr, t->base + TCR);
--
--		/* reset counter to zero, set new period */
--		__raw_writel(0, t->base + t->tim_off);
--		__raw_writel(t->period, t->base + t->prd_off);
--
--		/* Set enable mode */
--		if (t->opts & TIMER_OPTS_ONESHOT)
--			tcr |= TCR_ENAMODE_ONESHOT << t->enamode_shift;
--		else if (t->opts & TIMER_OPTS_PERIODIC)
--			tcr |= TCR_ENAMODE_PERIODIC << t->enamode_shift;
--
--		__raw_writel(tcr, t->base + TCR);
--	}
--	return 0;
--}
--
--static inline u32 timer32_read(struct timer_s *t)
--{
--	return __raw_readl(t->base + t->tim_off);
--}
--
--static irqreturn_t timer_interrupt(int irq, void *dev_id)
--{
--	struct clock_event_device *evt = &clockevent_davinci;
--
--	evt->event_handler(evt);
--	return IRQ_HANDLED;
--}
--
--/* called when 32-bit counter wraps */
--static irqreturn_t freerun_interrupt(int irq, void *dev_id)
--{
--	return IRQ_HANDLED;
--}
--
--static struct timer_s timers[] = {
--	[TID_CLOCKEVENT] = {
--		.name      = "clockevent",
--		.opts      = TIMER_OPTS_DISABLED,
--		.irqaction = {
--			.flags   = IRQF_TIMER,
--			.handler = timer_interrupt,
--		}
--	},
--	[TID_CLOCKSOURCE] = {
--		.name       = "free-run counter",
--		.period     = ~0,
--		.opts       = TIMER_OPTS_PERIODIC,
--		.irqaction = {
--			.flags   = IRQF_TIMER,
--			.handler = freerun_interrupt,
--		}
--	},
--};
--
--static void __init timer_init(void)
--{
--	struct davinci_soc_info *soc_info = &davinci_soc_info;
--	struct davinci_timer_instance *dtip = soc_info->timer_info->timers;
--	void __iomem *base[2];
--	int i;
--
--	/* Global init of each 64-bit timer as a whole */
--	for(i=0; i<2; i++) {
--		u32 tgcr;
--
--		base[i] = ioremap(dtip[i].base, SZ_4K);
--		if (WARN_ON(!base[i]))
--			continue;
--
--		/* Disabled, Internal clock source */
--		__raw_writel(0, base[i] + TCR);
--
--		/* reset both timers, no pre-scaler for timer34 */
--		tgcr = 0;
--		__raw_writel(tgcr, base[i] + TGCR);
--
--		/* Set both timers to unchained 32-bit */
--		tgcr = TGCR_TIMMODE_32BIT_UNCHAINED << TGCR_TIMMODE_SHIFT;
--		__raw_writel(tgcr, base[i] + TGCR);
--
--		/* Unreset timers */
--		tgcr |= (TGCR_UNRESET << TGCR_TIM12RS_SHIFT) |
--			(TGCR_UNRESET << TGCR_TIM34RS_SHIFT);
--		__raw_writel(tgcr, base[i] + TGCR);
--
--		/* Init both counters to zero */
--		__raw_writel(0, base[i] + TIM12);
--		__raw_writel(0, base[i] + TIM34);
--	}
--
--	/* Init of each timer as a 32-bit timer */
--	for (i=0; i< ARRAY_SIZE(timers); i++) {
--		struct timer_s *t = &timers[i];
--		int timer = ID_TO_TIMER(t->id);
--		u32 irq;
--
--		t->base = base[timer];
--		if (!t->base)
--			continue;
--
--		if (IS_TIMER_BOT(t->id)) {
--			t->enamode_shift = 6;
--			t->tim_off = TIM12;
--			t->prd_off = PRD12;
--			irq = dtip[timer].bottom_irq;
--		} else {
--			t->enamode_shift = 22;
--			t->tim_off = TIM34;
--			t->prd_off = PRD34;
--			irq = dtip[timer].top_irq;
--		}
--
--		/* Register interrupt */
--		t->irqaction.name = t->name;
--		t->irqaction.dev_id = (void *)t;
--
--		if (t->irqaction.handler != NULL) {
--			irq = USING_COMPARE(t) ? dtip[i].cmp_irq : irq;
--			setup_irq(irq, &t->irqaction);
--		}
--	}
--}
--
--/*
-- * clocksource
-- */
--static u64 read_cycles(struct clocksource *cs)
--{
--	struct timer_s *t = &timers[TID_CLOCKSOURCE];
--
--	return (cycles_t)timer32_read(t);
--}
--
--static struct clocksource clocksource_davinci = {
--	.rating		= 300,
--	.read		= read_cycles,
--	.mask		= CLOCKSOURCE_MASK(32),
--	.flags		= CLOCK_SOURCE_IS_CONTINUOUS,
--};
--
--/*
-- * Overwrite weak default sched_clock with something more precise
-- */
--static u64 notrace davinci_read_sched_clock(void)
--{
--	return timer32_read(&timers[TID_CLOCKSOURCE]);
--}
--
--/*
-- * clockevent
-- */
--static int davinci_set_next_event(unsigned long cycles,
--				  struct clock_event_device *evt)
--{
--	struct timer_s *t = &timers[TID_CLOCKEVENT];
--
--	t->period = cycles;
--	timer32_config(t);
--	return 0;
--}
--
--static int davinci_shutdown(struct clock_event_device *evt)
--{
--	struct timer_s *t = &timers[TID_CLOCKEVENT];
--
--	t->opts &= ~TIMER_OPTS_STATE_MASK;
--	t->opts |= TIMER_OPTS_DISABLED;
--	return 0;
--}
--
--static int davinci_set_oneshot(struct clock_event_device *evt)
--{
--	struct timer_s *t = &timers[TID_CLOCKEVENT];
--
--	t->opts &= ~TIMER_OPTS_STATE_MASK;
--	t->opts |= TIMER_OPTS_ONESHOT;
--	return 0;
--}
--
--static int davinci_set_periodic(struct clock_event_device *evt)
--{
--	struct timer_s *t = &timers[TID_CLOCKEVENT];
--
--	t->period = davinci_clock_tick_rate / (HZ);
--	t->opts &= ~TIMER_OPTS_STATE_MASK;
--	t->opts |= TIMER_OPTS_PERIODIC;
--	timer32_config(t);
--	return 0;
--}
--
--static struct clock_event_device clockevent_davinci = {
--	.features		= CLOCK_EVT_FEAT_PERIODIC |
--				  CLOCK_EVT_FEAT_ONESHOT,
--	.set_next_event		= davinci_set_next_event,
--	.set_state_shutdown	= davinci_shutdown,
--	.set_state_periodic	= davinci_set_periodic,
--	.set_state_oneshot	= davinci_set_oneshot,
--};
--
--void __init davinci_timer_init(struct clk *timer_clk)
--{
--	struct davinci_soc_info *soc_info = &davinci_soc_info;
--	unsigned int clockevent_id;
--	unsigned int clocksource_id;
--	int i;
--
--	clockevent_id = soc_info->timer_info->clockevent_id;
--	clocksource_id = soc_info->timer_info->clocksource_id;
--
--	timers[TID_CLOCKEVENT].id = clockevent_id;
--	timers[TID_CLOCKSOURCE].id = clocksource_id;
--
--	/*
--	 * If using same timer for both clock events & clocksource,
--	 * a compare register must be used to generate an event interrupt.
--	 * This is equivalent to a oneshot timer only (not periodic).
--	 */
--	if (clockevent_id == clocksource_id) {
--		struct davinci_timer_instance *dtip =
--				soc_info->timer_info->timers;
--		int event_timer = ID_TO_TIMER(clockevent_id);
--
--		/* Only bottom timers can use compare regs */
--		if (IS_TIMER_TOP(clockevent_id))
--			pr_warn("%s: Invalid use of system timers.  Results unpredictable.\n",
--				__func__);
--		else if ((dtip[event_timer].cmp_off == 0)
--				|| (dtip[event_timer].cmp_irq == 0))
--			pr_warn("%s: Invalid timer instance setup.  Results unpredictable.\n",
--				__func__);
--		else {
--			timers[TID_CLOCKEVENT].opts |= TIMER_OPTS_USE_COMPARE;
--			clockevent_davinci.features = CLOCK_EVT_FEAT_ONESHOT;
--		}
--	}
--
--	BUG_ON(IS_ERR(timer_clk));
--	clk_prepare_enable(timer_clk);
--
--	/* init timer hw */
--	timer_init();
--
--	davinci_clock_tick_rate = clk_get_rate(timer_clk);
--
--	/* setup clocksource */
--	clocksource_davinci.name = id_to_name[clocksource_id];
--	if (clocksource_register_hz(&clocksource_davinci,
--				    davinci_clock_tick_rate))
--		pr_err("%s: can't register clocksource!\n",
--		       clocksource_davinci.name);
--
--	sched_clock_register(davinci_read_sched_clock, 32,
--			  davinci_clock_tick_rate);
--
--	/* setup clockevent */
--	clockevent_davinci.name = id_to_name[timers[TID_CLOCKEVENT].id];
--
--	clockevent_davinci.cpumask = cpumask_of(0);
--	clockevents_config_and_register(&clockevent_davinci,
--					davinci_clock_tick_rate, 1, 0xfffffffe);
--
--	for (i=0; i< ARRAY_SIZE(timers); i++)
--		timer32_config(&timers[i]);
--}
--- 
-2.21.0
-
+DQoNCk9uIDI0LzA2LzIwMTkgMTI6NDQsIEFuZHJ6ZWogSGFqZGEgd3JvdGU6DQo+IE9uIDI0LjA2
+LjIwMTkgMTM6MDIsIE1hdHQgUmVkZmVhcm4gd3JvdGU6DQo+PiBIaSwNCj4+IEFueXRoaW5nIHN0
+b3BwaW5nIHRoaXMgYmVpbmcgYXBwbGllZD8NCj4gDQo+IA0KPiBRdWV1ZWQgdG8gZHJtLW1pc2Mt
+bmV4dC4NCg0KVGhhbmtzIEFuZHJ6ZWohDQoNCj4gDQo+IC0tDQo+IFJlZ2FyZHMNCj4gQW5kcnpl
+ag0KPiANCj4gDQo+Pg0KPj4gVGhhbmtzLA0KPj4gTWF0dA0KPj4NCj4+IE9uIDAzLzA1LzIwMTkg
+MTY6MzIsIFBoaWxpcHBlIENPUk5VIHdyb3RlOg0KPj4+IEhpIE1hdHQsDQo+Pj4gYW5kIG1hbnkg
+dGhhbmtzIGZvciB0aGUgcGF0Y2guDQo+Pj4NCj4+PiBUZXN0ZWQgc3VjY2Vzc2Z1bGx5IGJ5IFlh
+bm5pY2sgb24gU1RNMzJNUDEgYm9hcmRzIDotKQ0KPj4+DQo+Pj4gVGVzdGVkLWJ5OiBZYW5uaWNr
+IEZlcnRyw6kgPHlhbm5pY2suZmVydHJlQHN0LmNvbT4NCj4+PiBSZXZpZXdlZC1ieTogUGhpbGlw
+cGUgQ29ybnUgPHBoaWxpcHBlLmNvcm51QHN0LmNvbT4NCj4+Pg0KPj4+IFRoYW5rIHlvdSwNCj4+
+PiBQaGlsaXBwZSA6LSkNCj4+Pg0KPj4+DQo+Pj4gT24gNC8zMC8xOSAxMDoxNyBBTSwgTWF0dCBS
+ZWRmZWFybiB3cm90ZToNCj4+Pj4gVGhlIFN5bm9wc3lzIE1JUEkgRFNJIElQIGNvbnRhaW5zIGEg
+dmlkZW8gdGVzdCBwYXR0ZXJuIGdlbmVyYXRvciB3aGljaA0KPj4+PiBpcyBoZWxwZnVsIGluIGRl
+YnVnZ2luZyB2aWRlbyB0aW1pbmcgd2l0aCBjb25uZWN0ZWQgZGlzcGxheXMuDQo+Pj4+IEFkZCBh
+IGRlYnVnZnMgZGlyZWN0b3J5IGNvbnRhaW5pbmcgZmlsZXMgd2hpY2ggYWxsb3cgdGhlIFZQRyB0
+byBiZQ0KPj4+PiBlbmFibGVkIGFuZCBkaXNhYmxlZCwgYW5kIGl0cyBvcmllbnRhdGlvbiB0byBi
+ZSBjaGFuZ2VkLg0KPj4+Pg0KPj4+PiBTaWduZWQtb2ZmLWJ5OiBNYXR0IFJlZGZlYXJuIDxtYXR0
+LnJlZGZlYXJuQHRoaW5jaS5jb20+DQo+Pj4+DQo+Pj4+IC0tLQ0KPj4+Pg0KPj4+PiBDaGFuZ2Vz
+IGluIHYyOg0KPj4+PiAtIEVuc3VyZSBkd19taXBpX2RzaV92aWRlb19tb2RlX2NvbmZpZygpIGRv
+ZXNuJ3QgYnJlYWsgd2l0aG91dCBDT05GSUdfREVCVUdfRlMNCj4+Pj4gLSBUaWR5IHVwIGluaXRp
+YWxpc2F0aW9uIC8gdGlkeSB1cCBvZiBkZWJ1Z2ZzDQo+Pj4+DQo+Pj4+ICAgICBkcml2ZXJzL2dw
+dS9kcm0vYnJpZGdlL3N5bm9wc3lzL2R3LW1pcGktZHNpLmMgfCA0NyArKysrKysrKysrKysrKysr
+KysrDQo+Pj4+ICAgICAxIGZpbGUgY2hhbmdlZCwgNDcgaW5zZXJ0aW9ucygrKQ0KPj4+Pg0KPj4+
+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9zeW5vcHN5cy9kdy1taXBpLWRz
+aS5jIGIvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9zeW5vcHN5cy9kdy1taXBpLWRzaS5jDQo+Pj4+
+IGluZGV4IDBlZTQ0MDIxNmI4Li5iZmZlZWY3YTZjYyAxMDA2NDQNCj4+Pj4gLS0tIGEvZHJpdmVy
+cy9ncHUvZHJtL2JyaWRnZS9zeW5vcHN5cy9kdy1taXBpLWRzaS5jDQo+Pj4+ICsrKyBiL2RyaXZl
+cnMvZ3B1L2RybS9icmlkZ2Uvc3lub3BzeXMvZHctbWlwaS1kc2kuYw0KPj4+PiBAQCAtMTAsNiAr
+MTAsNyBAQA0KPj4+PiAgICAgDQo+Pj4+ICAgICAjaW5jbHVkZSA8bGludXgvY2xrLmg+DQo+Pj4+
+ICAgICAjaW5jbHVkZSA8bGludXgvY29tcG9uZW50Lmg+DQo+Pj4+ICsjaW5jbHVkZSA8bGludXgv
+ZGVidWdmcy5oPg0KPj4+PiAgICAgI2luY2x1ZGUgPGxpbnV4L2lvcG9sbC5oPg0KPj4+PiAgICAg
+I2luY2x1ZGUgPGxpbnV4L21vZHVsZS5oPg0KPj4+PiAgICAgI2luY2x1ZGUgPGxpbnV4L29mX2Rl
+dmljZS5oPg0KPj4+PiBAQCAtODYsNiArODcsOCBAQA0KPj4+PiAgICAgI2RlZmluZSBWSURfTU9E
+RV9UWVBFX05PTl9CVVJTVF9TWU5DX0VWRU5UUwkweDENCj4+Pj4gICAgICNkZWZpbmUgVklEX01P
+REVfVFlQRV9CVVJTVAkJCTB4Mg0KPj4+PiAgICAgI2RlZmluZSBWSURfTU9ERV9UWVBFX01BU0sJ
+CQkweDMNCj4+Pj4gKyNkZWZpbmUgVklEX01PREVfVlBHX0VOQUJMRQkJQklUKDE2KQ0KPj4+PiAr
+I2RlZmluZSBWSURfTU9ERV9WUEdfSE9SSVpPTlRBTAkJQklUKDI0KQ0KPj4+PiAgICAgDQo+Pj4+
+ICAgICAjZGVmaW5lIERTSV9WSURfUEtUX1NJWkUJCTB4M2MNCj4+Pj4gICAgICNkZWZpbmUgVklE
+X1BLVF9TSVpFKHApCQkJKChwKSAmIDB4M2ZmZikNCj4+Pj4gQEAgLTIzNCw2ICsyMzcsMTMgQEAg
+c3RydWN0IGR3X21pcGlfZHNpIHsNCj4+Pj4gICAgIAl1MzIgZm9ybWF0Ow0KPj4+PiAgICAgCXVu
+c2lnbmVkIGxvbmcgbW9kZV9mbGFnczsNCj4+Pj4gICAgIA0KPj4+PiArI2lmZGVmIENPTkZJR19E
+RUJVR19GUw0KPj4+PiArCXN0cnVjdCBkZW50cnkgKmRlYnVnZnM7DQo+Pj4+ICsNCj4+Pj4gKwli
+b29sIHZwZzsNCj4+Pj4gKwlib29sIHZwZ19ob3Jpem9udGFsOw0KPj4+PiArI2VuZGlmIC8qIENP
+TkZJR19ERUJVR19GUyAqLw0KPj4+PiArDQo+Pj4+ICAgICAJc3RydWN0IGR3X21pcGlfZHNpICpt
+YXN0ZXI7IC8qIGR1YWwtZHNpIG1hc3RlciBwdHIgKi8NCj4+Pj4gICAgIAlzdHJ1Y3QgZHdfbWlw
+aV9kc2kgKnNsYXZlOyAvKiBkdWFsLWRzaSBzbGF2ZSBwdHIgKi8NCj4+Pj4gICAgIA0KPj4+PiBA
+QCAtNTI1LDYgKzUzNSwxMyBAQCBzdGF0aWMgdm9pZCBkd19taXBpX2RzaV92aWRlb19tb2RlX2Nv
+bmZpZyhzdHJ1Y3QgZHdfbWlwaV9kc2kgKmRzaSkNCj4+Pj4gICAgIAllbHNlDQo+Pj4+ICAgICAJ
+CXZhbCB8PSBWSURfTU9ERV9UWVBFX05PTl9CVVJTVF9TWU5DX0VWRU5UUzsNCj4+Pj4gICAgIA0K
+Pj4+PiArI2lmZGVmIENPTkZJR19ERUJVR19GUw0KPj4+PiArCWlmIChkc2ktPnZwZykgew0KPj4+
+PiArCQl2YWwgfD0gVklEX01PREVfVlBHX0VOQUJMRTsNCj4+Pj4gKwkJdmFsIHw9IGRzaS0+dnBn
+X2hvcml6b250YWwgPyBWSURfTU9ERV9WUEdfSE9SSVpPTlRBTCA6IDA7DQo+Pj4+ICsJfQ0KPj4+
+PiArI2VuZGlmIC8qIENPTkZJR19ERUJVR19GUyAqLw0KPj4+PiArDQo+Pj4+ICAgICAJZHNpX3dy
+aXRlKGRzaSwgRFNJX1ZJRF9NT0RFX0NGRywgdmFsKTsNCj4+Pj4gICAgIH0NCj4+Pj4gICAgIA0K
+Pj4+PiBAQCAtOTM1LDYgKzk1MiwzMyBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IGRybV9icmlkZ2Vf
+ZnVuY3MgZHdfbWlwaV9kc2lfYnJpZGdlX2Z1bmNzID0gew0KPj4+PiAgICAgCS5hdHRhY2gJICAg
+ICAgPSBkd19taXBpX2RzaV9icmlkZ2VfYXR0YWNoLA0KPj4+PiAgICAgfTsNCj4+Pj4gICAgIA0K
+Pj4+PiArI2lmZGVmIENPTkZJR19ERUJVR19GUw0KPj4+PiArDQo+Pj4+ICtzdGF0aWMgdm9pZCBk
+d19taXBpX2RzaV9kZWJ1Z2ZzX2luaXQoc3RydWN0IGR3X21pcGlfZHNpICpkc2kpDQo+Pj4+ICt7
+DQo+Pj4+ICsJZHNpLT5kZWJ1Z2ZzID0gZGVidWdmc19jcmVhdGVfZGlyKGRldl9uYW1lKGRzaS0+
+ZGV2KSwgTlVMTCk7DQo+Pj4+ICsJaWYgKElTX0VSUihkc2ktPmRlYnVnZnMpKSB7DQo+Pj4+ICsJ
+CWRldl9lcnIoZHNpLT5kZXYsICJmYWlsZWQgdG8gY3JlYXRlIGRlYnVnZnMgcm9vdFxuIik7DQo+
+Pj4+ICsJCXJldHVybjsNCj4+Pj4gKwl9DQo+Pj4+ICsNCj4+Pj4gKwlkZWJ1Z2ZzX2NyZWF0ZV9i
+b29sKCJ2cGciLCAwNjYwLCBkc2ktPmRlYnVnZnMsICZkc2ktPnZwZyk7DQo+Pj4+ICsJZGVidWdm
+c19jcmVhdGVfYm9vbCgidnBnX2hvcml6b250YWwiLCAwNjYwLCBkc2ktPmRlYnVnZnMsDQo+Pj4+
+ICsJCQkgICAgJmRzaS0+dnBnX2hvcml6b250YWwpOw0KPj4+PiArfQ0KPj4+PiArDQo+Pj4+ICtz
+dGF0aWMgdm9pZCBkd19taXBpX2RzaV9kZWJ1Z2ZzX3JlbW92ZShzdHJ1Y3QgZHdfbWlwaV9kc2kg
+KmRzaSkNCj4+Pj4gK3sNCj4+Pj4gKwlkZWJ1Z2ZzX3JlbW92ZV9yZWN1cnNpdmUoZHNpLT5kZWJ1
+Z2ZzKTsNCj4+Pj4gK30NCj4+Pj4gKw0KPj4+PiArI2Vsc2UNCj4+Pj4gKw0KPj4+PiArc3RhdGlj
+IHZvaWQgZHdfbWlwaV9kc2lfZGVidWdmc19pbml0KHN0cnVjdCBkd19taXBpX2RzaSAqZHNpKSB7
+IH0NCj4+Pj4gK3N0YXRpYyB2b2lkIGR3X21pcGlfZHNpX2RlYnVnZnNfcmVtb3ZlKHN0cnVjdCBk
+d19taXBpX2RzaSAqZHNpKSB7IH0NCj4+Pj4gKw0KPj4+PiArI2VuZGlmIC8qIENPTkZJR19ERUJV
+R19GUyAqLw0KPj4+PiArDQo+Pj4+ICAgICBzdGF0aWMgc3RydWN0IGR3X21pcGlfZHNpICoNCj4+
+Pj4gICAgIF9fZHdfbWlwaV9kc2lfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldiwN
+Cj4+Pj4gICAgIAkJICAgIGNvbnN0IHN0cnVjdCBkd19taXBpX2RzaV9wbGF0X2RhdGEgKnBsYXRf
+ZGF0YSkNCj4+Pj4gQEAgLTEwMDUsNiArMTA0OSw3IEBAIF9fZHdfbWlwaV9kc2lfcHJvYmUoc3Ry
+dWN0IHBsYXRmb3JtX2RldmljZSAqcGRldiwNCj4+Pj4gICAgIAkJY2xrX2Rpc2FibGVfdW5wcmVw
+YXJlKGRzaS0+cGNsayk7DQo+Pj4+ICAgICAJfQ0KPj4+PiAgICAgDQo+Pj4+ICsJZHdfbWlwaV9k
+c2lfZGVidWdmc19pbml0KGRzaSk7DQo+Pj4+ICAgICAJcG1fcnVudGltZV9lbmFibGUoZGV2KTsN
+Cj4+Pj4gICAgIA0KPj4+PiAgICAgCWRzaS0+ZHNpX2hvc3Qub3BzID0gJmR3X21pcGlfZHNpX2hv
+c3Rfb3BzOw0KPj4+PiBAQCAtMTAxMiw2ICsxMDU3LDcgQEAgX19kd19taXBpX2RzaV9wcm9iZShz
+dHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2LA0KPj4+PiAgICAgCXJldCA9IG1pcGlfZHNpX2hv
+c3RfcmVnaXN0ZXIoJmRzaS0+ZHNpX2hvc3QpOw0KPj4+PiAgICAgCWlmIChyZXQpIHsNCj4+Pj4g
+ICAgIAkJZGV2X2VycihkZXYsICJGYWlsZWQgdG8gcmVnaXN0ZXIgTUlQSSBob3N0OiAlZFxuIiwg
+cmV0KTsNCj4+Pj4gKwkJZHdfbWlwaV9kc2lfZGVidWdmc19yZW1vdmUoZHNpKTsNCj4+Pj4gICAg
+IAkJcmV0dXJuIEVSUl9QVFIocmV0KTsNCj4+Pj4gICAgIAl9DQo+Pj4+ICAgICANCj4+Pj4gQEAg
+LTEwMjksNiArMTA3NSw3IEBAIHN0YXRpYyB2b2lkIF9fZHdfbWlwaV9kc2lfcmVtb3ZlKHN0cnVj
+dCBkd19taXBpX2RzaSAqZHNpKQ0KPj4+PiAgICAgCW1pcGlfZHNpX2hvc3RfdW5yZWdpc3Rlcigm
+ZHNpLT5kc2lfaG9zdCk7DQo+Pj4+ICAgICANCj4+Pj4gICAgIAlwbV9ydW50aW1lX2Rpc2FibGUo
+ZHNpLT5kZXYpOw0KPj4+PiArCWR3X21pcGlfZHNpX2RlYnVnZnNfcmVtb3ZlKGRzaSk7DQo+Pj4+
+ICAgICB9DQo+Pj4+ICAgICANCj4+Pj4gICAgIHZvaWQgZHdfbWlwaV9kc2lfc2V0X3NsYXZlKHN0
+cnVjdCBkd19taXBpX2RzaSAqZHNpLCBzdHJ1Y3QgZHdfbWlwaV9kc2kgKnNsYXZlKQ0KPj4+Pg0K
+Pj4+IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fDQo+Pj4g
+ZHJpLWRldmVsIG1haWxpbmcgbGlzdA0KPj4+IGRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5v
+cmcNCj4+PiBodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Ry
+aS1kZXZlbA0KPj4+DQo+IA0K
