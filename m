@@ -2,274 +2,268 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E84A51B41
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 21:13:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E3A2C51B50
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 21:18:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730233AbfFXTNl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 15:13:41 -0400
-Received: from eddie.linux-mips.org ([148.251.95.138]:43528 "EHLO
-        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725881AbfFXTNk (ORCPT
+        id S1730375AbfFXTSe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 15:18:34 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:39034 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729083AbfFXTSd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 15:13:40 -0400
-Received: (from localhost user: 'macro', uid#1010) by eddie.linux-mips.org
-        with ESMTP id S23992973AbfFXTNhSGk7y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org> + 1 other);
-        Mon, 24 Jun 2019 21:13:37 +0200
-Date:   Mon, 24 Jun 2019 20:13:37 +0100 (BST)
-From:   "Maciej W. Rozycki" <macro@linux-mips.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-cc:     Paul Burton <paul.burton@mips.com>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        Serge Semin <Sergey.Semin@t-platforms.ru>,
-        "Vadim V . Vlasov" <vadim.vlasov@t-platforms.ru>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        David Howells <dhowells@redhat.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Mikulas Patocka <mpatocka@redhat.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mips: Remove q-accessors from non-64bit platforms
-In-Reply-To: <CAK8P3a0Vw-DPjRxsOKiqQmACztdKW5Drkdza8eb6yeEkjdsxoQ@mail.gmail.com>
-Message-ID: <alpine.LFD.2.21.1906241822460.28103@eddie.linux-mips.org>
-References: <20190614063341.1672-1-fancer.lancer@gmail.com> <20190620174002.tgayzon7dc5d57fh@pburton-laptop> <alpine.LFD.2.21.1906201851580.21654@eddie.linux-mips.org> <CAK8P3a28Dp3UygNyomDPDxDmCmey37VS7TJkmDogaKUGZMF2mw@mail.gmail.com>
- <alpine.LFD.2.21.1906211048360.21654@eddie.linux-mips.org> <CAK8P3a3HWn7RXjcT0KA_qOc+C1SgWd2qXSdCTTAmRKHdc4qNbQ@mail.gmail.com> <alpine.LFD.2.21.1906211230170.21654@eddie.linux-mips.org> <CAK8P3a0Vw-DPjRxsOKiqQmACztdKW5Drkdza8eb6yeEkjdsxoQ@mail.gmail.com>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+        Mon, 24 Jun 2019 15:18:33 -0400
+Received: by mail-ed1-f66.google.com with SMTP id m10so23319862edv.6;
+        Mon, 24 Jun 2019 12:18:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=C9sRjC6IIlagaAVZD2kVDVV7i0f7sEn0BfaZNFyhvmc=;
+        b=uzCwP7P2kDwXURnwxaxRt5tfLVjI/gECIOS6C8f0BuX21vytuhwhTLimOZwyNPdoiA
+         ZQ2Z0rMOjW/uFwePL6Wa5o2OyDyKjgmrnQ0Z04wDzYXugRBrLDhlsds7ILVV0PXdOeBd
+         7bBZjKW+wrDk0nUq2DXCnOrZvWyDikWLGtqORIEMpWeQObauS/PUhutqlLtEsdXR13/b
+         nUyWR57whY5bzzgCw3R+DO15MamH4aD8vhniZ840sRYC6eKkGkEfCziezFpIRldZoBav
+         eV5aGlsvqOYn8tVvUkMemo5W83uSejgyy1a9TZErK+DMBh7YA9XmRYZWJZ58hFG7dFDp
+         5k7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=C9sRjC6IIlagaAVZD2kVDVV7i0f7sEn0BfaZNFyhvmc=;
+        b=Cvbsl/09hl2yNw5NAvJQJjr2Wec5w2R1vyN9QcARxit7wb6jenXoh4yXIpq9R6OWpF
+         tcL95TjUoC5lRynznfqsFwOMlTWWHh2gSvtIJ914augFC35+Lzrv5/gbOmoOS3k1hwHP
+         9LBY7EBVBImTu0E0N+pyZgg58JkVfMslgzSXV56nDmO17ZM55YWUZbn153xxpgElkxMR
+         ec78xTHqp3z5O124DLeab6eWMzybU/rYESd/26FZ38miUDQZ5SjKyCCEfzzarsk6kIcg
+         y460jaEFrfHgbtJ5In3Td3yEIbr9gJcAVSwjf5TqU/50oUk82OzjINPTwbzvuM0jU7n3
+         4+fA==
+X-Gm-Message-State: APjAAAXYivNJzIB3YvLqDyhqewh84VPfDG1XdU/h+O1RG2ORsekfyW9O
+        zewEKTpdWAEcmoAJ3ShkjsSc7RHoQSTiP002
+X-Google-Smtp-Source: APXvYqwXzRpmw6V59pi9nBzKm5YkRtz37+uw5Sl1NIYyjWcwNJeG8tX8VtxO6Q0Q5r/bf0NwYO6h4Q==
+X-Received: by 2002:a05:6402:14d4:: with SMTP id f20mr55248215edx.125.1561403911100;
+        Mon, 24 Jun 2019 12:18:31 -0700 (PDT)
+Received: from [192.168.1.221] ([195.245.55.52])
+        by smtp.gmail.com with ESMTPSA id p3sm4122916eda.43.2019.06.24.12.18.28
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Mon, 24 Jun 2019 12:18:30 -0700 (PDT)
+Subject: Re: [PATCH V2 03/15] ARM: ep93xx: cleanup cppcheck shifting errors
+To:     Phong Tran <tranmanphong@gmail.com>
+Cc:     acme@kernel.org, alexander.shishkin@linux.intel.com,
+        allison@lohutok.net, andrew@lunn.ch, ast@kernel.org,
+        bgolaszewski@baylibre.com, bpf@vger.kernel.org,
+        daniel@iogearbox.net, daniel@zonque.org, dmg@turingmachine.org,
+        festevam@gmail.com, gerg@uclinux.org, gregkh@linuxfoundation.org,
+        gregory.clement@bootlin.com, haojian.zhuang@gmail.com,
+        hsweeten@visionengravers.com, illusionist.neo@gmail.com,
+        info@metux.net, jason@lakedaemon.net, jolsa@redhat.com,
+        kafai@fb.com, kernel@pengutronix.de, kgene@kernel.org,
+        krzk@kernel.org, kstewart@linuxfoundation.org,
+        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux@armlinux.org.uk,
+        liviu.dudau@arm.com, lkundrak@v3.sk, lorenzo.pieralisi@arm.com,
+        mark.rutland@arm.com, mingo@redhat.com, namhyung@kernel.org,
+        netdev@vger.kernel.org, nsekhar@ti.com, peterz@infradead.org,
+        robert.jarzmik@free.fr, s.hauer@pengutronix.de,
+        sebastian.hesselbarth@gmail.com, shawnguo@kernel.org,
+        songliubraving@fb.com, sudeep.holla@arm.com, swinslow@gmail.com,
+        tglx@linutronix.de, tony@atomide.com, will@kernel.org, yhs@fb.com
+References: <20190623151313.970-1-tranmanphong@gmail.com>
+ <20190624135105.15579-1-tranmanphong@gmail.com>
+ <20190624135105.15579-4-tranmanphong@gmail.com>
+From:   Alexander Sverdlin <alexander.sverdlin@gmail.com>
+Message-ID: <9d21b4dc-4855-b203-bc31-903591d3bb0d@gmail.com>
+Date:   Mon, 24 Jun 2019 21:16:47 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20190624135105.15579-4-tranmanphong@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Arnd,
+Hi!
 
- We're getting into MMIO and barriers again, sigh.  Cc-ing people recently 
-involved then.
+On 24/06/2019 15:50, Phong Tran wrote:
+> [arch/arm/mach-ep93xx/clock.c:102]: (error) Shifting signed 32-bit value
+> by 31 bits is undefined behaviour
+> [arch/arm/mach-ep93xx/clock.c:132]: (error) Shifting signed 32-bit value
+> by 31 bits is undefined behaviour
+> [arch/arm/mach-ep93xx/clock.c:140]: (error) Shifting signed 32-bit value
+> by 31 bits is undefined behaviour
+> [arch/arm/mach-ep93xx/core.c:1001]: (error) Shifting signed 32-bit value
+> by 31 bits is undefined behaviour
+> [arch/arm/mach-ep93xx/core.c:1002]: (error) Shifting signed 32-bit value
+> by 31 bits is undefined behaviour
 
-On Fri, 21 Jun 2019, Arnd Bergmann wrote:
+Acked-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
 
-> > > > > The other property of packet memory and similar things is that you
-> > > > > basically want memcpy()-behavior with no byteswaps. This is one
-> > > > > of the few cases in which __raw_readq() is actually the right accessor
-> > > > > in (mostly) portable code.
-> > > >
-> > > >  Correct, but we're missing an `__raw_readq_relaxed', etc. interface and
-> > > > having additional barriers applied on every access would hit performance
-> > > > very badly;
-> > >
-> > > How so? __raw_readq() by definition has the least barriers of
-> > > all, you can't make it more relaxed than it already is.
-> >
-> >  Well, `__raw_readq' has all the barriers plain `readq' has except it does
-> > not ever do byte-swapping (which may be bad where address swizzling is
-> > also present).  Whereas `readq_relaxed' at least avoids the trailing DMA
-> > barrier.
-> >
-> >  This is what the MIPS version has:
-> >
-> > #define __BUILD_MEMORY_SINGLE(pfx, bwlq, type, barrier, relax, irq)     \
-> > [...]
-> >
-> > #define __BUILD_MEMORY_PFX(bus, bwlq, type, relax)                      \
-> >                                                                         \
-> > __BUILD_MEMORY_SINGLE(bus, bwlq, type, 1, relax, 1)
-> >
-> > #define BUILDIO_MEM(bwlq, type)                                         \
-> >                                                                         \
-> > __BUILD_MEMORY_PFX(__raw_, bwlq, type, 0)                               \
-> > __BUILD_MEMORY_PFX(__relaxed_, bwlq, type, 1)                           \
-> > __BUILD_MEMORY_PFX(__mem_, bwlq, type, 0)                               \
-> > __BUILD_MEMORY_PFX(, bwlq, type, 0)
-> >
-> > So `barrier' is always passed 1 and consequently all the accessors have a
-> > leading MMIO ordering barrier inserted and only `__relaxed_*' ones have
-> > `relax' set to 0 making them skip the trailing MMIO read vs DMA ordering
-> > barrier.  This is in accordance to Documentation/memory-barriers.txt I
-> > believe.
+> Signed-off-by: Phong Tran <tranmanphong@gmail.com>
+> ---
+>  arch/arm/mach-ep93xx/soc.h | 132 ++++++++++++++++++++++-----------------------
+>  1 file changed, 66 insertions(+), 66 deletions(-)
 > 
-> It is definitely not what other architectures do here. In particular, the
-> asm-generic implementation that is now used on most of them
-> defines raw_readl() as
-> 
-> static inline u32 __raw_readl(const volatile void __iomem *addr)
-> {
->         return *(const volatile u32 __force *)addr;
-> }
-> 
-> and there are a number of drivers that depend on this behavior.
-> readl_relaxed() typically adds the byteswap on this, and readl() adds
-> the barriers on top of readl_relaxed().
-
- If the lack of any ordering barriers with `__raw_*' accessors is indeed 
-intended, then we need to document it in `memory-barriers.txt' as the 
-expected semantics.
-
- This however does not make the interface suitable for accesses to 
-memory-like MMIO resources, e.g. string I/O, but also the ATA data port, 
-unless you want to make/keep the nomenclature more confusing than it has 
-to be.
-
- First some backgound information.
-
-1. For systems that have a uniform endianness throughout there's obviously 
-   no issue.  We only need to choose between strongly-ordered and, if 
-   applicable weakly-ordered accesses.  As the minimum and at the cost of 
-   performance we can enforce strong MMIO ordering everywhere.
-
-2. For systems parts of which have the opposite endianness we can have two 
-   variants (or endianness policies) implemented in hardware for accesses 
-   that cross the boundary of the two endiannesses:
-
-   a. Byte lane matching.
-
-      In this case individual byte addresses are preserved while accessing 
-      a device and byte enables are generated directly from the least 
-      significant bits of the CPU address, meaning that the device is 
-      addressed within its decoding window directly as documented.
-
-      The data quantity accessed, however, has to be byte-swapped to be 
-      interpreted within the domain of the opposite endianness as a 
-      numerical value or a bit pattern if wider than 8 bits.
-
-   b. Bit lane matching.
-
-      In this case individual byte addresses are mangled while accessing a 
-      device and byte enables are generated from the inverse of the 
-      leastsignificant bits of the CPU address, meaning that to calculate 
-      a device address the CPU address has to be transformed, unless 
-      accessing an aligned data quantity of the bus width.
-
-      The data quantity accessed, however, can be used directly to be 
-      interpreted within the domain of the opposite endianness as a 
-      numerical value or a bit pattern regardless of its width.
-
-   Like with the systems of a uniform endianness ordering is to be 
-   considered separately.
-
-Existing computer systems based on the MIPS processor implement either 
-endianness policy or both.  The existence of systems that do bit lane 
-matching is why we have all the arch/mips/include/asm/mach-*/mangle-port.h 
-headers.
-
- I actually own a SOC-based system that implements both, when strapped at 
-reset for the big endianness, by having two MMIO windows defined in its 
-address space, which assume each of the policies respectively, and the 
-boundary between the two endianness domains is at the PCI host bridge.  
-This means that device accesses that cross the PCI bridge need address 
-mangling or byte-swapping as necessary while device accesses that access 
-onchip SOC devices or external devices wired to SOC's interfaces other 
-than PCI require straight through accesses.
-
- The implementers of our Linux port for this system chose to use the byte 
-lane matching policy exclusively, although for performance reason it might 
-make sense to switch between the two policies depending on whether data is 
-to be interpreted as a value or memory contents as the offset between the 
-two windows is fixed.
-
- Anyway, for a system like this and regardless of any ordering requirement 
-we clearly need to have three kinds of accessors:
-
-1. Native (pass-through data, never with address mangling).
-
-2. Value (data byte-swapped if required, possibly with address mangling).
-
-3. Memory (data byte-swapped if required, possibly with address mangling).
-
-And I think the natural nomenclature for the three kinds of accessors 
-respectively is:
-
-1. `__raw_*'.
-
-2. `*' (no prefix by long-established practice, although `__val_*' would 
-   do too, IMO).
-
-3. `__mem_*'.
-
-So I think the MIPS port got it right (and the rest is confused, IMHO).
-
- Furthermore, going back to the ordering requirement, I think we also need 
-to have strongly-ordered native accessors, so that driver writers do not 
-have to be bothered about sprinkling barriers in the common case.
-
- The MIPS port currently meets all the requirements, although it does not 
-provide weakly ordered accessors.
-
-> >  NB I got one part wrong in the previous e-mail, sorry, as for packet
-> > memory accesses etc. the correct accessors are actually `__mem_*' rather
-> > than `__raw_*' ones, but the former ones are not portable.  I always
-> > forget about this peculiarity and it took us years to get it right with
-> > the MIPS port and the old IDE subsystem when doing PIO.
-> >
-> >  The `__mem_*' handlers still do whetever system-specific transformation
-> > is required to present data in the memory rather than CPU byte ordering.
-> > See arch/mips/include/asm/mach-ip27/mangle-port.h for a non-trivial
-> > example and arch/mips/include/asm/mach-generic/mangle-port.h for the
-> > general case.  Whereas `__raw_*' pass raw data unchanged and are generally
-> > only suitable for accesses to onchip SOC MMIO or similar resources that do
-> > not traverse any external bus where a system's endianness may be observed.
-> 
-> Ok, so what you have for __mem_* is actually what I had expected from
-> __raw_* for an architecture, except for the barriers that should have been
-> left out.
-
- Please see above for an explanation as to why `__mem_*' is equivalent to 
-neither `__raw_*' nor plain `*'.
-
-> >  So contrary to what I have written before for the theoretical case of a
-> > big-endian system possibly doing address swizzling we'd have to define and
-> > use `__mem_readq_unordered', etc. here rather than `__raw_readq_relaxed',
-> > etc.
-> 
-> Right.
-> 
-> > > > in fact even the barriers `*_relaxed' accessors imply would
-> > > > best be removed in this use (which is why defza.c uses `readw_o' vs
-> > > > `readw_u', etc. internally), but after all the struggles over the years
-> > > > for weakly ordered internal APIs x86 people are so averse to I'm not sure
-> > > > if I want to start another one.  We can get away with `readq_relaxed' in
-> > > > this use though as all the systems this device can be used with are
-> > > > little-endian as is TURBOchannel, so no byte-swapping will ever actually
-> > > > occur.
-> > >
-> > > I still don't see any downside of using __raw_readq() here, while the
-> > > upsides are:
-> > >
-> > > - makes the driver portable to big-endian kernels (even though we don't
-> > >   care)
-> > > - avoids all barriers
-> > > - fixes the build regression.
-> >
-> >  Giving my observations above it would only address item #3 on your list,
-> > while addressing #1 and #2 would require defining `__mem_readq_unordered',
-> > etc. I am afraid.
-> >
-> >  Have I missed anything?
-> 
-> No, I think you are right based on how mips defines __raw_readl().
-> 
-> Unfortunately, this also means that all portable drivers using the
-> __raw_ accessors to do what you want here are broken on mips
-> (at least on big-endian), while mips drivers using __raw_* are not
-> portable to anything else.
-
- I guess your conclusion is correct then, but I maintain that the 
-nomenclature chosen for the MIPS port years ago is the correct one.  This 
-goes back to commit 4912ba72d6e2 ("Define mem_*() I/O accessory functions 
-that preserve byte addresses.") which defined `mem_*' accessors later 
-renamed to `__mem_*' with commit 290f10ae4230 ("mips: namespace pollution
-- mem_... -> __mem_... in io.h").  I don't know at what stage of awareness 
-of the three scenarios other ports were back then.
-
- Questions, comments, thoughts?
-
-  Maciej
+> diff --git a/arch/arm/mach-ep93xx/soc.h b/arch/arm/mach-ep93xx/soc.h
+> index f2dace1c9154..250c82f8b0a1 100644
+> --- a/arch/arm/mach-ep93xx/soc.h
+> +++ b/arch/arm/mach-ep93xx/soc.h
+> @@ -109,89 +109,89 @@
+>  #define EP93XX_SYSCON_REG(x)		(EP93XX_SYSCON_BASE + (x))
+>  #define EP93XX_SYSCON_POWER_STATE	EP93XX_SYSCON_REG(0x00)
+>  #define EP93XX_SYSCON_PWRCNT		EP93XX_SYSCON_REG(0x04)
+> -#define EP93XX_SYSCON_PWRCNT_FIR_EN	(1<<31)
+> -#define EP93XX_SYSCON_PWRCNT_UARTBAUD	(1<<29)
+> -#define EP93XX_SYSCON_PWRCNT_USH_EN	(1<<28)
+> -#define EP93XX_SYSCON_PWRCNT_DMA_M2M1	(1<<27)
+> -#define EP93XX_SYSCON_PWRCNT_DMA_M2M0	(1<<26)
+> -#define EP93XX_SYSCON_PWRCNT_DMA_M2P8	(1<<25)
+> -#define EP93XX_SYSCON_PWRCNT_DMA_M2P9	(1<<24)
+> -#define EP93XX_SYSCON_PWRCNT_DMA_M2P6	(1<<23)
+> -#define EP93XX_SYSCON_PWRCNT_DMA_M2P7	(1<<22)
+> -#define EP93XX_SYSCON_PWRCNT_DMA_M2P4	(1<<21)
+> -#define EP93XX_SYSCON_PWRCNT_DMA_M2P5	(1<<20)
+> -#define EP93XX_SYSCON_PWRCNT_DMA_M2P2	(1<<19)
+> -#define EP93XX_SYSCON_PWRCNT_DMA_M2P3	(1<<18)
+> -#define EP93XX_SYSCON_PWRCNT_DMA_M2P0	(1<<17)
+> -#define EP93XX_SYSCON_PWRCNT_DMA_M2P1	(1<<16)
+> +#define EP93XX_SYSCON_PWRCNT_FIR_EN	BIT(31)
+> +#define EP93XX_SYSCON_PWRCNT_UARTBAUD	BIT(29)
+> +#define EP93XX_SYSCON_PWRCNT_USH_EN	BIT(28)
+> +#define EP93XX_SYSCON_PWRCNT_DMA_M2M1	BIT(27)
+> +#define EP93XX_SYSCON_PWRCNT_DMA_M2M0	BIT(26)
+> +#define EP93XX_SYSCON_PWRCNT_DMA_M2P8	BIT(25)
+> +#define EP93XX_SYSCON_PWRCNT_DMA_M2P9	BIT(24)
+> +#define EP93XX_SYSCON_PWRCNT_DMA_M2P6	BIT(23)
+> +#define EP93XX_SYSCON_PWRCNT_DMA_M2P7	BIT(22)
+> +#define EP93XX_SYSCON_PWRCNT_DMA_M2P4	BIT(21)
+> +#define EP93XX_SYSCON_PWRCNT_DMA_M2P5	BIT(20)
+> +#define EP93XX_SYSCON_PWRCNT_DMA_M2P2	BIT(19)
+> +#define EP93XX_SYSCON_PWRCNT_DMA_M2P3	BIT(18)
+> +#define EP93XX_SYSCON_PWRCNT_DMA_M2P0	BIT(17)
+> +#define EP93XX_SYSCON_PWRCNT_DMA_M2P1	BIT(16)
+>  #define EP93XX_SYSCON_HALT		EP93XX_SYSCON_REG(0x08)
+>  #define EP93XX_SYSCON_STANDBY		EP93XX_SYSCON_REG(0x0c)
+>  #define EP93XX_SYSCON_CLKSET1		EP93XX_SYSCON_REG(0x20)
+> -#define EP93XX_SYSCON_CLKSET1_NBYP1	(1<<23)
+> +#define EP93XX_SYSCON_CLKSET1_NBYP1	BIT(23)
+>  #define EP93XX_SYSCON_CLKSET2		EP93XX_SYSCON_REG(0x24)
+> -#define EP93XX_SYSCON_CLKSET2_NBYP2	(1<<19)
+> -#define EP93XX_SYSCON_CLKSET2_PLL2_EN	(1<<18)
+> +#define EP93XX_SYSCON_CLKSET2_NBYP2	BIT(19)
+> +#define EP93XX_SYSCON_CLKSET2_PLL2_EN	BIT(18)
+>  #define EP93XX_SYSCON_DEVCFG		EP93XX_SYSCON_REG(0x80)
+> -#define EP93XX_SYSCON_DEVCFG_SWRST	(1<<31)
+> -#define EP93XX_SYSCON_DEVCFG_D1ONG	(1<<30)
+> -#define EP93XX_SYSCON_DEVCFG_D0ONG	(1<<29)
+> -#define EP93XX_SYSCON_DEVCFG_IONU2	(1<<28)
+> -#define EP93XX_SYSCON_DEVCFG_GONK	(1<<27)
+> -#define EP93XX_SYSCON_DEVCFG_TONG	(1<<26)
+> -#define EP93XX_SYSCON_DEVCFG_MONG	(1<<25)
+> -#define EP93XX_SYSCON_DEVCFG_U3EN	(1<<24)
+> -#define EP93XX_SYSCON_DEVCFG_CPENA	(1<<23)
+> -#define EP93XX_SYSCON_DEVCFG_A2ONG	(1<<22)
+> -#define EP93XX_SYSCON_DEVCFG_A1ONG	(1<<21)
+> -#define EP93XX_SYSCON_DEVCFG_U2EN	(1<<20)
+> -#define EP93XX_SYSCON_DEVCFG_EXVC	(1<<19)
+> -#define EP93XX_SYSCON_DEVCFG_U1EN	(1<<18)
+> -#define EP93XX_SYSCON_DEVCFG_TIN	(1<<17)
+> -#define EP93XX_SYSCON_DEVCFG_HC3IN	(1<<15)
+> -#define EP93XX_SYSCON_DEVCFG_HC3EN	(1<<14)
+> -#define EP93XX_SYSCON_DEVCFG_HC1IN	(1<<13)
+> -#define EP93XX_SYSCON_DEVCFG_HC1EN	(1<<12)
+> -#define EP93XX_SYSCON_DEVCFG_HONIDE	(1<<11)
+> -#define EP93XX_SYSCON_DEVCFG_GONIDE	(1<<10)
+> -#define EP93XX_SYSCON_DEVCFG_PONG	(1<<9)
+> -#define EP93XX_SYSCON_DEVCFG_EONIDE	(1<<8)
+> -#define EP93XX_SYSCON_DEVCFG_I2SONSSP	(1<<7)
+> -#define EP93XX_SYSCON_DEVCFG_I2SONAC97	(1<<6)
+> -#define EP93XX_SYSCON_DEVCFG_RASONP3	(1<<4)
+> -#define EP93XX_SYSCON_DEVCFG_RAS	(1<<3)
+> -#define EP93XX_SYSCON_DEVCFG_ADCPD	(1<<2)
+> -#define EP93XX_SYSCON_DEVCFG_KEYS	(1<<1)
+> -#define EP93XX_SYSCON_DEVCFG_SHENA	(1<<0)
+> +#define EP93XX_SYSCON_DEVCFG_SWRST	BIT(31)
+> +#define EP93XX_SYSCON_DEVCFG_D1ONG	BIT(30)
+> +#define EP93XX_SYSCON_DEVCFG_D0ONG	BIT(29)
+> +#define EP93XX_SYSCON_DEVCFG_IONU2	BIT(28)
+> +#define EP93XX_SYSCON_DEVCFG_GONK	BIT(27)
+> +#define EP93XX_SYSCON_DEVCFG_TONG	BIT(26)
+> +#define EP93XX_SYSCON_DEVCFG_MONG	BIT(25)
+> +#define EP93XX_SYSCON_DEVCFG_U3EN	BIT(24)
+> +#define EP93XX_SYSCON_DEVCFG_CPENA	BIT(23)
+> +#define EP93XX_SYSCON_DEVCFG_A2ONG	BIT(22)
+> +#define EP93XX_SYSCON_DEVCFG_A1ONG	BIT(21)
+> +#define EP93XX_SYSCON_DEVCFG_U2EN	BIT(20)
+> +#define EP93XX_SYSCON_DEVCFG_EXVC	BIT(19)
+> +#define EP93XX_SYSCON_DEVCFG_U1EN	BIT(18)
+> +#define EP93XX_SYSCON_DEVCFG_TIN	BIT(17)
+> +#define EP93XX_SYSCON_DEVCFG_HC3IN	BIT(15)
+> +#define EP93XX_SYSCON_DEVCFG_HC3EN	BIT(14)
+> +#define EP93XX_SYSCON_DEVCFG_HC1IN	BIT(13)
+> +#define EP93XX_SYSCON_DEVCFG_HC1EN	BIT(12)
+> +#define EP93XX_SYSCON_DEVCFG_HONIDE	BIT(11)
+> +#define EP93XX_SYSCON_DEVCFG_GONIDE	BIT(10)
+> +#define EP93XX_SYSCON_DEVCFG_PONG	BIT(9)
+> +#define EP93XX_SYSCON_DEVCFG_EONIDE	BIT(8)
+> +#define EP93XX_SYSCON_DEVCFG_I2SONSSP	BIT(7)
+> +#define EP93XX_SYSCON_DEVCFG_I2SONAC97	BIT(6)
+> +#define EP93XX_SYSCON_DEVCFG_RASONP3	BIT(4)
+> +#define EP93XX_SYSCON_DEVCFG_RAS	BIT(3)
+> +#define EP93XX_SYSCON_DEVCFG_ADCPD	BIT(2)
+> +#define EP93XX_SYSCON_DEVCFG_KEYS	BIT(1)
+> +#define EP93XX_SYSCON_DEVCFG_SHENA	BIT(0)
+>  #define EP93XX_SYSCON_VIDCLKDIV		EP93XX_SYSCON_REG(0x84)
+> -#define EP93XX_SYSCON_CLKDIV_ENABLE	(1<<15)
+> -#define EP93XX_SYSCON_CLKDIV_ESEL	(1<<14)
+> -#define EP93XX_SYSCON_CLKDIV_PSEL	(1<<13)
+> +#define EP93XX_SYSCON_CLKDIV_ENABLE	BIT(15)
+> +#define EP93XX_SYSCON_CLKDIV_ESEL	BIT(14)
+> +#define EP93XX_SYSCON_CLKDIV_PSEL	BIT(13)
+>  #define EP93XX_SYSCON_CLKDIV_PDIV_SHIFT	8
+>  #define EP93XX_SYSCON_I2SCLKDIV		EP93XX_SYSCON_REG(0x8c)
+> -#define EP93XX_SYSCON_I2SCLKDIV_SENA	(1<<31)
+> -#define EP93XX_SYSCON_I2SCLKDIV_ORIDE   (1<<29)
+> -#define EP93XX_SYSCON_I2SCLKDIV_SPOL	(1<<19)
+> +#define EP93XX_SYSCON_I2SCLKDIV_SENA	BIT(31)
+> +#define EP93XX_SYSCON_I2SCLKDIV_ORIDE   BIT(29)
+> +#define EP93XX_SYSCON_I2SCLKDIV_SPOL	BIT(19)
+>  #define EP93XX_I2SCLKDIV_SDIV		(1 << 16)
+>  #define EP93XX_I2SCLKDIV_LRDIV32	(0 << 17)
+>  #define EP93XX_I2SCLKDIV_LRDIV64	(1 << 17)
+>  #define EP93XX_I2SCLKDIV_LRDIV128	(2 << 17)
+>  #define EP93XX_I2SCLKDIV_LRDIV_MASK	(3 << 17)
+>  #define EP93XX_SYSCON_KEYTCHCLKDIV	EP93XX_SYSCON_REG(0x90)
+> -#define EP93XX_SYSCON_KEYTCHCLKDIV_TSEN	(1<<31)
+> -#define EP93XX_SYSCON_KEYTCHCLKDIV_ADIV	(1<<16)
+> -#define EP93XX_SYSCON_KEYTCHCLKDIV_KEN	(1<<15)
+> -#define EP93XX_SYSCON_KEYTCHCLKDIV_KDIV	(1<<0)
+> +#define EP93XX_SYSCON_KEYTCHCLKDIV_TSEN	BIT(31)
+> +#define EP93XX_SYSCON_KEYTCHCLKDIV_ADIV	BIT(16)
+> +#define EP93XX_SYSCON_KEYTCHCLKDIV_KEN	BIT(15)
+> +#define EP93XX_SYSCON_KEYTCHCLKDIV_KDIV	BIT(0)
+>  #define EP93XX_SYSCON_SYSCFG		EP93XX_SYSCON_REG(0x9c)
+>  #define EP93XX_SYSCON_SYSCFG_REV_MASK	(0xf0000000)
+>  #define EP93XX_SYSCON_SYSCFG_REV_SHIFT	(28)
+> -#define EP93XX_SYSCON_SYSCFG_SBOOT	(1<<8)
+> -#define EP93XX_SYSCON_SYSCFG_LCSN7	(1<<7)
+> -#define EP93XX_SYSCON_SYSCFG_LCSN6	(1<<6)
+> -#define EP93XX_SYSCON_SYSCFG_LASDO	(1<<5)
+> -#define EP93XX_SYSCON_SYSCFG_LEEDA	(1<<4)
+> -#define EP93XX_SYSCON_SYSCFG_LEECLK	(1<<3)
+> -#define EP93XX_SYSCON_SYSCFG_LCSN2	(1<<1)
+> -#define EP93XX_SYSCON_SYSCFG_LCSN1	(1<<0)
+> +#define EP93XX_SYSCON_SYSCFG_SBOOT	BIT(8)
+> +#define EP93XX_SYSCON_SYSCFG_LCSN7	BIT(7)
+> +#define EP93XX_SYSCON_SYSCFG_LCSN6	BIT(6)
+> +#define EP93XX_SYSCON_SYSCFG_LASDO	BIT(5)
+> +#define EP93XX_SYSCON_SYSCFG_LEEDA	BIT(4)
+> +#define EP93XX_SYSCON_SYSCFG_LEECLK	BIT(3)
+> +#define EP93XX_SYSCON_SYSCFG_LCSN2	BIT(1)
+> +#define EP93XX_SYSCON_SYSCFG_LCSN1	BIT(0)
+>  #define EP93XX_SYSCON_SWLOCK		EP93XX_SYSCON_REG(0xc0)
+>  
+>  /* EP93xx System Controller software locked register write */
