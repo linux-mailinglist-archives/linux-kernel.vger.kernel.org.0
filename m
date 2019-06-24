@@ -2,107 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41ED64FEC8
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 03:57:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D63C84FEAE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 03:51:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726673AbfFXB52 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 21:57:28 -0400
-Received: from ozlabs.org ([203.11.71.1]:52193 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726382AbfFXB50 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 21:57:26 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45XBLP6CHyz9sP1;
-        Mon, 24 Jun 2019 11:20:29 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1561339233;
-        bh=tHpKwuHkDaYhqmZgfsFoheh7ykmCSOsO+dlIAnOp5YA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=iH/Ezv8DzLvBwG2s0LQ7ZBM1welnN8fckpARVHddhZPLxtjELZrJzSp8tZYjclIHj
-         OiHAqv6wiLW5pCCaa9reiSr+VLvDsU4HFF6hKpNdx8mwP/+TMKGiaHvPmRS70uMSfT
-         1d2b5DZrek2rF+dHmCPF7+4RWTaw19TsknadJ7KEg7DKURj+1IWE29q0rY6TQJX8Sn
-         POZsWqoDp3665q0EDKriozuPffzKfV0xQPt73rUTT1gXEDINFIaMrUugDMEm1sekUa
-         z3I7ArxUhv/hmTqmhwVj5cIwMdm5dOfjhnHdboIGIkHiUyOXUgMKUsG/AJ7wTubPYC
-         7dJqjoN7uByRA==
-Date:   Mon, 24 Jun 2019 11:20:29 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Michael Kelley <mikelley@microsoft.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Mark Salyzyn <salyzyn@android.com>,
-        Peter Collingbourne <pcc@google.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Huw Davies <huw@codeweavers.com>, linux-hyperv@vger.kernel.org,
-        Greg KH <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v6 18/19] x86: Add support for generic vDSO
-Message-ID: <20190624112029.4f42a8cd@canb.auug.org.au>
-In-Reply-To: <20190624002430.GN2226@sasha-vm>
-References: <20190530141531.43462-1-vincenzo.frascino@arm.com>
-        <20190530141531.43462-19-vincenzo.frascino@arm.com>
-        <BYAPR21MB1221D54FCEC97509EEF7395CD7180@BYAPR21MB1221.namprd21.prod.outlook.com>
-        <alpine.DEB.2.21.1906141313150.1722@nanos.tec.linutronix.de>
-        <20190614211710.GQ1513@sasha-vm>
-        <alpine.DEB.2.21.1906221542270.5503@nanos.tec.linutronix.de>
-        <20190623190929.GL2226@sasha-vm>
-        <20190624075834.2491a61a@canb.auug.org.au>
-        <20190624002430.GN2226@sasha-vm>
+        id S1726516AbfFXBvt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 21:51:49 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:44247 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726304AbfFXBvt (ORCPT
+        <rfc822;Linux-kernel@vger.kernel.org>);
+        Sun, 23 Jun 2019 21:51:49 -0400
+Received: by mail-io1-f68.google.com with SMTP id s7so524109iob.11
+        for <Linux-kernel@vger.kernel.org>; Sun, 23 Jun 2019 18:51:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=b+MLzYEoEduR8Q+ofY+9DSCWoJU/Fb/z+zF7Y0bwVTI=;
+        b=Qi4Uh0togE92l73msdpzeDUQYoLAyZbb6tYJqdSYxXXbCbuKYbIrOFew4kw1bAfb6k
+         2d1A6Hsd9u2fJFbrs5TT5PAgHVkgKCRCKhE+DNc8NO7z5Ri+niBjt845zb3lruTCh9id
+         uXToEifUf1p2SVDBJovQyBWllp+Y8V2ZMXca6QVxXMWTYO3beoTBtFqqHi0NGApE/RHg
+         bshvgR9AJsc+zf1NdfI1cIEL2879R+1CA17sPwjJw6ZS4Zz3AYLcD3UjlKzyt1fcsmH0
+         nMH/bmFil0zmY8bvMreCMOQCD6WM26TKyaSR61R324NacVQS/+A63xWa5rqFJNsmU9R+
+         tqww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=b+MLzYEoEduR8Q+ofY+9DSCWoJU/Fb/z+zF7Y0bwVTI=;
+        b=OK5XPwUH9hvW4B+r+vAkhQEeXR7ZHUqge/dFvShXPyPHjS4Q1E6JWcKACJylrPWIZ+
+         aP31X71ZnbgwWVzupvDoGs+O9Kul4/qQnPeiKDAr+n/tSLybwMaJz5R76VM1QI4pAzJ5
+         C1/SIFM7w+59EG61VfVTkR0KNMmDONItvDhdeHXIYEav5DHQuknyOAxaXzPB96Fqi/Go
+         dZGrcgpAjAs2SPG+uAVHIlWj3y3eko1FH1HA1GkTRItvzA63QgahSowrStOxOcew+tVE
+         n+6s+PoB12w5ENI5HTe1CifiekrqLsbFHCafQ0BOzJOlRTZm2IR2vJymx5Du4aqOjMyx
+         u7FA==
+X-Gm-Message-State: APjAAAWwFCZn6XjkXY6Scg9xOiLjh/vvcpCFNpzgW6tWZACDEbuHwTBt
+        /kTgtEMGC2guzfTPQMY/C3Z1JP/+T/2zOzq/aMOF
+X-Google-Smtp-Source: APXvYqwlrTd7zZ+8C5LG65dPmV1E9CKsY7yiH4Q4qh+AomfR8v3cv/tfgFHaNCcDqrgpU1DtrOjGGbkR19Vqdm4kFkE=
+X-Received: by 2002:a6b:5106:: with SMTP id f6mr8398579iob.15.1561339279746;
+ Sun, 23 Jun 2019 18:21:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/UW6IjEE3Jj_YtxhGwam1e.t"; protocol="application/pgp-signature"
+References: <1561112116-23072-1-git-send-email-kernelfans@gmail.com> <20190621181349.GA21680@iweiny-DESK2.sc.intel.com>
+In-Reply-To: <20190621181349.GA21680@iweiny-DESK2.sc.intel.com>
+From:   Pingfan Liu <kernelfans@gmail.com>
+Date:   Mon, 24 Jun 2019 09:21:07 +0800
+Message-ID: <CAFgQCTt2M3NVD5Xmip3YX=eYM_wJn9mWLjZq8z-jXuvT5q-naQ@mail.gmail.com>
+Subject: Re: [PATCH] mm/gup: speed up check_and_migrate_cma_pages() on huge page
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     Linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        John Hubbard <jhubbard@nvidia.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Keith Busch <keith.busch@intel.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        LKML <Linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/UW6IjEE3Jj_YtxhGwam1e.t
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi Sasha,
-
-On Sun, 23 Jun 2019 20:24:30 -0400 Sasha Levin <sashal@kernel.org> wrote:
+On Sat, Jun 22, 2019 at 2:13 AM Ira Weiny <ira.weiny@intel.com> wrote:
 >
-> Pushed now. For some reason the airport wifi was blocking ssh :/
+> On Fri, Jun 21, 2019 at 06:15:16PM +0800, Pingfan Liu wrote:
+> > Both hugetlb and thp locate on the same migration type of pageblock, since
+> > they are allocated from a free_list[]. Based on this fact, it is enough to
+> > check on a single subpage to decide the migration type of the whole huge
+> > page. By this way, it saves (2M/4K - 1) times loop for pmd_huge on x86,
+> > similar on other archs.
+> >
+> > Furthermore, when executing isolate_huge_page(), it avoid taking global
+> > hugetlb_lock many times, and meanless remove/add to the local link list
+> > cma_page_list.
+> >
+> > Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
+> > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > Cc: Ira Weiny <ira.weiny@intel.com>
+> > Cc: Mike Rapoport <rppt@linux.ibm.com>
+> > Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+> > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > Cc: John Hubbard <jhubbard@nvidia.com>
+> > Cc: "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+> > Cc: Christoph Hellwig <hch@lst.de>
+> > Cc: Keith Busch <keith.busch@intel.com>
+> > Cc: Mike Kravetz <mike.kravetz@oracle.com>
+> > Cc: Linux-kernel@vger.kernel.org
+> > ---
+> >  mm/gup.c | 13 +++++++++----
+> >  1 file changed, 9 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/mm/gup.c b/mm/gup.c
+> > index ddde097..2eecb16 100644
+> > --- a/mm/gup.c
+> > +++ b/mm/gup.c
+> > @@ -1342,16 +1342,19 @@ static long check_and_migrate_cma_pages(struct task_struct *tsk,
+> >       LIST_HEAD(cma_page_list);
+> >
+> >  check_again:
+> > -     for (i = 0; i < nr_pages; i++) {
+> > +     for (i = 0; i < nr_pages;) {
+> > +
+> > +             struct page *head = compound_head(pages[i]);
+> > +             long step = 1;
+> > +
+> > +             if (PageCompound(head))
+> > +                     step = compound_order(head) - (pages[i] - head);
+> >               /*
+> >                * If we get a page from the CMA zone, since we are going to
+> >                * be pinning these entries, we might as well move them out
+> >                * of the CMA zone if possible.
+> >                */
+> >               if (is_migrate_cma_page(pages[i])) {
+>
+> I like this but I think for consistency I would change this pages[i] to be
+> head.  Even though it is not required.
+Yes, agree. Thank you for your good suggestion.
 
-Thanks.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/UW6IjEE3Jj_YtxhGwam1e.t
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0QJV0ACgkQAVBC80lX
-0GwUBQf/e/6tJWyAWMaopYMBDqN2qz4oN/vHsi0Cl4cEtZikDfm20K5/e1B/rwg4
-3AdDGd4MfB2z5/yvCCH0gZcA3R8U8r/OX6rpU6BHD6jewnLN813ja7GesU+lgWGE
-fDznHmIHmGaN2LljjUA34WkBymJGMDsOcA30q6ZIdO48ABULY+FstQOahDrTFMde
-Btm0wVAvmSOP5iIIXt64JWYPhNzGJljLoW9Y5SzpAQOIrTCzYaTIcKceQsBXmPoK
-XH6Ypn5GZCfCNZD/9reOW8IG8CNsSN+7OBdtFFC9W7/OGZdAmMz9n6eX+a/9WS3x
-VqP7o7p8NE5G2ug+cDsnFn1aIkDb6g==
-=/UhR
------END PGP SIGNATURE-----
-
---Sig_/UW6IjEE3Jj_YtxhGwam1e.t--
+Regards,
+  Pingfan
+>
+> Ira
+>
+> > -
+> > -                     struct page *head = compound_head(pages[i]);
+> > -
+> >                       if (PageHuge(head)) {
+> >                               isolate_huge_page(head, &cma_page_list);
+> >                       } else {
+> > @@ -1369,6 +1372,8 @@ static long check_and_migrate_cma_pages(struct task_struct *tsk,
+> >                               }
+> >                       }
+> >               }
+> > +
+> > +             i += step;
+> >       }
+> >
+> >       if (!list_empty(&cma_page_list)) {
+> > --
+> > 2.7.5
+> >
