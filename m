@@ -2,144 +2,179 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA6735185D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 18:21:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02C6751861
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 18:22:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732051AbfFXQVt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 12:21:49 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:18242 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732017AbfFXQVr (ORCPT
+        id S1732070AbfFXQVy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 12:21:54 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:36554 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732037AbfFXQVs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 12:21:47 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d10f8970001>; Mon, 24 Jun 2019 09:21:43 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Mon, 24 Jun 2019 09:21:45 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Mon, 24 Jun 2019 09:21:45 -0700
-Received: from [10.2.174.126] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 24 Jun
- 2019 16:21:41 +0000
-Subject: Re: [PATCH V4 13/18] soc/tegra: pmc: allow support for more tegra
- wake
-To:     Marc Zyngier <marc.zyngier@arm.com>
-CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <tglx@linutronix.de>, <jason@lakedaemon.net>,
-        <linus.walleij@linaro.org>, <stefan@agner.ch>,
-        <mark.rutland@arm.com>, <pdeschrijver@nvidia.com>,
-        <pgaikwad@nvidia.com>, <sboyd@kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <jckuo@nvidia.com>, <josephl@nvidia.com>, <talho@nvidia.com>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
-        <digetx@gmail.com>, <devicetree@vger.kernel.org>
-References: <1561345379-2429-1-git-send-email-skomatineni@nvidia.com>
- <1561345379-2429-14-git-send-email-skomatineni@nvidia.com>
- <86d0j3pfga.wl-marc.zyngier@arm.com>
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-Message-ID: <dc320c81-6601-4e6d-a7a0-57df8771bd99@nvidia.com>
-Date:   Mon, 24 Jun 2019 09:21:41 -0700
+        Mon, 24 Jun 2019 12:21:48 -0400
+Received: by mail-io1-f67.google.com with SMTP id h6so169229ioh.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 09:21:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=NHcHEiSdSzp7kZzdggQV3ZCbPz87FtIjlV1Wwg8dnCc=;
+        b=n0WuiMFNEx8umDDpCQxWIEg70TRSYwsFgwp84toS3j+ajz6fDTN+LSjpVISAk+gcn7
+         OiGmouq7voqFPTDYY0IxyrHgrHYTs8zXLUp+3cSI6rsYBzJ6fQzFpIt8CsFI5XPFEbdj
+         6LHZkNyI2unWRRT07m2PnS/O6/3NM5DagMSimBV3EcXZMc8/D9vDWrk+kr6r/zXdnRFJ
+         lY3lW0t9qzpqMwVDBY+9fTX8b+RJktyxzISeYf5iEx7382ecQwzjY9xcf4Nmmf63t2IS
+         KDFzExaZYwZQBiRx1GsxVvmQXz4bMPySOV7Yo41zenTARMgdaF20DffvHlwPmcvKdT6d
+         USRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=NHcHEiSdSzp7kZzdggQV3ZCbPz87FtIjlV1Wwg8dnCc=;
+        b=N+RdrzDKE1bsbHP4Q4Js4kuAvaPUMwN7aHO+fPLhDGn0wQJMQbqvAIvhaKE/iYjsEU
+         PYr5Wls12ftOv2m6kdqu5C8bf3E7nzXLOflPLKWnnXeC/NHF9E55W5nXvmuONaLnwbce
+         g1GxjvIFHRHGsfnJoNz5pmwPbQPHYzwoPMu62eq4MmqeJe+b2KabVTI9fB2YWnncqU3L
+         6EGdLdQEpWPSRDjvbAB9kvOFEB4gWeYeGYrmVrux3n6dt2U9Q/+dFdwdld6za8XOwAEn
+         HDhxzNnHC9Kcg5m5WtVWQ/4FY2fVtwLHjEufyb8jAp+XSJDdPXpkrA2ZgeJAv1PxWuMj
+         DMwA==
+X-Gm-Message-State: APjAAAVdlxmX1XLkDXdNDVQ5/5mF91sp79PxSoQ+LqvSunLIIxlz9PEx
+        b+2AtxcYDhLwowYWnuAB39Dipw==
+X-Google-Smtp-Source: APXvYqyhoOXuIy2nGfb0zpKJ/QI7jrdnphG9+1VVEKKyvNesuyv9czZi+tkOqsGi2nRGtTpWW9HFAg==
+X-Received: by 2002:a6b:1451:: with SMTP id 78mr21581488iou.247.1561393307216;
+        Mon, 24 Jun 2019 09:21:47 -0700 (PDT)
+Received: from [172.22.22.26] (c-71-195-29-92.hsd1.mn.comcast.net. [71.195.29.92])
+        by smtp.googlemail.com with ESMTPSA id a7sm9861343iok.19.2019.06.24.09.21.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 24 Jun 2019 09:21:46 -0700 (PDT)
+Subject: Re: [PATCH v2 00/17] net: introduce Qualcomm IPA driver
+To:     Johannes Berg <johannes@sipsolutions.net>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc:     abhishek.esse@gmail.com, Ben Chan <benchan@google.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        cpratapa@codeaurora.org, David Miller <davem@davemloft.net>,
+        Dan Williams <dcbw@redhat.com>,
+        DTML <devicetree@vger.kernel.org>,
+        Eric Caruso <ejcaruso@google.com>, evgreen@chromium.org,
+        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-soc@vger.kernel.org, Networking <netdev@vger.kernel.org>,
+        Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>,
+        syadagir@codeaurora.org
+References: <380a6185-7ad1-6be0-060b-e6e5d4126917@linaro.org>
+ <a94676381a5ca662c848f7a725562f721c43ce76.camel@sipsolutions.net>
+ <CAK8P3a0kV-i7BJJ2X6C=5n65rSGfo8fUiC4J_G-+M8EctYKbkg@mail.gmail.com>
+ <066e9b39f937586f0f922abf801351553ec2ba1d.camel@sipsolutions.net>
+ <b3686626-e2d8-bc9c-6dd0-9ebb137715af@linaro.org>
+ <b23a83c18055470c5308fcd1eed018056371fc1d.camel@sipsolutions.net>
+From:   Alex Elder <elder@linaro.org>
+Message-ID: <a9230cf8-c8f6-9270-c0e4-b56f340c3ecc@linaro.org>
+Date:   Mon, 24 Jun 2019 11:21:45 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+ Thunderbird/60.7.1
 MIME-Version: 1.0
-In-Reply-To: <86d0j3pfga.wl-marc.zyngier@arm.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <b23a83c18055470c5308fcd1eed018056371fc1d.camel@sipsolutions.net>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1561393303; bh=XARYCg4Be2F4cVbObRkOiXOwjOP0Mst/Yjb4BxYksk0=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=pEd8vglzapKb+YjH1kGdq1VvI2uMA+mEhIyqxyWrXHKcbEabHER36cmfheBuAXH/+
-         vwgY3pHKBGeLWWTaPihZ7JnQckG/pIOcjGpxkG22i4HM/fv2VvmS1F751NssxwWs5q
-         yB1ylptYE7DJ09259Ltst/0zXgzj5VU0voWZe3SFKU5ZnE8Yyhr/rKGTYMb+GaYgbu
-         BQNNfXXuCKZElcuZOLzroNxOOAtdMv2S8BOeu/AA92VpmzH7QwZxjzqXk17B/lN5B/
-         apDiv7TaS+FHvQhgcDOylFeDL7wanZT2PtbhHQECsfolUVLfW3PDzKdo/quVC0BXQm
-         VYS4YczznrIJg==
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 6/18/19 2:14 PM, Johannes Berg wrote:
+> On Tue, 2019-06-18 at 08:16 -0500, Alex Elder wrote:
+>> On 6/17/19 6:28 AM, Johannes Berg wrote:
+>>> On Tue, 2019-06-11 at 13:56 +0200, Arnd Bergmann wrote:
+>>>> On Tue, Jun 11, 2019 at 10:12 AM Johannes Berg
+>>>> <johannes@sipsolutions.net> wrote:
+>>>>
+>>>>>> As I've made clear before, my work on this has been focused on the IPA transport,
 
-On 6/24/19 1:15 AM, Marc Zyngier wrote:
-> On Mon, 24 Jun 2019 04:02:54 +0100,
-> Sowjanya Komatineni <skomatineni@nvidia.com> wrote:
->> This patch allows to create separate irq_set_wake and irq_set_type
->> implementations for different tegra designs PMC that has different
->> wake models which require difference wake registers and different
->> programming sequence.
->>
->> AOWAKE model support is available for Tegra186 and Tegra194 only
->> and it resides within PMC and supports tiered wake architecture.
->>
->> Tegra210 and prior tegra designs uses PMC directly to receive wake
->> events and coordinate the wake sequence.
->>
->> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->> ---
->>   drivers/soc/tegra/pmc.c | 14 ++++++++++----
->>   1 file changed, 10 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
->> index edd4fe06810f..e87f29a35fcf 100644
->> --- a/drivers/soc/tegra/pmc.c
->> +++ b/drivers/soc/tegra/pmc.c
->> @@ -226,6 +226,8 @@ struct tegra_pmc_soc {
->>   	void (*setup_irq_polarity)(struct tegra_pmc *pmc,
->>   				   struct device_node *np,
->>   				   bool invert);
->> +	int (*irq_set_wake)(struct irq_data *data, unsigned int on);
->> +	int (*irq_set_type)(struct irq_data *data, unsigned int type);
->>   
->>   	const char * const *reset_sources;
->>   	unsigned int num_reset_sources;
->> @@ -1919,7 +1921,7 @@ static const struct irq_domain_ops tegra_pmc_irq_domain_ops = {
->>   	.alloc = tegra_pmc_irq_alloc,
->>   };
->>   
->> -static int tegra_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
->> +static int tegra186_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
->>   {
->>   	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
->>   	unsigned int offset, bit;
->> @@ -1951,7 +1953,7 @@ static int tegra_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
->>   	return 0;
->>   }
->>   
->> -static int tegra_pmc_irq_set_type(struct irq_data *data, unsigned int type)
->> +static int tegra186_pmc_irq_set_type(struct irq_data *data, unsigned int type)
->>   {
->>   	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
->>   	u32 value;
->> @@ -2005,8 +2007,10 @@ static int tegra_pmc_irq_init(struct tegra_pmc *pmc)
->>   	pmc->irq.irq_unmask = irq_chip_unmask_parent;
->>   	pmc->irq.irq_eoi = irq_chip_eoi_parent;
->>   	pmc->irq.irq_set_affinity = irq_chip_set_affinity_parent;
->> -	pmc->irq.irq_set_type = tegra_pmc_irq_set_type;
->> -	pmc->irq.irq_set_wake = tegra_pmc_irq_set_wake;
->> +	if (pmc->soc->irq_set_type)
->> +		pmc->irq.irq_set_type = pmc->soc->irq_set_type;
->> +	if (pmc->soc->irq_set_wake)
->> +		pmc->irq.irq_set_wake = pmc->soc->irq_set_wake;
-> I already commented on how superfluous these 'if ()' where. If you
-> disagree, please let me know why.
->
-> Thanks,
->
-> 	M.
+. . .
 
-Sorry Marc, missed it. Will fix in next version...
+>> The IPA driver was very large, and in an effort to have an initial driver
+>> that was more easily accepted upstream, it was carved down to support
+>> a single, very simple use case.  It supports only a single channel for
+>> carrying network data, and does not expose any of the IPA's other
+>> capabilities like filtering and routing (and multiplexing).
+> 
+> Ok. But it *does* use (or even require using) rmnet, so it has multiple
+> channels in a sense, no?
 
+Yes.  It's a multiplexing protocol, supporting one *or more* channels.
 
-Thanks
+>> Originally the IPA code had an IOCTL interface for adding and removing
+>> multiplexed channel IDs, but the simplified use case expected only one
+>> channel to be used.  
+> 
+> What did those channels do? Create different netdevs? Something else
+I don't know.  The code I started with only supported the use of
+one channel, but assumed the use of rmnet anyway (for aggregation
+and checksum offload most likely).
 
-Sowjanya
+. . .
+
+>> So getting back to your question, the IPA in its current form only
+>> has a single "multiplexed" channel carried over the connection
+>> between the AP and modem.  Previously (and in the future) there
+>> was a way to add or remove channels.
+> 
+> What would those channels do?
+> 
+> I've not really been very clear with the differentiation between a
+> channel and what's multiplexed inside of the channel.
+> 
+> Using the terminology you defined in your other mail, are you saying
+> that IPA (originally) allowed multiple *connections* to the device, or
+> is there basically just one connection, with multiple (QMAP-muxed)
+> *channels* on top of it?
+
+One connection, with the ability to have multiple multiplexed
+channels.
+
+> If the latter, why did IPA need ioctls, rather than rmnet?
+
+The "full" IPA driver supported a lot more than what is being
+proposed right now.  The strategy for getting support upstream
+was to drastically reduce the size of the driver by focusing
+on a single use case:  providing a netdev data interface served
+by the modem.
+
+But even to support that, the IPA driver needed to allow user
+space to identify certain resources that need to be used for
+implementing that netdev, or configuring whether certain
+features (e.g. download checksum) were to be used.
+
+. . .
+
+>> The hardware can aggregate multiple packets received from the
+>> modem into a single buffer, which the rmnet driver is then able
+>> to deaggregate.
+> 
+> Right, I gathered that much, but I'm not really sure I see why userspace
+> would even be allowed to control this? Either the device is doing it or
+> not, but the driver is going to have to cope either way?
+
+Maybe because doing aggregation or not is a policy decision?
+And/or a tunable parameter?  There might be a more appropriate
+way to do this.
+
+. . .
+
+>> My goal continues to be getting a baseline IPA driver accepted
+>> upstream as soon as possible, so I can then start building on
+>> that foundation.
+> 
+> Yeah. My goal is actually the same, but for the Intel driver, but I
+> don't have much code yet (it's being cleaned up now) :-)
+
+Well then I guess I'll beat you to it (or I *hope* I do)...
+
+					-Alex
+
+> 
+> johannes
+> 
 
