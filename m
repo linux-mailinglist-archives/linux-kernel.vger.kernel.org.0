@@ -2,151 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3876B518EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 18:45:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9467B518F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 18:49:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732180AbfFXQpt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 12:45:49 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:40463 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727847AbfFXQpt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 12:45:49 -0400
-Received: by mail-wm1-f66.google.com with SMTP id v19so31001wmj.5
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 09:45:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netronome-com.20150623.gappssmtp.com; s=20150623;
-        h=references:user-agent:from:to:cc:subject:message-id:in-reply-to
-         :date:mime-version;
-        bh=DzGlPYsIYshbD5peGKifO8l46y0lKsTTIsT4YjNzT5E=;
-        b=d6bKmA1qg0uC0Ie/B+rKeOICs7HZyVW8m4zo5CufVyG8tVEYsVvxLbE/SN124rH9p3
-         06yUcEvuoj+0PcroXaMiWv8HRvVCQeLqaMGAjw8YiGZA+5OdDouYUSYBBjcOtnTezmpB
-         mSev/yoU1rb28ZElCOVgrod/eoj6MrAaSrfoqh6HliP3cARmrjnP7lmUG96MesS3+Ku0
-         J5V5MSG5H8SsQIMgau0YDGSiMF5J1gZFIuklMrMYbGDIDGDq/l78UhoMTq3J/cwJ4v7X
-         mPdQecNR4EHgr/JIOVaSbkfVdT2FxX1qxupmrqOEyO1iKOT+/uX5o+xyqn6TbPQHpqBd
-         X2TQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:references:user-agent:from:to:cc:subject
-         :message-id:in-reply-to:date:mime-version;
-        bh=DzGlPYsIYshbD5peGKifO8l46y0lKsTTIsT4YjNzT5E=;
-        b=T8ad89Az7rFl6jbjddVrHPOurC5N2dbSQGC2IyJqcTld01eQqvMgM+yZ5znTjCbCph
-         8eC1WjyjvLstBm10+TuGZ7wDIduSS+XkYZiL0bin32m4C6OlJDHgGeucTniW1vvLJtgl
-         5tanbb6UIZ8NpH9spHtaizBDrNTXfvsroLSRURNPcrVP8GeWqunh2B2uR2guMX91petG
-         LJuQixxV8gWMx10Ug2czlC22iongCyWWRYfL1fw0B1wJwYWZGpfBJGtcku3wH0D6kwrn
-         v4gldbdzR0yIssNZTMufbZVPmd7RELaHq54VI8teIN5TDPr7P2NufaCHjN8DV7WTbNbi
-         WIhg==
-X-Gm-Message-State: APjAAAVQOPsm/ecKxPxVsfUlWg8N0VpMHGMluuR9OFMWDrLBuQ6sYids
-        Ulovt3bbXqst42S5f4t+oc2WsQ==
-X-Google-Smtp-Source: APXvYqzCOhY6pbib85YShe2BKk3kBMiCErh/riJuTO+Y3VGhfakrMQj54c4JSjzoIeVurBCR7ItggQ==
-X-Received: by 2002:a1c:4d6:: with SMTP id 205mr15402634wme.148.1561394746919;
-        Mon, 24 Jun 2019 09:45:46 -0700 (PDT)
-Received: from LAPTOP-V3S7NLPL ([217.38.71.146])
-        by smtp.gmail.com with ESMTPSA id 15sm21315wmk.34.2019.06.24.09.45.46
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 24 Jun 2019 09:45:46 -0700 (PDT)
-References: <20190621225938.27030-1-lukenels@cs.washington.edu>
-User-agent: mu4e 0.9.18; emacs 25.2.2
-From:   Jiong Wang <jiong.wang@netronome.com>
-To:     Luke Nelson <lukenels@cs.washington.edu>
-Cc:     Luke Nelson <luke.r.nels@gmail.com>, Xi Wang <xi.wang@gmail.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@gmail.com>,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [RFC PATCH bpf-next] RV32G eBPF JIT
-Message-ID: <87h88f9bm3.fsf@netronome.com>
-In-reply-to: <20190621225938.27030-1-lukenels@cs.washington.edu>
-Date:   Mon, 24 Jun 2019 17:45:45 +0100
+        id S1730074AbfFXQtJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 12:49:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44236 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727715AbfFXQtJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 12:49:09 -0400
+Received: from localhost (unknown [106.201.35.23])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4D8D1204EC;
+        Mon, 24 Jun 2019 16:49:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561394947;
+        bh=/NHJfqWeCqb+Lp1/50yhyIeXAOct+MNKza0IWDRx7mQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rnTD54Rb4s3lVxiO5SzU0ZulEwZcIBpuL1tTEC9wRmVu13q+75fb2w+vR4dIo/U5s
+         V0MZwRq0JJrXn2EQr0NG+C7+dEIAQSA67UxQBP2GdwiIEQRLCbrISQsgGu3tbJOniy
+         ql3Oen9IgZxiIULiGacGWLru4UV9HKaSrt+1zurI=
+Date:   Mon, 24 Jun 2019 22:15:56 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Peng Ma <peng.ma@nxp.com>
+Cc:     dan.j.williams@intel.com, leoyang.li@nxp.com,
+        linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org
+Subject: Re: [V4 2/2] dmaengine: fsl-dpaa2-qdma: Add NXP dpaa2 qDMA
+ controller driver for Layerscape SoCs
+Message-ID: <20190624164556.GD2962@vkoul-mobl>
+References: <20190613101341.21169-1-peng.ma@nxp.com>
+ <20190613101341.21169-2-peng.ma@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190613101341.21169-2-peng.ma@nxp.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 13-06-19, 10:13, Peng Ma wrote:
+> DPPA2(Data Path Acceleration Architecture 2) qDMA
+> supports channel virtualization by allowing DMA
 
-Luke Nelson writes:
+typo virtualization
 
-> From: Luke Nelson <luke.r.nels@gmail.com>
->
-> This is an eBPF JIT for RV32G, adapted from the JIT for RV64G.
-> Any feedback would be greatly appreciated.
->
-> It passes 359 out of 378 tests in test_bpf.ko. The failing tests are
-> features that are not supported right now:
->   - ALU64 DIV/MOD:
->       These require loops to emulate on 32-bit hardware,
->       and are not supported on other 32-bit JITs like
->       ARM32.
->   - BPF_XADD | BPF_DW:
->       RV32G does not have atomic instructions for operating
->       on double words. This is similar to ARM32.
->   - Tail calls:
->       I'm working on adding support for these now, but couldn't
->       find any test cases that use them. What's the best way
->       of testing tail call code?
->   - Far branches
->       These are not supported in RV64G either.
->
-> There are two main changes required for this to work compared to the
-> RV64 JIT.
->
-> First, eBPF registers are 64-bit, while RV32G registers are 32-bit.
-> I take an approach similar to ARM32: most BPF registers map directly to
-> 2 RISC-V registers, while some reside in stack scratch space and must
-> be saved / restored when used.
->
-> Second, many 64-bit ALU operations do not trivially map to 32-bit
-> operations. Operations that move bits between high and low words, such
-> as ADD, LSH, MUL, and others must emulate the 64-bit behavior in terms
-> of 32-bit instructions.
->
-> Signed-off-by: Luke Nelson <luke.r.nels@gmail.com>
-> Cc: Xi Wang <xi.wang@gmail.com>
-> ---
->  arch/riscv/Kconfig              |    2 +-
->  arch/riscv/net/Makefile         |    7 +-
->  arch/riscv/net/bpf_jit_comp32.c | 1460 +++++++++++++++++++++++++++++++
->  3 files changed, 1467 insertions(+), 2 deletions(-)
->  create mode 100644 arch/riscv/net/bpf_jit_comp32.c
->
-<snip>
-> +static void rv32_bpf_put_reg32(const s8 *reg, const s8 *src,
-> +			       struct rv_jit_context *ctx)
+> jobs to be enqueued into different frame queues.
+> Core can initiate a DMA transaction by preparing a frame
+> descriptor(FD) for each DMA job and enqueuing this job to
+> a frame queue. through a hardware portal. The qDMA
+              ^^^
+why this full stop?
+
+> +static struct dpaa2_qdma_comp *
+> +dpaa2_qdma_request_desc(struct dpaa2_qdma_chan *dpaa2_chan)
 > +{
-> +	if (is_stacked(reg[1])) {
-> +		emit(rv_sw(RV_REG_FP, reg[1], src[1]), ctx);
-> +		emit(rv_sw(RV_REG_FP, reg[0], RV_REG_ZERO), ctx);
-> +	} else {
-> +		emit(rv_addi(reg[0], RV_REG_ZERO, 0), ctx);
-> +	}
-> +}
+> +	struct dpaa2_qdma_comp *comp_temp = NULL;
+> +	unsigned long flags;
 > +
+> +	spin_lock_irqsave(&dpaa2_chan->queue_lock, flags);
+> +	if (list_empty(&dpaa2_chan->comp_free)) {
+> +		spin_unlock_irqrestore(&dpaa2_chan->queue_lock, flags);
+> +		comp_temp = kzalloc(sizeof(*comp_temp), GFP_NOWAIT);
+> +		if (!comp_temp)
+> +			goto err;
+> +		comp_temp->fd_virt_addr =
+> +			dma_pool_alloc(dpaa2_chan->fd_pool, GFP_NOWAIT,
+> +				       &comp_temp->fd_bus_addr);
+> +		if (!comp_temp->fd_virt_addr)
+> +			goto err_comp;
+> +
+> +		comp_temp->fl_virt_addr =
+> +			dma_pool_alloc(dpaa2_chan->fl_pool, GFP_NOWAIT,
+> +				       &comp_temp->fl_bus_addr);
+> +		if (!comp_temp->fl_virt_addr)
+> +			goto err_fd_virt;
+> +
+> +		comp_temp->desc_virt_addr =
+> +			dma_pool_alloc(dpaa2_chan->sdd_pool, GFP_NOWAIT,
+> +				       &comp_temp->desc_bus_addr);
+> +		if (!comp_temp->desc_virt_addr)
+> +			goto err_fl_virt;
+> +
+> +		comp_temp->qchan = dpaa2_chan;
+> +		return comp_temp;
+> +	}
+> +
+> +	comp_temp = list_first_entry(&dpaa2_chan->comp_free,
+> +				     struct dpaa2_qdma_comp, list);
+> +	list_del(&comp_temp->list);
+> +	spin_unlock_irqrestore(&dpaa2_chan->queue_lock, flags);
+> +
+> +	comp_temp->qchan = dpaa2_chan;
+> +
+> +	return comp_temp;
+> +
+> +err_fl_virt:
 
-Looks to me 32-bit optimization is not enabled.
+no err logs? how will you know what went wrong?
 
-If you define bpf_jit_needs_zext to return true
+> +static enum
+> +dma_status dpaa2_qdma_tx_status(struct dma_chan *chan,
+> +				dma_cookie_t cookie,
+> +				struct dma_tx_state *txstate)
+> +{
+> +	return dma_cookie_status(chan, cookie, txstate);
 
-  bool bpf_jit_needs_zext(void)
-  {
-        return true;
-  }
+why not set dma_cookie_status as this callback?
 
-Then you don't need to zero high 32-bit when writing 32-bit sub-register
-and you just need to implement the explicit zero extension insn which is a
-special variant of BPF_MOV. This can save quite a few instructions. RV64
-and arches like arm has implemented this, please search
-"aux->verifier_zext".
+> +static int __cold dpaa2_qdma_setup(struct fsl_mc_device *ls_dev)
+> +{
+> +	struct dpaa2_qdma_priv_per_prio *ppriv;
+> +	struct device *dev = &ls_dev->dev;
+> +	struct dpaa2_qdma_priv *priv;
+> +	u8 prio_def = DPDMAI_PRIO_NUM;
+> +	int err = -EINVAL;
+> +	int i;
+> +
+> +	priv = dev_get_drvdata(dev);
+> +
+> +	priv->dev = dev;
+> +	priv->dpqdma_id = ls_dev->obj_desc.id;
+> +
+> +	/* Get the handle for the DPDMAI this interface is associate with */
+> +	err = dpdmai_open(priv->mc_io, 0, priv->dpqdma_id, &ls_dev->mc_handle);
+> +	if (err) {
+> +		dev_err(dev, "dpdmai_open() failed\n");
+> +		return err;
+> +	}
+> +	dev_info(dev, "Opened dpdmai object successfully\n");
 
-And there is a doc for this optimization:
+this is noise in kernel, consider debug level
 
-https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git/tree/Documentation/bpf/bpf_design_QA.rst#n168
+> +static int __cold dpaa2_dpdmai_bind(struct dpaa2_qdma_priv *priv)
+> +{
+> +	int err;
+> +	int i, num;
+> +	struct device *dev = priv->dev;
+> +	struct dpaa2_qdma_priv_per_prio *ppriv;
+> +	struct dpdmai_rx_queue_cfg rx_queue_cfg;
+> +	struct fsl_mc_device *ls_dev = to_fsl_mc_device(dev);
 
-Regards,
-Jiong
+the order is reverse than used in other fn, please stick to one style!
+-- 
+~Vinod
