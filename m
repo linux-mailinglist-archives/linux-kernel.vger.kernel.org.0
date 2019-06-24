@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6EDB508A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:22:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0252750676
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:01:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730259AbfFXKVl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 06:21:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57372 "EHLO mail.kernel.org"
+        id S1729100AbfFXJ65 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 05:58:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57716 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727525AbfFXKVk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 06:21:40 -0400
+        id S1729095AbfFXJ6y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 05:58:54 -0400
 Received: from localhost (f4.8f.5177.ip4.static.sl-reverse.com [119.81.143.244])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EDA622089F;
-        Mon, 24 Jun 2019 10:21:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 55E28208CA;
+        Mon, 24 Jun 2019 09:58:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561371699;
-        bh=BoomFJW/1NNweO7euA096XJIfZxFk1tLT5l9P0tVrGY=;
+        s=default; t=1561370333;
+        bh=VEnuqXkxsQa1rgelxG5DOex5cRrW5oJx5Knmo8WH9S4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y42C/gbu52flmSZyMLl+sv9KefvWED24MLUHYdbidUiUIwIWu1UtrpL3H22IFnqTI
-         NAw/RwNBw+6CV2eP5y+8yRif2K7VQyc+MmvPSNtCEn65IZKn4sAcpeFdtydNATVDyb
-         SFQTJ9y0MnaiJmQqAHviy0RcTa7LSpaYp+nwKaNQ=
+        b=fXHs+8VUEIcNAdADb+9LkD3jCtvhi9nRcuL75gT6oWfEPgvVRaqMx8EsixTK3MAi9
+         lqfIU8Ue/8QaNDus1l4utEvG+E6RBYNFiTOX2q6fWz5SgfL+Ipo4Bjb2rz11G1wddh
+         mpNEnFO3h3EBPdpl2smuqobfuOab79Adi3ljr/2o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Miaohe Lin <linmiaohe@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Don Brace <don.brace@microsemi.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 079/121] net: ipvlan: Fix ipvlan device tso disabled while NETIF_F_IP_CSUM is set
+Subject: [PATCH 4.14 33/51] scsi: smartpqi: unlock on error in pqi_submit_raid_request_synchronous()
 Date:   Mon, 24 Jun 2019 17:56:51 +0800
-Message-Id: <20190624092324.908699931@linuxfoundation.org>
+Message-Id: <20190624092310.099740505@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190624092320.652599624@linuxfoundation.org>
-References: <20190624092320.652599624@linuxfoundation.org>
+In-Reply-To: <20190624092305.919204959@linuxfoundation.org>
+References: <20190624092305.919204959@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,42 +45,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit ceae266bf0ae6564ac16d086bf749a096fa90ded ]
+[ Upstream commit cc8f52609bb4177febade24d11713e20c0893b0a ]
 
-There's some NICs, such as hinic, with NETIF_F_IP_CSUM and NETIF_F_TSO
-on but NETIF_F_HW_CSUM off. And ipvlan device features will be
-NETIF_F_TSO on with NETIF_F_IP_CSUM and NETIF_F_IP_CSUM both off as
-IPVLAN_FEATURES only care about NETIF_F_HW_CSUM. So TSO will be
-disabled in netdev_fix_features.
-For example:
-Features for enp129s0f0:
-rx-checksumming: on
-tx-checksumming: on
-        tx-checksum-ipv4: on
-        tx-checksum-ip-generic: off [fixed]
-        tx-checksum-ipv6: on
+We need to drop the "ctrl_info->sync_request_sem" lock before returning.
 
-Fixes: a188222b6ed2 ("net: Rename NETIF_F_ALL_CSUM to NETIF_F_CSUM_MASK")
-Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 6c223761eb54 ("smartpqi: initial commit of Microsemi smartpqi driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Don Brace <don.brace@microsemi.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ipvlan/ipvlan_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/smartpqi/smartpqi_init.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ipvlan/ipvlan_main.c b/drivers/net/ipvlan/ipvlan_main.c
-index bbeb1623e2d5..717fce6edeb7 100644
---- a/drivers/net/ipvlan/ipvlan_main.c
-+++ b/drivers/net/ipvlan/ipvlan_main.c
-@@ -112,7 +112,7 @@ static void ipvlan_port_destroy(struct net_device *dev)
- }
- 
- #define IPVLAN_FEATURES \
--	(NETIF_F_SG | NETIF_F_HW_CSUM | NETIF_F_HIGHDMA | NETIF_F_FRAGLIST | \
-+	(NETIF_F_SG | NETIF_F_CSUM_MASK | NETIF_F_HIGHDMA | NETIF_F_FRAGLIST | \
- 	 NETIF_F_GSO | NETIF_F_TSO | NETIF_F_GSO_ROBUST | \
- 	 NETIF_F_TSO_ECN | NETIF_F_TSO6 | NETIF_F_GRO | NETIF_F_RXCSUM | \
- 	 NETIF_F_HW_VLAN_CTAG_FILTER | NETIF_F_HW_VLAN_STAG_FILTER)
+diff --git a/drivers/scsi/smartpqi/smartpqi_init.c b/drivers/scsi/smartpqi/smartpqi_init.c
+index d34351c6b9af..4055753b495a 100644
+--- a/drivers/scsi/smartpqi/smartpqi_init.c
++++ b/drivers/scsi/smartpqi/smartpqi_init.c
+@@ -3686,8 +3686,10 @@ static int pqi_submit_raid_request_synchronous(struct pqi_ctrl_info *ctrl_info,
+ 				return -ETIMEDOUT;
+ 			msecs_blocked =
+ 				jiffies_to_msecs(jiffies - start_jiffies);
+-			if (msecs_blocked >= timeout_msecs)
+-				return -ETIMEDOUT;
++			if (msecs_blocked >= timeout_msecs) {
++				rc = -ETIMEDOUT;
++				goto out;
++			}
+ 			timeout_msecs -= msecs_blocked;
+ 		}
+ 	}
 -- 
 2.20.1
 
