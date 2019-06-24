@@ -2,148 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7527650066
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 05:59:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B51E5006B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 06:01:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727734AbfFXD7t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 23:59:49 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:43901 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726476AbfFXD7s (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 23:59:48 -0400
-Received: by mail-pf1-f195.google.com with SMTP id i189so6693863pfg.10
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2019 20:59:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
-         :mime-version:content-transfer-encoding;
-        bh=DephS9aF1RqbAgEf2w/teieLK755TA9/UUG6864ldTk=;
-        b=jT/wq8XmUCz8Im8200YDWVs5dje0T+QGCmO5uSugbAC1PeL/PQgjnKSfwebDtHvf3n
-         YldtzdHrE/5KKVZmbJziVLUtAx6SVLxutPXLLF+MHR3fvJbd/QJWTueh0pzR4t5AkQGF
-         WRHi7MxYHtca7JNfQBUaViLHjuBQ3BJ/iei2xoOztQMKceDgC5vHBxMyAWD7ztp+2s3Q
-         eQdQUiyk4+Q8xOP2PkDxfOdd4JKnreswB7Lr92GC+u7+SJL73h0WQsxFI0/bO5TP20pk
-         bCavE76fh34nKkUhNZq7JkCV2cTGThiNzeopAVWjO+BqPYSs3OH7k3IU6xkjDNJ/70+J
-         7Dyg==
-X-Gm-Message-State: APjAAAWUO8+uaTT7FgS5j1eHN7qDMOTPApfS2DHx17iShTUwErTFn04N
-        DOp3kbfCTJgdVnheVPmH+KelSw==
-X-Google-Smtp-Source: APXvYqx0vYrtGNTNl5KXc2DpVQEG5bwKvqspWyryVid6mzUIPcvfQcnDFMCtCb5rPpbnT1bu7BxQuw==
-X-Received: by 2002:a63:3d09:: with SMTP id k9mr24980118pga.321.1561348787037;
-        Sun, 23 Jun 2019 20:59:47 -0700 (PDT)
-Received: from localhost (220-132-236-182.HINET-IP.hinet.net. [220.132.236.182])
-        by smtp.gmail.com with ESMTPSA id t24sm9569893pfh.113.2019.06.23.20.59.46
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sun, 23 Jun 2019 20:59:46 -0700 (PDT)
-Date:   Sun, 23 Jun 2019 20:59:46 -0700 (PDT)
-X-Google-Original-Date: Sun, 23 Jun 2019 20:59:43 PDT (-0700)
-Subject:     Re: linux-next: build failure after merge of the net-next tree
-In-Reply-To: <20190624131245.359e59a4@canb.auug.org.au>
-CC:     davem@davemloft.net, netdev@vger.kernel.org,
-        linux-next@vger.kernel.org, linux-kernel@vger.kernel.org,
-        yash.shah@sifive.com
-From:   Palmer Dabbelt <palmer@sifive.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Message-ID: <mhng-24035d0e-a382-4a48-89eb-eb00213fca7e@palmer-si-x1e>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
+        id S1727740AbfFXEB3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 00:01:29 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:19099 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725769AbfFXEB2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 00:01:28 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id A030B2BC4CFD26FB6995;
+        Mon, 24 Jun 2019 12:01:24 +0800 (CST)
+Received: from [127.0.0.1] (10.184.225.177) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Mon, 24 Jun 2019
+ 12:01:13 +0800
+Subject: Re: [PATCH next] softirq: enable MAX_SOFTIRQ_TIME tuning with sysctl
+ max_softirq_time_usecs
+To:     Thomas Gleixner <tglx@linutronix.de>
+CC:     <corbet@lwn.net>, <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>, <akpm@linux-foundation.org>,
+        <manfred@colorfullife.com>, <jwilk@jwilk.net>,
+        <dvyukov@google.com>, <feng.tang@intel.com>,
+        <sunilmut@microsoft.com>, <quentin.perret@arm.com>,
+        <linux@leemhuis.info>, <alex.popov@linux.com>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>,
+        "wangxiaogang (F)" <wangxiaogang3@huawei.com>,
+        "Zhoukang (A)" <zhoukang7@huawei.com>,
+        Mingfangsen <mingfangsen@huawei.com>, <tedheadster@gmail.com>,
+        Eric Dumazet <edumazet@google.com>
+References: <f274f85a-bbb6-3e32-b293-1d5d7f27a98f@huawei.com>
+ <alpine.DEB.2.21.1906231820470.32342@nanos.tec.linutronix.de>
+From:   Zhiqiang Liu <liuzhiqiang26@huawei.com>
+Message-ID: <0099726a-ead3-bdbe-4c66-c8adc9a4f11b@huawei.com>
+Date:   Mon, 24 Jun 2019 12:01:01 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
+MIME-Version: 1.0
+In-Reply-To: <alpine.DEB.2.21.1906231820470.32342@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset="gbk"
 Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.184.225.177]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 23 Jun 2019 20:12:45 PDT (-0700), Stephen Rothwell wrote:
-> Hi all,
->
-> On Thu, 20 Jun 2019 19:13:48 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+
+ÔÚ 2019/6/24 0:38, Thomas Gleixner Ð´µÀ:
+> Zhiqiang,
+>> controlled by sysadmins to copy with hardware changes over time.
+> 
+> So much for the theory. See below.
+
+Thanks for your reply.
+> 
+>> Correspondingly, the MAX_SOFTIRQ_TIME should be able to be tunned by sysadmins,
+>> who knows best about hardware performance, for excepted tradeoff between latence
+>> and fairness.
 >>
->> After merging the net-next tree, today's linux-next build (powerpc
->> allyesconfig) failed like this:
->> 
->> drivers/net/ethernet/cadence/macb_main.c:48:16: error: field 'hw' has incomplete type
->>   struct clk_hw hw;
->>                 ^~
->> drivers/net/ethernet/cadence/macb_main.c:4003:21: error: variable 'fu540_c000_ops' has initializer but incomplete type
->>  static const struct clk_ops fu540_c000_ops = {
->>                      ^~~~~~~
->> drivers/net/ethernet/cadence/macb_main.c:4004:3: error: 'const struct clk_ops' has no member named 'recalc_rate'
->>   .recalc_rate = fu540_macb_tx_recalc_rate,
->>    ^~~~~~~~~~~
->> drivers/net/ethernet/cadence/macb_main.c:4004:17: warning: excess elements in struct initializer
->>   .recalc_rate = fu540_macb_tx_recalc_rate,
->>                  ^~~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/net/ethernet/cadence/macb_main.c:4004:17: note: (near initialization for 'fu540_c000_ops')
->> drivers/net/ethernet/cadence/macb_main.c:4005:3: error: 'const struct clk_ops' has no member named 'round_rate'
->>   .round_rate = fu540_macb_tx_round_rate,
->>    ^~~~~~~~~~
->> drivers/net/ethernet/cadence/macb_main.c:4005:16: warning: excess elements in struct initializer
->>   .round_rate = fu540_macb_tx_round_rate,
->>                 ^~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/net/ethernet/cadence/macb_main.c:4005:16: note: (near initialization for 'fu540_c000_ops')
->> drivers/net/ethernet/cadence/macb_main.c:4006:3: error: 'const struct clk_ops' has no member named 'set_rate'
->>   .set_rate = fu540_macb_tx_set_rate,
->>    ^~~~~~~~
->> drivers/net/ethernet/cadence/macb_main.c:4006:14: warning: excess elements in struct initializer
->>   .set_rate = fu540_macb_tx_set_rate,
->>               ^~~~~~~~~~~~~~~~~~~~~~
->> drivers/net/ethernet/cadence/macb_main.c:4006:14: note: (near initialization for 'fu540_c000_ops')
->> drivers/net/ethernet/cadence/macb_main.c: In function 'fu540_c000_clk_init':
->> drivers/net/ethernet/cadence/macb_main.c:4013:23: error: storage size of 'init' isn't known
->>   struct clk_init_data init;
->>                        ^~~~
->> drivers/net/ethernet/cadence/macb_main.c:4032:12: error: implicit declaration of function 'clk_register'; did you mean 'sock_register'? [-Werror=implicit-function-declaration]
->>   *tx_clk = clk_register(NULL, &mgmt->hw);
->>             ^~~~~~~~~~~~
->>             sock_register
->> drivers/net/ethernet/cadence/macb_main.c:4013:23: warning: unused variable 'init' [-Wunused-variable]
->>   struct clk_init_data init;
->>                        ^~~~
->> drivers/net/ethernet/cadence/macb_main.c: In function 'macb_probe':
->> drivers/net/ethernet/cadence/macb_main.c:4366:2: error: implicit declaration of function 'clk_unregister'; did you mean 'sock_unregister'? [-Werror=implicit-function-declaration]
->>   clk_unregister(tx_clk);
->>   ^~~~~~~~~~~~~~
->>   sock_unregister
->> drivers/net/ethernet/cadence/macb_main.c: At top level:
->> drivers/net/ethernet/cadence/macb_main.c:4003:29: error: storage size of 'fu540_c000_ops' isn't known
->>  static const struct clk_ops fu540_c000_ops = {
->>                              ^~~~~~~~~~~~~~
->> 
->> Caused by commit
->> 
->>   c218ad559020 ("macb: Add support for SiFive FU540-C000")
->> 
->> CONFIG_COMMON_CLK is not set for this build.
->> 
->> I have reverted that commit for today.
->
-> I am still reverting that commit.  Has this problem been fixed in some
-> subtle way?
+>> Here, we add sysctl variable max_softirq_time_usecs to replace MAX_SOFTIRQ_TIME
+>> with 2ms default value.
+> 
+> ...
+> 
+>>   */
+>> -#define MAX_SOFTIRQ_TIME  msecs_to_jiffies(2)
+>> +unsigned int __read_mostly max_softirq_time_usecs = 2000;
+>>  #define MAX_SOFTIRQ_RESTART 10
+>>
+>>  #ifdef CONFIG_TRACE_IRQFLAGS
+>> @@ -248,7 +249,8 @@ static inline void lockdep_softirq_end(bool in_hardirq) { }
+>>
+>>  asmlinkage __visible void __softirq_entry __do_softirq(void)
+>>  {
+>> -	unsigned long end = jiffies + MAX_SOFTIRQ_TIME;
+>> +	unsigned long end = jiffies +
+>> +		usecs_to_jiffies(max_softirq_time_usecs);
+> 
+> That's still jiffies based and therefore depends on CONFIG_HZ. Any budget
+> value will be rounded up to the next jiffie. So in case of HZ=100 and
+> time=1000us this will still result in 10ms of allowed loop time.
+> 
+> I'm not saying that we must use a more fine grained time source, but both
+> the changelog and the sysctl documentation are misleading.
+> 
+> If we keep it jiffies based, then microseconds do not make any sense. They
+> just give a false sense of controlability.
+> 
+> Keep also in mind that with jiffies the accuracy depends also on the
+> distance to the next tick when 'end' is evaluated. The next tick might be
+> imminent.
+> 
+> That's all information which needs to be in the documentation.
+> 
 
-I don't think so.  I'm assuming something like this is necessary
+Thanks again for your detailed advice.
+As your said, the max_softirq_time_usecs setting without explaining the
+relationship with CONFIG_HZ will give a false sense of controlability. And
+the time accuracy of jiffies will result in a certain difference between the
+max_softirq_time_usecs set value and the actual value, which is in one jiffies
+range.
 
-diff --git a/drivers/net/ethernet/cadence/Kconfig b/drivers/net/ethernet/cadence/Kconfig
-index 1766697c9c5a..d13db9e9c818 100644
---- a/drivers/net/ethernet/cadence/Kconfig
-+++ b/drivers/net/ethernet/cadence/Kconfig
-@@ -23,6 +23,7 @@ config MACB
-        tristate "Cadence MACB/GEM support"
-        depends on HAS_DMA
-        select PHYLIB
-+       depends on COMMON_CLK
-        ---help---
-          The Cadence MACB ethernet interface is found on many Atmel AT32 and
-          AT91 parts.  This driver also supports the Cadence GEM (Gigabit
-@@ -42,7 +43,7 @@ config MACB_USE_HWSTAMP
+I will add these infomation in the sysctl documentation and changelog in v2 patch.
 
- config MACB_PCI
-        tristate "Cadence PCI MACB/GEM support"
--       depends on MACB && PCI && COMMON_CLK
-+       depends on MACB && PCI
-        ---help---
-          This is PCI wrapper for MACB driver.
+>> +	{
+>> +		.procname	= "max_softirq_time_usecs",
+>> +		.data		= &max_softirq_time_usecs,
+>> +		.maxlen		= sizeof(unsigned int),
+>> +		.mode		= 0644,
+>> +		.proc_handler   = proc_dointvec_minmax,
+>> +		.extra1		= &zero,
+>> +	},
+> 
+> Zero as the lower limit? That means it allows a single loop. Fine, but
+> needs to be documented as well.
+> 
+> Thanks,
+> 
+> 	tglx
+> 
+> .
+> 
 
-at a minimum, though it may be saner to #ifdef support for the SiFive clock
-driver as that's only useful on some systems.  Assuming I can reproduce the
-build failure (which shouldn't be too hard), I'll send out a patch that adds a
-Kconfig for the FU540 clock driver to avoid adding a COMMON_CLK dependency for
-all MACB systems.
