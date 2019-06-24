@@ -2,132 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 009235079C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:12:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B956E50632
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 11:56:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730452AbfFXKI2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 06:08:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41102 "EHLO mail.kernel.org"
+        id S1728709AbfFXJ40 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 05:56:26 -0400
+Received: from foss.arm.com ([217.140.110.172]:44932 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730352AbfFXKIE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 06:08:04 -0400
-Received: from localhost (f4.8f.5177.ip4.static.sl-reverse.com [119.81.143.244])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9FF2F20645;
-        Mon, 24 Jun 2019 10:08:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561370884;
-        bh=2bCaQpKfQhYXu+UNFytJt21KrwSS7cGYWdbooSHkFCQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Sl5RZk8a7XojLLaqMYvXQ3x/bfkDBiWWOAI+Ex3oeaafTt9VcM7Odyi9mjpzW2/fj
-         00j2LBm7JXZXAG5N8vwxHXuLwvZORBHW2nuaCsCJhMSeY6pCsvilwutgtsxSp/XD0C
-         MSz5qNAgeUCVqfSxqETkXEPwQqfvSMwrKCrCkjpc=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 5.1 007/121] mmc: core: Add sdio_retune_hold_now() and sdio_retune_release()
-Date:   Mon, 24 Jun 2019 17:55:39 +0800
-Message-Id: <20190624092321.017259033@linuxfoundation.org>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190624092320.652599624@linuxfoundation.org>
-References: <20190624092320.652599624@linuxfoundation.org>
-User-Agent: quilt/0.66
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        id S1728688AbfFXJ4Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 05:56:24 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6852311D4;
+        Mon, 24 Jun 2019 02:56:23 -0700 (PDT)
+Received: from e121650-lin.cambridge.arm.com (e121650-lin.cambridge.arm.com [10.1.196.120])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4A2B73F71E;
+        Mon, 24 Jun 2019 02:56:22 -0700 (PDT)
+From:   Raphael Gault <raphael.gault@arm.com>
+To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     jpoimboe@redhat.com, peterz@infradead.org, catalin.marinas@arm.com,
+        will.deacon@arm.com, julien.thierry@arm.com,
+        Raphael Gault <raphael.gault@arm.com>
+Subject: [RFC V3 09/18] gcc-plugins: objtool: Add plugin to detect switch table on arm64
+Date:   Mon, 24 Jun 2019 10:55:39 +0100
+Message-Id: <20190624095548.8578-10-raphael.gault@arm.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190624095548.8578-1-raphael.gault@arm.com>
+References: <20190624095548.8578-1-raphael.gault@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Douglas Anderson <dianders@chromium.org>
+This plugins comes into play before the final 2 RTL passes of GCC and
+detects switch-tables that are to be outputed in the ELF and writes
+information in an "objtool_data" section which will be used by objtool.
 
-commit b4c9f938d542d5f88c501744d2d12fad4fd2915f upstream.
-
-We want SDIO drivers to be able to temporarily stop retuning when the
-driver knows that the SDIO card is not in a state where retuning will
-work (maybe because the card is asleep).  We'll move the relevant
-functions to a place where drivers can call them.
-
-Cc: stable@vger.kernel.org #v4.18+
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-Acked-by: Kalle Valo <kvalo@codeaurora.org>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Raphael Gault <raphael.gault@arm.com>
 ---
- drivers/mmc/core/sdio_io.c    |   40 ++++++++++++++++++++++++++++++++++++++++
- include/linux/mmc/sdio_func.h |    3 +++
- 2 files changed, 43 insertions(+)
+ scripts/Makefile.gcc-plugins                  |  2 +
+ scripts/gcc-plugins/Kconfig                   |  9 +++
+ .../arm64_switch_table_detection_plugin.c     | 58 +++++++++++++++++++
+ 3 files changed, 69 insertions(+)
+ create mode 100644 scripts/gcc-plugins/arm64_switch_table_detection_plugin.c
 
---- a/drivers/mmc/core/sdio_io.c
-+++ b/drivers/mmc/core/sdio_io.c
-@@ -19,6 +19,7 @@
- #include "sdio_ops.h"
- #include "core.h"
- #include "card.h"
-+#include "host.h"
+diff --git a/scripts/Makefile.gcc-plugins b/scripts/Makefile.gcc-plugins
+index 5f7df50cfe7a..a56736df9dc2 100644
+--- a/scripts/Makefile.gcc-plugins
++++ b/scripts/Makefile.gcc-plugins
+@@ -44,6 +44,8 @@ ifdef CONFIG_GCC_PLUGIN_ARM_SSP_PER_TASK
+ endif
+ export DISABLE_ARM_SSP_PER_TASK_PLUGIN
  
- /**
-  *	sdio_claim_host - exclusively claim a bus for a certain SDIO function
-@@ -775,3 +776,42 @@ void sdio_retune_crc_enable(struct sdio_
- 	func->card->host->retune_crc_disable = false;
- }
- EXPORT_SYMBOL_GPL(sdio_retune_crc_enable);
++gcc-plugin-$(CONFIG_GCC_PLUGIN_SWITCH_TABLES)	+= arm64_switch_table_detection_plugin.so
 +
-+/**
-+ *	sdio_retune_hold_now - start deferring retuning requests till release
-+ *	@func: SDIO function attached to host
-+ *
-+ *	This function can be called if it's currently a bad time to do
-+ *	a retune of the SDIO card.  Retune requests made during this time
-+ *	will be held and we'll actually do the retune sometime after the
-+ *	release.
-+ *
-+ *	This function could be useful if an SDIO card is in a power state
-+ *	where it can respond to a small subset of commands that doesn't
-+ *	include the retuning command.  Care should be taken when using
-+ *	this function since (presumably) the retuning request we might be
-+ *	deferring was made for a good reason.
-+ *
-+ *	This function should be called while the host is claimed.
-+ */
-+void sdio_retune_hold_now(struct sdio_func *func)
-+{
-+	mmc_retune_hold_now(func->card->host);
-+}
-+EXPORT_SYMBOL_GPL(sdio_retune_hold_now);
-+
-+/**
-+ *	sdio_retune_release - signal that it's OK to retune now
-+ *	@func: SDIO function attached to host
-+ *
-+ *	This is the complement to sdio_retune_hold_now().  Calling this
-+ *	function won't make a retune happen right away but will allow
-+ *	them to be scheduled normally.
-+ *
-+ *	This function should be called while the host is claimed.
-+ */
-+void sdio_retune_release(struct sdio_func *func)
-+{
-+	mmc_retune_release(func->card->host);
-+}
-+EXPORT_SYMBOL_GPL(sdio_retune_release);
---- a/include/linux/mmc/sdio_func.h
-+++ b/include/linux/mmc/sdio_func.h
-@@ -162,4 +162,7 @@ extern int sdio_set_host_pm_flags(struct
- extern void sdio_retune_crc_disable(struct sdio_func *func);
- extern void sdio_retune_crc_enable(struct sdio_func *func);
+ # All the plugin CFLAGS are collected here in case a build target needs to
+ # filter them out of the KBUILD_CFLAGS.
+ GCC_PLUGINS_CFLAGS := $(strip $(addprefix -fplugin=$(objtree)/scripts/gcc-plugins/, $(gcc-plugin-y)) $(gcc-plugin-cflags-y))
+diff --git a/scripts/gcc-plugins/Kconfig b/scripts/gcc-plugins/Kconfig
+index e9c677a53c74..a9b13d257cd2 100644
+--- a/scripts/gcc-plugins/Kconfig
++++ b/scripts/gcc-plugins/Kconfig
+@@ -113,4 +113,13 @@ config GCC_PLUGIN_ARM_SSP_PER_TASK
+ 	bool
+ 	depends on GCC_PLUGINS && ARM
  
-+extern void sdio_retune_hold_now(struct sdio_func *func);
-+extern void sdio_retune_release(struct sdio_func *func);
++config GCC_PLUGIN_SWITCH_TABLES
++	bool "GCC Plugin: Identify switch tables at compile time"
++	default y
++	depends on STACK_VALIDATION && ARM64
++	help
++	  Plugin to identify switch tables generated at compile time and store
++	  them in a .objtool_data section. Objtool will then use that section
++	  to analyse the different execution path of the switch table.
 +
- #endif /* LINUX_MMC_SDIO_FUNC_H */
-
+ endmenu
+diff --git a/scripts/gcc-plugins/arm64_switch_table_detection_plugin.c b/scripts/gcc-plugins/arm64_switch_table_detection_plugin.c
+new file mode 100644
+index 000000000000..d7f0e13910d5
+--- /dev/null
++++ b/scripts/gcc-plugins/arm64_switch_table_detection_plugin.c
+@@ -0,0 +1,58 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#include <stdio.h>
++#include "gcc-common.h"
++
++__visible int plugin_is_GPL_compatible;
++
++static unsigned int arm64_switchtbl_rtl_execute(void)
++{
++	rtx_insn *insn;
++	rtx_insn *labelp = NULL;
++	rtx_jump_table_data *tablep = NULL;
++	section *sec = get_section(".objtool_data", SECTION_STRINGS, NULL);
++	section *curr_sec = current_function_section();
++
++	for (insn = get_insns(); insn; insn = NEXT_INSN(insn)) {
++		/*
++		 * Find a tablejump_p INSN (using a dispatch table)
++		 */
++		if (!tablejump_p(insn, &labelp, &tablep))
++			continue;
++
++		if (labelp && tablep) {
++			switch_to_section(sec);
++			assemble_integer_with_op(".quad ", gen_rtx_LABEL_REF(Pmode, labelp));
++			assemble_integer_with_op(".quad ", GEN_INT(GET_NUM_ELEM(tablep->get_labels())));
++			assemble_integer_with_op(".quad ", GEN_INT(ADDR_DIFF_VEC_FLAGS(tablep).offset_unsigned));
++			switch_to_section(curr_sec);
++		}
++	}
++	return 0;
++}
++
++#define PASS_NAME arm64_switchtbl_rtl
++
++#define NO_GATE
++#include "gcc-generate-rtl-pass.h"
++
++__visible int plugin_init(struct plugin_name_args *plugin_info,
++			  struct plugin_gcc_version *version)
++{
++	const char * const plugin_name = plugin_info->base_name;
++	int tso = 0;
++	int i;
++
++	if (!plugin_default_version_check(version, &gcc_version)) {
++		error(G_("incompatible gcc/plugin versions"));
++		return 1;
++	}
++
++	PASS_INFO(arm64_switchtbl_rtl, "outof_cfglayout", 1,
++		  PASS_POS_INSERT_AFTER);
++
++	register_callback(plugin_info->base_name, PLUGIN_PASS_MANAGER_SETUP,
++			  NULL, &arm64_switchtbl_rtl_pass_info);
++
++	return 0;
++}
+-- 
+2.17.1
 
