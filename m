@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFB12507AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:12:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 678C8506D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:06:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730574AbfFXKJB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 06:09:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42920 "EHLO mail.kernel.org"
+        id S1728890AbfFXJ54 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 05:57:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56072 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729679AbfFXKI6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 06:08:58 -0400
+        id S1728624AbfFXJ5u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 05:57:50 -0400
 Received: from localhost (f4.8f.5177.ip4.static.sl-reverse.com [119.81.143.244])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0C7C620645;
-        Mon, 24 Jun 2019 10:08:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 04A6C21530;
+        Mon, 24 Jun 2019 09:57:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561370937;
-        bh=6Tczy/LPCmXuXBRIHyLsjCWyZj76TRsf8UNl8F5pyAc=;
+        s=default; t=1561370269;
+        bh=AkT0n44v+S5CAKaSgs/CCFCguX4Ebrotd0gjY3kOFjY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fjn/Ocw4mD6DCUas0yl5gOPCzq3mdxMn7qCz1JGuOHZ3894kj4UNLUIK2H9LC5Xrv
-         nbUKU8/XljYFUApyJqIERkh6qnVpws5TxiUsy+LWsYySU825IjQfipf+FkJGGnzWHK
-         hYW9bM9hn4A8zC0bdR5eMfL34CEuELilIA90azIo=
+        b=tM/r5zpWpVEmowhN1JCkLRCqpxEyVUmTRexZge5vrba2nhp9zzQpSWyUcMfdz8yn9
+         13A/Whk4PZpUsDgNN11wMLgozsZZojYFF8gOZTi1NkGP0ufBITons2ZDdq7CccxFlv
+         Mr6JEPznjPCjEAx4MdYtUmCQs6181PEO0AkCQ+sw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 056/121] xtensa: Fix section mismatch between memblock_reserve and mem_reserve
-Date:   Mon, 24 Jun 2019 17:56:28 +0800
-Message-Id: <20190624092323.566660181@linuxfoundation.org>
+        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
+        John Johansen <john.johansen@canonical.com>
+Subject: [PATCH 4.14 11/51] apparmor: enforce nullbyte at end of tag string
+Date:   Mon, 24 Jun 2019 17:56:29 +0800
+Message-Id: <20190624092307.714151995@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190624092320.652599624@linuxfoundation.org>
-References: <20190624092320.652599624@linuxfoundation.org>
+In-Reply-To: <20190624092305.919204959@linuxfoundation.org>
+References: <20190624092305.919204959@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,50 +43,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit adefd051a6707a6ca0ebad278d3c1c05c960fc3b ]
+From: Jann Horn <jannh@google.com>
 
-Since commit 9012d011660ea5cf2 ("compiler: allow all arches to enable
-CONFIG_OPTIMIZE_INLINING"), xtensa:tinyconfig fails to build with section
-mismatch errors.
+commit 8404d7a674c49278607d19726e0acc0cae299357 upstream.
 
-WARNING: vmlinux.o(.text.unlikely+0x68): Section mismatch in reference
-	from the function ___pa()
-	to the function .meminit.text:memblock_reserve()
-WARNING: vmlinux.o(.text.unlikely+0x74): Section mismatch in reference
-	from the function mem_reserve()
-	to the function .meminit.text:memblock_reserve()
-FATAL: modpost: Section mismatches detected.
+A packed AppArmor policy contains null-terminated tag strings that are read
+by unpack_nameX(). However, unpack_nameX() uses string functions on them
+without ensuring that they are actually null-terminated, potentially
+leading to out-of-bounds accesses.
 
-This was not seen prior to the above mentioned commit because mem_reserve()
-was always inlined.
+Make sure that the tag string is null-terminated before passing it to
+strcmp().
 
-Mark mem_reserve(() as __init_memblock to have it reside in the same
-section as memblock_reserve().
+Cc: stable@vger.kernel.org
+Fixes: 736ec752d95e ("AppArmor: policy routines for loading and unpacking policy")
+Signed-off-by: Jann Horn <jannh@google.com>
+Signed-off-by: John Johansen <john.johansen@canonical.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Message-Id: <1559220098-9955-1-git-send-email-linux@roeck-us.net>
-Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/xtensa/kernel/setup.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ security/apparmor/policy_unpack.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/xtensa/kernel/setup.c b/arch/xtensa/kernel/setup.c
-index 4ec6fbb696bf..a5139f1d9220 100644
---- a/arch/xtensa/kernel/setup.c
-+++ b/arch/xtensa/kernel/setup.c
-@@ -310,7 +310,8 @@ extern char _SecondaryResetVector_text_start;
- extern char _SecondaryResetVector_text_end;
- #endif
- 
--static inline int mem_reserve(unsigned long start, unsigned long end)
-+static inline int __init_memblock mem_reserve(unsigned long start,
-+					      unsigned long end)
- {
- 	return memblock_reserve(start, end - start);
- }
--- 
-2.20.1
-
+--- a/security/apparmor/policy_unpack.c
++++ b/security/apparmor/policy_unpack.c
+@@ -259,7 +259,7 @@ static bool unpack_nameX(struct aa_ext *
+ 		char *tag = NULL;
+ 		size_t size = unpack_u16_chunk(e, &tag);
+ 		/* if a name is specified it must match. otherwise skip tag */
+-		if (name && (!size || strcmp(name, tag)))
++		if (name && (!size || tag[size-1] != '\0' || strcmp(name, tag)))
+ 			goto fail;
+ 	} else if (name) {
+ 		/* if a name is specified and there is no name tag fail */
 
 
