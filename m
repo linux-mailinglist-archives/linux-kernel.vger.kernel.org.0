@@ -2,96 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB91D4FE85
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 03:42:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5723A4FE8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 03:44:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727078AbfFXBmm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 21:42:42 -0400
-Received: from ozlabs.org ([203.11.71.1]:57899 "EHLO ozlabs.org"
+        id S1726385AbfFXBo0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 21:44:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33592 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726961AbfFXBmk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 21:42:40 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        id S1726321AbfFXBoZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Jun 2019 21:44:25 -0400
+Received: from dragon (li1322-146.members.linode.com [45.79.223.146])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45XBqw6RT9z9sNp;
-        Mon, 24 Jun 2019 11:42:36 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1561340557;
-        bh=XBZyZiWGZvEcYJxfAYdtAgq+Dh3SIHzZg+ZSyBneIcw=;
-        h=Date:From:To:Cc:Subject:From;
-        b=sMplEexP8oLKl06X1hDE3fCa3vHejQ5HRFepUQ48BZyVhBonGvMShVh5gNYeS+hCj
-         15d5kJAEyezGOKGdNd/5X9Y+8VkjdLzUsYBnvea0cc6e9zYzrgeZ7reItNyHQQyJb3
-         ix30/hp3XjtFXPoD5AyXN3D+fp/+1jmt8h8YgGPi/03QGcrRiFrI81cZ8/Nxccui1A
-         EdyCcDZV8b4lWAq/ogT4HFdaUY2BXgRYg2puv5RBhsD/hEdWEmOck35JkNCu86CqFL
-         j+21rDRm/E5x5ovPSxvfjsGdonRJU+v/Tco2Pc/pkLyfDS+t/RoUF10HNG5Fm0MHyT
-         MophwVD9PzLkg==
-Date:   Mon, 24 Jun 2019 11:42:35 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: linux-next: manual merge of the fbdev tree with Linus' tree
-Message-ID: <20190624114235.2a7249e2@canb.auug.org.au>
+        by mail.kernel.org (Postfix) with ESMTPSA id 247F1205ED;
+        Mon, 24 Jun 2019 01:44:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561340664;
+        bh=L51b/2QgjrPE0+cEczSNkLZTA7o5n080OlbpRGOR1Wc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Z3szbyA/JEupNJmaT4Fg6uC+zWG5smbJXs7IBZuivL/JVx5Gu1fQRikaE8HM0eq8G
+         ErFlU0Xwvigdrgh4HApZzEavQK9GYlxf3e4szYfLTv44iS9iIjGB/+5T553tZcpo0g
+         BpPtCwsmDFIQz1aleU9NTtzTsIzUSPFhRw33g7N0=
+Date:   Mon, 24 Jun 2019 09:44:11 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Anson.Huang@nxp.com
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, abel.vesa@nxp.com,
+        ccaione@baylibre.com, leonard.crestez@nxp.com,
+        aisheng.dong@nxp.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Linux-imx@nxp.com
+Subject: Re: [PATCH 1/2] clk: imx: Remove __init for
+ imx_register_uart_clocks() API
+Message-ID: <20190624014410.GI3800@dragon>
+References: <20190619071240.38503-1-Anson.Huang@nxp.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/UGr24t_4FVr3bOX8gNqfH9G"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190619071240.38503-1-Anson.Huang@nxp.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/UGr24t_4FVr3bOX8gNqfH9G
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Jun 19, 2019 at 03:12:39PM +0800, Anson.Huang@nxp.com wrote:
+> From: Anson Huang <Anson.Huang@nxp.com>
+> 
+> Some of i.MX SoCs' clock driver use platform driver model,
+> and they need to call imx_register_uart_clocks() API, so
+> imx_register_uart_clocks() API should NOT be in .init section.
+> 
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
-Hi all,
-
-Today's linux-next merge of the fbdev tree got a conflict in:
-
-  drivers/video/fbdev/omap2/omapfb/dss/rfbi.c
-
-between commit:
-
-  caab277b1de0 ("treewide: Replace GPLv2 boilerplate/reference with SPDX - =
-rule 234")
-
-from the Linus' and commit:
-
-  76c47323c151 ("video: fbdev: omap2: remove rfbi")
-
-from the fbdev tree.
-
-I fixed it up (I just deleted the file) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
-
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/UGr24t_4FVr3bOX8gNqfH9G
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0QKosACgkQAVBC80lX
-0Gyz0gf9GKDIaaLzkF3pmY+zbZ2Sxitn2w2zl9kcAFwxdVPsDh//ltLL6ZZ+6e+i
-iq24N3OiGfi7PT9vxg0xWZCOhwoErSRKWSQvuk9UaCJ+oZK9HdbIwFcjiM+2cm0S
-h1QbElwb/Cvs3dyOiEMehHZUW2SWBDxOZyAFCxlTdy/wV+raQZHrTzQLcS5sk491
-znQWgJn/b9q10fjncg9+nPM3Zg4c+BwfKYBHgn55GV82aytHS14GKHsumI4EzLyZ
-fa7cU5Vn4q5Gstsy1Xfr7ZOuIoa5v5uB5z7Ghhq93dHeY5z6TxRZOCio7artUufn
-nT1MxkJ+4KjXVEsQGJdzgDXCzGfDnw==
-=ua0L
------END PGP SIGNATURE-----
-
---Sig_/UGr24t_4FVr3bOX8gNqfH9G--
+Applied both, thanks.
