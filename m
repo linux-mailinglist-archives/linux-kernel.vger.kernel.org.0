@@ -2,108 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19F1B5076A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:12:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3094550633
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 11:56:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730221AbfFXKG5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 06:06:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39316 "EHLO mail.kernel.org"
+        id S1728748AbfFXJ4c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 05:56:32 -0400
+Received: from foss.arm.com ([217.140.110.172]:44952 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729777AbfFXKGz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 06:06:55 -0400
-Received: from localhost (f4.8f.5177.ip4.static.sl-reverse.com [119.81.143.244])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EEB23208E3;
-        Mon, 24 Jun 2019 10:06:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561370814;
-        bh=98xwHsstZrM34rlzeo3ta4SSHIeaWrCcpHnO3+wo7GM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QrJB6Zs9vtjxOKvbJKGkCAOv160Em1gV4Fwkrc625CktnvTaiBQnLS4Q1XKJMdX9k
-         JnHKfca1USHXA7krissCYdaFLBoBgS1h/CCU4ENVppo+BJQai3UKUxctGX0aO0ZRvX
-         Vgr/70N19N1BdpNiEFSRgL0No3wTuFzV3vZLUK8I=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mathias Nyman <mathias.nyman@linux.intel.com>
-Subject: [PATCH 5.1 011/121] xhci: detect USB 3.2 capable host controllers correctly
-Date:   Mon, 24 Jun 2019 17:55:43 +0800
-Message-Id: <20190624092321.220227761@linuxfoundation.org>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190624092320.652599624@linuxfoundation.org>
-References: <20190624092320.652599624@linuxfoundation.org>
-User-Agent: quilt/0.66
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        id S1728717AbfFXJ43 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 05:56:29 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B90E61570;
+        Mon, 24 Jun 2019 02:56:28 -0700 (PDT)
+Received: from e121650-lin.cambridge.arm.com (e121650-lin.cambridge.arm.com [10.1.196.120])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9A8E03F71E;
+        Mon, 24 Jun 2019 02:56:27 -0700 (PDT)
+From:   Raphael Gault <raphael.gault@arm.com>
+To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     jpoimboe@redhat.com, peterz@infradead.org, catalin.marinas@arm.com,
+        will.deacon@arm.com, julien.thierry@arm.com,
+        Raphael Gault <raphael.gault@arm.com>
+Subject: [RFC V3 13/18] arm64: sleep: Prevent stack frame warnings from objtool
+Date:   Mon, 24 Jun 2019 10:55:43 +0100
+Message-Id: <20190624095548.8578-14-raphael.gault@arm.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190624095548.8578-1-raphael.gault@arm.com>
+References: <20190624095548.8578-1-raphael.gault@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
+This code doesn't respect the Arm PCS but it is intended this
+way. Adapting it to respect the PCS would result in altering the
+behaviour.
 
-commit ddd57980a0fde30f7b5d14b888a2cc84d01610e8 upstream.
+In order to suppress objtool's warnings, we setup a stack frame
+for __cpu_suspend_enter and annotate cpu_resume and _cpu_resume
+as having non-standard stack frames.
 
-USB 3.2 capability in a host can be detected from the
-xHCI Supported Protocol Capability major and minor revision fields.
-
-If major is 0x3 and minor 0x20 then the host is USB 3.2 capable.
-
-For USB 3.2 capable hosts set the root hub lane count to 2.
-
-The Major Revision and Minor Revision fields contain a BCD version number.
-The value of the Major Revision field is JJh and the value of the Minor
-Revision field is MNh for version JJ.M.N, where JJ = major revision number,
-M - minor version number, N = sub-minor version number,
-e.g. version 3.1 is represented with a value of 0310h.
-
-Also fix the extra whitespace printed out when announcing regular
-SuperSpeed hosts.
-
-Cc: <stable@vger.kernel.org> # v4.18+
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Raphael Gault <raphael.gault@arm.com>
 ---
- drivers/usb/host/xhci.c |   20 +++++++++++++++-----
- 1 file changed, 15 insertions(+), 5 deletions(-)
+ arch/arm64/kernel/sleep.S | 4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/usb/host/xhci.c
-+++ b/drivers/usb/host/xhci.c
-@@ -5029,16 +5029,26 @@ int xhci_gen_setup(struct usb_hcd *hcd,
- 	} else {
- 		/*
- 		 * Some 3.1 hosts return sbrn 0x30, use xhci supported protocol
--		 * minor revision instead of sbrn
-+		 * minor revision instead of sbrn. Minor revision is a two digit
-+		 * BCD containing minor and sub-minor numbers, only show minor.
- 		 */
--		minor_rev = xhci->usb3_rhub.min_rev;
--		if (minor_rev) {
-+		minor_rev = xhci->usb3_rhub.min_rev / 0x10;
+diff --git a/arch/arm64/kernel/sleep.S b/arch/arm64/kernel/sleep.S
+index 3e53ffa07994..eb434525fe82 100644
+--- a/arch/arm64/kernel/sleep.S
++++ b/arch/arm64/kernel/sleep.S
+@@ -90,6 +90,7 @@ ENTRY(__cpu_suspend_enter)
+ 	str	x0, [x1]
+ 	add	x0, x0, #SLEEP_STACK_DATA_SYSTEM_REGS
+ 	stp	x29, lr, [sp, #-16]!
++	mov	x29, sp
+ 	bl	cpu_do_suspend
+ 	ldp	x29, lr, [sp], #16
+ 	mov	x0, #1
+@@ -146,3 +147,6 @@ ENTRY(_cpu_resume)
+ 	mov	x0, #0
+ 	ret
+ ENDPROC(_cpu_resume)
 +
-+		switch (minor_rev) {
-+		case 2:
-+			hcd->speed = HCD_USB32;
-+			hcd->self.root_hub->speed = USB_SPEED_SUPER_PLUS;
-+			hcd->self.root_hub->rx_lanes = 2;
-+			hcd->self.root_hub->tx_lanes = 2;
-+			break;
-+		case 1:
- 			hcd->speed = HCD_USB31;
- 			hcd->self.root_hub->speed = USB_SPEED_SUPER_PLUS;
-+			break;
- 		}
--		xhci_info(xhci, "Host supports USB 3.%x %s SuperSpeed\n",
-+		xhci_info(xhci, "Host supports USB 3.%x %sSuperSpeed\n",
- 			  minor_rev,
--			  minor_rev ? "Enhanced" : "");
-+			  minor_rev ? "Enhanced " : "");
- 
- 		xhci->usb3_rhub.hcd = hcd;
- 		/* xHCI private pointer was set in xhci_pci_probe for the second
-
++	asm_stack_frame_non_standard cpu_resume
++	asm_stack_frame_non_standard _cpu_resume
+-- 
+2.17.1
 
