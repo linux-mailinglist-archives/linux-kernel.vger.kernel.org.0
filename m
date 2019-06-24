@@ -2,98 +2,187 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C99350AA0
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 14:24:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9396C50AAD
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 14:28:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730212AbfFXMYP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 08:24:15 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:34124 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728552AbfFXMYP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 08:24:15 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5OCNcJr006146;
-        Mon, 24 Jun 2019 07:23:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1561379018;
-        bh=T1q2FQcEBznzi7DLWeCI39uS9gU76CChdki0O3aXxMQ=;
-        h=Date:From:To:CC:Subject:References:In-Reply-To;
-        b=DWY1fkE+g2GW/G6QTkEn34ovWtWmUempqk+L2lviBBRBH8WS/Td01h9ufhLf3J8/z
-         98L+WMy2BtTN3MMvqhhKnsSPieo3OsrEkyOJmtGavY6g8sKH6U/fymEwCmANWjn2e7
-         fSzu6i4KA8TGEv3j2MIvzG7F9L4uBwd/SwIq8PLA=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5OCNcPp005882
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 24 Jun 2019 07:23:38 -0500
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 24
- Jun 2019 07:23:38 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Mon, 24 Jun 2019 07:23:38 -0500
-Received: from ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with SMTP id x5OCNcWq000775;
-        Mon, 24 Jun 2019 07:23:38 -0500
-Date:   Mon, 24 Jun 2019 07:24:57 -0500
-From:   Benoit Parrot <bparrot@ti.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-CC:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Henrik Rydberg <rydberg@bitmath.org>,
-        Marco Felsch <m.felsch@pengutronix.de>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-input <linux-input@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [Patch 1/1] Input: edt-ft5x06 - disable irq handling during
- suspend
-Message-ID: <20190624122457.seiezk4cla2gjh5u@ti.com>
-References: <20190621185124.28966-1-bparrot@ti.com>
- <CAHp75VdcAfmn8u0du-Y95SjMcmuJa2402tdXCNHMcme1Y925xg@mail.gmail.com>
- <20190623055940.GA204275@dtor-ws>
+        id S1730223AbfFXM2U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 08:28:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39022 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727344AbfFXM2U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 08:28:20 -0400
+Received: from localhost (unknown [106.201.35.23])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2CB30205C9;
+        Mon, 24 Jun 2019 12:28:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561379299;
+        bh=xAWHMRPfHHeuUDsb2NoJwA0gB6ClzmGYlj5zwWg9ygE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=MlyM/+HoLj6dP1Gga8KhvuWJr/2JNCuTOzkpKzyQtMA9G2d2AL8LpAJPPzcYZtoJc
+         hoj7Vz6tmY8M6T6+WZRAuUcaEMtLhJgGUvCm3VwdSZfbP3Gsquq18W03zaSDnpgsgp
+         GAwwNq3q7d2zEWW4aEsL3irBZy4q4bOA5TGRs1xU=
+Date:   Mon, 24 Jun 2019 17:55:09 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Peng Ma <peng.ma@nxp.com>
+Cc:     dan.j.williams@intel.com, leoyang.li@nxp.com,
+        linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org
+Subject: Re: [V4 1/2] dmaengine: fsl-dpaa2-qdma: Add the DPDMAI(Data Path DMA
+ Interface) support
+Message-ID: <20190624122509.GC2962@vkoul-mobl>
+References: <20190613101341.21169-1-peng.ma@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190623055940.GA204275@dtor-ws>
-User-Agent: NeoMutt/20171215
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20190613101341.21169-1-peng.ma@nxp.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote on Sat [2019-Jun-22 22:59:40 -0700]:
-> On Sat, Jun 22, 2019 at 01:37:10PM +0300, Andy Shevchenko wrote:
-> > On Fri, Jun 21, 2019 at 9:53 PM Benoit Parrot <bparrot@ti.com> wrote:
-> > >
-> > > As a wakeup source when the system is in suspend there is little point
-> > > trying to access a register across the i2c bus as it is probably still
-> > > inactive. We need to prevent the irq handler from being called during
-> > > suspend.
-> > >
-> > 
-> > Hmm... But how OS will know what the event to handle afterwards?
-> > I mean shouldn't we guarantee somehow the delivery of the event to the
-> > input, in this case, subsystem followed by corresponding user space?
-> 
-> If we are using level interrupts then it will work OK, however it is
-> really easy to lose edge here, as replaying disabled edge triggered
-> interrupts is not really reliable.
-> 
-> Benoit, what kind of interrupt do you use in your system?
+On 13-06-19, 10:13, Peng Ma wrote:
+> The MC(Management Complex) exports the DPDMAI(Data Path DMA Interface)
+> object as an interface to operate the DPAA2(Data Path Acceleration
+> Architecture 2) qDMA Engine. The DPDMAI enables sending frame-based
+> requests to qDMA and receiving back confirmation response on transaction
+> completion, utilizing the DPAA2 QBMan(Queue Manager and Buffer Manager
+> hardware) infrastructure. DPDMAI object provides up to two priorities for
+> processing qDMA requests.
+> The following list summarizes the DPDMAI main features and capabilities:
+> 	1. Supports up to two scheduling priorities for processing
+> 	service requests.
+> 	- Each DPDMAI transmit queue is mapped to one of two service
+> 	priorities, allowing further prioritization in hardware between
+> 	requests from different DPDMAI objects.
+> 	2. Supports up to two receive queues for incoming transaction
+> 	completion confirmations.
+> 	- Each DPDMAI receive queue is mapped to one of two receive
+> 	priorities, allowing further prioritization between other
+> 	interfaces when associating the DPDMAI receive queues to DPIO
+> 	or DPCON(Data Path Concentrator) objects.
+> 	3. Supports different scheduling options for processing received
+> 	packets:
+> 	- Queues can be configured either in 'parked' mode (default),
+> 	oattached to a DPIO object, or attached to DPCON object.
+        ^^^^^^^^^
+typo?
 
-Dmitry,
+> +struct dpdmai_cmd_open {
+> +	__le32 dpdmai_id;
+> +};
 
-On our systems we currently used edge trigger. One example is available in
-mainline: arch/arm/boot/dts/am437x-sk-evm.dts
-632:              interrupts = <31 IRQ_TYPE_EDGE_FALLING>;
+Do you really need a struct to handle a 32bit value?
 
+And seeing it used once, we can skip and avoid needless cast in usage as
+well!
 
-Benoit
+> +/* cmd, param, offset, width, type, arg_name */
+> +#define DPDMAI_CMD_CREATE(_cmd, _cfg) \
+> +do { \
+> +	typeof(_cmd) (cmd) = (_cmd); \
+> +	typeof(_cfg) (cfg) = (_cfg); \
+> +	MC_CMD_OP(cmd, 0, 8,  8,  u8,  (cfg)->priorities[0]);\
+> +	MC_CMD_OP(cmd, 0, 16, 8,  u8,  (cfg)->priorities[1]);\
+> +} while (0)
+> +
+> +static inline u64 mc_enc(int lsoffset, int width, u64 val)
+> +{
+> +	return (u64)(((u64)val & MAKE_UMASK64(width)) << lsoffset);
 
-> 
-> Thanks.
-> 
-> -- 
-> Dmitry
+this looks not so nice. val is u64 so why is it required to cast to u64
+again?
+
+> +}
+> +
+> +static inline u64 mc_dec(u64 val, int lsoffset, int width)
+> +{
+> +	return (u64)((val >> lsoffset) & MAKE_UMASK64(width));
+
+do we need the cast here?
+
+> +int dpdmai_create(struct fsl_mc_io *mc_io, u32 cmd_flags,
+> +		  const struct dpdmai_cfg *cfg, u16 *token)
+> +{
+> +	struct fsl_mc_command cmd = { 0 };
+> +	int err;
+> +
+> +	/* prepare command */
+> +	cmd.header = mc_encode_cmd_header(DPDMAI_CMDID_CREATE,
+> +					  cmd_flags,
+> +					  0);
+
+This seems to fit in a single line!
+
+> +	DPDMAI_CMD_CREATE(cmd, cfg);
+> +
+> +	/* send command to mc*/
+> +	err = mc_send_command(mc_io, &cmd);
+> +	if (err)
+> +		return err;
+> +
+> +	/* retrieve response parameters */
+> +	*token = MC_CMD_HDR_READ_TOKEN(cmd.header);
+
+This looks very similar to dpdmai_open() and I suppose you can create a
+macro to create and send cmd with optional params!
+
+> +
+> +	return 0;
+> +}
+> +
+> +int dpdmai_enable(struct fsl_mc_io *mc_io, u32 cmd_flags,
+> +		  u16 token)
+> +{
+> +	struct fsl_mc_command cmd = { 0 };
+> +
+> +	/* prepare command */
+> +	cmd.header = mc_encode_cmd_header(DPDMAI_CMDID_ENABLE,
+> +					  cmd_flags,
+> +					  token);
+
+This can fit in two lines
+
+> +
+> +	/* send command to mc*/
+> +	return mc_send_command(mc_io, &cmd);
+> +}
+> +
+> +int dpdmai_disable(struct fsl_mc_io *mc_io, u32 cmd_flags,
+> +		   u16 token)
+
+why two lines for this!
+
+> +{
+> +	struct fsl_mc_command cmd = { 0 };
+> +
+> +	/* prepare command */
+> +	cmd.header = mc_encode_cmd_header(DPDMAI_CMDID_DISABLE,
+> +					  cmd_flags,
+> +					  token);
+
+This also!
+
+Please check rest of the driver for these style issues and see bunch of
+places can fit into a line or two!
+
+> +/**
+> + * dpdmai_open() - Open a control session for the specified object
+> + * @mc_io:	Pointer to MC portal's I/O object
+> + * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
+> + * @dpdmai_id:	DPDMAI unique ID
+> + * @token:	Returned token; use in subsequent API calls
+> + *
+> + * This function can be used to open a control session for an
+> + * already created object; an object may have been declared in
+> + * the DPL or by calling the dpdmai_create() function.
+> + * This function returns a unique authentication token,
+> + * associated with the specific object ID and the specific MC
+> + * portal; this token must be used in all subsequent commands for
+> + * this specific object.
+
+This is good but can you move them to C file with the function
+
+-- 
+~Vinod
