@@ -2,107 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 094CB51C4F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 22:29:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7315851C51
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 22:31:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731753AbfFXU3s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 16:29:48 -0400
-Received: from smtprelay0192.hostedemail.com ([216.40.44.192]:38887 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726393AbfFXU3s (ORCPT
+        id S1731779AbfFXUbV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 16:31:21 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:44831 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726393AbfFXUbV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 16:29:48 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 586A3182CED2A;
-        Mon, 24 Jun 2019 20:29:46 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::,RULES_HIT:41:355:379:599:800:960:967:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1381:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2525:2559:2563:2682:2685:2691:2693:2828:2859:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3354:3622:3865:3866:3867:3868:3870:3871:3873:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4321:5007:6119:6691:7903:7904:9025:10004:10400:10848:11232:11658:11914:12043:12048:12297:12555:12663:12740:12760:12895:12986:13069:13071:13311:13357:13439:14180:14181:14659:14721:21060:21080:21433:21451:21611:21627:21811:30054:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:29,LUA_SUMMARY:none
-X-HE-Tag: road72_1ae72be6d3a1a
-X-Filterd-Recvd-Size: 3216
-Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf12.hostedemail.com (Postfix) with ESMTPA;
-        Mon, 24 Jun 2019 20:29:44 +0000 (UTC)
-Message-ID: <977bc7c484ef55ff78de51d7555afcc3c3350b1e.camel@perches.com>
-Subject: Re: [PATCH 0/3] Clean up crypto documentation
-From:   Joe Perches <joe@perches.com>
-To:     Gary R Hook <ghook@amd.com>, "Hook, Gary" <Gary.Hook@amd.com>,
-        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>
-Date:   Mon, 24 Jun 2019 13:29:42 -0700
-In-Reply-To: <d8b359ff-5891-7bb8-d292-9f10cca04f17@amd.com>
-References: <156140322426.29777.8610751479936722967.stgit@taos>
-         <23a5979082c89d7028409ad9ae082840411e1ca6.camel@perches.com>
-         <d8b359ff-5891-7bb8-d292-9f10cca04f17@amd.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
+        Mon, 24 Jun 2019 16:31:21 -0400
+Received: by mail-pl1-f195.google.com with SMTP id t7so7525750plr.11
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 13:31:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=p8eKR4sWGzU8LALqN+Rywpmmy+C9BMm/CB6qnIMC0UI=;
+        b=OerfV0snZfWTKFe6g+LZSlNlk+hlaRZTYdkXi6xFzubIfsuYRqrR478es590r/uipG
+         Za9cOfVOlS/Tx8biMdxBPavuRBtuFpD5DqsfSl4Frr5uGAgXHd9EfJPHv7PHPKGz5ykf
+         Ha81o5GREDJwrbSfWGjsmCtO9Dqm7iWDvuM8g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=p8eKR4sWGzU8LALqN+Rywpmmy+C9BMm/CB6qnIMC0UI=;
+        b=uoAKWJcb8WpiY5Ure2YYXNAN7tes3Ez8IWkl1vK5kW//dHKujg6FsZHPGCM0lH4e59
+         /y3Rpnt/C6bZKbJ+Zxuvig/lOXZ7PBIKHTZqd/jpcP4gg/ztVooIHf+e0nqdP6SNwqYm
+         vwdKYrnKoxkdUk855dF2OkFvt3WNwOWXnbzl7nBc81wld06QwSYMUMnFeE9SqtSwJMLE
+         QNlfP/0ogMIv0jZL1B6jRC3SrtN1F3I9JI+S6Px8Cs+LxuYMoZCf3v4SBssdT2O22jrm
+         Ns+IsanpNSDG7d2hGq3aR5Gd9KJLDWX9y0tygZdPA5cSkwBuZzVZ6T3x2tmwNFlMn99U
+         cUUQ==
+X-Gm-Message-State: APjAAAWsWhXqftlg7mzRQ7T5sawE/+OOi5p8ta4X29s9yO46gJx/zOuF
+        5Pcqn2J/T8emsWMsIIHDqBcIBA==
+X-Google-Smtp-Source: APXvYqzBKihWAttr4Rykcb5BT7S4M6tWgTs4LN43nmmOkYIKYPwMKpzMISvKirmoiIp5hny8kMFQzQ==
+X-Received: by 2002:a17:902:d916:: with SMTP id c22mr20031582plz.195.1561408280395;
+        Mon, 24 Jun 2019 13:31:20 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id u128sm15650127pfu.26.2019.06.24.13.31.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 24 Jun 2019 13:31:19 -0700 (PDT)
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc:     linux-pwm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Brian Norris <briannorris@chromium.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: [PATCH v2 0/4] backlight: Expose brightness curve type through sysfs
+Date:   Mon, 24 Jun 2019 13:31:09 -0700
+Message-Id: <20190624203114.93277-1-mka@chromium.org>
+X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-06-24 at 20:06 +0000, Gary R Hook wrote:
+Backlight brightness curves can have different shapes. The two main
+types are linear and non-linear curves. The human eye doesn't
+perceive linearly increasing/decreasing brightness as linear (see
+also 88ba95bedb79 "backlight: pwm_bl: Compute brightness of LED
+linearly to human eye"), hence many backlights use non-linear (often
+logarithmic) brightness curves. The type of curve is currently opaque
+to userspace, so userspace often relies on more or less reliable
+heuristics (like the number of brightness levels) to decide whether
+to treat a backlight device as linear or non-linear.
 
-Hi Gary.
+Export the type of the brightness curve via a new sysfs attribute.
 
-> On 6/24/19 2:30 PM, Joe Perches wrote:
-> > On Mon, 2019-06-24 at 19:07 +0000, Hook, Gary wrote:
-> > > Tidy up the crypto documentation by filling in some variable
-> > > descriptions, make some grammatical corrections, and enhance
-> > > formatting.
-> > 
-> > While this seems generally OK, please try not to make the
-> > readability of the source _text_ less intelligible just
-> > to enhance the output formatting of the html.
-> > 
-> > e.g.:
-> > 
-> > Unnecessary blank lines separating function descriptions
-> > Removing space alignment from bullet point descriptions
-> 
-> Apologies. I generally consider white space a Good Thing,
-> but will take your note and not do that. The blank lines I
-> added do not affect the output, so I should not have done
-> that.
-> 
-> Also, I turned sentences into bulleted lists here, so I'm not
-> clear on whether that was a Bad Thing or not.
+Matthias Kaehlcke (4):
+  MAINTAINERS: Add entry for stable backlight sysfs ABI documentation
+  backlight: Expose brightness curve type through sysfs
+  backlight: pwm_bl: Set scale type for CIE 1931 curves
+  backlight: pwm_bl: Set scale type for brightness curves specified in
+    the DT
 
-To me, using bulleted lists are not a bad thing at all
-but are quite the opposite for humans to read.
+ .../ABI/testing/sysfs-class-backlight         | 32 +++++++++++++++++
+ MAINTAINERS                                   |  2 ++
+ drivers/video/backlight/backlight.c           | 21 +++++++++++
+ drivers/video/backlight/pwm_bl.c              | 35 ++++++++++++++++++-
+ include/linux/backlight.h                     | 10 ++++++
+ 5 files changed, 99 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-class-backlight
 
-> Seems more legible
-> to me all the way around, but I clearly could be incorrect.
-
-Not at all.
-
-> I agree that mucking with alignment is a bad thing, and would not
-> intentionally do so. That said, if you would please elaborate on
-> any mistakes I've made?
-> 
-> Finally, would you prefer a v2 of the patch set? Happy to do
-> whatever is preferred, of course.
-
-Whatever Jonathan decides is fine with me.
-Mine was just a plea to avoid unnecessarily
-making the source text harder to read as
-that's what I mostly use.
-
-I don't know if this extension is valid yet, but
-I believe just using <function_name>() is more
-readable as text than ``<function_name>`` or
-:c:func:`<function_name>`
-
-https://lore.kernel.org/lkml/20190425200125.12302-1-corbet@lwn.net/T/
-
-I prefer the automatic approach over the manual
-marking of functions as ideally sphinx formatting
-should not overly impact the source text.
-
+-- 
+2.22.0.410.gd8fdbe21b5-goog
 
