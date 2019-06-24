@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 825A9507B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:12:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BA5B507B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:12:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730600AbfFXKJO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 06:09:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42790 "EHLO mail.kernel.org"
+        id S1729968AbfFXKJJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 06:09:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42864 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730117AbfFXKIx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 06:08:53 -0400
+        id S1730564AbfFXKIz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 06:08:55 -0400
 Received: from localhost (f4.8f.5177.ip4.static.sl-reverse.com [119.81.143.244])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9EC5E21473;
-        Mon, 24 Jun 2019 10:08:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5CCB3205C9;
+        Mon, 24 Jun 2019 10:08:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561370932;
-        bh=/LuzipxlxcA01dUG2PDDkaVnU54GDF4QMOE/ETs3E9o=;
+        s=default; t=1561370934;
+        bh=vRC8nGd9BZ6q8TZ5jkEnycT++YcDV6a94y6g05XjZcE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UXOg0NrQRirhFAaGXmxuGB+omwsdJAwQL8CfgrSBFuqRxbsrNyNk3y7N2PAcLJ/XK
-         vkxzIkA/jP6mfz2L09mBx1Gqh22dK1zfpCqdhYSlM5X4CNbQWpdgXm/UukWej6kOjk
-         GfsDPduTWnE3lPIYCAAA7pG8kM5JEparFfSOKg8k=
+        b=cq647VavDFH6J8NuY3Vg9F2fJksDqwVwuoijRamGa8QtMFFTw4FzVOzlojBe1rLmX
+         H0HLiRBj1OxqKAOwSNA0gwDSKdJGdNnxoYr7E//rm9sr+mcc4vPwnUn0ZIzx4KIwUi
+         BHaD0JHqL93ubb9/t5Jy0e5mrTSzpkSJIF4DfaP4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
-        Paul Burton <paul.burton@mips.com>, ralf@linux-mips.org,
-        jhogan@kernel.org, linux-mips@vger.kernel.org,
+        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 054/121] MIPS: uprobes: remove set but not used variable epc
-Date:   Mon, 24 Jun 2019 17:56:26 +0800
-Message-Id: <20190624092323.477620929@linuxfoundation.org>
+Subject: [PATCH 5.1 055/121] crypto: hmac - fix memory leak in hmac_init_tfm()
+Date:   Mon, 24 Jun 2019 17:56:27 +0800
+Message-Id: <20190624092323.522420091@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190624092320.652599624@linuxfoundation.org>
 References: <20190624092320.652599624@linuxfoundation.org>
@@ -45,41 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit f532beeeff0c0a3586cc15538bc52d249eb19e7c ]
+[ Upstream commit 7829a0c1cb9c80debfb4fdb49b4d90019f2ea1ac ]
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+When I added the sanity check of 'descsize', I missed that the child
+hash tfm needs to be freed if the sanity check fails.  Of course this
+should never happen, hence the use of WARN_ON(), but it should be fixed.
 
-arch/mips/kernel/uprobes.c: In function 'arch_uprobe_pre_xol':
-arch/mips/kernel/uprobes.c:115:17: warning: variable 'epc' set but not used [-Wunused-but-set-variable]
-
-It's never used since introduction in
-commit 40e084a506eb ("MIPS: Add uprobes support.")
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Cc: <ralf@linux-mips.org>
-Cc: <jhogan@kernel.org>
-Cc: <linux-kernel@vger.kernel.org>
-Cc: <linux-mips@vger.kernel.org>
+Fixes: e1354400b25d ("crypto: hash - fix incorrect HASH_MAX_DESCSIZE")
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/kernel/uprobes.c | 3 ---
- 1 file changed, 3 deletions(-)
+ crypto/hmac.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/mips/kernel/uprobes.c b/arch/mips/kernel/uprobes.c
-index 4aaff3b3175c..6dbe4eab0a0e 100644
---- a/arch/mips/kernel/uprobes.c
-+++ b/arch/mips/kernel/uprobes.c
-@@ -112,9 +112,6 @@ int arch_uprobe_pre_xol(struct arch_uprobe *aup, struct pt_regs *regs)
- 	 */
- 	aup->resume_epc = regs->cp0_epc + 4;
- 	if (insn_has_delay_slot((union mips_instruction) aup->insn[0])) {
--		unsigned long epc;
--
--		epc = regs->cp0_epc;
- 		__compute_return_epc_for_insn(regs,
- 			(union mips_instruction) aup->insn[0]);
- 		aup->resume_epc = regs->cp0_epc;
+diff --git a/crypto/hmac.c b/crypto/hmac.c
+index 4b8c8ee8f15c..c623778b36ba 100644
+--- a/crypto/hmac.c
++++ b/crypto/hmac.c
+@@ -168,8 +168,10 @@ static int hmac_init_tfm(struct crypto_tfm *tfm)
+ 
+ 	parent->descsize = sizeof(struct shash_desc) +
+ 			   crypto_shash_descsize(hash);
+-	if (WARN_ON(parent->descsize > HASH_MAX_DESCSIZE))
++	if (WARN_ON(parent->descsize > HASH_MAX_DESCSIZE)) {
++		crypto_free_shash(hash);
+ 		return -EINVAL;
++	}
+ 
+ 	ctx->hash = hash;
+ 	return 0;
 -- 
 2.20.1
 
