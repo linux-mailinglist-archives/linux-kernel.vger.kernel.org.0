@@ -2,75 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CAF8B502F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 09:20:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D66150311
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 09:23:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727819AbfFXHUf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 03:20:35 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:44686 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727784AbfFXHUd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 03:20:33 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 8130C20059A;
-        Mon, 24 Jun 2019 09:20:31 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 3C1AA200534;
-        Mon, 24 Jun 2019 09:20:26 +0200 (CEST)
-Received: from mega.ap.freescale.net (mega.ap.freescale.net [10.192.208.232])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 6561140323;
-        Mon, 24 Jun 2019 15:20:19 +0800 (SGT)
-From:   Yinbo Zhu <yinbo.zhu@nxp.com>
-To:     Alan Stern <stern@rowland.harvard.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     yinbo.zhu@nxp.com, xiaobo.xie@nxp.com, jiafei.pan@nxp.com,
-        Ramneek Mehresh <ramneek.mehresh@freescale.com>,
-        Nikhil Badola <nikhil.badola@freescale.com>,
-        Ran Wang <ran.wang_1@nxp.com>, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v8 5/5] usb :fsl: Change string format for errata property
-Date:   Mon, 24 Jun 2019 15:22:19 +0800
-Message-Id: <20190624072219.15258-5-yinbo.zhu@nxp.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190624072219.15258-1-yinbo.zhu@nxp.com>
-References: <20190624072219.15258-1-yinbo.zhu@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1727010AbfFXHXB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 03:23:01 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:34992 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726077AbfFXHXB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 03:23:01 -0400
+Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hfJJI-0000ag-5o; Mon, 24 Jun 2019 09:22:40 +0200
+Date:   Mon, 24 Jun 2019 09:22:39 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Christoph Hellwig <hch@lst.de>
+cc:     Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        x86@kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-sh@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH 4/5] x86: don't use asm-generic/ptrace.h
+In-Reply-To: <20190624054728.30966-5-hch@lst.de>
+Message-ID: <alpine.DEB.2.21.1906240922270.32342@nanos.tec.linutronix.de>
+References: <20190624054728.30966-1-hch@lst.de> <20190624054728.30966-5-hch@lst.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nikhil Badola <nikhil.badola@freescale.com>
+On Mon, 24 Jun 2019, Christoph Hellwig wrote:
 
-Remove USB errata checking code from driver. Applicability of erratum
-is retrieved by reading corresponding property in device tree.
-This property is written during device tree fixup.
+> Doing the indirection through macros for the regs accessors just
+> makes them harder to read, so implement the helpers directly.
+> 
+> Note that only the helpers actually used are implemented now.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Acked-by: Ingo Molnar <mingo@kernel.org>
+> Acked-by: Oleg Nesterov <oleg@redhat.com>
 
-Signed-off-by: Ramneek Mehresh <ramneek.mehresh@freescale.com>
-Signed-off-by: Nikhil Badola <nikhil.badola@freescale.com>
-Signed-off-by: Yinbo Zhu <yinbo.zhu@nxp.com>
----
- drivers/usb/host/fsl-mph-dr-of.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/usb/host/fsl-mph-dr-of.c b/drivers/usb/host/fsl-mph-dr-of.c
-index 762b97600ab0..ae8f60f6e6a5 100644
---- a/drivers/usb/host/fsl-mph-dr-of.c
-+++ b/drivers/usb/host/fsl-mph-dr-of.c
-@@ -226,11 +226,8 @@ static int fsl_usb2_mph_dr_of_probe(struct platform_device *ofdev)
- 		of_property_read_bool(np, "fsl,usb_erratum-a005697");
- 	pdata->has_fsl_erratum_a006918 =
- 		of_property_read_bool(np, "fsl,usb_erratum-a006918");
--
--	if (of_get_property(np, "fsl,usb_erratum_14", NULL))
--		pdata->has_fsl_erratum_14 = 1;
--	else
--		pdata->has_fsl_erratum_14 = 0;
-+	pdata->has_fsl_erratum_14 =
-+		of_property_read_bool(np, "fsl,usb_erratum-14");
- 
- 	/*
- 	 * Determine whether phy_clk_valid needs to be checked
--- 
-2.17.1
-
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
