@@ -2,52 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9591D4FE77
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 03:42:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 042E34FE61
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 03:40:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726498AbfFXBkx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 21:40:53 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:51211 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726399AbfFXBkw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726470AbfFXBkw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Sun, 23 Jun 2019 21:40:52 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:43987 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726323AbfFXBkv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Jun 2019 21:40:51 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5O03Hlu2861852
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5O03xuD2861908
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Sun, 23 Jun 2019 17:03:17 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5O03Hlu2861852
+        Sun, 23 Jun 2019 17:03:59 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5O03xuD2861908
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019061801; t=1561334598;
-        bh=+18Ntd0kE6dvp136tT6pwfJGGmQfcDsEk531Ot6zEhQ=;
+        s=2019061801; t=1561334640;
+        bh=G6Rcj19LN8Eah6UVwz0SmpTcT/imHv19chiL/vGryN4=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=owJTfDKFojYlabt2eYFt/+S0EqL8E/bPTpg7iG5np0HT9zdpcEFNuqTJOadDR15M0
-         JtfzmYBqR1tnWmPg4Foj5njZqvVilEtt5IM+YcTBTBlGNb5VZFpqTRCzekIJbvclas
-         L3JdWijsios9F0NKLKngGJp5kxQRzWoqeirr1KmkEAHHz6M6lUWe8BsIyRHWz1z0iC
-         /ASX+oPEEUuQat2qUn2FH0JF5QKDnJfhf/QaPvADKdv//kTwc55tYTvTvNyuNrR05n
-         QZ3+2Up4UzXUk8i3LmntlKHE04ErRnYzMK3Gu88EWwBqUbjW3bE6JA5WqaGx6sGCh1
-         rVcs7gRu6WF9Q==
+        b=cB3nYOt3O/B8xn7hNsmxgh0+SBb79HHSsWJodsImWN7k7ubkZhbd7ejEF0EEcIvQP
+         Du10KdSg+1tK9w1abh8uU6WF9FN8ydgpvhhMmdJvWYSVBfxuocxPsvR3vMdVnA2HL6
+         blI0Z9XgQU1ijW7eoa7jod1Vx0HOcdQdzOKif5wotwKERAWxVvlXoN9ZayOqmTbv8I
+         B8yZOa94mLSkxeDRlWK4tmvUagOzBxx9C6rzFx7Hc7U4z8yqT967jmEaTmFi8GchqM
+         58G4qFVYx0ncUwY1h35IvC4giRHlcA7sGG2EijMmb811VkW8nJo3IIul9mIYM/GSpe
+         b2b15W8JS0MIg==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5O03HOp2861849;
-        Sun, 23 Jun 2019 17:03:17 -0700
-Date:   Sun, 23 Jun 2019 17:03:17 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5O03wC72861905;
+        Sun, 23 Jun 2019 17:03:58 -0700
+Date:   Sun, 23 Jun 2019 17:03:58 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Fenghua Yu <tipbot@zytor.com>
-Message-ID: <tip-bd9a0c97e53c3d7a56b2751179903ddc5da42683@git.kernel.org>
-Cc:     ravi.v.shankar@intel.com, hpa@zytor.com, mingo@kernel.org,
-        bp@alien8.de, luto@kernel.org, fenghua.yu@intel.com,
-        ashok.raj@intel.com, tony.luck@intel.com, peterz@infradead.org,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de
-Reply-To: peterz@infradead.org, tglx@linutronix.de, bp@alien8.de,
-          linux-kernel@vger.kernel.org, tony.luck@intel.com,
-          ashok.raj@intel.com, hpa@zytor.com, mingo@kernel.org,
-          ravi.v.shankar@intel.com, luto@kernel.org, fenghua.yu@intel.com
-In-Reply-To: <1560994438-235698-5-git-send-email-fenghua.yu@intel.com>
-References: <1560994438-235698-5-git-send-email-fenghua.yu@intel.com>
+Message-ID: <tip-203dffacf592317e54480704f569a09f8b7ca380@git.kernel.org>
+Cc:     mingo@kernel.org, hpa@zytor.com, bp@alien8.de,
+        peterz@infradead.org, ravi.v.shankar@intel.com,
+        ashok.raj@intel.com, tony.luck@intel.com, tglx@linutronix.de,
+        fenghua.yu@intel.com, linux-kernel@vger.kernel.org, luto@kernel.org
+Reply-To: peterz@infradead.org, tony.luck@intel.com, tglx@linutronix.de,
+          ashok.raj@intel.com, ravi.v.shankar@intel.com, mingo@kernel.org,
+          hpa@zytor.com, bp@alien8.de, luto@kernel.org,
+          linux-kernel@vger.kernel.org, fenghua.yu@intel.com
+In-Reply-To: <1560994438-235698-6-git-send-email-fenghua.yu@intel.com>
+References: <1560994438-235698-6-git-send-email-fenghua.yu@intel.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cpu] x86/umwait: Add sysfs interface to control umwait
- maximum time
-Git-Commit-ID: bd9a0c97e53c3d7a56b2751179903ddc5da42683
+Subject: [tip:x86/cpu] Documentation/ABI: Document umwait control sysfs
+ interfaces
+Git-Commit-ID: 203dffacf592317e54480704f569a09f8b7ca380
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -65,92 +64,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  bd9a0c97e53c3d7a56b2751179903ddc5da42683
-Gitweb:     https://git.kernel.org/tip/bd9a0c97e53c3d7a56b2751179903ddc5da42683
+Commit-ID:  203dffacf592317e54480704f569a09f8b7ca380
+Gitweb:     https://git.kernel.org/tip/203dffacf592317e54480704f569a09f8b7ca380
 Author:     Fenghua Yu <fenghua.yu@intel.com>
-AuthorDate: Wed, 19 Jun 2019 18:33:57 -0700
+AuthorDate: Wed, 19 Jun 2019 18:33:58 -0700
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Mon, 24 Jun 2019 01:44:20 +0200
+CommitDate: Mon, 24 Jun 2019 01:44:35 +0200
 
-x86/umwait: Add sysfs interface to control umwait maximum time
+Documentation/ABI: Document umwait control sysfs interfaces
 
-IA32_UMWAIT_CONTROL[31:2] determines the maximum time in TSC-quanta
-that processor can stay in C0.1 or C0.2. A zero value means no maximum
-time.
+Since two new sysfs interface files are created for umwait control, add
+an ABI document entry for the files:
 
-Each instruction sets its own deadline in the instruction's implicit
-input EDX:EAX value. The instruction wakes up if the time-stamp counter
-reaches or exceeds the specified deadline, or the umwait maximum time
-expires, or a store happens in the monitored address range in umwait.
+   /sys/devices/system/cpu/umwait_control/enable_c02
+   /sys/devices/system/cpu/umwait_control/max_time
 
-The administrator can write an unsigned 32-bit number to
-/sys/devices/system/cpu/umwait_control/max_time to change the default
-value. Note that a value of zero means there is no limit. The lower two
-bits of the value must be zero.
-
-[ tglx: Simplify the write function. Massage changelog ]
+[ tglx: Made the write value instructions readable ]
 
 Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Ashok Raj <ashok.raj@intel.com>
-Reviewed-by: Tony Luck <tony.luck@intel.com>
 Cc: "Borislav Petkov" <bp@alien8.de>
 Cc: "H Peter Anvin" <hpa@zytor.com>
 Cc: "Andy Lutomirski" <luto@kernel.org>
 Cc: "Peter Zijlstra" <peterz@infradead.org>
+Cc: "Tony Luck" <tony.luck@intel.com>
 Cc: "Ravi V Shankar" <ravi.v.shankar@intel.com>
-Link: https://lkml.kernel.org/r/1560994438-235698-5-git-send-email-fenghua.yu@intel.com
-
+Link: https://lkml.kernel.org/r/1560994438-235698-6-git-send-email-fenghua.yu@intel.com
 ---
- arch/x86/kernel/cpu/umwait.c | 36 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+ Documentation/ABI/testing/sysfs-devices-system-cpu | 23 ++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-diff --git a/arch/x86/kernel/cpu/umwait.c b/arch/x86/kernel/cpu/umwait.c
-index 56149d630e35..6a204e7336c1 100644
---- a/arch/x86/kernel/cpu/umwait.c
-+++ b/arch/x86/kernel/cpu/umwait.c
-@@ -131,8 +131,44 @@ static ssize_t enable_c02_store(struct device *dev,
- }
- static DEVICE_ATTR_RW(enable_c02);
+diff --git a/Documentation/ABI/testing/sysfs-devices-system-cpu b/Documentation/ABI/testing/sysfs-devices-system-cpu
+index 1528239f69b2..923fe2001472 100644
+--- a/Documentation/ABI/testing/sysfs-devices-system-cpu
++++ b/Documentation/ABI/testing/sysfs-devices-system-cpu
+@@ -538,3 +538,26 @@ Description:	Intel Energy and Performance Bias Hint (EPB)
  
-+static ssize_t
-+max_time_show(struct device *kobj, struct device_attribute *attr, char *buf)
-+{
-+	u32 ctrl = READ_ONCE(umwait_control_cached);
+ 		This attribute is present for all online CPUs supporting the
+ 		Intel EPB feature.
 +
-+	return sprintf(buf, "%u\n", umwait_ctrl_max_time(ctrl));
-+}
++What:		/sys/devices/system/cpu/umwait_control
++		/sys/devices/system/cpu/umwait_control/enable_c02
++		/sys/devices/system/cpu/umwait_control/max_time
++Date:		May 2019
++Contact:	Linux kernel mailing list <linux-kernel@vger.kernel.org>
++Description:	Umwait control
 +
-+static ssize_t max_time_store(struct device *kobj,
-+			      struct device_attribute *attr,
-+			      const char *buf, size_t count)
-+{
-+	u32 max_time, ctrl;
-+	int ret;
++		enable_c02: Read/write interface to control umwait C0.2 state
++			Read returns C0.2 state status:
++				0: C0.2 is disabled
++				1: C0.2 is enabled
 +
-+	ret = kstrtou32(buf, 0, &max_time);
-+	if (ret)
-+		return ret;
++			Write 'y' or '1'  or 'on' to enable C0.2 state.
++			Write 'n' or '0'  or 'off' to disable C0.2 state.
 +
-+	/* bits[1:0] must be zero */
-+	if (max_time & ~MSR_IA32_UMWAIT_CONTROL_TIME_MASK)
-+		return -EINVAL;
++			The interface is case insensitive.
 +
-+	mutex_lock(&umwait_lock);
-+
-+	ctrl = READ_ONCE(umwait_control_cached);
-+	if (max_time != umwait_ctrl_max_time(ctrl))
-+		umwait_update_control(max_time, umwait_ctrl_c02_enabled(ctrl));
-+
-+	mutex_unlock(&umwait_lock);
-+
-+	return count;
-+}
-+static DEVICE_ATTR_RW(max_time);
-+
- static struct attribute *umwait_attrs[] = {
- 	&dev_attr_enable_c02.attr,
-+	&dev_attr_max_time.attr,
- 	NULL
- };
- 
++		max_time: Read/write interface to control umwait maximum time
++			  in TSC-quanta that the CPU can reside in either C0.1
++			  or C0.2 state. The time is an unsigned 32-bit number.
++			  Note that a value of zero means there is no limit.
++			  Low order two bits must be zero.
