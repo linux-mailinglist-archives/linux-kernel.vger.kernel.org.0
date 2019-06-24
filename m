@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE00C50856
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:18:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5210507FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:13:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730604AbfFXKQj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 06:16:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54110 "EHLO mail.kernel.org"
+        id S1729961AbfFXKFj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 06:05:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37538 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730759AbfFXKQf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 06:16:35 -0400
+        id S1729944AbfFXKFe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 06:05:34 -0400
 Received: from localhost (f4.8f.5177.ip4.static.sl-reverse.com [119.81.143.244])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C96F721473;
-        Mon, 24 Jun 2019 10:16:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3ADF1208E3;
+        Mon, 24 Jun 2019 10:05:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561371395;
-        bh=ZoUvg6Cuj0gLOckE2E1pb8pVmMdC6IXEbv+tF/XOAV0=;
+        s=default; t=1561370733;
+        bh=sLCeOjCrzZWFX3mgX9qYm4q7YOx5AuqolYxd8ZsyC4k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fw+LhZGKx+1GB6Th3Zjyra0OgWQNqdTwEbqimPd5LCnajMQPLpfAaM2Xj1umuzarp
-         67NpV8ib+33pjCG3BlaP9LS/nddAjqJdKGlqpcviu1srZjbz5xunZjQUqwrafti03S
-         JDdIKeURdtXRdBqbtmJCRbLrN75dVb2G/afyKuLU=
+        b=EwPM7zXE7xlEZ779FYdOEBlFshbMmDWAaZuo7a93YBxQAdYwbunYKyYokI8mejLBf
+         vDU1dKh2PGZQrEK7K1FXmzATXrNUrEdQ+NsMs9PDNsN4aB3E7AeQcTPv2zFriIO+9g
+         CdjBwkCVUCP+1X1+FPs/8yoMxL0ipLU4a82mp3Fc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jaesoo Lee <jalee@purestorage.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 088/121] nvme: Fix u32 overflow in the number of namespace list calculation
-Date:   Mon, 24 Jun 2019 17:57:00 +0800
-Message-Id: <20190624092325.313690600@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+a90604060cb40f5bdd16@syzkaller.appspotmail.com,
+        Willem de Bruijn <willemb@google.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>
+Subject: [PATCH 4.19 71/90] can: purge socket error queue on sock destruct
+Date:   Mon, 24 Jun 2019 17:57:01 +0800
+Message-Id: <20190624092318.678635319@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190624092320.652599624@linuxfoundation.org>
-References: <20190624092320.652599624@linuxfoundation.org>
+In-Reply-To: <20190624092313.788773607@linuxfoundation.org>
+References: <20190624092313.788773607@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,37 +45,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit c8e8c77b3bdbade6e26e8e76595f141ede12b692 ]
+From: Willem de Bruijn <willemb@google.com>
 
-The Number of Namespaces (nn) field in the identify controller data structure is
-defined as u32 and the maximum allowed value in NVMe specification is
-0xFFFFFFFEUL. This change fixes the possible overflow of the DIV_ROUND_UP()
-operation used in nvme_scan_ns_list() by casting the nn to u64.
+commit fd704bd5ee749d560e86c4f1fd2ef486d8abf7cf upstream.
 
-Signed-off-by: Jaesoo Lee <jalee@purestorage.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Sagi Grimberg <sagi@grimberg.me>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+CAN supports software tx timestamps as of the below commit. Purge
+any queued timestamp packets on socket destroy.
+
+Fixes: 51f31cabe3ce ("ip: support for TX timestamps on UDP and RAW sockets")
+Reported-by: syzbot+a90604060cb40f5bdd16@syzkaller.appspotmail.com
+Signed-off-by: Willem de Bruijn <willemb@google.com>
+Cc: linux-stable <stable@vger.kernel.org>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/nvme/host/core.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ net/can/af_can.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index 35d2202ee2fd..3a390b2c7540 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -3397,7 +3397,8 @@ static int nvme_scan_ns_list(struct nvme_ctrl *ctrl, unsigned nn)
+--- a/net/can/af_can.c
++++ b/net/can/af_can.c
+@@ -105,6 +105,7 @@ EXPORT_SYMBOL(can_ioctl);
+ static void can_sock_destruct(struct sock *sk)
  {
- 	struct nvme_ns *ns;
- 	__le32 *ns_list;
--	unsigned i, j, nsid, prev = 0, num_lists = DIV_ROUND_UP(nn, 1024);
-+	unsigned i, j, nsid, prev = 0;
-+	unsigned num_lists = DIV_ROUND_UP_ULL((u64)nn, 1024);
- 	int ret = 0;
+ 	skb_queue_purge(&sk->sk_receive_queue);
++	skb_queue_purge(&sk->sk_error_queue);
+ }
  
- 	ns_list = kzalloc(NVME_IDENTIFY_DATA_SIZE, GFP_KERNEL);
--- 
-2.20.1
-
+ static const struct can_proto *can_get_proto(int protocol)
 
 
