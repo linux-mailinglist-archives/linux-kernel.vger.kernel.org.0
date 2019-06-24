@@ -2,299 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E0EC50686
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:01:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29D545064D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 11:58:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728823AbfFXJ7T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 05:59:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58270 "EHLO mail.kernel.org"
+        id S1728481AbfFXJ5p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 05:57:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55934 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729182AbfFXJ7Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 05:59:16 -0400
+        id S1726453AbfFXJ5p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 05:57:45 -0400
 Received: from localhost (f4.8f.5177.ip4.static.sl-reverse.com [119.81.143.244])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 34404208CA;
-        Mon, 24 Jun 2019 09:59:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A64E0205ED;
+        Mon, 24 Jun 2019 09:57:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561370355;
-        bh=4BalYveyIrSeu2ARQNdldDjPUeWBl9/8p5PG4CUaff4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=A40zROWfaJZ1BpJXofB2hWEXf7yBxS2/wNo3bnLupyJP4Wo980/3kCw1AzCXfAs7G
-         c0qhvaAsdu8vCMR5xsnpGoVrbKRWRlzE4VANpFAvvMqhwIuptYR/wVEQruLxHBLSq9
-         HVTazwiOKaQf3nCC1mnzGQtYd2kw+KFPkP29rExA=
+        s=default; t=1561370264;
+        bh=79Z6yu1NECFO17rSLe4/LFTXyANXKsb8vRPaV4ZpytA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=VsEmh8hFFJAsuBlKuDSubA0HS1AVJuyeOWkF1GpTMHA4OY0P05buY2U5nb4LZcp5V
+         XppnANaemFOp7b72K+COnyjW7XneEZcyDK/mg3liEkuI7cWWRumc3eDyN1xlmi84zJ
+         0h7VdQS10Mgks9JJn2om767OSwHdrve/c7xH1Bc4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: [PATCH 4.14 00/51] 4.14.130-stable review
-Date:   Mon, 24 Jun 2019 17:56:18 +0800
-Message-Id: <20190624092305.919204959@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: [PATCH 4.14 01/51] tracing: Silence GCC 9 array bounds warning
+Date:   Mon, 24 Jun 2019 17:56:19 +0800
+Message-Id: <20190624092306.061938404@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-MIME-Version: 1.0
+In-Reply-To: <20190624092305.919204959@linuxfoundation.org>
+References: <20190624092305.919204959@linuxfoundation.org>
 User-Agent: quilt/0.66
 X-stable: review
 X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.130-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-4.14.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 4.14.130-rc1
-X-KernelTest-Deadline: 2019-06-26T09:23+00:00
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the start of the stable review cycle for the 4.14.130 release.
-There are 51 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 
-Responses should be made by Wed 26 Jun 2019 09:22:03 AM UTC.
-Anything received after that time might be too late.
+commit 0c97bf863efce63d6ab7971dad811601e6171d2f upstream.
 
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.130-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-and the diffstat can be found below.
+Starting with GCC 9, -Warray-bounds detects cases when memset is called
+starting on a member of a struct but the size to be cleared ends up
+writing over further members.
 
-thanks,
+Such a call happens in the trace code to clear, at once, all members
+after and including `seq` on struct trace_iterator:
 
-greg k-h
+    In function 'memset',
+        inlined from 'ftrace_dump' at kernel/trace/trace.c:8914:3:
+    ./include/linux/string.h:344:9: warning: '__builtin_memset' offset
+    [8505, 8560] from the object at 'iter' is out of the bounds of
+    referenced subobject 'seq' with type 'struct trace_seq' at offset
+    4368 [-Warray-bounds]
+      344 |  return __builtin_memset(p, c, size);
+          |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
--------------
-Pseudo-Shortlog of commits:
+In order to avoid GCC complaining about it, we compute the address
+ourselves by adding the offsetof distance instead of referring
+directly to the member.
 
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 4.14.130-rc1
+Since there are two places doing this clear (trace.c and trace_kdb.c),
+take the chance to move the workaround into a single place in
+the internal header.
 
-Jouni Malinen <j@w1.fi>
-    mac80211: Do not use stack memory with scatterlist for GMAC
+Link: http://lkml.kernel.org/r/20190523124535.GA12931@gmail.com
 
-Yu Wang <yyuwang@codeaurora.org>
-    mac80211: handle deauthentication/disassociation from TDLS peer
+Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+[ Removed unnecessary parenthesis around "iter" ]
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Johannes Berg <johannes.berg@intel.com>
-    mac80211: drop robust management frames from unknown TA
+---
+ kernel/trace/trace.c     |    6 +-----
+ kernel/trace/trace.h     |   18 ++++++++++++++++++
+ kernel/trace/trace_kdb.c |    6 +-----
+ 3 files changed, 20 insertions(+), 10 deletions(-)
 
-Eric Biggers <ebiggers@google.com>
-    cfg80211: fix memory leak of wiphy device name
-
-Steve French <stfrench@microsoft.com>
-    SMB3: retry on STATUS_INSUFFICIENT_RESOURCES instead of failing write
-
-Marcel Holtmann <marcel@holtmann.org>
-    Bluetooth: Fix regression with minimum encryption key size alignment
-
-Marcel Holtmann <marcel@holtmann.org>
-    Bluetooth: Align minimum encryption key size for LE and BR/EDR connections
-
-Faiz Abbas <faiz_abbas@ti.com>
-    ARM: dts: am57xx-idk: Remove support for voltage switching for SD card
-
-Fabio Estevam <festevam@gmail.com>
-    ARM: imx: cpuidle-imx6sx: Restrict the SW2ISO increase to i.MX6SX
-
-Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-    powerpc/bpf: use unsigned division instruction for 64-bit operations
-
-Willem de Bruijn <willemb@google.com>
-    can: purge socket error queue on sock destruct
-
-Joakim Zhang <qiangqing.zhang@nxp.com>
-    can: flexcan: fix timeout when set small bitrate
-
-Naohiro Aota <naohiro.aota@wdc.com>
-    btrfs: start readahead also in seed devices
-
-Jaesoo Lee <jalee@purestorage.com>
-    nvme: Fix u32 overflow in the number of namespace list calculation
-
-Robert Hancock <hancock@sedsystems.ca>
-    hwmon: (pmbus/core) Treat parameters as paged if on multiple pages
-
-Eduardo Valentin <eduval@amazon.com>
-    hwmon: (core) add thermal sensors only if dev->of_node is present
-
-Alexandra Winter <wintera@linux.ibm.com>
-    s390/qeth: fix VLAN attribute in bridge_hostnotify udev event
-
-Miaohe Lin <linmiaohe@huawei.com>
-    net: ipvlan: Fix ipvlan device tso disabled while NETIF_F_IP_CSUM is set
-
-Dan Carpenter <dan.carpenter@oracle.com>
-    scsi: smartpqi: unlock on error in pqi_submit_raid_request_synchronous()
-
-Avri Altman <avri.altman@wdc.com>
-    scsi: ufs: Check that space was properly alloced in copy_query_response
-
-George G. Davis <george_davis@mentor.com>
-    scripts/checkstack.pl: Fix arm64 wrong or unknown architecture
-
-Robin Murphy <robin.murphy@arm.com>
-    drm/arm/hdlcd: Allow a bit of clock tolerance
-
-Robin Murphy <robin.murphy@arm.com>
-    drm/arm/hdlcd: Actually validate CRTC modes
-
-Sean Wang <sean.wang@mediatek.com>
-    net: ethernet: mediatek: Use NET_IP_ALIGN to judge if HW RX_2BYTE_OFFSET is enabled
-
-Sean Wang <sean.wang@mediatek.com>
-    net: ethernet: mediatek: Use hw_feature to judge if HWLRO is supported
-
-Young Xiao <92siuyang@gmail.com>
-    sparc: perf: fix updated event period in response to PERF_EVENT_IOC_PERIOD
-
-Gen Zhang <blackgod016574@gmail.com>
-    mdesc: fix a missing-check bug in get_vdev_port_node_info()
-
-Yonglong Liu <liuyonglong@huawei.com>
-    net: hns: Fix loopback test failed at copper ports
-
-Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-    net: dsa: mv88e6xxx: avoid error message on remove from VLAN 0
-
-Guenter Roeck <linux@roeck-us.net>
-    xtensa: Fix section mismatch between memblock_reserve and mem_reserve
-
-YueHaibing <yuehaibing@huawei.com>
-    MIPS: uprobes: remove set but not used variable 'epc'
-
-Kamenee Arumugam <kamenee.arumugam@intel.com>
-    IB/hfi1: Validate page aligned for a given virtual address
-
-Mike Marciniszyn <mike.marciniszyn@intel.com>
-    IB/{qib, hfi1, rdmavt}: Correct ibv_devinfo max_mr value
-
-Mike Marciniszyn <mike.marciniszyn@intel.com>
-    IB/hfi1: Insure freeze_work work_struct is canceled on shutdown
-
-Mike Marciniszyn <mike.marciniszyn@intel.com>
-    IB/rdmavt: Fix alloc_qpn() WARN_ON()
-
-Helge Deller <deller@gmx.de>
-    parisc: Fix compiler warnings in float emulation code
-
-YueHaibing <yuehaibing@huawei.com>
-    parport: Fix mem leak in parport_register_dev_model
-
-Jose Abreu <joabreu@synopsys.com>
-    ARC: [plat-hsdk]: Add missing FIFO size entry in GMAC node
-
-Jose Abreu <joabreu@synopsys.com>
-    ARC: [plat-hsdk]: Add missing multicast filter bins number to GMAC node
-
-Vineet Gupta <vgupta@synopsys.com>
-    ARC: fix build warnings
-
-Jann Horn <jannh@google.com>
-    apparmor: enforce nullbyte at end of tag string
-
-Andrey Smirnov <andrew.smirnov@gmail.com>
-    Input: uinput - add compat ioctl number translation for UI_*_FF_UPLOAD
-
-Alexander Mikhaylenko <exalm7659@gmail.com>
-    Input: synaptics - enable SMBus on ThinkPad E480 and E580
-
-Mike Marciniszyn <mike.marciniszyn@intel.com>
-    IB/hfi1: Silence txreq allocation warnings
-
-Peter Chen <peter.chen@nxp.com>
-    usb: chipidea: udc: workaround for endpoint conflict issue
-
-Stanley Chu <stanley.chu@mediatek.com>
-    scsi: ufs: Avoid runtime suspend possibly being blocked forever
-
-Ulf Hansson <ulf.hansson@linaro.org>
-    mmc: core: Prevent processing SDIO IRQs when the card is suspended
-
-Florian Fainelli <f.fainelli@gmail.com>
-    net: phy: broadcom: Use strlcpy() for ethtool::get_strings
-
-Linus Torvalds <torvalds@linux-foundation.org>
-    gcc-9: silence 'address-of-packed-member' warning
-
-Allan Xavier <allan.x.xavier@oracle.com>
-    objtool: Support per-function rodata sections
-
-Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-    tracing: Silence GCC 9 array bounds warning
-
-
--------------
-
-Diffstat:
-
- Makefile                                         |  6 ++--
- arch/arc/boot/dts/hsdk.dts                       |  4 +++
- arch/arc/include/asm/cmpxchg.h                   | 14 ++++++---
- arch/arc/mm/tlb.c                                | 13 ++++----
- arch/arm/boot/dts/am57xx-idk-common.dtsi         |  1 +
- arch/arm/mach-imx/cpuidle-imx6sx.c               |  3 +-
- arch/mips/kernel/uprobes.c                       |  3 --
- arch/parisc/math-emu/cnv_float.h                 |  8 ++---
- arch/powerpc/include/asm/ppc-opcode.h            |  1 +
- arch/powerpc/net/bpf_jit.h                       |  2 +-
- arch/powerpc/net/bpf_jit_comp64.c                |  8 ++---
- arch/sparc/kernel/mdesc.c                        |  2 ++
- arch/sparc/kernel/perf_event.c                   |  4 +++
- arch/xtensa/kernel/setup.c                       |  3 +-
- drivers/gpu/drm/arm/hdlcd_crtc.c                 | 14 ++++-----
- drivers/hwmon/hwmon.c                            |  2 +-
- drivers/hwmon/pmbus/pmbus_core.c                 | 34 ++++++++++++++++++---
- drivers/infiniband/hw/hfi1/chip.c                |  1 +
- drivers/infiniband/hw/hfi1/user_exp_rcv.c        |  3 ++
- drivers/infiniband/hw/hfi1/verbs.c               |  2 --
- drivers/infiniband/hw/hfi1/verbs_txreq.c         |  2 +-
- drivers/infiniband/hw/hfi1/verbs_txreq.h         |  3 +-
- drivers/infiniband/hw/qib/qib_verbs.c            |  2 --
- drivers/infiniband/sw/rdmavt/mr.c                |  2 ++
- drivers/infiniband/sw/rdmavt/qp.c                |  3 +-
- drivers/input/misc/uinput.c                      | 22 ++++++++++++--
- drivers/input/mouse/synaptics.c                  |  2 ++
- drivers/mmc/core/sdio.c                          | 13 +++++++-
- drivers/mmc/core/sdio_irq.c                      |  4 +++
- drivers/net/can/flexcan.c                        |  2 +-
- drivers/net/dsa/mv88e6xxx/chip.c                 |  2 +-
- drivers/net/ethernet/hisilicon/hns/hns_ethtool.c |  4 +++
- drivers/net/ethernet/mediatek/mtk_eth_soc.c      | 15 +++++-----
- drivers/net/ipvlan/ipvlan_main.c                 |  2 +-
- drivers/net/phy/bcm-phy-lib.c                    |  4 +--
- drivers/nvme/host/core.c                         |  3 +-
- drivers/parport/share.c                          |  2 ++
- drivers/s390/net/qeth_l2_main.c                  |  2 +-
- drivers/scsi/smartpqi/smartpqi_init.c            |  6 ++--
- drivers/scsi/ufs/ufshcd-pltfrm.c                 | 11 +++----
- drivers/scsi/ufs/ufshcd.c                        |  3 +-
- drivers/usb/chipidea/udc.c                       | 20 +++++++++++++
- fs/btrfs/reada.c                                 |  5 ++++
- fs/cifs/smb2maperror.c                           |  2 +-
- include/net/bluetooth/hci_core.h                 |  3 ++
- kernel/trace/trace.c                             |  6 +---
- kernel/trace/trace.h                             | 18 +++++++++++
- kernel/trace/trace_kdb.c                         |  6 +---
- net/bluetooth/hci_conn.c                         | 10 ++++++-
- net/bluetooth/l2cap_core.c                       | 33 ++++++++++++++++----
- net/can/af_can.c                                 |  1 +
- net/mac80211/ieee80211_i.h                       |  3 ++
- net/mac80211/mlme.c                              | 12 +++++++-
- net/mac80211/rx.c                                |  2 ++
- net/mac80211/tdls.c                              | 23 ++++++++++++++
- net/mac80211/wpa.c                               |  7 ++++-
- net/wireless/core.c                              |  2 +-
- scripts/checkstack.pl                            |  2 +-
- security/apparmor/policy_unpack.c                |  2 +-
- tools/objtool/check.c                            | 38 ++++++++++++++++++++----
- tools/objtool/check.h                            |  4 +--
- tools/objtool/elf.c                              |  1 +
- tools/objtool/elf.h                              |  3 +-
- 63 files changed, 337 insertions(+), 103 deletions(-)
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -8249,12 +8249,8 @@ void ftrace_dump(enum ftrace_dump_mode o
+ 
+ 		cnt++;
+ 
+-		/* reset all but tr, trace, and overruns */
+-		memset(&iter.seq, 0,
+-		       sizeof(struct trace_iterator) -
+-		       offsetof(struct trace_iterator, seq));
++		trace_iterator_reset(&iter);
+ 		iter.iter_flags |= TRACE_FILE_LAT_FMT;
+-		iter.pos = -1;
+ 
+ 		if (trace_find_next_entry_inc(&iter) != NULL) {
+ 			int ret;
+--- a/kernel/trace/trace.h
++++ b/kernel/trace/trace.h
+@@ -1871,4 +1871,22 @@ static inline int tracing_alloc_snapshot
+ 
+ extern struct trace_iterator *tracepoint_print_iter;
+ 
++/*
++ * Reset the state of the trace_iterator so that it can read consumed data.
++ * Normally, the trace_iterator is used for reading the data when it is not
++ * consumed, and must retain state.
++ */
++static __always_inline void trace_iterator_reset(struct trace_iterator *iter)
++{
++	const size_t offset = offsetof(struct trace_iterator, seq);
++
++	/*
++	 * Keep gcc from complaining about overwriting more than just one
++	 * member in the structure.
++	 */
++	memset((char *)iter + offset, 0, sizeof(struct trace_iterator) - offset);
++
++	iter->pos = -1;
++}
++
+ #endif /* _LINUX_KERNEL_TRACE_H */
+--- a/kernel/trace/trace_kdb.c
++++ b/kernel/trace/trace_kdb.c
+@@ -41,12 +41,8 @@ static void ftrace_dump_buf(int skip_lin
+ 
+ 	kdb_printf("Dumping ftrace buffer:\n");
+ 
+-	/* reset all but tr, trace, and overruns */
+-	memset(&iter.seq, 0,
+-		   sizeof(struct trace_iterator) -
+-		   offsetof(struct trace_iterator, seq));
++	trace_iterator_reset(&iter);
+ 	iter.iter_flags |= TRACE_FILE_LAT_FMT;
+-	iter.pos = -1;
+ 
+ 	if (cpu_file == RING_BUFFER_ALL_CPUS) {
+ 		for_each_tracing_cpu(cpu) {
 
 
