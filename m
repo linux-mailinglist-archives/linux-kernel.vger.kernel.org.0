@@ -2,96 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE72C50B43
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 14:59:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D409A50B4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 14:59:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730442AbfFXM7C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 08:59:02 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:32877 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728138AbfFXM7C (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 08:59:02 -0400
-Received: by mail-qt1-f194.google.com with SMTP id w40so3753621qtk.0;
-        Mon, 24 Jun 2019 05:59:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=DWkkM2LQJnLqQ9mL4Q4VZowB5B9WSyjJGV//+UzbHVo=;
-        b=Knj0PVJoYsFETKY1bXIB2yw4ELWyZnJDq8qsKe2o3LylTS5nGiDabO5fV0MYRSeWdU
-         uDIt56Ah18UyDNojfSwhTt10HXZDnyRKUhq0S7f+ESg+9A9yvuF/n+nZMPVYLM/tLKXl
-         lZXbUvL9OxJYSu3v9ELsNKoCpJAV/IEmltlgmJUbwxynyvNFooMhbfOMPduOWjuJCd6u
-         FgJCKd/GhAHKvvupNMe7lSDzf5RJhi1onV4SIAsx8IEYl4kWlDsvTWXQWOEu1Cqe/glh
-         qufSY3chBoB2UevXen2GOooNGibx8WYdsyDLHi4/f6qYc4TXSLQVv3wsG4nT4yyn8F8y
-         QfDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=DWkkM2LQJnLqQ9mL4Q4VZowB5B9WSyjJGV//+UzbHVo=;
-        b=BK9CQIWAdXStaLhUhTt8ugupxLmm5nt6mHndY52EqjBseeRlMLQZBExAtIEl3vAEJ4
-         /h9p28Pe3H+hfmbJ/HUMK9sWmJ90oK95vEqN2MDDquMi5Nx7uZXIDjhqOjMF+GIjNCtG
-         a4D735snyXWA+T1W3x4zRlJRcNss1r0ug1HsyX0BahilPKOPxNAH7q7W1ASRfT5Cq+5x
-         czF16Sz+Muxi4bHFeKOzjejbYGBq9yrNWsxRvOnqTrfkuYV5cE4GJabRbVtgvwFVWNPG
-         yyomA5qdmXUtE1aX9skffSHlE8ZLHAHFNuXioEVqtd/lPIAOLu1AbALFiUZNFAW4eypr
-         Dr1w==
-X-Gm-Message-State: APjAAAUEKCtPxVFHPlSW2xDFqVMK2IRDOTFKVjo0O+gob3z4P5u6eoER
-        Iiu/r7tU9nXte+iuzhGhWkc=
-X-Google-Smtp-Source: APXvYqxyqmUAN0XevsGL58UvEms4bJfE5JAIV8JURnSB2+6VQZEG0ejliEbPbHaYIW9tsKLKmkbstw==
-X-Received: by 2002:a0c:b0e4:: with SMTP id p33mr48061763qvc.208.1561381140837;
-        Mon, 24 Jun 2019 05:59:00 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:480::8b21])
-        by smtp.gmail.com with ESMTPSA id z63sm5273756qkb.136.2019.06.24.05.58.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Jun 2019 05:58:58 -0700 (PDT)
-Date:   Mon, 24 Jun 2019 05:58:56 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     dsterba@suse.com, clm@fb.com, josef@toxicpanda.com,
-        axboe@kernel.dk, linux-btrfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        kernel-team@fb.com
-Subject: Re: [PATCH 2/9] blkcg, writeback: Add wbc->no_wbc_acct
-Message-ID: <20190624125856.GO657710@devbig004.ftw2.facebook.com>
-References: <20190615182453.843275-1-tj@kernel.org>
- <20190615182453.843275-3-tj@kernel.org>
- <20190620152145.GL30243@quack2.suse.cz>
- <20190620170250.GL657710@devbig004.ftw2.facebook.com>
- <20190624082129.GA32376@quack2.suse.cz>
+        id S1730503AbfFXM7f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 08:59:35 -0400
+Received: from canardo.mork.no ([148.122.252.1]:34121 "EHLO canardo.mork.no"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728070AbfFXM7f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 08:59:35 -0400
+Received: from miraculix.mork.no ([IPv6:2a02:2121:282:c0c6:2870:15ff:fe87:c238])
+        (authenticated bits=0)
+        by canardo.mork.no (8.15.2/8.15.2) with ESMTPSA id x5OCxGG2006893
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Mon, 24 Jun 2019 14:59:17 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mork.no; s=b;
+        t=1561381158; bh=XQsUYIbtGV5iLBtEMGinbcXCCB2jfmy7MxU1fU6ua0E=;
+        h=From:To:Cc:Subject:References:Date:Message-ID:From;
+        b=NFec1O8OFGN9c5A8nkGrqjIpmLTHJO9Q0DGVTC2jYIVhCNIkS8MJGaVONb6L+caha
+         EYyp1Vo1/sf6IDv2WP4xQVnRDiQOJVr0k/hVFTjmyuGOGq/BOHdD/krguQzXjzQHVU
+         JNt8Z/ZueCsQzPQ/dyQncu9JhJ/fPL3kSF26llJA=
+Received: from bjorn by miraculix.mork.no with local (Exim 4.89)
+        (envelope-from <bjorn@mork.no>)
+        id 1hfOYx-0007Ao-Fm; Mon, 24 Jun 2019 14:59:11 +0200
+From:   =?utf-8?Q?Bj=C3=B8rn_Mork?= <bjorn@mork.no>
+To:     Kristian Evensen <kristian.evensen@gmail.com>
+Cc:     syzbot <syzbot+b68605d7fadd21510de1@syzkaller.appspotmail.com>,
+        andreyknvl@google.com, davem@davemloft.net,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: KASAN: global-out-of-bounds Read in qmi_wwan_probe
+Organization: m
+References: <0000000000008f19f7058c10a633@google.com>
+Date:   Mon, 24 Jun 2019 14:59:11 +0200
+In-Reply-To: <0000000000008f19f7058c10a633@google.com> (syzbot's message of
+        "Mon, 24 Jun 2019 05:07:05 -0700")
+Message-ID: <871rzj6sww.fsf@miraculix.mork.no>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190624082129.GA32376@quack2.suse.cz>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Virus-Scanned: clamav-milter 0.100.3 at canardo
+X-Virus-Status: Clean
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, Jan.
+syzbot <syzbot+b68605d7fadd21510de1@syzkaller.appspotmail.com> writes:
 
-On Mon, Jun 24, 2019 at 10:21:30AM +0200, Jan Kara wrote:
-> OK, now I understand. Just one more question: So effectively, you are using
-> wbc->no_wbc_acct to pass information from btrfs code to btrfs code telling
-> it whether IO should or should not be accounted with wbc_account_io().
+> Hello,
+>
+> syzbot found the following crash on:
+>
+> HEAD commit:    9939f56e usb-fuzzer: main usb gadget fuzzer driver
+> git tree:       https://github.com/google/kasan.git usb-fuzzer
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D1615a669a00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3Ddf134eda130bb=
+43a
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3Db68605d7fadd215=
+10de1
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D10630af6a00=
+000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D1127da69a00000
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+b68605d7fadd21510de1@syzkaller.appspotmail.com
+>
+> usb 1-1: new high-speed USB device number 2 using dummy_hcd
+> usb 1-1: Using ep0 maxpacket: 8
+> usb 1-1: New USB device found, idVendor=3D12d1, idProduct=3D14f1,
+> bcdDevice=3Dd4.d9
+> usb 1-1: New USB device strings: Mfr=3D0, Product=3D0, SerialNumber=3D0
+> usb 1-1: config 0 descriptor??
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> BUG: KASAN: global-out-of-bounds in qmi_wwan_probe+0x342/0x360
+> drivers/net/usb/qmi_wwan.c:1417
+> Read of size 8 at addr ffffffff8618c140 by task kworker/1:1/22
+>
+> CPU: 1 PID: 22 Comm: kworker/1:1 Not tainted 5.2.0-rc5+ #11
+> Hardware name: Google Google Compute Engine/Google Compute Engine,
+> BIOS Google 01/01/2011
+> Workqueue: usb_hub_wq hub_event
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:77 [inline]
+>  dump_stack+0xca/0x13e lib/dump_stack.c:113
+>  print_address_description+0x67/0x231 mm/kasan/report.c:188
+>  __kasan_report.cold+0x1a/0x32 mm/kasan/report.c:317
+>  kasan_report+0xe/0x20 mm/kasan/common.c:614
+>  qmi_wwan_probe+0x342/0x360 drivers/net/usb/qmi_wwan.c:1417
+>  usb_probe_interface+0x305/0x7a0 drivers/usb/core/driver.c:361
+>  really_probe+0x281/0x660 drivers/base/dd.c:509
+>  driver_probe_device+0x104/0x210 drivers/base/dd.c:670
+>  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:777
+>  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
+>
 
-Yes.
+Hello Kristian!
 
-> Wouldn't it make more sense to just pass this information internally
-> within btrfs? Granted, if this mechanism gets more widespread use by other
-> filesystems, then probably using wbc flag makes more sense. But I'm not
-> sure if this isn't a premature generalization...
+I need some help understanding this...  IIUC syzbot is claiming an
+out-of-bounds access at line 1417 in v5.2-rc5.  Or whatever - I'm having
+a hard time deciphering what kernel version the bot is actually
+testing. The claimed HEAD is not a kernel commit.  At least not in my
+kernel...
 
-The btrfs async issuers end up using generic writeback path and uses
-the generic wbc owner mechanisms so that ios are attached to the right
-cgroup too.  So, I kinda prefer to provide a generic mechanism from
-wbc side.  That said, the names are a bit misleading and I think it'd
-be better to rename them to something more explicit, e.g. sth along
-the line of wbc_update_cgroup_owner() and wbc->no_cgroup_owner.  What
-do you think?
 
-Thanks.
+But if this is correct, then it points to the info->data access you
+recently added:
 
--- 
-tejun
+822e44b45eb99 (Kristian Evensen        2019-03-02 13:32:26 +0100 1409)  /* =
+Several Quectel modems supports dynamic interface configuration, so
+7c5cca3588545 (Kristian Evensen        2018-09-08 13:50:48 +0200 1410)   * =
+we need to match on class/subclass/protocol. These values are
+7c5cca3588545 (Kristian Evensen        2018-09-08 13:50:48 +0200 1411)   * =
+identical for the diagnostic- and QMI-interface, but bNumEndpoints is
+7c5cca3588545 (Kristian Evensen        2018-09-08 13:50:48 +0200 1412)   * =
+different. Ignore the current interface if the number of endpoints
+e4bf63482c309 (Kristian Evensen        2019-04-07 15:39:09 +0200 1413)   * =
+equals the number for the diag interface (two).
+7c5cca3588545 (Kristian Evensen        2018-09-08 13:50:48 +0200 1414)   */
+e4bf63482c309 (Kristian Evensen        2019-04-07 15:39:09 +0200 1415)  inf=
+o =3D (void *)&id->driver_info;
+e4bf63482c309 (Kristian Evensen        2019-04-07 15:39:09 +0200 1416)=20
+e4bf63482c309 (Kristian Evensen        2019-04-07 15:39:09 +0200 1417)  if =
+(info->data & QMI_WWAN_QUIRK_QUECTEL_DYNCFG) {
+e4bf63482c309 (Kristian Evensen        2019-04-07 15:39:09 +0200 1418)     =
+     if (desc->bNumEndpoints =3D=3D 2)
+e4bf63482c309 (Kristian Evensen        2019-04-07 15:39:09 +0200 1419)     =
+             return -ENODEV;
+e4bf63482c309 (Kristian Evensen        2019-04-07 15:39:09 +0200 1420)  }
+
+
+I must be blind. I cannot see how this could end up failing.
+id->driver_info is always set to one of qmi_wwan_info,
+qmi_wwan_info_quirk_dtr or qmi_wwan_info_quirk_quectel_dyncfg at this
+point.  How does that end up out-of-bounds?
+
+
+
+Bj=C3=B8rn
