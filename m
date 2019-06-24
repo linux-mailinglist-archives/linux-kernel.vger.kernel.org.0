@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1181C50895
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:19:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D06F507F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:13:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730792AbfFXKSv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 06:18:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53094 "EHLO mail.kernel.org"
+        id S1730532AbfFXKMN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 06:12:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38290 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730084AbfFXKPp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 06:15:45 -0400
+        id S1730055AbfFXKGM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 06:06:12 -0400
 Received: from localhost (f4.8f.5177.ip4.static.sl-reverse.com [119.81.143.244])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 17D58205ED;
-        Mon, 24 Jun 2019 10:15:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F3080208E3;
+        Mon, 24 Jun 2019 10:06:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561371344;
-        bh=wmC6sIKsGuYIVEGrslgGVmYB1d51672VeR1UWq/sook=;
+        s=default; t=1561370771;
+        bh=GQIqOJoLrWOHgb9iG6OJt8URd/S+GLaWZyR0/LD9Jvo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pzoQ+WATQamKZISpr7+KQZYWrsonvJ/IBKI0Ed5WRQ//4KPYa7mhLr+VmGw80YGEh
-         6j1u9KJ5Pg7JoZpZd3jmqyT+rBYCGGMMGXSXCRiUKTsrDiwk/yEg2KYAHsr6B8oRPU
-         B6Qty0UefSKSddlu0dpI9+lrczGdVpUNbPVYC6dg=
+        b=iI+8TDsyf+gczjSB7UAzK9O6kGknqcX1TsmyaILYQTznokqE4vwc8R2W6RQQ6b67R
+         Vbvuv7phdMnWN01y/wKEXJ+VwclAYoW3ajL3kSLgsl3wmNKH/ix2ETVIvr1ZK07W1n
+         s1rTR6Osh/IxrIiOH68MMACw+Wq4ladFNbsPKGbg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mark Lee <mark-mc.lee@mediatek.com>,
-        Sean Wang <sean.wang@mediatek.com>,
+        stable@vger.kernel.org, Yonglong Liu <liuyonglong@huawei.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 067/121] net: ethernet: mediatek: Use hw_feature to judge if HWLRO is supported
-Date:   Mon, 24 Jun 2019 17:56:39 +0800
-Message-Id: <20190624092324.278858135@linuxfoundation.org>
+Subject: [PATCH 4.19 50/90] net: hns: Fix loopback test failed at copper ports
+Date:   Mon, 24 Jun 2019 17:56:40 +0800
+Message-Id: <20190624092317.482478718@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190624092320.652599624@linuxfoundation.org>
-References: <20190624092320.652599624@linuxfoundation.org>
+In-Reply-To: <20190624092313.788773607@linuxfoundation.org>
+References: <20190624092313.788773607@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,67 +44,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 9e4f56f1a7f3287718d0083b5cb85298dc05a5fd ]
+[ Upstream commit 2e1f164861e500f4e068a9d909bbd3fcc7841483 ]
 
-Should hw_feature as hardware capability flags to check if hardware LRO
-got support.
+When doing a loopback test at copper ports, the serdes loopback
+and the phy loopback will fail, because of the adjust link had
+not finished, and phy not ready.
 
-Signed-off-by: Mark Lee <mark-mc.lee@mediatek.com>
-Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+Adds sleep between adjust link and test process to fix it.
+
+Signed-off-by: Yonglong Liu <liuyonglong@huawei.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mediatek/mtk_eth_soc.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/net/ethernet/hisilicon/hns/hns_ethtool.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.c b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-index 549d36497b8c..59601cb5aeee 100644
---- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-+++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-@@ -2297,13 +2297,13 @@ static int mtk_get_rxnfc(struct net_device *dev, struct ethtool_rxnfc *cmd,
+diff --git a/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c b/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c
+index e2710ff48fb0..1fa0cd527ead 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c
+@@ -339,6 +339,7 @@ static int __lb_setup(struct net_device *ndev,
+ static int __lb_up(struct net_device *ndev,
+ 		   enum hnae_loop loop_mode)
+ {
++#define NIC_LB_TEST_WAIT_PHY_LINK_TIME 300
+ 	struct hns_nic_priv *priv = netdev_priv(ndev);
+ 	struct hnae_handle *h = priv->ae_handle;
+ 	int speed, duplex;
+@@ -365,6 +366,9 @@ static int __lb_up(struct net_device *ndev,
  
- 	switch (cmd->cmd) {
- 	case ETHTOOL_GRXRINGS:
--		if (dev->features & NETIF_F_LRO) {
-+		if (dev->hw_features & NETIF_F_LRO) {
- 			cmd->data = MTK_MAX_RX_RING_NUM;
- 			ret = 0;
- 		}
- 		break;
- 	case ETHTOOL_GRXCLSRLCNT:
--		if (dev->features & NETIF_F_LRO) {
-+		if (dev->hw_features & NETIF_F_LRO) {
- 			struct mtk_mac *mac = netdev_priv(dev);
+ 	h->dev->ops->adjust_link(h, speed, duplex);
  
- 			cmd->rule_cnt = mac->hwlro_ip_cnt;
-@@ -2311,11 +2311,11 @@ static int mtk_get_rxnfc(struct net_device *dev, struct ethtool_rxnfc *cmd,
- 		}
- 		break;
- 	case ETHTOOL_GRXCLSRULE:
--		if (dev->features & NETIF_F_LRO)
-+		if (dev->hw_features & NETIF_F_LRO)
- 			ret = mtk_hwlro_get_fdir_entry(dev, cmd);
- 		break;
- 	case ETHTOOL_GRXCLSRLALL:
--		if (dev->features & NETIF_F_LRO)
-+		if (dev->hw_features & NETIF_F_LRO)
- 			ret = mtk_hwlro_get_fdir_all(dev, cmd,
- 						     rule_locs);
- 		break;
-@@ -2332,11 +2332,11 @@ static int mtk_set_rxnfc(struct net_device *dev, struct ethtool_rxnfc *cmd)
++	/* wait adjust link done and phy ready */
++	msleep(NIC_LB_TEST_WAIT_PHY_LINK_TIME);
++
+ 	return 0;
+ }
  
- 	switch (cmd->cmd) {
- 	case ETHTOOL_SRXCLSRLINS:
--		if (dev->features & NETIF_F_LRO)
-+		if (dev->hw_features & NETIF_F_LRO)
- 			ret = mtk_hwlro_add_ipaddr(dev, cmd);
- 		break;
- 	case ETHTOOL_SRXCLSRLDEL:
--		if (dev->features & NETIF_F_LRO)
-+		if (dev->hw_features & NETIF_F_LRO)
- 			ret = mtk_hwlro_del_ipaddr(dev, cmd);
- 		break;
- 	default:
 -- 
 2.20.1
 
