@@ -2,108 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9ACE503F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 09:47:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 444CB50400
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 09:52:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728028AbfFXHrc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 03:47:32 -0400
-Received: from mga03.intel.com ([134.134.136.65]:55575 "EHLO mga03.intel.com"
+        id S1727885AbfFXHwn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 03:52:43 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:42827 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727010AbfFXHrb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 03:47:31 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jun 2019 00:46:35 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,411,1557212400"; 
-   d="scan'208";a="312629841"
-Received: from xxx.igk.intel.com (HELO xxx) ([10.237.93.170])
-  by orsmga004.jf.intel.com with ESMTP; 24 Jun 2019 00:46:33 -0700
-Date:   Mon, 24 Jun 2019 09:50:36 +0200
-From:   Amadeusz =?UTF-8?B?U8WCYXdpxYRza2k=?= 
-        <amadeuszx.slawinski@linux.intel.com>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        Cezary Rojewski <cezary.rojewski@intel.com>,
-        alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>,
-        Jie Yang <yang.jie@linux.intel.com>,
-        linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: Re: [alsa-devel] [PATCH v2 09/11] ASoC: Intel: hdac_hdmi: Set ops
- to NULL on remove
-Message-ID: <20190624095036.034ab575@xxx>
-In-Reply-To: <26946ff4-1c91-a7e0-4354-132cbd06235a@linux.intel.com>
-References: <20190617113644.25621-1-amadeuszx.slawinski@linux.intel.com>
-        <20190617113644.25621-10-amadeuszx.slawinski@linux.intel.com>
-        <75be86354032f4886cbaf7d430de2aa89eaab573.camel@linux.intel.com>
-        <20190618130015.0fc388b4@xxx>
-        <bd8855a7ab7a9958113631b76706120fd4427631.camel@linux.intel.com>
-        <20190619103859.15bf51c5@xxx>
-        <0c939329d17c50c353acacf164583ba259a775c0.camel@linux.intel.com>
-        <26946ff4-1c91-a7e0-4354-132cbd06235a@linux.intel.com>
+        id S1726807AbfFXHwm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 03:52:42 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45XM2v2t7dz9s4Y;
+        Mon, 24 Jun 2019 17:52:39 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1561362760;
+        bh=MEkWZxy8yWkkKdtyyG0r03VQogOTR4Q2scjrD0exlOM=;
+        h=Date:From:To:Cc:Subject:From;
+        b=OvWH5QwDyRRZ+oX410T3EgdKkOnWllxbh2n+Fqp0JRSZ1neQvB1GC5VGzQ3xzgv28
+         lskIhsTmNr9UviuiogceJrqxAs8v6HqahQ/dmX/oY3W4a8cgoQtpfjMwCCh0cyrSUI
+         vG5tc/zUIk9opfzxw/9lSPfVhMpAAga1VX0xmSdkjOupyAnyljX9SnY1Y/v3utGsCf
+         iakShjlZi5ErcoDR9+DjeEQP+aAUvzDI7IFTzYgVIYQ7/jSqxoqeEouj/+ppXbzHs4
+         /YqPS3Uf4xpwirHVBBiR/8iMeDwufPtdYOnMI2s9pUNq3rNCQVhxkMtncjw1bloMX3
+         ArXalLj3xRmag==
+Date:   Mon, 24 Jun 2019 17:52:38 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Tejun Heo <tj@kernel.org>, Jens Axboe <axboe@kernel.dk>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: linux-next: manual merge of the cgroup tree with the block tree
+Message-ID: <20190624175238.5ce3db2f@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/VDHs3=S.BVa4PxjFRVw5N/I"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 20 Jun 2019 08:17:33 +0200
-Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com> wrote:
+--Sig_/VDHs3=S.BVa4PxjFRVw5N/I
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> >>>>> Could you please give a bit more context on what error you see
-> >>>>> when this happens?  
-> >>>>
-> >>>> Hi,
-> >>>>
-> >>>> I get Oops. This is what happens with all other patches in this
-> >>>> series and only this one reverted:
-> >>>>
-> >>>> root@APL:~# rmmod snd_soc_sst_bxt_rt298
-> >>>> root@APL:~# rmmod snd_soc_hdac_hdmi
-> >>>> root@APL:~# rmmod snd_soc_skl  
-> >>>
-> >>> Thanks, Amadeusz. I think the order in which the drivers are
-> >>> removed
-> >>> is what's causing the oops in your case. With SOF, the order we
-> >>> remove is
-> >>>
-> >>> 1. rmmod sof_pci_dev
-> >>> 2. rmmod snd_soc_sst_bxt_rt298
-> >>> 3. rmmod snd_soc_hdac_hdmi
-> >>>  
-> >>
-> >> Well, there is nothing enforcing the order in which modules can be
-> >> unloaded (and I see no reason to force it), as you can see from
-> >> following excerpt, you can either start unloading from
-> >> snd_soc_sst_bxt_rt298 or snd_soc_skl, and yes if you start from
-> >> snd_soc_skl, there is no problem.  
-> 
-> there is a fundamental dependency that you are ignoring: the module 
-> snd_soc_sst_bxt_rt298 is a machine driver which will be probed when 
-> snd_soc_skl creates a platform_device.
-> Sure you can remove modules in a different order, but that's a bit of
-> an artificial/academic exercise isn't it?
-> 
-> >>  
-> > I am good with this patch. I just wanted to understand why we werent
-> > seeing this error with SOF. Sure, there's nothing enforcing the
-> > order in which modules are unloaded  but there must be a logical
-> > order for testing purposes.
-> > 
-> > Pierre, can you please comment on it. I vaguely remember discussing
-> > this with you last year.  
-> 
-> Our tests remove the modules by taking care of dependencies and it's 
-> already unveiled dozens of issues.
-> We could add a sequence similar to Amadeusz and unbind the modules
-> which are loaded with the creation of a platform_device (machine
-> driver, dmic), I am just not sure how of useful this would be.
+Hi all,
 
-You work under the assumption that users will remove modules in
-"correct" order. Because it is not enforced by modules dependencies you
-can expect users to do everything possible at some point in time. In
-this case unloading modules in not expected order will lead to kernel
-Oops, which is not what should happen.
+Today's linux-next merge of the cgroup tree got a conflict in:
+
+  Documentation/block/bfq-iosched.txt
+
+between commit:
+
+  8060c47ba853 ("block: rename CONFIG_DEBUG_BLK_CGROUP to CONFIG_BFQ_CGROUP=
+_DEBUG")
+
+from the block tree and commit:
+
+  99c8b231ae6c ("docs: cgroup-v1: convert docs to ReST and rename to *.rst")
+
+from the cgroup tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc Documentation/block/bfq-iosched.txt
+index f02163fabf80,b2265cf6c9c3..000000000000
+--- a/Documentation/block/bfq-iosched.txt
++++ b/Documentation/block/bfq-iosched.txt
+@@@ -537,10 -537,10 +537,10 @@@ or io.bfq.weight
+ =20
+  As for cgroups-v1 (blkio controller), the exact set of stat files
+  created, and kept up-to-date by bfq, depends on whether
+ -CONFIG_DEBUG_BLK_CGROUP is set. If it is set, then bfq creates all
+ +CONFIG_BFQ_CGROUP_DEBUG is set. If it is set, then bfq creates all
+  the stat files documented in
+- Documentation/cgroup-v1/blkio-controller.txt. If, instead,
++ Documentation/cgroup-v1/blkio-controller.rst. If, instead,
+ -CONFIG_DEBUG_BLK_CGROUP is not set, then bfq creates only the files
+ +CONFIG_BFQ_CGROUP_DEBUG is not set, then bfq creates only the files
+  blkio.bfq.io_service_bytes
+  blkio.bfq.io_service_bytes_recursive
+  blkio.bfq.io_serviced
+
+--Sig_/VDHs3=S.BVa4PxjFRVw5N/I
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0QgUYACgkQAVBC80lX
+0Gzuigf9FGi9hou12ZEtW6bqTOB1xUBIL3T/EiVcNF9qPdMaxCCNZC9iw+oTvV+m
+HVQsqjXgHRIphIkHuBAMdhTn7TKnGCxvKK4tboSuCrxy+PG+YFCT5h/Cqt22QVq+
+ldF2irMDPV4zGmzVSxFjACKpmxEOb9D0ozUafjqSyKjqppAXUtziMXXPu0ID1RsG
+TtumF8aIZXk+oQUMsZszNYrx14/4EhM/4ol3TNr6SyLDMVIAWiBQKm4AIMAHx+BQ
+WINHBalWn0eS+eXeKGq2FUCcadQfNr+kdkUS+kcRMzVY3v61k1VjcpeBTi0F7GsA
+XLiP7n5j2YNP3UAjzD8qwT/7XIjk2g==
+=4vKo
+-----END PGP SIGNATURE-----
+
+--Sig_/VDHs3=S.BVa4PxjFRVw5N/I--
