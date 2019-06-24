@@ -2,104 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11B75508B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:22:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C56DE508BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:22:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728773AbfFXKWV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 06:22:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58152 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731092AbfFXKWR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 06:22:17 -0400
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 691F9208E4;
-        Mon, 24 Jun 2019 10:22:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561371736;
-        bh=d4H3ytDN4+6bzOFsrB7H72D5xnyH2d7DzxF9eKjN0sY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=JwiHHdW7tU89KwjK81T7yWoMzvqANGQZczB5UCgT2eBTMTSj/2WtBXwPLu9Bm31O5
-         r/b9kyNOheWOPU6eueHBoKQB11SLCVWYnVhoKTq/4mVb1bd1PgiaqOudYcyxSqF2PT
-         S4tMcKDxPqFg/3U3pumEBb3BDhOvWlvqmdZEXn2I=
-Date:   Mon, 24 Jun 2019 11:22:10 +0100
-From:   Will Deacon <will@kernel.org>
-To:     Guo Ren <guoren@kernel.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>, julien.thierry@arm.com,
-        aou@eecs.berkeley.edu, james.morse@arm.com, suzuki.poulose@arm.com,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Anup Patel <anup.Patel@wdc.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-kernel@vger.kernel.org, rppt@linux.ibm.com,
-        hch@infradead.org, Atish Patra <Atish.Patra@wdc.com>,
-        Julien Grall <julien.grall@arm.com>,
-        Palmer Dabbelt <palmer@sifive.com>, gary@garyguo.net,
-        paul.walmsley@sifive.com, christoffer.dall@arm.com,
-        linux-riscv@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH RFC 11/14] arm64: Move the ASID allocator code in a
- separate file
-Message-ID: <20190624102209.ngwtosgr5fvp3ler@willie-the-truck>
-References: <20190321163623.20219-1-julien.grall@arm.com>
- <20190321163623.20219-12-julien.grall@arm.com>
- <0dfe120b-066a-2ac8-13bc-3f5a29e2caa3@arm.com>
- <CAJF2gTTXHHgDboaexdHA284y6kNZVSjLis5-Q2rDnXCxr4RSmA@mail.gmail.com>
- <c871a5ae-914f-a8bb-9474-1dcfec5d45bf@arm.com>
- <CAJF2gTStSR7Jmu7=HaO5Wxz=Zn8A5-RD8ktori3oKEhM9vozAA@mail.gmail.com>
- <20190621141606.GF18954@arrakis.emea.arm.com>
- <CAJF2gTTVUToRkRtxTmtWDotMGXy5YQCpL1h_2neTBuN3e6oz1w@mail.gmail.com>
+        id S1731151AbfFXKWi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 06:22:38 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:60204 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728639AbfFXKWg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 06:22:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=gYSAqVGmd9+5jafkLGxsrXZP9qRiAS9DRLx55zB7uGk=; b=CDushfXBP9FCxeXoORC2CJQrL
+        Zi0OQBvrjQcvo6ZczE3VLjM/kjszpaM6mZPqclTWPFD0DGU59LvGEqwWsTg6TtZ4+FWBVoKANuaD2
+        B0PnNEDeu0PLDY1UREPLTzbal0gBLAXd9yHvTKAOckmZ77qaUWdPCbUaGuA4I5Bc+zuyl+yAm2jFv
+        LgUNMDmwxZ8mYwvDViXCm5QMstlvjTzZasEBdm9jY+v0/Ar78QhcL2DkduXVKuMuXQ4Bl1t+jlw6X
+        v4EpIPMsfxhtAzSHMihYKV07kHF5hHjVVS57uxL62datkuhkP5je588PFW6lWuy0OEInXQRAkE7ST
+        10+luZAXA==;
+Received: from shell.armlinux.org.uk ([2002:4e20:1eda:1:5054:ff:fe00:4ec]:59024)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1hfM7H-0007L2-Tn; Mon, 24 Jun 2019 11:22:28 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.89)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1hfM7E-00060V-UJ; Mon, 24 Jun 2019 11:22:25 +0100
+Date:   Mon, 24 Jun 2019 11:22:24 +0100
+From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
+To:     Parshuram Raju Thombare <pthombar@cadence.com>
+Cc:     "andrew@lunn.ch" <andrew@lunn.ch>,
+        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Rafal Ciepiela <rafalc@cadence.com>,
+        Anil Joy Varughese <aniljoy@cadence.com>,
+        Piotr Sroka <piotrs@cadence.com>
+Subject: Re: [PATCH v4 2/5] net: macb: add support for sgmii MAC-PHY interface
+Message-ID: <20190624102224.6gudxxdaz43wrlcc@shell.armlinux.org.uk>
+References: <1561281419-6030-1-git-send-email-pthombar@cadence.com>
+ <1561281781-13479-1-git-send-email-pthombar@cadence.com>
+ <20190623101224.nzwodgfo6vvv65cx@shell.armlinux.org.uk>
+ <CO2PR07MB246931C79F736F39D0523D3BC1E00@CO2PR07MB2469.namprd07.prod.outlook.com>
+ <20190624093533.4vhvjmqqrucq2ixf@shell.armlinux.org.uk>
+ <CO2PR07MB24699250A3773DE76B6D2E9EC1E00@CO2PR07MB2469.namprd07.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJF2gTTVUToRkRtxTmtWDotMGXy5YQCpL1h_2neTBuN3e6oz1w@mail.gmail.com>
+In-Reply-To: <CO2PR07MB24699250A3773DE76B6D2E9EC1E00@CO2PR07MB2469.namprd07.prod.outlook.com>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 12:35:35AM +0800, Guo Ren wrote:
-> On Fri, Jun 21, 2019 at 10:16 PM Catalin Marinas
-> <catalin.marinas@arm.com> wrote:
+On Mon, Jun 24, 2019 at 10:14:41AM +0000, Parshuram Raju Thombare wrote:
+> >> >I still don't think this makes much sense, splitting the interface
+> >> > configuration between here and below.
+> >> Do you mean splitting mac_config in two *_configure functions ?
+> >> This was done as per Andrew's suggestion to make code mode readable
+> >> and easy to manage by splitting MAC configuration for different interfaces.
+> >No, I mean here you disable SGMII if we're switching away from SGMII
+> >mode.... (note, this means there is more to come for this sentence)
+> Sorry, I misunderstood your original question. I think disabling old interface
+> and enabling new one can be done in single place. I will do this change.
+> 
+> >> >This will only be executed when we are not using inband mode, which
+> >> >basically means it's not possible to switch to SGMII in-band mode.
+> >> SGMII is used in default PHY mode. And above code is to program MAC to
+> >> select PCS and SGMII interface.
+> >... and here you enable it for SGMII mode, but only for non-inband
+> >modes.
 > >
-> > On Wed, Jun 19, 2019 at 07:51:03PM +0800, Guo Ren wrote:
-> > > On Wed, Jun 19, 2019 at 4:54 PM Julien Grall <julien.grall@arm.com> wrote:
-> > > > On 6/19/19 9:07 AM, Guo Ren wrote:
-> > > > > Move arm asid allocator code in a generic one is a agood idea, I've
-> > > > > made a patchset for C-SKY and test is on processing, See:
-> > > > > https://lore.kernel.org/linux-csky/1560930553-26502-1-git-send-email-guoren@kernel.org/
-> > > > >
-> > > > > If you plan to seperate it into generic one, I could co-work with you.
-> > > >
-> > > > Was the ASID allocator work out of box on C-Sky?
-> > >
-> > > Almost done, but one question:
-> > > arm64 remove the code in switch_mm:
-> > >   cpumask_clear_cpu(cpu, mm_cpumask(prev));
-> > >   cpumask_set_cpu(cpu, mm_cpumask(next));
-> > >
-> > > Why? Although arm64 cache operations could affect all harts with CTC
-> > > method of interconnect, I think we should keep these code for
-> > > primitive integrity in linux. Because cpu_bitmap is in mm_struct
-> > > instead of mm->context.
-> >
-> > We didn't have a use for this in the arm64 code, so no point in
-> > maintaining the mm_cpumask. On some arm32 systems (ARMv6) with no
-> > hardware broadcast of some TLB/cache operations, we use it to track
-> > where the task has run to issue IPI for TLB invalidation or some
-> > deferred I-cache invalidation.
-> The operation of set/clear mm_cpumask was removed in arm64 compared to
-> arm32. It seems no side effect on current arm64 system, but from
-> software meaning it's wrong.
-> I think we should keep mm_cpumask just like arm32.
+> >Why not:
+> >	if (change_interface)  {
+> >		if (state->interface == PHY_INTERFACE_MODE_SGMII) {
+> >			// Enable SGMII mode and PCS
+> >			gem_writel(bp, NCFGR, ncfgr | GEM_BIT(SGMIIEN) |
+> >				   GEM_BIT(PCSSEL));
+> >		} else {
+> >			// Disable SGMII mode and PCS
+> >			gem_writel(bp, NCFGR, ncfgr & ~(GEM_BIT(SGMIIEN)
+> >				   GEM_BIT(PCSSEL)));
+> >			// Reset PCS
+> >			gem_writel(bp, PCS_CTRL, gem_readl(bp, PCS_CTRL)
+> >				   GEM_BIT(PCS_CTRL_RST));
+> >		}
+> >	}
+> >	if (!phylink_autoneg_inband(mode) &&
+> >	    (bp->speed != state->speed || bp->duplex != state->duplex)) {
+> >?
+> Ok
+> 
+> >> >> +
+> >> >> +		if (!interface_supported) {
+> >> >> +			netdev_err(dev, "Phy mode %s not supported",
+> >> >> +				   phy_modes(phy_mode));
+> >> >> +			goto err_out_free_netdev;
+> >> >> +		}
+> >> >> +
+> >> >>  		bp->phy_interface = phy_mode;
+> >> >> +	} else {
+> >> >> +		bp->phy_interface = phy_mode;
+> >> >> +	}
+> >> >If bp->phy_interface is PHY_INTERFACE_MODE_SGMII here, and
+> >> > mac_config()
+> >> >is called with state->interface = PHY_INTERFACE_MODE_SGMII, then
+> >> >mac_config() won't configure the MAC for the interface type - is that
+> >> >intentional?
+> >> In mac_config configure MAC for non in-band mode, there is also check for
+> >> speed, duplex
+> >> changes. bp->speed and bp->duplex are initialized to SPEED_UNKNOWN
+> >> and DUPLEX_UNKNOWN
+> >> values so it is expected that for non in band mode state contains valid speed
+> >> and duplex mode
+> >> which are different from *_UNKNOWN values.
+> 
+> >Sorry, this reply doesn't answer my question.  I'm not asking about
+> >bp->speed and bp->duplex.  I'm asking:
+> >1) why you are initialising bp->phy_interface here
+> >2) you to consider the impact that has on the mac_config() implementation
+> >  you are proposing
+> > because I think it's buggy.
+> bp->phy_interface is to store phy mode value from device tree. This is used later 
+> to know what phy interface user has selected for PHY-MAC. Same is used
+> to configure MAC correctly and based on your suggestion code is
+> added to handle PHY dynamically changing phy interface, in which 
+> case bp->phy_interface is also updated. Though it may not be what user want, 
+> if phy interface is totally decided by PHY and is anyway going to be different from what user
+> has selected in DT, initializing it here doesn't make sense.
+> But in case of PHY not changing phy_interface dynamically bp->phy_interface need to be
+> initialized with value from DT.
 
-It was a while ago now, but I remember the atomic update of the mm_cpumask
-being quite expensive when I was profiling this stuff, so I removed it
-because we don't need it for arm64 (at least, it doesn't allow us to
-optimise our shootdowns in practice).
+When phylink_start() is called, you will receive a mac_config() call to
+configure the MAC for the initial operating settings, which will include
+the current PHY interface mode.  This will initially be whatever
+interface mode was passed in to phylink_create().
 
-I still think this is over-engineered for what you want on c-sky and making
-this code generic is a mistake.
-
-Will
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
