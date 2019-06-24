@@ -2,270 +2,296 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC95650D60
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 16:09:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37B9B50D61
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 16:09:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731870AbfFXOJs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 10:09:48 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:33550 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727728AbfFXOJp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 10:09:45 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 337AA3086234;
-        Mon, 24 Jun 2019 14:09:45 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-57.rdu2.redhat.com [10.10.120.57])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id EF51F5D70D;
-        Mon, 24 Jun 2019 14:09:42 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 06/25] fsinfo: Implement retrieval of LSM parameters with
- fsinfo() [ver #14]
-From:   David Howells <dhowells@redhat.com>
-To:     viro@zeniv.linux.org.uk
-Cc:     dhowells@redhat.com, raven@themaw.net, mszeredi@redhat.com,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Mon, 24 Jun 2019 15:09:41 +0100
-Message-ID: <156138538170.25627.4711643125563188523.stgit@warthog.procyon.org.uk>
-In-Reply-To: <156138532485.25627.7459410522109581052.stgit@warthog.procyon.org.uk>
-References: <156138532485.25627.7459410522109581052.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        id S1731926AbfFXOJx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 10:09:53 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40594 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727728AbfFXOJv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 10:09:51 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id B61CCADC4;
+        Mon, 24 Jun 2019 14:09:49 +0000 (UTC)
+Date:   Mon, 24 Jun 2019 16:09:48 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     John Ogness <john.ogness@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [RFC PATCH v2 1/2] printk-rb: add a new printk ringbuffer
+ implementation
+Message-ID: <20190624140948.l7ekcmz5ser3zfr2@pathway.suse.cz>
+References: <20190607162349.18199-1-john.ogness@linutronix.de>
+ <20190607162349.18199-2-john.ogness@linutronix.de>
+ <20190621140516.h36g4in26pe3rmly@pathway.suse.cz>
+ <87d0j31iyc.fsf@linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Mon, 24 Jun 2019 14:09:45 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87d0j31iyc.fsf@linutronix.de>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Implement LSM parameter value retrieval with fsinfo() - akin to parsing
-/proc/mounts. This allows all the LSM parameters to be retrieved in one go
-with:
+On Mon 2019-06-24 10:33:15, John Ogness wrote:
+> > 1. Linked list of descriptors
+> > -----------------------------
+> >
+> > The list of descriptors makes the code more complicated
+> > and I do not see much gain. It is possible that I just missed
+> > something.
+> >
+> > If I get it correctly then the list could only grow by adding
+> > never used members. The already added members are newer removed
+> > neither shuffled.
 
-	struct fsinfo_params params = {
-		.request        = FSINFO_ATTR_LSM_PARAMETER,
-	};
+Is the above paragraph correct, please?
 
-The format is a blob containing pairs of length-prefixed strings to avoid
-the need to escape commas and suchlike in the values.  This is the same as
-for FSINFO_ATTR_PARAMETER.
+> > If the above is true then we could achieve similar result
+> > when using the array as a circular buffer. It would be
+> > the same like when all members are linked from the beginning.
+> 
+> So you are suggesting using a multi-reader multi-writer lockless
+> ringbuffer to implement a multi-reader multi-writer lockless
+> ringbuffer. ;-)
+> 
+> The descriptor ringbuffer has fixed-size items, which simplifies the
+> task. But I expect you will run into a chicken-egg scenario.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
----
+AFAIK, the main obstacle with the fully lockless solution was
+that the entries did not have a fixed size.
 
- fs/fsinfo.c                 |   21 +++++++++++++++------
- include/linux/lsm_hooks.h   |   13 +++++++++++++
- include/linux/security.h    |   11 +++++++++++
- include/uapi/linux/fsinfo.h |    1 +
- samples/vfs/test-fsinfo.c   |    6 +++++-
- security/security.c         |   12 ++++++++++++
- 6 files changed, 57 insertions(+), 7 deletions(-)
+If I understand it correctly, the list works exactly as a
+ring buffer once all available descriptors are used.
 
-diff --git a/fs/fsinfo.c b/fs/fsinfo.c
-index 3b35cedab0df..b3d517654c98 100644
---- a/fs/fsinfo.c
-+++ b/fs/fsinfo.c
-@@ -363,7 +363,8 @@ static int vfs_fsinfo(struct path *path, struct fsinfo_kparams *params)
- 	int (*fsinfo)(struct path *, struct fsinfo_kparams *);
- 	int ret;
- 
--	if (params->request == FSINFO_ATTR_FSINFO) {
-+	switch (params->request) {
-+	case FSINFO_ATTR_FSINFO: {
- 		struct fsinfo_fsinfo *info = params->buffer;
- 
- 		info->max_attr	= FSINFO_ATTR__NR;
-@@ -371,11 +372,18 @@ static int vfs_fsinfo(struct path *path, struct fsinfo_kparams *params)
- 		return sizeof(*info);
- 	}
- 
--	fsinfo = dentry->d_sb->s_op->fsinfo;
--	if (!fsinfo) {
--		if (!dentry->d_sb->s_op->statfs)
--			return -EOPNOTSUPP;
--		fsinfo = generic_fsinfo;
-+	case FSINFO_ATTR_LSM_PARAMETERS:
-+		fsinfo = security_sb_fsinfo;
-+		break;
-+
-+	default:
-+		fsinfo = dentry->d_sb->s_op->fsinfo;
-+		if (!fsinfo) {
-+			if (!dentry->d_sb->s_op->statfs)
-+				return -EOPNOTSUPP;
-+			fsinfo = generic_fsinfo;
-+		}
-+		break;
- 	}
- 
- 	ret = security_sb_statfs(dentry);
-@@ -566,6 +574,7 @@ static const struct fsinfo_attr_info fsinfo_buffer_info[FSINFO_ATTR__NR] = {
- 	FSINFO_STRUCT_N		(PARAM_SPECIFICATION,	param_specification),
- 	FSINFO_STRUCT_N		(PARAM_ENUM,		param_enum),
- 	FSINFO_OPAQUE		(PARAMETERS,		-),
-+	FSINFO_OPAQUE		(LSM_PARAMETERS,	-),
- };
- 
- /**
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 47f58cfb6a19..2474c3f785ca 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -108,6 +108,13 @@
-  *	mountpoint.
-  *	@dentry is a handle on the superblock for the filesystem.
-  *	Return 0 if permission is granted.
-+ * @sb_fsinfo:
-+ *	Query LSM information for a filesystem.
-+ *	@path is a handle on the superblock for the filesystem.
-+ *	@params is the fsinfo parameter and buffer block.
-+ *	 - Currently, params->request can only be FSINFO_ATTR_LSM_PARAMETERS.
-+ *	Return the length of the data in the buffer (and can return -ENODATA to
-+ *      indicate no value under certain circumstances).
-  * @sb_mount:
-  *	Check permission before an object specified by @dev_name is mounted on
-  *	the mount point named by @nd.  For an ordinary mount, @dev_name
-@@ -1492,6 +1499,9 @@ union security_list_options {
- 	int (*sb_kern_mount)(struct super_block *sb);
- 	int (*sb_show_options)(struct seq_file *m, struct super_block *sb);
- 	int (*sb_statfs)(struct dentry *dentry);
-+#ifdef CONFIG_FSINFO
-+	int (*sb_fsinfo)(struct path *path, struct fsinfo_kparams *params);
-+#endif
- 	int (*sb_mount)(const char *dev_name, const struct path *path,
- 			const char *type, unsigned long flags, void *data);
- 	int (*sb_umount)(struct vfsmount *mnt, int flags);
-@@ -1838,6 +1848,9 @@ struct security_hook_heads {
- 	struct hlist_head sb_kern_mount;
- 	struct hlist_head sb_show_options;
- 	struct hlist_head sb_statfs;
-+#ifdef CONFIG_FSINFO
-+	struct hlist_head sb_fsinfo;
-+#endif
- 	struct hlist_head sb_mount;
- 	struct hlist_head sb_umount;
- 	struct hlist_head sb_pivotroot;
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 659071c2e57c..23c8b602c0ab 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -57,6 +57,7 @@ struct mm_struct;
- struct fs_context;
- struct fs_parameter;
- enum fs_value_type;
-+struct fsinfo_kparams;
- 
- /* Default (no) options for the capable function */
- #define CAP_OPT_NONE 0x0
-@@ -237,6 +238,9 @@ int security_sb_remount(struct super_block *sb, void *mnt_opts);
- int security_sb_kern_mount(struct super_block *sb);
- int security_sb_show_options(struct seq_file *m, struct super_block *sb);
- int security_sb_statfs(struct dentry *dentry);
-+#ifdef CONFIG_FSINFO
-+int security_sb_fsinfo(struct path *path, struct fsinfo_kparams *params);
-+#endif
- int security_sb_mount(const char *dev_name, const struct path *path,
- 		      const char *type, unsigned long flags, void *data);
- int security_sb_umount(struct vfsmount *mnt, int flags);
-@@ -575,6 +579,13 @@ static inline int security_sb_statfs(struct dentry *dentry)
- 	return 0;
- }
- 
-+#ifdef CONFIG_FSINFO
-+static inline int security_sb_fsinfo(struct path *path, struct fsinfo_kparams *params)
-+{
-+	return 0;
-+}
-+#endif
-+
- static inline int security_sb_mount(const char *dev_name, const struct path *path,
- 				    const char *type, unsigned long flags,
- 				    void *data)
-diff --git a/include/uapi/linux/fsinfo.h b/include/uapi/linux/fsinfo.h
-index 475cd1c97b12..bae0bdc9ace9 100644
---- a/include/uapi/linux/fsinfo.h
-+++ b/include/uapi/linux/fsinfo.h
-@@ -31,6 +31,7 @@ enum fsinfo_attribute {
- 	FSINFO_ATTR_PARAM_SPECIFICATION	= 13,	/* Nth parameter specification */
- 	FSINFO_ATTR_PARAM_ENUM		= 14,	/* Nth enum-to-val */
- 	FSINFO_ATTR_PARAMETERS		= 15,	/* Mount parameters (large string) */
-+	FSINFO_ATTR_LSM_PARAMETERS	= 16,	/* LSM Mount parameters (large string) */
- 	FSINFO_ATTR__NR
- };
- 
-diff --git a/samples/vfs/test-fsinfo.c b/samples/vfs/test-fsinfo.c
-index 8cf5b02e333a..f865bc1af16f 100644
---- a/samples/vfs/test-fsinfo.c
-+++ b/samples/vfs/test-fsinfo.c
-@@ -82,6 +82,7 @@ static const struct fsinfo_attr_info fsinfo_buffer_info[FSINFO_ATTR__NR] = {
- 	FSINFO_STRUCT_N		(PARAM_SPECIFICATION,	param_specification),
- 	FSINFO_STRUCT_N		(PARAM_ENUM,		param_enum),
- 	FSINFO_OVERLARGE	(PARAMETERS,		-),
-+	FSINFO_OVERLARGE	(LSM_PARAMETERS,	-),
- };
- 
- #define FSINFO_NAME(X,Y) [FSINFO_ATTR_##X] = #Y
-@@ -102,6 +103,7 @@ static const char *fsinfo_attr_names[FSINFO_ATTR__NR] = {
- 	FSINFO_NAME		(PARAM_SPECIFICATION,	param_specification),
- 	FSINFO_NAME		(PARAM_ENUM,		param_enum),
- 	FSINFO_NAME		(PARAMETERS,		parameters),
-+	FSINFO_NAME		(LSM_PARAMETERS,	lsm_parameters),
- };
- 
- union reply {
-@@ -459,6 +461,7 @@ static int try_one(const char *file, struct fsinfo_params *params, bool raw)
- 
- 	switch (params->request) {
- 	case FSINFO_ATTR_PARAMETERS:
-+	case FSINFO_ATTR_LSM_PARAMETERS:
- 		if (ret == 0)
- 			return 0;
- 	}
-@@ -505,7 +508,8 @@ static int try_one(const char *file, struct fsinfo_params *params, bool raw)
- 		return 0;
- 
- 	case __FSINFO_OVER:
--		if (params->request == FSINFO_ATTR_PARAMETERS)
-+		if (params->request == FSINFO_ATTR_PARAMETERS ||
-+		    params->request == FSINFO_ATTR_LSM_PARAMETERS)
- 			dump_params(about, r, ret);
- 		return 0;
- 
-diff --git a/security/security.c b/security/security.c
-index 613a5c00e602..3af886e8fced 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -25,6 +25,7 @@
- #include <linux/ima.h>
- #include <linux/evm.h>
- #include <linux/fsnotify.h>
-+#include <linux/fsinfo.h>
- #include <linux/mman.h>
- #include <linux/mount.h>
- #include <linux/personality.h>
-@@ -821,6 +822,17 @@ int security_sb_statfs(struct dentry *dentry)
- 	return call_int_hook(sb_statfs, 0, dentry);
- }
- 
-+#ifdef CONFIG_FSINFO
-+int security_sb_fsinfo(struct path *path, struct fsinfo_kparams *params)
-+{
-+	int ret = -ENODATA;
-+
-+	if (params->request == FSINFO_ATTR_LSM_PARAMETERS)
-+		ret = 0; /* This is cumulative amongst all LSMs */
-+	return call_int_hook(sb_fsinfo, ret, path, params);
-+}
-+#endif
-+
- int security_sb_mount(const char *dev_name, const struct path *path,
-                        const char *type, unsigned long flags, void *data)
- {
 
+> > It would allow to remove:
+> >
+> >     + desc->id because it will be the same as desc->seq
+> >     + desc->next because the address of the next member
+> > 		can be easily counted
+> 
+> Yes, you will remove these and then replace them with new variables to
+> track array-element state.
+
+Yes, it should easier to understand that, for example, a descriptor
+is free by a flag named "free" than by some magic check of links.
+
+It is not must to have. But the code is complicated. Anything
+that might make it easier to understand is much appreciated.
+
+> > I think that it might be much more safe when we mask the two
+> > highest bits of seq number and use them for the flags.
+> > Then we could track the state of the given sequence number
+> > a very safe and straightforward way.
+> 
+> When I first started to design/code this, I implemented something quite
+> similar: using a single variable to represent state and id. This works
+> nicely for cmpxchg operations (lockless synchronization) and reader
+> validation. The problem I ran into was a chicken-egg problem (which I
+> suspect you will also run into).
+
+Do you remember more details about the chicken-egg problem, please?
+I believe that there might be one. Any hint just could save
+me quite some time.
+
+I have hit two big dead ends so far:
+
+  1. I was not able to free data when there was no free descriptor
+     and free descriptor when the data have already been freed.
+     I was not able to make both operations race-free.
+
+     I got inspiration from remove_oldest_descr() and solved this
+     by failing to get descriptor when there was no free one.
+
+     But it is possible that I just did not try hard enough.
+     I see that your code is actually able to free the data
+     and descriptor from assign_descriptor().
+
+
+  2. I was not able to free the oldest data. I did not know
+     how to make sure that the seq read from the data buffer
+     was valid.
+
+     My plan was to solve this by changing seq and state flags
+     in the descriptor atomically. Then I would just check
+     whether the seq was in valid bounds (I would ignore
+     overflow) and that the flag "committed" was set. Then
+     I would just set the flag "freed". The descriptor
+     itself would be freed from prb_get_desc().
+
+     But I might actually use similar approach like you
+     are using in expire_oldest_data(). We could assume
+     that as long as the desc->seq is within valid
+     bounds (rb->first_seq <= seq <= rb->last_seq)
+     then it is the right descriptor.
+
+
+> I solved this problem by changing the design to use a linked list for
+> the descriptors. At first I had kept state information for each
+> descriptor. But later I realized that state information was not
+> necessary because the linked list itself was providing implicit state
+> information.
+
+And this is my problem. I do not see how the list itself provides
+the state information. Especially I do not see how it distinguishes
+reserved and commited state, for example, from expire_oldest_data()
+point of view.
+
+
+> > Finally, here are some comments about the original patch:
+> >
+> > On Fri 2019-06-07 18:29:48, John Ogness wrote:
+> >> See documentation for details.
+> >
+> > Please, mention here some basics. It might be enough to copy the
+> > following sections from the documentation:
+> >
+> > Overview
+> > Features
+> > Behavior
+>
+> Ugh. Do we really want all that in a commit message?
+
+2-3 pages of text for such a complicated commit is perfectly fine.
+You could not build html/pdf variant easily when reading "git log -p".
+
+> > Note that the documentation is written via .rst file. You need to
+> > build html or pdf to get all the pieces together.
+> 
+> Yes, but isn't that how all the kernel docs are supposed to be for the
+> future?
+
+I could not talk for others. I have personally built the html version
+for the first time just few weeks ago. And it was only because
+I reviewed conversion of livepatch related documentation into rst.
+
+I normally search for information using "cscope in emacs", "git
+blame", "git log -p", "git grep", and "google in web browser".
+I much prefer to find the information in the code sources or
+in the related commit message.
+
+
+> >> +/**
+> >> + * struct prb_list - An abstract linked list of items.
+> >> + * @oldest: The oldest item on the list.
+> >> + * @newest: The newest item on the list.
+> >
+> > I admit that I got confused by this. I wonder if there is another
+> > location in kernel where lists are handled this way.
+> >
+> > I have always seen in kernel only lists handled via the struct
+> > list_head trick. Where the same structure is bundled in all
+> > linked members.
+> >
+> > I can't find a good name. I would personally remove the structure
+> > and add the members into the relates structures directly.
+> 
+> The only reason I made it a struct is so that I could just write
+> l->oldest instead of rb->descr_list_oldest. But it is an otherwise
+> useless struct that I can remove.
+
+rb->last_lpos and rb->last_seq are short enough. And it is clear
+what exactly is being compared.
+
+> > Also I would personally use "first" and "last" because they are
+> > shorter and easier to visually distinguish. I know that "oldest"
+> > and "newest" are more clear but...
+> 
+> I don't like "oldest" and "newest" either, but it is immediately
+> clear. How about:
+> 
+> rb->data_lpos_oldest (formerly rb->data_list.oldest)
+> rb->data_lpos_newest (formerly rb->data_list.newest)
+> rb->desc_id_oldest (formerly rb->descr_list.oldest)
+> rb->desc_id_newest (formerly rb->descr_list.newest)
+> 
+> If using the strings "oldest" and "newest" are too ugly for people, I
+> have no problems using first/last or head/tail, even if IMHO they add
+> unnecessary confusion.
+
+I do not have strong opinion. I am slightly biased because I am used
+to "first"/"next" from the current code.
+
+In each case when I compare:
+
+rb->data_lpos_oldest (formerly rb->data_list.oldest)
+rb->data_lpos_newest (formerly rb->data_list.newest)
+rb->desc_id_oldest (formerly rb->descr_list.oldest)
+rb->desc_id_newest (formerly rb->descr_list.newest)
+
+rb->data_lpos_first (formerly rb->data_list.first)
+rb->data_lpos_last (formerly rb->data_list.last)
+rb->desc_id_first (formerly rb->descr_list.first)
+rb->desc_id_last (formerly rb->descr_list.last)
+
+then the 2nd variant helps me to spot the difference
+and find the valuable information.
+
+> >> + * @data_next: The logical position of the data next to this entry.
+> >> + *             This is used to determine the length of the data as well as
+> >> + *             identify where the next data begins.
+> >
+> > next_lpos
+> 
+> How about lpos_next?
+
+next_lpos looks gramatically more correct. Well, I do not mind as long
+as the style is consistent all over the code.
+
+> >> +/**
+> >> + * expire_oldest_data() - Invalidate the oldest data block.
+> >> + * @rb: The ringbuffer containing the data block.
+> >> + * @oldest_lpos: The logical position of the oldest data block.
+> >> + *
+> >> + * This function expects to "push" the pointer to the oldest data block
+> >> + * forward, thus invalidating the oldest data block. However, before pushing,
+> >> + * it is verified if the data block is valid. (For example, if the data block
+> >> + * was reserved but not yet committed, it is not permitted to invalidate the
+> >> + * "in use by a writer" data.)
+> >> + *
+> >> + * If the data is valid, it will be associated with a descriptor, which will
+> >> + * then provide the necessary information to validate the data.
+> >> + *
+> >> + * Return: true if the oldest data was invalidated (regardless if this
+> >> + *         task was the one that did it or not), otherwise false.
+> >> + */
+> >> +static bool expire_oldest_data(struct printk_ringbuffer *rb,
+> >> +			       unsigned long oldest_lpos)
+> >> +{
+> > How is it ensured that the descriptor is not an outdated one?
+> >
+> > IMHO, there might be a garbage in the data array. It might be chance
+> > point to an outdated descriptor that by chance pointed to this
+> > data range in the past. I agree that it is very unlikely. But
+> > we could not afford such a risk.
+> 
+> An outdated descriptor that has a data value (lpos) matching the oldest
+> (lpos) would mean that the lpos has completely wrapped (4GB of data on a
+> 32-bit system) without the descriptor having been recycled.
+
+Ah, I missed that it takes long time until the positions are reused
+(overflow). It would probably helped me when all the compared variables
+were called lpos instead of data ;-)
+
+> It should be
+> possible to force such a situation on a 32-bit system, so this issue
+> does need to be addressed. Thanks.
+
+We might even be able to ignore this because both descriptors and data
+arrays are reused. It should be impossible to wrap around lpos without
+wrapping seq and vice versa.
+
+Best Regards,
+Petr
