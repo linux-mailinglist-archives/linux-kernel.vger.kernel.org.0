@@ -2,101 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3346851027
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 17:19:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 687B55102A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 17:19:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729197AbfFXPTF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 11:19:05 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:42533 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726414AbfFXPTF (ORCPT
+        id S1730388AbfFXPT1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 11:19:27 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:46194 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729305AbfFXPT1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 11:19:05 -0400
-Received: by mail-ot1-f68.google.com with SMTP id l15so13874512otn.9
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 08:19:04 -0700 (PDT)
+        Mon, 24 Jun 2019 11:19:27 -0400
+Received: by mail-pg1-f196.google.com with SMTP id v9so7261106pgr.13
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 08:19:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vGAZaIMWrZDEIWanvXMbB1hgAeVc7diLVZDQfS9ghPc=;
-        b=Fss0sMaGJF3Y4FoyVnJKt9/yDLgJeUdWrZvaCo+g5PpQm8xGB3qmJWzr0j1BFfcJ7T
-         2iVZKoJPb7fBWLfcv4ZHSNa4DdPDkzEY4tTE2wZgot97mWs9so/DP/O6Dq/a78hlcIAZ
-         ppU7ArJYxlOw8ppWDdI1+PYV5wprBv3DC1SuY=
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=xk9Y9/4d1P0hhiRulYC6/59GayfnrTydVvyulmj2MA0=;
+        b=gJlLLhHaj6Jvm1bCaUN3ZW2zumf00y0LQxCLkUqwaGzxFCYZiFYQ8rTczXQpCRZDpw
+         NtK5q/uM6I5V76gghSg5fmbJ43CHbwtS081cohfzOJ6io4WFLGOcoXgaTyWCbMrjkAsj
+         xY9qHxrZFwQHzIVemFHx4ljFg0oGqYce6edkh2yeRRpwJiU/trCjsIhFgezWhFJcCgqe
+         H4Scl/FXgMov4Q2yD8FeFxw798h6RqiToCrKV5Bs2iobxW0/QAamUc9TkSldXFyswImI
+         Apxtk2c/8886Fs7QUpgFAYPFhvHX896Nq/69H5XW37lFOXvRa0xmPRdWgvt7Lc42nHf+
+         rPsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vGAZaIMWrZDEIWanvXMbB1hgAeVc7diLVZDQfS9ghPc=;
-        b=PeTLbhSAjWb0o2lxSpJlZQVSvtkWHAdfXTDV13Ot+9MS0kX7VDs7qQzmA/62qVtWCh
-         +BG3TS8VdO5FsNooLxrPO5zTcSkkXzq/f9RfNk//31fpLa6aGBSqt947wG0fOixfnWGY
-         w/e0i9mTY8ZZ+eNpkWBM6jf1Le49BZUvXVKe4yJ9a812diup9DHEYb3g+O4fBNxs4feF
-         xNIWbu2Mwy4gdHRmEvhTc+k3+u622ybQrMokT2xa5dDIa9ygt/BRk37wa37aHFejbWaM
-         rPAdK6dLu5HG2uJfVRsH/L8+Mr5OXuvQh0Djpc9+4nCSGYShYGRFq8gdBoUeEAzT8CnP
-         4P4Q==
-X-Gm-Message-State: APjAAAU20c2P3iQyRjHZBmqlDphDUAeN6yaMnshScA7YQuftJjkgawF6
-        bgNDC9JjMVJVJ14MKv6/yhDL7qDWkGA=
-X-Google-Smtp-Source: APXvYqyL8OZi7PqpyFBoE8v/r6F62d+fcdpo9WErNSqJufZPugzvieWis4Dstqw4KWikiYKjIQg/zw==
-X-Received: by 2002:a9d:529:: with SMTP id 38mr13895681otw.145.1561389543817;
-        Mon, 24 Jun 2019 08:19:03 -0700 (PDT)
-Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com. [209.85.167.179])
-        by smtp.gmail.com with ESMTPSA id x128sm4460819oig.54.2019.06.24.08.19.02
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Jun 2019 08:19:03 -0700 (PDT)
-Received: by mail-oi1-f179.google.com with SMTP id a128so10083377oib.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 08:19:02 -0700 (PDT)
-X-Received: by 2002:aca:bd43:: with SMTP id n64mr10336864oif.148.1561389542365;
- Mon, 24 Jun 2019 08:19:02 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=xk9Y9/4d1P0hhiRulYC6/59GayfnrTydVvyulmj2MA0=;
+        b=LrRrB6tpx+26roxvc0Hs7MrZ6/5/mQzzTq0rF7U5BBxlRkJO9f8FMaztH/x0lmmagr
+         ZV0YYhUbibjbRn2U4pmkf8H1qyfCvfL2ozX+16GmR9EEOmmz4dSOx3N3M0v+DkWVVp3/
+         btws6oGVPgcjaZbRyteJkj5NKETFdnFpBJmwJuUteRCQ6/XJdoX1vxu4yjiVXqHiKDE8
+         OUTtk8TQT6vOKfcOKM01mhRrSroPsvekm1mwkxCbQuqis/X5pdWrIxJqC6i6tTzl1dgE
+         YJF2aCGhsMlP7aIjxav2QXjOjJo8RpaOtD/p5DpJ2iGcGanKY4yCxYu4rc8tLCz8wccc
+         7vSg==
+X-Gm-Message-State: APjAAAUxG5iTPOxpcfmneEN2FcOknzqaffND5vhZAz2vHHhO5w8IiSGY
+        22nYhSugBFGHkkg0N7OGr0ER6g==
+X-Google-Smtp-Source: APXvYqwFHGQOnQnTXhDr9lU4NK1+H6IcL2ndUHa4gASx7rxzeny46s92Ldbi9u0yLFNEg+G6B9aOGg==
+X-Received: by 2002:a17:90a:ad93:: with SMTP id s19mr25538029pjq.36.1561389566146;
+        Mon, 24 Jun 2019 08:19:26 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:500::d3ed])
+        by smtp.gmail.com with ESMTPSA id n2sm10152216pgp.27.2019.06.24.08.19.24
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 24 Jun 2019 08:19:25 -0700 (PDT)
+Date:   Mon, 24 Jun 2019 11:19:23 -0400
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com
+Subject: Re: [PATCH] mm: fix page cache convergence regression
+Message-ID: <20190624151923.GA10572@cmpxchg.org>
+References: <20190524153148.18481-1-hannes@cmpxchg.org>
+ <20190524160417.GB1075@bombadil.infradead.org>
+ <20190524173900.GA11702@cmpxchg.org>
+ <20190530161548.GA8415@cmpxchg.org>
+ <20190530171356.GA19630@bombadil.infradead.org>
 MIME-Version: 1.0
-References: <201906220821.144PfQAY%lkp@intel.com> <20190622005547.GA65190@lkp-kbuild08>
-In-Reply-To: <20190622005547.GA65190@lkp-kbuild08>
-From:   Nick Crews <ncrews@chromium.org>
-Date:   Mon, 24 Jun 2019 09:18:51 -0600
-X-Gmail-Original-Message-ID: <CAHX4x848FRQD9Fy9G88RsCgWtZFF3pugx7ZmKmY+STF2wwTN=A@mail.gmail.com>
-Message-ID: <CAHX4x848FRQD9Fy9G88RsCgWtZFF3pugx7ZmKmY+STF2wwTN=A@mail.gmail.com>
-Subject: Re: [PATCH] platform/chrome: cros_ec_lpc: fix stream_open.cocci warnings
-To:     kbuild test robot <lkp@intel.com>
-Cc:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        kbuild-all@01.org, Ezequiel Garcia <ezequiel@collabora.com>,
-        Benson Leung <bleung@chromium.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190530171356.GA19630@bombadil.infradead.org>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I applied this in the new version as well.
+On Thu, May 30, 2019 at 10:13:56AM -0700, Matthew Wilcox wrote:
+> On Thu, May 30, 2019 at 12:15:48PM -0400, Johannes Weiner wrote:
+> > Are there any objections or feedback on the proposed fix below? This
+> > is kind of a serious regression.
+> 
+> I'll drop it into the xarray tree for merging in a week, if that's ok
+> with you?
 
-On Fri, Jun 21, 2019 at 6:55 PM kbuild test robot <lkp@intel.com> wrote:
->
-> From: kbuild test robot <lkp@intel.com>
->
-> drivers/platform/chrome/wilco_ec/event.c:270:1-17: WARNING: event_fops: .read() has stream semantic; safe to change nonseekable_open -> stream_open.
->
-> Generated by: scripts/coccinelle/api/stream_open.cocci
->
-> Fixes: 22c040fa21b6 ("platform/chrome: cros_ec_lpc: Choose Microchip EC at runtime")
-> Signed-off-by: kbuild test robot <lkp@intel.com>
-> ---
->
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform/linux.git for-next
-> head:   9eecd07b34507de9d6a9c264d13d30e1ee5fabe8
-> commit: 22c040fa21b604b9b3d88645e108fb2f0a74474b [21/22] platform/chrome: cros_ec_lpc: Choose Microchip EC at runtime
->
-> Please take the patch only if it's a positive warning. Thanks!
->
->  event.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> --- a/drivers/platform/chrome/wilco_ec/event.c
-> +++ b/drivers/platform/chrome/wilco_ec/event.c
-> @@ -267,7 +267,7 @@ static int event_open(struct inode *inod
->
->         /* Increase refcount on device so dev_data is not freed */
->         get_device(&dev_data->dev);
-> -       nonseekable_open(inode, filp);
-> +       stream_open(inode, filp);
->         filp->private_data = dev_data;
->
->         return 0;
+Hey, it's three weeks later and we're about to miss 5.2.
+
+This sucks, Matthew. You introduced a serious regression to the MM
+subsystem, whose process and patch routing you largely bypassed. When
+I encountered the problem and provided a reproducer and a fix, you
+gave me a hard time on cosmetic grounds. I incorporated all your
+feedback, and still you show no urgency to get this patch or a fix of
+your own into mainline. It's your bug, please fix it.
