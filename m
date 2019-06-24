@@ -2,38 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F3C3506C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:01:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D9445074A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:06:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729036AbfFXKBy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 06:01:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56410 "EHLO mail.kernel.org"
+        id S1730112AbfFXKG3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 06:06:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38580 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728921AbfFXJ6E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 05:58:04 -0400
+        id S1729676AbfFXKGZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 06:06:25 -0400
 Received: from localhost (f4.8f.5177.ip4.static.sl-reverse.com [119.81.143.244])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7D151208E4;
-        Mon, 24 Jun 2019 09:58:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2B3AE21473;
+        Mon, 24 Jun 2019 10:06:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561370283;
-        bh=d37ICMBKvoimNiAqVg+adZ7Qd5e54zOXaNlzOgph3Rw=;
+        s=default; t=1561370784;
+        bh=OO5fToault7/iuM9p/Pfv6WWw4iMDInMVV1/WwyLUew=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DiUhP5T86wfu7o3gi94ztNWh2jIvl6iWGo2nh1+WjaD4yRMu3/Z+AtjckfysW3J1B
-         mnBFfWxUvF89KQEAn+5XmKPmTuc3Dreqrx+K4+5q9U6wi4XM5wbX9Cqq7r8DforwXT
-         C7jya8kkura1Ic07Tq8ikva1BHZTBOjGAI1gky6s=
+        b=WViqk4PYNDKd623HcTERwnTZPsgKqDzn1wLNpklVcD7eFsrnbH6r/qjtTv0Q+yGcL
+         p4TVuLWIfCGfiEcUetvtnfFgNDHyh1Llwsy5GOkGfCk4AphfcqUMvRI8ZvaBbeawLi
+         JAO9tPQbma2OnX4w7MWHEmiCGOfJvM0O4fHEl3T4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Helge Deller <deller@gmx.de>,
+        stable@vger.kernel.org, Alex Shi <alex.shi@linux.alibaba.com>,
+        Shuah Khan <shuah@kernel.org>, Roman Gushchin <guro@fb.com>,
+        Tejun Heo <tj@kernel.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Jay Kamat <jgkamat@fb.com>, linux-kselftest@vger.kernel.org,
+        Shuah Khan <skhan@linuxfoundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 16/51] parisc: Fix compiler warnings in float emulation code
-Date:   Mon, 24 Jun 2019 17:56:34 +0800
-Message-Id: <20190624092308.168299518@linuxfoundation.org>
+Subject: [PATCH 4.19 45/90] kselftest/cgroup: fix unexpected testing failure on test_memcontrol
+Date:   Mon, 24 Jun 2019 17:56:35 +0800
+Message-Id: <20190624092317.217590191@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190624092305.919204959@linuxfoundation.org>
-References: <20190624092305.919204959@linuxfoundation.org>
+In-Reply-To: <20190624092313.788773607@linuxfoundation.org>
+References: <20190624092313.788773607@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,48 +48,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 6b98d9134e14f5ef4bcf64b27eedf484ed19a1ec ]
+[ Upstream commit f6131f28057d4fd8922599339e701a2504e0f23d ]
 
-Avoid such compiler warnings:
-arch/parisc/math-emu/cnv_float.h:71:27: warning: ‘<<’ in boolean context, did you mean ‘<’ ? [-Wint-in-bool-context]
-     ((Dintp1(dint_valueA) << 33 - SGL_EXP_LENGTH) || Dintp2(dint_valueB))
-arch/parisc/math-emu/fcnvxf.c:257:6: note: in expansion of macro ‘Dint_isinexact_to_sgl’
-  if (Dint_isinexact_to_sgl(srcp1,srcp2)) {
+The cgroup testing relies on the root cgroup's subtree_control setting,
+If the 'memory' controller isn't set, all test cases will be failed
+as following:
 
-Signed-off-by: Helge Deller <deller@gmx.de>
+$ sudo ./test_memcontrol
+not ok 1 test_memcg_subtree_control
+not ok 2 test_memcg_current
+ok 3 # skip test_memcg_min
+not ok 4 test_memcg_low
+not ok 5 test_memcg_high
+not ok 6 test_memcg_max
+not ok 7 test_memcg_oom_events
+ok 8 # skip test_memcg_swap_max
+not ok 9 test_memcg_sock
+not ok 10 test_memcg_oom_group_leaf_events
+not ok 11 test_memcg_oom_group_parent_events
+not ok 12 test_memcg_oom_group_score_events
+
+To correct this unexpected failure, this patch write the 'memory' to
+subtree_control of root to get a right result.
+
+Signed-off-by: Alex Shi <alex.shi@linux.alibaba.com>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Roman Gushchin <guro@fb.com>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc: Jay Kamat <jgkamat@fb.com>
+Cc: linux-kselftest@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Reviewed-by: Roman Gushchin <guro@fb.com>
+Acked-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/parisc/math-emu/cnv_float.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ tools/testing/selftests/cgroup/test_memcontrol.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/parisc/math-emu/cnv_float.h b/arch/parisc/math-emu/cnv_float.h
-index 933423fa5144..b0db61188a61 100644
---- a/arch/parisc/math-emu/cnv_float.h
-+++ b/arch/parisc/math-emu/cnv_float.h
-@@ -60,19 +60,19 @@
-     ((exponent < (SGL_P - 1)) ?				\
-      (Sall(sgl_value) << (SGL_EXP_LENGTH + 1 + exponent)) : FALSE)
+diff --git a/tools/testing/selftests/cgroup/test_memcontrol.c b/tools/testing/selftests/cgroup/test_memcontrol.c
+index 6f339882a6ca..c19a97dd02d4 100644
+--- a/tools/testing/selftests/cgroup/test_memcontrol.c
++++ b/tools/testing/selftests/cgroup/test_memcontrol.c
+@@ -1205,6 +1205,10 @@ int main(int argc, char **argv)
+ 	if (cg_read_strstr(root, "cgroup.controllers", "memory"))
+ 		ksft_exit_skip("memory controller isn't available\n");
  
--#define Int_isinexact_to_sgl(int_value)	(int_value << 33 - SGL_EXP_LENGTH)
-+#define Int_isinexact_to_sgl(int_value)	((int_value << 33 - SGL_EXP_LENGTH) != 0)
- 
- #define Sgl_roundnearest_from_int(int_value,sgl_value)			\
-     if (int_value & 1<<(SGL_EXP_LENGTH - 2))   /* round bit */		\
--    	if ((int_value << 34 - SGL_EXP_LENGTH) || Slow(sgl_value))	\
-+	if (((int_value << 34 - SGL_EXP_LENGTH) != 0) || Slow(sgl_value)) \
- 		Sall(sgl_value)++
- 
- #define Dint_isinexact_to_sgl(dint_valueA,dint_valueB)		\
--    ((Dintp1(dint_valueA) << 33 - SGL_EXP_LENGTH) || Dintp2(dint_valueB))
-+    (((Dintp1(dint_valueA) << 33 - SGL_EXP_LENGTH) != 0) || Dintp2(dint_valueB))
- 
- #define Sgl_roundnearest_from_dint(dint_valueA,dint_valueB,sgl_value)	\
-     if (Dintp1(dint_valueA) & 1<<(SGL_EXP_LENGTH - 2)) 			\
--    	if ((Dintp1(dint_valueA) << 34 - SGL_EXP_LENGTH) ||		\
-+	if (((Dintp1(dint_valueA) << 34 - SGL_EXP_LENGTH) != 0) ||	\
-     	Dintp2(dint_valueB) || Slow(sgl_value)) Sall(sgl_value)++
- 
- #define Dint_isinexact_to_dbl(dint_value) 	\
++	if (cg_read_strstr(root, "cgroup.subtree_control", "memory"))
++		if (cg_write(root, "cgroup.subtree_control", "+memory"))
++			ksft_exit_skip("Failed to set memory controller\n");
++
+ 	for (i = 0; i < ARRAY_SIZE(tests); i++) {
+ 		switch (tests[i].fn(root)) {
+ 		case KSFT_PASS:
 -- 
 2.20.1
 
