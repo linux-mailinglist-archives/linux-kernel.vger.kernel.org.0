@@ -2,91 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0920550304
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 09:21:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 638C350307
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 09:21:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727847AbfFXHUz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 03:20:55 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:5746 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727835AbfFXHUx (ORCPT
+        id S1727875AbfFXHVU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 03:21:20 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:45027 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726453AbfFXHVU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 03:20:53 -0400
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5O7Gm0F007581;
-        Mon, 24 Jun 2019 09:20:42 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=STMicroelectronics;
- bh=yIONWFSs1oKdCqvaOndtOK2au6DElgx93gHb16N6pdA=;
- b=tdZKaSReLQWq+x145acXGNzuTOxthCpcU6H+wKus6fEiLuo8dTGtEONv2HRoSTSBe1ci
- m8rW0Vuqxwm0wV2Lg82xGZEX/vCVXbpcQmia3Lr5MjyM7DSKstaRFUfhReidzZg1a7xu
- LYO75tyU3+iSDt5cmM+irMvvYIybQGvigSX8FN+5BUYL7tzSpf7OTcHHHGPJ6JhLIG0N
- SrubZ601lzVMyIDo4lFAnLck9Q8cuc9J4ETRgVjKFBqCABp76XQvaFnBObVn8c1jCToA
- kAirryQ+WWkhztroKEOxlTVe4F+Mrz8qE8J4U1/VBGZESIGYNA+LGoxwL9R1lf2GLCG3 Lw== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2t9d2w9jav-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Mon, 24 Jun 2019 09:20:42 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 5484734;
-        Mon, 24 Jun 2019 07:20:41 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 3359F15AA;
-        Mon, 24 Jun 2019 07:20:41 +0000 (GMT)
-Received: from SFHDAG3NODE2.st.com (10.75.127.8) by SFHDAG3NODE2.st.com
- (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 24 Jun
- 2019 09:20:40 +0200
-Received: from SFHDAG3NODE2.st.com ([fe80::b82f:1ce:8854:5b96]) by
- SFHDAG3NODE2.st.com ([fe80::b82f:1ce:8854:5b96%20]) with mapi id
- 15.00.1347.000; Mon, 24 Jun 2019 09:20:40 +0200
-From:   Amelie DELAUNAY <amelie.delaunay@st.com>
-To:     Denis Efremov <efremov@linux.com>,
-        Nathan Chancellor <natechancellor@gmail.com>
-CC:     Lee Jones <lee.jones@linaro.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mfd: stmfx.h: typo in the header guard
-Thread-Topic: [PATCH] mfd: stmfx.h: typo in the header guard
-Thread-Index: AQHVKdJKyJAGS3v5qEa3Gl2UX5YQFKaqRXsA
-Date:   Mon, 24 Jun 2019 07:20:40 +0000
-Message-ID: <3d00e9cd-ba4d-73d1-a486-0b4f2c511c9c@st.com>
-References: <20190623144459.21608-1-efremov@linux.com>
-In-Reply-To: <20190623144459.21608-1-efremov@linux.com>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.46]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <DFE614BF5A257D43A03D62C054DEF94C@st.com>
-Content-Transfer-Encoding: base64
+        Mon, 24 Jun 2019 03:21:20 -0400
+Received: by mail-io1-f65.google.com with SMTP id s7so1926153iob.11
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 00:21:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=rRYD08uEOW6jHrjgv0dXHWz0dSOkoJBUbYYXM6hia+M=;
+        b=0ZOIPzJOIW81mQOo9Abzgc1wEIKgyK9mpk44HMHlNquRvqK1UJk9Z0J5QB0h9Wl6Xm
+         +RBZUo5G7lxjMfHHUsZi5afzbNtd+v65zeYjsEU5/mcyoZDR6uA90b8ozuYvCmxlSOEU
+         sNnlRlfK9QUuU6vVIU8GMkY8p7Wrx9ExfMtI/NCucCQDvVmlp2i0fPKdI03PsFLci1dV
+         kN5f1dsqr9PbBpoV2jmE//4nKtMFKtx+qSVHKIhjA3tKTJzL7jhg97g5pQM/kJQAvO6J
+         EnQfA71tnvEgEY7wWkQPg5FvRYWsVlbvKCb4LSi1LQCpsne7O0xrZOdhBllf2KK6NUsa
+         95NQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=rRYD08uEOW6jHrjgv0dXHWz0dSOkoJBUbYYXM6hia+M=;
+        b=kkna2/bFgDKGyxcwmf6SPjp28MR9FbdMh/TZwzybSetRiyzZJJhDcY0bGBgoeWVZtm
+         S4hIs01pWWHrRRxLvqYSYOH01LqgCLUWJUfU/P2ufZPCQSgvXuwr78Y0Ox+Ln1yvclzT
+         p1CrHwBBbChz2NQAzPkXikZVu7WtbgffpvJ/F75j59ClF+Q5Yhy2HmoedrWg7NQH9RvX
+         gTg2suVREooNv4mLg+i0VaUvZX/wuPrupD5HFEtFTmxXBStCilUe+BLgQhMb4WEBkN3g
+         FJv3C6ZfLaO881WyNPHRfGfFwSxOmkkbU1U3wFpQUJpRC7mQL1wAiBshES6tlRrNXk8K
+         g/aA==
+X-Gm-Message-State: APjAAAWOngs9SFF3Wtm20oCoLo9YS85JWQSraSVo1RnORtfgnXFQpX8o
+        TNVfz0Q/6ll8JL7bKRVnb/3wXo5qQePbfLlkHqSUiTN90Ag=
+X-Google-Smtp-Source: APXvYqwmfI+mGWxHOSQwh+smr+2AsnMoFa+nhOVINzC/PYNsF18ld5h/oPC845ZsqFBHEgBqdnp2ZEyQ1xFhL93MxyQ=
+X-Received: by 2002:a02:5b05:: with SMTP id g5mr120533961jab.114.1561360879228;
+ Mon, 24 Jun 2019 00:21:19 -0700 (PDT)
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-24_06:,,
- signatures=0
+References: <20190605083334.22383-1-brgl@bgdev.pl> <1ac8cfcf-1d77-9b6b-4aab-4171f6cf80fc@ti.com>
+ <1a66e067-631c-c7a4-288b-3934737bee8c@linaro.org>
+In-Reply-To: <1a66e067-631c-c7a4-288b-3934737bee8c@linaro.org>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Mon, 24 Jun 2019 09:21:08 +0200
+Message-ID: <CAMRc=MecrpzwC0-8x=1dAipf+j7h+C54pHCfbZidFGXtAyv7Pg@mail.gmail.com>
+Subject: Re: [RFC v3 0/2] clocksource: davinci-timer: new driver
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        David Lechner <david@lechnology.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gNi8yMy8xOSA0OjQ0IFBNLCBEZW5pcyBFZnJlbW92IHdyb3RlOg0KPiBUaGUgZ3VhcmQgbWFj
-cm8gTUZYX1NUTUZYX0ggaW4gdGhlIGhlYWRlciBzdG1meC5oDQo+IGRvZXNuJ3QgbWF0Y2ggdGhl
-ICNpZm5kZWYgbWFjcm8gTUZEX1NUTUZYX0guIFRoZSBwYXRjaA0KPiBmaXhlcyB0aGUgdHlwby4N
-Cj4gDQo+IFNpZ25lZC1vZmYtYnk6IERlbmlzIEVmcmVtb3YgPGVmcmVtb3ZAbGludXguY29tPg0K
-PiAtLS0NCj4gICBpbmNsdWRlL2xpbnV4L21mZC9zdG1meC5oIHwgMiArLQ0KPiAgIDEgZmlsZSBj
-aGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0KPiANCj4gZGlmZiAtLWdpdCBh
-L2luY2x1ZGUvbGludXgvbWZkL3N0bWZ4LmggYi9pbmNsdWRlL2xpbnV4L21mZC9zdG1meC5oDQo+
-IGluZGV4IGQ4OTA1OTViODliNi4uM2M2Nzk4MzY3OGVjIDEwMDY0NA0KPiAtLS0gYS9pbmNsdWRl
-L2xpbnV4L21mZC9zdG1meC5oDQo+ICsrKyBiL2luY2x1ZGUvbGludXgvbWZkL3N0bWZ4LmgNCj4g
-QEAgLTUsNyArNSw3IEBADQo+ICAgICovDQo+ICAgDQo+ICAgI2lmbmRlZiBNRkRfU1RNRlhfSA0K
-PiAtI2RlZmluZSBNRlhfU1RNRlhfSA0KPiArI2RlZmluZSBNRkRfU1RNRlhfSA0KPiAgIA0KPiAg
-ICNpbmNsdWRlIDxsaW51eC9yZWdtYXAuaD4NCj4gICANCj4gDQoNCkhpIERlbmlzLA0KDQpUaGFu
-a3MgZm9yIHlvdXIgcGF0Y2guIE5hdGhhbiBhbHJlYWR5IHNlbnQgYSBmaXggZm9yIHRoYXQ6IA0K
-aHR0cHM6Ly9sa21sLm9yZy9sa21sLzIwMTkvNS8xMC83NzcuDQoNClJlZ2FyZHMsDQpBbWVsaWU=
+pon., 24 cze 2019 o 07:40 Daniel Lezcano <daniel.lezcano@linaro.org> napisa=
+=C5=82(a):
+>
+>
+> Sekhar, Bartosz,
+>
+> if the sparse warning is not fixed, the driver won't hit this kernel
+> version. Please fix it before the two next days otherwise it won't make
+> it for v5.4.
+>
+> Thanks
+>
+
+Hi Daniel,
+
+will do, I just came back to the office.
+
+Sekhar, how do we want to handle the rest of the platform code with
+this driver? Do you think it can make it for the next release?
+
+Bart
