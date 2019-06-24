@@ -2,104 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C017503AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 09:37:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C552250398
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 09:35:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727919AbfFXHhK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 03:37:10 -0400
-Received: from wout5-smtp.messagingengine.com ([64.147.123.21]:46281 "EHLO
-        wout5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726077AbfFXHhK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 03:37:10 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.west.internal (Postfix) with ESMTP id 8F0133F8;
-        Mon, 24 Jun 2019 03:37:08 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Mon, 24 Jun 2019 03:37:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=1+J5C2HWzRAWGr9qUi/dV7VOWB/
-        lXXCZf4VWBdCbOxE=; b=g3K+3sQDn4c+WQ7BN/Yf4iqSFAz7JeF62Y4qIKWKKP8
-        K/HCVktH3QNaiWY9FqoIk8EuPRvCRaSZZwJsVP4qY/xZWEIxtpA2BCG4EpXErQ+p
-        g8vRbb4zqg3VxbsAuZ8KVOPDM/22O0sJJ1AMwhRkhWvFqgASksdnTqen1Ul0sM4F
-        kTBPbPmd5vJ2IWV8HjR7qzoIyrvE7GvQsqkF5VvVDMFh76ZUaq9wOdFo6iHitq28
-        uiEqGztL9PLua0hjB1Ysgu+SccZ+1/hSYwBYUJDZsZdoYGqtKmMYdR4ujqUPF3Nq
-        cNCi3DSkhC5W7+IoRg/oorzQd+oCfKhZHSmh6EGJWyw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=1+J5C2
-        HWzRAWGr9qUi/dV7VOWB/lXXCZf4VWBdCbOxE=; b=T24kO8Ynmc/MMjAOj4hhOj
-        IDuIVgpVAXkT2XaGkzoeMbl17mHQN7MYMU1XNrFi9eMPzWpnohauDClfU0y6y2V4
-        tw+uPDVsJBm1smL1gIcSAjyWvA4eJBABq7QJiorvLJWGcZ1ALgCMzlKy9suAWiql
-        H9iQ2JkGA9Y9rR2lNkP5pjqRTnpjcJPdEohgwdVQVNRqTrZMTHuhxFvHxdVkFH73
-        TGl2jA9wdNtOcJisHzSusaUp2q59FaSmNR7eLKTFOtQgi9IsNUR16GOM2uuKKx5W
-        dODG4KQcEAqZIQc6mhIQw7APa5Wx3Kv87TxmaG+FdvmJMoDwIwUWZoenV/iyDwQg
-        ==
-X-ME-Sender: <xms:o30QXbleGP7Hx66krWKlv_allmqAP1f7ya7ChKI0SDKWFNLcoGfByA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddruddugdduvdegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjfgesthdtredttdervdenucfhrhhomhepifhrvghg
-    ucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecukfhppedujedvrddutdegrddvge
-    ekrdeggeenucfrrghrrghmpehmrghilhhfrhhomhepghhrvghgsehkrhhorghhrdgtohhm
-    necuvehluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:o30QXTGAK3c5LrdHsb-EQ8r4ss3kEO79j9kYTI51qescz8Rg3ozatw>
-    <xmx:o30QXcqHiD9l23zn63Lmslgc-TxBSBEUDygWsXmwRfz-wFrRx775bQ>
-    <xmx:o30QXX5WWCBWCyIOILJmborWroz4ycwM5Wz7AsmmwUnoYZHIc7JxXQ>
-    <xmx:pH0QXZ0lKSu-QcedHo4lnr2K49mtL7tK0dCMxUE6UX7Agc7UeOxSbA>
-Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 2AA83380083;
-        Mon, 24 Jun 2019 03:37:05 -0400 (EDT)
-Date:   Mon, 24 Jun 2019 15:34:43 +0800
-From:   Greg KH <greg@kroah.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Changbin Du <changbin.du@gmail.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: Re: linux-next: manual merge of the usb tree with the pci tree
-Message-ID: <20190624073443.GA13830@kroah.com>
-References: <20190624171229.6415ca4f@canb.auug.org.au>
+        id S1728006AbfFXHe7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 03:34:59 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:19101 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726077AbfFXHe7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 03:34:59 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 825BA6EB3A94ED6FA231;
+        Mon, 24 Jun 2019 15:34:56 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 24 Jun
+ 2019 15:34:47 +0800
+Subject: Re: [PATCH v3 0/8] staging: erofs: decompression inplace approach
+To:     Gao Xiang <hsiangkao@aol.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     <devel@driverdev.osuosl.org>, LKML <linux-kernel@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-erofs@lists.ozlabs.org>,
+        Chao Yu <chao@kernel.org>, Miao Xie <miaoxie@huawei.com>,
+        Fang Wei <fangwei1@huawei.com>, Du Wei <weidu.du@huawei.com>
+References: <20190624072258.28362-1-hsiangkao@aol.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <b07bc3f7-e85e-896a-c8ae-4800ca6c9816@huawei.com>
+Date:   Mon, 24 Jun 2019 15:34:46 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190624171229.6415ca4f@canb.auug.org.au>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190624072258.28362-1-hsiangkao@aol.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 05:12:29PM +1000, Stephen Rothwell wrote:
-> Hi all,
+On 2019/6/24 15:22, Gao Xiang wrote:
+> This is patch v3 of erofs decompression inplace approach, which is sent
+> out by my personal email since I'm out of office to attend Open Source
+> Summit China 2019 these days. No major change from PATCH v2 since no
+> noticeable issue raised from landing to our products till now, mainly
+> as a response to Chao's suggestions.
 > 
-> Today's linux-next merge of the usb tree got a conflict in:
+> See the bottom lines which are taken from RFC PATCH v1 and describe
+> the principle of these technologies.
 > 
->   Documentation/index.rst
+> The series is based on the latest staging-next since all dependencies
+> have already been merged.
 > 
-> between commit:
-> 
->   c42eaffa1656 ("Documentation: add Linux PCI to Sphinx TOC tree")
-> 
-> from the pci tree and commit:
-> 
->   ecefae6db042 ("docs: usb: rename files to .rst and add them to drivers-api")
-> 
-> from the usb tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
+> changelog from v2:
+>  - wrap up some offsets as marcos;
+>  - add some error handling for erofs_get_pcpubuf();
+>  - move some decompression inplace stuffes from PATCH 5 -> 6.
 
-No patch "below", but I'm sure the fixup is fine :)
+Thanks for the update, those all changes look good to me. :)
 
-thanks,
-
-greg k-h
+Thanks,
