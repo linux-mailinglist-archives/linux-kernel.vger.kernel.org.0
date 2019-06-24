@@ -2,150 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CAFA651D75
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 23:55:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6135551D8E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 23:58:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732328AbfFXVze (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 17:55:34 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:38020 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726301AbfFXVze (ORCPT
+        id S1732566AbfFXV6x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 17:58:53 -0400
+Received: from mail-io1-f49.google.com ([209.85.166.49]:33557 "EHLO
+        mail-io1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728401AbfFXV6w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 17:55:34 -0400
-Received: by mail-ot1-f67.google.com with SMTP id d17so15151547oth.5;
-        Mon, 24 Jun 2019 14:55:33 -0700 (PDT)
+        Mon, 24 Jun 2019 17:58:52 -0400
+Received: by mail-io1-f49.google.com with SMTP id u13so1057239iop.0;
+        Mon, 24 Jun 2019 14:58:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bXXOeQr1nr3EJjM+4QD/VWYIWuMniD/p0glIK58q2lw=;
-        b=iLduze51oJSQC3mBlxRVCefqeKdDry2HKzymKu7DNq8H4uxyLj7ja8zpDhFn+u1/0z
-         SCY0H0xVegN45hW7HN0EJrcAxjgXVwHoWsj59JKb8YPjnyrMDMmVefBMQUE5ySUa4YZC
-         CrCCkN198lwGldFeebUDjpsV46e774353lEEEcUWsk2EYt6xi418jlhk2nvD8adH1VQ6
-         qMX8Gew8ZosEv08k5U6+k5sR3X0j0nq6IvVbKmFLKamarn5EVUkIQzlm15h2qJio/RKG
-         lVtYns5yf0Krj7qUF3vSXUUgDdofx1FN9K+nm7JHqwnOQTWsUr2mmEdUukdzbERypi1K
-         YkSQ==
-X-Gm-Message-State: APjAAAW6L867WqZo1w1HCkj8Su8WqxbpPQUGZ/gadkgahs+u9KQ9AU3e
-        18OK4pHCUmm6qB1B35YdQS6528AEusg30hhtdyI=
-X-Google-Smtp-Source: APXvYqxCIMnyIAm/Gne6dT6ugsoyr5ed6v2aWDRBi4esuv9pa5hFlWjlNphmOgrvGiS9NWQiyxoCmcL1ZDid2/BHWuk=
-X-Received: by 2002:a9d:6959:: with SMTP id p25mr66359894oto.118.1561413332973;
- Mon, 24 Jun 2019 14:55:32 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=uM4dZl8hD5W0Ng6JXl84WrF4vu6F9ad7AQJYlmPgT/Q=;
+        b=R23y6qQHPZBxAlu2QcOGTRQb89EPfP4L0b98lVwN16Mcl8/LFGTTjpggKzJv73Np8t
+         dGpsWLslXIijFaAVyZaFsNoyvGoGot7/HtJpKi1VZvQt0fbwTVN1YIUQfXWPckJdRYF7
+         ++srYmXy4rwNu7kmk2RzhHj9IfIMa3yjn0CjFQ8tmA/+TIFjHH79wWO794HTRLqZwRjH
+         gK07gW5+zMGCdQQ9C+63NL1jqXBGpcqUAeKIlEO5inOXSbDQr/NXJ7t7q9r356Tyt41u
+         w4ETpvV68doGE3X8SHaj+1jvlNVL2xRMzaJt8g+iUb/Z/NtB/SQaJAisGVYcfUUnV39G
+         Ygvg==
+X-Gm-Message-State: APjAAAUlrNOYPfDdGZPSHa5YMd3oyVDjqOCQQU9U9zQf+iaY+cuEUikz
+        w8B/VjbATOBI9BK5CQ4anw==
+X-Google-Smtp-Source: APXvYqzop/7WORnCldt5IXvpf7uk9nCqbvMhBidbGV24RJR/cbv6s3xV2UCKCK7udclytSub7YsBrA==
+X-Received: by 2002:a6b:c90c:: with SMTP id z12mr110760237iof.11.1561413531618;
+        Mon, 24 Jun 2019 14:58:51 -0700 (PDT)
+Received: from localhost.localdomain ([64.188.179.247])
+        by smtp.googlemail.com with ESMTPSA id l5sm14717301ioq.83.2019.06.24.14.58.50
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 24 Jun 2019 14:58:50 -0700 (PDT)
+From:   Rob Herring <robh@kernel.org>
+To:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: [PATCH v2 00/15] Conversion of panel bindings to DT schema
+Date:   Mon, 24 Jun 2019 15:56:34 -0600
+Message-Id: <20190624215649.8939-1-robh@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <CANA+-vCThdRivg7nrMK5QoFu8SGUzEVSvSyp0H2CPyy9==Tqog@mail.gmail.com>
- <CANA+-vARQ9Ao=W1oEArrAQ0sqh757orq=-=kytdVPhstm-3E9w@mail.gmail.com>
- <20190618182502.GC203031@google.com> <4587569.x9DSL43cXO@kreacher>
- <CANA+-vCMK6u1n9gXf2+v5dFn_tGfr1PT8d7W4d2BCzw+B-HvYw@mail.gmail.com>
- <CAJWu+oo7kwmEyMXQN0yfswV2=J-Fa9QybhAUx-SOGG_ipsBErQ@mail.gmail.com>
- <CAJZ5v0gvzCx-7qS9qkxB=sGKjQJKMR7yCc21f=_vqrbZxMSWNg@mail.gmail.com>
- <CANA+-vCBW=P=dpJGfcKTt7SoNKzWcpP5pwZHSDMU6MkwBKoC9A@mail.gmail.com>
- <20190624073659.GA13957@kroah.com> <CAJWu+orGgYwnC+ya13+KtdNrH7ZjvmKL8625m=msVZd0==dq9A@mail.gmail.com>
-In-Reply-To: <CAJWu+orGgYwnC+ya13+KtdNrH7ZjvmKL8625m=msVZd0==dq9A@mail.gmail.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Mon, 24 Jun 2019 23:55:21 +0200
-Message-ID: <CAJZ5v0jeYRx=9stkGbJZgvyQz=Wp2CBkyTwOkJ2Y61AEE6sMdg@mail.gmail.com>
-Subject: Re: Alternatives to /sys/kernel/debug/wakeup_sources
-To:     Joel Fernandes <joelaf@google.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tri Vo <trong@android.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Sandeep Patil <sspatil@android.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Hridya Valsaraju <hridya@google.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "Cc: Android Kernel" <kernel-team@android.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 2:27 PM Joel Fernandes <joelaf@google.com> wrote:
->
-> On Mon, Jun 24, 2019 at 3:37 AM Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Sun, Jun 23, 2019 at 06:48:43PM -0700, Tri Vo wrote:
-> > > On Wed, Jun 19, 2019 at 1:35 AM Rafael J. Wysocki <rafael@kernel.org> wrote:
-> > > >
-> > > > On Wed, Jun 19, 2019 at 1:52 AM Joel Fernandes <joelaf@google.com> wrote:
-> > > > >
-> > > > > On Tue, Jun 18, 2019 at 7:15 PM Tri Vo <trong@android.com> wrote:
-> > > > > [snip]
-> > > > > > > > > >
-> > > > > > > > > > Android userspace reading wakeup_sources is not ideal because:
-> > > > > > > > > > - Debugfs API is not stable, i.e. Android tools built on top of it are
-> > > > > > > > > > not guaranteed to be backward/forward compatible.
-> > > > > > > > > > - This file requires debugfs to be mounted, which itself is
-> > > > > > > > > > undesirable for security reasons.
-> > > > > > > > > >
-> > > > > > > > > > To address these problems, we want to contribute a way to expose these
-> > > > > > > > > > statistics that doesn't depend on debugfs.
-> > > > > > > > > >
-> > > > > > > > > > Some initial thoughts/questions: Should we expose the stats in sysfs?
-> > > > > > > > > > Or maybe implement eBPF-based solution? What do you think?
-> > > > > > > >
-> > > > > > > > We are going through Android's out-of-tree kernel dependencies along with
-> > > > > > > > userspace APIs that are not necessarily considered "stable and forever
-> > > > > > > > supported" upstream. The debugfs dependencies showed up on our radar as a
-> > > > > > > > result and so we are wondering if we should worry about changes in debugfs
-> > > > > > > > interface and hence the question(s) below.
-> > > > > > > >
-> > > > > > > > So, can we rely on /d/wakeup_sources to be considered a userspace API and
-> > > > > > > > hence maintained stable as we do for other /proc and /sys entries?
-> > > > > > > >
-> > > > > > > > If yes, then we will go ahead and add tests for this in LTP or
-> > > > > > > > somewhere else suitable.
-> > > > > > >
-> > > > > > > No, debugfs is not ABI.
-> > > > > > >
-> > > > > > > > If no, then we would love to hear suggestions for any changes that need to be
-> > > > > > > > made or we simply just move the debugfs entry into somewhere like
-> > > > > > > > /sys/power/ ?
-> > > > > > >
-> > > > > > > No, moving that entire file from debugfs into sysfs is not an option either.
-> > > > > > >
-> > > > > > > The statistics for the wakeup sources associated with devices are already there
-> > > > > > > under /sys/devices/.../power/ , but I guess you want all wakeup sources?
-> > > > > > >
-> > > > > > > That would require adding a kobject to struct wakeup_source and exposing
-> > > > > > > all of the statistics as separate attributes under it.  In which case it would be
-> > > > > > > good to replace the existing wakeup statistics under /sys/devices/.../power/
-> > > > > > > with symbolic links to the attributes under the wakeup_source kobject.
-> > > > > >
-> > > > > > Thanks for your input, Rafael! Your suggestion makes sense. I'll work
-> > > > > > on a patch for this.
-> > > > >
-> > > > > Does that entail making each wake up source, a new sysfs node under a
-> > > > > particular device, and then adding stats under that new node?
-> > > >
-> > > > Not under a device, because there are wakeup source objects without
-> > > > associated devices.
-> > > >
-> > > > It is conceivable to have a "wakeup_sources" directory under
-> > > > /sys/power/ and sysfs nodes for all wakeup sources in there.
-> > > >
-> > > > Then, instead of exposing wakeup statistics directly under
-> > > > /sys/devices/.../power/, there can be symbolic links from there to the
-> > > > new wakeup source nodes under "wakeup_sources" (so as to avoid
-> > > > exposing the same data in two different places in sysfs, which may be
-> > > > confusing).
-> > >
-> > > This may be a dumb question. Is it appropriate to make symbolic links
-> > > in sysfs from one attribute to another attribute? For example,
-> > > /sys/devices/.../power/wakeup_count ->
-> > > /sys/power/wakeup_sources/.../wakeup_count.
-> >
-> > Why? would you want that?
->
-> This sounds like what Rafael suggested (quoted above), right?
+This series converts the common panel bindings to DT schema format. 
+Besides the conversion of common panel properties, a few panel bindings 
+are converted here as well. These are all the ones with references to 
+panel-common.txt or panel-lvds.txt.
 
-I did, basically to avoid exposing the same information in two places
-via different code paths.
+Rob
 
-I tend to forget about this limitation, sorry for the confusion.
+Rob Herring (15):
+  dt-bindings: display: rockchip-lvds: Remove panel references
+  dt-bindings: display: Convert common panel bindings to DT schema
+  dt-bindings: display: Convert ampire,am-480272h3tmqw-t01h panel to DT
+    schema
+  dt-bindings: display: Convert armadeus,st0700-adapt panel to DT schema
+  dt-bindings: display: Convert bananapi,s070wv20-ct16 panel to DT
+    schema
+  dt-bindings: display: Convert dlc,dlc0700yzg-1 panel to DT schema
+  dt-bindings: display: Convert pda,91-00156-a0 panel to DT schema
+  dt-bindings: display: Convert raspberrypi,7inch-touchscreen panel to
+    DT schema
+  dt-bindings: display: Convert tfc,s9700rtwv43tr-01b panel to DT schema
+  dt-bindings: display: Convert tpo,tpg110 panel to DT schema
+  dt-bindings: display: Convert panel-lvds to DT schema
+  dt-bindings: display: Convert innolux,ee101ia-01 panel to DT schema
+  dt-bindings: display: Convert mitsubishi,aa104xd12 panel to DT schema
+  dt-bindings: display: Convert mitsubishi,aa121td01 panel to DT schema
+  dt-bindings: display: Convert sgd,gktw70sdae4se panel to DT schema
 
-That's not a big deal, though, the attributes under
-/sys/devices/.../power/ just need to stay the way they are (for
-backwards compatibility).
+ .../panel/ampire,am-480272h3tmqw-t01h.txt     |  26 ---
+ .../panel/ampire,am-480272h3tmqw-t01h.yaml    |  42 +++++
+ .../display/panel/arm,versatile-tft-panel.txt |   2 +-
+ .../display/panel/armadeus,st0700-adapt.txt   |   9 --
+ .../display/panel/armadeus,st0700-adapt.yaml  |  27 ++++
+ .../display/panel/bananapi,s070wv20-ct16.txt  |  12 --
+ .../display/panel/bananapi,s070wv20-ct16.yaml |  24 +++
+ .../display/panel/dlc,dlc0700yzg-1.txt        |  13 --
+ .../display/panel/dlc,dlc0700yzg-1.yaml       |  28 ++++
+ .../display/panel/innolux,ee101ia-01d.txt     |   7 -
+ .../display/panel/innolux,ee101ia-01d.yaml    |  22 +++
+ .../bindings/display/panel/lvds.yaml          | 107 +++++++++++++
+ .../display/panel/mitsubishi,aa104xd12.txt    |  47 ------
+ .../display/panel/mitsubishi,aa104xd12.yaml   |  71 +++++++++
+ .../display/panel/mitsubishi,aa121td01.txt    |  47 ------
+ .../display/panel/mitsubishi,aa121td01.yaml   |  69 ++++++++
+ .../bindings/display/panel/panel-common.txt   | 101 ------------
+ .../bindings/display/panel/panel-common.yaml  | 149 ++++++++++++++++++
+ .../bindings/display/panel/panel-lvds.txt     | 121 --------------
+ .../bindings/display/panel/panel.txt          |   4 -
+ .../display/panel/pda,91-00156-a0.txt         |  14 --
+ .../display/panel/pda,91-00156-a0.yaml        |  25 +++
+ .../panel/raspberrypi,7inch-touchscreen.txt   |  49 ------
+ .../panel/raspberrypi,7inch-touchscreen.yaml  |  71 +++++++++
+ .../display/panel/sgd,gktw70sdae4se.txt       |  41 -----
+ .../display/panel/sgd,gktw70sdae4se.yaml      |  63 ++++++++
+ .../bindings/display/panel/simple-panel.txt   |  29 +---
+ .../display/panel/tfc,s9700rtwv43tr-01b.txt   |  15 --
+ .../display/panel/tfc,s9700rtwv43tr-01b.yaml  |  30 ++++
+ .../bindings/display/panel/tpo,tpg110.txt     |  70 --------
+ .../bindings/display/panel/tpo,tpg110.yaml    | 101 ++++++++++++
+ .../display/rockchip/rockchip-lvds.txt        |  11 --
+ 32 files changed, 831 insertions(+), 616 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/display/panel/ampire,am-480272h3tmqw-t01h.txt
+ create mode 100644 Documentation/devicetree/bindings/display/panel/ampire,am-480272h3tmqw-t01h.yaml
+ delete mode 100644 Documentation/devicetree/bindings/display/panel/armadeus,st0700-adapt.txt
+ create mode 100644 Documentation/devicetree/bindings/display/panel/armadeus,st0700-adapt.yaml
+ delete mode 100644 Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.txt
+ create mode 100644 Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.yaml
+ delete mode 100644 Documentation/devicetree/bindings/display/panel/dlc,dlc0700yzg-1.txt
+ create mode 100644 Documentation/devicetree/bindings/display/panel/dlc,dlc0700yzg-1.yaml
+ delete mode 100644 Documentation/devicetree/bindings/display/panel/innolux,ee101ia-01d.txt
+ create mode 100644 Documentation/devicetree/bindings/display/panel/innolux,ee101ia-01d.yaml
+ create mode 100644 Documentation/devicetree/bindings/display/panel/lvds.yaml
+ delete mode 100644 Documentation/devicetree/bindings/display/panel/mitsubishi,aa104xd12.txt
+ create mode 100644 Documentation/devicetree/bindings/display/panel/mitsubishi,aa104xd12.yaml
+ delete mode 100644 Documentation/devicetree/bindings/display/panel/mitsubishi,aa121td01.txt
+ create mode 100644 Documentation/devicetree/bindings/display/panel/mitsubishi,aa121td01.yaml
+ delete mode 100644 Documentation/devicetree/bindings/display/panel/panel-common.txt
+ create mode 100644 Documentation/devicetree/bindings/display/panel/panel-common.yaml
+ delete mode 100644 Documentation/devicetree/bindings/display/panel/panel-lvds.txt
+ delete mode 100644 Documentation/devicetree/bindings/display/panel/panel.txt
+ delete mode 100644 Documentation/devicetree/bindings/display/panel/pda,91-00156-a0.txt
+ create mode 100644 Documentation/devicetree/bindings/display/panel/pda,91-00156-a0.yaml
+ delete mode 100644 Documentation/devicetree/bindings/display/panel/raspberrypi,7inch-touchscreen.txt
+ create mode 100644 Documentation/devicetree/bindings/display/panel/raspberrypi,7inch-touchscreen.yaml
+ delete mode 100644 Documentation/devicetree/bindings/display/panel/sgd,gktw70sdae4se.txt
+ create mode 100644 Documentation/devicetree/bindings/display/panel/sgd,gktw70sdae4se.yaml
+ delete mode 100644 Documentation/devicetree/bindings/display/panel/tfc,s9700rtwv43tr-01b.txt
+ create mode 100644 Documentation/devicetree/bindings/display/panel/tfc,s9700rtwv43tr-01b.yaml
+ delete mode 100644 Documentation/devicetree/bindings/display/panel/tpo,tpg110.txt
+ create mode 100644 Documentation/devicetree/bindings/display/panel/tpo,tpg110.yaml
+
+-- 
+2.20.1
+
