@@ -2,106 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FE494FEB4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 03:52:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D22D34FEBE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 03:54:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726822AbfFXBw3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 21:52:29 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:3888 "EHLO mx1.redhat.com"
+        id S1726447AbfFXByH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 21:54:07 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:38686 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726795AbfFXBw2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 21:52:28 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        id S1726323AbfFXByH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Jun 2019 21:54:07 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CB2E6C04959F;
-        Mon, 24 Jun 2019 01:52:23 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id A7D4A30832CE;
+        Mon, 24 Jun 2019 01:54:06 +0000 (UTC)
 Received: from dhcp-128-65.nay.redhat.com (ovpn-12-23.pek2.redhat.com [10.72.12.23])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3A55310018F9;
-        Mon, 24 Jun 2019 01:52:14 +0000 (UTC)
-Date:   Mon, 24 Jun 2019 09:52:06 +0800
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 60D995D739;
+        Mon, 24 Jun 2019 01:54:03 +0000 (UTC)
+Date:   Mon, 24 Jun 2019 09:53:59 +0800
 From:   Dave Young <dyoung@redhat.com>
-To:     Matthew Garrett <mjg59@google.com>
-Cc:     James Morris <jmorris@namei.org>, Jiri Bohac <jbohac@suse.cz>,
-        Linux API <linux-api@vger.kernel.org>,
-        kexec@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH V31 07/25] kexec_file: Restrict at runtime if the kernel
- is locked down
-Message-ID: <20190624015206.GB2976@dhcp-128-65.nay.redhat.com>
-References: <20190326182742.16950-1-matthewgarrett@google.com>
- <20190326182742.16950-8-matthewgarrett@google.com>
- <20190621064340.GB4528@localhost.localdomain>
- <CACdnJut=J1YTpM4s6g5XWCEs+=X0Jvf8otfMg+w=_oqSZmf01Q@mail.gmail.com>
+To:     Tiezhu Yang <kernelpatch@126.com>
+Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        x86@kernel.org, linux-kernel@vger.kernel.org, vgoyal@redhat.com
+Subject: Re: [PATCH v2] kexec: fix warnig of crash_zero_bytes in crash.c
+Message-ID: <20190624015359.GC2976@dhcp-128-65.nay.redhat.com>
+References: <43d6fe3a.18e.16b814a09ba.Coremail.kernelpatch@126.com>
+ <20190624013520.GA2976@dhcp-128-65.nay.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CACdnJut=J1YTpM4s6g5XWCEs+=X0Jvf8otfMg+w=_oqSZmf01Q@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190624013520.GA2976@dhcp-128-65.nay.redhat.com>
 User-Agent: Mutt/1.11.3 (2019-02-01)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Mon, 24 Jun 2019 01:52:28 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Mon, 24 Jun 2019 01:54:06 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/21/19 at 01:18pm, Matthew Garrett wrote:
-> On Thu, Jun 20, 2019 at 11:43 PM Dave Young <dyoung@redhat.com> wrote:
-> >
-> > On 03/26/19 at 11:27am, Matthew Garrett wrote:
-> > > From: Jiri Bohac <jbohac@suse.cz>
-> > >
-> > > When KEXEC_SIG is not enabled, kernel should not load images through
-> > > kexec_file systemcall if the kernel is locked down.
-> > >
-> > > [Modified by David Howells to fit with modifications to the previous patch
-> > >  and to return -EPERM if the kernel is locked down for consistency with
-> > >  other lockdowns. Modified by Matthew Garrett to remove the IMA
-> > >  integration, which will be replaced by integrating with the IMA
-> > >  architecture policy patches.]
-> > >
-> > > Signed-off-by: Jiri Bohac <jbohac@suse.cz>
-> > > Signed-off-by: David Howells <dhowells@redhat.com>
-> > > Signed-off-by: Matthew Garrett <mjg59@google.com>
-> > > Reviewed-by: Jiri Bohac <jbohac@suse.cz>
-> > > cc: kexec@lists.infradead.org
-> > > ---
-> > >  kernel/kexec_file.c | 6 ++++++
-> > >  1 file changed, 6 insertions(+)
-> > >
-> > > diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-> > > index 67f3a866eabe..a1cc37c8b43b 100644
-> > > --- a/kernel/kexec_file.c
-> > > +++ b/kernel/kexec_file.c
-> > > @@ -239,6 +239,12 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
-> > >               }
-> > >
-> > >               ret = 0;
-> > > +
-> > > +             if (kernel_is_locked_down(reason, LOCKDOWN_INTEGRITY)) {
-> > > +                     ret = -EPERM;
-> > > +                     goto out;
-> > > +             }
-> > > +
-> >
-> > Checking here is late, it would be good to move the check to earlier
-> > code around below code:
-> >         /* We only trust the superuser with rebooting the system. */
-> >         if (!capable(CAP_SYS_BOOT) || kexec_load_disabled)
-> >                 return -EPERM;
+On 06/24/19 at 09:35am, Dave Young wrote:
+> On 06/23/19 at 06:24am, Tiezhu Yang wrote:
+> > Fix the following sparse warning:
+> > 
+> > arch/x86/kernel/crash.c:59:15:
+> > warning: symbol 'crash_zero_bytes' was not declared. Should it be static?
+> > 
+> > First, make crash_zero_bytes static. In addition, crash_zero_bytes
+> > is used when CONFIG_KEXEC_FILE is set, so make it only available
+> > under CONFIG_KEXEC_FILE. Otherwise, if CONFIG_KEXEC_FILE is not set,
+> > the following warning will appear when make crash_zero_bytes static:
+> > 
+> > arch/x86/kernel/crash.c:59:22:
+> > warning: ‘crash_zero_bytes’ defined but not used [-Wunused-variable]
+> > 
+> > Fixes: dd5f726076cc ("kexec: support for kexec on panic using new system call")
+> > Signed-off-by: Tiezhu Yang <kernelpatch@126.com>
+> > Cc: Vivek Goyal <vgoyal@redhat.com>
+> > ---
+> >  arch/x86/kernel/crash.c | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/arch/x86/kernel/crash.c b/arch/x86/kernel/crash.c
+> > index 576b2e1..f13480e 100644
+> > --- a/arch/x86/kernel/crash.c
+> > +++ b/arch/x86/kernel/crash.c
+> > @@ -56,7 +56,9 @@ struct crash_memmap_data {
+> >   */
+> >  crash_vmclear_fn __rcu *crash_vmclear_loaded_vmcss = NULL;
+> >  EXPORT_SYMBOL_GPL(crash_vmclear_loaded_vmcss);
+> > -unsigned long crash_zero_bytes;
+> > +#ifdef CONFIG_KEXEC_FILE
+> > +static unsigned long crash_zero_bytes;
+> > +#endif
+> >  
+> >  static inline void cpu_crash_vmclear_loaded_vmcss(void)
+> >  {
+> > -- 
+> > 1.8.3.1
 > 
-> I don't think so - we want it to be possible to load images if they
-> have a valid signature.
+> Acked-by: Dave Young <dyoung@redhat.com>
 
-I know it works like this way because of the previous patch.  But from
-the patch log "When KEXEC_SIG is not enabled, kernel should not load
-images", it is simple to check it early for !IS_ENABLED(CONFIG_KEXEC_SIG) && 
-kernel_is_locked_down(reason, LOCKDOWN_INTEGRITY)  instead of depending
-on the late code to verify signature.  In that way, easier to
-understand the logic, no?
+BTW, a soft reminder, for kexec patches, it would be better to cc kexec mail
+list.
 
-Thanks
-Dave
+> 
+> Thanks
+> Dave
+> 
