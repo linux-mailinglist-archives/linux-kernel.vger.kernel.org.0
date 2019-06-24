@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D6C950654
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 11:58:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A1B1A5071B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:06:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728500AbfFXJ6D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 05:58:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56360 "EHLO mail.kernel.org"
+        id S1729702AbfFXKE1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 06:04:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35882 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728487AbfFXJ6A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 05:58:00 -0400
+        id S1729683AbfFXKEY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 06:04:24 -0400
 Received: from localhost (f4.8f.5177.ip4.static.sl-reverse.com [119.81.143.244])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ADD1F208CA;
-        Mon, 24 Jun 2019 09:57:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C8DF820848;
+        Mon, 24 Jun 2019 10:04:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561370280;
-        bh=D4RMN1f/DLIbKHDKcjd5wfl1Siuho9V4f9ky9WSofjQ=;
+        s=default; t=1561370663;
+        bh=zMp2ePy9UZCidN9RvyRX77OJYaD0oKbjuTufdWjNZuU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ibNR+x6E+WtT1FIoRMStPLa7itDTe+aZ6aSXUxYRiq/977Fc1Vfi8ayiIDUGTrGc7
-         8pW9Yx0IM5qgZXE7XOmbKhJTHCTWJXiAu37i1nRN+8zDuPxRBI/ADqg0Jujgn0rkbw
-         Kgj0eIEYeBDtxZRukG99aMe2uB1uD384UGdXXZUg=
+        b=aHBWmbYT50cuT/uPZilEKF4UZC6JEy6klPnZfDYn5SwXvIvc3FM2sl1TB5Jl6wxtF
+         T7yNSaIBN2/ONY5BK0Y3zjsNioB2bUEVyMGiQ2gPjw+CPygr4UW72cKGVdWcOttKOb
+         moIUex/h0Mc8Y2lgT4+U9KGi1iK6sURBo/LuGwC8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
-        YueHaibing <yuehaibing@huawei.com>,
+        stable@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
+        Max Filippov <jcmvbkbc@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 15/51] parport: Fix mem leak in parport_register_dev_model
-Date:   Mon, 24 Jun 2019 17:56:33 +0800
-Message-Id: <20190624092308.098826071@linuxfoundation.org>
+Subject: [PATCH 4.19 44/90] xtensa: Fix section mismatch between memblock_reserve and mem_reserve
+Date:   Mon, 24 Jun 2019 17:56:34 +0800
+Message-Id: <20190624092317.162158686@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190624092305.919204959@linuxfoundation.org>
-References: <20190624092305.919204959@linuxfoundation.org>
+In-Reply-To: <20190624092313.788773607@linuxfoundation.org>
+References: <20190624092313.788773607@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,65 +44,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 1c7ebeabc9e5ee12e42075a597de40fdb9059530 ]
+[ Upstream commit adefd051a6707a6ca0ebad278d3c1c05c960fc3b ]
 
-BUG: memory leak
-unreferenced object 0xffff8881df48cda0 (size 16):
-  comm "syz-executor.0", pid 5077, jiffies 4295994670 (age 22.280s)
-  hex dump (first 16 bytes):
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-  backtrace:
-    [<00000000d2d0d5fe>] parport_register_dev_model+0x141/0x6e0 [parport]
-    [<00000000782f6dab>] 0xffffffffc15d1196
-    [<00000000d2ca6ae4>] platform_drv_probe+0x7e/0x100
-    [<00000000628c2a94>] really_probe+0x342/0x4d0
-    [<000000006874f5da>] driver_probe_device+0x8c/0x170
-    [<00000000424de37a>] __device_attach_driver+0xda/0x100
-    [<000000002acab09a>] bus_for_each_drv+0xfe/0x170
-    [<000000003d9e5f31>] __device_attach+0x190/0x230
-    [<0000000035d32f80>] bus_probe_device+0x123/0x140
-    [<00000000a05ba627>] device_add+0x7cc/0xce0
-    [<000000003f7560bf>] platform_device_add+0x230/0x3c0
-    [<000000002a0be07d>] 0xffffffffc15d0949
-    [<000000007361d8d2>] port_check+0x3b/0x50 [parport]
-    [<000000004d67200f>] bus_for_each_dev+0x115/0x180
-    [<000000003ccfd11c>] __parport_register_driver+0x1f0/0x210 [parport]
-    [<00000000987f06fc>] 0xffffffffc15d803e
+Since commit 9012d011660ea5cf2 ("compiler: allow all arches to enable
+CONFIG_OPTIMIZE_INLINING"), xtensa:tinyconfig fails to build with section
+mismatch errors.
 
-After commit 4e5a74f1db8d ("parport: Revert "parport: fix
-memory leak""), free_pardevice do not free par_dev->state,
-we should free it in error path of parport_register_dev_model
-before return.
+WARNING: vmlinux.o(.text.unlikely+0x68): Section mismatch in reference
+	from the function ___pa()
+	to the function .meminit.text:memblock_reserve()
+WARNING: vmlinux.o(.text.unlikely+0x74): Section mismatch in reference
+	from the function mem_reserve()
+	to the function .meminit.text:memblock_reserve()
+FATAL: modpost: Section mismatches detected.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Fixes: 4e5a74f1db8d ("parport: Revert "parport: fix memory leak"")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+This was not seen prior to the above mentioned commit because mem_reserve()
+was always inlined.
+
+Mark mem_reserve(() as __init_memblock to have it reside in the same
+section as memblock_reserve().
+
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Message-Id: <1559220098-9955-1-git-send-email-linux@roeck-us.net>
+Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/parport/share.c | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/xtensa/kernel/setup.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/parport/share.c b/drivers/parport/share.c
-index 5dc53d420ca8..7b4ee33c1935 100644
---- a/drivers/parport/share.c
-+++ b/drivers/parport/share.c
-@@ -895,6 +895,7 @@ parport_register_dev_model(struct parport *port, const char *name,
- 	par_dev->devmodel = true;
- 	ret = device_register(&par_dev->dev);
- 	if (ret) {
-+		kfree(par_dev->state);
- 		put_device(&par_dev->dev);
- 		goto err_put_port;
- 	}
-@@ -912,6 +913,7 @@ parport_register_dev_model(struct parport *port, const char *name,
- 			spin_unlock(&port->physport->pardevice_lock);
- 			pr_debug("%s: cannot grant exclusive access for device %s\n",
- 				 port->name, name);
-+			kfree(par_dev->state);
- 			device_unregister(&par_dev->dev);
- 			goto err_put_port;
- 		}
+diff --git a/arch/xtensa/kernel/setup.c b/arch/xtensa/kernel/setup.c
+index 351283b60df6..a285fbd0fd9b 100644
+--- a/arch/xtensa/kernel/setup.c
++++ b/arch/xtensa/kernel/setup.c
+@@ -310,7 +310,8 @@ extern char _SecondaryResetVector_text_start;
+ extern char _SecondaryResetVector_text_end;
+ #endif
+ 
+-static inline int mem_reserve(unsigned long start, unsigned long end)
++static inline int __init_memblock mem_reserve(unsigned long start,
++					      unsigned long end)
+ {
+ 	return memblock_reserve(start, end - start);
+ }
 -- 
 2.20.1
 
