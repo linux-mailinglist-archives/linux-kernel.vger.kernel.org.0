@@ -2,203 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8452750835
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:18:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02CAE50887
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:19:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729800AbfFXKO6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 06:14:58 -0400
-Received: from mx0b-0014ca01.pphosted.com ([208.86.201.193]:8706 "EHLO
-        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727730AbfFXKO5 (ORCPT
+        id S1730711AbfFXKS3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 06:18:29 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:41550 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729957AbfFXKS1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 06:14:57 -0400
-Received: from pps.filterd (m0042333.ppops.net [127.0.0.1])
-        by mx0b-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5OADjcZ003210;
-        Mon, 24 Jun 2019 03:14:44 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=proofpoint;
- bh=PGG92Jwe85r2s+rfBND0QCvpRuKfPpVJwCiRVOzdo1s=;
- b=a16f48n1BtRQOTUWsUL2yRW7a0ooVTs2CqXOPQ6GkIBuwt0gYlG9NQ7x97jVlA6BpsOP
- AGlrKVdNdnNnfXTKVkEAHgjNtV2nZ+FXFz4pG1/BJwCWA19NgiDkIg/zfoBrLX0FfJr7
- GwJef97Lcb2YnSMSD/B6/Kt1Ypbi6JZZeNSNQJBk9omp7mfVk0Icj9v1hchLtNHNpmXW
- +wGOynSWB4Qv9vXjW8aeUg57zGYUcq471B2h+cdXu0ln7dzIB0f+KfrqsKCnQWScX1oq
- c2LVU+T2IjO+LHf+6Dc9+v6KiZxtbBm02hugICcF/mpNUDeT3Xc7np0d0OvFSfuLGD1J xA== 
-Authentication-Results: cadence.com;
-        spf=pass smtp.mailfrom=pthombar@cadence.com
-Received: from nam04-bn3-obe.outbound.protection.outlook.com (mail-bn3nam04lp2055.outbound.protection.outlook.com [104.47.46.55])
-        by mx0b-0014ca01.pphosted.com with ESMTP id 2t9fwtqe4w-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 24 Jun 2019 03:14:44 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PGG92Jwe85r2s+rfBND0QCvpRuKfPpVJwCiRVOzdo1s=;
- b=Bz2dtP77jSBDyT5McK5KdDWnry39I92YxD2hUARswVYPRcX6GUPEZOlBzZS0/lFRMgPm/fTo+28nqbs15eyGfsMBmbWcSYOQK8VjO2eOo8m7vCm2MRuzHCtkYzqgEweue88G7oPrpDm8EQCJ7BCyskXqlfKzfPNtGlSlbDG3NpI=
-Received: from CO2PR07MB2469.namprd07.prod.outlook.com (10.166.94.21) by
- CO2PR07MB2520.namprd07.prod.outlook.com (10.166.95.8) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2008.16; Mon, 24 Jun 2019 10:14:42 +0000
-Received: from CO2PR07MB2469.namprd07.prod.outlook.com
- ([fe80::b9c0:ba2d:e9e8:4176]) by CO2PR07MB2469.namprd07.prod.outlook.com
- ([fe80::b9c0:ba2d:e9e8:4176%4]) with mapi id 15.20.1987.014; Mon, 24 Jun 2019
- 10:14:42 +0000
-From:   Parshuram Raju Thombare <pthombar@cadence.com>
-To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
-CC:     "andrew@lunn.ch" <andrew@lunn.ch>,
-        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        Anil Joy Varughese <aniljoy@cadence.com>,
-        Piotr Sroka <piotrs@cadence.com>
-Subject: RE: [PATCH v4 2/5] net: macb: add support for sgmii MAC-PHY interface
-Thread-Topic: [PATCH v4 2/5] net: macb: add support for sgmii MAC-PHY
- interface
-Thread-Index: AQHVKaVHMt019Pka20mPugoFl8ah06apBQMAgAFRdiCAADaTgIAABQ5Q
-Date:   Mon, 24 Jun 2019 10:14:41 +0000
-Message-ID: <CO2PR07MB24699250A3773DE76B6D2E9EC1E00@CO2PR07MB2469.namprd07.prod.outlook.com>
-References: <1561281419-6030-1-git-send-email-pthombar@cadence.com>
- <1561281781-13479-1-git-send-email-pthombar@cadence.com>
- <20190623101224.nzwodgfo6vvv65cx@shell.armlinux.org.uk>
- <CO2PR07MB246931C79F736F39D0523D3BC1E00@CO2PR07MB2469.namprd07.prod.outlook.com>
- <20190624093533.4vhvjmqqrucq2ixf@shell.armlinux.org.uk>
-In-Reply-To: <20190624093533.4vhvjmqqrucq2ixf@shell.armlinux.org.uk>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNccHRob21iYXJcYXBwZGF0YVxyb2FtaW5nXDA5ZDg0OWI2LTMyZDMtNGE0MC04NWVlLTZiODRiYTI5ZTM1Ylxtc2dzXG1zZy1kZjMzNWQxZC05NjY4LTExZTktODRmOS0xMDY1MzBlNmVmM2VcYW1lLXRlc3RcZGYzMzVkMWUtOTY2OC0xMWU5LTg0ZjktMTA2NTMwZTZlZjNlYm9keS50eHQiIHN6PSIzNTA4IiB0PSIxMzIwNTg0NDg3ODc0NTAwNjMiIGg9IitWWGFGcXVGRmZpbGlsT3BUOFl1TTJvWjFrbz0iIGlkPSIiIGJsPSIwIiBibz0iMSIvPjwvbWV0YT4=
-x-dg-rorf: 
-x-originating-ip: [14.143.9.161]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 93f675ba-10e0-4b8d-731b-08d6f88cc5fa
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:CO2PR07MB2520;
-x-ms-traffictypediagnostic: CO2PR07MB2520:
-x-microsoft-antispam-prvs: <CO2PR07MB2520A9D42387576D9314CFB9C1E00@CO2PR07MB2520.namprd07.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
-x-forefront-prvs: 007814487B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(376002)(39860400002)(136003)(396003)(346002)(199004)(189003)(36092001)(26005)(7736002)(81156014)(81166006)(7696005)(99286004)(8936002)(55236004)(256004)(33656002)(305945005)(76176011)(6506007)(186003)(6116002)(74316002)(486006)(73956011)(6916009)(446003)(11346002)(3846002)(229853002)(476003)(6436002)(66066001)(478600001)(5660300002)(52536014)(55016002)(102836004)(8676002)(53936002)(71200400001)(71190400001)(4326008)(6246003)(78486014)(54906003)(25786009)(76116006)(2906002)(66556008)(9686003)(86362001)(66446008)(64756008)(66476007)(14454004)(66946007)(68736007)(107886003)(316002);DIR:OUT;SFP:1101;SCL:1;SRVR:CO2PR07MB2520;H:CO2PR07MB2469.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: cadence.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: LNPxW90ZkRdisnwEt//o9weqCqjmALzStdxmbKoaGfxSC9H4Q4LtBuicBAf9bjWo99ms1Anm23G030A9fBlIVSpaOCak39skqYebVusiC4BQzk3wN8F74WhntcnhLDIkAttl1YBuaXDvQ3N86Pg8Afoi7V8i0jRcudQhrA9gcZZ/0I2XJ+G3OaNuADFCL7NRq0FofpFDHViltYi9hkEe2uwQ0vjLBLLT/GqjQvmKzma2G96vDGEl4QZmE32G3oFILhLWaQT72BQJq3ncyE6TNHe2WWLnDjpNw82pI8QjGIALmN1XunS0qQrGXYN+JzyI6KM/CSsSV3RRJHdomv4mzl0OTVv0feGxcw9xK4Pr8AKv1CY+SZUa+k60lK1XwVQddUvYH39KWjZV/HGALeMwqRdkX/yle/0vUZucZ8en2mg=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 24 Jun 2019 06:18:27 -0400
+Received: by mail-lj1-f193.google.com with SMTP id 205so3245902ljj.8;
+        Mon, 24 Jun 2019 03:18:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=vyuS1ujG9UIY+yejiz+Q6yg4IZCzarP8XNib11msW9Y=;
+        b=tUaCZF6G7U0RK8nN+5LABe7LZahV07ysvAzTK0CLDMpaQm6Ht5/KvCDPSCzbA3wKfr
+         kGLjZlhulwBTIuzSMMx0XflPJik8SXfJw1JpMz80IUQsundJSFmYuq/No9WhEIeqkR7p
+         uHlGxlC8I7adEvMM8r9cwwBBy6BP76BNbT1ct4Vhb8FmLziuJARmAtuZlK3HB9RNrCRU
+         h9o9Dl6U0s5T++8AP8/0hKEOR4P7o7eBPSXMcP5sKOPhbhpLhug03H0Bv+ALdHPtjPVi
+         VIYEDyM8kSPnt38ab3OfmA5/8Zgd1h9QVz/Mc0SxIgxQO02dpnP4rXexZEF5KnZSuX8B
+         W1ig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=vyuS1ujG9UIY+yejiz+Q6yg4IZCzarP8XNib11msW9Y=;
+        b=eMMF6TtFgZ4G/jD/BaOAoCiQ/15ky13+iU8peyWN64rNh752BNeQjCait1y/yGvegc
+         0G4agv4L7NpG/wl9wyWF/8H4QEaq494cRRHoEYHFzykq+qlXn4kgd/TMBjvLQii/vA7L
+         +6KmFDNNng7WE2DVrnoO71KcCEi99Ip1+Fg0qzhAFLjDrXLDQN1Nn0qw0R5P3V+eTxV0
+         xcTcvbDCaOuObO2rymHr1nPabtShf6L6ZdgPDEXtgD0MefjH5Dn34pEbReGx8d3mlVF4
+         89wKv4mw42kkj0aXYRkx3TiaLpZt8ISSfdqEkSqFs5yjZjExA3q36/xvaVBqYD2ZN3/X
+         BUFg==
+X-Gm-Message-State: APjAAAUxtO1gIqvkdtMEFY+XsQiYGwQkc0W6X3PsbUEX8yKbsIFOsXc4
+        i6aqtZT+WTLTEVgfNh1sLVvSzbQi
+X-Google-Smtp-Source: APXvYqxYmfWiHdxTXcDfhgn9yzRhuVvf6Kq/pEglYaIKNvZ6IyPRz1YxNbsIATONH9Ii1vocD82GXg==
+X-Received: by 2002:a2e:980e:: with SMTP id a14mr71871735ljj.60.1561371505209;
+        Mon, 24 Jun 2019 03:18:25 -0700 (PDT)
+Received: from [192.168.2.145] (ppp91-79-162-197.pppoe.mtu-net.ru. [91.79.162.197])
+        by smtp.googlemail.com with ESMTPSA id p9sm1686854lji.107.2019.06.24.03.18.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 24 Jun 2019 03:18:24 -0700 (PDT)
+Subject: Re: [PATCH v1] OPP: Fix crashing when current OPP has unsupportable
+ voltage
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Marc Dietrich <marvin24@gmx.de>, linux-pm@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190623175053.26167-1-digetx@gmail.com>
+ <20190624071857.6ji4zc55qugpqnij@vireshk-i7>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <c5c7d412-b3f6-1f6c-dc34-0f541e955d47@gmail.com>
+Date:   Mon, 24 Jun 2019 13:18:23 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
-X-OriginatorOrg: cadence.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 93f675ba-10e0-4b8d-731b-08d6f88cc5fa
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jun 2019 10:14:41.9197
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: pthombar@global.cadence.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO2PR07MB2520
-X-Proofpoint-SPF-Result: pass
-X-Proofpoint-SPF-Record: v=spf1 include:spf.smktg.jp include:_spf.salesforce.com
- include:mktomail.com include:spf-0014ca01.pphosted.com
- include:spf.protection.outlook.com include:auth.msgapp.com
- include:spf.mandrillapp.com ~all
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-24_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
- priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
- spamscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906240086
+In-Reply-To: <20190624071857.6ji4zc55qugpqnij@vireshk-i7>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->> >I still don't think this makes much sense, splitting the interface
->> > configuration between here and below.
->> Do you mean splitting mac_config in two *_configure functions ?
->> This was done as per Andrew's suggestion to make code mode readable
->> and easy to manage by splitting MAC configuration for different interfac=
-es.
->No, I mean here you disable SGMII if we're switching away from SGMII
->mode.... (note, this means there is more to come for this sentence)
-Sorry, I misunderstood your original question. I think disabling old interf=
-ace
-and enabling new one can be done in single place. I will do this change.
+24.06.2019 10:18, Viresh Kumar пишет:
+> On 23-06-19, 20:50, Dmitry Osipenko wrote:
+>> Fix NULL dereference caused by a typo in the code. In particular it
+>> happens when CPU is running on a frequency which has unsupportable voltage
+>> (by regulator) defined in the OPP table and a custom set_opp() callback is
+>> being used. The problem was spotted during of testing of upcoming update
+>> for the NVIDIA Tegra CPUFreq driver.
+>>
+>> Cc: stable <stable@vger.kernel.org>
+>> Fixes: 7e535993fa4f ("OPP: Separate out custom OPP handler specific code")
+>> Reported-by: Marc Dietrich <marvin24@gmx.de>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  drivers/opp/core.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+>> index 9fda9a0ec016..89ec6aa220cf 100644
+>> --- a/drivers/opp/core.c
+>> +++ b/drivers/opp/core.c
+>> @@ -685,7 +685,7 @@ static int _set_opp_custom(const struct opp_table *opp_table,
+>>  
+>>  	data->old_opp.rate = old_freq;
+>>  	size = sizeof(*old_supply) * opp_table->regulator_count;
+>> -	if (IS_ERR(old_supply))
+>> +	if (!old_supply)
+>>  		memset(data->old_opp.supplies, 0, size);
+>>  	else
+>>  		memcpy(data->old_opp.supplies, old_supply, size);
+> 
+> While the change is fine, the commit log isn't. It isn't about
+> unsupportable voltage but frequency. The frequency the CPU is
+> currently running at, is not present in the OPP table and so there is
+> no corresponding OPP, hence no voltage supplies.
 
->> >This will only be executed when we are not using inband mode, which
->> >basically means it's not possible to switch to SGMII in-band mode.
->> SGMII is used in default PHY mode. And above code is to program MAC to
->> select PCS and SGMII interface.
->... and here you enable it for SGMII mode, but only for non-inband
->modes.
->
->Why not:
->	if (change_interface)  {
->		if (state->interface =3D=3D PHY_INTERFACE_MODE_SGMII) {
->			// Enable SGMII mode and PCS
->			gem_writel(bp, NCFGR, ncfgr | GEM_BIT(SGMIIEN) |
->				   GEM_BIT(PCSSEL));
->		} else {
->			// Disable SGMII mode and PCS
->			gem_writel(bp, NCFGR, ncfgr & ~(GEM_BIT(SGMIIEN)
->				   GEM_BIT(PCSSEL)));
->			// Reset PCS
->			gem_writel(bp, PCS_CTRL, gem_readl(bp, PCS_CTRL)
->				   GEM_BIT(PCS_CTRL_RST));
->		}
->	}
->	if (!phylink_autoneg_inband(mode) &&
->	    (bp->speed !=3D state->speed || bp->duplex !=3D state->duplex)) {
->?
-Ok
+Ah, indeed! Looks like the reason for old OPP not being found was caused
+by the appropriate OPP being disabled because of unsupportable voltage.
+The offending higher "unsupportable" CPU freq was left after bootloader.
 
->> >> +
->> >> +		if (!interface_supported) {
->> >> +			netdev_err(dev, "Phy mode %s not supported",
->> >> +				   phy_modes(phy_mode));
->> >> +			goto err_out_free_netdev;
->> >> +		}
->> >> +
->> >>  		bp->phy_interface =3D phy_mode;
->> >> +	} else {
->> >> +		bp->phy_interface =3D phy_mode;
->> >> +	}
->> >If bp->phy_interface is PHY_INTERFACE_MODE_SGMII here, and
->> > mac_config()
->> >is called with state->interface =3D PHY_INTERFACE_MODE_SGMII, then
->> >mac_config() won't configure the MAC for the interface type - is that
->> >intentional?
->> In mac_config configure MAC for non in-band mode, there is also check fo=
-r
->> speed, duplex
->> changes. bp->speed and bp->duplex are initialized to SPEED_UNKNOWN
->> and DUPLEX_UNKNOWN
->> values so it is expected that for non in band mode state contains valid =
-speed
->> and duplex mode
->> which are different from *_UNKNOWN values.
+> I have applied this patch with following change log:
+> 
+> commit 560d1bcad715c215e7ffe5d7cffe045974b623d0 (HEAD -> opp/linux-next)
+> Author: Dmitry Osipenko <digetx@gmail.com>
+> Date:   Sun Jun 23 20:50:53 2019 +0300
+> 
+>     opp: Don't use IS_ERR on invalid supplies
+>     
+>     _set_opp_custom() receives a set of OPP supplies as its arguments and
+>     the caller of it passes NULL when the supplies are not valid. But
+>     _set_opp_custom(), by mistake, checks for error by performing
+>     IS_ERR(old_supply) on it which will always evaluate to false.
+>     
+>     The problem was spotted during of testing of upcoming update for the
+>     NVIDIA Tegra CPUFreq driver.
+>     
+>     Cc: stable <stable@vger.kernel.org>
+>     Fixes: 7e535993fa4f ("OPP: Separate out custom OPP handler specific code")
+>     Reported-by: Marc Dietrich <marvin24@gmx.de>
+>     Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>     [ Viresh: Massaged changelog ]
+>     Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+> ---
+>  drivers/opp/core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
->Sorry, this reply doesn't answer my question.  I'm not asking about
->bp->speed and bp->duplex.  I'm asking:
->1) why you are initialising bp->phy_interface here
->2) you to consider the impact that has on the mac_config() implementation
->  you are proposing
-> because I think it's buggy.
-bp->phy_interface is to store phy mode value from device tree. This is used=
- later=20
-to know what phy interface user has selected for PHY-MAC. Same is used
-to configure MAC correctly and based on your suggestion code is
-added to handle PHY dynamically changing phy interface, in which=20
-case bp->phy_interface is also updated. Though it may not be what user want=
-,=20
-if phy interface is totally decided by PHY and is anyway going to be differ=
-ent from what user
-has selected in DT, initializing it here doesn't make sense.
-But in case of PHY not changing phy_interface dynamically bp->phy_interface=
- need to be
-initialized with value from DT.
-
-Regards,
-Parshuram Thombare
+Thank you very much!
