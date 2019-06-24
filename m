@@ -2,42 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B362250F0F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 16:49:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 06ADE50F1C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 16:51:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730314AbfFXOt3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 10:49:29 -0400
-Received: from mga06.intel.com ([134.134.136.31]:40950 "EHLO mga06.intel.com"
+        id S1728993AbfFXOvB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 10:51:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50720 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728127AbfFXOt2 (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 10:49:28 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jun 2019 07:49:27 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,412,1557212400"; 
-   d="scan'208";a="163342375"
-Received: from yjin15-mobl.ccr.corp.intel.com (HELO [10.254.211.94]) ([10.254.211.94])
-  by fmsmga007.fm.intel.com with ESMTP; 24 Jun 2019 07:49:25 -0700
-Subject: Re: [PATCH v4 4/7] perf diff: Use hists to manage basic blocks per
- symbol
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com,
-        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
-        kan.liang@intel.com, yao.jin@intel.com
-References: <1561041402-29444-1-git-send-email-yao.jin@linux.intel.com>
- <1561041402-29444-5-git-send-email-yao.jin@linux.intel.com>
- <20190624075718.GE5471@krava>
-From:   "Jin, Yao" <yao.jin@linux.intel.com>
-Message-ID: <cdc87d42-8a5c-5b12-c746-896e3324cb35@linux.intel.com>
-Date:   Mon, 24 Jun 2019 22:49:25 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
+        id S1727454AbfFXOvB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 10:51:01 -0400
+Received: from [192.168.1.25] (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7CE3620644;
+        Mon, 24 Jun 2019 14:50:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561387860;
+        bh=MEavrdEWUvq1WhMa8mXT4JihEigsl6+4LBo/RZXggYc=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=yzatTweh68URH+QhtsDVciQfjjk9nXuewVNvAr+G9AY2f5RNjMri87Falxsl/5X/B
+         UPSiC7DaXHOnEucfMl7VkBukr9oOPukNEOuKe2Isxo/6oY98CXqYETgXou584iw94a
+         /mMdPZuDPWCnWYRWC9PD9ID4JZhPOYKbvISPSCKE=
+Subject: Re: [PATCHv6 2/2] mtd: spi-nor: cadence-quadspi: add reset control
+To:     Tudor.Ambarus@microchip.com, linux-mtd@lists.infradead.org
+Cc:     marex@denx.de, dwmw2@infradead.org, computersforpeace@gmail.com,
+        bbrezillon@kernel.org, linux-kernel@vger.kernel.org,
+        tien.fong.chee@intel.com
+References: <20190613113138.8280-1-dinguyen@kernel.org>
+ <20190613113138.8280-2-dinguyen@kernel.org>
+ <08cde9f6-6687-94df-b4fb-7fde2d9a1478@microchip.com>
+From:   Dinh Nguyen <dinguyen@kernel.org>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <9da2c6a1-d21c-b2d3-3ca4-807ccc271f0a@kernel.org>
+Date:   Mon, 24 Jun 2019 09:50:58 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-In-Reply-To: <20190624075718.GE5471@krava>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <08cde9f6-6687-94df-b4fb-7fde2d9a1478@microchip.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -45,58 +89,19 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Tudor,
 
-
-On 6/24/2019 3:57 PM, Jiri Olsa wrote:
-> On Thu, Jun 20, 2019 at 10:36:39PM +0800, Jin Yao wrote:
+On 6/22/19 5:21 AM, Tudor.Ambarus@microchip.com wrote:
+> Hi, Dinh,
 > 
-> SNIP
+> On 06/13/2019 02:31 PM, Dinh Nguyen wrote:
+>> +	struct reset_control *rstc;
+>> +	struct reset_control *rstc_ocp;
 > 
->> +
->> +static void *block_entry_zalloc(size_t size)
->> +{
->> +	return zalloc(size + sizeof(struct hist_entry));
->> +}
->> +
->> +static void block_entry_free(void *he)
->> +{
->> +	struct block_info *bi = ((struct hist_entry *)he)->block_info;
->> +
->> +	block_info__put(bi);
->> +	free(he);
->> +}
->> +
->> +struct hist_entry_ops block_entry_ops = {
->> +	.new    = block_entry_zalloc,
->> +	.free   = block_entry_free,
->> +};
-> 
-> hum, so there's already block_hist_ops moving that stuff into 'struct block_hist',
-> which is great, but why don't we have 'struct block_entry' in here? that would
-> keep the 'struct block_info'
-> 
-> thanks,
-> jirka
+> I'll add these on a single line when applying. The patch is good, I'm waiting
+> for Rob to review the bindings.
 > 
 
-Hi Jiri,
+Thanks!
 
-If I define 'struct block_entry' as following and cast 'he' to 'struct 
-block_entry' in some places, such as in block_cmp(), we can get the 
-'struct block_entry'.
-
-struct block_entry {
-	struct block_info bi;
-	struct hist_entry he;
-};
-
-But I don't know when I can set the 'bi' of 'struct block_entry'. Before 
-or after calling hists__add_entry_xxx()? Before calling 
-hists__add_entry_xxx(), we don't know the hist_entry. After calling 
-hists__add_entry_xxx(), actually the hist_entry__cmp doesn't work (no bi ).
-
-That's why I create block_info in hist_entry. Maybe I misunderstand what 
-your suggested, correct me if I'm wrong.
-
-Thanks
-Jin Yao
+Dinh
