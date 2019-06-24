@@ -2,176 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 570884FF7D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 04:42:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6031F4FF83
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 04:47:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727212AbfFXCmY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 22:42:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52830 "EHLO mail.kernel.org"
+        id S1727255AbfFXCrZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 22:47:25 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:56141 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726510AbfFXCmY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 22:42:24 -0400
-Received: from dragon (li1322-146.members.linode.com [45.79.223.146])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        id S1727236AbfFXCrZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Jun 2019 22:47:25 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 312382073F;
-        Mon, 24 Jun 2019 00:16:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561335418;
-        bh=rlOHzwEHb6pqbLmFFdbDpWnjpgMeLjwtJXHuyHU99k4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=roJv8fNnUZ0dRiuDvVUwCMeTZKp+rYD7LINPyt/Equnhsgqrl0uw2KlYXz3yv/oOz
-         LsjbdcChTu9SBpwoJkep+EimMkvVRkjQ0BK0ZtsArotoz5QR34PwqBsyCMuDxcASBL
-         BZJmJN/MJsDoVQKxEcXbXI5c6+E4rwQscQOAaLSc=
-Date:   Mon, 24 Jun 2019 08:16:45 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Robin Gong <yibin.gong@nxp.com>
-Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "u.kleine-koenig@pengutronix.de" <u.kleine-koenig@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "vkoul@kernel.org" <vkoul@kernel.org>,
-        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v5 00/15] add ecspi ERR009165 for i.mx6/7 soc family
-Message-ID: <20190624001643.GB3800@dragon>
-References: <20190610081753.11422-1-yibin.gong@nxp.com>
- <1561135476.7537.5.camel@nxp.com>
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45X91r5q3Hz9sBr;
+        Mon, 24 Jun 2019 10:21:04 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1561335665;
+        bh=LsJYm2shRM7LwoHE6XZAh2/rVUWiyUrU41fclTA7RUg=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=CnMhLfzkf/Z5PWXtxD5DelHCkvmsS3IVaO1bsPpCPs1p+QQUZyR0Y14NAsVIrFNJW
+         za2/d9Wr/1n3juJ0tkfo6FH7cKqrvJeazZgKLl1efmQe7s7mg7NoZmBTBfQaaGPahF
+         i7va/lDvVzwXjP5tpFcgGAHL8z5866rvPFkPmKxzXYkTUQ08jbBPC1uxhosqTIB5c/
+         iWTTPsMoqZEN/PXR5WDaEjuBAape32+mnTIw2VpG1UcpyLxbgZC79h0qlBKu6Xy+Gq
+         +s00aAmj0vLlN0KpPqXJA6xnBRBvJ6MACTP6g934+OdTxkVr0UR5lpyuAeGIOTCP7n
+         cUHn6ff0IYkDA==
+Date:   Mon, 24 Jun 2019 10:20:52 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     kernel list <linux-kernel@vger.kernel.org>, jaegeuk@kernel.org,
+        yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net,
+        Qiuyang Sun <sunqiuyang@huawei.com>
+Subject: Re: Next 20190621: fails to link f2fs in x86-32
+Message-ID: <20190624101844.50e4c4ff@canb.auug.org.au>
+In-Reply-To: <20190622174945.GA30317@amd>
+References: <20190621110311.GF24145@amd>
+        <20190621214657.1624e5a4@canb.auug.org.au>
+        <20190622174945.GA30317@amd>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1561135476.7537.5.camel@nxp.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Wb7ooV2y5t6ph2TKs7tq9B/"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 21, 2019 at 08:42:48AM +0000, Robin Gong wrote:
-> Hello Shawn/Will,
->   Do you have comments for this V5 patch set? I got tags from Mark,
-> Vinod and Rob.
+--Sig_/Wb7ooV2y5t6ph2TKs7tq9B/
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I'm fine with the DTS change, but not sure how the series should be
-merged.
+Hi all,
 
-Shawn
+On Sat, 22 Jun 2019 19:49:45 +0200 Pavel Machek <pavel@ucw.cz> wrote:
+>
+> ld: fs/f2fs/gc.o: in function `f2fs_resize_fs':
+> gc.c:(.text+0x3a91): undefined reference to `__umoddi3'
+> ld: gc.c:(.text+0x3b70): undefined reference to `__udivdi3'
+> make: *** [Makefile:1052: vmlinux] Error 1
 
-> 
-> On 2019-06-10 at 08:17 +0000, yibin.gong@nxp.com wrote:
-> > From: Robin Gong <yibin.gong@nxp.com>
-> > 
-> >   There is ecspi ERR009165 on i.mx6/7 soc family, which cause FIFO
-> > transfer to be send twice in DMA mode. Please get more information
-> > from:
-> > https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fwww
-> > .nxp.com%2Fdocs%2Fen%2Ferrata%2FIMX6DQCE.pdf&amp;data=02%7C01%7Cyibin
-> > .gong%40nxp.com%7C67d3e78fe5ef4428b3af08d6ed7beb74%7C686ea1d3bc2b4c6f
-> > a92cd99c5c301635%7C0%7C1%7C636957513814970412&amp;sdata=%2F9sbrDEmIpu
-> > OazcIAVpIrELZMEjO94%2Bjen7wOOlVsVk%3D&amp;reserved=0. The workaround
-> > is adding
-> > new sdma ram script which works in XCH  mode as PIO inside sdma
-> > instead
-> > of SMC mode, meanwhile, 'TX_THRESHOLD' should be 0. The issue should
-> > be
-> > exist on all legacy i.mx6/7 soc family before i.mx6ul.
-> >   NXP fix this design issue from i.mx6ul, so newer chips including
-> > i.mx6ul/
-> > 6ull/6sll do not need this workaroud anymore. All other i.mx6/7/8
-> > chips
-> > still need this workaroud. This patch set add new 'fsl,imx6ul-ecspi'
-> > for ecspi driver and 'ecspi_fixed' in sdma driver to choose if need
-> > errata
-> > or not.
-> >   The first two reverted patches should be the same issue, though, it
-> > seems 'fixed' by changing to other shp script. Hope Sean or Sascha
-> > could
-> > have the chance to test this patch set if could fix their issues.
-> >   Besides, enable sdma support for i.mx8mm/8mq and fix ecspi1 not
-> > work
-> > on i.mx8mm because the event id is zero.
-> > 
-> > PS:
-> >    Please get sdma firmware from below linux-firmware and copy it to
-> > your
-> > local rootfs /lib/firmware/imx/sdma.
-> > https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgit
-> > .kernel.org%2Fpub%2Fscm%2Flinux%2Fkernel%2Fgit%2Ffirmware%2Flinux-
-> > firmware.git%2Ftree%2Fimx%2Fsdma&amp;data=02%7C01%7Cyibin.gong%40nxp.
-> > com%7C67d3e78fe5ef4428b3af08d6ed7beb74%7C686ea1d3bc2b4c6fa92cd99c5c30
-> > 1635%7C0%7C1%7C636957513814970412&amp;sdata=xXHBWpSaSLmMosb%2FajOAiXn
-> > nkxaYV6HCt25OOzgRLbI%3D&amp;reserved=0
-> > 
-> > v2:
-> >   1.Add commit log for reverted patches.
-> >   2.Add comment for 'ecspi_fixed' in sdma driver.
-> >   3.Add 'fsl,imx6sll-ecspi' compatible instead of 'fsl,imx6ul-ecspi'
-> >     rather than remove.
-> > v3:
-> >   1.Confirm with design team make sure ERR009165 fixed on
-> > i.mx6ul/i.mx6ull
-> >     /i.mx6sll, not fixed on i.mx8m/8mm and other i.mx6/7 legacy
-> > chips.
-> >     Correct dts related dts patch in v2.
-> >   2.Clean eratta information in binding doc and new 'tx_glitch_fixed'
-> > flag
-> >     in spi-imx driver to state ERR009165 fixed or not.
-> >   3.Enlarge burst size to fifo size for tx since tx_wml set to 0 in
-> > the
-> >     errata workaroud, thus improve performance as possible.
-> > v4:
-> >   1.add Ack tag from Mark and Vinod
-> >   2. remove checking 'event_id1' zero as 'event_id0'.
-> > v5:
-> >   1.Add another patch for compatible with the current uart driver
-> > which
-> >     using rom script, so both uart ram script and rom script
-> > supported
-> >     in latest firmware, by default uart rom script used. UART driver
-> >     will be broken without this patch. Latest sdma firmware has been
-> >     already updated in linux-firmware. 
-> > 
-> > Robin Gong (15):
-> >   Revert "ARM: dts: imx6q: Use correct SDMA script for SPI5 core"
-> >   Revert "ARM: dts: imx6: Use correct SDMA script for SPI cores"
-> >   Revert "dmaengine: imx-sdma: refine to load context only once"
-> >   dmaengine: imx-sdma: remove dupilicated sdma_load_context
-> >   dmaengine: imx-sdma: add mcu_2_ecspi script
-> >   spi: imx: fix ERR009165
-> >   spi: imx: remove ERR009165 workaround on i.mx6ul
-> >   spi: imx: add new i.mx6ul compatible name in binding doc
-> >   dmaengine: imx-sdma: remove ERR009165 on i.mx6ul
-> >   dma: imx-sdma: add i.mx6ul/6sx compatible name
-> >   dmaengine: imx-sdma: fix ecspi1 rx dma not work on i.mx8mm
-> >   ARM: dts: imx6ul: add dma support on ecspi
-> >   ARM: dts: imx6sll: correct sdma compatible
-> >   arm64: defconfig: Enable SDMA on i.mx8mq/8mm
-> >   dmaengine: imx-sdma: add uart rom script
-> > 
-> >  .../devicetree/bindings/dma/fsl-imx-sdma.txt       |  2 +
-> >  .../devicetree/bindings/spi/fsl-imx-cspi.txt       |  1 +
-> >  arch/arm/boot/dts/imx6q.dtsi                       |  2 +-
-> >  arch/arm/boot/dts/imx6qdl.dtsi                     |  8 +-
-> >  arch/arm/boot/dts/imx6sll.dtsi                     |  2 +-
-> >  arch/arm/boot/dts/imx6ul.dtsi                      |  8 ++
-> >  arch/arm64/configs/defconfig                       |  3 +
-> >  drivers/dma/imx-sdma.c                             | 88
-> > ++++++++++++++++------
-> >  drivers/spi/spi-imx.c                              | 61
-> > ++++++++++++---
-> >  include/linux/platform_data/dma-imx-sdma.h         | 11 ++-
-> >  10 files changed, 145 insertions(+), 41 deletions(-)
-> > 
+This should be fixed in today's linux-next.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Wb7ooV2y5t6ph2TKs7tq9B/
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0QF2QACgkQAVBC80lX
+0GxbTAf/SO1zcjwMF8BYrgo+9HrcqV5Z1qaT8zq2nIV7DM38Jeqw9zrCreqkaeFN
+JQR1BchCJKA9SFUQYGGjmK1A5+/EbMo03tYfumEjuS4QP18wObXnZuriMGxm+HuJ
+ovFiNJmmMuKMaew2Wlao/aNRiHPnUBJGzuBlz+hTr7wDt6MQ90+8phmXa2TTCINL
+lKc8qaqJt+kvCgUasD7y2ogtDBWixr9Gh6yKq7JCA8veoQhHlHFLLwO+ZDQVTKHU
+in2ZkiDXNgQ95G4O5aAP76kn1/Uf0mpCFlKUy2Qm1EKNZ6EPdwohOpGAaWl2AEBU
+RXL7tkY5OvIfuzarF0mPlp9fDTM0ZQ==
+=GvQV
+-----END PGP SIGNATURE-----
+
+--Sig_/Wb7ooV2y5t6ph2TKs7tq9B/--
