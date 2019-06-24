@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3F225083D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:18:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDB765065B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 11:58:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729993AbfFXKPn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 06:15:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52144 "EHLO mail.kernel.org"
+        id S1728966AbfFXJ6U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 05:58:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56762 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730379AbfFXKOo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 06:14:44 -0400
+        id S1728953AbfFXJ6R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 05:58:17 -0400
 Received: from localhost (f4.8f.5177.ip4.static.sl-reverse.com [119.81.143.244])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8CEC9205C9;
-        Mon, 24 Jun 2019 10:14:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C4AB021530;
+        Mon, 24 Jun 2019 09:58:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561371284;
-        bh=B8haucdH0Bac5XxjC19HYszcAgma7sNI2LLJyXDiMss=;
+        s=default; t=1561370296;
+        bh=TSnBK+TOK1j2SbjEs6KEX4gUZT3ktGaHfgONdzdZuWg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=esuQWnoSLb11kZY7VkZljHEGPv5sVZd5YZKAnYE7jXmbtTKBh98fj3QZaqJ7lduG1
-         DMVvkIQLRIzH0p0tL0NaAoTsDupfHvIUrxAFKMfDFJ1oo6NtTbkvM5J7crntMjl2yZ
-         R6cZ/PIB3hkoU8j9sE1PyWmIczwLmSdxc7akCTek=
+        b=T2OHTj4FO9f0agH9rs+pm2/tMHE1L+uGRkSHHQKg7HMGMzVYaaGyRvfU7xjYtafAs
+         JTTzDCa39dDHIsevVgqWZXzRZ7+J1HSxLNz7CRb4ZTUxNtXM5b3dTGnB/gDpw1V1Ev
+         FySutypTpLLruuhpwfK8LD9cC70iBRq3tkw+kvIs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gen Zhang <blackgod016574@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        "Michael J. Ruhl" <michael.j.ruhl@intel.com>,
+        Kamenee Arumugam <kamenee.arumugam@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 065/121] mdesc: fix a missing-check bug in get_vdev_port_node_info()
-Date:   Mon, 24 Jun 2019 17:56:37 +0800
-Message-Id: <20190624092324.129228105@linuxfoundation.org>
+Subject: [PATCH 4.14 20/51] IB/hfi1: Validate page aligned for a given virtual address
+Date:   Mon, 24 Jun 2019 17:56:38 +0800
+Message-Id: <20190624092308.572253031@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190624092320.652599624@linuxfoundation.org>
-References: <20190624092320.652599624@linuxfoundation.org>
+In-Reply-To: <20190624092305.919204959@linuxfoundation.org>
+References: <20190624092305.919204959@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,32 +47,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 80caf43549e7e41a695c6d1e11066286538b336f ]
+[ Upstream commit 97736f36dbebf2cda2799db3b54717ba5b388255 ]
 
-In get_vdev_port_node_info(), 'node_info->vdev_port.name' is allcoated
-by kstrdup_const(), and it returns NULL when fails. So
-'node_info->vdev_port.name' should be checked.
+User applications can register memory regions for TID buffers that are not
+aligned on page boundaries. Hfi1 is expected to pin those pages in memory
+and cache the pages with mmu_rb. The rb tree will fail to insert pages
+that are not aligned correctly.
 
-Signed-off-by: Gen Zhang <blackgod016574@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Validate whether a given virtual address is page aligned before pinning.
+
+Fixes: 7e7a436ecb6e ("staging/hfi1: Add TID entry program function body")
+Reviewed-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
+Signed-off-by: Kamenee Arumugam <kamenee.arumugam@intel.com>
+Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/sparc/kernel/mdesc.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/infiniband/hw/hfi1/user_exp_rcv.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/sparc/kernel/mdesc.c b/arch/sparc/kernel/mdesc.c
-index 9a26b442f820..8e645ddac58e 100644
---- a/arch/sparc/kernel/mdesc.c
-+++ b/arch/sparc/kernel/mdesc.c
-@@ -356,6 +356,8 @@ static int get_vdev_port_node_info(struct mdesc_handle *md, u64 node,
+diff --git a/drivers/infiniband/hw/hfi1/user_exp_rcv.c b/drivers/infiniband/hw/hfi1/user_exp_rcv.c
+index 6f6c14df383e..b38e3808836c 100644
+--- a/drivers/infiniband/hw/hfi1/user_exp_rcv.c
++++ b/drivers/infiniband/hw/hfi1/user_exp_rcv.c
+@@ -324,6 +324,9 @@ int hfi1_user_exp_rcv_setup(struct hfi1_filedata *fd,
+ 	u32 *tidlist = NULL;
+ 	struct tid_user_buf *tidbuf;
  
- 	node_info->vdev_port.id = *idp;
- 	node_info->vdev_port.name = kstrdup_const(name, GFP_KERNEL);
-+	if (!node_info->vdev_port.name)
-+		return -1;
- 	node_info->vdev_port.parent_cfg_hdl = *parent_cfg_hdlp;
- 
- 	return 0;
++	if (!PAGE_ALIGNED(tinfo->vaddr))
++		return -EINVAL;
++
+ 	tidbuf = kzalloc(sizeof(*tidbuf), GFP_KERNEL);
+ 	if (!tidbuf)
+ 		return -ENOMEM;
 -- 
 2.20.1
 
