@@ -2,56 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8C3C50202
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 08:16:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2323F50216
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 08:20:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727439AbfFXGQu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 02:16:50 -0400
-Received: from verein.lst.de ([213.95.11.211]:52606 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726343AbfFXGQu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 02:16:50 -0400
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id A185E68AFE; Mon, 24 Jun 2019 08:16:17 +0200 (CEST)
-Date:   Mon, 24 Jun 2019 08:16:17 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Daniel Drake <drake@endlessm.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Keith Busch <kbusch@kernel.org>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        linux-nvme <linux-nvme@lists.infradead.org>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-ide@vger.kernel.org,
-        Linux Upstreaming Team <linux@endlessm.com>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Hannes Reinecke <hare@suse.de>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [PATCH v2 2/5] nvme: rename "pci" operations to "mmio"
-Message-ID: <20190624061617.GA2848@lst.de>
-References: <20190620051333.2235-1-drake@endlessm.com> <20190620051333.2235-3-drake@endlessm.com> <20190620061038.GA20564@lst.de> <CAD8Lp45ua=L+ixO+du=Njhy+dxjWobWA+V1i+Y2p6faeyt1FBQ@mail.gmail.com>
+        id S1727608AbfFXGT6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 02:19:58 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:38664 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726355AbfFXGT5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 02:19:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=HJFnO/8iFK6/8h+P54G3yCQG359ggQHSy2fGcxIE6tg=; b=dpTYhomxoOK7Fn9FZAWy/F2d7
+        OB7DbwOE/C/akpzeuzlFpIzjTzgoisvDVOi16ZOChuge0F6rRBKzi/zyrVCPfV41l37CddrCDy9wj
+        PkqmyYHP3GYQM23anQWNnajftFlRUdipaP1YC40vmEHUC9Xv2wt5GzuZEx40uTy0BMPSEfE4SLZFr
+        1GN8Gsm6hYT++2wtH7J0rAf26csTNJaeQwzpPzSohD0iNWgp9gSggAiNUCv8SKdG8HI94/bi3Wrnh
+        LvnWeGzcHl93S3WJCQWQi4N0S74dvgznU+OwCpBcRWi+2ZzrGpfA+z42pLHGuyd8wUxyrpgpbOC+0
+        xR9laD4Pg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hfIKP-0001PA-JV; Mon, 24 Jun 2019 06:19:45 +0000
+Date:   Sun, 23 Jun 2019 23:19:45 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Tom Murphy <murphyt7@tcd.ie>, Joerg Roedel <joro@8bytes.org>
+Cc:     iommu@lists.linux-foundation.org, Heiko Stuebner <heiko@sntech.de>,
+        Will Deacon <will.deacon@arm.com>,
+        virtualization@lists.linux-foundation.org,
+        David Brown <david.brown@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-s390@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-rockchip@lists.infradead.org, Andy Gross <agross@kernel.org>,
+        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
+        linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Robin Murphy <robin.murphy@arm.com>,
+        linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: Re: [PATCH v4 0/5] iommu/amd: Convert the AMD iommu driver to the
+ dma-iommu api
+Message-ID: <20190624061945.GA4912@infradead.org>
+References: <20190613223901.9523-1-murphyt7@tcd.ie>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAD8Lp45ua=L+ixO+du=Njhy+dxjWobWA+V1i+Y2p6faeyt1FBQ@mail.gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20190613223901.9523-1-murphyt7@tcd.ie>
+User-Agent: Mutt/1.11.4 (2019-03-13)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 20, 2019 at 04:11:26PM +0800, Daniel Drake wrote:
-> On Thu, Jun 20, 2019 at 2:11 PM Christoph Hellwig <hch@lst.de> wrote:
-> > The Linux NVMe driver will deal with NVMe as specified plus whatever
-> > minor tweaks we'll need for small bugs.  Hiding it behind an AHCI
-> > device is completely out of scope and will not be accepted.
-> 
-> Do you have any new suggestions for alternative ways we can implement
-> support for this storage configuration?
+Tom,
 
-IFF we want to support it it has to be done at the PCIe layer.  But
-even that will require actual documentation and support from Intel.
+next time please cc Jerg as the AMD IOMMU maintainer.
 
-If Intel still believes this scheme is their magic secret to control
-the NVMe market and give themselves and unfair advantage over their
-competitors there is not much we can do.
+Joerg, any chance you could review this?  Toms patches to convert the
+AMD and Intel IOMMU drivers to the dma-iommu code are going to make my
+life in DMA land significantly easier, so I have a vested interest
+in this series moving forward :)
