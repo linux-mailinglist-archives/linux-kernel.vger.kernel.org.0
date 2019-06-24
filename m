@@ -2,114 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DAB651F08
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 01:16:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A17951EFF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 01:15:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728358AbfFXXQf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 19:16:35 -0400
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:59024 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726486AbfFXXQf (ORCPT
+        id S1728278AbfFXXPd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 19:15:33 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:32780 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726486AbfFXXPd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 19:16:35 -0400
-Received: from dread.disaster.area (pa49-195-139-63.pa.nsw.optusnet.com.au [49.195.139.63])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 8564B149D6D;
-        Tue, 25 Jun 2019 09:16:30 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92)
-        (envelope-from <david@fromorbit.com>)
-        id 1hfYBH-0000af-3Z; Tue, 25 Jun 2019 09:15:23 +1000
-Date:   Tue, 25 Jun 2019 09:15:23 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 07/12] xfs: don't preallocate a transaction for file size
- updates
-Message-ID: <20190624231523.GC7777@dread.disaster.area>
-References: <20190624055253.31183-1-hch@lst.de>
- <20190624055253.31183-8-hch@lst.de>
- <20190624161720.GQ5387@magnolia>
+        Mon, 24 Jun 2019 19:15:33 -0400
+Received: by mail-pl1-f193.google.com with SMTP id c14so7732836plo.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 16:15:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=2IMAKyHpnPJ1yDvedXi3maHRvnqNVDYJ2coEjzpqvcg=;
+        b=fNoiNIAlRLn2QPb90BjGH37+vFNKA/mLAyGEzncUaIUNKlz7FLzTUan3SXPxa1rNq8
+         7saw0x1+SkHrlvHHaLtCzAuR7AUl5tVeWeM7dauo2/iU1K+AVzbwctFJ5zSEeVx94FuT
+         7MMlmAJrW3AOOmVZ7ElmnT16ufcPs1Zow5dWLjMaqdWX+cWwAom1Wk+c0lBAehDJdbr2
+         unMFbvikaH6zQO3eS25IrkX5zlnygUySo3Ybd8VG/p9wqDGJZ0CibWSLbx/Bn46+GRrn
+         C9SbdikcTznE1mRjY+HDMes2guFt2BWypwoXZuPoBwsmUusAWHuddfXUtfS0d8dJlRFd
+         Hhqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=2IMAKyHpnPJ1yDvedXi3maHRvnqNVDYJ2coEjzpqvcg=;
+        b=TO/VHDfNgZuosCbLE/rc3Fwf9Rwj4fMAR9RoLA5uH5wun4zCPsdLVj96BMBuClCk5b
+         t0KVvENrXJMk4gOlTZSBiMvy6RCAXFQaOuKq8Neus7tVh1U3IlNl2YZXMIEMAr4yhmtW
+         mgkBgBovj3NPyWW9cmj1i4RsP8N9F+kXHYlneLahtT0pq1TEvOC9aYT8quIQQUZxzLK8
+         M188uG0gnDJ7BjMsClOgzeTP/ExVFAZ6toD57zPvXh0upCkDwy5hm9QaxPyAkAn9b8KO
+         M4ZaLV+ETI3g2GHS/QCHG9gbHafoVwpIypwcT/fVEB9uS0ThEux+aXFrAYXdKpeAlDrx
+         dvdQ==
+X-Gm-Message-State: APjAAAWszvGRNRbCm8OBsmagyPlFXnEybSuGCK93N7aCggsnX6MGJAkF
+        MmwrmWOc7IlGCzTCgYTUpLF5OA==
+X-Google-Smtp-Source: APXvYqwROTeApbbRvj7XZr2xOey7lePNY05i1p2vtda9bu6wK0pvM2dbxuFwX8hcBJqIgVsFRVqElQ==
+X-Received: by 2002:a17:902:42d:: with SMTP id 42mr144122426ple.228.1561418132182;
+        Mon, 24 Jun 2019 16:15:32 -0700 (PDT)
+Received: from localhost ([2601:602:9200:a1a5:559b:6f10:667f:4354])
+        by smtp.googlemail.com with ESMTPSA id v9sm16566583pgj.69.2019.06.24.16.15.31
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 24 Jun 2019 16:15:31 -0700 (PDT)
+From:   Kevin Hilman <khilman@baylibre.com>
+To:     86zhm782g5.fsf@baylibre.com,
+        Neil Armstrong <narmstrong@baylibre.com>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, Julien Masson <jmasson@baylibre.com>
+Subject: Re: [PATCH 4/9] drm: meson: vpp: use proper macros instead of magic constants
+In-Reply-To: <86tvcf82eu.fsf@baylibre.com>
+References: <86zhm782g5.fsf@baylibre.com> <86tvcf82eu.fsf@baylibre.com>
+Date:   Mon, 24 Jun 2019 16:15:28 -0700
+Message-ID: <7h36jyy3qn.fsf@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190624161720.GQ5387@magnolia>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=D+Q3ErZj c=1 sm=1 tr=0 cx=a_idp_d
-        a=fNT+DnnR6FjB+3sUuX8HHA==:117 a=fNT+DnnR6FjB+3sUuX8HHA==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=dq6fvYVFJ5YA:10
-        a=7-415B0cAAAA:8 a=oLq8ofgPWqtQ5Z905GkA:9 a=6BQrOku7L8tHAI1q:21
-        a=BwSqpppzWO7tify-:21 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 09:17:20AM -0700, Darrick J. Wong wrote:
-> On Mon, Jun 24, 2019 at 07:52:48AM +0200, Christoph Hellwig wrote:
-> > We have historically decided that we want to preallocate the xfs_trans
-> > structure at writeback time so that we don't have to allocate on in
-> > the I/O completion handler.  But we treat unwrittent extent and COW
-> > fork conversions different already, which proves that the transaction
-> > allocations in the end I/O handler are not a problem.  Removing the
-> > preallocation gets rid of a lot of corner case code, and also ensures
-> > we only allocate one and log a transaction when actually required,
-> > as the ioend merging can reduce the number of actual i_size updates
-> > significantly.
-> 
-> That's what I thought when I wrote the ioend merging patches, but IIRC
-> Dave objected on the grounds that most file writes are trivial file
-> extending writes and therefore we should leave this alone to avoid
-> slowing down the ioend path even if it came at a cost of cancelling a
-> lot of empty transactions.
+Julien Masson <jmasson@baylibre.com> writes:
 
-The issue is stuff like extracting a tarball, where we might write a
-hundred thousand files and they are all written in a single IO. i.e.
-there is no IO completion merging at all.
+> This patch add new macros which are used to set the following
+> registers:
+> - VPP_OSD_SCALE_COEF_IDX
+> - VPP_DOLBY_CTRL
+> - VPP_OFIFO_SIZE
+> - VPP_HOLD_LINES
+> - VPP_SC_MISC
+> - VPP_VADJ_CTRL
+>
+> Signed-off-by: Julien Masson <jmasson@baylibre.com>
 
-> I wasn't 100% convinced it mattered but ran out of time in the
-> development window and never got around to researching if it made any
-> difference.
+[...]
 
-Yeah, it's not all that simple :/
+> @@ -97,20 +97,22 @@ void meson_vpp_init(struct meson_drm *priv)
+>  	else if (meson_vpu_is_compatible(priv, "amlogic,meson-gxm-vpu")) {
+>  		writel_bits_relaxed(0xff << 16, 0xff << 16,
+>  				    priv->io_base + _REG(VIU_MISC_CTRL1));
+> -		writel_relaxed(0x20000, priv->io_base + _REG(VPP_DOLBY_CTRL));
+> -		writel_relaxed(0x1020080,
+> +		writel_relaxed(VPP_PPS_DUMMY_DATA_MODE,
+> +			       priv->io_base + _REG(VPP_DOLBY_CTRL));
+> +		writel_relaxed(0x108080,
 
-In these cases, we always have to allocate a transaction for every
-file being written. If we do it before we submit the IO, then all
-the transactions are allocated from the single writeback context. If
-we don't have log space, data writeback pauses while the tail of the
-AIL is pushed, metadata writeback occurs, and then the transaction
-allocation for data writeback is woken, and data writeback
-submission continues. It's fairly orderly, and we don't end up
-trying to write back data while we are doing bulk metadata flushing
-from the AIL.
+nit: still a magic constant here, and it's not obvious why it's
+different from the current one.
 
-If we delay the transaction allocation to the ioend context and we
-are low on log space, we end up blocking a kworker on a transaction
-allocation which then has to wait for metadata writeback. The
-kworker infrastructure will then issue the next ioend work, which
-then blocks on transaction allocation. Delayed allocation can cause
-thousands of small file IOs to be inflight at the same time due to
-intra-file contiguous allocation and IO merging in the block layer,
-hence we can have thousands of individual IO completions that
-require transaction allocation to be completed.
-
-> So, uh, how much of a hit do we take for having to allocate a
-> transaction for a file size extension?  Particularly since we can
-> combine those things now?
-
-Unless we are out of log space, the transaction allocation and free
-should be largely uncontended and so it's just a small amount of CPU
-usage. i.e it's a slab allocation/free and then lockless space
-reservation/free. If we are out of log space, then we sleep waiting
-for space - the issue really comes down to where it is better to
-sleep in that case....
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Kevin
