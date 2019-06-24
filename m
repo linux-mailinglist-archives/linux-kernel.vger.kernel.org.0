@@ -2,95 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2E6450ADE
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 14:40:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E8A750AE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 14:40:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730391AbfFXMj5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 08:39:57 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:28592 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730345AbfFXMjr (ORCPT
+        id S1728025AbfFXMk0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 08:40:26 -0400
+Received: from relay11.mail.gandi.net ([217.70.178.231]:36429 "EHLO
+        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727659AbfFXMk0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 08:39:47 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5OCRUtx112829
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 08:39:46 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2tax7dhkau-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 08:39:46 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Mon, 24 Jun 2019 13:39:44 +0100
-Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 24 Jun 2019 13:39:40 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5OCdd1e15860188
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 24 Jun 2019 12:39:39 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3B8D242049;
-        Mon, 24 Jun 2019 12:39:39 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 656E64203F;
-        Mon, 24 Jun 2019 12:39:38 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.110.5])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 24 Jun 2019 12:39:38 +0000 (GMT)
-Subject: Re: [PATCH V10 1/3] IMA: Define a new hook to measure the kexec
- boot command line arguments
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Prakhar Srivastava <prsriva02@gmail.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     roberto.sassu@huawei.com, vgoyal@redhat.com
-Date:   Mon, 24 Jun 2019 08:39:27 -0400
-In-Reply-To: <20190624062331.388-2-prsriva02@gmail.com>
-References: <20190624062331.388-1-prsriva02@gmail.com>
-         <20190624062331.388-2-prsriva02@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19062412-0016-0000-0000-0000028BE04C
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19062412-0017-0000-0000-000032E94C63
-Message-Id: <1561379967.4340.3.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-24_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906240103
+        Mon, 24 Jun 2019 08:40:26 -0400
+Received: from localhost (aaubervilliers-681-1-41-156.w90-88.abo.wanadoo.fr [90.88.16.156])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay11.mail.gandi.net (Postfix) with ESMTPSA id 285C810000F;
+        Mon, 24 Jun 2019 12:40:20 +0000 (UTC)
+Date:   Mon, 24 Jun 2019 14:40:19 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Icenowy Zheng <icenowy@aosc.io>
+Cc:     Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v3 1/9] pinctrl: sunxi: v3s: introduce support for V3
+Message-ID: <20190624124019.o6acnnkjikekshl5@flea>
+References: <20190623043801.14040-1-icenowy@aosc.io>
+ <20190623043801.14040-2-icenowy@aosc.io>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="2wajni7mcz7mizzf"
+Content-Disposition: inline
+In-Reply-To: <20190623043801.14040-2-icenowy@aosc.io>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Prakhar,
 
-On Sun, 2019-06-23 at 23:23 -0700, Prakhar Srivastava wrote:
-> Currently during soft reboot(kexec_file_load) boot command line
-> arguments are not measured. Define hooks needed to measure kexec
-> command line arguments during soft reboot(kexec_file_load).
-> 
-> - A new ima hook ima_kexec_cmdline is defined to be called by the
-> kexec code.
-> - A new function process_buffer_measurement is defined to measure
-> the buffer hash into the IMA measurement list.
-> - A new func policy KEXEC_CMDLINE is defined to control the
->  measurement.[Suggested by Mimi]
-> 
-> Signed-off-by: Prakhar Srivastava <prsriva02@gmail.com>
+--2wajni7mcz7mizzf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thanks!  This patch set is now queued in the next-queued-testing
-branch for any last minute comments or Reviews/Acks, before being
-staged in the next-integrity branch.
+On Sun, Jun 23, 2019 at 12:37:53PM +0800, Icenowy Zheng wrote:
+> Introduce the GPIO pins that is only available on V3 (not on V3s) to the
+> V3s pinctrl driver.
+>
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> ---
+> Changes in v3:
+> - Fixed code alignment.
+> - Fixed LVDS function number.
+>
+> Changes in v2:
+> - Dropped the driver rename patch and apply the changes directly on V3s
+>   driver.
+>
+>  drivers/pinctrl/sunxi/pinctrl-sun8i-v3s.c | 473 +++++++++++++++++-----
+>  drivers/pinctrl/sunxi/pinctrl-sunxi.h     |   2 +
+>  2 files changed, 366 insertions(+), 109 deletions(-)
+>
+> diff --git a/drivers/pinctrl/sunxi/pinctrl-sun8i-v3s.c b/drivers/pinctrl/sunxi/pinctrl-sun8i-v3s.c
+> index 6704ce8e5e3d..721c997d472b 100644
+> --- a/drivers/pinctrl/sunxi/pinctrl-sun8i-v3s.c
+> +++ b/drivers/pinctrl/sunxi/pinctrl-sun8i-v3s.c
+> @@ -1,5 +1,5 @@
+>  /*
+> - * Allwinner V3s SoCs pinctrl driver.
+> + * Allwinner V3/V3s SoCs pinctrl driver.
+>   *
+>   * Copyright (C) 2016 Icenowy Zheng <icenowy@aosc.xyz>
+>   *
+> @@ -28,235 +28,433 @@ static const struct sunxi_desc_pin sun8i_v3s_pins[] = {
+>  	SUNXI_PIN(SUNXI_PINCTRL_PIN(B, 0),
+>  		  SUNXI_FUNCTION(0x0, "gpio_in"),
+>  		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> -		  SUNXI_FUNCTION(0x2, "uart2"),		/* TX */
+> -		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 0)),	/* PB_EINT0 */
+> +		  SUNXI_FUNCTION(0x2, "uart2"),			/* TX */
+> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 0)),		/* PB_EINT0 */
 
-Mimi
+I'm not sure why all that churn is needed.
 
+Looks good otherwise.
+
+Maxime
+
+--
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--2wajni7mcz7mizzf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXRDEswAKCRDj7w1vZxhR
+xcUqAP96jDUQxD5ktA8bJadn0csZC5zu80WvAEMGgbNIXKKLTAD/U+6znAbbceG1
+7MaO9SVfGDrn45QzR2JTKu4r3t/2VAw=
+=tGMg
+-----END PGP SIGNATURE-----
+
+--2wajni7mcz7mizzf--
