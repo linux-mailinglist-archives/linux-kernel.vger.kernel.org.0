@@ -2,98 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED30850EF3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 16:48:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C43150DBB
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 16:22:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728502AbfFXOr6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 10:47:58 -0400
-Received: from mail-wr1-f51.google.com ([209.85.221.51]:44110 "EHLO
-        mail-wr1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725562AbfFXOr6 (ORCPT
+        id S1727737AbfFXOWM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 10:22:12 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:56826 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1727451AbfFXOWL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 10:47:58 -0400
-Received: by mail-wr1-f51.google.com with SMTP id r16so14194620wrl.11
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 07:47:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version;
-        bh=dIRgQ3ynOpjhyuIVnVuPJTcE55pI12BhgO4qsYJmHWg=;
-        b=1t2stW6KFcusBgmgb+vjxCC6D/mAJkeo4PWwfQTJtiO7t+wgz+REk1m6xRvG5PdvpB
-         N5Cfj0WIDM23ujK4DsoZ5o1ow097YCS3oiJGmCJJLc5kPXI9NQjDO+jaevjCq4y3MDyi
-         RwKqbnu2Na54f0LI1M23VY8Iq8pGBws7IXzE5sNIaK7HzGq0HBb8ZEcyorT4YW2sK18x
-         cQHHT0avopamkHoV1U0VKmXeQpKbSOAQpadRqHyELQS+oT5AGEeyL05nMQWknKwiEzY7
-         kaNz21h3qkJfc4TfwevGKTNdhk0RfDvec7zs18vmX6VVcVS/qiaLjeq43dtTUSp9cngj
-         BBqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version;
-        bh=dIRgQ3ynOpjhyuIVnVuPJTcE55pI12BhgO4qsYJmHWg=;
-        b=cuYIb9oehsxxrrYQuqB7a0gJCDKIFk4/rFEJIIqCYKLwe+M3mv6veL07U5FzIBB8ZF
-         634N54yFNQN+WxmZT/jvCXpq8xZH2eG+fozVz4qgONzIQyt9yrQJv4AReK19scwTRUoK
-         J+zyQjhBzaAZVrRVDIvwGCLhy7+cHf3Gli1ieKGOmx2/O4+pefo6v3SWWWwkoyaPaRr+
-         ckb8BOQzypFwdCUW48V91XT0diop/MrszluatlZqgykEut7sL3lMGjJZWvT3REIywiMw
-         xFJQ7iBdsDjL7vyAvx+FWY4XDq6okNg6RDYSVqgf8HDtDYWH9/7q0YMlnhWaLdBxu/jq
-         fjgQ==
-X-Gm-Message-State: APjAAAW6eXtS9ayVLU8F2mkOoGrX3KRq7xEOYnqn8U7MhXl7l9zqtonn
-        CwOmbK8vhAM3g/G3znrsZJIjLg==
-X-Google-Smtp-Source: APXvYqzAhY+ZzLqrg8P9+Gjky58V/7Mins9CYwy8HmsCLCi6hwSDb1K4orr31YS8ZR7Cuubi4to67Q==
-X-Received: by 2002:a5d:4642:: with SMTP id j2mr11688565wrs.211.1561387676728;
-        Mon, 24 Jun 2019 07:47:56 -0700 (PDT)
-Received: from localhost (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id u6sm13228366wml.9.2019.06.24.07.47.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Jun 2019 07:47:55 -0700 (PDT)
-From:   Julien Masson <jmasson@baylibre.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, Julien Masson <jmasson@baylibre.com>
-Subject: [PATCH 0/9] drm: meson: global clean-up (use proper macros, update comments ...)
-Date:   Mon, 24 Jun 2019 16:20:42 +0200
-Message-ID: <86zhm782g5.fsf@baylibre.com>
+        Mon, 24 Jun 2019 10:22:11 -0400
+Received: (qmail 1735 invoked by uid 2102); 24 Jun 2019 10:22:10 -0400
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 24 Jun 2019 10:22:10 -0400
+Date:   Mon, 24 Jun 2019 10:22:10 -0400 (EDT)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     Oliver Neukum <oneukum@suse.com>
+cc:     Tejun Heo <tj@kernel.org>,
+        Kernel development list <linux-kernel@vger.kernel.org>,
+        USB list <linux-usb@vger.kernel.org>
+Subject: Re: [RFC] deadlock with flush_work() in UAS
+In-Reply-To: <1561366612.2846.10.camel@suse.com>
+Message-ID: <Pine.LNX.4.44L0.1906241007350.1609-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 24 Jun 2019, Oliver Neukum wrote:
 
-This patch series aims to clean-up differents parts of the drm meson
-code source.
+> Am Donnerstag, den 20.06.2019, 07:10 -0700 schrieb Tejun Heo:
+> > Hello,
+> > 
+> > On Tue, Jun 18, 2019 at 11:59:39AM -0400, Alan Stern wrote:
+> > > > > Even if you disagree, perhaps we should have a global workqueue with a
+> > > > > permanently set noio flag.  It could be shared among multiple drivers
+> > > > > such as uas and the hub driver for purposes like this.  (In fact, the 
+> > > > > hub driver already has its own dedicated workqueue.)
+> > > > 
+> > > > That is a good idea. But does UAS need WQ_MEM_RECLAIM?
+> > > 
+> > > These are good questions, and I don't have the answers.  Perhaps Tejun 
+> > > or someone else on LKML can help.
+> > 
+> > Any device which may host a filesystem or swap needs to use
+> > WQ_MEM_RECLAIM workqueues on anything which may be used during normal
+> > IOs including e.g. error handling which may be invoked.  One
+> > WQ_MEM_RECLAIM workqueue guarantees one level of concurrency for all
+> > its tasks regardless of memory situation, so as long as there's no
+> > interdependence between work items, the workqueue can be shared.
+> 
+> Ouch.
+> 
+> Alan, in that case anything doing a reset, suspend or resume needs
+> to use WQ_MEM_RECLAIM, it looks to me. What do we do?
 
-Couple macros have been defined and used to set several registers
-instead of using magic constants.
+I'm not sure this is really a problem.
 
-I also took the opportunity to:
-- add/remove/update comments
-- remove useless code
-- minor fix/improvment
+For example, the reset issue arises only when a driver does the 
+following:
 
-Julien Masson (9):
-  drm: meson: mask value when writing bits relaxed
-  drm: meson: crtc: use proper macros instead of magic constants
-  drm: meson: drv: use macro when initializing vpu
-  drm: meson: vpp: use proper macros instead of magic constants
-  drm: meson: viu: use proper macros instead of magic constants
-  drm: meson: venc: use proper macros instead of magic constants
-  drm: meson: global clean-up
-  drm: meson: add macro used to enable HDMI PLL
-  drm: meson: venc: set the correct macrovision max amplitude value
+	Locks the device.
 
- drivers/gpu/drm/meson/meson_crtc.c      |  17 ++-
- drivers/gpu/drm/meson/meson_drv.c       |  26 +++-
- drivers/gpu/drm/meson/meson_dw_hdmi.c   |   2 +
- drivers/gpu/drm/meson/meson_dw_hdmi.h   |  12 +-
- drivers/gpu/drm/meson/meson_plane.c     |   2 +-
- drivers/gpu/drm/meson/meson_registers.h | 136 ++++++++++++++++---
- drivers/gpu/drm/meson/meson_vclk.c      |   7 +-
- drivers/gpu/drm/meson/meson_venc.c      | 169 ++++++++++++++++++------
- drivers/gpu/drm/meson/meson_venc_cvbs.c |   3 +-
- drivers/gpu/drm/meson/meson_viu.c       |  82 ++++++------
- drivers/gpu/drm/meson/meson_vpp.c       |  27 ++--
- 11 files changed, 362 insertions(+), 121 deletions(-)
+	Queues a work routine to reset the device.
 
--- 
-2.17.1
+	Waits for the reset to finish.
+
+	Unlocks the device.
+
+But that pattern makes no sense; a driver would never use it.  The 
+driver would just do the reset itself.
+
+There's no problem if the locking is done in the work routine; in that
+case the usb-storage or uas driver would be able to carry out any
+necessary resets if the work routine was unable to start for lack of
+memory.
+
+Similarly, while async wakeups might get blocked by lack of memory, the 
+normal USB driver paths use synchronous wakeup.
+
+Alan Stern
 
