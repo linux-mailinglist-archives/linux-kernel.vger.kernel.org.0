@@ -2,300 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD5E7519CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 19:40:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55F43519C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 19:40:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732614AbfFXRkw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 13:40:52 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:45243 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732515AbfFXRkv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 13:40:51 -0400
-Received: by mail-ed1-f68.google.com with SMTP id a14so22882356edv.12;
-        Mon, 24 Jun 2019 10:40:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=7G9hz19DpQMOp6xUIOTV29RIVUvIs4RqyPOZnJ3+kuc=;
-        b=QcATPe/q75AXCQpILZkSYxvxZuX+nvVMhHyIKaH257464XhpoWfF1kA0yKxKPWGtV1
-         C/xpC8cZdNkATT1TkazXzSvP5HPhbssuDiua8vWJ+Abh78C749y0G5BNu0NV8Wma1ODb
-         pRroFTr0cWs1pAMNIM7wZM1FDLVcaiLEdcrkwVSo2rdDBujTz/d+7cTSz01rRA32oOXe
-         3/4SO/cjKdBadss1eJEEML/PpeDIGZwkGRTt1bHRrqZVrqwLivQS5QYrUzwz9lmGdx2m
-         bVGOxuvHLpCa+MzDPW5+8s1ES4u/XuKP99nj3RGDh9Kapj+BvdTz0nNeIMujPeoZoloa
-         KBDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=7G9hz19DpQMOp6xUIOTV29RIVUvIs4RqyPOZnJ3+kuc=;
-        b=TVs2VOKIiMS5lblEMpEwG43sHfYp5Iz4gysdUDdySSSMaS64xWM7qcpgdinkadp5O3
-         wdqZUcUb9t2p0nTFzk6wdMBiOimoNayJvxETd26GDU1C+/jvaLedpnKMRyqGPjntclvf
-         exGy9PJuOa5WQR+YqzRfZAcwVTUt23aPobPaeelJsZUGcY84On9iV9xfUj0+SA5JW8AL
-         ib9fjCUeijC9mWgxTnSYiHbpmp5hzW31cs1r04yPl5JIt5QaiIFEjHASSfczB8GpCC0O
-         e7qeqRxqVdvvtX9L7bHnHm6fNqsossFx7udQ6eI5f8V0d2T5ttHc3lDEABnrb6BoKeau
-         QnDw==
-X-Gm-Message-State: APjAAAVWkWf2EsPXsmhNwLpU3M46VQDuGD868TnsF7WL2/KL5RTWDozH
-        +OwVSgEt3jaDd2brMeRfW1w=
-X-Google-Smtp-Source: APXvYqx9X3oE8Zq3qnLXcp2vY0GKoHOdc0iFgpRY1QX/Odw7afke/4A7u4dYcN3iqnYOne65JA59vQ==
-X-Received: by 2002:a17:906:e282:: with SMTP id gg2mr24192530ejb.38.1561398048655;
-        Mon, 24 Jun 2019 10:40:48 -0700 (PDT)
-Received: from localhost (ip1f10d6e1.dynamic.kabel-deutschland.de. [31.16.214.225])
-        by smtp.gmail.com with ESMTPSA id b25sm4068315eda.38.2019.06.24.10.40.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Jun 2019 10:40:48 -0700 (PDT)
-From:   Oliver Graute <oliver.graute@gmail.com>
-To:     oliver.graute@gmail.com
-Cc:     narmstrong@baylibre.com, Rob Herring <robh+dt@kernel.org>,
+        id S1732568AbfFXRkX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 13:40:23 -0400
+Received: from foss.arm.com ([217.140.110.172]:55820 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727945AbfFXRkX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 13:40:23 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 67044C0A;
+        Mon, 24 Jun 2019 10:40:22 -0700 (PDT)
+Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.78])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B95AE3F718;
+        Mon, 24 Jun 2019 10:40:17 -0700 (PDT)
+Date:   Mon, 24 Jun 2019 18:40:15 +0100
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Andrey Konovalov <andreyknvl@google.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org,
+        linux-media@vger.kernel.org, kvm@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
         Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 2/2] ARM: dts: Add support for i.MX6 UltraLite DART Variscite Customboard
-Date:   Mon, 24 Jun 2019 19:40:13 +0200
-Message-Id: <1561398017-10548-3-git-send-email-oliver.graute@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1561398017-10548-1-git-send-email-oliver.graute@gmail.com>
-References: <1561398017-10548-1-git-send-email-oliver.graute@gmail.com>
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Yishai Hadas <yishaih@mellanox.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        Alexander Deucher <Alexander.Deucher@amd.com>,
+        Christian Koenig <Christian.Koenig@amd.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Khalid Aziz <khalid.aziz@oracle.com>, enh <enh@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Kevin Brodsky <kevin.brodsky@arm.com>,
+        Szabolcs Nagy <Szabolcs.Nagy@arm.com>
+Subject: Re: [PATCH v18 11/15] IB/mlx4: untag user pointers in
+ mlx4_get_umem_mr
+Message-ID: <20190624174015.GL29120@arrakis.emea.arm.com>
+References: <cover.1561386715.git.andreyknvl@google.com>
+ <ea0ff94ef2b8af12ea6c222c5ebd970e0849b6dd.1561386715.git.andreyknvl@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ea0ff94ef2b8af12ea6c222c5ebd970e0849b6dd.1561386715.git.andreyknvl@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds DeviceTree Source for the i.MX6 UltraLite DART NAND/WIFI
+On Mon, Jun 24, 2019 at 04:32:56PM +0200, Andrey Konovalov wrote:
+> This patch is a part of a series that extends kernel ABI to allow to pass
+> tagged user pointers (with the top byte set to something else other than
+> 0x00) as syscall arguments.
+> 
+> mlx4_get_umem_mr() uses provided user pointers for vma lookups, which can
+> only by done with untagged pointers.
+> 
+> Untag user pointers in this function.
+> 
+> Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+> ---
+>  drivers/infiniband/hw/mlx4/mr.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
 
-Signed-off-by: Oliver Graute <oliver.graute@gmail.com>
----
- arch/arm/boot/dts/Makefile                      |   1 +
- arch/arm/boot/dts/imx6ul-var-6ulcustomboard.dts | 203 ++++++++++++++++++++++++
- 2 files changed, 204 insertions(+)
- create mode 100644 arch/arm/boot/dts/imx6ul-var-6ulcustomboard.dts
+Acked-by: Catalin Marinas <catalin.marinas@arm.com>
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index c4742af..5dc3fbf 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -577,6 +577,7 @@ dtb-$(CONFIG_SOC_IMX6UL) += \
- 	imx6ul-tx6ul-0010.dtb \
- 	imx6ul-tx6ul-0011.dtb \
- 	imx6ul-tx6ul-mainboard.dtb \
-+	imx6ul-var-6ulcustomboard.dtb \
- 	imx6ull-14x14-evk.dtb \
- 	imx6ull-colibri-eval-v3.dtb \
- 	imx6ull-colibri-wifi-eval-v3.dtb \
-diff --git a/arch/arm/boot/dts/imx6ul-var-6ulcustomboard.dts b/arch/arm/boot/dts/imx6ul-var-6ulcustomboard.dts
-new file mode 100644
-index 0000000..59354e6
---- /dev/null
-+++ b/arch/arm/boot/dts/imx6ul-var-6ulcustomboard.dts
-@@ -0,0 +1,203 @@
-+// SPDX-License-Identifier: (GPL-2.0)
-+/*
-+ * Support for Variscite DART-6UL Module
-+ *
-+ * Copyright (C) 2015 Freescale Semiconductor, Inc.
-+ * Copyright (C) 2015-2016 Variscite Ltd. - http://www.variscite.com
-+ * Copyright (C) 2018-2019 Oliver Graute <oliver.graute@gmail.com>
-+ */
-+
-+/dts-v1/;
-+
-+#include <dt-bindings/input/input.h>
-+#include "imx6ul-imx6ull-var-dart-common.dtsi"
-+
-+/ {
-+	model = "Variscite i.MX6 UltraLite Carrier-board";
-+	compatible = "fsl,6ulcustomboard", "fsl,imx6ul";
-+
-+	backlight {
-+		compatible = "pwm-backlight";
-+		pwms = <&pwm1 0 20000>;
-+		brightness-levels = <0 4 8 16 32 64 128 255>;
-+		default-brightness-level = <6>;
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+
-+		user {
-+			gpios = <&gpio1 0 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_BACK>;
-+			gpio-key,wakeup;
-+		};
-+	};
-+
-+	gpio-leds {
-+		compatible = "gpio-leds";
-+
-+		d16-led {
-+			gpios = <&gpio4 20 GPIO_ACTIVE_HIGH>;
-+			linux,default-trigger = "heartbeat";
-+		};
-+	};
-+
-+	sound {
-+		compatible = "simple-audio-card";
-+		simple-audio-card,name = "wm8731audio";
-+		simple-audio-card,widgets =
-+			"Headphone", "Headphone Jack",
-+			"Line", "Line Jack",
-+			"Microphone", "Mic Jack";
-+		simple-audio-card,routing =
-+			"Headphone Jack", "RHPOUT",
-+			"Headphone Jack", "LHPOUT",
-+			"LLINEIN", "Line Jack",
-+			"RLINEIN", "Line Jack",
-+			"MICIN", "Mic Bias",
-+			"Mic Bias", "Mic Jack";
-+		simple-audio-card,format = "i2s";
-+		simple-audio-card,bitclock-master = <&sound_master>;
-+		simple-audio-card,frame-master = <&sound_master>;
-+
-+		sound_master: simple-audio-card,cpu {
-+				sound-dai = <&sai2>;
-+		};
-+	};
-+};
-+
-+&can1 {
-+	status = "okay";
-+};
-+
-+&can2 {
-+	status = "okay";
-+};
-+
-+&gpc {
-+	fsl,cpu_pupscr_sw2iso = <0x2>;
-+	fsl,cpu_pupscr_sw = <0x1>;
-+	fsl,cpu_pdnscr_iso2sw = <0x1>;
-+	fsl,cpu_pdnscr_iso = <0x1>;
-+	fsl,ldo-bypass = <0>; /* DCDC, ldo-enable */
-+};
-+
-+&fec1 {
-+	phy-mode = "rgmii";
-+	phy-reset-gpios = <&gpio5 0 GPIO_ACTIVE_LOW>;
-+	phy-handle = <&ethphy0>;
-+	status = "okay";
-+};
-+
-+&fec2 {
-+	phy-mode = "rgmii";
-+	phy-reset-gpios = <&gpio1 10 GPIO_ACTIVE_LOW>;
-+	phy-handle = <&ethphy1>;
-+	status = "okay";
-+};
-+
-+&i2c1 {
-+	clock-frequency = <400000>;
-+	status = "okay";
-+};
-+
-+&i2c2 {
-+	clock_frequency = <100000>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_i2c2>;
-+	status = "okay";
-+
-+	wm8731: audio-codec@1a {
-+		#sound-dai-cells = <0>;
-+		compatible = "wlf,wm8731";
-+		reg = <0x1a>;
-+		clocks = <&clks IMX6UL_CLK_SAI2>;
-+		clock-names = "mclk";
-+	};
-+
-+	touchscreen@38 {
-+		compatible = "edt,edt-ft5x06";
-+		reg = <0x38>;
-+		interrupt-parent = <&gpio3>;
-+		interrupts = <4 0>;
-+		touchscreen-size-x = <800>;
-+		touchscreen-size-y = <480>;
-+		touchscreen-inverted-x;
-+		touchscreen-inverted-y;
-+	};
-+
-+	rtc@68 {
-+		compatible = "dallas,ds1337";
-+		reg = <0x68>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_rtc>;
-+		interrupt-parent = <&gpio5>;
-+		interrupts = <7 IRQ_TYPE_EDGE_FALLING>;
-+	};
-+};
-+
-+&lcdif {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_lcdif_dat
-+		     &pinctrl_lcdif_ctrl>;
-+	display = <&display0>;
-+	status = "okay";
-+
-+	display0: display0 {
-+		bits-per-pixel = <16>;
-+		bus-width = <24>;
-+
-+		display-timings {
-+			native-mode = <&timing0>;
-+			timing0: timing0 {
-+				clock-frequency =<35000000>;
-+				hactive = <800>;
-+				vactive = <480>;
-+				hfront-porch = <40>;
-+				hback-porch = <40>;
-+				hsync-len = <48>;
-+				vback-porch = <29>;
-+				vfront-porch = <13>;
-+				vsync-len = <3>;
-+				hsync-active = <0>;
-+				vsync-active = <0>;
-+				de-active = <1>;
-+				pixelclk-active = <0>;
-+			};
-+		};
-+	};
-+};
-+
-+&pwm1 {
-+	status = "okay";
-+};
-+
-+&uart1 {
-+	status = "okay";
-+};
-+
-+&uart2 {
-+	status = "okay";
-+};
-+
-+&uart3 {
-+	status = "okay";
-+};
-+
-+&usbotg1 {
-+	dr_mode = "host";
-+	status = "okay";
-+};
-+
-+&usbotg2 {
-+	dr_mode = "host";
-+	status = "okay";
-+};
-+
-+&iomuxc {
-+	pinctrl_rtc: rtcgrp {
-+		fsl,pins = <
-+			MX6UL_PAD_SNVS_TAMPER7__GPIO5_IO07	0x1b0b0
-+		>;
-+	};
-+};
+This patch also needs an ack from the infiniband maintainers (Jason).
+
 -- 
-2.7.4
-
+Catalin
