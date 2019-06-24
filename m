@@ -2,272 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 964FF50967
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 13:06:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 268B850969
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 13:06:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729136AbfFXLGA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 07:06:00 -0400
-Received: from mail-qk1-f201.google.com ([209.85.222.201]:46382 "EHLO
-        mail-qk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727732AbfFXLGA (ORCPT
+        id S1729556AbfFXLGt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 07:06:49 -0400
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:39829 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727732AbfFXLGt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 07:06:00 -0400
-Received: by mail-qk1-f201.google.com with SMTP id 18so15760910qkl.13
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 04:05:59 -0700 (PDT)
+        Mon, 24 Jun 2019 07:06:49 -0400
+Received: by mail-ua1-f67.google.com with SMTP id j8so5505357uan.6
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 04:06:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=PHd5TU1tSErJuln8CLwgi6IjxpHufjIY0VZFaXkHGNk=;
-        b=vosRPmYOoKEVRZZMh5n78maBJpGu9JU/xpF6TD3FlIpepWnIPkIDSseYdS/kli9c23
-         En9IpdwouPvux+1HD/GtnHn7igk+wht09bMoFi38Fhk1GIyCePRSO09mvSYfIymVD0px
-         lHIi558uyfcZIkRjsy4NiWcehmrN9cfFF1+IP/yEA4gbnw4S8rAYxTN2dufQdWS4+P8l
-         uCCQIqe0HQa1cCK9pnMMWmOlhAZ7uQcMBXA7GWVQUITkc71GUeJprSIEW4sS7Z2dnDk3
-         Qw7KiZFFuR9bquQZBhJMbB7FrA9VsuY8rrNpWoYcqhryopYvpFLFmA9a+2OU9yAPvTUq
-         4Pag==
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=fkp1r1unOso/XbfS/SeH8Y7cLqPAxOPVwBOoi7qrCvg=;
+        b=BjsvYPdZBVwueF6a9ZqcaW6SGSoa6qO4pmfggrzhX5pI531Q6QaQfEPOCBt6Y+/F4F
+         kKaNuHUQV3GJvP5YsBLkeVe19upwMhcuw+oBFRbYoJhdRaY+jpjF7hLYbFlqLS0NhjEM
+         KMMCPVIPmJ6f5mXMQNi6hqex7rdUX+r2LTX7Z1WvhLQ4Zl9szKOyLLFqP8br1WbM2LBE
+         DcTz/Uhu2n0nj4K4OtA6+E4gdYEnc/7yqN7elv9RiGxMhLkO91Fo40igsYzpxg6El0jX
+         1pMJYHjRYl9N23K2iPD2yYHPvJj/tfx0CY7i4on6KuGWCduskDFFUfE7Mho4Sctg1lKi
+         Ldcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=PHd5TU1tSErJuln8CLwgi6IjxpHufjIY0VZFaXkHGNk=;
-        b=rJCQhqEX2fN1UmmTDE+CErGUqOQNDVPAZIszd6NvsDTbIAW+RUx0hKx1aewAH8kymK
-         XHqh1aaG0/YWjibluV3hPRaPTvNmnsO9IOThgxY6aMTlnRYuwKf9hgP0JF58a2bj0qu0
-         OUrGGD/vwQsjiHl3oKDtKGEQ+R25C7O6XBN/fingIKyWGwMjCHpl2dI13QXe3AWMJ+tG
-         36KyxJF5CnGSrqpazJ6V+MFjta/L4gcE3dSZu1T8gzlW8BpS8MHgoKmkFfkPUk9sb05s
-         BmMBZSF6p0V44ddcxzbYvfCRCV0rJm152Q5BAxAqNurKEt0PGtt7rsqDqRKMHCzGhSoK
-         Dt1w==
-X-Gm-Message-State: APjAAAXs5eAUlVl0xtVmlkTADq2wi63T2N1wE9An7Wj33i4n0i6Ntpog
-        2fhlvG5e0cQAfeqRyy0pljD+cIRUkg==
-X-Google-Smtp-Source: APXvYqzed8xxggaQRg/+ic0BLsdTYDC0epTsxdulJgxPeeCwXFWeEbWlaqpgELg0b+3ya6R95iIR3lAqAQ==
-X-Received: by 2002:a37:805:: with SMTP id 5mr15123706qki.385.1561374359272;
- Mon, 24 Jun 2019 04:05:59 -0700 (PDT)
-Date:   Mon, 24 Jun 2019 13:05:32 +0200
-Message-Id: <20190624110532.41065-1-elver@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
-Subject: [PATCH] mm/kasan: Add shadow memory validation in ksize()
-From:   Marco Elver <elver@google.com>
-To:     aryabinin@virtuozzo.com, dvyukov@google.com, glider@google.com,
-        andreyknvl@google.com
-Cc:     linux-kernel@vger.kernel.org, Marco Elver <elver@google.com>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        kasan-dev@googlegroups.com, linux-mm@kvack.org
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=fkp1r1unOso/XbfS/SeH8Y7cLqPAxOPVwBOoi7qrCvg=;
+        b=rb7jajgl77TIPePV8uouIGeJloEcoW3K0KQH21aIsAQFvPd8EntVW+ytnOchl9V0B9
+         vgvDgS5TrvNbApAOMTnnnMU51AuI1LVa/uWZ1ol7a99vwXGTm/ua6fTxIwMg+onpxMaO
+         hN6M/qws+OWYQrtM4m8z6V4Ph1seAOPyurJTL4y99l2SDh5BdcD71kV5+VJS7/HQpjwQ
+         63IeKdw2WDnrYWrTygMZQ4vDmgpJA0KRZd32IBt2bZXK4ybW7ut4lne//9Hc0nwXftRZ
+         KfLeFbnjt99BcDf0zKWjQCD8mdvvnuDa+NsRU8WIj7WqFrX49limg1N8Voc6y8Q6ureI
+         E05A==
+X-Gm-Message-State: APjAAAUXbHfpH5o0GRMZF4XYF7bFDtcKbwwQHZbP+cyq49wy2vASlyZn
+        7InXpZ9OqYWdu4NagIeh+4KICqlUoXhMogTt9+A=
+X-Google-Smtp-Source: APXvYqz6cMPinF+p+p0bi5rIXGX8J3H4kvHhv/u0vCXRVg67Q6XDld8IQT+f+i3Vt1M+CTaP9w5pjdNiVir41irCPiM=
+X-Received: by 2002:ab0:a1:: with SMTP id 30mr29642305uaj.29.1561374408478;
+ Mon, 24 Jun 2019 04:06:48 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a67:ea43:0:0:0:0:0 with HTTP; Mon, 24 Jun 2019 04:06:48
+ -0700 (PDT)
+Reply-To: eddywilliam0003@gmail.com
+From:   eddy william <missdonnahistory@gmail.com>
+Date:   Mon, 24 Jun 2019 13:06:48 +0200
+Message-ID: <CACROPfEG2vGYruj2O-_T-KvL0HmyMmqs5L8UOPUiW3j=-n7qhw@mail.gmail.com>
+Subject: hello
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ksize() has been unconditionally unpoisoning the whole shadow memory region
-associated with an allocation. This can lead to various undetected bugs,
-for example, double-kzfree().
+Mijn naam is Eddy William. Ik ben van beroep advocaat. Ik wil je aanbieden
+nabestaanden van mijn cli=C3=ABnt. Je ervaart de som van ($ 14,2 miljoen)
+dollars die mijn cli=C3=ABnt voor zijn overlijden op de bank heeft achterge=
+laten.
 
-kzfree() uses ksize() to determine the actual allocation size, and
-subsequently zeroes the memory. Since ksize() used to just unpoison the
-whole shadow memory region, no invalid free was detected.
+Mijn klant is een burger van jouw land die stierf in auto-ongeluk met zijn =
+vrouw
+en alleen zoon. Ik krijg 50% van het totale fonds en 50% wel
+voor jou zijn.
 
-This patch addresses this as follows:
+Neem hier voor meer informatie contact op met mijn priv=C3=A9mail:
+eddywilliam0003@gmail.com
 
-1. For each SLAB and SLUB allocators: add a check in ksize() that the
-   pointed to object's shadow memory is valid, and only then unpoison
-   the memory region.
+Bij voorbaat hartelijk dank,
+Eddy William,
 
-2. Update kasan_unpoison_slab() to explicitly unpoison the shadow memory
-   region using the size obtained from ksize(); it is possible that
-   double-unpoison can occur if the shadow was already valid, however,
-   this should not be the general case.
 
-Tested:
-1. With SLAB allocator: a) normal boot without warnings; b) verified the
-   added double-kzfree() is detected.
-2. With SLUB allocator: a) normal boot without warnings; b) verified the
-   added double-kzfree() is detected.
 
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=199359
-Signed-off-by: Marco Elver <elver@google.com>
-Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: Alexander Potapenko <glider@google.com>
-Cc: Andrey Konovalov <andreyknvl@google.com>
-Cc: Christoph Lameter <cl@linux.com>
-Cc: Pekka Enberg <penberg@kernel.org>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: kasan-dev@googlegroups.com
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org
----
- include/linux/kasan.h | 20 +++++++++++++++++++-
- lib/test_kasan.c      | 17 +++++++++++++++++
- mm/kasan/common.c     | 15 ++++++++++++---
- mm/slab.c             | 12 ++++++++----
- mm/slub.c             | 11 +++++++----
- 5 files changed, 63 insertions(+), 12 deletions(-)
+Hello
 
-diff --git a/include/linux/kasan.h b/include/linux/kasan.h
-index b40ea104dd36..9778a68fb5cf 100644
---- a/include/linux/kasan.h
-+++ b/include/linux/kasan.h
-@@ -63,6 +63,14 @@ void * __must_check kasan_krealloc(const void *object, size_t new_size,
- 
- void * __must_check kasan_slab_alloc(struct kmem_cache *s, void *object,
- 					gfp_t flags);
-+
-+/**
-+ * kasan_shadow_invalid - Check if shadow memory of object is invalid.
-+ * @object: The pointed to object; the object pointer may be tagged.
-+ * @return: true if shadow is invalid, false if valid.
-+ */
-+bool kasan_shadow_invalid(const void *object);
-+
- bool kasan_slab_free(struct kmem_cache *s, void *object, unsigned long ip);
- 
- struct kasan_cache {
-@@ -77,7 +85,11 @@ int kasan_add_zero_shadow(void *start, unsigned long size);
- void kasan_remove_zero_shadow(void *start, unsigned long size);
- 
- size_t ksize(const void *);
--static inline void kasan_unpoison_slab(const void *ptr) { ksize(ptr); }
-+static inline void kasan_unpoison_slab(const void *ptr)
-+{
-+	/* Force unpoison: ksize() only unpoisons if shadow of ptr is valid. */
-+	kasan_unpoison_shadow(ptr, ksize(ptr));
-+}
- size_t kasan_metadata_size(struct kmem_cache *cache);
- 
- bool kasan_save_enable_multi_shot(void);
-@@ -133,6 +145,12 @@ static inline void *kasan_slab_alloc(struct kmem_cache *s, void *object,
- {
- 	return object;
- }
-+
-+static inline bool kasan_shadow_invalid(const void *object)
-+{
-+	return false;
-+}
-+
- static inline bool kasan_slab_free(struct kmem_cache *s, void *object,
- 				   unsigned long ip)
- {
-diff --git a/lib/test_kasan.c b/lib/test_kasan.c
-index 7de2702621dc..9b710bfa84da 100644
---- a/lib/test_kasan.c
-+++ b/lib/test_kasan.c
-@@ -623,6 +623,22 @@ static noinline void __init kasan_strings(void)
- 	strnlen(ptr, 1);
- }
- 
-+static noinline void __init kmalloc_pagealloc_double_kzfree(void)
-+{
-+	char *ptr;
-+	size_t size = 16;
-+
-+	pr_info("kmalloc pagealloc allocation: double-free (kzfree)\n");
-+	ptr = kmalloc(size, GFP_KERNEL);
-+	if (!ptr) {
-+		pr_err("Allocation failed\n");
-+		return;
-+	}
-+
-+	kzfree(ptr);
-+	kzfree(ptr);
-+}
-+
- static int __init kmalloc_tests_init(void)
- {
- 	/*
-@@ -664,6 +680,7 @@ static int __init kmalloc_tests_init(void)
- 	kasan_memchr();
- 	kasan_memcmp();
- 	kasan_strings();
-+	kmalloc_pagealloc_double_kzfree();
- 
- 	kasan_restore_multi_shot(multishot);
- 
-diff --git a/mm/kasan/common.c b/mm/kasan/common.c
-index 242fdc01aaa9..357e02e73163 100644
---- a/mm/kasan/common.c
-+++ b/mm/kasan/common.c
-@@ -413,10 +413,20 @@ static inline bool shadow_invalid(u8 tag, s8 shadow_byte)
- 		return tag != (u8)shadow_byte;
- }
- 
-+bool kasan_shadow_invalid(const void *object)
-+{
-+	u8 tag = get_tag(object);
-+	s8 shadow_byte;
-+
-+	object = reset_tag(object);
-+
-+	shadow_byte = READ_ONCE(*(s8 *)kasan_mem_to_shadow(object));
-+	return shadow_invalid(tag, shadow_byte);
-+}
-+
- static bool __kasan_slab_free(struct kmem_cache *cache, void *object,
- 			      unsigned long ip, bool quarantine)
- {
--	s8 shadow_byte;
- 	u8 tag;
- 	void *tagged_object;
- 	unsigned long rounded_up_size;
-@@ -435,8 +445,7 @@ static bool __kasan_slab_free(struct kmem_cache *cache, void *object,
- 	if (unlikely(cache->flags & SLAB_TYPESAFE_BY_RCU))
- 		return false;
- 
--	shadow_byte = READ_ONCE(*(s8 *)kasan_mem_to_shadow(object));
--	if (shadow_invalid(tag, shadow_byte)) {
-+	if (kasan_shadow_invalid(tagged_object)) {
- 		kasan_report_invalid_free(tagged_object, ip);
- 		return true;
- 	}
-diff --git a/mm/slab.c b/mm/slab.c
-index f7117ad9b3a3..3595348c401b 100644
---- a/mm/slab.c
-+++ b/mm/slab.c
-@@ -4226,10 +4226,14 @@ size_t ksize(const void *objp)
- 		return 0;
- 
- 	size = virt_to_cache(objp)->object_size;
--	/* We assume that ksize callers could use the whole allocated area,
--	 * so we need to unpoison this area.
--	 */
--	kasan_unpoison_shadow(objp, size);
-+
-+	if (!kasan_shadow_invalid(objp)) {
-+		/*
-+		 * We assume that ksize callers could use the whole allocated
-+		 * area, so we need to unpoison this area.
-+		 */
-+		kasan_unpoison_shadow(objp, size);
-+	}
- 
- 	return size;
- }
-diff --git a/mm/slub.c b/mm/slub.c
-index cd04dbd2b5d0..28231d30358e 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -3921,10 +3921,13 @@ static size_t __ksize(const void *object)
- size_t ksize(const void *object)
- {
- 	size_t size = __ksize(object);
--	/* We assume that ksize callers could use whole allocated area,
--	 * so we need to unpoison this area.
--	 */
--	kasan_unpoison_shadow(object, size);
-+	if (!kasan_shadow_invalid(object)) {
-+		/*
-+		 * We assume that ksize callers could use whole allocated area,
-+		 * so we need to unpoison this area.
-+		 */
-+		kasan_unpoison_shadow(object, size);
-+	}
- 	return size;
- }
- EXPORT_SYMBOL(ksize);
--- 
-2.22.0.410.gd8fdbe21b5-goog
+My name is Eddy William I am a lawyer by profession. I wish to offer you
+the next of kin to my client. You will inherit the sum of ($14.2 Million)
+dollars my client left in the bank before his death.
 
+My client is a citizen of your country who died in auto crash with his wife
+and only son. I will be entitled with 50% of the total fund while 50% will
+be for you.
+
+Please contact my private email here for more details:eddywilliam0003@gmail=
+.com
+
+Many thanks in advance,
+Mr.Eddy William,
