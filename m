@@ -2,79 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C2864FEB6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 03:52:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52BA24FECE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 03:57:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726690AbfFXBwj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 21:52:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36822 "EHLO mail.kernel.org"
+        id S1726768AbfFXB5j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 21:57:39 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:49529 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726682AbfFXBw0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 21:52:26 -0400
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726416AbfFXB50 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Jun 2019 21:57:26 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0D36622DCB
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 01:15:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561338947;
-        bh=oPpq+YScZrWevywmu9N3ag0Ky3wXqEPlzcFQAwc4wac=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=ZObr9Sve1fr7WfDRdAZ7O7pKw2lzSEd1p3K7pVFn8jwfqek+njnBSfU1sbxow578F
-         F3L2CcAeHPt3k4hmVjYWNM5uRXjlXxrtSgeEisWCC9Uq4HZjuqASVM4UZsrVcxDLnl
-         t5ja0wCLA+XZotal4ksNMp9wwleOlxtVrJ5K1QKc=
-Received: by mail-wm1-f50.google.com with SMTP id s15so11564418wmj.3
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2019 18:15:46 -0700 (PDT)
-X-Gm-Message-State: APjAAAVj1pNGQmqAAW3QUOyzp4cttNabcKq7Iu0729lxScDzAQtTUR6p
-        TNTQMV3fu3wu5HCQw7YwR/6m+lNZ8U8NnlRQup86eQ==
-X-Google-Smtp-Source: APXvYqxXfZO9JbIsNZmRpKd7ahekmHh/DeHYGI38xrq+mQInt0q9I7titye+BRFoBLBaUaVpBy9Q+nBinA9a1jW5Vj4=
-X-Received: by 2002:a7b:c450:: with SMTP id l16mr13710054wmi.0.1561338945460;
- Sun, 23 Jun 2019 18:15:45 -0700 (PDT)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45XBHj4b2fz9sNk;
+        Mon, 24 Jun 2019 11:18:09 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1561339090;
+        bh=dKWqYqiQ43IXw7uRXmq4Og/WGeJ5CqQGoMCUg/cqTzk=;
+        h=Date:From:To:Cc:Subject:From;
+        b=Rzd7Wwh19ca62JJVEBtyosh+5VJdbMPGBaNzrPw6xvfiYJEzWIX/8ZJ9YFZklw7/Y
+         TF8/wATgqdjembLEeIxeLGOx67VKRUGrgh9CJt2FAdU+2aHeCt5n22ZmQcmNf4AF/D
+         WE5/kOo/k24Rt+zuNzubWnx30lVJpcQh5EgaeyupbO295rRLdsvp3uHGuARWmRHx9Y
+         hx5QBHgWwcEXxu1AehzCfu0t4Jqfq6yp3zDNynMmul8/NsJqqJYjXEs1vhxXwTZS4+
+         qvCVGqKp93DFvDsvkTu81F/4HK13EZvMSHbPGC1rHZVVkrhw0Gc6DiFNk2p5yOPxfl
+         IRrf7Tvl5mQzA==
+Date:   Mon, 24 Jun 2019 11:18:08 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: linux-next: manual merge of the hwmon-staging tree with Linus' tree
+Message-ID: <20190624111808.59e2258f@canb.auug.org.au>
 MIME-Version: 1.0
-References: <20190621095252.32307-1-vincenzo.frascino@arm.com> <alpine.DEB.2.21.1906240142000.32342@nanos.tec.linutronix.de>
-In-Reply-To: <alpine.DEB.2.21.1906240142000.32342@nanos.tec.linutronix.de>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Sun, 23 Jun 2019 18:15:32 -0700
-X-Gmail-Original-Message-ID: <CALCETrV-suRS5=JqDjbouXciN_OPsguERjux7fQVFOKGmdrspA@mail.gmail.com>
-Message-ID: <CALCETrV-suRS5=JqDjbouXciN_OPsguERjux7fQVFOKGmdrspA@mail.gmail.com>
-Subject: Re: [PATCH v7 00/25] Unify vDSOs across more architectures
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LAK <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-mips@vger.kernel.org,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Mark Salyzyn <salyzyn@android.com>,
-        Peter Collingbourne <pcc@google.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Huw Davies <huw@codeweavers.com>,
-        Shijith Thotton <sthotton@marvell.com>,
-        Andre Przywara <andre.przywara@arm.com>,
-        Dmitry Safonov <dima@arista.com>,
-        Andrei Vagin <avagin@openvz.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Michael Kelley <mikelley@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/l1Uao6wQiQSV=qS6.2pFurn"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jun 23, 2019 at 5:34 PM Thomas Gleixner <tglx@linutronix.de> wrote:
-> +GENERIC VDSO LIBRARY:
-> +M:     Andy Lutomirksy <luto@kernel.org>
+--Sig_/l1Uao6wQiQSV=qS6.2pFurn
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Lutomirski, perhaps?  Although I do appreciate the opportunity to say
-"not me!" :)
+Hi all,
+
+Today's linux-next merge of the hwmon-staging tree got a conflict in:
+
+  drivers/hwmon/iio_hwmon.c
+
+between commit:
+
+  d2912cb15bdd ("treewide: Replace GPLv2 boilerplate/reference with SPDX - =
+rule 500")
+
+from Linus' tree and commit:
+
+  2119f92b6b66 ("hwmon: Convert remaining drivers to use SPDX identifier")
+
+from the hwmon-staging tree.
+
+I fixed it up (Ijust used the version from Linus' tree - GPL-2.0-only
+v. GPL-2.0) and can carry the fix as necessary. This is now fixed as
+far as linux-next is concerned, but any non trivial conflicts should be
+mentioned to your upstream maintainer when your tree is submitted for
+merging.  You may also want to consider cooperating with the maintainer
+of the conflicting tree to minimise any particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/l1Uao6wQiQSV=qS6.2pFurn
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0QJNAACgkQAVBC80lX
+0GxtAQf9El3MCE4vFEdNgOiwDr0LAQ+Ue43nuaPDBbL+8RKW2Qj25n8tEqa9tDcy
+FUoqhe0Z2EwQJEVTUAA+ON/5ynS9d9mC9EJQhZHTkppjQ686EsaNPyc6IR9weOwu
+PUU4TpH2fx58s9UFC9WIB7QNyJFMIBCiz0jdJmjoH+pjiDIqb5ei5ycFe6yCG1UJ
+KVQ9pf1ZY2eUGYPLgJBdbcfhepCoeCkn3USJ1liArOp/XF1B559WedAQjKSXK+Tj
+D6yoo7yl4DhdSJtS/3sH0CEZERpgQBVxZVkvHa4LBux8rb18RmKQM+NrabX5kcfg
+2Ak8Te7Gm+xU6Z6yXEWzrUqDDKi0Dg==
+=5snR
+-----END PGP SIGNATURE-----
+
+--Sig_/l1Uao6wQiQSV=qS6.2pFurn--
