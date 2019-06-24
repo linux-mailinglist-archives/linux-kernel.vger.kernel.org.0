@@ -2,149 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D92B4FF03
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 04:05:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A5CFF4FEB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 03:52:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726875AbfFXCFB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 22:05:01 -0400
-Received: from mga07.intel.com ([134.134.136.100]:38790 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726647AbfFXCFA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 22:05:00 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jun 2019 17:59:30 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,410,1557212400"; 
-   d="scan'208";a="163444402"
-Received: from shao2-debian.sh.intel.com (HELO [10.239.13.6]) ([10.239.13.6])
-  by orsmga003.jf.intel.com with ESMTP; 23 Jun 2019 17:59:28 -0700
-Subject: Re: [selftests/bpf] 69d96519db:
- kernel_selftests.bpf.test_socket_cookie.fail
-To:     Stanislav Fomichev <sdf@fomichev.me>,
-        Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc:     Stanislav Fomichev <sdf@google.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin Lau <kafai@fb.com>, LKML <linux-kernel@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        bpf <bpf@vger.kernel.org>, lkp@01.org
-References: <20190621084040.GU7221@shao2-debian>
- <20190621161039.GF1383@mini-arch>
- <CAEf4Bzaajc27=YyMaOa8UFRz=xE7y6E+qLbPBPbvLADO2peXQg@mail.gmail.com>
- <20190621222745.GH1383@mini-arch>
-From:   Rong Chen <rong.a.chen@intel.com>
-Message-ID: <f3aa0dc2-c959-1166-8b09-84781363f0e0@intel.com>
-Date:   Mon, 24 Jun 2019 08:59:37 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1726587AbfFXBwM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 21:52:12 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:19061 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726304AbfFXBwM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Jun 2019 21:52:12 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 5CCA224ABF6BFC940E38;
+        Mon, 24 Jun 2019 09:06:42 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 24 Jun
+ 2019 09:06:38 +0800
+Subject: Re: [f2fs-dev] [PATCH v3] f2fs: add a rw_sem to cover quota flag
+ changes
+To:     Jaegeuk Kim <jaegeuk@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>
+References: <20190530033115.16853-1-jaegeuk@kernel.org>
+ <20190530175714.GB28719@jaegeuk-macbookpro.roam.corp.google.com>
+ <20190604183619.GA8507@jaegeuk-macbookpro.roam.corp.google.com>
+ <2afe0416-fe2d-8ba8-7625-0246aca9eba6@huawei.com>
+ <20190614024655.GA18113@jaegeuk-macbookpro.roam.corp.google.com>
+ <6f70ae56-45eb-666d-ae55-48eb0cc96f32@huawei.com>
+ <20190619172651.GB57884@jaegeuk-macbookpro.roam.corp.google.com>
+ <ba6555c9-b864-d0cc-1c65-4077e7f15175@huawei.com>
+ <20190621173807.GB79502@jaegeuk-macbookpro.roam.corp.google.com>
+ <20190621175135.GC79502@jaegeuk-macbookpro.roam.corp.google.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <8c1eb98f-6d32-7ceb-5ae5-ba0234d38f78@huawei.com>
+Date:   Mon, 24 Jun 2019 09:06:38 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20190621222745.GH1383@mini-arch>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20190621175135.GC79502@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Type: text/plain; charset="windows-1252"
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/22/19 6:27 AM, Stanislav Fomichev wrote:
-> On 06/21, Andrii Nakryiko wrote:
->> )
+On 2019/6/22 1:51, Jaegeuk Kim wrote:
+> On 06/21, Jaegeuk Kim wrote:
+>> On 06/20, Chao Yu wrote:
+>>> On 2019/6/20 1:26, Jaegeuk Kim wrote:
+>>>> On 06/18, Chao Yu wrote:
+>>>>> On 2019/6/14 10:46, Jaegeuk Kim wrote:
+>>>>>> On 06/11, Chao Yu wrote:
+>>>>>>> On 2019/6/5 2:36, Jaegeuk Kim wrote:
+>>>>>>>> Two paths to update quota and f2fs_lock_op:
+>>>>>>>>
+>>>>>>>> 1.
+>>>>>>>>  - lock_op
+>>>>>>>>  |  - quota_update
+>>>>>>>>  `- unlock_op
+>>>>>>>>
+>>>>>>>> 2.
+>>>>>>>>  - quota_update
+>>>>>>>>  - lock_op
+>>>>>>>>  `- unlock_op
+>>>>>>>>
+>>>>>>>> But, we need to make a transaction on quota_update + lock_op in #2 case.
+>>>>>>>> So, this patch introduces:
+>>>>>>>> 1. lock_op
+>>>>>>>> 2. down_write
+>>>>>>>> 3. check __need_flush
+>>>>>>>> 4. up_write
+>>>>>>>> 5. if there is dirty quota entries, flush them
+>>>>>>>> 6. otherwise, good to go
+>>>>>>>>
+>>>>>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>>>>>>>> ---
+>>>>>>>>
+>>>>>>>> v3 from v2:
+>>>>>>>>  - refactor to fix quota corruption issue
+>>>>>>>>   : it seems that the previous scenario is not real and no deadlock case was
+>>>>>>>>     encountered.
+>>>>>>>
+>>>>>>> - f2fs_dquot_commit
+>>>>>>>  - down_read(&sbi->quota_sem)
+>>>>>>> 					- block_operation
+>>>>>>> 					 - f2fs_lock_all
+>>>>>>> 					  - need_flush_quota
+>>>>>>> 					   - down_write(&sbi->quota_sem)
+>>>>>>>   - f2fs_quota_write
+>>>>>>>    - f2fs_lock_op
+>>>>>>>
+>>>>>>> Why can't this happen?
+>>>>>>>
+>>>>>>> Once more question, should we hold quota_sem during checkpoint to avoid further
+>>>>>>> quota update? f2fs_lock_op can do this job as well?
+>>>>>>
+>>>>>> I couldn't find write_dquot() call to make this happen, and f2fs_lock_op was not
+>>>>>
+>>>>> - f2fs_dquot_commit
+>>>>>  - dquot_commit
+>>>>>   ->commit_dqblk (v2_write_dquot)
+>>>>>    - qtree_write_dquot
+>>>>>     ->quota_write (f2fs_quota_write)
+>>>>>      - f2fs_lock_op
+>>>>>
+>>>>> Do you mean there is no such way that calling f2fs_lock_op() from
+>>>>> f2fs_quota_write()? So that deadlock condition is not existing?
+>>>>
+>>>> I mean write_dquot->f2fs_dquot_commit and block_operation seems not racing
+>>>> together.
+>>>
+>>> quota ioctl has the path calling write_dquot->f2fs_dquot_commit as below, which
+>>> can race with checkpoint().
+>>>
+>>> - do_quotactl
+>>>  - sb->s_qcop->quota_sync (f2fs_quota_sync)
+>>>   - down_read(&sbi->quota_sem);      ----  First
+>>>    - dquot_writeback_dquots
+>>>     - sb->dq_op->write_dquot (f2fs_dquot_commit)
+>>> 							- block_operation can race here
+>>>      - down_read(&sbi->quota_sem);   ----  Second
 >>
->> On Fri, Jun 21, 2019 at 9:11 AM Stanislav Fomichev <sdf@fomichev.me> wrote:
->>> On 06/21, kernel test robot wrote:
->>>> FYI, we noticed the following commit (built with gcc-7):
->>>>
->>>> commit: 69d96519dbf0bfa1868dc8597d4b9b2cdeb009d7 ("selftests/bpf: convert socket_cookie test to sk storage")
->>>> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
->>>>
->>>> in testcase: kernel_selftests
->>>> with following parameters:
->>>>
->>>>        group: kselftests-00
->>>>
->>>> test-description: The kernel contains a set of "self tests" under the tools/testing/selftests/ directory. These are intended to be small unit tests to exercise individual code paths in the kernel.
->>>> test-url: https://www.kernel.org/doc/Documentation/kselftest.txt
->>>>
->>>>
->>>> on test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 4G
->>>>
->>>> caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
->>>>
->>>>
->>>> If you fix the issue, kindly add following tag
->>>> Reported-by: kernel test robot <rong.a.chen@intel.com>
->>>>
->>>> # selftests: bpf: test_socket_cookie
->>>> # libbpf: failed to create map (name: 'socket_cookies'): Invalid
->>>> # argument
->>> Another case of old clang trying to create a map that depends on BTF?
->>> Should we maybe switch those BTF checks in the kernel to return
->>> EOPNOTSUPP to make it easy to diagnose?
->> For older compilers that don't generate DATASEC/VAR, you'll see a clear message:
->>
->> libbpf: DATASEC '.maps' not found.
->>
->> So this must be something else. I just confirmed with clang version
->> 7.0.20180201 that for ./test_socket_cookie that's the first line
->> that's emitted on failure.
-> Thanks for checking, I also took a look at the attached kernel_selftests.xz,
-> here is what it has:
-> 2019-06-21 11:58:35 ln -sf /usr/bin/clang-6.0 /usr/bin/clang
-> 2019-06-21 11:58:35 ln -sf /usr/bin/llc-6.0 /usr/bin/llc
-> ...
-> # BTF libbpf test[1] (test_btf_haskv.o): SKIP. No ELF .BTF found
-> # BTF libbpf test[2] (test_btf_nokv.o): SKIP. No ELF .BTF found
-> ...
-> # Test case #0 (btf_dump_test_case_syntax): test_btf_dump_case:71:FAIL
-> # failed to load test BTF: -2
-> # Test case #1 (btf_dump_test_case_ordering): test_btf_dump_case:71:FAIL
-> # failed to load test BTF: -2
-> ...
->
-> And so on. So there is clearly an old clang that doesn't emit any
-> BTF. And I also don't see your recent abd29c931459 before 69d96519dbf0 in
-> linux-next, that's why it doesn't complain about missing/corrupt BTF.
->
-> We need to convince lkp people to upgrade clang, otherwise, I suppose,
-> we'll get more of these reportings after your recent df0b77925982 :-(
+>> Adding f2fs_lock_op() in f2fs_quota_sync() should be fine?
+> 
+> Something like this?
 
-Thanks for the clarification, we'll upgrade clang asap.
+I'm okay with this diff. :)
 
-Best Regards,
-Rong Chen
+Thanks,
 
-
->
->>>> # libbpf: failed to load object './socket_cookie_prog.o'
->>>> # (test_socket_cookie.c:149: errno: Invalid argument) Failed to load
->>>> # ./socket_cookie_prog.o
->>>> # FAILED
->>>> not ok 15 selftests: bpf: test_socket_cookie
->>>>
->>>>
->>>>
->>>>
->>>> To reproduce:
->>>>
->>>>          # build kernel
->>>>        cd linux
->>>>        cp config-5.2.0-rc2-00598-g69d9651 .config
->>>>        make HOSTCC=gcc-7 CC=gcc-7 ARCH=x86_64 olddefconfig
->>>>        make HOSTCC=gcc-7 CC=gcc-7 ARCH=x86_64 prepare
->>>>        make HOSTCC=gcc-7 CC=gcc-7 ARCH=x86_64 modules_prepare
->>>>        make HOSTCC=gcc-7 CC=gcc-7 ARCH=x86_64 SHELL=/bin/bash
->>>>        make HOSTCC=gcc-7 CC=gcc-7 ARCH=x86_64 bzImage
->>>>
->>>>
->>>>          git clone https://github.com/intel/lkp-tests.git
->>>>          cd lkp-tests
->>>>          bin/lkp qemu -k <bzImage> job-script # job-script is attached in this email
->>>>
->>>>
->>>>
->>>> Thanks,
->>>> Rong Chen
->>>>
->> <mega snip>
+> 
+> ---
+>  fs/f2fs/super.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index 7f2829b1192e..1d33ca1a8c09 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -1919,6 +1919,17 @@ int f2fs_quota_sync(struct super_block *sb, int type)
+>  	int cnt;
+>  	int ret;
+>  
+> +	/*
+> +	 * do_quotactl
+> +	 *  f2fs_quota_sync
+> +	 *  down_read(quota_sem)
+> +	 *  dquot_writeback_dquots()
+> +	 *  f2fs_dquot_commit
+> +	 *                            block_operation
+> +	 *                            down_read(quota_sem)
+> +	 */
+> +	f2fs_lock_op(sbi);
+> +
+>  	down_read(&sbi->quota_sem);
+>  	ret = dquot_writeback_dquots(sb, type);
+>  	if (ret)
+> @@ -1958,6 +1969,7 @@ int f2fs_quota_sync(struct super_block *sb, int type)
+>  	if (ret)
+>  		set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
+>  	up_read(&sbi->quota_sem);
+> +	f2fs_unlock_op(sbi);
+>  	return ret;
+>  }
+>  
+> 
