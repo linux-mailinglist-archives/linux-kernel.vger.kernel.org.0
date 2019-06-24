@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51E7450695
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:01:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 188F450743
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:06:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729244AbfFXJ7k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 05:59:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58834 "EHLO mail.kernel.org"
+        id S1730029AbfFXKGF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 06:06:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38112 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728691AbfFXJ7i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 05:59:38 -0400
+        id S1729403AbfFXKGB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 06:06:01 -0400
 Received: from localhost (f4.8f.5177.ip4.static.sl-reverse.com [119.81.143.244])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 787E5214C6;
-        Mon, 24 Jun 2019 09:59:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0370C212F5;
+        Mon, 24 Jun 2019 10:05:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561370376;
-        bh=tLVZwVgEy3INWT+QDUG63JAAvvmORHsEoFCuqJI91d8=;
+        s=default; t=1561370760;
+        bh=OQps3H3ljcKHdkYTP3akozmibnMzVqfCH4EZLVabmbA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oKyvls+G7wcnqIaBFC9e/IbzhuJwl2TNOwXCvLlWqKL/ok9EAWQU44R7v31eS+Ibe
-         55it9LzBTpNl6HVgXkVCkJEamMGseYFzgNHO18Q4fFCUgKyGzJXfEltsv0hnVDfgMk
-         8cQSpGr8agaoXEghbcaboeGzaXG8wlsKLnshtnNU=
+        b=jmp27kTv1RlcRhxf7Q/JdqryTPQ0mk+j6T95yWfBS0S7Glv6wFt/Y4VxL80n83y8F
+         NFg5heK8Nw0vHHKrYHRQotG8QG0b4O5rBFp4JkHUig/jLp7UT/4Cvb1ySJbD+A93lF
+         DXUXxNrXCBYKd76y4JmQ8DzCwOdgn0BtGPEzNPg8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jouni Malinen <j@w1.fi>,
-        Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 4.14 51/51] mac80211: Do not use stack memory with scatterlist for GMAC
-Date:   Mon, 24 Jun 2019 17:57:09 +0800
-Message-Id: <20190624092311.567774680@linuxfoundation.org>
+        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Gao Xiang <gaoxiang25@huawei.com>
+Subject: [PATCH 4.19 80/90] staging: erofs: add requirements field in superblock
+Date:   Mon, 24 Jun 2019 17:57:10 +0800
+Message-Id: <20190624092319.173827456@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190624092305.919204959@linuxfoundation.org>
-References: <20190624092305.919204959@linuxfoundation.org>
+In-Reply-To: <20190624092313.788773607@linuxfoundation.org>
+References: <20190624092313.788773607@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,60 +43,106 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jouni Malinen <j@w1.fi>
+From: Gao Xiang <gaoxiang25@huawei.com>
 
-commit a71fd9dac23613d96ba3c05619a8ef4fd6cdf9b9 upstream.
+commit 5efe5137f05bbb4688890620934538c005e7d1d6 upstream.
 
-ieee80211_aes_gmac() uses the mic argument directly in sg_set_buf() and
-that does not allow use of stack memory (e.g., BUG_ON() is hit in
-sg_set_buf() with CONFIG_DEBUG_SG). BIP GMAC TX side is fine for this
-since it can use the skb data buffer, but the RX side was using a stack
-variable for deriving the local MIC value to compare against the
-received one.
+There are some backward incompatible features pending
+for months, mainly due to on-disk format expensions.
 
-Fix this by allocating heap memory for the mic buffer.
+However, we should ensure that it cannot be mounted with
+old kernels. Otherwise, it will causes unexpected behaviors.
 
-This was found with hwsim test case ap_cipher_bip_gmac_128 hitting that
-BUG_ON() and kernel panic.
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Jouni Malinen <j@w1.fi>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Fixes: ba2b77a82022 ("staging: erofs: add super block operations")
+Cc: <stable@vger.kernel.org> # 4.19+
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/mac80211/wpa.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/staging/erofs/erofs_fs.h |   13 ++++++++++---
+ drivers/staging/erofs/internal.h |    2 ++
+ drivers/staging/erofs/super.c    |   19 +++++++++++++++++++
+ 3 files changed, 31 insertions(+), 3 deletions(-)
 
---- a/net/mac80211/wpa.c
-+++ b/net/mac80211/wpa.c
-@@ -1169,7 +1169,7 @@ ieee80211_crypto_aes_gmac_decrypt(struct
- 	struct ieee80211_rx_status *status = IEEE80211_SKB_RXCB(skb);
- 	struct ieee80211_key *key = rx->key;
- 	struct ieee80211_mmie_16 *mmie;
--	u8 aad[GMAC_AAD_LEN], mic[GMAC_MIC_LEN], ipn[6], nonce[GMAC_NONCE_LEN];
-+	u8 aad[GMAC_AAD_LEN], *mic, ipn[6], nonce[GMAC_NONCE_LEN];
- 	struct ieee80211_hdr *hdr = (struct ieee80211_hdr *)skb->data;
+--- a/drivers/staging/erofs/erofs_fs.h
++++ b/drivers/staging/erofs/erofs_fs.h
+@@ -17,10 +17,16 @@
+ #define EROFS_SUPER_MAGIC_V1    0xE0F5E1E2
+ #define EROFS_SUPER_OFFSET      1024
  
- 	if (!ieee80211_is_mgmt(hdr->frame_control))
-@@ -1200,13 +1200,18 @@ ieee80211_crypto_aes_gmac_decrypt(struct
- 		memcpy(nonce, hdr->addr2, ETH_ALEN);
- 		memcpy(nonce + ETH_ALEN, ipn, 6);
++/*
++ * Any bits that aren't in EROFS_ALL_REQUIREMENTS should be
++ * incompatible with this kernel version.
++ */
++#define EROFS_ALL_REQUIREMENTS  0
++
+ struct erofs_super_block {
+ /*  0 */__le32 magic;           /* in the little endian */
+ /*  4 */__le32 checksum;        /* crc32c(super_block) */
+-/*  8 */__le32 features;
++/*  8 */__le32 features;        /* (aka. feature_compat) */
+ /* 12 */__u8 blkszbits;         /* support block_size == PAGE_SIZE only */
+ /* 13 */__u8 reserved;
  
-+		mic = kmalloc(GMAC_MIC_LEN, GFP_ATOMIC);
-+		if (!mic)
-+			return RX_DROP_UNUSABLE;
- 		if (ieee80211_aes_gmac(key->u.aes_gmac.tfm, aad, nonce,
- 				       skb->data + 24, skb->len - 24,
- 				       mic) < 0 ||
- 		    crypto_memneq(mic, mmie->mic, sizeof(mmie->mic))) {
- 			key->u.aes_gmac.icverrors++;
-+			kfree(mic);
- 			return RX_DROP_UNUSABLE;
- 		}
-+		kfree(mic);
+@@ -34,9 +40,10 @@ struct erofs_super_block {
+ /* 44 */__le32 xattr_blkaddr;
+ /* 48 */__u8 uuid[16];          /* 128-bit uuid for volume */
+ /* 64 */__u8 volume_name[16];   /* volume name */
++/* 80 */__le32 requirements;    /* (aka. feature_incompat) */
+ 
+-/* 80 */__u8 reserved2[48];     /* 128 bytes */
+-} __packed;
++/* 84 */__u8 reserved2[44];
++} __packed;                     /* 128 bytes */
+ 
+ #define __EROFS_BIT(_prefix, _cur, _pre)	enum {	\
+ 	_prefix ## _cur ## _BIT = _prefix ## _pre ## _BIT + \
+--- a/drivers/staging/erofs/internal.h
++++ b/drivers/staging/erofs/internal.h
+@@ -111,6 +111,8 @@ struct erofs_sb_info {
+ 
+ 	u8 uuid[16];                    /* 128-bit uuid for volume */
+ 	u8 volume_name[16];             /* volume name */
++	u32 requirements;
++
+ 	char *dev_name;
+ 
+ 	unsigned int mount_opt;
+--- a/drivers/staging/erofs/super.c
++++ b/drivers/staging/erofs/super.c
+@@ -75,6 +75,22 @@ static void destroy_inode(struct inode *
+ 	call_rcu(&inode->i_rcu, i_callback);
+ }
+ 
++static bool check_layout_compatibility(struct super_block *sb,
++				       struct erofs_super_block *layout)
++{
++	const unsigned int requirements = le32_to_cpu(layout->requirements);
++
++	EROFS_SB(sb)->requirements = requirements;
++
++	/* check if current kernel meets all mandatory requirements */
++	if (requirements & (~EROFS_ALL_REQUIREMENTS)) {
++		errln("unidentified requirements %x, please upgrade kernel version",
++		      requirements & ~EROFS_ALL_REQUIREMENTS);
++		return false;
++	}
++	return true;
++}
++
+ static int superblock_read(struct super_block *sb)
+ {
+ 	struct erofs_sb_info *sbi;
+@@ -108,6 +124,9 @@ static int superblock_read(struct super_
+ 		goto out;
  	}
  
- 	memcpy(key->u.aes_gmac.rx_pn, ipn, 6);
++	if (!check_layout_compatibility(sb, layout))
++		goto out;
++
+ 	sbi->blocks = le32_to_cpu(layout->blocks);
+ 	sbi->meta_blkaddr = le32_to_cpu(layout->meta_blkaddr);
+ #ifdef CONFIG_EROFS_FS_XATTR
 
 
