@@ -2,135 +2,176 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A51FF50D32
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 16:02:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0D8C50D3C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 16:05:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729383AbfFXOCg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 10:02:36 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:35196 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727901AbfFXOCf (ORCPT
+        id S1729119AbfFXOFc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 10:05:32 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:44829 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725562AbfFXOFc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 10:02:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=zZSxwVvfCril3he0j5sVVnq9Oums5ivrZ078cOx8kAU=; b=T1kGrnSSYrMNPlLFuiEIzBqNx
-        rS2N5cBpI30qrO9Oq02nPbzVZPV48XXtXtAO8PYzmgSVdD1duTRlScBD/3WxhXcQUVVbgs6h6f2cg
-        k6E3rCHcqypJyRJX8kPVVDhX8dfNr9kkMNtCVDS3xJfapvb1rixKwuiPGSEyeEsfy824ZXthgg2rw
-        6YcJij50Pp1ffta9EeCAneztN+8M2gJQW60gx/G7ZexA9CZqPV93lQb9ZcGvJwua4EGrw+iSdvXO/
-        y8h5UvoRXRpXNzE7XxtVh/IAZ+FmE/EwDRUIxkVPtzeBbnQF4LCupNMk3rj+9qAY8Vj22BbwN8Bji
-        VGTUcDTiw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:59944)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1hfPY3-0008Uf-6a; Mon, 24 Jun 2019 15:02:19 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.89)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1hfPXx-0006Lb-0M; Mon, 24 Jun 2019 15:02:13 +0100
-Date:   Mon, 24 Jun 2019 15:02:12 +0100
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     Phong Tran <tranmanphong@gmail.com>
-Cc:     acme@kernel.org, alexander.shishkin@linux.intel.com,
-        alexander.sverdlin@gmail.com, allison@lohutok.net, andrew@lunn.ch,
-        ast@kernel.org, bgolaszewski@baylibre.com, bpf@vger.kernel.org,
-        daniel@iogearbox.net, daniel@zonque.org, dmg@turingmachine.org,
-        festevam@gmail.com, gerg@uclinux.org, gregkh@linuxfoundation.org,
-        gregory.clement@bootlin.com, haojian.zhuang@gmail.com,
-        hsweeten@visionengravers.com, illusionist.neo@gmail.com,
-        info@metux.net, jason@lakedaemon.net, jolsa@redhat.com,
-        kafai@fb.com, kernel@pengutronix.de, kgene@kernel.org,
-        krzk@kernel.org, kstewart@linuxfoundation.org,
-        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, liviu.dudau@arm.com,
-        lkundrak@v3.sk, lorenzo.pieralisi@arm.com, mark.rutland@arm.com,
-        mingo@redhat.com, namhyung@kernel.org, netdev@vger.kernel.org,
-        nsekhar@ti.com, peterz@infradead.org, robert.jarzmik@free.fr,
-        s.hauer@pengutronix.de, sebastian.hesselbarth@gmail.com,
-        shawnguo@kernel.org, songliubraving@fb.com, sudeep.holla@arm.com,
-        swinslow@gmail.com, tglx@linutronix.de, tony@atomide.com,
-        will@kernel.org, yhs@fb.com
-Subject: Re: [PATCH V2 00/15] cleanup cppcheck signed shifting errors
-Message-ID: <20190624140212.p6xvcg5lhtgeeogc@shell.armlinux.org.uk>
-References: <20190623151313.970-1-tranmanphong@gmail.com>
- <20190624135105.15579-1-tranmanphong@gmail.com>
+        Mon, 24 Jun 2019 10:05:32 -0400
+Received: by mail-lj1-f195.google.com with SMTP id k18so12732093ljc.11
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 07:05:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gjx1On7f1VuMt9pjHPrhxleD/jqhPbFIKT7N3KSr3NM=;
+        b=taqQtVSyBzuZ4c+2VF7FW4RLKaX/Cp/CaiXZ1tvthUGsTt/1mjyGJaT8LzDEYV+x+2
+         ayswVg645HrxsJ54YVhWs92jFhvJTxTsIYHqJaHrFzOFaJLHdBXB0irvPVysbJXoWUAv
+         Twn96UY1OHsftdpH95LB5pw/K7gynmkGD4Jvan0g4TZyjZmtz6UFua2/cxf9eBRfgiPs
+         EY0NxGieJmyuSnMyQ1XYQboxwl/mV9SfVLJp5hFXfCLxrE4Mj8pLPh/LXeRgwtAacHw4
+         ojdmCnGGPCTMUP/z8Sr+6cfNkQX2PuaF+wdsHgJtl5YNaG8m1JWG+keKmIqHuzTFEwcO
+         xHFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gjx1On7f1VuMt9pjHPrhxleD/jqhPbFIKT7N3KSr3NM=;
+        b=FP8/khCkUi6+T/vTQAQN+nO69PerLLaSk0RA+1est1h+xx7bVeNdsE9htXdQf67vvq
+         NlIs6yw9yhWbfcoun/U1g+G96J69Lkt1ZUQHvdWrfArZM1/iql+XOKmk259u8YHKxfqQ
+         oOWocf2gxiSRTj5LFxcwpLeq0mqcKm3htDySSxwhR/iXgDWzsHIVhP9bYMntiQMYe/xF
+         cehIj015c/XbFU4NXepv8ZcgL/j7S2RAcK8xs+mB+LBQX0Duf3wYP5S5MgDwbCM4e3VI
+         JX3o5OZqQzawkRr0G0NcXMbaQbkidPK40j3MkwnGrF4ltMnIm4PaI4vP4bARttW4KEwX
+         0Mtg==
+X-Gm-Message-State: APjAAAVngk/bnevLck/H/ZPj5Hu9AX+wQLWYebKaPy0aOdGOBlQ3MKqU
+        8qvAecwW8YHTH3Ydu85WLZPojmt9oXHKsDK0y0mqAw==
+X-Google-Smtp-Source: APXvYqy1v/JREDF0Z2UI1o9VWF2fFyKN2OstLEsW5Et4kEIc//QPnE+TIqkrxCyn741ldFWGAnTrC3kuxwBMW34Q+pA=
+X-Received: by 2002:a2e:994:: with SMTP id 142mr8590901ljj.130.1561385129002;
+ Mon, 24 Jun 2019 07:05:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190624135105.15579-1-tranmanphong@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <1560959396-13969-1-git-send-email-pbonzini@redhat.com>
+ <87zhmcfo0w.fsf@vitty.brq.redhat.com> <8ab81435-d94a-1883-a7e0-e2eba6a1ba68@redhat.com>
+In-Reply-To: <8ab81435-d94a-1883-a7e0-e2eba6a1ba68@redhat.com>
+From:   Aaron Lewis <aaronlewis@google.com>
+Date:   Mon, 24 Jun 2019 07:05:16 -0700
+Message-ID: <CAAAPnDFJmjjzsELo68zvJY1n_g_WGfS73ZUA1NOVQniYyF5Zdw@mail.gmail.com>
+Subject: Re: [PATCH] KVM: nVMX: reorganize initial steps of vmx_set_nested_state
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 08:50:50PM +0700, Phong Tran wrote:
-> There are errors with cppcheck 
-> 
-> "Shifting signed 32-bit value by 31 bits is undefined behaviour errors"
-> 
-> This is just a mirror changing. 
+On Thu, Jun 20, 2019 at 6:18 AM Paolo Bonzini <pbonzini@redhat.com> wrote:
+>
+> On 20/06/19 14:18, Vitaly Kuznetsov wrote:
+> > There's also something wrong with the patch as it fails to apply because
+> > of (not only?) whitespace issues or maybe I'm just applying it to the
+> > wrong tree...
+>
+> Yes, there's a change to KVM_GET/SET_NESTED_STATE structs from Liran.
+>
+> Paolo
 
-"mirror" ?
+Below is a revised patch for vmx_set_nested_state_test based on your
+changes.  If I applied your patch correctly I think they should look
+something like this.  I don't have your changes to kvm_nested_state,
+so those still have to be applied, but I think they are good
+otherwise.
 
-Apart from that and the extra unnecessary parens (which ought to be
-cleaned up) this looks fine to me.
+---
+ .../kvm/x86_64/vmx_set_nested_state_test.c    | 59 ++++++++++---------
+ 1 file changed, 32 insertions(+), 27 deletions(-)
 
-When there's too many parens next to each other, it makes reading
-the expression more difficult - and that is definitely bad, so please
-avoid unecessary parens where possible.
+diff --git a/tools/testing/selftests/kvm/x86_64/vmx_set_nested_state_test.c
+b/tools/testing/selftests/kvm/x86_64/vmx_set_nested_state_test.c
+index 9d62e2c7e024..17cf72749ca8 100644
+--- a/tools/testing/selftests/kvm/x86_64/vmx_set_nested_state_test.c
++++ b/tools/testing/selftests/kvm/x86_64/vmx_set_nested_state_test.c
+@@ -113,25 +113,6 @@ void test_vmx_nested_state(struct kvm_vm *vm)
+  state->format = 1;
+  test_nested_state_expect_einval(vm, state);
 
-Thanks.
+- /*
+- * We cannot virtualize anything if the guest does not have VMX
+- * enabled.
+- */
+- set_default_vmx_state(state, state_sz);
+- test_nested_state_expect_einval(vm, state);
+-
+- /*
+- * We cannot virtualize anything if the guest does not have VMX
+- * enabled.  We expect KVM_SET_NESTED_STATE to return 0 if vmxon_pa
+- * is set to -1ull.
+- */
+- set_default_vmx_state(state, state_sz);
+- state->vmx.vmxon_pa = -1ull;
+- test_nested_state(vm, state);
+-
+- /* Enable VMX in the guest CPUID. */
+- vcpu_set_cpuid(vm, VCPU_ID, kvm_get_supported_cpuid());
+-
+  /* It is invalid to have vmxon_pa == -1ull and SMM flags non-zero. */
+  set_default_vmx_state(state, state_sz);
+  state->vmx.vmxon_pa = -1ull;
+@@ -139,19 +120,28 @@ void test_vmx_nested_state(struct kvm_vm *vm)
+  test_nested_state_expect_einval(vm, state);
 
-> 
-> V2: Using BIT() macro instead of (1UL << nr) 
-> 
-> Phong Tran (15):
->   arm: perf: cleanup cppcheck shifting error
->   ARM: davinci: cleanup cppcheck shifting errors
->   ARM: ep93xx: cleanup cppcheck shifting errors
->   ARM: exynos: cleanup cppcheck shifting error
->   ARM: footbridge: cleanup cppcheck shifting error
->   ARM: imx: cleanup cppcheck shifting errors
->   ARM: ks8695: cleanup cppcheck shifting error
->   ARM: mmp: cleanup cppcheck shifting errors
->   ARM: omap2: cleanup cppcheck shifting error
->   ARM: orion5x: cleanup cppcheck shifting errors
->   ARM: pxa: cleanup cppcheck shifting errors
->   ARM: vexpress: cleanup cppcheck shifting error
->   ARM: mm: cleanup cppcheck shifting errors
->   ARM: bpf: cleanup cppcheck shifting error
->   ARM: vfp: cleanup cppcheck shifting errors
-> 
->  arch/arm/kernel/perf_event_v7.c    |   6 +-
->  arch/arm/mach-davinci/ddr2.h       |   6 +-
->  arch/arm/mach-ep93xx/soc.h         | 132 ++++++++++++++++++-------------------
->  arch/arm/mach-exynos/suspend.c     |   2 +-
->  arch/arm/mach-footbridge/dc21285.c |   2 +-
->  arch/arm/mach-imx/iomux-mx3.h      |  64 +++++++++---------
->  arch/arm/mach-ks8695/regs-pci.h    |   4 +-
->  arch/arm/mach-mmp/pm-mmp2.h        |  40 +++++------
->  arch/arm/mach-mmp/pm-pxa910.h      |  76 ++++++++++-----------
->  arch/arm/mach-omap2/powerdomain.c  |   2 +-
->  arch/arm/mach-orion5x/pci.c        |   8 +--
->  arch/arm/mach-pxa/irq.c            |   4 +-
->  arch/arm/mach-vexpress/spc.c       |  12 ++--
->  arch/arm/mm/fault.h                |   6 +-
->  arch/arm/net/bpf_jit_32.c          |   2 +-
->  arch/arm/vfp/vfpinstr.h            |   8 +--
->  16 files changed, 187 insertions(+), 187 deletions(-)
-> 
-> -- 
-> 2.11.0
-> 
-> 
+  /* It is invalid to have vmxon_pa == -1ull and vmcs_pa != -1ull. */
+- set_default_vmx_state(state, state_sz);
+- state->vmx.vmxon_pa = -1ull;
+- state->vmx.vmcs_pa = 0;
++ state->vmx.smm.flags = 0;
+  test_nested_state_expect_einval(vm, state);
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+  /*
+- * Setting vmxon_pa == -1ull and vmcs_pa == -1ull exits early without
+- * setting the nested state.
++ * It is invalid to have vmxon_pa == -1ull and have one or both of the
++ * flags KVM_STATE_NESTED_RUN_PENDING or KVM_STATE_NESTED_GUEST_MODE
++ * set.
+  */
+- set_default_vmx_state(state, state_sz);
+- state->vmx.vmxon_pa = -1ull;
++ state->flags = KVM_STATE_NESTED_RUN_PENDING |
++        KVM_STATE_NESTED_GUEST_MODE;
+  state->vmx.vmcs_pa = -1ull;
+- test_nested_state(vm, state);
++ test_nested_state_expect_einval(vm, state);
++
++ /*
++ * We cannot virtualize anything if the guest does not have VMX
++ * enabled.
++ */
++ set_default_vmx_state(state, state_sz);
++ test_nested_state_expect_einval(vm, state);
++
++ /* Enable VMX in the guest CPUID. */
++ vcpu_set_cpuid(vm, VCPU_ID, kvm_get_supported_cpuid());
+
+  /* It is invalid to have vmxon_pa set to a non-page aligned address. */
+  set_default_vmx_state(state, state_sz);
+@@ -195,11 +185,26 @@ void test_vmx_nested_state(struct kvm_vm *vm)
+  state->vmx.vmcs_pa = 0;
+  test_nested_state_expect_einval(vm, state);
+
++ /*
++ * It is invalid to not have the vmcs_pa set when the flag
++ * KVM_STATE_NESTED_EVMCS is not set.
++ */
++ set_default_vmx_state(state, state_sz);
++ state->vmx.vmcs_pa = -1ull;
++ state->flags = KVM_STATE_NESTED_GUEST_MODE  |
++ KVM_STATE_NESTED_RUN_PENDING;
++ test_nested_state_expect_einval(vm, state);
++
+  /* The revision id for vmcs12 must be VMCS12_REVISION. */
+  set_default_vmx_state(state, state_sz);
+  set_revision_id_for_vmcs12(state, 0);
+  test_nested_state_expect_einval(vm, state);
+
++ /* The KVM_STATE_NESTED_GUEST_MODE flag must be set */
++ set_default_vmx_state(state, state_sz);
++ state->flags = KVM_STATE_NESTED_EVMCS;
++ test_nested_state(vm, state);
++
+  /*
+  * Test that if we leave nesting the state reflects that when we get
+  * it again.
+--
