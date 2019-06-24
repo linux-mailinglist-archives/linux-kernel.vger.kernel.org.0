@@ -2,89 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 357B551E73
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 00:37:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D999051E77
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 00:39:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727043AbfFXWhr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 18:37:47 -0400
-Received: from smtprelay0249.hostedemail.com ([216.40.44.249]:55905 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726413AbfFXWhr (ORCPT
+        id S1726986AbfFXWjE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 18:39:04 -0400
+Received: from esa5.hgst.iphmx.com ([216.71.153.144]:55769 "EHLO
+        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726413AbfFXWjE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 18:37:47 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 72975181D3402;
-        Mon, 24 Jun 2019 22:37:45 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::,RULES_HIT:41:355:379:421:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2194:2199:2393:2553:2559:2562:2689:2691:2828:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3870:3871:3872:3873:3874:4321:5007:8531:9108:10004:10400:10848:10967:11232:11658:11914:12043:12297:12740:12760:12895:13069:13311:13357:13439:14181:14659:14721:14777:21080:21433:21451:21627:30054:30090:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:25,LUA_SUMMARY:none
-X-HE-Tag: rod05_7db6cd2afbd24
-X-Filterd-Recvd-Size: 2664
-Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf14.hostedemail.com (Postfix) with ESMTPA;
-        Mon, 24 Jun 2019 22:37:43 +0000 (UTC)
-Message-ID: <74833f93f6082c7b44f4fa8a3093ea1a751d5539.camel@perches.com>
-Subject: Re: [PATCH 0/3] Clean up crypto documentation
-From:   Joe Perches <joe@perches.com>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     Gary R Hook <ghook@amd.com>, "Hook, Gary" <Gary.Hook@amd.com>,
-        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>
-Date:   Mon, 24 Jun 2019 15:37:42 -0700
-In-Reply-To: <20190624143748.7fcfe623@lwn.net>
-References: <156140322426.29777.8610751479936722967.stgit@taos>
-         <23a5979082c89d7028409ad9ae082840411e1ca6.camel@perches.com>
-         <d8b359ff-5891-7bb8-d292-9f10cca04f17@amd.com>
-         <977bc7c484ef55ff78de51d7555afcc3c3350b1e.camel@perches.com>
-         <20190624143748.7fcfe623@lwn.net>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
+        Mon, 24 Jun 2019 18:39:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1561415945; x=1592951945;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=amaL0k2oUBluhz5amtgozZ38Lqs3Jm8acq5qCLADl/0=;
+  b=CigVOVk5rNeTLtOrVr37e4eIpG2j8X2rjPTsuQfS6E6dswCG7E8zNHT+
+   oHVGB5xAFcH2sgg+od0AI/BFmCCOtJWJ4srw1BJOuSMePrc0YqN3wdncd
+   ijenbyMMIov7wfwDWGuN8t9+QPdZN5nl2fLKaDoT+iUKIaDjl21tOZwcX
+   LNcMbQ3ug8DohKPK7K4bcfcS1RwAUYTmN2nWGTin2TRmdmE3/jp6IvQOE
+   Kemv+FByEk/ceKDqf0Wv4LlYd1XNF0aLGWE35sKpoiIa1c+DsjcGYfIwT
+   IdBZ7MhJ+xPLhuN6nyKdpxqXzA3z54ehv2pk52Gvg1+JjwIUQL7ID3uJ0
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.63,413,1557158400"; 
+   d="scan'208";a="112639901"
+Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 25 Jun 2019 06:38:52 +0800
+IronPort-SDR: hOZJrM82do9XHd01VWm9Rd3nqlX57UDL02fa0kh1lfjiUmoZFXXn8PNuHX6VcIXjtPDy3bjRWV
+ DKemYyP4m/+3OyNzu1hY7t2nlgJ+Hv0fKu+XZ2MQ8U0JZGfRPz72wQmAW/ZW16L16vPkBIf1aC
+ UiK8Ydfp29+5Ay1qblnjGpVzmR64o54hkXO9mZwlM7srsVWSZktrNK1gZgfSYyYWsy6B1f51Sg
+ QxVmvvFYylZfOxZe/dmVgyntexUgVDOudCHjtalNtyjwV56ff7y8Y084Ki8n2aE8oysiAJcVru
+ 5QZ8XAryEr/Avm5ck4ZE+ly3
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep02.wdc.com with ESMTP; 24 Jun 2019 15:38:10 -0700
+IronPort-SDR: jYLXl3hSQmhk2KvSiMaIW/VEw3gCbmz1B8E1cNVXFGHRCN1oqPhMfM4xfeynB4tzA9GtbHJI5e
+ hg3N+OzdzF3tW2Yh3CsZMkaGDrSj46aRvbxxkdVXy0j2Jz3JPYgaWpldwq5vg1qi/DvOAcOkn+
+ sGXiaWy0cdep5J1lVBRrLDaJKF3vWuklHa1SG/KdeGgSxExWduUNMk8sGlTJpMBKY6n73vj8jx
+ LAiSMnIrzgiB67YyIjXq+4OyTDgfKSsGQqTtr0e/VBt/69hSjueSOlDJsw9pwNZ0jpb7zgFKfg
+ /Eo=
+Received: from jedi-01.sdcorp.global.sandisk.com (HELO jedi-01.int.fusionio.com) ([10.11.143.218])
+  by uls-op-cesaip02.wdc.com with ESMTP; 24 Jun 2019 15:38:49 -0700
+From:   Atish Patra <atish.patra@wdc.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Atish Patra <atish.patra@wdc.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Anup Patel <anup@brainfault.org>, devicetree@vger.kernel.org,
+        linux-riscv@lists.infradead.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Yash Shah <yash.shah@sifive.com>
+Subject: [PATCH] riscv: Add cpu topology DT entry.
+Date:   Mon, 24 Jun 2019 15:38:19 -0700
+Message-Id: <20190624223819.14320-1-atish.patra@wdc.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-06-24 at 14:37 -0600, Jonathan Corbet wrote:
-> On Mon, 24 Jun 2019 13:29:42 -0700
-> Joe Perches <joe@perches.com> wrote:
-> 
-> > > Finally, would you prefer a v2 of the patch set? Happy to do
-> > > whatever is preferred, of course.  
-> > 
-> > Whatever Jonathan decides is fine with me.
-> > Mine was just a plea to avoid unnecessarily
-> > making the source text harder to read as
-> > that's what I mostly use.
-> 
-> Usually Herbert seems to take crypto docs, so it's not necessarily up to
-> me :)
-> 
-> I don't see much that's objectionable here.  But...
-> 
-> > I don't know if this extension is valid yet, but
-> > I believe just using <function_name>() is more
-> > readable as text than ``<function_name>`` or
-> > :c:func:`<function_name>`
-> 
-> It's been "valid" since I wrote it...it's just not upstream yet :)  I
-> expect it to be in 5.3, though.  So the best way to refer to a kernel
-> function, going forward, is just function() with no markup needed.
+Currently, there is no CPU topology defined for RISC-V.
+The following series adds topology support in RISC-V.
 
-When that's actually "valid" I suggest doing:
+http://lists.infradead.org/pipermail/linux-riscv/2019-June/005072.html
 
-$ git ls-files -- 'Documentation/*.rst' | \
- xargs perl -pi -e 's/:c:func:`(\w+)(?:\(\))?`/\1()/g; s/``(\w+)\(\)``/\1()/g'
+Add a DT node for unleashed that describes the CPU topology
+present in HiFive Unleashed.
 
-so function designations in Documentation are simpler to read.
+Signed-off-by: Atish Patra <atish.patra@wdc.com>
+---
+ arch/riscv/boot/dts/sifive/fu540-c000.dtsi | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-Right now that's:
-
-$ git diff --shortstat Documentation/
- 125 files changed, 1680 insertions(+), 1680 deletions(-)
-
+diff --git a/arch/riscv/boot/dts/sifive/fu540-c000.dtsi b/arch/riscv/boot/dts/sifive/fu540-c000.dtsi
+index 83f40b00ab63..907564f4f07a 100644
+--- a/arch/riscv/boot/dts/sifive/fu540-c000.dtsi
++++ b/arch/riscv/boot/dts/sifive/fu540-c000.dtsi
+@@ -22,6 +22,24 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 		timebase-frequency = <1000000>;
++
++		cpu-map {
++			cluster0 {
++				core0 {
++					cpu = <&cpu1>;
++				};
++				core1 {
++					cpu = <&cpu2>;
++				};
++				core2 {
++					cpu = <&cpu3>;
++				};
++				core3 {
++					cpu = <&cpu4>;
++				};
++			};
++		};
++
+ 		cpu0: cpu@0 {
+ 			compatible = "sifive,e51", "sifive,rocket0", "riscv";
+ 			device_type = "cpu";
+-- 
+2.21.0
 
