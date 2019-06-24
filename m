@@ -2,50 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79217528A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 11:54:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 664C6528A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 11:54:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731781AbfFYJy1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 05:54:27 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37858 "EHLO
+        id S1731760AbfFYJyN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 05:54:13 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37282 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727644AbfFYJy0 (ORCPT
+        with ESMTP id S1730063AbfFYJyI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 05:54:26 -0400
+        Tue, 25 Jun 2019 05:54:08 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=g8e7LN5W+icCyPVPUZHVbZsiHWowuU5Bzf2USy1hwRc=; b=J52ajW99TBzE
-        dwXWMvIbw43krhBM2dpHWopP5KozXZUn96zPLHOvDcYumdIUZRvJoWr1L8ragsCp+m1GTq9GYmAFz
-        7HK6gedmdfH98/N4iFgxyx+oATXvyuzegF1uu4AFzsKtcpFaALgxY1j0rDQi2N4g+Y2qeJuKhl7A2
-        gFnI0=;
+        List-Archive; bh=Is1+qLfsClVYiQcPS895LnMxgYzGgmXn4MHHKf2bb7I=; b=cNk4HE2OKVSE
+        St+k+AGRo3ZxuiSrky92SzPbqf4UFvfwEaI6n+IVKYrX9I8a/UrMrdqwLrHVHcLBYEwcUia2INzV6
+        tYSzPa1lYqmLmz7LtxB7iiKinuPW52wKKTsZclliiDmWBvgkqOwMCSTdFIX/jZQuPsucp2HRopelY
+        9mwNw=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=finisterre.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hfi9E-0004mN-Th; Tue, 25 Jun 2019 09:53:57 +0000
+        id 1hfi9G-0004mc-GD; Tue, 25 Jun 2019 09:53:58 +0000
 Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-        id 33351440055; Mon, 24 Jun 2019 17:32:14 +0100 (BST)
+        id 6A2A0440066; Mon, 24 Jun 2019 17:32:21 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     alsa-devel@alsa-project.org, Arnd Bergmann <arnd@arndb.de>,
-        Bard Liao <yung-chuan.liao@linux.intel.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-        kernel-janitors@vger.kernel.org,
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
         Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Takashi Iwai <tiwai@suse.com>,
-        Zhu Yingjiang <yingjiang.zhu@linux.intel.com>
-Subject: Applied "ASoC: SOF: Intel: hda: remove duplicated include from hda.c" to the asoc tree
-In-Reply-To: <20190620145709.122498-1-yuehaibing@huawei.com>
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Mark Brown <broonie@kernel.org>, notify@kernel.org,
+        Sangbeom Kim <sbkim73@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>
+Subject: Applied "regulator: s2mps11: Reduce number of rdev_get_id() calls" to the regulator tree
+In-Reply-To: <20190620183530.5386-2-krzk@kernel.org>
 X-Patchwork-Hint: ignore
-Message-Id: <20190624163214.33351440055@finisterre.sirena.org.uk>
-Date:   Mon, 24 Jun 2019 17:32:14 +0100 (BST)
+Message-Id: <20190624163221.6A2A0440066@finisterre.sirena.org.uk>
+Date:   Mon, 24 Jun 2019 17:32:21 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -53,11 +53,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: SOF: Intel: hda: remove duplicated include from hda.c
+   regulator: s2mps11: Reduce number of rdev_get_id() calls
 
-has been applied to the asoc tree at
+has been applied to the regulator tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.3
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-5.3
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -78,32 +78,108 @@ to this mail.
 Thanks,
 Mark
 
-From a2438253ba73ae51d9521c90ad8d3989bcdda74e Mon Sep 17 00:00:00 2001
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 20 Jun 2019 14:57:09 +0000
-Subject: [PATCH] ASoC: SOF: Intel: hda: remove duplicated include from hda.c
+From df33799c5c3262a69acd29b7a4eb9e7cbd1b007c Mon Sep 17 00:00:00 2001
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Thu, 20 Jun 2019 20:35:26 +0200
+Subject: [PATCH] regulator: s2mps11: Reduce number of rdev_get_id() calls
 
-Remove duplicated include.
+Store the regulator ID instead of calling rdev_get_id() every time.
+This makes code slightly easier to read as shorter 'rdev_id' variable is
+used instead of full call.  This can also speed things up by reducing
+number of calls, although effect was not measured.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/sof/intel/hda.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/regulator/s2mps11.c | 23 +++++++++++++----------
+ 1 file changed, 13 insertions(+), 10 deletions(-)
 
-diff --git a/sound/soc/sof/intel/hda.c b/sound/soc/sof/intel/hda.c
-index 8754dfe75000..136f98bf5d7e 100644
---- a/sound/soc/sof/intel/hda.c
-+++ b/sound/soc/sof/intel/hda.c
-@@ -19,7 +19,6 @@
- #include <sound/hda_register.h>
+diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
+index 134c62db36c5..93570712eb56 100644
+--- a/drivers/regulator/s2mps11.c
++++ b/drivers/regulator/s2mps11.c
+@@ -70,10 +70,11 @@ static int s2mps11_regulator_set_voltage_time_sel(struct regulator_dev *rdev,
+ 				   unsigned int new_selector)
+ {
+ 	struct s2mps11_info *s2mps11 = rdev_get_drvdata(rdev);
++	int rdev_id = rdev_get_id(rdev);
+ 	unsigned int ramp_delay = 0;
+ 	int old_volt, new_volt;
  
- #include <linux/module.h>
--#include <sound/hdaudio_ext.h>
- #include <sound/sof.h>
- #include <sound/sof/xtensa.h>
- #include "../ops.h"
+-	switch (rdev_get_id(rdev)) {
++	switch (rdev_id) {
+ 	case S2MPS11_BUCK2:
+ 		ramp_delay = s2mps11->ramp_delay2;
+ 		break;
+@@ -111,9 +112,10 @@ static int s2mps11_set_ramp_delay(struct regulator_dev *rdev, int ramp_delay)
+ 	struct s2mps11_info *s2mps11 = rdev_get_drvdata(rdev);
+ 	unsigned int ramp_val, ramp_shift, ramp_reg = S2MPS11_REG_RAMP_BUCK;
+ 	unsigned int ramp_enable = 1, enable_shift = 0;
++	int rdev_id = rdev_get_id(rdev);
+ 	int ret;
+ 
+-	switch (rdev_get_id(rdev)) {
++	switch (rdev_id) {
+ 	case S2MPS11_BUCK1:
+ 		if (ramp_delay > s2mps11->ramp_delay16)
+ 			s2mps11->ramp_delay16 = ramp_delay;
+@@ -203,9 +205,8 @@ static int s2mps11_set_ramp_delay(struct regulator_dev *rdev, int ramp_delay)
+ 		goto ramp_disable;
+ 
+ 	/* Ramp delay can be enabled/disabled only for buck[2346] */
+-	if ((rdev_get_id(rdev) >= S2MPS11_BUCK2 &&
+-			rdev_get_id(rdev) <= S2MPS11_BUCK4) ||
+-			rdev_get_id(rdev) == S2MPS11_BUCK6)  {
++	if ((rdev_id >= S2MPS11_BUCK2 && rdev_id <= S2MPS11_BUCK4) ||
++	    rdev_id == S2MPS11_BUCK6)  {
+ 		ret = regmap_update_bits(rdev->regmap, S2MPS11_REG_RAMP,
+ 					 1 << enable_shift, 1 << enable_shift);
+ 		if (ret) {
+@@ -503,20 +504,21 @@ static const struct regulator_desc s2mps13_regulators[] = {
+ static int s2mps14_regulator_enable(struct regulator_dev *rdev)
+ {
+ 	struct s2mps11_info *s2mps11 = rdev_get_drvdata(rdev);
++	int rdev_id = rdev_get_id(rdev);
+ 	unsigned int val;
+ 
+ 	switch (s2mps11->dev_type) {
+ 	case S2MPS13X:
+ 	case S2MPS14X:
+-		if (test_bit(rdev_get_id(rdev), s2mps11->suspend_state))
++		if (test_bit(rdev_id, s2mps11->suspend_state))
+ 			val = S2MPS14_ENABLE_SUSPEND;
+-		else if (s2mps11->ext_control_gpiod[rdev_get_id(rdev)])
++		else if (s2mps11->ext_control_gpiod[rdev_id])
+ 			val = S2MPS14_ENABLE_EXT_CONTROL;
+ 		else
+ 			val = rdev->desc->enable_mask;
+ 		break;
+ 	case S2MPU02:
+-		if (test_bit(rdev_get_id(rdev), s2mps11->suspend_state))
++		if (test_bit(rdev_id, s2mps11->suspend_state))
+ 			val = S2MPU02_ENABLE_SUSPEND;
+ 		else
+ 			val = rdev->desc->enable_mask;
+@@ -570,7 +572,7 @@ static int s2mps14_regulator_set_suspend_disable(struct regulator_dev *rdev)
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	set_bit(rdev_get_id(rdev), s2mps11->suspend_state);
++	set_bit(rdev_id, s2mps11->suspend_state);
+ 	/*
+ 	 * Don't enable suspend mode if regulator is already disabled because
+ 	 * this would effectively for a short time turn on the regulator after
+@@ -856,8 +858,9 @@ static int s2mps11_pmic_dt_parse(struct platform_device *pdev,
+ static int s2mpu02_set_ramp_delay(struct regulator_dev *rdev, int ramp_delay)
+ {
+ 	unsigned int ramp_val, ramp_shift, ramp_reg;
++	int rdev_id = rdev_get_id(rdev);
+ 
+-	switch (rdev_get_id(rdev)) {
++	switch (rdev_id) {
+ 	case S2MPU02_BUCK1:
+ 		ramp_shift = S2MPU02_BUCK1_RAMP_SHIFT;
+ 		break;
 -- 
 2.20.1
 
