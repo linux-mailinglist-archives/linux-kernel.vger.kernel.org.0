@@ -2,110 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2F1350C02
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 15:29:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93F8750C4D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 15:48:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731111AbfFXN3b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 09:29:31 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:33878 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728926AbfFXN3a (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 09:29:30 -0400
-Received: by mail-wr1-f65.google.com with SMTP id k11so13953985wrl.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 06:29:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=11Pv9Z5s19Zp78uuJj22ZvE45uxJPM0y1Jwb+Rtnf2Q=;
-        b=ausNJ9qPVHfSlWc7AO4tZT1/2mqSZc363wbHLhcQa6Es6sK4HPxresxuh408Hmpwws
-         g4vz6DueaV+gB6ChXtQVP1MhOXU0Gdev5xoAnv/WX9D9OaRPrqUJwNFu6GP+56ED8pDQ
-         loqJo9A+XXlslbd0e55r6dDkR+4ELqDBmNU7sZgTdxzyV+FvQZ4K/xJJKOWNbm/x7FRb
-         m73JbfKtM2JYF3VnU2UPdiQ3ao+AgGURf1knJiY64ooM99lDq5EMKZLKWDt8sW9KduEv
-         /X/siXujC2KFB5yoEBwkcMTvJjHDrWMkrwPfGQC4Elmnv+7ZQZ1stwmYsvdh1qpypipy
-         c5ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=11Pv9Z5s19Zp78uuJj22ZvE45uxJPM0y1Jwb+Rtnf2Q=;
-        b=uRR+wqg9iCH3EDuPYC7fbzkrVUwfaf9isdN2sV10AgOc2/w6fXdBYbkxirGxFAQFyu
-         50vnZDzLt6VYul4BssYQ2nGwNXSBiF7CdyDjJcYvf8rADj5Lzdvh/4aoqy+9Ds26oZTv
-         AYrsuB+UlJx9B5tsoN7rCFZyjZEDOh4jQXr82zNvbX0fe1derYAm+2Ne5N5lOADZtSUd
-         myZiyamxcNyOxb7fB1f1nPcAwNfTOAMof1FZG/jlD3QIVf+lqMbwDA/6f82m1W1pcoOo
-         3I1IvhYzP61L9hJ82gOfoxX9EZkMOzDYpuvQIqXpUrldPge3RsiEAivw53rW8L6Z/v0w
-         o9tw==
-X-Gm-Message-State: APjAAAVr8v/tHObNLiHu2lCByS2XE51QWvke/ShCS27NqC/XlovgNlnK
-        IFMpYNKvLXwPsRj/IDWnEEhflg==
-X-Google-Smtp-Source: APXvYqzfbC+Y53cjWnbaVA0/kzG+I9yhSNyZvY7bcKLozH3pD5SObocC0xd9C0soFuVVaehhsBksEg==
-X-Received: by 2002:a5d:5448:: with SMTP id w8mr77224907wrv.180.1561382968454;
-        Mon, 24 Jun 2019 06:29:28 -0700 (PDT)
-Received: from localhost.localdomain ([212.91.227.56])
-        by smtp.gmail.com with ESMTPSA id s63sm7842418wme.17.2019.06.24.06.29.27
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 24 Jun 2019 06:29:27 -0700 (PDT)
-From:   Christian Brauner <christian@brauner.io>
-To:     davem@davemloft.net, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        netdev@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Christian Brauner <christian@brauner.io>
-Subject: [PATCH net-next] ipv4: enable route flushing in network namespaces
-Date:   Mon, 24 Jun 2019 15:29:23 +0200
-Message-Id: <20190624132923.16792-1-christian@brauner.io>
-X-Mailer: git-send-email 2.22.0
+        id S1731325AbfFXNsT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 09:48:19 -0400
+Received: from m13-129.163.com ([220.181.13.129]:16837 "EHLO m13-129.163.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726505AbfFXNsS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 09:48:18 -0400
+X-Greylist: delayed 916 seconds by postgrey-1.27 at vger.kernel.org; Mon, 24 Jun 2019 09:48:17 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=Date:From:Subject:MIME-Version:Message-ID; bh=aUGKt
+        vZSy+6o0S9PVtKxbkzfcp42LXfJggJvKQBcobw=; b=mQly/kqzO1oiR3doEt8hS
+        ppAyTx2uccPH4rQaW6E2hG79FGTcWdoLaP4/usBjKU2gFnZ6g0P1Qr5yI5bZGeqw
+        nMLcNJNkKT9jAvWPUFg2jPFPiJ2mlOTez343k0d5uFJ+Tnw2Sd7t8QRdjMDgLSQz
+        ZOuiDhAZpZrNIfxQpY2au4=
+Received: from weijieut$163.com ( [121.237.48.209] ) by
+ ajax-webmail-wmsvr129 (Coremail) ; Mon, 24 Jun 2019 21:30:10 +0800 (CST)
+X-Originating-IP: [121.237.48.209]
+Date:   Mon, 24 Jun 2019 21:30:10 +0800 (CST)
+From:   "Weijie Yang" <weijieut@163.com>
+To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Cc:     axboe@fb.com, fengguang.wu@intel.com, linux-api@vger.kernel.org,
+        "weijie.yang@samsung.com" <weijie.yang@samsung.com>
+Subject: [bug report] read-ahead can't work properly
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version SP_ntes V3.5 build
+ 20190614(cb3344cf) Copyright (c) 2002-2019 www.mailtech.cn 163com
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <37a8bb5a.af8b.16b89adff5d.Coremail.weijieut@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID: gcGowADXbfJi0BBdeBX+AA--.3677W
+X-CM-SenderInfo: xzhlyxxhxwqiywtou0bp/xtbBDQLdsFaD5oP5fAAAsX
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tools such as vpnc try to flush routes when run inside network
-namespaces by writing 1 into /proc/sys/net/ipv4/route/flush. This
-currently does not work because flush is not enabled in non-initial
-network namespaces.
-Since routes are per network namespace it is safe to enable
-/proc/sys/net/ipv4/route/flush in there.
-
-Link: https://github.com/lxc/lxd/issues/4257
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
----
- net/ipv4/route.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
-
-diff --git a/net/ipv4/route.c b/net/ipv4/route.c
-index 6cb7cff22db9..41726e26cd5f 100644
---- a/net/ipv4/route.c
-+++ b/net/ipv4/route.c
-@@ -3197,9 +3197,11 @@ static struct ctl_table ipv4_route_table[] = {
- 	{ }
- };
- 
-+static const char ipv4_route_flush_procname[] = "flush";
-+
- static struct ctl_table ipv4_route_flush_table[] = {
- 	{
--		.procname	= "flush",
-+		.procname	= ipv4_route_flush_procname,
- 		.maxlen		= sizeof(int),
- 		.mode		= 0200,
- 		.proc_handler	= ipv4_sysctl_rtcache_flush,
-@@ -3217,9 +3219,11 @@ static __net_init int sysctl_route_net_init(struct net *net)
- 		if (!tbl)
- 			goto err_dup;
- 
--		/* Don't export sysctls to unprivileged users */
--		if (net->user_ns != &init_user_ns)
--			tbl[0].procname = NULL;
-+		/* Don't export non-whitelisted sysctls to unprivileged users */
-+		if (net->user_ns != &init_user_ns) {
-+			if (tbl[0].procname != ipv4_route_flush_procname)
-+				tbl[0].procname = NULL;
-+		}
- 	}
- 	tbl[0].extra1 = net;
- 
--- 
-2.22.0
-
+CldoZW4gdHJ5IHRoZSBmaWxlIHJlYWRhaGVhZCBieSBwb3NpeF9mYWR2aXNlKCksIEkgZmluZCBp
+dCBjYW4ndCB3b3JrIHByb3Blcmx5LgoKRm9yIGV4YW1wbGUsIHBvc2l4X2ZhZHZpc2UoUE9TSVhf
+RkFEVl9XSUxMTkVFRCkgYSAxME1CIGZpbGUsIHRoZSBrZXJuZWwKYWN0dWFsbHkgIHJlYWRhaGVh
+ZCBvbmx5IDUxMktCIGRhdGEgdG8gdGhlIHBhZ2UgY2FjaGUsIGV2ZW4gaWYgdGhlcmUgYXJlIGVu
+b3VnaApmcmVlIG1lbW9yeSBpbiB0aGUgbWFjaGluZS4KCldoZW4gdHJhY2UgdG8ga2VybmVsLCBJ
+IGZpbmQgdGhlIGlzc3VlIGlzIGF0IGZvcmNlX3BhZ2VfY2FjaGVfcmVhZGFoZWFkKCk6CiAKICAg
+ICAgICBtYXhfcGFnZXMgPSBtYXhfdCh1bnNpZ25lZCBsb25nLCBiZGktPmlvX3BhZ2VzLCByYS0+
+cmFfcGFnZXMpOwogICAgICAgIG5yX3RvX3JlYWQgPSBtaW4obnJfdG9fcmVhZCwgbWF4X3BhZ2Vz
+KTsKCk5vIG1hdGVyIHdoYXQgaW5wdXQgbnJfdG9fcmVhZCBpcywgaXQgaXMgbGltaXRlZCB0byBh
+IHZlcnkgc21hbGwgc2l6ZSwgc3VjaCBhcyAxMjggcGFnZXMuCgpJIHRoaW5rIHRoZSBtaW4oKSBs
+aW1pdCBjb2RlIGlzIHRvIGxpbWl0IHBlci1kaXNrLWlvIHNpemUsIG5vdCB0aGUgdG90YWwgbnJf
+dG9fcmVhZC4KYW5kIHRyYWNlIHRoZSBnaXQgbG9nLCB0aGlzIGlzc3VlIGlzIGludHJvZHVjZWQg
+YnkgNmQyYmU5MTVlNTg5CmFmdGVyIHRoYXQsIG5yX3RvX3JlYWQgaXMgbGltaXRlZCBhdCBzbWFs
+bCwgZXZlbiBpZiB0aGVyZSBhcmUgZW5vdWdoIGZyZWUgbWVtb3J5LgpiZWZvcmUgdGhhdCwgdXNl
+ciBjYW4gcmVhZGFoZWFkIGEgdmVyeSBsYXJnZSBmaWxlIGlmIHRoZXkgaGF2ZSBlbm91Z2ggbWVt
+b3J5LgoKV2hlbiByZWFkIHRoZSBwb3NpeF9mYWR2aXNlKCkgbWFuLXBhZ2UsIGl0IHNheXMgcmVh
+ZGFoZWFkIGRhdGEgZGVwZW5kaW5nIG9uCnZpcnR1YWwgbWVtb3J5IGxvYWQuIApTbyBpZiB0aGVy
+ZSBhcmUgZW5vdWdoIG1lbW9yeSwgaXQgc2hvdWxkIHJlYWQgYXMgbWFueSBkYXRhIGFzIHVzZXIg
+ZXhwZWN0ZWQuCgpFeHBlY3Qgc29tZW9uZSBjYW4gY2xhcmlmeSBvci9hbmQgZml4IGl0LiAKClRo
+YW5rcyAKCgoKCg==
