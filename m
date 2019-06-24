@@ -2,103 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2B4C4FEF7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 04:02:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC1D24FF90
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 05:01:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726865AbfFXCCr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 22:02:47 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:36795 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726438AbfFXCCq (ORCPT
+        id S1726508AbfFXDBk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 23:01:40 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:34568 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727280AbfFXDBi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 22:02:46 -0400
-Received: by mail-lj1-f193.google.com with SMTP id i21so10943540ljj.3;
-        Sun, 23 Jun 2019 19:02:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=OpRgBHIbpOuAIRmC5hAbsG+gtGfST0EqR1Mz8i1XFZM=;
-        b=UEWHPIM+R5z0E3Vplag65jH9IWmRu9wJa1nac4dklpzcPXmjG2fcEVQAAwTskqlKYy
-         b8HncNdkOjk/MrtZmo+fb51cMIKolRAWYBlBJ07PFWFE4TqjErGBCImCjbv7W+hjc+qL
-         utZHi6XMY00Xmd4CGOwEBzOMP2mBVRNFfYQLcBSlkb5f7R8VQspzeub2Ux0NQfgRRc1L
-         4i/aJwtlv5ByK9HFttuMmj6md7UKZJKvVB4QVUZ2CcV/TFfCWx5smKPwRTIEPa7vF7w1
-         1M1jukjBUwKS7VGH159PX22M2FMaStEUUk6B0VfyxGCT/aHN0QHQ75yjdZXkbB+LmN2O
-         0NXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=OpRgBHIbpOuAIRmC5hAbsG+gtGfST0EqR1Mz8i1XFZM=;
-        b=F6LP05d3d8TXxLwqR6nScJ2K8h7cO8zU4bfp5FXHMMcAC/AXLIGbdwo1qOQ26JnWX7
-         HQGCq39SNR8/yFfDFKkfiPu4bP6wpzqQHEzqTx//JD8+QoCzpfLF6JiH/6QzSMRnrTTI
-         TuuoLpxMo4+yOJ4JrP4W1iji3lFUGwtlfP+h2iHzNI/lsSGzImDFixbwZHfNUqDu4rjD
-         YsLraJmiIW/bwEZ+e05naOhKG5ii+4KuzrcfDZSyiPi1hchyaSnuQEfBO5QXQWCVBLZV
-         BfEHHNrVbrweSXktbS6lf/jGUpAp2KDrRzwNdruN85d5j/OXQl915RQYFkiKTV6PhQ9Z
-         Z7BQ==
-X-Gm-Message-State: APjAAAUnQ8Ki79/gCjJjy+Nb8fFTiwW9D56n5KmiEKrkAl7ZdBw4Y8n5
-        UJrnMo8olvFrOy9pBZX4AnGkg41p
-X-Google-Smtp-Source: APXvYqwOIUx48Ioz//gnowWELX2etqP+2SsH3RYNkIRjAlKOq3WdHRPiGHQeDullIbpvvxD5qqopEA==
-X-Received: by 2002:a2e:92c6:: with SMTP id k6mr4167363ljh.148.1561336327043;
-        Sun, 23 Jun 2019 17:32:07 -0700 (PDT)
-Received: from localhost.localdomain (ppp91-79-162-197.pppoe.mtu-net.ru. [91.79.162.197])
-        by smtp.gmail.com with ESMTPSA id y5sm1495146ljj.5.2019.06.23.17.32.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 23 Jun 2019 17:32:06 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Joseph Lo <josephl@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 10/10] ARM: dts: tegra30: Add External Memory Controller node
-Date:   Mon, 24 Jun 2019 03:31:32 +0300
-Message-Id: <20190624003132.29473-11-digetx@gmail.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190624003132.29473-1-digetx@gmail.com>
-References: <20190624003132.29473-1-digetx@gmail.com>
+        Sun, 23 Jun 2019 23:01:38 -0400
+Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hfCwE-0000Q9-46; Mon, 24 Jun 2019 02:34:26 +0200
+Date:   Mon, 24 Jun 2019 02:34:24 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Vincenzo Frascino <vincenzo.frascino@arm.com>
+cc:     linux-arch@vger.kernel.org,
+        LAK <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-mips@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Peter Collingbourne <pcc@google.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Huw Davies <huw@codeweavers.com>,
+        Shijith Thotton <sthotton@marvell.com>,
+        Andre Przywara <andre.przywara@arm.com>,
+        Dmitry Safonov <dima@arista.com>,
+        Andrei Vagin <avagin@openvz.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Michael Kelley <mikelley@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: Re: [PATCH v7 00/25] Unify vDSOs across more architectures
+In-Reply-To: <20190621095252.32307-1-vincenzo.frascino@arm.com>
+Message-ID: <alpine.DEB.2.21.1906240142000.32342@nanos.tec.linutronix.de>
+References: <20190621095252.32307-1-vincenzo.frascino@arm.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add External Memory Controller node to the device-tree.
+Vincenzo,
 
-Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- arch/arm/boot/dts/tegra30.dtsi | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+On Fri, 21 Jun 2019, Vincenzo Frascino wrote:
+> vDSO (virtual dynamic shared object) is a mechanism that the Linux
+> kernel provides as an alternative to system calls to reduce where
+> possible the costs in terms of cycles.
+> This is possible because certain syscalls like gettimeofday() do
+> not write any data and return one or more values that are stored
+> in the kernel, which makes relatively safe calling them directly
+> as a library function.
+> 
+> Even if the mechanism is pretty much standard, every architecture
+> in the last few years ended up implementing their own vDSO library
+> in the architectural code.
 
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index e074258d4518..92c4aeafab29 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -732,6 +732,17 @@
- 		#reset-cells = <1>;
- 	};
+....
  
-+	memory-controller@7000f400 {
-+		compatible = "nvidia,tegra30-emc";
-+		reg = <0x7000f400 0x400>;
-+		interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA30_CLK_EMC>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		nvidia,memory-controller = <&mc>;
-+	};
-+
- 	fuse@7000f800 {
- 		compatible = "nvidia,tegra30-efuse";
- 		reg = <0x7000f800 0x400>;
--- 
-2.22.0
+> This implementation contains the portings to the common library for: arm64,
+> compat mode for arm64, arm, mips, x86_64, x32, compat mode for x86_64 and
+> i386.
 
+I picked up the core implementation and the ARM64 and x86 conversion. I did
+some refinements in several places, coding style, naming conventions,
+comments and changelogs including subject prefixes. Please double check!
+
+I did not merge the ARM and MIPS parts as they lack any form of
+acknowlegment from their maintainers. Please talk to those folks. If they
+ack/review the changes then I can pick them up and they go into 5.3 or they
+have to go in a later cycle. Nevertheless it was well worth the trouble to
+have those conversions done to confirm that the new common library fits a
+bunch of different architectures.
+
+As you can see from the commit dates, this has soaked for some time in a
+WIP branch and I did extensive regression testing. So far so good.
+
+Thanks a lot for going through several iterations. It's a very much
+appreciated effort!
+
+Especially with the upcoming time namespaces this will avoid a lot of
+duplicated and pointlessly different horrors all over the architecture
+space. Any architecture which wants to gain that support needs to convert
+to the generic VDSO first.
+
+As you have become the dude who knows almost everything about VDSO
+including all the nasty pitfalls, I propose the patch below.
+
+Thanks,
+
+	tglx
+
+8<------------
+Subject: MAINTAINERS: Add entry for the generic VDSO library
+From: Thomas Gleixner <tglx@linutronix.de>
+Date: Mon, 24 Jun 2019 02:03:50 +0200
+
+Asign the following folks in alphabetic order:
+
+ - Andy for being the VDSO wizard of x86 and in general. He's also the
+   performance monitor of choice and the code in the generic library is
+   heavily influenced by his previous x86 VDSO work.
+
+ - Thomas for being the dude who has to deal with any form of time(r)
+   nonsense anyway
+
+ - Vincenzo for being the poor sod who went through all the different
+   architecture implementations in order to unify them. A lot of knowledge
+   gained from VDSO implementation details to the intricacies of taming the
+   build system.
+
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+---
+ MAINTAINERS |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6665,6 +6665,18 @@ L:	kvm@vger.kernel.org
+ S:	Supported
+ F:	drivers/uio/uio_pci_generic.c
+ 
++GENERIC VDSO LIBRARY:
++M:	Andy Lutomirksy <luto@kernel.org>
++M:	Thomas Gleixner <tglx@linutronix.de>
++M:	Vincenzo Frascino <vincenzo.frascino@arm.com>
++L:	linux-kernel@vger.kernel.org
++T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers/vdso
++S:	Maintained
++F:	lib/vdso
++F:	kernel/time/vsyscall.c
++F:	include/vdso
++F:	include/asm-generic/vdso/vsyscall.h
++
+ GENWQE (IBM Generic Workqueue Card)
+ M:	Frank Haverkamp <haver@linux.ibm.com>
+ S:	Supported
