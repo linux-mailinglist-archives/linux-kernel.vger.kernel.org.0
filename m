@@ -2,148 +2,196 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27BA750AA9
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 14:27:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C385E50AB5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 14:31:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728690AbfFXM1e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 08:27:34 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:39361 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728355AbfFXM1e (ORCPT
+        id S1730169AbfFXMbu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 08:31:50 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:33023 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726453AbfFXMbu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 08:27:34 -0400
-Received: by mail-qt1-f196.google.com with SMTP id i34so14190501qta.6
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 05:27:33 -0700 (PDT)
+        Mon, 24 Jun 2019 08:31:50 -0400
+Received: by mail-ed1-f65.google.com with SMTP id i11so21594674edq.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 05:31:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8pxgU2+2zAe7XjIsxn6dDw49AVrZSbjiR8p9fg9h61c=;
-        b=izv8/ISAHD8c9UNVkM0cWQvNgJp3wRoXCluQG17yMRfV2pDdp1/uWG9IXPpDE/XYKH
-         CQELaE70QgG60CSIem6+F6R2WvEQaZnzaFC1s3chbLxM9lxC2EBLHJWA9yMJ1J5AHz3P
-         7Zpy0MkZGWg/jnMkdoP+RjTjqsNzWfhxRh/xufz46CJ8Bi0bpWfwAGQ9z4+84AQcvFFV
-         7NSNuj1D+TU3msKRtqeLsf8HA47QG7I/FJcR/P/ZoG073n9/Vgaj78HN3O0I2bM28Q3P
-         qcnLqv41V8hfaMJFwessbe/ky89XOtoWX4bZ9dD7wVAZ6zUgQjHis6jvi1iyT9uLt35P
-         zlgA==
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tFm56QmTytg84qXew2YclW3TMekhbP3jpjd8esAI1kU=;
+        b=jBfTo5nx93Xzhhvw7wvHHNb8SaG3gvfcaKNqjy3wd7jZ17Us25JgUM1vWunJqfNnN1
+         QmHVb/VuieX4DT7wn3KeCrxh1M38Z3OAXYE+Y20VAuJbE6urpNAUhnulEadgqokQ+YvX
+         XB0YHGiQt4jS5joZW5hndMtftv4RWF9C6JLDig6H3jjU9LZII1PI84YqUhgaWN6v2cyy
+         7YykXrb1gLJbtUGrwwOeGmTXIR5mOYqW3ykAVynQY3j9Om7yoW1BjHBoufpLes8BEa8o
+         c0OAzj228PrnAuzrW/EY9D8blhu8wyrLwOzGkZdFap6IkPgLb4VHeUXdfN9UbxIb52A7
+         9dew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8pxgU2+2zAe7XjIsxn6dDw49AVrZSbjiR8p9fg9h61c=;
-        b=rdXUMaWwcmz8KtRq5seeo+0weFShNED2Ys/twED2+GIYl8K/9D7GFSMVzuUnO4OtZa
-         4TGJXeTHVhDBIITNiKY95gRZqjgEr5nXu8eeKcGtTi+n+74XYfCOm7F/BulM2UeId1U1
-         4WcQkwGMzxWIBfr5+MJrLD3bSvO3tVUbnQiBpAhZ1PZenlVIok34RxPVEb4KdvnYpn0q
-         QVPV0wcPQsW9gz40sDTh3vuVhTsKUxXHh4C1pDwtuA+N/zXFg+W34aSnFBr2V7X9FHik
-         G5go0uiuPZrYJ7FkW2fwreHqJzKeN7F5P1ENYQYjkdRzjTWlw7yl8QmSioKQZxoDq97D
-         G1DQ==
-X-Gm-Message-State: APjAAAXsnulDYc+5v6IHgAS+Eg7n6X9JjyhPJEvnjhAMDh22AyA559GH
-        uMe81bDStXEy0wWSuyFdFqakzpo5UZq/ObvlPG0eBw==
-X-Google-Smtp-Source: APXvYqyM38rDzwG+qvoXoDo5ZWVVUOEgmwuEYbjLvKWiYs9mNZH/qiES9AHddHYSmG8/Wpvavwglr3tx6kusJaGPdL0=
-X-Received: by 2002:aed:21f0:: with SMTP id m45mr114648286qtc.391.1561379252759;
- Mon, 24 Jun 2019 05:27:32 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tFm56QmTytg84qXew2YclW3TMekhbP3jpjd8esAI1kU=;
+        b=cqwxpl1Cl4JX8jVZqf4shcruT1zM2iTXINsXkuK0jz4a0xyvDGOyoQEK8niqLAQZlZ
+         98GtrHLC9zHLMFZwnaxiTBdcy/52hKW3ckSntSyqH4WHzo1kVZ6XfL7ZVrUWM65N1bZo
+         M0iPLkN01UuEjm40i52o1UWwu/Phsv5cMCe6QI/kgC1+xmlHmshqTppoAPt4NaBZlxz1
+         QcuBNmSPyOvTIfIsPTWciWBVYH6uU0QOD8eskA2Plh65UnNzNMkwmFViVRCVNoxezdje
+         Xf28XGqRJmJt5zBNRVQFLlklNN1UGcxpCrTPOWEDFEj0RV2Ke2S1jWw5yVzm2p4XqbUz
+         rmcA==
+X-Gm-Message-State: APjAAAWRLdpJ+r2j2INMXBVzdVq+5VpxHYyd6sFHbmBIO8SmTbuuMYke
+        9VV3XceIiGPlt9CtoFhN66tWeg==
+X-Google-Smtp-Source: APXvYqwxi0JBz/8YExn0Q1IAk8/9QNOWXOHqeyo5aB7Vf0SLtq+llAgTf7VykYs2WIuVUQR53gpcBg==
+X-Received: by 2002:a17:906:5a05:: with SMTP id p5mr80522171ejq.193.1561379507641;
+        Mon, 24 Jun 2019 05:31:47 -0700 (PDT)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id i1sm1855170ejo.32.2019.06.24.05.31.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 24 Jun 2019 05:31:47 -0700 (PDT)
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+X-Google-Original-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Received: by box.localdomain (Postfix, from userid 1000)
+        id 6CDAD10439E; Mon, 24 Jun 2019 15:31:52 +0300 (+03)
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Kyle Pelton <kyle.d.pelton@intel.com>,
+        Baoquan He <bhe@redhat.com>
+Subject: [PATCHv2] x86/mm: Handle physical-virtual alignment mismatch in phys_p4d_init()
+Date:   Mon, 24 Jun 2019 15:31:50 +0300
+Message-Id: <20190624123150.920-1-kirill.shutemov@linux.intel.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <CANA+-vCThdRivg7nrMK5QoFu8SGUzEVSvSyp0H2CPyy9==Tqog@mail.gmail.com>
- <CANA+-vARQ9Ao=W1oEArrAQ0sqh757orq=-=kytdVPhstm-3E9w@mail.gmail.com>
- <20190618182502.GC203031@google.com> <4587569.x9DSL43cXO@kreacher>
- <CANA+-vCMK6u1n9gXf2+v5dFn_tGfr1PT8d7W4d2BCzw+B-HvYw@mail.gmail.com>
- <CAJWu+oo7kwmEyMXQN0yfswV2=J-Fa9QybhAUx-SOGG_ipsBErQ@mail.gmail.com>
- <CAJZ5v0gvzCx-7qS9qkxB=sGKjQJKMR7yCc21f=_vqrbZxMSWNg@mail.gmail.com>
- <CANA+-vCBW=P=dpJGfcKTt7SoNKzWcpP5pwZHSDMU6MkwBKoC9A@mail.gmail.com> <20190624073659.GA13957@kroah.com>
-In-Reply-To: <20190624073659.GA13957@kroah.com>
-From:   Joel Fernandes <joelaf@google.com>
-Date:   Mon, 24 Jun 2019 08:27:21 -0400
-Message-ID: <CAJWu+orGgYwnC+ya13+KtdNrH7ZjvmKL8625m=msVZd0==dq9A@mail.gmail.com>
-Subject: Re: Alternatives to /sys/kernel/debug/wakeup_sources
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Tri Vo <trong@android.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Sandeep Patil <sspatil@android.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Hridya Valsaraju <hridya@google.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "Cc: Android Kernel" <kernel-team@android.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 3:37 AM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Sun, Jun 23, 2019 at 06:48:43PM -0700, Tri Vo wrote:
-> > On Wed, Jun 19, 2019 at 1:35 AM Rafael J. Wysocki <rafael@kernel.org> wrote:
-> > >
-> > > On Wed, Jun 19, 2019 at 1:52 AM Joel Fernandes <joelaf@google.com> wrote:
-> > > >
-> > > > On Tue, Jun 18, 2019 at 7:15 PM Tri Vo <trong@android.com> wrote:
-> > > > [snip]
-> > > > > > > > >
-> > > > > > > > > Android userspace reading wakeup_sources is not ideal because:
-> > > > > > > > > - Debugfs API is not stable, i.e. Android tools built on top of it are
-> > > > > > > > > not guaranteed to be backward/forward compatible.
-> > > > > > > > > - This file requires debugfs to be mounted, which itself is
-> > > > > > > > > undesirable for security reasons.
-> > > > > > > > >
-> > > > > > > > > To address these problems, we want to contribute a way to expose these
-> > > > > > > > > statistics that doesn't depend on debugfs.
-> > > > > > > > >
-> > > > > > > > > Some initial thoughts/questions: Should we expose the stats in sysfs?
-> > > > > > > > > Or maybe implement eBPF-based solution? What do you think?
-> > > > > > >
-> > > > > > > We are going through Android's out-of-tree kernel dependencies along with
-> > > > > > > userspace APIs that are not necessarily considered "stable and forever
-> > > > > > > supported" upstream. The debugfs dependencies showed up on our radar as a
-> > > > > > > result and so we are wondering if we should worry about changes in debugfs
-> > > > > > > interface and hence the question(s) below.
-> > > > > > >
-> > > > > > > So, can we rely on /d/wakeup_sources to be considered a userspace API and
-> > > > > > > hence maintained stable as we do for other /proc and /sys entries?
-> > > > > > >
-> > > > > > > If yes, then we will go ahead and add tests for this in LTP or
-> > > > > > > somewhere else suitable.
-> > > > > >
-> > > > > > No, debugfs is not ABI.
-> > > > > >
-> > > > > > > If no, then we would love to hear suggestions for any changes that need to be
-> > > > > > > made or we simply just move the debugfs entry into somewhere like
-> > > > > > > /sys/power/ ?
-> > > > > >
-> > > > > > No, moving that entire file from debugfs into sysfs is not an option either.
-> > > > > >
-> > > > > > The statistics for the wakeup sources associated with devices are already there
-> > > > > > under /sys/devices/.../power/ , but I guess you want all wakeup sources?
-> > > > > >
-> > > > > > That would require adding a kobject to struct wakeup_source and exposing
-> > > > > > all of the statistics as separate attributes under it.  In which case it would be
-> > > > > > good to replace the existing wakeup statistics under /sys/devices/.../power/
-> > > > > > with symbolic links to the attributes under the wakeup_source kobject.
-> > > > >
-> > > > > Thanks for your input, Rafael! Your suggestion makes sense. I'll work
-> > > > > on a patch for this.
-> > > >
-> > > > Does that entail making each wake up source, a new sysfs node under a
-> > > > particular device, and then adding stats under that new node?
-> > >
-> > > Not under a device, because there are wakeup source objects without
-> > > associated devices.
-> > >
-> > > It is conceivable to have a "wakeup_sources" directory under
-> > > /sys/power/ and sysfs nodes for all wakeup sources in there.
-> > >
-> > > Then, instead of exposing wakeup statistics directly under
-> > > /sys/devices/.../power/, there can be symbolic links from there to the
-> > > new wakeup source nodes under "wakeup_sources" (so as to avoid
-> > > exposing the same data in two different places in sysfs, which may be
-> > > confusing).
-> >
-> > This may be a dumb question. Is it appropriate to make symbolic links
-> > in sysfs from one attribute to another attribute? For example,
-> > /sys/devices/.../power/wakeup_count ->
-> > /sys/power/wakeup_sources/.../wakeup_count.
->
-> Why? would you want that?
+Kyle has reported that kernel crashes sometimes when it boots in
+5-level paging mode with KASLR enabled:
 
-This sounds like what Rafael suggested (quoted above), right?
+  WARNING: CPU: 0 PID: 0 at arch/x86/mm/init_64.c:87 phys_p4d_init+0x1d4/0x1ea
+  RIP: 0010:phys_p4d_init+0x1d4/0x1ea
+  Call Trace:
+   __kernel_physical_mapping_init+0x10a/0x35c
+   kernel_physical_mapping_init+0xe/0x10
+   init_memory_mapping+0x1aa/0x3b0
+   init_range_memory_mapping+0xc8/0x116
+   init_mem_mapping+0x225/0x2eb
+   setup_arch+0x6ff/0xcf5
+   start_kernel+0x64/0x53b
+   ? copy_bootdata+0x1f/0xce
+   x86_64_start_reservations+0x24/0x26
+   x86_64_start_kernel+0x8a/0x8d
+   secondary_startup_64+0xb6/0xc0
+
+which causes later:
+
+  BUG: unable to handle page fault for address: ff484d019580eff8
+  #PF: supervisor read access in kernel mode
+  #PF: error_code(0x0000) - not-present page
+  BAD
+  Oops: 0000 [#1] SMP NOPTI
+  RIP: 0010:fill_pud+0x13/0x130
+  Call Trace:
+   set_pte_vaddr_p4d+0x2e/0x50
+   set_pte_vaddr+0x6f/0xb0
+   __native_set_fixmap+0x28/0x40
+   native_set_fixmap+0x39/0x70
+   register_lapic_address+0x49/0xb6
+   early_acpi_boot_init+0xa5/0xde
+   setup_arch+0x944/0xcf5
+   start_kernel+0x64/0x53b
+
+Kyle bisected the issue to commit b569c1843498 ("x86/mm/KASLR: Reduce
+randomization granularity for 5-level paging to 1GB")
+
+Before the commit PAGE_OFFSET is always aligned to P4D_SIZE if we boot in
+5-level paging mode. But now only PUD_SIZE alignment is guaranteed.
+
+For phys_p4d_init() it means that 'paddr_next' after the first iteration
+can belong to the same p4d entry.
+
+In the case I was able to reproduce the 'vaddr' on the first iteration
+is 0xff4228027fe00000 and 'paddr' is 0x33fe00000. On the second
+iteration 'vaddr' becomes 0xff42287f40000000 and 'paddr' is
+0x8000000000. The 'vaddr' in both cases belong to the same p4d entry.
+
+It screws up 'i' count: we miss the last entry in the page table
+completely.  And it confuses the branch under 'paddr >= paddr_end'
+condition: the p4d entry can be cleared where must not to.
+
+The patch makes phys_p4d_init() walk by virtual address space, like
+__kernel_physical_mapping_init() does. It makes it work correctly with
+phys-virt mismatch.
+
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Reported-and-tested-by: Kyle Pelton <kyle.d.pelton@intel.com>
+Fixes: b569c1843498 ("x86/mm/KASLR: Reduce randomization granularity for 5-level paging to 1GB")
+Cc: Baoquan He <bhe@redhat.com>
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+---
+ arch/x86/mm/init_64.c | 24 +++++++++++++-----------
+ 1 file changed, 13 insertions(+), 11 deletions(-)
+
+diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+index 693aaf28d5fe..0f01c7b1d217 100644
+--- a/arch/x86/mm/init_64.c
++++ b/arch/x86/mm/init_64.c
+@@ -671,23 +671,25 @@ static unsigned long __meminit
+ phys_p4d_init(p4d_t *p4d_page, unsigned long paddr, unsigned long paddr_end,
+ 	      unsigned long page_size_mask, bool init)
+ {
+-	unsigned long paddr_next, paddr_last = paddr_end;
+-	unsigned long vaddr = (unsigned long)__va(paddr);
+-	int i = p4d_index(vaddr);
++	unsigned long vaddr, vaddr_end, vaddr_next, paddr_next, paddr_last;
++
++	paddr_last = paddr_end;
++	vaddr = (unsigned long)__va(paddr);
++	vaddr_end = (unsigned long)__va(paddr_end);
+ 
+ 	if (!pgtable_l5_enabled())
+ 		return phys_pud_init((pud_t *) p4d_page, paddr, paddr_end,
+ 				     page_size_mask, init);
+ 
+-	for (; i < PTRS_PER_P4D; i++, paddr = paddr_next) {
+-		p4d_t *p4d;
++	for (; vaddr < vaddr_end; vaddr = vaddr_next) {
++		p4d_t *p4d = p4d_page + p4d_index(vaddr);
+ 		pud_t *pud;
+ 
+-		vaddr = (unsigned long)__va(paddr);
+-		p4d = p4d_page + p4d_index(vaddr);
+-		paddr_next = (paddr & P4D_MASK) + P4D_SIZE;
++		vaddr_next = (vaddr & P4D_MASK) + P4D_SIZE;
++		paddr = __pa(vaddr);
+ 
+ 		if (paddr >= paddr_end) {
++			paddr_next = __pa(vaddr_next);
+ 			if (!after_bootmem &&
+ 			    !e820__mapped_any(paddr & P4D_MASK, paddr_next,
+ 					     E820_TYPE_RAM) &&
+@@ -699,13 +701,13 @@ phys_p4d_init(p4d_t *p4d_page, unsigned long paddr, unsigned long paddr_end,
+ 
+ 		if (!p4d_none(*p4d)) {
+ 			pud = pud_offset(p4d, 0);
+-			paddr_last = phys_pud_init(pud, paddr, paddr_end,
+-						   page_size_mask, init);
++			paddr_last = phys_pud_init(pud, paddr, __pa(vaddr_end),
++					page_size_mask, init);
+ 			continue;
+ 		}
+ 
+ 		pud = alloc_low_page();
+-		paddr_last = phys_pud_init(pud, paddr, paddr_end,
++		paddr_last = phys_pud_init(pud, paddr, __pa(vaddr_end),
+ 					   page_size_mask, init);
+ 
+ 		spin_lock(&init_mm.page_table_lock);
+-- 
+2.21.0
+
