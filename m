@@ -2,169 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EBCF509C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 13:28:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E1BB509D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 13:31:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729791AbfFXL2E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 07:28:04 -0400
-Received: from mga18.intel.com ([134.134.136.126]:9448 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727525AbfFXL2E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 07:28:04 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jun 2019 04:28:03 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,412,1557212400"; 
-   d="scan'208";a="182617283"
-Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.150])
-  by fmsmga001.fm.intel.com with ESMTP; 24 Jun 2019 04:27:58 -0700
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH 1/3] Docs: An initial automarkup extension for sphinx
-In-Reply-To: <20190621235159.6992-2-corbet@lwn.net>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20190621235159.6992-1-corbet@lwn.net> <20190621235159.6992-2-corbet@lwn.net>
-Date:   Mon, 24 Jun 2019 14:30:47 +0300
-Message-ID: <87k1dbrziw.fsf@intel.com>
+        id S1729690AbfFXLbk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 07:31:40 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:33774 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726622AbfFXLbj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 07:31:39 -0400
+Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 54BBD323;
+        Mon, 24 Jun 2019 13:31:38 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1561375898;
+        bh=TTMoZ7L0TvwNHbazuq/zwIiZIs9paL/P68Ui7Cjouyc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=T7DpsKTaR9/3ZvSzOgeS4b4LBK0i6+ZgRoYkX5bXOyfnMgVGltTTwbeRfO5UvHdJq
+         +WxmuSTy/Ntp1eSlzg0Rdq0nSpBDb65EAdSVbztbt2xVD/0emnxYtHgwrKngW9SgVO
+         A+JWXhl8xhRUcE54OrD9xsC0Z9pII1FxMorvqcDs=
+Date:   Mon, 24 Jun 2019 14:31:19 +0300
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     a.hajda@samsung.com, daniel@ffwll.ch, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, Jonas Karlman <jonas@kwiboo.se>,
+        Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@siol.net>
+Subject: Re: [PATCH] MAINTAINERS: Update Maintainers and Reviewers of DRM
+ Bridge Drivers
+Message-ID: <20190624113119.GD5737@pendragon.ideasonboard.com>
+References: <20190624090851.17859-1-narmstrong@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190624090851.17859-1-narmstrong@baylibre.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 21 Jun 2019, Jonathan Corbet <corbet@lwn.net> wrote:
-> Rather than fill our text files with :c:func:`function()` syntax, just do
-> the markup via a hook into the sphinx build process.
->
-> Signed-off-by: Jonathan Corbet <corbet@lwn.net>
+Hi Neil,
+
+Thank you for the patch.
+
+On Mon, Jun 24, 2019 at 11:08:51AM +0200, Neil Armstrong wrote:
+> Add myself as co-maintainer of DRM Bridge Drivers then add Jonas Karlman
+> and Jernej Škrabec as Reviewers of DRM Bridge Drivers.
+> 
+> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Cc: Jonas Karlman <jonas@kwiboo.se>
+> Cc: Andrzej Hajda <a.hajda@samsung.com>
+> Cc: Jernej Škrabec <jernej.skrabec@siol.net>
+> Cc: Daniel Vetter <daniel@ffwll.ch>
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
 > ---
->  Documentation/conf.py              |  3 +-
->  Documentation/sphinx/automarkup.py | 80 ++++++++++++++++++++++++++++++
->  2 files changed, 82 insertions(+), 1 deletion(-)
->  create mode 100644 Documentation/sphinx/automarkup.py
->
-> diff --git a/Documentation/conf.py b/Documentation/conf.py
-> index 7ace3f8852bd..a502baecbb85 100644
-> --- a/Documentation/conf.py
-> +++ b/Documentation/conf.py
-> @@ -34,7 +34,8 @@ needs_sphinx = '1.3'
->  # Add any Sphinx extension module names here, as strings. They can be
->  # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
->  # ones.
-> -extensions = ['kerneldoc', 'rstFlatTable', 'kernel_include', 'cdomain', 'kfigure', 'sphinx.ext.ifconfig']
-> +extensions = ['kerneldoc', 'rstFlatTable', 'kernel_include', 'cdomain',
-> +              'kfigure', 'sphinx.ext.ifconfig', 'automarkup']
+>  MAINTAINERS | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 2abf6d28db64..dd8dacc61e79 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -5253,7 +5253,10 @@ T:	git git://anongit.freedesktop.org/drm/drm-misc
 >  
->  # The name of the math extension changed on Sphinx 1.4
->  if (major == 1 and minor > 3) or (major > 1):
-> diff --git a/Documentation/sphinx/automarkup.py b/Documentation/sphinx/automarkup.py
-> new file mode 100644
-> index 000000000000..14b09b5d145e
-> --- /dev/null
-> +++ b/Documentation/sphinx/automarkup.py
-> @@ -0,0 +1,80 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +# Copyright 2019 Jonathan Corbet <corbet@lwn.net>
-> +#
-> +# Apply kernel-specific tweaks after the initial document processing
-> +# has been done.
-> +#
-> +from docutils import nodes
-> +from sphinx import addnodes
-> +import re
-> +
-> +#
-> +# Regex nastiness.  Of course.
-> +# Try to identify "function()" that's not already marked up some
-> +# other way.  Sphinx doesn't like a lot of stuff right after a
-> +# :c:func: block (i.e. ":c:func:`mmap()`s" flakes out), so the last
-> +# bit tries to restrict matches to things that won't create trouble.
-> +#
-> +RE_function = re.compile(r'([\w_][\w\d_]+\(\))')
-> +
-> +#
-> +# The DVB docs create references for these basic system calls, leading
-> +# to lots of confusing links.  So just don't link them.
-> +#
-> +Skipfuncs = [ 'open', 'close', 'write' ]
-> +
-> +#
-> +# Find all occurrences of function() and try to replace them with
-> +# appropriate cross references.
-> +#
-> +def markup_funcs(docname, app, node):
-> +    cdom = app.env.domains['c']
-> +    t = node.astext()
-> +    done = 0
-> +    repl = [ ]
-> +    for m in RE_function.finditer(t):
-> +        #
-> +        # Include any text prior to function() as a normal text node.
-> +        #
-> +        if m.start() > done:
-> +            repl.append(nodes.Text(t[done:m.start()]))
-> +        #
-> +        # Go through the dance of getting an xref out of the C domain
-> +        #
-> +        target = m.group(1)[:-2]
-> +        target_text = nodes.Text(target + '()')
-> +        xref = None
-> +        if target not in Skipfuncs:
-> +            lit_text = nodes.literal(classes=['xref', 'c', 'c-func'])
-> +            lit_text += target_text
-> +            pxref = addnodes.pending_xref('', refdomain = 'c',
-> +                                          reftype = 'function',
-> +                                          reftarget = target, modname = None,
-> +                                          classname = None)
-> +            xref = cdom.resolve_xref(app.env, docname, app.builder,
-> +                                     'function', target, pxref, lit_text)
-> +        #
-> +        # Toss the xref into the list if we got it; otherwise just put
-> +        # the function text.
-> +        #
-> +        if xref:
-> +            repl.append(xref)
-> +        else:
-> +            repl.append(target_text)
-> +        done = m.end()
-> +    if done < len(t):
-> +        repl.append(nodes.Text(t[done:]))
-> +    return repl
-> +
-> +def auto_markup(app, doctree, name):
-> +    for para in doctree.traverse(nodes.paragraph):
-> +        for node in para.traverse(nodes.Text):
-> +            if not isinstance(node.parent, nodes.literal):
-> +                node.parent.replace(node, markup_funcs(name, app, node))
-
-I think overall this is a better approach than preprocessing. Thanks for
-doing this!
-
-I toyed with something like this before, and the key difference here
-seems to be ignoring literal blocks. The problem seemed to be that
-replacing blocks with syntax highlighting also removed the syntax
-highlighting, with no way that I could find to bring it back.
-
-Obviously it would be great to be able to add the cross references in
-more places than just bulk text nodes, but this is a good start.
-
-BR,
-Jani.
-
-
-> +
-> +def setup(app):
-> +    app.connect('doctree-resolved', auto_markup)
-> +    return {
-> +        'parallel_read_safe': True,
-> +        'parallel_write_safe': True,
-> +        }
+>  DRM DRIVERS FOR BRIDGE CHIPS
+>  M:	Andrzej Hajda <a.hajda@samsung.com>
+> +M:	Neil Armstrong <narmstrong@baylibre.com>
+>  R:	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+> +R:	Jonas Karlman <jonas@kwiboo.se>
+> +R:	Jernej Skrabec <jernej.skrabec@siol.net>
+>  S:	Maintained
+>  T:	git git://anongit.freedesktop.org/drm/drm-misc
+>  F:	drivers/gpu/drm/bridge/
 
 -- 
-Jani Nikula, Intel Open Source Graphics Center
+Regards,
+
+Laurent Pinchart
