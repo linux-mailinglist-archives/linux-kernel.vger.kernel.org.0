@@ -2,75 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0AC850240
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 08:26:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14A195002F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 05:23:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727345AbfFXG0F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 02:26:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59646 "EHLO mail.kernel.org"
+        id S1727570AbfFXDXq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 23:23:46 -0400
+Received: from ozlabs.org ([203.11.71.1]:37979 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726548AbfFXG0F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 02:26:05 -0400
-Received: from localhost (unknown [116.247.127.123])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726502AbfFXDXq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Jun 2019 23:23:46 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BDE2E21530;
-        Mon, 24 Jun 2019 06:26:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561357564;
-        bh=k59t1m8wsiRmS1GXcPU6ssPkedRk7do9n0WBaDvykoM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=dHnYZQ1c0qzeZe0amKkYEc5WHqmoV9zMD4AD/MVGJWW/TCq+qv2J8LVzfAm9erTKD
-         cFaO4A7sv6a/0PTn+AfVwy/E814PajvGu1DtbW7ZtqVAB4V7M15vGyUdfFcc8lTI6x
-         L4IFN0eSrxH8wZLP8iSXkdullBfO4wCD8cpy+hy0=
-Date:   Mon, 24 Jun 2019 05:20:07 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Suzuki K Poulose <suzuki.poulose@arm.com>,
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45XF4Z0wy9z9s4Y;
+        Mon, 24 Jun 2019 13:23:41 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1561346623;
+        bh=Ld51LDvZP5MLJdlUGJjSgMBhQwTnBRPHw/iDQzFTbA0=;
+        h=Date:From:To:Cc:Subject:From;
+        b=QF0oV63MZSkWDnakhYVD3xnb7VcUtkw8rAdMkDWwZ8JDMgFSdapMBlpIGx9Dx3oi3
+         Ug1Fd1nJwZ9/PkGa6YiLlff1wvvKR2g3d/XcYtmoJAZioJV618+pNBgTpWAA/NPKpW
+         gExi8z3D4pIiApU9XFDhB6wJSYcwBar57DT8lcofRXBS/+Gm+hPgYduKuYyN0xs3vt
+         rVflnV7pnwc20sT3Ji5+npjFuEeQDO2+nEcN/tyuw6BRAXeLSnnnvYTLIOfVi5Jgan
+         VwzYTDZsXoXAjCWx2oVLyAixcSAftd7IeZOJQOUMBNxEtGWvN4BR8LIxFSss3f6zLE
+         FT/ctlHrmla6w==
+Date:   Mon, 24 Jun 2019 13:23:41 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Tudor Ambarus <Tudor.Ambarus@microchip.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Len Brown <lenb@kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>
-Subject: Re: [PATCH v2 03/28] acpi: utils: Cleanup acpi_dev_match_cb
-Message-ID: <20190624032007.GA23457@kroah.com>
-References: <1560534863-15115-1-git-send-email-suzuki.poulose@arm.com>
- <1560534863-15115-4-git-send-email-suzuki.poulose@arm.com>
- <CAJZ5v0j-AwFkeK35xG-WnDq8_wrzfH-0jqv6hVW+7uZD3R2k8Q@mail.gmail.com>
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ludovic Barre <ludovic.barre@st.com>
+Subject: linux-next: manual merge of the spi-nor tree with Linus' tree
+Message-ID: <20190624132341.7cdf1214@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJZ5v0j-AwFkeK35xG-WnDq8_wrzfH-0jqv6hVW+7uZD3R2k8Q@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/CsJE6n9rHzX00k4CQHfkzhe"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 18, 2019 at 12:08:45AM +0200, Rafael J. Wysocki wrote:
-> On Fri, Jun 14, 2019 at 7:54 PM Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
-> >
-> > The prototype of bus_find_device() will be unified with that of
-> > class_find_device() subsequently, but for this purpose the callback
-> > functions passed to it need to take (const void *) as the second
-> > argument.  Consequently, they cannot modify the memory pointed to by
-> > that argument which currently is not the case for acpi_dev_match_cb().
-> > However, acpi_dev_match_cb() really need not modify the "match" object
-> > passed to it, because acpi_dev_get_first_match_dev() which uses it via
-> > bus_find_device() can easily convert the result of bus_find_device()
-> > into the pointer to return.
-> >
-> > For this reason, update acpi_dev_match_cb() to avoid the redundant
-> > memory updates.
-> >
-> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-> > Cc: Len Brown <lenb@kernel.org>
-> > Cc: linux-acpi@vger.kernel.org
-> > Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> 
-> Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> Or if you want me to take this patch, please let me know.
+--Sig_/CsJE6n9rHzX00k4CQHfkzhe
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I'll take it now, thanks.
+Hi all,
 
-greg k-h
+Today's linux-next merge of the spi-nor tree got a conflict in:
+
+  drivers/mtd/spi-nor/stm32-quadspi.c
+
+between commit:
+
+  caab277b1de0 ("treewide: Replace GPLv2 boilerplate/reference with SPDX - =
+rule 234")
+
+from Linus' tree and commit:
+
+  df6bd6c002a4 ("mtd: spi-nor: stm32: remove the driver as it was replaced =
+by spi-stm32-qspi.c")
+
+from the spi-nor tree.
+
+I fixed it up (I removed the file) and can carry the fix as necessary.
+This is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/CsJE6n9rHzX00k4CQHfkzhe
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0QQj0ACgkQAVBC80lX
+0Gyk8Af+KoY3oPRcY/pacom9JBsnThTy4deUQQ/D5Er7/NWm2T6LKFm3kdVPiuzw
+TLXULV7BB6iXO01ENcE6joZwKe2BBQHbhIg3LSZv5kCrwak7y1vaFi37SSca0Md9
+tGkmG76WSN7Ab2AUKLWKUYxmg20R5So5GB+p0qqUJmENrSTnJYD/fOPRpWc8QSdY
+UDTMHuqmakOPP9osBCWGlj5lBFavyMYRwc6HitrHFx8H8smuZcqs9yNsiBQ0a+AZ
+mfJyanphRHNBh+h2P0VXwG6AZSJQvXgkfmHbd25t2XTj8jE/dqFeYC0PvU8zxKtA
+4YbwbjfiNVNgsqlXGkPjXBS8eM0PIw==
+=/yQ1
+-----END PGP SIGNATURE-----
+
+--Sig_/CsJE6n9rHzX00k4CQHfkzhe--
