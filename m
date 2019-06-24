@@ -2,101 +2,218 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62BEF509C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 13:26:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 844D4509C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 13:28:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729680AbfFXL0K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 07:26:10 -0400
-Received: from mail-oln040092067095.outbound.protection.outlook.com ([40.92.67.95]:59814
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727525AbfFXL0K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 07:26:10 -0400
-Received: from VE1EUR02FT009.eop-EUR02.prod.protection.outlook.com
- (10.152.12.54) by VE1EUR02HT069.eop-EUR02.prod.protection.outlook.com
- (10.152.13.188) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.2008.13; Mon, 24 Jun
- 2019 11:26:07 +0000
-Received: from VI1PR06MB4142.eurprd06.prod.outlook.com (10.152.12.60) by
- VE1EUR02FT009.mail.protection.outlook.com (10.152.12.226) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2008.13 via Frontend Transport; Mon, 24 Jun 2019 11:26:07 +0000
-Received: from VI1PR06MB4142.eurprd06.prod.outlook.com
- ([fe80::c8ce:d86:2172:6b3]) by VI1PR06MB4142.eurprd06.prod.outlook.com
- ([fe80::c8ce:d86:2172:6b3%7]) with mapi id 15.20.2008.014; Mon, 24 Jun 2019
- 11:26:07 +0000
-From:   Jonas Karlman <jonas@kwiboo.se>
-To:     Neil Armstrong <narmstrong@baylibre.com>,
-        "laurent.pinchart@ideasonboard.com" 
-        <laurent.pinchart@ideasonboard.com>,
-        "a.hajda@samsung.com" <a.hajda@samsung.com>,
-        "daniel@ffwll.ch" <daniel@ffwll.ch>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        =?utf-8?B?SmVybmVqIMWga3JhYmVj?= <jernej.skrabec@siol.net>
-Subject: Re: [PATCH] MAINTAINERS: Update Maintainers and Reviewers of DRM
- Bridge Drivers
-Thread-Topic: [PATCH] MAINTAINERS: Update Maintainers and Reviewers of DRM
- Bridge Drivers
-Thread-Index: AQHVKmx1kLdA2SW15k6VQDSHihxT4aaqqlwA
-Date:   Mon, 24 Jun 2019 11:26:07 +0000
-Message-ID: <VI1PR06MB41421447ED6897E551E23087ACE00@VI1PR06MB4142.eurprd06.prod.outlook.com>
-References: <20190624090851.17859-1-narmstrong@baylibre.com>
-In-Reply-To: <20190624090851.17859-1-narmstrong@baylibre.com>
-Accept-Language: sv-SE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: HE1PR05CA0183.eurprd05.prod.outlook.com
- (2603:10a6:3:f8::31) To VI1PR06MB4142.eurprd06.prod.outlook.com
- (2603:10a6:802:64::15)
-x-incomingtopheadermarker: OriginalChecksum:46A3463A05CD975A64871E050BBFE208C484F53A3AB79B2D8620F5C3338191B2;UpperCasedChecksum:B2C6E075A6A6E0F287866249642BF9E1280D07AEAF963723DCBCD95F56181275;SizeAsReceived:7727;Count:49
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn:  [2NLynlfImZeI93Sbq+o2aeIuOfJItXLi]
-x-microsoft-original-message-id: <8ac600c2-360b-0bf2-dea6-5e7812fd9a63@kwiboo.se>
-x-ms-publictraffictype: Email
-x-incomingheadercount: 49
-x-eopattributedmessage: 0
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(5050001)(7020095)(20181119110)(201702061078)(5061506573)(5061507331)(1603103135)(2017031320274)(2017031322404)(2017031323274)(2017031324274)(1601125500)(1603101475)(1701031045);SRVR:VE1EUR02HT069;
-x-ms-traffictypediagnostic: VE1EUR02HT069:
-x-microsoft-antispam-message-info: VmqY7L3HyR/1l3ZxYFzkPQemjekEVqQ61l4gqLL+4D2X5iEQDOfSiP3jwA2/swVkMsmfWSUncGmkXYb8VoFSIQZo01ohD0rEmiijJAEppOLTqC70AEdm9nZM8+e6c0B8c5APl7etkdLOabZg/J4eDsNlBeNAIjOIuyHmTgc1qgkBfDmHmdjHx24gNtQmOCG4
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <0A1ADD9DDF40DE48B2D4DD6F74FE9374@eurprd06.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1729812AbfFXL2u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 07:28:50 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:42243 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728169AbfFXL2u (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 07:28:50 -0400
+Received: by mail-wr1-f66.google.com with SMTP id x17so13472120wrl.9
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 04:28:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=UNcy8eWqctDZ/B0vQmCYKv2pj1uHfmf+ueIIuptmq+g=;
+        b=HofRi30RbWmoIRYk082kCxt/H5Be+HRHLSug71DnVgsW1wmNEH1LPvTG3PsCttbvvC
+         dtgv/zgBiH8OcGz6bjsS+7FCSFCUUKoTnHE73WfOV5DzNs+J9G3iHEFI01fSqUDb4WiP
+         DD1uXfJgSvKavkWwFeOqvzsVA0ysnXDZLodb3SzosUwEiqzCMpjIf0Wj9dwrujNb/FMj
+         A/SM1HD1ACjmDGDvr4ePjLI8NkmXQ3ntpR4oh50Uka9zAsBoO354aXnu9yU2SIszxli1
+         Nw6EUWjdsKmvji+uM12gtlfuYf3uqQ74XZR5TI6X5qiiSkkBYCAPOtDYZ4GIcOQWx1F/
+         G2UA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=UNcy8eWqctDZ/B0vQmCYKv2pj1uHfmf+ueIIuptmq+g=;
+        b=ieqRpmh4iZOBecplo4kj1TMIHR/t/ocO900S7Ttj0VIFZWNPHc5ABhBIuDM6i+CQrD
+         W9PkolPxZwlzjN8V5GvNgGzX5mDtMmkCAKT6GtIIYCe5u5K79TYDBPVNhVlpD6DVDg+Z
+         b6I5HMqitz+mF6HZGDhWS7ly4DheC2eom4KwTulmupM2ftkY56K0M5YpjSychj1qXBu1
+         BP9+F2QEZL9kUM/237pjFzoW8rac4EiELaaRFvW4DMucdjv/8qNFh2CQU2+YBNKCCiBR
+         WBUGmyVQco9w3/TT0wL4clrxU2bH+7SJQb9aQQfiwynSbFrOjqd33plajczPYcO3VOts
+         W17Q==
+X-Gm-Message-State: APjAAAV+gepEpPsD5buI4j0VweuLX8mnG3E0Zdpkk5rJ3cCvCYUQYHK+
+        MIkamGMtoC0nMJ1YII4QKPUwrA==
+X-Google-Smtp-Source: APXvYqx2FMSxOtUi9i/iRHzrVCNGDY7XivA/wMjvC/gHwJYcWyvkHAQGW/e4L15l5LzoWyz6R8VRig==
+X-Received: by 2002:a5d:46c7:: with SMTP id g7mr59955676wrs.215.1561375727072;
+        Mon, 24 Jun 2019 04:28:47 -0700 (PDT)
+Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
+        by smtp.gmail.com with ESMTPSA id h8sm8951645wmf.12.2019.06.24.04.28.45
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 24 Jun 2019 04:28:46 -0700 (PDT)
+Date:   Mon, 24 Jun 2019 12:28:44 +0100
+From:   Daniel Thompson <daniel.thompson@linaro.org>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Paul Cercueil <paul@crapouillou.net>,
+        Lee Jones <lee.jones@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        od@zcrc.me, linux-pwm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] backlight: pwm_bl: Set pin to sleep state when powered
+ down
+Message-ID: <20190624112844.fmwbfpdxjkst3u7r@holly.lan>
+References: <20190522163428.7078-1-paul@crapouillou.net>
+ <5b0f8bb3-e7b0-52c1-1f2f-9709992b76fc@linaro.org>
+ <20190621135608.GB11839@ulmo>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: b38207f9-7b5e-473f-6061-08d6f896c005
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jun 2019 11:26:07.5001
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Internet
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1EUR02HT069
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190621135608.GB11839@ulmo>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMjAxOS0wNi0yNCAxMTowOCwgTmVpbCBBcm1zdHJvbmcgd3JvdGU6DQo+IEFkZCBteXNlbGYg
-YXMgY28tbWFpbnRhaW5lciBvZiBEUk0gQnJpZGdlIERyaXZlcnMgdGhlbiBhZGQgSm9uYXMgS2Fy
-bG1hbg0KPiBhbmQgSmVybmVqIMWga3JhYmVjIGFzIFJldmlld2VycyBvZiBEUk0gQnJpZGdlIERy
-aXZlcnMuDQo+DQo+IENjOiBMYXVyZW50IFBpbmNoYXJ0IDxsYXVyZW50LnBpbmNoYXJ0QGlkZWFz
-b25ib2FyZC5jb20+DQo+IENjOiBKb25hcyBLYXJsbWFuIDxqb25hc0Brd2lib28uc2U+DQo+IENj
-OiBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcuY29tPg0KPiBDYzogSmVybmVqIMWga3Jh
-YmVjIDxqZXJuZWouc2tyYWJlY0BzaW9sLm5ldD4NCj4gQ2M6IERhbmllbCBWZXR0ZXIgPGRhbmll
-bEBmZndsbC5jaD4NCj4gU2lnbmVkLW9mZi1ieTogTmVpbCBBcm1zdHJvbmcgPG5hcm1zdHJvbmdA
-YmF5bGlicmUuY29tPg0KPiAtLS0NCj4gIE1BSU5UQUlORVJTIHwgMyArKysNCj4gIDEgZmlsZSBj
-aGFuZ2VkLCAzIGluc2VydGlvbnMoKykNCj4NCj4gZGlmZiAtLWdpdCBhL01BSU5UQUlORVJTIGIv
-TUFJTlRBSU5FUlMNCj4gaW5kZXggMmFiZjZkMjhkYjY0Li5kZDhkYWNjNjFlNzkgMTAwNjQ0DQo+
-IC0tLSBhL01BSU5UQUlORVJTDQo+ICsrKyBiL01BSU5UQUlORVJTDQo+IEBAIC01MjUzLDcgKzUy
-NTMsMTAgQEAgVDoJZ2l0IGdpdDovL2Fub25naXQuZnJlZWRlc2t0b3Aub3JnL2RybS9kcm0tbWlz
-Yw0KPiAgDQo+ICBEUk0gRFJJVkVSUyBGT1IgQlJJREdFIENISVBTDQo+ICBNOglBbmRyemVqIEhh
-amRhIDxhLmhhamRhQHNhbXN1bmcuY29tPg0KPiArTToJTmVpbCBBcm1zdHJvbmcgPG5hcm1zdHJv
-bmdAYmF5bGlicmUuY29tPg0KPiAgUjoJTGF1cmVudCBQaW5jaGFydCA8TGF1cmVudC5waW5jaGFy
-dEBpZGVhc29uYm9hcmQuY29tPg0KPiArUjoJSm9uYXMgS2FybG1hbiA8am9uYXNAa3dpYm9vLnNl
-Pg0KPiArUjoJSmVybmVqIFNrcmFiZWMgPGplcm5lai5za3JhYmVjQHNpb2wubmV0Pg0KPiAgUzoJ
-TWFpbnRhaW5lZA0KPiAgVDoJZ2l0IGdpdDovL2Fub25naXQuZnJlZWRlc2t0b3Aub3JnL2RybS9k
-cm0tbWlzYw0KPiAgRjoJZHJpdmVycy9ncHUvZHJtL2JyaWRnZS8NCg0KVGhhbmtzIQ0KDQpSZXZp
-ZXdlZC1ieTogSm9uYXMgS2FybG1hbiA8am9uYXNAa3dpYm9vLnNlPg0KDQpCZXN0IHJlZ2FyZHMs
-DQpKb25hcw0K
+On Fri, Jun 21, 2019 at 03:56:08PM +0200, Thierry Reding wrote:
+> On Fri, Jun 21, 2019 at 01:41:45PM +0100, Daniel Thompson wrote:
+> > On 22/05/2019 17:34, Paul Cercueil wrote:
+> > > When the driver probes, the PWM pin is automatically configured to its
+> > > default state, which should be the "pwm" function.
+> > 
+> > At which point in the probe... and by who?
+> 
+> The driver core will select the "default" state of a device right before
+> calling the driver's probe, see:
+> 
+> 	drivers/base/pinctrl.c: pinctrl_bind_pins()
+> 
+> which is called from:
+> 
+> 	drivers/base/dd.c: really_probe()
+> 
+
+Thanks. I assumed it would be something like that... although given
+pwm-backlight is essentially a wrapper driver round a PWM I wondered why
+the pinctrl was on the backlight node (rather than the PWM node).
+
+Looking at the DTs in the upstream kernel it looks like ~20% of the
+backlight drivers have pinctrl on the backlight node. Others presumable
+have none or have it on the PWM node (and it looks like support for
+sleeping the pins is *very* rare amoung the PWM drivers).
+
+
+> > > However, at this
+> > > point we don't know the actual level of the pin, which may be active or
+> > > inactive. As a result, if the driver probes without enabling the
+> > > backlight, the PWM pin might be active, and the backlight would be
+> > > lit way before being officially enabled.
+> > > 
+> > > To work around this, if the probe function doesn't enable the backlight,
+> > > the pin is set to its sleep state instead of the default one, until the
+> > > backlight is enabled. Whenk the backlight is disabled, the pin is reset
+> > > to its sleep state.
+> > Doesn't this workaround result in a backlight flash between whatever enables
+> > it and the new code turning it off again?
+> 
+> Yeah, I think it would. I guess if you're very careful on how you set up
+> the device tree you might be able to work around it. Besides the default
+> and idle standard pinctrl states, there's also the "init" state. The
+> core will select that instead of the default state if available. However
+> there's also pinctrl_init_done() which will try again to switch to the
+> default state after probe has finished and the driver didn't switch away
+> from the init state.
+> 
+> So you could presumably set up the device tree such that you have three
+> states defined: "default" would be the one where the PWM pin is active,
+> "idle" would be used when backlight is off (PWM pin inactive) and then
+> another "init" state that would be the same as "idle" to be used during
+> probe. During probe the driver could then switch to the "idle" state so
+> that the pin shouldn't glitch.
+> 
+> I'm not sure this would actually work because I think the way that
+> pinctrl handles states both "init" and "idle" would be the same pointer
+> values and therefore pinctrl_init_done() would think the driver didn't
+> change away from the "init" state because it is the same pointer value
+> as the "idle" state that the driver selected. One way to work around
+> that would be to duplicate the "idle" state definition and associate one
+> instance of it with the "idle" state and the other with the "init"
+> state. At that point both states should be different (different pointer
+> values) and we'd get the init state selected automatically before probe,
+> select "idle" during probe and then the core will leave it alone. That's
+> of course ugly because we duplicate the pinctrl state in DT, but perhaps
+> it's the least ugly solution.
+> Adding Linus for visibility. Perhaps he can share some insight.
+
+To be honest I'm happy to summarize in my head as "if it flashes then it's not
+a pwm_bl.c's problem" ;-).
+
+
+Daniel.
+
+
+> 
+> On that note, I'm wondering if perhaps it'd make sense for pinctrl to
+> support some mode where a device would start out in idle mode. That is,
+> where pinctrl_bind_pins() would select the "idle" mode as the default
+> before probe. With something like that we could easily support this
+> use-case without glitching.
+> 
+> I suppose yet another variant would be for the PWM backlight to not use
+> any of the standard pinctrl states at all. Instead it could just define
+> custom states, say "active" and "inactive". Looking at the code that
+> would prevent pinctrl_bind_pins() from doing anything with pinctrl
+> states and given the driver exact control over when each of the states
+> will be selected. That's somewhat suboptimal because we can't make use
+> of the pinctrl PM helpers and it'd require more boilerplate.
+> 
+> Thierry
+> 
+> > > Signed-off-by: Paul Cercueil <paul@crapouillou.net> > ---
+> > >   drivers/video/backlight/pwm_bl.c | 9 +++++++++
+> > >   1 file changed, 9 insertions(+)
+> > > 
+> > > diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
+> > > index fb45f866b923..422f7903b382 100644
+> > > --- a/drivers/video/backlight/pwm_bl.c
+> > > +++ b/drivers/video/backlight/pwm_bl.c
+> > > @@ -16,6 +16,7 @@
+> > >   #include <linux/module.h>
+> > >   #include <linux/kernel.h>
+> > >   #include <linux/init.h>
+> > > +#include <linux/pinctrl/consumer.h>
+> > >   #include <linux/platform_device.h>
+> > >   #include <linux/fb.h>
+> > >   #include <linux/backlight.h>
+> > > @@ -50,6 +51,8 @@ static void pwm_backlight_power_on(struct pwm_bl_data *pb)
+> > >   	struct pwm_state state;
+> > >   	int err;
+> > > +	pinctrl_pm_select_default_state(pb->dev);
+> > > +
+> > >   	pwm_get_state(pb->pwm, &state);
+> > >   	if (pb->enabled)
+> > >   		return;
+> > > @@ -90,6 +93,8 @@ static void pwm_backlight_power_off(struct pwm_bl_data *pb)
+> > >   	regulator_disable(pb->power_supply);
+> > >   	pb->enabled = false;
+> > > +
+> > > +	pinctrl_pm_select_sleep_state(pb->dev);
+> > >   }
+> > >   static int compute_duty_cycle(struct pwm_bl_data *pb, int brightness)
+> > > @@ -626,6 +631,10 @@ static int pwm_backlight_probe(struct platform_device *pdev)
+> > >   	backlight_update_status(bl);
+> > >   	platform_set_drvdata(pdev, bl);
+> > > +
+> > > +	if (bl->props.power == FB_BLANK_POWERDOWN)
+> > > +		pinctrl_pm_select_sleep_state(&pdev->dev);
+> > 
+> > Didn't backlight_update_status(bl) already do this?
+> > 
+> > 
+> > Daniel.
+> > 
+> > 
+> > > +
+> > >   	return 0;
+> > >   err_alloc:
+> > > 
+> > 
+
+
