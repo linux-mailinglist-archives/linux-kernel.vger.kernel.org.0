@@ -2,500 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C8D84FFFE
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 05:07:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9CBA50011
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 05:10:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726992AbfFXDHJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 23:07:09 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:48129 "EHLO ozlabs.org"
+        id S1727296AbfFXDKG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 23:10:06 -0400
+Received: from mga04.intel.com ([192.55.52.120]:47896 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726323AbfFXDHI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 23:07:08 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45XDjH4jSwz9s5c;
-        Mon, 24 Jun 2019 13:06:58 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1561345620;
-        bh=dwaO/C2xGPho3+xJTJ5X5VkmYAgKAaMYHky8EdG4Q78=;
-        h=Date:From:To:Cc:Subject:From;
-        b=G1R0Z3ouizfjBLA5L4x/vP7Ukq/DfBTiQY5GE1rea1Q0svzKpPdec709A1wohloNe
-         9sR3U65hto4UdjPYf5D8rpk2nQzjEtY0S1v7XUht134QhaTKr8e4VAbfBwVE6yU1xD
-         ybk+AIx3Uqbkcx2wPLXNASMB9W7D+tEU2t7VrLAsNzchInNWRESV9Xckv9sWguHbYp
-         7YzxPbbwOjpGMz9U5QtABHXc5N3gfWKVp/l3n9YEjDqECVoIKdYhQTnKt96/A5F7sl
-         O9gfZDlYrGfGWiDAkLmfyWkr+MrtV+1x4zAlrXAQFks7nTAAOpBztHfTAnV0Wtyho0
-         YCEyVKcw4+DeQ==
-Date:   Mon, 24 Jun 2019 13:06:53 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Pablo Neira Ayuso <pablo@netfilter.org>,
-        NetFilter <netfilter-devel@vger.kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: linux-next: manual merge of the netfilter-next tree with Linus'
- tree
-Message-ID: <20190624130653.64016e85@canb.auug.org.au>
+        id S1726307AbfFXDKG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Jun 2019 23:10:06 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jun 2019 20:10:06 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,410,1557212400"; 
+   d="scan'208";a="312566017"
+Received: from liujing-mobl.ccr.corp.intel.com (HELO [10.238.129.47]) ([10.238.129.47])
+  by orsmga004.jf.intel.com with ESMTP; 23 Jun 2019 20:10:04 -0700
+Subject: Re: [PATCH RFC] kvm: x86: Expose AVX512_BF16 feature to guest
+From:   Jing Liu <jing2.liu@linux.intel.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, jing2.liu@intel.com
+References: <1561029712-11848-1-git-send-email-jing2.liu@linux.intel.com>
+ <1561029712-11848-2-git-send-email-jing2.liu@linux.intel.com>
+ <fd861e94-3ea5-3976-9855-05375f869f00@redhat.com>
+ <384bc07d-6105-d380-cd44-4518870c15f1@linux.intel.com>
+Message-ID: <fb749626-1d9e-138f-c673-14b52fe7170c@linux.intel.com>
+Date:   Mon, 24 Jun 2019 11:10:03 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/6mot5skLooM.T4TIYECrW5B"; protocol="application/pgp-signature"
+In-Reply-To: <384bc07d-6105-d380-cd44-4518870c15f1@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/6mot5skLooM.T4TIYECrW5B
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Paolo,
 
-Hi all,
+After thinking more, I found way to satisfy all cases in a easy way.
+How about things like this?
 
-Today's linux-next merge of the netfilter-next tree got conflicts in:
+@@ -507,12 +510,26 @@ static inline int __do_cpuid_ent(struct 
+kvm_cpuid_entry2 *entry, u32 fu
+                          * if the host doesn't support it.
+                          */
+                         entry->edx |= F(ARCH_CAPABILITIES);
++               } else if (index == 1) {
++                       entry->eax &= kvm_cpuid_7_1_eax_x86_features;
++                       entry->ebx = 0;
++                       entry->ecx = 0;
++                       entry->edx = 0;
+                 } else {
++                       entry->eax = 0;
+                         entry->ebx = 0;
+                         entry->ecx = 0;
+                         entry->edx = 0;
+                 }
+-               entry->eax = 0;
++
++               if (index == 0 && entry->eax >= 1) {
++                       entry[1].eax &= kvm_cpuid_7_1_eax_x86_features;
++                       entry[1].ebx = 0;
++                       entry[1].ecx = 0;
++                       entry[1].edx = 0;
++                       entry[1].flags |= KVM_CPUID_FLAG_SIGNIFCANT_INDEX;
++                       ++*nent;
++               }
+                 break;
+         }
 
-  include/linux/netfilter/ipset/ip_set.h
-  include/linux/netfilter/ipset/ip_set_counter.h
-  include/linux/netfilter/ipset/ip_set_skbinfo.h
-  include/linux/netfilter/ipset/ip_set_timeout.h
-  net/netfilter/ipset/ip_set_bitmap_gen.h
-  net/netfilter/ipset/ip_set_bitmap_ip.c
-  net/netfilter/ipset/ip_set_bitmap_ipmac.c
-  net/netfilter/ipset/ip_set_bitmap_port.c
-  net/netfilter/ipset/ip_set_core.c
-  net/netfilter/ipset/ip_set_getport.c
-  net/netfilter/ipset/ip_set_hash_gen.h
-  net/netfilter/ipset/ip_set_hash_ip.c
-  net/netfilter/ipset/ip_set_hash_ipmark.c
-  net/netfilter/ipset/ip_set_hash_ipport.c
-  net/netfilter/ipset/ip_set_hash_ipportip.c
-  net/netfilter/ipset/ip_set_hash_ipportnet.c
-  net/netfilter/ipset/ip_set_hash_mac.c
-  net/netfilter/ipset/ip_set_hash_net.c
-  net/netfilter/ipset/ip_set_hash_netiface.c
-  net/netfilter/ipset/ip_set_hash_netnet.c
-  net/netfilter/ipset/ip_set_hash_netport.c
-  net/netfilter/ipset/ip_set_hash_netportnet.c
-  net/netfilter/ipset/ip_set_list_set.c
-  net/netfilter/xt_set.c
 
-between commit:
+Or you prefer that I update this into another version later?
 
-  d2912cb15bdd ("treewide: Replace GPLv2 boilerplate/reference with SPDX - =
-rule 500")
+Thanks!
+Jing
 
-from Linus' tree and commit:
-
-  fe03d4745675 ("Update my email address")
-
-from the netfilter-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc include/linux/netfilter/ipset/ip_set.h
-index f5e03809cdb2,f5c6e7cd6469..000000000000
---- a/include/linux/netfilter/ipset/ip_set.h
-+++ b/include/linux/netfilter/ipset/ip_set.h
-@@@ -2,7 -1,11 +2,7 @@@
-  /* Copyright (C) 2000-2002 Joakim Axelsson <gozem@linux.nu>
-   *                         Patrick Schaaf <bof@bof.de>
-   *                         Martin Josefsson <gandalf@wlug.westbo.se>
--  * Copyright (C) 2003-2013 Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
-+  * Copyright (C) 2003-2013 Jozsef Kadlecsik <kadlec@netfilter.org>
- - *
- - * This program is free software; you can redistribute it and/or modify
- - * it under the terms of the GNU General Public License version 2 as
- - * published by the Free Software Foundation.
-   */
-  #ifndef _IP_SET_H
-  #define _IP_SET_H
-diff --cc include/linux/netfilter/ipset/ip_set_counter.h
-index 5477492c8374,305aeda2a899..000000000000
---- a/include/linux/netfilter/ipset/ip_set_counter.h
-+++ b/include/linux/netfilter/ipset/ip_set_counter.h
-@@@ -2,7 -1,11 +2,7 @@@
-  #ifndef _IP_SET_COUNTER_H
-  #define _IP_SET_COUNTER_H
- =20
-- /* Copyright (C) 2015 Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
-+ /* Copyright (C) 2015 Jozsef Kadlecsik <kadlec@netfilter.org>
- - *
- - * This program is free software; you can redistribute it and/or modify
- - * it under the terms of the GNU General Public License version 2 as
- - * published by the Free Software Foundation.
-   */
- =20
-  #ifdef __KERNEL__
-diff --cc include/linux/netfilter/ipset/ip_set_skbinfo.h
-index aae081e085c6,fac57ef854c2..000000000000
---- a/include/linux/netfilter/ipset/ip_set_skbinfo.h
-+++ b/include/linux/netfilter/ipset/ip_set_skbinfo.h
-@@@ -2,7 -1,11 +2,7 @@@
-  #ifndef _IP_SET_SKBINFO_H
-  #define _IP_SET_SKBINFO_H
- =20
-- /* Copyright (C) 2015 Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
-+ /* Copyright (C) 2015 Jozsef Kadlecsik <kadlec@netfilter.org>
- - *
- - * This program is free software; you can redistribute it and/or modify
- - * it under the terms of the GNU General Public License version 2 as
- - * published by the Free Software Foundation.
-   */
- =20
-  #ifdef __KERNEL__
-diff --cc include/linux/netfilter/ipset/ip_set_timeout.h
-index 88926b4c75f0,dc74150f3432..000000000000
---- a/include/linux/netfilter/ipset/ip_set_timeout.h
-+++ b/include/linux/netfilter/ipset/ip_set_timeout.h
-@@@ -2,7 -1,11 +2,7 @@@
-  #ifndef _IP_SET_TIMEOUT_H
-  #define _IP_SET_TIMEOUT_H
- =20
-- /* Copyright (C) 2003-2013 Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
-+ /* Copyright (C) 2003-2013 Jozsef Kadlecsik <kadlec@netfilter.org>
- - *
- - * This program is free software; you can redistribute it and/or modify
- - * it under the terms of the GNU General Public License version 2 as
- - * published by the Free Software Foundation.
-   */
- =20
-  #ifdef __KERNEL__
-diff --cc net/netfilter/ipset/ip_set_bitmap_gen.h
-index 8acc4e173167,29c1e9a50601..000000000000
---- a/net/netfilter/ipset/ip_set_bitmap_gen.h
-+++ b/net/netfilter/ipset/ip_set_bitmap_gen.h
-@@@ -1,5 -1,8 +1,5 @@@
- +/* SPDX-License-Identifier: GPL-2.0-only */
-- /* Copyright (C) 2013 Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
-+ /* Copyright (C) 2013 Jozsef Kadlecsik <kadlec@netfilter.org>
- - *
- - * This program is free software; you can redistribute it and/or modify
- - * it under the terms of the GNU General Public License version 2 as
- - * published by the Free Software Foundation.
-   */
- =20
-  #ifndef __IP_SET_BITMAP_IP_GEN_H
-diff --cc net/netfilter/ipset/ip_set_bitmap_ip.c
-index e3884b0cca91,5a66c5499700..000000000000
---- a/net/netfilter/ipset/ip_set_bitmap_ip.c
-+++ b/net/netfilter/ipset/ip_set_bitmap_ip.c
-@@@ -1,7 -1,10 +1,7 @@@
- +// SPDX-License-Identifier: GPL-2.0-only
-  /* Copyright (C) 2000-2002 Joakim Axelsson <gozem@linux.nu>
-   *                         Patrick Schaaf <bof@bof.de>
--  * Copyright (C) 2003-2013 Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
-+  * Copyright (C) 2003-2013 Jozsef Kadlecsik <kadlec@netfilter.org>
- - *
- - * This program is free software; you can redistribute it and/or modify
- - * it under the terms of the GNU General Public License version 2 as
- - * published by the Free Software Foundation.
-   */
- =20
-  /* Kernel module implementing an IP set type: the bitmap:ip type */
-diff --cc net/netfilter/ipset/ip_set_bitmap_ipmac.c
-index b73c37b3a791,ec7a8b12642c..000000000000
---- a/net/netfilter/ipset/ip_set_bitmap_ipmac.c
-+++ b/net/netfilter/ipset/ip_set_bitmap_ipmac.c
-@@@ -2,7 -1,11 +2,7 @@@
-  /* Copyright (C) 2000-2002 Joakim Axelsson <gozem@linux.nu>
-   *                         Patrick Schaaf <bof@bof.de>
-   *			   Martin Josefsson <gandalf@wlug.westbo.se>
--  * Copyright (C) 2003-2013 Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
-+  * Copyright (C) 2003-2013 Jozsef Kadlecsik <kadlec@netfilter.org>
- - *
- - * This program is free software; you can redistribute it and/or modify
- - * it under the terms of the GNU General Public License version 2 as
- - * published by the Free Software Foundation.
-   */
- =20
-  /* Kernel module implementing an IP set type: the bitmap:ip,mac type */
-diff --cc net/netfilter/ipset/ip_set_bitmap_port.c
-index d8c140553379,18275ec4924c..000000000000
---- a/net/netfilter/ipset/ip_set_bitmap_port.c
-+++ b/net/netfilter/ipset/ip_set_bitmap_port.c
-@@@ -1,5 -1,8 +1,5 @@@
- +// SPDX-License-Identifier: GPL-2.0-only
-- /* Copyright (C) 2003-2013 Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
-+ /* Copyright (C) 2003-2013 Jozsef Kadlecsik <kadlec@netfilter.org>
- - *
- - * This program is free software; you can redistribute it and/or modify
- - * it under the terms of the GNU General Public License version 2 as
- - * published by the Free Software Foundation.
-   */
- =20
-  /* Kernel module implementing an IP set type: the bitmap:port type */
-diff --cc net/netfilter/ipset/ip_set_core.c
-index 3cdf171cd468,18430ad2fdf2..000000000000
---- a/net/netfilter/ipset/ip_set_core.c
-+++ b/net/netfilter/ipset/ip_set_core.c
-@@@ -1,7 -1,10 +1,7 @@@
- +// SPDX-License-Identifier: GPL-2.0-only
-  /* Copyright (C) 2000-2002 Joakim Axelsson <gozem@linux.nu>
-   *                         Patrick Schaaf <bof@bof.de>
--  * Copyright (C) 2003-2013 Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
-+  * Copyright (C) 2003-2013 Jozsef Kadlecsik <kadlec@netfilter.org>
- - *
- - * This program is free software; you can redistribute it and/or modify
- - * it under the terms of the GNU General Public License version 2 as
- - * published by the Free Software Foundation.
-   */
- =20
-  /* Kernel module for IP set management */
-diff --cc net/netfilter/ipset/ip_set_getport.c
-index 2384e36aef5c,dc7b46b41354..000000000000
---- a/net/netfilter/ipset/ip_set_getport.c
-+++ b/net/netfilter/ipset/ip_set_getport.c
-@@@ -1,5 -1,8 +1,5 @@@
- +// SPDX-License-Identifier: GPL-2.0-only
-- /* Copyright (C) 2003-2011 Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
-+ /* Copyright (C) 2003-2011 Jozsef Kadlecsik <kadlec@netfilter.org>
- - *
- - * This program is free software; you can redistribute it and/or modify
- - * it under the terms of the GNU General Public License version 2 as
- - * published by the Free Software Foundation.
-   */
- =20
-  /* Get Layer-4 data from the packets */
-diff --cc net/netfilter/ipset/ip_set_hash_gen.h
-index 10f619625abd,07ef941130a6..000000000000
---- a/net/netfilter/ipset/ip_set_hash_gen.h
-+++ b/net/netfilter/ipset/ip_set_hash_gen.h
-@@@ -1,5 -1,8 +1,5 @@@
- +/* SPDX-License-Identifier: GPL-2.0-only */
-- /* Copyright (C) 2013 Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
-+ /* Copyright (C) 2013 Jozsef Kadlecsik <kadlec@netfilter.org>
- - *
- - * This program is free software; you can redistribute it and/or modify
- - * it under the terms of the GNU General Public License version 2 as
- - * published by the Free Software Foundation.
-   */
- =20
-  #ifndef _IP_SET_HASH_GEN_H
-diff --cc net/netfilter/ipset/ip_set_hash_ip.c
-index 69d7576be2e6,7b82bf1104ce..000000000000
---- a/net/netfilter/ipset/ip_set_hash_ip.c
-+++ b/net/netfilter/ipset/ip_set_hash_ip.c
-@@@ -1,5 -1,8 +1,5 @@@
- +// SPDX-License-Identifier: GPL-2.0-only
-- /* Copyright (C) 2003-2013 Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
-+ /* Copyright (C) 2003-2013 Jozsef Kadlecsik <kadlec@netfilter.org>
- - *
- - * This program is free software; you can redistribute it and/or modify
- - * it under the terms of the GNU General Public License version 2 as
- - * published by the Free Software Foundation.
-   */
- =20
-  /* Kernel module implementing an IP set type: the hash:ip type */
-diff --cc net/netfilter/ipset/ip_set_hash_ipmark.c
-index 6fe1ec0d2154,7d468f98a252..000000000000
---- a/net/netfilter/ipset/ip_set_hash_ipmark.c
-+++ b/net/netfilter/ipset/ip_set_hash_ipmark.c
-@@@ -1,6 -1,9 +1,6 @@@
- +// SPDX-License-Identifier: GPL-2.0-only
-- /* Copyright (C) 2003-2013 Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
-+ /* Copyright (C) 2003-2013 Jozsef Kadlecsik <kadlec@netfilter.org>
-   * Copyright (C) 2013 Smoothwall Ltd. <vytas.dauksa@smoothwall.net>
- - *
- - * This program is free software; you can redistribute it and/or modify
- - * it under the terms of the GNU General Public License version 2 as
- - * published by the Free Software Foundation.
-   */
- =20
-  /* Kernel module implementing an IP set type: the hash:ip,mark type */
-diff --cc net/netfilter/ipset/ip_set_hash_ipport.c
-index 74ec7e097e34,d358ee69d04b..000000000000
---- a/net/netfilter/ipset/ip_set_hash_ipport.c
-+++ b/net/netfilter/ipset/ip_set_hash_ipport.c
-@@@ -1,5 -1,8 +1,5 @@@
- +// SPDX-License-Identifier: GPL-2.0-only
-- /* Copyright (C) 2003-2013 Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
-+ /* Copyright (C) 2003-2013 Jozsef Kadlecsik <kadlec@netfilter.org>
- - *
- - * This program is free software; you can redistribute it and/or modify
- - * it under the terms of the GNU General Public License version 2 as
- - * published by the Free Software Foundation.
-   */
- =20
-  /* Kernel module implementing an IP set type: the hash:ip,port type */
-diff --cc net/netfilter/ipset/ip_set_hash_ipportip.c
-index ced57d63b01f,0a304785f912..000000000000
---- a/net/netfilter/ipset/ip_set_hash_ipportip.c
-+++ b/net/netfilter/ipset/ip_set_hash_ipportip.c
-@@@ -1,5 -1,8 +1,5 @@@
- +// SPDX-License-Identifier: GPL-2.0-only
-- /* Copyright (C) 2003-2013 Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
-+ /* Copyright (C) 2003-2013 Jozsef Kadlecsik <kadlec@netfilter.org>
- - *
- - * This program is free software; you can redistribute it and/or modify
- - * it under the terms of the GNU General Public License version 2 as
- - * published by the Free Software Foundation.
-   */
- =20
-  /* Kernel module implementing an IP set type: the hash:ip,port,ip type */
-diff --cc net/netfilter/ipset/ip_set_hash_ipportnet.c
-index 905f6cf0f55e,245f7d714870..000000000000
---- a/net/netfilter/ipset/ip_set_hash_ipportnet.c
-+++ b/net/netfilter/ipset/ip_set_hash_ipportnet.c
-@@@ -1,5 -1,8 +1,5 @@@
- +// SPDX-License-Identifier: GPL-2.0-only
-- /* Copyright (C) 2003-2013 Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
-+ /* Copyright (C) 2003-2013 Jozsef Kadlecsik <kadlec@netfilter.org>
- - *
- - * This program is free software; you can redistribute it and/or modify
- - * it under the terms of the GNU General Public License version 2 as
- - * published by the Free Software Foundation.
-   */
- =20
-  /* Kernel module implementing an IP set type: the hash:ip,port,net type */
-diff --cc net/netfilter/ipset/ip_set_hash_mac.c
-index 853e772ab4d9,3d1fc71dac38..000000000000
---- a/net/netfilter/ipset/ip_set_hash_mac.c
-+++ b/net/netfilter/ipset/ip_set_hash_mac.c
-@@@ -1,5 -1,8 +1,5 @@@
- +// SPDX-License-Identifier: GPL-2.0-only
-- /* Copyright (C) 2014 Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
-+ /* Copyright (C) 2014 Jozsef Kadlecsik <kadlec@netfilter.org>
- - *
- - * This program is free software; you can redistribute it and/or modify
- - * it under the terms of the GNU General Public License version 2 as
- - * published by the Free Software Foundation.
-   */
- =20
-  /* Kernel module implementing an IP set type: the hash:mac type */
-diff --cc net/netfilter/ipset/ip_set_hash_net.c
-index 06c91e49bf25,470701fda231..000000000000
---- a/net/netfilter/ipset/ip_set_hash_net.c
-+++ b/net/netfilter/ipset/ip_set_hash_net.c
-@@@ -1,5 -1,8 +1,5 @@@
- +// SPDX-License-Identifier: GPL-2.0-only
-- /* Copyright (C) 2003-2013 Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
-+ /* Copyright (C) 2003-2013 Jozsef Kadlecsik <kadlec@netfilter.org>
- - *
- - * This program is free software; you can redistribute it and/or modify
- - * it under the terms of the GNU General Public License version 2 as
- - * published by the Free Software Foundation.
-   */
- =20
-  /* Kernel module implementing an IP set type: the hash:net type */
-diff --cc net/netfilter/ipset/ip_set_hash_netiface.c
-index 0a8cbcdfb42b,1df8656ad84d..000000000000
---- a/net/netfilter/ipset/ip_set_hash_netiface.c
-+++ b/net/netfilter/ipset/ip_set_hash_netiface.c
-@@@ -1,5 -1,8 +1,5 @@@
- +// SPDX-License-Identifier: GPL-2.0-only
-- /* Copyright (C) 2011-2013 Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
-+ /* Copyright (C) 2011-2013 Jozsef Kadlecsik <kadlec@netfilter.org>
- - *
- - * This program is free software; you can redistribute it and/or modify
- - * it under the terms of the GNU General Public License version 2 as
- - * published by the Free Software Foundation.
-   */
- =20
-  /* Kernel module implementing an IP set type: the hash:net,iface type */
-diff --cc net/netfilter/ipset/ip_set_hash_netnet.c
-index 832e4f5491cb,e0553be89600..000000000000
---- a/net/netfilter/ipset/ip_set_hash_netnet.c
-+++ b/net/netfilter/ipset/ip_set_hash_netnet.c
-@@@ -1,6 -1,9 +1,6 @@@
- +// SPDX-License-Identifier: GPL-2.0-only
-- /* Copyright (C) 2003-2013 Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
-+ /* Copyright (C) 2003-2013 Jozsef Kadlecsik <kadlec@netfilter.org>
-   * Copyright (C) 2013 Oliver Smith <oliver@8.c.9.b.0.7.4.0.1.0.0.2.ip6.ar=
-pa>
- - *
- - * This program is free software; you can redistribute it and/or modify
- - * it under the terms of the GNU General Public License version 2 as
- - * published by the Free Software Foundation.
-   */
- =20
-  /* Kernel module implementing an IP set type: the hash:net type */
-diff --cc net/netfilter/ipset/ip_set_hash_netport.c
-index a4f3f15b874a,943d55d76fcf..000000000000
---- a/net/netfilter/ipset/ip_set_hash_netport.c
-+++ b/net/netfilter/ipset/ip_set_hash_netport.c
-@@@ -1,5 -1,8 +1,5 @@@
- +// SPDX-License-Identifier: GPL-2.0-only
-- /* Copyright (C) 2003-2013 Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
-+ /* Copyright (C) 2003-2013 Jozsef Kadlecsik <kadlec@netfilter.org>
- - *
- - * This program is free software; you can redistribute it and/or modify
- - * it under the terms of the GNU General Public License version 2 as
- - * published by the Free Software Foundation.
-   */
- =20
-  /* Kernel module implementing an IP set type: the hash:net,port type */
-diff --cc net/netfilter/ipset/ip_set_hash_netportnet.c
-index e54d415405f3,afaff99e578c..000000000000
---- a/net/netfilter/ipset/ip_set_hash_netportnet.c
-+++ b/net/netfilter/ipset/ip_set_hash_netportnet.c
-@@@ -1,5 -1,8 +1,5 @@@
- +// SPDX-License-Identifier: GPL-2.0-only
-- /* Copyright (C) 2003-2013 Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
-+ /* Copyright (C) 2003-2013 Jozsef Kadlecsik <kadlec@netfilter.org>
- - *
- - * This program is free software; you can redistribute it and/or modify
- - * it under the terms of the GNU General Public License version 2 as
- - * published by the Free Software Foundation.
-   */
- =20
-  /* Kernel module implementing an IP set type: the hash:ip,port,net type */
-diff --cc net/netfilter/ipset/ip_set_list_set.c
-index 8ada318bf09d,ed4360072f64..000000000000
---- a/net/netfilter/ipset/ip_set_list_set.c
-+++ b/net/netfilter/ipset/ip_set_list_set.c
-@@@ -1,5 -1,8 +1,5 @@@
- +// SPDX-License-Identifier: GPL-2.0-only
-- /* Copyright (C) 2008-2013 Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
-+ /* Copyright (C) 2008-2013 Jozsef Kadlecsik <kadlec@netfilter.org>
- - *
- - * This program is free software; you can redistribute it and/or modify
- - * it under the terms of the GNU General Public License version 2 as
- - * published by the Free Software Foundation.
-   */
- =20
-  /* Kernel module implementing an IP set type: the list:set type */
-diff --cc net/netfilter/xt_set.c
-index f099228cb9c4,f025c51ba375..000000000000
---- a/net/netfilter/xt_set.c
-+++ b/net/netfilter/xt_set.c
-@@@ -2,7 -1,11 +2,7 @@@
-  /* Copyright (C) 2000-2002 Joakim Axelsson <gozem@linux.nu>
-   *                         Patrick Schaaf <bof@bof.de>
-   *                         Martin Josefsson <gandalf@wlug.westbo.se>
--  * Copyright (C) 2003-2013 Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
-+  * Copyright (C) 2003-2013 Jozsef Kadlecsik <kadlec@netfilter.org>
- - *
- - * This program is free software; you can redistribute it and/or modify
- - * it under the terms of the GNU General Public License version 2 as
- - * published by the Free Software Foundation.
-   */
- =20
-  /* Kernel module which implements the set match and SET target
-
---Sig_/6mot5skLooM.T4TIYECrW5B
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0QPk0ACgkQAVBC80lX
-0Gwi5gf/erXv7gS0AVA1pLAkZNWC4grWZ9V6OnU9KWWZkWdAzNuVSDgNGsOK0BZU
-wJEJu7s2CQCZZ8i06KBsNLSnwGcAXyK3ATNSttRXq2bHshprimN4gQWPT6oOwIeY
-yTnxD3y4RT2hwZGVXpWJgWJiZ5jm7Y2A5vyka5gzVpK0nbS2aZSdgIPtiLuQNR9O
-QZYT00UqQwI02cv81b1IELHbTxyAIQS+GJutHGWSzFlx+Pjc644UUBippMnZSXJt
-83OL8buxSDnTKNQ34y0oJ6r6Q32bi/SJvRlnlQqxnx2QOzgzGoxJcwwDrmC29Qgk
-yLeNUlcMwjFG78HnvuvE4T2qNswaUQ==
-=h34A
------END PGP SIGNATURE-----
-
---Sig_/6mot5skLooM.T4TIYECrW5B--
+On 6/20/2019 11:09 PM, Liu, Jing2 wrote:
+> Hi Paolo,
+> 
+> On 6/20/2019 8:16 PM, Paolo Bonzini wrote:
+>> On 20/06/19 13:21, Jing Liu wrote:
+>>> +        for (i = 1; i <= times; i++) {
+>>> +            if (*nent >= maxnent)
+>>> +                goto out;
+>>> +            do_cpuid_1_ent(&entry[i], function, i);
+>>> +            entry[i].eax &= F(AVX512_BF16);
+>>> +            entry[i].ebx = 0;
+>>> +            entry[i].ecx = 0;
+>>> +            entry[i].edx = 0;
+>>> +            entry[i].flags |= KVM_CPUID_FLAG_SIGNIFCANT_INDEX;
+>>> +            ++*nent;
+>>
+>> This woud be wrong for i > 1, so instead make this
+>>
+>>     if (entry->eax >= 1)
+>>
+> 
+> I am confused about the @index parameter. @index seems not used for
+> every case except 0x07. Since the caller function only has @index=0, so
+> all other cases except 0x07 put cpuid info from subleaf=0 to max subleaf.
+> 
+> What do you think about @index in current function? Does it mean, we
+> need put cpuid from index to max subleaf to @entry[i]? If so, the logic
+> seems as follows,
+> 
+> if (index == 0) {
+>      // Put subleaf 0 into @entry
+>      // Put subleaf 1 into @entry[1]
+> } else if (index < entry->eax) {
+>      // Put subleaf 1 into @entry
+> } else {
+>      // Put all zero into @entry
+> }
+> 
+> But this seems not identical with other cases, for current caller
+> function. Or we can simply ignore @index in 0x07 and just put all possible
+> subleaf info back?
+> 
+>> and define F(AVX512_BF16) as a new constant kvm_cpuid_7_1_eax_features.
+>>
+> Got it.
+> 
+> 
+> Thanks,
+> Jing
+> 
+>> Paolo
+>>
