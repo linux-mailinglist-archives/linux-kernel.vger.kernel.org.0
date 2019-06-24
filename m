@@ -2,88 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F30B51E6C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 00:37:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 675EB51E63
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 00:36:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726978AbfFXWhe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 18:37:34 -0400
-Received: from mga01.intel.com ([192.55.52.88]:1686 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726413AbfFXWhc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 18:37:32 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jun 2019 15:37:32 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,413,1557212400"; 
-   d="scan'208";a="172143160"
-Received: from skuppusw-desk.jf.intel.com ([10.54.74.33])
-  by orsmga002.jf.intel.com with ESMTP; 24 Jun 2019 15:37:31 -0700
-From:   sathyanarayanan.kuppuswamy@linux.intel.com
-To:     bhelgaas@google.com
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ashok.raj@intel.com, keith.busch@intel.com,
-        sathyanarayanan.kuppuswamy@linux.intel.com
-Subject: [PATCH v1 1/1] PCI/ERR: Update error status after reset_link()
-Date:   Mon, 24 Jun 2019 15:35:23 -0700
-Message-Id: <20190624223523.115019-1-sathyanarayanan.kuppuswamy@linux.intel.com>
-X-Mailer: git-send-email 2.21.0
+        id S1726610AbfFXWgw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 18:36:52 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:41401 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726413AbfFXWgw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 18:36:52 -0400
+Received: by mail-lj1-f196.google.com with SMTP id 205so5397205ljj.8
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 15:36:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=J6mvSj9HIBsk8EjLGW0hTzAQhZMarT0YB1g8io943NY=;
+        b=sUkqpU7CRPJa8WBRq9dbfWldit0lSlp++W1TdZzD9bsloqAAyiyEYnZaN9j8hCqVWl
+         GnY52VMS/EfwfuyHSPAbY8sXyWOlrq9hBe0WvJOkwiwUmSTxlvXQTQQD3hzW71xRMNlW
+         ARtdmVHxPGokOAbn1kaJQ1A6sdL/+y6PVTl+Sq1TETju8ACSE4oSpHruEkgvJmwHDOt4
+         l7eCeJjOSarS8Vu/mcSXrgxukP1PUYswqgCYOcFqC6ULrw6sb2Cwy4GF79yDm/UtFml9
+         TGKYDZYVHNSjsjlPkUPtS1QeFDe/laWx10l4FrczaNx+MKYryXO7+IBoAO4pb/KdpUXF
+         F3zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=J6mvSj9HIBsk8EjLGW0hTzAQhZMarT0YB1g8io943NY=;
+        b=M/1LvCjRDS+g2mgnfpVE7gQ091VKCCPdXGW7QBH316+TB87gnbneYGSbpFIYxt64mn
+         jhj3C5jNMfy/Ja4xJYHX7W8Wbh2G/Goq0G1sR2kVZbU3CHM1Sy2J+cbZBa2FUX4e/XlE
+         G+jqgSxqtAHzhm0fUZBOCnZfQf2g39h++CIMP7KqjWag/6slACCQqEOdtiZVQklFn+8h
+         h00CNJ2iMR2pwtJ7kW5c6Zo2agqruuO9pRmM39dweCHOLaDqlj5CzJu3/NSUhqpMKkjv
+         Ng3EPr9OlVPptNLXmbLD/4/i/TKVjJ1RPhS3bECK1vykXkURAUN3r4NEj7nmCJ5d2OsE
+         OaAw==
+X-Gm-Message-State: APjAAAUFHSBr229DQVTLpewTXRsbRaOqRMUamLCLJEbcXsg1zOSb4IoK
+        9MWj88c4cFhJHv8ko88CXwvX0b0oMlMc4051cYDJdtXQ
+X-Google-Smtp-Source: APXvYqzwcsIfU2fhhMg3DeSXFdWRcU2jq1WdvPR6NAlR0GJdjSA/p8p4eNDenRfaMzxDWDGYenzTX1Bjfkox3wK+5/I=
+X-Received: by 2002:a2e:8756:: with SMTP id q22mr52904734ljj.108.1561415810154;
+ Mon, 24 Jun 2019 15:36:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190621152413.21361-1-thierry.reding@gmail.com>
+In-Reply-To: <20190621152413.21361-1-thierry.reding@gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 25 Jun 2019 00:36:38 +0200
+Message-ID: <CACRpkdZMP3hfAdcJjs1EUMnB5naN7NHsrKFHi9xJ4k5XWCnFFw@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: Add device link between pin controller and GPIO
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+On Fri, Jun 21, 2019 at 5:24 PM Thierry Reding <thierry.reding@gmail.com> wrote:
 
-Commit bdb5ac85777d ("PCI/ERR: Handle fatal error recovery") uses
-reset_link() to recover from fatal errors. But, if the reset is
-successful there is no need to continue the rest of the error recovery
-checks. Also, during fatal error recovery, if the initial value of error
-status is PCI_ERS_RESULT_DISCONNECT or PCI_ERS_RESULT_NO_AER_DRIVER then
-even after successful recovery (using reset_link()) pcie_do_recovery()
-will report the recovery result as failure. So update the status of
-error after reset_link().
+> From: Thierry Reding <treding@nvidia.com>
+>
+> When a GPIO controller registers a pin range with a pin controller,
+> establish a device link between them in order to keep track of the
+> dependency, which will help keep the right suspend/resume ordering.
+>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 
-Fixes: bdb5ac85777d ("PCI/ERR: Handle fatal error recovery")
-Cc: Ashok Raj <ashok.raj@intel.com>
-Cc: Keith Busch <keith.busch@intel.com>
-Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
----
- drivers/pci/pcie/err.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+This make sense.
 
-diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
-index 773197a12568..aecec124a829 100644
---- a/drivers/pci/pcie/err.c
-+++ b/drivers/pci/pcie/err.c
-@@ -204,9 +204,13 @@ void pcie_do_recovery(struct pci_dev *dev, enum pci_channel_state state,
- 	else
- 		pci_walk_bus(bus, report_normal_detected, &status);
- 
--	if (state == pci_channel_io_frozen &&
--	    reset_link(dev, service) != PCI_ERS_RESULT_RECOVERED)
--		goto failed;
-+	if (state == pci_channel_io_frozen) {
-+		status = reset_link(dev, service);
-+		if (status != PCI_ERS_RESULT_RECOVERED)
-+			goto failed;
-+		else
-+			goto done;
-+	}
- 
- 	if (status == PCI_ERS_RESULT_CAN_RECOVER) {
- 		status = PCI_ERS_RESULT_RECOVERED;
-@@ -228,6 +232,7 @@ void pcie_do_recovery(struct pci_dev *dev, enum pci_channel_state state,
- 	if (status != PCI_ERS_RESULT_RECOVERED)
- 		goto failed;
- 
-+done:
- 	pci_dbg(dev, "broadcast resume message\n");
- 	pci_walk_bus(bus, report_resume, &status);
- 
--- 
-2.21.0
+> +               link = device_link_add(range->gc->parent, pctldev->dev,
+> +                                      DL_FLAG_AUTOREMOVE_CONSUMER);
 
+What about parentless GPIO chips now again?
+The parent field is optional, sad to say (yes I wish I could just
+fix it all).
+
+> +                       device_link_remove(range->gc->parent, pctldev->dev);
+
+And here again.
+
+Yours,
+Linus Walleij
