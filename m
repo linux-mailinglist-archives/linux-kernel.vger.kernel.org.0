@@ -2,125 +2,218 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E33FD50C3D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 15:45:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 85B0650C47
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 15:47:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730701AbfFXNpg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 09:45:36 -0400
-Received: from vmicros1.altlinux.org ([194.107.17.57]:57254 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726533AbfFXNpg (ORCPT
+        id S1731301AbfFXNrI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 09:47:08 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:36910 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729954AbfFXNrH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 09:45:36 -0400
-Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 1294772CC58;
-        Mon, 24 Jun 2019 16:45:32 +0300 (MSK)
-Received: by mua.local.altlinux.org (Postfix, from userid 508)
-        id 088B57CCE32; Mon, 24 Jun 2019 16:45:31 +0300 (MSK)
-Date:   Mon, 24 Jun 2019 16:45:31 +0300
-From:   "Dmitry V. Levin" <ldv@altlinux.org>
-To:     Christian Brauner <christian@brauner.io>
-Cc:     Jann Horn <jannh@google.com>, Oleg Nesterov <oleg@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] CLONE_PIDFD: do not use the value pointed by
- parent_tidptr
-Message-ID: <20190624134531.GB6010@altlinux.org>
-References: <20190620103105.cdxgqfelzlnkmblv@brauner.io>
- <20190620110037.GA4998@altlinux.org>
- <20190620111036.asi3mbcv4ax5ekrw@brauner.io>
- <20190621170613.GA26182@altlinux.org>
- <20190621221339.6yj4vg4zexv4y2j7@brauner.io>
- <20190623112717.GA20697@altlinux.org>
- <20190624094940.24qrteybbcp25wq7@brauner.io>
- <20190624115942.g6vyis3zy4ptt3fc@brauner.io>
+        Mon, 24 Jun 2019 09:47:07 -0400
+Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hfPIq-0003An-PU; Mon, 24 Jun 2019 15:46:36 +0200
+Date:   Mon, 24 Jun 2019 15:46:36 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Jan Kiszka <jan.kiszka@siemens.com>
+cc:     Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jan Beulich <jbeulich@suse.com>
+Subject: Re: x86: Spurious vectors not handled robustly
+In-Reply-To: <alpine.DEB.2.21.1906241236390.32342@nanos.tec.linutronix.de>
+Message-ID: <alpine.DEB.2.21.1906241541290.32342@nanos.tec.linutronix.de>
+References: <e525108f-3749-4e1d-1ac2-0d0a2655f15f@siemens.com> <alpine.DEB.2.21.1906241204430.32342@nanos.tec.linutronix.de> <1565f016-4e3b-fa89-62e5-fc77594ee5aa@siemens.com> <alpine.DEB.2.21.1906241236390.32342@nanos.tec.linutronix.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="JP+T4n/bALQSJXh8"
-Content-Disposition: inline
-In-Reply-To: <20190624115942.g6vyis3zy4ptt3fc@brauner.io>
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 24 Jun 2019, Thomas Gleixner wrote:
+> On Mon, 24 Jun 2019, Jan Kiszka wrote:
+> > On 24.06.19 12:09, Thomas Gleixner wrote:
+> > > If it is a vectored one it _IS_ acked.
+> > > 
+> > >          inc_irq_stat(irq_spurious_count);
+> > > 
+> > >   	/* see sw-dev-man vol 3, chapter 7.4.13.5 */
+> > >          pr_info("spurious APIC interrupt through vector %02x on CPU#%d, "
+> > >                  "should never happen.\n", vector, smp_processor_id());
+> > > 
+> > > and the vector through which that comes is printed correctly, unless
+> > > regs->orig_ax is hosed.
+> > 
+> > ...which is exactly the case: Since that commit, all unused vectors share the
+> > same entry point, spurious_interrupt, see idt_setup_apic_and_irq_gates(). And
+> > that entry point sets orig_ax to ~0xff.
+> 
+> Bah. Of course I did not look at that ...
+> 
+> /me goes back to stare at the code.
 
---JP+T4n/bALQSJXh8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The patch below should fix it. It's quick tested on 64bit (without inducing
+a spurious vector) and compile tested on 32bit.
 
-On Mon, Jun 24, 2019 at 01:59:43PM +0200, Christian Brauner wrote:
-> On Mon, Jun 24, 2019 at 11:49:40AM +0200, Christian Brauner wrote:
-> > On Sun, Jun 23, 2019 at 02:27:17PM +0300, Dmitry V. Levin wrote:
-> > > Userspace needs a cheap and reliable way to tell whether CLONE_PIDFD
-> > > is supported by the kernel or not.
-> > >=20
-> > > While older kernels without CLONE_PIDFD support just leave unchanged
-> > > the value pointed by parent_tidptr, current implementation fails with
-> > > EINVAL if that value is non-zero.
-> > >=20
-> > > If CLONE_PIDFD is supported and fd 0 is closed, then mandatory pidfd =
-=3D=3D 0
-> > > pointed by parent_tidptr also remains unchanged, which effectively
-> > > means that userspace must either check CLONE_PIDFD support beforehand
-> > > or ensure that fd 0 is not closed when invoking CLONE_PIDFD.
-> > >=20
-> > > The check for pidfd =3D=3D 0 was introduced during v5.2 release cycle
-> > > by commit b3e583825266 ("clone: add CLONE_PIDFD") to ensure that
-> > > CLONE_PIDFD could be potentially extended by passing in flags through
-> > > the return argument.
-> > >=20
-> > > However, that extension would look horrendous, and with introduction =
-of
-> > > clone3 syscall in v5.3 there is no need to extend legacy clone syscall
-> > > this way.
-> > >=20
-> > > So remove the pidfd =3D=3D 0 check.  Userspace that needs to be porta=
-ble
-> > > to kernels without CLONE_PIDFD support is advised to initialize pidfd
-> > > with -1 and check the pidfd value returned by CLONE_PIDFD.
-> > >=20
-> > > Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
-> >=20
-> > Reviewed-by: Christian Brauner <christian@brauner.io>
-> >=20
-> > Thank you Dmitry, queueing this up for rc7.
->=20
-> This is now sitting in
->=20
-> https://git.kernel.org/pub/scm/linux/kernel/git/brauner/linux.git/commit/=
-?h=3Dfixes&id=3D43754d05f235dd1b6c7f8ab9f42007770d721f10
->=20
-> I reformulated the commit message a bit and gave it a Fixes tag. Dmitry,
-> if you want you can take a look and tell me if that's acceptable to you.
+Can you please give it a try with your failure case?
 
-s/Old kernel that only support/Old kernels that only support/
+Thanks,
 
-Besides that, fine with me.  Thanks.
+	tglx
 
+8<----------------
+Subject: x86/irq: Seperate unused system vectors from spurious entry again
+From: Thomas Gleixner <tglx@linutronix.de>
+Date: Mon, 24 Jun 2019 13:34:06 +0200
 
---=20
-ldv
+Quite some time ago the interrupt entry stubs for unused vectors in the
+system vector range got removed and directly mapped to the spurious
+interrupt vector entry point.
 
---JP+T4n/bALQSJXh8
-Content-Type: application/pgp-signature; name="signature.asc"
+Sounds reasonable, but it's subtly broken. The spurious interrupt vector
+entry point pushes vector number 0xFF on the stack which makes the whole
+logic in smp_spurious_interrupt() pointless.
 
------BEGIN PGP SIGNATURE-----
+As a consequence any spurious interrupt which comes from a vector != 0xFF
+is treated as a real spurious interrupt (vector 0xFF) and not
+acknowledged. That subsequently stalls all interrupt vectors of equal and
+lower priority, which brings the system to a grinding halt.
 
-iQIcBAEBCAAGBQJdENP7AAoJEAVFT+BVnCUIrgIP/1sgLmygdF42/bB1S8h0pKru
-c98crUZv9Ws1hDC3tW4+8ZxI9c2iV/qCiyZo3N4dkS06nWcJJbPR35ZlTCS4u8zd
-OszHMNqeusLo5iU+lhmiOXGu45R9i3QEb+Egk4TAENeCOZCPOVPBrscM/smUSxAD
-uZQtDuf73zq/9fs+2ePbZ15NE2o98/hYRHEkZx39mmOPhVwMSg3eI9m+mdi0M0Km
-Yxor/sAPasFakCaUeNrayK9Rv7q+a3V5awO2PmQk8fOGi+67EDrAraGjPjAYTxtX
-/IrTDNf6KbK2rBJWIKD9cHpQAXTGMkTbYQ9Gspki1QdTu7PUz8RLYM4hpHrULTq0
-6VFAH95ccMH7XabUr+C54aZH8QAuXokf3w5heRWsVVa0NnjvBvJMIQA8GtUlZVSR
-omYxd/PDdJiNG+UAB4yzqyliMQfhJSLdyYIN6MtoloRw+5BzQY78gXad3vVItyCA
-GW1f3wufQ2xdv/irt6DMHtxbJfNLjIiWtUvmafI/iJcG9vJ0Ymkqg7mcxhEOi2P5
-whk94r7dQ8gqsbQkcIMZmyZxhGn7776vPt6L/ZDZg1yenOKV8r4vm+ERqqrKAHrG
-Avpm+9B6WUHhx35xJdV7/EDcOp8bwz2tXWhh7eemrw3j0ay1LW8us49A8UFlJ6/7
-lwACNg07XV9tLqMqHjJ+
-=bvRp
------END PGP SIGNATURE-----
+This can happen because even on 64-bit the system vector space is not
+guaranteed to be fully populated. A full compile time handling of the
+unused vectors is not possible because quite some of them are conditonally
+populated at runtime.
 
---JP+T4n/bALQSJXh8--
+Bring the entry stubs back, which wastes 160 bytes if all stubs are unused,
+but gains the proper handling back. There is no point to selectively spare
+some of the stubs which are known at compile time as the required code in
+the IDT management would be way larger and convoluted. The array is
+straight forward and simple.
+
+Do not route the spurious entries through common_interrupt and do_IRQ() as
+the original code did. Route it to smp_spurious_interrupt() which evaluates
+the vector number and acts accordingly now that the real vector numbers are
+handed in.
+
+Fixes: 2414e021ac8d ("x86: Avoid building unused IRQ entry stubs")
+Reported-by: Jan Kiszka <jan.kiszka@siemens.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jan Beulich <jbeulich@suse.com>
+---
+ arch/x86/entry/entry_32.S     |   24 ++++++++++++++++++++++++
+ arch/x86/entry/entry_64.S     |   30 ++++++++++++++++++++++++++----
+ arch/x86/include/asm/hw_irq.h |    2 ++
+ arch/x86/kernel/idt.c         |    3 ++-
+ 4 files changed, 54 insertions(+), 5 deletions(-)
+
+--- a/arch/x86/entry/entry_32.S
++++ b/arch/x86/entry/entry_32.S
+@@ -1104,6 +1104,30 @@ ENTRY(irq_entries_start)
+     .endr
+ END(irq_entries_start)
+ 
++#ifdef CONFIG_X86_LOCAL_APIC
++	.align 8
++ENTRY(spurious_entries_start)
++    vector=FIRST_SYSTEM_VECTOR
++    .rept (NR_VECTORS - FIRST_SYSTEM_VECTOR)
++	pushl	$(~vector+0x80)			/* Note: always in signed byte range */
++    vector=vector+1
++	jmp	common_spurious_vector
++	.align	8
++    .endr
++END(spurious_entries_start)
++
++common_spurious:
++	ASM_CLAC
++	addl	$-0x80, (%esp)			/* Adjust vector into the [-256, -1] range */
++	SAVE_ALL switch_stacks=1
++	ENCODE_FRAME_POINTER
++	TRACE_IRQS_OFF
++	movl	%esp, %eax
++	call	smp_spurious_interrupt
++	jmp	ret_from_intr
++ENDPROC(common_interrupt)
++#endif
++
+ /*
+  * the CPU automatically disables interrupts when executing an IRQ vector,
+  * so IRQ-flags tracing has to follow that:
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -375,6 +375,18 @@ ENTRY(irq_entries_start)
+     .endr
+ END(irq_entries_start)
+ 
++	.align 8
++ENTRY(spurious_entries_start)
++    vector=FIRST_SYSTEM_VECTOR
++    .rept (NR_VECTORS - FIRST_SYSTEM_VECTOR)
++	UNWIND_HINT_IRET_REGS
++	pushq	$(~vector+0x80)			/* Note: always in signed byte range */
++	jmp	common_spurious
++	.align	8
++	vector=vector+1
++    .endr
++END(spurious_entries_start)
++
+ .macro DEBUG_ENTRY_ASSERT_IRQS_OFF
+ #ifdef CONFIG_DEBUG_ENTRY
+ 	pushq %rax
+@@ -571,10 +583,20 @@ END(interrupt_entry)
+ 
+ /* Interrupt entry/exit. */
+ 
+-	/*
+-	 * The interrupt stubs push (~vector+0x80) onto the stack and
+-	 * then jump to common_interrupt.
+-	 */
++/*
++ * The interrupt stubs push (~vector+0x80) onto the stack and
++ * then jump to common_spurious/interrupt.
++ */
++common_spurious:
++	addq	$-0x80, (%rsp)			/* Adjust vector to [-256, -1] range */
++	call	interrupt_entry
++	UNWIND_HINT_REGS indirect=1
++	call	smp_spurious_interrupt		/* rdi points to pt_regs */
++	jmp	ret_from_intr
++END(common_spurious)
++_ASM_NOKPROBE(common_spurious)
++
++/* common_interrupt is a hotpath. Align it */
+ 	.p2align CONFIG_X86_L1_CACHE_SHIFT
+ common_interrupt:
+ 	addq	$-0x80, (%rsp)			/* Adjust vector to [-256, -1] range */
+--- a/arch/x86/include/asm/hw_irq.h
++++ b/arch/x86/include/asm/hw_irq.h
+@@ -150,6 +150,8 @@ extern char irq_entries_start[];
+ #define trace_irq_entries_start irq_entries_start
+ #endif
+ 
++extern char spurious_entries_start[];
++
+ #define VECTOR_UNUSED		NULL
+ #define VECTOR_RETRIGGERED	((void *)~0UL)
+ 
+--- a/arch/x86/kernel/idt.c
++++ b/arch/x86/kernel/idt.c
+@@ -319,7 +319,8 @@ void __init idt_setup_apic_and_irq_gates
+ #ifdef CONFIG_X86_LOCAL_APIC
+ 	for_each_clear_bit_from(i, system_vectors, NR_VECTORS) {
+ 		set_bit(i, system_vectors);
+-		set_intr_gate(i, spurious_interrupt);
++		entry = spurious_entries_start + 8 * (i - FIRST_SYSTEM_VECTOR);
++		set_intr_gate(i, entry);
+ 	}
+ #endif
+ }
