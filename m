@@ -2,116 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E13251DE3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 00:03:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC8B151DEE
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 00:08:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728097AbfFXWDu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 18:03:50 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55248 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726468AbfFXWDu (ORCPT
+        id S1726587AbfFXWIU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 18:08:20 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:17004 "EHLO
+        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726301AbfFXWIU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 18:03:50 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5OLv4KF098970
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 18:03:48 -0400
-Received: from e34.co.us.ibm.com (e34.co.us.ibm.com [32.97.110.152])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2tb5f6ke6r-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 18:03:48 -0400
-Received: from localhost
-        by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <bauerman@linux.ibm.com>;
-        Mon, 24 Jun 2019 23:03:47 +0100
-Received: from b03cxnp08025.gho.boulder.ibm.com (9.17.130.17)
-        by e34.co.us.ibm.com (192.168.1.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 24 Jun 2019 23:03:44 +0100
-Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5OM3hOc61342108
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 24 Jun 2019 22:03:43 GMT
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CC233780AF;
-        Mon, 24 Jun 2019 22:03:43 +0000 (GMT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BFB65780AE;
-        Mon, 24 Jun 2019 22:03:41 +0000 (GMT)
-Received: from morokweng.localdomain (unknown [9.85.209.86])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTPS;
-        Mon, 24 Jun 2019 22:03:41 +0000 (GMT)
-References: <20190624062331.388-1-prsriva02@gmail.com> <20190624062331.388-3-prsriva02@gmail.com>
-User-agent: mu4e 1.2.0; emacs 26.2
-From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
-To:     Prakhar Srivastava <prsriva02@gmail.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, zohar@linux.ibm.com,
-        roberto.sassu@huawei.com, vgoyal@redhat.com
-Subject: Re: [PATCH V10 2/3] IMA: Define a new template field buf
-In-reply-to: <20190624062331.388-3-prsriva02@gmail.com>
-Date:   Mon, 24 Jun 2019 19:03:35 -0300
+        Mon, 24 Jun 2019 18:08:20 -0400
+Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5OM352x020882;
+        Mon, 24 Jun 2019 15:07:03 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=LbB+A2jZrl6/VgBQUWCu5No6mbMHqxjOmNm1doe7H+Q=;
+ b=Oy/XfKc4wxj0DYs3I0O9AyQ4+L65pGpUao35r3fj3Px/Gr9Mq7aVpfndPO34pvKPWfB7
+ mTru5MBsuXj9PVKdSCQ5wI63cB5EUJBb29cfsfJOifjJf07wgTPlEbEKzqqBANgebGgR
+ nfNNPgsrsWRCLlqhTxFqkdU1cX8QBkkM+5I= 
+Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2tb6j2g3x8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Mon, 24 Jun 2019 15:07:03 -0700
+Received: from prn-mbx05.TheFacebook.com (2620:10d:c081:6::19) by
+ prn-hub06.TheFacebook.com (2620:10d:c081:35::130) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1713.5; Mon, 24 Jun 2019 15:07:02 -0700
+Received: from prn-hub05.TheFacebook.com (2620:10d:c081:35::129) by
+ prn-mbx05.TheFacebook.com (2620:10d:c081:6::19) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1713.5; Mon, 24 Jun 2019 15:07:02 -0700
+Received: from NAM02-BL2-obe.outbound.protection.outlook.com (192.168.54.28)
+ by o365-in.thefacebook.com (192.168.16.29) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1713.5
+ via Frontend Transport; Mon, 24 Jun 2019 15:07:02 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LbB+A2jZrl6/VgBQUWCu5No6mbMHqxjOmNm1doe7H+Q=;
+ b=SCKGUzs5bQvgaOXJSRdQjxJIp6Ta0YpqfbwTnndZjL6cXbB6nT/KdqCusm0/2XOXkN4+ZcaNo8mvlh48MXTrt41lyiH2AJOk7oR8IsHq7aotjzCjHfF0xjG8VnwRlGzmapmOZA4H2EtO5R25eO7wMrJWTXEfGbuTAiOyeHmAUy8=
+Received: from MWHPR15MB1165.namprd15.prod.outlook.com (10.175.3.22) by
+ MWHPR15MB1840.namprd15.prod.outlook.com (10.174.99.149) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2008.13; Mon, 24 Jun 2019 22:07:00 +0000
+Received: from MWHPR15MB1165.namprd15.prod.outlook.com
+ ([fe80::400e:e329:ea98:aa0d]) by MWHPR15MB1165.namprd15.prod.outlook.com
+ ([fe80::400e:e329:ea98:aa0d%6]) with mapi id 15.20.2008.014; Mon, 24 Jun 2019
+ 22:07:00 +0000
+From:   Song Liu <songliubraving@fb.com>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>
+CC:     "matthew.wilcox@oracle.com" <matthew.wilcox@oracle.com>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "oleg@redhat.com" <oleg@redhat.com>,
+        "rostedt@goodmis.org" <rostedt@goodmis.org>,
+        Kernel Team <Kernel-team@fb.com>,
+        "william.kucharski@oracle.com" <william.kucharski@oracle.com>
+Subject: Re: [PATCH v6 5/6] khugepaged: enable collapse pmd for pte-mapped THP
+Thread-Topic: [PATCH v6 5/6] khugepaged: enable collapse pmd for pte-mapped
+ THP
+Thread-Index: AQHVKYdbTu9KGYA+hEyrpX71HNVoZKarXzqA
+Date:   Mon, 24 Jun 2019 22:06:59 +0000
+Message-ID: <867149FC-1F89-4FE9-98B3-621D2F42B366@fb.com>
+References: <20190623054829.4018117-1-songliubraving@fb.com>
+ <20190623054829.4018117-6-songliubraving@fb.com>
+In-Reply-To: <20190623054829.4018117-6-songliubraving@fb.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Apple Mail (2.3445.104.11)
+x-originating-ip: [199.201.64.134]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 4731ca80-ede4-48b6-b452-08d6f8f047e5
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MWHPR15MB1840;
+x-ms-traffictypediagnostic: MWHPR15MB1840:
+x-microsoft-antispam-prvs: <MWHPR15MB1840052741ED71D6FDBE13B1B3E00@MWHPR15MB1840.namprd15.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 007814487B
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(376002)(136003)(396003)(39860400002)(346002)(189003)(199004)(54906003)(229853002)(6512007)(53936002)(6486002)(66946007)(64756008)(66446008)(76116006)(66556008)(66476007)(316002)(478600001)(99286004)(186003)(256004)(6506007)(53546011)(76176011)(2501003)(14444005)(73956011)(3846002)(102836004)(4326008)(68736007)(71190400001)(6116002)(25786009)(71200400001)(11346002)(5660300002)(476003)(446003)(86362001)(50226002)(8676002)(26005)(110136005)(305945005)(486006)(81156014)(8936002)(81166006)(66066001)(7736002)(2906002)(6436002)(6246003)(36756003)(14454004)(57306001)(33656002)(2616005);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1840;H:MWHPR15MB1165.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: yk/JYMEiLyBBfP36bNvi+bhIvGrGi1PDlzEoC0oB/U5cOEAMr8JbZD6oiaHVNyKtIePgk64LsGJDJxIMhNWpJdV1VGA4xlRCgF68QQkKWi0I+O28P0Eqed2xnvjeIQDm/xKNqsR6W2VnmMyAKyIPWxBqDOPL1igU+oQWmKiyDRGbAZm5CMqTxjznG8AOpzsw3ECMbIFiGHlpg0kFf/N+tkChLN5J/ou4yJes4nQ31wS5/m3HrLsOvl7Lg5ALjvrWmVs6683WaMEtjGECOb8Ox5Iyb/LLoqPjmY+Pi2Avn1vaSPIIJcdgekFORbV7KqZWEVHCIPqE2o9rF0m35zMXWKBG3+1dRb1bkFfQ+m/bpzNJzCW+kPTQxlT2LUKDQ4Dwrmrq51Cj3kP4JHDhgqIqyOr6ZrwaRMS/Dij5JXtvtWQ=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <440EA5C2B4657A4DB95362F92DF168EC@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-x-cbid: 19062422-0016-0000-0000-000009C6A200
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00011323; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000286; SDB=6.01222783; UDB=6.00643436; IPR=6.01003943;
- MB=3.00027451; MTD=3.00000008; XFM=3.00000015; UTC=2019-06-24 22:03:46
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19062422-0017-0000-0000-000043C5516A
-Message-Id: <87ftnyk5e0.fsf@morokweng.localdomain>
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4731ca80-ede4-48b6-b452-08d6f8f047e5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jun 2019 22:07:00.0148
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: songliubraving@fb.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1840
+X-OriginatorOrg: fb.com
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-24_14:,,
  signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
  mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906240173
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906240174
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-Hello Prakhar,
 
-Prakhar Srivastava <prsriva02@gmail.com> writes:
+> On Jun 22, 2019, at 10:48 PM, Song Liu <songliubraving@fb.com> wrote:
+>=20
+> khugepaged needs exclusive mmap_sem to access page table. When it fails
+> to lock mmap_sem, the page will fault in as pte-mapped THP. As the page
+> is already a THP, khugepaged will not handle this pmd again.
+>=20
+> This patch enables the khugepaged to retry retract_page_tables().
+>=20
+> A new flag AS_COLLAPSE_PMD is introduced to show the address_space may
+> contain pte-mapped THPs. When khugepaged fails to trylock the mmap_sem,
+> it sets AS_COLLAPSE_PMD. Then, at a later time, khugepaged will retry
+> compound pages in this address_space.
+>=20
+> Since collapse may happen at an later time, some pages may already fault
+> in. To handle these pages properly, it is necessary to prepare the pmd
+> before collapsing. prepare_pmd_for_collapse() is introduced to prepare
+> the pmd by removing rmap, adjusting refcount and mm_counter.
+>=20
+> prepare_pmd_for_collapse() also double checks whether all ptes in this
+> pmd are mapping to the same THP. This is necessary because some subpage
+> of the THP may be replaced, for example by uprobe. In such cases, it
+> is not possible to collapse the pmd, so we fall back.
+>=20
+> Signed-off-by: Song Liu <songliubraving@fb.com>
+> ---
+> include/linux/pagemap.h |  1 +
+> mm/khugepaged.c         | 69 +++++++++++++++++++++++++++++++++++------
+> 2 files changed, 60 insertions(+), 10 deletions(-)
+>=20
+> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+> index 9ec3544baee2..eac881de2a46 100644
+> --- a/include/linux/pagemap.h
+> +++ b/include/linux/pagemap.h
+> @@ -29,6 +29,7 @@ enum mapping_flags {
+> 	AS_EXITING	=3D 4, 	/* final truncate in progress */
+> 	/* writeback related tags are not used */
+> 	AS_NO_WRITEBACK_TAGS =3D 5,
+> +	AS_COLLAPSE_PMD =3D 6,	/* try collapse pmd for THP */
+> };
+>=20
+> /**
+> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+> index a4f90a1b06f5..9b980327fd9b 100644
+> --- a/mm/khugepaged.c
+> +++ b/mm/khugepaged.c
+> @@ -1254,7 +1254,47 @@ static void collect_mm_slot(struct mm_slot *mm_slo=
+t)
+> }
+>=20
+> #if defined(CONFIG_SHMEM) && defined(CONFIG_TRANSPARENT_HUGE_PAGECACHE)
+> -static void retract_page_tables(struct address_space *mapping, pgoff_t p=
+goff)
+> +
+> +/* return whether the pmd is ready for collapse */
+> +bool prepare_pmd_for_collapse(struct vm_area_struct *vma, pgoff_t pgoff,
+> +			      struct page *hpage, pmd_t *pmd)
 
-> diff --git a/security/integrity/ima/ima_template.c b/security/integrity/ima/ima_template.c
-> index 00dd5a434689..a01a17e5c581 100644
-> --- a/security/integrity/ima/ima_template.c
-> +++ b/security/integrity/ima/ima_template.c
-> @@ -26,6 +26,7 @@ static struct ima_template_desc builtin_templates[] = {
->  	{.name = IMA_TEMPLATE_IMA_NAME, .fmt = IMA_TEMPLATE_IMA_FMT},
->  	{.name = "ima-ng", .fmt = "d-ng|n-ng"},
->  	{.name = "ima-sig", .fmt = "d-ng|n-ng|sig"},
-> +	{.name = "ima-buf", .fmt = "d-ng|n-ng|buf"},
->  	{.name = "", .fmt = ""},	/* placeholder for a custom format */
->  };
->
-> @@ -43,6 +44,8 @@ static const struct ima_template_field supported_fields[] = {
->  	 .field_show = ima_show_template_string},
->  	{.field_id = "sig", .field_init = ima_eventsig_init,
->  	 .field_show = ima_show_template_sig},
-> +	{.field_id = "buf", .field_init = ima_eventbuf_init,
-> +	 .field_show = ima_show_template_buf},
->  };
->  #define MAX_TEMPLATE_NAME_LEN 15
 
-Currently, MAX_TEMPLATE_NAME_LEN is the length of a template that
-contains all valid fields. It may make sense to increase it since
-there's a new field being added.
+kbuild test robot reported I missed "static" here. But I am holding off a=20
+newer version that just fixes this.=20
 
-I suggest using a sizeof() to show where the number comes from (and
-which can be visually shown to be correct):
-
-#define MAX_TEMPLATE_NAME_LEN sizeof("d|n|d-ng|n-ng|sig|buf")
-
-The sizeof() is calculated at compile time.
-
---
-Thiago Jung Bauermann
-IBM Linux Technology Center
+Thanks,=20
+Song
 
