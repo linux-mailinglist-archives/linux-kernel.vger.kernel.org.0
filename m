@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3ED7450748
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:06:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CBF7508A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:22:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730074AbfFXKGV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 06:06:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38406 "EHLO mail.kernel.org"
+        id S1730683AbfFXKVp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 06:21:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57432 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730065AbfFXKGR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 06:06:17 -0400
+        id S1727525AbfFXKVn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 06:21:43 -0400
 Received: from localhost (f4.8f.5177.ip4.static.sl-reverse.com [119.81.143.244])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4EEE8208E3;
-        Mon, 24 Jun 2019 10:06:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A938A20645;
+        Mon, 24 Jun 2019 10:21:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561370776;
-        bh=B9GUuf1SLyExYTmkrwyLfOKmn2kWX9csUu3/dVUz+gc=;
+        s=default; t=1561371702;
+        bh=bD9YaJqBlzl1KE7+ecKFBN9ZNPFXK3KxohStnliNm60=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TtyiRAgqhf+mxWnwxTQvpe9C0Bqb8dM1XVbd5kqULRwarpUQw79dqsCPtGlqZ6RUZ
-         VjfkmVm4Iy3VK71+3ZPROdsbiL4HIogk3gOZ2bw28iC/EPwa6YCGGOu49VpVHGpdu9
-         mRxwHTItSWIdTpkGmOFYrISFMilRVb9lJOfxZZUk=
+        b=cK4nLNRpFig/SrmIREvUXfevaopa8Rhg5qLROSeEUmhGS802jXyOuhD95rHi969VC
+         dxrMGUMU/5RoS6WfHq+QtDYWfzYaIr0bpPbYo4l9E5MBnW1Ce1KY0XHhGaEQbO+Mu1
+         ArWRExiFSbJz0A8DXXpIyCXtddozghRltfwhIRIk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Young Xiao <92siuyang@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Wen He <wen.he_1@nxp.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 52/90] sparc: perf: fix updated event period in response to PERF_EVENT_IOC_PERIOD
+Subject: [PATCH 5.1 070/121] drm/arm/mali-dp: Add a loop around the second set CVAL and try 5 times
 Date:   Mon, 24 Jun 2019 17:56:42 +0800
-Message-Id: <20190624092317.591627603@linuxfoundation.org>
+Message-Id: <20190624092324.454603668@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190624092313.788773607@linuxfoundation.org>
-References: <20190624092313.788773607@linuxfoundation.org>
+In-Reply-To: <20190624092320.652599624@linuxfoundation.org>
+References: <20190624092320.652599624@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,41 +44,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 56cd0aefa475079e9613085b14a0f05037518fed ]
+[ Upstream commit 6a88e0c14813d00f8520d0e16cd4136c6cf8b4d4 ]
 
-The PERF_EVENT_IOC_PERIOD ioctl command can be used to change the
-sample period of a running perf_event. Consequently, when calculating
-the next event period, the new period will only be considered after the
-previous one has overflowed.
+This patch trying to fix monitor freeze issue caused by drm error
+'flip_done timed out' on LS1028A platform. this set try is make a loop
+around the second setting CVAL and try like 5 times before giveing up.
 
-This patch changes the calculation of the remaining event ticks so that
-they are offset if the period has changed.
-
-See commit 3581fe0ef37c ("ARM: 7556/1: perf: fix updated event period in
-response to PERF_EVENT_IOC_PERIOD") for details.
-
-Signed-off-by: Young Xiao <92siuyang@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Wen He <wen.he_1@nxp.com>
+Signed-off-by: Liviu Dudau <liviu.dudau@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/sparc/kernel/perf_event.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/gpu/drm/arm/malidp_drv.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/arch/sparc/kernel/perf_event.c b/arch/sparc/kernel/perf_event.c
-index 67b3e6b3ce5d..1ad5911f62b4 100644
---- a/arch/sparc/kernel/perf_event.c
-+++ b/arch/sparc/kernel/perf_event.c
-@@ -891,6 +891,10 @@ static int sparc_perf_event_set_period(struct perf_event *event,
- 	s64 period = hwc->sample_period;
- 	int ret = 0;
+diff --git a/drivers/gpu/drm/arm/malidp_drv.c b/drivers/gpu/drm/arm/malidp_drv.c
+index ab50ad06e271..64da56f4b0cf 100644
+--- a/drivers/gpu/drm/arm/malidp_drv.c
++++ b/drivers/gpu/drm/arm/malidp_drv.c
+@@ -192,6 +192,7 @@ static void malidp_atomic_commit_hw_done(struct drm_atomic_state *state)
+ {
+ 	struct drm_device *drm = state->dev;
+ 	struct malidp_drm *malidp = drm->dev_private;
++	int loop = 5;
  
-+	/* The period may have been changed by PERF_EVENT_IOC_PERIOD */
-+	if (unlikely(period != hwc->last_period))
-+		left = period - (hwc->last_period - left);
+ 	malidp->event = malidp->crtc.state->event;
+ 	malidp->crtc.state->event = NULL;
+@@ -206,8 +207,18 @@ static void malidp_atomic_commit_hw_done(struct drm_atomic_state *state)
+ 			drm_crtc_vblank_get(&malidp->crtc);
+ 
+ 		/* only set config_valid if the CRTC is enabled */
+-		if (malidp_set_and_wait_config_valid(drm) < 0)
++		if (malidp_set_and_wait_config_valid(drm) < 0) {
++			/*
++			 * make a loop around the second CVAL setting and
++			 * try 5 times before giving up.
++			 */
++			while (loop--) {
++				if (!malidp_set_and_wait_config_valid(drm))
++					break;
++			}
+ 			DRM_DEBUG_DRIVER("timed out waiting for updated configuration\n");
++		}
 +
- 	if (unlikely(left <= -period)) {
- 		left = period;
- 		local64_set(&hwc->period_left, left);
+ 	} else if (malidp->event) {
+ 		/* CRTC inactive means vblank IRQ is disabled, send event directly */
+ 		spin_lock_irq(&drm->event_lock);
 -- 
 2.20.1
 
