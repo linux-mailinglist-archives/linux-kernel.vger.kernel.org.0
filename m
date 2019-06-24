@@ -2,94 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9869251A0E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 19:52:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DAD551A14
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 19:54:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732652AbfFXRwU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 13:52:20 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:40722 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731941AbfFXRwS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 13:52:18 -0400
-Received: by mail-ot1-f65.google.com with SMTP id e8so14398163otl.7;
-        Mon, 24 Jun 2019 10:52:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=MCQN6msgppUQW4O/T7y5pKWHp92LoOmLLo22qkbzGno=;
-        b=e/wtny6MsqW3FF7aW3WKEPb63uKd43EIU6Lt6Laf7sFlIR5v/eD4EvRjHAoD1JmDAj
-         oBNAuRpz3AwQx2R/wVMIMwxFHfOCNfhiCwoj1xjNGoSzph4ydLUhdRheofcakrlcQ4Et
-         yf1EIssSxoxjEnxR+aKB7J98Yr3s2EmoBxDFRZPuTBFbNuQSTSRyWwOc/UD8FgvlMDoU
-         mN5GIcWI2UKw8g8h5g8wszKxiXTTU/0DI0gd6uAKUWmQKtW5eOR4zcSd8N9QUDffWDjh
-         kRDB4dyA/pO1444DEZWKy1RAxWxNXLfFD93K2l6zSVfa4wCUWEtIKIFgyK6iPoW+PH6w
-         9Y0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=MCQN6msgppUQW4O/T7y5pKWHp92LoOmLLo22qkbzGno=;
-        b=HV0vnAWdNEFCXTTBo2gBxINL4mtREMV9MqqAS94wgup61N2SpcNaY1RBml8uzT5ZhJ
-         0YBewQG/FsUXchLV5LiJf3C25K2kQ3S3fiejEJKyT6DiHZpCEWJabrvDDxHnnC0sDoMv
-         gms7BOsiuD3pXy/1Sby9XKIiX3D4ehWUmwa/+RS2toYmL31ObkKlnsFj3CQEPMoaE/L2
-         HhZXupd1wlAO8k12IrpOu1fhFSRsewDUAxHhq/pc+/N8yKgEOxwu2va4cSuMPzd0XynC
-         3H7qvwv4fgvyA+R9YAg6wqRKrBBzh6o6Fwwe7Yv3N5jYYtQguFPjR/Kf2m5A+frSeeAG
-         G+NQ==
-X-Gm-Message-State: APjAAAWxeFg1UmLEj70OqvFdNDx7bFXrUa2hynt4wS8dFMoVoElDuqan
-        tHm2r4dumvtTviCcb5J2N3M=
-X-Google-Smtp-Source: APXvYqxrn4WhU9uFli8NmuYlmt6iGhsu/s+XA6fuxfJ7qFmtz5BiPOvFeE8L20niahYwGYXBE6u4qw==
-X-Received: by 2002:a9d:3bb6:: with SMTP id k51mr38299914otc.238.1561398737916;
-        Mon, 24 Jun 2019 10:52:17 -0700 (PDT)
-Received: from rYz3n ([2600:1700:210:3790::48])
-        by smtp.gmail.com with ESMTPSA id c21sm3993247oib.4.2019.06.24.10.52.16
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 24 Jun 2019 10:52:17 -0700 (PDT)
-Date:   Mon, 24 Jun 2019 12:52:16 -0500
-From:   Jiunn Chang <c0d1n61at3@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH 5.1 000/121] 5.1.15-stable review
-Message-ID: <20190624175215.s5gtvatc3gqqeact@rYz3n>
-References: <20190624092320.652599624@linuxfoundation.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190624092320.652599624@linuxfoundation.org>
-User-Agent: NeoMutt/20180716
+        id S1732664AbfFXRyd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 13:54:33 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42424 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726451AbfFXRyd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 13:54:33 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D36E8ABE1;
+        Mon, 24 Jun 2019 17:54:31 +0000 (UTC)
+Message-ID: <1561398869.3073.4.camel@suse.de>
+Subject: Re: [PATCH v10 02/13] mm/sparsemem: Introduce a SECTION_IS_EARLY
+ flag
+From:   Oscar Salvador <osalvador@suse.de>
+To:     Dan Williams <dan.j.williams@intel.com>, akpm@linux-foundation.org
+Cc:     Qian Cai <cai@lca.pw>, Michal Hocko <mhocko@suse.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        David Hildenbrand <david@redhat.com>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>, linux-mm@kvack.org,
+        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org
+Date:   Mon, 24 Jun 2019 19:54:29 +0200
+In-Reply-To: <156092350358.979959.5817209875548072819.stgit@dwillia2-desk3.amr.corp.intel.com>
+References: <156092349300.979959.17603710711957735135.stgit@dwillia2-desk3.amr.corp.intel.com>
+         <156092350358.979959.5817209875548072819.stgit@dwillia2-desk3.amr.corp.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 05:55:32PM +0800, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.1.15 release.
-> There are 121 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Tue, 2019-06-18 at 22:51 -0700, Dan Williams wrote:
+> In preparation for sub-section hotplug, track whether a given section
+> was created during early memory initialization, or later via memory
+> hotplug.  This distinction is needed to maintain the coarse
+> expectation
+> that pfn_valid() returns true for any pfn within a given section even
+> if
+> that section has pages that are reserved from the page allocator.
 > 
-> Responses should be made by Wed 26 Jun 2019 09:22:03 AM UTC.
-> Anything received after that time might be too late.
+> For example one of the of goals of subsection hotplug is to support
+> cases where the system physical memory layout collides System RAM and
+> PMEM within a section. Several pfn_valid() users expect to just check
+> if
+> a section is valid, but they are not careful to check if the given
+> pfn
+> is within a "System RAM" boundary and instead expect pgdat
+> information
+> to further validate the pfn.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.1.15-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.1.y
-> and the diffstat can be found below.
+> Rather than unwind those paths to make their pfn_valid() queries more
+> precise a follow on patch uses the SECTION_IS_EARLY flag to maintain
+> the
+> traditional expectation that pfn_valid() returns true for all early
+> sections.
 > 
-> thanks,
-> 
-> greg k-h
-> 
-> -------------
+> Link: https://lore.kernel.org/lkml/1560366952-10660-1-git-send-email-
+> cai@lca.pw/
+> Reported-by: Qian Cai <cai@lca.pw>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: Logan Gunthorpe <logang@deltatee.com>
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Oscar Salvador <osalvador@suse.de>
+> Cc: Pavel Tatashin <pasha.tatashin@soleen.com>
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 
-Hello,
+[...]
+> @@ -731,7 +732,7 @@ int __meminit sparse_add_one_section(int nid,
+> unsigned long start_pfn,
+>  	page_init_poison(memmap, sizeof(struct page) *
+> PAGES_PER_SECTION);
+>  
+>  	section_mark_present(ms);
+> -	sparse_init_one_section(ms, section_nr, memmap, usage);
+> +	sparse_init_one_section(ms, section_nr, memmap, usage, 0);
 
-Compiled and booted fine.  No regressions on x86_64.
+I think this is an improvment, and I really like the idea of leveraring
+a new section's flag for this, but I have mixed feelings about the way
+to mark a section as an early one.
+IMHO, I think that a new "section_mark_early" function would be better
+than passing a new flag parameter to sparse_init_one_section().
 
-THX
+But I do not feel strong on this:
 
-Jiunn
+Reviewed-by: Oscar Salvador <osalvador@suse.de>
+
+
+-- 
+Oscar Salvador
+SUSE L3
