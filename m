@@ -2,45 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CA8D517A1
+	by mail.lfdr.de (Postfix) with ESMTP id 9DE68517A2
 	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 17:50:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731048AbfFXPuW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 11:50:22 -0400
-Received: from mail-ot1-f49.google.com ([209.85.210.49]:35220 "EHLO
-        mail-ot1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726862AbfFXPuV (ORCPT
+        id S1731148AbfFXPuX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 11:50:23 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:45085 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730525AbfFXPuW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 11:50:21 -0400
-Received: by mail-ot1-f49.google.com with SMTP id j19so14026480otq.2
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 08:50:21 -0700 (PDT)
+        Mon, 24 Jun 2019 11:50:22 -0400
+Received: by mail-ot1-f66.google.com with SMTP id x21so13946569otq.12
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 08:50:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=indeed.com; s=google;
         h=from:to:subject:date:message-id:in-reply-to:references;
-        bh=8myhvq178LDUl7I4FoNI+Lu1VTlerrD1c45aJYqC8NU=;
-        b=PUNk8yovZHbXkBBep/263tf6wYeTeUwWG1Nm+qCEz55Lk74D7Um6Q/3MRiSppY2Yxx
-         h8fbYzz0b6kwTpKv4XPL8ixLfKbD2xQkZ7SG5yfmhSKG7h2AtyxZaoyzDV/Er9tzjy4w
-         dEphCN+uJPMoyODXqPInVyJ33blp2WrB0yQuc=
+        bh=g7SeDWVCJ8EIBUNOCPrNemk+yV65sZFM9h29PN2LZx0=;
+        b=yG5UXB03/IrJRyiU10SAWztzkbmLfNTtyCoBXKb7Sa0ikLAOdOSDcRABxlZXhy7t/f
+         qWp1J7376WXJvj1S9LLl5mOiaLp5PhRFFVqAXN2YyLWV2WuBaYYiYatq7AtawG6u8ylL
+         Z38b1Nx8POJoiokCtjnLILdBbWdZwB5IeFnnQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references;
-        bh=8myhvq178LDUl7I4FoNI+Lu1VTlerrD1c45aJYqC8NU=;
-        b=W17KCwQvFEGje/L/M0cY2N4rvL4f1dN4xZaAP5tF2uWHW0HcsUfwzzMUnzLWipH5u5
-         82CbfqaJT6qcMPTb06iztEEM6zqlY4E6w9MUHKl29DfLrIzrzIRTuJMwg8IPAJcfy88a
-         oqyhbY3hvdc5DbdoagxbISkGj0jRc5Y7VHMU0MAYZ+ks6odIfgZ2muGEaWBmB42Cz4jC
-         pGMmAAgeImuQ3nLpBlWdFd5AWsxfexn75kHXQCLF7qnxiKHD8g2W1Qgd42s4lf+bAEcv
-         uTuAU+J5IlMhN/s3LSpiAUyOcTcaL9QxxCgJOtBhDEJCYPMNz5q0HlxjgidfB9/Gssqh
-         bNmg==
-X-Gm-Message-State: APjAAAWzZu7VZCwxdr5a0WbrahnutKXMq96/yCGINLJvoq3S3RKGsIkx
-        7DmDW24V1cAQ/R+niM2Pt/Blrw==
-X-Google-Smtp-Source: APXvYqzbMD+f7wzKYiZDRTmef5MK5GFoBYRdjfKDopr15+02mn84uuFdvhoh59tR4YOB9jZpwPbYXQ==
-X-Received: by 2002:a9d:8f1:: with SMTP id 104mr48237869otf.137.1561391420731;
-        Mon, 24 Jun 2019 08:50:20 -0700 (PDT)
+        bh=g7SeDWVCJ8EIBUNOCPrNemk+yV65sZFM9h29PN2LZx0=;
+        b=op5HA2M45+xnXVYRO4f/9SKocEc4vgKvefAC2IEOD97RSKVeeymxN2BniXfByGAiyy
+         OgNMHNBLSz77uBVT1ATLOWUuZr29kas/L5DajAZxdfQptoBtYENLMpOTV1jSZ6r8RyF2
+         04Ut0jHXqyh2CjIgoHlP2a8l4AvTnUXSuSZ7uJtKqvVk2uWfhb4JbdaDOwB93mIkzQUK
+         AoSt6irTBQ6oxhajpYqmN18vsrb2k+kRoU5tkYOppFG6a4pAOA6mAwY91hVEKYejOg/N
+         K/KsIy4DUs1GwIQ0EJCpgDun2eTtwaNxUJp/sVX6bLReXTFCp2i21wlMYkKs/F0+Z96k
+         o94g==
+X-Gm-Message-State: APjAAAXS6Mb4UIoy8FMz6w2vNpiI1sCiTvW2/v2WRazYVmNKr0s/BiFY
+        UKtZx3KH6gVr4dUnNrYse6Ue4g==
+X-Google-Smtp-Source: APXvYqweqHB/m++oeLT8Uza1GfI1KtUuJkbSV9iCDBBWOpZXvTSYS8BosHfB9UO11Vr3Zxj1YqlXIA==
+X-Received: by 2002:a9d:7ccb:: with SMTP id r11mr49437066otn.80.1561391421494;
+        Mon, 24 Jun 2019 08:50:21 -0700 (PDT)
 Received: from cando.ausoff.indeed.net ([97.105.47.162])
-        by smtp.gmail.com with ESMTPSA id x88sm4237710ota.56.2019.06.24.08.50.19
+        by smtp.gmail.com with ESMTPSA id x88sm4237710ota.56.2019.06.24.08.50.20
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Jun 2019 08:50:19 -0700 (PDT)
+        Mon, 24 Jun 2019 08:50:21 -0700 (PDT)
 From:   Dave Chiluk <chiluk+linux@indeed.com>
 To:     Ben Segall <bsegall@google.com>, Phil Auld <pauld@redhat.com>,
         Peter Oskolkov <posk@posk.io>,
@@ -51,29 +51,88 @@ To:     Ben Segall <bsegall@google.com>, Phil Auld <pauld@redhat.com>,
         Gabriel Munos <gmunoz@netflix.com>,
         John Hammond <jhammond@indeed.com>,
         Cong Wang <xiyou.wangcong@gmail.com>
-Subject: 
-Date:   Mon, 24 Jun 2019 10:50:03 -0500
-Message-Id: <1561391404-14450-1-git-send-email-chiluk+linux@indeed.com>
+Subject: [PATCH v4 1/1] sched/fair: Return all runtime when cfs_b has very little remaining.
+Date:   Mon, 24 Jun 2019 10:50:04 -0500
+Message-Id: <1561391404-14450-2-git-send-email-chiluk+linux@indeed.com>
 X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1558121424-2914-1-git-send-email-chiluk+linux@indeed.com>
+In-Reply-To: <1561391404-14450-1-git-send-email-chiluk+linux@indeed.com>
 References: <1558121424-2914-1-git-send-email-chiluk+linux@indeed.com>
+ <1561391404-14450-1-git-send-email-chiluk+linux@indeed.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+It has been observed, that highly-threaded, user-interactive
+applications running under cpu.cfs_quota_us constraints can hit a high
+percentage of periods throttled while simultaneously not consuming the
+allocated amount of quota. This impacts user-interactive non-cpu bound
+applications, such as those running in kubernetes or mesos when run on
+multiple cores.
 
-Changelog v4
- - Rewrote patch to return all quota when cfs_b has very litte.
- - Removed documentation changes, as bursting is no longer possible with this
-   new solution.
+This has been root caused to threads being allocated per cpu bandwidth
+slices, and then not fully using that slice within the period. This
+results in min_cfs_rq_runtime remaining on each per-cpu cfs_rq. At the
+end of the period this remaining quota goes unused and expires. This
+expiration of unused time on per-cpu runqueues results in applications
+under-utilizing their quota while simultaneously hitting throttling.
 
-After the suggestion from Ben Segall to set min_cfs_rq_runtime=0, I came up
-this in an attempt to balance the desire leave runtime on the per-cpu queues
-with the desire to use this quota on other per-cpu rq.
+The solution is to return all spare cfs_rq->runtime_remaining when
+cfs_b->runtime nears the sched_cfs_bandwidth_slice. This balances the
+desire to prevent cfs_rq from always pulling quota with the desire to
+allow applications to fully utilize their quota.
 
-Basically we now check the cfs_b on each return, and decide if all the remaining
-time should be returned or to leave min_cfs_rq_runtime on the per-cpu queue
-based on how much time is remaining on the cfs_b.  As a result this mostly
-gives us the benefits of both worlds.
+Fixes: 512ac999d275 ("sched/fair: Fix bandwidth timer clock drift condition")
+Signed-off-by: Dave Chiluk <chiluk+linux@indeed.com>
+---
+ kernel/sched/fair.c | 19 ++++++++++++++++---
+ 1 file changed, 16 insertions(+), 3 deletions(-)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index f35930f..4894eda 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -4695,7 +4695,9 @@ static int do_sched_cfs_period_timer(struct cfs_bandwidth *cfs_b, int overrun, u
+ 	return 1;
+ }
+ 
+-/* a cfs_rq won't donate quota below this amount */
++/* a cfs_rq won't donate quota below this amount unless cfs_b has very little
++ * remaining runtime.
++ */
+ static const u64 min_cfs_rq_runtime = 1 * NSEC_PER_MSEC;
+ /* minimum remaining period time to redistribute slack quota */
+ static const u64 min_bandwidth_expiration = 2 * NSEC_PER_MSEC;
+@@ -4743,16 +4745,27 @@ static void start_cfs_slack_bandwidth(struct cfs_bandwidth *cfs_b)
+ static void __return_cfs_rq_runtime(struct cfs_rq *cfs_rq)
+ {
+ 	struct cfs_bandwidth *cfs_b = tg_cfs_bandwidth(cfs_rq->tg);
+-	s64 slack_runtime = cfs_rq->runtime_remaining - min_cfs_rq_runtime;
++	s64 slack_runtime = cfs_rq->runtime_remaining;
+ 
++	/* There is no runtime to return. */
+ 	if (slack_runtime <= 0)
+ 		return;
+ 
+ 	raw_spin_lock(&cfs_b->lock);
+ 	if (cfs_b->quota != RUNTIME_INF &&
+ 	    cfs_rq->runtime_expires == cfs_b->runtime_expires) {
+-		cfs_b->runtime += slack_runtime;
++		/* As we near 0 quota remaining on cfs_b start returning all
++		 * remaining runtime. This avoids stranding and then expiring
++		 * runtime on per-cpu cfs_rq.
++		 *
++		 * cfs->b has plenty of runtime leave min_cfs_rq_runtime of
++		 * runtime on this cfs_rq.
++		 */
++		if (cfs_b->runtime >= sched_cfs_bandwidth_slice() * 3 &&
++		    slack_runtime > min_cfs_rq_runtime)
++			slack_runtime -= min_cfs_rq_runtime;
+ 
++		cfs_b->runtime += slack_runtime;
+ 		/* we are under rq->lock, defer unthrottling using a timer */
+ 		if (cfs_b->runtime > sched_cfs_bandwidth_slice() &&
+ 		    !list_empty(&cfs_b->throttled_cfs_rq))
+-- 
+1.8.3.1
 
