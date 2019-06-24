@@ -2,84 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C98D251F54
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 01:56:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9984851F67
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 02:00:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728817AbfFXX4h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 19:56:37 -0400
-Received: from mga14.intel.com ([192.55.52.115]:57752 "EHLO mga14.intel.com"
+        id S1729060AbfFYAAC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 20:00:02 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:33589 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727234AbfFXX4h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 19:56:37 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jun 2019 16:56:36 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,413,1557212400"; 
-   d="scan'208";a="336667312"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga005.jf.intel.com with ESMTP; 24 Jun 2019 16:56:35 -0700
-Date:   Mon, 24 Jun 2019 16:59:51 -0700
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc:     <iommu@lists.linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        "Eric Auger" <eric.auger@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        Raj Ashok <ashok.raj@intel.com>,
-        Andriy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v4 19/22] iommu/vt-d: Clean up for SVM device list
-Message-ID: <20190624165951.0646b788@jacob-builder>
-In-Reply-To: <20190618174237.00000556@huawei.com>
-References: <1560087862-57608-1-git-send-email-jacob.jun.pan@linux.intel.com>
-        <1560087862-57608-20-git-send-email-jacob.jun.pan@linux.intel.com>
-        <20190618174237.00000556@huawei.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1728694AbfFYAAB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 20:00:01 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45XmW15DXgz9s8m;
+        Tue, 25 Jun 2019 09:59:57 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1561420797;
+        bh=MlRWefn1WQf29R23/74S5YR8kTEjm7BUbnrp4hb4pGs=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Wd5IZQ/TwZDx2wHrneA0oZBPbn144eU7UA14QqvfHVljPGEXvyabBasaKCgT+mRm2
+         cS7uOuMg/5aT1DXv7dtFMo0aNoB4RUSMukrGCwh3b8VYQKCLX0sCz7G5hBgJzenJy0
+         p+LynBuw7jqCC6sluWhO6gI33XxaSBTZ0EP95g+PWLqAkSvN+lwF3ZXIDJX7wkzNlD
+         xIrDVxq5vrwMb27NRo+/9Ht9h1vZ0Ze+4bStfW7wK/xJLwnCuTq1DGFtU5nWf0Wvrb
+         4ea1WVAFIumkAPD7VT/oPAyflc/XFrPpmK8BFfy8sBdcTrT3OWv72FzK2OSleV58lm
+         S4l7QmUc+cDDQ==
+Date:   Tue, 25 Jun 2019 09:59:57 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        ARM <linux-arm-kernel@lists.infradead.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the samsung-krzk tree with the
+ arm-soc tree
+Message-ID: <20190625095957.3b46dad2@canb.auug.org.au>
+In-Reply-To: <20190625095906.06c97e0c@canb.auug.org.au>
+References: <20190625095906.06c97e0c@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/j=1nnD556ddK5QITS5c.k+J"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 18 Jun 2019 17:42:37 +0100
-Jonathan Cameron <jonathan.cameron@huawei.com> wrote:
+--Sig_/j=1nnD556ddK5QITS5c.k+J
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> On Sun, 9 Jun 2019 06:44:19 -0700
-> Jacob Pan <jacob.jun.pan@linux.intel.com> wrote:
-> 
-> > Use combined macro for_each_svm_dev() to simplify SVM device
-> > iteration.
-> > 
-> > Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> > Reviewed-by: Eric Auger <eric.auger@redhat.com>
-> > ---
-> >  drivers/iommu/intel-svm.c | 79
-> > +++++++++++++++++++++++------------------------ 1 file changed, 39
-> > insertions(+), 40 deletions(-)
-> > 
-> > diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
-> > index 9cbcc1f..66d98e1 100644
-> > --- a/drivers/iommu/intel-svm.c
-> > +++ b/drivers/iommu/intel-svm.c
-> > @@ -225,6 +225,9 @@ static const struct mmu_notifier_ops
-> > intel_mmuops = { 
-> >  static DEFINE_MUTEX(pasid_mutex);
-> >  static LIST_HEAD(global_svm_list);
-> > +#define for_each_svm_dev() \
-> > +	list_for_each_entry(sdev, &svm->devs, list)	\
-> > +	if (dev == sdev->dev)				\  
-> 
-> Could we make this macro less opaque and have it take the svm and dev
-> as arguments?
-> 
-sounds good, it makes the code more readable.
+Hi all,
+
+On Tue, 25 Jun 2019 09:59:06 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next merge of the samsung-krzk tree got a conflict in:
+>=20
+>   arch/arm/configs/s3c6400_defconfig
+>=20
+> between commit:
+>=20
+>   6c48edcc955a ("ARM: configs: Remove useless UEVENT_HELPER_PATH")
+>=20
+> from the arm-soc tree and commit:
+>=20
+>   5a96019ce5cd ("ARM: defconfig: samsung: Cleanup with savedefconfig")
+>=20
+> from the samsung-krzk tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/arm/configs/s3c6400_defconfig
+index 6eea99300f7f,34f9992ce8e9..000000000000
+--- a/arch/arm/configs/s3c6400_defconfig
++++ b/arch/arm/configs/s3c6400_defconfig
+@@@ -18,9 -15,12 +15,11 @@@ CONFIG_MACH_HMT=3D
+  CONFIG_MACH_SMARTQ5=3Dy
+  CONFIG_MACH_SMARTQ7=3Dy
+  CONFIG_MACH_WLF_CRAGG_6410=3Dy
+- CONFIG_AEABI=3Dy
+  CONFIG_CMDLINE=3D"console=3DttySAC0,115200 root=3D/dev/ram init=3D/linuxr=
+c initrd=3D0x51000000,6M ramdisk_size=3D6144"
+  CONFIG_VFP=3Dy
+ -CONFIG_UEVENT_HELPER_PATH=3D"/sbin/hotplug"
++ CONFIG_MODULES=3Dy
++ CONFIG_MODULE_UNLOAD=3Dy
++ # CONFIG_BLK_DEV_BSG is not set
+  CONFIG_MTD=3Dy
+  CONFIG_MTD_RAW_NAND=3Dy
+  CONFIG_MTD_NAND_S3C2410=3Dy
+
+--Sig_/j=1nnD556ddK5QITS5c.k+J
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0RY/0ACgkQAVBC80lX
+0GyPwAf/fkACeIarbbcK2fwJPoxLF6bKdjgUZAHoFGlNpMrB0LvwJ3+lO/zdCrEE
+lvMCss4LCr5E4RU9RuD8mG1BRoX2ltGwLcrsZITk8/dK6kd73wm8a/L5mZdk9eyd
++vxUFucdOtb8sB5RDJVfif4cvtJj85vTufKcPxL0tsYylCsiN53Qs1Ru3GT+kjmA
+/QJa2hWRornUq953NkCkDJj1dDvNLKqd11XI+nqAmN1Ye1zEoHP4Z3x/MLhyFKuG
+IgLDr5wxVlk+5N+vlzOtWCbKVX6aAbvLX70KahFXoHed6yjc/DkKX0ULEjYtZs8P
+zgqkg3DWn3BZyB20Wvop8f5NZq7c2A==
+=ptDH
+-----END PGP SIGNATURE-----
+
+--Sig_/j=1nnD556ddK5QITS5c.k+J--
