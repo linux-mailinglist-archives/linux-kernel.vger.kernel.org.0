@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1AEC5086C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:19:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6079950880
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:19:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730905AbfFXKRL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 06:17:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54660 "EHLO mail.kernel.org"
+        id S1729543AbfFXKR6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 06:17:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54724 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728562AbfFXKRF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 06:17:05 -0400
+        id S1730881AbfFXKRI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 06:17:08 -0400
 Received: from localhost (f4.8f.5177.ip4.static.sl-reverse.com [119.81.143.244])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 418BB2089F;
-        Mon, 24 Jun 2019 10:17:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 01695205C9;
+        Mon, 24 Jun 2019 10:17:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561371424;
-        bh=CRSruYZNYZEsKMB0PpnlbwDxJmP7qjeeKQInSfEmv5U=;
+        s=default; t=1561371427;
+        bh=x7VfQFfgk8E9omygdCv9dSD4u/vHVPh7i1fyCCVFDXA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UT0WPI+eFvZQyADi8wVRAxmfDFmQRVt4532lpzB923mDmvxzybx9IyT0/xsApOGkk
-         XzGr3HzdVHQ1A5kDkd9C6C6puYzsLVjgUSEw3db0GHzopSccfMxACmD2a5vmbD/m8V
-         IkYXMf1BjdXDCf6fLGzqx54VvdMGmLh3bQluFW4A=
+        b=Zyl2EaZJlgrs8GI91sNsOloVIuvGVxCVRjsbh+qN72rjEtl/GJvzguw4GD7slDBss
+         BrRG+eIDlQgO1XAsqgw/5bMBdbXHh73oiSdD6+2mr5YQaqALU5+QaYluN/sJvGsjKZ
+         FgU/zgbSKoZ1KXsE3XxgaPu1+eGM0nDZsoxdp6Ao=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Christoph Niedermaier <cniedermaier@dh-electronics.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        =?UTF-8?q?S=C3=A9bastien=20Szymanski?= 
-        <sebastien.szymanski@armadeus.com>, Shawn Guo <shawnguo@kernel.org>
-Subject: [PATCH 5.1 098/121] ARM: imx: cpuidle-imx6sx: Restrict the SW2ISO increase to i.MX6SX
-Date:   Mon, 24 Jun 2019 17:57:10 +0800
-Message-Id: <20190624092325.745004450@linuxfoundation.org>
+        =?UTF-8?q?Jan=20Kundr=C3=A1t?= <jan.kundrat@cesnet.cz>,
+        Baruch Siach <baruch@tkos.co.il>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        "David S. Miller" <davem@davemloft.net>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        stable@kernel.org
+Subject: [PATCH 5.1 099/121] ARM: mvebu_v7_defconfig: fix Ethernet on Clearfog
+Date:   Mon, 24 Jun 2019 17:57:11 +0800
+Message-Id: <20190624092325.792383126@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190624092320.652599624@linuxfoundation.org>
 References: <20190624092320.652599624@linuxfoundation.org>
@@ -46,52 +49,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Fabio Estevam <festevam@gmail.com>
+From: Jan Kundrát <jan.kundrat@cesnet.cz>
 
-commit b25af2ff7c07bd19af74e3f64ff82e2880d13d81 upstream.
+commit cc538ca4308372e81b824be08561c466b1d73b72 upstream.
 
-Since commit 1e434b703248 ("ARM: imx: update the cpu power up timing
-setting on i.mx6sx") some characters loss is noticed on i.MX6ULL UART
-as reported by Christoph Niedermaier.
+Compared to kernel 5.0, patches merged for 5.1 added support for A38x'
+PHY guarded by a config option which was not enabled by default. As a
+result, there was no eth1 and eth2 on a Solid Run Clearfog Base.
 
-The intention of such commit was to increase the SW2ISO field for i.MX6SX
-only, but since cpuidle-imx6sx is also used on i.MX6UL/i.MX6ULL this caused
-unintended side effects on other SoCs.
+Ensure that A38x PHY is enabled on mvebu.
 
-Fix this problem by keeping the original SW2ISO value for i.MX6UL/i.MX6ULL
-and only increase SW2ISO in the i.MX6SX case.
+[gregory: issue appeared in 5.1 not in 5.2 and added Fixes tag]
 
-Cc: stable@vger.kernel.org
-Fixes: 1e434b703248 ("ARM: imx: update the cpu power up timing setting on i.mx6sx")
-Reported-by: Christoph Niedermaier <cniedermaier@dh-electronics.com>
-Signed-off-by: Fabio Estevam <festevam@gmail.com>
-Tested-by: Sébastien Szymanski <sebastien.szymanski@armadeus.com>
-Tested-by: Christoph Niedermaier <cniedermaier@dh-electronics.com>
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Jan Kundrát <jan.kundrat@cesnet.cz>
+Cc: Baruch Siach <baruch@tkos.co.il>
+Cc: Gregory CLEMENT <gregory.clement@bootlin.com>
+Cc: Russell King <rmk+kernel@armlinux.org.uk>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Fixes: a10c1c8191e0 ("net: marvell: neta: add comphy support")
+Cc: stable@kernel.org
+Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/mach-imx/cpuidle-imx6sx.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/arm/configs/mvebu_v7_defconfig |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/arm/mach-imx/cpuidle-imx6sx.c
-+++ b/arch/arm/mach-imx/cpuidle-imx6sx.c
-@@ -15,6 +15,7 @@
- 
- #include "common.h"
- #include "cpuidle.h"
-+#include "hardware.h"
- 
- static int imx6sx_idle_finish(unsigned long val)
- {
-@@ -110,7 +111,7 @@ int __init imx6sx_cpuidle_init(void)
- 	 * except for power up sw2iso which need to be
- 	 * larger than LDO ramp up time.
- 	 */
--	imx_gpc_set_arm_power_up_timing(0xf, 1);
-+	imx_gpc_set_arm_power_up_timing(cpu_is_imx6sx() ? 0xf : 0x2, 1);
- 	imx_gpc_set_arm_power_down_timing(1, 1);
- 
- 	return cpuidle_register(&imx6sx_cpuidle_driver, NULL);
+--- a/arch/arm/configs/mvebu_v7_defconfig
++++ b/arch/arm/configs/mvebu_v7_defconfig
+@@ -131,6 +131,7 @@ CONFIG_MV_XOR=y
+ # CONFIG_IOMMU_SUPPORT is not set
+ CONFIG_MEMORY=y
+ CONFIG_PWM=y
++CONFIG_PHY_MVEBU_A38X_COMPHY=y
+ CONFIG_EXT4_FS=y
+ CONFIG_ISO9660_FS=y
+ CONFIG_JOLIET=y
 
 
