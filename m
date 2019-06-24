@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96AB95069B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:01:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABF2550884
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:19:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729281AbfFXJ7r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 05:59:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59086 "EHLO mail.kernel.org"
+        id S1729458AbfFXKST (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 06:18:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53958 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729263AbfFXJ7p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 05:59:45 -0400
+        id S1729770AbfFXKQ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 06:16:27 -0400
 Received: from localhost (f4.8f.5177.ip4.static.sl-reverse.com [119.81.143.244])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 86F23205ED;
-        Mon, 24 Jun 2019 09:59:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CF272208E3;
+        Mon, 24 Jun 2019 10:16:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561370385;
-        bh=rmZhShVbSyi1ZR/CTwHwPw4v+qk5JBg4Vmc46R0vNs4=;
+        s=default; t=1561371387;
+        bh=ZWzPHxVYO6d7ILI+35xWNGfP9V6kWW0cbdaUNlzXlDU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MnkSmBhWKegeE6V7d7A6VAxmucQCkVqeg72on9jbQYDoR6F+XFdlL0TKqCWLp3r2O
-         xVUPeo2EW1iwPO+1PZ7U/Cne6JMvEJu+ZLiWRsZDuqQzLPCA3O68b4fncpVcdcxJKF
-         gBW/it+9MFZfRfbjPoxgcAiqT5Fuhd9aIKKCF9oQ=
+        b=gjHDuDS5q969CBYr7xVYm6kH6H3AKJQC1ehb8wq3Gi2hejFNlppgwQWS1cuMeM9wM
+         DnDbXsOhCne9gVjLVxfg8veoSOPvBXWFZOAXhRuDo5UCtSOxMGx3hjCRl/D+aNivUh
+         U2qpDBJl5avr5SUIuXfIpk/t8jclDDHp77rf6KF8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
-        Naohiro Aota <naohiro.aota@wdc.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.14 39/51] btrfs: start readahead also in seed devices
+        stable@vger.kernel.org, Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        linux-hwmon@vger.kernel.org, Eduardo Valentin <eduval@amazon.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 085/121] hwmon: (core) add thermal sensors only if dev->of_node is present
 Date:   Mon, 24 Jun 2019 17:56:57 +0800
-Message-Id: <20190624092310.601848981@linuxfoundation.org>
+Message-Id: <20190624092325.180202592@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190624092305.919204959@linuxfoundation.org>
-References: <20190624092305.919204959@linuxfoundation.org>
+In-Reply-To: <20190624092320.652599624@linuxfoundation.org>
+References: <20190624092320.652599624@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,49 +45,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Naohiro Aota <naohiro.aota@wdc.com>
+[ Upstream commit c41dd48e21fae3e55b3670ccf2eb562fc1f6a67d ]
 
-commit c4e0540d0ad49c8ceab06cceed1de27c4fe29f6e upstream.
+Drivers may register to hwmon and request for also registering
+with the thermal subsystem (HWMON_C_REGISTER_TZ). However,
+some of these driver, e.g. marvell phy, may be probed from
+Device Tree or being dynamically allocated, and in the later
+case, it will not have a dev->of_node entry.
 
-Currently, btrfs does not consult seed devices to start readahead. As a
-result, if readahead zone is added to the seed devices, btrfs_reada_wait()
-indefinitely wait for the reada_ctl to finish.
+Registering with hwmon without the dev->of_node may result in
+different outcomes depending on the device tree, which may
+be a bit misleading. If the device tree blob has no 'thermal-zones'
+node, the *hwmon_device_register*() family functions are going
+to gracefully succeed, because of-thermal,
+*thermal_zone_of_sensor_register() return -ENODEV in this case,
+and the hwmon error path handles this error code as success to
+cover for the case where CONFIG_THERMAL_OF is not set.
+However, if the device tree blob has the 'thermal-zones'
+entry, the *hwmon_device_register*() will always fail on callers
+with no dev->of_node, propagating -EINVAL.
 
-You can reproduce the hung by modifying btrfs/163 to have larger initial
-file size (e.g. xfs_io pwrite 4M instead of current 256K).
+If dev->of_node is not present, calling of-thermal does not
+make sense. For this reason, this patch checks first if the
+device has a of_node before going over the process of registering
+with the thermal subsystem of-thermal interface. And in this case,
+when a caller of *hwmon_device_register*() with HWMON_C_REGISTER_TZ
+and no dev->of_node will still register with hwmon, but not with
+the thermal subsystem. If all the hwmon part bits are in place,
+the registration will succeed.
 
-Fixes: 7414a03fbf9e ("btrfs: initial readahead code and prototypes")
-Cc: stable@vger.kernel.org # 3.2+: ce7791ffee1e: Btrfs: fix race between readahead and device replace/removal
-Cc: stable@vger.kernel.org # 3.2+
-Reviewed-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: d560168b5d0f ("hwmon: (core) New hwmon registration API")
+Cc: Jean Delvare <jdelvare@suse.com>
+Cc: Guenter Roeck <linux@roeck-us.net>
+Cc: linux-hwmon@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Eduardo Valentin <eduval@amazon.com>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/btrfs/reada.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/hwmon/hwmon.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/btrfs/reada.c
-+++ b/fs/btrfs/reada.c
-@@ -759,6 +759,7 @@ static void __reada_start_machine(struct
- 	u64 total = 0;
- 	int i;
+diff --git a/drivers/hwmon/hwmon.c b/drivers/hwmon/hwmon.c
+index c22dc1e07911..c38883f748a1 100644
+--- a/drivers/hwmon/hwmon.c
++++ b/drivers/hwmon/hwmon.c
+@@ -633,7 +633,7 @@ __hwmon_device_register(struct device *dev, const char *name, void *drvdata,
+ 	if (err)
+ 		goto free_hwmon;
  
-+again:
- 	do {
- 		enqueued = 0;
- 		mutex_lock(&fs_devices->device_list_mutex);
-@@ -770,6 +771,10 @@ static void __reada_start_machine(struct
- 		mutex_unlock(&fs_devices->device_list_mutex);
- 		total += enqueued;
- 	} while (enqueued && total < 10000);
-+	if (fs_devices->seed) {
-+		fs_devices = fs_devices->seed;
-+		goto again;
-+	}
- 
- 	if (enqueued == 0)
- 		return;
+-	if (dev && chip && chip->ops->read &&
++	if (dev && dev->of_node && chip && chip->ops->read &&
+ 	    chip->info[0]->type == hwmon_chip &&
+ 	    (chip->info[0]->config[0] & HWMON_C_REGISTER_TZ)) {
+ 		const struct hwmon_channel_info **info = chip->info;
+-- 
+2.20.1
+
 
 
