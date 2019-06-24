@@ -2,92 +2,255 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43F6850790
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:12:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A11350647
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 11:58:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729429AbfFXKIG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 06:08:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40540 "EHLO mail.kernel.org"
+        id S1728468AbfFXJ5X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 05:57:23 -0400
+Received: from foss.arm.com ([217.140.110.172]:44900 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730359AbfFXKHs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 06:07:48 -0400
-Received: from localhost (f4.8f.5177.ip4.static.sl-reverse.com [119.81.143.244])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4F3BA20644;
-        Mon, 24 Jun 2019 10:07:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561370867;
-        bh=k1UeBPaMg9crGnvIX9XG0jozyYs+NYomN/H3UaM7mo4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sgKnEw4jwhrs66XvYA04HnAM8W2/nUfcUhkrqDlyDGwMBF0cXoyR4Zb2WLsARDLOw
-         +P2z2Y3jzj9501iAXw1hZBScsKJ2fsTRzINdmceaGBrXxqLulcMWN51SnHEAQlgi7d
-         TVJxI/NCu4y8MHv/M81IOpGvyTbk1V+7LCAq27Yk=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 5.1 003/121] mmc: sdhi: disallow HS400 for M3-W ES1.2, RZ/G2M, and V3H
-Date:   Mon, 24 Jun 2019 17:55:35 +0800
-Message-Id: <20190624092320.828212800@linuxfoundation.org>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190624092320.652599624@linuxfoundation.org>
-References: <20190624092320.652599624@linuxfoundation.org>
-User-Agent: quilt/0.66
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        id S1728653AbfFXJ4S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 05:56:18 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 183E6ED1;
+        Mon, 24 Jun 2019 02:56:18 -0700 (PDT)
+Received: from e121650-lin.cambridge.arm.com (e121650-lin.cambridge.arm.com [10.1.196.120])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EE2893F71E;
+        Mon, 24 Jun 2019 02:56:16 -0700 (PDT)
+From:   Raphael Gault <raphael.gault@arm.com>
+To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     jpoimboe@redhat.com, peterz@infradead.org, catalin.marinas@arm.com,
+        will.deacon@arm.com, julien.thierry@arm.com,
+        Raphael Gault <raphael.gault@arm.com>
+Subject: [RFC V3 05/18] objtool: special: Adapt special section handling
+Date:   Mon, 24 Jun 2019 10:55:35 +0100
+Message-Id: <20190624095548.8578-6-raphael.gault@arm.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190624095548.8578-1-raphael.gault@arm.com>
+References: <20190624095548.8578-1-raphael.gault@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+This patch abstracts the few architecture dependent tests that are
+perform when handling special section and switch tables. It enables any
+architecture to ignore a particular CPU feature or not to handle switch
+tables.
 
-commit 97bf85b6ec9e6597ce81c79b26a28f7918fc4eaf upstream.
-
-Our HW engineers informed us that HS400 is not working on these SoC
-revisions.
-
-Fixes: 0f4e2054c971 ("mmc: renesas_sdhi: disable HS400 on H3 ES1.x and M3-W ES1.[012]")
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Cc: stable@vger.kernel.org
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Raphael Gault <raphael.gault@arm.com>
 ---
- drivers/mmc/host/renesas_sdhi_core.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ tools/objtool/arch/arm64/Build                |  1 +
+ tools/objtool/arch/arm64/arch_special.c       | 22 +++++++++++++++
+ .../objtool/arch/arm64/include/arch_special.h | 10 +++++--
+ tools/objtool/arch/x86/Build                  |  1 +
+ tools/objtool/arch/x86/arch_special.c         | 28 +++++++++++++++++++
+ tools/objtool/arch/x86/include/arch_special.h |  9 ++++++
+ tools/objtool/check.c                         | 15 ++++++++--
+ tools/objtool/special.c                       |  9 ++----
+ tools/objtool/special.h                       |  3 ++
+ 9 files changed, 87 insertions(+), 11 deletions(-)
+ create mode 100644 tools/objtool/arch/arm64/arch_special.c
+ create mode 100644 tools/objtool/arch/x86/arch_special.c
 
---- a/drivers/mmc/host/renesas_sdhi_core.c
-+++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -620,11 +620,16 @@ static const struct renesas_sdhi_quirks
- 	.hs400_4taps = true,
- };
- 
-+static const struct renesas_sdhi_quirks sdhi_quirks_nohs400 = {
-+	.hs400_disabled = true,
-+};
+diff --git a/tools/objtool/arch/arm64/Build b/tools/objtool/arch/arm64/Build
+index bf7a32c2b9e9..3d09be745a84 100644
+--- a/tools/objtool/arch/arm64/Build
++++ b/tools/objtool/arch/arm64/Build
+@@ -1,3 +1,4 @@
++objtool-y += arch_special.o
+ objtool-y += decode.o
+ objtool-y += orc_dump.o
+ objtool-y += orc_gen.o
+diff --git a/tools/objtool/arch/arm64/arch_special.c b/tools/objtool/arch/arm64/arch_special.c
+new file mode 100644
+index 000000000000..a21d28876317
+--- /dev/null
++++ b/tools/objtool/arch/arm64/arch_special.c
+@@ -0,0 +1,22 @@
++/*
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License
++ * as published by the Free Software Foundation; either version 2
++ * of the License, or (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, see <http://www.gnu.org/licenses/>.
++ */
++#include "../../special.h"
++#include "arch_special.h"
 +
- static const struct soc_device_attribute sdhi_quirks_match[]  = {
- 	{ .soc_id = "r8a7795", .revision = "ES1.*", .data = &sdhi_quirks_h3_m3w_es1 },
- 	{ .soc_id = "r8a7795", .revision = "ES2.0", .data = &sdhi_quirks_h3_es2 },
--	{ .soc_id = "r8a7796", .revision = "ES1.0", .data = &sdhi_quirks_h3_m3w_es1 },
--	{ .soc_id = "r8a7796", .revision = "ES1.1", .data = &sdhi_quirks_h3_m3w_es1 },
-+	{ .soc_id = "r8a7796", .revision = "ES1.[012]", .data = &sdhi_quirks_h3_m3w_es1 },
-+	{ .soc_id = "r8a774a1", .revision = "ES1.[012]", .data = &sdhi_quirks_h3_m3w_es1 },
-+	{ .soc_id = "r8a77980", .data = &sdhi_quirks_nohs400 },
- 	{ /* Sentinel. */ },
++void arch_force_alt_path(unsigned short feature,
++			 bool uaccess,
++			 struct special_alt *alt)
++{
++}
+diff --git a/tools/objtool/arch/arm64/include/arch_special.h b/tools/objtool/arch/arm64/include/arch_special.h
+index 63da775d0581..185103be8a51 100644
+--- a/tools/objtool/arch/arm64/include/arch_special.h
++++ b/tools/objtool/arch/arm64/include/arch_special.h
+@@ -30,7 +30,13 @@
+ #define ALT_ORIG_LEN_OFFSET	10
+ #define ALT_NEW_LEN_OFFSET	11
+ 
+-#define X86_FEATURE_POPCNT (4 * 32 + 23)
+-#define X86_FEATURE_SMAP   (9 * 32 + 20)
++static inline bool arch_should_ignore_feature(unsigned short feature)
++{
++	return false;
++}
+ 
++static inline bool arch_support_switch_table(void)
++{
++	return false;
++}
+ #endif /* _ARM64_ARCH_SPECIAL_H */
+diff --git a/tools/objtool/arch/x86/Build b/tools/objtool/arch/x86/Build
+index 1f11b45999d0..63e167775bc8 100644
+--- a/tools/objtool/arch/x86/Build
++++ b/tools/objtool/arch/x86/Build
+@@ -1,3 +1,4 @@
++objtool-y += arch_special.o
+ objtool-y += decode.o
+ objtool-y += orc_dump.o
+ objtool-y += orc_gen.o
+diff --git a/tools/objtool/arch/x86/arch_special.c b/tools/objtool/arch/x86/arch_special.c
+new file mode 100644
+index 000000000000..6583a1770bb2
+--- /dev/null
++++ b/tools/objtool/arch/x86/arch_special.c
+@@ -0,0 +1,28 @@
++/*
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License
++ * as published by the Free Software Foundation; either version 2
++ * of the License, or (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, see <http://www.gnu.org/licenses/>.
++ */
++#include "../../special.h"
++#include "arch_special.h"
++
++void arch_force_alt_path(unsigned short feature,
++			 bool uaccess,
++			 struct special_alt *alt)
++{
++		if (feature == X86_FEATURE_SMAP) {
++			if (uaccess)
++				alt->skip_orig = true;
++			else
++				alt->skip_alt = true;
++		}
++}
+diff --git a/tools/objtool/arch/x86/include/arch_special.h b/tools/objtool/arch/x86/include/arch_special.h
+index 424ce47013e3..fce2b1193194 100644
+--- a/tools/objtool/arch/x86/include/arch_special.h
++++ b/tools/objtool/arch/x86/include/arch_special.h
+@@ -33,4 +33,13 @@
+ #define X86_FEATURE_POPCNT (4 * 32 + 23)
+ #define X86_FEATURE_SMAP   (9 * 32 + 20)
+ 
++static inline bool arch_should_ignore_feature(unsigned short feature)
++{
++	return feature == X86_FEATURE_POPCNT;
++}
++
++static inline bool arch_support_switch_table(void)
++{
++	return true;
++}
+ #endif /* _X86_ARCH_SPECIAL_H */
+diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+index 1a7ee85e9878..0fba7b70d73a 100644
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -729,7 +729,7 @@ static int handle_group_alt(struct objtool_file *file,
+ 		last_orig_insn = insn;
+ 	}
+ 
+-	if (next_insn_same_sec(file, last_orig_insn)) {
++	if (last_orig_insn && next_insn_same_sec(file, last_orig_insn)) {
+ 		fake_jump = malloc(sizeof(*fake_jump));
+ 		if (!fake_jump) {
+ 			WARN("malloc failed");
+@@ -1045,6 +1045,17 @@ static struct rela *find_switch_table(struct objtool_file *file,
+ 		if (find_symbol_containing(rodata_sec, table_offset))
+ 			continue;
+ 
++		/*
++		 * If we are on arm64 architecture, we now that we
++		 * are in presence of a switch table thanks to
++		 * the `br <Xn>` insn. but we can't retrieve it yet.
++		 * So we just ignore unreachable for this file.
++		 */
++		if (!arch_support_switch_table()) {
++			file->ignore_unreachables = true;
++			return NULL;
++		}
++
+ 		rodata_rela = find_rela_by_dest(rodata_sec, table_offset);
+ 		if (rodata_rela) {
+ 			/*
+@@ -1844,7 +1855,7 @@ static int validate_branch(struct objtool_file *file, struct instruction *first,
+ 	insn = first;
+ 	sec = insn->sec;
+ 
+-	if (insn->alt_group && list_empty(&insn->alts)) {
++	if (!insn->visited && insn->alt_group && list_empty(&insn->alts)) {
+ 		WARN_FUNC("don't know how to handle branch to middle of alternative instruction group",
+ 			  sec, insn->offset);
+ 		return 1;
+diff --git a/tools/objtool/special.c b/tools/objtool/special.c
+index b8ccee1b5382..7a0092d6e5b3 100644
+--- a/tools/objtool/special.c
++++ b/tools/objtool/special.c
+@@ -81,7 +81,7 @@ static int get_alt_entry(struct elf *elf, struct special_entry *entry,
+ 		 * feature path which is a "very very small percentage of
+ 		 * machines".
+ 		 */
+-		if (feature == X86_FEATURE_POPCNT)
++		if (arch_should_ignore_feature(feature))
+ 			alt->skip_orig = true;
+ 
+ 		/*
+@@ -93,12 +93,7 @@ static int get_alt_entry(struct elf *elf, struct special_entry *entry,
+ 		 * find paths that see the STAC but take the NOP instead of
+ 		 * CLAC and the other way around.
+ 		 */
+-		if (feature == X86_FEATURE_SMAP) {
+-			if (uaccess)
+-				alt->skip_orig = true;
+-			else
+-				alt->skip_alt = true;
+-		}
++		arch_force_alt_path(feature, uaccess, alt);
+ 	}
+ 
+ 	orig_rela = find_rela_by_dest(sec, offset + entry->orig);
+diff --git a/tools/objtool/special.h b/tools/objtool/special.h
+index 35061530e46e..90626a7e41cf 100644
+--- a/tools/objtool/special.h
++++ b/tools/objtool/special.h
+@@ -27,5 +27,8 @@ struct special_alt {
  };
  
-
+ int special_get_alts(struct elf *elf, struct list_head *alts);
++void arch_force_alt_path(unsigned short feature,
++			 bool uaccess,
++			 struct special_alt *alt);
+ 
+ #endif /* _SPECIAL_H */
+-- 
+2.17.1
 
