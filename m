@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C54A850739
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:06:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24AD4506AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:01:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729972AbfFXKFm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 06:05:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37600 "EHLO mail.kernel.org"
+        id S1726716AbfFXKAr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 06:00:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58398 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729799AbfFXKFh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 06:05:37 -0400
+        id S1728687AbfFXJ7V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 05:59:21 -0400
 Received: from localhost (f4.8f.5177.ip4.static.sl-reverse.com [119.81.143.244])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D01F121473;
-        Mon, 24 Jun 2019 10:05:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 860A2208E4;
+        Mon, 24 Jun 2019 09:59:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561370736;
-        bh=tsibFGeCM9kozJlvLSct5i3Ff8kYIeVStbM5u+Zsugk=;
+        s=default; t=1561370361;
+        bh=I5zM+GozbT0bt9CqEAiv4Y3sfVcVo/KIvmIUaX75MXE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2e/ypiZo03yVTnrT69Z5asUZiwkwXZKhsm15dLWTQ0+ONYQuKLqVDct7985HTPm7b
-         SMY27DoEdRFbmEHIM/N6QZx2xnoMA9U3IDQLh66cGHKb3jFBz89mf4EK728Xz+yA+m
-         S8FsjPQsQy3p4magk17fvgtN6Xe4wBK2pVSiL2Gg=
+        b=h28MlDzGHQhnpnpjXiVdQChh1nootKc+fqGw5WDx6hbMv6P/JXF9IY/iVFOtAFe1j
+         MV5RVWgGBM5jQwk90Zey/lpyXfP/f7d/QPrKNsbFg4CNfTStxJ/8Rxgv/7hcLLszeo
+         zsNd0IjY7Zpl5NhZuLzfhUHemEqa+iAttu6oJDBU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, ShihPo Hung <shihpo.hung@sifive.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        linux-riscv@lists.infradead.org
-Subject: [PATCH 4.19 72/90] riscv: mm: synchronize MMU after pte change
-Date:   Mon, 24 Jun 2019 17:57:02 +0800
-Message-Id: <20190624092318.729317368@linuxfoundation.org>
+        stable@vger.kernel.org, Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@intel.com>
+Subject: [PATCH 4.14 45/51] Bluetooth: Align minimum encryption key size for LE and BR/EDR connections
+Date:   Mon, 24 Jun 2019 17:57:03 +0800
+Message-Id: <20190624092311.114942422@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190624092313.788773607@linuxfoundation.org>
-References: <20190624092313.788773607@linuxfoundation.org>
+In-Reply-To: <20190624092305.919204959@linuxfoundation.org>
+References: <20190624092305.919204959@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,57 +43,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: ShihPo Hung <shihpo.hung@sifive.com>
+From: Marcel Holtmann <marcel@holtmann.org>
 
-commit bf587caae305ae3b4393077fb22c98478ee55755 upstream.
+commit d5bb334a8e171b262e48f378bd2096c0ea458265 upstream.
 
-Because RISC-V compliant implementations can cache invalid entries
-in TLB, an SFENCE.VMA is necessary after changes to the page table.
-This patch adds an SFENCE.vma for the vmalloc_fault path.
+The minimum encryption key size for LE connections is 56 bits and to
+align LE with BR/EDR, enforce 56 bits of minimum encryption key size for
+BR/EDR connections as well.
 
-Signed-off-by: ShihPo Hung <shihpo.hung@sifive.com>
-[paul.walmsley@sifive.com: reversed tab->whitespace conversion,
- wrapped comment lines]
-Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
-Cc: Palmer Dabbelt <palmer@sifive.com>
-Cc: Albert Ou <aou@eecs.berkeley.edu>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>
-Cc: linux-riscv@lists.infradead.org
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Signed-off-by: Johan Hedberg <johan.hedberg@intel.com>
 Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/riscv/mm/fault.c |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ include/net/bluetooth/hci_core.h |    3 +++
+ net/bluetooth/hci_conn.c         |    8 ++++++++
+ 2 files changed, 11 insertions(+)
 
---- a/arch/riscv/mm/fault.c
-+++ b/arch/riscv/mm/fault.c
-@@ -29,6 +29,7 @@
+--- a/include/net/bluetooth/hci_core.h
++++ b/include/net/bluetooth/hci_core.h
+@@ -178,6 +178,9 @@ struct adv_info {
  
- #include <asm/pgalloc.h>
- #include <asm/ptrace.h>
-+#include <asm/tlbflush.h>
+ #define HCI_MAX_SHORT_NAME_LENGTH	10
  
- /*
-  * This routine handles page faults.  It determines the address and the
-@@ -281,6 +282,18 @@ vmalloc_fault:
- 		pte_k = pte_offset_kernel(pmd_k, addr);
- 		if (!pte_present(*pte_k))
- 			goto no_context;
++/* Min encryption key size to match with SMP */
++#define HCI_MIN_ENC_KEY_SIZE		7
 +
-+		/*
-+		 * The kernel assumes that TLBs don't cache invalid
-+		 * entries, but in RISC-V, SFENCE.VMA specifies an
-+		 * ordering constraint, not a cache flush; it is
-+		 * necessary even after writing invalid entries.
-+		 * Relying on flush_tlb_fix_spurious_fault would
-+		 * suffice, but the extra traps reduce
-+		 * performance. So, eagerly SFENCE.VMA.
-+		 */
-+		local_flush_tlb_page(addr);
+ /* Default LE RPA expiry time, 15 minutes */
+ #define HCI_DEFAULT_RPA_TIMEOUT		(15 * 60)
+ 
+--- a/net/bluetooth/hci_conn.c
++++ b/net/bluetooth/hci_conn.c
+@@ -1165,6 +1165,14 @@ int hci_conn_check_link_mode(struct hci_
+ 	    !test_bit(HCI_CONN_ENCRYPT, &conn->flags))
+ 		return 0;
+ 
++	/* The minimum encryption key size needs to be enforced by the
++	 * host stack before establishing any L2CAP connections. The
++	 * specification in theory allows a minimum of 1, but to align
++	 * BR/EDR and LE transports, a minimum of 7 is chosen.
++	 */
++	if (conn->enc_key_size < HCI_MIN_ENC_KEY_SIZE)
++		return 0;
 +
- 		return;
- 	}
+ 	return 1;
  }
+ 
 
 
