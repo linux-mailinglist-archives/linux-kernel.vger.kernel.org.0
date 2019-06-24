@@ -2,145 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A378450301
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 09:21:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0920550304
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 09:21:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727832AbfFXHUp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 03:20:45 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:51006 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727611AbfFXHUn (ORCPT
+        id S1727847AbfFXHUz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 03:20:55 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:5746 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727835AbfFXHUx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 03:20:43 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190624072041euoutp028e6d41e91423d064e0c4656e7511b864~rEWm_T86X3053630536euoutp021
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 07:20:41 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190624072041euoutp028e6d41e91423d064e0c4656e7511b864~rEWm_T86X3053630536euoutp021
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1561360841;
-        bh=AkkGYU4UEYgfsh3s+7fzHB6aVXnYZdkOfuooy+x870g=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=WkgAnjsW05sUl8X6Dlqlm58Q2AcbroHkjtjUeWf/nTaafa1+3WNjnyPWBt+6Hp27Y
-         vAtgxL4uz+cujhJXZwoFIIwRylPCvpk/gDbM1oSAThGEBJDbjfiw62NCBHcdXK1k+p
-         XVRgnXYj1nwF3q+OyCB4vO62LUnO8Zh7Y1U0CEzI=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20190624072041eucas1p2aea54a574b3873ce169927d1c4fa95d5~rEWmo1As_3236132361eucas1p2d;
+        Mon, 24 Jun 2019 03:20:53 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5O7Gm0F007581;
+        Mon, 24 Jun 2019 09:20:42 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=STMicroelectronics;
+ bh=yIONWFSs1oKdCqvaOndtOK2au6DElgx93gHb16N6pdA=;
+ b=tdZKaSReLQWq+x145acXGNzuTOxthCpcU6H+wKus6fEiLuo8dTGtEONv2HRoSTSBe1ci
+ m8rW0Vuqxwm0wV2Lg82xGZEX/vCVXbpcQmia3Lr5MjyM7DSKstaRFUfhReidzZg1a7xu
+ LYO75tyU3+iSDt5cmM+irMvvYIybQGvigSX8FN+5BUYL7tzSpf7OTcHHHGPJ6JhLIG0N
+ SrubZ601lzVMyIDo4lFAnLck9Q8cuc9J4ETRgVjKFBqCABp76XQvaFnBObVn8c1jCToA
+ kAirryQ+WWkhztroKEOxlTVe4F+Mrz8qE8J4U1/VBGZESIGYNA+LGoxwL9R1lf2GLCG3 Lw== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2t9d2w9jav-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Mon, 24 Jun 2019 09:20:42 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 5484734;
         Mon, 24 Jun 2019 07:20:41 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 89.6C.04325.8C9701D5; Mon, 24
-        Jun 2019 08:20:41 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20190624072040eucas1p2d484086328b7c097693c2b45f18076db~rEWl7OxCh3225832258eucas1p2c;
-        Mon, 24 Jun 2019 07:20:40 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20190624072040eusmtrp2509024819a46be13d0f5a21e69749747~rEWltEwkM1889218892eusmtrp2t;
-        Mon, 24 Jun 2019 07:20:40 +0000 (GMT)
-X-AuditID: cbfec7f5-fbbf09c0000010e5-88-5d1079c83e4a
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 24.39.04140.8C9701D5; Mon, 24
-        Jun 2019 08:20:40 +0100 (BST)
-Received: from [106.120.50.25] (unknown [106.120.50.25]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20190624072039eusmtip14a1638925c7d4e53713e27369151dee7~rEWlW37Px0343903439eusmtip1S;
-        Mon, 24 Jun 2019 07:20:39 +0000 (GMT)
-Subject: Re: [PATCH v2 3/4] ARM: dts: exynos: Add regulator suspend
- configuration to Odroid XU3/XU4/HC1 family
-To:     Anand Moon <linux.amoon@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Kukjin Kim <kgene@kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <d94a2f99-fb99-c238-7011-9bbb4c0cd90f@samsung.com>
-Date:   Mon, 24 Jun 2019 09:20:38 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
-        Thunderbird/60.7.2
-MIME-Version: 1.0
-In-Reply-To: <CANAwSgTFQo8wL5s-djwPXFFOLtTHvRQif6234kFC=23PwMhuEQ@mail.gmail.com>
-Content-Transfer-Encoding: 7bit
+Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 3359F15AA;
+        Mon, 24 Jun 2019 07:20:41 +0000 (GMT)
+Received: from SFHDAG3NODE2.st.com (10.75.127.8) by SFHDAG3NODE2.st.com
+ (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 24 Jun
+ 2019 09:20:40 +0200
+Received: from SFHDAG3NODE2.st.com ([fe80::b82f:1ce:8854:5b96]) by
+ SFHDAG3NODE2.st.com ([fe80::b82f:1ce:8854:5b96%20]) with mapi id
+ 15.00.1347.000; Mon, 24 Jun 2019 09:20:40 +0200
+From:   Amelie DELAUNAY <amelie.delaunay@st.com>
+To:     Denis Efremov <efremov@linux.com>,
+        Nathan Chancellor <natechancellor@gmail.com>
+CC:     Lee Jones <lee.jones@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mfd: stmfx.h: typo in the header guard
+Thread-Topic: [PATCH] mfd: stmfx.h: typo in the header guard
+Thread-Index: AQHVKdJKyJAGS3v5qEa3Gl2UX5YQFKaqRXsA
+Date:   Mon, 24 Jun 2019 07:20:40 +0000
+Message-ID: <3d00e9cd-ba4d-73d1-a486-0b4f2c511c9c@st.com>
+References: <20190623144459.21608-1-efremov@linux.com>
+In-Reply-To: <20190623144459.21608-1-efremov@linux.com>
+Accept-Language: fr-FR, en-US
 Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrMKsWRmVeSWpSXmKPExsWy7djP87onKwViDdZ+ZbSYf+Qcq0X/49fM
-        FufPb2C32PT4GqvF5V1z2CxmnN/HZLFu4y12B3aPnbPusntsWtXJ5rF5Sb3H501yASxRXDYp
-        qTmZZalF+nYJXBkfLhxjKVjOWTHh8QH2BsYV7F2MnBwSAiYSm/f/YOli5OIQEljBKNG9/QCU
-        84VR4uuMe0wQzmdGiabjS4AcDrCWPTtdIOLLGSX6ev+yQThvGSWuXFrFBDJXWKBAovPoWzYQ
-        W0TAX6Jn4z5WkCJmgZuMEt+3rmUESbAJGEp0ve0CK+IVsJP4ceo1O8gGFgFViffr+UDCogIx
-        Eg/n34EqEZQ4OfMJC4jNKRAoceHvPrAfmAXkJba/ncMMYYtL3HoyH+xqCYFl7BIrJ25jh7ja
-        ReL7NjGIn4UlXh3fAvW/jMT/nTD1zYwSD8+tZYdwehglLjfNYISospY4fPwiK8ggZgFNifW7
-        9CFmOkq8uZYKYfJJ3HgrCHECn8SkbdOZIcK8Eh1tQhAz1CRmHV8Ht/XghUvMExiVZiF5bBaS
-        Z2YheWYWwtoFjCyrGMVTS4tz01OLjfNSy/WKE3OLS/PS9ZLzczcxApPO6X/Hv+5g3Pcn6RCj
-        AAejEg+vwAb+WCHWxLLiytxDjBIczEoivEsTBWKFeFMSK6tSi/Lji0pzUosPMUpzsCiJ81Yz
-        PIgWEkhPLEnNTk0tSC2CyTJxcEo1MAauSX783k1KQVzbX+n423dPXdfvLozyV0y4KXlgHcPO
-        tZcX+b1W77t24aP//v69JwR4Jrsp9p7U38mZ+nWudnuv3q1nwX5+z1l1vyw0ufHnEGvr36/3
-        inWW/lV8tWxCUjeHeBTz6l0X4364uMotir60ce67OYcj1AVNjlkknrxUIOjcza3jq6XEUpyR
-        aKjFXFScCAA6JuHXNgMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrKIsWRmVeSWpSXmKPExsVy+t/xu7onKgViDY4cFrCYf+Qcq0X/49fM
-        FufPb2C32PT4GqvF5V1z2CxmnN/HZLFu4y12B3aPnbPusntsWtXJ5rF5Sb3H501yASxRejZF
-        +aUlqQoZ+cUltkrRhhZGeoaWFnpGJpZ6hsbmsVZGpkr6djYpqTmZZalF+nYJehkfLhxjKVjO
-        WTHh8QH2BsYV7F2MHBwSAiYSe3a6dDFycQgJLGWUaD8KEucEistInJzWwAphC0v8udbFBmIL
-        CbxmlPg6pQjEFhYokOg8+hYsLiLgK/G/4RYziM0scJNRouuODcTQH4wS87YsYwRJsAkYSnS9
-        hRjEK2An8ePUa7AjWARUJd6v5wMJiwrESHRN/ckCUSIocXLmEzCbUyBQ4sLffewQ880k5m1+
-        CLVLXmL72zlQtrjErSfzmSYwCs1C0j4LScssJC2zkLQsYGRZxSiSWlqcm55bbKRXnJhbXJqX
-        rpecn7uJERhl24793LKDsetd8CFGAQ5GJR5egQ38sUKsiWXFlbmHGCU4mJVEeJcmCsQK8aYk
-        VlalFuXHF5XmpBYfYjQF+m0is5Rocj4wAeSVxBuaGppbWBqaG5sbm1koifN2CByMERJITyxJ
-        zU5NLUgtgulj4uCUamA8taH+p2rW/JWexWdda3281B6+mL3SWW630gXT3R42uaZt0/OeliQ8
-        mCex0H7FhodFnRXySvetV5/zPrbfQnVH84QEngWvSvK1NkQZ7jI+r2PlNs/Yq2p39Peftyo/
-        5i7f5vrlxrmPztVndM0UJkww0lBeOWGv3J/Mm1sjVMUU2dZZXDZ5f/2wEktxRqKhFnNRcSIA
-        XxGznMgCAAA=
-X-CMS-MailID: 20190624072040eucas1p2d484086328b7c097693c2b45f18076db
-X-Msg-Generator: CA
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.46]
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20190623160226epcas2p3449814deb1faf7bf939481e6d4da2b86
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20190623160226epcas2p3449814deb1faf7bf939481e6d4da2b86
-References: <20190621155845.7079-1-krzk@kernel.org>
-        <20190621155845.7079-3-krzk@kernel.org>
-        <CGME20190623160226epcas2p3449814deb1faf7bf939481e6d4da2b86@epcas2p3.samsung.com>
-        <CANAwSgTFQo8wL5s-djwPXFFOLtTHvRQif6234kFC=23PwMhuEQ@mail.gmail.com>
+Content-ID: <DFE614BF5A257D43A03D62C054DEF94C@st.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-24_06:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Anand,
-
-On 2019-06-23 18:02, Anand Moon wrote:
-> Thanks for this patch. Please add my
->
-> Tested-by: Anand Moon <linux.amoon@gmail.com>
->
-> [snip]
->
-> Could you integrate below small changes into this patch.
-> with these below changes suspend and resume work correctly at my end.
->
-> [1] XU4_suspendresume.patch
->
-> As per S2MPS11B PMIC 1.2.1 Regulator (Features)
-> Fix the min max value for *Buck7* and *Buck8*
->
-> -- Buck7 (VDD_1.0V_LDO) 1.5 A (1.2 V to 1.5 V, 12.5 mV step, default on 1.35 V)
-> -- Buck8 (VDD_1.8V_LDO) 2.5 A (1.8 V to 2.1 V, 12.5 mV step, default on 2.0 V)
-
-Could you elaborate why such change for Buck7 and Buck8 is needed?
-
-> Also add suspend-off for *Buck9*
-> Buck9 internally controls the power of USB hub.
-> Adding suspend the this node help proper reset of USB hub on Odroid
-> XU4 / HC1/ XU3
-> during suspend and resume. Below it the logs from my testing.
-
-Disabling Buck9 in suspend indeed reduces the power consumed by the 
-board during suspend-to-ram from about 80mA to as little as 7-10mA, what 
-matches the results of OdroidXU3. Thanks for the hint!
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+T24gNi8yMy8xOSA0OjQ0IFBNLCBEZW5pcyBFZnJlbW92IHdyb3RlOg0KPiBUaGUgZ3VhcmQgbWFj
+cm8gTUZYX1NUTUZYX0ggaW4gdGhlIGhlYWRlciBzdG1meC5oDQo+IGRvZXNuJ3QgbWF0Y2ggdGhl
+ICNpZm5kZWYgbWFjcm8gTUZEX1NUTUZYX0guIFRoZSBwYXRjaA0KPiBmaXhlcyB0aGUgdHlwby4N
+Cj4gDQo+IFNpZ25lZC1vZmYtYnk6IERlbmlzIEVmcmVtb3YgPGVmcmVtb3ZAbGludXguY29tPg0K
+PiAtLS0NCj4gICBpbmNsdWRlL2xpbnV4L21mZC9zdG1meC5oIHwgMiArLQ0KPiAgIDEgZmlsZSBj
+aGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0KPiANCj4gZGlmZiAtLWdpdCBh
+L2luY2x1ZGUvbGludXgvbWZkL3N0bWZ4LmggYi9pbmNsdWRlL2xpbnV4L21mZC9zdG1meC5oDQo+
+IGluZGV4IGQ4OTA1OTViODliNi4uM2M2Nzk4MzY3OGVjIDEwMDY0NA0KPiAtLS0gYS9pbmNsdWRl
+L2xpbnV4L21mZC9zdG1meC5oDQo+ICsrKyBiL2luY2x1ZGUvbGludXgvbWZkL3N0bWZ4LmgNCj4g
+QEAgLTUsNyArNSw3IEBADQo+ICAgICovDQo+ICAgDQo+ICAgI2lmbmRlZiBNRkRfU1RNRlhfSA0K
+PiAtI2RlZmluZSBNRlhfU1RNRlhfSA0KPiArI2RlZmluZSBNRkRfU1RNRlhfSA0KPiAgIA0KPiAg
+ICNpbmNsdWRlIDxsaW51eC9yZWdtYXAuaD4NCj4gICANCj4gDQoNCkhpIERlbmlzLA0KDQpUaGFu
+a3MgZm9yIHlvdXIgcGF0Y2guIE5hdGhhbiBhbHJlYWR5IHNlbnQgYSBmaXggZm9yIHRoYXQ6IA0K
+aHR0cHM6Ly9sa21sLm9yZy9sa21sLzIwMTkvNS8xMC83NzcuDQoNClJlZ2FyZHMsDQpBbWVsaWU=
