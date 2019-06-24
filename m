@@ -2,145 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A80AB4FEA1
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 03:48:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B4494FEAF
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 03:52:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726534AbfFXBs4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 21:48:56 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:33689 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726323AbfFXBs4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 21:48:56 -0400
-Received: by mail-ot1-f66.google.com with SMTP id i4so12083012otk.0
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2019 18:48:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=android.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KoQYiQrMBAoPwcouH5zLkPtiukwZNYdGgxBPjr/sF88=;
-        b=aYkg+TE39brESepUpYvudC15qXREldRUSMU/512F+I3btn18W+Xyfqt6LgqaLTPCkh
-         vCiVE2NlKC1hkzVZQPazcAnCKBWcQ56W8WagWpEk5ys8BlKUE8Tti5E4ZaCMNNgKYpGM
-         MsJCrSidc4ZdUr0WbczMxSGC8q3qfuxN9gHvUsNU/IRlKcdg7NcG/cBP9kWp0ZZM4AQd
-         4ix6Wuk06EKbD7SsXf7AWQrjeWS/JMdohdjDev0BJ5XI/c1gmGhRnKg2GmyCbWj0FLzb
-         02XeKxEDDNRRW0+Xg44AIg6KcDbGzWU1YaXJnupcpQ18Kg5Ez8NhzflUYscbN98fUctm
-         UGOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KoQYiQrMBAoPwcouH5zLkPtiukwZNYdGgxBPjr/sF88=;
-        b=DWo1L/7bB1RWyvHmsulLGh2jViQKn2GfUvohog01OZqQYMKlikyZlPY+dWm41V/rAQ
-         k2O8zurj8sF49iC3mC4qOfrSgcHhcqyH60v0vWqc3OV9PMaTYp7jzYoZMqf9hoyEDQsb
-         zva7nUBDKYOAM3zMcwt6mbyEAyqy/x8aXEBli8wzpy7QRy7ozOITdp7+DGJkjuzsW6ky
-         tXAcR+YILFeOeSawiYNUp9J56wtwlVuCOGKFptVfH2KdqZZc1uPJ9hC1vTIzr2L/chWC
-         viZ8r9peZ6c4/puLanvNs6ePckMtyqYhjSnkbaT0NBhuCUIA3Yc1SAlkrUmUkLzQNYJC
-         N3XA==
-X-Gm-Message-State: APjAAAWpndj2IgassgItqHTaJdelYuHO0vpJDd28AG7tl4/WTo71BIre
-        sYY5Q9IreqXkaHINClUERgLcoXj4TsuCbX3dB9ZYrA==
-X-Google-Smtp-Source: APXvYqyu3RIcWBRJLSScwP9CuXO3dOu2zHqFIr87b56yxDl/RFshM7fhRGX07M5Ok8/ypr/fYnAwbIpE31qvkI24V9g=
-X-Received: by 2002:a9d:450a:: with SMTP id w10mr43913762ote.148.1561340935025;
- Sun, 23 Jun 2019 18:48:55 -0700 (PDT)
+        id S1726558AbfFXBwB convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Sun, 23 Jun 2019 21:52:01 -0400
+Received: from mga12.intel.com ([192.55.52.136]:54742 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726304AbfFXBwA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Jun 2019 21:52:00 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jun 2019 18:52:00 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,410,1557212400"; 
+   d="scan'208";a="359411805"
+Received: from pgsmsx101.gar.corp.intel.com ([10.221.44.78])
+  by fmsmga005.fm.intel.com with ESMTP; 23 Jun 2019 18:51:58 -0700
+Received: from pgsmsx103.gar.corp.intel.com ([169.254.2.96]) by
+ PGSMSX101.gar.corp.intel.com ([169.254.1.223]) with mapi id 14.03.0439.000;
+ Mon, 24 Jun 2019 09:51:58 +0800
+From:   "Voon, Weifeng" <weifeng.voon@intel.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+CC:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        "Ong, Boon Leong" <boon.leong.ong@intel.com>
+Subject: RE: linux-next: Fixes tag needs some work in the net tree
+Thread-Topic: linux-next: Fixes tag needs some work in the net tree
+Thread-Index: AQHVKg160YmtwNARk0KEtCAotjVl8aaqCfJA
+Date:   Mon, 24 Jun 2019 01:51:56 +0000
+Message-ID: <D6759987A7968C4889FDA6FA91D5CBC8147282FB@PGSMSX103.gar.corp.intel.com>
+References: <20190624074716.44b749d3@canb.auug.org.au>
+In-Reply-To: <20190624074716.44b749d3@canb.auug.org.au>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-version: 11.0.600.7
+dlp-reaction: no-action
+x-originating-ip: [172.30.20.205]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-References: <CANA+-vCThdRivg7nrMK5QoFu8SGUzEVSvSyp0H2CPyy9==Tqog@mail.gmail.com>
- <CANA+-vARQ9Ao=W1oEArrAQ0sqh757orq=-=kytdVPhstm-3E9w@mail.gmail.com>
- <20190618182502.GC203031@google.com> <4587569.x9DSL43cXO@kreacher>
- <CANA+-vCMK6u1n9gXf2+v5dFn_tGfr1PT8d7W4d2BCzw+B-HvYw@mail.gmail.com>
- <CAJWu+oo7kwmEyMXQN0yfswV2=J-Fa9QybhAUx-SOGG_ipsBErQ@mail.gmail.com> <CAJZ5v0gvzCx-7qS9qkxB=sGKjQJKMR7yCc21f=_vqrbZxMSWNg@mail.gmail.com>
-In-Reply-To: <CAJZ5v0gvzCx-7qS9qkxB=sGKjQJKMR7yCc21f=_vqrbZxMSWNg@mail.gmail.com>
-From:   Tri Vo <trong@android.com>
-Date:   Sun, 23 Jun 2019 18:48:43 -0700
-Message-ID: <CANA+-vCBW=P=dpJGfcKTt7SoNKzWcpP5pwZHSDMU6MkwBKoC9A@mail.gmail.com>
-Subject: Re: Alternatives to /sys/kernel/debug/wakeup_sources
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Joel Fernandes <joelaf@google.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Sandeep Patil <sspatil@android.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Hridya Valsaraju <hridya@google.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "Cc: Android Kernel" <kernel-team@android.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 19, 2019 at 1:35 AM Rafael J. Wysocki <rafael@kernel.org> wrote:
->
-> On Wed, Jun 19, 2019 at 1:52 AM Joel Fernandes <joelaf@google.com> wrote:
-> >
-> > On Tue, Jun 18, 2019 at 7:15 PM Tri Vo <trong@android.com> wrote:
-> > [snip]
-> > > > > > >
-> > > > > > > Android userspace reading wakeup_sources is not ideal because:
-> > > > > > > - Debugfs API is not stable, i.e. Android tools built on top of it are
-> > > > > > > not guaranteed to be backward/forward compatible.
-> > > > > > > - This file requires debugfs to be mounted, which itself is
-> > > > > > > undesirable for security reasons.
-> > > > > > >
-> > > > > > > To address these problems, we want to contribute a way to expose these
-> > > > > > > statistics that doesn't depend on debugfs.
-> > > > > > >
-> > > > > > > Some initial thoughts/questions: Should we expose the stats in sysfs?
-> > > > > > > Or maybe implement eBPF-based solution? What do you think?
-> > > > >
-> > > > > We are going through Android's out-of-tree kernel dependencies along with
-> > > > > userspace APIs that are not necessarily considered "stable and forever
-> > > > > supported" upstream. The debugfs dependencies showed up on our radar as a
-> > > > > result and so we are wondering if we should worry about changes in debugfs
-> > > > > interface and hence the question(s) below.
-> > > > >
-> > > > > So, can we rely on /d/wakeup_sources to be considered a userspace API and
-> > > > > hence maintained stable as we do for other /proc and /sys entries?
-> > > > >
-> > > > > If yes, then we will go ahead and add tests for this in LTP or
-> > > > > somewhere else suitable.
-> > > >
-> > > > No, debugfs is not ABI.
-> > > >
-> > > > > If no, then we would love to hear suggestions for any changes that need to be
-> > > > > made or we simply just move the debugfs entry into somewhere like
-> > > > > /sys/power/ ?
-> > > >
-> > > > No, moving that entire file from debugfs into sysfs is not an option either.
-> > > >
-> > > > The statistics for the wakeup sources associated with devices are already there
-> > > > under /sys/devices/.../power/ , but I guess you want all wakeup sources?
-> > > >
-> > > > That would require adding a kobject to struct wakeup_source and exposing
-> > > > all of the statistics as separate attributes under it.  In which case it would be
-> > > > good to replace the existing wakeup statistics under /sys/devices/.../power/
-> > > > with symbolic links to the attributes under the wakeup_source kobject.
-> > >
-> > > Thanks for your input, Rafael! Your suggestion makes sense. I'll work
-> > > on a patch for this.
-> >
-> > Does that entail making each wake up source, a new sysfs node under a
-> > particular device, and then adding stats under that new node?
->
-> Not under a device, because there are wakeup source objects without
-> associated devices.
->
-> It is conceivable to have a "wakeup_sources" directory under
-> /sys/power/ and sysfs nodes for all wakeup sources in there.
->
-> Then, instead of exposing wakeup statistics directly under
-> /sys/devices/.../power/, there can be symbolic links from there to the
-> new wakeup source nodes under "wakeup_sources" (so as to avoid
-> exposing the same data in two different places in sysfs, which may be
-> confusing).
+> Hi all,
+> 
+> In commit
+> 
+>   d0bb82fd6018 ("net: stmmac: set IC bit when transmitting frames with
+> HW timestamp")
+> 
+> Fixes tag
+> 
+>   Fixes: f748be531d70 ("net: stmmac: Rework coalesce timer and fix
+> multi-queue races")
+> 
+> has these problem(s):
+> 
+>   - Subject does not match target commit subject
+>     Just use
+> 	git log -1 --format='Fixes: %h ("%s")'
+> 
+> Fixes: f748be531d70 ("stmmac: support new GMAC4")
+> 
+> or did you mean
+> 
+> Fixes: 8fce33317023 ("net: stmmac: Rework coalesce timer and fix multi-
+> queue races")
+> 
 
-This may be a dumb question. Is it appropriate to make symbolic links
-in sysfs from one attribute to another attribute? For example,
-/sys/devices/.../power/wakeup_count ->
-/sys/power/wakeup_sources/.../wakeup_count.
+Sorry for the confusion, what I meant is:
+Fixes: 8fce33317023 ("net: stmmac: Rework coalesce timer and fix multi-
+queue races")
 
-I only see kobject to kobject symlinks around. And I don't think we
-can make /sys/devices/.../power/ directory a symlink to where our new
-wakeup stats will be, since the former contains attributes other than
-wakeup ones.
+Regards,
+Weifeng
 
-Thanks!
+> --
+> Cheers,
+> Stephen Rothwell
