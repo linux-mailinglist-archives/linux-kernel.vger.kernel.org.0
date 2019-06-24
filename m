@@ -2,130 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C449517BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 17:55:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71C52517C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 17:56:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731351AbfFXPzq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 11:55:46 -0400
-Received: from esa2.microchip.iphmx.com ([68.232.149.84]:21637 "EHLO
-        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728725AbfFXPzq (ORCPT
+        id S1731389AbfFXP4q convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 24 Jun 2019 11:56:46 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:34898 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726774AbfFXP4p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 11:55:46 -0400
-Received-SPF: Pass (esa2.microchip.iphmx.com: domain of
-  Nicolas.Ferre@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa2.microchip.iphmx.com;
-  envelope-from="Nicolas.Ferre@microchip.com";
-  x-sender="Nicolas.Ferre@microchip.com";
-  x-conformance=spf_only; x-record-type="v=spf1";
-  x-record-text="v=spf1 mx a:ushub1.microchip.com
-  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
-  a:mx2.microchip.iphmx.com include:servers.mcsv.net
-  include:mktomail.com include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa2.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa2.microchip.iphmx.com;
-  envelope-from="Nicolas.Ferre@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa2.microchip.iphmx.com; spf=Pass smtp.mailfrom=Nicolas.Ferre@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dkim=pass (signature verified) header.i=@microchiptechnology.onmicrosoft.com; dmarc=pass (p=none dis=none) d=microchip.com
-X-IronPort-AV: E=Sophos;i="5.63,412,1557212400"; 
-   d="scan'208";a="38666742"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 24 Jun 2019 08:55:45 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.87.151) by
- chn-vm-ex02.mchp-main.com (10.10.87.72) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Mon, 24 Jun 2019 08:55:43 -0700
-Received: from NAM05-DM3-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.87.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5
- via Frontend Transport; Mon, 24 Jun 2019 08:54:46 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector1-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dSAL7ZUDnNnvwDnja2X3H+nPz0McQEvLa6pPV2s10AA=;
- b=Emj72WPPgHDHOW3QnD+lPQy3U3+4XvQCCGk7Mf9K5vN5JgpJBH4z67aIfGMm9IkbmnGsUQlawbhWVMz98u/ySi+3EW3Lz1RLl0zPD+KOV9eIGEsJNeXxwncn8g3gH5s4CGiSTrF/ouNsTObfjbC+qh1VY803WHejCwsdW1DS2PE=
-Received: from MWHPR11MB1662.namprd11.prod.outlook.com (10.172.55.15) by
- MWHPR11MB1999.namprd11.prod.outlook.com (10.169.232.23) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2008.13; Mon, 24 Jun 2019 15:55:42 +0000
-Received: from MWHPR11MB1662.namprd11.prod.outlook.com
- ([fe80::7534:63dc:8504:c2b3]) by MWHPR11MB1662.namprd11.prod.outlook.com
- ([fe80::7534:63dc:8504:c2b3%6]) with mapi id 15.20.2008.014; Mon, 24 Jun 2019
- 15:55:42 +0000
-From:   <Nicolas.Ferre@microchip.com>
-To:     <antoine.tenart@bootlin.com>, <davem@davemloft.net>
-CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <Ludovic.Desroches@microchip.com>, <alexandre.belloni@bootlin.com>
-Subject: Re: [PATCH net] net: macb: do not copy the mac address if NULL
-Thread-Topic: [PATCH net] net: macb: do not copy the mac address if NULL
-Thread-Index: AQHVKqVGsoNXrtPxPk6+LOJezvU7tA==
-Date:   Mon, 24 Jun 2019 15:55:41 +0000
-Message-ID: <0dceaf8f-0a08-8515-5054-1f9395e9b60f@microchip.com>
-References: <20190621152635.29689-1-antoine.tenart@bootlin.com>
-In-Reply-To: <20190621152635.29689-1-antoine.tenart@bootlin.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: LO2P265CA0257.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:8a::29) To MWHPR11MB1662.namprd11.prod.outlook.com
- (2603:10b6:301:e::15)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [213.41.198.74]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 578956ea-04ad-46f5-29ce-08d6f8bc68bf
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MWHPR11MB1999;
-x-ms-traffictypediagnostic: MWHPR11MB1999:
-x-microsoft-antispam-prvs: <MWHPR11MB1999C3517C82AE085FFACC82E0E00@MWHPR11MB1999.namprd11.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 007814487B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(136003)(346002)(376002)(366004)(39860400002)(199004)(189003)(31686004)(186003)(256004)(14444005)(25786009)(305945005)(52116002)(102836004)(7736002)(99286004)(4326008)(6116002)(3846002)(6506007)(386003)(8676002)(476003)(229853002)(2906002)(11346002)(26005)(446003)(2616005)(68736007)(486006)(36756003)(316002)(6246003)(53546011)(110136005)(478600001)(54906003)(31696002)(2501003)(5660300002)(66066001)(14454004)(6512007)(81156014)(81166006)(66556008)(72206003)(66946007)(73956011)(66476007)(64756008)(66446008)(53936002)(6436002)(6486002)(76176011)(86362001)(8936002)(71190400001)(71200400001);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR11MB1999;H:MWHPR11MB1662.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: dikfw+ARIqM3QthXMSCBaJkWlovxnpzbqms7MeqTeculbdwzlu0X3a0104feIid5dpp8bsPP6zBn7vYybWSFwSRIu+hN+HiyPHXuuMsUT/LBahz4Ii5lzY2ogjvnbIg+E0kdtXMqci89EM84+54cTUzMB5LcSnBRKEOxvlXDQzeHaIxgynGuSrKfB8U+T8qCghm18V52aUBkO6CKMiYXoBL5lsPGLonm62DPTg/PHENdrInSYy4MaQXkqZ6lHMwdwGhIf7ZYWu1ljMZgGI8DI0JIiIvL/xLn9JrZ7GCL/Fa/QSsMRn5QnXefRQFdLOZEpHgC/erpqruyDNzNHkwgyeX8e7G8p1bh9AfBTRiTbJCkzYqedNyo84/1uLY9QfsX2EUTtICYSApNEW/gQNoboi1SgDX+jT+QPR4Xcz4hip4=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <86D8B851C2653D4A818D7CB3A6A763E0@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Mon, 24 Jun 2019 11:56:45 -0400
+Received: by mail-ed1-f66.google.com with SMTP id w20so14876775edd.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 08:56:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=mMUgs4HoLKDmtg/T/uzM5Qeyyd0kP1F7cWc1uMkgeRs=;
+        b=f6MpH70T/k12GzVORXWXsIR5heiROU0PHkVp7O3nLmesMTRtGRU2q4qux4S17fPm8e
+         bjpIce4BQxwKkLtPH17KSvdkicwRqwwo5rSZhITaF4FrjoWa3zM+BHGP30yYAS/AnxFS
+         OaXm0mFmQTwkf0xkdNfNcs1qdcKpfzwWEW2eTIqdtbErrsv3ThAQfP9EOQFXzQHKJVP6
+         CP7iEi/ZHJ92LxFnYZhPeAqXcymKo72+w6qNMZul4f8hEr9nL12h3mW7PgzPjxQko5fH
+         c7S3ATWSkYvaYeBgkSeTACm2k3zB/ZDwT6diszCKJXmg9pP1Xj6NDWX+H8+mFOrxo8+u
+         YEZg==
+X-Gm-Message-State: APjAAAUYVcKldjQBAClNtCOo1epXa20vQPisPgjHHvZpT4Wxn+MDdDjd
+        PPjf8oOQKH6tSmxEBE+1UGM165qiXaE=
+X-Google-Smtp-Source: APXvYqzZQUQotwQYrqZNCYZXQ+x2MO1sWW0bFtMWPMBHT7pd0Hr3s1ChG62EqI7GxXj2lQdpXiLUjA==
+X-Received: by 2002:a50:aa7c:: with SMTP id p57mr116794659edc.179.1561391803332;
+        Mon, 24 Jun 2019 08:56:43 -0700 (PDT)
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com. [209.85.128.49])
+        by smtp.gmail.com with ESMTPSA id me3sm1942965ejb.21.2019.06.24.08.56.42
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Mon, 24 Jun 2019 08:56:42 -0700 (PDT)
+Received: by mail-wm1-f49.google.com with SMTP id v19so13898197wmj.5
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 08:56:42 -0700 (PDT)
+X-Received: by 2002:a1c:f512:: with SMTP id t18mr16201190wmh.47.1561391801973;
+ Mon, 24 Jun 2019 08:56:41 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 578956ea-04ad-46f5-29ce-08d6f8bc68bf
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jun 2019 15:55:41.9866
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: nicolas.ferre@microchip.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR11MB1999
+References: <VI1PR03MB420621617DDEAB3596700DE0AC1C0@VI1PR03MB4206.eurprd03.prod.outlook.com>
+ <VI1PR03MB4206740285A775280063E303AC1C0@VI1PR03MB4206.eurprd03.prod.outlook.com>
+ <baf95e6b-bfcf-27e7-1a00-ca877ae6f82d@samsung.com> <CGME20190624150546epcas1p1da19043e13dd3604a546f7983fc089b9@epcas1p1.samsung.com>
+ <6819050.kFKQ8T6p8H@jernej-laptop> <3f9e51d5-8ca5-a439-943c-26de92dd52fe@samsung.com>
+In-Reply-To: <3f9e51d5-8ca5-a439-943c-26de92dd52fe@samsung.com>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Mon, 24 Jun 2019 23:56:30 +0800
+X-Gmail-Original-Message-ID: <CAGb2v67FF3k9wZu7K+Z5yKFFeh8A_4iuEXfh+tO65UvVRfY-sA@mail.gmail.com>
+Message-ID: <CAGb2v67FF3k9wZu7K+Z5yKFFeh8A_4iuEXfh+tO65UvVRfY-sA@mail.gmail.com>
+Subject: Re: [PATCH 4/4] drm/sun4i: Enable DRM InfoFrame support on H6
+To:     Andrzej Hajda <a.hajda@samsung.com>
+Cc:     =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@siol.net>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        "Laurent.pinchart@ideasonboard.com" 
+        <Laurent.pinchart@ideasonboard.com>,
+        "narmstrong@baylibre.com" <narmstrong@baylibre.com>,
+        "khilman@baylibre.com" <khilman@baylibre.com>,
+        "zhengyang@rock-chips.com" <zhengyang@rock-chips.com>,
+        "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>,
+        "hjc@rock-chips.com" <hjc@rock-chips.com>,
+        "heiko@sntech.de" <heiko@sntech.de>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMjEvMDYvMjAxOSBhdCAxNzoyNiwgQW50b2luZSBUZW5hcnQgd3JvdGU6DQo+IFRoaXMgcGF0
-Y2ggZml4ZXMgdGhlIE1BQyBhZGRyZXNzIHNldHVwIGluIHRoZSBwcm9iZS4gVGhlIE1BQyBhZGRy
-ZXNzDQo+IHJldHJpZXZlZCB1c2luZyBvZl9nZXRfbWFjX2FkZHJlc3Mgd2FzIGNoZWNrZWQgZm9y
-IG5vdCBjb250YWluaW5nIGFuDQo+IGVycm9yLCBidXQgaXQgbWF5IGFsc28gYmUgTlVMTCB3aGlj
-aCB3YXNuJ3QgdGVzdGVkLiBGaXggaXQgYnkgcmVwbGFjaW5nDQo+IElTX0VSUiB3aXRoIElTX0VS
-Ul9PUl9OVUxMLg0KPiANCj4gRml4ZXM6IDU0MWRkYzY2ZDY2NSAoIm5ldDogbWFjYjogc3VwcG9y
-dCBvZl9nZXRfbWFjX2FkZHJlc3MgbmV3IEVSUl9QVFIgZXJyb3IiKQ0KPiBTaWduZWQtb2ZmLWJ5
-OiBBbnRvaW5lIFRlbmFydCA8YW50b2luZS50ZW5hcnRAYm9vdGxpbi5jb20+DQoNCkFja2VkLWJ5
-OiBOaWNvbGFzIEZlcnJlIDxuaWNvbGFzLmZlcnJlQG1pY3JvY2hpcC5jb20+DQoNCkl0IGNvdWxk
-IGJlIGdvb2QgdG8gaGF2ZSB0aGlzIGZpeCBmb3IgNS4yLWZpbmFsLi4uDQoNClRoYW5rcyENCg0K
-PiAtLS0NCj4gICBkcml2ZXJzL25ldC9ldGhlcm5ldC9jYWRlbmNlL21hY2JfbWFpbi5jIHwgMiAr
-LQ0KPiAgIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0KPiAN
-Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L2V0aGVybmV0L2NhZGVuY2UvbWFjYl9tYWluLmMg
-Yi9kcml2ZXJzL25ldC9ldGhlcm5ldC9jYWRlbmNlL21hY2JfbWFpbi5jDQo+IGluZGV4IDEyNDFh
-MmE3MzQzOC4uMWNkMWYyYzM2ZDZmIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL25ldC9ldGhlcm5l
-dC9jYWRlbmNlL21hY2JfbWFpbi5jDQo+ICsrKyBiL2RyaXZlcnMvbmV0L2V0aGVybmV0L2NhZGVu
-Y2UvbWFjYl9tYWluLmMNCj4gQEAgLTQzMDQsNyArNDMwNCw3IEBAIHN0YXRpYyBpbnQgbWFjYl9w
-cm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQ0KPiAgIAlpZiAoUFRSX0VSUihtYWMp
-ID09IC1FUFJPQkVfREVGRVIpIHsNCj4gICAJCWVyciA9IC1FUFJPQkVfREVGRVI7DQo+ICAgCQln
-b3RvIGVycl9vdXRfZnJlZV9uZXRkZXY7DQo+IC0JfSBlbHNlIGlmICghSVNfRVJSKG1hYykpIHsN
-Cj4gKwl9IGVsc2UgaWYgKCFJU19FUlJfT1JfTlVMTChtYWMpKSB7DQo+ICAgCQlldGhlcl9hZGRy
-X2NvcHkoYnAtPmRldi0+ZGV2X2FkZHIsIG1hYyk7DQo+ICAgCX0gZWxzZSB7DQo+ICAgCQltYWNi
-X2dldF9od2FkZHIoYnApOw0KPiANCg0KDQotLSANCk5pY29sYXMgRmVycmUNCg==
+On Mon, Jun 24, 2019 at 11:49 PM Andrzej Hajda <a.hajda@samsung.com> wrote:
+>
+> On 24.06.2019 17:05, Jernej Škrabec wrote:
+> > Dne ponedeljek, 24. junij 2019 ob 17:03:31 CEST je Andrzej Hajda napisal(a):
+> >> On 26.05.2019 23:20, Jonas Karlman wrote:
+> >>> This patch enables Dynamic Range and Mastering InfoFrame on H6.
+> >>>
+> >>> Cc: Maxime Ripard <maxime.ripard@bootlin.com>
+> >>> Cc: Jernej Skrabec <jernej.skrabec@siol.net>
+> >>> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
+> >>> ---
+> >>>
+> >>>  drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c | 2 ++
+> >>>  drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h | 1 +
+> >>>  2 files changed, 3 insertions(+)
+> >>>
+> >>> diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
+> >>> b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c index 39d8509d96a0..b80164dd8ad8
+> >>> 100644
+> >>> --- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
+> >>> +++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
+> >>> @@ -189,6 +189,7 @@ static int sun8i_dw_hdmi_bind(struct device *dev,
+> >>> struct device *master,>
+> >>>     sun8i_hdmi_phy_init(hdmi->phy);
+> >>>
+> >>>     plat_data->mode_valid = hdmi->quirks->mode_valid;
+> >>>
+> >>> +   plat_data->drm_infoframe = hdmi->quirks->drm_infoframe;
+> >>>
+> >>>     sun8i_hdmi_phy_set_ops(hdmi->phy, plat_data);
+> >>>
+> >>>     platform_set_drvdata(pdev, hdmi);
+> >>>
+> >>> @@ -255,6 +256,7 @@ static const struct sun8i_dw_hdmi_quirks
+> >>> sun8i_a83t_quirks = {>
+> >>>  static const struct sun8i_dw_hdmi_quirks sun50i_h6_quirks = {
+> >>>
+> >>>     .mode_valid = sun8i_dw_hdmi_mode_valid_h6,
+> >>>
+> >>> +   .drm_infoframe = true,
+> >>>
+> >>>  };
+> >>>
+> >>>  static const struct of_device_id sun8i_dw_hdmi_dt_ids[] = {
+> >>>
+> >>> diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
+> >>> b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h index 720c5aa8adc1..2a0ec08ee236
+> >>> 100644
+> >>> --- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
+> >>> +++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
+> >>> @@ -178,6 +178,7 @@ struct sun8i_dw_hdmi_quirks {
+> >>>
+> >>>     enum drm_mode_status (*mode_valid)(struct drm_connector
+> > *connector,
+> >>>
+> >>>                                        const struct
+> > drm_display_mode *mode);
+> >>>
+> >>>     unsigned int set_rate : 1;
+> >>>
+> >>> +   unsigned int drm_infoframe : 1;
+> >> Again, drm_infoframe suggests it contains inforframe, but in fact it
+> >> just informs infoframe can be used, so again my suggestion
+> >> use_drm_infoframe.
+> >>
+> >> Moreover bool type seems more appropriate here.
+> > checkpatch will give warning if bool is used.
+>
+>
+> Then I would say "fix/ignore checkpatch" :)
+>
+> But maybe there is a reason.
+
+Here's an old one from Linus: https://lkml.org/lkml/2013/9/1/154
+
+I'd say that bool in a struct is a waste of space compared to a 1 bit bitfield,
+especially when there already are other bitfields in the same struct.
+
+> Anyway I've tested and I do not see the warning, could you elaborate it.
+
+Maybe checkpatch.pl --strict?
+
+ChenYu
