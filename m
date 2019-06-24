@@ -2,220 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE4EC51A63
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 20:21:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0BF251009
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 17:12:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732793AbfFXSVB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 14:21:01 -0400
-Received: from mx0b-00128a01.pphosted.com ([148.163.139.77]:34984 "EHLO
-        mx0b-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726934AbfFXSVB (ORCPT
+        id S1730789AbfFXPMX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 11:12:23 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:34159 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730435AbfFXPMV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 14:21:01 -0400
-X-Greylist: delayed 11321 seconds by postgrey-1.27 at vger.kernel.org; Mon, 24 Jun 2019 14:20:59 EDT
-Received: from pps.filterd (m0167091.ppops.net [127.0.0.1])
-        by mx0b-00128a01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5OEwF7S011278;
-        Mon, 24 Jun 2019 11:12:18 -0400
-Received: from nam04-bn3-obe.outbound.protection.outlook.com (mail-bn3nam04lp2053.outbound.protection.outlook.com [104.47.46.53])
-        by mx0b-00128a01.pphosted.com with ESMTP id 2t9e37ecnr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 24 Jun 2019 11:12:18 -0400
+        Mon, 24 Jun 2019 11:12:21 -0400
+Received: by mail-io1-f68.google.com with SMTP id k8so2397645iot.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 08:12:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=analog.onmicrosoft.com; s=selector1-analog-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zqps4Mjpvk7USh+X6xxZbZcJ0Zair5LEZipihcqs1Bs=;
- b=ZfVQbXfGZe3OAknF2rWIMCiqxQC+1B77xt9AjUJtljVF1JDtitNaR+q9H3dDXxzDxE53UgDtseVU3r32ieJ/e2QSJ5n1F4HxuGL9P4pVCF4VMwFNOdnQnzEEq1te4mKcSvRAoZbB/USnlwFFVvzmrQRv9XR1zD0Fj4eH8pBr7wQ=
-Received: from CY4PR03CA0100.namprd03.prod.outlook.com (2603:10b6:910:4d::41)
- by DM5PR03MB3129.namprd03.prod.outlook.com (2603:10b6:4:3c::26) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2008.16; Mon, 24 Jun
- 2019 15:12:16 +0000
-Received: from BL2NAM02FT038.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e46::201) by CY4PR03CA0100.outlook.office365.com
- (2603:10b6:910:4d::41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2008.13 via Frontend
- Transport; Mon, 24 Jun 2019 15:12:16 +0000
-Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
- 137.71.25.57 as permitted sender) receiver=protection.outlook.com;
- client-ip=137.71.25.57; helo=nwd2mta2.analog.com;
-Received: from nwd2mta2.analog.com (137.71.25.57) by
- BL2NAM02FT038.mail.protection.outlook.com (10.152.77.25) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1987.11
- via Frontend Transport; Mon, 24 Jun 2019 15:12:16 +0000
-Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
-        by nwd2mta2.analog.com (8.13.8/8.13.8) with ESMTP id x5OFCFmH010372
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
-        Mon, 24 Jun 2019 08:12:15 -0700
-Received: from linux.ad.analog.com (10.32.226.41) by NWD2HUBCAS7.ad.analog.com
- (10.64.69.107) with Microsoft SMTP Server id 14.3.408.0; Mon, 24 Jun 2019
- 11:12:15 -0400
-From:   Stefan Popa <stefan.popa@analog.com>
-To:     <jic23@kernel.org>
-CC:     <Michael.Hennerich@analog.com>, <knaack.h@gmx.de>,
-        <lars@metafoo.de>, <pmeerw@pmeerw.net>,
-        <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
-        <linux-iio@vger.kernel.org>, <stefan.popa@analog.com>
-Subject: [PATCH 2/4] iio: frequency: adf4371: Add support for ADF4372 PLL
-Date:   Mon, 24 Jun 2019 18:12:12 +0300
-Message-ID: <1561389132-26182-1-git-send-email-stefan.popa@analog.com>
-X-Mailer: git-send-email 2.7.4
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=i6RP5sEIUQVe7K2Xxca+vDWdrwxXZnb7gXo4fjhFOrI=;
+        b=jvgv4lXqQaoTaUCCgSqFt7dA1UG8exJvGDZ8+KtKxJ/F1Y3nXoRjm3mDxBFqek2yPa
+         6+vxZZK7y20j65gwxGP1TZgLx/GKaAMRMeotexYhGiKkgr37FscTGeHpnWfkup4MQBr7
+         kVxvBPx8VMwMyBZCYCSMzStUhOKfpSYUOOQNP1hG5P9YNsNt6Hqx3aziwKkU0BVMlqW5
+         XwuM0TSzS42G1XJIYxd1+xd1q7vW9P7SovoLT4e4ilPznQYjhpoSBkE7NXsIzj1AHE0l
+         W1m+hPlUxfwPUS1qbPsmfFXhOaK94yklTADYhpuaQtZALjOAMeIsSx6O8N77qkEgoEW0
+         dCVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=i6RP5sEIUQVe7K2Xxca+vDWdrwxXZnb7gXo4fjhFOrI=;
+        b=bBmcy4UJHrIQ8xq/bh1JaKIjcNgzpyEdRROaSenX+Kpjz7bGXHK7L47Qlpm8dui1/C
+         mJT+lS3/8tejchL2aW5Tl45yYm9nIl/hQprS1BXBAhpZxhD0Tw9AhutTujj+Q3oh/ynL
+         dm46+NGhQDfXh8XsETHxBkk405Lu14tT6qSU40UhKzmXNpP8+RibeARjTTLNTK0p+yoc
+         Y+3bLf471VNOkxilw3JDT73eu/60p1rj6VjIqvNP8apAMU565uC/8XuCgCWNvxfXqyel
+         fHfSCGyjVWbktNUbZyY75AdDtZRGW1sUW2vGMlot2NpmUw2ODI9pOOSULm/7gVtHY2Ks
+         DI0A==
+X-Gm-Message-State: APjAAAX4UyxQtTt2hOKL89eA1lJUryMZELzkdwBbYpQcstDgORr/oA8r
+        x77/10h9DENe6th1KY852HUr0H+jq9IUmA==
+X-Google-Smtp-Source: APXvYqxhCdDitnoCJq15metdrBXJXKIUUa7soKbJdiR2x1Uo/Def9XZLDCqSPhNc0JhCX6SVb8UL6w==
+X-Received: by 2002:a02:2a8f:: with SMTP id w137mr127594244jaw.50.1561389140370;
+        Mon, 24 Jun 2019 08:12:20 -0700 (PDT)
+Received: from google.com ([2620:15c:183:200:855f:8919:84a7:4794])
+        by smtp.gmail.com with ESMTPSA id f17sm25760614ioc.2.2019.06.24.08.12.19
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 24 Jun 2019 08:12:19 -0700 (PDT)
+Date:   Mon, 24 Jun 2019 09:12:17 -0600
+From:   Ross Zwisler <zwisler@google.com>
+To:     kbuild test robot <lkp@intel.com>
+Cc:     Ross Zwisler <zwisler@chromium.org>, kbuild-all@01.org,
+        linux-kernel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jan Kara <jack@suse.com>, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Fletcher Woodruff <fletcherw@google.com>,
+        Justin TerAvest <teravest@google.com>, Jan Kara <jack@suse.cz>,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] ext4: use jbd2_inode dirty range scoping
+Message-ID: <20190624151217.GA249955@google.com>
+References: <20190620151839.195506-4-zwisler@google.com>
+ <201906240244.12r4nktI%lkp@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ADIRoutedOnPrem: True
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39860400002)(136003)(346002)(376002)(396003)(2980300002)(199004)(189003)(2351001)(70586007)(7636002)(305945005)(5660300002)(70206006)(47776003)(8936002)(6916009)(7696005)(478600001)(51416003)(50226002)(6306002)(6666004)(356004)(186003)(48376002)(966005)(72206003)(2906002)(50466002)(14444005)(316002)(26005)(106002)(54906003)(8676002)(336012)(77096007)(16586007)(126002)(476003)(2616005)(44832011)(246002)(36756003)(426003)(486006)(4326008)(107886003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR03MB3129;H:nwd2mta2.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail11.analog.com;A:1;MX:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 4305754e-c133-40a7-fdf3-08d6f8b6581e
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(4709080)(1401327)(2017052603328);SRVR:DM5PR03MB3129;
-X-MS-TrafficTypeDiagnostic: DM5PR03MB3129:
-X-MS-Exchange-PUrlCount: 1
-X-Microsoft-Antispam-PRVS: <DM5PR03MB312956149E539DD3265D69BA9DE00@DM5PR03MB3129.namprd03.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:6430;
-X-Forefront-PRVS: 007814487B
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: 2lmfN9AcqrP5v22mZbWyYGfJuQ5ta091Ak+lGrEV13pk9Nu55Vt0/fKAHfFb4czqXOI42/E4Drjb9vS2XSGycYFt/5HRALOR1gkBJhdiu/k9BortkSHpOipMfdwdItrEyCH5asnKxviHkgHGKWFJEzKaTOcOcXQAmJQHUi47v6vugl7fm8SVovTPVtssDOuzCJZf6XFlOicJ320ErTa1sIVAKOo9y9d5zCIUTaG8s9QhxvS39AtoAvPiIFAhdopk2RTTKQKezCzEhn35fTT4NV3VKuD9XK6qyUVcUUF+yZ0pHlSb4pVVFmhuCAZVb4GlLvifwI7H/1/AN/z5iF9GkKlFpDFg9aVobzZiwxqsAXWtxyrKI7bOJPIswz0lLtvrAXOTGBz/OpLM1JZjHlmoCk6uV1WdX0SpNn8q+Df+VLk=
-X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jun 2019 15:12:16.4415
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4305754e-c133-40a7-fdf3-08d6f8b6581e
-X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.57];Helo=[nwd2mta2.analog.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR03MB3129
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-24_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906240122
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201906240244.12r4nktI%lkp@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The ADF4372 is part of the same family with ADF4371, the main difference
-is that it has only 3 channels instead of 4, as the frequency quadrupler
-is missing. As a result, the ADF4372 allows frequencies from 62.5 MHz to
-16 GHz to be generated.
+On Mon, Jun 24, 2019 at 02:54:49AM +0800, kbuild test robot wrote:
+> Hi Ross,
+> 
+> Thank you for the patch! Yet something to improve:
+> 
+> [auto build test ERROR on linus/master]
+> [also build test ERROR on v5.2-rc6 next-20190621]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> 
+> url:    https://github.com/0day-ci/linux/commits/Ross-Zwisler/mm-add-filemap_fdatawait_range_keep_errors/20190623-181603
+> config: x86_64-rhel-7.6 (attached as .config)
+> compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
+> reproduce:
+>         # save the attached .config to linux build tree
+>         make ARCH=x86_64 
+> 
+> If you fix the issue, kindly add following tag
+> Reported-by: kbuild test robot <lkp@intel.com>
+> 
+> All errors (new ones prefixed by >>):
+> 
+> >> ERROR: "jbd2_journal_inode_ranged_wait" [fs/ext4/ext4.ko] undefined!
+> >> ERROR: "jbd2_journal_inode_ranged_write" [fs/ext4/ext4.ko] undefined!
 
-Datasheet:
-Link: https://www.analog.com/media/en/technical-documentation/data-sheets/adf4372.pdf
+Yep, this is caused by the lack of EXPORT_SYMBOL() calls for these two new
+jbd2 functions.  Ted also pointed this out and fixed this up when he was
+committing:
 
-Signed-off-by: Stefan Popa <stefan.popa@analog.com>
----
- drivers/iio/frequency/Kconfig   |  6 +++---
- drivers/iio/frequency/adf4371.c | 31 ++++++++++++++++++++++++++++---
- 2 files changed, 31 insertions(+), 6 deletions(-)
+https://patchwork.kernel.org/patch/11007139/#22717091
 
-diff --git a/drivers/iio/frequency/Kconfig b/drivers/iio/frequency/Kconfig
-index e4a921f..353914b 100644
---- a/drivers/iio/frequency/Kconfig
-+++ b/drivers/iio/frequency/Kconfig
-@@ -39,12 +39,12 @@ config ADF4350
- 	  module will be called adf4350.
- 
- config ADF4371
--	tristate "Analog Devices ADF4371 Wideband Synthesizer"
-+	tristate "Analog Devices ADF4371/ADF4372 Wideband Synthesizers"
- 	depends on SPI
- 	select REGMAP_SPI
- 	help
--	  Say yes here to build support for Analog Devices  ADF4371
--	  Wideband Synthesizer. The driver provides direct access via sysfs.
-+	  Say yes here to build support for Analog Devices ADF4371 and ADF4372
-+	  Wideband Synthesizers. The driver provides direct access via sysfs.
- 
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called adf4371.
-diff --git a/drivers/iio/frequency/adf4371.c b/drivers/iio/frequency/adf4371.c
-index d8c414b..f874219 100644
---- a/drivers/iio/frequency/adf4371.c
-+++ b/drivers/iio/frequency/adf4371.c
-@@ -87,6 +87,11 @@ enum {
- 	ADF4371_CH_RF32
- };
- 
-+enum adf4371_variant {
-+	ADF4371,
-+	ADF4372
-+};
-+
- struct adf4371_pwrdown {
- 	unsigned int reg;
- 	unsigned int bit;
-@@ -140,6 +145,11 @@ static const struct regmap_config adf4371_regmap_config = {
- 	.read_flag_mask = BIT(7),
- };
- 
-+struct adf4371_chip_info {
-+	unsigned int num_channels;
-+	const struct iio_chan_spec *channels;
-+};
-+
- struct adf4371_state {
- 	struct spi_device *spi;
- 	struct regmap *regmap;
-@@ -152,6 +162,7 @@ struct adf4371_state {
- 	 * writes.
- 	 */
- 	struct mutex lock;
-+	const struct adf4371_chip_info *chip_info;
- 	unsigned long clkin_freq;
- 	unsigned long fpfd;
- 	unsigned int integer;
-@@ -429,6 +440,17 @@ static const struct iio_chan_spec adf4371_chan[] = {
- 	ADF4371_CHANNEL(ADF4371_CH_RF32),
- };
- 
-+static const struct adf4371_chip_info adf4371_chip_info[] = {
-+	[ADF4371] = {
-+		.channels = adf4371_chan,
-+		.num_channels = 4,
-+	},
-+	[ADF4372] = {
-+		.channels = adf4371_chan,
-+		.num_channels = 3,
-+	}
-+};
-+
- static int adf4371_reg_access(struct iio_dev *indio_dev,
- 			      unsigned int reg,
- 			      unsigned int writeval,
-@@ -537,12 +559,13 @@ static int adf4371_probe(struct spi_device *spi)
- 	st->regmap = regmap;
- 	mutex_init(&st->lock);
- 
-+	st->chip_info = &adf4371_chip_info[id->driver_data];
- 	indio_dev->dev.parent = &spi->dev;
- 	indio_dev->name = id->name;
- 	indio_dev->info = &adf4371_info;
- 	indio_dev->modes = INDIO_DIRECT_MODE;
--	indio_dev->channels = adf4371_chan;
--	indio_dev->num_channels = ARRAY_SIZE(adf4371_chan);
-+	indio_dev->channels = st->chip_info->channels;
-+	indio_dev->num_channels = st->chip_info->num_channels;
- 
- 	st->clkin = devm_clk_get(&spi->dev, "clkin");
- 	if (IS_ERR(st->clkin))
-@@ -568,13 +591,15 @@ static int adf4371_probe(struct spi_device *spi)
- }
- 
- static const struct spi_device_id adf4371_id_table[] = {
--	{ "adf4371", 0 },
-+	{ "adf4371", ADF4371 },
-+	{ "adf4372", ADF4372 },
- 	{}
- };
- MODULE_DEVICE_TABLE(spi, adf4371_id_table);
- 
- static const struct of_device_id adf4371_of_match[] = {
- 	{ .compatible = "adi,adf4371" },
-+	{ .compatible = "adi,adf4372" },
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, adf4371_of_match);
--- 
-2.7.4
-
+Thank you for the report!
