@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B4A150741
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:06:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 51E7450695
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:01:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730018AbfFXKGB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 06:06:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38076 "EHLO mail.kernel.org"
+        id S1729244AbfFXJ7k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 05:59:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58834 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729819AbfFXKF6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 06:05:58 -0400
+        id S1728691AbfFXJ7i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 05:59:38 -0400
 Received: from localhost (f4.8f.5177.ip4.static.sl-reverse.com [119.81.143.244])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 57E90212F5;
-        Mon, 24 Jun 2019 10:05:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 787E5214C6;
+        Mon, 24 Jun 2019 09:59:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561370757;
-        bh=0soxVsViu3xx6+L+4kDR+OCTU6k4+MLhJZC68ctLQYo=;
+        s=default; t=1561370376;
+        bh=tLVZwVgEy3INWT+QDUG63JAAvvmORHsEoFCuqJI91d8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xxwCx/yh0qSiS5EfeCAFMk2ShcqlAIIMHIcJbqS8KVZzRM0lBMLEynaT2q/+hz/tM
-         pCeABD2MQaaIPC+GFfAzliR72rrrhf2NxrB/oXUke+NTJGswzb4UgahCxcYvx0hEZF
-         SydwYXygCEEkZOa01+RqW2UfJOtc/iRHFEDOg8zI=
+        b=oKyvls+G7wcnqIaBFC9e/IbzhuJwl2TNOwXCvLlWqKL/ok9EAWQU44R7v31eS+Ibe
+         55it9LzBTpNl6HVgXkVCkJEamMGseYFzgNHO18Q4fFCUgKyGzJXfEltsv0hnVDfgMk
+         8cQSpGr8agaoXEghbcaboeGzaXG8wlsKLnshtnNU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Hellstrom <thellstrom@vmware.com>,
-        Deepak Rawat <drawat@vmware.com>
-Subject: [PATCH 4.19 79/90] drm/vmwgfx: Use the backdoor port if the HB port is not available
+        stable@vger.kernel.org, Jouni Malinen <j@w1.fi>,
+        Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 4.14 51/51] mac80211: Do not use stack memory with scatterlist for GMAC
 Date:   Mon, 24 Jun 2019 17:57:09 +0800
-Message-Id: <20190624092319.123052565@linuxfoundation.org>
+Message-Id: <20190624092311.567774680@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190624092313.788773607@linuxfoundation.org>
-References: <20190624092313.788773607@linuxfoundation.org>
+In-Reply-To: <20190624092305.919204959@linuxfoundation.org>
+References: <20190624092305.919204959@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,221 +43,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Hellstrom <thellstrom@vmware.com>
+From: Jouni Malinen <j@w1.fi>
 
-commit cc0ba0d8624f210995924bb57a8b181ce8976606 upstream.
+commit a71fd9dac23613d96ba3c05619a8ef4fd6cdf9b9 upstream.
 
-The HB port may not be available for various reasons. Either it has been
-disabled by a config option or by the hypervisor for other reasons.
-In that case, make sure we have a backup plan and use the backdoor port
-instead with a performance penalty.
+ieee80211_aes_gmac() uses the mic argument directly in sg_set_buf() and
+that does not allow use of stack memory (e.g., BUG_ON() is hit in
+sg_set_buf() with CONFIG_DEBUG_SG). BIP GMAC TX side is fine for this
+since it can use the skb data buffer, but the RX side was using a stack
+variable for deriving the local MIC value to compare against the
+received one.
+
+Fix this by allocating heap memory for the mic buffer.
+
+This was found with hwsim test case ap_cipher_bip_gmac_128 hitting that
+BUG_ON() and kernel panic.
 
 Cc: stable@vger.kernel.org
-Fixes: 89da76fde68d ("drm/vmwgfx: Add VMWare host messaging capability")
-Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
-Reviewed-by: Deepak Rawat <drawat@vmware.com>
+Signed-off-by: Jouni Malinen <j@w1.fi>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/vmwgfx/vmwgfx_msg.c |  146 ++++++++++++++++++++++++++++--------
- 1 file changed, 117 insertions(+), 29 deletions(-)
+ net/mac80211/wpa.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_msg.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_msg.c
-@@ -136,6 +136,114 @@ static int vmw_close_channel(struct rpc_
- 	return 0;
- }
+--- a/net/mac80211/wpa.c
++++ b/net/mac80211/wpa.c
+@@ -1169,7 +1169,7 @@ ieee80211_crypto_aes_gmac_decrypt(struct
+ 	struct ieee80211_rx_status *status = IEEE80211_SKB_RXCB(skb);
+ 	struct ieee80211_key *key = rx->key;
+ 	struct ieee80211_mmie_16 *mmie;
+-	u8 aad[GMAC_AAD_LEN], mic[GMAC_MIC_LEN], ipn[6], nonce[GMAC_NONCE_LEN];
++	u8 aad[GMAC_AAD_LEN], *mic, ipn[6], nonce[GMAC_NONCE_LEN];
+ 	struct ieee80211_hdr *hdr = (struct ieee80211_hdr *)skb->data;
  
-+/**
-+ * vmw_port_hb_out - Send the message payload either through the
-+ * high-bandwidth port if available, or through the backdoor otherwise.
-+ * @channel: The rpc channel.
-+ * @msg: NULL-terminated message.
-+ * @hb: Whether the high-bandwidth port is available.
-+ *
-+ * Return: The port status.
-+ */
-+static unsigned long vmw_port_hb_out(struct rpc_channel *channel,
-+				     const char *msg, bool hb)
-+{
-+	unsigned long si, di, eax, ebx, ecx, edx;
-+	unsigned long msg_len = strlen(msg);
-+
-+	if (hb) {
-+		unsigned long bp = channel->cookie_high;
-+
-+		si = (uintptr_t) msg;
-+		di = channel->cookie_low;
-+
-+		VMW_PORT_HB_OUT(
-+			(MESSAGE_STATUS_SUCCESS << 16) | VMW_PORT_CMD_HB_MSG,
-+			msg_len, si, di,
-+			VMW_HYPERVISOR_HB_PORT | (channel->channel_id << 16),
-+			VMW_HYPERVISOR_MAGIC, bp,
-+			eax, ebx, ecx, edx, si, di);
-+
-+		return ebx;
-+	}
-+
-+	/* HB port not available. Send the message 4 bytes at a time. */
-+	ecx = MESSAGE_STATUS_SUCCESS << 16;
-+	while (msg_len && (HIGH_WORD(ecx) & MESSAGE_STATUS_SUCCESS)) {
-+		unsigned int bytes = min_t(size_t, msg_len, 4);
-+		unsigned long word = 0;
-+
-+		memcpy(&word, msg, bytes);
-+		msg_len -= bytes;
-+		msg += bytes;
-+		si = channel->cookie_high;
-+		di = channel->cookie_low;
-+
-+		VMW_PORT(VMW_PORT_CMD_MSG | (MSG_TYPE_SENDPAYLOAD << 16),
-+			 word, si, di,
-+			 VMW_HYPERVISOR_PORT | (channel->channel_id << 16),
-+			 VMW_HYPERVISOR_MAGIC,
-+			 eax, ebx, ecx, edx, si, di);
-+	}
-+
-+	return ecx;
-+}
-+
-+/**
-+ * vmw_port_hb_in - Receive the message payload either through the
-+ * high-bandwidth port if available, or through the backdoor otherwise.
-+ * @channel: The rpc channel.
-+ * @reply: Pointer to buffer holding reply.
-+ * @reply_len: Length of the reply.
-+ * @hb: Whether the high-bandwidth port is available.
-+ *
-+ * Return: The port status.
-+ */
-+static unsigned long vmw_port_hb_in(struct rpc_channel *channel, char *reply,
-+				    unsigned long reply_len, bool hb)
-+{
-+	unsigned long si, di, eax, ebx, ecx, edx;
-+
-+	if (hb) {
-+		unsigned long bp = channel->cookie_low;
-+
-+		si = channel->cookie_high;
-+		di = (uintptr_t) reply;
-+
-+		VMW_PORT_HB_IN(
-+			(MESSAGE_STATUS_SUCCESS << 16) | VMW_PORT_CMD_HB_MSG,
-+			reply_len, si, di,
-+			VMW_HYPERVISOR_HB_PORT | (channel->channel_id << 16),
-+			VMW_HYPERVISOR_MAGIC, bp,
-+			eax, ebx, ecx, edx, si, di);
-+
-+		return ebx;
-+	}
-+
-+	/* HB port not available. Retrieve the message 4 bytes at a time. */
-+	ecx = MESSAGE_STATUS_SUCCESS << 16;
-+	while (reply_len) {
-+		unsigned int bytes = min_t(unsigned long, reply_len, 4);
-+
-+		si = channel->cookie_high;
-+		di = channel->cookie_low;
-+
-+		VMW_PORT(VMW_PORT_CMD_MSG | (MSG_TYPE_RECVPAYLOAD << 16),
-+			 MESSAGE_STATUS_SUCCESS, si, di,
-+			 VMW_HYPERVISOR_PORT | (channel->channel_id << 16),
-+			 VMW_HYPERVISOR_MAGIC,
-+			 eax, ebx, ecx, edx, si, di);
-+
-+		if ((HIGH_WORD(ecx) & MESSAGE_STATUS_SUCCESS) == 0)
-+			break;
-+
-+		memcpy(reply, &ebx, bytes);
-+		reply_len -= bytes;
-+		reply += bytes;
-+	}
-+
-+	return ecx;
-+}
+ 	if (!ieee80211_is_mgmt(hdr->frame_control))
+@@ -1200,13 +1200,18 @@ ieee80211_crypto_aes_gmac_decrypt(struct
+ 		memcpy(nonce, hdr->addr2, ETH_ALEN);
+ 		memcpy(nonce + ETH_ALEN, ipn, 6);
  
- 
- /**
-@@ -148,11 +256,10 @@ static int vmw_close_channel(struct rpc_
-  */
- static int vmw_send_msg(struct rpc_channel *channel, const char *msg)
- {
--	unsigned long eax, ebx, ecx, edx, si, di, bp;
-+	unsigned long eax, ebx, ecx, edx, si, di;
- 	size_t msg_len = strlen(msg);
- 	int retries = 0;
- 
--
- 	while (retries < RETRIES) {
- 		retries++;
- 
-@@ -166,23 +273,14 @@ static int vmw_send_msg(struct rpc_chann
- 			VMW_HYPERVISOR_MAGIC,
- 			eax, ebx, ecx, edx, si, di);
- 
--		if ((HIGH_WORD(ecx) & MESSAGE_STATUS_SUCCESS) == 0 ||
--		    (HIGH_WORD(ecx) & MESSAGE_STATUS_HB) == 0) {
--			/* Expected success + high-bandwidth. Give up. */
-+		if ((HIGH_WORD(ecx) & MESSAGE_STATUS_SUCCESS) == 0) {
-+			/* Expected success. Give up. */
- 			return -EINVAL;
++		mic = kmalloc(GMAC_MIC_LEN, GFP_ATOMIC);
++		if (!mic)
++			return RX_DROP_UNUSABLE;
+ 		if (ieee80211_aes_gmac(key->u.aes_gmac.tfm, aad, nonce,
+ 				       skb->data + 24, skb->len - 24,
+ 				       mic) < 0 ||
+ 		    crypto_memneq(mic, mmie->mic, sizeof(mmie->mic))) {
+ 			key->u.aes_gmac.icverrors++;
++			kfree(mic);
+ 			return RX_DROP_UNUSABLE;
  		}
++		kfree(mic);
+ 	}
  
- 		/* Send msg */
--		si  = (uintptr_t) msg;
--		di  = channel->cookie_low;
--		bp  = channel->cookie_high;
--
--		VMW_PORT_HB_OUT(
--			(MESSAGE_STATUS_SUCCESS << 16) | VMW_PORT_CMD_HB_MSG,
--			msg_len, si, di,
--			VMW_HYPERVISOR_HB_PORT | (channel->channel_id << 16),
--			VMW_HYPERVISOR_MAGIC, bp,
--			eax, ebx, ecx, edx, si, di);
-+		ebx = vmw_port_hb_out(channel, msg,
-+				      !!(HIGH_WORD(ecx) & MESSAGE_STATUS_HB));
- 
- 		if ((HIGH_WORD(ebx) & MESSAGE_STATUS_SUCCESS) != 0) {
- 			return 0;
-@@ -211,7 +309,7 @@ STACK_FRAME_NON_STANDARD(vmw_send_msg);
- static int vmw_recv_msg(struct rpc_channel *channel, void **msg,
- 			size_t *msg_len)
- {
--	unsigned long eax, ebx, ecx, edx, si, di, bp;
-+	unsigned long eax, ebx, ecx, edx, si, di;
- 	char *reply;
- 	size_t reply_len;
- 	int retries = 0;
-@@ -233,8 +331,7 @@ static int vmw_recv_msg(struct rpc_chann
- 			VMW_HYPERVISOR_MAGIC,
- 			eax, ebx, ecx, edx, si, di);
- 
--		if ((HIGH_WORD(ecx) & MESSAGE_STATUS_SUCCESS) == 0 ||
--		    (HIGH_WORD(ecx) & MESSAGE_STATUS_HB) == 0) {
-+		if ((HIGH_WORD(ecx) & MESSAGE_STATUS_SUCCESS) == 0) {
- 			DRM_ERROR("Failed to get reply size for host message.\n");
- 			return -EINVAL;
- 		}
-@@ -252,17 +349,8 @@ static int vmw_recv_msg(struct rpc_chann
- 
- 
- 		/* Receive buffer */
--		si  = channel->cookie_high;
--		di  = (uintptr_t) reply;
--		bp  = channel->cookie_low;
--
--		VMW_PORT_HB_IN(
--			(MESSAGE_STATUS_SUCCESS << 16) | VMW_PORT_CMD_HB_MSG,
--			reply_len, si, di,
--			VMW_HYPERVISOR_HB_PORT | (channel->channel_id << 16),
--			VMW_HYPERVISOR_MAGIC, bp,
--			eax, ebx, ecx, edx, si, di);
--
-+		ebx = vmw_port_hb_in(channel, reply, reply_len,
-+				     !!(HIGH_WORD(ecx) & MESSAGE_STATUS_HB));
- 		if ((HIGH_WORD(ebx) & MESSAGE_STATUS_SUCCESS) == 0) {
- 			kfree(reply);
- 
+ 	memcpy(key->u.aes_gmac.rx_pn, ipn, 6);
 
 
