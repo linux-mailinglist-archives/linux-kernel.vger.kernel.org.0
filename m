@@ -2,276 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 215FE519E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 19:43:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8879F519D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 19:43:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732621AbfFXRnm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 13:43:42 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:35570 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728975AbfFXRnl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 13:43:41 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id EEC937FDE5;
-        Mon, 24 Jun 2019 17:43:22 +0000 (UTC)
-Received: from llong.com (dhcp-17-85.bos.redhat.com [10.18.17.85])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0D47B5D9D5;
-        Mon, 24 Jun 2019 17:43:17 +0000 (UTC)
-From:   Waiman Long <longman@redhat.com>
-To:     Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>
-Cc:     linux-mm@kvack.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Waiman Long <longman@redhat.com>
-Subject: [PATCH 2/2] mm, slab: Extend vm/drop_caches to shrink kmem slabs
-Date:   Mon, 24 Jun 2019 13:42:19 -0400
-Message-Id: <20190624174219.25513-3-longman@redhat.com>
-In-Reply-To: <20190624174219.25513-1-longman@redhat.com>
-References: <20190624174219.25513-1-longman@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Mon, 24 Jun 2019 17:43:40 +0000 (UTC)
+        id S1731677AbfFXRna (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 13:43:30 -0400
+Received: from mail-eopbgr810050.outbound.protection.outlook.com ([40.107.81.50]:61920
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726988AbfFXRn3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 13:43:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector1-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pKOrHB6hoLwxQAGqq9dyuNjyW3+XKqaRQrmHBJj7FXc=;
+ b=q33CpKJAug3UmStp4ijH6AKGc+4f00iI6CQ3JHtUe6HvAFwVV/KgISn3ZrwU9Gl1ueRoRWdQ9ptEPCd5AUJltf7XlSpY+1qwO7xdYcuPW68tfWTP9E6iUHIsOfr/55kQqKFp0sp3aSyR4soK5/w4PWaIpmBg9Lh8yCSOu0UFei0=
+Received: from CH2PR12MB3831.namprd12.prod.outlook.com (52.132.245.141) by
+ CH2PR12MB3783.namprd12.prod.outlook.com (52.132.245.13) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2008.16; Mon, 24 Jun 2019 17:42:47 +0000
+Received: from CH2PR12MB3831.namprd12.prod.outlook.com
+ ([fe80::3459:726f:43e7:a64c]) by CH2PR12MB3831.namprd12.prod.outlook.com
+ ([fe80::3459:726f:43e7:a64c%4]) with mapi id 15.20.2008.014; Mon, 24 Jun 2019
+ 17:42:47 +0000
+From:   "Kim, Jonathan" <Jonathan.Kim@amd.com>
+To:     Mao Wenan <maowenan@huawei.com>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        "daniel@ffwll.ch" <daniel@ffwll.ch>,
+        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
+        "Koenig, Christian" <Christian.Koenig@amd.com>,
+        "Zhou, David(ChunMing)" <David1.Zhou@amd.com>,
+        "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>,
+        "julia.lawall@lip6.fr" <julia.lawall@lip6.fr>
+CC:     "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH -next v4] drm/amdgpu: return 'ret' immediately if failed
+ in amdgpu_pmu_init
+Thread-Topic: [PATCH -next v4] drm/amdgpu: return 'ret' immediately if failed
+ in amdgpu_pmu_init
+Thread-Index: AQHVKn5JEKVMvtxkwUKFh6TNDZEkvaarEYog
+Date:   Mon, 24 Jun 2019 17:42:46 +0000
+Message-ID: <CH2PR12MB3831BE36FF61D74FC529F64F85E00@CH2PR12MB3831.namprd12.prod.outlook.com>
+References: <20190624094850.GQ18776@kadam>
+ <20190624112318.149299-1-maowenan@huawei.com>
+In-Reply-To: <20190624112318.149299-1-maowenan@huawei.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Jonathan.Kim@amd.com; 
+x-originating-ip: [165.204.55.251]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 0d477039-84db-4fd8-7c54-08d6f8cb5eb9
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:CH2PR12MB3783;
+x-ms-traffictypediagnostic: CH2PR12MB3783:
+x-microsoft-antispam-prvs: <CH2PR12MB3783E513C00516C73437131785E00@CH2PR12MB3783.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6108;
+x-forefront-prvs: 007814487B
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(396003)(366004)(39860400002)(376002)(346002)(13464003)(199004)(189003)(54906003)(110136005)(76176011)(6506007)(8936002)(7696005)(25786009)(476003)(7736002)(71190400001)(72206003)(33656002)(86362001)(256004)(71200400001)(446003)(486006)(53936002)(305945005)(478600001)(4326008)(2906002)(52536014)(14444005)(74316002)(2501003)(68736007)(9686003)(102836004)(229853002)(316002)(55016002)(6246003)(6436002)(53546011)(66446008)(73956011)(81156014)(64756008)(14454004)(76116006)(99286004)(6116002)(3846002)(66556008)(5660300002)(81166006)(2201001)(66946007)(66476007)(186003)(8676002)(66066001)(11346002)(26005)(14773001)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:CH2PR12MB3783;H:CH2PR12MB3831.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: mWAFPdEHvjBJauKAcHgTXKzXyvI1wqW+sUSDQYD77Oa16+Mk4YU2Msn7TYVFm7VF+nOet8Cwjk2JeHGfjkEp5CGp7mVk8JVTuVPlkufDTiz6Je+We3laG0amw4npi7L046tjplp4AsEXgWpBPqL7cxxqDpk0ojuSYQEemB2I+Dk3pgDjufptEtI3MuCamnfXhvdzNAxPW/ULbKKhXHLby4jkjYaMebfsbkw4TGOBo3diyyZYo/6UQ4QaVgQqE28eVsFvbVnxB4YxEYYNl6R0+00EoTxuLx+3B8w6Unk4Y7CAwyG9CKCZfpio7HP2su+23cxngPisqpI+mfJ8nPl9DnYT6d83KtWB+5rJUhF7/BgcGXgcdjjIycAL1nxeyeOmvE+LW+8MZZmHBEP4t9KUeLSuDtJfZ24Yl678XPbYIeI=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0d477039-84db-4fd8-7c54-08d6f8cb5eb9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jun 2019 17:42:46.9858
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: jokim@amd.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB3783
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With the slub memory allocator, the numbers of active slab objects
-reported in /proc/slabinfo are not real because they include objects
-that are held by the per-cpu slab structures whether they are actually
-used or not.  The problem gets worse the more CPUs a system have. For
-instance, looking at the reported number of active task_struct objects,
-one will wonder where all the missing tasks gone.
-
-I know it is hard and costly to get a real count of active objects. So
-I am not advocating for that. Instead, this patch extends the
-/proc/sys/vm/drop_caches sysctl parameter by using a new bit (bit 3)
-to shrink all the kmem slabs which will flush out all the slabs in the
-per-cpu structures and give a more accurate view of how much memory are
-really used up by the active slab objects. This is a costly operation,
-of course, but it gives a way to have a clearer picture of the actual
-number of slab objects used, if the need arises.
-
-The upper range of the drop_caches sysctl parameter is increased to 15
-to allow all possible combinations of the lowest 4 bits.
-
-On a 2-socket 64-core 256-thread ARM64 system with 64k page size after
-a parallel kernel build, the amount of memory occupied by slabs before
-and after echoing to drop_caches were:
-
- # grep task_struct /proc/slabinfo
- task_struct        48376  48434   4288   61    4 : tunables    0    0
- 0 : slabdata    794    794      0
- # grep "^S[lRU]" /proc/meminfo
- Slab:            3419072 kB
- SReclaimable:     354688 kB
- SUnreclaim:      3064384 kB
- # echo 3 > /proc/sys/vm/drop_caches
- # grep "^S[lRU]" /proc/meminfo
- Slab:            3351680 kB
- SReclaimable:     316096 kB
- SUnreclaim:      3035584 kB
- # echo 8 > /proc/sys/vm/drop_caches
- # grep "^S[lRU]" /proc/meminfo
- Slab:            1008192 kB
- SReclaimable:     126912 kB
- SUnreclaim:       881280 kB
- # grep task_struct /proc/slabinfo
- task_struct         2601   6588   4288   61    4 : tunables    0    0
- 0 : slabdata    108    108      0
-
-Shrinking the slabs saves more than 2GB of memory in this case. This
-new feature certainly fulfills the promise of dropping caches.
-
-Unlike counting objects in the per-node caches done by /proc/slabinfo
-which is rather light weight, iterating all the per-cpu caches and
-shrinking them is much more heavy weight.
-
-For this particular instance, the time taken to shrinks all the root
-caches was about 30.2ms. There were 73 memory cgroup and the longest
-time taken for shrinking the largest one was about 16.4ms. The total
-shrinking time was about 101ms.
-
-Because of the potential long time to shrinks all the caches, the
-slab_mutex was taken multiple times - once for all the root caches
-and once for each memory cgroup. This is to reduce the slab_mutex hold
-time to minimize impact to other running applications that may need to
-acquire the mutex.
-
-The slab shrinking feature is only available when CONFIG_MEMCG_KMEM is
-defined as the code need to access slab_root_caches to iterate all the
-root caches.
-
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- Documentation/sysctl/vm.txt | 11 ++++++++--
- fs/drop_caches.c            |  4 ++++
- include/linux/slab.h        |  1 +
- kernel/sysctl.c             |  4 ++--
- mm/slab_common.c            | 44 +++++++++++++++++++++++++++++++++++++
- 5 files changed, 60 insertions(+), 4 deletions(-)
-
-diff --git a/Documentation/sysctl/vm.txt b/Documentation/sysctl/vm.txt
-index 749322060f10..b643ac8968d2 100644
---- a/Documentation/sysctl/vm.txt
-+++ b/Documentation/sysctl/vm.txt
-@@ -207,8 +207,8 @@ Setting this to zero disables periodic writeback altogether.
- drop_caches
- 
- Writing to this will cause the kernel to drop clean caches, as well as
--reclaimable slab objects like dentries and inodes.  Once dropped, their
--memory becomes free.
-+reclaimable slab objects like dentries and inodes.  It can also be used
-+to shrink the slabs.  Once dropped, their memory becomes free.
- 
- To free pagecache:
- 	echo 1 > /proc/sys/vm/drop_caches
-@@ -216,6 +216,8 @@ To free reclaimable slab objects (includes dentries and inodes):
- 	echo 2 > /proc/sys/vm/drop_caches
- To free slab objects and pagecache:
- 	echo 3 > /proc/sys/vm/drop_caches
-+To shrink the slabs:
-+	echo 8 > /proc/sys/vm/drop_caches
- 
- This is a non-destructive operation and will not free any dirty objects.
- To increase the number of objects freed by this operation, the user may run
-@@ -223,6 +225,11 @@ To increase the number of objects freed by this operation, the user may run
- number of dirty objects on the system and create more candidates to be
- dropped.
- 
-+Shrinking the slabs can reduce the memory footprint used by the slabs.
-+It also makes the number of active objects reported in /proc/slabinfo
-+more representative of the actual number of objects used for the slub
-+memory allocator.
-+
- This file is not a means to control the growth of the various kernel caches
- (inodes, dentries, pagecache, etc...)  These objects are automatically
- reclaimed by the kernel when memory is needed elsewhere on the system.
-diff --git a/fs/drop_caches.c b/fs/drop_caches.c
-index d31b6c72b476..633b99e25dab 100644
---- a/fs/drop_caches.c
-+++ b/fs/drop_caches.c
-@@ -9,6 +9,7 @@
- #include <linux/writeback.h>
- #include <linux/sysctl.h>
- #include <linux/gfp.h>
-+#include <linux/slab.h>
- #include "internal.h"
- 
- /* A global variable is a bit ugly, but it keeps the code simple */
-@@ -65,6 +66,9 @@ int drop_caches_sysctl_handler(struct ctl_table *table, int write,
- 			drop_slab();
- 			count_vm_event(DROP_SLAB);
- 		}
-+		if (sysctl_drop_caches & 8) {
-+			kmem_cache_shrink_all();
-+		}
- 		if (!stfu) {
- 			pr_info("%s (%d): drop_caches: %d\n",
- 				current->comm, task_pid_nr(current),
-diff --git a/include/linux/slab.h b/include/linux/slab.h
-index 9449b19c5f10..f7c1626b2aa6 100644
---- a/include/linux/slab.h
-+++ b/include/linux/slab.h
-@@ -149,6 +149,7 @@ struct kmem_cache *kmem_cache_create_usercopy(const char *name,
- 			void (*ctor)(void *));
- void kmem_cache_destroy(struct kmem_cache *);
- int kmem_cache_shrink(struct kmem_cache *);
-+void kmem_cache_shrink_all(void);
- 
- void memcg_create_kmem_cache(struct mem_cgroup *, struct kmem_cache *);
- void memcg_deactivate_kmem_caches(struct mem_cgroup *);
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 1beca96fb625..feeb867dabd7 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -129,7 +129,7 @@ static int __maybe_unused neg_one = -1;
- static int zero;
- static int __maybe_unused one = 1;
- static int __maybe_unused two = 2;
--static int __maybe_unused four = 4;
-+static int __maybe_unused fifteen = 15;
- static unsigned long zero_ul;
- static unsigned long one_ul = 1;
- static unsigned long long_max = LONG_MAX;
-@@ -1455,7 +1455,7 @@ static struct ctl_table vm_table[] = {
- 		.mode		= 0644,
- 		.proc_handler	= drop_caches_sysctl_handler,
- 		.extra1		= &one,
--		.extra2		= &four,
-+		.extra2		= &fifteen,
- 	},
- #ifdef CONFIG_COMPACTION
- 	{
-diff --git a/mm/slab_common.c b/mm/slab_common.c
-index 58251ba63e4a..b3c5b64f9bfb 100644
---- a/mm/slab_common.c
-+++ b/mm/slab_common.c
-@@ -956,6 +956,50 @@ int kmem_cache_shrink(struct kmem_cache *cachep)
- }
- EXPORT_SYMBOL(kmem_cache_shrink);
- 
-+#ifdef CONFIG_MEMCG_KMEM
-+static void kmem_cache_shrink_memcg(struct mem_cgroup *memcg,
-+				    void __maybe_unused *arg)
-+{
-+	struct kmem_cache *s;
-+
-+	if (memcg == root_mem_cgroup)
-+		return;
-+	mutex_lock(&slab_mutex);
-+	list_for_each_entry(s, &memcg->kmem_caches,
-+			    memcg_params.kmem_caches_node) {
-+		kmem_cache_shrink(s);
-+	}
-+	mutex_unlock(&slab_mutex);
-+	cond_resched();
-+}
-+
-+/*
-+ * Shrink all the kmem caches.
-+ *
-+ * If there are a large number of memory cgroups outstanding, it may take
-+ * a while to shrink all of them. So we may need to release the lock, call
-+ * cond_resched() and reacquire the lock from time to time.
-+ */
-+void kmem_cache_shrink_all(void)
-+{
-+	struct kmem_cache *s;
-+
-+	/* Shrink all the root caches */
-+	mutex_lock(&slab_mutex);
-+	list_for_each_entry(s, &slab_root_caches, root_caches_node)
-+		kmem_cache_shrink(s);
-+	mutex_unlock(&slab_mutex);
-+	cond_resched();
-+
-+	/*
-+	 * Flush each of the memcg individually
-+	 */
-+	memcg_iterate_all(kmem_cache_shrink_memcg, NULL);
-+}
-+#else
-+void kmem_cache_shrink_all(void) { }
-+#endif
-+
- bool slab_is_available(void)
- {
- 	return slab_state >= UP;
--- 
-2.18.1
-
+SW1tZWRpYXRlIHJldHVybiBzaG91bGQgYmUgb2sgc2luY2UgcGVyZiByZWdpc3RyYXRpb24gaXNu
+J3QgZGVwZW5kZW50IG9uIGdwdSBody4NCg0KUmV2aWV3ZWQtYnk6IEpvbmF0aGFuIEtpbSA8Sm9u
+YXRoYW4uS2ltQGFtZC5jb20+DQoNCi0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQpGcm9tOiBN
+YW8gV2VuYW4gPG1hb3dlbmFuQGh1YXdlaS5jb20+IA0KU2VudDogTW9uZGF5LCBKdW5lIDI0LCAy
+MDE5IDc6MjMgQU0NClRvOiBhaXJsaWVkQGxpbnV4LmllOyBkYW5pZWxAZmZ3bGwuY2g7IERldWNo
+ZXIsIEFsZXhhbmRlciA8QWxleGFuZGVyLkRldWNoZXJAYW1kLmNvbT47IEtvZW5pZywgQ2hyaXN0
+aWFuIDxDaHJpc3RpYW4uS29lbmlnQGFtZC5jb20+OyBaaG91LCBEYXZpZChDaHVuTWluZykgPERh
+dmlkMS5aaG91QGFtZC5jb20+OyBkYW4uY2FycGVudGVyQG9yYWNsZS5jb207IGp1bGlhLmxhd2Fs
+bEBsaXA2LmZyDQpDYzoga2VybmVsLWphbml0b3JzQHZnZXIua2VybmVsLm9yZzsgYW1kLWdmeEBs
+aXN0cy5mcmVlZGVza3RvcC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IEtpbSwg
+Sm9uYXRoYW4gPEpvbmF0aGFuLktpbUBhbWQuY29tPjsgTWFvIFdlbmFuIDxtYW93ZW5hbkBodWF3
+ZWkuY29tPg0KU3ViamVjdDogW1BBVENIIC1uZXh0IHY0XSBkcm0vYW1kZ3B1OiByZXR1cm4gJ3Jl
+dCcgaW1tZWRpYXRlbHkgaWYgZmFpbGVkIGluIGFtZGdwdV9wbXVfaW5pdA0KDQpbQ0FVVElPTjog
+RXh0ZXJuYWwgRW1haWxdDQoNClRoZXJlIGlzIG9uZSB3YXJuaW5nOg0KZHJpdmVycy9ncHUvZHJt
+L2FtZC9hbWRncHUvYW1kZ3B1X3BtdS5jOiBJbiBmdW5jdGlvbiDigJhhbWRncHVfcG11X2luaXTi
+gJk6DQpkcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9hbWRncHVfcG11LmM6MjQ5OjY6IHdhcm5p
+bmc6IHZhcmlhYmxlIOKAmHJldOKAmSBzZXQgYnV0IG5vdCB1c2VkIFstV3VudXNlZC1idXQtc2V0
+LXZhcmlhYmxlXQ0KICBpbnQgcmV0ID0gMDsNCiAgICAgIF4NCmFtZGdwdV9wbXVfaW5pdCgpIGlz
+IGNhbGxlZCBieSBhbWRncHVfZGV2aWNlX2luaXQoKSBpbiBkcml2ZXJzL2dwdS9kcm0vYW1kL2Ft
+ZGdwdS9hbWRncHVfZGV2aWNlLmMsDQp3aGljaCB3aWxsIHVzZSB0aGUgcmV0dXJuIHZhbHVlLiBT
+byBpdCBzaG91bGQgcmV0dXJuICdyZXQnIGltbWVkaWF0ZWx5IGlmIGluaXRfcG11X2J5X3R5cGUo
+KSBmYWlsZWQuDQphbWRncHVfZGV2aWNlX2luaXQoKQ0KICAgICAgICByID0gYW1kZ3B1X3BtdV9p
+bml0KGFkZXYpOw0KDQpGaXhlczogOWM3Yzg1ZjdlYTFmICgiZHJtL2FtZGdwdTogYWRkIHBtdSBj
+b3VudGVycyIpDQoNClNpZ25lZC1vZmYtYnk6IE1hbyBXZW5hbiA8bWFvd2VuYW5AaHVhd2VpLmNv
+bT4NCi0tLQ0KIHYxLT52MjogY2hhbmdlIHRoZSBzdWJqZWN0IGZvciB0aGlzIHBhdGNoOyBjaGFu
+Z2UgdGhlIGluZGVudGluZyB3aGVuIGl0IGNhbGxzIGluaXRfcG11X2J5X3R5cGU7IHVzZSB0aGUg
+dmFsdWUgJ3JldCcgaW4gIGFtZGdwdV9wbXVfaW5pdCgpLg0KIHYyLT52MzogY2hhbmdlIHRoZSBz
+dWJqZWN0IGZvciB0aGlzIHBhdGNoOyByZXR1cm4gJ3JldCcgaW1tZWRpYXRlbHkgaWYgZmFpbGVk
+IHRvIGNhbGwgaW5pdF9wbXVfYnlfdHlwZSgpLg0KIHYzLT52NDogZGVsZXRlIHRoZSBpbmRlbnRp
+bmcgZm9yIGluaXRfcG11X2J5X3R5cGUoKSBhcmd1bWVudHMuIFRoZSBvcmlnaW5hbCBpbmRlbnRp
+bmcgaXMgY29ycmVjdC4NCg0KIGRyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2FtZGdwdV9wbXUu
+YyB8IDIgKysNCiAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspDQoNCmRpZmYgLS1naXQg
+YS9kcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9hbWRncHVfcG11LmMgYi9kcml2ZXJzL2dwdS9k
+cm0vYW1kL2FtZGdwdS9hbWRncHVfcG11LmMNCmluZGV4IDBlNmRiYTlmNjBmMC4uYzk4Y2Y3N2Ez
+N2YzIDEwMDY0NA0KLS0tIGEvZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvYW1kZ3B1X3BtdS5j
+DQorKysgYi9kcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9hbWRncHVfcG11LmMNCkBAIC0yNTQs
+NiArMjU0LDggQEAgaW50IGFtZGdwdV9wbXVfaW5pdChzdHJ1Y3QgYW1kZ3B1X2RldmljZSAqYWRl
+dikNCiAgICAgICAgICAgICAgICByZXQgPSBpbml0X3BtdV9ieV90eXBlKGFkZXYsIGRmX3YzXzZf
+YXR0cl9ncm91cHMsDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAiREYi
+LCAiYW1kZ3B1X2RmIiwgUEVSRl9UWVBFX0FNREdQVV9ERiwNCiAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgIERGX1YzXzZfTUFYX0NPVU5URVJTKTsNCisgICAgICAgICAgICAg
+ICBpZiAocmV0KQ0KKyAgICAgICAgICAgICAgICAgICAgICAgcmV0dXJuIHJldDsNCg0KICAgICAg
+ICAgICAgICAgIC8qIG90aGVyIHBtdSB0eXBlcyBnbyBoZXJlKi8NCiAgICAgICAgICAgICAgICBi
+cmVhazsNCi0tDQoyLjIwLjENCg0K
