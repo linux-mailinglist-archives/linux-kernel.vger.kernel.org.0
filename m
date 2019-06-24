@@ -2,162 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4160F50EE6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 16:44:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 162A650EC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 16:42:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729248AbfFXOoB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 10:44:01 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:37606 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728037AbfFXOoB (ORCPT
+        id S1729688AbfFXOmZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 10:42:25 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:44879 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729578AbfFXOmV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 10:44:01 -0400
-Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
-        by m0089730.ppops.net (8.16.0.27/8.16.0.27) with SMTP id x5OEccID028211;
-        Mon, 24 Jun 2019 07:42:17 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=biTD7+gjv13LBHVp56WKg5wlOTLn7gVlvfXmHII4/ok=;
- b=YbT/S+4jHhwcBUnVmSpfg/CTv+qiHSa2j6QjIcDl18JMdRk2nD2uHIJn0YWv6JALpzJP
- zbKM8BWJoyqfL1UP4IfzjGvN3HFG8NaqMiWeipfrkyBgXjfur8uH8SzQ46voPT89jB5k
- oBswVWrhd05YwMe+wt7ccxbPEm0ffPSHj+k= 
-Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
-        by m0089730.ppops.net with ESMTP id 2tavm1rt2c-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Mon, 24 Jun 2019 07:42:16 -0700
-Received: from prn-hub06.TheFacebook.com (2620:10d:c081:35::130) by
- prn-hub04.TheFacebook.com (2620:10d:c081:35::128) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1713.5; Mon, 24 Jun 2019 07:42:14 -0700
-Received: from NAM02-CY1-obe.outbound.protection.outlook.com (192.168.54.28)
- by o365-in.thefacebook.com (192.168.16.30) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1713.5
- via Frontend Transport; Mon, 24 Jun 2019 07:42:14 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector1-fb-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=biTD7+gjv13LBHVp56WKg5wlOTLn7gVlvfXmHII4/ok=;
- b=YkUAdX/CR/SfdHVD2JNUQSU0NdeTpCi0XH2ngMXk3QgAFuyId43CFQgdiD3JMPNU8Me9i1wasfDlGvSxp4wND/MJUTfmwE8lFwqyP/0j0ydaC2WuIBw3K9gqiG9DSGFn7kkJUw7a0GaD1Talvx9ix+l4HTZVMBcRRlVHi2s5P5w=
-Received: from MWHPR15MB1165.namprd15.prod.outlook.com (10.175.3.22) by
- MWHPR15MB1807.namprd15.prod.outlook.com (10.174.255.135) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2008.16; Mon, 24 Jun 2019 14:42:13 +0000
-Received: from MWHPR15MB1165.namprd15.prod.outlook.com
- ([fe80::400e:e329:ea98:aa0d]) by MWHPR15MB1165.namprd15.prod.outlook.com
- ([fe80::400e:e329:ea98:aa0d%6]) with mapi id 15.20.2008.014; Mon, 24 Jun 2019
- 14:42:13 +0000
-From:   Song Liu <songliubraving@fb.com>
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-CC:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "matthew.wilcox@oracle.com" <matthew.wilcox@oracle.com>,
-        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
-        Kernel Team <Kernel-team@fb.com>,
-        "william.kucharski@oracle.com" <william.kucharski@oracle.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "hdanton@sina.com" <hdanton@sina.com>
-Subject: Re: [PATCH v7 5/6] mm,thp: add read-only THP support for (non-shmem)
- FS
-Thread-Topic: [PATCH v7 5/6] mm,thp: add read-only THP support for (non-shmem)
- FS
-Thread-Index: AQHVKYdGAmz09KUZ80Kts9GVGsmXGaaqwvwAgAAUeoCAAAd4gIAABAcA
-Date:   Mon, 24 Jun 2019 14:42:13 +0000
-Message-ID: <C3161C66-5044-44E6-92F4-BBAD42EDF4E2@fb.com>
-References: <20190623054749.4016638-1-songliubraving@fb.com>
- <20190623054749.4016638-6-songliubraving@fb.com>
- <20190624124746.7evd2hmbn3qg3tfs@box>
- <52BDA50B-7CBF-4333-9D15-0C17FD04F6ED@fb.com>
- <20190624142747.chy5s3nendxktm3l@box>
-In-Reply-To: <20190624142747.chy5s3nendxktm3l@box>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Apple Mail (2.3445.104.11)
-x-originating-ip: [2620:10d:c090:180::1:d642]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 45d81ac6-ac3e-48e2-beae-08d6f8b2257b
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MWHPR15MB1807;
-x-ms-traffictypediagnostic: MWHPR15MB1807:
-x-microsoft-antispam-prvs: <MWHPR15MB180742845552E60E19A13010B3E00@MWHPR15MB1807.namprd15.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7691;
-x-forefront-prvs: 007814487B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(136003)(366004)(346002)(376002)(39860400002)(189003)(199004)(6506007)(76176011)(81166006)(4326008)(14454004)(229853002)(8936002)(33656002)(478600001)(81156014)(316002)(305945005)(446003)(11346002)(486006)(476003)(2906002)(68736007)(54906003)(71190400001)(2616005)(7736002)(46003)(6916009)(5660300002)(99286004)(86362001)(102836004)(53546011)(186003)(6116002)(50226002)(71200400001)(14444005)(256004)(53936002)(6486002)(6246003)(6436002)(8676002)(57306001)(66946007)(36756003)(6512007)(66446008)(25786009)(64756008)(66556008)(66476007)(73956011)(76116006)(142933001);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1807;H:MWHPR15MB1165.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: Lk/CUEMV78I14ydrlsW5qgP88OvuK0x0jsbMzojChZI4NXsxs7L5JIxUdB54ovFl1olcDjTDROkr4Bxf3UCCcY9zKBFkQfnr9nubd1XPluSCROzP5cicyHWygeW7Dz9wtOGA6diNLFhvJ3YyYBl2Of5B3kpBr1lm8yb3eZznP6vPttZz8I2dc9HoEuIdPl/L3SvjRKw3XeYoH5i3JFSRjdDlFdp9+mmiCkX44tOgfqQWizoSz5Xb21BnIUwfeOvOebo+jvrnGsBU8sFkm9IYLJ00a0t+fRwgmGSpoCC95AxAF6hoZ1ujDhN1Fko5AYpBQfmVYXr2cKltW9YnoZG/n7Iw8hXP+2bT0OWGVrO3a/nyZlzul1gupwRB09UVlxxGZuZXW2ieBDJxVuQ1LBRiV/gTVYbg24l55bwIFHQ7qIw=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2A04ABA06972B54D9DEF657049A91AAE@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Mon, 24 Jun 2019 10:42:21 -0400
+Received: by mail-wr1-f68.google.com with SMTP id r16so14174090wrl.11
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 07:42:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=WJSvq2LIxATKn+LWMv8CHJiothdM7oH+EVf+Mvst0+Y=;
+        b=XhG7FShA6qBbp/WQt/e2IYiVRf7470DLLSVXOvlkyrs9TbPvViOD/uwQ/vLghdUpjC
+         eTHY9SsI6KSJohznUNK/y2uTUk7eDLN9TtrWbc8dh0qJcTsr1nnC0FJLi0mZbrSfw3Tc
+         QXUVIYjLGtQOW0luTCwwmsbW7nzBh7NrS7qIe7QrrawLQA7FkjLEId41jTu1axBOsyaj
+         SHV6MV966pfX24QMfFyGFNT/0ZHN7f4k7k4kuNrdNusuEYw5zj7TVh7U3NFlPpu04icr
+         8FeKDrQ16CGYx97n13J0E1HEl/E3u6dh0PiUIhf9t92hCuJ+SaGWzsBsyTe5ToI/7Yhx
+         MteQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=WJSvq2LIxATKn+LWMv8CHJiothdM7oH+EVf+Mvst0+Y=;
+        b=I1Y8mg2D9EcOnzq/QR5NFPZvIFdiphjPN+keiNb0GCgvLabZiZ4p9t14KmcetSEPAp
+         3LaFbwpgv9EfnA/0gHb2GQe+WrfhF0GxlfLe36NpWVqhMAeX58++x6Rx8IDIGBrsfWn8
+         BRmxZp6HyVFa4FbLb9/Bz+gMGOTCLA4MWpCHVkHtaBDE3AEA9NODwMZU3UZlf7dF7QhN
+         Hy3V0jxLWtmFO9Ee8HrKD0c2WTze0jyJSFM2NT6ISpz/liU8TIYaLdralb69V6wb04IY
+         NBKGv66Wu37Pph1opiASBPwhk+33U4EksREIH2FyredIeO/MO2LDnyKEToDx2KDa9EOV
+         EztQ==
+X-Gm-Message-State: APjAAAUFTH6FxD1fI7/0+Atq6qSrjT6XoUpVhx3zhZ4TxDjY+8REl8C7
+        r8aQZF38byNxbCmYK5jxupKEvw==
+X-Google-Smtp-Source: APXvYqwyX1hCtPOWVR/ZT7bPifdleHLNn5A9mPUiZdm00NxEthHXf/lcSAwUdmqXBO+nY60t/9/VIQ==
+X-Received: by 2002:a5d:4703:: with SMTP id y3mr52167321wrq.35.1561387339642;
+        Mon, 24 Jun 2019 07:42:19 -0700 (PDT)
+Received: from dell ([2.27.35.164])
+        by smtp.gmail.com with ESMTPSA id a2sm17551916wmj.9.2019.06.24.07.42.18
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 24 Jun 2019 07:42:18 -0700 (PDT)
+Date:   Mon, 24 Jun 2019 15:42:17 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Dan Murphy <dmurphy@ti.com>
+Cc:     jacek.anaszewski@gmail.com, pavel@ucw.cz, broonie@kernel.org,
+        lgirdwood@gmail.com, linux-leds@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 0/5] LM36274 Introduction
+Message-ID: <20190624144217.GJ4699@dell>
+References: <20190605125634.7042-1-dmurphy@ti.com>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 45d81ac6-ac3e-48e2-beae-08d6f8b2257b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jun 2019 14:42:13.4296
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: songliubraving@fb.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1807
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-24_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906240119
-X-FB-Internal: deliver
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190605125634.7042-1-dmurphy@ti.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 05 Jun 2019, Dan Murphy wrote:
 
+> Hello
+> 
+> The v5 patchset missed adding in the new validation code.
+> Patch 1 of the v5 series was squashed into patch 4 of the v5 series.
+> So this will reduce the patchset by 1.
+> 
+> Sorry for the extra noise on the patchsets.  The change was lost when I converted
+> the patches from the mainline branch to the LED branch.
+> 
+> This change was made on top of the branch
+> 
+> repo: https://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git
+> branch: ti-lmu-led-drivers
+> 
+> 
+> Dan Murphy (5):
+>   dt-bindings: mfd: Add lm36274 bindings to ti-lmu
+>   mfd: ti-lmu: Add LM36274 support to the ti-lmu
+>   regulator: lm363x: Add support for LM36274
+>   dt-bindings: leds: Add LED bindings for the LM36274
+>   leds: lm36274: Introduce the TI LM36274 LED driver
+> 
+>  .../devicetree/bindings/leds/leds-lm36274.txt |  82 +++++++++
+>  .../devicetree/bindings/mfd/ti-lmu.txt        |  54 ++++++
+>  drivers/leds/Kconfig                          |   8 +
+>  drivers/leds/Makefile                         |   1 +
+>  drivers/leds/leds-lm36274.c                   | 174 ++++++++++++++++++
+>  drivers/mfd/Kconfig                           |   5 +-
+>  drivers/mfd/ti-lmu.c                          |  14 ++
+>  drivers/regulator/Kconfig                     |   2 +-
+>  drivers/regulator/lm363x-regulator.c          |  78 +++++++-
+>  include/linux/mfd/ti-lmu-register.h           |  23 +++
+>  include/linux/mfd/ti-lmu.h                    |   4 +
+>  11 files changed, 437 insertions(+), 8 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/leds/leds-lm36274.txt
+>  create mode 100644 drivers/leds/leds-lm36274.c
 
-> On Jun 24, 2019, at 7:27 AM, Kirill A. Shutemov <kirill@shutemov.name> wr=
-ote:
->=20
-> On Mon, Jun 24, 2019 at 02:01:05PM +0000, Song Liu wrote:
->>>> @@ -1392,6 +1403,23 @@ static void collapse_file(struct mm_struct *mm,
->>>> 				result =3D SCAN_FAIL;
->>>> 				goto xa_unlocked;
->>>> 			}
->>>> +		} else if (!page || xa_is_value(page)) {
->>>> +			xas_unlock_irq(&xas);
->>>> +			page_cache_sync_readahead(mapping, &file->f_ra, file,
->>>> +						  index, PAGE_SIZE);
->>>> +			lru_add_drain();
->>>=20
->>> Why?
->>=20
->> isolate_lru_page() is likely to fail if we don't drain the pagevecs.=20
->=20
-> Please add a comment.
+Can you finish of satisfying everyone's comments and re-send with all
+the Acks you've collected so far?  If you turn this around quickly,
+you might still get into v5.3.
 
-Will do.=20
-
->=20
->>>> +			page =3D find_lock_page(mapping, index);
->>>> +			if (unlikely(page =3D=3D NULL)) {
->>>> +				result =3D SCAN_FAIL;
->>>> +				goto xa_unlocked;
->>>> +			}
->>>> +		} else if (!PageUptodate(page)) {
->>>=20
->>> Maybe we should try wait_on_page_locked() here before give up?
->>=20
->> Are you referring to the "if (!PageUptodate(page))" case?=20
->=20
-> Yes.
-
-I think this case happens when another thread is reading the page in.=20
-I could not think of a way to trigger this condition for testing.=20
-
-On the other hand, with current logic, we will retry the page on the=20
-next scan, so I guess this is OK.=20
-
-Thanks,
-Song=
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
