@@ -2,95 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B175650911
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:39:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11B75508B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:22:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729139AbfFXKjI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 06:39:08 -0400
-Received: from lizzard.sbs.de ([194.138.37.39]:58913 "EHLO lizzard.sbs.de"
+        id S1728773AbfFXKWV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 06:22:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58152 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727101AbfFXKjH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 06:39:07 -0400
-X-Greylist: delayed 1024 seconds by postgrey-1.27 at vger.kernel.org; Mon, 24 Jun 2019 06:39:06 EDT
-Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
-        by lizzard.sbs.de (8.15.2/8.15.2) with ESMTPS id x5OALUnS029575
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 24 Jun 2019 12:21:30 +0200
-Received: from [139.25.68.37] (md1q0hnc.ad001.siemens.net [139.25.68.37] (may be forged))
-        by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id x5OALSmM010254;
-        Mon, 24 Jun 2019 12:21:28 +0200
-Subject: Re: x86: Spurious vectors not handled robustly
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <e525108f-3749-4e1d-1ac2-0d0a2655f15f@siemens.com>
- <alpine.DEB.2.21.1906241204430.32342@nanos.tec.linutronix.de>
-From:   Jan Kiszka <jan.kiszka@siemens.com>
-Message-ID: <1565f016-4e3b-fa89-62e5-fc77594ee5aa@siemens.com>
-Date:   Mon, 24 Jun 2019 12:21:27 +0200
-User-Agent: Mozilla/5.0 (X11; U; Linux i686 (x86_64); de; rv:1.8.1.12)
- Gecko/20080226 SUSE/2.0.0.12-1.1 Thunderbird/2.0.0.12 Mnenhy/0.7.5.666
+        id S1731092AbfFXKWR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 06:22:17 -0400
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 691F9208E4;
+        Mon, 24 Jun 2019 10:22:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561371736;
+        bh=d4H3ytDN4+6bzOFsrB7H72D5xnyH2d7DzxF9eKjN0sY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=JwiHHdW7tU89KwjK81T7yWoMzvqANGQZczB5UCgT2eBTMTSj/2WtBXwPLu9Bm31O5
+         r/b9kyNOheWOPU6eueHBoKQB11SLCVWYnVhoKTq/4mVb1bd1PgiaqOudYcyxSqF2PT
+         S4tMcKDxPqFg/3U3pumEBb3BDhOvWlvqmdZEXn2I=
+Date:   Mon, 24 Jun 2019 11:22:10 +0100
+From:   Will Deacon <will@kernel.org>
+To:     Guo Ren <guoren@kernel.org>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>, julien.thierry@arm.com,
+        aou@eecs.berkeley.edu, james.morse@arm.com, suzuki.poulose@arm.com,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Anup Patel <anup.Patel@wdc.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-kernel@vger.kernel.org, rppt@linux.ibm.com,
+        hch@infradead.org, Atish Patra <Atish.Patra@wdc.com>,
+        Julien Grall <julien.grall@arm.com>,
+        Palmer Dabbelt <palmer@sifive.com>, gary@garyguo.net,
+        paul.walmsley@sifive.com, christoffer.dall@arm.com,
+        linux-riscv@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH RFC 11/14] arm64: Move the ASID allocator code in a
+ separate file
+Message-ID: <20190624102209.ngwtosgr5fvp3ler@willie-the-truck>
+References: <20190321163623.20219-1-julien.grall@arm.com>
+ <20190321163623.20219-12-julien.grall@arm.com>
+ <0dfe120b-066a-2ac8-13bc-3f5a29e2caa3@arm.com>
+ <CAJF2gTTXHHgDboaexdHA284y6kNZVSjLis5-Q2rDnXCxr4RSmA@mail.gmail.com>
+ <c871a5ae-914f-a8bb-9474-1dcfec5d45bf@arm.com>
+ <CAJF2gTStSR7Jmu7=HaO5Wxz=Zn8A5-RD8ktori3oKEhM9vozAA@mail.gmail.com>
+ <20190621141606.GF18954@arrakis.emea.arm.com>
+ <CAJF2gTTVUToRkRtxTmtWDotMGXy5YQCpL1h_2neTBuN3e6oz1w@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1906241204430.32342@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJF2gTTVUToRkRtxTmtWDotMGXy5YQCpL1h_2neTBuN3e6oz1w@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24.06.19 12:09, Thomas Gleixner wrote:
-> Jan,
-> 
-> On Mon, 24 Jun 2019, Jan Kiszka wrote:
->> probably since "x86: Avoid building unused IRQ entry stubs" (2414e021ac8d),
->> the kernel can no longer tell spurious IRQs by the APIC apart from spuriously
->> triggered unused vectors.
-> 
-> Err. It does.
-> 
->> We've managed to trigger such a cause with the Jailhouse hypervisor
->> (incorrectly injected MANAGED_IRQ_SHUTDOWN_VECTOR), and the result was
->> not only a misreport of the vector number (0xff instead of 0xef - took me
->> a while...), but also stalled interrupts of equal and lower priority
->> because a spurious interrupt is not (and must not be) acknowledged.
-> 
-> That does not make sense.
-> 
-> __visible void __irq_entry smp_spurious_interrupt(struct pt_regs *regs)
-> {
->          u8 vector = ~regs->orig_ax;
->          u32 v;
-> 
->          entering_irq();
->          trace_spurious_apic_entry(vector);
->          /*
->           * Check if this really is a spurious interrupt and ACK it
->           * if it is a vectored one.  Just in case...
->           */
->          v = apic_read(APIC_ISR + ((vector & ~0x1f) >> 1));
->          if (v & (1 << (vector & 0x1f)))
->                  ack_APIC_irq();
-> 
-> If it is a vectored one it _IS_ acked.
-> 
->          inc_irq_stat(irq_spurious_count);
-> 
->   	/* see sw-dev-man vol 3, chapter 7.4.13.5 */
->          pr_info("spurious APIC interrupt through vector %02x on CPU#%d, "
->                  "should never happen.\n", vector, smp_processor_id());
-> 
-> and the vector through which that comes is printed correctly, unless
-> regs->orig_ax is hosed.
+On Mon, Jun 24, 2019 at 12:35:35AM +0800, Guo Ren wrote:
+> On Fri, Jun 21, 2019 at 10:16 PM Catalin Marinas
+> <catalin.marinas@arm.com> wrote:
+> >
+> > On Wed, Jun 19, 2019 at 07:51:03PM +0800, Guo Ren wrote:
+> > > On Wed, Jun 19, 2019 at 4:54 PM Julien Grall <julien.grall@arm.com> wrote:
+> > > > On 6/19/19 9:07 AM, Guo Ren wrote:
+> > > > > Move arm asid allocator code in a generic one is a agood idea, I've
+> > > > > made a patchset for C-SKY and test is on processing, See:
+> > > > > https://lore.kernel.org/linux-csky/1560930553-26502-1-git-send-email-guoren@kernel.org/
+> > > > >
+> > > > > If you plan to seperate it into generic one, I could co-work with you.
+> > > >
+> > > > Was the ASID allocator work out of box on C-Sky?
+> > >
+> > > Almost done, but one question:
+> > > arm64 remove the code in switch_mm:
+> > >   cpumask_clear_cpu(cpu, mm_cpumask(prev));
+> > >   cpumask_set_cpu(cpu, mm_cpumask(next));
+> > >
+> > > Why? Although arm64 cache operations could affect all harts with CTC
+> > > method of interconnect, I think we should keep these code for
+> > > primitive integrity in linux. Because cpu_bitmap is in mm_struct
+> > > instead of mm->context.
+> >
+> > We didn't have a use for this in the arm64 code, so no point in
+> > maintaining the mm_cpumask. On some arm32 systems (ARMv6) with no
+> > hardware broadcast of some TLB/cache operations, we use it to track
+> > where the task has run to issue IPI for TLB invalidation or some
+> > deferred I-cache invalidation.
+> The operation of set/clear mm_cpumask was removed in arm64 compared to
+> arm32. It seems no side effect on current arm64 system, but from
+> software meaning it's wrong.
+> I think we should keep mm_cpumask just like arm32.
 
-...which is exactly the case: Since that commit, all unused vectors share the 
-same entry point, spurious_interrupt, see idt_setup_apic_and_irq_gates(). And 
-that entry point sets orig_ax to ~0xff.
+It was a while ago now, but I remember the atomic update of the mm_cpumask
+being quite expensive when I was profiling this stuff, so I removed it
+because we don't need it for arm64 (at least, it doesn't allow us to
+optimise our shootdowns in practice).
 
-Jan
+I still think this is over-engineered for what you want on c-sky and making
+this code generic is a mistake.
 
--- 
-Siemens AG, Corporate Technology, CT RDA IOT SES-DE
-Corporate Competence Center Embedded Linux
+Will
