@@ -2,187 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FE9A51018
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 17:15:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C3937510BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 17:37:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730627AbfFXPPd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 11:15:33 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:56876 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727454AbfFXPPc (ORCPT
+        id S1731159AbfFXPhZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 11:37:25 -0400
+Received: from www62.your-server.de ([213.133.104.62]:47396 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729580AbfFXPhX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 11:15:32 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5OFECoq071721;
-        Mon, 24 Jun 2019 15:15:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=K2nF3E6XseZb+sJVbpB/EPZWQ5pUv4zPKdLyAreNOeQ=;
- b=tTbnK/vSuSa/WFsaptNDxZHOGxUMqS8lmHdzq0BRMVHDBGNihqRcZwy7kJVr8k6ag7RL
- X0FIAd02B28xMSzH+fRqWndtIb7Qw/Um9Mqamdp9nUtdjxj9vaVcpJh1z9N+vihDaH90
- Uej6lAZjeSzXYFFtLwsbrh2JTcXgM1yOCvCesULk6OlXMsJNUsMStk17Z1RnI4TiXA7u
- dQya6dyibkajKJgk96csInRebW5GNNeq0m6qcJn/MEvUzrWMtmzakakVu6I9Z3mXL6NI
- EYvFTPHiWPKPmnTV1eXVR5hqYH3kXFGoY5LHfyBIG184Hkdse1xBtXt2+dH3/EDLyowK WQ== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2120.oracle.com with ESMTP id 2t9cyq7023-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 24 Jun 2019 15:15:02 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5OFEkLB095843;
-        Mon, 24 Jun 2019 15:15:01 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3020.oracle.com with ESMTP id 2t9p6tn1ts-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 24 Jun 2019 15:15:01 +0000
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5OFF0xw004130;
-        Mon, 24 Jun 2019 15:15:00 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 24 Jun 2019 08:14:59 -0700
-Date:   Mon, 24 Jun 2019 08:14:58 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 02/12] xfs: simplify xfs_chain_bio
-Message-ID: <20190624151458.GI5387@magnolia>
-References: <20190624055253.31183-1-hch@lst.de>
- <20190624055253.31183-3-hch@lst.de>
+        Mon, 24 Jun 2019 11:37:23 -0400
+Received: from [88.198.220.130] (helo=sslproxy01.your-server.de)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1hfQgn-0006VD-11; Mon, 24 Jun 2019 17:15:25 +0200
+Received: from [178.199.41.31] (helo=linux.home)
+        by sslproxy01.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1hfQgm-0001i0-IJ; Mon, 24 Jun 2019 17:15:24 +0200
+Subject: Re: [PATCH V34 23/29] bpf: Restrict bpf when kernel lockdown is in
+ confidentiality mode
+To:     Matthew Garrett <matthewgarrett@google.com>, jmorris@namei.org
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        David Howells <dhowells@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Matthew Garrett <mjg59@google.com>, netdev@vger.kernel.org,
+        Chun-Yi Lee <jlee@suse.com>, jannh@google.com,
+        bpf@vger.kernel.org
+References: <20190622000358.19895-1-matthewgarrett@google.com>
+ <20190622000358.19895-24-matthewgarrett@google.com>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <739e21b5-9559-d588-3542-bf0bc81de1b2@iogearbox.net>
+Date:   Mon, 24 Jun 2019 17:15:22 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190624055253.31183-3-hch@lst.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9298 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1906240122
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9298 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1906240123
+In-Reply-To: <20190622000358.19895-24-matthewgarrett@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.100.3/25490/Mon Jun 24 10:02:14 2019)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 07:52:43AM +0200, Christoph Hellwig wrote:
-> Move setting up operation and write hint to xfs_alloc_ioend, and
-> then just copy over all needed information from the previous bio
-> in xfs_chain_bio and stop passing various parameters to it.
+On 06/22/2019 02:03 AM, Matthew Garrett wrote:
+> From: David Howells <dhowells@redhat.com>
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> There are some bpf functions can be used to read kernel memory:
 
-I always thought it was a little odd that we were still setting bio
-fields in the submission function...
+Nit: that
 
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+> bpf_probe_read, bpf_probe_write_user and bpf_trace_printk.  These allow
 
---D
+Please explain how bpf_probe_write_user reads kernel memory ... ?!
 
-> ---
->  fs/xfs/xfs_aops.c | 35 +++++++++++++++++------------------
->  1 file changed, 17 insertions(+), 18 deletions(-)
+> private keys in kernel memory (e.g. the hibernation image signing key) to
+> be read by an eBPF program and kernel memory to be altered without
+
+... and while we're at it, also how they allow "kernel memory to be
+altered without restriction". I've been pointing this false statement
+out long ago.
+
+> restriction. Disable them if the kernel has been locked down in
+> confidentiality mode.
 > 
-> diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-> index a6f0f4761a37..9cceb90e77c5 100644
-> --- a/fs/xfs/xfs_aops.c
-> +++ b/fs/xfs/xfs_aops.c
-> @@ -665,7 +665,6 @@ xfs_submit_ioend(
+> Suggested-by: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> Signed-off-by: Matthew Garrett <mjg59@google.com>
+> cc: netdev@vger.kernel.org
+> cc: Chun-Yi Lee <jlee@suse.com>
+> cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+> Cc: Daniel Borkmann <daniel@iogearbox.net>
+
+Nacked-by: Daniel Borkmann <daniel@iogearbox.net>
+
+[...]
 >  
->  	ioend->io_bio->bi_private = ioend;
->  	ioend->io_bio->bi_end_io = xfs_end_bio;
-> -	ioend->io_bio->bi_opf = REQ_OP_WRITE | wbc_to_write_flags(wbc);
+> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+> index d64c00afceb5..638f9b00a8df 100644
+> --- a/kernel/trace/bpf_trace.c
+> +++ b/kernel/trace/bpf_trace.c
+> @@ -137,6 +137,10 @@ BPF_CALL_3(bpf_probe_read, void *, dst, u32, size, const void *, unsafe_ptr)
+>  {
+>  	int ret;
+>  
+> +	ret = security_locked_down(LOCKDOWN_BPF_READ);
+> +	if (ret)
+> +		return ret;
+
+This whole thing is still buggy as has been pointed out before by
+Jann. For helpers like above and few others below, error conditions
+must clear the buffer ...
+
+>  	ret = probe_kernel_read(dst, unsafe_ptr, size);
+>  	if (unlikely(ret < 0))
+>  		memset(dst, 0, size);
+> @@ -156,6 +160,12 @@ static const struct bpf_func_proto bpf_probe_read_proto = {
+>  BPF_CALL_3(bpf_probe_write_user, void *, unsafe_ptr, const void *, src,
+>  	   u32, size)
+>  {
+> +	int ret;
+> +
+> +	ret = security_locked_down(LOCKDOWN_BPF_READ);
+> +	if (ret)
+> +		return ret;
+> +
+>  	/*
+>  	 * Ensure we're in user context which is safe for the helper to
+>  	 * run. This helper has no business in a kthread.
+> @@ -205,7 +215,11 @@ BPF_CALL_5(bpf_trace_printk, char *, fmt, u32, fmt_size, u64, arg1,
+>  	int fmt_cnt = 0;
+>  	u64 unsafe_addr;
+>  	char buf[64];
+> -	int i;
+> +	int i, ret;
+> +
+> +	ret = security_locked_down(LOCKDOWN_BPF_READ);
+> +	if (ret)
+> +		return ret;
 >  
 >  	/*
->  	 * If we are failing the IO now, just mark the ioend with an
-> @@ -679,7 +678,6 @@ xfs_submit_ioend(
->  		return status;
->  	}
->  
-> -	ioend->io_bio->bi_write_hint = ioend->io_inode->i_write_hint;
->  	submit_bio(ioend->io_bio);
->  	return 0;
->  }
-> @@ -691,7 +689,8 @@ xfs_alloc_ioend(
->  	xfs_exntst_t		state,
->  	xfs_off_t		offset,
->  	struct block_device	*bdev,
-> -	sector_t		sector)
-> +	sector_t		sector,
-> +	struct writeback_control *wbc)
+>  	 * bpf_check()->check_func_arg()->check_stack_boundary()
+> @@ -534,6 +548,10 @@ BPF_CALL_3(bpf_probe_read_str, void *, dst, u32, size,
 >  {
->  	struct xfs_ioend	*ioend;
->  	struct bio		*bio;
-> @@ -699,6 +698,8 @@ xfs_alloc_ioend(
->  	bio = bio_alloc_bioset(GFP_NOFS, BIO_MAX_PAGES, &xfs_ioend_bioset);
->  	bio_set_dev(bio, bdev);
->  	bio->bi_iter.bi_sector = sector;
-> +	bio->bi_opf = REQ_OP_WRITE | wbc_to_write_flags(wbc);
-> +	bio->bi_write_hint = inode->i_write_hint;
+>  	int ret;
 >  
->  	ioend = container_of(bio, struct xfs_ioend, io_inline_bio);
->  	INIT_LIST_HEAD(&ioend->io_list);
-> @@ -719,24 +720,22 @@ xfs_alloc_ioend(
->   * so that the bi_private linkage is set up in the right direction for the
->   * traversal in xfs_destroy_ioend().
->   */
-> -static void
-> +static struct bio *
->  xfs_chain_bio(
-> -	struct xfs_ioend	*ioend,
-> -	struct writeback_control *wbc,
-> -	struct block_device	*bdev,
-> -	sector_t		sector)
-> +	struct bio		*prev)
->  {
->  	struct bio *new;
->  
->  	new = bio_alloc(GFP_NOFS, BIO_MAX_PAGES);
-> -	bio_set_dev(new, bdev);
-> -	new->bi_iter.bi_sector = sector;
-> -	bio_chain(ioend->io_bio, new);
-> -	bio_get(ioend->io_bio);		/* for xfs_destroy_ioend */
-> -	ioend->io_bio->bi_opf = REQ_OP_WRITE | wbc_to_write_flags(wbc);
-> -	ioend->io_bio->bi_write_hint = ioend->io_inode->i_write_hint;
-> -	submit_bio(ioend->io_bio);
-> -	ioend->io_bio = new;
-> +	bio_copy_dev(new, prev);
-> +	new->bi_iter.bi_sector = bio_end_sector(prev);
-> +	new->bi_opf = prev->bi_opf;
-> +	new->bi_write_hint = prev->bi_write_hint;
+> +	ret = security_locked_down(LOCKDOWN_BPF_READ);
+> +	if (ret)
+> +		return ret;
 > +
-> +	bio_chain(prev, new);
-> +	bio_get(prev);		/* for xfs_destroy_ioend */
-> +	submit_bio(prev);
-> +	return new;
->  }
+>  	/*
+>  	 * The strncpy_from_unsafe() call will likely not fill the entire
+>  	 * buffer, but that's okay in this circumstance as we're probing
+> diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
+> index 5a08c17f224d..2eea2cc13117 100644
+> --- a/security/lockdown/lockdown.c
+> +++ b/security/lockdown/lockdown.c
+> @@ -33,6 +33,7 @@ static char *lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
+>  	[LOCKDOWN_INTEGRITY_MAX] = "integrity",
+>  	[LOCKDOWN_KCORE] = "/proc/kcore access",
+>  	[LOCKDOWN_KPROBES] = "use of kprobes",
+> +	[LOCKDOWN_BPF_READ] = "use of bpf to read kernel RAM",
+>  	[LOCKDOWN_CONFIDENTIALITY_MAX] = "confidentiality",
+>  };
 >  
->  /*
-> @@ -771,14 +770,14 @@ xfs_add_to_ioend(
->  		if (wpc->ioend)
->  			list_add(&wpc->ioend->io_list, iolist);
->  		wpc->ioend = xfs_alloc_ioend(inode, wpc->fork,
-> -				wpc->imap.br_state, offset, bdev, sector);
-> +				wpc->imap.br_state, offset, bdev, sector, wbc);
->  	}
->  
->  	if (!__bio_try_merge_page(wpc->ioend->io_bio, page, len, poff, true)) {
->  		if (iop)
->  			atomic_inc(&iop->write_count);
->  		if (bio_full(wpc->ioend->io_bio))
-> -			xfs_chain_bio(wpc->ioend, wbc, bdev, sector);
-> +			wpc->ioend->io_bio = xfs_chain_bio(wpc->ioend->io_bio);
->  		bio_add_page(wpc->ioend->io_bio, page, len, poff);
->  	}
->  
-> -- 
-> 2.20.1
 > 
+
