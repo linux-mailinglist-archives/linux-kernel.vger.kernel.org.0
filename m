@@ -2,136 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A5C150C5C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 15:50:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AABC50C63
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 15:50:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731336AbfFXNuL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 09:50:11 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:53363 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730189AbfFXNuK (ORCPT
+        id S1731360AbfFXNuz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 09:50:55 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:33670 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725562AbfFXNuz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 09:50:10 -0400
-Received: by mail-wm1-f65.google.com with SMTP id x15so12870980wmj.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 06:50:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=D4DjKhaJXWAcFaHULT8Zn9bt97FGVDTogkGCO3mVhww=;
-        b=L3+4oA+lklMFId3a+K4s1lbQz8lfC1jKbU/8fqFCiBIs/PIwKb+e9ikmlolc9VPVIa
-         FE59+E+se4ULjwA7pZMEWJRcWW266Y9/THR37nNy3C8Z9ShArChMLN6FJtGfUjXZYJUY
-         cMOlzCLXEgA1QFRo9w+NvQS71+dn71fjAhvY6AkD+lFwy43PchpCfNocxDGInrBpS12y
-         exPpeucAKilYlsBFaDjsQBBsCwJ6k8xHnh8J5Plp2LhASJ2K1AtKfuNZnutf9B+F4yof
-         FR/Uc97Ph0wxyM6imYUSD28AnrDt58buFZpT3RuZIutFUN70+y73l5U9ZHpfrVB/Y9Pe
-         8XFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=D4DjKhaJXWAcFaHULT8Zn9bt97FGVDTogkGCO3mVhww=;
-        b=m5ZU0hOGtNblVQ9cisQwEXeSxjDbGyXwEWFx2ylR0CKxdleB+4rNExti4anzA2wC48
-         ZQ8mv28nMTuaEJvsPcCMTo6iYusd+gtJTCCwcG9UBI5Gs8c9xYyAPM9vnKuoNfZAVfNZ
-         8uiMZ80kpcs3K7bLmBkdPmkLP/mPY/B12cfKQ+scTphIYU5PCAW58j88xU7bE8cn7oKQ
-         1HX9ygSE8e30fhmSemXYH/Q+yxwypBwmPwI/VaB8CX3kuoJVe3Juh5/If0rHJ63dCAw8
-         CgCPh/Ow6ssHIjR5fBgZX0GmLrYEuP5VuyakqnVsHJdRZcj57WLmuX/0qk8xSHuVHHrB
-         NUDQ==
-X-Gm-Message-State: APjAAAWATgA35a22kA7VrNZKj7SahDIVpLisGTXhXeVbwIyxGQ/T10pX
-        v9eeuIwjCY8zZlJXZ95qKZqqPA==
-X-Google-Smtp-Source: APXvYqyMEn90cp6R9MWMj/HJmzulUNmcokEq3zfm9OmaA0vTRaK1wb0kEC559DwYAMjQKSXHIW3mug==
-X-Received: by 2002:a1c:5f09:: with SMTP id t9mr17082582wmb.112.1561384208642;
-        Mon, 24 Jun 2019 06:50:08 -0700 (PDT)
-Received: from localhost (ip-89-176-222-26.net.upcbroadband.cz. [89.176.222.26])
-        by smtp.gmail.com with ESMTPSA id v4sm9256542wmg.22.2019.06.24.06.50.08
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 24 Jun 2019 06:50:08 -0700 (PDT)
-Date:   Mon, 24 Jun 2019 15:50:07 +0200
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     Stanislav Fomichev <sdf@fomichev.me>
-Cc:     Yuehaibing <yuehaibing@huawei.com>, davem@davemloft.net,
-        sdf@google.com, jianbol@mellanox.com, jiri@mellanox.com,
-        mirq-linux@rere.qmqm.pl, willemb@google.com,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH] flow_dissector: Fix vlan header offset in
- __skb_flow_dissect
-Message-ID: <20190624135007.GA17673@nanopsycho>
-References: <20190619160132.38416-1-yuehaibing@huawei.com>
- <20190619183938.GA19111@mini-arch>
- <00a5d09f-a23e-661f-60c0-75fba6227451@huawei.com>
- <20190621003317.GE1383@mini-arch>
+        Mon, 24 Jun 2019 09:50:55 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5ODnCJ2183615;
+        Mon, 24 Jun 2019 13:50:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=SW6Szazq/wB2nNLnJHycEJb7byHwJ55tmOD9zZh4JmM=;
+ b=QmgF69El//eOOAYwiDMFA/pB2Cg6Ir69CC2fmdEAI9knXHbuIo2t5IhWYLRQ2NB4UrZa
+ eQKByBNHGzfTyeIofHM6kf3PTPNqTpiR74BZYP1X5Lno4YoCOWdWuLiW3DGCqaXPUz0+
+ E4bUyY1cC1m4dI7CVDedv26N7Rt+nx+B/R+TY80Z9tBX4JlpiNHHe3zLPOyjCAvUCbMc
+ fxmxYblZMxYmroQkBAYl8yGzBTRh1sh8Esv22I7tWF+8u6vVHH7c3KZe31p5Cej5Md7y
+ pDqlTYpZHPj5HvbMTs9IcRZPugKoEkTmf20FTU6kldV79+FckoRnWcW8L4LzkLYNeGwl hw== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 2t9brsxjhf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 24 Jun 2019 13:50:39 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5ODnNxj113546;
+        Mon, 24 Jun 2019 13:50:38 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 2tat7bn7mf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 24 Jun 2019 13:50:38 +0000
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5ODoaqJ029412;
+        Mon, 24 Jun 2019 13:50:37 GMT
+Received: from [192.168.0.8] (/1.180.238.73)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 24 Jun 2019 06:50:36 -0700
+Subject: Re: [PATCH 3/6] x86: Add nopv parameter to disable PV extensions
+To:     Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org
+Cc:     tglx@linutronix.de, mingo@kernel.org, bp@alien8.de, hpa@zytor.com,
+        boris.ostrovsky@oracle.com, sstabellini@kernel.org,
+        xen-devel@lists.xenproject.org
+References: <1561294903-6166-1-git-send-email-zhenzhong.duan@oracle.com>
+ <1561294903-6166-3-git-send-email-zhenzhong.duan@oracle.com>
+ <9e60cea2-a15f-b816-9049-f22be14c04b2@suse.com>
+From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <cf315d9a-7027-aa8c-1cac-9be9b734811c@oracle.com>
+Date:   Mon, 24 Jun 2019 21:50:16 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190621003317.GE1383@mini-arch>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <9e60cea2-a15f-b816-9049-f22be14c04b2@suse.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9297 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1906240113
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9297 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906240113
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fri, Jun 21, 2019 at 02:33:17AM CEST, sdf@fomichev.me wrote:
->On 06/20, Yuehaibing wrote:
->> On 2019/6/20 2:39, Stanislav Fomichev wrote:
->> > On 06/20, YueHaibing wrote:
->> >> We build vlan on top of bonding interface, which vlan offload
->> >> is off, bond mode is 802.3ad (LACP) and xmit_hash_policy is
->> >> BOND_XMIT_POLICY_ENCAP34.
->> >>
->> >> __skb_flow_dissect() fails to get information from protocol headers
->> >> encapsulated within vlan, because 'nhoff' is points to IP header,
->> >> so bond hashing is based on layer 2 info, which fails to distribute
->> >> packets across slaves.
->> >>
->> >> Fixes: d5709f7ab776 ("flow_dissector: For stripped vlan, get vlan info from skb->vlan_tci")
->> >> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
->> >> ---
->> >>  net/core/flow_dissector.c | 3 +++
->> >>  1 file changed, 3 insertions(+)
->> >>
->> >> diff --git a/net/core/flow_dissector.c b/net/core/flow_dissector.c
->> >> index 415b95f..2a52abb 100644
->> >> --- a/net/core/flow_dissector.c
->> >> +++ b/net/core/flow_dissector.c
->> >> @@ -785,6 +785,9 @@ bool __skb_flow_dissect(const struct sk_buff *skb,
->> >>  		    skb && skb_vlan_tag_present(skb)) {
->> >>  			proto = skb->protocol;
->> >>  		} else {
->> >> +			if (dissector_vlan == FLOW_DISSECTOR_KEY_MAX)
->> >> +				nhoff -=  sizeof(*vlan);
->> >> +
->> > Should we instead fix the place where the skb is allocated to properly
->> > pull vlan (skb_vlan_untag)? I'm not sure this particular place is
->> > supposed to work with an skb. Having an skb with nhoff pointing to
->> > IP header but missing skb_vlan_tag_present() when with
->> > proto==ETH_P_8021xx seems weird.
->> 
->> The skb is a forwarded vxlan packet, it send through vlan interface like this:
->> 
->>    vlan_dev_hard_start_xmit
->>     --> __vlan_hwaccel_put_tag //vlan_tci and VLAN_TAG_PRESENT is set
->>     --> dev_queue_xmit
->>         --> validate_xmit_skb
->>           --> validate_xmit_vlan // vlan_hw_offload_capable is false
->>              --> __vlan_hwaccel_push_inside //here skb_push vlan_hlen, then clear skb->tci
->> 
->>     --> bond_start_xmit
->>        --> bond_xmit_hash
->>          --> __skb_flow_dissect // nhoff point to IP header
->>             -->  case htons(ETH_P_8021Q)
->>             // skb_vlan_tag_present is false, so
->>               vlan = __skb_header_pointer(skb, nhoff, sizeof(_vlan), //vlan point to ip header wrongly
->I see, so bonding device propagates hw VLAN support from the slaves.
->If one of the slaves doesn't have it, its disabled for the bond device.
->Any idea why we do that? Why not pass skbs to the slave devices
->instead and let them handle the hw/sw vlan implementation?
 
-Probably due to historical reasons. It is indeed not needed to push the
-vlan header. We should rather have the vlan_tci filled all the way down
-to the transmitting netdevice. So the bonding/team should have the
-NETIF_F_HW_VLAN_CTAG_TX and NETIF_F_HW_VLAN_STAG_TX flags always on.
-That seems to be the correct fix to me.
+On 2019/6/24 21:18, Juergen Gross wrote:
+> On 23.06.19 15:01, Zhenzhong Duan wrote:
+>> In virtualization environment, PV extensions (drivers, interrupts,
+>> timers, etc) are enabled in the majority of use cases which is the
+>> best option.
+>>
+>> However, in some cases (kexec not fully working, benchmarking)
+>> we want to disable PV extensions. As such introduce the
+>> 'nopv' parameter that will do it.
+>>
+>> There is already 'xen_nopv' parameter for XEN platform but not for
+>> others. 'xen_nopv' can then be removed with this change.
+>>
+>> Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+>> Cc: xen-devel@lists.xenproject.org
+>> ---
+>>   Documentation/admin-guide/kernel-parameters.txt |  4 ++++
+>>   arch/x86/kernel/cpu/hypervisor.c                | 11 +++++++++++
+>>   2 files changed, 15 insertions(+)
+>>
+>> diff --git a/Documentation/admin-guide/kernel-parameters.txt 
+>> b/Documentation/admin-guide/kernel-parameters.txt
+>> index 138f666..b352f36 100644
+>> --- a/Documentation/admin-guide/kernel-parameters.txt
+>> +++ b/Documentation/admin-guide/kernel-parameters.txt
+>> @@ -5268,6 +5268,10 @@
+>>               improve timer resolution at the expense of processing
+>>               more timer interrupts.
+>>   +    nopv=        [X86]
+>> +            Disables the PV optimizations forcing the guest to run
+>> +            as generic guest with no PV drivers.
+>> +
+>>       xirc2ps_cs=    [NET,PCMCIA]
+>>               Format:
+>> <irq>,<irq_mask>,<io>,<full_duplex>,<do_sound>,<lockup_hack>[,<irq2>[,<irq3>[,<irq4>]]]
+>> diff --git a/arch/x86/kernel/cpu/hypervisor.c 
+>> b/arch/x86/kernel/cpu/hypervisor.c
+>> index 479ca47..4f2c875 100644
+>> --- a/arch/x86/kernel/cpu/hypervisor.c
+>> +++ b/arch/x86/kernel/cpu/hypervisor.c
+>> @@ -85,10 +85,21 @@ static void __init copy_array(const void *src, 
+>> void *target, unsigned int size)
+>>               to[i] = from[i];
+>>   }
+>>   +static bool nopv;
+>> +static __init int xen_parse_nopv(char *arg)
+>> +{
+>> +    nopv = true;
+>> +    return 0;
+>> +}
+>> +early_param("nopv", xen_parse_nopv);
+>> +
+>>   void __init init_hypervisor_platform(void)
+>>   {
+>>       const struct hypervisor_x86 *h;
+>>   +    if (nopv)
+>> +        return;
+>> +
+>
+> Oh, this is no good idea.
+>
+> There are guest types which just won't work without pv interfaces, like
+> Xen PV and Xen PVH. Letting them fail due to just a wrong command line
+> parameter is not nice, especially as the failure might be very hard to
+> track down to the issue for the user.
+Yes, thanks for catching.
+>
+> I guess you could add a "ignore_nopv" member to struct hypervisor_x86
+> set to true for the mentioned guest types and call the detect functions
+> only if nopv is false or ignore_nopv is true.
 
+I think your suggestion is good, I'll rework it based on your suggestion.
 
->I see the propagation was added in 278339a42a1b 10 years ago and
->I don't see any rationale in the commit description.
->Somebody with more context should probably chime in :-)
+Thanks
+
+Zhenzhong
+
