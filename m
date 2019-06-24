@@ -2,88 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B55E51BCC
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 21:57:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C3BE51BD4
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 21:58:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731053AbfFXT5O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 15:57:14 -0400
-Received: from relay10.mail.gandi.net ([217.70.178.230]:48617 "EHLO
-        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727282AbfFXT5N (ORCPT
+        id S1731261AbfFXT6a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 15:58:30 -0400
+Received: from mail-lf1-f41.google.com ([209.85.167.41]:44186 "EHLO
+        mail-lf1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726263AbfFXT6a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 15:57:13 -0400
-Received: from localhost (lfbn-1-1545-137.w90-65.abo.wanadoo.fr [90.65.161.137])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 874FF240005;
-        Mon, 24 Jun 2019 19:57:05 +0000 (UTC)
-Date:   Mon, 24 Jun 2019 21:57:05 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Finn Thain <fthain@telegraphics.com.au>
-Cc:     Alessandro Zummo <a.zummo@towertech.it>, linux-rtc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rtc: Don't state that the RTC holds UTC in case it
- doesn't
-Message-ID: <20190624195705.GD5690@piout.net>
-References: <3e1e24a326b8b623b1a8b66a905ac6494ef74a07.1561081886.git.fthain@telegraphics.com.au>
+        Mon, 24 Jun 2019 15:58:30 -0400
+Received: by mail-lf1-f41.google.com with SMTP id r15so10916860lfm.11;
+        Mon, 24 Jun 2019 12:58:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zMA8++vd98/rlAwnVJntUv97lzDmhQiW1l9rW7+CeaE=;
+        b=mI729AlwP9R+qtDCGGEiExjDVIvwap0quVVCd9H1QOIWRGj2a6WmiQ7mpu9JynWiTl
+         MBiBgrlrd82Pib6+dBUqVzoYXHlnMsFn+0c97S+RiGADQ/yvqrXEbyWciynRJJ97H8lL
+         8os5EwwPZ6cGimvRB4Pma0lW9NVDHHNFC+WxfPoUZin2DrzmmFwfPVrdA2bwE7QHssub
+         Lac2zk2mktgSxkhAlDYnMi7tFkwVDhy2wScuhkYj+E2OZMYLN4WRSH7vvf7lIzbu8nDO
+         qhzuPX54QkJIunmLSN5yBHiHdPULEPX02Q8T0AZ1QIiUffaDMCfV7cdLPYvsEeRXFbxD
+         TZ/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zMA8++vd98/rlAwnVJntUv97lzDmhQiW1l9rW7+CeaE=;
+        b=dkvdBhTmTtAfIm/bXQKg+bCi1CggOY312oKYxNf1z3AdJjiXHNBmo3Ur7J7BgcbhWo
+         Dnq5emliy4YaO0EEkb9ACMh5vkVMkocpVLENx0VVx1zaYdp5E5VqnEhoFOOUlLBMPHI7
+         vAiYkHHkqJBuDsimC8LNqvpNLTa740oBh68zgq6aCgpQE5XxEfml9EDwqPtcmn9Y1Fgw
+         icFY8ufDbqPXmYdFlWFugHoWgzNlVwLTg26Te3qVQzAZAY2qdOVAaS7wc13YsoWnQJfY
+         +OB6VFc4bpZr588TJpqyBKluVuUahi52KMN4bIffFYCnTi1iSgDU+PzzLmmVEQ+2iJPY
+         iAJg==
+X-Gm-Message-State: APjAAAWFSd/yvj/bOnaWChaY8Tk1bQXxKBivUXZgH6mG0BUu0c3pS6iT
+        vcQ8XCVMcOV97M9VQ/EcM3qPa2IZjhMyHtUDrs0=
+X-Google-Smtp-Source: APXvYqxeWm1dY/BeGvUJ11kjU06uOztLuwFtzDS9B/aD8vqFftuGui5xb00hQr4+67JZuKerfwd3QqtMbTcAppnyMIY=
+X-Received: by 2002:a19:e05c:: with SMTP id g28mr63608637lfj.167.1561406307546;
+ Mon, 24 Jun 2019 12:58:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3e1e24a326b8b623b1a8b66a905ac6494ef74a07.1561081886.git.fthain@telegraphics.com.au>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+References: <CA+G9fYsMcdHmKY66CNhsrizO-gErkOQCkTcBSyOHLpOs+8g5=g@mail.gmail.com>
+ <CAEf4BzbTD8G_zKkj-S3MOeG5Hq3_2zz3bGoXhQtpt0beG8nWJA@mail.gmail.com>
+ <20190621161752.d7d7n4m5q67uivys@xps.therub.org> <CAEf4BzaSoKA5H5rN=w+OAtUz4bD30-VOjjjY+Qv9tTAnhMweiA@mail.gmail.com>
+ <20190624195336.nubi7n2np5vfjutr@xps.therub.org>
+In-Reply-To: <20190624195336.nubi7n2np5vfjutr@xps.therub.org>
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date:   Mon, 24 Jun 2019 12:58:15 -0700
+Message-ID: <CAADnVQKZycXgSw6C0qa7g0y=W3xRhM_4Rqcj7ZzL=rGh_n4mgA@mail.gmail.com>
+Subject: Re: selftests: bpf: test_libbpf.sh failed at file test_l4lb.o
+To:     Dan Rue <dan.rue@linaro.org>
+Cc:     Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Xdp <xdp-newbies@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>, Martin Lau <kafai@fb.com>,
+        Yonghong Song <yhs@fb.com>,
+        john fastabend <john.fastabend@gmail.com>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Shuah Khan <shuah@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/06/2019 11:51:26+1000, Finn Thain wrote:
-> Some machines store local time in the Real Time Clock. The hard-coded
-> "UTC" string is wrong on those machines so just omit that string.
-> Update the log parser so it doesn't require the string "UTC".
-> 
+On Mon, Jun 24, 2019 at 12:53 PM Dan Rue <dan.rue@linaro.org> wrote:
+>
+> I would say if it's not possible to check at runtime, and it requires
+> clang 9.0, that this test should not be enabled by default.
 
-I don't agree, hctossys will always think the RTC is in UTC. If you
-store local time in the RTC, then you are probably not using hctosys
-because it definitively doesn't know about the timezone and will
-incorrectly set the system time. That information is usually kept in
-/etc/adjtime.
-
-> Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-> ---
->  drivers/rtc/hctosys.c             | 2 +-
->  tools/power/pm-graph/bootgraph.py | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/rtc/hctosys.c b/drivers/rtc/hctosys.c
-> index ff2092a0d38c..2270eca23203 100644
-> --- a/drivers/rtc/hctosys.c
-> +++ b/drivers/rtc/hctosys.c
-> @@ -58,7 +58,7 @@ static int __init rtc_hctosys(void)
->  
->  	err = do_settimeofday64(&tv64);
->  
-> -	dev_info(rtc->dev.parent, "setting system clock to %ptR UTC (%lld)\n",
-> +	dev_info(rtc->dev.parent, "setting system clock to %ptR (%lld)\n",
->  		 &tm, (long long)tv64.tv_sec);
->  
->  err_read:
-> diff --git a/tools/power/pm-graph/bootgraph.py b/tools/power/pm-graph/bootgraph.py
-> index 6dae57041537..5a045d1cb879 100755
-> --- a/tools/power/pm-graph/bootgraph.py
-> +++ b/tools/power/pm-graph/bootgraph.py
-> @@ -333,7 +333,7 @@ def parseKernelLog():
->  			if(not sysvals.stamp['kernel']):
->  				sysvals.stamp['kernel'] = sysvals.kernelVersion(msg)
->  			continue
-> -		m = re.match('.* setting system clock to (?P<t>.*) UTC.*', msg)
-> +		m = re.match('.* setting system clock to (?P<t>.*) (?:UTC )?\(.*', msg)
->  		if(m):
->  			bt = datetime.strptime(m.group('t'), '%Y-%m-%d %H:%M:%S')
->  			bt = bt - timedelta(seconds=int(ktime))
-> -- 
-> 2.21.0
-> 
-
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+The latest clang is the requirement.
+If environment has old clang or no clang at all these tests will be failing.
