@@ -2,163 +2,272 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2C74509ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 13:40:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23F5C509FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 13:44:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729067AbfFXLkU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 07:40:20 -0400
-Received: from foss.arm.com ([217.140.110.172]:47854 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726887AbfFXLkU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 07:40:20 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 89E602B;
-        Mon, 24 Jun 2019 04:40:19 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8624A3F718;
-        Mon, 24 Jun 2019 04:40:18 -0700 (PDT)
-Date:   Mon, 24 Jun 2019 12:40:10 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     guoren@kernel.org
-Cc:     julien.grall@arm.com, arnd@arndb.de, linux-kernel@vger.kernel.org,
-        linux-csky@vger.kernel.org, Guo Ren <ren_guo@c-sky.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: [PATCH] arm64: asid: Optimize cache_flush for SMT
-Message-ID: <20190624114010.GA51882@lakrids.cambridge.arm.com>
-References: <1561305869-18872-1-git-send-email-guoren@kernel.org>
+        id S1728869AbfFXLoR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 07:44:17 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:44588 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728596AbfFXLoQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 07:44:16 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190624114414euoutp029e813bdc065d4a3bd4cb25f293548d7d~rH8t8_XBm1186811868euoutp02z
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 11:44:14 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190624114414euoutp029e813bdc065d4a3bd4cb25f293548d7d~rH8t8_XBm1186811868euoutp02z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1561376654;
+        bh=OQuH1fK1Mq0SGuvaIWVkirqd0DzLaLERGnAwyc1o0PY=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=er1KuzqMKjogbSSN/ncKmxXFac2P4zHRbKvPdpBJbPRnXUs0F0g78nX13ZIis1dcr
+         r9REnilXvMpxPZRYpC+OLIUwhYzizwCURiGANBkX0wTMpQvgSzMSZ4PIqyK4QPIath
+         GXRc4iHIT30ZcLqtisiWMVTnSHiSnZzeIquQZ1FQ=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20190624114413eucas1p1953e70c97577b65ac95759ec5c500cd7~rH8tQUVMY0606206062eucas1p17;
+        Mon, 24 Jun 2019 11:44:13 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id DC.3A.04377.D87B01D5; Mon, 24
+        Jun 2019 12:44:13 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20190624114413eucas1p14fcfcf4feb2a1458f02be3414f6cd57c~rH8sj2g6d1682016820eucas1p1C;
+        Mon, 24 Jun 2019 11:44:13 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190624114413eusmtrp15bf14aef47ac2a8b297228048339e64e~rH8sjQ-Ur2161521615eusmtrp1K;
+        Mon, 24 Jun 2019 11:44:13 +0000 (GMT)
+X-AuditID: cbfec7f4-5632c9c000001119-be-5d10b78d24e6
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 8A.13.04140.D87B01D5; Mon, 24
+        Jun 2019 12:44:13 +0100 (BST)
+Received: from [106.120.51.74] (unknown [106.120.51.74]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20190624114412eusmtip12a0b55ea36d2b276144f305eca20696b~rH8sHK0C20194001940eusmtip1I;
+        Mon, 24 Jun 2019 11:44:12 +0000 (GMT)
+Subject: Re: [PATCH v2] drm/bridge/synopsys: dsi: Allow VPG to be enabled
+ via debugfs
+To:     Matt Redfearn <matt.redfearn@thinci.com>,
+        Philippe CORNU <philippe.cornu@st.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+Cc:     Archit Taneja <architt@codeaurora.org>,
+        David Airlie <airlied@linux.ie>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Matthew Redfearn <matthew.redfearn@thinci.com>,
+        Yannick FERTRE <yannick.fertre@st.com>,
+        Nickey Yang <nickey.yang@rock-chips.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+From:   Andrzej Hajda <a.hajda@samsung.com>
+Message-ID: <d73e0df8-761d-380c-17f3-f3cbb737c677@samsung.com>
+Date:   Mon, 24 Jun 2019 13:44:11 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1561305869-18872-1-git-send-email-guoren@kernel.org>
-User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
+In-Reply-To: <fd4f3c69-5bbd-a7ac-983c-4aa9a2a2313e@thinci.com>
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrBKsWRmVeSWpSXmKPExsWy7djP87q92wViDf7MVrfoPXeSyaKp4y2r
+        xZWv79ksOicuYbe4vGsOm8Wu+wuYLLbP28BksfT3O0aLBy0vWC3aO1vZHLg8Lvf1MnnM7pjJ
+        6rH92wNWj/vdx5k8/s7az+Lx9MdeZo/Zkx+xenzeJBfAEcVlk5Kak1mWWqRvl8CV8XTPQqaC
+        GRoV81+4NjAeVehi5OCQEDCRmLpcsYuRi0NIYAWjxKmXk9ggnC+MEst+LWaHcD4zSjz+fZGp
+        i5ETrKN7zlmoquWMEq0thxlBEkICbxkljhz2A7GFBcIlHlzqYwUpEhHoY5Q4NuUNM4jDLHCT
+        SeLntwdgHWwCmhJ/N99kA7F5Bewkvn6aBmazCKhKPH27iBnEFhWIkPiycxMjRI2gxMmZT1hA
+        bE6g+u/35oPZzALyEs1bZzND2OISt57MZwJZJiFwj11i77LTUHe7SJxdt4gVwhaWeHV8CzuE
+        LSNxenIPC4RdL3F/RQszRHMHo8TWDTuZIRLWEoePX2QFBRkz0NXrd+lDhB0l9n9cxAgJST6J
+        G28FIW7gk5i0bTozRJhXoqNNCKJaUeL+2a1QA8Ulll74yjaBUWkWks9mIflmFpJvZiHsXcDI
+        sopRPLW0ODc9tdgoL7Vcrzgxt7g0L10vOT93EyMwfZ3+d/zLDsZdf5IOMQpwMCrx8Aps4I8V
+        Yk0sK67MPcQowcGsJMK7NFEgVog3JbGyKrUoP76oNCe1+BCjNAeLkjhvNcODaCGB9MSS1OzU
+        1ILUIpgsEwenVANj/r/giZ9dd9iLJgXyCZjE3+Ta4Fq65aGI1dIne9MZDh1KLuC3vfjDTjk/
+        tumY2MrHMma7xXS9rJep7YlP3qmn9ndbcNL58Evih25k3CtrzNjzWnodn3jaZ/vDd/fdmb3Q
+        kuu3f6TQ0oui97tmx2VKe4u8eMhQUXbvAtOM2x8Ewx/GzOzNjuRUYinOSDTUYi4qTgQAohK5
+        EVsDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrDIsWRmVeSWpSXmKPExsVy+t/xu7q92wViDc5tYrfoPXeSyaKp4y2r
+        xZWv79ksOicuYbe4vGsOm8Wu+wuYLLbP28BksfT3O0aLBy0vWC3aO1vZHLg8Lvf1MnnM7pjJ
+        6rH92wNWj/vdx5k8/s7az+Lx9MdeZo/Zkx+xenzeJBfAEaVnU5RfWpKqkJFfXGKrFG1oYaRn
+        aGmhZ2RiqWdobB5rZWSqpG9nk5Kak1mWWqRvl6CX8XTPQqaCGRoV81+4NjAeVehi5OSQEDCR
+        6J5zlq2LkYtDSGApo8Sprd2sEAlxid3z3zJD2MISf651QRW9ZpSY8/wsO0hCWCBcor23jREk
+        ISLQxyix4OAXdhCHWeA2k8Ts748YQaqEBL4ySpw9EQFiswloSvzdfJMNxOYVsJP4+mkamM0i
+        oCrx9O0isHWiAhESs3c1sEDUCEqcnPkEzOYEqv9+bz6YzSygLvFn3iVmCFteonnrbChbXOLW
+        k/lMExiFZiFpn4WkZRaSlllIWhYwsqxiFEktLc5Nzy020itOzC0uzUvXS87P3cQIjNltx35u
+        2cHY9S74EKMAB6MSD6/ABv5YIdbEsuLK3EOMEhzMSiK8SxMFYoV4UxIrq1KL8uOLSnNSiw8x
+        mgI9N5FZSjQ5H5hO8kriDU0NzS0sDc2NzY3NLJTEeTsEDsYICaQnlqRmp6YWpBbB9DFxcEo1
+        MPp9saq5mR+huu2wvuI8Dm7jWU8UzMxWa2zezK5scnXz4uMvnRLP28+clxh2s+nGUqmmDINl
+        DCfn9Ees6ctZtZGDOffLe80zHSs7jVjPXLZasOqp2LNrYn2cqy6a3Tfvk993o0Rt2kfVZ5W6
+        86V++P6p7//raXo14qThhqOuwmJTS87/DGXcba3EUpyRaKjFXFScCADmrb7Z7wIAAA==
+X-CMS-MailID: 20190624114413eucas1p14fcfcf4feb2a1458f02be3414f6cd57c
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190624110224epcas3p45442d82c6f6c3e99311334c2603b9143
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190624110224epcas3p45442d82c6f6c3e99311334c2603b9143
+References: <20190430081646.23845-1-matt.redfearn@thinci.com>
+        <0832ec0c-cf21-7b43-17a7-dbe54513453c@st.com>
+        <CGME20190624110224epcas3p45442d82c6f6c3e99311334c2603b9143@epcas3p4.samsung.com>
+        <fd4f3c69-5bbd-a7ac-983c-4aa9a2a2313e@thinci.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I'm very confused by this patch. The title says arm64, yet the code is
-under arch/csky/, and the code in question refers to HARTs, which IIUC
-is RISC-V terminology.
+On 24.06.2019 13:02, Matt Redfearn wrote:
+> Hi,
+> Anything stopping this being applied?
 
-On Mon, Jun 24, 2019 at 12:04:29AM +0800, guoren@kernel.org wrote:
-> From: Guo Ren <ren_guo@c-sky.com>
-> 
-> The hardware threads of one core could share the same TLB for SMT+SMP
-> system. Assume hardware threads number sequence like this:
-> 
-> | 0 1 2 3 | 4 5 6 7 | 8 9 a b | c d e f |
->    core1     core2     core3     core4
 
-Given this is the Linux logical CPU ID rather than a physical CPU ID,
-this assumption is not valid. For example, CPUs may be renumbered across
-kexec.
+Queued to drm-misc-next.
 
-Even if this were a physical CPU ID, this doesn't hold on arm64 (e.g.
-due to big.LITTLE).
+--
+Regards
+Andrzej
 
-> Current algorithm seems is correct for SMT+SMP, but it'll give some
-> duplicate local_tlb_flush. Because one hardware threads local_tlb_flush
-> will also flush other hardware threads' TLB entry in one core TLB.
 
-Does any architecture specification mandate that behaviour?
+>
+> Thanks,
+> Matt
+>
+> On 03/05/2019 16:32, Philippe CORNU wrote:
+>> Hi Matt,
+>> and many thanks for the patch.
+>>
+>> Tested successfully by Yannick on STM32MP1 boards :-)
+>>
+>> Tested-by: Yannick Fertré <yannick.fertre@st.com>
+>> Reviewed-by: Philippe Cornu <philippe.cornu@st.com>
+>>
+>> Thank you,
+>> Philippe :-)
+>>
+>>
+>> On 4/30/19 10:17 AM, Matt Redfearn wrote:
+>>> The Synopsys MIPI DSI IP contains a video test pattern generator which
+>>> is helpful in debugging video timing with connected displays.
+>>> Add a debugfs directory containing files which allow the VPG to be
+>>> enabled and disabled, and its orientation to be changed.
+>>>
+>>> Signed-off-by: Matt Redfearn <matt.redfearn@thinci.com>
+>>>
+>>> ---
+>>>
+>>> Changes in v2:
+>>> - Ensure dw_mipi_dsi_video_mode_config() doesn't break without CONFIG_DEBUG_FS
+>>> - Tidy up initialisation / tidy up of debugfs
+>>>
+>>>    drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c | 47 +++++++++++++++++++
+>>>    1 file changed, 47 insertions(+)
+>>>
+>>> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c b/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c
+>>> index 0ee440216b8..bffeef7a6cc 100644
+>>> --- a/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c
+>>> +++ b/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c
+>>> @@ -10,6 +10,7 @@
+>>>    
+>>>    #include <linux/clk.h>
+>>>    #include <linux/component.h>
+>>> +#include <linux/debugfs.h>
+>>>    #include <linux/iopoll.h>
+>>>    #include <linux/module.h>
+>>>    #include <linux/of_device.h>
+>>> @@ -86,6 +87,8 @@
+>>>    #define VID_MODE_TYPE_NON_BURST_SYNC_EVENTS	0x1
+>>>    #define VID_MODE_TYPE_BURST			0x2
+>>>    #define VID_MODE_TYPE_MASK			0x3
+>>> +#define VID_MODE_VPG_ENABLE		BIT(16)
+>>> +#define VID_MODE_VPG_HORIZONTAL		BIT(24)
+>>>    
+>>>    #define DSI_VID_PKT_SIZE		0x3c
+>>>    #define VID_PKT_SIZE(p)			((p) & 0x3fff)
+>>> @@ -234,6 +237,13 @@ struct dw_mipi_dsi {
+>>>    	u32 format;
+>>>    	unsigned long mode_flags;
+>>>    
+>>> +#ifdef CONFIG_DEBUG_FS
+>>> +	struct dentry *debugfs;
+>>> +
+>>> +	bool vpg;
+>>> +	bool vpg_horizontal;
+>>> +#endif /* CONFIG_DEBUG_FS */
+>>> +
+>>>    	struct dw_mipi_dsi *master; /* dual-dsi master ptr */
+>>>    	struct dw_mipi_dsi *slave; /* dual-dsi slave ptr */
+>>>    
+>>> @@ -525,6 +535,13 @@ static void dw_mipi_dsi_video_mode_config(struct dw_mipi_dsi *dsi)
+>>>    	else
+>>>    		val |= VID_MODE_TYPE_NON_BURST_SYNC_EVENTS;
+>>>    
+>>> +#ifdef CONFIG_DEBUG_FS
+>>> +	if (dsi->vpg) {
+>>> +		val |= VID_MODE_VPG_ENABLE;
+>>> +		val |= dsi->vpg_horizontal ? VID_MODE_VPG_HORIZONTAL : 0;
+>>> +	}
+>>> +#endif /* CONFIG_DEBUG_FS */
+>>> +
+>>>    	dsi_write(dsi, DSI_VID_MODE_CFG, val);
+>>>    }
+>>>    
+>>> @@ -935,6 +952,33 @@ static const struct drm_bridge_funcs dw_mipi_dsi_bridge_funcs = {
+>>>    	.attach	      = dw_mipi_dsi_bridge_attach,
+>>>    };
+>>>    
+>>> +#ifdef CONFIG_DEBUG_FS
+>>> +
+>>> +static void dw_mipi_dsi_debugfs_init(struct dw_mipi_dsi *dsi)
+>>> +{
+>>> +	dsi->debugfs = debugfs_create_dir(dev_name(dsi->dev), NULL);
+>>> +	if (IS_ERR(dsi->debugfs)) {
+>>> +		dev_err(dsi->dev, "failed to create debugfs root\n");
+>>> +		return;
+>>> +	}
+>>> +
+>>> +	debugfs_create_bool("vpg", 0660, dsi->debugfs, &dsi->vpg);
+>>> +	debugfs_create_bool("vpg_horizontal", 0660, dsi->debugfs,
+>>> +			    &dsi->vpg_horizontal);
+>>> +}
+>>> +
+>>> +static void dw_mipi_dsi_debugfs_remove(struct dw_mipi_dsi *dsi)
+>>> +{
+>>> +	debugfs_remove_recursive(dsi->debugfs);
+>>> +}
+>>> +
+>>> +#else
+>>> +
+>>> +static void dw_mipi_dsi_debugfs_init(struct dw_mipi_dsi *dsi) { }
+>>> +static void dw_mipi_dsi_debugfs_remove(struct dw_mipi_dsi *dsi) { }
+>>> +
+>>> +#endif /* CONFIG_DEBUG_FS */
+>>> +
+>>>    static struct dw_mipi_dsi *
+>>>    __dw_mipi_dsi_probe(struct platform_device *pdev,
+>>>    		    const struct dw_mipi_dsi_plat_data *plat_data)
+>>> @@ -1005,6 +1049,7 @@ __dw_mipi_dsi_probe(struct platform_device *pdev,
+>>>    		clk_disable_unprepare(dsi->pclk);
+>>>    	}
+>>>    
+>>> +	dw_mipi_dsi_debugfs_init(dsi);
+>>>    	pm_runtime_enable(dev);
+>>>    
+>>>    	dsi->dsi_host.ops = &dw_mipi_dsi_host_ops;
+>>> @@ -1012,6 +1057,7 @@ __dw_mipi_dsi_probe(struct platform_device *pdev,
+>>>    	ret = mipi_dsi_host_register(&dsi->dsi_host);
+>>>    	if (ret) {
+>>>    		dev_err(dev, "Failed to register MIPI host: %d\n", ret);
+>>> +		dw_mipi_dsi_debugfs_remove(dsi);
+>>>    		return ERR_PTR(ret);
+>>>    	}
+>>>    
+>>> @@ -1029,6 +1075,7 @@ static void __dw_mipi_dsi_remove(struct dw_mipi_dsi *dsi)
+>>>    	mipi_dsi_host_unregister(&dsi->dsi_host);
+>>>    
+>>>    	pm_runtime_disable(dsi->dev);
+>>> +	dw_mipi_dsi_debugfs_remove(dsi);
+>>>    }
+>>>    
+>>>    void dw_mipi_dsi_set_slave(struct dw_mipi_dsi *dsi, struct dw_mipi_dsi *slave)
+>>>
+>> _______________________________________________
+>> dri-devel mailing list
+>> dri-devel@lists.freedesktop.org
+>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+>>
 
-That isn't true for arm64, I have no idea whether RISC-V mandates that,
-and as below it seems this is irrelevant on C-SKY.
-
-> So we can use bitmap to reduce local_tlb_flush for SMT.
-> 
-> C-SKY cores don't support SMT and the patch is no benefit for C-SKY.
-
-As above, this patch is very confusing -- if this doesn't benefit C-SKY,
-why modify the C-SKY code?
-
-Thanks,
-Mark.
-
-> 
-> Signed-off-by: Guo Ren <ren_guo@c-sky.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Julien Grall <julien.grall@arm.com>
-> ---
->  arch/csky/include/asm/asid.h |  4 ++++
->  arch/csky/mm/asid.c          | 11 ++++++++++-
->  arch/csky/mm/context.c       |  2 +-
->  3 files changed, 15 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/csky/include/asm/asid.h b/arch/csky/include/asm/asid.h
-> index ac08b0f..f654492 100644
-> --- a/arch/csky/include/asm/asid.h
-> +++ b/arch/csky/include/asm/asid.h
-> @@ -23,6 +23,9 @@ struct asid_info
->  	unsigned int		ctxt_shift;
->  	/* Callback to locally flush the context. */
->  	void			(*flush_cpu_ctxt_cb)(void);
-> +	/* To reduce duplicate tlb_flush for SMT */
-> +	unsigned int		harts_per_core;
-> +	unsigned int		harts_per_core_mask;
->  };
->  
->  #define NUM_ASIDS(info)			(1UL << ((info)->bits))
-> @@ -73,6 +76,7 @@ static inline void asid_check_context(struct asid_info *info,
->  
->  int asid_allocator_init(struct asid_info *info,
->  			u32 bits, unsigned int asid_per_ctxt,
-> +			unsigned int harts_per_core,
->  			void (*flush_cpu_ctxt_cb)(void));
->  
->  #endif
-> diff --git a/arch/csky/mm/asid.c b/arch/csky/mm/asid.c
-> index b2e9147..50a983e 100644
-> --- a/arch/csky/mm/asid.c
-> +++ b/arch/csky/mm/asid.c
-> @@ -148,8 +148,13 @@ void asid_new_context(struct asid_info *info, atomic64_t *pasid,
->  		atomic64_set(pasid, asid);
->  	}
->  
-> -	if (cpumask_test_and_clear_cpu(cpu, &info->flush_pending))
-> +	if (cpumask_test_cpu(cpu, &info->flush_pending)) {
-> +		unsigned int i;
-> +		unsigned int harts_base = cpu & info->harts_per_core_mask;
->  		info->flush_cpu_ctxt_cb();
-> +		for (i = 0; i < info->harts_per_core; i++)
-> +			cpumask_clear_cpu(harts_base + i, &info->flush_pending);
-> +	}
->  
->  	atomic64_set(&active_asid(info, cpu), asid);
->  	cpumask_set_cpu(cpu, mm_cpumask(mm));
-> @@ -162,15 +167,19 @@ void asid_new_context(struct asid_info *info, atomic64_t *pasid,
->   * @info: Pointer to the asid allocator structure
->   * @bits: Number of ASIDs available
->   * @asid_per_ctxt: Number of ASIDs to allocate per-context. ASIDs are
-> + * @harts_per_core: Number hardware threads per core, must be 1, 2, 4, 8, 16 ...
->   * allocated contiguously for a given context. This value should be a power of
->   * 2.
->   */
->  int asid_allocator_init(struct asid_info *info,
->  			u32 bits, unsigned int asid_per_ctxt,
-> +			unsigned int harts_per_core,
->  			void (*flush_cpu_ctxt_cb)(void))
->  {
->  	info->bits = bits;
->  	info->ctxt_shift = ilog2(asid_per_ctxt);
-> +	info->harts_per_core = harts_per_core;
-> +	info->harts_per_core_mask = ~((1 << ilog2(harts_per_core)) - 1);
->  	info->flush_cpu_ctxt_cb = flush_cpu_ctxt_cb;
->  	/*
->  	 * Expect allocation after rollover to fail if we don't have at least
-> diff --git a/arch/csky/mm/context.c b/arch/csky/mm/context.c
-> index 0d95bdd..b58523b 100644
-> --- a/arch/csky/mm/context.c
-> +++ b/arch/csky/mm/context.c
-> @@ -30,7 +30,7 @@ static int asids_init(void)
->  {
->  	BUG_ON(((1 << CONFIG_CPU_ASID_BITS) - 1) <= num_possible_cpus());
->  
-> -	if (asid_allocator_init(&asid_info, CONFIG_CPU_ASID_BITS, 1,
-> +	if (asid_allocator_init(&asid_info, CONFIG_CPU_ASID_BITS, 1, 1,
->  				asid_flush_cpu_ctxt))
->  		panic("Unable to initialize ASID allocator for %lu ASIDs\n",
->  		      NUM_ASIDS(&asid_info));
-> -- 
-> 2.7.4
-> 
