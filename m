@@ -2,276 +2,190 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 709E150B48
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 14:59:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42B2D50B52
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 15:00:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728712AbfFXM7W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 08:59:22 -0400
-Received: from ste-pvt-msa1.bahnhof.se ([213.80.101.70]:11206 "EHLO
-        ste-pvt-msa1.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728070AbfFXM7V (ORCPT
+        id S1730532AbfFXNAa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 09:00:30 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:37721 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728927AbfFXNA3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 08:59:21 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTP id 840FE3F669;
-        Mon, 24 Jun 2019 14:59:18 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at bahnhof.se
-X-Spam-Flag: NO
-X-Spam-Score: -2.9
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 tagged_above=-999 required=6.31
-        tests=[ALL_TRUSTED=-1, BAYES_00=-1.9] autolearn=ham autolearn_force=no
-Received: from ste-pvt-msa1.bahnhof.se ([127.0.0.1])
-        by localhost (ste-pvt-msa1.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 1ArtfnyGGGGw; Mon, 24 Jun 2019 14:59:18 +0200 (CEST)
-Received: from localhost (h-41-252.A163.priv.bahnhof.se [46.59.41.252])
-        (Authenticated sender: mb547485)
-        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTPA id 32B2C3F4E9;
-        Mon, 24 Jun 2019 14:59:17 +0200 (CEST)
-Date:   Mon, 24 Jun 2019 14:59:16 +0200
-From:   Fredrik Noring <noring@nocrew.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Guenter Roeck <linux@roeck-us.net>, laurentiu.tudor@nxp.com,
-        stern@rowland.harvard.edu, gregkh@linuxfoundation.org,
-        linux-usb@vger.kernel.org, marex@denx.de, leoyang.li@nxp.com,
-        linux-kernel@vger.kernel.org, robin.murphy@arm.com,
-        JuergenUrban@gmx.de
-Subject: Re: [PATCH v7 3/5] usb: host: ohci-sm501: init genalloc for local
- memory
-Message-ID: <20190624125916.GA2516@sx9>
-References: <20190605214622.GA22254@roeck-us.net>
- <20190611133223.GA30054@roeck-us.net>
- <20190611172654.GA2602@sx9>
- <20190611190343.GA18459@roeck-us.net>
- <20190613134033.GA2489@sx9>
- <bdfd2178-9e3c-dc15-6aa1-ec1f1fbcb191@roeck-us.net>
- <20190613153414.GA909@sx9>
- <3f2164cd-7655-b7cc-ec57-d8751886728c@roeck-us.net>
- <20190614142816.GA2574@sx9>
- <20190624063515.GA3296@lst.de>
+        Mon, 24 Jun 2019 09:00:29 -0400
+Received: by mail-wm1-f66.google.com with SMTP id f17so13295763wme.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 06:00:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:openpgp:autocrypt:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=Nmpgddv/VZ7SylRsR89EiRePJjvIlH6D/oTU9sJHdKo=;
+        b=JUM8Et2hbU/oiGp41zM4dR19qryH3yi54Ow8jD8T1Q0wlk+pVNrUwrxpEXm75IrruH
+         tsloKva+BvpwnOTlHahpUTDVTjJzXSlX86ku0j0arwKGCXl8GX4sKegDLLR5pSDxpvKK
+         mEpWPqTgvUpxKoATI+hwVya9Ki3rkpHMnqwf3mB1bfN4zFZ7cpWgZ7klldm/wE4x9Z3U
+         P5GD4Ev9vSLumV+893GQoneV4MAZS4f3FOWBax6mh9uaiuYF3P6uW7L/OGoDG6WKESoh
+         c4Eqb2JXe6x02wluKsEjpe1ETm5n+gGBofy0dd8t8Fo+QBYPDJzcy7Jk/iV4fa9BjMcn
+         PgWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :organization:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=Nmpgddv/VZ7SylRsR89EiRePJjvIlH6D/oTU9sJHdKo=;
+        b=cJg4kw8oAF9XnDgr4xSYMe+CIYXMAdkJh/esxg4oCuPqitvm6lWEcWdvYJstpxKJdw
+         RMHMn5HWHGg2kcKk1GhBjCruEJWUeEpvNNiqB/ptqu29x2owlSV7MRmgNyjEM14YByIF
+         1vKVniqsZdLYAipJtuk76fPdiOg+se3BFg0+qE7n57ggU7q8UjCiOb6s1IS6MBtf+u6P
+         i/NgPlhieQIHl5B0jb8mCRJksbOdsCXqMLxvey2zTq8xWr8TC73xEdoZ7qT7GlX9dpyw
+         e5XULxvEJS3tcXFq1yD9LSxnimohQ5qYGzXZ3pPhQhtXBxV9Bttc9RKThHDTG+T/TFP0
+         /lAQ==
+X-Gm-Message-State: APjAAAXCNya7uFb6/xX7uD63PnKyhi2mM08Cm5QHxx6+oQy7Uyr3ujjW
+        FKfoGbYpzzUZ28DS3NoUSRgYqQ==
+X-Google-Smtp-Source: APXvYqxeLrg5tU/qUWKgVmCYqS8C1mMJJThRMesgyY5ep2ZP1c8PMXVZXf0TQdIiTpP+Mjtn2f/S/w==
+X-Received: by 2002:a1c:c74a:: with SMTP id x71mr16028776wmf.121.1561381226444;
+        Mon, 24 Jun 2019 06:00:26 -0700 (PDT)
+Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id x6sm12219581wru.0.2019.06.24.06.00.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 24 Jun 2019 06:00:25 -0700 (PDT)
+Subject: Re: [PATCH v2] phy: meson-g12a-usb3-pcie: disable locking for
+ cr_regmap
+To:     kishon@ti.com
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org
+References: <20190605090215.29905-1-narmstrong@baylibre.com>
+From:   Neil Armstrong <narmstrong@baylibre.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
+ 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
+ ZaTUOEkgIor5losDrePdPgE=
+Organization: Baylibre
+Message-ID: <990fd423-fe01-0c35-1ec9-99b43e1d9bc0@baylibre.com>
+Date:   Mon, 24 Jun 2019 15:00:23 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
+In-Reply-To: <20190605090215.29905-1-narmstrong@baylibre.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190624063515.GA3296@lst.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Christoph,
+Hi Kishon,
 
-> Can you send me the patch formally so that I can queue it up for the
-> dma-mapping tree?
+On 05/06/2019 11:02, Neil Armstrong wrote:
+> Locking is not needed for the phy_g12a_usb3_pcie_cr_bus_read/write() and
+> currently it causes the following BUG because of the usage of the
+> regmap_read_poll_timeout() running in spinlock_irq, configured by regmap fast_io.
+> 
+> Simply disable locking in the cr_regmap config since it's only used from the
+> PHY init callback function.
 
-That patch would be detrimental to local memory devices, as previously
-discussed, so I would like to suggest a much better approach, as shown below,
-where allocations are aligned as required but not necessarily much more than
-that.
+Gentle ping,
+Is the commit log right now ?
 
-Fredrik
+Thanks,
+Neil
 
-diff --git a/drivers/usb/core/hcd.c b/drivers/usb/core/hcd.c
---- a/drivers/usb/core/hcd.c
-+++ b/drivers/usb/core/hcd.c
-@@ -3014,7 +3014,7 @@ int usb_hcd_setup_local_mem(struct usb_hcd *hcd, phys_addr_t phys_addr,
- 	int err;
- 	void __iomem *local_mem;
- 
--	hcd->localmem_pool = devm_gen_pool_create(hcd->self.sysdev, PAGE_SHIFT,
-+	hcd->localmem_pool = devm_gen_pool_create(hcd->self.sysdev, 4,
- 						  dev_to_node(hcd->self.sysdev),
- 						  dev_name(hcd->self.sysdev));
- 	if (IS_ERR(hcd->localmem_pool))
-diff --git a/drivers/usb/host/ohci-hcd.c b/drivers/usb/host/ohci-hcd.c
---- a/drivers/usb/host/ohci-hcd.c
-+++ b/drivers/usb/host/ohci-hcd.c
-@@ -507,9 +507,9 @@ static int ohci_init (struct ohci_hcd *ohci)
- 	ohci->prev_frame_no = IO_WATCHDOG_OFF;
- 
- 	if (hcd->localmem_pool)
--		ohci->hcca = gen_pool_dma_alloc(hcd->localmem_pool,
-+		ohci->hcca = gen_pool_dma_alloc_align(hcd->localmem_pool,
- 						sizeof(*ohci->hcca),
--						&ohci->hcca_dma);
-+						&ohci->hcca_dma, 256);
- 	else
- 		ohci->hcca = dma_alloc_coherent(hcd->self.controller,
- 						sizeof(*ohci->hcca),
-diff --git a/drivers/usb/host/ohci-mem.c b/drivers/usb/host/ohci-mem.c
---- a/drivers/usb/host/ohci-mem.c
-+++ b/drivers/usb/host/ohci-mem.c
-@@ -94,7 +94,8 @@ td_alloc (struct ohci_hcd *hc, gfp_t mem_flags)
- 	struct usb_hcd	*hcd = ohci_to_hcd(hc);
- 
- 	if (hcd->localmem_pool)
--		td = gen_pool_dma_zalloc(hcd->localmem_pool, sizeof(*td), &dma);
-+		td = gen_pool_dma_zalloc_align(hcd->localmem_pool,
-+				sizeof(*td), &dma, 32);
- 	else
- 		td = dma_pool_zalloc(hc->td_cache, mem_flags, &dma);
- 	if (td) {
-@@ -137,7 +138,8 @@ ed_alloc (struct ohci_hcd *hc, gfp_t mem_flags)
- 	struct usb_hcd	*hcd = ohci_to_hcd(hc);
- 
- 	if (hcd->localmem_pool)
--		ed = gen_pool_dma_zalloc(hcd->localmem_pool, sizeof(*ed), &dma);
-+		ed = gen_pool_dma_zalloc_align(hcd->localmem_pool,
-+				sizeof(*ed), &dma, 16);
- 	else
- 		ed = dma_pool_zalloc(hc->ed_cache, mem_flags, &dma);
- 	if (ed) {
-diff --git a/include/linux/genalloc.h b/include/linux/genalloc.h
---- a/include/linux/genalloc.h
-+++ b/include/linux/genalloc.h
-@@ -121,7 +121,15 @@ extern unsigned long gen_pool_alloc_algo(struct gen_pool *, size_t,
- 		genpool_algo_t algo, void *data);
- extern void *gen_pool_dma_alloc(struct gen_pool *pool, size_t size,
- 		dma_addr_t *dma);
--void *gen_pool_dma_zalloc(struct gen_pool *pool, size_t size, dma_addr_t *dma);
-+extern void *gen_pool_dma_alloc_algo(struct gen_pool *pool, size_t size,
-+		dma_addr_t *dma, genpool_algo_t algo, void *data);
-+extern void *gen_pool_dma_alloc_align(struct gen_pool *pool, size_t size,
-+		dma_addr_t *dma, int align);
-+extern void *gen_pool_dma_zalloc(struct gen_pool *pool, size_t size, dma_addr_t *dma);
-+extern void *gen_pool_dma_zalloc_algo(struct gen_pool *pool, size_t size,
-+		dma_addr_t *dma, genpool_algo_t algo, void *data);
-+extern void *gen_pool_dma_zalloc_align(struct gen_pool *pool, size_t size,
-+		dma_addr_t *dma, int align);
- extern void gen_pool_free(struct gen_pool *, unsigned long, size_t);
- extern void gen_pool_for_each_chunk(struct gen_pool *,
- 	void (*)(struct gen_pool *, struct gen_pool_chunk *, void *), void *);
-diff --git a/lib/genalloc.c b/lib/genalloc.c
---- a/lib/genalloc.c
-+++ b/lib/genalloc.c
-@@ -347,13 +347,33 @@ EXPORT_SYMBOL(gen_pool_alloc_algo);
-  * Return: virtual address of the allocated memory, or %NULL on failure
-  */
- void *gen_pool_dma_alloc(struct gen_pool *pool, size_t size, dma_addr_t *dma)
-+{
-+	return gen_pool_dma_alloc_algo(pool, size, dma, pool->algo, pool->data);
-+}
-+EXPORT_SYMBOL(gen_pool_dma_alloc);
-+
-+/**
-+ * gen_pool_dma_alloc_algo - allocate special memory from the pool for DMA
-+ * usage with the given pool algorithm
-+ * @pool: pool to allocate from
-+ * @size: number of bytes to allocate from the pool
-+ * @dma: dma-view physical address return value.  Use NULL if unneeded.
-+ * @algo: algorithm passed from caller
-+ * @data: data passed to algorithm
-+ *
-+ * Allocate the requested number of bytes from the specified pool. Uses the
-+ * given pool allocation function. Can not be used in NMI handler on
-+ * architectures without NMI-safe cmpxchg implementation.
-+ */
-+void *gen_pool_dma_alloc_algo(struct gen_pool *pool, size_t size,
-+		dma_addr_t *dma, genpool_algo_t algo, void *data)
- {
- 	unsigned long vaddr;
- 
- 	if (!pool)
- 		return NULL;
- 
--	vaddr = gen_pool_alloc(pool, size);
-+	vaddr = gen_pool_alloc_algo(pool, size, algo, data);
- 	if (!vaddr)
- 		return NULL;
- 
-@@ -362,7 +382,31 @@ void *gen_pool_dma_alloc(struct gen_pool *pool, size_t size, dma_addr_t *dma)
- 
- 	return (void *)vaddr;
- }
--EXPORT_SYMBOL(gen_pool_dma_alloc);
-+EXPORT_SYMBOL(gen_pool_dma_alloc_algo);
-+
-+/**
-+ * gen_pool_dma_zalloc_align - allocate special from the pool for DMA usage
-+ * with the given alignment
-+ * @pool: pool to allocate from
-+ * @size: number of bytes to allocate from the pool
-+ * @dma: dma-view physical address return value.  Use %NULL if unneeded.
-+ * @align: alignment in bytes for starting address
-+ *
-+ * Allocate the requested number bytes from the specified pool, with the given
-+ * alignment restriction. Can not be used in NMI handler on architectures
-+ * without NMI-safe cmpxchg implementation.
-+ *
-+ * Return: virtual address of the allocated memory, or %NULL on failure
-+ */
-+void *gen_pool_dma_alloc_align(struct gen_pool *pool, size_t size,
-+		dma_addr_t *dma, int align)
-+{
-+	struct genpool_data_align data = { .align = align };
-+
-+	return gen_pool_dma_alloc_algo(pool, size, dma,
-+			gen_pool_first_fit_align, &data);
-+}
-+EXPORT_SYMBOL(gen_pool_dma_alloc_align);
- 
- /**
-  * gen_pool_dma_zalloc - allocate special zeroed memory from the pool for
-@@ -380,14 +424,60 @@ EXPORT_SYMBOL(gen_pool_dma_alloc);
-  */
- void *gen_pool_dma_zalloc(struct gen_pool *pool, size_t size, dma_addr_t *dma)
- {
--	void *vaddr = gen_pool_dma_alloc(pool, size, dma);
-+	return gen_pool_dma_zalloc_algo(pool, size, dma, pool->algo, pool->data);
-+}
-+EXPORT_SYMBOL(gen_pool_dma_zalloc);
-+
-+/**
-+ * gen_pool_dma_zalloc_algo - allocate special zeroed memory from the pool for
-+ * DMA usage with the given pool algorithm
-+ * @pool: pool to allocate from
-+ * @size: number of bytes to allocate from the pool
-+ * @dma: dma-view physical address return value.  Use %NULL if unneeded.
-+ * @algo: algorithm passed from caller
-+ * @data: data passed to algorithm
-+ *
-+ * Allocate the requested number of zeroed bytes from the specified pool. Uses
-+ * the pool allocation function. Can not be used in NMI handler on
-+ * architectures without NMI-safe cmpxchg implementation.
-+ *
-+ * Return: virtual address of the allocated zeroed memory, or %NULL on failure
-+ */
-+void *gen_pool_dma_zalloc_algo(struct gen_pool *pool, size_t size,
-+		dma_addr_t *dma, genpool_algo_t algo, void *data)
-+{
-+	void *vaddr = gen_pool_dma_alloc_algo(pool, size, dma, algo, data);
- 
- 	if (vaddr)
- 		memset(vaddr, 0, size);
- 
- 	return vaddr;
- }
--EXPORT_SYMBOL(gen_pool_dma_zalloc);
-+EXPORT_SYMBOL(gen_pool_dma_zalloc_algo);
-+
-+/**
-+ * gen_pool_dma_zalloc_align - allocate special zeroed memory from the pool for
-+ * DMA usage with the given alignment
-+ * @pool: pool to allocate from
-+ * @size: number of bytes to allocate from the pool
-+ * @dma: dma-view physical address return value.  Use %NULL if unneeded.
-+ * @align: alignment in bytes for starting address
-+ *
-+ * Allocate the requested number of zeroed bytes from the specified pool,
-+ * with the given alignment restriction. Can not be used in NMI handler on
-+ * architectures without NMI-safe cmpxchg implementation.
-+ *
-+ * Return: virtual address of the allocated zeroed memory, or %NULL on failure
-+ */
-+void *gen_pool_dma_zalloc_align(struct gen_pool *pool, size_t size,
-+		dma_addr_t *dma, int align)
-+{
-+	struct genpool_data_align data = { .align = align };
-+
-+	return gen_pool_dma_zalloc_algo(pool, size, dma,
-+			gen_pool_first_fit_align, &data);
-+}
-+EXPORT_SYMBOL(gen_pool_dma_zalloc_align);
- 
- /**
-  * gen_pool_free - free allocated special memory back to the pool
+> 
+> BUG: sleeping function called from invalid context at drivers/phy/amlogic/phy-meson-g12a-usb3-pcie.c:85
+> in_atomic(): 1, irqs_disabled(): 128, pid: 60, name: kworker/3:1
+> [snip]
+> Workqueue: events deferred_probe_work_func
+> Call trace:
+>  dump_backtrace+0x0/0x190
+>  show_stack+0x14/0x20
+>  dump_stack+0x90/0xb4
+>  ___might_sleep+0xec/0x110
+>  __might_sleep+0x50/0x88
+>  phy_g12a_usb3_pcie_cr_bus_addr.isra.0+0x80/0x1a8
+>  phy_g12a_usb3_pcie_cr_bus_read+0x34/0x1d8
+>  _regmap_read+0x60/0xe0
+>  _regmap_update_bits+0xc4/0x110
+>  regmap_update_bits_base+0x60/0x90
+>  phy_g12a_usb3_pcie_init+0xdc/0x210
+>  phy_init+0x74/0xd0
+>  dwc3_meson_g12a_probe+0x2cc/0x4d0
+>  platform_drv_probe+0x50/0xa0
+>  really_probe+0x20c/0x3b8
+>  driver_probe_device+0x68/0x150
+>  __device_attach_driver+0xa8/0x170
+>  bus_for_each_drv+0x64/0xc8
+>  __device_attach+0xd8/0x158
+>  device_initial_probe+0x10/0x18
+>  bus_probe_device+0x90/0x98
+>  deferred_probe_work_func+0x94/0xe8
+>  process_one_work+0x1e0/0x338
+>  worker_thread+0x230/0x458
+>  kthread+0x134/0x138
+>  ret_from_fork+0x10/0x1con,
+> 
+> Fixes: 36077e16c050 ("phy: amlogic: Add Amlogic G12A USB3 + PCIE Combo PHY Driver")
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> ---
+>  drivers/phy/amlogic/phy-meson-g12a-usb3-pcie.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/phy/amlogic/phy-meson-g12a-usb3-pcie.c b/drivers/phy/amlogic/phy-meson-g12a-usb3-pcie.c
+> index 6233a7979a93..ac322d643c7a 100644
+> --- a/drivers/phy/amlogic/phy-meson-g12a-usb3-pcie.c
+> +++ b/drivers/phy/amlogic/phy-meson-g12a-usb3-pcie.c
+> @@ -188,7 +188,7 @@ static const struct regmap_config phy_g12a_usb3_pcie_cr_regmap_conf = {
+>  	.reg_read = phy_g12a_usb3_pcie_cr_bus_read,
+>  	.reg_write = phy_g12a_usb3_pcie_cr_bus_write,
+>  	.max_register = 0xffff,
+> -	.fast_io = true,
+> +	.disable_locking = true,
+>  };
+>  
+>  static int phy_g12a_usb3_init(struct phy *phy)
+> 
+
