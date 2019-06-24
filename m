@@ -2,137 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02CAE50887
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:19:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A1F115089B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:19:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730711AbfFXKS3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 06:18:29 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:41550 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729957AbfFXKS1 (ORCPT
+        id S1730741AbfFXKTQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 06:19:16 -0400
+Received: from mx0b-0014ca01.pphosted.com ([208.86.201.193]:45346 "EHLO
+        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729400AbfFXKTP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 06:18:27 -0400
-Received: by mail-lj1-f193.google.com with SMTP id 205so3245902ljj.8;
-        Mon, 24 Jun 2019 03:18:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=vyuS1ujG9UIY+yejiz+Q6yg4IZCzarP8XNib11msW9Y=;
-        b=tUaCZF6G7U0RK8nN+5LABe7LZahV07ysvAzTK0CLDMpaQm6Ht5/KvCDPSCzbA3wKfr
-         kGLjZlhulwBTIuzSMMx0XflPJik8SXfJw1JpMz80IUQsundJSFmYuq/No9WhEIeqkR7p
-         uHlGxlC8I7adEvMM8r9cwwBBy6BP76BNbT1ct4Vhb8FmLziuJARmAtuZlK3HB9RNrCRU
-         h9o9Dl6U0s5T++8AP8/0hKEOR4P7o7eBPSXMcP5sKOPhbhpLhug03H0Bv+ALdHPtjPVi
-         VIYEDyM8kSPnt38ab3OfmA5/8Zgd1h9QVz/Mc0SxIgxQO02dpnP4rXexZEF5KnZSuX8B
-         W1ig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=vyuS1ujG9UIY+yejiz+Q6yg4IZCzarP8XNib11msW9Y=;
-        b=eMMF6TtFgZ4G/jD/BaOAoCiQ/15ky13+iU8peyWN64rNh752BNeQjCait1y/yGvegc
-         0G4agv4L7NpG/wl9wyWF/8H4QEaq494cRRHoEYHFzykq+qlXn4kgd/TMBjvLQii/vA7L
-         +6KmFDNNng7WE2DVrnoO71KcCEi99Ip1+Fg0qzhAFLjDrXLDQN1Nn0qw0R5P3V+eTxV0
-         xcTcvbDCaOuObO2rymHr1nPabtShf6L6ZdgPDEXtgD0MefjH5Dn34pEbReGx8d3mlVF4
-         89wKv4mw42kkj0aXYRkx3TiaLpZt8ISSfdqEkSqFs5yjZjExA3q36/xvaVBqYD2ZN3/X
-         BUFg==
-X-Gm-Message-State: APjAAAUxtO1gIqvkdtMEFY+XsQiYGwQkc0W6X3PsbUEX8yKbsIFOsXc4
-        i6aqtZT+WTLTEVgfNh1sLVvSzbQi
-X-Google-Smtp-Source: APXvYqxYmfWiHdxTXcDfhgn9yzRhuVvf6Kq/pEglYaIKNvZ6IyPRz1YxNbsIATONH9Ii1vocD82GXg==
-X-Received: by 2002:a2e:980e:: with SMTP id a14mr71871735ljj.60.1561371505209;
-        Mon, 24 Jun 2019 03:18:25 -0700 (PDT)
-Received: from [192.168.2.145] (ppp91-79-162-197.pppoe.mtu-net.ru. [91.79.162.197])
-        by smtp.googlemail.com with ESMTPSA id p9sm1686854lji.107.2019.06.24.03.18.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Jun 2019 03:18:24 -0700 (PDT)
-Subject: Re: [PATCH v1] OPP: Fix crashing when current OPP has unsupportable
- voltage
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Marc Dietrich <marvin24@gmx.de>, linux-pm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190623175053.26167-1-digetx@gmail.com>
- <20190624071857.6ji4zc55qugpqnij@vireshk-i7>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <c5c7d412-b3f6-1f6c-dc34-0f541e955d47@gmail.com>
-Date:   Mon, 24 Jun 2019 13:18:23 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
-MIME-Version: 1.0
-In-Reply-To: <20190624071857.6ji4zc55qugpqnij@vireshk-i7>
-Content-Type: text/plain; charset=utf-8
+        Mon, 24 Jun 2019 06:19:15 -0400
+Received: from pps.filterd (m0042333.ppops.net [127.0.0.1])
+        by mx0b-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5OAIdkY007722;
+        Mon, 24 Jun 2019 03:19:05 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=proofpoint;
+ bh=g8/H8c55eFuiumdincuibm2IYtX75b4d0bKGDijdr+s=;
+ b=t41nle2iNN7shIpGe1j6I2IHipSYh8tcWEbMey3b8zSslH6hmP71FAzak4fD82TgeGAv
+ 0JF0FSgCFgW0viKw/LSjcTXpfN79MNyZuHc8QmJpLMf5ENliDj/BoamQRlrpMpUxJmlq
+ BSJDY0BJRIdrpGP9hPVlP+Qty5NQDyK4U8WHQAEfWwO6bs17MID90fSpRvQWc7afa2Ui
+ loR75PPX8pD9GDTmnxNhEze1qQmJXGI4pF9PDooEjr/9j9YyTO4OcjPXSovI9EXivava
+ 2pGmscipqQV0KUTDvNkADKTSH5Tm6xIwJ6e+uAQoitAU1mW9q9mmak9r2u1BI7ZBfqZ3 DA== 
+Authentication-Results: cadence.com;
+        spf=pass smtp.mailfrom=pthombar@cadence.com
+Received: from nam04-bn3-obe.outbound.protection.outlook.com (mail-bn3nam04lp2053.outbound.protection.outlook.com [104.47.46.53])
+        by mx0b-0014ca01.pphosted.com with ESMTP id 2t9fwtqeq3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 24 Jun 2019 03:19:05 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=g8/H8c55eFuiumdincuibm2IYtX75b4d0bKGDijdr+s=;
+ b=Rtzmv2W6Kki10fpmmZhPh1R8e7AdzFVPN7ba6PPDH0xaypn94CIpwa4XyQ9nm6+AUnowW+9Z5/dCrCdd3hOCBVe4yyNrGpsIWo6DBFE3LYSfmMt28yvbLuujquQrTRHy1SiXnWI27SPidvIhS2zttg9RWbN72Gk8GPI3fCeJpJ0=
+Received: from CO2PR07MB2469.namprd07.prod.outlook.com (10.166.94.21) by
+ CO2PR07MB2520.namprd07.prod.outlook.com (10.166.95.8) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2008.16; Mon, 24 Jun 2019 10:19:03 +0000
+Received: from CO2PR07MB2469.namprd07.prod.outlook.com
+ ([fe80::b9c0:ba2d:e9e8:4176]) by CO2PR07MB2469.namprd07.prod.outlook.com
+ ([fe80::b9c0:ba2d:e9e8:4176%4]) with mapi id 15.20.1987.014; Mon, 24 Jun 2019
+ 10:19:03 +0000
+From:   Parshuram Raju Thombare <pthombar@cadence.com>
+To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
+CC:     "andrew@lunn.ch" <andrew@lunn.ch>,
+        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Rafal Ciepiela <rafalc@cadence.com>,
+        Anil Joy Varughese <aniljoy@cadence.com>,
+        Piotr Sroka <piotrs@cadence.com>
+Subject: RE: [PATCH v4 3/5] net: macb: add support for c45 PHY
+Thread-Topic: [PATCH v4 3/5] net: macb: add support for c45 PHY
+Thread-Index: AQHVKaVPGC45x6EWd0uJPVpf/aeuSqapBSQAgAFXn5CAADI9gIAACRZw
+Date:   Mon, 24 Jun 2019 10:19:03 +0000
+Message-ID: <CO2PR07MB2469305C663FE90BC75E0AAFC1E00@CO2PR07MB2469.namprd07.prod.outlook.com>
+References: <1561281419-6030-1-git-send-email-pthombar@cadence.com>
+ <1561281797-13796-1-git-send-email-pthombar@cadence.com>
+ <20190623101252.olfxbls3phgxttcb@shell.armlinux.org.uk>
+ <CO2PR07MB24695E11E3931BE2E5664054C1E00@CO2PR07MB2469.namprd07.prod.outlook.com>
+ <20190624094233.3xick3snqbcm55gu@shell.armlinux.org.uk>
+In-Reply-To: <20190624094233.3xick3snqbcm55gu@shell.armlinux.org.uk>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNccHRob21iYXJcYXBwZGF0YVxyb2FtaW5nXDA5ZDg0OWI2LTMyZDMtNGE0MC04NWVlLTZiODRiYTI5ZTM1Ylxtc2dzXG1zZy03YjIzZTk5Ni05NjY5LTExZTktODRmOS0xMDY1MzBlNmVmM2VcYW1lLXRlc3RcN2IyM2U5OTgtOTY2OS0xMWU5LTg0ZjktMTA2NTMwZTZlZjNlYm9keS50eHQiIHN6PSI0MzkiIHQ9IjEzMjA1ODQ1MTQwMzM2MzkzNyIgaD0iNWFEUUtha3p5dU13RnlwZERZN2VsL1VvVFZjPSIgaWQ9IiIgYmw9IjAiIGJvPSIxIi8+PC9tZXRhPg==
+x-dg-rorf: 
+x-originating-ip: [14.143.9.161]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 9259f529-51e1-4806-1038-08d6f88d61f7
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:CO2PR07MB2520;
+x-ms-traffictypediagnostic: CO2PR07MB2520:
+x-microsoft-antispam-prvs: <CO2PR07MB2520A55CC8A830BCAF29C69DC1E00@CO2PR07MB2520.namprd07.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:3044;
+x-forefront-prvs: 007814487B
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(376002)(39860400002)(136003)(396003)(346002)(199004)(189003)(36092001)(26005)(7736002)(81156014)(81166006)(7696005)(99286004)(8936002)(55236004)(256004)(33656002)(305945005)(76176011)(6506007)(186003)(6116002)(74316002)(486006)(73956011)(6916009)(446003)(11346002)(3846002)(229853002)(476003)(6436002)(66066001)(478600001)(5660300002)(52536014)(55016002)(102836004)(8676002)(53936002)(71200400001)(71190400001)(4326008)(6246003)(78486014)(54906003)(25786009)(76116006)(2906002)(66556008)(9686003)(86362001)(4744005)(66446008)(64756008)(66476007)(14454004)(66946007)(68736007)(107886003)(316002);DIR:OUT;SFP:1101;SCL:1;SRVR:CO2PR07MB2520;H:CO2PR07MB2469.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: cadence.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: UUeQQCMWqcgmH170a5v/R9u3q+A8ICI3oG5UPfv+yJrNRKBW5aCut/RUXL6xMgBKjrcsNYh2fwa0PI380qiIEsdDCJYP+oFh78h8ck7ShyYBva+EGLRMCAhcRpkjSzUnkshC0wJDFN77WtJSFW5ngKcQp7z2kz5tXh62693bvIqF9PaDdX1gCFGX8wreIHcX455+g2VhD0Oa24g9vA0SjyTDAdf0JLCIsjn0uFZsemtfOHsGSBjeHHBb8911Bp1K2CVmAiYWx7bVaFt0rmpi/Sm21DSYqneK3sJb2hiyuW5z1pJT3f48urCfw4L/4WvGhLjTV0cfSfneWsmp2DRYLpLQy8Bot8FOAR3Lf9tI1hp87SmSGatTqprFoa18RgUWbGXlK7tcmRV49/3C1A3kCji8F2TaMREzTVkC+TlN5pw=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: cadence.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9259f529-51e1-4806-1038-08d6f88d61f7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jun 2019 10:19:03.5571
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: pthombar@global.cadence.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO2PR07MB2520
+X-Proofpoint-SPF-Result: pass
+X-Proofpoint-SPF-Record: v=spf1 include:spf.smktg.jp include:_spf.salesforce.com
+ include:mktomail.com include:spf-0014ca01.pphosted.com
+ include:spf.protection.outlook.com include:auth.msgapp.com
+ include:spf.mandrillapp.com ~all
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-24_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
+ priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
+ spamscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=677 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906240087
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-24.06.2019 10:18, Viresh Kumar пишет:
-> On 23-06-19, 20:50, Dmitry Osipenko wrote:
->> Fix NULL dereference caused by a typo in the code. In particular it
->> happens when CPU is running on a frequency which has unsupportable voltage
->> (by regulator) defined in the OPP table and a custom set_opp() callback is
->> being used. The problem was spotted during of testing of upcoming update
->> for the NVIDIA Tegra CPUFreq driver.
->>
->> Cc: stable <stable@vger.kernel.org>
->> Fixes: 7e535993fa4f ("OPP: Separate out custom OPP handler specific code")
->> Reported-by: Marc Dietrich <marvin24@gmx.de>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  drivers/opp/core.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
->> index 9fda9a0ec016..89ec6aa220cf 100644
->> --- a/drivers/opp/core.c
->> +++ b/drivers/opp/core.c
->> @@ -685,7 +685,7 @@ static int _set_opp_custom(const struct opp_table *opp_table,
->>  
->>  	data->old_opp.rate = old_freq;
->>  	size = sizeof(*old_supply) * opp_table->regulator_count;
->> -	if (IS_ERR(old_supply))
->> +	if (!old_supply)
->>  		memset(data->old_opp.supplies, 0, size);
->>  	else
->>  		memcpy(data->old_opp.supplies, old_supply, size);
-> 
-> While the change is fine, the commit log isn't. It isn't about
-> unsupportable voltage but frequency. The frequency the CPU is
-> currently running at, is not present in the OPP table and so there is
-> no corresponding OPP, hence no voltage supplies.
+>However, it seems from that comment that you're not talking about real
+>hardware.  Is there no real hardware out there supporting 10G mode with
+>these proposed driver changes yet?
+I think there are some 10GBaseT PHY out there, but I don't have any test
+setup with those. This patch is tested on emulation test setup.=20
 
-Ah, indeed! Looks like the reason for old OPP not being found was caused
-by the appropriate OPP being disabled because of unsupportable voltage.
-The offending higher "unsupportable" CPU freq was left after bootloader.
-
-> I have applied this patch with following change log:
-> 
-> commit 560d1bcad715c215e7ffe5d7cffe045974b623d0 (HEAD -> opp/linux-next)
-> Author: Dmitry Osipenko <digetx@gmail.com>
-> Date:   Sun Jun 23 20:50:53 2019 +0300
-> 
->     opp: Don't use IS_ERR on invalid supplies
->     
->     _set_opp_custom() receives a set of OPP supplies as its arguments and
->     the caller of it passes NULL when the supplies are not valid. But
->     _set_opp_custom(), by mistake, checks for error by performing
->     IS_ERR(old_supply) on it which will always evaluate to false.
->     
->     The problem was spotted during of testing of upcoming update for the
->     NVIDIA Tegra CPUFreq driver.
->     
->     Cc: stable <stable@vger.kernel.org>
->     Fixes: 7e535993fa4f ("OPP: Separate out custom OPP handler specific code")
->     Reported-by: Marc Dietrich <marvin24@gmx.de>
->     Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->     [ Viresh: Massaged changelog ]
->     Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
->  drivers/opp/core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-
-Thank you very much!
+Regards,
+Parshuram Thombare
