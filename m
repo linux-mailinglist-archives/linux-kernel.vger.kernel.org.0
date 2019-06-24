@@ -2,94 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52BA24FECE
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 03:57:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41ED64FEC8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 03:57:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726768AbfFXB5j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 21:57:39 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:49529 "EHLO ozlabs.org"
+        id S1726673AbfFXB52 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 21:57:28 -0400
+Received: from ozlabs.org ([203.11.71.1]:52193 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726416AbfFXB50 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726382AbfFXB50 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 23 Jun 2019 21:57:26 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45XBHj4b2fz9sNk;
-        Mon, 24 Jun 2019 11:18:09 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45XBLP6CHyz9sP1;
+        Mon, 24 Jun 2019 11:20:29 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1561339090;
-        bh=dKWqYqiQ43IXw7uRXmq4Og/WGeJ5CqQGoMCUg/cqTzk=;
-        h=Date:From:To:Cc:Subject:From;
-        b=Rzd7Wwh19ca62JJVEBtyosh+5VJdbMPGBaNzrPw6xvfiYJEzWIX/8ZJ9YFZklw7/Y
-         TF8/wATgqdjembLEeIxeLGOx67VKRUGrgh9CJt2FAdU+2aHeCt5n22ZmQcmNf4AF/D
-         WE5/kOo/k24Rt+zuNzubWnx30lVJpcQh5EgaeyupbO295rRLdsvp3uHGuARWmRHx9Y
-         hx5QBHgWwcEXxu1AehzCfu0t4Jqfq6yp3zDNynMmul8/NsJqqJYjXEs1vhxXwTZS4+
-         qvCVGqKp93DFvDsvkTu81F/4HK13EZvMSHbPGC1rHZVVkrhw0Gc6DiFNk2p5yOPxfl
-         IRrf7Tvl5mQzA==
-Date:   Mon, 24 Jun 2019 11:18:08 +1000
+        s=201702; t=1561339233;
+        bh=tHpKwuHkDaYhqmZgfsFoheh7ykmCSOsO+dlIAnOp5YA=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=iH/Ezv8DzLvBwG2s0LQ7ZBM1welnN8fckpARVHddhZPLxtjELZrJzSp8tZYjclIHj
+         OiHAqv6wiLW5pCCaa9reiSr+VLvDsU4HFF6hKpNdx8mwP/+TMKGiaHvPmRS70uMSfT
+         1d2b5DZrek2rF+dHmCPF7+4RWTaw19TsknadJ7KEg7DKURj+1IWE29q0rY6TQJX8Sn
+         POZsWqoDp3665q0EDKriozuPffzKfV0xQPt73rUTT1gXEDINFIaMrUugDMEm1sekUa
+         z3I7ArxUhv/hmTqmhwVj5cIwMdm5dOfjhnHdboIGIkHiUyOXUgMKUsG/AJ7wTubPYC
+         7dJqjoN7uByRA==
+Date:   Mon, 24 Jun 2019 11:20:29 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: linux-next: manual merge of the hwmon-staging tree with Linus' tree
-Message-ID: <20190624111808.59e2258f@canb.auug.org.au>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Michael Kelley <mikelley@microsoft.com>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Peter Collingbourne <pcc@google.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Huw Davies <huw@codeweavers.com>, linux-hyperv@vger.kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v6 18/19] x86: Add support for generic vDSO
+Message-ID: <20190624112029.4f42a8cd@canb.auug.org.au>
+In-Reply-To: <20190624002430.GN2226@sasha-vm>
+References: <20190530141531.43462-1-vincenzo.frascino@arm.com>
+        <20190530141531.43462-19-vincenzo.frascino@arm.com>
+        <BYAPR21MB1221D54FCEC97509EEF7395CD7180@BYAPR21MB1221.namprd21.prod.outlook.com>
+        <alpine.DEB.2.21.1906141313150.1722@nanos.tec.linutronix.de>
+        <20190614211710.GQ1513@sasha-vm>
+        <alpine.DEB.2.21.1906221542270.5503@nanos.tec.linutronix.de>
+        <20190623190929.GL2226@sasha-vm>
+        <20190624075834.2491a61a@canb.auug.org.au>
+        <20190624002430.GN2226@sasha-vm>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/l1Uao6wQiQSV=qS6.2pFurn"; protocol="application/pgp-signature"
+ boundary="Sig_/UW6IjEE3Jj_YtxhGwam1e.t"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/l1Uao6wQiQSV=qS6.2pFurn
+--Sig_/UW6IjEE3Jj_YtxhGwam1e.t
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Sasha,
 
-Today's linux-next merge of the hwmon-staging tree got a conflict in:
+On Sun, 23 Jun 2019 20:24:30 -0400 Sasha Levin <sashal@kernel.org> wrote:
+>
+> Pushed now. For some reason the airport wifi was blocking ssh :/
 
-  drivers/hwmon/iio_hwmon.c
-
-between commit:
-
-  d2912cb15bdd ("treewide: Replace GPLv2 boilerplate/reference with SPDX - =
-rule 500")
-
-from Linus' tree and commit:
-
-  2119f92b6b66 ("hwmon: Convert remaining drivers to use SPDX identifier")
-
-from the hwmon-staging tree.
-
-I fixed it up (Ijust used the version from Linus' tree - GPL-2.0-only
-v. GPL-2.0) and can carry the fix as necessary. This is now fixed as
-far as linux-next is concerned, but any non trivial conflicts should be
-mentioned to your upstream maintainer when your tree is submitted for
-merging.  You may also want to consider cooperating with the maintainer
-of the conflicting tree to minimise any particularly complex conflicts.
+Thanks.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/l1Uao6wQiQSV=qS6.2pFurn
+--Sig_/UW6IjEE3Jj_YtxhGwam1e.t
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0QJNAACgkQAVBC80lX
-0GxtAQf9El3MCE4vFEdNgOiwDr0LAQ+Ue43nuaPDBbL+8RKW2Qj25n8tEqa9tDcy
-FUoqhe0Z2EwQJEVTUAA+ON/5ynS9d9mC9EJQhZHTkppjQ686EsaNPyc6IR9weOwu
-PUU4TpH2fx58s9UFC9WIB7QNyJFMIBCiz0jdJmjoH+pjiDIqb5ei5ycFe6yCG1UJ
-KVQ9pf1ZY2eUGYPLgJBdbcfhepCoeCkn3USJ1liArOp/XF1B559WedAQjKSXK+Tj
-D6yoo7yl4DhdSJtS/3sH0CEZERpgQBVxZVkvHa4LBux8rb18RmKQM+NrabX5kcfg
-2Ak8Te7Gm+xU6Z6yXEWzrUqDDKi0Dg==
-=5snR
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0QJV0ACgkQAVBC80lX
+0GwUBQf/e/6tJWyAWMaopYMBDqN2qz4oN/vHsi0Cl4cEtZikDfm20K5/e1B/rwg4
+3AdDGd4MfB2z5/yvCCH0gZcA3R8U8r/OX6rpU6BHD6jewnLN813ja7GesU+lgWGE
+fDznHmIHmGaN2LljjUA34WkBymJGMDsOcA30q6ZIdO48ABULY+FstQOahDrTFMde
+Btm0wVAvmSOP5iIIXt64JWYPhNzGJljLoW9Y5SzpAQOIrTCzYaTIcKceQsBXmPoK
+XH6Ypn5GZCfCNZD/9reOW8IG8CNsSN+7OBdtFFC9W7/OGZdAmMz9n6eX+a/9WS3x
+VqP7o7p8NE5G2ug+cDsnFn1aIkDb6g==
+=/UhR
 -----END PGP SIGNATURE-----
 
---Sig_/l1Uao6wQiQSV=qS6.2pFurn--
+--Sig_/UW6IjEE3Jj_YtxhGwam1e.t--
