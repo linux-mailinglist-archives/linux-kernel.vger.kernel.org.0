@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E58E5506A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:01:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C54A850739
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:06:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728638AbfFXKAC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 06:00:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59458 "EHLO mail.kernel.org"
+        id S1729972AbfFXKFm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 06:05:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37600 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729351AbfFXJ77 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 05:59:59 -0400
+        id S1729799AbfFXKFh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 06:05:37 -0400
 Received: from localhost (f4.8f.5177.ip4.static.sl-reverse.com [119.81.143.244])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E8B7C214C6;
-        Mon, 24 Jun 2019 09:59:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D01F121473;
+        Mon, 24 Jun 2019 10:05:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561370398;
-        bh=30UQfNx5V5qlH97nqNcpVbRoZDxwq1XOiz803BNOLlw=;
+        s=default; t=1561370736;
+        bh=tsibFGeCM9kozJlvLSct5i3Ff8kYIeVStbM5u+Zsugk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1uRUFxJQhBJ9a5UYJDn8WLaLjtJJUiq0JGlF3YjxZ5reom4tK2+2Dqc2k5VaTouJp
-         cTkRVSDCXzNbdgADyBwf2sH+P4d/cmVStkXP3QeInHKgm7XTDoneeSCzYg2BIqeMZm
-         ed4YTUb/nrhxgv5Kvcy0Q716J96TXNOio903LGek=
+        b=2e/ypiZo03yVTnrT69Z5asUZiwkwXZKhsm15dLWTQ0+ONYQuKLqVDct7985HTPm7b
+         SMY27DoEdRFbmEHIM/N6QZx2xnoMA9U3IDQLh66cGHKb3jFBz89mf4EK728Xz+yA+m
+         S8FsjPQsQy3p4magk17fvgtN6Xe4wBK2pVSiL2Gg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Faiz Abbas <faiz_abbas@ti.com>,
-        Tony Lindgren <tony@atomide.com>
-Subject: [PATCH 4.14 44/51] ARM: dts: am57xx-idk: Remove support for voltage switching for SD card
+        stable@vger.kernel.org, ShihPo Hung <shihpo.hung@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        linux-riscv@lists.infradead.org
+Subject: [PATCH 4.19 72/90] riscv: mm: synchronize MMU after pte change
 Date:   Mon, 24 Jun 2019 17:57:02 +0800
-Message-Id: <20190624092311.047822964@linuxfoundation.org>
+Message-Id: <20190624092318.729317368@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190624092305.919204959@linuxfoundation.org>
-References: <20190624092305.919204959@linuxfoundation.org>
+In-Reply-To: <20190624092313.788773607@linuxfoundation.org>
+References: <20190624092313.788773607@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,41 +46,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Faiz Abbas <faiz_abbas@ti.com>
+From: ShihPo Hung <shihpo.hung@sifive.com>
 
-commit 88a748419b84187fd1da05637b8e5928b04a1e06 upstream.
+commit bf587caae305ae3b4393077fb22c98478ee55755 upstream.
 
-If UHS speed modes are enabled, a compatible SD card switches down to
-1.8V during enumeration. If after this a software reboot/crash takes
-place and on-chip ROM tries to enumerate the SD card, the difference in
-IO voltages (host @ 3.3V and card @ 1.8V) may end up damaging the card.
+Because RISC-V compliant implementations can cache invalid entries
+in TLB, an SFENCE.VMA is necessary after changes to the page table.
+This patch adds an SFENCE.vma for the vmalloc_fault path.
 
-The fix for this is to have support for power cycling the card in
-hardware (with a PORz/soft-reset line causing a power cycle of the
-card). Since am571x-, am572x- and am574x-idk don't have this
-capability, disable voltage switching for these boards.
-
-The major effect of this is that the maximum supported speed
-mode is now high speed(50 MHz) down from SDR104(200 MHz).
-
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: ShihPo Hung <shihpo.hung@sifive.com>
+[paul.walmsley@sifive.com: reversed tab->whitespace conversion,
+ wrapped comment lines]
+Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
+Cc: Palmer Dabbelt <palmer@sifive.com>
+Cc: Albert Ou <aou@eecs.berkeley.edu>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>
+Cc: linux-riscv@lists.infradead.org
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/boot/dts/am57xx-idk-common.dtsi |    1 +
- 1 file changed, 1 insertion(+)
+ arch/riscv/mm/fault.c |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
---- a/arch/arm/boot/dts/am57xx-idk-common.dtsi
-+++ b/arch/arm/boot/dts/am57xx-idk-common.dtsi
-@@ -405,6 +405,7 @@
- 	vqmmc-supply = <&ldo1_reg>;
- 	bus-width = <4>;
- 	cd-gpios = <&gpio6 27 GPIO_ACTIVE_LOW>; /* gpio 219 */
-+	no-1-8-v;
- };
+--- a/arch/riscv/mm/fault.c
++++ b/arch/riscv/mm/fault.c
+@@ -29,6 +29,7 @@
  
- &mmc2 {
+ #include <asm/pgalloc.h>
+ #include <asm/ptrace.h>
++#include <asm/tlbflush.h>
+ 
+ /*
+  * This routine handles page faults.  It determines the address and the
+@@ -281,6 +282,18 @@ vmalloc_fault:
+ 		pte_k = pte_offset_kernel(pmd_k, addr);
+ 		if (!pte_present(*pte_k))
+ 			goto no_context;
++
++		/*
++		 * The kernel assumes that TLBs don't cache invalid
++		 * entries, but in RISC-V, SFENCE.VMA specifies an
++		 * ordering constraint, not a cache flush; it is
++		 * necessary even after writing invalid entries.
++		 * Relying on flush_tlb_fix_spurious_fault would
++		 * suffice, but the extra traps reduce
++		 * performance. So, eagerly SFENCE.VMA.
++		 */
++		local_flush_tlb_page(addr);
++
+ 		return;
+ 	}
+ }
 
 
