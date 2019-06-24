@@ -2,186 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA7C750138
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 07:44:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8351050116
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 07:43:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727569AbfFXFoL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 01:44:11 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:35422 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727463AbfFXFoE (ORCPT
+        id S1727106AbfFXFnX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 01:43:23 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:34612 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726223AbfFXFnW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 01:44:04 -0400
-Received: by mail-pg1-f194.google.com with SMTP id s27so6497333pgl.2;
-        Sun, 23 Jun 2019 22:44:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=atvVCCZlaaqvzEl6Yh465+OzoxbvPTqnW+FcPoxAmko=;
-        b=dCs9iUVMJyqrd2/T7sKKRH+p0B2WfPpIE2OcecwSrrJFBpxBF4g8gg6xLeoURsDMhU
-         SpwAFGDkvq99q4fx9JKaty/5erC6z8reYxaxW1L7YohqUq2TQNUp9PgaqLN7zgXWSFFk
-         SuDy8SeiQoa7aX9gLJ5dckOnxNza7JYx/1Q4evNc1MrKWUWWyoZvmoEz1Ovfistwyc+t
-         t3mT51xsj3BKbBYvXq39ztgc12hFPZcVWULzX0wYL0sHaNkccwvk0nCtQbkTsGPxewTl
-         ddlfcraPP7hN1vCUH6cRdlqBbKLt7SdTndpij8arEh8xbue67P7jABIb0mqoP4ZL8UIY
-         yNag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=atvVCCZlaaqvzEl6Yh465+OzoxbvPTqnW+FcPoxAmko=;
-        b=Y41Kk9LOqXcgHyVKNLtIzHy17l48+76iK9F8j1nfN0sLrBvGOCGGtRlG8wE3qLRoXj
-         8zxEMnLb/i3b7tKL26G0ImnHw8bZO4m3Vc97Fd1tOhZdQ1z1j4XHRILRJ8Qk8atoc7Qu
-         eMim1McVQVQ1XemiIxzIGszHyba6DBLLzfmssvFuZNbxJXxNZ6nWAr5Z9j8T6fg113ga
-         TiHr4ToXnTgcPnFM48Sjf7SEcTNEAB4u4tNbJh0C0/h9FGf18VtsI7AKdYgf0ICnX6GU
-         X4mmK/syD7opfhuQtErWuRBJ/zj0eFMKKyzHPsCbbx7iok8YPWKdEU9GPgd9W/arLNqe
-         Z+Zw==
-X-Gm-Message-State: APjAAAUi2LRiHWlzAjN8bIYxfrlJrn6QIR0gHYmuJEnrRlo9qfeZEKxH
-        FWlEya06voi0JUvbGN//wtE=
-X-Google-Smtp-Source: APXvYqwCf8aQbMfAF7+Kb3CzB9vu5dq4fm2q5GLjv+X4nbjUH8Z4lOK4+PjGKWxJKVrEBMrnnsoQrA==
-X-Received: by 2002:a63:a41:: with SMTP id z1mr31007694pgk.290.1561355043781;
-        Sun, 23 Jun 2019 22:44:03 -0700 (PDT)
-Received: from localhost ([2601:600:103:d129:8c22:ab98:95b3:d831])
-        by smtp.gmail.com with ESMTPSA id f7sm10146829pfd.43.2019.06.23.22.44.03
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sun, 23 Jun 2019 22:44:03 -0700 (PDT)
-From:   Jordan Hand <jordanhand22@gmail.com>
-Cc:     jordanhand22@gmail.com, Peter Huewe <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Allison Randal <allison@lohutok.net>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] tpm: Get TCG log from TPM2 ACPI table for tpm2 systems
-Date:   Sun, 23 Jun 2019 22:42:31 -0700
-Message-Id: <20190624054232.20216-1-jordanhand22@gmail.com>
+        Mon, 24 Jun 2019 01:43:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=G+0O3j+cgCRbigr/X4MIfnZa4yWmCGHY98UjePy9hlI=; b=WnxrlYY91HMHTqus7NTc7TkvF
+        mDPWku21XSxCKeAPWG/rATrzM+mOEukkUC/aepN9oWr4+USpYvA6rpAheJljOmRzQv4Fosq0IXzQ5
+        /lR09sihl/AgaGkaKRV8KZ8qt+O/HskRSKeBwYzk/8zosnQmWPGzXDAlZlrhivb2Ac9As7JAEwRNJ
+        azOD6kksRz/fZE0Xp3xOqBk9GkUgfdaz3LB3v81wBIAkvvg+0PxRQ7uMYCsFgPJv5SXT1g+IOC/KD
+        cbyUJ+5yxKazc4N530ff+eGFiHIO6qnd842pID0hlRpAQzqQiX+fvlTTJg6I++Na6SvSjjsEUibBz
+        zXKRYKCwQ==;
+Received: from 213-225-6-159.nat.highway.a1.net ([213.225.6.159] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hfHl5-00063u-7r; Mon, 24 Jun 2019 05:43:15 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Palmer Dabbelt <palmer@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>
+Cc:     Damien Le Moal <damien.lemoal@wdc.com>,
+        linux-riscv@lists.infradead.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: RISC-V nommu support v2
+Date:   Mon, 24 Jun 2019 07:42:54 +0200
+Message-Id: <20190624054311.30256-1-hch@lst.de>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190624034734.15957-1-jordanhand22@gmail.com>
-References: <20190624034734.15957-1-jordanhand22@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For TPM2-based systems, retrieve the TCG log from the TPM2 ACPI table.
+Hi all,
 
-Signed-off-by: Jordan Hand <jordanhand22@gmail.com>
----
-v2:
-- Apologies, v1 had a silly compile error
+below is a series to support nommu mode on RISC-V.  For now this series
+just works under qemu with the qemu-virt platform, but Damien has also
+been able to get kernel based on this tree with additional driver hacks
+to work on the Kendryte KD210, but that will take a while to cleanup
+an upstream.
 
- drivers/char/tpm/eventlog/acpi.c | 67 +++++++++++++++++++++++---------
- 1 file changed, 48 insertions(+), 19 deletions(-)
+To be useful this series also require the RISC-V binfmt_flat support,
+which I've sent out separately.
 
-diff --git a/drivers/char/tpm/eventlog/acpi.c b/drivers/char/tpm/eventlog/acpi.c
-index 63ada5e53f13..b945c4ff3af6 100644
---- a/drivers/char/tpm/eventlog/acpi.c
-+++ b/drivers/char/tpm/eventlog/acpi.c
-@@ -41,17 +41,31 @@ struct acpi_tcpa {
- 	};
- };
- 
-+struct acpi_tpm2 {
-+	struct acpi_table_header hdr;
-+	u16 platform_class;
-+	u16 reserved;
-+	u64 control_area_addr;
-+	u32 start_method;
-+	u8 start_method_params[12];
-+	u32 log_max_len;
-+	u64 log_start_addr;
-+} __packed;
-+
- /* read binary bios log */
- int tpm_read_log_acpi(struct tpm_chip *chip)
- {
--	struct acpi_tcpa *buff;
-+	struct acpi_table_header *buff;
-+	struct acpi_tcpa *tcpa;
-+	struct acpi_tpm2 *tpm2;
-+
- 	acpi_status status;
- 	void __iomem *virt;
- 	u64 len, start;
-+	int log_type;
- 	struct tpm_bios_log *log;
--
--	if (chip->flags & TPM_CHIP_FLAG_TPM2)
--		return -ENODEV;
-+	bool is_tpm2 = chip->flags & TPM_CHIP_FLAG_TPM2;
-+	acpi_string table_sig;
- 
- 	log = &chip->log;
- 
-@@ -61,26 +75,41 @@ int tpm_read_log_acpi(struct tpm_chip *chip)
- 	if (!chip->acpi_dev_handle)
- 		return -ENODEV;
- 
--	/* Find TCPA entry in RSDT (ACPI_LOGICAL_ADDRESSING) */
--	status = acpi_get_table(ACPI_SIG_TCPA, 1,
--				(struct acpi_table_header **)&buff);
-+	/* Find TCPA or TPM2 entry in RSDT (ACPI_LOGICAL_ADDRESSING) */
-+	table_sig = is_tpm2 ? ACPI_SIG_TPM2 : ACPI_SIG_TCPA;
-+	status = acpi_get_table(table_sig, 1, &buff);
- 
- 	if (ACPI_FAILURE(status))
- 		return -ENODEV;
- 
--	switch(buff->platform_class) {
--	case BIOS_SERVER:
--		len = buff->server.log_max_len;
--		start = buff->server.log_start_addr;
--		break;
--	case BIOS_CLIENT:
--	default:
--		len = buff->client.log_max_len;
--		start = buff->client.log_start_addr;
--		break;
-+	/* If log_max_len and log_start_addr are set, start_method_params will
-+	 * be 12 bytes, according to TCG ACPI spec. If start_method_params is
-+	 * fewer than 12 bytes, the TCG log is not available
-+	 */
-+	if (is_tpm2 && (buff->length == sizeof(struct acpi_tpm2))) {
-+		tpm2 = (struct acpi_tpm2 *)buff;
-+		len = tpm2->log_max_len;
-+		start = tpm2->log_start_addr;
-+		log_type = EFI_TCG2_EVENT_LOG_FORMAT_TCG_2;
-+	} else {
-+		tcpa = (struct acpi_tcpa *)buff;
-+		switch (tcpa->platform_class) {
-+		case BIOS_SERVER:
-+			len = tcpa->server.log_max_len;
-+			start = tcpa->server.log_start_addr;
-+			break;
-+		case BIOS_CLIENT:
-+		default:
-+			len = tcpa->client.log_max_len;
-+			start = tcpa->client.log_start_addr;
-+			break;
-+		}
-+		log_type = EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
- 	}
-+
- 	if (!len) {
--		dev_warn(&chip->dev, "%s: TCPA log area empty\n", __func__);
-+		dev_warn(&chip->dev, "%s: %s log area empty\n",
-+				table_sig, __func__);
- 		return -EIO;
- 	}
- 
-@@ -98,7 +127,7 @@ int tpm_read_log_acpi(struct tpm_chip *chip)
- 	memcpy_fromio(log->bios_event_log, virt, len);
- 
- 	acpi_os_unmap_iomem(virt, len);
--	return EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
-+	return log_type;
- 
- err:
- 	kfree(log->bios_event_log);
--- 
-2.20.1
+A branch that includes this series and the binfmt_flat support is
+available here:
 
+    git://git.infradead.org/users/hch/riscv.git riscv-nommu.2
+
+Gitweb:
+
+    http://git.infradead.org/users/hch/riscv.git/shortlog/refs/heads/riscv-nommu.2
+
+I've also pushed out a builtroot branch that can build a RISC-V nommu
+root filesystem here:
+
+   git://git.infradead.org/users/hch/buildroot.git riscv-nommu.2
+
+Gitweb:
+
+   http://git.infradead.org/users/hch/buildroot.git/shortlog/refs/heads/riscv-nommu.2
+
+Changes since v1:
+ - fixes so that a kernel with this series still work on builds with an
+   IOMMU
+ - small clint cleanups
+ - the binfmt_flat base and buildroot now don't put arguments on the stack
