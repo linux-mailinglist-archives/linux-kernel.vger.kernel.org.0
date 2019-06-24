@@ -2,65 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BA5450536
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 11:10:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C637504F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 10:57:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728345AbfFXJKe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 05:10:34 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49894 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728019AbfFXJKe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 05:10:34 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 63E10AB87;
-        Mon, 24 Jun 2019 09:10:33 +0000 (UTC)
-Message-ID: <1561366612.2846.10.camel@suse.com>
-Subject: Re: [RFC] deadlock with flush_work() in UAS
-From:   Oliver Neukum <oneukum@suse.com>
-To:     Tejun Heo <tj@kernel.org>, Alan Stern <stern@rowland.harvard.edu>
-Cc:     Kernel development list <linux-kernel@vger.kernel.org>,
-        USB list <linux-usb@vger.kernel.org>
-Date:   Mon, 24 Jun 2019 10:56:52 +0200
-In-Reply-To: <20190620140937.GJ657710@devbig004.ftw2.facebook.com>
-References: <1560871774.3184.16.camel@suse.com>
-         <Pine.LNX.4.44L0.1906181156370.1659-100000@iolanthe.rowland.org>
-         <20190620140937.GJ657710@devbig004.ftw2.facebook.com>
+        id S1727912AbfFXI5F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 04:57:05 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:38975 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725916AbfFXI5F (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 04:57:05 -0400
+Received: by mail-qt1-f194.google.com with SMTP id i34so13631021qta.6;
+        Mon, 24 Jun 2019 01:57:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rwacPTmf68JLKbehPKMF+01ucNGP5jLYN7O/MVkbRZM=;
+        b=IaPLALGADm4YigFjf8QaYbqbU8HyByiT2AN/v5LVXIWyOVrJiI9t9HzhqR4sUhgLp6
+         pLB7foFEjhs5vdzIPNC3mxdIvK8ao5NriQgLb2pyMc2iYRgnid5GiaSmyf4OpDboLPDT
+         oWbySk51XT9RSry1VaGdisjrnH/y3GSDXDXHaJso5IJvP+WcYDZ8mMLhTiKc9Pmp4+ZO
+         cZYZh3OTQb01fkp4tOqsJ09A1XX9MRxlapYWHtSLk2EfSOhDn1gq4hB3F4Nn77h7Apl/
+         qwr8/3zFKjx6jaHrn47Zxakh9wqSfmsC+ZQyoMqZxAeCNErp6VbGIj7Y8hyy7FlmpBmF
+         pTRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rwacPTmf68JLKbehPKMF+01ucNGP5jLYN7O/MVkbRZM=;
+        b=RzFFcWqhSfSmbEFG6a1sDe2tnFE2lQcUUhUzEQuUAmX40ObzPwf1eZq6dhVQE0BOa9
+         KAlvG9J8AVWsD20F+bQ+ymmUrrVULtO38Iw84euTdG89Wjmnt8p7/oqTX3rnMzKnZyEh
+         Kg0boXtyr2zh4Lb4XdTkqa/0ForTvTQplN1XccPD3CmkjM+a7EUIN4ZY8ZHK2lBl6ie8
+         0yE+KBXV5v4cZaIOTSjJDpc5zWU9IY3mRBxapFr4TvnkRuGCwbHxM3zyvbX0UZM8vbOv
+         XVx0Uy+7KFBjFybh3lP0JI7fc1B43UFedgf3IIqqpHuhgOZ415+kAX6hJzpavubxjX58
+         qhBg==
+X-Gm-Message-State: APjAAAVARJ9913KDHcIrKOx3syqr2N3DRVZ4iiPASGUPYK6P2zsFFGck
+        NUIB/m4fIeoIVKWVfiET4ogQ/o5yu7MXJSyoitY=
+X-Google-Smtp-Source: APXvYqzsSuG33IXfavhw36xaFFGbD7fBTgk8QI/l4ZfL7hpDvDTVc+FitqRovMGmS0hsLozqE7DGchEVCY1SYtWJWNU=
+X-Received: by 2002:ac8:368a:: with SMTP id a10mr46257196qtc.143.1561366624259;
+ Mon, 24 Jun 2019 01:57:04 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190621141833.17551-1-jlayton@kernel.org>
+In-Reply-To: <20190621141833.17551-1-jlayton@kernel.org>
+From:   "Yan, Zheng" <ukernel@gmail.com>
+Date:   Mon, 24 Jun 2019 16:56:52 +0800
+Message-ID: <CAAM7YAmfb0ZoaGMqHE8POFbHUFNvzz+eP3Ygsq-ncRptq6wN7w@mail.gmail.com>
+Subject: Re: [PATCH v3 0/2] ceph: don't NULL terminate virtual xattr values
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ceph-devel <ceph-devel@vger.kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>, Zheng Yan <zyan@redhat.com>,
+        Sage Weil <sage@redhat.com>, agruenba@redhat.com,
+        joe@perches.com, geert+renesas@glider.be,
+        andriy.shevchenko@linux.intel.com
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Donnerstag, den 20.06.2019, 07:10 -0700 schrieb Tejun Heo:
-> Hello,
-> 
-> On Tue, Jun 18, 2019 at 11:59:39AM -0400, Alan Stern wrote:
-> > > > Even if you disagree, perhaps we should have a global workqueue with a
-> > > > permanently set noio flag.  It could be shared among multiple drivers
-> > > > such as uas and the hub driver for purposes like this.  (In fact, the 
-> > > > hub driver already has its own dedicated workqueue.)
-> > > 
-> > > That is a good idea. But does UAS need WQ_MEM_RECLAIM?
-> > 
-> > These are good questions, and I don't have the answers.  Perhaps Tejun 
-> > or someone else on LKML can help.
-> 
-> Any device which may host a filesystem or swap needs to use
-> WQ_MEM_RECLAIM workqueues on anything which may be used during normal
-> IOs including e.g. error handling which may be invoked.  One
-> WQ_MEM_RECLAIM workqueue guarantees one level of concurrency for all
-> its tasks regardless of memory situation, so as long as there's no
-> interdependence between work items, the workqueue can be shared.
+On Fri, Jun 21, 2019 at 10:21 PM Jeff Layton <jlayton@kernel.org> wrote:
+>
+> v3: switch to using an intermediate buffer for snprintf destination
+>     add patch to fix ceph_vxattrcb_layout return value
+> v2: drop bogus EXPORT_SYMBOL of static function
+>
+> This is the 3rd posting of this patchset. Instead of adding a new
+> snprintf variant that doesn't NULL terminate, this set instead has
+> the vxattr handlers use an intermediate buffer as the snprintf
+> destination and then memcpy's the result into the destination buffer.
+>
+> Also, I added a patch to fix up the return of ceph_vxattrcb_layout. The
+> existing code actually worked, but relied on casting a signed negative
+> value to unsigned and back, which seemed a little sketchy.
+>
+> Most of the rationale for this set is in the description of the first
+> patch of the series.
+>
+> Jeff Layton (2):
+>   ceph: fix buffer length handling in virtual xattrs
+>   ceph: fix return of ceph_vxattrcb_layout
+>
+>  fs/ceph/xattr.c | 113 ++++++++++++++++++++++++++++++++++--------------
+>  1 file changed, 81 insertions(+), 32 deletions(-)
+>
 
-Ouch.
-
-Alan, in that case anything doing a reset, suspend or resume needs
-to use WQ_MEM_RECLAIM, it looks to me. What do we do?
-
-	Regards
-		Oliver
-
+Reviewed-by
+> --
+> 2.21.0
+>
