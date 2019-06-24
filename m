@@ -2,61 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71C015063E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 11:57:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C84F250770
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:12:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728796AbfFXJ4u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 05:56:50 -0400
-Received: from foss.arm.com ([217.140.110.172]:44972 "EHLO foss.arm.com"
+        id S1730256AbfFXKHF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 06:07:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39484 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728736AbfFXJ4b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 05:56:31 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6694C2B;
-        Mon, 24 Jun 2019 02:56:31 -0700 (PDT)
-Received: from e121650-lin.cambridge.arm.com (e121650-lin.cambridge.arm.com [10.1.196.120])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 48B893F71E;
-        Mon, 24 Jun 2019 02:56:30 -0700 (PDT)
-From:   Raphael Gault <raphael.gault@arm.com>
-To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     jpoimboe@redhat.com, peterz@infradead.org, catalin.marinas@arm.com,
-        will.deacon@arm.com, julien.thierry@arm.com,
-        Raphael Gault <raphael.gault@arm.com>
-Subject: [RFC V3 15/18] arm64: kernel: Add exception on kuser32 to prevent stack analysis
-Date:   Mon, 24 Jun 2019 10:55:45 +0100
-Message-Id: <20190624095548.8578-16-raphael.gault@arm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190624095548.8578-1-raphael.gault@arm.com>
-References: <20190624095548.8578-1-raphael.gault@arm.com>
+        id S1730242AbfFXKHD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 06:07:03 -0400
+Received: from localhost (f4.8f.5177.ip4.static.sl-reverse.com [119.81.143.244])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0FF96217D7;
+        Mon, 24 Jun 2019 10:07:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561370822;
+        bh=SNyT30zTNR7FIwwROCLH1qOKMHdFefreBa9XQfNA9bo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=zdq/Y54YztCea0OJ29TnMZQChRHyPY02++e61Ujst0SeKxa5zzi9//99ZZejibOfo
+         i0EB7p9KDFoOmrdwpFfiGC8A3yvNiMFDErFD2JhLwf50GvZgZ1rdKrc6yTy/pOXO41
+         oAI5uh5BZHuq0bK/+MdJTkf37/5B2v45uHPtKjnI=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Ronnie Sahlberg <lsahlber@redhat.com>,
+        Pavel Shilovsky <pshilov@microsoft.com>,
+        Steve French <stfrench@microsoft.com>
+Subject: [PATCH 5.1 014/121] cifs: fix GlobalMid_Lock bug in cifs_reconnect
+Date:   Mon, 24 Jun 2019 17:55:46 +0800
+Message-Id: <20190624092321.371392266@linuxfoundation.org>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190624092320.652599624@linuxfoundation.org>
+References: <20190624092320.652599624@linuxfoundation.org>
+User-Agent: quilt/0.66
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-kuser32 being used for compatibility, it contains a32 instructions
-which are not recognised by objtool when trying to analyse arm64
-object files. Thus, we add an exception to skip validation on this
-particular file.
+From: Ronnie Sahlberg <lsahlber@redhat.com>
 
-Signed-off-by: Raphael Gault <raphael.gault@arm.com>
+commit 61cabc7b0a5cf0d3c532cfa96594c801743fe7f6 upstream.
+
+We can not hold the GlobalMid_Lock spinlock during the
+dfs processing in cifs_reconnect since it invokes things that may sleep
+and thus trigger :
+
+BUG: sleeping function called from invalid context at kernel/locking/rwsem.c:23
+
+Thus we need to drop the spinlock during this code block.
+
+RHBZ: 1716743
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Acked-by: Pavel Shilovsky <pshilov@microsoft.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/arm64/kernel/Makefile | 3 +++
- 1 file changed, 3 insertions(+)
+ fs/cifs/connect.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm64/kernel/Makefile b/arch/arm64/kernel/Makefile
-index 478491f07b4f..1239c7da4c02 100644
---- a/arch/arm64/kernel/Makefile
-+++ b/arch/arm64/kernel/Makefile
-@@ -33,6 +33,9 @@ ifneq ($(CONFIG_COMPAT_VDSO), y)
- obj-$(CONFIG_COMPAT)			+= sigreturn32.o
- endif
- obj-$(CONFIG_KUSER_HELPERS)		+= kuser32.o
-+
-+OBJECT_FILES_NON_STANDARD_kuser32.o := y
-+
- obj-$(CONFIG_FUNCTION_TRACER)		+= ftrace.o entry-ftrace.o
- obj-$(CONFIG_MODULES)			+= module.o
- obj-$(CONFIG_ARM64_MODULE_PLTS)		+= module-plts.o
--- 
-2.17.1
+--- a/fs/cifs/connect.c
++++ b/fs/cifs/connect.c
+@@ -478,6 +478,7 @@ cifs_reconnect(struct TCP_Server_Info *s
+ 	spin_lock(&GlobalMid_Lock);
+ 	server->nr_targets = 1;
+ #ifdef CONFIG_CIFS_DFS_UPCALL
++	spin_unlock(&GlobalMid_Lock);
+ 	cifs_sb = find_super_by_tcp(server);
+ 	if (IS_ERR(cifs_sb)) {
+ 		rc = PTR_ERR(cifs_sb);
+@@ -495,6 +496,7 @@ cifs_reconnect(struct TCP_Server_Info *s
+ 	}
+ 	cifs_dbg(FYI, "%s: will retry %d target(s)\n", __func__,
+ 		 server->nr_targets);
++	spin_lock(&GlobalMid_Lock);
+ #endif
+ 	if (server->tcpStatus == CifsExiting) {
+ 		/* the demux thread will exit normally
+
 
