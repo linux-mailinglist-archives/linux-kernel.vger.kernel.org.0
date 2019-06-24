@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8102F5073D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:06:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 53D605065C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 11:58:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729996AbfFXKFt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 06:05:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37786 "EHLO mail.kernel.org"
+        id S1728605AbfFXJ6Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 05:58:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56804 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729478AbfFXKFp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 06:05:45 -0400
+        id S1728958AbfFXJ6T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 05:58:19 -0400
 Received: from localhost (f4.8f.5177.ip4.static.sl-reverse.com [119.81.143.244])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AE2492145D;
-        Mon, 24 Jun 2019 10:05:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 70643214C6;
+        Mon, 24 Jun 2019 09:58:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561370744;
-        bh=W0Xsbqza/+fR8KzRJ6FPJFO9jlBLhM1du4QMqOW7tXs=;
+        s=default; t=1561370298;
+        bh=Zg15pztu//YRoIkB29z76JytlOishIF08DkqrF/PHKY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VMrUoZRuwmT1iLBUqoND0xed4r5GQK55HBI/1H9ySlV2WvdxNNN68WaYPFhU+H1cQ
-         U463KGpi7/+IqxUztQ0RXfPqT0CiyyWWl+76eoxHYu3yGB4AyZqdGEv+SYazCmohYy
-         o4jJkxnasEgN/MKxRc+z8EDGZ9JOucgQ6an59cMg=
+        b=K/8KxwFLH8aDnXKbuaUaK7wx1t3CZWaEmkdiwz73M+ZBzBS/GBMWMGObFvPSmSXAA
+         yo6k4oCLm7oFXkmGIdFWNpn3TVAg8er8fSjoV58wljh9cEgs6AvJGufq8AhYLO7cjR
+         Ep7WnvvUglE8JEZcBdj3uGVkrk5jWM/Kd60VTsA0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
+        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
+        Paul Burton <paul.burton@mips.com>, ralf@linux-mips.org,
+        jhogan@kernel.org, linux-mips@vger.kernel.org,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 48/90] selftests: vm: install test_vmalloc.sh for run_vmtests
-Date:   Mon, 24 Jun 2019 17:56:38 +0800
-Message-Id: <20190624092317.387371473@linuxfoundation.org>
+Subject: [PATCH 4.14 21/51] MIPS: uprobes: remove set but not used variable epc
+Date:   Mon, 24 Jun 2019 17:56:39 +0800
+Message-Id: <20190624092308.703469152@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190624092313.788773607@linuxfoundation.org>
-References: <20190624092313.788773607@linuxfoundation.org>
+In-Reply-To: <20190624092305.919204959@linuxfoundation.org>
+References: <20190624092305.919204959@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,36 +45,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit bc2cce3f2ebcae02aa4bb29e3436bf75ee674c32 ]
+[ Upstream commit f532beeeff0c0a3586cc15538bc52d249eb19e7c ]
 
-Add test_vmalloc.sh to TEST_FILES to make sure it gets installed for
-run_vmtests.
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Fixed below error:
-./run_vmtests: line 217: ./test_vmalloc.sh: No such file or directory
+arch/mips/kernel/uprobes.c: In function 'arch_uprobe_pre_xol':
+arch/mips/kernel/uprobes.c:115:17: warning: variable 'epc' set but not used [-Wunused-but-set-variable]
 
-Tested with: make TARGETS=vm install INSTALL_PATH=$PWD/x
+It's never used since introduction in
+commit 40e084a506eb ("MIPS: Add uprobes support.")
 
-Signed-off-by: Naresh Kamboju <naresh.kamboju@linaro.org>
-Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Cc: <ralf@linux-mips.org>
+Cc: <jhogan@kernel.org>
+Cc: <linux-kernel@vger.kernel.org>
+Cc: <linux-mips@vger.kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/vm/Makefile | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/mips/kernel/uprobes.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/tools/testing/selftests/vm/Makefile b/tools/testing/selftests/vm/Makefile
-index dc68340a6a96..2cf3dc49bd03 100644
---- a/tools/testing/selftests/vm/Makefile
-+++ b/tools/testing/selftests/vm/Makefile
-@@ -24,6 +24,8 @@ TEST_GEN_FILES += virtual_address_range
- 
- TEST_PROGS := run_vmtests
- 
-+TEST_FILES := test_vmalloc.sh
-+
- KSFT_KHDR_INSTALL := 1
- include ../lib.mk
- 
+diff --git a/arch/mips/kernel/uprobes.c b/arch/mips/kernel/uprobes.c
+index f7a0645ccb82..6305e91ffc44 100644
+--- a/arch/mips/kernel/uprobes.c
++++ b/arch/mips/kernel/uprobes.c
+@@ -112,9 +112,6 @@ int arch_uprobe_pre_xol(struct arch_uprobe *aup, struct pt_regs *regs)
+ 	 */
+ 	aup->resume_epc = regs->cp0_epc + 4;
+ 	if (insn_has_delay_slot((union mips_instruction) aup->insn[0])) {
+-		unsigned long epc;
+-
+-		epc = regs->cp0_epc;
+ 		__compute_return_epc_for_insn(regs,
+ 			(union mips_instruction) aup->insn[0]);
+ 		aup->resume_epc = regs->cp0_epc;
 -- 
 2.20.1
 
