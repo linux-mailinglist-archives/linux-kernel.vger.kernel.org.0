@@ -2,235 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D71551BCF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 21:57:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC07A51BCA
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 21:57:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731241AbfFXT5h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 15:57:37 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:10782 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727282AbfFXT5h (ORCPT
+        id S1729458AbfFXT5B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 15:57:01 -0400
+Received: from smtprelay0115.hostedemail.com ([216.40.44.115]:58495 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727282AbfFXT5B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 15:57:37 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5OJuqR7068710;
-        Mon, 24 Jun 2019 15:56:59 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2tb4e2hqxc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 24 Jun 2019 15:56:59 -0400
-Received: from m0098410.ppops.net (m0098410.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x5OJuwXL069377;
-        Mon, 24 Jun 2019 15:56:58 -0400
-Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2tb4e2hqwj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 24 Jun 2019 15:56:58 -0400
-Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
-        by ppma03dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x5OJsw1l022275;
-        Mon, 24 Jun 2019 19:56:57 GMT
-Received: from b03cxnp08028.gho.boulder.ibm.com (b03cxnp08028.gho.boulder.ibm.com [9.17.130.20])
-        by ppma03dal.us.ibm.com with ESMTP id 2t9by6rj46-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 24 Jun 2019 19:56:57 +0000
-Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
-        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5OJuuSF63242568
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 24 Jun 2019 19:56:56 GMT
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 26B39C6057;
-        Mon, 24 Jun 2019 19:56:56 +0000 (GMT)
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9F754C6055;
-        Mon, 24 Jun 2019 19:56:51 +0000 (GMT)
-Received: from morokweng.localdomain (unknown [9.85.209.86])
-        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTPS;
-        Mon, 24 Jun 2019 19:56:51 +0000 (GMT)
-References: <20190611062817.18412-1-bauerman@linux.ibm.com> <20190611062817.18412-3-bauerman@linux.ibm.com>
-User-agent: mu4e 1.2.0; emacs 26.2
-From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
-To:     David Howells <dhowells@redhat.com>
-Cc:     linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Jessica Yu <jeyu@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "AKASHI\, Takahiro" <takahiro.akashi@linaro.org>,
-        linux-integrity@vger.kernel.org
-Subject: Re: [PATCH v11 02/13] PKCS#7: Refactor verify_pkcs7_signature()
-In-reply-to: <20190611062817.18412-3-bauerman@linux.ibm.com>
-Date:   Mon, 24 Jun 2019 16:56:49 -0300
-Message-ID: <87h88ekb9a.fsf@morokweng.localdomain>
+        Mon, 24 Jun 2019 15:57:01 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 1FD7F100E86C5;
+        Mon, 24 Jun 2019 19:57:00 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::,RULES_HIT:41:355:379:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3871:4250:4321:5007:6119:6691:8557:8957:9036:10004:10400:10848:11026:11232:11473:11658:11914:12043:12048:12297:12438:12740:12760:12895:13069:13161:13229:13311:13357:13439:14040:14659:14721:21080:21220:21451:21627:30054:30079:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:27,LUA_SUMMARY:none
+X-HE-Tag: fold16_1fd688a2af52b
+X-Filterd-Recvd-Size: 2354
+Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf17.hostedemail.com (Postfix) with ESMTPA;
+        Mon, 24 Jun 2019 19:56:58 +0000 (UTC)
+Message-ID: <c40261d18ff593767a026d0392d44f322b4a3b33.camel@perches.com>
+Subject: Re: [PATCH v6 1/1] EDAC, mellanox: Add ECC support for BlueField
+ DDR4
+From:   Joe Perches <joe@perches.com>
+To:     Shravan Kumar Ramani <sramani@mellanox.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        James Morse <james.morse@arm.com>
+Cc:     Liming Sun <lsun@mellanox.com>, linux-edac@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Mon, 24 Jun 2019 12:56:57 -0700
+In-Reply-To: <176e13c80688f9a37161091e31ade487db6d4c2e.1561400421.git.sramani@mellanox.com>
+References: <cover.1561400421.git.sramani@mellanox.com>
+         <176e13c80688f9a37161091e31ade487db6d4c2e.1561400421.git.sramani@mellanox.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-24_13:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906240159
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 2019-06-24 at 14:42 -0400, Shravan Kumar Ramani wrote:
+> Add ECC support for Mellanox BlueField SoC DDR controller.
+> This requires SMC to the running Arm Trusted Firmware to report
+> what is the current memory configuration.
+[]
+> diff --git a/drivers/edac/bluefield_edac.c b/drivers/edac/bluefield_edac.c
+[]
+> @@ -0,0 +1,381 @@
+[]
+> +#define MLXBF_ECC_CNT__SERR_CNT_SHIFT 0
+> +#define MLXBF_ECC_CNT__SERR_CNT_MASK 0xffff
+> +#define MLXBF_ECC_CNT__DERR_CNT_SHIFT 16
+> +#define MLXBF_ECC_CNT__DERR_CNT_MASK 0xffff
 
-Hello David,
+[multiple variants of #defines like the above]
 
-AFAIK Mimi is happy with this patch set, but I still need acks from
-maintainers of other subsystems that my changes touch before she can
-accept it.
+[]
 
-Are this patch and the next one ("PKCS#7: Introduce pkcs7_get_digest()")
-OK from your PoV?
+> +	serr = (dram_syndrom >> MLXBF_SYNDROM__SERR_SHIFT) &
+> +		MLXBF_SYNDROM__SERR_MASK;
+> +	derr = (dram_syndrom >> MLXBF_SYNDROM__DERR_SHIFT) &
+> +		MLXBF_SYNDROM__DERR_MASK;
+> +	syndrom = (dram_syndrom >> MLXBF_SYNDROM__SYN_SHIFT) &
+> +		MLXBF_SYNDROM__SYN_MASK;
 
---
-Thiago Jung Bauermann
-IBM Linux Technology Center
+To improve readability and reduce possible copy/paste errors,
+these would all benefit from a macro like
+
+#define MLXBF_SM(val, type) 	\
+	(((val) >> (MLXBF_ ## type ## _SHIFT)) & (MLXBF_ ## type ## _MASK)))
+
+So these uses could become:
+
+	serr = MLXBF_SM(dram_syndrom, SYNDROM__SERR);
+	derr = MLXBF_SM(dram_syndrom, SYNDROM__DERR);
+	syndrom =
+MLXBF_SM(dram_syndrom, SYN);
+
+etc...
 
 
-Thiago Jung Bauermann <bauerman@linux.ibm.com> writes:
-
-> IMA will need to verify a PKCS#7 signature which has already been parsed.
-> For this reason, factor out the code which does that from
-> verify_pkcs7_signature() into a new function which takes a struct
-> pkcs7_message instead of a data buffer.
->
-> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
-> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-> Cc: David Howells <dhowells@redhat.com>
-> Cc: David Woodhouse <dwmw2@infradead.org>
-> Cc: Herbert Xu <herbert@gondor.apana.org.au>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> ---
->  certs/system_keyring.c       | 61 ++++++++++++++++++++++++++----------
->  include/linux/verification.h | 10 ++++++
->  2 files changed, 55 insertions(+), 16 deletions(-)
->
-> diff --git a/certs/system_keyring.c b/certs/system_keyring.c
-> index c05c29ae4d5d..4ba82e52e4b4 100644
-> --- a/certs/system_keyring.c
-> +++ b/certs/system_keyring.c
-> @@ -194,33 +194,27 @@ late_initcall(load_system_certificate_list);
->  #ifdef CONFIG_SYSTEM_DATA_VERIFICATION
->
->  /**
-> - * verify_pkcs7_signature - Verify a PKCS#7-based signature on system data.
-> + * verify_pkcs7_message_sig - Verify a PKCS#7-based signature on system data.
->   * @data: The data to be verified (NULL if expecting internal data).
->   * @len: Size of @data.
-> - * @raw_pkcs7: The PKCS#7 message that is the signature.
-> - * @pkcs7_len: The size of @raw_pkcs7.
-> + * @pkcs7: The PKCS#7 message that is the signature.
->   * @trusted_keys: Trusted keys to use (NULL for builtin trusted keys only,
->   *					(void *)1UL for all trusted keys).
->   * @usage: The use to which the key is being put.
->   * @view_content: Callback to gain access to content.
->   * @ctx: Context for callback.
->   */
-> -int verify_pkcs7_signature(const void *data, size_t len,
-> -			   const void *raw_pkcs7, size_t pkcs7_len,
-> -			   struct key *trusted_keys,
-> -			   enum key_being_used_for usage,
-> -			   int (*view_content)(void *ctx,
-> -					       const void *data, size_t len,
-> -					       size_t asn1hdrlen),
-> -			   void *ctx)
-> +int verify_pkcs7_message_sig(const void *data, size_t len,
-> +			     struct pkcs7_message *pkcs7,
-> +			     struct key *trusted_keys,
-> +			     enum key_being_used_for usage,
-> +			     int (*view_content)(void *ctx,
-> +						 const void *data, size_t len,
-> +						 size_t asn1hdrlen),
-> +			     void *ctx)
->  {
-> -	struct pkcs7_message *pkcs7;
->  	int ret;
->
-> -	pkcs7 = pkcs7_parse_message(raw_pkcs7, pkcs7_len);
-> -	if (IS_ERR(pkcs7))
-> -		return PTR_ERR(pkcs7);
-> -
->  	/* The data should be detached - so we need to supply it. */
->  	if (data && pkcs7_supply_detached_data(pkcs7, data, len) < 0) {
->  		pr_err("PKCS#7 signature with non-detached data\n");
-> @@ -273,6 +267,41 @@ int verify_pkcs7_signature(const void *data, size_t len,
->  	}
->
->  error:
-> +	pr_devel("<==%s() = %d\n", __func__, ret);
-> +	return ret;
-> +}
-> +
-> +/**
-> + * verify_pkcs7_signature - Verify a PKCS#7-based signature on system data.
-> + * @data: The data to be verified (NULL if expecting internal data).
-> + * @len: Size of @data.
-> + * @raw_pkcs7: The PKCS#7 message that is the signature.
-> + * @pkcs7_len: The size of @raw_pkcs7.
-> + * @trusted_keys: Trusted keys to use (NULL for builtin trusted keys only,
-> + *					(void *)1UL for all trusted keys).
-> + * @usage: The use to which the key is being put.
-> + * @view_content: Callback to gain access to content.
-> + * @ctx: Context for callback.
-> + */
-> +int verify_pkcs7_signature(const void *data, size_t len,
-> +			   const void *raw_pkcs7, size_t pkcs7_len,
-> +			   struct key *trusted_keys,
-> +			   enum key_being_used_for usage,
-> +			   int (*view_content)(void *ctx,
-> +					       const void *data, size_t len,
-> +					       size_t asn1hdrlen),
-> +			   void *ctx)
-> +{
-> +	struct pkcs7_message *pkcs7;
-> +	int ret;
-> +
-> +	pkcs7 = pkcs7_parse_message(raw_pkcs7, pkcs7_len);
-> +	if (IS_ERR(pkcs7))
-> +		return PTR_ERR(pkcs7);
-> +
-> +	ret = verify_pkcs7_message_sig(data, len, pkcs7, trusted_keys, usage,
-> +				       view_content, ctx);
-> +
->  	pkcs7_free_message(pkcs7);
->  	pr_devel("<==%s() = %d\n", __func__, ret);
->  	return ret;
-> diff --git a/include/linux/verification.h b/include/linux/verification.h
-> index 018fb5f13d44..5e1d41f2b336 100644
-> --- a/include/linux/verification.h
-> +++ b/include/linux/verification.h
-> @@ -36,6 +36,7 @@ extern const char *const key_being_used_for[NR__KEY_BEING_USED_FOR];
->  #ifdef CONFIG_SYSTEM_DATA_VERIFICATION
->
->  struct key;
-> +struct pkcs7_message;
->
->  extern int verify_pkcs7_signature(const void *data, size_t len,
->  				  const void *raw_pkcs7, size_t pkcs7_len,
-> @@ -45,6 +46,15 @@ extern int verify_pkcs7_signature(const void *data, size_t len,
->  						      const void *data, size_t len,
->  						      size_t asn1hdrlen),
->  				  void *ctx);
-> +extern int verify_pkcs7_message_sig(const void *data, size_t len,
-> +				    struct pkcs7_message *pkcs7,
-> +				    struct key *trusted_keys,
-> +				    enum key_being_used_for usage,
-> +				    int (*view_content)(void *ctx,
-> +							const void *data,
-> +							size_t len,
-> +							size_t asn1hdrlen),
-> +				    void *ctx);
->
->  #ifdef CONFIG_SIGNED_PE_FILE_VERIFICATION
->  extern int verify_pefile_signature(const void *pebuf, unsigned pelen,
