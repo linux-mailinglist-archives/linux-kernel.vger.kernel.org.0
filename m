@@ -2,135 +2,251 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B429250299
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 08:57:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42E69502A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 09:00:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727240AbfFXG46 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 02:56:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44144 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726399AbfFXG46 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 02:56:58 -0400
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 576DA214C6;
-        Mon, 24 Jun 2019 06:56:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561359416;
-        bh=Wmle4DmUHAJz9qxbWxUuCO6gcEUZ8pGJ4hH7DvFoVHc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=BZRSOZwnvbTtrhE5FdhMr78QW7zS+u3+C0+kDVKvvXlEFAAiAv1CYiZKFI/RWBEHU
-         QoVnOObxJg0OyB7oKA4lV4pLeYu3bw7phQ8UCPWIM1UHlhqTZ2H/o6Yyso5RFhmLS3
-         OSenBnmvuMdUNYsUcZbMIMdm0cGNQAhQZOtdbvN0=
-Received: by mail-lj1-f174.google.com with SMTP id t28so11447948lje.9;
-        Sun, 23 Jun 2019 23:56:56 -0700 (PDT)
-X-Gm-Message-State: APjAAAWwPLU3Xh2dksv2ZowEWxqZ15csKExc5KAF7Px29UkA+E+SxTA9
-        KJA0nUbdBP9Wfvc42eedj7hv+Uj5XsCXQ4BvB4I=
-X-Google-Smtp-Source: APXvYqwuYsg0YtPp4HSVT4GsrVo3BqbfBMVGJw+z+cnqoCkDTdXplaaPso8EW7Ygbl0e07xoKBfuQzhZfcbiBsmYcXk=
-X-Received: by 2002:a2e:12dc:: with SMTP id 89mr16648875ljs.40.1561359414533;
- Sun, 23 Jun 2019 23:56:54 -0700 (PDT)
+        id S1727376AbfFXHAI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 03:00:08 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53966 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726077AbfFXHAI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 03:00:08 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 231F7AF99;
+        Mon, 24 Jun 2019 07:00:06 +0000 (UTC)
+Subject: Re: [PATCH] bcache: make stripe_size configurable and persistent for
+ hardware raid5/6
+To:     Eric Wheeler <bcache@lists.ewheeler.net>
+Cc:     linux-block@vger.kernel.org, Eric Wheeler <git@linux.ewheeler.net>,
+        Eric Wheeler <bcache@linux.ewheeler.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:BCACHE (BLOCK LAYER CACHE)" <linux-bcache@vger.kernel.org>
+References: <d3f7fd44-9287-c7fa-ee95-c3b8a4d56c93@suse.de>
+ <1561245371-10235-1-git-send-email-bcache@lists.ewheeler.net>
+From:   Coly Li <colyli@suse.de>
+Openpgp: preference=signencrypt
+Organization: SUSE Labs
+Message-ID: <1185f3ad-ac4c-7f48-206f-22fdbbfe289e@suse.de>
+Date:   Mon, 24 Jun 2019 14:57:42 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.7.2
 MIME-Version: 1.0
-References: <20190621180208.25361-7-krzk@kernel.org> <20190622191838.29850-1-krzk@kernel.org>
- <CAGTfZH2g6E2pCEtqjfCd+PjEzjwc2AB75LXJfCeO+PcYLiLTUw@mail.gmail.com>
- <CGME20190623192007epcas4p2a3995bb00091b436562828fceb6ff790@epcas4p2.samsung.com>
- <CAJKOXPcFFY08R1H-DrrzX2BC3L8x4NPJTP7nDn9yixAvmaiF9Q@mail.gmail.com> <6edbe882-314c-85e1-4109-7c3b324dc7ab@samsung.com>
-In-Reply-To: <6edbe882-314c-85e1-4109-7c3b324dc7ab@samsung.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Mon, 24 Jun 2019 08:56:43 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPd6BRm+Hz363BhP8xr9dZ6jZxMQmaT7KuiEHAyZz-hDoQ@mail.gmail.com>
-Message-ID: <CAJKOXPd6BRm+Hz363BhP8xr9dZ6jZxMQmaT7KuiEHAyZz-hDoQ@mail.gmail.com>
-Subject: Re: [PATCH v3] arm64: defconfig: Enable Panfrost and Lima drivers
-To:     Chanwoo Choi <cw00.choi@samsung.com>
-Cc:     cwchoi00@gmail.com, Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Olof Johansson <olof@lixom.net>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1561245371-10235-1-git-send-email-bcache@lists.ewheeler.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 24 Jun 2019 at 01:36, Chanwoo Choi <cw00.choi@samsung.com> wrote:
->
-> On 19. 6. 24. =EC=98=A4=EC=A0=84 4:16, Krzysztof Kozlowski wrote:
-> > On Sun, 23 Jun 2019 at 06:31, Chanwoo Choi <cwchoi00@gmail.com> wrote:
-> >>
-> >> Hi Krzysztof,
-> >>
-> >> 2019=EB=85=84 6=EC=9B=94 23=EC=9D=BC (=EC=9D=BC) =EC=98=A4=EC=A0=84 4:=
-20, Krzysztof Kozlowski <krzk@kernel.org>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=
-=B1:
-> >>>
-> >>> Enable support for Mali GPU with Panfrost and Lima drivers for:
-> >>> 1. Samsung Exynos5433 and Exynos7 (having Mali T760),
-> >>> 2. Allwiner A64 and H5 (Mali 400/450).
-> >>>
-> >>> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> >>>
-> >>> ---
-> >>>
-> >>> Changes since v1:
-> >>> 1. Enable Lima driver
-> >>> ---
-> >>>  arch/arm64/configs/defconfig | 3 ++-
-> >>>  1 file changed, 2 insertions(+), 1 deletion(-)
-> >>>
-> >>> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defcon=
-fig
-> >>> index fbbc065415d4..3d31611368af 100644
-> >>> --- a/arch/arm64/configs/defconfig
-> >>> +++ b/arch/arm64/configs/defconfig
-> >>> @@ -518,6 +518,8 @@ CONFIG_DRM_HISI_HIBMC=3Dm
-> >>>  CONFIG_DRM_HISI_KIRIN=3Dm
-> >>>  CONFIG_DRM_MESON=3Dm
-> >>>  CONFIG_DRM_PL111=3Dm
-> >>> +CONFIG_DRM_LIMA=3Dm
-> >>> +CONFIG_DRM_PANFROST=3Dm
-> >>>  CONFIG_FB=3Dy
-> >>>  CONFIG_FB_MODE_HELPERS=3Dy
-> >>>  CONFIG_BACKLIGHT_GENERIC=3Dm
-> >>> @@ -718,7 +720,6 @@ CONFIG_ARCH_TEGRA_194_SOC=3Dy
-> >>>  CONFIG_ARCH_K3_AM6_SOC=3Dy
-> >>>  CONFIG_SOC_TI=3Dy
-> >>>  CONFIG_TI_SCI_PM_DOMAINS=3Dy
-> >>> -CONFIG_DEVFREQ_GOV_SIMPLE_ONDEMAND=3Dy
-> >>
-> >> Exynos5433-tm2 board support the exynos-bus device which
-> >> used the simple_ondmenad governor of devfreq.
-> >> Why do you remove this configuration from the defconfig?
-> >
-> > It is selected by default by DRM_PANFROST. The difference is that
-> > PANFROST selects it as module. The 'y' is chosen because of:
-> >   SCSI_UFSHCD [=3Dy] && SCSI_LOWLEVEL [=3Dy] && SCSI [=3Dy] && SCSI_DMA=
- [=3Dy]
->
-> When I tried to find the history of CONFIG_DEVFREQ_GOV_SIMPLE_ONDEMAND
-> for defconfig, the following patch[1] added this configuration.
-> [1] b972ff75f2938c39e2205c23ea0e531d36b27f86
-> - "arm64: defconfig: Enable UFS on msm8996"
->
-> I think that this patch will affect the opration of 'USF on msm8998'.
+On 2019/6/23 7:16 上午, Eric Wheeler wrote:
+> From: Eric Wheeler <git@linux.ewheeler.net>
+> 
+> While some drivers set queue_limits.io_opt (e.g., md raid5), there are
+> currently no SCSI/RAID controller drivers that do.  Previously stripe_size
+> and partial_stripes_expensive were read-only values and could not be
+> tuned by users (eg, for hardware RAID5/6).
+> 
+> This patch enables users to save the optimal IO size via sysfs through
+> the backing device attributes stripe_size and partial_stripes_expensive
+> into the bcache superblock.
+> 
+> Superblock changes are backwards-compatable:
+> 
+> *  partial_stripes_expensive: One bit was used in the superblock flags field
+> 
+> *  stripe_size: There are eight 64-bit "pad" fields for future use in
+>    the superblock which default to 0; from those, 32-bits are now used
+>    to save the stripe_size and load at device registration time.
+> 
+> Signed-off-by: Eric Wheeler <bcache@linux.ewheeler.net>
 
-Hi Chanwoo,
+Hi Eric,
 
-Thanks for the feedback. Unfortunately I do not see how removing a
-dependency will affect that SCSI_UFSHCD. The
-DEVFREQ_GOV_SIMPLE_ONDEMAND is still built in, exactly the same as
-before...
+In general I am OK with this patch. Since Peter comments lots of SCSI
+RAID devices reports a stripe width, could you please list the hardware
+raid devices which don't list stripe size ? Then we can make decision
+whether it is necessary to have such option enabled.
 
-Best regards,
-Krzysztof
+Another point is, this patch changes struct cache_sb, it is no problem
+to change on-disk format. I plan to update the super block version soon,
+to store more configuration persistently into super block. stripe_size
+can be added to cache_sb with other on-disk changes.
+
+Thanks.
+
+Coly Li
+
+
+> ---
+>  Documentation/admin-guide/bcache.rst | 21 +++++++++++++++++++++
+>  drivers/md/bcache/super.c            | 15 ++++++++++++++-
+>  drivers/md/bcache/sysfs.c            | 33 +++++++++++++++++++++++++++++++--
+>  include/uapi/linux/bcache.h          |  6 ++++--
+>  4 files changed, 70 insertions(+), 5 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/bcache.rst b/Documentation/admin-guide/bcache.rst
+> index c0ce64d..ef82022 100644
+> --- a/Documentation/admin-guide/bcache.rst
+> +++ b/Documentation/admin-guide/bcache.rst
+> @@ -420,6 +420,12 @@ dirty_data
+>  label
+>    Name of underlying device.
+>  
+> +partial_stripes_expensive
+> +  Flag to bcache that partial or unaligned stripe_size'd
+> +  writes to the backing device are expensive (e.g., RAID5/6 incur
+> +  read-copy-write). Writing this sysfs attribute updates the superblock
+> +  and also takes effect immediately.  See also stripe_size, below.
+> +
+>  readahead
+>    Size of readahead that should be performed.  Defaults to 0.  If set to e.g.
+>    1M, it will round cache miss reads up to that size, but without overlapping
+> @@ -458,6 +464,21 @@ stop
+>    Write to this file to shut down the bcache device and close the backing
+>    device.
+>  
+> +stripe_size
+> +  The stripe size in bytes of the backing device for optimial
+> +  write performance (also known as the "stride width"). This is set
+> +  automatically when using a device driver sets blk_limits_io_opt
+> +  (e.g., md, rbd, skd, zram, virtio_blk).  No hardware RAID controller
+> +  sets blk_limits_io_opt as of 2019-06-15, so configure this to suit
+> +  your needs.  Note that you must unregister and re-register the backing
+> +  device after making a change to stripe_size.
+> +
+> +  Where N is the number of data disks,
+> +    RAID5: stripe_size = (N-1)*RAID_CHUNK_SIZE.
+> +    RAID6: stripe_size = (N-2)*RAID_CHUNK_SIZE.
+> +
+> +  See also partial_stripes_expensive, above.
+> +
+>  writeback_delay
+>    When dirty data is written to the cache and it previously did not contain
+>    any, waits some number of seconds before initiating writeback. Defaults to
+> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+> index 1b63ac8..d0b9501 100644
+> --- a/drivers/md/bcache/super.c
+> +++ b/drivers/md/bcache/super.c
+> @@ -80,6 +80,7 @@ static const char *read_super(struct cache_sb *sb, struct block_device *bdev,
+>  
+>  	sb->flags		= le64_to_cpu(s->flags);
+>  	sb->seq			= le64_to_cpu(s->seq);
+> +	sb->stripe_size		= le32_to_cpu(s->stripe_size);
+>  	sb->last_mount		= le32_to_cpu(s->last_mount);
+>  	sb->first_bucket	= le16_to_cpu(s->first_bucket);
+>  	sb->keys		= le16_to_cpu(s->keys);
+> @@ -221,6 +222,7 @@ static void __write_super(struct cache_sb *sb, struct bio *bio)
+>  
+>  	out->flags		= cpu_to_le64(sb->flags);
+>  	out->seq		= cpu_to_le64(sb->seq);
+> +	out->stripe_size	= cpu_to_le32(sb->stripe_size);
+>  
+>  	out->last_mount		= cpu_to_le32(sb->last_mount);
+>  	out->first_bucket	= cpu_to_le16(sb->first_bucket);
+> @@ -1258,7 +1260,18 @@ static int cached_dev_init(struct cached_dev *dc, unsigned int block_size)
+>  
+>  	dc->disk.stripe_size = q->limits.io_opt >> 9;
+>  
+> -	if (dc->disk.stripe_size)
+> +	if (dc->sb.stripe_size) {
+> +		if (dc->disk.stripe_size &&
+> +		    dc->disk.stripe_size != dc->sb.stripe_size) {
+> +			pr_warn("superblock stripe_size (%d) overrides bdev stripe_size (%d)\n",
+> +				(int)dc->sb.stripe_size,
+> +				(int)dc->disk.stripe_size);
+> +		}
+> +
+> +		dc->disk.stripe_size = dc->sb.stripe_size;
+> +		dc->partial_stripes_expensive =
+> +			(unsigned int)BDEV_PARTIAL_STRIPES_EXPENSIVE(&dc->sb);
+> +	} else if (dc->disk.stripe_size)
+>  		dc->partial_stripes_expensive =
+>  			q->limits.raid_partial_stripes_expensive;
+>  
+> diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
+> index bfb437f..4ebca52 100644
+> --- a/drivers/md/bcache/sysfs.c
+> +++ b/drivers/md/bcache/sysfs.c
+> @@ -111,8 +111,8 @@
+>  rw_attribute(writeback_rate_minimum);
+>  read_attribute(writeback_rate_debug);
+>  
+> -read_attribute(stripe_size);
+> -read_attribute(partial_stripes_expensive);
+> +rw_attribute(stripe_size);
+> +rw_attribute(partial_stripes_expensive);
+>  
+>  rw_attribute(synchronous);
+>  rw_attribute(journal_delay_ms);
+> @@ -343,6 +343,35 @@ static ssize_t bch_snprint_string_list(char *buf,
+>  		}
+>  	}
+>  
+> +	if (attr == &sysfs_stripe_size) {
+> +		int v = strtoul_or_return(buf);
+> +
+> +		if (v & 0x1FF) {
+> +			pr_err("stripe_size must be a muliple of 512-byte sectors");
+> +			return -EINVAL;
+> +		}
+> +
+> +		v >>= 9;
+> +
+> +		if (v != dc->sb.stripe_size) {
+> +			dc->sb.stripe_size = v;
+> +			pr_info("stripe_size=%d, re-register to take effect.",
+> +				v<<9);
+> +			bch_write_bdev_super(dc, NULL);
+> +		} else
+> +			pr_info("stripe_size is already set to %d.", v<<9);
+> +	}
+> +
+> +	if (attr == &sysfs_partial_stripes_expensive) {
+> +		int v = strtoul_or_return(buf);
+> +
+> +		if (v != BDEV_PARTIAL_STRIPES_EXPENSIVE(&dc->sb)) {
+> +			SET_BDEV_PARTIAL_STRIPES_EXPENSIVE(&dc->sb, v);
+> +			dc->partial_stripes_expensive = v;
+> +			bch_write_bdev_super(dc, NULL);
+> +		}
+> +	}
+> +
+>  	if (attr == &sysfs_stop_when_cache_set_failed) {
+>  		v = __sysfs_match_string(bch_stop_on_failure_modes, -1, buf);
+>  		if (v < 0)
+> diff --git a/include/uapi/linux/bcache.h b/include/uapi/linux/bcache.h
+> index 5d4f58e..ee60914 100644
+> --- a/include/uapi/linux/bcache.h
+> +++ b/include/uapi/linux/bcache.h
+> @@ -172,7 +172,9 @@ struct cache_sb {
+>  
+>  	__u64			flags;
+>  	__u64			seq;
+> -	__u64			pad[8];
+> +	__u32			stripe_size;
+> +	__u32			pad_u32;
+> +	__u64			pad_u64[7];
+>  
+>  	union {
+>  	struct {
+> @@ -230,7 +232,7 @@ static inline _Bool SB_IS_BDEV(const struct cache_sb *sb)
+>  #define BDEV_STATE_CLEAN		1U
+>  #define BDEV_STATE_DIRTY		2U
+>  #define BDEV_STATE_STALE		3U
+> -
+> +BITMASK(BDEV_PARTIAL_STRIPES_EXPENSIVE,	struct cache_sb, flags, 60, 1);
+>  /*
+>   * Magic numbers
+>   *
+> 
+
+
+-- 
+
+Coly Li
