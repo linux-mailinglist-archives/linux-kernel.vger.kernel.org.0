@@ -2,85 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9A415004C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 05:38:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19C9E50057
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 05:47:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727681AbfFXDiv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 23:38:51 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:19098 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727290AbfFXDiv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 23:38:51 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 61310B675E14D312AA48;
-        Mon, 24 Jun 2019 11:38:44 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
- 14.3.439.0; Mon, 24 Jun 2019 11:38:34 +0800
-From:   Mao Wenan <maowenan@huawei.com>
-To:     <airlied@linux.ie>, <daniel@ffwll.ch>, <alexander.deucher@amd.com>,
-        <christian.koenig@amd.com>, <David1.Zhou@amd.com>,
-        <dan.carpenter@oracle.com>, <julia.lawall@lip6.fr>
-CC:     <kernel-janitors@vger.kernel.org>, <amd-gfx@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>, <jonathan.kim@amd.com>,
-        Mao Wenan <maowenan@huawei.com>
-Subject: [PATCH -next v3] drm/amdgpu: return 'ret' immediately if failed in amdgpu_pmu_init
-Date:   Mon, 24 Jun 2019 11:45:32 +0800
-Message-ID: <20190624034532.135201-1-maowenan@huawei.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <alpine.DEB.2.21.1906230809400.4961@hadrien>
-References: <alpine.DEB.2.21.1906230809400.4961@hadrien>
-MIME-Version: 1.0
+        id S1727644AbfFXDrA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 23:47:00 -0400
+Received: from smtprelay0159.hostedemail.com ([216.40.44.159]:44831 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727132AbfFXDrA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Jun 2019 23:47:00 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay03.hostedemail.com (Postfix) with ESMTP id E5BE8837F24C;
+        Mon, 24 Jun 2019 03:46:58 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::,RULES_HIT:41:152:355:379:599:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2198:2199:2393:2559:2562:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3868:3870:3871:3872:3873:3874:4321:4605:4823:5007:6119:7903:8784:10004:10400:10848:11026:11232:11233:11473:11657:11658:11914:12043:12048:12296:12297:12438:12740:12895:13069:13311:13357:13894:14096:14097:14659:14721:14777:21063:21080:21451:21627:30012:30026:30054:30070:30091,0,RBL:23.242.70.174:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:28,LUA_SUMMARY:none
+X-HE-Tag: dust72_279b0f5cc505
+X-Filterd-Recvd-Size: 3038
+Received: from XPS-9350 (cpe-23-242-70-174.socal.res.rr.com [23.242.70.174])
+        (Authenticated sender: joe@perches.com)
+        by omf19.hostedemail.com (Postfix) with ESMTPA;
+        Mon, 24 Jun 2019 03:46:56 +0000 (UTC)
+Message-ID: <f7af76e8237f490f75d9f2624127e01c55476d2f.camel@perches.com>
+Subject: Re: [PATCH -next v2] drm/amdgpu: return 'ret' in amdgpu_pmu_init
+From:   Joe Perches <joe@perches.com>
+To:     maowenan <maowenan@huawei.com>, airlied@linux.ie, daniel@ffwll.ch,
+        alexander.deucher@amd.com, christian.koenig@amd.com,
+        David1.Zhou@amd.com, dan.carpenter@oracle.com, julia.lawall@lip6.fr
+Cc:     kernel-janitors@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, Jonathan Kim <jonathan.kim@amd.com>
+Date:   Sun, 23 Jun 2019 20:46:55 -0700
+In-Reply-To: <b468d765-bef7-70a8-9a14-bad0e6ed14df@huawei.com>
+References: <20190622104318.GT28859@kadam>
+         <20190622130527.182022-1-maowenan@huawei.com>
+         <0ab82cdb0bec30e7e431f106f8e0e9d141491555.camel@perches.com>
+         <b468d765-bef7-70a8-9a14-bad0e6ed14df@huawei.com>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is one warning:
-drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c: In function ‘amdgpu_pmu_init’:
-drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c:249:6: warning: variable ‘ret’ set but not used [-Wunused-but-set-variable]
-  int ret = 0;
-      ^
-amdgpu_pmu_init() is called by amdgpu_device_init() in drivers/gpu/drm/amd/amdgpu/amdgpu_device.c,
-which will use the return value. So it should return 'ret' immediately if init_pmu_by_type() failed.
-amdgpu_device_init()
-	r = amdgpu_pmu_init(adev);
+On Mon, 2019-06-24 at 11:41 +0800, maowenan wrote:
+> 
+> On 2019/6/23 2:13, Joe Perches wrote:
+> > On Sat, 2019-06-22 at 21:05 +0800, Mao Wenan wrote:
+> > > There is one warning:
+> > > drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c: In function ‘amdgpu_pmu_init’:
+> > > drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c:249:6: warning: variable ‘ret’ set but not used [-Wunused-but-set-variable]
+> > >   int ret = 0;
+> > []
+> > >  v1->v2: change the subject for this patch; change the indenting when it calls init_pmu_by_type; use the value 'ret' in
+> > >  amdgpu_pmu_init().
+> > []
+> > > diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
+> > []
+> > > @@ -252,8 +252,8 @@ int amdgpu_pmu_init(struct amdgpu_device *adev)
+> > >  	case CHIP_VEGA20:
+> > >  		/* init df */
+> > >  		ret = init_pmu_by_type(adev, df_v3_6_attr_groups,
+> > > -				       "DF", "amdgpu_df", PERF_TYPE_AMDGPU_DF,
+> > > -				       DF_V3_6_MAX_COUNTERS);
+> > > +							   "DF", "amdgpu_df", PERF_TYPE_AMDGPU_DF,
+> > > +							   DF_V3_6_MAX_COUNTERS);
+> > 
+> > trivia:
+> > 
+> > The indentation change seems superfluous and
+> > appears to make the code harder to read.
+> > 
+> > You could also cc Jonathan Kim who wrote all of this.
+> I think this is just display issue in mail format. It is correct that in vi/vim.
+> The arguments are line up with '(' after my change.
 
-This patch is also to update the indenting on the arguments so they line up with the '('.
+Use 8 character tabs and try again please.
 
-Fixes: 9c7c85f7ea1f ("drm/amdgpu: add pmu counters")
+> @@ -252,8 +252,8 @@ int amdgpu_pmu_init(struct amdgpu_device *adev)$
+>  ^Icase CHIP_VEGA20:$
+>  ^I^I/* init df */$
+>  ^I^Iret = init_pmu_by_type(adev, df_v3_6_attr_groups,$
+> -^I^I^I^I       "DF", "amdgpu_df", PERF_TYPE_AMDGPU_DF,$
+> -^I^I^I^I       DF_V3_6_MAX_COUNTERS);$
+> +^I^I^I^I^I^I^I   "DF", "amdgpu_df", PERF_TYPE_AMDGPU_DF,$
+> +^I^I^I^I^I^I^I   DF_V3_6_MAX_COUNTERS);$
 
-Signed-off-by: Mao Wenan <maowenan@huawei.com>
----
- v1->v2: change the subject for this patch; change the indenting when it calls init_pmu_by_type; use the value 'ret' in
- amdgpu_pmu_init().
- v2->v3: change the subject for this patch; return 'ret' immediately if failed to call init_pmu_by_type(). 
-
- drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
-index 0e6dba9..b702322 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
-@@ -252,8 +252,11 @@ int amdgpu_pmu_init(struct amdgpu_device *adev)
- 	case CHIP_VEGA20:
- 		/* init df */
- 		ret = init_pmu_by_type(adev, df_v3_6_attr_groups,
--				       "DF", "amdgpu_df", PERF_TYPE_AMDGPU_DF,
--				       DF_V3_6_MAX_COUNTERS);
-+							   "DF", "amdgpu_df",
-+							   PERF_TYPE_AMDGPU_DF,
-+							   DF_V3_6_MAX_COUNTERS);
-+		if (ret)
-+			return ret;
- 
- 		/* other pmu types go here*/
- 		break;
--- 
-2.7.4
 
