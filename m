@@ -2,122 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E6B0507E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:13:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D219A50761
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:12:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730362AbfFXKLy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 06:11:54 -0400
-Received: from mout.kundenserver.de ([212.227.126.130]:42609 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730103AbfFXKG2 (ORCPT
+        id S1730158AbfFXKGl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 06:06:41 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:39152 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728873AbfFXKGd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 06:06:28 -0400
-Received: from [192.168.1.110] ([77.4.138.202]) by mrelayeu.kundenserver.de
- (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1MirfI-1iB8Md1MgO-00er3h; Mon, 24 Jun 2019 12:05:43 +0200
-Subject: Re: [PATCH] drivers: Adjust scope for CONFIG_HAS_IOMEM before
- devm_platform_ioremap_resource()
-To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Markus Elfring <Markus.Elfring@web.de>
-Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Keerthy <j-keerthy@ti.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20190221162627.3476-1-brgl@bgdev.pl>
- <9efcbce2-4d49-7197-a3d8-0e83850892d5@web.de>
- <CAMpxmJX-wXQ-ff1RWkPmJBWSsP_v2MjZrA3fhj3HQX0_zM0eZA@mail.gmail.com>
-From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Organization: metux IT consult
-Message-ID: <39ae399a-c606-c6de-f84d-35e39d0410c0@metux.net>
-Date:   Mon, 24 Jun 2019 12:05:42 +0200
-User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 24 Jun 2019 06:06:33 -0400
+Received: by mail-io1-f65.google.com with SMTP id r185so740646iod.6
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 03:06:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jzjhqKUQE+QT87VlGM7mrbkwUfIug49zvMwL3mtkgLI=;
+        b=nsgcCRD4CD7gAOEhmxdS9KtrV1XDmK+5s3tRYAp4HsTfnT8B4aoKgDLyD6HpN5bSKn
+         Emsl7eP2xijq0eANUtP0KvD/WoHMrGgOyW9IebxKrBzgTnq8rg7HWaY1HiETeI+wVCy3
+         G0x1q+sKHGvktCR3zFb/ltoxVGFvwJ8UiRlSdeXa1JY87nKd8jkdRUZsagcB8fNP2IsO
+         5Tzq0jCElctINZ9ixKqDwpWfKrUXZl1inBuoVPQObeQ9VIgGrIzSZj33cST1DvsZkQkt
+         kWOD/4dgdYs0UhB5mDmCjKCO8oP7XkPLXtP2+kJoFvLZGT21/9PxD/UiuYBhnX8OFA3A
+         Zwng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jzjhqKUQE+QT87VlGM7mrbkwUfIug49zvMwL3mtkgLI=;
+        b=Pec8mVQjPc/BimqPb0u+C2ebpep6vpy5F9QWDD7mqwJe8NjhWQ3e1KJWpxEmRfCsV5
+         SThRT8CFPd3u4pQx06LuNiz3nPJBWtgz96Hru9YO15NpoJH4DNb306ZV4lslJ35oD7qS
+         rhTbasCHMm6qM7+RW/N0oXAXQ9qr7YWwaqdYe1ylVMu1r0fHR8JohbyJ0O39wxEswkvj
+         JJNlcc8bvJLjoxvD1egOk8P9dh6VJfiNjE85xVVpQamwHLdP2sUoaZ74woZ7vN7CLKVX
+         4dpdpq08OuPlVsBRLK/vflqHkUM+oRxhZ4hrJayrlXFXxXnpxNkNrn49hGdKiFIILyID
+         pWeg==
+X-Gm-Message-State: APjAAAX6BLkRFd8OR/oncajbdqQ56ty8XFudFRivxesiAZK9C3Q3X9YA
+        Z2ne2y8HONn0kAa+PgM4pher/i35al/n6sQpyqlBAw==
+X-Google-Smtp-Source: APXvYqzI8LYtNA99krDyYdJrbnPVFN00/VQBOGb8UbWp0fin3ELK5c7b8Nol1ZK3tMvJkd9iYwbO2GQPbH3p5eA9CAM=
+X-Received: by 2002:a02:6597:: with SMTP id u145mr28812545jab.26.1561370790929;
+ Mon, 24 Jun 2019 03:06:30 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAMpxmJX-wXQ-ff1RWkPmJBWSsP_v2MjZrA3fhj3HQX0_zM0eZA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:Y5KmhAuGYBWpz63kWCoOrWjQppi2GCM7nw4zwIl5goqEXlJ5BbX
- t8ubaYngOokp6Z8xrfJZdvOg8jSkCfYvjScNX1xaVigp3qfACw0j20K6xuf4CANZ46Nq9me
- q08dSj4GKou4/MPmMnT9912RJMpzT2PhiqIUQy8YOCHkkeHk9RA7GVcmp4d+Al1H+rYRXPs
- 32V86gxzCU6XHurLGQZkA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:EhlFrXnRRgs=:/a8XyZ7CEl2MasOCthdPtj
- GHPmIV3VKUQE9+3JzxCKgOABObymqWS20d1W1RBSBjOszBrrtsH9gfXYJYPn76gflfz2vENlz
- f7yuhlrfbJvb/GmOQW0IF0Mio5exilcACOo3xQHJXqqHp2i5N1BXXYS7k5+XdcYDSCfPKS+ZU
- 8pYNFguDUshvnjh2oUJ80YdL8blZUSa08lYuap5dZtqw4LAgNmuJmpzRltz/125xVxwPE8Ccl
- 1Yd2YmZ2kfhnd1EmwVn6OeN3Fj/zeuXq+aJq3F0QHpUP+K5mPhlEs7h+RJwooknu04BCD+VsR
- nUr+BfT1xIWR/sTJJ4WgIJ64t1dTTangFgfUiadeSMwaEV6OvOaOpvR4JQ5h5+phkGo24n6LD
- QC+KNoTH/n4wDIHzqMyqX5Ev35mg9SvjSrIwoSmBx2aCHvX0tGazcolLApMyZx4Nmrx79iQiD
- uoOz6UVo0p5K2+W/qigonOACW2LdYozDvoaePPP/4F9CMdG/79hvp5Qjk02aSHpy+ki18VXH+
- CFLv6ygB+oMEAVxl4EvuffVb5WYkGHvkUjQMspnD7rc5mGFJllTXRsrLoB4h+8InP6OTM9w8l
- khKa6p00oEoCBymM8BKqFu0Zr+ZcHWEiXSpJUzLkoob77+hG+k3WltUeg0zOCcED/lLOJPKsf
- 2BkRkkh3rMPoy3a/iusG2prGte2LUVNt5UBGA1Yr3ry2YBA2rsYbudm44rtCdPpzZgaU6K/h9
- D/eNKp1aT1PhRS9h7Kuoi1K+0coK98p/mkx00aFfY0souEtU/PI3+UTZ3QvcWfKkaIgS8MpQ3
- eLPWthYy3Xf2gooeBE1FiY5qhbOertn8d6oftV/J6aDRj0kTdaFsDmFZfHJNuGW4qQlnHAF
+References: <20190620003244.261595-1-ndesaulniers@google.com>
+ <20190620074640.GA27228@brain-police> <CAKv+Gu_KCFCVxw_zAfzUf8DjD4DmhvaJEoqBsX_SigOse_NwYw@mail.gmail.com>
+ <CAKwvOdmQ+WdD8nvLz_VB_5atDi56fv485Xsn+mHJZKnyj6L-JA@mail.gmail.com> <20190624095749.wasjfrgcda7ygdr5@willie-the-truck>
+In-Reply-To: <20190624095749.wasjfrgcda7ygdr5@willie-the-truck>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Mon, 24 Jun 2019 12:06:18 +0200
+Message-ID: <CAKv+Gu8G2GQGxmcAAy1XQ5gkN-2fJSWAKCQQm9T4skYdh5cT3Q@mail.gmail.com>
+Subject: Re: [PATCH] arm64: defconfig: update and enable CONFIG_RANDOMIZE_BASE
+To:     Will Deacon <will@kernel.org>
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        Kees Cook <keescook@google.com>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Jeffrey Vander Stoep <jeffv@google.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Olof Johansson <olof@lixom.net>,
+        Shawn Guo <shawnguo@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24.06.19 10:29, Bartosz Golaszewski wrote:
-> pt., 14 cze 2019 o 18:50 Markus Elfring <Markus.Elfring@web.de> napisał(a):
->>
->> From: Markus Elfring <elfring@users.sourceforge.net>
->> Date: Fri, 14 Jun 2019 17:45:13 +0200
->>
->> Move the preprocessor statement “#ifdef CONFIG_HAS_IOMEM” so that
->> the corresponding scope for conditional compilation includes also comments
->> for this function implementation.
->>
->> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
->> ---
->>  drivers/base/platform.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/base/platform.c b/drivers/base/platform.c
->> index 4d1729853d1a..a5f40974a6ef 100644
->> --- a/drivers/base/platform.c
->> +++ b/drivers/base/platform.c
->> @@ -78,6 +78,7 @@ struct resource *platform_get_resource(struct platform_device *dev,
->>         return NULL;
->>  }
->>  EXPORT_SYMBOL_GPL(platform_get_resource);
->> +#ifdef CONFIG_HAS_IOMEM
->>
->>  /**
->>   * devm_platform_ioremap_resource - call devm_ioremap_resource() for a platform
->> @@ -87,7 +88,6 @@ EXPORT_SYMBOL_GPL(platform_get_resource);
->>   *        resource management
->>   * @index: resource index
->>   */
->> -#ifdef CONFIG_HAS_IOMEM
->>  void __iomem *devm_platform_ioremap_resource(struct platform_device *pdev,
->>                                              unsigned int index)
->>  {
->> --
->> 2.22.0
->>
-> 
-> And what is the purpose of that?
+On Mon, 24 Jun 2019 at 11:57, Will Deacon <will@kernel.org> wrote:
+>
+> Hi Nick, Kees, Ard,
+>
+> Thanks for the responses.
+>
+> On Fri, Jun 21, 2019 at 01:27:45PM -0700, Nick Desaulniers wrote:
+> > On Thu, Jun 20, 2019 at 1:17 AM Ard Biesheuvel
+> > <ard.biesheuvel@linaro.org> wrote:
+> > > On Thu, 20 Jun 2019 at 09:47, Will Deacon <will.deacon@arm.com> wrote:
+> > > > On the flip side, I worry that it could make debugging more difficult, but I
+> > > > don't know whether that's a genuine concern or not. I'm assuming you've
+> > > > debugged your fair share of crashes from KASLR-enabled kernels; how bad is
+> > > > it? (I'm thinking of the case where somebody mails you part of a panic log
+> > > > and a .config).
+> >
+> > I don't recall specific cases where KASLR made debugging difficult.  I
+> > went and spoke to our stability team that debugs crash reports from
+> > the field.  My understanding is that we capture full ramdumps.  They
+> > have a lot of custom tooling for debugging, but they did not recall
+> > ever having to disable KASLR to debug further.  We've had KASLR
+> > enabled since I think the 2016 Pixel 1, so I assume their tooling
+> > accounts for the seed/offset.
+> >
+> > I think if a full ramdump of the kernel image is loaded into GDB with
+> > the matching kernel image it "just works" but could be mistaken.  For
+> > external developers, "nokaslr" boot time param is pretty standard.
+> >
+> > > In fact, given how many Android phones are running this code: Nick,
+> > > can you check if there are any KASLR related kernel fixes that haven't
+> > > been upstreamed?
+> >
+> > I spoke with the android common kernel team that's trying to burn down
+> > their out of tree patches.  I triple checked a doc they had where they
+> > had audited every last patch, looking for for KASLR and
+> > CONFIG_RANDOMIZE_BASE.  I also triple checked our internal bug tracker
+> > for burning down the out of tree patches.  Finally I'm scanning each
+> > branch of our android-common trees via `git log --all --grep
+> > <KASLR|CONFIG_RANDOMIZE_BASE>`.  I haven't found anything yet, and the
+> > team doesn't expect any out of tree patches related to that feature.
+> > Sorry for not responding sooner, but I'm still going through our 4.4,
+> > 4.9, 4.14, and 4.19 branches.
+>
+> Thanks for having a look. It could be that we've fixed the issue Catalin was
+> running into in the past -- he was going to see if the problem persists with
+> mainline, since it was frequent enough that it was causing us to ignore the
+> results from our testing infrastructure when RANDOMIZE_BASE=y.
+>
 
-I can imagine that this could improve readability a little bit. Maybe if
-one uses same fancy ide/editor that can fold code blocks like functions
-and conditionals, this patch could make the code prettier.
+I had no idea this was the case. I can look into it if we are still
+seeing failures.
 
-The patch seems pretty trivial and doesn't change any actual code, so
-I don't see hard resons for rejecting it.
+> > > So KASLR is known to be broken unless you enable KPTI as well, so that
+> > > is something we could take into account. I.e., mitigations that don't
+> > > reduce the attack surface at all are just pointless complexity, which
+> > > should obviously be avoided.
+> >
+> > (Note to Sami + Jeff if they had KPTI on their radar)
+>
+> I mean, we could have RANDOMIZE_BASE select UNMAP_KERNEL_AT_EL0 if you like?
+> The latter is already default y and hidden behind EXPERT.
+>
 
+IIRC, when KASLR is enabled (and we have a seed), we override the
+runtime decision to out out of KPTI, and so even uarchs that don't
+require the Meltdown mitigations it provides will still be using it.
 
---mtx
+So I'd be fine with just adding a note to the UNMAP_KERNEL_AT_EL0
+Kconfig help text that even non-affected uarchs have a use for it if
+KASLR is enabled, but given that it is already behind EXPERT, I don't
+think more hand holding is necessary.
 
-
--- 
-Enrico Weigelt, metux IT consult
-Free software and Linux embedded engineering
-info@metux.net -- +49-151-27565287
+> > > Another thing to note is that the runtime cost of KASLR is ~zero, with
+> > > the exception of the module PLTs. However, the latter could do with
+> > > some additional coverage as well, so in summary, I think enabling this
+> > > is a good thing. Otherwise, we could disable full module randomization
+> > > so that the module PLT code doesn't get used in practice.
+> > >
+> > > Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> >
+> > Olof mentioned on IRC that I should resend without the other defconfig
+> > changes.  Do others have thoughts on that?
+>
+> That's not a bad idea. If you do that, feel free to add my Ack to the one
+> adding RANDOMIZE_BASE=y:
+>
+> Acked-by: Will Deacon <will@kernel.org>
+>
+> Will
