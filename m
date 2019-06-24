@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C09CC50863
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:18:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8964A5068F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:01:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730839AbfFXKQ4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 06:16:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54418 "EHLO mail.kernel.org"
+        id S1729223AbfFXJ7c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 05:59:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58630 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730812AbfFXKQw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 06:16:52 -0400
+        id S1729216AbfFXJ73 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 05:59:29 -0400
 Received: from localhost (f4.8f.5177.ip4.static.sl-reverse.com [119.81.143.244])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E57E32089F;
-        Mon, 24 Jun 2019 10:16:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 74F1A205ED;
+        Mon, 24 Jun 2019 09:59:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561371411;
-        bh=iij1meYte0WHz2U2A83FqefBIDwkigj8yIeBCh4EbG4=;
+        s=default; t=1561370368;
+        bh=AZ4hQFbDbc3e4yABmB6vYKoy2RI/A6f6SK1Pel/zyrM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=myf/f+xEf8NEvlgMMN4e32DZghZXBrlf8t2JThhKZ+yUaYeHuFe+rDAQ6UWJRpFrA
-         ifpHno0KCcxt5lKsS+Kc+l5DLKkj2Sj1MBMnDOKV//lNSeFKlT99QwWTAU1smg9as6
-         0jnpairRKLErnNapvPho5Mu+O3QDrpjq6YFZKZuo=
+        b=RX/WwSwwS/IoKtcaz4gKAFkWjTBlOEMsdnNJxezoo9F2AKUEOqV1JoWa5Aiuvodo5
+         fPy2oCqFFyZvRYSxdphatdlJEY/ycXw6X298YJECnefFonPqA8NGh8KxiECc45M+0W
+         16N4wowCzsgwvJAfzYyN7FGDlcJOCxL19EvfIJ7g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Shubhrajyoti Datta <shubhrajyoti.datta@gmail.com>,
-        Anssi Hannula <anssi.hannula@bitwise.fi>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 5.1 093/121] can: xilinx_can: use correct bittiming_const for CAN FD core
-Date:   Mon, 24 Jun 2019 17:57:05 +0800
-Message-Id: <20190624092325.534361171@linuxfoundation.org>
+        syzbot+7fddca22578bc67c3fe4@syzkaller.appspotmail.com,
+        Eric Biggers <ebiggers@google.com>,
+        Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 4.14 48/51] cfg80211: fix memory leak of wiphy device name
+Date:   Mon, 24 Jun 2019 17:57:06 +0800
+Message-Id: <20190624092311.362114698@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190624092320.652599624@linuxfoundation.org>
-References: <20190624092320.652599624@linuxfoundation.org>
+In-Reply-To: <20190624092305.919204959@linuxfoundation.org>
+References: <20190624092305.919204959@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,42 +45,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anssi Hannula <anssi.hannula@bitwise.fi>
+From: Eric Biggers <ebiggers@google.com>
 
-commit 904044dd8fff43e289c11a2f90fa532e946a1d8b upstream.
+commit 4f488fbca2a86cc7714a128952eead92cac279ab upstream.
 
-Commit 9e5f1b273e6a ("can: xilinx_can: add support for Xilinx CAN FD
-core") added a new can_bittiming_const structure for CAN FD cores that
-support larger values for tseg1, tseg2, and sjw than previous Xilinx CAN
-cores, but the commit did not actually take that into use.
+In wiphy_new_nm(), if an error occurs after dev_set_name() and
+device_initialize() have already been called, it's necessary to call
+put_device() (via wiphy_free()) to avoid a memory leak.
 
-Fix that.
-
-Tested with CAN FD core on a ZynqMP board.
-
-Fixes: 9e5f1b273e6a ("can: xilinx_can: add support for Xilinx CAN FD core")
-Reported-by: Shubhrajyoti Datta <shubhrajyoti.datta@gmail.com>
-Signed-off-by: Anssi Hannula <anssi.hannula@bitwise.fi>
-Cc: Michal Simek <michal.simek@xilinx.com>
-Reviewed-by: Shubhrajyoti Datta <shubhrajyoti.datta@gmail.com>
-Cc: linux-stable <stable@vger.kernel.org>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Reported-by: syzbot+7fddca22578bc67c3fe4@syzkaller.appspotmail.com
+Fixes: 1f87f7d3a3b4 ("cfg80211: add rfkill support")
+Cc: stable@vger.kernel.org
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/can/xilinx_can.c |    2 +-
+ net/wireless/core.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/can/xilinx_can.c
-+++ b/drivers/net/can/xilinx_can.c
-@@ -1443,7 +1443,7 @@ static const struct xcan_devtype_data xc
- 		 XCAN_FLAG_RXMNF |
- 		 XCAN_FLAG_TX_MAILBOXES |
- 		 XCAN_FLAG_RX_FIFO_MULTI,
--	.bittiming_const = &xcan_bittiming_const,
-+	.bittiming_const = &xcan_bittiming_const_canfd,
- 	.btr_ts2_shift = XCAN_BTR_TS2_SHIFT_CANFD,
- 	.btr_sjw_shift = XCAN_BTR_SJW_SHIFT_CANFD,
- 	.bus_clk_name = "s_axi_aclk",
+--- a/net/wireless/core.c
++++ b/net/wireless/core.c
+@@ -498,7 +498,7 @@ use_default_name:
+ 				   &rdev->rfkill_ops, rdev);
+ 
+ 	if (!rdev->rfkill) {
+-		kfree(rdev);
++		wiphy_free(&rdev->wiphy);
+ 		return NULL;
+ 	}
+ 
 
 
