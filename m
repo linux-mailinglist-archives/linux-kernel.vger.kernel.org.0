@@ -2,86 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8097950636
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 11:56:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B132E50772
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:12:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727368AbfFXJ4n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 05:56:43 -0400
-Received: from foss.arm.com ([217.140.110.172]:44980 "EHLO foss.arm.com"
+        id S1730267AbfFXKHI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 06:07:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39524 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728752AbfFXJ4e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 05:56:34 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 155E7C15;
-        Mon, 24 Jun 2019 02:56:34 -0700 (PDT)
-Received: from e121650-lin.cambridge.arm.com (e121650-lin.cambridge.arm.com [10.1.196.120])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EACB73F71E;
-        Mon, 24 Jun 2019 02:56:32 -0700 (PDT)
-From:   Raphael Gault <raphael.gault@arm.com>
-To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     jpoimboe@redhat.com, peterz@infradead.org, catalin.marinas@arm.com,
-        will.deacon@arm.com, julien.thierry@arm.com,
-        Raphael Gault <raphael.gault@arm.com>
-Subject: [RFC V3 17/18] arm64: kernel: Annotate non-standard stack frame functions
-Date:   Mon, 24 Jun 2019 10:55:47 +0100
-Message-Id: <20190624095548.8578-18-raphael.gault@arm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190624095548.8578-1-raphael.gault@arm.com>
-References: <20190624095548.8578-1-raphael.gault@arm.com>
+        id S1730255AbfFXKHG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 06:07:06 -0400
+Received: from localhost (f4.8f.5177.ip4.static.sl-reverse.com [119.81.143.244])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A022E214DA;
+        Mon, 24 Jun 2019 10:07:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561370825;
+        bh=Xob4prRYpzGNCy0BfQoNaMaioIygswDmCuiakzquiK4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=FypKb7s32FSqa6AF2dAsWlEt/5V3GDEfgMxbAwb7tpDwFPAu5Jybaw5EGQCUcnXvd
+         neF7XwJ9BGTtQEHNXRenm/rq1Shy4zvvCFaHSQlfvXmGyrrOiIgCE3AGOL7j/RQj4s
+         JB/Rc58nICJGA8E+Mwu7RRLmqp8sk7ecDO5t7+48=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Kaike Wan <kaike.wan@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 5.1 015/121] IB/hfi1: Validate fault injection opcode user input
+Date:   Mon, 24 Jun 2019 17:55:47 +0800
+Message-Id: <20190624092321.411704799@linuxfoundation.org>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190624092320.652599624@linuxfoundation.org>
+References: <20190624092320.652599624@linuxfoundation.org>
+User-Agent: quilt/0.66
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Annotate assembler functions which are callable but do not
-setup a correct stack frame.
+From: Kaike Wan <kaike.wan@intel.com>
 
-Signed-off-by: Raphael Gault <raphael.gault@arm.com>
+commit 5f90677ed31963abb184ee08ebee4a4a68225dd8 upstream.
+
+The opcode range for fault injection from user should be validated before
+it is applied to the fault->opcodes[] bitmap to avoid out-of-bound
+error.
+
+Cc: <stable@vger.kernel.org>
+Fixes: a74d5307caba ("IB/hfi1: Rework fault injection machinery")
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Signed-off-by: Kaike Wan <kaike.wan@intel.com>
+Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/arm64/kernel/hyp-stub.S | 2 ++
- arch/arm64/kvm/hyp-init.S    | 2 ++
- 2 files changed, 4 insertions(+)
+ drivers/infiniband/hw/hfi1/fault.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/arm64/kernel/hyp-stub.S b/arch/arm64/kernel/hyp-stub.S
-index 73d46070b315..a382f0e33735 100644
---- a/arch/arm64/kernel/hyp-stub.S
-+++ b/arch/arm64/kernel/hyp-stub.S
-@@ -42,6 +42,7 @@ ENTRY(__hyp_stub_vectors)
- 	ventry	el1_fiq_invalid			// FIQ 32-bit EL1
- 	ventry	el1_error_invalid		// Error 32-bit EL1
- ENDPROC(__hyp_stub_vectors)
-+asm_stack_frame_non_standard __hyp_stub_vectors
+--- a/drivers/infiniband/hw/hfi1/fault.c
++++ b/drivers/infiniband/hw/hfi1/fault.c
+@@ -153,6 +153,7 @@ static ssize_t fault_opcodes_write(struc
+ 		char *dash;
+ 		unsigned long range_start, range_end, i;
+ 		bool remove = false;
++		unsigned long bound = 1U << BITS_PER_BYTE;
  
- 	.align 11
- 
-@@ -69,6 +70,7 @@ el1_sync:
- 9:	mov	x0, xzr
- 	eret
- ENDPROC(el1_sync)
-+asm_stack_frame_non_standard el1_sync
- 
- .macro invalid_vector	label
- \label:
-diff --git a/arch/arm64/kvm/hyp-init.S b/arch/arm64/kvm/hyp-init.S
-index 160be2b4696d..65b7c12b9aa8 100644
---- a/arch/arm64/kvm/hyp-init.S
-+++ b/arch/arm64/kvm/hyp-init.S
-@@ -118,6 +118,7 @@ CPU_BE(	orr	x4, x4, #SCTLR_ELx_EE)
- 	/* Hello, World! */
- 	eret
- ENDPROC(__kvm_hyp_init)
-+asm_stack_frame_non_standard __kvm_hyp_init
- 
- ENTRY(__kvm_handle_stub_hvc)
- 	cmp	x0, #HVC_SOFT_RESTART
-@@ -159,6 +160,7 @@ reset:
- 	eret
- 
- ENDPROC(__kvm_handle_stub_hvc)
-+asm_stack_frame_non_standard __kvm_handle_stub_hvc
- 
- 	.ltorg
- 
--- 
-2.17.1
+ 		end = strchr(ptr, ',');
+ 		if (end)
+@@ -178,6 +179,10 @@ static ssize_t fault_opcodes_write(struc
+ 				    BITS_PER_BYTE);
+ 			break;
+ 		}
++		/* Check the inputs */
++		if (range_start >= bound || range_end >= bound)
++			break;
++
+ 		for (i = range_start; i <= range_end; i++) {
+ 			if (remove)
+ 				clear_bit(i, fault->opcodes);
+
 
