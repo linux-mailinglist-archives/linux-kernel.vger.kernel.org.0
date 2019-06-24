@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8011850701
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:06:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C0A850679
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:01:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729556AbfFXKDU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 06:03:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34566 "EHLO mail.kernel.org"
+        id S1729128AbfFXJ7C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 05:59:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57848 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729524AbfFXKDO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 06:03:14 -0400
+        id S1729106AbfFXJ67 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 05:58:59 -0400
 Received: from localhost (f4.8f.5177.ip4.static.sl-reverse.com [119.81.143.244])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 01CC0205ED;
-        Mon, 24 Jun 2019 10:03:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B1118214C6;
+        Mon, 24 Jun 2019 09:58:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561370593;
-        bh=CpjiAQxxGhskeVbGZi9ELuGE30tiEiIXdWgK6Pov1Gc=;
+        s=default; t=1561370339;
+        bh=aOrGG1cBOahIihJ05bmyAadfSEbi8NCeOcF5KGQ0zE0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=F0uG5DQa6L8n2RGuELqicuXeaJWUNrnCkDyYDIYYK2xkgX51hXw/3k86cSUxKrYN/
-         BSdauBL0fFzEwSbZ4ai4gXorP9P1Kd8W1wMPPI7dBO/VKuvEm8g4aOshfuz1g07quK
-         Leh+YGpGTlFwGoz87hkUSU2J4KFfROedqQrCPuJ8=
+        b=PeH04u/v0Rz1kfjjIVVx+cepQiMCtPVUgv4TpjUyWc+ypXVL14f+LMexOyuxFfl8E
+         jqnZxZOehH+Xt+BX2SurdRWyUY9K55zRSuE+be9/0zVIAOanjleApsfLLZWkNfL8ly
+         /hnXrJksMWqZi/YTMsNhaZU2LhsYGOfy3NQCZ4mo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 31/90] dmaengine: dw-axi-dmac: fix null dereference when pointer first is null
-Date:   Mon, 24 Jun 2019 17:56:21 +0800
-Message-Id: <20190624092316.334690590@linuxfoundation.org>
+        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 04/51] net: phy: broadcom: Use strlcpy() for ethtool::get_strings
+Date:   Mon, 24 Jun 2019 17:56:22 +0800
+Message-Id: <20190624092306.418859848@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190624092313.788773607@linuxfoundation.org>
-References: <20190624092313.788773607@linuxfoundation.org>
+In-Reply-To: <20190624092305.919204959@linuxfoundation.org>
+References: <20190624092305.919204959@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,39 +43,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 0788611c9a0925c607de536b2449de5ed98ef8df ]
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-In the unlikely event that axi_desc_get returns a null desc in the
-very first iteration of the while-loop the error exit path ends
-up calling axi_desc_put on a null pointer 'first' and this causes
-a null pointer dereference.  Fix this by adding a null check on
-pointer 'first' before calling axi_desc_put.
+commit 8a17eefa235f73b60c0ca7d397d2e4f66f85f413 upstream.
 
-Addresses-Coverity: ("Explicit null dereference")
-Fixes: 1fe20f1b8454 ("dmaengine: Introduce DW AXI DMAC driver")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Our statistics strings are allocated at initialization without being
+bound to a specific size, yet, we would copy ETH_GSTRING_LEN bytes using
+memcpy() which would create out of bounds accesses, this was flagged by
+KASAN. Replace this with strlcpy() to make sure we are bound the source
+buffer size and we also always NUL-terminate strings.
+
+Fixes: 820ee17b8d3b ("net: phy: broadcom: Add support code for reading PHY counters")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/phy/bcm-phy-lib.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c b/drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c
-index c4eb55e3011c..c05ef7f1d7b6 100644
---- a/drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c
-+++ b/drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c
-@@ -512,7 +512,8 @@ dma_chan_prep_dma_memcpy(struct dma_chan *dchan, dma_addr_t dst_adr,
- 	return vchan_tx_prep(&chan->vc, &first->vd, flags);
+--- a/drivers/net/phy/bcm-phy-lib.c
++++ b/drivers/net/phy/bcm-phy-lib.c
+@@ -341,8 +341,8 @@ void bcm_phy_get_strings(struct phy_devi
+ 	unsigned int i;
  
- err_desc_get:
--	axi_desc_put(first);
-+	if (first)
-+		axi_desc_put(first);
- 	return NULL;
+ 	for (i = 0; i < ARRAY_SIZE(bcm_phy_hw_stats); i++)
+-		memcpy(data + i * ETH_GSTRING_LEN,
+-		       bcm_phy_hw_stats[i].string, ETH_GSTRING_LEN);
++		strlcpy(data + i * ETH_GSTRING_LEN,
++			bcm_phy_hw_stats[i].string, ETH_GSTRING_LEN);
  }
+ EXPORT_SYMBOL_GPL(bcm_phy_get_strings);
  
--- 
-2.20.1
-
 
 
