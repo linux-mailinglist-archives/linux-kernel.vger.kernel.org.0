@@ -2,44 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7B6954E20
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 14:00:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0214054E1F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 14:00:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732465AbfFYMAv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 08:00:51 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:38940 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727966AbfFYMAv (ORCPT
+        id S1732453AbfFYMAp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 08:00:45 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:54916 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731509AbfFYMAn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 08:00:51 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5PBwTDs034898;
-        Tue, 25 Jun 2019 12:00:04 GMT
+        Tue, 25 Jun 2019 08:00:43 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5PBwkuP132922;
+        Tue, 25 Jun 2019 12:00:06 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
- bh=6klKICAt+a+KHWaEwnSq/964CSEq5H1pgE5tT5g7vdQ=;
- b=YdQfxpBKwEfWxikYjMknr/V/zwveF/HaI/kF2hIg4FLnuMIlt9gtV0D0vPr3sgCAHo+I
- PPlzin4Ws8tcfFdRucHkrtUxRqAbrOMwRxBSl7Tf9CASrpcgBrwSElGlqUDWvNwsJsZd
- RzdkyB49SOrB7oowtH7mx2hTzrEzZXQglGMJbEf6t+on4ZhwrfvdK88wmzYxvCb8FeOc
- 7Bab0+JA4YxqNQTUuTke2lo2j7O4yg38pvqO2n1CeOIvOZxtAE2cWiOYG/MelfmGze43
- 5X/GLj64bvgPZjkEZsRtsze5ia3ne1x9SK41C9CL1xg+tI/P0/EP9urZJboNkzcDU6YF pQ== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2120.oracle.com with ESMTP id 2t9cyqbubg-1
+ bh=iNQTvVUSmgNuLxw/E1kf9kiRXgGAedbtzYJ7h/7MhiM=;
+ b=xIAw4zPPw23qdkXzzO7kIYWXxKfuSWEZME+9rRcJ1KvLaeHHFqrGGzTHONRNQHR7BvVZ
+ iK/Wag51OR8USF4fgGFhHZ5vUQwTXO7LO8xhdrYFJjhRsgd51IIKWgto3cQmrs+kX1iB
+ C5PUWNcg8xG3ReOM2UlG+VGrJaSp3A2yktkKQP6bydJ+7Nd8+hyXdMeuv7X5SN8805fl
+ Etm7qGx+urDGi96IDdT9cOP1lnHDUiJUC8Be6ypgeuoJyuZ4lDJPECpRaL9udvR4pEai
+ i9dIB1JcfOepxDS7yGP06jlhELtV3mRA8Wqx/52aQBiPJ3uJS0TyyvcLdC6iPIwbgA2D 8A== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 2t9c9pkv6n-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 25 Jun 2019 12:00:03 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5PBwhAr130232;
-        Tue, 25 Jun 2019 12:00:03 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3020.oracle.com with ESMTP id 2t9p6u515b-1
+        Tue, 25 Jun 2019 12:00:06 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5PBxTnS064989;
+        Tue, 25 Jun 2019 12:00:06 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3030.oracle.com with ESMTP id 2t9acc2gnd-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 25 Jun 2019 12:00:02 +0000
+        Tue, 25 Jun 2019 12:00:05 +0000
 Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5PC01Tb012106;
-        Tue, 25 Jun 2019 12:00:01 GMT
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x5PC046Z027550;
+        Tue, 25 Jun 2019 12:00:04 GMT
 Received: from z2.cn.oracle.com (/10.182.69.87)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 25 Jun 2019 05:00:01 -0700
+        with ESMTP ; Tue, 25 Jun 2019 05:00:04 -0700
 From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     tglx@linutronix.de, mingo@kernel.org, bp@alien8.de, hpa@zytor.com,
@@ -48,9 +48,9 @@ Cc:     tglx@linutronix.de, mingo@kernel.org, bp@alien8.de, hpa@zytor.com,
         srinivas.eeda@oracle.com,
         Zhenzhong Duan <zhenzhong.duan@oracle.com>,
         Ingo Molnar <mingo@redhat.com>, xen-devel@lists.xenproject.org
-Subject: [PATCH v2 4/7] Revert "xen: Introduce 'xen_nopv' to disable PV extensions for HVM guests."
-Date:   Mon, 24 Jun 2019 20:02:56 +0800
-Message-Id: <1561377779-28036-5-git-send-email-zhenzhong.duan@oracle.com>
+Subject: [PATCH v2 5/7] x86/xen: nopv parameter support for HVM guest
+Date:   Mon, 24 Jun 2019 20:02:57 +0800
+Message-Id: <1561377779-28036-6-git-send-email-zhenzhong.duan@oracle.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1561377779-28036-1-git-send-email-zhenzhong.duan@oracle.com>
 References: <1561377779-28036-1-git-send-email-zhenzhong.duan@oracle.com>
@@ -70,10 +70,13 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit 8d693b911bb9c57009c24cb1772d205b84c7985c.
+PVH guest needs PV extentions to work, so nopv parameter is ignored
+for PVH but not for HVM guest.
 
-Instead we use an unified parameter 'nopv' for all the hypervisor
-platforms.
+In order for nopv parameter to take effect for HVM guest, we need to
+distinguish between PVH and HVM guest early in hypervisor detection
+code. By moving the detection of PVH in xen_platform_hvm(),
+xen_pvh_domain() could be used for that purpose.
 
 Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
 Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
@@ -84,57 +87,58 @@ Cc: Ingo Molnar <mingo@redhat.com>
 Cc: Borislav Petkov <bp@alien8.de>
 Cc: xen-devel@lists.xenproject.org
 ---
- Documentation/admin-guide/kernel-parameters.txt |  4 ----
- arch/x86/xen/enlighten_hvm.c                    | 12 +-----------
- 2 files changed, 1 insertion(+), 15 deletions(-)
+ arch/x86/xen/enlighten_hvm.c | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 21e08af..d5c3dcc 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -5251,10 +5251,6 @@
- 			Disables the ticketlock slowpath using Xen PV
- 			optimizations.
- 
--	xen_nopv	[X86]
--			Disables the PV optimizations forcing the HVM guest to
--			run as generic HVM guest with no PV drivers.
--
- 	xen_scrub_pages=	[XEN]
- 			Boolean option to control scrubbing pages before giving them back
- 			to Xen, for use by other domains. Can be also changed at runtime
 diff --git a/arch/x86/xen/enlighten_hvm.c b/arch/x86/xen/enlighten_hvm.c
-index ac4943c..7fcb4ea 100644
+index 7fcb4ea..26939e7 100644
 --- a/arch/x86/xen/enlighten_hvm.c
 +++ b/arch/x86/xen/enlighten_hvm.c
-@@ -210,18 +210,8 @@ static void __init xen_hvm_guest_init(void)
- #endif
- }
+@@ -25,6 +25,7 @@
+ #include "mmu.h"
+ #include "smp.h"
  
--static bool xen_nopv;
--static __init int xen_parse_nopv(char *arg)
--{
--       xen_nopv = true;
--       return 0;
--}
--early_param("xen_nopv", xen_parse_nopv);
--
- bool __init xen_hvm_need_lapic(void)
- {
--	if (xen_nopv)
--		return false;
++extern bool nopv;
+ static unsigned long shared_info_pfn;
+ 
+ void xen_hvm_init_shared_info(void)
+@@ -226,20 +227,24 @@ static uint32_t __init xen_platform_hvm(void)
  	if (xen_pv_domain())
- 		return false;
- 	if (!xen_hvm_domain())
-@@ -233,7 +223,7 @@ bool __init xen_hvm_need_lapic(void)
- 
- static uint32_t __init xen_platform_hvm(void)
- {
--	if (xen_pv_domain() || xen_nopv)
-+	if (xen_pv_domain())
  		return 0;
  
++#ifdef CONFIG_XEN_PVH
++	/* Test for PVH domain (PVH boot path taken overrides ACPI flags). */
++	if (!x86_platform.legacy.rtc && x86_platform.legacy.no_vga)
++		xen_pvh = true;
++#endif
++
++	if (!xen_pvh_domain() && nopv)
++		return 0;
++
  	return xen_cpuid_base();
+ }
+ 
+ static __init void xen_hvm_guest_late_init(void)
+ {
+ #ifdef CONFIG_XEN_PVH
+-	/* Test for PVH domain (PVH boot path taken overrides ACPI flags). */
+-	if (!xen_pvh &&
+-	    (x86_platform.legacy.rtc || !x86_platform.legacy.no_vga))
++	if (!xen_pvh)
+ 		return;
+ 
+-	/* PVH detected. */
+-	xen_pvh = true;
+-
+ 	/* Make sure we don't fall back to (default) ACPI_IRQ_MODEL_PIC. */
+ 	if (!nr_ioapics && acpi_irq_model == ACPI_IRQ_MODEL_PIC)
+ 		acpi_irq_model = ACPI_IRQ_MODEL_PLATFORM;
+@@ -258,4 +263,5 @@ static __init void xen_hvm_guest_late_init(void)
+ 	.init.init_mem_mapping	= xen_hvm_init_mem_mapping,
+ 	.init.guest_late_init	= xen_hvm_guest_late_init,
+ 	.runtime.pin_vcpu       = xen_pin_vcpu,
++	.ignore_nopv            = true,
+ };
 -- 
 1.8.3.1
 
