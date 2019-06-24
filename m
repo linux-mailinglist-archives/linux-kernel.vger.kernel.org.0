@@ -2,92 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CFDA51F29
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 01:35:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E69251F30
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 01:44:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728514AbfFXXfV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 19:35:21 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:37021 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726424AbfFXXfT (ORCPT
+        id S1728569AbfFXXoQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 19:44:16 -0400
+Received: from mail106.syd.optusnet.com.au ([211.29.132.42]:45829 "EHLO
+        mail106.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728499AbfFXXoQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 19:35:19 -0400
-Received: by mail-lj1-f196.google.com with SMTP id 131so14301585ljf.4;
-        Mon, 24 Jun 2019 16:35:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IvGfUsEsPfILP2JsuYFvKK2rmUrap93sJGjxp5w61WY=;
-        b=ZexGESd2sbrcoHawQOWaaPxCngJqUh4OV23ETrO6o22YScx//Qbj3/ocqGOZGCIZUy
-         GcPca+zC8Su66++qVCX4TpMs09R0syQMTjIiTJ1pRuHX7QLOgmVrO3Q9Nu4R9rNkeDPV
-         hMibTNmHxr+H8W/p3iZdoQOocQehqUdjwdQvp61vga2WviZUNEqIUbp/q4dHrtLLQd5X
-         Fky8UBT+kRcLF7pcMANeuMYWvnW1SfpD0cI+Ti+cMwELgxMX7vigpZiec4T/yxfoE9wB
-         uedXRbL4KWsG7gYBhBigccWi/R6cCl68qR3obOdIbWTgnYD2rsUBwM3BsZk2WnGlsvrr
-         7oSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IvGfUsEsPfILP2JsuYFvKK2rmUrap93sJGjxp5w61WY=;
-        b=K7XTBp8pxOw62zx0najiSZ20/QpTT9VmGhmBJi+kahiSEqKiqVjHoRKfAcYtMM8AAZ
-         hm9btwLdDo+3eqsvuuvtl2xma6P81Ol24+Wq/x46iPqNT6rqhGK9Q77ZiomuhomQFY5y
-         u78E+3+1Z6rrl4yXUiiLfhE71c7jarKc4mUorjxjWoHHDToGDNz/uRqUYX2/HkOJ4E2M
-         hOE5+Z1pJQbyVGLEdQjQVDZCMdxaqWMcO5b4mJZtT0bT0OCMjTWkTSxeGdnHbaXDNHKd
-         P23AqqksU5eGmetpDxTr3RD2Zj4/j2QpEQ3o7TNLs9KXPg8RZp7/jH7h5HgrS9l0DjSP
-         m8Dw==
-X-Gm-Message-State: APjAAAUWgsXidzGfApbBvFRv96LDBBOXju7YbPrtMQiUhJw+Ky6ScT60
-        Q8i2Jjclvky4u05HOpEExSWcrvQrvEikOR3ZzZ8=
-X-Google-Smtp-Source: APXvYqziSryBpZbr4FqRjAhwFUa0RwgdClngxZGrqEXbOXHzWLAm2wr6tgY3okW5B8Ea57NLNHi94eFducexe72BgxI=
-X-Received: by 2002:a2e:b047:: with SMTP id d7mr10251853ljl.8.1561419316476;
- Mon, 24 Jun 2019 16:35:16 -0700 (PDT)
+        Mon, 24 Jun 2019 19:44:16 -0400
+Received: from dread.disaster.area (pa49-195-139-63.pa.nsw.optusnet.com.au [49.195.139.63])
+        by mail106.syd.optusnet.com.au (Postfix) with ESMTPS id E6EC03DBE31;
+        Tue, 25 Jun 2019 09:44:12 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92)
+        (envelope-from <david@fromorbit.com>)
+        id 1hfYc4-0000mA-Q2; Tue, 25 Jun 2019 09:43:04 +1000
+Date:   Tue, 25 Jun 2019 09:43:04 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 11/12] iomap: move the xfs writeback code to iomap.c
+Message-ID: <20190624234304.GD7777@dread.disaster.area>
+References: <20190624055253.31183-1-hch@lst.de>
+ <20190624055253.31183-12-hch@lst.de>
 MIME-Version: 1.0
-References: <20190621231650.32073-1-brianvv@google.com> <20190621231650.32073-3-brianvv@google.com>
- <20190624154558.65c31561@cakuba.netronome.com>
-In-Reply-To: <20190624154558.65c31561@cakuba.netronome.com>
-From:   Brian Vazquez <brianvv.kernel@gmail.com>
-Date:   Mon, 24 Jun 2019 16:35:05 -0700
-Message-ID: <CABCgpaUhHmLaWUg-x_X+yYD6pnoAcMLw9jr1BPnv5vrM-NYmqQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/6] bpf: add BPF_MAP_DUMP command to access more than
- one entry per call
-To:     Jakub Kicinski <jakub.kicinski@netronome.com>
-Cc:     Brian Vazquez <brianvv@google.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        "David S . Miller" <davem@davemloft.net>,
-        Stanislav Fomichev <sdf@google.com>,
-        Willem de Bruijn <willemb@google.com>,
-        Petar Penkov <ppenkov@google.com>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190624055253.31183-12-hch@lst.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=P6RKvmIu c=1 sm=1 tr=0 cx=a_idp_d
+        a=fNT+DnnR6FjB+3sUuX8HHA==:117 a=fNT+DnnR6FjB+3sUuX8HHA==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=dq6fvYVFJ5YA:10
+        a=7-415B0cAAAA:8 a=WnLPuD5yqiszFHSN9gAA:9 a=CjuIK1q_8ugA:10
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 3:46 PM Jakub Kicinski
-<jakub.kicinski@netronome.com> wrote:
->
-> On Fri, 21 Jun 2019 16:16:46 -0700, Brian Vazquez wrote:
-> > @@ -385,6 +386,14 @@ union bpf_attr {
-> >               __u64           flags;
-> >       };
-> >
-> > +     struct { /* struct used by BPF_MAP_DUMP command */
-> > +             __u32           map_fd;
->
-> There is a hole here, perhaps flags don't have to be 64 bit?
-The command implementation is wrapping BPF_MAP_*_ELEM commands, I
-would expect this one to handle the same flags which are 64 bit.
-Note that there's a hole in the anonymous structure used by the other
-commands too:
-        struct { /* anonymous struct used by BPF_MAP_*_ELEM commands */
-                __u32           map_fd;
-                __aligned_u64   key;
-                union {
-                        __aligned_u64 value;
-                        __aligned_u64 next_key;
-                };
-                __u64           flags;
-        };
+On Mon, Jun 24, 2019 at 07:52:52AM +0200, Christoph Hellwig wrote:
+> Takes the xfs writeback code and move it to iomap.c.  A new structure
+> with three methods is added as the abstraction from the generic
+> writeback code to the file system.  These methods are used to map
+> blocks, submit an ioend, and cancel a page that encountered an error
+> before it was added to an ioend.
+> 
+> Note that we temporarily lose the writepage tracing, but that will
+> be added back soon.
+
+I'm a little concerned this is going to limit what we can do
+with the XFS IO path because now we can't change this code without
+considering the direct impact on other filesystems. The QA burden of
+changing the XFS writeback code goes through the roof with this
+change (i.e. we can break multiple filesystems, not just XFS).
+
+The writepage code is one of the areas that, historically speaking,
+has one of the highest rates of modification in XFS - we've
+substantially reworked this code from top to bottom 4 or 5 times in
+a bit over ten years, and each time it's been removing abstraction
+layers and getting the writeback code closer to the internal XFS
+extent mapping infrastructure.
+
+This steps the other way - it adds abstraction to move the XFS code
+to be generic, and now we have to be concerned about how changes to
+the XFS IO path affects other filesystems. While I can see the
+desire to use this code in other filesystems, no other filesystem
+does COW or delayed allocation like XFS and this functionality is
+tightly tied into the iomap page writeback architecture.
+
+As such, I'm not convinced that a wholesale lifting of this code
+into the generic iomap code is going to make our life easier or
+better. The stuff we've already got in fs/iomap.c is largely
+uncontroversial and straight forward, but this writeback code is
+anything but straight forward.....
+
+Another issue this raises is that fs/iomap.c is already huge chunk
+of code with lots of different functionality in it. Adding another
+500+ lines of new functionality to it doesn't make it any easier to
+navigate or find things.
+
+If we are going to move this writeback code to the generic iomap
+infrastructure, can we please split the iomap code up in to smaller
+files first?  e.g. fs/iomap-dio.c for all the direct IO code,
+fs/iomap-pageio.c for all the page-based IO, fs/iomap.c for all the
+core functionality (like iomap_apply()) and fs/iomap-util.c for all
+the miscellaneous one-off functions like fiemap, etc?
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
