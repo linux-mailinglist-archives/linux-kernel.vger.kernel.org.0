@@ -2,91 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30E4E5035E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 09:29:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 205245036B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 09:31:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727955AbfFXH3g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 03:29:36 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:37270 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726375AbfFXH3g (ORCPT
+        id S1727699AbfFXHbG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 03:31:06 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:39720 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726077AbfFXHbG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 03:29:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=uGTfk2MZqnV1h8cqP0BiyMCPA5BgEGZVqlqHVJi8+YY=; b=DQ2fpU2IIQH/C2TzC4LYgFhKw
-        mdanMGxbHMxvKg82o1nlhutLDxbOSBcVrXH7YP55ovmYdTO3UdgrcmJLqunnbQK5w2yGTdmuOgQAt
-        ifxIEV5Tqc6o1xZk20pgN1z71Q7DQYiq441bxpv3eL/Jx0y/FLkaj7xPmTqUBluL4wTV0PkMGxGp0
-        7YjKZaRYD//7hRPP/gFZgltMqh6w85mp9pKMsS/YRtuB06/RWdbiBf6lSIjommqgCCA552sEGxLEY
-        WbspNerkQKgsbG4cdG6kJDIPYY1nXvJ+1EYEmPSlTKn3+V206+aERgxogS3RzgiSHb3YbGgf1ad4O
-        RBRFiL4og==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hfJPz-0001Y8-3m; Mon, 24 Jun 2019 07:29:35 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 7F34720A021EC; Mon, 24 Jun 2019 09:29:33 +0200 (CEST)
-Date:   Mon, 24 Jun 2019 09:29:33 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Nicholas Piggin <npiggin@gmail.com>
-Cc:     kernel test robot <rong.a.chen@intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [kernel/isolation] c427534e48:
- BUG:kernel_NULL_pointer_dereference,address
-Message-ID: <20190624072933.GO3436@hirez.programming.kicks-ass.net>
-References: <20190621082027.GS7221@shao2-debian>
- <1561160086.rsh9p04w45.astroid@bobo.none>
+        Mon, 24 Jun 2019 03:31:06 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5O7U2mx055210;
+        Mon, 24 Jun 2019 02:30:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1561361402;
+        bh=Nr11N80KudDTkBmA2h5dEMXRhA9/KJlHbyFJQ9rK1ac=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=Apq91SiE6fuoCNrkBrsu2GdGAQZnDy9tWyWbwFr+Ps86ONgTmNm10mJdS1hueW/Ld
+         KbeLqqlQLwhyZqcbKpYuPMm1suBxv4Qn+nUSafkbEj5nhrUb2RF4PN6wToyb5R/tP+
+         B0pd71XKHKAUOO7JTn3qZY0MjSxcU0U6t7+IIWrI=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5O7U1jL012828
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 24 Jun 2019 02:30:02 -0500
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 24
+ Jun 2019 02:30:01 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Mon, 24 Jun 2019 02:30:01 -0500
+Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5O7TwPr072735;
+        Mon, 24 Jun 2019 02:29:58 -0500
+Subject: Re: [RFC v3 0/2] clocksource: davinci-timer: new driver
+To:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+CC:     Kevin Hilman <khilman@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        David Lechner <david@lechnology.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20190605083334.22383-1-brgl@bgdev.pl>
+ <1ac8cfcf-1d77-9b6b-4aab-4171f6cf80fc@ti.com>
+ <1a66e067-631c-c7a4-288b-3934737bee8c@linaro.org>
+ <CAMRc=MecrpzwC0-8x=1dAipf+j7h+C54pHCfbZidFGXtAyv7Pg@mail.gmail.com>
+From:   Sekhar Nori <nsekhar@ti.com>
+Message-ID: <234ab4c6-3b3d-6d6b-9bbc-6dc4ca9243b7@ti.com>
+Date:   Mon, 24 Jun 2019 12:59:57 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1561160086.rsh9p04w45.astroid@bobo.none>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAMRc=MecrpzwC0-8x=1dAipf+j7h+C54pHCfbZidFGXtAyv7Pg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 22, 2019 at 09:43:42AM +1000, Nicholas Piggin wrote:
-> kernel test robot's on June 21, 2019 6:20 pm:
-
-> > If you fix the issue, kindly add following tag
-> > Reported-by: kernel test robot <rong.a.chen@intel.com>
-> > 
-> > 
-> > [    0.562433] BUG: kernel NULL pointer dereference, address: 0000000000000000
-> > [    0.562994] #PF: supervisor read access in kernel mode
-> > [    0.562994] #PF: error_code(0x0000) - not-present page
-> > [    0.562994] PGD 0 P4D 0 
-> > [    0.562994] Oops: 0000 [#1] SMP PTI
-> > [    0.562994] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.2.0-rc5-00015-gc427534 #1
-> > [    0.562994] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
-> > [    0.562994] RIP: 0010:housekeeping_verify_smp+0x2b/0x41
-> > [    0.562994] Code: 66 66 66 90 53 83 c8 ff 48 c7 c3 c0 e2 e3 84 48 89 de 89 c7 e8 94 d4 d7 fe 3b 05 22 77 b8 ff 73 13 89 c2 48 8b 0d db eb 28 00 <48> 0f a3 11 73 df 31 c0 5b c3 48 c7 c7 f0 0e 8d 84 e8 1b 84 3e fe
-> > [    0.562994] RSP: 0000:ffffabda00327e18 EFLAGS: 00010293
-> > [    0.562994] RAX: 0000000000000000 RBX: ffffffff84e3e2c0 RCX: 0000000000000000
-> > [    0.562994] RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffffff84e3e2c0
-> > [    0.562994] RBP: ffffffff852b7572 R08: 0000000000000044 R09: 0000000000000228
-> > [    0.562994] R10: 0000000000000000 R11: ffff892f4f817e10 R12: ffffffff854a0938
-> > [    0.562994] R13: 0000000000000002 R14: ffffffff852898d9 R15: 0000000000000000
-> > [    0.562994] FS:  0000000000000000(0000) GS:ffff892fa1e00000(0000) knlGS:0000000000000000
-> > [    0.562994] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > [    0.562994] CR2: 0000000000000000 CR3: 000000001ec0a000 CR4: 00000000000406f0
-> > [    0.562994] Call Trace:
-> > [    0.562994]  do_one_initcall+0x46/0x214
-> > [    0.562994]  kernel_init_freeable+0x1c7/0x272
-> > [    0.562994]  ? rest_init+0xd0/0xd0
-> > [    0.562994]  kernel_init+0xa/0x110
-> > [    0.562994]  ret_from_fork+0x35/0x40
-> > [    0.562994] Modules linked in:
-> > [    0.562994] CR2: 0000000000000000
-> > [    0.562994] ---[ end trace 1c0ad476e5b7f021 ]---
+On 24/06/19 12:51 PM, Bartosz Golaszewski wrote:
+> pon., 24 cze 2019 o 07:40 Daniel Lezcano <daniel.lezcano@linaro.org> napisał(a):
+>>
+>>
+>> Sekhar, Bartosz,
+>>
+>> if the sparse warning is not fixed, the driver won't hit this kernel
+>> version. Please fix it before the two next days otherwise it won't make
+>> it for v5.4.
+>>
+>> Thanks
+>>
 > 
-> Oops, housekeeping_verify_smp needs to needs to check
-> housekeeping_overidden before testing housekeeping_mask.
+> Hi Daniel,
 > 
-> You want me to resend with a fix?
+> will do, I just came back to the office.
+> 
+> Sekhar, how do we want to handle the rest of the platform code with
+> this driver? Do you think it can make it for the next release?
 
-That'd be great.
+It may have to wait till next release, I am afraid. Lets first try to
+get the driver in though. I can try a late pull request with no guarantees.
+
+Thanks,
+Sekhar
