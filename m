@@ -2,64 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86CC351B6B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 21:30:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8441551B70
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 21:31:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730277AbfFXTao (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 15:30:44 -0400
-Received: from smtprelay0081.hostedemail.com ([216.40.44.81]:37207 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729180AbfFXTao (ORCPT
+        id S1730284AbfFXTbw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 15:31:52 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:57422 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727329AbfFXTbv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 15:30:44 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 03618181D3403;
-        Mon, 24 Jun 2019 19:30:43 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::,RULES_HIT:41:355:379:599:982:988:989:1260:1277:1311:1313:1314:1345:1359:1381:1437:1515:1516:1518:1534:1538:1568:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3622:3865:3866:3867:3868:3870:4321:5007:6119:6691:7903:10004:10400:10848:11232:11658:11914:12048:12297:12740:12760:12895:13019:13069:13311:13357:13439:14659:21080:21433:21627:30054:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.14.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:26,LUA_SUMMARY:none
-X-HE-Tag: leaf43_5d60cb96f485f
-X-Filterd-Recvd-Size: 1576
-Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf20.hostedemail.com (Postfix) with ESMTPA;
-        Mon, 24 Jun 2019 19:30:41 +0000 (UTC)
-Message-ID: <23a5979082c89d7028409ad9ae082840411e1ca6.camel@perches.com>
-Subject: Re: [PATCH 0/3] Clean up crypto documentation
-From:   Joe Perches <joe@perches.com>
-To:     "Hook, Gary" <Gary.Hook@amd.com>,
-        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>
-Date:   Mon, 24 Jun 2019 12:30:40 -0700
-In-Reply-To: <156140322426.29777.8610751479936722967.stgit@taos>
-References: <156140322426.29777.8610751479936722967.stgit@taos>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
+        Mon, 24 Jun 2019 15:31:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
+        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=8ZhVLbrVEu9qNpIdvb/u1Bup6gHcBX3xecQojTKBcMs=; b=Im0l8x6/B9mUso7iiUnHOkZcIn
+        cTaeswhJ/K59uTrfAIY68SlWuj4W4S1a5WUY8s+g7v/dJUrANVZFfyPS8iCYxQbY5DBC9K2U33ft0
+        N/5qUOPO/72vvbo8w5Qqk90eqY5wPpytrtMwLfPE56ebw89sifxHWLEkuuNKcSxPAoM/5LR3cyh/V
+        khDchm8ugbKkfmplxP57Zrh56Jri5Cy73FCXnlBlVtBeqfkG1M/6Rly+0mf09cbK0X7r+6pYpQc4o
+        2l2d085+sAXPiXrXGYh8+1cVKoaEPEsqtfKLrG5MN7513Th3EUVQh4P81UcRDmQIUY9JHMtTjGMNF
+        FvInlp9g==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hfUgX-0008KU-Oz; Mon, 24 Jun 2019 19:31:26 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 96FF120A0EACA; Mon, 24 Jun 2019 21:31:23 +0200 (CEST)
+Date:   Mon, 24 Jun 2019 21:31:23 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Kan Liang <kan.liang@linux.intel.com>,
+        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH] perf/x86/intel: Mark expected switch fall-throughs
+Message-ID: <20190624193123.GI3436@hirez.programming.kicks-ass.net>
+References: <20190624161913.GA32270@embeddedor>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190624161913.GA32270@embeddedor>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-06-24 at 19:07 +0000, Hook, Gary wrote:
-> Tidy up the crypto documentation by filling in some variable
-> descriptions, make some grammatical corrections, and enhance
-> formatting.
+On Mon, Jun 24, 2019 at 11:19:13AM -0500, Gustavo A. R. Silva wrote:
+> In preparation to enabling -Wimplicit-fallthrough, mark switch
+> cases where we are expecting to fall through.
+> 
+> This patch fixes the following warnings:
+> 
+> arch/x86/events/intel/core.c: In function ‘intel_pmu_init’:
+> arch/x86/events/intel/core.c:4959:8: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>    pmem = true;
+>    ~~~~~^~~~~~
+> arch/x86/events/intel/core.c:4960:2: note: here
+>   case INTEL_FAM6_SKYLAKE_MOBILE:
+>   ^~~~
+> arch/x86/events/intel/core.c:5008:8: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>    pmem = true;
+>    ~~~~~^~~~~~
+> arch/x86/events/intel/core.c:5009:2: note: here
+>   case INTEL_FAM6_ICELAKE_MOBILE:
+>   ^~~~
+> 
+> Warning level 3 was used: -Wimplicit-fallthrough=3
+> 
+> This patch is part of the ongoing efforts to enable
+> -Wimplicit-fallthrough.
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-While this seems generally OK, please try not to make the
-readability of the source _text_ less intelligible just
-to enhance the output formatting of the html.
-
-e.g.:
-
-Unnecessary blank lines separating function descriptions
-Removing space alignment from bullet point descriptions
-
-etc..,
-
-
-
+I still consider it an abomination that the C parser looks at comments
+-- other than to delete them, but OK I suppose, I'll take it.
