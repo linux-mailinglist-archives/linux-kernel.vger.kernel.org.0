@@ -2,151 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CC5C51F33
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 01:44:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95ABA51F2D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 01:41:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728600AbfFXXo0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 19:44:26 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:12492 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728499AbfFXXo0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 19:44:26 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5ONhMe8127404
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 19:44:24 -0400
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2tb5ysnn46-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 19:44:24 -0400
-Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Tue, 25 Jun 2019 00:44:23 +0100
-Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 25 Jun 2019 00:44:20 +0100
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5ONiJ1F41746830
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 24 Jun 2019 23:44:19 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 15AFEB2064;
-        Mon, 24 Jun 2019 23:44:19 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id ECF2CB205F;
-        Mon, 24 Jun 2019 23:44:18 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.26])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon, 24 Jun 2019 23:44:18 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 73EFB16C5D9C; Mon, 24 Jun 2019 16:44:22 -0700 (PDT)
-Date:   Mon, 24 Jun 2019 16:44:22 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Frederic Weisbecker <frederic@kernel.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de
-Subject: Re: [PATCH] time/tick-broadcast: Fix tick_broadcast_offline()
- lockdep complaint
-Reply-To: paulmck@linux.ibm.com
-References: <20190620211019.GA3436@hirez.programming.kicks-ass.net>
- <20190620221336.GZ26519@linux.ibm.com>
- <20190621105503.GI3436@hirez.programming.kicks-ass.net>
- <20190621121630.GE26519@linux.ibm.com>
- <20190621122927.GV3402@hirez.programming.kicks-ass.net>
- <20190621133414.GF26519@linux.ibm.com>
- <20190621174104.GA7519@linux.ibm.com>
- <20190621175027.GA23260@linux.ibm.com>
- <20190621234602.GA16286@linux.ibm.com>
- <20190624231222.GA17497@lerouge>
+        id S1728546AbfFXXlh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 19:41:37 -0400
+Received: from mga07.intel.com ([134.134.136.100]:29338 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728499AbfFXXlh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 19:41:37 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jun 2019 16:41:35 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,413,1557212400"; 
+   d="scan'208";a="244876675"
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
+  by orsmga001.jf.intel.com with ESMTP; 24 Jun 2019 16:41:35 -0700
+Date:   Mon, 24 Jun 2019 16:44:50 -0700
+From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
+To:     Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc:     <iommu@lists.linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        "Eric Auger" <eric.auger@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        Raj Ashok <ashok.raj@intel.com>,
+        Andriy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH v4 17/22] iommu/vt-d: Avoid duplicated code for PASID
+ setup
+Message-ID: <20190624164450.732e5539@jacob-builder>
+In-Reply-To: <20190618170335.000078db@huawei.com>
+References: <1560087862-57608-1-git-send-email-jacob.jun.pan@linux.intel.com>
+        <1560087862-57608-18-git-send-email-jacob.jun.pan@linux.intel.com>
+        <20190618170335.000078db@huawei.com>
+Organization: OTC
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190624231222.GA17497@lerouge>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 19062423-0072-0000-0000-0000044068DF
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00011323; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000286; SDB=6.01222816; UDB=6.00643456; IPR=6.01003976;
- MB=3.00027451; MTD=3.00000008; XFM=3.00000015; UTC=2019-06-24 23:44:22
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19062423-0073-0000-0000-00004CB089EF
-Message-Id: <20190624234422.GP26519@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-24_16:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906240187
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 25, 2019 at 01:12:23AM +0200, Frederic Weisbecker wrote:
-> On Fri, Jun 21, 2019 at 04:46:02PM -0700, Paul E. McKenney wrote:
-> > @@ -3097,13 +3126,21 @@ static void sched_tick_remote(struct work_struct *work)
-> >  	/*
-> >  	 * Run the remote tick once per second (1Hz). This arbitrary
-> >  	 * frequency is large enough to avoid overload but short enough
-> > -	 * to keep scheduler internal stats reasonably up to date.
-> > +	 * to keep scheduler internal stats reasonably up to date.  But
-> > +	 * first update state to reflect hotplug activity if required.
-> >  	 */
-> > +	os = atomic_read(&twork->state);
-> > +	if (os) {
-> > +		WARN_ON_ONCE(os != TICK_SCHED_REMOTE_OFFLINING);
-> > +		if (atomic_inc_not_zero(&twork->state))
-> > +			return;
-> 
-> Using inc makes me a bit nervous here. If we do so, we should somewhow
-> make sure that we never exceed a value higher than TICK_SCHED_REMOTE_OFFLINE
-> by accident.
-> 
-> atomic_xchg() is probably a bit costlier but also safer as it allows
-> us to check both the old and the new value. That path shouldn't be critically fast
-> after all.
+On Tue, 18 Jun 2019 17:03:35 +0100
+Jonathan Cameron <jonathan.cameron@huawei.com> wrote:
 
-It would need to be cmpxchg() to avoid messing with the state if
-the state were somehow TICK_SCHED_REMOTE_RUNNING, right?
+> On Sun, 9 Jun 2019 06:44:17 -0700
+> Jacob Pan <jacob.jun.pan@linux.intel.com> wrote:
+> 
+> > After each setup for PASID entry, related translation caches must
+> > be flushed. We can combine duplicated code into one function which
+> > is less error prone.
+> > 
+> > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>  
+> Formatting nitpick below ;)
+> 
+> Otherwise it's cut and paste
+> > ---
+> >  drivers/iommu/intel-pasid.c | 48
+> > +++++++++++++++++---------------------------- 1 file changed, 18
+> > insertions(+), 30 deletions(-)
+> > 
+> > diff --git a/drivers/iommu/intel-pasid.c
+> > b/drivers/iommu/intel-pasid.c index 1e25539..1ff2ecc 100644
+> > --- a/drivers/iommu/intel-pasid.c
+> > +++ b/drivers/iommu/intel-pasid.c
+> > @@ -522,6 +522,21 @@ void intel_pasid_tear_down_entry(struct
+> > intel_iommu *iommu, devtlb_invalidation_with_pasid(iommu, dev,
+> > pasid); }
+> >  
+> > +static inline void pasid_flush_caches(struct intel_iommu *iommu,
+> > +				struct pasid_entry *pte,
+> > +				int pasid, u16 did)
+> > +{
+> > +	if (!ecap_coherent(iommu->ecap))
+> > +		clflush_cache_range(pte, sizeof(*pte));
+> > +
+> > +	if (cap_caching_mode(iommu->cap)) {
+> > +		pasid_cache_invalidation_with_pasid(iommu, did,
+> > pasid);
+> > +		iotlb_invalidation_with_pasid(iommu, did, pasid);
+> > +	} else
+> > +		iommu_flush_write_buffer(iommu);  
+> 
+> I have some vague recollection kernel style says use brackets around
+> single lines if other blocks in an if / else stack have multiple
+> lines..
+> 
+> I checked, this case is specifically called out
+> 
+> https://www.kernel.org/doc/html/v5.1/process/coding-style.html
+> > +  
+> This blank line doesn't add anything either ;)
+indeed. i will add the braces and remove the blank line.
 
-> > +	}
-> >  	queue_delayed_work(system_unbound_wq, dwork, HZ);
+Thanks for looking it up.
+> > +}
+> > +
+> >  /*
+> >   * Set up the scalable mode pasid table entry for first only
+> >   * translation type.
+> > @@ -567,16 +582,7 @@ int intel_pasid_setup_first_level(struct
+> > intel_iommu *iommu, /* Setup Present and PASID Granular Transfer
+> > Type: */ pasid_set_translation_type(pte, 1);
+> >  	pasid_set_present(pte);
+> > -
+> > -	if (!ecap_coherent(iommu->ecap))
+> > -		clflush_cache_range(pte, sizeof(*pte));
+> > -
+> > -	if (cap_caching_mode(iommu->cap)) {
+> > -		pasid_cache_invalidation_with_pasid(iommu, did,
+> > pasid);
+> > -		iotlb_invalidation_with_pasid(iommu, did, pasid);
+> > -	} else {
+> > -		iommu_flush_write_buffer(iommu);
+> > -	}
+> > +	pasid_flush_caches(iommu, pte, pasid, did);
+> >  
+> >  	return 0;
 > >  }
+> > @@ -640,16 +646,7 @@ int intel_pasid_setup_second_level(struct
+> > intel_iommu *iommu, */
+> >  	pasid_set_sre(pte);
+> >  	pasid_set_present(pte);
+> > -
+> > -	if (!ecap_coherent(iommu->ecap))
+> > -		clflush_cache_range(pte, sizeof(*pte));
+> > -
+> > -	if (cap_caching_mode(iommu->cap)) {
+> > -		pasid_cache_invalidation_with_pasid(iommu, did,
+> > pasid);
+> > -		iotlb_invalidation_with_pasid(iommu, did, pasid);
+> > -	} else {
+> > -		iommu_flush_write_buffer(iommu);
+> > -	}
+> > +	pasid_flush_caches(iommu, pte, pasid, did);
 > >  
-> >  static void sched_tick_start(int cpu)
-> >  {
-> > +	int os;
-> >  	struct tick_work *twork;
-> >  
-> >  	if (housekeeping_cpu(cpu, HK_FLAG_TICK))
-> > @@ -3112,15 +3149,20 @@ static void sched_tick_start(int cpu)
-> >  	WARN_ON_ONCE(!tick_work_cpu);
-> >  
-> >  	twork = per_cpu_ptr(tick_work_cpu, cpu);
-> > -	twork->cpu = cpu;
-> > -	INIT_DELAYED_WORK(&twork->work, sched_tick_remote);
-> > -	queue_delayed_work(system_unbound_wq, &twork->work, HZ);
-> > +	os = atomic_xchg(&twork->state, TICK_SCHED_REMOTE_RUNNING);
-> > +	WARN_ON_ONCE(os == TICK_SCHED_REMOTE_RUNNING);
-> 
-> See if we use atomic_inc(), we would need to also WARN(os > TICK_SCHED_REMOTE_OFFLINE).
-
-How about if I put that WARN() between the atomic_inc_not_zero() and
-the return, presumably also adding braces?
-
-							Thanx, Paul
-
-> > +	if (os == TICK_SCHED_REMOTE_OFFLINE) {
-> > +		twork->cpu = cpu;
-> > +		INIT_DELAYED_WORK(&twork->work, sched_tick_remote);
-> > +		queue_delayed_work(system_unbound_wq, &twork->work, HZ);
-> > +	}
+> >  	return 0;
 > >  }
+> > @@ -683,16 +680,7 @@ int intel_pasid_setup_pass_through(struct
+> > intel_iommu *iommu, */
+> >  	pasid_set_sre(pte);
+> >  	pasid_set_present(pte);
+> > -
+> > -	if (!ecap_coherent(iommu->ecap))
+> > -		clflush_cache_range(pte, sizeof(*pte));
+> > -
+> > -	if (cap_caching_mode(iommu->cap)) {
+> > -		pasid_cache_invalidation_with_pasid(iommu, did,
+> > pasid);
+> > -		iotlb_invalidation_with_pasid(iommu, did, pasid);
+> > -	} else {
+> > -		iommu_flush_write_buffer(iommu);
+> > -	}
+> > +	pasid_flush_caches(iommu, pte, pasid, did);
+> >  
+> >  	return 0;
+> >  }  
 > 
-> Thanks.
 > 
 
+[Jacob Pan]
