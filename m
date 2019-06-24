@@ -2,110 +2,190 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A84F450B36
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 14:56:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6A7950B41
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 14:58:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729697AbfFXM4i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 08:56:38 -0400
-Received: from uho.ysoft.cz ([81.19.3.130]:34046 "EHLO uho.ysoft.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726557AbfFXM4h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 08:56:37 -0400
-Received: from [10.1.8.111] (unknown [10.1.8.111])
-        by uho.ysoft.cz (Postfix) with ESMTP id 6243EA3CE0;
-        Mon, 24 Jun 2019 14:56:35 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ysoft.com;
-        s=20160406-ysoft-com; t=1561380995;
-        bh=ftLh3jjn96azi7D40yoVAcACOsELxiOylqDXhJNBYqY=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=F+cz7D0qNH+OMabqAaPEpFg2lOv2GVExnUwmrt73hWRux1wg4tQh8+CHFieEu6OKx
-         MnWRAJFsGjVXN0Gwp9/KEsjRgt6qQWm56YgkZlqpJj8/pSve1i8mK3LqqmIzHzKvXE
-         ACGqMio9jTjkklnaeoHDudWKXgSjVbgBO4bzkm0w=
-Subject: Re: [RFC PATCH v2 1/4] dt-bindings: input: Add support for the MPR121
- without interrupt line
-To:     Rob Herring <robh@kernel.org>
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Pengutronix Kernel Team <kernel@pengutronix.de>
-References: <1558098773-47416-1-git-send-email-michal.vokac@ysoft.com>
- <1558098773-47416-2-git-send-email-michal.vokac@ysoft.com>
- <20190613223945.GA938@bogus>
-From:   =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <michal.vokac@ysoft.com>
-Message-ID: <69302603-f1a3-8955-7d90-74a290071794@ysoft.com>
-Date:   Mon, 24 Jun 2019 14:56:35 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20190613223945.GA938@bogus>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+        id S1730410AbfFXM6y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 08:58:54 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:44564 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726740AbfFXM6x (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 08:58:53 -0400
+Received: by mail-qk1-f195.google.com with SMTP id p144so9585023qke.11
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 05:58:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Xx/RWmPWBvyJH2ZU2NlE1zPXjYqIgHNE0+DzqPjHLoo=;
+        b=UCwvLTFauBZM95y94QPC9oGAEFrPbOt1jJVDGyUlhejwVII3S37uAzEACDd2yNiWBO
+         ZfugWza9SALwHGlXK6Us5p0JFr8g7Uq6jOhsgHGnOv2iLSTaBMMCmFeIlJ/PlMYSoVKY
+         7V1p9+PFLFuZxBSv/8oozyk+2ws3ohRQ+lP5KlRHZzB0zyaRdMRtH6GzM0Ybc9IdSt7C
+         QYW+6878VyjokxvbhFe/IuwqXjgMMKC4JR2xtAJTacgmn59f49lg93ukqIFU0Wx62B2w
+         TrRRXepBonyL+njzjSwQU4tq5njBfTcRcrIsKEVqtWoohLqcA+kGcBYNBJF6vy8F4jB4
+         LywQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Xx/RWmPWBvyJH2ZU2NlE1zPXjYqIgHNE0+DzqPjHLoo=;
+        b=cXyoQkbnqE4yCjbxKR8dK/Z+zmyDlNMnq4vxBMGoP1q5IDrt9IcXLYphSqYxkwMgjm
+         9SzNEFSqoBiNSIRU+7epiY+tfImlemRs65kF1kQisi152ThySyEciQFpkaJZsrag1A2T
+         dvE/PwPI1QVHKDyYUbcK+D12JlFFFl0Us2MLrL1+Y6oXW8R4l2VPXEDD5I7d3jgk3iT0
+         fUrJ5XmrjD2PMwvwBXLNVyJk1tbp9gHMLmsjToRQ5IXRU7unGRD92Ni+HqCMmVgY9zs/
+         0VerY2Iga2SwwHD3gUqmkmTxqwtMhU04KzV76p5vrsRdAkKLdNQNbN0hAk4v2yf2AzG1
+         lxgQ==
+X-Gm-Message-State: APjAAAVqaY/mXQeevhARpV1ilaL5+Do5hfFUeGbF50Zh89qr3qsv2IKz
+        mwi8kQDeFwGuHgnb46WFq8Uyng==
+X-Google-Smtp-Source: APXvYqxjWNfQxLfoP+rpGNMOujJkBpLhTS8ucR6j2FpSxRJn0uwMDXTszglfdGdwE/0XbXCQipp1Kw==
+X-Received: by 2002:a37:6b07:: with SMTP id g7mr20623988qkc.217.1561381131743;
+        Mon, 24 Jun 2019 05:58:51 -0700 (PDT)
+Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id f1sm5502266qke.117.2019.06.24.05.58.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 24 Jun 2019 05:58:50 -0700 (PDT)
+Message-ID: <1561381129.5154.55.camel@lca.pw>
+Subject: Re: LTP hugemmap05 test case failure on arm64 with linux-next
+ (next-20190613)
+From:   Qian Cai <cai@lca.pw>
+To:     Will Deacon <will@kernel.org>
+Cc:     Anshuman Khandual <anshuman.khandual@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+Date:   Mon, 24 Jun 2019 08:58:49 -0400
+In-Reply-To: <20190624093507.6m2quduiacuot3ne@willie-the-truck>
+References: <1560461641.5154.19.camel@lca.pw>
+         <20190614102017.GC10659@fuggles.cambridge.arm.com>
+         <1560514539.5154.20.camel@lca.pw>
+         <054b6532-a867-ec7c-0a72-6a58d4b2723e@arm.com>
+         <EC704BC3-62FF-4DCE-8127-40279ED50D65@lca.pw>
+         <20190624093507.6m2quduiacuot3ne@willie-the-truck>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14. 06. 19 0:39, Rob Herring wrote:
-> On Fri, May 17, 2019 at 03:12:50PM +0200, Michal Vokáč wrote:
->> Normally, the MPR121 controller uses separate interrupt line to notify
->> the I2C host that a key was touched/released. To support platforms that
->> can not use the interrupt line, polling of the MPR121 registers can be
->> used.
+On Mon, 2019-06-24 at 10:35 +0100, Will Deacon wrote:
+> Hi Qian Cai,
 > 
-> 'separate' from what?
-
-"Separate" here is meant like "additional to the standard set of SCL
-and SDA I2C lines". Looks like inappropriately used word by
-a non-native speaker that can be omitted.
-
->> Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
->> ---
->> Changes since v1:
->> - Document the polled binding in the original file, do not create a new one.
->>    (Rob)
->>
->>   Documentation/devicetree/bindings/input/mpr121-touchkey.txt | 9 +++++++--
->>   1 file changed, 7 insertions(+), 2 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/input/mpr121-touchkey.txt b/Documentation/devicetree/bindings/input/mpr121-touchkey.txt
->> index b7c61ee5841b..97f55273d473 100644
->> --- a/Documentation/devicetree/bindings/input/mpr121-touchkey.txt
->> +++ b/Documentation/devicetree/bindings/input/mpr121-touchkey.txt
->> @@ -1,9 +1,14 @@
->> -* Freescale MPR121 Controllor
->> +* Freescale MPR121 Controller
->>   
->>   Required Properties:
->> -- compatible:		Should be "fsl,mpr121-touchkey"
->> +- compatible:		Should be one of:
->> +			- "fsl,mpr121-touchkey" - MPR121 with interrupt line
->> +			- "fsl,mpr121-touchkey-polled" - MPR121 with polling
->>   - reg:			The I2C slave address of the device.
->>   - interrupts:		The interrupt number to the cpu.
->> +			In case of "fsl,mpr121-touchkey-polled" the interrupt
->> +			line is not used and hence the interrupts property is
->> +			not required.
+> On Sun, Jun 16, 2019 at 09:41:09PM -0400, Qian Cai wrote:
+> > > On Jun 16, 2019, at 9:32 PM, Anshuman Khandual <anshuman.khandual@arm.com>
+> > > wrote:
+> > > On 06/14/2019 05:45 PM, Qian Cai wrote:
+> > > > On Fri, 2019-06-14 at 11:20 +0100, Will Deacon wrote:
+> > > > > On Thu, Jun 13, 2019 at 05:34:01PM -0400, Qian Cai wrote:
+> > > > > > LTP hugemmap05 test case [1] could not exit itself properly and then
+> > > > > > degrade
+> > > > > > the
+> > > > > > system performance on arm64 with linux-next (next-20190613). The
+> > > > > > bisection
+> > > > > > so
+> > > > > > far indicates,
+> > > > > > 
+> > > > > > BAD:  30bafbc357f1 Merge remote-tracking branch 'arm64/for-
+> > > > > > next/core'
+> > > > > > GOOD: 0c3d124a3043 Merge remote-tracking branch 'arm64-fixes/for-
+> > > > > > next/fixes'
+> > > > > 
+> > > > > Did you finish the bisection in the end? Also, what config are you
+> > > > > using
+> > > > > (you usually have something fairly esoteric ;)?
+> > > > 
+> > > > No, it is still running.
+> > > > 
+> > > > https://raw.githubusercontent.com/cailca/linux-mm/master/arm64.config
+> > > > 
+> > > 
+> > > Were you able to bisect the problem till a particular commit ?
+> > 
+> > Not yet, it turned out the test case needs to run a few times (usually
+> > within 5) to reproduce, so the previous bisection was totally wrong where
+> > it assume the bad commit will fail every time. Once reproduced, the test
+> > case becomes unkillable stuck in the D state.
+> > 
+> > I am still in the middle of running a new round of bisection. The current
+> > progress is,
+> > 
+> > 35c99ffa20ed GOOD (survived 20 times)
+> > def0fdae813d BAD
 > 
-> Absence of the interrupts property is enough to determine polled mode
-> and you don't need a separate compatible string.
+> Just wondering if you got anywhere with this? We've failed to reproduce the
+> problem locally.
 
-Would not this work only if the polled mode was implemented as
-part of the current driver? I raised this question in the cover letter.
-I do not really know how this should be done.
+Unfortunately, I have not had a chance to dig this up yet. The progress I had so
+far is,
 
-So I implemented the polled mode in a new driver (taking the
-gpio-keys-polled as an example). Having separate compatible string is
-the only option I know of to match the right driver.
+The issue was there for a long time goes back to 4.20 and probably earlier. It
+is not failing every time. The script below could reproduce it usually within 10
+0 tires.
 
-Anyway, Dmitry already commented that his addition of input_polled_dev
-for creating polled input devices was not the best choice. He would
-rather like to implement polling mode for all regular input devices
-and that would allow to enable polling mode in existing drivers.
+i=0; while :; do ./hugemmap05 -m -s; echo $((i++)); sleep 5; done
 
-Since I do not know how to help with that work I am stuck with the
-separate driver/compatible string solution.
+This can be reproduced in an error path, i.e., shmget() in the test case will
+fail every time before triggering the soft lockups.
+
+# ./hugemmap05 -s -m
+tst_test.c:1112: INFO: Timeout per run is 0h 05m 00s
+hugemmap05.c:235: INFO: original nr_hugepages is 0
+hugemmap05.c:248: INFO: original nr_overcommit_hugepages is 0
+tst_safe_sysv_ipc.c:111: BROK: hugemmap05.c:97: shmget(218366029, 103079215104,
+b80) failed: ENOMEM
+hugemmap05.c:192: INFO: restore nr_hugepages to 0.
+hugemmap05.c:201: INFO: restore nr_overcommit_hugepages to 0.
+
+Summary:
+passed   0
+failed   0
+skipped  0
+warnings 0
+0
+
+My understanding is that the soft lockups are triggered in this path,
+
+ipcget
+  ipcget_public
+    ops->getnew
+      newseg
+        hugetlb_file_setup <- return ENOMEM
+
+[ 1521.471216][ T1309] INFO: task hugemmap05:4718 blocked for more than 860
+seconds.
+[ 1521.478731][ T1309]       Tainted: G        W         5.2.0-rc4+ #8
+[ 1521.485023][ T1309] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
+disables this message.
+[ 1521.493568][ T1309] hugemmap05      D27168  4718      1 0x00000001
+[ 1521.499815][ T1309] Call trace:
+[ 1521.502985][ T1309]  __switch_to+0x2e0/0x37c
+[ 1521.507278][ T1309]  __schedule+0xa0c/0xd9c
+[ 1521.511484][ T1309]  schedule+0x60/0x168
+[ 1521.515430][ T1309]  __rwsem_down_write_failed_common+0x484/0x7b8
+[ 1521.521546][ T1309]  rwsem_down_write_failed+0x20/0x2c
+[ 1521.526717][ T1309]  down_write+0xa0/0xa4
+[ 1521.530747][ T1309]  ipcget+0x74/0x414
+[ 1521.534518][ T1309]  ksys_shmget+0x90/0xc4
+[ 1521.538638][ T1309]  __arm64_sys_shmget+0x54/0x88
+[ 1521.543366][ T1309]  el0_svc_handler+0x198/0x260
+[ 1521.548005][ T1309]  el0_svc+0x8/0xc
+[ 1521.551605][ T1309] 
+[ 1521.551605][ T1309] Showing all locks held in the system:
+[ 1521.559349][ T1309] 1 lock held by khungtaskd/1309:
+[ 1521.564251][ T1309]  #0: 00000000033dd0e2 (rcu_read_lock){....}, at:
+rcu_lock_acquire+0x8/0x38
+[ 1521.573014][ T1309] 2 locks held by hugemmap05/4694:
+[ 1521.578010][ T1309] 1 lock held by hugemmap05/4718:
+[ 1521.582904][ T1309]  #0: 00000000c62a3d44 (&ids->rwsem){....}, at:
+ipcget+0x74/0x414
+[ 1521.590707][ T1309] 1 lock held by hugemmap05/4755:
+[ 1521.595595][ T1309]  #0: 00000000c62a3d44 (&ids->rwsem){....}, at:
+ipcget+0x74/0x414
+[ 1521.603373][ T1309] 1 lock held by hugemmap05/4781:
+[ 1521.608270][ T1309]  #0: 00000000c62a3d44 (&ids->rwsem){....}, at:
+ipcget+0x74/0x414
