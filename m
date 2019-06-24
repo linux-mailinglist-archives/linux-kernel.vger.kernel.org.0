@@ -2,86 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8441551B70
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 21:31:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C773F51B7F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 21:37:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730284AbfFXTbw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 15:31:52 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:57422 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727329AbfFXTbv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 15:31:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
-        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=8ZhVLbrVEu9qNpIdvb/u1Bup6gHcBX3xecQojTKBcMs=; b=Im0l8x6/B9mUso7iiUnHOkZcIn
-        cTaeswhJ/K59uTrfAIY68SlWuj4W4S1a5WUY8s+g7v/dJUrANVZFfyPS8iCYxQbY5DBC9K2U33ft0
-        N/5qUOPO/72vvbo8w5Qqk90eqY5wPpytrtMwLfPE56ebw89sifxHWLEkuuNKcSxPAoM/5LR3cyh/V
-        khDchm8ugbKkfmplxP57Zrh56Jri5Cy73FCXnlBlVtBeqfkG1M/6Rly+0mf09cbK0X7r+6pYpQc4o
-        2l2d085+sAXPiXrXGYh8+1cVKoaEPEsqtfKLrG5MN7513Th3EUVQh4P81UcRDmQIUY9JHMtTjGMNF
-        FvInlp9g==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hfUgX-0008KU-Oz; Mon, 24 Jun 2019 19:31:26 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 96FF120A0EACA; Mon, 24 Jun 2019 21:31:23 +0200 (CEST)
-Date:   Mon, 24 Jun 2019 21:31:23 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Kan Liang <kan.liang@linux.intel.com>,
-        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH] perf/x86/intel: Mark expected switch fall-throughs
-Message-ID: <20190624193123.GI3436@hirez.programming.kicks-ass.net>
-References: <20190624161913.GA32270@embeddedor>
+        id S1730405AbfFXThV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 15:37:21 -0400
+Received: from mga01.intel.com ([192.55.52.88]:58846 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728690AbfFXThV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 15:37:21 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jun 2019 12:37:20 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,413,1557212400"; 
+   d="scan'208";a="163408495"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.137])
+  by fmsmga007.fm.intel.com with ESMTP; 24 Jun 2019 12:37:20 -0700
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+        id 4B38F3020F2; Mon, 24 Jun 2019 12:37:20 -0700 (PDT)
+From:   Andi Kleen <andi@firstfloor.org>
+To:     acme@kernel.org
+Cc:     jolsa@kernel.org, kan.liang@intel.com, linux-kernel@vger.kernel.org
+Subject: Some bug fixes for perf stat metrics
+Date:   Mon, 24 Jun 2019 12:37:07 -0700
+Message-Id: <20190624193711.35241-1-andi@firstfloor.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190624161913.GA32270@embeddedor>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 11:19:13AM -0500, Gustavo A. R. Silva wrote:
-> In preparation to enabling -Wimplicit-fallthrough, mark switch
-> cases where we are expecting to fall through.
-> 
-> This patch fixes the following warnings:
-> 
-> arch/x86/events/intel/core.c: In function ‘intel_pmu_init’:
-> arch/x86/events/intel/core.c:4959:8: warning: this statement may fall through [-Wimplicit-fallthrough=]
->    pmem = true;
->    ~~~~~^~~~~~
-> arch/x86/events/intel/core.c:4960:2: note: here
->   case INTEL_FAM6_SKYLAKE_MOBILE:
->   ^~~~
-> arch/x86/events/intel/core.c:5008:8: warning: this statement may fall through [-Wimplicit-fallthrough=]
->    pmem = true;
->    ~~~~~^~~~~~
-> arch/x86/events/intel/core.c:5009:2: note: here
->   case INTEL_FAM6_ICELAKE_MOBILE:
->   ^~~~
-> 
-> Warning level 3 was used: -Wimplicit-fallthrough=3
-> 
-> This patch is part of the ongoing efforts to enable
-> -Wimplicit-fallthrough.
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Fix some bugs and regressions in perf stat --metrics support.
 
-I still consider it an abomination that the C parser looks at comments
--- other than to delete them, but OK I suppose, I'll take it.
+Also available in 
+
+git://git.kernel.org/pub/scm/linux/kernel/git/ak/linux-misc perf/metric-fixes-1
+
+
