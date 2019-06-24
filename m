@@ -2,70 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BF4751887
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 18:25:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D96DC51896
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 18:25:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730267AbfFXQYr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 12:24:47 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:40406 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728531AbfFXQYo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 12:24:44 -0400
-Received: by mail-lj1-f193.google.com with SMTP id a21so13205239ljh.7
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 09:24:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=9Gb75iWQt0cpz/5NmHdBfJrzF8RmekOJobQZJ/P2MXc=;
-        b=Gj6tFWpTHtguvy/SwvKjVME6fdq9aIlZL39Ljzd1zkOEFgAwBmd65J9sQDbo+dPRHF
-         v84clnth46E11nlFxZYgaJ50wlIP7wZVpr/WklNhYu6noqdMl8eLelaQJAir0q7OJ2ZU
-         GKgdS3Vf2lDama9TW3Rol6WSd/wYr3hhECE2Dtqdwn7AueAcDe6D3QV26F9IBK327wfJ
-         P2Vf/2N58PpkXwCi4+Puw9K+4b/R9PYZrDYOgW6jV3z/DF9M+ea7Gn2B5WJcNmDt66oI
-         g3MC+MdSac+JrwMMsV+qFgSljNxgCDgDjEwPEFQnN5Qt8FbCpzooyFLe8bUEV++Bvh6O
-         pKag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=9Gb75iWQt0cpz/5NmHdBfJrzF8RmekOJobQZJ/P2MXc=;
-        b=Li6XsCQBcB57YLykSIXR3NA4MYrmv+CdEEub4XE4MoqnyYBnTLPKakRO65msL0lzNk
-         L0trCShaGG0I0MNNMXVSYjlaUPY2M8RfD6uVJy7oH9IY82P72yDpJ+13rYf9u4ptm9rb
-         z/f8lgV0rAq9D+Kxv7oB8LPdZ+l1F5M6qnmPOcun0VXmLSL8f3Cz8LWhJc+nQRRCDITI
-         AU+pO/eog6S265IBKZUf8AF2xzqjxrQPZOnzz+zq41svP+dzkTR+zgZeZ4HuBnG1pTbX
-         ksObkBTPwunksA5MFnW0wQkYeu710yeuRkISMyRXvl7Hzhe3MbYxGiPNYKnrOXAZSr1N
-         jukQ==
-X-Gm-Message-State: APjAAAWWrADWcWkcKT8TsSJ8caCyo3o7T8hroEaCqDu4MTDO+3SdzM6Q
-        5Ef6f3N1q5TAg92mP0DWhA5V2umMCOzBB4LInYI=
-X-Google-Smtp-Source: APXvYqwVnNS0lQXgH5dfJsTHpXYpqgA9eMSA7CDMtBNIJyhsLnhajn8gWMta8IbG7iLvXcnZ+dEeF4yVxfwH46w1SRE=
-X-Received: by 2002:a2e:989a:: with SMTP id b26mr21539590ljj.31.1561393481123;
- Mon, 24 Jun 2019 09:24:41 -0700 (PDT)
+        id S1732100AbfFXQZy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 12:25:54 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53858 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726393AbfFXQZy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 12:25:54 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 0AF07ADDA;
+        Mon, 24 Jun 2019 16:25:53 +0000 (UTC)
 MIME-Version: 1.0
-Received: by 2002:a2e:914e:0:0:0:0:0 with HTTP; Mon, 24 Jun 2019 09:24:40
- -0700 (PDT)
-Reply-To: joeakaba01@gmail.com
-From:   eddy william <brichardjohnson02@gmail.com>
-Date:   Mon, 24 Jun 2019 18:24:40 +0200
-Message-ID: <CAOZWaH9hmuVRdmP+_H41hDBM6QyPtfFvoBSYW=05fB1+paYRKQ@mail.gmail.com>
-Subject: hello
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 24 Jun 2019 18:25:52 +0200
+From:   Roman Penyaev <rpenyaev@suse.de>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 13/14] epoll: implement epoll_create2() syscall
+In-Reply-To: <CAK8P3a3YgKZbF=nx4nsbj5mvgcSk8OfjU1HNvSjC19RPsyVMsQ@mail.gmail.com>
+References: <20190624144151.22688-1-rpenyaev@suse.de>
+ <20190624144151.22688-14-rpenyaev@suse.de>
+ <CAK8P3a3YgKZbF=nx4nsbj5mvgcSk8OfjU1HNvSjC19RPsyVMsQ@mail.gmail.com>
+Message-ID: <d1603e27672acbc72c20bd2b03b80f9c@suse.de>
+X-Sender: rpenyaev@suse.de
+User-Agent: Roundcube Webmail
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello
+On 2019-06-24 18:14, Arnd Bergmann wrote:
+> On Mon, Jun 24, 2019 at 4:42 PM Roman Penyaev <rpenyaev@suse.de> wrote:
+>> 
+>> epoll_create2() is needed to accept EPOLL_USERPOLL flags
+>> and size, i.e. this patch wires up polling from userspace.
+> 
+> Can you explain in the patch description more what it's needed for?
 
-My name is Eddy William I am a lawyer by profession. I wish to offer you
-the next of kin to my client. You will inherit the sum of ($14.2 Million)
-dollars my client left in the bank before his death.
+Sure. Will update on next iteration.
 
-My client is a citizen of your country who died in auto crash with his wife
-and only son. I will be entitled with 50% of the total fund while 50% will
-be for you.
+> 
+> The man page only states that "Since Linux 2.6.8, the size argument
+> is ignored", so your description above does not explain why you need
+> to add the size argument back.
+> 
+>> diff --git a/arch/alpha/kernel/syscalls/syscall.tbl 
+>> b/arch/alpha/kernel/syscalls/syscall.tbl
+>> index 1db9bbcfb84e..a1d7b695063d 100644
+>> --- a/arch/alpha/kernel/syscalls/syscall.tbl
+>> +++ b/arch/alpha/kernel/syscalls/syscall.tbl
+>> @@ -474,3 +474,5 @@
+>>  542    common  fsmount                         sys_fsmount
+>>  543    common  fspick                          sys_fspick
+>>  544    common  pidfd_open                      sys_pidfd_open
+>> +# 546  common  clone3                  sys_clone3
+>> +547    common  epoll_create2                   sys_epoll_create2
+>> diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
+>> index ff45d8807cb8..1497f3c87d54 100644
+>> --- a/arch/arm/tools/syscall.tbl
+>> +++ b/arch/arm/tools/syscall.tbl
+>> @@ -449,3 +449,4 @@
+>>  433    common  fspick                          sys_fspick
+>>  434    common  pidfd_open                      sys_pidfd_open
+>>  436    common  clone3                          sys_clone3
+>> +437    common  epoll_create2                   sys_epoll_create2
+> 
+> The table changes all look correct and complete, provided we
+> don't get another patch picking the same number.
 
-Please contact my private email here for more details:joeakaba01@gmail.com
+Good.  I had doubts, because on some archs there is a gap,
+(sys_clone3 was missing).  So I left a placeholder, so
+can be uncommented when sys_clone3 is implemented.
 
-Many thanks in advance,
-Mr.Eddy William,
+--
+Roman
+
