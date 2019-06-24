@@ -2,113 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 444CB50400
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 09:52:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 111A450405
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 09:56:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727885AbfFXHwn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 03:52:43 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:42827 "EHLO ozlabs.org"
+        id S1728062AbfFXH4v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 03:56:51 -0400
+Received: from mga06.intel.com ([134.134.136.31]:22094 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726807AbfFXHwm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 03:52:42 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45XM2v2t7dz9s4Y;
-        Mon, 24 Jun 2019 17:52:39 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1561362760;
-        bh=MEkWZxy8yWkkKdtyyG0r03VQogOTR4Q2scjrD0exlOM=;
-        h=Date:From:To:Cc:Subject:From;
-        b=OvWH5QwDyRRZ+oX410T3EgdKkOnWllxbh2n+Fqp0JRSZ1neQvB1GC5VGzQ3xzgv28
-         lskIhsTmNr9UviuiogceJrqxAs8v6HqahQ/dmX/oY3W4a8cgoQtpfjMwCCh0cyrSUI
-         vG5tc/zUIk9opfzxw/9lSPfVhMpAAga1VX0xmSdkjOupyAnyljX9SnY1Y/v3utGsCf
-         iakShjlZi5ErcoDR9+DjeEQP+aAUvzDI7IFTzYgVIYQ7/jSqxoqeEouj/+ppXbzHs4
-         /YqPS3Uf4xpwirHVBBiR/8iMeDwufPtdYOnMI2s9pUNq3rNCQVhxkMtncjw1bloMX3
-         ArXalLj3xRmag==
-Date:   Mon, 24 Jun 2019 17:52:38 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Tejun Heo <tj@kernel.org>, Jens Axboe <axboe@kernel.dk>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: linux-next: manual merge of the cgroup tree with the block tree
-Message-ID: <20190624175238.5ce3db2f@canb.auug.org.au>
+        id S1725916AbfFXH4u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 03:56:50 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jun 2019 00:55:26 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,411,1557212400"; 
+   d="scan'208";a="187844126"
+Received: from yhuang-dev.sh.intel.com ([10.239.159.29])
+  by fmsmga002.fm.intel.com with ESMTP; 24 Jun 2019 00:55:23 -0700
+From:   "Huang, Ying" <ying.huang@intel.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Huang Ying <ying.huang@intel.com>,
+        Ming Lei <ming.lei@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Hugh Dickins <hughd@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Rik van Riel <riel@redhat.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>
+Subject: [PATCH -mm -V2] mm, swap: Fix THP swap out
+Date:   Mon, 24 Jun 2019 15:55:15 +0800
+Message-Id: <20190624075515.31040-1-ying.huang@intel.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/VDHs3=S.BVa4PxjFRVw5N/I"; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/VDHs3=S.BVa4PxjFRVw5N/I
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Huang Ying <ying.huang@intel.com>
 
-Hi all,
+0-Day test system reported some OOM regressions for several
+THP (Transparent Huge Page) swap test cases.  These regressions are
+bisected to 6861428921b5 ("block: always define BIO_MAX_PAGES as
+256").  In the commit, BIO_MAX_PAGES is set to 256 even when THP swap
+is enabled.  So the bio_alloc(gfp_flags, 512) in get_swap_bio() may
+fail when swapping out THP.  That causes the OOM.
 
-Today's linux-next merge of the cgroup tree got a conflict in:
+As in the patch description of 6861428921b5 ("block: always define
+BIO_MAX_PAGES as 256"), THP swap should use multi-page bvec to write
+THP to swap space.  So the issue is fixed via doing that in
+get_swap_bio().
 
-  Documentation/block/bfq-iosched.txt
+BTW: I remember I have checked the THP swap code when
+6861428921b5 ("block: always define BIO_MAX_PAGES as 256") was merged,
+and thought the THP swap code needn't to be changed.  But apparently,
+I was wrong.  I should have done this at that time.
 
-between commit:
+Fixes: 6861428921b5 ("block: always define BIO_MAX_PAGES as 256")
+Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+Cc: Ming Lei <ming.lei@redhat.com>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Minchan Kim <minchan@kernel.org>
+Cc: Rik van Riel <riel@redhat.com>
+Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
 
-  8060c47ba853 ("block: rename CONFIG_DEBUG_BLK_CGROUP to CONFIG_BFQ_CGROUP=
-_DEBUG")
+Changelogs:
 
-from the block tree and commit:
+V2:
 
-  99c8b231ae6c ("docs: cgroup-v1: convert docs to ReST and rename to *.rst")
+- Replace __bio_add_page() with bio_add_page() per Ming's comments.
 
-from the cgroup tree.
+---
+ mm/page_io.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+diff --git a/mm/page_io.c b/mm/page_io.c
+index 2e8019d0e048..189415852077 100644
+--- a/mm/page_io.c
++++ b/mm/page_io.c
+@@ -29,10 +29,9 @@
+ static struct bio *get_swap_bio(gfp_t gfp_flags,
+ 				struct page *page, bio_end_io_t end_io)
+ {
+-	int i, nr = hpage_nr_pages(page);
+ 	struct bio *bio;
+ 
+-	bio = bio_alloc(gfp_flags, nr);
++	bio = bio_alloc(gfp_flags, 1);
+ 	if (bio) {
+ 		struct block_device *bdev;
+ 
+@@ -41,9 +40,7 @@ static struct bio *get_swap_bio(gfp_t gfp_flags,
+ 		bio->bi_iter.bi_sector <<= PAGE_SHIFT - 9;
+ 		bio->bi_end_io = end_io;
+ 
+-		for (i = 0; i < nr; i++)
+-			bio_add_page(bio, page + i, PAGE_SIZE, 0);
+-		VM_BUG_ON(bio->bi_iter.bi_size != PAGE_SIZE * nr);
++		bio_add_page(bio, page, PAGE_SIZE * hpage_nr_pages(page), 0);
+ 	}
+ 	return bio;
+ }
+-- 
+2.20.1
 
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc Documentation/block/bfq-iosched.txt
-index f02163fabf80,b2265cf6c9c3..000000000000
---- a/Documentation/block/bfq-iosched.txt
-+++ b/Documentation/block/bfq-iosched.txt
-@@@ -537,10 -537,10 +537,10 @@@ or io.bfq.weight
- =20
-  As for cgroups-v1 (blkio controller), the exact set of stat files
-  created, and kept up-to-date by bfq, depends on whether
- -CONFIG_DEBUG_BLK_CGROUP is set. If it is set, then bfq creates all
- +CONFIG_BFQ_CGROUP_DEBUG is set. If it is set, then bfq creates all
-  the stat files documented in
-- Documentation/cgroup-v1/blkio-controller.txt. If, instead,
-+ Documentation/cgroup-v1/blkio-controller.rst. If, instead,
- -CONFIG_DEBUG_BLK_CGROUP is not set, then bfq creates only the files
- +CONFIG_BFQ_CGROUP_DEBUG is not set, then bfq creates only the files
-  blkio.bfq.io_service_bytes
-  blkio.bfq.io_service_bytes_recursive
-  blkio.bfq.io_serviced
-
---Sig_/VDHs3=S.BVa4PxjFRVw5N/I
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0QgUYACgkQAVBC80lX
-0Gzuigf9FGi9hou12ZEtW6bqTOB1xUBIL3T/EiVcNF9qPdMaxCCNZC9iw+oTvV+m
-HVQsqjXgHRIphIkHuBAMdhTn7TKnGCxvKK4tboSuCrxy+PG+YFCT5h/Cqt22QVq+
-ldF2irMDPV4zGmzVSxFjACKpmxEOb9D0ozUafjqSyKjqppAXUtziMXXPu0ID1RsG
-TtumF8aIZXk+oQUMsZszNYrx14/4EhM/4ol3TNr6SyLDMVIAWiBQKm4AIMAHx+BQ
-WINHBalWn0eS+eXeKGq2FUCcadQfNr+kdkUS+kcRMzVY3v61k1VjcpeBTi0F7GsA
-XLiP7n5j2YNP3UAjzD8qwT/7XIjk2g==
-=4vKo
------END PGP SIGNATURE-----
-
---Sig_/VDHs3=S.BVa4PxjFRVw5N/I--
