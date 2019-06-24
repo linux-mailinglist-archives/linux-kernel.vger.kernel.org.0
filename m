@@ -2,87 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82609509B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 13:24:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AEBF509B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 13:24:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729690AbfFXLYQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 07:24:16 -0400
-Received: from foss.arm.com ([217.140.110.172]:47508 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727722AbfFXLYP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 07:24:15 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B918D2B;
-        Mon, 24 Jun 2019 04:24:14 -0700 (PDT)
-Received: from [0.0.0.0] (e107985-lin.cambridge.arm.com [10.1.194.38])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D847D3F718;
-        Mon, 24 Jun 2019 04:24:12 -0700 (PDT)
-Subject: Re: [PATCH 5/8] sched,cfs: use explicit cfs_rq of parent se helper
-To:     Rik van Riel <riel@surriel.com>, peterz@infradead.org
-Cc:     mingo@redhat.com, linux-kernel@vger.kernel.org, kernel-team@fb.com,
-        morten.rasmussen@arm.com, tglx@linutronix.de,
-        dietmar.eggeman@arm.com, mgorman@techsingularity.com,
-        vincent.guittot@linaro.org
-References: <20190612193227.993-1-riel@surriel.com>
- <20190612193227.993-6-riel@surriel.com>
- <55c0dc01-24b2-bb7f-6ceb-b65c52f7b46b@arm.com>
- <c5c73fd374ed952eedc46a89af294e1d521609b2.camel@surriel.com>
-From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
-Message-ID: <1f90005d-1130-399b-8642-9e1ad7089ab3@arm.com>
-Date:   Mon, 24 Jun 2019 13:24:10 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
-MIME-Version: 1.0
-In-Reply-To: <c5c73fd374ed952eedc46a89af294e1d521609b2.camel@surriel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        id S1729804AbfFXLY2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 07:24:28 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:40501 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728664AbfFXLY2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 07:24:28 -0400
+Received: by mail-pg1-f196.google.com with SMTP id w10so6941548pgj.7
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 04:24:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=cPO95tQ02ItJUXKI0dlIoUOx9gg/Y99XsbDXMsh4yyo=;
+        b=JPNxft3APis+w63JZCUevjDC4FQtwDYcNWMo5bWBOLjBiw7leJlkdff0ToQiDXNy2f
+         eT1qyEHIOFYlUtBmnICfl7Zj0PoedCNri3AuuzCCnTGCUbEuEbj0JbIug0kQyGBFpVJ5
+         rB3WESNwo3RlmIwwBJnJGiLlzTfYcKWoW4ih19orBUKAa8r+BoiDPTYueKGYmcu1ivb3
+         5mKHWuYgG7+5Rd03JpM/cjyHTsPrrQw+Q6ZfhC6geHyGgDIasIhWCKikRNPLmuGBNfwh
+         XQ5F9jl+vPPyoOst6mRAMO1qlj/AASwLG3jdugDZfjqkZIjvsxjAtkgHqpESO75owI1e
+         WWyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=cPO95tQ02ItJUXKI0dlIoUOx9gg/Y99XsbDXMsh4yyo=;
+        b=iIVCnQol9u3ot1Z4W+sC9FhcdHM1HnZlLHV6qtc0hSQI4C9USyT1YT1o0Y8ynPJKwN
+         MosjTo9zWNjx7LUe3UAWMnzHGjHYIorn8ksmbNo853qWk/Xth9F5Rh87bTuBBomR+C8E
+         XVTP98/hemph7WqXE60vkVaL6uOCtPCKXxwL0KNvAaBitwbc7eCK8zixL6js9idFg5M7
+         vkPpW4ef9I6QSc5x949RYXUZ75JiXYfhoXssbKvXz0dBr/a1OgVwu1Fh6QJBluAn1nw3
+         hM83pOBvgJdiR4zkcmTZ/KbDkvPO4n4NFycJ/fwMwFkAca8piH+8nG4Ido1veK56n08y
+         N/yA==
+X-Gm-Message-State: APjAAAVTrglSKIldHJpk6BIjDgTvtLfE/6milh12vDAvZWriZd/YhCo+
+        NN8bQsa/iQzsHWoL0euPGMzixA==
+X-Google-Smtp-Source: APXvYqxMZQ4aLs+DdHurIPQVyUtL6Vwf4JhyCVXzEEUkRFr418zSvSkIzfy4Hf9658l7TWn9tUBPlg==
+X-Received: by 2002:a17:90a:2488:: with SMTP id i8mr23689463pje.123.1561375467383;
+        Mon, 24 Jun 2019 04:24:27 -0700 (PDT)
+Received: from buildserver-90.open-silicon.com ([114.143.65.226])
+        by smtp.googlemail.com with ESMTPSA id b24sm10635119pfd.98.2019.06.24.04.24.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 24 Jun 2019 04:24:26 -0700 (PDT)
+From:   Yash Shah <yash.shah@sifive.com>
+To:     robh+dt@kernel.org, paul.walmsley@sifive.com,
+        devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc:     mark.rutland@arm.com, palmer@sifive.com, aou@eecs.berkeley.edu,
+        sachin.ghadi@sifive.com, Yash Shah <yash.shah@sifive.com>
+Subject: [PATCH] riscv: dts: Re-organize SPI DT nodes
+Date:   Mon, 24 Jun 2019 16:54:13 +0530
+Message-Id: <1561375453-3135-1-git-send-email-yash.shah@sifive.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/20/19 6:29 PM, Rik van Riel wrote:
-> On Thu, 2019-06-20 at 18:23 +0200, Dietmar Eggemann wrote:
->> On 6/12/19 9:32 PM, Rik van Riel wrote:
+As per the General convention, define only device DT node in SOC DTSi
+file with status = "disabled" and enable device in Board DTS file with
+status = "okay"
 
-[...]
+Reported-by: Anup Patel <anup@brainfault.org>
+Signed-off-by: Yash Shah <yash.shah@sifive.com>
+---
+ arch/riscv/boot/dts/sifive/fu540-c000.dtsi          | 3 +++
+ arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dts | 1 +
+ 2 files changed, 4 insertions(+)
 
->>> @@ -7779,7 +7788,7 @@ static void update_cfs_rq_h_load(struct
->>> cfs_rq *cfs_rq)
->>>  
->>>  	WRITE_ONCE(cfs_rq->h_load_next, NULL);
->>>  	for_each_sched_entity(se) {
->>> -		cfs_rq = cfs_rq_of(se);
->>> +		cfs_rq = group_cfs_rq_of_parent(se);
->>
->> Why do you change this here? task_se_h_load() calls
->> update_cfs_rq_h_load() with cfs_rq = group_cfs_rq_of_parent(se)
->> because
->> the task might not be on the cfs_rq yet.
-> 
-> Because patch 6 points cfs_rq_of(se) at the CPU's top level
-> cfs_rq for every task se ...
-> 
-> ... but I guess since I have not changed where the cfs_rq_of
-> points for cgroup sched_entities, this change is not necessary
-> at this time, and I should be able to go without it, in this
-> function.
-
-IMHO, since you only change set_task_rq() (p->se.cfs_rq =
-&cpu_rq(cpu)->cfs instead of tg->cfs_rq[cpu] in 8/8) (used for a task)
-and not init_tg_cfs_entry() (used for a taskgroup), 'cfs_rq_of(se) ==
-se->parent->my_q' should still be true in update_cfs_rq_h_load().
-
-update_cfs_rq_h_load() only deals with se's representing taskgroups. So
-cfs_rq_of(se) and group_cfs_rq_of_parent(se) should deliver the same
-result for these se's.
-
->> But inside update_cfs_rq_h_load() the first se is derived from
->> cfs_rq->tg->se[cpu_of(rq)] so in the first for_each_sched_entity()
->> loop
->> we should still start with group_cfs_rq() (se->my_q) ?
-
-Here I was wrong. The first loop did use cfs_rq_of() and not group_cfs_rq().
-[...]
+diff --git a/arch/riscv/boot/dts/sifive/fu540-c000.dtsi b/arch/riscv/boot/dts/sifive/fu540-c000.dtsi
+index 4e8fbde..270f6e8 100644
+--- a/arch/riscv/boot/dts/sifive/fu540-c000.dtsi
++++ b/arch/riscv/boot/dts/sifive/fu540-c000.dtsi
+@@ -203,6 +203,7 @@
+ 			interrupt-parent = <&plic0>;
+ 			interrupts = <51>;
+ 			clocks = <&prci PRCI_CLK_TLCLK>;
++			status = "disabled";
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 		};
+@@ -213,6 +214,7 @@
+ 			interrupt-parent = <&plic0>;
+ 			interrupts = <52>;
+ 			clocks = <&prci PRCI_CLK_TLCLK>;
++			status = "disabled";
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 		};
+@@ -222,6 +224,7 @@
+ 			interrupt-parent = <&plic0>;
+ 			interrupts = <6>;
+ 			clocks = <&prci PRCI_CLK_TLCLK>;
++			status = "disabled";
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 		};
+diff --git a/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dts b/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dts
+index 4da8870..73e2af6 100644
+--- a/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dts
++++ b/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dts
+@@ -43,6 +43,7 @@
+ };
+ 
+ &qspi0 {
++	status = "okay";
+ 	flash@0 {
+ 		compatible = "issi,is25wp256", "jedec,spi-nor";
+ 		reg = <0>;
+-- 
+1.9.1
 
