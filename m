@@ -2,60 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B4B951A34
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 20:01:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98AC851A38
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 20:03:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732714AbfFXSA5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 14:00:57 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43524 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729644AbfFXSA5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 14:00:57 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 2569EAEFF;
-        Mon, 24 Jun 2019 18:00:56 +0000 (UTC)
-Message-ID: <1561399254.3073.7.camel@suse.de>
-Subject: Re: [PATCH v10 05/13] mm/sparsemem: Convert
- kmalloc_section_memmap() to populate_section_memmap()
-From:   Oscar Salvador <osalvador@suse.de>
-To:     Dan Williams <dan.j.williams@intel.com>, akpm@linux-foundation.org
-Cc:     Michal Hocko <mhocko@suse.com>,
-        David Hildenbrand <david@redhat.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>, linux-mm@kvack.org,
-        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org
-Date:   Mon, 24 Jun 2019 20:00:54 +0200
-In-Reply-To: <156092352058.979959.6551283472062305149.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <156092349300.979959.17603710711957735135.stgit@dwillia2-desk3.amr.corp.intel.com>
-         <156092352058.979959.6551283472062305149.stgit@dwillia2-desk3.amr.corp.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1732725AbfFXSDj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 14:03:39 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:41534 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727607AbfFXSDj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 14:03:39 -0400
+Received: by mail-pf1-f193.google.com with SMTP id m30so7964603pff.8;
+        Mon, 24 Jun 2019 11:03:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=PCvtDCUCpjMSyIAhRAhBLf7oJ+KbK1Zh4keTiDChtXE=;
+        b=bcssdMmPd3qsUP6KIeFC5k3jx6e2AWsynKvKDQr7wAWk4AKa3suQ5BvdAloRnnFADZ
+         2TimM36y5qX3czkYLaXAU4eRLuSZZbtYVS5Pu3cPXvlrcZomRUE493HKc3Wm+EyMXoW/
+         hozxVmzkFEVa+SM6SX2vqAvZGcNd4XTvKLuPQNQISxWz8yN7vDeOa6RzLj3jN8bgXuo8
+         6AmYvaZXcQT+ArzlPV/iZKXASZlVlvtWsyy4yKTMcWeaqq3smp6KVl0KU/NjyZLxkNdG
+         NRPFvCkPOA2QglyheZ8PtkCclerC+nY7QPMSUCGUmLQyosgJA1f/m/HnUHip7WWE9eeh
+         O2gg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=PCvtDCUCpjMSyIAhRAhBLf7oJ+KbK1Zh4keTiDChtXE=;
+        b=Ypxp2EfA6yTad7eg4WZ1Z2ULA2gGpHj5V/ux1eU5JuSbE3JCU3vHoADLcYyFWPjP/v
+         D/+vrgp+1cv1mVL4oPsmupsO5LgnKLwI2okzezwwoQ5m8wcZCZFJ+mWHATo/7byUZq+1
+         4fVjAmq+K2GJskmTV45yb+AUE+8qNoaGYSQPC/zMjvpwmKX50tfYt0qb+XywHezCBbOi
+         isYsJHoBaZyZprX9A8SWAhzgCG/2MkTHj8PTbeDiAD6Ym//0VyHsGpJqHqoXSjCDvsLE
+         R1Yok+lYWq4JaIql02ICZ4lPYB5XaKRbi88rnM02YFDUgi/FCRRh+wRhD96J7tzpZU7k
+         i/ow==
+X-Gm-Message-State: APjAAAWrCzcgcoFq6GN1P4EFk5oAHodQq4GjzVipyIh+5AsiExj+g7kL
+        R6De0CxNDTkZeVdGdfoFwvluP6xL
+X-Google-Smtp-Source: APXvYqyO6sHXsoHaPxH2UTvfIo1D2EDl9g1i7YEAKvP+VrFCdlUrpApbEzT1MHvRG+YlDslscdctVQ==
+X-Received: by 2002:a17:90a:5806:: with SMTP id h6mr23232455pji.126.1561399418766;
+        Mon, 24 Jun 2019 11:03:38 -0700 (PDT)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id j11sm12840651pfa.2.2019.06.24.11.03.38
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 24 Jun 2019 11:03:38 -0700 (PDT)
+Date:   Mon, 24 Jun 2019 11:03:37 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.14 00/51] 4.14.130-stable review
+Message-ID: <20190624180337.GA27897@roeck-us.net>
+References: <20190624092305.919204959@linuxfoundation.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190624092305.919204959@linuxfoundation.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-06-18 at 22:52 -0700, Dan Williams wrote:
-> Allow sub-section sized ranges to be added to the memmap.
-> populate_section_memmap() takes an explict pfn range rather than
-> assuming a full section, and those parameters are plumbed all the way
-> through to vmmemap_populate(). There should be no sub-section usage
-> in
-> current deployments. New warnings are added to clarify which memmap
-> allocation paths are sub-section capable.
+On Mon, Jun 24, 2019 at 05:56:18PM +0800, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.130 release.
+> There are 51 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: Logan Gunthorpe <logang@deltatee.com>
-> Cc: Oscar Salvador <osalvador@suse.de>
-> Reviewed-by: Pavel Tatashin <pasha.tatashin@soleen.com>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> Responses should be made by Wed 26 Jun 2019 09:22:03 AM UTC.
+> Anything received after that time might be too late.
+> 
 
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
+Build results:
+	total: 172 pass: 172 fail: 0
+Qemu test results:
+	total: 346 pass: 346 fail: 0
 
--- 
-Oscar Salvador
-SUSE L3
+Guenter
