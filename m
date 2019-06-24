@@ -2,90 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B4494FEAF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 03:52:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FE494FEB4
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 03:52:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726558AbfFXBwB convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Sun, 23 Jun 2019 21:52:01 -0400
-Received: from mga12.intel.com ([192.55.52.136]:54742 "EHLO mga12.intel.com"
+        id S1726822AbfFXBw3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 21:52:29 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:3888 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726304AbfFXBwA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 21:52:00 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jun 2019 18:52:00 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,410,1557212400"; 
-   d="scan'208";a="359411805"
-Received: from pgsmsx101.gar.corp.intel.com ([10.221.44.78])
-  by fmsmga005.fm.intel.com with ESMTP; 23 Jun 2019 18:51:58 -0700
-Received: from pgsmsx103.gar.corp.intel.com ([169.254.2.96]) by
- PGSMSX101.gar.corp.intel.com ([169.254.1.223]) with mapi id 14.03.0439.000;
- Mon, 24 Jun 2019 09:51:58 +0800
-From:   "Voon, Weifeng" <weifeng.voon@intel.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-CC:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        "Ong, Boon Leong" <boon.leong.ong@intel.com>
-Subject: RE: linux-next: Fixes tag needs some work in the net tree
-Thread-Topic: linux-next: Fixes tag needs some work in the net tree
-Thread-Index: AQHVKg160YmtwNARk0KEtCAotjVl8aaqCfJA
-Date:   Mon, 24 Jun 2019 01:51:56 +0000
-Message-ID: <D6759987A7968C4889FDA6FA91D5CBC8147282FB@PGSMSX103.gar.corp.intel.com>
-References: <20190624074716.44b749d3@canb.auug.org.au>
-In-Reply-To: <20190624074716.44b749d3@canb.auug.org.au>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-version: 11.0.600.7
-dlp-reaction: no-action
-x-originating-ip: [172.30.20.205]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1726795AbfFXBw2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Jun 2019 21:52:28 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id CB2E6C04959F;
+        Mon, 24 Jun 2019 01:52:23 +0000 (UTC)
+Received: from dhcp-128-65.nay.redhat.com (ovpn-12-23.pek2.redhat.com [10.72.12.23])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3A55310018F9;
+        Mon, 24 Jun 2019 01:52:14 +0000 (UTC)
+Date:   Mon, 24 Jun 2019 09:52:06 +0800
+From:   Dave Young <dyoung@redhat.com>
+To:     Matthew Garrett <mjg59@google.com>
+Cc:     James Morris <jmorris@namei.org>, Jiri Bohac <jbohac@suse.cz>,
+        Linux API <linux-api@vger.kernel.org>,
+        kexec@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>
+Subject: Re: [PATCH V31 07/25] kexec_file: Restrict at runtime if the kernel
+ is locked down
+Message-ID: <20190624015206.GB2976@dhcp-128-65.nay.redhat.com>
+References: <20190326182742.16950-1-matthewgarrett@google.com>
+ <20190326182742.16950-8-matthewgarrett@google.com>
+ <20190621064340.GB4528@localhost.localdomain>
+ <CACdnJut=J1YTpM4s6g5XWCEs+=X0Jvf8otfMg+w=_oqSZmf01Q@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACdnJut=J1YTpM4s6g5XWCEs+=X0Jvf8otfMg+w=_oqSZmf01Q@mail.gmail.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Mon, 24 Jun 2019 01:52:28 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Hi all,
+On 06/21/19 at 01:18pm, Matthew Garrett wrote:
+> On Thu, Jun 20, 2019 at 11:43 PM Dave Young <dyoung@redhat.com> wrote:
+> >
+> > On 03/26/19 at 11:27am, Matthew Garrett wrote:
+> > > From: Jiri Bohac <jbohac@suse.cz>
+> > >
+> > > When KEXEC_SIG is not enabled, kernel should not load images through
+> > > kexec_file systemcall if the kernel is locked down.
+> > >
+> > > [Modified by David Howells to fit with modifications to the previous patch
+> > >  and to return -EPERM if the kernel is locked down for consistency with
+> > >  other lockdowns. Modified by Matthew Garrett to remove the IMA
+> > >  integration, which will be replaced by integrating with the IMA
+> > >  architecture policy patches.]
+> > >
+> > > Signed-off-by: Jiri Bohac <jbohac@suse.cz>
+> > > Signed-off-by: David Howells <dhowells@redhat.com>
+> > > Signed-off-by: Matthew Garrett <mjg59@google.com>
+> > > Reviewed-by: Jiri Bohac <jbohac@suse.cz>
+> > > cc: kexec@lists.infradead.org
+> > > ---
+> > >  kernel/kexec_file.c | 6 ++++++
+> > >  1 file changed, 6 insertions(+)
+> > >
+> > > diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+> > > index 67f3a866eabe..a1cc37c8b43b 100644
+> > > --- a/kernel/kexec_file.c
+> > > +++ b/kernel/kexec_file.c
+> > > @@ -239,6 +239,12 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
+> > >               }
+> > >
+> > >               ret = 0;
+> > > +
+> > > +             if (kernel_is_locked_down(reason, LOCKDOWN_INTEGRITY)) {
+> > > +                     ret = -EPERM;
+> > > +                     goto out;
+> > > +             }
+> > > +
+> >
+> > Checking here is late, it would be good to move the check to earlier
+> > code around below code:
+> >         /* We only trust the superuser with rebooting the system. */
+> >         if (!capable(CAP_SYS_BOOT) || kexec_load_disabled)
+> >                 return -EPERM;
 > 
-> In commit
-> 
->   d0bb82fd6018 ("net: stmmac: set IC bit when transmitting frames with
-> HW timestamp")
-> 
-> Fixes tag
-> 
->   Fixes: f748be531d70 ("net: stmmac: Rework coalesce timer and fix
-> multi-queue races")
-> 
-> has these problem(s):
-> 
->   - Subject does not match target commit subject
->     Just use
-> 	git log -1 --format='Fixes: %h ("%s")'
-> 
-> Fixes: f748be531d70 ("stmmac: support new GMAC4")
-> 
-> or did you mean
-> 
-> Fixes: 8fce33317023 ("net: stmmac: Rework coalesce timer and fix multi-
-> queue races")
-> 
+> I don't think so - we want it to be possible to load images if they
+> have a valid signature.
 
-Sorry for the confusion, what I meant is:
-Fixes: 8fce33317023 ("net: stmmac: Rework coalesce timer and fix multi-
-queue races")
+I know it works like this way because of the previous patch.  But from
+the patch log "When KEXEC_SIG is not enabled, kernel should not load
+images", it is simple to check it early for !IS_ENABLED(CONFIG_KEXEC_SIG) && 
+kernel_is_locked_down(reason, LOCKDOWN_INTEGRITY)  instead of depending
+on the late code to verify signature.  In that way, easier to
+understand the logic, no?
 
-Regards,
-Weifeng
-
-> --
-> Cheers,
-> Stephen Rothwell
+Thanks
+Dave
