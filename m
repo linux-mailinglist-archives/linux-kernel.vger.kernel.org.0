@@ -2,147 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3121D50768
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:12:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B701D50638
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 11:57:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730212AbfFXKGx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 06:06:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39228 "EHLO mail.kernel.org"
+        id S1728668AbfFXJ4U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 05:56:20 -0400
+Received: from foss.arm.com ([217.140.110.172]:44878 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729599AbfFXKGu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 06:06:50 -0400
-Received: from localhost (f4.8f.5177.ip4.static.sl-reverse.com [119.81.143.244])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 982B421473;
-        Mon, 24 Jun 2019 10:06:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561370809;
-        bh=/lLAJYDQGzK0dJdUaekE5OmOKBa+Yz4MjnphOvkmKyA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W8cr9Jrl3Vy75fBe8bMzIIAlD/QYBOdqg+CImhixtREjER+nGpZ+UHaoCkKiIinJ8
-         9c9lv9g4bdNBEEX9/i+tTs+oycbiKohMhDkS3/8onL+mQFrII/mMdZwXe/55ZnagWA
-         Em+HLCF5ybRsMGcMGorPPzf333NUyiSFfN+rcOyw=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 5.1 001/121] tracing: Silence GCC 9 array bounds warning
-Date:   Mon, 24 Jun 2019 17:55:33 +0800
-Message-Id: <20190624092320.733047084@linuxfoundation.org>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190624092320.652599624@linuxfoundation.org>
-References: <20190624092320.652599624@linuxfoundation.org>
-User-Agent: quilt/0.66
-X-stable: review
-X-Patchwork-Hint: ignore
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        id S1728638AbfFXJ4P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 05:56:15 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1816EC28;
+        Mon, 24 Jun 2019 02:56:15 -0700 (PDT)
+Received: from e121650-lin.cambridge.arm.com (e121650-lin.cambridge.arm.com [10.1.196.120])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E9B163F71E;
+        Mon, 24 Jun 2019 02:56:13 -0700 (PDT)
+From:   Raphael Gault <raphael.gault@arm.com>
+To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     jpoimboe@redhat.com, peterz@infradead.org, catalin.marinas@arm.com,
+        will.deacon@arm.com, julien.thierry@arm.com,
+        Raphael Gault <raphael.gault@arm.com>
+Subject: [RFC V3 03/18] objtool: Move registers and control flow to arch-dependent code
+Date:   Mon, 24 Jun 2019 10:55:33 +0100
+Message-Id: <20190624095548.8578-4-raphael.gault@arm.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190624095548.8578-1-raphael.gault@arm.com>
+References: <20190624095548.8578-1-raphael.gault@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+The control flow information and register macro definitions were based on
+the x86_64 architecture but should be abstract so that each architecture
+can define the correct values for the registers, especially the registers
+related to the stack frame (Frame Pointer, Stack Pointer and possibly
+Return Address).
 
-commit 0c97bf863efce63d6ab7971dad811601e6171d2f upstream.
-
-Starting with GCC 9, -Warray-bounds detects cases when memset is called
-starting on a member of a struct but the size to be cleared ends up
-writing over further members.
-
-Such a call happens in the trace code to clear, at once, all members
-after and including `seq` on struct trace_iterator:
-
-    In function 'memset',
-        inlined from 'ftrace_dump' at kernel/trace/trace.c:8914:3:
-    ./include/linux/string.h:344:9: warning: '__builtin_memset' offset
-    [8505, 8560] from the object at 'iter' is out of the bounds of
-    referenced subobject 'seq' with type 'struct trace_seq' at offset
-    4368 [-Warray-bounds]
-      344 |  return __builtin_memset(p, c, size);
-          |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-In order to avoid GCC complaining about it, we compute the address
-ourselves by adding the offsetof distance instead of referring
-directly to the member.
-
-Since there are two places doing this clear (trace.c and trace_kdb.c),
-take the chance to move the workaround into a single place in
-the internal header.
-
-Link: http://lkml.kernel.org/r/20190523124535.GA12931@gmail.com
-
-Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-[ Removed unnecessary parenthesis around "iter" ]
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Raphael Gault <raphael.gault@arm.com>
 ---
- kernel/trace/trace.c     |    6 +-----
- kernel/trace/trace.h     |   18 ++++++++++++++++++
- kernel/trace/trace_kdb.c |    6 +-----
- 3 files changed, 20 insertions(+), 10 deletions(-)
+ tools/objtool/arch/x86/include/arch_special.h | 36 +++++++++++++++++++
+ tools/objtool/{ => arch/x86/include}/cfi.h    |  0
+ tools/objtool/check.h                         |  1 +
+ tools/objtool/special.c                       | 19 +---------
+ 4 files changed, 38 insertions(+), 18 deletions(-)
+ create mode 100644 tools/objtool/arch/x86/include/arch_special.h
+ rename tools/objtool/{ => arch/x86/include}/cfi.h (100%)
 
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -8627,12 +8627,8 @@ void ftrace_dump(enum ftrace_dump_mode o
- 
- 		cnt++;
- 
--		/* reset all but tr, trace, and overruns */
--		memset(&iter.seq, 0,
--		       sizeof(struct trace_iterator) -
--		       offsetof(struct trace_iterator, seq));
-+		trace_iterator_reset(&iter);
- 		iter.iter_flags |= TRACE_FILE_LAT_FMT;
--		iter.pos = -1;
- 
- 		if (trace_find_next_entry_inc(&iter) != NULL) {
- 			int ret;
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -1964,4 +1964,22 @@ static inline void tracer_hardirqs_off(u
- 
- extern struct trace_iterator *tracepoint_print_iter;
- 
+diff --git a/tools/objtool/arch/x86/include/arch_special.h b/tools/objtool/arch/x86/include/arch_special.h
+new file mode 100644
+index 000000000000..424ce47013e3
+--- /dev/null
++++ b/tools/objtool/arch/x86/include/arch_special.h
+@@ -0,0 +1,36 @@
 +/*
-+ * Reset the state of the trace_iterator so that it can read consumed data.
-+ * Normally, the trace_iterator is used for reading the data when it is not
-+ * consumed, and must retain state.
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License
++ * as published by the Free Software Foundation; either version 2
++ * of the License, or (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, see <http://www.gnu.org/licenses/>.
 + */
-+static __always_inline void trace_iterator_reset(struct trace_iterator *iter)
-+{
-+	const size_t offset = offsetof(struct trace_iterator, seq);
++#ifndef _X86_ARCH_SPECIAL_H
++#define _X86_ARCH_SPECIAL_H
 +
-+	/*
-+	 * Keep gcc from complaining about overwriting more than just one
-+	 * member in the structure.
-+	 */
-+	memset((char *)iter + offset, 0, sizeof(struct trace_iterator) - offset);
++#define EX_ENTRY_SIZE		12
++#define EX_ORIG_OFFSET		0
++#define EX_NEW_OFFSET		4
 +
-+	iter->pos = -1;
-+}
++#define JUMP_ENTRY_SIZE		16
++#define JUMP_ORIG_OFFSET	0
++#define JUMP_NEW_OFFSET		4
 +
- #endif /* _LINUX_KERNEL_TRACE_H */
---- a/kernel/trace/trace_kdb.c
-+++ b/kernel/trace/trace_kdb.c
-@@ -41,12 +41,8 @@ static void ftrace_dump_buf(int skip_lin
++#define ALT_ENTRY_SIZE		13
++#define ALT_ORIG_OFFSET		0
++#define ALT_NEW_OFFSET		4
++#define ALT_FEATURE_OFFSET	8
++#define ALT_ORIG_LEN_OFFSET	10
++#define ALT_NEW_LEN_OFFSET	11
++
++#define X86_FEATURE_POPCNT (4 * 32 + 23)
++#define X86_FEATURE_SMAP   (9 * 32 + 20)
++
++#endif /* _X86_ARCH_SPECIAL_H */
+diff --git a/tools/objtool/cfi.h b/tools/objtool/arch/x86/include/cfi.h
+similarity index 100%
+rename from tools/objtool/cfi.h
+rename to tools/objtool/arch/x86/include/cfi.h
+diff --git a/tools/objtool/check.h b/tools/objtool/check.h
+index cb60b9acf5cf..c44f9fe40178 100644
+--- a/tools/objtool/check.h
++++ b/tools/objtool/check.h
+@@ -11,6 +11,7 @@
+ #include "cfi.h"
+ #include "arch.h"
+ #include "orc.h"
++#include "arch_special.h"
+ #include <linux/hashtable.h>
  
- 	kdb_printf("Dumping ftrace buffer:\n");
+ struct insn_state {
+diff --git a/tools/objtool/special.c b/tools/objtool/special.c
+index fdbaa611146d..b8ccee1b5382 100644
+--- a/tools/objtool/special.c
++++ b/tools/objtool/special.c
+@@ -14,24 +14,7 @@
+ #include "builtin.h"
+ #include "special.h"
+ #include "warn.h"
+-
+-#define EX_ENTRY_SIZE		12
+-#define EX_ORIG_OFFSET		0
+-#define EX_NEW_OFFSET		4
+-
+-#define JUMP_ENTRY_SIZE		16
+-#define JUMP_ORIG_OFFSET	0
+-#define JUMP_NEW_OFFSET		4
+-
+-#define ALT_ENTRY_SIZE		13
+-#define ALT_ORIG_OFFSET		0
+-#define ALT_NEW_OFFSET		4
+-#define ALT_FEATURE_OFFSET	8
+-#define ALT_ORIG_LEN_OFFSET	10
+-#define ALT_NEW_LEN_OFFSET	11
+-
+-#define X86_FEATURE_POPCNT (4*32+23)
+-#define X86_FEATURE_SMAP   (9*32+20)
++#include "arch_special.h"
  
--	/* reset all but tr, trace, and overruns */
--	memset(&iter.seq, 0,
--		   sizeof(struct trace_iterator) -
--		   offsetof(struct trace_iterator, seq));
-+	trace_iterator_reset(&iter);
- 	iter.iter_flags |= TRACE_FILE_LAT_FMT;
--	iter.pos = -1;
- 
- 	if (cpu_file == RING_BUFFER_ALL_CPUS) {
- 		for_each_tracing_cpu(cpu) {
-
+ struct special_entry {
+ 	const char *sec;
+-- 
+2.17.1
 
