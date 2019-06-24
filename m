@@ -2,121 +2,200 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 724AC528A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 11:54:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DF77518BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 18:34:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730129AbfFYJyH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 05:54:07 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37182 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727613AbfFYJyE (ORCPT
+        id S1732171AbfFXQe2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 12:34:28 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:1248 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727953AbfFXQe1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 05:54:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=4xhafNZ9vsKKvjfqO+yD1YjW/mVePLcmRuEcd5QcDMA=; b=SCJr7OJ8/Njz
-        sjrg808suH9HC4CBUz9daEFnlgLmMAzA5NIn6wpTTpHuJacXeImBpd1jD9AzN1rKJLX13BbcaUxxr
-        uFqawaJkOIdT6Qq4pqif2W5wJ3lbTxODiXA1sYC3ma8Qq5nd+VVgxao/29MX0Arurm+aWI+nzzXcU
-        EmTU4=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=finisterre.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hfi9F-0004mM-03; Tue, 25 Jun 2019 09:53:57 +0000
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-        id DD2B044006F; Mon, 24 Jun 2019 17:32:28 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Patrice Chotard <patrice.chotard@st.com>
-Cc:     Alexandre Torgue <alexandre.torgue@st.com>,
-        christophe.kerello@st.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Mark Brown <broonie@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        patrice.chotard@st.com
-Subject: Applied "spi: spi-stm32-qspi: Remove CR_FTHRES_MASK usage" to the spi tree
-In-Reply-To: <20190620131323.5955-1-patrice.chotard@st.com>
-X-Patchwork-Hint: ignore
-Message-Id: <20190624163228.DD2B044006F@finisterre.sirena.org.uk>
-Date:   Mon, 24 Jun 2019 17:32:28 +0100 (BST)
+        Mon, 24 Jun 2019 12:34:27 -0400
+Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5OGELJS007215;
+        Mon, 24 Jun 2019 09:33:44 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=Ff85BVXHKyiWhomRfjKhokfcqFEBMPFU3gwxDsVvmMM=;
+ b=fQ3y6GYYTMXvrX0E6N0I21K4A8h3sAtq5hHELBf7WrD1kjJye8Kol0zD1eHNhZe8U7cb
+ Bc241dnGBe4J1y43IQMzXd8/U6PqYrP20uUXrXLQC2f5G6lidXt7RTnWB5clm8td+6T6
+ LISdmDZ/GOpjlImcBFsnXOX0aw1j3JE+QCw= 
+Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2tapd5jb0c-4
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Mon, 24 Jun 2019 09:33:44 -0700
+Received: from prn-mbx03.TheFacebook.com (2620:10d:c081:6::17) by
+ prn-hub01.TheFacebook.com (2620:10d:c081:35::125) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1713.5; Mon, 24 Jun 2019 09:33:27 -0700
+Received: from prn-hub05.TheFacebook.com (2620:10d:c081:35::129) by
+ prn-mbx03.TheFacebook.com (2620:10d:c081:6::17) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1713.5; Mon, 24 Jun 2019 09:33:21 -0700
+Received: from NAM04-CO1-obe.outbound.protection.outlook.com (192.168.54.28)
+ by o365-in.thefacebook.com (192.168.16.29) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1713.5
+ via Frontend Transport; Mon, 24 Jun 2019 09:33:21 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ff85BVXHKyiWhomRfjKhokfcqFEBMPFU3gwxDsVvmMM=;
+ b=ipKkWXY7ab78aX5YvwN3nNbNFR/amArHFDxHHtmt43EKwKAE8oxSnNLoUhlNt8i3Eu8wUOZEHnr0G8Sm/LlQoyb76JypOm4HORtzK76zuK0pprybYXFTCCfYqYm5f8NJzoU0E9NaICLN1RztmphtnT1csE0O+B5XzQo9VjbuxRA=
+Received: from MWHPR15MB1165.namprd15.prod.outlook.com (10.175.3.22) by
+ MWHPR15MB1615.namprd15.prod.outlook.com (10.175.135.137) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2008.16; Mon, 24 Jun 2019 16:33:20 +0000
+Received: from MWHPR15MB1165.namprd15.prod.outlook.com
+ ([fe80::400e:e329:ea98:aa0d]) by MWHPR15MB1165.namprd15.prod.outlook.com
+ ([fe80::400e:e329:ea98:aa0d%6]) with mapi id 15.20.2008.014; Mon, 24 Jun 2019
+ 16:33:20 +0000
+From:   Song Liu <songliubraving@fb.com>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+CC:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "matthew.wilcox@oracle.com" <matthew.wilcox@oracle.com>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        Kernel Team <Kernel-team@fb.com>,
+        "william.kucharski@oracle.com" <william.kucharski@oracle.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "hdanton@sina.com" <hdanton@sina.com>
+Subject: Re: [PATCH v7 5/6] mm,thp: add read-only THP support for (non-shmem)
+ FS
+Thread-Topic: [PATCH v7 5/6] mm,thp: add read-only THP support for (non-shmem)
+ FS
+Thread-Index: AQHVKYdGAmz09KUZ80Kts9GVGsmXGaaqwvwAgAAUeoCAAAd4gIAABAcAgAADi4CAAAKkAIAAAxwAgAAVwYA=
+Date:   Mon, 24 Jun 2019 16:33:20 +0000
+Message-ID: <59707C4A-8C5C-42DA-80C7-35ABE3D2BBF9@fb.com>
+References: <20190623054749.4016638-1-songliubraving@fb.com>
+ <20190623054749.4016638-6-songliubraving@fb.com>
+ <20190624124746.7evd2hmbn3qg3tfs@box>
+ <52BDA50B-7CBF-4333-9D15-0C17FD04F6ED@fb.com>
+ <20190624142747.chy5s3nendxktm3l@box>
+ <C3161C66-5044-44E6-92F4-BBAD42EDF4E2@fb.com>
+ <20190624145453.u4ej3e4ktyyqjite@box>
+ <5BE23F34-B611-496B-9277-A09C9CC784B1@fb.com>
+ <20190624151528.fnz3hvlnyvea3ytn@box>
+In-Reply-To: <20190624151528.fnz3hvlnyvea3ytn@box>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Apple Mail (2.3445.104.11)
+x-originating-ip: [2620:10d:c090:200::2:78ae]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 66884793-4140-4bb5-04c8-08d6f8c1ab47
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MWHPR15MB1615;
+x-ms-traffictypediagnostic: MWHPR15MB1615:
+x-microsoft-antispam-prvs: <MWHPR15MB16156F322E2AFC6B17D39283B3E00@MWHPR15MB1615.namprd15.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7219;
+x-forefront-prvs: 007814487B
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(346002)(39860400002)(396003)(376002)(366004)(199004)(189003)(53936002)(6512007)(256004)(14444005)(71190400001)(305945005)(71200400001)(6246003)(46003)(50226002)(57306001)(8936002)(486006)(478600001)(476003)(2616005)(11346002)(6116002)(446003)(8676002)(81156014)(81166006)(6916009)(316002)(2906002)(229853002)(14454004)(99286004)(6486002)(6436002)(33656002)(36756003)(68736007)(54906003)(7736002)(66476007)(66556008)(64756008)(76116006)(53546011)(102836004)(6506007)(86362001)(4326008)(25786009)(186003)(5660300002)(66946007)(73956011)(76176011)(66446008)(142933001);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1615;H:MWHPR15MB1165.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: y0II3nRyq7rtnDjyjLRVeiP0ugtKko4OCoCf7p9iadLDFoieMaSwuFqlE0wHKffayFuzuyVVMFVNLMS2FSo2zJOjC14itfURDP3gLiY6wcN3S7GdVHX83DPKfvVecqZOlKHjZ84P7ep2uG3GroN0U3krllv5zkbLxPxu6V7j/VgqIuWtcdIhwy8qEEiJCTi4Jnt4/9oTIaTu/mR8Z3geL01jZzm1ZbTTdwIU7BRnsrHrdJyZMDqo+sH0HkcK8SeX0uDlCJejqd8+INBftz70cXhGbJnKr/7hq5ocYJWFBEAsj+gHJNAV5jmWckJj5+f+66YImI5bz3p7kf3ku3EudkT4x8pmJ017oK+QrDoQXk3gma8kMTUts7HUCcKAJkrcVMG037qYTzuuz6/CHGbh1sekrDLPjvQ9NnQ3gDrCRTw=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <134F80DA4AD2794F9C8FD4E3E86C271F@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 66884793-4140-4bb5-04c8-08d6f8c1ab47
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jun 2019 16:33:20.3707
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: songliubraving@fb.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1615
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-24_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906240130
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
 
-   spi: spi-stm32-qspi: Remove CR_FTHRES_MASK usage
 
-has been applied to the spi tree at
+> On Jun 24, 2019, at 8:15 AM, Kirill A. Shutemov <kirill@shutemov.name> wr=
+ote:
+>=20
+> On Mon, Jun 24, 2019 at 03:04:21PM +0000, Song Liu wrote:
+>>=20
+>>=20
+>>> On Jun 24, 2019, at 7:54 AM, Kirill A. Shutemov <kirill@shutemov.name> =
+wrote:
+>>>=20
+>>> On Mon, Jun 24, 2019 at 02:42:13PM +0000, Song Liu wrote:
+>>>>=20
+>>>>=20
+>>>>> On Jun 24, 2019, at 7:27 AM, Kirill A. Shutemov <kirill@shutemov.name=
+> wrote:
+>>>>>=20
+>>>>> On Mon, Jun 24, 2019 at 02:01:05PM +0000, Song Liu wrote:
+>>>>>>>> @@ -1392,6 +1403,23 @@ static void collapse_file(struct mm_struct =
+*mm,
+>>>>>>>> 				result =3D SCAN_FAIL;
+>>>>>>>> 				goto xa_unlocked;
+>>>>>>>> 			}
+>>>>>>>> +		} else if (!page || xa_is_value(page)) {
+>>>>>>>> +			xas_unlock_irq(&xas);
+>>>>>>>> +			page_cache_sync_readahead(mapping, &file->f_ra, file,
+>>>>>>>> +						  index, PAGE_SIZE);
+>>>>>>>> +			lru_add_drain();
+>>>>>>>=20
+>>>>>>> Why?
+>>>>>>=20
+>>>>>> isolate_lru_page() is likely to fail if we don't drain the pagevecs.=
+=20
+>>>>>=20
+>>>>> Please add a comment.
+>>>>=20
+>>>> Will do.=20
+>>>>=20
+>>>>>=20
+>>>>>>>> +			page =3D find_lock_page(mapping, index);
+>>>>>>>> +			if (unlikely(page =3D=3D NULL)) {
+>>>>>>>> +				result =3D SCAN_FAIL;
+>>>>>>>> +				goto xa_unlocked;
+>>>>>>>> +			}
+>>>>>>>> +		} else if (!PageUptodate(page)) {
+>>>>>>>=20
+>>>>>>> Maybe we should try wait_on_page_locked() here before give up?
+>>>>>>=20
+>>>>>> Are you referring to the "if (!PageUptodate(page))" case?=20
+>>>>>=20
+>>>>> Yes.
+>>>>=20
+>>>> I think this case happens when another thread is reading the page in.=
+=20
+>>>> I could not think of a way to trigger this condition for testing.=20
+>>>>=20
+>>>> On the other hand, with current logic, we will retry the page on the=20
+>>>> next scan, so I guess this is OK.=20
+>>>=20
+>>> What I meant that calling wait_on_page_locked() on !PageUptodate() page
+>>> will likely make it up-to-date and we don't need to SCAN_FAIL the attem=
+pt.
+>>>=20
+>>=20
+>> Yeah, I got the point. My only concern is that I don't know how to=20
+>> reliably trigger this case for testing. I can try to trigger it. But I=20
+>> don't know whether it will happen easily.=20
+>=20
+> Atrifically slowing down IO should do the trick.
+>=20
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.2
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+Let me try that.=20
 
 Thanks,
-Mark
-
-From 94613d5ae1091a28b33f38e18d96e8d953ac18df Mon Sep 17 00:00:00 2001
-From: Patrice Chotard <patrice.chotard@st.com>
-Date: Thu, 20 Jun 2019 15:13:23 +0200
-Subject: [PATCH] spi: spi-stm32-qspi: Remove CR_FTHRES_MASK usage
-
-On STM32 F4/F7/H7 SoCs, FTHRES is a 5 bits field in QSPI_CR register,
-but for STM32MP1 SoCs, FTHRES is a 4 bits field long. CR_FTHRES_MASK
-definition is not correct.
-
-As for all these SoCs, FTHRES field is set to 3, FIELD_PREP() macro
-is used with a constant as second parameter which make its usage useless.
-
-CR_FTHRES_MASK and FIELD_PREP() can be removed.
-
-Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/spi/spi-stm32-qspi.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/spi/spi-stm32-qspi.c b/drivers/spi/spi-stm32-qspi.c
-index 42f8e3c6aa1f..5dbb6a8e893c 100644
---- a/drivers/spi/spi-stm32-qspi.c
-+++ b/drivers/spi/spi-stm32-qspi.c
-@@ -29,7 +29,7 @@
- #define CR_SSHIFT		BIT(4)
- #define CR_DFM			BIT(6)
- #define CR_FSEL			BIT(7)
--#define CR_FTHRES_MASK		GENMASK(12, 8)
-+#define CR_FTHRES_SHIFT		8
- #define CR_TEIE			BIT(16)
- #define CR_TCIE			BIT(17)
- #define CR_FTIE			BIT(18)
-@@ -463,7 +463,7 @@ static int stm32_qspi_setup(struct spi_device *spi)
- 	flash->presc = presc;
- 
- 	mutex_lock(&qspi->lock);
--	qspi->cr_reg = FIELD_PREP(CR_FTHRES_MASK, 3) | CR_SSHIFT | CR_EN;
-+	qspi->cr_reg = 3 << CR_FTHRES_SHIFT | CR_SSHIFT | CR_EN;
- 	writel_relaxed(qspi->cr_reg, qspi->io_base + QSPI_CR);
- 
- 	/* set dcr fsize to max address */
--- 
-2.20.1
+Song
 
