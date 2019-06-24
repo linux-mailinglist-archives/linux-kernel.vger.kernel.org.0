@@ -2,315 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20B195069E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:01:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36666506AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:01:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729294AbfFXJ7u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 05:59:50 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:37352 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729263AbfFXJ7s (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 05:59:48 -0400
-Received: by mail-io1-f66.google.com with SMTP id e5so253803iok.4;
-        Mon, 24 Jun 2019 02:59:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=yFTJKriGhLQIksY/i5luQyBHaATlB+z0Np2m+AM8Ixc=;
-        b=N0Q68bSbA+Bmwkg7gZYUzcdPY8ZEwsXtgp0olS8XjotnZYJvq2WVukL7w1wSWMwXk7
-         /crbISYt73NclWrgD6uWGR87+OmW7piDI92RabW729iOFBIuOtvtDfuPguE7IuVJwXyi
-         GaV4YJcNoTFQH0STqT0yG96Aw4Tcjs4GlDl2CGX14pgrbzhoqjpbwZYC5bp5YMf8j/HN
-         /4uMAgi0TSJyYsskJF/RBq/UunDMlVg9VENZzyPQa49AQPJHaX7/PEuzIjfyTohVtfIZ
-         8syGvVgeVbJffcPbuEdhJeQZP9V0tpC1FJZ//GRzt9fWJe2itgewQPEDqeDcwqeUxs2I
-         J0ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yFTJKriGhLQIksY/i5luQyBHaATlB+z0Np2m+AM8Ixc=;
-        b=dSe5pOjgjzoX2kIcQ9ZA06OZ/Mr5KnTmW7zBJNGP8KNUCBadBmZqIos+kYKg9ej6+Z
-         ig+8TTDD4CSa4YC18hw/inTZb+eZzZm8eJE9+Rc8T05c0MkU59/3lAhaLn7QxvEX/881
-         0ljH7ChFQkmJCwnLYbJnz4wZH76Dq6pDli08tZdRsYslxZuqshnjwObFBhbManLKQ4Um
-         rfmu+eahvCtSM8G6ynYeIIv2PAl6NfZMUIs7iIwQ5v+vmjfIqSiGith5rOERLMXRQLAa
-         jxPvZfdhngySusmGQ1TUSHBsVM3WdDpkSCHbe62gbEIk/FjPyrGu/inHOWZqfc8rEG1A
-         NIzQ==
-X-Gm-Message-State: APjAAAUUcSfh9YWj95hUtxF6FmF7cEuwsPPbjJp+WxQxFFx0lCAUryy6
-        jtc28tamZ2ju1OFC+JfnH+nrf85DthjTm9a5A0o=
-X-Google-Smtp-Source: APXvYqx2niX2O5rujpi2Ej58covOglXU1OaHc3qftpmrbcitzCIEK/b2uGNYgA91Ba0IR5ksluV+p519l6w+7PSaAHQ=
-X-Received: by 2002:a6b:7f0b:: with SMTP id l11mr111487129ioq.282.1561370387061;
- Mon, 24 Jun 2019 02:59:47 -0700 (PDT)
+        id S1728845AbfFXKAj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 06:00:39 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33766 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728620AbfFXKAh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 06:00:37 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7A0EAAFED;
+        Mon, 24 Jun 2019 10:00:35 +0000 (UTC)
+Date:   Mon, 24 Jun 2019 12:00:33 +0200 (CEST)
+From:   Miroslav Benes <mbenes@suse.cz>
+To:     Thomas Gleixner <tglx@linutronix.de>
+cc:     Cheng Jian <cj.chengjian@huawei.com>, linux-kernel@vger.kernel.org,
+        live-patching@vger.kernel.org, jpoimboe@redhat.com,
+        mingo@redhat.com, huawei.libin@huawei.com, xiexiuqi@huawei.com,
+        yangyingliang@huawei.com, bobo.shaobowang@huawei.com
+Subject: Re: [PATCH] Revert "x86/module: Detect and skip invalid
+ relocations"
+In-Reply-To: <alpine.DEB.2.21.1906220927460.5503@nanos.tec.linutronix.de>
+Message-ID: <alpine.LSU.2.21.1906241150000.31030@pobox.suse.cz>
+References: <1561019068-132672-1-git-send-email-cj.chengjian@huawei.com> <alpine.LSU.2.21.1906201028490.25778@pobox.suse.cz> <alpine.DEB.2.21.1906220927460.5503@nanos.tec.linutronix.de>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-References: <20190621141833.17551-1-jlayton@kernel.org> <20190621141833.17551-2-jlayton@kernel.org>
-In-Reply-To: <20190621141833.17551-2-jlayton@kernel.org>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Mon, 24 Jun 2019 12:00:00 +0200
-Message-ID: <CAOi1vP8bJcW8ViXhfuoCUqntqLj0bC56dc-9+MGwZvR9yHRFLA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] ceph: fix buffer length handling in virtual xattrs
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        "Yan, Zheng" <zyan@redhat.com>, Sage Weil <sage@redhat.com>,
-        agruenba@redhat.com, Joe Perches <joe@perches.com>,
-        geert+renesas@glider.be, andriy.shevchenko@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 21, 2019 at 4:18 PM Jeff Layton <jlayton@kernel.org> wrote:
->
-> The convention with xattrs is to not store the termination with string
-> data, given that it returns the length. This is how setfattr/getfattr
-> operate.
->
-> Most of ceph's virtual xattr routines use snprintf to plop the string
-> directly into the destination buffer, but snprintf always NULL
-> terminates the string. This means that if we send the kernel a buffer
-> that is the exact length needed to hold the string, it'll end up
-> truncated.
->
-> Add new routines to format the string into an on-stack buffer that is
-> always large enough to hold the whole thing and then memcpy the result
-> into the destination buffer. Then, change over the virtual xattr
-> routines to use the new helper functions as appropriate.
->
-> Finally, make the code return ERANGE if the destination buffer size was
-> too small to hold the returned value.
->
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  fs/ceph/xattr.c | 103 ++++++++++++++++++++++++++++++++++++------------
->  1 file changed, 78 insertions(+), 25 deletions(-)
->
-> diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
-> index 6621d27e64f5..359d3cbbb37b 100644
-> --- a/fs/ceph/xattr.c
-> +++ b/fs/ceph/xattr.c
-> @@ -112,22 +112,47 @@ static size_t ceph_vxattrcb_layout(struct ceph_inode_info *ci, char *val,
->         return ret;
->  }
->
-> +/* Enough to hold any possible expression of integer TYPE in base 10 */
-> +#define INT_STR_SIZE(_type)    3*sizeof(_type)+2
-> +
-> +/*
-> + * snprintf always NULL terminates, but we need for xattrs to not be. For
-> + * the integer vxattrs, just create an on-stack buffer for snprintf's
-> + * destination, and just don't copy the termination to the actual buffer.
-> + */
-> +#define GENERATE_XATTR_INT_FORMATTER(_lbl, _format, _type)                  \
-> +static size_t format_ ## _lbl ## _xattr(char *val, size_t size, _type src)   \
-> +{                                                                           \
-> +       size_t ret;                                                          \
-> +       char buf[INT_STR_SIZE(_type)];                                       \
-> +                                                                            \
-> +       ret = snprintf(buf, size ? sizeof(buf) : 0, _format, src);           \
-> +       if (ret <= size)                                                     \
-> +               memcpy(val, buf, ret);                                       \
-> +       return ret;                                                          \
-> +}
-> +
-> +GENERATE_XATTR_INT_FORMATTER(u, "%u", unsigned int)
-> +GENERATE_XATTR_INT_FORMATTER(d, "%d", int)
-> +GENERATE_XATTR_INT_FORMATTER(lld, "%lld", long long)
-> +GENERATE_XATTR_INT_FORMATTER(llu, "%llu", unsigned long long)
-> +
->  static size_t ceph_vxattrcb_layout_stripe_unit(struct ceph_inode_info *ci,
->                                                char *val, size_t size)
->  {
-> -       return snprintf(val, size, "%u", ci->i_layout.stripe_unit);
-> +       return format_u_xattr(val, size, ci->i_layout.stripe_unit);
->  }
->
->  static size_t ceph_vxattrcb_layout_stripe_count(struct ceph_inode_info *ci,
->                                                 char *val, size_t size)
->  {
-> -       return snprintf(val, size, "%u", ci->i_layout.stripe_count);
-> +       return format_u_xattr(val, size, ci->i_layout.stripe_count);
->  }
->
->  static size_t ceph_vxattrcb_layout_object_size(struct ceph_inode_info *ci,
->                                                char *val, size_t size)
->  {
-> -       return snprintf(val, size, "%u", ci->i_layout.object_size);
-> +       return format_u_xattr(val, size, ci->i_layout.object_size);
->  }
->
->  static size_t ceph_vxattrcb_layout_pool(struct ceph_inode_info *ci,
-> @@ -141,10 +166,14 @@ static size_t ceph_vxattrcb_layout_pool(struct ceph_inode_info *ci,
->
->         down_read(&osdc->lock);
->         pool_name = ceph_pg_pool_name_by_id(osdc->osdmap, pool);
-> -       if (pool_name)
-> -               ret = snprintf(val, size, "%s", pool_name);
-> -       else
-> -               ret = snprintf(val, size, "%lld", (unsigned long long)pool);
-> +       if (pool_name) {
-> +               ret = strlen(pool_name);
-> +
-> +               if (ret <= size)
-> +                       memcpy(val, pool_name, ret);
-> +       } else {
-> +               ret = format_lld_xattr(val, size, pool);
-> +       }
->         up_read(&osdc->lock);
->         return ret;
->  }
-> @@ -155,7 +184,11 @@ static size_t ceph_vxattrcb_layout_pool_namespace(struct ceph_inode_info *ci,
->         int ret = 0;
->         struct ceph_string *ns = ceph_try_get_string(ci->i_layout.pool_ns);
->         if (ns) {
-> -               ret = snprintf(val, size, "%.*s", (int)ns->len, ns->str);
-> +               ret = ns->len;
-> +
-> +               if (ret <= size)
-> +                       memcpy(val, ns->str, ns->len);
-> +
->                 ceph_put_string(ns);
->         }
->         return ret;
-> @@ -166,50 +199,61 @@ static size_t ceph_vxattrcb_layout_pool_namespace(struct ceph_inode_info *ci,
->  static size_t ceph_vxattrcb_dir_entries(struct ceph_inode_info *ci, char *val,
->                                         size_t size)
->  {
-> -       return snprintf(val, size, "%lld", ci->i_files + ci->i_subdirs);
-> +       return format_lld_xattr(val, size, ci->i_files + ci->i_subdirs);
->  }
->
->  static size_t ceph_vxattrcb_dir_files(struct ceph_inode_info *ci, char *val,
->                                       size_t size)
->  {
-> -       return snprintf(val, size, "%lld", ci->i_files);
-> +       return format_lld_xattr(val, size, ci->i_files);
->  }
->
->  static size_t ceph_vxattrcb_dir_subdirs(struct ceph_inode_info *ci, char *val,
->                                         size_t size)
->  {
-> -       return snprintf(val, size, "%lld", ci->i_subdirs);
-> +       return format_lld_xattr(val, size, ci->i_subdirs);
->  }
->
->  static size_t ceph_vxattrcb_dir_rentries(struct ceph_inode_info *ci, char *val,
->                                          size_t size)
->  {
-> -       return snprintf(val, size, "%lld", ci->i_rfiles + ci->i_rsubdirs);
-> +       return format_lld_xattr(val, size, ci->i_rfiles + ci->i_rsubdirs);
->  }
->
->  static size_t ceph_vxattrcb_dir_rfiles(struct ceph_inode_info *ci, char *val,
->                                        size_t size)
->  {
-> -       return snprintf(val, size, "%lld", ci->i_rfiles);
-> +       return format_lld_xattr(val, size, ci->i_rfiles);
->  }
->
->  static size_t ceph_vxattrcb_dir_rsubdirs(struct ceph_inode_info *ci, char *val,
->                                          size_t size)
->  {
-> -       return snprintf(val, size, "%lld", ci->i_rsubdirs);
-> +       return format_lld_xattr(val, size, ci->i_rsubdirs);
->  }
->
->  static size_t ceph_vxattrcb_dir_rbytes(struct ceph_inode_info *ci, char *val,
->                                        size_t size)
->  {
-> -       return snprintf(val, size, "%lld", ci->i_rbytes);
-> +       return format_lld_xattr(val, size, ci->i_rbytes);
-> +}
-> +
-> +static size_t format_ts64_xattr(char *val, size_t size, struct timespec64 *src)
-> +{
-> +       size_t ret;
-> +       char buf[INT_STR_SIZE(long long) + 1 + 9];
-> +
-> +       ret = snprintf(buf, size ? sizeof(buf) : 0, "%lld.%09ld", src->tv_sec,
-> +                      src->tv_nsec);
-> +       if (ret <= size)
-> +               memcpy(val, buf, ret);
-> +       return ret;
->  }
->
->  static size_t ceph_vxattrcb_dir_rctime(struct ceph_inode_info *ci, char *val,
->                                        size_t size)
->  {
-> -       return snprintf(val, size, "%lld.%09ld", ci->i_rctime.tv_sec,
-> -                       ci->i_rctime.tv_nsec);
-> +       return format_ts64_xattr(val, size, &ci->i_rctime);
->  }
->
->  /* dir pin */
-> @@ -221,7 +265,7 @@ static bool ceph_vxattrcb_dir_pin_exists(struct ceph_inode_info *ci)
->  static size_t ceph_vxattrcb_dir_pin(struct ceph_inode_info *ci, char *val,
->                                      size_t size)
->  {
-> -       return snprintf(val, size, "%d", (int)ci->i_dir_pin);
-> +       return format_d_xattr(val, size, ci->i_dir_pin);
->  }
->
->  /* quotas */
-> @@ -241,20 +285,27 @@ static bool ceph_vxattrcb_quota_exists(struct ceph_inode_info *ci)
->  static size_t ceph_vxattrcb_quota(struct ceph_inode_info *ci, char *val,
->                                   size_t size)
->  {
-> -       return snprintf(val, size, "max_bytes=%llu max_files=%llu",
-> -                       ci->i_max_bytes, ci->i_max_files);
-> +       size_t ret;
-> +       char buf[(2*INT_STR_SIZE(unsigned long long)) + 10 + 11];
-> +
-> +       ret = snprintf(buf, size ? sizeof(buf) : 0,
-> +                      "max_bytes=%llu max_files=%llu",
-> +                      ci->i_max_bytes, ci->i_max_files);
-> +       if (ret <= size)
-> +               memcpy(val, buf, ret);
-> +       return ret;
->  }
->
->  static size_t ceph_vxattrcb_quota_max_bytes(struct ceph_inode_info *ci,
->                                             char *val, size_t size)
->  {
-> -       return snprintf(val, size, "%llu", ci->i_max_bytes);
-> +       return format_llu_xattr(val, size, ci->i_max_bytes);
->  }
->
->  static size_t ceph_vxattrcb_quota_max_files(struct ceph_inode_info *ci,
->                                             char *val, size_t size)
->  {
-> -       return snprintf(val, size, "%llu", ci->i_max_files);
-> +       return format_llu_xattr(val, size, ci->i_max_files);
->  }
->
->  /* snapshots */
-> @@ -266,8 +317,7 @@ static bool ceph_vxattrcb_snap_btime_exists(struct ceph_inode_info *ci)
->  static size_t ceph_vxattrcb_snap_btime(struct ceph_inode_info *ci, char *val,
->                                        size_t size)
->  {
-> -       return snprintf(val, size, "%lld.%09ld", ci->i_snap_btime.tv_sec,
-> -                       ci->i_snap_btime.tv_nsec);
-> +       return format_ts64_xattr(val, size, &ci->i_snap_btime);
->  }
->
->  #define CEPH_XATTR_NAME(_type, _name)  XATTR_CEPH_PREFIX #_type "." #_name
+On Sat, 22 Jun 2019, Thomas Gleixner wrote:
 
-Hi Jeff,
+> Miroslav,
+> 
+> On Thu, 20 Jun 2019, Miroslav Benes wrote:
+> > On Thu, 20 Jun 2019, Cheng Jian wrote:
+> > 
+> > > This reverts commit eda9cec4c9a12208a6f69fbe68f72a6311d50032.
+> > > 
+> > > Since commit (eda9cec4c9a1 'x86/module: Detect and skip invalid
+> > > relocations') add some sanity check in apply_relocate_add, borke
+> > > re-insmod a kernel module which has been patched before,
+> > > 
+> > > The relocation informations of the livepatch module have been
+> > > overwritten since first patched, so if we rmmod and insmod the
+> > > kernel module, these values are not zero anymore, when
+> > > klp_module_coming doing, and that commit marks them as invalid
+> > > invalid_relocation.
+> > > 
+> > > Then the following error occurs:
+> > > 
+> > > 	module: x86/modules: Skipping invalid relocation target, existing value is nonzero for type 2, loc (____ptrval____), val ffffffffc000236c
+> > > 	livepatch: failed to initialize patch 'livepatch_0001_test' for module 'test' (-8)
+> > > 	livepatch: patch 'livepatch_0001_test' failed for module 'test', refusing to load module 'test'
+> > 
+> > Oh yeah. First reported here 20180602161151.apuhs2dygsexmcg2@treble (LP ML 
+> > only and there is no archive on lore.kernel.org yet. Sorry about that.). I 
+> > posted v1 here 
+> > https://lore.kernel.org/lkml/20180607092949.1706-1-mbenes@suse.cz/ and 
+> > even started to work on v2 in March with arch-specific nullifying, but 
+> > then I got sidetracked again. I'll move it up my todo list a bit.
+> 
+> so we need to revert it for now, right?
 
-This seems over-engineered to me.  You have four functions just for
-ints, two more for ts64 and quota and several ad-hoc %s memcpys.  Why
-not define a single function with a generously-sized buffer, BUG in
-case it's too small and take a format string?
+Not necessarily.
 
-Regardless, I would much prefer
+Quoting Josh from the original bug report:
+"Possible ways to fix it:
 
-  char buf[64];
+1) Remove the error check in apply_relocate_add().  I don't think we
+   should do this, because the error is actually useful for detecting
+   corrupt modules.  And also, powerpc has the similar error so this
+   wouldn't be a universal solution.
 
-over
+2) In klp_unpatch_object(), call an arch-specific arch_unpatch_object()
+   which reverses any arch-specific patching: on x86, clearing all
+   relocation targets to zero; on powerpc, converting the instructions
+   after relative link branches to nops.  I don't think we should do
+   this because it's not a global solution and requires fidgety
+   arch-specific patching code.
 
-  #define INT_STR_SIZE(_type)    3*sizeof(_type)+2
-  char buf[(2*INT_STR_SIZE(unsigned long long)) + 10 + 11];
+3) Don't allow patched modules to be removed.  I think this makes the
+   most sense.  Nobody needs this functionality anyway (right?).
+"
 
-Thanks,
+1 would be the revert. We decided against it. The scenario (rmmod a 
+module) is (supposedly) not that common in practice. Even the current bug 
+report was triggered just in testing if I am not mistaken. Moreover, you 
+need kpatch-build to properly set up relocation records. Upstream 
+livepatch does not offer it as of now. That's why (I think) Josh thought 
+the benefits of the check outweighed the disadvantage.
 
-                Ilya
+Then I tried to implement 3, but there were problems with it too. 2 
+remains to be finished and then we can decide what the best approach is.
+
+That being said... I am not against the reverting the commit per se, but 
+we lived with it or quite a long time and no one has met it so far in 
+"real life". I don't think it is the classic "we broke something, we have 
+to revert" scenario.
+
+Josh, any comment? I think your opinion matters here much more than mine.
+
+Miroslav
