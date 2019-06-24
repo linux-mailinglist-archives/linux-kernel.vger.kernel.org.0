@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F94450708
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:06:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C1DB8507BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:12:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729572AbfFXKDv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 06:03:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35138 "EHLO mail.kernel.org"
+        id S1730300AbfFXKJj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 06:09:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42536 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728730AbfFXKDt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 06:03:49 -0400
+        id S1730489AbfFXKIm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 06:08:42 -0400
 Received: from localhost (f4.8f.5177.ip4.static.sl-reverse.com [119.81.143.244])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3D012208E3;
-        Mon, 24 Jun 2019 10:03:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0782A2089F;
+        Mon, 24 Jun 2019 10:08:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561370628;
-        bh=TGBsQJwB/9SZ4dCxM9rwwKRyxINEMNBpivPmqFGJXCU=;
+        s=default; t=1561370921;
+        bh=FqfyOE32pGG0nTN2uey/6HiKT1i752OzCJIa1JzZZJM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Tups/nlvmHyd5UX6sCP3yD478I1G1u5ljnk9maHiCCc6wGLDuebhW2e9YQx+giHUO
-         35lhDtROw+A7IwMaqcb9co2UEeLAnOGUTTP7aJj6MNmUH3LZdhMJwRLZpMlENAMqao
-         cUAbTJ3MoTuFzkG7D4n69q/8zyeS21qfnQUafA+A=
+        b=PusuoNYsjL9oKhXYSb6hJc1r05w6hbCDX/wbezzDLoK0FBy/iC1vXDL8i9kSQOa/A
+         U8VCyQcfHoAkQpY9nWlrOfEaWpGCXarBXu5PHZaZNkkcqGR20O4R3dhaatiT5FF2x2
+         +4OnWwrXHr7pgZ43ecdRfedSzgiklIQX1PUdMoVE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Long <eric.long@unisoc.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 32/90] dmaengine: sprd: Fix block length overflow
-Date:   Mon, 24 Jun 2019 17:56:22 +0800
-Message-Id: <20190624092316.417766707@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Michael J. Ruhl" <michael.j.ruhl@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 051/121] IB/hfi1: Insure freeze_work work_struct is canceled on shutdown
+Date:   Mon, 24 Jun 2019 17:56:23 +0800
+Message-Id: <20190624092323.346979705@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190624092313.788773607@linuxfoundation.org>
-References: <20190624092313.788773607@linuxfoundation.org>
+In-Reply-To: <20190624092320.652599624@linuxfoundation.org>
+References: <20190624092320.652599624@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,36 +47,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 89d03b3c126d683f7b2cd5b07178493993d12448 ]
+[ Upstream commit 6d517353c70bb0818b691ca003afdcb5ee5ea44e ]
 
-The maximum value of block length is 0xffff, so if the configured transfer length
-is more than 0xffff, that will cause block length overflow to lead a configuration
-error.
+By code inspection, the freeze_work is never canceled.
 
-Thus we can set block length as the maximum burst length to avoid this issue, since
-the maximum burst length will not be a big value which is more than 0xffff.
+Fix by adding a cancel_work_sync in the shutdown path to insure it is no
+longer running.
 
-Signed-off-by: Eric Long <eric.long@unisoc.com>
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Fixes: 7724105686e7 ("IB/hfi1: add driver files")
+Reviewed-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
+Reviewed-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/sprd-dma.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/infiniband/hw/hfi1/chip.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/dma/sprd-dma.c b/drivers/dma/sprd-dma.c
-index 55df0d41355b..1ed1c7efa288 100644
---- a/drivers/dma/sprd-dma.c
-+++ b/drivers/dma/sprd-dma.c
-@@ -663,7 +663,7 @@ static int sprd_dma_fill_desc(struct dma_chan *chan,
- 	temp |= slave_cfg->src_maxburst & SPRD_DMA_FRG_LEN_MASK;
- 	hw->frg_len = temp;
+diff --git a/drivers/infiniband/hw/hfi1/chip.c b/drivers/infiniband/hw/hfi1/chip.c
+index e02d9a739e9c..597f2f02f3a8 100644
+--- a/drivers/infiniband/hw/hfi1/chip.c
++++ b/drivers/infiniband/hw/hfi1/chip.c
+@@ -9848,6 +9848,7 @@ void hfi1_quiet_serdes(struct hfi1_pportdata *ppd)
  
--	hw->blk_len = len & SPRD_DMA_BLK_LEN_MASK;
-+	hw->blk_len = slave_cfg->src_maxburst & SPRD_DMA_BLK_LEN_MASK;
- 	hw->trsc_len = len & SPRD_DMA_TRSC_LEN_MASK;
+ 	/* disable the port */
+ 	clear_rcvctrl(dd, RCV_CTRL_RCV_PORT_ENABLE_SMASK);
++	cancel_work_sync(&ppd->freeze_work);
+ }
  
- 	temp = (dst_step & SPRD_DMA_TRSF_STEP_MASK) << SPRD_DMA_DEST_TRSF_STEP_OFFSET;
+ static inline int init_cpu_counters(struct hfi1_devdata *dd)
 -- 
 2.20.1
 
