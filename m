@@ -2,144 +2,198 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C822054E24
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 14:01:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D8E550A54
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 14:05:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732489AbfFYMBB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 08:01:01 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:39112 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728365AbfFYMBA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 08:01:00 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5PBwX7f034947;
-        Tue, 25 Jun 2019 12:00:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
- bh=EMb96t5WuJs0JYsPKdZC7E6ogPsiS0s7Bn+LAKFUFOo=;
- b=RkcP6ugO5B/V6L4Gii2r0I1mE75z/MSvzTdT69uvlEwGcewX/RDt5usbISd03uSsM8z8
- LrRqJEVtJTtndV+h46oiYyCeE8gLWfDjydbFTwxYLN/FDRTn0H2XHq+CLsiezo/2ffIu
- OXpBGcXKwaHA0iwZv+BwN2kOzTv7bHL5XlxzVRpSFn81vZP3PZmKkadbWn4VYeLc8Mso
- sM5H+qKQMczF0szdapkQMXBk/VLpj4i8hPpR4QQ7rBT2RecLun4/KMyEl70HpM/lrl3r
- kMdRJjSrh2W7cirJenv4USgSjdNCt8kGheEjYnt739I26wPeJfvc88WgHAbf9a3WpfTh Aw== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2120.oracle.com with ESMTP id 2t9cyqbuda-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 25 Jun 2019 12:00:14 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5PBxTGE065052;
-        Tue, 25 Jun 2019 12:00:14 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3030.oracle.com with ESMTP id 2t9acc2gty-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 25 Jun 2019 12:00:13 +0000
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5PC0Cwn012306;
-        Tue, 25 Jun 2019 12:00:12 GMT
-Received: from z2.cn.oracle.com (/10.182.69.87)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 25 Jun 2019 05:00:11 -0700
-From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     tglx@linutronix.de, mingo@kernel.org, bp@alien8.de, hpa@zytor.com,
-        boris.ostrovsky@oracle.com, jgross@suse.com,
-        sstabellini@kernel.org, peterz@infradead.org,
-        srinivas.eeda@oracle.com,
-        Zhenzhong Duan <zhenzhong.duan@oracle.com>,
-        Waiman Long <longman@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dou Liyang <douly.fnst@cn.fujitsu.com>
-Subject: [PATCH v2 7/7] Revert "x86/paravirt: Set up the virt_spin_lock_key after static keys get initialized"
-Date:   Mon, 24 Jun 2019 20:02:59 +0800
-Message-Id: <1561377779-28036-8-git-send-email-zhenzhong.duan@oracle.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1561377779-28036-1-git-send-email-zhenzhong.duan@oracle.com>
-References: <1561377779-28036-1-git-send-email-zhenzhong.duan@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9298 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1906250097
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9298 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1906250097
+        id S1728930AbfFXMFk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 08:05:40 -0400
+Received: from vps.xff.cz ([195.181.215.36]:47542 "EHLO vps.xff.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726923AbfFXMFk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 08:05:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
+        t=1561377938; bh=T4BXa4VwDBoEc4A4HcwS0Dl0bssMv2ECXblVliRU+Rc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mziuWN5kTFFpcq304OoQGK6gxdzqSCt3c4v+QPAJAN2Xr/rjVgJt8bguMb+m+Bs0+
+         vDVZ1NmuEY1NyjB18a9F+pwxlCIMHxTyDOcZCQvhN8Zz//HRyQr+mAtuE+Xl8Kl2Lr
+         IWjXiq/GG8qikZgtD4XyWJPxehxIBwPjI1F10fGA=
+Date:   Mon, 24 Jun 2019 14:05:37 +0200
+From:   =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>
+To:     Yangtao Li <tiny.windzz@gmail.com>
+Cc:     rui.zhang@intel.com, edubezval@gmail.com,
+        daniel.lezcano@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, maxime.ripard@bootlin.com, wens@csie.org,
+        davem@davemloft.net, gregkh@linuxfoundation.org,
+        mchehab+samsung@kernel.org, linus.walleij@linaro.org,
+        nicolas.ferre@microchip.com, paulmck@linux.ibm.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v4 11/11] thermal: sun8i: add thermal driver for h3
+Message-ID: <20190624120537.sxdm4y3jec3ksr4u@core.my.home>
+Mail-Followup-To: Yangtao Li <tiny.windzz@gmail.com>, rui.zhang@intel.com,
+        edubezval@gmail.com, daniel.lezcano@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, maxime.ripard@bootlin.com, wens@csie.org,
+        davem@davemloft.net, gregkh@linuxfoundation.org,
+        mchehab+samsung@kernel.org, linus.walleij@linaro.org,
+        nicolas.ferre@microchip.com, paulmck@linux.ibm.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
+References: <20190623164206.7467-1-tiny.windzz@gmail.com>
+ <20190623164206.7467-12-tiny.windzz@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190623164206.7467-12-tiny.windzz@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit ca5d376e17072c1b60c3fee66f3be58ef018952d.
+Hello Yangtao,
 
-Commit 8990cac6e5ea ("x86/jump_label: Initialize static branching
-early") adds jump_label_init() call in setup_arch() to make static
-keys initialized early, so we could use the original simpler code
-again.
+On Sun, Jun 23, 2019 at 12:42:06PM -0400, Yangtao Li wrote:
+> This patch adds the support for allwinner h3 thermal sensor.
+> 
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> ---
+>  drivers/thermal/sun8i_thermal.c | 72 +++++++++++++++++++++++++++++++++
+>  1 file changed, 72 insertions(+)
+> 
+> diff --git a/drivers/thermal/sun8i_thermal.c b/drivers/thermal/sun8i_thermal.c
+> index 260b24340f5b..c8ee291f3b17 100644
+> --- a/drivers/thermal/sun8i_thermal.c
+> +++ b/drivers/thermal/sun8i_thermal.c
+> @@ -27,6 +27,14 @@
+>  #define TEMP_TO_REG				672
+>  #define CALIBRATE_DEFAULT			0x800
+>  
+> +#define SUN8I_THS_CTRL0				0x00
+> +#define SUN8I_THS_CTRL2				0x40
+> +#define SUN8I_THS_IC				0x44
+> +#define SUN8I_THS_IS				0x48
+> +#define SUN8I_THS_MFC				0x70
+> +#define SUN8I_THS_TEMP_CALIB			0x74
+> +#define SUN8I_THS_TEMP_DATA			0x80
+> +
+>  #define SUN50I_THS_CTRL0			0x00
+>  #define SUN50I_H6_THS_ENABLE			0x04
+>  #define SUN50I_H6_THS_PC			0x08
+> @@ -36,6 +44,9 @@
+>  #define SUN50I_H6_THS_TEMP_CALIB		0xa0
+>  #define SUN50I_H6_THS_TEMP_DATA			0xc0
+>  
+> +#define SUN8I_THS_CTRL0_T_ACQ0(x)		(GENMASK(15, 0) & (x))
+> +#define SUN8I_THS_CTRL2_T_ACQ1(x)		((GENMASK(15, 0) & (x)) << 16)
+> +
+>  #define SUN50I_THS_CTRL0_T_ACQ(x)		((GENMASK(15, 0) & (x)) << 16)
+>  #define SUN50I_THS_FILTER_EN			BIT(2)
+>  #define SUN50I_THS_FILTER_TYPE(x)		(GENMASK(1, 0) & (x))
+> @@ -121,6 +132,21 @@ static const struct regmap_config config = {
+>  	.fast_io = true,
+>  };
+>  
+> +static int sun8i_h3_irq_ack(struct ths_device *tmdev)
+> +{
+> +	int state, ret = 0;
+> +
+> +	regmap_read(tmdev->regmap, SUN8I_THS_IS, &state);
+> +
+> +	if (state & BIT(8)) {
+> +		regmap_write(tmdev->regmap, SUN8I_THS_IS,
+> +			     BIT(8));
+> +		ret |= BIT(1);
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+>  static int sun50i_h6_irq_ack(struct ths_device *tmdev)
+>  {
+>  	int i, state, ret = 0;
+> @@ -154,6 +180,14 @@ static irqreturn_t sun8i_irq_thread(int irq, void *data)
+>  	return IRQ_HANDLED;
+>  }
+>  
+> +static int sun8i_h3_ths_calibrate(struct ths_device *tmdev,
+> +			       u16 *caldata, int callen)
+> +{
+> +	regmap_write(tmdev->regmap, SUN8I_THS_TEMP_CALIB, *caldata);
 
-Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Cc: Waiman Long <longman@redhat.com>
-Cc: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: Stefano Stabellini <sstabellini@kernel.org>
-Cc: Dou Liyang <douly.fnst@cn.fujitsu.com>
----
- arch/x86/kernel/smpboot.c | 3 +--
- arch/x86/xen/spinlock.c   | 6 ++----
- 2 files changed, 3 insertions(+), 6 deletions(-)
+You're missing a sanity check for callen here.
 
-diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
-index 362dd89..44472ca 100644
---- a/arch/x86/kernel/smpboot.c
-+++ b/arch/x86/kernel/smpboot.c
-@@ -1308,8 +1308,6 @@ void __init native_smp_prepare_cpus(unsigned int max_cpus)
- 	pr_info("CPU0: ");
- 	print_cpu_info(&cpu_data(0));
- 
--	native_pv_lock_init();
--
- 	uv_system_init();
- 
- 	set_mtrr_aps_delayed_init();
-@@ -1339,6 +1337,7 @@ void __init native_smp_prepare_boot_cpu(void)
- 	/* already set me in cpu_online_mask in boot_cpu_init() */
- 	cpumask_set_cpu(me, cpu_callout_mask);
- 	cpu_set_state_online(me);
-+	native_pv_lock_init();
- }
- 
- void __init calculate_max_logical_packages(void)
-diff --git a/arch/x86/xen/spinlock.c b/arch/x86/xen/spinlock.c
-index 3776122..6deb490 100644
---- a/arch/x86/xen/spinlock.c
-+++ b/arch/x86/xen/spinlock.c
-@@ -68,11 +68,8 @@ void xen_init_lock_cpu(int cpu)
- 	int irq;
- 	char *name;
- 
--	if (!xen_pvspin) {
--		if (cpu == 0)
--			static_branch_disable(&virt_spin_lock_key);
-+	if (!xen_pvspin)
- 		return;
--	}
- 
- 	WARN(per_cpu(lock_kicker_irq, cpu) >= 0, "spinlock on CPU%d exists on IRQ%d!\n",
- 	     cpu, per_cpu(lock_kicker_irq, cpu));
-@@ -124,6 +121,7 @@ void __init xen_init_spinlocks(void)
- 
- 	if (!xen_pvspin) {
- 		printk(KERN_DEBUG "xen: PV spinlocks disabled\n");
-+		static_branch_disable(&virt_spin_lock_key);
- 		return;
- 	}
- 	printk(KERN_DEBUG "xen: PV spinlocks enabled\n");
--- 
-1.8.3.1
+regards,
+	o.
 
+> +	return 0;
+> +}
+> +
+>  static int sun50i_h6_ths_calibrate(struct ths_device *tmdev,
+>  				   u16 *caldata, int callen)
+>  {
+> @@ -325,6 +359,32 @@ static int sun8i_ths_resource_init(struct ths_device *tmdev)
+>  	return ret;
+>  }
+>  
+> +static int sun8i_h3_thermal_init(struct ths_device *tmdev)
+> +{
+> +	/* average over 4 samples */
+> +	regmap_write(tmdev->regmap, SUN8I_THS_MFC,
+> +		     SUN50I_THS_FILTER_EN |
+> +		     SUN50I_THS_FILTER_TYPE(1));
+> +	/*
+> +	 * period = (x + 1) * 4096 / clkin; ~10ms
+> +	 * enable data interrupt
+> +	 */
+> +	regmap_write(tmdev->regmap, SUN8I_THS_IC,
+> +		     SUN50I_H6_THS_PC_TEMP_PERIOD(58) | BIT(8));
+> +	/*
+> +	 * clkin = 24MHz
+> +	 * T acquire = clkin / (x + 1)
+> +	 *           = 20us
+> +	 * enable sensor
+> +	 */
+> +	regmap_write(tmdev->regmap, SUN8I_THS_CTRL0,
+> +		     SUN8I_THS_CTRL0_T_ACQ0(479));
+> +	regmap_write(tmdev->regmap, SUN8I_THS_CTRL2,
+> +		     SUN8I_THS_CTRL2_T_ACQ1(479) | BIT(0));
+> +
+> +	return 0;
+> +}
+> +
+>  static int sun50i_thermal_init(struct ths_device *tmdev)
+>  {
+>  	int val;
+> @@ -431,6 +491,17 @@ static int sun8i_ths_remove(struct platform_device *pdev)
+>  	return 0;
+>  }
+>  
+> +static const struct ths_thermal_chip sun8i_h3_ths = {
+> +	.sensor_num = 1,
+> +	.offset = -1794,
+> +	.scale = -121,
+> +	.has_ahb_clk = true,
+> +	.temp_data_base = SUN8I_THS_TEMP_DATA,
+> +	.calibrate = sun8i_h3_ths_calibrate,
+> +	.init = sun8i_h3_thermal_init,
+> +	.irq_ack = sun8i_h3_irq_ack,
+> +};
+> +
+>  static const struct ths_thermal_chip sun50i_h6_ths = {
+>  	.sensor_num = 2,
+>  	.offset = -2794,
+> @@ -443,6 +514,7 @@ static const struct ths_thermal_chip sun50i_h6_ths = {
+>  };
+>  
+>  static const struct of_device_id of_ths_match[] = {
+> +	{ .compatible = "allwinner,sun8i-h3-ths", .data = &sun8i_h3_ths },
+>  	{ .compatible = "allwinner,sun50i-h6-ths", .data = &sun50i_h6_ths },
+>  	{ /* sentinel */ },
+>  };
+> -- 
+> 2.17.1
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
