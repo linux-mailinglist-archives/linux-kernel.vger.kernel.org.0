@@ -2,134 +2,321 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6B9D51E2E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 00:24:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B67151E26
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 00:21:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726474AbfFXWYr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 18:24:47 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:39099 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726419AbfFXWYr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 18:24:47 -0400
-Received: by mail-lj1-f193.google.com with SMTP id v18so14162394ljh.6
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 15:24:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=RJ/2kCUFqt0p/B8wH1ducrJXpRHD9Vd6UXD6eBdK5zo=;
-        b=vwlK2G28iGSTX/mLKanEVw9OvnDhLwi6UXaP2hX51CLLI0HSzYdn77mn/RmqiYl6mW
-         CXVNWQJq2Y6m4JNAPCnzwC3jx+ABB3bEJfd7Ex6+90WTQgrgfpXS5uArKoPYzrlBPLWn
-         TBar6NvVfyTlkAgiAbggVAo8Sqml0eNQXCnpKZikmrZOsoiI1FEDqj7DgA0/8KWHu936
-         bihW3r9kMySDEs+cslLHX8Lntkgwcqp95tdQOtVjGMRE8+NWpeledtFLbGtFhVrofDiV
-         J6FvSKMD0R8uaXGt9tQHU6k2X9umBkLZdaxYAzPSlBGijZQFe/caAq9vnri98wA2nV2Q
-         6l0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=RJ/2kCUFqt0p/B8wH1ducrJXpRHD9Vd6UXD6eBdK5zo=;
-        b=PqS49AtnNctUlXg5JFfYwi4CvykdjVoRwoq1+mUG7Tk+E9VQln/OhR8XvrJKGBkeug
-         Bb7iq/5M2XM8vgkrnGtl7TMP4FbsJGZZoLCMSi4L+stkizquBV3AZwPF7F1lhiCB99KO
-         RQ1LCprD1Uickzdfs/ZKAjrMgnDkbQURmMMiXk06Hrijzje3OoiJfiMsBf2dMsAN+X+n
-         XCEqcKSlny2JLzKgDjrFJsBlusopEWRWwW9o/r611V+3vX8kXM5Np4JW/Z5sB0LO9Dgh
-         2h1aPhNlre+BP2KgNXocyyrpAmm5L2HQ199uQO7bx4VY5oKvT7YtPwgz69iwzl0d0t6m
-         y8tQ==
-X-Gm-Message-State: APjAAAVdMkB+nR2R8cxKwTXt1n8Q84l3YpY0ONyJMUEQ1wtwCmnoHa/N
-        ioWiRoQXSgcyNTTxh8p5PV3SSzJ4lv4tIc+oycKX5Q==
-X-Google-Smtp-Source: APXvYqyj9SWN55Ra6slAJalJXB9mI/2jhCNU0xMT8hU+a2Rt1JjRex0Jx9/li/PopExkS9619juMJUl218+p6e5/e70=
-X-Received: by 2002:a2e:a0cf:: with SMTP id f15mr6893176ljm.180.1561415085502;
- Mon, 24 Jun 2019 15:24:45 -0700 (PDT)
+        id S1727360AbfFXWVg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 18:21:36 -0400
+Received: from mga04.intel.com ([192.55.52.120]:29702 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727289AbfFXWVf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 18:21:35 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jun 2019 15:21:34 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,413,1557212400"; 
+   d="scan'208";a="244856421"
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
+  by orsmga001.jf.intel.com with ESMTP; 24 Jun 2019 15:21:34 -0700
+Date:   Mon, 24 Jun 2019 15:24:49 -0700
+From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
+To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Cc:     "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Eric Auger <eric.auger@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Yi Liu <yi.l.liu@intel.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        Raj Ashok <ashok.raj@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Andriy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH v4 11/22] iommu: Introduce guest PASID bind function
+Message-ID: <20190624152449.35780563@jacob-builder>
+In-Reply-To: <1b2e3db5-4f92-2578-ed1e-752570a19867@arm.com>
+References: <1560087862-57608-1-git-send-email-jacob.jun.pan@linux.intel.com>
+        <1560087862-57608-12-git-send-email-jacob.jun.pan@linux.intel.com>
+        <1b2e3db5-4f92-2578-ed1e-752570a19867@arm.com>
+Organization: OTC
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <CGME20190530183941epcas5p4688d5fa80df649e4184a296ea78e6256@epcas5p4.samsung.com>
- <20190530183932.4132-1-linus.walleij@linaro.org> <28b92b86-19ac-0bf3-57d8-c7ab4557a45b@samsung.com>
- <CACRpkdaCaZyzfr9=QRz6uRZpK6mw_zDeVmBwgH7=FPbNGKB9tQ@mail.gmail.com> <547eacd4-e4b9-e9a9-9f89-aa33b05cb674@samsung.com>
-In-Reply-To: <547eacd4-e4b9-e9a9-9f89-aa33b05cb674@samsung.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 25 Jun 2019 00:24:33 +0200
-Message-ID: <CACRpkdaiXcuygPfN-D848zTzs4+d5euquFKO3njHPhWvf_dasw@mail.gmail.com>
-Subject: Re: [PATCH] extcon: gpio: Request reasonable interrupts
-To:     Chanwoo Choi <cw00.choi@samsung.com>
-Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 2:08 AM Chanwoo Choi <cw00.choi@samsung.com> wrote:
-> On 19. 6. 8. =EC=98=A4=EC=A0=84 6:24, Linus Walleij wrote:
-> > On Tue, Jun 4, 2019 at 3:30 AM Chanwoo Choi <cw00.choi@samsung.com> wro=
-te:
-> >> On 19. 5. 31. =EC=98=A4=EC=A0=84 3:39, Linus Walleij wrote:
-> >
-> >>> +     /*
-> >>> +      * It is unlikely that this is an acknowledged interrupt that g=
-oes
-> >>> +      * away after handling, what we are looking for are falling edg=
-es
-> >>> +      * if the signal is active low, and rising edges if the signal =
-is
-> >>> +      * active high.
-> >>> +      */
-> >>> +     if (gpiod_is_active_low(data->gpiod))
-> >>> +             irq_flags =3D IRQF_TRIGGER_FALLING;
-> >>
-> >> If gpiod_is_active_low(data->gpiod) is true, irq_flags might be
-> >> IRQF_TRIGGER_LOW instead of IRQF_TRIGGER_FALLING. How can we sure
-> >> that irq_flags is always IRQF_TRIGGER_FALLING?
-> >
-> > OK correct me if I'm wrong, but this is an external connector and
-> > the GPIO goes low/high when the connector is physically inserted.
-> > If it was level trigged, it would lock up the CPU with interrupts until
-> > it was unplugged again, since there is no way to acknowledge a
-> > level IRQ.
-> >
-> > I think level IRQ on GPIOs are only used for logic peripherals
-> > such as ethernet controllers etc where you can talk to the peripheral
-> > and get it to deassert the line and thus acknowledge the IRQ.
-> >
-> > So the way I see it only edge triggering makes sense for extcon.
-> >
-> > Correct me if I'm wrong.
->
-> Sorry for late reply because of vacation.
+On Tue, 18 Jun 2019 16:36:33 +0100
+Jean-Philippe Brucker <jean-philippe.brucker@arm.com> wrote:
 
-Don't worry I am not in a hurry. This is clean-up work :)
+> On 09/06/2019 14:44, Jacob Pan wrote:
+> > Guest shared virtual address (SVA) may require host to shadow guest
+> > PASID tables. Guest PASID can also be allocated from the host via
+> > enlightened interfaces. In this case, guest needs to bind the guest
+> > mm, i.e. cr3 in guest physical address to the actual PASID table in
+> > the host IOMMU. Nesting will be turned on such that guest virtual
+> > address can go through a two level translation:
+> > - 1st level translates GVA to GPA
+> > - 2nd level translates GPA to HPA
+> > This patch introduces APIs to bind guest PASID data to the assigned
+> > device entry in the physical IOMMU. See the diagram below for usage
+> > explaination.  
+> 
+> explanation
+> 
+will fix, thanks
+> > 
+> >     .-------------.  .---------------------------.
+> >     |   vIOMMU    |  | Guest process mm, FL only |
+> >     |             |  '---------------------------'
+> >     .----------------/
+> >     | PASID Entry |--- PASID cache flush -
+> >     '-------------'                       |
+> >     |             |                       V
+> >     |             |                      GP
+> >     '-------------'
+> > Guest
+> > ------| Shadow |----------------------- GP->HP* ---------
+> >       v        v                          |
+> > Host                                      v
+> >     .-------------.  .----------------------.
+> >     |   pIOMMU    |  | Bind FL for GVA-GPA  |
+> >     |             |  '----------------------'
+> >     .----------------/  |
+> >     | PASID Entry |     V (Nested xlate)
+> >     '----------------\.---------------------.
+> >     |             |   |Set SL to GPA-HPA    |
+> >     |             |   '---------------------'
+> >     '-------------'
+> > 
+> > Where:
+> >  - FL = First level/stage one page tables
+> >  - SL = Second level/stage two page tables
+> >  - GP = Guest PASID
+> >  - HP = Host PASID
+> > * Conversion needed if non-identity GP-HP mapping option is chosen.
+> > 
+> > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> > Signed-off-by: Liu Yi L <yi.l.liu@intel.com>
+> > ---
+> >  drivers/iommu/iommu.c      | 20 ++++++++++++++++
+> >  include/linux/iommu.h      | 21 +++++++++++++++++
+> >  include/uapi/linux/iommu.h | 58
+> > ++++++++++++++++++++++++++++++++++++++++++++++ 3 files changed, 99
+> > insertions(+)
+> > 
+> > diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+> > index 1758b57..d0416f60 100644
+> > --- a/drivers/iommu/iommu.c
+> > +++ b/drivers/iommu/iommu.c
+> > @@ -1648,6 +1648,26 @@ int iommu_cache_invalidate(struct
+> > iommu_domain *domain, struct device *dev, }
+> >  EXPORT_SYMBOL_GPL(iommu_cache_invalidate);
+> >  
+> > +int iommu_sva_bind_gpasid(struct iommu_domain *domain,
+> > +			struct device *dev, struct
+> > gpasid_bind_data *data)  
+> 
+> I'm curious about the VFIO side of this. Is the ioctl on the device or
+> on the container fd? For bind_pasid_table, it's on the container and
+> we only pass the iommu_domain to the IOMMU driver, not the device
+> (since devices in a domain share the same PASID table).
+> 
+VFIO side of gpasid bind is on the container fd (Yi can confirm :)).
+We have per device PASID table regardless of domain sharing. It can
+provide more protection within the guest.
+Second level page tables are harvested from domain for nested
+translation.
+> > +{
+> > +	if (unlikely(!domain->ops->sva_bind_gpasid))
+> > +		return -ENODEV;
+> > +
+> > +	return domain->ops->sva_bind_gpasid(domain, dev, data);
+> > +}
+> > +EXPORT_SYMBOL_GPL(iommu_sva_bind_gpasid);
+> > +
+> > +int iommu_sva_unbind_gpasid(struct iommu_domain *domain, struct
+> > device *dev,
+> > +			ioasid_t pasid)
+> > +{
+> > +	if (unlikely(!domain->ops->sva_unbind_gpasid))
+> > +		return -ENODEV;
+> > +
+> > +	return domain->ops->sva_unbind_gpasid(dev, pasid);
+> > +}
+> > +EXPORT_SYMBOL_GPL(iommu_sva_unbind_gpasid);
+> > +
+> >  static void __iommu_detach_device(struct iommu_domain *domain,
+> >  				  struct device *dev)
+> >  {
+> > diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+> > index 8d766a8..560c8c8 100644
+> > --- a/include/linux/iommu.h
+> > +++ b/include/linux/iommu.h
+> > @@ -25,6 +25,7 @@
+> >  #include <linux/errno.h>
+> >  #include <linux/err.h>
+> >  #include <linux/of.h>
+> > +#include <linux/ioasid.h>
+> >  #include <uapi/linux/iommu.h>
+> >  
+> >  #define IOMMU_READ	(1 << 0)
+> > @@ -267,6 +268,8 @@ struct page_response_msg {
+> >   * @detach_pasid_table: detach the pasid table
+> >   * @cache_invalidate: invalidate translation caches
+> >   * @pgsize_bitmap: bitmap of all possible supported page sizes
+> > + * @sva_bind_gpasid: bind guest pasid and mm
+> > + * @sva_unbind_gpasid: unbind guest pasid and mm
+> >   */
+> >  struct iommu_ops {
+> >  	bool (*capable)(enum iommu_cap);
+> > @@ -332,6 +335,10 @@ struct iommu_ops {
+> >  	int (*page_response)(struct device *dev, struct
+> > page_response_msg *msg); int (*cache_invalidate)(struct
+> > iommu_domain *domain, struct device *dev, struct
+> > iommu_cache_invalidate_info *inv_info);
+> > +	int (*sva_bind_gpasid)(struct iommu_domain *domain,
+> > +			struct device *dev, struct
+> > gpasid_bind_data *data); +
+> > +	int (*sva_unbind_gpasid)(struct device *dev, int pasid);
+> >  
+> >  	unsigned long pgsize_bitmap;
+> >  };
+> > @@ -447,6 +454,10 @@ extern void iommu_detach_pasid_table(struct
+> > iommu_domain *domain); extern int iommu_cache_invalidate(struct
+> > iommu_domain *domain, struct device *dev,
+> >  				  struct
+> > iommu_cache_invalidate_info *inv_info); +extern int
+> > iommu_sva_bind_gpasid(struct iommu_domain *domain,
+> > +		struct device *dev, struct gpasid_bind_data *data);
+> > +extern int iommu_sva_unbind_gpasid(struct iommu_domain *domain,
+> > +				struct device *dev, ioasid_t
+> > pasid); extern struct iommu_domain *iommu_get_domain_for_dev(struct
+> > device *dev); extern struct iommu_domain
+> > *iommu_get_dma_domain(struct device *dev); extern int
+> > iommu_map(struct iommu_domain *domain, unsigned long iova, @@
+> > -998,6 +1009,16 @@ iommu_cache_invalidate(struct iommu_domain
+> > *domain, { return -ENODEV;
+> >  }
+> > +static inline int iommu_sva_bind_gpasid(struct iommu_domain
+> > *domain,
+> > +				struct device *dev, struct
+> > gpasid_bind_data *data) +{
+> > +	return -ENODEV;
+> > +}
+> > +
+> > +static inline int sva_unbind_gpasid(struct device *dev, int
+> > pasid)  
+> 
+> The prototype above also has a domain argument
+> 
+right, i missed the function name and argument.
+> > +{
+> > +	return -ENODEV;
+> > +}
+> >  
+> >  #endif /* CONFIG_IOMMU_API */
+> >  
+> > diff --git a/include/uapi/linux/iommu.h b/include/uapi/linux/iommu.h
+> > index ca4b753..a9cdc63 100644
+> > --- a/include/uapi/linux/iommu.h
+> > +++ b/include/uapi/linux/iommu.h
+> > @@ -277,4 +277,62 @@ struct iommu_cache_invalidate_info {
+> >  	};
+> >  };
+> >  
+> > +/**
+> > + * struct gpasid_bind_data_vtd - Intel VT-d specific data on
+> > device and guest
+> > + * SVA binding.
+> > + *
+> > + * @flags:	VT-d PASID table entry attributes
+> > + * @pat:	Page attribute table data to compute effective
+> > memory type
+> > + * @emt:	Extended memory type
+> > + *
+> > + * Only guest vIOMMU selectable and effective options are passed
+> > down to
+> > + * the host IOMMU.
+> > + */
+> > +struct gpasid_bind_data_vtd {
+> > +#define IOMMU_SVA_VTD_GPASID_SRE	(1 << 0) /* supervisor
+> > request */ +#define IOMMU_SVA_VTD_GPASID_EAFE	(1 << 1) /*
+> > extended access enable */ +#define IOMMU_SVA_VTD_GPASID_PCD
+> > (1 << 2) /* page-level cache disable */ +#define
+> > IOMMU_SVA_VTD_GPASID_PWT	(1 << 3) /* page-level write
+> > through */ +#define IOMMU_SVA_VTD_GPASID_EMTE	(1 << 4) /*
+> > extended mem type enable */ +#define
+> > IOMMU_SVA_VTD_GPASID_CD		(1 << 5) /* PASID-level
+> > cache disable */
+> > +	__u64 flags;
+> > +	__u32 pat;
+> > +	__u32 emt;
+> > +};
+> > +
+> > +/**
+> > + * struct gpasid_bind_data - Information about device and guest
+> > PASID binding
+> > + * @version:	Version of this data structure
+> > + * @format:	PASID table entry format
+> > + * @flags:	Additional information on guest bind request
+> > + * @gpgd:	Guest page directory base of the guest mm to bind
+> > + * @hpasid:	Process address space ID used for the guest mm
+> > in host IOMMU
+> > + * @gpasid:	Process address space ID used for the guest mm
+> > in guest IOMMU
+> > + * @addr_width:	Guest virtual address width  
+> 
+> + "in bits"
+> 
+yes, precisely.
+> > + * @vtd:	Intel VT-d specific data
+> > + *
+> > + * Guest to host PASID mapping can be an identity or non-identity,
+> > where guest
+> > + * has its own PASID space. For non-identify mapping, guest to
+> > host PASID lookup
+> > + * is needed when VM programs guest PASID into an assigned device.
+> > VMM may
+> > + * trap such PASID programming then request host IOMMU driver to
+> > convert guest
+> > + * PASID to host PASID based on this bind data.
+> > + */
+> > +struct gpasid_bind_data {
+> > +#define IOMMU_GPASID_BIND_VERSION_1	1
+> > +	__u32 version;
+> > +#define IOMMU_PASID_FORMAT_INTEL_VTD	1
+> > +	__u32 format;
+> > +#define IOMMU_SVA_GPASID_VAL	(1 << 0) /* guest PASID valid
+> > */
+> > +	__u64 flags;
+> > +	__u64 gpgd;
+> > +	__u64 hpasid;
+> > +	__u64 gpasid;
+> > +	__u32 addr_width;  
+> 
+> We could use a __u8 for addr_width
+> 
+true
 
-> Actually, I have not thought that the kind of irq_flags are fixed
-> according to the category of specific h/w device. Until now, as I knew,
-> the h/w device have to initialize the the kind of irq_flags
-> for each peripheral device dependency. The each vendor of peripheral devi=
-ce
-> might design the kind of the kind of irq-flags for detection.
->
-> If possible, could you provide some example on mainline kernel?
+> Thanks,
+> Jean
+> 
+> > +	__u8  padding[4];
+> > +	/* Vendor specific data */
+> > +	union {
+> > +		struct gpasid_bind_data_vtd vtd;
+> > +	};
+> > +};
+> > +
+> >  #endif /* _UAPI_IOMMU_H */
+> >   
+> 
 
-I don't know exactly what kind of example you are looking
-for, but in e.g. drivers/input/keyboard/gpio_keys.c
-you find this code:
-
-                isr =3D gpio_keys_gpio_isr;
-                irqflags =3D IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING;
-
-                switch (button->wakeup_event_action) {
-                case EV_ACT_ASSERTED:
-                        bdata->wakeup_trigger_type =3D active_low ?
-                                IRQ_TYPE_EDGE_FALLING : IRQ_TYPE_EDGE_RISIN=
-G;
-                        break;
-                case EV_ACT_DEASSERTED:
-                        bdata->wakeup_trigger_type =3D active_low ?
-                                IRQ_TYPE_EDGE_RISING : IRQ_TYPE_EDGE_FALLIN=
-G;
-                        break;
-
-Is this what you're looking for?
-
-Yours,
-Linus Walleij
+[Jacob Pan]
