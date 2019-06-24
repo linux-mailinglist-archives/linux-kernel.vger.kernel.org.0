@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC5F850699
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:01:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C4A3E5084F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:18:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729268AbfFXJ7p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 05:59:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59020 "EHLO mail.kernel.org"
+        id S1730734AbfFXKQ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 06:16:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53906 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729258AbfFXJ7m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 05:59:42 -0400
+        id S1728376AbfFXKQZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 06:16:25 -0400
 Received: from localhost (f4.8f.5177.ip4.static.sl-reverse.com [119.81.143.244])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D9C6A21707;
-        Mon, 24 Jun 2019 09:59:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 329942089F;
+        Mon, 24 Jun 2019 10:16:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561370382;
-        bh=SroNtNBSHwyo2gYVUKqPXgaMziChHnyAc0Rq/AajKXU=;
+        s=default; t=1561371384;
+        bh=OYzrlx2PcG/tyb34xB667l00sDOGV1VV1As7ECozjiw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Av4uQnWVPdna4XQAQB9MygQNGtn5ryAoUqOtwqw9FLQziaX02KrLIfNLq2CyCfjM7
-         MDS0BgDaBoDdKUbOter5wdZiMDpgzzPdUmyI5TEUtDaBvxBE0aPlus0VVdp9IQkpH8
-         TZ4/gF+MSN6iV5qhMzcCqY42WKkwng1BTAB5l0r0=
+        b=T2GtARzehQJQTTJdgzlrvMVGURRwiW6R1hNvKMTyd+7we4oe9if+3uI4MLD1m8LnC
+         CtYgdyfhPctK2M3jr66RV2maMPNi2tjnQ0tmxk28HOtZhugoqAT6pjTKBSZ+YB0kh4
+         g5YQlc9wESEu8HbWeg6eIlQEFEx6kmkP8UdYsTRs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jaesoo Lee <jalee@purestorage.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
+        stable@vger.kernel.org, Alexandra Winter <wintera@linux.ibm.com>,
+        Julian Wiedmann <jwi@linux.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 38/51] nvme: Fix u32 overflow in the number of namespace list calculation
+Subject: [PATCH 5.1 084/121] s390/qeth: fix VLAN attribute in bridge_hostnotify udev event
 Date:   Mon, 24 Jun 2019 17:56:56 +0800
-Message-Id: <20190624092310.525280784@linuxfoundation.org>
+Message-Id: <20190624092325.137038420@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190624092305.919204959@linuxfoundation.org>
-References: <20190624092305.919204959@linuxfoundation.org>
+In-Reply-To: <20190624092320.652599624@linuxfoundation.org>
+References: <20190624092320.652599624@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,35 +45,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit c8e8c77b3bdbade6e26e8e76595f141ede12b692 ]
+[ Upstream commit 335726195e460cb6b3f795b695bfd31f0ea70ef0 ]
 
-The Number of Namespaces (nn) field in the identify controller data structure is
-defined as u32 and the maximum allowed value in NVMe specification is
-0xFFFFFFFEUL. This change fixes the possible overflow of the DIV_ROUND_UP()
-operation used in nvme_scan_ns_list() by casting the nn to u64.
+Enabling sysfs attribute bridge_hostnotify triggers a series of udev events
+for the MAC addresses of all currently connected peers. In case no VLAN is
+set for a peer, the device reports the corresponding MAC addresses with
+VLAN ID 4096. This currently results in attribute VLAN=4096 for all
+non-VLAN interfaces in the initial series of events after host-notify is
+enabled.
 
-Signed-off-by: Jaesoo Lee <jalee@purestorage.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Sagi Grimberg <sagi@grimberg.me>
+Instead, no VLAN attribute should be reported in the udev event for
+non-VLAN interfaces.
+
+Only the initial events face this issue. For dynamic changes that are
+reported later, the device uses a validity flag.
+
+This also changes the code so that it now sets the VLAN attribute for
+MAC addresses with VID 0. On Linux, no qeth interface will ever be
+registered with VID 0: Linux kernel registers VID 0 on all network
+interfaces initially, but qeth will drop .ndo_vlan_rx_add_vid for VID 0.
+Peers with other OSs could register MACs with VID 0.
+
+Fixes: 9f48b9db9a22 ("qeth: bridgeport support - address notifications")
+Signed-off-by: Alexandra Winter <wintera@linux.ibm.com>
+Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvme/host/core.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/s390/net/qeth_l2_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index d98ffb1ce629..768ac752a6e3 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -2477,7 +2477,8 @@ static int nvme_scan_ns_list(struct nvme_ctrl *ctrl, unsigned nn)
- {
- 	struct nvme_ns *ns;
- 	__le32 *ns_list;
--	unsigned i, j, nsid, prev = 0, num_lists = DIV_ROUND_UP(nn, 1024);
-+	unsigned i, j, nsid, prev = 0;
-+	unsigned num_lists = DIV_ROUND_UP_ULL((u64)nn, 1024);
- 	int ret = 0;
+diff --git a/drivers/s390/net/qeth_l2_main.c b/drivers/s390/net/qeth_l2_main.c
+index c3067fd3bd9e..fece768efcb1 100644
+--- a/drivers/s390/net/qeth_l2_main.c
++++ b/drivers/s390/net/qeth_l2_main.c
+@@ -1679,7 +1679,7 @@ static void qeth_bridgeport_an_set_cb(void *priv,
  
- 	ns_list = kzalloc(0x1000, GFP_KERNEL);
+ 	l2entry = (struct qdio_brinfo_entry_l2 *)entry;
+ 	code = IPA_ADDR_CHANGE_CODE_MACADDR;
+-	if (l2entry->addr_lnid.lnid)
++	if (l2entry->addr_lnid.lnid < VLAN_N_VID)
+ 		code |= IPA_ADDR_CHANGE_CODE_VLANID;
+ 	qeth_bridge_emit_host_event(card, anev_reg_unreg, code,
+ 		(struct net_if_token *)&l2entry->nit,
 -- 
 2.20.1
 
