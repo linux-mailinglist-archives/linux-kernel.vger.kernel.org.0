@@ -2,79 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A655250994
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 13:16:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82609509B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 13:24:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729599AbfFXLQe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 07:16:34 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:19064 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727953AbfFXLQd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 07:16:33 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 722C6F7675D79B1559C7;
-        Mon, 24 Jun 2019 19:16:29 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
- 14.3.439.0; Mon, 24 Jun 2019 19:16:22 +0800
-From:   Mao Wenan <maowenan@huawei.com>
-To:     <airlied@linux.ie>, <daniel@ffwll.ch>, <alexander.deucher@amd.com>,
-        <christian.koenig@amd.com>, <David1.Zhou@amd.com>,
-        <dan.carpenter@oracle.com>, <julia.lawall@lip6.fr>
-CC:     <kernel-janitors@vger.kernel.org>, <amd-gfx@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>, <jonathan.kim@amd.com>,
-        Mao Wenan <maowenan@huawei.com>
-Subject: [PATCH -next v4] drm/amdgpu: return 'ret' immediately if failed in amdgpu_pmu_init
-Date:   Mon, 24 Jun 2019 19:23:18 +0800
-Message-ID: <20190624112318.149299-1-maowenan@huawei.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190624094850.GQ18776@kadam>
-References: <20190624094850.GQ18776@kadam>
+        id S1729690AbfFXLYQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 07:24:16 -0400
+Received: from foss.arm.com ([217.140.110.172]:47508 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727722AbfFXLYP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 07:24:15 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B918D2B;
+        Mon, 24 Jun 2019 04:24:14 -0700 (PDT)
+Received: from [0.0.0.0] (e107985-lin.cambridge.arm.com [10.1.194.38])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D847D3F718;
+        Mon, 24 Jun 2019 04:24:12 -0700 (PDT)
+Subject: Re: [PATCH 5/8] sched,cfs: use explicit cfs_rq of parent se helper
+To:     Rik van Riel <riel@surriel.com>, peterz@infradead.org
+Cc:     mingo@redhat.com, linux-kernel@vger.kernel.org, kernel-team@fb.com,
+        morten.rasmussen@arm.com, tglx@linutronix.de,
+        dietmar.eggeman@arm.com, mgorman@techsingularity.com,
+        vincent.guittot@linaro.org
+References: <20190612193227.993-1-riel@surriel.com>
+ <20190612193227.993-6-riel@surriel.com>
+ <55c0dc01-24b2-bb7f-6ceb-b65c52f7b46b@arm.com>
+ <c5c73fd374ed952eedc46a89af294e1d521609b2.camel@surriel.com>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <1f90005d-1130-399b-8642-9e1ad7089ab3@arm.com>
+Date:   Mon, 24 Jun 2019 13:24:10 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+In-Reply-To: <c5c73fd374ed952eedc46a89af294e1d521609b2.camel@surriel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is one warning:
-drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c: In function ‘amdgpu_pmu_init’:
-drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c:249:6: warning: variable ‘ret’ set but not used [-Wunused-but-set-variable]
-  int ret = 0;
-      ^
-amdgpu_pmu_init() is called by amdgpu_device_init() in drivers/gpu/drm/amd/amdgpu/amdgpu_device.c,
-which will use the return value. So it should return 'ret' immediately if init_pmu_by_type() failed.
-amdgpu_device_init()
-	r = amdgpu_pmu_init(adev);
+On 6/20/19 6:29 PM, Rik van Riel wrote:
+> On Thu, 2019-06-20 at 18:23 +0200, Dietmar Eggemann wrote:
+>> On 6/12/19 9:32 PM, Rik van Riel wrote:
 
-Fixes: 9c7c85f7ea1f ("drm/amdgpu: add pmu counters")
+[...]
 
-Signed-off-by: Mao Wenan <maowenan@huawei.com>
----
- v1->v2: change the subject for this patch; change the indenting when it calls init_pmu_by_type; use the value 'ret' in
- amdgpu_pmu_init().
- v2->v3: change the subject for this patch; return 'ret' immediately if failed to call init_pmu_by_type(). 
- v3->v4: delete the indenting for init_pmu_by_type() arguments. The original indenting is correct.
+>>> @@ -7779,7 +7788,7 @@ static void update_cfs_rq_h_load(struct
+>>> cfs_rq *cfs_rq)
+>>>  
+>>>  	WRITE_ONCE(cfs_rq->h_load_next, NULL);
+>>>  	for_each_sched_entity(se) {
+>>> -		cfs_rq = cfs_rq_of(se);
+>>> +		cfs_rq = group_cfs_rq_of_parent(se);
+>>
+>> Why do you change this here? task_se_h_load() calls
+>> update_cfs_rq_h_load() with cfs_rq = group_cfs_rq_of_parent(se)
+>> because
+>> the task might not be on the cfs_rq yet.
+> 
+> Because patch 6 points cfs_rq_of(se) at the CPU's top level
+> cfs_rq for every task se ...
+> 
+> ... but I guess since I have not changed where the cfs_rq_of
+> points for cgroup sched_entities, this change is not necessary
+> at this time, and I should be able to go without it, in this
+> function.
 
- drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c | 2 ++
- 1 file changed, 2 insertions(+)
+IMHO, since you only change set_task_rq() (p->se.cfs_rq =
+&cpu_rq(cpu)->cfs instead of tg->cfs_rq[cpu] in 8/8) (used for a task)
+and not init_tg_cfs_entry() (used for a taskgroup), 'cfs_rq_of(se) ==
+se->parent->my_q' should still be true in update_cfs_rq_h_load().
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
-index 0e6dba9f60f0..c98cf77a37f3 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
-@@ -254,6 +254,8 @@ int amdgpu_pmu_init(struct amdgpu_device *adev)
- 		ret = init_pmu_by_type(adev, df_v3_6_attr_groups,
- 				       "DF", "amdgpu_df", PERF_TYPE_AMDGPU_DF,
- 				       DF_V3_6_MAX_COUNTERS);
-+		if (ret)
-+			return ret;
- 
- 		/* other pmu types go here*/
- 		break;
--- 
-2.20.1
+update_cfs_rq_h_load() only deals with se's representing taskgroups. So
+cfs_rq_of(se) and group_cfs_rq_of_parent(se) should deliver the same
+result for these se's.
+
+>> But inside update_cfs_rq_h_load() the first se is derived from
+>> cfs_rq->tg->se[cpu_of(rq)] so in the first for_each_sched_entity()
+>> loop
+>> we should still start with group_cfs_rq() (se->my_q) ?
+
+Here I was wrong. The first loop did use cfs_rq_of() and not group_cfs_rq().
+[...]
 
