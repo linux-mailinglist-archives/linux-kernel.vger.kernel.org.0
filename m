@@ -2,156 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC1D24FF90
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 05:01:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D7FE4FF49
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 04:23:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726508AbfFXDBk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 23:01:40 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:34568 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727280AbfFXDBi (ORCPT
+        id S1727074AbfFXCXs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 22:23:48 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:42314 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726370AbfFXCXs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 23:01:38 -0400
-Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hfCwE-0000Q9-46; Mon, 24 Jun 2019 02:34:26 +0200
-Date:   Mon, 24 Jun 2019 02:34:24 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Vincenzo Frascino <vincenzo.frascino@arm.com>
-cc:     linux-arch@vger.kernel.org,
-        LAK <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-mips@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Mark Salyzyn <salyzyn@android.com>,
-        Peter Collingbourne <pcc@google.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Huw Davies <huw@codeweavers.com>,
-        Shijith Thotton <sthotton@marvell.com>,
-        Andre Przywara <andre.przywara@arm.com>,
-        Dmitry Safonov <dima@arista.com>,
-        Andrei Vagin <avagin@openvz.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Michael Kelley <mikelley@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH v7 00/25] Unify vDSOs across more architectures
-In-Reply-To: <20190621095252.32307-1-vincenzo.frascino@arm.com>
-Message-ID: <alpine.DEB.2.21.1906240142000.32342@nanos.tec.linutronix.de>
-References: <20190621095252.32307-1-vincenzo.frascino@arm.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Sun, 23 Jun 2019 22:23:48 -0400
+Received: by mail-lf1-f67.google.com with SMTP id x144so1352346lfa.9;
+        Sun, 23 Jun 2019 19:23:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=d28rLR61bEHhlQ7ZaLjzEo7EXN7nV6mp2jaVnBr+SN0=;
+        b=dtpiU+FhTbBG/G6KcA6mRKle96BQiDowlKrQlytPeYq0TT2INWyknc3s88Qlnsvb6C
+         qZMQoyaeR1uGZ2huPAD9HXUZxCCvu7NnVNzJnoAAm5gtnjNhXsgkBvMEgSOPFZitlBuN
+         sDOVlZsDUEcyADii7AN8TuK/0LPV0eO6xPBd2A5OYqHVCrxORe5qj3isIfpbs/9f2Iqa
+         M1d8IQI5tyMdemNR4fpgW5a6aZ4a8x7VIZx/MGCVTy85AbVGU/5xxKxKKiAa0/XD+ec1
+         AXY1VqqDyzqrYpReyNpBGMHTonTOmlJh/CtzdGe1gSF6DHbBMenqdOxtQouzXW3zF4Yx
+         E55A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=d28rLR61bEHhlQ7ZaLjzEo7EXN7nV6mp2jaVnBr+SN0=;
+        b=qCXxS6xLLjq0OGs+4us3TCRwPHx2sG0wGTN5gYiVhCbG10ihizGAD+UQw8mrncmmiU
+         pzpnKzDC4Y70gvVOL+Ptcg/dkZzq4DtXPu1U79RJd1tuU+UEdEOhRirG6zlVBSBs3aOF
+         4hz2kBLJjUwyHmD4Uuv90iN/IKdBPGRCuzuesM1KlIZn0wuuX+ycziKN1Jdg0gpZyMWm
+         rIVgJQQu9kHx7EW1D+BZxmBwehb26eQX+IgSixhZ9Hf6NYeX69JAPYWfwMtawfy3cv5F
+         x/JrjcC/4t1Hvx231LH1MbBvOlStjE/FdbXRWe4xdwtQJJvHndsehlfFVoRhVwDs2eVK
+         sgdw==
+X-Gm-Message-State: APjAAAWlEg4xW0wtXjcmIEy7+r+JQKvv8SILyKwOMAeT2h0JTYFosH2g
+        cnIfozC1za4PiHaPQYJJYLD3rwK/
+X-Google-Smtp-Source: APXvYqzp3xpYo/+S38IaUxFUeLxZtX8vTSKdXatdtXKY5E2EaxW4mweXcaiOqhyE/kedLKYFq9656w==
+X-Received: by 2002:ac2:4d1c:: with SMTP id r28mr35207146lfi.159.1561336545448;
+        Sun, 23 Jun 2019 17:35:45 -0700 (PDT)
+Received: from [192.168.2.145] (ppp91-79-162-197.pppoe.mtu-net.ru. [91.79.162.197])
+        by smtp.googlemail.com with ESMTPSA id y12sm1513359lfy.36.2019.06.23.17.35.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 23 Jun 2019 17:35:44 -0700 (PDT)
+Subject: Re: [PATCH v4 00/16] NVIDIA Tegra devfreq improvements and Tegra20/30
+ support
+To:     Chanwoo Choi <cw00.choi@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <CGME20190501234148epcas5p1cc9a8dafa9ee6d8d046d1292b8270727@epcas5p1.samsung.com>
+ <20190501233815.32643-1-digetx@gmail.com>
+ <60ef6e47-e61b-3a92-e90d-90debedfcfc4@samsung.com>
+ <fa061a65-f108-6c5e-1f87-950a9a8caafc@gmail.com>
+ <0fb50eb1-a173-1756-6889-2526a10ac707@gmail.com>
+ <683b343a-e64f-8345-ac44-10f5c00521bd@samsung.com>
+ <5c2a7c32-a98c-3930-14ae-beb0241908d0@gmail.com>
+ <389cc71d-8f0b-fa39-1325-433d27c75dc8@gmail.com>
+ <31fc1430-5a3b-cccb-06bb-7b46081edb68@samsung.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <5d5cba1f-1625-7496-3599-7bdc6042b5ca@gmail.com>
+Date:   Mon, 24 Jun 2019 03:35:43 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <31fc1430-5a3b-cccb-06bb-7b46081edb68@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Vincenzo,
-
-On Fri, 21 Jun 2019, Vincenzo Frascino wrote:
-> vDSO (virtual dynamic shared object) is a mechanism that the Linux
-> kernel provides as an alternative to system calls to reduce where
-> possible the costs in terms of cycles.
-> This is possible because certain syscalls like gettimeofday() do
-> not write any data and return one or more values that are stored
-> in the kernel, which makes relatively safe calling them directly
-> as a library function.
+24.06.2019 2:50, Chanwoo Choi пишет:
+> Hi Dmitry,
 > 
-> Even if the mechanism is pretty much standard, every architecture
-> in the last few years ended up implementing their own vDSO library
-> in the architectural code.
+> On 19. 6. 24. 오전 2:17, Dmitry Osipenko wrote:
+>> 05.06.2019 2:09, Dmitry Osipenko пишет:
+>>> 04.06.2019 3:49, Chanwoo Choi пишет:
+>>>> On 19. 6. 4. 오전 1:52, Dmitry Osipenko wrote:
+>>>>> 03.05.2019 3:52, Dmitry Osipenko пишет:
+>>>>>> 03.05.2019 3:31, Chanwoo Choi пишет:
+>>>>>>> Hi Dmitry,
+>>>>>>>
+>>>>>>> On 19. 5. 2. 오전 8:37, Dmitry Osipenko wrote:
+>>>>>>>> Changelog:
+>>>>>>>>
+>>>>>>>> v4: Addressed all review comments that were made by Chanwoo Choi to v3:
+>>>>>>>>
+>>>>>>>>     - changed the driver removal order to match the probe exactly
+>>>>>>>>     - added clarifying comment for 1/8 ratio to the Tegra20 driver
+>>>>>>>>
+>>>>>>>>     Chanwoo, please also note that the clk patch that should fix
+>>>>>>>>     compilation problem that was reported the kbuild-test-robot is already
+>>>>>>>>     applied and available in the recent linux-next.
+>>>>>>>
+>>>>>>> I knew that Stephen picked up your path about clock.
+>>>>>>
+>>>>>> Hi Chanwoo,
+>>>>>>
+>>>>>> Okay, good. Thank you very much for reviewing this series! I assume it's
+>>>>>> too late now for v5.2, but it should be good to go for v5.3.
+>>>>>>
+>>>>>
+>>>>> Hello Chanwoo,
+>>>>>
+>>>>> Will be nice to see the patches in the linux-next before they'll hit mainline. We have tested that
+>>>>> everything works fine on a selective devices, but won't hurt to get some extra testing beforehand.
+>>>>> AFAIK, at least NVIDIA people are regularly testing -next on theirs dev boards. Please note that
+>>>>> this not very important, so don't bother if there is some hurdle with pushing to the tracking branch
+>>>>> for now. Also please let me know if you're expecting to see some ACK's on the patches, I'm sure
+>>>>> we'll be able to work out that with Thierry and Jon if necessary.
+>>>>>
+>>>>>
+>>>>
+>>>> Hi Dmitry,
+>>>> I think that it is enough for applying to mainline branch.
+>>>> The devfreq.git is maintained by Myungjoo. He will be merged or
+>>>> reviewed if there are th remained review point.
+>>>
+>>> Thank you very much!
+>>>
+>>>>
+>>>> Hi Myungjoo,
+>>>> I reviewed the Dmitry's patches from v1 to v4 patches.
+>>>> And then I tested them on my testing branch[1] for catching
+>>>> the build warning and error. In result, it is clean.
+>>>> [1] https://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/linux.git/log/?h=devfreq-testing
+>>>>
+>>>> Please review or apply these patches for v5.3.
+>>>>
+>>>
+>>> Hello Myungjoo,
+>>>
+>>> I think this patchset should be completed now. Thierry has some extra
+>>> comments to the patches, but seems nothing critical so far and all the
+>>> concerns could be addressed in a follow-up series. Please let me know if
+>>> you're fine with this, I can re-spin v5 as well if necessary.
+>>>
+>>
+>> Hello Chanwoo,
+>>
+>> It looks like Myungjoo is inactive at the moment. Do you know if he'll
+>> be back to the time of the merge window opening or you'll be curating
+>> the pull request for 5.3 this time?
+> 
+> Myungoo works in the same place. I'll talk with him.
+> 
+>>
+>> Secondly, I'll send a few more patches on top of this series, addressing
+>> Thierry's comments and making more improvements. Please let me know if
+>> this causes any problems and I should re-spin the whole series.
+> 
+> OK. I'll review them.
 
-....
- 
-> This implementation contains the portings to the common library for: arm64,
-> compat mode for arm64, arm, mips, x86_64, x32, compat mode for x86_64 and
-> i386.
+Thank you!
 
-I picked up the core implementation and the ARM64 and x86 conversion. I did
-some refinements in several places, coding style, naming conventions,
-comments and changelogs including subject prefixes. Please double check!
-
-I did not merge the ARM and MIPS parts as they lack any form of
-acknowlegment from their maintainers. Please talk to those folks. If they
-ack/review the changes then I can pick them up and they go into 5.3 or they
-have to go in a later cycle. Nevertheless it was well worth the trouble to
-have those conversions done to confirm that the new common library fits a
-bunch of different architectures.
-
-As you can see from the commit dates, this has soaked for some time in a
-WIP branch and I did extensive regression testing. So far so good.
-
-Thanks a lot for going through several iterations. It's a very much
-appreciated effort!
-
-Especially with the upcoming time namespaces this will avoid a lot of
-duplicated and pointlessly different horrors all over the architecture
-space. Any architecture which wants to gain that support needs to convert
-to the generic VDSO first.
-
-As you have become the dude who knows almost everything about VDSO
-including all the nasty pitfalls, I propose the patch below.
-
-Thanks,
-
-	tglx
-
-8<------------
-Subject: MAINTAINERS: Add entry for the generic VDSO library
-From: Thomas Gleixner <tglx@linutronix.de>
-Date: Mon, 24 Jun 2019 02:03:50 +0200
-
-Asign the following folks in alphabetic order:
-
- - Andy for being the VDSO wizard of x86 and in general. He's also the
-   performance monitor of choice and the code in the generic library is
-   heavily influenced by his previous x86 VDSO work.
-
- - Thomas for being the dude who has to deal with any form of time(r)
-   nonsense anyway
-
- - Vincenzo for being the poor sod who went through all the different
-   architecture implementations in order to unify them. A lot of knowledge
-   gained from VDSO implementation details to the intricacies of taming the
-   build system.
-
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
----
- MAINTAINERS |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6665,6 +6665,18 @@ L:	kvm@vger.kernel.org
- S:	Supported
- F:	drivers/uio/uio_pci_generic.c
- 
-+GENERIC VDSO LIBRARY:
-+M:	Andy Lutomirksy <luto@kernel.org>
-+M:	Thomas Gleixner <tglx@linutronix.de>
-+M:	Vincenzo Frascino <vincenzo.frascino@arm.com>
-+L:	linux-kernel@vger.kernel.org
-+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers/vdso
-+S:	Maintained
-+F:	lib/vdso
-+F:	kernel/time/vsyscall.c
-+F:	include/vdso
-+F:	include/asm-generic/vdso/vsyscall.h
-+
- GENWQE (IBM Generic Workqueue Card)
- M:	Frank Haverkamp <haver@linux.ibm.com>
- S:	Supported
