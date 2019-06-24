@@ -2,210 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80D6B50333
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 09:25:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EFC4A5034A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 09:27:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727903AbfFXHYh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 03:24:37 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:59104 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726719AbfFXHYh (ORCPT
+        id S1727900AbfFXH1Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 03:27:16 -0400
+Received: from mail-io1-f69.google.com ([209.85.166.69]:50963 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727170AbfFXH1J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 03:24:37 -0400
-X-UUID: f99ff83372764d82ac28946816a925de-20190624
-X-UUID: f99ff83372764d82ac28946816a925de-20190624
-Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw01.mediatek.com
-        (envelope-from <neal.liu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 176232665; Mon, 24 Jun 2019 15:24:30 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 24 Jun 2019 15:24:29 +0800
-Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 24 Jun 2019 15:24:28 +0800
-From:   Neal Liu <neal.liu@mediatek.com>
-To:     Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Sean Wang <sean.wang@kernel.org>
-CC:     Neal Liu <neal.liu@mediatek.com>,
-        Crystal Guo <Crystal.Guo@mediatek.com>,
-        <linux-crypto@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <wsd_upstream@mediatek.com>
-Subject: [PATCH v4 3/3] hwrng: add mtk-sec-rng driver
-Date:   Mon, 24 Jun 2019 15:24:12 +0800
-Message-ID: <1561361052-13072-4-git-send-email-neal.liu@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <1561361052-13072-1-git-send-email-neal.liu@mediatek.com>
-References: <1561361052-13072-1-git-send-email-neal.liu@mediatek.com>
+        Mon, 24 Jun 2019 03:27:09 -0400
+Received: by mail-io1-f69.google.com with SMTP id m26so20851323ioh.17
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 00:27:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=YIBl5sn+qEAnvVG9RktF5oSe3uviRA0QejfBS359Mi8=;
+        b=NGz2sz0sCXZQq49psga/Mrr8DjbQx1AFXFZ1elB4i7A2Cb+wVpv8pfhVFRBI1i8YTi
+         mCJxurkFUXp358lfXjowVgBE+Cymmfmveq0BHKWKZ1gJK5XnuqUsp+ChhdFSWnt3BPEM
+         7Y3dGspoJ79LRxtWXTjXgYI3SkIDcriEDSk8Dvd6phDgIstbKOPu/NN+QP7u2Ahq5CZF
+         RZifd4SiEOnRQ8zmUwdhguIi4SuYRAB8TQ8IaQNN4YzwyQYkSDWDoBoM8XZ5cX6IoV7u
+         vCMqKUsM0VdZ0Oaw2q9V8cYyyDDVr/j9N4IYmEKQdKbesNiJAoEwg6YrJfkPEU1F5ZcG
+         uFtA==
+X-Gm-Message-State: APjAAAXO4B+twybxP6hXblQMPv21VBfDSv/STaH+RB0hgLk0wqUErptV
+        OafU6atsFBVPibyPTKGAkBZPTEmpEPWpwc93Ef0jgbcCcAKP
+X-Google-Smtp-Source: APXvYqw/SDM0pKIz2hztVK7kLGs1klUZUsrSE68p3+ZOknK6Pl2jz+INUj5tzF/BdQlh2jd5BSMqVorSU4vh1DYf07VoFiDkG6ah
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+X-Received: by 2002:a6b:6b14:: with SMTP id g20mr40168187ioc.28.1561361228957;
+ Mon, 24 Jun 2019 00:27:08 -0700 (PDT)
+Date:   Mon, 24 Jun 2019 00:27:08 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000006b1779058c0cbdda@google.com>
+Subject: memory leak in h4_recv_buf
+From:   syzbot <syzbot+97388eb9d31b997fe1d0@syzkaller.appspotmail.com>
+To:     johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org,
+        linux-kernel@vger.kernel.org, marcel@holtmann.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For MediaTek SoCs on ARMv8 with TrustZone enabled, peripherals like
-entropy sources is not accessible from normal world (linux) and
-rather accessible from secure world (ATF/TEE) only. This driver aims
-to provide a generic interface to ATF rng service.
+Hello,
 
-Signed-off-by: Neal Liu <neal.liu@mediatek.com>
+syzbot found the following crash on:
+
+HEAD commit:    abf02e29 Merge tag 'pm-5.2-rc6' of git://git.kernel.org/pu..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1054e6b2a00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=56f1da14935c3cce
+dashboard link: https://syzkaller.appspot.com/bug?extid=97388eb9d31b997fe1d0
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1073d8aaa00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17b36fbea00000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+97388eb9d31b997fe1d0@syzkaller.appspotmail.com
+
+program
+BUG: memory leak
+unreferenced object 0xffff88810991fa00 (size 224):
+   comm "syz-executor739", pid 7080, jiffies 4294949854 (age 18.640s)
+   hex dump (first 32 bytes):
+     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+   backtrace:
+     [<00000000da42c09f>] kmemleak_alloc_recursive  
+include/linux/kmemleak.h:43 [inline]
+     [<00000000da42c09f>] slab_post_alloc_hook mm/slab.h:439 [inline]
+     [<00000000da42c09f>] slab_alloc_node mm/slab.c:3269 [inline]
+     [<00000000da42c09f>] kmem_cache_alloc_node+0x153/0x2a0 mm/slab.c:3579
+     [<00000000f6fbcf84>] __alloc_skb+0x6e/0x210 net/core/skbuff.c:194
+     [<00000000ea93fc4c>] alloc_skb include/linux/skbuff.h:1054 [inline]
+     [<00000000ea93fc4c>] bt_skb_alloc include/net/bluetooth/bluetooth.h:339  
+[inline]
+     [<00000000ea93fc4c>] h4_recv_buf+0x26d/0x450  
+drivers/bluetooth/hci_h4.c:182
+     [<00000000e0312475>] h4_recv+0x51/0xb0 drivers/bluetooth/hci_h4.c:116
+     [<00000000ebf11fab>] hci_uart_tty_receive+0xba/0x200  
+drivers/bluetooth/hci_ldisc.c:592
+     [<0000000095e1216e>] tiocsti drivers/tty/tty_io.c:2195 [inline]
+     [<0000000095e1216e>] tty_ioctl+0x81c/0xa30 drivers/tty/tty_io.c:2571
+     [<000000009fa523f0>] vfs_ioctl fs/ioctl.c:46 [inline]
+     [<000000009fa523f0>] file_ioctl fs/ioctl.c:509 [inline]
+     [<000000009fa523f0>] do_vfs_ioctl+0x62a/0x810 fs/ioctl.c:696
+     [<000000000cebb5d9>] ksys_ioctl+0x86/0xb0 fs/ioctl.c:713
+     [<000000001630008a>] __do_sys_ioctl fs/ioctl.c:720 [inline]
+     [<000000001630008a>] __se_sys_ioctl fs/ioctl.c:718 [inline]
+     [<000000001630008a>] __x64_sys_ioctl+0x1e/0x30 fs/ioctl.c:718
+     [<00000000c62091e3>] do_syscall_64+0x76/0x1a0  
+arch/x86/entry/common.c:301
+     [<000000005c213625>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+BUG: memory leak
+unreferenced object 0xffff8881204f4400 (size 1024):
+   comm "syz-executor739", pid 7080, jiffies 4294949854 (age 18.640s)
+   hex dump (first 32 bytes):
+     6c 69 62 75 64 65 76 00 fe ed ca fe 28 00 00 00  libudev.....(...
+     28 00 00 00 a0 00 00 00 52 ca da 77 00 00 00 00  (.......R..w....
+   backtrace:
+     [<0000000034504843>] kmemleak_alloc_recursive  
+include/linux/kmemleak.h:43 [inline]
+     [<0000000034504843>] slab_post_alloc_hook mm/slab.h:439 [inline]
+     [<0000000034504843>] slab_alloc_node mm/slab.c:3269 [inline]
+     [<0000000034504843>] kmem_cache_alloc_node_trace+0x15b/0x2a0  
+mm/slab.c:3597
+     [<0000000056d30eb5>] __do_kmalloc_node mm/slab.c:3619 [inline]
+     [<0000000056d30eb5>] __kmalloc_node_track_caller+0x38/0x50  
+mm/slab.c:3634
+     [<00000000df40176c>] __kmalloc_reserve.isra.0+0x40/0xb0  
+net/core/skbuff.c:138
+     [<0000000035340e64>] __alloc_skb+0xa0/0x210 net/core/skbuff.c:206
+     [<00000000ea93fc4c>] alloc_skb include/linux/skbuff.h:1054 [inline]
+     [<00000000ea93fc4c>] bt_skb_alloc include/net/bluetooth/bluetooth.h:339  
+[inline]
+     [<00000000ea93fc4c>] h4_recv_buf+0x26d/0x450  
+drivers/bluetooth/hci_h4.c:182
+     [<00000000e0312475>] h4_recv+0x51/0xb0 drivers/bluetooth/hci_h4.c:116
+     [<00000000ebf11fab>] hci_uart_tty_receive+0xba/0x200  
+drivers/bluetooth/hci_ldisc.c:592
+     [<0000000095e1216e>] tiocsti drivers/tty/tty_io.c:2195 [inline]
+     [<0000000095e1216e>] tty_ioctl+0x81c/0xa30 drivers/tty/tty_io.c:2571
+     [<000000009fa523f0>] vfs_ioctl fs/ioctl.c:46 [inline]
+     [<000000009fa523f0>] file_ioctl fs/ioctl.c:509 [inline]
+     [<000000009fa523f0>] do_vfs_ioctl+0x62a/0x810 fs/ioctl.c:696
+     [<000000000cebb5d9>] ksys_ioctl+0x86/0xb0 fs/ioctl.c:713
+     [<000000001630008a>] __do_sys_ioctl fs/ioctl.c:720 [inline]
+     [<000000001630008a>] __se_sys_ioctl fs/ioctl.c:718 [inline]
+     [<000000001630008a>] __x64_sys_ioctl+0x1e/0x30 fs/ioctl.c:718
+     [<00000000c62091e3>] do_syscall_64+0x76/0x1a0  
+arch/x86/entry/common.c:301
+     [<000000005c213625>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+
+
 ---
- drivers/char/hw_random/Kconfig       |   16 ++++++
- drivers/char/hw_random/Makefile      |    1 +
- drivers/char/hw_random/mtk-sec-rng.c |   97 ++++++++++++++++++++++++++++++++++
- 3 files changed, 114 insertions(+)
- create mode 100644 drivers/char/hw_random/mtk-sec-rng.c
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/char/hw_random/Kconfig b/drivers/char/hw_random/Kconfig
-index 25a7d8f..6c82a3b 100644
---- a/drivers/char/hw_random/Kconfig
-+++ b/drivers/char/hw_random/Kconfig
-@@ -398,6 +398,22 @@ config HW_RANDOM_MTK
- 
- 	  If unsure, say Y.
- 
-+config HW_RANDOM_MTK_SEC
-+	tristate "MediaTek Security Random Number Generator support"
-+	depends on HW_RANDOM
-+	depends on ARCH_MEDIATEK || COMPILE_TEST
-+	default HW_RANDOM
-+	help
-+	  This driver provides kernel-side support for the Random Number
-+	  Generator hardware found on MediaTek SoCs. The difference with
-+	  mtk-rng is the Random Number Generator hardware is secure
-+	  access only.
-+
-+	  To compile this driver as a module, choose M here. the
-+	  module will be called mtk-sec-rng.
-+
-+	  If unsure, say Y.
-+
- config HW_RANDOM_S390
- 	tristate "S390 True Random Number Generator support"
- 	depends on S390
-diff --git a/drivers/char/hw_random/Makefile b/drivers/char/hw_random/Makefile
-index 7c9ef4a..0ae4993 100644
---- a/drivers/char/hw_random/Makefile
-+++ b/drivers/char/hw_random/Makefile
-@@ -36,6 +36,7 @@ obj-$(CONFIG_HW_RANDOM_PIC32) += pic32-rng.o
- obj-$(CONFIG_HW_RANDOM_MESON) += meson-rng.o
- obj-$(CONFIG_HW_RANDOM_CAVIUM) += cavium-rng.o cavium-rng-vf.o
- obj-$(CONFIG_HW_RANDOM_MTK)	+= mtk-rng.o
-+obj-$(CONFIG_HW_RANDOM_MTK_SEC) += mtk-sec-rng.o
- obj-$(CONFIG_HW_RANDOM_S390) += s390-trng.o
- obj-$(CONFIG_HW_RANDOM_KEYSTONE) += ks-sa-rng.o
- obj-$(CONFIG_HW_RANDOM_OPTEE) += optee-rng.o
-diff --git a/drivers/char/hw_random/mtk-sec-rng.c b/drivers/char/hw_random/mtk-sec-rng.c
-new file mode 100644
-index 0000000..ecd2e29
---- /dev/null
-+++ b/drivers/char/hw_random/mtk-sec-rng.c
-@@ -0,0 +1,97 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2019 MediaTek Inc.
-+ */
-+
-+#include <linux/arm-smccc.h>
-+#include <linux/hw_random.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/soc/mediatek/mtk_sip_svc.h>
-+
-+#define MT67XX_RNG_MAGIC	0x74726e67
-+#define SMC_RET_NUM		4
-+#define MTK_SEC_RND_SIZE	(sizeof(u32) * SMC_RET_NUM)
-+
-+struct mtk_sec_rng_priv {
-+	struct hwrng rng;
-+};
-+
-+static void mtk_sec_get_rnd(uint32_t *val)
-+{
-+	struct arm_smccc_res res;
-+
-+	arm_smccc_smc(MTK_SIP_KERNEL_GET_RND,
-+		      MT67XX_RNG_MAGIC, 0, 0, 0, 0, 0, 0, &res);
-+
-+	val[0] = res.a0;
-+	val[1] = res.a1;
-+	val[2] = res.a2;
-+	val[3] = res.a3;
-+}
-+
-+static int mtk_sec_rng_read(struct hwrng *rng, void *buf, size_t max, bool wait)
-+{
-+	u32 val[4] = {0};
-+	int retval = 0;
-+	int i;
-+
-+	while (max >= MTK_SEC_RND_SIZE) {
-+		mtk_sec_get_rnd(val);
-+
-+		for (i = 0; i < SMC_RET_NUM; i++) {
-+			*(u32 *)buf = val[i];
-+			buf += sizeof(u32);
-+		}
-+
-+		retval += MTK_SEC_RND_SIZE;
-+		max -= MTK_SEC_RND_SIZE;
-+	}
-+
-+	return retval;
-+}
-+
-+static int mtk_sec_rng_probe(struct platform_device *pdev)
-+{
-+	struct mtk_sec_rng_priv *priv;
-+	int ret;
-+
-+	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->rng.name = pdev->name;
-+	priv->rng.read = mtk_sec_rng_read;
-+	priv->rng.priv = (unsigned long)&pdev->dev;
-+	priv->rng.quality = 900;
-+
-+	ret = devm_hwrng_register(&pdev->dev, &priv->rng);
-+	if (ret) {
-+		dev_err(&pdev->dev, "failed to register rng device: %d\n", ret);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id mtk_sec_rng_match[] = {
-+	{ .compatible = "mediatek,mtk-sec-rng", },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, mtk_sec_rng_match);
-+
-+static struct platform_driver mtk_sec_rng_driver = {
-+	.probe = mtk_sec_rng_probe,
-+	.driver = {
-+		.name = KBUILD_MODNAME,
-+		.owner = THIS_MODULE,
-+		.of_match_table = mtk_sec_rng_match,
-+	},
-+};
-+
-+module_platform_driver(mtk_sec_rng_driver);
-+
-+MODULE_DESCRIPTION("MediaTek Security Random Number Generator Driver");
-+MODULE_AUTHOR("Neal Liu <neal.liu@mediatek.com>");
-+MODULE_LICENSE("GPL");
--- 
-1.7.9.5
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
