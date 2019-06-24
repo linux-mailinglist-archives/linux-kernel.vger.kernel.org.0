@@ -2,144 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B33250038
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 05:30:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BE3F50041
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 05:35:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727650AbfFXDaA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 23:30:00 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:9912 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726936AbfFXDaA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 23:30:00 -0400
-Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
-        by m0089730.ppops.net (8.16.0.27/8.16.0.27) with SMTP id x5O3StHq013518;
-        Sun, 23 Jun 2019 20:29:39 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=q07u1rapyj2+hD9nQJNdwWG04vJ74NHNepRzJEp7IGU=;
- b=BleYE8qBT1IqCAPSKGA8n7XSuzUDW1gUpxBm2BJ4rx7bBHrlGgmmroB9yiy3tW2vZDkw
- 0Vcg2wbnWgfvOeTcHQe5P5lHYS9syHwS+TwlnUQ8xufFKK7ojTLFcQJMy5iCPQpf0BOU
- zZ1k8UkP5wNo/5ZRl2b+JgWeryW2sg7kUW4= 
-Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
-        by m0089730.ppops.net with ESMTP id 2t9ftnmptb-2
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Sun, 23 Jun 2019 20:29:39 -0700
-Received: from prn-mbx02.TheFacebook.com (2620:10d:c081:6::16) by
- prn-hub06.TheFacebook.com (2620:10d:c081:35::130) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1713.5; Sun, 23 Jun 2019 20:29:38 -0700
-Received: from prn-hub06.TheFacebook.com (2620:10d:c081:35::130) by
- prn-mbx02.TheFacebook.com (2620:10d:c081:6::16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1713.5; Sun, 23 Jun 2019 20:29:38 -0700
-Received: from NAM04-BN3-obe.outbound.protection.outlook.com (192.168.54.28)
- by o365-in.thefacebook.com (192.168.16.30) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1713.5
- via Frontend Transport; Sun, 23 Jun 2019 20:29:38 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector1-fb-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=q07u1rapyj2+hD9nQJNdwWG04vJ74NHNepRzJEp7IGU=;
- b=scLYkqUu26NFs5HeUPmkyZlGwprPmeNctuyn88ldVFs1wtwpe/9bvVVODaC5CHIVZkP6YBBgIVfyL7EnZLZwdJFHmZS0If0g3rV8BKyeL/7pF+WlLHTfbpPYeAB9z8SEaAwLx8GzvKWE6uQNC8Rf82eW4eLhPLXsUqBsy4VcV58=
-Received: from BYAPR15MB2501.namprd15.prod.outlook.com (52.135.196.11) by
- BYAPR15MB2248.namprd15.prod.outlook.com (52.135.197.13) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2008.16; Mon, 24 Jun 2019 03:29:23 +0000
-Received: from BYAPR15MB2501.namprd15.prod.outlook.com
- ([fe80::60a3:8bdd:1ea2:3702]) by BYAPR15MB2501.namprd15.prod.outlook.com
- ([fe80::60a3:8bdd:1ea2:3702%7]) with mapi id 15.20.2008.014; Mon, 24 Jun 2019
- 03:29:22 +0000
-From:   Alexei Starovoitov <ast@fb.com>
-To:     Roman Gushchin <guro@fb.com>, Alexei Starovoitov <ast@kernel.org>,
-        "Daniel Borkmann" <daniel@iogearbox.net>,
-        Tejun Heo <tj@kernel.org>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>
-CC:     Kernel Team <Kernel-team@fb.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH bpf-next] bpf: fix cgroup bpf release synchronization
-Thread-Topic: [PATCH bpf-next] bpf: fix cgroup bpf release synchronization
-Thread-Index: AQHVKjTnfXTg4w17SUSy4+EivgF2L6aqJZmA
-Date:   Mon, 24 Jun 2019 03:29:21 +0000
-Message-ID: <91017042-1b59-6110-dfdd-13cfbbec1ae1@fb.com>
-References: <20190624023051.4168487-1-guro@fb.com>
-In-Reply-To: <20190624023051.4168487-1-guro@fb.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MWHPR15CA0030.namprd15.prod.outlook.com
- (2603:10b6:300:ad::16) To BYAPR15MB2501.namprd15.prod.outlook.com
- (2603:10b6:a02:88::11)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [2620:10d:c090:180::1:2311]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: a096a053-f78d-478a-57f1-08d6f85425db
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BYAPR15MB2248;
-x-ms-traffictypediagnostic: BYAPR15MB2248:
-x-microsoft-antispam-prvs: <BYAPR15MB224837A588DD22825328E621D7E00@BYAPR15MB2248.namprd15.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2331;
-x-forefront-prvs: 007814487B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(396003)(39860400002)(346002)(376002)(366004)(189003)(199004)(446003)(52116002)(14454004)(110136005)(99286004)(54906003)(8936002)(81166006)(2906002)(53936002)(305945005)(6246003)(81156014)(31686004)(7736002)(6486002)(229853002)(256004)(8676002)(14444005)(5024004)(6512007)(2501003)(71190400001)(71200400001)(6436002)(36756003)(316002)(76176011)(186003)(25786009)(102836004)(86362001)(2616005)(4326008)(53546011)(66946007)(73956011)(476003)(64756008)(66556008)(66476007)(68736007)(6506007)(66446008)(386003)(46003)(11346002)(478600001)(6116002)(486006)(31696002)(5660300002);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR15MB2248;H:BYAPR15MB2501.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: fqKg1dux5aDJeYMSoH7eJJ5hUEOJEd2wkAbGL/5c7eUO01r20R3RS0calapsT6w2yV+ZEJZbYN0JQc1ZqcNHaJGg9h2a06LD1Ln3c9JimFNjHWpQ0Cz/tDsLx+knaGjSBb8N+319vZa395NUoBZ+WquQqj2QmGiAztFl1IMzfHBVO0XiAmdxLuNcb6Ah0FxnQv5lAWxSx3et485L/jhNQlEPILsSkcnVzdxKybBI/dCG9CrPiWVpwMsSa+xcmvfmYKC6Xfn6/li8Jd0qRhAheMGm2voYtmEHj7ii0C9iXSsHlakJ5C6OCzkNsVFDD3BNgt7p6zfalV6uCbLNOi0LZP+cvL7MP87CmqVUbsDDV2w3EDOUIGMc7G0shCVyCAYxyYEjV+qTB/eg2jPeaWvDAeds9lCim/5YgN6Ul6GO3U4=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <51017A5837F88B4C9B114849454B92EF@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1727683AbfFXDfO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 23:35:14 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:40906 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726551AbfFXDfO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Jun 2019 23:35:14 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8A6FD85546;
+        Mon, 24 Jun 2019 03:35:04 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-22.pek2.redhat.com [10.72.8.22])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 953A719C65;
+        Mon, 24 Jun 2019 03:34:45 +0000 (UTC)
+Date:   Mon, 24 Jun 2019 11:34:40 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     "Huang, Ying" <ying.huang@intel.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Michal Hocko <mhocko@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Hugh Dickins <hughd@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Rik van Riel <riel@redhat.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>
+Subject: Re: [PATCH -mm] mm, swap: Fix THP swap out
+Message-ID: <20190624033438.GB6563@ming.t460p>
+References: <20190624022336.12465-1-ying.huang@intel.com>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: a096a053-f78d-478a-57f1-08d6f85425db
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jun 2019 03:29:21.9184
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ast@fb.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB2248
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-24_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=967 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906240027
-X-FB-Internal: deliver
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190624022336.12465-1-ying.huang@intel.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Mon, 24 Jun 2019 03:35:14 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gNi8yMy8xOSA3OjMwIFBNLCBSb21hbiBHdXNoY2hpbiB3cm90ZToNCj4gU2luY2UgY29tbWl0
-IDRiZmMwYmIyYzYwZSAoImJwZjogZGVjb3VwbGUgdGhlIGxpZmV0aW1lIG9mIGNncm91cF9icGYN
-Cj4gZnJvbSBjZ3JvdXAgaXRzZWxmIiksIGNncm91cF9icGYgcmVsZWFzZSBvY2N1cnMgYXN5bmNo
-cm9ub3VzbHkNCj4gKGZyb20gYSB3b3JrZXIgY29udGV4dCksIGFuZCBiZWZvcmUgdGhlIHJlbGVh
-c2Ugb2YgdGhlIGNncm91cCBpdHNlbGYuDQo+IA0KPiBUaGlzIGludHJvZHVjZWQgYSBwcmV2aW91
-c2x5IG5vbi1leGlzdGluZyByYWNlIGJldHdlZW4gdGhlIHJlbGVhc2UNCj4gYW5kIHVwZGF0ZSBw
-YXRocy4gRS5nLiBpZiBhIGxlYWYncyBjZ3JvdXBfYnBmIGlzIHJlbGVhc2VkIGFuZCBhIG5ldw0K
-PiBicGYgcHJvZ3JhbSBpcyBhdHRhY2hlZCB0byB0aGUgb25lIG9mIGFuY2VzdG9yIGNncm91cHMg
-YXQgdGhlIHNhbWUNCj4gdGltZS4gVGhlIHJhY2UgbWF5IHJlc3VsdCBpbiBkb3VibGUtZnJlZSBh
-bmQgb3RoZXIgbWVtb3J5IGNvcnJ1cHRpb25zLg0KPiANCj4gVG8gZml4IHRoZSBwcm9ibGVtLCBs
-ZXQncyBwcm90ZWN0IHRoZSBib2R5IG9mIGNncm91cF9icGZfcmVsZWFzZSgpDQo+IHdpdGggY2dy
-b3VwX211dGV4LCBhcyBpdCB3YXMgZWZmZWN0aXZlbHkgcHJldmlvdXNseSwgd2hlbiBhbGwgdGhp
-cw0KPiBjb2RlIHdhcyBjYWxsZWQgZnJvbSB0aGUgY2dyb3VwIHJlbGVhc2UgcGF0aCB3aXRoIGNn
-cm91cCBtdXRleCBoZWxkLg0KPiANCj4gQWxzbyBtYWtlIHN1cmUsIHRoYXQgd2UgZG9uJ3QgbGVh
-dmUgYWxyZWFkeSBmcmVlZCBwb2ludGVycyB0byB0aGUNCj4gZWZmZWN0aXZlIHByb2cgYXJyYXlz
-LiBPdGhlcndpc2UsIHRoZXkgY2FuIGJlIHJlbGVhc2VkIGFnYWluIGJ5DQo+IHRoZSB1cGRhdGUg
-cGF0aC4gSXQgd2Fzbid0IG5lY2Vzc2FyeSBiZWZvcmUsIGJlY2F1c2UgcHJldmlvdXNseQ0KPiB0
-aGUgdXBkYXRlIHBhdGggY291bGRuJ3Qgc2VlIHN1Y2ggYSBjZ3JvdXAsIGFzIGNncm91cF9icGYg
-YW5kIGNncm91cA0KPiBpdHNlbGYgd2VyZSByZWxlYXNlZCB0b2dldGhlci4NCg0KSSB0aG91Z2h0
-IGR5aW5nIGNncm91cCB3b24ndCBoYXZlIGFueSBjaGlsZHJlbiBjZ3JvdXBzID8NCkl0IHNob3Vs
-ZCBoYXZlIGJlZW4gZW1wdHkgd2l0aCBubyB0YXNrcyBpbnNpZGUgaXQ/DQpPbmx5IHNvbWUgcmVz
-b3VyY2VzIGFyZSBzdGlsbCBoZWxkPw0KbXV0ZXggYW5kIHplcm8gaW5pdCBhcmUgaGlnaGx5IHN1
-c3BpY2lvdXMuDQpJdCBmZWVscyB0aGF0IGNncm91cF9icGZfcmVsZWFzZSBpcyBjYWxsZWQgdG9v
-IGVhcmx5Lg0KDQpUaGlua2luZyBmcm9tIGFub3RoZXIgYW5nbGUuLi4gaWYgY2hpbGQgY2dyb3Vw
-cyBjYW4gc3RpbGwgYXR0YWNoIHRoZW4NCnRoaXMgYnBmX3JlbGVhc2UgaXMgYnJva2VuLiBUaGUg
-Y29kZSBzaG91bGQgYmUNCmNhbGxpbmcgX19jZ3JvdXBfYnBmX2RldGFjaCgpIG9uZSBieSBvbmUg
-dG8gbWFrZSBzdXJlDQp1cGRhdGVfZWZmZWN0aXZlX3Byb2dzKCkgaXMgY2FsbGVkLCBzaW5jZSBk
-ZXNjZW5kYW50IGFyZSBzdGlsbA0Kc29ydC1vZiBhbGl2ZSBhbmQgY2FuIGF0dGFjaD8NCg0KTXkg
-bW9uZXkgaXMgb24gJ3RvbyBlYXJseScuDQpNYXkgYmUgY2dyb3VwIGlzIG5vdCBkeWluZyA/DQpK
-dXN0IGNncm91cF9za19mcmVlKCkgaXMgY2FsbGVkIG9uIHRoZSBsYXN0IHNvY2tldCBhbmQNCnRo
-aXMgYXV0by1kZXRhY2ggbG9naWMgZ290IHRyaWdnZXJlZCBpbmNvcnJlY3RseT8NCg==
+Hi Huang Ying,
+
+On Mon, Jun 24, 2019 at 10:23:36AM +0800, Huang, Ying wrote:
+> From: Huang Ying <ying.huang@intel.com>
+> 
+> 0-Day test system reported some OOM regressions for several
+> THP (Transparent Huge Page) swap test cases.  These regressions are
+> bisected to 6861428921b5 ("block: always define BIO_MAX_PAGES as
+> 256").  In the commit, BIO_MAX_PAGES is set to 256 even when THP swap
+> is enabled.  So the bio_alloc(gfp_flags, 512) in get_swap_bio() may
+> fail when swapping out THP.  That causes the OOM.
+> 
+> As in the patch description of 6861428921b5 ("block: always define
+> BIO_MAX_PAGES as 256"), THP swap should use multi-page bvec to write
+> THP to swap space.  So the issue is fixed via doing that in
+> get_swap_bio().
+> 
+> BTW: I remember I have checked the THP swap code when
+> 6861428921b5 ("block: always define BIO_MAX_PAGES as 256") was merged,
+> and thought the THP swap code needn't to be changed.  But apparently,
+> I was wrong.  I should have done this at that time.
+> 
+> Fixes: 6861428921b5 ("block: always define BIO_MAX_PAGES as 256")
+> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+> Cc: Ming Lei <ming.lei@redhat.com>
+> Cc: Michal Hocko <mhocko@kernel.org>
+> Cc: Johannes Weiner <hannes@cmpxchg.org>
+> Cc: Hugh Dickins <hughd@google.com>
+> Cc: Minchan Kim <minchan@kernel.org>
+> Cc: Rik van Riel <riel@redhat.com>
+> Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
+> ---
+>  mm/page_io.c | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
+> 
+> diff --git a/mm/page_io.c b/mm/page_io.c
+> index 2e8019d0e048..4ab997f84061 100644
+> --- a/mm/page_io.c
+> +++ b/mm/page_io.c
+> @@ -29,10 +29,9 @@
+>  static struct bio *get_swap_bio(gfp_t gfp_flags,
+>  				struct page *page, bio_end_io_t end_io)
+>  {
+> -	int i, nr = hpage_nr_pages(page);
+>  	struct bio *bio;
+>  
+> -	bio = bio_alloc(gfp_flags, nr);
+> +	bio = bio_alloc(gfp_flags, 1);
+>  	if (bio) {
+>  		struct block_device *bdev;
+>  
+> @@ -41,9 +40,7 @@ static struct bio *get_swap_bio(gfp_t gfp_flags,
+>  		bio->bi_iter.bi_sector <<= PAGE_SHIFT - 9;
+>  		bio->bi_end_io = end_io;
+>  
+> -		for (i = 0; i < nr; i++)
+> -			bio_add_page(bio, page + i, PAGE_SIZE, 0);
+
+bio_add_page() supposes to work, just wondering why it doesn't recently.
+
+Could you share me one test case for reproducing it?
+
+> -		VM_BUG_ON(bio->bi_iter.bi_size != PAGE_SIZE * nr);
+> +		__bio_add_page(bio, page, PAGE_SIZE * hpage_nr_pages(page), 0);
+>  	}
+>  	return bio;
+
+Actually the above code can be simplified as:
+
+diff --git a/mm/page_io.c b/mm/page_io.c
+index 2e8019d0e048..c20b4189d0a1 100644
+--- a/mm/page_io.c
++++ b/mm/page_io.c
+@@ -29,7 +29,7 @@
+ static struct bio *get_swap_bio(gfp_t gfp_flags,
+ 				struct page *page, bio_end_io_t end_io)
+ {
+-	int i, nr = hpage_nr_pages(page);
++	int nr = hpage_nr_pages(page);
+ 	struct bio *bio;
+ 
+ 	bio = bio_alloc(gfp_flags, nr);
+@@ -41,8 +41,7 @@ static struct bio *get_swap_bio(gfp_t gfp_flags,
+ 		bio->bi_iter.bi_sector <<= PAGE_SHIFT - 9;
+ 		bio->bi_end_io = end_io;
+ 
+-		for (i = 0; i < nr; i++)
+-			bio_add_page(bio, page + i, PAGE_SIZE, 0);
++		bio_add_page(bio, page, PAGE_SIZE * nr, 0);
+ 		VM_BUG_ON(bio->bi_iter.bi_size != PAGE_SIZE * nr);
+ 	}
+ 	return bio;
+
+
+Thanks,
+Ming
