@@ -2,154 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41F3951DC0
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 23:59:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC5AD51D83
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 23:58:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732881AbfFXV7t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 17:59:49 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:39540 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727733AbfFXV7r (ORCPT
+        id S1730280AbfFXV63 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 17:58:29 -0400
+Received: from mail-vk1-f201.google.com ([209.85.221.201]:43125 "EHLO
+        mail-vk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728690AbfFXV63 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 17:59:47 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5OLsca6091939;
-        Mon, 24 Jun 2019 21:58:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=JPBEqrnBb8FJilUCQCUmMJhL0pO+qsW2uzegjGEHDYQ=;
- b=vwSceTOFPnndaHyinJXnA0XxpMTF4zGHNj5lEs+w8XWiVL6ly7Z9VEVjJV4gnFgKkKwW
- B8SdZ4krsyR6f1E0FlYW5moxuEmjhgn85HtSg0z2oOp1hhMJdo3XOqpiHvEil1BlZ2KW
- PEGmAIadWWqhl9+AmMr5FDs139rF0no0szY6ZnskKVnUEMSG9PrJ5dCsFbIdJrY2zxiP
- 3z4yfqHwUSqvLrreOnH+MDuEMhE8ElZOtQ8shgvbsZ/7FCLrYScc7NOmLBxChFYSaq/u
- gI1Rn+l+GOiLbqZED3Z1Od5UlWcckpvKqSJxtGUwwy+7uAnIrP4j5qb9NqSYBMPprys8 Qw== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 2t9c9pgrf7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 24 Jun 2019 21:58:29 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5OLwP9j160075;
-        Mon, 24 Jun 2019 21:58:28 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by userp3020.oracle.com with ESMTP id 2tat7bvjfc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 24 Jun 2019 21:58:28 +0000
-Received: from userp3020.oracle.com (userp3020.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x5OLwS3d160108;
-        Mon, 24 Jun 2019 21:58:28 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3020.oracle.com with ESMTP id 2tat7bvjf7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 24 Jun 2019 21:58:28 +0000
-Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x5OLwK6v015219;
-        Mon, 24 Jun 2019 21:58:20 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 24 Jun 2019 14:58:20 -0700
-Date:   Mon, 24 Jun 2019 14:58:17 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     matthew.garrett@nebula.com, yuchao0@huawei.com, tytso@mit.edu,
-        ard.biesheuvel@linaro.org, josef@toxicpanda.com, clm@fb.com,
-        adilger.kernel@dilger.ca, viro@zeniv.linux.org.uk, jack@suse.com,
-        dsterba@suse.com, jaegeuk@kernel.org, jk@ozlabs.org,
-        reiserfs-devel@vger.kernel.org, linux-efi@vger.kernel.org,
-        devel@lists.orangefs.org, linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
-        linux-mm@kvack.org, linux-nilfs@vger.kernel.org,
-        linux-mtd@lists.infradead.org, ocfs2-devel@oss.oracle.com,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-btrfs@vger.kernel.org
-Subject: Re: [PATCH 2/7] vfs: flush and wait for io when setting the
- immutable flag via SETFLAGS
-Message-ID: <20190624215817.GE1611011@magnolia>
-References: <156116141046.1664939.11424021489724835645.stgit@magnolia>
- <156116142734.1664939.5074567130774423066.stgit@magnolia>
- <20190624113737.GG32376@quack2.suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190624113737.GG32376@quack2.suse.cz>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9298 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=805 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1906240172
+        Mon, 24 Jun 2019 17:58:29 -0400
+Received: by mail-vk1-f201.google.com with SMTP id j140so4356966vke.10
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 14:58:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=Q0hyqVzuncQMFkIZhAOHJkIfbxm5sDRWMvyBXtcavoo=;
+        b=RhTI0VON+5np3cwB/7HOu3t/iTPn2XCK9u35az8zZzqwq33aR1/TRgDApIz75TYjeD
+         taeLRalcKhbhPepoAbvK52wnMDZ4a4X4rQyvghiYUBX6lvanbJlq1DeR0k4U1q7eFNYV
+         BF+JEeZCIrldZEWNpdVz2IUoRYv+zgxEMD/AiCGhXJwswmAgGA3GeNHqIk31m5cbt2l1
+         uwJ2HebPA8Tcrtk5Sq6k1GuOo6rkny49EjlVuC3wxvojrEBmBFbu3QlkfxniDohl6kCZ
+         KUcCvCDfB5huDAVj39axpBOZIQ0XycHOBqagQKH8BqMaTmCzE2FHM+KvrEaKpSm4zON1
+         p9Dw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=Q0hyqVzuncQMFkIZhAOHJkIfbxm5sDRWMvyBXtcavoo=;
+        b=qE1PkE0tVUdmx5k1iW22WVPzqzjEhrLBaFkNGuf+9UbcQyfGh918aKf+rrs36RJd1w
+         oQ31ZK/taQ884YV/EdSjYiRuAc6ZJ0v8h9AzRg/i2rHitkqjNn1hpSxQzLyRlFWO63Up
+         NMK/eiDRiSJeXNqDT/RYhT/QNxT5ZD0iHC4yZ1XSJIHZKJnGomBtwGCfS3fh1tTWdojE
+         h5wuLOcgexyCcYMBlWIBRn+yCJSflUxn+3ZiGLVl0M1EoB2Ws72ddbvD+W4UhTEHeXAk
+         1wVl5GDN7NQN9UYpjPyxh/VpMxiKs4jesM6dJdhyGjqapiGSRJBzrCPWH3PGehNFAHuO
+         4rxw==
+X-Gm-Message-State: APjAAAXbNjn2fxbjRu5bBtF2BMeDS9+KUqmPGpACWkQfKUxjE4HN34PI
+        oZI18BqrbTlIsiafmxjOWAMLxHvhKQrQ/JB/
+X-Google-Smtp-Source: APXvYqysClsnN/4Bk4V5HqW6LruC+5/Q9jhmidRxur/KiP8HrehrQutBwAy9P5+/J7jI4WPt5SLBO8hZ4T+vVzyY
+X-Received: by 2002:a1f:4107:: with SMTP id o7mr4981084vka.34.1561413508074;
+ Mon, 24 Jun 2019 14:58:28 -0700 (PDT)
+Date:   Mon, 24 Jun 2019 14:58:22 -0700
+Message-Id: <20190624215824.118783-1-allanzhang@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
+Subject: [PATCH] bpf: Allow bpf_skb_event_output for a few prog types
+From:   allanzhang <allanzhang@google.com>
+To:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     allanzhang <allanzhang@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 01:37:37PM +0200, Jan Kara wrote:
-> On Fri 21-06-19 16:57:07, Darrick J. Wong wrote:
-> > From: Darrick J. Wong <darrick.wong@oracle.com>
-> > 
-> > When we're using FS_IOC_SETFLAGS to set the immutable flag on a file, we
-> > need to ensure that userspace can't continue to write the file after the
-> > file becomes immutable.  To make that happen, we have to flush all the
-> > dirty pagecache pages to disk to ensure that we can fail a page fault on
-> > a mmap'd region, wait for pending directio to complete, and hope the
-> > caller locked out any new writes by holding the inode lock.
-> > 
-> > Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
-> 
-> Seeing the way this worked out, is there a reason to have separate
-> vfs_ioc_setflags_flush_data() instead of folding the functionality in
-> vfs_ioc_setflags_check() (possibly renaming it to
-> vfs_ioc_setflags_prepare() to indicate it does already some changes)? I
-> don't see any place that would need these two separated...
+Software event output is only enabled by a few prog types right now (TC,
+LWT out, XDP, sockops). Many other skb based prog types need
+bpf_skb_event_output to produce software event.
 
-XFS needs them to be separated.
+Added socket_filter, cg_skb, sk_skb prog types to generate sw event.
 
-If we even /think/ that we're going to be setting the immutable flag
-then we need to grab the IOLOCK and the MMAPLOCK to prevent further
-writes while we drain all the directio writes and dirty data.  IO
-completions for the write draining can take the ILOCK, which means that
-we can't have grabbed it yet.
+Test bpf code is generated from code snippet:
 
-Next, we grab the ILOCK so we can check the new flags against the inode
-and then update the inode core.
+struct TMP {
+    uint64_t tmp;
+} tt;
+tt.tmp = 5;
+bpf_perf_event_output(skb, &connection_tracking_event_map, 0,
+                      &tt, sizeof(tt));
+return 1;
 
-For most filesystems I think it suffices to inode_lock and then do both,
-though.
+the bpf assembly from llvm is:
+       0:       b7 02 00 00 05 00 00 00         r2 = 5
+       1:       7b 2a f8 ff 00 00 00 00         *(u64 *)(r10 - 8) = r2
+       2:       bf a4 00 00 00 00 00 00         r4 = r10
+       3:       07 04 00 00 f8 ff ff ff         r4 += -8
+       4:       18 02 00 00 00 00 00 00 00 00 00 00 00 00 00 00    r2 = 0ll
+       6:       b7 03 00 00 00 00 00 00         r3 = 0
+       7:       b7 05 00 00 08 00 00 00         r5 = 8
+       8:       85 00 00 00 19 00 00 00         call 25
+       9:       b7 00 00 00 01 00 00 00         r0 = 1
+      10:       95 00 00 00 00 00 00 00         exit
 
-> > +/*
-> > + * Flush all pending IO and dirty mappings before setting S_IMMUTABLE on an
-> > + * inode via FS_IOC_SETFLAGS.  If the flush fails we'll clear the flag before
-> > + * returning error.
-> > + *
-> > + * Note: the caller should be holding i_mutex, or else be sure that
-> > + * they have exclusive access to the inode structure.
-> > + */
-> > +static inline int vfs_ioc_setflags_flush_data(struct inode *inode, int flags)
-> > +{
-> > +	int ret;
-> > +
-> > +	if (!vfs_ioc_setflags_need_flush(inode, flags))
-> > +		return 0;
-> > +
-> > +	inode_set_flags(inode, S_IMMUTABLE, S_IMMUTABLE);
-> > +	ret = inode_flush_data(inode);
-> > +	if (ret)
-> > +		inode_set_flags(inode, 0, S_IMMUTABLE);
-> > +	return ret;
-> > +}
-> 
-> Also this sets S_IMMUTABLE whenever vfs_ioc_setflags_need_flush() returns
-> true. That is currently the right thing but seems like a landmine waiting
-> to trip? So I'd just drop the vfs_ioc_setflags_need_flush() abstraction to
-> make it clear what's going on.
+Patch 1 is enabling code.
+Patch 2 is fullly covered selftest code.
 
-Ok.
-
---D
-
-> 
-> 								Honza
-> -- 
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+Signed-off-by: allanzhang <allanzhang@google.com>
