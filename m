@@ -2,60 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61E1F50A8D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 14:17:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C190650A92
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 14:18:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728505AbfFXMQ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 08:16:59 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:39586 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726524AbfFXMQ7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 08:16:59 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1hfNtx-0000ZK-Uf; Mon, 24 Jun 2019 12:16:50 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Lijun Ou <oulijun@huawei.com>, Wei Hu <xavier.huwei@huawei.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] RDMA/hns: fix spelling mistake "attatch" -> "attach"
-Date:   Mon, 24 Jun 2019 13:16:49 +0100
-Message-Id: <20190624121649.3281-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.20.1
+        id S1730122AbfFXMSC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 08:18:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58972 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726984AbfFXMSB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 08:18:01 -0400
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A78FB20679;
+        Mon, 24 Jun 2019 12:17:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561378681;
+        bh=qI+nOBS7I+14IwIUt9KpcpGTazjFg0RUqJZL7RWpoiE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=SsyfE3nZyXhY0/IZCS4LQdDGtxJEpDMB7ff/KYCnZckLQ83Yc56OeNIujCR8wCYk9
+         YKvsiBvxkbnkDurDHUENRB4SotV1cHXQ5IVG2g1NBMdsC6MLFDFabJJw6OACRJFauz
+         iE5G9z9ijcVgTXr13oL07wWunBCFWRIWplj3jHo4=
+Date:   Mon, 24 Jun 2019 13:17:55 +0100
+From:   Will Deacon <will@kernel.org>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Yuyang Du <duyuyang@gmail.com>,
+        Waiman Long <longman@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] locking/lockdep: Move mark_lock() inside
+ CONFIG_TRACE_IRQFLAGS && CONFIG_PROVE_LOCKING
+Message-ID: <20190624121755.x5746xrskrbbhaft@willie-the-truck>
+References: <20190617124718.1232976-1-arnd@arndb.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190617124718.1232976-1-arnd@arndb.de>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Hi Arnd,
 
-There is a spelling mistake in an dev_err message. Fix it.
+On Mon, Jun 17, 2019 at 02:47:05PM +0200, Arnd Bergmann wrote:
+> The last cleanup patch triggered another issue, as now another function
+> should be moved into the same section:
+> 
+> kernel/locking/lockdep.c:3580:12: error: 'mark_lock' defined but not used [-Werror=unused-function]
+>  static int mark_lock(struct task_struct *curr, struct held_lock *this,
+> 
+> Move mark_lock() into the same #ifdef section as its only caller, and
+> remove the now-unused mark_lock_irq() stub helper.
+> 
+> Fixes: 0d2cc3b34532 ("locking/lockdep: Move valid_state() inside CONFIG_TRACE_IRQFLAGS && CONFIG_PROVE_LOCKING")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  kernel/locking/lockdep.c | 73 +++++++++++++++++++---------------------
+>  1 file changed, 34 insertions(+), 39 deletions(-)
+> 
+> diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+> index 48a840adb281..43e880ceafc2 100644
+> --- a/kernel/locking/lockdep.c
+> +++ b/kernel/locking/lockdep.c
+> @@ -437,13 +437,6 @@ static int verbose(struct lock_class *class)
+>  	return 0;
+>  }
+>  
+> -/*
+> - * Stack-trace: tightly packed array of stack backtrace
+> - * addresses. Protected by the graph_lock.
+> - */
+> -unsigned long nr_stack_trace_entries;
+> -static unsigned long stack_trace[MAX_STACK_TRACE_ENTRIES];
+> -
+>  static void print_lockdep_off(const char *bug_msg)
+>  {
+>  	printk(KERN_DEBUG "%s\n", bug_msg);
+> @@ -453,6 +446,15 @@ static void print_lockdep_off(const char *bug_msg)
+>  #endif
+>  }
+>  
+> +unsigned long nr_stack_trace_entries;
+> +
+> +#if defined(CONFIG_TRACE_IRQFLAGS) && defined(CONFIG_PROVE_LOCKING)
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/infiniband/hw/hns/hns_roce_qp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Is this necessary, given that CONFIG_PROVE_LOCKING selects TRACE_IRQFLAGS?
+I find that having both of the symbols makes this really hard to read. For
+example:
 
-diff --git a/drivers/infiniband/hw/hns/hns_roce_qp.c b/drivers/infiniband/hw/hns/hns_roce_qp.c
-index 99ec5d43b99b..13a1916b0cdc 100644
---- a/drivers/infiniband/hw/hns/hns_roce_qp.c
-+++ b/drivers/infiniband/hw/hns/hns_roce_qp.c
-@@ -858,7 +858,7 @@ static int hns_roce_create_qp_common(struct hns_roce_dev *hr_dev,
- 	ret = hns_roce_mtr_attach(hr_dev, &hr_qp->mtr, buf_list,
- 				  hr_qp->regions, hr_qp->region_cnt);
- 	if (ret) {
--		dev_err(dev, "mtr attatch error for create qp\n");
-+		dev_err(dev, "mtr attach error for create qp\n");
- 		goto err_mtr;
- 	}
- 
--- 
-2.20.1
+> +/*
+> + * Stack-trace: tightly packed array of stack backtrace
+> + * addresses. Protected by the graph_lock.
+> + */
+> +static unsigned long stack_trace[MAX_STACK_TRACE_ENTRIES];
 
+This is used later on by print_lock_trace(), which is only predicated
+on #ifdef CONFIG_PROVE_LOCKING.
+
+Will
