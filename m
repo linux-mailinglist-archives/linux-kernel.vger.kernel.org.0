@@ -2,33 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B900851B81
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 21:37:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 042C551B78
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 21:37:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730653AbfFXTho (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 15:37:44 -0400
-Received: from mga01.intel.com ([192.55.52.88]:58846 "EHLO mga01.intel.com"
+        id S1730518AbfFXThW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 15:37:22 -0400
+Received: from mga09.intel.com ([134.134.136.24]:16954 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729421AbfFXThV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729405AbfFXThV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 24 Jun 2019 15:37:21 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jun 2019 12:37:20 -0700
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jun 2019 12:37:20 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.63,413,1557212400"; 
-   d="scan'208";a="169538638"
+   d="scan'208";a="182700779"
 Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.137])
-  by FMSMGA003.fm.intel.com with ESMTP; 24 Jun 2019 12:37:20 -0700
+  by fmsmga001.fm.intel.com with ESMTP; 24 Jun 2019 12:37:20 -0700
 Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id 566AB302116; Mon, 24 Jun 2019 12:37:20 -0700 (PDT)
+        id 5E417302106; Mon, 24 Jun 2019 12:37:20 -0700 (PDT)
 From:   Andi Kleen <andi@firstfloor.org>
 To:     acme@kernel.org
 Cc:     jolsa@kernel.org, kan.liang@intel.com,
         linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>
-Subject: [PATCH v1 2/4] perf stat: Don't merge events in the same PMU
-Date:   Mon, 24 Jun 2019 12:37:09 -0700
-Message-Id: <20190624193711.35241-3-andi@firstfloor.org>
+Subject: [PATCH v1 3/4] perf stat: Fix group lookup for metric group
+Date:   Mon, 24 Jun 2019 12:37:10 -0700
+Message-Id: <20190624193711.35241-4-andi@firstfloor.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190624193711.35241-1-andi@firstfloor.org>
 References: <20190624193711.35241-1-andi@firstfloor.org>
@@ -41,46 +41,115 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andi Kleen <ak@linux.intel.com>
 
-Event merging is mainly to collapse similar events in lots of
-different duplicated PMUs.
+The metric group code tries to find a group it added earlier
+in the evlist. Fix the lookup to handle groups with partially
+overlaps correctly. When a sub string match fails and we reset
+the match, we have to compare the first element again.
 
-It can break metric displaying. It's possible for two metrics
-to have the same event, and when the two events happen in a row
-the second wouldn't be displayed.  This would also not
-show the second metric.
+I also renamed the find_evsel function to find_evsel_group
+to make its purpose clearer.
 
-To avoid this don't merge events in the same PMU. This makes
-sense, if we have multiple events in the same PMU there is
-likely some reason for it (e.g. using multiple groups)
-and we better not merge them.
+With the earlier changes this fixes:
 
-While in theory it would be possible to construct metrics
-that have events with the same name in different PMU no
-current metrics have this problem.
+Before:
 
-This is the fix for perf stat -M UPI,IPC (needs also
-another bug fix to completely work)
+% perf stat -M UPI,IPC sleep 1
+...
+         1,032,922      uops_retired.retire_slots #      1.1 UPI
+         1,896,096      inst_retired.any
+         1,896,096      inst_retired.any
+         1,177,254      cpu_clk_unhalted.thread
 
-Fixes: 430daf2dc7af ("perf stat: Collapse identically ...")
+After:
+
+% perf stat -M UPI,IPC sleep 1
+...
+        1,013,193      uops_retired.retire_slots #      1.1 UPI
+           932,033      inst_retired.any
+           932,033      inst_retired.any          #      0.9 IPC
+         1,091,245      cpu_clk_unhalted.thread
+
+Fixes: b18f3e365019 ("perf stat: Support JSON metrics ...")
 Signed-off-by: Andi Kleen <ak@linux.intel.com>
 ---
- tools/perf/util/stat-display.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ tools/perf/util/metricgroup.c | 47 ++++++++++++++++++++++++++---------
+ 1 file changed, 35 insertions(+), 12 deletions(-)
 
-diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-display.c
-index a6b9de3e83fc..91d62fd6607f 100644
---- a/tools/perf/util/stat-display.c
-+++ b/tools/perf/util/stat-display.c
-@@ -555,7 +555,8 @@ static void collect_all_aliases(struct perf_stat_config *config, struct perf_evs
- 		    alias->scale != counter->scale ||
- 		    alias->cgrp != counter->cgrp ||
- 		    strcmp(alias->unit, counter->unit) ||
--		    perf_evsel__is_clock(alias) != perf_evsel__is_clock(counter))
-+		    perf_evsel__is_clock(alias) != perf_evsel__is_clock(counter) ||
-+		    !strcmp(alias->pmu_name, counter->pmu_name))
+diff --git a/tools/perf/util/metricgroup.c b/tools/perf/util/metricgroup.c
+index 699e020737d9..fabdb6dde88e 100644
+--- a/tools/perf/util/metricgroup.c
++++ b/tools/perf/util/metricgroup.c
+@@ -85,26 +85,49 @@ struct egroup {
+ 	const char *metric_expr;
+ };
+ 
+-static struct perf_evsel *find_evsel(struct perf_evlist *perf_evlist,
+-				     const char **ids,
+-				     int idnum,
+-				     struct perf_evsel **metric_events)
++static bool record_evsel(int *ind, struct perf_evsel **start,
++			 int idnum,
++			 struct perf_evsel **metric_events,
++			 struct perf_evsel *ev)
++{
++	metric_events[*ind] = ev;
++	if (*ind == 0)
++		*start = ev;
++	if (++*ind == idnum) {
++		metric_events[*ind] = NULL;
++		return true;
++	}
++	return false;
++}
++
++static struct perf_evsel *find_evsel_group(struct perf_evlist *perf_evlist,
++					   const char **ids,
++					   int idnum,
++					   struct perf_evsel **metric_events)
+ {
+ 	struct perf_evsel *ev, *start = NULL;
+ 	int ind = 0;
+ 
+ 	evlist__for_each_entry (perf_evlist, ev) {
++		if (ev->collect_stat)
++			continue;
+ 		if (!strcmp(ev->name, ids[ind])) {
+-			metric_events[ind] = ev;
+-			if (ind == 0)
+-				start = ev;
+-			if (++ind == idnum) {
+-				metric_events[ind] = NULL;
++			if (record_evsel(&ind, &start, idnum,
++					 metric_events, ev))
+ 				return start;
+-			}
+ 		} else {
++			/*
++			 * We saw some other event that is not
++			 * in our list of events. Discard
++			 * the whole match and start again.
++			 */
+ 			ind = 0;
+ 			start = NULL;
++			if (!strcmp(ev->name, ids[ind])) {
++				if (record_evsel(&ind, &start, idnum,
++						 metric_events, ev))
++					return start;
++			}
+ 		}
+ 	}
+ 	/*
+@@ -134,8 +157,8 @@ static int metricgroup__setup_events(struct list_head *groups,
+ 			ret = -ENOMEM;
  			break;
- 		alias->merged_stat = true;
- 		cb(config, alias, data, false);
+ 		}
+-		evsel = find_evsel(perf_evlist, eg->ids, eg->idnum,
+-				   metric_events);
++		evsel = find_evsel_group(perf_evlist, eg->ids, eg->idnum,
++					 metric_events);
+ 		if (!evsel) {
+ 			pr_debug("Cannot resolve %s: %s\n",
+ 					eg->metric_name, eg->metric_expr);
 -- 
 2.20.1
 
