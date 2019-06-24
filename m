@@ -2,101 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55D2150C08
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 15:32:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2020750C12
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 15:33:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731157AbfFXNcD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 09:32:03 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:34104 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729020AbfFXNcC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 09:32:02 -0400
-Received: by mail-lj1-f194.google.com with SMTP id p17so12662797ljg.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 06:32:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=CCHpK1CZOVMMRr9wyoLp/eyfAndWJItR7EDWf+w9QSU=;
-        b=fP2Ot5P/h6IfQPNnkVaknnZvAAp4gjmHLWg6mRMP+CMZ9YAztqfCuIF7zICgw8PE7u
-         /C5LdKfScbPHPRwoC7oBsNOwoCQQK/AfSEDzYLOxSTacOSmZz5MIf7KYY0IaZD9cXmtQ
-         J7BnzTNhxal/KCJBAvzgxW3R7HKTgQazjdJ9I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CCHpK1CZOVMMRr9wyoLp/eyfAndWJItR7EDWf+w9QSU=;
-        b=slWfTEIR3x8BJT9fX7DNWFrRsqWJuCPasASBNybzGDyFYKJbUkrNBwlJCBgRvrexTA
-         NvvFKcgzytkXOdL9eseOfnRtwlulH+G7PDD54ES/Zp49G+hrFvasGygjTurdBKuGJdCi
-         fyC8EnCiNUgeWQPXavHsLuF741CvzgHGiUKghfNOSC3Nj6vQEtrJ+Q303oBmw67esCdL
-         g76Xznk3xWWsLkXQzUbLhO2JKfsM026O6hSTGlUIfE1WEXnq1qKjocCK1Ur+6ru2JLx7
-         JZB+M9Og4m2niuf/PXxtDLwYdX9lhiFjMlhYdge7hrry1y0OHCnxtpe3UCJa78K1ZQOr
-         Fkxg==
-X-Gm-Message-State: APjAAAWZQYaV6YFDbX18pKiIwPBpYuqKahRijsmUG6VtQo2Z0k8Lzkda
-        FTNyMHl8qHet7TI6z5MgNzdz39D+qA4=
-X-Google-Smtp-Source: APXvYqx/fha9NF/NMXaHjIkRjoJJKpXTuuTE6mOMfeWPdjxKP7LjiQTPOxVXeQKMExY58NS9bK1Yuw==
-X-Received: by 2002:a2e:5bdd:: with SMTP id m90mr70770517lje.46.1561383119997;
-        Mon, 24 Jun 2019 06:31:59 -0700 (PDT)
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
-        by smtp.gmail.com with ESMTPSA id r14sm1555551lff.44.2019.06.24.06.31.58
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Jun 2019 06:31:58 -0700 (PDT)
-Received: by mail-lj1-f179.google.com with SMTP id k18so12617083ljc.11
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 06:31:58 -0700 (PDT)
-X-Received: by 2002:a2e:95d5:: with SMTP id y21mr63467183ljh.84.1561383118160;
- Mon, 24 Jun 2019 06:31:58 -0700 (PDT)
+        id S1731194AbfFXNdt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 09:33:49 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:19066 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728884AbfFXNdt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 09:33:49 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id D7DD23998DC962976001;
+        Mon, 24 Jun 2019 21:33:43 +0800 (CST)
+Received: from [127.0.0.1] (10.184.225.177) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Mon, 24 Jun 2019
+ 21:33:37 +0800
+Subject: Re: [PATCH next] softirq: enable MAX_SOFTIRQ_TIME tuning with sysctl
+ max_softirq_time_usecs
+To:     Thomas Gleixner <tglx@linutronix.de>
+CC:     <corbet@lwn.net>, <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>, <akpm@linux-foundation.org>,
+        <manfred@colorfullife.com>, <jwilk@jwilk.net>,
+        <dvyukov@google.com>, <feng.tang@intel.com>,
+        <sunilmut@microsoft.com>, <quentin.perret@arm.com>,
+        <linux@leemhuis.info>, <alex.popov@linux.com>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>,
+        "wangxiaogang (F)" <wangxiaogang3@huawei.com>,
+        "Zhoukang (A)" <zhoukang7@huawei.com>,
+        Mingfangsen <mingfangsen@huawei.com>, <tedheadster@gmail.com>,
+        Eric Dumazet <edumazet@google.com>
+References: <f274f85a-bbb6-3e32-b293-1d5d7f27a98f@huawei.com>
+ <alpine.DEB.2.21.1906231820470.32342@nanos.tec.linutronix.de>
+ <0099726a-ead3-bdbe-4c66-c8adc9a4f11b@huawei.com>
+ <alpine.DEB.2.21.1906241141370.32342@nanos.tec.linutronix.de>
+From:   Zhiqiang Liu <liuzhiqiang26@huawei.com>
+Message-ID: <e870e089-efb6-53a7-4299-8468f2ba8852@huawei.com>
+Date:   Mon, 24 Jun 2019 21:32:48 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-References: <20190620022008.19172-1-peterx@redhat.com> <20190620022008.19172-3-peterx@redhat.com>
- <CAHk-=wiGphH2UL+To5rASyFoCk6=9bROUkGDWSa_rMu9Kgb0yw@mail.gmail.com> <20190624074250.GF6279@xz-x1>
-In-Reply-To: <20190624074250.GF6279@xz-x1>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 24 Jun 2019 21:31:42 +0800
-X-Gmail-Original-Message-ID: <CAHk-=whRw_6ZTj=AT=cRoSTyoEk2-hiqJoNkqgWE-gSRVE5YwQ@mail.gmail.com>
-Message-ID: <CAHk-=whRw_6ZTj=AT=cRoSTyoEk2-hiqJoNkqgWE-gSRVE5YwQ@mail.gmail.com>
-Subject: Re: [PATCH v5 02/25] mm: userfault: return VM_FAULT_RETRY on signals
-To:     Peter Xu <peterx@redhat.com>
-Cc:     Linux-MM <linux-mm@kvack.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Hugh Dickins <hughd@google.com>,
-        Maya Gokhale <gokhale2@llnl.gov>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Martin Cracauer <cracauer@cons.org>,
-        Denis Plotnikov <dplotnikov@virtuozzo.com>,
-        Shaohua Li <shli@fb.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Marty McFadden <mcfadden8@llnl.gov>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Mel Gorman <mgorman@suse.de>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <alpine.DEB.2.21.1906241141370.32342@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset="gbk"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.184.225.177]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 3:43 PM Peter Xu <peterx@redhat.com> wrote:
->
-> Should we still be able to react on signal_pending() as part of fault
-> handling (because that's what this patch wants to do, at least for an
-> user-mode page fault)?  Please kindly correct me if I misunderstood...
+On 2019/6/24 17:45, Thomas Gleixner wrote:
+> Zhiqiang,
+> 
+> On Mon, 24 Jun 2019, Zhiqiang Liu wrote:
+>> ÔÚ 2019/6/24 0:38, Thomas Gleixner Ð´µÀ:
+>>
+>> Thanks again for your detailed advice.
+>> As your said, the max_softirq_time_usecs setting without explaining the
+>> relationship with CONFIG_HZ will give a false sense of controlability. And
+>> the time accuracy of jiffies will result in a certain difference between the
+>> max_softirq_time_usecs set value and the actual value, which is in one jiffies
+>> range.
+>>
+>> I will add these infomation in the sysctl documentation and changelog in v2 patch.
+> 
+> Please make the sysctl milliseconds based. That's the closest approximation
+> of useful units for this. This still has the same issues as explained
+> before but it's not off by 3 orders of magitude anymore.
+> 
+> Thanks,
+> 
+> 	tglx
+> 
+Thanks for your suggestion.
+I will adopt max_softirq_time_ms to replace MAX_SOFTIRQ_TIME in v2.
 
-I think that with this patch (modulo possible fix-ups) then yes, as
-long as we're returning to user mode we can do signal_pending() and
-return RETRY.
-
-But I think we really want to add a new FAULT_FLAG_INTERRUPTIBLE bit
-for that (the same way we already have FAULT_FLAG_KILLABLE for things
-that can react to fatal signals), and only do it when that is set.
-Then the page fault handler can set that flag when it's doing a
-user-mode page fault.
-
-Does that sound reasonable?
-
-               Linus
