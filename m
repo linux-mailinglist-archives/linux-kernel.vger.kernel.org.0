@@ -2,90 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52FBA51DB8
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 23:59:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9AF5851DDC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 00:02:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732864AbfFXV7j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 17:59:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53482 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727733AbfFXV7g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 17:59:36 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 822DE20665;
-        Mon, 24 Jun 2019 21:59:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561413575;
-        bh=wkXd8LvsRDQsmIsQI1DMB/m6N5fb+f+VDdAigOle070=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=FG9EtLCSkYGjdJmYxQbSShBk/IghxUE5O9kTJzVcelMAZzKAsdYFrsyxawgpty8ox
-         vymL2hcpUMZLg3rLtDADZOh6FncBGexh2/l0jY+zGBavC04bRRsC9zKQYybDhrmKuA
-         kaCU3FeX7BXum0WAQBJzzUM4Fw3XX/jEdMgXQttM=
-Date:   Mon, 24 Jun 2019 14:59:35 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Nikolay Borisov <nborisov@suse.com>
-Subject: Re: linux-next: build failure after merge of the akpm-current tree
-Message-Id: <20190624145935.b9516f0316953057c76fff69@linux-foundation.org>
-In-Reply-To: <20190624210043.13c924f1@canb.auug.org.au>
-References: <20190624210043.13c924f1@canb.auug.org.au>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1727270AbfFXWCS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 18:02:18 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:32962 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726393AbfFXWCR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 18:02:17 -0400
+Received: by mail-lj1-f193.google.com with SMTP id h10so14162724ljg.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 15:02:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4XtbMn3xFs7FmnICFe6DhpFIKouWcZNSxkCHmQ/+Ylc=;
+        b=izb2Z46NzMUkEEC4KRpeTZxTRLJ0GQ/RzhAb8ief9AuLtSRsxtyGojyTaRXUHuLRF1
+         Y1K1Hj+ItpQFmYCDMraMDoN6XKefXr/fA2S8lixYzb6lN+40iNMZAwugGK8wDaIMlihe
+         GnpLw8qtECPRTbWEMTN4v6XVwOgmV0JI/tyVx9mdyNZyMPiICLek7nR5F+BVEJ6kQcqU
+         ZPQK7vlfl2br4pdVVLyjIF2wmIT5LthddzXtyklfp3JOeQBYHHElDedyH9Pfi4UkF1mQ
+         QU0A3nRr+NuNXpcAu8UNX2jUf/t5J1gt+oqip44qh7spUrxSVnv6owch92cePWrvXSMi
+         c6gw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4XtbMn3xFs7FmnICFe6DhpFIKouWcZNSxkCHmQ/+Ylc=;
+        b=a57PrS5hr033Nu4w5k2MSrl1uXyCcnoFDsBDN8RRsQltd3p8+o4H3u7mYzss0+f1PF
+         d2ptjqXl9Dd/XISi86S6+dn5xCtfWFpp1cJDT/ge1kYguFpvZcVQFpNGCDvDwetuvJHz
+         qSZsVZQnoGVbNFlH8v4ozUfSzQa9Jkf4ooGeL+fGGcikAOnYMejV/hvykpIJDgprxQii
+         HyTfkj2V6wneVYW9Q943x4eHk9OnSOnfE78fFZwZSjAKOmPN9MeM9Dgx+91kyy8d928I
+         2QDhcuwyH8rjP3doJXXFQvQe37ToJE8VPxNVNgn3prR73UfOeNyUL62OWFQw2uhswhgw
+         ScwA==
+X-Gm-Message-State: APjAAAWz+I3WOKHTC3JLAJQ9ttT9uDo0W4xkjRTwY2RXtd0v9kk4/AoR
+        H+WV7e6Vr6IyNWfZnGN7qgoikUZDMOsp3bAQk/EAev+f
+X-Google-Smtp-Source: APXvYqz94aRYtRYpNe6kqWgritXzE0c6aWIYSvz2gxrGE8hvN+/7y7do5SKF1vQxUBqEL72NonVRvHe+q4JNPmoe7sI=
+X-Received: by 2002:a2e:81d8:: with SMTP id s24mr31105577ljg.37.1561413735780;
+ Mon, 24 Jun 2019 15:02:15 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190522163428.7078-1-paul@crapouillou.net> <5b0f8bb3-e7b0-52c1-1f2f-9709992b76fc@linaro.org>
+ <20190621135608.GB11839@ulmo>
+In-Reply-To: <20190621135608.GB11839@ulmo>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 25 Jun 2019 00:02:02 +0200
+Message-ID: <CACRpkdY4xgtYVto8fM-TSGWbDEsJpj=Fx2zXHPaZTJ6m1JuWQw@mail.gmail.com>
+Subject: Re: [PATCH] backlight: pwm_bl: Set pin to sleep state when powered down
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Daniel Thompson <daniel.thompson@linaro.org>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Lee Jones <lee.jones@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        od@zcrc.me, linux-pwm@vger.kernel.org,
+        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        linux-fbdev@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 24 Jun 2019 21:00:43 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Fri, Jun 21, 2019 at 3:56 PM Thierry Reding <thierry.reding@gmail.com> wrote:
 
-> Hi Andrew,
-> 
-> After merging the akpm-current tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
-> 
-> mm/util.c: In function '__account_locked_vm':
-> mm/util.c:372:2: error: implicit declaration of function 'lockdep_assert_held_exclusive'; did you mean 'lockdep_assert_held_once'? [-Werror=implicit-function-declaration]
->   lockdep_assert_held_exclusive(&mm->mmap_sem);
->   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->   lockdep_assert_held_once
-> cc1: some warnings being treated as errors
-> 
-> Caused by commit
-> 
->   610509219f27 ("mm-add-account_locked_vm-utility-function-v3")
-> 
-> interacting with commit
-> 
->   9ffbe8ac05db ("locking/lockdep: Rename lockdep_assert_held_exclusive() -> lockdep_assert_held_write()")
-> 
-> from the tip tree.
-> 
-> I have applied the following merge fix patch.
-> 
-> ...
->
-> --- a/mm/util.c
-> +++ b/mm/util.c
-> @@ -369,7 +369,7 @@ int __account_locked_vm(struct mm_struct *mm, unsigned long pages, bool inc,
->  	unsigned long locked_vm, limit;
->  	int ret = 0;
->  
-> -	lockdep_assert_held_exclusive(&mm->mmap_sem);
-> +	lockdep_assert_held_write(&mm->mmap_sem);
->  
->  	locked_vm = mm->locked_vm;
->  	if (inc) {
+> I'm not sure this would actually work because I think the way that
+> pinctrl handles states both "init" and "idle" would be the same pointer
+> values and therefore pinctrl_init_done() would think the driver didn't
+> change away from the "init" state because it is the same pointer value
+> as the "idle" state that the driver selected.
 
-OK, thanks, I'll stage mm-add-account_locked_vm-utility-function.patch
-behind linux-next and shall fix this up.
+Right.
 
+> One way to work around
+> that would be to duplicate the "idle" state definition and associate one
+> instance of it with the "idle" state and the other with the "init"
+> state. At that point both states should be different (different pointer
+> values) and we'd get the init state selected automatically before probe,
+> select "idle" during probe and then the core will leave it alone. That's
+> of course ugly because we duplicate the pinctrl state in DT, but perhaps
+> it's the least ugly solution.
+
+If something needs special mockery and is not generic, I'd just
+come up with whatever string PWM needs, like
+"pwm-idle", "pwm-sleep", "pwm-init" etc instead of
+complicating the stuff done before probe(). These states are
+only handled there to make probe() simple in simple cases.
+
+> Adding Linus for visibility. Perhaps he can share some insight.
+
+I think Paul hashed it out. Or will.
+
+> On that note, I'm wondering if perhaps it'd make sense for pinctrl to
+> support some mode where a device would start out in idle mode. That is,
+> where pinctrl_bind_pins() would select the "idle" mode as the default
+> before probe. With something like that we could easily support this
+> use-case without glitching.
+
+I would say the driver can come up with whatever state it need for
+that and handle it explicitly. When there are so many of them that
+it warrants growing the device core, we can move it into
+drivers/base/pinctrl.c. But no upfront design.
+
+> I suppose yet another variant would be for the PWM backlight to not use
+> any of the standard pinctrl states at all. Instead it could just define
+> custom states, say "active" and "inactive".
+
+I would suggest doing that.
+
+> Looking at the code that
+> would prevent pinctrl_bind_pins() from doing anything with pinctrl
+> states and given the driver exact control over when each of the states
+> will be selected. That's somewhat suboptimal because we can't make use
+> of the pinctrl PM helpers and it'd require more boilerplate.
+
+The helpers are just for the dirt-simple cases anyway.
+At one point one developer thought that the "default" set up
+before probe would be the only thing any system would ever
+want to do with pin control. It seems like not.
+
+Yours,
+Linus Walleij
