@@ -2,190 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6868351DA4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 23:59:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E02551D7D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 23:58:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730740AbfFXV7a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 17:59:30 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:44919 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732758AbfFXV7Q (ORCPT
+        id S1730098AbfFXV6J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 17:58:09 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:54186 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726372AbfFXV6I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 17:59:16 -0400
-Received: by mail-io1-f66.google.com with SMTP id s7so375238iob.11;
-        Mon, 24 Jun 2019 14:59:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=yESbo+i10idiBFWz3etXGo6XCmb8EOHmWEtPPGEz5fg=;
-        b=MJPnPFcx3FT6k1/keLY2A9rCgikbC5T3SIjQxbrf2+agyaGbfMJIkU+fl9h+At/N14
-         7jfSniV79nby1EZwcQ1gcyWD+VIrw2OdpBEQvD0CMsPWIe78CTZHV/OhyzJHsCwufz0t
-         oZbYlvkkIMqahkhbUUfkHBBC9WL6HZMJ/wEQUN3zcaRg9Tsq7t+fCk5DpvKT1b83M1Iu
-         5zAUGj9vgibc+3ysKZ2WgNBGp8FEtzKhFjSHMrXjMqFZ7txMr/eD11L4DUv25V3SsXcL
-         2+aO6xbgIuEWucueJLLmo8Gjp6ILDGa1iw1MhGp1+j4D1YleWI7NIHwZMtrzjTqFAmRT
-         g0uw==
-X-Gm-Message-State: APjAAAWPuiYCUf3ibpqqdD/GOfgjKEZyOyVkuUw4st8rRwbzIeuzTVev
-        IB6DaopZkLB6w3k5B4DOhw==
-X-Google-Smtp-Source: APXvYqzx4ePf7Uty9RR9tYKGcckhJ+bYViFIXE+QeRd8I8EaUvtcw0Nt5XfARxGLI3Ds4h7wBvKfOA==
-X-Received: by 2002:a6b:4e08:: with SMTP id c8mr33071155iob.217.1561413554728;
-        Mon, 24 Jun 2019 14:59:14 -0700 (PDT)
-Received: from localhost.localdomain ([64.188.179.247])
-        by smtp.googlemail.com with ESMTPSA id l5sm14717301ioq.83.2019.06.24.14.59.13
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 24 Jun 2019 14:59:14 -0700 (PDT)
-From:   Rob Herring <robh@kernel.org>
-To:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH v2 15/15] dt-bindings: display: Convert sgd,gktw70sdae4se panel to DT schema
-Date:   Mon, 24 Jun 2019 15:56:49 -0600
-Message-Id: <20190624215649.8939-16-robh@kernel.org>
+        Mon, 24 Jun 2019 17:58:08 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1hfWyS-0007FY-EG; Mon, 24 Jun 2019 21:58:04 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] media: vivid: fix potential integer overflow on left shift
+Date:   Mon, 24 Jun 2019 22:58:04 +0100
+Message-Id: <20190624215804.12122-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190624215649.8939-1-robh@kernel.org>
-References: <20190624215649.8939-1-robh@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert the sgd,gktw70sdae4se LVDS panel binding to DT schema.
+From: Colin Ian King <colin.king@canonical.com>
 
-Cc: Neil Armstrong <narmstrong@baylibre.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Sam Ravnborg <sam@ravnborg.org>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Rob Herring <robh@kernel.org>
+There is a potential integer overflow when int 2 is left shifted
+as this is evaluated using 32 bit arithmetic but is being used in
+a context that expects an expression of type s64.  Fix this by
+shifting 2ULL to avoid a 32 bit overflow.
+
+Addresses-Coverity: ("Unintentional integer overflow")
+Fixes: 8a99e9faa131 ("media: vivid: add HDMI (dis)connect RX emulation")
+Fixes: 79a792dafac6 ("media: vivid: add HDMI (dis)connect TX emulation")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- .../display/panel/sgd,gktw70sdae4se.txt       | 41 ------------
- .../display/panel/sgd,gktw70sdae4se.yaml      | 63 +++++++++++++++++++
- 2 files changed, 63 insertions(+), 41 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/display/panel/sgd,gktw70sdae4se.txt
- create mode 100644 Documentation/devicetree/bindings/display/panel/sgd,gktw70sdae4se.yaml
+ drivers/media/platform/vivid/vivid-ctrls.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/display/panel/sgd,gktw70sdae4se.txt b/Documentation/devicetree/bindings/display/panel/sgd,gktw70sdae4se.txt
-deleted file mode 100644
-index d06644b555bd..000000000000
---- a/Documentation/devicetree/bindings/display/panel/sgd,gktw70sdae4se.txt
-+++ /dev/null
-@@ -1,41 +0,0 @@
--Solomon Goldentek Display GKTW70SDAE4SE LVDS Display Panel
--==========================================================
--
--The GKTW70SDAE4SE is a 7" WVGA TFT-LCD display panel.
--
--These DT bindings follow the LVDS panel bindings defined in panel-lvds.txt
--with the following device-specific properties.
--
--Required properties:
--
--- compatible: Shall contain "sgd,gktw70sdae4se" and "panel-lvds", in that order.
--
--Example
---------
--
--panel {
--	compatible = "sgd,gktw70sdae4se", "panel-lvds";
--
--	width-mm = <153>;
--	height-mm = <86>;
--
--	data-mapping = "jeida-18";
--
--	panel-timing {
--		clock-frequency = <32000000>;
--		hactive = <800>;
--		vactive = <480>;
--		hback-porch = <39>;
--		hfront-porch = <39>;
--		vback-porch = <29>;
--		vfront-porch = <13>;
--		hsync-len = <47>;
--		vsync-len = <2>;
--	};
--
--	port {
--		panel_in: endpoint {
--			remote-endpoint = <&lvds_encoder>;
--		};
--	};
--};
-diff --git a/Documentation/devicetree/bindings/display/panel/sgd,gktw70sdae4se.yaml b/Documentation/devicetree/bindings/display/panel/sgd,gktw70sdae4se.yaml
-new file mode 100644
-index 000000000000..487283288cb0
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/panel/sgd,gktw70sdae4se.yaml
-@@ -0,0 +1,63 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/display/panel/sgd,gktw70sdae4se.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Solomon Goldentek Display GKTW70SDAE4SE 7" WVGA LVDS Display Panel
-+
-+maintainers:
-+  - Neil Armstrong <narmstrong@baylibre.com>
-+  - Thierry Reding <thierry.reding@gmail.com>
-+
-+allOf:
-+  - $ref: lvds.yaml#
-+
-+properties:
-+  compatible:
-+    items:
-+      - const: sgd,gktw70sdae4se
-+      - {} # panel-lvds, but not listed here to avoid false select
-+
-+  data-mapping:
-+    const: jeida-18
-+
-+  width-mm:
-+    const: 153
-+
-+  height-mm:
-+    const: 86
-+
-+required:
-+  - compatible
-+
-+examples:
-+  - |+
-+    panel {
-+      compatible = "sgd,gktw70sdae4se", "panel-lvds";
-+
-+      width-mm = <153>;
-+      height-mm = <86>;
-+
-+      data-mapping = "jeida-18";
-+
-+      panel-timing {
-+        clock-frequency = <32000000>;
-+        hactive = <800>;
-+        vactive = <480>;
-+        hback-porch = <39>;
-+        hfront-porch = <39>;
-+        vback-porch = <29>;
-+        vfront-porch = <13>;
-+        hsync-len = <47>;
-+        vsync-len = <2>;
-+      };
-+
-+      port {
-+        panel_in: endpoint {
-+          remote-endpoint = <&lvds_encoder>;
-+        };
-+      };
-+    };
-+
-+...
+diff --git a/drivers/media/platform/vivid/vivid-ctrls.c b/drivers/media/platform/vivid/vivid-ctrls.c
+index 3e916c8befb7..8f340cfd6993 100644
+--- a/drivers/media/platform/vivid/vivid-ctrls.c
++++ b/drivers/media/platform/vivid/vivid-ctrls.c
+@@ -1634,8 +1634,8 @@ int vivid_create_controls(struct vivid_dev *dev, bool show_ccs_cap,
+ 			0, V4L2_DV_RGB_RANGE_AUTO);
+ 		dev->ctrl_rx_power_present = v4l2_ctrl_new_std(hdl_vid_cap,
+ 			NULL, V4L2_CID_DV_RX_POWER_PRESENT, 0,
+-			(2 << (dev->num_hdmi_inputs - 1)) - 1, 0,
+-			(2 << (dev->num_hdmi_inputs - 1)) - 1);
++			(2ULL << (dev->num_hdmi_inputs - 1)) - 1, 0,
++			(2ULL << (dev->num_hdmi_inputs - 1)) - 1);
+ 
+ 	}
+ 	if (dev->num_hdmi_outputs) {
+@@ -1653,16 +1653,16 @@ int vivid_create_controls(struct vivid_dev *dev, bool show_ccs_cap,
+ 			&vivid_ctrl_display_present, NULL);
+ 		dev->ctrl_tx_hotplug = v4l2_ctrl_new_std(hdl_vid_out,
+ 			NULL, V4L2_CID_DV_TX_HOTPLUG, 0,
+-			(2 << (dev->num_hdmi_outputs - 1)) - 1, 0,
+-			(2 << (dev->num_hdmi_outputs - 1)) - 1);
++			(2ULL << (dev->num_hdmi_outputs - 1)) - 1, 0,
++			(2ULL << (dev->num_hdmi_outputs - 1)) - 1);
+ 		dev->ctrl_tx_rxsense = v4l2_ctrl_new_std(hdl_vid_out,
+ 			NULL, V4L2_CID_DV_TX_RXSENSE, 0,
+-			(2 << (dev->num_hdmi_outputs - 1)) - 1, 0,
+-			(2 << (dev->num_hdmi_outputs - 1)) - 1);
++			(2ULL << (dev->num_hdmi_outputs - 1)) - 1, 0,
++			(2ULL << (dev->num_hdmi_outputs - 1)) - 1);
+ 		dev->ctrl_tx_edid_present = v4l2_ctrl_new_std(hdl_vid_out,
+ 			NULL, V4L2_CID_DV_TX_EDID_PRESENT, 0,
+-			(2 << (dev->num_hdmi_outputs - 1)) - 1, 0,
+-			(2 << (dev->num_hdmi_outputs - 1)) - 1);
++			(2ULL << (dev->num_hdmi_outputs - 1)) - 1, 0,
++			(2ULL << (dev->num_hdmi_outputs - 1)) - 1);
+ 	}
+ 	if ((dev->has_vid_cap && dev->has_vid_out) ||
+ 	    (dev->has_vbi_cap && dev->has_vbi_out))
 -- 
 2.20.1
 
