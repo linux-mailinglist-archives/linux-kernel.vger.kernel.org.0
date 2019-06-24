@@ -2,330 +2,176 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AD275063A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 11:57:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0117507D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:13:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728694AbfFXJ4Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 05:56:25 -0400
-Received: from foss.arm.com ([217.140.110.172]:44926 "EHLO foss.arm.com"
+        id S1730434AbfFXKK0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 06:10:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40990 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728677AbfFXJ4W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 05:56:22 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 17463139F;
-        Mon, 24 Jun 2019 02:56:22 -0700 (PDT)
-Received: from e121650-lin.cambridge.arm.com (e121650-lin.cambridge.arm.com [10.1.196.120])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ED5403F71E;
-        Mon, 24 Jun 2019 02:56:20 -0700 (PDT)
-From:   Raphael Gault <raphael.gault@arm.com>
-To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     jpoimboe@redhat.com, peterz@infradead.org, catalin.marinas@arm.com,
-        will.deacon@arm.com, julien.thierry@arm.com,
-        Raphael Gault <raphael.gault@arm.com>
-Subject: [RFC V3 08/18] objtool: Refactor switch-tables code to support other architectures
-Date:   Mon, 24 Jun 2019 10:55:38 +0100
-Message-Id: <20190624095548.8578-9-raphael.gault@arm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190624095548.8578-1-raphael.gault@arm.com>
-References: <20190624095548.8578-1-raphael.gault@arm.com>
+        id S1730015AbfFXKIC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 06:08:02 -0400
+Received: from localhost (f4.8f.5177.ip4.static.sl-reverse.com [119.81.143.244])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 09227205C9;
+        Mon, 24 Jun 2019 10:08:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561370881;
+        bh=AdM6+pPzjybjfnZGgbahedXVNFsGmlcHWNK+ynDfvEg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ux10n0V1EQhVvxzuSsZ5g8pWwUbSD9rMmN95vXxES3aOfXRWT2bH3ZbiQpvXtCuCl
+         SrNXAsdwFsnE886k9KzhVE7vn0+V5oB6yPc3E/gH5qUdiG3zPfBTKUmjq/OE5j8LZS
+         3YoUeJ6z/mJKNgfxvivt73x1RQGGU8eVH5qu1n0o=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 5.1 006/121] mmc: core: API to temporarily disable retuning for SDIO CRC errors
+Date:   Mon, 24 Jun 2019 17:55:38 +0800
+Message-Id: <20190624092320.973414712@linuxfoundation.org>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190624092320.652599624@linuxfoundation.org>
+References: <20190624092320.652599624@linuxfoundation.org>
+User-Agent: quilt/0.66
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The way to identify switch-tables and retrieves all the data necessary
-to handle the different execution branches is not the same on all
-architecture. In order to be able to add other architecture support,
-this patch defines arch-dependent functions to process jump-tables.
+From: Douglas Anderson <dianders@chromium.org>
 
-Signed-off-by: Raphael Gault <raphael.gault@arm.com>
+commit 0a55f4ab9678413a01e740c86e9367ba0c612b36 upstream.
+
+Normally when the MMC core sees an "-EILSEQ" error returned by a host
+controller then it will trigger a retuning of the card.  This is
+generally a good idea.
+
+However, if a command is expected to sometimes cause transfer errors
+then these transfer errors shouldn't cause a re-tuning.  This
+re-tuning will be a needless waste of time.  One example case where a
+transfer is expected to cause errors is when transitioning between
+idle (sometimes referred to as "sleep" in Broadcom code) and active
+state on certain Broadcom WiFi SDIO cards.  Specifically if the card
+was already transitioning between states when the command was sent it
+could cause an error on the SDIO bus.
+
+Let's add an API that the SDIO function drivers can call that will
+temporarily disable the auto-tuning functionality.  Then we can add a
+call to this in the Broadcom WiFi driver and any other driver that
+might have similar needs.
+
+NOTE: this makes the assumption that the card is already tuned well
+enough that it's OK to disable the auto-retuning during one of these
+error-prone situations.  Presumably the driver code performing the
+error-prone transfer knows how to recover / retry from errors.  ...and
+after we can get back to a state where transfers are no longer
+error-prone then we can enable the auto-retuning again.  If we truly
+find ourselves in a case where the card needs to be retuned sometimes
+to handle one of these error-prone transfers then we can always try a
+few transfers first without auto-retuning and then re-try with
+auto-retuning if the first few fail.
+
+Without this change on rk3288-veyron-minnie I periodically see this in
+the logs of a machine just sitting there idle:
+  dwmmc_rockchip ff0d0000.dwmmc: Successfully tuned phase to XYZ
+
+Cc: stable@vger.kernel.org #v4.18+
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Acked-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- tools/objtool/arch/arm64/arch_special.c | 15 +++++
- tools/objtool/arch/x86/arch_special.c   | 73 +++++++++++++++++++++
- tools/objtool/check.c                   | 84 +------------------------
- tools/objtool/check.h                   |  7 +++
- tools/objtool/special.h                 | 10 ++-
- 5 files changed, 107 insertions(+), 82 deletions(-)
+ drivers/mmc/core/core.c       |    5 +++--
+ drivers/mmc/core/sdio_io.c    |   37 +++++++++++++++++++++++++++++++++++++
+ include/linux/mmc/host.h      |    1 +
+ include/linux/mmc/sdio_func.h |    3 +++
+ 4 files changed, 44 insertions(+), 2 deletions(-)
 
-diff --git a/tools/objtool/arch/arm64/arch_special.c b/tools/objtool/arch/arm64/arch_special.c
-index a21d28876317..a0f7066994b5 100644
---- a/tools/objtool/arch/arm64/arch_special.c
-+++ b/tools/objtool/arch/arm64/arch_special.c
-@@ -20,3 +20,18 @@ void arch_force_alt_path(unsigned short feature,
- 			 struct special_alt *alt)
- {
+--- a/drivers/mmc/core/core.c
++++ b/drivers/mmc/core/core.c
+@@ -144,8 +144,9 @@ void mmc_request_done(struct mmc_host *h
+ 	int err = cmd->error;
+ 
+ 	/* Flag re-tuning needed on CRC errors */
+-	if ((cmd->opcode != MMC_SEND_TUNING_BLOCK &&
+-	    cmd->opcode != MMC_SEND_TUNING_BLOCK_HS200) &&
++	if (cmd->opcode != MMC_SEND_TUNING_BLOCK &&
++	    cmd->opcode != MMC_SEND_TUNING_BLOCK_HS200 &&
++	    !host->retune_crc_disable &&
+ 	    (err == -EILSEQ || (mrq->sbc && mrq->sbc->error == -EILSEQ) ||
+ 	    (mrq->data && mrq->data->error == -EILSEQ) ||
+ 	    (mrq->stop && mrq->stop->error == -EILSEQ)))
+--- a/drivers/mmc/core/sdio_io.c
++++ b/drivers/mmc/core/sdio_io.c
+@@ -738,3 +738,40 @@ int sdio_set_host_pm_flags(struct sdio_f
+ 	return 0;
  }
+ EXPORT_SYMBOL_GPL(sdio_set_host_pm_flags);
 +
-+int arch_add_switch_table(struct objtool_file *file, struct instruction *insn,
-+			    struct rela *table, struct rela *next_table)
++/**
++ *	sdio_retune_crc_disable - temporarily disable retuning on CRC errors
++ *	@func: SDIO function attached to host
++ *
++ *	If the SDIO card is known to be in a state where it might produce
++ *	CRC errors on the bus in response to commands (like if we know it is
++ *	transitioning between power states), an SDIO function driver can
++ *	call this function to temporarily disable the SD/MMC core behavior of
++ *	triggering an automatic retuning.
++ *
++ *	This function should be called while the host is claimed and the host
++ *	should remain claimed until sdio_retune_crc_enable() is called.
++ *	Specifically, the expected sequence of calls is:
++ *	- sdio_claim_host()
++ *	- sdio_retune_crc_disable()
++ *	- some number of calls like sdio_writeb() and sdio_readb()
++ *	- sdio_retune_crc_enable()
++ *	- sdio_release_host()
++ */
++void sdio_retune_crc_disable(struct sdio_func *func)
 +{
-+	return 0;
++	func->card->host->retune_crc_disable = true;
 +}
++EXPORT_SYMBOL_GPL(sdio_retune_crc_disable);
 +
-+struct rela *arch_find_switch_table(struct objtool_file *file,
-+				    struct rela *text_rela,
-+				    struct section *rodata_sec,
-+				    unsigned long table_offset)
++/**
++ *	sdio_retune_crc_enable - re-enable retuning on CRC errors
++ *	@func: SDIO function attached to host
++ *
++ *	This is the compement to sdio_retune_crc_disable().
++ */
++void sdio_retune_crc_enable(struct sdio_func *func)
 +{
-+	file->ignore_unreachables = true;
-+	return NULL;
++	func->card->host->retune_crc_disable = false;
 +}
-diff --git a/tools/objtool/arch/x86/arch_special.c b/tools/objtool/arch/x86/arch_special.c
-index 6583a1770bb2..38ac010f8a02 100644
---- a/tools/objtool/arch/x86/arch_special.c
-+++ b/tools/objtool/arch/x86/arch_special.c
-@@ -26,3 +26,76 @@ void arch_force_alt_path(unsigned short feature,
- 				alt->skip_alt = true;
- 		}
- }
-+
-+int arch_add_switch_table(struct objtool_file *file, struct instruction *insn,
-+			    struct rela *table, struct rela *next_table)
-+{
-+	struct rela *rela = table;
-+	struct instruction *alt_insn;
-+	struct alternative *alt;
-+	struct symbol *pfunc = insn->func->pfunc;
-+	unsigned int prev_offset = 0;
-+
-+	list_for_each_entry_from(rela, &table->rela_sec->rela_list, list) {
-+		if (rela == next_table)
-+			break;
-+
-+		/* Make sure the switch table entries are consecutive: */
-+		if (prev_offset && rela->offset != prev_offset + 8)
-+			break;
-+
-+		/* Detect function pointers from contiguous objects: */
-+		if (rela->sym->sec == pfunc->sec &&
-+		    rela->addend == pfunc->offset)
-+			break;
-+
-+		alt_insn = find_insn(file, rela->sym->sec, rela->addend);
-+		if (!alt_insn)
-+			break;
-+
-+		/* Make sure the jmp dest is in the function or subfunction: */
-+		if (alt_insn->func->pfunc != pfunc)
-+			break;
-+
-+		alt = malloc(sizeof(*alt));
-+		if (!alt) {
-+			WARN("malloc failed");
-+			return -1;
-+		}
-+
-+		alt->insn = alt_insn;
-+		list_add_tail(&alt->list, &insn->alts);
-+		prev_offset = rela->offset;
-+	}
-+
-+	if (!prev_offset) {
-+		WARN_FUNC("can't find switch jump table",
-+			  insn->sec, insn->offset);
-+		return -1;
-+	}
-+
-+	return 0;
-+}
-+
-+struct rela *arch_find_switch_table(struct objtool_file *file,
-+				    struct rela *text_rela,
-+				    struct section *rodata_sec,
-+				    unsigned long table_offset)
-+{
-+	struct rela *rodata_rela;
-+
-+	rodata_rela = find_rela_by_dest(rodata_sec, table_offset);
-+	if (rodata_rela) {
-+		/*
-+		 * Use of RIP-relative switch jumps is quite rare, and
-+		 * indicates a rare GCC quirk/bug which can leave dead
-+		 * code behind.
-+		 */
-+		if (text_rela->type == R_X86_64_PC32)
-+			file->ignore_unreachables = true;
-+
-+		return rodata_rela;
-+	}
-+
-+	return NULL;
-+}
-diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index cba1d91451cc..ce1165ce448a 100644
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -18,12 +18,6 @@
++EXPORT_SYMBOL_GPL(sdio_retune_crc_enable);
+--- a/include/linux/mmc/host.h
++++ b/include/linux/mmc/host.h
+@@ -398,6 +398,7 @@ struct mmc_host {
+ 	unsigned int		retune_now:1;	/* do re-tuning at next req */
+ 	unsigned int		retune_paused:1; /* re-tuning is temporarily disabled */
+ 	unsigned int		use_blk_mq:1;	/* use blk-mq */
++	unsigned int		retune_crc_disable:1; /* don't trigger retune upon crc */
  
- #define FAKE_JUMP_OFFSET -1
+ 	int			rescan_disable;	/* disable card detection */
+ 	int			rescan_entered;	/* used with nonremovable devices */
+--- a/include/linux/mmc/sdio_func.h
++++ b/include/linux/mmc/sdio_func.h
+@@ -159,4 +159,7 @@ extern void sdio_f0_writeb(struct sdio_f
+ extern mmc_pm_flag_t sdio_get_host_pm_caps(struct sdio_func *func);
+ extern int sdio_set_host_pm_flags(struct sdio_func *func, mmc_pm_flag_t flags);
  
--struct alternative {
--	struct list_head list;
--	struct instruction *insn;
--	bool skip_orig;
--};
--
- const char *objname;
- struct cfi_state initial_func_cfi;
- 
-@@ -901,56 +895,6 @@ static int add_special_section_alts(struct objtool_file *file)
- 	return ret;
- }
- 
--static int add_switch_table(struct objtool_file *file, struct instruction *insn,
--			    struct rela *table, struct rela *next_table)
--{
--	struct rela *rela = table;
--	struct instruction *alt_insn;
--	struct alternative *alt;
--	struct symbol *pfunc = insn->func->pfunc;
--	unsigned int prev_offset = 0;
--
--	list_for_each_entry_from(rela, &table->rela_sec->rela_list, list) {
--		if (rela == next_table)
--			break;
--
--		/* Make sure the switch table entries are consecutive: */
--		if (prev_offset && rela->offset != prev_offset + 8)
--			break;
--
--		/* Detect function pointers from contiguous objects: */
--		if (rela->sym->sec == pfunc->sec &&
--		    rela->addend == pfunc->offset)
--			break;
--
--		alt_insn = find_insn(file, rela->sym->sec, rela->addend);
--		if (!alt_insn)
--			break;
--
--		/* Make sure the jmp dest is in the function or subfunction: */
--		if (alt_insn->func->pfunc != pfunc)
--			break;
--
--		alt = malloc(sizeof(*alt));
--		if (!alt) {
--			WARN("malloc failed");
--			return -1;
--		}
--
--		alt->insn = alt_insn;
--		list_add_tail(&alt->list, &insn->alts);
--		prev_offset = rela->offset;
--	}
--
--	if (!prev_offset) {
--		WARN_FUNC("can't find switch jump table",
--			  insn->sec, insn->offset);
--		return -1;
--	}
--
--	return 0;
--}
--
- /*
-  * find_switch_table() - Given a dynamic jump, find the switch jump table in
-  * .rodata associated with it.
-@@ -1045,29 +989,7 @@ static struct rela *find_switch_table(struct objtool_file *file,
- 		if (find_symbol_containing(rodata_sec, table_offset))
- 			continue;
- 
--		/*
--		 * If we are on arm64 architecture, we now that we
--		 * are in presence of a switch table thanks to
--		 * the `br <Xn>` insn. but we can't retrieve it yet.
--		 * So we just ignore unreachable for this file.
--		 */
--		if (!arch_support_switch_table()) {
--			file->ignore_unreachables = true;
--			return NULL;
--		}
--
--		rodata_rela = find_rela_by_dest(rodata_sec, table_offset);
--		if (rodata_rela) {
--			/*
--			 * Use of RIP-relative switch jumps is quite rare, and
--			 * indicates a rare GCC quirk/bug which can leave dead
--			 * code behind.
--			 */
--			if (text_rela->type == R_X86_64_PC32)
--				file->ignore_unreachables = true;
--
--			return rodata_rela;
--		}
-+		return arch_find_switch_table(file, text_rela, rodata_sec, table_offset);
- 	}
- 
- 	return NULL;
-@@ -1112,7 +1034,7 @@ static int add_func_switch_tables(struct objtool_file *file,
- 		 * the beginning of another switch table in the same function.
- 		 */
- 		if (prev_jump) {
--			ret = add_switch_table(file, prev_jump, prev_rela, rela);
-+			ret = arch_add_switch_table(file, prev_jump, prev_rela, rela);
- 			if (ret)
- 				return ret;
- 		}
-@@ -1122,7 +1044,7 @@ static int add_func_switch_tables(struct objtool_file *file,
- 	}
- 
- 	if (prev_jump) {
--		ret = add_switch_table(file, prev_jump, prev_rela, NULL);
-+		ret = arch_add_switch_table(file, prev_jump, prev_rela, NULL);
- 		if (ret)
- 			return ret;
- 	}
-diff --git a/tools/objtool/check.h b/tools/objtool/check.h
-index c44f9fe40178..80e7a96525af 100644
---- a/tools/objtool/check.h
-+++ b/tools/objtool/check.h
-@@ -13,6 +13,7 @@
- #include "orc.h"
- #include "arch_special.h"
- #include <linux/hashtable.h>
-+;
- 
- struct insn_state {
- 	struct cfi_reg cfa;
-@@ -46,6 +47,12 @@ struct instruction {
- 	struct orc_entry orc;
- };
- 
-+struct alternative {
-+	struct list_head list;
-+	struct instruction *insn;
-+	bool skip_orig;
-+};
++extern void sdio_retune_crc_disable(struct sdio_func *func);
++extern void sdio_retune_crc_enable(struct sdio_func *func);
 +
- struct objtool_file {
- 	struct elf *elf;
- 	struct list_head insn_list;
-diff --git a/tools/objtool/special.h b/tools/objtool/special.h
-index 90626a7e41cf..3fe093c1a9c5 100644
---- a/tools/objtool/special.h
-+++ b/tools/objtool/special.h
-@@ -7,7 +7,10 @@
- #define _SPECIAL_H
- 
- #include <stdbool.h>
-+#include <stdlib.h>
-+#include "check.h"
- #include "elf.h"
-+#include "warn.h"
- 
- struct special_alt {
- 	struct list_head list;
-@@ -30,5 +33,10 @@ int special_get_alts(struct elf *elf, struct list_head *alts);
- void arch_force_alt_path(unsigned short feature,
- 			 bool uaccess,
- 			 struct special_alt *alt);
--
-+int arch_add_switch_table(struct objtool_file *file, struct instruction *insn,
-+			    struct rela *table, struct rela *next_table);
-+struct rela *arch_find_switch_table(struct objtool_file *file,
-+				    struct rela *text_rela,
-+				    struct section *rodata_sec,
-+				    unsigned long table_offset);
- #endif /* _SPECIAL_H */
--- 
-2.17.1
+ #endif /* LINUX_MMC_SDIO_FUNC_H */
+
 
