@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB45450689
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:01:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C8F45084C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:18:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727926AbfFXJ7X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 05:59:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58352 "EHLO mail.kernel.org"
+        id S1730729AbfFXKQV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 06:16:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53810 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728673AbfFXJ7T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 05:59:19 -0400
+        id S1730716AbfFXKQT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 06:16:19 -0400
 Received: from localhost (f4.8f.5177.ip4.static.sl-reverse.com [119.81.143.244])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CB27F21655;
-        Mon, 24 Jun 2019 09:59:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D6FE2205ED;
+        Mon, 24 Jun 2019 10:16:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561370358;
-        bh=lQIVZkQGmXcK1EaMH+3xunD5I8bRDu8RrN8phKF5kMY=;
+        s=default; t=1561371379;
+        bh=ItG58oxo55y7vmAp93rhq5C1zB1HpbpQeHMneZJ8HRs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wGec/v7ZQBWWeZW/RzMVGa+dZu6Ui4oygYNC0KjciBD8ag/FOSZ/AZubXskvpOFyc
-         Da7dbJVQJIxqY0lf8p9Aq5mM4/SLbcUCN8yQgxmBHAV+kulCzgTEnjYPZZ3JVmK2TD
-         A0/CaL+EAzJoTwLeqpNHYdAWvEtyyVQVLo+d5JHk=
+        b=KUpoiYiAhNlo8FjLoNJZA3kycTbkwJJFs2jpNbOWc4aAE/9dZHf3XszU07QFAlUl+
+         kmZg5zg9iYnoxwYujFh2x3np7XVjZFcWFwLfw3qJ95elJDvCHpPT3OXwpRw63Q7me/
+         2el5ezBZVDQ+JgDNjTamzyyBQIJHLciEz/MhSWoQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        linux-hwmon@vger.kernel.org, Eduardo Valentin <eduval@amazon.com>,
+        stable@vger.kernel.org, Julian Wiedmann <jwi@linux.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 36/51] hwmon: (core) add thermal sensors only if dev->of_node is present
+Subject: [PATCH 5.1 082/121] s390/qeth: handle limited IPv4 broadcast in L3 TX path
 Date:   Mon, 24 Jun 2019 17:56:54 +0800
-Message-Id: <20190624092310.342420987@linuxfoundation.org>
+Message-Id: <20190624092325.041131363@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190624092305.919204959@linuxfoundation.org>
-References: <20190624092305.919204959@linuxfoundation.org>
+In-Reply-To: <20190624092320.652599624@linuxfoundation.org>
+References: <20190624092320.652599624@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,60 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit c41dd48e21fae3e55b3670ccf2eb562fc1f6a67d ]
+[ Upstream commit 72c87976c5abbf8a834ad85f10d03c0cd58b985c ]
 
-Drivers may register to hwmon and request for also registering
-with the thermal subsystem (HWMON_C_REGISTER_TZ). However,
-some of these driver, e.g. marvell phy, may be probed from
-Device Tree or being dynamically allocated, and in the later
-case, it will not have a dev->of_node entry.
+When selecting the cast type of a neighbourless IPv4 skb (eg. on a raw
+socket), qeth_l3 falls back to the packet's destination IP address.
+For this case we should classify traffic sent to 255.255.255.255 as
+broadcast.
+This fixes DHCP requests, which were misclassified as unicast
+(and for IQD interfaces thus ended up on the wrong HW queue).
 
-Registering with hwmon without the dev->of_node may result in
-different outcomes depending on the device tree, which may
-be a bit misleading. If the device tree blob has no 'thermal-zones'
-node, the *hwmon_device_register*() family functions are going
-to gracefully succeed, because of-thermal,
-*thermal_zone_of_sensor_register() return -ENODEV in this case,
-and the hwmon error path handles this error code as success to
-cover for the case where CONFIG_THERMAL_OF is not set.
-However, if the device tree blob has the 'thermal-zones'
-entry, the *hwmon_device_register*() will always fail on callers
-with no dev->of_node, propagating -EINVAL.
-
-If dev->of_node is not present, calling of-thermal does not
-make sense. For this reason, this patch checks first if the
-device has a of_node before going over the process of registering
-with the thermal subsystem of-thermal interface. And in this case,
-when a caller of *hwmon_device_register*() with HWMON_C_REGISTER_TZ
-and no dev->of_node will still register with hwmon, but not with
-the thermal subsystem. If all the hwmon part bits are in place,
-the registration will succeed.
-
-Fixes: d560168b5d0f ("hwmon: (core) New hwmon registration API")
-Cc: Jean Delvare <jdelvare@suse.com>
-Cc: Guenter Roeck <linux@roeck-us.net>
-Cc: linux-hwmon@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Eduardo Valentin <eduval@amazon.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hwmon/hwmon.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/s390/net/qeth_l3_main.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/hwmon/hwmon.c b/drivers/hwmon/hwmon.c
-index c9790e2c3440..7b53065e9882 100644
---- a/drivers/hwmon/hwmon.c
-+++ b/drivers/hwmon/hwmon.c
-@@ -608,7 +608,7 @@ __hwmon_device_register(struct device *dev, const char *name, void *drvdata,
- 	if (err)
- 		goto free_hwmon;
- 
--	if (dev && chip && chip->ops->read &&
-+	if (dev && dev->of_node && chip && chip->ops->read &&
- 	    chip->info[0]->type == hwmon_chip &&
- 	    (chip->info[0]->config[0] & HWMON_C_REGISTER_TZ)) {
- 		const struct hwmon_channel_info **info = chip->info;
+diff --git a/drivers/s390/net/qeth_l3_main.c b/drivers/s390/net/qeth_l3_main.c
+index 53712cf26406..cb641fd303d3 100644
+--- a/drivers/s390/net/qeth_l3_main.c
++++ b/drivers/s390/net/qeth_l3_main.c
+@@ -1906,6 +1906,8 @@ static int qeth_l3_get_cast_type(struct sk_buff *skb)
+ 	/* no neighbour (eg AF_PACKET), fall back to target's IP address ... */
+ 	switch (qeth_get_ip_version(skb)) {
+ 	case 4:
++		if (ipv4_is_lbcast(ip_hdr(skb)->daddr))
++			return RTN_BROADCAST;
+ 		return ipv4_is_multicast(ip_hdr(skb)->daddr) ?
+ 				RTN_MULTICAST : RTN_UNICAST;
+ 	case 6:
 -- 
 2.20.1
 
