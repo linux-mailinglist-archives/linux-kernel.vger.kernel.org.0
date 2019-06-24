@@ -2,145 +2,235 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB7F951BC6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 21:54:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D71551BCF
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 21:57:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731200AbfFXTyv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 15:54:51 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:59406 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726774AbfFXTyv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 15:54:51 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A453D3078AB7;
-        Mon, 24 Jun 2019 19:54:38 +0000 (UTC)
-Received: from ovpn-112-53.rdu2.redhat.com (ovpn-112-53.rdu2.redhat.com [10.10.112.53])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BFA0D5D70D;
-        Mon, 24 Jun 2019 19:54:31 +0000 (UTC)
-Message-ID: <f0fcee096d779837abc46e7badae9105ee8aaecf.camel@redhat.com>
-Subject: Re: WWAN Controller Framework (was IPA [PATCH v2 00/17])
-From:   Dan Williams <dcbw@redhat.com>
-To:     Alex Elder <elder@linaro.org>, davem@davemloft.net, arnd@arndb.de,
-        bjorn.andersson@linaro.org, ilias.apalodimas@linaro.org
-Cc:     evgreen@chromium.org, benchan@google.com, ejcaruso@google.com,
-        cpratapa@codeaurora.org, syadagir@codeaurora.org,
-        subashab@codeaurora.org, abhishek.esse@gmail.com,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org
-Date:   Mon, 24 Jun 2019 14:54:30 -0500
-In-Reply-To: <23ff4cce-1fee-98ab-3608-1fd09c2d97f1@linaro.org>
-References: <20190531035348.7194-1-elder@linaro.org>
-         <23ff4cce-1fee-98ab-3608-1fd09c2d97f1@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+        id S1731241AbfFXT5h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 15:57:37 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:10782 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727282AbfFXT5h (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 15:57:37 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5OJuqR7068710;
+        Mon, 24 Jun 2019 15:56:59 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2tb4e2hqxc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 24 Jun 2019 15:56:59 -0400
+Received: from m0098410.ppops.net (m0098410.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x5OJuwXL069377;
+        Mon, 24 Jun 2019 15:56:58 -0400
+Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2tb4e2hqwj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 24 Jun 2019 15:56:58 -0400
+Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
+        by ppma03dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x5OJsw1l022275;
+        Mon, 24 Jun 2019 19:56:57 GMT
+Received: from b03cxnp08028.gho.boulder.ibm.com (b03cxnp08028.gho.boulder.ibm.com [9.17.130.20])
+        by ppma03dal.us.ibm.com with ESMTP id 2t9by6rj46-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 24 Jun 2019 19:56:57 +0000
+Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
+        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5OJuuSF63242568
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 24 Jun 2019 19:56:56 GMT
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 26B39C6057;
+        Mon, 24 Jun 2019 19:56:56 +0000 (GMT)
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9F754C6055;
+        Mon, 24 Jun 2019 19:56:51 +0000 (GMT)
+Received: from morokweng.localdomain (unknown [9.85.209.86])
+        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTPS;
+        Mon, 24 Jun 2019 19:56:51 +0000 (GMT)
+References: <20190611062817.18412-1-bauerman@linux.ibm.com> <20190611062817.18412-3-bauerman@linux.ibm.com>
+User-agent: mu4e 1.2.0; emacs 26.2
+From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
+To:     David Howells <dhowells@redhat.com>
+Cc:     linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Jessica Yu <jeyu@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "AKASHI\, Takahiro" <takahiro.akashi@linaro.org>,
+        linux-integrity@vger.kernel.org
+Subject: Re: [PATCH v11 02/13] PKCS#7: Refactor verify_pkcs7_signature()
+In-reply-to: <20190611062817.18412-3-bauerman@linux.ibm.com>
+Date:   Mon, 24 Jun 2019 16:56:49 -0300
+Message-ID: <87h88ekb9a.fsf@morokweng.localdomain>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Mon, 24 Jun 2019 19:54:51 +0000 (UTC)
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-24_13:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906240159
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-06-24 at 11:30 -0500, Alex Elder wrote:
-> OK I want to try to organize a little more concisely some of the
-> discussion on this, because there is a very large amount of volume
-> to date and I think we need to try to narrow the focus back down
-> again.
-> 
-> I'm going to use a few terms here.  Some of these I really don't
-> like, but I want to be unambiguous *and* (at least for now) I want
-> to avoid the very overloaded term "device".
-> 
-> I have lots more to say, but let's start with a top-level picture,
-> to make sure we're all on the same page.
-> 
->          WWAN Communication
->          Channel (Physical)
->                  |     ------------------------
-> ------------     v     |           :+ Control |  \
-> >          |-----------|           :+ Data    |  |
-> >    AP    |           | WWAN unit :+ Voice   |   > Functions
-> >          |===========|           :+ GPS     |  |
-> ------------     ^     |           :+ ...     |  /
->                  |     -------------------------
->           Multiplexed WWAN
->            Communication
->          Channel (Physical)
-> 
-> - The *AP* is the main CPU complex that's running Linux on one or
->   more CPU cores.
-> - A *WWAN unit* is an entity that shares one or more physical
->   *WWAN communication channels* with the AP.
 
-You could just say "WWAN modem" here.
+Hello David,
 
-> - A *WWAN communication channel* is a bidirectional means of
->   carrying data between the AP and WWAN unit.
-> - A WWAN communication channel carries data using a *WWAN protocol*.
-> - A WWAN unit implements one or more *WWAN functions*, such as
->   5G data, LTE voice, GPS, and so on.
+AFAIK Mimi is happy with this patch set, but I still need acks from
+maintainers of other subsystems that my changes touch before she can
+accept it.
 
-Go more generic here. Not just 5G data but any WWAN IP-based data
-(GPRS, EDGE, CDMA, UMTS, EVDO, LTE, 5G, etc). And not just LTE voice
-but any voice data; plenty of devices don't support LTE but still have
-"WWAN logical communication channels"
+Are this patch and the next one ("PKCS#7: Introduce pkcs7_get_digest()")
+OK from your PoV?
 
-> - A WWAN unit shall implement a *WWAN control function*, used to
->   manage the use of other WWAN functions, as well as the WWAN unit
->   itself.
-> - The AP communicates with a WWAN function using a WWAN protocol.
-> - A WWAN physical channel can be *multiplexed*, in which case it
->   carries the data for one or more *WWAN logical channels*.
+--
+Thiago Jung Bauermann
+IBM Linux Technology Center
 
-It's unclear to me what "physical" means here. USB Interface or
-Endpoint or PCI Function or SMD channel? Or kernel TTY device?
 
-For example on Qualcomm-based USB dongles a given USB Interface's
-Endpoint represents a QMAP "IP data" channel which itself could be
-multiplexed into separate "IP data" channels.  Or that USB Endpoint(s)
-could be exposed as a TTY which itself can be MUX-ed dynamically using
-GSM 07.10.
+Thiago Jung Bauermann <bauerman@linux.ibm.com> writes:
 
-To me "physical" usually means the bus type (PCI, USB, SMD, whatever).
-A Linux hardware driver (IPA, qmi_wwan, option, sierra, etc) binds to
-that physical entity using hardware IDs (USB or PCI VID/PID, devicetree
-properties) and exposes some "WWAN logical communication channels".
-Those logical channels might be multiplexed and another driver (rmnet)
-could handle exposing the de-muxed logical channels that the muxed
-logical channel carries.
-
-> - A multiplexed WWAN communication channel uses a *WWAN wultiplexing
->   protocol*, which is used to separate independent data streams
->   carrying other WWAN protocols.
-> - A WWAN logical channel carries a bidirectional stream of WWAN
->   protocol data between an entity on the AP and a WWAN function.
-
-It *usually* is bidirectional. For example some GPS logical
-communication channels just start spitting out NMEA when you give the
-control function a command. The NMEA ports themselves don't accept any
-input.
-
-> Does that adequately represent a very high-level picture of what
-> we're trying to manage?
-
-Yes, pretty well. Thanks for trying to specify it all.
-
-> And if I understand it right, the purpose of the generic framework
-> being discussed is to define a common mechanism for managing (i.e.,
-> discovering, creating, destroying, querying, configuring, enabling,
-> disabling, etc.) WWAN units and the functions they implement, along
-> with the communication and logical channels used to communicate with
-> them.
-
-Yes.
-
-Dan
-
-> Comments?
-> 
-> 					-Alex
-
+> IMA will need to verify a PKCS#7 signature which has already been parsed.
+> For this reason, factor out the code which does that from
+> verify_pkcs7_signature() into a new function which takes a struct
+> pkcs7_message instead of a data buffer.
+>
+> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+> Cc: David Howells <dhowells@redhat.com>
+> Cc: David Woodhouse <dwmw2@infradead.org>
+> Cc: Herbert Xu <herbert@gondor.apana.org.au>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> ---
+>  certs/system_keyring.c       | 61 ++++++++++++++++++++++++++----------
+>  include/linux/verification.h | 10 ++++++
+>  2 files changed, 55 insertions(+), 16 deletions(-)
+>
+> diff --git a/certs/system_keyring.c b/certs/system_keyring.c
+> index c05c29ae4d5d..4ba82e52e4b4 100644
+> --- a/certs/system_keyring.c
+> +++ b/certs/system_keyring.c
+> @@ -194,33 +194,27 @@ late_initcall(load_system_certificate_list);
+>  #ifdef CONFIG_SYSTEM_DATA_VERIFICATION
+>
+>  /**
+> - * verify_pkcs7_signature - Verify a PKCS#7-based signature on system data.
+> + * verify_pkcs7_message_sig - Verify a PKCS#7-based signature on system data.
+>   * @data: The data to be verified (NULL if expecting internal data).
+>   * @len: Size of @data.
+> - * @raw_pkcs7: The PKCS#7 message that is the signature.
+> - * @pkcs7_len: The size of @raw_pkcs7.
+> + * @pkcs7: The PKCS#7 message that is the signature.
+>   * @trusted_keys: Trusted keys to use (NULL for builtin trusted keys only,
+>   *					(void *)1UL for all trusted keys).
+>   * @usage: The use to which the key is being put.
+>   * @view_content: Callback to gain access to content.
+>   * @ctx: Context for callback.
+>   */
+> -int verify_pkcs7_signature(const void *data, size_t len,
+> -			   const void *raw_pkcs7, size_t pkcs7_len,
+> -			   struct key *trusted_keys,
+> -			   enum key_being_used_for usage,
+> -			   int (*view_content)(void *ctx,
+> -					       const void *data, size_t len,
+> -					       size_t asn1hdrlen),
+> -			   void *ctx)
+> +int verify_pkcs7_message_sig(const void *data, size_t len,
+> +			     struct pkcs7_message *pkcs7,
+> +			     struct key *trusted_keys,
+> +			     enum key_being_used_for usage,
+> +			     int (*view_content)(void *ctx,
+> +						 const void *data, size_t len,
+> +						 size_t asn1hdrlen),
+> +			     void *ctx)
+>  {
+> -	struct pkcs7_message *pkcs7;
+>  	int ret;
+>
+> -	pkcs7 = pkcs7_parse_message(raw_pkcs7, pkcs7_len);
+> -	if (IS_ERR(pkcs7))
+> -		return PTR_ERR(pkcs7);
+> -
+>  	/* The data should be detached - so we need to supply it. */
+>  	if (data && pkcs7_supply_detached_data(pkcs7, data, len) < 0) {
+>  		pr_err("PKCS#7 signature with non-detached data\n");
+> @@ -273,6 +267,41 @@ int verify_pkcs7_signature(const void *data, size_t len,
+>  	}
+>
+>  error:
+> +	pr_devel("<==%s() = %d\n", __func__, ret);
+> +	return ret;
+> +}
+> +
+> +/**
+> + * verify_pkcs7_signature - Verify a PKCS#7-based signature on system data.
+> + * @data: The data to be verified (NULL if expecting internal data).
+> + * @len: Size of @data.
+> + * @raw_pkcs7: The PKCS#7 message that is the signature.
+> + * @pkcs7_len: The size of @raw_pkcs7.
+> + * @trusted_keys: Trusted keys to use (NULL for builtin trusted keys only,
+> + *					(void *)1UL for all trusted keys).
+> + * @usage: The use to which the key is being put.
+> + * @view_content: Callback to gain access to content.
+> + * @ctx: Context for callback.
+> + */
+> +int verify_pkcs7_signature(const void *data, size_t len,
+> +			   const void *raw_pkcs7, size_t pkcs7_len,
+> +			   struct key *trusted_keys,
+> +			   enum key_being_used_for usage,
+> +			   int (*view_content)(void *ctx,
+> +					       const void *data, size_t len,
+> +					       size_t asn1hdrlen),
+> +			   void *ctx)
+> +{
+> +	struct pkcs7_message *pkcs7;
+> +	int ret;
+> +
+> +	pkcs7 = pkcs7_parse_message(raw_pkcs7, pkcs7_len);
+> +	if (IS_ERR(pkcs7))
+> +		return PTR_ERR(pkcs7);
+> +
+> +	ret = verify_pkcs7_message_sig(data, len, pkcs7, trusted_keys, usage,
+> +				       view_content, ctx);
+> +
+>  	pkcs7_free_message(pkcs7);
+>  	pr_devel("<==%s() = %d\n", __func__, ret);
+>  	return ret;
+> diff --git a/include/linux/verification.h b/include/linux/verification.h
+> index 018fb5f13d44..5e1d41f2b336 100644
+> --- a/include/linux/verification.h
+> +++ b/include/linux/verification.h
+> @@ -36,6 +36,7 @@ extern const char *const key_being_used_for[NR__KEY_BEING_USED_FOR];
+>  #ifdef CONFIG_SYSTEM_DATA_VERIFICATION
+>
+>  struct key;
+> +struct pkcs7_message;
+>
+>  extern int verify_pkcs7_signature(const void *data, size_t len,
+>  				  const void *raw_pkcs7, size_t pkcs7_len,
+> @@ -45,6 +46,15 @@ extern int verify_pkcs7_signature(const void *data, size_t len,
+>  						      const void *data, size_t len,
+>  						      size_t asn1hdrlen),
+>  				  void *ctx);
+> +extern int verify_pkcs7_message_sig(const void *data, size_t len,
+> +				    struct pkcs7_message *pkcs7,
+> +				    struct key *trusted_keys,
+> +				    enum key_being_used_for usage,
+> +				    int (*view_content)(void *ctx,
+> +							const void *data,
+> +							size_t len,
+> +							size_t asn1hdrlen),
+> +				    void *ctx);
+>
+>  #ifdef CONFIG_SIGNED_PE_FILE_VERIFICATION
+>  extern int verify_pefile_signature(const void *pebuf, unsigned pelen,
