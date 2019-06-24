@@ -2,264 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EABC509AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 13:23:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A655250994
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 13:16:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729599AbfFXLXH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 07:23:07 -0400
-Received: from mail-eopbgr10057.outbound.protection.outlook.com ([40.107.1.57]:63393
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        id S1729599AbfFXLQe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 07:16:34 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:19064 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727722AbfFXLXH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 07:23:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector2-armh-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NU5RfhzATYnNtEbzdJMlg5nJO49fQr6OkPY21klfCjA=;
- b=ODw6DWkrXfKmQzJie9qkjHYISE1j07zlDFs45LObIu6PhdoWNBdp9d2X6urbGNDWZlG+xqAmY90HadbrqbD04LZPF5zDlqATIjcZnI2cpk5iUoDQBHB2H6hgXX3xbcpfLgO/rzOk2c/dFc1GJ0u8YRZ4csCgVFG9FVW0K8Es+jk=
-Received: from VI1PR08MB3696.eurprd08.prod.outlook.com (20.178.13.156) by
- VI1PR08MB5293.eurprd08.prod.outlook.com (20.178.126.208) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2008.16; Mon, 24 Jun 2019 11:23:03 +0000
-Received: from VI1PR08MB3696.eurprd08.prod.outlook.com
- ([fe80::f00e:b5de:6aa:4a64]) by VI1PR08MB3696.eurprd08.prod.outlook.com
- ([fe80::f00e:b5de:6aa:4a64%6]) with mapi id 15.20.2008.014; Mon, 24 Jun 2019
- 11:23:03 +0000
-From:   Brian Starkey <Brian.Starkey@arm.com>
-To:     Daniel Vetter <daniel@ffwll.ch>
-CC:     Raymond Smith <Raymond.Smith@arm.com>,
-        "maarten.lankhorst@linux.intel.com" 
-        <maarten.lankhorst@linux.intel.com>,
-        "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>,
-        "sean@poorly.run" <sean@poorly.run>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "yuq825@gmail.com" <yuq825@gmail.com>,
-        Ayan Halder <Ayan.Halder@arm.com>,
-        "malidp@foss.arm.com" <malidp@foss.arm.com>, nd <nd@arm.com>
-Subject: Re: [PATCH] drm/fourcc: Add Arm 16x16 block modifier
-Thread-Topic: [PATCH] drm/fourcc: Add Arm 16x16 block modifier
-Thread-Index: AQHVKBsKBvRwqAaS30eXmbt21cTJQqamO1MAgART94CAAAdigIAAF3uA
-Date:   Mon, 24 Jun 2019 11:23:02 +0000
-Message-ID: <20190624112301.dmczf2vofxnpzqqi@DESKTOP-E1NTVVP.localdomain>
-References: <1561112433-5308-1-git-send-email-raymond.smith@arm.com>
- <CAKMK7uEjh+GrSy5AgbVLVQd1S5oJ8KFiWEUmxtMMVdcMSBtdCQ@mail.gmail.com>
- <20190624093233.73f3tcshewlbogli@DESKTOP-E1NTVVP.localdomain>
- <CAKMK7uG02qAqH8MMpE6kzRO99HTjnadTFDrY1vVr9RmAiFPvJA@mail.gmail.com>
-In-Reply-To: <CAKMK7uG02qAqH8MMpE6kzRO99HTjnadTFDrY1vVr9RmAiFPvJA@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: NeoMutt/20180716-849-147d51-dirty
-x-originating-ip: [217.140.106.55]
-x-clientproxiedby: LNXP265CA0064.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:5d::28) To VI1PR08MB3696.eurprd08.prod.outlook.com
- (2603:10a6:803:b6::28)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Brian.Starkey@arm.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: e896d14c-d1c6-423e-c665-08d6f8965226
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR08MB5293;
-x-ms-traffictypediagnostic: VI1PR08MB5293:
-x-ms-exchange-purlcount: 1
-nodisclaimer: True
-x-microsoft-antispam-prvs: <VI1PR08MB5293E22A088CA5422852CB99F0E00@VI1PR08MB5293.eurprd08.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:3826;
-x-forefront-prvs: 007814487B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(376002)(366004)(396003)(136003)(39860400002)(199004)(189003)(229853002)(7736002)(305945005)(2906002)(1076003)(81166006)(8676002)(81156014)(8936002)(71190400001)(71200400001)(4326008)(68736007)(66556008)(66476007)(66066001)(73956011)(5660300002)(86362001)(64756008)(66446008)(66946007)(25786009)(478600001)(44832011)(6306002)(386003)(6506007)(99286004)(6512007)(76176011)(9686003)(53546011)(486006)(256004)(6916009)(6436002)(6246003)(53386004)(6486002)(11346002)(476003)(14444005)(52116002)(6116002)(3846002)(53936002)(58126008)(316002)(54906003)(102836004)(186003)(26005)(966005)(72206003)(14454004)(446003)(587094005);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR08MB5293;H:VI1PR08MB3696.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: arm.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 8FW0NZ9y6DT6mP22xdeO1UwP5wZKwoHwrPzA3kIBrcYKLCUz9LAnWsYnRN1yIbIbyovBsdbfADjjbInMVU41y8zV6y/PPzEewTiojcJUtrWrZCmiEdFB99eR97iAG+AqUQnh9GEoebWYMQynca9XgKnNAD0cI3f1IRRgOYI/pwxLg1e6mtvP6Bk1AYMnqOQFs/2Lgt+5PUeZSJNG6hiLv0L919r8VVUiKd8ktDpGuJMa0gHgQ6L2Iy4hSQeQssbES1vnD1GpqREAeKJS3IOy4V2QcMWuxayZWNcudk4sGhWcDPhpbJSVmo8v5nCwiP54BN1Y9mYfElQO77CJnur9IFzobTll/f9xeZ1tAZDl/8T0JnMyt7rRKVmPYLaYbqmjBGGpau6bhjlf3BnM1cBZYZo37VyJc+ZmtOvXti3DtjQ=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <EE26A5E2E77051458B19FA94DBC13C81@eurprd08.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        id S1727953AbfFXLQd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 07:16:33 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 722C6F7675D79B1559C7;
+        Mon, 24 Jun 2019 19:16:29 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
+ 14.3.439.0; Mon, 24 Jun 2019 19:16:22 +0800
+From:   Mao Wenan <maowenan@huawei.com>
+To:     <airlied@linux.ie>, <daniel@ffwll.ch>, <alexander.deucher@amd.com>,
+        <christian.koenig@amd.com>, <David1.Zhou@amd.com>,
+        <dan.carpenter@oracle.com>, <julia.lawall@lip6.fr>
+CC:     <kernel-janitors@vger.kernel.org>, <amd-gfx@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>, <jonathan.kim@amd.com>,
+        Mao Wenan <maowenan@huawei.com>
+Subject: [PATCH -next v4] drm/amdgpu: return 'ret' immediately if failed in amdgpu_pmu_init
+Date:   Mon, 24 Jun 2019 19:23:18 +0800
+Message-ID: <20190624112318.149299-1-maowenan@huawei.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190624094850.GQ18776@kadam>
+References: <20190624094850.GQ18776@kadam>
 MIME-Version: 1.0
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e896d14c-d1c6-423e-c665-08d6f8965226
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jun 2019 11:23:02.9787
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Brian.Starkey@arm.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR08MB5293
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 11:58:59AM +0200, Daniel Vetter wrote:
-> On Mon, Jun 24, 2019 at 11:32 AM Brian Starkey <Brian.Starkey@arm.com> wr=
-ote:
-> >
-> > Hi Daniel,
-> >
-> > On Fri, Jun 21, 2019 at 05:27:00PM +0200, Daniel Vetter wrote:
-> > > On Fri, Jun 21, 2019 at 12:21 PM Raymond Smith <Raymond.Smith@arm.com=
-> wrote:
-> > > >
-> > > > Add the DRM_FORMAT_MOD_ARM_16X16_BLOCK_U_INTERLEAVED modifier to
-> > > > denote the 16x16 block u-interleaved format used in Arm Utgard and
-> > > > Midgard GPUs.
-> > > >
-> > > > Signed-off-by: Raymond Smith <raymond.smith@arm.com>
-> > > > ---
-> > > >  include/uapi/drm/drm_fourcc.h | 10 ++++++++++
-> > > >  1 file changed, 10 insertions(+)
-> > > >
-> > > > diff --git a/include/uapi/drm/drm_fourcc.h b/include/uapi/drm/drm_f=
-ourcc.h
-> > > > index 3feeaa3..8ed7ecf 100644
-> > > > --- a/include/uapi/drm/drm_fourcc.h
-> > > > +++ b/include/uapi/drm/drm_fourcc.h
-> > > > @@ -743,6 +743,16 @@ extern "C" {
-> > > >  #define AFBC_FORMAT_MOD_BCH     (1ULL << 11)
-> > > >
-> > > >  /*
-> > > > + * Arm 16x16 Block U-Interleaved modifier
-> > > > + *
-> > > > + * This is used by Arm Mali Utgard and Midgard GPUs. It divides th=
-e image
-> > > > + * into 16x16 pixel blocks. Blocks are stored linearly in order, b=
-ut pixels
-> > > > + * in the block are reordered.
-> > > > + */
-> > > > +#define DRM_FORMAT_MOD_ARM_16X16_BLOCK_U_INTERLEAVED \
-> > > > +       fourcc_mod_code(ARM, ((1ULL << 55) | 1))
-> > >
-> > > This seems to be an extremely random pick for a new number. What's th=
-e
-> > > thinking here? Aside from "doesnt match any of the afbc combos" ofc.
-> > > If you're already up to having thrown away 55bits, then it's not goin=
-g
-> > > to last long really :-)
-> > >
-> > > I think a good idea would be to reserve a bunch of the high bits as
-> > > some form of index (afbc would get index 0 for backwards compat). And
-> > > then the lower bits would be for free use for a given index/mode. And
-> > > the first mode is probably an enumeration, where possible modes simpl=
-e
-> > > get enumerated without further flags or anything.
-> >
-> > Yup, that's the plan:
-> >
-> >         (0 << 55): AFBC
-> >         (1 << 55): This "non-category" for U-Interleaved
-> >         (1 << 54): Whatever the next category is
-> >         (3 << 54): Whatever comes after that
-> >         (1 << 53): Maybe we'll get here someday
->=20
-> Uh, so the index would be encoded with least-significant bit first,
-> starting from bit55 downwards?=20
+There is one warning:
+drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c: In function ‘amdgpu_pmu_init’:
+drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c:249:6: warning: variable ‘ret’ set but not used [-Wunused-but-set-variable]
+  int ret = 0;
+      ^
+amdgpu_pmu_init() is called by amdgpu_device_init() in drivers/gpu/drm/amd/amdgpu/amdgpu_device.c,
+which will use the return value. So it should return 'ret' immediately if init_pmu_by_type() failed.
+amdgpu_device_init()
+	r = amdgpu_pmu_init(adev);
 
-Yeah.
+Fixes: 9c7c85f7ea1f ("drm/amdgpu: add pmu counters")
 
-> Clever idea, but I think this needs a
-> macro (or at least a comment). Not sure there's a ready-made bitmask
-> mirror function for this stuff, works case we can hand-code it and
-> extend every time we need one more bit encoded. Something like:
->=20
-> MIRROR_U32((u & (BIT(0)) << 31 | (u & BIT(1) << 30 | ...)
->=20
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ v1->v2: change the subject for this patch; change the indenting when it calls init_pmu_by_type; use the value 'ret' in
+ amdgpu_pmu_init().
+ v2->v3: change the subject for this patch; return 'ret' immediately if failed to call init_pmu_by_type(). 
+ v3->v4: delete the indenting for init_pmu_by_type() arguments. The original indenting is correct.
 
-Is it really worth it? People can just use the definitions as written
-in drm_fourcc.h. I agree that we should have the high bits described
-in a comment though.
+ drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> And then shift that to the correct place. Probably want an
->=20
-> ARM_MODIFIER_ENCODE(space_idx, flags) macro which assembles everything.
->=20
-> >         ...
-> >
-> > I didn't want to explicitly reserve some high bits, because we've no
-> > idea how many to reserve. This way, we can assign exactly as many
-> > high bits as we need, when we need them. If any of the "modes" start
-> > encroaching towards the high bits, we'll have to make a decision at
-> > that point.
-> >
-> > Also, this is the only U-Interleaved format (that I know of), so it's
-> > not worth calling bit 55 "The U-Interleaved bit" because that would be
-> > a waste of space. It's more like the "misc" bit, but that's not a
-> > useful name to enshrine in UAPI.
->=20
-> Yeah that's what I meant. Also better to explicitly reserve this, i.e.
->=20
-> #define ARM_FBC_MODIFIER_SPACE 0
-> #define ARM_MISC_MODIFIER_SPACE 1
->=20
-> and then encode with the mirror trickery.
->=20
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
+index 0e6dba9f60f0..c98cf77a37f3 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
+@@ -254,6 +254,8 @@ int amdgpu_pmu_init(struct amdgpu_device *adev)
+ 		ret = init_pmu_by_type(adev, df_v3_6_attr_groups,
+ 				       "DF", "amdgpu_df", PERF_TYPE_AMDGPU_DF,
+ 				       DF_V3_6_MAX_COUNTERS);
++		if (ret)
++			return ret;
+ 
+ 		/* other pmu types go here*/
+ 		break;
+-- 
+2.20.1
 
-I don't really see the value in that either, it's just giving
-userspace the opportunity to depend on more stuff: more future
-headaches. So long as the 64-bit values are stable, that should be
-enough.
-
-> > Note that isn't the same as the "not-AFBC bit", because we may well
-> > have something in the future which is neither AFBC nor "misc".
-> >
-> > We've been very careful in our code to enforce all
-> > undefined/unrecognised bits to be zero, to ensure that this works.
-> >
-> > >
-> > > The other bit: Would be real good to define the format a bit more
-> > > precisely, including the layout within the tile.
-> >
-> > It's U-Interleaved, obviously ;-)
->=20
-> :-) I mean full code exists in panfrost/lima, so this won't change
-> anything really ...
-
-Yeah, so for us to provide a more detailed description would require
-another lengthy loop through our legal approval process, and I'm not
-sure we can make a strong business case (which is what we need) for
-why this is needed.
-
-Of course, if someone happens to know the layout and wants to
-contribute to this file... Then I don't know how ack/r-b would work in
-that case, but I imagine the subsystem maintainer(s) might take issue
-with us attempting to block that contribution.
-
-Thanks,
--Brian
-
->=20
-> Cheers, Daniel
->=20
-> >
-> > -Brian
-> >
-> > >
-> > > Also ofc needs acks from lima/panfrost people since I assume they'll
-> > > be using this, too.
-> > >
-> > > Thanks, Daniel
-> > >
-> > > > +
-> > > > +/*
-> > > >   * Allwinner tiled modifier
-> > > >   *
-> > > >   * This tiling mode is implemented by the VPU found on all Allwinn=
-er platforms,
-> > > > --
-> > > > 2.7.4
-> > > >
-> > >
-> > >
-> > > --
-> > > Daniel Vetter
-> > > Software Engineer, Intel Corporation
-> > > +41 (0) 79 365 57 48 - http://blog.ffwll.ch
->=20
->=20
->=20
-> --=20
-> Daniel Vetter
-> Software Engineer, Intel Corporation
-> +41 (0) 79 365 57 48 - http://blog.ffwll.ch
