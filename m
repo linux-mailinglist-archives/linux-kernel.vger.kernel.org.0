@@ -2,152 +2,192 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1C3250EDD
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 16:43:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 639E550EEB
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 16:44:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730274AbfFXOnO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 10:43:14 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:38301 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727851AbfFXOnL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 10:43:11 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20190624144310euoutp0180b0a974c27f5f25241be2563823e4ec~rKY8PH_TD0561705617euoutp01Z
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 14:43:10 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20190624144310euoutp0180b0a974c27f5f25241be2563823e4ec~rKY8PH_TD0561705617euoutp01Z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1561387390;
-        bh=S9RCnb2EVI6dRCJRJYmUfdHCAyIzmct1AhV9SunnKk0=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=rct59tpOa5d4WE7YUzWSyZP2IUdvnCGW9tJzc2cxSuqgDx89a19ygpjJ8zTuNl+Wf
-         VN0z4hSeU3pOki2eRQBrTAnmq8bvENKSb+dtPEWYHRaiEgmofBAUl4kuOHwZYki7oU
-         4/y+kzMvFx0u5Nt7g6RAHYtQ5EoM92oCpZpC/rFg=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20190624144309eucas1p147e0e2e352967d2c14d71328663aa099~rKY7Z0__f0229402294eucas1p1c;
-        Mon, 24 Jun 2019 14:43:09 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 7B.97.04298.C71E01D5; Mon, 24
-        Jun 2019 15:43:09 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20190624144308eucas1p118fe74e266dd911ab02c2c47011e7db0~rKY6WWa1E0229902299eucas1p1t;
-        Mon, 24 Jun 2019 14:43:08 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20190624144307eusmtrp26434c8a6912fa4bf1339ac9d5114b1b1~rKY6ILf-e3216732167eusmtrp2Q;
-        Mon, 24 Jun 2019 14:43:07 +0000 (GMT)
-X-AuditID: cbfec7f2-f2dff700000010ca-3f-5d10e17cf279
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id BB.7E.04140.B71E01D5; Mon, 24
-        Jun 2019 15:43:07 +0100 (BST)
-Received: from [106.120.51.74] (unknown [106.120.51.74]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20190624144307eusmtip176915b64526e17b7dd8bb86f57086396~rKY5lnUDV1498914989eusmtip1A;
-        Mon, 24 Jun 2019 14:43:07 +0000 (GMT)
-Subject: Re: [PATCH 2/4] drm/rockchip: Enable DRM InfoFrame support on
- RK3328 and RK3399
-To:     Jonas Karlman <jonas@kwiboo.se>,
-        "Laurent.pinchart@ideasonboard.com" 
-        <Laurent.pinchart@ideasonboard.com>
-Cc:     "jernej.skrabec@siol.net" <jernej.skrabec@siol.net>,
-        "narmstrong@baylibre.com" <narmstrong@baylibre.com>,
-        "khilman@baylibre.com" <khilman@baylibre.com>,
-        "zhengyang@rock-chips.com" <zhengyang@rock-chips.com>,
-        "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>,
-        "wens@csie.org" <wens@csie.org>,
-        "hjc@rock-chips.com" <hjc@rock-chips.com>,
-        "heiko@sntech.de" <heiko@sntech.de>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From:   Andrzej Hajda <a.hajda@samsung.com>
-Message-ID: <9fb2998c-dc8f-6ec1-2a87-ce7298fa966e@samsung.com>
-Date:   Mon, 24 Jun 2019 16:43:06 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.7.0
+        id S1729443AbfFXOot (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 10:44:49 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:56317 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729109AbfFXOot (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 10:44:49 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45XXBP2K0pz9s6w;
+        Tue, 25 Jun 2019 00:44:44 +1000 (AEST)
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     oss-security@lists.openwall.com
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        linuxppc-users@lists.ozlabs.org
+Subject: CVE-2019-12817: Linux kernel: powerpc: Unrelated processes may be able to read/write to each other's virtual memory
+Date:   Tue, 25 Jun 2019 00:44:31 +1000
+Message-ID: <87lfxr82ls.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-In-Reply-To: <VI1PR03MB42062F51FD88AEB6DADD8734AC1C0@VI1PR03MB4206.eurprd03.prod.outlook.com>
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA01SbUhTYRj13b3brsvJ67T2sNJoEFSWSwi6fSAJ/bg/JIQgLBNdeVPLTdnS
-        MpMCv7VsalLNnFMcaWrKcpaCGEsyTTEtc7NIS6HMtEhnaJh5vUr+O8855znveeClCNlboYKK
-        015kdVp1vFIkIZtfzPftSfuEI/baUum3rh8ieunzpJAuK0qjB39PEHTX90GSns9uEtC5hVVi
-        +k3rfRE9OtGOaHtBOD1v7xPQDRmqIx7MD0emmDHVpTKNn2uFTGnOPSHz0jAgYEbyOwXMorGd
-        ZJ7dLCaZJ+9MBDNj9QuVnJIcjmbj45JZnSooShJb4fpCJhokl/OyesTXUQuVh9wpwPtgvKQe
-        5SEJJcPVCEatk0J+mEXwKGdOxA8zCAx2m2htZbrsI8kLDxAsmWfEnCDDUwjGRpYFivLGp6Ci
-        dTtH+2AtlC+aViwENpBQMxfCYRHeCYuPnSuZUhwEfbVZBLdK4u3QWLeDozfiMJhtsSLe4gVd
-        98ZJDrvjCLBULRB85FZIt5WuYjkMj5cLuGqAXWJ41GtDXCbgo9A/rOHre8O3ziYxj7fAUgvn
-        5/A1GKnOIPjdHAS2xhaCFw7B885+IZdDLHduaFXxdDBk/J4j+HhPcEx58RU8oaj5ziothZws
-        Ge/eBiO9ttVAOVheu0QGpDSuO8y47hjjumOM/981I/IhkrNJek0Mqw/UspcC9GqNPkkbE3A2
-        QWNFy3/t1d/OX0+Ra+CMHWEKKT2k5g4cIROqk/UpGjsCilD6SC3qZUoarU65wuoSInVJ8aze
-        jjZTpFIuTXUbDZfhGPVF9gLLJrK6NVVAuSuuI6l7Sb/zbpeyPNFpREmnVTVBm/x7TkYd72qL
-        fp/84Vh3bemC7/mhjman753M+hCTs7UoN78+/WrRLfPsXN8QjFWO3o48HvJ1b+FJy8E63w24
-        6dz0nxu6sND7PgpFqMnR4Iiq/MmGuNmDD6QXJ4dmm/1UQ/77C4Z2p1w70TbcbZMoSX2sOnAX
-        odOr/wFFEgb5ZwMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrDIsWRmVeSWpSXmKPExsVy+t/xu7rVDwViDU48M7W48vU9m8X/R69Z
-        LeZOqrW4+v0ls8XJN1dZLH62b2Gy6Jy4hN3i8q45bBYPXu5ntDjUF23x89B5Jov1LfoOPB7v
-        b7Sye8xbU+2x4dFqVo/ZHTNZPU5MuMTkcb/7OJPH31n7WTwO9E5m8dh+bR6zx+dNcgFcUXo2
-        RfmlJakKGfnFJbZK0YYWRnqGlhZ6RiaWeobG5rFWRqZK+nY2Kak5mWWpRfp2CXoZC78+ZymY
-        wFXR1XaGvYFxJ0cXIyeHhICJxLu591i6GLk4hASWMkqc7JnPApEQl9g9/y0zhC0s8edaFxtE
-        0WtGiddn77KBJIQFoiQ23t/FCmKLCORJzLo9B6yIWWACi8S+vU+gOpqZJB7vaGACqWIT0JT4
-        u/kmWDevgJ3E+dVtQCs4OFgEVCU2rNEACYsKREjM3tXAAlEiKHFy5hMwm1MgVmLpkl9gFzEL
-        qEv8mXcJypaXaN46G8oWl7j1ZD7TBEahWUjaZyFpmYWkZRaSlgWMLKsYRVJLi3PTc4uN9IoT
-        c4tL89L1kvNzNzECY3rbsZ9bdjB2vQs+xCjAwajEw7vgiECsEGtiWXFl7iFGCQ5mJRHepYlA
-        Id6UxMqq1KL8+KLSnNTiQ4ymQL9NZJYSTc4Hppu8knhDU0NzC0tDc2NzYzMLJXHeDoGDMUIC
-        6YklqdmpqQWpRTB9TBycUg2M9bLKPVF8clPYuK/svtgiZrqC49LpR5mVcfolh+4L+pmoz03i
-        mpDaue4kd+Dmb3rrebbG9lulV7zo8DLMmp4+R0hAYt7paZOseA6HPXqcPauu+fAznvOXGCXc
-        nD+eV36YFbxTZ8Fjc4/WzwcarVdf05tYo8cvxLPajO9A1YzJofGsgozNMaxKLMUZiYZazEXF
-        iQC3tcyY/wIAAA==
-X-CMS-MailID: 20190624144308eucas1p118fe74e266dd911ab02c2c47011e7db0
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20190526212010epcas2p4c6d5ea6f812959585fcc55d2bf04ad3c
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20190526212010epcas2p4c6d5ea6f812959585fcc55d2bf04ad3c
-References: <VI1PR03MB420621617DDEAB3596700DE0AC1C0@VI1PR03MB4206.eurprd03.prod.outlook.com>
-        <CGME20190526212010epcas2p4c6d5ea6f812959585fcc55d2bf04ad3c@epcas2p4.samsung.com>
-        <VI1PR03MB42062F51FD88AEB6DADD8734AC1C0@VI1PR03MB4206.eurprd03.prod.outlook.com>
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26.05.2019 23:20, Jonas Karlman wrote:
-> This patch enables Dynamic Range and Mastering InfoFrame on RK3328 and RK3399.
->
-> Cc: Sandy Huang <hjc@rock-chips.com>
-> Cc: Heiko Stuebner <heiko@sntech.de>
-> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+--=-=-=
+Content-Type: text/plain
 
- --
-Regards
-Andrzej
-> ---
->  drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c b/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
-> index 4cdc9f86c2e5..1f31f3726f04 100644
-> --- a/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
-> +++ b/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
-> @@ -405,6 +405,7 @@ static const struct dw_hdmi_plat_data rk3328_hdmi_drv_data = {
->  	.phy_ops = &rk3328_hdmi_phy_ops,
->  	.phy_name = "inno_dw_hdmi_phy2",
->  	.phy_force_vendor = true,
-> +	.drm_infoframe = true,
->  };
->  
->  static struct rockchip_hdmi_chip_data rk3399_chip_data = {
-> @@ -419,6 +420,7 @@ static const struct dw_hdmi_plat_data rk3399_hdmi_drv_data = {
->  	.cur_ctr    = rockchip_cur_ctr,
->  	.phy_config = rockchip_phy_config,
->  	.phy_data = &rk3399_chip_data,
-> +	.drm_infoframe = true,
->  };
->  
->  static const struct of_device_id dw_hdmi_rockchip_dt_ids[] = {
+The Linux kernel for powerpc since 4.17 has a bug where unrelated processes may
+be able to read/write to each other's virtual memory under certain conditions.
+
+This bug only affects machines using 64-bit CPUs with the hash page table MMU,
+see below for more detail on affected CPUs.
+
+To trigger the bug a process must allocate memory above 512TB. That only happens
+if userspace explicitly requests it with mmap(). That process must then fork(),
+at this point the child incorrectly inherits the "context id" of the parent
+associated with the mapping above 512TB. It may then be possible for the
+parent/child to write to each other's mappings above 512TB, which should not be
+possible, and constitutes memory corruption.
+
+If instead the child process exits, all its context ids are freed, including the
+context id that is still in use by the parent for the mapping above 512TB. That
+id can then be reallocated to a third process, that process can then read/write
+to the parent's mapping above 512TB. Additionally if the freed id is used for
+the third process's primary context id, then the parent is able to read/write to
+the third process's mappings *below* 512TB.
+
+If the parent and child both exit before another process is allocated the freed
+context id, the kernel will notice the double free of the id and print a warning
+such as:
+
+  ida_free called for id=103 which is not allocated.
+  WARNING: CPU: 8 PID: 7293 at lib/idr.c:520 ida_free_rc+0x1b4/0x1d0
+
+The bug was introduced in commit:
+  f384796c40dc ("powerpc/mm: Add support for handling > 512TB address in SLB miss")
+
+Which was originally merged in v4.17.
+
+Only machines using the hash page table (HPT) MMU are affected, eg. PowerPC 970
+(G5), PA6T, Power5/6/7/8/9. By default Power9 bare metal machines (powernv) use
+the Radix MMU and are not affected, unless the machine has been explicitly
+booted in HPT mode (using disable_radix on the kernel command line). KVM guests
+on Power9 may be affected if the host or guest is configured to use the HPT MMU.
+LPARs under PowerVM on Power9 are affected as they always use the HPT MMU.
+Kernels built with PAGE_SIZE=4K are not affected.
+
+The upstream fix is here:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=ca72d88378b2f2444d3ec145dd442d449d3fefbc
+
+There's also a kernel selftest to verify the fix:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=16391bfc862342f285195013b73c1394fab28b97
+
+Or a similar standalone version is included below.
+
+cheers
 
 
+cat > test.c <<EOF
+#undef NDEBUG
+
+#include <assert.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/mman.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
+
+#ifndef MAP_FIXED_NOREPLACE
+#define MAP_FIXED_NOREPLACE	MAP_FIXED	// "Should be safe" above 512TB
+#endif
+
+int main(void)
+{
+	int p2c[2], c2p[2], rc, status, c, *p;
+	unsigned long page_size;
+	pid_t pid;
+
+	page_size = sysconf(_SC_PAGESIZE);
+	if (page_size != 65536) {
+		printf("Unsupported page size - not affected\n");
+		return 1;
+	}
+
+	// Create a mapping at 512TB to allocate an extended_id
+	p = mmap((void *)(512ul << 40), page_size, PROT_READ | PROT_WRITE,
+		MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED_NOREPLACE, -1, 0);
+	if (p == MAP_FAILED) {
+		perror("mmap");
+		printf("Error: couldn't mmap(), confirm kernel has 4TB support\n");
+		return 1;
+	}
+
+	printf("parent writing %p = 1\n", p);
+	*p = 1;
+
+	assert(pipe(p2c) != -1 && pipe(c2p) != -1);
+
+	pid = fork();
+	if (pid == 0) {
+		close(p2c[1]);
+		close(c2p[0]);
+		assert(read(p2c[0], &c, 1) == 1);
+
+		pid = getpid();
+		printf("child writing  %p = %d\n", p, pid);
+		*p = pid;
+
+		assert(write(c2p[1], &c, 1) == 1);
+		assert(read(p2c[0], &c, 1) == 1);
+		exit(0);
+	}
+	close(p2c[0]);
+	close(c2p[1]);
+
+	c = 0;
+	assert(write(p2c[1], &c, 1) == 1);
+	assert(read(c2p[0], &c, 1) == 1);
+
+	// Prevent compiler optimisation
+	asm volatile("" : : : "memory");
+
+	rc = 0;
+	printf("parent reading %p = %d\n", p, *p);
+	if (*p != 1) {
+		printf("Error: BUG! parent saw child's write! *p = %d\n", *p);
+		rc = 1;
+	}
+
+	assert(write(p2c[1], &c, 1) == 1);
+	assert(waitpid(pid, &status, 0) != -1);
+	assert(WIFEXITED(status) && WEXITSTATUS(status) == 0);
+
+	if (rc == 0)
+		printf("success: test completed OK\n");
+
+	return rc;
+}
+EOF
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEJFGtCPCthwEv2Y/bUevqPMjhpYAFAl0Q4c8ACgkQUevqPMjh
+pYBBARAAqM95nzwHVCnSIMUqAqRSuLV3UOx4KxNylmdSu3ig42AgS75KeCYyBKuT
+q8bXq4sSKS5mZAp42/YgaIQpBtv8nOGutMSivZEJmMNnL3riEd7bT63BOw8EnA20
+ryhXsqf504anqzPXYv7P5xKeoQjEbK7MhuaN9d86erot/6cWh7tCcIF0SdiPGX3W
+PLlPrptRMnPCm0QhKCZxlKPxd3qd+HPNr2RVP2bIbv+8x0fldVTR+N2+gD+a5i5p
+rLsxERpaAsPvDbQNeXN/9Wck19wx+ZQMlCxStSY+VECM2jwsXty2f93hZmQ5Nm5E
+HV+nE57IF7tI/7lrlQfQ3Xml5bhVnFXwxQhbdeZfxg5vKm8YDSB0Vu0FaA59TqK7
+ANS2VLgGZV+F0VqCkWx3mVgmJsAAKfOrTjqsQAV0zH42siyYV9AvKZDdYYOxbbkf
+ZZjol8VGh684uKxZRlHeGMBL0kztUE32FiNqrhioJfpCkNhBKPcTljfVgHdPYfzz
+ULAd4QoIUcKa4RgNN5KQgMpxajXgaLxqk8K8R566dRz1KyZnpIn41v3Mq88ApBTv
+0UQarN0AYEyWyO+YI7Q0ngFWxrrcVhA9nFMRXdIdfI581hBqtWPbvItEMFVy30fZ
+3FXzj07zCVIqm7oy21QabFaLUPAEopARj7ByxutyPJT8efdhkRc=
+=21oU
+-----END PGP SIGNATURE-----
+--=-=-=--
