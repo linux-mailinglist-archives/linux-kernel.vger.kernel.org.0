@@ -2,100 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06CF150E51
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 16:34:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE77350E97
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 16:36:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730080AbfFXOeT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 10:34:19 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:37682 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729673AbfFXOeP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 10:34:15 -0400
-Received: by mail-wr1-f68.google.com with SMTP id v14so14183825wrr.4
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 07:34:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=d9D2kEXCsPIkGCquDsjWyHOfnVyVeC30BSwHW6sKb08=;
-        b=hDTWDWPjrGB/UveU0A3qxdYyZksn4UsDLpKxijj9mG6X1s/RlMhjOrL3KYSrBb/0Hi
-         Ce70U+N/TeRlZ0PdnrQWJS6TGv5JPntOVeeYCZA8hw3WqtmwcHMUfHU0Ym3yjb9Ey0JG
-         W7v4waDSLd/z7imZ7xf5fq26Lf3SEb9OdfcSsuobwcLlOdjzOPBNJ1hvgqcgKnvmgJHk
-         sbmMAkkg+i7vj7/sxqEiIX4whYt/uN8skjCq5iudjTPOXf1GJjgZge32RrpJ/nmxp/H7
-         09/REKqecoYWySDkpY8+RaawBN9kZOwJyBVB77fPMWNWxHxLZX2cN+kZ8KZBOD9/FRHR
-         N0pQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=d9D2kEXCsPIkGCquDsjWyHOfnVyVeC30BSwHW6sKb08=;
-        b=iXKvbAo90sJ3+GEtLnc/GUFVqVLSrLnYnSYqP7znpfJxjyRKUChxocvTEZQjrJ291s
-         kyN5zPtV51HKjkwG9cgsjuaMusYNU1AUeP8vtX9KHo47lk2bG/il3FVDHDODpOf1hLoV
-         lDLVqmYHGigQwuq1K6a7ggiY0BIclXKa2m83+1Yvm2QuwbjxJWGcxZosFffh8H2fbQVR
-         +ZnKg5JDNdag6AUHPDwL3hP51s5s6Tp5+UpBdl0AcnfbIX3i3n8hvbqya49Hp00i3/5N
-         pYuDjuLdA9my4yaJmbh3t/6s4KZ9Gb1fLiknx1Lc5/IYuoW2v3OHgMSX+XgvgCMPAlC3
-         lhAA==
-X-Gm-Message-State: APjAAAUftZr68gUmBDiei/0v8hCkrPP0EW3JQU2RlWqnQBq7MqwfYiwC
-        agZ1kMORUgbTpLPX2bfDnEgZBQwW0N8=
-X-Google-Smtp-Source: APXvYqyf6M5jRi32zH996X1MpIXcWx8o4+oS1/kwbXY4rYnLxrnr8e9xEvTrzmSTdJWiNp3wQiMyNA==
-X-Received: by 2002:a5d:4843:: with SMTP id n3mr18164230wrs.77.1561386853355;
-        Mon, 24 Jun 2019 07:34:13 -0700 (PDT)
-Received: from dell ([2.27.35.164])
-        by smtp.gmail.com with ESMTPSA id r12sm12131545wrt.95.2019.06.24.07.34.12
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 24 Jun 2019 07:34:12 -0700 (PDT)
-Date:   Mon, 24 Jun 2019 15:34:11 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     torvalds@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org
-Subject: [GIT PULL v2] MFD fixes for v5.2
-Message-ID: <20190624143411.GI4699@dell>
-References: <20190617100054.GE16364@dell>
+        id S1728558AbfFXOgl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 10:36:41 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:19068 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727170AbfFXOgj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 10:36:39 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 0CD4920D55B641FA4EB3;
+        Mon, 24 Jun 2019 22:36:37 +0800 (CST)
+Received: from localhost.localdomain (10.67.212.75) by
+ DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
+ 14.3.439.0; Mon, 24 Jun 2019 22:36:27 +0800
+From:   John Garry <john.garry@huawei.com>
+To:     <xuwei5@huawei.com>
+CC:     <bhelgaas@google.com>, <linuxarm@huawei.com>,
+        <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <arnd@arndb.de>, <olof@lixom.net>,
+        John Garry <john.garry@huawei.com>
+Subject: [PATCH v2 0/6] Fixes for HiSilicon LPC driver and logical PIO code
+Date:   Mon, 24 Jun 2019 22:35:02 +0800
+Message-ID: <1561386908-31884-1-git-send-email-john.garry@huawei.com>
+X-Mailer: git-send-email 2.8.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190617100054.GE16364@dell>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+As reported in [1], the hisi-lpc driver has certain issues in handling
+logical PIO regions, specifically unregistering regions.
 
-Hopefully this is more to your liking.
+This series add a method to unregister a logical PIO region, and fixes up
+the driver to use them.
 
-The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
+RCU usage in logical PIO code looks to always have been broken, so that
+is fixed also. This is not a major fix as the list which RCU protects
+would be rarely modified.
 
-  Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
+There is another patch to simplify logical PIO registration, made possible
+by the fixes.
 
-are available in the Git repository at:
+At this point, there are still separate ongoing discussions about how to
+stop the logical PIO and PCI host bridge code leaking ranges, as in [2].
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git mfd-fixes-5.2-1
+Hopefully this series can go through the arm soc tree and the maintainers
+have no issue with that. I'm talking specifically about the logical PIO
+code, which went through PCI tree on only previous upstreaming.
 
-for you to fetch changes up to 63b2de12b7eeacfb2edbe005f5c3cff17a2a02e2:
+Cc. linux-pci@vger.kernel.org
 
-  mfd: stmfx: Fix an endian bug in stmfx_irq_handler() (2019-06-24 15:19:31 +0100)
+[1] https://lore.kernel.org/lkml/1560770148-57960-1-git-send-email-john.garry@huawei.com/
+[2] https://lore.kernel.org/lkml/4b24fd36-e716-7c5e-31cc-13da727802e7@huawei.com/
 
-----------------------------------------------------------------
- - Bug Fixes
-   - Resize variable to avoid uninitialised (MSB) data; stmfx
-   - Fixe endian bug; stmfx
+Changes since v1:
+- Add more reasoning in RCU fix patch
+- Create separate patch to change LOGIC_PIO_CPU_MMIO registration to
+  accomodate unregistration
 
-----------------------------------------------------------------
-Dan Carpenter (2):
-      mfd: stmfx: Uninitialized variable in stmfx_irq_handler()
-      mfd: stmfx: Fix an endian bug in stmfx_irq_handler()
+John Garry (6):
+  lib: logic_pio: Fix RCU usage
+  lib: logic_pio: Avoid possible overlap for unregistering regions
+  lib: logic_pio: Add logic_pio_unregister_range()
+  bus: hisi_lpc: Unregister logical PIO range to avoid potential
+    use-after-free
+  bus: hisi_lpc: Add .remove method to avoid driver unbind crash
+  lib: logic_pio: Enforce LOGIC_PIO_INDIRECT region ops are set at
+    registration
 
- drivers/mfd/stmfx.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/bus/hisi_lpc.c    | 43 +++++++++++++++++---
+ include/linux/logic_pio.h |  1 +
+ lib/logic_pio.c           | 86 +++++++++++++++++++++++++++------------
+ 3 files changed, 99 insertions(+), 31 deletions(-)
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.17.1
+
