@@ -2,127 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E4DB4FF52
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 04:26:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BF0E4FF5A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 04:27:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727117AbfFXC0J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 22:26:09 -0400
-Received: from mail-eopbgr00072.outbound.protection.outlook.com ([40.107.0.72]:32782
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726758AbfFXC0J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 22:26:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fuwY5M+LhzNtMX2fFp8HUfde8HKxnfuq2nGJMebwqwU=;
- b=a4YAHAC0xcpOdCkgp9SYHAH6PhncGSGV1mXnGE0PKHmxGXFduoWQY9JIM4axmq8ZW8MP1IfTGQGbNEfR4/Q7Q+t3zvR9iU1VEzn+i2WHQeSxc8bjPBcJ1pnyLXuTcQRlUNf5hptuEyv2jkCg/IoGod+Ua6Ikjh5+z9zzMz0PN4o=
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
- DB3PR0402MB3739.eurprd04.prod.outlook.com (52.134.67.22) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2008.16; Mon, 24 Jun 2019 02:26:05 +0000
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::3945:fcda:5bdd:8191]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::3945:fcda:5bdd:8191%4]) with mapi id 15.20.2008.014; Mon, 24 Jun 2019
- 02:26:05 +0000
-From:   Anson Huang <anson.huang@nxp.com>
-To:     Shawn Guo <shawnguo@kernel.org>
-CC:     "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will@kernel.org" <will@kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [PATCH 1/4] arm64: Enable TIMER_IMX_SYS_CTR for ARCH_MXC
+        id S1727138AbfFXC1b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 22:27:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50674 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726334AbfFXC1b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Jun 2019 22:27:31 -0400
+Received: from dragon (li1322-146.members.linode.com [45.79.223.146])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E22FF20673;
+        Mon, 24 Jun 2019 02:27:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561343250;
+        bh=ou2nDa4kNa8Pv4nkFnhiNPp3TzP3RXH/iQPlya1mB2s=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=l1Bkm9jZrS8R93bPW+8w45kq/C2uyFqIlhyY6U+jjclFujI+oqLsgfu9GIgQbspDa
+         +v8wBGNfLcygxHfHmSIsyWr2pu31FOkLi+pAgPCTtEXThDoUZcb8ons8a0WNe/gaAv
+         /xVPCMYtS1DjaV8NPq8ZJsJZACXKEDQTLd+WphCM=
+Date:   Mon, 24 Jun 2019 10:27:14 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Anson.Huang@nxp.com
+Cc:     mark.rutland@arm.com, aisheng.dong@nxp.com, peng.fan@nxp.com,
+        festevam@gmail.com, ping.bai@nxp.com, devicetree@vger.kernel.org,
+        sboyd@kernel.org, catalin.marinas@arm.com, s.hauer@pengutronix.de,
+        linux-kernel@vger.kernel.org, daniel.baluta@nxp.com,
+        linux-clk@vger.kernel.org, robh+dt@kernel.org, Linux-imx@nxp.com,
+        kernel@pengutronix.de, leonard.crestez@nxp.com, will@kernel.org,
+        mturquette@baylibre.com, linux-arm-kernel@lists.infradead.org,
+        abel.vesa@nxp.com
+Subject: Re: [PATCH 1/4] arm64: Enable TIMER_IMX_SYS_CTR for ARCH_MXC
  platforms
-Thread-Topic: [PATCH 1/4] arm64: Enable TIMER_IMX_SYS_CTR for ARCH_MXC
- platforms
-Thread-Index: AQHVJ/+7WzrDWTethU+K40MoFm49OKaqFzaAgAAA3XA=
-Date:   Mon, 24 Jun 2019 02:26:04 +0000
-Message-ID: <DB3PR0402MB39160E3867ACE054098229B8F5E00@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+Message-ID: <20190624022713.GO3800@dragon>
 References: <20190621070720.12395-1-Anson.Huang@nxp.com>
  <20190624022200.GN3800@dragon>
-In-Reply-To: <20190624022200.GN3800@dragon>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: d46b71f9-bafe-4f40-67d5-08d6f84b4f05
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DB3PR0402MB3739;
-x-ms-traffictypediagnostic: DB3PR0402MB3739:
-x-microsoft-antispam-prvs: <DB3PR0402MB37393993549361114AB166C4F5E00@DB3PR0402MB3739.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2512;
-x-forefront-prvs: 007814487B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(376002)(346002)(39860400002)(136003)(396003)(189003)(199004)(13464003)(102836004)(229853002)(256004)(6116002)(446003)(11346002)(305945005)(74316002)(7696005)(476003)(9686003)(6506007)(81166006)(81156014)(68736007)(486006)(44832011)(54906003)(66066001)(76176011)(55016002)(3846002)(7736002)(53546011)(6436002)(53936002)(2906002)(316002)(99286004)(6246003)(8936002)(4326008)(26005)(186003)(33656002)(8676002)(7416002)(25786009)(66556008)(66446008)(52536014)(73956011)(76116006)(66946007)(66476007)(64756008)(14454004)(5660300002)(86362001)(71200400001)(71190400001)(478600001)(6916009);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3739;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: upGZ5zHy7wHyBNgNGSgusdrvfpokECAdTlBCyOGj3SDwOnG/HIzSkn46DZp6TPldXqiXxQU5oZDQYAIVeVZyEfhom1MK6PgwGj9/OTbnh6KXhgrO8rIvTpO73JG1W4m54V3Do+hvdqdKp9O2V7Oq4sjt8PKnwuZLJO3XDLrllndOL2WGQIX35hWk+B1mi/USsF8upM/9+xeAZqZcMo0RkSsRLF4Q+SKCBCn71XKTFT75PTOlCBShGsd6D714lnLeCIIESM+2yloIIvZMUIpHP6SZolCOJ95S8omL8yv7g0G9ty8BpHG6Oa8wSmOrWuLfCeIwOfV6STbkAIUxfe8Y9scH67ZpM+x6V0FU+gPtmWEMYukYFwy7uR72ETm+RQDCmwSXoTXZPGHTtociXVzC3UkNKD/Bzl0KvX3pQ9G0+w8=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d46b71f9-bafe-4f40-67d5-08d6f84b4f05
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jun 2019 02:26:04.9924
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: anson.huang@nxp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3739
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190624022200.GN3800@dragon>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksIFNoYXduDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogU2hhd24g
-R3VvIDxzaGF3bmd1b0BrZXJuZWwub3JnPg0KPiBTZW50OiBNb25kYXksIEp1bmUgMjQsIDIwMTkg
-MTA6MjIgQU0NCj4gVG86IEFuc29uIEh1YW5nIDxhbnNvbi5odWFuZ0BueHAuY29tPg0KPiBDYzog
-Y2F0YWxpbi5tYXJpbmFzQGFybS5jb207IHdpbGxAa2VybmVsLm9yZzsgcm9iaCtkdEBrZXJuZWwu
-b3JnOw0KPiBtYXJrLnJ1dGxhbmRAYXJtLmNvbTsgcy5oYXVlckBwZW5ndXRyb25peC5kZTsga2Vy
-bmVsQHBlbmd1dHJvbml4LmRlOw0KPiBmZXN0ZXZhbUBnbWFpbC5jb207IG10dXJxdWV0dGVAYmF5
-bGlicmUuY29tOyBzYm95ZEBrZXJuZWwub3JnOw0KPiBMZW9uYXJkIENyZXN0ZXogPGxlb25hcmQu
-Y3Jlc3RlekBueHAuY29tPjsgQWlzaGVuZyBEb25nDQo+IDxhaXNoZW5nLmRvbmdAbnhwLmNvbT47
-IEphY2t5IEJhaSA8cGluZy5iYWlAbnhwLmNvbT47IERhbmllbCBCYWx1dGENCj4gPGRhbmllbC5i
-YWx1dGFAbnhwLmNvbT47IFBlbmcgRmFuIDxwZW5nLmZhbkBueHAuY29tPjsgQWJlbCBWZXNhDQo+
-IDxhYmVsLnZlc2FAbnhwLmNvbT47IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9y
-ZzsgbGludXgtDQo+IGtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGRldmljZXRyZWVAdmdlci5rZXJu
-ZWwub3JnOyBsaW51eC0NCj4gY2xrQHZnZXIua2VybmVsLm9yZzsgZGwtbGludXgtaW14IDxsaW51
-eC1pbXhAbnhwLmNvbT4NCj4gU3ViamVjdDogUmU6IFtQQVRDSCAxLzRdIGFybTY0OiBFbmFibGUg
-VElNRVJfSU1YX1NZU19DVFIgZm9yIEFSQ0hfTVhDDQo+IHBsYXRmb3Jtcw0KPiANCj4gT24gRnJp
-LCBKdW4gMjEsIDIwMTkgYXQgMDM6MDc6MTdQTSArMDgwMCwgQW5zb24uSHVhbmdAbnhwLmNvbSB3
-cm90ZToNCj4gPiBGcm9tOiBBbnNvbiBIdWFuZyA8QW5zb24uSHVhbmdAbnhwLmNvbT4NCj4gPg0K
-PiA+IEFSQ0hfTVhDIHBsYXRmb3JtcyBuZWVkcyBzeXN0ZW0gY291bnRlciBhcyBicm9hZGNhc3Qg
-dGltZXIgdG8gc3VwcG9ydA0KPiA+IGNwdWlkbGUsIGVuYWJsZSBpdCBieSBkZWZhdWx0Lg0KPiA+
-DQo+ID4gU2lnbmVkLW9mZi1ieTogQW5zb24gSHVhbmcgPEFuc29uLkh1YW5nQG54cC5jb20+DQo+
-ID4gLS0tDQo+ID4gIGFyY2gvYXJtNjQvS2NvbmZpZy5wbGF0Zm9ybXMgfCAxICsNCj4gPiAgMSBm
-aWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvYXJjaC9h
-cm02NC9LY29uZmlnLnBsYXRmb3Jtcw0KPiA+IGIvYXJjaC9hcm02NC9LY29uZmlnLnBsYXRmb3Jt
-cyBpbmRleCA0Nzc4Yzc3Li5mNWU2MjNmIDEwMDY0NA0KPiA+IC0tLSBhL2FyY2gvYXJtNjQvS2Nv
-bmZpZy5wbGF0Zm9ybXMNCj4gPiArKysgYi9hcmNoL2FybTY0L0tjb25maWcucGxhdGZvcm1zDQo+
-ID4gQEAgLTE3Myw2ICsxNzMsNyBAQCBjb25maWcgQVJDSF9NWEMNCj4gPiAgCXNlbGVjdCBQTQ0K
-PiA+ICAJc2VsZWN0IFBNX0dFTkVSSUNfRE9NQUlOUw0KPiA+ICAJc2VsZWN0IFNPQ19CVVMNCj4g
-PiArCXNlbGVjdCBUSU1FUl9JTVhfU1lTX0NUUg0KPiANCj4gV2hlcmUgaXMgdGhhdCBkcml2ZXI/
-DQoNClRoZSBkcml2ZXIgaXMgZHJpdmVycy9jbG9ja3NvdXJjZS90aW1lci1pbXgtc3lzY3RyLmMs
-IHNpbWlsYXIgZnVuY3Rpb24gYXMgR1BULg0KDQpUaGFua3MsDQpBbnNvbg0KDQo+IA0KPiBTaGF3
-bg0KPiANCj4gPiAgCWhlbHANCj4gPiAgCSAgVGhpcyBlbmFibGVzIHN1cHBvcnQgZm9yIHRoZSBB
-Uk12OCBiYXNlZCBTb0NzIGluIHRoZQ0KPiA+ICAJICBOWFAgaS5NWCBmYW1pbHkuDQo+ID4gLS0N
-Cj4gPiAyLjcuNA0KPiA+DQo=
+On Mon, Jun 24, 2019 at 10:22:01AM +0800, Shawn Guo wrote:
+> On Fri, Jun 21, 2019 at 03:07:17PM +0800, Anson.Huang@nxp.com wrote:
+> > From: Anson Huang <Anson.Huang@nxp.com>
+> > 
+> > ARCH_MXC platforms needs system counter as broadcast timer
+> > to support cpuidle, enable it by default.
+> > 
+> > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> > ---
+> >  arch/arm64/Kconfig.platforms | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+> > index 4778c77..f5e623f 100644
+> > --- a/arch/arm64/Kconfig.platforms
+> > +++ b/arch/arm64/Kconfig.platforms
+> > @@ -173,6 +173,7 @@ config ARCH_MXC
+> >  	select PM
+> >  	select PM_GENERIC_DOMAINS
+> >  	select SOC_BUS
+> > +	select TIMER_IMX_SYS_CTR
+> 
+> Where is that driver?
+
+Okay, just found it in the mailbox.  They seem to be sent in the wrong
+order.  Really, you should send this series only after the driver lands
+on mainline.
+
+Shawn
