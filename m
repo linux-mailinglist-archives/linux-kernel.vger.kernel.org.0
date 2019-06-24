@@ -2,188 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F36151C75
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 22:36:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 377CF51C7C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 22:38:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730175AbfFXUgq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 16:36:46 -0400
-Received: from asavdk4.altibox.net ([109.247.116.15]:37636 "EHLO
-        asavdk4.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728872AbfFXUgp (ORCPT
+        id S1731709AbfFXUiL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 16:38:11 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:49444 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726920AbfFXUiK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 16:36:45 -0400
-Received: from ravnborg.org (unknown [158.248.194.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by asavdk4.altibox.net (Postfix) with ESMTPS id 9A6F28032A;
-        Mon, 24 Jun 2019 22:36:38 +0200 (CEST)
-Date:   Mon, 24 Jun 2019 22:36:32 +0200
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Derek Basehore <dbasehore@chromium.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        CK Hu <ck.hu@mediatek.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v3 1/4] drm/panel: Add helper for reading DT rotation
-Message-ID: <20190624203632.GA12316@ravnborg.org>
-References: <20190622034105.188454-1-dbasehore@chromium.org>
- <20190622034105.188454-2-dbasehore@chromium.org>
+        Mon, 24 Jun 2019 16:38:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=g9Kc3M2XzlQsZ42pdKJZfNvaMS17HAF5866mWARfI/o=; b=C4tiwGrXnLH5PWKVQIib3u+KFc
+        W5jwlPiBbllr/NclCmfYVLP7R/ZAatW3vEOhbPegDRc9DE1z5QHUTJmz2Ks2+vEn716E3c+pF7cZR
+        IH/OV8B6YT9P62899SDtdD1zUrkrpRzsSsbfdHE9cGrFlOBF9uCdskldE+rfVC5zS7AhdeufZ7ZbN
+        dWgnylmEZvTvVT/kH3L9vryIUR+XYFGc6AT6j3pcWvbcdCSY2MGT5vfrgOq/9JjQKJLjAUhYDmukx
+        ZSb8EYfFmW6/F/Y4A3T4NoiUtsJ/aeoY1G/PTm7audTmOOievOdGj/cOovypfakVqI2L49gQl7IeO
+        RJO2Lngg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hfVid-0003d0-JG; Mon, 24 Jun 2019 20:37:39 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 2DCBF20A5CE80; Mon, 24 Jun 2019 22:37:37 +0200 (CEST)
+Date:   Mon, 24 Jun 2019 22:37:37 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Joe Perches <joe@perches.com>
+Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Kan Liang <kan.liang@linux.intel.com>,
+        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Shawn Landden <shawn@git.icu>
+Subject: Re: [PATCH] perf/x86/intel: Mark expected switch fall-throughs
+Message-ID: <20190624203737.GL3436@hirez.programming.kicks-ass.net>
+References: <20190624161913.GA32270@embeddedor>
+ <20190624193123.GI3436@hirez.programming.kicks-ass.net>
+ <b00fc090d83ac6bd41a5db866b02d425d9ab20e4.camel@perches.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190622034105.188454-2-dbasehore@chromium.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b00fc090d83ac6bd41a5db866b02d425d9ab20e4.camel@perches.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=VcLZwmh9 c=1 sm=1 tr=0
-        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=cm27Pg_UAAAA:8
-        a=Ikd4Dj_1AAAA:8 a=hD3m9dJnucmI1XD2aicA:9 a=CjuIK1q_8ugA:10
-        a=xmb-EsYY8bH0VWELuYED:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Derek.
-
-On Fri, Jun 21, 2019 at 08:41:02PM -0700, Derek Basehore wrote:
-> This adds a helper function for reading the rotation (panel
-> orientation) from the device tree.
+On Mon, Jun 24, 2019 at 12:45:54PM -0700, Joe Perches wrote:
+> On Mon, 2019-06-24 at 21:31 +0200, Peter Zijlstra wrote:
+> > On Mon, Jun 24, 2019 at 11:19:13AM -0500, Gustavo A. R. Silva wrote:
+> > > In preparation to enabling -Wimplicit-fallthrough, mark switch
+> > > cases where we are expecting to fall through.
+> > > 
+> > > This patch fixes the following warnings:
+> > > 
+> > > arch/x86/events/intel/core.c: In function ‘intel_pmu_init’:
+> > > arch/x86/events/intel/core.c:4959:8: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> > >    pmem = true;
+> > >    ~~~~~^~~~~~
+> > > arch/x86/events/intel/core.c:4960:2: note: here
+> > >   case INTEL_FAM6_SKYLAKE_MOBILE:
+> > >   ^~~~
+> > > arch/x86/events/intel/core.c:5008:8: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> > >    pmem = true;
+> > >    ~~~~~^~~~~~
+> > > arch/x86/events/intel/core.c:5009:2: note: here
+> > >   case INTEL_FAM6_ICELAKE_MOBILE:
+> > >   ^~~~
+> > > 
+> > > Warning level 3 was used: -Wimplicit-fallthrough=3
+> > > 
+> > > This patch is part of the ongoing efforts to enable
+> > > -Wimplicit-fallthrough.
+> > > 
+> > > Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> > 
+> > I still consider it an abomination that the C parser looks at comments
+> > -- other than to delete them, but OK I suppose, I'll take it.
 > 
-> Signed-off-by: Derek Basehore <dbasehore@chromium.org>
-> ---
->  drivers/gpu/drm/drm_panel.c | 42 +++++++++++++++++++++++++++++++++++++
->  include/drm/drm_panel.h     |  7 +++++++
->  2 files changed, 49 insertions(+)
+> I still believe Arnaldo's/Miguel's/Shawn's/my et al. suggestion of
 > 
-> diff --git a/drivers/gpu/drm/drm_panel.c b/drivers/gpu/drm/drm_panel.c
-> index dbd5b873e8f2..507099af4b57 100644
-> --- a/drivers/gpu/drm/drm_panel.c
-> +++ b/drivers/gpu/drm/drm_panel.c
-> @@ -172,6 +172,48 @@ struct drm_panel *of_drm_find_panel(const struct device_node *np)
->  	return ERR_PTR(-EPROBE_DEFER);
->  }
->  EXPORT_SYMBOL(of_drm_find_panel);
-> +
-> +/**
-> + * of_drm_get_panel_orientation - look up the rotation of the panel using a
-> + * device tree node
-> + * @np: device tree node of the panel
-> + * @orientation: orientation enum to be filled in
-> + *
-> + * Looks up the rotation of a panel in the device tree. The rotation in the
-> + * device tree is counter clockwise.
-> + *
-> + * Return: 0 when a valid rotation value (0, 90, 180, or 270) is read or the
-> + * rotation property doesn't exist. -EERROR otherwise.
-> + */
-This function should better spell out why it talks about rotation versus
-orientation.
+> #define __fallthrough __attribute__((fallthrough))
+> 
+> is far better.
+> 
+> https://lkml.org/lkml/2017/2/9/845
+> https://lkml.org/lkml/2017/2/10/485
+> https://lore.kernel.org/lkml/20181021171414.22674-2-miguel.ojeda.sandonis@gmail.com/
+> https://lore.kernel.org/lkml/20190617155643.GA32544@amd/
 
-It happens that orientation, due to bad design choices is named rotation
-in DT.
-But then this function is all about orientation, that just happens to be
-named rotation in DT.
-And the comments associated to the function should reflect this.
-
-something like:
-/**
- * of_drm_get_panel_orientation - look up the orientation of the panel using a
- * device tree node
- * @np: device tree node of the panel
- * @orientation: orientation enum to be filled in
- *
- * Looks up the rotation property of a panel in the device tree.
- * The orientation of the panel is expressed as a property named
- * "rotation" in the device tree.
- * The rotation in the device tree is counter clockwise.
- *
- * Return: 0 when a valid orientation value (0, 90, 180, or 270) is read or the
- * rotation property doesn't exist. -EERROR otherwise.
- */
-
-This would at least remove some of my confusiuon.
-And then maybe add a bit more explanation to the binding property
-description too.
-
-	Sam
-
-
-
-
-
-
-
-
-
-
-
-
-> +int of_drm_get_panel_orientation(const struct device_node *np,
-> +				 enum drm_panel_orientation *orientation)
-> +{
-> +	int rotation, ret;
-> +
-> +	ret = of_property_read_u32(np, "rotation", &rotation);
-> +	if (ret == -EINVAL) {
-> +		/* Don't return an error if there's no rotation property. */
-> +		*orientation = DRM_MODE_PANEL_ORIENTATION_UNKNOWN;
-> +		return 0;
-> +	}
-> +
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	if (rotation == 0)
-> +		*orientation = DRM_MODE_PANEL_ORIENTATION_NORMAL;
-> +	else if (rotation == 90)
-> +		*orientation = DRM_MODE_PANEL_ORIENTATION_RIGHT_UP;
-> +	else if (rotation == 180)
-> +		*orientation = DRM_MODE_PANEL_ORIENTATION_BOTTOM_UP;
-> +	else if (rotation == 270)
-> +		*orientation = DRM_MODE_PANEL_ORIENTATION_LEFT_UP;
-> +	else
-> +		return -EINVAL;
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL(of_drm_get_panel_orientation);
->  #endif
->  
->  MODULE_AUTHOR("Thierry Reding <treding@nvidia.com>");
-> diff --git a/include/drm/drm_panel.h b/include/drm/drm_panel.h
-> index 8c738c0e6e9f..3564952f1a4f 100644
-> --- a/include/drm/drm_panel.h
-> +++ b/include/drm/drm_panel.h
-> @@ -197,11 +197,18 @@ int drm_panel_detach(struct drm_panel *panel);
->  
->  #if defined(CONFIG_OF) && defined(CONFIG_DRM_PANEL)
->  struct drm_panel *of_drm_find_panel(const struct device_node *np);
-> +int of_drm_get_panel_orientation(const struct device_node *np,
-> +				 enum drm_panel_orientation *orientation);
->  #else
->  static inline struct drm_panel *of_drm_find_panel(const struct device_node *np)
->  {
->  	return ERR_PTR(-ENODEV);
->  }
-> +int of_drm_get_panel_orientation(const struct device_node *np,
-> +				 enum drm_panel_orientation *orientation)
-> +{
-> +	return -ENODEV;
-> +}
->  #endif
->  
->  #endif
-> -- 
-> 2.22.0.410.gd8fdbe21b5-goog
+Oh yes, worlds better. Please, can we haz that instead?
