@@ -2,75 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADC7C51AE1
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 20:42:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B897051AE6
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 20:43:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729375AbfFXSmy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 14:42:54 -0400
-Received: from mout.kundenserver.de ([212.227.126.130]:42141 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727664AbfFXSmx (ORCPT
+        id S1728138AbfFXSni (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 14:43:38 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:35765 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726285AbfFXSnh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 14:42:53 -0400
-Received: from [192.168.1.110] ([77.4.138.202]) by mrelayeu.kundenserver.de
- (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1N2lzA-1iic5w3MB2-0138jG; Mon, 24 Jun 2019 20:42:44 +0200
-Subject: Re: [PATCH] spi: spi-gpio: Make probe function __init_or_module
-To:     Mark Brown <broonie@kernel.org>,
-        Paul Cercueil <paul@crapouillou.net>
-Cc:     od@zcrc.me, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190607155631.15072-1-paul@crapouillou.net>
- <20190607155907.GH2456@sirena.org.uk>
-From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Organization: metux IT consult
-Message-ID: <0323abd9-2c68-2d2e-0140-c34edf983f4f@metux.net>
-Date:   Mon, 24 Jun 2019 20:42:43 +0200
-User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 24 Jun 2019 14:43:37 -0400
+Received: by mail-wr1-f65.google.com with SMTP id f15so5121461wrp.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 11:43:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=GfjEkDFqzgTZBEb7tk5FQBBfhGJ6qrc4fpvCj0iHlvg=;
+        b=PEMLzOlh0FhIICOnXDd6MnoSC8ODG7+U6KY9QYqdS6jTEuAtXQIYcUUCFm+Sb2VKKt
+         XDH8PziZL5otFnWtD5c8J2FoKoOqOcXTVryoZKhROER/C4M8Un0+846X3PSCjTa5lQXB
+         zU01u9ptz6jhB06mRWetGguL7wbGpRuZvj8d00WCds4RlMZ2cs7HpQ4POUU6ztIjzi84
+         874Z/7+2kuLAh6lmo0zx1fWXAzSUX4DsGPG7mGoMm12tTSc1sN2qhVjo/askcA0Ad3c2
+         tCPFPtdVQN98elu/Ehv1N71MQW8gdqZPqRF4zF1HSwxv34nUXLLVEZflX6UxlVm32Iiu
+         B8rA==
+X-Gm-Message-State: APjAAAUIoHF83jiDzaFYBYsuMf9flFrn1PP33P+zwv+NiCiYJiLyOac9
+        JJ19fEiiprXfC7LDC52KQTZTfw==
+X-Google-Smtp-Source: APXvYqw37VJQFJbX+dUabx4CSUB5gIDbQkk/Rk2XlTrf2S7d3VSRR3BHYb/8IS7tK0hRyAS3jV9ftA==
+X-Received: by 2002:a5d:66ce:: with SMTP id k14mr45670884wrw.308.1561401815379;
+        Mon, 24 Jun 2019 11:43:35 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:45fb:a0de:928e:79e8? ([2001:b07:6468:f312:45fb:a0de:928e:79e8])
+        by smtp.gmail.com with ESMTPSA id y19sm397750wmc.21.2019.06.24.11.43.33
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Mon, 24 Jun 2019 11:43:34 -0700 (PDT)
+Subject: Re: [PATCH v9 02/17] drivers/net/b44: Align pwol_mask to unsigned
+ long for better performance
+To:     David Laight <David.Laight@ACULAB.COM>,
+        'Fenghua Yu' <fenghua.yu@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        H Peter Anvin <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Radim Krcmar <rkrcmar@redhat.com>,
+        Christopherson Sean J <sean.j.christopherson@intel.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Xiaoyao Li <xiaoyao.li@intel.com>,
+        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
+References: <1560897679-228028-1-git-send-email-fenghua.yu@intel.com>
+ <1560897679-228028-3-git-send-email-fenghua.yu@intel.com>
+ <fce80c42ba1949fd8d7924786bbf0ec8@AcuMS.aculab.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <4cd9d48f-e655-4943-2ec9-1b74a77e317c@redhat.com>
+Date:   Mon, 24 Jun 2019 20:43:32 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20190607155907.GH2456@sirena.org.uk>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <fce80c42ba1949fd8d7924786bbf0ec8@AcuMS.aculab.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:B+ndejNADLbmP9NRTeO+zCHd8NO0E21L/8XSu+JU+mD7UOddsph
- U1qSW8obBRMcO4mka1He6D8C+vH8prpf2f+MpWv/FfR2sSDIGyhcw/TsZxFRcvnngqw1kn2
- aWB6yhSbIyei6Kxh0wmIxD4W9ZcGxTPGHnwgo5T7xNrnwUfshZ7jLauXc81VeUpdOOjqdBw
- 7MtRnQ7o8j/IJwRVrbX2A==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:7aKfJg27cUI=:PMcIRU/bPjtyYQ/lc67Q4c
- i+u1enHgsJBu/v9tnbNGZ17JMna8D1SD6pbqIlibzyChudF7uXU+4oN6z43lY/6bib/ERdpU3
- KcCdV6vpYcx0DnPe36iTNr3xFrNRaXx/9sKBkOoG14L8s+EygPyiq/yMzKXKQnBDXvNVFodQL
- IC/zyWDRi/zCMZklIkI7BmOgiN5yBL8NiI0yflMUOO0xny48i3fTwYbOAuoTlKy5WrdSQPj7G
- +bxAlA3As3YMwrqJIJ3pxjKNLkGlFN2V52cMJm3Z48nB3UGEg94FO8L3hG4FESGKCUl2CE/MH
- 6msLmhwxMT2/bQvI7du3bB9fmtA8WC6hbzbITt2Hr+UnU3P/PMxLQWrnMYT6oqpZad5qRnHcr
- J+o/j6hubN4Vl2WZEGh5eWtngHh/7gjDfNZy0JhgjKfi6GoUTw336+sHAfE0LDmNphSq3dLNl
- cxnD1/SyLSY0nWp0FkWVW/FXr/O53WkoKnPurzY+a/GaeHSIu8slZKaBRf9QpeB485Gat56AH
- 4mIcEIxcZnR+YOpuTM65Og4iBTPJwbMvUObYA6a7MuGpYp/i/j6PDfbJfdiMPPR5FJr13KpSh
- 4ardoF3P3Q8NTf8m8kYQZsG1t9ytGxXclAEtSAvzH2/ZOXrtC9roFKoBjfbRE70g6bV7no9OC
- ZsEV1G4gU29v3VfLD6tCrekNckD90lwK4G+K9lomumJqAnp4YgT5o+xVUvr6mlhaEdbvpOpjf
- 0Mlmvv+R6WTNvtxqQQi4JekEDyfFYRkDojSRxBxj2h/5NBGzt9BfOmc5SUU=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07.06.19 17:59, Mark Brown wrote:
-> On Fri, Jun 07, 2019 at 05:56:31PM +0200, Paul Cercueil wrote:
->> This allows the probe function to be dropped after the kernel finished
->> its initialization, in the case where the driver was not compiled as a
->> module.
+On 24/06/19 17:12, David Laight wrote:
+> From: Fenghua Yu
+>> Sent: 18 June 2019 23:41
+>> From: Peter Zijlstra <peterz@infradead.org>
+>>
+>> A bit in pwol_mask is set in b44_magic_pattern() by atomic set_bit().
+>> But since pwol_mask is local and never exposed to concurrency, there is
+>> no need to set bit in pwol_mask atomically.
+>>
+>> set_bit() sets the bit in a single unsigned long location. Because
+>> pwol_mask may not be aligned to unsigned long, the location may cross two
+>> cache lines. On x86, accessing two cache lines in locked instruction in
+>> set_bit() is called split locked access and can cause overall performance
+>> degradation.
+>>
+>> So use non atomic __set_bit() to set pwol_mask bits. __set_bit() won't hit
+>> split lock issue on x86.
+>>
+>> Signed-off-by: Peter Zijlstra <peterz@infradead.org>
+>> Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
+>> ---
+>>  drivers/net/ethernet/broadcom/b44.c | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/net/ethernet/broadcom/b44.c b/drivers/net/ethernet/broadcom/b44.c
+>> index 97ab0dd25552..5738ab963dfb 100644
+>> --- a/drivers/net/ethernet/broadcom/b44.c
+>> +++ b/drivers/net/ethernet/broadcom/b44.c
+>> @@ -1520,7 +1520,7 @@ static int b44_magic_pattern(u8 *macaddr, u8 *ppattern, u8 *pmask, int offset)
+>>
+>>  	memset(ppattern + offset, 0xff, magicsync);
+>>  	for (j = 0; j < magicsync; j++)
+>> -		set_bit(len++, (unsigned long *) pmask);
+>> +		__set_bit(len++, (unsigned long *)pmask);
+>>
+>>  	for (j = 0; j < B44_MAX_PATTERNS; j++) {
+>>  		if ((B44_PATTERN_SIZE - len) >= ETH_ALEN)
+>> @@ -1532,7 +1532,7 @@ static int b44_magic_pattern(u8 *macaddr, u8 *ppattern, u8 *pmask, int offset)
+>>  		for (k = 0; k< ethaddr_bytes; k++) {
+>>  			ppattern[offset + magicsync +
+>>  				(j * ETH_ALEN) + k] = macaddr[k];
+>> -			set_bit(len++, (unsigned long *) pmask);
+>> +			__set_bit(len++, (unsigned long *)pmask);
 > 
-> Hopefully not since we might probe later on if something registers a new
-> device...
-> 
+> Is this code expected to do anything sensible on BE systems?
 
-Common pitfall. Also fallen into this myself and wondered why
-it oops'd :o.
+Probably not, but it's not wrong in different ways before/after the patch.
 
+Paolo
 
---mtx
-
--- 
-Enrico Weigelt, metux IT consult
-Free software and Linux embedded engineering
-info@metux.net -- +49-151-27565287
+> Casting the bitmask[] argument to any of the set_bit() functions is dubious at best.
