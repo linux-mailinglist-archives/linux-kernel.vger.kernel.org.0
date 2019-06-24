@@ -2,175 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31C034FE93
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 03:46:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A80AB4FEA1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 03:48:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726485AbfFXBqd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 21:46:33 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:52900 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726351AbfFXBqc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 21:46:32 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id E68BE3218E86D03620B8;
-        Mon, 24 Jun 2019 09:46:29 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.211) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 24 Jun
- 2019 09:46:26 +0800
-Subject: Re: [f2fs-dev] [PATCH] f2fs: add wsync_mode for sysfs entry
-To:     Jaegeuk Kim <jaegeuk@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>
-CC:     Jaegeuk Kim <jaegeuk@google.com>
-References: <20190621180124.82842-1-jaegeuk@kernel.org>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <622f5e04-3781-d49a-d65d-a7c244389cb3@huawei.com>
-Date:   Mon, 24 Jun 2019 09:46:26 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1726534AbfFXBs4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 21:48:56 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:33689 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726323AbfFXBs4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Jun 2019 21:48:56 -0400
+Received: by mail-ot1-f66.google.com with SMTP id i4so12083012otk.0
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2019 18:48:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=android.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=KoQYiQrMBAoPwcouH5zLkPtiukwZNYdGgxBPjr/sF88=;
+        b=aYkg+TE39brESepUpYvudC15qXREldRUSMU/512F+I3btn18W+Xyfqt6LgqaLTPCkh
+         vCiVE2NlKC1hkzVZQPazcAnCKBWcQ56W8WagWpEk5ys8BlKUE8Tti5E4ZaCMNNgKYpGM
+         MsJCrSidc4ZdUr0WbczMxSGC8q3qfuxN9gHvUsNU/IRlKcdg7NcG/cBP9kWp0ZZM4AQd
+         4ix6Wuk06EKbD7SsXf7AWQrjeWS/JMdohdjDev0BJ5XI/c1gmGhRnKg2GmyCbWj0FLzb
+         02XeKxEDDNRRW0+Xg44AIg6KcDbGzWU1YaXJnupcpQ18Kg5Ez8NhzflUYscbN98fUctm
+         UGOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KoQYiQrMBAoPwcouH5zLkPtiukwZNYdGgxBPjr/sF88=;
+        b=DWo1L/7bB1RWyvHmsulLGh2jViQKn2GfUvohog01OZqQYMKlikyZlPY+dWm41V/rAQ
+         k2O8zurj8sF49iC3mC4qOfrSgcHhcqyH60v0vWqc3OV9PMaTYp7jzYoZMqf9hoyEDQsb
+         zva7nUBDKYOAM3zMcwt6mbyEAyqy/x8aXEBli8wzpy7QRy7ozOITdp7+DGJkjuzsW6ky
+         tXAcR+YILFeOeSawiYNUp9J56wtwlVuCOGKFptVfH2KdqZZc1uPJ9hC1vTIzr2L/chWC
+         viZ8r9peZ6c4/puLanvNs6ePckMtyqYhjSnkbaT0NBhuCUIA3Yc1SAlkrUmUkLzQNYJC
+         N3XA==
+X-Gm-Message-State: APjAAAWpndj2IgassgItqHTaJdelYuHO0vpJDd28AG7tl4/WTo71BIre
+        sYY5Q9IreqXkaHINClUERgLcoXj4TsuCbX3dB9ZYrA==
+X-Google-Smtp-Source: APXvYqyu3RIcWBRJLSScwP9CuXO3dOu2zHqFIr87b56yxDl/RFshM7fhRGX07M5Ok8/ypr/fYnAwbIpE31qvkI24V9g=
+X-Received: by 2002:a9d:450a:: with SMTP id w10mr43913762ote.148.1561340935025;
+ Sun, 23 Jun 2019 18:48:55 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190621180124.82842-1-jaegeuk@kernel.org>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+References: <CANA+-vCThdRivg7nrMK5QoFu8SGUzEVSvSyp0H2CPyy9==Tqog@mail.gmail.com>
+ <CANA+-vARQ9Ao=W1oEArrAQ0sqh757orq=-=kytdVPhstm-3E9w@mail.gmail.com>
+ <20190618182502.GC203031@google.com> <4587569.x9DSL43cXO@kreacher>
+ <CANA+-vCMK6u1n9gXf2+v5dFn_tGfr1PT8d7W4d2BCzw+B-HvYw@mail.gmail.com>
+ <CAJWu+oo7kwmEyMXQN0yfswV2=J-Fa9QybhAUx-SOGG_ipsBErQ@mail.gmail.com> <CAJZ5v0gvzCx-7qS9qkxB=sGKjQJKMR7yCc21f=_vqrbZxMSWNg@mail.gmail.com>
+In-Reply-To: <CAJZ5v0gvzCx-7qS9qkxB=sGKjQJKMR7yCc21f=_vqrbZxMSWNg@mail.gmail.com>
+From:   Tri Vo <trong@android.com>
+Date:   Sun, 23 Jun 2019 18:48:43 -0700
+Message-ID: <CANA+-vCBW=P=dpJGfcKTt7SoNKzWcpP5pwZHSDMU6MkwBKoC9A@mail.gmail.com>
+Subject: Re: Alternatives to /sys/kernel/debug/wakeup_sources
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Joel Fernandes <joelaf@google.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Sandeep Patil <sspatil@android.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Hridya Valsaraju <hridya@google.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        "Cc: Android Kernel" <kernel-team@android.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/6/22 2:01, Jaegeuk Kim wrote:
-> From: Jaegeuk Kim <jaegeuk@google.com>
-> 
-> This add one sysfs entry to control REQ_SYNC/REQ_BACKGROUND for write bios
-> for data page writes.
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@google.com>
-> ---
->  Documentation/ABI/testing/sysfs-fs-f2fs |  7 +++++++
->  Documentation/filesystems/f2fs.txt      |  4 ++++
->  fs/f2fs/data.c                          |  3 +--
->  fs/f2fs/f2fs.h                          | 12 ++++++++++++
->  fs/f2fs/sysfs.c                         |  2 ++
->  5 files changed, 26 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-> index dca326e0ee3e..d3eca3eb3214 100644
-> --- a/Documentation/ABI/testing/sysfs-fs-f2fs
-> +++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-> @@ -251,3 +251,10 @@ Description:
->  		If checkpoint=disable, it displays the number of blocks that are unusable.
->                  If checkpoint=enable it displays the enumber of blocks that would be unusable
->                  if checkpoint=disable were to be set.
-> +
-> +What:		/sys/fs/f2fs/<disk>/wsync_mode
-> +Date		June 2019
-> +Contact:	"Jaegeuk Kim" <jaegeuk.kim@kernel.org>
+On Wed, Jun 19, 2019 at 1:35 AM Rafael J. Wysocki <rafael@kernel.org> wrote:
+>
+> On Wed, Jun 19, 2019 at 1:52 AM Joel Fernandes <joelaf@google.com> wrote:
+> >
+> > On Tue, Jun 18, 2019 at 7:15 PM Tri Vo <trong@android.com> wrote:
+> > [snip]
+> > > > > > >
+> > > > > > > Android userspace reading wakeup_sources is not ideal because:
+> > > > > > > - Debugfs API is not stable, i.e. Android tools built on top of it are
+> > > > > > > not guaranteed to be backward/forward compatible.
+> > > > > > > - This file requires debugfs to be mounted, which itself is
+> > > > > > > undesirable for security reasons.
+> > > > > > >
+> > > > > > > To address these problems, we want to contribute a way to expose these
+> > > > > > > statistics that doesn't depend on debugfs.
+> > > > > > >
+> > > > > > > Some initial thoughts/questions: Should we expose the stats in sysfs?
+> > > > > > > Or maybe implement eBPF-based solution? What do you think?
+> > > > >
+> > > > > We are going through Android's out-of-tree kernel dependencies along with
+> > > > > userspace APIs that are not necessarily considered "stable and forever
+> > > > > supported" upstream. The debugfs dependencies showed up on our radar as a
+> > > > > result and so we are wondering if we should worry about changes in debugfs
+> > > > > interface and hence the question(s) below.
+> > > > >
+> > > > > So, can we rely on /d/wakeup_sources to be considered a userspace API and
+> > > > > hence maintained stable as we do for other /proc and /sys entries?
+> > > > >
+> > > > > If yes, then we will go ahead and add tests for this in LTP or
+> > > > > somewhere else suitable.
+> > > >
+> > > > No, debugfs is not ABI.
+> > > >
+> > > > > If no, then we would love to hear suggestions for any changes that need to be
+> > > > > made or we simply just move the debugfs entry into somewhere like
+> > > > > /sys/power/ ?
+> > > >
+> > > > No, moving that entire file from debugfs into sysfs is not an option either.
+> > > >
+> > > > The statistics for the wakeup sources associated with devices are already there
+> > > > under /sys/devices/.../power/ , but I guess you want all wakeup sources?
+> > > >
+> > > > That would require adding a kobject to struct wakeup_source and exposing
+> > > > all of the statistics as separate attributes under it.  In which case it would be
+> > > > good to replace the existing wakeup statistics under /sys/devices/.../power/
+> > > > with symbolic links to the attributes under the wakeup_source kobject.
+> > >
+> > > Thanks for your input, Rafael! Your suggestion makes sense. I'll work
+> > > on a patch for this.
+> >
+> > Does that entail making each wake up source, a new sysfs node under a
+> > particular device, and then adding stats under that new node?
+>
+> Not under a device, because there are wakeup source objects without
+> associated devices.
+>
+> It is conceivable to have a "wakeup_sources" directory under
+> /sys/power/ and sysfs nodes for all wakeup sources in there.
+>
+> Then, instead of exposing wakeup statistics directly under
+> /sys/devices/.../power/, there can be symbolic links from there to the
+> new wakeup source nodes under "wakeup_sources" (so as to avoid
+> exposing the same data in two different places in sysfs, which may be
+> confusing).
 
-jaegeuk@kernel.org ?
+This may be a dumb question. Is it appropriate to make symbolic links
+in sysfs from one attribute to another attribute? For example,
+/sys/devices/.../power/wakeup_count ->
+/sys/power/wakeup_sources/.../wakeup_count.
 
-> +Description:
-> +		0 gives no change. 1 assigns all the data writes with REQ_SYNC.
-> +                2 does REQ_BACKGROUND instead.
-> diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
-> index bebd1be3ba49..81c529801a88 100644
-> --- a/Documentation/filesystems/f2fs.txt
-> +++ b/Documentation/filesystems/f2fs.txt
-> @@ -413,6 +413,10 @@ Files in /sys/fs/f2fs/<devname>
->                                that would be unusable if checkpoint=disable were
->                                to be set.
->  
-> + wsync_mode                   0 is by default. 1 gives REQ_SYNC for all the data
-> +                              writes. 2 gives REQ_BACKGROUND for all. This can
-> +                              used for the performance tuning purpose.
+I only see kobject to kobject symlinks around. And I don't think we
+can make /sys/devices/.../power/ directory a symlink to where our new
+wakeup stats will be, since the former contains attributes other than
+wakeup ones.
 
-It looks so hacking. :P
-
-Could you please explain more about this idea, I'm confused in which scenario it
-can improve performance.
-
-Thanks,
-
-> +
->  ================================================================================
->  USAGE
->  ================================================================================
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index f4e1672bd96e..18c73a1fdef3 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -9,7 +9,6 @@
->  #include <linux/f2fs_fs.h>
->  #include <linux/buffer_head.h>
->  #include <linux/mpage.h>
-> -#include <linux/writeback.h>
->  #include <linux/backing-dev.h>
->  #include <linux/pagevec.h>
->  #include <linux/blkdev.h>
-> @@ -2021,7 +2020,7 @@ static int __write_data_page(struct page *page, bool *submitted,
->  		.ino = inode->i_ino,
->  		.type = DATA,
->  		.op = REQ_OP_WRITE,
-> -		.op_flags = wbc_to_write_flags(wbc),
-> +		.op_flags = f2fs_wbc_to_write_flags(sbi, wbc),
->  		.old_blkaddr = NULL_ADDR,
->  		.page = page,
->  		.encrypted_page = NULL,
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 2be2b16573c3..1cc46a6dc340 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -12,6 +12,7 @@
->  #include <linux/types.h>
->  #include <linux/page-flags.h>
->  #include <linux/buffer_head.h>
-> +#include <linux/writeback.h>
->  #include <linux/slab.h>
->  #include <linux/crc32.h>
->  #include <linux/magic.h>
-> @@ -1264,6 +1265,7 @@ struct f2fs_sb_info {
->  
->  	/* writeback control */
->  	atomic_t wb_sync_req[META];	/* count # of WB_SYNC threads */
-> +	int wsync_mode;			/* write mode */
->  
->  	/* valid inode count */
->  	struct percpu_counter total_valid_inode_count;
-> @@ -3631,6 +3633,16 @@ static inline void set_opt_mode(struct f2fs_sb_info *sbi, unsigned int mt)
->  	}
->  }
->  
-> +static inline int f2fs_wbc_to_write_flags(struct f2fs_sb_info *sbi,
-> +				struct writeback_control *wbc)
-> +{
-> +	if (sbi->wsync_mode == 1)
-> +		return REQ_SYNC;
-> +	if (sbi->wsync_mode == 2)
-> +		return REQ_BACKGROUND;
-> +	return wbc_to_write_flags(wbc);
-> +}
-> +
->  static inline bool f2fs_may_encrypt(struct inode *inode)
->  {
->  #ifdef CONFIG_FS_ENCRYPTION
-> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-> index 3aeacd0aacfd..e3c164d921a1 100644
-> --- a/fs/f2fs/sysfs.c
-> +++ b/fs/f2fs/sysfs.c
-> @@ -455,6 +455,7 @@ F2FS_GENERAL_RO_ATTR(lifetime_write_kbytes);
->  F2FS_GENERAL_RO_ATTR(features);
->  F2FS_GENERAL_RO_ATTR(current_reserved_blocks);
->  F2FS_GENERAL_RO_ATTR(unusable);
-> +F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, wsync_mode, wsync_mode);
->  
->  #ifdef CONFIG_FS_ENCRYPTION
->  F2FS_FEATURE_RO_ATTR(encryption, FEAT_CRYPTO);
-> @@ -515,6 +516,7 @@ static struct attribute *f2fs_attrs[] = {
->  	ATTR_LIST(features),
->  	ATTR_LIST(reserved_blocks),
->  	ATTR_LIST(current_reserved_blocks),
-> +	ATTR_LIST(wsync_mode),
->  	NULL,
->  };
->  ATTRIBUTE_GROUPS(f2fs);
-> 
+Thanks!
