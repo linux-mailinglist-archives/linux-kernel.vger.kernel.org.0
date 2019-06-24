@@ -2,105 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60CA3502F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 09:20:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A378450301
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 09:21:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727749AbfFXHU0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 03:20:26 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:32524 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727703AbfFXHUT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 03:20:19 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 45XLKT2PPCz9vBmr;
-        Mon, 24 Jun 2019 09:20:13 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=f6rF5gt6; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id yAlHfOfeUya4; Mon, 24 Jun 2019 09:20:13 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 45XLKT1NPgz9vBmR;
-        Mon, 24 Jun 2019 09:20:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1561360813; bh=EhmPXZfGnYJpiSEZOI7XcomPFqzgecwsbBunVsRFXLI=;
-        h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
-        b=f6rF5gt6uM2W6lU31UbmKnDHUHioKL/qzM2yLQtw8lhN+7V74Zkux+N4vrhkPeufn
-         m7/knorL3FR/1jZyAruVc9ZI7Ic394cr5GAesYgudSvqKdf+hy2q28ll/HiixlaYe4
-         iV7KbLHCUV8sMHzHnmxPTtDsas1CvIhkJ/432B5U=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id BCF398B78B;
-        Mon, 24 Jun 2019 09:20:17 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id zfaVaFGTgYdb; Mon, 24 Jun 2019 09:20:17 +0200 (CEST)
-Received: from po16838vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.230.101])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 9A2DB8B787;
-        Mon, 24 Jun 2019 09:20:17 +0200 (CEST)
-Received: by po16838vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 99A9867424; Mon, 24 Jun 2019 07:20:17 +0000 (UTC)
-Message-Id: <74dfa930b0b68da4096242feba6a1f002bf0bfd2.1561360551.git.christophe.leroy@c-s.fr>
-In-Reply-To: <cover.1561360551.git.christophe.leroy@c-s.fr>
-References: <cover.1561360551.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v5 4/4] crypto: talitos - drop icv_ool
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>, horia.geanta@nxp.com
-Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Date:   Mon, 24 Jun 2019 07:20:17 +0000 (UTC)
+        id S1727832AbfFXHUp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 03:20:45 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:51006 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727611AbfFXHUn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 03:20:43 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190624072041euoutp028e6d41e91423d064e0c4656e7511b864~rEWm_T86X3053630536euoutp021
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 07:20:41 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190624072041euoutp028e6d41e91423d064e0c4656e7511b864~rEWm_T86X3053630536euoutp021
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1561360841;
+        bh=AkkGYU4UEYgfsh3s+7fzHB6aVXnYZdkOfuooy+x870g=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=WkgAnjsW05sUl8X6Dlqlm58Q2AcbroHkjtjUeWf/nTaafa1+3WNjnyPWBt+6Hp27Y
+         vAtgxL4uz+cujhJXZwoFIIwRylPCvpk/gDbM1oSAThGEBJDbjfiw62NCBHcdXK1k+p
+         XVRgnXYj1nwF3q+OyCB4vO62LUnO8Zh7Y1U0CEzI=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20190624072041eucas1p2aea54a574b3873ce169927d1c4fa95d5~rEWmo1As_3236132361eucas1p2d;
+        Mon, 24 Jun 2019 07:20:41 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 89.6C.04325.8C9701D5; Mon, 24
+        Jun 2019 08:20:41 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20190624072040eucas1p2d484086328b7c097693c2b45f18076db~rEWl7OxCh3225832258eucas1p2c;
+        Mon, 24 Jun 2019 07:20:40 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20190624072040eusmtrp2509024819a46be13d0f5a21e69749747~rEWltEwkM1889218892eusmtrp2t;
+        Mon, 24 Jun 2019 07:20:40 +0000 (GMT)
+X-AuditID: cbfec7f5-fbbf09c0000010e5-88-5d1079c83e4a
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 24.39.04140.8C9701D5; Mon, 24
+        Jun 2019 08:20:40 +0100 (BST)
+Received: from [106.120.50.25] (unknown [106.120.50.25]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20190624072039eusmtip14a1638925c7d4e53713e27369151dee7~rEWlW37Px0343903439eusmtip1S;
+        Mon, 24 Jun 2019 07:20:39 +0000 (GMT)
+Subject: Re: [PATCH v2 3/4] ARM: dts: exynos: Add regulator suspend
+ configuration to Odroid XU3/XU4/HC1 family
+To:     Anand Moon <linux.amoon@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Kukjin Kim <kgene@kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc@vger.kernel.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Message-ID: <d94a2f99-fb99-c238-7011-9bbb4c0cd90f@samsung.com>
+Date:   Mon, 24 Jun 2019 09:20:38 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+        Thunderbird/60.7.2
+MIME-Version: 1.0
+In-Reply-To: <CANAwSgTFQo8wL5s-djwPXFFOLtTHvRQif6234kFC=23PwMhuEQ@mail.gmail.com>
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrMKsWRmVeSWpSXmKPExsWy7djP87onKwViDdZ+ZbSYf+Qcq0X/49fM
+        FufPb2C32PT4GqvF5V1z2CxmnN/HZLFu4y12B3aPnbPusntsWtXJ5rF5Sb3H501yASxRXDYp
+        qTmZZalF+nYJXBkfLhxjKVjOWTHh8QH2BsYV7F2MnBwSAiYSm/f/YOli5OIQEljBKNG9/QCU
+        84VR4uuMe0wQzmdGiabjS4AcDrCWPTtdIOLLGSX6ev+yQThvGSWuXFrFBDJXWKBAovPoWzYQ
+        W0TAX6Jn4z5WkCJmgZuMEt+3rmUESbAJGEp0ve0CK+IVsJP4ceo1O8gGFgFViffr+UDCogIx
+        Eg/n34EqEZQ4OfMJC4jNKRAoceHvPrAfmAXkJba/ncMMYYtL3HoyH+xqCYFl7BIrJ25jh7ja
+        ReL7NjGIn4UlXh3fAvW/jMT/nTD1zYwSD8+tZYdwehglLjfNYISospY4fPwiK8ggZgFNifW7
+        9CFmOkq8uZYKYfJJ3HgrCHECn8SkbdOZIcK8Eh1tQhAz1CRmHV8Ht/XghUvMExiVZiF5bBaS
+        Z2YheWYWwtoFjCyrGMVTS4tz01OLjfNSy/WKE3OLS/PS9ZLzczcxApPO6X/Hv+5g3Pcn6RCj
+        AAejEg+vwAb+WCHWxLLiytxDjBIczEoivEsTBWKFeFMSK6tSi/Lji0pzUosPMUpzsCiJ81Yz
+        PIgWEkhPLEnNTk0tSC2CyTJxcEo1MAauSX783k1KQVzbX+n423dPXdfvLozyV0y4KXlgHcPO
+        tZcX+b1W77t24aP//v69JwR4Jrsp9p7U38mZ+nWudnuv3q1nwX5+z1l1vyw0ufHnEGvr36/3
+        inWW/lV8tWxCUjeHeBTz6l0X4364uMotir60ce67OYcj1AVNjlkknrxUIOjcza3jq6XEUpyR
+        aKjFXFScCAA6JuHXNgMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrKIsWRmVeSWpSXmKPExsVy+t/xu7onKgViDY4cFrCYf+Qcq0X/49fM
+        FufPb2C32PT4GqvF5V1z2CxmnN/HZLFu4y12B3aPnbPusntsWtXJ5rF5Sb3H501yASxRejZF
+        +aUlqQoZ+cUltkrRhhZGeoaWFnpGJpZ6hsbmsVZGpkr6djYpqTmZZalF+nYJehkfLhxjKVjO
+        WTHh8QH2BsYV7F2MHBwSAiYSe3a6dDFycQgJLGWUaD8KEucEistInJzWwAphC0v8udbFBmIL
+        CbxmlPg6pQjEFhYokOg8+hYsLiLgK/G/4RYziM0scJNRouuODcTQH4wS87YsYwRJsAkYSnS9
+        hRjEK2An8ePUa7AjWARUJd6v5wMJiwrESHRN/ckCUSIocXLmEzCbUyBQ4sLffewQ880k5m1+
+        CLVLXmL72zlQtrjErSfzmSYwCs1C0j4LScssJC2zkLQsYGRZxSiSWlqcm55bbKRXnJhbXJqX
+        rpecn7uJERhl24793LKDsetd8CFGAQ5GJR5egQ38sUKsiWXFlbmHGCU4mJVEeJcmCsQK8aYk
+        VlalFuXHF5XmpBYfYjQF+m0is5Rocj4wAeSVxBuaGppbWBqaG5sbm1koifN2CByMERJITyxJ
+        zU5NLUgtgulj4uCUamA8taH+p2rW/JWexWdda3281B6+mL3SWW630gXT3R42uaZt0/OeliQ8
+        mCex0H7FhodFnRXySvetV5/zPrbfQnVH84QEngWvSvK1NkQZ7jI+r2PlNs/Yq2p39Peftyo/
+        5i7f5vrlxrmPztVndM0UJkww0lBeOWGv3J/Mm1sjVMUU2dZZXDZ5f/2wEktxRqKhFnNRcSIA
+        XxGznMgCAAA=
+X-CMS-MailID: 20190624072040eucas1p2d484086328b7c097693c2b45f18076db
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190623160226epcas2p3449814deb1faf7bf939481e6d4da2b86
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190623160226epcas2p3449814deb1faf7bf939481e6d4da2b86
+References: <20190621155845.7079-1-krzk@kernel.org>
+        <20190621155845.7079-3-krzk@kernel.org>
+        <CGME20190623160226epcas2p3449814deb1faf7bf939481e6d4da2b86@epcas2p3.samsung.com>
+        <CANAwSgTFQo8wL5s-djwPXFFOLtTHvRQif6234kFC=23PwMhuEQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-icv_ool is not used anymore, drop it.
+Hi Anand,
 
-Fixes: e345177ded17 ("crypto: talitos - fix AEAD processing.")
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- drivers/crypto/talitos.c | 3 ---
- drivers/crypto/talitos.h | 2 --
- 2 files changed, 5 deletions(-)
+On 2019-06-23 18:02, Anand Moon wrote:
+> Thanks for this patch. Please add my
+>
+> Tested-by: Anand Moon <linux.amoon@gmail.com>
+>
+> [snip]
+>
+> Could you integrate below small changes into this patch.
+> with these below changes suspend and resume work correctly at my end.
+>
+> [1] XU4_suspendresume.patch
+>
+> As per S2MPS11B PMIC 1.2.1 Regulator (Features)
+> Fix the min max value for *Buck7* and *Buck8*
+>
+> -- Buck7 (VDD_1.0V_LDO) 1.5 A (1.2 V to 1.5 V, 12.5 mV step, default on 1.35 V)
+> -- Buck8 (VDD_1.8V_LDO) 2.5 A (1.8 V to 2.1 V, 12.5 mV step, default on 2.0 V)
 
-diff --git a/drivers/crypto/talitos.c b/drivers/crypto/talitos.c
-index ab6bd45addf7..c9d686a0e805 100644
---- a/drivers/crypto/talitos.c
-+++ b/drivers/crypto/talitos.c
-@@ -1285,9 +1285,6 @@ static int ipsec_esp(struct talitos_edesc *edesc, struct aead_request *areq,
- 				 is_ipsec_esp && !encrypt);
- 	tbl_off += ret;
- 
--	/* ICV data */
--	edesc->icv_ool = !encrypt;
--
- 	if (!encrypt && is_ipsec_esp) {
- 		struct talitos_ptr *tbl_ptr = &edesc->link_tbl[tbl_off];
- 
-diff --git a/drivers/crypto/talitos.h b/drivers/crypto/talitos.h
-index 95f78c6d9206..1469b956948a 100644
---- a/drivers/crypto/talitos.h
-+++ b/drivers/crypto/talitos.h
-@@ -46,7 +46,6 @@ struct talitos_desc {
-  * talitos_edesc - s/w-extended descriptor
-  * @src_nents: number of segments in input scatterlist
-  * @dst_nents: number of segments in output scatterlist
-- * @icv_ool: whether ICV is out-of-line
-  * @iv_dma: dma address of iv for checking continuity and link table
-  * @dma_len: length of dma mapped link_tbl space
-  * @dma_link_tbl: bus physical address of link_tbl/buf
-@@ -61,7 +60,6 @@ struct talitos_desc {
- struct talitos_edesc {
- 	int src_nents;
- 	int dst_nents;
--	bool icv_ool;
- 	dma_addr_t iv_dma;
- 	int dma_len;
- 	dma_addr_t dma_link_tbl;
+Could you elaborate why such change for Buck7 and Buck8 is needed?
+
+> Also add suspend-off for *Buck9*
+> Buck9 internally controls the power of USB hub.
+> Adding suspend the this node help proper reset of USB hub on Odroid
+> XU4 / HC1/ XU3
+> during suspend and resume. Below it the logs from my testing.
+
+Disabling Buck9 in suspend indeed reduces the power consumed by the 
+board during suspend-to-ram from about 80mA to as little as 7-10mA, what 
+matches the results of OdroidXU3. Thanks for the hint!
+
+Best regards
 -- 
-2.13.3
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
