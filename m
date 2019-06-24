@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC81F50819
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:13:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B02950793
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:12:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729713AbfFXKEa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 06:04:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35954 "EHLO mail.kernel.org"
+        id S1729789AbfFXKIJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 06:08:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40624 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729697AbfFXKE0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 06:04:26 -0400
+        id S1730366AbfFXKHv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 06:07:51 -0400
 Received: from localhost (f4.8f.5177.ip4.static.sl-reverse.com [119.81.143.244])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 78EC3208E4;
-        Mon, 24 Jun 2019 10:04:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0B6E8205C9;
+        Mon, 24 Jun 2019 10:07:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561370665;
-        bh=3rtSL/c/4C9S8Ce/tdeE9tMTBn05hu6OGsoopWkk47w=;
+        s=default; t=1561370870;
+        bh=DUFMgnssTbGIMl+18y8NzDV0gu9yv0m/to1vbGlRUpE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Qswu1nKdr82fPzSEceN9Z4Ab5TkvbD44/LlEC4QmnmlGP1/1qQPnGf5KH6oCyMxTA
-         p+yhzlDK2488sw0yEGC7MKIeh2DP4+cKLD/DDcagIe4I0FCW9v6sXwKCwMA9wMr1cN
-         qNFqz9M70I6GCmNhK1HP8cmbHwUtwoTUW1ggTBy0=
+        b=rZhfKS3Scp1N6zylS4XwD2lGMCQpbTIrzKNYnUFaOM9NNuEoQJv6QAM2cBm1gLO0d
+         JV9okF+HKjP9Io2zvdHoP3NNwt5xLrn9fIaKJj8ZWtgo9+KMM9ivza1Thia/7POSDQ
+         BsYa3bAVTfs3uoGxhfz0BnHxKwvmtgWUOqeVwEoM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Harald Freudenberger <freude@linux.ibm.com>,
-        Ilya Leoshkevich <iii@linux.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 11/90] s390/ap: rework assembler functions to use unions for in/out register variables
-Date:   Mon, 24 Jun 2019 17:56:01 +0800
-Message-Id: <20190624092314.738302736@linuxfoundation.org>
+        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 5.1 030/121] brcmfmac: sdio: Dont tune while the card is off
+Date:   Mon, 24 Jun 2019 17:56:02 +0800
+Message-Id: <20190624092322.370827148@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190624092313.788773607@linuxfoundation.org>
-References: <20190624092313.788773607@linuxfoundation.org>
+In-Reply-To: <20190624092320.652599624@linuxfoundation.org>
+References: <20190624092320.652599624@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,85 +46,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 159491f3b509bd8101199944dc7b0673b881c734 ]
+From: Douglas Anderson <dianders@chromium.org>
 
-The inline assembler functions ap_aqic() and ap_qact() used two
-variables declared on the very same register. One variable was for
-input only, the other for output. Looks like newer versions of the gcc
-don't like this. Anyway it is a better coding to use one variable
-(which may have a union data type) on one register for input and
-output. So this patch introduces unions and uses only one variable now
-for input and output for GR1 for the PQAP(QACT) and PQAP(QIC)
-invocation.
+commit 65dade6044079a5c206fd1803642ff420061417a upstream.
 
-Signed-off-by: Harald Freudenberger <freude@linux.ibm.com>
-Acked-by: Ilya Leoshkevich <iii@linux.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+When Broadcom SDIO cards are idled they go to sleep and a whole
+separate subsystem takes over their SDIO communication.  This is the
+Always-On-Subsystem (AOS) and it can't handle tuning requests.
+
+Specifically, as tested on rk3288-veyron-minnie (which reports having
+BCM4354/1 in dmesg), if I force a retune in brcmf_sdio_kso_control()
+when "on = 1" (aka we're transition from sleep to wake) by whacking:
+  bus->sdiodev->func1->card->host->need_retune = 1
+...then I can often see tuning fail.  In this case dw_mmc reports "All
+phases bad!").  Note that I don't get 100% failure, presumably because
+sometimes the card itself has already transitioned away from the AOS
+itself by the time we try to wake it up.  If I force retuning when "on
+= 0" (AKA force retuning right before sending the command to go to
+sleep) then retuning is always OK.
+
+NOTE: we need _both_ this patch and the patch to avoid triggering
+tuning due to CRC errors in the sleep/wake transition, AKA ("brcmfmac:
+sdio: Disable auto-tuning around commands expected to fail").  Though
+both patches handle issues with Broadcom's AOS, the problems are
+distinct:
+1. We want to defer (but not ignore) asynchronous (like
+   timer-requested) tuning requests till the card is awake.  However,
+   we want to ignore CRC errors during the transition, we don't want
+   to queue deferred tuning request.
+2. You could imagine that the AOS could implement retuning but we
+   could still get errors while transitioning in and out of the AOS.
+   Similarly you could imagine a seamless transition into and out of
+   the AOS (with no CRC errors) even if the AOS couldn't handle
+   tuning.
+
+ALSO NOTE: presumably there is never a desperate need to retune in
+order to wake up the card, since doing so is impossible.  Luckily the
+only way the card can get into sleep state is if we had a good enough
+tuning to send it the command to put it into sleep, so presumably that
+"good enough" tuning is enough to wake us up, at least with a few
+retries.
+
+Cc: stable@vger.kernel.org #v4.18+
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Reviewed-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+Acked-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/s390/include/asm/ap.h | 28 +++++++++++++++++++---------
- 1 file changed, 19 insertions(+), 9 deletions(-)
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/arch/s390/include/asm/ap.h b/arch/s390/include/asm/ap.h
-index 8c00fd509c45..1a6a7092d942 100644
---- a/arch/s390/include/asm/ap.h
-+++ b/arch/s390/include/asm/ap.h
-@@ -221,16 +221,22 @@ static inline struct ap_queue_status ap_aqic(ap_qid_t qid,
- 					     void *ind)
- {
- 	register unsigned long reg0 asm ("0") = qid | (3UL << 24);
--	register struct ap_qirq_ctrl reg1_in asm ("1") = qirqctrl;
--	register struct ap_queue_status reg1_out asm ("1");
-+	register union {
-+		unsigned long value;
-+		struct ap_qirq_ctrl qirqctrl;
-+		struct ap_queue_status status;
-+	} reg1 asm ("1");
- 	register void *reg2 asm ("2") = ind;
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
+@@ -678,6 +678,10 @@ brcmf_sdio_kso_control(struct brcmf_sdio
  
-+	reg1.qirqctrl = qirqctrl;
+ 	sdio_retune_crc_disable(bus->sdiodev->func1);
+ 
++	/* Cannot re-tune if device is asleep; defer till we're awake */
++	if (on)
++		sdio_retune_hold_now(bus->sdiodev->func1);
 +
- 	asm volatile(
- 		".long 0xb2af0000"		/* PQAP(AQIC) */
--		: "=d" (reg1_out)
--		: "d" (reg0), "d" (reg1_in), "d" (reg2)
-+		: "+d" (reg1)
-+		: "d" (reg0), "d" (reg2)
- 		: "cc");
--	return reg1_out;
+ 	wr_val = (on << SBSDIO_FUNC1_SLEEPCSR_KSO_SHIFT);
+ 	/* 1st KSO write goes to AOS wake up core if device is asleep  */
+ 	brcmf_sdiod_writeb(bus->sdiodev, SBSDIO_FUNC1_SLEEPCSR, wr_val, &err);
+@@ -738,6 +742,9 @@ brcmf_sdio_kso_control(struct brcmf_sdio
+ 	if (try_cnt > MAX_KSO_ATTEMPTS)
+ 		brcmf_err("max tries: rd_val=0x%x err=%d\n", rd_val, err);
+ 
++	if (on)
++		sdio_retune_release(bus->sdiodev->func1);
 +
-+	return reg1.status;
- }
+ 	sdio_retune_crc_enable(bus->sdiodev->func1);
  
- /*
-@@ -264,17 +270,21 @@ static inline struct ap_queue_status ap_qact(ap_qid_t qid, int ifbit,
- {
- 	register unsigned long reg0 asm ("0") = qid | (5UL << 24)
- 		| ((ifbit & 0x01) << 22);
--	register unsigned long reg1_in asm ("1") = apinfo->val;
--	register struct ap_queue_status reg1_out asm ("1");
-+	register union {
-+		unsigned long value;
-+		struct ap_queue_status status;
-+	} reg1 asm ("1");
- 	register unsigned long reg2 asm ("2");
- 
-+	reg1.value = apinfo->val;
-+
- 	asm volatile(
- 		".long 0xb2af0000"		/* PQAP(QACT) */
--		: "+d" (reg1_in), "=d" (reg1_out), "=d" (reg2)
-+		: "+d" (reg1), "=d" (reg2)
- 		: "d" (reg0)
- 		: "cc");
- 	apinfo->val = reg2;
--	return reg1_out;
-+	return reg1.status;
- }
- 
- /**
--- 
-2.20.1
-
+ 	return err;
 
 
