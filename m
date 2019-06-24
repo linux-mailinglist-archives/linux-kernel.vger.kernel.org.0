@@ -2,133 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A9BB5001B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 05:16:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E372950023
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 05:17:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727383AbfFXDQu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 23:16:50 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:19062 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726307AbfFXDQu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 23:16:50 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 9FB2A91CF8408B57CC70;
-        Mon, 24 Jun 2019 11:16:47 +0800 (CST)
-Received: from [127.0.0.1] (10.177.96.96) by DGGEMS410-HUB.china.huawei.com
- (10.3.19.210) with Microsoft SMTP Server id 14.3.439.0; Mon, 24 Jun 2019
- 11:16:45 +0800
-Subject: Re: [PATCH -next v2] drm/amdgpu: return 'ret' in amdgpu_pmu_init
-To:     Julia Lawall <julia.lawall@lip6.fr>
-References: <20190622104318.GT28859@kadam>
- <20190622130527.182022-1-maowenan@huawei.com>
- <alpine.DEB.2.21.1906221504110.3253@hadrien>
- <063c9726-8f16-f9b7-2d16-bc87a99085bb@huawei.com>
- <alpine.DEB.2.21.1906221559060.3253@hadrien>
-CC:     <airlied@linux.ie>, <daniel@ffwll.ch>, <alexander.deucher@amd.com>,
-        <christian.koenig@amd.com>, <David1.Zhou@amd.com>,
-        <dan.carpenter@oracle.com>, <kernel-janitors@vger.kernel.org>,
-        <amd-gfx@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-From:   maowenan <maowenan@huawei.com>
-Message-ID: <fced7783-1216-ff3f-039f-d7c3a70b4916@huawei.com>
-Date:   Mon, 24 Jun 2019 11:16:41 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.2.0
+        id S1727510AbfFXDR0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 23:17:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46608 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726307AbfFXDR0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Jun 2019 23:17:26 -0400
+Received: from dragon (li1322-146.members.linode.com [45.79.223.146])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7579120663;
+        Mon, 24 Jun 2019 03:16:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561346245;
+        bh=uXZHOHUtLcEMnM5mBVcj3Apcs/iHOElmyoO1V8O2rCQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=O0w6mnKDtsQiP5FItZQgTYOishkH95cwlStBEtx5KZOA4/uDidjWfkJMW1945J2Nt
+         1ox1/OCeZEt6EsF+QVIvzNvR1my6libK0c4uYDqBEGiG83TNzluBT1+EQdPerwVZDT
+         KbBqIvGO8bBw2uct1DGJiBLB8yqO9+3KgHmuHCkg=
+Date:   Mon, 24 Jun 2019 11:16:52 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Phong Tran <tranmanphong@gmail.com>
+Cc:     mark.rutland@arm.com, kstewart@linuxfoundation.org,
+        songliubraving@fb.com, andrew@lunn.ch, peterz@infradead.org,
+        nsekhar@ti.com, ast@kernel.org, jolsa@redhat.com,
+        netdev@vger.kernel.org, gerg@uclinux.org,
+        lorenzo.pieralisi@arm.com, will@kernel.org,
+        linux-samsung-soc@vger.kernel.org, daniel@iogearbox.net,
+        festevam@gmail.com, gregory.clement@bootlin.com,
+        allison@lohutok.net, linux@armlinux.org.uk, krzk@kernel.org,
+        haojian.zhuang@gmail.com, bgolaszewski@baylibre.com,
+        tony@atomide.com, mingo@redhat.com, linux-imx@nxp.com, yhs@fb.com,
+        sebastian.hesselbarth@gmail.com, illusionist.neo@gmail.com,
+        jason@lakedaemon.net, liviu.dudau@arm.com, s.hauer@pengutronix.de,
+        acme@kernel.org, lkundrak@v3.sk, robert.jarzmik@free.fr,
+        dmg@turingmachine.org, swinslow@gmail.com, namhyung@kernel.org,
+        tglx@linutronix.de, linux-omap@vger.kernel.org,
+        alexander.sverdlin@gmail.com, linux-arm-kernel@lists.infradead.org,
+        info@metux.net, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, alexander.shishkin@linux.intel.com,
+        hsweeten@visionengravers.com, kgene@kernel.org,
+        kernel@pengutronix.de, sudeep.holla@arm.com, bpf@vger.kernel.org,
+        kafai@fb.com, daniel@zonque.org
+Subject: Re: [PATCH 06/15] ARM: imx: cleanup cppcheck shifting errors
+Message-ID: <20190624031651.GA16146@dragon>
+References: <20190623151313.970-1-tranmanphong@gmail.com>
+ <20190623151313.970-7-tranmanphong@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1906221559060.3253@hadrien>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.177.96.96]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190623151313.970-7-tranmanphong@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, Jun 23, 2019 at 10:13:04PM +0700, Phong Tran wrote:
+> [arch/arm/mach-imx/iomux-mx3.h:93]: (error) Shifting signed 32-bit value
+> by 31 bits is undefined behaviour
+> 
+> Signed-off-by: Phong Tran <tranmanphong@gmail.com>
 
-
-On 2019/6/22 22:00, Julia Lawall wrote:
-> 
-> 
-> On Sat, 22 Jun 2019, maowenan wrote:
-> 
->>
->>
->> On 2019/6/22 21:06, Julia Lawall wrote:
->>>
->>>
->>> On Sat, 22 Jun 2019, Mao Wenan wrote:
->>>
->>>> There is one warning:
->>>> drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c: In function ‘amdgpu_pmu_init’:
->>>> drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c:249:6: warning: variable ‘ret’ set but not used [-Wunused-but-set-variable]
->>>>   int ret = 0;
->>>>       ^
->>>> amdgpu_pmu_init() is called by amdgpu_device_init() in drivers/gpu/drm/amd/amdgpu/amdgpu_device.c,
->>>> which will use the return value. So it returns 'ret' for caller.
->>>> amdgpu_device_init()
->>>> 	r = amdgpu_pmu_init(adev);
->>>>
->>>> Fixes: 9c7c85f7ea1f ("drm/amdgpu: add pmu counters")
->>>>
->>>> Signed-off-by: Mao Wenan <maowenan@huawei.com>
->>>> ---
->>>>  v1->v2: change the subject for this patch; change the indenting when it calls init_pmu_by_type; use the value 'ret' in
->>>>  amdgpu_pmu_init().
->>>>  drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c | 6 +++---
->>>>  1 file changed, 3 insertions(+), 3 deletions(-)
->>>>
->>>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
->>>> index 0e6dba9..145e720 100644
->>>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
->>>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
->>>> @@ -252,8 +252,8 @@ int amdgpu_pmu_init(struct amdgpu_device *adev)
->>>>  	case CHIP_VEGA20:
->>>>  		/* init df */
->>>>  		ret = init_pmu_by_type(adev, df_v3_6_attr_groups,
->>>> -				       "DF", "amdgpu_df", PERF_TYPE_AMDGPU_DF,
->>>> -				       DF_V3_6_MAX_COUNTERS);
->>>> +							   "DF", "amdgpu_df", PERF_TYPE_AMDGPU_DF,
->>>> +							   DF_V3_6_MAX_COUNTERS);
->>>>
->>>>  		/* other pmu types go here*/
->>>
->>> I don't know what is the impact of the other pmu types that are planned
->>> for the future.  Perhaps it would be better to abort the function
->>> immediately in the case of a failure.
->>
-
-OK, v3 will be sent.
-
->> I guess it would be better to use new function or new switch case clause to process different PMU types
->> in future.
-> 
-> I don't know.  But normally when an error may occur it is checked for
-> immediately, rather than just letting it go until the end of the function.
-> But maybe the developer know what is planned for the future for this
-> function.
-> 
-> julia
-> 
->>
->>>
->>> julia
->>>
->>>>  		break;
->>>> @@ -261,7 +261,7 @@ int amdgpu_pmu_init(struct amdgpu_device *adev)
->>>>  		return 0;
->>>>  	}
->>>>
->>>> -	return 0;
->>>> +	return ret;
->>>>  }
->>>>
->>>>
->>>> --
->>>> 2.7.4
->>>>
->>>>
->>>
->>
->>
-> 
-
+Applied, thanks.
