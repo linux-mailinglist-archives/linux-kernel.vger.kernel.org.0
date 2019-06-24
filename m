@@ -2,41 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 176EB50715
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:06:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D87A50652
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 11:58:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729657AbfFXKES (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 06:04:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35694 "EHLO mail.kernel.org"
+        id S1728549AbfFXJ57 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 05:57:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56292 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728909AbfFXKEQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 06:04:16 -0400
+        id S1728322AbfFXJ56 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 05:57:58 -0400
 Received: from localhost (f4.8f.5177.ip4.static.sl-reverse.com [119.81.143.244])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B8991208E4;
-        Mon, 24 Jun 2019 10:04:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B99CC208E4;
+        Mon, 24 Jun 2019 09:57:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561370655;
-        bh=Zy/yHJsOFUduk6qI/dCMLylQE+bGJCqwnqi1WcRMcGw=;
+        s=default; t=1561370277;
+        bh=29XaB1Kr/S/ex/Qsue3XS8TIrFUIlDqc+lXTxFPKfX8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fO3tVogT2ViXdYXWSIbhIYTbHi9DGuxcgM9nOsfTvow872G6+RAAD0iV+LfJP+jBk
-         kkCNXcG22gTCBeHFWnQHUcRzdRQJpq/uaHMxRv/PMFVmolqMidJKC3ZKow1ARd18aS
-         3CpWyOMdX+I8pNgdXIs7p1LzSWEPQts9L3BFJKJc=
+        b=cGnQAqzsV1M1NkI9RQAw+PHWQCNMgpJRH60qNXvuUJ48IV/sIwOtRXqNMjgcEBsBW
+         qJiCfmPLEkCaHwKc99TJ0apao4W7zSnwGpsSkiy6hp52HBNfv8lcKlMNp2p+DzJfYa
+         n5LFcMHzCZlbBUQG1TEV7tkm7WkB3AqJjajgGFxQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josh Collier <josh.d.collier@intel.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Joao Pinto <jpinto@synopsys.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        Alexey Brodkin <abrodkin@synopsys.com>,
+        Jose Abreu <joabreu@synopsys.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 41/90] IB/{qib, hfi1, rdmavt}: Correct ibv_devinfo max_mr value
-Date:   Mon, 24 Jun 2019 17:56:31 +0800
-Message-Id: <20190624092316.990005614@linuxfoundation.org>
+Subject: [PATCH 4.14 14/51] ARC: [plat-hsdk]: Add missing FIFO size entry in GMAC node
+Date:   Mon, 24 Jun 2019 17:56:32 +0800
+Message-Id: <20190624092308.011664466@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190624092313.788773607@linuxfoundation.org>
-References: <20190624092313.788773607@linuxfoundation.org>
+In-Reply-To: <20190624092305.919204959@linuxfoundation.org>
+References: <20190624092305.919204959@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,64 +49,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 35164f5259a47ea756fa1deb3e463ac2a4f10dc9 ]
+[ Upstream commit 4c70850aeb2e40016722cd1abd43c679666d3ca0 ]
 
-The command 'ibv_devinfo -v' reports 0 for max_mr.
+Add the binding for RX/TX fifo size of GMAC node.
 
-Fix by assigning the query values after the mr lkey_table has been built
-rather than early on in the driver.
-
-Fixes: 7b1e2099adc8 ("IB/rdmavt: Move memory registration into rdmavt")
-Reviewed-by: Josh Collier <josh.d.collier@intel.com>
-Signed-off-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
-Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Cc: Joao Pinto <jpinto@synopsys.com>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Vineet Gupta <vgupta@synopsys.com>
+Tested-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Acked-by: Alexey Brodkin <abrodkin@synopsys.com>
+Signed-off-by: Jose Abreu <joabreu@synopsys.com>
+Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/hw/hfi1/verbs.c    | 2 --
- drivers/infiniband/hw/qib/qib_verbs.c | 2 --
- drivers/infiniband/sw/rdmavt/mr.c     | 2 ++
- 3 files changed, 2 insertions(+), 4 deletions(-)
+ arch/arc/boot/dts/hsdk.dts | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/infiniband/hw/hfi1/verbs.c b/drivers/infiniband/hw/hfi1/verbs.c
-index 48692adbe811..27d9c4cefdc7 100644
---- a/drivers/infiniband/hw/hfi1/verbs.c
-+++ b/drivers/infiniband/hw/hfi1/verbs.c
-@@ -1418,8 +1418,6 @@ static void hfi1_fill_device_attr(struct hfi1_devdata *dd)
- 	rdi->dparms.props.max_cq = hfi1_max_cqs;
- 	rdi->dparms.props.max_ah = hfi1_max_ahs;
- 	rdi->dparms.props.max_cqe = hfi1_max_cqes;
--	rdi->dparms.props.max_mr = rdi->lkey_table.max;
--	rdi->dparms.props.max_fmr = rdi->lkey_table.max;
- 	rdi->dparms.props.max_map_per_fmr = 32767;
- 	rdi->dparms.props.max_pd = hfi1_max_pds;
- 	rdi->dparms.props.max_qp_rd_atom = HFI1_MAX_RDMA_ATOMIC;
-diff --git a/drivers/infiniband/hw/qib/qib_verbs.c b/drivers/infiniband/hw/qib/qib_verbs.c
-index 41babbc0db58..803c3544c75b 100644
---- a/drivers/infiniband/hw/qib/qib_verbs.c
-+++ b/drivers/infiniband/hw/qib/qib_verbs.c
-@@ -1495,8 +1495,6 @@ static void qib_fill_device_attr(struct qib_devdata *dd)
- 	rdi->dparms.props.max_cq = ib_qib_max_cqs;
- 	rdi->dparms.props.max_cqe = ib_qib_max_cqes;
- 	rdi->dparms.props.max_ah = ib_qib_max_ahs;
--	rdi->dparms.props.max_mr = rdi->lkey_table.max;
--	rdi->dparms.props.max_fmr = rdi->lkey_table.max;
- 	rdi->dparms.props.max_map_per_fmr = 32767;
- 	rdi->dparms.props.max_qp_rd_atom = QIB_MAX_RDMA_ATOMIC;
- 	rdi->dparms.props.max_qp_init_rd_atom = 255;
-diff --git a/drivers/infiniband/sw/rdmavt/mr.c b/drivers/infiniband/sw/rdmavt/mr.c
-index 5819c9d6ffdc..39d101df229d 100644
---- a/drivers/infiniband/sw/rdmavt/mr.c
-+++ b/drivers/infiniband/sw/rdmavt/mr.c
-@@ -96,6 +96,8 @@ int rvt_driver_mr_init(struct rvt_dev_info *rdi)
- 	for (i = 0; i < rdi->lkey_table.max; i++)
- 		RCU_INIT_POINTER(rdi->lkey_table.table[i], NULL);
+diff --git a/arch/arc/boot/dts/hsdk.dts b/arch/arc/boot/dts/hsdk.dts
+index c033ae45fe42..57d81c6aa379 100644
+--- a/arch/arc/boot/dts/hsdk.dts
++++ b/arch/arc/boot/dts/hsdk.dts
+@@ -170,6 +170,9 @@
+ 			resets = <&cgu_rst HSDK_ETH_RESET>;
+ 			reset-names = "stmmaceth";
  
-+	rdi->dparms.props.max_mr = rdi->lkey_table.max;
-+	rdi->dparms.props.max_fmr = rdi->lkey_table.max;
- 	return 0;
- }
- 
++			tx-fifo-depth = <4096>;
++			rx-fifo-depth = <4096>;
++
+ 			mdio {
+ 				#address-cells = <1>;
+ 				#size-cells = <0>;
 -- 
 2.20.1
 
