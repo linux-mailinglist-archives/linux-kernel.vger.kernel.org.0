@@ -2,64 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93F8750C4D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 15:48:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C8FA750C04
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 15:30:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731325AbfFXNsT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 09:48:19 -0400
-Received: from m13-129.163.com ([220.181.13.129]:16837 "EHLO m13-129.163.com"
+        id S1731138AbfFXNac (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 09:30:32 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:57846 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726505AbfFXNsS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 09:48:18 -0400
-X-Greylist: delayed 916 seconds by postgrey-1.27 at vger.kernel.org; Mon, 24 Jun 2019 09:48:17 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=Date:From:Subject:MIME-Version:Message-ID; bh=aUGKt
-        vZSy+6o0S9PVtKxbkzfcp42LXfJggJvKQBcobw=; b=mQly/kqzO1oiR3doEt8hS
-        ppAyTx2uccPH4rQaW6E2hG79FGTcWdoLaP4/usBjKU2gFnZ6g0P1Qr5yI5bZGeqw
-        nMLcNJNkKT9jAvWPUFg2jPFPiJ2mlOTez343k0d5uFJ+Tnw2Sd7t8QRdjMDgLSQz
-        ZOuiDhAZpZrNIfxQpY2au4=
-Received: from weijieut$163.com ( [121.237.48.209] ) by
- ajax-webmail-wmsvr129 (Coremail) ; Mon, 24 Jun 2019 21:30:10 +0800 (CST)
-X-Originating-IP: [121.237.48.209]
-Date:   Mon, 24 Jun 2019 21:30:10 +0800 (CST)
-From:   "Weijie Yang" <weijieut@163.com>
-To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Cc:     axboe@fb.com, fengguang.wu@intel.com, linux-api@vger.kernel.org,
-        "weijie.yang@samsung.com" <weijie.yang@samsung.com>
-Subject: [bug report] read-ahead can't work properly
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version SP_ntes V3.5 build
- 20190614(cb3344cf) Copyright (c) 2002-2019 www.mailtech.cn 163com
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+        id S1728926AbfFXNac (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 09:30:32 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 00B3D30821BF;
+        Mon, 24 Jun 2019 13:30:32 +0000 (UTC)
+Received: from vitty.brq.redhat.com (unknown [10.43.2.155])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D13985D70D;
+        Mon, 24 Jun 2019 13:30:30 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     kvm@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
+Subject: [PATCH] x86/kvm/nVMCS: fix VMCLEAR when Enlightened VMCS is in use
+Date:   Mon, 24 Jun 2019 15:30:28 +0200
+Message-Id: <20190624133028.3710-1-vkuznets@redhat.com>
 MIME-Version: 1.0
-Message-ID: <37a8bb5a.af8b.16b89adff5d.Coremail.weijieut@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID: gcGowADXbfJi0BBdeBX+AA--.3677W
-X-CM-SenderInfo: xzhlyxxhxwqiywtou0bp/xtbBDQLdsFaD5oP5fAAAsX
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Mon, 24 Jun 2019 13:30:32 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-CldoZW4gdHJ5IHRoZSBmaWxlIHJlYWRhaGVhZCBieSBwb3NpeF9mYWR2aXNlKCksIEkgZmluZCBp
-dCBjYW4ndCB3b3JrIHByb3Blcmx5LgoKRm9yIGV4YW1wbGUsIHBvc2l4X2ZhZHZpc2UoUE9TSVhf
-RkFEVl9XSUxMTkVFRCkgYSAxME1CIGZpbGUsIHRoZSBrZXJuZWwKYWN0dWFsbHkgIHJlYWRhaGVh
-ZCBvbmx5IDUxMktCIGRhdGEgdG8gdGhlIHBhZ2UgY2FjaGUsIGV2ZW4gaWYgdGhlcmUgYXJlIGVu
-b3VnaApmcmVlIG1lbW9yeSBpbiB0aGUgbWFjaGluZS4KCldoZW4gdHJhY2UgdG8ga2VybmVsLCBJ
-IGZpbmQgdGhlIGlzc3VlIGlzIGF0IGZvcmNlX3BhZ2VfY2FjaGVfcmVhZGFoZWFkKCk6CiAKICAg
-ICAgICBtYXhfcGFnZXMgPSBtYXhfdCh1bnNpZ25lZCBsb25nLCBiZGktPmlvX3BhZ2VzLCByYS0+
-cmFfcGFnZXMpOwogICAgICAgIG5yX3RvX3JlYWQgPSBtaW4obnJfdG9fcmVhZCwgbWF4X3BhZ2Vz
-KTsKCk5vIG1hdGVyIHdoYXQgaW5wdXQgbnJfdG9fcmVhZCBpcywgaXQgaXMgbGltaXRlZCB0byBh
-IHZlcnkgc21hbGwgc2l6ZSwgc3VjaCBhcyAxMjggcGFnZXMuCgpJIHRoaW5rIHRoZSBtaW4oKSBs
-aW1pdCBjb2RlIGlzIHRvIGxpbWl0IHBlci1kaXNrLWlvIHNpemUsIG5vdCB0aGUgdG90YWwgbnJf
-dG9fcmVhZC4KYW5kIHRyYWNlIHRoZSBnaXQgbG9nLCB0aGlzIGlzc3VlIGlzIGludHJvZHVjZWQg
-YnkgNmQyYmU5MTVlNTg5CmFmdGVyIHRoYXQsIG5yX3RvX3JlYWQgaXMgbGltaXRlZCBhdCBzbWFs
-bCwgZXZlbiBpZiB0aGVyZSBhcmUgZW5vdWdoIGZyZWUgbWVtb3J5LgpiZWZvcmUgdGhhdCwgdXNl
-ciBjYW4gcmVhZGFoZWFkIGEgdmVyeSBsYXJnZSBmaWxlIGlmIHRoZXkgaGF2ZSBlbm91Z2ggbWVt
-b3J5LgoKV2hlbiByZWFkIHRoZSBwb3NpeF9mYWR2aXNlKCkgbWFuLXBhZ2UsIGl0IHNheXMgcmVh
-ZGFoZWFkIGRhdGEgZGVwZW5kaW5nIG9uCnZpcnR1YWwgbWVtb3J5IGxvYWQuIApTbyBpZiB0aGVy
-ZSBhcmUgZW5vdWdoIG1lbW9yeSwgaXQgc2hvdWxkIHJlYWQgYXMgbWFueSBkYXRhIGFzIHVzZXIg
-ZXhwZWN0ZWQuCgpFeHBlY3Qgc29tZW9uZSBjYW4gY2xhcmlmeSBvci9hbmQgZml4IGl0LiAKClRo
-YW5rcyAKCgoKCg==
+When Enlightened VMCS is in use, it is valid to do VMCLEAR and,
+according to TLFS, this should "transition an enlightened VMCS from the
+active to the non-active state". It is, however, wrong to assume that
+it is only valid to do VMCLEAR for the eVMCS which is currently active
+on the vCPU performing VMCLEAR.
+
+Currently, the logic in handle_vmclear() is broken: in case, there is no
+active eVMCS on the vCPU doing VMCLEAR we treat the argument as a 'normal'
+VMCS and kvm_vcpu_write_guest() to the 'launch_state' field irreversibly
+corrupts the memory area.
+
+So, in case the VMCLEAR argument is not the current active eVMCS on the
+vCPU, how can we know if the area it is pointing to is a normal or an
+enlightened VMCS?
+Thanks to the bug in Hyper-V (see commit 72aeb60c52bf7 ("KVM: nVMX: Verify
+eVMCS revision id match supported eVMCS version on eVMCS VMPTRLD")) we can
+not, the revision can't be used to distinguish between them. So let's
+assume it is always enlightened in case enlightened vmentry is enabled in
+the assist page. Also, check if vmx->nested.enlightened_vmcs_enabled to
+minimize the impact for 'unenlightened' workloads.
+
+Fixes: b8bbab928fb1 ("KVM: nVMX: implement enlightened VMPTRLD and VMCLEAR")
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+---
+ arch/x86/kvm/vmx/evmcs.c  | 18 ++++++++++++++++++
+ arch/x86/kvm/vmx/evmcs.h  |  1 +
+ arch/x86/kvm/vmx/nested.c | 19 ++++++++-----------
+ 3 files changed, 27 insertions(+), 11 deletions(-)
+
+diff --git a/arch/x86/kvm/vmx/evmcs.c b/arch/x86/kvm/vmx/evmcs.c
+index 1a6b3e1581aa..eae636ec0cc8 100644
+--- a/arch/x86/kvm/vmx/evmcs.c
++++ b/arch/x86/kvm/vmx/evmcs.c
+@@ -3,6 +3,7 @@
+ #include <linux/errno.h>
+ #include <linux/smp.h>
+ 
++#include "../hyperv.h"
+ #include "evmcs.h"
+ #include "vmcs.h"
+ #include "vmx.h"
+@@ -309,6 +310,23 @@ void evmcs_sanitize_exec_ctrls(struct vmcs_config *vmcs_conf)
+ }
+ #endif
+ 
++bool nested_enlightened_vmentry(struct kvm_vcpu *vcpu, u64 *evmptr)
++{
++	struct hv_vp_assist_page assist_page;
++
++	*evmptr = -1ull;
++
++	if (unlikely(!kvm_hv_get_assist_page(vcpu, &assist_page)))
++		return false;
++
++	if (unlikely(!assist_page.enlighten_vmentry))
++		return false;
++
++	*evmptr = assist_page.current_nested_vmcs;
++
++	return true;
++}
++
+ uint16_t nested_get_evmcs_version(struct kvm_vcpu *vcpu)
+ {
+        struct vcpu_vmx *vmx = to_vmx(vcpu);
+diff --git a/arch/x86/kvm/vmx/evmcs.h b/arch/x86/kvm/vmx/evmcs.h
+index e0fcef85b332..c449e79a9c4a 100644
+--- a/arch/x86/kvm/vmx/evmcs.h
++++ b/arch/x86/kvm/vmx/evmcs.h
+@@ -195,6 +195,7 @@ static inline void evmcs_sanitize_exec_ctrls(struct vmcs_config *vmcs_conf) {}
+ static inline void evmcs_touch_msr_bitmap(void) {}
+ #endif /* IS_ENABLED(CONFIG_HYPERV) */
+ 
++bool nested_enlightened_vmentry(struct kvm_vcpu *vcpu, u64 *evmptr);
+ uint16_t nested_get_evmcs_version(struct kvm_vcpu *vcpu);
+ int nested_enable_evmcs(struct kvm_vcpu *vcpu,
+ 			uint16_t *vmcs_version);
+diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
+index 9214b3aea1f9..ee8dda7d8a03 100644
+--- a/arch/x86/kvm/vmx/nested.c
++++ b/arch/x86/kvm/vmx/nested.c
+@@ -1765,26 +1765,21 @@ static int nested_vmx_handle_enlightened_vmptrld(struct kvm_vcpu *vcpu,
+ 						 bool from_launch)
+ {
+ 	struct vcpu_vmx *vmx = to_vmx(vcpu);
+-	struct hv_vp_assist_page assist_page;
++	u64 evmptr;
+ 
+ 	if (likely(!vmx->nested.enlightened_vmcs_enabled))
+ 		return 1;
+ 
+-	if (unlikely(!kvm_hv_get_assist_page(vcpu, &assist_page)))
++	if (!nested_enlightened_vmentry(vcpu, &evmptr))
+ 		return 1;
+ 
+-	if (unlikely(!assist_page.enlighten_vmentry))
+-		return 1;
+-
+-	if (unlikely(assist_page.current_nested_vmcs !=
+-		     vmx->nested.hv_evmcs_vmptr)) {
+-
++	if (unlikely(evmptr != vmx->nested.hv_evmcs_vmptr)) {
+ 		if (!vmx->nested.hv_evmcs)
+ 			vmx->nested.current_vmptr = -1ull;
+ 
+ 		nested_release_evmcs(vcpu);
+ 
+-		if (kvm_vcpu_map(vcpu, gpa_to_gfn(assist_page.current_nested_vmcs),
++		if (kvm_vcpu_map(vcpu, gpa_to_gfn(evmptr),
+ 				 &vmx->nested.hv_evmcs_map))
+ 			return 0;
+ 
+@@ -1826,7 +1821,7 @@ static int nested_vmx_handle_enlightened_vmptrld(struct kvm_vcpu *vcpu,
+ 		 */
+ 		vmx->nested.hv_evmcs->hv_clean_fields &=
+ 			~HV_VMX_ENLIGHTENED_CLEAN_FIELD_ALL;
+-		vmx->nested.hv_evmcs_vmptr = assist_page.current_nested_vmcs;
++		vmx->nested.hv_evmcs_vmptr = evmptr;
+ 
+ 		/*
+ 		 * Unlike normal vmcs12, enlightened vmcs12 is not fully
+@@ -4331,6 +4326,7 @@ static int handle_vmclear(struct kvm_vcpu *vcpu)
+ 	struct vcpu_vmx *vmx = to_vmx(vcpu);
+ 	u32 zero = 0;
+ 	gpa_t vmptr;
++	u64 evmptr;
+ 
+ 	if (!nested_vmx_check_permission(vcpu))
+ 		return 1;
+@@ -4346,7 +4342,8 @@ static int handle_vmclear(struct kvm_vcpu *vcpu)
+ 		return nested_vmx_failValid(vcpu,
+ 			VMXERR_VMCLEAR_VMXON_POINTER);
+ 
+-	if (vmx->nested.hv_evmcs_map.hva) {
++	if (unlikely(vmx->nested.enlightened_vmcs_enabled) &&
++	    nested_enlightened_vmentry(vcpu, &evmptr)) {
+ 		if (vmptr == vmx->nested.hv_evmcs_vmptr)
+ 			nested_release_evmcs(vcpu);
+ 	} else {
+-- 
+2.20.1
+
