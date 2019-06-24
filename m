@@ -2,144 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA89950350
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 09:27:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D395350357
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 09:28:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727842AbfFXH1P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 03:27:15 -0400
-Received: from mail-io1-f71.google.com ([209.85.166.71]:35415 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726418AbfFXH1J (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 03:27:09 -0400
-Received: by mail-io1-f71.google.com with SMTP id w17so20926002iom.2
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 00:27:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=Q+jSIt1RbaUKJIAwoqkZbIlk6NUJrHcjgQhUeOx3Q34=;
-        b=cI5OkzwV7NxHKMd2HdXQ3zlNdb9TYg3O3uCqmTPR+h+tuWca6VDtRa8MuBqJaJbY66
-         KSuNF1AY68f2iNrhCI7TWc8XLBcTAJiSynvgauCp3EdHTui6w688dzc7Z+sVA24UjjUj
-         BvgzceD34haqPRupvPgpkR17QmJFvdrQYKGOzAJq3d6ACMGLHjptgOXOT4FcR5bOVC2u
-         5lj5d5rvdSvCS71cHvo2aOjk8mrnOn3Qus7Wadmd+h+D9DeyVqkQT+wK0lXNPLOgxgR/
-         6XDlqU9oYhi6SnWbjRNeoJxir1uGnS8+0ic6hWqha87GTIam82MKV0KZH6cRguVtLJoB
-         v60w==
-X-Gm-Message-State: APjAAAUJKDSqZztgyw7OCfU8UhJGhtitMelTFZWl74dHY2UdgwubMZtC
-        xFs9U/0Fw8Xt7llwvjBsa7gJ84CqFDR5QNp9KCj6nscjQV9y
-X-Google-Smtp-Source: APXvYqy/O0/vqy+34ZnqXymFhrK27i4TCuMIDpV9S7wFv/rDi3jRPMJdVVlIpNnM5iGIXFOdrtxkM8xTE8ILETQuWcr5InsS6kHw
+        id S1727927AbfFXH2Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 03:28:25 -0400
+Received: from verein.lst.de ([213.95.11.211]:53057 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726375AbfFXH2Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 03:28:25 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id 0DC7D68B02; Mon, 24 Jun 2019 09:27:53 +0200 (CEST)
+Date:   Mon, 24 Jun 2019 09:27:52 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Logan Gunthorpe <logang@deltatee.com>
+Cc:     linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
+        linux-rdma@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@lst.de>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Keith Busch <kbusch@kernel.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Stephen Bates <sbates@raithlin.com>
+Subject: Re: [RFC PATCH 00/28] Removing struct page from P2PDMA
+Message-ID: <20190624072752.GA3954@lst.de>
+References: <20190620161240.22738-1-logang@deltatee.com>
 MIME-Version: 1.0
-X-Received: by 2002:a02:1948:: with SMTP id b69mr23721911jab.55.1561361228126;
- Mon, 24 Jun 2019 00:27:08 -0700 (PDT)
-Date:   Mon, 24 Jun 2019 00:27:08 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000005e6124058c0cbdbe@google.com>
-Subject: memory leak in fdb_create
-From:   syzbot <syzbot+88533dc8b582309bf3ee@syzkaller.appspotmail.com>
-To:     bridge@lists.linux-foundation.org, davem@davemloft.net,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        nikolay@cumulusnetworks.com, roopa@cumulusnetworks.com,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190620161240.22738-1-logang@deltatee.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+This is not going to fly.
 
-syzbot found the following crash on:
+For one passing a dma_addr_t through the block layer is a layering
+violation, and one that I think will also bite us in practice.
+The host physical to PCIe bus address mapping can have offsets, and
+those offsets absolutely can be different for differnet root ports.
+So with your caller generated dma_addr_t everything works fine with
+a switched setup as the one you are probably testing on, but on a
+sufficiently complicated setup with multiple root ports it can break.
 
-HEAD commit:    abf02e29 Merge tag 'pm-5.2-rc6' of git://git.kernel.org/pu..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12970eb2a00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=56f1da14935c3cce
-dashboard link: https://syzkaller.appspot.com/bug?extid=88533dc8b582309bf3ee
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16de5c06a00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10546026a00000
+Also duplicating the whole block I/O stack, including hooks all over
+the fast path is pretty much a no-go.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+88533dc8b582309bf3ee@syzkaller.appspotmail.com
+I've been pondering for a while if we wouldn't be better off just
+passing a phys_addr_t + len instead of the page, offset, len tuple
+in the bio_vec, though.  If you look at the normal I/O path here
+is what we normally do:
 
-ffffffffda RBX: 0000000000000000 RCX: 0000000000441519
-BUG: memory leak
-unreferenced object 0xffff888123886800 (size 128):
-   comm "softirq", pid 0, jiffies 4294945699 (age 13.160s)
-   hex dump (first 32 bytes):
-     81 89 f8 20 81 88 ff ff 00 00 00 00 00 00 00 00  ... ............
-     32 f9 fc b7 11 e2 01 00 00 00 00 00 00 00 00 00  2...............
-   backtrace:
-     [<00000000ca2421fa>] kmemleak_alloc_recursive  
-include/linux/kmemleak.h:43 [inline]
-     [<00000000ca2421fa>] slab_post_alloc_hook mm/slab.h:439 [inline]
-     [<00000000ca2421fa>] slab_alloc mm/slab.c:3326 [inline]
-     [<00000000ca2421fa>] kmem_cache_alloc+0x134/0x270 mm/slab.c:3488
-     [<000000007faade68>] fdb_create+0x49/0x5a0 net/bridge/br_fdb.c:492
-     [<00000000772dfc36>] fdb_insert+0xb7/0x100 net/bridge/br_fdb.c:536
-     [<00000000ded35dd0>] br_fdb_insert+0x3b/0x60 net/bridge/br_fdb.c:552
-     [<00000000758ae277>] __vlan_add+0x617/0xdf0 net/bridge/br_vlan.c:284
-     [<0000000054c3b165>] br_vlan_add+0x26f/0x480 net/bridge/br_vlan.c:678
-     [<00000000ed895462>] br_vlan_init+0xe9/0x130 net/bridge/br_vlan.c:1061
-     [<00000000f916c753>] br_dev_init+0xa6/0x170 net/bridge/br_device.c:137
-     [<00000000a4e1a1ea>] register_netdevice+0xbf/0x600 net/core/dev.c:8663
-     [<00000000bdcf4ebd>] register_netdev+0x24/0x40 net/core/dev.c:8851
-     [<0000000042e6c0c4>] br_add_bridge+0x5e/0xa0 net/bridge/br_if.c:456
-     [<0000000036402409>] br_ioctl_deviceless_stub+0x30c/0x350  
-net/bridge/br_ioctl.c:374
-     [<00000000e57c9a76>] sock_ioctl+0x287/0x480 net/socket.c:1141
-     [<00000000109b8329>] vfs_ioctl fs/ioctl.c:46 [inline]
-     [<00000000109b8329>] file_ioctl fs/ioctl.c:509 [inline]
-     [<00000000109b8329>] do_vfs_ioctl+0x62a/0x810 fs/ioctl.c:696
-     [<00000000d8eb5a5e>] ksys_ioctl+0x86/0xb0 fs/ioctl.c:713
-     [<00000000cd162915>] __do_sys_ioctl fs/ioctl.c:720 [inline]
-     [<00000000cd162915>] __se_sys_ioctl fs/ioctl.c:718 [inline]
-     [<00000000cd162915>] __x64_sys_ioctl+0x1e/0x30 fs/ioctl.c:718
+ - we get a page as input, either because we have it at hand (e.g.
+   from the page cache) or from get_user_pages (which actually caculates
+   it from a pfn in the page tables)
+ - once in the bio all the merging decisions are based on the physical
+   address, so we have to convert it to the physical address there,
+   potentially multiple times
+ - then dma mapping all works off the physical address, which it gets
+   from the page at the start
+ - then only the dma address is used for the I/O
+ - on I/O completion we often but not always need the page again.  In
+   the direct I/O case for reference counting and dirty status, in the
+   file system also for things like marking the page uptodate
 
-BUG: memory leak
-unreferenced object 0xffff88811ced2de0 (size 32):
-   comm "syz-executor140", pid 6998, jiffies 4294945699 (age 13.160s)
-   hex dump (first 32 bytes):
-     d3 d2 f1 a7 6c 83 5b 30 30 15 a1 6f 77 3f 00 00  ....l.[00..ow?..
-     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-   backtrace:
-     [<00000000d53fdc1e>] kmemleak_alloc_recursive  
-include/linux/kmemleak.h:43 [inline]
-     [<00000000d53fdc1e>] slab_post_alloc_hook mm/slab.h:439 [inline]
-     [<00000000d53fdc1e>] slab_alloc mm/slab.c:3326 [inline]
-     [<00000000d53fdc1e>] __do_kmalloc mm/slab.c:3658 [inline]
-     [<00000000d53fdc1e>] __kmalloc_track_caller+0x15d/0x2c0 mm/slab.c:3675
-     [<00000000c742d29c>] kstrdup+0x3a/0x70 mm/util.c:52
-     [<00000000d3df5d2b>] kstrdup_const+0x48/0x60 mm/util.c:74
-     [<00000000d75a8fa8>] kvasprintf_const+0x7e/0xe0 lib/kasprintf.c:48
-     [<00000000ebee37a0>] kobject_set_name_vargs+0x40/0xe0 lib/kobject.c:289
-     [<00000000c23c056a>] dev_set_name+0x63/0x90 drivers/base/core.c:1915
-     [<000000004c47b6d3>] netdev_register_kobject+0x5a/0x1b0  
-net/core/net-sysfs.c:1727
-     [<000000005fb074af>] register_netdevice+0x397/0x600 net/core/dev.c:8733
-     [<00000000bdcf4ebd>] register_netdev+0x24/0x40 net/core/dev.c:8851
-     [<0000000042e6c0c4>] br_add_bridge+0x5e/0xa0 net/bridge/br_if.c:456
-     [<0000000036402409>] br_ioctl_deviceless_stub+0x30c/0x350  
-net/bridge/br_ioctl.c:374
-     [<00000000e57c9a76>] sock_ioctl+0x287/0x480 net/socket.c:1141
-     [<00000000109b8329>] vfs_ioctl fs/ioctl.c:46 [inline]
-     [<00000000109b8329>] file_ioctl fs/ioctl.c:509 [inline]
-     [<00000000109b8329>] do_vfs_ioctl+0x62a/0x810 fs/ioctl.c:696
-     [<00000000d8eb5a5e>] ksys_ioctl+0x86/0xb0 fs/ioctl.c:713
-     [<00000000cd162915>] __do_sys_ioctl fs/ioctl.c:720 [inline]
-     [<00000000cd162915>] __se_sys_ioctl fs/ioctl.c:718 [inline]
-     [<00000000cd162915>] __x64_sys_ioctl+0x1e/0x30 fs/ioctl.c:718
-     [<0000000069b4ac36>] do_syscall_64+0x76/0x1a0  
-arch/x86/entry/common.c:301
+So if we move to a phys_addr_t we'd need to go back to the page at least
+once.  But because of how the merging works we really only need to do
+it once per segment, as we can just do pointer arithmerics do get the
+following pages.  As we generally go at least once from a physical
+address to a page in the merging code even a relatively expensive vmem_map
+looks shouldn't be too bad.  Even more so given that the super hot path
+(small blkdev direct I/O) can actually trivially cache the affected pages
+as well.
 
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+Linus kinda hates the pfn approach, but part of that was really that
+it was proposed for file system data, which we all found out really
+can't work as-is without pages the hard way.  Another part probably
+was potential performance issue, but between the few page lookups, and
+the fact that using a single phys_addr_t instead of pfn/page + offset
+should avoid quite a few calculations performance should not actually
+be affected, although we'll have to be careful to actually verify that.
