@@ -2,88 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A1D6510D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 17:40:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D77B51786
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 17:44:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731258AbfFXPkM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 11:40:12 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:39154 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726551AbfFXPkM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 11:40:12 -0400
-Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hfR4Z-0000HP-Q2; Mon, 24 Jun 2019 17:39:59 +0200
-Date:   Mon, 24 Jun 2019 17:39:58 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Stephen Hemminger <stephen@networkplumber.org>
-cc:     Octavio Alvarez <octallk1@alvarezp.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Jiang Biao <jiang.biao2@zte.com.cn>,
-        Yi Wang <wang.yi59@zte.com.cn>,
-        Dou Liyang <douly.fnst@cn.fujitsu.com>,
-        Nicolai Stange <nstange@suse.de>,
-        Mirko Lindner <mlindner@marvell.com>
-Subject: Re: PROBLEM: Marvell 88E8040 (sky2) fails after hibernation
-In-Reply-To: <20190624083618.28cfd30a@hermes.lan>
-Message-ID: <alpine.DEB.2.21.1906241736570.32342@nanos.tec.linutronix.de>
-References: <aba1c363-92de-66d7-4aac-b555f398e70a@alvarezp.org>        <2cf2f745-0e29-13a7-6364-0a981dae758c@alvarezp.org>        <alpine.DEB.2.21.1906132229540.1791@nanos.tec.linutronix.de>        <95539fd9-ffdb-b91c-935f-7fd54d048fdf@alvarezp.org>       
- <alpine.DEB.2.21.1906221523340.5503@nanos.tec.linutronix.de>        <alpine.DEB.2.21.1906231448540.32342@nanos.tec.linutronix.de> <20190624083618.28cfd30a@hermes.lan>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1731269AbfFXPoo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 11:44:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44166 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726862AbfFXPon (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 11:44:43 -0400
+Received: from localhost (mobile-166-177-251-191.mycingular.net [166.177.251.191])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 98F512054F;
+        Mon, 24 Jun 2019 15:44:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561391082;
+        bh=7Jt7rUpCp3dXBK8HQ+SmNDCCUj1JSeZ3i8KBPoRDdwk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kX253NfTTtyouxOS1RZK2ORnfaf0USw4oBL5rt3Za3DEUC+ByPjKeXv/Jbfr/bPE1
+         nVRmlumHIELavHZHLA7oi/1Fo2SiZPDMENCa4l1fR6UrVZr0Vk83GMTqHSLX6yAziL
+         1gvwwwJgNqOFBcAba7OI37PsO8wdWRwlZ9z+Vuj4=
+Date:   Mon, 24 Jun 2019 23:41:45 +0800
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 5.1 000/121] 5.1.15-stable review
+Message-ID: <20190624154145.GA30572@kroah.com>
+References: <20190624092320.652599624@linuxfoundation.org>
+ <a37d3054-c0a4-da0f-8316-051f0ce293ca@roeck-us.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a37d3054-c0a4-da0f-8316-051f0ce293ca@roeck-us.net>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 24 Jun 2019, Stephen Hemminger wrote:
-> On Sun, 23 Jun 2019 14:54:13 +0200 (CEST)
-> Thomas Gleixner <tglx@linutronix.de> wrote:
-> > > > I will keep trying 4.14, unless you say otherwise.  
-> > > 
-> > > It would be interesting though I don't expect too much data.
-> > > 
-> > > So all of the above use PCI/MSI. That's at least a data point. I need to
-> > > stare into that driver again to figure out why this might make a
-> > > difference, but right now I'm lost.  
+On Mon, Jun 24, 2019 at 05:48:34AM -0700, Guenter Roeck wrote:
+> On 6/24/19 2:55 AM, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.1.15 release.
+> > There are 121 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
 > > 
-> > One other data point you could provide please:
+> > Responses should be made by Wed 26 Jun 2019 09:22:03 AM UTC.
+> > Anything received after that time might be too late.
 > > 
-> >  Load the driver on Linus master with the following module parameter:
-> > 
-> >    disable_msi=1
-> > 
-> > That switches to INTx usage. Does the machine resume proper with that?
-> > 
-> > Thanks,
-> > 
-> > 	tglx
 > 
+> Early feedback:
 > 
-> Suspend/resume and hibernation issues are often related to BIOS issues.
+> Building nds32:allmodconfig ... failed
+> --------------
+> Error log:
+> arch/nds32/math-emu/fpuemu.c: In function 'fpu_emu':
+> arch/nds32/math-emu/fpuemu.c:308:48: error: 'FPCSR_mskALLE_NO_UDFE' undeclared (first use in this function); did you mean 'FPCSR_mskALLE_NO_UDF_IEXE'?
+>   if (((fpu_reg->fpcsr << 5) & fpu_reg->fpcsr & FPCSR_mskALLE_NO_UDFE) ||
+>                                                 ^~~~~~~~~~~~~~~~~~~~~
+>                                                 FPCSR_mskALLE_NO_UDF_IEXE
+> arch/nds32/math-emu/fpuemu.c:308:48: note: each undeclared identifier is reported only once for each function it appears in
+> arch/nds32/math-emu/fpuemu.c:309:52: error: 'struct fpu_struct' has no member named 'UDF_trap'; did you mean 'UDF_IEX_trap'?
+>       ((fpu_reg->fpcsr & FPCSR_mskUDF) && (fpu_reg->UDF_trap)))
+>                                                     ^~~~~~~~
+>                                                     UDF_IEX_trap
 
-Right. The puzzle is that it worked and stopped working at some point and
-the cure is to revert a change in the irq core. That change fixed a
-regression in MSI and basically restores previous behaviour which should be
-very similar to the behaviour in the working old (4.9) kernel.
+Now dropped nds32 patch that caused this, and pushed out an -rc2
+release.
 
-Still trying to wrap my head around that, but of course everything is a
-moving part since then (interrupts, network, ....)
+thanks
 
-Thanks,
-
-	tglx
-
+greg k-h
