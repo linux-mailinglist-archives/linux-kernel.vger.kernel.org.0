@@ -2,100 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63CB251E5D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 00:34:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F30B51E6C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 00:37:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726696AbfFXWeo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 18:34:44 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:40961 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726397AbfFXWen (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 18:34:43 -0400
-Received: by mail-lf1-f67.google.com with SMTP id 136so11190304lfa.8
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 15:34:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=y8eI1qO6AFmOqg+DGNHTfaHm/FdxuE7uuuEzH8JMWmA=;
-        b=QSe0zP7x1PhqeFm5Pa1g378mzzZ9F4w1zBJn8qZeqnRDI9KV/yXGJRMQzdGKm8ZUgM
-         ixEcJO5JNi7MHG9Ry+Xmb17GQNKPjDakyNvN6vMbO3YS+BkBvuIF79xwNWqUM/hmufCH
-         1h2TXBqR7yMD4Bt5H3LvAyESbfAVNfgYjX5REfOYMLCxcd3rL6Xvka5TDM7zoSZH7tw+
-         FZJTaOQ4evD0HamcazF6LA7ghv7gapAci8IVBNM8TYj2DLbj3alkIPZMvTKbZznDfxiL
-         6OuJCyyot+2ls0X0JcFnRBfcW2kFMaZyaUs775cOcEXOOCGezhTRgUDYaR+3ZeZPt1Xj
-         +4NA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=y8eI1qO6AFmOqg+DGNHTfaHm/FdxuE7uuuEzH8JMWmA=;
-        b=sE/xw2HA699AD4hQaUwOsaVg/QxoVQ0WEQ3vJUXZc6mPbxE5cGSBe2uoERCEC3xlve
-         /37VgyuR/ydtCZ1xSZgxOy8q1HXGR1M/CBZtL9LP6K+7Uqo0iVPt6Ud0rCML2EOcUPpb
-         r/tldJWV+F1x+Z93DEqCdG2qObsvNcDAGndYla+/yJ0tFLnVuGedFtiDNmBcHJKOKITP
-         JlZcx31G+yfCM+M5aiIB20/pCdjGamvAwAdz22Q3c8uyfdY0rFRU8k6A2TV2tJF/WSzj
-         UTyiDX66cpM5/L+wfi0Lwk82F6Qu1Gs2fyHOfjPoXU+4AL9IXugWBa4mkdDBHUFeH77f
-         6B5g==
-X-Gm-Message-State: APjAAAV98X++HhXY7OitCUk+bBauXNvGa2HWFDfoqiPtWKKOWi6RxeUf
-        mpCQKqr+sgOv+fGRELyoG1slW0kba6ISoy3Ors1IzA==
-X-Google-Smtp-Source: APXvYqxFHSmad1x1wi9PdCcVTpSY3IPLSnbObJWPfhnJk0sD/mXvfU9nvhf52ekQIxfe3n4jChqssFab3rPEkOYHe0M=
-X-Received: by 2002:ac2:598d:: with SMTP id w13mr74724539lfn.165.1561415681723;
- Mon, 24 Jun 2019 15:34:41 -0700 (PDT)
+        id S1726978AbfFXWhe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 18:37:34 -0400
+Received: from mga01.intel.com ([192.55.52.88]:1686 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726413AbfFXWhc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 18:37:32 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jun 2019 15:37:32 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,413,1557212400"; 
+   d="scan'208";a="172143160"
+Received: from skuppusw-desk.jf.intel.com ([10.54.74.33])
+  by orsmga002.jf.intel.com with ESMTP; 24 Jun 2019 15:37:31 -0700
+From:   sathyanarayanan.kuppuswamy@linux.intel.com
+To:     bhelgaas@google.com
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ashok.raj@intel.com, keith.busch@intel.com,
+        sathyanarayanan.kuppuswamy@linux.intel.com
+Subject: [PATCH v1 1/1] PCI/ERR: Update error status after reset_link()
+Date:   Mon, 24 Jun 2019 15:35:23 -0700
+Message-Id: <20190624223523.115019-1-sathyanarayanan.kuppuswamy@linux.intel.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <20190621152329.21072-1-thierry.reding@gmail.com>
-In-Reply-To: <20190621152329.21072-1-thierry.reding@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 25 Jun 2019 00:34:30 +0200
-Message-ID: <CACRpkdbKCOgJDYWx0hJ+tYyimXbShMNV00oHsVAskeJm1kT0Jg@mail.gmail.com>
-Subject: Re: [PATCH] gpio: Add device link support
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 21, 2019 at 5:23 PM Thierry Reding <thierry.reding@gmail.com> wrote:
+From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
 
-> From: Thierry Reding <treding@nvidia.com>
->
-> Create a device link between a GPIO consumer and the GPIO supplier (i.e.
-> the GPIO chip's parent). This makes the driver core aware of the
-> dependency between the two devices so that it can properly order the
-> suspend/resume sequence.
->
-> As a side-effect the GPIO consumer will be force unloaded when the GPIO
-> supplier goes away, which prevents the consumer from accessing dangling
-> GPIOs.
->
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
+Commit bdb5ac85777d ("PCI/ERR: Handle fatal error recovery") uses
+reset_link() to recover from fatal errors. But, if the reset is
+successful there is no need to continue the rest of the error recovery
+checks. Also, during fatal error recovery, if the initial value of error
+status is PCI_ERS_RESULT_DISCONNECT or PCI_ERS_RESULT_NO_AER_DRIVER then
+even after successful recovery (using reset_link()) pcie_do_recovery()
+will report the recovery result as failure. So update the status of
+error after reset_link().
 
-I was thinking we were gonna see this soon :D
+Fixes: bdb5ac85777d ("PCI/ERR: Handle fatal error recovery")
+Cc: Ashok Raj <ashok.raj@intel.com>
+Cc: Keith Busch <keith.busch@intel.com>
+Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+---
+ drivers/pci/pcie/err.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-> +void gpiod_add_device_link(struct gpio_desc *desc, struct device *consumer)
-> +{
-> +       struct device_link *link;
-> +
-> +       link = device_link_add(consumer, desc->gdev->dev.parent,
-> +                              DL_FLAG_AUTOREMOVE_CONSUMER);
+diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
+index 773197a12568..aecec124a829 100644
+--- a/drivers/pci/pcie/err.c
++++ b/drivers/pci/pcie/err.c
+@@ -204,9 +204,13 @@ void pcie_do_recovery(struct pci_dev *dev, enum pci_channel_state state,
+ 	else
+ 		pci_walk_bus(bus, report_normal_detected, &status);
+ 
+-	if (state == pci_channel_io_frozen &&
+-	    reset_link(dev, service) != PCI_ERS_RESULT_RECOVERED)
+-		goto failed;
++	if (state == pci_channel_io_frozen) {
++		status = reset_link(dev, service);
++		if (status != PCI_ERS_RESULT_RECOVERED)
++			goto failed;
++		else
++			goto done;
++	}
+ 
+ 	if (status == PCI_ERS_RESULT_CAN_RECOVER) {
+ 		status = PCI_ERS_RESULT_RECOVERED;
+@@ -228,6 +232,7 @@ void pcie_do_recovery(struct pci_dev *dev, enum pci_channel_state state,
+ 	if (status != PCI_ERS_RESULT_RECOVERED)
+ 		goto failed;
+ 
++done:
+ 	pci_dbg(dev, "broadcast resume message\n");
+ 	pci_walk_bus(bus, report_resume, &status);
+ 
+-- 
+2.21.0
 
-I think this needs a NULL check.
-
-Some GPIO chips still have NULL as parent here, they just
-register a gpio_chip right out of boardfile code without any
-corresponding device. MIPS does this for example IIRC.
-
-> +               device_link_remove(desc->consumer, desc->gdev->dev.parent);
-
-And same on remove.
-
-But why not use desc->gdev->dev as link, simply?
-That device has the same lifetime as the gpio_chip, sometimes
-even longer I think, if e.g. there is userspace holding the
-GPIOs.
-
-Yours,
-Linus Walleij
