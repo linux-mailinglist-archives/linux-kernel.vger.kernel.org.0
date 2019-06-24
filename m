@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14275506F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:06:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 079F750844
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:18:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729468AbfFXKCx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 06:02:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34006 "EHLO mail.kernel.org"
+        id S1730620AbfFXKQF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 06:16:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53484 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728591AbfFXKCq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 06:02:46 -0400
+        id S1729670AbfFXKQE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 06:16:04 -0400
 Received: from localhost (f4.8f.5177.ip4.static.sl-reverse.com [119.81.143.244])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 59D40208E4;
-        Mon, 24 Jun 2019 10:02:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BF8D9205ED;
+        Mon, 24 Jun 2019 10:16:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561370563;
-        bh=RrDzfyGthtF5raNEydbiuzy84TWzT8OuuZw9M17TTDk=;
+        s=default; t=1561371363;
+        bh=6F0uQCMTnlWtg++gfb6hQFg+O79tkm8+jbu/aXD6iy0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oLyRQTfXVQlZy8Oc/IeoJ4Lb29frRRdOPP0MwsrnDapYr4Q4syuRzsniGMPITEasf
-         PhMqmAQffkTJY/Me9YLcNnbKg0NQI4bxoxIS+6/6TDibw5fSuo3qQgP/HK2rScDa5A
-         Vo8Zn/6pywOsq1h8tEurf9+tVkYH7Kr0H7MJSWL0=
+        b=S+IsMYwGVz1NtBOkYeSFfihKOPqlY4NEXotNZ5PGexyU+75Y1Lp8+VJQ+F7tc37en
+         jf/NuvdOU6xukKLUTxnfURJLxFzurkQBZaQFsuAzJdnKOu0WCpK8D55RmRqLUUAgCc
+         UQKji1eed6298ZjNzXhA+JN6DOc6OUHAPC/EyLiE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Doug Ledford <dledford@redhat.com>
-Subject: [PATCH 4.19 21/90] IB/hfi1: Silence txreq allocation warnings
-Date:   Mon, 24 Jun 2019 17:56:11 +0800
-Message-Id: <20190624092315.445290966@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Long <eric.long@unisoc.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 040/121] dmaengine: sprd: Fix the right place to configure 2-stage transfer
+Date:   Mon, 24 Jun 2019 17:56:12 +0800
+Message-Id: <20190624092322.847607054@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190624092313.788773607@linuxfoundation.org>
-References: <20190624092313.788773607@linuxfoundation.org>
+In-Reply-To: <20190624092320.652599624@linuxfoundation.org>
+References: <20190624092320.652599624@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,91 +44,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mike Marciniszyn <mike.marciniszyn@intel.com>
+[ Upstream commit c434e377dad1dec05cad1870ce21bc539e1e024f ]
 
-commit 3230f4a8d44e4a0bb7afea814b280b5129521f52 upstream.
+Move the 2-stage configuration before configuring the link-list mode,
+since we will use some 2-stage configuration to fill the link-list
+configuration.
 
-The following warning can happen when a memory shortage
-occurs during txreq allocation:
-
-[10220.939246] SLUB: Unable to allocate memory on node -1, gfp=0xa20(GFP_ATOMIC)
-[10220.939246] Hardware name: Intel Corporation S2600WT2R/S2600WT2R, BIOS SE5C610.86B.01.01.0018.C4.072020161249 07/20/2016
-[10220.939247]   cache: mnt_cache, object size: 384, buffer size: 384, default order: 2, min order: 0
-[10220.939260] Workqueue: hfi0_0 _hfi1_do_send [hfi1]
-[10220.939261]   node 0: slabs: 1026568, objs: 43115856, free: 0
-[10220.939262] Call Trace:
-[10220.939262]   node 1: slabs: 820872, objs: 34476624, free: 0
-[10220.939263]  dump_stack+0x5a/0x73
-[10220.939265]  warn_alloc+0x103/0x190
-[10220.939267]  ? wake_all_kswapds+0x54/0x8b
-[10220.939268]  __alloc_pages_slowpath+0x86c/0xa2e
-[10220.939270]  ? __alloc_pages_nodemask+0x2fe/0x320
-[10220.939271]  __alloc_pages_nodemask+0x2fe/0x320
-[10220.939273]  new_slab+0x475/0x550
-[10220.939275]  ___slab_alloc+0x36c/0x520
-[10220.939287]  ? hfi1_make_rc_req+0x90/0x18b0 [hfi1]
-[10220.939299]  ? __get_txreq+0x54/0x160 [hfi1]
-[10220.939310]  ? hfi1_make_rc_req+0x90/0x18b0 [hfi1]
-[10220.939312]  __slab_alloc+0x40/0x61
-[10220.939323]  ? hfi1_make_rc_req+0x90/0x18b0 [hfi1]
-[10220.939325]  kmem_cache_alloc+0x181/0x1b0
-[10220.939336]  hfi1_make_rc_req+0x90/0x18b0 [hfi1]
-[10220.939348]  ? hfi1_verbs_send_dma+0x386/0xa10 [hfi1]
-[10220.939359]  ? find_prev_entry+0xb0/0xb0 [hfi1]
-[10220.939371]  hfi1_do_send+0x1d9/0x3f0 [hfi1]
-[10220.939372]  process_one_work+0x171/0x380
-[10220.939374]  worker_thread+0x49/0x3f0
-[10220.939375]  kthread+0xf8/0x130
-[10220.939377]  ? max_active_store+0x80/0x80
-[10220.939378]  ? kthread_bind+0x10/0x10
-[10220.939379]  ret_from_fork+0x35/0x40
-[10220.939381] SLUB: Unable to allocate memory on node -1, gfp=0xa20(GFP_ATOMIC)
-
-The shortage is handled properly so the message isn't needed. Silence by
-adding the no warn option to the slab allocation.
-
-Fixes: 45842abbb292 ("staging/rdma/hfi1: move txreq header code")
-Cc: <stable@vger.kernel.org>
-Reviewed-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Signed-off-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
-Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Eric Long <eric.long@unisoc.com>
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/hw/hfi1/verbs_txreq.c |    2 +-
- drivers/infiniband/hw/hfi1/verbs_txreq.h |    3 ++-
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ drivers/dma/sprd-dma.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
---- a/drivers/infiniband/hw/hfi1/verbs_txreq.c
-+++ b/drivers/infiniband/hw/hfi1/verbs_txreq.c
-@@ -100,7 +100,7 @@ struct verbs_txreq *__get_txreq(struct h
- 	if (ib_rvt_state_ops[qp->state] & RVT_PROCESS_RECV_OK) {
- 		struct hfi1_qp_priv *priv;
+diff --git a/drivers/dma/sprd-dma.c b/drivers/dma/sprd-dma.c
+index a01c23246632..01abed5cde49 100644
+--- a/drivers/dma/sprd-dma.c
++++ b/drivers/dma/sprd-dma.c
+@@ -911,6 +911,12 @@ sprd_dma_prep_slave_sg(struct dma_chan *chan, struct scatterlist *sgl,
+ 		schan->linklist.virt_addr = 0;
+ 	}
  
--		tx = kmem_cache_alloc(dev->verbs_txreq_cache, GFP_ATOMIC);
-+		tx = kmem_cache_alloc(dev->verbs_txreq_cache, VERBS_TXREQ_GFP);
- 		if (tx)
- 			goto out;
- 		priv = qp->priv;
---- a/drivers/infiniband/hw/hfi1/verbs_txreq.h
-+++ b/drivers/infiniband/hw/hfi1/verbs_txreq.h
-@@ -72,6 +72,7 @@ struct hfi1_ibdev;
- struct verbs_txreq *__get_txreq(struct hfi1_ibdev *dev,
- 				struct rvt_qp *qp);
++	/* Set channel mode and trigger mode for 2-stage transfer */
++	schan->chn_mode =
++		(flags >> SPRD_DMA_CHN_MODE_SHIFT) & SPRD_DMA_CHN_MODE_MASK;
++	schan->trg_mode =
++		(flags >> SPRD_DMA_TRG_MODE_SHIFT) & SPRD_DMA_TRG_MODE_MASK;
++
+ 	sdesc = kzalloc(sizeof(*sdesc), GFP_NOWAIT);
+ 	if (!sdesc)
+ 		return NULL;
+@@ -944,12 +950,6 @@ sprd_dma_prep_slave_sg(struct dma_chan *chan, struct scatterlist *sgl,
+ 		}
+ 	}
  
-+#define VERBS_TXREQ_GFP (GFP_ATOMIC | __GFP_NOWARN)
- static inline struct verbs_txreq *get_txreq(struct hfi1_ibdev *dev,
- 					    struct rvt_qp *qp)
- 	__must_hold(&qp->slock)
-@@ -79,7 +80,7 @@ static inline struct verbs_txreq *get_tx
- 	struct verbs_txreq *tx;
- 	struct hfi1_qp_priv *priv = qp->priv;
- 
--	tx = kmem_cache_alloc(dev->verbs_txreq_cache, GFP_ATOMIC);
-+	tx = kmem_cache_alloc(dev->verbs_txreq_cache, VERBS_TXREQ_GFP);
- 	if (unlikely(!tx)) {
- 		/* call slow path to get the lock */
- 		tx = __get_txreq(dev, qp);
+-	/* Set channel mode and trigger mode for 2-stage transfer */
+-	schan->chn_mode =
+-		(flags >> SPRD_DMA_CHN_MODE_SHIFT) & SPRD_DMA_CHN_MODE_MASK;
+-	schan->trg_mode =
+-		(flags >> SPRD_DMA_TRG_MODE_SHIFT) & SPRD_DMA_TRG_MODE_MASK;
+-
+ 	ret = sprd_dma_fill_desc(chan, &sdesc->chn_hw, 0, 0, src, dst, len,
+ 				 dir, flags, slave_cfg);
+ 	if (ret) {
+-- 
+2.20.1
+
 
 
