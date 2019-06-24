@@ -2,267 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08AED518A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 18:27:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5041F518B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 18:30:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730977AbfFXQ1e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 12:27:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35906 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732120AbfFXQ1c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 12:27:32 -0400
-Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AFBEB20679;
-        Mon, 24 Jun 2019 16:27:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561393651;
-        bh=ETXn3bRrvPg59r7p2xI6l/zSX+4MyNV5iotfpUctc3I=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lSMqV4dUSvUAE0p8QxBXdrqyTiPa2vNF2z96BR+XLXdEh/b3+UpGgqJseV+GXBleS
-         zGa5bjj264Pi0dHbLjaJW1r6ubYU6BmNtnEMSegi4S9t6j1gLGGbbAiRND3quJbn7d
-         BSBMGWZ1BAGRkXJHHNezs1tWGSwnGsstQa9+yqZQ=
-From:   Jeff Layton <jlayton@kernel.org>
-To:     linux-kernel@vger.kernel.org, ceph-devel@vger.kernel.org
-Cc:     idryomov@gmail.com, zyan@redhat.com, sage@redhat.com,
-        agruenba@redhat.com
-Subject: [PATCH v4 3/3] ceph: don't NULL terminate virtual xattrs
-Date:   Mon, 24 Jun 2019 12:27:26 -0400
-Message-Id: <20190624162726.17413-4-jlayton@kernel.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190624162726.17413-1-jlayton@kernel.org>
-References: <20190624162726.17413-1-jlayton@kernel.org>
+        id S1732158AbfFXQai (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 12:30:38 -0400
+Received: from mail-io1-f49.google.com ([209.85.166.49]:41491 "EHLO
+        mail-io1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730472AbfFXQai (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 12:30:38 -0400
+Received: by mail-io1-f49.google.com with SMTP id w25so2930190ioc.8
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 09:30:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Wulrto/HXlEP0Cxmn+aSmPqpiH4PSf21/9EuSwKYHd4=;
+        b=Mn0cXMbFYMBl0SszZa7WI2WTD5T6951RjYiCrZy61CKf7Cm2DTD9UiLUXwJ0nx0zBY
+         1ujuIMMLx77NflyHWBE1yHJcYVq4eHb2AFI56KEKa6Ixd5wfgzHDtkT0WQXMURcOSVAl
+         O7Vkq2+51rP5ijLHFX1ZeCKQOT/dDYZntnHe5jyJwkHd7wAslrFu8N5j0IFVI/bIEuwq
+         GEjmX3B6uGzH6yZ+b7nKqHGaETy/LXWhmuYf6hpvua3ECqdLlCvvyEH0+IU7TOktpF4M
+         zyORQJmP8JKT7T81fNiN8Gbe0OZtEXP/NYrDuoZf7q8Lzo97joLIHKPPtTkz0yI5kWnm
+         20kA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Wulrto/HXlEP0Cxmn+aSmPqpiH4PSf21/9EuSwKYHd4=;
+        b=NxSbSUJ8lc7sjekT54KmReS+PyRT3rE4HvNHigPFEhRRnWxD2ySBlc2VEXwCh9y7ex
+         Nm82CxBQsHntI3xyhzs2A8TXof/QUDpQGxEGAgCxV3yB4zBLd4aEE3aJymwNB5DtyCfs
+         RmU+rgFsLyOOPrvOMGxMKJI0yWb8F90huNuoycqQSYb0YzKaFDc0yVOpDwZUFNm3NE8j
+         UHkqOkvDoMAiPn2pWwjAKIlAZ2bgcbA6HNtCng9/aucUN71rKvfxrKjKWKY6YcnLslMS
+         h04Fx5tE1xnkk69uOf6as/vmSdyxi/akXKQbZXJbruvqGAyWENAa1oxAsi7y0IpLoG5P
+         vGiw==
+X-Gm-Message-State: APjAAAU6UMhkgs/w6z5zzfvANRH4wcRFJJbPaPWj01lN1iB7+bcJq3mb
+        Dj6vxSNQol1CtHlGRP3uagEugA==
+X-Google-Smtp-Source: APXvYqxdhhVgzPshhJyQgs10Hk+zfOquGsuDDw6awgazoiRekD4XFtjDBCvTdDE3FewywU+/yE2bnw==
+X-Received: by 2002:a02:5185:: with SMTP id s127mr26639219jaa.44.1561393837131;
+        Mon, 24 Jun 2019 09:30:37 -0700 (PDT)
+Received: from [172.22.22.26] (c-71-195-29-92.hsd1.mn.comcast.net. [71.195.29.92])
+        by smtp.googlemail.com with ESMTPSA id p25sm13692350iol.48.2019.06.24.09.30.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 24 Jun 2019 09:30:36 -0700 (PDT)
+Subject: WWAN Controller Framework (was IPA [PATCH v2 00/17])
+From:   Alex Elder <elder@linaro.org>
+To:     davem@davemloft.net, arnd@arndb.de, bjorn.andersson@linaro.org,
+        ilias.apalodimas@linaro.org
+Cc:     evgreen@chromium.org, benchan@google.com, ejcaruso@google.com,
+        cpratapa@codeaurora.org, syadagir@codeaurora.org,
+        subashab@codeaurora.org, abhishek.esse@gmail.com,
+        netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org
+References: <20190531035348.7194-1-elder@linaro.org>
+Message-ID: <23ff4cce-1fee-98ab-3608-1fd09c2d97f1@linaro.org>
+Date:   Mon, 24 Jun 2019 11:30:35 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190531035348.7194-1-elder@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The convention with xattrs is to not store the termination with string
-data, given that it returns the length. This is how setfattr/getfattr
-operate.
+OK I want to try to organize a little more concisely some of the
+discussion on this, because there is a very large amount of volume
+to date and I think we need to try to narrow the focus back down
+again.
 
-Most of ceph's virtual xattr routines use snprintf to plop the string
-directly into the destination buffer, but snprintf always NULL
-terminates the string. This means that if we send the kernel a buffer
-that is the exact length needed to hold the string, it'll end up
-truncated.
+I'm going to use a few terms here.  Some of these I really don't
+like, but I want to be unambiguous *and* (at least for now) I want
+to avoid the very overloaded term "device".
 
-Add a ceph_fmt_xattr helper function to format the string into an
-on-stack buffer that is should always be large enough to hold the whole
-thing and then memcpy the result into the destination buffer. If it does
-turn out that the formatted string won't fit in the on-stack buffer,
-then return -E2BIG and do a WARN_ONCE().
+I have lots more to say, but let's start with a top-level picture,
+to make sure we're all on the same page.
 
-Change over most of the virtual xattr routines to use the new helper. A
-couple of the xattrs are sourced from strings however, and it's
-difficult to know how long they'll be. Just have those memcpy the result
-in place after verifying the length.
+         WWAN Communication
+         Channel (Physical)
+                 |     ------------------------
+------------     v     |           :+ Control |  \
+|          |-----------|           :+ Data    |  |
+|    AP    |           | WWAN unit :+ Voice   |   > Functions
+|          |===========|           :+ GPS     |  |
+------------     ^     |           :+ ...     |  /
+                 |     -------------------------
+          Multiplexed WWAN
+           Communication
+         Channel (Physical)
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/ceph/xattr.c | 84 ++++++++++++++++++++++++++++++++++---------------
- 1 file changed, 59 insertions(+), 25 deletions(-)
+- The *AP* is the main CPU complex that's running Linux on one or
+  more CPU cores.
+- A *WWAN unit* is an entity that shares one or more physical
+  *WWAN communication channels* with the AP.
+- A *WWAN communication channel* is a bidirectional means of
+  carrying data between the AP and WWAN unit.
+- A WWAN communication channel carries data using a *WWAN protocol*.
+- A WWAN unit implements one or more *WWAN functions*, such as
+  5G data, LTE voice, GPS, and so on.
+- A WWAN unit shall implement a *WWAN control function*, used to
+  manage the use of other WWAN functions, as well as the WWAN unit
+  itself.
+- The AP communicates with a WWAN function using a WWAN protocol.
+- A WWAN physical channel can be *multiplexed*, in which case it
+  carries the data for one or more *WWAN logical channels*.
+- A multiplexed WWAN communication channel uses a *WWAN wultiplexing
+  protocol*, which is used to separate independent data streams
+  carrying other WWAN protocols.
+- A WWAN logical channel carries a bidirectional stream of WWAN
+  protocol data between an entity on the AP and a WWAN function.
 
-diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
-index 9b77dca0b786..37b458a9af3a 100644
---- a/fs/ceph/xattr.c
-+++ b/fs/ceph/xattr.c
-@@ -109,22 +109,49 @@ static ssize_t ceph_vxattrcb_layout(struct ceph_inode_info *ci, char *val,
- 	return ret;
- }
- 
-+/*
-+ * The convention with strings in xattrs is that they should not be NULL
-+ * terminated, since we're returning the length with them. snprintf always
-+ * NULL terminates however, so call it on a temporary buffer and then memcpy
-+ * the result into place.
-+ */
-+static int ceph_fmt_xattr(char *val, size_t size, const char *fmt, ...)
-+{
-+	int ret;
-+	va_list args;
-+	char buf[96]; /* NB: reevaluate size if new vxattrs are added */
-+
-+	va_start(args, fmt);
-+	ret = vsnprintf(buf, size ? sizeof(buf) : 0, fmt, args);
-+	va_end(args);
-+
-+	/* Sanity check */
-+	if (size && ret + 1 > sizeof(buf)) {
-+		WARN_ONCE(true, "Returned length too big (%d)", ret);
-+		return -E2BIG;
-+	}
-+
-+	if (ret <= size)
-+		memcpy(val, buf, ret);
-+	return ret;
-+}
-+
- static ssize_t ceph_vxattrcb_layout_stripe_unit(struct ceph_inode_info *ci,
- 						char *val, size_t size)
- {
--	return snprintf(val, size, "%u", ci->i_layout.stripe_unit);
-+	return ceph_fmt_xattr(val, size, "%u", ci->i_layout.stripe_unit);
- }
- 
- static ssize_t ceph_vxattrcb_layout_stripe_count(struct ceph_inode_info *ci,
- 						 char *val, size_t size)
- {
--	return snprintf(val, size, "%u", ci->i_layout.stripe_count);
-+	return ceph_fmt_xattr(val, size, "%u", ci->i_layout.stripe_count);
- }
- 
- static ssize_t ceph_vxattrcb_layout_object_size(struct ceph_inode_info *ci,
- 						char *val, size_t size)
- {
--	return snprintf(val, size, "%u", ci->i_layout.object_size);
-+	return ceph_fmt_xattr(val, size, "%u", ci->i_layout.object_size);
- }
- 
- static ssize_t ceph_vxattrcb_layout_pool(struct ceph_inode_info *ci,
-@@ -138,10 +165,13 @@ static ssize_t ceph_vxattrcb_layout_pool(struct ceph_inode_info *ci,
- 
- 	down_read(&osdc->lock);
- 	pool_name = ceph_pg_pool_name_by_id(osdc->osdmap, pool);
--	if (pool_name)
--		ret = snprintf(val, size, "%s", pool_name);
--	else
--		ret = snprintf(val, size, "%lld", pool);
-+	if (pool_name) {
-+		ret = strlen(pool_name);
-+		if (ret <= size)
-+			memcpy(val, pool_name, ret);
-+	} else {
-+		ret = ceph_fmt_xattr(val, size, "%lld", pool);
-+	}
- 	up_read(&osdc->lock);
- 	return ret;
- }
-@@ -149,10 +179,13 @@ static ssize_t ceph_vxattrcb_layout_pool(struct ceph_inode_info *ci,
- static ssize_t ceph_vxattrcb_layout_pool_namespace(struct ceph_inode_info *ci,
- 						   char *val, size_t size)
- {
--	int ret = 0;
-+	ssize_t ret = 0;
- 	struct ceph_string *ns = ceph_try_get_string(ci->i_layout.pool_ns);
-+
- 	if (ns) {
--		ret = snprintf(val, size, "%.*s", ns->len, ns->str);
-+		ret = ns->len;
-+		if (ret <= size)
-+			memcpy(val, ns->str, ret);
- 		ceph_put_string(ns);
- 	}
- 	return ret;
-@@ -163,50 +196,51 @@ static ssize_t ceph_vxattrcb_layout_pool_namespace(struct ceph_inode_info *ci,
- static ssize_t ceph_vxattrcb_dir_entries(struct ceph_inode_info *ci, char *val,
- 					 size_t size)
- {
--	return snprintf(val, size, "%lld", ci->i_files + ci->i_subdirs);
-+	return ceph_fmt_xattr(val, size, "%lld", ci->i_files + ci->i_subdirs);
- }
- 
- static ssize_t ceph_vxattrcb_dir_files(struct ceph_inode_info *ci, char *val,
- 				       size_t size)
- {
--	return snprintf(val, size, "%lld", ci->i_files);
-+	return ceph_fmt_xattr(val, size, "%lld", ci->i_files);
- }
- 
- static ssize_t ceph_vxattrcb_dir_subdirs(struct ceph_inode_info *ci, char *val,
- 					 size_t size)
- {
--	return snprintf(val, size, "%lld", ci->i_subdirs);
-+	return ceph_fmt_xattr(val, size, "%lld", ci->i_subdirs);
- }
- 
- static ssize_t ceph_vxattrcb_dir_rentries(struct ceph_inode_info *ci, char *val,
- 					  size_t size)
- {
--	return snprintf(val, size, "%lld", ci->i_rfiles + ci->i_rsubdirs);
-+	return ceph_fmt_xattr(val, size, "%lld",
-+				ci->i_rfiles + ci->i_rsubdirs);
- }
- 
- static ssize_t ceph_vxattrcb_dir_rfiles(struct ceph_inode_info *ci, char *val,
- 					size_t size)
- {
--	return snprintf(val, size, "%lld", ci->i_rfiles);
-+	return ceph_fmt_xattr(val, size, "%lld", ci->i_rfiles);
- }
- 
- static ssize_t ceph_vxattrcb_dir_rsubdirs(struct ceph_inode_info *ci, char *val,
- 					  size_t size)
- {
--	return snprintf(val, size, "%lld", ci->i_rsubdirs);
-+	return ceph_fmt_xattr(val, size, "%lld", ci->i_rsubdirs);
- }
- 
- static ssize_t ceph_vxattrcb_dir_rbytes(struct ceph_inode_info *ci, char *val,
- 					size_t size)
- {
--	return snprintf(val, size, "%lld", ci->i_rbytes);
-+	return ceph_fmt_xattr(val, size, "%lld", ci->i_rbytes);
- }
- 
- static ssize_t ceph_vxattrcb_dir_rctime(struct ceph_inode_info *ci, char *val,
- 					size_t size)
- {
--	return snprintf(val, size, "%lld.%09ld", ci->i_rctime.tv_sec,
--			ci->i_rctime.tv_nsec);
-+	return ceph_fmt_xattr(val, size, "%lld.%09ld", ci->i_rctime.tv_sec,
-+				ci->i_rctime.tv_nsec);
- }
- 
- /* dir pin */
-@@ -218,7 +252,7 @@ static bool ceph_vxattrcb_dir_pin_exists(struct ceph_inode_info *ci)
- static ssize_t ceph_vxattrcb_dir_pin(struct ceph_inode_info *ci, char *val,
- 				     size_t size)
- {
--	return snprintf(val, size, "%d", (int)ci->i_dir_pin);
-+	return ceph_fmt_xattr(val, size, "%d", (int)ci->i_dir_pin);
- }
- 
- /* quotas */
-@@ -238,20 +272,20 @@ static bool ceph_vxattrcb_quota_exists(struct ceph_inode_info *ci)
- static ssize_t ceph_vxattrcb_quota(struct ceph_inode_info *ci, char *val,
- 				   size_t size)
- {
--	return snprintf(val, size, "max_bytes=%llu max_files=%llu",
--			ci->i_max_bytes, ci->i_max_files);
-+	return ceph_fmt_xattr(val, size, "max_bytes=%llu max_files=%llu",
-+				ci->i_max_bytes, ci->i_max_files);
- }
- 
- static ssize_t ceph_vxattrcb_quota_max_bytes(struct ceph_inode_info *ci,
- 					     char *val, size_t size)
- {
--	return snprintf(val, size, "%llu", ci->i_max_bytes);
-+	return ceph_fmt_xattr(val, size, "%llu", ci->i_max_bytes);
- }
- 
- static ssize_t ceph_vxattrcb_quota_max_files(struct ceph_inode_info *ci,
- 					     char *val, size_t size)
- {
--	return snprintf(val, size, "%llu", ci->i_max_files);
-+	return ceph_fmt_xattr(val, size, "%llu", ci->i_max_files);
- }
- 
- /* snapshots */
-@@ -263,8 +297,8 @@ static bool ceph_vxattrcb_snap_btime_exists(struct ceph_inode_info *ci)
- static ssize_t ceph_vxattrcb_snap_btime(struct ceph_inode_info *ci, char *val,
- 					size_t size)
- {
--	return snprintf(val, size, "%lld.%09ld", ci->i_snap_btime.tv_sec,
--			ci->i_snap_btime.tv_nsec);
-+	return ceph_fmt_xattr(val, size, "%lld.%09ld", ci->i_snap_btime.tv_sec,
-+				ci->i_snap_btime.tv_nsec);
- }
- 
- #define CEPH_XATTR_NAME(_type, _name)	XATTR_CEPH_PREFIX #_type "." #_name
--- 
-2.21.0
+Does that adequately represent a very high-level picture of what
+we're trying to manage?
 
+And if I understand it right, the purpose of the generic framework
+being discussed is to define a common mechanism for managing (i.e.,
+discovering, creating, destroying, querying, configuring, enabling,
+disabling, etc.) WWAN units and the functions they implement, along
+with the communication and logical channels used to communicate with
+them.
+
+Comments?
+
+					-Alex
