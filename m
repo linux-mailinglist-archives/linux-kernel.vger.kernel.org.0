@@ -2,37 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C697D51B7D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 21:37:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DCF0E51B86
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 21:41:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730461AbfFXThV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 15:37:21 -0400
-Received: from mga02.intel.com ([134.134.136.20]:60546 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727329AbfFXThV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 15:37:21 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jun 2019 12:37:20 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,413,1557212400"; 
-   d="scan'208";a="152047193"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.137])
-  by orsmga007.jf.intel.com with ESMTP; 24 Jun 2019 12:37:20 -0700
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id 65E3C30212A; Mon, 24 Jun 2019 12:37:20 -0700 (PDT)
-From:   Andi Kleen <andi@firstfloor.org>
-To:     acme@kernel.org
-Cc:     jolsa@kernel.org, kan.liang@intel.com,
-        linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
-        Agustin Vega-Frias <agustinv@codeaurora.org>
-Subject: [PATCH v1 4/4] perf stat: Fix metrics with --no-merge
-Date:   Mon, 24 Jun 2019 12:37:11 -0700
-Message-Id: <20190624193711.35241-5-andi@firstfloor.org>
+        id S1730342AbfFXTlH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 15:41:07 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:40336 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726414AbfFXTlH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 15:41:07 -0400
+Received: by mail-wr1-f67.google.com with SMTP id p11so15157182wre.7
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 12:41:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=J6McyXpHhvJ62Wx5SvCqGaB8/OSzRVB/5VC6vTy2TqQ=;
+        b=M48+BroHFQYMi06n4mupqxhg0lJK+JUAVqf5zHxFG54TrAZYIrIWtQUPbfLJhowVfY
+         nha7AD8YdXoLitLaAIuvmXGtIlr0gJfEkS8Ir4FSHGlf6R191KkvGz+ie7RevmS0hbyH
+         tOIz9XGsYXVfkUZxFaUZQaMcXIKXc3VdKe/8I09ftsegvoJ6IONcP55/knMzWpu5v9+V
+         Wi3TELxFuVq+OGYDSZ1Az+t/uyW1KrJZvtZlrVf8zaporbdn9tEexXV4RvLls+RjZWls
+         lh6ZfGKNdpHun6Ky9xnYfIbip8UwcW4DPTnmTk7Txy+AeSEwTYHjDkawFzMMt8SqFQKV
+         P/Pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=J6McyXpHhvJ62Wx5SvCqGaB8/OSzRVB/5VC6vTy2TqQ=;
+        b=Pn9UJOINdIKEpZ2e3QhV7WyPHrXjhaurI7ehlxz3VFlU0rpuXQ8PqlO3ZlpBGS25Se
+         Uub9hg+Bam7+gtD40J+X9g6EKsWSmMOEktTqv2PlDUuH3f1dv2m/wflz52JTbuOrW6/8
+         62WKlT3cq7TozcjLxMFxKpNHn1CuZH35PJnGshG/bZwLNnLGT+yjXWBxbYQ+MyM07yVM
+         7wn9vRPyyqm04lwJLT891OI888MxBMGqb4R5SKpA7WwpvBQHv5oh/A47jCOHUFcvEybw
+         OJTeLz/R2UeKZt2Osjj5herxLRDDtCTxh0i/G+ks/bR8cAqZBkRBDeWA16J15W3MYu9U
+         Narw==
+X-Gm-Message-State: APjAAAW8y/eb/+SMfWO6ixap1wMvwrrkarslOzCY3LnPzgjgWjH72fVF
+        fKXhTGLxV9FLNXgmoyCGhTWhng==
+X-Google-Smtp-Source: APXvYqyD1eXJ9voOpGfL9zu8E91jQPk0kmAnjvPBM0hwFXNjfqm/29dKOBYYxImoXX6UVfSxyoJczA==
+X-Received: by 2002:adf:dfc4:: with SMTP id q4mr37375067wrn.54.1561405265273;
+        Mon, 24 Jun 2019 12:41:05 -0700 (PDT)
+Received: from localhost.localdomain (146-241-101-27.dyn.eolo.it. [146.241.101.27])
+        by smtp.gmail.com with ESMTPSA id q25sm17615395wrc.68.2019.06.24.12.41.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 24 Jun 2019 12:41:04 -0700 (PDT)
+From:   Paolo Valente <paolo.valente@linaro.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ulf.hansson@linaro.org, linus.walleij@linaro.org,
+        bfq-iosched@googlegroups.com, oleksandr@natalenko.name,
+        bottura.nicola95@gmail.com, srivatsa@csail.mit.edu,
+        Paolo Valente <paolo.valente@linaro.org>
+Subject: [PATCH BUGFIX IMPROVEMENT 0/7] boost throughput with synced I/O, reduce latency and fix a bandwidth bug
+Date:   Mon, 24 Jun 2019 21:40:35 +0200
+Message-Id: <20190624194042.38747-1-paolo.valente@linaro.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190624193711.35241-1-andi@firstfloor.org>
-References: <20190624193711.35241-1-andi@firstfloor.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -40,64 +63,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andi Kleen <ak@linux.intel.com>
+Hi Jens,
+this series, based against for-5.3/block, contains:
+1) The improvements to recover the throughput loss reported by
+   Srivatsa [1] (first five patches)
+2) A preemption improvement to reduce I/O latency
+3) A fix of a subtle bug causing loss of control over I/O bandwidths
 
-Since 8c5421c016a4 ("perf pmu: Display pmu name when printing ...")
-using --no-merge adds the PMU name to the evsel name. This breaks
-the metric value lookup because the parser doesn't know about this.
+Thanks,
+Paolo
 
-Remove the extra postfixes for the metric evaluation.
+[1] https://lkml.org/lkml/2019/5/17/755
 
-Fixes: 8c5421c016a4 ("perf pmu: Display pmu name when printing ...")
-Cc: Agustin Vega-Frias <agustinv@codeaurora.org>
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
----
- tools/perf/util/stat-shadow.c | 18 +++++++++++++++++-
- 1 file changed, 17 insertions(+), 1 deletion(-)
+Paolo Valente (7):
+  block, bfq: reset inject limit when think-time state changes
+  block, bfq: fix rq_in_driver check in bfq_update_inject_limit
+  block, bfq: update base request service times when possible
+  block, bfq: bring forward seek&think time update
+  block, bfq: detect wakers and unconditionally inject their I/O
+  block, bfq: preempt lower-weight or lower-priority queues
+  block, bfq: re-schedule empty queues if they deserve I/O plugging
 
-diff --git a/tools/perf/util/stat-shadow.c b/tools/perf/util/stat-shadow.c
-index 3f8fd127d31e..cb891e5c2969 100644
---- a/tools/perf/util/stat-shadow.c
-+++ b/tools/perf/util/stat-shadow.c
-@@ -724,6 +724,7 @@ static void generic_metric(struct perf_stat_config *config,
- 	double ratio;
- 	int i;
- 	void *ctxp = out->ctx;
-+	char *n, *pn;
- 
- 	expr__ctx_init(&pctx);
- 	expr__add_id(&pctx, name, avg);
-@@ -743,7 +744,19 @@ static void generic_metric(struct perf_stat_config *config,
- 			stats = &v->stats;
- 			scale = 1.0;
- 		}
--		expr__add_id(&pctx, metric_events[i]->name, avg_stats(stats)*scale);
-+
-+		n = strdup(metric_events[i]->name);
-+		if (!n)
-+			return;
-+		/*
-+		 * This display code with --no-merge adds [cpu] postfixes.
-+		 * These are not supported by the parser. Remove everything
-+		 * after the space.
-+		 */
-+		pn = strchr(n, ' ');
-+		if (pn)
-+			*pn = 0;
-+		expr__add_id(&pctx, n, avg_stats(stats)*scale);
- 	}
- 	if (!metric_events[i]) {
- 		const char *p = metric_expr;
-@@ -760,6 +773,9 @@ static void generic_metric(struct perf_stat_config *config,
- 				     (metric_name ? metric_name : name) : "", 0);
- 	} else
- 		print_metric(config, ctxp, NULL, NULL, "", 0);
-+
-+	for (i = 1; i < pctx.num_ids; i++)
-+		free((void *)pctx.ids[i].name);
- }
- 
- void perf_stat__print_shadow_stats(struct perf_stat_config *config,
--- 
+ block/bfq-iosched.c | 952 ++++++++++++++++++++++++++++++--------------
+ block/bfq-iosched.h |  25 +-
+ 2 files changed, 686 insertions(+), 291 deletions(-)
+
+--
 2.20.1
-
