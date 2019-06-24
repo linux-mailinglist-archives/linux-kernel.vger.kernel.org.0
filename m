@@ -2,53 +2,211 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BEF19517FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 18:06:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC776517F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 18:05:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731561AbfFXQGE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 12:06:04 -0400
-Received: from sonic315-53.consmr.mail.ne1.yahoo.com ([66.163.190.179]:39393
-        "EHLO sonic315-53.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727082AbfFXQGD (ORCPT
+        id S1729686AbfFXQFH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 12:05:07 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:50594 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727282AbfFXQFH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 12:06:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1561392362; bh=Wn45IEVQxjYS/KJ/AenupJ6pixj3tpnk+IQw8lNF8Cw=; h=Date:From:Reply-To:Subject:References:From:Subject; b=adz+9T8AOWQF7cpX3UIJFgDbsGa0lPQOJBD2UMxhhLU92GhZPeqNH9sniYqhQQ0dF0VUlc5Hr9P2z/tzlClgzme+/T7j6wgLNIMLpXvZaEyw1ssSgi3HQLMINJhm9QaGM+XSPb0nqXs1GaaAkl7CJ/qm5Lz2ZklTt+sl3OTGU1CYYKW6BBAkVGjb+YnkNYcI1VWYvlJvXUfuy6Kzz57gfT38X0V/oc0FVnIQh2mmSr3sdch+ySho62hc6FEc4tABm9NOulo5eXZ9aRQwghL3vPpJlSs+cYGI5lPfUqRQ/LCDL5jms4dpIaHvUa0PjD5gY+9h5EuIMderXfJuJY4s2A==
-X-YMail-OSG: df8Hr4sVM1nQAOpsedsGwDE93k9EQHaKbpTdkv_ZjEX4z1dWIMJB.F5LPIDCwlA
- oZkPEFARJ0MnvZD_16HqBhebnBIpi7eGlh1xFVbmkXTSBr2qcKJ7KaXflKDpchCDebw5vcOr46p0
- oYwZEz4iUaG4G0wno3lYXbReJov.Gj459w95GB2bZGEhB2i.YyG1_RpEhZizN_bsjwX877V1B6XP
- cbdLGYCxQkYsO9G6Wu9neppUaB_OrGnbDHJHNPy3498BHWaL2eexOy8M2nikzdYOKq0VWeqePK0o
- mjncJLrwM4P536YZml58mgCuk0tkN_XXdYKEzlPGd2H52n9aLgo3sfZ.tC5L93kS9UFilrgKjEsQ
- geJCPMs1yMGR..amYJTKJRNvvLBXFas.lFO9kxa.1f4tP9HVzCtBveYs5A.Mzidki60bgvE16_WG
- 8c9or4W37PsKe.6hzeRd7HmK7N1NXuZ.wuZ41adqn6FOdMqBX1QFe6t._zlDS3Ixmu30tliUNqWc
- J5aSrqjOm3MaJl2HNt97vjQKCMzzj9Iq35ufJWjZdC1_3zE3h3jNdU9FaoArhweNXOpXYitQTtel
- 6If7PBPXBRPaPL_aVl2shjqbaG_KmBymOcZNb3b3p6u_8GWd3Q2TBwEY0yRo9BibDD.hob.ekkJg
- OWdGJwzU2VVPC7ueXJaQ2mRmmbLAOLlls2OLxubIwH8xI_1dzKLRwoMWFeCf6wSzEWbC8h4.V991
- fev5fAOQzEx6vNPQy61og_vjs0saS7NoM3AYblP2dTEiP6Ba8RjXf4ztYYfbd05lEKM38vyDtAwR
- s5BzoSx8hXQBpf93_JLoWxyY2NnAOjL6ukyjiM6Li.hwrMRazWn9ie81UwZKcNM7_Stk9ScteAoG
- S_jHGzU7KZtsCdTkCJEdntY2_gFOI8Uh3zDTz3vISBuBNkhbKdzVuqB1WAYHA2osYKBbonobPkW.
- j_DWgjtpt2ftKCyo.EVVxrErJr5oAWwk34L6VQwbN8kJNHaTCKzY_s8VvZ5.mVkhZ4vzlclAQEEU
- 33ZcpxesVzATdBk8LSVdu6HO7abscZ2P2MG7Sct0I8W4lw3QNMvbYE6wYqJxNOMdP8_FKfNcGIch
- LmLadgkXm8D3rJsC1k_f955FgEp47WUdTqvlD8e5cren4SjXMAjpGHZtUOdY2fPYk66d933onKdq
- bcDTc0PVd7jMYBKetqEHRc5CIrAwcCxWbframCstMBLQfoVlpGj_ajwTachApW38xM2G15Nhv7ZO
- 5Xub.Is.KC0vU0eHMjd5HjrI-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.ne1.yahoo.com with HTTP; Mon, 24 Jun 2019 16:06:02 +0000
-Date:   Mon, 24 Jun 2019 16:04:01 +0000 (UTC)
-From:   "ij49 ." <ij49@gajdm.org.in>
-Reply-To: "ij49 ." <ij49@gajdm.org.in>
-Message-ID: <1179155815.1171075.1561392241619@mail.yahoo.com>
-Subject: 
+        Mon, 24 Jun 2019 12:05:07 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5OFxD38102539;
+        Mon, 24 Jun 2019 16:04:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=41sMWJSvnLAsRg6ez6H1oy7Azi3oAaiWmBUqC3HmD1c=;
+ b=d+iVvU182KeWLCIxwR84lKkvldN63MA0JYNwLkIQE/W0BCoNXXyjUPYJs8AO6YIFr8P3
+ Qd7A6a5DKf1YgoUcS1JPAmUmOpi3f84PZ1kkpXZ/aiG7pzfIYN1IKmXKwgl7mUhxO6BE
+ FBDtaKy0Nmmk1++NcEzHFxPQSjwZiDqOrlrcIDosUksJQW7+DQvs0sTt1poruZhW/eew
+ i2iafeOcbPFUuRCt3p1yEjGyQvgQ6fqDD0qBcokOTfD5XsDOeIg/ZpTF/eJXoJh/Bu/t
+ WPVpTDZIAbPQIG7zJkb5J1f0C8pPlb7zcZP+N5lZvDH5GDIxdb5UudafqGeVtF5muQIx rQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 2t9brsybsj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 24 Jun 2019 16:04:53 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5OG4g5o029842;
+        Mon, 24 Jun 2019 16:04:53 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 2t9p6tnus3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 24 Jun 2019 16:04:53 +0000
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x5OG4pHj017154;
+        Mon, 24 Jun 2019 16:04:51 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 24 Jun 2019 09:04:51 -0700
+Date:   Mon, 24 Jun 2019 09:04:50 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 09/12] xfs: refactor the ioend merging code
+Message-ID: <20190624160450.GO5387@magnolia>
+References: <20190624055253.31183-1-hch@lst.de>
+ <20190624055253.31183-10-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-References: <1179155815.1171075.1561392241619.ref@mail.yahoo.com>
-X-Mailer: WebService/1.1.13837 YahooMailBasic Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190624055253.31183-10-hch@lst.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9298 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1906240128
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9298 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906240128
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I am in the military unit here in Afghanistan, we have some amount of funds that we want to move out of the country. My partners and I need a good partner someone we can trust. It is risk free and legal. Reply to this email: hornbeckmajordennis635@gmail.com
+On Mon, Jun 24, 2019 at 07:52:50AM +0200, Christoph Hellwig wrote:
+> Introduce two nicely abstracted helper, which can be moved to the
+> iomap code later.  Also use list_pop and list_first_entry_or_null
+> to simplify the code a bit.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-Regards,
-Major Dennis Hornbeck.
+Looks ok,
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+
+--D
+
+> ---
+>  fs/xfs/xfs_aops.c | 66 ++++++++++++++++++++++++++---------------------
+>  1 file changed, 36 insertions(+), 30 deletions(-)
+> 
+> diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
+> index acbd73976067..5d302ebe2a33 100644
+> --- a/fs/xfs/xfs_aops.c
+> +++ b/fs/xfs/xfs_aops.c
+> @@ -121,6 +121,19 @@ xfs_destroy_ioend(
+>  	}
+>  }
+>  
+> +static void
+> +xfs_destroy_ioends(
+> +	struct xfs_ioend	*ioend,
+> +	int			error)
+> +{
+> +	struct list_head	tmp;
+> +
+> +	list_replace_init(&ioend->io_list, &tmp);
+> +	xfs_destroy_ioend(ioend, error);
+> +	while ((ioend = list_pop(&tmp, struct xfs_ioend, io_list)))
+> +		xfs_destroy_ioend(ioend, error);
+> +}
+> +
+>  /*
+>   * Fast and loose check if this write could update the on-disk inode size.
+>   */
+> @@ -173,7 +186,6 @@ xfs_end_ioend(
+>  	struct xfs_ioend	*ioend)
+>  {
+>  	unsigned int		nofs_flag = memalloc_nofs_save();
+> -	struct list_head	ioend_list;
+>  	struct xfs_inode	*ip = XFS_I(ioend->io_inode);
+>  	xfs_off_t		offset = ioend->io_offset;
+>  	size_t			size = ioend->io_size;
+> @@ -207,16 +219,7 @@ xfs_end_ioend(
+>  	if (!error && xfs_ioend_is_append(ioend))
+>  		error = xfs_setfilesize(ip, offset, size);
+>  done:
+> -	list_replace_init(&ioend->io_list, &ioend_list);
+> -	xfs_destroy_ioend(ioend, error);
+> -
+> -	while (!list_empty(&ioend_list)) {
+> -		ioend = list_first_entry(&ioend_list, struct xfs_ioend,
+> -				io_list);
+> -		list_del_init(&ioend->io_list);
+> -		xfs_destroy_ioend(ioend, error);
+> -	}
+> -
+> +	xfs_destroy_ioends(ioend, error);
+>  	memalloc_nofs_restore(nofs_flag);
+>  }
+>  
+> @@ -246,15 +249,16 @@ xfs_ioend_try_merge(
+>  	struct xfs_ioend	*ioend,
+>  	struct list_head	*more_ioends)
+>  {
+> -	struct xfs_ioend	*next_ioend;
+> +	struct xfs_ioend	*next;
+>  
+> -	while (!list_empty(more_ioends)) {
+> -		next_ioend = list_first_entry(more_ioends, struct xfs_ioend,
+> -				io_list);
+> -		if (!xfs_ioend_can_merge(ioend, next_ioend))
+> +	INIT_LIST_HEAD(&ioend->io_list);
+> +
+> +	while ((next = list_first_entry_or_null(more_ioends, struct xfs_ioend,
+> +			io_list))) {
+> +		if (!xfs_ioend_can_merge(ioend, next))
+>  			break;
+> -		list_move_tail(&next_ioend->io_list, &ioend->io_list);
+> -		ioend->io_size += next_ioend->io_size;
+> +		list_move_tail(&next->io_list, &ioend->io_list);
+> +		ioend->io_size += next->io_size;
+>  	}
+>  }
+>  
+> @@ -277,29 +281,31 @@ xfs_ioend_compare(
+>  	return 0;
+>  }
+>  
+> +static void
+> +xfs_sort_ioends(
+> +	struct list_head	*ioend_list)
+> +{
+> +	list_sort(NULL, ioend_list, xfs_ioend_compare);
+> +}
+> +
+>  /* Finish all pending io completions. */
+>  void
+>  xfs_end_io(
+>  	struct work_struct	*work)
+>  {
+> -	struct xfs_inode	*ip;
+> +	struct xfs_inode	*ip =
+> +		container_of(work, struct xfs_inode, i_ioend_work);
+>  	struct xfs_ioend	*ioend;
+> -	struct list_head	completion_list;
+> +	struct list_head	tmp;
+>  	unsigned long		flags;
+>  
+> -	ip = container_of(work, struct xfs_inode, i_ioend_work);
+> -
+>  	spin_lock_irqsave(&ip->i_ioend_lock, flags);
+> -	list_replace_init(&ip->i_ioend_list, &completion_list);
+> +	list_replace_init(&ip->i_ioend_list, &tmp);
+>  	spin_unlock_irqrestore(&ip->i_ioend_lock, flags);
+>  
+> -	list_sort(NULL, &completion_list, xfs_ioend_compare);
+> -
+> -	while (!list_empty(&completion_list)) {
+> -		ioend = list_first_entry(&completion_list, struct xfs_ioend,
+> -				io_list);
+> -		list_del_init(&ioend->io_list);
+> -		xfs_ioend_try_merge(ioend, &completion_list);
+> +	xfs_sort_ioends(&tmp);
+> +	while ((ioend = list_pop(&tmp, struct xfs_ioend, io_list))) {
+> +		xfs_ioend_try_merge(ioend, &tmp);
+>  		xfs_end_ioend(ioend);
+>  	}
+>  }
+> -- 
+> 2.20.1
+> 
