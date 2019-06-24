@@ -2,380 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08DF351BB0
+	by mail.lfdr.de (Postfix) with ESMTP id 83B6351BB1
 	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 21:49:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731091AbfFXTta (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 15:49:30 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:32904 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730835AbfFXTtZ (ORCPT
+        id S1731166AbfFXTtk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 15:49:40 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:40722 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728549AbfFXTtj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 15:49:25 -0400
-Received: by mail-pf1-f194.google.com with SMTP id x15so8132078pfq.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 12:49:25 -0700 (PDT)
+        Mon, 24 Jun 2019 15:49:39 -0400
+Received: by mail-io1-f66.google.com with SMTP id n5so4834940ioc.7;
+        Mon, 24 Jun 2019 12:49:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=2hSI8EbMMFV4OCju8jPVBwC8bC74JNJP0N5AkdXGFG8=;
-        b=HJ8/f17UiYsYKLq92bi4VUN5Un6UE93aX2ImJYs9C+FtSZnvWN4z2rP0bGOrLWjjkF
-         j/4a8+5HXiMEfk/njOZbvIjxs0VMaqOOqA7Y/aEWC+xGsdhv9NjF36z53pmlgNiyr5gs
-         FV07tGXAkkokHDRyQBOonjNjDiOu/uUaZtEbWKibac3KSx24wPcKT7alDpM1fOC5Id2+
-         COeIR+AFU4kjVjBwqzTKvFwL9hp1shKRUkKVwDkZ870msBn90gxJfHQmzDbqvjXbOIpz
-         dySZHmX54+/bsEA6l9CcUoPYlCoLRsZ6k5qiJcMNiDJ66FvLIQCPcztxqIXab3OMlGOU
-         viAQ==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=NZu4O00NPZleuCWXITSxnWW1rGLa66653MvVC+wHLmw=;
+        b=jVeSXiVsHVu2ouD9U37An682AZzAmmkFDiJ+LkM6/EftdC972P9MeMDquhfc5L4lZL
+         j18MoUvN4XjKZXE8rOAlSmSh2ypQaGsQoNcsFVIgUXlQDhNWGg0oUi9l+paz44faPa3+
+         7pEB3QBX417I/pQ+SqxPYr+HKmEHMeM8Jy5nKjXEC88TEMrlxO01uMszzLY9Li5eIOBt
+         q+Kju30heEn6reuItzwtS+hr+qVrMPOrn7MbwoleSpbDniuYdJtHhFZjPnTmf+jmD8MS
+         lf4UlMnZew435rZg9jB3TiwL33OJLG1VQlSaLpWEO+3P/OpW1E6aF9XKP52g89geYsfX
+         dVqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=2hSI8EbMMFV4OCju8jPVBwC8bC74JNJP0N5AkdXGFG8=;
-        b=HEgc66VZRrHjytn46ELjI8DXkjmICp91HTrERgC2kjXfdWmlW+Mtg8Y/fPkApmpT1u
-         qIvTSu0SYRMgV5jRpvKqJZs34ax2V7LbuAFYkjM/Trz9/lC/4e3thryNrd22Mre77wcE
-         HWGz6B5wZgueblZoSTyR2rYt+/qLY4qO0eXYmC0b80i8L3HZhwr3FePu5oZaPrlmhu1+
-         QutjyQYzHPjQMyElN/KqiLXGfzSfk2q4xiVx3pXKpKsffFKL5ocyKuNUZqStkhE2cBi8
-         tr84zmllLczrclmtY9HdV2eUlRUEtWTElBtEte92myNdG+rXSAlCZGHEFGouJ+1j3IQA
-         MreQ==
-X-Gm-Message-State: APjAAAXt2FxOcgPhjbiQvwzveO/8MtMnsUqUDhv2bJaH1r105bc2Kr9M
-        4SJo9uhWskX5DosLtETxrB5xFbcIF0c=
-X-Google-Smtp-Source: APXvYqz4euNAuhD6FRrwHxg71dXALMoi3gDsa00rimNtHcAF8xHYqr0WyFukBz8MrFTl62EEguvIsQ==
-X-Received: by 2002:a63:c301:: with SMTP id c1mr34700786pgd.41.1561405763984;
-        Mon, 24 Jun 2019 12:49:23 -0700 (PDT)
-Received: from localhost.localdomain ([2601:1c2:680:1319:692:26ff:feda:3a81])
-        by smtp.gmail.com with ESMTPSA id v3sm7957031pfm.188.2019.06.24.12.49.22
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 24 Jun 2019 12:49:23 -0700 (PDT)
-From:   John Stultz <john.stultz@linaro.org>
-To:     lkml <linux-kernel@vger.kernel.org>
-Cc:     John Stultz <john.stultz@linaro.org>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Liam Mark <lmark@codeaurora.org>,
-        Pratik Patel <pratikp@codeaurora.org>,
-        Brian Starkey <Brian.Starkey@arm.com>,
-        Vincent Donnefort <Vincent.Donnefort@arm.com>,
-        Sudipto Paul <Sudipto.Paul@arm.com>,
-        "Andrew F . Davis" <afd@ti.com>,
-        Xu YiPing <xuyiping@hisilicon.com>,
-        "Chenfeng (puck)" <puck.chen@hisilicon.com>,
-        butao <butao@hisilicon.com>,
-        "Xiaqing (A)" <saberlily.xia@hisilicon.com>,
-        Yudongbin <yudongbin@hisilicon.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Chenbo Feng <fengc@google.com>,
-        Alistair Strachan <astrachan@google.com>,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH v6 5/5] kselftests: Add dma-heap test
-Date:   Mon, 24 Jun 2019 19:49:08 +0000
-Message-Id: <20190624194908.121273-6-john.stultz@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190624194908.121273-1-john.stultz@linaro.org>
-References: <20190624194908.121273-1-john.stultz@linaro.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=NZu4O00NPZleuCWXITSxnWW1rGLa66653MvVC+wHLmw=;
+        b=lVkKH6ziGeWS1YGXBuqHOtlS9aX0D0bfhylGJLDaCRUHKPVZHgJc35bRMzFVU9I9Iy
+         d9wMRe/sl203f7mIHlWTJ8jF+Yxacew2uvGMrF2KCAmngs2LgzhHZy218MYnpdmveql1
+         aIygR8Zt+e32kG13S0ABGNHuAPq5PPiKJOOCKnooD+vvjMXAlBEJ4/kGptRGQfeAOy65
+         Md7Z6TvAwneX1otjyc8wqJ/LOsqNPZedrZo6QLsCSVOXf99yIZbYCqghmnAScR0MeLuE
+         nImUctd4ODJCNivC35jtxJA0qjtCEoutL0EktM7fOCOhBcTxRw+IqJL+3+eKpCYiSjPW
+         bwVw==
+X-Gm-Message-State: APjAAAU6FcO0+uY658J2mBXMPS1vyjIaKdxq37+Xx0QBjzo8oUzBepBE
+        IDBS7bPx2mJ96jGHJB69j/BQp5Mi
+X-Google-Smtp-Source: APXvYqwxzKpMjHARD9RmDR1Id9qihaizxqLIei0rShn3JXXydBhIZ5G7UVmfyA/1PL1Yfe9SW0G+Cg==
+X-Received: by 2002:a5e:8508:: with SMTP id i8mr17447890ioj.108.1561405778305;
+        Mon, 24 Jun 2019 12:49:38 -0700 (PDT)
+Received: from ?IPv6:2601:282:800:fd80:f558:9f3d:eff4:2876? ([2601:282:800:fd80:f558:9f3d:eff4:2876])
+        by smtp.googlemail.com with ESMTPSA id e188sm18389354ioa.3.2019.06.24.12.49.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 24 Jun 2019 12:49:37 -0700 (PDT)
+Subject: Re: [PATCH net-next] ipv4: enable route flushing in network
+ namespaces
+To:     Christian Brauner <christian@brauner.io>, davem@davemloft.net,
+        kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
+        netdev@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org
+References: <20190624132923.16792-1-christian@brauner.io>
+From:   David Ahern <dsahern@gmail.com>
+Message-ID: <56ed92eb-14db-789a-c226-cdf8a5862e61@gmail.com>
+Date:   Mon, 24 Jun 2019 13:49:33 -0600
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20190624132923.16792-1-christian@brauner.io>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add very trivial allocation and import test for dma-heaps,
-utilizing the vgem driver as a test importer.
+On 6/24/19 7:29 AM, Christian Brauner wrote:
+> Tools such as vpnc try to flush routes when run inside network
+> namespaces by writing 1 into /proc/sys/net/ipv4/route/flush. This
+> currently does not work because flush is not enabled in non-initial
+> network namespaces.
+> Since routes are per network namespace it is safe to enable
+> /proc/sys/net/ipv4/route/flush in there.
+> 
+> Link: https://github.com/lxc/lxd/issues/4257
+> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+> ---
+>  net/ipv4/route.c | 12 ++++++++----
+>  1 file changed, 8 insertions(+), 4 deletions(-)
+> 
 
-A good chunk of this code taken from:
-  tools/testing/selftests/android/ion/ionmap_test.c
-  Originally by Laura Abbott <labbott@redhat.com>
-
-Cc: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Cc: Sumit Semwal <sumit.semwal@linaro.org>
-Cc: Liam Mark <lmark@codeaurora.org>
-Cc: Pratik Patel <pratikp@codeaurora.org>
-Cc: Brian Starkey <Brian.Starkey@arm.com>
-Cc: Vincent Donnefort <Vincent.Donnefort@arm.com>
-Cc: Sudipto Paul <Sudipto.Paul@arm.com>
-Cc: Andrew F. Davis <afd@ti.com>
-Cc: Xu YiPing <xuyiping@hisilicon.com>
-Cc: "Chenfeng (puck)" <puck.chen@hisilicon.com>
-Cc: butao <butao@hisilicon.com>
-Cc: "Xiaqing (A)" <saberlily.xia@hisilicon.com>
-Cc: Yudongbin <yudongbin@hisilicon.com>
-Cc: Christoph Hellwig <hch@infradead.org>
-Cc: Chenbo Feng <fengc@google.com>
-Cc: Alistair Strachan <astrachan@google.com>
-Cc: dri-devel@lists.freedesktop.org
-Reviewed-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Signed-off-by: John Stultz <john.stultz@linaro.org>
-Change-Id: Ib98569fdda6378eb086b8092fb5d6bd419b8d431
----
-v2:
-* Switched to use reworked dma-heap apis
-v3:
-* Add simple mmap
-* Utilize dma-buf testdev to test importing
-v4:
-* Rework to use vgem
-* Pass in fd_flags to match interface changes
-* Skip . and .. dirs
-v6:
-* Number of style/cleanups suggested by Brian
----
- tools/testing/selftests/dmabuf-heaps/Makefile |   9 +
- .../selftests/dmabuf-heaps/dmabuf-heap.c      | 234 ++++++++++++++++++
- 2 files changed, 243 insertions(+)
- create mode 100644 tools/testing/selftests/dmabuf-heaps/Makefile
- create mode 100644 tools/testing/selftests/dmabuf-heaps/dmabuf-heap.c
-
-diff --git a/tools/testing/selftests/dmabuf-heaps/Makefile b/tools/testing/selftests/dmabuf-heaps/Makefile
-new file mode 100644
-index 000000000000..8c4c36e2972d
---- /dev/null
-+++ b/tools/testing/selftests/dmabuf-heaps/Makefile
-@@ -0,0 +1,9 @@
-+# SPDX-License-Identifier: GPL-2.0
-+CFLAGS += -static -O3 -Wl,-no-as-needed -Wall
-+#LDLIBS += -lrt -lpthread -lm
-+
-+# these are all "safe" tests that don't modify
-+# system time or require escalated privileges
-+TEST_GEN_PROGS = dmabuf-heap
-+
-+include ../lib.mk
-diff --git a/tools/testing/selftests/dmabuf-heaps/dmabuf-heap.c b/tools/testing/selftests/dmabuf-heaps/dmabuf-heap.c
-new file mode 100644
-index 000000000000..1e93b6fbe459
---- /dev/null
-+++ b/tools/testing/selftests/dmabuf-heaps/dmabuf-heap.c
-@@ -0,0 +1,234 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <dirent.h>
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <stdint.h>
-+#include <string.h>
-+#include <unistd.h>
-+#include <sys/ioctl.h>
-+#include <sys/mman.h>
-+#include <sys/types.h>
-+
-+#include <linux/dma-buf.h>
-+#include <drm/drm.h>
-+
-+
-+#include "../../../../include/uapi/linux/dma-heap.h"
-+
-+#define DEVPATH "/dev/dma_heap"
-+
-+static int check_vgem(int fd)
-+{
-+	drm_version_t version = { 0 };
-+	char name[5];
-+	int ret;
-+
-+	version.name_len = 4;
-+	version.name = name;
-+
-+	ret = ioctl(fd, DRM_IOCTL_VERSION, &version);
-+	if (ret)
-+		return 0;
-+
-+	return !strcmp(name, "vgem");
-+}
-+
-+static int open_vgem(void)
-+{
-+	int i, fd;
-+	const char *drmstr = "/dev/dri/card";
-+
-+	fd = -1;
-+	for (i = 0; i < 16; i++) {
-+		char name[80];
-+
-+		sprintf(name, "%s%u", drmstr, i);
-+
-+		fd = open(name, O_RDWR);
-+		if (fd < 0)
-+			continue;
-+
-+		if (!check_vgem(fd)) {
-+			close(fd);
-+			continue;
-+		} else {
-+			break;
-+		}
-+
-+	}
-+	return fd;
-+}
-+
-+static int import_vgem_fd(int vgem_fd, int dma_buf_fd, uint32_t *handle)
-+{
-+	struct drm_prime_handle import_handle = {
-+		.fd = dma_buf_fd,
-+		.flags = 0,
-+		.handle = 0,
-+	 };
-+	int ret;
-+
-+	ret = ioctl(vgem_fd, DRM_IOCTL_PRIME_FD_TO_HANDLE, &import_handle);
-+	if (ret == 0)
-+		*handle = import_handle.handle;
-+	return ret;
-+}
-+
-+static void close_handle(int vgem_fd, uint32_t handle)
-+{
-+	struct drm_gem_close close = {
-+		.handle = handle,
-+	};
-+
-+	ioctl(vgem_fd, DRM_IOCTL_GEM_CLOSE, &close);
-+}
-+
-+
-+static int dmabuf_heap_open(char *name)
-+{
-+	int ret, fd;
-+	char buf[256];
-+
-+	ret = sprintf(buf, "%s/%s", DEVPATH, name);
-+	if (ret < 0) {
-+		printf("sprintf failed!\n");
-+		return ret;
-+	}
-+
-+	fd = open(buf, O_RDWR);
-+	if (fd < 0)
-+		printf("open %s failed!\n", buf);
-+	return fd;
-+}
-+
-+static int dmabuf_heap_alloc(int fd, size_t len, unsigned int flags, int *dmabuf_fd)
-+{
-+	struct dma_heap_allocation_data data = {
-+		.len = len,
-+		.fd_flags = O_RDWR | O_CLOEXEC,
-+		.heap_flags = flags,
-+	};
-+	int ret;
-+
-+	if (dmabuf_fd == NULL)
-+		return -EINVAL;
-+
-+	ret = ioctl(fd, DMA_HEAP_IOC_ALLOC, &data);
-+	if (ret < 0)
-+		return ret;
-+	*dmabuf_fd = (int)data.fd;
-+	return ret;
-+}
-+
-+static void dmabuf_sync(int fd, int start_stop)
-+{
-+	struct dma_buf_sync sync = {
-+		.flags = start_stop | DMA_BUF_SYNC_RW,
-+	};
-+	int ret;
-+
-+	ret = ioctl(fd, DMA_BUF_IOCTL_SYNC, &sync);
-+	if (ret)
-+		printf("sync failed %d\n", errno);
-+}
-+
-+#define ONE_MEG (1024*1024)
-+
-+static void do_test(char *heap_name)
-+{
-+	int heap_fd = -1, dmabuf_fd = -1, importer_fd = -1;
-+	uint32_t handle = 0;
-+	void *p = NULL;
-+	int ret;
-+
-+	printf("Testing heap: %s\n", heap_name);
-+
-+	heap_fd = dmabuf_heap_open(heap_name);
-+	if (heap_fd < 0)
-+		return;
-+
-+	printf("Allocating 1 MEG\n");
-+	ret = dmabuf_heap_alloc(heap_fd, ONE_MEG, 0, &dmabuf_fd);
-+	if (ret) {
-+		printf("Allocation Failed!\n");
-+		goto out;
-+	}
-+	/* mmap and write a simple pattern */
-+	p = mmap(NULL,
-+		 ONE_MEG,
-+		 PROT_READ | PROT_WRITE,
-+		 MAP_SHARED,
-+		 dmabuf_fd,
-+		 0);
-+	if (p == MAP_FAILED) {
-+		printf("mmap() failed: %m\n");
-+		goto out;
-+	}
-+	printf("mmap passed\n");
-+
-+
-+	dmabuf_sync(dmabuf_fd, DMA_BUF_SYNC_START);
-+
-+	memset(p, 1, ONE_MEG / 2);
-+	memset((char *)p + ONE_MEG / 2, 0, ONE_MEG / 2);
-+	dmabuf_sync(dmabuf_fd, DMA_BUF_SYNC_END);
-+
-+	importer_fd = open_vgem();
-+	if (importer_fd < 0) {
-+		ret = importer_fd;
-+		printf("Failed to open vgem\n");
-+		goto out;
-+	}
-+
-+	ret = import_vgem_fd(importer_fd, dmabuf_fd, &handle);
-+	if (ret < 0) {
-+		printf("Failed to import buffer\n");
-+		goto out;
-+	}
-+	printf("import passed\n");
-+
-+	dmabuf_sync(dmabuf_fd, DMA_BUF_SYNC_START);
-+	memset(p, 0xff, ONE_MEG);
-+	dmabuf_sync(dmabuf_fd, DMA_BUF_SYNC_END);
-+	printf("syncs passed\n");
-+
-+	close_handle(importer_fd, handle);
-+
-+out:
-+	if (p)
-+		munmap(p, ONE_MEG);
-+	if (importer_fd >= 0)
-+		close(importer_fd);
-+	if (dmabuf_fd >= 0)
-+		close(dmabuf_fd);
-+	if (heap_fd >= 0)
-+		close(heap_fd);
-+}
-+
-+
-+int main(void)
-+{
-+	DIR *d;
-+	struct dirent *dir;
-+
-+	d = opendir(DEVPATH);
-+	if (!d) {
-+		printf("No %s directory?\n", DEVPATH);
-+		return -1;
-+	}
-+
-+	while ((dir = readdir(d)) != NULL) {
-+		if (!strncmp(dir->d_name, ".", 2))
-+			continue;
-+		if (!strncmp(dir->d_name, "..", 3))
-+			continue;
-+
-+		do_test(dir->d_name);
-+	}
-+	closedir(d);
-+
-+	return 0;
-+}
--- 
-2.17.1
+why not teach vpnc to use rtnetlink and then add a flush option to
+RTM_DELROUTE?
 
