@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3A4150826
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:18:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DFC5506DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:06:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729166AbfFXKCP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 06:02:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33266 "EHLO mail.kernel.org"
+        id S1729080AbfFXKCR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 06:02:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33378 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727284AbfFXKCM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 06:02:12 -0400
+        id S1729114AbfFXKCP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 06:02:15 -0400
 Received: from localhost (f4.8f.5177.ip4.static.sl-reverse.com [119.81.143.244])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 10A072146F;
-        Mon, 24 Jun 2019 10:02:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B8C8B208E3;
+        Mon, 24 Jun 2019 10:02:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561370531;
-        bh=plZOkWaLb4yy5BvUkpSJ/NwGDi97Ob4vcXUWQKp9oBk=;
+        s=default; t=1561370534;
+        bh=TG0TjBa9mw6J7otx5tv6YLaiVZ41FrBRxhyigiSb6go=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nVmf+DgRrS80lvELxEXOMQXLL8FXWOc7K9UG+zShHIidJLwCROIbPW+AF/C6gBLla
-         8ifXyktGhMBH5jvmd4R9jur64WAVwChhMVOv/Vwtp1Aufebv7RtmNSmz7ORmzmWkS5
-         jJHmRBJXbobIWWtC5cBLVRcmXpVVIm/WqW3aRE7M=
+        b=em3oVJR2pWTQCNZ8dG8YuUN45HFYkHPThf7snUZv/4QKmxnyGC3uv7UgMrNTnnUsc
+         13HiU9sRBm3v9ZUh9lD/kKt3ILzgQL2odwaRvXx7VbD497VbzWy3N9n4EBLjS3p2o9
+         pGGPZSlwXuF1EAmpEiQ+fOB51C7Vt75/LWx+QHow=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.19 01/90] tracing: Silence GCC 9 array bounds warning
-Date:   Mon, 24 Jun 2019 17:55:51 +0800
-Message-Id: <20190624092313.930230995@linuxfoundation.org>
+        stable@vger.kernel.org, Allan Xavier <allan.x.xavier@oracle.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 4.19 02/90] objtool: Support per-function rodata sections
+Date:   Mon, 24 Jun 2019 17:55:52 +0800
+Message-Id: <20190624092313.998819325@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190624092313.788773607@linuxfoundation.org>
 References: <20190624092313.788773607@linuxfoundation.org>
 User-Agent: quilt/0.66
-X-stable: review
-X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -46,103 +44,189 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+From: Allan Xavier <allan.x.xavier@oracle.com>
 
-commit 0c97bf863efce63d6ab7971dad811601e6171d2f upstream.
+commit 4a60aa05a0634241ce17f957bf9fb5ac1eed6576 upstream.
 
-Starting with GCC 9, -Warray-bounds detects cases when memset is called
-starting on a member of a struct but the size to be cleared ends up
-writing over further members.
+Add support for processing switch jump tables in objects with multiple
+.rodata sections, such as those created by '-ffunction-sections' and
+'-fdata-sections'.  Currently, objtool always looks in .rodata for jump
+table information, which results in many "sibling call from callable
+instruction with modified stack frame" warnings with objects compiled
+using those flags.
 
-Such a call happens in the trace code to clear, at once, all members
-after and including `seq` on struct trace_iterator:
+The fix is comprised of three parts:
 
-    In function 'memset',
-        inlined from 'ftrace_dump' at kernel/trace/trace.c:8914:3:
-    ./include/linux/string.h:344:9: warning: '__builtin_memset' offset
-    [8505, 8560] from the object at 'iter' is out of the bounds of
-    referenced subobject 'seq' with type 'struct trace_seq' at offset
-    4368 [-Warray-bounds]
-      344 |  return __builtin_memset(p, c, size);
-          |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1. Flagging all .rodata sections when importing ELF information for
+   easier checking later.
 
-In order to avoid GCC complaining about it, we compute the address
-ourselves by adding the offsetof distance instead of referring
-directly to the member.
+2. Keeping a reference to the section each relocation is from in order
+   to get the list_head for the other relocations in that section.
 
-Since there are two places doing this clear (trace.c and trace_kdb.c),
-take the chance to move the workaround into a single place in
-the internal header.
+3. Finding jump tables by following relocations to .rodata sections,
+   rather than always referencing a single global .rodata section.
 
-Link: http://lkml.kernel.org/r/20190523124535.GA12931@gmail.com
+The patch has been tested without data sections enabled and no
+differences in the resulting orc unwind information were seen.
 
-Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-[ Removed unnecessary parenthesis around "iter" ]
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Note that as objtool adds terminators to end of each .text section the
+unwind information generated between a function+data sections build and
+a normal build aren't directly comparable. Manual inspection suggests
+that objtool is now generating the correct information, or at least
+making more of an effort to do so than it did previously.
+
+Signed-off-by: Allan Xavier <allan.x.xavier@oracle.com>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/099bdc375195c490dda04db777ee0b95d566ded1.1536325914.git.jpoimboe@redhat.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/trace/trace.c     |    6 +-----
- kernel/trace/trace.h     |   18 ++++++++++++++++++
- kernel/trace/trace_kdb.c |    6 +-----
- 3 files changed, 20 insertions(+), 10 deletions(-)
+ tools/objtool/check.c |   38 ++++++++++++++++++++++++++++++++------
+ tools/objtool/check.h |    4 ++--
+ tools/objtool/elf.c   |    1 +
+ tools/objtool/elf.h   |    3 ++-
+ 4 files changed, 37 insertions(+), 9 deletions(-)
 
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -8351,12 +8351,8 @@ void ftrace_dump(enum ftrace_dump_mode o
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -839,7 +839,7 @@ static int add_switch_table(struct objto
+ 	struct symbol *pfunc = insn->func->pfunc;
+ 	unsigned int prev_offset = 0;
  
- 		cnt++;
+-	list_for_each_entry_from(rela, &file->rodata->rela->rela_list, list) {
++	list_for_each_entry_from(rela, &table->rela_sec->rela_list, list) {
+ 		if (rela == next_table)
+ 			break;
  
--		/* reset all but tr, trace, and overruns */
--		memset(&iter.seq, 0,
--		       sizeof(struct trace_iterator) -
--		       offsetof(struct trace_iterator, seq));
-+		trace_iterator_reset(&iter);
- 		iter.iter_flags |= TRACE_FILE_LAT_FMT;
--		iter.pos = -1;
+@@ -929,6 +929,7 @@ static struct rela *find_switch_table(st
+ {
+ 	struct rela *text_rela, *rodata_rela;
+ 	struct instruction *orig_insn = insn;
++	struct section *rodata_sec;
+ 	unsigned long table_offset;
  
- 		if (trace_find_next_entry_inc(&iter) != NULL) {
- 			int ret;
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -1895,4 +1895,22 @@ static inline void tracer_hardirqs_off(u
+ 	/*
+@@ -956,10 +957,13 @@ static struct rela *find_switch_table(st
+ 		/* look for a relocation which references .rodata */
+ 		text_rela = find_rela_by_dest_range(insn->sec, insn->offset,
+ 						    insn->len);
+-		if (!text_rela || text_rela->sym != file->rodata->sym)
++		if (!text_rela || text_rela->sym->type != STT_SECTION ||
++		    !text_rela->sym->sec->rodata)
+ 			continue;
  
- extern struct trace_iterator *tracepoint_print_iter;
+ 		table_offset = text_rela->addend;
++		rodata_sec = text_rela->sym->sec;
++
+ 		if (text_rela->type == R_X86_64_PC32)
+ 			table_offset += 4;
  
-+/*
-+ * Reset the state of the trace_iterator so that it can read consumed data.
-+ * Normally, the trace_iterator is used for reading the data when it is not
-+ * consumed, and must retain state.
-+ */
-+static __always_inline void trace_iterator_reset(struct trace_iterator *iter)
+@@ -967,10 +971,10 @@ static struct rela *find_switch_table(st
+ 		 * Make sure the .rodata address isn't associated with a
+ 		 * symbol.  gcc jump tables are anonymous data.
+ 		 */
+-		if (find_symbol_containing(file->rodata, table_offset))
++		if (find_symbol_containing(rodata_sec, table_offset))
+ 			continue;
+ 
+-		rodata_rela = find_rela_by_dest(file->rodata, table_offset);
++		rodata_rela = find_rela_by_dest(rodata_sec, table_offset);
+ 		if (rodata_rela) {
+ 			/*
+ 			 * Use of RIP-relative switch jumps is quite rare, and
+@@ -1055,7 +1059,7 @@ static int add_switch_table_alts(struct
+ 	struct symbol *func;
+ 	int ret;
+ 
+-	if (!file->rodata || !file->rodata->rela)
++	if (!file->rodata)
+ 		return 0;
+ 
+ 	for_each_sec(file, sec) {
+@@ -1201,10 +1205,33 @@ static int read_retpoline_hints(struct o
+ 	return 0;
+ }
+ 
++static void mark_rodata(struct objtool_file *file)
 +{
-+	const size_t offset = offsetof(struct trace_iterator, seq);
++	struct section *sec;
++	bool found = false;
 +
 +	/*
-+	 * Keep gcc from complaining about overwriting more than just one
-+	 * member in the structure.
++	 * This searches for the .rodata section or multiple .rodata.func_name
++	 * sections if -fdata-sections is being used. The .str.1.1 and .str.1.8
++	 * rodata sections are ignored as they don't contain jump tables.
 +	 */
-+	memset((char *)iter + offset, 0, sizeof(struct trace_iterator) - offset);
++	for_each_sec(file, sec) {
++		if (!strncmp(sec->name, ".rodata", 7) &&
++		    !strstr(sec->name, ".str1.")) {
++			sec->rodata = true;
++			found = true;
++		}
++	}
 +
-+	iter->pos = -1;
++	file->rodata = found;
 +}
 +
- #endif /* _LINUX_KERNEL_TRACE_H */
---- a/kernel/trace/trace_kdb.c
-+++ b/kernel/trace/trace_kdb.c
-@@ -41,12 +41,8 @@ static void ftrace_dump_buf(int skip_lin
+ static int decode_sections(struct objtool_file *file)
+ {
+ 	int ret;
  
- 	kdb_printf("Dumping ftrace buffer:\n");
++	mark_rodata(file);
++
+ 	ret = decode_instructions(file);
+ 	if (ret)
+ 		return ret;
+@@ -2176,7 +2203,6 @@ int check(const char *_objname, bool orc
+ 	INIT_LIST_HEAD(&file.insn_list);
+ 	hash_init(file.insn_hash);
+ 	file.whitelist = find_section_by_name(file.elf, ".discard.func_stack_frame_non_standard");
+-	file.rodata = find_section_by_name(file.elf, ".rodata");
+ 	file.c_file = find_section_by_name(file.elf, ".comment");
+ 	file.ignore_unreachables = no_unreachable;
+ 	file.hints = false;
+--- a/tools/objtool/check.h
++++ b/tools/objtool/check.h
+@@ -60,8 +60,8 @@ struct objtool_file {
+ 	struct elf *elf;
+ 	struct list_head insn_list;
+ 	DECLARE_HASHTABLE(insn_hash, 16);
+-	struct section *rodata, *whitelist;
+-	bool ignore_unreachables, c_file, hints;
++	struct section *whitelist;
++	bool ignore_unreachables, c_file, hints, rodata;
+ };
  
--	/* reset all but tr, trace, and overruns */
--	memset(&iter.seq, 0,
--		   sizeof(struct trace_iterator) -
--		   offsetof(struct trace_iterator, seq));
-+	trace_iterator_reset(&iter);
- 	iter.iter_flags |= TRACE_FILE_LAT_FMT;
--	iter.pos = -1;
+ int check(const char *objname, bool orc);
+--- a/tools/objtool/elf.c
++++ b/tools/objtool/elf.c
+@@ -390,6 +390,7 @@ static int read_relas(struct elf *elf)
+ 			rela->offset = rela->rela.r_offset;
+ 			symndx = GELF_R_SYM(rela->rela.r_info);
+ 			rela->sym = find_symbol_by_index(elf, symndx);
++			rela->rela_sec = sec;
+ 			if (!rela->sym) {
+ 				WARN("can't find rela entry symbol %d for %s",
+ 				     symndx, sec->name);
+--- a/tools/objtool/elf.h
++++ b/tools/objtool/elf.h
+@@ -48,7 +48,7 @@ struct section {
+ 	char *name;
+ 	int idx;
+ 	unsigned int len;
+-	bool changed, text;
++	bool changed, text, rodata;
+ };
  
- 	if (cpu_file == RING_BUFFER_ALL_CPUS) {
- 		for_each_tracing_cpu(cpu) {
+ struct symbol {
+@@ -68,6 +68,7 @@ struct rela {
+ 	struct list_head list;
+ 	struct hlist_node hash;
+ 	GElf_Rela rela;
++	struct section *rela_sec;
+ 	struct symbol *sym;
+ 	unsigned int type;
+ 	unsigned long offset;
 
 
