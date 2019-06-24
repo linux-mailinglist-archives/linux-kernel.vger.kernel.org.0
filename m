@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F57150684
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:01:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D64650711
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:06:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729183AbfFXJ7Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 05:59:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58226 "EHLO mail.kernel.org"
+        id S1729634AbfFXKEK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 06:04:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35548 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728388AbfFXJ7N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 05:59:13 -0400
+        id S1729626AbfFXKEH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 06:04:07 -0400
 Received: from localhost (f4.8f.5177.ip4.static.sl-reverse.com [119.81.143.244])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 81DD0205ED;
-        Mon, 24 Jun 2019 09:59:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A256721537;
+        Mon, 24 Jun 2019 10:04:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561370353;
-        bh=A1RrtKwHN0dBw+kQjkpEeeBB6NYU+o4WplT4dVU1GkQ=;
+        s=default; t=1561370647;
+        bh=d37ICMBKvoimNiAqVg+adZ7Qd5e54zOXaNlzOgph3Rw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DaSmpA3TlvgTpcaEFTtM01Z2W0aZ1yx4nAJfh9+rx+SXd/sMfh+0XKJVVzHCmvrH3
-         WRM7HR4TP3D7GnRtdd+NvZ6CCgh0E3IuXjJbItL/XS8OFiq3sxkr2Mttc8cRpAsjgh
-         hv5gaHH70uUR+/qIC3DPwhvpca/prz0tSioxw2s0=
+        b=QEDSP2vq0RxmgArWXKx423bBsUV4ZSjuPpqoZQ7F05BVjwwtP4jUkCjUPLT55xp6Y
+         exFR7UmweYorB/IC78SmPLtTWFKjPbtL0Vz2Qg3gjnZdZs2hEeXSw+HFwxGT6vQWyw
+         M1o6VUhLq6zICxvpjPdYeJcLAsRMABP9YJEaRXhM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alexander Mikhaylenko <exalm7659@gmail.com>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.14 09/51] Input: synaptics - enable SMBus on ThinkPad E480 and E580
-Date:   Mon, 24 Jun 2019 17:56:27 +0800
-Message-Id: <20190624092307.436696381@linuxfoundation.org>
+        stable@vger.kernel.org, Helge Deller <deller@gmx.de>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 38/90] parisc: Fix compiler warnings in float emulation code
+Date:   Mon, 24 Jun 2019 17:56:28 +0800
+Message-Id: <20190624092316.796169695@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190624092305.919204959@linuxfoundation.org>
-References: <20190624092305.919204959@linuxfoundation.org>
+In-Reply-To: <20190624092313.788773607@linuxfoundation.org>
+References: <20190624092313.788773607@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,36 +43,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander Mikhaylenko <exalm7659@gmail.com>
+[ Upstream commit 6b98d9134e14f5ef4bcf64b27eedf484ed19a1ec ]
 
-commit 9843f3e08e2144724be7148e08d77a195dea257a upstream.
+Avoid such compiler warnings:
+arch/parisc/math-emu/cnv_float.h:71:27: warning: ‘<<’ in boolean context, did you mean ‘<’ ? [-Wint-in-bool-context]
+     ((Dintp1(dint_valueA) << 33 - SGL_EXP_LENGTH) || Dintp2(dint_valueB))
+arch/parisc/math-emu/fcnvxf.c:257:6: note: in expansion of macro ‘Dint_isinexact_to_sgl’
+  if (Dint_isinexact_to_sgl(srcp1,srcp2)) {
 
-They are capable of using intertouch and it works well with
-psmouse.synaptics_intertouch=1, so add them to the list.
-
-Without it, scrolling and gestures are jumpy, three-finger pinch gesture
-doesn't work and three- or four-finger swipes sometimes get stuck.
-
-Signed-off-by: Alexander Mikhaylenko <exalm7659@gmail.com>
-Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Helge Deller <deller@gmx.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/input/mouse/synaptics.c |    2 ++
- 1 file changed, 2 insertions(+)
+ arch/parisc/math-emu/cnv_float.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/input/mouse/synaptics.c
-+++ b/drivers/input/mouse/synaptics.c
-@@ -179,6 +179,8 @@ static const char * const smbus_pnp_ids[
- 	"LEN0096", /* X280 */
- 	"LEN0097", /* X280 -> ALPS trackpoint */
- 	"LEN200f", /* T450s */
-+	"LEN2054", /* E480 */
-+	"LEN2055", /* E580 */
- 	"SYN3052", /* HP EliteBook 840 G4 */
- 	"SYN3221", /* HP 15-ay000 */
- 	NULL
+diff --git a/arch/parisc/math-emu/cnv_float.h b/arch/parisc/math-emu/cnv_float.h
+index 933423fa5144..b0db61188a61 100644
+--- a/arch/parisc/math-emu/cnv_float.h
++++ b/arch/parisc/math-emu/cnv_float.h
+@@ -60,19 +60,19 @@
+     ((exponent < (SGL_P - 1)) ?				\
+      (Sall(sgl_value) << (SGL_EXP_LENGTH + 1 + exponent)) : FALSE)
+ 
+-#define Int_isinexact_to_sgl(int_value)	(int_value << 33 - SGL_EXP_LENGTH)
++#define Int_isinexact_to_sgl(int_value)	((int_value << 33 - SGL_EXP_LENGTH) != 0)
+ 
+ #define Sgl_roundnearest_from_int(int_value,sgl_value)			\
+     if (int_value & 1<<(SGL_EXP_LENGTH - 2))   /* round bit */		\
+-    	if ((int_value << 34 - SGL_EXP_LENGTH) || Slow(sgl_value))	\
++	if (((int_value << 34 - SGL_EXP_LENGTH) != 0) || Slow(sgl_value)) \
+ 		Sall(sgl_value)++
+ 
+ #define Dint_isinexact_to_sgl(dint_valueA,dint_valueB)		\
+-    ((Dintp1(dint_valueA) << 33 - SGL_EXP_LENGTH) || Dintp2(dint_valueB))
++    (((Dintp1(dint_valueA) << 33 - SGL_EXP_LENGTH) != 0) || Dintp2(dint_valueB))
+ 
+ #define Sgl_roundnearest_from_dint(dint_valueA,dint_valueB,sgl_value)	\
+     if (Dintp1(dint_valueA) & 1<<(SGL_EXP_LENGTH - 2)) 			\
+-    	if ((Dintp1(dint_valueA) << 34 - SGL_EXP_LENGTH) ||		\
++	if (((Dintp1(dint_valueA) << 34 - SGL_EXP_LENGTH) != 0) ||	\
+     	Dintp2(dint_valueB) || Slow(sgl_value)) Sall(sgl_value)++
+ 
+ #define Dint_isinexact_to_dbl(dint_value) 	\
+-- 
+2.20.1
+
 
 
