@@ -2,93 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB62E51C7D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 22:38:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3ABE51C89
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 22:39:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731967AbfFXUi1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 16:38:27 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:40907 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726920AbfFXUi1 (ORCPT
+        id S1732038AbfFXUjk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 16:39:40 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:41604 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726920AbfFXUjj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 16:38:27 -0400
-Received: by mail-lj1-f196.google.com with SMTP id a21so13928812ljh.7
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 13:38:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=v1ni3gZJ5DTYbVR+EneqvuBS0klKngeeCXjk7sRCSGw=;
-        b=Kq4O+bMGVFxakj9kxG9tRFGL2K0FolT9Gw9P0jU0osuV0wrn2LvztvEJI5K2gdqAdO
-         BTY7iQchISdZJb8oUShzSbisNENbHBS1Npx38UjU4RvSM4S5t/DaY+p0iignOeyWElQw
-         9E9YKGwdKIThg4sSe1kFEnbIZ1quXo9mGQXZA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=v1ni3gZJ5DTYbVR+EneqvuBS0klKngeeCXjk7sRCSGw=;
-        b=lhXV0SajKUYgQtvLa33/2F9wsjGo8J+1lNJ0dkEO22iQzB6wkXuS8zbARj4aBuZVGt
-         li/2k/rDXNO6L3GNpmt6qoSwLgeRM2CsYJAD9I9Lc5+GkmIO3I8Oxz7BemUBn1EVspvs
-         TbHPwD1RUx+drrYsmzc2gLlSZ748oMpVz4b4/DaoR68LxWF6TW1pYIgU5m9hODMCw26x
-         JUiMiPkwMvLHPf/azG91ppfna56PP6rXB9cnqY55Su/skm0hh+B0S6YhHf+/AGRZbikd
-         q5jVe23kMxj01FkCuz15Alqz0M3+plVaPNF2GZmTU+i/lEvnahefnTOVVgGkwrkfHa66
-         d2sQ==
-X-Gm-Message-State: APjAAAX4i3rysdBzen9/7Fn4jgQEKRUPDjwmxDQDwtALWGwBC4hFiChM
-        oFBXTPm8vZEcf2PCWFdY6f6kaMfmbZE=
-X-Google-Smtp-Source: APXvYqy2v7NBOdtsPQWrhbQyxLJD1GCO43pHjDWejMumMo/PoPNNI/vgkRNNH10+jWn2kZtG3emSEA==
-X-Received: by 2002:a2e:6c0f:: with SMTP id h15mr19052222ljc.36.1561408704378;
-        Mon, 24 Jun 2019 13:38:24 -0700 (PDT)
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com. [209.85.208.180])
-        by smtp.gmail.com with ESMTPSA id u21sm1911728lju.2.2019.06.24.13.38.23
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Jun 2019 13:38:23 -0700 (PDT)
-Received: by mail-lj1-f180.google.com with SMTP id a21so13928718ljh.7
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 13:38:23 -0700 (PDT)
-X-Received: by 2002:a2e:9bc6:: with SMTP id w6mr13248937ljj.156.1561408702960;
- Mon, 24 Jun 2019 13:38:22 -0700 (PDT)
+        Mon, 24 Jun 2019 16:39:39 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5OKdZCS077530;
+        Mon, 24 Jun 2019 15:39:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1561408775;
+        bh=oIggU2usg7ip92ERe3n8UI5GnQ67C5U97I7Ca1/uLxw=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=PXmZABqByRnONJkq4IlV58VJMYG2qoNypXsSXYUb9lYL8kntL4D1kvhndujxPF8ZW
+         1go4rpAo3ktU3Up5YbUgyQLWcPKFsctVlVxZSUpo44VbxwZJJuikzMMdsDAJOsJR2G
+         G9UFie8rQJdHNniqlGTm16JM62GsByKyV2pS13iM=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5OKdZD1076634
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 24 Jun 2019 15:39:35 -0500
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 24
+ Jun 2019 15:39:34 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Mon, 24 Jun 2019 15:39:34 -0500
+Received: from [128.247.58.153] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5OKdYHJ075028;
+        Mon, 24 Jun 2019 15:39:34 -0500
+Subject: Re: [PATCH 0/2] Add Mailbox support for TI K3 SoCs
+To:     Jassi Brar <jassisinghbrar@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     <devicetree@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20190604170146.12205-1-s-anna@ti.com>
+From:   Suman Anna <s-anna@ti.com>
+Message-ID: <47b8f278-85ff-18be-d5a0-fde9de6e17f2@ti.com>
+Date:   Mon, 24 Jun 2019 15:39:34 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <20190624144151.22688-1-rpenyaev@suse.de>
-In-Reply-To: <20190624144151.22688-1-rpenyaev@suse.de>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 25 Jun 2019 04:38:06 +0800
-X-Gmail-Original-Message-ID: <CAHk-=wgQaCDiH09ocVA=74ceg9XyS=kRDF5Hi=783shCaKVRWg@mail.gmail.com>
-Message-ID: <CAHk-=wgQaCDiH09ocVA=74ceg9XyS=kRDF5Hi=783shCaKVRWg@mail.gmail.com>
-Subject: Re: [PATCH v5 00/14] epoll: support pollable epoll from userspace
-To:     Roman Penyaev <rpenyaev@suse.de>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Azat Khuzhin <azat@libevent.org>, Eric Wong <e@80x24.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190604170146.12205-1-s-anna@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 10:42 PM Roman Penyaev <rpenyaev@suse.de> wrote:
->
-> So harvesting events from userspace gives 15% gain.  Though bench_http
-> is not ideal benchmark, but at least it is the part of libevent and was
-> easy to modify.
->
-> Worth to mention that uepoll is very sensible to CPU, e.g. the gain above
-> is observed on desktop "Intel(R) Core(TM) i7-6820HQ CPU @ 2.70GHz", but on
-> "Intel(R) Xeon(R) Silver 4110 CPU @ 2.10GHz" measurements are almost the
-> same for both runs.
+Hi Jassi,
 
-Hmm. 15% may be big in a big picture thing, but when it comes to what
-is pretty much a micro-benchmark, I'm not sure how meaningful it is.
+On 6/4/19 12:01 PM, Suman Anna wrote:
+> Hi Jassi,
+> 
+> The following series adds the support for the Mailbox IP present
+> within the Main NavSS module on the newer TI K3 AM65x and J721E SoCs.
+> 
+> The Mailbox IP is similar to the previous generation IP on OMAP SoCs
+> with a few differences:
+>  - Multiple IP instances from previous DRA7/AM57 family each form a
+>    cluster and are part of the same IP. The driver support will continue
+>    to be based on a cluster.
+>  - The IP is present within a Main NaVSS, and interrupts have to go
+>    through an Interrupt Router within Main NavSS before they reach the
+>    respective processor sub-system's interrupt controllers.
+>  - The register layout is mostly same, with difference in two registers
+> 
+> Support is added by enhancing the existing OMAP Mailbox driver to 
+> support the K3 IP using a new compatible. The driver also has to be
+> adjusted to deal with the 32-bit mailbox payloads vs the 64-bit 
+> pointers used by the Mailbox API on these Arm v8 platforms.
+> 
+> DT nodes will be posted separately once the binding is acked.
 
-And the CPU sensitivity thing worries me. Did you check _why_ it
-doesn't seem to make any difference on the Xeon 4110? Is it just
-because at that point the machine has enough cores that you might as
-well just sit in epoll() in the kernel and uepoll doesn't give you
-much? Or is there something else going on?
+Can you please pick this series up for 5.3 merge window if you do not
+have any comments.
 
-Because this is a big enough change and UAPI thing that it's a bit
-concerning if there isn't a clear and unambiguous win.
+Thanks,
+Suman
 
-               Linus
+> 
+> Suman Anna (2):
+>   dt-bindings: mailbox: omap: Update bindings for TI K3 SoCs
+>   mailbox/omap: Add support for TI K3 SoCs
+> 
+>  .../bindings/mailbox/omap-mailbox.txt         | 59 ++++++++++++++++---
+>  drivers/mailbox/Kconfig                       |  2 +-
+>  drivers/mailbox/omap-mailbox.c                | 43 ++++++++------
+>  include/linux/omap-mailbox.h                  |  4 +-
+>  4 files changed, 80 insertions(+), 28 deletions(-)
+> 
+
