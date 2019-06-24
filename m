@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 693C15083E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:18:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8102F5073D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:06:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730215AbfFXKPr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 06:15:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53044 "EHLO mail.kernel.org"
+        id S1729996AbfFXKFt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 06:05:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37786 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729706AbfFXKPm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 06:15:42 -0400
+        id S1729478AbfFXKFp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 06:05:45 -0400
 Received: from localhost (f4.8f.5177.ip4.static.sl-reverse.com [119.81.143.244])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6456A2089F;
-        Mon, 24 Jun 2019 10:15:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AE2492145D;
+        Mon, 24 Jun 2019 10:05:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561371341;
-        bh=6OdPh8UvNgFw9kAu6ULVURDzR2ajJLVxWU0NRDBdpe0=;
+        s=default; t=1561370744;
+        bh=W0Xsbqza/+fR8KzRJ6FPJFO9jlBLhM1du4QMqOW7tXs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=K/QllV4T15nfPeq9EY5tYSi16iLAylaiJY1d6mSaDTaD+9wIYSQUEddMbVVqEdkGY
-         zRabsYg1U52ipTsaCbZazBtfQHYCdOtsabNh2V+Ljj7GjW0XvkW+Fu/tTG4YvSpKp8
-         PyfVTBSkKbYFAuP/wXTHk8oVgkU4HyTzHHPsovXA=
+        b=VMrUoZRuwmT1iLBUqoND0xed4r5GQK55HBI/1H9ySlV2WvdxNNN68WaYPFhU+H1cQ
+         U463KGpi7/+IqxUztQ0RXfPqT0CiyyWWl+76eoxHYu3yGB4AyZqdGEv+SYazCmohYy
+         o4jJkxnasEgN/MKxRc+z8EDGZ9JOucgQ6an59cMg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Young Xiao <92siuyang@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 066/121] sparc: perf: fix updated event period in response to PERF_EVENT_IOC_PERIOD
+Subject: [PATCH 4.19 48/90] selftests: vm: install test_vmalloc.sh for run_vmtests
 Date:   Mon, 24 Jun 2019 17:56:38 +0800
-Message-Id: <20190624092324.192490402@linuxfoundation.org>
+Message-Id: <20190624092317.387371473@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190624092320.652599624@linuxfoundation.org>
-References: <20190624092320.652599624@linuxfoundation.org>
+In-Reply-To: <20190624092313.788773607@linuxfoundation.org>
+References: <20190624092313.788773607@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,41 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 56cd0aefa475079e9613085b14a0f05037518fed ]
+[ Upstream commit bc2cce3f2ebcae02aa4bb29e3436bf75ee674c32 ]
 
-The PERF_EVENT_IOC_PERIOD ioctl command can be used to change the
-sample period of a running perf_event. Consequently, when calculating
-the next event period, the new period will only be considered after the
-previous one has overflowed.
+Add test_vmalloc.sh to TEST_FILES to make sure it gets installed for
+run_vmtests.
 
-This patch changes the calculation of the remaining event ticks so that
-they are offset if the period has changed.
+Fixed below error:
+./run_vmtests: line 217: ./test_vmalloc.sh: No such file or directory
 
-See commit 3581fe0ef37c ("ARM: 7556/1: perf: fix updated event period in
-response to PERF_EVENT_IOC_PERIOD") for details.
+Tested with: make TARGETS=vm install INSTALL_PATH=$PWD/x
 
-Signed-off-by: Young Xiao <92siuyang@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/sparc/kernel/perf_event.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ tools/testing/selftests/vm/Makefile | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/sparc/kernel/perf_event.c b/arch/sparc/kernel/perf_event.c
-index 6de7c684c29f..a58ae9c42803 100644
---- a/arch/sparc/kernel/perf_event.c
-+++ b/arch/sparc/kernel/perf_event.c
-@@ -891,6 +891,10 @@ static int sparc_perf_event_set_period(struct perf_event *event,
- 	s64 period = hwc->sample_period;
- 	int ret = 0;
+diff --git a/tools/testing/selftests/vm/Makefile b/tools/testing/selftests/vm/Makefile
+index dc68340a6a96..2cf3dc49bd03 100644
+--- a/tools/testing/selftests/vm/Makefile
++++ b/tools/testing/selftests/vm/Makefile
+@@ -24,6 +24,8 @@ TEST_GEN_FILES += virtual_address_range
  
-+	/* The period may have been changed by PERF_EVENT_IOC_PERIOD */
-+	if (unlikely(period != hwc->last_period))
-+		left = period - (hwc->last_period - left);
+ TEST_PROGS := run_vmtests
+ 
++TEST_FILES := test_vmalloc.sh
 +
- 	if (unlikely(left <= -period)) {
- 		left = period;
- 		local64_set(&hwc->period_left, left);
+ KSFT_KHDR_INSTALL := 1
+ include ../lib.mk
+ 
 -- 
 2.20.1
 
