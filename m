@@ -2,140 +2,255 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FACA50FA1
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 17:05:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D99F750FAA
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 17:06:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729679AbfFXPFp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 11:05:45 -0400
-Received: from mailoutvs50.siol.net ([185.57.226.241]:44931 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725562AbfFXPFp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 11:05:45 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id 07E62522ABF;
-        Mon, 24 Jun 2019 17:05:41 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at psrvmta10.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta10.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id xoqTPOpf7QY5; Mon, 24 Jun 2019 17:05:40 +0200 (CEST)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id 98D1F522F0B;
-        Mon, 24 Jun 2019 17:05:40 +0200 (CEST)
-Received: from jernej-laptop.localnet (cpe-86-58-52-202.static.triera.net [86.58.52.202])
-        (Authenticated sender: jernej.skrabec@siol.net)
-        by mail.siol.net (Postfix) with ESMTPA id CD736522ABF;
-        Mon, 24 Jun 2019 17:05:37 +0200 (CEST)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To:     Andrzej Hajda <a.hajda@samsung.com>
-Cc:     Jonas Karlman <jonas@kwiboo.se>,
-        "Laurent.pinchart@ideasonboard.com" 
-        <Laurent.pinchart@ideasonboard.com>,
-        "narmstrong@baylibre.com" <narmstrong@baylibre.com>,
-        "khilman@baylibre.com" <khilman@baylibre.com>,
-        "zhengyang@rock-chips.com" <zhengyang@rock-chips.com>,
-        "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>,
-        "wens@csie.org" <wens@csie.org>,
-        "hjc@rock-chips.com" <hjc@rock-chips.com>,
-        "heiko@sntech.de" <heiko@sntech.de>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/4] drm/sun4i: Enable DRM InfoFrame support on H6
-Date:   Mon, 24 Jun 2019 17:05:37 +0200
-Message-ID: <6819050.kFKQ8T6p8H@jernej-laptop>
-In-Reply-To: <baf95e6b-bfcf-27e7-1a00-ca877ae6f82d@samsung.com>
-References: <VI1PR03MB420621617DDEAB3596700DE0AC1C0@VI1PR03MB4206.eurprd03.prod.outlook.com> <VI1PR03MB4206740285A775280063E303AC1C0@VI1PR03MB4206.eurprd03.prod.outlook.com> <baf95e6b-bfcf-27e7-1a00-ca877ae6f82d@samsung.com>
+        id S1730342AbfFXPGz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 11:06:55 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:53066 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726414AbfFXPGy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 11:06:54 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B5BE766967;
+        Mon, 24 Jun 2019 15:06:42 +0000 (UTC)
+Received: from [10.36.116.89] (ovpn-116-89.ams2.redhat.com [10.36.116.89])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0DDC819C6A;
+        Mon, 24 Jun 2019 15:06:29 +0000 (UTC)
+Subject: Re: [PATCH v4 08/22] iommu: Introduce attach/detach_pasid_table API
+To:     Jonathan Cameron <jonathan.cameron@huawei.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>
+Cc:     iommu@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        Yi L <yi.l.liu@linux.intel.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        Raj Ashok <ashok.raj@intel.com>, Liu@mail.linuxfoundation.org,
+        Andriy Shevchenko <andriy.shevchenko@linux.intel.com>
+References: <1560087862-57608-1-git-send-email-jacob.jun.pan@linux.intel.com>
+ <1560087862-57608-9-git-send-email-jacob.jun.pan@linux.intel.com>
+ <20190618164128.0000204f@huawei.com>
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <c6e2d65b-8181-3627-f454-d491a738b6ee@redhat.com>
+Date:   Mon, 24 Jun 2019 17:06:27 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20190618164128.0000204f@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Mon, 24 Jun 2019 15:06:54 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dne ponedeljek, 24. junij 2019 ob 17:03:31 CEST je Andrzej Hajda napisal(a):
-> On 26.05.2019 23:20, Jonas Karlman wrote:
-> > This patch enables Dynamic Range and Mastering InfoFrame on H6.
-> > 
-> > Cc: Maxime Ripard <maxime.ripard@bootlin.com>
-> > Cc: Jernej Skrabec <jernej.skrabec@siol.net>
-> > Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
-> > ---
-> > 
-> >  drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c | 2 ++
-> >  drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h | 1 +
-> >  2 files changed, 3 insertions(+)
-> > 
-> > diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
-> > b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c index 39d8509d96a0..b80164dd8ad8
-> > 100644
-> > --- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
-> > +++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
-> > @@ -189,6 +189,7 @@ static int sun8i_dw_hdmi_bind(struct device *dev,
-> > struct device *master,> 
-> >  	sun8i_hdmi_phy_init(hdmi->phy);
-> >  	
-> >  	plat_data->mode_valid = hdmi->quirks->mode_valid;
-> > 
-> > +	plat_data->drm_infoframe = hdmi->quirks->drm_infoframe;
-> > 
-> >  	sun8i_hdmi_phy_set_ops(hdmi->phy, plat_data);
-> >  	
-> >  	platform_set_drvdata(pdev, hdmi);
-> > 
-> > @@ -255,6 +256,7 @@ static const struct sun8i_dw_hdmi_quirks
-> > sun8i_a83t_quirks = {> 
-> >  static const struct sun8i_dw_hdmi_quirks sun50i_h6_quirks = {
-> >  
-> >  	.mode_valid = sun8i_dw_hdmi_mode_valid_h6,
-> > 
-> > +	.drm_infoframe = true,
-> > 
-> >  };
-> >  
-> >  static const struct of_device_id sun8i_dw_hdmi_dt_ids[] = {
-> > 
-> > diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-> > b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h index 720c5aa8adc1..2a0ec08ee236
-> > 100644
-> > --- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-> > +++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-> > @@ -178,6 +178,7 @@ struct sun8i_dw_hdmi_quirks {
-> > 
-> >  	enum drm_mode_status (*mode_valid)(struct drm_connector 
-*connector,
-> >  	
-> >  					   const struct 
-drm_display_mode *mode);
-> >  	
-> >  	unsigned int set_rate : 1;
-> > 
-> > +	unsigned int drm_infoframe : 1;
+Hi,
+
+On 6/18/19 5:41 PM, Jonathan Cameron wrote:
+> On Sun, 9 Jun 2019 06:44:08 -0700
+> Jacob Pan <jacob.jun.pan@linux.intel.com> wrote:
 > 
-> Again, drm_infoframe suggests it contains inforframe, but in fact it
-> just informs infoframe can be used, so again my suggestion
-> use_drm_infoframe.
+>> In virtualization use case, when a guest is assigned
+>> a PCI host device, protected by a virtual IOMMU on the guest,
+>> the physical IOMMU must be programmed to be consistent with
+>> the guest mappings. If the physical IOMMU supports two
+>> translation stages it makes sense to program guest mappings
+>> onto the first stage/level (ARM/Intel terminology) while the host
+>> owns the stage/level 2.
+>>
+>> In that case, it is mandated to trap on guest configuration
+>> settings and pass those to the physical iommu driver.
+>>
+>> This patch adds a new API to the iommu subsystem that allows
+>> to set/unset the pasid table information.
+>>
+>> A generic iommu_pasid_table_config struct is introduced in
+>> a new iommu.h uapi header. This is going to be used by the VFIO
+>> user API.
 > 
-> Moreover bool type seems more appropriate here.
+> Another case where strictly speaking stuff is introduced that this series
+> doesn't use.  I don't know what the plans are to merge the various
+> related series though so this might make sense in general. Right now
+> it just bloats this series a bit..
 
-checkpatch will give warning if bool is used.
+I am now the only user of this API in
+[PATCH v8 00/29] SMMUv3 Nested Stage Setup
+(https://patchwork.kernel.org/cover/10961733/).
 
-Best regards,
-Jernej
+This can live in this series or Jean-Philippe do you intend to keep on
+maintaining it in your api branch?
 
+Thanks
+
+Eric
+>>
+>> Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+>> Signed-off-by: Liu, Yi L <yi.l.liu@linux.intel.com>
+>> Signed-off-by: Ashok Raj <ashok.raj@intel.com>
+>> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+>> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+>> Reviewed-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+>> ---
+>>  drivers/iommu/iommu.c      | 19 +++++++++++++++++
+>>  include/linux/iommu.h      | 18 ++++++++++++++++
+>>  include/uapi/linux/iommu.h | 52 ++++++++++++++++++++++++++++++++++++++++++++++
+>>  3 files changed, 89 insertions(+)
+>>
+>> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+>> index 166adb8..4496ccd 100644
+>> --- a/drivers/iommu/iommu.c
+>> +++ b/drivers/iommu/iommu.c
+>> @@ -1619,6 +1619,25 @@ int iommu_page_response(struct device *dev,
+>>  }
+>>  EXPORT_SYMBOL_GPL(iommu_page_response);
+>>  
+>> +int iommu_attach_pasid_table(struct iommu_domain *domain,
+>> +			     struct iommu_pasid_table_config *cfg)
+>> +{
+>> +	if (unlikely(!domain->ops->attach_pasid_table))
+>> +		return -ENODEV;
+>> +
+>> +	return domain->ops->attach_pasid_table(domain, cfg);
+>> +}
+>> +EXPORT_SYMBOL_GPL(iommu_attach_pasid_table);
+>> +
+>> +void iommu_detach_pasid_table(struct iommu_domain *domain)
+>> +{
+>> +	if (unlikely(!domain->ops->detach_pasid_table))
+>> +		return;
+>> +
+>> +	domain->ops->detach_pasid_table(domain);
+>> +}
+>> +EXPORT_SYMBOL_GPL(iommu_detach_pasid_table);
+>> +
+>>  static void __iommu_detach_device(struct iommu_domain *domain,
+>>  				  struct device *dev)
+>>  {
+>> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+>> index 950347b..d3edb10 100644
+>> --- a/include/linux/iommu.h
+>> +++ b/include/linux/iommu.h
+>> @@ -264,6 +264,8 @@ struct page_response_msg {
+>>   * @sva_unbind: Unbind process address space from device
+>>   * @sva_get_pasid: Get PASID associated to a SVA handle
+>>   * @page_response: handle page request response
+>> + * @attach_pasid_table: attach a pasid table
+>> + * @detach_pasid_table: detach the pasid table
+>>   * @pgsize_bitmap: bitmap of all possible supported page sizes
+>>   */
+>>  struct iommu_ops {
+>> @@ -323,6 +325,9 @@ struct iommu_ops {
+>>  				      void *drvdata);
+>>  	void (*sva_unbind)(struct iommu_sva *handle);
+>>  	int (*sva_get_pasid)(struct iommu_sva *handle);
+>> +	int (*attach_pasid_table)(struct iommu_domain *domain,
+>> +				  struct iommu_pasid_table_config *cfg);
+>> +	void (*detach_pasid_table)(struct iommu_domain *domain);
+>>  
+>>  	int (*page_response)(struct device *dev, struct page_response_msg *msg);
+>>  
+>> @@ -434,6 +439,9 @@ extern int iommu_attach_device(struct iommu_domain *domain,
+>>  			       struct device *dev);
+>>  extern void iommu_detach_device(struct iommu_domain *domain,
+>>  				struct device *dev);
+>> +extern int iommu_attach_pasid_table(struct iommu_domain *domain,
+>> +				    struct iommu_pasid_table_config *cfg);
+>> +extern void iommu_detach_pasid_table(struct iommu_domain *domain);
+>>  extern struct iommu_domain *iommu_get_domain_for_dev(struct device *dev);
+>>  extern struct iommu_domain *iommu_get_dma_domain(struct device *dev);
+>>  extern int iommu_map(struct iommu_domain *domain, unsigned long iova,
+>> @@ -947,6 +955,13 @@ iommu_aux_get_pasid(struct iommu_domain *domain, struct device *dev)
+>>  	return -ENODEV;
+>>  }
+>>  
+>> +static inline
+>> +int iommu_attach_pasid_table(struct iommu_domain *domain,
+>> +			     struct iommu_pasid_table_config *cfg)
+>> +{
+>> +	return -ENODEV;
+>> +}
+>> +
+>>  static inline struct iommu_sva *
+>>  iommu_sva_bind_device(struct device *dev, struct mm_struct *mm, void *drvdata)
+>>  {
+>> @@ -968,6 +983,9 @@ static inline int iommu_sva_get_pasid(struct iommu_sva *handle)
+>>  	return IOMMU_PASID_INVALID;
+>>  }
+>>  
+>> +static inline
+>> +void iommu_detach_pasid_table(struct iommu_domain *domain) {}
+>> +
+>>  #endif /* CONFIG_IOMMU_API */
+>>  
+>>  #ifdef CONFIG_IOMMU_DEBUGFS
+>> diff --git a/include/uapi/linux/iommu.h b/include/uapi/linux/iommu.h
+>> index aaa3b6a..3976767 100644
+>> --- a/include/uapi/linux/iommu.h
+>> +++ b/include/uapi/linux/iommu.h
+>> @@ -115,4 +115,56 @@ struct iommu_fault {
+>>  		struct iommu_fault_page_request prm;
+>>  	};
+>>  };
+>> +
+>> +/**
+>> + * struct iommu_pasid_smmuv3 - ARM SMMUv3 Stream Table Entry stage 1 related
+>> + *     information
+>> + * @version: API version of this structure
+>> + * @s1fmt: STE s1fmt (format of the CD table: single CD, linear table
+>> + *         or 2-level table)
+>> + * @s1dss: STE s1dss (specifies the behavior when @pasid_bits != 0
+>> + *         and no PASID is passed along with the incoming transaction)
+>> + * @padding: reserved for future use (should be zero)
+>> + *
+>> + * The PASID table is referred to as the Context Descriptor (CD) table on ARM
+>> + * SMMUv3. Please refer to the ARM SMMU 3.x spec (ARM IHI 0070A) for full
+>> + * details.
+>> + */
+>> +struct iommu_pasid_smmuv3 {
+>> +#define PASID_TABLE_SMMUV3_CFG_VERSION_1 1
+>> +	__u32	version;
+>> +	__u8	s1fmt;
+>> +	__u8	s1dss;
+>> +	__u8	padding[2];
+>> +};
+>> +
+>> +/**
+>> + * struct iommu_pasid_table_config - PASID table data used to bind guest PASID
+>> + *     table to the host IOMMU
+>> + * @version: API version to prepare for future extensions
+>> + * @format: format of the PASID table
+>> + * @base_ptr: guest physical address of the PASID table
+>> + * @pasid_bits: number of PASID bits used in the PASID table
+>> + * @config: indicates whether the guest translation stage must
+>> + *          be translated, bypassed or aborted.
+>> + * @padding: reserved for future use (should be zero)
+>> + * @smmuv3: table information when @format is %IOMMU_PASID_FORMAT_SMMUV3
+>> + */
+>> +struct iommu_pasid_table_config {
+>> +#define PASID_TABLE_CFG_VERSION_1 1
+>> +	__u32	version;
+>> +#define IOMMU_PASID_FORMAT_SMMUV3	1
+>> +	__u32	format;
+>> +	__u64	base_ptr;
+>> +	__u8	pasid_bits;
+>> +#define IOMMU_PASID_CONFIG_TRANSLATE	1
+>> +#define IOMMU_PASID_CONFIG_BYPASS	2
+>> +#define IOMMU_PASID_CONFIG_ABORT	3
+>> +	__u8	config;
+>> +	__u8    padding[6];
+>> +	union {
+>> +		struct iommu_pasid_smmuv3 smmuv3;
+>> +	};
+>> +};
+>> +
+>>  #endif /* _UAPI_IOMMU_H */
 > 
-> Beside this:
 > 
-> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-> 
->  --
-> Regards
-> Andrzej
-> 
-> >  };
-> >  
-> >  struct sun8i_dw_hdmi {
-
-
-
-
