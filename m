@@ -2,50 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8369D4FE89
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 03:42:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 772CC4FE62
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 03:40:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727108AbfFXBmw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 21:42:52 -0400
+        id S1726521AbfFXBky (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 21:40:54 -0400
 Received: from terminus.zytor.com ([198.137.202.136]:43987 "EHLO
         mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726416AbfFXBkw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 21:40:52 -0400
+        id S1726453AbfFXBkx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Jun 2019 21:40:53 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5O015RJ2861440
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5O01p6W2861525
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Sun, 23 Jun 2019 17:01:05 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5O015RJ2861440
+        Sun, 23 Jun 2019 17:01:51 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5O01p6W2861525
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019061801; t=1561334466;
-        bh=9Q0LBSpPTClmIQnLyXzhC9StoB4MrBqwop/ZevWzvp0=;
+        s=2019061801; t=1561334512;
+        bh=aImPNQPSJVZ+L+HHQH6bS0b24PMJZ4rvKoB2Rx14N5U=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=X0g7jw8QdtBRZ0nYYkVigy4FqN9BNYj4mlKxLDG9vxvpPDrbASR7SUt4dfKsvZbjD
-         0vtUrCC0HVDRWJ+YfE1lCThMAWIkgoC0p5XCiD8HwgvOGmzBAO82PMARVedpU4fe7M
-         H0Xpp1pFCv9qEYK2uZQxdP5CqPFg+sKGm2FANpoPAVijYe+rAn9GB3lE2os1U36xzM
-         gsQg9G7KB7ra05LQEkKRu+6Lorv4HdOiqKnFLMTx4FQBqt3UShip1sNVgDE/kzTPje
-         RgGgdDHEJhXn94ViUI1sdZStKWrRWLLZhBY9BoPTtD5dGVNCyk2MpTazppvBgBfsiZ
-         /oe1f1GJz/LBg==
+        b=kdogjt88x9Ox5YXN9vCu0oZZP6vly/yykmjvp5y1w/N0BifcaBWCp9AWqCEXYoYPI
+         FLmg3GJpsnVg3eYJq0qJx2DwZeqCG8Ed36TLGqp6OqveHkhWlA87YcApjO2r1IMAbs
+         CDd7MSpOGgjlfVQp25fd/rcIXrdJcT0L1U9YEey+99X90MMKPjXHW2RSHOiO30MZkz
+         6r0gz8NkxQ++S/JwwKYR5lmnLBqi7/m+G3j5FtIrn9W3O3jebYI+9/xV+bRdRDxNy4
+         B1oin3H1DV0tfMX4+v7/cReOfJc7hOrqasgBL4cpjHqiUWPDx3y0S2gu2Zr+pXaOF/
+         HYgmHCpVOZ/Yw==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5O014ui2861436;
-        Sun, 23 Jun 2019 17:01:04 -0700
-Date:   Sun, 23 Jun 2019 17:01:04 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5O01pSn2861522;
+        Sun, 23 Jun 2019 17:01:51 -0700
+Date:   Sun, 23 Jun 2019 17:01:51 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Fenghua Yu <tipbot@zytor.com>
-Message-ID: <tip-6dbbf5ec9e1e9f607a4c51266d0f9a63ba754b63@git.kernel.org>
-Cc:     hpa@zytor.com, tony.luck@intel.com, ashok.raj@intel.com,
-        linux-kernel@vger.kernel.org, fenghua.yu@intel.com,
-        tglx@linutronix.de, luto@kernel.org, mingo@kernel.org,
-        peterz@infradead.org, ravi.v.shankar@intel.com, bp@alien8.de
-Reply-To: peterz@infradead.org, mingo@kernel.org, fenghua.yu@intel.com,
-          ashok.raj@intel.com, tony.luck@intel.com, hpa@zytor.com,
-          bp@alien8.de, ravi.v.shankar@intel.com, luto@kernel.org,
-          tglx@linutronix.de, linux-kernel@vger.kernel.org
-In-Reply-To: <1560994438-235698-2-git-send-email-fenghua.yu@intel.com>
-References: <1560994438-235698-2-git-send-email-fenghua.yu@intel.com>
+Message-ID: <tip-bd688c69b7e6693de3bd78f38fd63f7850c2711e@git.kernel.org>
+Cc:     hpa@zytor.com, bp@alien8.de, tony.luck@intel.com,
+        fenghua.yu@intel.com, ravi.v.shankar@intel.com, tglx@linutronix.de,
+        mingo@kernel.org, luto@kernel.org, peterz@infradead.org,
+        ashok.raj@intel.com, linux-kernel@vger.kernel.org
+Reply-To: hpa@zytor.com, bp@alien8.de, tony.luck@intel.com,
+          fenghua.yu@intel.com, ravi.v.shankar@intel.com,
+          tglx@linutronix.de, mingo@kernel.org, luto@kernel.org,
+          peterz@infradead.org, ashok.raj@intel.com,
+          linux-kernel@vger.kernel.org
+In-Reply-To: <1560994438-235698-3-git-send-email-fenghua.yu@intel.com>
+References: <1560994438-235698-3-git-send-email-fenghua.yu@intel.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cpu] x86/cpufeatures: Enumerate user wait instructions
-Git-Commit-ID: 6dbbf5ec9e1e9f607a4c51266d0f9a63ba754b63
+Subject: [tip:x86/cpu] x86/umwait: Initialize umwait control values
+Git-Commit-ID: bd688c69b7e6693de3bd78f38fd63f7850c2711e
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -63,48 +64,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  6dbbf5ec9e1e9f607a4c51266d0f9a63ba754b63
-Gitweb:     https://git.kernel.org/tip/6dbbf5ec9e1e9f607a4c51266d0f9a63ba754b63
+Commit-ID:  bd688c69b7e6693de3bd78f38fd63f7850c2711e
+Gitweb:     https://git.kernel.org/tip/bd688c69b7e6693de3bd78f38fd63f7850c2711e
 Author:     Fenghua Yu <fenghua.yu@intel.com>
-AuthorDate: Wed, 19 Jun 2019 18:33:54 -0700
+AuthorDate: Wed, 19 Jun 2019 18:33:55 -0700
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Mon, 24 Jun 2019 01:44:19 +0200
 
-x86/cpufeatures: Enumerate user wait instructions
+x86/umwait: Initialize umwait control values
 
-umonitor, umwait, and tpause are a set of user wait instructions.
+umwait or tpause allows the processor to enter a light-weight
+power/performance optimized state (C0.1 state) or an improved
+power/performance optimized state (C0.2 state) for a period specified by
+the instruction or until the system time limit or until a store to the
+monitored address range in umwait.
 
-umonitor arms address monitoring hardware using an address. The
-address range is determined by using CPUID.0x5. A store to
-an address within the specified address range triggers the
-monitoring hardware to wake up the processor waiting in umwait.
+IA32_UMWAIT_CONTROL MSR register allows the OS to enable/disable C0.2 on
+the processor and to set the maximum time the processor can reside in C0.1
+or C0.2.
 
-umwait instructs the processor to enter an implementation-dependent
-optimized state while monitoring a range of addresses. The optimized
-state may be either a light-weight power/performance optimized state
-(C0.1 state) or an improved power/performance optimized state
-(C0.2 state).
+By default C0.2 is enabled so the user wait instructions can enter the
+C0.2 state to save more power with slower wakeup time.
 
-tpause instructs the processor to enter an implementation-dependent
-optimized state C0.1 or C0.2 state and wake up when time-stamp counter
-reaches specified timeout.
+Andy Lutomirski proposed to set the maximum umwait time to 100000 cycles by
+default. A quote from Andy:
 
-The three instructions may be executed at any privilege level.
+  "What I want to avoid is the case where it works dramatically differently
+   on NO_HZ_FULL systems as compared to everything else. Also, UMWAIT may
+   behave a bit differently if the max timeout is hit, and I'd like that
+   path to get exercised widely by making it happen even on default
+   configs."
 
-The instructions provide power saving method while waiting in
-user space. Additionally, they can allow a sibling hyperthread to
-make faster progress while this thread is waiting. One example of an
-application usage of umwait is when waiting for input data from another
-application, such as a user level multi-threaded packet processing
-engine.
+A sysfs interface to adjust the time and the C0.2 enablement is provided in
+a follow up change.
 
-Availability of the user wait instructions is indicated by the presence
-of the CPUID feature flag WAITPKG CPUID.0x07.0x0:ECX[5].
-
-Detailed information on the instructions and CPUID feature WAITPKG flag
-can be found in the latest Intel Architecture Instruction Set Extensions
-and Future Features Programming Reference and Intel 64 and IA-32
-Architectures Software Developer's Manual.
+[ tglx: Renamed MSR_IA32_UMWAIT_CONTROL_MAX_TIME to
+  	MSR_IA32_UMWAIT_CONTROL_TIME_MASK because the constant is used as
+  	mask throughout the code.
+	Massaged comments and changelog ]
 
 Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
@@ -115,21 +112,111 @@ Cc: "H Peter Anvin" <hpa@zytor.com>
 Cc: "Peter Zijlstra" <peterz@infradead.org>
 Cc: "Tony Luck" <tony.luck@intel.com>
 Cc: "Ravi V Shankar" <ravi.v.shankar@intel.com>
-Link: https://lkml.kernel.org/r/1560994438-235698-2-git-send-email-fenghua.yu@intel.com
+Link: https://lkml.kernel.org/r/1560994438-235698-3-git-send-email-fenghua.yu@intel.com
 
 ---
- arch/x86/include/asm/cpufeatures.h | 1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/include/asm/msr-index.h |  9 ++++++
+ arch/x86/kernel/cpu/Makefile     |  1 +
+ arch/x86/kernel/cpu/umwait.c     | 62 ++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 72 insertions(+)
 
-diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index 8ecd9fac97c3..998c2cc08363 100644
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -330,6 +330,7 @@
- #define X86_FEATURE_UMIP		(16*32+ 2) /* User Mode Instruction Protection */
- #define X86_FEATURE_PKU			(16*32+ 3) /* Protection Keys for Userspace */
- #define X86_FEATURE_OSPKE		(16*32+ 4) /* OS Protection Keys Enable */
-+#define X86_FEATURE_WAITPKG		(16*32+ 5) /* UMONITOR/UMWAIT/TPAUSE Instructions */
- #define X86_FEATURE_AVX512_VBMI2	(16*32+ 6) /* Additional AVX512 Vector Bit Manipulation Instructions */
- #define X86_FEATURE_GFNI		(16*32+ 8) /* Galois Field New Instructions */
- #define X86_FEATURE_VAES		(16*32+ 9) /* Vector AES */
+diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
+index 979ef971cc78..6b4fc2788078 100644
+--- a/arch/x86/include/asm/msr-index.h
++++ b/arch/x86/include/asm/msr-index.h
+@@ -61,6 +61,15 @@
+ #define MSR_PLATFORM_INFO_CPUID_FAULT_BIT	31
+ #define MSR_PLATFORM_INFO_CPUID_FAULT		BIT_ULL(MSR_PLATFORM_INFO_CPUID_FAULT_BIT)
+ 
++#define MSR_IA32_UMWAIT_CONTROL			0xe1
++#define MSR_IA32_UMWAIT_CONTROL_C02_DISABLE	BIT(0)
++#define MSR_IA32_UMWAIT_CONTROL_RESERVED	BIT(1)
++/*
++ * The time field is bit[31:2], but representing a 32bit value with
++ * bit[1:0] zero.
++ */
++#define MSR_IA32_UMWAIT_CONTROL_TIME_MASK	(~0x03U)
++
+ #define MSR_PKG_CST_CONFIG_CONTROL	0x000000e2
+ #define NHM_C3_AUTO_DEMOTE		(1UL << 25)
+ #define NHM_C1_AUTO_DEMOTE		(1UL << 26)
+diff --git a/arch/x86/kernel/cpu/Makefile b/arch/x86/kernel/cpu/Makefile
+index a7d9a4cb3ab6..4b4eb06e117c 100644
+--- a/arch/x86/kernel/cpu/Makefile
++++ b/arch/x86/kernel/cpu/Makefile
+@@ -24,6 +24,7 @@ obj-y			+= match.o
+ obj-y			+= bugs.o
+ obj-y			+= aperfmperf.o
+ obj-y			+= cpuid-deps.o
++obj-y			+= umwait.o
+ 
+ obj-$(CONFIG_PROC_FS)	+= proc.o
+ obj-$(CONFIG_X86_FEATURE_NAMES) += capflags.o powerflags.o
+diff --git a/arch/x86/kernel/cpu/umwait.c b/arch/x86/kernel/cpu/umwait.c
+new file mode 100644
+index 000000000000..0a113c731df3
+--- /dev/null
++++ b/arch/x86/kernel/cpu/umwait.c
+@@ -0,0 +1,62 @@
++// SPDX-License-Identifier: GPL-2.0
++#include <linux/syscore_ops.h>
++#include <linux/suspend.h>
++#include <linux/cpu.h>
++
++#include <asm/msr.h>
++
++#define UMWAIT_C02_ENABLE	0
++
++#define UMWAIT_CTRL_VAL(maxtime, c02_disable)				\
++	(((maxtime) & MSR_IA32_UMWAIT_CONTROL_TIME_MASK) |		\
++	((c02_disable) & MSR_IA32_UMWAIT_CONTROL_C02_DISABLE))
++
++/*
++ * Cache IA32_UMWAIT_CONTROL MSR. This is a systemwide control. By default,
++ * umwait max time is 100000 in TSC-quanta and C0.2 is enabled
++ */
++static u32 umwait_control_cached = UMWAIT_CTRL_VAL(100000, UMWAIT_C02_ENABLE);
++
++/* Set IA32_UMWAIT_CONTROL MSR on this CPU to the current global setting. */
++static int umwait_cpu_online(unsigned int cpu)
++{
++	wrmsr(MSR_IA32_UMWAIT_CONTROL, umwait_control_cached, 0);
++	return 0;
++}
++
++/*
++ * On resume, restore IA32_UMWAIT_CONTROL MSR on the boot processor which
++ * is the only active CPU at this time. The MSR is set up on the APs via the
++ * CPU hotplug callback.
++ *
++ * This function is invoked on resume from suspend and hibernation. On
++ * resume from suspend the restore should be not required, but we neither
++ * trust the firmware nor does it matter if the same value is written
++ * again.
++ */
++static void umwait_syscore_resume(void)
++{
++	wrmsr(MSR_IA32_UMWAIT_CONTROL, umwait_control_cached, 0);
++}
++
++static struct syscore_ops umwait_syscore_ops = {
++	.resume	= umwait_syscore_resume,
++};
++
++static int __init umwait_init(void)
++{
++	int ret;
++
++	if (!boot_cpu_has(X86_FEATURE_WAITPKG))
++		return -ENODEV;
++
++	ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "umwait:online",
++				umwait_cpu_online, NULL);
++	if (ret < 0)
++		return ret;
++
++	register_syscore_ops(&umwait_syscore_ops);
++
++	return 0;
++}
++device_initcall(umwait_init);
