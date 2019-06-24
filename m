@@ -2,85 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F0DC505AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 11:30:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 927F7505CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 11:32:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728097AbfFXJaJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 05:30:09 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:46784 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726632AbfFXJaJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 05:30:09 -0400
-Received: from 79.184.254.216.ipv4.supernova.orange.pl (79.184.254.216) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.267)
- id 789321dd4d6a6982; Mon, 24 Jun 2019 11:30:07 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:CPU FREQUENCY SCALING FRAMEWORK" 
-        <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH 1/6] cpufreq: Use existing stub functions instead of IS_ENABLED macro
-Date:   Mon, 24 Jun 2019 11:30:07 +0200
-Message-ID: <2097869.93pjHihJNk@kreacher>
-In-Reply-To: <b817a599-6564-b3d0-9c91-59c3fd5b5eb1@linaro.org>
-References: <20190621132302.30414-1-daniel.lezcano@linaro.org> <CAJZ5v0j0q+Z+FRpVuj39ML_c5ijo-veMMMSANdoDz1ZxAK3RgQ@mail.gmail.com> <b817a599-6564-b3d0-9c91-59c3fd5b5eb1@linaro.org>
+        id S1728146AbfFXJcV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 05:32:21 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56130 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726632AbfFXJcV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 05:32:21 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 10828AF47;
+        Mon, 24 Jun 2019 09:32:20 +0000 (UTC)
+From:   Nicolai Stange <nstange@suse.de>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>,
+        Nicolai Stange <nstange@suse.de>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC 2/5] livepatch: Basic API to track system state changes
+References: <20190611135627.15556-1-pmladek@suse.com>
+        <20190611135627.15556-3-pmladek@suse.com>
+Date:   Mon, 24 Jun 2019 11:32:19 +0200
+In-Reply-To: <20190611135627.15556-3-pmladek@suse.com> (Petr Mladek's message
+        of "Tue, 11 Jun 2019 15:56:24 +0200")
+Message-ID: <87k1db49cs.fsf@suse.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.2 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday, June 24, 2019 11:22:19 AM CEST Daniel Lezcano wrote:
-> On 22/06/2019 11:12, Rafael J. Wysocki wrote:
-> > On Fri, Jun 21, 2019 at 3:23 PM Daniel Lezcano
-> > <daniel.lezcano@linaro.org> wrote:
-> >>
-> >> The functions stub already exist for the condition the IS_ENABLED
-> >> is trying to avoid.
-> >>
-> >> Remove the IS_ENABLED macros as they are pointless.
-> > 
-> > AFAICS, the IS_ENABLED checks are an optimization to avoid generating
-> > pointless code (including a branch) in case CONFIG_CPU_THERMAL is not
-> > set.
-> > 
-> > Why do you think that it is not useful?
-> 
-> I agree but I'm not a big fan of IS_ENABLED macros in the code when it
-> is possible to avoid them.
-> 
-> What about adding a stub for that like:
+Petr Mladek <pmladek@suse.com> writes:
 
-Well,
+> ---
+>  include/linux/livepatch.h | 15 +++++++++
+>  kernel/livepatch/Makefile |  2 +-
+>  kernel/livepatch/state.c  | 83 +++++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 99 insertions(+), 1 deletion(-)
+>  create mode 100644 kernel/livepatch/state.c
+>
+> diff --git a/include/linux/livepatch.h b/include/linux/livepatch.h
+> index eeba421cc671..591abdee30d7 100644
+> --- a/include/linux/livepatch.h
+> +++ b/include/linux/livepatch.h
+> @@ -132,10 +132,21 @@ struct klp_object {
+>  	bool patched;
+>  };
+>  
+> +/**
+> + * struct klp_state - state of the system modified by the livepatch
+> + * @id:		system state identifier (non zero)
+> + * @data:	custom data
+> + */
+> +struct klp_state {
+> +	int id;
 
-> #ifdef CPU_THERMAL
-> static inline int cpufreq_is_cooling_dev(struct cpufreq_driver *drv)
-> {
-> 	return drv->flags & CPUFREQ_IS_COOLING_DEV;
-> }
-> #else
-> static inline int cpufreq_is_cooling_dev(struct cpufreq_driver *drv)
-> {
-> 	return 0;
-> }
-> #endif
+Can we make this an unsigned long please? It would be consistent with
+shadow variable ids and would give more room for encoding bugzilla or
+CVE numbers or so.
 
-This may as well be defined as
+Nicolai
 
-static inline int cpufreq_is_cooling_dev(struct cpufreq_driver *drv)
-{
-	return IS_ENABLED(CPU_THERMAL) && drv->flags & CPUFREQ_IS_COOLING_DEV;
-}
-
-which is fewer lines of code.
-
-And I would call it something like cpufreq_thermal_control_enabled().
-
-
-
+> +	void *data;
+> +};
+> +
