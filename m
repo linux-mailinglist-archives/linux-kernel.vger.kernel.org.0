@@ -2,59 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5E775244C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 09:23:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0FB3524C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 09:30:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728150AbfFYHXu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 03:23:50 -0400
-Received: from verein.lst.de ([213.95.11.211]:60268 "EHLO newverein.lst.de"
+        id S1728367AbfFYHax (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 03:30:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58132 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726422AbfFYHXt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 03:23:49 -0400
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id EDBB068B02; Tue, 25 Jun 2019 09:23:17 +0200 (CEST)
-Date:   Tue, 25 Jun 2019 09:23:17 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Michal Hocko <mhocko@kernel.org>, Christoph Hellwig <hch@lst.de>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Ben Skeggs <bskeggs@redhat.com>, Linux MM <linux-mm@kvack.org>,
-        nouveau@lists.freedesktop.org,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-pci@vger.kernel.org,
+        id S1726907AbfFYHax (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 03:30:53 -0400
+Received: from localhost (f4.8f.5177.ip4.static.sl-reverse.com [119.81.143.244])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 115A72085A;
+        Tue, 25 Jun 2019 07:30:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561447852;
+        bh=4epmSJ7jd5ByQ7pNK6zUj/oXuoSovcWeH6v4vssgIIw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=H2cHmo2pJI4ZbLSNajdR8C1HfNEzADIySNJJJxfU3WrRJjFGTMd7Tj4NZsusZXPd5
+         3nAepyNZW5/ttcQvB315a2rWjAL6kZhytnMwzTIqgpGC0tYNMSi6PT8CYJpivwWamZ
+         kNGQYa7q9J/a4ZY67R5lhT9nSq6mcmMZKUuYpUSk=
+Date:   Tue, 25 Jun 2019 15:24:07 +0800
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Joel Stanley <joel@jms.id.au>
+Cc:     Alistair Popple <alistair@popple.id.au>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Eddie James <eajames@linux.ibm.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 05/22] mm: export alloc_pages_vma
-Message-ID: <20190625072317.GC30350@lst.de>
-References: <20190613094326.24093-1-hch@lst.de> <20190613094326.24093-6-hch@lst.de> <20190620191733.GH12083@dhcp22.suse.cz> <CAPcyv4h9+Ha4FVrvDAe-YAr1wBOjc4yi7CAzVuASv=JCxPcFaw@mail.gmail.com>
+Subject: Re: [PATCH] fsi: sbefifo: Don't fail operations when in SBE IPL state
+Message-ID: <20190625072407.GA18197@kroah.com>
+References: <1548090958-25908-1-git-send-email-eajames@linux.ibm.com>
+ <1780173.icGFXHrAMq@townsend>
+ <CACPK8XfqSyMB4pWLffzx+8qOj+m54h=aWUhYsKMV4TQR0fKVUg@mail.gmail.com>
+ <CACPK8Xfns=dSD5gaVJ--OkmVe7ggqF8acGsszdPqM1AqpPSAiA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAPcyv4h9+Ha4FVrvDAe-YAr1wBOjc4yi7CAzVuASv=JCxPcFaw@mail.gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <CACPK8Xfns=dSD5gaVJ--OkmVe7ggqF8acGsszdPqM1AqpPSAiA@mail.gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 11:24:48AM -0700, Dan Williams wrote:
-> I asked for this simply because it was not exported historically. In
-> general I want to establish explicit export-type criteria so the
-> community can spend less time debating when to use EXPORT_SYMBOL_GPL
-> [1].
+On Tue, Jun 25, 2019 at 04:35:50AM +0000, Joel Stanley wrote:
+> Hi Greg,
 > 
-> The thought in this instance is that it is not historically exported
-> to modules and it is safer from a maintenance perspective to start
-> with GPL-only for new symbols in case we don't want to maintain that
-> interface long-term for out-of-tree modules.
+> On Mon, 17 Jun 2019 at 05:41, Joel Stanley <joel@jms.id.au> wrote:
+> >
+> > On Mon, 17 Jun 2019 at 02:09, Alistair Popple <alistair@popple.id.au> wrote:
+> > >
+> > > On Monday, 21 January 2019 11:15:58 AM AEST Eddie James wrote:
+> > > > SBE fifo operations should be allowed while the SBE is in any of the
+> > > > "IPL" states. Operations should succeed in this state.
+> > > >
+> > > > Signed-off-by: Eddie James <eajames@linux.ibm.com>
+> > >
+> > > This fixed the problem I was having trying to issue istep operations to the
+> > > SBE.
+> > >
+> > > Tested-by: Alistair Popple <alistair@popple.id.au>
+> >
+> > This one slipped through the cracks.
+> >
+> > Fixes: 9f4a8a2d7f9d fsi/sbefifo: Add driver for the SBE FIFO
+> > Reviewed-by: Joel Stanley <joel@jsm.id.au>
+> >
+> > Greg, can you please queue this one up for 5.3?
 > 
-> Yes, we always reserve the right to remove / change interfaces
-> regardless of the export type, but history has shown that external
-> pressure to keep an interface stable (contrary to
-> Documentation/process/stable-api-nonsense.rst) tends to be less for
-> GPL-only exports.
+> Ping?
 
-Fully agreed.  In the end the decision is with the MM maintainers,
-though, although I'd prefer to keep it as in this series.
+I don't see this in my queue at all, sorry.  Can someone resend it in a
+format that I can apply it in with the needed tested-by and reviewed-by
+added to it?
+
+thanks,
+
+greg k-h
