@@ -2,56 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B7AB54ECD
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 14:27:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BE4154EC8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 14:27:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731166AbfFYM1N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 08:27:13 -0400
-Received: from verein.lst.de ([213.95.11.211]:34415 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729997AbfFYM1N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 08:27:13 -0400
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 9D66168B05; Tue, 25 Jun 2019 14:26:41 +0200 (CEST)
-Date:   Tue, 25 Jun 2019 14:26:41 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Mark Greer <mgreer@animalcreek.com>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Dale Farnsworth <dale@farnsworth.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Subject: DMA coherency in drivers/tty/serial/mpsc.c
-Message-ID: <20190625122641.GA4421@lst.de>
+        id S1730959AbfFYM07 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 08:26:59 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:41038 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729997AbfFYM07 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 08:26:59 -0400
+Received: by mail-lj1-f194.google.com with SMTP id 205so7256137ljj.8
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 05:26:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jkM0/+Y2mDTWRWvyb1EfYEosGBa2XCe1MpHMrOCqACs=;
+        b=gjRocc0M0csOsxcltg1nkQWWzkjs3PSER+yR2O1GOwKo2FVeeoBS8PgxAD1E6mjPxY
+         LLT3xmGdPMDMbbTnk6hBta7ypvxPkY6YPvTpZ+01Z0y098PfPKQ/+49XGlm2WDmMh5tl
+         D1coqelf7c3PUCElzY3sJ9LOc4F3XRV8vFhFCXIBISTf3Zg5DyOBweRq306XDmxj3zbr
+         QFf+mbnJOyKWRpw7ox/wP9s7TnI3bxPYYM/t6l1xHEx/ARZvPVDZZXiS28HhVjokMT8L
+         C/AmhzogK4YVADlvOLp6zZpxSrK0oXTk2Wyo8ngs/zRfpv9qxe/Ofch61mG2cQ8oZDX6
+         ZJPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jkM0/+Y2mDTWRWvyb1EfYEosGBa2XCe1MpHMrOCqACs=;
+        b=pv9gKvB1DLdr1PU8WI3wJqqCXGNmdvR6SaTRHtjBWA0rgBV7cTFa5bUc1UEnizLUB7
+         BfgUCy7fQv6z9pzRU5hGYAyAdzRpjwDJIeccsXRDKO/HjKAVyk1LNt263+MKvWHJ9l1d
+         PFlbN1kY1i8/PNZx81OAEiBnOJr5HLy2U836+oNiJx0hF+YNEQJMOuFP8akvc2h8p6JB
+         +moBSsoI0/LlJVJdqG2sIGsfiHM6BFvBTtbcI/3twwtxlKjbO58+dL8NfnEm2B8qGgRg
+         WeRf1+kw33v4EF8QHgY0nKjKrYCBR8y2Qi0zdBC52eBp5iqD6AATfvdSweZkjPpfOTdO
+         yNJg==
+X-Gm-Message-State: APjAAAUAQykhknJpQucGfCUNxTa21b3BIbGfQum+l7Hv6D6aDIXe8l1p
+        v5NGBdr2Lw3SjCVviGFaLHcM6rSe4rU81ET3vG9jvw==
+X-Google-Smtp-Source: APXvYqwqmW7K+YRAv/jeZfMAYfAGHtHSP+nnNJ4VnkYeEMfCpom4R1Lx1FjpN+hjQApZV+HFHvgf/yn0v6vmuNYbGmo=
+X-Received: by 2002:a2e:a0cf:: with SMTP id f15mr9060553ljm.180.1561465617100;
+ Tue, 25 Jun 2019 05:26:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.5.17 (2007-11-01)
+References: <20190617215458.32688-1-chris.packham@alliedtelesis.co.nz> <20190617215458.32688-4-chris.packham@alliedtelesis.co.nz>
+In-Reply-To: <20190617215458.32688-4-chris.packham@alliedtelesis.co.nz>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 25 Jun 2019 14:26:45 +0200
+Message-ID: <CACRpkdbSS18us3o=v7ki_=8cLXYjfDd8q321xMCounXPh11GAQ@mail.gmail.com>
+Subject: Re: [PATCH v2 3/4] pinctrl: mvebu: Add support for MV98DX1135
+To:     Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paul, Dale and Mark (I hope this reaches the right Mark),
+On Mon, Jun 17, 2019 at 11:55 PM Chris Packham
+<chris.packham@alliedtelesis.co.nz> wrote:
 
-I've started auditing all users of DMA_ATTR_NON_CONSISTENT ot prepare
-for major API improvements in that area.
+> The 98DX1135 is a switch chip with an integrated CPU. This is similar to
+> the 98DX4122 except the MPP assignments differ.
+>
+> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-One of the odd users is the mpsc ѕerial driver, which allocates DMA
-memory with the above flag, and then actually properly calls
-dma_cache_sync.  So far, so good.  But it turns out it also has
-"#if defined(CONFIG_PPC32) && !defined(CONFIG_NOT_COHERENT_CACHE)"
-ifdef blocks next to the dma_cache_sync calls that perform cache
-maintainance for platforms that according to the ifdef claim to
-be cache coherent.  According to the Kconfig the driver can
-only build if the MV64X60 symbol is set, which is a ppc embedded 6xx
-SOC, which appears to be configurable as either cache coherent, or
-not.  But according to the code in the driver at least this device
-always is not cache coherent.
+Patch applied.
+I just assume this one has no dependency on the clock patches
+so I can merge it separately.
 
-It seems like we need to always mark that platform as potentially
-not coherent, and then use the per-device flag to mark all device
-except for this one as coherent.  Or did I miss anything?  Maybe
-all this is actually dead code and can go away?
-
+Yours,
+Linus Walleij
