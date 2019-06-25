@@ -2,201 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9834352059
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 03:25:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE9925205E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 03:29:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729979AbfFYBZd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 21:25:33 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58304 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729374AbfFYBZc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 21:25:32 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E6C1AAE2C;
-        Tue, 25 Jun 2019 01:25:30 +0000 (UTC)
-Subject: Re: [PATCH] csky: dts: Add NationalChip GX6605S
-To:     Guo Ren <guoren@kernel.org>
-Cc:     linux-csky@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
-References: <20190625002829.17409-1-afaerber@suse.de>
- <CAJF2gTTnhTQK-mOyC+e8U8xrDwaoDUACb1R_zQfDCKwdKzc96w@mail.gmail.com>
-From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Openpgp: preference=signencrypt
-Organization: SUSE Linux GmbH
-Message-ID: <a27255d3-e21c-787d-c510-359d72f53a1c@suse.de>
-Date:   Tue, 25 Jun 2019 03:25:29 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1730019AbfFYB3W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 21:29:22 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:33200 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727728AbfFYB3W (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 21:29:22 -0400
+Received: by mail-pg1-f195.google.com with SMTP id m4so7443168pgk.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 18:29:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=etsukata-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=474r08//8FJD1v658qJyBzGmPp2fJuSEfEyv/CnfdVs=;
+        b=GddzZNJiE8VR1oUVTCDcUwothRMS8GdIrqGZA1bhLUbXycYK2xN9RIbjH8YCOTSAYQ
+         saRT2rQ4LDwQP145yX1vzp/HYY9g4e50B/iLZqmaC3A7bISPwArS/6QvJyJS7LUpYeT1
+         vXFwA9PHyCR0WDOHQhQ6Q+ofajSRgvi8iHZgmIlewqRpomawiGBELrlJMSeTWx0hCBNB
+         dJfyq/cijVNTn8eWCORJ87dqZ0Sqb/CjNMZQm7KoGKr5ljD8Y1qhrWNG4Z/rxcuwBIcL
+         KLZ4vCDWxVAH+emsRNAP0c/AY+OfIs27AvQ21bZkm4Z3y/gL+c96Ji5FGgqzINK3ikw1
+         REnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=474r08//8FJD1v658qJyBzGmPp2fJuSEfEyv/CnfdVs=;
+        b=a0UERLERZMO2NqdxnbQeEaUV1gvQjr5jEGZSHX7fho2bHPAdGKUSnSuOualYMI+5Uq
+         DqIAWg2hhwPpVfQuRxVBeazeeln9TPyGeDh/Wot/llg4obVL+JoV0o2p5YqeNUBDvFmM
+         6d5LBQsxQQwle50wLouJrmljaCmI5lXqwns1sBKlkFqyx5egKnSLmQSLE8Aw5Dgc5+sN
+         +Gk83mHY9wSZ83k22wTyyEmAlH+xZqUEr/ejslWwC6K5qNU/KFD79WQH6dLPz2ZClkLa
+         f+Ehh47V9iKoSQz/rD6p4UqRbypXmEoR+rIydRSigHoG+RXSVNIXeX/aikwHyfJqVeAO
+         +7xA==
+X-Gm-Message-State: APjAAAUBiEB8MLtKxqLodw4p6l4prbf8eW6aEYLsmgcKn8w9qc+nLa3G
+        5t0ZWxABgdV2Ql/62301qxSeMA==
+X-Google-Smtp-Source: APXvYqwt2ciSE2R7MdI/FGbilpaBKdXho6qyh0pcZyLNooQc3vNygFVrD9E4thCiKI1f6zIHNGEmpQ==
+X-Received: by 2002:a63:d415:: with SMTP id a21mr34816748pgh.229.1561426161626;
+        Mon, 24 Jun 2019 18:29:21 -0700 (PDT)
+Received: from localhost.localdomain (p2517222-ipngn21701marunouchi.tokyo.ocn.ne.jp. [118.7.246.222])
+        by smtp.gmail.com with ESMTPSA id e188sm2959716pfh.99.2019.06.24.18.29.19
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 24 Jun 2019 18:29:20 -0700 (PDT)
+From:   Eiichi Tsukata <devel@etsukata.com>
+To:     rostedt@goodmis.org, mingo@redhat.com, linux-kernel@vger.kernel.org
+Cc:     Eiichi Tsukata <devel@etsukata.com>
+Subject: [PATCH] tracing/snapshot: resize spare buffer if size changed
+Date:   Tue, 25 Jun 2019 10:29:10 +0900
+Message-Id: <20190625012910.13109-1-devel@etsukata.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-In-Reply-To: <CAJF2gTTnhTQK-mOyC+e8U8xrDwaoDUACb1R_zQfDCKwdKzc96w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 25.06.19 um 02:45 schrieb Guo Ren:
-> Thx for the patch. No need seperate part into dtsi,
+Current snapshot implementation swaps two ring_buffers even though their
+sizes are different from each other, that can cause an inconsistency
+between the contents of buffer_size_kb file and the current buffer size.
 
-Sorry, I know from many arm contributions that using a .dtsi is the
-right thing here. It logically separates the chip from the board, even
-if there's only one evaluation board currently. Think about set-top
-boxes that someone might author a .dts for - they should be able to
-reuse the .dtsi for the SoC rather than copy it.
+For example:
 
-> just follow:
-> https://lore.kernel.org/linux-csky/1561376581-19568-1-git-send-email-guoren@kernel.org/T/#u
+  # cat buffer_size_kb
+  7 (expanded: 1408)
+  # echo 1 > events/enable
+  # grep bytes per_cpu/cpu0/stats
+  bytes: 1441020
+  # echo 1 > snapshot             // current:1408, spare:1408
+  # echo 123 > buffer_size_kb     // current:123,  spare:1408
+  # echo 1 > snapshot             // current:1408, spare:123
+  # grep bytes per_cpu/cpu0/stats
+  bytes: 1443700
+  # cat buffer_size_kb
+  123                             // != current:1408
 
-Thanks for that pointer! I still think my node names are cleaner and
-also the structure of keeping clocks and gpio users outside of /soc. I
-see the value you use is 27 MHz, will try it tomorrow. I see you use
-nice KEY_ constants, whereas I just took the raw values from the dtb.
+And also, a similar per-cpu case hits the following WARNING:
 
-I notice that your patch doesn't have any Copyright header, how should I
-credit you in the resulting combined patch? I would then also add your
-SoB from the patch you linked to.
+Reproducer:
 
-More comments inline...
+  # echo 1 > per_cpu/cpu0/snapshot
+  # echo 123 > buffer_size_kb
+  # echo 1 > per_cpu/cpu0/snapshot
 
-> On Tue, Jun 25, 2019 at 8:28 AM Andreas Färber <afaerber@suse.de> wrote:
->>
->> Add Device Trees for NationalChip GX6605S SoC (based on CK610 CPU) and its
->> dev board. GxLoader expects as filename gx6605s.dtb, so keep that.
->> The bootargs are prepared to boot from USB and to output to serial.
->>
->> Compatibles for the SoC and board are left out for now.
->>
->> Signed-off-by: Andreas Färber <afaerber@suse.de>
->> ---
->>  arch/csky/boot/dts/gx6605s.dts  | 104 ++++++++++++++++++++++++++++++++++++++++
->>  arch/csky/boot/dts/gx6605s.dtsi |  82 +++++++++++++++++++++++++++++++
->>  2 files changed, 186 insertions(+)
->>  create mode 100644 arch/csky/boot/dts/gx6605s.dts
->>  create mode 100644 arch/csky/boot/dts/gx6605s.dtsi
->>
->> diff --git a/arch/csky/boot/dts/gx6605s.dts b/arch/csky/boot/dts/gx6605s.dts
->> new file mode 100644
->> index 000000000000..f7511024ec6f
->> --- /dev/null
->> +++ b/arch/csky/boot/dts/gx6605s.dts
-[...]
->> +       leds {
->> +               compatible = "gpio-leds";
->> +
->> +               led0 {
->> +                       label = "led10";
+WARNING:
 
-I forgot to align the numbering here. The label matches the GPIO and
-what is printed on the board.
+  WARNING: CPU: 0 PID: 1946 at kernel/trace/trace.c:1607 update_max_tr_single.part.0+0x2b8/0x380
+  Modules linked in:
+  CPU: 0 PID: 1946 Comm: bash Not tainted 5.2.0-rc6 #20
+  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.12.0-2.fc30 04/01/2014
+  RIP: 0010:update_max_tr_single.part.0+0x2b8/0x380
+  Code: ff e8 dc da f9 ff 0f 0b e9 88 fe ff ff e8 d0 da f9 ff 44 89 ee bf f5 ff ff ff e8 33 dc f9 ff 41 83 fd f5 74 96 e8 b8 da f9 ff <0f> 0b eb 8d e8 af da f9 ff 0f 0b e9 bf fd ff ff e8 a3 da f9 ff 48
+  RSP: 0018:ffff888063e4fca0 EFLAGS: 00010093
+  RAX: ffff888066214380 RBX: ffffffff99850fe0 RCX: ffffffff964298a8
+  RDX: 0000000000000000 RSI: 00000000fffffff5 RDI: 0000000000000005
+  RBP: 1ffff1100c7c9f96 R08: ffff888066214380 R09: ffffed100c7c9f9b
+  R10: ffffed100c7c9f9a R11: 0000000000000003 R12: 0000000000000000
+  R13: 00000000ffffffea R14: ffff888066214380 R15: ffffffff99851060
+  FS:  00007f9f8173c700(0000) GS:ffff88806d000000(0000) knlGS:0000000000000000
+  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+  CR2: 0000000000714dc0 CR3: 0000000066fa6000 CR4: 00000000000006f0
+  Call Trace:
+   ? trace_array_printk_buf+0x140/0x140
+   ? __mutex_lock_slowpath+0x10/0x10
+   tracing_snapshot_write+0x4c8/0x7f0
+   ? trace_printk_init_buffers+0x60/0x60
+   ? selinux_file_permission+0x3b/0x540
+   ? tracer_preempt_off+0x38/0x506
+   ? trace_printk_init_buffers+0x60/0x60
+   __vfs_write+0x81/0x100
+   vfs_write+0x1e1/0x560
+   ksys_write+0x126/0x250
+   ? __ia32_sys_read+0xb0/0xb0
+   ? do_syscall_64+0x1f/0x390
+   do_syscall_64+0xc1/0x390
+   entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
->> +                       gpios = <&gpio 10 GPIO_ACTIVE_LOW>;
->> +                       linux,default-trigger = "heartbeat";
+This patch adds resize_buffer_duplicate_size() to check if there is a
+difference between current/spare buffer sizes and resize a spare buffer
+if necessary.
 
-This green one stops blinking and stays on.
+Signed-off-by: Eiichi Tsukata <devel@etsukata.com>
+---
+ kernel/trace/trace.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
->> +               };
->> +
->> +               led1 {
->> +                       label = "led11";
->> +                       gpios = <&gpio 11 GPIO_ACTIVE_LOW>;
->> +                       linux,default-trigger = "timer";
-
-This red one keeps blinking after the panic.
-
->> +               };
->> +
->> +               led2 {
->> +                       label = "led12";
->> +                       gpios = <&gpio 12 GPIO_ACTIVE_LOW>;
->> +                       linux,default-trigger = "default-on";
->> +               };
->> +
->> +               led3 {
->> +                       label = "led13";
->> +                       gpios = <&gpio 13 GPIO_ACTIVE_LOW>;
->> +                       linux,default-trigger = "default-on";
-
-These two remain off. So I wonder whether the GPIO polarity is wrong?
-In the example usb.img the gpio-leds module is not loaded by default, so
-maybe it wasn't noticed before?
-
-Also, many arm boards use more complex LED labels with multiple parts
-separated by colon, like "boardname:name:function" or so.
-
->> +               };
->> +       };
-[...]
->> diff --git a/arch/csky/boot/dts/gx6605s.dtsi b/arch/csky/boot/dts/gx6605s.dtsi
->> new file mode 100644
->> index 000000000000..956af5674add
->> --- /dev/null
->> +++ b/arch/csky/boot/dts/gx6605s.dtsi
->> @@ -0,0 +1,82 @@
->> +/* SPDX-License-Identifier: GPL-2.0-or-later OR BSD-2-Clause */
->> +/*
->> + * NationalChip GX6605S SoC
->> + *
->> + * Copyright (c) 2019 Andreas Färber
->> + */
->> +
->> +/ {
->> +       #address-cells = <1>;
->> +       #size-cells = <1>;
->> +
->> +       cpus {
->> +               #address-cells = <1>;
->> +               #size-cells = <0>;
->> +
->> +               cpu0: cpu@0 {
->> +                       device_type = "cpu";
->> +                       compatible = "csky,ck610";
->> +                       reg = <0>;
->> +               };
->> +       };
->> +
->> +       soc {
->> +               compatible = "simple-bus";
->> +               interrupt-parent = <&intc>;
->> +               #address-cells = <1>;
->> +               #size-cells = <1>;
->> +               ranges;
->> +
->> +               timer0: timer@20a000 {
->> +                       compatible = "csky,gx6605s-timer";
-
-The reason I left out the compatible for the SoC/board is that it looks
-unclean to me that you're using a "csky," vendor prefix for interrupt
-controller and timer instead of a new "nationalchip," prefix for the SoC
-vendor. Did I miss some reasoning for that, or did that slip through
-patch review?
-
-Being the first board we'd need to create a new YAML file to document
-them, I assume. Not sure what the best scope (=name) would be here.
-
->> +                       reg = <0x0020a000 0x400>;
->> +                       clocks = <&dummy_apb_clk>;
->> +                       interrupts = <10>;
->> +               };
-[...]
->> +               intc: interrupt-controller@500000 {
->> +                       compatible = "csky,gx6605s-intc";
-
-Here's the other SoC compatible.
-
->> +                       reg = <0x00500000 0x400>;
->> +                       interrupt-controller;
->> +                       #interrupt-cells = <1>;
->> +               };
-[snip]
-
-Regards,
-Andreas
-
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 83e08b78dbee..3edd4c1b96be 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -6719,11 +6719,13 @@ tracing_snapshot_write(struct file *filp, const char __user *ubuf, size_t cnt,
+ 			break;
+ 		}
+ #endif
+-		if (!tr->allocated_snapshot) {
++		if (tr->allocated_snapshot)
++			ret = resize_buffer_duplicate_size(&tr->max_buffer,
++					&tr->trace_buffer, iter->cpu_file);
++		else
+ 			ret = tracing_alloc_snapshot_instance(tr);
+-			if (ret < 0)
+-				break;
+-		}
++		if (ret < 0)
++			break;
+ 		local_irq_disable();
+ 		/* Now, we're going to swap */
+ 		if (iter->cpu_file == RING_BUFFER_ALL_CPUS)
 -- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Mary Higgins, Sri Rasiah
-HRB 21284 (AG Nürnberg)
+2.21.0
+
