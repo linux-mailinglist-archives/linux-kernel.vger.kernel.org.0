@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA598522A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 07:14:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BBDC7522A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 07:13:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727876AbfFYFNM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 01:13:12 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:53400 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727869AbfFYFNJ (ORCPT
+        id S1728087AbfFYFNX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 01:13:23 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:37515 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727893AbfFYFNK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 01:13:09 -0400
-Received: by mail-wm1-f68.google.com with SMTP id x15so1376143wmj.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 22:13:08 -0700 (PDT)
+        Tue, 25 Jun 2019 01:13:10 -0400
+Received: by mail-wm1-f66.google.com with SMTP id f17so1445445wme.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 22:13:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=XwWPXATMjzsrThYG9AxfqAA38GUZEp5E9KeCsI7Vd04=;
-        b=LUWYoAI0RIV2kR9YiKqtLKhr7jPVpGW/qnnu3/EArBmigcVqRS4njao+hxXF4mPymS
-         OA5I39ma3J3gmFXeP6z+9v0md0a8qsPaPT/3MKAEdUA46eEbUU9Dnxh37yaB792iizJe
-         VXL/d1z3ZwztcxcZEjEwa9zfyN/JFj8mRIzSV5pwMYv7aKkQQj+5eE/u+UeDfLs4HLYN
-         Ko/rfNODIZGh37y6CdTioKuB/eOoCC/392y0WRxWth84g8XcFwhKbm5pPsOkBKvJUfnS
-         YXCQ3I/uCvi/hiws7bN+uiOHh52uCJALNb+gxbOWHAQ4qfc7m6f4bIPce0UNKITQOORF
-         B69g==
+        bh=hDUKv8YUyogiDpRRrW1kMLdeBfpgWpL6nQUelcgrRGk=;
+        b=P1UbVuQAQAxdEuobXFG66avtxb07lOHKpDbpTaxKfsxl05uYaz7+ztqWh3qTSOslXw
+         rsOUdD4c3nDgaH4dPRY1Mr9udMkIN9CpzscP/Svrwe2NRK3B2O1dJ7lGN/ROvgyDU6Sk
+         PnAf1ulxThb8PdJfbojGyLcuMOsJmQKGxa0bsal6Z3DGKXhnR1JRhVPTu2wAs7ZT5bfT
+         h58RYIHsHZ0zTgei4x0GDZKaUIQEW4qwMVhzN2ImIcPQSv358AkUzeFIPgTt3tFXgau+
+         OuazCdzSt6jUbFR/NqxSWpO1k9EGsUPYn1OBDGTdT8/eso7X+JIGh9tayMVvcme5uXNS
+         4KZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=XwWPXATMjzsrThYG9AxfqAA38GUZEp5E9KeCsI7Vd04=;
-        b=EOSGtidXh8McW2v4WIVr3d8iVZ4TZW54NxJLLmEgiE4neIPoNP4yfB3WmaeK713w96
-         /OiE5d+Sr/9nhWX3ZYLzw3dM2LBXBj5tktOqQhXdxoaguWqTpG5cri4/WHL/hEg4lYRr
-         lxlN+qgpmxak3ZdWrzFEznYjeiqgcNNVkZ6dPqmQJJ0RGz5jRARQAvHVVepktQlthOec
-         GTwqO6T/+57ZgFhaypmuZd1t/iGuNYHaQYaJteEXFa7KH6pnxPhgzvr7FyT4URlNdctb
-         jxDal26tc8ls9yA4Dzjl/0kH20esLD2MfFS062LxP1gxtGSYtmvyyZ0+QpFH1YaRji6V
-         B/Aw==
-X-Gm-Message-State: APjAAAX1rCWCyHVCSN1hvsQ1hgmKf7jshf+gHhFklMjrBjOWZl15Nt5b
-        7FNGB7x2ni+NliUSrf9QNk2LAQ==
-X-Google-Smtp-Source: APXvYqxmFzDMq45w/U4TvH/tFfi2O7AaVFDU5wqiPW1cSH4kZC3au3aiFsC8sAHsor17QaeU7rcVMQ==
-X-Received: by 2002:a1c:4184:: with SMTP id o126mr18023346wma.68.1561439587593;
-        Mon, 24 Jun 2019 22:13:07 -0700 (PDT)
+        bh=hDUKv8YUyogiDpRRrW1kMLdeBfpgWpL6nQUelcgrRGk=;
+        b=YH4KHHqVYjjC6w5cr21mTXXWgKxfJFw+5vDK7X2Y1tPIZFchAqpo7lZKOwFH8IGsHJ
+         gpUcCYiKccWjbwRaO3VITfulUCvr08JJjez6QM5IDjg3aRBhww//AxlPNW4OYMAeBJQm
+         iJSjLxAiqGPOTv/wbJyudNcqaa/tkdmZPcLhljmTtKJ14I2Q91+v8qFLojCdxQkqB6ap
+         RHKl/8sZCC4oA1biUKjD/tF6M9clWMYPdcdBRbh14s7BzfdMnk9V88xhC1WWaEVAoO+O
+         fo4o5WgeQLhcfyurzWHd3Pp4vfgekfFKm8fnoaUiMiEVtrTTeJw/qwYJSabzfBb5YEPh
+         YEMA==
+X-Gm-Message-State: APjAAAUlpOKzYWYkHy3oyvM7qzpj8oauWVG4PH308Ied1CfQhNNuyGrL
+        8QjGKEsdlkvCzOlY5prpjfON1A==
+X-Google-Smtp-Source: APXvYqye9+BosaBHq2W3kVdYV/oWBvsbLFzXFJY8xj1nm51j3plSV51adEqi9N6ZJ3ylPkhnQ3bnmA==
+X-Received: by 2002:a1c:a6d3:: with SMTP id p202mr19024488wme.26.1561439588831;
+        Mon, 24 Jun 2019 22:13:08 -0700 (PDT)
 Received: from localhost.localdomain (146-241-102-168.dyn.eolo.it. [146.241.102.168])
-        by smtp.gmail.com with ESMTPSA id q20sm28543149wra.36.2019.06.24.22.13.06
+        by smtp.gmail.com with ESMTPSA id q20sm28543149wra.36.2019.06.24.22.13.07
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Jun 2019 22:13:07 -0700 (PDT)
+        Mon, 24 Jun 2019 22:13:08 -0700 (PDT)
 From:   Paolo Valente <paolo.valente@linaro.org>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -52,9 +52,9 @@ Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         bfq-iosched@googlegroups.com, oleksandr@natalenko.name,
         bottura.nicola95@gmail.com, srivatsa@csail.mit.edu,
         Paolo Valente <paolo.valente@linaro.org>
-Subject: [PATCH BUGFIX IMPROVEMENT V2 3/7] block, bfq: update base request service times when possible
-Date:   Tue, 25 Jun 2019 07:12:45 +0200
-Message-Id: <20190625051249.39265-4-paolo.valente@linaro.org>
+Subject: [PATCH BUGFIX IMPROVEMENT V2 4/7] block, bfq: bring forward seek&think time update
+Date:   Tue, 25 Jun 2019 07:12:46 +0200
+Message-Id: <20190625051249.39265-5-paolo.valente@linaro.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190625051249.39265-1-paolo.valente@linaro.org>
 References: <20190625051249.39265-1-paolo.valente@linaro.org>
@@ -65,48 +65,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I/O injection gets reduced if it increases the request service times
-of the victim queue beyond a certain threshold.  The threshold, in its
-turn, is computed as a function of the base service time enjoyed by
-the queue when it undergoes no injection.
+Until the base value for request service times gets finally computed
+for a bfq_queue, the inject limit for that queue does depend on the
+think-time state (short|long) of the queue. A timely update of the
+think time then guarantees a quicker activation or deactivation of the
+injection. Fortunately, the think time of a bfq_queue is updated in
+the same code path as the inject limit; but after the inject limit.
 
-As a consequence, for injection to work properly, the above base value
-has to be accurate. In this respect, such a value may vary over
-time. For example, it varies if the size or the spatial locality of
-the I/O requests in the queue change. It is then important to update
-this value whenever possible. This commit performs this update.
+This commits moves the update of the think time before the update of
+the inject limit. For coherence, it moves the update of the seek time
+too.
 
 Reported-by: Srivatsa S. Bhat (VMware) <srivatsa@csail.mit.edu>
 Tested-by: Srivatsa S. Bhat (VMware) <srivatsa@csail.mit.edu>
 Signed-off-by: Paolo Valente <paolo.valente@linaro.org>
 ---
- block/bfq-iosched.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ block/bfq-iosched.c | 14 ++++----------
+ 1 file changed, 4 insertions(+), 10 deletions(-)
 
 diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
-index 05041f84b8da..62442083b147 100644
+index 62442083b147..d5bc32371ace 100644
 --- a/block/bfq-iosched.c
 +++ b/block/bfq-iosched.c
-@@ -5496,7 +5496,18 @@ static void bfq_update_inject_limit(struct bfq_data *bfqd,
- 		 * start trying injection.
- 		 */
- 		bfqq->inject_limit = max_t(unsigned int, 1, old_limit);
--	}
-+	} else if (!bfqd->rqs_injected && bfqd->rq_in_driver == 1)
-+		/*
-+		 * No I/O injected and no request still in service in
-+		 * the drive: these are the exact conditions for
-+		 * computing the base value of the total service time
-+		 * for bfqq. So let's update this value, because it is
-+		 * rather variable. For example, it varies if the size
-+		 * or the spatial locality of the I/O requests in bfqq
-+		 * change.
-+		 */
-+		bfqq->last_serv_time_ns = tot_time_ns;
-+
+@@ -4979,19 +4979,9 @@ static void bfq_update_has_short_ttime(struct bfq_data *bfqd,
+ static void bfq_rq_enqueued(struct bfq_data *bfqd, struct bfq_queue *bfqq,
+ 			    struct request *rq)
+ {
+-	struct bfq_io_cq *bic = RQ_BIC(rq);
+-
+ 	if (rq->cmd_flags & REQ_META)
+ 		bfqq->meta_pending++;
  
- 	/* update complete, not waiting for any request completion any longer */
- 	bfqd->waited_rq = NULL;
+-	bfq_update_io_thinktime(bfqd, bfqq);
+-	bfq_update_has_short_ttime(bfqd, bfqq, bic);
+-	bfq_update_io_seektime(bfqd, bfqq, rq);
+-
+-	bfq_log_bfqq(bfqd, bfqq,
+-		     "rq_enqueued: has_short_ttime=%d (seeky %d)",
+-		     bfq_bfqq_has_short_ttime(bfqq), BFQQ_SEEKY(bfqq));
+-
+ 	bfqq->last_request_pos = blk_rq_pos(rq) + blk_rq_sectors(rq);
+ 
+ 	if (bfqq == bfqd->in_service_queue && bfq_bfqq_wait_request(bfqq)) {
+@@ -5079,6 +5069,10 @@ static bool __bfq_insert_request(struct bfq_data *bfqd, struct request *rq)
+ 		bfqq = new_bfqq;
+ 	}
+ 
++	bfq_update_io_thinktime(bfqd, bfqq);
++	bfq_update_has_short_ttime(bfqd, bfqq, RQ_BIC(rq));
++	bfq_update_io_seektime(bfqd, bfqq, rq);
++
+ 	waiting = bfqq && bfq_bfqq_wait_request(bfqq);
+ 	bfq_add_request(rq);
+ 	idle_timer_disabled = waiting && !bfq_bfqq_wait_request(bfqq);
 -- 
 2.20.1
 
