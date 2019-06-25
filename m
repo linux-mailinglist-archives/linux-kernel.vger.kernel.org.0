@@ -2,208 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46096551E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 16:38:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FD1255226
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 16:40:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731695AbfFYOiD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 10:38:03 -0400
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:51525 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731516AbfFYOh7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 10:37:59 -0400
-X-Originating-IP: 90.88.16.156
-Received: from localhost (aaubervilliers-681-1-41-156.w90-88.abo.wanadoo.fr [90.88.16.156])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id B6C476000A;
-        Tue, 25 Jun 2019 14:37:47 +0000 (UTC)
-Date:   Tue, 25 Jun 2019 16:37:47 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Chen-Yu Tsai <wens@csie.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Bhushan Shah <bshah@mykolab.com>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        =?utf-8?B?5Z2a5a6a5YmN6KGM?= <powerpan@qq.com>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-amarula <linux-amarula@amarulasolutions.com>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [linux-sunxi] Re: [PATCH v10 04/11] drm/sun4i: tcon: Compute
- DCLK dividers based on format, lanes
-Message-ID: <20190625143747.3czd7sit4waz75b6@flea>
-References: <20190520090318.27570-1-jagan@amarulasolutions.com>
- <20190520090318.27570-5-jagan@amarulasolutions.com>
- <20190523204823.mx7l4ozklzdh7npn@flea>
- <CAMty3ZA0S=+8NBrQZvP6sFdzSYWqhNZL_KjkJAQ0jTc2RVivrw@mail.gmail.com>
- <20190604143016.fcx3ezmga244xakp@flea>
- <CAMty3ZAAK4RoE6g_LAZ-Q38On_1s_TTOz65YG7PVd88mwp-+4Q@mail.gmail.com>
- <20190613131626.7zbwvrvd4e7eafrc@flea>
- <CAMty3ZBDkMJkZm8FudNB1wQ+L-q3XVKa3zR2M0wZ5Uncdy_Ayg@mail.gmail.com>
- <20190624130442.ww4l3zctykr4i2e2@flea>
- <CAMty3ZB+eZUh5mr-LMZuEd_wrwLCN0mbf7arcRQHj8=uUNNq=Q@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="4qhko7umufjvzvnc"
-Content-Disposition: inline
-In-Reply-To: <CAMty3ZB+eZUh5mr-LMZuEd_wrwLCN0mbf7arcRQHj8=uUNNq=Q@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+        id S1730959AbfFYOkA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 10:40:00 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:58306 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730689AbfFYOkA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 10:40:00 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 899CD30C585A;
+        Tue, 25 Jun 2019 14:39:44 +0000 (UTC)
+Received: from llong.com (dhcp-17-85.bos.redhat.com [10.18.17.85])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DBBB5620CF;
+        Tue, 25 Jun 2019 14:39:31 +0000 (UTC)
+From:   Waiman Long <longman@redhat.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        huang ying <huang.ying.caritas@gmail.com>,
+        Waiman Long <longman@redhat.com>
+Subject: [PATCH-tip] locking/rwsem: Make handoff writer optimistically spin on owner
+Date:   Tue, 25 Jun 2019 10:39:13 -0400
+Message-Id: <20190625143913.24154-1-longman@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Tue, 25 Jun 2019 14:39:59 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+When the handoff bit is set by a writer, no other tasks other than
+the setting writer itself is allowed to acquire the lock. If the
+to-be-handoff'ed writer goes to sleep, there will be a wakeup latency
+period where the lock is free, but no one can acquire it. That is less
+than ideal.
 
---4qhko7umufjvzvnc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+To reduce that latency, the handoff writer will now optimistically spin
+on the owner if it happens to be a on-cpu writer. It will spin until
+it releases the lock and the to-be-handoff'ed writer can then acquire
+the lock immediately without any delay. Of course, if the owner is not
+a on-cpu writer, the to-be-handoff'ed writer will have to sleep anyway.
 
-On Mon, Jun 24, 2019 at 09:32:11PM +0530, Jagan Teki wrote:
-> On Mon, Jun 24, 2019 at 6:34 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> >
-> > On Fri, Jun 14, 2019 at 05:33:23PM +0530, Jagan Teki wrote:
-> > > On Thu, Jun 13, 2019 at 7:28 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> > > >
-> > > > On Wed, Jun 05, 2019 at 01:11:44PM +0530, Jagan Teki wrote:
-> > > > > On Tue, Jun 4, 2019 at 8:00 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> > > > > >
-> > > > > > On Fri, May 24, 2019 at 03:37:36PM +0530, Jagan Teki wrote:
-> > > > > > > On Fri, May 24, 2019 at 2:18 AM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> > > > > > > >
-> > > > > > > > On Mon, May 20, 2019 at 02:33:11PM +0530, Jagan Teki wrote:
-> > > > > > > > > pll-video => pll-mipi => tcon0 => tcon0-pixel-clock is the typical
-> > > > > > > > > MIPI clock topology in Allwinner DSI controller.
-> > > > > > > > >
-> > > > > > > > > TCON dotclock driver is computing the desired DCLK divider based on
-> > > > > > > > > panel pixel clock along with input DCLK min, max divider values from
-> > > > > > > > > tcon driver and that would eventually set the pll-mipi clock rate.
-> > > > > > > > >
-> > > > > > > > > The current code is passing dsi min and max divider value as 4 via
-> > > > > > > > > tcon driver which would ended-up triggering below vblank wait timed out
-> > > > > > > > > warning on "bananapi,s070wv20-ct16" panel.
-> > > > > > > > >
-> > > > > > > > >  WARNING: CPU: 0 PID: 31 at drivers/gpu/drm/drm_atomic_helper.c:1429 drm_atomic_helper_wait_for_vblanks.part.1+0x298/0x2a0
-> > > > > > > > >  [CRTC:46:crtc-0] vblank wait timed out
-> > > > > > > > >  Modules linked in:
-> > > > > > > > >  CPU: 0 PID: 31 Comm: kworker/0:1 Not tainted 5.1.0-next-20190514-00025-g5186cdf10757-dirty #6
-> > > > > > > > >  Hardware name: Allwinner sun8i Family
-> > > > > > > > >  Workqueue: events deferred_probe_work_func
-> > > > > > > > >  [<c010ed54>] (unwind_backtrace) from [<c010b76c>] (show_stack+0x10/0x14)
-> > > > > > > > >  [<c010b76c>] (show_stack) from [<c0688c70>] (dump_stack+0x84/0x98)
-> > > > > > > > >  [<c0688c70>] (dump_stack) from [<c011d9e4>] (__warn+0xfc/0x114)
-> > > > > > > > >  [<c011d9e4>] (__warn) from [<c011da40>] (warn_slowpath_fmt+0x44/0x68)
-> > > > > > > > >  [<c011da40>] (warn_slowpath_fmt) from [<c040cd50>] (drm_atomic_helper_wait_for_vblanks.part.1+0x298/0x2a0)
-> > > > > > > > >  [<c040cd50>] (drm_atomic_helper_wait_for_vblanks.part.1) from [<c040e694>] (drm_atomic_helper_commit_tail_rpm+0x5c/0x6c)
-> > > > > > > > >  [<c040e694>] (drm_atomic_helper_commit_tail_rpm) from [<c040e4dc>] (commit_tail+0x40/0x6c)
-> > > > > > > > >  [<c040e4dc>] (commit_tail) from [<c040e5cc>] (drm_atomic_helper_commit+0xbc/0x128)
-> > > > > > > > >  [<c040e5cc>] (drm_atomic_helper_commit) from [<c0411b64>] (restore_fbdev_mode_atomic+0x1cc/0x1dc)
-> > > > > > > > >  [<c0411b64>] (restore_fbdev_mode_atomic) from [<c04156f8>] (drm_fb_helper_restore_fbdev_mode_unlocked+0x54/0xa0)
-> > > > > > > > >  [<c04156f8>] (drm_fb_helper_restore_fbdev_mode_unlocked) from [<c0415774>] (drm_fb_helper_set_par+0x30/0x54)
-> > > > > > > > >  [<c0415774>] (drm_fb_helper_set_par) from [<c03ad450>] (fbcon_init+0x560/0x5ac)
-> > > > > > > > >  [<c03ad450>] (fbcon_init) from [<c03eb8a0>] (visual_init+0xbc/0x104)
-> > > > > > > > >  [<c03eb8a0>] (visual_init) from [<c03ed1b8>] (do_bind_con_driver+0x1b0/0x390)
-> > > > > > > > >  [<c03ed1b8>] (do_bind_con_driver) from [<c03ed780>] (do_take_over_console+0x13c/0x1c4)
-> > > > > > > > >  [<c03ed780>] (do_take_over_console) from [<c03ad800>] (do_fbcon_takeover+0x74/0xcc)
-> > > > > > > > >  [<c03ad800>] (do_fbcon_takeover) from [<c013c9c8>] (notifier_call_chain+0x44/0x84)
-> > > > > > > > >  [<c013c9c8>] (notifier_call_chain) from [<c013cd20>] (__blocking_notifier_call_chain+0x48/0x60)
-> > > > > > > > >  [<c013cd20>] (__blocking_notifier_call_chain) from [<c013cd50>] (blocking_notifier_call_chain+0x18/0x20)
-> > > > > > > > >  [<c013cd50>] (blocking_notifier_call_chain) from [<c03a6e44>] (register_framebuffer+0x1e0/0x2f8)
-> > > > > > > > >  [<c03a6e44>] (register_framebuffer) from [<c04153c0>] (__drm_fb_helper_initial_config_and_unlock+0x2fc/0x50c)
-> > > > > > > > >  [<c04153c0>] (__drm_fb_helper_initial_config_and_unlock) from [<c04158c8>] (drm_fbdev_client_hotplug+0xe8/0x1b8)
-> > > > > > > > >  [<c04158c8>] (drm_fbdev_client_hotplug) from [<c0415a20>] (drm_fbdev_generic_setup+0x88/0x118)
-> > > > > > > > >  [<c0415a20>] (drm_fbdev_generic_setup) from [<c043f060>] (sun4i_drv_bind+0x128/0x160)
-> > > > > > > > >  [<c043f060>] (sun4i_drv_bind) from [<c044b588>] (try_to_bring_up_master+0x164/0x1a0)
-> > > > > > > > >  [<c044b588>] (try_to_bring_up_master) from [<c044b658>] (__component_add+0x94/0x140)
-> > > > > > > > >  [<c044b658>] (__component_add) from [<c0445e0c>] (sun6i_dsi_probe+0x144/0x234)
-> > > > > > > > >  [<c0445e0c>] (sun6i_dsi_probe) from [<c0452ee4>] (platform_drv_probe+0x48/0x9c)
-> > > > > > > > >  [<c0452ee4>] (platform_drv_probe) from [<c04512bc>] (really_probe+0x1dc/0x2c8)
-> > > > > > > > >  [<c04512bc>] (really_probe) from [<c0451508>] (driver_probe_device+0x60/0x160)
-> > > > > > > > >  [<c0451508>] (driver_probe_device) from [<c044f794>] (bus_for_each_drv+0x74/0xb8)
-> > > > > > > > >  [<c044f794>] (bus_for_each_drv) from [<c045106c>] (__device_attach+0xd0/0x13c)
-> > > > > > > > >  [<c045106c>] (__device_attach) from [<c0450464>] (bus_probe_device+0x84/0x8c)
-> > > > > > > > >  [<c0450464>] (bus_probe_device) from [<c04508f0>] (deferred_probe_work_func+0x64/0x90)
-> > > > > > > > >  [<c04508f0>] (deferred_probe_work_func) from [<c0135970>] (process_one_work+0x204/0x420)
-> > > > > > > > >  [<c0135970>] (process_one_work) from [<c013690c>] (worker_thread+0x274/0x5a0)
-> > > > > > > > >  [<c013690c>] (worker_thread) from [<c013b3d8>] (kthread+0x11c/0x14c)
-> > > > > > > > >  [<c013b3d8>] (kthread) from [<c01010e8>] (ret_from_fork+0x14/0x2c)
-> > > > > > > > >  Exception stack(0xde539fb0 to 0xde539ff8)
-> > > > > > > > >  9fa0:                                     00000000 00000000 00000000 00000000
-> > > > > > > > >  9fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-> > > > > > > > >  9fe0: 00000000 00000000 00000000 00000000 00000013 00000000
-> > > > > > > > >  ---[ end trace 4017fea4906ab391 ]---
-> > > > > > > > >
-> > > > > > > > > But accordingly to Allwinner A33, A64 BSP codes [1] [2] this divider
-> > > > > > > > > is clearly using 'format/lanes' for dsi divider value, dsi_clk.clk_div
-> > > > > > > > >
-> > > > > > > > > Which would compute the pll_freq and set a clock rate for it in
-> > > > > > > > > [3] and [4] respectively.
-> > > > > > > > >
-> > > > > > > > > The same issue has reproduced in A33, A64 with 4-lane and 2-lane devices
-> > > > > > > > > and got fixed with this computation logic 'format/lanes', so this patch
-> > > > > > > > > using dclk min and max dividers as per BSP.
-> > > > > > > > >
-> > > > > > > > > [1] https://github.com/BPI-SINOVOIP/BPI-M2M-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp/de/disp_lcd.c#L1106
-> > > > > > > > > [2] https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/disp_al.c#L213
-> > > > > > > > > [3] https://github.com/BPI-SINOVOIP/BPI-M2M-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp/de/disp_lcd.c#L1127
-> > > > > > > > > [4] https://github.com/BPI-SINOVOIP/BPI-M2M-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp/de/disp_lcd.c#L1161
-> > > > > > > >
-> > > > > > > > In that mail, I've pointed out that clk_div isn't used for the TCON dclk divider:
-> > > > > > > > http://lists.infradead.org/pipermail/linux-arm-kernel/2019-February/629596.html
-> > > > > > > >
-> > > > > > > > The only reply you've sent is that you indeed see that the divider is
-> > > > > > > > set to 4 in the BSP, but you're now saying that the BSP can change
-> > > > > > > > it. If so, then please point exactly the flaw in the explanation in
-> > > > > > > > that mail.
-> > > > > > >
-> > > > > > > Frankly, I have explained these details in commit message and previous
-> > > > > > > version patch[1] with print messages on the code.
-> > > > > > >
-> > > > > > > BSP has tcon_div and dsi_div. dsi_div is dynamic which depends on
-> > > > > > > bpp/lanes and it indeed depends on PLL computation (not tcon_div),
-> > > > > > > anyway I have explained again on this initial link you mentioned.
-> > > > > > > Please have a look and get back.
-> > > > > >
-> > > > > > I'll have a look, thanks.
-> > > > > >
-> > > > > > I've given your patches a try on my setup though, and this patch
-> > > > > > breaks it with vblank timeouts and some horizontal lines that looks
-> > > > > > like what should be displayed, but blinking and on the right of the
-> > > > > > display. The previous ones are fine though.
-> > > > >
-> > > > > Would you please send me the link of panel driver.
-> > > >
-> > > > It's drivers/gpu/drm/panel/panel-ronbo-rb070d30.c
-> > >
-> > > Look like this panel work even w/o any vendor sequence. it's similar
-> > > to the 4-lane panel I have with RGB888, so the dclk div is 6, is it
-> > > working with this divider?
-> >
-> > It works with 4, it doesn't work with 6.
->
-> Can be the pixel clock with associated timings can make this diff.
-> Would you send me the pixel clock, pll_rate and timings this panel
-> used it from BSP?
+The optimistic spinning code is also modified to not stop spinning
+when the handoff bit is set. This will prevent an occasional setting of
+handoff bit from causing a bunch of optimistic spinners from entering
+into the wait queue causing significant reduction in throughput.
 
-This board never had an Allwinner BSP
+On a 1-socket 22-core 44-thread Skylake system, the AIM7 shared_memory
+workload was run with 7000 users. The throughput (jobs/min) of the
+following kernels were as follows:
 
-Maxime
+ 1) 5.2-rc6
+    - 8,092,486
+ 2) 5.2-rc6 + tip's rwsem patches
+    - 7,567,568
+ 3) 5.2-rc6 + tip's rwsem patches + this patch
+    - 7,954,545
 
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Using perf-record(1), the %cpu time used by rwsem_down_write_slowpath(),
+rwsem_down_write_failed() and their callees for the 3 kernels were 1.70%,
+5.46% and 2.08% respectively.
 
---4qhko7umufjvzvnc
-Content-Type: application/pgp-signature; name="signature.asc"
+Signed-off-by: Waiman Long <longman@redhat.com>
+---
+ kernel/locking/rwsem.c | 32 ++++++++++++++++++++++++++------
+ 1 file changed, 26 insertions(+), 6 deletions(-)
 
------BEGIN PGP SIGNATURE-----
+diff --git a/kernel/locking/rwsem.c b/kernel/locking/rwsem.c
+index 37524a47f002..5e022fbdb2bb 100644
+--- a/kernel/locking/rwsem.c
++++ b/kernel/locking/rwsem.c
+@@ -720,11 +720,12 @@ rwsem_spin_on_owner(struct rw_semaphore *sem, unsigned long nonspinnable)
+ 
+ 	rcu_read_lock();
+ 	for (;;) {
+-		if (atomic_long_read(&sem->count) & RWSEM_FLAG_HANDOFF) {
+-			state = OWNER_NONSPINNABLE;
+-			break;
+-		}
+-
++		/*
++		 * When a waiting writer set the handoff flag, it may spin
++		 * on the owner as well. Once that writer acquires the lock,
++		 * we can spin on it. So we don't need to quit even when the
++		 * handoff bit is set.
++		 */
+ 		new = rwsem_owner_flags(sem, &new_flags);
+ 		if ((new != owner) || (new_flags != flags)) {
+ 			state = rwsem_owner_state(new, new_flags, nonspinnable);
+@@ -970,6 +971,13 @@ static inline bool rwsem_reader_phase_trylock(struct rw_semaphore *sem,
+ {
+ 	return false;
+ }
++
++static inline int
++rwsem_spin_on_owner(struct rw_semaphore *sem, unsigned long nonspinnable)
++{
++	return 0;
++}
++#define OWNER_NULL	1
+ #endif
+ 
+ /*
+@@ -1190,6 +1198,18 @@ rwsem_down_write_slowpath(struct rw_semaphore *sem, int state)
+ 
+ 		raw_spin_unlock_irq(&sem->wait_lock);
+ 
++		/*
++		 * After setting the handoff bit and failing to acquire
++		 * the lock, attempt to spin on owner to accelerate lock
++		 * transfer. If the previous owner is a on-cpu writer and it
++		 * has just released the lock, OWNER_NULL will be returned.
++		 * In this case, we attempt to acquire the lock again
++		 * without sleeping.
++		 */
++		if ((wstate == WRITER_HANDOFF) &&
++		    (rwsem_spin_on_owner(sem, 0) == OWNER_NULL))
++			goto trylock_again;
++
+ 		/* Block until there are no active lockers. */
+ 		for (;;) {
+ 			if (signal_pending_state(state, current))
+@@ -1224,7 +1244,7 @@ rwsem_down_write_slowpath(struct rw_semaphore *sem, int state)
+ 				break;
+ 			}
+ 		}
+-
++trylock_again:
+ 		raw_spin_lock_irq(&sem->wait_lock);
+ 	}
+ 	__set_current_state(TASK_RUNNING);
+-- 
+2.18.1
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXRIxuwAKCRDj7w1vZxhR
-xVscAP9pbjUMb+7sqNoi00MHqD8g9+AnFhyeTBWi07kSntTxvgEAqbLn4ybIstfr
-Lzg/6w2mQ3encbcK4zDbkflqVuTtnQ4=
-=Qu0L
------END PGP SIGNATURE-----
-
---4qhko7umufjvzvnc--
