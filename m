@@ -2,106 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CCB054E48
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 14:05:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05BB754E53
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 14:06:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728546AbfFYMFB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 08:05:01 -0400
-Received: from skedge04.snt-world.com ([91.208.41.69]:46404 "EHLO
-        skedge04.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726949AbfFYMFA (ORCPT
+        id S1729983AbfFYMGf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 08:06:35 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:50952 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726551AbfFYMGe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 08:05:00 -0400
-Received: from sntmail11s.snt-is.com (unknown [10.203.32.181])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by skedge04.snt-world.com (Postfix) with ESMTPS id CA6CD67A062;
-        Tue, 25 Jun 2019 14:04:58 +0200 (CEST)
-Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail11s.snt-is.com
- (10.203.32.181) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Tue, 25 Jun
- 2019 14:04:58 +0200
-Received: from sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305]) by
- sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305%3]) with mapi id
- 15.01.1713.004; Tue, 25 Jun 2019 14:04:58 +0200
-From:   Schrempf Frieder <frieder.schrempf@kontron.de>
-To:     liaoweixiong <liaoweixiong@allwinnertech.com>
-CC:     Greg KH <gregkh@linuxfoundation.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        "Richard Weinberger" <richard@nod.at>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Chuanhong Guo <gch981213@gmail.com>,
-        "Marek Vasut" <marek.vasut@gmail.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: Re: [RESEND PATCH v2] mtd: spinand: read return badly if the last
- page has bitflips
-Thread-Topic: [RESEND PATCH v2] mtd: spinand: read return badly if the last
- page has bitflips
-Thread-Index: AQHVKvG5vIRdXk03g0+SrXGJtaID9aarjwGAgABB7wCAAFGaAIAAAnWA
-Date:   Tue, 25 Jun 2019 12:04:58 +0000
-Message-ID: <3c019394-04a1-ff85-867f-29928a996931@kontron.de>
-References: <1561424549-784-1-git-send-email-liaoweixiong@allwinnertech.com>
- <20190625030807.GA11074@kroah.com>
- <97adf58f-4771-90f1-bdaf-5a9d00eef768@kontron.de>
- <814a343e-e4c4-3ef2-29e2-d6c56f3d5bbb@allwinnertech.com>
-In-Reply-To: <814a343e-e4c4-3ef2-29e2-d6c56f3d5bbb@allwinnertech.com>
-Accept-Language: de-DE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.25.9.193]
-x-c2processedorg: 51b406b7-48a2-4d03-b652-521f56ac89f3
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <9EC415AB919DFC40958CBB43C7495004@snt-world.com>
-Content-Transfer-Encoding: base64
+        Tue, 25 Jun 2019 08:06:34 -0400
+Received: from 79.184.254.216.ipv4.supernova.orange.pl (79.184.254.216) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.267)
+ id 83cfdbf0013218ff; Tue, 25 Jun 2019 14:06:32 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Linux ACPI <linux-acpi@vger.kernel.org>
+Cc:     Bjorn Helgaas <helgaas@kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>
+Subject: [PATCH 2/2] ACPI: PM: Allow transitions to D0 to occur in special cases
+Date:   Tue, 25 Jun 2019 14:06:13 +0200
+Message-ID: <2807567.5m5tnf7bLv@kreacher>
+In-Reply-To: <10419005.Mb09WM6RCc@kreacher>
+References: <10419005.Mb09WM6RCc@kreacher>
 MIME-Version: 1.0
-X-SnT-MailScanner-Information: Please contact the ISP for more information
-X-SnT-MailScanner-ID: CA6CD67A062.A1039
-X-SnT-MailScanner: Not scanned: please contact your Internet E-Mail Service Provider for details
-X-SnT-MailScanner-SpamCheck: 
-X-SnT-MailScanner-From: frieder.schrempf@kontron.de
-X-SnT-MailScanner-To: bbrezillon@kernel.org, computersforpeace@gmail.com,
-        dwmw2@infradead.org, gch981213@gmail.com, gregkh@linuxfoundation.org,
-        liaoweixiong@allwinnertech.com, linux-kernel@vger.kernel.org,
-        linux-mtd@lists.infradead.org, marek.vasut@gmail.com,
-        miquel.raynal@bootlin.com, richard@nod.at, stable@vger.kernel.org,
-        vigneshr@ti.com
-X-Spam-Status: No
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMjUuMDYuMTkgMTM6NTYsIGxpYW93ZWl4aW9uZyB3cm90ZToNCj4gT2gsIGkgYW0gc29ycnkg
-dGhhdCBpIGhhZCBtaXN1bmRlcnN0YW5kZWQgeW91ciBsZXR0ZXIuDQoNCk5vIHByb2JsZW0gOykN
-Cg0KPiBUaGFuayB5b3UgZm9yIHlvdXIgZG9jdW1lbnQgYW5kIGd1aWRhbmNlLg0KDQpZb3UncmUg
-d2VsY29tZSENCg0KPiBPbiAyMDE5LzYvMjUgUE0gMzowNCwgU2NocmVtcGYgRnJpZWRlciB3cm90
-ZToNCj4+IEhpIGxpYW93ZWl4aW9uZywNCj4+DQo+PiBPbiAyNS4wNi4xOSAwNTowOCwgR3JlZyBL
-SCB3cm90ZToNCj4+PiBPbiBUdWUsIEp1biAyNSwgMjAxOSBhdCAwOTowMjoyOUFNICswODAwLCBs
-aWFvd2VpeGlvbmcgd3JvdGU6DQo+Pj4+IEluIGNhc2Ugb2YgdGhlIGxhc3QgcGFnZSBjb250YWlu
-aW5nIGJpdGZsaXBzIChyZXQgPiAwKSwNCj4+Pj4gc3BpbmFuZF9tdGRfcmVhZCgpIHdpbGwgcmV0
-dXJuIHRoYXQgbnVtYmVyIG9mIGJpdGZsaXBzIGZvciB0aGUgbGFzdA0KPj4+PiBwYWdlLiBCdXQg
-dG8gbWUgaXQgbG9va3MgbGlrZSBpdCBzaG91bGQgaW5zdGVhZCByZXR1cm4gbWF4X2JpdGZsaXBz
-IGxpa2UNCj4+Pj4gaXQgZG9lcyB3aGVuIHRoZSBsYXN0IHBhZ2UgcmVhZCByZXR1cm5zIHdpdGgg
-MC4NCj4+Pj4NCj4+Pj4gU2lnbmVkLW9mZi1ieTogbGlhb3dlaXhpb25nIDxsaWFvd2VpeGlvbmdA
-YWxsd2lubmVydGVjaC5jb20+DQo+Pj4+IFJldmlld2VkLWJ5OiBCb3JpcyBCcmV6aWxsb24gPGJv
-cmlzLmJyZXppbGxvbkBjb2xsYWJvcmEuY29tPg0KPj4+PiBSZXZpZXdlZC1ieTogRnJpZWRlciBT
-Y2hyZW1wZiA8ZnJpZWRlci5zY2hyZW1wZkBrb250cm9uLmRlPg0KPj4+PiBGaXhlczogNzUyOWRm
-NDY1MjQ4ICgibXRkOiBuYW5kOiBBZGQgY29yZSBpbmZyYXN0cnVjdHVyZSB0byBzdXBwb3J0IFNQ
-SSBOQU5EcyIpDQo+Pj4+IC0tLQ0KPj4+PiAgICBkcml2ZXJzL210ZC9uYW5kL3NwaS9jb3JlLmMg
-fCAyICstDQo+Pj4+ICAgIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlv
-bigtKQ0KPj4+DQo+Pj4gPGZvcm1sZXR0ZXI+DQo+Pj4NCj4+PiBUaGlzIGlzIG5vdCB0aGUgY29y
-cmVjdCB3YXkgdG8gc3VibWl0IHBhdGNoZXMgZm9yIGluY2x1c2lvbiBpbiB0aGUNCj4+PiBzdGFi
-bGUga2VybmVsIHRyZWUuICBQbGVhc2UgcmVhZDoNCj4+PiAgICAgICBodHRwczovL3d3dy5rZXJu
-ZWwub3JnL2RvYy9odG1sL2xhdGVzdC9wcm9jZXNzL3N0YWJsZS1rZXJuZWwtcnVsZXMuaHRtbA0K
-Pj4+IGZvciBob3cgdG8gZG8gdGhpcyBwcm9wZXJseS4NCj4+Pg0KPj4+IDwvZm9ybWxldHRlcj4N
-Cj4+DQo+PiBGWUksIHlvdSBzaG91bGQgbm90IHNlbmQgdGhlIHBhdGNoIHRvIHN0YWJsZUB2Z2Vy
-Lmtlcm5lbC5vcmcsIGJ1dA0KPj4gaW5zdGVhZCwgYXMgSSBzYWlkIGluIG15IG90aGVyIHJlcGx5
-LCBhZGQgdGhlIHRhZyAiQ2M6DQo+PiBzdGFibGVAdmdlci5rZXJuZWwub3JnIi4gU2VlICJPcHRp
-b24gMSIgaW4gdGhlIGRvY3VtZW50IEdyZWcgcmVmZXJyZWQgdG8uDQo+Pg0KPj4gVGhhbmtzLA0K
-Pj4gRnJpZWRlcg0KPj4NCj4g
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+
+If a device with ACPI PM is left in D0 during a system-wide
+transition to the S3 (suspend-to-RAM) or S4 (hibernation) sleep
+state, the actual state of the device need not be D0 during resume
+from it, although its power.state value will still reflect D0 (that
+is, the power state from before the system-wide transition).
+
+In that case, the acpi_device_set_power() call made to ensure that
+the power state of the device will be D0 going forward has no effect,
+because the new state (D0) is equal to the one reflected by the
+device's power.state value.  That does not affect power resources,
+which are taken care of by acpi_resume_power_resources() called from
+acpi_pm_finish() during resume from system-wide sleep states, but it
+still may be necessary to invoke _PS0 for the device on top of that
+in order to finalize its transition to D0.
+
+For this reason, modify acpi_device_set_power() to allow transitions
+to D0 to occur even if D0 is the current power state of the device
+according to its power.state value.
+
+That will not affect power resources, which are assumed to be in
+the right configuration already (as reflected by the current values
+of their reference counters), but it may cause _PS0 to be evaluated
+for the device.  However, evaluating _PS0 for a device already in D0
+may lead to confusion in general, so invoke _PSC (if present) to
+check the device's current power state upfront and only evaluate
+_PS0 for it if _PSC has returned a power state different from D0.
+[If _PSC is not present or the evaluation of it fails, the power
+state of the device is assumed to be D0 at this point.]
+
+Fixes: 20dacb71ad28 (ACPI / PM: Rework device power management to follow ACPI 6)
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/acpi/device_pm.c |   53 +++++++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 45 insertions(+), 8 deletions(-)
+
+Index: linux-pm/drivers/acpi/device_pm.c
+===================================================================
+--- linux-pm.orig/drivers/acpi/device_pm.c
++++ linux-pm/drivers/acpi/device_pm.c
+@@ -45,6 +45,19 @@ const char *acpi_power_state_string(int
+ 	}
+ }
+ 
++static int acpi_dev_pm_explicit_get(struct acpi_device *device, int *state)
++{
++	unsigned long long psc;
++	acpi_status status;
++
++	status = acpi_evaluate_integer(device->handle, "_PSC", NULL, &psc);
++	if (ACPI_FAILURE(status))
++		return -ENODEV;
++
++	*state = psc;
++	return 0;
++}
++
+ /**
+  * acpi_device_get_power - Get power state of an ACPI device.
+  * @device: Device to get the power state of.
+@@ -57,6 +70,7 @@ const char *acpi_power_state_string(int
+ int acpi_device_get_power(struct acpi_device *device, int *state)
+ {
+ 	int result = ACPI_STATE_UNKNOWN;
++	int error;
+ 
+ 	if (!device || !state)
+ 		return -EINVAL;
+@@ -73,18 +87,16 @@ int acpi_device_get_power(struct acpi_de
+ 	 * if available.
+ 	 */
+ 	if (device->power.flags.power_resources) {
+-		int error = acpi_power_get_inferred_state(device, &result);
++		error = acpi_power_get_inferred_state(device, &result);
+ 		if (error)
+ 			return error;
+ 	}
+ 	if (device->power.flags.explicit_get) {
+-		acpi_handle handle = device->handle;
+-		unsigned long long psc;
+-		acpi_status status;
++		int psc;
+ 
+-		status = acpi_evaluate_integer(handle, "_PSC", NULL, &psc);
+-		if (ACPI_FAILURE(status))
+-			return -ENODEV;
++		error = acpi_dev_pm_explicit_get(device, &psc);
++		if (error)
++			return error;
+ 
+ 		/*
+ 		 * The power resources settings may indicate a power state
+@@ -152,7 +164,8 @@ int acpi_device_set_power(struct acpi_de
+ 
+ 	/* Make sure this is a valid target state */
+ 
+-	if (state == device->power.state) {
++	/* There is a special case for D0 addressed below. */
++	if (state > ACPI_STATE_D0 && state == device->power.state) {
+ 		ACPI_DEBUG_PRINT((ACPI_DB_INFO, "Device [%s] already in %s\n",
+ 				  device->pnp.bus_id,
+ 				  acpi_power_state_string(state)));
+@@ -214,6 +227,30 @@ int acpi_device_set_power(struct acpi_de
+ 			if (result)
+ 				goto end;
+ 		}
++
++		if (device->power.state == ACPI_STATE_D0) {
++			int psc;
++
++			/* Nothing to do here if _PSC is not present. */
++			if (!device->power.flags.explicit_get)
++				return 0;
++
++			/*
++			 * The power state of the device was set to D0 last
++			 * time, but that might have happened before a
++			 * system-wide transition involving the platform
++			 * firmware, so it may be necessary to evaluate _PS0
++			 * for the device here.  However, use extra care here
++			 * and evaluate _PSC to check the device's current power
++			 * state, and only invoke _PS0 if the evaluation of _PSC
++			 * is successful and it returns a power state different
++			 * from D0.
++			 */
++			result = acpi_dev_pm_explicit_get(device, &psc);
++			if (result || psc == ACPI_STATE_D0)
++				return 0;
++		}
++
+ 		result = acpi_dev_pm_explicit_set(device, ACPI_STATE_D0);
+ 	}
+ 
+
+
+
