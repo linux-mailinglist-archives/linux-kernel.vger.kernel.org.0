@@ -2,78 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0BEC52587
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 09:56:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 68DB652598
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 09:57:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728870AbfFYH4H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 03:56:07 -0400
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:48097 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726422AbfFYH4E (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 03:56:04 -0400
-X-Originating-IP: 90.88.16.156
-Received: from localhost (aaubervilliers-681-1-41-156.w90-88.abo.wanadoo.fr [90.88.16.156])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id 3F05720004;
-        Tue, 25 Jun 2019 07:56:02 +0000 (UTC)
-Date:   Tue, 25 Jun 2019 09:56:00 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v2 07/15] dt-bindings: display: Convert pda,91-00156-a0
- panel to DT schema
-Message-ID: <20190625075600.bqk7si7ljrp3wziv@flea>
-References: <20190624215649.8939-1-robh@kernel.org>
- <20190624215649.8939-8-robh@kernel.org>
+        id S1728926AbfFYH5Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 03:57:24 -0400
+Received: from verein.lst.de ([213.95.11.211]:60598 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726531AbfFYH5Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 03:57:24 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id 1831068B02; Tue, 25 Jun 2019 09:56:51 +0200 (CEST)
+Date:   Tue, 25 Jun 2019 09:56:50 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Khalid Aziz <khalid.aziz@oracle.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linux-mips@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-mm@kvack.org, x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 11/16] mm: consolidate the get_user_pages*
+ implementations
+Message-ID: <20190625075650.GF30815@lst.de>
+References: <20190611144102.8848-1-hch@lst.de> <20190611144102.8848-12-hch@lst.de> <20190621144131.GQ19891@ziepe.ca>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="tetcemb75nz6lnkc"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190624215649.8939-8-robh@kernel.org>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190621144131.GQ19891@ziepe.ca>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Jun 21, 2019 at 11:41:31AM -0300, Jason Gunthorpe wrote:
+> >  static bool gup_fast_permitted(unsigned long start, unsigned long end)
+> >  {
+> > -	return true;
+> > +	return IS_ENABLED(CONFIG_HAVE_FAST_GUP) ? true : false;
+> 
+> The ?: is needed with IS_ENABLED?
 
---tetcemb75nz6lnkc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+It shouldn't, I'll fix it up.
 
-On Mon, Jun 24, 2019 at 03:56:41PM -0600, Rob Herring wrote:
-> Convert the pda,91-00156-a0 panel binding to DT schema.
->
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Sam Ravnborg <sam@ravnborg.org>
-> Cc: Maxime Ripard <maxime.ripard@bootlin.com>
-> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Cc: dri-devel@lists.freedesktop.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
+> I'd suggest to revise this block a tiny bit:
+> 
+> -#ifndef gup_fast_permitted
+> +#if !IS_ENABLED(CONFIG_HAVE_FAST_GUP) || !defined(gup_fast_permitted)
+>  /*
+>   * Check if it's allowed to use __get_user_pages_fast() for the range, or
+>   * we need to fall back to the slow version:
+>   */
+> -bool gup_fast_permitted(unsigned long start, int nr_pages)
+> +static bool gup_fast_permitted(unsigned long start, int nr_pages)
+>  {
+> 
+> Just in case some future arch code mismatches the header and kconfig..
 
-Reviewed-by: Maxime Ripard <maxime.ripard@bootlin.com>
-
-Maxime
-
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---tetcemb75nz6lnkc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXRHTkAAKCRDj7w1vZxhR
-xbsHAQC+DItZS8FM/IwhhvjelXnaAO1PLBHqZkJhMjEYsWx2ZAEA05KkRSEAsqUQ
-xN5fn1gOLC4Ji1f0HZpTRyEo8fAcwQQ=
-=KgYT
------END PGP SIGNATURE-----
-
---tetcemb75nz6lnkc--
+IS_ENABLED outside a function doesn't really make sense.  But I'll
+just life the IS_ENABLED(CONFIG_HAVE_FAST_GUP) checks into the two
+callers.
