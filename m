@@ -2,96 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A72E6527D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 11:21:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C49CE527DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 11:21:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731302AbfFYJVC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 05:21:02 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:37412 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726053AbfFYJVB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 05:21:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=kWFGsgP2Pm3DM5uQIO0spWLoR+OdFQRgQgn4QPKEhkE=; b=ae2ixDhngouE2PWTP0Nptq1H7N
-        V7n0/drK3xAbC49373SoCXt3of3zPB3/DdTa1CiLFowJKzMX3M1ONi+zHx89Tlz1btzBjjKycjc6i
-        mPoo5E1wfKgZnlrxCsbK7eb+pmtBRXyZ8oGThFPWADET3nhxWKLhP85sc0N9sclASPN5SaMCllPFC
-        zSUzzd250+H5TdJ+iXOmhNTZ8vPXpJGnAVMReS64TtETY6+TvDYaKZBQ22RlPD2p6RCfZO79C+BRH
-        2UNwa6EYFZpWmg4QtQcYIIwYexwu78Z7Ns7ABpEVA7hkUiMWGnUtKi3uCq0MJaYkgH6DkZ4nJxGZ2
-        g14ypjEw==;
-Received: from clnet-p19-102.ikbnet.co.at ([83.175.77.102] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hfhdH-0005lS-Iu; Tue, 25 Jun 2019 09:20:56 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Russell King <linux@armlinux.org.uk>, linux-mmc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] dma-mapping: remove dma_max_pfn
-Date:   Tue, 25 Jun 2019 11:20:42 +0200
-Message-Id: <20190625092042.19320-3-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190625092042.19320-1-hch@lst.de>
-References: <20190625092042.19320-1-hch@lst.de>
+        id S1731429AbfFYJVT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 05:21:19 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:44184 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731407AbfFYJVR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 05:21:17 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 898793082E64;
+        Tue, 25 Jun 2019 09:21:17 +0000 (UTC)
+Received: from carbon (ovpn-200-34.brq.redhat.com [10.40.200.34])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3CCDE10021B4;
+        Tue, 25 Jun 2019 09:21:07 +0000 (UTC)
+Date:   Tue, 25 Jun 2019 11:21:04 +0200
+From:   Jesper Dangaard Brouer <brouer@redhat.com>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     <davem@davemloft.net>, <ast@kernel.org>, <daniel@iogearbox.net>,
+        <jakub.kicinski@netronome.com>, <john.fastabend@gmail.com>,
+        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <xdp-newbies@vger.kernel.org>, <bpf@vger.kernel.org>,
+        brouer@redhat.com
+Subject: Re: [PATCH net-next] xdp: Make __mem_id_disconnect static
+Message-ID: <20190625112104.6654a048@carbon>
+In-Reply-To: <20190625023137.29272-1-yuehaibing@huawei.com>
+References: <20190625023137.29272-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Tue, 25 Jun 2019 09:21:17 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These days the DMA mapping code must bounce buffer for any not supported
-address, and if they driver needs to optimize for natively supported
-ranged it should use dma_get_required_mask.
+On Tue, 25 Jun 2019 10:31:37 +0800
+YueHaibing <yuehaibing@huawei.com> wrote:
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- arch/arm/include/asm/dma-mapping.h | 7 -------
- include/linux/dma-mapping.h        | 7 -------
- 2 files changed, 14 deletions(-)
+> Fix sparse warning:
+> 
+> net/core/xdp.c:88:6: warning:
+>  symbol '__mem_id_disconnect' was not declared. Should it be static?
 
-diff --git a/arch/arm/include/asm/dma-mapping.h b/arch/arm/include/asm/dma-mapping.h
-index 03ba90ffc0f8..7e0486ad1318 100644
---- a/arch/arm/include/asm/dma-mapping.h
-+++ b/arch/arm/include/asm/dma-mapping.h
-@@ -89,13 +89,6 @@ static inline dma_addr_t virt_to_dma(struct device *dev, void *addr)
- }
- #endif
- 
--/* The ARM override for dma_max_pfn() */
--static inline unsigned long dma_max_pfn(struct device *dev)
--{
--	return dma_to_pfn(dev, *dev->dma_mask);
--}
--#define dma_max_pfn(dev) dma_max_pfn(dev)
--
- /* do not use this function in a driver */
- static inline bool is_device_dma_coherent(struct device *dev)
- {
-diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-index 6309a721394b..8d13e28a8e07 100644
---- a/include/linux/dma-mapping.h
-+++ b/include/linux/dma-mapping.h
-@@ -729,13 +729,6 @@ static inline int dma_set_seg_boundary(struct device *dev, unsigned long mask)
- 	return -EIO;
- }
- 
--#ifndef dma_max_pfn
--static inline unsigned long dma_max_pfn(struct device *dev)
--{
--	return (*dev->dma_mask >> PAGE_SHIFT) + dev->dma_pfn_offset;
--}
--#endif
--
- static inline int dma_get_cache_alignment(void)
- {
- #ifdef ARCH_DMA_MINALIGN
+I didn't declare it static as I didn't want it to get inlined.  As
+during development I was using kprobes to inspect this function.  In
+the end I added a tracepoint in this function as kprobes was not enough
+to capture the state needed.
+
+So, I guess we can declare it static.
+
+Acked-by: Jesper Dangaard Brouer <brouer@redhat.com>
+
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+>  net/core/xdp.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/net/core/xdp.c b/net/core/xdp.c
+> index b29d7b5..829377c 100644
+> --- a/net/core/xdp.c
+> +++ b/net/core/xdp.c
+> @@ -85,7 +85,7 @@ static void __xdp_mem_allocator_rcu_free(struct rcu_head *rcu)
+>  	kfree(xa);
+>  }
+>  
+> -bool __mem_id_disconnect(int id, bool force)
+> +static bool __mem_id_disconnect(int id, bool force)
+>  {
+>  	struct xdp_mem_allocator *xa;
+>  	bool safe_to_remove = true;
+
+
 -- 
-2.20.1
-
+Best regards,
+  Jesper Dangaard Brouer
+  MSc.CS, Principal Kernel Engineer at Red Hat
+  LinkedIn: http://www.linkedin.com/in/brouer
