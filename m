@@ -2,104 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD73A55885
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 22:13:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FB505588E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 22:15:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727738AbfFYUNv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 16:13:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42690 "EHLO mail.kernel.org"
+        id S1727007AbfFYUPd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 16:15:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44066 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726907AbfFYUNu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 16:13:50 -0400
-Received: from sasha-vm.mshome.net (unknown [167.220.24.221])
+        id S1726628AbfFYUPd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 16:15:33 -0400
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 067F4208E3;
-        Tue, 25 Jun 2019 20:13:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 208DF216E3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 20:15:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561493629;
-        bh=+A8kslJHW27NDdIFi7+iCBJaMHuSt9MpoOrdUYPdCYE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wMCLl0PFhJPyATqhiS/MBnteSDZoFOtFe/8PptE6znBX92m3v8uZXSrNAxTvMYnKH
-         bdR+H4HmyIcDHrwqFYISVEt6I6k3JXcKWI9ORFLtCmCvVzEsTMjkwgRA9ULXgn+aFh
-         AP7om9XgDfvXBC7XblRLKcAGUgZkn35wj2eUyD7Q=
-From:   Sasha Levin <sashal@kernel.org>
-To:     peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca
-Cc:     corbet@lwn.net, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@microsoft.com, thiruan@microsoft.com,
-        bryankel@microsoft.com, tee-dev@lists.linaro.org,
-        ilias.apalodimas@linaro.org, sumit.garg@linaro.org,
-        rdunlap@infradead.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH v7 2/2] fTPM: add documentation for ftpm driver
-Date:   Tue, 25 Jun 2019 16:13:41 -0400
-Message-Id: <20190625201341.15865-3-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190625201341.15865-1-sashal@kernel.org>
-References: <20190625201341.15865-1-sashal@kernel.org>
+        s=default; t=1561493732;
+        bh=Non/zwPybF2AGuhmjwFgxmMCpYW8ogfnhbNrhDKk/vc=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=lLPnssPRCinSZhMedXFl4IX9MsXTNhVSxFwL4KFntKi0pXjqZtp295xgMzrg8LGbO
+         mOUGpRdpbB/L63NxLJu57zUIKU8V40nkRaOVFZ6w0Dr1RtDyGNFekX200zDZun+Q1n
+         hwMQ4fQRt/bJqYXOD6mBo2LKulD7skPGobAZzDmU=
+Received: by mail-wr1-f47.google.com with SMTP id n4so73090wrs.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 13:15:32 -0700 (PDT)
+X-Gm-Message-State: APjAAAWYLeOVhVybsUR2qojRV1378sjHfofXns6VNbKUYuLERvBKslhY
+        JwfOQtQkz6Zl0O+fTSeNkjSckFiLA1Au2Vq8VxtgIg==
+X-Google-Smtp-Source: APXvYqyhHtmITJg1+Pl3hirpl0QwbJ++nvN6wGzhM8y02SUtgxU8TIY6h1kuPsgr5idu476pi12gfJv0CJukh1rt4Oc=
+X-Received: by 2002:adf:cc85:: with SMTP id p5mr17560wrj.47.1561493730555;
+ Tue, 25 Jun 2019 13:15:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190624133607.GI29497@fuggles.cambridge.arm.com>
+ <20190625161804.38713-1-vincenzo.frascino@arm.com> <alpine.DEB.2.21.1906251851350.32342@nanos.tec.linutronix.de>
+ <alpine.DEB.2.21.1906252024350.32342@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1906252024350.32342@nanos.tec.linutronix.de>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Tue, 25 Jun 2019 13:15:19 -0700
+X-Gmail-Original-Message-ID: <CALCETrWE3zYN-6h0RkMV9j5kSkSWbJ-nQnjhH=md=ybSR0eZ9Q@mail.gmail.com>
+Message-ID: <CALCETrWE3zYN-6h0RkMV9j5kSkSWbJ-nQnjhH=md=ybSR0eZ9Q@mail.gmail.com>
+Subject: Re: [PATCH 1/3] lib/vdso: Delay mask application in do_hres()
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LAK <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-mips@vger.kernel.org,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Peter Collingbourne <pcc@google.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Huw Davies <huw@codeweavers.com>,
+        Shijith Thotton <sthotton@marvell.com>,
+        Andre Przywara <andre.przywara@arm.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds basic documentation to describe the new fTPM driver.
+On Tue, Jun 25, 2019 at 11:27 AM Thomas Gleixner <tglx@linutronix.de> wrote:
+>
+> On Tue, 25 Jun 2019, Thomas Gleixner wrote:
+>
+> > On Tue, 25 Jun 2019, Vincenzo Frascino wrote:
+> >
+> > CC+ Andy
+> >
+> > > do_hres() in the vDSO generic library masks the hw counter value
+> > > immediately after reading it.
+> > >
+> > > Postpone the mask application after checking if the syscall fallback is
+> > > enabled, in order to be able to detect a possible fallback for the
+> > > architectures that have masks smaller than ULLONG_MAX.
+> >
+> > Right. This only worked on x86 because the mask is there ULLONG_MAX for all
+> > VDSO capable clocksources, i.e. that ever worked just by chance.
+> >
+> > As we talked about that already yesterday, I tested this on a couple of
+> > machines and as expected the outcome is uarch dependent. Minimal deviations
+> > to both sides and some machines do not show any change at all. I doubt it's
+> > possible to come up with a solution which makes all uarchs go faster
+> > magically.
+> >
+> > Though, thinking about it, we could remove the mask operation completely on
+> > X86. /me runs tests
+>
+> Unsurprisingly the results vary. Two uarchs do not care, but they did not
+> care about moving the mask either. The other two gain performance and the
+> last one falls back to the state before moving the mask. So in general it
+> looks like a worthwhile optimization.
+>
 
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- Documentation/security/tpm/index.rst        |  1 +
- Documentation/security/tpm/tpm_ftpm_tee.rst | 31 +++++++++++++++++++++
- 2 files changed, 32 insertions(+)
- create mode 100644 Documentation/security/tpm/tpm_ftpm_tee.rst
-
-diff --git a/Documentation/security/tpm/index.rst b/Documentation/security/tpm/index.rst
-index af77a7bbb070..15783668644f 100644
---- a/Documentation/security/tpm/index.rst
-+++ b/Documentation/security/tpm/index.rst
-@@ -4,4 +4,5 @@ Trusted Platform Module documentation
- 
- .. toctree::
- 
-+   tpm_ftpm_tee
-    tpm_vtpm_proxy
-diff --git a/Documentation/security/tpm/tpm_ftpm_tee.rst b/Documentation/security/tpm/tpm_ftpm_tee.rst
-new file mode 100644
-index 000000000000..48de0dcec0f6
---- /dev/null
-+++ b/Documentation/security/tpm/tpm_ftpm_tee.rst
-@@ -0,0 +1,31 @@
-+=============================================
-+Firmware TPM Driver
-+=============================================
-+
-+| Authors:
-+| Thirupathaiah Annapureddy <thiruan@microsoft.com>
-+| Sasha Levin <sashal@kernel.org>
-+
-+This document describes the firmware Trusted Platform Module (fTPM)
-+device driver.
-+
-+Introduction
-+============
-+
-+This driver is a shim for firmware implemented in ARM's TrustZone
-+environment. The driver allows programs to interact with the TPM in the same
-+way they would interact with a hardware TPM.
-+
-+Design
-+======
-+
-+The driver acts as a thin layer that passes commands to and from a TPM
-+implemented in firmware. The driver itself doesn't contain much logic and is
-+used more like a dumb pipe between firmware and kernel/userspace.
-+
-+The firmware itself is based on the following paper:
-+https://www.microsoft.com/en-us/research/wp-content/uploads/2017/06/ftpm1.pdf
-+
-+When the driver is loaded it will expose ``/dev/tpmX`` character devices to
-+userspace which will enable userspace to communicate with the firmware TPM
-+through this device.
--- 
-2.20.1
-
+At one point, I contemplated a different approach: have the "get the
+counter" routine return 0 and then do if (unlikely(cycles <= last))
+goto fallback.  This will remove one branch from the hot path.  I got
+dubious results when I tried benchmarking it, probably because the
+branch in question was always correctly predicted.
