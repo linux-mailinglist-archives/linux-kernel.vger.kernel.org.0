@@ -2,115 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A362355B09
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 00:25:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D39A855B18
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 00:29:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726474AbfFYWYy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 18:24:54 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:44570 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726274AbfFYWYx (ORCPT
+        id S1726454AbfFYW3e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 18:29:34 -0400
+Received: from smtprelay0161.hostedemail.com ([216.40.44.161]:55295 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726077AbfFYW3d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 18:24:53 -0400
-Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hftrr-00020M-H0; Wed, 26 Jun 2019 00:24:47 +0200
-Date:   Wed, 26 Jun 2019 00:24:46 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Andy Lutomirski <luto@kernel.org>
-cc:     Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LAK <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-mips@vger.kernel.org,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Mark Salyzyn <salyzyn@android.com>,
-        Peter Collingbourne <pcc@google.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Huw Davies <huw@codeweavers.com>,
-        Shijith Thotton <sthotton@marvell.com>,
-        Andre Przywara <andre.przywara@arm.com>,
+        Tue, 25 Jun 2019 18:29:33 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 294F1100E86C4;
+        Tue, 25 Jun 2019 22:29:32 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::::::::::::::::::,RULES_HIT:41:355:379:599:960:968:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2194:2199:2393:2559:2562:2691:2828:2919:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3868:3870:3871:3872:3874:4321:4605:5007:6238:6742:7875:7904:10004:10400:10848:11026:11232:11473:11658:11914:12043:12295:12296:12297:12438:12555:12660:12740:12760:12895:13018:13019:13069:13141:13230:13311:13357:13439:14181:14659:14721:21063:21080:21451:21627:21740:30054:30055:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.14.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:29,LUA_SUMMARY:none
+X-HE-Tag: part49_6fe907977cd1a
+X-Filterd-Recvd-Size: 3628
+Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf20.hostedemail.com (Postfix) with ESMTPA;
+        Tue, 25 Jun 2019 22:29:28 +0000 (UTC)
+Message-ID: <1336988f46fb7ffda925ab86a6e4d5437cfdb275.camel@perches.com>
+Subject: Re: [PATCH] perf/x86/intel: Mark expected switch fall-throughs
+From:   Joe Perches <joe@perches.com>
+To:     Nick Desaulniers <ndesaulniers@google.com>,
         Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH 1/3] lib/vdso: Delay mask application in do_hres()
-In-Reply-To: <CALCETrWE3zYN-6h0RkMV9j5kSkSWbJ-nQnjhH=md=ybSR0eZ9Q@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1906260009260.32342@nanos.tec.linutronix.de>
-References: <20190624133607.GI29497@fuggles.cambridge.arm.com> <20190625161804.38713-1-vincenzo.frascino@arm.com> <alpine.DEB.2.21.1906251851350.32342@nanos.tec.linutronix.de> <alpine.DEB.2.21.1906252024350.32342@nanos.tec.linutronix.de>
- <CALCETrWE3zYN-6h0RkMV9j5kSkSWbJ-nQnjhH=md=ybSR0eZ9Q@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Shawn Landden <shawn@git.icu>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Chandler Carruth <chandlerc@google.com>
+Date:   Tue, 25 Jun 2019 15:29:27 -0700
+In-Reply-To: <CAKwvOdn5j8Hkc_jrLMbhg-4jbNya+agtMJi=c9o01RPCno1Q+w@mail.gmail.com>
+References: <20190624161913.GA32270@embeddedor>
+         <20190624193123.GI3436@hirez.programming.kicks-ass.net>
+         <b00fc090d83ac6bd41a5db866b02d425d9ab20e4.camel@perches.com>
+         <20190624203737.GL3436@hirez.programming.kicks-ass.net>
+         <3dc75cd4-9a8d-f454-b5fb-64c3e6d1f416@embeddedor.com>
+         <CANiq72mMS6tHcP8MHW63YRmbdFrD3ZCWMbnQEeHUVN49v7wyXQ@mail.gmail.com>
+         <20190625071846.GN3436@hirez.programming.kicks-ass.net>
+         <CANiq72=zzZ+Cx8uM+5UW7HeB9XtbXRhXmC2y2tz5EzPX77gHMw@mail.gmail.com>
+         <CAKwvOdn5j8Hkc_jrLMbhg-4jbNya+agtMJi=c9o01RPCno1Q+w@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 25 Jun 2019, Andy Lutomirski wrote:
-> On Tue, Jun 25, 2019 at 11:27 AM Thomas Gleixner <tglx@linutronix.de> wrote:
-> >
-> > On Tue, 25 Jun 2019, Thomas Gleixner wrote:
-> >
-> > > On Tue, 25 Jun 2019, Vincenzo Frascino wrote:
-> > >
-> > > CC+ Andy
-> > >
-> > > > do_hres() in the vDSO generic library masks the hw counter value
-> > > > immediately after reading it.
-> > > >
-> > > > Postpone the mask application after checking if the syscall fallback is
-> > > > enabled, in order to be able to detect a possible fallback for the
-> > > > architectures that have masks smaller than ULLONG_MAX.
-> > >
-> > > Right. This only worked on x86 because the mask is there ULLONG_MAX for all
-> > > VDSO capable clocksources, i.e. that ever worked just by chance.
-> > >
-> > > As we talked about that already yesterday, I tested this on a couple of
-> > > machines and as expected the outcome is uarch dependent. Minimal deviations
-> > > to both sides and some machines do not show any change at all. I doubt it's
-> > > possible to come up with a solution which makes all uarchs go faster
-> > > magically.
-> > >
-> > > Though, thinking about it, we could remove the mask operation completely on
-> > > X86. /me runs tests
-> >
-> > Unsurprisingly the results vary. Two uarchs do not care, but they did not
-> > care about moving the mask either. The other two gain performance and the
-> > last one falls back to the state before moving the mask. So in general it
-> > looks like a worthwhile optimization.
-> >
-> 
-> At one point, I contemplated a different approach: have the "get the
-> counter" routine return 0 and then do if (unlikely(cycles <= last))
-> goto fallback.  This will remove one branch from the hot path.  I got
-> dubious results when I tried benchmarking it, probably because the
-> branch in question was always correctly predicted.
+On Tue, 2019-06-25 at 11:15 -0700, Nick Desaulniers wrote:
+> Unreleased versions of Clang built from source can; the latest release
+> of Clang-8 doesn't have asm goto support required for
+> CONFIG_JUMP_LABEL.  Things can get complicated based on which kernel
+> tree/branch (mainline, -next, stable), arch, and configs, but I think
+> we just have a few long tail bugs left.
 
-Just tried and it's the same thing. One drops, one does not care and one
-gains. Did not test the other two as they are asleep already. There is no
-universal cure for this I fear. I even tried a uarch optimized build a few
-days ago which came out worse than the generic one...
+At some point, when clang generically compiles the kernel,
+I believe it'd be good to remove the various bits that
+are unusual like CONFIG_CC_HAS_ASM_GOTO in Makefile
+and the scripts/clang-version.sh and the like.
 
-The issue in that code path is the fencing of the TSC read. That seems to
-screw up every uarch in a different way.
+This could help when compiling a specific .config on
+different systems.
 
-If you have no objections I'll queue this change (moving the mask) along
-with the other two ARM64 ones to unbreak the fallback path for these errata
-inflicted machines.
+Maybe add the equivalent compiler-gcc.h #define below
+even before the removals
 
-Thanks,
+(whatever minor/patchlevel appropriate)
+---
+ include/linux/compiler-clang.h | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-	tglx
+diff --git a/include/linux/compiler-clang.h b/include/linux/compiler-clang.h
+index 333a6695a918..b46aece0f9ca 100644
+--- a/include/linux/compiler-clang.h
++++ b/include/linux/compiler-clang.h
+@@ -5,6 +5,14 @@
+ 
+ /* Compiler specific definitions for Clang compiler */
+ 
++#define CLANG_VERSION (__clang_major__ * 10000	\
++		       + __clang_minor__ * 100	\
++		       + __clang_patchlevel__)
++
++#if CLANG_VERSION < 90000
++# error Sorry, your compiler is too old - please upgrade it.
++#endif
++
+ #define uninitialized_var(x) x = *(&(x))
+ 
+ /* same as gcc, this was present in clang-2.6 so we can assume it works
+
+
+
 
