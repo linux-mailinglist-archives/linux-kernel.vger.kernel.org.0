@@ -2,479 +2,238 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A376C52656
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 10:19:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E77E852664
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 10:21:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729772AbfFYITc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 04:19:32 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:38083 "EHLO frisell.zx2c4.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728818AbfFYITb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 04:19:31 -0400
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id c4d01081;
-        Tue, 25 Jun 2019 07:45:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=from:to:cc
-        :subject:date:message-id:in-reply-to:references:mime-version
-        :content-transfer-encoding; s=mail; bh=2oUXYO/ZlKc88Ej+IHrly3uiZ
-        o4=; b=ihxT0NBfTWjQVuwgzsSOVSXLDTPuyZmoqIMZ/CbKrraGLF3w8/Ta5qADf
-        MP+RhCOK3Ros+msDJZPsYYPKNvEpRV1pn7kOvBYT3/9+jOodbq9oDa5B4VWhhqIx
-        iZBxZ9gTDvUDgPMX2WQz70MbAWFWAL9TliPuUgXTy3yrs28q1Et1VhT57JpPsJ25
-        Y+qGXajCocedM013PSvSLIQXXVqNTkQJwpw4tX4ukiRV15TQY3CVVZ4iLgzwIZJ5
-        Vl5jLSiIrU/N6+klyYQc1sxo2DJgcR2CQeyHPvruyqPtXvRI60DWdDwv7vBVuhlq
-        6+4KrNqXguyC+HkFq/3kBY/V2qrPQ==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id b724ab95 (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO);
-        Tue, 25 Jun 2019 07:45:35 +0000 (UTC)
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 2/2] timekeeping: rename fast getter functions to be consistent
-Date:   Tue, 25 Jun 2019 10:19:12 +0200
-Message-Id: <20190625081912.14813-3-Jason@zx2c4.com>
-In-Reply-To: <20190625081912.14813-1-Jason@zx2c4.com>
-References: <20190625081912.14813-1-Jason@zx2c4.com>
+        id S1730044AbfFYIVt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 04:21:49 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:33575 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726951AbfFYIVs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 04:21:48 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5P8JtMn3527010
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Tue, 25 Jun 2019 01:19:55 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5P8JtMn3527010
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019061801; t=1561450796;
+        bh=vnj76vv/pJNUD1nlr2Y4IkmpO8r8t16xgdTjn6otvew=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=sF3N1JA65VimiPFKQF6WMHdhKnGFlMGJXT5TVMwTZ5BD6hJas9ePSCmOosFQ4Ds1A
+         JESQTkDABGQ35/5QE223jBQtFvfmCTLWVKnebTAIs/LJoOqZyq6weqxqpYDFTjw+51
+         j+O/cJO7K90VCtX0JaDEoPYaAgjid2916xqpR9T2apNTxudbfV1zom16hd0Hqg1rDT
+         TCYZAyObh/+KMkvuX2TNtEPHMc9rGNt6FSgLySaxOau4LuuobfgSyoEd/uNg0VrQCe
+         qPHz9c3RPGFK6kP+8/huGTPAOL3Vx7o/Je/G5NS0QvlU4UhNPVJVLgrTgsAtd+vcLt
+         OZwLIx8sBrgKw==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5P8Jtv73527007;
+        Tue, 25 Jun 2019 01:19:55 -0700
+Date:   Tue, 25 Jun 2019 01:19:55 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Kan Liang <tipbot@zytor.com>
+Message-ID: <tip-e321d02db87af7840da29ef833a2a71fc0eab198@git.kernel.org>
+Cc:     eranian@google.com, mingo@kernel.org,
+        torvalds@linux-foundation.org, acme@redhat.com, jolsa@redhat.com,
+        kan.liang@linux.intel.com, tglx@linutronix.de, hpa@zytor.com,
+        vincent.weaver@maine.edu, alexander.shishkin@linux.intel.com,
+        linux-kernel@vger.kernel.org, peterz@infradead.org
+Reply-To: hpa@zytor.com, linux-kernel@vger.kernel.org,
+          alexander.shishkin@linux.intel.com, vincent.weaver@maine.edu,
+          peterz@infradead.org, mingo@kernel.org,
+          torvalds@linux-foundation.org, eranian@google.com,
+          kan.liang@linux.intel.com, acme@redhat.com, jolsa@redhat.com,
+          tglx@linutronix.de
+In-Reply-To: <1559081314-9714-1-git-send-email-kan.liang@linux.intel.com>
+References: <1559081314-9714-1-git-send-email-kan.liang@linux.intel.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] perf/x86: Disable extended registers for
+ non-supported PMUs
+Git-Commit-ID: e321d02db87af7840da29ef833a2a71fc0eab198
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF autolearn=ham
+        autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The _fast_ family of functions put the _fast_ modifier in the wrong
-place and confuse tai with clocktai and boot with boottime. Also, no
-other functions use _mono, making that the default unlabeled one.
-This commit normalizes these to match the rest of timekeeping.h.
+Commit-ID:  e321d02db87af7840da29ef833a2a71fc0eab198
+Gitweb:     https://git.kernel.org/tip/e321d02db87af7840da29ef833a2a71fc0eab198
+Author:     Kan Liang <kan.liang@linux.intel.com>
+AuthorDate: Tue, 28 May 2019 15:08:30 -0700
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Mon, 24 Jun 2019 19:19:23 +0200
 
-Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
+perf/x86: Disable extended registers for non-supported PMUs
+
+The perf fuzzer caused Skylake machine to crash:
+
+[ 9680.085831] Call Trace:
+[ 9680.088301]  <IRQ>
+[ 9680.090363]  perf_output_sample_regs+0x43/0xa0
+[ 9680.094928]  perf_output_sample+0x3aa/0x7a0
+[ 9680.099181]  perf_event_output_forward+0x53/0x80
+[ 9680.103917]  __perf_event_overflow+0x52/0xf0
+[ 9680.108266]  ? perf_trace_run_bpf_submit+0xc0/0xc0
+[ 9680.113108]  perf_swevent_hrtimer+0xe2/0x150
+[ 9680.117475]  ? check_preempt_wakeup+0x181/0x230
+[ 9680.122091]  ? check_preempt_curr+0x62/0x90
+[ 9680.126361]  ? ttwu_do_wakeup+0x19/0x140
+[ 9680.130355]  ? try_to_wake_up+0x54/0x460
+[ 9680.134366]  ? reweight_entity+0x15b/0x1a0
+[ 9680.138559]  ? __queue_work+0x103/0x3f0
+[ 9680.142472]  ? update_dl_rq_load_avg+0x1cd/0x270
+[ 9680.147194]  ? timerqueue_del+0x1e/0x40
+[ 9680.151092]  ? __remove_hrtimer+0x35/0x70
+[ 9680.155191]  __hrtimer_run_queues+0x100/0x280
+[ 9680.159658]  hrtimer_interrupt+0x100/0x220
+[ 9680.163835]  smp_apic_timer_interrupt+0x6a/0x140
+[ 9680.168555]  apic_timer_interrupt+0xf/0x20
+[ 9680.172756]  </IRQ>
+
+The XMM registers can only be collected by PEBS hardware events on the
+platforms with PEBS baseline support, e.g. Icelake, not software/probe
+events.
+
+Add capabilities flag PERF_PMU_CAP_EXTENDED_REGS to indicate the PMU
+which support extended registers. For X86, the extended registers are
+XMM registers.
+
+Add has_extended_regs() to check if extended registers are applied.
+
+The generic code define the mask of extended registers as 0 if arch
+headers haven't overridden it.
+
+Originally-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reported-by: Vince Weaver <vincent.weaver@maine.edu>
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
+Fixes: 878068ea270e ("perf/x86: Support outputting XMM registers")
+Link: https://lkml.kernel.org/r/1559081314-9714-1-git-send-email-kan.liang@linux.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- Documentation/core-api/timekeeping.rst | 18 ++++++++--------
- Documentation/trace/ftrace.rst         |  2 +-
- drivers/base/power/runtime.c           | 12 +++++------
- drivers/gpu/drm/i915/i915_perf.c       |  2 +-
- fs/pstore/platform.c                   |  2 +-
- include/linux/pm_runtime.h             |  2 +-
- include/linux/timekeeping.h            | 24 ++++++++++-----------
- kernel/bpf/helpers.c                   |  2 +-
- kernel/debug/kdb/kdb_main.c            |  2 +-
- kernel/events/core.c                   |  4 ++--
- kernel/rcu/rcuperf.c                   |  6 +++---
- kernel/rcu/srcutree.c                  |  6 +++---
- kernel/time/timekeeping.c              | 30 +++++++++++++-------------
- kernel/trace/trace.c                   |  6 +++---
- kernel/watchdog_hld.c                  |  2 +-
- 15 files changed, 60 insertions(+), 60 deletions(-)
+ arch/x86/events/intel/ds.c            |  1 +
+ arch/x86/include/uapi/asm/perf_regs.h |  3 +++
+ include/linux/perf_event.h            |  1 +
+ include/linux/perf_regs.h             |  8 ++++++++
+ kernel/events/core.c                  | 18 ++++++++++++++----
+ 5 files changed, 27 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/core-api/timekeeping.rst b/Documentation/core-api/timekeeping.rst
-index 29d38a86faac..3a9eac43f619 100644
---- a/Documentation/core-api/timekeeping.rst
-+++ b/Documentation/core-api/timekeeping.rst
-@@ -129,15 +129,15 @@ Some additional variants exist for more specialized cases:
- 	up to several microseconds on older hardware with an external
- 	clocksource.
- 
--.. c:function:: ktime_t ktime_get_mono_fast( void )
--		ktime_t ktime_get_raw_fast( void )
--		ktime_t ktime_get_boottime_fast( void )
--		ktime_t ktime_get_real_fast( void )
--
--.. c:function:: u64 ktime_get_mono_fast_ns( void )
--		u64 ktime_get_raw_fast_ns( void )
--		u64 ktime_get_boot_fast_ns( void )
--		u64 ktime_get_real_fast_ns( void )
-+.. c:function:: ktime_t ktime_get_fast( void )
-+		ktime_t ktime_get_fast_raw( void )
-+		ktime_t ktime_get_fast_boottime( void )
-+		ktime_t ktime_get_fast_real( void )
+diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
+index 7acc526b4ad2..6cb38ab02c8a 100644
+--- a/arch/x86/events/intel/ds.c
++++ b/arch/x86/events/intel/ds.c
+@@ -2020,6 +2020,7 @@ void __init intel_ds_init(void)
+ 					PERF_SAMPLE_TIME;
+ 				x86_pmu.flags |= PMU_FL_PEBS_ALL;
+ 				pebs_qual = "-baseline";
++				x86_get_pmu()->capabilities |= PERF_PMU_CAP_EXTENDED_REGS;
+ 			} else {
+ 				/* Only basic record supported */
+ 				x86_pmu.pebs_no_xmm_regs = 1;
+diff --git a/arch/x86/include/uapi/asm/perf_regs.h b/arch/x86/include/uapi/asm/perf_regs.h
+index ac67bbea10ca..7c9d2bb3833b 100644
+--- a/arch/x86/include/uapi/asm/perf_regs.h
++++ b/arch/x86/include/uapi/asm/perf_regs.h
+@@ -52,4 +52,7 @@ enum perf_event_x86_regs {
+ 	/* These include both GPRs and XMMX registers */
+ 	PERF_REG_X86_XMM_MAX = PERF_REG_X86_XMM15 + 2,
+ };
 +
-+.. c:function:: u64 ktime_get_fast_ns( void )
-+		u64 ktime_get_fast_raw_ns( void )
-+		u64 ktime_get_fast_boottime_ns( void )
-+		u64 ktime_get_fast_real_ns( void )
++#define PERF_REG_EXTENDED_MASK	(~((1ULL << PERF_REG_X86_XMM0) - 1))
++
+ #endif /* _ASM_X86_PERF_REGS_H */
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index 0ab99c7b652d..2bca72f3028b 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -241,6 +241,7 @@ struct perf_event;
+ #define PERF_PMU_CAP_NO_INTERRUPT		0x01
+ #define PERF_PMU_CAP_NO_NMI			0x02
+ #define PERF_PMU_CAP_AUX_NO_SG			0x04
++#define PERF_PMU_CAP_EXTENDED_REGS		0x08
+ #define PERF_PMU_CAP_EXCLUSIVE			0x10
+ #define PERF_PMU_CAP_ITRACE			0x20
+ #define PERF_PMU_CAP_HETEROGENEOUS_CPUS		0x40
+diff --git a/include/linux/perf_regs.h b/include/linux/perf_regs.h
+index 476747456bca..2d12e97d5e7b 100644
+--- a/include/linux/perf_regs.h
++++ b/include/linux/perf_regs.h
+@@ -11,6 +11,11 @@ struct perf_regs {
  
- 	These variants are safe to call from any context, including from
- 	a non-maskable interrupt (NMI) during a timekeeper update, and
-diff --git a/Documentation/trace/ftrace.rst b/Documentation/trace/ftrace.rst
-index f60079259669..6ec0e2a59419 100644
---- a/Documentation/trace/ftrace.rst
-+++ b/Documentation/trace/ftrace.rst
-@@ -482,7 +482,7 @@ of ftrace. Here is a list of some of the key files:
- 		Also on 32-bit systems, it's possible that the 64-bit boot offset
- 		sees a partial update. These effects are rare and post
- 		processing should be able to handle them. See comments in the
--		ktime_get_boot_fast_ns() function for more information.
-+		ktime_get_fast_boottime_ns() function for more information.
- 
- 	To set a clock, simply echo the clock name into this file::
- 
-diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
-index 952a1e7057c7..218bc89c20ba 100644
---- a/drivers/base/power/runtime.c
-+++ b/drivers/base/power/runtime.c
-@@ -71,11 +71,11 @@ static void update_pm_runtime_accounting(struct device *dev)
- 
- 	last = dev->power.accounting_timestamp;
- 
--	now = ktime_get_mono_fast_ns();
-+	now = ktime_get_fast_ns();
- 	dev->power.accounting_timestamp = now;
- 
- 	/*
--	 * Because ktime_get_mono_fast_ns() is not monotonic during
-+	 * Because ktime_get_fast_ns() is not monotonic during
- 	 * timekeeping updates, ensure that 'now' is after the last saved
- 	 * timesptamp.
- 	 */
-@@ -174,7 +174,7 @@ u64 pm_runtime_autosuspend_expiration(struct device *dev)
- 
- 	expires  = READ_ONCE(dev->power.last_busy);
- 	expires += (u64)autosuspend_delay * NSEC_PER_MSEC;
--	if (expires > ktime_get_mono_fast_ns())
-+	if (expires > ktime_get_fast_ns())
- 		return expires;	/* Expires in the future */
- 
+ #ifdef CONFIG_HAVE_PERF_REGS
+ #include <asm/perf_regs.h>
++
++#ifndef PERF_REG_EXTENDED_MASK
++#define PERF_REG_EXTENDED_MASK	0
++#endif
++
+ u64 perf_reg_value(struct pt_regs *regs, int idx);
+ int perf_reg_validate(u64 mask);
+ u64 perf_reg_abi(struct task_struct *task);
+@@ -18,6 +23,9 @@ void perf_get_regs_user(struct perf_regs *regs_user,
+ 			struct pt_regs *regs,
+ 			struct pt_regs *regs_user_copy);
+ #else
++
++#define PERF_REG_EXTENDED_MASK	0
++
+ static inline u64 perf_reg_value(struct pt_regs *regs, int idx)
+ {
  	return 0;
-@@ -938,7 +938,7 @@ static enum hrtimer_restart  pm_suspend_timer_fn(struct hrtimer *timer)
- 	 * If 'expires' is after the current time, we've been called
- 	 * too early.
- 	 */
--	if (expires > 0 && expires < ktime_get_mono_fast_ns()) {
-+	if (expires > 0 && expires < ktime_get_fast_ns()) {
- 		dev->power.timer_expires = 0;
- 		rpm_suspend(dev, dev->power.timer_autosuspends ?
- 		    (RPM_ASYNC | RPM_AUTO) : RPM_ASYNC);
-@@ -974,7 +974,7 @@ int pm_schedule_suspend(struct device *dev, unsigned int delay)
- 	/* Other scheduled or pending requests need to be canceled. */
- 	pm_runtime_cancel_pending(dev);
- 
--	expires = ktime_get_mono_fast_ns() + (u64)delay * NSEC_PER_MSEC;
-+	expires = ktime_get_fast_ns() + (u64)delay * NSEC_PER_MSEC;
- 	dev->power.timer_expires = expires;
- 	dev->power.timer_autosuspends = 0;
- 	hrtimer_start(&dev->power.suspend_timer, expires, HRTIMER_MODE_ABS);
-@@ -1378,7 +1378,7 @@ void pm_runtime_enable(struct device *dev)
- 
- 		/* About to enable runtime pm, set accounting_timestamp to now */
- 		if (!dev->power.disable_depth)
--			dev->power.accounting_timestamp = ktime_get_mono_fast_ns();
-+			dev->power.accounting_timestamp = ktime_get_fast_ns();
- 	} else {
- 		dev_warn(dev, "Unbalanced %s!\n", __func__);
- 	}
-diff --git a/drivers/gpu/drm/i915/i915_perf.c b/drivers/gpu/drm/i915/i915_perf.c
-index dc4ce694c06a..211b10cec5e2 100644
---- a/drivers/gpu/drm/i915/i915_perf.c
-+++ b/drivers/gpu/drm/i915/i915_perf.c
-@@ -478,7 +478,7 @@ static bool oa_buffer_check_unlocked(struct drm_i915_private *dev_priv)
- 	 */
- 	hw_tail &= ~(report_size - 1);
- 
--	now = ktime_get_mono_fast_ns();
-+	now = ktime_get_fast_ns();
- 
- 	/* Update the aged tail
- 	 *
-diff --git a/fs/pstore/platform.c b/fs/pstore/platform.c
-index 3d7024662d29..531e48d96096 100644
---- a/fs/pstore/platform.c
-+++ b/fs/pstore/platform.c
-@@ -378,7 +378,7 @@ void pstore_record_init(struct pstore_record *record,
- 	record->psi = psinfo;
- 
- 	/* Report zeroed timestamp if called before timekeeping has resumed. */
--	record->time = ns_to_timespec64(ktime_get_real_fast_ns());
-+	record->time = ns_to_timespec64(ktime_get_fast_real_ns());
- }
- 
- /*
-diff --git a/include/linux/pm_runtime.h b/include/linux/pm_runtime.h
-index 22af69d237a6..e904d93c6cfd 100644
---- a/include/linux/pm_runtime.h
-+++ b/include/linux/pm_runtime.h
-@@ -104,7 +104,7 @@ static inline bool pm_runtime_callbacks_present(struct device *dev)
- 
- static inline void pm_runtime_mark_last_busy(struct device *dev)
- {
--	WRITE_ONCE(dev->power.last_busy, ktime_get_mono_fast_ns());
-+	WRITE_ONCE(dev->power.last_busy, ktime_get_fast_ns());
- }
- 
- static inline bool pm_runtime_is_irq_safe(struct device *dev)
-diff --git a/include/linux/timekeeping.h b/include/linux/timekeeping.h
-index b8a3a129258c..e06a5989b7c5 100644
---- a/include/linux/timekeeping.h
-+++ b/include/linux/timekeeping.h
-@@ -174,29 +174,29 @@ static inline u64 ktime_get_raw_ns(void)
- 	return ktime_to_ns(ktime_get_raw());
- }
- 
--extern ktime_t ktime_get_mono_fast(void);
--extern ktime_t ktime_get_raw_fast(void);
--extern ktime_t ktime_get_boottime_fast(void);
--extern ktime_t ktime_get_real_fast(void);
-+extern ktime_t ktime_get_fast(void);
-+extern ktime_t ktime_get_fast_raw(void);
-+extern ktime_t ktime_get_fast_boottime(void);
-+extern ktime_t ktime_get_fast_real(void);
- 
--static inline u64 ktime_get_mono_fast_ns(void)
-+static inline u64 ktime_get_fast_ns(void)
- {
--	return ktime_to_ns(ktime_get_mono_fast());
-+	return ktime_to_ns(ktime_get_fast());
- }
- 
--static inline u64 ktime_get_raw_fast_ns(void)
-+static inline u64 ktime_get_fast_raw_ns(void)
- {
--	return ktime_to_ns(ktime_get_raw_fast());
-+	return ktime_to_ns(ktime_get_fast_raw());
- }
- 
--static inline u64 ktime_get_boot_fast_ns(void)
-+static inline u64 ktime_get_fast_boottime_ns(void)
- {
--	return ktime_to_ns(ktime_get_boottime_fast());
-+	return ktime_to_ns(ktime_get_fast_boottime());
- }
- 
--static inline u64 ktime_get_real_fast_ns(void)
-+static inline u64 ktime_get_fast_real_ns(void)
- {
--	return ktime_to_ns(ktime_get_real_fast());
-+	return ktime_to_ns(ktime_get_fast_real());
- }
- 
- /*
-diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
-index 5e28718928ca..df3617962dfd 100644
---- a/kernel/bpf/helpers.c
-+++ b/kernel/bpf/helpers.c
-@@ -143,7 +143,7 @@ const struct bpf_func_proto bpf_get_numa_node_id_proto = {
- BPF_CALL_0(bpf_ktime_get_ns)
- {
- 	/* NMI safe access to clock monotonic */
--	return ktime_get_mono_fast_ns();
-+	return ktime_get_fast_ns();
- }
- 
- const struct bpf_func_proto bpf_ktime_get_ns_proto = {
-diff --git a/kernel/debug/kdb/kdb_main.c b/kernel/debug/kdb/kdb_main.c
-index 9ecfa37c7fbf..59dce544cfea 100644
---- a/kernel/debug/kdb/kdb_main.c
-+++ b/kernel/debug/kdb/kdb_main.c
-@@ -2491,7 +2491,7 @@ static int kdb_kill(int argc, const char **argv)
-  */
- static void kdb_sysinfo(struct sysinfo *val)
- {
--	u64 uptime = ktime_get_mono_fast_ns();
-+	u64 uptime = ktime_get_fast_ns();
- 
- 	memset(val, 0, sizeof(*val));
- 	val->uptime = div_u64(uptime, NSEC_PER_SEC);
 diff --git a/kernel/events/core.c b/kernel/events/core.c
-index e2d014395fc6..2f708be06aad 100644
+index 8d1c62df20a7..f85929ce13be 100644
 --- a/kernel/events/core.c
 +++ b/kernel/events/core.c
-@@ -10666,12 +10666,12 @@ static int perf_event_set_clock(struct perf_event *event, clockid_t clk_id)
- 
- 	switch (clk_id) {
- 	case CLOCK_MONOTONIC:
--		event->clock = &ktime_get_mono_fast_ns;
-+		event->clock = &ktime_get_fast_ns;
- 		nmi_safe = true;
- 		break;
- 
- 	case CLOCK_MONOTONIC_RAW:
--		event->clock = &ktime_get_raw_fast_ns;
-+		event->clock = &ktime_get_fast_raw_ns;
- 		nmi_safe = true;
- 		break;
- 
-diff --git a/kernel/rcu/rcuperf.c b/kernel/rcu/rcuperf.c
-index 7a6890b23c5f..665056894dea 100644
---- a/kernel/rcu/rcuperf.c
-+++ b/kernel/rcu/rcuperf.c
-@@ -375,7 +375,7 @@ rcu_perf_writer(void *arg)
- 	if (holdoff)
- 		schedule_timeout_uninterruptible(holdoff * HZ);
- 
--	t = ktime_get_mono_fast_ns();
-+	t = ktime_get_fast_ns();
- 	if (atomic_inc_return(&n_rcu_perf_writer_started) >= nrealwriters) {
- 		t_rcu_perf_writer_started = t;
- 		if (gp_exp) {
-@@ -390,7 +390,7 @@ rcu_perf_writer(void *arg)
- 		if (writer_holdoff)
- 			udelay(writer_holdoff);
- 		wdp = &wdpp[i];
--		*wdp = ktime_get_mono_fast_ns();
-+		*wdp = ktime_get_fast_ns();
- 		if (gp_async) {
- retry:
- 			if (!rhp)
-@@ -415,7 +415,7 @@ rcu_perf_writer(void *arg)
- 			cur_ops->sync();
- 		}
- 		rcu_perf_writer_state = RTWS_IDLE;
--		t = ktime_get_mono_fast_ns();
-+		t = ktime_get_fast_ns();
- 		*wdp = t - *wdp;
- 		i_max = i;
- 		if (!started &&
-diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
-index 9b761e546de8..21e06a227e0a 100644
---- a/kernel/rcu/srcutree.c
-+++ b/kernel/rcu/srcutree.c
-@@ -179,7 +179,7 @@ static int init_srcu_struct_fields(struct srcu_struct *ssp, bool is_static)
- 		ssp->sda = alloc_percpu(struct srcu_data);
- 	init_srcu_struct_nodes(ssp, is_static);
- 	ssp->srcu_gp_seq_needed_exp = 0;
--	ssp->srcu_last_gp_end = ktime_get_mono_fast_ns();
-+	ssp->srcu_last_gp_end = ktime_get_fast_ns();
- 	smp_store_release(&ssp->srcu_gp_seq_needed, 0); /* Init done. */
- 	return ssp->sda ? 0 : -ENOMEM;
+@@ -10036,6 +10036,12 @@ void perf_pmu_unregister(struct pmu *pmu)
  }
-@@ -530,7 +530,7 @@ static void srcu_gp_end(struct srcu_struct *ssp)
- 	idx = rcu_seq_state(ssp->srcu_gp_seq);
- 	WARN_ON_ONCE(idx != SRCU_STATE_SCAN2);
- 	cbdelay = srcu_get_delay(ssp);
--	ssp->srcu_last_gp_end = ktime_get_mono_fast_ns();
-+	ssp->srcu_last_gp_end = ktime_get_fast_ns();
- 	rcu_seq_end(&ssp->srcu_gp_seq);
- 	gpseq = rcu_seq_current(&ssp->srcu_gp_seq);
- 	if (ULONG_CMP_LT(ssp->srcu_gp_seq_needed_exp, gpseq))
-@@ -779,7 +779,7 @@ static bool srcu_might_be_idle(struct srcu_struct *ssp)
- 	 */
+ EXPORT_SYMBOL_GPL(perf_pmu_unregister);
  
- 	/* First, see if enough time has passed since the last GP. */
--	t = ktime_get_mono_fast_ns();
-+	t = ktime_get_fast_ns();
- 	if (exp_holdoff == 0 ||
- 	    time_in_range_open(t, ssp->srcu_last_gp_end,
- 			       ssp->srcu_last_gp_end + exp_holdoff))
-diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
-index db0081a14b90..ae0ab8911e0c 100644
---- a/kernel/time/timekeeping.c
-+++ b/kernel/time/timekeeping.c
-@@ -391,7 +391,7 @@ static inline u64 timekeeping_cycles_to_ns(const struct tk_read_base *tkr, u64 c
-  * So if a NMI hits the update of base[0] then it will use base[1]
-  * which is still consistent. In the worst case this can result is a
-  * slightly wrong timestamp (a few nanoseconds). See
-- * @ktime_get_mono_fast_ns.
-+ * @ktime_get_fast_ns.
-  */
- static void update_fast_timekeeper(const struct tk_read_base *tkr,
- 				   struct tk_fast *tkf)
-@@ -412,7 +412,7 @@ static void update_fast_timekeeper(const struct tk_read_base *tkr,
- }
- 
- /**
-- * ktime_get_mono_fast_ns - Fast NMI safe access to clock monotonic
-+ * ktime_get_fast_ns - Fast NMI safe access to clock monotonic
-  *
-  * This timestamp is not guaranteed to be monotonic across an update.
-  * The timestamp is calculated by:
-@@ -463,20 +463,20 @@ static __always_inline ktime_t __ktime_get_fast(struct tk_fast *tkf)
- 	return now;
- }
- 
--ktime_t ktime_get_mono_fast(void)
-+ktime_t ktime_get_fast(void)
++static inline bool has_extended_regs(struct perf_event *event)
++{
++	return (event->attr.sample_regs_user & PERF_REG_EXTENDED_MASK) ||
++	       (event->attr.sample_regs_intr & PERF_REG_EXTENDED_MASK);
++}
++
+ static int perf_try_init_event(struct pmu *pmu, struct perf_event *event)
  {
- 	return __ktime_get_fast(&tk_fast_mono);
- }
--EXPORT_SYMBOL_GPL(ktime_get_mono_fast);
-+EXPORT_SYMBOL_GPL(ktime_get_fast);
+ 	struct perf_event_context *ctx = NULL;
+@@ -10067,12 +10073,16 @@ static int perf_try_init_event(struct pmu *pmu, struct perf_event *event)
+ 		perf_event_ctx_unlock(event->group_leader, ctx);
  
--ktime_t ktime_get_raw_fast(void)
-+ktime_t ktime_get_fast_raw(void)
- {
- 	return __ktime_get_fast(&tk_fast_raw);
- }
--EXPORT_SYMBOL_GPL(ktime_get_raw_fast);
-+EXPORT_SYMBOL_GPL(ktime_get_fast_raw);
+ 	if (!ret) {
++		if (!(pmu->capabilities & PERF_PMU_CAP_EXTENDED_REGS) &&
++		    has_extended_regs(event))
++			ret = -EOPNOTSUPP;
++
+ 		if (pmu->capabilities & PERF_PMU_CAP_NO_EXCLUDE &&
+-				event_has_any_exclude_flag(event)) {
+-			if (event->destroy)
+-				event->destroy(event);
++		    event_has_any_exclude_flag(event))
+ 			ret = -EINVAL;
+-		}
++
++		if (ret && event->destroy)
++			event->destroy(event);
+ 	}
  
- /**
-- * ktime_get_boottime_fast - NMI safe and fast access to boot clock.
-+ * ktime_get_fast_boottime - NMI safe and fast access to boot clock.
-  *
-  * To keep it NMI safe since we're accessing from tracing, we're not using a
-  * separate timekeeper with updates to monotonic clock and boot offset
-@@ -496,19 +496,19 @@ EXPORT_SYMBOL_GPL(ktime_get_raw_fast);
-  * partially updated.  Since the tk->offs_boot update is a rare event, this
-  * should be a rare occurrence which postprocessing should be able to handle.
-  */
--ktime_t notrace ktime_get_boottime_fast(void)
-+ktime_t notrace ktime_get_fast_boottime(void)
- {
- 	struct timekeeper *tk = &tk_core.timekeeper;
- 
--	return ktime_add(ktime_get_mono_fast(), tk->offs_boot);
-+	return ktime_add(ktime_get_fast(), tk->offs_boot);
- }
--EXPORT_SYMBOL_GPL(ktime_get_boottime_fast);
-+EXPORT_SYMBOL_GPL(ktime_get_fast_boottime);
- 
- 
- /*
-  * See comment for __ktime_get_fast() vs. timestamp ordering
-  */
--static __always_inline ktime_t __ktime_get_real_fast(struct tk_fast *tkf)
-+static __always_inline ktime_t __ktime_get_fast_real(struct tk_fast *tkf)
- {
- 	struct tk_read_base *tkr;
- 	unsigned int seq;
-@@ -529,13 +529,13 @@ static __always_inline ktime_t __ktime_get_real_fast(struct tk_fast *tkf)
- }
- 
- /**
-- * ktime_get_real_fast: - NMI safe and fast access to clock realtime.
-+ * ktime_get_fast_real: - NMI safe and fast access to clock realtime.
-  */
--ktime_t ktime_get_real_fast(void)
-+ktime_t ktime_get_fast_real(void)
- {
--	return __ktime_get_real_fast(&tk_fast_mono);
-+	return __ktime_get_fast_real(&tk_fast_mono);
- }
--EXPORT_SYMBOL_GPL(ktime_get_real_fast);
-+EXPORT_SYMBOL_GPL(ktime_get_fast_real);
- 
- /**
-  * halt_fast_timekeeper - Prevent fast timekeeper from accessing clocksource.
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 83e08b78dbee..840a4d024015 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -1336,9 +1336,9 @@ static struct {
- 	{ trace_clock_counter,		"counter",	0 },
- 	{ trace_clock_jiffies,		"uptime",	0 },
- 	{ trace_clock,			"perf",		1 },
--	{ ktime_get_mono_fast_ns,	"mono",		1 },
--	{ ktime_get_raw_fast_ns,	"mono_raw",	1 },
--	{ ktime_get_boot_fast_ns,	"boot",		1 },
-+	{ ktime_get_fast_ns,		"mono",		1 },
-+	{ ktime_get_fast_raw_ns,	"mono_raw",	1 },
-+	{ ktime_get_fast_boottime_ns,	"boot",		1 },
- 	ARCH_TRACE_CLOCKS
- };
- 
-diff --git a/kernel/watchdog_hld.c b/kernel/watchdog_hld.c
-index 247bf0b1582c..044fc850b9a9 100644
---- a/kernel/watchdog_hld.c
-+++ b/kernel/watchdog_hld.c
-@@ -75,7 +75,7 @@ void watchdog_update_hrtimer_threshold(u64 period)
- 
- static bool watchdog_check_timestamp(void)
- {
--	ktime_t delta, now = ktime_get_mono_fast_ns();
-+	ktime_t delta, now = ktime_get_fast_ns();
- 
- 	delta = now - __this_cpu_read(last_timestamp);
- 	if (delta < watchdog_hrtimer_sample_threshold) {
--- 
-2.21.0
-
+ 	if (ret)
