@@ -2,54 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E070B54E57
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 14:06:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE7D654E34
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 14:03:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732510AbfFYMGl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 08:06:41 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:46625 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728082AbfFYMGg (ORCPT
+        id S1728546AbfFYMDx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 08:03:53 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:42503 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726628AbfFYMDw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 08:06:36 -0400
-Received: from 79.184.254.216.ipv4.supernova.orange.pl (79.184.254.216) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.267)
- id a3be8bf0b7d12839; Tue, 25 Jun 2019 14:06:33 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Linux ACPI <linux-acpi@vger.kernel.org>
-Cc:     Bjorn Helgaas <helgaas@kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>
-Subject: [PATCH 0/2] ACPI: PM: Fix two issues in acpi_device_set_power()
-Date:   Tue, 25 Jun 2019 14:03:17 +0200
-Message-ID: <10419005.Mb09WM6RCc@kreacher>
+        Tue, 25 Jun 2019 08:03:52 -0400
+Received: from localhost ([127.0.0.1] helo=vostro.local)
+        by Galois.linutronix.de with esmtp (Exim 4.80)
+        (envelope-from <john.ogness@linutronix.de>)
+        id 1hfkAm-0006Fr-Ta; Tue, 25 Jun 2019 14:03:41 +0200
+From:   John Ogness <john.ogness@linutronix.de>
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     Petr Mladek <pmladek@suse.com>, linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [RFC PATCH v2 1/2] printk-rb: add a new printk ringbuffer implementation
+References: <20190607162349.18199-1-john.ogness@linutronix.de>
+        <20190607162349.18199-2-john.ogness@linutronix.de>
+        <20190618045117.GA7419@jagdpanzerIV> <87imt2bl0k.fsf@linutronix.de>
+        <20190625064543.GA19050@jagdpanzerIV>
+        <20190625071500.GB19050@jagdpanzerIV> <875zoujbq4.fsf@linutronix.de>
+        <20190625090620.wufhvdxxiryumdra@pathway.suse.cz>
+        <20190625100322.GD532@jagdpanzerIV>
+Date:   Tue, 25 Jun 2019 14:03:39 +0200
+In-Reply-To: <20190625100322.GD532@jagdpanzerIV> (Sergey Senozhatsky's message
+        of "Tue, 25 Jun 2019 19:03:22 +0900")
+Message-ID: <87woh9hnxg.fsf@linutronix.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi All,
+On 2019-06-25, Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com> wrote:
+>>>> In vprintk_emit(), are we going to always reserve 1024-byte
+>>>> records, since we don't know the size in advance, e.g.
+>>>> 
+>>>> 	printk("%pS %s\n", regs->ip, current->name)
+>>>> 		prb_reserve(&e, &rb, ????);
+>>>> 
+>>>> or are we going to run vscnprintf() on a NULL buffer first,
+>>>> then reserve the exactly required number of bytes and afterwards
+>>>> vscnprintf(s) -> prb_commit(&e)?
+>>> 
+>>> (As suggested by Petr) I want to use vscnprintf() on a NULL
+>>> buffer. However, a NULL buffer is not sufficient because things like the
+>>> loglevel are sometimes added via %s (for example, in /dev/kmsg). So
+>>> rather than a NULL buffer, I would use a small buffer on the stack
+>>> (large enough to store loglevel/cont information). This way we can use
+>>> vscnprintf() to get the exact size _and_ printk_get_level() will see
+>>> enough of the formatted string to parse what it needs.
+>> 
+>> vscnprintf() with NULL pointer is perfectly fine. Only the formatted
+>> string has variable size.
+>
+> Yeah, that should work. Probably. Can't think of any issues, except
+> for increased CPU usage. Some sprintf() format specifiers are heavier
+> than the rest (pS/pF on ia64/ppc/hppa).
+>
+> OK, very theoretically.
+>
+> There is a difference.
+>
+> Doing "sz = vscprintf(NULL, msg); vscnprintf(buf, sz, msg)" for
+> msg_print_text() and msg_print_ext_header() was safe, because the
+> data - msg - would not change under us, we would work with logbuf
+> records, IOW with data which is owned by printk() and printk only.
+>
+> But doing
+> 		sz = vcsprintf(NULL, "xxx", random_pointer);
+> 		if ((buf = prb_reserve(... sz))) {
+> 			vscnprintf(buf, sz, "xxx", random_pointer);
+> 			prb_commit(...);
+> 		}
+>
+> might have different outcome sometimes. We probably (!!!) can have
+> some race conditions. The problem is that, unlike msg_print_text()
+> and msg_print_ext_header(), printk() works with pointers which it
+> does not own nor control. IOW within single printk() we will access
+> some random kernel pointers, then do prb stuff, then access those
+> same pointers, expecting that none of them will ever change their
+> state. A very simple example
+>
+> 		printk("Comm %s\n", current->comm)
+>
+> Suppose printk on CPU0 and ia64_mca_modify_comm on CPU1
+>
+> CPU0								CPU1
+> printk(...)
+>  sz = vscprintf(NULL, "Comm %s\n", current->comm);
+> 								ia64_mca_modify_comm()
+> 								  snprintf(comm, sizeof(comm), "%s %d", current->comm, previous_current->pid);
+> 								  memcpy(current->comm, comm, sizeof(current->comm));
+>  if ((buf = prb_reserve(... sz))) {
+>    vscnprintf(buf, "Comm %s\n", current->comm);
+> 				^^^^^^^^^^^^^^ ->comm has changed.
+> 					       Nothing critical, we
+> 					       should not corrupt
+> 					       anything, but we will
+> 					       truncate ->comm if its
+> 					       new size is larger than
+> 					       what it used to be when
+> 					       we did vscprintf(NULL).
+>    prb_commit(...);
+>  }
+>
+> Probably there can be other examples.
 
-There are two, arguably minor, issues in acpi_device_set_power() that have been
-introduced while making the code follow the ACPI 6 recommendations.
+This is a very good point, and quite important. It is not acceptable if
+some crash output is cut off because of this effect.
 
-One of them is that, if the device is in D3hot, transitioning it into D3cold only
-involves dropping references to some power resources and it should not
-involve evaluating _PS3 which may happen currently.
+In my v1 rfc series, I avoided this issue by having a separate dedicated
+ringbuffer (rb_sprintf) that was used to allocate a temporary max-size
+(2KB) buffer for sprinting to. Then _that_ was used for the real
+ringbuffer input (strlen, prb_reserve, memcpy, prb_commit). That would
+still be the approach of my choice.
 
-The second one is that it sometimes is necessary to update the power state
-of a device to D0 even if it was put into D0 previously, so that needs to be
-possible.
-
-Please refer to the patch changelogs for details.
-
-Thanks,
-Rafael
-
-
-
+John Ogness
