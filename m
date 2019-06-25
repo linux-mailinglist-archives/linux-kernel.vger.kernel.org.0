@@ -2,114 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3775B5200C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 02:43:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3FE752014
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 02:44:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729435AbfFYAnE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 20:43:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54986 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729029AbfFYAnE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 20:43:04 -0400
-Received: from localhost (lfbn-ncy-1-174-150.w83-194.abo.wanadoo.fr [83.194.254.150])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 34C77206DD;
-        Tue, 25 Jun 2019 00:43:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561423383;
-        bh=qj5i57JAwdvtRUu3tXXvC5SbPBVOp5TOwUDHMMZ2hgQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GBhO+1b2f0WHMAKT8TKAOnoLPzkuOWXDgbmqu/5oZ2NjG9uNhkAQ8+OLk9gKbAX2c
-         ezXbqAO4gHbmNr+/RXMUUisfTF1Pjol8VQTITbQS4WlZk4ijDUM2VLa4kOS60535rN
-         Il/B3vBn2eHltFAL/rQk7D/3nfueHVsSWNHwFi6U=
-Date:   Tue, 25 Jun 2019 02:43:00 +0200
-From:   Frederic Weisbecker <frederic@kernel.org>
-To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de
-Subject: Re: [PATCH] time/tick-broadcast: Fix tick_broadcast_offline()
- lockdep complaint
-Message-ID: <20190625004300.GB17497@lerouge>
-References: <20190620221336.GZ26519@linux.ibm.com>
- <20190621105503.GI3436@hirez.programming.kicks-ass.net>
- <20190621121630.GE26519@linux.ibm.com>
- <20190621122927.GV3402@hirez.programming.kicks-ass.net>
- <20190621133414.GF26519@linux.ibm.com>
- <20190621174104.GA7519@linux.ibm.com>
- <20190621175027.GA23260@linux.ibm.com>
- <20190621234602.GA16286@linux.ibm.com>
- <20190624231222.GA17497@lerouge>
- <20190624234422.GP26519@linux.ibm.com>
+        id S1729595AbfFYAoE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 20:44:04 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:40721 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728495AbfFYAoE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 20:44:04 -0400
+Received: by mail-lf1-f65.google.com with SMTP id a9so11348002lff.7
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 17:44:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=CqsSVwEbnPYR+CbblI/s5YoLiQL9z41UI6Zu+9qXwWs=;
+        b=OUeMHhIm9MlrApudaCrTYD9zzrqDiS9ycnwcJlloFn/q2MLeodWmMItZXDp4Vg4Gyh
+         v8MezQ0whTrozGzNjjxhqvsbl3ZCOFQ2O2aT0vmXRFBO75XiazhaETouEjuCuONqc1S/
+         2WaE+Ic0oAothA6zinx7PtO/apd1i6c4Y2XVFEQqENkYXeOxqv5c3jB7OEWcqg9YnTvT
+         tH8NEz6ijfLClwj/pF2k01xXMyw6/zdf1wHAEjKYjt53eiQll7PfzhW7Xx9EaF2WoSKP
+         QxILUfPaeSk7UWL6JrkNgLx2aUz+BqNSqR4G68KIXeapdbwG1KZ1O3cU39WswOZgsqZ2
+         DAAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=CqsSVwEbnPYR+CbblI/s5YoLiQL9z41UI6Zu+9qXwWs=;
+        b=uCSNpLR3VOWibqiLVBWn7nd0H7fV+ysAN5VryYMoAGGotSNH3QvRungRKZ5eWmNZOs
+         dNaF5CZTnJX9fTVbak6z/DL7DjFiiF125air2c3eKhcBSWW0QKuILy/qePoF4zGCdU2G
+         3BPidnypKj0BP1xxS8rWdY3H7C9xEAbQmqIhug3CDrl72cBDOOLA8h5dZcXdF1cAqnxg
+         S0a+v4abA2hguzt8ivWKsIWPYwfu2xEbdXNJuDOCYIY50LUW3QU312U+gvaGQkvp7/KU
+         xH98El6q3mTt3qtvhbdoFBI36kvEy9QDb306s2Bgn/sM/3fFTZbra8JvAyMiihaALZgr
+         yAFA==
+X-Gm-Message-State: APjAAAUQjVP5k6/e2oTJHuEV1nF9Ex4xu49lOmtfSiWe3iifugRi7c0f
+        Ai/uvOMJGCy2IUVKwTsihTKomCnzdRoQXG0Mz4Z6ZA==
+X-Google-Smtp-Source: APXvYqzzem/0Ye5O7fzYnTekrmrIgKpQ2UbojNG5AXpf/0bao9mx7yxd442XtUHharIhnZ53stYUrmPodJW+QoA81/M=
+X-Received: by 2002:a19:488e:: with SMTP id v136mr8494494lfa.192.1561423442252;
+ Mon, 24 Jun 2019 17:44:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190624234422.GP26519@linux.ibm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20190624092313.788773607@linuxfoundation.org>
+In-Reply-To: <20190624092313.788773607@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Tue, 25 Jun 2019 06:13:50 +0530
+Message-ID: <CA+G9fYuD6Enko_srw4NFPC_FsUPaLauLN4pp=AgxH6r-kaZ9Aw@mail.gmail.com>
+Subject: Re: [PATCH 4.19 00/90] 4.19.56-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        lkft-triage@lists.linaro.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        linux- stable <stable@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 04:44:22PM -0700, Paul E. McKenney wrote:
-> On Tue, Jun 25, 2019 at 01:12:23AM +0200, Frederic Weisbecker wrote:
-> > On Fri, Jun 21, 2019 at 04:46:02PM -0700, Paul E. McKenney wrote:
-> > > @@ -3097,13 +3126,21 @@ static void sched_tick_remote(struct work_struct *work)
-> > >  	/*
-> > >  	 * Run the remote tick once per second (1Hz). This arbitrary
-> > >  	 * frequency is large enough to avoid overload but short enough
-> > > -	 * to keep scheduler internal stats reasonably up to date.
-> > > +	 * to keep scheduler internal stats reasonably up to date.  But
-> > > +	 * first update state to reflect hotplug activity if required.
-> > >  	 */
-> > > +	os = atomic_read(&twork->state);
-> > > +	if (os) {
-> > > +		WARN_ON_ONCE(os != TICK_SCHED_REMOTE_OFFLINING);
-> > > +		if (atomic_inc_not_zero(&twork->state))
-> > > +			return;
-> > 
-> > Using inc makes me a bit nervous here. If we do so, we should somewhow
-> > make sure that we never exceed a value higher than TICK_SCHED_REMOTE_OFFLINE
-> > by accident.
-> > 
-> > atomic_xchg() is probably a bit costlier but also safer as it allows
-> > us to check both the old and the new value. That path shouldn't be critically fast
-> > after all.
-> 
-> It would need to be cmpxchg() to avoid messing with the state if
-> the state were somehow TICK_SCHED_REMOTE_RUNNING, right?
+On Mon, 24 Jun 2019 at 15:33, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 4.19.56 release.
+> There are 90 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Wed 26 Jun 2019 09:22:03 AM UTC.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.19.56-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.19.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
+>
 
-Ah indeed! Nevermind, let's keep things as they are then.
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-> > > +	}
-> > >  	queue_delayed_work(system_unbound_wq, dwork, HZ);
-> > >  }
-> > >  
-> > >  static void sched_tick_start(int cpu)
-> > >  {
-> > > +	int os;
-> > >  	struct tick_work *twork;
-> > >  
-> > >  	if (housekeeping_cpu(cpu, HK_FLAG_TICK))
-> > > @@ -3112,15 +3149,20 @@ static void sched_tick_start(int cpu)
-> > >  	WARN_ON_ONCE(!tick_work_cpu);
-> > >  
-> > >  	twork = per_cpu_ptr(tick_work_cpu, cpu);
-> > > -	twork->cpu = cpu;
-> > > -	INIT_DELAYED_WORK(&twork->work, sched_tick_remote);
-> > > -	queue_delayed_work(system_unbound_wq, &twork->work, HZ);
-> > > +	os = atomic_xchg(&twork->state, TICK_SCHED_REMOTE_RUNNING);
-> > > +	WARN_ON_ONCE(os == TICK_SCHED_REMOTE_RUNNING);
-> > 
-> > See if we use atomic_inc(), we would need to also WARN(os > TICK_SCHED_REMOTE_OFFLINE).
-> 
-> How about if I put that WARN() between the atomic_inc_not_zero() and
-> the return, presumably also adding braces?
+Summary
+------------------------------------------------------------------------
 
-Yeah, unfortunately there is no atomic_add_not_zero_return().
-I guess we can live with a check using atomic_read(). In the best
-case it returns the fresh increment, otherwise it should be REMOTE_RUNNING.
+kernel: 4.19.56-rc2
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.19.y
+git commit: d8e5ade617e917a499d5d59b24e19e71f80886a8
+git describe: v4.19.55-92-gd8e5ade617e9
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.19-oe/bu=
+ild/v4.19.55-92-gd8e5ade617e9
 
-In any case the (os > TICK_SCHED_REMOTE_OFFLINE) check applies.
 
-Thanks.
+No regressions (compared to build v4.19.55)
+
+No fixes (compared to build v4.19.55)
+
+Ran 25252 total tests in the following environments and test suites.
+
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- i386
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_i386
+- qemu_x86_64
+- x15 - arm
+- x86_64
+
+Test Suites
+-----------
+* build
+* install-android-platform-tools-r2600
+* kselftest
+* libgpiod
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-commands-tests
+* ltp-containers-tests
+* ltp-cpuhotplug-tests
+* ltp-cve-tests
+* ltp-dio-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-mm-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+* perf
+* spectre-meltdown-checker-test
+* v4l2-compliance
+* network-basic-tests
+* ltp-open-posix-tests
+* kvm-unit-tests
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+
+--=20
+Linaro LKFT
+https://lkft.linaro.org
