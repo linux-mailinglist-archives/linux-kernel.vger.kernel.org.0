@@ -2,74 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9501852773
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 11:04:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CE1152893
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 11:49:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731277AbfFYJEb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 05:04:31 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:41786 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731102AbfFYJEb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 05:04:31 -0400
-Received: by mail-lj1-f196.google.com with SMTP id 205so6644083ljj.8
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 02:04:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rhBjmgTFiYbfZZESWFQ8f7valPKPixUWhzHoz12+ivw=;
-        b=GqEjpL8FHzMdySOuqZoN9HZ/OkZx7WFMmzNdnwrGpQ+jCqyaej++1ThsR1ZV5rjHoB
-         ZwcNL59UKwVRJBRlevU81FuITNrJ929IPiuGv3ysff62ONus6boiXH6VfC/JbaiKuEEp
-         zGkt42Fm+sEkxLPKPfSvrAJeJC9ft+j1lC8xswbhuCJrpCnqLjdIUMvAyQbGNEVhjEKG
-         WOVSloHSmWWSXZlSXL+oZ6HQdczouaj2LcA5iUTWEF0XpHMSiHKOuAxM2U8RLIn0UdXl
-         uxQengVbdXro7sXTxTB0+hJ5nrO5LuZuV0RaUXxGvOEMj+vgvWMruSFCcULQ4Zpf8FnF
-         i3kQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rhBjmgTFiYbfZZESWFQ8f7valPKPixUWhzHoz12+ivw=;
-        b=RREvXDr5gz3oGtFetNfOjiuQd8/wxAPeiOY9YFs/nJzOUVb2t4HaFt9KBk4tE5qDCB
-         qmR/qlyKjYdltb3vRU0sjAGAVElQi9JA5eZYJai3L3PFLQwBz5KGM4ce1eqTzdb3RC4o
-         UM9b2YcQsuSj0yM4GAN/CCggjSAqS9w96Iqn3/RjAHu2aFPCfWRXlMfYZDzT/t6PY4zk
-         aMuUh+V7nM0KdnZMCemgUKmhG5v5jwCT27W8yDaYt0KJtSjeHtpTGgahVN2LJuCH0N6x
-         Lw3WP0Dpk8VeV6rsOQbzZKfhmcvkDMyUPuEvJ+haIDRrNUNb1iuY4TaAhnR8YjpZlth6
-         fI/w==
-X-Gm-Message-State: APjAAAV/ChIQLJk+DymynsCpLvaVQXUNgvlnBcA4Tl/Q48Z4Ao8y5S8X
-        ZQDVoJ8daxsNE8mDKKq2TQ88H5LmrpgkxVwS3ZU64A==
-X-Google-Smtp-Source: APXvYqye7HuIOF5YxCSm4sBtOJdPFIUuBv2Fl2N7KdeZdnjWH1VOEEmCjLP5M8RahTU5/pd3UgjGIZJRBiP2FVhZEY8=
-X-Received: by 2002:a2e:650a:: with SMTP id z10mr43756285ljb.28.1561453469329;
- Tue, 25 Jun 2019 02:04:29 -0700 (PDT)
+        id S1729598AbfFYJt0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 05:49:26 -0400
+Received: from elvis.franken.de ([193.175.24.41]:43924 "EHLO elvis.franken.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726441AbfFYJtX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 05:49:23 -0400
+Received: from uucp (helo=alpha)
+        by elvis.franken.de with local-bsmtp (Exim 3.36 #1)
+        id 1hfhQI-00035W-00; Tue, 25 Jun 2019 11:07:30 +0200
+Received: by alpha.franken.de (Postfix, from userid 1000)
+        id 01082C0E40; Tue, 25 Jun 2019 11:04:51 +0200 (CEST)
+Date:   Tue, 25 Jun 2019 11:04:51 +0200
+From:   Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To:     Lee Jones <lee.jones@linaro.org>, linux-mips@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 5/7] mfd: ioc3: Add driver for SGI IOC3 chip
+Message-ID: <20190625090451.GA9794@alpha.franken.de>
+References: <20190613170636.6647-1-tbogendoerfer@suse.de>
+ <20190613170636.6647-6-tbogendoerfer@suse.de>
 MIME-Version: 1.0
-References: <1560790160-3372-1-git-send-email-info@metux.net>
-In-Reply-To: <1560790160-3372-1-git-send-email-info@metux.net>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 25 Jun 2019 11:04:18 +0200
-Message-ID: <CACRpkdbcR5bcBRSx_21nq682Q+N+XgmYHS4wCVQVqdAiym1D+w@mail.gmail.com>
-Subject: Re: [PATCH 1/7] drivers: gpio: rcar: pedantic formatting
-To:     "Enrico Weigelt, metux IT consult" <info@metux.net>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Lyra Zhang <zhang.lyra@gmail.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190613170636.6647-6-tbogendoerfer@suse.de>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 17, 2019 at 6:49 PM Enrico Weigelt, metux IT consult
-<info@metux.net> wrote:
+On Thu, Jun 13, 2019 at 07:06:31PM +0200, Thomas Bogendoerfer wrote:
+> SGI IOC3 chip has integrated ethernet, keyboard and mouse interface.
+> It also supports connecting a SuperIO chip for serial and parallel
+> interfaces. IOC3 is used inside various SGI systemboards and add-on
+> cards with different equipped external interfaces.
+> 
+> Support for ethernet and serial interfaces were implemented inside
+> the network driver. This patchset moves out the not network related
+> parts to a new MFD driver, which takes care of card detection,
+> setup of platform devices and interrupt distribution for the subdevices.
+> 
+> Serial portion: Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> 
+> Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+> ---
+>  arch/mips/include/asm/sn/ioc3.h     |  345 +++----
+>  arch/mips/sgi-ip27/ip27-timer.c     |   20 -
+>  drivers/mfd/Kconfig                 |   13 +
+>  drivers/mfd/Makefile                |    1 +
+>  drivers/mfd/ioc3.c                  |  683 +++++++++++++
 
-> A tab sneaked in, where it shouldn't be.
->
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
+Lee,
 
-Patch applied.
+can you give me an indication, if the MFD changes are ok now
+or if I need to improve it further.
 
-Yours,
-Linus Walleij
+Thanks,
+Thomas.
+
+-- 
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
