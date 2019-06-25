@@ -2,89 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74619556DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 20:17:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D9B6556F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 20:18:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732844AbfFYSRS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 14:17:18 -0400
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:43908 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727479AbfFYSRR (ORCPT
+        id S1732883AbfFYSSk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 14:18:40 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:59798 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727479AbfFYSSi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 14:17:17 -0400
-Received: by mail-yb1-f193.google.com with SMTP id 5so4289949ybj.10
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 11:17:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LV+Pj0XizZBoM+Zg/sXCVKPC66eQENrb7Ey4RHKp69s=;
-        b=Q0zhknitW1nMpsuYODap81b+Kff2FM//a6CrncKspkGXfz6ukAPtuB4vDq/ujO0Q4P
-         Bsvo/811XJHJD4y7+vKLSA/Ir2MSraBJu1zfY7Ur/9MpBPG4tVWAqZ0jr0eO8XThScKm
-         xkqUTB8U2/BXKwnxr8KaKQa0aN0JevXkYQ69KDF/7ktoFH4lAScTbmdbKfbbvpKrOqoU
-         TR/V28hTfDInSozjEuFH6hvQG5RrZ7ArINs68zsK+twdmu9MvlXJ0/NGt9d0YeHILF2Y
-         c/CInQ8UrQAjnUW8ZYJsWyQmUXrZMU1tGH5UpJoxnMPkgQzkmJRhTP3vClkIrGpwa82o
-         lQZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LV+Pj0XizZBoM+Zg/sXCVKPC66eQENrb7Ey4RHKp69s=;
-        b=UU+tKqyrY7Ocbp4adKc0uZVLoXnO+X5nelR/rI+aXYN+R3xVGs9VG0/Wdc1RKPT0T7
-         fNgzx0Wa59E1mJfQFzYjrcr6JkNR8lHGWU8avxXpfULW8ndSeJ29JldXYzvJX/rBDQwn
-         tfw8RgdW6MzvMsocxY1beaH8Z8k8SfFb5okJ9vSLsqqUU4/lNe92mzLutim7bSqj15TX
-         C7LHhREZ0xATJ4sxExIXPT1fCgFmkkpjvFbW7erREL2lr+PW2cr/RBMwpoUy45dOjsMD
-         fpURhvfswBkQRhoormkFSBIIKn8G+iEbUU33zuDjo64JtZm7RonfLXxnqawzV6Fcd6d0
-         8eYw==
-X-Gm-Message-State: APjAAAXeryX/IL7yHU0cIKMIwhDKdR2+offcJPCQYqq8yvK9GkEzOmsA
-        vm/C4hxSnogB9d6H/XCHXJKIwn28Xj2xEPsoroXKcQ==
-X-Google-Smtp-Source: APXvYqyOBKfMA9lKTfCv08MGlGUTAUGGHiNLkjP3FZ0Jpmnx5mxfL+mlmmC/u6PckTvZybw780vm3EK1meJ5YTRbNwU=
-X-Received: by 2002:a25:1ed6:: with SMTP id e205mr81985599ybe.467.1561486636279;
- Tue, 25 Jun 2019 11:17:16 -0700 (PDT)
+        Tue, 25 Jun 2019 14:18:38 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5PI4epq154535;
+        Tue, 25 Jun 2019 18:17:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to :
+ subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=lmgK8Cm3Fl3Y68PjHL3I/TBSUBy/0hTgnkbGgtqK7rI=;
+ b=sq8wRGFMDp2keeCzfEbQvRF23m4FZdHqzF6KTStnvsnqKgYJRFIybtKXIRJ/BkjACsOp
+ VHjdfFdvkzl4/Qyds9SgcqVsToxzG/t5q2X6QJw92ykC0hsb2bCu0+1HnE8/vR1cKWgj
+ 9LAuCEvVM/6Q8BB9oO+b2Er0NdC/PFqDczBk7D1I2Io7k9QsIy4cloHAf7QWxHhbVscL
+ fa9qlI7JJ3E8N38P1RnUBSFFAK1Ox9ur0vfVe7sOoxdIUQu71AdGqU2biDBGiUMsl2PB
+ KOtGcPBYzfwUGEHU5Q7xPZKcvd0Ct/iT3yoSupbQ+ljJ3hcRKX4C0zF8TH1T/hnyBICA pg== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2130.oracle.com with ESMTP id 2t9brt63t2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 25 Jun 2019 18:17:39 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5PIHUke113170;
+        Tue, 25 Jun 2019 18:17:38 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by aserp3030.oracle.com with ESMTP id 2t9acc8wvk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 25 Jun 2019 18:17:38 +0000
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x5PIHcHG113583;
+        Tue, 25 Jun 2019 18:17:38 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 2t9acc8wve-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 25 Jun 2019 18:17:38 +0000
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5PIHai8000391;
+        Tue, 25 Jun 2019 18:17:36 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 25 Jun 2019 11:17:36 -0700
+Date:   Tue, 25 Jun 2019 11:17:33 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     dsterba@suse.cz, matthew.garrett@nebula.com, yuchao0@huawei.com,
+        tytso@mit.edu, shaggy@kernel.org, ard.biesheuvel@linaro.org,
+        josef@toxicpanda.com, clm@fb.com, adilger.kernel@dilger.ca,
+        jk@ozlabs.org, jack@suse.com, dsterba@suse.com, jaegeuk@kernel.org,
+        viro@zeniv.linux.org.uk, cluster-devel@redhat.com,
+        jfs-discussion@lists.sourceforge.net, linux-efi@vger.kernel.org,
+        Jan Kara <jack@suse.cz>, reiserfs-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
+        linux-nilfs@vger.kernel.org, linux-mtd@lists.infradead.org,
+        ocfs2-devel@oss.oracle.com, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org
+Subject: Re: [PATCH 1/4] vfs: create a generic checking function for
+ FS_IOC_SETFLAGS
+Message-ID: <20190625181733.GG5375@magnolia>
+References: <156116136742.1664814.17093419199766834123.stgit@magnolia>
+ <156116138140.1664814.9610454726122206157.stgit@magnolia>
+ <20190625171254.GT8917@twin.jikos.cz>
 MIME-Version: 1.0
-References: <20190611231813.3148843-1-guro@fb.com> <20190611231813.3148843-3-guro@fb.com>
-In-Reply-To: <20190611231813.3148843-3-guro@fb.com>
-From:   Shakeel Butt <shakeelb@google.com>
-Date:   Tue, 25 Jun 2019 11:17:05 -0700
-Message-ID: <CALvZod41GMxCdsp_XSHSYAri5NpO5suimJ3y8D5=LLai2=qd7Q@mail.gmail.com>
-Subject: Re: [PATCH v7 02/10] mm: rename slab delayed deactivation functions
- and fields
-To:     Roman Gushchin <guro@fb.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Team <kernel-team@fb.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Waiman Long <longman@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190625171254.GT8917@twin.jikos.cz>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9299 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906250137
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 11, 2019 at 4:18 PM Roman Gushchin <guro@fb.com> wrote:
->
-> The delayed work/rcu deactivation infrastructure of non-root
-> kmem_caches can be also used for asynchronous release of these
-> objects. Let's get rid of the word "deactivation" in corresponding
-> names to make the code look better after generalization.
->
-> It's easier to make the renaming first, so that the generalized
-> code will look consistent from scratch.
->
-> Let's rename struct memcg_cache_params fields:
->   deact_fn -> work_fn
->   deact_rcu_head -> rcu_head
->   deact_work -> work
->
-> And RCU/delayed work callbacks in slab common code:
->   kmemcg_deactivate_rcufn -> kmemcg_rcufn
->   kmemcg_deactivate_workfn -> kmemcg_workfn
->
-> This patch contains no functional changes, only renamings.
->
-> Signed-off-by: Roman Gushchin <guro@fb.com>
-> Acked-by: Vladimir Davydov <vdavydov.dev@gmail.com>
+On Tue, Jun 25, 2019 at 07:12:54PM +0200, David Sterba wrote:
+> On Fri, Jun 21, 2019 at 04:56:21PM -0700, Darrick J. Wong wrote:
+> > From: Darrick J. Wong <darrick.wong@oracle.com>
+> > 
+> > Create a generic checking function for the incoming FS_IOC_SETFLAGS flag
+> > values so that we can standardize the implementations that follow ext4's
+> > flag values.
+> 
+> I checked a few samples what's the type of the flags, there are unsigned
+> types while the proposed VFS functions take signed type.
+> 
+> > +int vfs_ioc_setflags_check(struct inode *inode, int oldflags, int flags);
+> 
+> Specifically ext4 uses unsigned type and his was the original API that
+> got copied so I'd think that it should unsigned everywhere.
 
-Reviewed-by: Shakeel Butt <shakeelb@google.com>
+Yeah, I'll change it.
+
+> >  fs/btrfs/ioctl.c    |   13 +++++--------
+> 
+> For the btrfs bits
+> 
+> Acked-by: David Sterba <dsterba@suse.com>
+> 
+> and besides the signedness, the rest of the changes look good to me.
+
+Thanks for the look around!  I'll have a new revision with all changes
+out by the end of the day. :)
+
+--D
