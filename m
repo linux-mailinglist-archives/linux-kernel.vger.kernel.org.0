@@ -2,89 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF98454E4A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 14:05:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B5E154DF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 13:50:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731615AbfFYMFM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 08:05:12 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:34379 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726949AbfFYMFM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 08:05:12 -0400
-Received: by mail-lj1-f194.google.com with SMTP id p17so16025761ljg.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 05:05:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=qxqCorAGy2MAZQkuKJiyGeZj1RhrCJf1RH+LL3myVCQ=;
-        b=Y/D9VWUOPy2ux7lYcCLTrBdCtUsgdrOSNJVrmxTtEVY+zFPNI5hIxYiTXc32XzvPXk
-         UYy/LUJQwOuo4BxifzkYthYi4t72FWLzfRADlj5QKdV0yxNoZe+RashX7edY0qtPU/KB
-         KgF0lckeVvTDgmbBduixuFX/44dhFRslylx66OA1udRchf87GII2vku0DmKyb4R6xWZa
-         thBDs3BxA+ixP6NpIpAFWymW1vFvyZ1BzXuaj9/Wx09jWNOTYXGLquZJI9GcSjH0kNL/
-         sasdo4BVUXdpVpZ5qPWIz+YF0A0/rtTSW9Ac7PYCQj8nsGQPaEwyWOJ2rIKMs77s/sVW
-         hngQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=qxqCorAGy2MAZQkuKJiyGeZj1RhrCJf1RH+LL3myVCQ=;
-        b=GGccKK8QwLZmU4jU1uKlymRCG8Ex0cvIrayvhiAP7iePcG539ewyHBoTeGiNjJaTsT
-         ZBD21uce9hJTzDunjAnBeCm+xIPcq9AEacJZS1m5xB+1weJg/GzfLrE9vvU9pOJXuwG0
-         jc6b0j32Ns9zzynzfawFRt7B3K16CAS1Mvpo6KSxMWuoBnTgCJAObLb+JP9F5E8r0o6Z
-         9FmvL5Q2qbK+LJY3h8TPS7lYrjY/XlCl3QUZiRtQHL+OvcgyjFwZoaUcVlt3Yxio7B0e
-         wuyYGk9fkk+kGdKFvjW04lGxGZN6KDpEcz9bGDFuSjtawaIxq/WilONLJWQDJmHarz0S
-         HrUQ==
-X-Gm-Message-State: APjAAAUH/x0F/9+Go6t26lYRJSJrM51ZsK0t/m3IC/qErgCeqotOh/6+
-        1F109TLCpddWYNVYtRZ26SRK7g==
-X-Google-Smtp-Source: APXvYqx/DfSTspXsgLNKDQN1Bg+yw1ClAxWIVQMzZAtoBqE8/QLkbwzE6qtwYd4+GmtO+VOpu3BhOA==
-X-Received: by 2002:a2e:9ac6:: with SMTP id p6mr3074324ljj.100.1561464310105;
-        Tue, 25 Jun 2019 05:05:10 -0700 (PDT)
-Received: from localhost (h85-30-9-151.cust.a3fiber.se. [85.30.9.151])
-        by smtp.gmail.com with ESMTPSA id j11sm1935335lfm.29.2019.06.25.05.05.08
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 25 Jun 2019 05:05:08 -0700 (PDT)
-Date:   Tue, 25 Jun 2019 04:49:56 -0700
-From:   Olof Johansson <olof@lixom.net>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, arm@kernel.org,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] ARM: at91: DT for 5.3
-Message-ID: <20190625114956.y6nrvfiuwm5duitz@localhost>
-References: <20190621212246.GA30172@piout.net>
+        id S1732152AbfFYLuS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 07:50:18 -0400
+Received: from mga18.intel.com ([134.134.136.126]:5186 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726931AbfFYLuS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 07:50:18 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jun 2019 04:50:17 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,415,1557212400"; 
+   d="scan'208";a="182871497"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
+  by fmsmga001.fm.intel.com with SMTP; 25 Jun 2019 04:50:12 -0700
+Received: by lahna (sSMTP sendmail emulation); Tue, 25 Jun 2019 14:50:11 +0300
+Date:   Tue, 25 Jun 2019 14:50:11 +0300
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc:     wsa@the-dreams.de, jarkko.nikula@linux.intel.com,
+        andriy.shevchenko@linux.intel.com, linux-i2c@vger.kernel.org,
+        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        benjamin.tissoires@redhat.com, jbroadus@gmail.com,
+        patches@opensource.cirrus.com
+Subject: Re: [PATCH v6 4/7] i2c: core: Make i2c_acpi_get_irq available to the
+ rest of the I2C core
+Message-ID: <20190625115011.GE2640@lahna.fi.intel.com>
+References: <20190621100815.12417-1-ckeepax@opensource.cirrus.com>
+ <20190621100815.12417-5-ckeepax@opensource.cirrus.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190621212246.GA30172@piout.net>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20190621100815.12417-5-ckeepax@opensource.cirrus.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 21, 2019 at 11:22:46PM +0200, Alexandre Belloni wrote:
-> Arnd, Olof,
+On Fri, Jun 21, 2019 at 11:08:12AM +0100, Charles Keepax wrote:
+> In preparation for more refactoring make i2c_acpi_get_irq available
+> outside i2c-core-acpi.c.
 > 
-> Still very few updates. It is mostly about removing DTC warnings by
-> switching the sckc to the proper bindings and converting the atmel
-> bindings to json-schema.
+> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+> ---
 > 
-> The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
-> 
->   Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
-> 
-> are available in the Git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/at91/linux tags/at91-5.3-dt
-> 
-> for you to fetch changes up to 271839b0a819cbb76ef3ce5c7237d6cb624b3eba:
-> 
->   dt-bindings: arm: Convert Atmel board/soc bindings to json-schema (2019-06-20 11:13:52 +0200)
+> Changes since v5:
+>  - Pass a struct device rather than acpi_device to i2c_acpi_get_irq,
+>    note this is more awkward than I would have liked as I am very
+>    unconvinced that adev->dev can actually be passed to
+>    ACPI_COMPANION. If anyone can answer that for sure that would be
+>    very helpful.
 
-Merged, thanks!
+I don't think you can do that.
 
+I probably missed some previous discussion but what's wrong passing
+struct i2c_client instead and use ACPI_COMPANION() for that?
 
--Olof
+> 
+> Thanks,
+> Charles
+> 
+>  drivers/i2c/i2c-core-acpi.c | 13 +++++++++++--
+>  drivers/i2c/i2c-core.h      |  7 +++++++
+>  2 files changed, 18 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/i2c/i2c-core-acpi.c b/drivers/i2c/i2c-core-acpi.c
+> index c91492eaacd93..37bf80b35365f 100644
+> --- a/drivers/i2c/i2c-core-acpi.c
+> +++ b/drivers/i2c/i2c-core-acpi.c
+> @@ -145,8 +145,17 @@ static int i2c_acpi_add_resource(struct acpi_resource *ares, void *data)
+>  	return 1;
+>  }
+>  
+> -static int i2c_acpi_get_irq(struct acpi_device *adev)
+> +/**
+> + * i2c_acpi_get_irq - get device IRQ number from ACPI
+> + * @client: Pointer to the I2C client device
+
+I think this should be @dev now.
+
+> + *
+> + * Find the IRQ number used by a specific client device.
+> + *
+> + * Return: The IRQ number or an error code.
+> + */
+> +int i2c_acpi_get_irq(struct device *dev)
+>  {
+> +	struct acpi_device *adev = container_of(dev, struct acpi_device, dev);
+>  	struct list_head resource_list;
+>  	int irq = -ENOENT;
+>  	int ret;
+> @@ -199,7 +208,7 @@ static int i2c_acpi_get_info(struct acpi_device *adev,
+>  		*adapter_handle = lookup.adapter_handle;
+>  
+>  	/* Then fill IRQ number if any */
+> -	info->irq = i2c_acpi_get_irq(adev);
+> +	info->irq = i2c_acpi_get_irq(&adev->dev);
+>  	if (info->irq < 0)
+>  		return info->irq;
+>  
+> diff --git a/drivers/i2c/i2c-core.h b/drivers/i2c/i2c-core.h
+> index 2a3b28bf826b1..1735ac17a957a 100644
+> --- a/drivers/i2c/i2c-core.h
+> +++ b/drivers/i2c/i2c-core.h
+> @@ -63,6 +63,8 @@ const struct acpi_device_id *
+>  i2c_acpi_match_device(const struct acpi_device_id *matches,
+>  		      struct i2c_client *client);
+>  void i2c_acpi_register_devices(struct i2c_adapter *adap);
+> +
+> +int i2c_acpi_get_irq(struct device *dev);
+>  #else /* CONFIG_ACPI */
+>  static inline void i2c_acpi_register_devices(struct i2c_adapter *adap) { }
+>  static inline const struct acpi_device_id *
+> @@ -71,6 +73,11 @@ i2c_acpi_match_device(const struct acpi_device_id *matches,
+>  {
+>  	return NULL;
+>  }
+> +
+> +static inline int i2c_acpi_get_irq(struct device *dev)
+> +{
+> +	return 0;
+> +}
+>  #endif /* CONFIG_ACPI */
+>  extern struct notifier_block i2c_acpi_notifier;
+>  
+> -- 
+> 2.11.0
