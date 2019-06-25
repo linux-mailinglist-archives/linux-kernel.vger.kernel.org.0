@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB210554A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 18:35:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C557855492
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 18:35:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732113AbfFYQfj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 12:35:39 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:42652 "EHLO
+        id S1730342AbfFYQfB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 12:35:01 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:34827 "EHLO
         mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729448AbfFYQe6 (ORCPT
+        with ESMTP id S1729882AbfFYQe7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 12:34:58 -0400
-Received: by mail-wr1-f65.google.com with SMTP id x17so18601161wrl.9
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 09:34:56 -0700 (PDT)
+        Tue, 25 Jun 2019 12:34:59 -0400
+Received: by mail-wr1-f65.google.com with SMTP id f15so8743143wrp.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 09:34:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=9jHnEFpHn7uzznoO3/dgHPquJFVDhGL7Sa3AB/IK/o8=;
-        b=hn0sJGMrU38ycKfPEcke4oemjMf5nF19She6rrogMdb5v0F2pBQBNKFb+k/+2MJbvv
-         x0AL7iJN38li9VNodfle2pG9gu9d2FJ3tvO7WCdfFllzJdndvifHLTLjRDM4aDml+Kuj
-         ARXR5bllOgDLUQO3pl4c5PKCRuEuqrBRd/sgqgOD1M5Honf1Q9rxMnOT9Gtrbba1Pc6q
-         WCixZR6JX0xgDU+5eMlm3aDNlNwAqfajTgyiKEnyZ2eYijvvzNfmrix4ZFYvnBzoboQW
-         vWSvbCOsW9ZdQYXrDXj4UOEBCHTBJKcTLpDkXcvPZbiDAcrZsqeJshpkE3iV/v/oMDyN
-         QHOw==
+        bh=2g1huIVKZozNkv7icnrH8UYyhFSdx5OaAzsnOBD/wug=;
+        b=XfV694/+ba+iJjm7XndfMMr4t/G9R6WZsl7ZClO8hbM2sE6598a/agfQtKVXIRT+/V
+         AoWfR7WcIGSYP9NtRwQLMxrVuN8omLG3udtaeoq83oK2iDO6nbVLJEHwc4tAlzDRKnUW
+         gS/on6mUn/wFH3kWwFQKEFahEkn+l8s83Ssn4MxCUCfZZpg6XEZM2S6oO7wDsjKHlSzK
+         6DdCjzey8fw1L2Sr3nfWJAfvgsIF/hpbPE/j6G7N0faVlvQgkRP+V8rn2kBlHP6VSfn7
+         CBY8w6r9dg4x854xvpQB8f/T0kExSZQfy1QZEFOwDaubHwfdoPP9zoCw6SwKAt13nfeI
+         zNkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=9jHnEFpHn7uzznoO3/dgHPquJFVDhGL7Sa3AB/IK/o8=;
-        b=fxu56WlzoCH+1h//ncqQRt2rO4W34iRRyn34xIKdhRN2pK8JiQA4WT5pHoL6HJarQW
-         POS/r183LGb/KBit45ojd42fN5gSOthmMlm5sJctxoxK59VDwuywCy0oD5TkNDQ9ygsZ
-         nrYCljuJsC/zYdOlP6jNeFZNd4RdRXBrGDbGVyELsukeKMoCDF22Y/t/aVGJwUPfIs3J
-         orlgrduG25cCJjdPzRirnBGgcQ5RQHhOGCQOcpjGkA4HXoTGpxI+LDkhX66+JQaEY1cl
-         awilOQnp5RwFUdf4x9LiEUJHMYtjO/P6J0dUh4BOVBeDqvnDwNMyIXh4d2GIN/ZQYJN0
-         TWiA==
-X-Gm-Message-State: APjAAAU9s7x5M3ioXY2Bh786bMr8q/4aI8CJtSjZEzd98mi5Co56/CNa
-        hpuQyiczq6lDNDXgp/n4h9A9yw==
-X-Google-Smtp-Source: APXvYqwy7zacb5a2dIAzBH+DNPJmE7Ud9HzGmZ8XgxvKZbiQHoYeDIvLxGo471H1Sy/xZiRyc+Eftg==
-X-Received: by 2002:a5d:4fc8:: with SMTP id h8mr26465755wrw.124.1561480495518;
-        Tue, 25 Jun 2019 09:34:55 -0700 (PDT)
+        bh=2g1huIVKZozNkv7icnrH8UYyhFSdx5OaAzsnOBD/wug=;
+        b=JZqQbYTnLkftmqHs9IJJzKi6vKNxs+AyzKB1UKJSRlVynTL5eo5MtTf5xqHBI3P0jL
+         QwOtNrYCfj/M8hPTvwZYvqOdLz200l6PvbReG47P5H9DY/nBnhIiv1l36R7Dr+ZpQQd2
+         yrWu0Oa2Mg8uLcKyLfBtyINM7P/Q5reg6tgW6SeIvNBg6AYthUmK/PsIi+30HSSxIU0b
+         pup3UXwFQbW9nDgrLoqTzCnC1k27LGGKbYhjv0o7dP5VjWRwLiKCamh+yRiOhBrFiskl
+         HJEuMw+kJ5aQOELnfMrO6t1J1GGiumnWdYbYkEU07+Zx6y5Dfcr+PzXwY4Qk9AnfAjwY
+         UrgQ==
+X-Gm-Message-State: APjAAAUlvb19rtY4Af0It2lUbF5INONRzkqVA2v+TEvABj4F8HZI7/fj
+        6qpE3VZ48ZDDmXOMb242K/yFbA==
+X-Google-Smtp-Source: APXvYqwvUGzuhdRcRqrCnTEpE5XZ6xpDDtphMfdnxdkKNg7ns8U+hGGMdSWdjbAlt4fd7Q2s17qqjA==
+X-Received: by 2002:a5d:4e4d:: with SMTP id r13mr27001554wrt.295.1561480496798;
+        Tue, 25 Jun 2019 09:34:56 -0700 (PDT)
 Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id g8sm2683795wme.20.2019.06.25.09.34.54
+        by smtp.gmail.com with ESMTPSA id g8sm2683795wme.20.2019.06.25.09.34.55
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Jun 2019 09:34:54 -0700 (PDT)
+        Tue, 25 Jun 2019 09:34:56 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Lee Jones <lee.jones@linaro.org>,
@@ -56,9 +56,9 @@ To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 03/12] backlight: gpio: pull the non-pdata device probing code into probe()
-Date:   Tue, 25 Jun 2019 18:34:25 +0200
-Message-Id: <20190625163434.13620-4-brgl@bgdev.pl>
+Subject: [PATCH 04/12] ARM: davinci: refresh davinci_all_defconfig
+Date:   Tue, 25 Jun 2019 18:34:26 +0200
+Message-Id: <20190625163434.13620-5-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190625163434.13620-1-brgl@bgdev.pl>
 References: <20190625163434.13620-1-brgl@bgdev.pl>
@@ -71,80 +71,108 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-There's no good reason to have the generic probing code in a separate
-routine. This function is short and is inlined by the compiler anyway.
-Move it into probe under the pdata-specific part.
+Refresh davinci_all_defconfig with current master.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/video/backlight/gpio_backlight.c | 39 ++++++++----------------
- 1 file changed, 13 insertions(+), 26 deletions(-)
+ arch/arm/configs/davinci_all_defconfig | 27 ++++++++++----------------
+ 1 file changed, 10 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/video/backlight/gpio_backlight.c b/drivers/video/backlight/gpio_backlight.c
-index 8adbc8d75097..89e10bccfd3c 100644
---- a/drivers/video/backlight/gpio_backlight.c
-+++ b/drivers/video/backlight/gpio_backlight.c
-@@ -54,30 +54,6 @@ static const struct backlight_ops gpio_backlight_ops = {
- 	.check_fb	= gpio_backlight_check_fb,
- };
- 
--static int gpio_backlight_probe_prop(struct platform_device *pdev,
--				     struct gpio_backlight *gbl)
--{
--	struct device *dev = &pdev->dev;
--	enum gpiod_flags flags;
--	int ret;
--
--	gbl->def_value = device_property_read_bool(dev, "default-on");
--	flags = gbl->def_value ? GPIOD_OUT_HIGH : GPIOD_OUT_LOW;
--
--	gbl->gpiod = devm_gpiod_get(dev, NULL, flags);
--	if (IS_ERR(gbl->gpiod)) {
--		ret = PTR_ERR(gbl->gpiod);
--
--		if (ret != -EPROBE_DEFER) {
--			dev_err(dev,
--				"Error: The gpios parameter is missing or invalid.\n");
--		}
--		return ret;
--	}
--
--	return 0;
--}
--
- static int gpio_backlight_probe(struct platform_device *pdev)
- {
- 	struct gpio_backlight_platform_data *pdata =
-@@ -86,6 +62,7 @@ static int gpio_backlight_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct backlight_device *bl;
- 	struct gpio_backlight *gbl;
-+	enum gpiod_flags flags;
- 	int ret;
- 
- 	gbl = devm_kzalloc(dev, sizeof(*gbl), GFP_KERNEL);
-@@ -116,9 +93,19 @@ static int gpio_backlight_probe(struct platform_device *pdev)
- 		if (!gbl->gpiod)
- 			return -EINVAL;
- 	} else {
--		ret = gpio_backlight_probe_prop(pdev, gbl);
--		if (ret)
-+		gbl->def_value = device_property_read_bool(dev, "default-on");
-+		flags = gbl->def_value ? GPIOD_OUT_HIGH : GPIOD_OUT_LOW;
-+
-+		gbl->gpiod = devm_gpiod_get(dev, NULL, flags);
-+		if (IS_ERR(gbl->gpiod)) {
-+			ret = PTR_ERR(gbl->gpiod);
-+
-+			if (ret != -EPROBE_DEFER) {
-+				dev_err(dev,
-+					"Error: The gpios parameter is missing or invalid.\n");
-+			}
- 			return ret;
-+		}
- 	}
- 
- 	memset(&props, 0, sizeof(props));
+diff --git a/arch/arm/configs/davinci_all_defconfig b/arch/arm/configs/davinci_all_defconfig
+index 4a8cad4d3707..13d7846c613d 100644
+--- a/arch/arm/configs/davinci_all_defconfig
++++ b/arch/arm/configs/davinci_all_defconfig
+@@ -3,6 +3,7 @@ CONFIG_SYSVIPC=y
+ CONFIG_POSIX_MQUEUE=y
+ CONFIG_NO_HZ=y
+ CONFIG_HIGH_RES_TIMERS=y
++CONFIG_PREEMPT=y
+ CONFIG_IKCONFIG=y
+ CONFIG_IKCONFIG_PROC=y
+ CONFIG_LOG_BUF_SHIFT=14
+@@ -10,13 +11,6 @@ CONFIG_CGROUPS=y
+ CONFIG_CHECKPOINT_RESTORE=y
+ CONFIG_BLK_DEV_INITRD=y
+ CONFIG_EXPERT=y
+-CONFIG_MODULES=y
+-CONFIG_MODULE_UNLOAD=y
+-CONFIG_MODULE_FORCE_UNLOAD=y
+-CONFIG_MODVERSIONS=y
+-CONFIG_PARTITION_ADVANCED=y
+-# CONFIG_IOSCHED_DEADLINE is not set
+-# CONFIG_IOSCHED_CFQ is not set
+ CONFIG_ARCH_DAVINCI=y
+ CONFIG_ARCH_DAVINCI_DM644x=y
+ CONFIG_ARCH_DAVINCI_DM355=y
+@@ -31,9 +25,7 @@ CONFIG_MACH_MITYOMAPL138=y
+ CONFIG_MACH_OMAPL138_HAWKBOARD=y
+ CONFIG_DAVINCI_MUX_DEBUG=y
+ CONFIG_DAVINCI_MUX_WARNINGS=y
+-CONFIG_PREEMPT=y
+ CONFIG_AEABI=y
+-CONFIG_CMA=y
+ CONFIG_SECCOMP=y
+ CONFIG_ZBOOT_ROM_TEXT=0x0
+ CONFIG_ZBOOT_ROM_BSS=0x0
+@@ -46,6 +38,12 @@ CONFIG_CPU_FREQ_GOV_PERFORMANCE=m
+ CONFIG_CPU_FREQ_GOV_POWERSAVE=m
+ CONFIG_CPU_FREQ_GOV_ONDEMAND=m
+ CONFIG_CPU_IDLE=y
++CONFIG_MODULES=y
++CONFIG_MODULE_UNLOAD=y
++CONFIG_MODULE_FORCE_UNLOAD=y
++CONFIG_MODVERSIONS=y
++CONFIG_PARTITION_ADVANCED=y
++CONFIG_CMA=y
+ CONFIG_NET=y
+ CONFIG_PACKET=y
+ CONFIG_UNIX=y
+@@ -63,7 +61,6 @@ CONFIG_BT_HCIUART_LL=y
+ CONFIG_DEVTMPFS=y
+ CONFIG_DEVTMPFS_MOUNT=y
+ CONFIG_FW_LOADER=m
+-CONFIG_DMA_CMA=y
+ CONFIG_DA8XX_MSTPRI=y
+ CONFIG_MTD=m
+ CONFIG_MTD_TESTS=m
+@@ -167,8 +164,6 @@ CONFIG_SOUND=m
+ CONFIG_SND=m
+ CONFIG_SND_USB_AUDIO=m
+ CONFIG_SND_SOC=m
+-CONFIG_SND_SOC_TLV320AIC3X=m
+-CONFIG_SND_SOC_DAVINCI_MCASP=m
+ CONFIG_SND_SOC_DAVINCI_EVM=m
+ CONFIG_SND_SIMPLE_CARD=m
+ CONFIG_HID=m
+@@ -213,14 +208,12 @@ CONFIG_MMC_DAVINCI=y
+ CONFIG_NEW_LEDS=y
+ CONFIG_LEDS_CLASS=m
+ CONFIG_LEDS_GPIO=m
+-CONFIG_LEDS_TRIGGERS=y
+ CONFIG_LEDS_TRIGGER_TIMER=m
+ CONFIG_LEDS_TRIGGER_HEARTBEAT=m
+ CONFIG_LEDS_TRIGGER_DEFAULT_ON=m
+ CONFIG_RTC_CLASS=y
+ CONFIG_RTC_DRV_OMAP=m
+ CONFIG_DMADEVICES=y
+-CONFIG_TI_EDMA=y
+ CONFIG_COMMON_CLK_PWM=m
+ CONFIG_REMOTEPROC=m
+ CONFIG_DA8XX_REMOTEPROC=m
+@@ -258,10 +251,10 @@ CONFIG_NLS_CODEPAGE_437=y
+ CONFIG_NLS_ASCII=m
+ CONFIG_NLS_ISO8859_1=y
+ CONFIG_NLS_UTF8=m
++# CONFIG_CRYPTO_HW is not set
++CONFIG_CRC_T10DIF=m
++CONFIG_DMA_CMA=y
+ CONFIG_DEBUG_FS=y
+ CONFIG_DEBUG_RT_MUTEXES=y
+ CONFIG_DEBUG_MUTEXES=y
+-# CONFIG_ARM_UNWIND is not set
+ CONFIG_DEBUG_USER=y
+-# CONFIG_CRYPTO_HW is not set
+-CONFIG_CRC_T10DIF=m
 -- 
 2.21.0
 
