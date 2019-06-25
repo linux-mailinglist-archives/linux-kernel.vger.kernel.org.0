@@ -2,92 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9052D558BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 22:26:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18845558C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 22:27:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727604AbfFYU0e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 16:26:34 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:42267 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726455AbfFYU0d (ORCPT
+        id S1727845AbfFYU1H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 16:27:07 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:46108 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726455AbfFYU1G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 16:26:33 -0400
-Received: by mail-io1-f65.google.com with SMTP id u19so62975ior.9
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 13:26:33 -0700 (PDT)
+        Tue, 25 Jun 2019 16:27:06 -0400
+Received: by mail-lf1-f65.google.com with SMTP id z15so13552705lfh.13
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 13:27:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cs.washington.edu; s=goo201206;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=3dXZ1ZldviFyFOVz1FcLJwKSvcaZ1rjNgYTX6/8h5IQ=;
-        b=X6YyqVl8grKfhWkl+F5Utw8TrTHiNiBboyq2VqpLQiszWuDZHm0EGVYkSi7KNFcbHh
-         sJ0bmiq9v4oDJn5lkdHCvyfBuOK6citsYJGGWMD21WP0IhuQOJ9vDctIGuA29imxU5Ok
-         1PvG9vtlWtIiLkZiFjfvNUmDTQCYgZg1qc82Q=
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=0YDqvR98EjwNxyu4huLL3dsPvsKLYn4gdNkZG2oBOJs=;
+        b=ogc+rYMA9sdqu9wSpp67RZ+Lj/mZ8Za7GmnoAmifPddTMTPznHlqTWRXxOSIh2hrbf
+         rgHK9WvEXU4z1dSYPcm9UVJ7/GCISvrI1yYKNdeJF5LC6UkAwwCTve6aKweG6zD6g6ab
+         75bC/zD8yeBlSOGg0GFPTx1lyvDcfhMkwsaCMkvpfgJMLv/p4JnSElcxyzR5NH5Dfrvq
+         WzdTDN89NzXPDXz0CLIQHD0dkAEgaum1ymPsXFsH98xGEcdzZJr41VYDRgig6ZOMYyb/
+         c3DLt28dh3CpqwUsPcJVVsGBIP87UA8vhN5TtjoScLG+XIIQN8aLoTMCxXD3nR9vBG8w
+         Uicg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=3dXZ1ZldviFyFOVz1FcLJwKSvcaZ1rjNgYTX6/8h5IQ=;
-        b=Mi3O4Fmbh18gaGaXyS3kffsiynw7cErzK+kqCAwGD3jSBu1u7zJP6ve4eWsZTgITAV
-         7gxylx9JSQf2vdHk39HzhVY/m4zoeZISOpht03wS8rle8+gkiZwuftlpKreG9wL5EiHQ
-         xHXIjrFZtcZf//xwlQjfk67gDKVZrkp1IWdy24Rr3nWYGI+wS+NoQx588L2pRB9UoxpG
-         cZvo/JikFHJDcdaifgsFYSdt6IS36jO4De7sWfik5Q9BoalzUTHrWAreoALU0XwJSz4t
-         KjLdJ+vLF/pFWaGdoUS0xsPtF4Sw7U8e4Gg4nw9EnjKWk3Reio68cZXpnMUTKh7byF4L
-         q/pw==
-X-Gm-Message-State: APjAAAVUGWwvTNFR3TS4xqos3fUYkw4RR58IoqcPrAdJO7rgFIuUvT4b
-        BXzyLXZOYldHo0obntun/iTGsSvioO0YMpRmBDbiDpFQ+Vlkfw==
-X-Google-Smtp-Source: APXvYqw+CW2Mln6le7x4W9V5GIvhL/JhV1LrVv2fcHmykNwbbgpsGnOoW4T9YtXdSwCVPv4OQhW1kAmI1VONvnZYHGU=
-X-Received: by 2002:a5e:940b:: with SMTP id q11mr577045ioj.251.1561494392480;
- Tue, 25 Jun 2019 13:26:32 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190621225938.27030-1-lukenels@cs.washington.edu> <87h88f9bm3.fsf@netronome.com>
-In-Reply-To: <87h88f9bm3.fsf@netronome.com>
-From:   Luke Nelson <lukenels@cs.washington.edu>
-Date:   Tue, 25 Jun 2019 13:26:21 -0700
-Message-ID: <CADasFoCrWPg3=kchWzJX5vDeymV9wiL7GnPxWDg4rQETyF5TeA@mail.gmail.com>
-Subject: Re: [RFC PATCH bpf-next] RV32G eBPF JIT
-To:     Jiong Wang <jiong.wang@netronome.com>
-Cc:     Luke Nelson <luke.r.nels@gmail.com>, Xi Wang <xi.wang@gmail.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@gmail.com>,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=0YDqvR98EjwNxyu4huLL3dsPvsKLYn4gdNkZG2oBOJs=;
+        b=kOUzWqtMaLMZ2SqoooYjl5ygu5dMhKbmjJYaDEX6eUOz7Tg4u4UjwTUXH2sGH/mRUX
+         tvysY0ejzp5DS3nNhvQUHiC/azGZdZHeFFhzzF9/0yDP7JM9to5+WxF/AJV0I4gHrcdh
+         lhHfUI4Iaxk/uR7VyQ9ok0nRiRcxsucEcx/GY+jkECcwdtKAcDCph1qAeGi9WwNyIVkG
+         B3klKG18NI1dQ8WON4HcvjaK5Pw/nhFrXg3aejrGYCcSwpOfeYf4WWYrsfY5QJWPgfNt
+         fnMNBXWZJRsLlimFXlh8BBE4xjS5ZXsU4HOK6PQ0zH61SA0eocTI2HPTbe9bzKKWhd08
+         weaA==
+X-Gm-Message-State: APjAAAUvxDtWLxYM9aVBcWPta2ylL2Y6iHo1VlDccjJtCgMcXsZmL35X
+        PuAf+pEVhN/FiNff/Al4iHBhmADvNFE=
+X-Google-Smtp-Source: APXvYqzcMVnRXL4XO+yihowQtHyEaB/cdp9lUKVcAvdS1owjAyn8/YfQPThVzOdDdvjE3MgEOOP03w==
+X-Received: by 2002:ac2:5337:: with SMTP id f23mr383567lfh.15.1561494424398;
+        Tue, 25 Jun 2019 13:27:04 -0700 (PDT)
+Received: from localhost.localdomain (59-201-94-178.pool.ukrtel.net. [178.94.201.59])
+        by smtp.gmail.com with ESMTPSA id y10sm2070362lfb.28.2019.06.25.13.27.03
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 25 Jun 2019 13:27:03 -0700 (PDT)
+From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+To:     ast@kernel.org, netdev@vger.kernel.org
+Cc:     daniel@iogearbox.net, bpf@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+Subject: [PATCH bpf-next] libbpf: fix max() type mismatch for 32bit
+Date:   Tue, 25 Jun 2019 23:27:00 +0300
+Message-Id: <20190625202700.28030-1-ivan.khoronzhuk@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 9:45 AM Jiong Wang <jiong.wang@netronome.com> wrote=
-:
->
-> Looks to me 32-bit optimization is not enabled.
->
-> If you define bpf_jit_needs_zext to return true
->
->   bool bpf_jit_needs_zext(void)
->   {
->         return true;
->   }
->
-> Then you don't need to zero high 32-bit when writing 32-bit sub-register
-> and you just need to implement the explicit zero extension insn which is =
-a
-> special variant of BPF_MOV. This can save quite a few instructions. RV64
-> and arches like arm has implemented this, please search
-> "aux->verifier_zext".
->
-> And there is a doc for this optimization:
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git/tree/Doc=
-umentation/bpf/bpf_design_QA.rst#n168
+It fixes build error for 32bit caused by type mismatch
+size_t/unsigned long.
 
-Thanks for the pointer. I'll add this optimization before sending out
-an updated version of the patch.
+Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+---
+ tools/lib/bpf/libbpf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-=E2=80=93 Luke
+diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+index 68f45a96769f..5186b7710430 100644
+--- a/tools/lib/bpf/libbpf.c
++++ b/tools/lib/bpf/libbpf.c
+@@ -778,7 +778,7 @@ static struct bpf_map *bpf_object__add_map(struct bpf_object *obj)
+ 	if (obj->nr_maps < obj->maps_cap)
+ 		return &obj->maps[obj->nr_maps++];
+ 
+-	new_cap = max(4ul, obj->maps_cap * 3 / 2);
++	new_cap = max((size_t)4, obj->maps_cap * 3 / 2);
+ 	new_maps = realloc(obj->maps, new_cap * sizeof(*obj->maps));
+ 	if (!new_maps) {
+ 		pr_warning("alloc maps for object failed\n");
+-- 
+2.17.1
+
