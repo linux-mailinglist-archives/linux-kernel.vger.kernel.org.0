@@ -2,92 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3AC053003
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 12:36:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 936425299B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 12:31:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729521AbfFYKge (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 06:36:34 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43724 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728377AbfFYKge (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 06:36:34 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E2921ACCE;
-        Tue, 25 Jun 2019 10:36:32 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id A1B321E4323; Tue, 25 Jun 2019 12:30:19 +0200 (CEST)
-Date:   Tue, 25 Jun 2019 12:30:19 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Steve Magnani <steve.magnani@digidescorp.com>
-Cc:     Jan Kara <jack@suse.com>, linux-kernel@vger.kernel.org,
-        "Steven J . Magnani" <steve@digidescorp.com>
-Subject: Re: [PATCH 1/1] udf: Fix incorrect final NOT_ALLOCATED (hole) extent
- length
-Message-ID: <20190625103019.GA1994@quack2.suse.cz>
-References: <20190604123158.12741-1-steve@digidescorp.com>
- <20190604123158.12741-2-steve@digidescorp.com>
+        id S1727964AbfFYKbi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 06:31:38 -0400
+Received: from foss.arm.com ([217.140.110.172]:38290 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726653AbfFYKbi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 06:31:38 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 80371360;
+        Tue, 25 Jun 2019 03:31:37 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 91F543F71E;
+        Tue, 25 Jun 2019 03:31:34 -0700 (PDT)
+Date:   Tue, 25 Jun 2019 11:31:29 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Anshuman Khandual <anshuman.khandual@arm.com>
+Cc:     Steve Capper <Steve.Capper@arm.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        Catalin Marinas <Catalin.Marinas@arm.com>,
+        Will Deacon <Will.Deacon@arm.com>,
+        "mhocko@suse.com" <mhocko@suse.com>,
+        "ira.weiny@intel.com" <ira.weiny@intel.com>,
+        "david@redhat.com" <david@redhat.com>, "cai@lca.pw" <cai@lca.pw>,
+        "logang@deltatee.com" <logang@deltatee.com>,
+        James Morse <James.Morse@arm.com>,
+        "cpandya@codeaurora.org" <cpandya@codeaurora.org>,
+        "arunks@codeaurora.org" <arunks@codeaurora.org>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "mgorman@techsingularity.net" <mgorman@techsingularity.net>,
+        "osalvador@suse.de" <osalvador@suse.de>,
+        Ard Biesheuvel <Ard.Biesheuvel@arm.com>, nd <nd@arm.com>
+Subject: Re: [PATCH V6 3/3] arm64/mm: Enable memory hot remove
+Message-ID: <20190625103128.GA12207@lakrids.cambridge.arm.com>
+References: <1560917860-26169-1-git-send-email-anshuman.khandual@arm.com>
+ <1560917860-26169-4-git-send-email-anshuman.khandual@arm.com>
+ <20190621143540.GA3376@capper-debian.cambridge.arm.com>
+ <20190624165148.GA9847@lakrids.cambridge.arm.com>
+ <48f39fa1-c369-c8e2-4572-b7e016dca2d6@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190604123158.12741-2-steve@digidescorp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <48f39fa1-c369-c8e2-4572-b7e016dca2d6@arm.com>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 04-06-19 07:31:58, Steve Magnani wrote:
-> In some cases, using the 'truncate' command to extend a UDF file results
-> in a mismatch between the length of the file's extents (specifically, due
-> to incorrect length of the final NOT_ALLOCATED extent) and the information
-> (file) length. The discrepancy can prevent other operating systems
-> (i.e., Windows 10) from opening the file.
+On Tue, Jun 25, 2019 at 10:57:07AM +0530, Anshuman Khandual wrote:
+> On 06/24/2019 10:22 PM, Mark Rutland wrote:
+> > On Fri, Jun 21, 2019 at 03:35:53PM +0100, Steve Capper wrote:
+> >> On Wed, Jun 19, 2019 at 09:47:40AM +0530, Anshuman Khandual wrote:
+> >>> +static void free_hotplug_page_range(struct page *page, size_t size)
+> >>> +{
+> >>> +	WARN_ON(!page || PageReserved(page));
+> >>> +	free_pages((unsigned long)page_address(page), get_order(size));
+> >>> +}
+> >>
+> >> We are dealing with power of 2 number of pages, it makes a lot more
+> >> sense (to me) to replace the size parameter with order.
+> >>
+> >> Also, all the callers are for known compile-time sizes, so we could just
+> >> translate the size parameter as follows to remove any usage of get_order?
+> >> PAGE_SIZE -> 0
+> >> PMD_SIZE -> PMD_SHIFT - PAGE_SHIFT
+> >> PUD_SIZE -> PUD_SHIFT - PAGE_SHIFT
+> > 
+> > Now that I look at this again, the above makes sense to me.
+> > 
+> > I'd requested the current form (which I now realise is broken), since
+> > back in v2 the code looked like:
+> > 
+> > static void free_pagetable(struct page *page, int order)
+> > {
+> > 	...
+> > 	free_pages((unsigned long)page_address(page), order);
+> > 	...
+> > }
+> > 
+> > ... with callsites looking like:
+> > 
+> > free_pagetable(pud_page(*pud), get_order(PUD_SIZE));
+> > 
+> > ... which I now see is off by PAGE_SHIFT, and we inherited that bug in
+> > the current code, so the calculated order is vastly larger than it
+> > should be. It's worrying that doesn't seem to be caught by anything in
+> > testing. :/
 > 
-> Two particular errors have been observed when extending a file:
-> 
-> 1. The final extent is larger than it should be, having been rounded up
->    to a multiple of the block size.
-> 
-> B. The final extent is not shorter than it should be, due to not having
->    been updated when the file's information length was increased.
-> 
-> The first case could represent a design error, if coded intentionally
-> due to a misinterpretation of scantily-documented ECMA-167 "file tail"
-> rules. The standard specifies that the tail, if present, consists of
-> a sequence of "unrecorded and allocated" extents (only).
-> 
-> Signed-off-by: Steven J. Magnani <steve@digidescorp.com>
+> get_order() returns the minimum page allocation order for a given size
+> which already takes into account PAGE_SHIFT i.e get_order(PAGE_SIZE)
+> returns 0.
 
-Thanks for the testcase and the patch! I finally got to reading through
-this in detail. In udf driver in Linux we are generally fine with the last
-extent being rounded up to the block size. udf_truncate_tail_extent() is
-generally responsible for truncating the last extent to appropriate size
-once we are done with the inode. However there are two problems with this:
+Phew.
 
-1) We used to do this inside udf_clear_inode() back in the old days but
-then switched to a different scheme in commit 2c948b3f86e5f "udf: Avoid IO
-in udf_clear_inode". So this actually breaks workloads where user calls
-truncate(2) directly and there's no place where udf_truncate_tail_extent()
-gets called.
+Let's leave this as is then -- it's clearer/simpler than using the SHIFT
+constants, performance isn't a major concern in this path, and it's very
+likely that GCC will inline and constant-fold this away regardless.
 
-2) udf_extend_file() sets i_lenExtents == i_size although the last extent
-isn't properly rounded so even if udf_truncate_tail_extent() gets called
-(which is actually the case for truncate(1) which does open, ftruncate,
-close), it will think it has nothing to do and exit.
+Sorry for the noise, and thanks for correcting me.
 
-Now 2) is easily fixed by setting i_lenExtents to real length of extents we
-have created. However that still leaves problem 1) which isn't easy to deal
-with. After some though I think that your solution of making
-udf_do_extend_file() always create appropriately sized extents makes
-sense. However I dislike the calling convention you've chosen. When
-udf_do_extend_file() needs to now byte length, then why not pass it to it
-directly, instead of somewhat cumbersome "sector length + byte offset"
-pair?
-
-Will you update the patch please? Thanks!
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Mark.
