@@ -2,80 +2,215 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A02455AAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 00:12:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0BA955AB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 00:13:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726439AbfFYWM2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 18:12:28 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:52675 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725782AbfFYWM0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 18:12:26 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45YL4P65dxz9s3C;
-        Wed, 26 Jun 2019 08:12:21 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1561500744;
-        bh=qGcg0SR74qg8KaugUHDJ6wMVcrBY0NX8Y49yabnuGzA=;
-        h=Date:From:To:Cc:Subject:From;
-        b=HHX4eUa/nr4lkU8qdHeG3aXxGHe7/AwJzIUB8QZjTiQPZJ1MCX1zr+LvSUAfQNm/f
-         ZEhISklPbThfbBnLOTbqL+rNHo068E2YhWBuOClglbDik0hFMOrg/E3eBL4rfcmF5t
-         HoE6Kao+0vxRyp9HnoELz7UxuFg0UCxaznskf9vhwo6FrFJx/N0JJxhWXh9ai0L/x9
-         xdyFjbgdyGQWw315cT4LnZcHdk4Uv/u6iy7Rr0ppCCegwWSbWHYF77sX5ZJeTdtd//
-         0P4DAWZZ34a3gGzi2MoQwYQ0bpB22sF9wqGTgK3Tm5oEQGrKudBdz873dRMXOtb3FZ
-         7K0Tw4wXB2Tuw==
-Date:   Wed, 26 Jun 2019 08:12:16 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        ARM <linux-arm-kernel@lists.infradead.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Stefan Wahren <wahrenst@gmx.net>,
-        Lukas Wunner <lukas@wunner.de>
-Subject: linux-next: Signed-off-by missing for commit in the arm-soc tree
-Message-ID: <20190626081216.4b8f48cb@canb.auug.org.au>
+        id S1726535AbfFYWNE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 18:13:04 -0400
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:40932 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725782AbfFYWND (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 18:13:03 -0400
+Received: by mail-vs1-f68.google.com with SMTP id a186so244732vsd.7
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 15:13:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3n+LcMejLmcA2HmAuYiDTQTe/hLh9m1gb0zWqdGsK68=;
+        b=VZCpcSruMkBN/fSuTzWYVVaGnaXStuxDTlxa6KFFowmHSW6v2Kp5xf+pb8sCdtaNmI
+         xWDUgTBPVJTm3UOzht8hRhzYr5tvq5wbDau9K9ekcL7zkkOkPO6YsM415uZM6T3vh/XA
+         fGfPjTr6Fy2AgIjssn8ZMUzqkRDozC0cHm7b8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3n+LcMejLmcA2HmAuYiDTQTe/hLh9m1gb0zWqdGsK68=;
+        b=G9O9ffwgF+RkOF1032LehYSR/Idz8a/oNZ4IMCm93km6WShymKjG9X1hIvyDaKA5gm
+         lxnOu3aAp38FI76hBouowJl7+QjQJVNXoWYZjdod71Hwpnwv2YWuDEr8QmchfSdPdh7r
+         0XDH8HjW6cn7K9/1lPbTuyJRhbeOKkX5yG0fopdbbKI58L0KsUe3jP4zoaQHpVTnkxiB
+         GmGE8ysJmnEy8fe2wriMiGd4Z6ov2NYB04ONIE75+5LGL7dZZtuXhMOxLxrR2faGsFAK
+         sCDL/3yfdiNYrSMbZOpMTauaFDdldZ35bbXDjW47yiS1/jVsmmwe8Oq5HCYurzIZhd1s
+         kTGA==
+X-Gm-Message-State: APjAAAUeR4xKC4BZPRW9zNzPp3snJTjfKas3GtC9SHqY0ApiHSyQAt8f
+        +EiGCMPFzZUzyiik9DnXV3juSDYh7F018nDx9aLfRA==
+X-Google-Smtp-Source: APXvYqxAFcpueCkXxA4fX5ZdmVpn9ubMtxiNatLRjWu9UrGeHKopzC5JOp9YWWvfIyG8W3lvQ5C/O8BukWSbyTUXEmY=
+X-Received: by 2002:a67:cd9a:: with SMTP id r26mr780862vsl.152.1561500782182;
+ Tue, 25 Jun 2019 15:13:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/GQh29YaGsGpYJe2hGqtHNGj"; protocol="application/pgp-signature"
+References: <20190622034105.188454-1-dbasehore@chromium.org>
+ <20190622034105.188454-2-dbasehore@chromium.org> <20190624203632.GA12316@ravnborg.org>
+In-Reply-To: <20190624203632.GA12316@ravnborg.org>
+From:   "dbasehore ." <dbasehore@chromium.org>
+Date:   Tue, 25 Jun 2019 15:12:51 -0700
+Message-ID: <CAGAzgspnknoX_6zP4__tjQonxg53jjJj-xP=yrQydA2FhMG2JA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/4] drm/panel: Add helper for reading DT rotation
+To:     Sam Ravnborg <sam@ravnborg.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        CK Hu <ck.hu@mediatek.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Intel Graphics <intel-gfx@lists.freedesktop.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/GQh29YaGsGpYJe2hGqtHNGj
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Jun 24, 2019 at 1:36 PM Sam Ravnborg <sam@ravnborg.org> wrote:
+>
+> Hi Derek.
+>
+> On Fri, Jun 21, 2019 at 08:41:02PM -0700, Derek Basehore wrote:
+> > This adds a helper function for reading the rotation (panel
+> > orientation) from the device tree.
+> >
+> > Signed-off-by: Derek Basehore <dbasehore@chromium.org>
+> > ---
+> >  drivers/gpu/drm/drm_panel.c | 42 +++++++++++++++++++++++++++++++++++++
+> >  include/drm/drm_panel.h     |  7 +++++++
+> >  2 files changed, 49 insertions(+)
+> >
+> > diff --git a/drivers/gpu/drm/drm_panel.c b/drivers/gpu/drm/drm_panel.c
+> > index dbd5b873e8f2..507099af4b57 100644
+> > --- a/drivers/gpu/drm/drm_panel.c
+> > +++ b/drivers/gpu/drm/drm_panel.c
+> > @@ -172,6 +172,48 @@ struct drm_panel *of_drm_find_panel(const struct device_node *np)
+> >       return ERR_PTR(-EPROBE_DEFER);
+> >  }
+> >  EXPORT_SYMBOL(of_drm_find_panel);
+> > +
+> > +/**
+> > + * of_drm_get_panel_orientation - look up the rotation of the panel using a
+> > + * device tree node
+> > + * @np: device tree node of the panel
+> > + * @orientation: orientation enum to be filled in
+> > + *
+> > + * Looks up the rotation of a panel in the device tree. The rotation in the
+> > + * device tree is counter clockwise.
+> > + *
+> > + * Return: 0 when a valid rotation value (0, 90, 180, or 270) is read or the
+> > + * rotation property doesn't exist. -EERROR otherwise.
+> > + */
+> This function should better spell out why it talks about rotation versus
+> orientation.
+>
+> It happens that orientation, due to bad design choices is named rotation
+> in DT.
+> But then this function is all about orientation, that just happens to be
+> named rotation in DT.
+> And the comments associated to the function should reflect this.
+>
+> something like:
+> /**
+>  * of_drm_get_panel_orientation - look up the orientation of the panel using a
+>  * device tree node
+>  * @np: device tree node of the panel
+>  * @orientation: orientation enum to be filled in
+>  *
+>  * Looks up the rotation property of a panel in the device tree.
+>  * The orientation of the panel is expressed as a property named
+>  * "rotation" in the device tree.
+>  * The rotation in the device tree is counter clockwise.
+>  *
+>  * Return: 0 when a valid orientation value (0, 90, 180, or 270) is read or the
+>  * rotation property doesn't exist. -EERROR otherwise.
+>  */
 
-Hi all,
+I'll clear this up in the next patch set.
 
-Commit
+>
+> This would at least remove some of my confusiuon.
+> And then maybe add a bit more explanation to the binding property
+> description too.
 
-  cbbe88333062 ("ARM: bcm283x: Enable DMA support for SPI controller")
+Tried this, yet I got told off for adding kernel details to the DT
+documentation (which is frowned upon).
 
-is missing a Signed-off-by from its committer.
+>
+>         Sam
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+> > +int of_drm_get_panel_orientation(const struct device_node *np,
+> > +                              enum drm_panel_orientation *orientation)
+> > +{
+> > +     int rotation, ret;
+> > +
+> > +     ret = of_property_read_u32(np, "rotation", &rotation);
+> > +     if (ret == -EINVAL) {
+> > +             /* Don't return an error if there's no rotation property. */
+> > +             *orientation = DRM_MODE_PANEL_ORIENTATION_UNKNOWN;
+> > +             return 0;
+> > +     }
+> > +
+> > +     if (ret < 0)
+> > +             return ret;
+> > +
+> > +     if (rotation == 0)
+> > +             *orientation = DRM_MODE_PANEL_ORIENTATION_NORMAL;
+> > +     else if (rotation == 90)
+> > +             *orientation = DRM_MODE_PANEL_ORIENTATION_RIGHT_UP;
+> > +     else if (rotation == 180)
+> > +             *orientation = DRM_MODE_PANEL_ORIENTATION_BOTTOM_UP;
+> > +     else if (rotation == 270)
+> > +             *orientation = DRM_MODE_PANEL_ORIENTATION_LEFT_UP;
+> > +     else
+> > +             return -EINVAL;
+> > +
+> > +     return 0;
+> > +}
+> > +EXPORT_SYMBOL(of_drm_get_panel_orientation);
+> >  #endif
+> >
+> >  MODULE_AUTHOR("Thierry Reding <treding@nvidia.com>");
+> > diff --git a/include/drm/drm_panel.h b/include/drm/drm_panel.h
+> > index 8c738c0e6e9f..3564952f1a4f 100644
+> > --- a/include/drm/drm_panel.h
+> > +++ b/include/drm/drm_panel.h
+> > @@ -197,11 +197,18 @@ int drm_panel_detach(struct drm_panel *panel);
+> >
+> >  #if defined(CONFIG_OF) && defined(CONFIG_DRM_PANEL)
+> >  struct drm_panel *of_drm_find_panel(const struct device_node *np);
+> > +int of_drm_get_panel_orientation(const struct device_node *np,
+> > +                              enum drm_panel_orientation *orientation);
+> >  #else
+> >  static inline struct drm_panel *of_drm_find_panel(const struct device_node *np)
+> >  {
+> >       return ERR_PTR(-ENODEV);
+> >  }
+> > +int of_drm_get_panel_orientation(const struct device_node *np,
+> > +                              enum drm_panel_orientation *orientation)
+> > +{
+> > +     return -ENODEV;
+> > +}
+> >  #endif
+> >
+> >  #endif
+> > --
+> > 2.22.0.410.gd8fdbe21b5-goog
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/GQh29YaGsGpYJe2hGqtHNGj
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0SnEAACgkQAVBC80lX
-0GyiFQf8CptctZ1Pj9v17+202YzkdivpT2sBA0AUPMM+QqsZThc+iL9pn4s0a3Fe
-N/CrSehYBDYGsmvTX8qU60lz8F4rDn7+ERmidTKSyknkQYjoihnybAaO57puj327
-d6MhscD0iJgiBlDK1U+JPAXt3MQBLtadoIsUjT12+FprUuD5niU/Ie835MvYNhzQ
-BXANackw3tb6o0WwFlX3gYDWCdW4vRLSJS4s6UawtzRmxFPa6nyxv0l+n6swhSrH
-Pc2DjblZPICQ70g9MeG1Ysyo7ls1RXADUZF1Hlp5UGEiq3Rpbb+3YiegtThfRukL
-q75crrUaGckyPtbZB37DJdheWvoG4Q==
-=62Sw
------END PGP SIGNATURE-----
-
---Sig_/GQh29YaGsGpYJe2hGqtHNGj--
+Thanks for the review
