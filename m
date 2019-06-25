@@ -2,225 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65426526B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 10:31:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76948526AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 10:30:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730554AbfFYIbf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 04:31:35 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:52167 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726702AbfFYIbe (ORCPT
+        id S1730478AbfFYIa4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 04:30:56 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:38281 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726702AbfFYIa4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 04:31:34 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5P8UiJ83530859
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Tue, 25 Jun 2019 01:30:44 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5P8UiJ83530859
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019061801; t=1561451445;
-        bh=TtMW6kRNDrkdJRMunLg1nGGdBIfnK4EGkyNec+zzJZU=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=fj3OUfzWHM0TCOx7kXexCkELuk1BvnJR9lL5xcB18dDvf6EoGedY7Xgp4sXnpK9tO
-         JT/fjxLAaMlaHR0IcAykHXIv0EaZtqW0ONoWFFMLimqYnB6HnYPUbOhx0+ErNphRd8
-         9kdU4x0ppKNNSLfR6s7vqH7TrHVlaCOHd0Atx2G3jEMg6FDprxTF7kXuPF6+1L4Vdc
-         6/i9vqpM4YhgKYy/Ze9r/ShMgtk3yzfAlFQilZM+3IALecVdEI2xgLCMT14u/FOt9a
-         my5AMy1qmPazIuXiuQktysfj2JcSHvlPLWv14EFRTvkapJorGKhb3yBczGnrCaDPON
-         DeuwsQcM29EBA==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5P8UiNp3530856;
-        Tue, 25 Jun 2019 01:30:44 -0700
-Date:   Tue, 25 Jun 2019 01:30:44 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Patrick Bellasi <tipbot@zytor.com>
-Message-ID: <tip-60daf9c19410604f08c99e146bc378c8a64f4ccd@git.kernel.org>
-Cc:     pjt@google.com, dietmar.eggemann@arm.com,
-        linux-kernel@vger.kernel.org, balsini@android.com,
-        peterz@infradead.org, rafael.j.wysocki@intel.com,
-        vincent.guittot@linaro.org, tkjos@google.com, hpa@zytor.com,
-        juri.lelli@redhat.com, patrick.bellasi@arm.com,
-        morten.rasmussen@arm.com, tglx@linutronix.de,
-        viresh.kumar@linaro.org, surenb@google.com, tj@kernel.org,
-        mingo@kernel.org, joelaf@google.com, quentin.perret@arm.com,
-        smuckle@google.com, torvalds@linux-foundation.org
-Reply-To: linux-kernel@vger.kernel.org, pjt@google.com,
-          dietmar.eggemann@arm.com, rafael.j.wysocki@intel.com,
-          peterz@infradead.org, balsini@android.com, hpa@zytor.com,
-          juri.lelli@redhat.com, vincent.guittot@linaro.org,
-          tkjos@google.com, patrick.bellasi@arm.com,
-          morten.rasmussen@arm.com, viresh.kumar@linaro.org,
-          tglx@linutronix.de, surenb@google.com, smuckle@google.com,
-          torvalds@linux-foundation.org, mingo@kernel.org, tj@kernel.org,
-          joelaf@google.com, quentin.perret@arm.com
-In-Reply-To: <20190621084217.8167-3-patrick.bellasi@arm.com>
-References: <20190621084217.8167-3-patrick.bellasi@arm.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/core] sched/uclamp: Add bucket local max tracking
-Git-Commit-ID: 60daf9c19410604f08c99e146bc378c8a64f4ccd
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF autolearn=ham
-        autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+        Tue, 25 Jun 2019 04:30:56 -0400
+Received: by mail-pg1-f196.google.com with SMTP id z75so5979885pgz.5;
+        Tue, 25 Jun 2019 01:30:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:subject:date:message-id;
+        bh=YqI+uB01O08qXYcfpRy+0O71chB2PgUQKTLZZkJEu5o=;
+        b=VtQA0z3JZ77kvRWa+hBp5VvOlqyBOh4xUDxfpdIFJlUu/C54kDNC/14zdvK0WRp6Rl
+         pkpvJmICr3UefhdE/eZ+riqBj5XUYwpdw8kqSlqcb/dBs1kD2TPWNjpqs8tnQqg9NYG3
+         bBsMj5YCeD7vWbLSuSvpj7EI/MT5P/WgEdDZupn5EpCnKtbiOMuFRtXAAwmEtTxaqlnc
+         AbIOah6P3e8g7dtRTR+hkdnyHlrjcBgMCAUPSQ0U0tayBXyufJWzTGZZ2WtIWApHhbvL
+         erBwqItYxI+tg6tLZl8VGhhGr1s7go0yYQjOw4+C4p+1jRAz+afk28wDD3SAeVx5u6/I
+         0rUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:subject:date:message-id;
+        bh=YqI+uB01O08qXYcfpRy+0O71chB2PgUQKTLZZkJEu5o=;
+        b=UnRFI3jJOLZvlK6tZkOGl4Z8c6YtVaGnLhK70kuLdKEHib/u8hHO/8KThDOEqe9iwu
+         nCWMCVHhCc+1ANKjdVfxPlpSSQh5lAO3nDeCXseOg9YqlaPp6bcuTKs3Tb69iNOx/y63
+         H1hpN5eAJbmUpSEQw1iEeG+px7RNv9bC+OJXDGTMBMEwo97yccHF0tonIrBf2vokVEni
+         HGVQGoQgsJu+8/hvDRi1rEfljSxgwtCOaT7M6QAtXBGS79jiDuM52X8d3BuA/xYTjAmP
+         xUiI6hZJNLTV7NGCzYBTU0TuDGGMZty/66cbnbpHO/S5/AJDj9ayrjkiznQA25Hrs2Bu
+         1D9g==
+X-Gm-Message-State: APjAAAUDrC0nZlrcFqbIu5CUtuQhY8hIqeDBesH7Ac54w1L5TMST8/7F
+        I3ge75GiYF72WHXj5Gcw1BdqMPqK
+X-Google-Smtp-Source: APXvYqx9aCCUlXyowJ/yjwEbnLcNSxx8p6Si+QM+nu42Hd3yUFM0Y+IOzm59T1aFkkPmWfGbHD2TOA==
+X-Received: by 2002:a65:4841:: with SMTP id i1mr38287995pgs.37.1561451454950;
+        Tue, 25 Jun 2019 01:30:54 -0700 (PDT)
+Received: from localhost (61-220-137-37.HINET-IP.hinet.net. [61.220.137.37])
+        by smtp.gmail.com with ESMTPSA id v10sm13115787pfe.163.2019.06.25.01.30.53
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 25 Jun 2019 01:30:54 -0700 (PDT)
+From:   AceLan Kao <acelan.kao@canonical.com>
+To:     Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] i2c: designware: Add disable runtime pm quirk
+Date:   Tue, 25 Jun 2019 16:30:51 +0800
+Message-Id: <20190625083051.30332-1-acelan.kao@canonical.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  60daf9c19410604f08c99e146bc378c8a64f4ccd
-Gitweb:     https://git.kernel.org/tip/60daf9c19410604f08c99e146bc378c8a64f4ccd
-Author:     Patrick Bellasi <patrick.bellasi@arm.com>
-AuthorDate: Fri, 21 Jun 2019 09:42:03 +0100
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 24 Jun 2019 19:23:44 +0200
+Dell machines come with goodix touchpad IC suffer from the double click
+issue if the Designware I2C adapter enters runtime suspend.
 
-sched/uclamp: Add bucket local max tracking
+It's because the goodix re-assert the interrupt if host doesn't read the
+data within 100ms and designware takes a longer time to wake up from
+runtime suspend. In the case, it got a second interrupt during
+resuming, so it thinks it's a double click.
 
-Because of bucketization, different task-specific clamp values are
-tracked in the same bucket.  For example, with 20% bucket size and
-assuming to have:
+There is no simple way to fix this, it's a firmware issue and goodix
+agrees to fix this in their firmware on next release, but this issue
+still affects the machines that don't come with an updated firmware. So,
+add a quirk to mark those machines and avoid the designware from
+entering runtime suspend.
 
-  Task1: util_min=25%
-  Task2: util_min=35%
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=202683
 
-both tasks will be refcounted in the [20..39]% bucket and always boosted
-only up to 20% thus implementing a simple floor aggregation normally
-used in histograms.
-
-In systems with only few and well-defined clamp values, it would be
-useful to track the exact clamp value required by a task whenever
-possible. For example, if a system requires only 23% and 47% boost
-values then it's possible to track the exact boost required by each
-task using only 3 buckets of ~33% size each.
-
-Introduce a mechanism to max aggregate the requested clamp values of
-RUNNABLE tasks in the same bucket. Keep it simple by resetting the
-bucket value to its base value only when a bucket becomes inactive.
-Allow a limited and controlled overboosting margin for tasks recounted
-in the same bucket.
-
-In systems where the boost values are not known in advance, it is still
-possible to control the maximum acceptable overboosting margin by tuning
-the number of clamp groups. For example, 20 groups ensure a 5% maximum
-overboost.
-
-Remove the rq bucket initialization code since a correct bucket value
-is now computed when a task is refcounted into a CPU's rq.
-
-Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Alessio Balsini <balsini@android.com>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: Joel Fernandes <joelaf@google.com>
-Cc: Juri Lelli <juri.lelli@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Morten Rasmussen <morten.rasmussen@arm.com>
-Cc: Paul Turner <pjt@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Quentin Perret <quentin.perret@arm.com>
-Cc: Rafael J . Wysocki <rafael.j.wysocki@intel.com>
-Cc: Steve Muckle <smuckle@google.com>
-Cc: Suren Baghdasaryan <surenb@google.com>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Todd Kjos <tkjos@google.com>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
-Link: https://lkml.kernel.org/r/20190621084217.8167-3-patrick.bellasi@arm.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: AceLan Kao <acelan.kao@canonical.com>
 ---
- kernel/sched/core.c | 43 +++++++++++++++++++++++++------------------
- 1 file changed, 25 insertions(+), 18 deletions(-)
+ drivers/i2c/busses/i2c-designware-master.c | 30 ++++++++++++++++++++--
+ 1 file changed, 28 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index d8c1e67afd82..0a6eff8a278b 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -785,6 +785,11 @@ static inline unsigned int uclamp_bucket_id(unsigned int clamp_value)
- 	return clamp_value / UCLAMP_BUCKET_DELTA;
- }
- 
-+static inline unsigned int uclamp_bucket_base_value(unsigned int clamp_value)
-+{
-+	return UCLAMP_BUCKET_DELTA * uclamp_bucket_id(clamp_value);
-+}
-+
- static inline unsigned int uclamp_none(int clamp_id)
- {
- 	if (clamp_id == UCLAMP_MIN)
-@@ -822,6 +827,11 @@ unsigned int uclamp_rq_max_value(struct rq *rq, unsigned int clamp_id)
-  * When a task is enqueued on a rq, the clamp bucket currently defined by the
-  * task's uclamp::bucket_id is refcounted on that rq. This also immediately
-  * updates the rq's clamp value if required.
-+ *
-+ * Tasks can have a task-specific value requested from user-space, track
-+ * within each bucket the maximum value for tasks refcounted in it.
-+ * This "local max aggregation" allows to track the exact "requested" value
-+ * for each bucket when all its RUNNABLE tasks require the same clamp.
+diff --git a/drivers/i2c/busses/i2c-designware-master.c b/drivers/i2c/busses/i2c-designware-master.c
+index d464799e40a3..4048a66355f6 100644
+--- a/drivers/i2c/busses/i2c-designware-master.c
++++ b/drivers/i2c/busses/i2c-designware-master.c
+@@ -9,6 +9,7 @@
+  * Copyright (C) 2009 Provigent Ltd.
   */
- static inline void uclamp_rq_inc_id(struct rq *rq, struct task_struct *p,
- 				    unsigned int clamp_id)
-@@ -835,8 +845,15 @@ static inline void uclamp_rq_inc_id(struct rq *rq, struct task_struct *p,
- 	bucket = &uc_rq->bucket[uc_se->bucket_id];
- 	bucket->tasks++;
+ #include <linux/delay.h>
++#include <linux/dmi.h>
+ #include <linux/err.h>
+ #include <linux/errno.h>
+ #include <linux/export.h>
+@@ -22,6 +23,25 @@
  
-+	/*
-+	 * Local max aggregation: rq buckets always track the max
-+	 * "requested" clamp value of its RUNNABLE tasks.
-+	 */
-+	if (bucket->tasks == 1 || uc_se->value > bucket->value)
-+		bucket->value = uc_se->value;
+ #include "i2c-designware-core.h"
+ 
++static int no_runtime_pm;
++static const struct dmi_system_id i2c_dw_no_runtime_pm[] = {
++	{
++		.ident = "Dell Inspiron 5390",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
++			DMI_MATCH(DMI_PRODUCT_NAME, "Inspiron 5390"),
++		},
++	},
++	{
++		.ident = "Dell Vostro 5390",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
++			DMI_MATCH(DMI_PRODUCT_NAME, "Vostro 5390"),
++		},
++	},
++	{ }
++};
 +
- 	if (uc_se->value > READ_ONCE(uc_rq->value))
--		WRITE_ONCE(uc_rq->value, bucket->value);
-+		WRITE_ONCE(uc_rq->value, uc_se->value);
+ static void i2c_dw_configure_fifo_master(struct dw_i2c_dev *dev)
+ {
+ 	/* Configure Tx/Rx FIFO threshold levels */
+@@ -424,7 +444,8 @@ i2c_dw_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
+ 
+ 	dev_dbg(dev->dev, "%s: msgs: %d\n", __func__, num);
+ 
+-	pm_runtime_get_sync(dev->dev);
++	if (!no_runtime_pm)
++		pm_runtime_get_sync(dev->dev);
+ 
+ 	if (dev_WARN_ONCE(dev->dev, dev->suspended, "Transfer while suspended\n")) {
+ 		ret = -ESHUTDOWN;
+@@ -501,7 +522,8 @@ i2c_dw_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
+ 
+ done_nolock:
+ 	pm_runtime_mark_last_busy(dev->dev);
+-	pm_runtime_put_autosuspend(dev->dev);
++	if (!no_runtime_pm)
++		pm_runtime_put_autosuspend(dev->dev);
+ 
+ 	return ret;
  }
+@@ -733,6 +755,10 @@ int i2c_dw_probe(struct dw_i2c_dev *dev)
+ 	if (ret)
+ 		return ret;
  
- /*
-@@ -863,6 +880,12 @@ static inline void uclamp_rq_dec_id(struct rq *rq, struct task_struct *p,
- 	if (likely(bucket->tasks))
- 		bucket->tasks--;
- 
-+	/*
-+	 * Keep "local max aggregation" simple and accept to (possibly)
-+	 * overboost some RUNNABLE tasks in the same bucket.
-+	 * The rq clamp bucket value is reset to its base value whenever
-+	 * there are no more RUNNABLE tasks refcounting it.
-+	 */
- 	if (likely(bucket->tasks))
- 		return;
- 
-@@ -903,25 +926,9 @@ static void __init init_uclamp(void)
- 	unsigned int clamp_id;
- 	int cpu;
- 
--	for_each_possible_cpu(cpu) {
--		struct uclamp_bucket *bucket;
--		struct uclamp_rq *uc_rq;
--		unsigned int bucket_id;
--
-+	for_each_possible_cpu(cpu)
- 		memset(&cpu_rq(cpu)->uclamp, 0, sizeof(struct uclamp_rq));
- 
--		for_each_clamp_id(clamp_id) {
--			uc_rq = &cpu_rq(cpu)->uclamp[clamp_id];
--
--			bucket_id = 1;
--			while (bucket_id < UCLAMP_BUCKETS) {
--				bucket = &uc_rq->bucket[bucket_id];
--				bucket->value = bucket_id * UCLAMP_BUCKET_DELTA;
--				++bucket_id;
--			}
--		}
--	}
--
- 	for_each_clamp_id(clamp_id) {
- 		uclamp_se_set(&init_task.uclamp[clamp_id],
- 			      uclamp_none(clamp_id));
++	no_runtime_pm = dmi_check_system(i2c_dw_no_runtime_pm);
++	if (no_runtime_pm)
++		__pm_runtime_disable(dev->dev, true);
++
+ 	/*
+ 	 * Increment PM usage count during adapter registration in order to
+ 	 * avoid possible spurious runtime suspend when adapter device is
+-- 
+2.17.1
+
