@@ -2,136 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E13CA55CC4
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 02:04:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DD1D55CA9
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 01:57:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726536AbfFZAEd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 20:04:33 -0400
-Received: from mga09.intel.com ([134.134.136.24]:45807 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726402AbfFZAEc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 20:04:32 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jun 2019 17:04:31 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,417,1557212400"; 
-   d="scan'208";a="188466243"
-Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
-  by fmsmga002.fm.intel.com with ESMTP; 25 Jun 2019 17:04:30 -0700
-Date:   Tue, 25 Jun 2019 16:54:47 -0700
-From:   Fenghua Yu <fenghua.yu@intel.com>
-To:     David Laight <David.Laight@ACULAB.COM>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        H Peter Anvin <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim Krcmar <rkrcmar@redhat.com>,
-        Christopherson Sean J <sean.j.christopherson@intel.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Xiaoyao Li <xiaoyao.li@intel.com>,
-        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        x86 <x86@kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>
-Subject: Re: [PATCH v9 03/17] x86/split_lock: Align x86_capability to
- unsigned long to avoid split locked access
-Message-ID: <20190625235447.GB245468@romley-ivt3.sc.intel.com>
-References: <1560897679-228028-1-git-send-email-fenghua.yu@intel.com>
- <1560897679-228028-4-git-send-email-fenghua.yu@intel.com>
- <746b5a8752cc40b1b954913f786ed9a6@AcuMS.aculab.com>
+        id S1726339AbfFYX5y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 19:57:54 -0400
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:41051 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725782AbfFYX5y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 19:57:54 -0400
+Received: by mail-yw1-f65.google.com with SMTP id y185so133501ywy.8
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 16:57:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BYYmoTlsMAXHE1sdf2TkcUfIalvt5FU+r7Wng7vtf2k=;
+        b=bHr9RG0tkfub5JlEPuSlccDNn2kaBl57++YE4B9BvBAfrk/lrYZ49HU1Eo9gNT3ehk
+         fNU3tQP8gui8q9wB/h1Fc81T9JFeVcZUyl03XKjJ8gOzY53YIyIzh/i5zII6JgrWgqIM
+         lkO3DVg7MWoytL4Eb8VJIzvW8QcRR10rlGa08CISiQVyfr2JSdtGwciaMXKI87B1ul24
+         1PRqHKieYqB7Sdn81jUAtFn5JbY1GfrO71H4sWFwdVdgOE9Ns1kODIziZwkcUyqk4eHb
+         Lull0e5SzkFSpJ4SxrKHhM1n+liVt/Q1fOL4ylNWFL6BIl1nlhx95K+44HpmfXZQO1Ma
+         7Swg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BYYmoTlsMAXHE1sdf2TkcUfIalvt5FU+r7Wng7vtf2k=;
+        b=sRB4XFHHGkGXXPlRZMoQL42ZmifMLjgNIndGrVmzL69tuxfyHzLgxq3eV4YG5En2Cw
+         Ica8jfIxx4Y+HF8jUKPrbtfEO+DWNdyEPLxGjgbCy7gzgN7MwOKe59+GQtcdpVf5VC9I
+         h2Z+yqiTc3in5T1Ohv3y99pdShc+Bb+BvutepJ4YWpSb8jLMwv8Nnxgi8x3xUjlJDo2A
+         B8ckyYLOOpVBC2g78RqR5MlAh2MmiANXLenWcpSBBRwrPhHRMuGmU5SpUDW+7hHeb3SJ
+         VNc/Ra3t5G+nX6LLjrEDEU6TpN4ujO9uc/UEEgyFvanRQVXWYpPCDyeGeZ+u0J5+V20i
+         B3Cg==
+X-Gm-Message-State: APjAAAUUF1MwdZ5/bQP6l6lNUpyd/YRZRwuHU2mFPP1QF3YNl70PYTmb
+        lkgjAQblT6jdc91Xm9EoE8HZTLrCamvWwtcagKraRA==
+X-Google-Smtp-Source: APXvYqwLaw1k639FvVXfSfGs08cOnJCQGJfxpqhknTwehsMkT1lTu3zMHVWSGjAgN0vQtarw8VCOzDn0TuQCrm+B3mU=
+X-Received: by 2002:a81:ae0e:: with SMTP id m14mr978096ywh.308.1561507073185;
+ Tue, 25 Jun 2019 16:57:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <746b5a8752cc40b1b954913f786ed9a6@AcuMS.aculab.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20190611231813.3148843-1-guro@fb.com> <20190611231813.3148843-9-guro@fb.com>
+In-Reply-To: <20190611231813.3148843-9-guro@fb.com>
+From:   Shakeel Butt <shakeelb@google.com>
+Date:   Tue, 25 Jun 2019 16:57:42 -0700
+Message-ID: <CALvZod7Z=q9YOGpWjv=EsORCy5dHAz+cDv=4qwD5V5xDv60QEw@mail.gmail.com>
+Subject: Re: [PATCH v7 08/10] mm: rework non-root kmem_cache lifecycle management
+To:     Roman Gushchin <guro@fb.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Kernel Team <kernel-team@fb.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Waiman Long <longman@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 03:12:49PM +0000, David Laight wrote:
-> From: Fenghua Yu
-> > Sent: 18 June 2019 23:41
-> > 
-> > set_cpu_cap() calls locked BTS and clear_cpu_cap() calls locked BTR to
-> > operate on bitmap defined in x86_capability.
-> > 
-> > Locked BTS/BTR accesses a single unsigned long location. In 64-bit mode,
-> > the location is at:
-> > base address of x86_capability + (bit offset in x86_capability / 64) * 8
-> > 
-> > Since base address of x86_capability may not be aligned to unsigned long,
-> > the single unsigned long location may cross two cache lines and
-> > accessing the location by locked BTS/BTR introductions will cause
-> > split lock.
-> > 
-> > To fix the split lock issue, align x86_capability to size of unsigned long
-> > so that the location will be always within one cache line.
-> > 
-> > Changing x86_capability's type to unsigned long may also fix the issue
-> > because x86_capability will be naturally aligned to size of unsigned long.
-> > But this needs additional code changes. So choose the simpler solution
-> > by setting the array's alignment to size of unsigned long.
-> 
-> As I've pointed out several times before this isn't the only int[] data item
-> in this code that gets passed to the bit operations.
-> Just because you haven't got a 'splat' from the others doesn't mean they don't
-> need fixing at the same time.
+On Tue, Jun 11, 2019 at 4:18 PM Roman Gushchin <guro@fb.com> wrote:
+>
+> Currently each charged slab page holds a reference to the cgroup to
+> which it's charged. Kmem_caches are held by the memcg and are released
+> all together with the memory cgroup. It means that none of kmem_caches
+> are released unless at least one reference to the memcg exists, which
+> is very far from optimal.
+>
+> Let's rework it in a way that allows releasing individual kmem_caches
+> as soon as the cgroup is offline, the kmem_cache is empty and there
+> are no pending allocations.
+>
+> To make it possible, let's introduce a new percpu refcounter for
+> non-root kmem caches. The counter is initialized to the percpu mode,
+> and is switched to the atomic mode during kmem_cache deactivation. The
+> counter is bumped for every charged page and also for every running
+> allocation. So the kmem_cache can't be released unless all allocations
+> complete.
+>
+> To shutdown non-active empty kmem_caches, let's reuse the work queue,
+> previously used for the kmem_cache deactivation. Once the reference
+> counter reaches 0, let's schedule an asynchronous kmem_cache release.
+>
+> * I used the following simple approach to test the performance
+> (stolen from another patchset by T. Harding):
+>
+>     time find / -name fname-no-exist
+>     echo 2 > /proc/sys/vm/drop_caches
+>     repeat 10 times
+>
+> Results:
+>
+>         orig            patched
+>
+> real    0m1.455s        real    0m1.355s
+> user    0m0.206s        user    0m0.219s
+> sys     0m0.855s        sys     0m0.807s
+>
+> real    0m1.487s        real    0m1.699s
+> user    0m0.221s        user    0m0.256s
+> sys     0m0.806s        sys     0m0.948s
+>
+> real    0m1.515s        real    0m1.505s
+> user    0m0.183s        user    0m0.215s
+> sys     0m0.876s        sys     0m0.858s
+>
+> real    0m1.291s        real    0m1.380s
+> user    0m0.193s        user    0m0.198s
+> sys     0m0.843s        sys     0m0.786s
+>
+> real    0m1.364s        real    0m1.374s
+> user    0m0.180s        user    0m0.182s
+> sys     0m0.868s        sys     0m0.806s
+>
+> real    0m1.352s        real    0m1.312s
+> user    0m0.201s        user    0m0.212s
+> sys     0m0.820s        sys     0m0.761s
+>
+> real    0m1.302s        real    0m1.349s
+> user    0m0.205s        user    0m0.203s
+> sys     0m0.803s        sys     0m0.792s
+>
+> real    0m1.334s        real    0m1.301s
+> user    0m0.194s        user    0m0.201s
+> sys     0m0.806s        sys     0m0.779s
+>
+> real    0m1.426s        real    0m1.434s
+> user    0m0.216s        user    0m0.181s
+> sys     0m0.824s        sys     0m0.864s
+>
+> real    0m1.350s        real    0m1.295s
+> user    0m0.200s        user    0m0.190s
+> sys     0m0.842s        sys     0m0.811s
+>
+> So it looks like the difference is not noticeable in this test.
+>
+> Signed-off-by: Roman Gushchin <guro@fb.com>
+> Acked-by: Vladimir Davydov <vdavydov.dev@gmail.com>
 
-As Thomas suggested in https://lkml.org/lkml/2019/4/25/353, patch #0017
-in this patch set implements WARN_ON_ONCE() to audit possible unalignment
-in atomic bit ops.
-
-This patch set just enables split lock detection first. Fixing ALL split
-lock issues might be practical after the patch is upstreamed and used widely.
-
-> 
-> > Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
-> > ---
-> >  arch/x86/include/asm/processor.h | 4 +++-
-> >  1 file changed, 3 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-> > index c34a35c78618..d3e017723634 100644
-> > --- a/arch/x86/include/asm/processor.h
-> > +++ b/arch/x86/include/asm/processor.h
-> > @@ -93,7 +93,9 @@ struct cpuinfo_x86 {
-> >  	__u32			extended_cpuid_level;
-> >  	/* Maximum supported CPUID level, -1=no CPUID: */
-> >  	int			cpuid_level;
-> > -	__u32			x86_capability[NCAPINTS + NBUGINTS];
-> > +	/* Aligned to size of unsigned long to avoid split lock in atomic ops */
-> 
-> Wrong comment.
-> Something like:
-> 	/* Align to sizeof (unsigned long) because the array is passed to the
-> 	 * atomic bit-op functions which require an aligned unsigned long []. */
-
-The problem we try to fix here is not because "the array is passed to the
-atomic bit-op functions which require an aligned unsigned long []".
-
-The problem is because of the possible split lock issue. If it's not because
-of split lock issue, there is no need to have this patch.
-
-So I would think my comment is right to point out explicitly why we need
-this alignment.
-
-> 
-> > +	__u32			x86_capability[NCAPINTS + NBUGINTS]
-> > +				__aligned(sizeof(unsigned long));
-> 
-> It might be better to use a union (maybe unnamed) here.
-
-That would be another patch. This patch just simply fixes the split lock
-issue.
-
-Thanks.
-
--Fenghua
+Reviewed-by: Shakeel Butt <shakeelb@google.com>
