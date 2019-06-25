@@ -2,104 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBEB3528B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 11:55:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F03DD528C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 11:58:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728636AbfFYJzh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 05:55:37 -0400
-Received: from sauhun.de ([88.99.104.3]:43854 "EHLO pokefinder.org"
+        id S1729834AbfFYJ6A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 05:58:00 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:55162 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726421AbfFYJzh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 05:55:37 -0400
-Received: from localhost (p54B333A7.dip0.t-ipconnect.de [84.179.51.167])
-        by pokefinder.org (Postfix) with ESMTPSA id 275C22C376D;
-        Tue, 25 Jun 2019 11:55:34 +0200 (CEST)
-Date:   Tue, 25 Jun 2019 11:55:33 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     Eugen.Hristev@microchip.com, peda@axentia.se, robh+dt@kernel.org,
-        mark.rutland@arm.com, Nicolas.Ferre@microchip.com,
-        Ludovic.Desroches@microchip.com, linux-i2c@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
-Subject: I2C filtering (was Re: [PATCH v2 6/9] dt-bindings: i2c: at91: add
- binding for enable-ana-filt)
-Message-ID: <20190625095533.GC1688@kunai>
-References: <1561449642-26956-1-git-send-email-eugen.hristev@microchip.com>
- <1561449642-26956-7-git-send-email-eugen.hristev@microchip.com>
- <4e81d3c9-25f3-ca6e-f2d5-17fad5905bb8@axentia.se>
- <84628b5e-bea7-7d91-f790-f3a2650040fa@microchip.com>
- <20190625093156.GF5690@piout.net>
+        id S1726421AbfFYJ6A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 05:58:00 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A59747E424;
+        Tue, 25 Jun 2019 09:57:47 +0000 (UTC)
+Received: from localhost (unknown [10.43.2.74])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C60F810013D9;
+        Tue, 25 Jun 2019 09:57:43 +0000 (UTC)
+Date:   Tue, 25 Jun 2019 11:57:37 +0200
+From:   Stanislaw Gruszka <sgruszka@redhat.com>
+To:     Soeren Moch <smoch@web.de>
+Cc:     Helmut Schaa <helmut.schaa@googlemail.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] rt2x00: fix rx queue hang
+Message-ID: <20190625095734.GA2886@redhat.com>
+References: <20190617094656.3952-1-smoch@web.de>
+ <20190618093431.GA2577@redhat.com>
+ <b6899d78-447c-3cb3-4bec-e4050660ccaa@web.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="PuGuTyElPB9bOcsM"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190625093156.GF5690@piout.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <b6899d78-447c-3cb3-4bec-e4050660ccaa@web.de>
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Tue, 25 Jun 2019 09:57:59 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello
 
---PuGuTyElPB9bOcsM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, Jun 21, 2019 at 01:30:01PM +0200, Soeren Moch wrote:
+> On 18.06.19 11:34, Stanislaw Gruszka wrote:
+> > Hi
+> >
+> > On Mon, Jun 17, 2019 at 11:46:56AM +0200, Soeren Moch wrote:
+> >> Since commit ed194d136769 ("usb: core: remove local_irq_save() around
+> >>  ->complete() handler") the handlers rt2x00usb_interrupt_rxdone() and
+> >> rt2x00usb_interrupt_txdone() are not running with interrupts disabled
+> >> anymore. So these handlers are not guaranteed to run completely before
+> >> workqueue processing starts. So only mark entries ready for workqueue
+> >> processing after proper accounting in the dma done queue.
+> > It was always the case on SMP machines that rt2x00usb_interrupt_{tx/rx}done
+> > can run concurrently with rt2x00_work_{rx,tx}done, so I do not
+> > understand how removing local_irq_save() around complete handler broke
+> > things.
+> I think because completion handlers can be interrupted now and scheduled
+> away
+> in the middle of processing.
+> > Have you reverted commit ed194d136769 and the revert does solve the problem ?
+> Yes, I already sent a patch for this, see [1]. But this was not considered
+> an acceptablesolution. Especially RT folks do not like code running with
+> interrupts disabled,particularly when trying to acquire spinlocks then.
+> 
+> [1] https://lkml.org/lkml/2019/5/31/863
+> > Between 4.19 and 4.20 we have some quite big changes in rt2x00 driver:
+> >
+> > 0240564430c0 rt2800: flush and txstatus rework for rt2800mmio
+> > adf26a356f13 rt2x00: use different txstatus timeouts when flushing
+> > 5022efb50f62 rt2x00: do not check for txstatus timeout every time on tasklet
+> > 0b0d556e0ebb rt2800mmio: use txdone/txstatus routines from lib
+> > 5c656c71b1bf rt2800: move usb specific txdone/txstatus routines to rt2800lib
+> >
+> > so I'm a bit afraid that one of those changes is real cause of
+> > the issue not ed194d136769 .
+> I tested 4.20 and 5.1 and see the exact same behavior. Reverting this
+> usb core patchsolves the problem.
+> 4.19.x (before this usb core patch) is running fine.
+> >> Note that rt2x00usb_work_rxdone() processes all available entries, not
+> >> only such for which queue_work() was called.
+> >>
+> >> This fixes a regression on a RT5370 based wifi stick in AP mode, which
+> >> suddenly stopped data transmission after some period of heavy load. Also
+> >> stopping the hanging hostapd resulted in the error message "ieee80211
+> >> phy0: rt2x00queue_flush_queue: Warning - Queue 14 failed to flush".
+> >> Other operation modes are probably affected as well, this just was
+> >> the used testcase.
+> > Do you know what actually make the traffic stop,
+> > TX queue hung or RX queue hung?
+> I think RX queue hang, as stated in the patch title. "Queue 14" means QID_RX
+> (rt2x00queue.h, enum data_queue_qid).
+> I also tried to re-add local_irq_save() in only one of the handlers. Adding
+> this tort2x00usb_interrupt_rxdone() alone solved the issue, while doing so
+> for tx alonedid not.
+> 
+> Note that this doesn't mean there is no problem for tx, that's maybe
+> just more
+> difficult to trigger.
+> >> diff --git a/drivers/net/wireless/ralink/rt2x00/rt2x00dev.c b/drivers/net/wireless/ralink/rt2x00/rt2x00dev.c
+> >> index 1b08b01db27b..9c102a501ee6 100644
+> >> --- a/drivers/net/wireless/ralink/rt2x00/rt2x00dev.c
+> >> +++ b/drivers/net/wireless/ralink/rt2x00/rt2x00dev.c
+> >> @@ -263,9 +263,9 @@ EXPORT_SYMBOL_GPL(rt2x00lib_dmastart);
+> >>
+> >>  void rt2x00lib_dmadone(struct queue_entry *entry)
+> >>  {
+> >> -	set_bit(ENTRY_DATA_STATUS_PENDING, &entry->flags);
+> >>  	clear_bit(ENTRY_OWNER_DEVICE_DATA, &entry->flags);
+> >>  	rt2x00queue_index_inc(entry, Q_INDEX_DMA_DONE);
+> >> +	set_bit(ENTRY_DATA_STATUS_PENDING, &entry->flags);
+> > Unfortunately I do not understand how this suppose to fix the problem,
+> > could you elaborate more about this change?
+> >
+> Re-adding local_irq_save() around thisrt2x00lib_dmadone()solved
+> the issue. So I also tried to reverse the order of these calls.
+> It seems totally plausible to me, that the correct sequence is to
+> first clear the device assignment, then to set the status to dma_done,
+> then to trigger the workqueue processing for this entry. When the handler
+> is scheduled away in the middle of this sequence, now there is no
+> strange state where the entry can be processed by the workqueue while
+> not declared dma_done for it.
+> With this changed sequence there is no need anymore to disable interrupts
+> for solving the hang issue.
 
-On Tue, Jun 25, 2019 at 11:31:56AM +0200, Alexandre Belloni wrote:
-> On 25/06/2019 09:14:13+0000, Eugen.Hristev@microchip.com wrote:
-> > > Perhaps
-> > >=20
-> > > 	microchip,digital-filter;
-> > > 	microchip,analog-filter;
-> > >=20
-> > > ?
-> >=20
-> > Hi Peter,
-> >=20
-> > Thanks for reviewing. The name of the property does not matter much to=
-=20
-> > me, and we have properties prefixed with vendor, and some are not.
-> >=20
-> > @Alexandre Belloni: which name you think it's best ?
-> >=20
->=20
-> I'm not sure, it depends on whether Wolfram thinks it is generic enough
-> to be used without a vendor prefix.
+Thanks very much for explanations. However I still do not fully
+understand the issue. Q_INDEX_DMA_DONE index is only checked on TX
+processing (on RX we use only Q_INDEX_DONE and Q_INDEX) and
+ENTRY_OWNER_DEVICE_DATA is already cleared before rt2x00lib_dmadone()
+in rt2x00usb_interrupt_rxdone() .
 
-I could imagine that we design a generic property for filters. The ones
-above make me wonder, though, because they are bool. I'd think you can
-configure the filters in some way, too?
+So I'm not sure how changing the order solve the problem. Looks
+for me that the issue is triggered by some rt2x00lib_dmadone()
+call done on error path (not in rt2x00usb_interrupt_rxdone())
+and it race with this check:
 
-I never used such filtering, so I am unaware of the parameters needed /
-suitable. Quick grepping through I2C master drivers reveals that
-i2c-stm32f7.c also handles filters, but only with default values. Maybe
-DT configuration would be benefitial to that driver, too?
+        if (test_and_set_bit(ENTRY_OWNER_DEVICE_DATA, &entry->flags) ||
+            test_bit(ENTRY_DATA_STATUS_PENDING, &entry->flags))
+                return false;
 
-Adding some people to CC.
+in rt2x00usb_kick_rx_entry() - we return instead of submit urb.
 
+I'm somewhat reluctant to change the order, because TX processing
+might relay on it (we first mark we wait for TX status and
+then mark entry is no longer owned by hardware). However on RX
+side ENTRY_DATA_STATUS_PENDING bit make no sense as we do not
+wait for status. We should remove ENTRY_DATA_STATUS_PENDING on
+RX side and perhaps this also will solve issue you observe.
+Could you please check below patch, if it fixes the problem as well?
 
---PuGuTyElPB9bOcsM
-Content-Type: application/pgp-signature; name="signature.asc"
+Stanislaw
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl0R75EACgkQFA3kzBSg
-KbaFyA//UefpasMtRS97YQqN/2m6N9Xgl7LiXTof1v53GW/mee1Y8ce675X8tAHL
-H2Hcvak1eeDIBiN+FPopoUSZ3EhxO3jsMeuR4cAXAKgbFS9lngHGyQcYWd8EZG3p
-lxcbnahpnUOBnvFKHet1j84f3RAkk8tksxEc7sFaV5puN3dReSBA5e++trJz73yk
-oUjx+42R9Zytrt27IsH+Vy86znzzuDboc+ngLwl+deTGG3E56xLAUNX4U5eGLJiJ
-jL7Ot0GUBIw+iHI610z+HrzuKREIQGY3XkGowq+ZU6RxgSnpdf0faRp8EqfRaJdb
-i0379EM5C0Hb4O0l7RLMmlNPWaIGPVhoh7Hr2cBSEXMmL4Fr8uBWNlpkKU1aFM4v
-4mq4KBULWYfihJ2CfFqWyKOLzY4320whOiHcq0O+81nYSrRoXCEpYyxHMLpfTicW
-YSysulIyWNbAv+j+Cns7y6SRE/Pm6HBaWsHuP8gqKha0+wjmAs+eE6zwZ4RiUYez
-tSqP31BTOQw7UG26/FOX+N/fAtBGQP2NcBePPSAmMBLTGAiAXWnEIZv/x9MO9qJ1
-kVEs2wtgeyX93qxwedyL9ueTa/d5HbmMpYDN0R3PFwpqGyC+qkyNlatWd/DJutwP
-oXKFHwEdabgjoSwYIaIfHkP4gxF/5BJp3F0H+vR/n+sDlQoaWp4=
-=qB/9
------END PGP SIGNATURE-----
-
---PuGuTyElPB9bOcsM--
+diff --git a/drivers/net/wireless/ralink/rt2x00/rt2x00usb.c b/drivers/net/wireless/ralink/rt2x00/rt2x00usb.c
+index b6c1344..731e633 100644
+--- a/drivers/net/wireless/ralink/rt2x00/rt2x00usb.c
++++ b/drivers/net/wireless/ralink/rt2x00/rt2x00usb.c
+@@ -360,8 +360,7 @@ static void rt2x00usb_work_rxdone(struct work_struct *work)
+ 	while (!rt2x00queue_empty(rt2x00dev->rx)) {
+ 		entry = rt2x00queue_get_entry(rt2x00dev->rx, Q_INDEX_DONE);
+ 
+-		if (test_bit(ENTRY_OWNER_DEVICE_DATA, &entry->flags) ||
+-		    !test_bit(ENTRY_DATA_STATUS_PENDING, &entry->flags))
++		if (test_bit(ENTRY_OWNER_DEVICE_DATA, &entry->flags))
+ 			break;
+ 
+ 		/*
+@@ -413,8 +412,7 @@ static bool rt2x00usb_kick_rx_entry(struct queue_entry *entry, void *data)
+ 	struct queue_entry_priv_usb *entry_priv = entry->priv_data;
+ 	int status;
+ 
+-	if (test_and_set_bit(ENTRY_OWNER_DEVICE_DATA, &entry->flags) ||
+-	    test_bit(ENTRY_DATA_STATUS_PENDING, &entry->flags))
++	if (test_and_set_bit(ENTRY_OWNER_DEVICE_DATA, &entry->flags))
+ 		return false;
+ 
+ 	rt2x00lib_dmastart(entry);
