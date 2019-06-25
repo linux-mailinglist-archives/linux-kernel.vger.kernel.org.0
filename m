@@ -2,127 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B08A554AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 18:37:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1B36554CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 18:46:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730052AbfFYQhH convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 25 Jun 2019 12:37:07 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:43948 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726896AbfFYQhH (ORCPT
+        id S1729832AbfFYQqQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 12:46:16 -0400
+Received: from new3-smtp.messagingengine.com ([66.111.4.229]:48577 "EHLO
+        new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726397AbfFYQqQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 12:37:07 -0400
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1hfoRJ-0003sY-Ib; Tue, 25 Jun 2019 18:37:01 +0200
-Date:   Tue, 25 Jun 2019 18:37:01 +0200
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Joe Perches <joe@perches.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] get_maintainer: Add --prefix option
-Message-ID: <20190625163701.xcb2ue7phpskvfnz@linutronix.de>
-References: <20190624130323.14137-1-bigeasy@linutronix.de>
- <20190624133333.GW3419@hirez.programming.kicks-ass.net>
- <9528bb2c4455db9e130576120c8b985b9dd94e3d.camel@perches.com>
+        Tue, 25 Jun 2019 12:46:16 -0400
+X-Greylist: delayed 524 seconds by postgrey-1.27 at vger.kernel.org; Tue, 25 Jun 2019 12:46:15 EDT
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 452053376;
+        Tue, 25 Jun 2019 12:37:28 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute3.internal (MEProxy); Tue, 25 Jun 2019 12:37:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=animalcreek.com;
+         h=date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:content-transfer-encoding:in-reply-to; s=mesmtp;
+         bh=gSyJjIHjthT3a2SYIYJNLmRY+/ZGTrj+u+zCYKrjbOY=; b=Pjjwt9K6MhBJ
+        zIuUap8jIrsLK5wc0QVha0hXjF6ATPFKsLe/UK4gCKkpu4gJa3sb4sXewoHVwKYb
+        qYuzqpS43/PE7nIII03rzTXWvSujg6zxliCmmKQIbwPfy0D5ux99JMv+xyEA+DCg
+        zoVbLxyQQ30U8rAInLhkmHQuiAVpSWI=
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; bh=gSyJjIHjthT3a2SYIYJNLmRY+/ZGTrj+u+zCYKrjb
+        OY=; b=0TaaIeG19hAjd3vPGddqd1WWw0wICU2LXquWcQhbdWOy/xTgmGnz8z9bH
+        wtXuiGUFghRvJ3lHfhKtQ7NSotX4m2sK+9LH50u9Bc7ZpU9oSxc2B9QUqDgZsonX
+        CNqhrnosdixhRCa2nYx3XLcKvE4MHPMes5pM6qL+sMeQ0/Nr6XjM8+A1BtPGowHN
+        MLJ+6vcUUJydtyWkkHRdzAPvDBVhxGgRg2xvAHrZpI5RhKMRA9t7xm6IQGvYHVSA
+        MwX0Pw6dzLvQSuo8lRVBR8Oba4CgR5VtgvQtweSJk9yQenSaqXXbuUyHZWZ0QfxL
+        S+59hWB7sWSizPQIcZbrc/isLk+Lw==
+X-ME-Sender: <xms:xk0SXXqoRo6-9c96z-V0VMIQ6RtwXK_Ym2YZ_RumZj1EaVMGTgiWTA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrudeggddutddvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtugfgjghofgesthekredttderjeenucfhrhhomhepofgr
+    rhhkucfirhgvvghruceomhhgrhgvvghrsegrnhhimhgrlhgtrhgvvghkrdgtohhmqeenuc
+    fkphepieekrddvrdekjedrleehnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmghhrvggv
+    rhesrghnihhmrghltghrvggvkhdrtghomhenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:xk0SXdP-_PEWJQ-GUifoOwZaTe-qXfgM7G7CB3tp4tBAMJSOsKyDOw>
+    <xmx:xk0SXUOuKAjwZH2g5YDwcEKThKcJfID8Ufz3v0Y1DEYWMmqADeLI6w>
+    <xmx:xk0SXf1X98dcDEpn0tsLimeZC0jV4RBuOmwZjA3R3q8vsRcEN2-yzw>
+    <xmx:yE0SXUxtVKcHhRzMz8c54pIyl_w4XGLXQyskSEBczUBmZpyw1IX1_A>
+Received: from blue.animalcreek.com (ip68-2-87-95.ph.ph.cox.net [68.2.87.95])
+        by mail.messagingengine.com (Postfix) with ESMTPA id A9A74380079;
+        Tue, 25 Jun 2019 12:37:26 -0400 (EDT)
+Received: by blue.animalcreek.com (Postfix, from userid 1000)
+        id D4B5AA22265; Tue, 25 Jun 2019 09:37:22 -0700 (MST)
+Date:   Tue, 25 Jun 2019 09:37:22 -0700
+From:   Mark Greer <mgreer@animalcreek.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Mark Greer <mgreer@animalcreek.com>,
+        Paul Gortmaker <paul.gortmaker@windriver.com>,
+        Dale Farnsworth <dale@farnsworth.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: DMA coherency in drivers/tty/serial/mpsc.c
+Message-ID: <20190625163722.GA18626@animalcreek.com>
+References: <20190625122641.GA4421@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <9528bb2c4455db9e130576120c8b985b9dd94e3d.camel@perches.com>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190625122641.GA4421@lst.de>
+Organization: Animal Creek Technologies, Inc.
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The --prefix option adds a Cc: prefix by default infront of the email
-address so it can be used by other Scripts directly instead of adding
-another wrapper for this.
-The option takes an optional argument so "--prefix=Bcc: " is also valid.
-Since it is expected to be output an email address it implies
-"--no-roles --no-rolestats".
+On Tue, Jun 25, 2019 at 02:26:41PM +0200, Christoph Hellwig wrote:
+> Hi Paul, Dale and Mark (I hope this reaches the right Mark),
 
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
-On 2019-06-24 07:27:47 [-0700], Joe Perches wrote:
-> On Mon, 2019-06-24 at 15:33 +0200, Peter Zijlstra wrote:
-> > Would it make sense to make '--cc' imply --no-roles --no-rolestats ?
+Hi Christoph.  Yes, you did reach the right Mark.  :)
+
+> I've started auditing all users of DMA_ATTR_NON_CONSISTENT ot prepare
+> for major API improvements in that area.
 > 
-> Maybe.
+> One of the odd users is the mpsc ѕerial driver, which allocates DMA
+> memory with the above flag, and then actually properly calls
+> dma_cache_sync.  So far, so good.  But it turns out it also has
+> "#if defined(CONFIG_PPC32) && !defined(CONFIG_NOT_COHERENT_CACHE)"
+> ifdef blocks next to the dma_cache_sync calls that perform cache
+> maintainance for platforms that according to the ifdef claim to
+> be cache coherent.  According to the Kconfig the driver can
+> only build if the MV64X60 symbol is set, which is a ppc embedded 6xx
+> SOC, which appears to be configurable as either cache coherent, or
+> not.  But according to the code in the driver at least this device
+> always is not cache coherent.
 > 
-> It's also unlikely to be sensibly used with mailing
-> lists so maybe --nol too.
+> It seems like we need to always mark that platform as potentially
+> not coherent, and then use the per-device flag to mark all device
+> except for this one as coherent.  Or did I miss anything?  Maybe
+> all this is actually dead code and can go away?
 
-I don't see a problem with lists but I think it would make sense to
-imply also "--nomoderated" once available.
+Yeah, the mpsc driver had lots of ugly cache related hacks because of
+cache coherency bugs in the early version of the MV64x60 bridge chips
+that it was embedded in.  That chip is pretty much dead now and I've
+removed core support for it from the powerpc tree.  Removing the mpsc
+driver is on my todo list but I've been busy and lazy.  So, to sum it
+up, don't spend any more time worrying about it as it should be removed.
 
-v1…v2:
-	- use --prefix instead --cc with "Cc: " as the default argument
-	  if not specified
-	- imply --no-roles --no-rolestats
+I'll post a patch to do that tonight and I'm sorry for any time you've
+spent looking at it so far.
 
- scripts/get_maintainer.pl | 18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
-
-diff --git a/scripts/get_maintainer.pl b/scripts/get_maintainer.pl
-index c1c088ef1420e..60da8444d6667 100755
---- a/scripts/get_maintainer.pl
-+++ b/scripts/get_maintainer.pl
-@@ -46,6 +46,8 @@ my $output_multiline = 1;
- my $output_separator = ", ";
- my $output_roles = 0;
- my $output_rolestats = 1;
-+my $output_prefix = undef;
-+my $cc_prefix = "";
- my $output_section_maxlen = 50;
- my $scm = 0;
- my $tree = 1;
-@@ -252,6 +254,7 @@ if (!GetOptions(
- 		'multiline!' => \$output_multiline,
- 		'roles!' => \$output_roles,
- 		'rolestats!' => \$output_rolestats,
-+		'prefix:s' => \$output_prefix,
- 		'separator=s' => \$output_separator,
- 		'subsystem!' => \$subsystem,
- 		'status!' => \$status,
-@@ -298,6 +301,16 @@ $output_multiline = 0 if ($output_separator ne ", ");
- $output_rolestats = 1 if ($interactive);
- $output_roles = 1 if ($output_rolestats);
- 
-+if (defined($output_prefix)) {
-+    if ($output_prefix eq "") {
-+         $cc_prefix = "Cc: ";
-+    } else {
-+         $cc_prefix = $output_prefix;
-+    }
-+    $output_rolestats = 0;
-+    $output_roles = 0;
-+}
-+
- if ($sections || $letters ne "") {
-     $sections = 1;
-     $email = 0;
-@@ -1037,6 +1050,7 @@ version: $V
-   --separator [, ] => separator for multiple entries on 1 line
-     using --separator also sets --nomultiline if --separator is not [, ]
-   --multiline => print 1 entry per line
-+  --prefix => prints a prefix infront of the entry. CC: is default if not specified
- 
- Other options:
-   --pattern-depth => Number of pattern directory traversals (default: 0 (all))
-@@ -2462,9 +2476,9 @@ sub merge_email {
- 	my ($address, $role) = @$_;
- 	if (!$saw{$address}) {
- 	    if ($output_roles) {
--		push(@lines, "$address ($role)");
-+		push(@lines, "$cc_prefix" . "$address ($role)");
- 	    } else {
--		push(@lines, $address);
-+		push(@lines, "$cc_prefix" . "$address");
- 	    }
- 	    $saw{$address} = 1;
- 	}
--- 
-2.20.1
-
+Mark
+--
