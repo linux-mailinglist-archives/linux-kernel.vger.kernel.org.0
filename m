@@ -2,83 +2,196 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0BAB55C4D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 01:28:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 75D5B55C5E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 01:33:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726408AbfFYX2W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 19:28:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58032 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725782AbfFYX2W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 19:28:22 -0400
-Received: from kernel.org (unknown [104.132.0.74])
+        id S1726539AbfFYXdo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 19:33:44 -0400
+Received: from mail-out.m-online.net ([212.18.0.10]:36611 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725782AbfFYXdS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 19:33:18 -0400
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 45YMsl1Kqqz1rh8r;
+        Wed, 26 Jun 2019 01:33:15 +0200 (CEST)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 45YMsl10Vpz20Rx6;
+        Wed, 26 Jun 2019 01:33:15 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id RjtqJ4q3UDsS; Wed, 26 Jun 2019 01:33:14 +0200 (CEST)
+X-Auth-Info: zBrVjxkKMbfWqKp2Cl795HfNVguRxOsqlOBmoluSHBg=
+Received: from kurokawa.lan (ip-86-49-110-70.net.upcbroadband.cz [86.49.110.70])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D1D4A20645;
-        Tue, 25 Jun 2019 23:28:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561505300;
-        bh=6+te7mpJt5x4SRywvdcyKAoVs6nKqWEZS+6deQkXGH8=;
-        h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
-        b=mNi8EavtpgSP7114DE4Fp5biFG5wHsOt3mCwaHqAvPfToIR33ip/aGcRxUCsKxc0s
-         EXhLCkwtAoStCqe+GzLtuLgPgtQZ1pupbmDvgjVncKJH5h41SuyDXxIch7EZ52g+6a
-         B0t6ZoE7uS0Gi+Lpb5A0gDs/i/stm1Y4Kn4Lr/kU=
-Content-Type: text/plain; charset="utf-8"
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Wed, 26 Jun 2019 01:33:14 +0200 (CEST)
+From:   Marek Vasut <marex@denx.de>
+To:     linux-kernel@vger.kernel.org
+Cc:     Marek Vasut <marex@denx.de>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Mark Brown <broonie@kernel.org>
+Subject: [RFC][PATCH] regmap: Drop CONFIG_64BIT checks from core
+Date:   Wed, 26 Jun 2019 01:31:16 +0200
+Message-Id: <20190625233116.2889-1-marex@denx.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1561502227.10069.1@crapouillou.net>
-References: <20190624225759.18299-1-paul@crapouillou.net> <20190624225759.18299-6-paul@crapouillou.net> <20190625220931.2F69B2086D@mail.kernel.org> <1561502227.10069.1@crapouillou.net>
-To:     Paul Cercueil <paul@crapouillou.net>
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v13 05/13] clk: ingenic: Add driver for the TCU clocks
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        James Hogan <jhogan@kernel.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Lee Jones <lee.jones@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mathieu Malaterre <malat@debian.org>, od@zcrc.me,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org, Artur Rojek <contact@artur-rojek.eu>
-User-Agent: alot/0.8.1
-Date:   Tue, 25 Jun 2019 16:28:20 -0700
-Message-Id: <20190625232820.D1D4A20645@mail.kernel.org>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Paul Cercueil (2019-06-25 15:37:07)
-> >=20
-> > Do you need to get the clk by name? Or can that clk be "known" to the
-> > TCU somehow so we can already have a direct clk pointer?
->=20
-> This clock is provided by a separate driver, so I have to obtain the
-> clock pointer from devicetree.
+Drop the CONFIG_64BIT checks from core regmap code, as it is well
+possible to access e.g. an SPI device with 64bit registers from a
+32bit CPU. The CONFIG_64BIT checks are still left in place in the
+regmap mmio code however.
 
-Ok.
+Signed-off-by: Marek Vasut <marex@denx.de>
+Cc: Rafael J. Wysocki <rafael@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>
+---
+ drivers/base/regmap/regcache.c |  4 ----
+ drivers/base/regmap/regmap.c   | 14 --------------
+ 2 files changed, 18 deletions(-)
 
-> >>  +}
-> >>  +
-> >>  +static int __maybe_unused tcu_pm_suspend(void)
-> >>  +{
-> >>  +       struct ingenic_tcu *tcu =3D ingenic_tcu;
-> >>  +
-> >>  +       if (tcu->clk)
-> >>  +               clk_disable(tcu->clk);
-> >=20
-> > Do you need to unprepare? Or it just isn't possible because this is
-> > called from syscore and thus we can't sleep?
->=20
-> I thought that clk_disable() was enough. We don't actually need to
-> unprepare, do we? And yes, as you pointed out, this call cannot sleep.
-
-Yeah unprepare isn't necessary, but it will be different on different
-platforms. This is a highly platform specific driver though so I suspect
-this is all fine.
+diff --git a/drivers/base/regmap/regcache.c b/drivers/base/regmap/regcache.c
+index a93cafd7be4f..e443d9de3f7e 100644
+--- a/drivers/base/regmap/regcache.c
++++ b/drivers/base/regmap/regcache.c
+@@ -577,14 +577,12 @@ bool regcache_set_val(struct regmap *map, void *base, unsigned int idx,
+ 		cache[idx] = val;
+ 		break;
+ 	}
+-#ifdef CONFIG_64BIT
+ 	case 8: {
+ 		u64 *cache = base;
+ 
+ 		cache[idx] = val;
+ 		break;
+ 	}
+-#endif
+ 	default:
+ 		BUG();
+ 	}
+@@ -618,13 +616,11 @@ unsigned int regcache_get_val(struct regmap *map, const void *base,
+ 
+ 		return cache[idx];
+ 	}
+-#ifdef CONFIG_64BIT
+ 	case 8: {
+ 		const u64 *cache = base;
+ 
+ 		return cache[idx];
+ 	}
+-#endif
+ 	default:
+ 		BUG();
+ 	}
+diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
+index 19f57ccfbe1d..7da9dbb98d8a 100644
+--- a/drivers/base/regmap/regmap.c
++++ b/drivers/base/regmap/regmap.c
+@@ -298,7 +298,6 @@ static void regmap_format_32_native(void *buf, unsigned int val,
+ 	*(u32 *)buf = val << shift;
+ }
+ 
+-#ifdef CONFIG_64BIT
+ static void regmap_format_64_be(void *buf, unsigned int val, unsigned int shift)
+ {
+ 	__be64 *b = buf;
+@@ -318,7 +317,6 @@ static void regmap_format_64_native(void *buf, unsigned int val,
+ {
+ 	*(u64 *)buf = (u64)val << shift;
+ }
+-#endif
+ 
+ static void regmap_parse_inplace_noop(void *buf)
+ {
+@@ -407,7 +405,6 @@ static unsigned int regmap_parse_32_native(const void *buf)
+ 	return *(u32 *)buf;
+ }
+ 
+-#ifdef CONFIG_64BIT
+ static unsigned int regmap_parse_64_be(const void *buf)
+ {
+ 	const __be64 *b = buf;
+@@ -440,7 +437,6 @@ static unsigned int regmap_parse_64_native(const void *buf)
+ {
+ 	return *(u64 *)buf;
+ }
+-#endif
+ 
+ static void regmap_lock_hwlock(void *__map)
+ {
+@@ -921,7 +917,6 @@ struct regmap *__regmap_init(struct device *dev,
+ 		}
+ 		break;
+ 
+-#ifdef CONFIG_64BIT
+ 	case 64:
+ 		switch (reg_endian) {
+ 		case REGMAP_ENDIAN_BIG:
+@@ -937,7 +932,6 @@ struct regmap *__regmap_init(struct device *dev,
+ 			goto err_hwlock;
+ 		}
+ 		break;
+-#endif
+ 
+ 	default:
+ 		goto err_hwlock;
+@@ -998,7 +992,6 @@ struct regmap *__regmap_init(struct device *dev,
+ 			goto err_hwlock;
+ 		}
+ 		break;
+-#ifdef CONFIG_64BIT
+ 	case 64:
+ 		switch (val_endian) {
+ 		case REGMAP_ENDIAN_BIG:
+@@ -1019,7 +1012,6 @@ struct regmap *__regmap_init(struct device *dev,
+ 			goto err_hwlock;
+ 		}
+ 		break;
+-#endif
+ 	}
+ 
+ 	if (map->format.format_write) {
+@@ -2081,11 +2073,9 @@ int regmap_bulk_write(struct regmap *map, unsigned int reg, const void *val,
+ 			case 4:
+ 				ival = *(u32 *)(val + (i * val_bytes));
+ 				break;
+-#ifdef CONFIG_64BIT
+ 			case 8:
+ 				ival = *(u64 *)(val + (i * val_bytes));
+ 				break;
+-#endif
+ 			default:
+ 				ret = -EINVAL;
+ 				goto out;
+@@ -2809,9 +2799,7 @@ int regmap_bulk_read(struct regmap *map, unsigned int reg, void *val,
+ 		for (i = 0; i < val_count * val_bytes; i += val_bytes)
+ 			map->format.parse_inplace(val + i);
+ 	} else {
+-#ifdef CONFIG_64BIT
+ 		u64 *u64 = val;
+-#endif
+ 		u32 *u32 = val;
+ 		u16 *u16 = val;
+ 		u8 *u8 = val;
+@@ -2827,11 +2815,9 @@ int regmap_bulk_read(struct regmap *map, unsigned int reg, void *val,
+ 				goto out;
+ 
+ 			switch (map->format.val_bytes) {
+-#ifdef CONFIG_64BIT
+ 			case 8:
+ 				u64[i] = ival;
+ 				break;
+-#endif
+ 			case 4:
+ 				u32[i] = ival;
+ 				break;
+-- 
+2.20.1
 
