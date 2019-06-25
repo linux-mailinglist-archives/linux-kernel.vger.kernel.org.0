@@ -2,55 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9346555B90
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 00:48:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 67CB955B9D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 00:50:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726524AbfFYWsp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 18:48:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45028 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726442AbfFYWso (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 18:48:44 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B67372086D;
-        Tue, 25 Jun 2019 22:48:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561502923;
-        bh=UbgKtH9JPi+VcX5lG7l/BUoaN1XBUhmU3D9CtflJUxA=;
-        h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
-        b=vVuMziO9dwx6S78iwvgisewURKt3glH06Xoe4kgqeqpPjbaM3pVNv3N5Vwdt6Fh/j
-         gEV5ocTS3df46ms+SWvmsrPAvX0/3BNSNR3kKOkpksjDAFJAzPh7cHQ6ImV21lWp4K
-         ZHTQssYoNidVZ2rAb/jAjk+5u5MXIxtvYOG9QmAA=
-Content-Type: text/plain; charset="utf-8"
+        id S1726534AbfFYWuA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 18:50:00 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:41225 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726422AbfFYWt7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 18:49:59 -0400
+Received: by mail-lj1-f196.google.com with SMTP id 205so128624ljj.8
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 15:49:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=oauyc528nBeA4aGB8HdudXwgvOR2M6xqw+qp8qrMia0=;
+        b=bsG0SS1331T2u5dmwMsWL5Mj0pDUYEJeS3x/a7g8HquS+iweixO7wS7VJSEpoTi3qV
+         nuPog56Of0ICCYrDywtGn1ibAaoMzBfJ0O2x753kYh6mwxaLA6pPl0WPqys4+kmd46Jq
+         rIsYCCZxCs33VBJGmf++ljLlMwhKk4609tQym+TGgY8G9VfxrtJCGVeYE5q5Nv/EWdBb
+         9YomnEjSNUKKZybvNhj4bcSAi4lFZCDmKYmnbBUBMoRe0luDo7+NKcilgdxESGUr6Bv1
+         8oE2HePy+PkGqZW4W/Q7dVoNdKg3qs2bj61g5enDhyYdyoeki0viAd/yTw4AoSrs8h9J
+         Q3ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=oauyc528nBeA4aGB8HdudXwgvOR2M6xqw+qp8qrMia0=;
+        b=dVT91AeTAlOBux+20wpH5BYR+Fbqy+zVUX/35oltK/eUNPoG2IUUyyjG07mNJfUrvt
+         EW+15t2QJA7vAgvODsncNmt/nHk8eQV5LRy59LNgZSoLgDuUdsu7OWOJdYO6lyblhGTo
+         c5ny5/mpR/LzXul8kB8tAGDOfbqRIq4I5XnT63fkT7fSgkWI2MH7YR2NlLdUUXGcdseL
+         uHn/8s4SMBuzttmMTor+1ocomxW9rzuqhJ4q3/93wsA/XDNBQlYpqxF2s+Qk8ExLjTTo
+         en9koiqu8eaBAS6drhcbeG6j8mYTXpd3/Q0m7FQ4Az2sTJcDiZDRS8a+CUNCLWizM+mb
+         iXAg==
+X-Gm-Message-State: APjAAAXW/CUXL+NosNqjhGjaEA/htxh1QWYMh6LSeMN8B8NfJMn8b6MF
+        9cmbDRRQxwG1OAitM4CyLLdtiw==
+X-Google-Smtp-Source: APXvYqzz8flqZD3CtlEaWTG6dgDQmMup6wovwU1fK+ijn1DOb2NtHpvpDzMqmApGLfzEkGldQTuXAg==
+X-Received: by 2002:a2e:b0ea:: with SMTP id h10mr575866ljl.50.1561502997676;
+        Tue, 25 Jun 2019 15:49:57 -0700 (PDT)
+Received: from khorivan (59-201-94-178.pool.ukrtel.net. [178.94.201.59])
+        by smtp.gmail.com with ESMTPSA id w1sm1580368lfe.50.2019.06.25.15.49.56
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 25 Jun 2019 15:49:57 -0700 (PDT)
+Date:   Wed, 26 Jun 2019 01:49:54 +0300
+From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+To:     Grygorii Strashko <grygorii.strashko@ti.com>
+Cc:     netdev@vger.kernel.org,
+        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+        Andrew Lunn <andrew@lunn.ch>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jiri Pirko <jiri@resnulli.us>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Sekhar Nori <nsekhar@ti.com>, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, Murali Karicheri <m-karicheri2@ti.com>,
+        Ivan Vecera <ivecera@redhat.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
+Subject: Re: [RFC PATCH v4 net-next 10/11] ARM: dts: am57xx-idk: add dt nodes
+ for new cpsw switch dev driver
+Message-ID: <20190625224953.GD6485@khorivan>
+Mail-Followup-To: Grygorii Strashko <grygorii.strashko@ti.com>,
+        netdev@vger.kernel.org,
+        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+        Andrew Lunn <andrew@lunn.ch>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jiri Pirko <jiri@resnulli.us>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Sekhar Nori <nsekhar@ti.com>, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, Murali Karicheri <m-karicheri2@ti.com>,
+        Ivan Vecera <ivecera@redhat.com>, Rob Herring <robh+dt@kernel.org>,
+        devicetree@vger.kernel.org
+References: <20190621181314.20778-1-grygorii.strashko@ti.com>
+ <20190621181314.20778-11-grygorii.strashko@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190611180757.32299-5-paul@crapouillou.net>
-References: <20190611180757.32299-1-paul@crapouillou.net> <20190611180757.32299-5-paul@crapouillou.net>
-To:     James Hogan <jhogan@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Ralf Baechle <ralf@linux-mips.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v2 5/5] MIPS: Remove dead code
-Cc:     od@zcrc.me, linux-mips@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Paul Cercueil <paul@crapouillou.net>
-User-Agent: alot/0.8.1
-Date:   Tue, 25 Jun 2019 15:48:42 -0700
-Message-Id: <20190625224843.B67372086D@mail.kernel.org>
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20190621181314.20778-11-grygorii.strashko@ti.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Paul Cercueil (2019-06-11 11:07:57)
-> Remove the unused <asm/mach-jz4740/clock.h> include.
->=20
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> ---
+On Fri, Jun 21, 2019 at 09:13:13PM +0300, Grygorii Strashko wrote:
+>Add DT nodes for new cpsw switch dev driver.
+>
+>Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+>---
+> arch/arm/boot/dts/am571x-idk.dts         | 28 +++++++++++++
+> arch/arm/boot/dts/am572x-idk.dts         |  5 +++
+> arch/arm/boot/dts/am574x-idk.dts         |  5 +++
+> arch/arm/boot/dts/am57xx-idk-common.dtsi |  2 +-
+> arch/arm/boot/dts/dra7-l4.dtsi           | 53 ++++++++++++++++++++++++
+> 5 files changed, 92 insertions(+), 1 deletion(-)
+>
 
-Applied to clk-next
+[...]
 
+>diff --git a/arch/arm/boot/dts/am57xx-idk-common.dtsi 
+>b/arch/arm/boot/dts/am57xx-idk-common.dtsi
+>index f7bd26458915..5c7663699efa 100644
+>--- a/arch/arm/boot/dts/am57xx-idk-common.dtsi
+>+++ b/arch/arm/boot/dts/am57xx-idk-common.dtsi
+>@@ -367,7 +367,7 @@
+> };
+>
+> &mac {
+>-	status = "okay";
+>+//	status = "okay";
+?
+
+
+-- 
+Regards,
+Ivan Khoronzhuk
