@@ -2,289 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04A165511D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 16:09:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 291B15512F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 16:11:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728858AbfFYOI4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 10:08:56 -0400
-Received: from mail.efficios.com ([167.114.142.138]:39880 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726532AbfFYOI4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 10:08:56 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id E19D525BF95;
-        Tue, 25 Jun 2019 10:08:53 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id QyG8j99SOcIq; Tue, 25 Jun 2019 10:08:53 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 1327B25BF8C;
-        Tue, 25 Jun 2019 10:08:53 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 1327B25BF8C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1561471733;
-        bh=ZqtVnpig7t9YimfV4x1WLgCndeFnHjjcXNpTezLm3iY=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=ikKpGFU7YciA3AINVWgB2B9+MmY7CrT/hs5z3j3oxwWAEKK2S1SmZPgPsklqhU/sZ
-         dVbCuHoeEemHI9rmi4u4fF2nBpb6d3g8CeifBMFFc5wSA2EkpBGZolMpd98gv4FgFR
-         OmSwoA1fzXFHXSW6KFX64T1cb/lePK1RyhQE8nvkEqduP7H40pR5Q7xFn4DdA2rV0H
-         ttFSsRciSrYDFHdjI3NpyoziASkSwoqT2a7fWZHbryF9WPXe9bHFnPZyNz8s56HtCj
-         1gE4FxU5B9vFc4yM5DWf9c/4PckPwnaG5uCJ4+YOw2pbhTU12A2Es0lsQcj+ElGfsb
-         C0L8HejwhA4fQ==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id 9SYqnRt07nsl; Tue, 25 Jun 2019 10:08:52 -0400 (EDT)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id E1BDC25BF85;
-        Tue, 25 Jun 2019 10:08:52 -0400 (EDT)
-Date:   Tue, 25 Jun 2019 10:08:52 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     shuah <shuah@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
+        id S1729531AbfFYOLF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 10:11:05 -0400
+Received: from mout.gmx.net ([212.227.15.19]:46075 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729432AbfFYOLF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 10:11:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1561471750;
+        bh=O/AVriiFXTyhIO2mqpq3Ioyp28ORdxttZFv5ecPR+mc=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=edsbQroIWHv5PrtjtfjZNIhaA6vbnnEhe2iPxwgKuAPNIOGmyRqiQTBnaT/rlfHpm
+         upx5WA233sSsPfr45ICeSv79Qf5cEZ7WBrUjnMGLpmwlqPsbkccAq0Vt0A31t0Dihd
+         HbD3PjlIvvSVLRMDuhhPe5yAPKH6w2z6pgXdr9n4=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from [192.168.20.60] ([92.116.144.45]) by mail.gmx.com (mrgmx001
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 0Lb5nF-1iQLEd1s3V-00kkGd; Tue, 25
+ Jun 2019 16:09:10 +0200
+Subject: Re: [PATCH RESEND 6/8] parisc: Use mmap_base, not mmap_legacy_base,
+ as low_limit for bottom-up mmap
+To:     Alexandre Ghiti <alex@ghiti.fr>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        "David S . Miller" <davem@davemloft.net>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Joel Fernandes <joelaf@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Dave Watson <davejwatson@fb.com>,
-        Andi Kleen <andi@firstfloor.org>,
-        linux-kselftest <linux-kselftest@vger.kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Chris Lameter <cl@linux.com>,
-        Russell King <linux@arm.linux.org.uk>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        Paul Turner <pjt@google.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        rostedt <rostedt@goodmis.org>, Ben Maurer <bmaurer@fb.com>,
-        linux-api <linux-api@vger.kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        carlos <carlos@redhat.com>, Florian Weimer <fweimer@redhat.com>
-Message-ID: <795143697.722.1561471732756.JavaMail.zimbra@efficios.com>
-In-Reply-To: <20190625091507.GA13263@fuggles.cambridge.arm.com>
-References: <20190617152304.23371-1-mathieu.desnoyers@efficios.com> <20190624172429.GA11133@fuggles.cambridge.arm.com> <1620037196.377.1561400426591.JavaMail.zimbra@efficios.com> <20190625091507.GA13263@fuggles.cambridge.arm.com>
-Subject: Re: [RFC PATCH 1/1] Revert "rseq/selftests: arm: use udf
- instruction for RSEQ_SIG"
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-parisc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-mm@kvack.org
+References: <20190620050328.8942-1-alex@ghiti.fr>
+ <20190620050328.8942-7-alex@ghiti.fr>
+From:   Helge Deller <deller@gmx.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=deller@gmx.de; keydata=
+ xsBNBFDPIPYBCAC6PdtagIE06GASPWQJtfXiIzvpBaaNbAGgmd3Iv7x+3g039EV7/zJ1do/a
+ y9jNEDn29j0/jyd0A9zMzWEmNO4JRwkMd5Z0h6APvlm2D8XhI94r/8stwroXOQ8yBpBcP0yX
+ +sqRm2UXgoYWL0KEGbL4XwzpDCCapt+kmarND12oFj30M1xhTjuFe0hkhyNHkLe8g6MC0xNg
+ KW3x7B74Rk829TTAtj03KP7oA+dqsp5hPlt/hZO0Lr0kSAxf3kxtaNA7+Z0LLiBqZ1nUerBh
+ OdiCasCF82vQ4/y8rUaKotXqdhGwD76YZry9AQ9p6ccqKaYEzWis078Wsj7p0UtHoYDbABEB
+ AAHNHEhlbGdlIERlbGxlciA8ZGVsbGVyQGdteC5kZT7CwJIEEwECADwCGwMGCwkIBwMCBhUI
+ AgkKCwQWAgMBAh4BAheAFiEE9M/0wAvkPPtRU6Boh8nBUbUeOGQFAlrHzIICGQEACgkQh8nB
+ UbUeOGT1GAgAt+EeoHB4DbAx+pZoGbBYp6ZY8L6211n8fSi7wiwgM5VppucJ+C+wILoPkqiU
+ +ZHKlcWRbttER2oBUvKOt0+yDfAGcoZwHS0P+iO3HtxR81h3bosOCwek+TofDXl+TH/WSQJa
+ iaitof6iiPZLygzUmmW+aLSSeIAHBunpBetRpFiep1e5zujCglKagsW78Pq0DnzbWugGe26A
+ 288JcK2W939bT1lZc22D9NhXXRHfX2QdDdrCQY7UsI6g/dAm1d2ldeFlGleqPMdaaQMcv5+E
+ vDOur20qjTlenjnR/TFm9tA1zV+K7ePh+JfwKc6BSbELK4EHv8J8WQJjfTphakYLVM7ATQRQ
+ zyD2AQgA2SJJapaLvCKdz83MHiTMbyk8yj2AHsuuXdmB30LzEQXjT3JEqj1mpvcEjXrX1B3h
+ +0nLUHPI2Q4XWRazrzsseNMGYqfVIhLsK6zT3URPkEAp7R1JxoSiLoh4qOBdJH6AJHex4CWu
+ UaSXX5HLqxKl1sq1tO8rq2+hFxY63zbWINvgT0FUEME27Uik9A5t8l9/dmF0CdxKdmrOvGMw
+ T770cTt76xUryzM3fAyjtOEVEglkFtVQNM/BN/dnq4jDE5fikLLs8eaJwsWG9k9wQUMtmLpL
+ gRXeFPRRK+IT48xuG8rK0g2NOD8aW5ThTkF4apznZe74M7OWr/VbuZbYW443QQARAQABwsBf
+ BBgBAgAJBQJQzyD2AhsMAAoJEIfJwVG1HjhkNTgH/idWz2WjLE8DvTi7LvfybzvnXyx6rWUs
+ 91tXUdCzLuOtjqWVsqBtSaZynfhAjlbqRlrFZQ8i8jRyJY1IwqgvHP6PO9s+rIxKlfFQtqhl
+ kR1KUdhNGtiI90sTpi4aeXVsOyG3572KV3dKeFe47ALU6xE5ZL5U2LGhgQkbjr44I3EhPWc/
+ lJ/MgLOPkfIUgjRXt0ZcZEN6pAMPU95+u1N52hmqAOQZvyoyUOJFH1siBMAFRbhgWyv+YE2Y
+ ZkAyVDL2WxAedQgD/YCCJ+16yXlGYGNAKlvp07SimS6vBEIXk/3h5Vq4Hwgg0Z8+FRGtYZyD
+ KrhlU0uMP9QTB5WAUvxvGy8=
+Message-ID: <438124ff-6838-7ced-044c-ca57a6b9cc91@gmx.de>
+Date:   Tue, 25 Jun 2019 16:09:06 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
+In-Reply-To: <20190620050328.8942-7-alex@ghiti.fr>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.12_GA_3803 (ZimbraWebClient - FF67 (Linux)/8.8.12_GA_3794)
-Thread-Topic: Revert "rseq/selftests: arm: use udf instruction for RSEQ_SIG"
-Thread-Index: hgYsmTALHNxnmFiVR4MEQT9OBpRJPA==
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:oGeLQJsmVPbobDimclHPwWqvExkEWwDRtzy5sld1Sw9SxJAviNo
+ VuQB0COfpiok+m5jvyYs01Ly4kyUgKDpl5OpmZGb/VVWXwVEOjDdoK9ZoeMc+DIU6pRZJt0
+ JvuTryyyRf7udxOK0xUojwH4decoxd3bBxJesqe7Pgv28mN4zgXudEpsMh5cxdU6PS/wnLK
+ yVxaq1UtwUSVfYPzYTqGQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:jsCViK54bZY=:vmFM6D3KKJj8EdDNSBPHOx
+ lzUVh6ZBu/d0aTycPJ2LhVS/jmSEMNKPUmN3LvgGTC6YrnAIyz3rS6JQHslHLHWyVmxE4saQa
+ +fQQxuXvHwKqXtKwuVz1hK0lYc3/+2wJMpQLabsnIWgBZttOakJB1ypeAt861TLVxq6y4Wp2v
+ X+wgqwjaG5GHOp6o1uZY2R09MQlMboRqyVThCNzlbRJkML3FJs+AkqChxGbXXVQWtlFrvLXlp
+ /r3i63bR7dwqQ/lVdxROq6jgqeBusB/XX8j2vLZEUrJ5oArlXLrKS4j26V6FxvFU0bNT+dRnA
+ 7T0eeUu8Nw9iOswaCkE1tAwWK9ID6QyD6FIvV1alI5qogfR9w6xnfQ2n1gULDBVOQVSV4Ckpa
+ ICrDPCmYhGv81wPmTrpCtIeqk1wryhgnH//XfwDUcW5aGAP2B6EXzeFjgshbKCI8igg0nlo1V
+ 0knzlxwd/g1dibOMDu2rlQhdYlQhXk/i4y47JiykhczbUlWLD9ZTAkuIARhRE9nTbApTXWk9k
+ igKE6AKH1j1BVDP3QXtoI7Bfa/0R2y2jNvbGEJdS2hm5Grxf7WlQqutaCHBEeKUZGIugchGJH
+ gBPQthXqSgnYQKIaUipVcFiGN7ASlZu/AyHXOmnK+cxPqp+7nZOrdLA+R1oJQoAPzKx+4exHU
+ KKp9xUrQDhsXVEuYzRfJoNZ130+WizBAcQg2gPW6pPmtkkNgbWquLNhsc2clAT2FoPbOI8x7B
+ kmAyyqfuC1EDnNrjeRo0iCSK3LYKk/fcvbZfxZa1RWn2M8ddvI9a22Bp9qq97UDj+WtLC7vzT
+ chRiiAJr+z8rfg0rrxA0L/LuHLgBMrOxgWiOumM4Jze/YlpuDan2OZTHh/dmz0N/PThNRJo7g
+ +cenmgWIQdaMLxxQNZ8xfIKQPhNB7txhrtbTU98rZVX8j5AONAf6BJ93pAiB33GQIZCMzB+hD
+ ieobmt2ei079i9U2TIxlya1W2BfBpxKI=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Jun 25, 2019, at 5:15 AM, Will Deacon will.deacon@arm.com wrote:
+On 20.06.19 07:03, Alexandre Ghiti wrote:
+> Bottom-up mmap scheme is used twice:
+>
+> - for legacy mode, in which mmap_legacy_base and mmap_base are equal.
+>
+> - in case of mmap failure in top-down mode, where there is no need to go
+> through the whole address space again for the bottom-up fallback: the go=
+al
+> of this fallback is to find, as a last resort, space between the top-dow=
+n
+> mmap base and the stack, which is the only place not covered by the
+> top-down mmap.
+>
+> Then this commit removes the usage of mmap_legacy_base field from parisc
+> code.
+>
+> Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
 
-> On Mon, Jun 24, 2019 at 02:20:26PM -0400, Mathieu Desnoyers wrote:
->> ----- On Jun 24, 2019, at 1:24 PM, Will Deacon will.deacon@arm.com wrote:
->> 
->> > On Mon, Jun 17, 2019 at 05:23:04PM +0200, Mathieu Desnoyers wrote:
->> >> This reverts commit 2b845d4b4acd9422bbb668989db8dc36dfc8f438.
->> >> 
->> >> That commit introduces build issues for programs compiled in Thumb mode.
->> >> Rather than try to be clever and emit a valid trap instruction on arm32,
->> >> which requires special care about big/little endian handling on that
->> >> architecture, just emit plain data. Data in the instruction stream is
->> >> technically expected on arm32: this is how literal pools are
->> >> implemented. Reverting to the prior behavior does exactly that.
->> >> 
->> >> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
->> >> CC: Peter Zijlstra <peterz@infradead.org>
->> >> CC: Thomas Gleixner <tglx@linutronix.de>
->> >> CC: Joel Fernandes <joelaf@google.com>
->> >> CC: Catalin Marinas <catalin.marinas@arm.com>
->> >> CC: Dave Watson <davejwatson@fb.com>
->> >> CC: Will Deacon <will.deacon@arm.com>
->> >> CC: Shuah Khan <shuah@kernel.org>
->> >> CC: Andi Kleen <andi@firstfloor.org>
->> >> CC: linux-kselftest@vger.kernel.org
->> >> CC: "H . Peter Anvin" <hpa@zytor.com>
->> >> CC: Chris Lameter <cl@linux.com>
->> >> CC: Russell King <linux@arm.linux.org.uk>
->> >> CC: Michael Kerrisk <mtk.manpages@gmail.com>
->> >> CC: "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>
->> >> CC: Paul Turner <pjt@google.com>
->> >> CC: Boqun Feng <boqun.feng@gmail.com>
->> >> CC: Josh Triplett <josh@joshtriplett.org>
->> >> CC: Steven Rostedt <rostedt@goodmis.org>
->> >> CC: Ben Maurer <bmaurer@fb.com>
->> >> CC: linux-api@vger.kernel.org
->> >> CC: Andy Lutomirski <luto@amacapital.net>
->> >> CC: Andrew Morton <akpm@linux-foundation.org>
->> >> CC: Linus Torvalds <torvalds@linux-foundation.org>
->> >> CC: Carlos O'Donell <carlos@redhat.com>
->> >> CC: Florian Weimer <fweimer@redhat.com>
->> >> ---
->> >>  tools/testing/selftests/rseq/rseq-arm.h | 52 ++-------------------------------
->> >>  1 file changed, 2 insertions(+), 50 deletions(-)
->> >> 
->> >> diff --git a/tools/testing/selftests/rseq/rseq-arm.h
->> >> b/tools/testing/selftests/rseq/rseq-arm.h
->> >> index 84f28f147fb6..5f262c54364f 100644
->> >> --- a/tools/testing/selftests/rseq/rseq-arm.h
->> >> +++ b/tools/testing/selftests/rseq/rseq-arm.h
->> >> @@ -5,54 +5,7 @@
->> >>   * (C) Copyright 2016-2018 - Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
->> >>   */
->> >>  
->> >> -/*
->> >> - * RSEQ_SIG uses the udf A32 instruction with an uncommon immediate operand
->> >> - * value 0x5de3. This traps if user-space reaches this instruction by mistake,
->> >> - * and the uncommon operand ensures the kernel does not move the instruction
->> >> - * pointer to attacker-controlled code on rseq abort.
->> >> - *
->> >> - * The instruction pattern in the A32 instruction set is:
->> >> - *
->> >> - * e7f5def3    udf    #24035    ; 0x5de3
->> >> - *
->> >> - * This translates to the following instruction pattern in the T16 instruction
->> >> - * set:
->> >> - *
->> >> - * little endian:
->> >> - * def3        udf    #243      ; 0xf3
->> >> - * e7f5        b.n    <7f5>
->> >> - *
->> >> - * pre-ARMv6 big endian code:
->> >> - * e7f5        b.n    <7f5>
->> >> - * def3        udf    #243      ; 0xf3
->> >> - *
->> >> - * ARMv6+ -mbig-endian generates mixed endianness code vs data: little-endian
->> >> - * code and big-endian data. Ensure the RSEQ_SIG data signature matches code
->> >> - * endianness. Prior to ARMv6, -mbig-endian generates big-endian code and data
->> >> - * (which match), so there is no need to reverse the endianness of the data
->> >> - * representation of the signature. However, the choice between BE32 and BE8
->> >> - * is done by the linker, so we cannot know whether code and data endianness
->> >> - * will be mixed before the linker is invoked.
->> >> - */
->> >> -
->> >> -#define RSEQ_SIG_CODE	0xe7f5def3
->> >> -
->> >> -#ifndef __ASSEMBLER__
->> >> -
->> >> -#define RSEQ_SIG_DATA							\
->> >> -	({								\
->> >> -		int sig;						\
->> >> -		asm volatile ("b 2f\n\t"				\
->> >> -			      "1: .inst " __rseq_str(RSEQ_SIG_CODE) "\n\t" \
->> >> -			      "2:\n\t"					\
->> >> -			      "ldr %[sig], 1b\n\t"			\
->> >> -			      : [sig] "=r" (sig));			\
->> >> -		sig;							\
->> >> -	})
->> >> -
->> >> -#define RSEQ_SIG	RSEQ_SIG_DATA
->> >> -
->> >> -#endif
->> >> +#define RSEQ_SIG	0x53053053
->> > 
->> > I don't get why you're reverting back to this old signature value, when the
->> > one we came up with will work well when interpreted as an instruction in the
->> > *vast* majority of scenarios that people care about (A32/T32 little-endian).
->> > I think you might be under-estimating just how dead things like BE32 really
->> > are.
->> 
->> My issue is that the current .instr approach is broken for programs or functions
->> built in Thumb mode, and I received no feedback on the solutions I proposed for
->> those issues, which led me to propose a patch reverting to a simple .word.
-> 
-> I understand why you're moving from .inst to .word, but I don't understand
-> why that necessitates a change in the value. Why not .word 0xe7f5def3 ? You
-> could also flip the bytes around in case of big-endian, which would keep the
-> instruction coding clean for BE8.
+Boot-tested on parisc and seems to work nicely, thus:
 
-As long as we state and document that this should not be expected to generate
-valid instructions on big endian prior to ARMv6, I'm OK with that approach, e.g.:
+Acked-by: Helge Deller <deller@gmx.de>
 
-/*
- * - ARM little endian
- *
- * RSEQ_SIG uses the udf A32 instruction with an uncommon immediate operand
- * value 0x5de3. This traps if user-space reaches this instruction by mistake,
- * and the uncommon operand ensures the kernel does not move the instruction
- * pointer to attacker-controlled code on rseq abort.
- *
- * The instruction pattern in the A32 instruction set is:
- *
- * e7f5def3    udf    #24035    ; 0x5de3
- *
- * This translates to the following instruction pattern in the T16 instruction
- * set:
- *
- * little endian:
- * def3        udf    #243      ; 0xf3
- * e7f5        b.n    <7f5>
- *
- * - ARMv6+ big endian:
- *
- * ARMv6+ -mbig-endian generates mixed endianness code vs data: little-endian
- * code and big-endian data. The data value of the signature needs to have its
- * byte order reversed to generate the trap instruction:
- *
- * Data: 0xf3def5e7
- *
- * Translates to this A32 instruction pattern:
- *
- * e7f5def3    udf    #24035    ; 0x5de3
- *
- * Translates to this T16 instruction pattern:
- *
- * def3        udf    #243      ; 0xf3
- * e7f5        b.n    <7f5>
- *
- * - Prior to ARMv6 big endian:
- *
- * Prior to ARMv6, -mbig-endian generates big-endian code and data (which match),
- * so the endianness of the data representation of the signature should not be
- * reversed. However, the choice between BE32 and BE8 is done by the linker,
- * so we cannot know whether code and data endianness will be mixed before the
- * linker is invoked. So rather than try to play tricks with the linker, the rseq
- * signature is simply data (not a trap instruction) prior to ARMv6 on big endian.
- * This is why the signature is expressed as data (.word) rather than as instruction
- * (.inst) in assembler.
- */
+Helge
 
-#ifdef __ARMEB__
-#define RSEQ_SIG    0xf3def5e7      /* udf    #24035    ; 0x5de3 (ARMv6+) */
-#else
-#define RSEQ_SIG    0xe7f5def3      /* udf    #24035    ; 0x5de3 */
-#endif
 
-> 
->> > That said, when you ran into .inst.n/.inst.w issues, did you try something
->> > along the lines of the WASM() macro we use in arch/arm/, which adds the ".w"
->> > suffix when targetting Thumb?
->> 
->> AFAIU, the WASM macros depend on CONFIG_THUMB2_KERNEL, which may be fine within
->> the kernel, but for user-space things are a bit more complex.
->> 
->> A compile-unit can be compiled as thumb, which will set a compiler define
->> which we could use to detect thumb mode. However, unfortunately, a single
->> function can also be compiled with an attribute selecting thumb mode, which
->> AFAIU does not influence the preprocessor defines.
-> 
-> Thanks, I hadn't considered that case. I don't know the right way to handle
-> that in the toolchain, so using .word is probably the best bet in the
-> absence of any better suggestions from the tools folks.
 
-Emitting a no-op within an excluded section, and using the size of that no-op
-to restore the original mode is the best way I found, but I find it rather
-tricky and bug-prone, so I would rather prefer the .word approach.
+> ---
+>  arch/parisc/kernel/sys_parisc.c | 8 +++-----
+>  1 file changed, 3 insertions(+), 5 deletions(-)
+>
+> diff --git a/arch/parisc/kernel/sys_parisc.c b/arch/parisc/kernel/sys_pa=
+risc.c
+> index 5d458a44b09c..e987f3a8eb0b 100644
+> --- a/arch/parisc/kernel/sys_parisc.c
+> +++ b/arch/parisc/kernel/sys_parisc.c
+> @@ -119,7 +119,7 @@ unsigned long arch_get_unmapped_area(struct file *fi=
+lp, unsigned long addr,
+>
+>  	info.flags =3D 0;
+>  	info.length =3D len;
+> -	info.low_limit =3D mm->mmap_legacy_base;
+> +	info.low_limit =3D mm->mmap_base;
+>  	info.high_limit =3D mmap_upper_limit(NULL);
+>  	info.align_mask =3D last_mmap ? (PAGE_MASK & (SHM_COLOUR - 1)) : 0;
+>  	info.align_offset =3D shared_align_offset(last_mmap, pgoff);
+> @@ -240,13 +240,11 @@ static unsigned long mmap_legacy_base(void)
+>   */
+>  void arch_pick_mmap_layout(struct mm_struct *mm, struct rlimit *rlim_st=
+ack)
+>  {
+> -	mm->mmap_legacy_base =3D mmap_legacy_base();
+> -	mm->mmap_base =3D mmap_upper_limit(rlim_stack);
+> -
+>  	if (mmap_is_legacy()) {
+> -		mm->mmap_base =3D mm->mmap_legacy_base;
+> +		mm->mmap_base =3D mmap_legacy_base();
+>  		mm->get_unmapped_area =3D arch_get_unmapped_area;
+>  	} else {
+> +		mm->mmap_base =3D mmap_upper_limit(rlim_stack);
+>  		mm->get_unmapped_area =3D arch_get_unmapped_area_topdown;
+>  	}
+>  }
+>
 
-Thoughts ?
-
-Thanks,
-
-Mathieu
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
