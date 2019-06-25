@@ -2,119 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60CC75267F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 10:25:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3996C52679
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 10:25:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730194AbfFYIZr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 04:25:47 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:47759 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728465AbfFYIZr (ORCPT
+        id S1730166AbfFYIZR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 04:25:17 -0400
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:45845 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726702AbfFYIZQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 04:25:47 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5P8P0M33529638
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Tue, 25 Jun 2019 01:25:00 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5P8P0M33529638
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019061801; t=1561451101;
-        bh=KxDixTeQny4IcqBw/DWyVQaGBJWQiYYmdKTsR65r9j0=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=ryvHKwkT6JEc/Nat/dYwXa8I95uGVJIVWshFcQIMcs7/F8ZUK2ZtAEB2nBzKdwl6R
-         p3XaVcHyAxEAw+8V4PyQV/YJ8ukeXPybOtkdNrk3HyoYRFy/x3fuPJeubhODOl/Usa
-         gsD/d+WPeejNSDmMvEI4JVgOtbsPOJigrp+eDctdjnZYitjP8WQ7v+aVBcE7se/kiC
-         9lSUaS5W2CWnhNVR4fgHQXdVCRoyUxxJeDqSakE+WXjfKlWabKwXDBGvQCwl0nuG8H
-         R9IaIYzmeU8sXtvRzhq1uNEygAaxp3sz9GVqVhIm+9maK7hvUaGqi2RZ/5aTbaiCwf
-         h7tZQaj/ND0qg==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5P8OxZT3529635;
-        Tue, 25 Jun 2019 01:24:59 -0700
-Date:   Tue, 25 Jun 2019 01:24:59 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Qais Yousef <tipbot@zytor.com>
-Message-ID: <tip-9ba5090aecac08ff3ae54ac3bd94b61db7708ffc@git.kernel.org>
-Cc:     hpa@zytor.com, quentin.perret@arm.com, qais.yousef@arm.com,
-        rostedt@goodmis.org, pkondeti@codeaurora.org, mingo@kernel.org,
-        u.kleine-koenig@pengutronix.de, torvalds@linux-foundation.org,
-        dietmar.eggemann@arm.com, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, peterz@infradead.org,
-        bigeasy@linutronix.de
-Reply-To: pkondeti@codeaurora.org, rostedt@goodmis.org,
-          qais.yousef@arm.com, quentin.perret@arm.com, hpa@zytor.com,
-          peterz@infradead.org, bigeasy@linutronix.de,
-          linux-kernel@vger.kernel.org, tglx@linutronix.de,
-          dietmar.eggemann@arm.com, torvalds@linux-foundation.org,
-          u.kleine-koenig@pengutronix.de, mingo@kernel.org
-In-Reply-To: <20190604111459.2862-2-qais.yousef@arm.com>
-References: <20190604111459.2862-2-qais.yousef@arm.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/core] sched/autogroup: Make autogroup_path() always
- available
-Git-Commit-ID: 9ba5090aecac08ff3ae54ac3bd94b61db7708ffc
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 25 Jun 2019 04:25:16 -0400
+X-Originating-IP: 90.88.16.156
+Received: from localhost (aaubervilliers-681-1-41-156.w90-88.abo.wanadoo.fr [90.88.16.156])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id 84BD740008;
+        Tue, 25 Jun 2019 08:25:07 +0000 (UTC)
+Date:   Tue, 25 Jun 2019 10:25:07 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Yangtao Li <tiny.windzz@gmail.com>, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+        gregkh@linuxfoundation.org, linus.walleij@linaro.org,
+        daniel.lezcano@linaro.org, linux-kernel@vger.kernel.org,
+        edubezval@gmail.com, wens@csie.org, robh+dt@kernel.org,
+        mchehab+samsung@kernel.org, rui.zhang@intel.com,
+        paulmck@linux.ibm.com, davem@davemloft.net,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v4 08/11] thermal: sun8i: support ahb clocks
+Message-ID: <20190625082507.mgycs6rzlxpvgqgu@flea>
+References: <20190623164206.7467-1-tiny.windzz@gmail.com>
+ <20190623164206.7467-9-tiny.windzz@gmail.com>
+ <20190624182333.di7avywtdvzwukms@flea>
+ <20190625003416.pxve36mrxmotg2bq@core.my.home>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ry5qotdx34xj2snb"
 Content-Disposition: inline
-X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF autolearn=ham
-        autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+In-Reply-To: <20190625003416.pxve36mrxmotg2bq@core.my.home>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  9ba5090aecac08ff3ae54ac3bd94b61db7708ffc
-Gitweb:     https://git.kernel.org/tip/9ba5090aecac08ff3ae54ac3bd94b61db7708ffc
-Author:     Qais Yousef <qais.yousef@arm.com>
-AuthorDate: Tue, 4 Jun 2019 12:14:54 +0100
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 24 Jun 2019 19:23:40 +0200
 
-sched/autogroup: Make autogroup_path() always available
+--ry5qotdx34xj2snb
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Remove the #ifdef CONFIG_SCHED_DEBUG.
+On Tue, Jun 25, 2019 at 02:34:16AM +0200, Ond=C5=99ej Jirman wrote:
+> On Mon, Jun 24, 2019 at 08:23:33PM +0200, Maxime Ripard wrote:
+> > On Sun, Jun 23, 2019 at 12:42:03PM -0400, Yangtao Li wrote:
+> > > H3 has extra clock, so introduce something in ths_thermal_chip/ths_de=
+vice
+> > > and adds the process of the clock.
+> > >
+> > > This is pre-work for supprt it.
+> > >
+> > > Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> > > ---
+> > >  drivers/thermal/sun8i_thermal.c | 17 ++++++++++++++++-
+> > >  1 file changed, 16 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/thermal/sun8i_thermal.c b/drivers/thermal/sun8i_=
+thermal.c
+> > > index ed1c19bb27cf..04f53ffb6a14 100644
+> > > --- a/drivers/thermal/sun8i_thermal.c
+> > > +++ b/drivers/thermal/sun8i_thermal.c
+> > > @@ -54,6 +54,7 @@ struct tsensor {
+> > >  };
+> > >
+> > >  struct ths_thermal_chip {
+> > > +	bool            has_ahb_clk;
+> > >  	int		sensor_num;
+> > >  	int		offset;
+> > >  	int		scale;
+> > > @@ -69,6 +70,7 @@ struct ths_device {
+> > >  	struct regmap				*regmap;
+> > >  	struct reset_control			*reset;
+> > >  	struct clk				*bus_clk;
+> > > +	struct clk                              *ahb_clk;
+> >
+> > Hmm, thinking a bit about this, the name of those two clocks doesn't
+> > make sense. AHB is the bus being used to access that device, so the
+> > bus clock is the AHB clock.
+> >
+> > What is that clock being used for?
+>
+> To control the A/D and sample averaging logic, I suppose. It's controlled=
+ by the
+> THS_CLK_REG (THS Clock Register) in H3 user manual.
+>
+> bus_clk controls THS_GATING in BUS_CLK_GATING_REG2 (THS module is connect=
+ed to
+> APB bus).
+>
+> I'd call it ths_clk and bus_clk.
 
-Some of the tracepoints to be introduced in later patches need to access
-this function. Hence make it always available since the tracepoints are
-not protected by CONFIG_SCHED_DEBUG.
+Thanks. We've tried to make clock names a bit more generic and
+consistent, so let's use mod instead.
 
-Signed-off-by: Qais Yousef <qais.yousef@arm.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Pavankumar Kondeti <pkondeti@codeaurora.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Quentin Perret <quentin.perret@arm.com>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Uwe Kleine-Konig <u.kleine-koenig@pengutronix.de>
-Link: https://lkml.kernel.org/r/20190604111459.2862-2-qais.yousef@arm.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- kernel/sched/autogroup.c | 2 --
- 1 file changed, 2 deletions(-)
+Maxime
 
-diff --git a/kernel/sched/autogroup.c b/kernel/sched/autogroup.c
-index 2d4ff5353ded..2067080bb235 100644
---- a/kernel/sched/autogroup.c
-+++ b/kernel/sched/autogroup.c
-@@ -259,7 +259,6 @@ out:
- }
- #endif /* CONFIG_PROC_FS */
- 
--#ifdef CONFIG_SCHED_DEBUG
- int autogroup_path(struct task_group *tg, char *buf, int buflen)
- {
- 	if (!task_group_is_autogroup(tg))
-@@ -267,4 +266,3 @@ int autogroup_path(struct task_group *tg, char *buf, int buflen)
- 
- 	return snprintf(buf, buflen, "%s-%ld", "/autogroup", tg->autogroup->id);
- }
--#endif
+--
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--ry5qotdx34xj2snb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXRHaYwAKCRDj7w1vZxhR
+xQrlAP9wwKwsQ2PbVvHGyuOJSFjRJZ9ASA22w83xIaKJDErjhgEAsmUAcw4APZyi
+BhQMziRi3MAIeW70nBIvZFtQhI4YBwI=
+=YZIB
+-----END PGP SIGNATURE-----
+
+--ry5qotdx34xj2snb--
