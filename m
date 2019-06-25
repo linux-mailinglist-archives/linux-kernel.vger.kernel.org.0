@@ -2,147 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FD1255226
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 16:40:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31A055522B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 16:40:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730959AbfFYOkA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 10:40:00 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:58306 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730689AbfFYOkA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 10:40:00 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 899CD30C585A;
-        Tue, 25 Jun 2019 14:39:44 +0000 (UTC)
-Received: from llong.com (dhcp-17-85.bos.redhat.com [10.18.17.85])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DBBB5620CF;
-        Tue, 25 Jun 2019 14:39:31 +0000 (UTC)
-From:   Waiman Long <longman@redhat.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        huang ying <huang.ying.caritas@gmail.com>,
-        Waiman Long <longman@redhat.com>
-Subject: [PATCH-tip] locking/rwsem: Make handoff writer optimistically spin on owner
-Date:   Tue, 25 Jun 2019 10:39:13 -0400
-Message-Id: <20190625143913.24154-1-longman@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Tue, 25 Jun 2019 14:39:59 +0000 (UTC)
+        id S1731521AbfFYOkY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 10:40:24 -0400
+Received: from www1102.sakura.ne.jp ([219.94.129.142]:34853 "EHLO
+        www1102.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730689AbfFYOkX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 10:40:23 -0400
+Received: from fsav101.sakura.ne.jp (fsav101.sakura.ne.jp [27.133.134.228])
+        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x5PEe0Jv044514;
+        Tue, 25 Jun 2019 23:40:00 +0900 (JST)
+        (envelope-from katsuhiro@katsuster.net)
+Received: from www1102.sakura.ne.jp (219.94.129.142)
+ by fsav101.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav101.sakura.ne.jp);
+ Tue, 25 Jun 2019 23:40:00 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav101.sakura.ne.jp)
+Received: from [192.168.1.2] (118.153.231.153.ap.dti.ne.jp [153.231.153.118])
+        (authenticated bits=0)
+        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x5PEe0HW044501
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Tue, 25 Jun 2019 23:40:00 +0900 (JST)
+        (envelope-from katsuhiro@katsuster.net)
+Subject: Re: [PATCH net-next] net: stmmac: Fix the case when PHY handle is not
+ present
+To:     Jose Abreu <Jose.Abreu@synopsys.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Cc:     Joao Pinto <Joao.Pinto@synopsys.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+References: <351cce38d1c572d8b171044f2856c7fae9f89cbc.1561450696.git.joabreu@synopsys.com>
+ <78EB27739596EE489E55E81C33FEC33A0B9D78A2@DE02WEMBXB.internal.synopsys.com>
+From:   Katsuhiro Suzuki <katsuhiro@katsuster.net>
+Message-ID: <5859e2c5-112f-597c-3bd5-e30e96b86152@katsuster.net>
+Date:   Tue, 25 Jun 2019 23:40:00 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
+MIME-Version: 1.0
+In-Reply-To: <78EB27739596EE489E55E81C33FEC33A0B9D78A2@DE02WEMBXB.internal.synopsys.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When the handoff bit is set by a writer, no other tasks other than
-the setting writer itself is allowed to acquire the lock. If the
-to-be-handoff'ed writer goes to sleep, there will be a wakeup latency
-period where the lock is free, but no one can acquire it. That is less
-than ideal.
+Hello Jose,
 
-To reduce that latency, the handoff writer will now optimistically spin
-on the owner if it happens to be a on-cpu writer. It will spin until
-it releases the lock and the to-be-handoff'ed writer can then acquire
-the lock immediately without any delay. Of course, if the owner is not
-a on-cpu writer, the to-be-handoff'ed writer will have to sleep anyway.
+This patch works fine with my Tinker Board. Thanks a lot!
 
-The optimistic spinning code is also modified to not stop spinning
-when the handoff bit is set. This will prevent an occasional setting of
-handoff bit from causing a bunch of optimistic spinners from entering
-into the wait queue causing significant reduction in throughput.
+Tested-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
 
-On a 1-socket 22-core 44-thread Skylake system, the AIM7 shared_memory
-workload was run with 7000 users. The throughput (jobs/min) of the
-following kernels were as follows:
 
- 1) 5.2-rc6
-    - 8,092,486
- 2) 5.2-rc6 + tip's rwsem patches
-    - 7,567,568
- 3) 5.2-rc6 + tip's rwsem patches + this patch
-    - 7,954,545
+BTW, from network guys point of view, is it better to add a phy node
+into device trees that have no phy node such as the Tinker Board?
 
-Using perf-record(1), the %cpu time used by rwsem_down_write_slowpath(),
-rwsem_down_write_failed() and their callees for the 3 kernels were 1.70%,
-5.46% and 2.08% respectively.
 
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- kernel/locking/rwsem.c | 32 ++++++++++++++++++++++++++------
- 1 file changed, 26 insertions(+), 6 deletions(-)
+Best Regards,
+Katsuhiro Suzuki
 
-diff --git a/kernel/locking/rwsem.c b/kernel/locking/rwsem.c
-index 37524a47f002..5e022fbdb2bb 100644
---- a/kernel/locking/rwsem.c
-+++ b/kernel/locking/rwsem.c
-@@ -720,11 +720,12 @@ rwsem_spin_on_owner(struct rw_semaphore *sem, unsigned long nonspinnable)
- 
- 	rcu_read_lock();
- 	for (;;) {
--		if (atomic_long_read(&sem->count) & RWSEM_FLAG_HANDOFF) {
--			state = OWNER_NONSPINNABLE;
--			break;
--		}
--
-+		/*
-+		 * When a waiting writer set the handoff flag, it may spin
-+		 * on the owner as well. Once that writer acquires the lock,
-+		 * we can spin on it. So we don't need to quit even when the
-+		 * handoff bit is set.
-+		 */
- 		new = rwsem_owner_flags(sem, &new_flags);
- 		if ((new != owner) || (new_flags != flags)) {
- 			state = rwsem_owner_state(new, new_flags, nonspinnable);
-@@ -970,6 +971,13 @@ static inline bool rwsem_reader_phase_trylock(struct rw_semaphore *sem,
- {
- 	return false;
- }
-+
-+static inline int
-+rwsem_spin_on_owner(struct rw_semaphore *sem, unsigned long nonspinnable)
-+{
-+	return 0;
-+}
-+#define OWNER_NULL	1
- #endif
- 
- /*
-@@ -1190,6 +1198,18 @@ rwsem_down_write_slowpath(struct rw_semaphore *sem, int state)
- 
- 		raw_spin_unlock_irq(&sem->wait_lock);
- 
-+		/*
-+		 * After setting the handoff bit and failing to acquire
-+		 * the lock, attempt to spin on owner to accelerate lock
-+		 * transfer. If the previous owner is a on-cpu writer and it
-+		 * has just released the lock, OWNER_NULL will be returned.
-+		 * In this case, we attempt to acquire the lock again
-+		 * without sleeping.
-+		 */
-+		if ((wstate == WRITER_HANDOFF) &&
-+		    (rwsem_spin_on_owner(sem, 0) == OWNER_NULL))
-+			goto trylock_again;
-+
- 		/* Block until there are no active lockers. */
- 		for (;;) {
- 			if (signal_pending_state(state, current))
-@@ -1224,7 +1244,7 @@ rwsem_down_write_slowpath(struct rw_semaphore *sem, int state)
- 				break;
- 			}
- 		}
--
-+trylock_again:
- 		raw_spin_lock_irq(&sem->wait_lock);
- 	}
- 	__set_current_state(TASK_RUNNING);
--- 
-2.18.1
+
+On 2019/06/25 22:11, Jose Abreu wrote:
+> ++ Katsuhiro
+> 
+> From: Jose Abreu <joabreu@synopsys.com>
+> 
+>> Some DT bindings do not have the PHY handle. Let's fallback to manually
+>> discovery in case phylink_of_phy_connect() fails.
+>>
+>> Reported-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
+>> Fixes: 74371272f97f ("net: stmmac: Convert to phylink and remove phylib logic")
+>> Signed-off-by: Jose Abreu <joabreu@synopsys.com>
+>> Cc: Joao Pinto <jpinto@synopsys.com>
+>> Cc: David S. Miller <davem@davemloft.net>
+>> Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+>> Cc: Alexandre Torgue <alexandre.torgue@st.com>
+>> ---
+>> Hello Katsuhiro,
+>>
+>> Can you please test this patch ?
+>> ---
+>>   drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 7 +++++--
+>>   1 file changed, 5 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+>> index a48751989fa6..f4593d2d9d20 100644
+>> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+>> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+>> @@ -950,9 +950,12 @@ static int stmmac_init_phy(struct net_device *dev)
+>>   
+>>   	node = priv->plat->phylink_node;
+>>   
+>> -	if (node) {
+>> +	if (node)
+>>   		ret = phylink_of_phy_connect(priv->phylink, node, 0);
+>> -	} else {
+>> +
+>> +	/* Some DT bindings do not set-up the PHY handle. Let's try to
+>> +	 * manually parse it */
+>> +	if (!node || ret) {
+>>   		int addr = priv->plat->phy_addr;
+>>   		struct phy_device *phydev;
+>>   
+>> -- 
+>> 2.7.4
+> 
+> 
+> 
+> 
 
