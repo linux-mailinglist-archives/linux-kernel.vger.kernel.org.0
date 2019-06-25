@@ -2,55 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3896852669
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 10:22:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 845735266D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 10:23:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729772AbfFYIWn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 04:22:43 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:43883 "EHLO
+        id S1730048AbfFYIX0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 04:23:26 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:35785 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727338AbfFYIWm (ORCPT
+        with ESMTP id S1726702AbfFYIXZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 04:22:42 -0400
+        Tue, 25 Jun 2019 04:23:25 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5P8M92L3527525
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5P8Mqcj3527600
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Tue, 25 Jun 2019 01:22:09 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5P8M92L3527525
+        Tue, 25 Jun 2019 01:22:52 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5P8Mqcj3527600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019061801; t=1561450930;
-        bh=0k6y0OXHppZsqTj4LnR8kUQ0tI7hwKSknVM/xL9SSkE=;
+        s=2019061801; t=1561450972;
+        bh=rkLmDGsspwhMrV2Zvfiae5ZQA4kN7FkdpszI3veh9I4=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=D8SKRwM72Fm1t68/fU5FY061zBwi1F9xKTrmO7W6xo5kEvRZIk+I5qpxT+9CMhpqF
-         i5MH4awOsHwqJtVJ4yZWwmbnXUKLzzb5A9RQzHSXebbrI7A4/mcToFVCwhhkzGjZPB
-         ei7LGFrPHkGgZVfEqhS2Hx41MGu6mUgA2U8W8n3VsNe1qpGsOo1lMMpX2QbtgiEhOC
-         8XCml+coTchHBiWZvv0UmQFOf4rj0llumyiI5BaXESqvs6TKcXXnxq86tI/MafdoCH
-         o0bxUtNyTXxVzimZQpiO9Fpzbk1miGkPw4aOn1wnV0N42OXJjHxjkSJnBMAJ0d7jgP
-         nfSLBbh3ogQ+A==
+        b=OG2c6NrEblTMzaYCEvA2qFzVC8CTIh2Fs7AfIqoe2CEg10bk4QkKND+uJ19bUwrTy
+         peB1t7SnbbHX+DWFwtCLJIhFPCh2Q+5yIJVq05T0CxISZlP771WH+Ymy5AZT9hPkcg
+         2Kf4NRtv2XFWIhoQzn5pcvZJDjYIB1s/bGumA8yiNV9BGZ+UQ8dOcioToKe8vOcKm4
+         2So1rYOK7v5F9cg4c96SW56AX5/ae5ycJuIJ60QRyn8xXxYKewsYJIg9X+NOp6Mu1S
+         +YrpJ4aFz14joxxQum/hVgvy4DTPjJ9AOsx7wz+IJ5k16XN6j3/KN4gV3JAqpFa0Ek
+         9IP7mS9e8KvjA==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5P8M8Eu3527518;
-        Tue, 25 Jun 2019 01:22:08 -0700
-Date:   Tue, 25 Jun 2019 01:22:08 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5P8MpAD3527597;
+        Tue, 25 Jun 2019 01:22:51 -0700
+Date:   Tue, 25 Jun 2019 01:22:51 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Kan Liang <tipbot@zytor.com>
-Message-ID: <tip-cd6b984f6d8cd615755b5404a51b7efe45215f28@git.kernel.org>
-Cc:     tglx@linutronix.de, jolsa@redhat.com,
-        torvalds@linux-foundation.org, vincent.weaver@maine.edu,
-        kan.liang@linux.intel.com, acme@redhat.com,
-        linux-kernel@vger.kernel.org, hpa@zytor.com,
-        alexander.shishkin@linux.intel.com, mingo@kernel.org,
-        peterz@infradead.org, eranian@google.com
-Reply-To: torvalds@linux-foundation.org, vincent.weaver@maine.edu,
-          kan.liang@linux.intel.com, acme@redhat.com,
+Message-ID: <tip-8b12b812f5367c2469fb937da7e28dd321ad8d7b@git.kernel.org>
+Cc:     kan.liang@linux.intel.com, torvalds@linux-foundation.org,
+        hpa@zytor.com, peterz@infradead.org, mingo@kernel.org,
+        alexander.shishkin@linux.intel.com, vincent.weaver@maine.edu,
+        linux-kernel@vger.kernel.org, jolsa@redhat.com, acme@redhat.com,
+        tglx@linutronix.de, eranian@google.com
+Reply-To: eranian@google.com, acme@redhat.com,
+          linux-kernel@vger.kernel.org, jolsa@redhat.com,
+          vincent.weaver@maine.edu, tglx@linutronix.de,
+          torvalds@linux-foundation.org, kan.liang@linux.intel.com,
           alexander.shishkin@linux.intel.com, peterz@infradead.org,
-          tglx@linutronix.de, jolsa@redhat.com,
-          linux-kernel@vger.kernel.org, hpa@zytor.com, mingo@kernel.org,
-          eranian@google.com
-In-Reply-To: <1559081314-9714-4-git-send-email-kan.liang@linux.intel.com>
-References: <1559081314-9714-4-git-send-email-kan.liang@linux.intel.com>
+          mingo@kernel.org, hpa@zytor.com
+In-Reply-To: <1559081314-9714-5-git-send-email-kan.liang@linux.intel.com>
+References: <1559081314-9714-5-git-send-email-kan.liang@linux.intel.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf/x86: Remove pmu->pebs_no_xmm_regs
-Git-Commit-ID: cd6b984f6d8cd615755b5404a51b7efe45215f28
+Subject: [tip:perf/urgent] perf/x86/regs: Use PERF_REG_EXTENDED_MASK
+Git-Commit-ID: 8b12b812f5367c2469fb937da7e28dd321ad8d7b
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -68,18 +67,18 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  cd6b984f6d8cd615755b5404a51b7efe45215f28
-Gitweb:     https://git.kernel.org/tip/cd6b984f6d8cd615755b5404a51b7efe45215f28
+Commit-ID:  8b12b812f5367c2469fb937da7e28dd321ad8d7b
+Gitweb:     https://git.kernel.org/tip/8b12b812f5367c2469fb937da7e28dd321ad8d7b
 Author:     Kan Liang <kan.liang@linux.intel.com>
-AuthorDate: Tue, 28 May 2019 15:08:33 -0700
+AuthorDate: Tue, 28 May 2019 15:08:34 -0700
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 24 Jun 2019 19:19:25 +0200
+CommitDate: Mon, 24 Jun 2019 19:19:26 +0200
 
-perf/x86: Remove pmu->pebs_no_xmm_regs
+perf/x86/regs: Use PERF_REG_EXTENDED_MASK
 
-We don't need pmu->pebs_no_xmm_regs anymore, the capabilities
-PERF_PMU_CAP_EXTENDED_REGS can be used to check if XMM registers
-collection is supported.
+Use the macro defined in kernel ABI header to replace the local name.
+
+No functional change.
 
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
@@ -91,63 +90,57 @@ Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Stephane Eranian <eranian@google.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Vince Weaver <vincent.weaver@maine.edu>
-Link: https://lkml.kernel.org/r/1559081314-9714-4-git-send-email-kan.liang@linux.intel.com
+Link: https://lkml.kernel.org/r/1559081314-9714-5-git-send-email-kan.liang@linux.intel.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/events/core.c       | 2 +-
- arch/x86/events/intel/ds.c   | 6 ++----
- arch/x86/events/perf_event.h | 3 +--
- 3 files changed, 4 insertions(+), 7 deletions(-)
+ tools/arch/x86/include/uapi/asm/perf_regs.h | 3 +++
+ tools/perf/arch/x86/include/perf_regs.h     | 1 -
+ tools/perf/arch/x86/util/perf_regs.c        | 4 ++--
+ 3 files changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-index 7708a6fb5f4a..52a97463cb24 100644
---- a/arch/x86/events/core.c
-+++ b/arch/x86/events/core.c
-@@ -568,7 +568,7 @@ int x86_pmu_hw_config(struct perf_event *event)
- 	 * be collected in PEBS on some platforms, e.g. Icelake
- 	 */
- 	if (unlikely(event->attr.sample_regs_intr & PERF_REG_EXTENDED_MASK)) {
--		if (x86_pmu.pebs_no_xmm_regs)
-+		if (!(event->pmu->capabilities & PERF_PMU_CAP_EXTENDED_REGS))
- 			return -EINVAL;
- 
- 		if (!event->attr.precise_ip)
-diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
-index 955b2c688f23..505c73dc6a73 100644
---- a/arch/x86/events/intel/ds.c
-+++ b/arch/x86/events/intel/ds.c
-@@ -1964,10 +1964,9 @@ void __init intel_ds_init(void)
- 	x86_pmu.bts  = boot_cpu_has(X86_FEATURE_BTS);
- 	x86_pmu.pebs = boot_cpu_has(X86_FEATURE_PEBS);
- 	x86_pmu.pebs_buffer_size = PEBS_BUFFER_SIZE;
--	if (x86_pmu.version <= 4) {
-+	if (x86_pmu.version <= 4)
- 		x86_pmu.pebs_no_isolation = 1;
--		x86_pmu.pebs_no_xmm_regs = 1;
--	}
+diff --git a/tools/arch/x86/include/uapi/asm/perf_regs.h b/tools/arch/x86/include/uapi/asm/perf_regs.h
+index ac67bbea10ca..7c9d2bb3833b 100644
+--- a/tools/arch/x86/include/uapi/asm/perf_regs.h
++++ b/tools/arch/x86/include/uapi/asm/perf_regs.h
+@@ -52,4 +52,7 @@ enum perf_event_x86_regs {
+ 	/* These include both GPRs and XMMX registers */
+ 	PERF_REG_X86_XMM_MAX = PERF_REG_X86_XMM15 + 2,
+ };
 +
- 	if (x86_pmu.pebs) {
- 		char pebs_type = x86_pmu.intel_cap.pebs_trap ?  '+' : '-';
- 		char *pebs_qual = "";
-@@ -2023,7 +2022,6 @@ void __init intel_ds_init(void)
- 				x86_get_pmu()->capabilities |= PERF_PMU_CAP_EXTENDED_REGS;
- 			} else {
- 				/* Only basic record supported */
--				x86_pmu.pebs_no_xmm_regs = 1;
- 				x86_pmu.large_pebs_flags &=
- 					~(PERF_SAMPLE_ADDR |
- 					  PERF_SAMPLE_TIME |
-diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
-index d3b6e90c80d3..4e346856ee19 100644
---- a/arch/x86/events/perf_event.h
-+++ b/arch/x86/events/perf_event.h
-@@ -650,8 +650,7 @@ struct x86_pmu {
- 			pebs_broken		:1,
- 			pebs_prec_dist		:1,
- 			pebs_no_tlb		:1,
--			pebs_no_isolation	:1,
--			pebs_no_xmm_regs	:1;
-+			pebs_no_isolation	:1;
- 	int		pebs_record_size;
- 	int		pebs_buffer_size;
- 	int		max_pebs_events;
++#define PERF_REG_EXTENDED_MASK	(~((1ULL << PERF_REG_X86_XMM0) - 1))
++
+ #endif /* _ASM_X86_PERF_REGS_H */
+diff --git a/tools/perf/arch/x86/include/perf_regs.h b/tools/perf/arch/x86/include/perf_regs.h
+index b7cd91a9014f..b7321337d100 100644
+--- a/tools/perf/arch/x86/include/perf_regs.h
++++ b/tools/perf/arch/x86/include/perf_regs.h
+@@ -9,7 +9,6 @@
+ void perf_regs_load(u64 *regs);
+ 
+ #define PERF_REGS_MAX PERF_REG_X86_XMM_MAX
+-#define PERF_XMM_REGS_MASK	(~((1ULL << PERF_REG_X86_XMM0) - 1))
+ #ifndef HAVE_ARCH_X86_64_SUPPORT
+ #define PERF_REGS_MASK ((1ULL << PERF_REG_X86_32_MAX) - 1)
+ #define PERF_SAMPLE_REGS_ABI PERF_SAMPLE_REGS_ABI_32
+diff --git a/tools/perf/arch/x86/util/perf_regs.c b/tools/perf/arch/x86/util/perf_regs.c
+index 7886ca5263e3..3666c0076df9 100644
+--- a/tools/perf/arch/x86/util/perf_regs.c
++++ b/tools/perf/arch/x86/util/perf_regs.c
+@@ -277,7 +277,7 @@ uint64_t arch__intr_reg_mask(void)
+ 		.type			= PERF_TYPE_HARDWARE,
+ 		.config			= PERF_COUNT_HW_CPU_CYCLES,
+ 		.sample_type		= PERF_SAMPLE_REGS_INTR,
+-		.sample_regs_intr	= PERF_XMM_REGS_MASK,
++		.sample_regs_intr	= PERF_REG_EXTENDED_MASK,
+ 		.precise_ip		= 1,
+ 		.disabled 		= 1,
+ 		.exclude_kernel		= 1,
+@@ -293,7 +293,7 @@ uint64_t arch__intr_reg_mask(void)
+ 	fd = sys_perf_event_open(&attr, 0, -1, -1, 0);
+ 	if (fd != -1) {
+ 		close(fd);
+-		return (PERF_XMM_REGS_MASK | PERF_REGS_MASK);
++		return (PERF_REG_EXTENDED_MASK | PERF_REGS_MASK);
+ 	}
+ 
+ 	return PERF_REGS_MASK;
