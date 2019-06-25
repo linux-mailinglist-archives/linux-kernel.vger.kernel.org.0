@@ -2,70 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CC475515E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 16:17:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C5DE5513C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 16:11:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730074AbfFYORC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 10:17:02 -0400
-Received: from mail.intenta.de ([178.249.25.132]:28384 "EHLO mail.intenta.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727070AbfFYORC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 10:17:02 -0400
-X-Greylist: delayed 329 seconds by postgrey-1.27 at vger.kernel.org; Tue, 25 Jun 2019 10:17:01 EDT
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=intenta.de; s=dkim1;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:CC:To:From:Date; bh=mJlPfSkpI779CY+9JAH0jj86uoiwu0wyCkk8KI2WfiE=;
-        b=d0q2bEjQJE2TygXNNfiz+huBzdmhBgB0yiW9nfIfG40l6rOBViCdcRXObmtvNQDPbKQxSz7UnLao3itC18ElskcAtXS4TutpTk8+sOOdoBSlMejuk0zfcX2TdlcwydFh0WajpCPbxZSduFaZ5YRA744AGHPAz6j+KsjFwMWXPDRwubATJd8bIWc6xm5NTNuYpCQEKuLrZhqXBryUzzGakL1WMYigxEiIeWPZDoPLp0ga4PCd2dRCBMHhX8CkVUDnC05EcH9B1OyjlE6tF9TZv7R5kfjwPeSAiXGR0ue8aQ1ZBd5ztWFF6NoPQ/0HrU0mmbj64EVtdpKZJDeQ9JSE9A==;
-X-CTCH-RefID: str=0001.0A0C020D.5D122B8E.0089,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Date:   Tue, 25 Jun 2019 16:11:26 +0200
-From:   Helmut Grohne <helmut.grohne@intenta.de>
-To:     Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com>
-CC:     "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        "richard@nod.at" <richard@nod.at>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "vigneshr@ti.com" <vigneshr@ti.com>,
-        "bbrezillon@kernel.org" <bbrezillon@kernel.org>,
-        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [LINUX PATCH v17 2/2] mtd: rawnand: pl353: Add basic driver for
- arm pl353 smc nand interface
-Message-ID: <20190625141126.ggmxjcmdh76lguds@laureti-dev>
-References: <20190625044630.31717-1-naga.sureshkumar.relli@xilinx.com>
- <20190625044630.31717-2-naga.sureshkumar.relli@xilinx.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20190625044630.31717-2-naga.sureshkumar.relli@xilinx.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-ClientProxiedBy: ICSMA002.intenta.de (10.10.16.48) To ICSMA002.intenta.de
- (10.10.16.48)
+        id S1729899AbfFYOLt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 10:11:49 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:44100 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727603AbfFYOLt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 10:11:49 -0400
+Received: by mail-lf1-f67.google.com with SMTP id r15so12712418lfm.11
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 07:11:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=gYuJuPOZBk4Y/I55Xfw4nMllA34HbJMTlhwO9fs6sKE=;
+        b=RrGdRYr/3/VMp2ftn6ZpAtSc6E+i+LepBHyiDnqE/7RSQxXYyCk/+3N4RfHuaFPwBu
+         tIT+EtcczTiCbyoETK9FM7l3NGlIumcG6DYtRf3yuUjQSV7eqRrigrh+UhqQXjwI/r3U
+         bjZLIwU1ZHKJRXRetaNlUJOVk7rWnS43NZ62J+z3IbLnaZBQBMXcMAJ4C+ju6cBs/aTM
+         I9q/W4hvLc3xIQrLRpTUM7BNPSTU6K6BwCmHP3JfUAuE48Etj+TfO8o6DoYAAdGyw3v9
+         ZsUT2Xxnmc7jwRXmX6+6VY8PJcUE9q5Qg696QWBZkYlRbffGARZ+SgiXI8ceAwTc78bc
+         Ouzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=gYuJuPOZBk4Y/I55Xfw4nMllA34HbJMTlhwO9fs6sKE=;
+        b=eoYz3BygyUmG68L6uJUp7LAz/d1njED/6Qf38QGSzNTLdcqpX3k5cVJFlPbQRAqiG0
+         26j3CexrS2WPxwmfFICgxl9pwW02O3F0MS2N7Y3xwDOyXxrkwC56d7OxBhkAIiC3X6nc
+         skALwCUxHRV53WHVth4BdDgw9Xa4VT6QUE/CIXu0Ur6DU2GckGOwW5izrPv4CMLqCI8D
+         fd1s8MtkQ/yg+ftp2E02qFU70Sekk15BTbHeigTaHD1PQZfYm0PaxtKhJiDRlwRfO6U8
+         qazgLrABeEHBsHLT9sDa/kPioY8gWbOOd236uU37XbSdblQknBn2aj2nLP9RDk5l7eCb
+         4k/A==
+X-Gm-Message-State: APjAAAV+90RxtncUpr70L8vI/o0a9pnOYOFRG3QbJ6dRoTbv1Jq7ha3S
+        ZNzpJ293G63Esw2nxUAPmcsaLA==
+X-Google-Smtp-Source: APXvYqymCGzBxYFBh6NDuxj2Z0bP9KTLDNIFnB0YdKzFofu+smjIUtjZXqAQj1DCj8d9p2R1wtj91w==
+X-Received: by 2002:ac2:4901:: with SMTP id n1mr2442751lfi.153.1561471906859;
+        Tue, 25 Jun 2019 07:11:46 -0700 (PDT)
+Received: from localhost.localdomain (59-201-94-178.pool.ukrtel.net. [178.94.201.59])
+        by smtp.gmail.com with ESMTPSA id z12sm1971522lfg.67.2019.06.25.07.11.45
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 25 Jun 2019 07:11:46 -0700 (PDT)
+From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+To:     ast@kernel.org, netdev@vger.kernel.org
+Cc:     daniel@iogearbox.net, bpf@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+Subject: [PATCH net-next] tools: lib: bpf: libbpf: fix max() type mistmatch for 32bit
+Date:   Tue, 25 Jun 2019 17:11:42 +0300
+Message-Id: <20190625141142.2378-1-ivan.khoronzhuk@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thank you for the quick update.
+It fixes build error for 32bit coused by type mistmatch
+size_t/unsigned long.
 
-On Tue, Jun 25, 2019 at 06:46:30AM +0200, Naga Sureshkumar Relli wrote:
-> -> Tested Micron MT29F2G08ABAEAWP (On-die capable) and AMD/Spansion S34ML01G1.
+Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+---
 
-I tested the v17 series with the MT29F2G08ABAEAWP. I can now mount
-existing jffs2 volumes without issues.
+Based on net-next/master
 
-When running nandtest on a 64MB area, I no longer see lots of
-consecutive errors. However I see few (4-8) single byte errors for
-random locations on about half the runs. In comparison, I couldn't
-reproduce these on the older driver on v4.14.
+ tools/lib/bpf/libbpf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-When writing random 1MB files on a fresh jffs2 filesystem and reading
-them back after umounting and mounting the filesystem, I got one faulty
-file in 50 attempts.
+diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+index 4259c9f0cfe7..d03016a559e2 100644
+--- a/tools/lib/bpf/libbpf.c
++++ b/tools/lib/bpf/libbpf.c
+@@ -778,7 +778,7 @@ static struct bpf_map *bpf_object__add_map(struct bpf_object *obj)
+ 	if (obj->nr_maps < obj->maps_cap)
+ 		return &obj->maps[obj->nr_maps++];
+ 
+-	new_cap = max(4ul, obj->maps_cap * 3 / 2);
++	new_cap = max((size_t)4, obj->maps_cap * 3 / 2);
+ 	new_maps = realloc(obj->maps, new_cap * sizeof(*obj->maps));
+ 	if (!new_maps) {
+ 		pr_warning("alloc maps for object failed\n");
+-- 
+2.17.1
 
-So this driver mostly works for me, but I suspect that something
-(possibly the tested hardware) doesn't fully work yet. To say more, I'll
-need long term testing results. In the mean time, I'm in favour of
-merging the driver.
-
-Helmut
