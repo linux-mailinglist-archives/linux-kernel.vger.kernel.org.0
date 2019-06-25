@@ -2,227 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B18D51F8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 02:13:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33B7851F96
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 02:13:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729745AbfFYANZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 20:13:25 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:34764 "EHLO
-        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729613AbfFYANM (ORCPT
+        id S1729874AbfFYANh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 20:13:37 -0400
+Received: from mail-ua1-f73.google.com ([209.85.222.73]:38247 "EHLO
+        mail-ua1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729753AbfFYANb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 20:13:12 -0400
-Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5P09dlY018475
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 17:13:10 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=3XZFERUpQR9pfQReUygYqP0Ugwxnn7ZlmK3Hj2ioXA8=;
- b=gP9uYvk9m8yAdtzGQs0XBLX8EnTnPpfzTgbRHqWiehHM03h4T22lEs/DkZ5H4o6gkQ7K
- KXlIyL0QYQ9hjbl6u4GESqmPMbO+19kdVAeiH2mWYhOqCTCGyyK8b9luL+QmCW/ac1m2
- 4Jbmts9ZD8cF41JQBoBYvFBTYtSUv33Go8o= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com with ESMTP id 2tawbtarag-4
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 17:13:10 -0700
-Received: from mx-out.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:82::f) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Mon, 24 Jun 2019 17:13:08 -0700
-Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)
-        id C93A962E206E; Mon, 24 Jun 2019 17:13:07 -0700 (PDT)
-Smtp-Origin-Hostprefix: devbig
-From:   Song Liu <songliubraving@fb.com>
-Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
-To:     <linux-mm@kvack.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <matthew.wilcox@oracle.com>, <kirill.shutemov@linux.intel.com>,
-        <kernel-team@fb.com>, <william.kucharski@oracle.com>,
-        <akpm@linux-foundation.org>, <hdanton@sina.com>,
-        Song Liu <songliubraving@fb.com>
-Smtp-Origin-Cluster: ftw2c04
-Subject: [PATCH v9 6/6] mm,thp: avoid writes to file with THP in pagecache
-Date:   Mon, 24 Jun 2019 17:12:46 -0700
-Message-ID: <20190625001246.685563-7-songliubraving@fb.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190625001246.685563-1-songliubraving@fb.com>
-References: <20190625001246.685563-1-songliubraving@fb.com>
-X-FB-Internal: Safe
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-24_16:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=804 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906250000
-X-FB-Internal: deliver
+        Mon, 24 Jun 2019 20:13:31 -0400
+Received: by mail-ua1-f73.google.com with SMTP id j22so1361932uaq.5
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 17:13:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=Q0hyqVzuncQMFkIZhAOHJkIfbxm5sDRWMvyBXtcavoo=;
+        b=EssshDt/dlH+w3otVcXsWVrkwsJGAEYnRZomAA2SB8qG/Igf+gZ+Yj3LwaIyfQ+jTJ
+         yZyJOFE5cqme7ibfp2WTeYILLR/Eq3LafVKKg36FAfr0rZ0zjaRRfvHudE5wa7UimQYV
+         HkJr+bRcOM4asjgjGlsGVfVmMhz2WroL/8+MSe/pjIy+MSyRaLtdC1vLU7xt2FLgAbd8
+         f9oP8cnro7VlgAtgCGyFmly/+lk9rLMPYRrltq92XkAexvCpDl/XhrAku4YXDNJB9kcf
+         VyY2P6cHBv0xzRRb/oyueFu/ELftH6aNCIaibDzCjQkh/Fe1azRI7GgxFS6mU08mapE+
+         GHPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=Q0hyqVzuncQMFkIZhAOHJkIfbxm5sDRWMvyBXtcavoo=;
+        b=RSTLYn1VBa5bBYIuRjAIm21h7dRk5BIV7Fs+fB4NU3FTbqX9ZrR8psVPxHw9Q5ES2k
+         2SwmFviFAMf3hCQi03rJrTbZrV0jFWkGXDV4TgMFAUqoDXdWlOuq6+PtRsIiSi2VuM3p
+         Ss1wbscq6bjDp/v5QZXtlpfwPF98Tx03zDf19DipZb6njTM4WnYpxa5C/st6a4Foubmi
+         rFWhhkqVN/ngtToU4XRURJdehMMvsC7bAKAIOZGdzjN5Orn4AKS0/Nk9oI5bs8UdFgDE
+         tggFdpFeeG3Eb2L4Hgl17lE/C/Qgalm971Genb94lxarUGX7J/V0NzeqBLpV/KiWMxVO
+         CW9Q==
+X-Gm-Message-State: APjAAAUxpWIYDU2+5ZIi/YVUnRLK/whXvxxW6sa7qXLQb+rf4HFMh4Eb
+        84QHee4vmyS3/Ip0sRep7Nj1npu2ff/sUya6
+X-Google-Smtp-Source: APXvYqymD+lJYYlyP2I7bp7SGi9HdcHDJCT5J5n7xkvzEZeLw9Txu07SMJTO5XtuZBxB44z+jN54bvP/ZD3J4c30
+X-Received: by 2002:a1f:ec85:: with SMTP id k127mr12749816vkh.92.1561421610156;
+ Mon, 24 Jun 2019 17:13:30 -0700 (PDT)
+Date:   Mon, 24 Jun 2019 17:13:24 -0700
+Message-Id: <20190625001326.172280-1-allanzhang@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
+Subject: [PATCH] bpf: Allow bpf_skb_event_output for a few prog types
+From:   allanzhang <allanzhang@google.com>
+To:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     allanzhang <allanzhang@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In previous patch, an application could put part of its text section in
-THP via madvise(). These THPs will be protected from writes when the
-application is still running (TXTBSY). However, after the application
-exits, the file is available for writes.
+Software event output is only enabled by a few prog types right now (TC,
+LWT out, XDP, sockops). Many other skb based prog types need
+bpf_skb_event_output to produce software event.
 
-This patch avoids writes to file THP by dropping page cache for the file
-when the file is open for write. A new counter nr_thps is added to struct
-address_space. In do_last(), if the file is open for write and nr_thps
-is non-zero, we drop page cache for the whole file.
+Added socket_filter, cg_skb, sk_skb prog types to generate sw event.
 
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Song Liu <songliubraving@fb.com>
----
- fs/inode.c         |  3 +++
- fs/namei.c         | 23 ++++++++++++++++++++++-
- include/linux/fs.h | 32 ++++++++++++++++++++++++++++++++
- mm/filemap.c       |  1 +
- mm/khugepaged.c    |  4 +++-
- 5 files changed, 61 insertions(+), 2 deletions(-)
+Test bpf code is generated from code snippet:
 
-diff --git a/fs/inode.c b/fs/inode.c
-index df6542ec3b88..518113a4e219 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -181,6 +181,9 @@ int inode_init_always(struct super_block *sb, struct inode *inode)
- 	mapping->flags = 0;
- 	mapping->wb_err = 0;
- 	atomic_set(&mapping->i_mmap_writable, 0);
-+#ifdef CONFIG_READ_ONLY_THP_FOR_FS
-+	atomic_set(&mapping->nr_thps, 0);
-+#endif
- 	mapping_set_gfp_mask(mapping, GFP_HIGHUSER_MOVABLE);
- 	mapping->private_data = NULL;
- 	mapping->writeback_index = 0;
-diff --git a/fs/namei.c b/fs/namei.c
-index 20831c2fbb34..3d95e94029cc 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3249,6 +3249,23 @@ static int lookup_open(struct nameidata *nd, struct path *path,
- 	return error;
- }
- 
-+/*
-+ * The file is open for write, so it is not mmapped with VM_DENYWRITE. If
-+ * it still has THP in page cache, drop the whole file from pagecache
-+ * before processing writes. This helps us avoid handling write back of
-+ * THP for now.
-+ */
-+static inline void release_file_thp(struct file *file)
-+{
-+	if (IS_ENABLED(CONFIG_READ_ONLY_THP_FOR_FS)) {
-+		struct inode *inode = file_inode(file);
-+
-+		if (inode_is_open_for_write(inode) &&
-+		    filemap_nr_thps(inode->i_mapping))
-+			truncate_pagecache(inode, 0);
-+	}
-+}
-+
- /*
-  * Handle the last step of open()
-  */
-@@ -3418,7 +3435,11 @@ static int do_last(struct nameidata *nd,
- 		goto out;
- opened:
- 	error = ima_file_check(file, op->acc_mode);
--	if (!error && will_truncate)
-+	if (error)
-+		goto out;
-+
-+	release_file_thp(file);
-+	if (will_truncate)
- 		error = handle_truncate(file);
- out:
- 	if (unlikely(error > 0)) {
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index f7fdfe93e25d..082fc581c7fc 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -427,6 +427,7 @@ int pagecache_write_end(struct file *, struct address_space *mapping,
-  * @i_pages: Cached pages.
-  * @gfp_mask: Memory allocation flags to use for allocating pages.
-  * @i_mmap_writable: Number of VM_SHARED mappings.
-+ * @nr_thps: Number of THPs in the pagecache (non-shmem only).
-  * @i_mmap: Tree of private and shared mappings.
-  * @i_mmap_rwsem: Protects @i_mmap and @i_mmap_writable.
-  * @nrpages: Number of page entries, protected by the i_pages lock.
-@@ -444,6 +445,10 @@ struct address_space {
- 	struct xarray		i_pages;
- 	gfp_t			gfp_mask;
- 	atomic_t		i_mmap_writable;
-+#ifdef CONFIG_READ_ONLY_THP_FOR_FS
-+	/* number of thp, only for non-shmem files */
-+	atomic_t		nr_thps;
-+#endif
- 	struct rb_root_cached	i_mmap;
- 	struct rw_semaphore	i_mmap_rwsem;
- 	unsigned long		nrpages;
-@@ -2790,6 +2795,33 @@ static inline errseq_t filemap_sample_wb_err(struct address_space *mapping)
- 	return errseq_sample(&mapping->wb_err);
- }
- 
-+static inline int filemap_nr_thps(struct address_space *mapping)
-+{
-+#ifdef CONFIG_READ_ONLY_THP_FOR_FS
-+	return atomic_read(&mapping->nr_thps);
-+#else
-+	return 0;
-+#endif
-+}
-+
-+static inline void filemap_nr_thps_inc(struct address_space *mapping)
-+{
-+#ifdef CONFIG_READ_ONLY_THP_FOR_FS
-+	atomic_inc(&mapping->nr_thps);
-+#else
-+	WARN_ON_ONCE(1);
-+#endif
-+}
-+
-+static inline void filemap_nr_thps_dec(struct address_space *mapping)
-+{
-+#ifdef CONFIG_READ_ONLY_THP_FOR_FS
-+	atomic_dec(&mapping->nr_thps);
-+#else
-+	WARN_ON_ONCE(1);
-+#endif
-+}
-+
- extern int vfs_fsync_range(struct file *file, loff_t start, loff_t end,
- 			   int datasync);
- extern int vfs_fsync(struct file *file, int datasync);
-diff --git a/mm/filemap.c b/mm/filemap.c
-index e79ceccdc6df..a8e86c136381 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -205,6 +205,7 @@ static void unaccount_page_cache_page(struct address_space *mapping,
- 			__dec_node_page_state(page, NR_SHMEM_THPS);
- 	} else if (PageTransHuge(page)) {
- 		__dec_node_page_state(page, NR_FILE_THPS);
-+		filemap_nr_thps_dec(mapping);
- 	}
- 
- 	/*
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index acbbbeaa083c..0bbc6be51197 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -1503,8 +1503,10 @@ static void collapse_file(struct mm_struct *mm,
- 
- 	if (is_shmem)
- 		__inc_node_page_state(new_page, NR_SHMEM_THPS);
--	else
-+	else {
- 		__inc_node_page_state(new_page, NR_FILE_THPS);
-+		filemap_nr_thps_inc(mapping);
-+	}
- 
- 	if (nr_none) {
- 		struct zone *zone = page_zone(new_page);
--- 
-2.17.1
+struct TMP {
+    uint64_t tmp;
+} tt;
+tt.tmp = 5;
+bpf_perf_event_output(skb, &connection_tracking_event_map, 0,
+                      &tt, sizeof(tt));
+return 1;
 
+the bpf assembly from llvm is:
+       0:       b7 02 00 00 05 00 00 00         r2 = 5
+       1:       7b 2a f8 ff 00 00 00 00         *(u64 *)(r10 - 8) = r2
+       2:       bf a4 00 00 00 00 00 00         r4 = r10
+       3:       07 04 00 00 f8 ff ff ff         r4 += -8
+       4:       18 02 00 00 00 00 00 00 00 00 00 00 00 00 00 00    r2 = 0ll
+       6:       b7 03 00 00 00 00 00 00         r3 = 0
+       7:       b7 05 00 00 08 00 00 00         r5 = 8
+       8:       85 00 00 00 19 00 00 00         call 25
+       9:       b7 00 00 00 01 00 00 00         r0 = 1
+      10:       95 00 00 00 00 00 00 00         exit
+
+Patch 1 is enabling code.
+Patch 2 is fullly covered selftest code.
+
+Signed-off-by: allanzhang <allanzhang@google.com>
