@@ -2,117 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3055955B83
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 00:47:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 233A955B7D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 00:46:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726430AbfFYWrN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 18:47:13 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:44639 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726274AbfFYWrM (ORCPT
+        id S1726357AbfFYWqi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 18:46:38 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:58438 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725782AbfFYWqi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 18:47:12 -0400
-Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hfuC6-0002Ou-9G; Wed, 26 Jun 2019 00:45:42 +0200
-Date:   Wed, 26 Jun 2019 00:45:41 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Hoan Tran OS <hoan@os.amperecomputing.com>
-cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Oscar Salvador <osalvador@suse.de>,
-        Pavel Tatashin <pavel.tatashin@microsoft.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Open Source Submission <patches@amperecomputing.com>
-Subject: Re: [PATCH 3/5] x86: Kconfig: Remove CONFIG_NODES_SPAN_OTHER_NODES
-In-Reply-To: <1561501810-25163-4-git-send-email-Hoan@os.amperecomputing.com>
-Message-ID: <alpine.DEB.2.21.1906260032250.32342@nanos.tec.linutronix.de>
-References: <1561501810-25163-1-git-send-email-Hoan@os.amperecomputing.com> <1561501810-25163-4-git-send-email-Hoan@os.amperecomputing.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 25 Jun 2019 18:46:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1561502796; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=NcmE0IdPIHPsGxWgeHnGaPovtko75TEzGChEKas55B4=;
+        b=oQ8txPHBXprhG3RY+xYXhM1fXk33OBrHHN986T//ux3X+VqX1jC9KgRhoORObmKVElmqgY
+        Grpv4WwuEC9b/Ej3Fjozh9dDFcmiZkppvZ1T+4jTnn8eK0+MNhpC4K3eOBemWja2w+heWI
+        i5TFA+Kc38rwaz+R7v3l5bszY1VshWg=
+Date:   Wed, 26 Jun 2019 00:46:31 +0200
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH v2 1/5] clk: ingenic: Add missing header in cgu.h
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     James Hogan <jhogan@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>, od@zcrc.me,
+        linux-mips@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-Id: <1561502791.10069.2@crapouillou.net>
+In-Reply-To: <20190625224221.2643520645@mail.kernel.org>
+References: <20190611180757.32299-1-paul@crapouillou.net>
+        <20190625221736.853892086D@mail.kernel.org>
+        <20190625224221.2643520645@mail.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hoan,
 
-On Tue, 25 Jun 2019, Hoan Tran OS wrote:
 
-Please use 'x86/Kconfig: ' as prefix.
+Le mer. 26 juin 2019 =E0 0:42, Stephen Boyd <sboyd@kernel.org> a =E9crit :
+> Quoting Stephen Boyd (2019-06-25 15:17:35)
+>>  Quoting Paul Cercueil (2019-06-11 11:07:53)
+>>  > The cgu.h has structures that contain 'clk_onecell_data' and=20
+>> 'clk_hw'
+>>  > structures (no pointers), so the <linux/clk-provider.h> header=20
+>> should be
+>>  > included.
+>>  >
+>>  > Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+>>  > ---
+>>  >
+>>  > Notes:
+>>  >     v2: Rebase on v5.2-rc4
+>>=20
+>>  You seemed to miss my review comments on patch set #1.
+>>=20
+>> =20
+>> https://lkml.kernel.org/r/155726035790.14659.7321778387595703949@swboyd.=
+mtv.corp.google.com
 
-> This patch removes CONFIG_NODES_SPAN_OTHER_NODES as it's
-> enabled by default with NUMA.
+Oops. Sorry about that.
 
-Please do not use 'This patch' in changelogs. It's pointless because we
-already know that this is a patch.
+> I've just decided to fix it instead of wait. Let me know if that's a
+> problem.
 
-See also Documentation/process/submitting-patches.rst and search for 'This
-patch'
+Sure, that's no problem. Thanks!
 
-Simply say:
+-Paul
 
-  Remove CONFIG_NODES_SPAN_OTHER_NODES as it's enabled by default with
-  NUMA.
+=
 
-But .....
-
-> @@ -1567,15 +1567,6 @@ config X86_64_ACPI_NUMA
->  	---help---
->  	  Enable ACPI SRAT based node topology detection.
->  
-> -# Some NUMA nodes have memory ranges that span
-> -# other nodes.  Even though a pfn is valid and
-> -# between a node's start and end pfns, it may not
-> -# reside on that node.  See memmap_init_zone()
-> -# for details.
-> -config NODES_SPAN_OTHER_NODES
-> -	def_bool y
-> -	depends on X86_64_ACPI_NUMA
-
-the changelog does not mention that this lifts the dependency on
-X86_64_ACPI_NUMA and therefore enables that functionality for anything
-which has NUMA enabled including 32bit.
-
-The core mm change gives no helpful information either. You just copied the
-above comment text from some random Kconfig.
-
-This needs a bit more data in the changelogs and the cover letter:
-
-     - Why is it useful to enable it unconditionally
-
-     - Why is it safe to do so, even if the architecture had constraints on
-       it
-
-     - What's the potential impact
-
-Thanks,
-
-	tglx
