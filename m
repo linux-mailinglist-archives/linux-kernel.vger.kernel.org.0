@@ -2,82 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D379524A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 09:29:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F06BD524C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 09:31:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728308AbfFYH3p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 03:29:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57418 "EHLO mail.kernel.org"
+        id S1730048AbfFYHbB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 03:31:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58256 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727781AbfFYH3p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 03:29:45 -0400
-Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
+        id S1729118AbfFYHa6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 03:30:58 -0400
+Received: from localhost (f4.8f.5177.ip4.static.sl-reverse.com [119.81.143.244])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5588A20652;
-        Tue, 25 Jun 2019 07:29:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C87120863;
+        Tue, 25 Jun 2019 07:30:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561447784;
-        bh=R4jNzRQw37JgF7x95aIa/iCUdU/hLNUV6njbwOGFUoM=;
+        s=default; t=1561447857;
+        bh=/QdJpDShT/yWCyXy42YAGFG+PVbKrfugMkhIQqmAP4k=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=MHYNPRO/hinfLrR7z1SR0mHpmHIrfaRWS31ESWqPRJaJ8Ehpq9EOUe2Bb5a00iCi0
-         9/N26lribFV1OcOLiKsUZJepFIlOjVDFsbK8cqLDnZW7f49yMOOPPc/hec7bkMx0sa
-         UV3xp5worvMmtfKMzi1SJeJBIXvxvmJHzB2s2pzA=
-Date:   Tue, 25 Jun 2019 00:29:42 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     bpf@vger.kernel.org
-Cc:     syzbot <syzbot+a861f52659ae2596492b@syzkaller.appspotmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs@googlegroups.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: [net/bpf] Re: WARNING in mark_lock
-Message-ID: <20190625072942.GB30940@sol.localdomain>
-References: <0000000000005aedf1058c1bf7e8@google.com>
- <alpine.DEB.2.21.1906250820060.32342@nanos.tec.linutronix.de>
+        b=UHE0jibf9j1D1l6TBM/X56TOxidrIG+agSqI7oHmTprTBS7wHKn7aSMpK+bSm8s0D
+         7O2AABe2JJs76+UlY8WLUEYOtahYLqikXpK6DtL7zb1TCiZhcwUu1mrDJIkif6/Vcy
+         yt7oJrJR8QzU8kPOnwwzvZqfbr3Zs/nfU0PxrYoM=
+Date:   Tue, 25 Jun 2019 15:30:16 +0800
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     "Enrico Weigelt, metux IT consult" <lkml@metux.net>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Markus Elfring <Markus.Elfring@web.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Keerthy <j-keerthy@ti.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] drivers: Adjust scope for CONFIG_HAS_IOMEM before
+ devm_platform_ioremap_resource()
+Message-ID: <20190625073016.GA18381@kroah.com>
+References: <20190221162627.3476-1-brgl@bgdev.pl>
+ <9efcbce2-4d49-7197-a3d8-0e83850892d5@web.de>
+ <CAMpxmJX-wXQ-ff1RWkPmJBWSsP_v2MjZrA3fhj3HQX0_zM0eZA@mail.gmail.com>
+ <39ae399a-c606-c6de-f84d-35e39d0410c0@metux.net>
+ <CAMRc=McepqowJNi6ay6x9KKoHOC8aCxP_ob12SgbsnJU_sKQng@mail.gmail.com>
+ <1dd52704-0e41-db31-33f4-c9f446a47344@metux.net>
+ <CAMRc=Mfp85diy849r_8UHKS9eao26djrsMF0_iwE--d62mQ5jg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1906250820060.32342@nanos.tec.linutronix.de>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=Mfp85diy849r_8UHKS9eao26djrsMF0_iwE--d62mQ5jg@mail.gmail.com>
 User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+bpf list]
-
-On Tue, Jun 25, 2019 at 08:20:56AM +0200, Thomas Gleixner wrote:
-> On Mon, 24 Jun 2019, syzbot wrote:
+On Tue, Jun 25, 2019 at 09:10:25AM +0200, Bartosz Golaszewski wrote:
+> pon., 24 cze 2019 o 20:22 Enrico Weigelt, metux IT consult
+> <lkml@metux.net> napisał(a):
+> >
+> > On 24.06.19 12:46, Bartosz Golaszewski wrote:
+> >
+> > >> The patch seems pretty trivial and doesn't change any actual code, so
+> > >> I don't see hard resons for rejecting it.
+> > >>
+> > >
+> > > In its current form it makes the code even less readable. The #ifdef
+> > > should actually be one line lower and touch the comment instead of the
+> > > EXPORT_SYMBOL() related to a different function.
+> >
+> > Okay, that missing newline should be fixed (as well as the extra one
+> > after the #ifdef). Besides that, I don't see any further problems.
+> >
 > 
-> > Hello,
+> Are we sure this even changes something? Does kernel documentation get
+> generated according to current config options? I really think this
+> patch just pollutes the history for now apparent reason.
 > 
-> CC++ Peterz 
-> 
-> > 
-> > syzbot found the following crash on:
-> > 
-> > HEAD commit:    dc636f5d Add linux-next specific files for 20190620
-> > git tree:       linux-next
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=162b68b1a00000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=99c104b0092a557b
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=a861f52659ae2596492b
-> > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=110b24f6a00000
-> > 
-> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > Reported-by: syzbot+a861f52659ae2596492b@syzkaller.appspotmail.com
+> Greg, could you give your opinion on this?
 
-The syz repro looks bpf related, and essentially the same repro is in lots of
-other open syzbot reports which I've assigned to the bpf subsystem...
-https://lore.kernel.org/lkml/20190624050114.GA30702@sol.localdomain/
+Why are you all arguing with a all-but-instinguishable-from-a-bot
+persona about a patch that I will never apply?
 
-{"threaded":true,"repeat":true,"procs":6,"sandbox":"none","fault_call":-1,"tun":true,"netdev":true,"resetnet":true,"cgroups":true,"binfmt_misc":true,"close_fds":true,"tmpdir":true,"segv":true}
-bpf$MAP_CREATE(0x0, &(0x7f0000000280)={0xf, 0x4, 0x4, 0x400, 0x0, 0x1}, 0x3c)
-socket$rxrpc(0x21, 0x2, 0x800000000a)
-r0 = socket$inet6_tcp(0xa, 0x1, 0x0)
-setsockopt$inet6_tcp_int(r0, 0x6, 0x13, &(0x7f00000000c0)=0x100000001, 0x1d4)
-connect$inet6(r0, &(0x7f0000000140), 0x1c)
-bpf$MAP_CREATE(0x0, &(0x7f0000000000)={0x5}, 0xfffffffffffffdcb)
-bpf$MAP_CREATE(0x2, &(0x7f0000003000)={0x3, 0x0, 0x77fffb, 0x0, 0x10020000000, 0x0}, 0x2c)
-setsockopt$inet6_tcp_TCP_ULP(r0, 0x6, 0x1f, &(0x7f0000000040)='tls\x00', 0x4)
+greg k-h
