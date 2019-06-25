@@ -2,72 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2141B54D62
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 13:19:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B335B54D6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 13:20:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730507AbfFYLTg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 07:19:36 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:40726 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727227AbfFYLTg (ORCPT
+        id S1730622AbfFYLUO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 07:20:14 -0400
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:63109 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727138AbfFYLUO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 07:19:36 -0400
-Received: by mail-qk1-f195.google.com with SMTP id c70so12214014qkg.7;
-        Tue, 25 Jun 2019 04:19:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=64y1Jl3E54NVU84ingXkOpLnS+rsOVnSacEQOqg2J1w=;
-        b=sITr3gWmFmV/1WWOaIp5y6sCKtr6km7K3vakrQjKPJFKaY+00RSHnuzDLR1W7ObI5q
-         6Mpj6tXMx7IhlRb/z9Xb+1SDn6hqADI4/kjz1QZfjhaGzWVDKg4EJUmigicGjj2ESv3v
-         l5NbRnGBn/PYwG54oIiNCmjyru2OWPziqmu/uR+baryJdYjTN7qIfWbF3fIzLt4x3qSw
-         p0zqOto99gFBUaDyGX0W9YIRU8PSGukgtHLZIYbS+PKK2cvNfYe2H7mq8lHIzT0dA10R
-         1GHlRK0pP1Ysgs36yaXwHLUhab3p9w0aJ1aPqBLwhPKS3PZDjb7ZoDKDVPI8Ama20Fcs
-         B8jQ==
-X-Gm-Message-State: APjAAAVpi17ogyBrLXCu4S94X+AQAQ6oAhzQtZqChczdsTrYKU0tkzHy
-        XqpzuWMFhnaxpwEghpmcoQKusE4+H5qqPbsLmyI=
-X-Google-Smtp-Source: APXvYqw9dxyYhvOf0CehdbEXdFH0r5aphU3aqYN2yfOZgOz4pRBFGnfseg6WNMqky6w5nCWex/YYZ8R2T/XY4+uneMs=
-X-Received: by 2002:a37:ad12:: with SMTP id f18mr84085002qkm.3.1561461574892;
- Tue, 25 Jun 2019 04:19:34 -0700 (PDT)
+        Tue, 25 Jun 2019 07:20:14 -0400
+Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51]) (authenticated)
+        by conssluserg-04.nifty.com with ESMTP id x5PBK6p4021676;
+        Tue, 25 Jun 2019 20:20:07 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com x5PBK6p4021676
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1561461608;
+        bh=EozDTvKOHcxfsnch/gqc5P65unHEyuMQ8uubcxmAZlM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=oDCIID4eTViowrKJm64kltyop6/yXFi4a2ne2EJNdeKBsXlpbk5LAz3XmX8AfmWfL
+         8CEq6IaPuCWnSpZWOWIiPr4CMraGKriEV0dr/scssIAkOoQ4tPdFZf/sWcGHhTErgP
+         uzz7xpwO38q+fHoB2SXfUDAGFds07jvr0L1ZGEE2+BxDxyNrHQwPE091iWCJKZFQ8y
+         CqAd43sbpPvZu06lGYYH6os07MhVCFJkVJ746HU7Fk8AcSr5M03G/W5iv5nQ1LUlU4
+         6ol4CQkJwTNbK2DDUBsnbh7qseqlivtSp/+N+V3oqdTU24RpIXXVYcI13t2Ave4WyT
+         Ufl80JYYkOmjg==
+X-Nifty-SrcIP: [209.85.217.51]
+Received: by mail-vs1-f51.google.com with SMTP id l20so10627514vsp.3;
+        Tue, 25 Jun 2019 04:20:07 -0700 (PDT)
+X-Gm-Message-State: APjAAAWqI4Elr7cLz+KisnO7gADGdW7IGrFIequShb6IrkeVZx50whlA
+        Q3htS0g83M4P49MV0mE91fjbPuY796F2c1iJUeg=
+X-Google-Smtp-Source: APXvYqz4C0jEV6JsmnAwXrS5jug/6D8+RpgLCkFumref4bUDIhrX+Gv/FiXLBqM2LQNc5AGO2JH8aSjrMd1YVy1QTpw=
+X-Received: by 2002:a67:cd1a:: with SMTP id u26mr46893396vsl.155.1561461606319;
+ Tue, 25 Jun 2019 04:20:06 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190617111718.2277220-1-arnd@arndb.de> <20190617111718.2277220-3-arnd@arndb.de>
- <20190625105650.scnahq2e5xgdnt2c@gofer.mess.org>
-In-Reply-To: <20190625105650.scnahq2e5xgdnt2c@gofer.mess.org>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 25 Jun 2019 13:19:18 +0200
-Message-ID: <CAK8P3a2=wFMxLjNdTtHT9rDq8+xhwPmDJgbMCBqMjoSa9otk_A@mail.gmail.com>
-Subject: Re: [PATCH 3/3] media: ttpci: add RC_CORE dependency
-To:     Sean Young <sean@mess.org>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20190521133257.GA21471@kroah.com> <CAK7LNASZWLwYC2E3vBkXhp7wt9zBWkFrR+NTnxTyLn1zO66a0w@mail.gmail.com>
+ <eae2d0e80824cc84965c571a0ea097e14d3f498c.camel@perches.com>
+In-Reply-To: <eae2d0e80824cc84965c571a0ea097e14d3f498c.camel@perches.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 25 Jun 2019 20:19:30 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASR_vJS13GjZmqMC0DSO=kTVNprpsRgtK4QSLExRUQFtg@mail.gmail.com>
+Message-ID: <CAK7LNASR_vJS13GjZmqMC0DSO=kTVNprpsRgtK4QSLExRUQFtg@mail.gmail.com>
+Subject: Re: [GIT PULL] SPDX update for 5.2-rc1 - round 1
+To:     Joe Perches <joe@perches.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-spdx@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 25, 2019 at 12:56 PM Sean Young <sean@mess.org> wrote:
->
-> On Mon, Jun 17, 2019 at 01:16:53PM +0200, Arnd Bergmann wrote:
-> > The ttpci driver now uses the rc-core, so we need to ensure it
-> > is enabled:
-> >
-> > ERROR: "rc_unregister_device" [drivers/media/pci/ttpci/dvb-ttpci.ko] undefined!
-> > ERROR: "rc_allocate_device" [drivers/media/pci/ttpci/dvb-ttpci.ko] undefined!
-> > ERROR: "rc_free_device" [drivers/media/pci/ttpci/dvb-ttpci.ko] undefined!
-> > ERROR: "rc_keydown" [drivers/media/pci/ttpci/dvb-ttpci.ko] undefined!
-> > ERROR: "rc_register_device" [drivers/media/pci/ttpci/dvb-ttpci.ko] undefined!
-> >
-> > Fixes: 71f49a8bf5c5 ("media: ttpci: use rc-core for the IR receiver")
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->
-> Thank you for the patch, unfortunately this was already fixed in
-> commit 12e23ebb396e6ffea88b8c5e483059a297326afb (which was accepted
-> after you sent your patch).
+Hi Joe,
 
-That seems like a better fix, thanks for addressing the issue!
+On Wed, May 22, 2019 at 3:37 PM Joe Perches <joe@perches.com> wrote:
+>
+> On Wed, 2019-05-22 at 13:32 +0900, Masahiro Yamada wrote:
+> > On Tue, May 21, 2019 at 10:34 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+> []
+> > >  - Add GPL-2.0-only or GPL-2.0-or-later tags to files where our scan
+> > >     tools can determine the license text in the file itself.  Where this
+> > >     happens, the license text is removed, in order to cut down on the
+> > >     700+ different ways we have in the kernel today, in a quest to get
+> > >     rid of all of these.
+> []
+> > I have been wondering for a while
+> > which version of spdx tags I should use in my work.
+> >
+> > I know the 'GPL-2.0' tag is already deprecated.
+> > (https://spdx.org/licenses/GPL-2.0.html)
+> >
+> > But, I saw negative reaction to this:
+> > https://lore.kernel.org/patchwork/patch/975394/
+> >
+> > Nor "-only" / "-or-later" are documented in
+> > Documentation/process/license-rules.rst
+> >
+> > In this patch series, Thomas used 'GPL-2.0-only' and 'GPL-2.0-or-later'
+> > instead of 'GPL-2.0' and 'GPL-2.0+'.
+> >
+> > Now, we have a great number of users of spdx v3 tags.
+> > $ git grep -P 'SPDX-License-Identifier.*(?:-or-later|-only)'| wc -l
+> > 4135
+> > So, what I understood is:
+> >
+> >   For newly added tags, '*-only' and '*-or-later' are preferred.
+> >
+> > (But, we do not convert existing spdx v2 tags globally.)
+> >
+> >
+> > "
+> > Joe's patch was not merged, but at least
+> > Documentation/process/license-rules.rst
+> > should be updated in my opinion.
+> >
+> > (Perhaps, checkpatch.pl can suggest newer tags in case
+> > patch submitters do not even know that deprecation.)
+>
+> I'd still prefer the kernel use of a single SPDX style.
+>
+> I don't know why the -only and -or-later forms were
+> used for this patch, but I like it.
+>
+> I believe the -only and -or-later are more intelligible
+> as a trivial reading of
+>
+>         SPDX-License-Identifier: GPL-2.0
+>
+> would generally mean to me the original
+> GPL-2.0 license without the elision of the
+> (or at your option, any later version) bits
+>
+> whereas
+>
+>         SPDX-License-Identifier: GPL-2.0-only
+>
+> seems fairly descriptive.
+>
+> Is it agreed that the GPL-<v>-only and GPL-<v>-or-later
+> forms should be preferred for new SPDX identifiers?
+>
+> If so, I'll submit a checkpatch patch.
 
-      Arnd
+
+Could you send a patch to update checkpatch and doc ?
+
+Similar discussion here too.
+https://lkml.org/lkml/2019/5/31/456
+
+We need better documentation to stop wasting time for this.
+
+This should be separated from the
+ /* ... */  vs // discussion.
+
+
+Thanks.
+
+
+> I could also wire up a patch to checkpatch and docs to
+> remove the /* */
+> requirement for .h files and prefer
+> the generic // form for both .c and
+> .h files as the
+> current minimum tooling versions now all allow //
+> comments
+> .
+>
+>
+
+
+-- 
+Best Regards
+Masahiro Yamada
