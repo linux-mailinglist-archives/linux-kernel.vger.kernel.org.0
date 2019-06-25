@@ -2,123 +2,231 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3512E55030
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 15:24:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD9095503F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 15:25:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729409AbfFYNYZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 09:24:25 -0400
-Received: from mail-eopbgr00088.outbound.protection.outlook.com ([40.107.0.88]:37038
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726707AbfFYNYZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 09:24:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iIUoRMmT7Q/pGFoH0kkDeucTRlXTCxDbQv1YoIyGNVU=;
- b=dYVaF7mT2ZnWUrzNi5i5uHUxULo9Nd6McPrUgYuX4ulVvlvqfpdQ0yxXs1jc4waihSok9Jd96EGQh2DFXzNMRxLFKb8uoaG1c0OmYXvxlJ0Tkias+y21ZUvR7d6ieBe0SeI6nfAp9eOQ5zjyCHc+H+e4Xo4R/iN39EZFUdwDAtI=
-Received: from VI1PR05MB4141.eurprd05.prod.outlook.com (10.171.182.144) by
- VI1PR05MB5679.eurprd05.prod.outlook.com (20.178.121.21) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2008.16; Tue, 25 Jun 2019 13:24:21 +0000
-Received: from VI1PR05MB4141.eurprd05.prod.outlook.com
- ([fe80::f5d8:df9:731:682e]) by VI1PR05MB4141.eurprd05.prod.outlook.com
- ([fe80::f5d8:df9:731:682e%5]) with mapi id 15.20.2008.014; Tue, 25 Jun 2019
- 13:24:21 +0000
-From:   Jason Gunthorpe <jgg@mellanox.com>
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-CC:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Doug Ledford <dledford@redhat.com>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>
-Subject: Re: [PATCH v3 13/33] docs: infiniband: convert docs to ReST and
- rename to *.rst
-Thread-Topic: [PATCH v3 13/33] docs: infiniband: convert docs to ReST and
- rename to *.rst
-Thread-Index: AQHVK1lMQcYJuuAOI0ys5lg+pRy3BA==
-Date:   Tue, 25 Jun 2019 13:24:21 +0000
-Message-ID: <20190625132418.GA18528@mellanox.com>
-References: <cover.1560045490.git.mchehab+samsung@kernel.org>
- <09036fdb89c4bec94cb92d25398c026afdb134e7.1560045490.git.mchehab+samsung@kernel.org>
-In-Reply-To: <09036fdb89c4bec94cb92d25398c026afdb134e7.1560045490.git.mchehab+samsung@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM6PR10CA0082.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:209:8c::23) To VI1PR05MB4141.eurprd05.prod.outlook.com
- (2603:10a6:803:4d::16)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=jgg@mellanox.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [66.187.232.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: af3e7102-177a-46f1-1570-08d6f9706ee0
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR05MB5679;
-x-ms-traffictypediagnostic: VI1PR05MB5679:
-x-microsoft-antispam-prvs: <VI1PR05MB5679691D268CE43F5A684265CFE30@VI1PR05MB5679.eurprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7691;
-x-forefront-prvs: 0079056367
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(366004)(136003)(346002)(39860400002)(376002)(199004)(189003)(478600001)(66066001)(14454004)(81156014)(8676002)(81166006)(25786009)(6486002)(5660300002)(6512007)(8936002)(6436002)(229853002)(4326008)(256004)(54906003)(86362001)(1076003)(14444005)(71200400001)(7736002)(71190400001)(305945005)(102836004)(2616005)(11346002)(3846002)(446003)(52116002)(386003)(6506007)(486006)(316002)(6116002)(33656002)(476003)(186003)(36756003)(64756008)(66476007)(66946007)(73956011)(53936002)(68736007)(66556008)(66446008)(6246003)(76176011)(2906002)(26005)(99286004);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR05MB5679;H:VI1PR05MB4141.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: nQ/LSQlnvbikcg+lluPb95qnljSz9aOrxASYmkcEaittJ6Imkag23r2+RXxgPe0YpR3EsLYvK4yYpWQXDub/1wDFFJ8mbmC1ToAinNqMIzqdCM4aCmfY1g6nHkWN+y3Xjl0ge2drj2S3mipRhn8RDYqQxVHLEA17mZZCH6uXnkZmCRa1urcCW0eRGeKc7JEysRlkZkjOgzGcdTTfOVO1/73+D2U7HieupHHprsQkXM/5u7GsSFQvJOSgkrZxSHlrWHbBctmWBCtsgifP3Gc0XkJ4Rr6/FT6jQUFLlVgBndYLjyKkrT//n2mN57bxWtY/Pw7Y6sxsFEToltbgSKVPaMleuL6Zw3fv9AO/J5soHHUfFy+gVC5EFtc6O68Cxba65ZnxR6uEfT6OdZNHs+vCixVrv8q6R4H/Q9rbDAqu62s=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <F7C52F5F4E05CF4E96AB692EE5D43B61@eurprd05.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        id S1728118AbfFYNZJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 09:25:09 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38636 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726486AbfFYNZJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 09:25:09 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5PDHbGQ053055;
+        Tue, 25 Jun 2019 09:24:35 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2tbk6241m9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 25 Jun 2019 09:24:35 -0400
+Received: from m0098414.ppops.net (m0098414.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x5PDHlRT054117;
+        Tue, 25 Jun 2019 09:24:34 -0400
+Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2tbk6241kd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 25 Jun 2019 09:24:34 -0400
+Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
+        by ppma04dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x5PDK5Dd008348;
+        Tue, 25 Jun 2019 13:24:33 GMT
+Received: from b01cxnp22033.gho.pok.ibm.com (b01cxnp22033.gho.pok.ibm.com [9.57.198.23])
+        by ppma04dal.us.ibm.com with ESMTP id 2t9by6ra34-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 25 Jun 2019 13:24:33 +0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5PDOWUG49152280
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 25 Jun 2019 13:24:32 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7E405B206A;
+        Tue, 25 Jun 2019 13:24:32 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 50090B2064;
+        Tue, 25 Jun 2019 13:24:32 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.26])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue, 25 Jun 2019 13:24:32 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 4328E16C179D; Tue, 25 Jun 2019 06:24:32 -0700 (PDT)
+Date:   Tue, 25 Jun 2019 06:24:32 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Byungchul Park <byungchul.park@lge.com>
+Cc:     Joel Fernandes <joel@joelfernandes.org>, josh@joshtriplett.org,
+        rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
+        jiangshanlai@gmail.com, rcu@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-team@lge.com
+Subject: Re: [RFC] rcu: Warn that rcu ktheads cannot be spawned
+Message-ID: <20190625132432.GU26519@linux.ibm.com>
+Reply-To: paulmck@linux.ibm.com
+References: <1561364852-5113-1-git-send-email-byungchul.park@lge.com>
+ <20190624164624.GA41314@google.com>
+ <20190625025015.GB10912@X58A-UD3R>
 MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: af3e7102-177a-46f1-1570-08d6f9706ee0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Jun 2019 13:24:21.5584
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: jgg@mellanox.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR05MB5679
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190625025015.GB10912@X58A-UD3R>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-25_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906250104
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 08, 2019 at 11:27:03PM -0300, Mauro Carvalho Chehab wrote:
-> The InfiniBand docs are plain text with no markups.
-> So, all we needed to do were to add the title markups and
-> some markup sequences in order to properly parse tables,
-> lists and literal blocks.
->=20
-> At its new index.rst, let's add a :orphan: while this is not linked to
-> the main index.rst file, in order to avoid build warnings.
->=20
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-> ---
->  .../{core_locking.txt =3D> core_locking.rst}    |  64 ++++++-----
->  Documentation/infiniband/index.rst            |  23 ++++
->  .../infiniband/{ipoib.txt =3D> ipoib.rst}       |  24 ++--
->  .../infiniband/{opa_vnic.txt =3D> opa_vnic.rst} | 108 +++++++++---------
->  .../infiniband/{sysfs.txt =3D> sysfs.rst}       |   4 +-
->  .../{tag_matching.txt =3D> tag_matching.rst}    |   5 +
->  .../infiniband/{user_mad.txt =3D> user_mad.rst} |  33 ++++--
->  .../{user_verbs.txt =3D> user_verbs.rst}        |  12 +-
->  drivers/infiniband/core/user_mad.c            |   2 +-
->  drivers/infiniband/ulp/ipoib/Kconfig          |   2 +-
->  10 files changed, 174 insertions(+), 103 deletions(-)
->  rename Documentation/infiniband/{core_locking.txt =3D> core_locking.rst}=
- (78%)
->  create mode 100644 Documentation/infiniband/index.rst
->  rename Documentation/infiniband/{ipoib.txt =3D> ipoib.rst} (90%)
->  rename Documentation/infiniband/{opa_vnic.txt =3D> opa_vnic.rst} (63%)
->  rename Documentation/infiniband/{sysfs.txt =3D> sysfs.rst} (69%)
->  rename Documentation/infiniband/{tag_matching.txt =3D> tag_matching.rst}=
- (98%)
->  rename Documentation/infiniband/{user_mad.txt =3D> user_mad.rst} (90%)
->  rename Documentation/infiniband/{user_verbs.txt =3D> user_verbs.rst} (93=
-%)
+On Tue, Jun 25, 2019 at 11:50:15AM +0900, Byungchul Park wrote:
+> On Mon, Jun 24, 2019 at 12:46:24PM -0400, Joel Fernandes wrote:
+> > On Mon, Jun 24, 2019 at 05:27:32PM +0900, Byungchul Park wrote:
+> > > Hello rcu folks,
+> > > 
+> > > I thought it'd better to announce it if those spawnings fail because of
+> > > !rcu_scheduler_fully_active.
+> > > 
+> > > Of course, with the current code, it never happens though.
+> > > 
+> > > Thoughts?
+> > 
+> > It seems in the right spirit, but with your patch a warning always fires.
+> > rcu_prepare_cpu() is called multiple times, once from rcu_init() and then
+> > from hotplug paths.
+> 
+> I'm sorry bothering you.
+> 
+> I sent the patch to ask how you guys think about the direction coz I'm
+> not sure if the current code w/o warning on it is intended or not.
+> 
+> However from now on, I think I need to test it first even if it's RFC :)
 
-Applied to for-next, thanks
+That is what I do.  ;-)
 
-Jason
+							Thanx, Paul
+
+> Thank you very much for the information.
+> 
+> Thanks,
+> Byungchul
+> 
+> > Warning splat stack looks like:
+> > 
+> > [    0.398767] Call Trace:                                                                                                        
+> > [    0.398775]  rcu_init+0x6aa/0x724                                             
+> > [    0.398779]  start_kernel+0x220/0x4a2                                    
+> > [    0.398780]  ? copy_bootdata+0x12/0xac                                                                                                                                   
+> > [    0.398782]  secondary_startup_64+0xa4/0xb0    
+> > 
+> > 
+> > > 
+> > > Thanks,
+> > > Byungchul
+> > > 
+> > > ---8<---
+> > > From 58a33a85c70f82c406319b4752af95cf6ceb73a3 Mon Sep 17 00:00:00 2001
+> > > From: Byungchul Park <byungchul.park@lge.com>
+> > > Date: Mon, 24 Jun 2019 17:08:26 +0900
+> > > Subject: [RFC] rcu: Warn that rcu ktheads cannot be spawned
+> > > 
+> > > In case that rcu ktheads cannot be spawned due to
+> > > !rcu_scheduler_fully_active, it'd be better to anounce it.
+> > > 
+> > > While at it, because the return value of rcu_spawn_one_boost_kthread()
+> > > is not used any longer, changed the return type from int to void.
+> > > 
+> > > Signed-off-by: Byungchul Park <byungchul.park@lge.com>
+> > > ---
+> > >  kernel/rcu/tree_plugin.h | 31 +++++++++++++++++++------------
+> > >  1 file changed, 19 insertions(+), 12 deletions(-)
+> > > 
+> > > diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+> > > index 1102765..7d74193 100644
+> > > --- a/kernel/rcu/tree_plugin.h
+> > > +++ b/kernel/rcu/tree_plugin.h
+> > > @@ -1131,7 +1131,7 @@ static void rcu_preempt_boost_start_gp(struct rcu_node *rnp)
+> > >   * already exist.  We only create this kthread for preemptible RCU.
+> > >   * Returns zero if all is well, a negated errno otherwise.
+> > >   */
+> > > -static int rcu_spawn_one_boost_kthread(struct rcu_node *rnp)
+> > > +static void rcu_spawn_one_boost_kthread(struct rcu_node *rnp)
+> > >  {
+> > >  	int rnp_index = rnp - rcu_get_root();
+> > >  	unsigned long flags;
+> > > @@ -1139,25 +1139,24 @@ static int rcu_spawn_one_boost_kthread(struct rcu_node *rnp)
+> > >  	struct task_struct *t;
+> > >  
+> > >  	if (!IS_ENABLED(CONFIG_PREEMPT_RCU))
+> > > -		return 0;
+> > > +		return;
+> > >  
+> > > -	if (!rcu_scheduler_fully_active || rcu_rnp_online_cpus(rnp) == 0)
+> > > -		return 0;
+> > > +	if (rcu_rnp_online_cpus(rnp) == 0)
+> > > +		return;
+> > >  
+> > >  	rcu_state.boost = 1;
+> > >  	if (rnp->boost_kthread_task != NULL)
+> > > -		return 0;
+> > > +		return;
+> > >  	t = kthread_create(rcu_boost_kthread, (void *)rnp,
+> > >  			   "rcub/%d", rnp_index);
+> > >  	if (IS_ERR(t))
+> > > -		return PTR_ERR(t);
+> > > +		return;
+> > >  	raw_spin_lock_irqsave_rcu_node(rnp, flags);
+> > >  	rnp->boost_kthread_task = t;
+> > >  	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
+> > >  	sp.sched_priority = kthread_prio;
+> > >  	sched_setscheduler_nocheck(t, SCHED_FIFO, &sp);
+> > >  	wake_up_process(t); /* get to TASK_INTERRUPTIBLE quickly. */
+> > > -	return 0;
+> > >  }
+> > >  
+> > >  static void rcu_cpu_kthread_setup(unsigned int cpu)
+> > > @@ -1264,8 +1263,12 @@ static void __init rcu_spawn_boost_kthreads(void)
+> > >  		per_cpu(rcu_data.rcu_cpu_has_work, cpu) = 0;
+> > >  	if (WARN_ONCE(smpboot_register_percpu_thread(&rcu_cpu_thread_spec), "%s: Could not start rcub kthread, OOM is now expected behavior\n", __func__))
+> > >  		return;
+> > > +
+> > > +	if (WARN_ON(!rcu_scheduler_fully_active))
+> > > +		return;
+> > > +
+> > >  	rcu_for_each_leaf_node(rnp)
+> > > -		(void)rcu_spawn_one_boost_kthread(rnp);
+> > > +		rcu_spawn_one_boost_kthread(rnp);
+> > >  }
+> > >  
+> > >  static void rcu_prepare_kthreads(int cpu)
+> > > @@ -1273,9 +1276,11 @@ static void rcu_prepare_kthreads(int cpu)
+> > >  	struct rcu_data *rdp = per_cpu_ptr(&rcu_data, cpu);
+> > >  	struct rcu_node *rnp = rdp->mynode;
+> > >  
+> > > +	if (WARN_ON(!rcu_scheduler_fully_active))
+> > > +		return;
+> > > +
+> > >  	/* Fire up the incoming CPU's kthread and leaf rcu_node kthread. */
+> > > -	if (rcu_scheduler_fully_active)
+> > > -		(void)rcu_spawn_one_boost_kthread(rnp);
+> > > +	rcu_spawn_one_boost_kthread(rnp);
+> > >  }
+> > >  
+> > >  #else /* #ifdef CONFIG_RCU_BOOST */
+> > > @@ -2198,8 +2203,10 @@ static void rcu_spawn_one_nocb_kthread(int cpu)
+> > >   */
+> > >  static void rcu_spawn_cpu_nocb_kthread(int cpu)
+> > >  {
+> > > -	if (rcu_scheduler_fully_active)
+> > > -		rcu_spawn_one_nocb_kthread(cpu);
+> > > +	if (WARN_ON(!rcu_scheduler_fully_active))
+> > > +		return;
+> > > +
+> > > +	rcu_spawn_one_nocb_kthread(cpu);
+> > >  }
+> > >  
+> > >  /*
+> > > -- 
+> > > 1.9.1
+> > > 
+> 
