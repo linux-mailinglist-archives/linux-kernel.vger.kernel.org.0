@@ -2,91 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 490A955996
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 22:59:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9FEC559A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 23:05:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726516AbfFYU7O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 16:59:14 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:45797 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726418AbfFYU7N (ORCPT
+        id S1726331AbfFYVE6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 17:04:58 -0400
+Received: from mail-pl1-f202.google.com ([209.85.214.202]:57050 "EHLO
+        mail-pl1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725290AbfFYVE5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 16:59:13 -0400
-Received: by mail-qk1-f194.google.com with SMTP id s22so13797571qkj.12;
-        Tue, 25 Jun 2019 13:59:12 -0700 (PDT)
+        Tue, 25 Jun 2019 17:04:57 -0400
+Received: by mail-pl1-f202.google.com with SMTP id o6so9858064plk.23
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 14:04:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=SznKw/4Q28ISDx9MuOlgmkJn46xF24IKGcART6Ixvq8=;
-        b=lfQTZDQ/kP9ekFOxmvlvUp5GWvxZOZo/FX0rphMfIA1K9Pt7D6j3dsertBcTPvL8pt
-         sX7TyVfT634gAmfREbLFGtSt1doAudPUi+NX5cQ72t5BMBnR5Svb59m17F0YJJNquw5F
-         Ux8U+1DWQ5Gm93tCYbQBhLN55bG4avxUtzBZ2FDLhgyRqs715MDqHVVXgDAaCJrgWdxq
-         EbLTw5zbT3nFkGJ5A9xgRPtM0J02FFB230bPnr/J/rO9pVn5tmlYPAM5Y+qdv1js2odk
-         n2VviblY35OUHiPMDwZ5UvuiRcwjK5+BqRtw51lF7Gf5Tw9YabGlwR/o7SlM3ZaW2a+n
-         AJIA==
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=HoLOG72+3lkaAV6Y6OdGRg3DmNGZd9sNYaOXLu26Ri4=;
+        b=iXxC3b2pI79w4JiYlTG7X6Y1lI3tTwIpbI+mFRBtcxsy+TDbY24OTyx8XqsdXKcFai
+         dP0ls6p4D60qx4UuVrDtqsByvQmeveUXtNtf6fuD3cIXfIp2Qhd94RYDgy+YH6utmfKb
+         gWoPN6IIsSpDWPiLZI3gNr8v8CfOpqv62mEi47Jpht1mouKA+GY25mDNvy3UsAijKIZd
+         CwlwVxbUvyN6nwNAjFVuVMLQkUNP3EsoHuvtUovY8usGc5BJGmWHq2V+jM4yW3ZMNOxF
+         0a7nhNwTbogb+WA/G460UjKNDg/pYXd+kV74ofbAqv0xzFgKMVWGNwzeCckNBu/jKXRL
+         obPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SznKw/4Q28ISDx9MuOlgmkJn46xF24IKGcART6Ixvq8=;
-        b=m/M71ZFpl9kArvCaxjLFjymIh1ThM91hD/upCKcxqoV6zhBTMWAaAIqiKvMcFBWVLm
-         d43+hug/ITaycrRM3t5cRhVHCK8MxRViQCBQuvU1bdeGeilbEqnqZNOqw/3+C6ROZ51a
-         ujn6cLJPEDVcs7DdVU4mUNtCBAqm94/p+fjtpFM5SJspiubKOgl3IJqSw1FDodbbFK2+
-         3yiE8/D4s3bnPvgwsOza7XFMURLT9TPBZ+KchswilnVoF1pO0aIFNROGhpClZ8MOcD+p
-         6gZw4pEAaDZfhG0bXIMhcSa1fJ3fYFkbuCaYRcRgiVS0dow71AM1sfhwmis3MTKKEOSU
-         YUTQ==
-X-Gm-Message-State: APjAAAVjbfgJUZx2ZfHRw/BADKfQKCYT+5MubfFLYvoBNJvj9dTP9EgT
-        v6Ifvj0WLY9PRVU15zNOkWPHyCw1OtLkix+Uwmw=
-X-Google-Smtp-Source: APXvYqy1LxA7P6qsfPBp27nTqcQSeg6zwFYi/DWcjgaVs2kNIXoLU0bA0EpUcekN/vvd/2/0aXi3yeCDqhsmw5gwpHs=
-X-Received: by 2002:a37:4d82:: with SMTP id a124mr690103qkb.72.1561496351999;
- Tue, 25 Jun 2019 13:59:11 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190625202700.28030-1-ivan.khoronzhuk@linaro.org>
-In-Reply-To: <20190625202700.28030-1-ivan.khoronzhuk@linaro.org>
-From:   Song Liu <liu.song.a23@gmail.com>
-Date:   Tue, 25 Jun 2019 13:59:00 -0700
-Message-ID: <CAPhsuW4w9oo=mNKo162apbw8rirQKWbJAnkcbjrcamNwfdUJNw@mail.gmail.com>
-Subject: Re: [PATCH bpf-next] libbpf: fix max() type mismatch for 32bit
-To:     Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Networking <netdev@vger.kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        bpf <bpf@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=HoLOG72+3lkaAV6Y6OdGRg3DmNGZd9sNYaOXLu26Ri4=;
+        b=RaI/+LOAFvz0UTk+TGTpeyh0rYu10FDIAeyxyfmYGCRUUovqauYUzEwftHURArQoxk
+         lrYrLE3rwMDDiJOaBG45NT4Uz3UTptMEOarhAfdpatLuu1QjKf59Spdq+dXosuw00tfd
+         0kawZ4lE0IB/ulPdxEy2sTsnMVxTVkHPEO+UXqyNjl0c1LHyeJQHC03019r4Z8rygB2Z
+         Ar8JGhAoOXblNa02cVk5QGvoe+5hWZRRWYGZcxDubjh1sMcOx4wtJJt25ljmFDz3KAjA
+         sASavJebOx15urHymYmZ1gxV/ZUuHB/GAFIqmyMckzlynj8dnPlY2kkVFM2JODhOmO2L
+         K6Sw==
+X-Gm-Message-State: APjAAAVviuCxAj3R0nGBUSQ5akonbgrMByMUJIrvh1U7tVvfsrS9ClTl
+        tOt/m2d9nZt8OC1OTsckWjutZv7EDzZqwfjcASk=
+X-Google-Smtp-Source: APXvYqyvpOUTtppsbsaJH/XnhifiqOT1lCdoynQlcEy37F5rlc4dQDPnt3QeVlEuBFY2ZFM/Yg7ZCQkznTZyASQyLyw=
+X-Received: by 2002:a63:f342:: with SMTP id t2mr38294443pgj.83.1561496696611;
+ Tue, 25 Jun 2019 14:04:56 -0700 (PDT)
+Date:   Tue, 25 Jun 2019 14:04:39 -0700
+Message-Id: <20190625210441.199514-1-ndesaulniers@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
+Subject: [PATCH] ARM: Kconfig: default to AEABI w/ Clang
+From:   Nick Desaulniers <ndesaulniers@google.com>
+To:     linux@armlinux.org.uk
+Cc:     clang-built-linux@googlegroups.com, broonie@kernel.org,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 25, 2019 at 1:28 PM Ivan Khoronzhuk
-<ivan.khoronzhuk@linaro.org> wrote:
->
-> It fixes build error for 32bit caused by type mismatch
-> size_t/unsigned long.
->
-> Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+Clang produces references to __aeabi_uidivmod and __aeabi_idivmod for
+arm-linux-gnueabi and arm-linux-gnueabihf targets incorrectly when AEABI
+is not selected (such as when OABI_COMPAT is selected).
 
-Acked-by: Song Liu <songliubraving@fb.com>
+While this means that OABI userspaces wont be able to upgraded to
+kernels built with Clang, it means that boards that don't enable AEABI
+like s3c2410_defconfig will stop failing to link in KernelCI when built
+with Clang.
 
-> ---
->  tools/lib/bpf/libbpf.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
-> index 68f45a96769f..5186b7710430 100644
-> --- a/tools/lib/bpf/libbpf.c
-> +++ b/tools/lib/bpf/libbpf.c
-> @@ -778,7 +778,7 @@ static struct bpf_map *bpf_object__add_map(struct bpf_object *obj)
->         if (obj->nr_maps < obj->maps_cap)
->                 return &obj->maps[obj->nr_maps++];
->
-> -       new_cap = max(4ul, obj->maps_cap * 3 / 2);
-> +       new_cap = max((size_t)4, obj->maps_cap * 3 / 2);
->         new_maps = realloc(obj->maps, new_cap * sizeof(*obj->maps));
->         if (!new_maps) {
->                 pr_warning("alloc maps for object failed\n");
-> --
-> 2.17.1
->
+Link: https://github.com/ClangBuiltLinux/linux/issues/482
+Link: https://groups.google.com/forum/#!msg/clang-built-linux/yydsAAux5hk/GxjqJSW-AQAJ
+Suggested-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+---
+ arch/arm/Kconfig | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 8869742a85df..3539be870055 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -1545,8 +1545,9 @@ config ARM_PATCH_IDIV
+ 	  code to do integer division.
+ 
+ config AEABI
+-	bool "Use the ARM EABI to compile the kernel" if !CPU_V7 && !CPU_V7M && !CPU_V6 && !CPU_V6K
+-	default CPU_V7 || CPU_V7M || CPU_V6 || CPU_V6K
++	bool "Use the ARM EABI to compile the kernel" if !CPU_V7 && \
++		!CPU_V7M && !CPU_V6 && !CPU_V6K && !CC_IS_CLANG
++	default CPU_V7 || CPU_V7M || CPU_V6 || CPU_V6K || CC_IS_CLANG
+ 	help
+ 	  This option allows for the kernel to be compiled using the latest
+ 	  ARM ABI (aka EABI).  This is only useful if you are using a user
+-- 
+2.22.0.410.gd8fdbe21b5-goog
+
