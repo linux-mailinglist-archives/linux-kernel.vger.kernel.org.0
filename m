@@ -2,128 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 897FE54C9B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 12:44:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B955E54C80
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 12:42:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728396AbfFYKot (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 06:44:49 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:19106 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726521AbfFYKot (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 06:44:49 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 12EA0BDC5EEDA6055D6F;
-        Tue, 25 Jun 2019 18:44:45 +0800 (CST)
-Received: from [127.0.0.1] (10.202.227.238) by DGGEMS410-HUB.china.huawei.com
- (10.3.19.210) with Microsoft SMTP Server id 14.3.439.0; Tue, 25 Jun 2019
- 18:44:33 +0800
-Subject: Re: [GIT PULL] Hisilicon fixes for v5.2
-To:     Wei Xu <xuwei5@hisilicon.com>, <arm@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Olof Johansson <olof@lixom.net>, <arnd@arndb.de>
-References: <b89ef8f0-d102-7f78-f373-cbcc7faddee3@hisilicon.com>
- <afaddac3-4f9c-c09d-09d1-9c3e71beaf7b@hisilicon.com>
-CC:     <linuxarm@huawei.com>, "xuwei (O)" <xuwei5@huawei.com>,
-        <bhelgaas@google.com>, <linux-pci@vger.kernel.org>,
-        <rjw@rjwysocki.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Zhangyi ac <zhangyi.ac@huawei.com>,
-        "Liguozhu (Kenneth)" <liguozhu@hisilicon.com>,
-        <jinying@hisilicon.com>, huangdaode <huangdaode@hisilicon.com>,
-        Tangkunshan <tangkunshan@huawei.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Shameerali Kolothum Thodi 
-        <shameerali.kolothum.thodi@huawei.com>,
-        Shiju Jose <shiju.jose@huawei.com>,
-        Salil Mehta <salil.mehta@huawei.com>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <1dc5a7b1-5476-d732-74ba-d044e63706fa@huawei.com>
-Date:   Tue, 25 Jun 2019 11:44:23 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
-MIME-Version: 1.0
-In-Reply-To: <afaddac3-4f9c-c09d-09d1-9c3e71beaf7b@hisilicon.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.227.238]
-X-CFilter-Loop: Reflected
+        id S1732041AbfFYKmn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 06:42:43 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:45084 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726756AbfFYKmn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 06:42:43 -0400
+Received: by mail-pg1-f194.google.com with SMTP id z19so5815406pgl.12;
+        Tue, 25 Jun 2019 03:42:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=1uMFvdA9zD0TW36wu1ROblZoYCBPkNlkO2ia2DlAOOo=;
+        b=f0R/j+8cwVS5csLWk6p5Ykg9xNZW0+umrEPAJ3HxBV4gG9Bw2yhyhB9sn49qE5Zrv+
+         AGFN3ejYP8YtKwR7g8vgMWS3lRP/dY6SmujIakxV4B/gwq2fepV15w/4waWXzPY1qZfJ
+         Vk51rxlvmoCKoFn6zALdPIwIj24YqqeCKjywnR6ottpAP7NU1ndYJ4+kHvZkZTf1iL9+
+         /ElGY1TjxP0hHokScFuCqeW4Gvl+8Xxp2d/iwMKwIKu5VY0uaSoLu3ctv8IgDqoHP887
+         unK7l0vZ0ltcYjo+Rg86TIpmX6Wgn5rAYY2vujaTRmhqba2E5tRU01mGmHyNL31LZxxt
+         /DBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=1uMFvdA9zD0TW36wu1ROblZoYCBPkNlkO2ia2DlAOOo=;
+        b=ThvHToR614SQdLTIVzuDENyr7potFUGv5ryZbtf1/5w3ZmIoMDbof4HS3Z+SJTR8H6
+         9TbX9Nrr5pIkAQN6hMZMeNm+LyaQ8s49rzrprAy53Dh9xA3JbyskxKmrjQgFCskJ70uF
+         q/rVtbrCqqZg9pArznLSUx/VLZhHw8mZ2eE/xXhBWcnrpqol7JqaU04HmwA3SL+Mt76J
+         cYvFFjZAGwO7m6dABCSwfRWFyp4rL6Ui3XAIbn3HeINqWp3NMwQb5u8Z+bAvVC1ul7eE
+         fPH0XrixFqhbbWtdyf9hw/O/ltTsgG+TqSKcLU6AdF+om7QranpoL3i829s/qRB+WPs+
+         VQ1w==
+X-Gm-Message-State: APjAAAUaRQtf8Xln+7MzVamCB04PTYxLkWF35lSl7+A3EQlPFb/Xn52k
+        WZIXH3o2k8+leHK9MzDgHzU=
+X-Google-Smtp-Source: APXvYqz07ytF5AwY9QhulPVIkFTT7bio8bpxCxvXzud/mQQUQXGy0FbUpYnn5JsBdLZntdfuj+fjHg==
+X-Received: by 2002:a63:f342:: with SMTP id t2mr35787408pgj.83.1561459362300;
+        Tue, 25 Jun 2019 03:42:42 -0700 (PDT)
+Received: from Pilot130.192.168.0.22 (211-20-114-70.HINET-IP.hinet.net. [211.20.114.70])
+        by smtp.googlemail.com with ESMTPSA id 14sm22026759pfj.36.2019.06.25.03.42.38
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 25 Jun 2019 03:42:41 -0700 (PDT)
+From:   "sudheer.v" <open.sudheer@gmail.com>
+To:     gregkh@linuxfoundation.org, jslaby@suse.com, joel@jms.id.au,
+        andrew@aj.id.au, benh@kernel.crashing.org, robh+dt@kernel.org,
+        mark.rutland@arm.com,
+        shivahshankar.shankarnarayanrao@aspeedtech.com,
+        shivahshankar@gmail.com, sudheer.veliseti@aspeedtech.com
+Cc:     sudheer veliseti <sudheer.open@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-aspeed@lists.ozlabs.org
+Subject: [patch v3 0/5] *** DMA based UART driver for AST2500 ***
+Date:   Tue, 25 Jun 2019 16:14:31 +0530
+Message-Id: <1561459476-14268-1-git-send-email-open.sudheer@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25/06/2019 11:39, Wei Xu wrote:
-> Hi ARM-SoC team,
->
-> Sorry, I forgot to mention that one or two patches in this patch set
-> are not pure fix.
-> We are also OK to queue for v5.3.
-> Thanks!
->
+From: sudheer veliseti <sudheer.open@gmail.com>
 
-Yes, specifically patch "lib: logic_pio: Enforce LOGIC_PIO_INDIRECT 
-region ops are set at registration" is a minor tidy/optimisation.
+Hi,
+AST2500 has dedicated Uart DMA controller which has 12 sets of
+Tx and RX channels connected to UART controller directly.
+Since the DMA controller have dedicated buffers and registers,
+there would be little benifit in adding DMA framework overhead.
+So the software for DMA controller is included within the UART driver itself.
 
-Others are fixes or required for fixes.
+Thanks and Regards
+Sudheer.V
 
-And adding for v5.3 is fine, then we can ensure that the necessary is 
-backported to stable when in mainline.
+changes in v3:
+- custom debugs replaced with pr_debug in 8250_ast2500_uart_dma.c
+- change logs added in patches
 
-Thanks,
-John
+sudheer veliseti (5):
+  AST2500 DMA UART driver
+  build configuration for AST2500 DMA UART driver
+  DT nodes for AST2500 DMA UART driver
+  defconfig and MAINTAINERS updated for AST2500 DMA UART driver
+  Documentation: DT bindings AST2500 DMA UART driver
 
-> Best Regards,
-> Wei
->
-> On 6/25/2019 11:23 AM, Wei Xu wrote:
->> Hi ARM-SoC team,
->>
->> Please consider to pull the following changes.
->> Thanks!
->>
->> Best Regards,
->> Wei
->>
->> ---
->>
->> The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
->>
->>   Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
->>
->> are available in the Git repository at:
->>
->>   git://github.com/hisilicon/linux-hisi.git tags/hisi-fixes-for-5.2
->>
->> for you to fetch changes up to 07c811af1c00d7b4212eac86900b023b6405a954:
->>
->>   lib: logic_pio: Enforce LOGIC_PIO_INDIRECT region ops are set at registration (2019-06-25 09:40:42 +0100)
->>
->> ----------------------------------------------------------------
->> Hisilicon fixes for v5.2-rc
->>
->> - fixed RCU usage in logical PIO
->> - Added a function to unregister a logical PIO range in logical PIO
->>   to support the fixes in the hisi-lpc driver
->> - fixed and optimized hisi-lpc driver to avoid potential use-after-free
->>   and driver unbind crash
->>
->> ----------------------------------------------------------------
->> John Garry (6):
->>       lib: logic_pio: Fix RCU usage
->>       lib: logic_pio: Avoid possible overlap for unregistering regions
->>       lib: logic_pio: Add logic_pio_unregister_range()
->>       bus: hisi_lpc: Unregister logical PIO range to avoid potential use-after-free
->>       bus: hisi_lpc: Add .remove method to avoid driver unbind crash
->>       lib: logic_pio: Enforce LOGIC_PIO_INDIRECT region ops are set at registration
->>
->>  drivers/bus/hisi_lpc.c    | 43 ++++++++++++++++++++----
->>  include/linux/logic_pio.h |  1 +
->>  lib/logic_pio.c           | 86 +++++++++++++++++++++++++++++++++--------------
->>  3 files changed, 99 insertions(+), 31 deletions(-)
->>
->
->
-> .
->
+ .../bindings/serial/ast2500-dma-uart.txt      |   40 +
+ MAINTAINERS                                   |   13 +
+ arch/arm/boot/dts/aspeed-ast2500-evb.dts      |   21 +
+ arch/arm/boot/dts/aspeed-g5.dtsi              |   71 +-
+ arch/arm/configs/aspeed_g5_defconfig          |    1 +
+ .../tty/serial/8250/8250_ast2500_uart_dma.c   | 1879 +++++++++++++++++
+ drivers/tty/serial/8250/Kconfig               |   35 +-
+ drivers/tty/serial/8250/Makefile              |    1 +
+ 8 files changed, 2056 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/serial/ast2500-dma-uart.txt
+ create mode 100644 drivers/tty/serial/8250/8250_ast2500_uart_dma.c
+
+-- 
+2.17.1
 
 
