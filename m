@@ -2,159 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02ECC557A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 21:16:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 53A4D557B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 21:19:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733065AbfFYTPx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 15:15:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34596 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733041AbfFYTPs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 15:15:48 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AC82621726;
-        Tue, 25 Jun 2019 19:15:47 +0000 (UTC)
-Received: from rostedt by gandalf.local.home with local (Exim 4.92)
-        (envelope-from <rostedt@goodmis.org>)
-        id 1hfquw-0002Nc-Qs; Tue, 25 Jun 2019 15:15:46 -0400
-Message-Id: <20190625191546.716820444@goodmis.org>
-User-Agent: quilt/0.65
-Date:   Tue, 25 Jun 2019 15:15:22 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: [for-next][PATCH 12/12] tracing/kprobe: Check registered state using kprobe
-References: <20190625191510.599310671@goodmis.org>
+        id S1728422AbfFYTTx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 15:19:53 -0400
+Received: from relay6-d.mail.gandi.net ([217.70.183.198]:58627 "EHLO
+        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726443AbfFYTTw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 15:19:52 -0400
+X-Originating-IP: 90.65.161.137
+Received: from localhost (lfbn-1-1545-137.w90-65.abo.wanadoo.fr [90.65.161.137])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 18B5DC000B;
+        Tue, 25 Jun 2019 19:19:46 +0000 (UTC)
+Date:   Tue, 25 Jun 2019 21:19:45 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Trent Piepho <tpiepho@impinj.com>
+Cc:     "fthain@telegraphics.com.au" <fthain@telegraphics.com.au>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "userm57@yahoo.com" <userm57@yahoo.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] rtc: Don't state that the RTC holds UTC in case it
+ doesn't
+Message-ID: <20190625191945.GH5690@piout.net>
+References: <3e1e24a326b8b623b1a8b66a905ac6494ef74a07.1561081886.git.fthain@telegraphics.com.au>
+ <20190624195705.GD5690@piout.net>
+ <alpine.LNX.2.21.1906251043050.8@nippy.intranet>
+ <20190625092926.GE5690@piout.net>
+ <1561483011.2343.6.camel@impinj.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1561483011.2343.6.camel@impinj.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+On 25/06/2019 17:16:52+0000, Trent Piepho wrote:
+> On Tue, 2019-06-25 at 11:29 +0200, Alexandre Belloni wrote:
+> > Userspace is certainly adjusting the timezone after the kernel did. Can
+> > you run the same commands without running your init? 
+> > 
+> > On stable, you have /etc/init.d/hwclock.sh that still runs and does the
+> > correct thing. My understanding is that systemd also handles the TZ
+> > properly after hctosys (see clock_is_localtime()).
+> > 
+> > Seriously, hctosys does a really bad job at setting the system time, it
+> > is guaranteed to be always wrong on most platforms. My plan is still to
+> > try to get distros to stop enabling it and do that properly in
+> > userspace. This is already ok when using sysV but systemd would need a
+> > few changes to stop relying on it when then is no hwclock initscript.
+> > Unfortunately, I didn't have time to work on that yet.
+> 
+> hctosys is very handy in that it sets the system time before any log
+> messages are generated.  Either in a main boot or in an initramfs. 
+> Having property time-stamped log messages is very important for
+> managing a large deployment.
+> 
+> If the system time is set by some script or systemd unit, then there
+> will always be all the things that need to run before that script or
+> unit can work.  E.g., udev creating rtc device nodes, mounting /sys and
+> /proc, systemd generator for local file system unis, the other parts of
+> systemd to do that, etc. All this won't be able to log with correct
+> system time.
+> 
 
-Change registered check only by trace_kprobe and remove
-TP_FLAG_REGISTERED from trace_probe, since this feature
-is only used for trace_kprobe.
+I'd argue that this system time is not correct anyway and hence is not
+that useful. Especially since the boot time to anything reading the RTC
+will still be smaller than the maximum error hctosys can have (that is
+up to two seconds). This is even worse if the RTC sotres local time.
 
-Link: http://lkml.kernel.org/r/155931588704.28323.4952266828256245833.stgit@devnote2
+Instead of using a systemd unit, we could make systemd read the RTC as
+soon as possible and set the system time correctly (at least, that is my
+plan). This would be especially useful when using NTP because as already
+reported, it may take a few hours to actually synchronize because
+hctosys didn't set the correct time.
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- kernel/trace/trace_kprobe.c | 23 +++++++++++++++--------
- kernel/trace/trace_probe.h  |  6 ------
- 2 files changed, 15 insertions(+), 14 deletions(-)
+I would agree that there are remaining use cases for hctosys, e.g. when
+wanting to boot a rootfs over a network filesystem and without an
+initramfs.
 
-diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
-index 62362ad1ad98..9d483ad9bb6c 100644
---- a/kernel/trace/trace_kprobe.c
-+++ b/kernel/trace/trace_kprobe.c
-@@ -157,6 +157,12 @@ static nokprobe_inline unsigned long trace_kprobe_nhit(struct trace_kprobe *tk)
- 	return nhit;
- }
- 
-+static nokprobe_inline bool trace_kprobe_is_registered(struct trace_kprobe *tk)
-+{
-+	return !(list_empty(&tk->rp.kp.list) &&
-+		 hlist_unhashed(&tk->rp.kp.hlist));
-+}
-+
- /* Return 0 if it fails to find the symbol address */
- static nokprobe_inline
- unsigned long trace_kprobe_address(struct trace_kprobe *tk)
-@@ -244,6 +250,8 @@ static struct trace_kprobe *alloc_trace_kprobe(const char *group,
- 		tk->rp.kp.pre_handler = kprobe_dispatcher;
- 
- 	tk->rp.maxactive = maxactive;
-+	INIT_HLIST_NODE(&tk->rp.kp.hlist);
-+	INIT_LIST_HEAD(&tk->rp.kp.list);
- 
- 	ret = trace_probe_init(&tk->tp, event, group);
- 	if (ret < 0)
-@@ -273,7 +281,7 @@ static inline int __enable_trace_kprobe(struct trace_kprobe *tk)
- {
- 	int ret = 0;
- 
--	if (trace_probe_is_registered(&tk->tp) && !trace_kprobe_has_gone(tk)) {
-+	if (trace_kprobe_is_registered(tk) && !trace_kprobe_has_gone(tk)) {
- 		if (trace_kprobe_is_return(tk))
- 			ret = enable_kretprobe(&tk->rp);
- 		else
-@@ -333,7 +341,7 @@ disable_trace_kprobe(struct trace_kprobe *tk, struct trace_event_file *file)
- 	} else
- 		trace_probe_clear_flag(tp, TP_FLAG_PROFILE);
- 
--	if (!trace_probe_is_enabled(tp) && trace_probe_is_registered(tp)) {
-+	if (!trace_probe_is_enabled(tp) && trace_kprobe_is_registered(tk)) {
- 		if (trace_kprobe_is_return(tk))
- 			disable_kretprobe(&tk->rp);
- 		else
-@@ -381,7 +389,7 @@ static int __register_trace_kprobe(struct trace_kprobe *tk)
- {
- 	int i, ret;
- 
--	if (trace_probe_is_registered(&tk->tp))
-+	if (trace_kprobe_is_registered(tk))
- 		return -EINVAL;
- 
- 	if (within_notrace_func(tk)) {
-@@ -407,21 +415,20 @@ static int __register_trace_kprobe(struct trace_kprobe *tk)
- 	else
- 		ret = register_kprobe(&tk->rp.kp);
- 
--	if (ret == 0)
--		trace_probe_set_flag(&tk->tp, TP_FLAG_REGISTERED);
- 	return ret;
- }
- 
- /* Internal unregister function - just handle k*probes and flags */
- static void __unregister_trace_kprobe(struct trace_kprobe *tk)
- {
--	if (trace_probe_is_registered(&tk->tp)) {
-+	if (trace_kprobe_is_registered(tk)) {
- 		if (trace_kprobe_is_return(tk))
- 			unregister_kretprobe(&tk->rp);
- 		else
- 			unregister_kprobe(&tk->rp.kp);
--		trace_probe_clear_flag(&tk->tp, TP_FLAG_REGISTERED);
--		/* Cleanup kprobe for reuse */
-+		/* Cleanup kprobe for reuse and mark it unregistered */
-+		INIT_HLIST_NODE(&tk->rp.kp.hlist);
-+		INIT_LIST_HEAD(&tk->rp.kp.list);
- 		if (tk->rp.kp.symbol_name)
- 			tk->rp.kp.addr = NULL;
- 	}
-diff --git a/kernel/trace/trace_probe.h b/kernel/trace/trace_probe.h
-index 6c33d4aa36c3..d1714820efe1 100644
---- a/kernel/trace/trace_probe.h
-+++ b/kernel/trace/trace_probe.h
-@@ -55,7 +55,6 @@
- /* Flags for trace_probe */
- #define TP_FLAG_TRACE		1
- #define TP_FLAG_PROFILE		2
--#define TP_FLAG_REGISTERED	4
- 
- /* data_loc: data location, compatible with u32 */
- #define make_data_loc(len, offs)	\
-@@ -261,11 +260,6 @@ static inline bool trace_probe_is_enabled(struct trace_probe *tp)
- 	return trace_probe_test_flag(tp, TP_FLAG_TRACE | TP_FLAG_PROFILE);
- }
- 
--static inline bool trace_probe_is_registered(struct trace_probe *tp)
--{
--	return trace_probe_test_flag(tp, TP_FLAG_REGISTERED);
--}
--
- static inline const char *trace_probe_name(struct trace_probe *tp)
- {
- 	return trace_event_name(&tp->call);
 -- 
-2.20.1
-
-
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
