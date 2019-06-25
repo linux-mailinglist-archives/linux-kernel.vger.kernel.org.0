@@ -2,97 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C778C55085
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 15:39:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2063355081
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 15:38:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730623AbfFYNi6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 09:38:58 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:57236 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729365AbfFYNi5 (ORCPT
+        id S1729899AbfFYNio (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 09:38:44 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:33963 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729365AbfFYNin (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 09:38:57 -0400
-Received: from arch-x1c3 (unknown [IPv6:2a00:5f00:102:0:9665:9cff:feee:aa4d])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: evelikov)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 706A9260D5B;
-        Tue, 25 Jun 2019 14:38:56 +0100 (BST)
-Date:   Tue, 25 Jun 2019 14:36:39 +0100
-From:   Emil Velikov <emil.velikov@collabora.com>
-To:     Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-Cc:     Russell King - ARM Linux admin <linux@armlinux.org.uk>,
-        linux-samsung-soc@vger.kernel.org,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Inki Dae <inki.dae@samsung.com>,
-        David Airlie <airlied@linux.ie>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>, dri-devel@lists.freedesktop.org,
-        Daniel Vetter <daniel@ffwll.ch>, kernel@collabora.com,
-        Sean Paul <sean@poorly.run>,
-        linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
-Subject: Re: [PATCH 0/2] Associate ddc adapters with connectors
-Message-ID: <20190625133639.GA16031@arch-x1c3>
-References: <cover.1561452052.git.andrzej.p@collabora.com>
- <20190625100351.52ddptvb2gizaepi@shell.armlinux.org.uk>
- <817ccfba-754c-6a28-8d75-63f70605fd43@collabora.com>
+        Tue, 25 Jun 2019 09:38:43 -0400
+Received: by mail-lf1-f68.google.com with SMTP id y198so12679480lfa.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 06:38:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=LSvTpOLyyXh49qYBGomCHftsOmnYZkhBKlFO4JP7Wco=;
+        b=M1mbYUFtUWy7KV2CuQ8M5nj8o/ooJsFihAJz7osC5AgX0PriOKLOv/57c+Ud2pPZYz
+         WabUrZRYC8iJuFTzI+CQWCu+xBqiuAf8oRQcslmGumQMVZ8/HwBktQVUQspZBYce1zfd
+         taGw+T6bJepqGs0Y5bw2kZRLDxW4ifJKz3myqKSs5EOoMyqCaY61mJtrIZyu7pBjOPZg
+         m6FQARBJw27QQbskEvQ3AdcukASou0VIzpTSRdz1ayrC68xRuw55bhY/bfgKdqRJoDng
+         cO9dQwy4TpzMe3SEJovusplELhe37+JoMC9g22TShMSob/tkCjfUqp2LJKCayQgtTFzk
+         DOLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LSvTpOLyyXh49qYBGomCHftsOmnYZkhBKlFO4JP7Wco=;
+        b=U6JWw2fLFn3llKpQLmUlMoS6T9o8Q3ECCjNRM42g3dE6i6jwDql9DI9ejjUQm5gy8G
+         ZH4v4qbFcmi89xksmZD8p2TQkF32W2yMTIXgn4sAlbVgZUK78Dtcxilhc8HeBDY2Y+bJ
+         GEW0l1BYCkNOk4h4XLvfLYkWse2M8lZeS97+xhFdaNXIZ+p4NYbX+MaKQ3Y9CWxOoHJo
+         qEZe3l86XzenqAgkukS1uBXw9wCgQx/R6QSfgglZ9g0HoTaEoWgqq2OtZW1WePCERUNN
+         dFe122RSu9CMIhqe4Uif5pZaDkwziCg6NI7vfFmz1By8uzV90yoFtL6mj0k91StURfCM
+         gvpA==
+X-Gm-Message-State: APjAAAVxJ9qqM+2y4DzjiremvqxtV8BaRrtXGsT8tXIGkp2gBsVWT/LB
+        PzURRAnRDuPYW08J5GlRdNRdjgrNJKkejnZNBSe6yw==
+X-Google-Smtp-Source: APXvYqw1szRm5IYELBubgoE074wOtxRYIQ93MVfFMiHW+jrrnby9r1otXbCpvLC/2ZO07gSJ2SF1xJN/82oqxqNsyBo=
+X-Received: by 2002:ac2:50c4:: with SMTP id h4mr25221480lfm.61.1561469921507;
+ Tue, 25 Jun 2019 06:38:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <817ccfba-754c-6a28-8d75-63f70605fd43@collabora.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+References: <1561345379-2429-1-git-send-email-skomatineni@nvidia.com> <1561345379-2429-4-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <1561345379-2429-4-git-send-email-skomatineni@nvidia.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 25 Jun 2019 15:38:29 +0200
+Message-ID: <CACRpkda0=HeRco8kExdf6TmiLOnCec3Ek06s-MdjNJvVGw3ZNQ@mail.gmail.com>
+Subject: Re: [PATCH V4 03/18] gpio: tegra: use resume_noirq for tegra gpio resume
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Stefan Agner <stefan@agner.ch>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        jckuo@nvidia.com, Joseph Lo <josephl@nvidia.com>, talho@nvidia.com,
+        linux-tegra@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Mikko Perttunen <mperttunen@nvidia.com>, spatra@nvidia.com,
+        Rob Herring <robh+dt@kernel.org>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/06/25, Andrzej Pietrasiewicz wrote:
-> Hi Russell,
-> 
-> W dniu 25.06.2019 o 12:03, Russell King - ARM Linux admin pisze:
-> > On Tue, Jun 25, 2019 at 11:46:34AM +0200, Andrzej Pietrasiewicz wrote:
-> > > It is difficult for a user to know which of the i2c adapters is for which
-> > > drm connector. This series addresses this problem.
-> > > 
-> > > The idea is to have a symbolic link in connector's sysfs directory, e.g.:
-> > > 
-> > > ls -l /sys/class/drm/card0-HDMI-A-1/i2c-2
-> > > lrwxrwxrwx 1 root root 0 Jun 24 10:42 /sys/class/drm/card0-HDMI-A-1/i2c-2 \
-> > > 	-> ../../../../soc/13880000.i2c/i2c-2
-> > 
-> > Don't you want the symlink name to be "i2c" or something fixed, rather
-> > than the name of the i2c adapter?  Otherwise, you seem to be encumbering
-> > userspace with searching the directory to try and find the symlink.
-> > 
-> 
-> Thank you for your comment. So you imagine something on the lines of:
-> 
-> lrwxrwxrwx 1 root root 0 Jun 24 10:42 /sys/class/drm/card0-HDMI-A-1/ddc \
->  	-> ../../../../soc/13880000.i2c/i2c-2
-> 
-> ?
-> 
-Fwiw my Intel machine lists a number of i2c devices:
-/sys/class/drm/card0-DP-1/i2c-6
-/sys/class/drm/card0-DP-2/i2c-7
-/sys/class/drm/card0-eDP-1/i2c-5
+On Mon, Jun 24, 2019 at 5:03 AM Sowjanya Komatineni
+<skomatineni@nvidia.com> wrote:
 
-Note: I haven't looked _if_ they relate to ones you're proposing here.
+> During SC7 resume, PARKED bit clear from the pinmux registers may
+> cause a glitch on the GPIO lines.
+>
+> So, Tegra GPIOs restore should happen prior to restoring Tegra pinmux
+> to keep the GPIO lines in a known good state prior to clearing PARKED
+> bit.
+>
+> This patch has fix for this by moving Tegra GPIOs restore to happen
+> very early than pinctrl resume.
+>
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 
-One thing worth mentioning is, the ones I've seen are not symlinks to
-another sysfs entries. And there aren't any i2c nodes in /dev ...
+Can this patch be applied in isolation from the other patches?
 
-Just a random food for thought :-)
+WOuld be nice to have at least Thierry's ACK on it before I
+apply it.
 
-HTH
-Emil
-
-
-
-
+Yours,
+Linus Walleij
