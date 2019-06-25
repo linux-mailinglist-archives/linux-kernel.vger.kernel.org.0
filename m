@@ -2,115 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C24F55547
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 19:01:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CF815554D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 19:01:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729624AbfFYRBE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 13:01:04 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:43821 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728506AbfFYRBE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 13:01:04 -0400
-Received: by mail-io1-f67.google.com with SMTP id k20so10438ios.10;
-        Tue, 25 Jun 2019 10:01:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4nh5j4XcTvP6By9QhoNnt2Wmf1hC1P4k60SdPp76T0k=;
-        b=Ocl1bNLr8OYzeu9TD1azuErTT8IzFHOcI287iJQWs6IMZ/x2MG20iUj2WdhhmYvmAv
-         Zk5lyLTO6h+MThMdU2/+IIXgapLAdfy2/NzsZHUjjaHkdyR8SzJzifePWoWbt2Wk3V+V
-         nAbOwcLUJ9Hzk/CkONjV89hTvByIB7QPw8pEzrfdP7W/CK2CUge/r97cvhG3Gy4B7CI6
-         YHfgMuJdDTDFbHKdRWU1tXveDuOZHRJ5jeZpZQvhhX3oU5ZlvAibv+TUloulaHhRuw39
-         FkQ4i8MfMB6AuCUZwqXTORgKRnBx9uEKm2Qe6caTvo6JaiEm28MA9JxSpIIvZ8onjSa3
-         FiUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4nh5j4XcTvP6By9QhoNnt2Wmf1hC1P4k60SdPp76T0k=;
-        b=N2ueKvvlUI8K5pOgr7n5J8hn6Ae0KrX8jnK0lwtN/yZDa6PSoHwFluPJ7M/BUTjKOS
-         oGLeOWKj6zB9lXkEa6sfX32lVrPCdrFGydELRLH4AgTdzcGoA/yPfmmIjZN0FAy+OdBM
-         RFT95JgNN7DhVCJNT+vuDZmzPie+DGrTmn+ZsupcXvsHmGL0R/tzMzH7qPrHFJC9Msh1
-         /IWZ84FvC7LKH+AyIir98j+kGHdpT5VKH89SIcviJqfkcL1mT0UB4UyhyLh0IiZY6JNl
-         yChPjCaa9d/PHMxaRv3B2aGOWZFfLJ9kZ+0ehGu2pYKv3g3kE20VE6TCz80dipZjZpur
-         d3Iw==
-X-Gm-Message-State: APjAAAVnMXOUkBMJID0trQIVoBa6GX29ZW65kJx01r3duj4ckVsAPr3t
-        Hl/Du2xpY/sdHvfcgM1CUbpE9iEYV4qh4lV2kfZmWJ5t
-X-Google-Smtp-Source: APXvYqzlYWj2ApUnurVtHQQxOd0ZImZSLCuMNUPe0E/UsQDrF+TtQT0+vIgxTiOE1J5+2kko7cJoekjiCl+Pxhleo7k=
-X-Received: by 2002:a6b:5106:: with SMTP id f6mr17350556iob.15.1561482063168;
- Tue, 25 Jun 2019 10:01:03 -0700 (PDT)
+        id S1730260AbfFYRBs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 13:01:48 -0400
+Received: from verein.lst.de ([213.95.11.211]:36441 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728664AbfFYRBs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 13:01:48 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id D3C0068B05; Tue, 25 Jun 2019 19:01:15 +0200 (CEST)
+Date:   Tue, 25 Jun 2019 19:01:15 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Logan Gunthorpe <logang@deltatee.com>
+Cc:     Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-pci@vger.kernel.org, linux-rdma@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Keith Busch <kbusch@kernel.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Stephen Bates <sbates@raithlin.com>
+Subject: Re: [RFC PATCH 00/28] Removing struct page from P2PDMA
+Message-ID: <20190625170115.GA9746@lst.de>
+References: <20190620161240.22738-1-logang@deltatee.com> <20190624072752.GA3954@lst.de> <558a27ba-e7c9-9d94-cad0-377b8ee374a6@deltatee.com> <20190625072008.GB30350@lst.de> <f0f002bf-2b94-cd18-d18f-5d0b08311495@deltatee.com>
 MIME-Version: 1.0
-References: <20190619222922.1231.27432.stgit@localhost.localdomain>
- <ff133df4-6291-bece-3d8d-dc3f12f398cf@redhat.com> <8fea71ba-2464-ead8-3802-2241805283cc@intel.com>
-In-Reply-To: <8fea71ba-2464-ead8-3802-2241805283cc@intel.com>
-From:   Alexander Duyck <alexander.duyck@gmail.com>
-Date:   Tue, 25 Jun 2019 10:00:51 -0700
-Message-ID: <CAKgT0UdAj4Kq8qHKkaiB3z08gCQh-jovNpos45VcGHa_v5aFGg@mail.gmail.com>
-Subject: Re: [PATCH v1 0/6] mm / virtio: Provide support for paravirtual waste
- page treatment
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     David Hildenbrand <david@redhat.com>,
-        Nitesh Narayan Lal <nitesh@redhat.com>,
-        kvm list <kvm@vger.kernel.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Yang Zhang <yang.zhang.wz@gmail.com>, pagupta@redhat.com,
-        Rik van Riel <riel@surriel.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        lcapitulino@redhat.com, wei.w.wang@intel.com,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>, dan.j.williams@intel.com,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f0f002bf-2b94-cd18-d18f-5d0b08311495@deltatee.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 25, 2019 at 7:10 AM Dave Hansen <dave.hansen@intel.com> wrote:
->
-> On 6/25/19 12:42 AM, David Hildenbrand wrote:
-> > On 20.06.19 00:32, Alexander Duyck wrote:
-> > I still *detest* the terminology, sorry. Can't you come up with a
-> > simpler terminology that makes more sense in the context of operating
-> > systems and pages we want to hint to the hypervisor? (that is the only
-> > use case you are using it for so far)
->
-> It's a wee bit too cute for my taste as well.  I could probably live
-> with it in the data structures, but having it show up out in places like
-> Kconfig and filenames goes too far.
->
-> For instance, someone seeing memory_aeration.c will have no concept
-> what's in the file.  Could we call it something like memory_paravirt.c?
->  Or even mm/paravirt.c.
+On Tue, Jun 25, 2019 at 09:57:52AM -0600, Logan Gunthorpe wrote:
+> > You assume all addressing is done by the PCI bus address.  If a device
+> > is addressing its own BAR there is no reason to use the PCI bus address,
+> > as it might have much more intelligent schemes (usually bar + offset).
+> 
+> Yes, that will be a bit tricky regardless of what we do.
 
-Well I couldn't come up with a better explanation of what this was
-doing, also I wanted to avoid mentioning hinting specifically because
-there have already been a few series that have been committed upstream
-that reference this for slightly different purposes such as the one by
-Wei Wang that was doing free memory tracking for migration purposes,
-https://lkml.org/lkml/2018/7/10/211.
+At least right now it isn't at all.  I've implemented support for
+a draft NVMe proposal for that, and it basically boils down to this
+in the p2p path:
 
-Basically what we are doing is inflating the memory size we can report
-by inserting voids into the free memory areas. In my mind that matches
-up very well with what "aeration" is. It is similar to balloon in
-functionality, however instead of inflating the balloon we are
-inflating the free_list for higher order free areas by creating voids
-where the madvised pages were.
+	addr = sg_phys(sg);
 
-> Could you talk for a minute about why the straightforward naming like
-> "hinted/unhinted" wasn't used?  Is there something else we could ever
-> use this infrastructure for that is not related to paravirtualized free
-> page hinting?
+	if (page->pgmap->dev == ctrl->dev && HAS_RELATIVE_ADDRESSING)
+		addr -= ctrl->cmb_start_addr;
 
-I was hoping there might be something in the future that could use the
-infrastructure if it needed to go through and sort out used versus
-unused memory. The way things are designed right now for instance
-there is only really a define that is limiting the lowest order pages
-that are processed. So if we wanted to use this for another purpose we
-could replace the AERATOR_MIN_ORDER define with something that is
-specific to that use case.
+		// set magic flag in the SGL
+	} else {
+		addr -= pgmap->pci_p2pdma_bus_offset;
+	}
+
+without the pagemap it would require a range compare instead, which
+isn't all that hard either.
+
+> >>> Also duplicating the whole block I/O stack, including hooks all over
+> >>> the fast path is pretty much a no-go.
+> >>
+> >> There was very little duplicate code in the patch set. (Really just the
+> >> mapping code). There are a few hooks, but in practice not that many if
+> >> we ignore the WARN_ONs. We might be able to work to reduce this further.
+> >> The main hooks are: when we skip bouncing, when we skip integrity prep,
+> >> when we split, and when we map. And the patchset drops the PCI_P2PDMA
+> >> hook when we map. So we're talking about maybe three or four extra ifs
+> >> that would likely normally be fast due to the branch predictor.
+> > 
+> > And all of those add code to the block layer fast path.
+> 
+> If we can't add any ifs to the block layer, there's really nothing we
+> can do.
+
+That is not what I said.  Of course we can.  But we rather have a
+really good reason.  And adding a parallel I/O path violating the
+highlevel model is not one.
+
+> So then we're committed to using struct page for P2P?
+
+Only until we have a significantly better soltution.  And I think
+using physical address in some form instead of pages is that,
+adding a parallel path with dma_addr_t is not, it actually is worse
+than the current code in many respects.
