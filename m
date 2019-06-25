@@ -2,54 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59EB952668
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 10:22:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AFE15266B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 10:22:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730088AbfFYIWU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 04:22:20 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:42505 "EHLO
+        id S1730011AbfFYIWw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 04:22:52 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:38101 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727338AbfFYIWT (ORCPT
+        with ESMTP id S1726702AbfFYIWw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 04:22:19 -0400
+        Tue, 25 Jun 2019 04:22:52 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5P8KiIH3527167
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5P8LQJO3527436
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Tue, 25 Jun 2019 01:20:44 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5P8KiIH3527167
+        Tue, 25 Jun 2019 01:21:27 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5P8LQJO3527436
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019061801; t=1561450845;
-        bh=HmWxbipk7wybSkq5o0iwtqlTHYXcd8O5ZYQUdvJbSZw=;
+        s=2019061801; t=1561450887;
+        bh=mpSsIZmZgptRzqmtSWuYMGtWCvhQ3YuueZtSPpXy07E=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=aDL8j3hV37i3fqC1pyjBMiiN1n+rhkDwOAohYlFFjkTAKxhl5syn6ipV3qZekJEqI
-         qQATfE0/WyrCmh+mLQuUrbRetNI4wvPqBCZPko1JZsEIDRVKUltx7H6JDiv/cBoKTk
-         0yVrjUdkRXWvK5erSRqP8gEGrHjP83/vX+KZsaOD2qXrRS2UN13eippxsRWMcIEAHY
-         EmJwQSwtASWKkYnQmhBq2FXoPomvPxN50fk4RcdWl+zBl4kRmjI8Tvyqegph92/wP2
-         wxptnI8MAXVKzOV6KrINRP1nJoSHeykrdxgyiOiOwM3P+yQYC0D1DlrAc9gVUXZQWT
-         xny9wFygtalpw==
+        b=YuzZKb2yXIvQpoUPAvOLO8Rkekdhfm5KMSlgeD4GICqfSrawvteXGvcdWGETNF8QX
+         0+6bQRrOVqdzlkv7bJl6HvtnQiqv1GYWpAvqxcKRLfgW7Gx2fQNyweWqidKu4i+sWn
+         jXtiQ1uekUMdHfW5/A6OmLEzVLswooUzFCF+SZqlO+65wbXEY/skHsOLXrzU78Uk7Y
+         ige/cBgaGdfWLRNXnHWZxDa0yAlEKyx4o3Vg/E2F4ssTipQjswdwYX6piK74Ds7pgw
+         IVqsCcH+QR3GCbEinLyFaWgqcba3qA5Af7iYFju87T17dkXYNYnnCMJK3WkZNshrQd
+         8gteFBZhr1/Yg==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5P8Ki5m3527164;
-        Tue, 25 Jun 2019 01:20:44 -0700
-Date:   Tue, 25 Jun 2019 01:20:44 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5P8LQ3i3527433;
+        Tue, 25 Jun 2019 01:21:26 -0700
+Date:   Tue, 25 Jun 2019 01:21:26 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Kan Liang <tipbot@zytor.com>
-Message-ID: <tip-90d424915ab6550826d297fd62df8ee255345b95@git.kernel.org>
-Cc:     peterz@infradead.org, acme@redhat.com, jolsa@redhat.com,
-        kan.liang@linux.intel.com, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, eranian@google.com,
-        tglx@linutronix.de, vincent.weaver@maine.edu,
-        alexander.shishkin@linux.intel.com, torvalds@linux-foundation.org,
-        hpa@zytor.com
-Reply-To: acme@redhat.com, jolsa@redhat.com, peterz@infradead.org,
-          tglx@linutronix.de, vincent.weaver@maine.edu, eranian@google.com,
-          hpa@zytor.com, torvalds@linux-foundation.org,
-          alexander.shishkin@linux.intel.com, mingo@kernel.org,
-          linux-kernel@vger.kernel.org, kan.liang@linux.intel.com
-In-Reply-To: <1559081314-9714-2-git-send-email-kan.liang@linux.intel.com>
-References: <1559081314-9714-2-git-send-email-kan.liang@linux.intel.com>
+Message-ID: <tip-dce86ac75d772047e9bc606154704aa73bfd4c83@git.kernel.org>
+Cc:     tglx@linutronix.de, alexander.shishkin@linux.intel.com,
+        eranian@google.com, torvalds@linux-foundation.org, acme@redhat.com,
+        linux-kernel@vger.kernel.org, kan.liang@linux.intel.com,
+        mingo@kernel.org, vincent.weaver@maine.edu, jolsa@redhat.com,
+        hpa@zytor.com, peterz@infradead.org
+Reply-To: kan.liang@linux.intel.com, vincent.weaver@maine.edu,
+          jolsa@redhat.com, mingo@kernel.org, tglx@linutronix.de,
+          alexander.shishkin@linux.intel.com, eranian@google.com,
+          peterz@infradead.org, linux-kernel@vger.kernel.org,
+          acme@redhat.com, torvalds@linux-foundation.org, hpa@zytor.com
+In-Reply-To: <1559081314-9714-3-git-send-email-kan.liang@linux.intel.com>
+References: <1559081314-9714-3-git-send-email-kan.liang@linux.intel.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf/x86/regs: Check reserved bits
-Git-Commit-ID: 90d424915ab6550826d297fd62df8ee255345b95
+Subject: [tip:perf/urgent] perf/x86: Clean up PEBS_XMM_REGS
+Git-Commit-ID: dce86ac75d772047e9bc606154704aa73bfd4c83
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -67,27 +66,18 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  90d424915ab6550826d297fd62df8ee255345b95
-Gitweb:     https://git.kernel.org/tip/90d424915ab6550826d297fd62df8ee255345b95
+Commit-ID:  dce86ac75d772047e9bc606154704aa73bfd4c83
+Gitweb:     https://git.kernel.org/tip/dce86ac75d772047e9bc606154704aa73bfd4c83
 Author:     Kan Liang <kan.liang@linux.intel.com>
-AuthorDate: Tue, 28 May 2019 15:08:31 -0700
+AuthorDate: Tue, 28 May 2019 15:08:32 -0700
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Mon, 24 Jun 2019 19:19:24 +0200
 
-perf/x86/regs: Check reserved bits
+perf/x86: Clean up PEBS_XMM_REGS
 
-The perf fuzzer triggers a warning which map to:
+Use generic macro PERF_REG_EXTENDED_MASK to replace PEBS_XMM_REGS to
+avoid duplication.
 
-        if (WARN_ON_ONCE(idx >= ARRAY_SIZE(pt_regs_offset)))
-                return 0;
-
-The bits between XMM registers and generic registers are reserved.
-But perf_reg_validate() doesn't check these bits.
-
-Add PERF_REG_X86_RESERVED for reserved bits on X86.
-Check the reserved bits in perf_reg_validate().
-
-Reported-by: Vince Weaver <vincent.weaver@maine.edu>
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
@@ -97,42 +87,74 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Stephane Eranian <eranian@google.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: 878068ea270e ("perf/x86: Support outputting XMM registers")
-Link: https://lkml.kernel.org/r/1559081314-9714-2-git-send-email-kan.liang@linux.intel.com
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Link: https://lkml.kernel.org/r/1559081314-9714-3-git-send-email-kan.liang@linux.intel.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/kernel/perf_regs.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ arch/x86/events/core.c       |  4 ++--
+ arch/x86/events/intel/ds.c   |  2 +-
+ arch/x86/events/perf_event.h | 18 ------------------
+ 3 files changed, 3 insertions(+), 21 deletions(-)
 
-diff --git a/arch/x86/kernel/perf_regs.c b/arch/x86/kernel/perf_regs.c
-index 07c30ee17425..bb7e1132290b 100644
---- a/arch/x86/kernel/perf_regs.c
-+++ b/arch/x86/kernel/perf_regs.c
-@@ -74,6 +74,9 @@ u64 perf_reg_value(struct pt_regs *regs, int idx)
- 	return regs_get_register(regs, pt_regs_offset[idx]);
- }
+diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+index f315425d8468..7708a6fb5f4a 100644
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -561,13 +561,13 @@ int x86_pmu_hw_config(struct perf_event *event)
+ 	}
  
-+#define PERF_REG_X86_RESERVED	(((1ULL << PERF_REG_X86_XMM0) - 1) & \
-+				 ~((1ULL << PERF_REG_X86_MAX) - 1))
-+
- #ifdef CONFIG_X86_32
- #define REG_NOSUPPORT ((1ULL << PERF_REG_X86_R8) | \
- 		       (1ULL << PERF_REG_X86_R9) | \
-@@ -86,7 +89,7 @@ u64 perf_reg_value(struct pt_regs *regs, int idx)
- 
- int perf_reg_validate(u64 mask)
- {
--	if (!mask || (mask & REG_NOSUPPORT))
-+	if (!mask || (mask & (REG_NOSUPPORT | PERF_REG_X86_RESERVED)))
+ 	/* sample_regs_user never support XMM registers */
+-	if (unlikely(event->attr.sample_regs_user & PEBS_XMM_REGS))
++	if (unlikely(event->attr.sample_regs_user & PERF_REG_EXTENDED_MASK))
  		return -EINVAL;
+ 	/*
+ 	 * Besides the general purpose registers, XMM registers may
+ 	 * be collected in PEBS on some platforms, e.g. Icelake
+ 	 */
+-	if (unlikely(event->attr.sample_regs_intr & PEBS_XMM_REGS)) {
++	if (unlikely(event->attr.sample_regs_intr & PERF_REG_EXTENDED_MASK)) {
+ 		if (x86_pmu.pebs_no_xmm_regs)
+ 			return -EINVAL;
  
- 	return 0;
-@@ -112,7 +115,7 @@ void perf_get_regs_user(struct perf_regs *regs_user,
+diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
+index 6cb38ab02c8a..955b2c688f23 100644
+--- a/arch/x86/events/intel/ds.c
++++ b/arch/x86/events/intel/ds.c
+@@ -987,7 +987,7 @@ static u64 pebs_update_adaptive_cfg(struct perf_event *event)
+ 		pebs_data_cfg |= PEBS_DATACFG_GP;
  
- int perf_reg_validate(u64 mask)
- {
--	if (!mask || (mask & REG_NOSUPPORT))
-+	if (!mask || (mask & (REG_NOSUPPORT | PERF_REG_X86_RESERVED)))
- 		return -EINVAL;
+ 	if ((sample_type & PERF_SAMPLE_REGS_INTR) &&
+-	    (attr->sample_regs_intr & PEBS_XMM_REGS))
++	    (attr->sample_regs_intr & PERF_REG_EXTENDED_MASK))
+ 		pebs_data_cfg |= PEBS_DATACFG_XMMS;
  
- 	return 0;
+ 	if (sample_type & PERF_SAMPLE_BRANCH_STACK) {
+diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
+index a6ac2f4f76fc..d3b6e90c80d3 100644
+--- a/arch/x86/events/perf_event.h
++++ b/arch/x86/events/perf_event.h
+@@ -121,24 +121,6 @@ struct amd_nb {
+ 	 (1ULL << PERF_REG_X86_R14)   | \
+ 	 (1ULL << PERF_REG_X86_R15))
+ 
+-#define PEBS_XMM_REGS                   \
+-	((1ULL << PERF_REG_X86_XMM0)  | \
+-	 (1ULL << PERF_REG_X86_XMM1)  | \
+-	 (1ULL << PERF_REG_X86_XMM2)  | \
+-	 (1ULL << PERF_REG_X86_XMM3)  | \
+-	 (1ULL << PERF_REG_X86_XMM4)  | \
+-	 (1ULL << PERF_REG_X86_XMM5)  | \
+-	 (1ULL << PERF_REG_X86_XMM6)  | \
+-	 (1ULL << PERF_REG_X86_XMM7)  | \
+-	 (1ULL << PERF_REG_X86_XMM8)  | \
+-	 (1ULL << PERF_REG_X86_XMM9)  | \
+-	 (1ULL << PERF_REG_X86_XMM10) | \
+-	 (1ULL << PERF_REG_X86_XMM11) | \
+-	 (1ULL << PERF_REG_X86_XMM12) | \
+-	 (1ULL << PERF_REG_X86_XMM13) | \
+-	 (1ULL << PERF_REG_X86_XMM14) | \
+-	 (1ULL << PERF_REG_X86_XMM15))
+-
+ /*
+  * Per register state.
+  */
