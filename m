@@ -2,256 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1979A555DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 19:27:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB9D8555E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 19:30:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731818AbfFYR1a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 13:27:30 -0400
-Received: from mail-pl1-f201.google.com ([209.85.214.201]:40588 "EHLO
-        mail-pl1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731657AbfFYR13 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 13:27:29 -0400
-Received: by mail-pl1-f201.google.com with SMTP id 91so9570466pla.7
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 10:27:29 -0700 (PDT)
+        id S1729092AbfFYRad (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 13:30:33 -0400
+Received: from mail-eopbgr750122.outbound.protection.outlook.com ([40.107.75.122]:56192
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727652AbfFYRad (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 13:30:33 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=OhecESP0ZYVvsQksEMIl7M9g/EECExAnf6+cs2HZy6c=;
-        b=eNjOQGZAYlR2hSjV/zWM0cTvt3ZSohvJKbByBBByJFVzjkrR+WjfvPPnyL0rx1LsBs
-         UJWXhdri+ztjLR1JJlxjYtMzgzlwKnWVeemHVo06IHLsn9shDuySOHtWRq1zPSVWxJRJ
-         SMrV/1J86BOj/tvTKUo26eOGBvNDat/6ksf0226vlglPWSjUgdwCQ6RVFI8tlCsHOw1b
-         OEnqGh1l8SIDQRimt7TdL0SrLxLPGTNunS/IN4B21FKqLnWePdRMJ+jiBNxj9VsH/mP4
-         ndv6gKoG1OAudkljm3IWOIzQ/0BHJRgJyyWzThyZplBL9x7Us+MzeGWr1RijFs6Ex77S
-         Y3OQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=OhecESP0ZYVvsQksEMIl7M9g/EECExAnf6+cs2HZy6c=;
-        b=DCayhs0Hryv5/n6381YAfTeaj0jysp+DJ73PVZ9tx1Ycd/iEhge3bW9PmL9EogNxNO
-         uxv4j8F6nb+hVoxHUJMQHIqzwGSlgi3i0Jb+jeCBalgOZC86kNpjrdgn0a+Wy3MGBht+
-         UiheVPQ5rfCZEtR+2oDnDcbWp8Woxc8ad0uTNRIxX2NdIJ+lMu3CfmW7s++w6+PGa6eB
-         TW/lGizXSkiylchOL139WwandXUdN9mdAv7nPdwDf7rN0oWOF85RzpwaYt/QovCmZ9bA
-         y9ZoGPDp627onSM5cFpBYs/rJzNDrVzhhfm3d4/JhZR+HAMepKotw7W1Fc4qztQPQxtM
-         kWTA==
-X-Gm-Message-State: APjAAAUTw6jzqeNxf3fRRHmh3lR0kRIfagqLetK1xCNYsv6gRyuusBDc
-        vDV+AcsxjZHq2sh7TfTG0Lf7Ksak96TmGDu6
-X-Google-Smtp-Source: APXvYqzigL1ff8SQ4lWGkFdb/IVSFf9iHGEq4J6nVvwLpIyjpHGpm2lqbxVd2IUyTvi7Ggn3rZp+DxhNjHruM/FK
-X-Received: by 2002:a63:735d:: with SMTP id d29mr27178922pgn.276.1561483648390;
- Tue, 25 Jun 2019 10:27:28 -0700 (PDT)
-Date:   Tue, 25 Jun 2019 10:27:17 -0700
-In-Reply-To: <20190625172717.158613-1-allanzhang@google.com>
-Message-Id: <20190625172717.158613-3-allanzhang@google.com>
-Mime-Version: 1.0
-References: <20190625172717.158613-1-allanzhang@google.com>
-X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
-Subject: [PATCH bpf-next v4 2/2] bpf: Add selftests for bpf_perf_event_output
-From:   allanzhang <allanzhang@google.com>
-To:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     allanzhang <allanzhang@google.com>
-Content-Type: text/plain; charset="UTF-8"
+ d=wavesemi.onmicrosoft.com; s=selector1-wavesemi-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rLaO9QWBVrbx1WHdWWcpHYHC7RcnT/IaFQfxF+WZUWQ=;
+ b=GcTgXpx1p5Ev5wCCmWM868S5FeQxAVrewWsehXbfli40a4ZsnjOq+NBw4+Hndw3XXhfsfqRyBkC81NpnLU5LHkdNxJz3g+6FdWscnd1fh1D3h/02oVUW4BcOE4xGGQot60ZckFliV22JXypxbYsMKJqZivDlnf9C5ofCI5M+9QM=
+Received: from MWHPR2201MB1277.namprd22.prod.outlook.com (10.172.60.12) by
+ MWHPR2201MB1341.namprd22.prod.outlook.com (10.172.63.21) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2008.16; Tue, 25 Jun 2019 17:30:29 +0000
+Received: from MWHPR2201MB1277.namprd22.prod.outlook.com
+ ([fe80::6975:b632:c85b:9e40]) by MWHPR2201MB1277.namprd22.prod.outlook.com
+ ([fe80::6975:b632:c85b:9e40%2]) with mapi id 15.20.2008.017; Tue, 25 Jun 2019
+ 17:30:28 +0000
+From:   Paul Burton <paul.burton@mips.com>
+To:     Paul Cercueil <paul@crapouillou.net>
+CC:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mathieu Malaterre <malat@debian.org>,
+        "od@zcrc.me" <od@zcrc.me>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Artur Rojek <contact@artur-rojek.eu>
+Subject: Re: [PATCH v13 04/13] mfd: Add Ingenic TCU driver
+Thread-Topic: [PATCH v13 04/13] mfd: Add Ingenic TCU driver
+Thread-Index: AQHVKuBSgPmYVawSQ0eFKnC+vy7xnKasoZqA
+Date:   Tue, 25 Jun 2019 17:30:28 +0000
+Message-ID: <20190625173026.dbvx44iwywnijjql@pburton-laptop>
+References: <20190624225759.18299-1-paul@crapouillou.net>
+ <20190624225759.18299-5-paul@crapouillou.net>
+In-Reply-To: <20190624225759.18299-5-paul@crapouillou.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: BYAPR01CA0063.prod.exchangelabs.com (2603:10b6:a03:94::40)
+ To MWHPR2201MB1277.namprd22.prod.outlook.com (2603:10b6:301:18::12)
+user-agent: NeoMutt/20180716
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=pburton@wavecomp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [12.94.197.246]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: a0554db2-ea68-411f-b3a9-08d6f992d0b8
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MWHPR2201MB1341;
+x-ms-traffictypediagnostic: MWHPR2201MB1341:
+x-microsoft-antispam-prvs: <MWHPR2201MB1341128582984F2461DC3983C1E30@MWHPR2201MB1341.namprd22.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6790;
+x-forefront-prvs: 0079056367
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(7916004)(366004)(396003)(136003)(39840400004)(376002)(346002)(199004)(189003)(66066001)(81166006)(446003)(33716001)(58126008)(476003)(8676002)(54906003)(6116002)(44832011)(186003)(81156014)(6246003)(316002)(11346002)(4326008)(7416002)(478600001)(53936002)(3846002)(26005)(305945005)(1076003)(7736002)(8936002)(14454004)(6512007)(6506007)(25786009)(76176011)(486006)(5660300002)(4744005)(102836004)(6916009)(6486002)(2906002)(386003)(6436002)(14444005)(71200400001)(71190400001)(256004)(99286004)(64756008)(66446008)(66556008)(66476007)(42882007)(73956011)(66946007)(9686003)(68736007)(52116002)(229853002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR2201MB1341;H:MWHPR2201MB1277.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: wavecomp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: oB4wAzcuoF+S/KJh0iA8dcAOQUARodytMY4ybVoFZGXn4FkT2ZgLYT8cHfpaC/R2XP52B1GzdkuNk50IFMDM+Fr0vV/TMESh58fr7aDlVdC8hLr1e09doRZuk/Z64gh7VchexPbVQ08cTmiqu9yV8QSDW7zeFAeyJnGo7sP6MgmunELcc31UGXx0uCcKi4geXv1LMO2b3XXffrWK559fcTReCLD4vv69bfnHvuDA65GPJbxY83UDHbjNwosA9qzd7vHo8d0v/3hbeIN1zAzz1z2NhE6vyzsSC5cSpvw73YfyZdUw1Tu7BcEYK5MzwikT+pXhY3rv78bsI92u6Fjh21jxkTh7ZIPhHKDfxKf0BP+4QMGhBSjz50UHvmjm8TBHN+im6RfSePZ9RKnqew1Z9mTybRFWVFz5av0Z5yIy448=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <9BAE9DD0984EBD4FBCD7F23175005B2A@namprd22.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: mips.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a0554db2-ea68-411f-b3a9-08d6f992d0b8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Jun 2019 17:30:28.7845
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 463607d3-1db3-40a0-8a29-970c56230104
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: pburton@wavecomp.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR2201MB1341
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Software event output is only enabled by a few prog types.
-This test is to ensure that all supported types are enbled for
-bpf_perf_event_output sucessfully.
+Hi Paul,
 
-v4:
-* Reformating log message
-v3:
-* Reformating log message
-v2:
-* Reformating log message
+On Tue, Jun 25, 2019 at 12:57:50AM +0200, Paul Cercueil wrote:
+> +static const struct of_device_id ingenic_tcu_of_match[] =3D {
+> +	{ .compatible =3D "ingenic,jz4740-tcu", .data =3D &jz4740_soc_info, },
+> +	{ .compatible =3D "ingenic,jz4725b-tcu", .data =3D &jz4725b_soc_info, }=
+,
+> +	{ .compatible =3D "ingenic,jz4770-tcu", .data =3D &jz4740_soc_info, },
+> +	{ }
+> +};
 
-Signed-off-by: allanzhang <allanzhang@google.com>
----
- tools/testing/selftests/bpf/test_verifier.c   | 33 ++++++-
- .../selftests/bpf/verifier/event_output.c     | 94 +++++++++++++++++++
- 2 files changed, 126 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/bpf/verifier/event_output.c
+Nit: why not order these numerically? ie. 25b, 40, 70.
 
-diff --git a/tools/testing/selftests/bpf/test_verifier.c b/tools/testing/selftests/bpf/test_verifier.c
-index c5514daf8865..901a188e1eea 100644
---- a/tools/testing/selftests/bpf/test_verifier.c
-+++ b/tools/testing/selftests/bpf/test_verifier.c
-@@ -50,7 +50,7 @@
- #define MAX_INSNS	BPF_MAXINSNS
- #define MAX_TEST_INSNS	1000000
- #define MAX_FIXUPS	8
--#define MAX_NR_MAPS	18
-+#define MAX_NR_MAPS	19
- #define MAX_TEST_RUNS	8
- #define POINTER_VALUE	0xcafe4all
- #define TEST_DATA_LEN	64
-@@ -84,6 +84,7 @@ struct bpf_test {
- 	int fixup_map_array_wo[MAX_FIXUPS];
- 	int fixup_map_array_small[MAX_FIXUPS];
- 	int fixup_sk_storage_map[MAX_FIXUPS];
-+	int fixup_map_event_output[MAX_FIXUPS];
- 	const char *errstr;
- 	const char *errstr_unpriv;
- 	uint32_t retval, retval_unpriv, insn_processed;
-@@ -604,6 +605,28 @@ static int create_sk_storage_map(void)
- 	return fd;
- }
- 
-+static int create_event_output_map(void)
-+{
-+	struct bpf_create_map_attr attr = {
-+		.name = "test_map",
-+		.map_type = BPF_MAP_TYPE_PERF_EVENT_ARRAY,
-+		.key_size = 4,
-+		.value_size = 4,
-+		.max_entries = 1,
-+	};
-+	int fd, btf_fd;
-+
-+	btf_fd = load_btf();
-+	if (btf_fd < 0)
-+		return -1;
-+	attr.btf_fd = btf_fd;
-+	fd = bpf_create_map_xattr(&attr);
-+	close(attr.btf_fd);
-+	if (fd < 0)
-+		printf("Failed to create event_output\n");
-+	return fd;
-+}
-+
- static char bpf_vlog[UINT_MAX >> 8];
- 
- static void do_test_fixup(struct bpf_test *test, enum bpf_prog_type prog_type,
-@@ -627,6 +650,7 @@ static void do_test_fixup(struct bpf_test *test, enum bpf_prog_type prog_type,
- 	int *fixup_map_array_wo = test->fixup_map_array_wo;
- 	int *fixup_map_array_small = test->fixup_map_array_small;
- 	int *fixup_sk_storage_map = test->fixup_sk_storage_map;
-+	int *fixup_map_event_output = test->fixup_map_event_output;
- 
- 	if (test->fill_helper) {
- 		test->fill_insns = calloc(MAX_TEST_INSNS, sizeof(struct bpf_insn));
-@@ -788,6 +812,13 @@ static void do_test_fixup(struct bpf_test *test, enum bpf_prog_type prog_type,
- 			fixup_sk_storage_map++;
- 		} while (*fixup_sk_storage_map);
- 	}
-+	if (*fixup_map_event_output) {
-+		map_fds[18] = create_event_output_map();
-+		do {
-+			prog[*fixup_map_event_output].imm = map_fds[18];
-+			fixup_map_event_output++;
-+		} while (*fixup_map_event_output);
-+	}
- }
- 
- static int set_admin(bool admin)
-diff --git a/tools/testing/selftests/bpf/verifier/event_output.c b/tools/testing/selftests/bpf/verifier/event_output.c
-new file mode 100644
-index 000000000000..b25eabcfaa56
---- /dev/null
-+++ b/tools/testing/selftests/bpf/verifier/event_output.c
-@@ -0,0 +1,94 @@
-+/* instructions used to output a skb based software event, produced
-+ * from code snippet:
-+struct TMP {
-+  uint64_t tmp;
-+} tt;
-+tt.tmp = 5;
-+bpf_perf_event_output(skb, &connection_tracking_event_map, 0,
-+		      &tt, sizeof(tt));
-+return 1;
-+
-+the bpf assembly from llvm is:
-+       0:       b7 02 00 00 05 00 00 00         r2 = 5
-+       1:       7b 2a f8 ff 00 00 00 00         *(u64 *)(r10 - 8) = r2
-+       2:       bf a4 00 00 00 00 00 00         r4 = r10
-+       3:       07 04 00 00 f8 ff ff ff         r4 += -8
-+       4:       18 02 00 00 00 00 00 00 00 00 00 00 00 00 00 00    r2 = 0ll
-+       6:       b7 03 00 00 00 00 00 00         r3 = 0
-+       7:       b7 05 00 00 08 00 00 00         r5 = 8
-+       8:       85 00 00 00 19 00 00 00         call 25
-+       9:       b7 00 00 00 01 00 00 00         r0 = 1
-+      10:       95 00 00 00 00 00 00 00         exit
-+
-+    The reason I put the code here instead of fill_helpers is that map fixup is
-+    against the insns, instead of filled prog.
-+*/
-+
-+#define __PERF_EVENT_INSNS__					\
-+	BPF_MOV64_IMM(BPF_REG_2, 5),				\
-+	BPF_STX_MEM(BPF_DW, BPF_REG_10, BPF_REG_2, -8),		\
-+	BPF_MOV64_REG(BPF_REG_4, BPF_REG_10),			\
-+	BPF_ALU64_IMM(BPF_ADD, BPF_REG_4, -8),			\
-+	BPF_LD_MAP_FD(BPF_REG_2, 0),				\
-+	BPF_MOV64_IMM(BPF_REG_3, 0),				\
-+	BPF_MOV64_IMM(BPF_REG_5, 8),				\
-+	BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, 0, 0,		\
-+		     BPF_FUNC_perf_event_output),		\
-+	BPF_MOV64_IMM(BPF_REG_0, 1),				\
-+	BPF_EXIT_INSN(),
-+{
-+	"perfevent for sockops",
-+	.insns = { __PERF_EVENT_INSNS__ },
-+	.prog_type = BPF_PROG_TYPE_SOCK_OPS,
-+	.fixup_map_event_output = { 4 },
-+	.result = ACCEPT,
-+	.retval = 1,
-+},
-+{
-+	"perfevent for tc",
-+	.insns =  { __PERF_EVENT_INSNS__ },
-+	.prog_type = BPF_PROG_TYPE_SCHED_CLS,
-+	.fixup_map_event_output = { 4 },
-+	.result = ACCEPT,
-+	.retval = 1,
-+},
-+{
-+	"perfevent for lwt out",
-+	.insns =  { __PERF_EVENT_INSNS__ },
-+	.prog_type = BPF_PROG_TYPE_LWT_OUT,
-+	.fixup_map_event_output = { 4 },
-+	.result = ACCEPT,
-+	.retval = 1,
-+},
-+{
-+	"perfevent for xdp",
-+	.insns =  { __PERF_EVENT_INSNS__ },
-+	.prog_type = BPF_PROG_TYPE_XDP,
-+	.fixup_map_event_output = { 4 },
-+	.result = ACCEPT,
-+	.retval = 1,
-+},
-+{
-+	"perfevent for socket filter",
-+	.insns =  { __PERF_EVENT_INSNS__ },
-+	.prog_type = BPF_PROG_TYPE_SOCKET_FILTER,
-+	.fixup_map_event_output = { 4 },
-+	.result = ACCEPT,
-+	.retval = 1,
-+},
-+{
-+	"perfevent for sk_skb",
-+	.insns =  { __PERF_EVENT_INSNS__ },
-+	.prog_type = BPF_PROG_TYPE_SK_SKB,
-+	.fixup_map_event_output = { 4 },
-+	.result = ACCEPT,
-+	.retval = 1,
-+},
-+{
-+	"perfevent for cgroup skb",
-+	.insns =  { __PERF_EVENT_INSNS__ },
-+	.prog_type = BPF_PROG_TYPE_CGROUP_SKB,
-+	.fixup_map_event_output = { 4 },
-+	.result = ACCEPT,
-+	.retval = 1,
-+},
--- 
-2.22.0.410.gd8fdbe21b5-goog
+> +static struct regmap * __init ingenic_tcu_create_regmap(struct device_no=
+de *np)
+> +{
+> +	struct resource res;
+> +	void __iomem *base;
+> +	struct regmap *map;
+> +
+> +	if (!of_match_node(ingenic_tcu_of_match, np))
+> +		return ERR_PTR(-EINVAL);
+> +
+> +	base =3D of_io_request_and_map(np, 0, "TCU");
+> +	if (IS_ERR(base))
+> +		return ERR_PTR(PTR_ERR(base));
 
+This is equivalent to:
+
+    return ERR_CAST(base);
+
+Apart from those:
+
+    Reviewed-by: Paul Burton <paul.burton@mips.com>
+
+Thanks,
+    Paul
