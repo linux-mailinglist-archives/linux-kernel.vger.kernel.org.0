@@ -2,19 +2,19 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7ADC556AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 20:03:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CC58556AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 20:03:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732781AbfFYSCj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 14:02:39 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:58764 "EHLO
+        id S1732819AbfFYSCt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 14:02:49 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:58790 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727289AbfFYSCi (ORCPT
+        with ESMTP id S1727385AbfFYSCj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 14:02:38 -0400
+        Tue, 25 Jun 2019 14:02:39 -0400
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: bbeckett)
-        with ESMTPSA id CE79E28A3F3
+        with ESMTPSA id 2ECC328626E
 From:   Robert Beckett <bob.beckett@collabora.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
@@ -29,9 +29,9 @@ Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         NXP Linux Team <linux-imx@nxp.com>,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Robert Beckett <bob.beckett@collabora.com>
-Subject: [PATCH v3 1/4] drm/vblank: warn on sending stale event
-Date:   Tue, 25 Jun 2019 18:59:12 +0100
-Message-Id: <a21034afa30246f31daa16e74a0772377a4791ef.1561483965.git.bob.beckett@collabora.com>
+Subject: [PATCH v3 2/4] drm/imx: notify drm core before sending event during crtc disable
+Date:   Tue, 25 Jun 2019 18:59:13 +0100
+Message-Id: <066eb916ec920e0515367548e4af2ee28f9d0a43.1561483965.git.bob.beckett@collabora.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <cover.1561483965.git.bob.beckett@collabora.com>
 References: <cover.1561483965.git.bob.beckett@collabora.com>
@@ -40,51 +40,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Warn when about to send stale vblank info and add advice to
-documentation on how to avoid.
+Notify drm core before sending pending events during crtc disable.
+This fixes the first event after disable having an old stale timestamp
+by having drm_crtc_vblank_off update the timestamp to now.
+
+This was seen while debugging weston log message:
+Warning: computed repaint delay is insane: -8212 msec
+
+This occured due to:
+1. driver starts up
+2. fbcon comes along and restores fbdev, enabling vblank
+3. vblank_disable_fn fires via timer disabling vblank, keeping vblank
+seq number and time set at current value
+(some time later)
+4. weston starts and does a modeset
+5. atomic commit disables crtc while it does the modeset
+6. ipu_crtc_atomic_disable sends vblank with old seq number and time
+
+Fixes: a474478642d5 ("drm/imx: fix crtc vblank state regression")
 
 Signed-off-by: Robert Beckett <bob.beckett@collabora.com>
 ---
- drivers/gpu/drm/drm_vblank.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ drivers/gpu/drm/imx/ipuv3-crtc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_vblank.c b/drivers/gpu/drm/drm_vblank.c
-index 603ab105125d..7dabb2bdb733 100644
---- a/drivers/gpu/drm/drm_vblank.c
-+++ b/drivers/gpu/drm/drm_vblank.c
-@@ -918,6 +918,19 @@ EXPORT_SYMBOL(drm_crtc_arm_vblank_event);
-  *
-  * See drm_crtc_arm_vblank_event() for a helper which can be used in certain
-  * situation, especially to send out events for atomic commit operations.
-+ *
-+ * Care should be taken to avoid stale timestamps. If:
-+ *   - your driver has vblank support (i.e. dev->num_crtcs > 0)
-+ *   - the vblank irq is off (i.e. no one called drm_crtc_vblank_get)
-+ *   - from the vblank code's pov the pipe is still running (i.e. not
-+ *     in-between a drm_crtc_vblank_off()/on() pair)
-+ * If all of these conditions hold then drm_crtc_send_vblank_event is
-+ * going to give you a garbage timestamp and and sequence number (the last
-+ * recorded before the irq was disabled). If you call drm_crtc_vblank_get/put
-+ * around it, or after vblank_off, then either of those will have rolled things
-+ * forward for you.
-+ * So, drivers should call drm_crtc_vblank_off() before this function in their
-+ * crtc atomic_disable handlers.
-  */
- void drm_crtc_send_vblank_event(struct drm_crtc *crtc,
- 				struct drm_pending_vblank_event *e)
-@@ -925,8 +938,12 @@ void drm_crtc_send_vblank_event(struct drm_crtc *crtc,
- 	struct drm_device *dev = crtc->dev;
- 	u64 seq;
- 	unsigned int pipe = drm_crtc_index(crtc);
-+	struct drm_vblank_crtc *vblank = &dev->vblank[pipe];
- 	ktime_t now;
+diff --git a/drivers/gpu/drm/imx/ipuv3-crtc.c b/drivers/gpu/drm/imx/ipuv3-crtc.c
+index 9cc1d678674f..e04d6efff1b5 100644
+--- a/drivers/gpu/drm/imx/ipuv3-crtc.c
++++ b/drivers/gpu/drm/imx/ipuv3-crtc.c
+@@ -91,14 +91,14 @@ static void ipu_crtc_atomic_disable(struct drm_crtc *crtc,
+ 	ipu_dc_disable(ipu);
+ 	ipu_prg_disable(ipu);
  
-+	WARN_ONCE(dev->num_crtcs > 0 && !vblank->enabled && !vblank->inmodeset,
-+		  "sending stale vblank info\n");
++	drm_crtc_vblank_off(crtc);
 +
- 	if (dev->num_crtcs > 0) {
- 		seq = drm_vblank_count_and_time(dev, pipe, &now);
- 	} else {
+ 	spin_lock_irq(&crtc->dev->event_lock);
+ 	if (crtc->state->event) {
+ 		drm_crtc_send_vblank_event(crtc, crtc->state->event);
+ 		crtc->state->event = NULL;
+ 	}
+ 	spin_unlock_irq(&crtc->dev->event_lock);
+-
+-	drm_crtc_vblank_off(crtc);
+ }
+ 
+ static void imx_drm_crtc_reset(struct drm_crtc *crtc)
 -- 
 2.18.0
 
