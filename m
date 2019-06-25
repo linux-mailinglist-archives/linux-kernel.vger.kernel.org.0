@@ -2,98 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73086528E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 12:01:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6387E528E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 12:03:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731795AbfFYKBR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 06:01:17 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:3157 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726421AbfFYKBQ (ORCPT
+        id S1731810AbfFYKD2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 06:03:28 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:41318 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726421AbfFYKD2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 06:01:16 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d11f0ea0000>; Tue, 25 Jun 2019 03:01:14 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 25 Jun 2019 03:01:15 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 25 Jun 2019 03:01:15 -0700
-Received: from [10.21.132.148] (172.20.13.39) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 25 Jun
- 2019 10:01:13 +0000
-Subject: Re: [PATCH 5.1 000/121] 5.1.15-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
-        <stable@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
-References: <20190624092320.652599624@linuxfoundation.org>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <163f4750-24c9-104c-95aa-16f51656ef63@nvidia.com>
-Date:   Tue, 25 Jun 2019 11:01:11 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
+        Tue, 25 Jun 2019 06:03:28 -0400
+Received: by mail-pf1-f196.google.com with SMTP id m30so9211972pff.8
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 03:03:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=uZBl3YBCGr2TkoynfSi6k0BV9mYucHFfZB7RzFEuUl4=;
+        b=WXr+rfS/rszZ4yQsdLfXsyMkLO6mhuPEzfQ87IU+Ico7psF7w4ljJ+GK97Zpfddrhq
+         PB366eC9oTuaqMgZ2x2E0e55033ERqbA+bAtEZ/LngETvGbdMZfftPEKFNeyIRi40vUe
+         wee42/h5Rqv1SwmaAnAg0ssDEG7hg629ABhooO3IpXEoRKBxLHFsL4hFwwbqWAYc5otk
+         TwRjxKToFUmwVExWKMyTYbgpAsV487CdnOzYNof3Is0agTeSD8Wr9xPuH1S/krDY+0db
+         aXxP4hTCwetawDInx97AOtp+89E5NVj2d46jdbc/Pt5Sk93RJzulH+kTJT34nQ175/Lw
+         kxcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=uZBl3YBCGr2TkoynfSi6k0BV9mYucHFfZB7RzFEuUl4=;
+        b=o6R64rSFR5SGKpdrkaoiV9H83f6hC6gZDqwcdOecHoBe3yOjCKSP1DW1GHZVE5wUYC
+         n5jW+qgaheok/syI5HSJNgZppcUQqSpt3U/ibqdMkfmh/XHMY1MFVczoQGz16PrU0hU5
+         SmTrE0l8O4oEblXfK1PxAjkM5b/325m/RmnXf2EEt72QwrR4+YykoyqhmxLUFU8dVmnU
+         3+M1QGdmZhJvQcscQASgOgMwPQlz43K22ZXtoPUPs30TS6DngW7LmGQZ8LXstrRI6lYL
+         j4rwhtMSGZvEQvMKV1Lm8bTfSX8P042C1PPAHgq5UICPIKk9+LBHSUo7YqxMxDI6odxh
+         5sRQ==
+X-Gm-Message-State: APjAAAWhZzM+p9n3n22VElAW6CmyobgVDX345l7K7wvBC4uAb4PXltOm
+        oj61UxoBUZOZd66XX6iv4Fw=
+X-Google-Smtp-Source: APXvYqyifQUMisgnYyI/ZiqlDTise+qowJ2uoRmtol0JbCRaNSkTVvO4EnTV7O09mHwqeH7NDX5MWw==
+X-Received: by 2002:a65:40cb:: with SMTP id u11mr39968946pgp.333.1561457007433;
+        Tue, 25 Jun 2019 03:03:27 -0700 (PDT)
+Received: from localhost ([175.223.22.38])
+        by smtp.gmail.com with ESMTPSA id z13sm5336351pjn.32.2019.06.25.03.03.25
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 25 Jun 2019 03:03:26 -0700 (PDT)
+Date:   Tue, 25 Jun 2019 19:03:22 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     John Ogness <john.ogness@linutronix.de>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [RFC PATCH v2 1/2] printk-rb: add a new printk ringbuffer
+ implementation
+Message-ID: <20190625100322.GD532@jagdpanzerIV>
+References: <20190607162349.18199-1-john.ogness@linutronix.de>
+ <20190607162349.18199-2-john.ogness@linutronix.de>
+ <20190618045117.GA7419@jagdpanzerIV>
+ <87imt2bl0k.fsf@linutronix.de>
+ <20190625064543.GA19050@jagdpanzerIV>
+ <20190625071500.GB19050@jagdpanzerIV>
+ <875zoujbq4.fsf@linutronix.de>
+ <20190625090620.wufhvdxxiryumdra@pathway.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <20190624092320.652599624@linuxfoundation.org>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL103.nvidia.com (172.20.187.11) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1561456874; bh=F+G9++7Dd6V5HfkR9MugXeCZVTJPB1SQBLIx7Vb0Q5c=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=mPFmQX1oR45P7r7qbq7DTnK7vKTayJtVK9oUVnfPqKiroW0gvZAsfHTxfNqno2pT6
-         GbgvRXQvI5QUtNyt08QQ0dyI/LPfeQxKxnckouYFhyVqeIRHwaayMsx9szNiSKH7L3
-         YvpBYC0fiTaBze/vBEAsr4OV/Uxg3ef83bky+q//8UMBY4OZH7XRsEC77sy7MGKlL0
-         lULX87GlKLiM54zLR0ve5egt4ea4jGlBNcGOv45pklxAZBGPs084IUpSM4CC0zl/hl
-         L0EQWzbOMazpG3zxhJ7USg/cInOdPQ2xysBhj/7aeKtk8fsXNubuJn0rvoxGeusxN8
-         op4xggD/PoB9A==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190625090620.wufhvdxxiryumdra@pathway.suse.cz>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 24/06/2019 10:55, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.1.15 release.
-> There are 121 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On (06/25/19 11:06), Petr Mladek wrote:
+> On Tue 2019-06-25 10:44:19, John Ogness wrote:
+> > On 2019-06-25, Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com> wrote:
+> > > In vprintk_emit(), are we going to always reserve 1024-byte
+> > > records, since we don't know the size in advance, e.g.
+> > > 
+> > > 	printk("%pS %s\n", regs->ip, current->name)
+> > > 		prb_reserve(&e, &rb, ????);
+> > > 
+> > > or are we going to run vscnprintf() on a NULL buffer first,
+> > > then reserve the exactly required number of bytes and afterwards
+> > > vscnprintf(s) -> prb_commit(&e)?
+> > 
+> > (As suggested by Petr) I want to use vscnprintf() on a NULL
+> > buffer. However, a NULL buffer is not sufficient because things like the
+> > loglevel are sometimes added via %s (for example, in /dev/kmsg). So
+> > rather than a NULL buffer, I would use a small buffer on the stack
+> > (large enough to store loglevel/cont information). This way we can use
+> > vscnprintf() to get the exact size _and_ printk_get_level() will see
+> > enough of the formatted string to parse what it needs.
 > 
-> Responses should be made by Wed 26 Jun 2019 09:22:03 AM UTC.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.1.15-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.1.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+> vscnprintf() with NULL pointer is perfectly fine. Only the formatted
+> string has variable size.
 
-All tests passing for Tegra ...
+Yeah, that should work. Probably. Can't think of any issues, except
+for increased CPU usage. Some sprintf() format specifiers are heavier
+than the rest (pS/pF on ia64/ppc/hppa).
 
-Test results for stable-v5.1:
-    12 builds:	12 pass, 0 fail
-    22 boots:	22 pass, 0 fail
-    32 tests:	32 pass, 0 fail
+OK, very theoretically.
 
-Linux version:	5.1.15-rc1-gd74a88068af9
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
+There is a difference.
 
-Cheers
-Jon
+Doing "sz = vscprintf(NULL, msg); vscnprintf(buf, sz, msg)" for
+msg_print_text() and msg_print_ext_header() was safe, because the
+data - msg - would not change under us, we would work with logbuf
+records, IOW with data which is owned by printk() and printk only.
 
--- 
-nvpublic
+But doing
+		sz = vcsprintf(NULL, "xxx", random_pointer);
+		if ((buf = prb_reserve(... sz))) {
+			vscnprintf(buf, sz, "xxx", random_pointer);
+			prb_commit(...);
+		}
+
+might have different outcome sometimes. We probably (!!!) can have
+some race conditions. The problem is that, unlike msg_print_text()
+and msg_print_ext_header(), printk() works with pointers which it
+does not own nor control. IOW within single printk() we will access
+some random kernel pointers, then do prb stuff, then access those
+same pointers, expecting that none of them will ever change their
+state. A very simple example
+
+		printk("Comm %s\n", current->comm)
+
+Suppose printk on CPU0 and ia64_mca_modify_comm on CPU1
+
+CPU0								CPU1
+printk(...)
+ sz = vscprintf(NULL, "Comm %s\n", current->comm);
+								ia64_mca_modify_comm()
+								  snprintf(comm, sizeof(comm), "%s %d", current->comm, previous_current->pid);
+								  memcpy(current->comm, comm, sizeof(current->comm));
+ if ((buf = prb_reserve(... sz))) {
+   vscnprintf(buf, "Comm %s\n", current->comm);
+				^^^^^^^^^^^^^^ ->comm has changed.
+					       Nothing critical, we
+					       should not corrupt
+					       anything, but we will
+					       truncate ->comm if its
+					       new size is larger than
+					       what it used to be when
+					       we did vscprintf(NULL).
+   prb_commit(...);
+ }
+
+Probably there can be other examples.
+
+	-ss
