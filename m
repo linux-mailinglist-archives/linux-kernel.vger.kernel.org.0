@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B757654D83
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 13:24:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21B5454D8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 13:25:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730891AbfFYLYo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 07:24:44 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:41852 "EHLO
+        id S1731142AbfFYLZC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 07:25:02 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:41859 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727138AbfFYLYj (ORCPT
+        with ESMTP id S1727964AbfFYLYk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 07:24:39 -0400
+        Tue, 25 Jun 2019 07:24:40 -0400
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1hfjYw-0004rC-6K; Tue, 25 Jun 2019 13:24:34 +0200
-Message-Id: <20190625112405.666964552@linutronix.de>
+        id 1hfjYw-0004rH-Nq; Tue, 25 Jun 2019 13:24:34 +0200
+Message-Id: <20190625112405.760253024@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Tue, 25 Jun 2019 13:13:55 +0200
+Date:   Tue, 25 Jun 2019 13:13:56 +0200
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Robert Hodaszi <Robert.Hodaszi@digi.com>,
@@ -26,7 +26,7 @@ Cc:     x86@kernel.org, Robert Hodaszi <Robert.Hodaszi@digi.com>,
         Ido Schimmel <idosch@mellanox.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-serial@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>
-Subject: [patch 2/5] genirq: Add optional hardware synchronization for shutdown
+Subject: [patch 3/5] x86/ioapic: Implement irq_inflight() callback
 References: <20190625111353.863718167@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -35,144 +35,99 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-free_irq() ensures that no hardware interrupt handler is executing on a
-different CPU before actually releasing resources and deactivating the
-interrupt completely in a domain hierarchy.
+When an interrupt is shut down in free_irq() there might be an inflight
+interrupt which is not yet serviced pending in the IO-APIC remote IRR. That
+means the interrupt has been sent to the target CPUs local APIC, but the
+target CPU is in a state which delays the servicing.
 
-But that does not catch the case where the interrupt is on flight at the
-hardware level but not yet serviced by the target CPU. That creates an
-interesing race condition:
+So free_irq() would proceed to free resources and to clear the vector
+because synchronize_hardirq() does not see an interrupt handler in
+progress.
 
-   CPU 0                  CPU 1               IRQ CHIP
+That can trigger a spurious interrupt warning, which is harmless and just
+confuses users, but it also can leave the remote IRR in a stale state
+because once the handler is invoked the interrupt resources might be freed
+already and therefore acknowledgement is not possible anymore.
 
-                                              interrupt is raised
-                                              sent to CPU1
-			  Unable to handle
-			  immediately
-			  (interrupts off,
-			   deep idle delay)
-   mask()
-   ...
-   free()
-     shutdown()
-     synchronize_irq()
-     release_resources()
-                          do_IRQ()
-                            -> resources are not available
+Implement the new irq_inflight() callback for the IO-APIC irq chip. The
+callback is invoked from free_irq() via __synchronize_hardirq(). Check the
+remote IRR bit of the interrupt and return 'in flight' if it is set and the
+interrupt is configured in level mode. For edge mode the remote IRR has no
+meaning.
 
-That might be harmless and just trigger a spurious interrupt warning, but
-some interrupt chips might get into a wedged state.
-
-Provide infrastructure for interrupt chips to provide an optional
-irq_inflight() callback and use it for the synchronization in free_irq().
-
-synchronize_[hard]irq() are not using this mechanism as it might actually
-deadlock unter certain conditions.
+As this is only meaningful for level triggered interrupts this won't cure
+the potential spurious interrupt warning for edge triggered interrupts, but
+the edge trigger case does not result in stale hardware state. This has to
+be addressed at the vector/interrupt entry level seperately.
 
 Fixes: 464d12309e1b ("x86/vector: Switch IOAPIC to global reservation mode")
 Reported-by: Robert Hodaszi <Robert.Hodaszi@digi.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- include/linux/irq.h |    2 ++
- kernel/irq/manage.c |   29 ++++++++++++++++++++++++-----
- 2 files changed, 26 insertions(+), 5 deletions(-)
+ arch/x86/kernel/apic/io_apic.c |   39 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
 
---- a/include/linux/irq.h
-+++ b/include/linux/irq.h
-@@ -418,6 +418,7 @@ static inline irq_hw_number_t irqd_to_hw
-  *			required. This is used for CPU hotplug where the
-  *			target CPU is not yet set in the cpu_online_mask.
-  * @irq_retrigger:	resend an IRQ to the CPU
-+ * @irq_inflight:	chip level detection of interrupts in flight (optional)
-  * @irq_set_type:	set the flow type (IRQ_TYPE_LEVEL/etc.) of an IRQ
-  * @irq_set_wake:	enable/disable power-management wake-on of an IRQ
-  * @irq_bus_lock:	function to lock access to slow bus (i2c) chips
-@@ -462,6 +463,7 @@ struct irq_chip {
+--- a/arch/x86/kernel/apic/io_apic.c
++++ b/arch/x86/kernel/apic/io_apic.c
+@@ -1893,6 +1893,43 @@ static int ioapic_set_affinity(struct ir
+ 	return ret;
+ }
  
- 	int		(*irq_set_affinity)(struct irq_data *data, const struct cpumask *dest, bool force);
- 	int		(*irq_retrigger)(struct irq_data *data);
-+	int		(*irq_inflight)(struct irq_data *data);
- 	int		(*irq_set_type)(struct irq_data *data, unsigned int flow_type);
- 	int		(*irq_set_wake)(struct irq_data *data, unsigned int on);
- 
---- a/kernel/irq/manage.c
-+++ b/kernel/irq/manage.c
-@@ -35,8 +35,10 @@ static int __init setup_forced_irqthread
- early_param("threadirqs", setup_forced_irqthreads);
- #endif
- 
--static void __synchronize_hardirq(struct irq_desc *desc)
-+static void __synchronize_hardirq(struct irq_desc *desc, bool sync_chip)
- {
-+	struct irq_data *irqd = irq_desc_get_irq_data(desc);
-+	struct irq_chip *chip = irq_data_get_irq_chip(irqd);
- 	bool inprogress;
- 
- 	do {
-@@ -52,6 +54,13 @@ static void __synchronize_hardirq(struct
- 		/* Ok, that indicated we're done: double-check carefully. */
- 		raw_spin_lock_irqsave(&desc->lock, flags);
- 		inprogress = irqd_irq_inprogress(&desc->irq_data);
++/*
++ * Interrupt shutdown masks the ioapic pin, but the interrupt might already
++ * be on flight, but not yet serviced by the target CPU. That means
++ * __synchronize_hardirq() would return and claim that everything is calmed
++ * down. So free_irq() would proceed and deactivate the interrupt and free
++ * resources.
++ *
++ * Once the target CPU comes around to service it it will find a cleared
++ * vector and complain. While the spurious interrupt is harmless, the full
++ * release of resources might prevent the interrupt from being acknowledged
++ * which keeps the hardware in a weird state.
++ *
++ * Verify that the corresponding Remote-IRR bits are clear.
++ */
++static int ioapic_irq_inflight(struct irq_data *irqd)
++{
++	struct mp_chip_data *mcd = irqd->chip_data;
++	struct IO_APIC_route_entry rentry;
++	struct irq_pin_list *p;
++	int ret = 0;
 +
++	raw_spin_lock(&ioapic_lock);
++	for_each_irq_pin(p, mcd->irq_2_pin) {
++		rentry = __ioapic_read_entry(p->apic, p->pin);
 +		/*
-+		 * If requested and supported, check at the chip whether it
-+		 * is in flight at the hardware level:
++		 * The remote IRR is only valid in level trigger mode. It's
++		 * meaning is undefined for edge triggered interrupts.
 +		 */
-+		if (!inprogress && sync_chip && chip && chip->irq_inflight)
-+			inprogress = chip->irq_inflight(irqd);
- 		raw_spin_unlock_irqrestore(&desc->lock, flags);
++		if (rentry.irr && rentry.trigger) {
++			ret = 1;
++			break;
++		}
++	}
++	raw_spin_unlock(&ioapic_lock);
++	return ret;
++}
++
+ static struct irq_chip ioapic_chip __read_mostly = {
+ 	.name			= "IO-APIC",
+ 	.irq_startup		= startup_ioapic_irq,
+@@ -1902,6 +1939,7 @@ static struct irq_chip ioapic_chip __rea
+ 	.irq_eoi		= ioapic_ack_level,
+ 	.irq_set_affinity	= ioapic_set_affinity,
+ 	.irq_retrigger		= irq_chip_retrigger_hierarchy,
++	.irq_inflight		= ioapic_irq_inflight,
+ 	.flags			= IRQCHIP_SKIP_SET_WAKE,
+ };
  
- 		/* Oops, that failed? */
-@@ -74,13 +83,16 @@ static void __synchronize_hardirq(struct
-  *	Returns: false if a threaded handler is active.
-  *
-  *	This function may be called - with care - from IRQ context.
-+ *
-+ *	It does not check whether there is an interrupt on flight at the
-+ *	hardware level, but not serviced yet, as this might deadlock.
-  */
- bool synchronize_hardirq(unsigned int irq)
- {
- 	struct irq_desc *desc = irq_to_desc(irq);
+@@ -1914,6 +1952,7 @@ static struct irq_chip ioapic_ir_chip __
+ 	.irq_eoi		= ioapic_ir_ack_level,
+ 	.irq_set_affinity	= ioapic_set_affinity,
+ 	.irq_retrigger		= irq_chip_retrigger_hierarchy,
++	.irq_inflight		= ioapic_irq_inflight,
+ 	.flags			= IRQCHIP_SKIP_SET_WAKE,
+ };
  
- 	if (desc) {
--		__synchronize_hardirq(desc);
-+		__synchronize_hardirq(desc, false);
- 		return !atomic_read(&desc->threads_active);
- 	}
- 
-@@ -97,13 +109,16 @@ EXPORT_SYMBOL(synchronize_hardirq);
-  *	holding a resource the IRQ handler may need you will deadlock.
-  *
-  *	This function may be called - with care - from IRQ context.
-+ *
-+ *	It does not check whether there is an interrupt on flight at the
-+ *	hardware level, but not serviced yet, as this might deadlock.
-  */
- void synchronize_irq(unsigned int irq)
- {
- 	struct irq_desc *desc = irq_to_desc(irq);
- 
- 	if (desc) {
--		__synchronize_hardirq(desc);
-+		__synchronize_hardirq(desc, false);
- 		/*
- 		 * We made sure that no hardirq handler is
- 		 * running. Now verify that no threaded handlers are
-@@ -1729,8 +1744,12 @@ static struct irqaction *__free_irq(stru
- 
- 	unregister_handler_proc(irq, action);
- 
--	/* Make sure it's not being used on another CPU: */
--	synchronize_hardirq(irq);
-+	/*
-+	 * Make sure it's not being used on another CPU and if the chip
-+	 * supports it also make sure that there is no (not yet serviced)
-+	 * interrupt on flight at the hardware level.
-+	 */
-+	__synchronize_hardirq(desc, true);
- 
- #ifdef CONFIG_DEBUG_SHIRQ
- 	/*
 
 
