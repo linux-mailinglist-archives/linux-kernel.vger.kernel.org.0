@@ -2,67 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27E1C55024
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 15:22:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CE2A5502A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 15:23:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728365AbfFYNWc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 09:22:32 -0400
-Received: from smtprelay0194.hostedemail.com ([216.40.44.194]:45882 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726707AbfFYNWb (ORCPT
+        id S1729128AbfFYNXi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 09:23:38 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:41984 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726707AbfFYNXi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 09:22:31 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 11F8D100E86CB;
-        Tue, 25 Jun 2019 13:22:30 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::,RULES_HIT:41:355:379:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1381:1431:1437:1515:1516:1518:1534:1539:1568:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3622:3865:3868:3872:4321:5007:7514:7576:10004:10400:10848:11232:11658:11914:12043:12048:12297:12740:12760:12895:13069:13161:13229:13311:13357:13439:14181:14659:14721:21080:21451:21627:21774:30054:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.14.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:26,LUA_SUMMARY:none
-X-HE-Tag: wood78_8a0682b7adc37
-X-Filterd-Recvd-Size: 1694
-Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf04.hostedemail.com (Postfix) with ESMTPA;
-        Tue, 25 Jun 2019 13:22:28 +0000 (UTC)
-Message-ID: <56190c099e31dd0c9f56296186fdb6296afbe630.camel@perches.com>
-Subject: Re: [PATCH 1/1] staging: media: fix style problem
-From:   Joe Perches <joe@perches.com>
-To:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Aliasgar Surti <aliasgar.surti500@gmail.com>,
-        mchehab@kernel.org, gregkh@linuxfoundation.org,
-        sakari.ailus@linux.intel.com, linux-media@vger.kernel.org,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Date:   Tue, 25 Jun 2019 06:22:26 -0700
-In-Reply-To: <6536b57d-fea2-e16d-2092-e9e27c51c0f1@xs4all.nl>
-References: <1561099192-19638-1-git-send-email-aliasgar.surti500@gmail.com>
-         <6536b57d-fea2-e16d-2092-e9e27c51c0f1@xs4all.nl>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
+        Tue, 25 Jun 2019 09:23:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Er+C2PKvEl/nJrxXCEOSipOUJk0fmvDq2EsmH4+cGk8=; b=j+KwMRPnq4dUxOOUVuJm3vBLp
+        Yr7hRnORtM5T8FZXNeYrnzja8t5wKGncmIO+vAeotY2az3jEqz2tCz07Q/U7C9dI1dL6sWmIWoOc6
+        41GmUMQjkrdfNZtjs/v/L1Gh1DhrICTQkiIhL42sZ4w8hBnDsyfdimP/vLvX72Sbx/j0nkveics04
+        +QwIFZhyR6j+7iarhWArXGc50cKiAscltQIlBXfJoykuEhGISPZ7Fyn765WPx7VsSHlbywYkRoOzR
+        ZZ7NGm3K4nFSfQtE8KvgzrchXvPbbnuokJM10Cn/+HMNe5VmQITEfKzxhw3+yiLLLX8FowxBeSThA
+        qn/bzaw0w==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hflPW-0006D5-Nn; Tue, 25 Jun 2019 13:22:58 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id ABAC5209FCA10; Tue, 25 Jun 2019 15:22:56 +0200 (CEST)
+Date:   Tue, 25 Jun 2019 15:22:56 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     Jessica Yu <jeyu@kernel.org>, linux-kernel@vger.kernel.org,
+        jikos@kernel.org, mbenes@suse.cz, pmladek@suse.com, ast@kernel.org,
+        daniel@iogearbox.net, akpm@linux-foundation.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+        Sam Protsenko <semen.protsenko@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexios Zavras <alexios.zavras@intel.com>,
+        Allison Randal <allison@lohutok.net>,
+        Vasily Averin <vvs@virtuozzo.com>,
+        Todd Brandt <todd.e.brandt@linux.intel.com>,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH 1/3] notifier: Fix broken error handling pattern
+Message-ID: <20190625132256.GY3419@hirez.programming.kicks-ass.net>
+References: <20190624091843.859714294@infradead.org>
+ <20190624092109.745446564@infradead.org>
+ <20190624222107.wrmtww6b2be26wwl@treble>
+ <20190625073821.GQ3436@hirez.programming.kicks-ass.net>
+ <20190625121334.x3dyvhwsuryxevrz@treble>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190625121334.x3dyvhwsuryxevrz@treble>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-06-25 at 09:17 +0200, Hans Verkuil wrote:
-> On 6/21/19 8:39 AM, Aliasgar Surti wrote:
-> > From: Aliasgar Surti <aliasgar.surti500@gmail.com>
+On Tue, Jun 25, 2019 at 07:13:34AM -0500, Josh Poimboeuf wrote:
+> On Tue, Jun 25, 2019 at 09:38:21AM +0200, Peter Zijlstra wrote:
+> > > > @@ -156,43 +169,30 @@ int atomic_notifier_chain_unregister(str
+> > > >  }
+> > > >  EXPORT_SYMBOL_GPL(atomic_notifier_chain_unregister);
+> > > >  
+> > > > -/**
+> > > > - *	__atomic_notifier_call_chain - Call functions in an atomic notifier chain
+> > > > - *	@nh: Pointer to head of the atomic notifier chain
+> > > > - *	@val: Value passed unmodified to notifier function
+> > > > - *	@v: Pointer passed unmodified to notifier function
+> > > > - *	@nr_to_call: See the comment for notifier_call_chain.
+> > > > - *	@nr_calls: See the comment for notifier_call_chain.
+> > > > - *
+> > > > - *	Calls each function in a notifier chain in turn.  The functions
+> > > > - *	run in an atomic context, so they must not block.
+> > > > - *	This routine uses RCU to synchronize with changes to the chain.
+> > > > - *
+> > > > - *	If the return value of the notifier can be and'ed
+> > > > - *	with %NOTIFY_STOP_MASK then atomic_notifier_call_chain()
+> > > > - *	will return immediately, with the return value of
+> > > > - *	the notifier function which halted execution.
+> > > > - *	Otherwise the return value is the return value
+> > > > - *	of the last notifier function called.
+> > > > - */
+> > > 
+> > > Why remove the useful comment?
 > > 
-> > checkpatch reported "WARNING: line over 80 characters".
-> > This patch fixes the warning for file soc_camera/soc_ov5642.c
+> > Because I delete the whole function ?
 > 
-> FYI: we're not accepting patches for staging/media/soc_camera: these
-> are obsolete and broken drivers.
+> I viewed it as more of a rename... Regardless would the comment not
+> still be useful for the non-double-underscore version of the function?
 
-Then mark the MAINTAINERS entry as Orphan / Obsolete
-
-It's currently:
-
-SOC-CAMERA V4L2 SUBSYSTEM
-L:	linux-media@vger.kernel.org
-T:	git git://linuxtv.org/media_tree.git
-S:	Orphan
-F:	include/media/soc_camera.h
-F:	drivers/staging/media/soc_camera/
-
-
+I never got that far, I just deleted the whole thing without reading it.
+But yes, with a few tweaks it should apply to the normal function.
