@@ -2,120 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69913552E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 17:07:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA18A552F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 17:08:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732112AbfFYPHM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 11:07:12 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:38734 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732067AbfFYPHM (ORCPT
+        id S1732036AbfFYPIn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 11:08:43 -0400
+Received: from pio-pvt-msa3.bahnhof.se ([79.136.2.42]:47660 "EHLO
+        pio-pvt-msa3.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731330AbfFYPIl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 11:07:12 -0400
-Received: by mail-qt1-f195.google.com with SMTP id n11so7517968qtl.5
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 08:07:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=MlFm0RSUDJWR/dpFwmu8HNr471hEX79YQx8dujmGuTY=;
-        b=fVY3ICfXakhtVfbzcDEtsi9F/GE7Aeb5Q8NxEHcRpOfvNIEa7ZHeVpZ1LXNQKE8eSd
-         vqN6KiG0165nartNEfdqe4JzSg8yaALuv9CoTSD7fYD2bxerXjngGFOKyuPepYPQETyX
-         ybUXyr6JOCICPvL18Wn+PCsbXig0qOG8x4CIs7tRnaFgJf4jdwC8OshLFaoPEzTrK8JD
-         uDy1T1gQia3lfsOzVCtVCiU54zrpuW6jKvcX9mLoDT8AaO0Xr5N4uO9EtMHuqr4yjyYm
-         pez17k3OKDsbC43eZDrg9ZfAWdOS/RHVzI951MCp/oiH7S/trI++NRhvG1fQqdMxicd3
-         DN3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=MlFm0RSUDJWR/dpFwmu8HNr471hEX79YQx8dujmGuTY=;
-        b=rc16uU1DyaqaVJpgO9V5/uty0Ye411YvzkoKIkNs/cjskg0hm5MV4xRYIT9yj8Q/g5
-         hOR0jF0aFw604lzD068+/n6yEEn8zx32BvyeGP9GL/RyHcSgsV7cb+ROBtBNvWTTyR6U
-         G7ukIeStn8YMu6VxsRGVJhcze/k6S/YclGpHRea1i8Rpjk+N4TYDwz4ZY1TqetjzQNMp
-         gdUOvwavuzaRkg2RB7TBoM1gWCYVDVBCOiX/rDUY7Ilt4GWQWttRU/3FnY5AbCTC3R0b
-         25fS8X9os7HJj9osXGS11GZBu9GijXGuXUffrfB4Ke1UD9I1bK29GId6GtYOQrt6t+1a
-         otiA==
-X-Gm-Message-State: APjAAAVfWiTE7+azp7F0eUvj7mBaA36g+KvRT+mbp8KBxk4TvVwS+Scl
-        NJ6nZyfM8m5fA7wFJ9R4grVHhQ==
-X-Google-Smtp-Source: APXvYqx5qq+RXjT0mopAm4rY8YxlQmok9dJ/vgId4MGAW9BSZbFsk13S7wC2nyjHTouIC5AdCKBLnQ==
-X-Received: by 2002:ac8:2d17:: with SMTP id n23mr72728077qta.132.1561475231316;
-        Tue, 25 Jun 2019 08:07:11 -0700 (PDT)
-Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id d17sm6781843qtp.84.2019.06.25.08.07.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Jun 2019 08:07:10 -0700 (PDT)
-Message-ID: <1561475229.5154.74.camel@lca.pw>
-Subject: Re: [PATCH v2] sched/core: silence a warning in sched_init()
-From:   Qian Cai <cai@lca.pw>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     mingo@redhat.com, valentin.schneider@arm.com,
-        linux-kernel@vger.kernel.org
-Date:   Tue, 25 Jun 2019 11:07:09 -0400
-In-Reply-To: <20190625142508.GE3419@hirez.programming.kicks-ass.net>
-References: <1561466662-22314-1-git-send-email-cai@lca.pw>
-         <20190625135238.GA3419@hirez.programming.kicks-ass.net>
-         <1561471459.5154.70.camel@lca.pw>
-         <20190625142508.GE3419@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 25 Jun 2019 11:08:41 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by pio-pvt-msa3.bahnhof.se (Postfix) with ESMTP id CA9AD3F732;
+        Tue, 25 Jun 2019 17:08:33 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at bahnhof.se
+X-Spam-Flag: NO
+X-Spam-Score: -2.899
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.899 tagged_above=-999 required=6.31
+        tests=[ALL_TRUSTED=-1, BAYES_00=-1.9, URIBL_BLOCKED=0.001]
+        autolearn=ham autolearn_force=no
+Received: from pio-pvt-msa3.bahnhof.se ([127.0.0.1])
+        by localhost (pio-pvt-msa3.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 1mKKqNFww7JF; Tue, 25 Jun 2019 17:08:24 +0200 (CEST)
+Received: from localhost (h-41-252.A163.priv.bahnhof.se [46.59.41.252])
+        (Authenticated sender: mb547485)
+        by pio-pvt-msa3.bahnhof.se (Postfix) with ESMTPA id 12E773F3B2;
+        Tue, 25 Jun 2019 17:08:23 +0200 (CEST)
+Date:   Tue, 25 Jun 2019 17:08:23 +0200
+From:   Fredrik Noring <noring@nocrew.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Guenter Roeck <linux@roeck-us.net>, laurentiu.tudor@nxp.com,
+        stern@rowland.harvard.edu, gregkh@linuxfoundation.org,
+        linux-usb@vger.kernel.org, marex@denx.de, leoyang.li@nxp.com,
+        linux-kernel@vger.kernel.org, robin.murphy@arm.com,
+        JuergenUrban@gmx.de
+Subject: [PATCH 2/2] usb: host: Fix excessive alignment restriction for local
+ memory allocations
+Message-ID: <20190625150823.GB2560@sx9>
+References: <20190611190343.GA18459@roeck-us.net>
+ <20190613134033.GA2489@sx9>
+ <bdfd2178-9e3c-dc15-6aa1-ec1f1fbcb191@roeck-us.net>
+ <20190613153414.GA909@sx9>
+ <3f2164cd-7655-b7cc-ec57-d8751886728c@roeck-us.net>
+ <20190614142816.GA2574@sx9>
+ <20190624063515.GA3296@lst.de>
+ <20190624125916.GA2516@sx9>
+ <20190625060000.GA28986@lst.de>
+ <20190625150558.GA2560@sx9>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190625150558.GA2560@sx9>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-06-25 at 16:25 +0200, Peter Zijlstra wrote:
-> On Tue, Jun 25, 2019 at 10:04:19AM -0400, Qian Cai wrote:
-> > On Tue, 2019-06-25 at 15:52 +0200, Peter Zijlstra wrote:
-> > Yes, -Wmissing-prototype makes no sense, but "-Wunused-but-set-variable" is
-> > pretty valid to catch certain developer errors. For example,
-> > 
-> > https://lists.linuxfoundation.org/pipermail/iommu/2019-May/035680.html
-> > 
-> > > 
-> > > As to this one, ideally the compiler would not be stupid, and understand
-> > > the below, but alas.
-> > 
-> > Pretty sure that won't work, as the compiler will complain something like,
-> > 
-> > ISO C90 forbids mixed declarations and code
-> 
-> No, it builds just fine, it's a new block and C allows new variables at
-> every block start -- with the scope of that block.
+The PAGE_SHIFT alignment restriction to devm_gen_pool_create() quickly
+exhaust local memory because most allocations are much smaller than
+PAGE_SIZE. This causes USB device failures such as
 
-I remember I tried that before but recalled the error code wrong. Here it is,
+	usb 1-2.1: reset full-speed USB device number 4 using sm501-usb
+	sd 1:0:0:0: [sda] tag#0 UNKNOWN(0x2003) Result: hostbyte=0x03 driverbyte=0x00
+	sd 1:0:0:0: [sda] tag#0 CDB: opcode=0x28 28 00 00 00 08 7c 00 00 f0 00
+	print_req_error: I/O error, dev sda, sector 2172 flags 80700
 
-kernel/sched/core.c:5940:17: warning: unused variable 'ptr' [-Wunused-variable]
-                unsigned long ptr = (unsigned long)kzalloc(alloc_size,
-GFP_NOWAIT);
+when trying to boot from the SM501 USB controller on SH4 with QEMU.
 
-> 
-> And for our config, alloc_size is an unconditional 0, so it should DCE
-> the whole block and with that our variable. But clearly the passes are
-> the other way around :/
-> 
-> > > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> > > index fa43ce3962e7..cb652e165570 100644
-> > > --- a/kernel/sched/core.c
-> > > +++ b/kernel/sched/core.c
-> > > @@ -6369,7 +6369,7 @@ DECLARE_PER_CPU(cpumask_var_t, select_idle_mask);
-> > >  
-> > >  void __init sched_init(void)
-> > >  {
-> > > -	unsigned long alloc_size = 0, ptr;
-> > > +	unsigned long alloc_size = 0;
-> > >  	int i;
-> > >  
-> > >  	wait_bit_init();
-> > > @@ -6381,7 +6381,7 @@ void __init sched_init(void)
-> > >  	alloc_size += 2 * nr_cpu_ids * sizeof(void **);
-> > >  #endif
-> > >  	if (alloc_size) {
-> > > -		ptr = (unsigned long)kzalloc(alloc_size, GFP_NOWAIT);
-> > > +		unsigned long ptr = (unsigned long)kzalloc(alloc_size,
-> > > GFP_NOWAIT);
-> > >  
-> > >  #ifdef CONFIG_FAIR_GROUP_SCHED
-> > >  		root_task_group.se = (struct sched_entity **)ptr;
+Align allocations as required but not necessarily much more than that.
+The HCCA, TD and ED structures align with 256, 32 and 16 byte memory
+boundaries, as specified by the Open HCI[1]. The min_alloc_order argument
+to devm_gen_pool_create is now somewhat arbitrarily set to 4 (16 bytes).
+Perhaps it could be somewhat lower for general buffer allocations.
+
+Reference:
+
+[1] "Open Host Controller Interface Specification for USB",
+    release 1.0a, Compaq, Microsoft, National Semiconductor, 1999,
+    pp. 16, 19, 33.
+
+Reported-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Fredrik Noring <noring@nocrew.org>
+---
+ drivers/usb/core/hcd.c      | 2 +-
+ drivers/usb/host/ohci-hcd.c | 4 ++--
+ drivers/usb/host/ohci-mem.c | 6 ++++--
+ 3 files changed, 7 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/usb/core/hcd.c b/drivers/usb/core/hcd.c
+index b2362303d32f..48483fa71854 100644
+--- a/drivers/usb/core/hcd.c
++++ b/drivers/usb/core/hcd.c
+@@ -3014,7 +3014,7 @@ int usb_hcd_setup_local_mem(struct usb_hcd *hcd, phys_addr_t phys_addr,
+ 	int err;
+ 	void __iomem *local_mem;
+ 
+-	hcd->localmem_pool = devm_gen_pool_create(hcd->self.sysdev, PAGE_SHIFT,
++	hcd->localmem_pool = devm_gen_pool_create(hcd->self.sysdev, 4,
+ 						  dev_to_node(hcd->self.sysdev),
+ 						  dev_name(hcd->self.sysdev));
+ 	if (IS_ERR(hcd->localmem_pool))
+diff --git a/drivers/usb/host/ohci-hcd.c b/drivers/usb/host/ohci-hcd.c
+index 5801858d867e..b457fdaff297 100644
+--- a/drivers/usb/host/ohci-hcd.c
++++ b/drivers/usb/host/ohci-hcd.c
+@@ -507,9 +507,9 @@ static int ohci_init (struct ohci_hcd *ohci)
+ 	ohci->prev_frame_no = IO_WATCHDOG_OFF;
+ 
+ 	if (hcd->localmem_pool)
+-		ohci->hcca = gen_pool_dma_alloc(hcd->localmem_pool,
++		ohci->hcca = gen_pool_dma_alloc_align(hcd->localmem_pool,
+ 						sizeof(*ohci->hcca),
+-						&ohci->hcca_dma);
++						&ohci->hcca_dma, 256);
+ 	else
+ 		ohci->hcca = dma_alloc_coherent(hcd->self.controller,
+ 						sizeof(*ohci->hcca),
+diff --git a/drivers/usb/host/ohci-mem.c b/drivers/usb/host/ohci-mem.c
+index 4afe27cc7e46..1425335c6baf 100644
+--- a/drivers/usb/host/ohci-mem.c
++++ b/drivers/usb/host/ohci-mem.c
+@@ -94,7 +94,8 @@ td_alloc (struct ohci_hcd *hc, gfp_t mem_flags)
+ 	struct usb_hcd	*hcd = ohci_to_hcd(hc);
+ 
+ 	if (hcd->localmem_pool)
+-		td = gen_pool_dma_zalloc(hcd->localmem_pool, sizeof(*td), &dma);
++		td = gen_pool_dma_zalloc_align(hcd->localmem_pool,
++				sizeof(*td), &dma, 32);
+ 	else
+ 		td = dma_pool_zalloc(hc->td_cache, mem_flags, &dma);
+ 	if (td) {
+@@ -137,7 +138,8 @@ ed_alloc (struct ohci_hcd *hc, gfp_t mem_flags)
+ 	struct usb_hcd	*hcd = ohci_to_hcd(hc);
+ 
+ 	if (hcd->localmem_pool)
+-		ed = gen_pool_dma_zalloc(hcd->localmem_pool, sizeof(*ed), &dma);
++		ed = gen_pool_dma_zalloc_align(hcd->localmem_pool,
++				sizeof(*ed), &dma, 16);
+ 	else
+ 		ed = dma_pool_zalloc(hc->ed_cache, mem_flags, &dma);
+ 	if (ed) {
+-- 
+2.21.0
+
