@@ -2,63 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F16054E15
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 13:59:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2319A54E1B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 14:00:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727862AbfFYL7y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 07:59:54 -0400
-Received: from verein.lst.de ([213.95.11.211]:34177 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726423AbfFYL7y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 07:59:54 -0400
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id D3FF468B05; Tue, 25 Jun 2019 13:59:21 +0200 (CEST)
-Date:   Tue, 25 Jun 2019 13:59:21 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Jason Gunthorpe <jgg@mellanox.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Michal Hocko <mhocko@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 18/22] mm: mark DEVICE_PUBLIC as broken
-Message-ID: <20190625115921.GA3874@lst.de>
-References: <20190613094326.24093-1-hch@lst.de> <20190613094326.24093-19-hch@lst.de> <20190620192648.GI12083@dhcp22.suse.cz> <20190625072915.GD30350@lst.de> <20190625114422.GA3118@mellanox.com>
+        id S1731505AbfFYMAg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 08:00:36 -0400
+Received: from www62.your-server.de ([213.133.104.62]:51514 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726009AbfFYMAg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 08:00:36 -0400
+Received: from [78.46.172.3] (helo=sslproxy06.your-server.de)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1hfk7l-0002Se-LS; Tue, 25 Jun 2019 14:00:33 +0200
+Received: from [178.199.41.31] (helo=linux.home)
+        by sslproxy06.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1hfk7l-0005Do-CT; Tue, 25 Jun 2019 14:00:33 +0200
+Subject: Re: [PATCH bpf-next] MAINTAINERS: add reviewer to maintainers entry
+To:     Jonathan Lemon <jonathan.lemon@gmail.com>,
+        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@gmail.com>
+Cc:     ast@kernel.org, netdev@vger.kernel.org,
+        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        magnus.karlsson@intel.com, bpf@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190624052455.10659-1-bjorn.topel@gmail.com>
+ <B5DAC105-8F88-43F7-9F6F-6C0B436C4F06@gmail.com>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <e0654342-7110-c1e3-53bc-cb9c303252e9@iogearbox.net>
+Date:   Tue, 25 Jun 2019 14:00:32 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190625114422.GA3118@mellanox.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <B5DAC105-8F88-43F7-9F6F-6C0B436C4F06@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.100.3/25491/Tue Jun 25 10:02:48 2019)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 25, 2019 at 11:44:28AM +0000, Jason Gunthorpe wrote:
-> Which tree and what does the resolution look like?
+On 06/24/2019 10:54 PM, Jonathan Lemon wrote:
+> On 23 Jun 2019, at 22:24, Björn Töpel wrote:
+>> From: Björn Töpel <bjorn.topel@intel.com>
+>>
+>> Jonathan Lemon has volunteered as an official AF_XDP reviewer. Thank
+>> you, Jonathan!
+>>
+>> Signed-off-by: Björn Töpel <bjorn.topel@intel.com>
+> Acked-by: Jonathan Lemon <jonathan.lemon@gmail.com>
 
-Looks like in -mm.  The current commit in linux-next is:
-
-commit 0d23b042f26955fb35721817beb98ba7f1d9ed9f
-Author: Robin Murphy <robin.murphy@arm.com>
-Date:   Fri Jun 14 10:42:14 2019 +1000
-
-    mm: clean up is_device_*_page() definitions
-
-
-> Also, I don't want to be making the decision if we should keep/remove
-> DEVICE_PUBLIC, so let's get an Ack from Andrew/etc?
-> 
-> My main reluctance is that I know there is HW out there that can do
-> coherent, and I want to believe they are coming with patches, just
-> too slowly. But I'd also rather those people defend themselves :P
-
-Lets keep everything as-is for now.  I'm pretty certain nothing
-will show up, but letting this linger another release or two
-shouldn't be much of a problem.  And if we urgently feel like removing
-it we can do it after -rc1.
+Given it's a doc update, I've applied it to bpf, thanks!
