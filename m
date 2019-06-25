@@ -2,92 +2,187 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92C4A559FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 23:33:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1148B559F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 23:33:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726422AbfFYVdv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 17:33:51 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:54416 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726331AbfFYVdt (ORCPT
+        id S1726304AbfFYVdn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 17:33:43 -0400
+Received: from mail-pl1-f202.google.com ([209.85.214.202]:44974 "EHLO
+        mail-pl1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725914AbfFYVdm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 17:33:49 -0400
-Received: from callcc.thunk.org (guestnat-104-133-0-109.corp.google.com [104.133.0.109] (may be forged))
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x5PLWF3v023800
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 25 Jun 2019 17:32:16 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 59DBA42002B; Tue, 25 Jun 2019 17:32:15 -0400 (EDT)
-Date:   Tue, 25 Jun 2019 17:32:15 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Arseny Maslennikov <ar@cs.msu.ru>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Vladimir D. Seleznev" <vseleznv@altlinux.org>,
-        Rob Landley <rob@landley.net>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v2 4/7] linux/signal.h: Ignore SIGINFO by default in new
- tasks
-Message-ID: <20190625213215.GB3116@mit.edu>
-Mail-Followup-To: Theodore Ts'o <tytso@mit.edu>,
-        Arseny Maslennikov <ar@cs.msu.ru>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Vladimir D. Seleznev" <vseleznv@altlinux.org>,
-        Rob Landley <rob@landley.net>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Pavel Machek <pavel@ucw.cz>
-References: <20190625161153.29811-1-ar@cs.msu.ru>
- <20190625161153.29811-5-ar@cs.msu.ru>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190625161153.29811-5-ar@cs.msu.ru>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 25 Jun 2019 17:33:42 -0400
+Received: by mail-pl1-f202.google.com with SMTP id n1so15522plk.11
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 14:33:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=c6hAycyMlxz47CFouFEVRVMQfFzVdquweZ4JkxM8rHY=;
+        b=vEdbAftA62D7XRgIji4W8EBitFBZHh3LfoDOdtCDkUr/sLgCAReon/sLsp2TZCVwbg
+         CkxOVs5hdloQkhFG/hMcJUpfmAmNc4IASleRLhQvbRZYIY++XI5FkjwlcmMn4PbIeVdg
+         QKax3rsPgT6Skrr+8OIOif2cEWoB1PWxiMHrR4KinqV9JS1Hk7peMVLptfltiFvxWp2J
+         Ux8LQQtZMShxqosksrqcue6KtFLfTRODveLJm3Clzv5UcDmSJL1YhVnwj9htFjezFvxU
+         ROAUBKalSsVqLlFjvE9DrUeRs+j9SCuNFKlJMEEPs9J+tUU+7+/PmI90QnQRgLx17odv
+         CMaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=c6hAycyMlxz47CFouFEVRVMQfFzVdquweZ4JkxM8rHY=;
+        b=n7Cameo0LNtGyq4Vn5TVzpr5fHDPunvo5Dl9X3t8//ihPyyROlR6zUjTnK/WjJr/m2
+         LzfVOV4o1gK3Vg+02LKz2a/4vKCaOsVMqxMME7HhNkOFekcCoqom6IfsS87UbbGVMjSZ
+         blEZ+EWMxx8FdEYJ4TcOWkYO50hKup6jWPX+pW42yS0ys5OrJahMm2I95xDoggkWK9s7
+         HqI07kSGbv6jRtSN5GJYf+vjpug400aB+z2eRJIuqsoUZXNScjkdCbLomxUHvjs6+5Rw
+         EUMDQawBVYSCwOb9zFwm19kfS45eKbvvmo+xp9+DM3meVaUXimhbecTw3BqPS6pPWZYf
+         dCxw==
+X-Gm-Message-State: APjAAAVpCEfucqFZwIL7lZgY8OSSgMZ01atFuvtuwCEEC77AMJV8sbk8
+        3Ah4a54oyyAphtHBAYMuIrEdHc0+Rl3I3mQ=
+X-Google-Smtp-Source: APXvYqzdDqdZcIyyTCQpfYliTXh2485VcU9QWV+U4gKElHjTn2Njkd1hjk1Yn51n6lFbcANWiKh2qE7vcWUFtYc=
+X-Received: by 2002:a63:dd53:: with SMTP id g19mr39414633pgj.3.1561498421863;
+ Tue, 25 Jun 2019 14:33:41 -0700 (PDT)
+Date:   Tue, 25 Jun 2019 14:33:33 -0700
+Message-Id: <20190625213337.157525-1-saravanak@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
+Subject: [PATCH v2 0/4] Add required-opps support to devfreq passive gov
+From:   Saravana Kannan <saravanak@google.com>
+To:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Saravana Kannan <saravanak@google.com>, kernel-team@android.com,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 25, 2019 at 07:11:50PM +0300, Arseny Maslennikov wrote:
-> This matches the behaviour of other Unix-like systems that have SIGINFO
-> and causes less harm to processes that do not install handlers for this
-> signal, making the keyboard status character non-fatal for them.
-> 
-> This is implemented with the assumption that SIGINFO is defined
-> to be equivalent to SIGPWR; still, there is no reason for PWR to
-> result in termination of the signal recipient anyway — it does not
-> indicate there is a fatal problem with the recipient's execution
-> context (like e.g. FPE/ILL do), and we have TERM/KILL for explicit
-> termination requests.
+The devfreq passive governor scales the frequency of a "child" device based
+on the current frequency of a "parent" device (not parent/child in the
+sense of device hierarchy). As of today, the passive governor requires one
+of the following to work correctly:
+1. The parent and child device have the same number of frequencies
+2. The child device driver passes a mapping function to translate from
+   parent frequency to child frequency.
 
-So this is a consequence of trying to overload SIGINFO with SIGPWR.
-At least on some legacy Unix systems, the way SIGPWR worked was that
-init would broadcast SIGPWR to all userspace process (with system
-daemons on an exception list so they could get shutdown last).
-Applications which didn't have a SIGPWR handler registered, would just
-exit.  Those that did, were expected to clean up in preparation with
-the impending shutdown.  After some period of time, then processes
-would get hard killed and then system daemons would get shut down and
-the system would cleanly shut itself down.
+When (1) is not true, (2) is the only option right now. But often times,
+all that is required is a simple mapping from parent's frequency to child's
+frequency.
 
-So SIGPWR acted much like SIGHUP, and that's why the default behavior
-was "terminate".  Now, as far as I know, we've not actually used in
-that way, at least for most common distributions, but there is a sane
-reason why things are they way there are, and in there are people who
-have been using SIGPWR the way it had originally been intended, there
-is risk in overloading SIGINFO with SIGPWR --- in particular, typing
-^T might cause some enterprise database to start shutting itself down.  :-)
+Since OPPs already support pointing to other "required-opps", add support
+for using that to map from parent device frequency to child device
+frequency. That way, every child device driver doesn't have to implement a
+separate mapping function anytime (1) isn't true.
 
-(In particular it might be worth checking Linux ports of Oracle and
-DB2.)
+Some common (but not comprehensive) reason for needing a devfreq passive
+governor to adjust the frequency of one device based on another are:
 
-					- Ted
+1. These were the combination of frequencies that were validated/screened
+   during the manufacturing process.
+2. These are the sensible performance combinations between two devices
+   interacting with each other. So that when one runs fast the other
+   doesn't become the bottleneck.
+3. Hardware bugs requiring some kind of frequency ratio between devices.
+
+For example, the following mapping can't be captured in DT as it stands
+today because the parent and child device have different number of OPPs.
+But with this patch series, this mapping can be captured cleanly.
+
+In arch/arm64/boot/dts/exynos/exynos5433-bus.dtsi you have something
+like this with the following changes:
+
+	bus_g2d_400: bus0 {
+		compatible = "samsung,exynos-bus";
+		clocks = <&cmu_top CLK_ACLK_G2D_400>;
+		clock-names = "bus";
+		operating-points-v2 = <&bus_g2d_400_opp_table>;
+		status = "disabled";
+	};
+
+	bus_noc2: bus9 {
+		compatible = "samsung,exynos-bus";
+		clocks = <&cmu_mif CLK_ACLK_BUS2_400>;
+		clock-names = "bus";
+		operating-points-v2 = <&bus_noc2_opp_table>;
+		status = "disabled";
+	};
+
+	bus_g2d_400_opp_table: opp_table2 {
+		compatible = "operating-points-v2";
+		opp-shared;
+
+		opp-400000000 {
+			opp-hz = /bits/ 64 <400000000>;
+			opp-microvolt = <1075000>;
+			required-opps = <&noc2_400>;
+		};
+		opp-267000000 {
+			opp-hz = /bits/ 64 <267000000>;
+			opp-microvolt = <1000000>;
+			required-opps = <&noc2_200>;
+		};
+		opp-200000000 {
+			opp-hz = /bits/ 64 <200000000>;
+			opp-microvolt = <975000>;
+			required-opps = <&noc2_200>;
+		};
+		opp-160000000 {
+			opp-hz = /bits/ 64 <160000000>;
+			opp-microvolt = <962500>;
+			required-opps = <&noc2_134>;
+		};
+		opp-134000000 {
+			opp-hz = /bits/ 64 <134000000>;
+			opp-microvolt = <950000>;
+			required-opps = <&noc2_134>;
+		};
+		opp-100000000 {
+			opp-hz = /bits/ 64 <100000000>;
+			opp-microvolt = <937500>;
+			required-opps = <&noc2_100>;
+		};
+	};
+
+	bus_noc2_opp_table: opp_table6 {
+		compatible = "operating-points-v2";
+
+		noc2_400: opp-400000000 {
+			opp-hz = /bits/ 64 <400000000>;
+		};
+		noc2_200: opp-200000000 {
+			opp-hz = /bits/ 64 <200000000>;
+		};
+		noc2_134: opp-134000000 {
+			opp-hz = /bits/ 64 <134000000>;
+		};
+		noc2_100: opp-100000000 {
+			opp-hz = /bits/ 64 <100000000>;
+		};
+	};
+
+-Saravana
+
+v1 -> v2:
+- Cached OPP table reference in devfreq to avoid looking up every time.
+- Renamed variable in passive governor to be more intuitive.
+- Updated cover letter with examples.
+
+Saravana Kannan (4):
+  OPP: Allow required-opps even if the device doesn't have power-domains
+  OPP: Add function to look up required OPP's for a given OPP
+  PM / devfreq: Cache OPP table reference in devfreq
+  PM / devfreq: Add required OPPs support to passive governor
+
+ drivers/devfreq/devfreq.c          |  6 ++++
+ drivers/devfreq/governor_passive.c | 20 ++++++++---
+ drivers/opp/core.c                 | 56 +++++++++++++++++++++++++++++-
+ drivers/opp/of.c                   | 14 --------
+ include/linux/devfreq.h            |  1 +
+ include/linux/pm_opp.h             | 11 ++++++
+ 6 files changed, 88 insertions(+), 20 deletions(-)
+
+-- 
+2.22.0.410.gd8fdbe21b5-goog
+
