@@ -2,99 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3271852580
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 09:55:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0BEC52587
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 09:56:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728539AbfFYHzz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 03:55:55 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:41467 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726543AbfFYHzy (ORCPT
+        id S1728870AbfFYH4H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 03:56:07 -0400
+Received: from relay7-d.mail.gandi.net ([217.70.183.200]:48097 "EHLO
+        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726422AbfFYH4E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 03:55:54 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5P7tj1O3518498
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Tue, 25 Jun 2019 00:55:45 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5P7tj1O3518498
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019061801; t=1561449345;
-        bh=4aoA9rOUg9GtgHHm8lMCJzjCAAaYoSMArmKxlNeWaTs=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=wVPVsAAEXhwS4myxRhxLwSOCs8mW2zYWMGSmZQpFNSVqv3/ly9/gDrapGIznLmdp0
-         GfeG9HbwFGzwe26ANVd/YfbrPoUd9YYS5bhitTm4tihDGS1CRr2royu3QiSeYxiTpm
-         IqVbHK2YVB7TEZ5szXNZ+XCsg/svr0L38Zyq39VgDtFzboaFCogbozZYBImaN0JjdO
-         hSueNE70UgG2CPbx+2N5u+KArRs0s6jUOvalUeNj3mkEiXHwougop7B4l4TwWaPr5a
-         pmIWv+PrwB8NvqqTKyJV4bKM4po4yR7agEgXHNV8A9DYO+R0t5Ob3FwEsG1pnaEvZo
-         VIcwEeGl8B/IQ==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5P7tiWU3518495;
-        Tue, 25 Jun 2019 00:55:44 -0700
-Date:   Tue, 25 Jun 2019 00:55:44 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Masahiro Yamada <tipbot@zytor.com>
-Message-ID: <tip-87b61864d7ab2aec5c212ff18950d4972f0dfb4e@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, bp@alien8.de, tglx@linutronix.de,
-        hpa@zytor.com, mingo@kernel.org, yamada.masahiro@socionext.com
-Reply-To: mingo@kernel.org, yamada.masahiro@socionext.com,
-          tglx@linutronix.de, hpa@zytor.com, bp@alien8.de,
-          linux-kernel@vger.kernel.org
-In-Reply-To: <20190625073311.18303-1-yamada.masahiro@socionext.com>
-References: <20190625073311.18303-1-yamada.masahiro@socionext.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/build] x86/build: Remove redundant 'clean-files +=
- capflags.c'
-Git-Commit-ID: 87b61864d7ab2aec5c212ff18950d4972f0dfb4e
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 25 Jun 2019 03:56:04 -0400
+X-Originating-IP: 90.88.16.156
+Received: from localhost (aaubervilliers-681-1-41-156.w90-88.abo.wanadoo.fr [90.88.16.156])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id 3F05720004;
+        Tue, 25 Jun 2019 07:56:02 +0000 (UTC)
+Date:   Tue, 25 Jun 2019 09:56:00 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH v2 07/15] dt-bindings: display: Convert pda,91-00156-a0
+ panel to DT schema
+Message-ID: <20190625075600.bqk7si7ljrp3wziv@flea>
+References: <20190624215649.8939-1-robh@kernel.org>
+ <20190624215649.8939-8-robh@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="tetcemb75nz6lnkc"
 Content-Disposition: inline
-X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF autolearn=ham
-        autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+In-Reply-To: <20190624215649.8939-8-robh@kernel.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  87b61864d7ab2aec5c212ff18950d4972f0dfb4e
-Gitweb:     https://git.kernel.org/tip/87b61864d7ab2aec5c212ff18950d4972f0dfb4e
-Author:     Masahiro Yamada <yamada.masahiro@socionext.com>
-AuthorDate: Tue, 25 Jun 2019 16:33:11 +0900
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Tue, 25 Jun 2019 09:52:06 +0200
 
-x86/build: Remove redundant 'clean-files += capflags.c'
+--tetcemb75nz6lnkc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-All the files added to 'targets' are cleaned. Adding the same file to both
-'targets' and 'clean-files' is redundant.
+On Mon, Jun 24, 2019 at 03:56:41PM -0600, Rob Herring wrote:
+> Convert the pda,91-00156-a0 panel binding to DT schema.
+>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Sam Ravnborg <sam@ravnborg.org>
+> Cc: Maxime Ripard <maxime.ripard@bootlin.com>
+> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Cc: dri-devel@lists.freedesktop.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Link: https://lkml.kernel.org/r/20190625073311.18303-1-yamada.masahiro@socionext.com
+Reviewed-by: Maxime Ripard <maxime.ripard@bootlin.com>
 
----
- arch/x86/kernel/cpu/Makefile | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Maxime
 
-diff --git a/arch/x86/kernel/cpu/Makefile b/arch/x86/kernel/cpu/Makefile
-index 5102bf7c8192..50abae9a72e5 100644
---- a/arch/x86/kernel/cpu/Makefile
-+++ b/arch/x86/kernel/cpu/Makefile
-@@ -54,8 +54,7 @@ quiet_cmd_mkcapflags = MKCAP   $@
- 
- cpufeature = $(src)/../../include/asm/cpufeatures.h
- 
--targets += capflags.c
- $(obj)/capflags.c: $(cpufeature) $(src)/mkcapflags.sh FORCE
- 	$(call if_changed,mkcapflags)
- endif
--clean-files += capflags.c
-+targets += capflags.c
+--
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--tetcemb75nz6lnkc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXRHTkAAKCRDj7w1vZxhR
+xbsHAQC+DItZS8FM/IwhhvjelXnaAO1PLBHqZkJhMjEYsWx2ZAEA05KkRSEAsqUQ
+xN5fn1gOLC4Ji1f0HZpTRyEo8fAcwQQ=
+=KgYT
+-----END PGP SIGNATURE-----
+
+--tetcemb75nz6lnkc--
