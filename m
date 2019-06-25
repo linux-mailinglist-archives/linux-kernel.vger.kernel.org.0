@@ -2,71 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED00F54DEB
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 13:47:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A5B954DDD
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 13:42:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731148AbfFYLrm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 07:47:42 -0400
-Received: from mailout2n.rrzn.uni-hannover.de ([130.75.2.113]:56312 "EHLO
-        mailout2n.rrzn.uni-hannover.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728527AbfFYLrl (ORCPT
+        id S1731136AbfFYLm4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 07:42:56 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:46837 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729164AbfFYLmx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 07:47:41 -0400
-X-Greylist: delayed 309 seconds by postgrey-1.27 at vger.kernel.org; Tue, 25 Jun 2019 07:47:40 EDT
-Received: from lab-pc01.sra.uni-hannover.de (lab.sra.uni-hannover.de [130.75.33.87])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mailout2n.rrzn.uni-hannover.de (Postfix) with ESMTPSA id 267C51F3F6;
-        Tue, 25 Jun 2019 13:42:30 +0200 (CEST)
-From:   Florian Knauf <florian.knauf@stud.uni-hannover.de>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-kernel@i4.cs.fau.de, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Florian Knauf <florian.knauf@stud.uni-hannover.de>,
-        Christian Ewert <christian.ewert@stud.uni-hannover.de>
-Subject: [PATCH] drivers/block/loop: Remove deprecated function, range check for max_loop
-Date:   Tue, 25 Jun 2019 13:40:56 +0200
-Message-Id: <20190625114056.8706-1-florian.knauf@stud.uni-hannover.de>
+        Tue, 25 Jun 2019 07:42:53 -0400
+Received: by mail-lf1-f68.google.com with SMTP id z15so12347203lfh.13
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 04:42:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=KC6UqMNqqkqf945o5TbzjnUd7iFuYFfkkwWAw6cVa+A=;
+        b=dRpoMSrornZ5+U7nptq/uktaa04UFIo/QAPLaDjRnueu6KFQvvbSC6ea/xIkrZ1H+I
+         Je7LPWkHilJBcantQI2hVUlxVqRs1rx96wT1pMz6dMOJHhnnGQlCkxVOepvxEeCOShTL
+         Yk4beULHTY/vTur12Zdo9Cktt4Ag8Xlo1DSjye7uzhgOi6xbe0mMRHDoIUsYjhCT9JDP
+         B6XZNeVqaYT95yRVDq8vrsv4Oi62dfsZacGbbZRDRztCjG8Ep7/SB33ub9e+WQ0Ep7vt
+         6UyJgyu/fZjIQRTiLMN6bJdHGOJtcz9XOJutcYpEA+DsJl38eDuJcLtKImIBfeVyUsIX
+         89pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=KC6UqMNqqkqf945o5TbzjnUd7iFuYFfkkwWAw6cVa+A=;
+        b=nAJACM43E+P2NSv4Nu3qMeEMIuxDofXF+b4BTHYn8GJTyYUJUCfBECGjqcks1Gutki
+         H6O8pHbghsU+iiM2+rfay3GNzM/pfNwcpAkzosFvY/jzC2t0hP5YKAPOnaqG5JVV/WrF
+         48uwOscbP2f3Mcy1fS3qdCMglP3ctOJheSDj7D7PtBFsz3n3q9g6RcMI7JzaJIwIcYs8
+         YbWkePthA7bhUuyIf3TWBTn6nHusvIHZO+dIMYV1Fy2W4p846g4ivKO+TC8AAEhJr+kR
+         xQlF+nkY3T3r1or7Ee/FMXaMnfDMdQhAHPKXlFH+Cw4MhA0r0sQ1otBKuXv3VWlTZm2F
+         tXHA==
+X-Gm-Message-State: APjAAAWNG7mirFkxNrx1Yu3T5+kKMTHN361205JRTcPD2rDurgH9pf0h
+        Qemyb8POPOKKO032PKDqCLFyNxWEwCA=
+X-Google-Smtp-Source: APXvYqxt2HqTpJfaSIXqLD+CeTVC95mRSNEVCNRSHi4rSCLqw8RN7sSne6onoOM39tgDEByte/9mFg==
+X-Received: by 2002:a19:3804:: with SMTP id f4mr6841525lfa.69.1561462970776;
+        Tue, 25 Jun 2019 04:42:50 -0700 (PDT)
+Received: from localhost.localdomain (59-201-94-178.pool.ukrtel.net. [178.94.201.59])
+        by smtp.gmail.com with ESMTPSA id r2sm1913675lfi.51.2019.06.25.04.42.49
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 25 Jun 2019 04:42:50 -0700 (PDT)
+From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+To:     netdev@vger.kernel.org, davem@davemloft.net
+Cc:     xdp-newbies@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ast@kernel.org, hawk@kernel.org,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+Subject: [[PATCH net-next]] net: core: xdp: make __mem_id_disconnect to be static
+Date:   Tue, 25 Jun 2019 14:42:46 +0300
+Message-Id: <20190625114246.14726-1-ivan.khoronzhuk@linaro.org>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch removes the deprecated simple_strtol function from the option
-parsing logic in the loopback device driver. It also introduces a range
-check for the max_loop parameter to ensure that negative and out-of-range
-values (that cannot be represented by int max_loop) are ignored.
+Add missed static for local __mem_id_disconnect().
 
-Signed-off-by: Florian Knauf <florian.knauf@stud.uni-hannover.de>
-Signed-off-by: Christian Ewert <christian.ewert@stud.uni-hannover.de>
+Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
 ---
- drivers/block/loop.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ net/core/xdp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index 102d79575895..acdd028ed486 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -2289,7 +2289,17 @@ module_exit(loop_exit);
- #ifndef MODULE
- static int __init max_loop_setup(char *str)
- {
--	max_loop = simple_strtol(str, NULL, 0);
-+	long max_loop_long = 0;
-+
-+	/*
-+	 * Range check for max_loop: negative values and values not
-+	 * representable by int are ignored.
-+	 */
-+	if (kstrtol(str, 0, &max_loop_long) == 0 &&
-+			max_loop_long >= 0 &&
-+			max_loop_long <= INT_MAX)
-+		max_loop = (int) max_loop_long;
-+
- 	return 1;
+diff --git a/net/core/xdp.c b/net/core/xdp.c
+index b29d7b513a18..829377cc83db 100644
+--- a/net/core/xdp.c
++++ b/net/core/xdp.c
+@@ -85,7 +85,7 @@ static void __xdp_mem_allocator_rcu_free(struct rcu_head *rcu)
+ 	kfree(xa);
  }
  
+-bool __mem_id_disconnect(int id, bool force)
++static bool __mem_id_disconnect(int id, bool force)
+ {
+ 	struct xdp_mem_allocator *xa;
+ 	bool safe_to_remove = true;
 -- 
 2.17.1
 
