@@ -2,147 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55AC45263F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 10:15:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A17E852649
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 10:17:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729619AbfFYIPr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 04:15:47 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:60268 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729203AbfFYIPo (ORCPT
+        id S1729674AbfFYIQ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 04:16:59 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:38442 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728374AbfFYIQ6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 04:15:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=MzcmXp8wnK/YescI+t3wQCUL4rfo5P0eGxn4+g4lKJo=; b=PDWRtRfItEfb0aqadoNGznuv03
-        aVolzw05/YIJc2tcL900edvQ0ac/DPanDASM/YSSVC6Fq+YwJr9JsKGMASTfcfq20Mxm1/KNNo8k0
-        Ic2E9BaUGjJEHNIxyAFNG90BsBJUMp4wjKWX4GK6RUr0TgseMvVzQXxhkB7BAiCKJcuZK7GhKCdQ4
-        9id7ey0Gqzx4WazsgPCOX0kwYZJfDv1uQPbYq3TqBbIatMX0A07wN52nNpLfp9IC2GNC1TjkK2JDB
-        xFlJK1G8ih7N1SMM3t+QAJ7vkcfRX45NkxTiVwW41q3kRe+J5ZZCL9fJ26GP2m1tlKa/oG2lE4jSn
-        jIVRF+hw==;
-Received: from 213-225-6-159.nat.highway.a1.net ([213.225.6.159] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hfgbx-00073o-7A; Tue, 25 Jun 2019 08:15:29 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     Oliver O'Halloran <oohall@gmail.com>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        Frederic Barrat <fbarrat@linux.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] powerpc/powernv: remove the unused vas_win_paste_addr and vas_win_id functions
-Date:   Tue, 25 Jun 2019 10:15:12 +0200
-Message-Id: <20190625081512.16704-5-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190625081512.16704-1-hch@lst.de>
-References: <20190625081512.16704-1-hch@lst.de>
+        Tue, 25 Jun 2019 04:16:58 -0400
+Received: from static-50-53-46-226.bvtn.or.frontiernet.net ([50.53.46.226] helo=[192.168.192.153])
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <john.johansen@canonical.com>)
+        id 1hfgdJ-0006B9-HT; Tue, 25 Jun 2019 08:16:53 +0000
+Subject: Re: [PATCH V34 00/29] Lockdown as an LSM
+To:     James Morris <jmorris@namei.org>,
+        Matthew Garrett <matthewgarrett@google.com>
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <20190622000358.19895-1-matthewgarrett@google.com>
+ <alpine.LRH.2.21.1906250853290.7826@namei.org>
+From:   John Johansen <john.johansen@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: Canonical
+Message-ID: <642487e9-f70c-c11b-bc61-ad366096e267@canonical.com>
+Date:   Tue, 25 Jun 2019 01:16:49 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <alpine.LRH.2.21.1906250853290.7826@namei.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These two function have never been used anywhere in the kernel tree
-since they were added to the kernel.
+On 6/24/19 4:01 PM, James Morris wrote:
+> On Fri, 21 Jun 2019, Matthew Garrett wrote:
+> 
+>> Minor updates over V33 - security_is_locked_down renamed to
+>> security_locked_down, return value of security_locked_down is returned
+>> in most cases, one unnecessary patch was dropped, couple of minor nits
+>> fixed.
+> 
+> Thanks for the respin.
+> 
+> We are still not resolved on granularity. Stephen has said he's not sure 
+> if a useful policy can be constructed with just confidentiality and 
+> integrity settings. I'd be interested to know JJ and Casey's thoughts on 
+> lockdown policy flexibility wrt their respective LSMs.
+> 
+> These are also "all or nothing" choices which may prevent deployment due 
+> to a user needing to allow (presumably controlled or mitigated) exceptions 
+> to the policy.
+> 
+> 
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- arch/powerpc/include/asm/vas.h              | 10 ----------
- arch/powerpc/platforms/powernv/vas-window.c | 19 -------------------
- arch/powerpc/platforms/powernv/vas.h        | 20 --------------------
- 3 files changed, 49 deletions(-)
+I haven't gotten a chance to play with this the way I want to so there is
+still a lot of questions regarding its interaction with apparmor and its
+policy, but from what I have seen so far it is looking good.
 
-diff --git a/arch/powerpc/include/asm/vas.h b/arch/powerpc/include/asm/vas.h
-index 771456227496..9b5b7261df7b 100644
---- a/arch/powerpc/include/asm/vas.h
-+++ b/arch/powerpc/include/asm/vas.h
-@@ -167,14 +167,4 @@ int vas_copy_crb(void *crb, int offset);
-  */
- int vas_paste_crb(struct vas_window *win, int offset, bool re);
- 
--/*
-- * Return a system-wide unique id for the VAS window @win.
-- */
--extern u32 vas_win_id(struct vas_window *win);
--
--/*
-- * Return the power bus paste address associated with @win so the caller
-- * can map that address into their address space.
-- */
--extern u64 vas_win_paste_addr(struct vas_window *win);
- #endif /* __ASM_POWERPC_VAS_H */
-diff --git a/arch/powerpc/platforms/powernv/vas-window.c b/arch/powerpc/platforms/powernv/vas-window.c
-index e59e0e60e5b5..e48c44cb3a16 100644
---- a/arch/powerpc/platforms/powernv/vas-window.c
-+++ b/arch/powerpc/platforms/powernv/vas-window.c
-@@ -44,16 +44,6 @@ static void compute_paste_address(struct vas_window *window, u64 *addr, int *len
- 	pr_debug("Txwin #%d: Paste addr 0x%llx\n", winid, *addr);
- }
- 
--u64 vas_win_paste_addr(struct vas_window *win)
--{
--	u64 addr;
--
--	compute_paste_address(win, &addr, NULL);
--
--	return addr;
--}
--EXPORT_SYMBOL(vas_win_paste_addr);
--
- static inline void get_hvwc_mmio_bar(struct vas_window *window,
- 			u64 *start, int *len)
- {
-@@ -1268,12 +1258,3 @@ int vas_win_close(struct vas_window *window)
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(vas_win_close);
--
--/*
-- * Return a system-wide unique window id for the window @win.
-- */
--u32 vas_win_id(struct vas_window *win)
--{
--	return encode_pswid(win->vinst->vas_id, win->winid);
--}
--EXPORT_SYMBOL_GPL(vas_win_id);
-diff --git a/arch/powerpc/platforms/powernv/vas.h b/arch/powerpc/platforms/powernv/vas.h
-index f5493dbdd7ff..551affaddd59 100644
---- a/arch/powerpc/platforms/powernv/vas.h
-+++ b/arch/powerpc/platforms/powernv/vas.h
-@@ -448,26 +448,6 @@ static inline u64 read_hvwc_reg(struct vas_window *win,
- 	return in_be64(win->hvwc_map+reg);
- }
- 
--/*
-- * Encode/decode the Partition Send Window ID (PSWID) for a window in
-- * a way that we can uniquely identify any window in the system. i.e.
-- * we should be able to locate the 'struct vas_window' given the PSWID.
-- *
-- *	Bits	Usage
-- *	0:7	VAS id (8 bits)
-- *	8:15	Unused, 0 (3 bits)
-- *	16:31	Window id (16 bits)
-- */
--static inline u32 encode_pswid(int vasid, int winid)
--{
--	u32 pswid = 0;
--
--	pswid |= vasid << (31 - 7);
--	pswid |= winid;
--
--	return pswid;
--}
--
- static inline void decode_pswid(u32 pswid, int *vasid, int *winid)
- {
- 	if (vasid)
--- 
-2.20.1
+I expect the all or nothing choices may limit its deployments (we really
+need to play with this more to say) but we already face similar issues.
+There are options we provide at a distro level that we can't turn on by
+default, but we do recommend to more security conscious users.
 
+If lockdown was in kernel we would certainly make it available for our
+users, we have even had a few people ask about it.
