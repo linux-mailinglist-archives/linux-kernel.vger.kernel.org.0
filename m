@@ -2,74 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A865952161
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 05:53:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BD7752028
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 02:54:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727099AbfFYDxb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 23:53:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35652 "EHLO mail.kernel.org"
+        id S1729796AbfFYAyg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 20:54:36 -0400
+Received: from onstation.org ([52.200.56.107]:41140 "EHLO onstation.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726833AbfFYDxa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 23:53:30 -0400
-Received: from localhost (unknown [116.226.249.212])
+        id S1728340AbfFYAyf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 20:54:35 -0400
+Received: from localhost (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7B33620665;
-        Tue, 25 Jun 2019 03:53:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561434810;
-        bh=SG26bYO56Ct0AuXTeKnwt8cQd353Qwg1893NFtQKAzw=;
+        (Authenticated sender: masneyb)
+        by onstation.org (Postfix) with ESMTPSA id A00813E887;
+        Tue, 25 Jun 2019 00:54:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=onstation.org;
+        s=default; t=1561424074;
+        bh=NAsqoWlx9/9+qIbcDabDQ+UDTfGjudulT8Oo+0tXCvI=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=0lffZ4z7QLh0fmRjOSbk0r0NLUV/FXL3S45N/S3wb7FI9oW4XY09GOvRvxL1vVdQ6
-         qh4NkYdTCIWhyKJKLnyQpCg+gJOpT0D6HMafm1WCVrfUnHfuEKLNuldPjlh5twZfVX
-         XVS2rAlCmvgJVqg4bx7TkBrOd7Z0BvXKZqi286hQ=
-Date:   Tue, 25 Jun 2019 08:51:30 +0800
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Jiunn Chang <c0d1n61at3@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH 5.1 000/121] 5.1.15-stable review
-Message-ID: <20190625005130.GA8909@kroah.com>
-References: <20190624092320.652599624@linuxfoundation.org>
- <20190624175215.s5gtvatc3gqqeact@rYz3n>
+        b=J67zsiZKAXiJjMre2OBNUybwldCs6aHDQu+0Uc5xcrTIpQqFMWbseSzKviZxKCURf
+         KMYBHfiLrmpiLewUuLb54QaC7RHQFJji02lCaoufk0f5kK4C000ng3rjY8L8Po7Rqh
+         LY0DG6uvzPOcXnhmM3qX/7ItJN2H0sNHPEgmANbE=
+Date:   Mon, 24 Jun 2019 20:54:34 -0400
+From:   Brian Masney <masneyb@onstation.org>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        Andy Gross <agross@kernel.org>,
+        David Brown <david.brown@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH RESEND] ARM: dts: qcom: msm8974-hammerhead: add device
+ tree bindings for vibrator
+Message-ID: <20190625005434.GA6401@onstation.org>
+References: <20190516085018.2207-1-masneyb@onstation.org>
+ <20190520142149.D56DA214AE@mail.kernel.org>
+ <CACRpkdZxu1LfK11OHEx5L_4kyjMZ7qERpvDzFj5u3Pk2kD1qRA@mail.gmail.com>
+ <20190529101231.GA14540@basecamp>
+ <CACRpkdY-TcF7rizbPz=UcHrFvDgPJD68vbovNdcWP-aBYppp=g@mail.gmail.com>
+ <20190623105332.GA25506@onstation.org>
+ <CACRpkdYTaM+sBs-bhaXVtAwFtp6+_PWWJ_k9jobd7qB41HubDg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190624175215.s5gtvatc3gqqeact@rYz3n>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <CACRpkdYTaM+sBs-bhaXVtAwFtp6+_PWWJ_k9jobd7qB41HubDg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 12:52:16PM -0500, Jiunn Chang wrote:
-> On Mon, Jun 24, 2019 at 05:55:32PM +0800, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.1.15 release.
-> > There are 121 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Wed 26 Jun 2019 09:22:03 AM UTC.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.1.15-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.1.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> > 
-> > -------------
+On Tue, Jun 25, 2019 at 12:29:29AM +0200, Linus Walleij wrote:
+> On Sun, Jun 23, 2019 at 12:53 PM Brian Masney <masneyb@onstation.org> wrote:
 > 
-> Hello,
+> > 2) Do what Linus suggests above. We can use v1 of this series from last
+> >    September (see below for link) that adds this to the pwm subsystem.
+> >    The locking would need to be added so that it won't conflict with the
+> >    clk subsystem. This can be tied into the input subsystem with the
+> >    existing pwm-vibra driver.
 > 
-> Compiled and booted fine.  No regressions on x86_64.
+> What I imagined was that the clk driver would double as a pwm driver.
+> Just register both interfaces.
+> 
+> There are already plenty of combines clk+reset drivers for example.
+> 
+> Otherwise I'm all for this approach (but that's just me).
 
-Great, thanks for letting me know!
+I agree that this makes sense. I especially like that it'll allow us
+to use the existing pwm-vibra driver in the input subsystem with this
+approach.
 
-greg k-h
+Brian
