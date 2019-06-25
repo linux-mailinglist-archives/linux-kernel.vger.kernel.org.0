@@ -2,115 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1B36554CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 18:46:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6A50554B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 18:38:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729832AbfFYQqQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 12:46:16 -0400
-Received: from new3-smtp.messagingengine.com ([66.111.4.229]:48577 "EHLO
-        new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726397AbfFYQqQ (ORCPT
+        id S1730316AbfFYQiI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 12:38:08 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:43958 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726896AbfFYQiI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 12:46:16 -0400
-X-Greylist: delayed 524 seconds by postgrey-1.27 at vger.kernel.org; Tue, 25 Jun 2019 12:46:15 EDT
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 452053376;
-        Tue, 25 Jun 2019 12:37:28 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Tue, 25 Jun 2019 12:37:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=animalcreek.com;
-         h=date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:content-transfer-encoding:in-reply-to; s=mesmtp;
-         bh=gSyJjIHjthT3a2SYIYJNLmRY+/ZGTrj+u+zCYKrjbOY=; b=Pjjwt9K6MhBJ
-        zIuUap8jIrsLK5wc0QVha0hXjF6ATPFKsLe/UK4gCKkpu4gJa3sb4sXewoHVwKYb
-        qYuzqpS43/PE7nIII03rzTXWvSujg6zxliCmmKQIbwPfy0D5ux99JMv+xyEA+DCg
-        zoVbLxyQQ30U8rAInLhkmHQuiAVpSWI=
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; bh=gSyJjIHjthT3a2SYIYJNLmRY+/ZGTrj+u+zCYKrjb
-        OY=; b=0TaaIeG19hAjd3vPGddqd1WWw0wICU2LXquWcQhbdWOy/xTgmGnz8z9bH
-        wtXuiGUFghRvJ3lHfhKtQ7NSotX4m2sK+9LH50u9Bc7ZpU9oSxc2B9QUqDgZsonX
-        CNqhrnosdixhRCa2nYx3XLcKvE4MHPMes5pM6qL+sMeQ0/Nr6XjM8+A1BtPGowHN
-        MLJ+6vcUUJydtyWkkHRdzAPvDBVhxGgRg2xvAHrZpI5RhKMRA9t7xm6IQGvYHVSA
-        MwX0Pw6dzLvQSuo8lRVBR8Oba4CgR5VtgvQtweSJk9yQenSaqXXbuUyHZWZ0QfxL
-        S+59hWB7sWSizPQIcZbrc/isLk+Lw==
-X-ME-Sender: <xms:xk0SXXqoRo6-9c96z-V0VMIQ6RtwXK_Ym2YZ_RumZj1EaVMGTgiWTA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrudeggddutddvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtugfgjghofgesthekredttderjeenucfhrhhomhepofgr
-    rhhkucfirhgvvghruceomhhgrhgvvghrsegrnhhimhgrlhgtrhgvvghkrdgtohhmqeenuc
-    fkphepieekrddvrdekjedrleehnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmghhrvggv
-    rhesrghnihhmrghltghrvggvkhdrtghomhenucevlhhushhtvghrufhiiigvpedt
-X-ME-Proxy: <xmx:xk0SXdP-_PEWJQ-GUifoOwZaTe-qXfgM7G7CB3tp4tBAMJSOsKyDOw>
-    <xmx:xk0SXUOuKAjwZH2g5YDwcEKThKcJfID8Ufz3v0Y1DEYWMmqADeLI6w>
-    <xmx:xk0SXf1X98dcDEpn0tsLimeZC0jV4RBuOmwZjA3R3q8vsRcEN2-yzw>
-    <xmx:yE0SXUxtVKcHhRzMz8c54pIyl_w4XGLXQyskSEBczUBmZpyw1IX1_A>
-Received: from blue.animalcreek.com (ip68-2-87-95.ph.ph.cox.net [68.2.87.95])
-        by mail.messagingengine.com (Postfix) with ESMTPA id A9A74380079;
-        Tue, 25 Jun 2019 12:37:26 -0400 (EDT)
-Received: by blue.animalcreek.com (Postfix, from userid 1000)
-        id D4B5AA22265; Tue, 25 Jun 2019 09:37:22 -0700 (MST)
-Date:   Tue, 25 Jun 2019 09:37:22 -0700
-From:   Mark Greer <mgreer@animalcreek.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Mark Greer <mgreer@animalcreek.com>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Dale Farnsworth <dale@farnsworth.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Subject: Re: DMA coherency in drivers/tty/serial/mpsc.c
-Message-ID: <20190625163722.GA18626@animalcreek.com>
-References: <20190625122641.GA4421@lst.de>
+        Tue, 25 Jun 2019 12:38:08 -0400
+Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hfoSE-0003tr-Sk; Tue, 25 Jun 2019 18:37:59 +0200
+Date:   Tue, 25 Jun 2019 18:37:58 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Dianzhang Chen <dianzhangchen0@gmail.com>
+cc:     mingo@redhat.com, bp@alien8.de, hpa@zytor.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] x86/tls: Fix possible spectre-v1 in
+ do_get_thread_area()
+In-Reply-To: <1561479779-6660-1-git-send-email-dianzhangchen0@gmail.com>
+Message-ID: <alpine.DEB.2.21.1906251835370.32342@nanos.tec.linutronix.de>
+References: <1561479779-6660-1-git-send-email-dianzhangchen0@gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190625122641.GA4421@lst.de>
-Organization: Animal Creek Technologies, Inc.
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 25, 2019 at 02:26:41PM +0200, Christoph Hellwig wrote:
-> Hi Paul, Dale and Mark (I hope this reaches the right Mark),
+On Wed, 26 Jun 2019, Dianzhang Chen wrote:
 
-Hi Christoph.  Yes, you did reach the right Mark.  :)
-
-> I've started auditing all users of DMA_ATTR_NON_CONSISTENT ot prepare
-> for major API improvements in that area.
+> The index to access the threads tls array is controlled by userspace
+> via syscall: sys_ptrace(), hence leading to a potential exploitation
+> of the Spectre variant 1 vulnerability.
+> The idx can be controlled from:
+>         ptrace -> arch_ptrace -> do_get_thread_area.
 > 
-> One of the odd users is the mpsc ѕerial driver, which allocates DMA
-> memory with the above flag, and then actually properly calls
-> dma_cache_sync.  So far, so good.  But it turns out it also has
-> "#if defined(CONFIG_PPC32) && !defined(CONFIG_NOT_COHERENT_CACHE)"
-> ifdef blocks next to the dma_cache_sync calls that perform cache
-> maintainance for platforms that according to the ifdef claim to
-> be cache coherent.  According to the Kconfig the driver can
-> only build if the MV64X60 symbol is set, which is a ppc embedded 6xx
-> SOC, which appears to be configurable as either cache coherent, or
-> not.  But according to the code in the driver at least this device
-> always is not cache coherent.
-> 
-> It seems like we need to always mark that platform as potentially
-> not coherent, and then use the per-device flag to mark all device
-> except for this one as coherent.  Or did I miss anything?  Maybe
-> all this is actually dead code and can go away?
+> Fix this by sanitizing idx before using it to index p->thread.tls_array.
 
-Yeah, the mpsc driver had lots of ugly cache related hacks because of
-cache coherency bugs in the early version of the MV64x60 bridge chips
-that it was embedded in.  That chip is pretty much dead now and I've
-removed core support for it from the powerpc tree.  Removing the mpsc
-driver is on my todo list but I've been busy and lazy.  So, to sum it
-up, don't spend any more time worrying about it as it should be removed.
+Just that I can't find a place which sanitizes the value....
 
-I'll post a patch to do that tonight and I'm sorry for any time you've
-spent looking at it so far.
+> +#include <linux/nospec.h>
 
-Mark
---
+and nothing which uses anything from this header file.
+
+>  #include <linux/uaccess.h>
+>  #include <asm/desc.h>
+> @@ -220,6 +221,7 @@ int do_get_thread_area(struct task_struct *p, int idx,
+>  		       struct user_desc __user *u_info)
+>  {
+>  	struct user_desc info;
+> +	int index;
+>  
+>  	if (idx == -1 && get_user(idx, &u_info->entry_number))
+>  		return -EFAULT;
+> @@ -227,8 +229,9 @@ int do_get_thread_area(struct task_struct *p, int idx,
+>  	if (idx < GDT_ENTRY_TLS_MIN || idx > GDT_ENTRY_TLS_MAX)
+>  		return -EINVAL;
+>  
+> -	fill_user_desc(&info, idx,
+> -		       &p->thread.tls_array[idx - GDT_ENTRY_TLS_MIN]);
+> +	index = idx - GDT_ENTRY_TLS_MIN;
+> +
+> +	fill_user_desc(&info, idx, &p->thread.tls_array[index]);
+
+So this is just a cosmetic change and the compiler will create probably
+exactly the same binary.
+
+Thanks,
+
+	tglx
+
