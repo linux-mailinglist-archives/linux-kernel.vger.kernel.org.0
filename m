@@ -2,79 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2386B5242B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 09:16:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52A475242A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 09:16:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729946AbfFYHQI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 03:16:08 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:54068 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726779AbfFYHQI (ORCPT
+        id S1729885AbfFYHQC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 03:16:02 -0400
+Received: from lb3-smtp-cloud7.xs4all.net ([194.109.24.31]:47693 "EHLO
+        lb3-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726779AbfFYHQB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 03:16:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=7ek+8zjVVNqNCck9ELy55SriRD5X2pM4qdyS7kz5qJA=; b=lZ/ih76nVxve2C5K2XWV1DMZu
-        tPyxSyTpO7C3Dhp6Pz36BhPg/TiOTINDtqx/YXq4CIJoteSPlPKJsFvuBix6LHB/3iq4Z874OrUbm
-        rcjjZCAwykXL+EwFuygfsRxOxDHR3jv0ah8ohblU6A6Wpj5yeb38yZjtXN48Q58htE6HfiAtaPFkR
-        XY0lS5PEoROWQTF70DnpnvjX2ZIFK1e06rzht84GFTQgqqRmcyb0b/zbBr6nR1PZvkUWtkjgYiyuT
-        eFff2MIQ4O4Oq/jNugN7rHpsaoMSI26FPF4YmGL2iju5mpgoI+7V85BdXQtoFA0MNZwyw0WcALN9r
-        lGmG2Tn0g==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hfffv-00020F-Qc; Tue, 25 Jun 2019 07:15:31 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id BEEB320A05DA6; Tue, 25 Jun 2019 09:15:28 +0200 (CEST)
-Date:   Tue, 25 Jun 2019 09:15:28 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Joe Perches <joe@perches.com>, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Kan Liang <kan.liang@linux.intel.com>,
-        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Shawn Landden <shawn@git.icu>
-Subject: Re: [PATCH] perf/x86/intel: Mark expected switch fall-throughs
-Message-ID: <20190625071528.GM3436@hirez.programming.kicks-ass.net>
-References: <20190624161913.GA32270@embeddedor>
- <20190624193123.GI3436@hirez.programming.kicks-ass.net>
- <b00fc090d83ac6bd41a5db866b02d425d9ab20e4.camel@perches.com>
- <20190624203737.GL3436@hirez.programming.kicks-ass.net>
- <3dc75cd4-9a8d-f454-b5fb-64c3e6d1f416@embeddedor.com>
+        Tue, 25 Jun 2019 03:16:01 -0400
+Received: from [192.168.2.10] ([46.9.252.75])
+        by smtp-cloud7.xs4all.net with ESMTPA
+        id ffgKhOAc3F85OffgNhckI0; Tue, 25 Jun 2019 09:16:00 +0200
+Subject: Re: [PATCH v2 1/1] staging: media: fix style problem
+To:     Aliasgar Surti <aliasgar.surti500@gmail.com>,
+        linux-media@vger.kernel.org, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org
+References: <1561091693-18427-1-git-send-email-aliasgar.surti500@gmail.com>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <6da132f6-9dca-d340-b237-3aed580a8d3a@xs4all.nl>
+Date:   Tue, 25 Jun 2019 09:15:56 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3dc75cd4-9a8d-f454-b5fb-64c3e6d1f416@embeddedor.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1561091693-18427-1-git-send-email-aliasgar.surti500@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfBUVUrEucL4EH4258ivfjz5MGaJRgSBJZU9KXqoSotm9E/VjPeHVYQmf/5jZKHlZinHEtFrVCcZQzB+ogetz5EYgOp9636TAGfHk6gaRN9KigrZ8pEjF
+ sSBletQ44ikkegUqX0FcUY00B8Yr0Ozmlg92mRHZMclkHDFrmOtzNN/46ox+bU+R8jDA2beW1gsT8Uq33fXsEOM6rlyvwQgG1bc2rINGvu3BeU6ArURaN68v
+ OLFbTa3/q+0bHbbrlJRgJClBmycW6jKJqSSPTDgmavIPCAXGrr8Yj0KEn+Yo9X/Y
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 03:53:04PM -0500, Gustavo A. R. Silva wrote:
-> Once the C++17 `__attribute__((fallthrough))` is more widely handled by C compilers,
+Hi Aliasgar,
 
-From what I read that attribute landed in the exact same GCC version as
-the warning. And last I checked clang wasn't there yet anyway.
+Please state the driver in question in the Subject. So:
 
-> static analyzers, and IDEs, we can switch to using that instead. Also, we are a few
+[PATCHv2] staging/media/davinci_vpfe: fix style problems
 
-I don't give a crap about lousy IDEs. And coverity already supports the
-attribute and other checkers are open-source and can be easily fixed or
-ignored.
+That way it is clear to reviewers which driver is modified.
 
-> warnings away (less than five) from being able to enable -Wimplicit-fallthrough. After
-> this option has been finally enabled (in v5.3) we can easily go and replace the comments
-> to whatever we agree upon.
+Also there is no need for '1/1' if there is only one patch.
 
-Feh. Still an abomination.
+Regards,
+
+	Hans
+
+On 6/21/19 6:34 AM, Aliasgar Surti wrote:
+> From: Aliasgar Surti <aliasgar.surti500@gmail.com>
+> 
+> checkpatch reported "WARNING: line over 80 characters".
+> This patch fixes the warning for file davinci_vpfe/dm365_isif.c
+> 
+> Signed-off-by: Aliasgar Surti <aliasgar.surti500@gmail.com>
+> ---
+> Changes in v2:
+> 	- Fixed styling as per suggestion in comments
+>  
+>  drivers/staging/media/davinci_vpfe/dm365_isif.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/staging/media/davinci_vpfe/dm365_isif.c b/drivers/staging/media/davinci_vpfe/dm365_isif.c
+> index 46fd818..e9c8de1 100644
+> --- a/drivers/staging/media/davinci_vpfe/dm365_isif.c
+> +++ b/drivers/staging/media/davinci_vpfe/dm365_isif.c
+> @@ -532,7 +532,8 @@ static int isif_validate_dfc_params(const struct vpfe_isif_dfc *dfc)
+>  #define DM365_ISIF_MAX_CLVSV			0x1fff
+>  #define DM365_ISIF_MAX_HEIGHT_BLACK_REGION	0x1fff
+>  
+> -static int isif_validate_bclamp_params(const struct vpfe_isif_black_clamp *bclamp)
+> +static int
+> +isif_validate_bclamp_params(const struct vpfe_isif_black_clamp *bclamp)
+>  {
+>  	int err = -EINVAL;
+>  
+> @@ -593,7 +594,8 @@ isif_validate_raw_params(const struct vpfe_isif_raw_config *params)
+>  	return isif_validate_bclamp_params(&params->bclamp);
+>  }
+>  
+> -static int isif_set_params(struct v4l2_subdev *sd, const struct vpfe_isif_raw_config *params)
+> +static int isif_set_params(struct v4l2_subdev *sd,
+> +			   const struct vpfe_isif_raw_config *params)
+>  {
+>  	struct vpfe_isif_device *isif = v4l2_get_subdevdata(sd);
+>  	int ret = -EINVAL;
+> 
+
