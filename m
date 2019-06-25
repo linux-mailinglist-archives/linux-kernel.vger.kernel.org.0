@@ -2,183 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D722855A34
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 23:47:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48E2155A30
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 23:47:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726599AbfFYVra (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 17:47:30 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:44512 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726557AbfFYVr3 (ORCPT
+        id S1726558AbfFYVrT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 17:47:19 -0400
+Received: from mail-io1-f70.google.com ([209.85.166.70]:37746 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725782AbfFYVrI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 17:47:29 -0400
-Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hftHP-00013C-Sg; Tue, 25 Jun 2019 23:47:08 +0200
-Date:   Tue, 25 Jun 2019 23:47:06 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Nathan Chancellor <natechancellor@gmail.com>
-cc:     Kees Cook <keescook@chromium.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Joe Perches <joe@perches.com>, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Shawn Landden <shawn@git.icu>,
-        clang-built-linux@googlegroups.com,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: Re: [PATCH] perf/x86/intel: Mark expected switch fall-throughs
-In-Reply-To: <20190625202746.GA83499@archlinux-epyc>
-Message-ID: <alpine.DEB.2.21.1906252255440.32342@nanos.tec.linutronix.de>
-References: <20190624161913.GA32270@embeddedor> <20190624193123.GI3436@hirez.programming.kicks-ass.net> <b00fc090d83ac6bd41a5db866b02d425d9ab20e4.camel@perches.com> <20190624203737.GL3436@hirez.programming.kicks-ass.net> <3dc75cd4-9a8d-f454-b5fb-64c3e6d1f416@embeddedor.com>
- <CANiq72mMS6tHcP8MHW63YRmbdFrD3ZCWMbnQEeHUVN49v7wyXQ@mail.gmail.com> <20190625071846.GN3436@hirez.programming.kicks-ass.net> <201906251009.BCB7438@keescook> <20190625180525.GA119831@archlinux-epyc> <alpine.DEB.2.21.1906252127290.32342@nanos.tec.linutronix.de>
- <20190625202746.GA83499@archlinux-epyc>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 25 Jun 2019 17:47:08 -0400
+Received: by mail-io1-f70.google.com with SMTP id j18so40434ioj.4
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 14:47:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=UJMkyJRfZAWiYHQO3lkQRyIVJFbkUi74TqZBHCN7Auo=;
+        b=RqaZFcNiX2639ERBQQ/QWlIM4SQjfZM1Vw1spSEjeAyh+NmqicZ3bBZ4h72ZhlCduJ
+         OGzwHh9LZsXi8pjeL85QWAdQxSGXj84EnISGOjFYA03Nx76Jpaj/6OvOgc82tWPTGBhj
+         VumS+LlXl9qKkG9p89oPWVsGM6raWz55Hmoa6D0fs92VwWMwBckPWb4fFqVZ2npBDcL+
+         uXHGGm9qK8znMYpuMBX2/uh59vvDVk6YGJpSs+0pAoGA6mpcOFvcR2iTOcvNDKS0/gMU
+         gWQrK0yXQuWnQZLenavBTmeDrs4E63le6lhcAmF5T9OM14JDtW0BhQAZsnrVP0Z9bJLp
+         4etw==
+X-Gm-Message-State: APjAAAXsjPJBmcR92SjXRvXpjq1XDagOwjgSaBPcYwg5OEQ+PUK3kl5D
+        rxys0rp6s52sp4ge/BLozBwtLflqgjWXGvJFHcsTwq3Oh8gB
+X-Google-Smtp-Source: APXvYqyAaDeug+XSRMcY1hscRo0iI/PV7iVIJW/oB23694qZ8/PtfaNdxgoEdPyLafLNk9QV+H3egweaSrcC+TxpiPmjoWOpCZk4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+X-Received: by 2002:a6b:b497:: with SMTP id d145mr1044980iof.17.1561499227149;
+ Tue, 25 Jun 2019 14:47:07 -0700 (PDT)
+Date:   Tue, 25 Jun 2019 14:47:07 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000c05b7b058c2cde8a@google.com>
+Subject: BUG: unable to handle kernel paging request in coalesced_mmio_write
+From:   syzbot <syzbot+983c866c3dd6efa3662a@syzkaller.appspotmail.com>
+To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        pbonzini@redhat.com, rkrcmar@redhat.com,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Nathan,
+Hello,
 
-On Tue, 25 Jun 2019, Nathan Chancellor wrote:
-> On Tue, Jun 25, 2019 at 09:53:09PM +0200, Thomas Gleixner wrote:
-> > 
-> > But can the script please check for a minimal clang version required to
-> > build that thing.
-> > 
-> > The default clang-3.8 which is installed on Debian stretch explodes. The
-> > 6.0 variant from backports works as advertised.
-> > 
-> 
-> Hmmm interesting, I test a lot of different distros using Docker
-> containers to make sure the script works universally and that includes
-> Debian stretch, which is the stress tester because all of the packages
-> are older. I install the following packages then run the following
-> command and it works fine for me (just tested):
-> 
-> $ apt update && apt install -y --no-install-recommends ca-certificates \
-> ccache clang cmake curl file gcc g++ git make ninja-build python3 \
-> texinfo zlib1g-dev
-> $ ./build-llvm.py
-> 
-> If you could give me a build log, I'd be happy to look into it and see
-> what I can do.
+syzbot found the following crash on:
 
-I can produce one tomorrow.
- 
-> > Kernel builds with the new shiny compiler. Jump labels seem to be enabled.
-> > 
-> > It complains about a few type conversions:
-> > 
-> >  arch/x86/kvm/mmu.c:4596:39: warning: implicit conversion from 'int' to 'u8' (aka 'unsigned char') changes value from -205 to 51 [-Wconstant-conversion]
-> >                 u8 wf = (pfec & PFERR_WRITE_MASK) ? ~w : 0;
-> >                    ~~                               ^~
-> > 
-> 
-> Yes, there was a patch sent to try and fix this but it was rejected by
-> the maintainers:
-> 
-> https://github.com/ClangBuiltLinux/linux/issues/95
-> 
-> https://lore.kernel.org/lkml/20180619192504.180479-1-mka@chromium.org/
+HEAD commit:    abf02e29 Merge tag 'pm-5.2-rc6' of git://git.kernel.org/pu..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=111932b1a00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e5c77f8090a3b96b
+dashboard link: https://syzkaller.appspot.com/bug?extid=983c866c3dd6efa3662a
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13299fc9a00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=134b2826a00000
 
-Just looked through it. I don't think it's an outright reject. Paolo was
-not totally against it and then the whole discussion degraded into bikeshed
-painting and bitching about compiler error messaged. Try again or should I?
+Bisection is inconclusive: the bug happens on the oldest tested release.
 
-> > but it also makes objtool unhappy:
-> > 
-> >  arch/x86/events/intel/core.o: warning: objtool: intel_pmu_nhm_workaround()+0xb3: unreachable
-instruction
-> >  kernel/fork.o: warning: objtool: free_thread_stack()+0x126: unreachable instruction
-> >  mm/workingset.o: warning: objtool: count_shadow_nodes()+0x11f: unreachable instruction
-> >  arch/x86/kernel/cpu/mtrr/generic.o: warning: objtool: get_fixed_ranges()+0x9b: unreachable
-instruction
-> >  arch/x86/kernel/platform-quirks.o: warning: objtool: x86_early_init_platform_quirks()+0x84:
-unreachable instruction
-> >  drivers/iommu/irq_remapping.o: warning: objtool: irq_remap_enable_fault_handling()+0x1d:
-unreachable instruction
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=108f9e06a00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=148f9e06a00000
 
-> Unfortunately, we have quite a few of those outstanding, it's probably
-> time to start really taking a look at them:
-> 
-> https://github.com/ClangBuiltLinux/linux/labels/objtool
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+983c866c3dd6efa3662a@syzkaller.appspotmail.com
 
-I just checked two of them in the disassembly. In both cases it's jump
-label related. Here is one:
+L1TF CPU bug present and SMT on, data leak possible. See CVE-2018-3646 and  
+https://www.kernel.org/doc/html/latest/admin-guide/hw-vuln/l1tf.html for  
+details.
+BUG: unable to handle page fault for address: ffffed12fb15ea1f
+#PF: supervisor read access in kernel mode
+#PF: error_code(0x0000) - not-present page
+PGD 21fff0067 P4D 21fff0067 PUD 0
+Oops: 0000 [#1] PREEMPT SMP KASAN
+CPU: 0 PID: 8945 Comm: syz-executor116 Not tainted 5.2.0-rc5+ #57
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:coalesced_mmio_write+0x28a/0x4d0  
+arch/x86/kvm/../../../virt/kvm/coalesced_mmio.c:83
+Code: 38 d0 7c 08 84 d2 0f 85 55 02 00 00 41 8b 47 04 48 8d 14 40 49 8d 7c  
+d7 08 48 ba 00 00 00 00 00 fc ff df 48 89 fe 48 c1 ee 03 <80> 3c 16 00 0f  
+85 1b 02 00 00 48 8d 14 40 48 be 00 00 00 00 00 fc
+RSP: 0018:ffff8880a045f170 EFLAGS: 00010a02
+RAX: 00000000f7d5760a RBX: 0000000000000000 RCX: ffffffff81080faa
+RDX: dffffc0000000000 RSI: 1ffff112fb15ea1f RDI: ffff8897d8af50f8
+RBP: ffff8880a045f1c0 R08: ffff888089e483c0 R09: 0000000000000000
+R10: ffffed101408be1b R11: 0000000000000003 R12: 0000000000000001
+R13: ffff8880a55dbf10 R14: 0000000000000001 R15: ffff88809cac4000
+FS:  000055555573a940(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffed12fb15ea1f CR3: 00000000a0aee000 CR4: 00000000001426f0
+Call Trace:
+  kvm_iodevice_write include/kvm/iodev.h:54 [inline]
+  __kvm_io_bus_write+0x29b/0x380  
+arch/x86/kvm/../../../virt/kvm/kvm_main.c:3701
+  kvm_io_bus_write+0x15c/0x290 arch/x86/kvm/../../../virt/kvm/kvm_main.c:3726
+  vcpu_mmio_write arch/x86/kvm/x86.c:5029 [inline]
+  write_mmio+0x175/0x4e0 arch/x86/kvm/x86.c:5391
+  emulator_read_write_onepage+0x429/0xd50 arch/x86/kvm/x86.c:5460
+  emulator_read_write+0x1b7/0x5a0 arch/x86/kvm/x86.c:5509
+  emulator_write_emulated+0x3c/0x50 arch/x86/kvm/x86.c:5546
+  segmented_write+0xf0/0x150 arch/x86/kvm/emulate.c:1446
+  writeback arch/x86/kvm/emulate.c:1808 [inline]
+  writeback+0x3f4/0x6a0 arch/x86/kvm/emulate.c:1794
+  x86_emulate_insn+0x1de1/0x48f0 arch/x86/kvm/emulate.c:5695
+  x86_emulate_instruction+0xca3/0x1c50 arch/x86/kvm/x86.c:6509
+  kvm_mmu_page_fault+0x370/0x1870 arch/x86/kvm/mmu.c:5430
+  handle_ept_violation+0x1c8/0x500 arch/x86/kvm/vmx/vmx.c:5099
+  vmx_handle_exit+0x280/0x1540 arch/x86/kvm/vmx/vmx.c:5861
+  vcpu_enter_guest+0x1174/0x5f40 arch/x86/kvm/x86.c:8035
+  vcpu_run arch/x86/kvm/x86.c:8099 [inline]
+  kvm_arch_vcpu_ioctl_run+0x423/0x1740 arch/x86/kvm/x86.c:8307
+  kvm_vcpu_ioctl+0x4dc/0xf90 arch/x86/kvm/../../../virt/kvm/kvm_main.c:2755
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:509 [inline]
+  do_vfs_ioctl+0xd5f/0x1380 fs/ioctl.c:696
+  ksys_ioctl+0xab/0xd0 fs/ioctl.c:713
+  __do_sys_ioctl fs/ioctl.c:720 [inline]
+  __se_sys_ioctl fs/ioctl.c:718 [inline]
+  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
+  do_syscall_64+0xfd/0x680 arch/x86/entry/common.c:301
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x4444e9
+Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 1b 0c fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fff46b48808 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007fff46b48810 RCX: 00000000004444e9
+RDX: 0000000000000000 RSI: 000000000000ae80 RDI: 0000000000000005
+RBP: 0000000000000000 R08: 0000000000402240 R09: 0000000000402240
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000405590
+R13: 0000000000405620 R14: 0000000000000000 R15: 0000000000000000
+Modules linked in:
+CR2: ffffed12fb15ea1f
+---[ end trace 84ecc85af6872381 ]---
+RIP: 0010:coalesced_mmio_write+0x28a/0x4d0  
+arch/x86/kvm/../../../virt/kvm/coalesced_mmio.c:83
+Code: 38 d0 7c 08 84 d2 0f 85 55 02 00 00 41 8b 47 04 48 8d 14 40 49 8d 7c  
+d7 08 48 ba 00 00 00 00 00 fc ff df 48 89 fe 48 c1 ee 03 <80> 3c 16 00 0f  
+85 1b 02 00 00 48 8d 14 40 48 be 00 00 00 00 00 fc
+RSP: 0018:ffff8880a045f170 EFLAGS: 00010a02
+RAX: 00000000f7d5760a RBX: 0000000000000000 RCX: ffffffff81080faa
+RDX: dffffc0000000000 RSI: 1ffff112fb15ea1f RDI: ffff8897d8af50f8
+RBP: ffff8880a045f1c0 R08: ffff888089e483c0 R09: 0000000000000000
+R10: ffffed101408be1b R11: 0000000000000003 R12: 0000000000000001
+R13: ffff8880a55dbf10 R14: 0000000000000001 R15: ffff88809cac4000
+FS:  000055555573a940(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffed12fb15ea1f CR3: 00000000a0aee000 CR4: 00000000001426f0
 
-      asm volatile("1: rdmsr\n"
- 410:   b9 59 02 00 00          mov    $0x259,%ecx
- 415:   0f 32                   rdmsr
- 417:   49 89 c6                mov    %rax,%r14
- 41a:   48 89 d3                mov    %rdx,%rbx
-      return EAX_EDX_VAL(val, low, high);
- 41d:   48 c1 e3 20             shl    $0x20,%rbx
- 421:   48 09 c3                or     %rax,%rbx
- 424:   0f 1f 44 00 00          nopl   0x0(%rax,%rax,1)
- 429:   eb 0f                   jmp    43a <get_fixed_ranges+0xaa>
-      do_trace_read_msr(msr, val, 0);
- 42b:   bf 59 02 00 00          mov    $0x259,%edi   <------- "unreachable"
- 430:   48 89 de                mov    %rbx,%rsi
- 433:   31 d2                   xor    %edx,%edx
- 435:   e8 00 00 00 00          callq  43a <get_fixed_ranges+0xaa>
- 43a:   44 89 35 00 00 00 00    mov    %r14d,0x0(%rip)        # 441 <get_fixed_ranges+0xb1>
 
-Interestingly enough there are some more hunks of the same pattern in that
-function which look all the same. Those are not upsetting objtool. Josh
-might give an hint where to stare at.
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Just for the fun of it I looked at the GCC output of the same file. It
-takes a different apporach:
-
-      asm volatile("1: rdmsr\n"
- c70:   b9 59 02 00 00          mov    $0x259,%ecx
- c75:   0f 32                   rdmsr
-      return EAX_EDX_VAL(val, low, high);
- c77:   48 c1 e2 20             shl    $0x20,%rdx
- c7b:   48 89 d3                mov    %rdx,%rbx
- c7e:   48 09 c3                or     %rax,%rbx
- c81:   0f 1f 44 00 00          nopl   0x0(%rax,%rax,1)
- c86:   48 89 1d 00 00 00 00    mov    %rbx,0x0(%rip)        # c8d <get_fixed_ranges.constprop.5+0x7d>
-
-and the tracing code is completely out of line:
-
-      do_trace_read_msr(msr, val, 0);
- ce2:   31 d2                   xor    %edx,%edx
- ce4:   48 89 de                mov    %rbx,%rsi
- ce7:   bf 59 02 00 00          mov    $0x259,%edi
- cec:   e8 00 00 00 00          callq  cf1 <get_fixed_ranges.constprop.5+0xe1>
- cf1:   eb 93                   jmp    c86 <get_fixed_ranges.constprop.5+0x76>
-
-which makes a lot of sense as the normal path (tracepoint disabled) just
-runs through linearly while in the clang version it has to jump around the
-tracepoint code.
-
-The jump itself is not a problem, but what matters is the $I cache
-footprint. The GCC version hotpath fits in 3 cache lines while the Clang
-version unconditionally eats 4.2 of them. That's a huge difference.
-
-> Thanks for trying it out and letting us know. Please keep us in the loop
-> if you happen to find anything amiss.
-
-Will do.
-
-Thanks,
-
-	tglx
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
