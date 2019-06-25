@@ -2,112 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1797351F73
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 02:03:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0890851F77
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 02:06:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729188AbfFYADo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 20:03:44 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:37437 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726631AbfFYADn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 20:03:43 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45XmbJ1K0Cz9s3l;
-        Tue, 25 Jun 2019 10:03:40 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1561421020;
-        bh=uxYIaPA9Islapamk5gE3dQb+BvPV85TXC7/AYf6Ybrw=;
-        h=Date:From:To:Cc:Subject:From;
-        b=fzQ1ADNOhGg2RdorKsEf1hdVUwI6MmArO7Z7j0IzEXiy/dmJs2DxkOMtDpnYBI/E8
-         3Hxuaq9BpUBtN7HQvP/8nh7uK4hItmJtDCP8lzrJWxYxvdCKPmCjhdUAw8kFr4zoBL
-         G+/9+Y+5Q4Fe+M1piesfl24xXnnbGEDOamfB3HuV3+SHKp46xRVe175ut6ujvlfSxt
-         nVYSeucWeKbfvqxi9BsyjoQqwbiynBe/TeiJqZ5meNI1tnM0lQl+flVj2WMYHmvQuk
-         +kPxuS46Jvo8guSCNV0orat0I1C6opIQkjEXkrfAxnoUuIBA7jlceeOgQK6yZfKFDh
-         xJgqAMMCC0YJw==
-Date:   Tue, 25 Jun 2019 10:03:39 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        ARM <linux-arm-kernel@lists.infradead.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Stefan Agner <stefan@agner.ch>
-Subject: linux-next: manual merge of the samsung-krzk tree with the arm-soc
- tree
-Message-ID: <20190625100339.6d7c1bd9@canb.auug.org.au>
+        id S1729156AbfFYAGU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 20:06:20 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:36535 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726631AbfFYAGT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 20:06:19 -0400
+Received: by mail-pg1-f196.google.com with SMTP id f21so7962865pgi.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 17:06:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:subject:to:cc:references:in-reply-to:mime-version
+         :user-agent:message-id:content-transfer-encoding;
+        bh=A4JLijstsEbt7bgpP/rJB5rz/anEJk4GklqKMuLHmb0=;
+        b=nfbeQGEAwO/zvJ7FHUqD9VPIfa6MAWAjJDAGWOJbcW0kmMqHSjGX2XcRSDKkyH2o6l
+         SQuXFZ7uKRTbRdg/dsjW+PBqYlSwhTHxsSlNiNiZzqZckb+ArmlDeo4oiNBi4Ws6W2US
+         nCGnBZiCyDZbFpyTsF9RI5TL8CtbMsJjQgd0I1ijygHbpuKMjdIriOovmS1J1IxeKnqo
+         VsrugoJ7bMEeh8fCeIEkDkGGQu8YvAN/C2mUx29xnSF0ZgIFX+Hp+uvez9H6yKjeKm1F
+         CTiB7pigDkfJnCXbVOIPRSBzpo/xQubtSnUpYCcwl1ZzNYU3GENK6wYcVaZigs4bLfIz
+         2O2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:subject:to:cc:references:in-reply-to
+         :mime-version:user-agent:message-id:content-transfer-encoding;
+        bh=A4JLijstsEbt7bgpP/rJB5rz/anEJk4GklqKMuLHmb0=;
+        b=RBylsdNg/tmCWj0Kjml2J8zcfIpdO4NPPEG/nMUiG4KmPwXdeSC57YnnRqgJNFiz0z
+         Zyc4wKQB7CNhR0dKhrinmCjx7bsRzJtCCDxaHJay8Z0K9zrEq3gNWbcFWVrkQ19c0DXO
+         6RQxAk3WWz6lOBRmJgXRtUAYJBWlTzmsMuEvCVY2wp8YFnyDBLxH7v+UXV3jBp6k7SYr
+         at3CJMtrbgbsuuL6v08L54Id5n5YDKMoY+p3rnaaPwkwTxYHT8LHoCi7QRVk5vtQvFr5
+         T2UaHZehz1QUimnHcU9+Bx+lFuEN86pnahFVofwX/us1KQwNJbOtWLZdIQjILbzlHeA5
+         IORg==
+X-Gm-Message-State: APjAAAViNuId/hXx/cVZjLp4NB96U7ID16ucgmndfgaPA/gBwKnLMaKT
+        7Pxl9yHK36eNWqk2VVZLGAsvJmtI
+X-Google-Smtp-Source: APXvYqxBMUtPGkWAS3/xbUBTPhyr8K4uWo4WDakaauiIlVvyAkmS4GN9hjPmaLvt+jqyiNETZMUtzQ==
+X-Received: by 2002:a63:ec13:: with SMTP id j19mr15746973pgh.174.1561421178893;
+        Mon, 24 Jun 2019 17:06:18 -0700 (PDT)
+Received: from localhost ([1.129.222.223])
+        by smtp.gmail.com with ESMTPSA id g8sm13512963pfi.8.2019.06.24.17.06.17
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 24 Jun 2019 17:06:17 -0700 (PDT)
+Date:   Tue, 25 Jun 2019 10:05:17 +1000
+From:   Nicholas Piggin <npiggin@gmail.com>
+Subject: Re: [PATCH] kernel/isolation: Asset that a housekeeping CPU comes up
+ at boot time
+To:     Qais Yousef <qais.yousef@arm.com>
+Cc:     Frederic Weisbecker <frederic@kernel.org>,
+        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>
+References: <20190601113919.2678-1-npiggin@gmail.com>
+        <20190624105729.3isejrp4455suxaz@e107158-lin.cambridge.arm.com>
+In-Reply-To: <20190624105729.3isejrp4455suxaz@e107158-lin.cambridge.arm.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/4YZKzyDAPHNnn/eu/Wz9c4q"; protocol="application/pgp-signature"
+User-Agent: astroid/0.14.0 (https://github.com/astroidmail/astroid)
+Message-Id: <1561420886.o0ruiu47ya.astroid@bobo.none>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/4YZKzyDAPHNnn/eu/Wz9c4q
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Qais Yousef's on June 24, 2019 8:57 pm:
+> On 06/01/19 21:39, Nicholas Piggin wrote:
+>> With the change to allow the boot CPU0 to be isolated, it is possible
+>> to specify command line options that result in no housekeeping CPU
+>> online at boot.
+>>=20
+>> An 8 CPU system booted with "nohz_full=3D0-6 maxcpus=3D4", for example.
+>>=20
+>> It is not easily possible at housekeeping init time to know all the
+>> various SMP options that will result in an invalid configuration, so
+>> this patch adds a sanity check after SMP init, to ensure that a
+>> housekeeping CPU has been onlined.
+>>=20
+>> The panic is undesirable, but it's better than the alternative of an
+>> obscure non deterministic failure. The panic will reliably happen
+>> when advanced parameters are used incorrectly.
+>>=20
+>> Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+>> ---
+>>  kernel/sched/isolation.c | 23 +++++++++++++++++++++++
+>>  1 file changed, 23 insertions(+)
+>>=20
+>> diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
+>> index 123ea07a3f3b..7b9e1e0d4ec3 100644
+>> --- a/kernel/sched/isolation.c
+>> +++ b/kernel/sched/isolation.c
+>> @@ -63,6 +63,29 @@ void __init housekeeping_init(void)
+>>  	WARN_ON_ONCE(cpumask_empty(housekeeping_mask));
+>>  }
+>> =20
+>> +static int __init housekeeping_verify_smp(void)
+>> +{
+>> +	int cpu;
+>> +
+>> +	/*
+>> +	 * Early housekeeping setup is done before CPUs come up, and there are
+>> +	 * a range of options scattered around that can restrict which CPUs
+>> +	 * come up. It is possible to pass in a combination of housekeeping
+>> +	 * and SMP arguments that result in housekeeping assigned to an
+>> +	 * offline CPU.
+>> +	 *
+>> +	 * Check that condition here after SMP comes up, and give a useful
+>> +	 * error message rather than an obscure non deterministic crash or
+>> +	 * hang later.
+>> +	 */
+>> +	for_each_online_cpu(cpu) {
+>> +		if (cpumask_test_cpu(cpu, housekeeping_mask))
+>> +			return 0;
+>> +	}
+>> +	panic("Housekeeping: nohz_full=3D or isolcpus=3D resulted in no online=
+ CPUs for housekeeping.\n");
+>=20
+> I am hitting this panic when I boot my juno board.
+>=20
+>=20
+> I have CONFIG_CPU_ISOLATION=3Dy but I don't pass nohuz_full nor isolcpus =
+in the
+> commandline. I think what's going on is that housekeeping_setup() doesn't=
+ get
+> called and hence housekeeping_mask isn't initialized in my case, causing =
+this
+> check to fail and trigger the panic.
+>=20
+> The below seems to 'fix' it though not sure if it's the right way forward=
+.
+> A revert obviously fixes it too but I doubt we want that :-)
 
-Hi all,
+That'll do it. Thanks for the report and investigation.
 
-Today's linux-next merge of the samsung-krzk tree got a conflict in:
-
-  arch/arm/mach-exynos/Makefile
-
-between commit:
-
-  3fe1ee40b2a2 ("ARM: use arch_extension directive instead of arch argument=
-")
-
-from the arm-soc tree and commit:
-
-  24d2c73ff28b ("ARM: exynos: Only build MCPM support if used")
-
-from the samsung-krzk tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc arch/arm/mach-exynos/Makefile
-index 5ccf9d7e58d4,5abf3db23912..000000000000
---- a/arch/arm/mach-exynos/Makefile
-+++ b/arch/arm/mach-exynos/Makefile
-@@@ -14,5 -14,9 +14,5 @@@ obj-$(CONFIG_PM_SLEEP)		+=3D suspend.
- =20
-  obj-$(CONFIG_SMP)		+=3D platsmp.o headsmp.o
- =20
-- obj-$(CONFIG_MCPM)		+=3D mcpm-exynos.o
- -plus_sec :=3D $(call as-instr,.arch_extension sec,+sec)
- -AFLAGS_exynos-smc.o		:=3D-Wa,-march=3Darmv7-a$(plus_sec)
- -AFLAGS_sleep.o			:=3D-Wa,-march=3Darmv7-a$(plus_sec)
- -
-+ obj-$(CONFIG_EXYNOS_MCPM)	+=3D mcpm-exynos.o
-  CFLAGS_mcpm-exynos.o		+=3D -march=3Darmv7-a
-
---Sig_/4YZKzyDAPHNnn/eu/Wz9c4q
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0RZNsACgkQAVBC80lX
-0Gzlnwf9GTpkLoUj3f/7R596jf/Jd1cry48ctgJ+Ykd28zaHeYs0U3MLbgpM8mKg
-RPHDp1mnmJO1KfJQrs4Pb3j+EirGFIWzZe1IjU/86g/Ysz6n7KmUtpyw9y5D/yPk
-TChuM2ycVT0vNwRntFrnHkT9AbbWqo9UUN5agkqLaRbryqGpQDdtlFXkYO7CdGRw
-8d2lrDf4h94RZ1FIHjKDvOKUuHLF2Bz/TBmrq2ucMnB53VDPQtD6abCP0V9vRiGQ
-Ew4FaFZWlcD4w5YcRMRRmTgZoqa8H8duGmTzhmPcwMiQ/+T8N5uyPaBESHMri3At
-mpPyg0TmQVhNKtKU5qgRjc5KLeLHkQ==
-=UYiD
------END PGP SIGNATURE-----
-
---Sig_/4YZKzyDAPHNnn/eu/Wz9c4q--
+>=20
+>=20
+> diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
+> index 7b9e1e0d4ec3..a9ca8628c1a2 100644
+> --- a/kernel/sched/isolation.c
+> +++ b/kernel/sched/isolation.c
+> @@ -67,6 +67,9 @@ static int __init housekeeping_verify_smp(void)
+>  {
+>  	int cpu;
+> =20
+> +	if (!housekeeping_flags)
+> +		return 0;
+> +
+>  	/*
+>  	 * Early housekeeping setup is done before CPUs come up, and there are
+>  	 * a range of options scattered around that can restrict which CPUs
+>=20
+>=20
+> Cheers
+>=20
+> --
+> Qais Yousef
+>=20
+>=20
+>> +}
+>> +core_initcall(housekeeping_verify_smp);
+>> +
+>>  static int __init housekeeping_setup(char *str, enum hk_flags flags)
+>>  {
+>>  	cpumask_var_t non_housekeeping_mask;
+>> --=20
+>> 2.20.1
+>>=20
+>=20
+=
