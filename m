@@ -2,94 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B7C355027
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 15:23:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38D2555033
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 15:24:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728846AbfFYNXI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 09:23:08 -0400
-Received: from mail-vs1-f53.google.com ([209.85.217.53]:38013 "EHLO
-        mail-vs1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726707AbfFYNXH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 09:23:07 -0400
-Received: by mail-vs1-f53.google.com with SMTP id k9so10878104vso.5
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 06:23:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XeB/3xDQrxxJuVXFQuMuJo5SBnSx0zSjynbT8yHXjaw=;
-        b=HA4KA6zkysUzhZVkwFh4OrxP/8T3QPuOgjRD3vYHXG832tEUmSoTTS7BnO0sHK99ja
-         kqvusqbmQ7LQiIPAV5SPR8rzIGQzaNyZ78LptqlRxpdXnsoWCbq6H4D57Yp84Dis7PZy
-         4xHpT7f5PH0MXqGj4VR/n8p10ggV0pK7ZLFFLIZpXudnqfw8DH9sfhT6058yZewp1j9c
-         tRNw0vTvMfORORGaZpwa9vPNCChsM6LEreYd2duZ18A/n1E6xLBlrCQ3oeIwja9yauqB
-         sG0p0KznNz/R8IkY5rS+s+ex7/frp+LvLmPL0s10LGaQguXEJE1dV9a9JuHD6O15BAzQ
-         kugA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XeB/3xDQrxxJuVXFQuMuJo5SBnSx0zSjynbT8yHXjaw=;
-        b=aRozz0I8tytSW/t7VQvh2ku9jauMEiJiZCuOCGDfUCnqc0SN1IIqiE4N6EUij3m8Pd
-         o60K9u3thTztZLhRzc11lRJSC8Ng6NwZpRsITLK2MBbUNAu8QiqPKuasA9gnMZhHE1r3
-         TL1FRDAaEperWuo+vDsK/QiYwz0SHhFU6hA/Ghhs1kACoBwKKqJCRFRnnejN5v+6BlZe
-         y6Fkoy88Wt9VP/RvBlw7eRHaGu2nU8NlJuS96zZy/8dHxioFjCu9Rd7t1lzkJ9mQjt6r
-         8IDb9Ae2TUtBDDBAgqT/GIj3b1H45vlXNkViV+KI3frTA1Mv+ZnL+9YbCKgCEUKam0kN
-         BjlQ==
-X-Gm-Message-State: APjAAAVkIYVHZh4OMfIWJbHSsU7XJiPIP2BM8I8TIQ0oz6RA42E9PTv3
-        /bf0vr+LUsF02McDEN6hwCCH405rLxHOU0MEMTs=
-X-Google-Smtp-Source: APXvYqx40wlnI/l2eAlCn1M4FsahOIj+i3MEKX6XnIqju5PViEYX0OKmV1myRuSbh1hnW99Fcegyvb7X7mVHShwTTZY=
-X-Received: by 2002:a05:6102:3c8:: with SMTP id n8mr164074vsq.135.1561468986495;
- Tue, 25 Jun 2019 06:23:06 -0700 (PDT)
+        id S1729885AbfFYNYb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 09:24:31 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:32906 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726707AbfFYNYa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 09:24:30 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6E21A3092669;
+        Tue, 25 Jun 2019 13:24:22 +0000 (UTC)
+Received: from [10.18.17.153] (dhcp-17-153.bos.redhat.com [10.18.17.153])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 92ABC5C238;
+        Tue, 25 Jun 2019 13:24:21 +0000 (UTC)
+Subject: Re: [PATCH v4 00/10] klp-convert livepatch build tooling
+To:     Miroslav Benes <mbenes@suse.cz>, Petr Mladek <pmladek@suse.com>
+Cc:     linux-kernel@vger.kernel.org, live-patching@vger.kernel.org,
+        linux-kbuild@vger.kernel.org
+References: <20190509143859.9050-1-joe.lawrence@redhat.com>
+ <alpine.LSU.2.21.1906131451560.22698@pobox.suse.cz>
+ <b1a627a4-3702-9689-6c03-0c2123c06a2d@redhat.com>
+ <c9021573-11c6-b576-0aa6-97754c98a06e@redhat.com>
+ <20190614083435.uq3mk6mprbatysol@pathway.suse.cz>
+ <alpine.LSU.2.21.1906251324450.12085@pobox.suse.cz>
+From:   Joe Lawrence <joe.lawrence@redhat.com>
+Message-ID: <76da6ab0-5540-d9ff-c5ea-6dc31a39c744@redhat.com>
+Date:   Tue, 25 Jun 2019 09:24:20 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-References: <20190624025604.30896-1-ying.huang@intel.com> <20190624140950.GF2947@suse.de>
-In-Reply-To: <20190624140950.GF2947@suse.de>
-From:   huang ying <huang.ying.caritas@gmail.com>
-Date:   Tue, 25 Jun 2019 21:23:22 +0800
-Message-ID: <CAC=cRTNYUxGUcSUvXa-g9hia49TgrjkzE-b06JbBtwSn2zWYsw@mail.gmail.com>
-Subject: Re: [PATCH -mm] autonuma: Fix scan period updating
-To:     Mel Gorman <mgorman@suse.de>
-Cc:     Huang Ying <ying.huang@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Rik van Riel <riel@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>, jhladky@redhat.com,
-        lvenanci@redhat.com, Ingo Molnar <mingo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <alpine.LSU.2.21.1906251324450.12085@pobox.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Tue, 25 Jun 2019 13:24:30 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 10:25 PM Mel Gorman <mgorman@suse.de> wrote:
->
-> On Mon, Jun 24, 2019 at 10:56:04AM +0800, Huang Ying wrote:
-> > The autonuma scan period should be increased (scanning is slowed down)
-> > if the majority of the page accesses are shared with other processes.
-> > But in current code, the scan period will be decreased (scanning is
-> > speeded up) in that situation.
-> >
-> > This patch fixes the code.  And this has been tested via tracing the
-> > scan period changing and /proc/vmstat numa_pte_updates counter when
-> > running a multi-threaded memory accessing program (most memory
-> > areas are accessed by multiple threads).
-> >
->
-> The patch somewhat flips the logic on whether shared or private is
-> considered and it's not immediately obvious why that was required. That
-> aside, other than the impact on numa_pte_updates, what actual
-> performance difference was measured and on on what workloads?
+On 6/25/19 7:36 AM, Miroslav Benes wrote:
+> 
+ > [ ... snip ... ]
+ >
+> So I made a couple of experiments and found that GCC is somehow involved.
+> If klp-convert (from scripts/livepatch/) is compiled with our GCC 4.8.5
+> from SLE12, the output is incorrect. If I compile it with GCC 7.4.0 from
+> openSUSE Leap 15.1, the output is correct.
+> 
+> If I revert commit d59cadc0a8f8 ("[squash] klp-convert: make
+> convert_rela() list-safe") (from Joe's expanded github tree), the problem
+> disappears.
+> 
+> I haven't spotted any problem in the code and I cannot explain a
+> dependency on GCC version. Any ideas?
+> 
 
-The original scanning period updating logic doesn't match the original
-patch description and comments.  I think the original patch
-description and comments make more sense.  So I fix the code logic to
-make it match the original patch description and comments.
+Thanks for revisiting and debugging this.  Narrowing it down to my "fix" 
+to convert_rela() should be helpful.
 
-If my understanding to the original code logic and the original patch
-description and comments were correct, do you think the original patch
-description and comments are wrong so we need to fix the comments
-instead?  Or you think we should prove whether the original patch
-description and comments are correct?
+In my case, I was probably testing with RHEL-8, which has gcc 8.2 vs 
+RHEL-7 which has gcc 4.8.  I'll have to make sure to try with a few 
+different versions for the next round.
 
-Best Regards,
-Huang, Ying
+-- Joe
