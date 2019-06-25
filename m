@@ -2,151 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B550B5277F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 11:07:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5894B527AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 11:12:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730470AbfFYJHY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 05:07:24 -0400
-Received: from mga01.intel.com ([192.55.52.88]:27064 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728365AbfFYJHX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 05:07:23 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jun 2019 02:07:22 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,415,1557212400"; 
-   d="scan'208";a="245009051"
-Received: from unknown (HELO [10.239.13.7]) ([10.239.13.7])
-  by orsmga001.jf.intel.com with ESMTP; 25 Jun 2019 02:07:20 -0700
-Message-ID: <5D11E58B.1060306@intel.com>
-Date:   Tue, 25 Jun 2019 17:12:43 +0800
-From:   Wei Wang <wei.w.wang@intel.com>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
+        id S1731274AbfFYJM5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 05:12:57 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:45249 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728823AbfFYJM5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 05:12:57 -0400
+Received: by mail-lj1-f194.google.com with SMTP id m23so15432581lje.12
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 02:12:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wwnVDgu7cxDgh+7o1y+6rFPyKnwN8aXJSKEBzNlYRcQ=;
+        b=ZpWrOyNQCqP49tiHyPuuCPEgUimdp9Xdbj6ODVd6x+t8ZnEYlMSuoMtV4DL3glA8k0
+         WEAJKctXijVfP69IryTxkOrjVhvTkEm5X1a8bYWgqM7EyR6a/VkHWe0DV4Eb++DYf3Jl
+         5L4oujBhgcCnN2X1PGv7+IWpgsXlDiazxZ++BXX4b8zyut6KsyEGkkEiIEyyhZwtZ87D
+         SZ2ZvpxUjvH5GnKN56+m2zq4Fj4UlFZtJ+oMfI0brEIvScS53jBeShOCNOIeps2wIMuf
+         RJrWv0R0+H1ZCrNREZQ7ZTANHp/q+mbld98tmDQUyVTfFiWOlUOBy/Bhs/t0wfo6e9LF
+         4mBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wwnVDgu7cxDgh+7o1y+6rFPyKnwN8aXJSKEBzNlYRcQ=;
+        b=CesFq77wfVycVYRnsshfKoMFWaKA+FdbZamP+gqlWtzeGVlg74X+oYud5JuZWc2mRi
+         2j6j3L7+GArabJYMbzTNTqwWxO+B7xZDZQenXF1IS+42zO3gSHfC4OrhcxLPlZbcfFDJ
+         XlyhlnXm7UTgt9VF2scWCXbwkjtzUZ1fgB2AHZvx7ylTWf3etcCaRbVg3fnK3FW6jI9Z
+         3h30CCAoK2hgFoS5EgdaFEDWUVVPnwwQcGvv2oYnxt9/nVP1Rfnfj7AK5AMAeACKwhzU
+         +uKxXKNHe9TncXI94lh5gj7LqFTfCfUpKbVjyKR1dqOQR/v68R1XONzRj2Tl36dM0uOG
+         lXMg==
+X-Gm-Message-State: APjAAAUYquQeiSz2aRgcla9VqUMoHVh3EPYO41JDhejPNo+snn5RMYsl
+        iiuJsgdqGY/ukoA1zGjF9mHBgqaZUjaog2w4+2tzxw==
+X-Google-Smtp-Source: APXvYqxbOkGclXqNTDfoJhNi3bCl/YUQljV/FA4qbEQSOtH0TEx8A89uKABkZtrdtTW9HQvDgYnj5AHhdffx8NZz/fA=
+X-Received: by 2002:a2e:2c14:: with SMTP id s20mr15201086ljs.54.1561453975476;
+ Tue, 25 Jun 2019 02:12:55 -0700 (PDT)
 MIME-Version: 1.0
-To:     Eric Hankland <ehankland@google.com>
-CC:     Paolo Bonzini <pbonzini@redhat.com>, rkrcmar@redhat.com,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Subject: Re: [PATCH v1] KVM: x86: PMU Whitelist
-References: <CAOyeoRWfPNmaWY6Lifdkdj3KPPM654vzDO+s3oduEMCJP+Asow@mail.gmail.com> <5D036843.2010607@intel.com> <CAOyeoRXr4gmbBPq1RsStoPguiZB8Jxod-irYd3Dm_AGVcQRGSQ@mail.gmail.com>
-In-Reply-To: <CAOyeoRXr4gmbBPq1RsStoPguiZB8Jxod-irYd3Dm_AGVcQRGSQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <1560790160-3372-1-git-send-email-info@metux.net> <1560790160-3372-3-git-send-email-info@metux.net>
+In-Reply-To: <1560790160-3372-3-git-send-email-info@metux.net>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 25 Jun 2019 11:12:43 +0200
+Message-ID: <CACRpkdZ1KRd2XkDSjc4h-55MN1q9fvk6KPCfxE2dT3vjZaX_3w@mail.gmail.com>
+Subject: Re: [PATCH 3/7] drivers: gpio: eic-sprd: use devm_platform_ioremap_resource()
+To:     "Enrico Weigelt, metux IT consult" <info@metux.net>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Lyra Zhang <zhang.lyra@gmail.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/25/2019 08:32 AM, Eric Hankland wrote:
-> Thanks for your feedback - I'll  send out an updated version
- > incorporating your comments shortly (assuming you don't have more
- > after this).
+On Mon, Jun 17, 2019 at 6:49 PM Enrico Weigelt, metux IT consult
+<info@metux.net> wrote:
 
-Actually I have another thing to discuss:
-probably we could consider to make this filter list white/black configurable
-from userspace. For example, userspace option: filter-list=white/black
-
-This reason is that for now, we start with only a couple of events to 
-whitelist.
-As people gradually add more (or future hardware has some enhancements to
-give you more confidence), finally there may have much more whitelisted 
-events.
-Then users could reuse this interface to switch to "filter-list=black",
-this will be more efficient, considering the amount of events to enlist 
-and the
-iteration of event comparisons.
-
-
->>> +struct  kvm_pmu_whitelist { +       __u64 event_mask;
- >>
- >> Is this "ARCH_PERFMON_EVENTSEL_EVENT |
- >> ARCH_PERFMON_EVENTSEL_UMASK"?
- >
- > In most cases, I envision this being the case, but it's possible
- > users may want other bits - see response to the next question below.
- >
-
-Probably we don't need this field to be passed from userspace?
-
-We could directly use AMD64_RAW_EVENTMASK_NB, which includes bit[35:32].
-Since those bits are reserved on Intel CPUs, have them as mask should be 
-fine.
-
-Alternatively, we could add this event_mask field to struct kvm_pmu, and 
-initalize
-it in the vendor specific intel_pmu_init or amd_pmu_init.
-
-Both options above look good to me.
-
-
->>> +       __u16  num_events; +       __u64 events[0];
- >>
- >> Can this be __u16? The lower 16 bits (umask+eventsel) already
- >> determines what the event is.
- >
- > It looks like newer AMD processors also use bits 32-35 for eventsel
- > (see AMD64_EVENTSEL_EVENT/AMD64_RAW_EVENT_MASK in
- > arch/x86/include/asm/perf_event.h or a recent reference guide),
- > though it doesn't look like this has made it to pmu_amd.c in kvm
- > yet.
-
-OK, thanks for the reminder on the AMD side. I'm fine to keep it __u64.
-
+> Use the new helper that wraps the calls to platform_get_resource()
+> and devm_ioremap_resource() together.
 >
- > Further, including the whole 64 bits could enable whitelisting some
- > events with particular modifiers (e.g. in_tx=0, but not in_tx=1).
- > I'm not sure if whitelisting with specific modifiers will be
- > necessary,
+> Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
 
-I think "eventsel+umask" should be enough to identify the event.
-Other modifiers could be treated with other options when needed (e.g. 
-AnyThread),
-otherwise it would complicate the case (e.g. double/trouble the number 
-of total events).
+Patch applied with Baolin's review tag.
 
->
- > but we definitely need more than u16 if we want to support any AMD
- > events that make use of those bits in the future.
- >
- >>> +       struct kvm_pmu_whitelist *whitelist;
- >>
- >> This could be per-VM and under rcu?
- > I'll try this out in the next version.
- >
- >> Why not moving this filter to reprogram_gp_counter?
- >>
- >> You could directly compare "unit_mask, event_sel"  with
- >> whitelist->events[i]
- > The reason is that this approach provides uniform behavior whether
- > an event is programmed on a fixed purpose counter vs a general
- > purpose one. Though I admit it's unlikely that instructions
- > retired/cycles wouldn't be whitelisted (and ref cycles can't be
- > programmed on gp counters), so it wouldn't be missing too much if I
- > do move this to reprogram_gp_counter. What do you think?
- >
-
-I'd prefer to moving it to reprogram_gp_counter, which
-simplifies the implementation (we don't need
-.get_event_code as you added in this version.), and it
-should also be faster.
-
-Another reason is that we are trying to build an alternative path
-of PMU virtualization, which makes the vPMU sits on the hardware
-directly, instead of the host perf subsystem. That path wouldn't
-go deeper to reprogram_pmc, which invloves the perf subsystem
-related implementation, but that path would still need this filter list.
-
-For the fixed counter, we could add a bitmap flag to kvm_arch,
-indicating which counter is whitelist-ed based on the
-"eventsel+umask" value passed from userspace. This flag is
-updated when updating the whitelist-ed events to kvm.
-For example, if userspace gives "00+01" (INST_RETIRED_ANY),
-then we enable fixed counter0 in the flag.
-
-When reprogram_fixed_counter, we check the flag and return
-if the related counter isn't whitelisted.
-
-Best,
-Wei
-
+Yours,
+Linus Walleij
