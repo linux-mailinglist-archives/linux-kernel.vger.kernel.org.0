@@ -2,70 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B9DA5290A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 12:08:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2868B528FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 12:06:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727730AbfFYKIl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 06:08:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38832 "EHLO mail.kernel.org"
+        id S1727414AbfFYKGi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 06:06:38 -0400
+Received: from verein.lst.de ([213.95.11.211]:33380 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726827AbfFYKIl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 06:08:41 -0400
-Received: from localhost.localdomain (unknown [106.201.40.23])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 436FD20644;
-        Tue, 25 Jun 2019 10:08:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561457320;
-        bh=SB0OifcBQQeaDTYy5h5HoqPRk/EuvqCl4qAhEEhDDoI=;
-        h=From:To:Cc:Subject:Date:From;
-        b=sO8n/UqlxK/WthcAyh59xyqW3dNdUNJQMjxDdaWM9FBFlQroBZnBKecPVpKbf1U3I
-         5IUlLiqbyvIK//yuz267HmhjHVcgwpHE6LS1iriSKljzRQYhulhQuFeDH1Fm4Dtgj0
-         z/fXhQYiJsjww6GKLUjXswZ+LkCXAmlVj0VIxDkc=
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
+        id S1726274AbfFYKGi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 06:06:38 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id C6FDC68B05; Tue, 25 Jun 2019 12:06:06 +0200 (CEST)
+Date:   Tue, 25 Jun 2019 12:06:06 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] linux/kernel.h: fix overflow for DIV_ROUND_UP_ULL
-Date:   Tue, 25 Jun 2019 15:35:18 +0530
-Message-Id: <20190625100518.30753-1-vkoul@kernel.org>
-X-Mailer: git-send-email 2.20.1
+Subject: Re: [PATCH 01/12] list.h: add a list_pop helper
+Message-ID: <20190625100606.GF1462@lst.de>
+References: <20190624055253.31183-1-hch@lst.de> <20190624055253.31183-2-hch@lst.de> <20190624155137.GO32656@bombadil.infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190624155137.GO32656@bombadil.infradead.org>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DIV_ROUND_UP_ULL adds the two arguments and then invokes
-DIV_ROUND_DOWN_ULL. But on a 32bit system the addition of two 32 bit
-values can overflow. DIV_ROUND_DOWN_ULL does it correctly and stashes
-the addition into a unsigned long long so cast the result to unsigned
-long long here to avoid the overflow condition.
+On Mon, Jun 24, 2019 at 08:51:37AM -0700, Matthew Wilcox wrote:
+> The usual convention in list.h is that list_foo uses the list head and
+> list_foo_entry uses the container type.  So I think this should be
+> renamed to list_pop_entry() at least.  Do we also want:
+> 
+> static inline struct list_head *list_pop(struct list_head *head)
+> {
+> 	struct list_head *first = READ_ONCE(head->next);
+> 
+> 	if (first == head)
+> 		return NULL;
+> 	__list_del(head, first->next);
+> 	return first;
+> }
+> 
+> we also seem to prefer using inline functions over #defines in this
+> header file.
 
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
----
- include/linux/kernel.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/include/linux/kernel.h b/include/linux/kernel.h
-index 74b1ee9027f5..1214fb48cfc8 100644
---- a/include/linux/kernel.h
-+++ b/include/linux/kernel.h
-@@ -93,7 +93,8 @@
- #define DIV_ROUND_DOWN_ULL(ll, d) \
- 	({ unsigned long long _tmp = (ll); do_div(_tmp, d); _tmp; })
- 
--#define DIV_ROUND_UP_ULL(ll, d)		DIV_ROUND_DOWN_ULL((ll) + (d) - 1, (d))
-+#define DIV_ROUND_UP_ULL(ll, d) \
-+	({ DIV_ROUND_DOWN_ULL((unsigned long long)(ll) + (d) - 1, (d)) })
- 
- #if BITS_PER_LONG == 32
- # define DIV_ROUND_UP_SECTOR_T(ll,d) DIV_ROUND_UP_ULL(ll, d)
--- 
-2.20.1
-
+Sure, I can rename it and split the implementation.
