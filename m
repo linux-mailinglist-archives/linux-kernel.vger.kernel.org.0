@@ -2,83 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9208552312
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 07:48:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 657625234F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 08:11:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728636AbfFYFsl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 01:48:41 -0400
-Received: from twhmllg3.macronix.com ([211.75.127.131]:34810 "EHLO
-        TWHMLLG3.macronix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728563AbfFYFsf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 01:48:35 -0400
-Received: from localhost.localdomain ([172.17.195.96])
-        by TWHMLLG3.macronix.com with ESMTP id x5P5mKt2093478;
-        Tue, 25 Jun 2019 13:48:23 +0800 (GMT-8)
-        (envelope-from masonccyang@mxic.com.tw)
-From:   Mason Yang <masonccyang@mxic.com.tw>
-To:     miquel.raynal@bootlin.com, marek.vasut@gmail.com,
-        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
-        bbrezillon@kernel.org, dwmw2@infradead.org,
-        computersforpeace@gmail.com, vigneshr@ti.com, paul.burton@mips.com,
-        liang.yang@amlogic.com, richard@nod.at, anders.roxell@linaro.org,
-        christophe.kerello@st.com, paul@crapouillou.net,
-        jianxin.pan@amlogic.com, stefan@agner.ch,
-        devicetree@vger.kernel.org
-Cc:     juliensu@mxic.com.tw, lee.jones@linaro.org,
-        masonccyang@mxic.com.tw, broonie@kernel.org
-Subject: [PATCH v4 2/2] dt-bindings: mtd: Document Macronix raw NAND controller bindings
-Date:   Tue, 25 Jun 2019 14:10:56 +0800
-Message-Id: <1561443056-13766-3-git-send-email-masonccyang@mxic.com.tw>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1561443056-13766-1-git-send-email-masonccyang@mxic.com.tw>
-References: <1561443056-13766-1-git-send-email-masonccyang@mxic.com.tw>
-X-MAIL: TWHMLLG3.macronix.com x5P5mKt2093478
+        id S1729055AbfFYGLh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 02:11:37 -0400
+Received: from verein.lst.de ([213.95.11.211]:59765 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726495AbfFYGLg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 02:11:36 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id 413AB68B02; Tue, 25 Jun 2019 08:11:04 +0200 (CEST)
+Date:   Tue, 25 Jun 2019 08:11:04 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Hillf Danton <hdanton@sina.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Vineet Gupta <vgupta@synopsys.com>,
+        Jonas Bonn <jonas@southpole.se>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Stafford Horne <shorne@gmail.com>,
+        Helge Deller <deller@gmx.de>,
+        Vladimir Murzin <vladimir.murzin@arm.com>,
+        linux-snps-arc@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        openrisc@lists.librecores.org, linux-parisc@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/7] dma-direct: handle DMA_ATTR_NON_CONSISTENT in
+ common code
+Message-ID: <20190625061104.GB28986@lst.de>
+References: <20190614144431.21760-1-hch@lst.de> <20190614144431.21760-6-hch@lst.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190614144431.21760-6-hch@lst.de>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document the bindings used by the Macronix raw NAND controller.
+On Sun, Jun 16, 2019 at 06:08:40PM +0800, Hillf Danton wrote:
+> Literally, any cpu (call it cpuW) other than pcx12 and pcx1 will no longer do
+> dma alloc for any device with this patch applied.
 
-Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
----
- .../devicetree/bindings/mtd/mxic-nand.txt          | 26 ++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mtd/mxic-nand.txt
+Yes.  And that is not a chance from the previous code, where only
+pcx1 and pcx12 could do coherent allocations,
 
-diff --git a/Documentation/devicetree/bindings/mtd/mxic-nand.txt b/Documentation/devicetree/bindings/mtd/mxic-nand.txt
-new file mode 100644
-index 0000000..3d198e4
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mtd/mxic-nand.txt
-@@ -0,0 +1,26 @@
-+Macronix Raw NAND Controller Device Tree Bindings
-+-------------------------------------------------
-+
-+Required properties:
-+- compatible: should be "mxic,raw-nand-ctlr"
-+- reg: should contain 1 entrie for the registers
-+- reg-names: should contain "regs"
-+- interrupts: interrupt line connected to this NAND controller
-+- clock-names: should contain "ps_clk", "send_clk" and "send_dly_clk"
-+- clocks: should contain 3 entries for the "ps_clk", "send_clk" and
-+	 "send_dly_clk" clocks
-+
-+Example:
-+
-+	nand: mxic-nfc@43c30000 {
-+		compatible = "mxic,raw-nand-ctlr";
-+		reg = <0x43c30000 0x10000>;
-+		reg-names = "regs";
-+		clocks = <&clkwizard 0>, <&clkwizard 1>, <&clkc 15>;
-+		clock-names = "send_clk", "send_dly_clk", "ps_clk";
-+
-+		nand-ecc-mode = "soft";
-+		nand-ecc-algo = "bch";
-+		nand-ecc-step-size = <512>;
-+		nand-ecc-strength = <8>;
-+	};
--- 
-1.9.1
+> On the other hand, 
+> !dev_is_dma_coherent(dev) && !(attrs & DMA_ATTR_NON_CONSISTENT) will ask
+> any cpu to do dma alloc, regardless of pcx1. This patch works imo unless cpuW
+> plays games only with devices that are dma coherent. I doubt it is true.
 
+I can't parse these two sentences.  But to explains the bits mentioned
+here - dev_is_dma_coherent will return if a device is coherently
+attached vs the cpu.  This will never be true for the parisc direct
+mapping.  DMA_ATTR_NON_CONSISTENT asks for a non-coherent mapping that
+needs to be explicitly synced.  This support now is in the dma-direct
+core code, and this is what the parisc specific devices used on the
+non-pcxl systems use, as they do not support dma coherency at all.
+(the story slightly changes when using an iommu, but that is irrelevant
+here)
