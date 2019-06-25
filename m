@@ -2,79 +2,223 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 339F954C7B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 12:41:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63EBE54C96
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 12:43:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732027AbfFYKlg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 06:41:36 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:40774 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726756AbfFYKlg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 06:41:36 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 32D393D953;
-        Tue, 25 Jun 2019 10:41:36 +0000 (UTC)
-Received: from astarta.redhat.com (ovpn-116-223.ams2.redhat.com [10.36.116.223])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0492F600CD;
-        Tue, 25 Jun 2019 10:41:34 +0000 (UTC)
-From:   Yauheni Kaliuta <yauheni.kaliuta@redhat.com>
-To:     Jiong Wang <jiong.wang@netronome.com>
-Cc:     linux-kernel@vger.kernel.org, Jiri Olsa <jolsa@redhat.com>,
-        Jiri Benc <jbenc@redhat.com>, bpf@vger.kernel.org
-Subject: Re: ebpf: BPF_ALU32 | BPF_ARSH on BE arches
-References: <xunyo92mox9h.fsf@redhat.com> <87ef3i9dbc.fsf@netronome.com>
-Date:   Tue, 25 Jun 2019 13:41:34 +0300
-In-Reply-To: <87ef3i9dbc.fsf@netronome.com> (Jiong Wang's message of "Tue, 25
-        Jun 2019 11:20:07 +0100")
-Message-ID: <xuny7e9aoskh.fsf@redhat.com>
+        id S1728930AbfFYKnr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 06:43:47 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:56586 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726509AbfFYKnr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 06:43:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=bX0AUbriIdW8uB8m351hBABxw7tgECbO9YEwMIEHwrQ=; b=tNpuKDIDuUrSdoDiaPT/u2qdB
+        50hIvL2r50PbwNs1jQ99TRYSifU64HfISbwd29t+N4skDcrjviu9F4q2/0lGv2FPRSx1GHSPas/Me
+        fgYZRFqB3IPcvw005nt0DHzQQ2g4E8gKPGUlQlHWT2fVuF8bqCCFARuqg06YHn3FizgTeW4+qtW3t
+        uqxvNfljvOS+ayaHEPGfXgns0zb9ll+ThJxWjm/tx5tuqJfMRVXVYnvkABwYsXvtlaD2AmjdUECJL
+        obZpiDUBQMW4uG/XtxD/DyyAVJyBKnhKX9vnL4HIMIBpZE9K15AFts80KqnswHQ8TVCD/lDE32JO5
+        CCeB9zsFQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hfiv4-0006iT-NO; Tue, 25 Jun 2019 10:43:23 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 5FEAB20A0643C; Tue, 25 Jun 2019 12:43:20 +0200 (CEST)
+Date:   Tue, 25 Jun 2019 12:43:20 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        jolsa@redhat.com, dvyukov@google.com, namhyung@kernel.org,
+        xiexiuqi@huawei.com,
+        syzbot+a24c397a29ad22d86c98@syzkaller.appspotmail.com
+Subject: [PATCH] perf: Fix race between close() and fork()
+Message-ID: <20190625104320.GZ3463@hirez.programming.kicks-ass.net>
+References: <278ac311-d8f3-2832-5fa1-522471c8c31c@huawei.com>
+ <20190228140109.64238-1-alexander.shishkin@linux.intel.com>
+ <20190308155429.GB10860@lakrids.cambridge.arm.com>
+ <20190624121902.GE3436@hirez.programming.kicks-ass.net>
+ <20190625084904.GY3463@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 25 Jun 2019 10:41:36 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190625084904.GY3463@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Jiong!
 
->>>>> On Tue, 25 Jun 2019 11:20:07 +0100, Jiong Wang  wrote:
+Syzcaller reported the following Use-after-Free issue:
 
- > Yauheni Kaliuta writes:
+	close()						clone()
 
- >> Hi!
- >> 
- >> Looks like the code:
- >> 
- >> ALU_ARSH_X:
- >> DST = (u64) (u32) ((*(s32 *) &DST) >> SRC);
- >> CONT;
- >> ALU_ARSH_K:
- >> DST = (u64) (u32) ((*(s32 *) &DST) >> IMM);
- >> CONT;
- >> 
- >> works incorrectly on BE arches since it must operate on lower
- >> parts of 64bit registers.
- >> 
- >> See failure of test_verifier test 'arsh32 on imm 2' (#23 on
- >> 5.2-rc6).
+							  copy_process()
+							    perf_event_init_task()
+							      perf_event_init_context()
+							        mutex_lock(parent_ctx->mutex)
+								inherit_task_group()
+								  inherit_group()
+								    inherit_event()
+								      mutex_lock(event->child_mutex)
+								      // expose event on child list
+								      list_add_tail()
+								      mutex_unlock(event->child_mutex)
+							        mutex_unlock(parent_ctx->mutex)
 
- > Ah, thanks for reporting this.
+							    ...
+							    goto bad_fork_*
 
- > Should not taken the address directly, does the following fix resolved the
- > failure?
+							  bad_fork_cleanup_perf:
+							    perf_event_free_task()
 
- >         ALU_ARSH_X:
- >                 DST = (u64) (u32) ((s32) DST) >> SRC);
- >                 CONT;
- >         ALU_ARSH_K:
- >                 DST = (u64) (u32) ((s32) DST) >> IMM);
- >                 CONT;
+	  perf_release()
+	    perf_event_release_kernel()
+	      list_for_each_entry()
+		mutex_lock(ctx->mutex)
+		mutex_lock(event->child_mutex)
+		// event is from the failing inherit
+		// on the other CPU
+		perf_remove_from_context()
+		list_move()
+		mutex_unlock(event->child_mutex)
+		mutex_unlock(ctx->mutex)
 
-Yes, thanks (just add the missing braces).
+							      mutex_lock(ctx->mutex)
+							      list_for_each_entry_safe()
+							        // event already stolen
+							      mutex_unlock(ctx->mutex)
 
--- 
-WBR,
-Yauheni Kaliuta
+							    delayed_free_task()
+							      free_task()
+
+	     list_for_each_entry_safe()
+	       list_del()
+	       free_event()
+	         _free_event()
+		   // and so event->hw.target
+		   // is the already freed failed clone()
+		   if (event->hw.target)
+		     put_task_struct(event->hw.target)
+		       // WHOOPSIE, already quite dead
+
+
+Which puts the lie to the the comment on perf_event_free_task():
+'unexposed, unused context' not so much.
+
+Which is a 'fun' confluence of fail; copy_process() doing an
+unconditional free_task() and not respecting refcounts, and perf having
+creative locking. In particular:
+
+  82d94856fa22 ("perf/core: Fix lock inversion between perf,trace,cpuhp")
+
+seems to have overlooked this 'fun' parade.
+
+Solve it by using the fact that detached events still have a reference
+count on their (previous) context. With this perf_event_free_task()
+can detect when events have escaped and wait for their destruction.
+
+Cc: Mark Rutland <mark.rutland@arm.com>
+Fixes: 82d94856fa22 ("perf/core: Fix lock inversion between perf,trace,cpuhp")
+Reported-by: syzbot+a24c397a29ad22d86c98@syzkaller.appspotmail.com
+Debugged-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+---
+ kernel/events/core.c | 49 +++++++++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 41 insertions(+), 8 deletions(-)
+
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 10c1dba9068c..5302c19e9892 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -4463,12 +4463,20 @@ static void _free_event(struct perf_event *event)
+ 	if (event->destroy)
+ 		event->destroy(event);
+ 
+-	if (event->ctx)
+-		put_ctx(event->ctx);
+-
++	/*
++	 * Must be after ->destroy(), due to uprobe_perf_close() using
++	 * hw.target.
++	 */
+ 	if (event->hw.target)
+ 		put_task_struct(event->hw.target);
+ 
++	/*
++	 * perf_event_free_task() relies on put_ctx() being 'last', in particular
++	 * all task references must be cleaned up.
++	 */
++	if (event->ctx)
++		put_ctx(event->ctx);
++
+ 	exclusive_event_destroy(event);
+ 	module_put(event->pmu->module);
+ 
+@@ -4648,8 +4656,17 @@ int perf_event_release_kernel(struct perf_event *event)
+ 	mutex_unlock(&event->child_mutex);
+ 
+ 	list_for_each_entry_safe(child, tmp, &free_list, child_list) {
++		void *var = &child->ctx->refcount;
++
+ 		list_del(&child->child_list);
+ 		free_event(child);
++
++		/*
++		 * Wake any perf_event_free_task() waiting for this event to be
++		 * freed.
++		 */
++		smp_mb(); /* pairs with wait_var_event() */
++		wake_up_var(var);
+ 	}
+ 
+ no_ctx:
+@@ -11512,11 +11529,11 @@ static void perf_free_event(struct perf_event *event,
+ }
+ 
+ /*
+- * Free an unexposed, unused context as created by inheritance by
+- * perf_event_init_task below, used by fork() in case of fail.
++ * Free a context as created by inheritance by perf_event_init_task() below,
++ * used by fork() in case of fail.
+  *
+- * Not all locks are strictly required, but take them anyway to be nice and
+- * help out with the lockdep assertions.
++ * Even though the task has never lived, the context and events have been
++ * exposed through the child_list, so we must take care tearing it all down.
+  */
+ void perf_event_free_task(struct task_struct *task)
+ {
+@@ -11546,7 +11563,23 @@ void perf_event_free_task(struct task_struct *task)
+ 			perf_free_event(event, ctx);
+ 
+ 		mutex_unlock(&ctx->mutex);
+-		put_ctx(ctx);
++
++		/*
++		 * perf_event_release_kernel() could've stolen some of our
++		 * child events and still have them on its free_list. In that
++		 * case we must wait for these events to have been freed (in
++		 * particular all their references to this task must've been
++		 * dropped).
++		 *
++		 * Without this copy_process() will unconditionally free this
++		 * task (irrespective of its reference count) and
++		 * _free_event()'s put_task_struct(event->hw.target) will be a
++		 * use-after-free.
++		 *
++		 * Wait for all events to drop their context reference.
++		 */
++		wait_var_event(&ctx->refcount, refcount_read(&ctx->refcount) == 1);
++		put_ctx(ctx); /* must be last */
+ 	}
+ }
+ 
+
