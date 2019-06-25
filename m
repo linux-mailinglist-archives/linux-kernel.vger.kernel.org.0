@@ -2,102 +2,184 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FED354FBE
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 15:05:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8782754FC1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 15:05:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730587AbfFYNFJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 09:05:09 -0400
-Received: from mail-eopbgr680046.outbound.protection.outlook.com ([40.107.68.46]:1924
-        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729440AbfFYNFJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 09:05:09 -0400
+        id S1730682AbfFYNFU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 09:05:20 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:50209 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727338AbfFYNFU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 09:05:20 -0400
+Received: by mail-wm1-f65.google.com with SMTP id c66so2770088wmf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 06:05:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wReQ+sPyOfw/5/jld0bgD9yhadk4anxbkoD1Hgt1YA4=;
- b=LGr9Jw+YdOoWQGdWRM1H4f5D40vjP/qWhp1QvjVrICWeNcGbu4/CRWGU2WfrClZndfn5xyQYbKgEv4Qi8cXeduM4zKw15MMec81HP1A1suuoCGpS/k7sWm2yoU+4vwBYDRtuFJquLU4hGTaOOHnApk/bG225foNLX0R/ElckU+0=
-Received: from DM5PR12MB1449.namprd12.prod.outlook.com (10.172.40.14) by
- DM5PR12MB1436.namprd12.prod.outlook.com (10.168.239.7) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2008.16; Tue, 25 Jun 2019 13:05:04 +0000
-Received: from DM5PR12MB1449.namprd12.prod.outlook.com
- ([fe80::180c:ff0c:37e6:a482]) by DM5PR12MB1449.namprd12.prod.outlook.com
- ([fe80::180c:ff0c:37e6:a482%10]) with mapi id 15.20.2008.017; Tue, 25 Jun
- 2019 13:05:04 +0000
-From:   Gary R Hook <ghook@amd.com>
-To:     Eric Biggers <ebiggers@kernel.org>,
-        "Hook, Gary" <Gary.Hook@amd.com>
-CC:     "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>
-Subject: Re: [PATCH 2/3] crypto: doc - Describe the crypto engine
-Thread-Topic: [PATCH 2/3] crypto: doc - Describe the crypto engine
-Thread-Index: AQHVKsAd+xpmsaFX3kCZNKb6odNQP6arW70AgAD79IA=
-Date:   Tue, 25 Jun 2019 13:05:04 +0000
-Message-ID: <9e89535a-f3c8-43fe-be77-d2e972dd2503@amd.com>
-References: <156140322426.29777.8610751479936722967.stgit@taos>
- <156140326736.29777.7751606850237303573.stgit@taos>
- <20190624220313.GB237341@gmail.com>
-In-Reply-To: <20190624220313.GB237341@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: SN6PR15CA0013.namprd15.prod.outlook.com
- (2603:10b6:805:16::26) To DM5PR12MB1449.namprd12.prod.outlook.com
- (2603:10b6:4:10::14)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Gary.Hook@amd.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [165.204.78.1]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: b7c606bc-77e0-47bd-51e6-08d6f96dbd08
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DM5PR12MB1436;
-x-ms-traffictypediagnostic: DM5PR12MB1436:
-x-microsoft-antispam-prvs: <DM5PR12MB1436FBD3D774E1D34E193F27FDE30@DM5PR12MB1436.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7219;
-x-forefront-prvs: 0079056367
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(39860400002)(136003)(396003)(366004)(189003)(199004)(4744005)(6116002)(8936002)(7736002)(53936002)(3846002)(6486002)(305945005)(486006)(446003)(2616005)(476003)(72206003)(186003)(66476007)(64756008)(110136005)(66446008)(6512007)(11346002)(229853002)(54906003)(66556008)(5660300002)(73956011)(256004)(26005)(66946007)(6636002)(6436002)(52116002)(31686004)(478600001)(99286004)(66066001)(36756003)(4326008)(53546011)(102836004)(6506007)(386003)(71190400001)(14454004)(8676002)(81156014)(76176011)(81166006)(316002)(68736007)(25786009)(31696002)(2906002)(6246003)(71200400001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1436;H:DM5PR12MB1449.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 7U2/Pis5C1S5ZejbajkCwNgP3Ov+WF3BadWi3eKv8c0DNzVYdhhJtkFnvPersJd5CxJWVH0liHYYspE0VhoQOdVSA2KL82Ukth3e9F297TA2ZMlHV+3DuljWiOblMDipXitjtIk9qNly7MGohYegw8/4rwS8eZS18KcEX1BTAbJW9mPHjtVjUxRoi/CZx2xG3UgWL4vikUUjRbIaHoBI86NFTwPvAy9WtZw1DEARI3dBT3/cny+yhO2HfGXmxPRTVsU/Ef4WIXcwbTRnkxwx3jeCnYutCeYaXaVtd8iN0NbnIeQCYuc6B3e8VSJybZF0REc3XsP34gNvRHyw0pi8ERjAWtvUEKeZogbl+Fg/BaZI8i5DvohuPfgvHLdE0ODOjaDSJbcx7qEL4dNVGTeo9v1I7zRQ2uM7s7N7HdQUQd0=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <73EFC7EE0FD28E4B8A4BDB6770E1637E@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=4nNfIWXsbuWkXABqorH5/YWxe2eUXvASoBcY3Q4IT0Q=;
+        b=agXIyohEeL5aSmsFK9/eZQnM28H5O3wLADo6asi/edUROUp+gkzSdzX6RNudO0KgEM
+         4sZzwU1LtPNYA6EmdBk5UNG9IRRbPPcBnBX0qay3q0RF0gJompYL15QmlEDh+ZeMr4EK
+         Wzs9ayvC4DuMYPOfw970JsaBe815uHC8oaD+Vz3n0wL5rH94JbgliM6GWDVBjwXuTrBi
+         mvS8T0i+SaLgmcMqowaF0jIrJKRnJ7nO3sLMK7MR0dSwIVTENAjbCh9InX82Wr58pBF5
+         mdLCNR1qN0vwZa35CT1VI4xPeb3N+AJZRPydZj0/eSul9EjkhAGXZ81ejFbCdhk6h+WI
+         LHFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=4nNfIWXsbuWkXABqorH5/YWxe2eUXvASoBcY3Q4IT0Q=;
+        b=m1NfW3LBbn/FlhmiaYXCpNUHNL/ple/ttjduXwzhl711A2ATvUW80EL6f3Pqg9PY8M
+         VefTaOZvLmop5tk8GuVu1M9vGXYQviDj+brhktW45/tx80kPaIadR0TX5Ld6N795GQLA
+         xctYaWFo7edGtHzGdptaDzjTp1UzKGj8j2QnCl4cmqge4s4RVTlNDJjZThukAuW5Nvr9
+         v1u2FI3XLWRWqHncxzSddIOG3tGb2aaFUgM0HJ2QlvignL/iWhqHY3sGiPBpKjBWJqHv
+         4w9rVdGHyvbGHNNQyypbqWW0FiQyfMEDfEpF8OvNpaX7CUnWzuRx+pdRYdK48AV5daNe
+         Qj8A==
+X-Gm-Message-State: APjAAAWKKQuJuwnpN25VqoP/XJREj8yo9wa9CuNBFOuTb4gF3BjJd5md
+        ey6HmiY5UzfkbEg/hQJdwFqWmg==
+X-Google-Smtp-Source: APXvYqxCiqTFDYEkNUUTS0hbWVxoN5bHMwTOYhwVDRdm+Z7NoLq0W9pFMznZLhmGIeMli9qpwdAsfA==
+X-Received: by 2002:a1c:f116:: with SMTP id p22mr19442330wmh.70.1561467917292;
+        Tue, 25 Jun 2019 06:05:17 -0700 (PDT)
+Received: from dell ([2.27.35.164])
+        by smtp.gmail.com with ESMTPSA id h1sm13430752wrt.20.2019.06.25.06.05.16
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 25 Jun 2019 06:05:16 -0700 (PDT)
+Date:   Tue, 25 Jun 2019 14:05:15 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Evan Green <evgreen@chromium.org>
+Cc:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Ravi Chandra Sadineni <ravisadineni@chromium.org>,
+        Rajat Jain <rajatja@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        linux-kernel@vger.kernel.org, Benson Leung <bleung@chromium.org>,
+        Tim Wawrzynczak <twawrzynczak@chromium.org>
+Subject: Re: [PATCH v2] platform/chrome: Expose resume result via debugfs
+Message-ID: <20190625130515.GJ21119@dell>
+References: <20190617215234.260982-1-evgreen@chromium.org>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b7c606bc-77e0-47bd-51e6-08d6f96dbd08
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Jun 2019 13:05:04.1837
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ghook@amd.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1436
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190617215234.260982-1-evgreen@chromium.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gNi8yNC8xOSA1OjAzIFBNLCBFcmljIEJpZ2dlcnMgd3JvdGU6DQo+IE9uIE1vbiwgSnVuIDI0
-LCAyMDE5IGF0IDA3OjA3OjQ5UE0gKzAwMDAsIEhvb2ssIEdhcnkgd3JvdGU6DQo+PiBBZGQgYSBy
-ZWZlcmVuY2UgdG8gdGhlIGNyeXB0byBlbmdpbmUgZG9jdW1lbnRhdGlvbiB0bw0KPj4gdGhlIGlu
-ZGV4Lg0KPj4NCj4+IFNpZ25lZC1vZmYtYnk6IEdhcnkgUiBIb29rIDxnYXJ5Lmhvb2tAYW1kLmNv
-bT4NCj4+IC0tLQ0KPj4gICBEb2N1bWVudGF0aW9uL2NyeXB0by9pbmRleC5yc3QgfCAgICAxICsN
-Cj4+ICAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspDQo+Pg0KPj4gZGlmZiAtLWdpdCBh
-L0RvY3VtZW50YXRpb24vY3J5cHRvL2luZGV4LnJzdCBiL0RvY3VtZW50YXRpb24vY3J5cHRvL2lu
-ZGV4LnJzdA0KPj4gaW5kZXggYzRmZjVkNzkxMjMzLi4zN2NkN2ZiMGVhODIgMTAwNjQ0DQo+PiAt
-LS0gYS9Eb2N1bWVudGF0aW9uL2NyeXB0by9pbmRleC5yc3QNCj4+ICsrKyBiL0RvY3VtZW50YXRp
-b24vY3J5cHRvL2luZGV4LnJzdA0KPj4gQEAgLTE5LDYgKzE5LDcgQEAgZm9yIGNyeXB0b2dyYXBo
-aWMgdXNlIGNhc2VzLCBhcyB3ZWxsIGFzIHByb2dyYW1taW5nIGV4YW1wbGVzLg0KPj4gICAgICBp
-bnRybw0KPj4gICAgICBhcmNoaXRlY3R1cmUNCj4+ICAgICAgZGV2ZWwtYWxnb3MNCj4+ICsgICBj
-cnlwdG9fZW5naW5lDQo+PiAgICAgIHVzZXJzcGFjZS1pZg0KPj4gICAgICBjcnlwdG9fZW5naW5l
-DQo+PiAgICAgIGFwaQ0KPj4NCj4gDQo+IEl0J3MgYWxyZWFkeSBpbiB0aGUgbGlzdC4NCg0KR2Fo
-ISBBbmQgYXQgdGhlIG1vbWVudCBJIGNhbid0IHJlbWVtYmVyIHdoeSB0aGF0IGV2ZW4gZ290IHB1
-dCB0aGVyZS4NCg0KQXBvbG9naWVzLg0KDQpncmgNCg==
+On Mon, 17 Jun 2019, Evan Green wrote:
+
+> For ECs that support it, the EC returns the number of slp_s0
+> transitions and whether or not there was a timeout in the resume
+> response. Expose the last resume result to usermode via debugfs so
+> that usermode can detect and report S0ix timeouts.
+> 
+> Signed-off-by: Evan Green <evgreen@chromium.org>
+
+This still needs a platform/chrome Ack.
+
+> ---
+> 
+> Changes in v2:
+>  - Moved from sysfs to debugfs (Enric)
+>  - Added documentation (Enric)
+> 
+> 
+> ---
+>  Documentation/ABI/testing/debugfs-cros-ec | 22 ++++++++++++++++++++++
+>  drivers/mfd/cros_ec.c                     |  6 +++++-
+>  drivers/platform/chrome/cros_ec_debugfs.c |  7 +++++++
+>  include/linux/mfd/cros_ec.h               |  1 +
+>  4 files changed, 35 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/ABI/testing/debugfs-cros-ec b/Documentation/ABI/testing/debugfs-cros-ec
+> index 573a82d23c89..008b31422079 100644
+> --- a/Documentation/ABI/testing/debugfs-cros-ec
+> +++ b/Documentation/ABI/testing/debugfs-cros-ec
+> @@ -32,3 +32,25 @@ Description:
+>  		is used for synchronizing the AP host time with the EC
+>  		log. An error is returned if the command is not supported
+>  		by the EC or there is a communication problem.
+> +
+> +What:		/sys/kernel/debug/cros_ec/last_resume_result
+> +Date:		June 2019
+> +KernelVersion:	5.3
+> +Description:
+> +		Some ECs have a feature where they will track transitions to
+> +		the (Intel) processor's SLP_S0 line, in order to detect cases
+> +		where a system failed to go into S0ix. When the system resumes,
+> +		an EC with this feature will return a summary of SLP_S0
+> +		transitions that occurred. The last_resume_result file returns
+> +		the most recent response from the AP's resume message to the EC.
+> +
+> +		The bottom 31 bits contain a count of the number of SLP_S0
+> +		transitions that occurred since the suspend message was
+> +		received. Bit 31 is set if the EC attempted to wake the
+> +		system due to a timeout when watching for SLP_S0 transitions.
+> +		Callers can use this to detect a wake from the EC due to
+> +		S0ix timeouts. The result will be zero if no suspend
+> +		transitions have been attempted, or the EC does not support
+> +		this feature.
+> +
+> +		Output will be in the format: "0x%08x\n".
+> diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
+> index 5d5c41ac3845..2a9ac5213893 100644
+> --- a/drivers/mfd/cros_ec.c
+> +++ b/drivers/mfd/cros_ec.c
+> @@ -102,12 +102,16 @@ static int cros_ec_sleep_event(struct cros_ec_device *ec_dev, u8 sleep_event)
+>  
+>  	/* For now, report failure to transition to S0ix with a warning. */
+>  	if (ret >= 0 && ec_dev->host_sleep_v1 &&
+> -	    (sleep_event == HOST_SLEEP_EVENT_S0IX_RESUME))
+> +	    (sleep_event == HOST_SLEEP_EVENT_S0IX_RESUME)) {
+> +		ec_dev->last_resume_result =
+> +			buf.u.resp1.resume_response.sleep_transitions;
+> +
+>  		WARN_ONCE(buf.u.resp1.resume_response.sleep_transitions &
+>  			  EC_HOST_RESUME_SLEEP_TIMEOUT,
+>  			  "EC detected sleep transition timeout. Total slp_s0 transitions: %d",
+>  			  buf.u.resp1.resume_response.sleep_transitions &
+>  			  EC_HOST_RESUME_SLEEP_TRANSITIONS_MASK);
+> +	}
+>  
+>  	return ret;
+>  }
+> diff --git a/drivers/platform/chrome/cros_ec_debugfs.c b/drivers/platform/chrome/cros_ec_debugfs.c
+> index cd3fb9c22a44..663bebf699bf 100644
+> --- a/drivers/platform/chrome/cros_ec_debugfs.c
+> +++ b/drivers/platform/chrome/cros_ec_debugfs.c
+> @@ -447,6 +447,13 @@ static int cros_ec_debugfs_probe(struct platform_device *pd)
+>  	debugfs_create_file("uptime", 0444, debug_info->dir, debug_info,
+>  			    &cros_ec_uptime_fops);
+>  
+> +	if (!strcmp(ec->class_dev.kobj.name, CROS_EC_DEV_NAME)) {
+> +		debugfs_create_x32("last_resume_result",
+> +				   0444,
+> +				   debug_info->dir,
+> +				   &ec->ec_dev->last_resume_result);
+> +	}
+> +
+>  	ec->debug_info = debug_info;
+>  
+>  	dev_set_drvdata(&pd->dev, ec);
+> diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.h
+> index 5ddca44be06d..45aba26db964 100644
+> --- a/include/linux/mfd/cros_ec.h
+> +++ b/include/linux/mfd/cros_ec.h
+> @@ -155,6 +155,7 @@ struct cros_ec_device {
+>  	struct ec_response_get_next_event_v1 event_data;
+>  	int event_size;
+>  	u32 host_event_wake_mask;
+> +	u32 last_resume_result;
+>  };
+>  
+>  /**
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
