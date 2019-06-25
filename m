@@ -2,100 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FA2C54F55
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 14:51:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7916E54F6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 14:56:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731957AbfFYMv1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 08:51:27 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:54606 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731674AbfFYMv1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 08:51:27 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 5663F1A07E6;
-        Tue, 25 Jun 2019 14:51:25 +0200 (CEST)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 48D291A07DC;
-        Tue, 25 Jun 2019 14:51:25 +0200 (CEST)
-Received: from fsr-ub1664-175.ea.freescale.net (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id BC1272061E;
-        Tue, 25 Jun 2019 14:51:24 +0200 (CEST)
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>
-Cc:     NXP Linux Team <linux-imx@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Abel Vesa <abel.vesa@nxp.com>
-Subject: [PATCH] arm64: dts: imx8mq: Init rates and parents configs for clocks
-Date:   Tue, 25 Jun 2019 15:51:21 +0300
-Message-Id: <1561467081-25701-1-git-send-email-abel.vesa@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1729792AbfFYM4M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 08:56:12 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:35225 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726504AbfFYM4L (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 08:56:11 -0400
+Received: by mail-qk1-f195.google.com with SMTP id l128so12456889qke.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 05:56:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=OurFPUo7gnihcYVub8SOQDvfLe3fR+6xdFiBUG/mGaU=;
+        b=DZuLEnT0c3Anyy8jegKUBD1pB5R05zrrm6Hg1/EXMvo2Azh30aWlDVwzQ+RXchLRx4
+         iC/YEH+9byL2b7UGpVIjBWH8xW/ZF3FPppaGwX4xwZn4cyZQAmeTD7xSQKyzUznHunVi
+         5u+9r26kvl7UvtOw7HersgYkGjYPuhz+17TPW4xuKu47wTkBHPGGXaxe+sIVSE+ccI1Y
+         Mca+ACVEJ5t1XQ2X7BDriCe3dTn7ZfiFxnlGjBD+nX/wcGAbV6ay2T28Sff6M3Zn3npM
+         2Df0OM/lpjKtZxhLZeisUM3a5HsKxUjS8ix42mJ2sSIsulPxOBiAlsdIFQUFVnkRwn1k
+         FRTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=OurFPUo7gnihcYVub8SOQDvfLe3fR+6xdFiBUG/mGaU=;
+        b=Rj00L3Re9s2B9B0shFHgOXRkE2dpEhKjphhJiKTuS0lzIORy7kceMuor5UJu3hVlia
+         k+JEZAKhuWIjmAUyzhjIWiaBVFH1PlwS3v2EtTy4lnofqBXHls183KcMqJb0OdasGOIB
+         FqJZX7dqw6r5IZmyZcQJ/Gy9phA0A0jVACs4fHXow3JvqVigBkkp54XW2xubloQEqbGm
+         mIKqYA4NMTLJm8d8pnPAQyVnU8MjulKLy9Sxh0mUdy95w+WY4q773Rd/Z0uiRc55mld4
+         BwbZQIl+DUqcDSA70zFCQkiykmJ8fWKyXuIQcyG/M2jC4yZKjOOKTAagWOjbCLyZQm8Y
+         MLQQ==
+X-Gm-Message-State: APjAAAUuijSJF4PLf/7b/qIY5Zei4B/3eqiDOyJjo28l96kTAsgmFNhV
+        WzVNpTNWhY18zbGNOM1929WEfA==
+X-Google-Smtp-Source: APXvYqwWcl7FHe5Q6JvWZnREmdhAYa+kjEanHdiJYtr/n0jOQquCki6IOPDpMJhUz8kj9KvU+BHsIA==
+X-Received: by 2002:a05:620a:15c9:: with SMTP id o9mr84310245qkm.195.1561467371037;
+        Tue, 25 Jun 2019 05:56:11 -0700 (PDT)
+Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id s130sm6740825qke.104.2019.06.25.05.56.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 25 Jun 2019 05:56:10 -0700 (PDT)
+Message-ID: <1561467369.5154.67.camel@lca.pw>
+Subject: Re: "arm64: vdso: Substitute gettimeofday() with C implementation"
+ breaks clang build
+From:   Qian Cai <cai@lca.pw>
+To:     Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        natechancellor@gmail.com, ndesaulniers@google.com
+Date:   Tue, 25 Jun 2019 08:56:09 -0400
+In-Reply-To: <e86774e4-7470-5cb2-fc3e-b7c1f529d253@arm.com>
+References: <1561464964.5154.63.camel@lca.pw>
+         <e86774e4-7470-5cb2-fc3e-b7c1f529d253@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the initial configuration for clocks that need default parent and rate
-setting. This is based on the vendor tree clock provider parents and rates
-configuration except this is doing the setup in dts rather then using clock
-consumer API in a clock provider driver.
+On Tue, 2019-06-25 at 13:47 +0100, Vincenzo Frascino wrote:
+> Hi Qian,
+> 
+> On 25/06/2019 13:16, Qian Cai wrote:
+> > The linux-next commit "arm64: vdso: Substitute gettimeofday() with C
+> > implementation" [1] breaks clang build.
+> > 
+> > error: invalid value 'tiny' in '-mcode-model tiny'
+> > make[1]: *** [scripts/Makefile.build:279:
+> > arch/arm64/kernel/vdso/vgettimeofday.o] Error 1
+> > make[1]: *** Waiting for unfinished jobs....
+> > make: *** [arch/arm64/Makefile:180: vdso_prepare] Error 2
+> > 
+> > [1] https://patchwork.kernel.org/patch/11009663/
+> > 
+> 
+> I am not sure what does exactly break from your report. Could you please
+> provide
+> more details?
 
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
----
- arch/arm64/boot/dts/freescale/imx8mq.dtsi | 34 +++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+Here is the config to reproduce.
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mq.dtsi b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-index d09b808..e0abe02 100644
---- a/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-@@ -489,6 +489,40 @@
- 				clock-names = "ckil", "osc_25m", "osc_27m",
- 				              "clk_ext1", "clk_ext2",
- 				              "clk_ext3", "clk_ext4";
-+				assigned-clocks = <&clk IMX8MQ_VIDEO_PLL1>,
-+					<&clk IMX8MQ_CLK_AHB>,
-+					<&clk IMX8MQ_CLK_NAND_USDHC_BUS>,
-+					<&clk IMX8MQ_CLK_AUDIO_AHB>,
-+					<&clk IMX8MQ_VIDEO_PLL1_REF_SEL>,
-+					<&clk IMX8MQ_CLK_NOC>,
-+					<&clk IMX8MQ_CLK_PCIE1_CTRL>,
-+					<&clk IMX8MQ_CLK_PCIE1_PHY>,
-+					<&clk IMX8MQ_CLK_PCIE2_CTRL>,
-+					<&clk IMX8MQ_CLK_PCIE2_PHY>,
-+					<&clk IMX8MQ_CLK_CSI1_CORE>,
-+					<&clk IMX8MQ_CLK_CSI1_PHY_REF>,
-+					<&clk IMX8MQ_CLK_CSI1_ESC>,
-+					<&clk IMX8MQ_CLK_CSI2_CORE>,
-+					<&clk IMX8MQ_CLK_CSI2_PHY_REF>,
-+					<&clk IMX8MQ_CLK_CSI2_ESC>;
-+				assigned-clock-parents = <0>,
-+						<&clk IMX8MQ_SYS1_PLL_133M>,
-+						<&clk IMX8MQ_SYS1_PLL_266M>,
-+						<&clk IMX8MQ_SYS2_PLL_500M>,
-+						<&clk IMX8MQ_CLK_27M>,
-+						<&clk IMX8MQ_SYS1_PLL_800M>,
-+						<&clk IMX8MQ_SYS2_PLL_250M>,
-+						<&clk IMX8MQ_SYS2_PLL_100M>,
-+						<&clk IMX8MQ_SYS2_PLL_250M>,
-+						<&clk IMX8MQ_SYS2_PLL_100M>,
-+						<&clk IMX8MQ_SYS1_PLL_266M>,
-+						<&clk IMX8MQ_SYS2_PLL_1000M>,
-+						<&clk IMX8MQ_SYS1_PLL_800M>,
-+						<&clk IMX8MQ_SYS1_PLL_266M>,
-+						<&clk IMX8MQ_SYS2_PLL_1000M>,
-+						<&clk IMX8MQ_SYS1_PLL_800M>;
-+				assigned-clock-rates = <593999999>;
-+
- 			};
- 
- 			src: reset-controller@30390000 {
--- 
-2.7.4
+https://raw.githubusercontent.com/cailca/linux-mm/master/arm64.config
 
+# make CC=clang -j $(nr_cpus)
+
+I can get it working again by removing "-mcmodel=tiny" in
+arch/arm64/kernel/vdso/Makefile
+
+> 
+> On my env:
+> 
+> $ make mrproper && make defconfig && make CC=clang HOSTCC=clang -j$(nproc)
+> 
+> ...
+> 
+> arch/arm64/Makefile:56: CROSS_COMPILE_COMPAT is clang, the compat vDSO will
+> not
+> be built
+> 
+> ...
+> 
+>   LDS     arch/arm64/kernel/vdso/vdso.lds
+>   AS      arch/arm64/kernel/vdso/note.o
+>   AS      arch/arm64/kernel/vdso/sigreturn.o
+>   CC      arch/arm64/kernel/vdso/vgettimeofday.o
+>   LD      arch/arm64/kernel/vdso/vdso.so.dbg
+>   VDSOCHK arch/arm64/kernel/vdso/vdso.so.dbg
+>   VDSOSYM include/generated/vdso-offsets.h
+> 
+> ...
+> 
+>   LD      vmlinux.o
+>   MODPOST vmlinux.o
+>   MODINFO modules.builtin.modinfo
+>   KSYM    .tmp_kallsyms1.o
+>   KSYM    .tmp_kallsyms2.o
+>   LD      vmlinux
+>   SORTEX  vmlinux
+>   SYSMAP  System.map
+>   Building modules, stage 2.
+>   OBJCOPY arch/arm64/boot/Image
+>   MODPOST 483 modules
+> 
