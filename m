@@ -2,186 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 534DB555A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 19:14:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 020DE555B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 19:18:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731538AbfFYRON (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 13:14:13 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:37753 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727540AbfFYROM (ORCPT
+        id S1729744AbfFYRSD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 13:18:03 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:51904 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726774AbfFYRSC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 13:14:12 -0400
-Received: by mail-io1-f66.google.com with SMTP id e5so1928591iok.4
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 10:14:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rIEg9mImdLbOPWr5JcAO9mpGaP6d2/FlgncwQFfkJdw=;
-        b=iFw/1dYYVqRHgcAh1TpJFGK77tujLxqxZtyDQdAChfPK8J2o5Z35qj7HlPTvAoJDh0
-         0LUe8zRzcBUHlMIsII05VrtML3UOjVu/FQEjIrmezQ6XDdecyYt7zJPA5fpXIGdpt63p
-         DHUgZqIHhAHn5Y29772IQWcGUWCAZyj5Z2xwo8VQFeDUCFWyvp8tluEdpnBnrkD63QQv
-         TQwDL87DoNOU7cDCAPKgC+e7rxUyug338krujNQfqkEtiqWde1T1kd0ZNcLYKO+v1JaY
-         zr5Ga8ex+w/NpqHgnMXiK+QpBeUCEVe1JKHl6CYdS6u3bHTHx1BMwcVsbzZ5dFI0KiG1
-         qqsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rIEg9mImdLbOPWr5JcAO9mpGaP6d2/FlgncwQFfkJdw=;
-        b=XcQX5jUImrylgOH8xA/TaNfmsEVShnGBdT2Fzoxx0mi/l6k2cggfgrXbpkV36DRK2B
-         jz32CBJRxkKOqLPJVKQGgOpIMUL6UA5b3ETrLnmY66O/bQnAbYuuVFdnRa5kpZbBqvw2
-         1X+NW6A5u9Yxhbca03HJzKm5lpy8cU4C7EniJUm5wBXvF5pks8i5etGlxwayRO/Vc1I2
-         cONEKzkjc2xz1WsGfk4fuD6JNYKHXVvVVA4FwwBpm59ta2kkwPU52PYhDvsNMDT2DcI0
-         +tFuccYbTcZw8MGeu5NKvWbZP/tclo9VCIkBdyetU6xgeleNrpUFbCJwfnRZ+VpEn8zf
-         rC8Q==
-X-Gm-Message-State: APjAAAVY902yIDpVOrS30a6xooyvO+XbrPew9U92qdoJvkK4ykeQ6njo
-        /bC1g73dJPupCsyJMd28vXYXU+GZQAjqx4zMvx1jGQ==
-X-Google-Smtp-Source: APXvYqxatAKGOw2Hd80AGbHfI0zoxMZ2N12wP/Os4mMS4dOimgUUQdghFbrjzzb/zt7brOd5o3IjqgB2yyjTx1aDKS8=
-X-Received: by 2002:a05:6638:3d6:: with SMTP id r22mr457862jaq.71.1561482851619;
- Tue, 25 Jun 2019 10:14:11 -0700 (PDT)
+        Tue, 25 Jun 2019 13:18:02 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5PHDjnK112356;
+        Tue, 25 Jun 2019 17:16:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to :
+ subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=8YOHqT1H5m87NYapYKi5uOloFdOjAQsayzwyn6FBGsU=;
+ b=kRLzMzcD4dDTxKKrIatPNQ8UbCC6dJVjee0v4WI+ASaqAGwEtXxAYgVRxpW7bi2F0kdN
+ +8BkhOTIe/oZhPnAYc1tUS8V4kAmfxQ6VRRo827Ml89rmcehwrL0IvipIkWsyxIORYzM
+ dFZwu3TFJ2jAetMYP79ISwOmGkO6y3D31aAPNJXhXBih2Gr5GYQy3VEltfIlToeYcYTA
+ OPEtp5J5s9kqXfLt+XUPAuzKiT8ERVsbjZlleEopgqvRqrrBmDlDLaWMStCqCoAydaCU
+ P+tj3IggCOnLZs/3nlNDQyjq5pVdz1NFvQtV5k0sEbhsON1T5kYdVRGZQlOdlAbybMLW JQ== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2130.oracle.com with ESMTP id 2t9brt5t2e-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 25 Jun 2019 17:16:24 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5PHFVC3141059;
+        Tue, 25 Jun 2019 17:16:23 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by aserp3030.oracle.com with ESMTP id 2t9acc7vvx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 25 Jun 2019 17:16:23 +0000
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x5PHGMB9143216;
+        Tue, 25 Jun 2019 17:16:22 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 2t9acc7vvk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 25 Jun 2019 17:16:22 +0000
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5PHGJxo007776;
+        Tue, 25 Jun 2019 17:16:19 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 25 Jun 2019 10:16:19 -0700
+Date:   Tue, 25 Jun 2019 10:16:16 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     dsterba@suse.cz, Christoph Hellwig <hch@infradead.org>,
+        matthew.garrett@nebula.com, yuchao0@huawei.com, tytso@mit.edu,
+        shaggy@kernel.org, ard.biesheuvel@linaro.org, josef@toxicpanda.com,
+        clm@fb.com, adilger.kernel@dilger.ca, jk@ozlabs.org, jack@suse.com,
+        dsterba@suse.com, jaegeuk@kernel.org, viro@zeniv.linux.org.uk,
+        cluster-devel@redhat.com, jfs-discussion@lists.sourceforge.net,
+        linux-efi@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
+        linux-nilfs@vger.kernel.org, linux-mtd@lists.infradead.org,
+        ocfs2-devel@oss.oracle.com, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org
+Subject: Re: [PATCH 2/4] vfs: create a generic checking function for
+ FS_IOC_FSSETXATTR
+Message-ID: <20190625171616.GB2230847@magnolia>
+References: <156116136742.1664814.17093419199766834123.stgit@magnolia>
+ <156116138952.1664814.16552129914959122837.stgit@magnolia>
+ <20190625105725.GB26085@infradead.org>
+ <20190625170248.GS8917@twin.jikos.cz>
 MIME-Version: 1.0
-References: <20190617150024.11787-1-leo.yan@linaro.org> <CANLsYkyMW=WG+=yWTLSyMT3JXqd_2kvsrx9c-EwCoKEnRZvErA@mail.gmail.com>
- <20190620005829.GH24549@leoy-ThinkPad-X240s> <20190624190009.GE4181@kernel.org>
-In-Reply-To: <20190624190009.GE4181@kernel.org>
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Tue, 25 Jun 2019 11:14:00 -0600
-Message-ID: <CANLsYkyOOS_ow_bRpok+V73_EBRg2yechwF0VHLtDBWB4VBEBw@mail.gmail.com>
-Subject: Re: [PATCH] perf cs-etm: Improve completeness for kernel address space
-To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-Cc:     Leo Yan <leo.yan@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        netdev@vger.kernel.org, bpf@vger.kernel.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Suzuki Poulouse <suzuki.poulose@arm.com>,
-        Coresight ML <coresight@lists.linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190625170248.GS8917@twin.jikos.cz>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9299 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906250130
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 24 Jun 2019 at 13:00, Arnaldo Carvalho de Melo
-<arnaldo.melo@gmail.com> wrote:
->
-> Em Thu, Jun 20, 2019 at 08:58:29AM +0800, Leo Yan escreveu:
-> > Hi Mathieu,
-> >
-> > On Wed, Jun 19, 2019 at 11:49:44AM -0600, Mathieu Poirier wrote:
-> >
-> > [...]
-> >
-> > > > diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-> > > > index 51dd00f65709..4776c2c1fb6d 100644
-> > > > --- a/tools/perf/Makefile.config
-> > > > +++ b/tools/perf/Makefile.config
-> > > > @@ -418,6 +418,30 @@ ifdef CORESIGHT
-> > > >      endif
-> > > >      LDFLAGS += $(LIBOPENCSD_LDFLAGS)
-> > > >      EXTLIBS += $(OPENCSDLIBS)
-> > > > +    ifneq ($(wildcard $(srctree)/arch/arm64/kernel/vmlinux.lds),)
-> > > > +      # Extract info from lds:
-> > > > +      #  . = ((((((((0xffffffffffffffff)) - (((1)) << (48)) + 1) + (0)) + (0x08000000))) + (0x08000000))) + 0x00080000;
-> > > > +      # ARM64_PRE_START_SIZE := (0x08000000 + 0x08000000 + 0x00080000)
-> > > > +      ARM64_PRE_START_SIZE := $(shell egrep ' \. \= \({8}0x[0-9a-fA-F]+\){2}' \
-> > > > +        $(srctree)/arch/arm64/kernel/vmlinux.lds | \
-> > > > +        sed -e 's/[(|)|.|=|+|<|;|-]//g' -e 's/ \+/ /g' -e 's/^[ \t]*//' | \
-> > > > +        awk -F' ' '{print "("$$6 "+"  $$7 "+" $$8")"}' 2>/dev/null)
-> > > > +    else
-> > > > +      ARM64_PRE_START_SIZE := 0
-> > > > +    endif
-> > > > +    CFLAGS += -DARM64_PRE_START_SIZE="$(ARM64_PRE_START_SIZE)"
-> > > > +    ifneq ($(wildcard $(srctree)/arch/arm/kernel/vmlinux.lds),)
-> > > > +      # Extract info from lds:
-> > > > +      #   . = ((0xC0000000)) + 0x00208000;
-> > > > +      # ARM_PRE_START_SIZE := 0x00208000
-> > > > +      ARM_PRE_START_SIZE := $(shell egrep ' \. \= \({2}0x[0-9a-fA-F]+\){2}' \
-> > > > +        $(srctree)/arch/arm/kernel/vmlinux.lds | \
-> > > > +        sed -e 's/[(|)|.|=|+|<|;|-]//g' -e 's/ \+/ /g' -e 's/^[ \t]*//' | \
-> > > > +        awk -F' ' '{print "("$$2")"}' 2>/dev/null)
-> > > > +    else
-> > > > +      ARM_PRE_START_SIZE := 0
-> > > > +    endif
-> > > > +    CFLAGS += -DARM_PRE_START_SIZE="$(ARM_PRE_START_SIZE)"
-> > > >      $(call detected,CONFIG_LIBOPENCSD)
-> > > >      ifdef CSTRACE_RAW
-> > > >        CFLAGS += -DCS_DEBUG_RAW
-> > > > diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
-> > > > index 0c7776b51045..ae831f836c70 100644
-> > > > --- a/tools/perf/util/cs-etm.c
-> > > > +++ b/tools/perf/util/cs-etm.c
-> > > > @@ -613,10 +613,34 @@ static void cs_etm__free(struct perf_session *session)
-> > > >  static u8 cs_etm__cpu_mode(struct cs_etm_queue *etmq, u64 address)
-> > > >  {
-> > > >         struct machine *machine;
-> > > > +       u64 fixup_kernel_start = 0;
-> > > > +       const char *arch;
-> > > >
-> > > >         machine = etmq->etm->machine;
-> > > > +       arch = perf_env__arch(machine->env);
-> > > >
-> > > > -       if (address >= etmq->etm->kernel_start) {
-> > > > +       /*
-> > > > +        * Since arm and arm64 specify some memory regions prior to
-> > > > +        * 'kernel_start', kernel addresses can be less than 'kernel_start'.
-> > > > +        *
-> > > > +        * For arm architecture, the 16MB virtual memory space prior to
-> > > > +        * 'kernel_start' is allocated to device modules, a PMD table if
-> > > > +        * CONFIG_HIGHMEM is enabled and a PGD table.
-> > > > +        *
-> > > > +        * For arm64 architecture, the root PGD table, device module memory
-> > > > +        * region and BPF jit region are prior to 'kernel_start'.
-> > > > +        *
-> > > > +        * To reflect the complete kernel address space, compensate these
-> > > > +        * pre-defined regions for kernel start address.
-> > > > +        */
-> > > > +       if (!strcmp(arch, "arm64"))
-> > > > +               fixup_kernel_start = etmq->etm->kernel_start -
-> > > > +                                    ARM64_PRE_START_SIZE;
-> > > > +       else if (!strcmp(arch, "arm"))
-> > > > +               fixup_kernel_start = etmq->etm->kernel_start -
-> > > > +                                    ARM_PRE_START_SIZE;
-> > >
-> > > I will test your work but from a quick look wouldn't it be better to
-> > > have a single define name here?  From looking at the modifications you
-> > > did to Makefile.config there doesn't seem to be a reason to have two.
-> >
-> > Thanks for suggestion.  I changed to use single define
-> > ARM_PRE_START_SIZE and sent patch v2 [1].
-> >
-> > If possible, please test patch v2.
-> >
-> > Thanks,
-> > Leo Yan
->
-> So just for the record, I'm waiting for Mathieu on this one, i.e. for
-> him to test/ack v3.
+On Tue, Jun 25, 2019 at 07:02:48PM +0200, David Sterba wrote:
+> On Tue, Jun 25, 2019 at 03:57:25AM -0700, Christoph Hellwig wrote:
+> > On Fri, Jun 21, 2019 at 04:56:29PM -0700, Darrick J. Wong wrote:
+> > > From: Darrick J. Wong <darrick.wong@oracle.com>
+> > > 
+> > > Create a generic checking function for the incoming FS_IOC_FSSETXATTR
+> > > fsxattr values so that we can standardize some of the implementation
+> > > behaviors.
+> > > 
+> > > Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+> > > Reviewed-by: Jan Kara <jack@suse.cz>
+> > > ---
+> > >  fs/btrfs/ioctl.c   |   21 +++++++++-------
+> > >  fs/ext4/ioctl.c    |   27 ++++++++++++++------
+> > >  fs/f2fs/file.c     |   26 ++++++++++++++-----
+> > >  fs/inode.c         |   17 +++++++++++++
+> > >  fs/xfs/xfs_ioctl.c |   70 ++++++++++++++++++++++++++++++----------------------
+> > >  include/linux/fs.h |    3 ++
+> > >  6 files changed, 111 insertions(+), 53 deletions(-)
+> > > 
+> > > 
+> > > diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
+> > > index f408aa93b0cf..7ddda5b4b6a6 100644
+> > > --- a/fs/btrfs/ioctl.c
+> > > +++ b/fs/btrfs/ioctl.c
+> > > @@ -366,6 +366,13 @@ static int check_xflags(unsigned int flags)
+> > >  	return 0;
+> > >  }
+> > >  
+> > > +static void __btrfs_ioctl_fsgetxattr(struct btrfs_inode *binode,
+> > > +				     struct fsxattr *fa)
+> > > +{
+> > > +	memset(fa, 0, sizeof(*fa));
+> > > +	fa->fsx_xflags = btrfs_inode_flags_to_xflags(binode->flags);
+> > 
+> > Is there really much of a point in this helper? Epeciall as
+> > the zeroing could easily be done in the variable declaration
+> > line using
+> > 
+> > 	struct fsxattr fa = { };
+> 
+> Agreed, not counting the initialization the wrapper is merely another
+> name for btrfs_inode_flags_to_xflags. I also find it slightly confusing
+> that __btrfs_ioctl_fsgetxattr name is too close to the ioctl callback
+> implementation btrfs_ioctl_fsgetxattr but only does some initialization.
 
-Right, please give me some time to test this.  As Leo indicated the
-procedure is time consuming.
+Ok; it's easily enough changed to:
 
-Thanks,
-Mathieu
+	struct fsxattr old_fa = {
+		.fsx_xflags = btrfs_inode_flags_to_xflags(binode->flags),
+	};
 
->
-> - Arnaldo
->
-> > [1] https://lore.kernel.org/linux-arm-kernel/20190620005428.20883-1-leo.yan@linaro.org/T/#u
-> >
-> > > > +
-> > > > +       if (address >= fixup_kernel_start) {
-> > > >                 if (machine__is_host(machine))
-> > > >                         return PERF_RECORD_MISC_KERNEL;
-> > > >                 else
-> > > > --
-> > > > 2.17.1
-> > > >
->
-> --
->
-> - Arnaldo
+--D
