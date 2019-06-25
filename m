@@ -2,159 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B335B54D6B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 13:20:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E19C54D66
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 13:19:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730622AbfFYLUO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 07:20:14 -0400
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:63109 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727138AbfFYLUO (ORCPT
+        id S1730543AbfFYLTw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 07:19:52 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40364 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727138AbfFYLTv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 07:20:14 -0400
-Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51]) (authenticated)
-        by conssluserg-04.nifty.com with ESMTP id x5PBK6p4021676;
-        Tue, 25 Jun 2019 20:20:07 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com x5PBK6p4021676
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1561461608;
-        bh=EozDTvKOHcxfsnch/gqc5P65unHEyuMQ8uubcxmAZlM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=oDCIID4eTViowrKJm64kltyop6/yXFi4a2ne2EJNdeKBsXlpbk5LAz3XmX8AfmWfL
-         8CEq6IaPuCWnSpZWOWIiPr4CMraGKriEV0dr/scssIAkOoQ4tPdFZf/sWcGHhTErgP
-         uzz7xpwO38q+fHoB2SXfUDAGFds07jvr0L1ZGEE2+BxDxyNrHQwPE091iWCJKZFQ8y
-         CqAd43sbpPvZu06lGYYH6os07MhVCFJkVJ746HU7Fk8AcSr5M03G/W5iv5nQ1LUlU4
-         6ol4CQkJwTNbK2DDUBsnbh7qseqlivtSp/+N+V3oqdTU24RpIXXVYcI13t2Ave4WyT
-         Ufl80JYYkOmjg==
-X-Nifty-SrcIP: [209.85.217.51]
-Received: by mail-vs1-f51.google.com with SMTP id l20so10627514vsp.3;
-        Tue, 25 Jun 2019 04:20:07 -0700 (PDT)
-X-Gm-Message-State: APjAAAWqI4Elr7cLz+KisnO7gADGdW7IGrFIequShb6IrkeVZx50whlA
-        Q3htS0g83M4P49MV0mE91fjbPuY796F2c1iJUeg=
-X-Google-Smtp-Source: APXvYqz4C0jEV6JsmnAwXrS5jug/6D8+RpgLCkFumref4bUDIhrX+Gv/FiXLBqM2LQNc5AGO2JH8aSjrMd1YVy1QTpw=
-X-Received: by 2002:a67:cd1a:: with SMTP id u26mr46893396vsl.155.1561461606319;
- Tue, 25 Jun 2019 04:20:06 -0700 (PDT)
+        Tue, 25 Jun 2019 07:19:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=JCFOlY7my5LaNTExvJt7ORvW5sA/RJVVsz2dF8gTHNY=; b=UV1bFLAxFhqpsTRLYrIOSnkUm
+        Zp7bkceku7WRDzTJcfrwG/udKCHgZki8IlMw/T/ujjHJzENADaWcx8xI92qETqPO0Z1vmuNZrMvK3
+        C+ZX2mAveWVF13pbON8bjOe/X15KFtFothA4KVuN0KXKLDSmmc3QO/NLekrMJFVsW7LpM=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=finisterre.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hfjUK-00057J-1Q; Tue, 25 Jun 2019 11:19:48 +0000
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+        id 223C5440046; Tue, 25 Jun 2019 12:19:47 +0100 (BST)
+Date:   Tue, 25 Jun 2019 12:19:47 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/5] regulator: core: Expose some of core functions
+ needed by couplers
+Message-ID: <20190625111946.GP5316@sirena.org.uk>
+References: <20190623210835.26281-1-digetx@gmail.com>
+ <20190623210835.26281-3-digetx@gmail.com>
 MIME-Version: 1.0
-References: <20190521133257.GA21471@kroah.com> <CAK7LNASZWLwYC2E3vBkXhp7wt9zBWkFrR+NTnxTyLn1zO66a0w@mail.gmail.com>
- <eae2d0e80824cc84965c571a0ea097e14d3f498c.camel@perches.com>
-In-Reply-To: <eae2d0e80824cc84965c571a0ea097e14d3f498c.camel@perches.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Tue, 25 Jun 2019 20:19:30 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASR_vJS13GjZmqMC0DSO=kTVNprpsRgtK4QSLExRUQFtg@mail.gmail.com>
-Message-ID: <CAK7LNASR_vJS13GjZmqMC0DSO=kTVNprpsRgtK4QSLExRUQFtg@mail.gmail.com>
-Subject: Re: [GIT PULL] SPDX update for 5.2-rc1 - round 1
-To:     Joe Perches <joe@perches.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-spdx@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="pSb/ns2SnWJqkKHb"
+Content-Disposition: inline
+In-Reply-To: <20190623210835.26281-3-digetx@gmail.com>
+X-Cookie: Editing is a rewording activity.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Joe,
 
-On Wed, May 22, 2019 at 3:37 PM Joe Perches <joe@perches.com> wrote:
->
-> On Wed, 2019-05-22 at 13:32 +0900, Masahiro Yamada wrote:
-> > On Tue, May 21, 2019 at 10:34 PM Greg KH <gregkh@linuxfoundation.org> wrote:
-> []
-> > >  - Add GPL-2.0-only or GPL-2.0-or-later tags to files where our scan
-> > >     tools can determine the license text in the file itself.  Where this
-> > >     happens, the license text is removed, in order to cut down on the
-> > >     700+ different ways we have in the kernel today, in a quest to get
-> > >     rid of all of these.
-> []
-> > I have been wondering for a while
-> > which version of spdx tags I should use in my work.
-> >
-> > I know the 'GPL-2.0' tag is already deprecated.
-> > (https://spdx.org/licenses/GPL-2.0.html)
-> >
-> > But, I saw negative reaction to this:
-> > https://lore.kernel.org/patchwork/patch/975394/
-> >
-> > Nor "-only" / "-or-later" are documented in
-> > Documentation/process/license-rules.rst
-> >
-> > In this patch series, Thomas used 'GPL-2.0-only' and 'GPL-2.0-or-later'
-> > instead of 'GPL-2.0' and 'GPL-2.0+'.
-> >
-> > Now, we have a great number of users of spdx v3 tags.
-> > $ git grep -P 'SPDX-License-Identifier.*(?:-or-later|-only)'| wc -l
-> > 4135
-> > So, what I understood is:
-> >
-> >   For newly added tags, '*-only' and '*-or-later' are preferred.
-> >
-> > (But, we do not convert existing spdx v2 tags globally.)
-> >
-> >
-> > "
-> > Joe's patch was not merged, but at least
-> > Documentation/process/license-rules.rst
-> > should be updated in my opinion.
-> >
-> > (Perhaps, checkpatch.pl can suggest newer tags in case
-> > patch submitters do not even know that deprecation.)
->
-> I'd still prefer the kernel use of a single SPDX style.
->
-> I don't know why the -only and -or-later forms were
-> used for this patch, but I like it.
->
-> I believe the -only and -or-later are more intelligible
-> as a trivial reading of
->
->         SPDX-License-Identifier: GPL-2.0
->
-> would generally mean to me the original
-> GPL-2.0 license without the elision of the
-> (or at your option, any later version) bits
->
-> whereas
->
->         SPDX-License-Identifier: GPL-2.0-only
->
-> seems fairly descriptive.
->
-> Is it agreed that the GPL-<v>-only and GPL-<v>-or-later
-> forms should be preferred for new SPDX identifiers?
->
-> If so, I'll submit a checkpatch patch.
+--pSb/ns2SnWJqkKHb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+On Mon, Jun 24, 2019 at 12:08:32AM +0300, Dmitry Osipenko wrote:
+> Expose some of internal functions that are required for implementation of
+> customized regulator couplers.
 
-Could you send a patch to update checkpatch and doc ?
+The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
 
-Similar discussion here too.
-https://lkml.org/lkml/2019/5/31/456
+  Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
 
-We need better documentation to stop wasting time for this.
+are available in the Git repository at:
 
-This should be separated from the
- /* ... */  vs // discussion.
+  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git tags/regulator-couple-api
 
+for you to fetch changes up to d22b85a1b97d12a4940ef9d778f6122546736f78:
 
-Thanks.
+  regulator: core: Expose some of core functions needed by couplers (2019-06-25 12:15:35 +0100)
 
+----------------------------------------------------------------
+regulator: Coupling API
 
-> I could also wire up a patch to checkpatch and docs to
-> remove the /* */
-> requirement for .h files and prefer
-> the generic // form for both .c and
-> .h files as the
-> current minimum tooling versions now all allow //
-> comments
-> .
->
->
+This series introduces a way of specifying a customized regulators coupler
+which is necessary for cases like a non-trivial DVFS implementation.
 
+----------------------------------------------------------------
+Dmitry Osipenko (2):
+      regulator: core: Introduce API for regulators coupling customization
+      regulator: core: Expose some of core functions needed by couplers
 
--- 
-Best Regards
-Masahiro Yamada
+ drivers/regulator/core.c          | 194 ++++++++++++++++++++++++++++----------
+ drivers/regulator/of_regulator.c  |  63 +++++++++----
+ include/linux/regulator/coupler.h |  97 +++++++++++++++++++
+ include/linux/regulator/driver.h  |   6 +-
+ include/linux/regulator/machine.h |   2 +-
+ 5 files changed, 287 insertions(+), 75 deletions(-)
+ create mode 100644 include/linux/regulator/coupler.h
+
+--pSb/ns2SnWJqkKHb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl0SA1IACgkQJNaLcl1U
+h9B/agf/ZN1FfEH/kisPsw/QpppR+haTC2xYUvHQmelY29bbY2yXwjPYBpXl8Ztk
+/rE6ZjD3gCdXzuBBSCyd8P+RTnkb/18NynDJAVv9WLe6AOZ/e1UYB4d7mh0O/IAB
+bjE+IiBMcwzgaMBnBTyF+EJ8JmhWkkEl9Z/FE0RcXT4oiTAU6oHSQ8Xs96H9/374
+Hqf9QfEge+nvqAdVwsmhJ2cbb+BXbGDfmcMRJjWv0swcRfJqDrLTFn6ATq/i5o7j
+ni2sOaGeQj0x5dhMUUT8oq4+ElSHJaJft2jpwb3xRdCehu+UYdLWeP13jwiS0afJ
+NIcKyExMiyb/PEYmhAN57EljvVIoGA==
+=6Ntz
+-----END PGP SIGNATURE-----
+
+--pSb/ns2SnWJqkKHb--
