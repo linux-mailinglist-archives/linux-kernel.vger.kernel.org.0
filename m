@@ -2,83 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44D9E55151
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 16:14:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16F8F55159
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 16:15:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729722AbfFYOO5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 10:14:57 -0400
-Received: from mga12.intel.com ([192.55.52.136]:12722 "EHLO mga12.intel.com"
+        id S1729918AbfFYOPc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 10:15:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42262 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727070AbfFYOO4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 10:14:56 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jun 2019 07:14:51 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,416,1557212400"; 
-   d="scan'208";a="182899347"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
-  by fmsmga001.fm.intel.com with SMTP; 25 Jun 2019 07:14:49 -0700
-Received: by lahna (sSMTP sendmail emulation); Tue, 25 Jun 2019 17:14:48 +0300
-Date:   Tue, 25 Jun 2019 17:14:48 +0300
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     Linux ACPI <linux-acpi@vger.kernel.org>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>
-Subject: Re: [PATCH 2/2] ACPI: PM: Allow transitions to D0 to occur in
- special cases
-Message-ID: <20190625141448.GJ2640@lahna.fi.intel.com>
-References: <10419005.Mb09WM6RCc@kreacher>
- <2807567.5m5tnf7bLv@kreacher>
+        id S1728252AbfFYOPc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 10:15:32 -0400
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 971C021655;
+        Tue, 25 Jun 2019 14:15:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561472130;
+        bh=CSPPQvXxxLJHjaf7mkYaItL0XCi+kuQqJ8aFZvaSQm4=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=V8WtBeSoOtEfNzciSHEA3eF3ej1jkECegr5DZ2OYjOzIPhWsp2Qh/VZPOSVHXnl1s
+         l4cBB1coaSY9tOZx5+pqs2pK4cFlxPurht3JDscmUVkCZchTb663MaJM8pc/6EROaj
+         vN1AoNoU+XADmmdcbUoLpBqIrw9UguN76bgTpxog=
+Received: by mail-qk1-f179.google.com with SMTP id l128so12698492qke.2;
+        Tue, 25 Jun 2019 07:15:30 -0700 (PDT)
+X-Gm-Message-State: APjAAAUoz84m8BghnQeugmYDYcfAq58XWwR2kwTQ+Ohc74JHOqsIPPtW
+        FRwyZMEwTNmX+nfMK5ynecfZYPIOfCiZM89OGA==
+X-Google-Smtp-Source: APXvYqxa6TVufszE/k5zs2VqtcN0LZDhjRXpJC1lxui07oIGK8cq4yrxwm2/cWvAG89bDUtj9YcBt3/wHOVAhSm8bTM=
+X-Received: by 2002:a37:a48e:: with SMTP id n136mr55002727qke.223.1561472129808;
+ Tue, 25 Jun 2019 07:15:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2807567.5m5tnf7bLv@kreacher>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.11.4 (2019-03-13)
+References: <20190624215649.8939-1-robh@kernel.org> <20190624215649.8939-7-robh@kernel.org>
+ <20190625075542.u5kzex4cbrcss5ga@flea>
+In-Reply-To: <20190625075542.u5kzex4cbrcss5ga@flea>
+From:   Rob Herring <robh@kernel.org>
+Date:   Tue, 25 Jun 2019 08:15:18 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+OgNgS7yVgZaVLEo6=OeS9R9ebgBpUbPxz609C7G9oOw@mail.gmail.com>
+Message-ID: <CAL_Jsq+OgNgS7yVgZaVLEo6=OeS9R9ebgBpUbPxz609C7G9oOw@mail.gmail.com>
+Subject: Re: [PATCH v2 06/15] dt-bindings: display: Convert dlc,dlc0700yzg-1
+ panel to DT schema
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 25, 2019 at 02:06:13PM +0200, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> If a device with ACPI PM is left in D0 during a system-wide
-> transition to the S3 (suspend-to-RAM) or S4 (hibernation) sleep
-> state, the actual state of the device need not be D0 during resume
-> from it, although its power.state value will still reflect D0 (that
-> is, the power state from before the system-wide transition).
-> 
-> In that case, the acpi_device_set_power() call made to ensure that
-> the power state of the device will be D0 going forward has no effect,
-> because the new state (D0) is equal to the one reflected by the
-> device's power.state value.  That does not affect power resources,
-> which are taken care of by acpi_resume_power_resources() called from
-> acpi_pm_finish() during resume from system-wide sleep states, but it
-> still may be necessary to invoke _PS0 for the device on top of that
-> in order to finalize its transition to D0.
-> 
-> For this reason, modify acpi_device_set_power() to allow transitions
-> to D0 to occur even if D0 is the current power state of the device
-> according to its power.state value.
-> 
-> That will not affect power resources, which are assumed to be in
-> the right configuration already (as reflected by the current values
-> of their reference counters), but it may cause _PS0 to be evaluated
-> for the device.  However, evaluating _PS0 for a device already in D0
-> may lead to confusion in general, so invoke _PSC (if present) to
-> check the device's current power state upfront and only evaluate
-> _PS0 for it if _PSC has returned a power state different from D0.
-> [If _PSC is not present or the evaluation of it fails, the power
-> state of the device is assumed to be D0 at this point.]
-> 
-> Fixes: 20dacb71ad28 (ACPI / PM: Rework device power management to follow ACPI 6)
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Tue, Jun 25, 2019 at 1:55 AM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+>
+> Hi,
+>
+> On Mon, Jun 24, 2019 at 03:56:40PM -0600, Rob Herring wrote:
+> > Convert the dlc,dlc0700yzg-1 panel binding to DT schema.
+> >
+> > Cc: Philipp Zabel <p.zabel@pengutronix.de>
+> > Cc: Thierry Reding <thierry.reding@gmail.com>
+> > Cc: Sam Ravnborg <sam@ravnborg.org>
+> > Cc: Maxime Ripard <maxime.ripard@bootlin.com>
+> > Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > Cc: dri-devel@lists.freedesktop.org
+> > Signed-off-by: Rob Herring <robh@kernel.org>
+> > ---
+> >  .../display/panel/dlc,dlc0700yzg-1.txt        | 13 ---------
+> >  .../display/panel/dlc,dlc0700yzg-1.yaml       | 28 +++++++++++++++++++
+> >  2 files changed, 28 insertions(+), 13 deletions(-)
+> >  delete mode 100644 Documentation/devicetree/bindings/display/panel/dlc,dlc0700yzg-1.txt
+> >  create mode 100644 Documentation/devicetree/bindings/display/panel/dlc,dlc0700yzg-1.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/display/panel/dlc,dlc0700yzg-1.txt b/Documentation/devicetree/bindings/display/panel/dlc,dlc0700yzg-1.txt
+> > deleted file mode 100644
+> > index bf06bb025b08..000000000000
+> > --- a/Documentation/devicetree/bindings/display/panel/dlc,dlc0700yzg-1.txt
+> > +++ /dev/null
+> > @@ -1,13 +0,0 @@
+> > -DLC Display Co. DLC0700YZG-1 7.0" WSVGA TFT LCD panel
+> > -
+> > -Required properties:
+> > -- compatible: should be "dlc,dlc0700yzg-1"
+> > -- power-supply: See simple-panel.txt
+> > -
+> > -Optional properties:
+> > -- reset-gpios: See panel-common.txt
+> > -- enable-gpios: See simple-panel.txt
+> > -- backlight: See simple-panel.txt
+> > -
+> > -This binding is compatible with the simple-panel binding, which is specified
+> > -in simple-panel.txt in this directory.
+> > diff --git a/Documentation/devicetree/bindings/display/panel/dlc,dlc0700yzg-1.yaml b/Documentation/devicetree/bindings/display/panel/dlc,dlc0700yzg-1.yaml
+> > new file mode 100644
+> > index 000000000000..1b0b63d46f3e
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/display/panel/dlc,dlc0700yzg-1.yaml
+> > @@ -0,0 +1,28 @@
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/display/panel/dlc,dlc0700yzg-1.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: DLC Display Co. DLC0700YZG-1 7.0" WSVGA TFT LCD panel
+> > +
+> > +maintainers:
+> > +  - Philipp Zabel <p.zabel@pengutronix.de>
+> > +  - Thierry Reding <thierry.reding@gmail.com>
+> > +
+> > +allOf:
+> > +  - $ref: panel-common.yaml#
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: dlc,dlc0700yzg-1
+> > +
+> > +  reset-gpios: true
+> > +  enable-gpios: true
+> > +  backlight: true
+>
+> Do we need to list them?
+>
+> Since we don't have additionalItems, it doesn't really change anything
+> since it will be validated by panel-common.
 
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+I've gone back and forth on it. I think we need to express what
+properties from the common properties apply for a particular panel.
+I've been requiring panel bindings to be explicit here rather than
+just say "uses the simple-panel binding." For example, if
+'power-supply' is not listed, does the panel have a single supply or
+multiple supplies that haven't haven't been considered?
+
+> Either way, it should be consistent between your patches, and the
+> previous patches in this series didn't list all the properties in the
+> binding.
+
+Indeed.
+
+Rob
