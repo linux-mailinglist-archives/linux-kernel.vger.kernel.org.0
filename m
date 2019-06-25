@@ -2,78 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 957835540A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 18:09:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 53A1E55438
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 18:12:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732592AbfFYQJX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 12:09:23 -0400
-Received: from mga04.intel.com ([192.55.52.120]:8904 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732575AbfFYQJW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 12:09:22 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jun 2019 09:09:21 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,416,1557212400"; 
-   d="scan'208";a="182917442"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
-  by fmsmga001.fm.intel.com with SMTP; 25 Jun 2019 09:09:18 -0700
-Received: by lahna (sSMTP sendmail emulation); Tue, 25 Jun 2019 19:09:18 +0300
-Date:   Tue, 25 Jun 2019 19:09:18 +0300
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     Linux PCI <linux-pci@vger.kernel.org>,
-        Linux ACPI <linux-acpi@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        Lukas Wunner <lukas@wunner.de>
-Subject: Re: [PATCH] PCI: PM/ACPI: Refresh all stale power state data in
- pci_pm_complete()
-Message-ID: <20190625160918.GK2640@lahna.fi.intel.com>
-References: <6435024.1ODgWP2se3@kreacher>
+        id S1732623AbfFYQMy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 12:12:54 -0400
+Received: from mx.cs.msu.ru ([188.44.42.42]:28063 "EHLO mail.cs.msu.ru"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731629AbfFYQMk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 12:12:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cs.msu.ru;
+         s=dkim; h=Subject:Content-Transfer-Encoding:Content-Type:MIME-Version:
+        Message-Id:Date:Cc:To:From:Sender:Reply-To:Content-ID:Content-Description:
+        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=sAAsGr5aya7rHncrNbs1gvq6cIgrrMYiXY3ywGrXYhQ=; b=QMNp5d8cwIP5v16UkqgbU+KLuu
+        wtu37K7gscVrjsH7LuRWQ/hbTe8vpYlpwsgcJMlbLVirR3xZeTfuZcbgxFdt6KmMtq2gTDfVLs0nk
+        Ll7XMiZIl/h5j9O/aHcbA4p8gX0rhT7ad78w5CINqwHFuydSdyZWQRkOipGat9tdadYxi2R8lsyt4
+        T4MJBZJqldvndWZT1B61gl9pGAzEwEJgKYYniNDNLvg4bV1HM8b9waNBfqpFjErMldhpRb92UeEvP
+        tYWVb5t8rYkf5EjEik0q7oWCcY4/RTVtq8yZYVFmEayQHOJ+DtD9yatQP+wLFQKr6KDpK4nT9kjm9
+        yLzldqXQ==;
+Received: from [10.7.4.141] (port=44632 helo=cello.cs.msu.ru)
+        by mail.cs.msu.ru with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92 (FreeBSD))
+        (envelope-from <ar@cs.msu.ru>)
+        id 1hfo3E-0006Uf-70; Tue, 25 Jun 2019 19:12:08 +0300
+From:   Arseny Maslennikov <ar@cs.msu.ru>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     "Vladimir D. Seleznev" <vseleznv@altlinux.org>,
+        Rob Landley <rob@landley.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Pavel Machek <pavel@ucw.cz>, Arseny Maslennikov <ar@cs.msu.ru>
+Date:   Tue, 25 Jun 2019 19:11:46 +0300
+Message-Id: <20190625161153.29811-1-ar@cs.msu.ru>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6435024.1ODgWP2se3@kreacher>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 10.7.4.141
+X-SA-Exim-Mail-From: ar@cs.msu.ru
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.cs.msu.ru
+X-Spam-Level: 
+X-Spam-Status: No, score=-5.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_ADSP_ALL autolearn=no autolearn_force=no version=3.4.2
+Subject: [PATCH v2 0/7] TTY Keyboard Status Request
+X-SA-Exim-Version: 4.2
+X-SA-Exim-Scanned: Yes (on mail.cs.msu.ru)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 25, 2019 at 02:09:12PM +0200, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> In pci_pm_complete() there are checks to decide whether or not to
-> resume devices that were left in runtime-suspend during the preceding
-> system-wide transition into a sleep state.  They involve checking the
-> current power state of the device and comparing it with the power
-> state of it set before the preceding system-wide transition, but the
-> platform component of the device's power state is not handled
-> correctly in there.
-> 
-> Namely, on platforms with ACPI, the device power state information
-> needs to be updated with care, so that the reference counters of
-> power resources used by the device (if any) are set to ensure that
-> the refreshed power state of it will be maintained going forward.
-> 
-> To that end, introduce a new ->refresh_state() platform PM callback
-> for PCI devices, for asking the platform to refresh the device power
-> state data and ensure that the corresponding power state will be
-> maintained going forward, make it invoke acpi_device_update_power()
-> (for devices with ACPI PM) on platforms with ACPI and make
-> pci_pm_complete() use it, through a new pci_refresh_power_state()
-> wrapper function.
-> 
-> Fixes: a0d2a959d3da (PCI: Avoid unnecessary resume after direct-complete)
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+This patch series introduces TTY keyboard status request, a feature of
+the n_tty line discipline that reserves a character in struct termios
+(^T by default) and reacts to it by printing a short informational line
+to the terminal and sending a Unix signal to the tty's foreground
+process group. The processes may, in response to the signal, output a
+textual description of what they're doing.
 
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+The feature has been present in a similar form at least in
+Free/Open/NetBSD; it would be nice to have something like this in Linux
+as well. There is an LKML thread[1] where users have previously
+expressed the rationale for this.
 
-I also tested this on Ice Lake system and did not see any issues over
-several suspend-to-ram cycles.
+The current implementation does not break existing kernel API in any
+way, since, fortunately, all the architectures supported by the kernel
+happen to have at least 1 free byte in the termios control character
+array.
+
+The series should cleanly apply to tty-next.
+
+To thoroughly test these, one might need at least a patched stty among
+other tools, so I've brought up a simple initrd generator[2] which can
+be used to create a lightweight environment to boot up in a VM and to
+fiddle with.
+
+[1] https://lore.kernel.org/lkml/1415200663.3247743.187387481.75CE9317@webmail.messagingengine.com/
+[2] https://github.com/porrided/tty-kb-status-userspace
+
+v2 <- v1: removed useless debugging bits.
+
+Discussion of v1:
+https://lore.kernel.org/lkml/20190605081906.28938-1-ar@cs.msu.ru/
+
+Arseny Maslennikov (7):
+  signal.h: Define SIGINFO on all architectures
+  tty: termios: Reserve space for VSTATUS in .c_cc
+  n_tty: Send SIGINFO to fg pgrp on status request character
+  linux/signal.h: Ignore SIGINFO by default in new tasks
+  tty: Add NOKERNINFO lflag to termios
+  n_tty: ->ops->write: Cut core logic out to a separate function
+  n_tty: Provide an informational line on VSTATUS receipt
+
+ arch/alpha/include/asm/termios.h         |   4 +-
+ arch/alpha/include/uapi/asm/termbits.h   |   2 +
+ arch/arm/include/uapi/asm/signal.h       |   1 +
+ arch/h8300/include/uapi/asm/signal.h     |   1 +
+ arch/ia64/include/asm/termios.h          |   4 +-
+ arch/ia64/include/uapi/asm/signal.h      |   1 +
+ arch/ia64/include/uapi/asm/termbits.h    |   2 +
+ arch/m68k/include/uapi/asm/signal.h      |   1 +
+ arch/mips/include/asm/termios.h          |   4 +-
+ arch/mips/include/uapi/asm/signal.h      |   1 +
+ arch/mips/include/uapi/asm/termbits.h    |   2 +
+ arch/parisc/include/asm/termios.h        |   4 +-
+ arch/parisc/include/uapi/asm/signal.h    |   1 +
+ arch/parisc/include/uapi/asm/termbits.h  |   2 +
+ arch/powerpc/include/asm/termios.h       |   4 +-
+ arch/powerpc/include/uapi/asm/signal.h   |   1 +
+ arch/powerpc/include/uapi/asm/termbits.h |   2 +
+ arch/s390/include/asm/termios.h          |   4 +-
+ arch/s390/include/uapi/asm/signal.h      |   1 +
+ arch/sparc/include/asm/termios.h         |   4 +-
+ arch/sparc/include/uapi/asm/signal.h     |   2 +
+ arch/sparc/include/uapi/asm/termbits.h   |   2 +
+ arch/x86/include/uapi/asm/signal.h       |   1 +
+ arch/xtensa/include/uapi/asm/signal.h    |   1 +
+ arch/xtensa/include/uapi/asm/termbits.h  |   2 +
+ drivers/tty/Makefile                     |   3 +-
+ drivers/tty/n_tty.c                      |  70 ++++-
+ drivers/tty/n_tty_status.c               | 337 +++++++++++++++++++++++
+ include/asm-generic/termios.h            |   4 +-
+ include/linux/sched.h                    |   7 +
+ include/linux/signal.h                   |   5 +-
+ include/linux/tty.h                      |   7 +-
+ include/uapi/asm-generic/signal.h        |   1 +
+ include/uapi/asm-generic/termbits.h      |   2 +
+ 34 files changed, 457 insertions(+), 33 deletions(-)
+ create mode 100644 drivers/tty/n_tty_status.c
+
+-- 
+2.20.1
+
