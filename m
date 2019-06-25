@@ -2,52 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0640E526FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 10:47:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2F6A52706
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 10:48:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730806AbfFYIrI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 04:47:08 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:34457 "EHLO
+        id S1730921AbfFYIr7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 04:47:59 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:53863 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727916AbfFYIrI (ORCPT
+        with ESMTP id S1726587AbfFYIr7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 04:47:08 -0400
+        Tue, 25 Jun 2019 04:47:59 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5P8kpbf3535966
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5P8lZV63536042
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Tue, 25 Jun 2019 01:46:51 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5P8kpbf3535966
+        Tue, 25 Jun 2019 01:47:35 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5P8lZV63536042
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019061801; t=1561452412;
-        bh=r6tnFvU39VmjCmnbfgkD0LslLgpQaPrkkhyNC3Y3hjs=;
+        s=2019061801; t=1561452456;
+        bh=ryX8v7tj7G7wPWNZ8zfZ0V7lLgGrMj2/mk3YLXLmFqo=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=mCjjhY47eiUszmbb/d7Jzohnfenrjyf93AZGYlUXTZOqnjxRM7j920CVKDepGzI4o
-         uClSgoyYkVPq8aKCBQMQdwlPmdATYvDuBNmSAOrk3XUROjzvNwa6m39Ky4J38td7Nz
-         qEwlAz0uRk2ws0h2DmBeeowEG6+HdJC8Mh8slf6Ite1J5bV+17ucaQK1JIM3gMYnPj
-         06gXQhsMoC6ZvqEc+Nqbp80mU3PfjLH5BbYzqHgEfyB0rE/XtkDo4boZWey+9i9kT6
-         kaV1p3H2TQqicedltuxYTShnwV4Hwew7sycq/wgPFPP6kmph35CHh4XaOLhQ/41XNs
-         srRqOutnt8d/g==
+        b=iRe6+A1zvkV7CTyV1VLkPAdiozK1z1Qh2jVGN6riSJ02W8p8wo+PvIF4NMyJIAVR3
+         WtulJVYExqt0z7qS78hV1RrmsCrJ2SrBeLYYzZMkBM2PIA17O4WBE/EV5sSNu1lgzt
+         y7f4qVhuv1i4jAiim+oO5SXbBo00mBT1YKiLojBAh0XfAomPAahtqEMaogDyUM20Y9
+         1HlzgU89AzW+xF7yFBp1/820KbypDdPlBaxbSdJMdCQrYSaUImI0mSgbFqlvyH4tti
+         KUt40cBZbemgcevBacQuYuzhCH1QdxazJ7xb8lldHkt661WfOpfmdpVfJ/FLsNd15v
+         RJoOkf0130jLQ==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5P8kpN63535963;
-        Tue, 25 Jun 2019 01:46:51 -0700
-Date:   Tue, 25 Jun 2019 01:46:51 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5P8lYtu3536038;
+        Tue, 25 Jun 2019 01:47:34 -0700
+Date:   Tue, 25 Jun 2019 01:47:34 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Michael Forney <tipbot@zytor.com>
-Message-ID: <tip-ebf8d82bbb32720878a3867b28e655950ccee992@git.kernel.org>
-Cc:     mingo@kernel.org, peterz@infradead.org,
-        linux-kernel@vger.kernel.org, mforney@mforney.org, hpa@zytor.com,
-        will.deacon@arm.com, boqun.feng@gmail.com,
-        torvalds@linux-foundation.org, tglx@linutronix.de
-Reply-To: torvalds@linux-foundation.org, tglx@linutronix.de,
-          boqun.feng@gmail.com, hpa@zytor.com, will.deacon@arm.com,
-          linux-kernel@vger.kernel.org, mforney@mforney.org,
-          mingo@kernel.org, peterz@infradead.org
-In-Reply-To: <20190618053306.730-1-mforney@mforney.org>
-References: <20190618053306.730-1-mforney@mforney.org>
+From:   tip-bot for Kobe Wu <tipbot@zytor.com>
+Message-ID: <tip-9156e545765e467e6268c4814cfa609ebb16237e@git.kernel.org>
+Cc:     kobe-cp.wu@mediatek.com, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, peterz@infradead.org,
+        mingo@kernel.org, tglx@linutronix.de,
+        linux-mediatek@lists.infradead.org, torvalds@linux-foundation.org,
+        wsd_upstream@mediatek.com, eason-yh.lin@mediatek.com,
+        will.deacon@arm.com
+Reply-To: will.deacon@arm.com, wsd_upstream@mediatek.com,
+          eason-yh.lin@mediatek.com, linux-mediatek@lists.infradead.org,
+          torvalds@linux-foundation.org, tglx@linutronix.de,
+          mingo@kernel.org, peterz@infradead.org,
+          linux-kernel@vger.kernel.org, hpa@zytor.com,
+          kobe-cp.wu@mediatek.com
+In-Reply-To: <1561365348-16050-1-git-send-email-kobe-cp.wu@mediatek.com>
+References: <1561365348-16050-1-git-send-email-kobe-cp.wu@mediatek.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/core] locking/atomics: Use sed(1) instead of
- non-standard head(1) option
-Git-Commit-ID: ebf8d82bbb32720878a3867b28e655950ccee992
+Subject: [tip:locking/core] locking/lockdep: increase size of counters for
+ lockdep statistics
+Git-Commit-ID: 9156e545765e467e6268c4814cfa609ebb16237e
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -56,54 +60,102 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-X-Spam-Status: No, score=-1.0 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        FREEMAIL_FORGED_REPLYTO autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF autolearn=ham
+        autolearn_force=no version=3.4.2
 X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  ebf8d82bbb32720878a3867b28e655950ccee992
-Gitweb:     https://git.kernel.org/tip/ebf8d82bbb32720878a3867b28e655950ccee992
-Author:     Michael Forney <mforney@mforney.org>
-AuthorDate: Mon, 17 Jun 2019 22:33:06 -0700
+Commit-ID:  9156e545765e467e6268c4814cfa609ebb16237e
+Gitweb:     https://git.kernel.org/tip/9156e545765e467e6268c4814cfa609ebb16237e
+Author:     Kobe Wu <kobe-cp.wu@mediatek.com>
+AuthorDate: Mon, 24 Jun 2019 16:35:48 +0800
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 25 Jun 2019 10:17:07 +0200
+CommitDate: Tue, 25 Jun 2019 10:17:08 +0200
 
-locking/atomics: Use sed(1) instead of non-standard head(1) option
+locking/lockdep: increase size of counters for lockdep statistics
 
-POSIX says the -n option must be a positive decimal integer. Not all
-implementations of head(1) support negative numbers meaning offset from
-the end of the file.
+When system has been running for a long time, signed integer
+counters are not enough for some lockdep statistics. Using
+unsigned long counters can satisfy the requirement. Besides,
+most of lockdep statistics are unsigned. It is better to use
+unsigned int instead of int.
 
-Instead, the sed expression '$d' has the same effect of removing the
-last line of the file.
+Remove unused variables.
+- max_recursion_depth
+- nr_cyclic_check_recursions
+- nr_find_usage_forwards_recursions
+- nr_find_usage_backwards_recursions
 
-Signed-off-by: Michael Forney <mforney@mforney.org>
+Signed-off-by: Kobe Wu <kobe-cp.wu@mediatek.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Will Deacon <will.deacon@arm.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: <linux-mediatek@lists.infradead.org>
+Cc: <wsd_upstream@mediatek.com>
+Cc: Eason Lin <eason-yh.lin@mediatek.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/20190618053306.730-1-mforney@mforney.org
+Cc: Will Deacon <will.deacon@arm.com>
+Link: https://lkml.kernel.org/r/1561365348-16050-1-git-send-email-kobe-cp.wu@mediatek.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- scripts/atomic/check-atomics.sh | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/locking/lockdep_internals.h | 36 ++++++++++++++++--------------------
+ 1 file changed, 16 insertions(+), 20 deletions(-)
 
-diff --git a/scripts/atomic/check-atomics.sh b/scripts/atomic/check-atomics.sh
-index cfa0c2f71c84..8378c63a1e09 100755
---- a/scripts/atomic/check-atomics.sh
-+++ b/scripts/atomic/check-atomics.sh
-@@ -22,7 +22,7 @@ while read header; do
- 	OLDSUM="$(tail -n 1 ${LINUXDIR}/include/${header})"
- 	OLDSUM="${OLDSUM#// }"
+diff --git a/kernel/locking/lockdep_internals.h b/kernel/locking/lockdep_internals.h
+index 150ec3f0c5b5..cc83568d5012 100644
+--- a/kernel/locking/lockdep_internals.h
++++ b/kernel/locking/lockdep_internals.h
+@@ -131,7 +131,6 @@ extern unsigned int nr_hardirq_chains;
+ extern unsigned int nr_softirq_chains;
+ extern unsigned int nr_process_chains;
+ extern unsigned int max_lockdep_depth;
+-extern unsigned int max_recursion_depth;
  
--	NEWSUM="$(head -n -1 ${LINUXDIR}/include/${header} | sha1sum)"
-+	NEWSUM="$(sed '$d' ${LINUXDIR}/include/${header} | sha1sum)"
- 	NEWSUM="${NEWSUM%% *}"
+ extern unsigned int max_bfs_queue_depth;
  
- 	if [ "${OLDSUM}" != "${NEWSUM}" ]; then
+@@ -160,25 +159,22 @@ lockdep_count_backward_deps(struct lock_class *class)
+  * and we want to avoid too much cache bouncing.
+  */
+ struct lockdep_stats {
+-	int	chain_lookup_hits;
+-	int	chain_lookup_misses;
+-	int	hardirqs_on_events;
+-	int	hardirqs_off_events;
+-	int	redundant_hardirqs_on;
+-	int	redundant_hardirqs_off;
+-	int	softirqs_on_events;
+-	int	softirqs_off_events;
+-	int	redundant_softirqs_on;
+-	int	redundant_softirqs_off;
+-	int	nr_unused_locks;
+-	int	nr_redundant_checks;
+-	int	nr_redundant;
+-	int	nr_cyclic_checks;
+-	int	nr_cyclic_check_recursions;
+-	int	nr_find_usage_forwards_checks;
+-	int	nr_find_usage_forwards_recursions;
+-	int	nr_find_usage_backwards_checks;
+-	int	nr_find_usage_backwards_recursions;
++	unsigned long  chain_lookup_hits;
++	unsigned int   chain_lookup_misses;
++	unsigned long  hardirqs_on_events;
++	unsigned long  hardirqs_off_events;
++	unsigned long  redundant_hardirqs_on;
++	unsigned long  redundant_hardirqs_off;
++	unsigned long  softirqs_on_events;
++	unsigned long  softirqs_off_events;
++	unsigned long  redundant_softirqs_on;
++	unsigned long  redundant_softirqs_off;
++	int            nr_unused_locks;
++	unsigned int   nr_redundant_checks;
++	unsigned int   nr_redundant;
++	unsigned int   nr_cyclic_checks;
++	unsigned int   nr_find_usage_forwards_checks;
++	unsigned int   nr_find_usage_backwards_checks;
+ 
+ 	/*
+ 	 * Per lock class locking operation stat counts
