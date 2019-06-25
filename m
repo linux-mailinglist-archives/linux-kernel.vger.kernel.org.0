@@ -2,67 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CE1152893
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 11:49:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B10852776
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 11:05:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729598AbfFYJt0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 05:49:26 -0400
-Received: from elvis.franken.de ([193.175.24.41]:43924 "EHLO elvis.franken.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726441AbfFYJtX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 05:49:23 -0400
-Received: from uucp (helo=alpha)
-        by elvis.franken.de with local-bsmtp (Exim 3.36 #1)
-        id 1hfhQI-00035W-00; Tue, 25 Jun 2019 11:07:30 +0200
-Received: by alpha.franken.de (Postfix, from userid 1000)
-        id 01082C0E40; Tue, 25 Jun 2019 11:04:51 +0200 (CEST)
-Date:   Tue, 25 Jun 2019 11:04:51 +0200
-From:   Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To:     Lee Jones <lee.jones@linaro.org>, linux-mips@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 5/7] mfd: ioc3: Add driver for SGI IOC3 chip
-Message-ID: <20190625090451.GA9794@alpha.franken.de>
-References: <20190613170636.6647-1-tbogendoerfer@suse.de>
- <20190613170636.6647-6-tbogendoerfer@suse.de>
+        id S1728937AbfFYJFk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 05:05:40 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:41473 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728365AbfFYJFk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 05:05:40 -0400
+Received: by mail-lf1-f66.google.com with SMTP id 136so12068778lfa.8
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 02:05:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PfsIEjwno9984x0xaZFvFQRHreP7y383b0yA/8o51ao=;
+        b=nFParKFr+QigyexDCDFFBgRPTVH7s2tgXQic1JyrzOYcjzvFaAe0cJHxr3XlvxzlAS
+         EqoKOFf6cyewb+42kGLyTQwePgf7SG6lJd4ZkGBUqGk+nrP0IstFMCC8dsyJrh4MG+4o
+         y8yLMITzcDvN+qcKEfUIKfrhpQKDA3P9F4vEkqC2efNYSKyO+idLW96uKvbpLkW4YC5c
+         k5IHlLaU47Xns1FNHNwJVKZe/7ZDZucBQe9oFpX5hB18sgoAMYhpobbOG+6xsaWebLcu
+         dIQH1HMond/+QbcSJZM8ejlgvyYcuZmNXTyCoyVpQT5PbnIyriqEO7x6N/gYrE9rFJMr
+         ANxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PfsIEjwno9984x0xaZFvFQRHreP7y383b0yA/8o51ao=;
+        b=tkQJMbn6f3xbTDQstmRLLQW48MgLXcvbEZrAg8vQOng3NwrZreJUjDbIuief5LYecn
+         5xHurw3XiwXtvYfR0kvn76eBt12NSxsJeuXMmDmi1p2YGf6G7vCjlcSqux6LTCcGUB0K
+         ETnkMEXVAdo2V+AtdckgMeKYpydGG4K+J+IE3E4jJBfXxZWVktRkB5xoN33V7pOm1QRi
+         1TPDSCNb8cX1ToC2C3ffiwZ+3twQ89vEUPsDwWJILcwko9c8dLMmQFecyjIIqOWic6Vr
+         IrwnS8Nf4J4zDZemryaZPs2dCWyQRNvAaP+mbYe4BpQFc+yV7c3LBN7qQfLwhOsn+Ml3
+         cLbw==
+X-Gm-Message-State: APjAAAVTGl4daL0bohDTXsMEoI65BbsRgftPcdq6OoGMO+sZnrmBcy5r
+        +h5mq119Bu84N9uzzixMld2brDxKYIVLRF2qglwcVQ==
+X-Google-Smtp-Source: APXvYqxeHuqZCf8OLU6iYGSBN9wT3sJ7A0Tzxmly5Y10lX4/3f8I/dMLymuTvaCc9HjkJUkdC9fFt7v7D9Pf1Y63hFs=
+X-Received: by 2002:ac2:4891:: with SMTP id x17mr28635379lfc.60.1561453537378;
+ Tue, 25 Jun 2019 02:05:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190613170636.6647-6-tbogendoerfer@suse.de>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <1560790160-3372-1-git-send-email-info@metux.net> <1560790160-3372-2-git-send-email-info@metux.net>
+In-Reply-To: <1560790160-3372-2-git-send-email-info@metux.net>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 25 Jun 2019 11:05:25 +0200
+Message-ID: <CACRpkdaSj2OA8RX-oxK2sn6=fUQd=xB6oNnbErqxbQUMDVg9Eg@mail.gmail.com>
+Subject: Re: [PATCH 2/7] drivers: gpio: amdpt: drop unneeded deref of &pdev->dev
+To:     "Enrico Weigelt, metux IT consult" <info@metux.net>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Lyra Zhang <zhang.lyra@gmail.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 07:06:31PM +0200, Thomas Bogendoerfer wrote:
-> SGI IOC3 chip has integrated ethernet, keyboard and mouse interface.
-> It also supports connecting a SuperIO chip for serial and parallel
-> interfaces. IOC3 is used inside various SGI systemboards and add-on
-> cards with different equipped external interfaces.
-> 
-> Support for ethernet and serial interfaces were implemented inside
-> the network driver. This patchset moves out the not network related
-> parts to a new MFD driver, which takes care of card detection,
-> setup of platform devices and interrupt distribution for the subdevices.
-> 
-> Serial portion: Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> 
-> Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
-> ---
->  arch/mips/include/asm/sn/ioc3.h     |  345 +++----
->  arch/mips/sgi-ip27/ip27-timer.c     |   20 -
->  drivers/mfd/Kconfig                 |   13 +
->  drivers/mfd/Makefile                |    1 +
->  drivers/mfd/ioc3.c                  |  683 +++++++++++++
+On Mon, Jun 17, 2019 at 6:49 PM Enrico Weigelt, metux IT consult
+<info@metux.net> wrote:
 
-Lee,
+> We already have the struct device* pointer in a local variable,
+> so we can write this a bit shorter.
+>
+> Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
 
-can you give me an indication, if the MFD changes are ok now
-or if I need to improve it further.
+Patch applied.
 
-Thanks,
-Thomas.
-
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+Yours,
+Linus Walleij
