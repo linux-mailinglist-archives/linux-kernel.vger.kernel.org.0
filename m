@@ -2,106 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6AC055CA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 01:53:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E13CA55CC4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 02:04:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726535AbfFYXxq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 19:53:46 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:16868 "EHLO
-        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726477AbfFYXxn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 19:53:43 -0400
-Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5PNm1ei020477
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 16:53:42 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=yjZXcMnfv52cV3iKAqHjSpI81GHA3MMnQyOdI5uEAgE=;
- b=VkTn5AAkF2g/g6aMB4uoEcacFi6ioIEc0jHI+HVDO8/jXANbk9TQoPd/wTj8QI8dmV1v
- 8oyl60BTncgPcmOw6/culgQ4kWqb1/6sgqTOldJJH4RSV4AT1ZFXmqoz2L0eExf8jbZ+
- Nw3kRVNGo3y5+heuWvOFhqIgFAE4Q3jtu7A= 
-Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2tbrn7958t-5
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 16:53:42 -0700
-Received: from mx-out.facebook.com (2620:10d:c081:10::13) by
- mail.thefacebook.com (2620:10d:c081:35::125) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1713.5;
- Tue, 25 Jun 2019 16:53:41 -0700
-Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)
-        id D10D962E1F8B; Tue, 25 Jun 2019 16:53:38 -0700 (PDT)
-Smtp-Origin-Hostprefix: devbig
-From:   Song Liu <songliubraving@fb.com>
-Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
-To:     <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>
-CC:     <matthew.wilcox@oracle.com>, <kirill.shutemov@linux.intel.com>,
-        <peterz@infradead.org>, <oleg@redhat.com>, <rostedt@goodmis.org>,
-        <kernel-team@fb.com>, <william.kucharski@oracle.com>,
-        Song Liu <songliubraving@fb.com>
-Smtp-Origin-Cluster: ftw2c04
-Subject: [PATCH v7 4/4] uprobe: use FOLL_SPLIT_PMD instead of FOLL_SPLIT
-Date:   Tue, 25 Jun 2019 16:53:25 -0700
-Message-ID: <20190625235325.2096441-5-songliubraving@fb.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190625235325.2096441-1-songliubraving@fb.com>
-References: <20190625235325.2096441-1-songliubraving@fb.com>
-X-FB-Internal: Safe
+        id S1726536AbfFZAEd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 20:04:33 -0400
+Received: from mga09.intel.com ([134.134.136.24]:45807 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726402AbfFZAEc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 20:04:32 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jun 2019 17:04:31 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,417,1557212400"; 
+   d="scan'208";a="188466243"
+Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
+  by fmsmga002.fm.intel.com with ESMTP; 25 Jun 2019 17:04:30 -0700
+Date:   Tue, 25 Jun 2019 16:54:47 -0700
+From:   Fenghua Yu <fenghua.yu@intel.com>
+To:     David Laight <David.Laight@ACULAB.COM>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        H Peter Anvin <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim Krcmar <rkrcmar@redhat.com>,
+        Christopherson Sean J <sean.j.christopherson@intel.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Xiaoyao Li <xiaoyao.li@intel.com>,
+        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        x86 <x86@kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>
+Subject: Re: [PATCH v9 03/17] x86/split_lock: Align x86_capability to
+ unsigned long to avoid split locked access
+Message-ID: <20190625235447.GB245468@romley-ivt3.sc.intel.com>
+References: <1560897679-228028-1-git-send-email-fenghua.yu@intel.com>
+ <1560897679-228028-4-git-send-email-fenghua.yu@intel.com>
+ <746b5a8752cc40b1b954913f786ed9a6@AcuMS.aculab.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-25_16:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=732 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906250195
-X-FB-Internal: deliver
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <746b5a8752cc40b1b954913f786ed9a6@AcuMS.aculab.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patches uses newly added FOLL_SPLIT_PMD in uprobe. This enables easy
-regroup of huge pmd after the uprobe is disabled (in next patch).
+On Mon, Jun 24, 2019 at 03:12:49PM +0000, David Laight wrote:
+> From: Fenghua Yu
+> > Sent: 18 June 2019 23:41
+> > 
+> > set_cpu_cap() calls locked BTS and clear_cpu_cap() calls locked BTR to
+> > operate on bitmap defined in x86_capability.
+> > 
+> > Locked BTS/BTR accesses a single unsigned long location. In 64-bit mode,
+> > the location is at:
+> > base address of x86_capability + (bit offset in x86_capability / 64) * 8
+> > 
+> > Since base address of x86_capability may not be aligned to unsigned long,
+> > the single unsigned long location may cross two cache lines and
+> > accessing the location by locked BTS/BTR introductions will cause
+> > split lock.
+> > 
+> > To fix the split lock issue, align x86_capability to size of unsigned long
+> > so that the location will be always within one cache line.
+> > 
+> > Changing x86_capability's type to unsigned long may also fix the issue
+> > because x86_capability will be naturally aligned to size of unsigned long.
+> > But this needs additional code changes. So choose the simpler solution
+> > by setting the array's alignment to size of unsigned long.
+> 
+> As I've pointed out several times before this isn't the only int[] data item
+> in this code that gets passed to the bit operations.
+> Just because you haven't got a 'splat' from the others doesn't mean they don't
+> need fixing at the same time.
 
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Signed-off-by: Song Liu <songliubraving@fb.com>
----
- kernel/events/uprobes.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+As Thomas suggested in https://lkml.org/lkml/2019/4/25/353, patch #0017
+in this patch set implements WARN_ON_ONCE() to audit possible unalignment
+in atomic bit ops.
 
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index f7c61a1ef720..a20d7b43a056 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -153,7 +153,7 @@ static int __replace_page(struct vm_area_struct *vma, unsigned long addr,
- {
- 	struct mm_struct *mm = vma->vm_mm;
- 	struct page_vma_mapped_walk pvmw = {
--		.page = old_page,
-+		.page = compound_head(old_page),
- 		.vma = vma,
- 		.address = addr,
- 	};
-@@ -165,8 +165,6 @@ static int __replace_page(struct vm_area_struct *vma, unsigned long addr,
- 	mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR, 0, vma, mm, addr,
- 				addr + PAGE_SIZE);
- 
--	VM_BUG_ON_PAGE(PageTransHuge(old_page), old_page);
--
- 	if (!orig) {
- 		err = mem_cgroup_try_charge(new_page, vma->vm_mm, GFP_KERNEL,
- 					    &memcg, false);
-@@ -483,7 +481,7 @@ int uprobe_write_opcode(struct arch_uprobe *auprobe, struct mm_struct *mm,
- retry:
- 	/* Read the page with vaddr into memory */
- 	ret = get_user_pages_remote(NULL, mm, vaddr, 1,
--			FOLL_FORCE | FOLL_SPLIT, &old_page, &vma, NULL);
-+			FOLL_FORCE | FOLL_SPLIT_PMD, &old_page, &vma, NULL);
- 	if (ret <= 0)
- 		return ret;
- 
--- 
-2.17.1
+This patch set just enables split lock detection first. Fixing ALL split
+lock issues might be practical after the patch is upstreamed and used widely.
 
+> 
+> > Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
+> > ---
+> >  arch/x86/include/asm/processor.h | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
+> > index c34a35c78618..d3e017723634 100644
+> > --- a/arch/x86/include/asm/processor.h
+> > +++ b/arch/x86/include/asm/processor.h
+> > @@ -93,7 +93,9 @@ struct cpuinfo_x86 {
+> >  	__u32			extended_cpuid_level;
+> >  	/* Maximum supported CPUID level, -1=no CPUID: */
+> >  	int			cpuid_level;
+> > -	__u32			x86_capability[NCAPINTS + NBUGINTS];
+> > +	/* Aligned to size of unsigned long to avoid split lock in atomic ops */
+> 
+> Wrong comment.
+> Something like:
+> 	/* Align to sizeof (unsigned long) because the array is passed to the
+> 	 * atomic bit-op functions which require an aligned unsigned long []. */
+
+The problem we try to fix here is not because "the array is passed to the
+atomic bit-op functions which require an aligned unsigned long []".
+
+The problem is because of the possible split lock issue. If it's not because
+of split lock issue, there is no need to have this patch.
+
+So I would think my comment is right to point out explicitly why we need
+this alignment.
+
+> 
+> > +	__u32			x86_capability[NCAPINTS + NBUGINTS]
+> > +				__aligned(sizeof(unsigned long));
+> 
+> It might be better to use a union (maybe unnamed) here.
+
+That would be another patch. This patch just simply fixes the split lock
+issue.
+
+Thanks.
+
+-Fenghua
