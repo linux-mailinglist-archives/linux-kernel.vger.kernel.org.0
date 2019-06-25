@@ -2,181 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E50855178
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 16:21:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC9955517E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 16:22:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730002AbfFYOVz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 10:21:55 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:41142 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728247AbfFYOVz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 10:21:55 -0400
-Received: by mail-ed1-f68.google.com with SMTP id p15so27389355eds.8
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 07:21:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=24gzO0A0maaezXLn4Sf+YkjPoPGU5cIzahsVUvGWJpM=;
-        b=Y+iwXU//8GiwvhB5OdOIwFWmfTwBckBPRRYgH6kue66lsWyh9dCVA2FaKmL02xFKEp
-         ZfANSgyGzfjQvccuoaiACu2E9hFGEvf3GDPGF1PFAIvlKZ7isxVSmuGTE6shmB2zXpAr
-         IoDUAySoIuAmV09dUoCcTV15LJhra9BJbO9AQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=24gzO0A0maaezXLn4Sf+YkjPoPGU5cIzahsVUvGWJpM=;
-        b=o5f5hfmxbUYkFgLqABj7PvAjCvkJ9Payd81+Nxi123KTJElzox1Srl5lGERi1WzcVI
-         rk6ZmZLcLJC5XjzeQdo1q+6HL9Q1XHrT88ys1fNhxx/R+76DmTBE7mBhCjRW/ujgUNAS
-         u6alMEfCbbPB1p4pA0Q58kbrafCWB42d8s4p9Z7H9SPupDNyi8HSXEl/DvEYrmo0M2CP
-         Zs1zLEBim/orPNj78/AwkXn3VkSvOlRs5DBCG+KxL+UpEE14g7IAFUufMu5cx2ILcppy
-         vLpaMli2bpe9yD4BWBYcRcIW2jyleo79tgeIaF33W0WSBGasw7a5snIrG/ZlEPGJMmDF
-         5TSg==
-X-Gm-Message-State: APjAAAUAylsbD6+tVpukGF3SpI8oqKIkMR9Hvq1l2yobGTZ9FVVYAOkh
-        mRFOLybBoF4rGgSnmiZzsIY+yg==
-X-Google-Smtp-Source: APXvYqxVUUONdezXsW7E9TNE+qfMGQMUrSmhwkxeITlCJQHWjHZ7M6mojDMZlCgAoAGW7zba80GVtw==
-X-Received: by 2002:aa7:d30b:: with SMTP id p11mr133074273edq.23.1561472512705;
-        Tue, 25 Jun 2019 07:21:52 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id z2sm2477457ejp.73.2019.06.25.07.21.51
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 25 Jun 2019 07:21:51 -0700 (PDT)
-Date:   Tue, 25 Jun 2019 16:21:49 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-Cc:     dri-devel@lists.freedesktop.org, kernel@collabora.com,
-        m.szyprowski@samsung.com,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] drm: Include ddc adapter pointer in struct
- drm_connector
-Message-ID: <20190625142149.GW12905@phenom.ffwll.local>
-Mail-Followup-To: Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
-        dri-devel@lists.freedesktop.org, kernel@collabora.com,
-        m.szyprowski@samsung.com,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-References: <cover.1561458051.git.andrzej.p@collabora.com>
- <ef88f682401ae863a91e6c885d83a2756ae20b85.1561458051.git.andrzej.p@collabora.com>
+        id S1730278AbfFYOWE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 10:22:04 -0400
+Received: from mail-eopbgr60082.outbound.protection.outlook.com ([40.107.6.82]:39335
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728252AbfFYOWD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 10:22:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vyjNARllyvJSmD8LmaYeP4Xkh6ob0o5S2vQ5dg9Y3fk=;
+ b=Ylmwq1gSB0exWozTN+z8I7q6cNSPhy2BpVivVl0wPnFGjOmXOvGDcANfiKkcTQ6oobXsI+QEPOt9kqanVL1rsB352GRxnVPwqdOxerLakJgPYiIYhJNUwXbdGiTmRqylpsh03WcRazMd95e5mkhIQsljTYTtygQVQEfiDTknl+E=
+Received: from VI1PR04MB5055.eurprd04.prod.outlook.com (20.177.50.140) by
+ VI1PR04MB6976.eurprd04.prod.outlook.com (52.133.246.212) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2008.16; Tue, 25 Jun 2019 14:22:00 +0000
+Received: from VI1PR04MB5055.eurprd04.prod.outlook.com
+ ([fe80::d83:14c4:dedb:213b]) by VI1PR04MB5055.eurprd04.prod.outlook.com
+ ([fe80::d83:14c4:dedb:213b%5]) with mapi id 15.20.2008.014; Tue, 25 Jun 2019
+ 14:22:00 +0000
+From:   Leonard Crestez <leonard.crestez@nxp.com>
+To:     Abel Vesa <abel.vesa@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Stephen Boyd <sboyd@kernel.org>, Jacky Bai <ping.bai@nxp.com>
+CC:     Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Anson Huang <anson.huang@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>
+Subject: Re: [PATCH] arm64: dts: imx8mq: Init rates and parents configs for
+ clocks
+Thread-Topic: [PATCH] arm64: dts: imx8mq: Init rates and parents configs for
+ clocks
+Thread-Index: AQHVK1SzBLyg7yu1NUGWmKUxLWsOPA==
+Date:   Tue, 25 Jun 2019 14:22:00 +0000
+Message-ID: <VI1PR04MB50550ACBAEA73FD7B5A97DD8EEE30@VI1PR04MB5055.eurprd04.prod.outlook.com>
+References: <1561467081-25701-1-git-send-email-abel.vesa@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=leonard.crestez@nxp.com; 
+x-originating-ip: [89.37.124.34]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: b9626825-8f06-44b0-7087-08d6f9787cd5
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR04MB6976;
+x-ms-traffictypediagnostic: VI1PR04MB6976:
+x-microsoft-antispam-prvs: <VI1PR04MB6976E904E8DE81270D21A23EEEE30@VI1PR04MB6976.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6430;
+x-forefront-prvs: 0079056367
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(346002)(376002)(39860400002)(396003)(366004)(189003)(199004)(6246003)(52536014)(305945005)(316002)(6436002)(66066001)(6116002)(74316002)(102836004)(25786009)(76176011)(110136005)(55016002)(68736007)(7696005)(54906003)(8936002)(26005)(9686003)(14454004)(4326008)(7416002)(229853002)(256004)(2906002)(86362001)(8676002)(81166006)(53546011)(478600001)(186003)(7736002)(5660300002)(44832011)(81156014)(53936002)(33656002)(6506007)(486006)(73956011)(476003)(71200400001)(71190400001)(99286004)(6636002)(66946007)(64756008)(76116006)(66446008)(446003)(91956017)(66476007)(66556008)(3846002)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB6976;H:VI1PR04MB5055.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: PIfCXF/oVmzJipsl0N3MIYOBzh0g6iyev9ly/P3+S35VF05jkHe5tPph02rXbps9LMzjxJBXI1tOcgUMo+NpaOG0F58tgGWUPhtvlHu+AVwFkfWpSwjmNWSMne+wDO3Te2xlnCyOqdEsONUgdcnlDVaADv/E51Vq1sysCTofODXS4CzI6pH5zWJmT3cOrxWp//xCHRZN/9Nu2aLESCu/ITfER8l5wcsq+obvH4Vg8OvCF6jOXJY8/WW+PNYK8jcUhfS3fPw+OMvLtEbvNeDBHMkawJaRhAGVj6iRR9SGXoDfKd2w0I+0oxFOJ2Ef7tLBnoa/uHX8Zfpkf87Q8Qi5ztCHJme/cdlSTCXbp58OD4JFabKT2S4p1LtSo0Akytfa6VMGVnn0zAHv4ISeUMeUL3Ohu3cSYgeE/KQg4F+YunU=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ef88f682401ae863a91e6c885d83a2756ae20b85.1561458051.git.andrzej.p@collabora.com>
-X-Operating-System: Linux phenom 4.19.0-5-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b9626825-8f06-44b0-7087-08d6f9787cd5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Jun 2019 14:22:00.4818
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: leonard.crestez@nxp.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB6976
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 25, 2019 at 12:24:40PM +0200, Andrzej Pietrasiewicz wrote:
-> Add generic code which creates symbolic links in sysfs, pointing to ddc
-> interface used by a particular video output. For example:
-> 
-> ls -l /sys/class/drm/card0-HDMI-A-1/ddc
-> lrwxrwxrwx 1 root root 0 Jun 24 10:42 /sys/class/drm/card0-HDMI-A-1/ddc \
-> 	-> ../../../../soc/13880000.i2c/i2c-2
-> 
-> This makes it easy for user to associate a display with its ddc adapter
-> and use e.g. ddcutil to control the chosen monitor.
-> 
-> This patch adds an i2c_adapter pointer to struct drm_connector. Particular
-> drivers can then use it instead of using their own private instance. If a
-> connector contains a ddc, then create a symbolic link in sysfs.
-> 
-> Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-
-Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-
-As mentioned in the other subthread, I think the important bit to sell
-this is rolling it out to as many drivers as feasible and collecting all
-the acks from driver maintainers.
--Daniel
-> ---
->  drivers/gpu/drm/drm_sysfs.c |  7 +++++++
->  include/drm/drm_connector.h | 11 +++++++++++
->  2 files changed, 18 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/drm_sysfs.c b/drivers/gpu/drm/drm_sysfs.c
-> index ad10810bc972..26d359b39785 100644
-> --- a/drivers/gpu/drm/drm_sysfs.c
-> +++ b/drivers/gpu/drm/drm_sysfs.c
-> @@ -294,6 +294,9 @@ int drm_sysfs_connector_add(struct drm_connector *connector)
->  	/* Let userspace know we have a new connector */
->  	drm_sysfs_hotplug_event(dev);
->  
-> +	if (connector->ddc)
-> +		return sysfs_create_link(&connector->kdev->kobj,
-> +				 &connector->ddc->dev.kobj, "ddc");
->  	return 0;
->  }
->  
-> @@ -301,6 +304,10 @@ void drm_sysfs_connector_remove(struct drm_connector *connector)
->  {
->  	if (!connector->kdev)
->  		return;
-> +
-> +	if (connector->ddc)
-> +		sysfs_remove_link(&connector->kdev->kobj, "ddc");
-> +
->  	DRM_DEBUG("removing \"%s\" from sysfs\n",
->  		  connector->name);
->  
-> diff --git a/include/drm/drm_connector.h b/include/drm/drm_connector.h
-> index ca745d9feaf5..1ad3d1d54ba7 100644
-> --- a/include/drm/drm_connector.h
-> +++ b/include/drm/drm_connector.h
-> @@ -23,6 +23,7 @@
->  #ifndef __DRM_CONNECTOR_H__
->  #define __DRM_CONNECTOR_H__
->  
-> +#include <linux/i2c.h>
->  #include <linux/list.h>
->  #include <linux/llist.h>
->  #include <linux/ctype.h>
-> @@ -1308,6 +1309,16 @@ struct drm_connector {
->  	 * [0]: progressive, [1]: interlaced
->  	 */
->  	int audio_latency[2];
-> +
-> +	/**
-> +	 * @ddc: associated ddc adapter.
-> +	 * A connector usually has its associated ddc adapter. If a driver uses
-> +	 * this field, then an appropriate symbolic link is created in connector
-> +	 * sysfs directory to make it easy for the user to tell which i2c
-> +	 * adapter is for a particular display.
-> +	 */
-> +	struct i2c_adapter *ddc;
-> +
->  	/**
->  	 * @null_edid_counter: track sinks that give us all zeros for the EDID.
->  	 * Needed to workaround some HW bugs where we get all 0s
-> -- 
-> 2.17.1
-> 
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+On 25.06.2019 15:51, Abel Vesa wrote:=0A=
+> Add the initial configuration for clocks that need default parent and rat=
+e=0A=
+> setting. This is based on the vendor tree clock provider parents and rate=
+s=0A=
+> configuration except this is doing the setup in dts rather then using clo=
+ck=0A=
+> consumer API in a clock provider driver.=0A=
+> =0A=
+> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>=0A=
+> ---=0A=
+>   arch/arm64/boot/dts/freescale/imx8mq.dtsi | 34 ++++++++++++++++++++++++=
++++++++=0A=
+>   1 file changed, 34 insertions(+)=0A=
+> =0A=
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mq.dtsi b/arch/arm64/boot/=
+dts/freescale/imx8mq.dtsi=0A=
+> index d09b808..e0abe02 100644=0A=
+> --- a/arch/arm64/boot/dts/freescale/imx8mq.dtsi=0A=
+> +++ b/arch/arm64/boot/dts/freescale/imx8mq.dtsi=0A=
+> @@ -489,6 +489,40 @@=0A=
+=0A=
+> +					<&clk IMX8MQ_CLK_PCIE1_CTRL>,=0A=
+> +					<&clk IMX8MQ_CLK_PCIE1_PHY>,=0A=
+> +					<&clk IMX8MQ_CLK_PCIE2_CTRL>,=0A=
+> +					<&clk IMX8MQ_CLK_PCIE2_PHY>,=0A=
+> +					<&clk IMX8MQ_CLK_CSI1_CORE>,=0A=
+> +					<&clk IMX8MQ_CLK_CSI1_PHY_REF>,=0A=
+> +					<&clk IMX8MQ_CLK_CSI1_ESC>,=0A=
+> +					<&clk IMX8MQ_CLK_CSI2_CORE>,=0A=
+> +					<&clk IMX8MQ_CLK_CSI2_PHY_REF>,=0A=
+> +					<&clk IMX8MQ_CLK_CSI2_ESC>;=0A=
+=0A=
+This stuff (and NAND) looks like it would belong to device nodes instead.=
+=0A=
+=0A=
+The rest seem fine though I'm not sure why exactly those clks are =0A=
+adjusted in vendor tree.=0A=
+=0A=
+--=0A=
+Regards,=0A=
+Leonard=0A=
