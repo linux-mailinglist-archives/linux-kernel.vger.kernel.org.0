@@ -2,135 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D62B55591
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 19:11:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16750555A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 19:12:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731529AbfFYRLY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 13:11:24 -0400
-Received: from mail-eopbgr760110.outbound.protection.outlook.com ([40.107.76.110]:34473
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728855AbfFYRLY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 13:11:24 -0400
+        id S1731635AbfFYRMq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 13:12:46 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:46271 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727540AbfFYRMp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 13:12:45 -0400
+Received: by mail-pl1-f196.google.com with SMTP id e5so9166014pls.13
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 10:12:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=wavesemi.onmicrosoft.com; s=selector1-wavesemi-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=h+iUoYUFY0FkKIr+aKKX1jj9cXKpVu1fn63ON3UHAEY=;
- b=lBMHHVH3zhdbqJAGoPOuBOWXtjpbsAM2AtNgcw1Ls1vuMB+itvPvRowhA6MKDew7HPy3Als6znt5QAroJj5zxNb8Nn/igbC1XqYCbooMmforgOZZ8tN4L6grquNV4eoe75SdWvEEd/jZDVOSPsW/apy596ryIYro/f2tBbBh6Mc=
-Received: from MWHPR2201MB1277.namprd22.prod.outlook.com (10.172.60.12) by
- MWHPR2201MB1118.namprd22.prod.outlook.com (10.174.169.156) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2008.16; Tue, 25 Jun 2019 17:11:20 +0000
-Received: from MWHPR2201MB1277.namprd22.prod.outlook.com
- ([fe80::6975:b632:c85b:9e40]) by MWHPR2201MB1277.namprd22.prod.outlook.com
- ([fe80::6975:b632:c85b:9e40%2]) with mapi id 15.20.2008.017; Tue, 25 Jun 2019
- 17:11:20 +0000
-From:   Paul Burton <paul.burton@mips.com>
-To:     Vincenzo Frascino <vincenzo.frascino@arm.com>
-CC:     Thomas Gleixner <tglx@linutronix.de>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        LAK <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Mark Salyzyn <salyzyn@android.com>,
-        Peter Collingbourne <pcc@google.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Huw Davies <huw@codeweavers.com>,
-        Shijith Thotton <sthotton@marvell.com>,
-        Andre Przywara <andre.przywara@arm.com>,
-        Dmitry Safonov <dima@arista.com>,
-        Andrei Vagin <avagin@openvz.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Michael Kelley <mikelley@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH v7 00/25] Unify vDSOs across more architectures
-Thread-Topic: [PATCH v7 00/25] Unify vDSOs across more architectures
-Thread-Index: AQHVKBcjN6FJrtEBy0+FRUrPEWueWKap+PYAgAEv3ICAAEzTgIABLC4A
-Date:   Tue, 25 Jun 2019 17:11:20 +0000
-Message-ID: <20190625171118.wznk5nva3h3jetky@pburton-laptop>
-References: <20190621095252.32307-1-vincenzo.frascino@arm.com>
- <alpine.DEB.2.21.1906240142000.32342@nanos.tec.linutronix.de>
- <20190624184157.mu6n74a7qqa4z5z5@pburton-laptop>
- <3ae7f595-0a15-0584-198e-b32fe3e3ea57@arm.com>
-In-Reply-To: <3ae7f595-0a15-0584-198e-b32fe3e3ea57@arm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: BYAPR01CA0070.prod.exchangelabs.com (2603:10b6:a03:94::47)
- To MWHPR2201MB1277.namprd22.prod.outlook.com (2603:10b6:301:18::12)
-user-agent: NeoMutt/20180716
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=pburton@wavecomp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [12.94.197.246]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: b809b5de-4021-4a76-8945-08d6f9902426
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MWHPR2201MB1118;
-x-ms-traffictypediagnostic: MWHPR2201MB1118:
-x-microsoft-antispam-prvs: <MWHPR2201MB1118A9595B9D7AA19A7BA973C1E30@MWHPR2201MB1118.namprd22.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 0079056367
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(7916004)(366004)(396003)(39840400004)(346002)(376002)(136003)(51914003)(199004)(189003)(229853002)(99286004)(4744005)(6486002)(186003)(5660300002)(26005)(71200400001)(6246003)(71190400001)(42882007)(1076003)(5024004)(58126008)(446003)(102836004)(2906002)(256004)(25786009)(54906003)(11346002)(66446008)(66556008)(64756008)(6506007)(386003)(66476007)(73956011)(66946007)(53936002)(316002)(476003)(7736002)(8936002)(44832011)(33716001)(81166006)(52116002)(68736007)(14454004)(305945005)(7416002)(6436002)(9686003)(6512007)(8676002)(6116002)(4326008)(3846002)(81156014)(66066001)(76176011)(6916009)(486006)(478600001);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR2201MB1118;H:MWHPR2201MB1277.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: wavecomp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: zcyNfYbyNhwspxVfGJ1htlI8y5R6VxxQcCVOyO09/n/9Bwwxi02qlNQ6NDcd4p/wsXmRMzHqvW4I3SzmIwVxTbMI1qwCpmcrNlrbbzqYQfsW0cKNlnzojpp+N13L2JVb10ZYle/j47RRHwDruBbt5N4h1dDgDJz/VolQH3Y74ZlreJFkUuFluHNAefENxQVQFqiqry9YDoi6Tnp4K2h6W5W6krnypP2RKTN7a5TDIEOrujZWCVqUvZx+omSOUx8Vi2ot0zxjoW5pXDc+2kad6aSjkXJBFdATyOMfy5PLPWetWhVhe02uarErHTNxDiUpkhUhEFPL5rv1kRfTaDXlAxGJ8cW36E1RZEa26QjEx0SmxoUitAgRCImd/QE8ca7pUeIsXku+M7BL/vZ3aDvwLTebP/JWQZ6WFIUgiXbUrrM=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <FD39DF5A3ADB314EAA7DACEAAC30B7A9@namprd22.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=evJZ611ieJocegJ3LQNW9Eg/UNskUaGIHgsK7ypKVgI=;
+        b=a3SMLs+dWET/7V/UepBDzEvuFcGfzDN4wp15+eaj/zWii+KNOggB6WL1bG8BG9Ikxv
+         bArAc5hMvi9DlkF9+F10Tj6n2UQrQ/wQkE7aKpZPZr3zidP+7DsZcmW/EUH0sCUlAN5x
+         0+vu/8lI2jV7wnCfiIEWnBsL25pL670ITGdOM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=evJZ611ieJocegJ3LQNW9Eg/UNskUaGIHgsK7ypKVgI=;
+        b=lQVA9i8KSo/sUF8ydjd50YbV5EfBxa4iq/SpEswVY/WKcnl6LDOP34Vdxjzn4f2b8g
+         i3GVwmyK/RxcXXe0UlX6tSNWXMR9yeXJsu5qLCMU5l9whOh9M69OEFWxcOqUyoNXq+eN
+         Q6EbQ0uXIMnIK9V1bbxja1p8sKqhzyI9YhjMYbZ8jNhTNwG8MR/Hb3ZlcKfNVTc3zLjN
+         dgaB+XSYUqKqDWARRiEp36elVvhexuR6m1H3PhEXV63WkcJvQ7Pf3dWqApsx9SW9Ei8M
+         bGDl0EvJt3LVCgKw3kpD70GWrTgafhpFERiK0U8QOb3sEnsL6tYjmsITe0o7q5RddDDB
+         axdA==
+X-Gm-Message-State: APjAAAWpXJGZuhuiVWbaHnvelLchBJN+0ke7dGL9exnWpVt1mud+nezF
+        NxSgftQNe4/Up03V+/QpRZ646Q==
+X-Google-Smtp-Source: APXvYqwXQYcCcg4xky16h6RsWQUwWMNys8Mo6oo9mRuYdIHGyVw26Oun6x/a7fQXH5k8iQjfjEAP7g==
+X-Received: by 2002:a17:902:9041:: with SMTP id w1mr143570404plz.132.1561482764938;
+        Tue, 25 Jun 2019 10:12:44 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id o14sm2846752pjp.29.2019.06.25.10.12.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 25 Jun 2019 10:12:43 -0700 (PDT)
+Date:   Tue, 25 Jun 2019 10:12:42 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Joe Perches <joe@perches.com>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Shawn Landden <shawn@git.icu>
+Subject: Re: [PATCH] perf/x86/intel: Mark expected switch fall-throughs
+Message-ID: <201906251009.BCB7438@keescook>
+References: <20190624161913.GA32270@embeddedor>
+ <20190624193123.GI3436@hirez.programming.kicks-ass.net>
+ <b00fc090d83ac6bd41a5db866b02d425d9ab20e4.camel@perches.com>
+ <20190624203737.GL3436@hirez.programming.kicks-ass.net>
+ <3dc75cd4-9a8d-f454-b5fb-64c3e6d1f416@embeddedor.com>
+ <CANiq72mMS6tHcP8MHW63YRmbdFrD3ZCWMbnQEeHUVN49v7wyXQ@mail.gmail.com>
+ <20190625071846.GN3436@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-X-OriginatorOrg: mips.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b809b5de-4021-4a76-8945-08d6f9902426
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Jun 2019 17:11:20.2050
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 463607d3-1db3-40a0-8a29-970c56230104
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: pburton@wavecomp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR2201MB1118
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190625071846.GN3436@hirez.programming.kicks-ass.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vincenzo,
+On Tue, Jun 25, 2019 at 09:18:46AM +0200, Peter Zijlstra wrote:
+> Can it build a kernel without patches yet? That is, why should I care
+> what LLVM does?
 
-On Tue, Jun 25, 2019 at 12:16:55AM +0100, Vincenzo Frascino wrote:
-> In the end I concluded that all the errors seen here depend on the fact t=
-hat I
-> tested my vdso implementation on MIPS32el only (as stated in the cover le=
-tter)
-> and that when I tried to compile a 32BIT binary on a 64BIT configuration =
-I did
-> it wrongly for two reasons, for N32 and O32 binaries:
->  - we need to undefine CONFIG_64BIT and define CONFIG_32BIT
->  - we need to define CONFIG_GENERIC_ATOMIC64
->=20
-> I have a fix for this (patch in attachment), but I do not have the hardwa=
-re to
-> test it. If you could provide some feedback would be appreciated (really =
-want to
-> see MIPS merged with the other archs in 5.3 :) ).
+Yes. LLVM trunk builds and boots x86 now. As for distro availability,
+AIUI, the asm-goto feature missed the 9.0 LLVM branch point, so it'll
+appear in the following release.
 
-Thanks for the quick turnaround on your patch!
-
-I'm certainly willing to test it, but in a few hours I'll be spending
-the bulk of a day on airplanes[1] so it might take a few days until I
-get to it.
-
-Thanks,
-    Paul
-
-[1] ...and travel isn't the hackathon it used to be with my 9 month old
-    son around :)
+-- 
+Kees Cook
