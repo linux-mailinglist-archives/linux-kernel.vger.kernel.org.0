@@ -2,77 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38BB052817
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 11:29:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 68E9852823
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 11:32:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731563AbfFYJ3l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 05:29:41 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:49280 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727789AbfFYJ3k (ORCPT
+        id S1731580AbfFYJcG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 05:32:06 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:36259 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728509AbfFYJcG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 05:29:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=IOs08vRJYw1qJiIbOQmayB+PkMsOoQ5W5ST49dzietI=; b=1AIJJNhrxhQNgKmIE3GuEHKhE
-        D6DomYPYPrbk4HYTCd4AM/NN5Ttg+d5YcvPC6FqdT44nfSIllS1+cK4r9QbFT+Q1xkGhS+LaBbwje
-        1NPdhy4DQardJmPjA3mvz2rcqOaNxepTtTCC8mqXgaZEkeSM4PWwK2qjE4MZ2iB2RMiH2GUF7HT5h
-        LCTKGfrgY6w1ysjLjvUjDbLmgLnKPjcQ+ZLH1mjtPjUwl02Udp4FToA+c+bn4Id/xqDHik/UM/xKb
-        vHM7AEMRAWEtJ3+diRTU20ZmjRc48quvzYmBCjRdUD9KDgh1s3kK+yYtx0D58cHy5Ma6KTqkz8V3b
-        xghNvokuQ==;
-Received: from shell.armlinux.org.uk ([2001:4d48:ad52:3201:5054:ff:fe00:4ec]:58976)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1hfhlc-0005TP-Q2; Tue, 25 Jun 2019 10:29:32 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.89)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1hfhla-00076N-Is; Tue, 25 Jun 2019 10:29:30 +0100
-Date:   Tue, 25 Jun 2019 10:29:30 +0100
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     Parshuram Raju Thombare <pthombar@cadence.com>
-Cc:     "andrew@lunn.ch" <andrew@lunn.ch>,
-        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        Anil Joy Varughese <aniljoy@cadence.com>,
-        Piotr Sroka <piotrs@cadence.com>
-Subject: Re: [PATCH v5 2/5] net: macb: add support for sgmii MAC-PHY interface
-Message-ID: <20190625092930.ootk5nvbkqqvfbtd@shell.armlinux.org.uk>
-References: <1561378210-11033-1-git-send-email-pthombar@cadence.com>
- <1561378274-12357-1-git-send-email-pthombar@cadence.com>
- <20190624134233.suowuortj5dcbxdg@shell.armlinux.org.uk>
- <SN2PR07MB2480B53AFE512F46986A1CAFC1E30@SN2PR07MB2480.namprd07.prod.outlook.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SN2PR07MB2480B53AFE512F46986A1CAFC1E30@SN2PR07MB2480.namprd07.prod.outlook.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Tue, 25 Jun 2019 05:32:06 -0400
+Received: by mail-pg1-f195.google.com with SMTP id f21so8682882pgi.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 02:32:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=rpStZmf35igMxqzLeEFybCYnhueTgWtLq21mpmx87uQ=;
+        b=lkRwaw1IUMjbuUdyCAHnbKBURaBkrUi37P3tS5gdfFTLedE3E79iT3ke2SHKBg9PZm
+         uweWcx3f9W4ua0SkJy+FupZMmVyBSYFKPFi9TcCe0MkoPpHZbR5dmglZFXbAhYkSrmnb
+         BHcQbrIRPav9Z2p0iJVqRb4I77GZkvtwdUJa+IrkhY/+rI/YTiDQRIydfn+QT2sa4JZc
+         Dk9+PbIY9ZlIFXzHVy8A6FjkvRx+e3nPJdDfvuVSdtFy31mZ52P7vlfrcEy3LJP1+C/6
+         Qpmw3cWv3L4O+jzdx8M0fqy32+Glba3bvb7tPgX4rwZktSZTJVoY7oGY3jC81O9tQTJP
+         TJLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=rpStZmf35igMxqzLeEFybCYnhueTgWtLq21mpmx87uQ=;
+        b=j+8PwCUr1XTCj7aulWjgKVWqLgd1jCqb7BcmwxiD2bvU3i1JzijmXPlqPqV4ynqvlR
+         oI9nldz7FD7T92TopVMRTNNkW56f/QCHXPiyGDgDNe/XY7UGjGt7SYUTCY9TbFO4JINW
+         cmsi9NQBqLed+89+/gBFwEZpboSJhmYV7P9qervzollUrGHsuTHra2394pAzjPv1K1Vo
+         ufCaX89WiG0Mnnz+Xxc7vgNZ4tOLXlv8teC8orKEoOvAbNrtjg9ncJwf8FcMj9urjHo8
+         /PLMAVYANdzS/vmgu9SaMR8reD/R025YOnvzAGQU3I3OnU9IdRYgRCrz32QzeD0UyNTK
+         oUFg==
+X-Gm-Message-State: APjAAAVD2MJd1NrA8ogLofsi17kccf1yP+TwMpxump8mZenhKC31qQJB
+        r2RsROCiaIQPTuoNl99UHkrQfg==
+X-Google-Smtp-Source: APXvYqzbAg5MBG2Xe6ojTiLwa+O3LoQWCgWKX7EW8u/iOuynr270+kNo1TQksKvvhwhqxIO76r/FpQ==
+X-Received: by 2002:a63:d218:: with SMTP id a24mr38650537pgg.419.1561455125207;
+        Tue, 25 Jun 2019 02:32:05 -0700 (PDT)
+Received: from buildserver-90.open-silicon.com ([114.143.65.226])
+        by smtp.googlemail.com with ESMTPSA id q19sm16634877pfc.62.2019.06.25.02.32.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 25 Jun 2019 02:32:04 -0700 (PDT)
+From:   Yash Shah <yash.shah@sifive.com>
+To:     robh+dt@kernel.org, paul.walmsley@sifive.com,
+        devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc:     mark.rutland@arm.com, palmer@sifive.com, aou@eecs.berkeley.edu,
+        sachin.ghadi@sifive.com, Yash Shah <yash.shah@sifive.com>
+Subject: [PATCH] riscv: dts: Re-organize the DT nodes
+Date:   Tue, 25 Jun 2019 15:01:31 +0530
+Message-Id: <1561455091-29488-1-git-send-email-yash.shah@sifive.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 25, 2019 at 09:26:29AM +0000, Parshuram Raju Thombare wrote:
-> >In which case, gem_phylink_validate() must clear the support mask when
-> >SGMII mode is requested to indicate that the interface mode is not
-> >supported.
-> >The same goes for _all_ other PHY link modes that the hardware does not
-> >actually support, such as PHY_INTERFACE_MODE_10GKR...
-> If interface is not supported by hardware probe returns with error, so we don't 
-> net interface is not registered at all.
+As per the convention for any SOC device with external connection,
+define only device DT node in SOC DTSi file with status = "disabled"
+and enable device in Board DTS file with status = "okay"
 
-That does not negate my comment above.
+Reported-by: Anup Patel <anup@brainfault.org>
+Signed-off-by: Yash Shah <yash.shah@sifive.com>
+---
+ arch/riscv/boot/dts/sifive/fu540-c000.dtsi          |  6 ++++++
+ arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dts | 13 +++++++++++++
+ 2 files changed, 19 insertions(+)
 
+diff --git a/arch/riscv/boot/dts/sifive/fu540-c000.dtsi b/arch/riscv/boot/dts/sifive/fu540-c000.dtsi
+index 4e8fbde..cc73522 100644
+--- a/arch/riscv/boot/dts/sifive/fu540-c000.dtsi
++++ b/arch/riscv/boot/dts/sifive/fu540-c000.dtsi
+@@ -177,6 +177,7 @@
+ 			interrupt-parent = <&plic0>;
+ 			interrupts = <4>;
+ 			clocks = <&prci PRCI_CLK_TLCLK>;
++			status = "disabled";
+ 		};
+ 		uart1: serial@10011000 {
+ 			compatible = "sifive,fu540-c000-uart", "sifive,uart0";
+@@ -184,6 +185,7 @@
+ 			interrupt-parent = <&plic0>;
+ 			interrupts = <5>;
+ 			clocks = <&prci PRCI_CLK_TLCLK>;
++			status = "disabled";
+ 		};
+ 		i2c0: i2c@10030000 {
+ 			compatible = "sifive,fu540-c000-i2c", "sifive,i2c0";
+@@ -195,6 +197,7 @@
+ 			reg-io-width = <1>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
++			status = "disabled";
+ 		};
+ 		qspi0: spi@10040000 {
+ 			compatible = "sifive,fu540-c000-spi", "sifive,spi0";
+@@ -205,6 +208,7 @@
+ 			clocks = <&prci PRCI_CLK_TLCLK>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
++			status = "disabled";
+ 		};
+ 		qspi1: spi@10041000 {
+ 			compatible = "sifive,fu540-c000-spi", "sifive,spi0";
+@@ -215,6 +219,7 @@
+ 			clocks = <&prci PRCI_CLK_TLCLK>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
++			status = "disabled";
+ 		};
+ 		qspi2: spi@10050000 {
+ 			compatible = "sifive,fu540-c000-spi", "sifive,spi0";
+@@ -224,6 +229,7 @@
+ 			clocks = <&prci PRCI_CLK_TLCLK>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
++			status = "disabled";
+ 		};
+ 	};
+ };
+diff --git a/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dts b/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dts
+index 4da8870..0b55c53 100644
+--- a/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dts
++++ b/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dts
+@@ -42,7 +42,20 @@
+ 	};
+ };
+ 
++&uart0 {
++	status = "okay";
++};
++
++&uart1 {
++	status = "okay";
++};
++
++&i2c0 {
++	status = "okay";
++};
++
+ &qspi0 {
++	status = "okay";
+ 	flash@0 {
+ 		compatible = "issi,is25wp256", "jedec,spi-nor";
+ 		reg = <0>;
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+1.9.1
+
