@@ -2,102 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADD965504C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 15:26:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3547B55054
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 15:28:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729517AbfFYN0k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 09:26:40 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:53564 "EHLO inva021.nxp.com"
+        id S1729806AbfFYN2Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 09:28:16 -0400
+Received: from mga03.intel.com ([134.134.136.65]:65246 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726916AbfFYN0j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 09:26:39 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 850BD200BEC;
-        Tue, 25 Jun 2019 15:26:37 +0200 (CEST)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 7461C20077B;
-        Tue, 25 Jun 2019 15:26:37 +0200 (CEST)
-Received: from fsr-ub1664-175.ea.freescale.net (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id E7B6B2061E;
-        Tue, 25 Jun 2019 15:26:36 +0200 (CEST)
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>
-Cc:     NXP Linux Team <linux-imx@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Abel Vesa <abel.vesa@nxp.com>
-Subject: [PATCH] arm64: dts: imx8mm: Init rates and parents configs for clocks
-Date:   Tue, 25 Jun 2019 16:26:31 +0300
-Message-Id: <1561469191-26840-1-git-send-email-abel.vesa@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726506AbfFYN2Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 09:28:16 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jun 2019 06:28:15 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,416,1557212400"; 
+   d="scan'208";a="155509935"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.145])
+  by orsmga008.jf.intel.com with ESMTP; 25 Jun 2019 06:28:13 -0700
+Received: from andy by smile with local (Exim 4.92)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1hflUa-0002rB-Do; Tue, 25 Jun 2019 16:28:12 +0300
+Date:   Tue, 25 Jun 2019 16:28:12 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Alexandru Ardelean <alexandru.ardelean@analog.com>
+Cc:     linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
+        alexander.shishkin@linux.intel.com, akpm@linux-foundation.org,
+        ndesaulniers@google.com
+Subject: Re: [PATCH][V4] lib: fix __sysfs_match_string() helper when n != -1
+Message-ID: <20190625132812.GB9224@smile.fi.intel.com>
+References: <20190508111913.7276-1-alexandru.ardelean@analog.com>
+ <20190625130104.29904-1-alexandru.ardelean@analog.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190625130104.29904-1-alexandru.ardelean@analog.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the initial configuration for clocks that need default parent and rate
-setting. This is based on the vendor tree clock provider parents and rates
-configuration except this is doing the setup in dts rather than using clock
-consumer API in a clock provider driver.
+On Tue, Jun 25, 2019 at 04:01:04PM +0300, Alexandru Ardelean wrote:
+> The documentation the `__sysfs_match_string()` helper mentions that `n`
+> (the size of the given array) should be:
+>  * @n: number of strings in the array or -1 for NULL terminated arrays
+> 
+> The behavior of the function is different, in the sense that it exits on
+> the first NULL element in the array.
+> 
+> This patch changes the behavior, to exit the loop when a NULL element is
+> found, and the size of the array is provided as -1.
+> 
+> All current users of __sysfs_match_string() & sysfs_match_string() provide
+> contiguous arrays of strings, so this behavior change doesn't influence
+> anything (at this point in time).
+> 
+> This behavior change allows for an array of strings to have NULL elements
+> within the array, which will be ignored. This is particularly useful when
+> creating mapping of strings and integers (as bitfields or other HW
+> description).
 
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
----
- arch/arm64/boot/dts/freescale/imx8mm.dtsi | 36 +++++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+Since it does nothing for current users and comes without an example,
+it's hard to justify the need.
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mm.dtsi b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-index 232a741..ab92108 100644
---- a/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-@@ -451,6 +451,42 @@
- 					 <&clk_ext3>, <&clk_ext4>;
- 				clock-names = "osc_32k", "osc_24m", "clk_ext1", "clk_ext2",
- 					      "clk_ext3", "clk_ext4";
-+				assigned-clocks = <&clk IMX8MM_CLK_AUDIO_AHB>,
-+						<&clk IMX8MM_CLK_IPG_AUDIO_ROOT>,
-+						<&clk IMX8MM_SYS_PLL3>,
-+						<&clk IMX8MM_VIDEO_PLL1>,
-+						<&clk IMX8MM_CLK_NOC>,
-+						<&clk IMX8MM_CLK_PCIE1_CTRL>,
-+						<&clk IMX8MM_CLK_PCIE1_PHY>,
-+						<&clk IMX8MM_CLK_CSI1_CORE>,
-+						<&clk IMX8MM_CLK_CSI1_PHY_REF>,
-+						<&clk IMX8MM_CLK_CSI1_ESC>,
-+						<&clk IMX8MM_CLK_DISP_AXI>,
-+						<&clk IMX8MM_CLK_DISP_APB>;
-+				assigned-clock-parents = <&clk IMX8MM_SYS_PLL1_800M>,
-+						<0>,
-+						<0>,
-+						<0>,
-+						<&clk IMX8MM_SYS_PLL3_OUT>,
-+						<&clk IMX8MM_SYS_PLL2_250M>,
-+						<&clk IMX8MM_SYS_PLL2_100M>,
-+						<&clk IMX8MM_SYS_PLL2_1000M>,
-+						<&clk IMX8MM_SYS_PLL2_1000M>,
-+						<&clk IMX8MM_SYS_PLL1_800M>,
-+						<&clk IMX8MM_SYS_PLL2_1000M>,
-+						<&clk IMX8MM_SYS_PLL1_800M>;
-+				assigned-clock-rates = <400000000>,
-+							<400000000>,
-+							<750000000>,
-+							<594000000>,
-+							<0>,
-+							<0>,
-+							<0>,
-+							<0>,
-+							<0>,
-+							<0>,
-+							<500000000>,
-+							<200000000>;
- 			};
- 
- 			src: reset-controller@30390000 {
+The code itself looks good to me.
+
+> 
+> Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+> ---
+> 
+> Changelog v3 -> v4:
+> * split this patch away from series; there are some unsolved discussions
+>   that will probably need resolving per sub-system
+> 
+>  lib/string.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/lib/string.c b/lib/string.c
+> index 3ab861c1a857..5bea3f98478a 100644
+> --- a/lib/string.c
+> +++ b/lib/string.c
+> @@ -674,8 +674,11 @@ int __sysfs_match_string(const char * const *array, size_t n, const char *str)
+>  
+>  	for (index = 0; index < n; index++) {
+>  		item = array[index];
+> -		if (!item)
+> +		if (!item) {
+> +			if (n != (size_t)-1)
+> +				continue;
+>  			break;
+> +		}
+>  		if (sysfs_streq(item, str))
+>  			return index;
+>  	}
+> -- 
+> 2.20.1
+> 
+
 -- 
-2.7.4
+With Best Regards,
+Andy Shevchenko
+
 
