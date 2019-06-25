@@ -2,99 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A86C55905
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 22:39:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF39F5590E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 22:40:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727053AbfFYUjm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 16:39:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35690 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726053AbfFYUjm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 16:39:42 -0400
-Received: from kernel.org (unknown [104.132.0.74])
+        id S1727837AbfFYUkF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 16:40:05 -0400
+Received: from asavdk3.altibox.net ([109.247.116.14]:60333 "EHLO
+        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726053AbfFYUkF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 16:40:05 -0400
+Received: from ravnborg.org (unknown [158.248.194.18])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 15C94205ED;
-        Tue, 25 Jun 2019 20:39:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561495181;
-        bh=j3KZFviB5Xle6qBDzGdMd3VNiDKlu0Os1FHRxXh+iWE=;
-        h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
-        b=xUFoVMMARF1CYfZ3FYmhyNeW9XHtmic9ocPCrbnTXm90L1w97pfhFjGEWr55wLxa4
-         ROSkUwmC8AKfCd63ZqTeQh1+ic2CEJIeGW/yM8H0Y67yBEdMYOnvEOkCOISqoh0h6t
-         tfDb3nBB6leXGBqFZc1m+hvKt4/dzPM7a92iMM+c=
-Content-Type: text/plain; charset="utf-8"
+        by asavdk3.altibox.net (Postfix) with ESMTPS id 86EE32002F;
+        Tue, 25 Jun 2019 22:40:01 +0200 (CEST)
+Date:   Tue, 25 Jun 2019 22:40:00 +0200
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, tomi.valkeinen@ti.com,
+        imirkin@alum.mit.edu, marek.belisko@gmail.com,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        letux-kernel@openphoenux.org
+Subject: Re: [PATCH v3 2/5] drm/panel: simple: Add Ortustech COM37H3M panel
+ support
+Message-ID: <20190625204000.GC18595@ravnborg.org>
+References: <cover.1559905870.git.hns@goldelico.com>
+ <43b47034b618cff26cea0484591c6deafb7f0685.1559905870.git.hns@goldelico.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1561373672-3533-1-git-send-email-abel.vesa@nxp.com>
-References: <1561373672-3533-1-git-send-email-abel.vesa@nxp.com>
-To:     Abel Vesa <abel.vesa@nxp.com>, Anson Huang <anson.huang@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH] clk: imx8mm: Switch to platform driver
-Cc:     NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Abel Vesa <abel.vesa@nxp.com>
-User-Agent: alot/0.8.1
-Date:   Tue, 25 Jun 2019 13:39:40 -0700
-Message-Id: <20190625203941.15C94205ED@mail.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <43b47034b618cff26cea0484591c6deafb7f0685.1559905870.git.hns@goldelico.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.3 cv=dqr19Wo4 c=1 sm=1 tr=0
+        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=ztCEdXhiAAAA:8
+        a=7gkXJVJtAAAA:8 a=e5mUnYsNAAAA:8 a=mnJRnKJ8Oc643HJHjbEA:9
+        a=CjuIK1q_8ugA:10 a=nCm3ceeH17rKjHWsMeRo:22 a=E9Po1WZjFZOl8hwRPBS3:22
+        a=Vxmtnl_E_bksehYqCbjh:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Abel Vesa (2019-06-24 03:54:32)
-> In order to make the clock provider a platform driver
-> all the data and code needs to be outside of .init section.
-
-Yes, but why are you making this change in general?
-
->=20
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-[...]
-> @@ -480,7 +481,7 @@ static int __init imx8mm_clocks_init(struct device_no=
-de *ccm_node)
->         clks[IMX8MM_SYS_PLL2_500M] =3D imx_clk_fixed_factor("sys_pll2_500=
-m", "sys_pll2_out", 1, 2);
->         clks[IMX8MM_SYS_PLL2_1000M] =3D imx_clk_fixed_factor("sys_pll2_10=
-00m", "sys_pll2_out", 1, 1);
-> =20
-> -       np =3D ccm_node;
-> +       np =3D dev->of_node;
->         base =3D of_iomap(np, 0);
-
-If we're using platform device here it would be nice to also use
-platform device APIs to map memory and request resources, etc.
-
->         if (WARN_ON(!base))
->                 return -ENOMEM;
-> @@ -682,4 +683,19 @@ static int __init imx8mm_clocks_init(struct device_n=
-ode *ccm_node)
-> =20
->         return 0;
->  }
-> -CLK_OF_DECLARE_DRIVER(imx8mm, "fsl,imx8mm-ccm", imx8mm_clocks_init);
-> +
-> +static const struct of_device_id imx8mm_clk_of_match[] =3D {
-> +       { .compatible =3D "fsl,imx8mm-ccm" },
-> +       { /* Sentinel */ },
+On Fri, Jun 07, 2019 at 01:11:08PM +0200, H. Nikolaus Schaller wrote:
+> The change adds support for the Ortustech COM37H3M05DTC/99DTC 3.7" TFT LCD panel.
+> 
+> Tested on Letux3704.
+> 
+> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
+> ---
+>  drivers/gpu/drm/panel/panel-simple.c | 33 ++++++++++++++++++++++++++++
+>  1 file changed, 33 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
+> index 5b27829c5a78..1fb74908a269 100644
+> --- a/drivers/gpu/drm/panel/panel-simple.c
+> +++ b/drivers/gpu/drm/panel/panel-simple.c
+> @@ -2007,6 +2007,33 @@ static const struct panel_desc ontat_yx700wv03 = {
+>  	.bus_format = MEDIA_BUS_FMT_RGB666_1X18,
+>  };
+>  
+> +static const struct drm_display_mode ortustech_com37h3m_mode  = {
+> +	.clock = 22153,
+> +	.hdisplay = 480,
+> +	.hsync_start = 480 + 8,
+> +	.hsync_end = 480 + 8 + 10,
+> +	.htotal = 480 + 8 + 10 + 10,
+> +	.vdisplay = 640,
+> +	.vsync_start = 640 + 4,
+> +	.vsync_end = 640 + 4 + 3,
+> +	.vtotal = 640 + 4 + 3 + 4,
+> +	.vrefresh = 60,
+> +	.flags = DRM_MODE_FLAG_NVSYNC | DRM_MODE_FLAG_NHSYNC,
 > +};
-> +MODULE_DEVICE_TABLE(of, imx8mm_clk_of_match);
 > +
-> +
-
-Nitpick: Drop the second newline.
-
-> +static struct platform_driver imx8mm_clk_driver =3D {
-> +       .probe =3D imx8mm_clocks_probe,
-> +       .driver =3D {
-> +               .name =3D "imx8mm-ccm",
-> +               .of_match_table =3D of_match_ptr(imx8mm_clk_of_match),
-> +       },
+> +static const struct panel_desc ortustech_com37h3m = {
+> +	.modes = &ortustech_com37h3m_mode,
+> +	.num_modes = 1,
+> +	.bpc = 8,
+> +	.size = {
+> +		.width = 56,	/* 56.16mm */
+> +		.height = 75,	/* 74.88mm */
+> +	},
+> +	.bus_format = MEDIA_BUS_FMT_RGB888_1X24,
+> +	.bus_flags = DRM_BUS_FLAG_DE_HIGH | DRM_BUS_FLAG_PIXDATA_POSEDGE |
+> +		     DRM_BUS_FLAG_SYNC_DRIVE_POSEDGE,
 > +};
-> +module_platform_driver(imx8mm_clk_driver);
+> +
+>  static const struct drm_display_mode ortustech_com43h4m85ulc_mode  = {
+>  	.clock = 25000,
+>  	.hdisplay = 480,
+> @@ -2786,6 +2813,12 @@ static const struct of_device_id platform_of_match[] = {
+>  	}, {
+>  		.compatible = "ontat,yx700wv03",
+>  		.data = &ontat_yx700wv03,
+> +	}, {
+> +		.compatible = "ortustech,com37h3m05dtc",
+> +		.data = &ortustech_com37h3m,
+> +	}, {
+> +		.compatible = "ortustech,com37h3m99dtc",
+> +		.data = &ortustech_com37h3m,
+>  	}, {
+>  		.compatible = "ortustech,com43h4m85ulc",
+>  		.data = &ortustech_com43h4m85ulc,
+> -- 
+> 2.19.1
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
