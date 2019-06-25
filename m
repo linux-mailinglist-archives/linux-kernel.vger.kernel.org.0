@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C557855492
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 18:35:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80A0B5549F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 18:35:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730342AbfFYQfB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 12:35:01 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:34827 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729882AbfFYQe7 (ORCPT
+        id S1731201AbfFYQfD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 12:35:03 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:38597 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730134AbfFYQfA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 12:34:59 -0400
-Received: by mail-wr1-f65.google.com with SMTP id f15so8743143wrp.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 09:34:57 -0700 (PDT)
+        Tue, 25 Jun 2019 12:35:00 -0400
+Received: by mail-wr1-f67.google.com with SMTP id d18so18647483wrs.5
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 09:34:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=2g1huIVKZozNkv7icnrH8UYyhFSdx5OaAzsnOBD/wug=;
-        b=XfV694/+ba+iJjm7XndfMMr4t/G9R6WZsl7ZClO8hbM2sE6598a/agfQtKVXIRT+/V
-         AoWfR7WcIGSYP9NtRwQLMxrVuN8omLG3udtaeoq83oK2iDO6nbVLJEHwc4tAlzDRKnUW
-         gS/on6mUn/wFH3kWwFQKEFahEkn+l8s83Ssn4MxCUCfZZpg6XEZM2S6oO7wDsjKHlSzK
-         6DdCjzey8fw1L2Sr3nfWJAfvgsIF/hpbPE/j6G7N0faVlvQgkRP+V8rn2kBlHP6VSfn7
-         CBY8w6r9dg4x854xvpQB8f/T0kExSZQfy1QZEFOwDaubHwfdoPP9zoCw6SwKAt13nfeI
-         zNkg==
+        bh=sFDObtAhBFoq+e3uGBncXCZh94u1gqoIy533R027F8g=;
+        b=G4Pw99p7XQ8OGBF3dnF0u8nsP2gzt973olZmzxwCvcharaKDy85867vLHAfEEMeOY6
+         WbvGNVaQTvX6o6k0m03Dbg3bqJePqRGuhQt3WSt/PGG8Cb/oCVEqY2X6FLotNA0IXfJm
+         ARyniYvJZe/t7VQyJcxGxpDqPU66WCtZIWCej1JRYrPbhTKgeT2by3xxii6Mp4ieweY4
+         kcGKmEFn2Ow9kyf3HS2AOfy4WfOxqLajkqnTEHqnZVLC2+gcImOh2N06MabRO5E7+Uh0
+         Rz8cDgo9FQcCj48JgPkYsVbGknrWRKT8C9/qsCP3bGmyaklMqjuX8zcNjbTiVOhmz5fy
+         wOUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=2g1huIVKZozNkv7icnrH8UYyhFSdx5OaAzsnOBD/wug=;
-        b=JZqQbYTnLkftmqHs9IJJzKi6vKNxs+AyzKB1UKJSRlVynTL5eo5MtTf5xqHBI3P0jL
-         QwOtNrYCfj/M8hPTvwZYvqOdLz200l6PvbReG47P5H9DY/nBnhIiv1l36R7Dr+ZpQQd2
-         yrWu0Oa2Mg8uLcKyLfBtyINM7P/Q5reg6tgW6SeIvNBg6AYthUmK/PsIi+30HSSxIU0b
-         pup3UXwFQbW9nDgrLoqTzCnC1k27LGGKbYhjv0o7dP5VjWRwLiKCamh+yRiOhBrFiskl
-         HJEuMw+kJ5aQOELnfMrO6t1J1GGiumnWdYbYkEU07+Zx6y5Dfcr+PzXwY4Qk9AnfAjwY
-         UrgQ==
-X-Gm-Message-State: APjAAAUlvb19rtY4Af0It2lUbF5INONRzkqVA2v+TEvABj4F8HZI7/fj
-        6qpE3VZ48ZDDmXOMb242K/yFbA==
-X-Google-Smtp-Source: APXvYqwvUGzuhdRcRqrCnTEpE5XZ6xpDDtphMfdnxdkKNg7ns8U+hGGMdSWdjbAlt4fd7Q2s17qqjA==
-X-Received: by 2002:a5d:4e4d:: with SMTP id r13mr27001554wrt.295.1561480496798;
-        Tue, 25 Jun 2019 09:34:56 -0700 (PDT)
+        bh=sFDObtAhBFoq+e3uGBncXCZh94u1gqoIy533R027F8g=;
+        b=P9rPxCBC6QZ9QBYye0AvEBj+IaND/E4jmB7vm/CkyPn/EeY8g8IrHkAdH7hC5MywtK
+         yNztn6Vm0JV7Kq4rKLg5ur/i2c6QOy/qj0rhcLai6ZyRtzzE3FhCXAnFjS6l6dKnLBjm
+         FdwRvVFxggBMhRAnVBBbbQOIpTsz3eGTzCGvfXnqOJlWdxoUbUa6VRbZPG8A4Pkz0cmc
+         QImDUac2RwwWjH5Gk4tD+nxtdXG4ATmvKwI1QJ4D9DAyTU9vLha2p4w9aEeAIxQXCHHJ
+         6JtnK6s3cTeCogYSbV56K7DNk8sA5Ay/nRGnp5/B6DY3l2tGi0scwsn08M1qOcRvVJaB
+         KcyQ==
+X-Gm-Message-State: APjAAAXFMqku+2NHGlTxfVSRCOH81V4W7Yge4ucvAQn6sPiS/Wf5L/RZ
+        JMeB+BFLu06xHq57Fj5V4XSu7g==
+X-Google-Smtp-Source: APXvYqw0FlaqXL9keBHWR7KbT8zOx0gQKa57yMr4s6cP5zk/w1cWEybKYPn7W1s8wCZ4fu5o6W6zoA==
+X-Received: by 2002:adf:fc91:: with SMTP id g17mr25182759wrr.194.1561480498103;
+        Tue, 25 Jun 2019 09:34:58 -0700 (PDT)
 Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id g8sm2683795wme.20.2019.06.25.09.34.55
+        by smtp.gmail.com with ESMTPSA id g8sm2683795wme.20.2019.06.25.09.34.56
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Jun 2019 09:34:56 -0700 (PDT)
+        Tue, 25 Jun 2019 09:34:57 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Lee Jones <lee.jones@linaro.org>,
@@ -56,9 +56,9 @@ To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 04/12] ARM: davinci: refresh davinci_all_defconfig
-Date:   Tue, 25 Jun 2019 18:34:26 +0200
-Message-Id: <20190625163434.13620-5-brgl@bgdev.pl>
+Subject: [PATCH 05/12] ARM: davinci_all_defconfig: enable GPIO backlight
+Date:   Tue, 25 Jun 2019 18:34:27 +0200
+Message-Id: <20190625163434.13620-6-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190625163434.13620-1-brgl@bgdev.pl>
 References: <20190625163434.13620-1-brgl@bgdev.pl>
@@ -71,108 +71,25 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Refresh davinci_all_defconfig with current master.
+Enable the GPIO backlight module in davinci_all_defconfig.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- arch/arm/configs/davinci_all_defconfig | 27 ++++++++++----------------
- 1 file changed, 10 insertions(+), 17 deletions(-)
+ arch/arm/configs/davinci_all_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/arch/arm/configs/davinci_all_defconfig b/arch/arm/configs/davinci_all_defconfig
-index 4a8cad4d3707..13d7846c613d 100644
+index 13d7846c613d..06855b2bce7e 100644
 --- a/arch/arm/configs/davinci_all_defconfig
 +++ b/arch/arm/configs/davinci_all_defconfig
-@@ -3,6 +3,7 @@ CONFIG_SYSVIPC=y
- CONFIG_POSIX_MQUEUE=y
- CONFIG_NO_HZ=y
- CONFIG_HIGH_RES_TIMERS=y
-+CONFIG_PREEMPT=y
- CONFIG_IKCONFIG=y
- CONFIG_IKCONFIG_PROC=y
- CONFIG_LOG_BUF_SHIFT=14
-@@ -10,13 +11,6 @@ CONFIG_CGROUPS=y
- CONFIG_CHECKPOINT_RESTORE=y
- CONFIG_BLK_DEV_INITRD=y
- CONFIG_EXPERT=y
--CONFIG_MODULES=y
--CONFIG_MODULE_UNLOAD=y
--CONFIG_MODULE_FORCE_UNLOAD=y
--CONFIG_MODVERSIONS=y
--CONFIG_PARTITION_ADVANCED=y
--# CONFIG_IOSCHED_DEADLINE is not set
--# CONFIG_IOSCHED_CFQ is not set
- CONFIG_ARCH_DAVINCI=y
- CONFIG_ARCH_DAVINCI_DM644x=y
- CONFIG_ARCH_DAVINCI_DM355=y
-@@ -31,9 +25,7 @@ CONFIG_MACH_MITYOMAPL138=y
- CONFIG_MACH_OMAPL138_HAWKBOARD=y
- CONFIG_DAVINCI_MUX_DEBUG=y
- CONFIG_DAVINCI_MUX_WARNINGS=y
--CONFIG_PREEMPT=y
- CONFIG_AEABI=y
--CONFIG_CMA=y
- CONFIG_SECCOMP=y
- CONFIG_ZBOOT_ROM_TEXT=0x0
- CONFIG_ZBOOT_ROM_BSS=0x0
-@@ -46,6 +38,12 @@ CONFIG_CPU_FREQ_GOV_PERFORMANCE=m
- CONFIG_CPU_FREQ_GOV_POWERSAVE=m
- CONFIG_CPU_FREQ_GOV_ONDEMAND=m
- CONFIG_CPU_IDLE=y
-+CONFIG_MODULES=y
-+CONFIG_MODULE_UNLOAD=y
-+CONFIG_MODULE_FORCE_UNLOAD=y
-+CONFIG_MODVERSIONS=y
-+CONFIG_PARTITION_ADVANCED=y
-+CONFIG_CMA=y
- CONFIG_NET=y
- CONFIG_PACKET=y
- CONFIG_UNIX=y
-@@ -63,7 +61,6 @@ CONFIG_BT_HCIUART_LL=y
- CONFIG_DEVTMPFS=y
- CONFIG_DEVTMPFS_MOUNT=y
- CONFIG_FW_LOADER=m
--CONFIG_DMA_CMA=y
- CONFIG_DA8XX_MSTPRI=y
- CONFIG_MTD=m
- CONFIG_MTD_TESTS=m
-@@ -167,8 +164,6 @@ CONFIG_SOUND=m
- CONFIG_SND=m
- CONFIG_SND_USB_AUDIO=m
- CONFIG_SND_SOC=m
--CONFIG_SND_SOC_TLV320AIC3X=m
--CONFIG_SND_SOC_DAVINCI_MCASP=m
- CONFIG_SND_SOC_DAVINCI_EVM=m
- CONFIG_SND_SIMPLE_CARD=m
- CONFIG_HID=m
-@@ -213,14 +208,12 @@ CONFIG_MMC_DAVINCI=y
- CONFIG_NEW_LEDS=y
- CONFIG_LEDS_CLASS=m
- CONFIG_LEDS_GPIO=m
--CONFIG_LEDS_TRIGGERS=y
- CONFIG_LEDS_TRIGGER_TIMER=m
- CONFIG_LEDS_TRIGGER_HEARTBEAT=m
- CONFIG_LEDS_TRIGGER_DEFAULT_ON=m
- CONFIG_RTC_CLASS=y
- CONFIG_RTC_DRV_OMAP=m
- CONFIG_DMADEVICES=y
--CONFIG_TI_EDMA=y
- CONFIG_COMMON_CLK_PWM=m
- CONFIG_REMOTEPROC=m
- CONFIG_DA8XX_REMOTEPROC=m
-@@ -258,10 +251,10 @@ CONFIG_NLS_CODEPAGE_437=y
- CONFIG_NLS_ASCII=m
- CONFIG_NLS_ISO8859_1=y
- CONFIG_NLS_UTF8=m
-+# CONFIG_CRYPTO_HW is not set
-+CONFIG_CRC_T10DIF=m
-+CONFIG_DMA_CMA=y
- CONFIG_DEBUG_FS=y
- CONFIG_DEBUG_RT_MUTEXES=y
- CONFIG_DEBUG_MUTEXES=y
--# CONFIG_ARM_UNWIND is not set
- CONFIG_DEBUG_USER=y
--# CONFIG_CRYPTO_HW is not set
--CONFIG_CRC_T10DIF=m
+@@ -158,6 +158,7 @@ CONFIG_FB=y
+ CONFIG_FIRMWARE_EDID=y
+ CONFIG_FB_DA8XX=y
+ CONFIG_BACKLIGHT_PWM=m
++CONFIG_BACKLIGHT_GPIO=m
+ CONFIG_FRAMEBUFFER_CONSOLE=y
+ CONFIG_LOGO=y
+ CONFIG_SOUND=m
 -- 
 2.21.0
 
