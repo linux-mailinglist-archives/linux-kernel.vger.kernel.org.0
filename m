@@ -2,117 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C41295209C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 04:28:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C2E3520A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 04:32:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730441AbfFYC2Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 22:28:24 -0400
-Received: from ozlabs.org ([203.11.71.1]:36197 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726774AbfFYC2W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 22:28:22 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45XqpB6qXWz9sCJ;
-        Tue, 25 Jun 2019 12:28:18 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1561429700;
-        bh=MSMkoQR214F5Kca8JxEJY32zLgsawr1UmWDfz49laZU=;
-        h=Date:From:To:Cc:Subject:From;
-        b=t8pGBM6N4uNqXsemgg4zyIuouia1h9QSXTAHuAvR7vQBSRkJ0oYmmxSXU2YJzwQEb
-         7yOuO7478BYs4UHd9eFU/e3Ral0ipfznrfV5Q6alUmgasu0OMNPbtkMZWDd+iRTe2G
-         dT2UtkohRcRpA9CsI8lkAwDuuTIdtZRhABJvIgAZ91tmpNC/OzB4UrX9QVV8OFqnXm
-         2VA/Yx1MbgStBrUY/oCG+c0GNDy8JTld1OX51Eim3JEW+d84Pwby+83ETCvxJgdzNo
-         qrZQjo7biD7nLscOpes4Mcpp8/uy8FxJPEBEB6BSn5hv6nlP0YzLqqBDQEX8pZI8l5
-         m/WHzkavm510Q==
-Date:   Tue, 25 Jun 2019 12:28:17 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: linux-next: manual merge of the fbdev tree with the v4l-dvb tree
-Message-ID: <20190625122817.1f6657c7@canb.auug.org.au>
+        id S1730492AbfFYCcv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 22:32:51 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:19103 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726774AbfFYCcv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 22:32:51 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 2EBA02D62198397EADAF;
+        Tue, 25 Jun 2019 10:32:48 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.439.0; Tue, 25 Jun 2019
+ 10:32:37 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <davem@davemloft.net>, <ast@kernel.org>, <daniel@iogearbox.net>,
+        <jakub.kicinski@netronome.com>, <hawk@kernel.org>,
+        <john.fastabend@gmail.com>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <xdp-newbies@vger.kernel.org>, <bpf@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH net-next] xdp: Make __mem_id_disconnect static
+Date:   Tue, 25 Jun 2019 10:31:37 +0800
+Message-ID: <20190625023137.29272-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ujqgfZAwnPLv8RKeU_TJR54"; protocol="application/pgp-signature"
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/ujqgfZAwnPLv8RKeU_TJR54
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Fix sparse warning:
 
-Hi all,
+net/core/xdp.c:88:6: warning:
+ symbol '__mem_id_disconnect' was not declared. Should it be static?
 
-Today's linux-next merge of the fbdev tree got a conflict in:
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ net/core/xdp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-  drivers/media/pci/ivtv/ivtvfb.c
+diff --git a/net/core/xdp.c b/net/core/xdp.c
+index b29d7b5..829377c 100644
+--- a/net/core/xdp.c
++++ b/net/core/xdp.c
+@@ -85,7 +85,7 @@ static void __xdp_mem_allocator_rcu_free(struct rcu_head *rcu)
+ 	kfree(xa);
+ }
+ 
+-bool __mem_id_disconnect(int id, bool force)
++static bool __mem_id_disconnect(int id, bool force)
+ {
+ 	struct xdp_mem_allocator *xa;
+ 	bool safe_to_remove = true;
+-- 
+2.7.4
 
-between commit:
 
-  2161536516ed ("media: media/pci: set device_caps in struct video_device")
-
-from the v4l-dvb tree and commit:
-
-  deb00d2785be ("fbdev: make unregister/unlink functions not fail")
-
-from the fbdev tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/media/pci/ivtv/ivtvfb.c
-index 800b3654cac5,299ff032f528..000000000000
---- a/drivers/media/pci/ivtv/ivtvfb.c
-+++ b/drivers/media/pci/ivtv/ivtvfb.c
-@@@ -1251,16 -1246,7 +1251,12 @@@ static int ivtvfb_callback_cleanup(stru
-  	struct osd_info *oi =3D itv->osd_info;
- =20
-  	if (itv->v4l2_cap & V4L2_CAP_VIDEO_OUTPUT) {
- +		itv->streams[IVTV_DEC_STREAM_TYPE_YUV].vdev.device_caps &=3D
- +			~V4L2_CAP_VIDEO_OUTPUT_OVERLAY;
- +		itv->streams[IVTV_DEC_STREAM_TYPE_MPG].vdev.device_caps &=3D
- +			~V4L2_CAP_VIDEO_OUTPUT_OVERLAY;
- +		itv->v4l2_cap &=3D ~V4L2_CAP_VIDEO_OUTPUT_OVERLAY;
-- 		if (unregister_framebuffer(&itv->osd_info->ivtvfb_info)) {
-- 			IVTVFB_WARN("Framebuffer %d is in use, cannot unload\n",
-- 				       itv->instance);
-- 			return 0;
-- 		}
-+ 		unregister_framebuffer(&itv->osd_info->ivtvfb_info);
-  		IVTVFB_INFO("Unregister framebuffer %d\n", itv->instance);
-  		itv->ivtvfb_restore =3D NULL;
-  		ivtvfb_blank(FB_BLANK_VSYNC_SUSPEND, &oi->ivtvfb_info);
-
---Sig_/ujqgfZAwnPLv8RKeU_TJR54
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0RhsEACgkQAVBC80lX
-0Gy8Ngf/U+gW1i/a3cwGmh294qAvV4VjmZLIoRCehie6fvs5vU/EWYsFocqf6o3f
-rs+Mq1NRPovdNiRyKo2oT8pPoGm76hhtwxXotyV8xFR4ePbA0C2LTlh6spoGaE8u
-qZqLelU6tvbu7MpqeS2sGBcEZlkr4ivIFklJXNtgUNYrVm4i4IufgUYsxxLpuEXT
-Ve8YHofQC9iykfHQ+CQER6o+Yiuqa8zq2+lNLX34fvIdhlr97Y7n6n8GEMuW5m5x
-SBMgTecgO/+ric+If+XEkbq8SYcJAy6rjNx1F2IALihf3ZKzwHfyCJwHmOkKJmiy
-+xGXdF+VZXn5sw/9rKUNtoO//gLgjw==
-=xZfT
------END PGP SIGNATURE-----
-
---Sig_/ujqgfZAwnPLv8RKeU_TJR54--
