@@ -2,107 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D98E52725
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 10:53:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 375D652722
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 10:52:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731089AbfFYIw5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 04:52:57 -0400
-Received: from conuserg-09.nifty.com ([210.131.2.76]:24772 "EHLO
-        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730788AbfFYIwy (ORCPT
+        id S1731040AbfFYIwA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 04:52:00 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:35232 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727770AbfFYIwA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 04:52:54 -0400
-Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-09.nifty.com with ESMTP id x5P8pmsS025960;
-        Tue, 25 Jun 2019 17:51:49 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com x5P8pmsS025960
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1561452709;
-        bh=YXVIKxWcP6nUMETBeMDBbVPvinAIc3GMcFygU3uYYac=;
-        h=From:To:Cc:Subject:Date:From;
-        b=zYLTQY6fXCrf0iusxvNAL8sGTmK4EWYgwmvFKhve7X5mSYbZ0JNLeXXMySQiR1mYp
-         GHNkUgwlbsfSLWS6mR5snYWfpH0V3LOkxgNKZPpmQ5zwUA2bUJBW4OkEIy9q0dpu5h
-         1PDikpIU0prTlseMfmUGieSR5A/ueJzOW5G50yAUvCjxcDdksw9+2lRCByIVWMKlLd
-         CfWqzO9LMY5H2qqdCxCzK6efBVtzP1VX5/LNHph3vbrt4I4HFMolQzTSEFbhL1F2AQ
-         oewaN6M7ur6C5L1RV2oej/oio9wKkbOeY20sjIYMNH8Uomg2KqWo+FpZey3sjR2hAi
-         IX4VX8tHps0LA==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-kbuild@vger.kernel.org
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Sam Ravnborg <sam@ravnborg.org>, Xi Wang <wangxi11@huawei.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] kbuild: add more hints about SUBDIRS replacement
-Date:   Tue, 25 Jun 2019 17:51:27 +0900
-Message-Id: <20190625085127.9446-1-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 25 Jun 2019 04:52:00 -0400
+Received: by mail-wr1-f67.google.com with SMTP id f15so6993285wrp.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 01:51:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version:content-transfer-encoding;
+        bh=BBA1NG64/5TLBLCMBIsPT7OuaVblZH5y/WjnLqDq5V4=;
+        b=lXno8TwCwsjyvbsT6Vvy0dlGk0bsX8fzu1FTFBe1XZ+te38LIk5YDcG1EsZChFFTAp
+         QHKs3wnJZkPdLZsfMRwhD213SWzyYhVit8KGv+Rpz0zV04LIVtZaKStOMA7cd2yyd0pi
+         IuNVcZRFHEQl+L8HBCv18AdXVKmwvtMUPcHI9zBYR5dPxQbBZTrSiJ9/E8r0qRzT+Kn8
+         NHQjC0bxZxAHX1p71qmPIymky9av/QPaNrdb4vP1nv4tcRNkVi8RSpOPx0uK3E0wq1gr
+         0/wLSwhK2YUWH+QpBUSNdpKuakH1jMqML3c4VVMDTLmh9ie9cm0SnO+ZL0uXBa1BdaEB
+         1wmA==
+X-Gm-Message-State: APjAAAWc3Zfpc+v1+dy2s4lE5g/3EONiKsa1JgrZLg3PL7TsUcmcoT81
+        mzq/UbsZoa4qPC44XFlGXZDNRyqYqKI=
+X-Google-Smtp-Source: APXvYqzkzahTsy2h4q4Bbr4cVKVsmUX5pYjfwji2TCSk1Qtj+xupmSpq2fY6tN0lC5lp5RaUdVvY4Q==
+X-Received: by 2002:adf:afde:: with SMTP id y30mr52581369wrd.197.1561452718089;
+        Tue, 25 Jun 2019 01:51:58 -0700 (PDT)
+Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id y19sm2392289wmc.21.2019.06.25.01.51.57
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 25 Jun 2019 01:51:57 -0700 (PDT)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Liran Alon <liran.alon@oracle.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Subject: Re: [PATCH] x86/kvm/nVMCS: fix VMCLEAR when Enlightened VMCS is in use
+In-Reply-To: <CEFF2A14-611A-417C-BC0A-8814862F26C6@oracle.com>
+References: <20190624133028.3710-1-vkuznets@redhat.com> <CEFF2A14-611A-417C-BC0A-8814862F26C6@oracle.com>
+Date:   Tue, 25 Jun 2019 10:51:56 +0200
+Message-ID: <87lfxqdp3n.fsf@vitty.brq.redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 0126be38d988 ("kbuild: announce removal of SUBDIRS if used")
-added a hint about the 'SUBDIRS' replacement, but it was not clear
-enough.
+Liran Alon <liran.alon@oracle.com> writes:
 
-Multiple people sent me similar questions, patches.
+>> On 24 Jun 2019, at 16:30, Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
+>> 
+>> 
+>> +bool nested_enlightened_vmentry(struct kvm_vcpu *vcpu, u64 *evmptr)
+>
+> I prefer to rename evmptr to evmcs_ptr. I think it’s more readable and sufficiently short.
+> In addition, I think you should return either -1ull or assist_page.current_nested_vmcs.
+> i.e. Don’t return evmcs_ptr by pointer but instead as a return-value
+> and get rid of the bool.
 
-  https://lkml.org/lkml/2019/1/17/456
+Actually no, sorry, I'm having second thoughts here: in handle_vmclear()
+we don't care about the value of evmcs_ptr, we only want to check that
+enlightened vmentry bit is enabled in assist page. If we switch to
+checking evmcs_ptr against '-1', for example, we will make '-1' a magic
+value which is not in the TLFS. Windows may decide to use it for
+something else - and we will get a hard-to-debug bug again.
 
-I did not mean to suggest M= for building a subdirectory in the kernel
-tree.
+If you still dislike nested_enlightened_vmentry() having the side effect
+of fetching evmcs_ptr I can get rid of it by splitting the function into
+two, however, it will be less efficient for
+nested_vmx_handle_enlightened_vmptrld(). Or we can just leave things as
+they are there and use the newly introduced function in handle_vmclear()
+only.
 
-From the commit 669efc76b317 ("net: hns3: fix compile error"), people
-already (ab)use M=... to do that because it seems to work to some extent.
-
-Documentation/kbuild/kbuild.txt says M= and KBUILD_EXTMOD are used for
-building external modules.
-
-In fact, Kbuild supports the single target '%/' for this purpose, but
-this may not be noticed much.
-
-Kindly add more hints.
-
-Makefile:213: ================= WARNING ================
-Makefile:214: 'SUBDIRS' will be removed after Linux 5.3
-Makefile:215:
-Makefile:216: If you are building an individual subdirectory
-Makefile:217: in the kernel tree, you can do like this:
-Makefile:218: $ make path/to/dir/you/want/to/build/
-Makefile:219: (Do not forget the trailing slash)
-Makefile:220:
-Makefile:221: If you are building an external module,
-Makefile:222: Please use 'M=' or 'KBUILD_EXTMOD' instead
-Makefile:223: ==========================================
-
-Suggested-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
- Makefile | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/Makefile b/Makefile
-index 7a7c17eb0cbf..823a39d940c6 100644
---- a/Makefile
-+++ b/Makefile
-@@ -212,6 +212,13 @@ endif
- ifdef SUBDIRS
-   $(warning ================= WARNING ================)
-   $(warning 'SUBDIRS' will be removed after Linux 5.3)
-+  $(warning )
-+  $(warning If you are building an individual subdirectory)
-+  $(warning in the kernel tree, you can do like this:)
-+  $(warning $$ make path/to/dir/you/want/to/build/)
-+  $(warning (Do not forget the trailing slash))
-+  $(warning )
-+  $(warning If you are building an external module,)
-   $(warning Please use 'M=' or 'KBUILD_EXTMOD' instead)
-   $(warning ==========================================)
-   KBUILD_EXTMOD ?= $(SUBDIRS)
 -- 
-2.17.1
-
+Vitaly
