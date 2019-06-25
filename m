@@ -2,167 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D803652689
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 10:27:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 630CB52694
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 10:27:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730296AbfFYI1L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 04:27:11 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:14979 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730197AbfFYI1K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 04:27:10 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E6258307CDD5;
-        Tue, 25 Jun 2019 08:27:09 +0000 (UTC)
-Received: from [10.36.117.83] (ovpn-117-83.ams2.redhat.com [10.36.117.83])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DAB7C600C7;
-        Tue, 25 Jun 2019 08:27:07 +0000 (UTC)
-Subject: Re: [PATCH v2 1/5] drivers/base/memory: Remove unneeded check in
- remove_memory_block_devices
-To:     Oscar Salvador <osalvador@suse.de>
-Cc:     akpm@linux-foundation.org, mhocko@suse.com,
-        dan.j.williams@intel.com, pasha.tatashin@soleen.com,
-        Jonathan.Cameron@huawei.com, anshuman.khandual@arm.com,
-        vbabka@suse.cz, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20190625075227.15193-1-osalvador@suse.de>
- <20190625075227.15193-2-osalvador@suse.de>
- <3e820fee-f82f-3336-ff34-31c66dbbbbfe@redhat.com>
- <0ed2f4ec-cc6f-8b81-46b0-d56d90ac1e86@redhat.com>
- <20190625080909.GA15394@linux>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <14272082-6ed4-a5d2-e275-2b4ebb53e65c@redhat.com>
-Date:   Tue, 25 Jun 2019 10:27:02 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1730391AbfFYI1n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 04:27:43 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:56097 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727835AbfFYI1n (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 04:27:43 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5P8RAkW3530187
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Tue, 25 Jun 2019 01:27:10 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5P8RAkW3530187
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019061801; t=1561451231;
+        bh=+ZN9/QPz9wc5gfEP0xmU54nfW6Ec1tILXhks4RnBJWU=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=hk3w5a4RffZveoUsQI4V/Ua1qKdziIL9Sx19v/5aYHkuR9CwaAEU4dx5M4xF6N9oy
+         2oi0JbM5TMFCtnOxzwAEU85xR/Q9fvvTNqMsmyAgW5uTdAWZDx6pA59Y5OCJot1nVK
+         SZZBxzOFtHn7uc7rhriKXqORe4Os/qWcn53XxntslPKszyZLA+c+WXmEMIzqMeNz4g
+         pMoKQT1vxlOcn4QAdTta/sMkyG2tcIq77GHJdtyrbwnDKO52qn5dO4B0tmYmq2/qDU
+         gkU6r/dT8AozYnfwi7eA6d0Wvkr84vpMmQFN3MHypAwoWDXIKcvIcIOQQY6qSmRSwJ
+         fbYjxnKP81W3g==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5P8RAYU3530184;
+        Tue, 25 Jun 2019 01:27:10 -0700
+Date:   Tue, 25 Jun 2019 01:27:10 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Qais Yousef <tipbot@zytor.com>
+Message-ID: <tip-8de6242cca17d9299e654e29c966d8612d397272@git.kernel.org>
+Cc:     dietmar.eggemann@arm.com, bigeasy@linutronix.de,
+        linux-kernel@vger.kernel.org, hpa@zytor.com, rostedt@goodmis.org,
+        tglx@linutronix.de, mingo@kernel.org, quentin.perret@arm.com,
+        u.kleine-koenig@pengutronix.de, qais.yousef@arm.com,
+        torvalds@linux-foundation.org, peterz@infradead.org,
+        pkondeti@codeaurora.org
+Reply-To: linux-kernel@vger.kernel.org, bigeasy@linutronix.de,
+          dietmar.eggemann@arm.com, tglx@linutronix.de,
+          rostedt@goodmis.org, hpa@zytor.com,
+          torvalds@linux-foundation.org, qais.yousef@arm.com,
+          u.kleine-koenig@pengutronix.de, quentin.perret@arm.com,
+          mingo@kernel.org, pkondeti@codeaurora.org, peterz@infradead.org
+In-Reply-To: <20190604111459.2862-5-qais.yousef@arm.com>
+References: <20190604111459.2862-5-qais.yousef@arm.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:sched/core] sched/debug: Add new tracepoint to track PELT at
+ se level
+Git-Commit-ID: 8de6242cca17d9299e654e29c966d8612d397272
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <20190625080909.GA15394@linux>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Tue, 25 Jun 2019 08:27:10 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF autolearn=ham
+        autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25.06.19 10:09, Oscar Salvador wrote:
-> On Tue, Jun 25, 2019 at 10:03:31AM +0200, David Hildenbrand wrote:
->> On 25.06.19 10:01, David Hildenbrand wrote:
->>> On 25.06.19 09:52, Oscar Salvador wrote:
->>>> remove_memory_block_devices() checks for the range to be aligned
->>>> to memory_block_size_bytes, which is our current memory block size,
->>>> and WARNs_ON and bails out if it is not.
->>>>
->>>> This is the right to do, but we do already do that in try_remove_memory(),
->>>> where remove_memory_block_devices() gets called from, and we even are
->>>> more strict in try_remove_memory, since we directly BUG_ON in case the range
->>>> is not properly aligned.
->>>>
->>>> Since remove_memory_block_devices() is only called from try_remove_memory(),
->>>> we can safely drop the check here.
->>>>
->>>> To be honest, I am not sure if we should kill the system in case we cannot
->>>> remove memory.
->>>> I tend to think that WARN_ON and return and error is better.
->>>
->>> I failed to parse this sentence.
->>>
->>>>
->>>> Signed-off-by: Oscar Salvador <osalvador@suse.de>
->>>> ---
->>>>  drivers/base/memory.c | 4 ----
->>>>  1 file changed, 4 deletions(-)
->>>>
->>>> diff --git a/drivers/base/memory.c b/drivers/base/memory.c
->>>> index 826dd76f662e..07ba731beb42 100644
->>>> --- a/drivers/base/memory.c
->>>> +++ b/drivers/base/memory.c
->>>> @@ -771,10 +771,6 @@ void remove_memory_block_devices(unsigned long start, unsigned long size)
->>>>  	struct memory_block *mem;
->>>>  	int block_id;
->>>>  
->>>> -	if (WARN_ON_ONCE(!IS_ALIGNED(start, memory_block_size_bytes()) ||
->>>> -			 !IS_ALIGNED(size, memory_block_size_bytes())))
->>>> -		return;
->>>> -
->>>>  	mutex_lock(&mem_sysfs_mutex);
->>>>  	for (block_id = start_block_id; block_id != end_block_id; block_id++) {
->>>>  		mem = find_memory_block_by_id(block_id, NULL);
->>>>
->>>
->>> As I said when I introduced this, I prefer to have such duplicate checks
->>> in place in case we have dependent code splattered over different files.
->>> (especially mm/ vs. drivers/base). Such simple checks avoid to document
->>> "start and size have to be aligned to memory blocks".
->>
->> Lol, I even documented it as well. So yeah, if you're going to drop this
->> once, also drop the one in create_memory_block_devices().
-> 
-> TBH, I would not mind sticking with it.
-> What sticked out the most was that in the previous check, we BUG_on while
-> here we just print out a warning, so it seemed quite "inconsistent" to me.
-> 
-> And I only stumbled upon this when I was testing a kernel module that
-> hot-removed memory in a different granularity.
-> 
-> Anyway, I do not really feel strong here, I can perfectly drop this patch as I
-> would rather have the focus in the following-up patches, which are the important
-> ones IMO.
+Commit-ID:  8de6242cca17d9299e654e29c966d8612d397272
+Gitweb:     https://git.kernel.org/tip/8de6242cca17d9299e654e29c966d8612d397272
+Author:     Qais Yousef <qais.yousef@arm.com>
+AuthorDate: Tue, 4 Jun 2019 12:14:57 +0100
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Mon, 24 Jun 2019 19:23:42 +0200
 
-Whetever you prefer, I can live with either :)
+sched/debug: Add new tracepoint to track PELT at se level
 
-(yes, separating this patch from the others makes sense)
+The new tracepoint allows tracking PELT signals at sched_entity level.
+Which is supported in CFS tasks and taskgroups only.
 
--- 
+Signed-off-by: Qais Yousef <qais.yousef@arm.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Pavankumar Kondeti <pkondeti@codeaurora.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Quentin Perret <quentin.perret@arm.com>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Uwe Kleine-Konig <u.kleine-koenig@pengutronix.de>
+Link: https://lkml.kernel.org/r/20190604111459.2862-5-qais.yousef@arm.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ include/trace/events/sched.h | 4 ++++
+ kernel/sched/fair.c          | 1 +
+ kernel/sched/pelt.c          | 2 ++
+ 3 files changed, 7 insertions(+)
 
-Thanks,
-
-David / dhildenb
+diff --git a/include/trace/events/sched.h b/include/trace/events/sched.h
+index 520b89d384ec..c7dd9bc7f001 100644
+--- a/include/trace/events/sched.h
++++ b/include/trace/events/sched.h
+@@ -617,6 +617,10 @@ DECLARE_TRACE(pelt_irq_tp,
+ 	TP_PROTO(struct rq *rq),
+ 	TP_ARGS(rq));
+ 
++DECLARE_TRACE(pelt_se_tp,
++	TP_PROTO(struct sched_entity *se),
++	TP_ARGS(se));
++
+ #endif /* _TRACE_SCHED_H */
+ 
+ /* This part must be outside protection */
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index e883d7e17e36..75218ab1fa07 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -3348,6 +3348,7 @@ static inline int propagate_entity_load_avg(struct sched_entity *se)
+ 	update_tg_cfs_runnable(cfs_rq, se, gcfs_rq);
+ 
+ 	trace_pelt_cfs_tp(cfs_rq);
++	trace_pelt_se_tp(se);
+ 
+ 	return 1;
+ }
+diff --git a/kernel/sched/pelt.c b/kernel/sched/pelt.c
+index 4e961b55b5ea..a96db50d40e0 100644
+--- a/kernel/sched/pelt.c
++++ b/kernel/sched/pelt.c
+@@ -267,6 +267,7 @@ int __update_load_avg_blocked_se(u64 now, struct sched_entity *se)
+ {
+ 	if (___update_load_sum(now, &se->avg, 0, 0, 0)) {
+ 		___update_load_avg(&se->avg, se_weight(se), se_runnable(se));
++		trace_pelt_se_tp(se);
+ 		return 1;
+ 	}
+ 
+@@ -280,6 +281,7 @@ int __update_load_avg_se(u64 now, struct cfs_rq *cfs_rq, struct sched_entity *se
+ 
+ 		___update_load_avg(&se->avg, se_weight(se), se_runnable(se));
+ 		cfs_se_util_change(&se->avg);
++		trace_pelt_se_tp(se);
+ 		return 1;
+ 	}
+ 
