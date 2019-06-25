@@ -2,187 +2,301 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6EE8558C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 22:27:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FBB2558D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 22:28:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727872AbfFYU1v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 16:27:51 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:37850 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726274AbfFYU1v (ORCPT
+        id S1726712AbfFYU2m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 16:28:42 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:44345 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726393AbfFYU2h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 16:27:51 -0400
-Received: by mail-ed1-f68.google.com with SMTP id w13so29090078eds.4
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 13:27:50 -0700 (PDT)
+        Tue, 25 Jun 2019 16:28:37 -0400
+Received: by mail-pg1-f194.google.com with SMTP id n2so9493431pgp.11
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 13:28:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=KHfPZQLU9yl1gHuggr9n1N7pshmjwg+NN34rxMj0w4s=;
-        b=Jfp/nLSGWZHHP04a0GL9kuH5TUJdr3nC5h+Ljhc6th6zySciaDZAmam8IinFFf57Uo
-         OQ8hu+DrOkncMiAdjkSKTLD4JxVCJNydcHOp7QANaz3Ph5i/frjYn/WKkFXL77HrHih+
-         rONtmWQ0W3P5U95COaaLEc1a3bow5QuvP8Cbs9ZABG24tN0OID3r+Vl/SuHXbIY+pDR+
-         93RbA4EgKNBapnZCkZVhGlBT6LpLIQLXVSdiYOV1i1lp5he0S0zBxBEAw8dq8TgW6jwz
-         vFKTutiOQZaLc4bhnoDrZ+qya+mdtrMh0a6OK4beQbdXkg6UfBbln+AaFm9m3MK5188F
-         aUag==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qq39ykktkvFBpmzRtbgM4tstWpOedFNE8kr26lh/InM=;
+        b=ni94OwioZx/gzf2szVloCDZTFFpJCo2YKSFZ2X9qr6bxYnBeEpnnagfszyXnnz51L8
+         DkJXaethFUsoHnz8KOQVG2ZSAlP6R4YiehiVV+cY7fw97Xus3XNQzLPLdgQULmgYaWnL
+         GEAS55DRith5+cQIVd4nDD9PnOpK5SEC0mcAjXyMYNE83XKQ2Jfbx9GzYoD6pnR9q88y
+         VjAnVY+gy9KsY/4+Tbda/+4DRlDyvSks4s9chgBxuZrKHnC3t/s2Oqm9eCfJpWO+nPcJ
+         ixgXgEVA9P9D5QKdeUq3VIirHZ16lxLB0iDdlrfqM9fruDTYYR+l+8zODcodp3flRnlv
+         dArA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=KHfPZQLU9yl1gHuggr9n1N7pshmjwg+NN34rxMj0w4s=;
-        b=TG2e0RUAMs6HV8pHf4mV6Envas0Fbgfj5mSCw5NaxruiDybLMdR8L4KHr25Ub/kvSH
-         z28oHO0Mz3M1uYlS5Yv70BO/w7t4OA0oQTDh+vIFAgc7KxbZAErttv/xLTAoHSYjhKeA
-         BQ2a6ch+ZZq2cPInC2LqgdPCUs+RprEuKkarxZwADlH+b6HGZi4G4xcb71GaGxAhNaJk
-         16EBOKq0IDgleySvMTdkYUb+Y8VIhK25KosLdRycJWz1RpHdcTobJsKcoycqfK3y01vt
-         24ap3BxYBF+++wSVuVJ0iooT4sxah2vfLT/ZDUML7exAwRZWugO891EisXmSDKBQaI+q
-         pPcg==
-X-Gm-Message-State: APjAAAUkNUCXMTqAIBrnwXVdC6WtAHJbcVtmWUyk80RUpfFcjGfRoCMj
-        1+A563RupmDIu4o5ENri7jQ=
-X-Google-Smtp-Source: APXvYqzC/bII30ufh+3eslpwLKFtwLVQgpfBB2Zd+HFjIVa7o0viBLQJwIWC6Dhw7rqBRQ2y7dh3RQ==
-X-Received: by 2002:a50:b635:: with SMTP id b50mr401477ede.293.1561494469286;
-        Tue, 25 Jun 2019 13:27:49 -0700 (PDT)
-Received: from archlinux-epyc ([2a01:4f9:2b:2b15::2])
-        by smtp.gmail.com with ESMTPSA id p15sm2608880ejb.6.2019.06.25.13.27.47
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 25 Jun 2019 13:27:48 -0700 (PDT)
-Date:   Tue, 25 Jun 2019 13:27:46 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Joe Perches <joe@perches.com>, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Shawn Landden <shawn@git.icu>,
-        clang-built-linux@googlegroups.com
-Subject: Re: [PATCH] perf/x86/intel: Mark expected switch fall-throughs
-Message-ID: <20190625202746.GA83499@archlinux-epyc>
-References: <20190624161913.GA32270@embeddedor>
- <20190624193123.GI3436@hirez.programming.kicks-ass.net>
- <b00fc090d83ac6bd41a5db866b02d425d9ab20e4.camel@perches.com>
- <20190624203737.GL3436@hirez.programming.kicks-ass.net>
- <3dc75cd4-9a8d-f454-b5fb-64c3e6d1f416@embeddedor.com>
- <CANiq72mMS6tHcP8MHW63YRmbdFrD3ZCWMbnQEeHUVN49v7wyXQ@mail.gmail.com>
- <20190625071846.GN3436@hirez.programming.kicks-ass.net>
- <201906251009.BCB7438@keescook>
- <20190625180525.GA119831@archlinux-epyc>
- <alpine.DEB.2.21.1906252127290.32342@nanos.tec.linutronix.de>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qq39ykktkvFBpmzRtbgM4tstWpOedFNE8kr26lh/InM=;
+        b=tqlzgClguFD4+8XxnQeiGYv9S1295tDjzjC1xb0WLThaawJ61DHnEls6UGLisewQik
+         MLIu0ixvQnlDo/K/gH9k7YtkYzRtCID02W+770lckf76IVBVtzI9F0MsXncCE9P5ZEky
+         Sk943FJ59SJfX242Ya2WRj0IunUvxJqYASy2tpLLVu6geQnvxwFTrLUw1DaCRDmyIRx8
+         M8wC2QKZz4RpYvFZf/55ha+fWvVhulG9p5/1WDKePzZ9JRIFUbo9GBApcmMFNp1EuTGt
+         xHEP27/PUb/y6Hoi47b/7avS3Kw5wBv35r9qXzsScaLJgVnpvV7Oev9Po8OWxGT37p/Y
+         OALg==
+X-Gm-Message-State: APjAAAV+8ZTKApiFYbnbeSNgLaEjzKG0yuSBTqzpMbxsEewg2LxJZ0Op
+        wuN0K+l98LGlTKJ2Rs+VTyuR90Ignz9lAPx3jNo0Ag==
+X-Google-Smtp-Source: APXvYqzvk20XXdVFtm6zl0X1nrjaH0TttItfcdP9iwaQ+JKQIeNhKF1pa7VSVvlXNPpMAUzP/tv1oR2JBEXuSnWnLw4=
+X-Received: by 2002:a17:90b:f0e:: with SMTP id br14mr754020pjb.117.1561494516332;
+ Tue, 25 Jun 2019 13:28:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1906252127290.32342@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <20190617082613.109131-1-brendanhiggins@google.com>
+ <20190617082613.109131-2-brendanhiggins@google.com> <20190620001526.93426218BE@mail.kernel.org>
+In-Reply-To: <20190620001526.93426218BE@mail.kernel.org>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Tue, 25 Jun 2019 13:28:25 -0700
+Message-ID: <CAFd5g46Jhxsz6_VXHEVYvTeDRwwzgKpr=aUWLL5b3S4kUukb8g@mail.gmail.com>
+Subject: Re: [PATCH v5 01/18] kunit: test: add KUnit test runner core
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Frank Rowand <frowand.list@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Kees Cook <keescook@google.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rob Herring <robh@kernel.org>, shuah <shuah@kernel.org>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        kunit-dev@googlegroups.com,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-um@lists.infradead.org,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        "Bird, Timothy" <Tim.Bird@sony.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Knut Omang <knut.omang@oracle.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Petr Mladek <pmladek@suse.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Richard Weinberger <richard@nod.at>,
+        David Rientjes <rientjes@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thomas,
+On Wed, Jun 19, 2019 at 5:15 PM Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Brendan Higgins (2019-06-17 01:25:56)
+> > diff --git a/kunit/test.c b/kunit/test.c
+> > new file mode 100644
+> > index 0000000000000..d05d254f1521f
+> > --- /dev/null
+> > +++ b/kunit/test.c
+> > @@ -0,0 +1,210 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Base unit test (KUnit) API.
+> > + *
+> > + * Copyright (C) 2019, Google LLC.
+> > + * Author: Brendan Higgins <brendanhiggins@google.com>
+> > + */
+> > +
+> > +#include <linux/sched/debug.h>
+> > +#include <kunit/test.h>
+> > +
+> > +static bool kunit_get_success(struct kunit *test)
+> > +{
+> > +       unsigned long flags;
+> > +       bool success;
+> > +
+> > +       spin_lock_irqsave(&test->lock, flags);
+> > +       success = test->success;
+> > +       spin_unlock_irqrestore(&test->lock, flags);
+>
+> I still don't understand the locking scheme in this code. Is the
+> intention to make getter and setter APIs that are "safe" by adding in a
+> spinlock that is held around getting and setting various members in the
+> kunit structure?
 
-On Tue, Jun 25, 2019 at 09:53:09PM +0200, Thomas Gleixner wrote:
-> On Tue, 25 Jun 2019, Nathan Chancellor wrote:
-> > On Tue, Jun 25, 2019 at 10:12:42AM -0700, Kees Cook wrote:
-> > > On Tue, Jun 25, 2019 at 09:18:46AM +0200, Peter Zijlstra wrote:
-> > > > Can it build a kernel without patches yet? That is, why should I care
-> > > > what LLVM does?
-> > > 
-> > > Yes. LLVM trunk builds and boots x86 now. As for distro availability,
-> > > AIUI, the asm-goto feature missed the 9.0 LLVM branch point, so it'll
-> > > appear in the following release.
-> > > 
-> > > -- 
-> > > Kees Cook
-> > 
-> > I don't think that's right. LLVM 9 hasn't been branched yet so it should
-> > make it in.
-> > 
-> > http://lists.llvm.org/pipermail/llvm-dev/2019-June/133155.html
-> > 
-> > If anyone wants to play around with it before then, we wrote a
-> > self-contained script that will build an LLVM toolchain suitable for
-> > kernel development:
-> > 
-> > https://github.com/ClangBuiltLinux/tc-build
-> 
-> Useful!
-> 
-> But can the script please check for a minimal clang version required to
-> build that thing.
-> 
-> The default clang-3.8 which is installed on Debian stretch explodes. The
-> 6.0 variant from backports works as advertised.
-> 
+Yes, your understanding is correct. It is possible for a user to write
+a test such that certain elements may be updated in different threads;
+this would most likely happen in the case where someone wants to make
+an assertion or an expectation in a thread created by a piece of code
+under test. Although this should generally be avoided, it is possible,
+and there are occasionally good reasons to do so, so it is
+functionality that we should support.
 
-Hmmm interesting, I test a lot of different distros using Docker
-containers to make sure the script works universally and that includes
-Debian stretch, which is the stress tester because all of the packages
-are older. I install the following packages then run the following
-command and it works fine for me (just tested):
+Do you think I should add a comment to this effect?
 
-$ apt update && apt install -y --no-install-recommends ca-certificates \
-ccache clang cmake curl file gcc g++ git make ninja-build python3 \
-texinfo zlib1g-dev
-$ ./build-llvm.py
+> In what situation is there more than one thread reading or writing the
+> kunit struct? Isn't it only a single process that is going to be
 
-If you could give me a build log, I'd be happy to look into it and see
-what I can do.
+As I said above, it is possible that the code under test may spawn a
+new thread that may make an expectation or an assertion. It is not a
+super common use case, but it is possible.
 
-> Kernel builds with the new shiny compiler. Jump labels seem to be enabled.
-> 
-> It complains about a few type conversions:
-> 
->  arch/x86/kvm/mmu.c:4596:39: warning: implicit conversion from 'int' to 'u8' (aka 'unsigned char') changes value from -205 to 51 [-Wconstant-conversion]
->                 u8 wf = (pfec & PFERR_WRITE_MASK) ? ~w : 0;
->                    ~~                               ^~
-> 
+> operating on this structure? And why do we need to disable irqs? Are we
+> expecting to be modifying the unit tests from irq contexts?
 
-Yes, there was a patch sent to try and fix this but it was rejected by
-the maintainers:
+There are instances where someone may want to test a driver which has
+an interrupt handler in it. I actually have (not the greatest) example
+here. Now in these cases, I expect someone to use a mock irqchip or
+some other fake mechanism to trigger the interrupt handler and not
+actual hardware; technically speaking in this case, it is not going to
+be accessed from a "real" irq context; however, the code under test
+should think that it is in an irq context; given that, I figured it is
+best to just treat it as a real irq context. Does that make sense?
 
-https://github.com/ClangBuiltLinux/linux/issues/95
+> > +
+> > +       return success;
+> > +}
+> > +
+> > +static void kunit_set_success(struct kunit *test, bool success)
+> > +{
+> > +       unsigned long flags;
+> > +
+> > +       spin_lock_irqsave(&test->lock, flags);
+> > +       test->success = success;
+> > +       spin_unlock_irqrestore(&test->lock, flags);
+> > +}
+> > +
+> > +static int kunit_vprintk_emit(int level, const char *fmt, va_list args)
+> > +{
+> > +       return vprintk_emit(0, level, NULL, 0, fmt, args);
+> > +}
+> > +
+> > +static int kunit_printk_emit(int level, const char *fmt, ...)
+> > +{
+> > +       va_list args;
+> > +       int ret;
+> > +
+> > +       va_start(args, fmt);
+> > +       ret = kunit_vprintk_emit(level, fmt, args);
+> > +       va_end(args);
+> > +
+> > +       return ret;
+> > +}
+> > +
+> > +static void kunit_vprintk(const struct kunit *test,
+> > +                         const char *level,
+> > +                         struct va_format *vaf)
+> > +{
+> > +       kunit_printk_emit(level[1] - '0', "\t# %s: %pV", test->name, vaf);
+> > +}
+> > +
+> > +static bool kunit_has_printed_tap_version;
+>
+> Can you please move this into function local scope in the function
+> below?
 
-https://lore.kernel.org/lkml/20180619192504.180479-1-mka@chromium.org/
+Sure, that makes sense.
 
-> but it also makes objtool unhappy:
-> 
->  arch/x86/events/intel/core.o: warning: objtool: intel_pmu_nhm_workaround()+0xb3: unreachable instruction
->  kernel/fork.o: warning: objtool: free_thread_stack()+0x126: unreachable instruction
->  mm/workingset.o: warning: objtool: count_shadow_nodes()+0x11f: unreachable instruction
->  arch/x86/kernel/cpu/mtrr/generic.o: warning: objtool: get_fixed_ranges()+0x9b: unreachable instruction
->  arch/x86/kernel/platform-quirks.o: warning: objtool: x86_early_init_platform_quirks()+0x84: unreachable instruction
->  drivers/iommu/irq_remapping.o: warning: objtool: irq_remap_enable_fault_handling()+0x1d: unreachable instruction
-> 
+> > +
+> > +static void kunit_print_tap_version(void)
+> > +{
+> > +       if (!kunit_has_printed_tap_version) {
+> > +               kunit_printk_emit(LOGLEVEL_INFO, "TAP version 14\n");
+> > +               kunit_has_printed_tap_version = true;
+> > +       }
+> > +}
+> > +
+> [...]
+> > +
+> > +static bool kunit_module_has_succeeded(struct kunit_module *module)
+> > +{
+> > +       const struct kunit_case *test_case;
+> > +       bool success = true;
+> > +
+> > +       for (test_case = module->test_cases; test_case->run_case; test_case++)
+> > +               if (!test_case->success) {
+> > +                       success = false;
+> > +                       break;
+>
+> Why not 'return false'?
 
-Unfortunately, we have quite a few of those outstanding, it's probably
-time to start really taking a look at them:
+Also a good point. Will fix.
 
-https://github.com/ClangBuiltLinux/linux/labels/objtool
+> > +               }
+> > +
+> > +       return success;
+>
+> And 'return true'?
 
-> Kernel boots. As I'm currently benchmarking VDSO performance, this was
-> obviosly my first test. Compared to the same kernel built with gcc6.3 the
-> performance of the VDSO drops slightly.
-> 
-> It's below 1%. Though I need to run the same tests on 4 other uarchs to get
-> the full picture. This stuff is randomly changing behaviour accross uarchs
-> depending on how the c source is arranged. So nothing to worry about (yet).
-> 
+Will fix.
 
-Thanks for trying it out and letting us know. Please keep us in the loop
-if you happen to find anything amiss.
+> > +}
+> > +
+> > +static size_t kunit_module_counter = 1;
+> > +
+> > +static void kunit_print_subtest_end(struct kunit_module *module)
+> > +{
+> > +       kunit_print_ok_not_ok(false,
+> > +                             kunit_module_has_succeeded(module),
+> > +                             kunit_module_counter++,
+> > +                             module->name);
+> > +}
+> > +
+> > +static void kunit_print_test_case_ok_not_ok(struct kunit_case *test_case,
+> > +                                           size_t test_number)
+> > +{
+> > +       kunit_print_ok_not_ok(true,
+> > +                             test_case->success,
+> > +                             test_number,
+> > +                             test_case->name);
+> > +}
+> > +
+> > +void kunit_init_test(struct kunit *test, const char *name)
+> > +{
+> > +       spin_lock_init(&test->lock);
+> > +       test->name = name;
+> > +       test->success = true;
+> > +}
+> > +
+> > +/*
+> > + * Performs all logic to run a test case.
+> > + */
+> > +static void kunit_run_case(struct kunit_module *module,
+> > +                          struct kunit_case *test_case)
+> > +{
+> > +       struct kunit test;
+> > +       int ret = 0;
+> > +
+> > +       kunit_init_test(&test, test_case->name);
+> > +
+> > +       if (module->init) {
+> > +               ret = module->init(&test);
+> > +               if (ret) {
+> > +                       kunit_err(&test, "failed to initialize: %d\n", ret);
+> > +                       kunit_set_success(&test, false);
+> > +                       return;
+> > +               }
+> > +       }
+> > +
+> > +       if (!ret)
+> > +               test_case->run_case(&test);
+>
+> Do we need this if condition? ret can only be set to non-zero above but
+> then we'll exit the function early so it seems unnecessary. Given that,
+> ret should probably be moved into the module->init path.
 
-Cheers,
-Nathan
+Whoops. Sorry, another instance of how it evolved over time and I
+forgot why I did the check. Will fix.
 
-> Thanks,
-> 
-> 	tglx
-> 
+> > +
+> > +       if (module->exit)
+> > +               module->exit(&test);
+> > +
+> > +       test_case->success = kunit_get_success(&test);
+> > +}
+> > +
+
+Thanks!
