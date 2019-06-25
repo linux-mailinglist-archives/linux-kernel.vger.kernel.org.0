@@ -2,102 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AC5C555B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 19:17:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA4F4555C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 19:19:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728111AbfFYRRY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 13:17:24 -0400
-Received: from foss.arm.com ([217.140.110.172]:45974 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726774AbfFYRRY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 13:17:24 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0E48D360;
-        Tue, 25 Jun 2019 10:17:23 -0700 (PDT)
-Received: from [10.1.196.72] (e119884-lin.cambridge.arm.com [10.1.196.72])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BB6273F718;
-        Tue, 25 Jun 2019 10:17:19 -0700 (PDT)
-Subject: Re: [PATCH v7 00/25] Unify vDSOs across more architectures
-To:     Paul Burton <paul.burton@mips.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        LAK <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Mark Salyzyn <salyzyn@android.com>,
-        Peter Collingbourne <pcc@google.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Huw Davies <huw@codeweavers.com>,
-        Shijith Thotton <sthotton@marvell.com>,
-        Andre Przywara <andre.przywara@arm.com>,
-        Dmitry Safonov <dima@arista.com>,
-        Andrei Vagin <avagin@openvz.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Michael Kelley <mikelley@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>
-References: <20190621095252.32307-1-vincenzo.frascino@arm.com>
- <alpine.DEB.2.21.1906240142000.32342@nanos.tec.linutronix.de>
- <20190624184157.mu6n74a7qqa4z5z5@pburton-laptop>
- <3ae7f595-0a15-0584-198e-b32fe3e3ea57@arm.com>
- <20190625171118.wznk5nva3h3jetky@pburton-laptop>
-From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
-Message-ID: <28ad9bf4-d639-f77c-8ac0-980f4f4595cd@arm.com>
-Date:   Tue, 25 Jun 2019 18:17:18 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1729907AbfFYRTf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 13:19:35 -0400
+Received: from mail-pl1-f176.google.com ([209.85.214.176]:45181 "EHLO
+        mail-pl1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726774AbfFYRTf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 13:19:35 -0400
+Received: by mail-pl1-f176.google.com with SMTP id bi6so9186270plb.12;
+        Tue, 25 Jun 2019 10:19:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DOwCBQyZRzVGfYg9SNTddzZDAkrsd0M2owTZiePG8Y0=;
+        b=YgGXKq67re3Lt45hm2dx1e0cgK2kXEbyhwGGG/6S5n3yg+YKs0E1xfzmNt4gwDa3NU
+         1Hi0CuBKLTcaoAR15Nv9umUB2s0C3ZWtGeQUXUa2Mj25ijLQ+rhuAJ0P01CrINH2PRlP
+         cWQuhemKcXEnR7vuuUDnj+m4Cll7fn5d9Zov+7TX/Xnae/KIKQio6dPbJq39PAeO6nRI
+         aLrQ+nrYUNFmKpdpRi0cJTXk+is/fJqFaS6FGZx4gaNcGsAqMC3Slq3USWHY/JKF88zN
+         DZIdRTQiQsEdNo68FE4HbE423VCSaQCR5n/Z4sNf8/GZQHiqrGq5XNDP+D3nC2rU0FSo
+         F74A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DOwCBQyZRzVGfYg9SNTddzZDAkrsd0M2owTZiePG8Y0=;
+        b=pVIm1UuriS6dCnRjxN3SVd3yEu0q2JvnADB2ZMODpcb12qUYLMcyNCfZfg6Ajc7ArA
+         yaXIwsdGzuZhhjArIiFXjPg2C3e4WIo/rPnQae93q7eoeEEAhCGRb/Jc3Qtqlmls8W/x
+         DF01qaaO6ypmQrbNm0KyJELfwLhgVo64k4elbuxUKAjA7rVL0GxwXdvpOv4h2BRB0MGT
+         DzbpSz43MhlDbLdYUahVFl8p5ewrsV3tuCEMlSe54qINw9GrqEhfi1oQScvCJBFwsMqt
+         9SAdsBw4Spow75RjETEa7aX14o0CeEbeKDVHkyoWsCl5QMGUH0PQ//4mDtZf2D/VYK0Q
+         g6og==
+X-Gm-Message-State: APjAAAW6jE0wCk7EWoc8C5uYerHpqGBb45tofwv+wC1XU6DzSRZgGKpY
+        kWa2jZwxHQXMMAQsJ4VcPFpFfonqPAJc2+5ZTlimbw==
+X-Google-Smtp-Source: APXvYqw0kb2X1B48/T4JKum7mtgX1P5q8n7X+39Ox3+V7IHev2oOY8mTnadreHiVQbLC+pJrrj1pfTM91AHoY3/VOck=
+X-Received: by 2002:a17:902:20b:: with SMTP id 11mr23320790plc.78.1561483174312;
+ Tue, 25 Jun 2019 10:19:34 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190625171118.wznk5nva3h3jetky@pburton-laptop>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190625210821.6907304a@canb.auug.org.au>
+In-Reply-To: <20190625210821.6907304a@canb.auug.org.au>
+From:   Steve French <smfrench@gmail.com>
+Date:   Tue, 25 Jun 2019 12:19:22 -0500
+Message-ID: <CAH2r5msJzRBZSKua7VffD+dkHu+4xU=QQ3KGRKa34fm-6M9CRg@mail.gmail.com>
+Subject: Re: linux-next: Signed-off-by missing for commit in the cifs tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     CIFS <linux-cifs@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paul,
+Fixed
 
-On 25/06/2019 18:11, Paul Burton wrote:
-> Hi Vincenzo,
-> 
-> On Tue, Jun 25, 2019 at 12:16:55AM +0100, Vincenzo Frascino wrote:
->> In the end I concluded that all the errors seen here depend on the fact that I
->> tested my vdso implementation on MIPS32el only (as stated in the cover letter)
->> and that when I tried to compile a 32BIT binary on a 64BIT configuration I did
->> it wrongly for two reasons, for N32 and O32 binaries:
->>  - we need to undefine CONFIG_64BIT and define CONFIG_32BIT
->>  - we need to define CONFIG_GENERIC_ATOMIC64
->>
->> I have a fix for this (patch in attachment), but I do not have the hardware to
->> test it. If you could provide some feedback would be appreciated (really want to
->> see MIPS merged with the other archs in 5.3 :) ).
-> 
-> Thanks for the quick turnaround on your patch!
-> 
-> I'm certainly willing to test it, but in a few hours I'll be spending
-> the bulk of a day on airplanes[1] so it might take a few days until I
-> get to it.
-> 
+On Tue, Jun 25, 2019 at 6:08 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Hi all,
+>
+> Commit
+>
+>   c1ed2864526e ("smb3: minor cleanup of compound_send_recv")
+>
+> is missing a Signed-off-by from its committer.
+>
+> --
+> Cheers,
+> Stephen Rothwell
 
-Sounds like a plan. Let us know when you have an update.
 
-> Thanks,
->     Paul
-> 
-> [1] ...and travel isn't the hackathon it used to be with my 9 month old
->     son around :)
-> 
 
 -- 
-Regards,
-Vincenzo
+Thanks,
+
+Steve
