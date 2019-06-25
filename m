@@ -2,123 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C1CA5524D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 16:45:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94BFC55263
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 16:46:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730878AbfFYOpL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 10:45:11 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:38708 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730505AbfFYOpK (ORCPT
+        id S1731478AbfFYOp6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 10:45:58 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:34390 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730905AbfFYOp6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 10:45:10 -0400
-Received: by mail-lj1-f195.google.com with SMTP id r9so16538402ljg.5
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 07:45:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=19byvgMooTxDLIKVTh81InKh4X1Q8jthyNGnpMWPTR8=;
-        b=lLgMXanVjEQcfCC9RLZP8uBcI+qZDhEJK3RhnXgJnRkmp8YmdmIanryeO/DXIyTczA
-         Qau20L/HQc5RzI56ASZ/J+q/SQyssmS80dEaB4v/jDB8ZrlWWu7TZZn6VEZg4Oh8DOux
-         VG4cG5O9G5SZGToAPJd4pMsri0a9UmL8H/UNlJgRSraTm1zQpI4cFVrqD5pzZWimcSsg
-         bu8fZQuw1RE69f00e1pRjQ0gFVWuGHkV9Q7Cjvt/pKdP/uNW5fJc4OZgowREyYzx6x0k
-         cVK0bs5DJSd2EkDG2csK+VrVn3P8CNa6+KcEUyuJy75LugOBVUPdU62yydCuAOOlfZd2
-         cd2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=19byvgMooTxDLIKVTh81InKh4X1Q8jthyNGnpMWPTR8=;
-        b=AsqPQa/vwEPjYCMsLqbW9mKsK8iaS4avLzFLC4F1+f4Oj3m7BxPwa3E18U6CORJoUs
-         PCZDiT86Cs/b69IKMNo5BHcob6txNldy33WqDl/rfAf9Tsp523KFo06nGYGPAriy1Gub
-         gFfSQrlh+4JcANAssH1JkjWXvt4+jtJKO1lmp5OBfn0kQ+BbgO9Xw46MCXdtl3FyJMi8
-         G5qlcKs5s9UsjLPGLwBSlyJOrmi33aLxzWzb8GXEedM4feJydnDwRPls6hWFccv/r4aa
-         Z6cgJfBTPu8Eru8zeC81tWjUNX7/qLmP3id7R9qMKDjYiW7D/6Uf9ymaZw8dRuA5SNYE
-         PobQ==
-X-Gm-Message-State: APjAAAXB0UDhPH5Ka2bImXb0Prcnm5t4/LZCkGEP4BhHRa00PCOtNRKG
-        87jFo/R04dHFNE4t2+QWdUk=
-X-Google-Smtp-Source: APXvYqzE+mgvqcRuw0XLGzJPuIidwv1afsSu+J/Ue9GwMrC/8NbuQdpemiOsmTQmluXQ0eeNwVCDOQ==
-X-Received: by 2002:a2e:970d:: with SMTP id r13mr73976367lji.126.1561473908776;
-        Tue, 25 Jun 2019 07:45:08 -0700 (PDT)
-Received: from [192.168.2.145] (ppp91-79-162-197.pppoe.mtu-net.ru. [91.79.162.197])
-        by smtp.googlemail.com with ESMTPSA id b62sm2287608ljb.71.2019.06.25.07.45.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Jun 2019 07:45:07 -0700 (PDT)
-Subject: Re: [v3 1/2] mtd: nand: Add Cadence NAND controller driver
-To:     Piotr Sroka <piotrs@cadence.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Stefan Agner <stefan@agner.ch>, linux-mtd@lists.infradead.org
-References: <20190614150638.28383-1-piotrs@cadence.com>
- <20190614150956.31244-1-piotrs@cadence.com>
- <dd96bd1b-e944-e95d-31c9-6dd1d0b5720f@gmail.com>
- <20190625130231.GA31865@global.cadence.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <20110899-d456-8403-f9be-663be5fcd07e@gmail.com>
-Date:   Tue, 25 Jun 2019 17:45:06 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
+        Tue, 25 Jun 2019 10:45:58 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5PEdTRU167344;
+        Tue, 25 Jun 2019 14:45:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ content-transfer-encoding : in-reply-to; s=corp-2018-07-02;
+ bh=0EUuG3LGzOAP6D3wSMZeh8KZEo6tiXD6ZqjeYMFA07M=;
+ b=dr5KWuEr9Y2rQYE6U73yHbzuosJaxne8Vv9WTN3EmUtptHxUk4jCAePfKSZX/EGU9mao
+ sVtLUi6cleNPuOkokte7LWCpcaGsMIHNAyytf4eCjSdgyymo9LX5Zj/YYLg8x2jyOaW7
+ +JU/4JyztHLU9VSvsr6Yndi6JvJ1KpWDFMNcl6CXoOQvOQErpxKHLRuWo8kZEHw/aJxR
+ pOkz1dNOk1YhXhK+ob1aJhkmRrveuv9MNk1LyCrRQID/WCDjH32mqqKliFdUR/xObqHl
+ h/zF9FPU8R0dHMUQoBDBaQWLBs4et5FNVTvun5Se4plrv3q/YvZgMNaXDYcgztS+Kgqk 1Q== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 2t9brt4vc6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 25 Jun 2019 14:45:17 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5PEhOVf030853;
+        Tue, 25 Jun 2019 14:45:17 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3020.oracle.com with ESMTP id 2tat7c9aer-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 25 Jun 2019 14:45:17 +0000
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x5PEjFHc026039;
+        Tue, 25 Jun 2019 14:45:15 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 25 Jun 2019 07:45:15 -0700
+Date:   Tue, 25 Jun 2019 07:45:13 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Nikolay Borisov <nborisov@suse.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 09/12] xfs: refactor the ioend merging code
+Message-ID: <20190625144513.GB5379@magnolia>
+References: <20190624055253.31183-1-hch@lst.de>
+ <20190624055253.31183-10-hch@lst.de>
+ <e42c54c4-4c64-8185-8ac3-cca38ad8e8a4@suse.com>
+ <20190625101445.GK1462@lst.de>
+ <387a9e4b-6a15-5b08-6878-53ed5cfb9bb0@suse.com>
 MIME-Version: 1.0
-In-Reply-To: <20190625130231.GA31865@global.cadence.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <387a9e4b-6a15-5b08-6878-53ed5cfb9bb0@suse.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9299 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1906250114
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9299 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906250114
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-25.06.2019 16:02, Piotr Sroka пишет:
-> Hi Dmitry
+On Tue, Jun 25, 2019 at 03:42:20PM +0300, Nikolay Borisov wrote:
 > 
-> The 06/16/2019 16:42, Dmitry Osipenko wrote:
->> EXTERNAL MAIL
->>
->>
->> 14.06.2019 18:09, Piotr Sroka пишет:
->>
->> Commit description is mandatory.
->>
->>> Signed-off-by: Piotr Sroka <piotrs@cadence.com>
->>> ---
->>
->> [snip]
->>
->>> +
->>> +/* Cadnence NAND flash controller capabilities get from driver data. */
->>> +struct cadence_nand_dt_devdata {
->>> +    /* Skew value of the output signals of the NAND Flash interface. */
->>> +    u32 if_skew;
->>> +    /* It informs if aging feature in the DLL PHY supported. */
->>> +    u8 phy_dll_aging;
->>> +    /*
->>> +     * It informs if per bit deskew for read and write path in
->>> +     * the PHY is supported.
->>> +     */
->>> +    u8 phy_per_bit_deskew;
->>> +    /* It informs if slave DMA interface is connected to DMA engine. */
->>> +    u8 has_dma;
->>
->> There is no needed to dedicate 8 bits to a variable if you only care about a single
->> bit. You may write this as:
->>
->> bool has_dma : 1;
-> I modified it locally but it looks that checkpatch does not like such
-> notation
-> "WARNING: Avoid using bool as bitfield.  Prefer bool bitfields as
-> unsigned int or u<8|16|32>"
-> So maybe I will leave it as is.
+> 
+> On 25.06.19 г. 13:14 ч., Christoph Hellwig wrote:
+> > On Mon, Jun 24, 2019 at 07:06:22PM +0300, Nikolay Borisov wrote:
+> >>> +{
+> >>> +	struct list_head	tmp;
+> >>> +
+> >>> +	list_replace_init(&ioend->io_list, &tmp);
+> >>> +	xfs_destroy_ioend(ioend, error);
+> >>> +	while ((ioend = list_pop(&tmp, struct xfs_ioend, io_list)))
+> >>> +		xfs_destroy_ioend(ioend, error);
+> >>
+> >> nit: I'd prefer if the list_pop patch is right before this one since
+> >> this is the first user of it.
+> > 
+> > I try to keep generic infrastructure first instead of interveawing
+> > it with subystem-specific patches.
+> > 
+> >> Additionally, I don't think list_pop is
+> >> really a net-negative win 
+> > 
+> > What is a "net-negative win" ?
+> 
+> What I meant was 'net-positive win', in terms of making the code more
+> readable or optimised.
+> 
+> > 
+> >> in comparison to list_for_each_entry_safe
+> >> here. In fact this "delete the list" would seems more idiomatic if
+> >> implemented via list_for_each_entry_safe
+> > 
+> > I disagree.  The for_each loops require an additional next iterator,
+> > and also don't clearly express what is going on, but require additional
+> > spotting of the list_del.
+> 
+> That is of course your opinion. At the very least we can agree to disagree.
+> 
+> What I'm worried about, though, is now you've essentially introduced a
+> new idiom to dispose of lists, which is used only in your code. If it
+> doesn't become more widespread and gradually start replacing current
+> list_for_each_entry_safe usage then you would have increased the public
+> list interface to cater for one specific use case, just because it seems
+> more natural to you. I guess only time will show whether it makes sense
+> to have list_pop_entry
 
-You may also use the "u8 : 1" form then, to satisfy the checkpatch. Probably
-"unsigned int : 1" will be the best in this case, it's up to you.
+I for one would love to replace all the opencoded "walk a list and drop
+each entry before we move on" code in fs/xfs/scrub/ with list_pop_entry.
+Quickly scanning fs/xfs/, there seem to be a couple dozen places where
+we could probably do that too.
+
+--D
