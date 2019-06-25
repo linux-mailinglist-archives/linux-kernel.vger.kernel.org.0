@@ -2,89 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8746520E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 05:08:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 705A152163
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 05:53:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727304AbfFYDI2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 23:08:28 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:40685 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726610AbfFYDI2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 23:08:28 -0400
-Received: by mail-pg1-f196.google.com with SMTP id w10so8153591pgj.7
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 20:08:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=etsukata-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=zExVfQYPlu8nT0CJtzuqIZxBlVwcNRcoQAaprYs9bF4=;
-        b=VOqJRbhXB9uGMJ5ABIUJOCPwsR7f7mwphTcc1odyIt5pF1uiLR9cktL7WbqNCdsSKV
-         +KeiUUxAtVgdPBt2NqOawG17pj58pMp1cY7lUdh8wRfcsXgdcPyVK8pNzk33Or5Bawzk
-         EPQKYq0fkFyLz5LoXnKg88p0uGdD0LItDbqf5zxqNuUSScOBHWVNlIeR5jhczOjeqBOe
-         DNUte19yK728oUrAiM2j1Fkt799o3maY2vWPKG7nOV86fmGaQyWj3jwJACix+sdn8f18
-         xRVbT1N1RxT4hruCq/RzBMPKYdR3wzgnjuji/oWQOtS9RmAM9SPOBC2PQo5mfsbKwtNE
-         hILA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=zExVfQYPlu8nT0CJtzuqIZxBlVwcNRcoQAaprYs9bF4=;
-        b=pgih4GCHl0nDfVfzbZU3mzFi4kB2JgxRDstUfSe8L/6F0SI+kGxPsR0U7ZMpymK7w4
-         h4F/B4P9D2JRgreeHiT/xR8VlM9xs/8NgfvwfsvkDx8VOzkttIJGMtvjs2eWPSXthfwC
-         rzRFZ89gEEavoz1kyZwCDRCQ1TZ179XAZcfnvevjkUCdB5vjyKyHbYr2qJFO030svWpa
-         2EQpKV18qATuz4D6ArKsQ5nwJby2jJ+aOcNJF9Jt14N5l34IQMGZr4OcsbWtNvdRA/MZ
-         dQ7aBcnqkJkEWhZq6MmYDNwERiuFwnONVzTO3/9VaZ9NzS1qIK2eMsM7wSFpdDodgjP7
-         dLGw==
-X-Gm-Message-State: APjAAAXCQQelfHCwa2wxK+b1AbQ+ajpR47FVPuybD11DgNhF7SA+q6H9
-        RaKvxQPIbMZVFScXP3BkIW7TSA==
-X-Google-Smtp-Source: APXvYqxgTwHx16vcj9gEYkBi/DiZVzjaUo2Ng8a8/VD9S52b0KE5xzakjnq2U19lX2AaU/+AUC8j0w==
-X-Received: by 2002:a63:f648:: with SMTP id u8mr36137024pgj.132.1561432107914;
-        Mon, 24 Jun 2019 20:08:27 -0700 (PDT)
-Received: from localhost.localdomain (p2517222-ipngn21701marunouchi.tokyo.ocn.ne.jp. [118.7.246.222])
-        by smtp.gmail.com with ESMTPSA id d4sm708016pju.31.2019.06.24.20.08.25
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 24 Jun 2019 20:08:27 -0700 (PDT)
-From:   Eiichi Tsukata <devel@etsukata.com>
-To:     gregkh@linuxfoundation.org, jslaby@suse.com, davem@davemloft.net,
-        kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Cc:     Eiichi Tsukata <devel@etsukata.com>
-Subject: [PATCH 2/2] net/ipv6: Fix misuse of proc_dointvec "skip_notify_on_dev_down"
-Date:   Tue, 25 Jun 2019 12:08:01 +0900
-Message-Id: <20190625030801.24538-2-devel@etsukata.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190625030801.24538-1-devel@etsukata.com>
-References: <20190625030801.24538-1-devel@etsukata.com>
+        id S1727156AbfFYDxj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 23:53:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35768 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726833AbfFYDxj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 23:53:39 -0400
+Received: from localhost (unknown [116.226.249.212])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 993EB20863;
+        Tue, 25 Jun 2019 03:53:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561434818;
+        bh=LiKh1y/cVsCqNr8ux7WO7aEmLV31ud+AQ1bb0n+nvNg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Zy0hx9p/4crxzYjV1lRLmNA6srJEKNhjem7iURpTiZ6qZyykyJc4xvBjgFbuwsPBI
+         LqUfYd9yJiH2pbvvMsA9I0JwKIbT8dhPcmzYkOFmPoWMn7kF9t4f7XcbUxpiVYvfOZ
+         70aqqAWKidJgfsmOQAnggYhLnpqxyh1bIcGdE/QQ=
+Date:   Tue, 25 Jun 2019 11:08:07 +0800
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     liaoweixiong <liaoweixiong@allwinnertech.com>
+Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Frieder Schrempf <frieder.schrempf@exceet.de>,
+        Peter Pan <peterpandong@micron.com>,
+        Chuanhong Guo <gch981213@gmail.com>,
+        Schrempf Frieder <frieder.schrempf@kontron.de>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [RESEND PATCH v2] mtd: spinand: read return badly if the last
+ page has bitflips
+Message-ID: <20190625030807.GA11074@kroah.com>
+References: <1561424549-784-1-git-send-email-liaoweixiong@allwinnertech.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1561424549-784-1-git-send-email-liaoweixiong@allwinnertech.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-/proc/sys/net/ipv6/route/skip_notify_on_dev_down assumes given value to be
-0 or 1. Use proc_dointvec_minmax instead of proc_dointvec.
+On Tue, Jun 25, 2019 at 09:02:29AM +0800, liaoweixiong wrote:
+> In case of the last page containing bitflips (ret > 0),
+> spinand_mtd_read() will return that number of bitflips for the last
+> page. But to me it looks like it should instead return max_bitflips like
+> it does when the last page read returns with 0.
+> 
+> Signed-off-by: liaoweixiong <liaoweixiong@allwinnertech.com>
+> Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+> Reviewed-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+> Fixes: 7529df465248 ("mtd: nand: Add core infrastructure to support SPI NANDs")
+> ---
+>  drivers/mtd/nand/spi/core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Fixes: 7c6bb7d2faaf ("net/ipv6: Add knob to skip DELROUTE message ondevice down")
-Signed-off-by: Eiichi Tsukata <devel@etsukata.com>
----
- net/ipv6/route.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+<formletter>
 
-diff --git a/net/ipv6/route.c b/net/ipv6/route.c
-index 11ad62effd56..aade636c6be6 100644
---- a/net/ipv6/route.c
-+++ b/net/ipv6/route.c
-@@ -5281,7 +5281,7 @@ static struct ctl_table ipv6_route_table_template[] = {
- 		.data		=	&init_net.ipv6.sysctl.skip_notify_on_dev_down,
- 		.maxlen		=	sizeof(int),
- 		.mode		=	0644,
--		.proc_handler	=	proc_dointvec,
-+		.proc_handler	=	proc_dointvec_minmax,
- 		.extra1		=	&zero,
- 		.extra2		=	&one,
- 	},
--- 
-2.21.0
+This is not the correct way to submit patches for inclusion in the
+stable kernel tree.  Please read:
+    https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
+for how to do this properly.
 
+</formletter>
