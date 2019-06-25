@@ -2,264 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DF5A5587B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 22:12:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CFCCC5588B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 22:14:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727358AbfFYUMW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 16:12:22 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:34541 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726274AbfFYUMW (ORCPT
+        id S1726776AbfFYUOl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 16:14:41 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:65392 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726053AbfFYUOl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 16:12:22 -0400
-Received: by mail-pl1-f193.google.com with SMTP id i2so56897plt.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 13:12:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fomichev-me.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=frdlJFxp0g7/JgxVC9Knu0EZuFk8912u7Wo1FVzUmns=;
-        b=Nyb+zlMnDiYMzmLqnBAwdmngB+mYJdvquxfMDwCy5zvB7uhuZYJ965t0yuyadQ5fC5
-         WAwMBqEhRzvXZJlWTFHp1eGTYXntKDuyWJIXRygR4w4aLx90JBuzG1YT5TqDklyjyWDe
-         YbTaC2rHWCEpTr7osJsgtI2DVbvgnyErrAnRKB5vxim3CQ8qV6vzbBI0GRTZeExvFESj
-         D7UvI9PzC50CDNlYR5vwX+gjDokE4WkOCypTdCQ0xFT4R+EYDTLtEFhmQ12/3aRbVPiL
-         q55toOzREutJvOUWTydV4sxijBek67/XvKyV7usdzK/go45JI2h3Ted+6+e+4vyurgnt
-         a5Tw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=frdlJFxp0g7/JgxVC9Knu0EZuFk8912u7Wo1FVzUmns=;
-        b=mHOtScJCBLFJfYep1yb5IYsjNfcYakp2+Dtm+HJPZxIHJog25PAavIz5D7cICZe5zu
-         aPHXZ/IUwC0i1cpks7yrBXspkpxucuIKxVuZ/1K7fkDBtldR6qC7COl3mwChfy3XqFQO
-         d5+JmlpQRlU+bJb1uMhb/w4RNh/HQf0ixZfW4vei4VZV2jJNW2trD+wSgmVE/PPIyF+h
-         Pb6W8dbYbcKCUqF8vVjUGkVgYi8xo9MIIthSnKS2Kaoi6ITmbY8q4hFY4fFhzrl0Jp/a
-         bbSG3t3JQ/PAuE5fYeuZERr9fqYWFvXatVc8WVOu/vXoNlSkvrq/UaE6kfKPFj/wbeBX
-         +Www==
-X-Gm-Message-State: APjAAAXKy679LgDRFQj8UnSqV2H1oQLdCiPwwfOtbdDd3dL+xvrc63oE
-        rPQQ+uFomOPnpOhf6GJoTz1PhQ==
-X-Google-Smtp-Source: APXvYqz5A8wkwC4bDX9Grozu3DdnvL4TZkl+WU84TSLtrBEe3ie0duREqD7ndDM6yIZbjMI4EQ0Hpw==
-X-Received: by 2002:a17:902:8207:: with SMTP id x7mr544236pln.63.1561493541558;
-        Tue, 25 Jun 2019 13:12:21 -0700 (PDT)
-Received: from localhost ([2601:646:8f00:18d9:d0fa:7a4b:764f:de48])
-        by smtp.gmail.com with ESMTPSA id j21sm16301529pfh.86.2019.06.25.13.12.20
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 25 Jun 2019 13:12:21 -0700 (PDT)
-Date:   Tue, 25 Jun 2019 13:12:20 -0700
-From:   Stanislav Fomichev <sdf@fomichev.me>
-To:     Krzesimir Nowak <krzesimir@kinvolk.io>
-Cc:     netdev@vger.kernel.org, Alban Crequy <alban@kinvolk.io>,
-        Iago =?iso-8859-1?Q?L=F3pez?= Galeiras <iago@kinvolk.io>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [bpf-next v2 08/10] bpf: Implement bpf_prog_test_run for perf
- event programs
-Message-ID: <20190625201220.GC10487@mini-arch>
-References: <20190625194215.14927-1-krzesimir@kinvolk.io>
- <20190625194215.14927-9-krzesimir@kinvolk.io>
+        Tue, 25 Jun 2019 16:14:41 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5PKES7r064101
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 16:14:39 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2tbsj723gy-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 16:14:34 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
+        Tue, 25 Jun 2019 21:13:18 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 25 Jun 2019 21:13:15 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5PKDDQh61866160
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 25 Jun 2019 20:13:13 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1AD1A4C046;
+        Tue, 25 Jun 2019 20:13:13 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 841114C050;
+        Tue, 25 Jun 2019 20:13:12 +0000 (GMT)
+Received: from oc7455500831.ibm.com (unknown [9.145.159.147])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 25 Jun 2019 20:13:12 +0000 (GMT)
+Subject: Re: [PATCH v9 4/4] s390: ap: kvm: Enable PQAP/AQIC facility for the
+ guest
+To:     Pierre Morel <pmorel@linux.ibm.com>
+Cc:     alex.williamson@redhat.com, cohuck@redhat.com,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, frankja@linux.ibm.com, akrowiak@linux.ibm.com,
+        pasic@linux.ibm.com, david@redhat.com, heiko.carstens@de.ibm.com,
+        freude@linux.ibm.com, mimu@linux.ibm.com
+References: <1558452877-27822-1-git-send-email-pmorel@linux.ibm.com>
+ <1558452877-27822-5-git-send-email-pmorel@linux.ibm.com>
+From:   Christian Borntraeger <borntraeger@de.ibm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
+ 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
+ syiRa+UVlsKmx1hsEg==
+Date:   Tue, 25 Jun 2019 22:13:12 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190625194215.14927-9-krzesimir@kinvolk.io>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <1558452877-27822-5-git-send-email-pmorel@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19062520-0020-0000-0000-0000034D561F
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19062520-0021-0000-0000-000021A0C76F
+Message-Id: <69ca50bd-3f5c-98b1-3b39-04af75151baf@de.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-25_13:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906250151
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/25, Krzesimir Nowak wrote:
-> As an input, test run for perf event program takes struct
-> bpf_perf_event_data as ctx_in and struct bpf_perf_event_value as
-> data_in. For an output, it basically ignores ctx_out and data_out.
+
+
+On 21.05.19 17:34, Pierre Morel wrote:
+> AP Queue Interruption Control (AQIC) facility gives
+> the guest the possibility to control interruption for
+> the Cryptographic Adjunct Processor queues.
 > 
-> The implementation sets an instance of struct bpf_perf_event_data_kern
-> in such a way that the BPF program reading data from context will
-> receive what we passed to the bpf prog test run in ctx_in. Also BPF
-> program can call bpf_perf_prog_read_value to receive what was passed
-> in data_in.
-> 
-> Signed-off-by: Krzesimir Nowak <krzesimir@kinvolk.io>
+> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
+> Reviewed-by: Tony Krowiak <akrowiak@linux.ibm.com>
 > ---
->  kernel/trace/bpf_trace.c                      | 107 ++++++++++++++++++
->  .../bpf/verifier/perf_event_sample_period.c   |   8 ++
->  2 files changed, 115 insertions(+)
+>  arch/s390/tools/gen_facilities.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-> index c102c240bb0b..2fa49ea8a475 100644
-> --- a/kernel/trace/bpf_trace.c
-> +++ b/kernel/trace/bpf_trace.c
-> @@ -16,6 +16,8 @@
->  
->  #include <asm/tlb.h>
->  
-> +#include <trace/events/bpf_test_run.h>
-> +
->  #include "trace_probe.h"
->  #include "trace.h"
->  
-> @@ -1160,7 +1162,112 @@ const struct bpf_verifier_ops perf_event_verifier_ops = {
->  	.convert_ctx_access	= pe_prog_convert_ctx_access,
->  };
->  
-> +static int pe_prog_test_run(struct bpf_prog *prog,
-> +			    const union bpf_attr *kattr,
-> +			    union bpf_attr __user *uattr)
-> +{
-> +	void __user *ctx_in = u64_to_user_ptr(kattr->test.ctx_in);
-> +	void __user *data_in = u64_to_user_ptr(kattr->test.data_in);
-> +	u32 data_size_in = kattr->test.data_size_in;
-> +	u32 ctx_size_in = kattr->test.ctx_size_in;
-> +	u32 repeat = kattr->test.repeat;
-> +	u32 retval = 0, duration = 0;
-> +	int err = -EINVAL;
-> +	u64 time_start, time_spent = 0;
-> +	int i;
-> +	struct perf_sample_data sample_data = {0, };
-> +	struct perf_event event = {0, };
-> +	struct bpf_perf_event_data_kern real_ctx = {0, };
-> +	struct bpf_perf_event_data fake_ctx = {0, };
-> +	struct bpf_perf_event_value value = {0, };
-> +
-> +	if (ctx_size_in != sizeof(fake_ctx))
-> +		goto out;
-> +	if (data_size_in != sizeof(value))
-> +		goto out;
-> +
-> +	if (copy_from_user(&fake_ctx, ctx_in, ctx_size_in)) {
-> +		err = -EFAULT;
-> +		goto out;
-> +	}
-Move this to net/bpf/test_run.c? I have a bpf_ctx_init helper to deal
-with ctx input, might save you some code above wrt ctx size/etc.
-
-> +	if (copy_from_user(&value, data_in, data_size_in)) {
-> +		err = -EFAULT;
-> +		goto out;
-> +	}
-> +
-> +	real_ctx.regs = &fake_ctx.regs;
-> +	real_ctx.data = &sample_data;
-> +	real_ctx.event = &event;
-> +	perf_sample_data_init(&sample_data, fake_ctx.addr,
-> +			      fake_ctx.sample_period);
-> +	event.cpu = smp_processor_id();
-> +	event.oncpu = -1;
-> +	event.state = PERF_EVENT_STATE_OFF;
-> +	local64_set(&event.count, value.counter);
-> +	event.total_time_enabled = value.enabled;
-> +	event.total_time_running = value.running;
-> +	/* make self as a leader - it is used only for checking the
-> +	 * state field
-> +	 */
-> +	event.group_leader = &event;
-> +
-> +	/* slightly changed copy pasta from bpf_test_run() in
-> +	 * net/bpf/test_run.c
-> +	 */
-> +	if (!repeat)
-> +		repeat = 1;
-> +
-> +	rcu_read_lock();
-> +	preempt_disable();
-> +	time_start = ktime_get_ns();
-> +	for (i = 0; i < repeat; i++) {
-Any reason for not using bpf_test_run?
-
-> +		retval = BPF_PROG_RUN(prog, &real_ctx);
-> +
-> +		if (signal_pending(current)) {
-> +			err = -EINTR;
-> +			preempt_enable();
-> +			rcu_read_unlock();
-> +			goto out;
-> +		}
-> +
-> +		if (need_resched()) {
-> +			time_spent += ktime_get_ns() - time_start;
-> +			preempt_enable();
-> +			rcu_read_unlock();
-> +
-> +			cond_resched();
-> +
-> +			rcu_read_lock();
-> +			preempt_disable();
-> +			time_start = ktime_get_ns();
-> +		}
-> +	}
-> +	time_spent += ktime_get_ns() - time_start;
-> +	preempt_enable();
-> +	rcu_read_unlock();
-> +
-> +	do_div(time_spent, repeat);
-> +	duration = time_spent > U32_MAX ? U32_MAX : (u32)time_spent;
-> +	/* end of slightly changed copy pasta from bpf_test_run() in
-> +	 * net/bpf/test_run.c
-> +	 */
-> +
-> +	if (copy_to_user(&uattr->test.retval, &retval, sizeof(retval))) {
-> +		err = -EFAULT;
-> +		goto out;
-> +	}
-> +	if (copy_to_user(&uattr->test.duration, &duration, sizeof(duration))) {
-> +		err = -EFAULT;
-> +		goto out;
-> +	}
-Can BPF program modify fake_ctx? Do we need/want to copy it back?
-
-> +	err = 0;
-> +out:
-> +	trace_bpf_test_finish(&err);
-> +	return err;
-> +}
-> +
->  const struct bpf_prog_ops perf_event_prog_ops = {
-> +	.test_run	= pe_prog_test_run,
->  };
->  
->  static DEFINE_MUTEX(bpf_event_mutex);
-> diff --git a/tools/testing/selftests/bpf/verifier/perf_event_sample_period.c b/tools/testing/selftests/bpf/verifier/perf_event_sample_period.c
-> index 471c1a5950d8..16e9e5824d14 100644
-> --- a/tools/testing/selftests/bpf/verifier/perf_event_sample_period.c
-> +++ b/tools/testing/selftests/bpf/verifier/perf_event_sample_period.c
-This should probably go in another patch.
-
-> @@ -13,6 +13,8 @@
->  	},
->  	.result = ACCEPT,
->  	.prog_type = BPF_PROG_TYPE_PERF_EVENT,
-> +	.ctx_len = sizeof(struct bpf_perf_event_data),
-> +	.data_len = sizeof(struct bpf_perf_event_value),
->  },
->  {
->  	"check bpf_perf_event_data->sample_period half load permitted",
-> @@ -29,6 +31,8 @@
->  	},
->  	.result = ACCEPT,
->  	.prog_type = BPF_PROG_TYPE_PERF_EVENT,
-> +	.ctx_len = sizeof(struct bpf_perf_event_data),
-> +	.data_len = sizeof(struct bpf_perf_event_value),
->  },
->  {
->  	"check bpf_perf_event_data->sample_period word load permitted",
-> @@ -45,6 +49,8 @@
->  	},
->  	.result = ACCEPT,
->  	.prog_type = BPF_PROG_TYPE_PERF_EVENT,
-> +	.ctx_len = sizeof(struct bpf_perf_event_data),
-> +	.data_len = sizeof(struct bpf_perf_event_value),
->  },
->  {
->  	"check bpf_perf_event_data->sample_period dword load permitted",
-> @@ -56,4 +62,6 @@
->  	},
->  	.result = ACCEPT,
->  	.prog_type = BPF_PROG_TYPE_PERF_EVENT,
-> +	.ctx_len = sizeof(struct bpf_perf_event_data),
-> +	.data_len = sizeof(struct bpf_perf_event_value),
->  },
-> -- 
-> 2.20.1
+> diff --git a/arch/s390/tools/gen_facilities.c b/arch/s390/tools/gen_facilities.c
+> index 61ce5b5..aed14fc 100644
+> --- a/arch/s390/tools/gen_facilities.c
+> +++ b/arch/s390/tools/gen_facilities.c
+> @@ -114,6 +114,7 @@ static struct facility_def facility_defs[] = {
+>  		.bits = (int[]){
+>  			12, /* AP Query Configuration Information */
+>  			15, /* AP Facilities Test */
+> +			65, /* AP Queue Interruption Control */
+>  			156, /* etoken facility */
+>  			-1  /* END */
+>  		}
 > 
+
+I think we should only set stfle.65 if we have the aiv facility (Because we do not
+have a GISA otherwise)
+
+So something like this instead?
+
+diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+index 28ebd64..1501cd6 100644
+--- a/arch/s390/kvm/kvm-s390.c
++++ b/arch/s390/kvm/kvm-s390.c
+@@ -2461,6 +2461,9 @@ int kvm_arch_init_vm(struct kvm *kvm, unsigned long type)
+                set_kvm_facility(kvm->arch.model.fac_list, 147);
+        }
+ 
++       if (css_general_characteristics.aiv)
++               set_kvm_facility(kvm->arch.model.fac_mask, 65);
++       
+        kvm->arch.model.cpuid = kvm_s390_get_initial_cpuid();
+        kvm->arch.model.ibc = sclp.ibc & 0x0fff;
+ 
+
