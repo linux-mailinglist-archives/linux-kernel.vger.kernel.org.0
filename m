@@ -2,189 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6127D54F86
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 15:02:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3509054F18
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 14:42:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730277AbfFYNCS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 09:02:18 -0400
-Received: from mailout4.samsung.com ([203.254.224.34]:36726 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730164AbfFYNCS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 09:02:18 -0400
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20190625130215epoutp04a5805974c93c0c1257ca5c96d3893264~rcqHWvhOb0379903799epoutp04j
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 13:02:15 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20190625130215epoutp04a5805974c93c0c1257ca5c96d3893264~rcqHWvhOb0379903799epoutp04j
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1561467735;
-        bh=1mfCW/D0RvA9qgVuTZWRRLeacuSFvpug25rw8ivnGkE=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=UDobX6GWkv6jtBcI5pdVOi3ojv1Z/LhJh6JK7gU1PMBLKMlVKAJaZt5k+BMA3QDGP
-         xaa0VNa0sdi7+3s9FSHsudo/RexyOorTbh73BEX5QqoS0CBtUU0m7ceoGd0JIgxFhR
-         M0EuOqS/r8CcRITeBoug3CbB6oOLepkmzbTDrCEw=
-Received: from epsmges5p3new.samsung.com (unknown [182.195.42.75]) by
-        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-        20190625130214epcas5p1b5abed54d0f40c0dfa17e35ef4c14060~rcqHCuiRY0738707387epcas5p1o;
-        Tue, 25 Jun 2019 13:02:14 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        DC.CE.04067.65B121D5; Tue, 25 Jun 2019 22:02:14 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-        20190625130214epcas5p39bf94a9a6d46d83c9da55df0eb8e3df1~rcqGVA_o62450024500epcas5p3k;
-        Tue, 25 Jun 2019 13:02:14 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20190625130214epsmtrp25225908f950faabb0dd1de864cbbce03~rcqGUPivn0790407904epsmtrp2u;
-        Tue, 25 Jun 2019 13:02:14 +0000 (GMT)
-X-AuditID: b6c32a4b-7a3ff70000000fe3-f5-5d121b56fc76
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        27.FF.03662.55B121D5; Tue, 25 Jun 2019 22:02:13 +0900 (KST)
-Received: from [107.108.73.28] (unknown [107.108.73.28]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20190625130212epsmtip2ef4a176364b84106f7faf62e3d3ebc4a~rcqEgAkIx0459504595epsmtip2U;
-        Tue, 25 Jun 2019 13:02:12 +0000 (GMT)
-Subject: Re: [PATCH v3 1/3] scsi: ufs: Introduce vops for resetting device
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Avri Altman <avri.altman@wdc.com>,
-        Pedro Sousa <pedrom.sousa@synopsys.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-scsi@vger.kernel.org
-From:   Alim Akhtar <alim.akhtar@samsung.com>
-Message-ID: <ad1c2a2a-91d6-25ce-9dfb-3b386b572ee2@samsung.com>
-Date:   Tue, 25 Jun 2019 18:11:24 +0530
+        id S1730959AbfFYMmZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 08:42:25 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48750 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726414AbfFYMmY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 08:42:24 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 945B9AFF9;
+        Tue, 25 Jun 2019 12:42:22 +0000 (UTC)
+Subject: Re: [PATCH 09/12] xfs: refactor the ioend merging code
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190624055253.31183-1-hch@lst.de>
+ <20190624055253.31183-10-hch@lst.de>
+ <e42c54c4-4c64-8185-8ac3-cca38ad8e8a4@suse.com>
+ <20190625101445.GK1462@lst.de>
+From:   Nikolay Borisov <nborisov@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <387a9e4b-6a15-5b08-6878-53ed5cfb9bb0@suse.com>
+Date:   Tue, 25 Jun 2019 15:42:20 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.7.1
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-In-Reply-To: <20190608050450.12056-2-bjorn.andersson@linaro.org>
+In-Reply-To: <20190625101445.GK1462@lst.de>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SeUgUcRTH+83Mzo7iys/V8qWRsaWQkZYHDRQmXQzaBdGJlkNOarrrsuuR
-        USHaqR2aVLa5aoIaJkWbeIuyLR5YZtqqiEHYFmlkpqslhuQ4Rv73ee993/v+3uPHkEqrzIOJ
-        0yQJOg2foKIdqepX6303HvFURm5qaAxguz7NUuzIjJVmO5vHKLbI0iVjSwaqCTa3+Y2c7a0v
-        oNns/lqaLe1/R7DlbXMEe7l1imKvNFnkoU5cZWEl4kwVN2huqK+R5nJKWhD38/MgxVU1TyJu
-        0rSau9aSTRxkTjhuixYS4lIEnX9IlGPso8ZxpH2x4pzVWClPRyMuWciBARwE9l6bLAs5Mkrc
-        gODtx3eLwQSCiXwbIQXTCNpr7xH/WqzfyiiRlbgJwag9QBJ9R5CXcx+JBVccBlmXByix4IaH
-        57tvz8rFgMQ2BANzGQsqGm+ADw+qFsYqcAhYhnpokSnsDTXGaZnIy/Ex6K2qR5LGBToe2uan
-        MowDDgVLXbKYJrE7DNqKCIm9oOZ7ASl6AS6RQ8ZT++Kzd0Fn5UtSYlcYbauSS+wBk2NNtDgT
-        cDzcrA+U0hegtLCVkng7tLwvWLAl8Xp4Xu8vWTnDrVnxQmKnAq5fVUpqb8gcsy52ekJudrZM
-        Yg76Mp4g6VYdCKbKjSgHrTEsWcywZBvDkm0M/52LEVWBVgpavTpG0AdrAzVCqp+eV+uTNTF+
-        pxPVJrTw2XzDa5Gpa68ZYQapnBS/W3GkUsan6NPUZgQMqXJTlPLzKUU0n3Ze0CWe0iUnCHoz
-        8mQolbvirswaocQxfJIQLwhaQfevSjAOHulIWx1z3H5mzxxx/tKv/N2r9ge3W7wy73np/qzr
-        iP02PlrdLK9zcbsalHpoxnvLmi/OaXyUz/SOZUfnTmGfwsMnn5etvWOyJ9sL97Kk884Irc5p
-        z1Z7XpixLjFYLe/5cdL6bLi7QvM4/LU2Pt1mqT17MWmf8auvObXb4J4V3bmj2HxARelj+c2+
-        pE7P/wUN40LhaAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrLIsWRmVeSWpSXmKPExsWy7bCSvG6otFCswcQWG4tzj3+zWLz8eZXN
-        4vT+dywW84+cY7VYdGMbk8XE/WfZLS7vmsNm0X19B5vF0usXmSyWH//HZNFy7CuLReveI+wO
-        PB5r5q1h9Ni0qpPN4861PWweExYdYPT4+PQWi8eW/Z8ZPT5vkvNoP9DNFMARxWWTkpqTWZZa
-        pG+XwJUxe88HxoKNYhVX565hb2B8KdjFyMkhIWAicfX1MpYuRi4OIYHdjBLTNy5lgkhIS1zf
-        OIEdwhaWWPnvOTtE0WtGiSXPtrKAJIQFvCS6Wm6AdYsIPGKUmHZjETOIwyzwBKhq2XuwKiGB
-        k4wSf19GgNhsAtoSd6dvAVvBK2AnceTOJTYQm0VAVWL73G+sILaoQIREX9tsNogaQYmTM58A
-        zeHg4BRwkDiysxQkzCxgJjFv80NmCFtc4taT+UwQtrzE9rdzmCcwCs1C0j0LScssJC2zkLQs
-        YGRZxSiZWlCcm55bbFhglJdarlecmFtcmpeul5yfu4kRHIlaWjsYT5yIP8QowMGoxMO74IhA
-        rBBrYllxZe4hRgkOZiUR3qWJQCHelMTKqtSi/Pii0pzU4kOM0hwsSuK88vnHIoUE0hNLUrNT
-        UwtSi2CyTBycUg2MmbOjNdZNUNW5GNMxYY94V+OygKliNnuPCTj98emdlG3256x83kHNyc9v
-        OWzdpu5xb3rCbq+7G2ucbih4T425wjfLcJHYlbVVyZvUtesmGDQG+c5ONVUWnLPsolra5w+z
-        diaz5diKT+f0fxpTw3laM13s3qWGDK+vuqe/Cm96U9Ry8tKSi0+UlFiKMxINtZiLihMBZOtz
-        EsACAAA=
-X-CMS-MailID: 20190625130214epcas5p39bf94a9a6d46d83c9da55df0eb8e3df1
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-X-CMS-RootMailID: 20190608050458epcas1p30f03f6d448eb962a6af56a4c0b021ef0
-References: <20190608050450.12056-1-bjorn.andersson@linaro.org>
-        <CGME20190608050458epcas1p30f03f6d448eb962a6af56a4c0b021ef0@epcas1p3.samsung.com>
-        <20190608050450.12056-2-bjorn.andersson@linaro.org>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn,
-Are you planning to address Bean's comment on patch#2 and want to 
-re-spin this series?
-I am ok with taking this patch as it is and take a Softreset patch as a 
-separate patch.
 
-On 6/8/19 10:34 AM, Bjorn Andersson wrote:
-> Some UFS memory devices needs their reset line toggled in order to get
-> them into a good state for initialization. Provide a new vops to allow
-> the platform driver to implement this operation.
+
+On 25.06.19 г. 13:14 ч., Christoph Hellwig wrote:
+> On Mon, Jun 24, 2019 at 07:06:22PM +0300, Nikolay Borisov wrote:
+>>> +{
+>>> +	struct list_head	tmp;
+>>> +
+>>> +	list_replace_init(&ioend->io_list, &tmp);
+>>> +	xfs_destroy_ioend(ioend, error);
+>>> +	while ((ioend = list_pop(&tmp, struct xfs_ioend, io_list)))
+>>> +		xfs_destroy_ioend(ioend, error);
+>>
+>> nit: I'd prefer if the list_pop patch is right before this one since
+>> this is the first user of it.
 > 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
-feel free to add
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+> I try to keep generic infrastructure first instead of interveawing
+> it with subystem-specific patches.
 > 
-> Changes since v2:
-> - New patch, to allow moving implementation to platform driver
+>> Additionally, I don't think list_pop is
+>> really a net-negative win 
 > 
->   drivers/scsi/ufs/ufshcd.c | 6 ++++++
->   drivers/scsi/ufs/ufshcd.h | 8 ++++++++
->   2 files changed, 14 insertions(+)
+> What is a "net-negative win" ?
+
+What I meant was 'net-positive win', in terms of making the code more
+readable or optimised.
+
 > 
-> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-> index 04d3686511c8..ee895a625456 100644
-> --- a/drivers/scsi/ufs/ufshcd.c
-> +++ b/drivers/scsi/ufs/ufshcd.c
-> @@ -6191,6 +6191,9 @@ static int ufshcd_reset_and_restore(struct ufs_hba *hba)
->   	int retries = MAX_HOST_RESET_RETRIES;
->   
->   	do {
-> +		/* Reset the attached device */
-> +		ufshcd_vops_device_reset(hba);
-> +
->   		err = ufshcd_host_reset_and_restore(hba);
->   	} while (err && --retries);
->   
-> @@ -8322,6 +8325,9 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
->   		goto exit_gating;
->   	}
->   
-> +	/* Reset the attached device */
-> +	ufshcd_vops_device_reset(hba);
-> +
->   	/* Host controller enable */
->   	err = ufshcd_hba_enable(hba);
->   	if (err) {
-> diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
-> index 994d73d03207..cd8139052ed6 100644
-> --- a/drivers/scsi/ufs/ufshcd.h
-> +++ b/drivers/scsi/ufs/ufshcd.h
-> @@ -298,6 +298,7 @@ struct ufs_pwr_mode_info {
->    * @resume: called during host controller PM callback
->    * @dbg_register_dump: used to dump controller debug information
->    * @phy_initialization: used to initialize phys
-> + * @device_reset: called to issue a reset pulse on the UFS device
->    */
->   struct ufs_hba_variant_ops {
->   	const char *name;
-> @@ -326,6 +327,7 @@ struct ufs_hba_variant_ops {
->   	int     (*resume)(struct ufs_hba *, enum ufs_pm_op);
->   	void	(*dbg_register_dump)(struct ufs_hba *hba);
->   	int	(*phy_initialization)(struct ufs_hba *);
-> +	void	(*device_reset)(struct ufs_hba *);
->   };
->   
->   /* clock gating state  */
-> @@ -1045,6 +1047,12 @@ static inline void ufshcd_vops_dbg_register_dump(struct ufs_hba *hba)
->   		hba->vops->dbg_register_dump(hba);
->   }
->   
-> +static inline void ufshcd_vops_device_reset(struct ufs_hba *hba)
-> +{
-> +	if (hba->vops && hba->vops->device_reset)
-> +		hba->vops->device_reset(hba);
-> +}
-> +
->   extern struct ufs_pm_lvl_states ufs_pm_lvl_states[];
->   
->   /*
+>> in comparison to list_for_each_entry_safe
+>> here. In fact this "delete the list" would seems more idiomatic if
+>> implemented via list_for_each_entry_safe
 > 
+> I disagree.  The for_each loops require an additional next iterator,
+> and also don't clearly express what is going on, but require additional
+> spotting of the list_del.
+
+That is of course your opinion. At the very least we can agree to disagree.
+
+What I'm worried about, though, is now you've essentially introduced a
+new idiom to dispose of lists, which is used only in your code. If it
+doesn't become more widespread and gradually start replacing current
+list_for_each_entry_safe usage then you would have increased the public
+list interface to cater for one specific use case, just because it seems
+more natural to you. I guess only time will show whether it makes sense
+to have list_pop_entry
+
