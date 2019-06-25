@@ -2,137 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B7B65513A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 16:11:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E45E15515F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 16:17:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729880AbfFYOLZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 10:11:25 -0400
-Received: from foss.arm.com ([217.140.110.172]:42712 "EHLO foss.arm.com"
+        id S1730159AbfFYORF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 10:17:05 -0400
+Received: from mail.intenta.de ([178.249.25.132]:28391 "EHLO mail.intenta.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728130AbfFYOLY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 10:11:24 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1B73F2B;
-        Tue, 25 Jun 2019 07:11:24 -0700 (PDT)
-Received: from [10.1.196.72] (e119884-lin.cambridge.arm.com [10.1.196.72])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DD24D3F718;
-        Tue, 25 Jun 2019 07:11:22 -0700 (PDT)
-Subject: Re: "arm64: vdso: Substitute gettimeofday() with C implementation"
- breaks clang build
-To:     Qian Cai <cai@lca.pw>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        natechancellor@gmail.com, ndesaulniers@google.com
-References: <1561464964.5154.63.camel@lca.pw>
- <e86774e4-7470-5cb2-fc3e-b7c1f529d253@arm.com>
- <1561467369.5154.67.camel@lca.pw>
- <00a78980-6b9c-5d5b-ed01-b28bb34be022@arm.com>
- <1561470705.5154.68.camel@lca.pw>
-From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
-Message-ID: <5113362e-1256-6712-6ce8-9599b1806cf1@arm.com>
-Date:   Tue, 25 Jun 2019 15:11:21 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1727070AbfFYORD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 10:17:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=intenta.de; s=dkim1;
+        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:CC:To:From:Date; bh=0LXqnefS6ua7gqL9kD/KCf39EJ+ezxI8Okybp4/Vr+o=;
+        b=GQXVa9j2NkuaRh3mroxMOkZV8AXHK22v8Lj314GNO/ChsPvS33P9Pzv/VrBU21g7Fnbt1V7HewaCrDHncVS+RMe0NaDPdrQapJEbyKttQypFLMjvVIRZ7R1owYz3tl43s+Zg+Nar+Jj4/Ayf2mT5qCeq2UKePxsiVj+pVNZEJnaR/n3ZrnQfo1nZ6jFNHzN81yuwcyOnD4kKqH/YCZvItcMoQ3k/+Rpv2iLFyyX+hLwRvQazeho7fxZx2reN+/6eIox4h7ZdYaYgWISGZY2Vflx6oUG0djzC4ZS+hmqj9NGqpeVfs84F9/64ghcbTLexjualZ/WKTfu1b1gFnhrmUA==;
+X-CTCH-RefID: str=0001.0A0C020D.5D122B8D.0069,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Date:   Tue, 25 Jun 2019 16:11:25 +0200
+From:   Helmut Grohne <helmut.grohne@intenta.de>
+To:     Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com>
+CC:     "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+        "richard@nod.at" <richard@nod.at>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "vigneshr@ti.com" <vigneshr@ti.com>,
+        "bbrezillon@kernel.org" <bbrezillon@kernel.org>,
+        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [LINUX PATCH v17 1/2] mtd: rawnand: nand_micron: Do not over
+ write driver's read_page()/write_page()
+Message-ID: <20190625141125.a4umdey6ejxjxap4@laureti-dev>
+References: <20190625044630.31717-1-naga.sureshkumar.relli@xilinx.com>
 MIME-Version: 1.0
-In-Reply-To: <1561470705.5154.68.camel@lca.pw>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20190625044630.31717-1-naga.sureshkumar.relli@xilinx.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-ClientProxiedBy: ICSMA002.intenta.de (10.10.16.48) To ICSMA002.intenta.de
+ (10.10.16.48)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Qian,
+On Tue, Jun 25, 2019 at 06:46:29AM +0200, Naga Sureshkumar Relli wrote:
+> --- a/drivers/mtd/nand/raw/nand_micron.c
+> +++ b/drivers/mtd/nand/raw/nand_micron.c
+> @@ -500,8 +500,11 @@ static int micron_nand_init(struct nand_chip *chip)
+>  		chip->ecc.size = 512;
+>  		chip->ecc.strength = chip->base.eccreq.strength;
+>  		chip->ecc.algo = NAND_ECC_BCH;
+> -		chip->ecc.read_page = micron_nand_read_page_on_die_ecc;
+> -		chip->ecc.write_page = micron_nand_write_page_on_die_ecc;
+> +		if (!chip->ecc.read_page)
+> +			chip->ecc.read_page = micron_nand_read_page_on_die_ecc;
+> +
+> +		if (!chip->ecc.write_page)
+> +			chip->ecc.write_page = micron_nand_write_page_on_die_ecc;
 
-On 25/06/2019 14:51, Qian Cai wrote:
-> On Tue, 2019-06-25 at 14:40 +0100, Vincenzo Frascino wrote:
->> On 25/06/2019 13:56, Qian Cai wrote:
->>> On Tue, 2019-06-25 at 13:47 +0100, Vincenzo Frascino wrote:
->>>> Hi Qian,
->>>>
->>>> On 25/06/2019 13:16, Qian Cai wrote:
->>>>> The linux-next commit "arm64: vdso: Substitute gettimeofday() with C
->>>>> implementation" [1] breaks clang build.
->>>>>
->>>>> error: invalid value 'tiny' in '-mcode-model tiny'
->>>>> make[1]: *** [scripts/Makefile.build:279:
->>>>> arch/arm64/kernel/vdso/vgettimeofday.o] Error 1
->>>>> make[1]: *** Waiting for unfinished jobs....
->>>>> make: *** [arch/arm64/Makefile:180: vdso_prepare] Error 2
->>>>>
->>>>> [1] https://patchwork.kernel.org/patch/11009663/
->>>>>
->>>>
->>>> I am not sure what does exactly break from your report. Could you please
->>>> provide
->>>> more details?
->>>
->>> Here is the config to reproduce.
->>>
->>> https://raw.githubusercontent.com/cailca/linux-mm/master/arm64.config
->>>
->>> # make CC=clang -j $(nr_cpus)
->>>
->>> I can get it working again by removing "-mcmodel=tiny" in
->>> arch/arm64/kernel/vdso/Makefile
->>>
->>
->> With your defconfig I can't still reproduce the problem. Which version of
->> clang
->> are you using?
-> 
-> Compiler: clang version 7.0.1 (tags/RELEASE_701/final)
-> 
+When used with pl353_nand.c, this change prioritizes the
+pl353_nand_read_page_raw/pl353_nand_write_page_raw implementations over
+micron_nand_read_page_on_die_ecc/micron_nand_write_page_on_die_ecc. The
+pl353 implementations don't check the status register of the flash for
+NAND_ECC_STATUS_WRITE_RECOMMENDED nor do they update ecc_stats.failed in
+any way. Unless I am mistaken, this implies that bitflips cannot be
+detected at all anymore.
 
-I am using clang 8.0.0. Could you please try with it and see if the issue goes away?
+However, this is the change that makes a MT29F2G08ABAEAWP practically
+work with jffs2 on the Zynq platform.
 
-Thanks,
-Vincenzo
+In this context, I countered a document from Micron[1] indicating that
+their on-die chips are incompatible with jffs2 as is, because the on-die
+oob layout is incompatible with jffs2. I suppose that using the raw
+variants puts jffs2 in full control of the oob area, but is this really
+the correct solution?
 
->>
->>>>
->>>> On my env:
->>>>
->>>> $ make mrproper && make defconfig && make CC=clang HOSTCC=clang -j$(nproc)
->>>>
->>>> ...
->>>>
->>>> arch/arm64/Makefile:56: CROSS_COMPILE_COMPAT is clang, the compat vDSO
->>>> will
->>>> not
->>>> be built
->>>>
->>>> ...
->>>>
->>>>   LDS     arch/arm64/kernel/vdso/vdso.lds
->>>>   AS      arch/arm64/kernel/vdso/note.o
->>>>   AS      arch/arm64/kernel/vdso/sigreturn.o
->>>>   CC      arch/arm64/kernel/vdso/vgettimeofday.o
->>>>   LD      arch/arm64/kernel/vdso/vdso.so.dbg
->>>>   VDSOCHK arch/arm64/kernel/vdso/vdso.so.dbg
->>>>   VDSOSYM include/generated/vdso-offsets.h
->>>>
->>>> ...
->>>>
->>>>   LD      vmlinux.o
->>>>   MODPOST vmlinux.o
->>>>   MODINFO modules.builtin.modinfo
->>>>   KSYM    .tmp_kallsyms1.o
->>>>   KSYM    .tmp_kallsyms2.o
->>>>   LD      vmlinux
->>>>   SORTEX  vmlinux
->>>>   SYSMAP  System.map
->>>>   Building modules, stage 2.
->>>>   OBJCOPY arch/arm64/boot/Image
->>>>   MODPOST 483 modules
->>>>
->>
->>
+Helmut
 
--- 
-Regards,
-Vincenzo
+[1] https://www.micron.com/~/media/Documents/Products/Technical%20Note/NAND%20Flash/tn2975_enable_on-die-ECC_NAND_JFFS2.pdf
