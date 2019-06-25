@@ -2,89 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4632255337
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 17:20:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14C395533E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 17:21:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732230AbfFYPUr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 11:20:47 -0400
-Received: from foss.arm.com ([217.140.110.172]:44006 "EHLO foss.arm.com"
+        id S1730920AbfFYPVx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 11:21:53 -0400
+Received: from verein.lst.de ([213.95.11.211]:35780 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728199AbfFYPUr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 11:20:47 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5BE622B;
-        Tue, 25 Jun 2019 08:20:46 -0700 (PDT)
-Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EF9493F718;
-        Tue, 25 Jun 2019 08:20:44 -0700 (PDT)
-Date:   Tue, 25 Jun 2019 16:20:38 +0100
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Valentin Schneider <valentin.schneider@arm.com>
-Cc:     Jeremy Linton <jeremy.linton@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, catalin.marinas@arm.com,
-        will.deacon@arm.com, rjw@rjwysocki.net, lenb@kernel.org,
-        Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH v2 1/2] ACPI/PPTT: Add support for ACPI 6.3 thread flag
-Message-ID: <20190625152029.GA2308@e107155-lin>
-References: <20190614223158.49575-1-jeremy.linton@arm.com>
- <20190614223158.49575-2-jeremy.linton@arm.com>
- <667f95c0-5aa9-f460-a49a-e6dfefc027d8@arm.com>
+        id S1728946AbfFYPVx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 11:21:53 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id BABDB68B05; Tue, 25 Jun 2019 17:21:20 +0200 (CEST)
+Date:   Tue, 25 Jun 2019 17:21:20 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 04/12] xfs: initialize ioma->flags in xfs_bmbt_to_iomap
+Message-ID: <20190625152120.GA8153@lst.de>
+References: <20190624055253.31183-1-hch@lst.de> <20190624055253.31183-5-hch@lst.de> <20190624145707.GH5387@magnolia> <20190625100701.GG1462@lst.de> <20190625151357.GA2230847@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <667f95c0-5aa9-f460-a49a-e6dfefc027d8@arm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190625151357.GA2230847@magnolia>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 17, 2019 at 01:34:51PM +0100, Valentin Schneider wrote:
-> Hi Jeremy,
->
-> Few nits below.
->
-> Also, I had a look at the other PPTT processor flags that were introduced
-> in 6.3, and the only other one being used is ACPI_LEAF_NODE in
-> acpi_pptt_leaf_node(). However that one already has a handle on the table
-> header, so the check_acpi_cpu_flag() isn't of much help there.
->
-> I don't believe the other existing flags will benefit from the helper since
-> they are more about describing the PPTT tree, but I think it doesn't hurt
-> to keep it around for potential future flags.
->
-> On 14/06/2019 23:31, Jeremy Linton wrote:
-> [...]
-> > @@ -517,6 +517,43 @@ static int find_acpi_cpu_topology_tag(unsigned int cpu, int level, int flag)
-> >  	return retval;
-> >  }
-> >
-> > +/**
-> > + * check_acpi_cpu_flag() - Determine if CPU node has a flag set
-> > + * @cpu: Kernel logical CPU number
-> > + * @rev: The PPTT revision defining the flag
-> > + * @flag: The flag itself
+On Tue, Jun 25, 2019 at 08:13:57AM -0700, Darrick J. Wong wrote:
+> > This doesn't affect any existing user as they all get a zeroed iomap
+> > passed from the caller in iomap.c.  It affects the writeback code
+> > once it uses struct iomap as it overwrites a previously used iomap.
+> 
+> Then shouldn't this new writeback code zero the iomap before calling
+> back into the filesystem, just to maintain consistent behavior?
 
-How about the "the processor structure flag being examined" ?
-
-> > + *
-> > + * Check the node representing a CPU for a given flag.
-> > + *
-> > + * Return: -ENOENT if the PPTT doesn't exist, the CPU cannot be found or
-> > + *	   the table revision isn't new enough.
-> > + * Otherwise returns flag value
-> > + */
->
-> Nit: strictly speaking we're not returning the flag value but its mask
-> applied to the flags field. I don't think anyone will care about getting
-> the actual flag value, but it should be made obvious in the doc:
->
-
-I agree with that. I am also fine if you want to change the code to
-return 0 or 1 based on the flag value. It then aligns well with comment
-under acpi_pptt_cpu_is_thread. Either way, we just need consistency.
-
---
-Regards,
-Sudeep
+The core code doesn't decide when to overwrite it, that ->map_blocks
+method does that based on a few factors (including the data_seq/cow_seq
+counters that are entirely inside xfs).
