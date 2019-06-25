@@ -2,91 +2,243 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49040526F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 10:44:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C282526FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 10:46:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730770AbfFYIoe convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 25 Jun 2019 04:44:34 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:54386 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726587AbfFYIod (ORCPT
+        id S1730756AbfFYIqo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 04:46:44 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:44029 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726587AbfFYIqo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 04:44:33 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-64-2CgliomXP9qa0e1tUxO66g-1; Tue, 25 Jun 2019 09:44:30 +0100
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Tue, 25 Jun 2019 09:44:29 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Tue, 25 Jun 2019 09:44:29 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Dmitry Torokhov' <dmitry.torokhov@gmail.com>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>
-CC:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Marco Felsch <m.felsch@pengutronix.de>,
-        Benoit Parrot <bparrot@ti.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 1/2] Input: edt-ft5x06 - use get_unaligned_be16()
-Thread-Topic: [PATCH 1/2] Input: edt-ft5x06 - use get_unaligned_be16()
-Thread-Index: AQHVKY1hAj6tejpQ3kG1+0ev0Psa8KasERZw
-Date:   Tue, 25 Jun 2019 08:44:29 +0000
-Message-ID: <011d62995b20493f977ead43f4b494a2@AcuMS.aculab.com>
-References: <20190623063153.261546-1-dmitry.torokhov@gmail.com>
-In-Reply-To: <20190623063153.261546-1-dmitry.torokhov@gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Tue, 25 Jun 2019 04:46:44 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5P8k8kS3535912
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Tue, 25 Jun 2019 01:46:08 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5P8k8kS3535912
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019061801; t=1561452369;
+        bh=zWD0RszlywYoxCwhvgC52O1JPWIYLiOShSE1SjW60rs=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=Ip/wsRJVVKkPzI0rBelkmmpJXXUDU3ywtfNdMtt4Ovvx5gXKhgIK4aOzLs/FS9m29
+         e5hi143Qa5DE6UmtrKBdnoOvONoy97zGeohr4F9eDWsXPvAYeojRIxoJc4/c16oo3x
+         AztbnevreC2vP7ymPrLnIoP/6/hPlmlzXx+TyPw+xEisz7wDBh/3URfBqG1wZGSIzd
+         eml968QxMQZOGamYYHPU+rUsahk8dKKQuQUzso5BmWoezjCqMD7GfsXk34RVd89mjR
+         5aknVg2Whz/vxuKiRYzQwYJn+fpRKJaWO8Ieol97KOk1qhyv7fe6/ek0poM5te0Cyy
+         dkApEZ+oq9FdA==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5P8k7Vb3535909;
+        Tue, 25 Jun 2019 01:46:07 -0700
+Date:   Tue, 25 Jun 2019 01:46:07 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Arnd Bergmann <tipbot@zytor.com>
+Message-ID: <tip-886532aee3cd42d95196601ed16d7c3d4679e9e5@git.kernel.org>
+Cc:     mingo@kernel.org, frederic@kernel.org, longman@redhat.com,
+        paulmck@linux.vnet.ibm.com, bvanassche@acm.org,
+        will.deacon@arm.com, tglx@linutronix.de, duyuyang@gmail.com,
+        arnd@arndb.de, torvalds@linux-foundation.org, hpa@zytor.com,
+        peterz@infradead.org, akpm@linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Reply-To: will.deacon@arm.com, tglx@linutronix.de, frederic@kernel.org,
+          mingo@kernel.org, longman@redhat.com, bvanassche@acm.org,
+          paulmck@linux.vnet.ibm.com, peterz@infradead.org,
+          akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+          arnd@arndb.de, duyuyang@gmail.com, torvalds@linux-foundation.org,
+          hpa@zytor.com
+In-Reply-To: <20190617124718.1232976-1-arnd@arndb.de>
+References: <20190617124718.1232976-1-arnd@arndb.de>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:locking/core] locking/lockdep: Move mark_lock() inside
+ CONFIG_TRACE_IRQFLAGS && CONFIG_PROVE_LOCKING
+Git-Commit-ID: 886532aee3cd42d95196601ed16d7c3d4679e9e5
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-X-MC-Unique: 2CgliomXP9qa0e1tUxO66g-1
-X-Mimecast-Spam-Score: 0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Disposition: inline
+X-Spam-Status: No, score=-1.0 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        FREEMAIL_FORGED_REPLYTO autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dmitry Torokhov
-> Sent: 23 June 2019 07:32
-> 
-> Instead of doing conversion by hand, let's use the proper accessors.
-> 
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> ---
->  drivers/input/touchscreen/edt-ft5x06.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/input/touchscreen/edt-ft5x06.c b/drivers/input/touchscreen/edt-ft5x06.c
-> index c639ebce914c..ec770226e119 100644
-> --- a/drivers/input/touchscreen/edt-ft5x06.c
-> +++ b/drivers/input/touchscreen/edt-ft5x06.c
-> @@ -27,6 +27,7 @@
->  #include <linux/gpio/consumer.h>
->  #include <linux/input/mt.h>
->  #include <linux/input/touchscreen.h>
-> +#include <asm/unaligned.h>
-> 
->  #define WORK_REGISTER_THRESHOLD		0x00
->  #define WORK_REGISTER_REPORT_RATE	0x08
-> @@ -239,8 +240,8 @@ static irqreturn_t edt_ft5x06_ts_isr(int irq, void *dev_id)
->  		if (tsdata->version == EDT_M06 && type == TOUCH_EVENT_DOWN)
->  			continue;
-> 
-> -		x = ((buf[0] << 8) | buf[1]) & 0x0fff;
-> -		y = ((buf[2] << 8) | buf[3]) & 0x0fff;
-> +		x = get_unaligned_be16(buf) & 0x0fff;
-> +		y = get_unaligned_be16(buf + 2) & 0x0fff;
+Commit-ID:  886532aee3cd42d95196601ed16d7c3d4679e9e5
+Gitweb:     https://git.kernel.org/tip/886532aee3cd42d95196601ed16d7c3d4679e9e5
+Author:     Arnd Bergmann <arnd@arndb.de>
+AuthorDate: Mon, 17 Jun 2019 14:47:05 +0200
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Tue, 25 Jun 2019 10:17:07 +0200
 
-You might as well delete the pointless masking with 0xff.
+locking/lockdep: Move mark_lock() inside CONFIG_TRACE_IRQFLAGS && CONFIG_PROVE_LOCKING
 
-	David
+The last cleanup patch triggered another issue, as now another function
+should be moved into the same section:
 
+ kernel/locking/lockdep.c:3580:12: error: 'mark_lock' defined but not used [-Werror=unused-function]
+  static int mark_lock(struct task_struct *curr, struct held_lock *this,
+
+Move mark_lock() into the same #ifdef section as its only caller, and
+remove the now-unused mark_lock_irq() stub helper.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Bart Van Assche <bvanassche@acm.org>
+Cc: Frederic Weisbecker <frederic@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Waiman Long <longman@redhat.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Yuyang Du <duyuyang@gmail.com>
+Fixes: 0d2cc3b34532 ("locking/lockdep: Move valid_state() inside CONFIG_TRACE_IRQFLAGS && CONFIG_PROVE_LOCKING")
+Link: https://lkml.kernel.org/r/20190617124718.1232976-1-arnd@arndb.de
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ kernel/locking/lockdep.c | 73 ++++++++++++++++++++++--------------------------
+ 1 file changed, 34 insertions(+), 39 deletions(-)
+
+diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+index 5e368f485330..341f52117f88 100644
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -437,13 +437,6 @@ static int verbose(struct lock_class *class)
+ 	return 0;
+ }
+ 
+-/*
+- * Stack-trace: tightly packed array of stack backtrace
+- * addresses. Protected by the graph_lock.
+- */
+-unsigned long nr_stack_trace_entries;
+-static unsigned long stack_trace[MAX_STACK_TRACE_ENTRIES];
 -
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
-
+ static void print_lockdep_off(const char *bug_msg)
+ {
+ 	printk(KERN_DEBUG "%s\n", bug_msg);
+@@ -453,6 +446,15 @@ static void print_lockdep_off(const char *bug_msg)
+ #endif
+ }
+ 
++unsigned long nr_stack_trace_entries;
++
++#if defined(CONFIG_TRACE_IRQFLAGS) && defined(CONFIG_PROVE_LOCKING)
++/*
++ * Stack-trace: tightly packed array of stack backtrace
++ * addresses. Protected by the graph_lock.
++ */
++static unsigned long stack_trace[MAX_STACK_TRACE_ENTRIES];
++
+ static int save_trace(struct lock_trace *trace)
+ {
+ 	unsigned long *entries = stack_trace + nr_stack_trace_entries;
+@@ -475,6 +477,7 @@ static int save_trace(struct lock_trace *trace)
+ 
+ 	return 1;
+ }
++#endif
+ 
+ unsigned int nr_hardirq_chains;
+ unsigned int nr_softirq_chains;
+@@ -488,6 +491,7 @@ unsigned int max_lockdep_depth;
+ DEFINE_PER_CPU(struct lockdep_stats, lockdep_stats);
+ #endif
+ 
++#if defined(CONFIG_TRACE_IRQFLAGS) && defined(CONFIG_PROVE_LOCKING)
+ /*
+  * Locking printouts:
+  */
+@@ -505,6 +509,7 @@ static const char *usage_str[] =
+ #undef LOCKDEP_STATE
+ 	[LOCK_USED] = "INITIAL USE",
+ };
++#endif
+ 
+ const char * __get_key_name(struct lockdep_subclass_key *key, char *str)
+ {
+@@ -2964,12 +2969,10 @@ static void check_chain_key(struct task_struct *curr)
+ #endif
+ }
+ 
++#if defined(CONFIG_TRACE_IRQFLAGS) && defined(CONFIG_PROVE_LOCKING)
+ static int mark_lock(struct task_struct *curr, struct held_lock *this,
+ 		     enum lock_usage_bit new_bit);
+ 
+-#if defined(CONFIG_TRACE_IRQFLAGS) && defined(CONFIG_PROVE_LOCKING)
+-
+-
+ static void print_usage_bug_scenario(struct held_lock *lock)
+ {
+ 	struct lock_class *class = hlock_class(lock);
+@@ -3545,35 +3548,6 @@ static int separate_irq_context(struct task_struct *curr,
+ 	return 0;
+ }
+ 
+-#else /* defined(CONFIG_TRACE_IRQFLAGS) && defined(CONFIG_PROVE_LOCKING) */
+-
+-static inline
+-int mark_lock_irq(struct task_struct *curr, struct held_lock *this,
+-		enum lock_usage_bit new_bit)
+-{
+-	WARN_ON(1); /* Impossible innit? when we don't have TRACE_IRQFLAG */
+-	return 1;
+-}
+-
+-static inline int
+-mark_usage(struct task_struct *curr, struct held_lock *hlock, int check)
+-{
+-	return 1;
+-}
+-
+-static inline unsigned int task_irq_context(struct task_struct *task)
+-{
+-	return 0;
+-}
+-
+-static inline int separate_irq_context(struct task_struct *curr,
+-		struct held_lock *hlock)
+-{
+-	return 0;
+-}
+-
+-#endif /* defined(CONFIG_TRACE_IRQFLAGS) && defined(CONFIG_PROVE_LOCKING) */
+-
+ /*
+  * Mark a lock with a usage bit, and validate the state transition:
+  */
+@@ -3634,6 +3608,27 @@ static int mark_lock(struct task_struct *curr, struct held_lock *this,
+ 	return ret;
+ }
+ 
++#else /* defined(CONFIG_TRACE_IRQFLAGS) && defined(CONFIG_PROVE_LOCKING) */
++
++static inline int
++mark_usage(struct task_struct *curr, struct held_lock *hlock, int check)
++{
++	return 1;
++}
++
++static inline unsigned int task_irq_context(struct task_struct *task)
++{
++	return 0;
++}
++
++static inline int separate_irq_context(struct task_struct *curr,
++		struct held_lock *hlock)
++{
++	return 0;
++}
++
++#endif /* defined(CONFIG_TRACE_IRQFLAGS) && defined(CONFIG_PROVE_LOCKING) */
++
+ /*
+  * Initialize a lock instance's lock-class mapping info:
+  */
