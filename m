@@ -2,49 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FA0B52674
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 10:24:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60CC75267F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 10:25:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730154AbfFYIY2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 04:24:28 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:49379 "EHLO
+        id S1730194AbfFYIZr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 04:25:47 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:47759 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726702AbfFYIY1 (ORCPT
+        with ESMTP id S1728465AbfFYIZr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 04:24:27 -0400
+        Tue, 25 Jun 2019 04:25:47 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5P8OGvc3529573
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5P8P0M33529638
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Tue, 25 Jun 2019 01:24:17 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5P8OGvc3529573
+        Tue, 25 Jun 2019 01:25:00 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5P8P0M33529638
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019061801; t=1561451057;
-        bh=7Hd2w97hwTtHuSlyNX6Z8LZNLBlxfFfzTOr2rVUFCZw=;
+        s=2019061801; t=1561451101;
+        bh=KxDixTeQny4IcqBw/DWyVQaGBJWQiYYmdKTsR65r9j0=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=gJWM3DnmpjREuN7P5Vap/PI5L80fXmvFVU6+I0iOvjmwAbHg2cx7p/lumulpCK0Hg
-         6avMAnuA9L+2jGddSqQflmsBfd36i9ReOti58ddD6+4tcIZcaAKRypLIjvhwPNWmD9
-         ZmWXK2Wop09xbogQcq2TyrGzGHPo2PUqJ/fu0RyMoq0SIIucwhqhvdTF+xMIlppdlm
-         x4xPrTZdIZoZdA6coSh4QpcwQ1uOnSJBt9la9iCTmBwJanMHVq1MQIrYW3CNEPCoBO
-         AzOgn9D+kcMrS7b0uH5ZRB1Gf+pVBme7iKtVVaI+m8071NNjR7E5O2U704FEI6chZD
-         IxR4hoe8Iu1iA==
+        b=ryvHKwkT6JEc/Nat/dYwXa8I95uGVJIVWshFcQIMcs7/F8ZUK2ZtAEB2nBzKdwl6R
+         p3XaVcHyAxEAw+8V4PyQV/YJ8ukeXPybOtkdNrk3HyoYRFy/x3fuPJeubhODOl/Usa
+         gsD/d+WPeejNSDmMvEI4JVgOtbsPOJigrp+eDctdjnZYitjP8WQ7v+aVBcE7se/kiC
+         9lSUaS5W2CWnhNVR4fgHQXdVCRoyUxxJeDqSakE+WXjfKlWabKwXDBGvQCwl0nuG8H
+         R9IaIYzmeU8sXtvRzhq1uNEygAaxp3sz9GVqVhIm+9maK7hvUaGqi2RZ/5aTbaiCwf
+         h7tZQaj/ND0qg==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5P8OGSR3529570;
-        Tue, 25 Jun 2019 01:24:16 -0700
-Date:   Tue, 25 Jun 2019 01:24:16 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5P8OxZT3529635;
+        Tue, 25 Jun 2019 01:24:59 -0700
+Date:   Tue, 25 Jun 2019 01:24:59 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Pavel Begunkov <tipbot@zytor.com>
-Message-ID: <tip-016190a4b5824df2d5bb97951a04dd3629973671@git.kernel.org>
-Cc:     torvalds@linux-foundation.org, peterz@infradead.org,
-        tglx@linutronix.de, hpa@zytor.com, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, asml.silence@gmail.com
-Reply-To: mingo@kernel.org, asml.silence@gmail.com,
-          linux-kernel@vger.kernel.org, peterz@infradead.org,
-          tglx@linutronix.de, hpa@zytor.com, torvalds@linux-foundation.org
-In-Reply-To: <43ffea6ee2152b90dedf962eac851609e4197218.1560256112.git.asml.silence@gmail.com>
-References: <43ffea6ee2152b90dedf962eac851609e4197218.1560256112.git.asml.silence@gmail.com>
+From:   tip-bot for Qais Yousef <tipbot@zytor.com>
+Message-ID: <tip-9ba5090aecac08ff3ae54ac3bd94b61db7708ffc@git.kernel.org>
+Cc:     hpa@zytor.com, quentin.perret@arm.com, qais.yousef@arm.com,
+        rostedt@goodmis.org, pkondeti@codeaurora.org, mingo@kernel.org,
+        u.kleine-koenig@pengutronix.de, torvalds@linux-foundation.org,
+        dietmar.eggemann@arm.com, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, peterz@infradead.org,
+        bigeasy@linutronix.de
+Reply-To: pkondeti@codeaurora.org, rostedt@goodmis.org,
+          qais.yousef@arm.com, quentin.perret@arm.com, hpa@zytor.com,
+          peterz@infradead.org, bigeasy@linutronix.de,
+          linux-kernel@vger.kernel.org, tglx@linutronix.de,
+          dietmar.eggemann@arm.com, torvalds@linux-foundation.org,
+          u.kleine-koenig@pengutronix.de, mingo@kernel.org
+In-Reply-To: <20190604111459.2862-2-qais.yousef@arm.com>
+References: <20190604111459.2862-2-qais.yousef@arm.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/core] sched/wait: Deduplicate code with do-while
-Git-Commit-ID: 016190a4b5824df2d5bb97951a04dd3629973671
+Subject: [tip:sched/core] sched/autogroup: Make autogroup_path() always
+ available
+Git-Commit-ID: 9ba5090aecac08ff3ae54ac3bd94b61db7708ffc
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -53,58 +60,61 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-X-Spam-Status: No, score=-1.0 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        FREEMAIL_FORGED_REPLYTO autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF autolearn=ham
+        autolearn_force=no version=3.4.2
 X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  016190a4b5824df2d5bb97951a04dd3629973671
-Gitweb:     https://git.kernel.org/tip/016190a4b5824df2d5bb97951a04dd3629973671
-Author:     Pavel Begunkov <asml.silence@gmail.com>
-AuthorDate: Tue, 11 Jun 2019 15:29:07 +0300
+Commit-ID:  9ba5090aecac08ff3ae54ac3bd94b61db7708ffc
+Gitweb:     https://git.kernel.org/tip/9ba5090aecac08ff3ae54ac3bd94b61db7708ffc
+Author:     Qais Yousef <qais.yousef@arm.com>
+AuthorDate: Tue, 4 Jun 2019 12:14:54 +0100
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Mon, 24 Jun 2019 19:23:40 +0200
 
-sched/wait: Deduplicate code with do-while
+sched/autogroup: Make autogroup_path() always available
 
-Statements in the loop's body and before it are identical.
-Use do-while to not repeat it.
+Remove the #ifdef CONFIG_SCHED_DEBUG.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+Some of the tracepoints to be introduced in later patches need to access
+this function. Hence make it always available since the tracepoints are
+not protected by CONFIG_SCHED_DEBUG.
+
+Signed-off-by: Qais Yousef <qais.yousef@arm.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Pavankumar Kondeti <pkondeti@codeaurora.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Quentin Perret <quentin.perret@arm.com>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Steven Rostedt <rostedt@goodmis.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/43ffea6ee2152b90dedf962eac851609e4197218.1560256112.git.asml.silence@gmail.com
+Cc: Uwe Kleine-Konig <u.kleine-koenig@pengutronix.de>
+Link: https://lkml.kernel.org/r/20190604111459.2862-2-qais.yousef@arm.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- kernel/sched/wait.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ kernel/sched/autogroup.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/kernel/sched/wait.c b/kernel/sched/wait.c
-index fa0f9adfb752..c1e566a114ca 100644
---- a/kernel/sched/wait.c
-+++ b/kernel/sched/wait.c
-@@ -118,16 +118,12 @@ static void __wake_up_common_lock(struct wait_queue_head *wq_head, unsigned int
- 	bookmark.func = NULL;
- 	INIT_LIST_HEAD(&bookmark.entry);
- 
--	spin_lock_irqsave(&wq_head->lock, flags);
--	nr_exclusive = __wake_up_common(wq_head, mode, nr_exclusive, wake_flags, key, &bookmark);
--	spin_unlock_irqrestore(&wq_head->lock, flags);
--
--	while (bookmark.flags & WQ_FLAG_BOOKMARK) {
-+	do {
- 		spin_lock_irqsave(&wq_head->lock, flags);
- 		nr_exclusive = __wake_up_common(wq_head, mode, nr_exclusive,
- 						wake_flags, key, &bookmark);
- 		spin_unlock_irqrestore(&wq_head->lock, flags);
--	}
-+	} while (bookmark.flags & WQ_FLAG_BOOKMARK);
+diff --git a/kernel/sched/autogroup.c b/kernel/sched/autogroup.c
+index 2d4ff5353ded..2067080bb235 100644
+--- a/kernel/sched/autogroup.c
++++ b/kernel/sched/autogroup.c
+@@ -259,7 +259,6 @@ out:
  }
+ #endif /* CONFIG_PROC_FS */
  
- /**
+-#ifdef CONFIG_SCHED_DEBUG
+ int autogroup_path(struct task_group *tg, char *buf, int buflen)
+ {
+ 	if (!task_group_is_autogroup(tg))
+@@ -267,4 +266,3 @@ int autogroup_path(struct task_group *tg, char *buf, int buflen)
+ 
+ 	return snprintf(buf, buflen, "%s-%ld", "/autogroup", tg->autogroup->id);
+ }
+-#endif
