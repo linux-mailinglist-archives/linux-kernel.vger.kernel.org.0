@@ -2,162 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 888B755497
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 18:35:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B08A554AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 18:37:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731799AbfFYQfM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 12:35:12 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:32782 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731640AbfFYQfI (ORCPT
+        id S1730052AbfFYQhH convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 25 Jun 2019 12:37:07 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:43948 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726896AbfFYQhH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 12:35:08 -0400
-Received: by mail-wr1-f67.google.com with SMTP id n9so18683196wru.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 09:35:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=ga+YwIrD2LqYZ2tJvuqiZTtIXkFbIASL3x6BxdYUV7E=;
-        b=AHkej/B1mfm2h6OHO9LRjul+QcnubPRDTF056QLWkadd6YmPrnjIQ0undO3cGCLteJ
-         vDiXd6NaEvKkuA/Ov1EU6GibR2fq54JcogmaTLJSE1w8VxFhBCKMQa6nMSc7ama2AQUQ
-         MXjYRzIQXao10HPHfkljNhFskfJ1miN0PiAO2WXQdrS+ZTVMirEH1Q6Xpg47b+c9njcv
-         +AACxr8d7oedC2TVbLqVhCM7LVV6mcxDlsoJqTfbUea3qLJwtE8gHdguCFLj0gCiAbWC
-         v37fEvz+TIlhi8gACKPDc1wJUhIQBhzZpszZhnPvYhMiEv2bxIIzjLBufGN9GEE3sxzT
-         cfTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ga+YwIrD2LqYZ2tJvuqiZTtIXkFbIASL3x6BxdYUV7E=;
-        b=UT08yQ/5+vz5laaT4OYPNDAQn/BQt+HCC5ze4ApbUmmqWJEY1WspjCHlbWR4p5BAep
-         knvo2I8zAq+MrCO+nxPQDuFxN53Bm5y5Nmn7zGgk0iN1UxQCybIdL6M/MhL9ExlU/hGw
-         UWaRUYxq6hVuh6e9zOkoWfVJkerQxhZRwMPAy9YfIfAKHVIWTYarbkCAm8JxgAlq80aE
-         5rrH7U1Ra5RObslkQ0Ma/MvumcCqiiZKFHsZkAEaWj6qNHMqFZSfyY017Jx+46KtjdIm
-         eqFUkQ1PCEeYwiP3RBHCBELRZS9/Q1rpQolk6ib/yhfzdEmSPIicLaHs9sHJ/ONIZPDw
-         /ktg==
-X-Gm-Message-State: APjAAAWI5c1eH/uj+HbzTQDe9w1r1yoe6rZt+Xf5v0I+12qIfd8xHO5L
-        xEJKnTEbBhyohstb2DlIvtQ9kclR6mo=
-X-Google-Smtp-Source: APXvYqyvWx9JbKk03RcDjA3pShyMvYT0hK97AL2s1HrAwQ3kyP6xBm3hM8uqoOdedFI3inNXlGh+zw==
-X-Received: by 2002:a5d:528b:: with SMTP id c11mr299403wrv.25.1561480506602;
-        Tue, 25 Jun 2019 09:35:06 -0700 (PDT)
-Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id g8sm2683795wme.20.2019.06.25.09.35.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Jun 2019 09:35:06 -0700 (PDT)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        David Lechner <david@lechnology.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 12/12] fbdev: da8xx: use resource management for dma
-Date:   Tue, 25 Jun 2019 18:34:34 +0200
-Message-Id: <20190625163434.13620-13-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190625163434.13620-1-brgl@bgdev.pl>
-References: <20190625163434.13620-1-brgl@bgdev.pl>
+        Tue, 25 Jun 2019 12:37:07 -0400
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1hfoRJ-0003sY-Ib; Tue, 25 Jun 2019 18:37:01 +0200
+Date:   Tue, 25 Jun 2019 18:37:01 +0200
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Joe Perches <joe@perches.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] get_maintainer: Add --prefix option
+Message-ID: <20190625163701.xcb2ue7phpskvfnz@linutronix.de>
+References: <20190624130323.14137-1-bigeasy@linutronix.de>
+ <20190624133333.GW3419@hirez.programming.kicks-ass.net>
+ <9528bb2c4455db9e130576120c8b985b9dd94e3d.camel@perches.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <9528bb2c4455db9e130576120c8b985b9dd94e3d.camel@perches.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+The --prefix option adds a Cc: prefix by default infront of the email
+address so it can be used by other Scripts directly instead of adding
+another wrapper for this.
+The option takes an optional argument so "--prefix=Bcc: " is also valid.
+Since it is expected to be output an email address it implies
+"--no-roles --no-rolestats".
 
-Use managed variants of dma alloc functions in the da8xx fbdev driver.
-
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Suggested-by: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- drivers/video/fbdev/da8xx-fb.c | 32 ++++++++++----------------------
- 1 file changed, 10 insertions(+), 22 deletions(-)
+On 2019-06-24 07:27:47 [-0700], Joe Perches wrote:
+> On Mon, 2019-06-24 at 15:33 +0200, Peter Zijlstra wrote:
+> > Would it make sense to make '--cc' imply --no-roles --no-rolestats ?
+> 
+> Maybe.
+> 
+> It's also unlikely to be sensibly used with mailing
+> lists so maybe --nol too.
 
-diff --git a/drivers/video/fbdev/da8xx-fb.c b/drivers/video/fbdev/da8xx-fb.c
-index 6b11a8108108..22f79b3c2326 100644
---- a/drivers/video/fbdev/da8xx-fb.c
-+++ b/drivers/video/fbdev/da8xx-fb.c
-@@ -1087,10 +1087,6 @@ static int fb_remove(struct platform_device *dev)
+I don't see a problem with lists but I think it would make sense to
+imply also "--nomoderated" once available.
+
+v1…v2:
+	- use --prefix instead --cc with "Cc: " as the default argument
+	  if not specified
+	- imply --no-roles --no-rolestats
+
+ scripts/get_maintainer.pl | 18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
+
+diff --git a/scripts/get_maintainer.pl b/scripts/get_maintainer.pl
+index c1c088ef1420e..60da8444d6667 100755
+--- a/scripts/get_maintainer.pl
++++ b/scripts/get_maintainer.pl
+@@ -46,6 +46,8 @@ my $output_multiline = 1;
+ my $output_separator = ", ";
+ my $output_roles = 0;
+ my $output_rolestats = 1;
++my $output_prefix = undef;
++my $cc_prefix = "";
+ my $output_section_maxlen = 50;
+ my $scm = 0;
+ my $tree = 1;
+@@ -252,6 +254,7 @@ if (!GetOptions(
+ 		'multiline!' => \$output_multiline,
+ 		'roles!' => \$output_roles,
+ 		'rolestats!' => \$output_rolestats,
++		'prefix:s' => \$output_prefix,
+ 		'separator=s' => \$output_separator,
+ 		'subsystem!' => \$subsystem,
+ 		'status!' => \$status,
+@@ -298,6 +301,16 @@ $output_multiline = 0 if ($output_separator ne ", ");
+ $output_rolestats = 1 if ($interactive);
+ $output_roles = 1 if ($output_rolestats);
  
- 	unregister_framebuffer(info);
- 	fb_dealloc_cmap(&info->cmap);
--	dma_free_coherent(par->dev, PALETTE_SIZE, par->v_palette_base,
--			  par->p_palette_base);
--	dma_free_coherent(par->dev, par->vram_size, par->vram_virt,
--			  par->vram_phys);
- 	pm_runtime_put_sync(&dev->dev);
- 	pm_runtime_disable(&dev->dev);
- 	framebuffer_release(info);
-@@ -1428,10 +1424,10 @@ static int fb_probe(struct platform_device *device)
- 	par->vram_size = roundup(par->vram_size/8, ulcm);
- 	par->vram_size = par->vram_size * LCD_NUM_BUFFERS;
++if (defined($output_prefix)) {
++    if ($output_prefix eq "") {
++         $cc_prefix = "Cc: ";
++    } else {
++         $cc_prefix = $output_prefix;
++    }
++    $output_rolestats = 0;
++    $output_roles = 0;
++}
++
+ if ($sections || $letters ne "") {
+     $sections = 1;
+     $email = 0;
+@@ -1037,6 +1050,7 @@ version: $V
+   --separator [, ] => separator for multiple entries on 1 line
+     using --separator also sets --nomultiline if --separator is not [, ]
+   --multiline => print 1 entry per line
++  --prefix => prints a prefix infront of the entry. CC: is default if not specified
  
--	par->vram_virt = dma_alloc_coherent(par->dev,
--					    par->vram_size,
--					    &par->vram_phys,
--					    GFP_KERNEL | GFP_DMA);
-+	par->vram_virt = dmam_alloc_coherent(par->dev,
-+					     par->vram_size,
-+					     &par->vram_phys,
-+					     GFP_KERNEL | GFP_DMA);
- 	if (!par->vram_virt) {
- 		dev_err(&device->dev,
- 			"GLCD: kmalloc for frame buffer failed\n");
-@@ -1449,20 +1445,20 @@ static int fb_probe(struct platform_device *device)
- 		da8xx_fb_fix.line_length - 1;
- 
- 	/* allocate palette buffer */
--	par->v_palette_base = dma_alloc_coherent(par->dev, PALETTE_SIZE,
--						 &par->p_palette_base,
--						 GFP_KERNEL | GFP_DMA);
-+	par->v_palette_base = dmam_alloc_coherent(par->dev, PALETTE_SIZE,
-+						  &par->p_palette_base,
-+						  GFP_KERNEL | GFP_DMA);
- 	if (!par->v_palette_base) {
- 		dev_err(&device->dev,
- 			"GLCD: kmalloc for palette buffer failed\n");
- 		ret = -EINVAL;
--		goto err_release_fb_mem;
-+		goto err_release_fb;
+ Other options:
+   --pattern-depth => Number of pattern directory traversals (default: 0 (all))
+@@ -2462,9 +2476,9 @@ sub merge_email {
+ 	my ($address, $role) = @$_;
+ 	if (!$saw{$address}) {
+ 	    if ($output_roles) {
+-		push(@lines, "$address ($role)");
++		push(@lines, "$cc_prefix" . "$address ($role)");
+ 	    } else {
+-		push(@lines, $address);
++		push(@lines, "$cc_prefix" . "$address");
+ 	    }
+ 	    $saw{$address} = 1;
  	}
- 
- 	par->irq = platform_get_irq(device, 0);
- 	if (par->irq < 0) {
- 		ret = -ENOENT;
--		goto err_release_pl_mem;
-+		goto err_release_fb;
- 	}
- 
- 	da8xx_fb_var.grayscale =
-@@ -1480,7 +1476,7 @@ static int fb_probe(struct platform_device *device)
- 
- 	ret = fb_alloc_cmap(&da8xx_fb_info->cmap, PALETTE_SIZE, 0);
- 	if (ret)
--		goto err_release_pl_mem;
-+		goto err_release_fb;
- 	da8xx_fb_info->cmap.len = par->palette_sz;
- 
- 	/* initialize var_screeninfo */
-@@ -1534,14 +1530,6 @@ static int fb_probe(struct platform_device *device)
- err_dealloc_cmap:
- 	fb_dealloc_cmap(&da8xx_fb_info->cmap);
- 
--err_release_pl_mem:
--	dma_free_coherent(par->dev, PALETTE_SIZE, par->v_palette_base,
--			  par->p_palette_base);
--
--err_release_fb_mem:
--	dma_free_coherent(par->dev, par->vram_size, par->vram_virt,
--		          par->vram_phys);
--
- err_release_fb:
- 	framebuffer_release(da8xx_fb_info);
- 
 -- 
-2.21.0
+2.20.1
 
