@@ -2,193 +2,183 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1498552739
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 10:55:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A7AE52738
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 10:55:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731140AbfFYIz5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 04:55:57 -0400
-Received: from mailgw02.mediatek.com ([1.203.163.81]:13548 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1730923AbfFYIzz (ORCPT
+        id S1731117AbfFYIzx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 04:55:53 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:34678 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731075AbfFYIzx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 04:55:55 -0400
-X-UUID: 8a407f64fa044f7c9e5ff29f519f0d6e-20190625
-X-UUID: 8a407f64fa044f7c9e5ff29f519f0d6e-20190625
-Received: from mtkcas36.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
-        (envelope-from <chunfeng.yun@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 2075891572; Tue, 25 Jun 2019 16:55:50 +0800
-Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS31N1.mediatek.inc
- (172.27.4.69) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 25 Jun
- 2019 16:55:48 +0800
-Received: from [10.17.3.153] (172.27.4.253) by MTKCAS36.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 25 Jun 2019 16:55:47 +0800
-Message-ID: <1561452947.32589.25.camel@mhfsdcap03>
-Subject: Re: [PATCH v7 09/10] usb: roles: add USB Type-B GPIO connector
- driver
-From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
-To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
-CC:     Rob Herring <robh+dt@kernel.org>,
+        Tue, 25 Jun 2019 04:55:53 -0400
+Received: by mail-pl1-f194.google.com with SMTP id i2so8477636plt.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 01:55:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=+IzEucIG54RmCyKHNUFpI/gXT16OQrPA9k18KegFQh4=;
+        b=EO3l1E7x1mMuMayS9FO0D6d2bRbRNDKZRvMX/rPQnRqccWt+GtKsk3FuusXMkc3URA
+         DnB9oA01u1WluZXmCdTzBipssgWFyA2lSgLLE3XGF5I0dSHZXfg43pMyji9y5isEnZQ4
+         XWY8X7dxUtQmMXDm11+Scn/qfwHiVRks4+slosnPWPquEaIzqZzAQZ2oFZ4/lmhQtAnI
+         GAylyAGOgBdlwCl+jN0n3L2soEiQwl9frqHlNoxi014VoG2qF8bJB+r66slh0NEAVMeF
+         7KOkZu0IVqDLtELToKKjkB0Rw7CO8q2r/FGT/cG94Go603d+F4seCJMcugx2Rh9GiHcl
+         1upQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+IzEucIG54RmCyKHNUFpI/gXT16OQrPA9k18KegFQh4=;
+        b=lo9lloF5a0fWOHOHXhi8KU8rKVmfMISdHCR9ZGfLEEczVATbkugNQJWd81wAAGNwZO
+         DCCLx47xglefboRvjDw4bSSvhhAWB/gtvzKgB//FSY0PwG62zl7ZmCIjpX7aP0V2EJ0Q
+         Y+VF5uWEyGCrqKrvCZisvLgDM3J1a+VRcNOJzd++tRNuA2rDODp81JcFk3ZNBso4/e6X
+         o59WrVGnemwjjXLFm7A9emMqNOiS8vpMDRkml52tYIPAXpxapNziWej4GAcWpEV1nAMi
+         7GrxkXMWG2G/tuqKBG3bU8hxN5sD5IbnfzgCNR+6hO0uWpubti08TDHbSs9BESjIo7Xv
+         OexA==
+X-Gm-Message-State: APjAAAWAOpN0FI0DCzCg7qHEiovkcoYRJqR3qSBknVA+DQOQHbyFk2LV
+        9HHbq9FYr8kkXsoNyU+6TDw=
+X-Google-Smtp-Source: APXvYqwCyQGa5cQvhhE258d2uOknwV0ovFPxPJQB0IR6EXa3DE+qIKDGPik6Rks2qO4/9qV3l3NLcg==
+X-Received: by 2002:a17:902:e65:: with SMTP id 92mr146290242plw.13.1561452952337;
+        Tue, 25 Jun 2019 01:55:52 -0700 (PDT)
+Received: from localhost ([175.223.22.38])
+        by smtp.gmail.com with ESMTPSA id j13sm13725770pfh.13.2019.06.25.01.55.50
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 25 Jun 2019 01:55:51 -0700 (PDT)
+Date:   Tue, 25 Jun 2019 17:55:48 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     John Ogness <john.ogness@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "Matthias Brugger" <matthias.bgg@gmail.com>,
-        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
-        Li Jun <jun.li@nxp.com>,
-        "Badhri Jagan Sridharan" <badhri@google.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Min Guo <min.guo@mediatek.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Yu Chen <chenyu56@huawei.com>,
-        "Nagarjuna Kristam" <nkristam@nvidia.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>
-Date:   Tue, 25 Jun 2019 16:55:47 +0800
-In-Reply-To: <20190624095827.GA6501@kuha.fi.intel.com>
-References: <1560242680-23844-1-git-send-email-chunfeng.yun@mediatek.com>
-         <1560242680-23844-10-git-send-email-chunfeng.yun@mediatek.com>
-         <20190624095827.GA6501@kuha.fi.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [RFC PATCH v2 1/2] printk-rb: add a new printk ringbuffer
+ implementation
+Message-ID: <20190625085548.GA532@jagdpanzerIV>
+References: <20190607162349.18199-1-john.ogness@linutronix.de>
+ <20190607162349.18199-2-john.ogness@linutronix.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190607162349.18199-2-john.ogness@linutronix.de>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Heikki,
+On (06/07/19 18:29), John Ogness wrote:
+[..]
+> +static void add_descr_list(struct prb_reserved_entry *e)
+> +{
+> +	struct printk_ringbuffer *rb = e->rb;
+> +	struct prb_list *l = &rb->descr_list;
+> +	struct prb_descr *d = e->descr;
+> +	struct prb_descr *newest_d;
+> +	unsigned long newest_id;
+> +
+> +	/* set as newest */
+> +	do {
+> +		/* MB5: synchronize add descr */
+> +		newest_id = smp_load_acquire(&l->newest);
+> +		newest_d = TO_DESCR(rb, newest_id);
+> +
+> +		if (newest_id == EOL)
+> +			WRITE_ONCE(d->seq, 1);
+> +		else
+> +			WRITE_ONCE(d->seq, READ_ONCE(newest_d->seq) + 1);
+> +		/*
+> +		 * MB5: synchronize add descr
+> +		 *
+> +		 * In particular: next written before cmpxchg
+> +		 */
+> +	} while (cmpxchg_release(&l->newest, newest_id, e->id) != newest_id);
+> +
+> +	if (unlikely(newest_id == EOL)) {
+> +		/* no previous newest means we *are* the list, set oldest */
+> +
+> +		/*
+> +		 * MB UNPAIRED
+> +		 *
+> +		 * In particular: Force cmpxchg _after_ cmpxchg on newest.
+> +		 */
+> +		WARN_ON_ONCE(cmpxchg_release(&l->oldest, EOL, e->id) != EOL);
+> +	} else {
+> +		/* link to previous chain */
+> +
+> +		/*
+> +		 * MB6: synchronize link descr
+> +		 *
+> +		 * In particular: Force cmpxchg _after_ cmpxchg on newest.
+> +		 */
+> +		WARN_ON_ONCE(cmpxchg_release(&newest_d->next,
+> +					     EOL, e->id) != EOL);
+> +	}
+> +}
 
-On Mon, 2019-06-24 at 12:58 +0300, Heikki Krogerus wrote:
-> Hi Chunfeng,
-> 
-> On Tue, Jun 11, 2019 at 04:44:39PM +0800, Chunfeng Yun wrote:
-> > Due to the requirement of usb-connector.txt binding, the old way
-> > using extcon to support USB Dual-Role switch is now deprecated
-> > when use Type-B connector.
-> > This patch introduces a driver of Type-B connector which typically
-> > uses an input GPIO to detect USB ID pin, and try to replace the
-> > function provided by extcon-usb-gpio driver
-> 
-> I'm sorry for asking this so late, but why is this driver a Type-B
-> specific driver (I really thought somebody had already asked this
-> question)?
-It's mainly used for Type-B connector with ID pin. 
+[..]
 
-> 
-> I don't see anything Type-B specific in the driver. 
-It's need add another compatible "usb-b-connector" except the driver
-provided.
+> +char *prb_reserve(struct prb_reserved_entry *e, struct printk_ringbuffer *rb,
+> +		  unsigned int size)
+> +{
+> +	struct prb_datablock *b;
+> +	struct prb_descr *d;
+> +	char *buf;
+> +
+> +	if (size == 0)
+> +		return NULL;
+> +
+> +	size += sizeof(struct prb_datablock);
+> +	size = DATA_ALIGN_SIZE(size);
+> +	if (size > DATAARRAY_SIZE(rb))
+> +		return NULL;
+> +
+> +	e->rb = rb;
+> +
+> +	local_irq_save(e->irqflags);
+> +
+> +	if (!assign_descr(e))
+> +		goto err_out;
+> +
+> +	d = e->descr;
+> +	WRITE_ONCE(d->id, e->id);
+> +
+> +	if (!data_reserve(e, size)) {
+> +		/* put invalid descriptor on list, can still be traversed */
+> +		WRITE_ONCE(d->next, EOL);
+> +		add_descr_list(e);
+> +		goto err_out;
+> +	}
 
-> Basically it looks
-> to me like just a gpio based connection detection driver that would
-> work fine with for example uAB connectors..
-Yes, it is.
-> 
-> > Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
-> > Tested-by: Nagarjuna Kristam <nkristam@nvidia.com>
-> > ---
-> > v7 changes:
-> >   1. remove macro DEV_PMS_OPS suggested by Andy
-> >   2. add tested-by Nagarjuna
-> > 
-> > v6 changes:
-> >   1. get usb-role-swtich by usb_role_switch_get()
-> > 
-> > v5 changes:
-> >   1. put usb_role_switch when error happens suggested by Biju
-> >   2. don't treat bype-B connector as a virtual device suggested by Rob
-> > 
-> > v4 changes:
-> >   1. remove linux/gpio.h suggested by Linus
-> >   2. put node when error happens
-> > 
-> > v3 changes:
-> >   1. treat bype-B connector as a virtual device;
-> >   2. change file name again
-> > 
-> > v2 changes:
-> >   1. file name is changed
-> >   2. use new compatible
-> > ---
-> >  drivers/usb/roles/Kconfig           |  11 ++
-> >  drivers/usb/roles/Makefile          |   1 +
-> >  drivers/usb/roles/typeb-conn-gpio.c | 284 ++++++++++++++++++++++++++++
-> 
-> ..It also drives me crazy that you've put this driver under this
-> folder. It does not create a role switch so ideally it should not go
-> under driver/usb/roles/. 
-agree:)
+I'm wondering if prb can always report about its problems. Including the
+cases when things "go rather bad".
 
-> I think a better place for it would be
-> drivers/usb/misc/, or actually, maybe it should go under
-> drivers/usb/common/?
-I'm not sure, but prefer misc/ folder.
+Suppose we have
 
-Hi Greg, 
+	printk()
+	 prb_reserve()
+	  !data_reserve()
+	    add_descr_list()
+	     WARN_ON_ONCE()
+	      printk()
+	       prb_reserve()
+	        !assign_descr(e)   << lost WARN_ON's "printk" or "printks"?
 
-would you please give me some suggestions about this?  which folder I
-should put the driver into?
+In general, assuming that there might be more error printk-s either
+called directly directly from prb->printk on indirectly, from
+prb->ABC->printk.
 
-> 
-> Could you still rename the driver to something like "usb-gpio.c" or
-> conn-gpio.c,
-I think about the name for a long time before, and have some doubt
-whether it's suitable to add typeb into the name.
-How about using usb-conn-gpio.c or conn-usb-gpio.c?
+Also note,
+Lost printk-s are not going to be accounted as 'lost' automatically.
+It seems that for printk() there is no way to find out that it has
+recursed from printk->prb_commit but hasn't succeeded in storing
+recursive messages. I'd say that prb_reserve() err_out should probably
+&rb->lost++.
 
-Thanks a lot
-
->  or something else, and also move it under
-> drivers/usb/misc/ or drivers/usb/common/?
-> 
-> >  3 files changed, 296 insertions(+)
-> >  create mode 100644 drivers/usb/roles/typeb-conn-gpio.c
-> > 
-> > diff --git a/drivers/usb/roles/Kconfig b/drivers/usb/roles/Kconfig
-> > index f8b31aa67526..d1156e18a81a 100644
-> > --- a/drivers/usb/roles/Kconfig
-> > +++ b/drivers/usb/roles/Kconfig
-> > @@ -26,4 +26,15 @@ config USB_ROLES_INTEL_XHCI
-> >  	  To compile the driver as a module, choose M here: the module will
-> >  	  be called intel-xhci-usb-role-switch.
-> >  
-> > +config TYPEB_CONN_GPIO
-> > +	tristate "USB Type-B GPIO Connector"
-> 
-> USB GPIO connection detection driver?
-> 
-> > +	depends on GPIOLIB
-> > +	help
-> > +	  The driver supports USB role switch between host and device via GPIO
-> > +	  based USB cable detection, used typically if an input GPIO is used
-> > +	  to detect USB ID pin.
-> > +
-> > +	  To compile the driver as a module, choose M here: the module will
-> > +	  be called typeb-conn-gpio.ko
-> > +
-> >  endif # USB_ROLE_SWITCH
-> > diff --git a/drivers/usb/roles/Makefile b/drivers/usb/roles/Makefile
-> > index 757a7d2797eb..5d5620d9d113 100644
-> > --- a/drivers/usb/roles/Makefile
-> > +++ b/drivers/usb/roles/Makefile
-> > @@ -3,3 +3,4 @@
-> >  obj-$(CONFIG_USB_ROLE_SWITCH)		+= roles.o
-> >  roles-y					:= class.o
-> >  obj-$(CONFIG_USB_ROLES_INTEL_XHCI)	+= intel-xhci-usb-role-switch.o
-> > +obj-$(CONFIG_TYPEB_CONN_GPIO)		+= typeb-conn-gpio.o
-> > diff --git a/drivers/usb/roles/typeb-conn-gpio.c b/drivers/usb/roles/typeb-conn-gpio.c
-> > new file mode 100644
-> > index 000000000000..e3fba1656069
-> > --- /dev/null
-> > +++ b/drivers/usb/roles/typeb-conn-gpio.c
-> > @@ -0,0 +1,284 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-
-
+	-ss
