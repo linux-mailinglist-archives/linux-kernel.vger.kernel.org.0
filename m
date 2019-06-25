@@ -2,89 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20EDD52653
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 10:19:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00BD752658
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 10:19:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729253AbfFYITU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 04:19:20 -0400
-Received: from dc2-smtprelay2.synopsys.com ([198.182.61.142]:52974 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727887AbfFYITT (ORCPT
+        id S1729849AbfFYITv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 04:19:51 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:42855 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727944AbfFYITu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 04:19:19 -0400
-Received: from mailhost.synopsys.com (unknown [10.225.0.210])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id F3B2EC0A95;
-        Tue, 25 Jun 2019 08:19:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1561450759; bh=aiaPDl4vQuKro8j2vf1Kqy0H4j+cOhqNeVOWB+OGgCU=;
-        h=From:To:Cc:Subject:Date:From;
-        b=dL1lfL4rXACyWZtSu5IC6WSXdFjDZwXWGfnyOWzuuwJ8I+kZco6gwg4a7n7SW/XG4
-         NUiUBbW7l0l9COAzeakcDwEshZvyO9fsxjuMtyaG8T9S+GRiYxIZzr32OXaZPsXjiW
-         cWZ3YZ3d9Oe7F4FhOrVtFJ1Yb51f+n+QMoYI1INZyKQGw4JAx9yUaj8j/EqRySkj/x
-         4PDhzyd+xwjBlY/iFOdBc+Qm0lhkc7YaoEFi8qL/39m6KVnvuk7vkw0zmpkXkOAfs9
-         Oh1N4TJepLH17X0TU02mnSkai55czIglBRXR716OjXzSTnjjh1hOolKKgpymR7r26t
-         0rUX4PUgoRjKQ==
-Received: from de02.synopsys.com (germany.internal.synopsys.com [10.225.17.21])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 0BA10A022F;
-        Tue, 25 Jun 2019 08:19:16 +0000 (UTC)
-Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
-        by de02.synopsys.com (Postfix) with ESMTP id AC8CC3DD5A;
-        Tue, 25 Jun 2019 10:19:16 +0200 (CEST)
-From:   Jose Abreu <Jose.Abreu@synopsys.com>
-To:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Cc:     Jose Abreu <Jose.Abreu@synopsys.com>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-Subject: [PATCH net-next] net: stmmac: Fix the case when PHY handle is not present
-Date:   Tue, 25 Jun 2019 10:19:08 +0200
-Message-Id: <351cce38d1c572d8b171044f2856c7fae9f89cbc.1561450696.git.joabreu@synopsys.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 25 Jun 2019 04:19:50 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5P8J95X3526902
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Tue, 25 Jun 2019 01:19:09 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5P8J95X3526902
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019061801; t=1561450750;
+        bh=XsqDv1T1rRr5lHY6o0BgkRrJWsnwiR4Jo4jV97xYJtA=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=GVFXjoYFEEeL+7IarGsEAGJ8z3sX2YFfxmqyQzJqTexVjMvgySyH538NNgYyNKTT+
+         Y0XzJs6tes06TqQeJLxqGVdmRckgCE4aEQWPrv6aYPvg6PmY6roVde9iAviA7TKEkc
+         QjbPFZo09sFvqSIHCf+QW7Y0r6qCu08G9dH3FubiAX/0EXHjQmgR2GUYdd8yIgpsd+
+         aT26nPC42Nk0+Jkc+zLH7/anm114mMRAJtM/AX68zbJ0eLvdJq8OizrO0RHGVYeje9
+         3+VpWTUlPfiGkf/iNloM3IJBD4QMurEMQ7dCUlNRRT1iCaIAKblcLdTFRvmAQCqpt6
+         lA3UHxy/BIpzw==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5P8J9673526899;
+        Tue, 25 Jun 2019 01:19:09 -0700
+Date:   Tue, 25 Jun 2019 01:19:09 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Ravi Bangoria <tipbot@zytor.com>
+Message-ID: <tip-913a90bc5a3a06b1f04c337320e9aeee2328dd77@git.kernel.org>
+Cc:     jolsa@redhat.com, hpa@zytor.com, peterz@infradead.org,
+        alexander.shishkin@linux.intel.com, eranian@google.com,
+        mingo@kernel.org, ravi.bangoria@linux.ibm.com,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        vincent.weaver@maine.edu, acme@redhat.com,
+        torvalds@linux-foundation.org
+Reply-To: alexander.shishkin@linux.intel.com, peterz@infradead.org,
+          hpa@zytor.com, jolsa@redhat.com, mingo@kernel.org,
+          eranian@google.com, vincent.weaver@maine.edu,
+          linux-kernel@vger.kernel.org, tglx@linutronix.de,
+          ravi.bangoria@linux.ibm.com, torvalds@linux-foundation.org,
+          acme@redhat.com
+In-Reply-To: <20190604042953.914-1-ravi.bangoria@linux.ibm.com>
+References: <20190604042953.914-1-ravi.bangoria@linux.ibm.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] perf/ioctl: Add check for the sample_period value
+Git-Commit-ID: 913a90bc5a3a06b1f04c337320e9aeee2328dd77
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF autolearn=ham
+        autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some DT bindings do not have the PHY handle. Let's fallback to manually
-discovery in case phylink_of_phy_connect() fails.
+Commit-ID:  913a90bc5a3a06b1f04c337320e9aeee2328dd77
+Gitweb:     https://git.kernel.org/tip/913a90bc5a3a06b1f04c337320e9aeee2328dd77
+Author:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+AuthorDate: Tue, 4 Jun 2019 09:59:53 +0530
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Mon, 24 Jun 2019 19:19:22 +0200
 
-Reported-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
-Fixes: 74371272f97f ("net: stmmac: Convert to phylink and remove phylib logic")
-Signed-off-by: Jose Abreu <joabreu@synopsys.com>
-Cc: Joao Pinto <jpinto@synopsys.com>
-Cc: David S. Miller <davem@davemloft.net>
-Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
-Cc: Alexandre Torgue <alexandre.torgue@st.com>
+perf/ioctl: Add check for the sample_period value
+
+perf_event_open() limits the sample_period to 63 bits. See:
+
+  0819b2e30ccb ("perf: Limit perf_event_attr::sample_period to 63 bits")
+
+Make ioctl() consistent with it.
+
+Also on PowerPC, negative sample_period could cause a recursive
+PMIs leading to a hang (reported when running perf-fuzzer).
+
+Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Cc: acme@kernel.org
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: maddy@linux.vnet.ibm.com
+Cc: mpe@ellerman.id.au
+Fixes: 0819b2e30ccb ("perf: Limit perf_event_attr::sample_period to 63 bits")
+Link: https://lkml.kernel.org/r/20190604042953.914-1-ravi.bangoria@linux.ibm.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
-Hello Katsuhiro,
+ kernel/events/core.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Can you please test this patch ?
----
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index a48751989fa6..f4593d2d9d20 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -950,9 +950,12 @@ static int stmmac_init_phy(struct net_device *dev)
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 2e32faac5511..8d1c62df20a7 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -5005,6 +5005,9 @@ static int perf_event_period(struct perf_event *event, u64 __user *arg)
+ 	if (perf_event_check_period(event, value))
+ 		return -EINVAL;
  
- 	node = priv->plat->phylink_node;
- 
--	if (node) {
-+	if (node)
- 		ret = phylink_of_phy_connect(priv->phylink, node, 0);
--	} else {
++	if (!event->attr.freq && (value & (1ULL << 63)))
++		return -EINVAL;
 +
-+	/* Some DT bindings do not set-up the PHY handle. Let's try to
-+	 * manually parse it */
-+	if (!node || ret) {
- 		int addr = priv->plat->phy_addr;
- 		struct phy_device *phydev;
+ 	event_function_call(event, __perf_event_period, &value);
  
--- 
-2.7.4
-
+ 	return 0;
