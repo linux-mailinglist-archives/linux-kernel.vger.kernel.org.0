@@ -2,168 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 410CA52703
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 10:47:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C5D5152708
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 10:49:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730879AbfFYIrq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 04:47:46 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:38842 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726587AbfFYIrq (ORCPT
+        id S1730860AbfFYIs5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 04:48:57 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:37922 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726587AbfFYIs4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 04:47:46 -0400
-Received: by mail-pl1-f196.google.com with SMTP id g4so8446105plb.5;
-        Tue, 25 Jun 2019 01:47:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:thread-topic:thread-index:date:message-id
-         :references:in-reply-to:accept-language:content-language
-         :content-transfer-encoding:mime-version;
-        bh=RPiWSabt5JgoWs5z40nQXXXKrZ3PBISZqfHALf5K1aM=;
-        b=Sz0I0sBTv0opAvby7bD8S71CXkhtdKHo78vR6Pn6+4QMdTxjy3//L76zw/vAWyUGy2
-         vKfyVT5cwJIU9ErBxIrO+aysfc4rTx+L/UUtpscmht6Koz4m7Gl11GDCRUma4OEjkjej
-         oS/b+OvxwZHQo6IVeUTzp8lTeVSaMKbzDDhUS+th3DsbNYlyGi2r6mNPduuV1hHFRvPm
-         m/r08YrTfe9d5CbOdyKFeHy3LBhTgBurgssT64IC2QErCcAMI0LxOT6fD8fHRf6Po8t6
-         cRJZYk763nI/p3n6PwsYfndJCXrBJOzx2wc5xjk/2b0IUA5veoKwxH4MGEgbYuwBFeCN
-         /YoA==
+        Tue, 25 Jun 2019 04:48:56 -0400
+Received: by mail-pl1-f195.google.com with SMTP id g4so8447801plb.5
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 01:48:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:thread-topic:thread-index
-         :date:message-id:references:in-reply-to:accept-language
-         :content-language:content-transfer-encoding:mime-version;
-        bh=RPiWSabt5JgoWs5z40nQXXXKrZ3PBISZqfHALf5K1aM=;
-        b=OTnr0kw4CQ5bq+Ovfd7x7Eqdd2j5PcU7i8pKDw1VDt5EE+8mUfDfpnnS2wHBnJS8yp
-         iU2wqVS42Bx6Y96dXZV4e/fwVKwoCNwZxlMfQPW4pZdZiUMnSuGtiffAGd6vFY2fqJV3
-         wZFY/4dUxL7mZd4c07IIuFFmH3Imiet9Pde264+CwWz1zUX3AnYWp+TcBZBc5lygPEXS
-         o7qpSv3l848JF6/p6rWZWQSHC0d+CVEeroaiKNagPy/D6pM7mSrknhdnLG1VbhHKI8Vx
-         dkbcc1ugkan7/0fZd4BcFPiqtrP/QMjdbQ69yTvekKKS1NkiMWLndcOjJ00zweKbJRLd
-         Zj4Q==
-X-Gm-Message-State: APjAAAXWxtOawAkRMOUe3KQ7EiMC5vXWJ67ojFsA8HbJG0y1AxLoSCDu
-        wkt236sk5GLnGzmImaGHQtI=
-X-Google-Smtp-Source: APXvYqxS9rd6025LvTXepoBuM+Fl4OiltcA6UGOv+QgfZAo2tiZuTDpVYaKa7WQBS7h9Ta9iSNENeQ==
-X-Received: by 2002:a17:902:7787:: with SMTP id o7mr7143805pll.120.1561452465723;
-        Tue, 25 Jun 2019 01:47:45 -0700 (PDT)
-Received: from PSXP216MB0662.KORP216.PROD.OUTLOOK.COM ([40.100.44.181])
-        by smtp.gmail.com with ESMTPSA id k19sm6987917pgl.42.2019.06.25.01.47.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Jun 2019 01:47:44 -0700 (PDT)
-From:   Jingoo Han <jingoohan1@gmail.com>
-To:     Vidya Sagar <vidyas@nvidia.com>,
-        "gustavo.pimentel@synopsys.com" <gustavo.pimentel@synopsys.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "Jisheng.Zhang@synaptics.com" <Jisheng.Zhang@synaptics.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "kishon@ti.com" <kishon@ti.com>
-CC:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kthota@nvidia.com" <kthota@nvidia.com>,
-        "mmaddireddy@nvidia.com" <mmaddireddy@nvidia.com>,
-        "sagar.tv@gmail.com" <sagar.tv@gmail.com>,
-        Han Jingoo <jingoohan1@gmail.com>
-Subject: Re: [PATCH V8 2/3] PCI: dwc: Cleanup DBI,ATU read and write APIs
-Thread-Topic: [PATCH V8 2/3] PCI: dwc: Cleanup DBI,ATU read and write APIs
-Thread-Index: AQHVKk1mZn06E4x3n0K7Ma23pehWQqasEKv6
-X-MS-Exchange-MessageSentRepresentingType: 1
-Date:   Tue, 25 Jun 2019 08:47:39 +0000
-Message-ID: <PSXP216MB066244DBB956E189F6B88559AAE30@PSXP216MB0662.KORP216.PROD.OUTLOOK.COM>
-References: <20190624052611.11279-1-vidyas@nvidia.com>
- <20190624052611.11279-2-vidyas@nvidia.com>
-In-Reply-To: <20190624052611.11279-2-vidyas@nvidia.com>
-Accept-Language: ko-KR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-Exchange-Organization-SCL: -1
-X-MS-TNEF-Correlator: 
-X-MS-Exchange-Organization-RecordReviewCfmType: 0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        h=x-gm-message-state:subject:date:message-id:mime-version
+         :content-transfer-encoding:cc:from:to;
+        bh=SbHI+2ZPe2F4trO/RmKldIi3BUNe0clBDqy+3ySKREk=;
+        b=Ln6MRThspN5yLcmhMSc5mI3lxabCG+/8pwVbgIs+S4arEpy//800m+lc+5vwtmDk+u
+         UDqvJB9jJsAstkMxuOHftK8Y2Bz8EercnXYgUcPRH7H1WQwlmOWuy8Cvz2hZwaOvNML9
+         5JB1MX+cz2qvNAgzZzOpsLZChAIbUsIr2mgGe8KX9tUhT++dSLqVUdI2Qrh3Hlk/Im+j
+         yN/RzKgv8lV07jXXAytUIRnzcnG5dhzFz/QYy29OjKXtlNA8yvEZe1x6LiXLE8nTo2ZL
+         971bogs830TREYDCtOnUnAbTK3+awrRKaE6Oc0A2wRUHMRtFgJOXq8TmYqXergLs9jnu
+         74LQ==
+X-Gm-Message-State: APjAAAWQ7tI4kGCLVlKP1+Ss9EAWsHO51o8AyQKN8RiK5TdO6WF3ejF7
+        17X13F0yaS4dNUglk9TfRZQTwpHMpgZrMNBT
+X-Google-Smtp-Source: APXvYqzICITq0LF39qdmLn3FbbAFe2vxOW+Jt8WI+imgxcTmTRasfjQerDzKPJEAr1yYLpBhtC6JIw==
+X-Received: by 2002:a17:902:28e9:: with SMTP id f96mr103841484plb.114.1561452535820;
+        Tue, 25 Jun 2019 01:48:55 -0700 (PDT)
+Received: from localhost (220-132-236-182.HINET-IP.hinet.net. [220.132.236.182])
+        by smtp.gmail.com with ESMTPSA id e26sm14280998pfn.94.2019.06.25.01.48.52
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 25 Jun 2019 01:48:54 -0700 (PDT)
+Subject: net: macb: Fix compilation on systems without COMMON_CLK, v2
+Date:   Tue, 25 Jun 2019 01:48:26 -0700
+Message-Id: <20190625084828.540-1-palmer@sifive.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Cc:     davem@davemloft.net, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From:   Palmer Dabbelt <palmer@sifive.com>
+To:     nicolas.ferre@microchip.com, harinik@xilinx.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/24/19, 2:26 PM, Vidya Sagar wrote:
->
-> Cleanup DBI read and write APIs by removing "__" (underscore) from their
-> names as there are no no-underscore versions and the underscore versions
-> are already doing what no-underscore versions typically do. It also remov=
-es
-> passing dbi/dbi2 base address as one of the arguments as the same can be
-> derived with in read and write APIs. Since dw_pcie_{readl/writel}_dbi()
-> APIs can't be used for ATU read/write as ATU base address could be
-> different from DBI base address, this patch attempts to implement
-> ATU read/write APIs using ATU base address without using
-> dw_pcie_{readl/writel}_dbi() APIs.
->
-> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-> ---
-> Changes from v7:
-> * Based on suggestion from Jingoo Han, moved implementation of readl, wri=
-tel for ATU
->   region to separate APIs dw_pcie_{read/write}_atu() in pcie-designware.c=
- file and
->   calling them from pcie-designware.h file.
->
-> Changes from v6:
-> * Modified ATU read/write APIs to use implementation specific DBI read/wr=
-ite
->   APIs if present.
->
-> Changes from v5:
-> * Removed passing base address as one of the arguments as the same can be=
- derived within
->   the API itself.
-> * Modified ATU read/write APIs to call dw_pcie_{write/read}() API
->
-> Changes from v4:
-> * This is a new patch in this series
->
->  drivers/pci/controller/dwc/pcie-designware.c | 28 +++++------
->  drivers/pci/controller/dwc/pcie-designware.h | 51 +++++++++++++-------
->  2 files changed, 45 insertions(+), 34 deletions(-)
+Our patch to add support for the FU540-C000 broke compilation on at
+least powerpc allyesconfig, which was found as part of the linux-next
+build regression tests.  This must have somehow slipped through the
+cracks, as the patch has been reverted in linux-next for a while now.
+This patch applies on top of the offending commit, which is the only one
+I've even tried it on as I'm not sure how this subsystem makes it to
+Linus.
 
-.......
+This patch set fixes the issue by adding a dependency of COMMON_CLK to
+the MACB Kconfig entry, which avoids the build failure by disabling MACB
+on systems where it wouldn't compile.  All known users of MACB have
+COMMON_CLK, so this shouldn't cause any issues.  This is a significantly
+simpler approach than disabling just the FU540-C000 support.
 
-> +u32 dw_pcie_read_atu(struct dw_pcie *pci, u32 reg, size_t size)
-> +{
-> +	int ret;
-> +	u32 val;
-> +
-> +	if (pci->ops->read_dbi)
-> +		return pci->ops->read_dbi(pci, pci->atu_base, reg, size);
-> +
-> +	ret =3D dw_pcie_read(pci->atu_base + reg, size, &val);
-> +	if (ret)
-> +		dev_err(pci->dev, "Read ATU address failed\n");
-> +
-> +	return val;
-> +}
-> +EXPORT_SYMBOL_GPL(dw_pcie_read_atu);
+I've also included a second patch to indicate this is a driver for a
+Cadence device that was originally written by an engineer at Atmel.  The
+only relation is that I stumbled across it when writing the first patch.
 
-Don't export dw_pcie_read_atu unnecessarily.
+Changes since v1 <20190624061603.1704-1-palmer@sifive.com>:
 
-> +
-> +void dw_pcie_write_atu(struct dw_pcie *pci, u32 reg, size_t size, u32 va=
-l)
-> +{
-> +	int ret;
-> +
-> +	if (pci->ops->write_dbi) {
-> +		pci->ops->write_dbi(pci, pci->atu_base, reg, size, val);
-> +		return;
-> +	}
-> +
-> +	ret =3D dw_pcie_write(pci->atu_base + reg, size, val);
-> +	if (ret)
-> +		dev_err(pci->dev, "Write ATU address failed\n");
-> +}
-> +EXPORT_SYMBOL_GPL(dw_pcie_write_atu);
+* Disable MACB on systems without COMMON_CLK, instead of just disabling
+  the FU540-C000 support on these systems.
+* Update the commit message to reflect the driver was written by Atmel.
 
-Don't export dw_pcie_write_atu unnecessarily.
 
-Best regards,
-Jingoo Han
-
-.....
