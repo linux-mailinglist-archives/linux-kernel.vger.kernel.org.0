@@ -2,69 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0116154D77
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 13:21:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C1C1354E3D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 14:04:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730189AbfFYLV5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 07:21:57 -0400
-Received: from tartarus.angband.pl ([54.37.238.230]:50050 "EHLO
-        tartarus.angband.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727138AbfFYLV4 (ORCPT
+        id S1731596AbfFYME2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 08:04:28 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:41965 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726557AbfFYME1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 07:21:56 -0400
-Received: from kilobyte by tartarus.angband.pl with local (Exim 4.92)
-        (envelope-from <kilobyte@angband.pl>)
-        id 1hfjWE-0003Yy-Fc; Tue, 25 Jun 2019 13:21:46 +0200
-Date:   Tue, 25 Jun 2019 13:21:46 +0200
-From:   Adam Borowski <kilobyte@angband.pl>
-To:     John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>, Arnd Bergmann <arnd@arndb.de>,
-        linux-sh@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC] remove arch/sh?
-Message-ID: <20190625112146.GA9580@angband.pl>
-References: <20190625085616.GA32399@lst.de>
- <ccfa78f3-35c2-1d26-98b5-b21a76b90e1e@physik.fu-berlin.de>
+        Tue, 25 Jun 2019 08:04:27 -0400
+Received: by mail-lf1-f67.google.com with SMTP id 136so12436000lfa.8
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 05:04:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=dF0IbJavBkDmedpj3yJyJEczStf0zljEZ8y8GfrnLNo=;
+        b=hZRADPizKg59OjucPBI3M0TUhnj8/1G1RIWD4zZbMQjcz8KM4CL4S+r66k1z7jRWqY
+         I+Qsw9vnUgoKZVK8z74l0ZwEZ5FmjLRHeGGsz2YpjdwS6dSEYMH82ElW4689vbo/7B61
+         sanDevh+OlBX3C5KyD8iujyOd0GaUoLg7N5JQMUQnTZeeavqf5yX2ij6+bFa3rBhevya
+         rNWGq4ASu/C5OhvTm03GcPSKRhVjdzDfIo4aY4rYi+JYYofnvMvEUp7VUaszHQJhU2A9
+         O5VUYsLKjJKuzh4LzmqbVJpqGwIzi0iwVRrHIy4tX84EfC2KAcgbeCoMlE7BLOEHRuNZ
+         q/qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=dF0IbJavBkDmedpj3yJyJEczStf0zljEZ8y8GfrnLNo=;
+        b=k0OMxRGh4EpO6nDdnruggWS6UTF5TbMb+LblyL63zD69xmL5++5pe7QhcArzZkFj7s
+         R3jJHtF8dUHrioI4KIhRVPiY4hWcUhk/QDNh310TLAO+fCzV0mV6zcsCYM7/uB1exsQX
+         hn3r8b6vikjZxXu0wkp+uAk/6gD4TUyv9M8gTNA3ENKL+ioNgbhSy5DSBj8Kg8W4Rk+N
+         AK7AMDgQc/f+h45aeDT0p31FEoV/wjGJ/MlLAEJ2DhvkLNHqa+Ju5yBLgOfBZZZb+WTJ
+         RUW0URUb9+0fnJU1fNN+14cwlDwZ2NcEWwqFiUjQQiIb2oli5zlxzDsuro6NOfPZD/Hc
+         1+9w==
+X-Gm-Message-State: APjAAAWsVixdpnULDPXWhjiu6SL3xMZ8prfe2oXo3jI0DddbSTrIyjy0
+        4FM+VSNgX04KSGePig6tx8+y6Q==
+X-Google-Smtp-Source: APXvYqwE0jVw8SSrbGCE55bdvMBAD//3OUaYwM0AqC52kAzrBq0+YhNc2p7IsfW9HIfpQvIyWtX8Fw==
+X-Received: by 2002:a05:6512:24a:: with SMTP id b10mr77179858lfo.37.1561464265290;
+        Tue, 25 Jun 2019 05:04:25 -0700 (PDT)
+Received: from localhost (h85-30-9-151.cust.a3fiber.se. [85.30.9.151])
+        by smtp.gmail.com with ESMTPSA id h4sm2245272ljj.31.2019.06.25.05.04.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 25 Jun 2019 05:04:24 -0700 (PDT)
+Date:   Tue, 25 Jun 2019 04:21:48 -0700
+From:   Olof Johansson <olof@lixom.net>
+To:     Wei Xu <xuwei5@hisilicon.com>
+Cc:     arm@kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        arnd@arndb.de, linuxarm@huawei.com,
+        "xuwei (O)" <xuwei5@huawei.com>,
+        John Garry <john.garry@huawei.com>, bhelgaas@google.com,
+        linux-pci@vger.kernel.org, rjw@rjwysocki.net,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Zhangyi ac <zhangyi.ac@huawei.com>,
+        "Liguozhu (Kenneth)" <liguozhu@hisilicon.com>,
+        jinying@hisilicon.com, huangdaode <huangdaode@hisilicon.com>,
+        Tangkunshan <tangkunshan@huawei.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Shameerali Kolothum Thodi 
+        <shameerali.kolothum.thodi@huawei.com>,
+        Shiju Jose <shiju.jose@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>
+Subject: Re: [GIT PULL] Hisilicon fixes for v5.2
+Message-ID: <20190625112148.ckj7sgdgvyeel7vy@localhost>
+References: <b89ef8f0-d102-7f78-f373-cbcc7faddee3@hisilicon.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ccfa78f3-35c2-1d26-98b5-b21a76b90e1e@physik.fu-berlin.de>
-X-Junkbait: aaron@angband.pl, zzyx@angband.pl
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: kilobyte@angband.pl
-X-SA-Exim-Scanned: No (on tartarus.angband.pl); SAEximRunCond expanded to false
+In-Reply-To: <b89ef8f0-d102-7f78-f373-cbcc7faddee3@hisilicon.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 25, 2019 at 11:02:36AM +0200, John Paul Adrian Glaubitz wrote:
-> On 6/25/19 10:56 AM, Christoph Hellwig wrote:
-> > arch/sh seems pretty much unmaintained these days.  The last time I got
-> > any reply to sh patches from the list maintainers, and the last maintainer
-> > pull request was over a year ago, and even that has been rather sporadic.
-> > 
-> > In the meantime we've not really seen any updates for new kernel features
-> > and code seems to be bitrotting.
+On Tue, Jun 25, 2019 at 11:23:21AM +0100, Wei Xu wrote:
+> Hi ARM-SoC team,
 > 
-> We're still using sh4 in Debian
+> Please consider to pull the following changes.
+> Thanks!
+> 
+> Best Regards,
+> Wei
+> 
+> ---
+> 
+> The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
+> 
+>   Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
+> 
+> are available in the Git repository at:
+> 
+>   git://github.com/hisilicon/linux-hisi.git tags/hisi-fixes-for-5.2
+> 
+> for you to fetch changes up to 07c811af1c00d7b4212eac86900b023b6405a954:
+> 
+>   lib: logic_pio: Enforce LOGIC_PIO_INDIRECT region ops are set at registration (2019-06-25 09:40:42 +0100)
+> 
+> ----------------------------------------------------------------
+> Hisilicon fixes for v5.2-rc
+> 
+> - fixed RCU usage in logical PIO
+> - Added a function to unregister a logical PIO range in logical PIO
+>   to support the fixes in the hisi-lpc driver
+> - fixed and optimized hisi-lpc driver to avoid potential use-after-free
+>   and driver unbind crash
 
-I wouldn't call it "used": it has popcon of 1, and despite watching many
-Debian channels, I don't recall hearing a word about sh4 in quite a while.
-
-Hardware development is dead: we were promised modern silicon by j-core
-after original patents expired, but after J2 nothing happened, there was
-silence from their side, and now https://j-core.org is down.
+Merged to fixes, thanks.
 
 
-Meow!
--- 
-⢀⣴⠾⠻⢶⣦⠀
-⣾⠁⢠⠒⠀⣿⡁ Packager's rule #1: upstream _always_ screws something up.  This
-⢿⡄⠘⠷⠚⠋⠀ is true especially if you're packaging your own project.
-⠈⠳⣄⠀⠀⠀⠀ 
+-Olof
