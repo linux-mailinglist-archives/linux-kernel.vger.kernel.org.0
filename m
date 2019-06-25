@@ -2,80 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5922255A2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 23:47:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8245C55A3E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 23:50:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726523AbfFYVrJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 17:47:09 -0400
-Received: from mail-io1-f71.google.com ([209.85.166.71]:53024 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726468AbfFYVrI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 17:47:08 -0400
-Received: by mail-io1-f71.google.com with SMTP id p12so28033463iog.19
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 14:47:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=yOoMpaVT6dXrWDNYoDhSc/rJDkj0e0b8QMQijEfQWZE=;
-        b=r9DdrN4yyJKcrv3njAUmcH8pqsKEbKYHOE1337Yrm32TMmmlPKqIHCpF09PXjQuD0n
-         2hJD6xRI0DyVuDmk7tCXxzqpIoXpibIEMiwmr8t5El5MZnjxKESEhTQJYATiaVTgdUrT
-         Pzhm9VuZ7vNE7zdNP0TDkkXfH+AZd+uRL00TOhgvVhmkzzYqhddfWUt6PFDxLDbyjXz2
-         nnFCNW/+eJYnf/pg05Vdb+RhH6pi6XEGEClF3vb9kilDA/rykgNxAdt8pbWnjez/MkOH
-         Fu77+vFVZGpG0IRAF8knPdyZuBYxto8TeOqmifkhfMIUQnt9Oe1Osx2TjAONGF/Zp4Sc
-         v4PQ==
-X-Gm-Message-State: APjAAAV6Xl55uZj7xVuHVJiuKNafRELGHjGDLzGEDuX04bPMy6OTlgF5
-        hc/BloGfyLiQ3kIS7X2f0Sl3exPtEDrmFUAMaODkQ/fjLc8K
-X-Google-Smtp-Source: APXvYqyU1bxNICbJ8wES5sEXzxyS4g5ky0U0eMrzt2+0Hx2a7cmFllMtVHCMyUaMViswWU1qNtYw1qyRQRN2aVKMz96o+CWBaG/+
+        id S1726462AbfFYVuh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 17:50:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52750 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726037AbfFYVug (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 17:50:36 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0698D2085A;
+        Tue, 25 Jun 2019 21:50:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561499436;
+        bh=GwgZoYHEjDqDV6/GDo7hMDaoiuZJidjKMue8bkbmYQw=;
+        h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
+        b=cw7hMuw8Yh7yn6pgURC7S9h226i5Ed/QVj0CiLsHuJCLgxGNA+xUTPDlB0P36Hh/2
+         fAwssMDQ2dDffRd2gl4wf3kSHL4EU+fZYrTZD2eV2/bLArpswzX2GIPimr1cI8YqXs
+         VttiYWrTNS/BFhdymu+WJulhOByKWtCH5+hqLpP0=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-X-Received: by 2002:a02:5a89:: with SMTP id v131mr629757jaa.130.1561499227626;
- Tue, 25 Jun 2019 14:47:07 -0700 (PDT)
-Date:   Tue, 25 Jun 2019 14:47:07 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c7a272058c2cde21@google.com>
-Subject: kernel panic: stack is corrupted in validate_chain
-From:   syzbot <syzbot+6ba34346b252f2d497c7@syzkaller.appspotmail.com>
-To:     linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190617120248.9590-1-geert+renesas@glider.be>
+References: <20190617120248.9590-1-geert+renesas@glider.be>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH] clk: Simplify clk_core_can_round()
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+User-Agent: alot/0.8.1
+Date:   Tue, 25 Jun 2019 14:50:35 -0700
+Message-Id: <20190625215036.0698D2085A@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Quoting Geert Uytterhoeven (2019-06-17 05:02:48)
+> A boolean expression already evaluates to true or false, so there is no
+> need to check the result and return true or false explicitly.
+>=20
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
 
-syzbot found the following crash on:
+Applied to clk-next
 
-HEAD commit:    249155c2 Merge branch 'parisc-5.2-4' of git://git.kernel.o..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12a4572da00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9a31528e58cc12e2
-dashboard link: https://syzkaller.appspot.com/bug?extid=6ba34346b252f2d497c7
-compiler:       clang version 9.0.0 (/home/glider/llvm/clang  
-80fee25776c2fb61e74c1ecb1a523375c2500b69)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=135e34eea00000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+6ba34346b252f2d497c7@syzkaller.appspotmail.com
-
-Kernel panic - not syncing: stack-protector: Kernel stack is corrupted in:  
-validate_chain+0x69fc/0x84f0 kernel/locking/lockdep.c:161
-CPU: 0 PID: 8300 Comm: syz-executor.4 Not tainted 5.2.0-rc6+ #7
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-Shutting down cpus with NMI
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
