@@ -2,187 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DF6A55184
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 16:22:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07EC35518B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 16:22:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730337AbfFYOWV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 10:22:21 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:58716 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728252AbfFYOWV (ORCPT
+        id S1730374AbfFYOWq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 10:22:46 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:42455 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728252AbfFYOWp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 10:22:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=TeTpjKWd461qmBPHaiV1+2YHstOBlkUWCmJFPzdC/eM=; b=Jvc8lgVhpv+7qNBW0oEsTZYf67
-        UfeCCAixLzwmnboBD8nA8yplOy4PbCUKZzyGe1p7Q8mnvjxFgCHXlMEQsxTSv2YW0n8+LbWtdOJVD
-        fWyI7eI40l1TftNhNp1n4AFNBb5LaGrO9gwFX0ItnzEuDthYd+B/UDHWaE32oxlplLh/5IpdG2huQ
-        TG3mYh+zhu+SWm8LpLD0dh+/EQOfDM30tOFRQVy5DrQRMQ73XxOeyRYKLRt/8xD6cuABbepDuoeuV
-        6NDhEEpHOWtuXi8hkoGUbcgoy2rg9ESDT5RRohyDl665Qz3ieakd5ZLECi/4zYszmIvF1mDnAn35u
-        ce7f0qWQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hfmKt-0001oV-SU; Tue, 25 Jun 2019 14:22:16 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id A1FCE209FD685; Tue, 25 Jun 2019 16:22:14 +0200 (CEST)
-Date:   Tue, 25 Jun 2019 16:22:14 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Christian =?iso-8859-1?Q?K=F6nig?= 
-        <ckoenig.leichtzumerken@gmail.com>
-Cc:     daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dma-buf: add reservation_context for deadlock
- handling
-Message-ID: <20190625142214.GD3419@hirez.programming.kicks-ass.net>
-References: <20190625135507.80548-1-christian.koenig@amd.com>
+        Tue, 25 Jun 2019 10:22:45 -0400
+Received: by mail-yw1-f66.google.com with SMTP id s5so7575675ywd.9
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 07:22:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=GtXSqHMmcydI8ch7kCrEW0Ru4DlQsmrCdQSIYBZEnK8=;
+        b=pa2+uBg8/S2pTPXRjx94PUQoPDu2mT0WiYVNyeyatLy3uGcFxgEkv1QbsA7q9SE71H
+         2TfMi8ZOSh8IF4k5fMAL1nhaX8Tdtn650XfBpGDIryIjh1qn63urs9nfvXWTxBMsm+fu
+         x3Ow3HT4LMabwprPqv3sqXyC/rQ+ZjZ0DYoOG/JuLyXx3wtntcwvHykcepLUiO4pvNxj
+         jEVwogBwVVKwFoRl1GqGMdYl5MBu5LQA8v5dcv71h+PvKy3uNd5eu8QC5vMy/XxxgqE+
+         copOOPuS8CCGe7aLhpNtcXX8YfCKbTMewyPSqQL+uSKrsewheSiMFpEXQflkraTZoxX8
+         wjOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=GtXSqHMmcydI8ch7kCrEW0Ru4DlQsmrCdQSIYBZEnK8=;
+        b=MF20PUvgsY+xQvwieCVQfS56NiguV0lgVCp2O8wLPQ51IUZg23d3A4euhWdomO/f/e
+         VP1ozmw++TQFlpHQdGEvTrVOr1lunUHCcZpBrHmfHDOOE6Ae/aSisGSc3OGx02qwN/Zz
+         sI4JLSU/Am84WjY3i1D09MGqRL2FmZ9pEvPmKXPxvGR8fDVudeOk1BmmCIDs0Yd7lIsp
+         2MlYeHQ0l5RNPTdEY7mDMWE3a4ayIlw3xGBwt6GY/exohoSZpYC2ks9846XgynIHQ9WV
+         RrqAPHT9IHOkzx4VkmerigawxxYtgvtgNCf1Y9x9Z/ioxax8UUxWAL2oFZRRYBmJUZR/
+         QCQg==
+X-Gm-Message-State: APjAAAVfg+3EbDnbxls8+SZBN+60eruyldVj3JbnRbFKgqj7b7H4frW+
+        7OQOQ/MdBGq9me8ACHUXvJvy2g==
+X-Google-Smtp-Source: APXvYqyuxG4473YNUDnXm3YS9kmxffQxRk8qNUvWb0UiLLLSv1OFhNpowD0E2wQoapm5t4ah79tOTg==
+X-Received: by 2002:a81:a042:: with SMTP id x63mr83956444ywg.396.1561472565070;
+        Tue, 25 Jun 2019 07:22:45 -0700 (PDT)
+Received: from localhost ([107.15.81.208])
+        by smtp.gmail.com with ESMTPSA id i126sm3645124ywa.108.2019.06.25.07.22.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 25 Jun 2019 07:22:44 -0700 (PDT)
+Date:   Tue, 25 Jun 2019 10:22:43 -0400
+From:   Josef Bacik <josef@toxicpanda.com>
+To:     "Huang, Ying" <ying.huang@intel.com>
+Cc:     Josef Bacik <josef@toxicpanda.com>,
+        kernel test robot <rong.a.chen@intel.com>,
+        David Sterba <dsterba@suse.com>, lkp@01.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [LKP] [btrfs]  c8eaeac7b7:  aim7.jobs-per-min -11.7% regression
+Message-ID: <20190625142242.oxltqbj2veuckoxo@MacBook-Pro-91.local>
+References: <20190513025004.GG31424@shao2-debian>
+ <87blzl7itt.fsf@yhuang-dev.intel.com>
+ <87v9xdymdg.fsf@yhuang-dev.intel.com>
+ <877e9fahmk.fsf@yhuang-dev.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190625135507.80548-1-christian.koenig@amd.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <877e9fahmk.fsf@yhuang-dev.intel.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 25, 2019 at 03:55:06PM +0200, Christian König wrote:
-
-> diff --git a/drivers/dma-buf/reservation.c b/drivers/dma-buf/reservation.c
-> index 4d32e2c67862..9e53e42b053a 100644
-> --- a/drivers/dma-buf/reservation.c
-> +++ b/drivers/dma-buf/reservation.c
-> @@ -55,6 +55,88 @@ EXPORT_SYMBOL(reservation_seqcount_class);
->  const char reservation_seqcount_string[] = "reservation_seqcount";
->  EXPORT_SYMBOL(reservation_seqcount_string);
->  
-> +/**
-> + * reservation_context_init - initialize a reservation context
-> + * @ctx: the context to initialize
-> + *
-> + * Start using this reservation context to lock reservation objects for update.
-> + */
-> +void reservation_context_init(struct reservation_context *ctx)
-> +{
-> +	ww_acquire_init(&ctx->ctx, &reservation_ww_class);
-> +	init_llist_head(&ctx->locked);
-
-	ctx->locked = NULL;
-
-> +	ctx->contended = NULL;
-> +}
-> +EXPORT_SYMBOL(reservation_context_init);
-> +
-> +/**
-> + * reservation_context_unlock_all - unlock all reservation objects
-> + * @ctx: the context which holds the reservation objects
-> + *
-> + * Unlocks all reservation objects locked with this context.
-> + */
-> +void reservation_context_unlock_all(struct reservation_context *ctx)
-> +{
-> +	struct reservation_object *obj, *next;
-> +
-> +	if (ctx->contended)
-> +		ww_mutex_unlock(&ctx->contended->lock);
-> +	ctx->contended = NULL;
-> +
-> +	llist_for_each_entry_safe(obj, next, ctx->locked.first, locked)
-> +		ww_mutex_unlock(&obj->lock);
-
-	for (obj = ctx->locked; obj && (next = obj->locked, true); obj = next)
-
-> +	init_llist_head(&ctx->locked);
-
-	ctx->locked = NULL;
-> +}
-> +EXPORT_SYMBOL(reservation_context_unlock_all);
-> +
-> +/**
-> + * reservation_context_lock - lock a reservation object with deadlock handling
-> + * @ctx: the context which should be used to lock the object
-> + * @obj: the object which needs to be locked
-> + * @interruptible: if we should wait interruptible or not
-> + *
-> + * Use @ctx to lock the reservation object. If a deadlock is detected we backoff
-> + * by releasing all locked objects and use the slow path to lock the reservation
-> + * object. After successfully locking in the slow path -EDEADLK is returned to
-> + * signal that all other locks must be re-taken as well.
-> + */
-> +int reservation_context_lock(struct reservation_context *ctx,
-> +			     struct reservation_object *obj,
-> +			     bool interruptible)
-> +{
-> +	int ret = 0;
-> +
-> +	if (unlikely(ctx->contended == obj))
-> +		ctx->contended = NULL;
-> +	else if (interruptible)
-> +		ret = ww_mutex_lock_interruptible(&obj->lock, &ctx->ctx);
-> +	else
-> +		ret = ww_mutex_lock(&obj->lock, &ctx->ctx);
-> +
-> +	if (likely(!ret)) {
-> +		/* don't use llist_add here, we have separate locking */
-> +		obj->locked.next = ctx->locked.first;
-> +		ctx->locked.first = &obj->locked;
-
-Since you're not actually using llist, could you then maybe open-code
-the whole thing and not rely on its implementation?
-
-That is, it hardly seems worth the trouble, as shown the bits you do use
-are hardly longer than just writing it out. Also, I was confused by the
-use of llist, as I wondered where the concurrency came from.
-
-> +		return 0;
-> +	}
-> +	if (unlikely(ret != -EDEADLK))
-> +		return ret;
-> +
-> +	reservation_context_unlock_all(ctx);
-> +
-> +	if (interruptible) {
-> +		ret = ww_mutex_lock_slow_interruptible(&obj->lock, &ctx->ctx);
-> +		if (unlikely(ret))
-> +			return ret;
-> +	} else {
-> +		ww_mutex_lock_slow(&obj->lock, &ctx->ctx);
-> +	}
-> +
-> +	ctx->contended = obj;
-> +	return -EDEADLK;
-> +}
-> +EXPORT_SYMBOL(reservation_context_lock);
-
-> diff --git a/include/linux/reservation.h b/include/linux/reservation.h
-> index ee750765cc94..a8a52e5d3e80 100644
-> --- a/include/linux/reservation.h
-> +++ b/include/linux/reservation.h
-
-> +struct reservation_context {
-> +	struct ww_acquire_ctx ctx;
-> +	struct llist_head locked;
-
-	struct reservation_object *locked;
-
-> +	struct reservation_object *contended;
-> +};
-
-> @@ -71,6 +108,7 @@ struct reservation_object_list {
->   */
->  struct reservation_object {
->  	struct ww_mutex lock;
-> +	struct llist_node locked;
-
-	struct reservation_object *locked;
-
->  	seqcount_t seq;
->  
->  	struct dma_fence __rcu *fence_excl;
-> -- 
-> 2.17.1
+On Fri, Jun 21, 2019 at 08:48:03AM +0800, Huang, Ying wrote:
+> "Huang, Ying" <ying.huang@intel.com> writes:
 > 
+> > "Huang, Ying" <ying.huang@intel.com> writes:
+> >
+> >> Hi, Josef,
+> >>
+> >> kernel test robot <rong.a.chen@intel.com> writes:
+> >>
+> >>> Greeting,
+> >>>
+> >>> FYI, we noticed a -11.7% regression of aim7.jobs-per-min due to commit:
+> >>>
+> >>>
+> >>> commit: c8eaeac7b734347c3afba7008b7af62f37b9c140 ("btrfs: reserve
+> >>> delalloc metadata differently")
+> >>> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+> >>>
+> >>> in testcase: aim7
+> >>> on test machine: 40 threads Intel(R) Xeon(R) CPU E5-2690 v2 @ 3.00GHz with 384G memory
+> >>> with following parameters:
+> >>>
+> >>> 	disk: 4BRD_12G
+> >>> 	md: RAID0
+> >>> 	fs: btrfs
+> >>> 	test: disk_rr
+> >>> 	load: 1500
+> >>> 	cpufreq_governor: performance
+> >>>
+> >>> test-description: AIM7 is a traditional UNIX system level benchmark
+> >>> suite which is used to test and measure the performance of multiuser
+> >>> system.
+> >>> test-url: https://sourceforge.net/projects/aimbench/files/aim-suite7/
+> >>
+> >> Here's another regression, do you have time to take a look at this?
+> >
+> > Ping
+> 
+> Ping again ...
+> 
+
+Finally got time to look at this but I can't get the reproducer to work
+
+root@destiny ~/lkp-tests# bin/lkp run ~/job-aim.yaml
+Traceback (most recent call last):
+        11: from /root/lkp-tests/bin/run-local:18:in `<main>'
+        10: from /usr/share/rubygems/rubygems/core_ext/kernel_require.rb:54:in `require'
+         9: from /usr/share/rubygems/rubygems/core_ext/kernel_require.rb:54:in `require'
+         8: from /root/lkp-tests/lib/yaml.rb:5:in `<top (required)>'
+         7: from /usr/share/rubygems/rubygems/core_ext/kernel_require.rb:54:in `require'
+         6: from /usr/share/rubygems/rubygems/core_ext/kernel_require.rb:54:in `require'
+         5: from /root/lkp-tests/lib/common.rb:9:in `<top (required)>'
+         4: from /usr/share/rubygems/rubygems/core_ext/kernel_require.rb:54:in `require'
+         3: from /usr/share/rubygems/rubygems/core_ext/kernel_require.rb:54:in `require'
+         2: from /root/lkp-tests/lib/array_ext.rb:3:in `<top (required)>'
+         1: from /usr/share/rubygems/rubygems/core_ext/kernel_require.rb:54:in `require'
+/usr/share/rubygems/rubygems/core_ext/kernel_require.rb:54:in `require': cannot load such file -- active_support/core_ext/enumerable (LoadError)
+
+I can't even figure out from the job file or anything how I'm supposed to run
+AIM7 itself.  This is on a Fedora 30 box, so it's relatively recent.  Thanks,
+
+Josef
