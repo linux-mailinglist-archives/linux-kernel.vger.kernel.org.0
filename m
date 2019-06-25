@@ -2,139 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 020DE555B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 19:18:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5ABD555A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 19:17:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729744AbfFYRSD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 13:18:03 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:51904 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726774AbfFYRSC (ORCPT
+        id S1729325AbfFYRQ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 13:16:58 -0400
+Received: from us-smtp-delivery-168.mimecast.com ([63.128.21.168]:25685 "EHLO
+        us-smtp-delivery-168.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726774AbfFYRQ5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 13:18:02 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5PHDjnK112356;
-        Tue, 25 Jun 2019 17:16:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to :
- subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=8YOHqT1H5m87NYapYKi5uOloFdOjAQsayzwyn6FBGsU=;
- b=kRLzMzcD4dDTxKKrIatPNQ8UbCC6dJVjee0v4WI+ASaqAGwEtXxAYgVRxpW7bi2F0kdN
- +8BkhOTIe/oZhPnAYc1tUS8V4kAmfxQ6VRRo827Ml89rmcehwrL0IvipIkWsyxIORYzM
- dFZwu3TFJ2jAetMYP79ISwOmGkO6y3D31aAPNJXhXBih2Gr5GYQy3VEltfIlToeYcYTA
- OPEtp5J5s9kqXfLt+XUPAuzKiT8ERVsbjZlleEopgqvRqrrBmDlDLaWMStCqCoAydaCU
- P+tj3IggCOnLZs/3nlNDQyjq5pVdz1NFvQtV5k0sEbhsON1T5kYdVRGZQlOdlAbybMLW JQ== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2130.oracle.com with ESMTP id 2t9brt5t2e-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 25 Jun 2019 17:16:24 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5PHFVC3141059;
-        Tue, 25 Jun 2019 17:16:23 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by aserp3030.oracle.com with ESMTP id 2t9acc7vvx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 25 Jun 2019 17:16:23 +0000
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x5PHGMB9143216;
-        Tue, 25 Jun 2019 17:16:22 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3030.oracle.com with ESMTP id 2t9acc7vvk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 25 Jun 2019 17:16:22 +0000
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5PHGJxo007776;
-        Tue, 25 Jun 2019 17:16:19 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 25 Jun 2019 10:16:19 -0700
-Date:   Tue, 25 Jun 2019 10:16:16 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     dsterba@suse.cz, Christoph Hellwig <hch@infradead.org>,
-        matthew.garrett@nebula.com, yuchao0@huawei.com, tytso@mit.edu,
-        shaggy@kernel.org, ard.biesheuvel@linaro.org, josef@toxicpanda.com,
-        clm@fb.com, adilger.kernel@dilger.ca, jk@ozlabs.org, jack@suse.com,
-        dsterba@suse.com, jaegeuk@kernel.org, viro@zeniv.linux.org.uk,
-        cluster-devel@redhat.com, jfs-discussion@lists.sourceforge.net,
-        linux-efi@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
-        linux-nilfs@vger.kernel.org, linux-mtd@lists.infradead.org,
-        ocfs2-devel@oss.oracle.com, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org
-Subject: Re: [PATCH 2/4] vfs: create a generic checking function for
- FS_IOC_FSSETXATTR
-Message-ID: <20190625171616.GB2230847@magnolia>
-References: <156116136742.1664814.17093419199766834123.stgit@magnolia>
- <156116138952.1664814.16552129914959122837.stgit@magnolia>
- <20190625105725.GB26085@infradead.org>
- <20190625170248.GS8917@twin.jikos.cz>
+        Tue, 25 Jun 2019 13:16:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=impinj.com;
+        s=mimecast20190405; t=1561483016;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=6wby4VwGd4v/juwDj/Pjs39tiYp5vbhVxRLNw2VMNPU=;
+        b=BJm2ynkyqPeKysG4CGImgXM5W3kI1SwtavnujVegCHbFK0io+4CPue/Xhk1EB7uwHiOknS
+        Yrlp2AroPAfE3egLAoRLwDNQwVg5jpl+iT6+sHf7+0Qclf8glSoZ/uhrF55gsFYDSR3qlc
+        4zAuyigYlycotNFaYxGzn3yCtcCLK6E=
+Received: from NAM02-BL2-obe.outbound.protection.outlook.com
+ (mail-bl2nam02lp2052.outbound.protection.outlook.com [104.47.38.52]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ us-mta-316-MiBPNs0ZNaaDQZS3HHksXw-1; Tue, 25 Jun 2019 13:16:54 -0400
+Received: from MWHPR0601MB3708.namprd06.prod.outlook.com (10.167.236.38) by
+ MWHPR0601MB3691.namprd06.prod.outlook.com (10.167.236.33) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2008.17; Tue, 25 Jun 2019 17:16:52 +0000
+Received: from MWHPR0601MB3708.namprd06.prod.outlook.com
+ ([fe80::2d66:fca6:b053:764f]) by MWHPR0601MB3708.namprd06.prod.outlook.com
+ ([fe80::2d66:fca6:b053:764f%6]) with mapi id 15.20.2008.014; Tue, 25 Jun 2019
+ 17:16:52 +0000
+From:   Trent Piepho <tpiepho@impinj.com>
+To:     "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "fthain@telegraphics.com.au" <fthain@telegraphics.com.au>
+CC:     "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "userm57@yahoo.com" <userm57@yahoo.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] rtc: Don't state that the RTC holds UTC in case it
+ doesn't
+Thread-Topic: [PATCH] rtc: Don't state that the RTC holds UTC in case it
+ doesn't
+Thread-Index: AQHVJ9Vy3OcHKvmN50CYhgsoBzBu56arPlOAgABjq4CAAH9NAIAAgpiA
+Date:   Tue, 25 Jun 2019 17:16:52 +0000
+Message-ID: <1561483011.2343.6.camel@impinj.com>
+References: <3e1e24a326b8b623b1a8b66a905ac6494ef74a07.1561081886.git.fthain@telegraphics.com.au>
+         <20190624195705.GD5690@piout.net>
+         <alpine.LNX.2.21.1906251043050.8@nippy.intranet>
+         <20190625092926.GE5690@piout.net>
+In-Reply-To: <20190625092926.GE5690@piout.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [216.207.205.253]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 07b33a57-490a-45ac-532b-08d6f990ea83
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MWHPR0601MB3691;
+x-ms-traffictypediagnostic: MWHPR0601MB3691:
+x-microsoft-antispam-prvs: <MWHPR0601MB3691AB1A742F7DA70E22E631D3E30@MWHPR0601MB3691.namprd06.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 0079056367
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(366004)(39850400004)(136003)(346002)(396003)(199004)(189003)(446003)(11346002)(476003)(54906003)(2616005)(6246003)(2501003)(486006)(6116002)(3846002)(68736007)(71190400001)(71200400001)(66066001)(25786009)(14444005)(478600001)(256004)(4326008)(14454004)(103116003)(2906002)(86362001)(5660300002)(6436002)(36756003)(8676002)(186003)(26005)(73956011)(66446008)(64756008)(66476007)(66556008)(76176011)(66946007)(91956017)(76116006)(99286004)(6506007)(6512007)(102836004)(53936002)(316002)(229853002)(305945005)(110136005)(81156014)(81166006)(8936002)(7736002)(6486002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR0601MB3691;H:MWHPR0601MB3708.namprd06.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: h1KPuWvUK/8loC3Sow2nned/kNlY6FwagCtTvRXDy6Ky1AXj37cs+LApYmb1Nn7wjM2QaBkwbbxeQDqD2n8l9fG/XOHYPDxafwxN9IpWSxqoStKrNlaDjGGeWhEAE74w7ydqNcvL1EV1DJDJhT0QzEuIbI9AIOotBSwI8HDYUHstDHUIns+65wnElnAFGF0IE05JkJr6vcCpe9uoolLo7XX/rEVqnlEunNbqP7bX0SddZUGUarsSLZvcYnyh4LwSbEPgz3r/hxZ+3mdZS+0zRIavirIDJLWD6rzidsKlfIWnWJWb/MkRrn8Xkn1+wqiTCDRFhuJ5M+xvuVwhOJ+hroeDSrYLNd8iGYtmTQoT3/GDDdCOqXu1/3+3LGDCSPm2XbJfadqwJc/YfJdW05e0TNtN2wjEXmDvr5gnfyJbpzk=
+Content-ID: <DDFEED856B81AF418949BC0D5A9D3AD7@namprd06.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190625170248.GS8917@twin.jikos.cz>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9299 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1906250130
+X-OriginatorOrg: impinj.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 07b33a57-490a-45ac-532b-08d6f990ea83
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Jun 2019 17:16:52.3646
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 6de70f0f-7357-4529-a415-d8cbb7e93e5e
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: tpiepho@impinj.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR0601MB3691
+X-MC-Unique: MiBPNs0ZNaaDQZS3HHksXw-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 25, 2019 at 07:02:48PM +0200, David Sterba wrote:
-> On Tue, Jun 25, 2019 at 03:57:25AM -0700, Christoph Hellwig wrote:
-> > On Fri, Jun 21, 2019 at 04:56:29PM -0700, Darrick J. Wong wrote:
-> > > From: Darrick J. Wong <darrick.wong@oracle.com>
-> > > 
-> > > Create a generic checking function for the incoming FS_IOC_FSSETXATTR
-> > > fsxattr values so that we can standardize some of the implementation
-> > > behaviors.
-> > > 
-> > > Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
-> > > Reviewed-by: Jan Kara <jack@suse.cz>
-> > > ---
-> > >  fs/btrfs/ioctl.c   |   21 +++++++++-------
-> > >  fs/ext4/ioctl.c    |   27 ++++++++++++++------
-> > >  fs/f2fs/file.c     |   26 ++++++++++++++-----
-> > >  fs/inode.c         |   17 +++++++++++++
-> > >  fs/xfs/xfs_ioctl.c |   70 ++++++++++++++++++++++++++++++----------------------
-> > >  include/linux/fs.h |    3 ++
-> > >  6 files changed, 111 insertions(+), 53 deletions(-)
-> > > 
-> > > 
-> > > diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-> > > index f408aa93b0cf..7ddda5b4b6a6 100644
-> > > --- a/fs/btrfs/ioctl.c
-> > > +++ b/fs/btrfs/ioctl.c
-> > > @@ -366,6 +366,13 @@ static int check_xflags(unsigned int flags)
-> > >  	return 0;
-> > >  }
-> > >  
-> > > +static void __btrfs_ioctl_fsgetxattr(struct btrfs_inode *binode,
-> > > +				     struct fsxattr *fa)
-> > > +{
-> > > +	memset(fa, 0, sizeof(*fa));
-> > > +	fa->fsx_xflags = btrfs_inode_flags_to_xflags(binode->flags);
-> > 
-> > Is there really much of a point in this helper? Epeciall as
-> > the zeroing could easily be done in the variable declaration
-> > line using
-> > 
-> > 	struct fsxattr fa = { };
-> 
-> Agreed, not counting the initialization the wrapper is merely another
-> name for btrfs_inode_flags_to_xflags. I also find it slightly confusing
-> that __btrfs_ioctl_fsgetxattr name is too close to the ioctl callback
-> implementation btrfs_ioctl_fsgetxattr but only does some initialization.
+T24gVHVlLCAyMDE5LTA2LTI1IGF0IDExOjI5ICswMjAwLCBBbGV4YW5kcmUgQmVsbG9uaSB3cm90
+ZToNCj4gDQo+IA0KPiBVc2Vyc3BhY2UgaXMgY2VydGFpbmx5IGFkanVzdGluZyB0aGUgdGltZXpv
+bmUgYWZ0ZXIgdGhlIGtlcm5lbCBkaWQuIENhbg0KPiB5b3UgcnVuIHRoZSBzYW1lIGNvbW1hbmRz
+IHdpdGhvdXQgcnVubmluZyB5b3VyIGluaXQ/IA0KPiANCj4gT24gc3RhYmxlLCB5b3UgaGF2ZSAv
+ZXRjL2luaXQuZC9od2Nsb2NrLnNoIHRoYXQgc3RpbGwgcnVucyBhbmQgZG9lcyB0aGUNCj4gY29y
+cmVjdCB0aGluZy4gTXkgdW5kZXJzdGFuZGluZyBpcyB0aGF0IHN5c3RlbWQgYWxzbyBoYW5kbGVz
+IHRoZSBUWg0KPiBwcm9wZXJseSBhZnRlciBoY3Rvc3lzIChzZWUgY2xvY2tfaXNfbG9jYWx0aW1l
+KCkpLg0KPiANCj4gU2VyaW91c2x5LCBoY3Rvc3lzIGRvZXMgYSByZWFsbHkgYmFkIGpvYiBhdCBz
+ZXR0aW5nIHRoZSBzeXN0ZW0gdGltZSwgaXQNCj4gaXMgZ3VhcmFudGVlZCB0byBiZSBhbHdheXMg
+d3Jvbmcgb24gbW9zdCBwbGF0Zm9ybXMuIE15IHBsYW4gaXMgc3RpbGwgdG8NCj4gdHJ5IHRvIGdl
+dCBkaXN0cm9zIHRvIHN0b3AgZW5hYmxpbmcgaXQgYW5kIGRvIHRoYXQgcHJvcGVybHkgaW4NCj4g
+dXNlcnNwYWNlLiBUaGlzIGlzIGFscmVhZHkgb2sgd2hlbiB1c2luZyBzeXNWIGJ1dCBzeXN0ZW1k
+IHdvdWxkIG5lZWQgYQ0KPiBmZXcgY2hhbmdlcyB0byBzdG9wIHJlbHlpbmcgb24gaXQgd2hlbiB0
+aGVuIGlzIG5vIGh3Y2xvY2sgaW5pdHNjcmlwdC4NCj4gVW5mb3J0dW5hdGVseSwgSSBkaWRuJ3Qg
+aGF2ZSB0aW1lIHRvIHdvcmsgb24gdGhhdCB5ZXQuDQoNCmhjdG9zeXMgaXMgdmVyeSBoYW5keSBp
+biB0aGF0IGl0IHNldHMgdGhlIHN5c3RlbSB0aW1lIGJlZm9yZSBhbnkgbG9nDQptZXNzYWdlcyBh
+cmUgZ2VuZXJhdGVkLiAgRWl0aGVyIGluIGEgbWFpbiBib290IG9yIGluIGFuIGluaXRyYW1mcy4g
+DQpIYXZpbmcgcHJvcGVydHkgdGltZS1zdGFtcGVkIGxvZyBtZXNzYWdlcyBpcyB2ZXJ5IGltcG9y
+dGFudCBmb3INCm1hbmFnaW5nIGEgbGFyZ2UgZGVwbG95bWVudC4NCg0KSWYgdGhlIHN5c3RlbSB0
+aW1lIGlzIHNldCBieSBzb21lIHNjcmlwdCBvciBzeXN0ZW1kIHVuaXQsIHRoZW4gdGhlcmUNCndp
+bGwgYWx3YXlzIGJlIGFsbCB0aGUgdGhpbmdzIHRoYXQgbmVlZCB0byBydW4gYmVmb3JlIHRoYXQg
+c2NyaXB0IG9yDQp1bml0IGNhbiB3b3JrLiAgRS5nLiwgdWRldiBjcmVhdGluZyBydGMgZGV2aWNl
+IG5vZGVzLCBtb3VudGluZyAvc3lzIGFuZA0KL3Byb2MsIHN5c3RlbWQgZ2VuZXJhdG9yIGZvciBs
+b2NhbCBmaWxlIHN5c3RlbSB1bmlzLCB0aGUgb3RoZXIgcGFydHMgb2YNCnN5c3RlbWQgdG8gZG8g
+dGhhdCwgZXRjLiBBbGwgdGhpcyB3b24ndCBiZSBhYmxlIHRvIGxvZyB3aXRoIGNvcnJlY3QNCnN5
+c3RlbSB0aW1lLg0KDQoNCg==
 
-Ok; it's easily enough changed to:
-
-	struct fsxattr old_fa = {
-		.fsx_xflags = btrfs_inode_flags_to_xflags(binode->flags),
-	};
-
---D
