@@ -2,88 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFFD055ABC
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 00:13:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC2CA55AD0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 00:14:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726603AbfFYWNW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 18:13:22 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:43048 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726320AbfFYWNW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 18:13:22 -0400
-Received: by mail-pg1-f194.google.com with SMTP id f25so112770pgv.10;
-        Tue, 25 Jun 2019 15:13:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8gzPjoJjuhl8UL7VUOkU3jqXACXyJKi+qh78CzG1deI=;
-        b=QoeUWtoXykCX+Bq53a7A9bl2m/QOc95LCrsFNc/FWV8IUOqhYzou5SH/2BbNSr/pGt
-         TFFWVbvaDRX3tyClX1+NQ+wo0YVmPKQ8jC9K+I+5OgjfsC/NL7MBsm7uLpbx1lBgivFC
-         YndY34vehKuD1a63b0CbdGf5Y+BEbwNVWx+vzHt5SMPTTz1+RZRgKfaYMEO++NInpPnj
-         W9bh9+1AAAclOUzyFR4bpHiPX60/c1yeRY4QJw5ZlU5yFKZgR34Q/oCHbEVxDDcO53Zj
-         AngIY4/iLj1p6IBC1MKsZPExsciJh5QjgQDyMhIkn5rY5k71jPikZEQS9KLWBXrfG/fh
-         w4HQ==
-X-Gm-Message-State: APjAAAU01WyKGR61McyR5fW2lM44tHAZlgvfVxCYWTRImrLOOFEM3cso
-        /Az2SrYL9bU24yifMM/2Gzs=
-X-Google-Smtp-Source: APXvYqxWuXRncraTED2jeacoTPyN1fvtJGk3Zc52FbqH3XACtitgQolZjqrTP/UYKEopxq0KXI3bTw==
-X-Received: by 2002:a63:480e:: with SMTP id v14mr1871131pga.182.1561500800857;
-        Tue, 25 Jun 2019 15:13:20 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id x3sm45355pja.7.2019.06.25.15.13.19
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 25 Jun 2019 15:13:19 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id D102E401EB; Tue, 25 Jun 2019 22:13:18 +0000 (UTC)
-Date:   Tue, 25 Jun 2019 22:13:18 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Brendan Higgins <brendanhiggins@google.com>
-Cc:     frowand.list@gmail.com, gregkh@linuxfoundation.org,
-        jpoimboe@redhat.com, keescook@google.com,
-        kieran.bingham@ideasonboard.com, peterz@infradead.org,
-        robh@kernel.org, sboyd@kernel.org, shuah@kernel.org, tytso@mit.edu,
-        yamada.masahiro@socionext.com, devicetree@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, kunit-dev@googlegroups.com,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-um@lists.infradead.org, Alexander.Levin@microsoft.com,
-        Tim.Bird@sony.com, amir73il@gmail.com, dan.carpenter@oracle.com,
-        daniel@ffwll.ch, jdike@addtoit.com, joel@jms.id.au,
-        julia.lawall@lip6.fr, khilman@baylibre.com, knut.omang@oracle.com,
-        logang@deltatee.com, mpe@ellerman.id.au, pmladek@suse.com,
-        rdunlap@infradead.org, richard@nod.at, rientjes@google.com,
-        rostedt@goodmis.org, wfg@linux.intel.com
-Subject: Re: [PATCH v5 06/18] kbuild: enable building KUnit
-Message-ID: <20190625221318.GO19023@42.do-not-panic.com>
-References: <20190617082613.109131-1-brendanhiggins@google.com>
- <20190617082613.109131-7-brendanhiggins@google.com>
+        id S1726674AbfFYWOR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 18:14:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53882 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725782AbfFYWOQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 18:14:16 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B0DC22086D;
+        Tue, 25 Jun 2019 22:14:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561500855;
+        bh=ZcG6s2SVVPlQMCLBl239NuNMjuljQYUwEP8YAEKAtsQ=;
+        h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
+        b=Ydzac1ENQGs8JHN5EL5E+CkJH82B6XZ3c9ps/ajN91KLrj3uAj/+VpNZmZCdy27gF
+         j+kmQ0rJLpj2ZbPXomZ68FzknKOIshM5pYbIqyrdhTjjiWWhao81hbRMTErmFENX0n
+         gDVC1TZk2QIFCy7IUZZGjEqeE/telP1NRjhfAJ2M=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190617082613.109131-7-brendanhiggins@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1560138293-4163-1-git-send-email-weiyi.lu@mediatek.com>
+References: <1560138293-4163-1-git-send-email-weiyi.lu@mediatek.com>
+To:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Weiyi Lu <weiyi.lu@mediatek.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [RFC v1] clk: core: support clocks that need to be enabled during re-parent
+Cc:     James Liao <jamesjj.liao@mediatek.com>,
+        Fan Chen <fan.chen@mediatek.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+        srv_heupstream@mediatek.com, stable@vger.kernel.org,
+        Weiyi Lu <weiyi.lu@mediatek.com>,
+        Biao Huang <biao.huang@mediatek.com>
+User-Agent: alot/0.8.1
+Date:   Tue, 25 Jun 2019 15:14:14 -0700
+Message-Id: <20190625221415.B0DC22086D@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 17, 2019 at 01:26:01AM -0700, Brendan Higgins wrote:
-> diff --git a/Kconfig b/Kconfig
-> index 48a80beab6853..10428501edb78 100644
-> --- a/Kconfig
-> +++ b/Kconfig
-> @@ -30,3 +30,5 @@ source "crypto/Kconfig"
->  source "lib/Kconfig"
->  
->  source "lib/Kconfig.debug"
-> +
-> +source "kunit/Kconfig"
+Quoting Weiyi Lu (2019-06-09 20:44:53)
+> When using property assigned-clock-parents to assign parent clocks,
+> core clocks might still be disabled during re-parent.
+> Add flag 'CLK_OPS_CORE_ENABLE' for those clocks must be enabled
+> during re-parent.
+>=20
+> Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
 
-This patch would break compilation as kunit/Kconfig is not introduced. This
-would would also break bisectability on this commit. This change should
-either be folded in to the next patch, or just be a separate patch after
-the next one.
+Can you further describe the scenario where this is a problem? Is it
+some sort of clk that is enabled by default out of the bootloader and is
+then configured to have an 'assigned-clock-parents' property to change
+the parent, but that clk needs to be "enabled" so that the framework
+turns on the parents for the parent switch?
 
-  Luis
