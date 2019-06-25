@@ -2,88 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3800B52456
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 09:27:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BCC44524C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 09:31:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726907AbfFYH1B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 03:27:01 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:40695 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726419AbfFYH1B (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 03:27:01 -0400
-Received: by mail-ot1-f68.google.com with SMTP id e8so16226022otl.7
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 00:27:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1Qkw0w8lvC08c786EpQGX2PIdXmdvbYBqHXJse34m3o=;
-        b=gvVX5CZyFWHbYmXHjH4/MtD5/k+9SoaguBjYui8eWO5/gSr/8S47ewJAeFvy/vXOOy
-         /ey4NlVB8dE/AUCG8COBU0T6ZDZ9e1ySPOExWcYgUBi7zsYXGAhlenWIpCcO7CUKBpMm
-         5oCo4v7H+eMJvqYUcbpbenYDVCwIU6qLQvJxW77K8xc0ys5q6urslrnUBcJnOuwXJViB
-         TkAMhBwWy7J/YLW5DENmAuqPHK0Un5bheXVMJbuItJli8i0jfLDWV+k6vYCrfL06GQDJ
-         4jpRmOwpCmsvg5TQGbc3rYdMc0GDqy40aP1d3jKOwheZNX/ogzaRfXebmc3bZfZfj8b4
-         o6zA==
-X-Gm-Message-State: APjAAAVjDbL87Z5vS+HQTVxqHvoR/GO2BHdJdOsNJ8JxPJ5Ml/gxSiNJ
-        r6UOyOY8IZ+DwuR8QLtQ9KehPje+puDxoxmb+kA=
-X-Google-Smtp-Source: APXvYqz5kpjmhQHLOOOnAPAkjsha+t1aYf/sUnzuNLLExvWSDtZeQwEE89t+NM6TZLU8/dKbki7oQhlqiOonWEwRSj8=
-X-Received: by 2002:a9d:529:: with SMTP id 38mr16990865otw.145.1561447620546;
- Tue, 25 Jun 2019 00:27:00 -0700 (PDT)
+        id S1728774AbfFYHa5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 03:30:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58182 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728408AbfFYHaz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 03:30:55 -0400
+Received: from localhost (f4.8f.5177.ip4.static.sl-reverse.com [119.81.143.244])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 954C720652;
+        Tue, 25 Jun 2019 07:30:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561447855;
+        bh=qOPMdAefONiiQtGyOnVHuNOQa95t20MqHBIrIkRKEUE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=QSQEnRsKS6ZadDbgY0eboH0YIJh21cGvWvGF2pMUwxQiFDuUq6eISTrpthg6uIoUZ
+         diWOwIoFZt7rST1C3aIR7UZ3yhcoTKhABAjNY1CEdfIi1g5E/6a8kMSr2jB2iZVwGd
+         48TdJfAWfbZ3qIHVtbPKg9UkpWY/ZnN50vuW3lRc=
+Date:   Tue, 25 Jun 2019 15:27:15 +0800
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     sudheer v <open.sudheer@gmail.com>
+Cc:     Jiri Slaby <jslaby@suse.com>, Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        ShivahShankar Shakarnarayan rao 
+        <shivahshankar.shankarnarayanrao@aspeedtech.com>,
+        Shiva shankar <shivahshankar@gmail.com>,
+        Sudheer V <sudheer.veliseti@aspeedtech.com>,
+        sudheer veliseti <sudheer.open@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-aspeed@lists.ozlabs.org
+Subject: Re: [patch 0/5] *** DMA based UART driver for AST2500 ***
+Message-ID: <20190625072715.GB18197@kroah.com>
+References: <1561115855-4186-1-git-send-email-open.sudheer@gmail.com>
+ <20190621131729.GA9997@kroah.com>
+ <CAE-5=DTdo4qDUPRw+Giu=bCcpqu7EdLDt5ddDvqLSgGbuqE1Fg@mail.gmail.com>
 MIME-Version: 1.0
-References: <20190614102126.8402-1-hch@lst.de> <CAMuHMdVPU5RQyX4FnHFEhxXZeG3v0uh_-t2FB=vAzQ8_3u-gSw@mail.gmail.com>
- <20190625063228.GA29561@lst.de>
-In-Reply-To: <20190625063228.GA29561@lst.de>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 25 Jun 2019 09:26:48 +0200
-Message-ID: <CAMuHMdUNwERTRg4MbkkD62EtNhsU7kWVy6x4kB89rYh6ann0Pw@mail.gmail.com>
-Subject: Re: [RFC] switch m68k to use the generic remapping DMA allocator
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Greg Ungerer <gerg@linux-m68k.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        Linux IOMMU <iommu@lists.linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAE-5=DTdo4qDUPRw+Giu=bCcpqu7EdLDt5ddDvqLSgGbuqE1Fg@mail.gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Christoph,
+On Tue, Jun 25, 2019 at 10:30:32AM +0530, sudheer v wrote:
+> Hi Greg,
+> When i last submitted patches, i have not added change-logs.
+> and also used custom debugs instead of kernel dynamic debugs.
+> So i have resubmitted the patches , considering you have discarded old set.
+> I want to send any changes suggested  from now on wards  with versioning
+> V1,V2...so on.
+> Is this acceptable for you? or should i submit the patches again as V1 once
+> again.?
 
-On Tue, Jun 25, 2019 at 8:33 AM Christoph Hellwig <hch@lst.de> wrote:
-> On Mon, Jun 17, 2019 at 08:53:55PM +0200, Geert Uytterhoeven wrote:
-> > On Fri, Jun 14, 2019 at 12:21 PM Christoph Hellwig <hch@lst.de> wrote:
-> > > can you take a look at the (untested) patches below?  They convert m68k
-> > > to use the generic remapping DMA allocator, which is also used by
-> > > arm64 and csky.
-> >
-> > Thanks. But what does this buy us?
->
-> A common dma mapping code base with everyone, including supporting
-> DMA allocations from atomic context, which the documentation and
-> API assume are there, but which don't work on m68k.
+No, please resend now as a v3 series, with the information that says
+what you changed from the previous versions.
 
-OK, thanks!
+thanks,
 
-> > bloat-o-meter says:
-> >
-> > add/remove: 75/0 grow/shrink: 11/6 up/down: 4122/-82 (4040)
->
-> What do these values stand for?  The code should grow a little as
-> we now need to include the the pool allocator for the above API
-> fix.
-
-Last 3 values are "bytes added/removed (net increase)".
-So this increases the static kernel size by ca. 4 KiB.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+greg k-h
