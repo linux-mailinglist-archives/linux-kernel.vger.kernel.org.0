@@ -2,96 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D20CC524E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 09:35:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F8B6524E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 09:35:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728382AbfFYHe7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 03:34:59 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:54252 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726846AbfFYHe6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 03:34:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=EfE9b6iC+ztQ2vj5wKDIVg9bT9RfKnT+aDZ7Xh8JmQE=; b=PSt1cdfG8jH5IrxOFwBR1B7iF
-        JopUIkQmRjHxy5FprH9Y9CT7pNwP2YVqEqKo8zs1R7JVlb0XlkpvWvDzyT/iV0M726xXDDr5LAztO
-        +clzTA2iC4AVb5yD2D0yaHL8M1nGCoVcywSlRINOe6I6HWIOVZORlh/9C5BAk+4Pe6zgbun+JUf/e
-        slVVCpJLcSsz0tYF3bVjdB9286lk2vtmB7eBZ0K+d/xiufG0TuVMCQs6wQOQY+JfJGHnxgNb+T7bF
-        KTIygfAloBmKQn/5WzScPCwqIV95gzFkI96M7ypN2EJxsIVWZG4UVAZ6OUoZ0KszrzoN8t3rFlXUh
-        34boJnm5Q==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hffxx-0002XT-5n; Tue, 25 Jun 2019 07:34:09 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id EDA9E209FFF54; Tue, 25 Jun 2019 09:34:07 +0200 (CEST)
-Date:   Tue, 25 Jun 2019 09:34:07 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Jann Horn <jannh@google.com>
-Cc:     Joel Fernandes <joel@joelfernandes.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        kernel-team <kernel-team@android.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Michal Hocko <mhocko@suse.com>
-Subject: Re: [PATCH RFC v2] Convert struct pid count to refcount_t
-Message-ID: <20190625073407.GP3436@hirez.programming.kicks-ass.net>
-References: <20190624184534.209896-1-joel@joelfernandes.org>
- <20190624185214.GA211230@google.com>
- <CAG48ez3maGsRbN3qr8YVb6ZCw0FDq-7GqqiTiA4yEa1mebkubw@mail.gmail.com>
+        id S1728762AbfFYHf4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 03:35:56 -0400
+Received: from verein.lst.de ([213.95.11.211]:60360 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728539AbfFYHf4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 03:35:56 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id 1FAFC68B02; Tue, 25 Jun 2019 09:35:25 +0200 (CEST)
+Date:   Tue, 25 Jun 2019 09:35:24 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Christoph Hellwig <hch@lst.de>, Greg Ungerer <gerg@linux-m68k.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        Linux IOMMU <iommu@lists.linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC] switch m68k to use the generic remapping DMA allocator
+Message-ID: <20190625073524.GA30815@lst.de>
+References: <20190614102126.8402-1-hch@lst.de> <CAMuHMdVPU5RQyX4FnHFEhxXZeG3v0uh_-t2FB=vAzQ8_3u-gSw@mail.gmail.com> <20190625063228.GA29561@lst.de> <CAMuHMdUNwERTRg4MbkkD62EtNhsU7kWVy6x4kB89rYh6ann0Pw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAG48ez3maGsRbN3qr8YVb6ZCw0FDq-7GqqiTiA4yEa1mebkubw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAMuHMdUNwERTRg4MbkkD62EtNhsU7kWVy6x4kB89rYh6ann0Pw@mail.gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 09:10:15PM +0200, Jann Horn wrote:
-> That part of the documentation only talks about cases where you have a
-> control dependency on the return value of the refcount operation. But
-> refcount_inc() does not return a value, so this isn't relevant for
-> refcount_inc().
+On Tue, Jun 25, 2019 at 09:26:48AM +0200, Geert Uytterhoeven wrote:
+> > > bloat-o-meter says:
+> > >
+> > > add/remove: 75/0 grow/shrink: 11/6 up/down: 4122/-82 (4040)
+> >
+> > What do these values stand for?  The code should grow a little as
+> > we now need to include the the pool allocator for the above API
+> > fix.
 > 
-> Also, AFAIU, the control dependency mentioned in the documentation has
-> to exist *in the caller* - it's just pointing out that if you write
-> code like the following, you have a control dependency between the
-> refcount operation and the write:
-> 
->     if (refcount_inc_not_zero(&obj->refcount)) {
->       WRITE_ONCE(obj->x, y);
->     }
-> 
-> For more information on the details of this stuff, try reading the
-> section "CONTROL DEPENDENCIES" of Documentation/memory-barriers.txt.
+> Last 3 values are "bytes added/removed (net increase)".
+> So this increases the static kernel size by ca. 4 KiB.
 
-IIRC the argument went as follows:
+That seems a lot for the little bit of pool code.  Did m68k not
+build lib/genalloc.c by default before?
 
- - if you use refcount_inc(), you've already got a stable object and
-   have ACQUIRED it otherwise, typically through locking.
-
- - if you use refcount_inc_not_zero(), you have a semi stable object
-   (RCU), but you still need to ensure any changes to the object happen
-   after acquiring a reference, and this is where the control dependency
-   comes in as Jann already explained.
-
-Specifically, it would be bad to allow STOREs to happen before we know
-the refcount isn't 0, as that would be a UaF.
-
-Also see the comment in lib/refcount.c.
-
+Also I'd be curious what the first 4 values are.
