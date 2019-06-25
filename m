@@ -2,81 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C54C75265A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 10:20:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A67DC52576
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 09:55:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729866AbfFYIUN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 04:20:13 -0400
-Received: from mslow2.mail.gandi.net ([217.70.178.242]:47076 "EHLO
-        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727496AbfFYIUN (ORCPT
+        id S1727992AbfFYHzN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 03:55:13 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:37189 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726421AbfFYHzM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 04:20:13 -0400
-Received: from relay5-d.mail.gandi.net (unknown [217.70.183.197])
-        by mslow2.mail.gandi.net (Postfix) with ESMTP id 5D2093ADFDA;
-        Tue, 25 Jun 2019 07:54:32 +0000 (UTC)
-X-Originating-IP: 90.88.16.156
-Received: from localhost (aaubervilliers-681-1-41-156.w90-88.abo.wanadoo.fr [90.88.16.156])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 454CA1C0009;
-        Tue, 25 Jun 2019 07:54:22 +0000 (UTC)
-Date:   Tue, 25 Jun 2019 09:54:21 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v2 05/15] dt-bindings: display: Convert
- bananapi,s070wv20-ct16 panel to DT schema
-Message-ID: <20190625075421.lsbldansq7lcjj3o@flea>
-References: <20190624215649.8939-1-robh@kernel.org>
- <20190624215649.8939-6-robh@kernel.org>
+        Tue, 25 Jun 2019 03:55:12 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5P7t2HU3518401
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Tue, 25 Jun 2019 00:55:02 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5P7t2HU3518401
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019061801; t=1561449302;
+        bh=rpTqlAr3NjNz0wKYHh5t9GllnyJIj/sh1rb3LA5nGcY=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=zL1VfzQpy8CVGXohhPJ1TzsycFmn6AqmdNk0qG+oQbeJ7eliZmVxyvl+FdE/Ojlri
+         sAs4gTER24/4ZfbITGy34i0qsDFsNnWJ4KStqiG3zAmFWm9NGWgZgBKiJwcJVnrxoE
+         uVYkreslsA44hHHkRUEL30mnntCEdUCNEXLAig24M04Artzt9JK3H5Lvc4sltRZc1j
+         2t1E/sno28Jj98JmdOCviFk617a1I1xNnQTW69y8PwbfTPAJbfxIvwfWFXQdnQ/TVs
+         a3LNCGInCcJ3+YaiThv8qWttmw39YmIj9nCl2W1xiL5Yt799TqfJ1bCe4Tx9JHE3Sb
+         UHlw3Dpo7VTow==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5P7t20J3518394;
+        Tue, 25 Jun 2019 00:55:02 -0700
+Date:   Tue, 25 Jun 2019 00:55:02 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Masahiro Yamada <tipbot@zytor.com>
+Message-ID: <tip-bc53d3d777f81385c1bb08b07bd1c06450ecc2c1@git.kernel.org>
+Cc:     mingo@kernel.org, tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        bp@alien8.de, hpa@zytor.com, yamada.masahiro@socionext.com
+Reply-To: yamada.masahiro@socionext.com, linux-kernel@vger.kernel.org,
+          tglx@linutronix.de, hpa@zytor.com, bp@alien8.de, mingo@kernel.org
+In-Reply-To: <20190625072622.17679-1-yamada.masahiro@socionext.com>
+References: <20190625072622.17679-1-yamada.masahiro@socionext.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/build] x86/build: Add 'set -e' to mkcapflags.sh to delete
+ broken capflags.c
+Git-Commit-ID: bc53d3d777f81385c1bb08b07bd1c06450ecc2c1
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="jmixvh5zrwacpzec"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20190624215649.8939-6-robh@kernel.org>
-User-Agent: NeoMutt/20180716
+X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF autolearn=ham
+        autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  bc53d3d777f81385c1bb08b07bd1c06450ecc2c1
+Gitweb:     https://git.kernel.org/tip/bc53d3d777f81385c1bb08b07bd1c06450ecc2c1
+Author:     Masahiro Yamada <yamada.masahiro@socionext.com>
+AuthorDate: Tue, 25 Jun 2019 16:26:22 +0900
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Tue, 25 Jun 2019 09:52:05 +0200
 
---jmixvh5zrwacpzec
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+x86/build: Add 'set -e' to mkcapflags.sh to delete broken capflags.c
 
-On Mon, Jun 24, 2019 at 03:56:39PM -0600, Rob Herring wrote:
-> Convert the bananapi,s070wv20-ct16 panel binding to DT schema.
->
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Sam Ravnborg <sam@ravnborg.org>
-> Cc: Maxime Ripard <maxime.ripard@bootlin.com>
-> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Cc: dri-devel@lists.freedesktop.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
+Without 'set -e', shell scripts continue running even after any
+error occurs. The missed 'set -e' is a typical bug in shell scripting.
 
-Reviewed-by: Maxime Ripard <maxime.ripard@bootlin.com>
+For example, when a disk space shortage occurs while this script is
+running, it actually ends up with generating a truncated capflags.c.
 
-Maxime
+Yet, mkcapflags.sh continues running and exits with 0. So, the build
+system assumes it has succeeded.
 
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+It will not be re-generated in the next invocation of Make since its
+timestamp is newer than that of any of the source files.
 
---jmixvh5zrwacpzec
-Content-Type: application/pgp-signature; name="signature.asc"
+Add 'set -e' so that any error in this script is caught and propagated
+to the build system.
 
------BEGIN PGP SIGNATURE-----
+Since 9c2af1c7377a ("kbuild: add .DELETE_ON_ERROR special target"),
+make automatically deletes the target on any failure. So, the broken
+capflags.c will be deleted automatically.
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXRHTLQAKCRDj7w1vZxhR
-xVFIAQDm+ODetR05CbTLFRsBL5VT2LSpM+VbD5nMJVcCFah2nAD/Vg1h5HCqRwf4
-be0dalO6uh4buoYa8FMcy6GGlmaGswk=
-=P2aH
------END PGP SIGNATURE-----
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Link: https://lkml.kernel.org/r/20190625072622.17679-1-yamada.masahiro@socionext.com
 
---jmixvh5zrwacpzec--
+---
+ arch/x86/kernel/cpu/mkcapflags.sh | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/x86/kernel/cpu/mkcapflags.sh b/arch/x86/kernel/cpu/mkcapflags.sh
+index d0dfb892c72f..aed45b8895d5 100644
+--- a/arch/x86/kernel/cpu/mkcapflags.sh
++++ b/arch/x86/kernel/cpu/mkcapflags.sh
+@@ -4,6 +4,8 @@
+ # Generate the x86_cap/bug_flags[] arrays from include/asm/cpufeatures.h
+ #
+ 
++set -e
++
+ IN=$1
+ OUT=$2
+ 
