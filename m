@@ -2,121 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 882635516E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 16:20:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD97155187
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 16:22:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729961AbfFYOUg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 10:20:36 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:34210 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727738AbfFYOUg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 10:20:36 -0400
-Received: by mail-ed1-f65.google.com with SMTP id s49so27463570edb.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 07:20:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=G6JtZL8+U2ZkwL0/tzXXiHIEAOss9zM+ZL3Pgbc8Mpk=;
-        b=PiKb0pq4SASNR7D3rZRPPn6hYPGCPxODqKLMDAnrrKgPg9InzXFNxhgfcjJ0osnNob
-         vyTtVKNuYim6MRswZ9WjaRBlsW8RMJPiwWKoyq3uAyYbDouZ9ZJClJkEADyVHPrEnO5E
-         2dv49ZPpK3sQqXzRaWmoTu0NM4VYZANoTUsRE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=G6JtZL8+U2ZkwL0/tzXXiHIEAOss9zM+ZL3Pgbc8Mpk=;
-        b=sOtLslIlVcnKC5o/DCC+axGvFhBBh6nZwyIE3DG8KmHMqOB87RqQf0jhrcVaTZFWsx
-         1arOirM/GpSS/4quWEAo62LIlpQLV3gFmKLimXq5q+dRzMhK1glQKOcpx8fHY2GbSQEZ
-         P5SBRknKzBqpg3GeMbtRkNYsCssZU4f2IZzIuZ+T1FXDIE5e6SvbZVEhugToi5evLXwA
-         rKr3cezdy8MkGCDIPNNJJDFvEfRM1/Pwh52p5HmBjWC+MPr4XC7ckFb2bOuxecSbOLnb
-         D9jQh1dpXk0Ca7ujqc6Hun43eU3muADv9iFymnQG5XnI29E/xjtEPR45ETtHy6yQ407z
-         5F1A==
-X-Gm-Message-State: APjAAAVNY9451vlunRErhQco2V+ewg8LFZB1O+ipdtz3aa5XJVTe7sz8
-        geVUCsJNNRJ9RlssEaUzwfrfkw==
-X-Google-Smtp-Source: APXvYqzf+qJgnUeqQvG0q196yIL7BFlfF2ImhuXnDKq2Nc9RZ6ZHCnGm/JBXEdesWWdkz8OViVV3qw==
-X-Received: by 2002:a05:6402:78c:: with SMTP id d12mr111470360edy.160.1561472434802;
-        Tue, 25 Jun 2019 07:20:34 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id n15sm4863868edd.49.2019.06.25.07.20.33
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 25 Jun 2019 07:20:33 -0700 (PDT)
-Date:   Tue, 25 Jun 2019 16:20:31 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
-Cc:     Daniel Vetter <daniel@ffwll.ch>,
-        Emil Velikov <emil.velikov@collabora.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        David Airlie <airlied@linux.ie>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>, dri-devel@lists.freedesktop.org,
-        kernel@collabora.com, Sean Paul <sean@poorly.run>,
-        linux-kernel@vger.kernel.org, m.szyprowski@samsung.com
-Subject: Re: [PATCH 0/2] Associate ddc adapters with connectors
-Message-ID: <20190625142031.GV12905@phenom.ffwll.local>
-Mail-Followup-To: Russell King - ARM Linux admin <linux@armlinux.org.uk>,
-        Emil Velikov <emil.velikov@collabora.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
-        Inki Dae <inki.dae@samsung.com>, David Airlie <airlied@linux.ie>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>, dri-devel@lists.freedesktop.org,
-        kernel@collabora.com, Sean Paul <sean@poorly.run>,
-        linux-kernel@vger.kernel.org, m.szyprowski@samsung.com
-References: <cover.1561452052.git.andrzej.p@collabora.com>
- <20190625100351.52ddptvb2gizaepi@shell.armlinux.org.uk>
- <817ccfba-754c-6a28-8d75-63f70605fd43@collabora.com>
- <20190625133639.GA16031@arch-x1c3>
- <20190625140755.GT12905@phenom.ffwll.local>
- <20190625141032.5jiy2oekb3olaejd@shell.armlinux.org.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190625141032.5jiy2oekb3olaejd@shell.armlinux.org.uk>
-X-Operating-System: Linux phenom 4.19.0-5-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1730150AbfFYOWd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 10:22:33 -0400
+Received: from mga03.intel.com ([134.134.136.65]:3432 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728252AbfFYOWd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 10:22:33 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jun 2019 07:22:32 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,416,1557212400"; 
+   d="scan'208";a="359968161"
+Received: from otc-icl-cdi-210.jf.intel.com ([10.54.55.28])
+  by fmsmga005.fm.intel.com with ESMTP; 25 Jun 2019 07:22:31 -0700
+From:   kan.liang@linux.intel.com
+To:     mingo@redhat.com, jolsa@kernel.org, peterz@infradead.org,
+        linux-kernel@vger.kernel.org
+Cc:     ak@linux.intel.com, Kan Liang <kan.liang@linux.intel.com>
+Subject: [PATCH] perf/x86/intel: Fix spurious NMI on fixed counter
+Date:   Tue, 25 Jun 2019 07:21:35 -0700
+Message-Id: <20190625142135.22112-1-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.14.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 25, 2019 at 03:10:32PM +0100, Russell King - ARM Linux admin wrote:
-> On Tue, Jun 25, 2019 at 04:07:55PM +0200, Daniel Vetter wrote:
-> > Otherwise I like this. Biggest problem I'm seeing here is rolling this out
-> > everywhere, this is a lot of work. And without widespread adoptions it's
-> > not terribly useful for userspace.
-> 
-> There will be cases where it's not possible, because the I2C bus is
-> hidden behind a chip that doesn't give you direct access to the DDC
-> bus.
+From: Kan Liang <kan.liang@linux.intel.com>
 
-Oh sure, plus lots of connectors where there's just not ddc bus at all.
-But if we only roll this out for a handful of drivers it's also not great,
-that's what I meant. Looking at
+If a user first sample a PEBS event on a fixed counter, then sample a
+non-PEBS event on the same fixed counter on Icelake, it will trigger
+spurious NMI. For example,
 
-$ git grep drm_do_get_edid
+  perf record -e 'cycles:p' -a
+  perf record -e 'cycles' -a
 
-there's only very few drivers where the ddc bus is hidden. There's a lot
-more where it's not, and I think a big series to tackle those would serve
-extremely well to make a case for this sysfs link.
--Daniel
+The error message for spurious NMI.
+
+  [June 21 15:38] Uhhuh. NMI received for unknown reason 30 on CPU 2.
+  [  +0.000000] Do you have a strange power saving mode enabled?
+  [  +0.000000] Dazed and confused, but trying to continue
+
+The issue was introduced by the following commit:
+
+  commit 6f55967ad9d9 ("perf/x86/intel: Fix race in intel_pmu_disable_event()")
+
+The commit moves the intel_pmu_pebs_disable() after
+intel_pmu_disable_fixed(), which returns immediately.
+The related bit of PEBS_ENABLE MSR will never be cleared for the fixed
+counter. Then a non-PEBS event runs on the fixed counter, but the bit
+on PEBS_ENABLE is still set, which trigger spurious NMI.
+
+Check and disable PEBS for fixed counter after intel_pmu_disable_fixed().
+
+Reported-by: Yi, Ammy <ammy.yi@intel.com>
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Fixes: 6f55967ad9d9 ("perf/x86/intel: Fix race in intel_pmu_disable_event()")
+---
+ arch/x86/events/intel/core.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
+
+diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+index 4377bf6a6f82..464316218b77 100644
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -2160,12 +2160,10 @@ static void intel_pmu_disable_event(struct perf_event *event)
+ 	cpuc->intel_ctrl_host_mask &= ~(1ull << hwc->idx);
+ 	cpuc->intel_cp_status &= ~(1ull << hwc->idx);
+ 
+-	if (unlikely(hwc->config_base == MSR_ARCH_PERFMON_FIXED_CTR_CTRL)) {
++	if (unlikely(hwc->config_base == MSR_ARCH_PERFMON_FIXED_CTR_CTRL))
+ 		intel_pmu_disable_fixed(hwc);
+-		return;
+-	}
+-
+-	x86_pmu_disable_event(event);
++	else
++		x86_pmu_disable_event(event);
+ 
+ 	/*
+ 	 * Needs to be called after x86_pmu_disable_event,
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+2.14.5
+
