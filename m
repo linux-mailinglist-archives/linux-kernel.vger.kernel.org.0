@@ -2,125 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09360524CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 09:31:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50F3A524D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 09:31:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729476AbfFYHb1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 03:31:27 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:41793 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727311AbfFYHb0 (ORCPT
+        id S1728380AbfFYHbx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 03:31:53 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:35562 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728342AbfFYHbw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 03:31:26 -0400
-Received: by mail-pl1-f196.google.com with SMTP id m7so8337646pls.8
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 00:31:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
-         :mime-version:content-transfer-encoding;
-        bh=LSFnG1VLPAxdrZu/1aoqM762Ph1wbr10WuLO1iu5MTU=;
-        b=qm/y87ecbFyIf1eFZsBSY3h2R6PTNTUomvSbU3uWIfChY+uRq0PvIsQSxBXBsNwHct
-         0qxu5Vqc0VLlOUo3UWbBUHa146K1iTtIaHdJRJzPzv7zJqmd9YNwasVX33OnctM2W7PT
-         6ED2jEWi/OGGV98Efe3zFxd6GGkOCOm6aqQK17eRipLwROdWt0EK7vjGDw6z26h3/cAM
-         2FPfsDcrXaUTkecFh1Y5vseIWUQ+1RdmCo8ap6+xMHy2TgVlzHfFTCHBrpu6isg6J43y
-         TxmgSwoIiD0OLyjRbUWTSStYRfbnp/B0QE8CIKuYpZq8YOEm7xfuqwRACVpD6mz8aX5t
-         1ahA==
-X-Gm-Message-State: APjAAAVifnQo2PwU1b6nO7FM2dkt/hD3v8FIdHJvaxCZyIv5yVaJ/Q/R
-        2GyahRL0qu8AAS0QMi7Te04yJQ==
-X-Google-Smtp-Source: APXvYqxA3AiKfUdGgybrZGEd+QlSDx5f6SSD+C9TEX69lBm8COreE3lS5uJ/emXNgMIJT2bbhTf5JQ==
-X-Received: by 2002:a17:902:8f81:: with SMTP id z1mr85183321plo.290.1561447885879;
-        Tue, 25 Jun 2019 00:31:25 -0700 (PDT)
-Received: from localhost (220-132-236-182.HINET-IP.hinet.net. [220.132.236.182])
-        by smtp.gmail.com with ESMTPSA id 12sm13241505pfi.60.2019.06.25.00.31.25
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 25 Jun 2019 00:31:25 -0700 (PDT)
-Date:   Tue, 25 Jun 2019 00:31:25 -0700 (PDT)
-X-Google-Original-Date: Tue, 25 Jun 2019 00:30:40 PDT (-0700)
-Subject:     Re: RISC-V nommu support v2
-In-Reply-To: <d4fd824d-03ff-e8ab-b19f-9e5ef5c22449@arm.com>
-CC:     Christoph Hellwig <hch@lst.de>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        linux-riscv@lists.infradead.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-From:   Palmer Dabbelt <palmer@sifive.com>
-To:     vladimir.murzin@arm.com
-Message-ID: <mhng-6f11ed95-e3f3-41dc-93c5-1576928b373b@palmer-si-x1e>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Tue, 25 Jun 2019 03:31:52 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20190625073151euoutp01cc46bd4b181672c252c860a25a155cd6~rYJo7KdNF0433004330euoutp01e
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 07:31:51 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20190625073151euoutp01cc46bd4b181672c252c860a25a155cd6~rYJo7KdNF0433004330euoutp01e
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1561447911;
+        bh=5sQ/QgoEhcfzsA95yFN4M7LlrW1v1YWERTGiizKMusA=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=ig1a/J/kiQ+Cl+AZzq0jsAtt9rOZ7Tp+0ehwE/Axpi9XwW99aFEjjBLTJ2/kFQKHY
+         DLv4Ft/8ZuY9zSCV18Slx6vFl7Y3eIq6UK9/oaMnXeE+AeZbNWkseudyQlB/AfZa/N
+         +Ehu5DLeCLy6IfNjIUxWMzNhrjyT8mj8SosOzU/g=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20190625073150eucas1p1804a7b12c5740935757ccbaa71dee43e~rYJn4KCUr1172011720eucas1p1F;
+        Tue, 25 Jun 2019 07:31:50 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 1A.FB.04325.5EDC11D5; Tue, 25
+        Jun 2019 08:31:49 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20190625073149eucas1p102dafce3c10e357cba18b64de8058ef9~rYJnDIWly0556905569eucas1p12;
+        Tue, 25 Jun 2019 07:31:49 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190625073149eusmtrp1c21b2f6b29117d29964abef090d964a7~rYJm0oKWL0495604956eusmtrp1M;
+        Tue, 25 Jun 2019 07:31:49 +0000 (GMT)
+X-AuditID: cbfec7f5-b8fff700000010e5-15-5d11cde5c6c0
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 98.B4.04146.4EDC11D5; Tue, 25
+        Jun 2019 08:31:48 +0100 (BST)
+Received: from [106.120.51.20] (unknown [106.120.51.20]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20190625073148eusmtip2a4fa4a3d5df3009c558e893be5645d45~rYJl48Fxw0621806218eusmtip2O;
+        Tue, 25 Jun 2019 07:31:48 +0000 (GMT)
+Subject: Re: [PATCH v10 09/13] drivers: devfreq: events: add Exynos PPMU new
+ events
+To:     cwchoi00@gmail.com
+Cc:     devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>, keescook@chromium.org,
+        Tony Lindgren <tony@atomide.com>, jroedel@suse.de,
+        treding@nvidia.com, digetx@gmail.com,
+        Greg KH <gregkh@linuxfoundation.org>,
+        willy.mh.wolff.ml@gmail.com
+From:   Lukasz Luba <l.luba@partner.samsung.com>
+Message-ID: <2e1be1d3-b6ae-e40d-48cd-6b6adb26860d@partner.samsung.com>
+Date:   Tue, 25 Jun 2019 09:31:46 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.7.0
+MIME-Version: 1.0
+In-Reply-To: <CAGTfZH35X0zE2LhGWJJp2xZNNk1ew7zNMoMqL+eZ5rcBFcPvew@mail.gmail.com>
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Se1BMYRjGfXuuu2xOi/YdDDOLGZdRGQ3fDGOYCWcYl5oxYxCOnCm0K3sq
+        l/yxRJEtJre1STW5zbosaUOZsC2ldHNt0tLYdatIU5hcwnbW6L/f+7zP973v883HEhozPZzd
+        YEgQjQYhTkeryOL7PbWT39QERoU6vGH4qsVO4efd7yj89t4knOuqpfCFTg/CKQV2Gh+uylHg
+        hwf0+KCnjcB1dVcYXLO7ncGd5pcUflxyksZdGS6ELXVlCnzJ5WZwQ9Vc/GLXeRqXt6dRuPfZ
+        VRLffrIAv/gRgL9WvkaztfzXL1kk39G4l+GzTQ0kf9PqZvhC236av51zkeEzUj7RfGaRDfHX
+        qpP5rsJRS1UrVDPXi3EbkkRjyKy1qlh3ayaK/6HcVvDoO2lCP5l0pGSBC4N8z10qHalYDXce
+        gTunk5GLbgRnP5ciuehCUF92AP078r7F4XedQ3DS2kzKxUcEvU437XMN4ZZBk6Ogj4dyQXD9
+        mLfvKoIrpWF3x2kiHbEszQXDDdsWn0fNzYPO2qa+CSQ3DlpMTYSPh3HLoftmIZI9gfDghJf0
+        sZKLgAv5HsrHBKeFJm+uQubRkOLIJuRNXSy8fErLHA6ZHos/wRBorSjyP8BIqD5sJmWWwJSR
+        7/fsBM/BHL9nBpRXNFC+lQluAthLQmR5Dpy6803hk4ELgMaPgfIGAZBVfJyQZTXsS9XI7vFQ
+        ZK5XyBwE5y4eYw4hnbVfLmu/LNZ+Waz/5+Yh0oa0YqKkjxGlqQZxa7Ak6KVEQ0xw9GZ9Ifr7
+        R6t7K77cQGU/1zkRxyLdIHWei4vSUEKStF3vRMASuqHqM8JfSb1e2L5DNG5eY0yMEyUnGsGS
+        Oq06eUDLSg0XIySIm0QxXjT+6ypY5XATWnw86W34He0S5cbysOXFySVp0WXueYN7zHuDw5cI
+        zwfOjnO3La6Gcc6ey4siRrR5Ndq7C8eEP4gOaTUYR+alpmZ/ykr4EDtr66tBGysDY22WeLK0
+        +deeW2Pnd1fpGh2EZfqZ0G/tJV2RV/bYpl2rP2KO+m2MvBymsR8dsyo+crWYZteRUqwwZSJh
+        lIQ/mlQ/0p8DAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRjHe3cuO4qLs6n54ocuAz90Wx2v78xEPxQn6YoU4YVceryQc7oz
+        RYtgJalpahfpMjMNkWKrvGV5SSWdmne0MNlSTEeGWmFqVJq0uQK//Xie/w+eB/4UJnlIuFMJ
+        SRpOnaRIlJKOeO9q1/huS784cm9T8z5UfbeSQO8Xpwn0qWMnKjUOEMgwPwVQZnkliW71lAhQ
+        X54SFU7NYmhwsEqI+i/PCdH8tXECvW28T6KFfCNAdwdbBOipcUyIhnoOIPOlxyRqn8sm0OpI
+        NY5a34Ug8/JG9OPNJAhyY38s3cTZb6NXhGyxdghnG3RjQrZGf5VkW0ueCNn8zK8kW/BcD9ja
+        3gvsQs3m445hsgC1KlXDbY1X8Zr90nAGecoYOZJ5estljJdfpL+nj3RPYEAMl5iQxqn3BEbJ
+        4sdmCkDyskN6+fBvXAtWhLnAgYK0N/w8UWdlR0pCVwBo/jBD2Beb4M2Wl/9CznBlJJe0h2YB
+        vD06QtoWzvRJaKorX2MXq/DytgXYQhjdTkLdsyKB3bghgK8+rWK5gKJIWgbr9Sk2QUQfhPMD
+        JmBjnPaAE1oTZmNX+jQsbtTi9owYdt+zrLEDfQIaHk6tXYfRvvBB7UfMzm7QZCkV2HkLzKwr
+        xq4DiW6drlun6NYpunVKGcD1wIVL5ZVxSp6R8Qoln5oUJ4tWKWuAtR4vOn/V1oPh6tA2QFNA
+        6iQqM9KREkKRxmco2wCkMKmLqEJhHYliFBnnObXqjDo1kePbgI/1uRuYu2u0ylq2JM0Zxofx
+        Q3LGz8vPyxdJ3UQ59OsICR2n0HDnOC6ZU//3BJSDuxYE1q82RFQsjWcevdgsNxzuiqKrzdPs
+        qGXkjhP+KzHWBFLkfzo624zb3ILCartemMOg06OfppzkKnFlXn2+KGI2xOOYMPfIk130zuCr
+        viC9x3/R8UC2wb37VJbH2YamyaLvG3zv6UPrRIV92tBwZpzYHjyd98WY1X+oPFYc7GmQ4ny8
+        gtmBqXnFX1VUj/40AwAA
+X-CMS-MailID: 20190625073149eucas1p102dafce3c10e357cba18b64de8058ef9
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190614095328eucas1p24009b3a07322fd12e49eabb7a08baf50
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190614095328eucas1p24009b3a07322fd12e49eabb7a08baf50
+References: <CGME20190614095328eucas1p24009b3a07322fd12e49eabb7a08baf50@eucas1p2.samsung.com>
+        <20190614095309.24100-1-l.luba@partner.samsung.com>
+        <20190614095309.24100-10-l.luba@partner.samsung.com>
+        <CAGTfZH35X0zE2LhGWJJp2xZNNk1ew7zNMoMqL+eZ5rcBFcPvew@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 24 Jun 2019 06:08:50 PDT (-0700), vladimir.murzin@arm.com wrote:
-> On 6/24/19 12:54 PM, Christoph Hellwig wrote:
->> On Mon, Jun 24, 2019 at 12:47:07PM +0100, Vladimir Murzin wrote:
->>> Since you are using binfmt_flat which is kind of 32-bit only I was expecting to see
->>> CONFIG_COMPAT (or something similar to that, like ILP32) enabled, yet I could not
->>> find it.
->>
->> There is no such thing in RISC-V.  I don't know of any 64-bit RISC-V
->> cpu that can actually run 32-bit RISC-V code, although in theory that
->> is possible.  There also is nothing like the x86 x32 or mips n32 mode
->> available either for now.
->>
->> But it turns out that with a few fixes to binfmt_flat it can run 64-bit
->> binaries just fine.  I sent that series out a while ago, and IIRC you
->> actually commented on it.
->>
->
-> True, yet my observation was that elf2flt utility assumes that address
-> space cannot exceed 32-bit (for header and absolute relocations). So,
-> from my limited point of view straightforward way to guarantee that would
-> be to build incoming elf in 32-bit mode (it is why I mentioned COMPAT/ILP32).
->
-> Also one of your patches expressed somewhat related idea
->
-> "binfmt_flat isn't the right binary format for huge executables to
-> start with"
->
-> Since you said there is no support for compat/ilp32, probably I'm missing some
-> toolchain magic?
->
-> Cheers
-> Vladimir
-To:          Christoph Hellwig <hch@lst.de>
-CC:          vladimir.murzin@arm.com
-CC:          Christoph Hellwig <hch@lst.de>
-CC:          Paul Walmsley <paul.walmsley@sifive.com>
-CC:          Damien Le Moal <Damien.LeMoal@wdc.com>
-CC:          linux-riscv@lists.infradead.org
-CC:          linux-mm@kvack.org
-CC:          linux-kernel@vger.kernel.org
-Subject:     Re: RISC-V nommu support v2
-In-Reply-To: <20190624131633.GB10746@lst.de>
 
-On Mon, 24 Jun 2019 06:16:33 PDT (-0700), Christoph Hellwig wrote:
-> On Mon, Jun 24, 2019 at 02:08:50PM +0100, Vladimir Murzin wrote:
->> True, yet my observation was that elf2flt utility assumes that address
->> space cannot exceed 32-bit (for header and absolute relocations). So,
->> from my limited point of view straightforward way to guarantee that would
->> be to build incoming elf in 32-bit mode (it is why I mentioned COMPAT/ILP32).
->>
->> Also one of your patches expressed somewhat related idea
->>
->> "binfmt_flat isn't the right binary format for huge executables to
->> start with"
->>
->> Since you said there is no support for compat/ilp32, probably I'm missing some
->> toolchain magic?
->
-> There is no magic except for the tiny elf2flt patch, which for
-> now is just in the buildroot repo pointed to in the cover letter
-> (and which I plan to upstream once the kernel support has landed
-> in Linus' tree).  We only support 32-bit code and data address spaces,
-> but we otherwise use the normal RISC-V ABI, that is 64-bit longs and
-> pointers.
 
-The medlow code model on RISC-V essentially enforces this -- technically it
-enforces a 32-bit region centered around address 0, but it's not that hard to
-stay away from negative addresses.  That said, as long as elf2flt gives you an
-error it should be fine because all medlow is going to do is give you a
-different looking error message.
+On 6/22/19 3:10 PM, Chanwoo Choi wrote:
+> Hi,
+> 
+> 2019년 6월 14일 (금) 오후 6:54, Lukasz Luba <l.luba@partner.samsung.com>님이 작성:
+>>
+>> Define new performance events supported by Exynos5422 SoC counters.
+>> The counters are built-in in Dynamic Memory Controller and provide
+>> information regarding memory utilization.
+>>
+>> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+>> ---
+>>   drivers/devfreq/event/exynos-ppmu.c | 6 ++++++
+>>   1 file changed, 6 insertions(+)
+>>
+>> diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
+>> index c2ea94957501..ce658c262c27 100644
+>> --- a/drivers/devfreq/event/exynos-ppmu.c
+>> +++ b/drivers/devfreq/event/exynos-ppmu.c
+>> @@ -89,6 +89,12 @@ static struct __exynos_ppmu_events {
+>>          PPMU_EVENT(d1-cpu),
+>>          PPMU_EVENT(d1-general),
+>>          PPMU_EVENT(d1-rt),
+>> +
+>> +       /* For Exynos5422 SoC */
+>> +       PPMU_EVENT(dmc0_0),
+>> +       PPMU_EVENT(dmc0_1),
+>> +       PPMU_EVENT(dmc1_0),
+>> +       PPMU_EVENT(dmc1_1),
+>>   };
+>>
+>>   static int exynos_ppmu_find_ppmu_id(struct devfreq_event_dev *edev)
+>> --
+>> 2.17.1
+>>
+> 
+> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+> 
+Thank you Chanwoo.
+
+Regards,
+Lukasz
