@@ -2,110 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE1AD51F7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 02:13:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95F0D51F88
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 02:13:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729341AbfFYAMs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 20:12:48 -0400
-Received: from ozlabs.org ([203.11.71.1]:34719 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729253AbfFYAMs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 20:12:48 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45Xmnl2h1kz9s8m;
-        Tue, 25 Jun 2019 10:12:43 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1561421565;
-        bh=RF29SwNLX4Zp9qVZfkr5djvyTLxzcCy+4KGrM+1AKnI=;
-        h=Date:From:To:Cc:Subject:From;
-        b=cp3t67y8c8l/r4Jag48reE22yUnEvjnaaX6jknHDb6CUA0Pe9I6s5k/zeuIKGWvtU
-         /OHxlSIXMtIWWQylErpcngefKTIbmU59oMrUBzLlUvHe4YlzdQ7fBCZlK6DWqns3n/
-         65l+TfOGexQt8N9a2afBUe9vMjEm24kWUC+8f1WUu7vNp/UFx6CV5rD0fyWgBuUMVI
-         Kz8KNehD8U76S4QvqDYgIdcdjmJt45hwMqPzKQwNnmPrPtLwju1STRZxcEDFi7c4lp
-         ZsNOdm3n2THJwSlKKb45vt0SOeGrmiQItgi+itaPTkz7iv0louHkmiHiXRiEnO9laX
-         +ldf8kOGAs8tg==
-Date:   Tue, 25 Jun 2019 10:12:42 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>,
-        Thierry Reding <treding@nvidia.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        ARM <linux-arm-kernel@lists.infradead.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Vidya Sagar <vidyas@nvidia.com>
-Subject: linux-next: manual merge of the tegra tree with the arm-soc tree
-Message-ID: <20190625101242.2eb0e418@canb.auug.org.au>
+        id S1729668AbfFYANP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 20:13:15 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:56234 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729583AbfFYANI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 20:13:08 -0400
+Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
+        by m0089730.ppops.net (8.16.0.27/8.16.0.27) with SMTP id x5P09Fcb031911
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 17:13:07 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=facebook; bh=TFx9H37w6mZg+4Tg54qFCnWnzVBpXQ/B3y/2N1lbRw0=;
+ b=YOqjNJ1ZSRhFiiRzZ6i6hCn4Q8zUNgxKC5HotrmxTrVVkvMXwz4ifQ84LDmXq0nOGIXA
+ iU8/tEBk5/3yfhnUGPCqnKQsc1AQgJJpf9dHc0UoVfnoRvbOEtz/UBV4WH8VNZlhcGad
+ mnvsemCNpShLGPDpOc2anHuA/kyrnoBT8oM= 
+Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
+        by m0089730.ppops.net with ESMTP id 2tb3gw98x1-9
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 17:13:07 -0700
+Received: from mx-out.facebook.com (2620:10d:c081:10::13) by
+ mail.thefacebook.com (2620:10d:c081:35::126) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1713.5;
+ Mon, 24 Jun 2019 17:13:04 -0700
+Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)
+        id 3AA9762E206E; Mon, 24 Jun 2019 17:12:59 -0700 (PDT)
+Smtp-Origin-Hostprefix: devbig
+From:   Song Liu <songliubraving@fb.com>
+Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
+To:     <linux-mm@kvack.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <matthew.wilcox@oracle.com>, <kirill.shutemov@linux.intel.com>,
+        <kernel-team@fb.com>, <william.kucharski@oracle.com>,
+        <akpm@linux-foundation.org>, <hdanton@sina.com>,
+        Song Liu <songliubraving@fb.com>
+Smtp-Origin-Cluster: ftw2c04
+Subject: [PATCH v9 3/6] mm,thp: stats for file backed THP
+Date:   Mon, 24 Jun 2019 17:12:43 -0700
+Message-ID: <20190625001246.685563-4-songliubraving@fb.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190625001246.685563-1-songliubraving@fb.com>
+References: <20190625001246.685563-1-songliubraving@fb.com>
+X-FB-Internal: Safe
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/j/50enT86+rbCHdAEI3eYmM"; protocol="application/pgp-signature"
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-24_16:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906250000
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/j/50enT86+rbCHdAEI3eYmM
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+In preparation for non-shmem THP, this patch adds a few stats and exposes
+them in /proc/meminfo, /sys/bus/node/devices/<node>/meminfo, and
+/proc/<pid>/task/<tid>/smaps.
 
-Hi all,
+This patch is mostly a rewrite of Kirill A. Shutemov's earlier version:
+https://lkml.kernel.org/r/20170126115819.58875-5-kirill.shutemov@linux.intel.com/
 
-Today's linux-next merge of the tegra tree got a conflict in:
+Acked-by: Rik van Riel <riel@surriel.com>
+Signed-off-by: Song Liu <songliubraving@fb.com>
+---
+ drivers/base/node.c    | 6 ++++++
+ fs/proc/meminfo.c      | 4 ++++
+ fs/proc/task_mmu.c     | 4 +++-
+ include/linux/mmzone.h | 2 ++
+ mm/vmstat.c            | 2 ++
+ 5 files changed, 17 insertions(+), 1 deletion(-)
 
-  arch/arm64/configs/defconfig
+diff --git a/drivers/base/node.c b/drivers/base/node.c
+index 8598fcbd2a17..71ae2dc93489 100644
+--- a/drivers/base/node.c
++++ b/drivers/base/node.c
+@@ -426,6 +426,8 @@ static ssize_t node_read_meminfo(struct device *dev,
+ 		       "Node %d AnonHugePages:  %8lu kB\n"
+ 		       "Node %d ShmemHugePages: %8lu kB\n"
+ 		       "Node %d ShmemPmdMapped: %8lu kB\n"
++		       "Node %d FileHugePages: %8lu kB\n"
++		       "Node %d FilePmdMapped: %8lu kB\n"
+ #endif
+ 			,
+ 		       nid, K(node_page_state(pgdat, NR_FILE_DIRTY)),
+@@ -451,6 +453,10 @@ static ssize_t node_read_meminfo(struct device *dev,
+ 		       nid, K(node_page_state(pgdat, NR_SHMEM_THPS) *
+ 				       HPAGE_PMD_NR),
+ 		       nid, K(node_page_state(pgdat, NR_SHMEM_PMDMAPPED) *
++				       HPAGE_PMD_NR),
++		       nid, K(node_page_state(pgdat, NR_FILE_THPS) *
++				       HPAGE_PMD_NR),
++		       nid, K(node_page_state(pgdat, NR_FILE_PMDMAPPED) *
+ 				       HPAGE_PMD_NR)
+ #endif
+ 		       );
+diff --git a/fs/proc/meminfo.c b/fs/proc/meminfo.c
+index 568d90e17c17..bac395fc11f9 100644
+--- a/fs/proc/meminfo.c
++++ b/fs/proc/meminfo.c
+@@ -136,6 +136,10 @@ static int meminfo_proc_show(struct seq_file *m, void *v)
+ 		    global_node_page_state(NR_SHMEM_THPS) * HPAGE_PMD_NR);
+ 	show_val_kb(m, "ShmemPmdMapped: ",
+ 		    global_node_page_state(NR_SHMEM_PMDMAPPED) * HPAGE_PMD_NR);
++	show_val_kb(m, "FileHugePages: ",
++		    global_node_page_state(NR_FILE_THPS) * HPAGE_PMD_NR);
++	show_val_kb(m, "FilePmdMapped: ",
++		    global_node_page_state(NR_FILE_PMDMAPPED) * HPAGE_PMD_NR);
+ #endif
+ 
+ #ifdef CONFIG_CMA
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index 01d4eb0e6bd1..0360e3b2ba89 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -413,6 +413,7 @@ struct mem_size_stats {
+ 	unsigned long lazyfree;
+ 	unsigned long anonymous_thp;
+ 	unsigned long shmem_thp;
++	unsigned long file_thp;
+ 	unsigned long swap;
+ 	unsigned long shared_hugetlb;
+ 	unsigned long private_hugetlb;
+@@ -563,7 +564,7 @@ static void smaps_pmd_entry(pmd_t *pmd, unsigned long addr,
+ 	else if (is_zone_device_page(page))
+ 		/* pass */;
+ 	else
+-		VM_BUG_ON_PAGE(1, page);
++		mss->file_thp += HPAGE_PMD_SIZE;
+ 	smaps_account(mss, page, true, pmd_young(*pmd), pmd_dirty(*pmd), locked);
+ }
+ #else
+@@ -767,6 +768,7 @@ static void __show_smap(struct seq_file *m, const struct mem_size_stats *mss)
+ 	SEQ_PUT_DEC(" kB\nLazyFree:       ", mss->lazyfree);
+ 	SEQ_PUT_DEC(" kB\nAnonHugePages:  ", mss->anonymous_thp);
+ 	SEQ_PUT_DEC(" kB\nShmemPmdMapped: ", mss->shmem_thp);
++	SEQ_PUT_DEC(" kB\nFilePmdMapped: ", mss->file_thp);
+ 	SEQ_PUT_DEC(" kB\nShared_Hugetlb: ", mss->shared_hugetlb);
+ 	seq_put_decimal_ull_width(m, " kB\nPrivate_Hugetlb: ",
+ 				  mss->private_hugetlb >> 10, 7);
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index 70394cabaf4e..827f9b777938 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -234,6 +234,8 @@ enum node_stat_item {
+ 	NR_SHMEM,		/* shmem pages (included tmpfs/GEM pages) */
+ 	NR_SHMEM_THPS,
+ 	NR_SHMEM_PMDMAPPED,
++	NR_FILE_THPS,
++	NR_FILE_PMDMAPPED,
+ 	NR_ANON_THPS,
+ 	NR_UNSTABLE_NFS,	/* NFS unstable pages */
+ 	NR_VMSCAN_WRITE,
+diff --git a/mm/vmstat.c b/mm/vmstat.c
+index fd7e16ca6996..6afc892a148a 100644
+--- a/mm/vmstat.c
++++ b/mm/vmstat.c
+@@ -1158,6 +1158,8 @@ const char * const vmstat_text[] = {
+ 	"nr_shmem",
+ 	"nr_shmem_hugepages",
+ 	"nr_shmem_pmdmapped",
++	"nr_file_hugepages",
++	"nr_file_pmdmapped",
+ 	"nr_anon_transparent_hugepages",
+ 	"nr_unstable",
+ 	"nr_vmscan_write",
+-- 
+2.17.1
 
-between commit:
-
-  39bab7bfb7d9 ("arm64: configs: Remove useless UEVENT_HELPER_PATH")
-
-from the arm-soc tree and commit:
-
-  01d6fb565b4a ("arm64: defconfig: Add Tegra194 PCIe driver")
-
-from the tegra tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc arch/arm64/configs/defconfig
-index 3fb84219817a,6a9dc67bbfac..000000000000
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@@ -192,6 -191,8 +192,7 @@@ CONFIG_PCIE_QCOM=3D
-  CONFIG_PCIE_ARMADA_8K=3Dy
-  CONFIG_PCIE_KIRIN=3Dy
-  CONFIG_PCIE_HISI_STB=3Dy
-+ CONFIG_PCIE_TEGRA194=3Dm
- -CONFIG_UEVENT_HELPER_PATH=3D"/sbin/hotplug"
-  CONFIG_DEVTMPFS=3Dy
-  CONFIG_DEVTMPFS_MOUNT=3Dy
-  CONFIG_HISILICON_LPC=3Dy
-
---Sig_/j/50enT86+rbCHdAEI3eYmM
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0RZvoACgkQAVBC80lX
-0GyVIggAmVr73GQ81DwKSfIkq5h/1I8FVxzB15jIuKSJe868pBbsapfalgxBPqmN
-mHU1B1F/pi+QOzHwu9g1aJOfVhSER4xGMmvRs7d3JMEvcuUqQUs9HTee24XnnUZr
-m7ozG8h2o1D3tjs03ZlIJPKHv4UXZ2c+07y55UvazAUJdXBzSrBJOu6wg4LGtSxr
-eLv338Tp9M/y86OhGpWw6C1ZLtQ7rgzD0kNnC8fM5ABdsKIl6/fs/XisCPqkCxj7
-cL1/7DMD6lTqHUex6wPidEpH7gn8Db9TovLmcbO2bn6X54oIymb0x+3XgG9PMQ0/
-b14+mH6qzYZNU9keacK+Nrm8fRThAg==
-=ReDA
------END PGP SIGNATURE-----
-
---Sig_/j/50enT86+rbCHdAEI3eYmM--
