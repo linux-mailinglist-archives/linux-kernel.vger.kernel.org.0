@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68C83554E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 18:48:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A5A3554F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 18:48:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732279AbfFYQsA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 12:48:00 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:50256 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732196AbfFYQr6 (ORCPT
+        id S1732360AbfFYQsP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 12:48:15 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:51290 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732219AbfFYQr7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 12:47:58 -0400
-Received: by mail-wm1-f66.google.com with SMTP id c66so3572491wmf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 09:47:56 -0700 (PDT)
+        Tue, 25 Jun 2019 12:47:59 -0400
+Received: by mail-wm1-f68.google.com with SMTP id 207so3560240wma.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 09:47:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=tH1fOw6y0vNQF4dreNKkipKssk8MEpaF1tmIMTiOzZ0=;
-        b=oyqB2avNk6MEzzgARPKSIYRj4FKnMd4idECsZjcdb/X0r284D9/CKoapvzEA/mN2wz
-         f5pup6I+0ItWKxIDz6OQkRGal5pbqqBLDE4GLNXjuXa4wN4MpsGfdDK7ZElYUtEu0xg9
-         IFNzR2+VkmyMWAP1x6q+hOQAJ9lmCTPw6Sy25pkN2iEtw3zvnFxWOY2wkh7zL4PVHCiY
-         a/ZzJuzBzRTAkaNpFq7pL6uQFpkhgVtrpPysHjQaxf6Cs5f6JwbrtJoe/3Vz583X/up7
-         BBe2+i+/FEFh/Z9WD/75Q25OnnabZ4MkihMgByLtZDrx46ZNUiVQCN2yyhac7CEbhICK
-         YFMg==
+        bh=YWv+ENYtDt9ayygv5AeNhTcINipts+nB0V2FRLcgbPQ=;
+        b=Dxdi6ZD33iGpwH42tE/qn+Iq4qpd9Q6uWsQShpkmqZS8uMNtMk4VAEgSDHLFGUcEzc
+         ESZloIWaRMy4AJgVcjFwGdZr5oL6Am2doHYp6EgXjBsFk/LbQnE2C4BKTkD4Zm+L7ONr
+         csb95VD80/aDbOBTm8p3fUFh6w81NVLCvmVOZNhhxQsy2NOWkzTk3rGeaCHXA632fA8c
+         RHakhy/AjDBjOZog1iWpRlFe9YY6J2eJOuW31Rkow0QeTClcSAtUATkhipMh/KqVUzg+
+         fw/hS8ts7UhwtDQ8OEeWIV5B1kXaTutTxgEBFcpE/chiQeD+kuwPB/cH90Ywhxr3sRlw
+         BwRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=tH1fOw6y0vNQF4dreNKkipKssk8MEpaF1tmIMTiOzZ0=;
-        b=FwiVe1knO4kJ4majyo++fo2kDzNu5Sm6tmGqn00q0sYDcUyxFUuyEQ2+ViF+RFCZoF
-         9fE4JIqi/ZAWqZuS9iei2t7wiQU/NdvURKuq2MaS14lEM9Z0IQsXHut+gRcI2VyoCTNA
-         pvezaceji0f7vAmkasBfMxKEW+tQ9eismDcLT+Q+BMnCT0uOIXmJsj1pneNGGmD0ZYTH
-         nkaUUHaMBeXA47OuTeQoM9/ruIXv69hdPwbemiNw8FIy/StMZmwg52hYaVu9DC8/KvVX
-         JLNd1cHULWYwHEO09D5Ws+GTJBK95FFT6nYnZ8B+wKZnyJf/PVWRvhui5rlDOvzbv2VT
-         eGlQ==
-X-Gm-Message-State: APjAAAVSi4XluCfvt22l7QcmkxiT79Bfy2J8GlunDL1b23a6as6uiCmR
-        ufEMq9bBPdMxxlNwzAPHjtRRyA==
-X-Google-Smtp-Source: APXvYqw0cMuC38HiirhzxXrIDkE7Ta0lCsm01E5gczklxa2ameHFTs38QzfSduEoCQ/93zEn2m/emw==
-X-Received: by 2002:a1c:238e:: with SMTP id j136mr19054867wmj.4.1561481276276;
-        Tue, 25 Jun 2019 09:47:56 -0700 (PDT)
+        bh=YWv+ENYtDt9ayygv5AeNhTcINipts+nB0V2FRLcgbPQ=;
+        b=EAX60Wp46SCezI2l/PEtmE8SVatH2yPpNxFjWDPGdia9ZgcqDbcemk40MzZ2TJm52w
+         gKmcN0fL2XOVUX7udJTMh+wTNvJoZlQBkBeQVg6Eu7pqebnju9SblBppUvM6XHxrGddO
+         Oy1d6R8wfnGZNNog2oboGKxObPQ4+WfBvUPO8Wsbm9PptutAojwptSPiXlSfWUsSpR6G
+         dM2UjJY5FUJmo8EaJzK/G2PYjv8qzPMPbtuYZ6McOyq9mEaiCfo4yhSRMT5RkE7ncwNK
+         wEUQUySjOs6SBkilrqMRyZwot2dh8pMEyx3ItHSASTNV9J9zXrRg+1n/66mYKZmBhU9z
+         KwZw==
+X-Gm-Message-State: APjAAAVs0y6oJJ4nfVZLC+lTP7uRISZCamTeAUX9xKimBUwViJ+GXN4J
+        uKRYxPJOg5MEOUnIEBBCC34uTA==
+X-Google-Smtp-Source: APXvYqyctq0fJwYMqXovLwVH+Rv/g41oIdZlbNT5SBNXiqMQk4fgjk1F1lSz3e94rDFGPxFy/vVOuQ==
+X-Received: by 2002:a1c:f102:: with SMTP id p2mr19064644wmh.60.1561481278013;
+        Tue, 25 Jun 2019 09:47:58 -0700 (PDT)
 Received: from localhost.localdomain (30.red-83-34-200.dynamicip.rima-tde.net. [83.34.200.30])
-        by smtp.gmail.com with ESMTPSA id d18sm42594476wrb.90.2019.06.25.09.47.54
+        by smtp.gmail.com with ESMTPSA id d18sm42594476wrb.90.2019.06.25.09.47.56
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 25 Jun 2019 09:47:55 -0700 (PDT)
+        Tue, 25 Jun 2019 09:47:57 -0700 (PDT)
 From:   Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
 To:     jorge.ramirez-ortiz@linaro.org, sboyd@kernel.org,
         bjorn.andersson@linaro.org, david.brown@linaro.org,
@@ -58,9 +58,9 @@ Cc:     vkoul@kernel.org, niklas.cassel@linaro.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, khasim.mohammed@linaro.org
-Subject: [PATCH v3 11/14] arm64: dts: qcom: qcs404: Add HFPLL node
-Date:   Tue, 25 Jun 2019 18:47:30 +0200
-Message-Id: <20190625164733.11091-12-jorge.ramirez-ortiz@linaro.org>
+Subject: [PATCH v3 12/14] arm64: dts: qcom: qcs404: Add the clocks for APCS mux/divider
+Date:   Tue, 25 Jun 2019 18:47:31 +0200
+Message-Id: <20190625164733.11091-13-jorge.ramirez-ortiz@linaro.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190625164733.11091-1-jorge.ramirez-ortiz@linaro.org>
 References: <20190625164733.11091-1-jorge.ramirez-ortiz@linaro.org>
@@ -71,36 +71,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The high frequency pll functionality is required to enable CPU
-frequency scaling operation.
+Specify the clocks that feed the APCS mux/divider instead of using
+default hardcoded values in the source code.
 
 Co-developed-by: Niklas Cassel <niklas.cassel@linaro.org>
 Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
 Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/qcs404.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/arm64/boot/dts/qcom/qcs404.dtsi | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-index d876dae5b0a5..94471aa31979 100644
+index 94471aa31979..9569686dbc41 100644
 --- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
 +++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-@@ -852,6 +852,15 @@
+@@ -850,6 +850,9 @@
+ 			compatible = "qcom,qcs404-apcs-apps-global", "syscon";
+ 			reg = <0x0b011000 0x1000>;
  			#mbox-cells = <1>;
++			clocks = <&gcc GCC_GPLL0_AO_OUT_MAIN>, <&apcs_hfpll>;
++			clock-names = "aux", "pll";
++			#clock-cells = <0>;
  		};
  
-+		apcs_hfpll: clock-controller@b016000 {
-+			compatible = "qcom,hfpll";
-+			reg = <0x0b016000 0x30>;
-+			#clock-cells = <0>;
-+			clock-output-names = "apcs_hfpll";
-+			clocks = <&xo_board>;
-+			clock-names = "xo";
-+		};
-+
- 		timer@b120000 {
- 			#address-cells = <1>;
- 			#size-cells = <1>;
+ 		apcs_hfpll: clock-controller@b016000 {
 -- 
 2.21.0
 
