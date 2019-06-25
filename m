@@ -2,126 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67DD855B4D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 00:35:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E3CF55C2B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 01:21:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726443AbfFYWe7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 18:34:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39948 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726320AbfFYWe6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 18:34:58 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1FCBF205ED;
-        Tue, 25 Jun 2019 22:34:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561502097;
-        bh=/kwIgl7T7RUB6O8AVjTRLgNL7U9K6Zhd50WUYjJcszk=;
-        h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
-        b=TJcRicsuQdvPQg9FeTYbsi/IhN1JdT58h299gkXyrGdyEDhz+ZXUCdRDp0ABWeF67
-         mfNgTTWW7vB2AB93S1BledWN7Ici0mXVLEkXdh1PtPnaCLdWvIrJvmKCZN0+p9w5ew
-         eHnOpg3F3NLVVen8lN7NjAb6z6kZ0nPHR1rtx0d4=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <DB3PR0402MB3916F7F7D7CA801F5C0D0610F5ED0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-References: <20190604015928.23157-1-Anson.Huang@nxp.com> <20190604015928.23157-3-Anson.Huang@nxp.com> <20190606162543.EFFB820645@mail.kernel.org> <DB3PR0402MB391625A0B3D838CE88C53E33F5100@DB3PR0402MB3916.eurprd04.prod.outlook.com> <20190607180039.611C7208C0@mail.kernel.org> <DB3PR0402MB391678C245944942EA2A7F62F5110@DB3PR0402MB3916.eurprd04.prod.outlook.com> <20190610151425.D8139207E0@mail.kernel.org> <DB3PR0402MB3916F7F7D7CA801F5C0D0610F5ED0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-To:     "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "dinguyen@kernel.org" <dinguyen@kernel.org>,
-        "enric.balletbo@collabora.com" <enric.balletbo@collabora.com>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "horms+renesas@verge.net.au" <horms+renesas@verge.net.au>,
-        "jagan@amarulasolutions.com" <jagan@amarulasolutions.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "olof@lixom.net" <olof@lixom.net>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "s.hauer@pengutronix .de" <s.hauer@pengutronix.de>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: RE: [PATCH V3 3/4] clk: imx: Add support for i.MX8MN clock driver
-Cc:     dl-linux-imx <linux-imx@nxp.com>
-User-Agent: alot/0.8.1
-Date:   Tue, 25 Jun 2019 15:34:56 -0700
-Message-Id: <20190625223457.1FCBF205ED@mail.kernel.org>
+        id S1726420AbfFYXVo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 19:21:44 -0400
+Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:36754 "EHLO
+        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725782AbfFYXVn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 19:21:43 -0400
+X-Greylist: delayed 2751 seconds by postgrey-1.27 at vger.kernel.org; Tue, 25 Jun 2019 19:21:42 EDT
+Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
+        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id x5PMZ754025278;
+        Wed, 26 Jun 2019 01:35:08 +0300
+Received: by taln60.nuvoton.co.il (Postfix, from userid 20053)
+        id EA30261FCB; Wed, 26 Jun 2019 01:35:07 +0300 (IDT)
+From:   Oshri Alkoby <oshrialkoby85@gmail.com>
+To:     robh+dt@kernel.org, mark.rutland@arm.com, peterhuewe@gmx.de,
+        jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca, arnd@arndb.de,
+        gregkh@linuxfoundation.org, oshrialkoby85@gmail.com,
+        oshri.alkoby@nuvoton.com
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org, gcwilson@us.ibm.com,
+        kgoldman@us.ibm.com, nayna@linux.vnet.ibm.com,
+        tomer.maimon@nuvoton.com
+Subject: [PATCH v1 0/2] char: tpm: add new driver for tpm i2c ptp
+Date:   Wed, 26 Jun 2019 01:35:01 +0300
+Message-Id: <20190625223503.367710-1-oshrialkoby85@gmail.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Anson Huang (2019-06-10 19:06:22)
-> > >
-> > > Sorry, I am still a little confused, all the clock
-> > > register(clk_register()) are via each different clock types like
-> > > imx_clk_gate4/imx_clk_pll14xx, if using clk_hw_register, means we need
-> > > to re-write the clock driver using different clk register method, that
-> > > will make the driver completely different from i.mx8mq/i.mx8mm, they
-> > > are actually same series of SoC as i.mx8mn, it will introduce many
-> > confusion, is my understanding correct? And is it OK to just keep what =
-it is
-> > and make them all aligned?
-> > >
-> >=20
-> > Ok, the problem I'm trying to point out is that clk registrations need =
-to be
-> > undone, i.e. clk_unregister() needs to be called, when the driver fails=
- to
-> > probe. devm_*() is one way to do this, but if you have other ways of
-> > removing all the registered clks then that works too. Makes sense?
->=20
-> Yes, it makes sense. Do you think it is OK to add an imx_unregister_clock=
-s() API, then
-> call it in every place of returning failure in .probe function? If yes, I=
- will add it and also
-> fix it in i.MX8MQ driver which uses platform driver model but does NOT ha=
-ndle this case.=20
->=20
->         base =3D devm_platform_ioremap_resource(pdev, 0);
-> -       if (WARN_ON(IS_ERR(base)))
-> -               return PTR_ERR(base);
-> +       if (WARN_ON(IS_ERR(base))) {
-> +               ret =3D PTR_ERR(base);
-> +               goto unregister_clks;
-> +       }
->=20
->                 pr_err("failed to register clks for i.MX8MN\n");
-> -               return -EINVAL;
-> +               goto unregister_clks;
->         }
->=20
->         return 0;
-> +
-> +unregister_clks:
-> +       imx_unregister_clocks(clks, ARRAY_SIZE(clks));
-> +
-> +       return ret;
->=20
-> +void imx_unregister_clocks(struct clk *clks[], unsigned int count)
-> +{
-> +       unsigned i;
-> +
-> +       for (i =3D 0; i < count; i++)
-> +               clk_unregister(clks[i]);
-> +}
-> +
->=20
+This patch set adds support for TPM devices that implement the I2C
+interface defined by TCG PTP specification.
 
-Yes, looks better.
+The driver was tested on Raspberry-Pie 3, using Nuvoton NPCT75X TPM.
+
+Oshri Alkoby (2):
+  dt-bindings: tpm: add the TPM I2C PTP device tree binding
+    documentation
+  char: tpm: add new driver for tpm i2c ptp
+
+ .../bindings/security/tpm/tpm-i2c-ptp.txt     |   17 +
+ drivers/char/tpm/Kconfig                      |   22 +
+ drivers/char/tpm/Makefile                     |    1 +
+ drivers/char/tpm/tpm_i2c_ptp.c                | 1099 +++++++++++++++++
+ 4 files changed, 1139 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/security/tpm/tpm-i2c-ptp.txt
+ create mode 100644 drivers/char/tpm/tpm_i2c_ptp.c
+
+-- 
+2.18.0
 
