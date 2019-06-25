@@ -2,196 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75D5B55C5E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 01:33:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34FC455C53
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 01:33:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726539AbfFYXdo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 19:33:44 -0400
-Received: from mail-out.m-online.net ([212.18.0.10]:36611 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725782AbfFYXdS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726334AbfFYXdS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Tue, 25 Jun 2019 19:33:18 -0400
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 45YMsl1Kqqz1rh8r;
-        Wed, 26 Jun 2019 01:33:15 +0200 (CEST)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 45YMsl10Vpz20Rx6;
-        Wed, 26 Jun 2019 01:33:15 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id RjtqJ4q3UDsS; Wed, 26 Jun 2019 01:33:14 +0200 (CEST)
-X-Auth-Info: zBrVjxkKMbfWqKp2Cl795HfNVguRxOsqlOBmoluSHBg=
-Received: from kurokawa.lan (ip-86-49-110-70.net.upcbroadband.cz [86.49.110.70])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ozlabs.org ([203.11.71.1]:42747 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726068AbfFYXdS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 19:33:18 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Wed, 26 Jun 2019 01:33:14 +0200 (CEST)
-From:   Marek Vasut <marex@denx.de>
-To:     linux-kernel@vger.kernel.org
-Cc:     Marek Vasut <marex@denx.de>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Mark Brown <broonie@kernel.org>
-Subject: [RFC][PATCH] regmap: Drop CONFIG_64BIT checks from core
-Date:   Wed, 26 Jun 2019 01:31:16 +0200
-Message-Id: <20190625233116.2889-1-marex@denx.de>
-X-Mailer: git-send-email 2.20.1
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45YMsl1ysYz9s3Z;
+        Wed, 26 Jun 2019 09:33:15 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1561505595;
+        bh=y1eG32qua6PhqAiVuAO6P1kOZFtVSk/MwLtTyC8MGsE=;
+        h=Date:From:To:Cc:Subject:From;
+        b=fkb9QrRbj//LRsIu9lXOvOrUiRoYIiFQsZPa6pgCLWNYPOp2dnEXnEZPzUiUKGeqQ
+         yimmxbMVdCiYo2XAR5lu+a6/w9HUk5dTFDcqNkZzC1LOqLsK15NS438bPUGUPOCUOi
+         CfKRf6J+blJVUs33h22MPwYdkZOr8ll6+xnrOIruD7Q9ei5RcuQuvov+G+7z2xlCwy
+         lGjyKbCEKAIw8X/jZ2mfpu56q/z+CjyRmO3lBPEyGey8DvQ1GlvgNZt5treR4xInI1
+         /p4wDeaOtA5cKhV0Lpv15cBCjPEQSk5OfcJQAonYj9BGY8V3zZLnbn4LRafRRN+Xm8
+         zOeRcedZyjTGg==
+Date:   Wed, 26 Jun 2019 09:32:50 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the tip tree
+Message-ID: <20190626093250.5c7cc243@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/_cU8wxQxL6QxmCi4sLWZT8C"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Drop the CONFIG_64BIT checks from core regmap code, as it is well
-possible to access e.g. an SPI device with 64bit registers from a
-32bit CPU. The CONFIG_64BIT checks are still left in place in the
-regmap mmio code however.
+--Sig_/_cU8wxQxL6QxmCi4sLWZT8C
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Marek Vasut <marex@denx.de>
-Cc: Rafael J. Wysocki <rafael@kernel.org>
-Cc: Mark Brown <broonie@kernel.org>
----
- drivers/base/regmap/regcache.c |  4 ----
- drivers/base/regmap/regmap.c   | 14 --------------
- 2 files changed, 18 deletions(-)
+Hi all,
 
-diff --git a/drivers/base/regmap/regcache.c b/drivers/base/regmap/regcache.c
-index a93cafd7be4f..e443d9de3f7e 100644
---- a/drivers/base/regmap/regcache.c
-+++ b/drivers/base/regmap/regcache.c
-@@ -577,14 +577,12 @@ bool regcache_set_val(struct regmap *map, void *base, unsigned int idx,
- 		cache[idx] = val;
- 		break;
- 	}
--#ifdef CONFIG_64BIT
- 	case 8: {
- 		u64 *cache = base;
- 
- 		cache[idx] = val;
- 		break;
- 	}
--#endif
- 	default:
- 		BUG();
- 	}
-@@ -618,13 +616,11 @@ unsigned int regcache_get_val(struct regmap *map, const void *base,
- 
- 		return cache[idx];
- 	}
--#ifdef CONFIG_64BIT
- 	case 8: {
- 		const u64 *cache = base;
- 
- 		return cache[idx];
- 	}
--#endif
- 	default:
- 		BUG();
- 	}
-diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
-index 19f57ccfbe1d..7da9dbb98d8a 100644
---- a/drivers/base/regmap/regmap.c
-+++ b/drivers/base/regmap/regmap.c
-@@ -298,7 +298,6 @@ static void regmap_format_32_native(void *buf, unsigned int val,
- 	*(u32 *)buf = val << shift;
- }
- 
--#ifdef CONFIG_64BIT
- static void regmap_format_64_be(void *buf, unsigned int val, unsigned int shift)
- {
- 	__be64 *b = buf;
-@@ -318,7 +317,6 @@ static void regmap_format_64_native(void *buf, unsigned int val,
- {
- 	*(u64 *)buf = (u64)val << shift;
- }
--#endif
- 
- static void regmap_parse_inplace_noop(void *buf)
- {
-@@ -407,7 +405,6 @@ static unsigned int regmap_parse_32_native(const void *buf)
- 	return *(u32 *)buf;
- }
- 
--#ifdef CONFIG_64BIT
- static unsigned int regmap_parse_64_be(const void *buf)
- {
- 	const __be64 *b = buf;
-@@ -440,7 +437,6 @@ static unsigned int regmap_parse_64_native(const void *buf)
- {
- 	return *(u64 *)buf;
- }
--#endif
- 
- static void regmap_lock_hwlock(void *__map)
- {
-@@ -921,7 +917,6 @@ struct regmap *__regmap_init(struct device *dev,
- 		}
- 		break;
- 
--#ifdef CONFIG_64BIT
- 	case 64:
- 		switch (reg_endian) {
- 		case REGMAP_ENDIAN_BIG:
-@@ -937,7 +932,6 @@ struct regmap *__regmap_init(struct device *dev,
- 			goto err_hwlock;
- 		}
- 		break;
--#endif
- 
- 	default:
- 		goto err_hwlock;
-@@ -998,7 +992,6 @@ struct regmap *__regmap_init(struct device *dev,
- 			goto err_hwlock;
- 		}
- 		break;
--#ifdef CONFIG_64BIT
- 	case 64:
- 		switch (val_endian) {
- 		case REGMAP_ENDIAN_BIG:
-@@ -1019,7 +1012,6 @@ struct regmap *__regmap_init(struct device *dev,
- 			goto err_hwlock;
- 		}
- 		break;
--#endif
- 	}
- 
- 	if (map->format.format_write) {
-@@ -2081,11 +2073,9 @@ int regmap_bulk_write(struct regmap *map, unsigned int reg, const void *val,
- 			case 4:
- 				ival = *(u32 *)(val + (i * val_bytes));
- 				break;
--#ifdef CONFIG_64BIT
- 			case 8:
- 				ival = *(u64 *)(val + (i * val_bytes));
- 				break;
--#endif
- 			default:
- 				ret = -EINVAL;
- 				goto out;
-@@ -2809,9 +2799,7 @@ int regmap_bulk_read(struct regmap *map, unsigned int reg, void *val,
- 		for (i = 0; i < val_count * val_bytes; i += val_bytes)
- 			map->format.parse_inplace(val + i);
- 	} else {
--#ifdef CONFIG_64BIT
- 		u64 *u64 = val;
--#endif
- 		u32 *u32 = val;
- 		u16 *u16 = val;
- 		u8 *u8 = val;
-@@ -2827,11 +2815,9 @@ int regmap_bulk_read(struct regmap *map, unsigned int reg, void *val,
- 				goto out;
- 
- 			switch (map->format.val_bytes) {
--#ifdef CONFIG_64BIT
- 			case 8:
- 				u64[i] = ival;
- 				break;
--#endif
- 			case 4:
- 				u32[i] = ival;
- 				break;
--- 
-2.20.1
+Commits
 
+  53d87b37a2a4 ("arm64: compat: No need for pre-ARMv7 barriers on an ARMv8 =
+system")
+  b4b12aca00d5 ("arm64: vdso: Remove unnecessary asm-offsets.c definitions")
+  4d33ebb02c45 ("vdso: Remove superfluous #ifdef __KERNEL__ in vdso/datapag=
+e.h")
+
+are missing a Signed-off-by from their committer.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/_cU8wxQxL6QxmCi4sLWZT8C
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0SryIACgkQAVBC80lX
+0GzxMQf/eUQTd1yP/D/HkdDSZaDGjSCXKjoIYk2l85WVbYglhdqFQgI7hjhCHKNT
+tQb2pZSFVQR22LTrk0ijvbo6s2bvc5rO6aBm2GQI/Wrp99PcTIEga07ZEwlcpddt
+QR0Re+b9Bf2RxquSBVh4KgdvdOKaZF9N17gKJRys9wIyyklAVXkvDtkyeEIkvdS3
+yNzd/eVKNya+v8JSdBmz/0WRsI0DaGj1IWDqBWU6eJZFD+cSliVdsduA6oQB3xsi
+jTn5wuW98xJDygXHWS/PxyEPQwN5+roQ1vgeQ5AOnnr4BkTd9xxOAaL22U8IQ7gk
+wEfrU7r5INEvlRvXYPKESM/DjwBPLA==
+=M3K1
+-----END PGP SIGNATURE-----
+
+--Sig_/_cU8wxQxL6QxmCi4sLWZT8C--
