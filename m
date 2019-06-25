@@ -2,171 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E2B752535
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 09:50:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F91E52530
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 09:49:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729744AbfFYHuS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 03:50:18 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:52577 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726441AbfFYHuS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 03:50:18 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5P7nlGg3516722
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Tue, 25 Jun 2019 00:49:47 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5P7nlGg3516722
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019061801; t=1561448988;
-        bh=LWaaVbK9bQYGi9SMe6yD2Id3Gl9UBssPgCcMKzM+gUg=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=D8+O52UCEGKUsWKNEvzi5OyBE2GyaqqXxYKOZbvJ9ekMUp3PTMnpm1K33X3P2ppy6
-         3+c6nnNRmZrO0UHIpPfcJaxdLCEZV0T32rGctykCKkut0B2u6hPR1OXz72+GNk1yY9
-         jtiUd7cbsPQsUfGhUcqmqCEkk/alPvScTMJwZWgWKK0Adr2c1kzuMpR/ODx+9te3Tf
-         HNeVRVviNA/1u7XzyqdKDwMyhmiVkVUonPRz+xpbQvxnxnli2e56Tbdk0WKr0Ymj4a
-         uw0z6xNXrARIurHm0tWdwZqSGSmqcd0Gt3BEN5F9pNiiP8uACLJb9Xeqe1+E6S5pHF
-         FVtiA6CpG93FQ==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5P7nl4H3516719;
-        Tue, 25 Jun 2019 00:49:47 -0700
-Date:   Tue, 25 Jun 2019 00:49:47 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Catalin Marinas <tipbot@zytor.com>
-Message-ID: <tip-b4b12aca00d509a233abd28990194628adcd71e6@git.kernel.org>
-Cc:     paul.burton@mips.com, will.deacon@arm.com, arnd@arndb.de,
-        salyzyn@android.com, linux@rasmusvillemoes.dk,
-        linux@armlinux.org.uk, tglx@linutronix.de,
-        vincenzo.frascino@arm.com, sthotton@marvell.com, hpa@zytor.com,
-        mingo@kernel.org, andre.przywara@arm.com, shuah@kernel.org,
-        catalin.marinas@arm.com, linux-kernel@vger.kernel.org,
-        huw@codeweavers.com, daniel.lezcano@linaro.org,
-        0x7f454c46@gmail.com, ralf@linux-mips.org, pcc@google.com
-Reply-To: andre.przywara@arm.com, shuah@kernel.org,
-          catalin.marinas@arm.com, linux-kernel@vger.kernel.org,
-          huw@codeweavers.com, daniel.lezcano@linaro.org,
-          0x7f454c46@gmail.com, ralf@linux-mips.org, pcc@google.com,
-          paul.burton@mips.com, will.deacon@arm.com, arnd@arndb.de,
-          salyzyn@android.com, linux@rasmusvillemoes.dk,
-          linux@armlinux.org.uk, tglx@linutronix.de,
-          vincenzo.frascino@arm.com, sthotton@marvell.com, hpa@zytor.com,
-          mingo@kernel.org
-In-Reply-To: <20190624135812.GC29120@arrakis.emea.arm.com>
-References: <20190624135812.GC29120@arrakis.emea.arm.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:timers/vdso] arm64: vdso: Remove unnecessary asm-offsets.c
- definitions
-Git-Commit-ID: b4b12aca00d509a233abd28990194628adcd71e6
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1729487AbfFYHty (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 03:49:54 -0400
+Received: from mail-eopbgr40137.outbound.protection.outlook.com ([40.107.4.137]:61105
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726421AbfFYHtx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 03:49:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=toradex.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tA6JBJb6oWxZQN8cj41AYPnn1HGbKv2UuwLOigCxT4o=;
+ b=tByNCMORj3IF9EmbsjewuOMAK0+noyH8RLinZ/J2aVzTxlMze+AfnkE5SHabH9JZBomM5dQT8g5kRf2NoQBenjTtnunmx6w+PH4T8pqfp+Rm/xoKlYguS6pgFjnMvDHeraVKF7XnxKrxIZOtKZq2HUqTeoT0eOtPjfdNZJjyWho=
+Received: from AM6PR05MB6535.eurprd05.prod.outlook.com (20.179.18.16) by
+ AM6PR05MB4150.eurprd05.prod.outlook.com (52.135.161.19) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2008.16; Tue, 25 Jun 2019 07:49:50 +0000
+Received: from AM6PR05MB6535.eurprd05.prod.outlook.com
+ ([fe80::2c23:fdba:9ce4:7397]) by AM6PR05MB6535.eurprd05.prod.outlook.com
+ ([fe80::2c23:fdba:9ce4:7397%7]) with mapi id 15.20.2008.007; Tue, 25 Jun 2019
+ 07:49:49 +0000
+From:   Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
+To:     Fabio Estevam <festevam@gmail.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Igor Opaniuk <igor.opaniuk@toradex.com>,
+        Oleksandr Suvorov <oleksandr.suvorov@toradex.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
+        Liam Girdwood <lgirdwood@gmail.com>
+Subject: [PATCH v2 2/6] ASoC: sgtl5000: add ADC mute control
+Thread-Topic: [PATCH v2 2/6] ASoC: sgtl5000: add ADC mute control
+Thread-Index: AQHVKyqRcZ04ncDZBUW/bJGcuQuzmw==
+Date:   Tue, 25 Jun 2019 07:49:49 +0000
+Message-ID: <20190625074937.2621-3-oleksandr.suvorov@toradex.com>
+References: <20190625074937.2621-1-oleksandr.suvorov@toradex.com>
+In-Reply-To: <20190625074937.2621-1-oleksandr.suvorov@toradex.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: AM0PR0402CA0035.eurprd04.prod.outlook.com
+ (2603:10a6:208:15::48) To AM6PR05MB6535.eurprd05.prod.outlook.com
+ (2603:10a6:20b:71::16)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=oleksandr.suvorov@toradex.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.20.1
+x-originating-ip: [194.105.145.90]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 1e6064a5-867d-4716-0659-08d6f941b35a
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:AM6PR05MB4150;
+x-ms-traffictypediagnostic: AM6PR05MB4150:
+x-microsoft-antispam-prvs: <AM6PR05MB4150F79D7B316AAE8CA31400F9E30@AM6PR05MB4150.eurprd05.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:669;
+x-forefront-prvs: 0079056367
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(366004)(39850400004)(136003)(346002)(376002)(189003)(199004)(6436002)(86362001)(8936002)(6116002)(3846002)(186003)(6486002)(81166006)(81156014)(446003)(102836004)(6506007)(386003)(26005)(486006)(2616005)(11346002)(478600001)(44832011)(8676002)(476003)(305945005)(71190400001)(7736002)(6512007)(54906003)(2906002)(316002)(4326008)(68736007)(71200400001)(66066001)(53936002)(25786009)(50226002)(66946007)(36756003)(73956011)(64756008)(66446008)(14454004)(66556008)(1076003)(66476007)(4744005)(6916009)(5660300002)(52116002)(76176011)(99286004)(256004)(1411001);DIR:OUT;SFP:1102;SCL:1;SRVR:AM6PR05MB4150;H:AM6PR05MB6535.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: toradex.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: FgKBrGWsHlyXSjqSkXA2jhegJfKn/kQMLHPhSyaMQ9eXlnh0boGHHZQINXzmmIFJcrZBx6hf4H1b88GUc0MMP1AS00sxXz1oBnnDUYwQZy9CfHUqTK8gAfdOGeEkpg8glzN1AuyCbHXDy6eMAtCLQq0jMBRehn+nIsL66yO/qsasCxHxOZLlh2nP++AW1tt0ihpCYft7C+yZFzess0D+eF3UzWiQFGZEezlimCDjQ0jSHkpmvlN/zSNUFDkQm59FoCoTgntmfgIF0isTmleogsMWhwyHloAGQM+xRti3z4hVHyI1GpG+uLQvL77dSJXQi2vPhpu5DBm1wJkr/bN5Qh9QxfFIcDcSjSF5PgpDfmISmNFXTY0VF+FSMtJHE2GE/NVaL5FGXdgNqS+SQDIpajrTl8bV3hAiQs77ILt16Pg=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=-0.8 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        FREEMAIL_FORGED_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT autolearn=no
-        autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+X-OriginatorOrg: toradex.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1e6064a5-867d-4716-0659-08d6f941b35a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Jun 2019 07:49:49.9374
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: d9995866-0d9b-4251-8315-093f062abab4
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: oleksandr.suvorov@toradex.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR05MB4150
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  b4b12aca00d509a233abd28990194628adcd71e6
-Gitweb:     https://git.kernel.org/tip/b4b12aca00d509a233abd28990194628adcd71e6
-Author:     Catalin Marinas <catalin.marinas@arm.com>
-AuthorDate: Mon, 24 Jun 2019 14:58:12 +0100
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Tue, 25 Jun 2019 09:43:38 +0200
-
-arm64: vdso: Remove unnecessary asm-offsets.c definitions
-
-Since the VDSO code has moved to C from assembly, there is no need to
-define and maintain the corresponding asm offsets.
-
-Fixes: 28b1a824a4f4 ("arm64: vdso: Substitute gettimeofday() with C implementation")
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Vincenzo Frascino <vincenzo.frascino@arm.com>
-Cc: linux-arch@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-mips@vger.kernel.org
-Cc: linux-kselftest@vger.kernel.org
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: Paul Burton <paul.burton@mips.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Mark Salyzyn <salyzyn@android.com>
-Cc: Peter Collingbourne <pcc@google.com>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: Dmitry Safonov <0x7f454c46@gmail.com>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: Huw Davies <huw@codeweavers.com>
-Cc: Shijith Thotton <sthotton@marvell.com>
-Cc: Andre Przywara <andre.przywara@arm.com>
-Link: https://lkml.kernel.org/r/20190624135812.GC29120@arrakis.emea.arm.com
----
- arch/arm64/kernel/asm-offsets.c | 39 ---------------------------------------
- 1 file changed, 39 deletions(-)
-
-diff --git a/arch/arm64/kernel/asm-offsets.c b/arch/arm64/kernel/asm-offsets.c
-index e6f7409a78a4..214685760e1c 100644
---- a/arch/arm64/kernel/asm-offsets.c
-+++ b/arch/arm64/kernel/asm-offsets.c
-@@ -14,7 +14,6 @@
- #include <linux/kvm_host.h>
- #include <linux/preempt.h>
- #include <linux/suspend.h>
--#include <vdso/datapage.h>
- #include <asm/cpufeature.h>
- #include <asm/fixmap.h>
- #include <asm/thread_info.h>
-@@ -86,44 +85,6 @@ int main(void)
-   BLANK();
-   DEFINE(PREEMPT_DISABLE_OFFSET, PREEMPT_DISABLE_OFFSET);
-   BLANK();
--  DEFINE(CLOCK_REALTIME,	CLOCK_REALTIME);
--  DEFINE(CLOCK_MONOTONIC,	CLOCK_MONOTONIC);
--  DEFINE(CLOCK_MONOTONIC_RAW,	CLOCK_MONOTONIC_RAW);
--  DEFINE(CLOCK_REALTIME_RES,	offsetof(struct vdso_data, hrtimer_res));
--  DEFINE(CLOCK_REALTIME_COARSE,	CLOCK_REALTIME_COARSE);
--  DEFINE(CLOCK_MONOTONIC_COARSE,CLOCK_MONOTONIC_COARSE);
--  DEFINE(CLOCK_COARSE_RES,	LOW_RES_NSEC);
--  DEFINE(NSEC_PER_SEC,		NSEC_PER_SEC);
--  BLANK();
--  DEFINE(VDSO_SEQ,		offsetof(struct vdso_data, seq));
--  DEFINE(VDSO_CLK_MODE,		offsetof(struct vdso_data, clock_mode));
--  DEFINE(VDSO_CYCLE_LAST,	offsetof(struct vdso_data, cycle_last));
--  DEFINE(VDSO_MASK,		offsetof(struct vdso_data, mask));
--  DEFINE(VDSO_MULT,		offsetof(struct vdso_data, mult));
--  DEFINE(VDSO_SHIFT,		offsetof(struct vdso_data, shift));
--  DEFINE(VDSO_REALTIME_SEC,	offsetof(struct vdso_data, basetime[CLOCK_REALTIME].sec));
--  DEFINE(VDSO_REALTIME_NSEC,	offsetof(struct vdso_data, basetime[CLOCK_REALTIME].nsec));
--  DEFINE(VDSO_MONO_SEC,		offsetof(struct vdso_data, basetime[CLOCK_MONOTONIC].sec));
--  DEFINE(VDSO_MONO_NSEC,	offsetof(struct vdso_data, basetime[CLOCK_MONOTONIC].nsec));
--  DEFINE(VDSO_MONO_RAW_SEC,	offsetof(struct vdso_data, basetime[CLOCK_MONOTONIC_RAW].sec));
--  DEFINE(VDSO_MONO_RAW_NSEC,	offsetof(struct vdso_data, basetime[CLOCK_MONOTONIC_RAW].nsec));
--  DEFINE(VDSO_BOOTTIME_SEC,	offsetof(struct vdso_data, basetime[CLOCK_BOOTTIME].sec));
--  DEFINE(VDSO_BOOTTIME_NSEC,	offsetof(struct vdso_data, basetime[CLOCK_BOOTTIME].nsec));
--  DEFINE(VDSO_TAI_SEC,		offsetof(struct vdso_data, basetime[CLOCK_TAI].sec));
--  DEFINE(VDSO_TAI_NSEC,		offsetof(struct vdso_data, basetime[CLOCK_TAI].nsec));
--  DEFINE(VDSO_RT_COARSE_SEC,	offsetof(struct vdso_data, basetime[CLOCK_REALTIME_COARSE].sec));
--  DEFINE(VDSO_RT_COARSE_NSEC,	offsetof(struct vdso_data, basetime[CLOCK_REALTIME_COARSE].nsec));
--  DEFINE(VDSO_MONO_COARSE_SEC,	offsetof(struct vdso_data, basetime[CLOCK_MONOTONIC_COARSE].sec));
--  DEFINE(VDSO_MONO_COARSE_NSEC,	offsetof(struct vdso_data, basetime[CLOCK_MONOTONIC_COARSE].nsec));
--  DEFINE(VDSO_TZ_MINWEST,	offsetof(struct vdso_data, tz_minuteswest));
--  DEFINE(VDSO_TZ_DSTTIME,	offsetof(struct vdso_data, tz_dsttime));
--  BLANK();
--  DEFINE(TVAL_TV_SEC,		offsetof(struct timeval, tv_sec));
--  DEFINE(TSPEC_TV_SEC,		offsetof(struct timespec, tv_sec));
--  BLANK();
--  DEFINE(TZ_MINWEST,		offsetof(struct timezone, tz_minuteswest));
--  DEFINE(TZ_DSTTIME,		offsetof(struct timezone, tz_dsttime));
--  BLANK();
-   DEFINE(CPU_BOOT_STACK,	offsetof(struct secondary_data, stack));
-   DEFINE(CPU_BOOT_TASK,		offsetof(struct secondary_data, task));
-   BLANK();
+VGhpcyBjb250cm9sIG11dGUvdW5tdXRlIHRoZSBBREMgaW5wdXQgb2YgU0dUTDUwMDANCnVzaW5n
+IGl0cyBDSElQX0FOQV9DVFJMIHJlZ2lzdGVyLg0KDQpTaWduZWQtb2ZmLWJ5OiBPbGVrc2FuZHIg
+U3V2b3JvdiA8b2xla3NhbmRyLnN1dm9yb3ZAdG9yYWRleC5jb20+DQotLS0NCg0KIHNvdW5kL3Nv
+Yy9jb2RlY3Mvc2d0bDUwMDAuYyB8IDEgKw0KIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigr
+KQ0KDQpkaWZmIC0tZ2l0IGEvc291bmQvc29jL2NvZGVjcy9zZ3RsNTAwMC5jIGIvc291bmQvc29j
+L2NvZGVjcy9zZ3RsNTAwMC5jDQppbmRleCA1ZTQ5NTIzZWUwYjY3Li5iYjU4Yzk5N2M2OTE0IDEw
+MDY0NA0KLS0tIGEvc291bmQvc29jL2NvZGVjcy9zZ3RsNTAwMC5jDQorKysgYi9zb3VuZC9zb2Mv
+Y29kZWNzL3NndGw1MDAwLmMNCkBAIC01NTYsNiArNTU2LDcgQEAgc3RhdGljIGNvbnN0IHN0cnVj
+dCBzbmRfa2NvbnRyb2xfbmV3IHNndGw1MDAwX3NuZF9jb250cm9sc1tdID0gew0KIAkJCVNHVEw1
+MDAwX0NISVBfQU5BX0FEQ19DVFJMLA0KIAkJCTgsIDEsIDAsIGNhcHR1cmVfNmRiX2F0dGVudWF0
+ZSksDQogCVNPQ19TSU5HTEUoIkNhcHR1cmUgWkMgU3dpdGNoIiwgU0dUTDUwMDBfQ0hJUF9BTkFf
+Q1RSTCwgMSwgMSwgMCksDQorCVNPQ19TSU5HTEUoIkNhcHR1cmUgU3dpdGNoIiwgU0dUTDUwMDBf
+Q0hJUF9BTkFfQ1RSTCwgMCwgMSwgMSksDQogDQogCVNPQ19ET1VCTEVfVExWKCJIZWFkcGhvbmUg
+UGxheWJhY2sgVm9sdW1lIiwNCiAJCQlTR1RMNTAwMF9DSElQX0FOQV9IUF9DVFJMLA0KLS0gDQoy
+LjIwLjENCg0K
