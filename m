@@ -2,74 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA6EB5277C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 11:06:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F08A52892
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 11:49:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730196AbfFYJGs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 05:06:48 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:34291 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728365AbfFYJGr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 05:06:47 -0400
-Received: by mail-lf1-f67.google.com with SMTP id y198so12091922lfa.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 02:06:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0GWdIS+GEfUG5nPSEfqs5x6+drSTvkhfOWgKSNYIqN0=;
-        b=cqZmHocIds26v78FD0hZWzSrS1sS4RO1JTOTnN8GdiR69sKc9Bl3wRM71FrY4zT1UI
-         2vsZVEc1VurGWpnc5fWwWLl4opKF6oHPsEd3dElV1amNVtQIGlSao7tPhq2UjqktMn1z
-         vAL+TdvclegR8/3Ca7qwmr7qPJgP83KAGImVRlMbGIdW83lzO9t6hXOplajeOtyoWjhC
-         om3VFvDUVKBoqmnqzcGqXQQsL8X35lrBPCxMkTklJ1eWMbvabLwGMFhWj2sQD+HgrRbg
-         8LaKMdBhKqW4uIceY1H/7JwxRS8VVOB/1gFvgVEKkLViFWlS+TLW4X5uq6BVRqsaakET
-         zKyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0GWdIS+GEfUG5nPSEfqs5x6+drSTvkhfOWgKSNYIqN0=;
-        b=QaokoliEyqDYquVENTzx8w9AJFj7fWtRpxXfSU7kzJDATD5GUEWS6KoxiBwWOLwe0Z
-         C14Aez7LtOsIPIyByBJJa6YY7RuWEJIDgmT3NyY8jF77GcbjmvNcxKvYy123VEGqfb0d
-         5hcbOMYMD6Dk/8OkZAFDz5J/+HmKDWs6BByx6BKQAPcxMnMjVmS3iyEoUxQ1UY4InSVj
-         BSq0bCMlamXgLgTHaikzvfIBgG6LBvsHT9ESvSmWWyrc7/ixqL9l7o2S50p6RtabYbZC
-         UUaVkGlxXmOkVD2LfcitPAQYAMfDgzobek8SkQKyzSF2Z4cRWJlwWN4NVtzYQ2ArZyHE
-         9q7A==
-X-Gm-Message-State: APjAAAWr5cj9ZgoBKTjPU7WmiTi0l+5B/ByNQo4bNQiDENY0Kg47Slbh
-        4OE/3SpGeKJcmoYsDSu32bkBeFKWuta8UPIM89CIziNL
-X-Google-Smtp-Source: APXvYqyX8aIOrqvIiIi+XamilqaJJoRB2E+h33a7b9KRiEugg+bPenbcNtzmyITE1BuZOzB+C0AVayz8pq77sBi8xb4=
-X-Received: by 2002:a19:6a01:: with SMTP id u1mr13452923lfu.141.1561453605766;
- Tue, 25 Jun 2019 02:06:45 -0700 (PDT)
+        id S1729433AbfFYJtW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 05:49:22 -0400
+Received: from elvis.franken.de ([193.175.24.41]:43923 "EHLO elvis.franken.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726441AbfFYJtW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 05:49:22 -0400
+X-Greylist: delayed 2510 seconds by postgrey-1.27 at vger.kernel.org; Tue, 25 Jun 2019 05:49:21 EDT
+Received: from uucp (helo=alpha)
+        by elvis.franken.de with local-bsmtp (Exim 3.36 #1)
+        id 1hfhQI-00035W-01; Tue, 25 Jun 2019 11:07:30 +0200
+Received: by alpha.franken.de (Postfix, from userid 1000)
+        id F1125C0E44; Tue, 25 Jun 2019 11:07:13 +0200 (CEST)
+Date:   Tue, 25 Jun 2019 11:07:13 +0200
+From:   Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To:     Evgeniy Polyakov <zbr@ioremap.net>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] w1: add 1-wire master driver for IP block found in
+ SGI ASICs
+Message-ID: <20190625090713.GB9794@alpha.franken.de>
+References: <20190531102749.18183-1-tbogendoerfer@suse.de>
 MIME-Version: 1.0
-References: <1560790160-3372-1-git-send-email-info@metux.net> <1560790160-3372-4-git-send-email-info@metux.net>
-In-Reply-To: <1560790160-3372-4-git-send-email-info@metux.net>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 25 Jun 2019 11:06:33 +0200
-Message-ID: <CACRpkdZG4qBUxcxEmov9pHMKhVu=C=gUssaviciuV_OsACB8Zg@mail.gmail.com>
-Subject: Re: [PATCH 4/7] drivers: gpio: ep93xx: devm_platform_ioremap_resource()
-To:     "Enrico Weigelt, metux IT consult" <info@metux.net>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Lyra Zhang <zhang.lyra@gmail.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190531102749.18183-1-tbogendoerfer@suse.de>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 17, 2019 at 6:49 PM Enrico Weigelt, metux IT consult
-<info@metux.net> wrote:
+On Fri, May 31, 2019 at 12:27:47PM +0200, Thomas Bogendoerfer wrote:
+> Starting with SGI Origin machines nearly every new SGI ASIC contains
+> an 1-Wire master. They are used for attaching One-Wire prom devices,
+> which contain information about part numbers, revision numbers,
+> serial number etc. and MAC addresses for ethernet interfaces.
+> This patch adds a master driver to support this IP block.
+> It also adds an extra field dev_id to struct w1_bus_master, which
+> could be in used in slave drivers for creating unique device names.
+> 
+> Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+> ---
+>  drivers/w1/masters/Kconfig           |   9 +++
+>  drivers/w1/masters/Makefile          |   1 +
+>  drivers/w1/masters/sgi_w1.c          | 130 +++++++++++++++++++++++++++++++++++
+>  include/linux/platform_data/sgi-w1.h |  15 ++++
+>  include/linux/w1.h                   |   2 +
+>  5 files changed, 157 insertions(+)
+>  create mode 100644 drivers/w1/masters/sgi_w1.c
+>  create mode 100644 include/linux/platform_data/sgi-w1.h
 
-> Use the new helper that wraps the calls to platform_get_resource()
-> and devm_ioremap_resource() together.
->
-> Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
+Evgeniy,
 
-Patch applied.
+are the patches ok for you or is there something to improve ? It would
+be good, if they could get upstream during the next merge window, as
+there are other patches from me depedning on them.
 
-Yours,
-Linus Walleij
+Thanks,
+Thomas.
+
+-- 
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
