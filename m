@@ -2,114 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 164D555781
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 21:00:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB17C55789
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 21:04:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730291AbfFYTAr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 15:00:47 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50468 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727684AbfFYTAq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 15:00:46 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 6933EAD3A;
-        Tue, 25 Jun 2019 19:00:44 +0000 (UTC)
-Date:   Tue, 25 Jun 2019 21:00:38 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Ben Skeggs <bskeggs@redhat.com>, Linux MM <linux-mm@kvack.org>,
-        nouveau@lists.freedesktop.org,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-pci@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 05/22] mm: export alloc_pages_vma
-Message-ID: <20190625190038.GK11400@dhcp22.suse.cz>
-References: <20190613094326.24093-1-hch@lst.de>
- <20190613094326.24093-6-hch@lst.de>
- <20190620191733.GH12083@dhcp22.suse.cz>
- <CAPcyv4h9+Ha4FVrvDAe-YAr1wBOjc4yi7CAzVuASv=JCxPcFaw@mail.gmail.com>
- <20190625072317.GC30350@lst.de>
- <20190625150053.GJ11400@dhcp22.suse.cz>
- <CAPcyv4j1e5dbBHnc+wmtsNUyFbMK_98WxHNwuD_Vxo4dX9Ce=Q@mail.gmail.com>
+        id S1731513AbfFYTE4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 15:04:56 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:44287 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728658AbfFYTEz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 15:04:55 -0400
+Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hfqkC-0006TO-T1; Tue, 25 Jun 2019 21:04:41 +0200
+Date:   Tue, 25 Jun 2019 21:04:39 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+cc:     Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: Re: [PATCH] x86/boot/64: Fix crash if kernel images crosses page
+ table boundary
+In-Reply-To: <20190620112345.28833-1-kirill.shutemov@linux.intel.com>
+Message-ID: <alpine.DEB.2.21.1906252100290.32342@nanos.tec.linutronix.de>
+References: <20190620112345.28833-1-kirill.shutemov@linux.intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4j1e5dbBHnc+wmtsNUyFbMK_98WxHNwuD_Vxo4dX9Ce=Q@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 25-06-19 11:03:53, Dan Williams wrote:
-> On Tue, Jun 25, 2019 at 8:01 AM Michal Hocko <mhocko@kernel.org> wrote:
-> >
-> > On Tue 25-06-19 09:23:17, Christoph Hellwig wrote:
-> > > On Mon, Jun 24, 2019 at 11:24:48AM -0700, Dan Williams wrote:
-> > > > I asked for this simply because it was not exported historically. In
-> > > > general I want to establish explicit export-type criteria so the
-> > > > community can spend less time debating when to use EXPORT_SYMBOL_GPL
-> > > > [1].
-> > > >
-> > > > The thought in this instance is that it is not historically exported
-> > > > to modules and it is safer from a maintenance perspective to start
-> > > > with GPL-only for new symbols in case we don't want to maintain that
-> > > > interface long-term for out-of-tree modules.
-> > > >
-> > > > Yes, we always reserve the right to remove / change interfaces
-> > > > regardless of the export type, but history has shown that external
-> > > > pressure to keep an interface stable (contrary to
-> > > > Documentation/process/stable-api-nonsense.rst) tends to be less for
-> > > > GPL-only exports.
-> > >
-> > > Fully agreed.  In the end the decision is with the MM maintainers,
-> > > though, although I'd prefer to keep it as in this series.
-> >
-> > I am sorry but I am not really convinced by the above reasoning wrt. to
-> > the allocator API and it has been a subject of many changes over time. I
-> > do not remember a single case where we would be bending the allocator
-> > API because of external modules and I am pretty sure we will push back
-> > heavily if that was the case in the future.
-> 
-> This seems to say that you have no direct experience of dealing with
-> changing symbols that that a prominent out-of-tree module needs? GPU
-> drivers and the core-mm are on a path to increase their cooperation on
-> memory management mechanisms over time, and symbol export changes for
-> out-of-tree GPU drivers have been a significant source of friction in
-> the past.
+On Thu, 20 Jun 2019, Kirill A. Shutemov wrote:
+> @@ -190,18 +190,18 @@ unsigned long __head __startup_64(unsigned long physaddr,
+>  		pgd[i + 0] = (pgdval_t)p4d + pgtable_flags;
+>  		pgd[i + 1] = (pgdval_t)p4d + pgtable_flags;
+>  
+> -		i = (physaddr >> P4D_SHIFT) % PTRS_PER_P4D;
+> -		p4d[i + 0] = (pgdval_t)pud + pgtable_flags;
+> -		p4d[i + 1] = (pgdval_t)pud + pgtable_flags;
+> +		i = physaddr >> P4D_SHIFT;
+> +		p4d[(i + 0) % PTRS_PER_P4D] = (pgdval_t)pud + pgtable_flags;
+> +		p4d[(i + 1) % PTRS_PER_P4D] = (pgdval_t)pud + pgtable_flags;
+>  	} else {
+>  		i = (physaddr >> PGDIR_SHIFT) % PTRS_PER_PGD;
+>  		pgd[i + 0] = (pgdval_t)pud + pgtable_flags;
+>  		pgd[i + 1] = (pgdval_t)pud + pgtable_flags;
+>  	}
+>  
+> -	i = (physaddr >> PUD_SHIFT) % PTRS_PER_PUD;
+> -	pud[i + 0] = (pudval_t)pmd + pgtable_flags;
+> -	pud[i + 1] = (pudval_t)pmd + pgtable_flags;
+> +	i = physaddr >> PUD_SHIFT;
+> +	pud[(i + 0) % PTRS_PER_PUD] = (pudval_t)pmd + pgtable_flags;
+> +	pud[(i + 1) % PTRS_PER_PUD] = (pudval_t)pmd + pgtable_flags;
+>  
+>  	pmd_entry = __PAGE_KERNEL_LARGE_EXEC & ~_PAGE_GLOBAL;
+>  	/* Filter out unsupported __PAGE_KERNEL_* bits: */
+> @@ -211,8 +211,8 @@ unsigned long __head __startup_64(unsigned long physaddr,
+>  	pmd_entry +=  physaddr;
+>  
+>  	for (i = 0; i < DIV_ROUND_UP(_end - _text, PMD_SIZE); i++) {
+> -		int idx = i + (physaddr >> PMD_SHIFT) % PTRS_PER_PMD;
+> -		pmd[idx] = pmd_entry + i * PMD_SIZE;
+> +		int idx = i + (physaddr >> PMD_SHIFT);;
 
-I have an experience e.g. to rework semantic of some gfp flags and that is
-something that users usualy get wrong and never heard that an out of
-tree code would insist on an old semantic and pushing us to the corner.
+double semicolon
 
-> > So in this particular case I would go with consistency and export the
-> > same way we do with other functions. Also we do not want people to
-> > reinvent this API and screw that like we have seen in other cases when
-> > external modules try reimplement core functionality themselves.
-> 
-> Consistency is a weak argument when the cost to the upstream community
-> is negligible. If the same functionality was available via another /
-> already exported interface *that* would be an argument to maintain the
-> existing export policy. "Consistency" in and of itself is not a
-> precedent we can use more widely in default export-type decisions.
-> 
-> Effectively I'm arguing EXPORT_SYMBOL_GPL by default with a later
-> decision to drop the _GPL. Similar to how we are careful to mark sysfs
-> interfaces in Documentation/ABI/ that we are not fully committed to
-> maintaining over time, or are otherwise so new that there is not yet a
-> good read on whether they can be made permanent.
+> +		pmd[idx % PTRS_PER_PMD] = pmd_entry + i * PMD_SIZE;
 
-Documentation/process/stable-api-nonsense.rst
-Really. If you want to play with GPL vs. EXPORT_SYMBOL else this is up
-to you but I do not see any technical argument to make this particular
-interface to the page allocator any different from all others that are
-exported to modules.
--- 
-Michal Hocko
-SUSE Labs
+This part is functionally equivivalent. So what's the value of this change?
+
+Thanks,
+
+	tglx
+
+
