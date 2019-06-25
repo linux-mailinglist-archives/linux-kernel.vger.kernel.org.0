@@ -2,90 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9813555762
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 20:50:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6025F5576C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 20:55:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733024AbfFYSt6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 14:49:58 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:52930 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731728AbfFYSt6 (ORCPT
+        id S1731222AbfFYSzY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 14:55:24 -0400
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:45919 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730588AbfFYSzX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 14:49:58 -0400
-Received: by mail-wm1-f65.google.com with SMTP id s3so3884366wms.2;
-        Tue, 25 Jun 2019 11:49:56 -0700 (PDT)
+        Tue, 25 Jun 2019 14:55:23 -0400
+Received: by mail-yw1-f65.google.com with SMTP id m16so7991333ywh.12
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 11:55:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=omnibond-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YoWQjtvkCeSVA1kdmqc11ysNxmHPU03GqQotMHxDp2U=;
+        b=JYQNOBN93vshA1tG3sDASUASg0IgzYx8xGpNBbiFRHkUwh3oZdl9OlCx6jtrKyS1PA
+         CrWyYZ0jKnkrirlUqW6deRq7Fi6sW4Rq7eUgopdxHjU0QgcSHpvnnweYhXypKLiZZ8vR
+         cuf6eyKxBAOFtGHE/zKQbWG3mZn2Wr8Hi+aiv/FAG+RF4izFWbaYnBMO5ymEVTPlxI6o
+         GvXxL0SVizG6nae8EeWBXNJsx5f76Ti+nvMB1QSd1ziILN0yR33OlN0W+m7qyFqpJ5Sg
+         HCuiwnpaCzlQslCfLzZHyriG7QbIAsi4t7cY765LFqIKVeUOnfdvuu6dRL8/eLhFKxJD
+         9o4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=NnYdk1L9tNxJOrD8BD7rIwHwgh6hKQRIs6DjAkp3gAE=;
-        b=Dp/hi+AnZRvnxV252Y1zilwrKb8DnTlvzlzlZ7571aQHlUTEFf+blfsC/9YM10g2y8
-         4Z/jbIJxtlAsHvLlbOabt2tQ71m7RCujDYIkCwG47Wpx+Z2tw7NYUqc1qr4bNvyknw87
-         D2NHpGF/XVK09k4FuV5z13cayPp6FhgLBgvEUD91ytD4v2F96agf27+jiJ4/YfG8SDMf
-         r1B2Ow67nBRyMgeGmvDR3wgdDdK8IwD8eGX9okmSiXeJyB91SP1VCMaTM00/FufBRZdw
-         NFHsJeLz5Ofm5Gwjfj+RmYQgAZ0SeB81RwbVkQvaODXOCnQkT8KwPQhw7SxHRFg827ak
-         eR4A==
-X-Gm-Message-State: APjAAAX4u0J4O/wCdUqmYHiSLIOhbBn3kC8FkCRF03a2IMQCdgXoIVt5
-        8VypmjweWZTHv36c3Hvmva8=
-X-Google-Smtp-Source: APXvYqzegnboHeF+ubq+Re36XcyZoE34C8XzPBywiqM+pa+uCqEiiTKajy0OCgcU1IWo0AD7Iuihsw==
-X-Received: by 2002:a1c:ef0c:: with SMTP id n12mr19655866wmh.132.1561488595719;
-        Tue, 25 Jun 2019 11:49:55 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.151])
-        by smtp.googlemail.com with ESMTPSA id o14sm12298185wrp.77.2019.06.25.11.49.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 25 Jun 2019 11:49:54 -0700 (PDT)
-Date:   Tue, 25 Jun 2019 20:49:51 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Phong Tran <tranmanphong@gmail.com>
-Cc:     acme@kernel.org, alexander.shishkin@linux.intel.com,
-        alexander.sverdlin@gmail.com, allison@lohutok.net, andrew@lunn.ch,
-        ast@kernel.org, bgolaszewski@baylibre.com, bpf@vger.kernel.org,
-        daniel@iogearbox.net, daniel@zonque.org, dmg@turingmachine.org,
-        festevam@gmail.com, gerg@uclinux.org, gregkh@linuxfoundation.org,
-        gregory.clement@bootlin.com, haojian.zhuang@gmail.com,
-        hsweeten@visionengravers.com, illusionist.neo@gmail.com,
-        info@metux.net, jason@lakedaemon.net, jolsa@redhat.com,
-        kafai@fb.com, kernel@pengutronix.de, kgene@kernel.org,
-        kstewart@linuxfoundation.org, linux-arm-kernel@lists.infradead.org,
-        linux-imx@nxp.com, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux@armlinux.org.uk, liviu.dudau@arm.com, lkundrak@v3.sk,
-        lorenzo.pieralisi@arm.com, mark.rutland@arm.com, mingo@redhat.com,
-        namhyung@kernel.org, netdev@vger.kernel.org, nsekhar@ti.com,
-        peterz@infradead.org, robert.jarzmik@free.fr,
-        s.hauer@pengutronix.de, sebastian.hesselbarth@gmail.com,
-        shawnguo@kernel.org, songliubraving@fb.com, sudeep.holla@arm.com,
-        swinslow@gmail.com, tglx@linutronix.de, tony@atomide.com,
-        will@kernel.org, yhs@fb.com
-Subject: Re: [PATCH V3 04/15] ARM: exynos: cleanup cppcheck shifting error
-Message-ID: <20190625184951.GA10025@kozik-lap>
-References: <20190624135105.15579-1-tranmanphong@gmail.com>
- <20190625040356.27473-1-tranmanphong@gmail.com>
- <20190625040356.27473-5-tranmanphong@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YoWQjtvkCeSVA1kdmqc11ysNxmHPU03GqQotMHxDp2U=;
+        b=fi3FvD437fMbui07DnsrFvEWxyYtiMVENgYgFaetwrjaYys2RDqghU8uzKOkikzEU0
+         UFWtJNexyWM8iaM+ovCrsM4lHpMA+9DpOckPTm4mKBfNOTZmdZ6sWt6b/CKH4MCc5DBv
+         +nTMuSi6rEBB7BaybAUFnIZdJyRBWInTo7Uku/nG0cfhcGQrpzhip/9MYf2kc5LlyfuP
+         mZ72ERUqC4pYlg1ncavNzCkS6h4a1OUuSOWYWrXTiVNnG78wlCmNNcbZwe6AvaqdqLo3
+         LUeRFo/aaVIE9YUMFDsOqTzciLnr4Tv+SiP5xd4KsaaVUF6CzG3geRO77T56T/wFf7tO
+         AXCg==
+X-Gm-Message-State: APjAAAVLXzJ+ALmH/sF72Aod8jqHSf8SD4txiXCr/QZ4HziX6BKzuEwo
+        KZPjMeqv510Qs/O0YLBVbOhX0Ea+DKRIFgEqdCQ/mA==
+X-Google-Smtp-Source: APXvYqzrnRLAsUllxL7vPOP5CM7N8fL1sWjlkqRDPfbOcLxlOi/xZjJsQ1aD+hFTQ8G5wxrFE8DwHOAM7ic7kFMTk6c=
+X-Received: by 2002:a81:5cd6:: with SMTP id q205mr121944ywb.13.1561488922875;
+ Tue, 25 Jun 2019 11:55:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190625040356.27473-5-tranmanphong@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20190511132700.4862-1-colin.king@canonical.com>
+ <CAOg9mSQt42NQu-3nwZOCGOPx45y7G8aaiDaVe4SwotGnD9iY1A@mail.gmail.com> <20190521150311.GL31203@kadam>
+In-Reply-To: <20190521150311.GL31203@kadam>
+From:   Mike Marshall <hubcap@omnibond.com>
+Date:   Tue, 25 Jun 2019 14:55:11 -0400
+Message-ID: <CAOg9mSQmV=BDMpTNLJvb4QBr=f96qg4Hr9qu=bB6xZubB+1LZQ@mail.gmail.com>
+Subject: Re: [PATCH] orangefs: remove redundant assignment to variable buffer_index
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Mike Marshall <hubcap@omnibond.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Cc:     Colin King <colin.king@canonical.com>,
+        Martin Brandenburg <martin@omnibond.com>,
+        devel@lists.orangefs.org, kernel-janitors@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 25, 2019 at 11:03:45AM +0700, Phong Tran wrote:
-> There is error from cppcheck tool
-> "Shifting signed 32-bit value by 31 bits is undefined behaviour errors"
-> change to use BIT() marco for improvement.
-> 
-> Signed-off-by: Phong Tran <tranmanphong@gmail.com>
-> ---
->  arch/arm/mach-exynos/suspend.c | 2 +-
+>> The only explanation I can think of is that you guys are discussing
+>> different code. :P
 
-Thanks, applied with slightly different commit message. As Peter
-pointed, there is no error because of GCC.  Usually we expect a reply to
-comments on LKML...  and also you could take his hints and use them to
-improve the commit msg to properly describe what is the problem.
+My response contained several conflations :-) ...
 
-Best regards,
-Krzysztof
+The code in file.c that Colin has flagged does indeed have buffer_index
+being initialized needlessly, and the assignment noted by Dan is also
+needless. There's even a second needless assignment done in another
+place in the same function. While the code around them has changed over
+time, these now needless manipulations of buffer_index are not new. I'll
+get rid of them.
 
+>> You often send these patches before they hit linux-next so I had skipped
+>> reviewing this one when you sent it.
+
+I know Linus is likely to refuse pull requests for stuff that
+has not been through linux-next, so I make sure stuff has been
+there at least a few days before asking for it to be pulled.
+"A few days" is long enough for robots to see it, perhaps not
+long enough for humans. I especially appreciate the human review. One of
+the good things about Orangefs is that it is easy to install and configure,
+especially for testing. Documentation/filesystems/orangefs.txt has
+instructions for dnf installing orangefs on Fedora, and also how to download
+a source tarball and install from that.
+
+-Mike
+
+On Tue, May 21, 2019 at 11:04 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+>
+> On Thu, May 16, 2019 at 12:06:31PM -0400, Mike Marshall wrote:
+> > Hi Colin...
+> >
+> > Thanks for the patch. Before I initialized buffer_index, Dan Williams sent
+> > in a warning that a particular error path could try to use ibuffer_index
+> > uninitialized. I could induce the problem he described with one
+> > of the xfstests resulting in a crashed kernel. I will try to refactor
+> > the code to fix the problem some other way than initializing
+> > buffer_index in the declaration.
+> >
+>
+> The only explanation I can think of is that you guys are discussing
+> different code.  :P
+>
+> regards,
+> dan carpenter
+>
