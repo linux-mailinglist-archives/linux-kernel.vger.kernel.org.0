@@ -2,134 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 508BD5297C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 12:29:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3AC053003
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 12:36:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732026AbfFYK3v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 06:29:51 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:49418 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731939AbfFYK3t (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 06:29:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=89G6EnwERirS4pDlPNUguptOr/aOmuUOxBTr3VXKKtI=; b=EYAj5n9Onzxz1XWV3DkgWAEsti
-        mDpDQPPYiczl1tyYrHvdfWc/Y4kWdwSyqrQT/RJQkf8d8R/AQH3y2i9/e6Cu/9yvaBv9dquWTHb3D
-        bJhW3gA7ZT2uR3QnNGqKK/Tu6u8ePt84doINubL+ydG58jP87rb13seIQPKE1/SKTgl0VFGT7LhfJ
-        eMDjhH++IhhTS4h3BLAsTRQIJpREN3rO3NQ0lsZu+d1tt+/rMqLXJV1jNNUiMoJmYMGzyZdiEWgNZ
-        TTTydT0pg7vZfddzox44QpDBJ3XeSJplhzvneQpcXeTGrKvJpyHBuXSkDJwEcxVQG+FqnTjwBQG2d
-        ABfUns2g==;
-Received: from clnet-p19-102.ikbnet.co.at ([83.175.77.102] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hfihs-0005Xp-VP; Tue, 25 Jun 2019 10:29:45 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Larry Finger <Larry.Finger@lwfinger.net>,
-        Kalle Valo <kvalo@codeaurora.org>
-Cc:     b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] b43: simplify engine type / DMA mask selection
-Date:   Tue, 25 Jun 2019 12:29:32 +0200
-Message-Id: <20190625102932.32257-5-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190625102932.32257-1-hch@lst.de>
-References: <20190625102932.32257-1-hch@lst.de>
+        id S1729521AbfFYKge (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 06:36:34 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43724 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728377AbfFYKge (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 06:36:34 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E2921ACCE;
+        Tue, 25 Jun 2019 10:36:32 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id A1B321E4323; Tue, 25 Jun 2019 12:30:19 +0200 (CEST)
+Date:   Tue, 25 Jun 2019 12:30:19 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Steve Magnani <steve.magnani@digidescorp.com>
+Cc:     Jan Kara <jack@suse.com>, linux-kernel@vger.kernel.org,
+        "Steven J . Magnani" <steve@digidescorp.com>
+Subject: Re: [PATCH 1/1] udf: Fix incorrect final NOT_ALLOCATED (hole) extent
+ length
+Message-ID: <20190625103019.GA1994@quack2.suse.cz>
+References: <20190604123158.12741-1-steve@digidescorp.com>
+ <20190604123158.12741-2-steve@digidescorp.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190604123158.12741-2-steve@digidescorp.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Return the engine type from the function looking at the registers, and
-just derive the DMA mask from that in the one place we care.
+On Tue 04-06-19 07:31:58, Steve Magnani wrote:
+> In some cases, using the 'truncate' command to extend a UDF file results
+> in a mismatch between the length of the file's extents (specifically, due
+> to incorrect length of the final NOT_ALLOCATED extent) and the information
+> (file) length. The discrepancy can prevent other operating systems
+> (i.e., Windows 10) from opening the file.
+> 
+> Two particular errors have been observed when extending a file:
+> 
+> 1. The final extent is larger than it should be, having been rounded up
+>    to a multiple of the block size.
+> 
+> B. The final extent is not shorter than it should be, due to not having
+>    been updated when the file's information length was increased.
+> 
+> The first case could represent a design error, if coded intentionally
+> due to a misinterpretation of scantily-documented ECMA-167 "file tail"
+> rules. The standard specifies that the tail, if present, consists of
+> a sequence of "unrecorded and allocated" extents (only).
+> 
+> Signed-off-by: Steven J. Magnani <steve@digidescorp.com>
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- drivers/net/wireless/broadcom/b43/dma.c | 28 ++++++-------------------
- 1 file changed, 6 insertions(+), 22 deletions(-)
+Thanks for the testcase and the patch! I finally got to reading through
+this in detail. In udf driver in Linux we are generally fine with the last
+extent being rounded up to the block size. udf_truncate_tail_extent() is
+generally responsible for truncating the last extent to appropriate size
+once we are done with the inode. However there are two problems with this:
 
-diff --git a/drivers/net/wireless/broadcom/b43/dma.c b/drivers/net/wireless/broadcom/b43/dma.c
-index 1d5ace4d3372..e8958edb9094 100644
---- a/drivers/net/wireless/broadcom/b43/dma.c
-+++ b/drivers/net/wireless/broadcom/b43/dma.c
-@@ -810,7 +810,7 @@ static void free_all_descbuffers(struct b43_dmaring *ring)
- 	}
- }
- 
--static u64 supported_dma_mask(struct b43_wldev *dev)
-+static enum b43_dmatype b43_engine_type(struct b43_wldev *dev)
- {
- 	u32 tmp;
- 	u16 mmio_base;
-@@ -820,14 +820,14 @@ static u64 supported_dma_mask(struct b43_wldev *dev)
- 	case B43_BUS_BCMA:
- 		tmp = bcma_aread32(dev->dev->bdev, BCMA_IOST);
- 		if (tmp & BCMA_IOST_DMA64)
--			return DMA_BIT_MASK(64);
-+			return B43_DMA_64BIT;
- 		break;
- #endif
- #ifdef CONFIG_B43_SSB
- 	case B43_BUS_SSB:
- 		tmp = ssb_read32(dev->dev->sdev, SSB_TMSHIGH);
- 		if (tmp & SSB_TMSHIGH_DMA64)
--			return DMA_BIT_MASK(64);
-+			return B43_DMA_64BIT;
- 		break;
- #endif
- 	}
-@@ -836,20 +836,7 @@ static u64 supported_dma_mask(struct b43_wldev *dev)
- 	b43_write32(dev, mmio_base + B43_DMA32_TXCTL, B43_DMA32_TXADDREXT_MASK);
- 	tmp = b43_read32(dev, mmio_base + B43_DMA32_TXCTL);
- 	if (tmp & B43_DMA32_TXADDREXT_MASK)
--		return DMA_BIT_MASK(32);
--
--	return DMA_BIT_MASK(30);
--}
--
--static enum b43_dmatype dma_mask_to_engine_type(u64 dmamask)
--{
--	if (dmamask == DMA_BIT_MASK(30))
--		return B43_DMA_30BIT;
--	if (dmamask == DMA_BIT_MASK(32))
- 		return B43_DMA_32BIT;
--	if (dmamask == DMA_BIT_MASK(64))
--		return B43_DMA_64BIT;
--	B43_WARN_ON(1);
- 	return B43_DMA_30BIT;
- }
- 
-@@ -1078,13 +1065,10 @@ static bool b43_dma_translation_in_low_word(struct b43_wldev *dev,
- int b43_dma_init(struct b43_wldev *dev)
- {
- 	struct b43_dma *dma = &dev->dma;
-+	enum b43_dmatype type = b43_engine_type(dev);
- 	int err;
--	u64 dmamask;
--	enum b43_dmatype type;
- 
--	dmamask = supported_dma_mask(dev);
--	type = dma_mask_to_engine_type(dmamask);
--	err = dma_set_mask_and_coherent(dev->dev->dma_dev, dmamask);
-+	err = dma_set_mask_and_coherent(dev->dev->dma_dev, DMA_BIT_MASK(type));
- 	if (err) {
- 		b43err(dev->wl, "The machine/kernel does not support "
- 		       "the required %u-bit DMA mask\n", type);
-@@ -1793,7 +1777,7 @@ void b43_dma_direct_fifo_rx(struct b43_wldev *dev,
- 	enum b43_dmatype type;
- 	u16 mmio_base;
- 
--	type = dma_mask_to_engine_type(supported_dma_mask(dev));
-+	type = b43_engine_type(dev);
- 
- 	mmio_base = b43_dmacontroller_base(type, engine_index);
- 	direct_fifo_rx(dev, type, mmio_base, enable);
+1) We used to do this inside udf_clear_inode() back in the old days but
+then switched to a different scheme in commit 2c948b3f86e5f "udf: Avoid IO
+in udf_clear_inode". So this actually breaks workloads where user calls
+truncate(2) directly and there's no place where udf_truncate_tail_extent()
+gets called.
+
+2) udf_extend_file() sets i_lenExtents == i_size although the last extent
+isn't properly rounded so even if udf_truncate_tail_extent() gets called
+(which is actually the case for truncate(1) which does open, ftruncate,
+close), it will think it has nothing to do and exit.
+
+Now 2) is easily fixed by setting i_lenExtents to real length of extents we
+have created. However that still leaves problem 1) which isn't easy to deal
+with. After some though I think that your solution of making
+udf_do_extend_file() always create appropriately sized extents makes
+sense. However I dislike the calling convention you've chosen. When
+udf_do_extend_file() needs to now byte length, then why not pass it to it
+directly, instead of somewhat cumbersome "sector length + byte offset"
+pair?
+
+Will you update the patch please? Thanks!
+
+								Honza
 -- 
-2.20.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
