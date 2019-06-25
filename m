@@ -2,94 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 992C954FBF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 15:05:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FA2C54F55
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 14:51:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730637AbfFYNFO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 09:05:14 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:34666 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729602AbfFYNFJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 09:05:09 -0400
-Received: by mail-lj1-f195.google.com with SMTP id p17so16224887ljg.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 06:05:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=HiDDaGbLbNiizAYEPIqiYku1CUXUnvmvT7gGstSM7Hw=;
-        b=V3fQ3g7cV87ib2au8etcejEm6dFtOJzOFODfm1C3A8qVJ9BkRCEYQV/bbv7pOXN0L9
-         Ah5xm1VXUML9zyBoXjA62FqazPzNPOBhKTLh6WibpBV3mQKvOwVIO/q4uUbZvaLhmKmP
-         EmFaNnfBkdU4AnwVslQHoFe9XuJL9+sVr1ur0KXjYNcz/7G3H44QYnEN6Ty4xVmZxQT8
-         mA8zw8jIfYDgBXyXpAW25LnobxO/41Hkypq39rG1s7tED/38/HanmLAvYNBe9SgvjoOn
-         JXv/DtjvC+MQO840Lx/G/NOaXbFU7t8QNgnf3YIj4+2hMzEBdVinAX7OyTVoT730Pocg
-         suOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=HiDDaGbLbNiizAYEPIqiYku1CUXUnvmvT7gGstSM7Hw=;
-        b=bXzyhW84vXZ5Bwf4/dEz0zPp1bqzwvo4w/BeR4o8CFVG57F9fJvugNl2CUjeggSker
-         FTg5kfp38ZspLUIcA3bVyOy1/GX092A15H2dI8cSSwvlFMx/VlmO/RfTOuJcB0ENaQho
-         eEY9kHCL64MvuxrkC2sah0KN97Aji/bEwWrlSQOM3+gZW1rncvdudpLkRzXXkMYF0Qnt
-         ZkYW8A+3J2yokglzirAdvLElQdcCkB6lYeq7WOJ85vSKQt53nXQdZlKQxlHOGaxc4q8q
-         QfXPrzHinoa1QaEzk0HaM1PRW/zxCYF4OgQIGa0rvDUAQ+/vyWtVMYbAz2ds2MBWvjIV
-         L0gA==
-X-Gm-Message-State: APjAAAW50FDhOzdXeR4dl7+STu6oH2PJ1KcVscAhQ9KhGHkHhWiEeo1Z
-        IrqJhHVTWyU22B4uJjmK+XHBIQ==
-X-Google-Smtp-Source: APXvYqwyLOVtv56HkjnDiOnbOFU0te1wyZEj9DGE6nCBXpmWzbHZLR/QmhZUF5joOKsTsrrdfCUMqg==
-X-Received: by 2002:a2e:50e:: with SMTP id 14mr66569975ljf.5.1561467907522;
-        Tue, 25 Jun 2019 06:05:07 -0700 (PDT)
-Received: from localhost (h85-30-9-151.cust.a3fiber.se. [85.30.9.151])
-        by smtp.gmail.com with ESMTPSA id l11sm2266959lfc.18.2019.06.25.06.05.06
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 25 Jun 2019 06:05:06 -0700 (PDT)
-Date:   Tue, 25 Jun 2019 05:51:03 -0700
-From:   Olof Johansson <olof@lixom.net>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, arm@kernel.org,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL RESEND] ARM: at91: SoC for 5.3
-Message-ID: <20190625125103.xan7nklv4gh6xw5o@localhost>
-References: <20190621212019.GA29971@piout.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190621212019.GA29971@piout.net>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S1731957AbfFYMv1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 08:51:27 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:54606 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731674AbfFYMv1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 08:51:27 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 5663F1A07E6;
+        Tue, 25 Jun 2019 14:51:25 +0200 (CEST)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 48D291A07DC;
+        Tue, 25 Jun 2019 14:51:25 +0200 (CEST)
+Received: from fsr-ub1664-175.ea.freescale.net (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id BC1272061E;
+        Tue, 25 Jun 2019 14:51:24 +0200 (CEST)
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>
+Cc:     NXP Linux Team <linux-imx@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Abel Vesa <abel.vesa@nxp.com>
+Subject: [PATCH] arm64: dts: imx8mq: Init rates and parents configs for clocks
+Date:   Tue, 25 Jun 2019 15:51:21 +0300
+Message-Id: <1561467081-25701-1-git-send-email-abel.vesa@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 21, 2019 at 11:20:19PM +0200, Alexandre Belloni wrote:
-> Arnd, Olof,
-> 
-> A single fix for a warning when compiling with W=1
-> 
-> Please disregard the previous one, it doesn't point ot the correct
-> repository.
-> 
-> The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
-> 
->   Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
-> 
-> are available in the Git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/at91/linux tags/at91-5.3-soc
-> 
-> for you to fetch changes up to 95701b1c3c8fe36368361394e3950094eece4723:
-> 
->   arm: add missing include platform-data/atmel.h (2019-06-20 12:15:47 +0200)
+Add the initial configuration for clocks that need default parent and rate
+setting. This is based on the vendor tree clock provider parents and rates
+configuration except this is doing the setup in dts rather then using clock
+consumer API in a clock provider driver.
 
-No worries, but ideally please do the resend as a reply to the original so they
-thread together. In this case, nothing had come inbetween so I noticed it in
-time. :-)
+Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+---
+ arch/arm64/boot/dts/freescale/imx8mq.dtsi | 34 +++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
-Merged, thanks!
+diff --git a/arch/arm64/boot/dts/freescale/imx8mq.dtsi b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
+index d09b808..e0abe02 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mq.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
+@@ -489,6 +489,40 @@
+ 				clock-names = "ckil", "osc_25m", "osc_27m",
+ 				              "clk_ext1", "clk_ext2",
+ 				              "clk_ext3", "clk_ext4";
++				assigned-clocks = <&clk IMX8MQ_VIDEO_PLL1>,
++					<&clk IMX8MQ_CLK_AHB>,
++					<&clk IMX8MQ_CLK_NAND_USDHC_BUS>,
++					<&clk IMX8MQ_CLK_AUDIO_AHB>,
++					<&clk IMX8MQ_VIDEO_PLL1_REF_SEL>,
++					<&clk IMX8MQ_CLK_NOC>,
++					<&clk IMX8MQ_CLK_PCIE1_CTRL>,
++					<&clk IMX8MQ_CLK_PCIE1_PHY>,
++					<&clk IMX8MQ_CLK_PCIE2_CTRL>,
++					<&clk IMX8MQ_CLK_PCIE2_PHY>,
++					<&clk IMX8MQ_CLK_CSI1_CORE>,
++					<&clk IMX8MQ_CLK_CSI1_PHY_REF>,
++					<&clk IMX8MQ_CLK_CSI1_ESC>,
++					<&clk IMX8MQ_CLK_CSI2_CORE>,
++					<&clk IMX8MQ_CLK_CSI2_PHY_REF>,
++					<&clk IMX8MQ_CLK_CSI2_ESC>;
++				assigned-clock-parents = <0>,
++						<&clk IMX8MQ_SYS1_PLL_133M>,
++						<&clk IMX8MQ_SYS1_PLL_266M>,
++						<&clk IMX8MQ_SYS2_PLL_500M>,
++						<&clk IMX8MQ_CLK_27M>,
++						<&clk IMX8MQ_SYS1_PLL_800M>,
++						<&clk IMX8MQ_SYS2_PLL_250M>,
++						<&clk IMX8MQ_SYS2_PLL_100M>,
++						<&clk IMX8MQ_SYS2_PLL_250M>,
++						<&clk IMX8MQ_SYS2_PLL_100M>,
++						<&clk IMX8MQ_SYS1_PLL_266M>,
++						<&clk IMX8MQ_SYS2_PLL_1000M>,
++						<&clk IMX8MQ_SYS1_PLL_800M>,
++						<&clk IMX8MQ_SYS1_PLL_266M>,
++						<&clk IMX8MQ_SYS2_PLL_1000M>,
++						<&clk IMX8MQ_SYS1_PLL_800M>;
++				assigned-clock-rates = <593999999>;
++
+ 			};
+ 
+ 			src: reset-controller@30390000 {
+-- 
+2.7.4
 
-
--Olof
