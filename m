@@ -2,91 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00C58550F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 15:57:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D7AFB550FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 16:01:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727975AbfFYN53 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 09:57:29 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:41837 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726532AbfFYN53 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 09:57:29 -0400
-Received: by mail-lf1-f65.google.com with SMTP id 136so12712390lfa.8
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 06:57:28 -0700 (PDT)
+        id S1728155AbfFYOB4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 10:01:56 -0400
+Received: from mail-eopbgr750047.outbound.protection.outlook.com ([40.107.75.47]:62527
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726532AbfFYOBz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 10:01:55 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=uTW1RTzufVVCLIfnh+7h6hW+A8p2OrQGWdWYeH+4NGc=;
-        b=rD0m+cdPPd//2jtOKnRrGA+yNzIqtS2OrqhFqNvI9BwnBTByDXePb2d3VmLU2Jsp2b
-         Oydu3kFeAuwXsLOTos5YOl2x5uYhXgslRKqRtNLsVCKqeXMHqkFg2ymZljatvVr6VYlA
-         O0tiN6MFwgHkc8Q/ZYT/7xhM6QsmCfMQ8+TvCfARZfEtL92HD+7UYauRjumeafw5xCsk
-         BZExa7hD1Zs1iEwk2uLNjmROHkuq7YMAp1FA+V8VgxqVdo+xk38mlwJEz72Xnk7ppxBr
-         +0cinfadSpALzcrTBdhVj0HVufS77V7TugkgzF4l2XAZenupQ1QYRRNAyk/hiuknm6eP
-         3NNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=uTW1RTzufVVCLIfnh+7h6hW+A8p2OrQGWdWYeH+4NGc=;
-        b=Ck6dLDv/R+Il7flM2ERltSoWxGI1cnEjsULu1VVbilp85eL+ZLn99QfdmGiWErZQJy
-         HWO+2ChRmzUD4Ee+ieirSFXC0XmUidNEJmyUbujInYSqPHNCmFEe75MhqBR0G3GjzPH0
-         zVUdsBNrxBEJIamf4Z43HKN8ary3B26cu614lssz1Z5CWpntqMj6mBtaWCfiETpBcEdk
-         OOl/2/nlgtgGCPWMegntBUexBk5CY42EPM7nFl2ZVwnr/+sRwu2TNoWPbReEFRIuutZQ
-         Vow0Vr4s1ft1wOPD97/ti3pno0NqsrVvDh2XJZU9pkznMEJ7GzUTwJ4YuwmZSmrmjA6Q
-         hqmw==
-X-Gm-Message-State: APjAAAVvPK0z+NbGsWtkuam2bg3bPzUHghwTW3ynBcf8oNfzvGhxLx7h
-        uEpCAe8C354nkNG7c3FZKoZ+1/eDeYaEhdoKxCsw7g==
-X-Google-Smtp-Source: APXvYqwtMnHq1yBBhWHpEFgSyvvNlRPOWrNyzfQxiPn5jAkCYYNbYam/5KODrrng0KafhfQTzullbXmVYSc52G3PQ3I=
-X-Received: by 2002:a19:7616:: with SMTP id c22mr25238102lff.115.1561471047372;
- Tue, 25 Jun 2019 06:57:27 -0700 (PDT)
+ d=amdcloud.onmicrosoft.com; s=selector1-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=L8xOtvZnGag/13sI6VqtomdUe88yUmY+6Rqe0SzGArk=;
+ b=ulkxi+CeMGw4km8ckzEmmZ88m2Sn585nMN+zMAzxocwwQmN7IgmBWi/dgJdVQskSkmC2Cr44AXGA6tln0TAHjAVjq/KJsX0gdMa3QnnuTP9jwNPl+Z0BSDHZmiHD47EhxORuZY9macEVymVYBPbvc6m9mOsHpvifATHuLDjPxrI=
+Received: from CY4PR1201CA0004.namprd12.prod.outlook.com
+ (2603:10b6:910:16::14) by MWHPR12MB1166.namprd12.prod.outlook.com
+ (2603:10b6:300:7::21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2008.13; Tue, 25 Jun
+ 2019 14:01:53 +0000
+Received: from DM3NAM03FT008.eop-NAM03.prod.protection.outlook.com
+ (2a01:111:f400:7e49::204) by CY4PR1201CA0004.outlook.office365.com
+ (2603:10b6:910:16::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.2008.16 via Frontend
+ Transport; Tue, 25 Jun 2019 14:01:53 +0000
+Authentication-Results: spf=none (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; lists.freedesktop.org; dkim=none (message not signed)
+ header.d=none;lists.freedesktop.org; dmarc=permerror action=none
+ header.from=amd.com;
+Received-SPF: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+Received: from SATLEXCHOV01.amd.com (165.204.84.17) by
+ DM3NAM03FT008.mail.protection.outlook.com (10.152.82.122) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.2008.13 via Frontend Transport; Tue, 25 Jun 2019 14:01:52 +0000
+Received: from hwentlanhp.amd.com (10.180.168.240) by SATLEXCHOV01.amd.com
+ (10.181.40.71) with Microsoft SMTP Server id 14.3.389.1; Tue, 25 Jun 2019
+ 09:01:52 -0500
+From:   Harry Wentland <harry.wentland@amd.com>
+To:     <airlied@gmail.com>, <natechancellor@gmail.com>
+CC:     <Anthony.Koo@amd.com>, <alexander.deucher@amd.com>,
+        <Jun.Lei@amd.com>, <Bhawanpreet.Lakha@amd.com>,
+        <sunpeng.li@amd.com>, <christian.koenig@amd.com>,
+        <David1.Zhou@amd.com>, <amd-gfx@lists.freedesktop.org>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        Harry Wentland <harry.wentland@amd.com>
+Subject: [PATCH] drm/amd/display: Use msleep instead of udelay for 8ms wait
+Date:   Tue, 25 Jun 2019 10:00:46 -0400
+Message-ID: <20190625140046.31682-1-harry.wentland@amd.com>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <CAPM=9txaQ43GwOzXSE3prTRLbMt+ip=s_ssmFzWsfsTYdLssaw@mail.gmail.com>
+References: <CAPM=9txaQ43GwOzXSE3prTRLbMt+ip=s_ssmFzWsfsTYdLssaw@mail.gmail.com>
 MIME-Version: 1.0
-References: <20190623043801.14040-1-icenowy@aosc.io> <20190623043801.14040-2-icenowy@aosc.io>
- <20190624124019.o6acnnkjikekshl5@flea>
-In-Reply-To: <20190624124019.o6acnnkjikekshl5@flea>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 25 Jun 2019 15:57:15 +0200
-Message-ID: <CACRpkdaQSg4qWWF1XurWA8wnW+ezGtTympVT9DvkF87VKEQVzw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/9] pinctrl: sunxi: v3s: introduce support for V3
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Icenowy Zheng <icenowy@aosc.io>, Rob Herring <robh+dt@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:165.204.84.17;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39860400002)(346002)(136003)(376002)(396003)(2980300002)(428003)(199004)(189003)(68736007)(50466002)(36756003)(81166006)(4326008)(6666004)(426003)(186003)(47776003)(356004)(48376002)(14444005)(305945005)(70206006)(53936002)(2616005)(11346002)(8936002)(81156014)(8676002)(446003)(476003)(53416004)(316002)(26005)(77096007)(54906003)(110136005)(5660300002)(44832011)(76176011)(2870700001)(2906002)(4744005)(72206003)(1076003)(478600001)(486006)(86362001)(7696005)(336012)(126002)(70586007)(51416003)(50226002);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR12MB1166;H:SATLEXCHOV01.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoDomainNonexistent;A:1;MX:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 7dbd7018-1c18-4bf2-175d-08d6f975ad2c
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328);SRVR:MWHPR12MB1166;
+X-MS-TrafficTypeDiagnostic: MWHPR12MB1166:
+X-Microsoft-Antispam-PRVS: <MWHPR12MB116640AFBDF7B1F757608FC78CE30@MWHPR12MB1166.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:5797;
+X-Forefront-PRVS: 0079056367
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Message-Info: FUf/ugQMFnurU++uU85eo/NPfFmqD4B4QfDTjngAVbaEgnsPY65UP3tavgfOtlXyJG9CwdeNjf43cYkrsWaIbLSEYqyz+g+IGeUedKxvaG9l5wYw82hGUjRjLn4tOmF3RMrFURUEt/u3qdZFvR6CUBFfdxbiI/2MhL8CHYYwuE2FqzDkL9Hhj92LGciSbidE2unRmriJrjT56XF5+7JfxpCP2jXZnR1Daj7Eseies0oPKc4aW/OGwE3KT9uwe/5sQYyZMJgJGZwgf1p3YveK0hV+AXUYebB0QbXCN/MdlhNvNf6gmyiTernP555cpZ3U2snP8/MG0bfBJeZ6gldMdW6V2xaxGXzexqh2o/H4PI4GmfHSHEJGjchZ8AVkCW9sTmSdxW6O6JSNBBq57L66YL2YoPh/pzIWCn9eMhveogk=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jun 2019 14:01:52.7838
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7dbd7018-1c18-4bf2-175d-08d6f975ad2c
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXCHOV01.amd.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR12MB1166
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 2:40 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> On Sun, Jun 23, 2019 at 12:37:53PM +0800, Icenowy Zheng wrote:
-> > Introduce the GPIO pins that is only available on V3 (not on V3s) to the
-> > V3s pinctrl driver.
-> >
-> > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> > ---
-> > Changes in v3:
-> > - Fixed code alignment.
-> > - Fixed LVDS function number.
+arm32's udelay only allows values up to 2000 microseconds. msleep
+does the trick for us here as there is no problem if this isn't
+microsecond accurate and takes a tad longer.
 
-> > -               SUNXI_FUNCTION(0x2, "uart2"),         /* TX */
-> > -               SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 0)),  /* PB_EINT0 */
-> > +               SUNXI_FUNCTION(0x2, "uart2"),                 /* TX */
-> > +               SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 0)),          /* PB_EINT0 */
->
-> I'm not sure why all that churn is needed.
->
-> Looks good otherwise.
+Signed-off-by: Harry Wentland <harry.wentland@amd.com>
+---
+ drivers/gpu/drm/amd/display/dc/core/dc_link.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Should I apply the patch or wait for a new version without the
-whitespace fixes?
+diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_link.c b/drivers/gpu/drm/amd/display/dc/core/dc_link.c
+index 4c31930f1cdf..f5d02f89b3f9 100644
+--- a/drivers/gpu/drm/amd/display/dc/core/dc_link.c
++++ b/drivers/gpu/drm/amd/display/dc/core/dc_link.c
+@@ -548,7 +548,7 @@ static void read_edp_current_link_settings_on_detect(struct dc_link *link)
+ 			break;
+ 		}
+ 
+-		udelay(8000);
++		msleep(8);
+ 	}
+ 
+ 	ASSERT(status == DC_OK);
+-- 
+2.22.0
 
-Yours,
-Linus Walleij
