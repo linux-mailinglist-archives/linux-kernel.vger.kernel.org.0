@@ -2,78 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE8695268E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 10:27:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BFB875269A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 10:28:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730353AbfFYI12 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 04:27:28 -0400
-Received: from honk.sigxcpu.org ([24.134.29.49]:47660 "EHLO honk.sigxcpu.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730139AbfFYI10 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 04:27:26 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by honk.sigxcpu.org (Postfix) with ESMTP id 71E68FB02;
-        Tue, 25 Jun 2019 10:27:24 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
-Received: from honk.sigxcpu.org ([127.0.0.1])
-        by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id f5PmPorYpdMO; Tue, 25 Jun 2019 10:27:23 +0200 (CEST)
-Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
-        id 1F56E48E14; Tue, 25 Jun 2019 10:27:22 +0200 (CEST)
-From:   =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>,
-        "Angus Ainslie (Purism)" <angus@akkea.ca>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        Carlo Caione <ccaione@baylibre.com>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] arm64: dts: imx8mq-librem5: Enable MIPI D-PHY
-Date:   Tue, 25 Jun 2019 10:27:21 +0200
-Message-Id: <d9a2076bd4231398bd131483db8b05a7e5d56d8b.1561451144.git.agx@sigxcpu.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <cover.1561451144.git.agx@sigxcpu.org>
-References: <cover.1561451144.git.agx@sigxcpu.org>
+        id S1730241AbfFYI21 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 04:28:27 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:50247 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726419AbfFYI20 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 04:28:26 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5P8Rr6d3530276
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Tue, 25 Jun 2019 01:27:53 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5P8Rr6d3530276
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019061801; t=1561451273;
+        bh=FVZduO8uCpQbUH+ZvmuOf8fI4oijO9iRMSWmE53gYx8=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=gtnNfdFSm5vJF3fbxvlEj97X8ZwvRpl5eTcFRFPOiIl8fF4CGzZv6kWTOweSngP61
+         9wpskkKvyuphsHtfuB33gdjv5G9tEXRcVkV1p72lR1WUhh+Yl1i+s+S6NkLVB4W5S3
+         wIfF/yy7TOvEuR2f4qq8G8wlquyrpi0VWh6ziDEW0CUxwujvwPGT0s3xD2p6Qijlan
+         zGHHBQEHbFrkbNYGxUPhzvYT5fJ23O0Lp5LmQj/fB6NnrcWm799nLs/EnDgX+P01Zb
+         UKNaUtwKWMoAVN0AqdOHExhYHx4h7KPpNCethRfAHkVQTW2qOLSOjHN8v5Y7uhd+99
+         /s1lY3eTXKa/A==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5P8Rrij3530273;
+        Tue, 25 Jun 2019 01:27:53 -0700
+Date:   Tue, 25 Jun 2019 01:27:53 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Qais Yousef <tipbot@zytor.com>
+Message-ID: <tip-f9f240f96efc5bcec62379eac701523e11fbb45b@git.kernel.org>
+Cc:     quentin.perret@arm.com, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, bigeasy@linutronix.de, mingo@kernel.org,
+        u.kleine-koenig@pengutronix.de, peterz@infradead.org,
+        dietmar.eggemann@arm.com, hpa@zytor.com, rostedt@goodmis.org,
+        torvalds@linux-foundation.org, qais.yousef@arm.com,
+        pkondeti@codeaurora.org
+Reply-To: torvalds@linux-foundation.org, hpa@zytor.com,
+          rostedt@goodmis.org, qais.yousef@arm.com,
+          pkondeti@codeaurora.org, linux-kernel@vger.kernel.org,
+          tglx@linutronix.de, quentin.perret@arm.com,
+          bigeasy@linutronix.de, u.kleine-koenig@pengutronix.de,
+          mingo@kernel.org, peterz@infradead.org, dietmar.eggemann@arm.com
+In-Reply-To: <20190604111459.2862-6-qais.yousef@arm.com>
+References: <20190604111459.2862-6-qais.yousef@arm.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:sched/core] sched/debug: Add sched_overutilized tracepoint
+Git-Commit-ID: f9f240f96efc5bcec62379eac701523e11fbb45b
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF autolearn=ham
+        autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This enables the Mixel MIPI D-PHY on the Librem 5 devkit
+Commit-ID:  f9f240f96efc5bcec62379eac701523e11fbb45b
+Gitweb:     https://git.kernel.org/tip/f9f240f96efc5bcec62379eac701523e11fbb45b
+Author:     Qais Yousef <qais.yousef@arm.com>
+AuthorDate: Tue, 4 Jun 2019 12:14:58 +0100
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Mon, 24 Jun 2019 19:23:42 +0200
 
-Signed-off-by: Guido Günther <agx@sigxcpu.org>
+sched/debug: Add sched_overutilized tracepoint
+
+The new tracepoint allows us to track the changes in overutilized
+status.
+
+Overutilized status is associated with EAS. It indicates that the system
+is in high performance state. EAS is disabled when the system is in this
+state since there's not much energy savings while high performance tasks
+are pushing the system to the limit and it's better to default to the
+spreading behavior of the scheduler.
+
+This tracepoint helps understanding and debugging the conditions under
+which this happens.
+
+Signed-off-by: Qais Yousef <qais.yousef@arm.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Pavankumar Kondeti <pkondeti@codeaurora.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Quentin Perret <quentin.perret@arm.com>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Uwe Kleine-Konig <u.kleine-koenig@pengutronix.de>
+Link: https://lkml.kernel.org/r/20190604111459.2862-6-qais.yousef@arm.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts | 4 ++++
- 1 file changed, 4 insertions(+)
+ include/trace/events/sched.h |  4 ++++
+ kernel/sched/fair.c          | 10 ++++++++--
+ 2 files changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts b/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts
-index 93b3830e5406..83c965773a29 100644
---- a/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts
-+++ b/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts
-@@ -174,6 +174,10 @@
- 	assigned-clock-rates = <786432000>, <722534400>;
- };
+diff --git a/include/trace/events/sched.h b/include/trace/events/sched.h
+index c7dd9bc7f001..420e80e56e55 100644
+--- a/include/trace/events/sched.h
++++ b/include/trace/events/sched.h
+@@ -621,6 +621,10 @@ DECLARE_TRACE(pelt_se_tp,
+ 	TP_PROTO(struct sched_entity *se),
+ 	TP_ARGS(se));
  
-+&dphy {
-+	status = "okay";
-+};
++DECLARE_TRACE(sched_overutilized_tp,
++	TP_PROTO(struct root_domain *rd, bool overutilized),
++	TP_ARGS(rd, overutilized));
 +
- &fec1 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_fec1>;
--- 
-2.20.1
-
+ #endif /* _TRACE_SCHED_H */
+ 
+ /* This part must be outside protection */
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 75218ab1fa07..11ec52709323 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -5181,8 +5181,10 @@ static inline bool cpu_overutilized(int cpu)
+ 
+ static inline void update_overutilized_status(struct rq *rq)
+ {
+-	if (!READ_ONCE(rq->rd->overutilized) && cpu_overutilized(rq->cpu))
++	if (!READ_ONCE(rq->rd->overutilized) && cpu_overutilized(rq->cpu)) {
+ 		WRITE_ONCE(rq->rd->overutilized, SG_OVERUTILIZED);
++		trace_sched_overutilized_tp(rq->rd, SG_OVERUTILIZED);
++	}
+ }
+ #else
+ static inline void update_overutilized_status(struct rq *rq) { }
+@@ -8214,8 +8216,12 @@ next_group:
+ 
+ 		/* Update over-utilization (tipping point, U >= 0) indicator */
+ 		WRITE_ONCE(rd->overutilized, sg_status & SG_OVERUTILIZED);
++		trace_sched_overutilized_tp(rd, sg_status & SG_OVERUTILIZED);
+ 	} else if (sg_status & SG_OVERUTILIZED) {
+-		WRITE_ONCE(env->dst_rq->rd->overutilized, SG_OVERUTILIZED);
++		struct root_domain *rd = env->dst_rq->rd;
++
++		WRITE_ONCE(rd->overutilized, SG_OVERUTILIZED);
++		trace_sched_overutilized_tp(rd, SG_OVERUTILIZED);
+ 	}
+ }
+ 
