@@ -2,85 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F222952145
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 05:31:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6ACA052168
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 05:53:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726738AbfFYDbt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 23:31:49 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:56071 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726362AbfFYDbs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 23:31:48 -0400
-Received: by mail-wm1-f65.google.com with SMTP id a15so1226956wmj.5
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 20:31:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hreneRMdosQHoew3G/ulwzqPUoN3bk6y0Mh9gFGiOHc=;
-        b=YutOJx/yNHxHBs7eip+GCzWGxLqBKS6HyqZOc89ENz9rJ34KjLkKIpDBw4RWPnmHLa
-         MgchNwF70fF15hKZ24AWHDw+jN7rsCA9L13wkYtqXguEBXH072x8pEdHIijavPAOQufT
-         ULwurfHUvacfjYlhENKW0MRK/d7rmWJ8yu0OcsDgVV91KEtrztuDNtXClNYJMgLaBzjI
-         tEDhtW2KUAkF61HI2Etk6L3uJMrm7rBqP7pglkCVqUtohmQL0WgIPACLQTdzadflJn8N
-         stPVpKOCO7djrBVvPtAQGvlSeYrSfjepK5GDBspXz4SOq5mnCipmYi9j4vRInCQRf0gk
-         ZlBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hreneRMdosQHoew3G/ulwzqPUoN3bk6y0Mh9gFGiOHc=;
-        b=ScDVo59pF41u7/0TpvQTyX70lr9vCmMD7WiNBR7Gl0IaCOZ3ng2DRfvQfaJPGjQG80
-         GXxXq87WGsYu/nNeod1jSHFZESsll3nBr3JnpLCXgPGdJYCU+Jsm6xcrHi97jD/nQHdu
-         ECty3SgeUAGUcbbL1IYb/dLnnj2Yk0pykmhCG0R+/qfZwb193CH0EjFDHAFRw8mPkRFO
-         YxVpG+7MOIXZLTxWdT5+SIkDrgBWxZV7qvpmW+O5+iZ1QwD9LqD2PYW4/32QhaMYAk74
-         BZ+W4zwhuCWXfyeMT0h/i0l3OzLCy5LrfOAKXjFuQ3USVdt/XEBCLl/KFKWeqm627OX6
-         ftlA==
-X-Gm-Message-State: APjAAAVxlfoW5eMzCSPWNIfxfnIXr7A7mtmNdlBDzjAnbUPvTuMmTICb
-        bzkeK5BF+FX1aEl3nVNYm8FsUq2cAsZoIEQmvPZKTA==
-X-Google-Smtp-Source: APXvYqwcYlRtlu/HQuSek8ocdSv5LWy+5p/nWI6LivltsiY0CBh5f2cBsro42LBCqwPhF/BJ5ow4BED0pcLfkh3uKF8=
-X-Received: by 2002:a1c:740f:: with SMTP id p15mr17990557wmc.103.1561433506287;
- Mon, 24 Jun 2019 20:31:46 -0700 (PDT)
+        id S1727435AbfFYDxx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 23:53:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36014 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726833AbfFYDxv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 23:53:51 -0400
+Received: from localhost (unknown [116.226.249.212])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8450520665;
+        Tue, 25 Jun 2019 03:53:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561434830;
+        bh=E4nE1EjWI33jbz4SGyWmu9sYfD082jUQXQQfrNoLQXU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=qZ7XYeo+I3dPO32jVSB6vo+lkkvvs2U54y9HoEjCetrb+kFfpvNKInrA0qvFV3IPw
+         IOt7m52Bjp6jnuCYyATUxw1wgbaU9HAoFSXZHVEZj9cGM5NZa0d1grdnDe4CJ8ddBC
+         PFaIesiJ+pkH4VGEoyAaQYY1YbdOoOKJEJ6ubYLk=
+Date:   Tue, 25 Jun 2019 11:32:16 +0800
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Eiichi Tsukata <devel@etsukata.com>
+Cc:     jslaby@suse.com, davem@davemloft.net, kuznet@ms2.inr.ac.ru,
+        yoshfuji@linux-ipv6.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH 1/2] tty: ldisc: Fix misuse of proc_dointvec
+ "ldisc_autoload"
+Message-ID: <20190625033216.GA11902@kroah.com>
+References: <20190625030801.24538-1-devel@etsukata.com>
 MIME-Version: 1.0
-References: <1561375453-3135-1-git-send-email-yash.shah@sifive.com> <alpine.DEB.2.21.9999.1906241421550.22820@viisi.sifive.com>
-In-Reply-To: <alpine.DEB.2.21.9999.1906241421550.22820@viisi.sifive.com>
-From:   Anup Patel <anup@brainfault.org>
-Date:   Tue, 25 Jun 2019 09:01:33 +0530
-Message-ID: <CAAhSdy0Z_uGMYqC+6yRPFzEBDGi+SHkrvhe2+1ZMt9heHhJ0=g@mail.gmail.com>
-Subject: Re: [PATCH] riscv: dts: Re-organize SPI DT nodes
-To:     Paul Walmsley <paul.walmsley@sifive.com>
-Cc:     Yash Shah <yash.shah@sifive.com>, Rob Herring <robh+dt@kernel.org>,
-        devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>, sachin.ghadi@sifive.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190625030801.24538-1-devel@etsukata.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 25, 2019 at 2:53 AM Paul Walmsley <paul.walmsley@sifive.com> wrote:
->
-> On Mon, 24 Jun 2019, Yash Shah wrote:
->
-> > As per the General convention, define only device DT node in SOC DTSi
-> > file with status = "disabled" and enable device in Board DTS file with
-> > status = "okay"
-> >
-> > Reported-by: Anup Patel <anup@brainfault.org>
-> > Signed-off-by: Yash Shah <yash.shah@sifive.com>
->
-> This is a good start, but should also cover the other I/O devices in the
-> chip DT file.  The mandatory internal devices, like the PRCI and PLIC, can
-> stay the way they are.
+On Tue, Jun 25, 2019 at 12:08:00PM +0900, Eiichi Tsukata wrote:
+> /proc/sys/dev/tty/ldisc_autoload assumes given value to be 0 or 1. Use
+> proc_dointvec_minmax instead of proc_dointvec.
+> 
+> Fixes: 7c0cca7c847e "(tty: ldisc: add sysctl to prevent autoloading of ldiscs)"
+> Signed-off-by: Eiichi Tsukata <devel@etsukata.com>
+> ---
+>  drivers/tty/tty_ldisc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/tty/tty_ldisc.c b/drivers/tty/tty_ldisc.c
+> index e38f104db174..a8ea7a35c94e 100644
+> --- a/drivers/tty/tty_ldisc.c
+> +++ b/drivers/tty/tty_ldisc.c
+> @@ -863,7 +863,7 @@ static struct ctl_table tty_table[] = {
+>  		.data		= &tty_ldisc_autoload,
+>  		.maxlen		= sizeof(tty_ldisc_autoload),
+>  		.mode		= 0644,
+> -		.proc_handler	= proc_dointvec,
+> +		.proc_handler	= proc_dointvec_minmax,
+>  		.extra1		= &zero,
+>  		.extra2		= &one,
 
-Yes, this convention only applies to SoC devices with external connections
-so PRCI, PLIC, and CLINT DT nodes are not required to follow this.
+Ah, nice catch.  But this really isn't an issue as if you use a bigger
+value, things will not "break", right?
 
-Eventually, this convention helps when we have multiple boards of same
-SOC and each board having different set of peripherals connections.
+thanks,
 
-Regards,
-Anup
+greg k-h
