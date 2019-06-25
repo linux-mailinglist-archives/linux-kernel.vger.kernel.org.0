@@ -2,33 +2,32 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 064705579F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 21:15:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CAE04557AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 21:16:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733056AbfFYTPt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 15:15:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34484 "EHLO mail.kernel.org"
+        id S1733136AbfFYTQ3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 15:16:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34514 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731166AbfFYTPq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 15:15:46 -0400
+        id S1731505AbfFYTPr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 15:15:47 -0400
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3E2E5208E3;
+        by mail.kernel.org (Postfix) with ESMTPSA id 64FA5214DA;
         Tue, 25 Jun 2019 19:15:46 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.92)
         (envelope-from <rostedt@goodmis.org>)
-        id 1hfquv-0002J7-BY; Tue, 25 Jun 2019 15:15:45 -0400
-Message-Id: <20190625191545.245259106@goodmis.org>
+        id 1hfquv-0002Je-Go; Tue, 25 Jun 2019 15:15:45 -0400
+Message-Id: <20190625191545.402754381@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Tue, 25 Jun 2019 15:15:13 -0400
+Date:   Tue, 25 Jun 2019 15:15:14 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Anders Roxell <anders.roxell@linaro.org>,
         Masami Hiramatsu <mhiramat@kernel.org>
-Subject: [for-next][PATCH 03/12] kprobes: Fix to init kprobes in subsys_initcall
+Subject: [for-next][PATCH 04/12] tracing/kprobe: Set print format right after parsed command
 References: <20190625191510.599310671@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -39,40 +38,96 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Masami Hiramatsu <mhiramat@kernel.org>
 
-Since arm64 kernel initializes breakpoint trap vector in arch_initcall(),
-initializing kprobe (and run smoke test) in postcore_initcall() causes
-a kernel panic.
+Set event call's print format right after parsed command for
+simplifying (un)register_kprobe_event().
 
-To fix this issue, move the kprobe initialization in subsys_initcall()
-(which is called right afer the arch_initcall).
+Link: http://lkml.kernel.org/r/155931580625.28323.5158822928646225903.stgit@devnote2
 
-In-kernel kprobe users (ftrace and bpf) are using fs_initcall() which is
-called after subsys_initcall(), so this shouldn't cause more problem.
-
-Link: http://lkml.kernel.org/r/155956708268.12228.10363800793132214198.stgit@devnote2
-
-Reported-by: Anders Roxell <anders.roxell@linaro.org>
-Fixes: b5f8b32c93b2 ("kprobes: Initialize kprobes at postcore_initcall")
-Tested-by: Anders Roxell <anders.roxell@linaro.org>
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- kernel/kprobes.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/trace/trace_kprobe.c | 25 +++++++++----------------
+ 1 file changed, 9 insertions(+), 16 deletions(-)
 
-diff --git a/kernel/kprobes.c b/kernel/kprobes.c
-index 54aaaad00a47..5471efbeb937 100644
---- a/kernel/kprobes.c
-+++ b/kernel/kprobes.c
-@@ -2289,7 +2289,7 @@ static int __init init_kprobes(void)
- 		init_test_probes();
- 	return err;
- }
--postcore_initcall(init_kprobes);
-+subsys_initcall(init_kprobes);
+diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
+index 7958da2fd922..01fc49f08b70 100644
+--- a/kernel/trace/trace_kprobe.c
++++ b/kernel/trace/trace_kprobe.c
+@@ -272,6 +272,7 @@ static void free_trace_kprobe(struct trace_kprobe *tk)
  
- #ifdef CONFIG_DEBUG_FS
- static void report_probe(struct seq_file *pi, struct kprobe *p,
+ 	kfree(tk->tp.call.class->system);
+ 	kfree(tk->tp.call.name);
++	kfree(tk->tp.call.print_fmt);
+ 	kfree(tk->symbol);
+ 	free_percpu(tk->nhit);
+ 	kfree(tk);
+@@ -730,6 +731,10 @@ static int trace_kprobe_create(int argc, const char *argv[])
+ 			goto error;	/* This can be -ENOMEM */
+ 	}
+ 
++	ret = traceprobe_set_print_fmt(&tk->tp, is_return);
++	if (ret < 0)
++		goto error;
++
+ 	ret = register_trace_kprobe(tk);
+ 	if (ret) {
+ 		trace_probe_log_set_index(1);
+@@ -1416,18 +1421,14 @@ static int register_kprobe_event(struct trace_kprobe *tk)
+ 
+ 	init_trace_event_call(tk, call);
+ 
+-	if (traceprobe_set_print_fmt(&tk->tp, trace_kprobe_is_return(tk)) < 0)
+-		return -ENOMEM;
+ 	ret = register_trace_event(&call->event);
+-	if (!ret) {
+-		kfree(call->print_fmt);
++	if (!ret)
+ 		return -ENODEV;
+-	}
++
+ 	ret = trace_add_event_call(call);
+ 	if (ret) {
+ 		pr_info("Failed to register kprobe event: %s\n",
+ 			trace_event_name(call));
+-		kfree(call->print_fmt);
+ 		unregister_trace_event(&call->event);
+ 	}
+ 	return ret;
+@@ -1435,13 +1436,8 @@ static int register_kprobe_event(struct trace_kprobe *tk)
+ 
+ static int unregister_kprobe_event(struct trace_kprobe *tk)
+ {
+-	int ret;
+-
+ 	/* tp->event is unregistered in trace_remove_event_call() */
+-	ret = trace_remove_event_call(&tk->tp.call);
+-	if (!ret)
+-		kfree(tk->tp.call.print_fmt);
+-	return ret;
++	return trace_remove_event_call(&tk->tp.call);
+ }
+ 
+ #ifdef CONFIG_PERF_EVENTS
+@@ -1479,10 +1475,8 @@ create_local_trace_kprobe(char *func, void *addr, unsigned long offs,
+ 	}
+ 
+ 	ret = __register_trace_kprobe(tk);
+-	if (ret < 0) {
+-		kfree(tk->tp.call.print_fmt);
++	if (ret < 0)
+ 		goto error;
+-	}
+ 
+ 	return &tk->tp.call;
+ error:
+@@ -1503,7 +1497,6 @@ void destroy_local_trace_kprobe(struct trace_event_call *event_call)
+ 
+ 	__unregister_trace_kprobe(tk);
+ 
+-	kfree(tk->tp.call.print_fmt);
+ 	free_trace_kprobe(tk);
+ }
+ #endif /* CONFIG_PERF_EVENTS */
 -- 
 2.20.1
 
