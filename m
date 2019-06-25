@@ -2,109 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 385575553E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 18:56:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC15855545
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 19:00:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729080AbfFYQ4k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 12:56:40 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:36708 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727763AbfFYQ4k (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 12:56:40 -0400
-Received: by mail-pg1-f196.google.com with SMTP id c13so225630pgg.3;
-        Tue, 25 Jun 2019 09:56:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=bK83zTa34d/KXkbi82In/9/Xz+oQsr3IYBuIQqRd50o=;
-        b=dvBCz/UcF4n4G75Q7NrRmFUhQLzXKSZQzOJTy4/n/5RlTWEPHc/MDsHBF1uH/qM2fR
-         +i1fZQ1sLEx9Bzp50BWMKASIt2aLqj0QgCbcAoTgaDxirdGAWIzwusyRZK5UPpnUifM1
-         o2KVAxiw2IRYNpYDSYCotyi9uEJacHcbu4VGrNk7FCC0ZTwOEAUbgl0srODbfjyw1s3w
-         LraoUz6N/cLgmnoa47A/cGWZi9n7KZR4z1yuKYSYebf0LCcNWHgmhJHoL1hgljvCxu+n
-         PTYAmYHeoXo3YG9gKnV1rZ24WU16b2s04C1LHel1gMEv75y8N/KbFF05BssbHjsXgyFs
-         OxRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=bK83zTa34d/KXkbi82In/9/Xz+oQsr3IYBuIQqRd50o=;
-        b=eGhf5Xb+TReWr9irfr0PUdP/mZ5uLNFNTaBH/QdrMUUh+UgpqnmP+MjJYAaxqmzW7s
-         me7tRdKt+BAJtU6JsPYtLWrrNlQt4iRpIdrj5Ho1jvcXoy7yeRiroq6wfvi8hhzdnLOe
-         wSUDhTRjs+NGFM7tVqKl33FRJh0ttVLNAENrNmo6xwtHkbRnW4/LIqxFqjlGpAk49WpJ
-         FESZqKRu48RSd4yW0373rOQIkSxQIEawS8uZOqcpistuV5WleL+A52jcmMeyNRJ/5eQT
-         oVdLeal+niXv9RF65h6CJesWHbpoN0Q6agiHgd193sUOjwcMMXDqhcBWnsXTvpU7keIB
-         DLow==
-X-Gm-Message-State: APjAAAWs3yC4zx5/GvKIvKvipvXlkIiIDQPDVqdyKPV/l9UKfpCKDKu7
-        tuOnisoCxVPgf5hSbRRYsOUhLYxe8jM=
-X-Google-Smtp-Source: APXvYqz16a2CNmNDX90XGSIt9WWz8e9FHgjvaiP6MpkRu71CJ40y9e1tWvHH9ImfRidNlozE8DybWg==
-X-Received: by 2002:a17:90a:2163:: with SMTP id a90mr31515981pje.3.1561481799115;
-        Tue, 25 Jun 2019 09:56:39 -0700 (PDT)
-Received: from continental ([177.132.134.92])
-        by smtp.gmail.com with ESMTPSA id g2sm14134483pgi.92.2019.06.25.09.56.35
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 25 Jun 2019 09:56:37 -0700 (PDT)
-Date:   Tue, 25 Jun 2019 13:57:11 -0300
-From:   Marcos Paulo de Souza <marcos.souza.org@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "open list:USB MASS STORAGE DRIVER" <linux-usb@vger.kernel.org>,
-        "open list:USB MASS STORAGE DRIVER" 
-        <usb-storage@lists.one-eyed-alien.net>
-Subject: Re: [PATCH v2] usb: storage: scsiglue: Do not skip VPD if
- try_vpd_pages is set
-Message-ID: <20190625165709.GA31932@continental>
-References: <20190618224454.16595-1-marcos.souza.org@gmail.com>
+        id S1729403AbfFYRAb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 13:00:31 -0400
+Received: from foss.arm.com ([217.140.110.172]:45714 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728506AbfFYRAa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 13:00:30 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E699F360;
+        Tue, 25 Jun 2019 10:00:29 -0700 (PDT)
+Received: from [10.1.196.72] (e119884-lin.cambridge.arm.com [10.1.196.72])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BEB0F3F718;
+        Tue, 25 Jun 2019 10:00:28 -0700 (PDT)
+Subject: Re: "arm64: vdso: Substitute gettimeofday() with C implementation"
+ breaks clang build
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Qian Cai <cai@lca.pw>, Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Nathan Chancellor <natechancellor@gmail.com>
+References: <1561464964.5154.63.camel@lca.pw>
+ <e86774e4-7470-5cb2-fc3e-b7c1f529d253@arm.com>
+ <1561467369.5154.67.camel@lca.pw>
+ <00a78980-6b9c-5d5b-ed01-b28bb34be022@arm.com>
+ <1561470705.5154.68.camel@lca.pw>
+ <5113362e-1256-6712-6ce8-9599b1806cf1@arm.com>
+ <1561472887.5154.72.camel@lca.pw>
+ <668bbe72-b32b-8cee-ccad-d1f6110c6728@arm.com>
+ <CAKwvOdmCFjunXRbninTdqoDGPNJ6b7npgXLAPYGqFZas5ofNjw@mail.gmail.com>
+From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
+Message-ID: <193c179e-16ca-4b4e-2584-75e8f6c1819f@arm.com>
+Date:   Tue, 25 Jun 2019 18:00:27 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190618224454.16595-1-marcos.souza.org@gmail.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <CAKwvOdmCFjunXRbninTdqoDGPNJ6b7npgXLAPYGqFZas5ofNjw@mail.gmail.com>
+Content-Type: multipart/mixed;
+ boundary="------------C25D41F534D1DAA79714818A"
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-humble ping :)
+This is a multi-part message in MIME format.
+--------------C25D41F534D1DAA79714818A
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 18, 2019 at 07:44:54PM -0300, Marcos Paulo de Souza wrote:
-> If BLIST_TRY_VPD_PAGES is set for a device, even for an USB, it should
-> be honored, so only set skip_vpd_pages is try_vpd_pages is not set.
+Hi Nick,
+
+On 25/06/2019 17:26, Nick Desaulniers wrote:
+> On Tue, Jun 25, 2019 at 7:54 AM Vincenzo Frascino
+> <vincenzo.frascino@arm.com> wrote:
+>>
+>> Hi Qian,
+>>
+>> ...
+>>
+>>>
+>>> but clang 7.0 is still use in many distros by default, so maybe this commit can
+>>> be fixed by adding a conditional check to use "small" if clang version < 8.0.
+>>>
+>>
+>> Could you please verify that the patch below works for you?
 > 
-> Signed-off-by: Marcos Paulo de Souza <marcos.souza.org@gmail.com>
-> Acked-by: Alan Stern <stern@rowland.harvard.edu>
-> ---
+> Should it be checking against CONFIG_CLANG_VERSION, or better yet be
+> using cc-option macro?
 > 
->  Changes from v1:
->  changed the check of try_vpd_pages from:
->  	sdev->try_vpd_pages == 0;
->  to:
->  	!sdev->try_vpd_pages;
->  (as suggested by Alan Stern)
-> 
->  drivers/usb/storage/scsiglue.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/usb/storage/scsiglue.c b/drivers/usb/storage/scsiglue.c
-> index 59190d88fa9f..30790240aec6 100644
-> --- a/drivers/usb/storage/scsiglue.c
-> +++ b/drivers/usb/storage/scsiglue.c
-> @@ -195,8 +195,11 @@ static int slave_configure(struct scsi_device *sdev)
->  		 */
->  		sdev->skip_ms_page_8 = 1;
->  
-> -		/* Some devices don't handle VPD pages correctly */
-> -		sdev->skip_vpd_pages = 1;
-> +		/*
-> +		 * Some devices don't handle VPD pages correctly, so skip vpd
-> +		 * pages if not forced by SCSI layer.
-> +		 */
-> +		sdev->skip_vpd_pages = !sdev->try_vpd_pages;
->  
->  		/* Do not attempt to use REPORT SUPPORTED OPERATION CODES */
->  		sdev->no_report_opcodes = 1;
-> -- 
-> 2.21.0
-> 
+
+This is what I did in my proposed patch, but I was surprised that clang-7
+generates relocations that clang-8 does not.
+
+  LD      arch/arm64/kernel/vdso/vdso.so.dbg
+  VDSOCHK arch/arm64/kernel/vdso/vdso.so.dbg
+00000000000009d0 R_AARCH64_JUMP_SLOT  _mcount
+
+arch/arm64/kernel/vdso/vdso.so.dbg: dynamic relocations are not supported
+make[1]: *** [arch/arm64/kernel/vdso/Makefile:59:
+arch/arm64/kernel/vdso/vdso.so.dbg] Error 1
+make: *** [arch/arm64/Makefile:180: vdso_prepare] Error 2
+
+This is the the result of the macro I introduced in lib/vdso/Makefile.
+
+And I just found out why. I forgot to add a "+" in the patch provided :)
+
+@Qian: Could you please retry with the one provided below?
+
+-- 
+Regards,
+Vincenzo
+
+--->8----
+
+
+
+
+--------------C25D41F534D1DAA79714818A
+Content-Type: text/x-patch;
+ name="0001-arm64-vdso-Fix-compilation-with-clang-8.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename="0001-arm64-vdso-Fix-compilation-with-clang-8.patch"
+
+From eed9ea23cf999d31b87db4b98a8e9de209706132 Mon Sep 17 00:00:00 2001
+From: Vincenzo Frascino <vincenzo.frascino@arm.com>
+Date: Tue, 25 Jun 2019 15:49:37 +0100
+Subject: [PATCH] arm64: vdso: Fix compilation with clang < 8
+
+clang versions previous to 8 do not support -mcmodel=tiny.
+
+Add a check to the vDSO Makefile for arm64 to remove the flag when these
+versions of the compiler are detected.
+
+Reported-by: Qian Cai <cai@lca.pw>
+Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+---
+ arch/arm64/kernel/vdso/Makefile | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/arch/arm64/kernel/vdso/Makefile b/arch/arm64/kernel/vdso/Makefile
+index ec81d28aeb5d..5154f50aff2d 100644
+--- a/arch/arm64/kernel/vdso/Makefile
++++ b/arch/arm64/kernel/vdso/Makefile
+@@ -38,6 +38,11 @@ else
+ CFLAGS_vgettimeofday.o = -O2 -mcmodel=tiny -include $(c-gettimeofday-y)
+ endif
+ 
++# Clang versions less than 8 do not support -mcmodel=tiny
++ifeq ($(shell test $(CONFIG_CLANG_VERSION) -lt 80000; echo $$?),0)
++CFLAGS_REMOVE_vgettimeofday.o += -mcmodel=tiny
++endif
++
+ # Disable gcov profiling for VDSO code
+ GCOV_PROFILE := n
+ 
+-- 
+2.22.0
+
+
+--------------C25D41F534D1DAA79714818A--
