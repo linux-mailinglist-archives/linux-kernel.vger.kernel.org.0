@@ -2,146 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9583D55A28
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 23:45:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03B9455A32
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 23:47:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726439AbfFYVpy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 17:45:54 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:36651 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725782AbfFYVpx (ORCPT
+        id S1726579AbfFYVrV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 17:47:21 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:43193 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726556AbfFYVrU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 17:45:53 -0400
-Received: by mail-oi1-f193.google.com with SMTP id w7so326904oic.3;
-        Tue, 25 Jun 2019 14:45:53 -0700 (PDT)
+        Tue, 25 Jun 2019 17:47:20 -0400
+Received: by mail-lj1-f194.google.com with SMTP id 16so17744564ljv.10
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 14:47:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=JjiTBZ0hm0NbqUS5/4bd1p2NmNnTTnu1Dvo2Kh058WY=;
-        b=Fygl8X6neXLKligulReeilyoG0dSjibvXxzB5K3QiSEGWUHn53omMxJXVy6dtXuree
-         kapPpf24Ab1SCrm8PcyefWC/Whia9xV1+TwqVpAQZ7sZAUkrSZNwMphtaXACYNcTJHJi
-         rSbPkODKXdqJ9kDKvCdN+77fOhnStuSZ0bF2Xqy2yzt3JWH+DpJoMrRKy2Uq4anb3f6Q
-         uGwTxo4t3VZXMKgs26OTPKLVpHtn2kXEeFXsnjj/byWFUM0K29RXkjfBg2MCKGWF5yM3
-         NTS0mPV+wehGpSuUUPtDptFBNn49ZtpRemI0eP+XnGCfBt18sdjjIrYnBETTN3fEfdUQ
-         gs3w==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=z/7iY+DnLcZ0LezbOS35sy0HgPdj0Ewcwnm4oaB/nKo=;
+        b=W9CPOfods70wf/mb0mzHG5wJJRKM+sddo446tb0HsZyJTxvQCyJ/CtsdhdqbFMCGe0
+         m2CZRzhDrc2+rhlxoVr1/AN07ukD7FfT8PZuoF0kNl1Tq2rmvT5fxpDD20YOv/tN2yra
+         5ixXEccCb2M2cZtGDh+8vJqcltnX9vaCsn+T7VPMK4okAhweQMd03C9eoIuOk1m7KErs
+         FDvxQLdPA3NpqdXOfJisP9QM1eKoUJcnuEBZTqj40V0d8ujg4aON8dMMvINLzOxs9atc
+         gyF030AxBKO08/Om7d9GbN/WFuvZzWi+JPdqsdoiuPN7LukX4vv+/e2F+p0P5GQbgBOg
+         G5DA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=JjiTBZ0hm0NbqUS5/4bd1p2NmNnTTnu1Dvo2Kh058WY=;
-        b=iqWVFCd940IYIdJ/FYj4W3p7VXX5racRZQILLgG6J95qrBbPSqzABgMTzhYaD9+S2y
-         cuhpe5pccyjgtJxTDBW83Emj9noJ1Lx3xSosdBc/VeM9jhzzdMgnYnAQBtG9cViqADLz
-         lRUDw4L3s9VLQ7rGUw+RfaNL+CLqHsP15TSozjR83mHApAd3xBZ7CfFk8dqKdI6HR1SR
-         EGczUDhqemqtXMZ+TPF4IsTszubi2l5JO5UoaOEP35fV9BFS0ymJOOsDO7GXgs8fLQNs
-         mUCDcoIWSI0/Qz6sO5elLbEsjaWvjNNDaLyr/nFl/Nw+4bLGEtilTLE+AS+9BBZDfOcz
-         pnaA==
-X-Gm-Message-State: APjAAAWmdtK3BIUS674PmQHqIgHMBaPSjlBREByKIXj1mcL5ZfC2UQ05
-        SMdquZpCoo2x2LAxM84dfhDBPgTA
-X-Google-Smtp-Source: APXvYqyvvvk+AYvxBruu9uR3BNyKTd9Flkw47/n6y+yQBiIPTNOFBXO56QK9Z9AECIulsn+YmQwmlA==
-X-Received: by 2002:aca:3a55:: with SMTP id h82mr2257138oia.49.1561499152775;
-        Tue, 25 Jun 2019 14:45:52 -0700 (PDT)
-Received: from [192.168.1.112] (cpe-24-31-245-230.kc.res.rr.com. [24.31.245.230])
-        by smtp.gmail.com with ESMTPSA id l145sm5772594oib.6.2019.06.25.14.45.51
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Jun 2019 14:45:52 -0700 (PDT)
-Subject: Re: [PATCH 1/4] b43legacy: remove b43legacy_dma_set_mask
-To:     Christoph Hellwig <hch@lst.de>, Kalle Valo <kvalo@codeaurora.org>
-Cc:     b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190625102932.32257-1-hch@lst.de>
- <20190625102932.32257-2-hch@lst.de>
-From:   Larry Finger <Larry.Finger@lwfinger.net>
-Message-ID: <55cf8864-3fa8-a0ed-0887-39ea21085492@lwfinger.net>
-Date:   Tue, 25 Jun 2019 16:45:51 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=z/7iY+DnLcZ0LezbOS35sy0HgPdj0Ewcwnm4oaB/nKo=;
+        b=sos+A+WLFXijrXyd6xnp0W0En4uYJBOMoUz+NqITcd1eUZS5ZgqWvIcOYVRw4D7051
+         rZaxttu8HSdaTlllYDuUlbx6UVQOMt7SGolnpE9TKyNL6Jg4R/cVd9Tog5vu+ocy4U8o
+         0O/TNsNnOCxj2s4ddM4qGyCoEjmEbRE9Q6Af7jZaJOzy49GzQ762DnMTFIOdsfDBjeJT
+         K6AIpNi1iDKSJ+MFke0QESZXIdGtygfTAz/zfZ88nXBRN9Sd17olMh7HJIyjsTkztPSn
+         aYEAOJg64xFVNYNamxou6iCeZtsJVkG4XAapL2JhJz7KMGDA+BlqhWWjKigq1iE/gtS8
+         i2fw==
+X-Gm-Message-State: APjAAAWZJP72Cp8t10lnGy/OgpkkNKmKa8Mn8gKPRHaBx8Q14TtQq2Em
+        bSEdnks9tKJ1Eenb4U0NN/NRFyNNRMUwG5nkWowNZQ==
+X-Google-Smtp-Source: APXvYqzMR10l93rViwuhFQNu55fJ5C0Pn/GPzn97xvFQHwI302OTE+IuljHXJI9gRVYElTANqxFQchnBMEROTxTabkA=
+X-Received: by 2002:a2e:a0cf:: with SMTP id f15mr463722ljm.180.1561499238305;
+ Tue, 25 Jun 2019 14:47:18 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190625102932.32257-2-hch@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190624215649.8939-1-robh@kernel.org> <20190624215649.8939-11-robh@kernel.org>
+ <CACRpkdYKE=zLJhmTeTWYGRCQNt3K8+rNNqsp5UDa2d31GG6Y2g@mail.gmail.com>
+ <CAL_Jsq+uCMKhUFgCCK3uUetL9OwokQPaq74GJHQS2VS=UjVH8w@mail.gmail.com>
+ <CACRpkdYnSZibUyhe5D8W259fCJBm05rG0_EmX+uoi=uqbrqEYA@mail.gmail.com> <CAL_Jsq+45dKRMdRCjfKgEkvsk1MLyeXnY4fjZmh50WLweyJfCg@mail.gmail.com>
+In-Reply-To: <CAL_Jsq+45dKRMdRCjfKgEkvsk1MLyeXnY4fjZmh50WLweyJfCg@mail.gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 25 Jun 2019 23:47:06 +0200
+Message-ID: <CACRpkdYEYcvxVai9kjLyz_Sudiz=JPD7oKU4sVL-bxOmWN0dkg@mail.gmail.com>
+Subject: Re: [PATCH v2 10/15] dt-bindings: display: Convert tpo,tpg110 panel
+ to DT schema
+To:     Rob Herring <robh@kernel.org>
+Cc:     "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/25/19 5:29 AM, Christoph Hellwig wrote:
-> These days drivers are not required to fallback to smaller DMA masks,
-> but can just set the largest mask they support, removing the need for
-> this trial and error logic.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->   drivers/net/wireless/broadcom/b43legacy/dma.c | 39 +------------------
->   1 file changed, 1 insertion(+), 38 deletions(-)
+On Tue, Jun 25, 2019 at 4:26 PM Rob Herring <robh@kernel.org> wrote:
+> On Tue, Jun 25, 2019 at 2:26 AM Linus Walleij <linus.walleij@linaro.org> wrote:
 
-The patches work for PPC32 for both b43legacy and b43.
+> > Can I simply just merge the panel-common patch as well and we
+> > are all happy?
+>
+> I have drm-misc commit rights too, so I'll apply the whole lot when it's ready.
+>
+> > I can also pick up more panel binding patches, IMO the yaml
+> > conversions are especially uncontroversial and should have low
+> > threshold for merging.
+>
+> Yes, but the threshold is at least 'make dt_binding_check' should not
+> break. But don't worry, there are 2 other breakages in linux-next
+> currently.
 
-Tested-by: Larry Finger <Larry.Finger@lwfinger.net>
+OK let's try to live with it for now, if it makes you too much trouble
+we can just revert it, accidents happen.
 
-Thanks,
-
-Larry
-
-> 
-> diff --git a/drivers/net/wireless/broadcom/b43legacy/dma.c b/drivers/net/wireless/broadcom/b43legacy/dma.c
-> index 2ce1537d983c..0c2de20622e3 100644
-> --- a/drivers/net/wireless/broadcom/b43legacy/dma.c
-> +++ b/drivers/net/wireless/broadcom/b43legacy/dma.c
-> @@ -797,43 +797,6 @@ void b43legacy_dma_free(struct b43legacy_wldev *dev)
->   	dma->tx_ring0 = NULL;
->   }
->   
-> -static int b43legacy_dma_set_mask(struct b43legacy_wldev *dev, u64 mask)
-> -{
-> -	u64 orig_mask = mask;
-> -	bool fallback = false;
-> -	int err;
-> -
-> -	/* Try to set the DMA mask. If it fails, try falling back to a
-> -	 * lower mask, as we can always also support a lower one. */
-> -	while (1) {
-> -		err = dma_set_mask_and_coherent(dev->dev->dma_dev, mask);
-> -		if (!err)
-> -			break;
-> -		if (mask == DMA_BIT_MASK(64)) {
-> -			mask = DMA_BIT_MASK(32);
-> -			fallback = true;
-> -			continue;
-> -		}
-> -		if (mask == DMA_BIT_MASK(32)) {
-> -			mask = DMA_BIT_MASK(30);
-> -			fallback = true;
-> -			continue;
-> -		}
-> -		b43legacyerr(dev->wl, "The machine/kernel does not support "
-> -		       "the required %u-bit DMA mask\n",
-> -		       (unsigned int)dma_mask_to_engine_type(orig_mask));
-> -		return -EOPNOTSUPP;
-> -	}
-> -	if (fallback) {
-> -		b43legacyinfo(dev->wl, "DMA mask fallback from %u-bit to %u-"
-> -			"bit\n",
-> -			(unsigned int)dma_mask_to_engine_type(orig_mask),
-> -			(unsigned int)dma_mask_to_engine_type(mask));
-> -	}
-> -
-> -	return 0;
-> -}
-> -
->   int b43legacy_dma_init(struct b43legacy_wldev *dev)
->   {
->   	struct b43legacy_dma *dma = &dev->dma;
-> @@ -844,7 +807,7 @@ int b43legacy_dma_init(struct b43legacy_wldev *dev)
->   
->   	dmamask = supported_dma_mask(dev);
->   	type = dma_mask_to_engine_type(dmamask);
-> -	err = b43legacy_dma_set_mask(dev, dmamask);
-> +	err = dma_set_mask_and_coherent(dev->dev->dma_dev, dmamask);
->   	if (err) {
->   #ifdef CONFIG_B43LEGACY_PIO
->   		b43legacywarn(dev->wl, "DMA for this device not supported. "
-> 
-
+Yours,
+Linus Walleij
