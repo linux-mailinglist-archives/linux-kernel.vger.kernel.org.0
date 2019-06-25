@@ -2,178 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54DDF551C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 16:35:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 92019551CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 16:35:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730758AbfFYOe4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 10:34:56 -0400
-Received: from s3.sipsolutions.net ([144.76.43.62]:36726 "EHLO
-        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728710AbfFYOez (ORCPT
+        id S1730886AbfFYOfu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 10:35:50 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:39598 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728710AbfFYOfu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 10:34:55 -0400
-Received: by sipsolutions.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <johannes@sipsolutions.net>)
-        id 1hfmWu-0005ft-Of; Tue, 25 Jun 2019 16:34:40 +0200
-Message-ID: <f1243295f088b70d48e4b832a28f79c0cd84ca1c.camel@sipsolutions.net>
-Subject: Re: WWAN Controller Framework (was IPA [PATCH v2 00/17])
-From:   Johannes Berg <johannes@sipsolutions.net>
-To:     Alex Elder <elder@linaro.org>, davem@davemloft.net, arnd@arndb.de,
-        bjorn.andersson@linaro.org, ilias.apalodimas@linaro.org,
-        Dan Williams <dcbw@redhat.com>
-Cc:     evgreen@chromium.org, benchan@google.com, ejcaruso@google.com,
-        cpratapa@codeaurora.org, syadagir@codeaurora.org,
-        subashab@codeaurora.org, abhishek.esse@gmail.com,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org
-Date:   Tue, 25 Jun 2019 16:34:38 +0200
-In-Reply-To: <6dae9d1c-ceae-7e88-fe61-f4cda82820ea@linaro.org> (sfid-20190624_190620_354118_89F0D47F)
-References: <20190531035348.7194-1-elder@linaro.org>
-         <23ff4cce-1fee-98ab-3608-1fd09c2d97f1@linaro.org>
-         <6dae9d1c-ceae-7e88-fe61-f4cda82820ea@linaro.org>
-         (sfid-20190624_190620_354118_89F0D47F)
+        Tue, 25 Jun 2019 10:35:50 -0400
+Received: by mail-io1-f68.google.com with SMTP id r185so3515490iod.6;
+        Tue, 25 Jun 2019 07:35:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=H4FBl2kb9Q12PpnYpa3OFWNOR4QPgL14IwXIkF/APGc=;
+        b=AqwXCb4MR2+p96JwYF9xQiAb6f8jOSAJ14XqFgrLKa6BOu9+BQk7J0IYaqxikkKACl
+         MpsYVm3Tv07NyhtN88rdYHc6brn73Nei8wOK861KMG4PMMRIcCYs2Yxwj8F3eNZOy9Uw
+         s3fVQKbrim/sM5N2/yd7HLOtNkBpWnaGhq48VOG9Zthztr3LrY4NKVx/2kNVL4Ixbn0y
+         QK7VX9Ja9cb/SZABcPiFEVLkkKke9HtJuBoPQmApMXHehMTQP4n2nvsDPbUib8qupOqu
+         UyMiPrbhKj4TU9IYRXsBZGptM5M7lYvpAlN0UAVW4lA3+yPnfC64wCxjVUaF1kivLTb0
+         CgKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=H4FBl2kb9Q12PpnYpa3OFWNOR4QPgL14IwXIkF/APGc=;
+        b=dkmaq8UABj7fS+toIvkbcVaqP9r+Yjbw6tNbsfpUaWbdAPH0FNf5aq5RZkXEf6qCC1
+         Kjx9Y7Cwl7YL0nBedaigyqDXWIhdGDLlTIE73VYDlPVTVdv8JpLm4hWH0xk9krB56scD
+         lqhOFLpzIie5qonfMPm+tm7thPxURJ/e7hsZuyW1xRJVZvlbxRywcfkopz6hqEPwbvMs
+         7AfZf0IPo1eY067DPE+9SwD/BCgUDjcrZN8jImi1J110qK+U/vRxsKzEftYCEPXOl6Eb
+         qdDCOOUzPkUPoNG9NdLzk//TMN2gVrS2B5jlRu2/WaqL+aOGRr+TU6oib3yxN+W8OTya
+         pTZA==
+X-Gm-Message-State: APjAAAVGBcaqFT/h6bTQ43zL5Q1491q/oSbnz3/N4S+VKtUZnAtWVma/
+        ghRHuR3mqeQP5AexqIDDFl32VMVYjMcG7Hjqeu12bMlT1k4=
+X-Google-Smtp-Source: APXvYqzY1wYzaxVeLZGo/x3Ina8bunvFlXLEAzmrewz/4RxLjz3A2w2qU1FGwreXznfAa7UKOq3PfU0/6lpK42MDqfo=
+X-Received: by 2002:a05:6638:149:: with SMTP id y9mr110950563jao.76.1561473349281;
+ Tue, 25 Jun 2019 07:35:49 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190624162726.17413-1-jlayton@kernel.org> <20190624162726.17413-4-jlayton@kernel.org>
+In-Reply-To: <20190624162726.17413-4-jlayton@kernel.org>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Tue, 25 Jun 2019 16:35:59 +0200
+Message-ID: <CAOi1vP_G9ybNs_QEn34cPvovAa=JB7G9F3FGy33QPH4yfST-iQ@mail.gmail.com>
+Subject: Re: [PATCH v4 3/3] ceph: don't NULL terminate virtual xattrs
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Ceph Development <ceph-devel@vger.kernel.org>,
+        "Yan, Zheng" <zyan@redhat.com>, Sage Weil <sage@redhat.com>,
+        agruenba@redhat.com
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-3.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-06-24 at 12:06 -0500, Alex Elder wrote:
+On Mon, Jun 24, 2019 at 6:27 PM Jeff Layton <jlayton@kernel.org> wrote:
+>
+> The convention with xattrs is to not store the termination with string
+> data, given that it returns the length. This is how setfattr/getfattr
+> operate.
+>
+> Most of ceph's virtual xattr routines use snprintf to plop the string
+> directly into the destination buffer, but snprintf always NULL
+> terminates the string. This means that if we send the kernel a buffer
+> that is the exact length needed to hold the string, it'll end up
+> truncated.
+>
+> Add a ceph_fmt_xattr helper function to format the string into an
+> on-stack buffer that is should always be large enough to hold the whole
+> thing and then memcpy the result into the destination buffer. If it does
+> turn out that the formatted string won't fit in the on-stack buffer,
+> then return -E2BIG and do a WARN_ONCE().
+>
+> Change over most of the virtual xattr routines to use the new helper. A
+> couple of the xattrs are sourced from strings however, and it's
+> difficult to know how long they'll be. Just have those memcpy the result
+> in place after verifying the length.
+>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  fs/ceph/xattr.c | 84 ++++++++++++++++++++++++++++++++++---------------
+>  1 file changed, 59 insertions(+), 25 deletions(-)
+>
+> diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
+> index 9b77dca0b786..37b458a9af3a 100644
+> --- a/fs/ceph/xattr.c
+> +++ b/fs/ceph/xattr.c
+> @@ -109,22 +109,49 @@ static ssize_t ceph_vxattrcb_layout(struct ceph_inode_info *ci, char *val,
+>         return ret;
+>  }
+>
+> +/*
+> + * The convention with strings in xattrs is that they should not be NULL
+> + * terminated, since we're returning the length with them. snprintf always
+> + * NULL terminates however, so call it on a temporary buffer and then memcpy
+> + * the result into place.
+> + */
+> +static int ceph_fmt_xattr(char *val, size_t size, const char *fmt, ...)
+> +{
+> +       int ret;
+> +       va_list args;
+> +       char buf[96]; /* NB: reevaluate size if new vxattrs are added */
+> +
+> +       va_start(args, fmt);
+> +       ret = vsnprintf(buf, size ? sizeof(buf) : 0, fmt, args);
+> +       va_end(args);
+> +
+> +       /* Sanity check */
+> +       if (size && ret + 1 > sizeof(buf)) {
+> +               WARN_ONCE(true, "Returned length too big (%d)", ret);
+> +               return -E2BIG;
+> +       }
+> +
+> +       if (ret <= size)
+> +               memcpy(val, buf, ret);
+> +       return ret;
+> +}
 
-> > OK I want to try to organize a little more concisely some of the
-> > discussion on this, because there is a very large amount of volume
-> > to date and I think we need to try to narrow the focus back down
-> > again.
+Nit: perhaps check size at the top and bail early instead of checking
+it at every step?
 
-Sounds good to me!
+Thanks,
 
-> > I'm going to use a few terms here.  Some of these I really don't
-> > like, but I want to be unambiguous *and* (at least for now) I want
-> > to avoid the very overloaded term "device".
-> > 
-> > I have lots more to say, but let's start with a top-level picture,
-> > to make sure we're all on the same page.
-> > 
-> >          WWAN Communication
-> >          Channel (Physical)
-> >                  |     ------------------------
-> > ------------     v     |           :+ Control |  \
-> > >          |-----------|           :+ Data    |  |
-> > >    AP    |           | WWAN unit :+ Voice   |   > Functions
-> > >          |===========|           :+ GPS     |  |
-> > 
-> > ------------     ^     |           :+ ...     |  /
-> >                  |     -------------------------
-> >           Multiplexed WWAN
-> >            Communication
-> >          Channel (Physical)
-
-Sounds right to me. I'm not sure if you're distinguishing here between
-the "Data function" and multiple data channels to the data function, but
-at this point I guess it doesn't matter.
-
-> > - The *AP* is the main CPU complex that's running Linux on one or
-> >   more CPU cores.
-> > - A *WWAN unit* is an entity that shares one or more physical
-> >   *WWAN communication channels* with the AP.
-> > - A *WWAN communication channel* is a bidirectional means of
-> >   carrying data between the AP and WWAN unit.
-> > - A WWAN communication channel carries data using a *WWAN protocol*.
-> > - A WWAN unit implements one or more *WWAN functions*, such as
-> >   5G data, LTE voice, GPS, and so on.
-> > - A WWAN unit shall implement a *WWAN control function*, used to
-> >   manage the use of other WWAN functions, as well as the WWAN unit
-> >   itself.
-
-I think here we need to be more careful. I don't know how you want to
-call it, but we actually have multiple levels of control here.
-
-You have
- * hardware control, to control how you actually use the (multiple or
-   not) physical communication channel(s) to the WWAN unit
- * this is partially exposed to userspace via the WWAN netlink family or
-   something like that, so userspace can create new netdevs to tx/rx
-   with the "data function" and to the network; note that it could be
-   one or multiple
- * WWAN control, which is typically userspace communicating with the
-   WWAN control function in the WWAN unit, but this can take different
-   forms (as I mentioned earlier, e.g. AT commands, MBIM, QMI)
-
-> > - The AP communicates with a WWAN function using a WWAN protocol.
-
-Right, that's just device specific (IPA vs. Intel vs. ...)
-
-> > - A WWAN physical channel can be *multiplexed*, in which case it
-> >   carries the data for one or more *WWAN logical channels*.
-
-This ... depends a bit on how you exactly define a physical channel
-here. Is that, to you, the PCIe/USB link? In that case, yes, obviously
-you have only one physical channel for each WWAN unit.
-
-However, I'd probably see this slightly differently, because e.g. the
-Intel modem has multiple DMA engines, and so you actually have multiple
-DMA rings to talk to the WWAN unit, and I'd have called each DMA ring a
-physical channel. And then, you just have a 1:1 from physical to logical
-channel since it doesn't actually carry a multiplexing protocol.
-
-> > - A multiplexed WWAN communication channel uses a *WWAN wultiplexing
-> >   protocol*, which is used to separate independent data streams
-> >   carrying other WWAN protocols.
-
-Like just described, this isn't really needed and is a device-specific
-property.
-
-> > - A WWAN logical channel carries a bidirectional stream of WWAN
-> >   protocol data between an entity on the AP and a WWAN function.
-> > 
-> > Does that adequately represent a very high-level picture of what
-> > we're trying to manage?
-
-Pretty much.
-
-I only disagree slightly on the control planes (there are multiple, and
-multiple options for the "Control function" one), and on the whole
-notion of physical link/logical link/multiplexing which is device
-specific.
-
-> > And if I understand it right, the purpose of the generic framework
-> > being discussed is to define a common mechanism for managing (i.e.,
-> > discovering, creating, destroying, querying, configuring, enabling,
-> > disabling, etc.) WWAN units and the functions they implement, along
-> > with the communication and logical channels used to communicate with
-> > them.
-
-Well, some subset of that matrix, the framework won't actually destroy
-WWAN units I hope ;-)
-
-But yes. I'd probably captured it in layers, and say that we have a
-
-WWAN framework layer
- - discover, query, configure WWAN units
- - enable, disable channels to the functions inside the WWAN units
-
-WWAN device driver
- - implement (partial) API offered by WWAN framework layer to allow
-   these things
-   (sometimes may not allow creating more control or data channels for
-   example, and fixed function channels are precreated, but then can
-   still discover data about the device and configure the channels
- - implement the device-specific protocols etc. necessary to achieve
-   this
-
-Userspace
- - uses control function channel (e.g. TTY) to talk directly to the WWAN
-   unit's control function
- - uses WWAN framework APIs to create/configure/... (other) function
-   channels
-   (it may be necessary to create a control channel even, before being
-   able to use it, since different options (AT/MBIM/QMI) may be there
- - configures netdevs (data function channels) after their creation
-
-johannes
-
+                Ilya
