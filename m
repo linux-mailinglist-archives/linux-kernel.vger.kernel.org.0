@@ -2,86 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31184528F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 12:04:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B9DA5290A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 12:08:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731863AbfFYKEy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 06:04:54 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:56120 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726520AbfFYKEy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 06:04:54 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5PA4nub062386;
-        Tue, 25 Jun 2019 05:04:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1561457089;
-        bh=P/SKDRzg6dvG83d820OF33YKZOlXQ/dcokiyRm5jtFc=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=tnNPtYBvq0/Yfx2zSsRQaGvcpfIolg/EwKSFKH62pwS3DTWQrENKYwZThgO4UKpwB
-         7nZMth6gzj/dQZsxl4dGNtlIJIfXnee87fJptL0wZGptuNDWWgb/QY9nhiRwbApnk2
-         P7O6MfDgHUY6eOl2Fo7xUNEvE0KsnGK8cbjoIhFg=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5PA4nro037894
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 25 Jun 2019 05:04:49 -0500
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 25
- Jun 2019 05:04:49 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Tue, 25 Jun 2019 05:04:49 -0500
-Received: from [10.250.132.197] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5PA4g3K005525;
-        Tue, 25 Jun 2019 05:04:43 -0500
-Subject: Re: [PATCH V2] net: ethernet: ti: cpsw: Fix suspend/resume break
-To:     David Miller <davem@davemloft.net>
-CC:     <ivan.khoronzhuk@linaro.org>, <andrew@lunn.ch>,
-        <ilias.apalodimas@linaro.org>, <linux-kernel@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <t-kristo@ti.com>, <grygorii.strashko@ti.com>, <nsekhar@ti.com>
-References: <20190624051619.20146-1-j-keerthy@ti.com>
- <20190624.072333.2300932810459542260.davem@davemloft.net>
-From:   keerthy <j-keerthy@ti.com>
-Message-ID: <e8e07695-d3dc-6a67-aede-a84d6cd3dbcc@ti.com>
-Date:   Tue, 25 Jun 2019 15:34:41 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
+        id S1727730AbfFYKIl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 06:08:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38832 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726827AbfFYKIl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 06:08:41 -0400
+Received: from localhost.localdomain (unknown [106.201.40.23])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 436FD20644;
+        Tue, 25 Jun 2019 10:08:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561457320;
+        bh=SB0OifcBQQeaDTYy5h5HoqPRk/EuvqCl4qAhEEhDDoI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=sO8n/UqlxK/WthcAyh59xyqW3dNdUNJQMjxDdaWM9FBFlQroBZnBKecPVpKbf1U3I
+         5IUlLiqbyvIK//yuz267HmhjHVcgwpHE6LS1iriSKljzRQYhulhQuFeDH1Fm4Dtgj0
+         z/fXhQYiJsjww6GKLUjXswZ+LkCXAmlVj0VIxDkc=
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] linux/kernel.h: fix overflow for DIV_ROUND_UP_ULL
+Date:   Tue, 25 Jun 2019 15:35:18 +0530
+Message-Id: <20190625100518.30753-1-vkoul@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20190624.072333.2300932810459542260.davem@davemloft.net>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+DIV_ROUND_UP_ULL adds the two arguments and then invokes
+DIV_ROUND_DOWN_ULL. But on a 32bit system the addition of two 32 bit
+values can overflow. DIV_ROUND_DOWN_ULL does it correctly and stashes
+the addition into a unsigned long long so cast the result to unsigned
+long long here to avoid the overflow condition.
 
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
+---
+ include/linux/kernel.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-On 6/24/2019 7:53 PM, David Miller wrote:
-> From: Keerthy <j-keerthy@ti.com>
-> Date: Mon, 24 Jun 2019 10:46:19 +0530
-> 
->> Commit bfe59032bd6127ee190edb30be9381a01765b958 ("net: ethernet:
->> ti: cpsw: use cpsw as drv data")changes
->> the driver data to struct cpsw_common *cpsw. This is done
->> only in probe/remove but the suspend/resume functions are
->> still left with struct net_device *ndev. Hence fix both
->> suspend & resume also to fetch the updated driver data.
->>
->> Fixes: bfe59032bd6127ee1 ("net: ethernet: ti: cpsw: use cpsw as drv data")
->> Signed-off-by: Keerthy <j-keerthy@ti.com>
-> 
-> Applied but please make it clear that changes are targetting net-next in the
-> future by saying "[PATCH net-next v2] ...." in your Subject line.
+diff --git a/include/linux/kernel.h b/include/linux/kernel.h
+index 74b1ee9027f5..1214fb48cfc8 100644
+--- a/include/linux/kernel.h
++++ b/include/linux/kernel.h
+@@ -93,7 +93,8 @@
+ #define DIV_ROUND_DOWN_ULL(ll, d) \
+ 	({ unsigned long long _tmp = (ll); do_div(_tmp, d); _tmp; })
+ 
+-#define DIV_ROUND_UP_ULL(ll, d)		DIV_ROUND_DOWN_ULL((ll) + (d) - 1, (d))
++#define DIV_ROUND_UP_ULL(ll, d) \
++	({ DIV_ROUND_DOWN_ULL((unsigned long long)(ll) + (d) - 1, (d)) })
+ 
+ #if BITS_PER_LONG == 32
+ # define DIV_ROUND_UP_SECTOR_T(ll,d) DIV_ROUND_UP_ULL(ll, d)
+-- 
+2.20.1
 
-Sure will do that. Thanks.
-
-> 
-> Thank you.
-> 
