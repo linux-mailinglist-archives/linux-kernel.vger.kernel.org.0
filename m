@@ -2,110 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0788456A80
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 15:32:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C146A56A8F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 15:32:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727704AbfFZNcY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 09:32:24 -0400
-Received: from sauhun.de ([88.99.104.3]:56248 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726104AbfFZNcX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 09:32:23 -0400
-Received: from localhost (p54B330AF.dip0.t-ipconnect.de [84.179.48.175])
-        by pokefinder.org (Postfix) with ESMTPSA id DD83E2C0114;
-        Wed, 26 Jun 2019 15:32:20 +0200 (CEST)
-Date:   Wed, 26 Jun 2019 15:32:20 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Cc:     Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-can@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Artemi Ivanov <artemi.ivanov@cogentembedded.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH resend] can: rcar_canfd: fix possible IRQ storm on high
- load
-Message-ID: <20190626133220.GK801@ninjato>
-References: <20190626130848.6671-1-nikita.yoush@cogentembedded.com>
- <20190626131251.GB801@ninjato>
+        id S1727893AbfFZNcw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 09:32:52 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:49218 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727771AbfFZNc3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 09:32:29 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212])
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1hg82F-0000P8-ND; Wed, 26 Jun 2019 13:32:27 +0000
+Subject: Re: [PATCH][next[ drm/amd/display: fix a couple of spelling mistakes
+To:     Daniel Stone <daniel@fooishbar.org>
+Cc:     Harry Wentland <harry.wentland@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        David Zhou <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Nikola Cornij <nikola.cornij@amd.com>,
+        Wenjing Liu <Wenjing.Liu@amd.com>,
+        amd-gfx mailing list <amd-gfx@lists.freedesktop.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        kernel-janitors@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20190626132427.12615-1-colin.king@canonical.com>
+ <CAPj87rM9y5Zen5A5KkiCqqUF5m+vAwwtLj-iJrcwFfzMev+Mrw@mail.gmail.com>
+From:   Colin Ian King <colin.king@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=colin.king@canonical.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <2bd65b8f-f278-1000-d9a2-6476fc3a497f@canonical.com>
+Date:   Wed, 26 Jun 2019 14:32:26 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ogUXNSQj4OI1q3LQ"
-Content-Disposition: inline
-In-Reply-To: <20190626131251.GB801@ninjato>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAPj87rM9y5Zen5A5KkiCqqUF5m+vAwwtLj-iJrcwFfzMev+Mrw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 26/06/2019 14:25, Daniel Stone wrote:
+> Hi Colin,
+> 
+> On Wed, 26 Jun 2019 at 14:24, Colin King <colin.king@canonical.com> wrote:
+>> There are a couple of spelling mistakes in dm_error messages and
+>> a comment. Fix these.
+> 
+> Whilst there, you might fix the '[next[' typo in the commit message.
 
---ogUXNSQj4OI1q3LQ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Jun 26, 2019 at 03:12:51PM +0200, Wolfram Sang wrote:
-> On Wed, Jun 26, 2019 at 04:08:48PM +0300, Nikita Yushchenko wrote:
-> > We have observed rcar_canfd driver entering IRQ storm under high load,
-> > with following scenario:
-> > - rcar_canfd_global_interrupt() in entered due to Rx available,
-> > - napi_schedule_prep() is called, and sets NAPIF_STATE_SCHED in state
-> > - Rx fifo interrupts are masked,
-> > - rcar_canfd_global_interrupt() is entered again, this time due to
-> >   error interrupt (e.g. due to overflow),
-> > - since scheduled napi poller has not yet executed, condition for calli=
-ng
-> >   napi_schedule_prep() from rcar_canfd_global_interrupt() remains true,
-> >   thus napi_schedule_prep() gets called and sets NAPIF_STATE_MISSED flag
-> >   in state,
-> > - later, napi poller function rcar_canfd_rx_poll() gets executed, and
-> >   calls napi_complete_done(),
-> > - due to NAPIF_STATE_MISSED flag in state, this call does not clear
-> >   NAPIF_STATE_SCHED flag from state,
-> > - on return from napi_complete_done(), rcar_canfd_rx_poll() unmasks Rx
-> >   interrutps,
-> > - Rx interrupt happens, rcar_canfd_global_interrupt() gets called
-> >   and calls napi_schedule_prep(),
-> > - since NAPIF_STATE_SCHED is set in state at this time, this call
-> >   returns false,
-> > - due to that false return, rcar_canfd_global_interrupt() returns
-> >   without masking Rx interrupt
-> > - and this results into IRQ storm: unmasked Rx interrupt happens again
-> >   and again is misprocessed in the same way.
-> >=20
-> > This patch fixes that scenario by unmasking Rx interrupts only when
-> > napi_complete_done() returns true, which means it has cleared
-> > NAPIF_STATE_SCHED in state.
-> >=20
-> > Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
->=20
-> CCing the driver author...
-
-Bounced :(
+Ugh, fickle fingers. Maybe the upstream devs will fix that before
+applying...
 
 
---ogUXNSQj4OI1q3LQ
-Content-Type: application/pgp-signature; name="signature.asc"
+> 
+> Cheers,
+> Daniel
+> 
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl0Tc+QACgkQFA3kzBSg
-Kbb75BAAhLltyFkBZdASqi3rHjdUTq/5x4rdFSNMulB8Cf9rrTMAt091eREUWO/f
-0aks7VxUHsBR3ojRJkzO90kB4Ep/6ph5KksO951YYCfRec4m5kMwLSl6aIDI+i9S
-ECa/PF9BYLVFi8WqreaFobkMf60pJrJ0505PBSFEEqM2be5AEuJqTuB51UN+6VEG
-BvTx8d3AEQLnvVsfWF+zKfR3YjDmmTHLqwe8KzwqTOmJ8DFhQCtQLQdQyeWNwkug
-KNvWA/Epo4XpxsY2IV0gElZhY1tFPJUpjlkFwWgKTONeXQywAdEaoMIaMD/5mQKV
-mlKrq5Mi+ZHGmTVikJJs1xUlG6P7s2aPlj3TqYtpmkXK2ySSBULTmvJxkzyZEYWv
-BLs7mGZsKT2sqkHk68GcIcPSElof+hkBruJMRZDpW+4XSsarU05/U3i2XG2J2bM3
-xCfIlTpEr1X8jkXCwGCfw+aRa7/7rbWv2yeOyKb89MW6U8Z9oXlwaKnwdg1GJVF5
-u/Y3kuYtmYtJN6KlOioWSymDn12H3q4Dex+FWUfALknKJvjUFggpjOBp+HmYulr7
-LY6AqdLEYEKyG+BsW+xfLuZELUwJdbIU96dEZBli3QvYAxuguhenKFJ93Sy6Qhfg
-oJhl7OvQsmKnpmJOe1vHKaBTwqdP0a5uzzJ64zflQCsSE8ItQ1I=
-=/Yw0
------END PGP SIGNATURE-----
-
---ogUXNSQj4OI1q3LQ--
