@@ -2,73 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D6D656953
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 14:36:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 649EF5695A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 14:37:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727629AbfFZMg0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 08:36:26 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59172 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726339AbfFZMg0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 08:36:26 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A640BAD78;
-        Wed, 26 Jun 2019 12:36:24 +0000 (UTC)
-Date:   Wed, 26 Jun 2019 14:36:23 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Ben Skeggs <bskeggs@redhat.com>, linux-mm@kvack.org,
-        nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-nvdimm@lists.01.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>
-Subject: Re: [PATCH 06/25] mm: export alloc_pages_vma
-Message-ID: <20190626123623.GU17798@dhcp22.suse.cz>
-References: <20190626122724.13313-1-hch@lst.de>
- <20190626122724.13313-7-hch@lst.de>
+        id S1727472AbfFZMhf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 08:37:35 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:33351 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726297AbfFZMhe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 08:37:34 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5QCak4c4104662
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Wed, 26 Jun 2019 05:36:46 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5QCak4c4104662
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019061801; t=1561552607;
+        bh=JYZFktAEiOopO81lWiOb4UtCUbUGECwWdh0u6lvqJHQ=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=tK92GWKVDyR57EKGsT1XD7t1EpxT7qUZw+wIjLhtswr58EGnTFmRxvzgYSx9i8J8e
+         cujeD1y6e77TfgaL9FUniU0FRvrB6mJtlnlvt+9QWIyV1ywIkjlE6NjHAVCLdZLmJe
+         V8W3aMCggyt9js8WErmJTzQ9IbXuHOb/zIStwo4votdQCOxmxnnwK6EwaOBlUbFHvG
+         YT38b8GFEuu0sS5PECf8Hntljd8f4nJOzr7GzBX0f8Y/QgnSukMlwTWA5tXRWRMBMq
+         fYIm4hob52RG+lGy1W73+h7OTGZ4NhfKIYrylDl3iou/cg6qWtTwrA9w1i9bl2Wofp
+         27DBvqEPwO5Wg==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5QCajw34104655;
+        Wed, 26 Jun 2019 05:36:45 -0700
+Date:   Wed, 26 Jun 2019 05:36:45 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
+Message-ID: <tip-e70980312a946a56173843cbc0104b3b0e57a0c7@git.kernel.org>
+Cc:     vincenzo.frascino@arm.com, mingo@kernel.org, avagin@openvz.org,
+        torvalds@linux-foundation.org, dima@arista.com, pcc@google.com,
+        will.deacon@arm.com, 0x7f454c46@gmail.com, luto@kernel.org,
+        hpa@zytor.com, salyzyn@android.com, arnd@arndb.de,
+        catalin.marinas@arm.com, huw@codeweavers.com, ralf@linux-mips.org,
+        daniel.lezcano@linaro.org, andre.przywara@arm.com,
+        tglx@linutronix.de, linux@armlinux.org.uk,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux@rasmusvillemoes.dk, paul.burton@mips.com, shuah@kernel.org,
+        sthotton@marvell.com, sashal@kernel.org, mikelley@microsoft.com
+Reply-To: hpa@zytor.com, luto@kernel.org, salyzyn@android.com,
+          0x7f454c46@gmail.com, arnd@arndb.de, catalin.marinas@arm.com,
+          mingo@kernel.org, avagin@openvz.org, vincenzo.frascino@arm.com,
+          torvalds@linux-foundation.org, dima@arista.com, pcc@google.com,
+          will.deacon@arm.com, paul.burton@mips.com,
+          mikelley@microsoft.com, shuah@kernel.org, sthotton@marvell.com,
+          sashal@kernel.org, andre.przywara@arm.com,
+          daniel.lezcano@linaro.org, huw@codeweavers.com,
+          ralf@linux-mips.org, linux-arm-kernel@lists.infradead.org,
+          linux@armlinux.org.uk, linux-kernel@vger.kernel.org,
+          linux@rasmusvillemoes.dk, tglx@linutronix.de
+In-Reply-To: <alpine.DEB.2.21.1906240142000.32342@nanos.tec.linutronix.de>
+References: <alpine.DEB.2.21.1906240142000.32342@nanos.tec.linutronix.de>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:timers/vdso] MAINTAINERS: Add entry for the generic VDSO
+ library
+Git-Commit-ID: e70980312a946a56173843cbc0104b3b0e57a0c7
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20190626122724.13313-7-hch@lst.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Spam-Status: No, score=2.4 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_12_24,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
+        DKIM_VALID_EF,FREEMAIL_FORGED_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Level: **
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 26-06-19 14:27:05, Christoph Hellwig wrote:
-> nouveau is currently using this through an odd hmm wrapper, and I plan
-> to switch it to the real thing later in this series.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+Commit-ID:  e70980312a946a56173843cbc0104b3b0e57a0c7
+Gitweb:     https://git.kernel.org/tip/e70980312a946a56173843cbc0104b3b0e57a0c7
+Author:     Thomas Gleixner <tglx@linutronix.de>
+AuthorDate: Mon, 24 Jun 2019 02:34:24 +0200
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Wed, 26 Jun 2019 07:28:11 +0200
 
-Acked-by: Michal Hocko <mhocko@suse.com>
+MAINTAINERS: Add entry for the generic VDSO library
 
-Thanks!
+Assign the following folks in alphabetic order:
 
-> ---
->  mm/mempolicy.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-> index 01600d80ae01..f48569aa1863 100644
-> --- a/mm/mempolicy.c
-> +++ b/mm/mempolicy.c
-> @@ -2098,6 +2098,7 @@ alloc_pages_vma(gfp_t gfp, int order, struct vm_area_struct *vma,
->  out:
->  	return page;
->  }
-> +EXPORT_SYMBOL(alloc_pages_vma);
->  
->  /**
->   * 	alloc_pages_current - Allocate pages.
-> -- 
-> 2.20.1
+ - Andy for being the VDSO wizard of x86 and in general. He's also the
+   performance monitor of choice and the code in the generic library is
+   heavily influenced by his previous x86 VDSO work.
 
--- 
-Michal Hocko
-SUSE Labs
+ - Thomas for being the dude who has to deal with any form of time(r)
+   nonsense anyway
+
+ - Vincenzo for being the poor sod who went through all the different
+   architecture implementations in order to unify them. A lot of knowledge
+   gained from VDSO implementation details to the intricacies of taming the
+   build system.
+
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc: linux-arch@vger.kernel.org
+Cc: LAK <linux-arm-kernel@lists.infradead.org>
+Cc: linux-mips@vger.kernel.org
+Cc: linux-kselftest@vger.kernel.org
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: Paul Burton <paul.burton@mips.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Mark Salyzyn <salyzyn@android.com>
+Cc: Peter Collingbourne <pcc@google.com>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Dmitry Safonov <0x7f454c46@gmail.com>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Huw Davies <huw@codeweavers.com>
+Cc: Shijith Thotton <sthotton@marvell.com>
+Cc: Andre Przywara <andre.przywara@arm.com>
+Cc: Dmitry Safonov <dima@arista.com>
+Cc: Andrei Vagin <avagin@openvz.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Michael Kelley <mikelley@microsoft.com>
+Cc: Sasha Levin <sashal@kernel.org>
+Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1906240142000.32342@nanos.tec.linutronix.de
+
+---
+ MAINTAINERS | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index d0ed735994a5..13ece5479167 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6664,6 +6664,18 @@ L:	kvm@vger.kernel.org
+ S:	Supported
+ F:	drivers/uio/uio_pci_generic.c
+ 
++GENERIC VDSO LIBRARY:
++M:	Andy Lutomirksi <luto@kernel.org>
++M:	Thomas Gleixner <tglx@linutronix.de>
++M:	Vincenzo Frascino <vincenzo.frascino@arm.com>
++L:	linux-kernel@vger.kernel.org
++T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers/vdso
++S:	Maintained
++F:	lib/vdso
++F:	kernel/time/vsyscall.c
++F:	include/vdso
++F:	include/asm-generic/vdso/vsyscall.h
++
+ GENWQE (IBM Generic Workqueue Card)
+ M:	Frank Haverkamp <haver@linux.ibm.com>
+ S:	Supported
