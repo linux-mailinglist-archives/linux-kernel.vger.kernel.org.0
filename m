@@ -2,69 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B127C5687A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 14:19:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B35C656898
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 14:23:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727395AbfFZMTe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 08:19:34 -0400
-Received: from mail-wr1-f42.google.com ([209.85.221.42]:40268 "EHLO
-        mail-wr1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726131AbfFZMTe (ORCPT
+        id S1727427AbfFZMXC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 08:23:02 -0400
+Received: from mail-qk1-f202.google.com ([209.85.222.202]:42063 "EHLO
+        mail-qk1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726104AbfFZMXC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 08:19:34 -0400
-Received: by mail-wr1-f42.google.com with SMTP id p11so2484720wre.7
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 05:19:33 -0700 (PDT)
+        Wed, 26 Jun 2019 08:23:02 -0400
+Received: by mail-qk1-f202.google.com with SMTP id l16so2352035qkk.9
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 05:23:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=rHwJaORfU9mZJNEEo+jfWN6v6wx9eIm8a8mlUMvLB5Q=;
+        b=FVvuA3zJQGuPor4RQmsHdaCKO/pAXJhuQF83hlbKY9iIKR6vfjKfGQ/ETMWnRE81jd
+         jePQNF4HBcVZjtFylu5myNQmiHspuGu9vfYpwq5mpUvkM54IRChAsDca97Pj2Fp3pkv4
+         RHLK9CR+MwadHsI9+rV6E5kxw8AXWSeQ3M3Zpo479Mioq8UM+sXQYEnXweDwXIcoKLa5
+         A/50ckDH7jQn0d13rdkD9sSTML6D67dq+1/2WiASn/N4iuwHh1mRPjrr2ilO4kETxctr
+         8+fkMMy7Gg4tHSwDW2ZwA0yQoCOBBiJBjW4RPPmxsnRWtL80rNEknMJ0Y12jLKm/bc0j
+         AAnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Z65EMMRLMdv1kWvP14/NVwJOwEpNkbLuO3J31367Rxs=;
-        b=WQe0ytc5qRTha08dO7dhjxvhIqquYazR1QjuXcy+KGkXODf+r8TDjD/ur+ZCQF6YPk
-         WnXZcPEn7hSh+tvSp5nXE07CIoPqm2sIr+lLadlmD2rTfhyFM2BiGJLbsQz3ohTdBhSH
-         a/2unEHCrhjDVYbrOD/maEoFYSCjjXHqA4absb6FdC3kSEiC8s60Bgm5S5TgQEDu60+5
-         fIS3qxoeyjDtgbMuHk4oAEzYMXi4M9BvGoETIZsqDHVuaOcnlKkrKBMHW4zPS2o1ikNT
-         Dy/gnxb95CTQ9G6eA+rGagCvpJfVczB22OurOg0OdfVjGbOoZPlpjw8w8P5Z8cj0N9C9
-         KDQg==
-X-Gm-Message-State: APjAAAUrTpgO1hVBtMS1cN+LGNEVgBIkIJiphuY1GFxm7AfEiHybe+l6
-        kFyjP6aW7k92cGjrr1nf2Fq9Mg==
-X-Google-Smtp-Source: APXvYqxjVWpVZIPguHFdWiP8rPq1t14VjoshpsvwLkCTn21s39Idea2oHCjm9hOtTdcLHbRSD5BINA==
-X-Received: by 2002:a5d:4b12:: with SMTP id v18mr3611195wrq.123.1561551572292;
-        Wed, 26 Jun 2019 05:19:32 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:e88d:856c:e081:f67d? ([2001:b07:6468:f312:e88d:856c:e081:f67d])
-        by smtp.gmail.com with ESMTPSA id j189sm2373028wmb.48.2019.06.26.05.19.31
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 Jun 2019 05:19:31 -0700 (PDT)
-Subject: Re: WARNING in kvm_set_tsc_khz
-To:     Alexander Potapenko <glider@google.com>,
-        syzbot+c03f30b4f4c46bdf8575@syzkaller.appspotmail.com,
-        haozhong.zhang@intel.com
-Cc:     hpa@zytor.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mingo@redhat.com, rkrcmar@redhat.com,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
-References: <CAG_fn=VyAYUYJuCqR1rL_KjGm5i1mBzffA=uuCnTa0QOBRsvaA@mail.gmail.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <abc5e09d-aaf5-3e12-6f2d-d97138951abe@redhat.com>
-Date:   Wed, 26 Jun 2019 14:19:30 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
-MIME-Version: 1.0
-In-Reply-To: <CAG_fn=VyAYUYJuCqR1rL_KjGm5i1mBzffA=uuCnTa0QOBRsvaA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=rHwJaORfU9mZJNEEo+jfWN6v6wx9eIm8a8mlUMvLB5Q=;
+        b=Ih6VHMv7tpNdDgXwhr/0+0+ScfqDRPP65lPvhNAKqXA3dbZe/PTY8oIzzTuY8cK1Zr
+         ENGAdkefJ8m8rcN1iVKQJIE/EiSY+MLjiQw2ugFAK5Ti/mHDoOrXCPOUhZtyT6l1Fi4i
+         /jxG27LzDfLRm8RM6/IO4Yph5dAd7kcZozU2pj780/EcG2fSYYShCRY6UqrunjkLD/jd
+         1oIDxqeNCw8il7fKSbFH8yLxtI/jnq4Kn587qgglZjYElotcs59SCapUW5FnlKcfBYFg
+         zCwTfMXDjadfiSdMztwr7hE8Bu3u3GZKybewCsNW49eLRr5tIvg9PeUlp4qBD8x8EBQj
+         qScQ==
+X-Gm-Message-State: APjAAAXDdNFfeIDHUSV1QUXPFLD8t1rgNNSFOaFxK/6UbHEOgWhiBaTx
+        AuPwSlT+MHlbzvPomD8aMxzZDWTruw==
+X-Google-Smtp-Source: APXvYqzl4LpGQmdrj0fZiOBsmG1D5EzH0t7qS8z3VuqQjCIlUkPj6pS/tt/JbkNeDbNPZCT8uxsjq+PytA==
+X-Received: by 2002:ac8:197a:: with SMTP id g55mr3301594qtk.320.1561551781196;
+ Wed, 26 Jun 2019 05:23:01 -0700 (PDT)
+Date:   Wed, 26 Jun 2019 14:20:15 +0200
+Message-Id: <20190626122018.171606-1-elver@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
+Subject: [PATCH v2 0/4] mm/kasan: Add object validation in ksize()
+From:   Marco Elver <elver@google.com>
+To:     aryabinin@virtuozzo.com, dvyukov@google.com, glider@google.com,
+        andreyknvl@google.com
+Cc:     linux-kernel@vger.kernel.org, Marco Elver <elver@google.com>,
+        Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        kasan-dev@googlegroups.com, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26/06/19 14:09, Alexander Potapenko wrote:
-> Hi Haozhong, Paolo,
-> 
-> KMSAN bot is hitting this warning every now and then.
-> Is it possible to replace it with a pr_warn()?
+This patch series adds proper validation of an object in ksize() --
+ksize() has been unconditionally unpoisoning the entire memory region
+associated with an allocation. This can lead to various undetected bugs.
 
-Sent a patch now---actually 2 because I forgot a --dry-run. :)
+To correctly address this for all allocators, and a requirement that we
+still need access to an unchecked ksize(), we introduce __ksize(), and
+then refactor the common logic in ksize() to slab_common.c.
 
-Paolo
+Furthermore, we introduce __kasan_check_{read,write}, which can be used
+even if KASAN is disabled in a compilation unit (as is the case for
+slab_common.c). See inline comment for why __kasan_check_read() is
+chosen to check validity of an object inside ksize().
+
+Previous version:
+http://lkml.kernel.org/r/20190624110532.41065-1-elver@google.com
+
+v2:
+* Complete rewrite of patch, refactoring ksize() and relying on
+  kasan_check_read for validation.
+
+Marco Elver (4):
+  mm/kasan: Introduce __kasan_check_{read,write}
+  lib/test_kasan: Add test for double-kzfree detection
+  mm/slab: Refactor common ksize KASAN logic into slab_common.c
+  mm/kasan: Add object validation in ksize()
+
+ include/linux/kasan-checks.h | 35 ++++++++++++++++++++++------
+ include/linux/kasan.h        |  7 ++++--
+ include/linux/slab.h         |  1 +
+ lib/test_kasan.c             | 17 ++++++++++++++
+ mm/kasan/common.c            | 14 +++++------
+ mm/kasan/generic.c           | 13 ++++++-----
+ mm/kasan/kasan.h             | 10 +++++++-
+ mm/kasan/tags.c              | 12 ++++++----
+ mm/slab.c                    | 28 +++++-----------------
+ mm/slab_common.c             | 45 ++++++++++++++++++++++++++++++++++++
+ mm/slob.c                    |  4 ++--
+ mm/slub.c                    | 14 ++---------
+ 12 files changed, 135 insertions(+), 65 deletions(-)
+
+-- 
+2.22.0.410.gd8fdbe21b5-goog
 
