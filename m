@@ -2,123 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADD2356DD2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 17:37:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E7B156DCF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 17:36:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728319AbfFZPhN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 11:37:13 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:38166 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726984AbfFZPhM (ORCPT
+        id S1727729AbfFZPgh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 11:36:37 -0400
+Received: from smtprelay0190.hostedemail.com ([216.40.44.190]:55605 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726104AbfFZPgh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 11:37:12 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5QFXoje151326;
-        Wed, 26 Jun 2019 15:35:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=9G5PiDG0S7gskQAEA+1rG18NFPpT+WoUOG9H+94vGJo=;
- b=Mr0csDp/6gFDwuuR4WcTjSwEQhZRUvDp0wq3YeKCIR/ppK1h93X/GLwv9+Y3cvXAo/We
- nBBPCWspqpkQf8Ya9/6yEHadZ9h5/AK9JEwgQLT2OJ63YoS19u03moZ7UXD928KK75Tw
- IYGgl4G6FFtMYGPdEh6jhDWXC8Gi+dRHPoIK4U9EU9fQhY9zQayETLpTGjqGl7XpA008
- xvtm1tvTyzmAnCbVLIgcaAr+22UL4c7SemsbRVUkLI8sB/S8GoHCuFEiRRnlmAb3SWPf
- RtSXc0WG3A/565vb1OMt7fUapvm0eYSNFeeM5VPPlY8RA+hUmYz247kCS97awaKxof1X 1A== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2130.oracle.com with ESMTP id 2t9brtb5ka-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 26 Jun 2019 15:35:48 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5QFZWnl185666;
-        Wed, 26 Jun 2019 15:35:48 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by aserp3030.oracle.com with ESMTP id 2t9accs0fq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 26 Jun 2019 15:35:48 +0000
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x5QFZlgQ186348;
-        Wed, 26 Jun 2019 15:35:47 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3030.oracle.com with ESMTP id 2t9accs0fn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 26 Jun 2019 15:35:47 +0000
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x5QFZjvI031893;
-        Wed, 26 Jun 2019 15:35:45 GMT
-Received: from localhost (/10.159.137.246)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 26 Jun 2019 08:35:45 -0700
-Date:   Wed, 26 Jun 2019 08:35:42 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     matthew.garrett@nebula.com, yuchao0@huawei.com, tytso@mit.edu,
-        shaggy@kernel.org, ard.biesheuvel@linaro.org, josef@toxicpanda.com,
-        hch@infradead.org, clm@fb.com, adilger.kernel@dilger.ca,
-        jk@ozlabs.org, jack@suse.com, dsterba@suse.com, jaegeuk@kernel.org,
-        cluster-devel@redhat.com, jfs-discussion@lists.sourceforge.net,
-        linux-efi@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
-        linux-nilfs@vger.kernel.org, linux-mtd@lists.infradead.org,
-        ocfs2-devel@oss.oracle.com, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org
-Subject: Re: [PATCH 2/5] vfs: create a generic checking function for
- FS_IOC_FSSETXATTR
-Message-ID: <20190626153542.GE5171@magnolia>
-References: <156151632209.2283456.3592379873620132456.stgit@magnolia>
- <156151633829.2283456.834142172527987802.stgit@magnolia>
- <20190626041133.GB32272@ZenIV.linux.org.uk>
+        Wed, 26 Jun 2019 11:36:37 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay06.hostedemail.com (Postfix) with ESMTP id CBB8E18225DEA;
+        Wed, 26 Jun 2019 15:36:35 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::,RULES_HIT:41:355:379:421:599:960:968:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2198:2199:2393:2553:2559:2562:2691:2828:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3868:3870:3871:3872:3873:3874:4321:5007:6248:6691:7903:7974:9010:10004:10400:10848:11232:11658:11914:12296:12297:12663:12740:12760:12895:13069:13076:13095:13311:13357:13439:13618:14093:14096:14097:14659:14721:14777:21080:21324:21433:21627:21819:30022:30054:30056:30060:30083:30090:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.14.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:52,LUA_SUMMARY:none
+X-HE-Tag: pest84_397bcb5d8fa2a
+X-Filterd-Recvd-Size: 2614
+Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf16.hostedemail.com (Postfix) with ESMTPA;
+        Wed, 26 Jun 2019 15:36:34 +0000 (UTC)
+Message-ID: <b007126ee329ba5094d84f0af91c0c8eafecbed4.camel@perches.com>
+Subject: Re: [PATCH v2] get_maintainer: Add --prefix option
+From:   Joe Perches <joe@perches.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        linux-kernel@vger.kernel.org
+Date:   Wed, 26 Jun 2019 08:36:33 -0700
+In-Reply-To: <20190626093635.GK3419@hirez.programming.kicks-ass.net>
+References: <20190624130323.14137-1-bigeasy@linutronix.de>
+         <20190624133333.GW3419@hirez.programming.kicks-ass.net>
+         <9528bb2c4455db9e130576120c8b985b9dd94e3d.camel@perches.com>
+         <20190625163701.xcb2ue7phpskvfnz@linutronix.de>
+         <8d416a7b0dad3933ceb8d12c9efaad541f7cf269.camel@perches.com>
+         <20190626093635.GK3419@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190626041133.GB32272@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9299 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1906260182
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 26, 2019 at 05:11:33AM +0100, Al Viro wrote:
-> On Tue, Jun 25, 2019 at 07:32:18PM -0700, Darrick J. Wong wrote:
-> > --- a/fs/btrfs/ioctl.c
-> > +++ b/fs/btrfs/ioctl.c
-> > @@ -373,10 +373,9 @@ static int check_xflags(unsigned int flags)
-> >  static int btrfs_ioctl_fsgetxattr(struct file *file, void __user *arg)
-> >  {
-> >  	struct btrfs_inode *binode = BTRFS_I(file_inode(file));
-> > -	struct fsxattr fa;
-> > -
-> > -	memset(&fa, 0, sizeof(fa));
-> > -	fa.fsx_xflags = btrfs_inode_flags_to_xflags(binode->flags);
-> > +	struct fsxattr fa = {
-> > +		.fsx_xflags = btrfs_inode_flags_to_xflags(binode->flags),
-> > +	};
+On Wed, 2019-06-26 at 11:36 +0200, Peter Zijlstra wrote:
+> On Tue, Jun 25, 2019 at 10:23:34AM -0700, Joe Perches wrote:
+[]
+> > I want to proposed patches to moderated lists
+> > and believe everyone really should too.
+> > 
+> > I don't care if moderated lists send a
+> > "waiting for moderation" message as long as the
+> > list gets the proposed patch eventually.
+> > 
+> > I think only Peter cares about those, to him,
+> > superfluous "being moderated" messages.
 > 
-> Umm...  Sure, there's no padding, but still - you are going to copy that thing
-> to userland...  How about
-> 
-> static inline void simple_fill_fsxattr(struct fsxattr *fa, unsigned xflags)
-> {
-> 	memset(fa, 0, sizeof(*fa));
-> 	fa->fsx_xflags = xflags;
-> }
-> 
-> and let the compiler optimize the crap out?
+> I'm really not alone in that. Not only do you get those annoying
+> messages, the people reading that list might get the discussion in
+> fragments, because some people that reply are subscribed and do not
+> require moderation while others do get caught in the moderation thing
+> and then delayed.
 
-The v2 series used to do that, but Christoph complained that having a
-helper for a two-line memset and initialization was silly[1] so now we
-have this version.
+<shrug> email moderation time is up to any moderator.
 
-I don't mind reinstating it as a static inline helper, but I'd like some
-input from any of the btrfs developers (or you, Al) about which form is
-preferred.
+> It also puts a burden on the moderator, do they allow the whole
+> discussion or only part. What if they deem the thing off-topic and want
+> to kill it, but then some of their whitelisted people do reply.
 
---D
+Please remember any moderated list entries originate here
+by using get_maintainers.pl for a proposed patch or discuss
+a particular subsystem.
 
-[1] https://lkml.org/lkml/2019/6/25/533
+If a moderator of a list decides an email chain about a
+patch is somehow off-topic and does not forward the email,
+likely that moderated list should be removed from MAINTAINERS.
+
+Under what use case would you want to use get_maintainer and
+_not_ cc a particular mailing list?
+
+
