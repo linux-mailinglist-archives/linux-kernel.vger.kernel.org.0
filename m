@@ -2,74 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C127256387
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 09:44:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FC0B56380
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 09:42:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726986AbfFZHoQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 03:44:16 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:19079 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726076AbfFZHoQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 03:44:16 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 50A90E953B7628D69444;
-        Wed, 26 Jun 2019 15:44:14 +0800 (CST)
-Received: from [127.0.0.1] (10.74.149.191) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Wed, 26 Jun 2019
- 15:44:05 +0800
-Subject: Re: [PATCH net-next 00/11] net: hns3: some code optimizations &
- bugfixes
-To:     David Miller <davem@davemloft.net>
-CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
-        <linuxarm@huawei.com>
-References: <1561020765-14481-1-git-send-email-tanhuazhong@huawei.com>
- <20190622.095323.1495992426494142587.davem@davemloft.net>
-From:   tanhuazhong <tanhuazhong@huawei.com>
-Message-ID: <573582a3-23fc-8591-f71b-af977ed6fd0e@huawei.com>
-Date:   Wed, 26 Jun 2019 15:44:05 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
-MIME-Version: 1.0
-In-Reply-To: <20190622.095323.1495992426494142587.davem@davemloft.net>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.74.149.191]
-X-CFilter-Loop: Reflected
+        id S1726912AbfFZHmX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 03:42:23 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:37704 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725954AbfFZHmX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 03:42:23 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 98662200912;
+        Wed, 26 Jun 2019 09:42:21 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 514E6200905;
+        Wed, 26 Jun 2019 09:42:16 +0200 (CEST)
+Received: from mega.ap.freescale.net (mega.ap.freescale.net [10.192.208.232])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 16DEA4030F;
+        Wed, 26 Jun 2019 15:42:10 +0800 (SGT)
+From:   Anson.Huang@nxp.com
+To:     shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, leonard.crestez@nxp.com, abel.vesa@nxp.com,
+        viresh.kumar@linaro.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH 1/2] soc: imx8: Add i.MX8MQ UID(unique identifier) support
+Date:   Wed, 26 Jun 2019 15:44:14 +0800
+Message-Id: <20190626074415.18224-1-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Anson Huang <Anson.Huang@nxp.com>
 
+Add i.MX8MQ SoC UID(unique identifier) support, user
+can read it from sysfs:
 
-On 2019/6/22 21:53, David Miller wrote:
-> From: Huazhong Tan <tanhuazhong@huawei.com>
-> Date: Thu, 20 Jun 2019 16:52:34 +0800
-> 
->> This patch-set includes code optimizations and bugfixes for
->> the HNS3 ethernet controller driver.
->>
->> [patch 1/11] fixes a selftest issue when doing autoneg.
->>
->> [patch 2/11 - 3-11] adds two code optimizations about VLAN issue.
->>
->> [patch 4/11] restores the MAC autoneg state after reset.
->>
->> [patch 5/11 - 8/11] adds some code optimizations and bugfixes about
->> HW errors handling.
->>
->> [patch 9/11 - 11/11] fixes some issues related to driver loading and
->> unloading.
-> 
-> Series applied, thanks.
-> 
+root@imx8mqevk:~# cat /sys/devices/soc0/soc_uid
+D56911D6F060954B
 
-Hi, david, has this patchset merged into net-next, why I cannot see it 
-after pulling net-next? Or is there some problem about this patchset I 
-have missed?
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ drivers/soc/imx/soc-imx8.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-> .
-> 
+diff --git a/drivers/soc/imx/soc-imx8.c b/drivers/soc/imx/soc-imx8.c
+index f924ae8..c19ef4b 100644
+--- a/drivers/soc/imx/soc-imx8.c
++++ b/drivers/soc/imx/soc-imx8.c
+@@ -16,6 +16,9 @@
+ #define IMX8MQ_SW_INFO_B1		0x40
+ #define IMX8MQ_SW_MAGIC_B1		0xff0055aa
+ 
++#define OCOTP_UID_LOW			0x410
++#define OCOTP_UID_HIGH			0x420
++
+ /* Same as ANADIG_DIGPROG_IMX7D */
+ #define ANADIG_DIGPROG_IMX8MM	0x800
+ 
+@@ -24,6 +27,16 @@ struct imx8_soc_data {
+ 	u32 (*soc_revision)(void);
+ };
+ 
++static u64 soc_uid;
++
++static ssize_t soc_uid_show(struct device *dev,
++			    struct device_attribute *attr, char *buf)
++{
++	return sprintf(buf, "%016llX\n", soc_uid);
++}
++
++static DEVICE_ATTR_RO(soc_uid);
++
+ static u32 __init imx8mq_soc_revision(void)
+ {
+ 	struct device_node *np;
+@@ -42,6 +55,10 @@ static u32 __init imx8mq_soc_revision(void)
+ 	if (magic == IMX8MQ_SW_MAGIC_B1)
+ 		rev = REV_B1;
+ 
++	soc_uid = readl_relaxed(ocotp_base + OCOTP_UID_HIGH);
++	soc_uid <<= 32;
++	soc_uid |= readl_relaxed(ocotp_base + OCOTP_UID_LOW);
++
+ 	iounmap(ocotp_base);
+ 
+ out:
+@@ -140,6 +157,11 @@ static int __init imx8_soc_init(void)
+ 		goto free_rev;
+ 	}
+ 
++	ret = device_create_file(soc_device_to_device(soc_dev),
++				 &dev_attr_soc_uid);
++	if (ret)
++		goto free_rev;
++
+ 	if (IS_ENABLED(CONFIG_ARM_IMX_CPUFREQ_DT))
+ 		platform_device_register_simple("imx-cpufreq-dt", -1, NULL, 0);
+ 
+-- 
+2.7.4
 
