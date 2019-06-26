@@ -2,164 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D12F5650D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 11:03:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55BF256518
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 11:06:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726907AbfFZJD2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 05:03:28 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40168 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725379AbfFZJD2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 05:03:28 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 80357AD09;
-        Wed, 26 Jun 2019 09:03:26 +0000 (UTC)
-Subject: Re: [PATCH v2 5/7] x86/xen: nopv parameter support for HVM guest
-To:     Zhenzhong Duan <zhenzhong.duan@oracle.com>,
-        linux-kernel@vger.kernel.org
-Cc:     tglx@linutronix.de, mingo@kernel.org, bp@alien8.de, hpa@zytor.com,
-        boris.ostrovsky@oracle.com, sstabellini@kernel.org,
-        peterz@infradead.org, srinivas.eeda@oracle.com,
-        Ingo Molnar <mingo@redhat.com>, xen-devel@lists.xenproject.org
-References: <1561377779-28036-1-git-send-email-zhenzhong.duan@oracle.com>
- <1561377779-28036-6-git-send-email-zhenzhong.duan@oracle.com>
- <99a28880-c2bf-e328-ee52-afc782af3b74@suse.com>
- <f5478215-0e1a-8a2a-19ec-378ac5849936@oracle.com>
-From:   Juergen Gross <jgross@suse.com>
-Message-ID: <feb2938b-ee09-7fac-12f7-fe2d9faf78f9@suse.com>
-Date:   Wed, 26 Jun 2019 11:03:25 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1726732AbfFZJGj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 05:06:39 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:39849 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726131AbfFZJGi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 05:06:38 -0400
+Received: by mail-wr1-f65.google.com with SMTP id x4so1779941wrt.6
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 02:06:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mNkBOhUSKZktXVzPgYHzPfOcBUciHYL1qLyKm8m40Ho=;
+        b=EmhhuBkjS/9rAtIkcIwpIcgZ3Gwn0zrnRkXyLjCQGmjeXCOilfqZFNx1wo3/FJFa7U
+         9Zf3mWYjuMWiSMztjZ+t0JkNLNA6+0NxTB0hHImzdVdROhyBF+N/VFwugbb1cfquvnDM
+         GigBE7k6TeDt+uMKPhQ6uMbUFN9qCJoBpsLPJXOVwMC1otSloUNC73MuEtir+kHO0GpJ
+         tf6H17PB/xAW7OUvxq1AdK5eoVwnr8vjho6yMVp+WQGfyPxn3AUJX6jitZCBLI+iwgR1
+         Yv64S3XIM0zji9dq5d9l+SNyhHmrsz6JnPZIiYZwTnGRwGDwbOdd2uQvWaS+1r9FPz7r
+         kYxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mNkBOhUSKZktXVzPgYHzPfOcBUciHYL1qLyKm8m40Ho=;
+        b=bIN32WGTU2xo6HmIBfH26xoN/t+V1vWlkPrT2N/Nehi3+kkZZzHd/PAShpZKzzHA0E
+         ew41CxElgBnBhjk0y/69T8951xznRbIc2WNL48gFngkje+Yvwt9k2Fs6k2JSm0yFJJ03
+         kaNwG5H3i9I4i2nS6sAs4plxI5ucBoWxrpRGO/6p9B8DLnCyPkTEuADnqhcImtqfp5It
+         bGQ00lROUJ5bkdJbuQ5oHIWkSBTvxwc+rShR1nzGxCoALGaFlfW2vTugZ2/BDaZhqVt/
+         v0QuTGquTPB0IbO1P/1FkUSa0sMB0uJ5Bq6pyu5OBhO0Go5TwMiPjuJDU9jN8uDYC2CU
+         c9UQ==
+X-Gm-Message-State: APjAAAWHodVW46tEcPMzFfW4bNCeA4HxZpEF80dc0h9Lt7M7i4D4U+G6
+        N+aqplsmpeyKPg43ApigPWImqg==
+X-Google-Smtp-Source: APXvYqwkO8aDGnvu8iP8rFMRwxiWuy/j1doyJakOZ/B3vub9BJrH3obe1f2ZF8drEhnPsKEo5ODJtQ==
+X-Received: by 2002:adf:afde:: with SMTP id y30mr2683421wrd.197.1561539996153;
+        Wed, 26 Jun 2019 02:06:36 -0700 (PDT)
+Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id o6sm1925797wmc.46.2019.06.26.02.06.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 26 Jun 2019 02:06:35 -0700 (PDT)
+From:   Neil Armstrong <narmstrong@baylibre.com>
+To:     jbrunet@baylibre.com, khilman@baylibre.com
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, martin.blumenstingl@googlemail.com,
+        linux-gpio@vger.kernel.org,
+        Neil Armstrong <narmstrong@baylibre.com>
+Subject: [RFC/RFT v2 00/14] arm64: g12a: add support for DVFS
+Date:   Wed, 26 Jun 2019 11:06:18 +0200
+Message-Id: <20190626090632.7540-1-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-In-Reply-To: <f5478215-0e1a-8a2a-19ec-378ac5849936@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26.06.19 10:56, Zhenzhong Duan wrote:
-> 
-> On 2019/6/25 20:31, Juergen Gross wrote:
->> On 24.06.19 14:02, Zhenzhong Duan wrote:
->>> PVH guest needs PV extentions to work, so nopv parameter is ignored
->>> for PVH but not for HVM guest.
->>>
->>> In order for nopv parameter to take effect for HVM guest, we need to
->>> distinguish between PVH and HVM guest early in hypervisor detection
->>> code. By moving the detection of PVH in xen_platform_hvm(),
->>> xen_pvh_domain() could be used for that purpose.
->>>
->>> Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
->>> Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
->>> Cc: Juergen Gross <jgross@suse.com>
->>> Cc: Stefano Stabellini <sstabellini@kernel.org>
->>> Cc: Thomas Gleixner <tglx@linutronix.de>
->>> Cc: Ingo Molnar <mingo@redhat.com>
->>> Cc: Borislav Petkov <bp@alien8.de>
->>> Cc: xen-devel@lists.xenproject.org
->>> ---
->>>   arch/x86/xen/enlighten_hvm.c | 18 ++++++++++++------
->>>   1 file changed, 12 insertions(+), 6 deletions(-)
->>>
->>> diff --git a/arch/x86/xen/enlighten_hvm.c b/arch/x86/xen/enlighten_hvm.c
->>> index 7fcb4ea..26939e7 100644
->>> --- a/arch/x86/xen/enlighten_hvm.c
->>> +++ b/arch/x86/xen/enlighten_hvm.c
->>> @@ -25,6 +25,7 @@
->>>   #include "mmu.h"
->>>   #include "smp.h"
->>>   +extern bool nopv;
->>>   static unsigned long shared_info_pfn;
->>>     void xen_hvm_init_shared_info(void)
->>> @@ -226,20 +227,24 @@ static uint32_t __init xen_platform_hvm(void)
->>>       if (xen_pv_domain())
->>>           return 0;
->>>   +#ifdef CONFIG_XEN_PVH
->>> +    /* Test for PVH domain (PVH boot path taken overrides ACPI 
->>> flags). */
->>> +    if (!x86_platform.legacy.rtc && x86_platform.legacy.no_vga)
->>> +        xen_pvh = true;
->>
->> Sorry, this won't work, as ACPI tables are scanned only some time later.
-> Hmm, right. Thanks for point out.
->>
->> You can test for xen_pvh being true here (for the case where the guest
->> has been booted via the Xen-PVH boot entry) and handle that case, but
->> the case of a PVH guest started via the normal boot entry (like via
->> grub2) and nopv specified is difficult. The only idea I have right now
->> would be to use another struct hypervisor_x86 for that case which will
->> only be used for Xen HVM/PVH _and_ nopv specified. It should be a copy
->> of the bare metal variant, but a special guest_late_init member issuing
->> a big fat warning in case PVH is being detected.
-> 
-> After that warning, I guess PVH will run into hang finally? If it's 
-> true, BUG() is better?
-> 
-> Adding another hypervisor_x86 is a bit redundant, I think of below change.
-> 
-> I'll test it tomorrow. But appreciate your suggestion whether it's 
-> feasible. Thanks
+The G12A/G12B Socs embeds a specific clock tree for each CPU cluster :
+cpu_clk / cpub_clk
+|   \- cpu_clk_dyn
+|      |  \- cpu_clk_premux0
+|      |        |- cpu_clk_postmux0
+|      |        |    |- cpu_clk_dyn0_div
+|      |        |    \- xtal/fclk_div2/fclk_div3
+|      |        \- xtal/fclk_div2/fclk_div3
+|      \- cpu_clk_premux1
+|            |- cpu_clk_postmux1
+|            |    |- cpu_clk_dyn1_div
+|            |    \- xtal/fclk_div2/fclk_div3
+|            \- xtal/fclk_div2/fclk_div3
+\ sys_pll / sys1_pll
 
-Yes, this seems to be a viable option.
+This patchset adds notifiers on cpu_clk / cpub_clk, cpu_clk_dyn,
+cpu_clk_premux0 and sys_pll / sys1_pll to permit change frequency of
+the CPU clock in a safe way as recommended by the vendor Documentation
+and reference code.
 
-> 
-> --- a/arch/x86/xen/enlighten_hvm.c
-> +++ b/arch/x86/xen/enlighten_hvm.c
-> @@ -25,6 +25,7 @@
->   #include "mmu.h"
->   #include "smp.h"
-> 
-> +extern bool nopv;
->   static unsigned long shared_info_pfn;
-> 
->   void xen_hvm_init_shared_info(void)
-> @@ -221,11 +222,37 @@ bool __init xen_hvm_need_lapic(void)
->          return true;
->   }
-> 
-> +static __init void xen_hvm_nopv_guest_late_init(void)
-> +{
-> +#ifdef CONFIG_XEN_PVH
-> +       if (x86_platform.legacy.rtc || !x86_platform.legacy.no_vga)
-> +               return;
-> +
-> +       /* PVH detected. */
-> +       xen_pvh = true;
-> +
-> +       printk(KERN_CRIT "nopv parameter isn't supported in PVH guest\n");
-> +       BUG();
-> +#endif
-> +}
-> +
-> +
->   static uint32_t __init xen_platform_hvm(void)
->   {
->          if (xen_pv_domain())
->                  return 0;
-> 
-> +       if (xen_pvh_domain() && nopv)
-> +       {
-> +       /* guest booting via the Xen-PVH boot entry goes here */
+This patchset :
+- introduces needed core and meson clk changes
+- adds support for the G12B second cluster clock measurer ids
+- protects clock measurer from cooncurent measures
+- adds the clock notifiers
+- moves the G12A DT to a common g12a-common dtsi
+- adds the G12A and G12B OPPs
+- enables DVFS on all supported boards
 
-Mind adjusting indentation of that comment?
+Dependencies:
+- PWM AO input order fix at [1]
+- PWM enhancements from Martin at [2]
 
-> +               printk(KERN_INFO "nopv parameter is ignored in PVH 
-> guest\n");
-> +       }
-> +       else if (nopv)
-> +       {
-> +       /* guest booting via normal boot entry (like via grub2) goes 
-> here */
+Changes since RFT/RFC v1 at [3]:
+- Added EXPORT_SYMBOL_GPL() to clk_hw_set_parent
+- Added missing static to g12b_cpub_clk_mux0_div_ops and g12a_cpu_clk_mux_nb
+- Simplified g12a_cpu_clk_mux_notifier_cb() without switch/case
+- Fixed typo in "this the current path" in g12a.c
+- Fixed G12B dtsi by adding back the sdio quirk
+- Fixed G12A dtsi unwanted sdio quirk removal
+- Fixed various checkpatch errors
 
-Same again?
+[1] https://patchwork.kernel.org/patch/11006835/
+[2] https://patchwork.kernel.org/patch/11006835/
+[3] https://patchwork.kernel.org/cover/11006929/
 
-With those corrected and no other changes you can add my:
+Neil Armstrong (14):
+  pinctrl: meson-g12a: add pwm_a on GPIOE_2 pinmux
+  clk: core: introduce clk_hw_set_parent()
+  clk: meson: regmap: export regmap_div ops functions
+  clk: meson: eeclk: add setup callback
+  soc: amlogic: meson-clk-measure: protect measure with a mutex
+  soc: amlogic: meson-clk-measure: add G12B second cluster cpu clk
+  clk: meson: g12a: add notifiers to handle cpu clock change
+  clk: meson: g12a: expose CPUB clock ID for G12B
+  arm64: dts: move common G12A & G12B modes to meson-g12-common.dtsi
+  arm64: dts: meson-g12-common: add pwm_a on GPIOE_2 pinmux
+  arm64: dts: meson-g12a: add cpus OPP table
+  arm64: dts: meson-g12a: enable DVFS on G12A boards
+  arm64: dts: meson-g12b: add cpus OPP tables
+  arm64: dts: meson-g12b-odroid-n2: enable DVFS
 
-Reviewed-by: Juergen Gross <jgross@suse.com>
+ .../boot/dts/amlogic/meson-g12-common.dtsi    | 2464 ++++++++++++++++
+ .../boot/dts/amlogic/meson-g12a-sei510.dts    |   55 +
+ .../boot/dts/amlogic/meson-g12a-u200.dts      |   55 +
+ .../boot/dts/amlogic/meson-g12a-x96-max.dts   |   52 +
+ arch/arm64/boot/dts/amlogic/meson-g12a.dtsi   | 2502 +----------------
+ .../boot/dts/amlogic/meson-g12b-odroid-n2.dts |   96 +
+ arch/arm64/boot/dts/amlogic/meson-g12b.dtsi   |  145 +-
+ drivers/clk/clk.c                             |    6 +
+ drivers/clk/meson/clk-regmap.c                |   10 +-
+ drivers/clk/meson/clk-regmap.h                |    5 +
+ drivers/clk/meson/g12a.c                      |  500 +++-
+ drivers/clk/meson/meson-eeclk.c               |    6 +
+ drivers/clk/meson/meson-eeclk.h               |    1 +
+ drivers/pinctrl/meson/pinctrl-meson-g12a.c    |    9 +
+ drivers/soc/amlogic/meson-clk-measure.c       |   14 +-
+ include/dt-bindings/clock/g12a-clkc.h         |    1 +
+ include/linux/clk-provider.h                  |    1 +
+ 17 files changed, 3439 insertions(+), 2483 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
 
+-- 
+2.21.0
 
-Juergen
