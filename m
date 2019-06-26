@@ -2,58 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07F6D566B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 12:28:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DA6B566B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 12:29:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727153AbfFZK2F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 06:28:05 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:41078 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726242AbfFZK2E (ORCPT
+        id S1727240AbfFZK2Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 06:28:24 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:53334 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726131AbfFZK2F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 06:28:04 -0400
-Received: by mail-wr1-f65.google.com with SMTP id c2so2083834wrm.8
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 03:28:02 -0700 (PDT)
+        Wed, 26 Jun 2019 06:28:05 -0400
+Received: by mail-wm1-f67.google.com with SMTP id x15so1519129wmj.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 03:28:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=p/mgZFZvtz5MXeK97S6RAma7XXrIP4D9tjHX9nEHACY=;
-        b=h1JRpI0JBRfQ+DluKeXamJpk4K1xEhaXO9qNejSpmI2TPx6pE6d0M/X0rx6rND0y5j
-         QkCOjv+8SKTcJSBjx6qzWuyqzQWVDccPIQvjSmth3U45tdO5j9nV7qah3hOY8LrqGTIz
-         CyZaCFdvCuKCUyIhaUgxSnW2QdZx42O5Cf59ZrNQlCgFBc2v0cOacMc4UmJFCxyoUDNf
-         pNcS/G4MaJg3r/sRiC2fI2Ul+RQ2HzXudlA+TT62lbeltM4+rM3i3HGhLJlN5jdWEovs
-         +tSmZUlUczr64N34sWFPtmpR5Vb1DwuIwzNnL+I1NEqcNEwM8WxU+rf2qxJInvbGmoZ6
-         MF0g==
+        bh=YkWgLbuNvvSsHDT8z49IMbijdNbjadafDfpCu7BT3J4=;
+        b=IZlQtchA8tyGkV6MypPeDsYD7GgL+RAXRgSwohzYZ7aL3OFSpkLqHTESsBLlDFsdC+
+         PL78y4k0DEkuD5Y1Jp7EDdcLshCHlLOMDs+jJWmxe4E5wqfqsV3P0XS5bvG5fGimUBNt
+         e5gm4KYH7twrUhQSRa6Xe/IfwZOJWcGlJ4oVE8iWTUdRELvnHQPLoAFYwnY0g2dZghB+
+         t/q7yjFbjwydx34vGUCfp5sdO9itDjxYmEU2//f9K2+JFVnjvblxa59G0pH2UErs9QMv
+         E/9DIaAe6aANUmXlQ4s6SN5sTdQSMv4KOH6CzlK6zmNTUbpppUvkGPzdIAU7xKUvBXRE
+         RcKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=p/mgZFZvtz5MXeK97S6RAma7XXrIP4D9tjHX9nEHACY=;
-        b=KNsVHDQeZIsd/HAw69LcLzo7WTpcVFFPGY5WUjbYjJI8KuyTamMgoLObECl8BWIbuz
-         QXcG5Ouswkr59/jZ9RrrAS24neQwmOhG9O8pPr7MNofHnPSUDFkWEyc+1lB+kzxe5GKI
-         L8dogKaAsmAtfNLX4jEkmnVF7AYdNymOKwgLbuJx/ebRXq0hKdmOqLR7MsyHiwDhETH6
-         3nHU+/cMZovCq5ehi0HHkH5/MiM09wDY208oJASZ3XDca8qn7WAvRW+JikCI2CIO1m0j
-         3JSlAnpyBM62SuleLMI28OUGLejenjZUg8NcO96EFsbWnxA1LLaQupx5l/m1MF4i+IMO
-         jd8w==
-X-Gm-Message-State: APjAAAXtShpQ2DgiBN++QWAnjYe6r5sfMhlBoyepXlvVUKLSr0s36K77
-        UTM3hMSTq1DN4PMlfejYHH5LfQ==
-X-Google-Smtp-Source: APXvYqyd0lrlxYf8LbmV4gTNQrlvndp90tSEhm81oxft/RmyBefcCA8J5bLEeYx7Gg53Kc04x6nMhw==
-X-Received: by 2002:adf:e40f:: with SMTP id g15mr2944999wrm.174.1561544881765;
-        Wed, 26 Jun 2019 03:28:01 -0700 (PDT)
+        bh=YkWgLbuNvvSsHDT8z49IMbijdNbjadafDfpCu7BT3J4=;
+        b=gjFSgA24fycQgKJyQ1oPLFHxtrtkRuhAOvwakgXWuRDaK8I5qMQght0Be4TwS88xxP
+         /8alRSXByAErDKeAvGOAV1ODu+87XCHrCYdsYFimuHKWcKapAT2wVtdtVfzw0ECWWzPh
+         BQs7wvGwj0mHNElZq62qXZ6wL4p2z336O4d2DWeWi1ozAEJ6QhUypBBifYGoZxVapEKM
+         +xvKhu5I7AzN0RhC1b8vVlUaIBWYIXSgTLAEhVbzObT1+HnUO5zb1z83BaBWU123vGEc
+         SUynAFTZKglFPNmcq/S0WYZ2ybaj7h5V0LRHV/cCu1xGOj6ztOZTcYTOjbb2BYkHbxui
+         1kZw==
+X-Gm-Message-State: APjAAAVSWD5dsNJuqyrmCXp55h6jye8p5pPhfdhNdqxbDYRMPV8AahsD
+        NAeaNtdDl1t2XVboAxsBR46Mcw==
+X-Google-Smtp-Source: APXvYqweJGjACasTVnjTFzlKfUE0OHmQzMzYcn69iB2wzSBvKj6RYfTICKZgBvu12Lg4A4za2EwdCA==
+X-Received: by 2002:a1c:d10c:: with SMTP id i12mr2253393wmg.152.1561544882838;
+        Wed, 26 Jun 2019 03:28:02 -0700 (PDT)
 Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id z19sm2212042wmi.7.2019.06.26.03.28.00
+        by smtp.gmail.com with ESMTPSA id z19sm2212042wmi.7.2019.06.26.03.28.01
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 26 Jun 2019 03:28:01 -0700 (PDT)
+        Wed, 26 Jun 2019 03:28:02 -0700 (PDT)
 From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 To:     gregkh@linuxfoundation.org
 Cc:     linux-kernel@vger.kernel.org,
         Bryan O'Donoghue <pure.logic@nexus-software.ie>,
         Leonard Crestez <leonard.crestez@nxp.com>,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH 1/6] nvmem: imx-ocotp: Elongate OCOTP_CTRL ADDR field to eight bits
-Date:   Wed, 26 Jun 2019 11:27:28 +0100
-Message-Id: <20190626102733.11708-2-srinivas.kandagatla@linaro.org>
+Subject: [PATCH 2/6] nvmem: imx-ocotp: Ensure WAIT bits are preserved when setting timing
+Date:   Wed, 26 Jun 2019 11:27:29 +0100
+Message-Id: <20190626102733.11708-3-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190626102733.11708-1-srinivas.kandagatla@linaro.org>
 References: <20190626102733.11708-1-srinivas.kandagatla@linaro.org>
@@ -66,38 +66,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
 
-i.MX6 defines OCOTP_CTRLn:ADDR as seven bit address-field with a one bit
-RSVD0 field, i.MX7 defines OCOTP_CTRLn:ADDR as a four bit address-field
-with a four bit RSVD0 field.
+The i.MX6 and i.MX8 both have a bit-field spanning bits 27:22 called the
+WAIT field.
 
-i.MX8 defines the OCOTP_CTRLn:ADDR bit-field as a full range eight bits.
+The WAIT field according to the documentation for both parts "specifies
+time interval between auto read and write access in one time program. It is
+given in number of ipg_clk periods."
 
-i.MX6 and i.MX7 should return zero for their respective RSVD0 bits and
-ignore a write-back of zero where i.MX8 will make use of the full range.
+This patch ensures that the relevant field is read and written back to the
+timing register.
 
-This patch expands the bit-field definition for all users to eight bits,
-which is safe due to RSVD0 being a no-op for the i.MX6 and i.MX7.
+Fixes: 0642bac7da42 ("nvmem: imx-ocotp: add write support")
 
 Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
 Reviewed-by: Leonard Crestez <leonard.crestez@nxp.com>
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- drivers/nvmem/imx-ocotp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/nvmem/imx-ocotp.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/nvmem/imx-ocotp.c b/drivers/nvmem/imx-ocotp.c
-index bd016b928589..14c2bff2cd96 100644
+index 14c2bff2cd96..f4e117bbf2c3 100644
 --- a/drivers/nvmem/imx-ocotp.c
 +++ b/drivers/nvmem/imx-ocotp.c
-@@ -39,7 +39,7 @@
- #define IMX_OCOTP_ADDR_DATA2		0x0040
- #define IMX_OCOTP_ADDR_DATA3		0x0050
+@@ -183,7 +183,8 @@ static void imx_ocotp_set_imx6_timing(struct ocotp_priv *priv)
+ 	strobe_prog = clk_rate / (1000000000 / 10000) + 2 * (DEF_RELAX + 1) - 1;
+ 	strobe_read = clk_rate / (1000000000 / 40) + 2 * (DEF_RELAX + 1) - 1;
  
--#define IMX_OCOTP_BM_CTRL_ADDR		0x0000007F
-+#define IMX_OCOTP_BM_CTRL_ADDR		0x000000FF
- #define IMX_OCOTP_BM_CTRL_BUSY		0x00000100
- #define IMX_OCOTP_BM_CTRL_ERROR		0x00000200
- #define IMX_OCOTP_BM_CTRL_REL_SHADOWS	0x00000400
+-	timing = strobe_prog & 0x00000FFF;
++	timing = readl(priv->base + IMX_OCOTP_ADDR_TIMING) & 0x0FC00000;
++	timing |= strobe_prog & 0x00000FFF;
+ 	timing |= (relax       << 12) & 0x0000F000;
+ 	timing |= (strobe_read << 16) & 0x003F0000;
+ 
 -- 
 2.21.0
 
