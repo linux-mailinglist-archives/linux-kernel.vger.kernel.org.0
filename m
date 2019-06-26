@@ -2,115 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17ED7563A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 09:50:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F10B6563AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 09:51:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726891AbfFZHt6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 03:49:58 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:43924 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725876AbfFZHt6 (ORCPT
+        id S1726977AbfFZHv1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 03:51:27 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:41904 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725379AbfFZHv0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 03:49:58 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5Q7nkRO053910;
-        Wed, 26 Jun 2019 02:49:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1561535386;
-        bh=zmZI9L/7aa+aZonFo/L+XtFMZfNbn+xOwQY5rhl7174=;
-        h=From:To:CC:Subject:Date;
-        b=yC7kwJlTN4tagiYZNYbJtSHvs7TZGr9esErsXGZeGArQ48iTBrRfjthe+IasZ9RXX
-         Qy5OB9EjiVzQFumPjukWOn2ZmfD+eklfYFBvGnyE+yWchBwRvMF0wI/X2cwOll1lwb
-         7xIpH8z5SOMT6VvNUbq3HphzdYsiUjmQtsm/fkJo=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5Q7nkSG004765
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 26 Jun 2019 02:49:46 -0500
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 26
- Jun 2019 02:49:45 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 26 Jun 2019 02:49:45 -0500
-Received: from a0393675ula.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5Q7nhd5049598;
-        Wed, 26 Jun 2019 02:49:43 -0500
-From:   Keerthy <j-keerthy@ti.com>
-To:     <tony@atomide.com>, <ssantosh@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <t-kristo@ti.com>,
-        <j-keerthy@ti.com>, <d-gerlach@ti.com>, <dan.carpenter@oracle.com>
-Subject: [PATCH] soc: ti: pm33xx: Fix static checker warnings
-Date:   Wed, 26 Jun 2019 13:20:14 +0530
-Message-ID: <20190626075014.2911-1-j-keerthy@ti.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 26 Jun 2019 03:51:26 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5Q7mv3L148629;
+        Wed, 26 Jun 2019 07:51:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=DLhWWoV7DMpdCJCPBZ560V866X8OmXEL0hmdn5y03HU=;
+ b=zkCCX+vlqjpK/SbAi35EyfCvewlIFJIT7L+vliQHeFK3ExkzLkSTA0WkTqc4E0fuN5jn
+ bJQwmSx1eaLU2MWK4p3uRPXG9Dz3UxRNrdnTlaUKuuOAVI9/MERhCD8vBHQheNPwZpaa
+ TW1O4C7agV9R2Hfxr9ZtX5JYQDgPq8hpmWOIGeSkWkUH72njkcznopFyciIVj4aBJ3KB
+ EjkpVr5HIhht8XtS6NJETTtJn664kRpW9UnDQ8Ey6AHC8+hPz7u4xAO+emKlXQHb42kd
+ K7OIm7+zE6ahfpwnvdncuUUkFxU9bIMQclmXEmIdBP/Dlq2ArJM31LWkizPYvv0xzlS4 eA== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 2t9brt8nyc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 26 Jun 2019 07:51:04 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5Q7okWL095097;
+        Wed, 26 Jun 2019 07:51:03 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3020.oracle.com with ESMTP id 2t9p6ums8u-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 26 Jun 2019 07:51:03 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5Q7ovQl020429;
+        Wed, 26 Jun 2019 07:50:58 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 26 Jun 2019 00:50:57 -0700
+Date:   Wed, 26 Jun 2019 10:50:48 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Fabian Krueger <fabian.krueger@fau.de>
+Cc:     devel@driverdev.osuosl.org, linux-kernel@i4.cs.fau.de,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Michael Scheiderer <michael.scheiderer@fau.de>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/8] staging: kpc2000: style refactoring
+Message-ID: <20190626075048.GD28859@kadam>
+References: <20190625115251.GA28859@kadam>
+ <20190626073531.8946-1-fabian.krueger@fau.de>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190626073531.8946-1-fabian.krueger@fau.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9299 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=844
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1906260094
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9299 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=906 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906260094
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch fixes a bunch of static checker warnings.
+This is better.
 
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Keerthy <j-keerthy@ti.com>
----
- drivers/soc/ti/pm33xx.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/soc/ti/pm33xx.c b/drivers/soc/ti/pm33xx.c
-index bb77c220b6f8..5f3a4499cf40 100644
---- a/drivers/soc/ti/pm33xx.c
-+++ b/drivers/soc/ti/pm33xx.c
-@@ -252,7 +252,7 @@ static int am33xx_pm_begin(suspend_state_t state)
- 	if (state == PM_SUSPEND_MEM && pm_ops->check_off_mode_enable()) {
- 		nvmem = devm_nvmem_device_get(&omap_rtc->dev,
- 					      "omap_rtc_scratch0");
--		if (nvmem)
-+		if (!IS_ERR(nvmem))
- 			nvmem_device_write(nvmem, RTC_SCRATCH_MAGIC_REG * 4, 4,
- 					   (void *)&rtc_magic_val);
- 		rtc_only_idle = 1;
-@@ -278,9 +278,12 @@ static void am33xx_pm_end(void)
- 	struct nvmem_device *nvmem;
- 
- 	nvmem = devm_nvmem_device_get(&omap_rtc->dev, "omap_rtc_scratch0");
-+	if (IS_ERR(nvmem))
-+		return;
-+
- 	m3_ipc->ops->finish_low_power(m3_ipc);
- 	if (rtc_only_idle) {
--		if (retrigger_irq)
-+		if (retrigger_irq) {
- 			/*
- 			 * 32 bits of Interrupt Set-Pending correspond to 32
- 			 * 32 interrupts. Compute the bit offset of the
-@@ -291,8 +294,10 @@ static void am33xx_pm_end(void)
- 			writel_relaxed(1 << (retrigger_irq & 31),
- 				       gic_dist_base + GIC_INT_SET_PENDING_BASE
- 				       + retrigger_irq / 32 * 4);
--			nvmem_device_write(nvmem, RTC_SCRATCH_MAGIC_REG * 4, 4,
--					   (void *)&val);
-+		}
-+
-+		nvmem_device_write(nvmem, RTC_SCRATCH_MAGIC_REG * 4, 4,
-+				   (void *)&val);
- 	}
- 
- 	rtc_only_idle = 0;
-@@ -415,7 +420,7 @@ static int am33xx_pm_rtc_setup(void)
- 
- 		nvmem = devm_nvmem_device_get(&omap_rtc->dev,
- 					      "omap_rtc_scratch0");
--		if (nvmem) {
-+		if (!IS_ERR(nvmem)) {
- 			nvmem_device_read(nvmem, RTC_SCRATCH_MAGIC_REG * 4,
- 					  4, (void *)&rtc_magic_val);
- 			if ((rtc_magic_val & 0xffff) != RTC_REG_BOOT_MAGIC)
--- 
-2.17.1
+regards,
+dan carpenter
 
