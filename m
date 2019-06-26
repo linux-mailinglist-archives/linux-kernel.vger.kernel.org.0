@@ -2,52 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EFA456BDE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 16:28:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC56356BE1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 16:28:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728057AbfFZO2F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 10:28:05 -0400
-Received: from mail-vs1-f73.google.com ([209.85.217.73]:46437 "EHLO
-        mail-vs1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725958AbfFZO2E (ORCPT
+        id S1728087AbfFZO2J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 10:28:09 -0400
+Received: from mail-vk1-f202.google.com ([209.85.221.202]:46729 "EHLO
+        mail-vk1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728063AbfFZO2H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 10:28:04 -0400
-Received: by mail-vs1-f73.google.com with SMTP id 129so525165vsx.13
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 07:28:03 -0700 (PDT)
+        Wed, 26 Jun 2019 10:28:07 -0400
+Received: by mail-vk1-f202.google.com with SMTP id p64so943438vkp.13
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 07:28:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=/Bjb3ErsQTLw+YrlSLkjBcr6K+fvu3f9fORDBwR/vbU=;
-        b=gU068bo8xI9L4oRs1xcqv6j6N8grLH+AVjMocfTmuM4/QLKQLZ9QIslBwFDqGkRaKR
-         Nalu2EhT83YJzP8X3y3VqF99al81l3vbeMWMq6Vv8cV0pT2GHKQG6TiZyPyxGWJJH0+w
-         uiXHRZi806sGyKzldGWmP+mv8uuH2IL46hSwD0xgwvmeXYFr1mZmXJNtmnOpcpCZ2TU9
-         LlX+Hvk2kLpmjnlVLNn+CmX1fXrBN8qP38IAz7RxpAbrzukzszYTb5z7N1xNWI48iTPq
-         KFLfb5HFylzoR1RIOZsvqdTxQbst5LNBijEISkOESca8sUNG/W0wbcjbhJs6XTeJjxqH
-         +W8A==
+        bh=3eGEWBsY8dqF2V6DSZ5u38cqY6eLJM9O9Aa4+MoaYxw=;
+        b=u/9U+nio0GSQlTuwXQJYoLEcLF76o87YU8PcOckc4P78mxdxcX2UHm9EJLgXpLkXI5
+         HQt7VNp7dkReXf/MW6OH7DXj8PZkvAKjLN1R9ZAJ3mJ/d13kIUhoP7HmTZrewr22chyt
+         T309sesiuUjKxYHbwNl0ml81KCv75+HCSipQYmUn34aqKbM465NC1YTY0rRGd/fuqGH4
+         l91CX114soALpbHKmRDF0xGDcGJfDc5o4imbC3mAOQPLzLPWoFHSWX8OvNtpv4uhs/3s
+         7dkzwq+JudTY0lRiJUeHcINv/obrEvTfimyBai//ek9cE1vxy9hLCL9Uji+qwgilNtbz
+         Hzqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=/Bjb3ErsQTLw+YrlSLkjBcr6K+fvu3f9fORDBwR/vbU=;
-        b=qe2lhwP1ljVfaKRe4M4ddXt7X73JZNtRG63P8BiON5qw2o3hATrbuJjao/uaz+Jxxg
-         qIE+mv2V8REq1SEQUNZX5hX7CrgWKtU94sprwQJY1JX3Gdo4Uai1k0hUcA4TtSexMvsz
-         CV1NVUNAPSaXH4OFwiTcWMt1ZvRpdqe+J6k0OcUuyY/MCwbWjQrOJo1g8N82jJMrcEE3
-         sreBVHtfbErst2HVlhOdNfwnZLGzSaP1uUIfi+wg6nbXJuaFrzGXoy0j9t93b+X+thbw
-         JUQw3XpjjYQYED9nhGXj7+KVLRnHkxDUkTSppnIFXdQ8Zs+QJH3nHPts11U/5/E2poAP
-         tQRw==
-X-Gm-Message-State: APjAAAWKsZTqSpYy4mFJG+2dhTMe7MuZM8c4A0YHH9ld9PEgQ+7pm7RQ
-        vECZuQCnnph6hL4e22E9m8jfR0c+Ow==
-X-Google-Smtp-Source: APXvYqyFzpguQlvg2yrB3GTEFA5hP/raLtejdwArbzB/ifkPk8m/SyboHpSof39lpBUIHCeFgRv34I646g==
-X-Received: by 2002:ac5:c2d2:: with SMTP id i18mr1273686vkk.36.1561559282687;
- Wed, 26 Jun 2019 07:28:02 -0700 (PDT)
-Date:   Wed, 26 Jun 2019 16:20:12 +0200
+        bh=3eGEWBsY8dqF2V6DSZ5u38cqY6eLJM9O9Aa4+MoaYxw=;
+        b=LAwlehcXPgWUpuNfXz8jXHCAPRxLHLuV8YvwX8BgrsNI5FZqMaBE0llICf6Xd9YEV3
+         b02t3bFGtFRBus0MNbW3hdt+HGxtWMtnKZKyOpx5UrEAQauTwgV7czy97c1m6zmX+KCA
+         Miswpav0wJUEDlEhp+R4ABU2R6ZnYcvP0SiaDh3aKjg5aKOlfqq7wa3wP7IWVxKcJDqZ
+         jRII2st4+LhbW0Lvc6d9si+0KGwxr91Ni2pDfTvpWfXSjVvOuyCpBzfup0chKMgO7aGt
+         vRo/olO8itlfBwxNEmPlgMsUibXtRAn4bWGGT+IYotDF0yi64PfMaPX4gJnpZlaxHDiH
+         X3Pg==
+X-Gm-Message-State: APjAAAXngw4Qk0zI2uuKmpL2Z1gil/5T+pUOKTns7X6ytlgPggIxCEVm
+        Rfjo1bB2xpFS5WHki3IU47GoqP/9BA==
+X-Google-Smtp-Source: APXvYqztp05jq/iKevbZ1lrkTr3y4FJp0BJcho7hQ2605KOA4eSE2mE8lLNh3stpTm9Ss5/+9xiosgWh9w==
+X-Received: by 2002:a1f:14c1:: with SMTP id 184mr1327869vku.69.1561559285813;
+ Wed, 26 Jun 2019 07:28:05 -0700 (PDT)
+Date:   Wed, 26 Jun 2019 16:20:13 +0200
 In-Reply-To: <20190626142014.141844-1-elver@google.com>
-Message-Id: <20190626142014.141844-4-elver@google.com>
+Message-Id: <20190626142014.141844-5-elver@google.com>
 Mime-Version: 1.0
 References: <20190626142014.141844-1-elver@google.com>
 X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
-Subject: [PATCH v3 3/5] lib/test_kasan: Add test for double-kzfree detection
+Subject: [PATCH v3 4/5] mm/slab: Refactor common ksize KASAN logic into slab_common.c
 From:   Marco Elver <elver@google.com>
 To:     elver@google.com
 Cc:     linux-kernel@vger.kernel.org,
@@ -68,8 +68,10 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adds a simple test that checks if double-kzfree is being detected
-correctly.
+This refactors common code of ksize() between the various allocators
+into slab_common.c: __ksize() is the allocator-specific implementation
+without instrumentation, whereas ksize() includes the required KASAN
+logic.
 
 Signed-off-by: Marco Elver <elver@google.com>
 Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
@@ -86,44 +88,160 @@ Cc: kasan-dev@googlegroups.com
 Cc: linux-kernel@vger.kernel.org
 Cc: linux-mm@kvack.org
 ---
- lib/test_kasan.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ include/linux/slab.h |  1 +
+ mm/slab.c            | 28 ++++++----------------------
+ mm/slab_common.c     | 26 ++++++++++++++++++++++++++
+ mm/slob.c            |  4 ++--
+ mm/slub.c            | 14 ++------------
+ 5 files changed, 37 insertions(+), 36 deletions(-)
 
-diff --git a/lib/test_kasan.c b/lib/test_kasan.c
-index e3c593c38eff..dda5da9f5bd4 100644
---- a/lib/test_kasan.c
-+++ b/lib/test_kasan.c
-@@ -619,6 +619,22 @@ static noinline void __init kasan_strings(void)
- 	strnlen(ptr, 1);
- }
+diff --git a/include/linux/slab.h b/include/linux/slab.h
+index 9449b19c5f10..98c3d12b7275 100644
+--- a/include/linux/slab.h
++++ b/include/linux/slab.h
+@@ -184,6 +184,7 @@ void * __must_check __krealloc(const void *, size_t, gfp_t);
+ void * __must_check krealloc(const void *, size_t, gfp_t);
+ void kfree(const void *);
+ void kzfree(const void *);
++size_t __ksize(const void *);
+ size_t ksize(const void *);
  
-+static noinline void __init kmalloc_double_kzfree(void)
-+{
-+	char *ptr;
-+	size_t size = 16;
-+
-+	pr_info("double-free (kzfree)\n");
-+	ptr = kmalloc(size, GFP_KERNEL);
-+	if (!ptr) {
-+		pr_err("Allocation failed\n");
-+		return;
-+	}
-+
-+	kzfree(ptr);
-+	kzfree(ptr);
-+}
-+
- static int __init kmalloc_tests_init(void)
+ #ifdef CONFIG_HAVE_HARDENED_USERCOPY_ALLOCATOR
+diff --git a/mm/slab.c b/mm/slab.c
+index f7117ad9b3a3..394e7c7a285e 100644
+--- a/mm/slab.c
++++ b/mm/slab.c
+@@ -4204,33 +4204,17 @@ void __check_heap_object(const void *ptr, unsigned long n, struct page *page,
+ #endif /* CONFIG_HARDENED_USERCOPY */
+ 
+ /**
+- * ksize - get the actual amount of memory allocated for a given object
+- * @objp: Pointer to the object
++ * __ksize -- Uninstrumented ksize.
+  *
+- * kmalloc may internally round up allocations and return more memory
+- * than requested. ksize() can be used to determine the actual amount of
+- * memory allocated. The caller may use this additional memory, even though
+- * a smaller amount of memory was initially specified with the kmalloc call.
+- * The caller must guarantee that objp points to a valid object previously
+- * allocated with either kmalloc() or kmem_cache_alloc(). The object
+- * must not be freed during the duration of the call.
+- *
+- * Return: size of the actual memory used by @objp in bytes
++ * Unlike ksize(), __ksize() is uninstrumented, and does not provide the same
++ * safety checks as ksize() with KASAN instrumentation enabled.
+  */
+-size_t ksize(const void *objp)
++size_t __ksize(const void *objp)
  {
- 	/*
-@@ -660,6 +676,7 @@ static int __init kmalloc_tests_init(void)
- 	kasan_memchr();
- 	kasan_memcmp();
- 	kasan_strings();
-+	kmalloc_double_kzfree();
+-	size_t size;
+-
+ 	BUG_ON(!objp);
+ 	if (unlikely(objp == ZERO_SIZE_PTR))
+ 		return 0;
  
- 	kasan_restore_multi_shot(multishot);
+-	size = virt_to_cache(objp)->object_size;
+-	/* We assume that ksize callers could use the whole allocated area,
+-	 * so we need to unpoison this area.
+-	 */
+-	kasan_unpoison_shadow(objp, size);
+-
+-	return size;
++	return virt_to_cache(objp)->object_size;
+ }
+-EXPORT_SYMBOL(ksize);
++EXPORT_SYMBOL(__ksize);
+diff --git a/mm/slab_common.c b/mm/slab_common.c
+index 58251ba63e4a..b7c6a40e436a 100644
+--- a/mm/slab_common.c
++++ b/mm/slab_common.c
+@@ -1597,6 +1597,32 @@ void kzfree(const void *p)
+ }
+ EXPORT_SYMBOL(kzfree);
  
++/**
++ * ksize - get the actual amount of memory allocated for a given object
++ * @objp: Pointer to the object
++ *
++ * kmalloc may internally round up allocations and return more memory
++ * than requested. ksize() can be used to determine the actual amount of
++ * memory allocated. The caller may use this additional memory, even though
++ * a smaller amount of memory was initially specified with the kmalloc call.
++ * The caller must guarantee that objp points to a valid object previously
++ * allocated with either kmalloc() or kmem_cache_alloc(). The object
++ * must not be freed during the duration of the call.
++ *
++ * Return: size of the actual memory used by @objp in bytes
++ */
++size_t ksize(const void *objp)
++{
++	size_t size = __ksize(objp);
++	/*
++	 * We assume that ksize callers could use whole allocated area,
++	 * so we need to unpoison this area.
++	 */
++	kasan_unpoison_shadow(objp, size);
++	return size;
++}
++EXPORT_SYMBOL(ksize);
++
+ /* Tracepoints definitions. */
+ EXPORT_TRACEPOINT_SYMBOL(kmalloc);
+ EXPORT_TRACEPOINT_SYMBOL(kmem_cache_alloc);
+diff --git a/mm/slob.c b/mm/slob.c
+index 84aefd9b91ee..7f421d0ca9ab 100644
+--- a/mm/slob.c
++++ b/mm/slob.c
+@@ -527,7 +527,7 @@ void kfree(const void *block)
+ EXPORT_SYMBOL(kfree);
+ 
+ /* can't use ksize for kmem_cache_alloc memory, only kmalloc */
+-size_t ksize(const void *block)
++size_t __ksize(const void *block)
+ {
+ 	struct page *sp;
+ 	int align;
+@@ -545,7 +545,7 @@ size_t ksize(const void *block)
+ 	m = (unsigned int *)(block - align);
+ 	return SLOB_UNITS(*m) * SLOB_UNIT;
+ }
+-EXPORT_SYMBOL(ksize);
++EXPORT_SYMBOL(__ksize);
+ 
+ int __kmem_cache_create(struct kmem_cache *c, slab_flags_t flags)
+ {
+diff --git a/mm/slub.c b/mm/slub.c
+index cd04dbd2b5d0..05a8d17dd9b2 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -3901,7 +3901,7 @@ void __check_heap_object(const void *ptr, unsigned long n, struct page *page,
+ }
+ #endif /* CONFIG_HARDENED_USERCOPY */
+ 
+-static size_t __ksize(const void *object)
++size_t __ksize(const void *object)
+ {
+ 	struct page *page;
+ 
+@@ -3917,17 +3917,7 @@ static size_t __ksize(const void *object)
+ 
+ 	return slab_ksize(page->slab_cache);
+ }
+-
+-size_t ksize(const void *object)
+-{
+-	size_t size = __ksize(object);
+-	/* We assume that ksize callers could use whole allocated area,
+-	 * so we need to unpoison this area.
+-	 */
+-	kasan_unpoison_shadow(object, size);
+-	return size;
+-}
+-EXPORT_SYMBOL(ksize);
++EXPORT_SYMBOL(__ksize);
+ 
+ void kfree(const void *x)
+ {
 -- 
 2.22.0.410.gd8fdbe21b5-goog
 
