@@ -2,119 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56DF755DA5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 03:35:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F72155DA7
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 03:35:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726331AbfFZBfk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 21:35:40 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:36396 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726750AbfFZBfi (ORCPT
+        id S1726781AbfFZBft (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 21:35:49 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:46949 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726750AbfFZBfq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 21:35:38 -0400
-Received: by mail-qt1-f196.google.com with SMTP id p15so677419qtl.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 18:35:38 -0700 (PDT)
+        Tue, 25 Jun 2019 21:35:46 -0400
+Received: by mail-qt1-f195.google.com with SMTP id h21so610257qtn.13;
+        Tue, 25 Jun 2019 18:35:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=0LRAWyCoMm6qSJUgjbP8auCw69o7m+ZLWJtl7bdpb+w=;
-        b=Xwx6E+6qHDSLrgkTZG71QymmraL414RSn1b4jzWwNp/EQoGWChZXZCJ56w78XccijD
-         1E+OOkSvvoDBM1ir+vgbxhq1ETv2ASxey+QcHAk0RffvDLUpCIiMwzBDcvl8aTWrspM9
-         XsG2jdiayltXMWwNwSfszrKu3xxh8g/1rb9sEJ658YI+L7cYh87PrcXSNwTT8FBCTQh0
-         jSpvEBID8+gwLbrQXSN0vNMY/mZg9v5On4L2zmP6Dojuz9QVukaYW9nzhWxNcmYSyX9u
-         KMQdnGm0JDSZRi1Aq5eGZ92rrFhJldEE9SjhMRf9na6KrjyWi0nw0bZg+A6eNEhBrwkL
-         U09A==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0jOVApdbcnmQ0gZ+s+iXjEnjmT2qng2C8MAWEXFhcLM=;
+        b=D7uUPnY0JIqehepH86/rg5CV9NOaQrvG3BqpmFHjf6mMuP2rRQze8DKufn7mYx2ZAd
+         wge+/l/A5dnUhkrbqswIWIKk9CZYofTFZyaj/lqvV85J1lLDAYfqxABlTKKNsvoByXUB
+         O4YRz6320HaOIaW6pBhHr+1/5OXnwdhKNBZjaDckxbWoOyHvkDEm6LULYvGrUAZ4qFKf
+         KatbGZKx/hCWWIwWTqi+krbMaf35cgwm5GRGkiCNhb1RhGFTChgut31GbwPL2HEkCwhY
+         Q0GIhvzU2TSSLq4QtYhBFb+CLcL3jcSBsjJNVEXLXhR4onWZ05glVZig+X5uSc7RYV4E
+         WTlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=0LRAWyCoMm6qSJUgjbP8auCw69o7m+ZLWJtl7bdpb+w=;
-        b=o/e25BRC6FL1Obji4GYkqmfaPfpWktRWevuGwL/T49mw7FYp8B+gU+FDUN5meKXJUG
-         PCvndAbW9wbYMEQ8paD8LTDFG/jtR1E/uhqJy9Dw+qUhtVl+gaFhkc0iEV6dhTZ/ii+a
-         5aosRHtNlcenClZnGJhiqptoeb/ENi/gqUBB54NvYPxMIp4tR5N4jcG+kIR2eKsdj7uP
-         1pD5MwUI67/Z0JnKuKKTnKGC2mD/FD22tVM9pfgspV8q5EtkFNc/WBH77XC3QFods7PU
-         CofUH/kjSoa1sqqo7+7D4OTWzz+BoasWov4aFzfUd02CnHYc70lnsXUhIvp58Zp0M/6D
-         oSrg==
-X-Gm-Message-State: APjAAAVdbhV1ywwsRxjR0fJo4w+v5aVc5An3fa3PBpDN473yt8iS1n8q
-        cP2QEiXQYTAoMaaDrJLeMo0=
-X-Google-Smtp-Source: APXvYqxpXDznfBJclCVx7xXV0zdyxRpLK69Oa2CuicRUspRtYvD+5giOq5ZovANyg2wCLBplsqvwMQ==
-X-Received: by 2002:ac8:17a5:: with SMTP id o34mr1385680qtj.232.1561512937655;
-        Tue, 25 Jun 2019 18:35:37 -0700 (PDT)
-Received: from smtp.gmail.com ([187.121.151.146])
-        by smtp.gmail.com with ESMTPSA id 123sm7343770qkh.113.2019.06.25.18.35.32
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 25 Jun 2019 18:35:36 -0700 (PDT)
-Date:   Tue, 25 Jun 2019 22:35:30 -0300
-From:   Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-To:     Brian Starkey <brian.starkey@arm.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Haneen Mohammed <hamohammed.sa@gmail.com>,
-        Simon Ser <contact@emersion.fr>
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH V3 0/5] drm/vkms: Introduces writeback support
-Message-ID: <cover.1561491964.git.rodrigosiqueiramelo@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0jOVApdbcnmQ0gZ+s+iXjEnjmT2qng2C8MAWEXFhcLM=;
+        b=q8oUS2tg2vGqTtNw4cbJTkUykSSIMj/hzvFwtWyFCyObS46OOTqUUTh5OuupK8QoZ/
+         jOi17I1LZLnss+L+fVTAtcVXE+la0PdecpkzKl8eyZgrI8TQtEVGKapRVDG+7jIDAz42
+         MUhOvY+fdMev8oIxcDvu5YtyBSM1/FIvMW8gyu93AE4P0oxZ11yjD+WsUkKMOkIAaPX+
+         gm6IGGiocnlzXbQOh6CLscpxM0wEWja/qejgH3qdzV3PL7YGVtzQcD4/xDCpj8ni9ucE
+         qQrAlRttZ/nFeRz4/TdmMsGYjHW4YqJxqIMPO/HPqH64yFawHnC9ZkvMKbcNacXoV6fx
+         oV0Q==
+X-Gm-Message-State: APjAAAUYloPckoW6EG/XO1U7cTAaOfiFHo/UXl22uI8gi0BY8e+hwp5B
+        Wg2UQxhfe8IlBbSYCrBAZPC4JjnK66YITu+V/Yk=
+X-Google-Smtp-Source: APXvYqzqQn3I+yuRy5UB66EDdkdlfdfXf+20eBNYN25S+bi1B5Ul4jyWQQqbEzJdDwwbejiFylmwtSgBMbjvcAd6eKs=
+X-Received: by 2002:aed:38c2:: with SMTP id k60mr1262888qte.83.1561512945624;
+ Tue, 25 Jun 2019 18:35:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: NeoMutt/20180716
+References: <20190626003852.163986-1-allanzhang@google.com>
+In-Reply-To: <20190626003852.163986-1-allanzhang@google.com>
+From:   Song Liu <liu.song.a23@gmail.com>
+Date:   Tue, 25 Jun 2019 18:35:34 -0700
+Message-ID: <CAPhsuW7-gyJ0_8_YVhgEF-fYGmjuT=1m1+NkTa_7cwQdKdKLeg@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v6 0/2] bpf: Allow bpf_skb_event_output for more
+ prog types
+To:     allanzhang <allanzhang@google.com>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the V3 version of a series that introduces the writeback support
-to vkms. As a result of the previous review, this patchset can be seen
-in three parts: make vkms able to support multiple connector, pre-work
-for vkms, and the vkms implementation. Follows the details:
+On Tue, Jun 25, 2019 at 5:39 PM allanzhang <allanzhang@google.com> wrote:
+>
+> Software event output is only enabled by a few prog types right now (TC,
+> LWT out, XDP, sockops). Many other skb based prog types need
+> bpf_skb_event_output to produce software event.
+>
+> More prog types are enabled to access bpf_skb_event_output in this
+> patch.
+>
+> v2 changes:
+> Reformating log message.
+>
+> v3 changes:
+> Reformating log message.
+>
+> v4 changes:
+> Reformating log message.
+>
+> v5 changes:
+> Fix typos, reformat comments in event_output.c, move revision history to
+> cover letter.
+>
+> v6 changes:
+> fix Signed-off-by, fix fixup map creation.
+>
+> allanzhang (2):
 
-* First part: The first patch of this series is a fix that enables vkms to
-accept new connectors, such as writeback connector.
+I guess you manually fixed the name in the other two patches, but forgot
+this one. You can fix it in your .gitconfig file. Make sure to get the proper
+capital letters.
 
-* Second part: The second part of this patchset starts on patch 02 and
-finish on patch 04; basically it is a pre-work that aims to make vkms
-composer operations a little bit more generic. These patches update the
-CRC files and function to make it work as a composer; it also
-centralizes the vkms framebuffer operations. Additionally, these changes
-enable the composer to use the writeback framebuffer instead of creating
-a copy.
+Also, please run ./scripts/checkpatch.pl on your patch files. This will help
+you find a lot of issues.
 
-* Third part: The final patch enables the support for writeback in vkms.
+Thanks,
+Song
 
-With this patchset, vkms can successfully pass all the kms_writeback
-tests from IGT.
-
-Note: Most of the changes in the V3 was suggested by Daniel Vetter as
-can be seen at the link
-https://patchwork.freedesktop.org/patch/311844/?series=61738&rev=2
-
-Note: This patchset depends on Daniel's rework of CRC, see it at
-https://patchwork.freedesktop.org/series/61737/
-
-Rodrigo Siqueira (5):
-  drm/vkms: Avoid assigning 0 for possible_crtc
-  drm/vkms: Rename vkms_crc.c into vkms_composer.c
-  drm/vkms: Decouple crc operations from composer
-  drm/vkms: Compute CRC without change input data
-  drm/vkms: Add support for writeback
-
- drivers/gpu/drm/vkms/Makefile                 |   9 +-
- .../drm/vkms/{vkms_crc.c => vkms_composer.c}  | 174 ++++++++++--------
- drivers/gpu/drm/vkms/vkms_crtc.c              |  30 +--
- drivers/gpu/drm/vkms/vkms_drv.c               |  10 +-
- drivers/gpu/drm/vkms/vkms_drv.h               |  40 ++--
- drivers/gpu/drm/vkms/vkms_output.c            |  16 +-
- drivers/gpu/drm/vkms/vkms_plane.c             |  40 ++--
- drivers/gpu/drm/vkms/vkms_writeback.c         | 141 ++++++++++++++
- 8 files changed, 331 insertions(+), 129 deletions(-)
- rename drivers/gpu/drm/vkms/{vkms_crc.c => vkms_composer.c} (51%)
- create mode 100644 drivers/gpu/drm/vkms/vkms_writeback.c
-
--- 
-2.21.0
-
-
--- 
-Rodrigo Siqueira
-https://siqueira.tech
+>   bpf: Allow bpf_skb_event_output for a few prog types
+>   bpf: Add selftests for bpf_perf_event_output
+>
+>  net/core/filter.c                             |  6 ++
+>  tools/testing/selftests/bpf/test_verifier.c   | 12 ++-
+>  .../selftests/bpf/verifier/event_output.c     | 94 +++++++++++++++++++
+>  3 files changed, 111 insertions(+), 1 deletion(-)
+>  create mode 100644 tools/testing/selftests/bpf/verifier/event_output.c
+>
+> --
+> 2.22.0.410.gd8fdbe21b5-goog
+>
