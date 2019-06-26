@@ -2,98 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD4F556208
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 08:07:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EED8556220
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 08:12:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726672AbfFZGHw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 02:07:52 -0400
-Received: from ushosting.nmnhosting.com ([66.55.73.32]:44884 "EHLO
-        ushosting.nmnhosting.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725379AbfFZGHw (ORCPT
+        id S1726713AbfFZGLr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 02:11:47 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:20490 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725379AbfFZGLr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 02:07:52 -0400
-Received: from mail2.nmnhosting.com (unknown [202.169.106.97])
-        by ushosting.nmnhosting.com (Postfix) with ESMTPS id D98F52DC0076;
-        Wed, 26 Jun 2019 02:07:50 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=d-silva.org;
-        s=201810a; t=1561529271;
-        bh=PnFeQBJrBN0kuPckvbbLTpCe2ZTzGtXQh9GKRCi7Ozs=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=BttHxzSaxRhW0isT2fne0Z55T1QSz5OBnpx9RWir+fLdNA2wE4jiPDVwjkyGHC9AF
-         0INk3Bu4w6G17+EreKMoSem+ZtX0p5Aa1MC5q6/pCEkQStrEkUsbMYXQAVTYFr4PrE
-         6Qz7U6ASgXZtL/VjI4RhWaWyfUbQKktaUKB6xCMFSoMkan678M1w9HpZveIoTc+qMv
-         RROctM+3nYh7EO+7AHBf+aALlOXg2XAPhkPJVaPnEV9sl+d6zh6WuFQNwOmtzyIf/y
-         hR1yrYRO2l1WDCNPtuokzg9JDeIho0VvN9ejxu62AyDFc5WS30gWXoOtxZLk1vTFEo
-         rmlsAdFEgOBjEKBZswnFgpODUXjPZ4IAo97MmBqCPp2BfUCovjYCI7TC756PWXQnrA
-         HvM628Ho1XwwCZwadX5fiAkjG/b5JyrKGVBNTMjEWAuMDP+U2bQLeJ63eA3kkPqEKr
-         W9W07si6/D+GBdwsN/M+Asayo/L8E2stRQpFDHs7cAB/D/xHP51FZzDTzuNYeDNF9E
-         nf+Et+4iuDgjP4q2popE29viGXt4sbnwPpSHQnoUkril4UQ2+NDQhIJkMH+8szo/9u
-         /FJT7YzYhj6MlnN+arpU7Y8QanfNH3Fw5Jn8Mu1h5s36jprug5CMa7gm0C4JRMDP2x
-         iBtIMbaHr+tfUiXskNLhSsZg=
-Received: from adsilva.ozlabs.ibm.com (static-82-10.transact.net.au [122.99.82.10] (may be forged))
-        (authenticated bits=0)
-        by mail2.nmnhosting.com (8.15.2/8.15.2) with ESMTPSA id x5Q67U6a031223
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 26 Jun 2019 16:07:46 +1000 (AEST)
-        (envelope-from alastair@d-silva.org)
-Message-ID: <214e5c621bf101a92c7abdf815a7300f0dacf496.camel@d-silva.org>
-Subject: Re: [PATCH] nvdimm: remove prototypes for nonexistent functions
-From:   "Alastair D'Silva" <alastair@d-silva.org>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>, linux-nvdimm@lists.01.org,
-        linux-kernel@vger.kernel.org
-Date:   Wed, 26 Jun 2019 16:07:29 +1000
-In-Reply-To: <20190626060350.15715-1-alastair@au1.ibm.com>
-References: <20190626060350.15715-1-alastair@au1.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.2 (3.32.2-1.fc30) 
+        Wed, 26 Jun 2019 02:11:47 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5Q67m6G096368
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 02:11:46 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2tbykmxtes-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 02:11:46 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <alastair@au1.ibm.com>;
+        Wed, 26 Jun 2019 07:11:43 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 26 Jun 2019 07:11:38 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5Q6BbO860162242
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 26 Jun 2019 06:11:37 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 82E1A42041;
+        Wed, 26 Jun 2019 06:11:37 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2E6394203F;
+        Wed, 26 Jun 2019 06:11:37 +0000 (GMT)
+Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 26 Jun 2019 06:11:37 +0000 (GMT)
+Received: from adsilva.ozlabs.ibm.com (haven.au.ibm.com [9.192.254.114])
+        (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id E1F39A01B9;
+        Wed, 26 Jun 2019 16:11:35 +1000 (AEST)
+From:   "Alastair D'Silva" <alastair@au1.ibm.com>
+To:     alastair@d-silva.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Baoquan He <bhe@redhat.com>,
+        Wei Yang <richard.weiyang@gmail.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: [PATCH v2 0/3] mm: Cleanup & allow modules to hotplug memory
+Date:   Wed, 26 Jun 2019 16:11:20 +1000
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.2 (mail2.nmnhosting.com [10.0.1.20]); Wed, 26 Jun 2019 16:07:46 +1000 (AEST)
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19062606-0012-0000-0000-0000032C756E
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19062606-0013-0000-0000-00002165ADDA
+Message-Id: <20190626061124.16013-1-alastair@au1.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-26_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=479 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906260074
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-06-26 at 16:03 +1000, Alastair D'Silva wrote:
-> From: Alastair D'Silva <alastair@d-silva.org>
-> 
-> These functions don't exist, so remove the prototypes for them.
-> 
-> Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
-> ---
->  drivers/nvdimm/nd-core.h | 4 ----
->  1 file changed, 4 deletions(-)
-> 
-> diff --git a/drivers/nvdimm/nd-core.h b/drivers/nvdimm/nd-core.h
-> index 391e88de3a29..57d162dbefaa 100644
-> --- a/drivers/nvdimm/nd-core.h
-> +++ b/drivers/nvdimm/nd-core.h
-> @@ -136,11 +136,7 @@ void nd_region_disable(struct nvdimm_bus
-> *nvdimm_bus, struct device *dev);
->  int nvdimm_bus_create_ndctl(struct nvdimm_bus *nvdimm_bus);
->  void nvdimm_bus_destroy_ndctl(struct nvdimm_bus *nvdimm_bus);
->  void nd_synchronize(void);
-> -int nvdimm_bus_register_dimms(struct nvdimm_bus *nvdimm_bus);
-> -int nvdimm_bus_register_regions(struct nvdimm_bus *nvdimm_bus);
-> -int nvdimm_bus_init_interleave_sets(struct nvdimm_bus *nvdimm_bus);
->  void __nd_device_register(struct device *dev);
-> -int nd_match_dimm(struct device *dev, void *data);
->  struct nd_label_id;
->  char *nd_label_gen_id(struct nd_label_id *label_id, u8 *uuid, u32
-> flags);
->  bool nd_is_uuid_unique(struct device *dev, u8 *uuid);
+From: Alastair D'Silva <alastair@d-silva.org>
 
+This series addresses some minor issues found when developing a
+persistent memory driver.
 
-Whoops, fat-fingered this, nothing has changed.
+Changelog:
+V2:
+  - Drop mm/hotplug: export try_online_node
+        (not necessary)
+  - Return errors from __section_nr
+  - Remove errant whitespace change in
+        mm: don't hide potentially null memmap pointer
+  - Rework mm: don't hide potentially null memmap pointer
+    to use a start & count
+  - Drop mm/hotplug: Avoid RCU stalls when removing large amounts of memory
+        (similar patch already went in)
+
+Alastair D'Silva (3):
+  mm: Trigger bug on if a section is not found in __section_nr
+  mm: don't hide potentially null memmap pointer in
+    sparse_remove_one_section
+  mm: Don't manually decrement num_poisoned_pages
+
+ drivers/base/memory.c | 18 +++++++++++++++---
+ mm/sparse.c           | 21 +++++++++++++++------
+ 2 files changed, 30 insertions(+), 9 deletions(-)
 
 -- 
-Alastair D'Silva           mob: 0423 762 819
-skype: alastair_dsilva    
-Twitter: @EvilDeece
-blog: http://alastair.d-silva.org
-
+2.21.0
 
