@@ -2,96 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67C7056D69
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 17:14:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B80B56D5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 17:13:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728451AbfFZPOH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 11:14:07 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:19114 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728430AbfFZPOE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 11:14:04 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 7C79BCA769915FB85BF2;
-        Wed, 26 Jun 2019 23:13:57 +0800 (CST)
-Received: from S00345302A-PC.china.huawei.com (10.202.227.237) by
- DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
- 14.3.439.0; Wed, 26 Jun 2019 23:13:49 +0800
-From:   Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
-To:     <alex.williamson@redhat.com>, <eric.auger@redhat.com>,
-        <pmorel@linux.vnet.ibm.com>
-CC:     <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <iommu@lists.linux-foundation.org>, <linuxarm@huawei.com>,
-        <john.garry@huawei.com>, <xuwei5@hisilicon.com>,
-        <kevin.tian@intel.com>,
-        Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
-Subject: [PATCH v7 6/6] vfio/type1: remove duplicate retrieval of reserved regions
-Date:   Wed, 26 Jun 2019 16:12:48 +0100
-Message-ID: <20190626151248.11776-7-shameerali.kolothum.thodi@huawei.com>
-X-Mailer: git-send-email 2.12.0.windows.1
-In-Reply-To: <20190626151248.11776-1-shameerali.kolothum.thodi@huawei.com>
-References: <20190626151248.11776-1-shameerali.kolothum.thodi@huawei.com>
+        id S1728041AbfFZPNI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 11:13:08 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:40357 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726157AbfFZPNI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 11:13:08 -0400
+Received: by mail-qk1-f196.google.com with SMTP id c70so1932119qkg.7
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 08:13:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ingics-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=42SCxQLArmojaNJ4Eg62ZtOfK5NvG2Y4ROvc7fxE2rM=;
+        b=XEtgO72dgbbxxJL4IFHjrM4f6XYpMuDAcGhRrjTTK3f920vg9awzgGxiEiDMGuccU4
+         53To3pDyZNSTeWJJ0MnzQz59RhEZiVQjRtqqVXsha7EU+/eRVUUfQVQH94m2N+n0ijHz
+         W0kaPdZikm5iS1vf6mjJQqKk07OC9VxzF52Hn95c3bAIIoHdpN7RgltATZDmYyevkLFL
+         rh+T5Cul2txV6zLbz3uATd5bqDDQRC7W5mVwJ30Od9RIq3dezlNuhP5fVPAmMEo+pB0R
+         3e9djL33wamnO01MPBGRAtGWgVglyTYBo8CrfkS/bYWCjjF5TL2jlDW78CECYKBU4AB3
+         z3Mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=42SCxQLArmojaNJ4Eg62ZtOfK5NvG2Y4ROvc7fxE2rM=;
+        b=D/PLr8XMwdbyPgoamJtPyNPlj+1U7oQCa0DxBv5PSHwi+6zJ9gIJi0mNwMusTvIP8N
+         HiB1zeghkNkW8BdGvAfWnAdoQoyUNovFTabCwz8tn/2eMqjLxkLqnXDnvF8Jtm89vEsC
+         NKFF6fdMwoycUTMY4zTrGSTesWXkkHerYhpOH2Txs3iQt1jCinVQjVGCIG5bt+71AHnA
+         9tf4cxfLuoDb+Yz+dSA4qtJfn2sw/9aKOwLXUabdtRp/1JKO7p1wuENDCtL4kTL6Xk7E
+         9VySDBREaJO4iw1KzZvuPbw5XHRloyGsZY2ogRXxOGWfcaPnsR4LJwevsRr2oMHoy/k4
+         n7wg==
+X-Gm-Message-State: APjAAAV5TxRYCaVxJANc9QeITQAoAdRFNlPXvDWgFbP8PhI2WZE2I6rH
+        SHvOjEdkeq028uUbv6+xZYps6ZpnmWBsmsk6bOeD9A==
+X-Google-Smtp-Source: APXvYqzoFOtmbJfugAdoXgdyPg9Pjxx/aCVlUqLeuIoi11XpvRxnrjqOG6deciPV2fhUB7AzZff4qFVs7OXI9SIsbjs=
+X-Received: by 2002:a37:6782:: with SMTP id b124mr4001921qkc.242.1561561987479;
+ Wed, 26 Jun 2019 08:13:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.202.227.237]
-X-CFilter-Loop: Reflected
+References: <20190626132632.32629-1-axel.lin@ingics.com> <a99b04a3-f079-3a43-9e19-d9501b76a96e@ti.com>
+In-Reply-To: <a99b04a3-f079-3a43-9e19-d9501b76a96e@ti.com>
+From:   Axel Lin <axel.lin@ingics.com>
+Date:   Wed, 26 Jun 2019 23:12:55 +0800
+Message-ID: <CAFRkauAewFwcQNzpSfAfXMiCdHuENcg2NRzKECjPQ1RtUCuXEA@mail.gmail.com>
+Subject: Re: [RFT][PATCH 1/2] regulator: lm363x: Fix off-by-one n_voltages for
+ lm3632 ldo_vpos/ldo_vneg
+To:     Dan Murphy <dmurphy@ti.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As we now already have the reserved regions list, just pass that into
-vfio_iommu_has_sw_msi() fn.
+Dan Murphy <dmurphy@ti.com> =E6=96=BC 2019=E5=B9=B46=E6=9C=8826=E6=97=A5 =
+=E9=80=B1=E4=B8=89 =E4=B8=8B=E5=8D=8811:07=E5=AF=AB=E9=81=93=EF=BC=9A
+>
+> Hello
+>
+> On 6/26/19 8:26 AM, Axel Lin wrote:
+> > According to the datasheet https://www.ti.com/lit/ds/symlink/lm3632a.pd=
+f
+> > Table 20. VPOS Bias Register Field Descriptions VPOS[5:0]
+> > Sets the Positive Display Bias (LDO) Voltage (50 mV per step)
+> > 000000: 4 V
+> > 000001: 4.05 V
+> > 000010: 4.1 V
+> > ....................
+> > 011101: 5.45 V
+> > 011110: 5.5 V (Default)
+> > 011111: 5.55 V
+> > ....................
+> > 100111: 5.95 V
+> > 101000: 6 V
+> > Note: Codes 101001 to 111111 map to 6 V
+> >
+> > The LM3632_LDO_VSEL_MAX should be 0b101000 (0x28), so the maximum volta=
+ge
+> > can match the datasheet.
+> >
+> > Fixes: 3a8d1a73a037 ("regulator: add LM363X driver")
+> > Signed-off-by: Axel Lin <axel.lin@ingics.com>
+> > ---
+> >   drivers/regulator/lm363x-regulator.c | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/regulator/lm363x-regulator.c b/drivers/regulator/l=
+m363x-regulator.c
+> > index 5647e2f97ff8..e4a27d63bf90 100644
+> > --- a/drivers/regulator/lm363x-regulator.c
+> > +++ b/drivers/regulator/lm363x-regulator.c
+> > @@ -30,7 +30,7 @@
+> >
+> >   /* LM3632 */
+> >   #define LM3632_BOOST_VSEL_MAX               0x26
+> > -#define LM3632_LDO_VSEL_MAX          0x29
+> > +#define LM3632_LDO_VSEL_MAX          0x28
+>
+> Similar comment as I made on the LM36274
+>
+> These are 0 based registers so it is 28 + 1
+The code shows:  .n_voltages     =3D LM3632_LDO_VSEL_MAX + 1
+so LM3632_LDO_VSEL_MAX needs to be 0x28.
 
-Signed-off-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
----
- drivers/vfio/vfio_iommu_type1.c | 15 ++++++---------
- 1 file changed, 6 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-index 450081802dcd..43b1e68ebce9 100644
---- a/drivers/vfio/vfio_iommu_type1.c
-+++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -1308,15 +1308,13 @@ static struct vfio_group *find_iommu_group(struct vfio_domain *domain,
- 	return NULL;
- }
- 
--static bool vfio_iommu_has_sw_msi(struct iommu_group *group, phys_addr_t *base)
-+static bool vfio_iommu_has_sw_msi(struct list_head *group_resv_regions,
-+				  phys_addr_t *base)
- {
--	struct list_head group_resv_regions;
--	struct iommu_resv_region *region, *next;
-+	struct iommu_resv_region *region;
- 	bool ret = false;
- 
--	INIT_LIST_HEAD(&group_resv_regions);
--	iommu_get_group_resv_regions(group, &group_resv_regions);
--	list_for_each_entry(region, &group_resv_regions, list) {
-+	list_for_each_entry(region, group_resv_regions, list) {
- 		/*
- 		 * The presence of any 'real' MSI regions should take
- 		 * precedence over the software-managed one if the
-@@ -1332,8 +1330,7 @@ static bool vfio_iommu_has_sw_msi(struct iommu_group *group, phys_addr_t *base)
- 			ret = true;
- 		}
- 	}
--	list_for_each_entry_safe(region, next, &group_resv_regions, list)
--		kfree(region);
-+
- 	return ret;
- }
- 
-@@ -1774,7 +1771,7 @@ static int vfio_iommu_type1_attach_group(void *iommu_data,
- 	if (ret)
- 		goto out_detach;
- 
--	resv_msi = vfio_iommu_has_sw_msi(iommu_group, &resv_msi_base);
-+	resv_msi = vfio_iommu_has_sw_msi(&group_resv_regions, &resv_msi_base);
- 
- 	INIT_LIST_HEAD(&domain->group_list);
- 	list_add(&group->next, &domain->group_list);
--- 
-2.17.1
-
-
+                .name           =3D "ldo_vpos",
+                .of_match       =3D "vpos",
+                .id             =3D LM3632_LDO_POS,
+                .ops            =3D &lm363x_regulator_voltage_table_ops,
+                .n_voltages     =3D LM3632_LDO_VSEL_MAX + 1,
