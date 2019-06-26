@@ -2,132 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F143C56EB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 18:28:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2455F56EB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 18:28:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726514AbfFZQ17 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 12:27:59 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:33673 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726014AbfFZQ16 (ORCPT
+        id S1726594AbfFZQ2f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 12:28:35 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:9428 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726042AbfFZQ2e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 12:27:58 -0400
-Received: by mail-ed1-f68.google.com with SMTP id i11so4196750edq.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 09:27:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=bsUqs0n2JVX/ZHVQlVV/zYXIO+Z2K2kc9Ql7fOjOo7Y=;
-        b=epc0pi3nmEwkTCiUljCqQQ7IQU6202q82Q75Ml2Iw+wDg98cP6TYWDl71HZ3y6wbsi
-         NBUo/5QinUkrqDuMPM/XJ2KV2y1rCbfUyNUhIFBEoie2Qo4N7TarQZb+nLu8+zKqW5Db
-         BREOCZt0tbzc7sR0r7yQxsjMK3y4thSosLLus=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=bsUqs0n2JVX/ZHVQlVV/zYXIO+Z2K2kc9Ql7fOjOo7Y=;
-        b=oWEK8ppqyvhLDUNzyH6/b/Gv7WquJLMbB/2JAjv90kIJIbC2qbgJPmtdOAgRjb2L9j
-         tjW0Fo952IA0b+gQdq69pYpOFAgQmB+noDdppPkh+2sZTBkXH2m9oc4QpsY3ZQtdBq2L
-         +bFkEyqTWK1GmhHRTqfCaSXAvUQUuKTvcKWaV+iex29H4xbwSGXkk4NQ/z/O4lMA+Kr9
-         ZvTjBhRL4kJDU/kIcdM8mwQ73cDuBNrUBAjzLs927Yo/ujA1L679K+e5LQ18dcmIRs1A
-         pCSTxzWdNIK95fMilY+2x8yBRAZ4tTRTnGVSVHI8fZr/1gHuD2BI71FVjzNuID0mqfYs
-         A58A==
-X-Gm-Message-State: APjAAAUy8VWnMavj8yKC4ljNwq+IxElg7Vi9nHZNv/1KZS9UyCnz8mgs
-        FaRJZI6/rbWwbicsCSofjXbJSg==
-X-Google-Smtp-Source: APXvYqwBNfKf7SIdROKkPaUQx5tJA3Bjy6L4WN2tFsurahT7SnAhhQBCE8+s9kljhzSwiaPh2GC1QA==
-X-Received: by 2002:a17:906:474a:: with SMTP id j10mr5068067ejs.104.1561566476982;
-        Wed, 26 Jun 2019 09:27:56 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id k11sm5612880edq.54.2019.06.26.09.27.55
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 26 Jun 2019 09:27:56 -0700 (PDT)
-Date:   Wed, 26 Jun 2019 18:27:54 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Sam Ravnborg <sam@ravnborg.org>
-Cc:     Gerd Hoffmann <kraxel@redhat.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
-        tzimmermann@suse.de, Sean Paul <sean@poorly.run>
-Subject: Re: [PATCH 1/2] drm/vram: store dumb bo dimensions.
-Message-ID: <20190626162754.GV12905@phenom.ffwll.local>
-Mail-Followup-To: Sam Ravnborg <sam@ravnborg.org>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
-        tzimmermann@suse.de, Sean Paul <sean@poorly.run>
-References: <20190626065551.12956-1-kraxel@redhat.com>
- <20190626065551.12956-2-kraxel@redhat.com>
- <20190626144013.GB12510@ravnborg.org>
+        Wed, 26 Jun 2019 12:28:34 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d139d300001>; Wed, 26 Jun 2019 09:28:32 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 26 Jun 2019 09:28:33 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 26 Jun 2019 09:28:33 -0700
+Received: from [10.2.169.244] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 26 Jun
+ 2019 16:28:30 +0000
+Subject: Re: [PATCH V4 18/18] arm64: dts: tegra210-p2180: Jetson TX1 SC7
+ timings
+To:     Thierry Reding <thierry.reding@gmail.com>
+CC:     <jonathanh@nvidia.com>, <tglx@linutronix.de>,
+        <jason@lakedaemon.net>, <marc.zyngier@arm.com>,
+        <linus.walleij@linaro.org>, <stefan@agner.ch>,
+        <mark.rutland@arm.com>, <pdeschrijver@nvidia.com>,
+        <pgaikwad@nvidia.com>, <sboyd@kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <jckuo@nvidia.com>, <josephl@nvidia.com>, <talho@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
+        <digetx@gmail.com>, <devicetree@vger.kernel.org>
+References: <1561345379-2429-1-git-send-email-skomatineni@nvidia.com>
+ <1561345379-2429-19-git-send-email-skomatineni@nvidia.com>
+ <20190626102824.GG6362@ulmo>
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+Message-ID: <908eb03e-3b08-4e48-e64e-56cf6e66b5f2@nvidia.com>
+Date:   Wed, 26 Jun 2019 09:28:28 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190626144013.GB12510@ravnborg.org>
-X-Operating-System: Linux phenom 4.19.0-5-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190626102824.GG6362@ulmo>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1561566512; bh=Ks04MbI5FEcRhxVamqMYukNzlx6rUh4PyXjSXplcqd0=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=P+xba7G+GO7cWamMT0lspBGjwvv0pgmp2SHgytizdpSEqDOzAWu61q6v0NXCzmVHT
+         X/5nXTxuRtQuGjsPwjeJ4LjhdcyIW2ys7lqW9RDlUn99FT5G1ns/aNC9ck4t6dV6Au
+         8hN4CAUwjrQBTeApYwJkOH7A+ockMVjtQpsLIZwW8ime17v2ZArOMi7NF/BA6338KR
+         O7A6+ehbY9Pi3N70YBbL1Pvnvthz0q7Cw7UX5udfuEP8LrQEeltiRIIf1k6mjv7M/M
+         pRLXThbXwSOXLvt/21RDtUuVibndQqRfBQ33PDxU/oAiXOk/wZNsoE90fyYszaBMTI
+         bObroxuPNW1wQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 26, 2019 at 04:40:13PM +0200, Sam Ravnborg wrote:
-> Hi Gerd.
-> 
-> On Wed, Jun 26, 2019 at 08:55:50AM +0200, Gerd Hoffmann wrote:
-> > Store width and height of the bo.  Needed in case userspace
-> > sets up a framebuffer with fb->width != bo->width..
-> > 
-> > Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-> > ---
-> >  include/drm/drm_gem_vram_helper.h     | 1 +
-> >  drivers/gpu/drm/drm_gem_vram_helper.c | 2 ++
-> >  2 files changed, 3 insertions(+)
-> > 
-> > diff --git a/include/drm/drm_gem_vram_helper.h b/include/drm/drm_gem_vram_helper.h
-> > index 1a0ea18e7a74..3692dba167df 100644
-> > --- a/include/drm/drm_gem_vram_helper.h
-> > +++ b/include/drm/drm_gem_vram_helper.h
-> > @@ -39,6 +39,7 @@ struct drm_gem_vram_object {
-> >  	struct drm_gem_object gem;
-> >  	struct ttm_buffer_object bo;
-> >  	struct ttm_bo_kmap_obj kmap;
-> > +	unsigned int width, height;
-> >  
-> >  	/* Supported placements are %TTM_PL_VRAM and %TTM_PL_SYSTEM */
-> >  	struct ttm_placement placement;
-> > diff --git a/drivers/gpu/drm/drm_gem_vram_helper.c b/drivers/gpu/drm/drm_gem_vram_helper.c
-> > index 4de782ca26b2..c02bf7694117 100644
-> > --- a/drivers/gpu/drm/drm_gem_vram_helper.c
-> > +++ b/drivers/gpu/drm/drm_gem_vram_helper.c
-> > @@ -377,6 +377,8 @@ int drm_gem_vram_fill_create_dumb(struct drm_file *file,
-> >  	gbo = drm_gem_vram_create(dev, bdev, size, pg_align, interruptible);
-> >  	if (IS_ERR(gbo))
-> >  		return PTR_ERR(gbo);
-> > +	gbo->width = args->width;
-> > +	gbo->height = args->height;
-> >  
-> >  	ret = drm_gem_handle_create(file, &gbo->gem, &handle);
-> >  	if (ret)
-> 
-> Be warned, I may have missed something in the bigger picture.
-> 
-> Your patch will set width and height only for dumb bo's
-> But we have several users of drm_gem_vram_create() that will
-> not set the width and height.
-> 
-> So only in some cases can we rely on them being set.
-> Should this be refactored so we always set width, height.
-> Or maybe say in a small comment that width,height are only
-> set for dumb bo's?
 
-Also for dumb bo allocated buffers if userspace gets the dimensions wrong
-between dumb_create and the addfb, something is wrong. Papering over that
-by remembering the right dimensions doesn't look like a good solution.
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+On 6/26/19 3:28 AM, Thierry Reding wrote:
+> On Sun, Jun 23, 2019 at 08:02:59PM -0700, Sowjanya Komatineni wrote:
+>> This patch has Jetson TX1 platform specific SC7 timing configuration
+>> in device tree.
+>>
+>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>> ---
+>>   arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi | 7 +++++++
+>>   1 file changed, 7 insertions(+)
+> Can you provide a similar patch for Jetson Nano (p3450-0000)? It'd be
+> great if we can make new features like this available across all boards.
+>
+> Thierry
+>
+Will add patch for Nano in V5...
+>> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
+>> index 27723829d033..cb58f79deb48 100644
+>> --- a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
+>> +++ b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
+>> @@ -279,6 +279,13 @@
+>>   
+>>   	pmc@7000e400 {
+>>   		nvidia,invert-interrupt;
+>> +		nvidia,suspend-mode = <0>;
+>> +		nvidia,cpu-pwr-good-time = <0>;
+>> +		nvidia,cpu-pwr-off-time = <0>;
+>> +		nvidia,core-pwr-good-time = <4587 3876>;
+>> +		nvidia,core-pwr-off-time = <39065>;
+>> +		nvidia,core-power-req-active-high;
+>> +		nvidia,sys-clock-req-active-high;
+>>   	};
+>>   
+>>   	/* eMMC */
+>> -- 
+>> 2.7.4
+>>
