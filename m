@@ -2,84 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CBAD56F85
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 19:31:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8269F56F9E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 19:35:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726401AbfFZRbg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 13:31:36 -0400
-Received: from mout.kundenserver.de ([217.72.192.74]:54289 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726042AbfFZRbf (ORCPT
+        id S1726455AbfFZRfy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 13:35:54 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:46952 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726042AbfFZRfy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 13:31:35 -0400
-Received: from [192.168.1.110] ([77.4.50.183]) by mrelayeu.kundenserver.de
- (mreue106 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MfZ9C-1iD3bn302q-00fxyE; Wed, 26 Jun 2019 19:31:31 +0200
-Subject: Re: [PATCH 1/2] siox: add helper macro to simplify driver
- registration
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        "Enrico Weigelt, metux IT consult" <info@metux.net>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        t.scherer@eckelmann.de
-References: <1561354834-22617-1-git-send-email-info@metux.net>
- <1561354834-22617-2-git-send-email-info@metux.net>
- <CACRpkdbZ68O41dx7uCccUF_jvmC3_YVvWEEo9igknMC95QEXhQ@mail.gmail.com>
-From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Organization: metux IT consult
-Message-ID: <c59bfd61-e6f2-2434-0085-f75e85b5deb0@metux.net>
-Date:   Wed, 26 Jun 2019 19:31:30 +0200
-User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 26 Jun 2019 13:35:54 -0400
+Received: by mail-pf1-f193.google.com with SMTP id 81so1704322pfy.13;
+        Wed, 26 Jun 2019 10:35:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=+fxDVnTTuhSR5z+Ysh8XFIy+I0e6r/dC96Y+BNXbBxY=;
+        b=RITarLgPOjvPDpxBVBKBO5Qv06uP9/z27lsnMBsV4xg0nWX5yTi+Pqx5dGNFtkZkpV
+         isuqxftRPm+MB+jxCwND+t93qBttG74hcPUNdkBFVZFZK7wo0sOekSD1VxwgEBw0bTmg
+         OXMfXVv0qU45EJAooW6dVrF1qi3QoCs8gBM/qr1TJK0iR5VfZzruKxx47mYjriRUhQUn
+         e3UP42aZFpVyqwtpUh/QWLxnf5I0odKL09GTqy93AtN98d9u/DAcQEQPfRxCsHFy+smg
+         B3tTuouoezT0u21sL8sHvQdGpqAsJBsGc76gZFw94V+1pLaPTVmxlDATYSwhS03F47Xx
+         SfOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+fxDVnTTuhSR5z+Ysh8XFIy+I0e6r/dC96Y+BNXbBxY=;
+        b=sGXShh168m8apZj/wnBvhv6IzBCfuBR1dHwpHRvTm9GgaPWWwJmCThdyVAKrhB82Tg
+         hTKwwSDE3MLqGsaEscdHB8976UWZN3863j7fka2wP8PhAIFmR40spTpjtku2yClEBvNm
+         RG6UBm0/oBwbF1KnjPVCCmaGyrMn0j2adqgqkCk99RwJPtpOuFp1CfUMB9c4NP8l18qE
+         ReimjHA4YhmDJm5Iakn5zk2YwYcvbFhEh9DIPWtKlJU7mmc+dsnZGAUpehW0V+cvvUFT
+         UKEl35IvBr3WmFuYCJS/1Vs5+3Me3YGJKgTj9NNNRcJ+7yjtb5lz3rmtuu6un09XwRUj
+         L9Rg==
+X-Gm-Message-State: APjAAAWsPRXXvqNEXzBQqnPDhHFSbQgLOzx89j+qBybpnJ6BYhfjRZ6j
+        ZFQIn94jx+PSEs4B82QVgeE=
+X-Google-Smtp-Source: APXvYqwuYu/ApwFxA2dbvbqkSN8S9Eo6YqrEOEnApB2SAylzCWpRRl1SwGVlZ+idrNnKuc5veRQxrw==
+X-Received: by 2002:a63:1723:: with SMTP id x35mr3985134pgl.233.1561570553732;
+        Wed, 26 Jun 2019 10:35:53 -0700 (PDT)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id y11sm20307207pfb.119.2019.06.26.10.35.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 26 Jun 2019 10:35:52 -0700 (PDT)
+Date:   Wed, 26 Jun 2019 10:35:51 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.4 0/1] 4.4.184-stable review
+Message-ID: <20190626173551.GA2530@roeck-us.net>
+References: <20190626083604.894288021@linuxfoundation.org>
 MIME-Version: 1.0
-In-Reply-To: <CACRpkdbZ68O41dx7uCccUF_jvmC3_YVvWEEo9igknMC95QEXhQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:D+qaod/gY3lxTsAGn7wxZA/4ZJMGxEPhRPb4cAtIK9dTVoHeULo
- 9r5GA/tOo/N5TfjrQf2yuz5/PiWTnPYq+0ZlAHgw2kUCAtYDWtBbeYIck6ysZVjEl61lsXV
- 57OGScr6eAQ3n8QoJVvXRKG4HxY4RXzjCJDXD2ulmJ/aOiDcQhsKfogVzDUF8wjODvQiGO+
- BVxg8bICsSaYNwMyQWalQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:Y/6NBZ6zpTI=:5kr/Jaw8pAeb09qLSQetrr
- Pt/y8jIU0DL4yEcXIZuhFyUIWdyq9jWqj/PHjjzcUfYQVUSNWi/zDAR9Kg8d6vr/bwlPeWMfW
- EEdNILCZPU6tA+IeD7O6nXkWWFMZ9c8PasoAK4rrtFSepHBjsYrazp39LlFOqNsidwiBqdc+V
- sBMYPonBh8HmZhcbgFhvqiX8PrY+uk1MTNYPH+g5m/JJopVOjOirxBeYk0GnnxcdIFzLkX9JU
- EINKP4nTBldzEDbnYwhYjPT1RXcNZvGStVXicIE/0Dd/PGIrA2dAN8Qf+Q5riL+pAOIBIhw92
- lHU5+/qAhvTifS2Vk/FTb4wCvdIgbfJ0bIsYiVmMfQAJTzpxz49Cr14R58M6YB6YG8iP6kx2F
- D08DWETEXk9YagkWyH3XXTS67m2Fqf3YtzOLxok18Fg5qEVNoz0M6oKMn5zh/Or3u2RElBMY/
- fBalxpNx8lHepaMaIZ3jhvlPZmPqMXXaQ84FD+B8LZpufXGnj1BXnndu6OZx7tF9Zyv97aagD
- uLeS2WMfy9KVqQJiLRhSzQeEaPwfL9zRWRiBrurxItjof4ejHUbuuFKeDG7IgoxyOxiaWHKOj
- r5mEigYO0FJLE1MOV0f+zWncB/54L35qvn0SQn3SVr1ma9scBQdFkSpfqG72sjIn4zGqg672W
- ORDthyTXTcqTcXH4BTvc/1iXi92DOba5OPjZMOb7kVeQnowFYbTCjUvpNFPTRWVwy1ahsNAy6
- tOVoFVRoOKMhXXgRQAAC9B8b4lawoy2AviP4/c/vwFj5W5Sg+hXdFlbXQJQ=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190626083604.894288021@linuxfoundation.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25.06.19 11:26, Linus Walleij wrote:
-> On Mon, Jun 24, 2019 at 7:40 AM Enrico Weigelt, metux IT consult
-> <info@metux.net> wrote:
+On Wed, Jun 26, 2019 at 04:45:04PM +0800, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.4.184 release.
+> There are 1 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
->> From: Enrico Weigelt <info@metux.net>
->>
->> Add more helper macros for trivial driver init cases, similar to the
->> already existing module_platform_driver() or module_i2c_driver().
->>
->> This helps to reduce driver init boilerplate.
->>
->> Signed-off-by: Enrico Weigelt <info@metux.net>
+> Responses should be made by Fri 28 Jun 2019 08:35:42 AM UTC.
+> Anything received after that time might be too late.
 > 
-> Patch applied with Uwe's ACK.
 
-thanks to both of you :)
+Build results:
+	total: 170 pass: 170 fail: 0
+Qemu test results:
+	total: 307 pass: 307 fail: 0
 
---mtx
-
--- 
-Enrico Weigelt, metux IT consult
-Free software and Linux embedded engineering
-info@metux.net -- +49-151-27565287
+Guenter
