@@ -2,82 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6EF356FAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 19:36:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DB9A56FB6
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 19:41:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726682AbfFZRgR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 13:36:17 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:35986 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726481AbfFZRgP (ORCPT
+        id S1726410AbfFZRld (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 13:41:33 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:39200 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726179AbfFZRld (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 13:36:15 -0400
-Received: by mail-pf1-f195.google.com with SMTP id r7so1725727pfl.3;
-        Wed, 26 Jun 2019 10:36:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=X321/IDP/t2tBpgQipnU54rMZLTeSk+Sj8cGzkHPfpE=;
-        b=TUZqc5/E4M0gtB5pR9iNHep6wX+2rOU3fXqKT1LQAdl63/Tfj3eqGbEGmGW50zdMiq
-         kYpkfHbLg8UcL5fzZ6sOGOtzQA5Dh4XERuL3F5mhTaKFLijwlfFb/ak9UylZD2yPRJ/O
-         1gP498EFjiN70EKvNLlEqP7mohM+c5IzaJh52HET8mBdUQcA81xUbG8YT4aYFGc9NoVv
-         mp9jMt0RsQQFBitUo835acHisfmCF8e1GL3pL8ZUu4CjMFt2LRNPK9OH/kUZDe6Ddfdi
-         jgj8Zt9QrngWRb85vfeW5Y0JZ4EXveXRcesEAQPZmFxKBKZ/WEuKxa9ZkbB58a/wRNEg
-         02lg==
+        Wed, 26 Jun 2019 13:41:33 -0400
+Received: by mail-wr1-f68.google.com with SMTP id x4so3719362wrt.6
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 10:41:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=X321/IDP/t2tBpgQipnU54rMZLTeSk+Sj8cGzkHPfpE=;
-        b=nM53p4wBwE0bLQZIJUOoFtTQ+YM1eAMHRBei477lPB80ATEU1x75rTI/XvoyhU6+WG
-         Zxis7sHW8Wck1HLE/gX5lHNyIge+ldUmwJGwelnKlpJ/5k/aixch3Br35MH3e62P93d1
-         bC8RvZhgMcGwuA3Juym4VimDJbeWHePGIjVFPKYHRQtwquZNuN059zdXouq2BcpN2uXy
-         5nMtRkriIOPKy5ozrbfnc5AXnvNTFtFGgZOuiYdw9cuafoTB0yl9rX/pTpannk+5hhZZ
-         qv2C06DPccfo4CtBAH7psoyfYSD3Zrx5BCVsLBwmIWDC/PTe6UmkZ9a4Wxyf5TwCb7yf
-         A7yg==
-X-Gm-Message-State: APjAAAWOrD7RVvdd3RH2ZOIgxXdH78L3h2mRJAl/hknrxjEA0Mk6hIH1
-        mg0DT5lKtefyMy0QH5IxqLvKYm6x
-X-Google-Smtp-Source: APXvYqxNlLUbRHLcrdpse8TlvXdR6DmIZxoofU6OpZ2Ow/xy5cUSuBHFV/U8K23BexWPQlpKnmGdFA==
-X-Received: by 2002:a17:90a:a008:: with SMTP id q8mr267573pjp.114.1561570574715;
-        Wed, 26 Jun 2019 10:36:14 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id c83sm2430022pfb.111.2019.06.26.10.36.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 Jun 2019 10:36:14 -0700 (PDT)
-Date:   Wed, 26 Jun 2019 10:36:13 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.14 0/1] 4.14.131-stable review
-Message-ID: <20190626173613.GB2530@roeck-us.net>
-References: <20190626083606.248422423@linuxfoundation.org>
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=t2qwRs7koe0N7pYzHfarivbdbI697R0UkLvgOjEc6fg=;
+        b=rNWScwCtIc3FS+PqLO6TGwiLFcIJtJxD+jaULsarqZ2w74dugcaLPDSdvP0+lTIGSU
+         v33OiUzXZEsd7Wi7wY2sFZ53yOBP8sQLwJIgwPT+zjZ7+zHHQOgJzUBsi4Zov1dhpCjY
+         r26KvGml+iAKaU3ZFtDya4VU+1P8nlBOR/UL383c5wAnm+1S+Po3A1OnTOJQulqRbgzh
+         Z4HZhf9x8UAFJ9P2U1K5Sd0clH73ACAX0CV89X3ST6Wjo6NQolKtm6Qp4ADJ9L8too4k
+         d2u41GcJ9V9RqpFJFFlkG+AO0PvdPJErgDhSwo55gzXuyvKHcMuII0tpdAkhwGFwut71
+         wT6w==
+X-Gm-Message-State: APjAAAU+MqkkgJ4CF90FYZrqRyZ8zCGtrNb/RXWR8yagCWa18FrCV1LX
+        uE2NMWfJHkBn9mCZJyAhs+aRxFEiNuk=
+X-Google-Smtp-Source: APXvYqwJ4Z4pdKRax8Z2pKF/BL7aG7XRGilbIpnO+wMYHg1EmrVhaIhK8YsHNXK6Nvcm7thSb6IuMg==
+X-Received: by 2002:adf:ee91:: with SMTP id b17mr4595442wro.182.1561570891172;
+        Wed, 26 Jun 2019 10:41:31 -0700 (PDT)
+Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id 72sm24638446wrk.22.2019.06.26.10.41.30
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 26 Jun 2019 10:41:30 -0700 (PDT)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Andy Lutomirski <luto@kernel.org>, Nadav Amit <namit@vmware.com>
+Cc:     Dave Hansen <dave.hansen@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        "kvm\@vger.kernel.org" <kvm@vger.kernel.org>
+Subject: Re: [PATCH 6/9] KVM: x86: Provide paravirtualized flush_tlb_multi()
+In-Reply-To: <CALCETrW2kudQ-nt7KFKRizNjBAzDVfLW7qQRJmkuigSmsYBFhg@mail.gmail.com>
+References: <20190613064813.8102-1-namit@vmware.com> <20190613064813.8102-7-namit@vmware.com> <cb28f2b4-92f0-f075-648e-dddfdbdd2e3c@intel.com> <401C4384-98A1-4C27-8F71-4848F4B4A440@vmware.com> <CALCETrWcUWw8ep-n6RaOeojnL924xOM7g7eb9g=3DRwOHQAgnA@mail.gmail.com> <35755C67-E8EB-48C3-8343-BB9ABEB4E32C@vmware.com> <CALCETrUPKj1rRn1bKDYkwZ8cv1navBne72kTCtGHjnhTM0cOVw@mail.gmail.com> <A52332CE-80A2-4705-ABB0-3CDDB7AEC889@vmware.com> <CALCETrW2kudQ-nt7KFKRizNjBAzDVfLW7qQRJmkuigSmsYBFhg@mail.gmail.com>
+Date:   Wed, 26 Jun 2019 19:41:29 +0200
+Message-ID: <878stockhi.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190626083606.248422423@linuxfoundation.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 26, 2019 at 04:45:20PM +0800, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.14.131 release.
-> There are 1 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Fri 28 Jun 2019 08:35:42 AM UTC.
-> Anything received after that time might be too late.
-> 
+Andy Lutomirski <luto@kernel.org> writes:
 
-Build results:
-	total: 172 pass: 172 fail: 0
-Qemu test results:
-	total: 346 pass: 346 fail: 0
+> All this being said, do we currently have any system that supports
+> PCID *and* remote flushes?  I guess KVM has some mechanism, but I'm
+> not that familiar with its exact capabilities.  If I remember right,
+> Hyper-V doesn't expose PCID yet.
+>
 
-Guenter
+It already does (and support it to certain extent), see
+
+commit 617ab45c9a8900e64a78b43696c02598b8cad68b
+Author: Vitaly Kuznetsov <vkuznets@redhat.com>
+Date:   Wed Jan 24 11:36:29 2018 +0100
+
+    x86/hyperv: Stop suppressing X86_FEATURE_PCID
+
+-- 
+Vitaly
