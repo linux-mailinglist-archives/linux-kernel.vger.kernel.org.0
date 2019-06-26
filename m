@@ -2,96 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D554956B1E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 15:48:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9A9156B10
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 15:47:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728115AbfFZNsd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 09:48:33 -0400
-Received: from smtprelay-out1.synopsys.com ([198.182.47.102]:51140 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727870AbfFZNry (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 09:47:54 -0400
-Received: from mailhost.synopsys.com (mdc-mailhost1.synopsys.com [10.225.0.209])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        id S1727904AbfFZNrz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 09:47:55 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:59124 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727282AbfFZNrx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 09:47:53 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id B8980C0C47;
-        Wed, 26 Jun 2019 13:47:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1561556874; bh=BHZi9tlrtLzVjp82tFDoiezzz8W/tFd5CHoGlftdzuY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-         References:From;
-        b=WQ9e4SONVoWDIF5qsCwGuH6eNP9Y3N1YVmTcFhEVNr1iDYYYigv0WOtcbIUZEuMjR
-         r8Aec50VMdl6MbPvqNB4poaY2ZFPmTuqUvfkLmMb+d+6DPF6Cjt10evH6zbWQFD6Kq
-         e9UcGtcdvBRsLBVvDZ48wlrC6EI0XNtrh7AcfiTiqqdXPMlnSM6+sHnAfB21d6nwaI
-         rCZ4NdC/SJ4/Mg9WKg4su+slvwYruiVpPsYbolfBtjz2ZXV9b7m7sZHC+rx0gmzXTc
-         OiXgEP0ydefIU/dPHj/ToVwjdflwiPzhw1CYNZ/igeSIKyhnnZ9hImsBD0rhFbLB2K
-         HVfKSQYOCB7gQ==
-Received: from de02.synopsys.com (de02.internal.synopsys.com [10.225.17.21])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 63A35A0075;
+        by mx1.redhat.com (Postfix) with ESMTPS id D77CF8830F;
         Wed, 26 Jun 2019 13:47:52 +0000 (UTC)
-Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
-        by de02.synopsys.com (Postfix) with ESMTP id 53CBE3B57C;
-        Wed, 26 Jun 2019 15:47:52 +0200 (CEST)
-From:   Jose Abreu <Jose.Abreu@synopsys.com>
-To:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Cc:     Jose Abreu <Jose.Abreu@synopsys.com>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-Subject: [PATCH net-next 10/10] net: stmmac: Try to get C45 PHY if everything else fails
-Date:   Wed, 26 Jun 2019 15:47:44 +0200
-Message-Id: <c7d1dbac1940853c22db8215ed60181b2abe3050.1561556556.git.joabreu@synopsys.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1561556555.git.joabreu@synopsys.com>
-References: <cover.1561556555.git.joabreu@synopsys.com>
-In-Reply-To: <cover.1561556555.git.joabreu@synopsys.com>
-References: <cover.1561556555.git.joabreu@synopsys.com>
+Received: from sandy.ghostprotocols.net (ovpn-112-10.phx2.redhat.com [10.3.112.10])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id BE2365C205;
+        Wed, 26 Jun 2019 13:47:50 +0000 (UTC)
+Received: by sandy.ghostprotocols.net (Postfix, from userid 1000)
+        id 6470211A; Wed, 26 Jun 2019 10:47:46 -0300 (BRT)
+Date:   Wed, 26 Jun 2019 10:47:46 -0300
+From:   Arnaldo Carvalho de Melo <acme@redhat.com>
+To:     Masanari Iida <standby24x7@gmail.com>
+Cc:     ak@linux.intel.com, kan.liang@intel.com,
+        linux-kernel@vger.kernel.org, acme@kernel.org
+Subject: Re: [PATCH] perf vendor events intel: Fix typos in
+ floating-point.json
+Message-ID: <20190626134746.GA2227@redhat.com>
+References: <20190626110436.22563-1-standby24x7@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190626110436.22563-1-standby24x7@gmail.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Wed, 26 Jun 2019 13:47:52 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On PCI based setups that are connected to C45 PHY we won't have DT
-bindings specifying what's the correct PHY type.
+Em Wed, Jun 26, 2019 at 08:04:36PM +0900, Masanari Iida escreveu:
+> This patch fix some spelling typo in x86/*/floating-point.json
 
-Fallback to C45 if everything else fails when trying to acquire PHY.
+These are auto-generated files, glad that you CCed your fixes to the
+Intel folks, hopefully they will in turn send it internally so that next
+time we get an update with the fixes, ok?
 
-Signed-off-by: Jose Abreu <joabreu@synopsys.com>
-Cc: Joao Pinto <jpinto@synopsys.com>
-Cc: David S. Miller <davem@davemloft.net>
-Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
-Cc: Alexandre Torgue <alexandre.torgue@st.com>
----
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+Thanks,
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index bc949665c529..e790ab79e819 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -1014,6 +1014,20 @@ static int stmmac_init_phy(struct net_device *dev)
+- Arnaldo
  
- 		phydev = mdiobus_get_phy(priv->mii, addr);
- 		if (!phydev) {
-+			/* Try C45 */
-+			phydev = get_phy_device(priv->mii, addr, true);
-+			if (phydev && !IS_ERR(phydev)) {
-+				ret = phy_device_register(phydev);
-+				if (ret) {
-+					phy_device_free(phydev);
-+					phydev = NULL;
-+				}
-+			} else {
-+				phydev = NULL;
-+			}
-+		}
-+
-+		if (!phydev) {
- 			netdev_err(priv->dev, "no phy at addr %d\n", addr);
- 			return -ENODEV;
- 		}
--- 
-2.7.4
-
+> Signed-off-by: Masanari Iida <standby24x7@gmail.com>
+> ---
+>  tools/perf/pmu-events/arch/x86/nehalemep/floating-point.json    | 2 +-
+>  tools/perf/pmu-events/arch/x86/nehalemex/floating-point.json    | 2 +-
+>  .../perf/pmu-events/arch/x86/westmereep-dp/floating-point.json  | 2 +-
+>  .../perf/pmu-events/arch/x86/westmereep-sp/floating-point.json  | 2 +-
+>  tools/perf/pmu-events/arch/x86/westmereex/floating-point.json   | 2 +-
+>  5 files changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/tools/perf/pmu-events/arch/x86/nehalemep/floating-point.json b/tools/perf/pmu-events/arch/x86/nehalemep/floating-point.json
+> index 7d2f71a9dee3..6b9b9fe74f3b 100644
+> --- a/tools/perf/pmu-events/arch/x86/nehalemep/floating-point.json
+> +++ b/tools/perf/pmu-events/arch/x86/nehalemep/floating-point.json
+> @@ -15,7 +15,7 @@
+>          "UMask": "0x4",
+>          "EventName": "FP_ASSIST.INPUT",
+>          "SampleAfterValue": "20000",
+> -        "BriefDescription": "X87 Floating poiint assists for invalid input value (Precise Event)"
+> +        "BriefDescription": "X87 Floating point assists for invalid input value (Precise Event)"
+>      },
+>      {
+>          "PEBS": "1",
+> diff --git a/tools/perf/pmu-events/arch/x86/nehalemex/floating-point.json b/tools/perf/pmu-events/arch/x86/nehalemex/floating-point.json
+> index 7d2f71a9dee3..6b9b9fe74f3b 100644
+> --- a/tools/perf/pmu-events/arch/x86/nehalemex/floating-point.json
+> +++ b/tools/perf/pmu-events/arch/x86/nehalemex/floating-point.json
+> @@ -15,7 +15,7 @@
+>          "UMask": "0x4",
+>          "EventName": "FP_ASSIST.INPUT",
+>          "SampleAfterValue": "20000",
+> -        "BriefDescription": "X87 Floating poiint assists for invalid input value (Precise Event)"
+> +        "BriefDescription": "X87 Floating point assists for invalid input value (Precise Event)"
+>      },
+>      {
+>          "PEBS": "1",
+> diff --git a/tools/perf/pmu-events/arch/x86/westmereep-dp/floating-point.json b/tools/perf/pmu-events/arch/x86/westmereep-dp/floating-point.json
+> index 7d2f71a9dee3..6b9b9fe74f3b 100644
+> --- a/tools/perf/pmu-events/arch/x86/westmereep-dp/floating-point.json
+> +++ b/tools/perf/pmu-events/arch/x86/westmereep-dp/floating-point.json
+> @@ -15,7 +15,7 @@
+>          "UMask": "0x4",
+>          "EventName": "FP_ASSIST.INPUT",
+>          "SampleAfterValue": "20000",
+> -        "BriefDescription": "X87 Floating poiint assists for invalid input value (Precise Event)"
+> +        "BriefDescription": "X87 Floating point assists for invalid input value (Precise Event)"
+>      },
+>      {
+>          "PEBS": "1",
+> diff --git a/tools/perf/pmu-events/arch/x86/westmereep-sp/floating-point.json b/tools/perf/pmu-events/arch/x86/westmereep-sp/floating-point.json
+> index 7d2f71a9dee3..6b9b9fe74f3b 100644
+> --- a/tools/perf/pmu-events/arch/x86/westmereep-sp/floating-point.json
+> +++ b/tools/perf/pmu-events/arch/x86/westmereep-sp/floating-point.json
+> @@ -15,7 +15,7 @@
+>          "UMask": "0x4",
+>          "EventName": "FP_ASSIST.INPUT",
+>          "SampleAfterValue": "20000",
+> -        "BriefDescription": "X87 Floating poiint assists for invalid input value (Precise Event)"
+> +        "BriefDescription": "X87 Floating point assists for invalid input value (Precise Event)"
+>      },
+>      {
+>          "PEBS": "1",
+> diff --git a/tools/perf/pmu-events/arch/x86/westmereex/floating-point.json b/tools/perf/pmu-events/arch/x86/westmereex/floating-point.json
+> index 7d2f71a9dee3..6b9b9fe74f3b 100644
+> --- a/tools/perf/pmu-events/arch/x86/westmereex/floating-point.json
+> +++ b/tools/perf/pmu-events/arch/x86/westmereex/floating-point.json
+> @@ -15,7 +15,7 @@
+>          "UMask": "0x4",
+>          "EventName": "FP_ASSIST.INPUT",
+>          "SampleAfterValue": "20000",
+> -        "BriefDescription": "X87 Floating poiint assists for invalid input value (Precise Event)"
+> +        "BriefDescription": "X87 Floating point assists for invalid input value (Precise Event)"
+>      },
+>      {
+>          "PEBS": "1",
+> -- 
+> 2.22.0.214.g8dca754b1e87
