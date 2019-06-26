@@ -2,52 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22AB4563A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 09:50:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17ED7563A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 09:50:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726963AbfFZHuJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 03:50:09 -0400
-Received: from verein.lst.de ([213.95.11.211]:40977 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725379AbfFZHuI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 03:50:08 -0400
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 0B20568B05; Wed, 26 Jun 2019 09:49:36 +0200 (CEST)
-Date:   Wed, 26 Jun 2019 09:49:35 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Alexey Kardashevskiy <aik@ozlabs.ru>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Oliver O'Halloran <oohall@gmail.com>,
-        Frederic Barrat <fbarrat@linux.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] powerpc/powernv: remove unused NPU DMA code
-Message-ID: <20190626074935.GA25452@lst.de>
-References: <20190625145239.2759-1-hch@lst.de> <20190625145239.2759-4-hch@lst.de> <7bde96e0-7bc5-d5fe-f151-52c29660633c@ozlabs.ru>
+        id S1726891AbfFZHt6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 03:49:58 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:43924 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725876AbfFZHt6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 03:49:58 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5Q7nkRO053910;
+        Wed, 26 Jun 2019 02:49:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1561535386;
+        bh=zmZI9L/7aa+aZonFo/L+XtFMZfNbn+xOwQY5rhl7174=;
+        h=From:To:CC:Subject:Date;
+        b=yC7kwJlTN4tagiYZNYbJtSHvs7TZGr9esErsXGZeGArQ48iTBrRfjthe+IasZ9RXX
+         Qy5OB9EjiVzQFumPjukWOn2ZmfD+eklfYFBvGnyE+yWchBwRvMF0wI/X2cwOll1lwb
+         7xIpH8z5SOMT6VvNUbq3HphzdYsiUjmQtsm/fkJo=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5Q7nkSG004765
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 26 Jun 2019 02:49:46 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 26
+ Jun 2019 02:49:45 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 26 Jun 2019 02:49:45 -0500
+Received: from a0393675ula.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5Q7nhd5049598;
+        Wed, 26 Jun 2019 02:49:43 -0500
+From:   Keerthy <j-keerthy@ti.com>
+To:     <tony@atomide.com>, <ssantosh@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <t-kristo@ti.com>,
+        <j-keerthy@ti.com>, <d-gerlach@ti.com>, <dan.carpenter@oracle.com>
+Subject: [PATCH] soc: ti: pm33xx: Fix static checker warnings
+Date:   Wed, 26 Jun 2019 13:20:14 +0530
+Message-ID: <20190626075014.2911-1-j-keerthy@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7bde96e0-7bc5-d5fe-f151-52c29660633c@ozlabs.ru>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 26, 2019 at 10:44:38AM +1000, Alexey Kardashevskiy wrote:
-> 
-> 
-> On 26/06/2019 00:52, Christoph Hellwig wrote:
-> > None of these routines were ever used anywhere in the kernel tree
-> > since they were added to the kernel.
-> 
-> 
-> So none of my comments has been addressed. Nice.
+The patch fixes a bunch of static checker warnings.
 
-Which comment?  Last time I asked you complaint "it is still used in
-exactly the same way as before" which you later clarified that you
-have a hidden out of tree user somewhere, and you only objected to
-the word "dead".  That has been fixed and there were no further
-comments.
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Keerthy <j-keerthy@ti.com>
+---
+ drivers/soc/ti/pm33xx.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/soc/ti/pm33xx.c b/drivers/soc/ti/pm33xx.c
+index bb77c220b6f8..5f3a4499cf40 100644
+--- a/drivers/soc/ti/pm33xx.c
++++ b/drivers/soc/ti/pm33xx.c
+@@ -252,7 +252,7 @@ static int am33xx_pm_begin(suspend_state_t state)
+ 	if (state == PM_SUSPEND_MEM && pm_ops->check_off_mode_enable()) {
+ 		nvmem = devm_nvmem_device_get(&omap_rtc->dev,
+ 					      "omap_rtc_scratch0");
+-		if (nvmem)
++		if (!IS_ERR(nvmem))
+ 			nvmem_device_write(nvmem, RTC_SCRATCH_MAGIC_REG * 4, 4,
+ 					   (void *)&rtc_magic_val);
+ 		rtc_only_idle = 1;
+@@ -278,9 +278,12 @@ static void am33xx_pm_end(void)
+ 	struct nvmem_device *nvmem;
+ 
+ 	nvmem = devm_nvmem_device_get(&omap_rtc->dev, "omap_rtc_scratch0");
++	if (IS_ERR(nvmem))
++		return;
++
+ 	m3_ipc->ops->finish_low_power(m3_ipc);
+ 	if (rtc_only_idle) {
+-		if (retrigger_irq)
++		if (retrigger_irq) {
+ 			/*
+ 			 * 32 bits of Interrupt Set-Pending correspond to 32
+ 			 * 32 interrupts. Compute the bit offset of the
+@@ -291,8 +294,10 @@ static void am33xx_pm_end(void)
+ 			writel_relaxed(1 << (retrigger_irq & 31),
+ 				       gic_dist_base + GIC_INT_SET_PENDING_BASE
+ 				       + retrigger_irq / 32 * 4);
+-			nvmem_device_write(nvmem, RTC_SCRATCH_MAGIC_REG * 4, 4,
+-					   (void *)&val);
++		}
++
++		nvmem_device_write(nvmem, RTC_SCRATCH_MAGIC_REG * 4, 4,
++				   (void *)&val);
+ 	}
+ 
+ 	rtc_only_idle = 0;
+@@ -415,7 +420,7 @@ static int am33xx_pm_rtc_setup(void)
+ 
+ 		nvmem = devm_nvmem_device_get(&omap_rtc->dev,
+ 					      "omap_rtc_scratch0");
+-		if (nvmem) {
++		if (!IS_ERR(nvmem)) {
+ 			nvmem_device_read(nvmem, RTC_SCRATCH_MAGIC_REG * 4,
+ 					  4, (void *)&rtc_magic_val);
+ 			if ((rtc_magic_val & 0xffff) != RTC_REG_BOOT_MAGIC)
+-- 
+2.17.1
+
