@@ -2,113 +2,226 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9F6C56DAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 17:30:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5E5256DBE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 17:33:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728357AbfFZPan (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 11:30:43 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:40617 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728103AbfFZPam (ORCPT
+        id S1728120AbfFZPdH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 11:33:07 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:37694 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726104AbfFZPdG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 11:30:42 -0400
-Received: by mail-io1-f65.google.com with SMTP id n5so2586559ioc.7
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 08:30:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:from:to:cc:subject:message-id:user-agent:mime-version;
-        bh=47jXrca/VLnvTViduml7tRENXk9Vm4pzuTXdi0htwSI=;
-        b=bRTbbNqpz27JcaELNMaS595xLsjJ2iZR7o/Zi3u9KMHMtQCVyCGoImqgSCPUjZnc9C
-         LHAyaKsDhOZozOCxG75IloZD/OcQLRRSnunyLEjKyoOruiTs9odjyzrjibUnGdWgulnY
-         wmOklJwNOkJWgvgCrHLVXzCg+vi7rozAUUVwDlhCZifpHsmXNr2JPArX3OlCDK3xMBOo
-         QOeW46uaidFx+SfkWH5IGUx5hmKzm0J374lMyziCP5hG6eRa3Mmfk+1cxgYto8fVsrgc
-         OucAX9s5pcExmgrX3P772wZIZXfgdlodYfIucoQLOs0cvhKEFCn1Hr+SYNp1ymg1p+To
-         esYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:user-agent
-         :mime-version;
-        bh=47jXrca/VLnvTViduml7tRENXk9Vm4pzuTXdi0htwSI=;
-        b=iD+QpbYl2duETo5jyEUzyHQzULVe0FsklJxelLak++cvQtBaLiG+tfR4x8Mb+2F2T8
-         DxeaSgKomK7o16x74SoZ+cJ87uLeZg5DlK3hn5rxZZABBzF2MtNDaR6eEC9r5KPfIUds
-         YQV+qNgLrfvF+VKE+ZDv40nLRw+WZphQk0ArAn8EGbV3IZVgBPiHsfITAGeC7NolOfZS
-         VYyJIVyuz0FSXt7l44lQuH5EGv6uW3M+/mSZqQKsZAEc+vOnDtt1q1aRkcfo8oupyKWg
-         Dto6lXINFzHL1gYyIKKWb+UG9ZmswASu5Vz/IGfMdC7ToBpJsFZf6GwGDSOEmU8Vwy22
-         4iwg==
-X-Gm-Message-State: APjAAAVXw8PXuyYAFdK1wiO6diFZNEZjVaJ3SYYoQu2f1gQRRor3EiqC
-        1oniHFpg6YA/cUSSF6oy9xZdqw==
-X-Google-Smtp-Source: APXvYqxxv99ftWybjb752ByTOs3EepgyGpjVVV0N/HtQbeNhEIL7ps//XlR9m9QlFx9cyXF2gB9B3Q==
-X-Received: by 2002:a5d:9e48:: with SMTP id i8mr5666557ioi.51.1561563042093;
-        Wed, 26 Jun 2019 08:30:42 -0700 (PDT)
-Received: from localhost (c-73-95-159-87.hsd1.co.comcast.net. [73.95.159.87])
-        by smtp.gmail.com with ESMTPSA id r139sm35785253iod.61.2019.06.26.08.30.41
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 26 Jun 2019 08:30:41 -0700 (PDT)
-Date:   Wed, 26 Jun 2019 08:30:40 -0700 (PDT)
-From:   Paul Walmsley <paul.walmsley@sifive.com>
-X-X-Sender: paulw@viisi.sifive.com
-To:     linux-riscv@lists.infradead.org
-cc:     linux-kernel@vger.kernel.org, robh@kernel.org
-Subject: [PATCH] dt-bindings: riscv: resolve 'make dt_binding_check'
- warnings
-Message-ID: <alpine.DEB.2.21.9999.1906260829030.21507@viisi.sifive.com>
-User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
+        Wed, 26 Jun 2019 11:33:06 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: ezequiel)
+        with ESMTPSA id ED64C28528D
+Message-ID: <7a205885f0599f04da067a7f41a14ee0b0d759f5.camel@collabora.com>
+Subject: Re: [PATCH v2] phy: rockchip-inno-usb2: allow to force the B-Device
+ Session Valid bit.
+From:   Ezequiel Garcia <ezequiel@collabora.com>
+To:     =?ISO-8859-1?Q?Ga=EBl?= PORTAY <gael.portay@collabora.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        kernel@collabora.com
+Date:   Wed, 26 Jun 2019 12:32:55 -0300
+In-Reply-To: <20190515222050.15075-1-gael.portay@collabora.com>
+References: <20190515222050.15075-1-gael.portay@collabora.com>
+Organization: Collabora
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-1.1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 2019-05-15 at 18:20 -0400, Gaël PORTAY wrote:
+> From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> 
+> The OTG disconnection event is generated after the presence/absence of
+> an ID connection, but some platforms don't have the ID pin connected, so
+> the event is not generated. In such case, for detecting the
+> disconnection event, we can get the cable state from an extcon driver.
+> We need, though, to force to set the B-Device Session Valid bit on the
+> PHY to have the device respond to the setup address. Otherwise, the
+> following error is shown:
+> 
+>     usb 2-2: Device not responding to setup address.
+>     usb 2-2: device not accepting address 14, error -71
+>     usb usb2-port2: unable to enumerate USB device
+> 
+> The patch tells the PHY to force the B-Device Session Valid bit when the
+> OTG role is device and clear that bit if the OTG role is host, when an
+> extcon is available.
+> 
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> Signed-off-by: Gaël PORTAY <gael.portay@collabora.com>
+> ---
+> 
+> Hi all,
+> 
+> The main purpose of this patch is have the Type-C port on the Samsung
+> Chromebook Plus work as a device or in OTG mode.
+> 
+> That patch was originally a part of that patchset[1]; all other patches
+> was merged recently in master.
+> 
+> The patch was tested on a Samsung Chromebook Plus by configuring one
+> port to work as device, configure a cdc ethernet gadget and communicate
+> via ethernet gadget my workstation with the chromebook through a usb-a
+> to type-c cable.
+> 
+> Best regards,
+> Gaël
+> 
+> [1]: https://lkml.org/lkml/2018/8/15/141
+> 
+> Changes since v1:
+>  - [PATCH 3/4] Remove introduction of dt property "rockchip,force-bvalid"
+>                and replace cable state using extcon instead (if set).
+> 
+>  drivers/phy/rockchip/phy-rockchip-inno-usb2.c | 51 +++++++++++++++++++
+>  1 file changed, 51 insertions(+)
+> 
+> diff --git a/drivers/phy/rockchip/phy-rockchip-inno-usb2.c b/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
+> index ba07121c3eff..5e9d50b5ae16 100644
+> --- a/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
+> +++ b/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
+> @@ -125,6 +125,7 @@ struct rockchip_chg_det_reg {
+>   * @bvalid_det_en: vbus valid rise detection enable register.
+>   * @bvalid_det_st: vbus valid rise detection status register.
+>   * @bvalid_det_clr: vbus valid rise detection clear register.
+> + * @bvalid_session: force B-device session valid register.
+>   * @ls_det_en: linestate detection enable register.
+>   * @ls_det_st: linestate detection state register.
+>   * @ls_det_clr: linestate detection clear register.
+> @@ -138,6 +139,7 @@ struct rockchip_usb2phy_port_cfg {
+>  	struct usb2phy_reg	bvalid_det_en;
+>  	struct usb2phy_reg	bvalid_det_st;
+>  	struct usb2phy_reg	bvalid_det_clr;
+> +	struct usb2phy_reg	bvalid_session;
+>  	struct usb2phy_reg	ls_det_en;
+>  	struct usb2phy_reg	ls_det_st;
+>  	struct usb2phy_reg	ls_det_clr;
+> @@ -169,6 +171,7 @@ struct rockchip_usb2phy_cfg {
+>   * @port_id: flag for otg port or host port.
+>   * @suspended: phy suspended flag.
+>   * @vbus_attached: otg device vbus status.
+> + * @force_bvalid: force the control of the B-device session valid bit.
+>   * @bvalid_irq: IRQ number assigned for vbus valid rise detection.
+>   * @ls_irq: IRQ number assigned for linestate detection.
+>   * @otg_mux_irq: IRQ number which multiplex otg-id/otg-bvalid/linestate
+> @@ -187,6 +190,7 @@ struct rockchip_usb2phy_port {
+>  	unsigned int	port_id;
+>  	bool		suspended;
+>  	bool		vbus_attached;
+> +	bool		force_bvalid;
+>  	int		bvalid_irq;
+>  	int		ls_irq;
+>  	int		otg_mux_irq;
+> @@ -553,6 +557,13 @@ static void rockchip_usb2phy_otg_sm_work(struct work_struct *work)
+>  	switch (rport->state) {
+>  	case OTG_STATE_UNDEFINED:
+>  		rport->state = OTG_STATE_B_IDLE;
+> +		if (rport->force_bvalid) {
+> +			property_enable(rphy->grf,
+> +					&rport->port_cfg->bvalid_session,
+> +					true);
+> +			dev_dbg(&rport->phy->dev,
+> +				"set the B-Device Session Valid\n");
+> +		}
+>  		if (!vbus_attach)
+>  			rockchip_usb2phy_power_off(rport->phy);
+>  		/* fall through */
+> @@ -560,6 +571,14 @@ static void rockchip_usb2phy_otg_sm_work(struct work_struct *work)
+>  		if (extcon_get_state(rphy->edev, EXTCON_USB_HOST) > 0) {
+>  			dev_dbg(&rport->phy->dev, "usb otg host connect\n");
+>  			rport->state = OTG_STATE_A_HOST;
+> +			/* When leaving device mode force end the session */
+> +			if (rport->force_bvalid) {
+> +				property_enable(rphy->grf,
+> +					&rport->port_cfg->bvalid_session,
+> +					false);
+> +				dev_dbg(&rport->phy->dev,
+> +					"clear the B-Device Session Valid\n");
+> +			}
+>  			rockchip_usb2phy_power_on(rport->phy);
+>  			return;
+>  		} else if (vbus_attach) {
+> @@ -634,6 +653,14 @@ static void rockchip_usb2phy_otg_sm_work(struct work_struct *work)
+>  		if (extcon_get_state(rphy->edev, EXTCON_USB_HOST) == 0) {
+>  			dev_dbg(&rport->phy->dev, "usb otg host disconnect\n");
+>  			rport->state = OTG_STATE_B_IDLE;
+> +			/* When leaving host mode force start the session */
+> +			if (rport->force_bvalid) {
+> +				property_enable(rphy->grf,
+> +					&rport->port_cfg->bvalid_session,
+> +					true);
+> +				dev_dbg(&rport->phy->dev,
+> +					"set the B-Device Session Valid\n");
+> +			}
+>  			rockchip_usb2phy_power_off(rport->phy);
+>  		}
+>  		break;
+> @@ -1016,6 +1043,28 @@ static int rockchip_usb2phy_otg_port_init(struct rockchip_usb2phy *rphy,
+>  	INIT_DELAYED_WORK(&rport->chg_work, rockchip_chg_detect_work);
+>  	INIT_DELAYED_WORK(&rport->otg_sm_work, rockchip_usb2phy_otg_sm_work);
+>  
+> +	/*
+> +	 * Some platforms doesn't have the ID pin connected to the phy, hence
+> +	 * the OTD ID event is not generated, but in some cases we can get the
+> +	 * cable state from an extcon driver. In such case we can force to set
+> +	 * the B-Device Session Valid bit on the PHY to have the device working
+> +	 * as a OTG.
+> +	 */
+> +	if (rphy->edev) {
+> +		/*
+> +		 * Check if bvalid_session register is set in the structure
+> +		 * rockchip_usb2phy_cfg for this SoC.
+> +		 */
+> +		if (rport->port_cfg->bvalid_session.offset == 0x0) {
+> +			rport->force_bvalid = false;
+> +			dev_err(rphy->dev,
+> +				"cannot force B-device session, the register is not set for that SoC\n");
+> +		} else {
+> +			rport->force_bvalid = true;
+> +			dev_info(rphy->dev, "force B-device session enabled\n");
+> +		}
+> +	}
+> +
+>  	/*
+>  	 * Some SoCs use one interrupt with otg-id/otg-bvalid/linestate
+>  	 * interrupts muxed together, so probe the otg-mux interrupt first,
+> @@ -1338,6 +1387,7 @@ static const struct rockchip_usb2phy_cfg rk3399_phy_cfgs[] = {
+>  				.bvalid_det_en	= { 0xe3c0, 3, 3, 0, 1 },
+>  				.bvalid_det_st	= { 0xe3e0, 3, 3, 0, 1 },
+>  				.bvalid_det_clr	= { 0xe3d0, 3, 3, 0, 1 },
+> +				.bvalid_session = { 0x4498, 4, 4, 0, 1 },
+>  				.utmi_avalid	= { 0xe2ac, 7, 7, 0, 1 },
+>  				.utmi_bvalid	= { 0xe2ac, 12, 12, 0, 1 },
+>  			},
+> @@ -1373,6 +1423,7 @@ static const struct rockchip_usb2phy_cfg rk3399_phy_cfgs[] = {
+>  				.bvalid_det_en  = { 0xe3c0, 8, 8, 0, 1 },
+>  				.bvalid_det_st  = { 0xe3e0, 8, 8, 0, 1 },
+>  				.bvalid_det_clr = { 0xe3d0, 8, 8, 0, 1 },
+> +				.bvalid_session = { 0x4518, 4, 4, 0, 1 },
+>  				.utmi_avalid	= { 0xe2ac, 10, 10, 0, 1 },
+>  				.utmi_bvalid    = { 0xe2ac, 16, 16, 0, 1 },
+>  			},
+> -- 
+> 2.21.0
+> 
+> 
 
-Rob pointed out that one of the examples in the RISC-V 'cpus' YAML schema 
-results in warnings from 'make dt_binding_check'.  Fix these.
+It's been more than a month without any activity here.
 
-While here, make the whitespace in the second example consistent with the 
-first example.
+Any news?
 
-Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
-Cc: Rob Herring <robh@kernel.org>
----
- .../devicetree/bindings/riscv/cpus.yaml       | 26 ++++++++++---------
- 1 file changed, 14 insertions(+), 12 deletions(-)
+Thanks,
+Ezequiel
 
-diff --git a/Documentation/devicetree/bindings/riscv/cpus.yaml b/Documentation/devicetree/bindings/riscv/cpus.yaml
-index 27f02ec4bb45..f97a4ecd7b91 100644
---- a/Documentation/devicetree/bindings/riscv/cpus.yaml
-+++ b/Documentation/devicetree/bindings/riscv/cpus.yaml
-@@ -152,17 +152,19 @@ examples:
-   - |
-     // Example 2: Spike ISA Simulator with 1 Hart
-     cpus {
--            cpu@0 {
--                    device_type = "cpu";
--                    reg = <0>;
--                    compatible = "riscv";
--                    riscv,isa = "rv64imafdc";
--                    mmu-type = "riscv,sv48";
--                    interrupt-controller {
--                            #interrupt-cells = <1>;
--                            interrupt-controller;
--                            compatible = "riscv,cpu-intc";
--                    };
--            };
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+        cpu@0 {
-+                device_type = "cpu";
-+                reg = <0>;
-+                compatible = "riscv";
-+                riscv,isa = "rv64imafdc";
-+                mmu-type = "riscv,sv48";
-+                interrupt-controller {
-+                        #interrupt-cells = <1>;
-+                        interrupt-controller;
-+                        compatible = "riscv,cpu-intc";
-+                };
-+        };
-     };
- ...
--- 
-2.20.1
 
