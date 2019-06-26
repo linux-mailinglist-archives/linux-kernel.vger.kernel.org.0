@@ -2,106 +2,231 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 159DD57522
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 01:58:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 132A75752C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 02:00:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726702AbfFZX6H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 19:58:07 -0400
-Received: from mail-pg1-f201.google.com ([209.85.215.201]:48690 "EHLO
-        mail-pg1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726385AbfFZX6H (ORCPT
+        id S1726733AbfF0AAE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 20:00:04 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:35760 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726385AbfF0AAE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 19:58:07 -0400
-Received: by mail-pg1-f201.google.com with SMTP id z10so201583pgf.15
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 16:58:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=kFK6kUjpqNh/C0sbAwD586/2wF+g+pKdLWduP+48Qag=;
-        b=OULKLsIl+2/igNiIyxSMQEZ09WlnN7Q5vcihYkyYKx5gqRl+4Fbh9jeuEqzKZBN+/r
-         wlaJD5vkDwxc3zfuQt0mbw0H6y2M2Zuql6lPB6OW2f9Y3/sI+n7/KumjC/nymAHGz2qs
-         twccjv2IPx5YPeC5dwXfnSl5SEqWbjesOYdm0T4gzPZ2l/QEOlJsyCVYp6EuZnWm29pe
-         UoJUAJ/6/e2WR82o0NqGO08HkR5uxmV8Phz/tEKsE5TafnvB6pi9QMGj8choxTMwtsRz
-         mDSuXDWWdIYDM+9AMHf4xixOtk5UojQRnVoyuBvCmUko3A54JVoBcMukHDpHSdR07LiG
-         gFrw==
+        Wed, 26 Jun 2019 20:00:04 -0400
+Received: by mail-io1-f68.google.com with SMTP id m24so759525ioo.2;
+        Wed, 26 Jun 2019 17:00:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=kFK6kUjpqNh/C0sbAwD586/2wF+g+pKdLWduP+48Qag=;
-        b=NKakLYK0h8BuYYBRPTcv1cUyTvbaIlIpWQgsLNnPU1MarBaUgiTD3Gh+cI++Urm+Hc
-         1Hrhz1kFPmTuFxHHmZHShPwsaGCmklmrbD5VmTkTi9qMj+7Tc8QIvC6mCqz5qo2uocX4
-         kk3AZgqTGdk9+W0pBtUkPoC8TiLzx5bYdhPkqgRAR3+iQYaqjxeJ+hYbJYO0IfF1O3yK
-         k03rFqh/ET8/DAWCxJ5afIlOY98NuivOPcR9FjwuCMv3KLa79zlymODHwPdz3evzE5/B
-         38DB4Ph99bEW2S+xgF5v50/+mRwi0p9eb1Ojzw/UKmOgfXBgkSvfN3ROGhL+6NwCGafF
-         C+vQ==
-X-Gm-Message-State: APjAAAUiIvT9p9DD2NGmcO1hBRXFYTFwLF/h+s60J2trxMGOIbi1dbk+
-        QYOyLKmFQFVDJvm/jgK9i/VC3XV30UW0WuJv
-X-Google-Smtp-Source: APXvYqyVcUdMzYMwzmbm6L0FaFU0CkZZDnGUw22g+ED0Vw7T6rHRtWPVv0iq15uAn/+jzW/PwGgqth77DdkSGtiN
-X-Received: by 2002:a63:5048:: with SMTP id q8mr639484pgl.446.1561593486318;
- Wed, 26 Jun 2019 16:58:06 -0700 (PDT)
-Date:   Wed, 26 Jun 2019 16:57:59 -0700
-Message-Id: <20190626235801.210508-1-allanzhang@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
-Subject: [PATCH bpf-next v7 0/2] bpf: Allow bpf_skb_event_output for more prog types
-From:   Allan Zhang <allanzhang@google.com>
-To:     Daniel Borkmann <daniel@iogearbox.net>,
-        Song Liu <songliubraving@fb.com>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Martin KaFai Lau <kafai@fb.com>, Yonghong Song <yhs@fb.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org, Allan Zhang <allanzhang@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=53IaqpMPerVQvE5lpwCouRahQV8Om4olnk1aH2ko0g8=;
+        b=fyerAui09rzodqkgck6mCAQTJNiB2/oMvJtyO4bs1E9J+RHMcLUcH5vhe2lr9T5Eqn
+         bVarnAOA05Stgo2ue12yMWpvDI/iboXBBovnatKAk8eMuPNqJ6ahEwxlsFS5DeH02EAA
+         t1gwVC/kMNI7CRCR+qa10x0r2PQAXa/lodOInEzkrRyqLzIP1/BihXpHqsxIdFdVErOf
+         GyRLLziLGjJ78vppXtcwVlAm6XPnT1jAwmqGvgr9XBjPmZhXy2/rkytn6GtWPxdekf4v
+         dBEF7khtOwhlLZ4T0fNGw6xHM1IDxXJ1E12mkZeu5URRknncTOLzR3QXOau36gQ5EAQr
+         3uMQ==
+X-Gm-Message-State: APjAAAVH2qMLklp+zijU8aPCHXngdvsKRJ3qKcowO7T10AKQ3kx4OrU7
+        kg16nnDMvYIHu/WbZ+pbZ8ExHwc=
+X-Google-Smtp-Source: APXvYqy5ezO/dANnHV+5w59X63kyA+lDVkCf1HEj3VQeONMkV/b1rEwNK5rUNDyShpwyMeIlhrynAg==
+X-Received: by 2002:a02:a384:: with SMTP id y4mr866306jak.77.1561593602990;
+        Wed, 26 Jun 2019 17:00:02 -0700 (PDT)
+Received: from localhost.localdomain ([64.188.179.243])
+        by smtp.googlemail.com with ESMTPSA id l2sm359969ioh.20.2019.06.26.17.00.02
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 26 Jun 2019 17:00:02 -0700 (PDT)
+From:   Rob Herring <robh@kernel.org>
+To:     Paul Walmsley <paul.walmsley@sifive.com>,
+        linux-riscv@lists.infradead.org, Palmer Dabbelt <palmer@sifive.com>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: riscv: Limit cpus schema to only check RiscV 'cpu' nodes
+Date:   Wed, 26 Jun 2019 17:57:59 -0600
+Message-Id: <20190626235759.3615-1-robh@kernel.org>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Software event output is only enabled by a few prog types right now (TC,
-LWT out, XDP, sockops). Many other skb based prog types need
-bpf_skb_event_output to produce software event.
+Matching on the 'cpus' node was a bad choice because the schema is
+incorrectly applied to non-RiscV cpus nodes. As we now have a common cpus
+schema which checks the general structure, it is also redundant to do so
+in the Risc-V CPU schema.
 
-More prog types are enabled to access bpf_skb_event_output in this
-patch.
+The downside is one could conceivably mix different architecture's cpu
+nodes or have typos in the compatible string. The latter problem pretty
+much exists for every schema.
 
-v7 changes:
-Reformat from hints by scripts/checkpatch.pl, including Song's comment
-on signed-off-by name to captical case in cover letter.
-3 of hints are ignored:
-1. new file mode.
-2. SPDX-License-Identifier for event_output.c since all files under
-   this dir have no such line.
-3. "Macros ... enclosed in parentheses" for macro in event_output.c
-   due to code's nature.
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+ .../devicetree/bindings/riscv/cpus.yaml       | 143 ++++++++----------
+ 1 file changed, 61 insertions(+), 82 deletions(-)
 
-Change patch 02 subject "bpf:..." to "selftests/bpf:..."
-
-v6 changes:
-Fix Signed-off-by, fix fixup map creation.
-
-v5 changes:
-Fix typos, reformat comments in event_output.c, move revision history to
-cover letter.
-
-v4 changes:
-Reformating log message.
-
-v3 changes:
-Reformating log message.
-
-v2 changes:
-Reformating log message.
-
-Allan Zhang (2):
-  bpf: Allow bpf_skb_event_output for a few prog types
-  selftests/bpf: Add selftests for bpf_perf_event_output
-
- net/core/filter.c                             |  6 ++
- tools/testing/selftests/bpf/test_verifier.c   | 12 ++-
- .../selftests/bpf/verifier/event_output.c     | 94 +++++++++++++++++++
- 3 files changed, 111 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/bpf/verifier/event_output.c
-
+diff --git a/Documentation/devicetree/bindings/riscv/cpus.yaml b/Documentation/devicetree/bindings/riscv/cpus.yaml
+index 27f02ec4bb45..67e54251eb90 100644
+--- a/Documentation/devicetree/bindings/riscv/cpus.yaml
++++ b/Documentation/devicetree/bindings/riscv/cpus.yaml
+@@ -10,97 +10,76 @@ maintainers:
+   - Paul Walmsley <paul.walmsley@sifive.com>
+   - Palmer Dabbelt <palmer@sifive.com>
+ 
+-allOf:
+-  - $ref: /schemas/cpus.yaml#
+-
+ properties:
+-  $nodename:
+-    const: cpus
+-    description: Container of cpu nodes
+-
+-  '#address-cells':
+-    const: 1
+-    description: |
+-      A single unsigned 32-bit integer uniquely identifies each RISC-V
+-      hart in a system.  (See the "reg" node under the "cpu" node,
+-      below).
+-
+-  '#size-cells':
+-    const: 0
++  compatible:
++    items:
++      - enum:
++          - sifive,rocket0
++          - sifive,e5
++          - sifive,e51
++          - sifive,u54-mc
++          - sifive,u54
++          - sifive,u5
++      - const: riscv
++    description:
++      Identifies that the hart uses the RISC-V instruction set
++      and identifies the type of the hart.
++
++  mmu-type:
++    allOf:
++      - $ref: "/schemas/types.yaml#/definitions/string"
++      - enum:
++          - riscv,sv32
++          - riscv,sv39
++          - riscv,sv48
++    description:
++      Identifies the MMU address translation mode used on this
++      hart.  These values originate from the RISC-V Privileged
++      Specification document, available from
++      https://riscv.org/specifications/
++
++  riscv,isa:
++    allOf:
++      - $ref: "/schemas/types.yaml#/definitions/string"
++      - enum:
++          - rv64imac
++          - rv64imafdc
++    description:
++      Identifies the specific RISC-V instruction set architecture
++      supported by the hart.  These are documented in the RISC-V
++      User-Level ISA document, available from
++      https://riscv.org/specifications/
++
++  timebase-frequency:
++    type: integer
++    minimum: 1
++    description:
++      Specifies the clock frequency of the system timer in Hz.
++      This value is common to all harts on a single system image.
++
++  interrupt-controller:
++    type: object
++    description: Describes the CPU's local interrupt controller
+ 
+-patternProperties:
+-  '^cpu@[0-9a-f]+$':
+     properties:
+-      compatible:
+-        type: array
+-        items:
+-          - enum:
+-              - sifive,rocket0
+-              - sifive,e5
+-              - sifive,e51
+-              - sifive,u54-mc
+-              - sifive,u54
+-              - sifive,u5
+-          - const: riscv
+-        description:
+-          Identifies that the hart uses the RISC-V instruction set
+-          and identifies the type of the hart.
+-
+-      mmu-type:
+-        allOf:
+-          - $ref: "/schemas/types.yaml#/definitions/string"
+-          - enum:
+-              - riscv,sv32
+-              - riscv,sv39
+-              - riscv,sv48
+-        description:
+-          Identifies the MMU address translation mode used on this
+-          hart.  These values originate from the RISC-V Privileged
+-          Specification document, available from
+-          https://riscv.org/specifications/
+-
+-      riscv,isa:
+-        allOf:
+-          - $ref: "/schemas/types.yaml#/definitions/string"
+-          - enum:
+-              - rv64imac
+-              - rv64imafdc
+-        description:
+-          Identifies the specific RISC-V instruction set architecture
+-          supported by the hart.  These are documented in the RISC-V
+-          User-Level ISA document, available from
+-          https://riscv.org/specifications/
++      '#interrupt-cells':
++        const: 1
+ 
+-      timebase-frequency:
+-        type: integer
+-        minimum: 1
+-        description:
+-          Specifies the clock frequency of the system timer in Hz.
+-          This value is common to all harts on a single system image.
+-
+-      interrupt-controller:
+-        type: object
+-        description: Describes the CPU's local interrupt controller
+-
+-        properties:
+-          '#interrupt-cells':
+-            const: 1
+-
+-          compatible:
+-            const: riscv,cpu-intc
+-
+-          interrupt-controller: true
++      compatible:
++        const: riscv,cpu-intc
+ 
+-        required:
+-          - '#interrupt-cells'
+-          - compatible
+-          - interrupt-controller
++      interrupt-controller: true
+ 
+     required:
+-      - riscv,isa
+-      - timebase-frequency
++      - '#interrupt-cells'
++      - compatible
+       - interrupt-controller
+ 
++required:
++  - riscv,isa
++  - timebase-frequency
++  - interrupt-controller
++
+ examples:
+   - |
+     // Example 1: SiFive Freedom U540G Development Kit
 -- 
-2.22.0.410.gd8fdbe21b5-goog
+2.20.1
 
