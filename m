@@ -2,238 +2,308 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FD7156558
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 11:09:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 726BD56561
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 11:10:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727063AbfFZJJg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 05:09:36 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40846 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726104AbfFZJJf (ORCPT
+        id S1727080AbfFZJKh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 05:10:37 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:33501 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725379AbfFZJKf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 05:09:35 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5Q98m6l052280
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 05:09:34 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2tc4ms2yx7-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 05:09:34 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <huntbag@linux.vnet.ibm.com>;
-        Wed, 26 Jun 2019 10:09:32 +0100
-Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 26 Jun 2019 10:09:30 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5Q99J8p30802320
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 26 Jun 2019 09:09:19 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9497D5204F;
-        Wed, 26 Jun 2019 09:09:28 +0000 (GMT)
-Received: from oc0383214508.ibm.com (unknown [9.124.35.188])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 079BC52067;
-        Wed, 26 Jun 2019 09:09:26 +0000 (GMT)
-Subject: Re: [PATCH v2 1/1] cpuidle-powernv : forced wakeup for stop states
-To:     Nicholas Piggin <npiggin@gmail.com>, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Cc:     daniel.lezcano@linaro.org, dja@axtens.net, ego@linux.vnet.ibm.com,
-        mpe@ellerman.id.au, rjw@rjwysocki.net
-References: <20190617095648.18847-1-huntbag@linux.vnet.ibm.com>
- <20190617095648.18847-2-huntbag@linux.vnet.ibm.com>
- <1560917320.mk5nn6r8jw.astroid@bobo.none>
- <689a52a7-7bfc-7225-e563-ac07f7357e75@linux.vnet.ibm.com>
- <1560938644.5ukemauqsy.astroid@bobo.none>
-From:   Abhishek <huntbag@linux.vnet.ibm.com>
-Date:   Wed, 26 Jun 2019 14:39:26 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 26 Jun 2019 05:10:35 -0400
+Received: by mail-lf1-f65.google.com with SMTP id y17so1069373lfe.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 02:10:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kinvolk.io; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=YoeqkPyuuUAa89a437Y8XeIR94IijuVYW37iJHKjXro=;
+        b=QCubpUKtrVll90cGRqb8Cq97Ey09kXjAZfiiKTih+3YGW80RSglFZRnsPIjISll9ZD
+         qF2C2a7hL5SsTky9phPAVleo1aFYfPBRMpZjhlyXV4cytIZSXYVB2b5k8w4tppDHsymp
+         9B02eWOVWuM8UbYMO7eHrhMCLl3+KLJbZJRak=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=YoeqkPyuuUAa89a437Y8XeIR94IijuVYW37iJHKjXro=;
+        b=LciJH0gehPDotF1JbMFpbHCw+1pciGjKdnCHe+RBBjcvaq1she1zigO7wT2t9Lo+7+
+         Sqc/0K3w7AouRdxpLqaVzFhM+ooRy44dBf31ZEGiiLZ9r2nMeaqAgnKBFDFrxWNFQVY3
+         1EAnX9Izj5at+z6cblvJAMdySc7vYkZ7X/2wCRD21C1CVL+qsSqwbAni7nQzWf86LAjq
+         SboC/X4lmsbzTlnUElt6VE5voYwOJWdWAAJ7NgiqvTDfLnCmn+iCf39YISkeH/KmAJyC
+         E+4pMwYhoxPRvgUf/pgeZh9AI6VUhiYCFgDv/zUa6avziOAoisuRrl6/ePmU3R0IqQWL
+         CI/w==
+X-Gm-Message-State: APjAAAX+WXnUr3ruKrPKmOzRODsS++Op3JluAHhSbYtzdFysbb9NLSfz
+        gKvBEtoXPeXBc31MSLkeoIGkSfV8QlaYylMSEjaUWw==
+X-Google-Smtp-Source: APXvYqymZ7lUVgJdBpBi6jtOw+JA7FkCqSjQ7i/H6+FJ0lYr8Np2FRYIbmUefQFTW6IHKYweDRBGVB5Ju2417aCZP40=
+X-Received: by 2002:ac2:418f:: with SMTP id z15mr1951625lfh.177.1561540231825;
+ Wed, 26 Jun 2019 02:10:31 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1560938644.5ukemauqsy.astroid@bobo.none>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 19062609-0020-0000-0000-0000034D7EEA
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19062609-0021-0000-0000-000021A0F2FD
-Message-Id: <003ea53f-1c11-96cf-5949-3d7bf6fc4b31@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-26_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906260111
+References: <20190625194215.14927-1-krzesimir@kinvolk.io> <20190625194215.14927-9-krzesimir@kinvolk.io>
+ <20190625201220.GC10487@mini-arch>
+In-Reply-To: <20190625201220.GC10487@mini-arch>
+From:   Krzesimir Nowak <krzesimir@kinvolk.io>
+Date:   Wed, 26 Jun 2019 11:10:20 +0200
+Message-ID: <CAGGp+cE3m1+ZWFBmjTgKFEHYVJ-L1dE=+iVUXvXCxWAxRG9YTA@mail.gmail.com>
+Subject: Re: [bpf-next v2 08/10] bpf: Implement bpf_prog_test_run for perf
+ event programs
+To:     Stanislav Fomichev <sdf@fomichev.me>
+Cc:     netdev@vger.kernel.org, Alban Crequy <alban@kinvolk.io>,
+        =?UTF-8?Q?Iago_L=C3=B3pez_Galeiras?= <iago@kinvolk.io>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Nick,
-
-
-On 06/19/2019 03:39 PM, Nicholas Piggin wrote:
-> Abhishek's on June 19, 2019 7:08 pm:
->> Hi Nick,
->>
->> Thanks for the review. Some replies below.
->>
->> On 06/19/2019 09:53 AM, Nicholas Piggin wrote:
->>> Abhishek Goel's on June 17, 2019 7:56 pm:
->>>> Currently, the cpuidle governors determine what idle state a idling CPU
->>>> should enter into based on heuristics that depend on the idle history on
->>>> that CPU. Given that no predictive heuristic is perfect, there are cases
->>>> where the governor predicts a shallow idle state, hoping that the CPU will
->>>> be busy soon. However, if no new workload is scheduled on that CPU in the
->>>> near future, the CPU may end up in the shallow state.
->>>>
->>>> This is problematic, when the predicted state in the aforementioned
->>>> scenario is a shallow stop state on a tickless system. As we might get
->>>> stuck into shallow states for hours, in absence of ticks or interrupts.
->>>>
->>>> To address this, We forcefully wakeup the cpu by setting the
->>>> decrementer. The decrementer is set to a value that corresponds with the
->>>> residency of the next available state. Thus firing up a timer that will
->>>> forcefully wakeup the cpu. Few such iterations will essentially train the
->>>> governor to select a deeper state for that cpu, as the timer here
->>>> corresponds to the next available cpuidle state residency. Thus, cpu will
->>>> eventually end up in the deepest possible state.
->>>>
->>>> Signed-off-by: Abhishek Goel <huntbag@linux.vnet.ibm.com>
->>>> ---
->>>>
->>>> Auto-promotion
->>>>    v1 : started as auto promotion logic for cpuidle states in generic
->>>> driver
->>>>    v2 : Removed timeout_needed and rebased the code to upstream kernel
->>>> Forced-wakeup
->>>>    v1 : New patch with name of forced wakeup started
->>>>    v2 : Extending the forced wakeup logic for all states. Setting the
->>>> decrementer instead of queuing up a hrtimer to implement the logic.
->>>>
->>>>    drivers/cpuidle/cpuidle-powernv.c | 38 +++++++++++++++++++++++++++++++
->>>>    1 file changed, 38 insertions(+)
->>>>
->>>> diff --git a/drivers/cpuidle/cpuidle-powernv.c b/drivers/cpuidle/cpuidle-powernv.c
->>>> index 84b1ebe212b3..bc9ca18ae7e3 100644
->>>> --- a/drivers/cpuidle/cpuidle-powernv.c
->>>> +++ b/drivers/cpuidle/cpuidle-powernv.c
->>>> @@ -46,6 +46,26 @@ static struct stop_psscr_table stop_psscr_table[CPUIDLE_STATE_MAX] __read_mostly
->>>>    static u64 default_snooze_timeout __read_mostly;
->>>>    static bool snooze_timeout_en __read_mostly;
->>>>    
->>>> +static u64 forced_wakeup_timeout(struct cpuidle_device *dev,
->>>> +				 struct cpuidle_driver *drv,
->>>> +				 int index)
->>>> +{
->>>> +	int i;
->>>> +
->>>> +	for (i = index + 1; i < drv->state_count; i++) {
->>>> +		struct cpuidle_state *s = &drv->states[i];
->>>> +		struct cpuidle_state_usage *su = &dev->states_usage[i];
->>>> +
->>>> +		if (s->disabled || su->disable)
->>>> +			continue;
->>>> +
->>>> +		return (s->target_residency + 2 * s->exit_latency) *
->>>> +			tb_ticks_per_usec;
->>>> +	}
->>>> +
->>>> +	return 0;
->>>> +}
->>> It would be nice to not have this kind of loop iteration in the
->>> idle fast path. Can we add a flag or something to the idle state?
->> Currently, we do not have any callback notification or some feedback that
->> notifies the driver everytime some state is enabled/disabled. So we have
->> to parse everytime to get the next enabled state.
-> Ahh, that's why you're doing that.
+On Tue, Jun 25, 2019 at 10:12 PM Stanislav Fomichev <sdf@fomichev.me> wrote=
+:
 >
->> Are you suggesting to
->> add something like next_enabled_state in cpuidle state structure itself
->> which will be updated when a state is enabled or disabled?
-> Hmm, I guess it normally should not iterate over more than one state
-> unless some idle states are disabled.
+> On 06/25, Krzesimir Nowak wrote:
+> > As an input, test run for perf event program takes struct
+> > bpf_perf_event_data as ctx_in and struct bpf_perf_event_value as
+> > data_in. For an output, it basically ignores ctx_out and data_out.
+> >
+> > The implementation sets an instance of struct bpf_perf_event_data_kern
+> > in such a way that the BPF program reading data from context will
+> > receive what we passed to the bpf prog test run in ctx_in. Also BPF
+> > program can call bpf_perf_prog_read_value to receive what was passed
+> > in data_in.
+> >
+> > Signed-off-by: Krzesimir Nowak <krzesimir@kinvolk.io>
+> > ---
+> >  kernel/trace/bpf_trace.c                      | 107 ++++++++++++++++++
+> >  .../bpf/verifier/perf_event_sample_period.c   |   8 ++
+> >  2 files changed, 115 insertions(+)
+> >
+> > diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+> > index c102c240bb0b..2fa49ea8a475 100644
+> > --- a/kernel/trace/bpf_trace.c
+> > +++ b/kernel/trace/bpf_trace.c
+> > @@ -16,6 +16,8 @@
+> >
+> >  #include <asm/tlb.h>
+> >
+> > +#include <trace/events/bpf_test_run.h>
+> > +
+> >  #include "trace_probe.h"
+> >  #include "trace.h"
+> >
+> > @@ -1160,7 +1162,112 @@ const struct bpf_verifier_ops perf_event_verifi=
+er_ops =3D {
+> >       .convert_ctx_access     =3D pe_prog_convert_ctx_access,
+> >  };
+> >
+> > +static int pe_prog_test_run(struct bpf_prog *prog,
+> > +                         const union bpf_attr *kattr,
+> > +                         union bpf_attr __user *uattr)
+> > +{
+> > +     void __user *ctx_in =3D u64_to_user_ptr(kattr->test.ctx_in);
+> > +     void __user *data_in =3D u64_to_user_ptr(kattr->test.data_in);
+> > +     u32 data_size_in =3D kattr->test.data_size_in;
+> > +     u32 ctx_size_in =3D kattr->test.ctx_size_in;
+> > +     u32 repeat =3D kattr->test.repeat;
+> > +     u32 retval =3D 0, duration =3D 0;
+> > +     int err =3D -EINVAL;
+> > +     u64 time_start, time_spent =3D 0;
+> > +     int i;
+> > +     struct perf_sample_data sample_data =3D {0, };
+> > +     struct perf_event event =3D {0, };
+> > +     struct bpf_perf_event_data_kern real_ctx =3D {0, };
+> > +     struct bpf_perf_event_data fake_ctx =3D {0, };
+> > +     struct bpf_perf_event_value value =3D {0, };
+> > +
+> > +     if (ctx_size_in !=3D sizeof(fake_ctx))
+> > +             goto out;
+> > +     if (data_size_in !=3D sizeof(value))
+> > +             goto out;
+> > +
+> > +     if (copy_from_user(&fake_ctx, ctx_in, ctx_size_in)) {
+> > +             err =3D -EFAULT;
+> > +             goto out;
+> > +     }
+> Move this to net/bpf/test_run.c? I have a bpf_ctx_init helper to deal
+> with ctx input, might save you some code above wrt ctx size/etc.
+
+My impression about net/bpf/test_run.c was that it was a collection of
+helpers for test runs of the network-related BPF programs, because
+they are so similar to each other. So kernel/trace/bpf_trace.c looked
+like an obvious place for the test_run implementation since other perf
+trace BPF stuff was already there.
+
+And about bpf_ctx_init - looks useful as it seems to me that it
+handles the scenario where the size of the ctx struct grows, but still
+allows passing older version of the struct (thus smaller) from
+userspace for compatibility. Maybe that checking and copying part of
+the function could be moved into some non-static helper function, so I
+could use it and still skip the need for allocating memory for the
+context?
+
 >
-> What would have been nice is each state just have its own timeout
-> field with ticks already calculated, if that could be updated when
-> a state is enabled or disabled. How hard is that to add to the
-> cpuidle core?
+> > +     if (copy_from_user(&value, data_in, data_size_in)) {
+> > +             err =3D -EFAULT;
+> > +             goto out;
+> > +     }
+> > +
+> > +     real_ctx.regs =3D &fake_ctx.regs;
+> > +     real_ctx.data =3D &sample_data;
+> > +     real_ctx.event =3D &event;
+> > +     perf_sample_data_init(&sample_data, fake_ctx.addr,
+> > +                           fake_ctx.sample_period);
+> > +     event.cpu =3D smp_processor_id();
+> > +     event.oncpu =3D -1;
+> > +     event.state =3D PERF_EVENT_STATE_OFF;
+> > +     local64_set(&event.count, value.counter);
+> > +     event.total_time_enabled =3D value.enabled;
+> > +     event.total_time_running =3D value.running;
+> > +     /* make self as a leader - it is used only for checking the
+> > +      * state field
+> > +      */
+> > +     event.group_leader =3D &event;
+> > +
+> > +     /* slightly changed copy pasta from bpf_test_run() in
+> > +      * net/bpf/test_run.c
+> > +      */
+> > +     if (!repeat)
+> > +             repeat =3D 1;
+> > +
+> > +     rcu_read_lock();
+> > +     preempt_disable();
+> > +     time_start =3D ktime_get_ns();
+> > +     for (i =3D 0; i < repeat; i++) {
+> Any reason for not using bpf_test_run?
 
-I have implemented a prototype which does what you have asked for. Added
-a  disable_callback which will update timeout whenever a state is 
-enabled or
-disabled. But It would mean adding some code to cpuidle.h and 
-cpuidle/sysfs.c.
-If that is not an issue, should I go ahead and post it?
->>>> +
->>>>    static u64 get_snooze_timeout(struct cpuidle_device *dev,
->>>>    			      struct cpuidle_driver *drv,
->>>>    			      int index)
->>>> @@ -144,8 +164,26 @@ static int stop_loop(struct cpuidle_device *dev,
->>>>    		     struct cpuidle_driver *drv,
->>>>    		     int index)
->>>>    {
->>>> +	u64 dec_expiry_tb, dec, timeout_tb, forced_wakeup;
->>>> +
->>>> +	dec = mfspr(SPRN_DEC);
->>>> +	timeout_tb = forced_wakeup_timeout(dev, drv, index);
->>>> +	forced_wakeup = 0;
->>>> +
->>>> +	if (timeout_tb && timeout_tb < dec) {
->>>> +		forced_wakeup = 1;
->>>> +		dec_expiry_tb = mftb() + dec;
->>>> +	}
->>> The compiler probably can't optimise away the SPR manipulations so try
->>> to avoid them if possible.
->> Are you suggesting something like set_dec_before_idle?(in line with
->> what you have suggested to do after idle, reset_dec_after_idle)
-> I should have been clear, I meant don't mfspr(SPRN_DEC) until you
-> have tested timeout_tb.
+Two, mostly. One was that it is a static function and my code was
+elsewhere. Second was that it does some cgroup storage setup and I'm
+not sure if the perf event BPF program needs that.
+
 >
->>>> +
->>>> +	if (forced_wakeup)
->>>> +		mtspr(SPRN_DEC, timeout_tb);
->>> This should just be put in the above 'if'.
->> Fair point.
->>>> +
->>>>    	power9_idle_type(stop_psscr_table[index].val,
->>>>    			 stop_psscr_table[index].mask);
->>>> +
->>>> +	if (forced_wakeup)
->>>> +		mtspr(SPRN_DEC, dec_expiry_tb - mftb());
->>> This will sometimes go negative and result in another timer interrupt.
->>>
->>> It also breaks irq work (which can be set here by machine check I
->>> believe.
->>>
->>> May need to implement some timer code to do this for you.
->>>
->>> static void reset_dec_after_idle(void)
->>> {
->>> 	u64 now;
->>>           u64 *next_tb;
->>>
->>> 	if (test_irq_work_pending())
->>> 		return;
->>> 	now = mftb;
->>> 	next_tb = this_cpu_ptr(&decrementers_next_tb);
->>>
->>> 	if (now >= *next_tb)
->>> 		return;
->>> 	set_dec(*next_tb - now);
->>> 	if (test_irq_work_pending())
->>> 		set_dec(1);
->>> }
->>>
->>> Something vaguely like that. See timer_interrupt().
->> Ah, Okay. Will go through timer_interrupt().
-> Thanks,
-> Nick
+> > +             retval =3D BPF_PROG_RUN(prog, &real_ctx);
+> > +
+> > +             if (signal_pending(current)) {
+> > +                     err =3D -EINTR;
+> > +                     preempt_enable();
+> > +                     rcu_read_unlock();
+> > +                     goto out;
+> > +             }
+> > +
+> > +             if (need_resched()) {
+> > +                     time_spent +=3D ktime_get_ns() - time_start;
+> > +                     preempt_enable();
+> > +                     rcu_read_unlock();
+> > +
+> > +                     cond_resched();
+> > +
+> > +                     rcu_read_lock();
+> > +                     preempt_disable();
+> > +                     time_start =3D ktime_get_ns();
+> > +             }
+> > +     }
+> > +     time_spent +=3D ktime_get_ns() - time_start;
+> > +     preempt_enable();
+> > +     rcu_read_unlock();
+> > +
+> > +     do_div(time_spent, repeat);
+> > +     duration =3D time_spent > U32_MAX ? U32_MAX : (u32)time_spent;
+> > +     /* end of slightly changed copy pasta from bpf_test_run() in
+> > +      * net/bpf/test_run.c
+> > +      */
+> > +
+> > +     if (copy_to_user(&uattr->test.retval, &retval, sizeof(retval))) {
+> > +             err =3D -EFAULT;
+> > +             goto out;
+> > +     }
+> > +     if (copy_to_user(&uattr->test.duration, &duration, sizeof(duratio=
+n))) {
+> > +             err =3D -EFAULT;
+> > +             goto out;
+> > +     }
+> Can BPF program modify fake_ctx? Do we need/want to copy it back?
 
-Thanks,
-Abhishek
+Reading the pe_prog_is_valid_access function tells me that it's not
+possible - the only type of valid access is read. So maybe I should be
+stricter about the requirements for the data_out and ctx_out sizes
+(should be zero or return -EINVAL).
 
+>
+> > +     err =3D 0;
+> > +out:
+> > +     trace_bpf_test_finish(&err);
+> > +     return err;
+> > +}
+> > +
+> >  const struct bpf_prog_ops perf_event_prog_ops =3D {
+> > +     .test_run       =3D pe_prog_test_run,
+> >  };
+> >
+> >  static DEFINE_MUTEX(bpf_event_mutex);
+> > diff --git a/tools/testing/selftests/bpf/verifier/perf_event_sample_per=
+iod.c b/tools/testing/selftests/bpf/verifier/perf_event_sample_period.c
+> > index 471c1a5950d8..16e9e5824d14 100644
+> > --- a/tools/testing/selftests/bpf/verifier/perf_event_sample_period.c
+> > +++ b/tools/testing/selftests/bpf/verifier/perf_event_sample_period.c
+> This should probably go in another patch.
+
+Yeah, I was wondering about it. These changes are here to avoid
+breaking the tests, since perf event program can actually be run now
+and the test_run for perf event required certain sizes for ctx and
+data.
+
+So, I will either move them to a separate patch or rework the test_run
+for perf event to accept the size between 0 and sizeof(struct
+something), so the changes in tests maybe will not be necessary.
+
+>
+> > @@ -13,6 +13,8 @@
+> >       },
+> >       .result =3D ACCEPT,
+> >       .prog_type =3D BPF_PROG_TYPE_PERF_EVENT,
+> > +     .ctx_len =3D sizeof(struct bpf_perf_event_data),
+> > +     .data_len =3D sizeof(struct bpf_perf_event_value),
+> >  },
+> >  {
+> >       "check bpf_perf_event_data->sample_period half load permitted",
+> > @@ -29,6 +31,8 @@
+> >       },
+> >       .result =3D ACCEPT,
+> >       .prog_type =3D BPF_PROG_TYPE_PERF_EVENT,
+> > +     .ctx_len =3D sizeof(struct bpf_perf_event_data),
+> > +     .data_len =3D sizeof(struct bpf_perf_event_value),
+> >  },
+> >  {
+> >       "check bpf_perf_event_data->sample_period word load permitted",
+> > @@ -45,6 +49,8 @@
+> >       },
+> >       .result =3D ACCEPT,
+> >       .prog_type =3D BPF_PROG_TYPE_PERF_EVENT,
+> > +     .ctx_len =3D sizeof(struct bpf_perf_event_data),
+> > +     .data_len =3D sizeof(struct bpf_perf_event_value),
+> >  },
+> >  {
+> >       "check bpf_perf_event_data->sample_period dword load permitted",
+> > @@ -56,4 +62,6 @@
+> >       },
+> >       .result =3D ACCEPT,
+> >       .prog_type =3D BPF_PROG_TYPE_PERF_EVENT,
+> > +     .ctx_len =3D sizeof(struct bpf_perf_event_data),
+> > +     .data_len =3D sizeof(struct bpf_perf_event_value),
+> >  },
+> > --
+> > 2.20.1
+> >
+
+
+
+--=20
+Kinvolk GmbH | Adalbertstr.6a, 10999 Berlin | tel: +491755589364
+Gesch=C3=A4ftsf=C3=BChrer/Directors: Alban Crequy, Chris K=C3=BChl, Iago L=
+=C3=B3pez Galeiras
+Registergericht/Court of registration: Amtsgericht Charlottenburg
+Registernummer/Registration number: HRB 171414 B
+Ust-ID-Nummer/VAT ID number: DE302207000
