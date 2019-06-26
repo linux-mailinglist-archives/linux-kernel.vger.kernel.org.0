@@ -2,251 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D064B56946
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 14:35:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD92656942
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 14:35:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727519AbfFZMfj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 08:35:39 -0400
-Received: from mail-eopbgr760082.outbound.protection.outlook.com ([40.107.76.82]:3910
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726131AbfFZMfi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 08:35:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector1-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eH1Gjz/SwiOnqPv7o/dbajUXmfLWHUqFdqJQ2e6SEf0=;
- b=iI9qcS6NjUdkzQgWwnqiFOD+Vqi2zZHjg6+tsRF1bbCiwRD3QpVctOynYmjh286nk5yYNkk/nSs3lqkvELFYzma3ux7rVxca63ju766Jt9zKHM3Cdm/H6xjGpWKyU9FxlZx73f3lKjqG2t6jpvX8EFKyV6pK2qNjjZqTNxhvnRc=
-Received: from DM6PR02MB4779.namprd02.prod.outlook.com (20.176.109.16) by
- DM6PR02MB4090.namprd02.prod.outlook.com (20.176.75.31) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2008.18; Wed, 26 Jun 2019 12:33:54 +0000
-Received: from DM6PR02MB4779.namprd02.prod.outlook.com
- ([fe80::936:90c8:a385:1513]) by DM6PR02MB4779.namprd02.prod.outlook.com
- ([fe80::936:90c8:a385:1513%4]) with mapi id 15.20.2008.017; Wed, 26 Jun 2019
- 12:33:54 +0000
-From:   Naga Sureshkumar Relli <nagasure@xilinx.com>
-To:     Boris Brezillon <boris.brezillon@collabora.com>
-CC:     "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        "helmut.grohne@intenta.de" <helmut.grohne@intenta.de>,
-        "richard@nod.at" <richard@nod.at>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "vigneshr@ti.com" <vigneshr@ti.com>,
-        "bbrezillon@kernel.org" <bbrezillon@kernel.org>,
-        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [LINUX PATCH v17 1/2] mtd: rawnand: nand_micron: Do not over
- write driver's read_page()/write_page()
-Thread-Topic: [LINUX PATCH v17 1/2] mtd: rawnand: nand_micron: Do not over
- write driver's read_page()/write_page()
-Thread-Index: AQHVKxEOKM99KajnN0G2IiFegkrxG6atgBaAgABKdoCAAAOHgIAABNvwgAAFfoCAAAE2wIAAA0eAgAABfeA=
-Date:   Wed, 26 Jun 2019 12:33:54 +0000
-Message-ID: <DM6PR02MB477919D28FDC063894C3CF50AFE20@DM6PR02MB4779.namprd02.prod.outlook.com>
-References: <20190625044630.31717-1-naga.sureshkumar.relli@xilinx.com>
-        <20190626084807.3f06e718@collabora.com>
-        <DM6PR02MB47796E3306C166A91E0BAE91AFE20@DM6PR02MB4779.namprd02.prod.outlook.com>
-        <20190626132715.6128d8b1@collabora.com>
-        <DM6PR02MB4779D347620E88BDB943DEB4AFE20@DM6PR02MB4779.namprd02.prod.outlook.com>
-        <20190626140417.440cf762@collabora.com>
-        <DM6PR02MB4779B5C815FB4DAF33EF4996AFE20@DM6PR02MB4779.namprd02.prod.outlook.com>
- <20190626142021.484c4fd8@collabora.com>
-In-Reply-To: <20190626142021.484c4fd8@collabora.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=nagasure@xilinx.com; 
-x-originating-ip: [149.199.50.133]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: f3229a60-a164-475a-3395-08d6fa328d2d
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DM6PR02MB4090;
-x-ms-traffictypediagnostic: DM6PR02MB4090:
-x-microsoft-antispam-prvs: <DM6PR02MB409062D03A1F0D686B1F5D4EAFE20@DM6PR02MB4090.namprd02.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 00808B16F3
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(366004)(396003)(346002)(376002)(136003)(13464003)(189003)(199004)(14444005)(9686003)(102836004)(256004)(25786009)(6436002)(7416002)(81166006)(4326008)(81156014)(229853002)(305945005)(55016002)(53936002)(74316002)(33656002)(8936002)(52536014)(7736002)(8676002)(2906002)(476003)(11346002)(76176011)(14454004)(5660300002)(71190400001)(6506007)(53546011)(99286004)(66066001)(446003)(68736007)(486006)(7696005)(54906003)(71200400001)(316002)(478600001)(6246003)(3846002)(6116002)(186003)(26005)(6916009)(76116006)(66446008)(73956011)(86362001)(66476007)(66556008)(66946007)(64756008);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR02MB4090;H:DM6PR02MB4779.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: xilinx.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: HckuFpK08hU5rbLwAujp9Y8G8e2qKvDd/fZm3Vymryp47zvq6xlzVZzk2LJX4tmm8m9FWy1FjELEUutp2KtzKPEIvwsrFoe6QNjIoy5e4Zqd5q6kb3B8Cmad++sJ8G3RuJDxMxmIp8XzpsKPWNAY6Lo0qPGzAWj6wwTLeXRRGjwvQtboUqfiLxmRNc8Nayi2fR08SiFw/lLW5UIASw5dU6fdV7xFqUYks18Az7xfq8aKhD1b5BdHsch6pH6d9RuSWtZ6ONhyjxwb1OS10PPJxTaGZflwxOAzXoBKljPqPsSZQmvdKHcj1J9nQy/wWAuNqXWGPoMX927gTtKEIMSi1c4JE+pqK/dijnWRz+X9fzFW5sTcPLquaTjdrPxv7JHeCr9vRLa2fddQr9u+yBq/qgEQRFkP43mOXzbXgJUbvTw=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1727442AbfFZMfG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 08:35:06 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:33557 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726297AbfFZMfG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 08:35:06 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5QCYNrn4104062
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Wed, 26 Jun 2019 05:34:23 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5QCYNrn4104062
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019061801; t=1561552464;
+        bh=Y0enMar43bdA6z9NN9cZVbiLguylPYm5r/Gn1WI/6AI=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=NpC1OoH7VvhUZ2MCaZEXj4HBlVGG++8z9F9q2k2AGDar38KFFrjDK9AajjBSX4RGl
+         Yt3B1bH0LrMrXjmWWGMH4qU9sjXs7AQeDOJboAp0xy1mavnXxwLslTRnjO3zctGPTL
+         5TeDCh1QAOC0pLBj/cWBMmLlEYl/sSbstT6HfZbEX7Y0Mtsop+0lrFDf9pW7cfTFKV
+         j5qmMmjl01p8vd/Ff06C5aTrPcpE2IdOanGZSqFaaWkFZ66SKSJb/Mc03g2J7M58jE
+         0fU/J7A6L2UqmhLZ/R1Cn0NFv5jvu3cWeaO+F/1e4B7bBpJf4YMFWWr2neKhexi81/
+         SazgcOL0B0p4w==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5QCYKb84104059;
+        Wed, 26 Jun 2019 05:34:20 -0700
+Date:   Wed, 26 Jun 2019 05:34:20 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Catalin Marinas <tipbot@zytor.com>
+Message-ID: <tip-ed75e8f60bb1d41d751ccad470e15bc2a57adee6@git.kernel.org>
+Cc:     will.deacon@arm.com, linux@rasmusvillemoes.dk, ralf@linux-mips.org,
+        0x7f454c46@gmail.com, mingo@kernel.org, sthotton@marvell.com,
+        hpa@zytor.com, shuah@kernel.org, salyzyn@android.com,
+        pcc@google.com, tglx@linutronix.de, vincenzo.frascino@arm.com,
+        andre.przywara@arm.com, linux-kernel@vger.kernel.org,
+        daniel.lezcano@linaro.org, huw@codeweavers.com,
+        catalin.marinas@arm.com, linux@armlinux.org.uk, arnd@arndb.de,
+        paul.burton@mips.com
+Reply-To: tglx@linutronix.de, vincenzo.frascino@arm.com, shuah@kernel.org,
+          pcc@google.com, salyzyn@android.com, sthotton@marvell.com,
+          hpa@zytor.com, linux@rasmusvillemoes.dk, 0x7f454c46@gmail.com,
+          mingo@kernel.org, ralf@linux-mips.org, will.deacon@arm.com,
+          paul.burton@mips.com, daniel.lezcano@linaro.org, arnd@arndb.de,
+          linux@armlinux.org.uk, catalin.marinas@arm.com,
+          huw@codeweavers.com, linux-kernel@vger.kernel.org,
+          andre.przywara@arm.com
+In-Reply-To: <20190624135624.GB29120@arrakis.emea.arm.com>
+References: <20190624135624.GB29120@arrakis.emea.arm.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:timers/vdso] vdso: Remove superfluous #ifdef __KERNEL__ in
+ vdso/datapage.h
+Git-Commit-ID: ed75e8f60bb1d41d751ccad470e15bc2a57adee6
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f3229a60-a164-475a-3395-08d6fa328d2d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Jun 2019 12:33:54.2592
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: nagasure@xilinx.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR02MB4090
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=2.4 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_12_24,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
+        DKIM_VALID_EF,FREEMAIL_FORGED_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Level: **
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Boris,
+Commit-ID:  ed75e8f60bb1d41d751ccad470e15bc2a57adee6
+Gitweb:     https://git.kernel.org/tip/ed75e8f60bb1d41d751ccad470e15bc2a57adee6
+Author:     Catalin Marinas <catalin.marinas@arm.com>
+AuthorDate: Mon, 24 Jun 2019 14:56:24 +0100
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Wed, 26 Jun 2019 07:28:09 +0200
 
-> -----Original Message-----
-> From: Boris Brezillon <boris.brezillon@collabora.com>
-> Sent: Wednesday, June 26, 2019 5:50 PM
-> To: Naga Sureshkumar Relli <nagasure@xilinx.com>
-> Cc: miquel.raynal@bootlin.com; helmut.grohne@intenta.de; richard@nod.at;
-> dwmw2@infradead.org; computersforpeace@gmail.com; marek.vasut@gmail.com;
-> vigneshr@ti.com; bbrezillon@kernel.org; yamada.masahiro@socionext.com; li=
-nux-
-> mtd@lists.infradead.org; linux-kernel@vger.kernel.org
-> Subject: Re: [LINUX PATCH v17 1/2] mtd: rawnand: nand_micron: Do not over=
- write
-> driver's read_page()/write_page()
->=20
-> On Wed, 26 Jun 2019 12:12:47 +0000
-> Naga Sureshkumar Relli <nagasure@xilinx.com> wrote:
->=20
-> > Hi Boris,
-> >
-> > > -----Original Message-----
-> > > From: Boris Brezillon <boris.brezillon@collabora.com>
-> > > Sent: Wednesday, June 26, 2019 5:34 PM
-> > > To: Naga Sureshkumar Relli <nagasure@xilinx.com>
-> > > Cc: miquel.raynal@bootlin.com; helmut.grohne@intenta.de;
-> > > richard@nod.at; dwmw2@infradead.org; computersforpeace@gmail.com;
-> > > marek.vasut@gmail.com; vigneshr@ti.com; bbrezillon@kernel.org;
-> > > yamada.masahiro@socionext.com; linux- mtd@lists.infradead.org;
-> > > linux-kernel@vger.kernel.org
-> > > Subject: Re: [LINUX PATCH v17 1/2] mtd: rawnand: nand_micron: Do not
-> > > over write driver's read_page()/write_page()
-> > >
-> > > On Wed, 26 Jun 2019 11:51:12 +0000
-> > > Naga Sureshkumar Relli <nagasure@xilinx.com> wrote:
-> > >
-> > > > Hi Boris,
-> > > >
-> > > > > -----Original Message-----
-> > > > > From: Boris Brezillon <boris.brezillon@collabora.com>
-> > > > > Sent: Wednesday, June 26, 2019 4:57 PM
-> > > > > To: Naga Sureshkumar Relli <nagasure@xilinx.com>
-> > > > > Cc: miquel.raynal@bootlin.com; helmut.grohne@intenta.de;
-> > > > > richard@nod.at; dwmw2@infradead.org;
-> > > > > computersforpeace@gmail.com; marek.vasut@gmail.com;
-> > > > > vigneshr@ti.com; bbrezillon@kernel.org;
-> > > > > yamada.masahiro@socionext.com; linux- mtd@lists.infradead.org;
-> > > > > linux-kernel@vger.kernel.org
-> > > > > Subject: Re: [LINUX PATCH v17 1/2] mtd: rawnand: nand_micron: Do
-> > > > > not over write driver's read_page()/write_page()
-> > > > >
-> > > > > On Wed, 26 Jun 2019 11:22:33 +0000 Naga Sureshkumar Relli
-> > > > > <nagasure@xilinx.com> wrote:
-> > > > >
-> > > > > > Hi Boris,
-> > > > > >
-> > > > > > > -----Original Message-----
-> > > > > > > From: Boris Brezillon <boris.brezillon@collabora.com>
-> > > > > > > Sent: Wednesday, June 26, 2019 12:18 PM
-> > > > > > > To: Naga Sureshkumar Relli <nagasure@xilinx.com>
-> > > > > > > Cc: miquel.raynal@bootlin.com; helmut.grohne@intenta.de;
-> > > > > > > richard@nod.at; dwmw2@infradead.org;
-> > > > > > > computersforpeace@gmail.com; marek.vasut@gmail.com;
-> > > > > > > vigneshr@ti.com; bbrezillon@kernel.org;
-> > > > > > > yamada.masahiro@socionext.com; linux-
-> > > > > > > mtd@lists.infradead.org; linux-kernel@vger.kernel.org
-> > > > > > > Subject: Re: [LINUX PATCH v17 1/2] mtd: rawnand:
-> > > > > > > nand_micron: Do not over write driver's
-> > > > > > > read_page()/write_page()
-> > > > > > >
-> > > > > > > On Mon, 24 Jun 2019 22:46:29 -0600 Naga Sureshkumar Relli
-> > > > > > > <naga.sureshkumar.relli@xilinx.com> wrote:
-> > > > > > >
-> > > > > > > > Add check before assigning chip->ecc.read_page() and
-> > > > > > > > chip->ecc.write_page()
-> > > > > > > >
-> > > > > > > > Signed-off-by: Naga Sureshkumar Relli
-> > > > > > > > <naga.sureshkumar.relli@xilinx.com>
-> > > > > > > > ---
-> > > > > > > >  drivers/mtd/nand/raw/nand_micron.c | 7 +++++--
-> > > > > > > >  1 file changed, 5 insertions(+), 2 deletions(-)
-> > > > > > > >
-> > > > > > > > diff --git a/drivers/mtd/nand/raw/nand_micron.c
-> > > > > > > > b/drivers/mtd/nand/raw/nand_micron.c
-> > > > > > > > index cbd4f09ac178..565f2696c747 100644
-> > > > > > > > --- a/drivers/mtd/nand/raw/nand_micron.c
-> > > > > > > > +++ b/drivers/mtd/nand/raw/nand_micron.c
-> > > > > > > > @@ -500,8 +500,11 @@ static int micron_nand_init(struct nan=
-d_chip *chip)
-> > > > > > > >  		chip->ecc.size =3D 512;
-> > > > > > > >  		chip->ecc.strength =3D chip->base.eccreq.strength;
-> > > > > > > >  		chip->ecc.algo =3D NAND_ECC_BCH;
-> > > > > > > > -		chip->ecc.read_page =3D micron_nand_read_page_on_die_ecc=
-;
-> > > > > > > > -		chip->ecc.write_page =3D micron_nand_write_page_on_die_e=
-cc;
-> > > > > > > > +		if (!chip->ecc.read_page)
-> > > > > > > > +			chip->ecc.read_page =3D
-> > > > > > > > +micron_nand_read_page_on_die_ecc;
-> > > > > > > > +
-> > > > > > > > +		if (!chip->ecc.write_page)
-> > > > > > > > +			chip->ecc.write_page =3D
-> > > > > > > > +micron_nand_write_page_on_die_ecc;
-> > > > > > >
-> > > > > > > That's wrong, if you don't want on-die ECC to be used,
-> > > > > > > simply don't set nand-ecc-mode to "on- die".
-> > > > > > Ok. But if we want to use on-die ECC then you mean to say it
-> > > > > > is mandatory to use
-> > > > > micron_nand_read/write_page_on_die_ecc()?
-> > > > >
-> > > > > Absolutely, and if it doesn't work that means you driver does
-> > > > > not implement raw accesses correctly, which means it's still bugg=
-y...
-> > > > I agree. But let's say, if there is a limitation with the
-> > > > controller. Then it is must to have this
-> > > check right?
-> > > > I mean, for pl353 controller, we must clear the CS during the data
-> > > > phase, hence we are splitting the Transfer in the pl353_read/write_=
-page_raw().
-> > > > +	pl353_nand_read_data_op(chip, buf, mtd->writesize, false);
-> > > > +	p =3D chip->oob_poi;
-> > > > +	pl353_nand_read_data_op(chip, p,
-> > > > +				(mtd->oobsize -
-> > > > +				PL353_NAND_LAST_TRANSFER_LENGTH),
-> false);
-> > > > +	p +=3D (mtd->oobsize - PL353_NAND_LAST_TRANSFER_LENGTH);
-> > > > +	xnfc->dataphase_addrflags |=3D PL353_NAND_CLEAR_CS;
-> > > > +	pl353_nand_read_data_op(chip, p,
-> PL353_NAND_LAST_TRANSFER_LENGTH,
-> > > > +				false);
-> > > > As the above sequence is needed even for raw access, PL353 is
-> > > > unable to use the on_die_page
-> > > reads.
-> > >
-> > > This "de-assert CS on last access" logic should be done in the
-> > > exec_op() implementation. I also wonder how that works for
-> > > operations that don't have data cycles. Oh, BTW, most chips are
-> > > CE-don't-care, which means you can assert/de-assert CS on each read_d=
-ata_op() without
-> any issues.
-> > Yes, we can assert/de-assert CS on each read/write_data_op().
-> > But what about transfer length splitting?
-> > +	p =3D chip->oob_poi;
-> > +	pl353_nand_read_data_op(chip, p,
-> > +				(mtd->oobsize -
-> > +				PL353_NAND_LAST_TRANSFER_LENGTH), false);
-> > +	p +=3D (mtd->oobsize - PL353_NAND_LAST_TRANSFER_LENGTH);
-> > This should be done as a part of pl353_raw_read/write() right?
->=20
-> Are you sure you need to do that, and if that's the case, do you have an =
-idea why this is needed?
-> Is this "read last 4 bytes separately"
-> thing is needed, I suspect it's needed for any kind of input-data cycles,=
- not just page reads.
-Yes. It is needed. This is Limitation in the HW, need to handle last 4 byte=
-s separately for both page read/writes
+vdso: Remove superfluous #ifdef __KERNEL__ in vdso/datapage.h
 
-Regards,
-Naga Sureshkumar Relli
+With the move to UAPI headers, such #ifdefs are no longer necessary.
+
+Fixes: 361f8aee9b09 ("vdso: Define standardized vdso_datapage")
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc: linux-arch@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-mips@vger.kernel.org
+Cc: linux-kselftest@vger.kernel.org
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: Paul Burton <paul.burton@mips.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Mark Salyzyn <salyzyn@android.com>
+Cc: Peter Collingbourne <pcc@google.com>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Dmitry Safonov <0x7f454c46@gmail.com>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Huw Davies <huw@codeweavers.com>
+Cc: Shijith Thotton <sthotton@marvell.com>
+Cc: Andre Przywara <andre.przywara@arm.com>
+Link: https://lkml.kernel.org/r/20190624135624.GB29120@arrakis.emea.arm.com
+
+---
+ include/vdso/datapage.h | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/include/vdso/datapage.h b/include/vdso/datapage.h
+index e6eb36c3d54f..2e302c0f41f7 100644
+--- a/include/vdso/datapage.h
++++ b/include/vdso/datapage.h
+@@ -2,8 +2,6 @@
+ #ifndef __VDSO_DATAPAGE_H
+ #define __VDSO_DATAPAGE_H
+ 
+-#ifdef __KERNEL__
+-
+ #ifndef __ASSEMBLY__
+ 
+ #include <linux/bits.h>
+@@ -88,6 +86,4 @@ extern struct vdso_data _vdso_data[CS_BASES] __attribute__((visibility("hidden")
+ 
+ #endif /* !__ASSEMBLY__ */
+ 
+-#endif /* __KERNEL__ */
+-
+ #endif /* __VDSO_DATAPAGE_H */
