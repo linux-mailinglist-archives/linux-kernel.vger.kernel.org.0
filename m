@@ -2,268 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B0CE56BD2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 16:27:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 672B356C40
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 16:37:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727989AbfFZO07 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 10:26:59 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:35000 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727139AbfFZO06 (ORCPT
+        id S1728212AbfFZOhj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 10:37:39 -0400
+Received: from smtp688out1.syd.oss-core.net ([210.50.76.228]:26344 "EHLO
+        smtp688out1.syd.oss-core.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727663AbfFZOhj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 10:26:58 -0400
-Received: by mail-ed1-f67.google.com with SMTP id w20so3680620edd.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 07:26:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=+Sws+y+jIZZelBzcnrJJ0ZS8ppZIP3b1lsfL6ibj+Hg=;
-        b=fuw0xmzWVsvYQ7NHziWwmctpltE/r/OGyFMtcvpw9sv8qBO+YV33n0Mc7j6fQqiqfB
-         Ja3+Ej4QXaQx/e8rB+5pVFuvF3r+CMYb/7JrhhKN0WLIG5LsbzDOWiR//ynyAmk2sI5H
-         KiJKUjzIa6YTwpMxeeH8JoevX2edcOhSC//Cs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=+Sws+y+jIZZelBzcnrJJ0ZS8ppZIP3b1lsfL6ibj+Hg=;
-        b=MHDh6/gHAxXtjzgAkwNaggxZ6IrRx0o3/duSaXfajMqzTQpeZPBG1VXZT7/rVwJ0JF
-         wVP79qfNGutbT2XTzjAiVUgHMpJiLTzluARfwcuHjDAbXdJpcxtRVKxO3pApWU2KwQ2R
-         4wem5ATMTLqh1VSJImoFqi9sSwFvKKJ87l/Ol2KqK8o9O5dr3ysClxJEdWnkBGHslhdD
-         zWYgyl8uot6kHZZvmVp6f2bKQ2FdSWUgzJzvoHo9zdhfMRvYjCo2oWflJfFvDEP0IUov
-         2oS8vG/bQN8jrvOFqQfIqgk/WUgQpWOIXneuc80/naIFzjlrXVBWzMbnl5OBoPFkBBVw
-         AZGA==
-X-Gm-Message-State: APjAAAW9UfPk5EOCBZd919OwNY30IVK9yAH43+59tQpn9c5QqgVZHLvI
-        nzh1yfR2Y14UIKa7R6xg7WLA3w==
-X-Google-Smtp-Source: APXvYqyp08IXUCIUK4l7d2Jt1o6F4hinDBwuiLEx0381nHzALAYQWsl3wQcRoV43OyBk7eOaVJjQlw==
-X-Received: by 2002:a17:906:15d0:: with SMTP id l16mr4451217ejd.234.1561559215925;
-        Wed, 26 Jun 2019 07:26:55 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id j17sm6164900ede.60.2019.06.26.07.26.54
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 26 Jun 2019 07:26:55 -0700 (PDT)
-Date:   Wed, 26 Jun 2019 16:26:52 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-Cc:     Daniel Vetter <daniel@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        intel-gfx <intel-gfx@lists.freedesktop.org>
-Subject: Re: [Intel-gfx] [PATCH V4] drm/drm_vblank: Change EINVAL by the
- correct errno
-Message-ID: <20190626142652.GL12905@phenom.ffwll.local>
-Mail-Followup-To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        intel-gfx <intel-gfx@lists.freedesktop.org>
-References: <20190619020750.swzerehjbvx6sbk2@smtp.gmail.com>
- <20190619074856.GJ12905@phenom.ffwll.local>
- <20190619075059.GK12905@phenom.ffwll.local>
- <20190626020005.vb5gmqcvkyzgcjee@smtp.gmail.com>
- <CAKMK7uEd71XTeuZeu1Km8Vq1K1VJJbgANyaZNWm4v18Qh-OqVw@mail.gmail.com>
- <CADKXj+5+QHr1a0aiVZ1cSiPbtZhUAjmqiTmoQHGyEhodbcA2WQ@mail.gmail.com>
+        Wed, 26 Jun 2019 10:37:39 -0400
+X-Greylist: delayed 593 seconds by postgrey-1.27 at vger.kernel.org; Wed, 26 Jun 2019 10:37:38 EDT
+DomainKey-Signature: s=iprimus-dk; d=iprimus.com.au; c=simple; q=dns;
+  h=X-IronPort-AV:Received:MIME-Version:Content-Type:
+   Content-Transfer-Encoding:Date:From:To:Subject:Reply-To:
+   Mail-Reply-To:Message-ID:X-Sender:User-Agent:
+   X-Originating-IP;
+  b=DR5d/2m6yf3cV8EkhbPyBhegJzcxTZIGPjuvhEegYqIXs8FbEox1QtoG
+   0ctl1+1Sio9eHFv4RK3NRqaFXG1SxNLshRQ6r3lmOCowCvtVzEN4t4ACL
+   R+GQW6Kk4K9+a0Z9r/44JJ3nyLldG35x6eQlFyRCCRFGQHslXT8lGktDF
+   w=;
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=iprimus.com.au; i=@iprimus.com.au; l=1943; q=dns/txt;
+  s=iprimus-dkim; t=1561559858; x=1593095858;
+  h=mime-version:content-transfer-encoding:date:from:to:
+   subject:reply-to:message-id;
+  bh=Hc8obvDdrcUMwWhu+Il+mJzbV0fX/hxqYtVCIDKFfrs=;
+  b=PLmKsR7DjI1xYSWG4SyntFC4yYcRUd0ufsql57BF/xYoXrYyFvBs3TiZ
+   4K8D1fO11gKnYQfxwpkZtEq3B/a3GsH2t8S28KMabPiKi305Ethxuni36
+   cuIqmqhC5ZEKvAiBtEO3AXeOsq1H/zu/hRHan7Fprsdw2BMt+iDD9dzfM
+   4=;
+X-IronPort-AV: E=Sophos;i="5.63,420,1557151200"; 
+   d="scan'208";a="118416057"
+Received: from 158.11.134.203.sta.m2core.net.au (HELO 0.0.0.0) ([203.134.11.158])
+  by smtp688.syd.oss-core.net with ESMTP; 27 Jun 2019 00:27:43 +1000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CADKXj+5+QHr1a0aiVZ1cSiPbtZhUAjmqiTmoQHGyEhodbcA2WQ@mail.gmail.com>
-X-Operating-System: Linux phenom 4.19.0-5-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Date:   Wed, 26 Jun 2019 14:27:43 +0000
+From:   Mrs Marija Sterbenc <marijasterbenc0@iprimus.com.au>
+To:     undisclosed-recipients:;
+Subject: Donatie Van Mvr Marija Sterbenc
+Reply-To: marijasterbenc55@gmail.com
+Mail-Reply-To: marijasterbenc55@gmail.com
+Message-ID: <fdc11dcdeed4f4ebfed9ec81574815cd@iprimus.com.au>
+X-Sender: marijasterbenc0@iprimus.com.au
+User-Agent: Roundcube Webmail/1.2.9
+X-Originating-IP: [58.162.210.160]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 26, 2019 at 10:37:11AM -0300, Rodrigo Siqueira wrote:
-> On Wed, Jun 26, 2019 at 4:53 AM Daniel Vetter <daniel@ffwll.ch> wrote:
-> >
-> > On Wed, Jun 26, 2019 at 4:00 AM Rodrigo Siqueira
-> > <rodrigosiqueiramelo@gmail.com> wrote:
-> > >
-> > > On 06/19, Daniel Vetter wrote:
-> > > > On Wed, Jun 19, 2019 at 09:48:56AM +0200, Daniel Vetter wrote:
-> > > > > On Tue, Jun 18, 2019 at 11:07:50PM -0300, Rodrigo Siqueira wrote:
-> > > > > > For historical reason, the function drm_wait_vblank_ioctl always return
-> > > > > > -EINVAL if something gets wrong. This scenario limits the flexibility
-> > > > > > for the userspace make detailed verification of the problem and take
-> > > > > > some action. In particular, the validation of “if (!dev->irq_enabled)”
-> > > > > > in the drm_wait_vblank_ioctl is responsible for checking if the driver
-> > > > > > support vblank or not. If the driver does not support VBlank, the
-> > > > > > function drm_wait_vblank_ioctl returns EINVAL which does not represent
-> > > > > > the real issue; this patch changes this behavior by return EOPNOTSUPP.
-> > > > > > Additionally, some operations are unsupported by this function, and
-> > > > > > returns EINVAL; this patch also changes the return value to EOPNOTSUPP
-> > > > > > in this case. Lastly, the function drm_wait_vblank_ioctl is invoked by
-> > > > > > libdrm, which is used by many compositors; because of this, it is
-> > > > > > important to check if this change breaks any compositor. In this sense,
-> > > > > > the following projects were examined:
-> > > > > >
-> > > > > > * Drm-hwcomposer
-> > > > > > * Kwin
-> > > > > > * Sway
-> > > > > > * Wlroots
-> > > > > > * Wayland-core
-> > > > > > * Weston
-> > > > > > * Xorg (67 different drivers)
-> > > > > >
-> > > > > > For each repository the verification happened in three steps:
-> > > > > >
-> > > > > > * Update the main branch
-> > > > > > * Look for any occurrence "drmWaitVBlank" with the command:
-> > > > > >   git grep -n "drmWaitVBlank"
-> > > > > > * Look in the git history of the project with the command:
-> > > > > >   git log -SdrmWaitVBlank
-> > > > > >
-> > > > > > Finally, none of the above projects validate the use of EINVAL which
-> > > > > > make safe, at least for these projects, to change the return values.
-> > > > > >
-> > > > > > Change since V3:
-> > > > > >  - Return EINVAL for _DRM_VBLANK_SIGNAL (Daniel)
-> > > > > >
-> > > > > > Change since V2:
-> > > > > >  Daniel Vetter and Chris Wilson
-> > > > > >  - Replace ENOTTY by EOPNOTSUPP
-> > > > > >  - Return EINVAL if the parameters are wrong
-> > > > > >
-> > > > >
-> > > > > Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-> > > > >
-> > > > > Apologies for the confusion on the last time around. btw if someone tells
-> > > > > you "r-b (or a-b) with these changes", then just apply the r-b/a-b tag
-> > > > > next time around. Otherwise people will re-review the same thing over and
-> > > > > over again.
-> > > >
-> > > > btw when resending patches it's good practice to add anyone who commented
-> > > > on it (or who commented on the igt test for the same patch and other way
-> > > > round) onto the explicit Cc: list of the patch. That way it's easier for
-> > > > them to follow the patch evolution and do a quick r-b once they're happy.
-> > >
-> > > Thanks for these valuable tips.
-> > > Do you think that is a good idea to resend this patch CC's everybody? Or
-> > > is it ok if I just apply it?
-> >
-> > Hm I thought I answered that on irc ... but just today I realized that
-> > we missed 2 ioctls. There's also drm_crtc_get_sequence_ioctl and
-> > drm_crtc_queue_sequence_ioctl which have the same dev->irq_enabled
-> > check and I think should be treated the same.
-> 
-> Hi,
-> 
-> I reexamined all the composers described in the commit message (latest
-> versions) to check if any project use and validate the return value
-> from  drm_crtc_get_sequence_ioctl and drm_crtc_queue_sequence_ioctl. I
-> noticed that mesa and xserver use them. FWIU replace EINVAL by
-> EOPNOTSUPP is harmless for mesa project, however it is not the same
-> for xserver.
-> 
-> Take a look at line 189 and 238 of hw/xfree86/drivers/modesetting/vblank.c
-> 
-> * https://gitlab.freedesktop.org/xorg/xserver/blob/master/hw/xfree86/drivers/modesetting/vblank.c#L238
-> * https://gitlab.freedesktop.org/xorg/xserver/blob/master/hw/xfree86/drivers/modesetting/vblank.c#L189
-> 
-> A little bit below the above lines, you can see a validation like that:
-> 
->   if (ret != -1 || (errno != ENOTTY && errno != EINVAL))
-> 
-> In other words, if we change the EINVAL by EOPNOTSUPP
-> drm_crtc_[get|queue]_sequence_ioctl we could break xserver. I noticed
-> that Keith Packard introduced these ioctls to the kernel and also to
-> the xserver, I will prepare a new version and CC Keith. Should I do
-> another thing to notify xserver developers?
+Donatie Van Mvr Marija Sterbenc
 
-If you want cc: xorg-devel or so, but I think they all moved to gitlab and
-the m-l is pretty dead. Cc'ing Keith should be enough.
+Liefste in de Heer,
 
-I looked at the code and I think we're fine. Better than fine actually,
-because if dev->irq_enabled == false then we really shouldn't use vblank
-ioctl, no matter whether the new or old version.
+Met alle respect en menselijkheid werd ik gedwongen te schrijven op een 
+humanitair gebied.
 
-So for drivers without vblank support, all that will happen is that we
-leave ->has_queue_sequence as false and then fail a bit later on with the
-legacy ioctl. Should be all harmless.
+Ik ben een weduwe Marija Sterbenc die langdurige zieken (kanker) 
+veroudert. Zijn momenteel opgenomen in een privéziekenhuis. Ik heb wat 
+geld dat ik heb geërfd van myhusband, Anthony Sterbenc, die later stierf 
+bij een auto-ongeluk.
 
-Note that the idea behind filtering out EINVAL is that if you do a
-QueueSequence on a crtc that's currently off, then it'll fail with EINVAL.
-But the ioctl still works, hence why we want to accept that. Setting
-has_queue_sequence = TRUE for the case where there's actually no vblank
-might trigger a bug somewhere later on.
--Daniel
+Toen mijn man in leven was, deponeerde hij de som van € 4.500.000,00 
+(4.500.000,00 Euro) in een bank. Momenteel staat dit geld nog steeds op 
+de bank.
 
-> 
-> Thanks
-> 
-> > Can you pls resend with those addressed too? Then you can also resend
-> > with the cc's all added.
-> > -Daniel
-> >
-> > >
-> > > > If you don't do that then much bigger chances your patch gets ignored.
-> > > > -Daniel
-> > > > >
-> > > > > > Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-> > > > > > ---
-> > > > > >  drivers/gpu/drm/drm_vblank.c | 2 +-
-> > > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > > >
-> > > > > > diff --git a/drivers/gpu/drm/drm_vblank.c b/drivers/gpu/drm/drm_vblank.c
-> > > > > > index 603ab105125d..bed233361614 100644
-> > > > > > --- a/drivers/gpu/drm/drm_vblank.c
-> > > > > > +++ b/drivers/gpu/drm/drm_vblank.c
-> > > > > > @@ -1582,7 +1582,7 @@ int drm_wait_vblank_ioctl(struct drm_device *dev, void *data,
-> > > > > >   unsigned int flags, pipe, high_pipe;
-> > > > > >
-> > > > > >   if (!dev->irq_enabled)
-> > > > > > -         return -EINVAL;
-> > > > > > +         return -EOPNOTSUPP;
-> > > > > >
-> > > > > >   if (vblwait->request.type & _DRM_VBLANK_SIGNAL)
-> > > > > >           return -EINVAL;
-> > > > > > --
-> > > > > > 2.21.0
-> > > > >
-> > > > > --
-> > > > > Daniel Vetter
-> > > > > Software Engineer, Intel Corporation
-> > > > > http://blog.ffwll.ch
-> > > >
-> > > > --
-> > > > Daniel Vetter
-> > > > Software Engineer, Intel Corporation
-> > > > http://blog.ffwll.ch
-> > >
-> > > --
-> > > Rodrigo Siqueira
-> > > https://siqueira.tech
-> > > _______________________________________________
-> > > Intel-gfx mailing list
-> > > Intel-gfx@lists.freedesktop.org
-> > > https://lists.freedesktop.org/mailman/listinfo/intel-gfx
-> >
-> >
-> >
-> > --
-> > Daniel Vetter
-> > Software Engineer, Intel Corporation
-> > +41 (0) 79 365 57 48 - http://blog.ffwll.ch
-> 
-> 
-> 
-> -- 
-> 
-> Rodrigo Siqueira
-> https://siqueira.tech
+Mijn arts zei me dat het de komende drie maanden niet zou aanhouden 
+vanwege het kankerprobleem. Ik heb iemand nodig die heel eerlijk en 
+godvrezend is en die deze gelden kan gebruiken voor het werk van God. 
+Mijn overleden man heeft geleerd dat dit fonds voor 
+liefdadigheidsdoeleinden moet worden gebruikt. , zoals het bouwen van 
+scholen, huizen van weeshuizen, ziekenhuizen, enz.
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Ik nam deze beslissing omdat ik geen kind heb dat dit geld zal erven en 
+ik wil dat God mij genadig is en mijn ziel accepteert. Met God zijn alle 
+dingen mogelijk. Alsjeblieft, als je in staat zou zijn om deze fondsen 
+te gebruiken voor Gods werk, reageer dan alstublieft op mijn id: met dit 
+e-mailadres: (marijasterbenc55@gmail.com)
+
+Ik wil dat je me de volgende informatie toestuurt waarnaar hieronder 
+wordt verwezen.
+
+Je volledige naam -----------------------
+Jouw land -------------------------
+Jouw adres --------------------------
+Jouw leeftijd ------------------------------
+Uw dienstverband -----------------------
+De telefoon ------------------------
+Zodra ik uw antwoord heb ontvangen, zal ik u het contact van de bank 
+geven en ik zal u ook een machtigingsbrief geven die u laat zien dat u 
+de huidige begunstigde van dit fonds bent.
+
+In de hoop uw antwoord te ontvangen. Blijf gezegend in de Heer.
+
+Dank je
+
+Met vriendelijke groet
+
+Mevrouw Marija Sterbenc
