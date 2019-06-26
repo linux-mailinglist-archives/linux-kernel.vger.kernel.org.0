@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6E9E5747B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 00:39:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 073B457475
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 00:39:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726739AbfFZWjf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 18:39:35 -0400
+        id S1726604AbfFZWjF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 18:39:05 -0400
 Received: from mga11.intel.com ([192.55.52.93]:10648 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726545AbfFZWjB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 18:39:01 -0400
+        id S1726563AbfFZWjC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 18:39:02 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jun 2019 15:39:00 -0700
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jun 2019 15:39:01 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.63,421,1557212400"; 
-   d="scan'208";a="313574975"
+   d="scan'208";a="313574981"
 Received: from spandruv-mobl.amr.corp.intel.com ([10.251.133.109])
-  by orsmga004.jf.intel.com with ESMTP; 26 Jun 2019 15:38:59 -0700
+  by orsmga004.jf.intel.com with ESMTP; 26 Jun 2019 15:39:00 -0700
 From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 To:     dvhart@infradead.org, andy@infradead.org,
         andriy.shevchenko@intel.com, corbet@lwn.net
@@ -27,9 +27,9 @@ Cc:     rjw@rjwysocki.net, alan@linux.intel.com, lenb@kernel.org,
         prarit@redhat.com, darcari@redhat.com, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
         Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [PATCH 03/10] platform/x86: ISST: Store per CPU information
-Date:   Wed, 26 Jun 2019 15:38:44 -0700
-Message-Id: <20190626223851.19138-4-srinivas.pandruvada@linux.intel.com>
+Subject: [PATCH 04/10] platform/x86: ISST: Add IOCTL to Translate Linux logical CPU to PUNIT CPU number
+Date:   Wed, 26 Jun 2019 15:38:45 -0700
+Message-Id: <20190626223851.19138-5-srinivas.pandruvada@linux.intel.com>
 X-Mailer: git-send-email 2.17.2
 In-Reply-To: <20190626223851.19138-1-srinivas.pandruvada@linux.intel.com>
 References: <20190626223851.19138-1-srinivas.pandruvada@linux.intel.com>
@@ -38,203 +38,148 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are two per CPU data needs to be stored and cached to avoid repeated
-MSR readings for accessing them later:
-
-- Physical to logical CPU conversion
-The PUNIT uses a different CPU numbering scheme which is not APIC id based.
-So we need to establish relationship between PUNIT CPU number and Linux
-logical CPU numbering which is based on APIC id. There is an MSR 0x53
-(MSR_THREAD_ID), which gets physical CPU number for the local CPU where it
-is read. Also the CPU mask in some messages will inform which CPUs needs
-to be online/offline for a TDP level. During TDP switch if user offlined
-some CPUs, then the physical CPU mask can't be converted as we can't
-read MSR on an offlined CPU to go to a lower TDP level by onlining more
-CPUs. So the mapping needs to be established at the boot up time.
-
-- Bus number corresponding to a CPU
-A group of CPUs are in a control of a PUNIT. The PUNIT device is exported
-as PCI device. To do operation on a PUNIT for a CPU, we need to find out
-to which PCI device it is related to. This is done by reading MSR 0x128
-(MSR_CPU_BUS_NUMBER).
-
-So during CPU online stages the above MSRs are read and stored. Later
-this stored information is used to process IOCTLs request from the user
-space.
+Add processing for IOCTL command ISST_IF_GET_PHY_ID. This converts from the
+Linux logical CPU to PUNIT CPU numbering scheme.
 
 Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 ---
- .../intel_speed_select_if/isst_if_common.c    | 114 +++++++++++++++++-
- .../intel_speed_select_if/isst_if_common.h    |   1 +
- 2 files changed, 114 insertions(+), 1 deletion(-)
+ .../intel_speed_select_if/isst_if_common.c    | 74 +++++++++++++++++++
+ include/uapi/linux/isst_if.h                  | 28 +++++++
+ 2 files changed, 102 insertions(+)
 
 diff --git a/drivers/platform/x86/intel_speed_select_if/isst_if_common.c b/drivers/platform/x86/intel_speed_select_if/isst_if_common.c
-index ab2bb4862dc8..0e16cbf685d0 100644
+index 0e16cbf685d0..72e74d72724b 100644
 --- a/drivers/platform/x86/intel_speed_select_if/isst_if_common.c
 +++ b/drivers/platform/x86/intel_speed_select_if/isst_if_common.c
-@@ -7,14 +7,22 @@
-  * Author: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-  */
+@@ -134,16 +134,90 @@ static void isst_if_cpu_info_exit(void)
+ 	kfree(isst_cpu_info);
+ };
  
-+#include <linux/cpufeature.h>
-+#include <linux/cpuhotplug.h>
- #include <linux/fs.h>
- #include <linux/miscdevice.h>
- #include <linux/module.h>
-+#include <linux/pci.h>
-+#include <linux/sched/signal.h>
-+#include <linux/slab.h>
- #include <linux/uaccess.h>
- #include <uapi/linux/isst_if.h>
- 
- #include "isst_if_common.h"
- 
-+#define MSR_THREAD_ID_INFO	0x53
-+#define MSR_CPU_BUS_NUMBER	0x128
-+
- static struct isst_if_cmd_cb punit_callbacks[ISST_IF_DEV_MAX];
- 
- static int isst_if_get_platform_info(void __user *argp)
-@@ -33,6 +41,99 @@ static int isst_if_get_platform_info(void __user *argp)
- 	return 0;
- }
- 
-+
-+struct isst_if_cpu_info {
-+	/* For BUS 0 and BUS 1 only, which we need for PUNIT interface */
-+	int bus_info[2];
-+	int punit_cpu_id;
-+};
-+
-+static struct isst_if_cpu_info *isst_cpu_info;
-+
-+/**
-+ * isst_if_get_pci_dev() - Get the PCI device instance for a CPU
-+ * @cpu: Logical CPU number.
-+ * @bus_number: The bus number assigned by the hardware.
-+ * @dev: The device number assigned by the hardware.
-+ * @fn: The function number assigned by the hardware.
-+ *
-+ * Using cached bus information, find out the PCI device for a bus number,
-+ * device and function.
-+ *
-+ * Return: Return pci_dev pointer or NULL.
-+ */
-+struct pci_dev *isst_if_get_pci_dev(int cpu, int bus_no, int dev, int fn)
++static long isst_if_proc_phyid_req(u8 *cmd_ptr, int *write_only, int resume)
 +{
-+	int bus_number;
++	struct isst_if_cpu_map *cpu_map;
 +
-+	if (bus_no < 0 || bus_no > 1 || cpu < 0 || cpu >= nr_cpu_ids ||
-+	    cpu >= num_possible_cpus())
-+		return NULL;
++	cpu_map = (struct isst_if_cpu_map *)cmd_ptr;
++	if (cpu_map->logical_cpu >= nr_cpu_ids ||
++	    cpu_map->logical_cpu >= num_possible_cpus())
++		return -EINVAL;
 +
-+	bus_number = isst_cpu_info[cpu].bus_info[bus_no];
-+	if (bus_number < 0)
-+		return NULL;
-+
-+	return pci_get_domain_bus_and_slot(0, bus_number, PCI_DEVFN(dev, fn));
-+}
-+EXPORT_SYMBOL_GPL(isst_if_get_pci_dev);
-+
-+static int isst_if_cpu_online(unsigned int cpu)
-+{
-+	u64 data;
-+	int ret;
-+
-+	ret = rdmsrl_safe(MSR_CPU_BUS_NUMBER, &data);
-+	if (ret) {
-+		/* This is not a fatal error on MSR mailbox only I/F */
-+		isst_cpu_info[cpu].bus_info[0] = -1;
-+		isst_cpu_info[cpu].bus_info[1] = -1;
-+	} else {
-+		isst_cpu_info[cpu].bus_info[0] = data & 0xff;
-+		isst_cpu_info[cpu].bus_info[1] = (data >> 8) & 0xff;
-+	}
-+
-+	ret = rdmsrl_safe(MSR_THREAD_ID_INFO, &data);
-+	if (ret) {
-+		isst_cpu_info[cpu].punit_cpu_id = -1;
-+		return ret;
-+	}
-+	isst_cpu_info[cpu].punit_cpu_id = data;
++	*write_only = 0;
++	cpu_map->physical_cpu = isst_cpu_info[cpu_map->logical_cpu].punit_cpu_id;
 +
 +	return 0;
 +}
 +
-+static int isst_if_online_id;
-+
-+static int isst_if_cpu_info_init(void)
++static long isst_if_exec_multi_cmd(void __user *argp, struct isst_if_cmd_cb *cb)
 +{
-+	int ret;
++	unsigned char __user *ptr;
++	u32 cmd_count;
++	u8 *cmd_ptr;
++	long ret;
++	int i;
 +
-+	isst_cpu_info = kcalloc(num_possible_cpus(),
-+				sizeof(*isst_cpu_info),
-+				GFP_KERNEL);
-+	if (!isst_cpu_info)
++	/* Each multi command has u32 command count as the first field */
++	if (copy_from_user(&cmd_count, argp, sizeof(cmd_count)))
++		return -EFAULT;
++
++	if (!cmd_count || cmd_count > ISST_IF_CMD_LIMIT)
++		return -EINVAL;
++
++	cmd_ptr = kmalloc(cb->cmd_size, GFP_KERNEL);
++	if (!cmd_ptr)
 +		return -ENOMEM;
 +
-+	ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN,
-+				"platform/x86/isst-if:online",
-+				isst_if_cpu_online, NULL);
-+	if (ret < 0) {
-+		kfree(isst_cpu_info);
-+		return ret;
++	/* cb->offset points to start of the command after the command count */
++	ptr = argp + cb->offset;
++
++	for (i = 0; i < cmd_count; ++i) {
++		int wr_only;
++
++		if (signal_pending(current)) {
++			ret = -EINTR;
++			break;
++		}
++
++		if (copy_from_user(cmd_ptr, ptr, cb->cmd_size)) {
++			ret = -EFAULT;
++			break;
++		}
++
++		ret = cb->cmd_callback(cmd_ptr, &wr_only, 0);
++		if (ret)
++			break;
++
++		if (!wr_only && copy_to_user(ptr, cmd_ptr, cb->cmd_size)) {
++			ret = -EFAULT;
++			break;
++		}
++
++		ptr += cb->cmd_size;
 +	}
 +
-+	isst_if_online_id = ret;
++	kfree(cmd_ptr);
 +
-+	return 0;
++	return i ? i : ret;
 +}
-+
-+static void isst_if_cpu_info_exit(void)
-+{
-+	cpuhp_remove_state(isst_if_online_id);
-+	kfree(isst_cpu_info);
-+};
 +
  static long isst_if_def_ioctl(struct file *file, unsigned int cmd,
  			      unsigned long arg)
  {
-@@ -145,9 +246,18 @@ int isst_if_cdev_register(int device_type, struct isst_if_cmd_cb *cb)
- 		return -EAGAIN;
+ 	void __user *argp = (void __user *)arg;
++	struct isst_if_cmd_cb cmd_cb;
+ 	long ret = -ENOTTY;
+ 
+ 	switch (cmd) {
+ 	case ISST_IF_GET_PLATFORM_INFO:
+ 		ret = isst_if_get_platform_info(argp);
+ 		break;
++	case ISST_IF_GET_PHY_ID:
++		cmd_cb.cmd_size = sizeof(struct isst_if_cpu_map);
++		cmd_cb.offset = offsetof(struct isst_if_cpu_maps, cpu_map);
++		cmd_cb.cmd_callback = isst_if_proc_phyid_req;
++		ret = isst_if_exec_multi_cmd(argp, &cmd_cb);
++		break;
+ 	default:
+ 		break;
  	}
- 	if (!misc_usage_count) {
-+		int ret;
+diff --git a/include/uapi/linux/isst_if.h b/include/uapi/linux/isst_if.h
+index fa94480b5f74..15d1f286a830 100644
+--- a/include/uapi/linux/isst_if.h
++++ b/include/uapi/linux/isst_if.h
+@@ -36,6 +36,34 @@ struct isst_if_platform_info {
+ 	__u8 mmio_supported;
+ };
+ 
++/**
++ * struct isst_if_cpu_map - CPU mapping between logical and physical CPU
++ * @logical_cpu:	Linux logical CPU number
++ * @physical_cpu:	PUNIT CPU number
++ *
++ * Used to convert from Linux logical CPU to PUNIT CPU numbering scheme.
++ * The PUNIT CPU number is different than APIC ID based CPU numbering.
++ */
++struct isst_if_cpu_map {
++	__u32 logical_cpu;
++	__u32 physical_cpu;
++};
 +
- 		misc_device_ret = misc_register(&isst_if_char_driver);
- 		if (misc_device_ret)
- 			goto unlock_exit;
++/**
++ * struct isst_if_cpu_maps - structure for CPU map IOCTL
++ * @cmd_count:	Number of CPU mapping command in cpu_map[]
++ * @cpu_map[]:	Holds one or more CPU map data structure
++ *
++ * This structure used with ioctl ISST_IF_GET_PHY_ID to send
++ * one or more CPU mapping commands. Here IOCTL return value indicates
++ * number of commands sent or error number if no commands have been sent.
++ */
++struct isst_if_cpu_maps {
++	__u32 cmd_count;
++	struct isst_if_cpu_map cpu_map[1];
++};
 +
-+		ret = isst_if_cpu_info_init();
-+		if (ret) {
-+			misc_deregister(&isst_if_char_driver);
-+			misc_device_ret = ret;
-+			goto unlock_exit;
-+		}
- 	}
- 	memcpy(&punit_callbacks[device_type], cb, sizeof(*cb));
- 	punit_callbacks[device_type].registered = 1;
-@@ -173,8 +283,10 @@ void isst_if_cdev_unregister(int device_type)
- 	mutex_lock(&punit_misc_dev_lock);
- 	misc_usage_count--;
- 	punit_callbacks[device_type].registered = 0;
--	if (!misc_usage_count && !misc_device_ret)
-+	if (!misc_usage_count && !misc_device_ret) {
- 		misc_deregister(&isst_if_char_driver);
-+		isst_if_cpu_info_exit();
-+	}
- 	mutex_unlock(&punit_misc_dev_lock);
- }
- EXPORT_SYMBOL_GPL(isst_if_cdev_unregister);
-diff --git a/drivers/platform/x86/intel_speed_select_if/isst_if_common.h b/drivers/platform/x86/intel_speed_select_if/isst_if_common.h
-index 11f339226fb4..dade77c58b22 100644
---- a/drivers/platform/x86/intel_speed_select_if/isst_if_common.h
-+++ b/drivers/platform/x86/intel_speed_select_if/isst_if_common.h
-@@ -57,4 +57,5 @@ struct isst_if_cmd_cb {
- /* Internal interface functions */
- int isst_if_cdev_register(int type, struct isst_if_cmd_cb *cb);
- void isst_if_cdev_unregister(int type);
-+struct pci_dev *isst_if_get_pci_dev(int cpu, int bus, int dev, int fn);
+ #define ISST_IF_MAGIC			0xFE
+ #define ISST_IF_GET_PLATFORM_INFO	_IOR(ISST_IF_MAGIC, 0, struct isst_if_platform_info *)
++#define ISST_IF_GET_PHY_ID		_IOWR(ISST_IF_MAGIC, 1, struct isst_if_cpu_map *)
  #endif
 -- 
 2.17.2
