@@ -2,88 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C86D156CDE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 16:52:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 30E7256CDC
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 16:52:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728173AbfFZOwj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 10:52:39 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:32822 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726484AbfFZOwi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 10:52:38 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A728681DEC;
-        Wed, 26 Jun 2019 14:52:24 +0000 (UTC)
-Received: from treble (ovpn-126-66.rdu2.redhat.com [10.10.126.66])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C1A2560BE5;
-        Wed, 26 Jun 2019 14:52:09 +0000 (UTC)
-Date:   Wed, 26 Jun 2019 09:52:06 -0500
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Petr Mladek <pmladek@suse.com>, Miroslav Benes <mbenes@suse.cz>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Jessica Yu <jeyu@kernel.org>, Jiri Kosina <jikos@kernel.org>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        linux-kernel@vger.kernel.org, live-patching@vger.kernel.org,
-        Johannes Erdfelt <johannes@erdfelt.com>,
-        Ingo Molnar <mingo@kernel.org>, mhiramat@kernel.org,
-        torvalds@linux-foundation.org
-Subject: Re: [PATCH 1/3] module: Fix livepatch/ftrace module text permissions
- race
-Message-ID: <20190626145206.vqp4nivxva4oshvw@treble>
-References: <cover.1560474114.git.jpoimboe@redhat.com>
- <ab43d56ab909469ac5d2520c5d944ad6d4abd476.1560474114.git.jpoimboe@redhat.com>
- <20190614170408.1b1162dc@gandalf.local.home>
- <alpine.LSU.2.21.1906260908170.22069@pobox.suse.cz>
- <20190626133721.ea2iuqqu4to2jpbv@pathway.suse.cz>
- <alpine.DEB.2.21.1906261643200.32342@nanos.tec.linutronix.de>
+        id S1728025AbfFZOwe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 10:52:34 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:39931 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727276AbfFZOwd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 10:52:33 -0400
+Received: by mail-wm1-f67.google.com with SMTP id z23so2421538wma.4
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 07:52:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=ksulmGbpyKA/h0G9nKZGl5oxUhwVMmz384qzdoLZyMs=;
+        b=vOujd1e9URvwh+ah/Yhk4dOxJkL9gDObRxTHIU8QALcQQkNnY1lw4zhsPaj00aS9mU
+         7Ew+zydcAfRTCcN28WeP9AFHCquXeaGa1WJSpPqn4F5oGpYiMVubFTCF5hUuovdfNG2W
+         hTBp0iAX051eXyqw7+56KqZV/0PPjqMTEcCAnJ6ZuTxvTsc4ULElKQOpDySFHwNXGDzY
+         9vSrb6/q/vinvRRVdxLj+fQCNIigvd2Y/PUagVLUfIDVlJrzWjMzee/jqU4PNWBXG9RB
+         kRsiIQRwGOYq/pqrX33l9ZKm8xsaBTw6l9wZ15yiXj05OQZJiPr6ICTVmd4nlQ2les5W
+         x5iA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=ksulmGbpyKA/h0G9nKZGl5oxUhwVMmz384qzdoLZyMs=;
+        b=HetDO7ZJoTD5YLVLqc4Rql28I2JKMJlVJRzGxwUClQZqecuLl0lMJ2S/9ftfPwvC2q
+         zIj+zQcn/b87j+xAwf9GCgGAwxrAqz0hhCI8c33nUYnWVvLEE/6+ki7xaE5i+PlpdENv
+         eaYdoXPC4nkh6qrMMBIjBOdtnq07WxznRXDWYMlwqrWq4CkeXQKSGruBT0FQlKvb8UKb
+         /KH2O7DhOLNQ0cYJLTQ652Tq3v8NUy/ZT8uEALE6LEg08HpR9Of7688Z7hLTrEomZNVl
+         +CyJ6MVjiMo4QvFr3obzTvWgHueiGNbBX4lHKLGo3jTMoKLW0i/kAwdYJcOPuz1PVdcV
+         fJIw==
+X-Gm-Message-State: APjAAAU3u7PnQxT9jYsk8tO1AUpU1Bnk1KqZMZmI8juTxYFvRBUzbSW8
+        MrMjEzOxzC5uz0kqYd5eQofJkBlwdeFCnHREKfk=
+X-Google-Smtp-Source: APXvYqyqlBFQ0/oL0yisv25+hvx9/9AvOA0DC8Pca29p9jhIstIW+k23R4G6NRg1uXr0KBJ1fVp4RxYDeU3+RYYQcNc=
+X-Received: by 2002:a1c:544d:: with SMTP id p13mr3196055wmi.78.1561560752293;
+ Wed, 26 Jun 2019 07:52:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1906261643200.32342@nanos.tec.linutronix.de>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Wed, 26 Jun 2019 14:52:38 +0000 (UTC)
+Received: by 2002:a7b:ca4b:0:0:0:0:0 with HTTP; Wed, 26 Jun 2019 07:52:31
+ -0700 (PDT)
+Reply-To: husamalsayedh@gmail.com
+From:   Husam Al Sayed <cristobalalonso684@gmail.com>
+Date:   Wed, 26 Jun 2019 15:52:31 +0100
+Message-ID: <CAJZrWE74zZS7hnoCgH9vFSrDRFCN-0esYj1jwdz3yqOYQEcy9Q@mail.gmail.com>
+Subject: KINDLY GET BACK TO ME
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 26, 2019 at 04:44:45PM +0200, Thomas Gleixner wrote:
-> On Wed, 26 Jun 2019, Petr Mladek wrote:
-> > On Wed 2019-06-26 10:22:45, Miroslav Benes wrote:
-> > It is similar problem that has been solved by 2d1e38f56622b9bb5af8
-> > ("kprobes: Cure hotplug lock ordering issues"). This commit solved
-> > it by always taking cpu_hotplug_lock.rw_sem before text_mutex inside.
-> > 
-> > If we follow the lock ordering then ftrace has to take text_mutex
-> > only when stop_machine() is not called or from code called via
-> > stop_machine() parameter.
-> > 
-> > This is not easy with the current design. For example, arm calls
-> > set_all_modules_text_rw() already in ftrace_arch_code_modify_prepare(),
-> > see arch/arm/kernel/ftrace.c. And it is called:
-> > 
-> >   + outside stop_machine() from ftrace_run_update_code()
-> >   + without stop_machine() from ftrace_module_enable()
-> > 
-> > A conservative solution for 5.2 release would be to move text_mutex
-> > locking from the generic kernel/trace/ftrace.c into
-> > arch/x86/kernel/ftrace.c:
-> > 
-> >    ftrace_arch_code_modify_prepare()
-> >    ftrace_arch_code_modify_post_process()
-> > 
-> > It should be enough to fix the original problem because
-> > x86 is the only architecture that calls set_all_modules_text_rw()
-> > in ftrace path and supports livepatching at the same time.
-> 
-> Looks correct, but I've paged out all the gory details vs. lock ordering in
-> that area.
+Did you receive my last email?
 
-Looks good to me as well, Petr can you post a proper patch?
-
--- 
-Josh
+Please, confirm about this.
