@@ -2,92 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CCA625612A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 06:15:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 44FB656137
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 06:20:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726757AbfFZEPE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 00:15:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36276 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726152AbfFZEPE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 00:15:04 -0400
-Received: from mail.kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 76D322146E;
-        Wed, 26 Jun 2019 04:15:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561522503;
-        bh=nLhLl0KRASWFnS70bdCvQOMOFLG+QXRubn6Xsywf0Zg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2odwG4C0c+WfqgHqocwKhJvQuog8CyN+0KKVO72O7lAEC1sLKz0fDyNoxUNS3v53N
-         VITNRI4TZWa55Y5uWsxzUp+648pHQXhgKAxk94KA0CgjftaFhfWbV5e4oPeRPGBqqw
-         7uYDkgYA91GnkCjBmwu89AgrsvhdiMk27m+gMHIU=
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH 2/2] clk: Unexport __clk_of_table
-Date:   Tue, 25 Jun 2019 21:15:02 -0700
-Message-Id: <20190626041502.237211-3-sboyd@kernel.org>
-X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
-In-Reply-To: <20190626041502.237211-1-sboyd@kernel.org>
-References: <20190626041502.237211-1-sboyd@kernel.org>
+        id S1726643AbfFZEUh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 00:20:37 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:44208 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726076AbfFZEUg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 00:20:36 -0400
+Received: by mail-ed1-f66.google.com with SMTP id k8so1146539edr.11
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 21:20:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8Cl6yVigkJvzoVrHwes9kSjc7pM4VSMZ/+3LWRXp8II=;
+        b=P1VTP7Pj84OsQis7x1uKS38d7izOAewPCuxClFsIh3Q8xGkm2w4RgYFl/ekzoDot/d
+         RTQkeWGv2/mJmfDBEZycoPXx/VnVCV+bKYezE/Jp05k1ZV98lV/XSNH1ReTqSAqkI20x
+         0fZ34XTKKdzC7dzKT/7nFE2cFuOfUyyMGoR/Um+LfVodvd3Gp63yidTSlEfLjrzHsbPd
+         /UQ/WYvvB6r1cqCXUZ3bdQ3qTR7MZW+0EpeXUfSuzT0BfIQoQOPN+zazD0Wed/sVNy1Y
+         ISzB4OmUR8YRywE4m0HoB4hYbglqSbD24bv6xGQtupOSojegFam/ztLkKtRyy/84s5l1
+         pwnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8Cl6yVigkJvzoVrHwes9kSjc7pM4VSMZ/+3LWRXp8II=;
+        b=pXKrKtBYXLzeHRyvJK1DeR58/rp1KBoKBuUgYUVDNYICuAq36mYkUk1DMrOOsT0nk4
+         Bg6DymO/S7p/HLjbsS9da3QPOqOKAXuhtBeQSGcyNOi8Npo/oTP+sNBhErcBIRPcrMOU
+         /OJaEr8s4Cj4UqkgjVk7V1rULi/yxsGkrpO7Z/oMJTJqaje4dLUgaxDCFb6VmY3FaDcN
+         jeE66kmdKRJ7LbUm8CzYTDLuxv/i0679wsrZA0tVDFIAA2FyUel/PwxytP6vVS+NUrte
+         2Acre+BoJN4vPBkAfqI4B5jZvPRihgxfPqkSrmuGjqy9iSEVVkQLKH5AgwzaFBSZq6Ge
+         azLg==
+X-Gm-Message-State: APjAAAXNAzk4QL0cjCS6RgSSsX7W2vbUPGJq3Y7bT1G9ewOPrDAqBe8t
+        qKlvZFn+1q3OngjKJLobuLk=
+X-Google-Smtp-Source: APXvYqwXqs1HEBueWWQka/6CMFwu/lhK03HSxnd+VHGfUzx+yhV/PAHnMwGpK/7LqQHSt0mldLz/Og==
+X-Received: by 2002:a50:b6c7:: with SMTP id f7mr2392320ede.275.1561522834286;
+        Tue, 25 Jun 2019 21:20:34 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:4f9:2b:2b15::2])
+        by smtp.gmail.com with ESMTPSA id a3sm5180717edr.48.2019.06.25.21.20.33
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 25 Jun 2019 21:20:33 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        clang-built-linux@googlegroups.com,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Fangrui Song <maskray@google.com>,
+        Peter Smith <peter.smith@linaro.org>
+Subject: [PATCH] arm64/efi: Mark __efistub_stext_offset as an absolute symbol explicitly
+Date:   Tue, 25 Jun 2019 21:20:17 -0700
+Message-Id: <20190626042017.54773-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
+X-Patchwork-Bot: notify
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This symbol doesn't need to be exported to clk providers anymore.
-Originally, it was hidden inside clk.c, but then OMAP needed to get
-access to it in commit 819b4861c18d ("CLK: ti: add init support for
-clock IP blocks"), but eventually that code also changed in commit
-c08ee14cc663 ("clk: ti: change clock init to use generic of_clk_init")
-and we were left with this exported. Move this back into clk.c so that
-it isn't exposed anymore.
+After r363059 and r363928 in LLVM, a build using ld.lld as the linker
+with CONFIG_RANDOMIZE_BASE enabled fails like so:
 
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+ld.lld: error: relocation R_AARCH64_ABS32 cannot be used against symbol
+__efistub_stext_offset; recompile with -fPIC
+
+Fangrui and Peter figured out that ld.lld is incorrectly considering
+__efistub_stext_offset as a relative symbol because of the order in
+which symbols are evaluated. _text is treated as an absolute symbol
+and stext is a relative symbol, making __efistub_stext_offset a
+relative symbol.
+
+Adding ABSOLUTE will force ld.lld to evalute this expression in the
+right context and does not change ld.bfd's behavior. ld.lld will
+need to be fixed but the developers do not see a quick or simple fix
+without some research (see the linked issue for further explanation).
+Add this simple workaround so that ld.lld can continue to link kernels.
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/561
+Link: https://github.com/llvm/llvm-project/commit/025a815d75d2356f2944136269aa5874721ec236
+Link: https://github.com/llvm/llvm-project/commit/249fde85832c33f8b06c6b4ac65d1c4b96d23b83
+Debugged-by: Fangrui Song <maskray@google.com>
+Debugged-by: Peter Smith <peter.smith@linaro.org>
+Suggested-by: Fangrui Song <maskray@google.com>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 ---
- drivers/clk/clk.c            | 1 +
- include/linux/clk-provider.h | 4 ----
- 2 files changed, 1 insertion(+), 4 deletions(-)
+ arch/arm64/kernel/image.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index aa51756fd4d6..b34e84bb8167 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -4038,6 +4038,7 @@ struct of_clk_provider {
- 	void *data;
- };
+diff --git a/arch/arm64/kernel/image.h b/arch/arm64/kernel/image.h
+index 04ca08086d35..9a2d2227907c 100644
+--- a/arch/arm64/kernel/image.h
++++ b/arch/arm64/kernel/image.h
+@@ -67,7 +67,7 @@
  
-+extern struct of_device_id __clk_of_table;
- static const struct of_device_id __clk_of_table_sentinel
- 	__used __section(__clk_of_table_end);
+ #ifdef CONFIG_EFI
  
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 3bced2ec9f26..9ba000e3a50d 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -865,8 +865,6 @@ static inline long divider_ro_round_rate(struct clk_hw *hw, unsigned long rate,
-  */
- unsigned long clk_hw_round_rate(struct clk_hw *hw, unsigned long rate);
- 
--struct of_device_id;
--
- struct clk_onecell_data {
- 	struct clk **clks;
- 	unsigned int clk_num;
-@@ -877,8 +875,6 @@ struct clk_hw_onecell_data {
- 	struct clk_hw *hws[];
- };
- 
--extern struct of_device_id __clk_of_table;
--
- #define CLK_OF_DECLARE(name, compat, fn) OF_DECLARE_1(clk, name, compat, fn)
+-__efistub_stext_offset = stext - _text;
++__efistub_stext_offset = ABSOLUTE(stext - _text);
  
  /*
+  * The EFI stub has its own symbol namespace prefixed by __efistub_, to
 -- 
-Sent by a computer through tubes
+2.22.0
 
