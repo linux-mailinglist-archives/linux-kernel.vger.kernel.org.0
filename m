@@ -2,99 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6891256BAE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 16:17:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D806856BB6
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 16:17:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727870AbfFZORD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 10:17:03 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:52017 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726157AbfFZORC (ORCPT
+        id S1727991AbfFZORm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 10:17:42 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:34052 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725958AbfFZORm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 10:17:02 -0400
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5QE8mJY025877;
-        Wed, 26 Jun 2019 16:16:51 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=STMicroelectronics;
- bh=CgrU7g19mUGlFYARexQUWZHRH8Nsuuv1t4En5Zbf7qQ=;
- b=L5CU7dOZ6hbCmFZhYGPI6n517KjA58N6aoG7+PWaZLNRmykqAzw3TdVmzqj43FCDmNEs
- ezcv7Lmt+CuwqD1WH+BipfNJmOITnw9vT+TFRFWfFOPr5stVc//LJfAGXOOmgyywp8gY
- uKMYn4NWKs64OOm8DQNxdvJ228n53cHoEeR5/qzY3tsu10bw1FQAYKg17kgndCPSa0a7
- JBL+jB9zIwzGQrqq99Vb7xluhHuDmmfxcQKT8qPEJbsojgUCIv9psqsBi5e3gGrKUdqq
- qToCXAWINbt2budmHjsoUgE8PhAJvvx02krgnr0gWPAC+DjtBTh6uJMNGZaei97fyAuv fQ== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2tb1f3vsyr-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Wed, 26 Jun 2019 16:16:51 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id D42F634;
-        Wed, 26 Jun 2019 14:16:50 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag5node2.st.com [10.75.127.14])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 759F22A72;
-        Wed, 26 Jun 2019 14:16:50 +0000 (GMT)
-Received: from [10.48.1.93] (10.75.127.50) by SFHDAG5NODE2.st.com
- (10.75.127.14) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 26 Jun
- 2019 16:16:49 +0200
-Subject: Re: [PATCH] dt-bindings: i2c-stm32: document optional dmas
-To:     Fabrice Gasnier <fabrice.gasnier@st.com>, <wsa@the-dreams.de>,
-        <robh+dt@kernel.org>
-CC:     <mark.rutland@arm.com>, <mcoquelin.stm32@gmail.com>,
-        <alexandre.torgue@st.com>, <linux-i2c@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1559655253-27008-1-git-send-email-fabrice.gasnier@st.com>
-From:   Pierre Yves MORDRET <pierre-yves.mordret@st.com>
-Message-ID: <7d521d13-de38-1d6b-83c1-927e6cad38e1@st.com>
-Date:   Wed, 26 Jun 2019 16:16:48 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
+        Wed, 26 Jun 2019 10:17:42 -0400
+Received: by mail-ed1-f67.google.com with SMTP id s49so3642460edb.1;
+        Wed, 26 Jun 2019 07:17:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Jz+d8Bq6px4B5hv9aLpu7uCGEvD+endKK7G195O5KL8=;
+        b=Xpyj1SUPnpsE8OMNc9qWXya/cPkZB9lk6rT8T0PoUrlFKAxcKz4Yy7evwdpI1FOXdn
+         FuO689CFG8+xvQfJoY34NLnEzKyE89bBKXy3vMTSJNuCPyh7U9nwu8I98fUrR0/nmcM5
+         RjvASyRfbHLqGvhuA4sK/ktdvelXsXIYu9/yYn6C+eiAravBk/5asaEO0jtF9r0kxBrx
+         Rrm0y7DRVVTF3MBy+0Qj86uUIeREEb4CBI0Yu/ayD40X+xQjB/jVWu2theWuOjmxxQxH
+         xOksdgr/UaX3dHuv/qwlxewevbcc5oUZIjT3KkXAvEY5rDHZzTqatZMpIYe8I2x5fIhw
+         td2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Jz+d8Bq6px4B5hv9aLpu7uCGEvD+endKK7G195O5KL8=;
+        b=aEAfjYE6mtZKAR+uYk4iL08csq26cBekfWzV8t99QYrdQEhYzMAcfwqnUBvuTRHO+o
+         Q52UvOU1VgKDF8LYz8VxOQ4J45lFJ9gRcNf+OtUIi+FRnXxjautpnHe4WP4VaWCBaOMn
+         jSgCgMDQPxZRojVD45/vFiYydlsrULfIqQ2603HSbI/A5AKwjrWZ2twgA1zCAYCQb08z
+         gMNBBSGbf09ytopdbfiMDJoOb1q0PhFm2TvxHu3CukkA5smptxZaSnmSvDWy56Q8ymfE
+         8KbAuZ4mPk/NcO7eCLUl+qsErDKhdWB9At4zscjwMU8UAr93ieiOn988mMJvyZ31lTGE
+         5Yyg==
+X-Gm-Message-State: APjAAAVw66aid8A2zeCNINZdyqoDsloPtUl9POjost7sbi7rFTQYtUqe
+        7iQXpZK/aKpvXpdlFD8Yai3Q2kioU8BKBJFzJgI=
+X-Google-Smtp-Source: APXvYqzrDNdvijzgbDqLjKhIz4Heet+Bul9RUJ3dxyVTIvG4efO+aI1oC/4DF9NAaTNa5V5XYDFtsZA2Eu41NOmx0z0=
+X-Received: by 2002:a50:a53a:: with SMTP id y55mr5734894edb.147.1561558659862;
+ Wed, 26 Jun 2019 07:17:39 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1559655253-27008-1-git-send-email-fabrice.gasnier@st.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.50]
-X-ClientProxiedBy: SFHDAG7NODE2.st.com (10.75.127.20) To SFHDAG5NODE2.st.com
- (10.75.127.14)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-26_07:,,
- signatures=0
+References: <20190624083352.29257-1-rasmus.villemoes@prevas.dk>
+ <CA+FuTSeHhz1kntLyeUfAB4ZbtYjO1=Ornwse-yQbPwo5c-_2=g@mail.gmail.com> <ff8160d4-3357-9b4f-1840-bbe46195da5a@prevas.dk>
+In-Reply-To: <ff8160d4-3357-9b4f-1840-bbe46195da5a@prevas.dk>
+From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Date:   Wed, 26 Jun 2019 10:17:03 -0400
+Message-ID: <CAF=yD-KyWJwdESFmY=CvbkTBT8yey2atKDY-tgd19yAeMf525g@mail.gmail.com>
+Subject: Re: [PATCH net-next] can: dev: call netif_carrier_off() in register_candev()
+To:     Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+Cc:     Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rasmus Villemoes <Rasmus.Villemoes@prevas.se>,
+        "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi
+On Wed, Jun 26, 2019 at 5:31 AM Rasmus Villemoes
+<rasmus.villemoes@prevas.dk> wrote:
+>
+> On 24/06/2019 19.26, Willem de Bruijn wrote:
+> > On Mon, Jun 24, 2019 at 4:34 AM Rasmus Villemoes
+> > <rasmus.villemoes@prevas.dk> wrote:
+> >>
+> >> CONFIG_CAN_LEDS is deprecated. When trying to use the generic netdev
+> >> trigger as suggested, there's a small inconsistency with the link
+> >> property: The LED is on initially, stays on when the device is brought
+> >> up, and then turns off (as expected) when the device is brought down.
+> >>
+> >> Make sure the LED always reflects the state of the CAN device.
+> >>
+> >> Signed-off-by: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+> >
+> > Should this target net?
+>
+> No, I think this should go through the CAN tree. Perhaps I've
+> misunderstood when to use the net-next prefix - is that only for things
+> that should be applied directly to the net-next tree? If so, sorry.
 
-It looks good to me
+I don't see consistent behavior on the list, so this is probably fine.
+It would probably help to target can (for fixes) or can-next (for new
+features).
 
-Reviewed-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+Let me reframe the question: should this target can, instead of can-next?
 
-Thx
+> > Regardless of CONFIG_CAN_LEDS deprecation,
+> > this is already not initialized properly if that CONFIG is disabled
+> > and a can_led_event call at device probe is a noop.
+>
+> I'm not sure I understand this part. The CONFIG_CAN_LEDS support for
+> showing the state of the interface is implemented via hooking into the
+> ndo_open/ndo_stop callbacks, and does not look at or touch the
+> __LINK_STATE_NOCARRIER bit at all.
+>
+> Other than via the netdev LED trigger I don't think one can even observe
+> the slightly odd initial state of the __LINK_STATE_NOCARRIER bit for CAN
+> devices,
 
-On 6/4/19 3:34 PM, Fabrice Gasnier wrote:
-> Add missing documentation for "dmas" and "dma-names" properties that can be
-> used on i2c-stm32.
-> 
-> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
-> ---
->  Documentation/devicetree/bindings/i2c/i2c-stm32.txt | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/i2c/i2c-stm32.txt b/Documentation/devicetree/bindings/i2c/i2c-stm32.txt
-> index f334738..ce3df2ff 100644
-> --- a/Documentation/devicetree/bindings/i2c/i2c-stm32.txt
-> +++ b/Documentation/devicetree/bindings/i2c/i2c-stm32.txt
-> @@ -21,6 +21,8 @@ Optional properties:
->    100000 and 400000.
->    For STM32F7, STM32H7 and STM32MP1 SoCs, Standard-mode, Fast-mode and Fast-mode
->    Plus are supported, possible values are 100000, 400000 and 1000000.
-> +- dmas: List of phandles to rx and tx DMA channels. Refer to stm32-dma.txt.
-> +- dma-names: List of dma names. Valid names are: "rx" and "tx".
->  - i2c-scl-rising-time-ns: I2C SCL Rising time for the board (default: 25)
->    For STM32F7, STM32H7 and STM32MP1 only.
->  - i2c-scl-falling-time-ns: I2C SCL Falling time for the board (default: 10)
-> 
+it's still incorrect, though I guess that's moot in practice.
+
+> which is why I framed this as a fix purely to allow the netdev
+> trigger to be a closer drop-in replacement for CONFIG_CAN_LEDS.
+
+So the entire CONFIG_CAN_LEDS code is to be removed? What exactly is
+this netdev trigger replacement, if not can_led_event? Sorry, I
+probably miss some context.
