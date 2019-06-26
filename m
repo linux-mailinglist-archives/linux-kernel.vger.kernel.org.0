@@ -2,129 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A46055D3B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 03:11:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A724B55D3F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 03:12:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726381AbfFZBKt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 21:10:49 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:37158 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726223AbfFZBKt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 21:10:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=UtW5OvMCSjQYk0vQjDM8NYHUQEBuLOBRls0IoB2nKTs=; b=xsAnA6weNkKTfYGnYr65dpdaI0
-        IowfByeZt/ku9RrguyPceaIexJ4vtqnZGbqKx1+1cpwAVxkNt46HoYucOCKRWgu/GlykISrhxQr0r
-        s7FS3+vjwjB2DRbaBR0v/oTzKUOAL/mKXzjjs4YwQ4EvTcOlj8GuJsPwCz9h1we9G/8ppsxr0/vUx
-        62PSjolrNJIr/rrwJJyeJabZKFu1wXyrdmk/+HLc5DDsejRhK4LieK3WDT2JFKEkZQ80SWIMsG68G
-        0VVpU01ii5XAnZe2K7MqB4WQtSHOKs1ya8IILXlK0MkMku2eWM5EPG/NJX/lzxD/N9ZSHajbYh0EZ
-        oZCp2GFA==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hfwSQ-0002pd-J8; Wed, 26 Jun 2019 01:10:43 +0000
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH -next] extcon: fix fsa9480 Kconfig warning and build errors
-Message-ID: <1075ea60-6657-ce8d-b527-639b4fc896ec@infradead.org>
-Date:   Tue, 25 Jun 2019 18:10:40 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1726521AbfFZBMu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 21:12:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38124 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726223AbfFZBMu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 21:12:50 -0400
+Received: from localhost (unknown [172.104.248.44])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0D0CA2086D;
+        Wed, 26 Jun 2019 01:12:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561511569;
+        bh=3OlpzYyKa6yLcvXYCQ1PS5dl9yEKICWKqWfnEFaJpGI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ta/DyoS/+ara90iiui7dB0fTlGKD2wsGcX+OYcrwO1ylp+rL3xzW6KEr5zT9U8Oeq
+         eRfvlueJRFv6yOL04uFq4TvR/MTUXJ/vcNoHQ9rhDGRDGEDqqN6WSewQEA3MIxbkCe
+         DT1ZEz5C3MMgkke7aPLNi3+w6w6YguhEQ4xG1XRQ=
+Date:   Wed, 26 Jun 2019 09:12:21 +0800
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Tri Vo <trong@android.com>
+Cc:     rjw@rjwysocki.net, viresh.kumar@linaro.org, rafael@kernel.org,
+        hridya@google.com, sspatil@google.com,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        kernel-team@android.com--annotate
+Subject: Re: [PATCH] PM / wakeup: show wakeup sources stats in sysfs
+Message-ID: <20190626011221.GB22454@kroah.com>
+References: <20190626005449.225796-1-trong@android.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190626005449.225796-1-trong@android.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+On Tue, Jun 25, 2019 at 05:54:49PM -0700, Tri Vo wrote:
+> Userspace can use wakeup_sources debugfs node to plot history of suspend
+> blocking wakeup sources over device's boot cycle. This information can
+> then be used (1) for power-specific bug reporting and (2) towards
+> attributing battery consumption to specific processes over a period of
+> time.
+> 
+> However, debugfs doesn't have stable ABI. For this reason, expose wakeup
+> sources statistics in sysfs under /sys/power/wakeup_sources/<name>/
+> 
+> Add following attributes to each wakeup source. These attributes match
+> the columns of /sys/kernel/debug/wakeup_sources.
+> 
+>   active_count
+>   event_count
+>   wakeup_count
+>   expire_count
+>   active_time (named "active_since" in debugfs)
+>   total_time
+>   max_time
+>   last_change
+>   prevent_suspend_time
 
-Fix Kconfig dependency warning and subsequent build errors caused by
-the Kconfig entry for EXTCON-FSA9480.  It should not select
-REGMAP_I2C unless I2C is already set/enabled.
+Can you also add a Documentation/ABI/ update for your new sysfs files so
+that we can properly review this?
 
-WARNING: unmet direct dependencies detected for REGMAP_I2C
-  Depends on [n]: I2C [=n]
-  Selected by [y]:
-  - EXTCON_FSA9480 [=y] && EXTCON [=y] && INPUT [=y]
+> Embedding a struct kobject into struct wakeup_source changes lifetime
+> requirements on the latter. To that end, change deallocation of struct
+> wakeup_source using kfree to kobject_put().
 
-../drivers/base/regmap/regmap-i2c.c: In function ‘regmap_smbus_byte_reg_read’:
-../drivers/base/regmap/regmap-i2c.c:25:2: error: implicit declaration of function ‘i2c_smbus_read_byte_data’ [-Werror=implicit-function-declaration]
-  ret = i2c_smbus_read_byte_data(i2c, reg);
-  ^
-../drivers/base/regmap/regmap-i2c.c: In function ‘regmap_smbus_byte_reg_write’:
-../drivers/base/regmap/regmap-i2c.c:43:2: error: implicit declaration of function ‘i2c_smbus_write_byte_data’ [-Werror=implicit-function-declaration]
-  return i2c_smbus_write_byte_data(i2c, reg, val);
-../drivers/base/regmap/regmap-i2c.c: In function ‘regmap_smbus_word_reg_read’:
-../drivers/base/regmap/regmap-i2c.c:61:2: error: implicit declaration of function ‘i2c_smbus_read_word_data’ [-Werror=implicit-function-declaration]
-  ret = i2c_smbus_read_word_data(i2c, reg);
-../drivers/base/regmap/regmap-i2c.c: In function ‘regmap_smbus_word_reg_write’:
-../drivers/base/regmap/regmap-i2c.c:79:2: error: implicit declaration of function ‘i2c_smbus_write_word_data’ [-Werror=implicit-function-declaration]
-  return i2c_smbus_write_word_data(i2c, reg, val);
-../drivers/base/regmap/regmap-i2c.c: In function ‘regmap_smbus_word_read_swapped’:
-../drivers/base/regmap/regmap-i2c.c:97:2: error: implicit declaration of function ‘i2c_smbus_read_word_swapped’ [-Werror=implicit-function-declaration]
-  ret = i2c_smbus_read_word_swapped(i2c, reg);
-../drivers/base/regmap/regmap-i2c.c: In function ‘regmap_smbus_word_write_swapped’:
-../drivers/base/regmap/regmap-i2c.c:115:2: error: implicit declaration of function ‘i2c_smbus_write_word_swapped’ [-Werror=implicit-function-declaration]
-  return i2c_smbus_write_word_swapped(i2c, reg, val);
-../drivers/base/regmap/regmap-i2c.c: In function ‘regmap_i2c_write’:
-../drivers/base/regmap/regmap-i2c.c:129:2: error: implicit declaration of function ‘i2c_master_send’ [-Werror=implicit-function-declaration]
-  ret = i2c_master_send(i2c, data, count);
-../drivers/base/regmap/regmap-i2c.c: In function ‘regmap_i2c_gather_write’:
-../drivers/base/regmap/regmap-i2c.c:150:2: error: implicit declaration of function ‘i2c_check_functionality’ [-Werror=implicit-function-declaration]
-  if (!i2c_check_functionality(i2c->adapter, I2C_FUNC_NOSTART))
-../drivers/base/regmap/regmap-i2c.c:163:2: error: implicit declaration of function ‘i2c_transfer’ [-Werror=implicit-function-declaration]
-  ret = i2c_transfer(i2c->adapter, xfer, 2);
-../drivers/base/regmap/regmap-i2c.c: In function ‘regmap_i2c_smbus_i2c_write’:
-../drivers/base/regmap/regmap-i2c.c:218:2: error: implicit declaration of function ‘i2c_smbus_write_i2c_block_data’ [-Werror=implicit-function-declaration]
-  return i2c_smbus_write_i2c_block_data(i2c, ((u8 *)data)[0], count,
-../drivers/base/regmap/regmap-i2c.c: In function ‘regmap_i2c_smbus_i2c_read’:
-../drivers/base/regmap/regmap-i2c.c:233:2: error: implicit declaration of function ‘i2c_smbus_read_i2c_block_data’ [-Werror=implicit-function-declaration]
-  ret = i2c_smbus_read_i2c_block_data(i2c, ((u8 *)reg)[0], val_size, val);
+Ick, are you sure you need a new kobject here?  Why wouldn't a named
+attribute group work instead?  That should keep this patch much smaller
+and simpler.
 
-../drivers/extcon/extcon-fsa9480.c: In function ‘fsa9480_module_init’:
-../drivers/extcon/extcon-fsa9480.c:383:2: error: implicit declaration of function ‘i2c_add_driver’ [-Werror=implicit-function-declaration]
-  return i2c_add_driver(&fsa9480_i2c_driver);
-../drivers/extcon/extcon-fsa9480.c: In function ‘fsa9480_module_exit’:
-../drivers/extcon/extcon-fsa9480.c:389:2: error: implicit declaration of function ‘i2c_del_driver’ [-Werror=implicit-function-declaration]
-  i2c_del_driver(&fsa9480_i2c_driver);
+> +static ssize_t wakeup_source_count_show(struct wakeup_source *ws,
+> +					struct wakeup_source_attribute *attr,
+> +					char *buf)
+> +{
+> +	unsigned long flags;
+> +	unsigned long var;
+> +
+> +	spin_lock_irqsave(&ws->lock, flags);
+> +	if (strcmp(attr->attr.name, "active_count") == 0)
+> +		var = ws->active_count;
+> +	else if (strcmp(attr->attr.name, "event_count") == 0)
+> +		var = ws->event_count;
+> +	else if (strcmp(attr->attr.name, "wakeup_count") == 0)
+> +		var = ws->wakeup_count;
+> +	else
+> +		var = ws->expire_count;
+> +	spin_unlock_irqrestore(&ws->lock, flags);
+> +
+> +	return sprintf(buf, "%lu\n", var);
+> +}
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>
----
-Found in mmotm; applies to linux-next.
+Why is this lock always needed to be grabbed?  You are just reading a
+value, who cares if it changes inbetween reading it and returning the
+buffer string as it can change at that point in time anyway?
 
-To extcon maintainers:  there are a few more extcon driver Kconfig
-entries that seem to have this same problem of selecting REGMAP_I2C
-without checking that I2C is set/enabled.
+thanks,
 
- drivers/extcon/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- mmotm-2019-0625-1620.orig/drivers/extcon/Kconfig
-+++ mmotm-2019-0625-1620/drivers/extcon/Kconfig
-@@ -39,7 +39,7 @@ config EXTCON_AXP288
- 
- config EXTCON_FSA9480
- 	tristate "FSA9480 EXTCON Support"
--	depends on INPUT
-+	depends on INPUT && I2C
- 	select IRQ_DOMAIN
- 	select REGMAP_I2C
- 	help
-
-
+greg k-h
