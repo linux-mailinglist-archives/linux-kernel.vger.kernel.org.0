@@ -2,105 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97834562DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 09:05:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12263562EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 09:13:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726731AbfFZHFP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 03:05:15 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:47262 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725790AbfFZHFP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 03:05:15 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 43245200256;
-        Wed, 26 Jun 2019 09:05:13 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 6C4E52008FD;
-        Wed, 26 Jun 2019 09:05:08 +0200 (CEST)
-Received: from mega.ap.freescale.net (mega.ap.freescale.net [10.192.208.232])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 405874030F;
-        Wed, 26 Jun 2019 15:05:02 +0800 (SGT)
-From:   Anson.Huang@nxp.com
-To:     shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, aisheng.dong@nxp.com, abel.vesa@nxp.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH] soc: imx-scu: Add SoC UID(unique identifier) support
-Date:   Wed, 26 Jun 2019 15:07:06 +0800
-Message-Id: <20190626070706.24930-1-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.17.1
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726838AbfFZHNs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 03:13:48 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:60664 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726077AbfFZHNs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 03:13:48 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id C9EE18BFD69C7550F6E3;
+        Wed, 26 Jun 2019 15:13:43 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 26 Jun
+ 2019 15:13:36 +0800
+Subject: Re: [PATCH RESEND] staging: erofs: remove unsupported ->datamode
+ check in fill_inline_data()
+To:     Yue Hu <zbestahu@gmail.com>, <gaoxiang25@huawei.com>,
+        <gregkh@linuxfoundation.org>
+CC:     <linux-erofs@lists.ozlabs.org>, <devel@driverdev.osuosl.org>,
+        <linux-kernel@vger.kernel.org>, <huyue2@yulong.com>
+References: <20190626032831.7252-1-zbestahu@gmail.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <654721e9-fdca-f21f-c244-9e9c8c421f4b@huawei.com>
+Date:   Wed, 26 Jun 2019 15:13:35 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20190626032831.7252-1-zbestahu@gmail.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anson Huang <Anson.Huang@nxp.com>
+On 2019/6/26 11:28, Yue Hu wrote:
+> From: Yue Hu <huyue2@yulong.com>
+> 
+> Already check if ->datamode is supported in read_inode(), no need to check
+> again in the next fill_inline_data() only called by fill_inode().
+> 
+> Signed-off-by: Yue Hu <huyue2@yulong.com>
 
-Add i.MX SCU SoC's UID(unique identifier) support, user
-can read it from sysfs:
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-root@imx8qxpmek:~# cat /sys/devices/soc0/soc_uid
-7B64280B57AC1898
-
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- drivers/soc/imx/soc-imx-scu.c | 35 +++++++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
-
-diff --git a/drivers/soc/imx/soc-imx-scu.c b/drivers/soc/imx/soc-imx-scu.c
-index 676f612..8d322a1 100644
---- a/drivers/soc/imx/soc-imx-scu.c
-+++ b/drivers/soc/imx/soc-imx-scu.c
-@@ -27,6 +27,36 @@ struct imx_sc_msg_misc_get_soc_id {
- 	} data;
- } __packed;
- 
-+struct imx_sc_msg_misc_get_soc_uid {
-+	struct imx_sc_rpc_msg hdr;
-+	u32 uid_low;
-+	u32 uid_high;
-+} __packed;
-+
-+static ssize_t soc_uid_show(struct device *dev,
-+			    struct device_attribute *attr, char *buf)
-+{
-+	struct imx_sc_msg_misc_get_soc_uid msg;
-+	struct imx_sc_rpc_msg *hdr = &msg.hdr;
-+	u64 soc_uid;
-+
-+	hdr->ver = IMX_SC_RPC_VERSION;
-+	hdr->svc = IMX_SC_RPC_SVC_MISC;
-+	hdr->func = IMX_SC_MISC_FUNC_UNIQUE_ID;
-+	hdr->size = 1;
-+
-+	/* the return value of SCU FW is in correct, skip return value check */
-+	imx_scu_call_rpc(soc_ipc_handle, &msg, true);
-+
-+	soc_uid = msg.uid_high;
-+	soc_uid <<= 32;
-+	soc_uid |= msg.uid_low;
-+
-+	return sprintf(buf, "%016llX\n", soc_uid);
-+}
-+
-+static DEVICE_ATTR_RO(soc_uid);
-+
- static int imx_scu_soc_id(void)
- {
- 	struct imx_sc_msg_misc_get_soc_id msg;
-@@ -102,6 +132,11 @@ static int imx_scu_soc_probe(struct platform_device *pdev)
- 		goto free_revision;
- 	}
- 
-+	ret = device_create_file(soc_device_to_device(soc_dev),
-+				 &dev_attr_soc_uid);
-+	if (ret)
-+		goto free_revision;
-+
- 	return 0;
- 
- free_revision:
--- 
-2.7.4
-
+Thanks,
