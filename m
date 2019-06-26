@@ -2,69 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38B1D56FA8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 19:36:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A397E56F83
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 19:31:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726648AbfFZRgL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 13:36:11 -0400
-Received: from ms.lwn.net ([45.79.88.28]:40900 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726042AbfFZRf4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 13:35:56 -0400
-Received: from meer.lwn.net (localhost [127.0.0.1])
-        by ms.lwn.net (Postfix) with ESMTPA id CEB978E7;
-        Wed, 26 Jun 2019 17:29:11 +0000 (UTC)
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     linux-doc@vger.kernel.org
-Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH v3 4/4] docs: Note that :c:func: should no longer be used
-Date:   Wed, 26 Jun 2019 11:28:59 -0600
-Message-Id: <20190626172859.16113-5-corbet@lwn.net>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190626172859.16113-1-corbet@lwn.net>
-References: <20190626172859.16113-1-corbet@lwn.net>
+        id S1726354AbfFZR35 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 13:29:57 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:46456 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726179AbfFZR35 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 13:29:57 -0400
+Received: by mail-pf1-f196.google.com with SMTP id 81so1696178pfy.13
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 10:29:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=5T6JwdKRjR0/RiG3X8PeL3Pv8Cc3TnWD4IRh13Xy5ag=;
+        b=My7eCbBlW0B5mb2GiL0BF8ubkmwJqvdlp2tjJodqd30zEwBuyaywestOcC28RB/fHl
+         eWqpPYluiFgdQJnQ5cdPaifnUof2fwhquXW/5BbSuJrUrZvfU+F1QWXW7N8qvQRvepYz
+         YuJkQJDQMoSFtGQ7zJtLkvhFrQ6V83tu+W1ALYoHtIHZBew3gtEM2P3hp4tnurJlS/vg
+         CE+jLYwkZgBpNtUXa3L5ysct7ElmiI7l4Hb0u+LZVma+wMG6OLTrCEVuKDZJiJVaIFhe
+         WHzIOALIYKaNa/uV0Ozs1qjve+pxiZpKu8Pa1KXzjfrqyRZkJ69xxlc5+Sf7y1oICyPd
+         SY5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=5T6JwdKRjR0/RiG3X8PeL3Pv8Cc3TnWD4IRh13Xy5ag=;
+        b=o6Iyu7FBk/L0Z9Qd9Pclq+p9oJ5mx5oYQtY2hFHJaG+m6cytRZBa+0UBO2Mo3Ex6Sx
+         w++vMH7qFEg/f+sZrLrv/W5P6ciE17kcSXwBwuVfvk0m7Q6+jzfOnHoVInPjJPelip8I
+         0FffMCrvcEGtzHGRomHwlEbP8Z/x/4LXEt3uonvQkYUWhfyds0/nqqTz7K5H4uMJsNpa
+         +YCbv+pfzFn3m/dwLsUyWs9wXEeEkuuitgCETezJYZefm7OBj/axwdnfHin7FnwktzZp
+         9OrawskIMiRwM2SFdB9HXIRxru5xP903QEEWtCaj13QNF3i0waAvTdkuk44R8x3So9Li
+         CMqw==
+X-Gm-Message-State: APjAAAX0KRf/uEpIPbaiXPou/hbsz7eDmuvG4fcWFh1c0fM060QPRyN4
+        yYjp3r85cVvGMf4dTOEzImw=
+X-Google-Smtp-Source: APXvYqzqQLv6YPA7wFT/1bH52+5xuqCsBHVv8kbrO5obSZEqzQEy5t8+odJ4iW8Nb9Gh6c2C+g2dmw==
+X-Received: by 2002:a17:90a:be08:: with SMTP id a8mr190221pjs.69.1561570196512;
+        Wed, 26 Jun 2019 10:29:56 -0700 (PDT)
+Received: from hari-Inspiron-1545 ([183.83.92.187])
+        by smtp.gmail.com with ESMTPSA id 11sm30296257pfw.33.2019.06.26.10.29.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 26 Jun 2019 10:29:55 -0700 (PDT)
+Date:   Wed, 26 Jun 2019 22:59:51 +0530
+From:   Hariprasad Kelam <hariprasad.kelam@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hariprasad Kelam <hariprasad.kelam@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Himadri Pandya <himadri18.07@gmail.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: rtl8723bs: hal: rtl8723b_hal_init: remove set but
+ unused variable pHalData
+Message-ID: <20190626172951.GA7521@hari-Inspiron-1545>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that we can mark up function() automatically, there is no reason to use
-:c:func: and every reason to avoid it.  Adjust the documentation to reflect
-that fact.
+Remove set but unsed variable pHalData in hw_var_set_mlme_join
+function
 
-Signed-off-by: Jonathan Corbet <corbet@lwn.net>
+Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
 ---
- Documentation/doc-guide/sphinx.rst | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/Documentation/doc-guide/sphinx.rst b/Documentation/doc-guide/sphinx.rst
-index e60a56640c63..f71ddd592aaa 100644
---- a/Documentation/doc-guide/sphinx.rst
-+++ b/Documentation/doc-guide/sphinx.rst
-@@ -241,11 +241,14 @@ The C domain of the kernel-doc has some additional features. E.g. you can
- 
- The func-name (e.g. ioctl) remains in the output but the ref-name changed from
- ``ioctl`` to ``VIDIOC_LOG_STATUS``. The index entry for this function is also
--changed to ``VIDIOC_LOG_STATUS`` and the function can now referenced by:
--
--.. code-block:: rst
--
--     :c:func:`VIDIOC_LOG_STATUS`
-+changed to ``VIDIOC_LOG_STATUS``.
-+
-+Please note that there is no need to use ``c:func:`` to generate cross
-+references to function documentation.  Due to some Sphinx extension magic,
-+the documentation build system will automatically turn a reference to
-+``function()`` into a cross reference if an index entry for the given
-+function name exists.  If you see ``c:func:`` use in a kernel document,
-+please feel free to remove it.
+diff --git a/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c b/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
+index 6cfd240..8ca6249 100644
+--- a/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
++++ b/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
+@@ -3579,14 +3579,12 @@ static void hw_var_set_mlme_join(struct adapter *padapter, u8 variable, u8 *val)
+ 	u32 val32;
+ 	u8 RetryLimit;
+ 	u8 type;
+-	struct hal_com_data *pHalData;
+ 	struct mlme_priv *pmlmepriv;
+ 	struct eeprom_priv *pEEPROM;
  
  
- list tables
+ 	RetryLimit = 0x30;
+ 	type = *(u8 *)val;
+-	pHalData = GET_HAL_DATA(padapter);
+ 	pmlmepriv = &padapter->mlmepriv;
+ 	pEEPROM = GET_EEPROM_EFUSE_PRIV(padapter);
+ 
 -- 
-2.21.0
+2.7.4
 
