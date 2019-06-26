@@ -2,111 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84650572EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 22:45:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FBC257319
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 22:50:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726445AbfFZUpy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 16:45:54 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:49582 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726293AbfFZUpx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 16:45:53 -0400
-Received: from s01061831bf6ec98c.cg.shawcable.net ([68.147.80.180] helo=[192.168.6.132])
-        by ale.deltatee.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1hgEnT-0002Rd-NS; Wed, 26 Jun 2019 14:45:40 -0600
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-pci@vger.kernel.org, linux-rdma@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Keith Busch <kbusch@kernel.org>,
-        Stephen Bates <sbates@raithlin.com>
-References: <20190620161240.22738-1-logang@deltatee.com>
- <20190624072752.GA3954@lst.de>
- <558a27ba-e7c9-9d94-cad0-377b8ee374a6@deltatee.com>
- <20190625072008.GB30350@lst.de>
- <f0f002bf-2b94-cd18-d18f-5d0b08311495@deltatee.com>
- <20190625170115.GA9746@lst.de>
- <41235a05-8ed1-e69a-e7cd-48cae7d8a676@deltatee.com>
- <20190626065708.GB24531@lst.de>
- <c15d5997-9ba4-f7db-0e7a-a69e75df316c@deltatee.com>
- <20190626202107.GA5850@ziepe.ca>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <8a0a08c3-a537-bff6-0852-a5f337a70688@deltatee.com>
-Date:   Wed, 26 Jun 2019 14:45:38 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
+        id S1726416AbfFZUuf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 16:50:35 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:36817 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726223AbfFZUuf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 16:50:35 -0400
+Received: by mail-qt1-f196.google.com with SMTP id p15so113763qtl.3;
+        Wed, 26 Jun 2019 13:50:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=0JIsc6upKI8LAsXQYXKRr6HIlOo8/DmHKKpGfMNZUew=;
+        b=SjGNdwfNg/zcvVGN+PGBlPzER4WoOK2W/rlWgMe5EDeYvGrDCPHKp2nfZun+PStLEZ
+         M7Y0HiMd2AQdt5pmBv/b4PN5sx5gtsvu1p7c/sl2xkPKEGIjX+vpoQ/fpefRgoTBNZJU
+         b/q6V1NctY9VKorBH1nPg651d1aq35B9SGL5WtaK5QTjApgRRx3OuuDBICmTd1yjMxuh
+         wLI5bsBAkfAoJmz0p4tjXdusElbj3ntkL7P4SH/CXsWVvLFq/7Wje6I1ANM4/x/WlW6O
+         tU78+s/ses5VMjryhek9d7DiMvz8SE6oGnFGjZPZLhKYumKEXZ9qR0nnWgIpICMo8k04
+         0kdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=0JIsc6upKI8LAsXQYXKRr6HIlOo8/DmHKKpGfMNZUew=;
+        b=Fg5BeBGj/ZmlJbzsaiMBlRk8WsBNyw5At4hDUBunHrTvroHs1XBHVarPHOqXsUv/xo
+         B3f0eMml1WKg4axGjQxWWN3O/zKyw8bY8PeRJkpJ8NdmUt+FEpdWeaZ5MM4OFP5yBJl3
+         obs2DMhdJNFPnUuR1tQuNwr8XO4oHkK18eQ2UOm0UjoYnNcV3GQtn+DcC85yiAyQv1oI
+         A83l25fPoq0uF93G4kfzjPX2aQFTuAke/apZoH7vYGybX0N09/TD1QD7drsN4azCUqKw
+         EbxuxZTSyUz5Rp6x4n0bN4lNCEn/clmTQf5dwWAAcelY0UYhImF8bC7iqx8FJc3fYNMh
+         zwFA==
+X-Gm-Message-State: APjAAAUq7Vxyibj0mJkoBwDjfmQp1oU0kGlK49vPtU8XXxl0g4cavLlD
+        wJ14glOd2VC67LenLDbFgclMY7W39wtPuDH90Z0=
+X-Google-Smtp-Source: APXvYqzg4kpaOhgH6DRsJAUX1HodpBqgBiRivJiHRugOt304HkbVCpfYd6BJiuQm5gWEfmapy8VnKuRQpNwdYxYSOeg=
+X-Received: by 2002:a0c:c146:: with SMTP id i6mr5401108qvh.79.1561582233943;
+ Wed, 26 Jun 2019 13:50:33 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190626202107.GA5850@ziepe.ca>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 68.147.80.180
-X-SA-Exim-Rcpt-To: sbates@raithlin.com, kbusch@kernel.org, sagi@grimberg.me, dan.j.williams@intel.com, bhelgaas@google.com, axboe@kernel.dk, linux-rdma@vger.kernel.org, linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, hch@lst.de, jgg@ziepe.ca
-X-SA-Exim-Mail-From: logang@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE autolearn=ham autolearn_force=no version=3.4.2
-Subject: Re: [RFC PATCH 00/28] Removing struct page from P2PDMA
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+References: <20190626155911.13574-1-ivan.khoronzhuk@linaro.org>
+In-Reply-To: <20190626155911.13574-1-ivan.khoronzhuk@linaro.org>
+From:   =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@gmail.com>
+Date:   Wed, 26 Jun 2019 22:50:23 +0200
+Message-ID: <CAJ+HfNid3PntipAJHuPR-tQudf+E6UQK6mPDHdc0O=wCUSjEEA@mail.gmail.com>
+Subject: Re: [PATCH net-next] xdp: xdp_umem: fix umem pages mapping for 32bits systems
+To:     Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+Cc:     =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        "Karlsson, Magnus" <magnus.karlsson@intel.com>,
+        David Miller <davem@davemloft.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Netdev <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        Xdp <xdp-newbies@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 26 Jun 2019 at 17:59, Ivan Khoronzhuk
+<ivan.khoronzhuk@linaro.org> wrote:
+>
+> Use kmap instead of page_address as it's not always in low memory.
+>
 
+Ah, some 32-bit love. :-) Thanks for working on this!
 
-On 2019-06-26 2:21 p.m., Jason Gunthorpe wrote:
-> On Wed, Jun 26, 2019 at 12:31:08PM -0600, Logan Gunthorpe wrote:
->>> we have a hole behind len where we could store flag.  Preferably
->>> optionally based on a P2P or other magic memory types config
->>> option so that 32-bit systems with 32-bit phys_addr_t actually
->>> benefit from the smaller and better packing structure.
->>
->> That seems sensible. The one thing that's unclear though is how to get
->> the PCI Bus address when appropriate. Can we pass that in instead of the
->> phys_addr with an appropriate flag? Or will we need to pass the actual
->> physical address and then, at the map step, the driver has to some how
->> lookup the PCI device to figure out the bus offset?
-> 
-> I agree with CH, if we go down this path it is a layering violation
-> for the thing injecting bio's into the block stack to know what struct
-> device they egress&dma map on just to be able to do the dma_map up
-> front.
+For future patches, please base AF_XDP patches on the bpf/bpf-next
+tree instead of net/net-next.
 
-Not sure I agree with this statement. The p2pdma code already *must*
-know and access the pci_dev of the dma device ahead of when it submits
-the IO to know if it's valid to allocate and use P2P memory at all. This
-is why the submitting driver has a lot of the information needed to map
-this memory that the mapping driver does not.
+Acked-by: Bj=C3=B6rn T=C3=B6pel <bjorn.topel@intel.com>
 
-> So we must be able to go from this new phys_addr_t&flags to some BAR
-> information during dma_map.
-
-> For instance we could use a small hash table of the upper phys addr
-> bits, or an interval tree, to do the lookup.
-
-Yes, if we're going to take a hard stance on this. But using an interval
-tree (or similar) is a lot more work for the CPU to figure out these
-mappings that may not be strictly necessary if we could just pass better
-information down from the submitting driver to the mapping driver.
-
-> The bar info would give the exporting struct device and any other info
-> we need to make the iommu mapping.
-
-Well, the IOMMU mapping is the normal thing the mapping driver will
-always do. We'd really just need the submitting driver to, when
-appropriate, inform the mapping driver that this is a pci bus address
-and not to call dma_map_xxx(). Then, for special mappings for the CMB
-like Christoph is talking about, it's simply a matter of doing a range
-compare on the PCI Bus address and converting the bus address to a BAR
-and offset.
-
-Logan
+> Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+> ---
+>  net/xdp/xdp_umem.c | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
+>
+> diff --git a/net/xdp/xdp_umem.c b/net/xdp/xdp_umem.c
+> index 9c6de4f114f8..d3c1411420fd 100644
+> --- a/net/xdp/xdp_umem.c
+> +++ b/net/xdp/xdp_umem.c
+> @@ -169,6 +169,14 @@ static void xdp_umem_clear_dev(struct xdp_umem *umem=
+)
+>         }
+>  }
+>
+> +static void xdp_umem_unmap_pages(struct xdp_umem *umem)
+> +{
+> +       unsigned int i;
+> +
+> +       for (i =3D 0; i < umem->npgs; i++)
+> +               kunmap(umem->pgs[i]);
+> +}
+> +
+>  static void xdp_umem_unpin_pages(struct xdp_umem *umem)
+>  {
+>         unsigned int i;
+> @@ -210,6 +218,7 @@ static void xdp_umem_release(struct xdp_umem *umem)
+>
+>         xsk_reuseq_destroy(umem);
+>
+> +       xdp_umem_unmap_pages(umem);
+>         xdp_umem_unpin_pages(umem);
+>
+>         kfree(umem->pages);
+> @@ -372,7 +381,7 @@ static int xdp_umem_reg(struct xdp_umem *umem, struct=
+ xdp_umem_reg *mr)
+>         }
+>
+>         for (i =3D 0; i < umem->npgs; i++)
+> -               umem->pages[i].addr =3D page_address(umem->pgs[i]);
+> +               umem->pages[i].addr =3D kmap(umem->pgs[i]);
+>
+>         return 0;
+>
+> --
+> 2.17.1
+>
