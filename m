@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CF99565BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 11:38:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01420565C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 11:39:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726462AbfFZJim (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 05:38:42 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48178 "EHLO mx1.suse.de"
+        id S1726864AbfFZJjH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 05:39:07 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48288 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725379AbfFZJil (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 05:38:41 -0400
+        id S1726329AbfFZJjH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 05:39:07 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 55AA1AEFD;
-        Wed, 26 Jun 2019 09:38:40 +0000 (UTC)
-Subject: Re: [PATCH v2 3/7] x86: Add nopv parameter to disable PV extensions
+        by mx1.suse.de (Postfix) with ESMTP id 6FC1DAEFD;
+        Wed, 26 Jun 2019 09:39:06 +0000 (UTC)
+Subject: Re: [PATCH v2 4/7] Revert "xen: Introduce 'xen_nopv' to disable PV
+ extensions for HVM guests."
 To:     Zhenzhong Duan <zhenzhong.duan@oracle.com>,
         linux-kernel@vger.kernel.org
 Cc:     tglx@linutronix.de, mingo@kernel.org, bp@alien8.de, hpa@zytor.com,
         boris.ostrovsky@oracle.com, sstabellini@kernel.org,
         peterz@infradead.org, srinivas.eeda@oracle.com,
-        Ingo Molnar <mingo@redhat.com>,
-        Jan Kiszka <jan.kiszka@siemens.com>,
-        xen-devel@lists.xenproject.org
+        Ingo Molnar <mingo@redhat.com>, xen-devel@lists.xenproject.org
 References: <1561377779-28036-1-git-send-email-zhenzhong.duan@oracle.com>
- <1561377779-28036-4-git-send-email-zhenzhong.duan@oracle.com>
+ <1561377779-28036-5-git-send-email-zhenzhong.duan@oracle.com>
 From:   Juergen Gross <jgross@suse.com>
-Message-ID: <23b5bdee-f6b8-609b-2a52-d0b8c10a8ff8@suse.com>
-Date:   Wed, 26 Jun 2019 11:38:39 +0200
+Message-ID: <c77e5df3-77ac-bce2-ccd3-7848f1915b43@suse.com>
+Date:   Wed, 26 Jun 2019 11:39:05 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.7.0
 MIME-Version: 1.0
-In-Reply-To: <1561377779-28036-4-git-send-email-zhenzhong.duan@oracle.com>
+In-Reply-To: <1561377779-28036-5-git-send-email-zhenzhong.duan@oracle.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: de-DE
 Content-Transfer-Encoding: 7bit
@@ -42,30 +41,18 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 24.06.19 14:02, Zhenzhong Duan wrote:
-> In virtualization environment, PV extensions (drivers, interrupts,
-> timers, etc) are enabled in the majority of use cases which is the
-> best option.
+> This reverts commit 8d693b911bb9c57009c24cb1772d205b84c7985c.
 > 
-> However, in some cases (kexec not fully working, benchmarking)
-> we want to disable PV extensions. As such introduce the
-> 'nopv' parameter that will do it.
+> Instead we use an unified parameter 'nopv' for all the hypervisor
+> platforms.
 > 
-> There are guest types which just won't work without PV extensions,
-> like Xen PV, Xen PVH and jailhouse. add a "ignore_nopv" member to
-> struct hypervisor_x86 set to true for those guest types and call
-> the detect functions only if nopv is false or ignore_nopv is true.
-> 
-> There is already 'xen_nopv' parameter for XEN platform but not for
-> others. 'xen_nopv' can then be removed with this change.
-> 
-> Suggested-by: Juergen Gross <jgross@suse.com>
 > Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+> Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+> Cc: Juergen Gross <jgross@suse.com>
+> Cc: Stefano Stabellini <sstabellini@kernel.org>
 > Cc: Thomas Gleixner <tglx@linutronix.de>
 > Cc: Ingo Molnar <mingo@redhat.com>
 > Cc: Borislav Petkov <bp@alien8.de>
-> Cc: Jan Kiszka <jan.kiszka@siemens.com>
-> Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-> Cc: Stefano Stabellini <sstabellini@kernel.org>
 > Cc: xen-devel@lists.xenproject.org
 
 Reviewed-by: Juergen Gross <jgross@suse.com>
