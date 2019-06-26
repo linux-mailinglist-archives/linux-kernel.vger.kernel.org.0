@@ -2,17 +2,17 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 745C956EBF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 18:29:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD36A56EB6
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 18:28:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726521AbfFZQ2e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 12:28:34 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:19085 "EHLO huawei.com"
+        id S1726628AbfFZQ2l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 12:28:41 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:50168 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726014AbfFZQ2d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 12:28:33 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 5BE6637B57A44D2D3B5C;
+        id S1726042AbfFZQ2j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 12:28:39 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 2A0A9EADBB0639188F3A;
         Thu, 27 Jun 2019 00:28:31 +0800 (CST)
 Received: from localhost.localdomain (10.67.212.75) by
  DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
@@ -22,9 +22,9 @@ To:     <xuwei5@huawei.com>
 CC:     <bhelgaas@google.com>, <linuxarm@huawei.com>,
         <linux-kernel@vger.kernel.org>, <arnd@arndb.de>, <olof@lixom.net>,
         John Garry <john.garry@huawei.com>
-Subject: [PATCH v3 1/6] lib: logic_pio: Fix RCU usage
-Date:   Thu, 27 Jun 2019 00:26:53 +0800
-Message-ID: <1561566418-22714-2-git-send-email-john.garry@huawei.com>
+Subject: [PATCH v3 2/6] lib: logic_pio: Avoid possible overlap for unregistering regions
+Date:   Thu, 27 Jun 2019 00:26:54 +0800
+Message-ID: <1561566418-22714-3-git-send-email-john.garry@huawei.com>
 X-Mailer: git-send-email 2.8.1
 In-Reply-To: <1561566418-22714-1-git-send-email-john.garry@huawei.com>
 References: <1561566418-22714-1-git-send-email-john.garry@huawei.com>
@@ -37,116 +37,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The traversing of io_range_list with list_for_each_entry_rcu()
-is not properly protected by rcu_read_lock() and rcu_read_unlock(),
-so add them.
+The code was originally written to not support unregistering logical PIO
+regions.
 
-These functions mark the critical section scope where the list is
-protected for the reader, it cannot be  "reclaimed". Any updater - in
-this case, the logical PIO registration functions - cannot update the
-list until the reader exits this critical section.
+To accommodate supporting unregistering logical PIO regions, subtly modify
+LOGIC_PIO_CPU_MMIO region registration code, such that the "end" of the
+registered regions is the "end" of the last region, and not the sum of
+the sizes of all the registered regions.
 
-In addition, the list traversing used in logic_pio_register_range()
-does not need to use the rcu variant.
-
-This is because we are already using io_range_mutex to guarantee mutual
-exclusion from mutating the list.
-
-Fixes: 031e3601869c ("lib: Add generic PIO mapping method")
 Signed-off-by: John Garry <john.garry@huawei.com>
 ---
- lib/logic_pio.c | 49 +++++++++++++++++++++++++++++++++++--------------
- 1 file changed, 35 insertions(+), 14 deletions(-)
+ lib/logic_pio.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/lib/logic_pio.c b/lib/logic_pio.c
-index feea48fd1a0d..761296376fbc 100644
+index 761296376fbc..d0165c88f705 100644
 --- a/lib/logic_pio.c
 +++ b/lib/logic_pio.c
-@@ -46,7 +46,7 @@ int logic_pio_register_range(struct logic_pio_hwaddr *new_range)
- 	end = new_range->hw_start + new_range->size;
- 
- 	mutex_lock(&io_range_mutex);
--	list_for_each_entry_rcu(range, &io_range_list, list) {
-+	list_for_each_entry(range, &io_range_list, list) {
- 		if (range->fwnode == new_range->fwnode) {
- 			/* range already there */
- 			goto end_register;
-@@ -108,26 +108,38 @@ int logic_pio_register_range(struct logic_pio_hwaddr *new_range)
-  */
- struct logic_pio_hwaddr *find_io_range_by_fwnode(struct fwnode_handle *fwnode)
- {
--	struct logic_pio_hwaddr *range;
-+	struct logic_pio_hwaddr *range, *found_range = NULL;
- 
-+	rcu_read_lock();
- 	list_for_each_entry_rcu(range, &io_range_list, list) {
--		if (range->fwnode == fwnode)
--			return range;
-+		if (range->fwnode == fwnode) {
-+			found_range = range;
-+			break;
-+		}
- 	}
--	return NULL;
-+	rcu_read_unlock();
-+
-+	return found_range;
- }
- 
- /* Return a registered range given an input PIO token */
- static struct logic_pio_hwaddr *find_io_range(unsigned long pio)
- {
--	struct logic_pio_hwaddr *range;
-+	struct logic_pio_hwaddr *range, *found_range = NULL;
- 
-+	rcu_read_lock();
- 	list_for_each_entry_rcu(range, &io_range_list, list) {
--		if (in_range(pio, range->io_start, range->size))
--			return range;
-+		if (in_range(pio, range->io_start, range->size)) {
-+			found_range = range;
-+			break;
-+		}
- 	}
--	pr_err("PIO entry token %lx invalid\n", pio);
--	return NULL;
-+	rcu_read_unlock();
-+
-+	if (!found_range)
-+		pr_err("PIO entry token 0x%lx invalid\n", pio);
-+
-+	return found_range;
- }
- 
- /**
-@@ -180,14 +192,23 @@ unsigned long logic_pio_trans_cpuaddr(resource_size_t addr)
- {
+@@ -35,7 +35,7 @@ int logic_pio_register_range(struct logic_pio_hwaddr *new_range)
  	struct logic_pio_hwaddr *range;
+ 	resource_size_t start;
+ 	resource_size_t end;
+-	resource_size_t mmio_sz = 0;
++	resource_size_t mmio_end = 0;
+ 	resource_size_t iio_sz = MMIO_UPPER_LIMIT;
+ 	int ret = 0;
  
-+	rcu_read_lock();
- 	list_for_each_entry_rcu(range, &io_range_list, list) {
- 		if (range->flags != LOGIC_PIO_CPU_MMIO)
- 			continue;
--		if (in_range(addr, range->hw_start, range->size))
--			return addr - range->hw_start + range->io_start;
-+		if (in_range(addr, range->hw_start, range->size)) {
-+			unsigned long cpuaddr;
-+
-+			cpuaddr = addr - range->hw_start + range->io_start;
-+
-+			rcu_read_unlock();
-+			return cpuaddr;
-+		}
- 	}
--	pr_err("addr %llx not registered in io_range_list\n",
--	       (unsigned long long) addr);
-+	rcu_read_unlock();
-+
-+	pr_err("addr %pa not registered in io_range_list\n", &addr);
-+
- 	return ~0UL;
- }
+@@ -56,7 +56,7 @@ int logic_pio_register_range(struct logic_pio_hwaddr *new_range)
+ 			/* for MMIO ranges we need to check for overlap */
+ 			if (start >= range->hw_start + range->size ||
+ 			    end < range->hw_start) {
+-				mmio_sz += range->size;
++				mmio_end = range->io_start + range->size;
+ 			} else {
+ 				ret = -EFAULT;
+ 				goto end_register;
+@@ -69,16 +69,16 @@ int logic_pio_register_range(struct logic_pio_hwaddr *new_range)
  
+ 	/* range not registered yet, check for available space */
+ 	if (new_range->flags == LOGIC_PIO_CPU_MMIO) {
+-		if (mmio_sz + new_range->size - 1 > MMIO_UPPER_LIMIT) {
++		if (mmio_end + new_range->size - 1 > MMIO_UPPER_LIMIT) {
+ 			/* if it's too big check if 64K space can be reserved */
+-			if (mmio_sz + SZ_64K - 1 > MMIO_UPPER_LIMIT) {
++			if (mmio_end + SZ_64K - 1 > MMIO_UPPER_LIMIT) {
+ 				ret = -E2BIG;
+ 				goto end_register;
+ 			}
+ 			new_range->size = SZ_64K;
+ 			pr_warn("Requested IO range too big, new size set to 64K\n");
+ 		}
+-		new_range->io_start = mmio_sz;
++		new_range->io_start = mmio_end;
+ 	} else if (new_range->flags == LOGIC_PIO_INDIRECT) {
+ 		if (iio_sz + new_range->size - 1 > IO_SPACE_LIMIT) {
+ 			ret = -E2BIG;
 -- 
 2.17.1
 
