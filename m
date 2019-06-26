@@ -2,58 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 709D6566B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 12:28:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6D7B566B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 12:28:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727176AbfFZK2I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 06:28:08 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:34110 "EHLO
+        id S1727220AbfFZK2T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 06:28:19 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:43942 "EHLO
         mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727127AbfFZK2G (ORCPT
+        with ESMTP id S1727147AbfFZK2G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 26 Jun 2019 06:28:06 -0400
-Received: by mail-wr1-f67.google.com with SMTP id k11so2126784wrl.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 03:28:04 -0700 (PDT)
+Received: by mail-wr1-f67.google.com with SMTP id p13so2071184wru.10
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 03:28:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Q2uYpOpXs+pbPux8Et5aQ4qoOceeJiTpOWIeON9aqJw=;
-        b=TKbBdaaGYBpQghXpwDdVwuYb2eCWIDnI0Lq2bX+5Ha7ssWcmvOzVFnhTmq7RY7F16j
-         3i7coj0QCT3zQ3ystfb83L4SINRepuK4shd6GTXtBWTQ3M81th5gOmuB1aces34W8oqi
-         XrpOYvnk6LNfhvIwp44XXW8jCEy6FLEt0J/KQBAIhGBLt0xL5JQR3fKTxMUjomnxVfPx
-         VBdOjiimLfLkrbfAObkmp8FdRuZ+y7cqEKd7UQHhieS7xDaBotVrBkFIL1zfQ1bkV2pQ
-         eIUIfb7Nm85ZDgU5lkZZWG64qigVpgceTPCphe/S4LtxEaWbqQrvZpnlvzlnyTICxriQ
-         LSYg==
+        bh=mvSt9hJ9riivcaZUoiXx5QKwOryBX80+CmAuVklqVuY=;
+        b=R5NXGadOK14TqMvGFxi5JBu0gnCPHKST2RzdeMIqI3j+ns642EdrPmjEwDrJlZNxdL
+         0poBYaMQpPcvKLibCyqWRYdXSWbKgO8BvSHYDPFEDJSM9o4f7VgqBQOfBN7WBHSZj0kd
+         amqwmru4k9QFqpsb9W5oYqGTk8bEFYdWhJdeipf4CZW4CLsI3j/r0Iul69JRS+pWdLEF
+         92gr3Hg5vY/TZyZg4UYxENt89GDwoXXhIdlCRKKE24hFUtugO3hA9d7FZw/nxjhcWkUw
+         BiAGE0mKurK4Jee+XfvSy+mvQ4ZknfbEW1HJZAS7wvx7F2eJtmeRT0h5QPJ2x1isr5GK
+         DoRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Q2uYpOpXs+pbPux8Et5aQ4qoOceeJiTpOWIeON9aqJw=;
-        b=VHfYvc4k4wbUTgT12pRfRcVcaQqWYOg5Ifski1zrwP8U7pDpfjDmV4v98o3EvaLoW7
-         KSAa7C6aOa+mZa/9AjThQzY+ampkCEHuzoRAU8YCKLk2XQ4N5nCEafwsM7TQTD3CZVSc
-         gfD1IS3jOlJ3ElR2vYOov/aNambpzXsmw3O0kDN58T6Yk9/DSmoklC7k909H0bi3DlnS
-         cudMp7MSgxReEeQHQ887xwDLJ25m04J0mqqtgFBueCKdGSu8qAYK24ZQikiQSNGqNIlc
-         ZXWjrS6YLLAObN6iR+qbJgAiLB4SmsV4MH97Rup/nwe7OGe7mRP5ctCSlZq3n+m7Zf4B
-         ryJA==
-X-Gm-Message-State: APjAAAV21XquVePq4+DsPf1AJg70QfpcmqsA3yGOypB9dn84v74nBT8o
-        XX73mFWJOz+Q/Iu+Ail6oKMXGg==
-X-Google-Smtp-Source: APXvYqxt3xXw6zPmzq+Jg1Wkb/bwFGikCdRC/55sVP0S3p2sNDd+C0O3qGrll+hpAOrNtxDvex5vQQ==
-X-Received: by 2002:adf:e490:: with SMTP id i16mr3068418wrm.280.1561544883691;
-        Wed, 26 Jun 2019 03:28:03 -0700 (PDT)
+        bh=mvSt9hJ9riivcaZUoiXx5QKwOryBX80+CmAuVklqVuY=;
+        b=kFkRstgxcupI4Sk+OE1F9xj9I85j/usYcpnTcNqUDQcfMflirsR15fyModUU0jSVaC
+         jTCZEkfOW64fWdzbj0io3PEGJPImwEysnY0x0c3JayuYzeJ4NbuogMTnvpEIZiA2EMDl
+         GZloKSVmOipTeEZMWsr7/8dlXEP4oHCPDbncAKYhVQR7otxMqHI8ZmtR4llmdyheyYsj
+         6hX9CSuhJmNabL80cnwU8X/mfmEOrZhvfmkuudWoPr7fdL+391eFXVj4gDuzsZrWAtlc
+         Qt+DpBwOzlvMy2aJpGpFZBiTJ/bfuTWeKxPOolFbcM3y0dFMzASi3iD60vPz8dp3mNhP
+         62pw==
+X-Gm-Message-State: APjAAAUMFcnt1/a1KvCq8XRLLNxf9ZI+UpeYoW5G9dIWtsFLNVfLquBc
+        xKwf3h5dhPEgZr2Fa0zI5G6glg==
+X-Google-Smtp-Source: APXvYqyUxp2HTk10/TPYId0f9iiqXY9bc1/NCL/3FY2t/2gSKs0yuX312ojOKmF38kJFexSu2bDW1w==
+X-Received: by 2002:adf:ea4a:: with SMTP id j10mr3038947wrn.3.1561544884817;
+        Wed, 26 Jun 2019 03:28:04 -0700 (PDT)
 Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id z19sm2212042wmi.7.2019.06.26.03.28.02
+        by smtp.gmail.com with ESMTPSA id z19sm2212042wmi.7.2019.06.26.03.28.03
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 26 Jun 2019 03:28:03 -0700 (PDT)
+        Wed, 26 Jun 2019 03:28:04 -0700 (PDT)
 From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 To:     gregkh@linuxfoundation.org
 Cc:     linux-kernel@vger.kernel.org,
         Bryan O'Donoghue <pure.logic@nexus-software.ie>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH 3/6] nvmem: imx-ocotp: Change TIMING calculation to u-boot algorithm
-Date:   Wed, 26 Jun 2019 11:27:30 +0100
-Message-Id: <20190626102733.11708-4-srinivas.kandagatla@linaro.org>
+Subject: [PATCH 4/6] nvmem: imx-ocotp: Add i.MX8MM support
+Date:   Wed, 26 Jun 2019 11:27:31 +0100
+Message-Id: <20190626102733.11708-5-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190626102733.11708-1-srinivas.kandagatla@linaro.org>
 References: <20190626102733.11708-1-srinivas.kandagatla@linaro.org>
@@ -66,91 +65,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
 
-The RELAX field of the OCOTP block is turning out as a zero on i.MX8MM.
-This messes up the subsequent re-load of the fuse shadow registers.
+This patch adds support to burn the fuses on the i.MX8MM.
+https://www.nxp.com/webapp/Download?colCode=IMX8MMRM
 
-After some discussion with people @ NXP its clear we have missed a trick
-here in Linux.
+The i.MX8MM is similar to i.MX6 processors in terms of addressing and clock
+setup.
 
-The OCOTP fuse programming time has a physical minimum 'burn time' that is
-not related to the ipg_clk.
-
-We need to define the RELAX, STROBE_READ and STROBE_PROG fields in terms of
-desired timings to allow for the burn-in to safely complete. Right now only
-the RELAX field is calculated in terms of an absolute time and we are
-ending up with a value of zero.
-
-This patch inherits the u-boot timings for the OCOTP_TIMING calculation on
-the i.MX6 and i.MX8. Those timings are known to work and critically specify
-values such as STROBE_PROG as a minimum timing.
-
-Fixes: 0642bac7da42 ("nvmem: imx-ocotp: add write support")
+The documentation specifies 60 discreet OTP registers but, the fusemap
+address space encompasses up to 256 registers. We map the entire putative
+256 OTP registers.
 
 Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Suggested-by: Leonard Crestez <leonard.crestez@nxp.com>
-Reviewed-by: Leonard Crestez <leonard.crestez@nxp.com>
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- drivers/nvmem/imx-ocotp.c | 36 ++++++++++++++++++++++++++++++++----
- 1 file changed, 32 insertions(+), 4 deletions(-)
+ drivers/nvmem/imx-ocotp.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
 diff --git a/drivers/nvmem/imx-ocotp.c b/drivers/nvmem/imx-ocotp.c
-index f4e117bbf2c3..b7dacf53c715 100644
+index b7dacf53c715..340ab336f987 100644
 --- a/drivers/nvmem/imx-ocotp.c
 +++ b/drivers/nvmem/imx-ocotp.c
-@@ -44,7 +44,9 @@
- #define IMX_OCOTP_BM_CTRL_ERROR		0x00000200
- #define IMX_OCOTP_BM_CTRL_REL_SHADOWS	0x00000400
+@@ -473,6 +473,12 @@ static const struct ocotp_params imx8mq_params = {
+ 	.set_timing = imx_ocotp_set_imx7_timing,
+ };
  
--#define DEF_RELAX			20	/* > 16.5ns */
-+#define TIMING_STROBE_PROG_US		10	/* Min time to blow a fuse */
-+#define TIMING_STROBE_READ_NS		37	/* Min time before read */
-+#define TIMING_RELAX_NS			17
- #define DEF_FSOURCE			1001	/* > 1000 ns */
- #define DEF_STROBE_PROG			10000	/* IPG clocks */
- #define IMX_OCOTP_WR_UNLOCK		0x3E770000
-@@ -176,12 +178,38 @@ static void imx_ocotp_set_imx6_timing(struct ocotp_priv *priv)
- 	 * fields with timing values to match the current frequency of the
- 	 * ipg_clk. OTP writes will work at maximum bus frequencies as long
- 	 * as the HW_OCOTP_TIMING parameters are set correctly.
-+	 *
-+	 * Note: there are minimum timings required to ensure an OTP fuse burns
-+	 * correctly that are independent of the ipg_clk. Those values are not
-+	 * formally documented anywhere however, working from the minimum
-+	 * timings given in u-boot we can say:
-+	 *
-+	 * - Minimum STROBE_PROG time is 10 microseconds. Intuitively 10
-+	 *   microseconds feels about right as representative of a minimum time
-+	 *   to physically burn out a fuse.
-+	 *
-+	 * - Minimum STROBE_READ i.e. the time to wait post OTP fuse burn before
-+	 *   performing another read is 37 nanoseconds
-+	 *
-+	 * - Minimum RELAX timing is 17 nanoseconds. This final RELAX minimum
-+	 *   timing is not entirely clear the documentation says "This
-+	 *   count value specifies the time to add to all default timing
-+	 *   parameters other than the Tpgm and Trd. It is given in number
-+	 *   of ipg_clk periods." where Tpgm and Trd refer to STROBE_PROG
-+	 *   and STROBE_READ respectively. What the other timing parameters
-+	 *   are though, is not specified. Experience shows a zero RELAX
-+	 *   value will mess up a re-load of the shadow registers post OTP
-+	 *   burn.
- 	 */
- 	clk_rate = clk_get_rate(priv->clk);
- 
--	relax = clk_rate / (1000000000 / DEF_RELAX) - 1;
--	strobe_prog = clk_rate / (1000000000 / 10000) + 2 * (DEF_RELAX + 1) - 1;
--	strobe_read = clk_rate / (1000000000 / 40) + 2 * (DEF_RELAX + 1) - 1;
-+	relax = DIV_ROUND_UP(clk_rate * TIMING_RELAX_NS, 1000000000) - 1;
-+	strobe_read = DIV_ROUND_UP(clk_rate * TIMING_STROBE_READ_NS,
-+				   1000000000);
-+	strobe_read += 2 * (relax + 1) - 1;
-+	strobe_prog = DIV_ROUND_CLOSEST(clk_rate * TIMING_STROBE_PROG_US,
-+					1000000);
-+	strobe_prog += 2 * (relax + 1) - 1;
- 
- 	timing = readl(priv->base + IMX_OCOTP_ADDR_TIMING) & 0x0FC00000;
- 	timing |= strobe_prog & 0x00000FFF;
++static const struct ocotp_params imx8mm_params = {
++	.nregs = 256,
++	.bank_address_words = 0,
++	.set_timing = imx_ocotp_set_imx6_timing,
++};
++
+ static const struct of_device_id imx_ocotp_dt_ids[] = {
+ 	{ .compatible = "fsl,imx6q-ocotp",  .data = &imx6q_params },
+ 	{ .compatible = "fsl,imx6sl-ocotp", .data = &imx6sl_params },
+@@ -483,6 +489,7 @@ static const struct of_device_id imx_ocotp_dt_ids[] = {
+ 	{ .compatible = "fsl,imx6sll-ocotp", .data = &imx6sll_params },
+ 	{ .compatible = "fsl,imx7ulp-ocotp", .data = &imx7ulp_params },
+ 	{ .compatible = "fsl,imx8mq-ocotp", .data = &imx8mq_params },
++	{ .compatible = "fsl,imx8mm-ocotp", .data = &imx8mm_params },
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, imx_ocotp_dt_ids);
 -- 
 2.21.0
 
