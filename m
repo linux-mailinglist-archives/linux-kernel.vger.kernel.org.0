@@ -2,95 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 609F5563ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 09:59:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EFB79563F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 10:03:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727092AbfFZH7P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 03:59:15 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:44396 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726042AbfFZH7P (ORCPT
+        id S1726550AbfFZIDJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 04:03:09 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:34957 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726104AbfFZIDI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 03:59:15 -0400
-Received: by mail-pl1-f193.google.com with SMTP id t7so976423plr.11
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 00:59:14 -0700 (PDT)
+        Wed, 26 Jun 2019 04:03:08 -0400
+Received: by mail-pf1-f195.google.com with SMTP id d126so931164pfd.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 01:03:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=m4ccwwpO5oRzKymdnY/55sXpZJv1GlqtCN/M5c5AvmY=;
-        b=ifNVdZNFnY/2v4zh/dDKfkaBnMcIoW/YPwoxRXpDgBPjIpbAtY9RULlxulJ0n8osIW
-         oikinqGd5ACHyhyJfm8gEuflttq5znCoqv/p9W9o3DxtDKiY/dP6y0QK32QnOFT1ly8W
-         OcslnNnxHhZ5fimkjloj72FgwhbwVoVMRBnmB3Dfowpb+y5KghzISjOl/m7LRcPNmTHa
-         Sp4glE1irTzNlJ7dDmLNmoSbPP8ehBwblXYBdax57+UceVwebOuP7G6weJfhcJLCPFdb
-         BCGvhc1R6AjuxfCzusrGdYXVQMx46iZqUGeUdt7S88Ci2Dbu5+rvzOl4dNhoau1g+3PO
-         GULQ==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nwcdyZlVJNYhzqAX8drYdwwlincSCC0RlYdtVUa7uAU=;
+        b=IkHW2/q5zYf/AiFOwOUn62sZGCukGK93pV5qaXaFIqAD6rVurvvvVguZ0CQNqSK004
+         PUW6XYRD1tpIvu/H8uK2xdNaMWkc3s+ZreXHoEsItZgP1H729MJ8nowT1aehVpl1AnJq
+         rAPmVbRpyeOR+0aKXV1iywesPypOO3F4fwUcKnHNHDKkSlnXU9KrB33bQAymKu7tZx6G
+         yt/Ix8apmwB+zPUY0f7g7GrCvvhKCA2B8FFf68JI9BW8d/snEU6oOmLqSE4EOwMnXWLP
+         uFddQ1SWm8yfpnKxzglfseoQZZbmazxOSGTrgVrxfJIOk1+YhP4zhoDMctTsB330F1Sn
+         /4dA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=m4ccwwpO5oRzKymdnY/55sXpZJv1GlqtCN/M5c5AvmY=;
-        b=Fdf/XMeH4pQjMZXMboZh4zXwEX6yRmSUpQH+1NwBhgbLn+5k1evdKZrVfUwOtSTNNK
-         MXb4LinGW+Fi5KH+Ds5S+bYETvC+Pjsz06FTv2BLckX4NKOS73+zZ8jMGx/ECyx27202
-         WTZqgWlsFlK278pTviyKWIBcW3VOxpRXsXFRMLd/9cDmt1v1AlTTdCQtAWj4fs57hgdF
-         ki7wXZ6P2FIbJt2uAK91SVyA6NwRYhPoVjHS59JyOEyvypSdEHOwluPzzU7CmAzpMjcP
-         b1rTud8XalCvaaw+32OrtVXFIi0I5k14Rl7ckaxwvWp093iLSkmRQ2jBEcgXsLh6hYXr
-         JwUQ==
-X-Gm-Message-State: APjAAAVWDPsQpGKzHk5g1gCK7A7rACajQWypmuXvHB+7OgD3/alMKeEO
-        gL5UiR2DmXw1tRdMV7Fc1lI=
-X-Google-Smtp-Source: APXvYqwb0Kc9S0n5E7F36S1KdjVeYBGXxGk/mESd3n76+oCdkdana+gh3ApUne4sMUzL5pIyTnPR5Q==
-X-Received: by 2002:a17:902:5ac4:: with SMTP id g4mr3986808plm.80.1561535954603;
-        Wed, 26 Jun 2019 00:59:14 -0700 (PDT)
-Received: from localhost ([175.223.45.10])
-        by smtp.gmail.com with ESMTPSA id k22sm19500304pfg.77.2019.06.26.00.59.13
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 26 Jun 2019 00:59:13 -0700 (PDT)
-Date:   Wed, 26 Jun 2019 16:59:10 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     John Ogness <john.ogness@linutronix.de>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [RFC PATCH v2 1/2] printk-rb: add a new printk ringbuffer
- implementation
-Message-ID: <20190626075910.GA2936@jagdpanzerIV>
-References: <87imt2bl0k.fsf@linutronix.de>
- <20190625064543.GA19050@jagdpanzerIV>
- <20190625071500.GB19050@jagdpanzerIV>
- <875zoujbq4.fsf@linutronix.de>
- <20190625090620.wufhvdxxiryumdra@pathway.suse.cz>
- <20190625100322.GD532@jagdpanzerIV>
- <87woh9hnxg.fsf@linutronix.de>
- <20190626020837.GA25178@jagdpanzerIV>
- <87mui43jgk.fsf@linutronix.de>
- <20190626074718.n7fmxugeul3lyyq6@pathway.suse.cz>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nwcdyZlVJNYhzqAX8drYdwwlincSCC0RlYdtVUa7uAU=;
+        b=ZNIxTc9nsDJz3fjZomNhH/uSevfdUZbiWGyL8qlTaqlnncqYlACB2Vm4uPyr1fXy2r
+         NbGeRPYGBUG3iCIL8+uFn/w2Rakg+hIdt/qalABX8VsKR/WC/vym5mGMG6JamOY3c4CM
+         uyrjjGkpA+Hn3ironVAd/fVLipanGycoSvCMVGgwsWTIUeND8EFVX0sMC/y4DYO6D+R0
+         Qq542PMdDyegzr2gqgj60hoJpI+hKD/UhVvjRP7hbLUWu4GKhpkHLHQqaQKZ1jEf3nhc
+         r4+xP6Yp2vi63XSqfycXWzcb2s8iKXNfj14PNG2B5r2NhyHsPM5UG5aQmA60woxg78av
+         DoEg==
+X-Gm-Message-State: APjAAAWCR+dRVSxwbRq+DDQEOr7kRJqn9VWvYJeZ4+miGeF0iGNI700n
+        l9ovgR2jpTL5qM8Q5pIbU8Qzky1T8aETcUGMoXBX0A==
+X-Google-Smtp-Source: APXvYqzSvFzyXqC4mv+sYfABQnmt0YNMhvFTkgdzLZZeovItyFY3wThgA7+iWx0YSEf5WS6vtdXjsfVxGyJkZN8WaD8=
+X-Received: by 2002:a17:90a:9382:: with SMTP id q2mr3140021pjo.131.1561536186861;
+ Wed, 26 Jun 2019 01:03:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190626074718.n7fmxugeul3lyyq6@pathway.suse.cz>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <20190617082613.109131-1-brendanhiggins@google.com>
+ <20190617082613.109131-14-brendanhiggins@google.com> <20190626000150.GT19023@42.do-not-panic.com>
+In-Reply-To: <20190626000150.GT19023@42.do-not-panic.com>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Wed, 26 Jun 2019 01:02:55 -0700
+Message-ID: <CAFd5g44kkepB2hZcpYL-NB5ZHYE5tP7W-0yducGCX7Khd9gd9w@mail.gmail.com>
+Subject: Re: [PATCH v5 13/18] kunit: tool: add Python wrappers for running
+ KUnit tests
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Frank Rowand <frowand.list@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Kees Cook <keescook@google.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        shuah <shuah@kernel.org>, "Theodore Ts'o" <tytso@mit.edu>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        kunit-dev@googlegroups.com,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-um@lists.infradead.org,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        "Bird, Timothy" <Tim.Bird@sony.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Knut Omang <knut.omang@oracle.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Petr Mladek <pmladek@suse.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Richard Weinberger <richard@nod.at>,
+        David Rientjes <rientjes@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com,
+        Felix Guo <felixguoxiuping@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (06/26/19 09:47), Petr Mladek wrote:
-[..]
-> If the data might change under the hood then we have bigger
-> problems. For example, there might be a race when the trailing
-> "\0" has not been written yet.
+On Tue, Jun 25, 2019 at 5:01 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
+>
+> On Mon, Jun 17, 2019 at 01:26:08AM -0700, Brendan Higgins wrote:
+> >  create mode 100644 tools/testing/kunit/test_data/test_is_test_passed-all_passed.log
+> >  create mode 100644 tools/testing/kunit/test_data/test_is_test_passed-crash.log
+> >  create mode 100644 tools/testing/kunit/test_data/test_is_test_passed-failure.log
+> >  create mode 100644 tools/testing/kunit/test_data/test_is_test_passed-no_tests_run.log
+> >  create mode 100644 tools/testing/kunit/test_data/test_output_isolated_correctly.log
+> >  create mode 100644 tools/testing/kunit/test_data/test_read_from_file.kconfig
+>
+> Why are these being added upstream? The commit log does not explain
+> this.
 
-Current printk would not handle such cases. I'm only talking about
-transition from one consistent state to another, when
-	sprintf(NULL, ptr) == A && sprintf(buf, ptr) != A
-Wether it's a corner case or not is entirely unclear to me but I
-probably would not call it "an impossible scenario".
-
-	-ss
+Oh sorry, those are for testing purposes. I thought that was clear
+from being in the test_data directory. I will reference it in the
+commit log in the next revision.
