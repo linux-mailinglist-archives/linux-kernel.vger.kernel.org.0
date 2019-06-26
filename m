@@ -2,173 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9DC056D73
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 17:16:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41C4356D79
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 17:19:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727985AbfFZPQs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 11:16:48 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:39598 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727258AbfFZPQr (ORCPT
+        id S1727962AbfFZPS7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 11:18:59 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:49220 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725958AbfFZPS7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 11:16:47 -0400
-Received: by mail-wm1-f66.google.com with SMTP id z23so2504499wma.4
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 08:16:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=m+Eox3jAI4p4arcBNi/bz5Q9icr2zuJCTw0NGg/mhXw=;
-        b=o6YaSBZc2EeuMFvlpkKfQlplQXMJ12sVko6EIjOoi6QedrBEoUWA5mjdxSslsLgROT
-         m7/ZBWLlXuBHYhbUPTU607aSCt5zDrQRPGZqCTnRz23fFKvLUKGvA9nzd0hi6YZTUy1b
-         pxt+Nv+XImLd5l4s0g86IKOu7ZahrJZcB1B+KKKWtgzRfSMpXTKAhbUf79Fc9zAiyD6O
-         8DYw+T7qHlS/M39+UYnRgNxhHKOwWrQm5GcT63xN8fJkktvuxGZfBFm5tJ8QQoS7uWKl
-         0GdTYAJRxsP0x2R9ZbmzDcMJ1XGsh/A88cJeBP37Rf1CUo5Khrv9s3A6jwt3rGRExZ96
-         DT7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=m+Eox3jAI4p4arcBNi/bz5Q9icr2zuJCTw0NGg/mhXw=;
-        b=nHZlVwGGP6RkZpgDK5LCdGaJh1zEcU/q/o0RwAaKSjxialYFdOzLpSc0rOktYtzlhX
-         dmuVMi2mshbHnHJTh3YkG6itKpfZ3b7NX+btdwZZjiqgBiUNRJWcR9tAK55K4jYxt5o0
-         89ZnuChZMoxNH1HE/FrdWRrYI3ZS5eJf3017FK2SaxB2OT3iLScRToO/P32/dBhcvObp
-         37IB3q3/V7OtX8MK2H/4GXy4h/KBiNwd09o/dlNKoG0e2o93j5csn/fYdoCtyxG5hido
-         GFaSKGO0RVBhfnWqDEOUsYC5JRsdXwDUuxxbfpeJhebOcE8ntBHCrqwgGt1H5539RnUo
-         +FNg==
-X-Gm-Message-State: APjAAAWogf7tujKEMfjagbnqLql+/+yXiaWmP1YXI8V2YaWwTHSgJeno
-        GcQDqorDiPir0+nAdHBo6pbCAw==
-X-Google-Smtp-Source: APXvYqx9AT2z25r8fnh5UqGS35LEo13rBEiKKHlLhWzY6nirXRAA6mty2ATs6Z7uJDe9HJVgEJ/Nag==
-X-Received: by 2002:a1c:7d08:: with SMTP id y8mr2601208wmc.50.1561562204873;
-        Wed, 26 Jun 2019 08:16:44 -0700 (PDT)
-Received: from [192.168.0.41] (26.92.130.77.rev.sfr.net. [77.130.92.26])
-        by smtp.googlemail.com with ESMTPSA id o12sm18653051wrx.63.2019.06.26.08.16.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 Jun 2019 08:16:44 -0700 (PDT)
-Subject: Re: [RFC v3 0/2] clocksource: davinci-timer: new driver
-To:     Sekhar Nori <nsekhar@ti.com>, Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Kevin Hilman <khilman@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        David Lechner <david@lechnology.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20190605083334.22383-1-brgl@bgdev.pl>
- <1ac8cfcf-1d77-9b6b-4aab-4171f6cf80fc@ti.com>
- <1a66e067-631c-c7a4-288b-3934737bee8c@linaro.org>
- <CAMRc=MecrpzwC0-8x=1dAipf+j7h+C54pHCfbZidFGXtAyv7Pg@mail.gmail.com>
- <234ab4c6-3b3d-6d6b-9bbc-6dc4ca9243b7@ti.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=daniel.lezcano@linaro.org; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <22da4309-a1a5-c2a3-df83-57398d824fe7@linaro.org>
-Date:   Wed, 26 Jun 2019 17:16:42 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Wed, 26 Jun 2019 11:18:59 -0400
+Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hg9h0-0005Q2-FX; Wed, 26 Jun 2019 17:18:38 +0200
+Date:   Wed, 26 Jun 2019 17:18:37 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Nathan Chancellor <natechancellor@gmail.com>
+cc:     Kees Cook <keescook@chromium.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Joe Perches <joe@perches.com>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Shawn Landden <shawn@git.icu>,
+        clang-built-linux@googlegroups.com,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: Re: [PATCH] perf/x86/intel: Mark expected switch fall-throughs
+In-Reply-To: <20190626051035.GA114229@archlinux-epyc>
+Message-ID: <alpine.DEB.2.21.1906261711540.32342@nanos.tec.linutronix.de>
+References: <b00fc090d83ac6bd41a5db866b02d425d9ab20e4.camel@perches.com> <20190624203737.GL3436@hirez.programming.kicks-ass.net> <3dc75cd4-9a8d-f454-b5fb-64c3e6d1f416@embeddedor.com> <CANiq72mMS6tHcP8MHW63YRmbdFrD3ZCWMbnQEeHUVN49v7wyXQ@mail.gmail.com>
+ <20190625071846.GN3436@hirez.programming.kicks-ass.net> <201906251009.BCB7438@keescook> <20190625180525.GA119831@archlinux-epyc> <alpine.DEB.2.21.1906252127290.32342@nanos.tec.linutronix.de> <20190625202746.GA83499@archlinux-epyc>
+ <alpine.DEB.2.21.1906252255440.32342@nanos.tec.linutronix.de> <20190626051035.GA114229@archlinux-epyc>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <234ab4c6-3b3d-6d6b-9bbc-6dc4ca9243b7@ti.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24/06/2019 09:29, Sekhar Nori wrote:
-> On 24/06/19 12:51 PM, Bartosz Golaszewski wrote:
->> pon., 24 cze 2019 o 07:40 Daniel Lezcano <daniel.lezcano@linaro.org> napisał(a):
->>>
->>>
->>> Sekhar, Bartosz,
->>>
->>> if the sparse warning is not fixed, the driver won't hit this kernel
->>> version. Please fix it before the two next days otherwise it won't make
->>> it for v5.4.
->>>
->>> Thanks
->>>
->>
->> Hi Daniel,
->>
->> will do, I just came back to the office.
->>
->> Sekhar, how do we want to handle the rest of the platform code with
->> this driver? Do you think it can make it for the next release?
-> 
-> It may have to wait till next release, I am afraid. Lets first try to
-> get the driver in though. I can try a late pull request with no guarantees.
+On Tue, 25 Jun 2019, Nathan Chancellor wrote:
+> On Tue, Jun 25, 2019 at 11:47:06PM +0200, Thomas Gleixner wrote:
+> > On Tue, 25 Jun 2019, Nathan Chancellor wrote:
+> > > On Tue, Jun 25, 2019 at 09:53:09PM +0200, Thomas Gleixner wrote:
+> > > > 
+> > > > But can the script please check for a minimal clang version required to
+> > > > build that thing.
+> > > > 
+> > > > The default clang-3.8 which is installed on Debian stretch explodes. The
+> > > > 6.0 variant from backports works as advertised.
+> > > > 
+> > > 
+> > > Hmmm interesting, I test a lot of different distros using Docker
+> > > containers to make sure the script works universally and that includes
+> > > Debian stretch, which is the stress tester because all of the packages
+> > > are older. I install the following packages then run the following
+> > > command and it works fine for me (just tested):
+> > > 
+> > > $ apt update && apt install -y --no-install-recommends ca-certificates \
+> > > ccache clang cmake curl file gcc g++ git make ninja-build python3 \
+> > > texinfo zlib1g-dev
+> > > $ ./build-llvm.py
+> > > 
+> > > If you could give me a build log, I'd be happy to look into it and see
+> > > what I can do.
+> > 
+> > I can produce one tomorrow.
 
-The driver is merged in tip/timers/core, however I messed up with the
-davinci branch, please do not consider it as an immutable branch.
+tarball with log and the preprocessed source and run scripts:
 
-Sorry for that.
+    https://tglx.de/~tglx/tc-crash.tar.bz2
 
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+The machine runs up to date debian stretch which has backports enabled and
+I just used the install command from the github project page you linked
+to. Getting started section.
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Thanks,
 
+	tglx
