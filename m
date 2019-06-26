@@ -2,160 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC725567EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 13:51:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E06FD567F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 13:52:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727275AbfFZLvk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 07:51:40 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:34746 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726104AbfFZLvj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 07:51:39 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C4963308FE8D;
-        Wed, 26 Jun 2019 11:51:38 +0000 (UTC)
-Received: from carbon (ovpn-200-45.brq.redhat.com [10.40.200.45])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 217C96012E;
-        Wed, 26 Jun 2019 11:51:30 +0000 (UTC)
-Date:   Wed, 26 Jun 2019 13:51:28 +0200
-From:   Jesper Dangaard Brouer <brouer@redhat.com>
-To:     Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-Cc:     davem@davemloft.net, grygorii.strashko@ti.com, saeedm@mellanox.com,
-        leon@kernel.org, ast@kernel.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, ilias.apalodimas@linaro.org,
-        netdev@vger.kernel.org, daniel@iogearbox.net,
-        jakub.kicinski@netronome.com, john.fastabend@gmail.com,
-        brouer@redhat.com
-Subject: Re: [PATCH v4 net-next 1/4] net: core: page_pool: add user cnt
- preventing pool deletion
-Message-ID: <20190626135128.5724f40e@carbon>
-In-Reply-To: <20190626104948.GF6485@khorivan>
-References: <20190625175948.24771-1-ivan.khoronzhuk@linaro.org>
-        <20190625175948.24771-2-ivan.khoronzhuk@linaro.org>
-        <20190626124216.494eee86@carbon>
-        <20190626104948.GF6485@khorivan>
+        id S1727349AbfFZLw4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 07:52:56 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:40397 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726462AbfFZLwz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 07:52:55 -0400
+Received: by mail-wr1-f67.google.com with SMTP id p11so2385914wre.7
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 04:52:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=pno/4ff/EmVlLZf+cwJB7HjSbJVtgJvFvXzyjJWjZww=;
+        b=FrNk6Np4dKzBgiOqvrCZ9v1nd+0v7nIXo4/H33U5FzHgCYLYA7hOtdyTBWOdQOfNX+
+         HHHdIpZFYCq/JEgJAPOlqWgVVH5FH0Htlv97hysKhCBtqAImccVHJyM7hmvvjtmBlO5J
+         1XrPbvBR/SNIwt+CNPfox7kegKCZVc0GtF0J9p9QlRplCJktwjufwGWfa1a0VOvBluan
+         vijqvZns8aBq6RG8cqZbQpEwGAu65ZB7lPyhQSdpj6KETAVoirRV21LbJLw6qB5yfcnG
+         WbNKGD5apEUUHpkgiva3bhaZ4xPkax61wvAsSwaGPOyQM22WpthkyWzvdDCKu2I5kXfl
+         f0Fw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=pno/4ff/EmVlLZf+cwJB7HjSbJVtgJvFvXzyjJWjZww=;
+        b=kiYSkYn1Wo4irdbGngq5VQ6BDY3QrKJbvZ4U0INZHMlyLlsAdJOXKOis0aXV1Hl+Ue
+         OAS4H/WPwuSvEP6kD4C8wkREC/PsPrUboGsMQj6KC8MZffPq8AZisN2B6ZPklU/DLhAr
+         gt3kH9cbhFVc8sC+ueYJglh+RdpVRX59tsd59nkOlQNJE7HTpBOY+hikf0czVHOF0r6t
+         lrsAi/BggDXYJ0qYHbyBZgGnWrGuot9anEvaLUdVXmXIr/nipv0WWV1hYajjsD6TNv91
+         NFDDY41QksyKZ8Dhj5zfibcibujBubQ7Zekz5TU+qVA5BcIXU4ghFy31gbkEYKLGCAV7
+         +6Zw==
+X-Gm-Message-State: APjAAAVB2KALLqB/SilUCWyYjNx45ZlR7IcU5OXezIytuhD895uBNDB+
+        C5iM8WTTSSHK34mrqKU9PFKDtw==
+X-Google-Smtp-Source: APXvYqzkue4b4T2/iz5KX/SFk9Swrlx2jlSbM8pLLMgMOTqmDRsgOwIKUpjFoXL5NkloPNPI8a1GxQ==
+X-Received: by 2002:a5d:53c2:: with SMTP id a2mr3508180wrw.8.1561549973997;
+        Wed, 26 Jun 2019 04:52:53 -0700 (PDT)
+Received: from dell ([2.27.35.164])
+        by smtp.gmail.com with ESMTPSA id y2sm14535504wrl.4.2019.06.26.04.52.52
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 26 Jun 2019 04:52:53 -0700 (PDT)
+Date:   Wed, 26 Jun 2019 12:52:51 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Tony Xie <tony.xie@rock-chips.com>
+Cc:     heiko@sntech.de, broonie@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
+        xsf@rock-chips.com, zhangqing@rock-chips.com,
+        huangtao@rock-chips.com
+Subject: Re: [PATCH v10 0/6] support a new type of PMIC,including two
+ chips(rk817 and rk809)
+Message-ID: <20190626115251.GR21119@dell>
+References: <20190621103258.8154-1-tony.xie@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Wed, 26 Jun 2019 11:51:39 +0000 (UTC)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190621103258.8154-1-tony.xie@rock-chips.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 26 Jun 2019 13:49:49 +0300
-Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org> wrote:
+On Fri, 21 Jun 2019, Tony Xie wrote:
 
-> On Wed, Jun 26, 2019 at 12:42:16PM +0200, Jesper Dangaard Brouer wrote:
-> >On Tue, 25 Jun 2019 20:59:45 +0300
-> >Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org> wrote:
-> >  
-> >> Add user counter allowing to delete pool only when no users.
-> >> It doesn't prevent pool from flush, only prevents freeing the
-> >> pool instance. Helps when no need to delete the pool and now
-> >> it's user responsibility to free it by calling page_pool_free()
-> >> while destroying procedure. It also makes to use page_pool_free()
-> >> explicitly, not fully hidden in xdp unreg, which looks more
-> >> correct after page pool "create" routine.  
-> >
-> >No, this is wrong.  
-> below.
+> Most of functions and registers of the rk817 and rk808 are the same,
+> so they can share allmost all codes.
 > 
-> >  
-> >> Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-> >> ---
-> >>  drivers/net/ethernet/mellanox/mlx5/core/en_main.c | 8 +++++---
-> >>  include/net/page_pool.h                           | 7 +++++++
-> >>  net/core/page_pool.c                              | 7 +++++++
-> >>  net/core/xdp.c                                    | 3 +++
-> >>  4 files changed, 22 insertions(+), 3 deletions(-)
-> >>
-> >> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-> >> index 5e40db8f92e6..cb028de64a1d 100644
-> >> --- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-> >> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-> >> @@ -545,10 +545,8 @@ static int mlx5e_alloc_rq(struct mlx5e_channel *c,
-> >>  	}
-> >>  	err = xdp_rxq_info_reg_mem_model(&rq->xdp_rxq,
-> >>  					 MEM_TYPE_PAGE_POOL, rq->page_pool);
-> >> -	if (err) {
-> >> -		page_pool_free(rq->page_pool);
-> >> +	if (err)
-> >>  		goto err_free;
-> >> -	}
-> >>
-> >>  	for (i = 0; i < wq_sz; i++) {
-> >>  		if (rq->wq_type == MLX5_WQ_TYPE_LINKED_LIST_STRIDING_RQ) {
-> >> @@ -613,6 +611,8 @@ static int mlx5e_alloc_rq(struct mlx5e_channel *c,
-> >>  	if (rq->xdp_prog)
-> >>  		bpf_prog_put(rq->xdp_prog);
-> >>  	xdp_rxq_info_unreg(&rq->xdp_rxq);
-> >> +	if (rq->page_pool)
-> >> +		page_pool_free(rq->page_pool);
-> >>  	mlx5_wq_destroy(&rq->wq_ctrl);
-> >>
-> >>  	return err;
-> >> @@ -643,6 +643,8 @@ static void mlx5e_free_rq(struct mlx5e_rq *rq)
-> >>  	}
-> >>
-> >>  	xdp_rxq_info_unreg(&rq->xdp_rxq);
-> >> +	if (rq->page_pool)
-> >> +		page_pool_free(rq->page_pool);  
-> >
-> >No, this is wrong.  The hole point with the merged page_pool fixes
-> >patchset was that page_pool_free() needs to be delayed until no-more
-> >in-flight packets exist.  
-> 
-> Probably it's not so obvious, but it's still delayed and deleted only
-> after no-more in-flight packets exist. Here question is only who is able
-> to do this first based on refcnt.
+> Their specifications are as follows:
+>   1) The RK809 and RK809 consist of 5 DCDCs, 9 LDOs and have the same
+> registers
+>      for these components except dcdc5.
+>   2) The dcdc5 is a boost dcdc for RK817 and is a buck for RK809.
+>   3) The RK817 has one switch but The Rk809 has two.
 
-Hmm... then I find this API is rather misleading, even the function
-name page_pool_free is misleading ("free"). (Now, I do see, below, that
-page_pool_create() take an extra reference).
-
-But it is still wrong / problematic.  As you allow
-__page_pool_request_shutdown() to be called with elevated refcnt.  Your
-use-case is to have more than 1 xdp_rxq_info struct using the same
-page_pool.  Then you have to call xdp_rxq_info_unreg_mem_model() for
-each, which will call __page_pool_request_shutdown().
-
-For this to be safe, your driver have to stop RX for all the
-xdp_rxq_info structs that share the page_pool.  The page_pool already
-have this requirement, but it comes as natural step when shutting down
-an RXQ.  With your change, you have to take care of stopping the RXQs
-first, and then call xdp_rxq_info_unreg_mem_model() for each
-xdp_rxq_info afterwards.  I assume you do this, but it is just a driver
-bug waiting to happen.
-
-
-> >> diff --git a/net/core/page_pool.c b/net/core/page_pool.c
-> >> index b366f59885c1..169b0e3c870e 100644
-> >> --- a/net/core/page_pool.c
-> >> +++ b/net/core/page_pool.c
-[...]
-> >> @@ -70,6 +71,8 @@ struct page_pool *page_pool_create(const struct page_pool_params *params)
-> >>  		kfree(pool);
-> >>  		return ERR_PTR(err);
-> >>  	}
-> >> +
-> >> +	page_pool_get(pool);
-> >>  	return pool;
-> >>  }
-> >>  EXPORT_SYMBOL(page_pool_create);
-
-The thing (perhaps) like about your API change, is that you also allow
-the driver to explicitly keep the page_pool object across/after a
-xdp_rxq_info_unreg_mem_model().  And this way possibly reuse it for
-another RXQ.  The problem is of-cause that on driver shutdown, this
-will force drivers to implement the same shutdown logic with
-schedule_delayed_work as the core xdp.c code already does.
+Just tried to apply this set to a v5.2-rc1 base, but it doesn't seem
+to do so cleanly.  Would you be able to rebase and resend please?
 
 -- 
-Best regards,
-  Jesper Dangaard Brouer
-  MSc.CS, Principal Kernel Engineer at Red Hat
-  LinkedIn: http://www.linkedin.com/in/brouer
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
