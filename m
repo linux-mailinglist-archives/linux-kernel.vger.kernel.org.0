@@ -2,85 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 634FC56B33
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 15:50:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5386356B36
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 15:50:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727709AbfFZNuE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 09:50:04 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:43208 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727282AbfFZNuE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 09:50:04 -0400
-Received: by mail-qk1-f196.google.com with SMTP id m14so1648743qka.10
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 06:50:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=V7w6w+dfv0biqzUUE5ewrpDw9Ee41HXfc9CN96OAGX4=;
-        b=JzCa9uKAvPQuqpfMqHF5HWHDsl6QmWzvmcjJ2YSvYbg0uFwQ36TQs/5LC9hUHNQgWf
-         SKA25T4g4TUmSDUhmYDGkSIVn1nsYeryl6hOYCNavuGkTHjznxcy/8GXn5fcZF1lcrKo
-         tI8iFzwzAbFsWvQqnOgb1BWBHOrgcdUYhc+BwzvWYj/29fjX3956+K/aYPRO3oV4X0Hh
-         mkRgC52gXjaceBCfX0MStw9jeTzhu+IU2866gFenUBvZTYuVBMXusmPp6vpIF8Fg8gbH
-         +uyX+3SeN7Mm603/UQR4HY26ISO3wD/uGi1woSneZSs28KKDwQzmVTabKs6XgRRlPAPm
-         XM7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=V7w6w+dfv0biqzUUE5ewrpDw9Ee41HXfc9CN96OAGX4=;
-        b=GgXkxHqjElzsMIX5eQguazLlPLRP6Yyww8Lb5GXkjdtUCG3HyKMGmbIjWmO3qlL18e
-         T7kJYuzZSBT9MD4Cq0GwDjZb0S9A1r6a1P3pTcHbcTmxKWs/+ai32K4iYLrSao16UrTy
-         Zb6RqrQKf6jw+ESKTqPhGMcDNdkYGnYPyH326zqnN8w5bjkgOwuqH1ETOH4EU/MKtN1N
-         4CeaI1gx4If1QbrI3TtPbMN2+PahPhrNzgkoZkYJi4N1T8audxqUIFU0NfBBCR/BkRjW
-         XknhuAgbelgdJxeHh06RD4OLmTRUt/A2mUtcLp0UFxTEaF0J7sNyTO/RWxel8txaC8au
-         wABA==
-X-Gm-Message-State: APjAAAWNqfW5ncDpX4KH+Qt6BT0JhLBxCtlNkfdBGkmYP+I2flGz7SQ5
-        hBDZ4U/uPVOHa7C7yj0/jV8=
-X-Google-Smtp-Source: APXvYqyP+2O1WiPSQrXK2geunwBg+Sltr+2NPgnwpLtV1XhHq9vyJhLtHbePOThD6wMhbn/e5VzHFg==
-X-Received: by 2002:a37:ccb:: with SMTP id 194mr3626080qkm.363.1561557002549;
-        Wed, 26 Jun 2019 06:50:02 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:480::953f])
-        by smtp.gmail.com with ESMTPSA id h185sm9025825qkd.11.2019.06.26.06.50.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 Jun 2019 06:50:00 -0700 (PDT)
-Date:   Wed, 26 Jun 2019 06:49:57 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     Lai Jiangshan <jiangshanlai@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 0/6] workqueue: convert to raw_spinlock_t
-Message-ID: <20190626134957.GT657710@devbig004.ftw2.facebook.com>
-References: <20190613145027.27753-1-bigeasy@linutronix.de>
- <20190626071719.psyftqdop4ny3zxd@linutronix.de>
+        id S1727924AbfFZNuQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 09:50:16 -0400
+Received: from ozlabs.org ([203.11.71.1]:32887 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726628AbfFZNuP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 09:50:15 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45YktX4q3Zz9s3Z;
+        Wed, 26 Jun 2019 23:50:12 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1561557012;
+        bh=CgFVAxLBBoJNkTiZPu52i39tbpv4zdhD2FMfBFNNmxI=;
+        h=Date:From:To:Cc:Subject:From;
+        b=YWnn41//Gs/iCFZMtwMZdMM6UtI+r2DjT9cy8AAifiKOAh2GznGMvMAmFtoSs5N7j
+         AXGF+BWqReftkVsEMImoLD75/ZzRMUgUFTKnInGumPc4iYE5NmhRYMtYs0en0XDM93
+         KoiNVk2lSLZSFh8BU/yAK5CHDceahkgxQHi+BmBPNCg81PdFmZF7dbDO8yXwafgD+9
+         l176Aq52oESwmWUwSDkMAO/RwyuPIJQJnJYgXNX3WO5AxEnYp2jM2VG8BY2U5beX+p
+         Q0kli/lVcBPtBVDYcJ0q0ZxAX+p+TOIt3TWOnGBFd6P/kUCfCvPbYEfmSTm7dqU09m
+         lgwOuCWy6haLw==
+Date:   Wed, 26 Jun 2019 23:50:11 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nicolas Boichat <drinkcat@chromium.org>
+Subject: linux-next: Fixes tag needs some work in the pinctrl tree
+Message-ID: <20190626235011.7b449eb0@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190626071719.psyftqdop4ny3zxd@linutronix.de>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/guC+oxRqAXQQC6UWwHorbL3"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 26, 2019 at 09:17:19AM +0200, Sebastian Andrzej Siewior wrote:
-> On 2019-06-13 16:50:21 [+0200], To linux-kernel@vger.kernel.org wrote:
-> > Hi,
-> > 
-> > the workqueue code has been reworked in -RT to use raw_spinlock_t based
-> > locking. This change allows to schedule worker from preempt_disable()ed
-> > or IRQ disabled section on -RT. This is the last patch. The previous
-> > patches are prerequisites or tiny cleanup (like patch #1 and #2).
-> 
-> a gentle *ping*
+--Sig_/guC+oxRqAXQQC6UWwHorbL3
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I don't now what to make of the series.  AFAICS, there's no benefit to
-mainline.  What am I missing?
+Hi Linus,
 
-Thanks.
+In commit
 
--- 
-tejun
+  99fd24aa4a45 ("pinctrl: mediatek: Ignore interrupts that are wake only du=
+ring resume")
+
+Fixes tag
+
+  Fixes: bf22ff45bed ("genirq: Avoid unnecessary low level irq function cal=
+ls")
+
+has these problem(s):
+
+  - SHA1 should be at least 12 digits long
+    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+    or later) just making sure it is not set (or set to "auto").
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/guC+oxRqAXQQC6UWwHorbL3
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0TeBMACgkQAVBC80lX
+0GxSQwgApiDxRMm6wi3XwcKZMTfIGRWkrSxyH6mqr4A5Nzl6jSx9NX9xu9qJM5Wa
+w+lD29RU6MTUsGwJGkbu6gvG65mcnrYCP0ZUr7vyOqc54PqDrGk2wGhAVDmVWagg
+73bOfNCS0VJnHNDnBilyat4UjA+2GojVg1pzMYqPbx93nRjF+cxGm77Qkl7o0DOm
+nacwcIH74qUOCmEzH93wI2bcRbCQEZsMgIrEh7mCVrR4LDsyLrcp/29TrEMacl37
+P4JK3dur3xMqn9rmoz2AMHErbIaR9jBOMgViykPn4YKUgmxkWg2xqX6Mn84/1Rh9
+IDR8W+DNLEp3B7cxxodUowHZygq4uQ==
+=5JVO
+-----END PGP SIGNATURE-----
+
+--Sig_/guC+oxRqAXQQC6UWwHorbL3--
