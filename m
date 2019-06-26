@@ -2,105 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 672B356C40
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 16:37:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CCBBE56BDF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 16:28:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728212AbfFZOhj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 10:37:39 -0400
-Received: from smtp688out1.syd.oss-core.net ([210.50.76.228]:26344 "EHLO
-        smtp688out1.syd.oss-core.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727663AbfFZOhj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 10:37:39 -0400
-X-Greylist: delayed 593 seconds by postgrey-1.27 at vger.kernel.org; Wed, 26 Jun 2019 10:37:38 EDT
-DomainKey-Signature: s=iprimus-dk; d=iprimus.com.au; c=simple; q=dns;
-  h=X-IronPort-AV:Received:MIME-Version:Content-Type:
-   Content-Transfer-Encoding:Date:From:To:Subject:Reply-To:
-   Mail-Reply-To:Message-ID:X-Sender:User-Agent:
-   X-Originating-IP;
-  b=DR5d/2m6yf3cV8EkhbPyBhegJzcxTZIGPjuvhEegYqIXs8FbEox1QtoG
-   0ctl1+1Sio9eHFv4RK3NRqaFXG1SxNLshRQ6r3lmOCowCvtVzEN4t4ACL
-   R+GQW6Kk4K9+a0Z9r/44JJ3nyLldG35x6eQlFyRCCRFGQHslXT8lGktDF
-   w=;
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=iprimus.com.au; i=@iprimus.com.au; l=1943; q=dns/txt;
-  s=iprimus-dkim; t=1561559858; x=1593095858;
-  h=mime-version:content-transfer-encoding:date:from:to:
-   subject:reply-to:message-id;
-  bh=Hc8obvDdrcUMwWhu+Il+mJzbV0fX/hxqYtVCIDKFfrs=;
-  b=PLmKsR7DjI1xYSWG4SyntFC4yYcRUd0ufsql57BF/xYoXrYyFvBs3TiZ
-   4K8D1fO11gKnYQfxwpkZtEq3B/a3GsH2t8S28KMabPiKi305Ethxuni36
-   cuIqmqhC5ZEKvAiBtEO3AXeOsq1H/zu/hRHan7Fprsdw2BMt+iDD9dzfM
-   4=;
-X-IronPort-AV: E=Sophos;i="5.63,420,1557151200"; 
-   d="scan'208";a="118416057"
-Received: from 158.11.134.203.sta.m2core.net.au (HELO 0.0.0.0) ([203.134.11.158])
-  by smtp688.syd.oss-core.net with ESMTP; 27 Jun 2019 00:27:43 +1000
+        id S1728072AbfFZO2H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 10:28:07 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:42070 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728022AbfFZO2B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 10:28:01 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E71FE81DE3;
+        Wed, 26 Jun 2019 14:28:00 +0000 (UTC)
+Received: from gimli.home (ovpn-117-35.phx2.redhat.com [10.3.117.35])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6CB0860852;
+        Wed, 26 Jun 2019 14:27:58 +0000 (UTC)
+Subject: [PATCH] mdev: Send uevents around parent device registration
+From:   Alex Williamson <alex.williamson@redhat.com>
+To:     kwankhede@nvidia.com, alex.williamson@redhat.com, cohuck@redhat.com
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Wed, 26 Jun 2019 08:27:58 -0600
+Message-ID: <156155924767.11505.11457229921502145577.stgit@gimli.home>
+User-Agent: StGit/0.19-dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date:   Wed, 26 Jun 2019 14:27:43 +0000
-From:   Mrs Marija Sterbenc <marijasterbenc0@iprimus.com.au>
-To:     undisclosed-recipients:;
-Subject: Donatie Van Mvr Marija Sterbenc
-Reply-To: marijasterbenc55@gmail.com
-Mail-Reply-To: marijasterbenc55@gmail.com
-Message-ID: <fdc11dcdeed4f4ebfed9ec81574815cd@iprimus.com.au>
-X-Sender: marijasterbenc0@iprimus.com.au
-User-Agent: Roundcube Webmail/1.2.9
-X-Originating-IP: [58.162.210.160]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Wed, 26 Jun 2019 14:28:00 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Donatie Van Mvr Marija Sterbenc
+This allows udev to trigger rules when a parent device is registered
+or unregistered from mdev.
 
-Liefste in de Heer,
+Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+---
+ drivers/vfio/mdev/mdev_core.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-Met alle respect en menselijkheid werd ik gedwongen te schrijven op een 
-humanitair gebied.
+diff --git a/drivers/vfio/mdev/mdev_core.c b/drivers/vfio/mdev/mdev_core.c
+index ae23151442cb..ecec2a3b13cb 100644
+--- a/drivers/vfio/mdev/mdev_core.c
++++ b/drivers/vfio/mdev/mdev_core.c
+@@ -146,6 +146,8 @@ int mdev_register_device(struct device *dev, const struct mdev_parent_ops *ops)
+ {
+ 	int ret;
+ 	struct mdev_parent *parent;
++	char *env_string = "MDEV_STATE=registered";
++	char *envp[] = { env_string, NULL };
+ 
+ 	/* check for mandatory ops */
+ 	if (!ops || !ops->create || !ops->remove || !ops->supported_type_groups)
+@@ -196,7 +198,8 @@ int mdev_register_device(struct device *dev, const struct mdev_parent_ops *ops)
+ 	list_add(&parent->next, &parent_list);
+ 	mutex_unlock(&parent_list_lock);
+ 
+-	dev_info(dev, "MDEV: Registered\n");
++	kobject_uevent_env(&dev->kobj, KOBJ_CHANGE, envp);
++
+ 	return 0;
+ 
+ add_dev_err:
+@@ -220,6 +223,8 @@ EXPORT_SYMBOL(mdev_register_device);
+ void mdev_unregister_device(struct device *dev)
+ {
+ 	struct mdev_parent *parent;
++	char *env_string = "MDEV_STATE=unregistered";
++	char *envp[] = { env_string, NULL };
+ 
+ 	mutex_lock(&parent_list_lock);
+ 	parent = __find_parent_device(dev);
+@@ -228,7 +233,6 @@ void mdev_unregister_device(struct device *dev)
+ 		mutex_unlock(&parent_list_lock);
+ 		return;
+ 	}
+-	dev_info(dev, "MDEV: Unregistering\n");
+ 
+ 	list_del(&parent->next);
+ 	mutex_unlock(&parent_list_lock);
+@@ -243,6 +247,8 @@ void mdev_unregister_device(struct device *dev)
+ 	up_write(&parent->unreg_sem);
+ 
+ 	mdev_put_parent(parent);
++
++	kobject_uevent_env(&dev->kobj, KOBJ_CHANGE, envp);
+ }
+ EXPORT_SYMBOL(mdev_unregister_device);
+ 
 
-Ik ben een weduwe Marija Sterbenc die langdurige zieken (kanker) 
-veroudert. Zijn momenteel opgenomen in een privéziekenhuis. Ik heb wat 
-geld dat ik heb geërfd van myhusband, Anthony Sterbenc, die later stierf 
-bij een auto-ongeluk.
-
-Toen mijn man in leven was, deponeerde hij de som van € 4.500.000,00 
-(4.500.000,00 Euro) in een bank. Momenteel staat dit geld nog steeds op 
-de bank.
-
-Mijn arts zei me dat het de komende drie maanden niet zou aanhouden 
-vanwege het kankerprobleem. Ik heb iemand nodig die heel eerlijk en 
-godvrezend is en die deze gelden kan gebruiken voor het werk van God. 
-Mijn overleden man heeft geleerd dat dit fonds voor 
-liefdadigheidsdoeleinden moet worden gebruikt. , zoals het bouwen van 
-scholen, huizen van weeshuizen, ziekenhuizen, enz.
-
-Ik nam deze beslissing omdat ik geen kind heb dat dit geld zal erven en 
-ik wil dat God mij genadig is en mijn ziel accepteert. Met God zijn alle 
-dingen mogelijk. Alsjeblieft, als je in staat zou zijn om deze fondsen 
-te gebruiken voor Gods werk, reageer dan alstublieft op mijn id: met dit 
-e-mailadres: (marijasterbenc55@gmail.com)
-
-Ik wil dat je me de volgende informatie toestuurt waarnaar hieronder 
-wordt verwezen.
-
-Je volledige naam -----------------------
-Jouw land -------------------------
-Jouw adres --------------------------
-Jouw leeftijd ------------------------------
-Uw dienstverband -----------------------
-De telefoon ------------------------
-Zodra ik uw antwoord heb ontvangen, zal ik u het contact van de bank 
-geven en ik zal u ook een machtigingsbrief geven die u laat zien dat u 
-de huidige begunstigde van dit fonds bent.
-
-In de hoop uw antwoord te ontvangen. Blijf gezegend in de Heer.
-
-Dank je
-
-Met vriendelijke groet
-
-Mevrouw Marija Sterbenc
