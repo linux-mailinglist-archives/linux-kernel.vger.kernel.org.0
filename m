@@ -2,116 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B80B56D5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 17:13:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A8F6156D75
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 17:17:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728041AbfFZPNI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 11:13:08 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:40357 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726157AbfFZPNI (ORCPT
+        id S1728225AbfFZPQw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 11:16:52 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:60479 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727258AbfFZPQv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 11:13:08 -0400
-Received: by mail-qk1-f196.google.com with SMTP id c70so1932119qkg.7
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 08:13:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ingics-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=42SCxQLArmojaNJ4Eg62ZtOfK5NvG2Y4ROvc7fxE2rM=;
-        b=XEtgO72dgbbxxJL4IFHjrM4f6XYpMuDAcGhRrjTTK3f920vg9awzgGxiEiDMGuccU4
-         53To3pDyZNSTeWJJ0MnzQz59RhEZiVQjRtqqVXsha7EU+/eRVUUfQVQH94m2N+n0ijHz
-         W0kaPdZikm5iS1vf6mjJQqKk07OC9VxzF52Hn95c3bAIIoHdpN7RgltATZDmYyevkLFL
-         rh+T5Cul2txV6zLbz3uATd5bqDDQRC7W5mVwJ30Od9RIq3dezlNuhP5fVPAmMEo+pB0R
-         3e9djL33wamnO01MPBGRAtGWgVglyTYBo8CrfkS/bYWCjjF5TL2jlDW78CECYKBU4AB3
-         z3Mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=42SCxQLArmojaNJ4Eg62ZtOfK5NvG2Y4ROvc7fxE2rM=;
-        b=D/PLr8XMwdbyPgoamJtPyNPlj+1U7oQCa0DxBv5PSHwi+6zJ9gIJi0mNwMusTvIP8N
-         HiB1zeghkNkW8BdGvAfWnAdoQoyUNovFTabCwz8tn/2eMqjLxkLqnXDnvF8Jtm89vEsC
-         NKFF6fdMwoycUTMY4zTrGSTesWXkkHerYhpOH2Txs3iQt1jCinVQjVGCIG5bt+71AHnA
-         9tf4cxfLuoDb+Yz+dSA4qtJfn2sw/9aKOwLXUabdtRp/1JKO7p1wuENDCtL4kTL6Xk7E
-         9VySDBREaJO4iw1KzZvuPbw5XHRloyGsZY2ogRXxOGWfcaPnsR4LJwevsRr2oMHoy/k4
-         n7wg==
-X-Gm-Message-State: APjAAAV5TxRYCaVxJANc9QeITQAoAdRFNlPXvDWgFbP8PhI2WZE2I6rH
-        SHvOjEdkeq028uUbv6+xZYps6ZpnmWBsmsk6bOeD9A==
-X-Google-Smtp-Source: APXvYqzoFOtmbJfugAdoXgdyPg9Pjxx/aCVlUqLeuIoi11XpvRxnrjqOG6deciPV2fhUB7AzZff4qFVs7OXI9SIsbjs=
-X-Received: by 2002:a37:6782:: with SMTP id b124mr4001921qkc.242.1561561987479;
- Wed, 26 Jun 2019 08:13:07 -0700 (PDT)
+        Wed, 26 Jun 2019 11:16:51 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5QFG74N4157838
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Wed, 26 Jun 2019 08:16:07 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5QFG74N4157838
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019061801; t=1561562168;
+        bh=X7NXGseKumNEiycbUaFlqHKZwn9YBPBWxfY85WvqOSQ=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=I83VedrXPWWbQ67uEUooqYlhy+29BQBG/HjPa37OB//s9DnRqw6KWKKEAOnAEoWM+
+         rd0+O463nRWZKBNX0VNm/i9rPwdipkGyjzAj+5j/3fZl866VSSt1VG9y+/bACZg+iv
+         YIHpR4p9Nei30tz7wrylxCTNvYIL1tHvFOVM83Uj9rOqGFQ67LKuhEqVuDIG1LYcqj
+         lDaox1Xy/2YT275sARzyT/ORnom910WJofV7lHNzVPjcMVrC7CGMCza4bDujOJqQBI
+         KhCp2wQmPXMKMDjsXh8F7+gMBIECIm1q5JKDZTp/znQgj9pVRYt68yk6e+4cfZcCxf
+         oRqLsruMEhCIw==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5QFG6Gq4157822;
+        Wed, 26 Jun 2019 08:16:06 -0700
+Date:   Wed, 26 Jun 2019 08:16:06 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Geert Uytterhoeven <tipbot@zytor.com>
+Message-ID: <tip-1bf72720281770162c87990697eae1ba2f1d917a@git.kernel.org>
+Cc:     mingo@kernel.org, peterz@infradead.org, ben@decadent.org.uk,
+        hpa@zytor.com, jpoimboe@redhat.com, tglx@linutronix.de,
+        gregkh@linuxfoundation.org, geert@linux-m68k.org, jkosina@suse.cz,
+        linux-kernel@vger.kernel.org
+Reply-To: tglx@linutronix.de, jkosina@suse.cz, geert@linux-m68k.org,
+          gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+          mingo@kernel.org, peterz@infradead.org, hpa@zytor.com,
+          ben@decadent.org.uk, jpoimboe@redhat.com
+In-Reply-To: <20190516070935.22546-1-geert@linux-m68k.org>
+References: <20190516070935.22546-1-geert@linux-m68k.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:smp/urgent] cpu/speculation: Warn on unsupported mitigations=
+ parameter
+Git-Commit-ID: 1bf72720281770162c87990697eae1ba2f1d917a
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-References: <20190626132632.32629-1-axel.lin@ingics.com> <a99b04a3-f079-3a43-9e19-d9501b76a96e@ti.com>
-In-Reply-To: <a99b04a3-f079-3a43-9e19-d9501b76a96e@ti.com>
-From:   Axel Lin <axel.lin@ingics.com>
-Date:   Wed, 26 Jun 2019 23:12:55 +0800
-Message-ID: <CAFRkauAewFwcQNzpSfAfXMiCdHuENcg2NRzKECjPQ1RtUCuXEA@mail.gmail.com>
-Subject: Re: [RFT][PATCH 1/2] regulator: lm363x: Fix off-by-one n_voltages for
- lm3632 ldo_vpos/ldo_vneg
-To:     Dan Murphy <dmurphy@ti.com>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=0.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_12_24,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
+        DKIM_VALID_EF autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dan Murphy <dmurphy@ti.com> =E6=96=BC 2019=E5=B9=B46=E6=9C=8826=E6=97=A5 =
-=E9=80=B1=E4=B8=89 =E4=B8=8B=E5=8D=8811:07=E5=AF=AB=E9=81=93=EF=BC=9A
->
-> Hello
->
-> On 6/26/19 8:26 AM, Axel Lin wrote:
-> > According to the datasheet https://www.ti.com/lit/ds/symlink/lm3632a.pd=
-f
-> > Table 20. VPOS Bias Register Field Descriptions VPOS[5:0]
-> > Sets the Positive Display Bias (LDO) Voltage (50 mV per step)
-> > 000000: 4 V
-> > 000001: 4.05 V
-> > 000010: 4.1 V
-> > ....................
-> > 011101: 5.45 V
-> > 011110: 5.5 V (Default)
-> > 011111: 5.55 V
-> > ....................
-> > 100111: 5.95 V
-> > 101000: 6 V
-> > Note: Codes 101001 to 111111 map to 6 V
-> >
-> > The LM3632_LDO_VSEL_MAX should be 0b101000 (0x28), so the maximum volta=
-ge
-> > can match the datasheet.
-> >
-> > Fixes: 3a8d1a73a037 ("regulator: add LM363X driver")
-> > Signed-off-by: Axel Lin <axel.lin@ingics.com>
-> > ---
-> >   drivers/regulator/lm363x-regulator.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/regulator/lm363x-regulator.c b/drivers/regulator/l=
-m363x-regulator.c
-> > index 5647e2f97ff8..e4a27d63bf90 100644
-> > --- a/drivers/regulator/lm363x-regulator.c
-> > +++ b/drivers/regulator/lm363x-regulator.c
-> > @@ -30,7 +30,7 @@
-> >
-> >   /* LM3632 */
-> >   #define LM3632_BOOST_VSEL_MAX               0x26
-> > -#define LM3632_LDO_VSEL_MAX          0x29
-> > +#define LM3632_LDO_VSEL_MAX          0x28
->
-> Similar comment as I made on the LM36274
->
-> These are 0 based registers so it is 28 + 1
-The code shows:  .n_voltages     =3D LM3632_LDO_VSEL_MAX + 1
-so LM3632_LDO_VSEL_MAX needs to be 0x28.
+Commit-ID:  1bf72720281770162c87990697eae1ba2f1d917a
+Gitweb:     https://git.kernel.org/tip/1bf72720281770162c87990697eae1ba2f1d917a
+Author:     Geert Uytterhoeven <geert@linux-m68k.org>
+AuthorDate: Thu, 16 May 2019 09:09:35 +0200
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Wed, 26 Jun 2019 16:56:21 +0200
 
-                .name           =3D "ldo_vpos",
-                .of_match       =3D "vpos",
-                .id             =3D LM3632_LDO_POS,
-                .ops            =3D &lm363x_regulator_voltage_table_ops,
-                .n_voltages     =3D LM3632_LDO_VSEL_MAX + 1,
+cpu/speculation: Warn on unsupported mitigations= parameter
+
+Currently, if the user specifies an unsupported mitigation strategy on the
+kernel command line, it will be ignored silently.  The code will fall back
+to the default strategy, possibly leaving the system more vulnerable than
+expected.
+
+This may happen due to e.g. a simple typo, or, for a stable kernel release,
+because not all mitigation strategies have been backported.
+
+Inform the user by printing a message.
+
+Fixes: 98af8452945c5565 ("cpu/speculation: Add 'mitigations=' cmdline option")
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Jiri Kosina <jkosina@suse.cz>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Ben Hutchings <ben@decadent.org.uk>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/20190516070935.22546-1-geert@linux-m68k.org
+
+---
+ kernel/cpu.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/kernel/cpu.c b/kernel/cpu.c
+index 077fde6fb953..551db494f153 100644
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -2339,6 +2339,9 @@ static int __init mitigations_parse_cmdline(char *arg)
+ 		cpu_mitigations = CPU_MITIGATIONS_AUTO;
+ 	else if (!strcmp(arg, "auto,nosmt"))
+ 		cpu_mitigations = CPU_MITIGATIONS_AUTO_NOSMT;
++	else
++		pr_crit("Unsupported mitigations=%s, system may still be vulnerable\n",
++			arg);
+ 
+ 	return 0;
+ }
