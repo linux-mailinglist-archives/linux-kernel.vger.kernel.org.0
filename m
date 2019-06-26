@@ -2,96 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1D4A56FFF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 19:52:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9869D57005
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 19:52:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726829AbfFZRwB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 13:52:01 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:40042 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726328AbfFZRv7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 13:51:59 -0400
-Received: by mail-pg1-f196.google.com with SMTP id w10so1551483pgj.7
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 10:51:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=PYRuyD1HElut26s/f7k9wlmyAWeFCl38SzC1C9BI8tY=;
-        b=XDlX7aiZwQokBsiCMdvUOmEJQsIlxeCrOI3mc84lr5R7kBNv78OIPHppyWoDe5UeNH
-         QGAj8tK1u83UflPF+m0lb+fllt8uoyjJhH1wQi218pbhA1yZMinKQjkB4S3O5xksopTG
-         ts9als020BCHH6PJmv5n88nInO2k+zonOtT4BxxwdVE3mUCqBWV7rKjA5Rt1K4W6ANYu
-         s7I8Suz73D05eUsDH6sQN9+k/6S9yjHlerk5gCLWKy0CAnbU5E1jd9bdUgUtUdEUMEaD
-         E8rD4vUuwZrvESBgAwV5b+aYt1BMHx/4vYJd8TVsrAcLZBVdBHEwZ62DinJDao4tNWn5
-         jkVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=PYRuyD1HElut26s/f7k9wlmyAWeFCl38SzC1C9BI8tY=;
-        b=bitQjjOb+WY2BqDKUh5XBGnkNQI1FBMMHvluP6d5pEpns5A+fb9OguU5w7re7BBzE9
-         T26rooaecWfqGvtIlwlVAsOo17N+GBlg49gdgKihZGhLgYlaAAXnTxVcizaovaFg8gzS
-         hO7iahMk08O4SRoUMex5qj71TjGINM66UfuGSjh3qV7jD7Qi47qbKUDuWOZu8NoCLgeT
-         FhADEnjl3VACvVju20KsUOaeURJkXtovd4vV9yZEEddXkx8fVksYB9rzGRJXcQrghLKh
-         d6pFrZnKINKxokH5OJJid2QkYJY9y0ZzUWFNQpHUi89CFGGb04zUETiJPlr84VK2bT41
-         c4GQ==
-X-Gm-Message-State: APjAAAXAakwN+1gbrh/eXpu7fz9iY7LXyb9oV/DaY0NWGQ3MBNvRfGTf
-        FF1dzyhC0x7b2vb9BLZHZC4=
-X-Google-Smtp-Source: APXvYqwTJk2prCUh4y+T1TfDWS6E+syxqfxVUP1FpSbpCkIQJbYVwja7RnF65f4XO2fpa2hhxlGJCw==
-X-Received: by 2002:a63:1723:: with SMTP id x35mr4053469pgl.233.1561571519161;
-        Wed, 26 Jun 2019 10:51:59 -0700 (PDT)
-Received: from hari-Inspiron-1545 ([183.83.92.187])
-        by smtp.gmail.com with ESMTPSA id s9sm2465026pjp.7.2019.06.26.10.51.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 Jun 2019 10:51:58 -0700 (PDT)
-Date:   Wed, 26 Jun 2019 23:21:55 +0530
-From:   Hariprasad Kelam <hariprasad.kelam@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hariprasad Kelam <hariprasad.kelam@gmail.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: rtl8723bs: hal: rtl8723b_rf6052: collect return
- status directly
-Message-ID: <20190626175155.GA9162@hari-Inspiron-1545>
+        id S1726520AbfFZRw3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 13:52:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45764 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726289AbfFZRw3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 13:52:29 -0400
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DEAB8208E3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 17:52:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561571548;
+        bh=S4bu6cwTK6G6hRMIv9GnhZMiK0UIi3WZJaspSurZK8c=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=iTGLj9aHRqtXaoP5kL+6QCzw5thEdaa1+j11XVbxBG4Xkir9g9ETqPKwLPjOnFrtb
+         dPSzi7QPpH3sx0BlkgIrs0kdLYCzA9MHJSn3bbfpR1/yrVvWvuPjkt1W2a/6P4cA5q
+         4NerJND/1KUOAE4bg7+g2SrLx6VU0Q1YF/aUlksU=
+Received: by mail-qk1-f172.google.com with SMTP id a27so2419386qkk.5
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 10:52:27 -0700 (PDT)
+X-Gm-Message-State: APjAAAXjE/ja0EnJ7LL7NYU8sb+eMYo1h2FuUrfMtHIZOC6GOeWPfAFi
+        X7AUzIYepbjWljYleHeiunmWqigZQX4HhVoM8A==
+X-Google-Smtp-Source: APXvYqzYhMv6rHrklns2vFmg1wcR2zD/R9gJFkeBnxKK/fLi2eSyCZ0bHo4Q8sz4Of0SuTqILRJ4kcOafVCphnT/TOk=
+X-Received: by 2002:ae9:ebd1:: with SMTP id b200mr5212035qkg.152.1561571547170;
+ Wed, 26 Jun 2019 10:52:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <alpine.DEB.2.21.9999.1906260829030.21507@viisi.sifive.com>
+In-Reply-To: <alpine.DEB.2.21.9999.1906260829030.21507@viisi.sifive.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Wed, 26 Jun 2019 11:52:15 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJs6MtvmuyAknsUxQymbmoV=G+=JfS1PQj9kNHV7fjC9g@mail.gmail.com>
+Message-ID: <CAL_JsqJs6MtvmuyAknsUxQymbmoV=G+=JfS1PQj9kNHV7fjC9g@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: riscv: resolve 'make dt_binding_check' warnings
+To:     Paul Walmsley <paul.walmsley@sifive.com>
+Cc:     linux-riscv@lists.infradead.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove variable rtStatus and return phy_RF6052_Config_ParaFile function
-directly
+On Wed, Jun 26, 2019 at 9:30 AM Paul Walmsley <paul.walmsley@sifive.com> wrote:
+>
+>
+> Rob pointed out that one of the examples in the RISC-V 'cpus' YAML schema
+> results in warnings from 'make dt_binding_check'.  Fix these.
+>
+> While here, make the whitespace in the second example consistent with the
+> first example.
+>
+> Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
+> Cc: Rob Herring <robh@kernel.org>
+> ---
+>  .../devicetree/bindings/riscv/cpus.yaml       | 26 ++++++++++---------
+>  1 file changed, 14 insertions(+), 12 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/riscv/cpus.yaml b/Documentation/devicetree/bindings/riscv/cpus.yaml
+> index 27f02ec4bb45..f97a4ecd7b91 100644
+> --- a/Documentation/devicetree/bindings/riscv/cpus.yaml
+> +++ b/Documentation/devicetree/bindings/riscv/cpus.yaml
+> @@ -152,17 +152,19 @@ examples:
+>    - |
+>      // Example 2: Spike ISA Simulator with 1 Hart
+>      cpus {
+> -            cpu@0 {
+> -                    device_type = "cpu";
+> -                    reg = <0>;
+> -                    compatible = "riscv";
+> -                    riscv,isa = "rv64imafdc";
+> -                    mmu-type = "riscv,sv48";
+> -                    interrupt-controller {
+> -                            #interrupt-cells = <1>;
+> -                            interrupt-controller;
+> -                            compatible = "riscv,cpu-intc";
+> -                    };
+> -            };
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +        cpu@0 {
 
-Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
----
- drivers/staging/rtl8723bs/hal/rtl8723b_rf6052.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+This only works because you removed 'cpus' and therefore none of this
+schema is applied.
 
-diff --git a/drivers/staging/rtl8723bs/hal/rtl8723b_rf6052.c b/drivers/staging/rtl8723bs/hal/rtl8723b_rf6052.c
-index c205345..d0ffe0a 100644
---- a/drivers/staging/rtl8723bs/hal/rtl8723b_rf6052.c
-+++ b/drivers/staging/rtl8723bs/hal/rtl8723b_rf6052.c
-@@ -194,7 +194,6 @@ static int phy_RF6052_Config_ParaFile(struct adapter *Adapter)
- int PHY_RF6052_Config8723B(struct adapter *Adapter)
- {
- 	struct hal_com_data *pHalData = GET_HAL_DATA(Adapter);
--	int rtStatus = _SUCCESS;
- 
- 	/*  */
- 	/*  Initialize general global value */
-@@ -208,8 +207,7 @@ int PHY_RF6052_Config8723B(struct adapter *Adapter)
- 	/*  */
- 	/*  Config BB and RF */
- 	/*  */
--	rtStatus = phy_RF6052_Config_ParaFile(Adapter);
--	return rtStatus;
-+	return phy_RF6052_Config_ParaFile(Adapter);
- 
- }
- 
--- 
-2.7.4
+> +                device_type = "cpu";
+> +                reg = <0>;
+> +                compatible = "riscv";
 
+According to the schema, this is wrong. It should have 2 strings. Or
+the schema needs to allow this case, but 'riscv' is too vague to be
+very useful.
+
+Also, I noticed that there's still a riscv/cpus.txt. That should be
+removed and replaced with this file. Looks like the hart description
+at least should be copied over (into top-level 'description').
+
+> +                riscv,isa = "rv64imafdc";
+> +                mmu-type = "riscv,sv48";
+> +                interrupt-controller {
+> +                        #interrupt-cells = <1>;
+> +                        interrupt-controller;
+> +                        compatible = "riscv,cpu-intc";
+> +                };
+> +        };
+>      };
+>  ...
+> --
+> 2.20.1
+>
