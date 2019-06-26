@@ -2,79 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 282B756B8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 16:11:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0494656C06
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 16:32:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727409AbfFZOLL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 10:11:11 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:47007 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725958AbfFZOLL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 10:11:11 -0400
-Received: by mail-lj1-f194.google.com with SMTP id v24so2341527ljg.13
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 07:11:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ZgFMa9Y26kQCWHNOMiCF1qTPzlaDQuATgwwzmRwsuO8=;
-        b=j76bodnB5J0pEQD7YCCdT+lcMefBQm3vIuqwobKnnGnPbxOmDElj//6NotynhdX8U2
-         K0JFu2W+90LrnMfwQEdwGYWHd14P3beVyR4qQby97mEBtBpV/iluRSwOBr6LjlAevFh6
-         VH0StCUrKKckkzZNu/Hfh8NHBQzoIUqaQvhTklvYMEalXQBvggF4jqMovkGJ5Bw91Mv6
-         ts3173Q83nCFybDvVWbttJ1dhg0elmsugM69fHWtZoCFcFCSoP+xfj5Ly7y0OQ+fmucp
-         Nc/AfWWS2Kgmb2STnlETIrDnfz9UYfnpvHpuxPlhBk5LjEIumuObs7j9W4VGPDQwmojI
-         aUNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZgFMa9Y26kQCWHNOMiCF1qTPzlaDQuATgwwzmRwsuO8=;
-        b=ZCPHMFIvjlrqv56dvSCprg2x6hQEm1c+W2ICdOPVrvVIbWwvB6RnQoxV2nCBu5T8ED
-         P84AKw5t7CM6lEPWZke9Pa8ADcoKUDIGJB14t8UbNLFDg3aBq/BL5naysPoGc9t+ROL9
-         hRcb9CIf8lK5pNA8xzwN0Etix9FbZX6X+87g4dyevvOU8JlDoG7x+XOda3R2fmh3vu+F
-         L3fsAPOQiUsWNn7/ZbmDIQZvrVZnJkKg5mQ4pULJ+PZZqBrHfVIzhrgaPmcsPkNJjYsP
-         lYriLBktahDVWiSsNEy6Wh3SwftdGzlu7XwE4ATAQw230Ryrtap5JjzIsuTBS7g8iQOk
-         h2DQ==
-X-Gm-Message-State: APjAAAWnngBMXgHgupKY5R7hhBo5h41b6qmxIjuHM6ntl6ghshNHLFZl
-        9zLNp870tnkN+PUD0F/cnTNLsifhfBobrEO+LRIS4g==
-X-Google-Smtp-Source: APXvYqzMnWdtbJcUq8EUwMWYCTDwVph/PVgkZMkdDc2sOwi2XRH4GT/0UaU1fJ6GixYV5fCVdWOf8+4XDJzn4k27zGA=
-X-Received: by 2002:a2e:a0cf:: with SMTP id f15mr3170958ljm.180.1561558268960;
- Wed, 26 Jun 2019 07:11:08 -0700 (PDT)
+        id S1728161AbfFZOcB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 10:32:01 -0400
+Received: from mail.kapsi.fi ([91.232.154.25]:37557 "EHLO mail.kapsi.fi"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727323AbfFZOcA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 10:32:00 -0400
+X-Greylist: delayed 1205 seconds by postgrey-1.27 at vger.kernel.org; Wed, 26 Jun 2019 10:31:59 EDT
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+         s=20161220; h=MIME-Version:Content-Type:Date:Cc:To:From:Subject:Message-ID:
+        Sender:Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:
+        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=keTA49kcFTmiW+xDiXyC1TWyuwYvwy0XCF0h+Kehxjk=; b=BM4EX49b7qlwytNWNpmgO9+Y8M
+        1GD3OyaUVCs1KegazXc1JsEeeRq8VErYh3GpA+lPa2UNikAlX5HSzmyHgcMqXB9R7QlDAeuMYf6Vf
+        LYRCo3j3hPdiScV9T4RNBdNgKSSThOGV5U+VnFU9RNFKtOcA9Ds+R5VE8WGujYvxfB62ZKXa5tUvO
+        nJAXaN+x65x8Kl6t870yr7I5H2Mdc5HzyIQnhkkSMtE4NIwIqBe4fdoUyUASVgcXzXbAP9TGMVtgw
+        yLV+EZhzkDfcOndj+O+LYQkqfNS1Zh5l/ElaZLeijv3vK5C+c6lZqpHBU0tmlhecKm2/uBoiBQ8Hq
+        icSvWITg==;
+Received: from [2001:999:82:7295:8199:173e:7dbf:6fc5] (helo=jsakkine-mobl1)
+        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <jarkko.sakkinen@iki.fi>)
+        id 1hg8eO-0006dp-Ug; Wed, 26 Jun 2019 17:11:53 +0300
+Message-ID: <c9c1e7f83a55bc5fb621e2e4e1dab90c5b3aac01.camel@iki.fi>
+Subject: On Nitrokey Pro's ECC support
+From:   Jarkko Sakkinen <jarkko.sakkinen@iki.fi>
+To:     corbet@lwn.net
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Wed, 26 Jun 2019 17:11:46 +0300
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-5zfw+oGv//ZvawvgHwv9"
+User-Agent: Evolution 3.32.1-2 
 MIME-Version: 1.0
-References: <20190626235011.7b449eb0@canb.auug.org.au>
-In-Reply-To: <20190626235011.7b449eb0@canb.auug.org.au>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 26 Jun 2019 16:10:56 +0200
-Message-ID: <CACRpkdaHyb=o=9YzSvKWRbbyPCbsOUxC=zoz+acnTWNvp=vu5w@mail.gmail.com>
-Subject: Re: linux-next: Fixes tag needs some work in the pinctrl tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nicolas Boichat <drinkcat@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+X-SA-Exim-Connect-IP: 2001:999:82:7295:8199:173e:7dbf:6fc5
+X-SA-Exim-Mail-From: jarkko.sakkinen@iki.fi
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 26, 2019 at 3:50 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-> In commit
->
->   99fd24aa4a45 ("pinctrl: mediatek: Ignore interrupts that are wake only during resume")
->
-> Fixes tag
->
->   Fixes: bf22ff45bed ("genirq: Avoid unnecessary low level irq function calls")
->
-> has these problem(s):
->
->   - SHA1 should be at least 12 digits long
->     Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
->     or later) just making sure it is not set (or set to "auto").
+--=-5zfw+oGv//ZvawvgHwv9
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Thanks Stephen, fixed this.
+Hi
 
-Yours,
-Linus Walleij
+I was getting myself a smartcard stick and looked for options from [1].
+The documentation says that Nitrokey Pro does not support ECC while it
+actually does [2]. I was already canceling my order when Jan Suhr, the
+CEO of that company, kindly pointed out to me this.
+
+[1] https://www.kernel.org/doc/html/latest/process/maintainer-pgp-guide.htm=
+l
+[2] https://shop.nitrokey.com/shop/product/nitrokey-pro-2-3
+
+/Jarkko
+
+--=-5zfw+oGv//ZvawvgHwv9
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRE6pSOnaBC00OEHEIaerohdGur0gUCXRN9IgAKCRAaerohdGur
+0kmSAQDB06lSbBGO3TqrgxTFhdezWcVxXl9lJ9kdDIu4kR1b8wEA3IQKv9+KGXoN
+HrGHyxmcchSzm03XAKFzO+r17q5+aAw=
+=+ngF
+-----END PGP SIGNATURE-----
+
+--=-5zfw+oGv//ZvawvgHwv9--
+
