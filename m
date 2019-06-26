@@ -2,98 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7809956214
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 08:11:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 248B65622B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 08:14:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726599AbfFZGLj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 02:11:39 -0400
-Received: from mx2.suse.de ([195.135.220.15]:57120 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725379AbfFZGLi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 02:11:38 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 96E90AF25;
-        Wed, 26 Jun 2019 06:11:36 +0000 (UTC)
-Date:   Wed, 26 Jun 2019 08:11:34 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Hoan Tran OS <hoan@os.amperecomputing.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Oscar Salvador <osalvador@suse.de>,
-        Pavel Tatashin <pavel.tatashin@microsoft.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Open Source Submission <patches@amperecomputing.com>
-Subject: Re: [PATCH 1/5] mm: Enable CONFIG_NODES_SPAN_OTHER_NODES by default
- for NUMA
-Message-ID: <20190626061134.GD17798@dhcp22.suse.cz>
-References: <1561501810-25163-1-git-send-email-Hoan@os.amperecomputing.com>
- <1561501810-25163-2-git-send-email-Hoan@os.amperecomputing.com>
+        id S1726664AbfFZGOU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 02:14:20 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:50885 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725790AbfFZGOU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 02:14:20 -0400
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1hg1C5-0005zD-Ll; Wed, 26 Jun 2019 08:14:09 +0200
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1hg1C1-0003D1-Jo; Wed, 26 Jun 2019 08:14:05 +0200
+Date:   Wed, 26 Jun 2019 08:14:05 +0200
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     "Enrico Weigelt, metux IT consult" <info@metux.net>
+Cc:     linux-kernel@vger.kernel.org, grygorii.strashko@ti.com,
+        mcoquelin.stm32@gmail.com, thloh@altera.com, festevam@gmail.com,
+        linus.walleij@linaro.org, khilman@kernel.org,
+        patches@opensource.cirrus.com, bgolaszewski@baylibre.com,
+        linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-imx@nxp.com, kernel@pengutronix.de, ssantosh@kernel.org,
+        linux-tegra@vger.kernel.org, andriy.shevchenko@linux.intel.com,
+        shawnguo@kernel.org, s.hauer@pengutronix.de,
+        alexandre.torgue@st.com
+Subject: Re: [PATCH 01/30] include: linux: platform_device: more helpers for
+ declaring platform drivers
+Message-ID: <20190626061405.qsqq5na4oactuo6f@pengutronix.de>
+References: <1560796871-18560-1-git-send-email-info@metux.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <1561501810-25163-2-git-send-email-Hoan@os.amperecomputing.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1560796871-18560-1-git-send-email-info@metux.net>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 25-06-19 22:30:24, Hoan Tran OS wrote:
-> This patch enables CONFIG_NODES_SPAN_OTHER_NODES by default
-> for NUMA. As some NUMA nodes have memory ranges that span other
-> nodes. Even though a pfn is valid and between a node's start and
-> end pfns, it may not reside on that node.
+Hello,
 
-Please describe the problem more thoroughly. What is the layout, what
-doesn't work with the default configuration and why do we need this
-particular fix rather than enabling of the config option for the
-specific HW.
-
+On Mon, Jun 17, 2019 at 08:40:42PM +0200, Enrico Weigelt, metux IT consult wrote:
+> From: Enrico Weigelt <info@metux.net>
 > 
-> Signed-off-by: Hoan Tran <Hoan@os.amperecomputing.com>
+> Add more helper macros for trivial driver init cases, similar to the
+> already existing module_platform_driver()+friends - now for those which
+> are initialized at other stages. Lots of drivers couldn't use the existing
+> macros, as they need to be called at different init stages, eg. subsys,
+> postcore, arch.
+> 
+> This helps to further reduce driver init boilerplate.
+> 
+> Signed-off-by: Enrico Weigelt <info@metux.net>
 > ---
->  mm/page_alloc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  include/linux/platform_device.h | 51 +++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 51 insertions(+)
 > 
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index d66bc8a..6335505 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -1413,7 +1413,7 @@ int __meminit early_pfn_to_nid(unsigned long pfn)
->  }
->  #endif
+> diff --git a/include/linux/platform_device.h b/include/linux/platform_device.h
+> index beb25f2..5f3a967 100644
+> --- a/include/linux/platform_device.h
+> +++ b/include/linux/platform_device.h
+> @@ -259,6 +259,57 @@ static inline void platform_set_drvdata(struct platform_device *pdev,
+>  } \
+>  module_exit(__platform_driver##_exit);
 >  
-> -#ifdef CONFIG_NODES_SPAN_OTHER_NODES
-> +#ifdef CONFIG_NUMA
->  /* Only safe to use early in boot when initialisation is single-threaded */
->  static inline bool __meminit early_pfn_in_nid(unsigned long pfn, int node)
->  {
-> -- 
-> 2.7.4
-> 
+> +/* postcore_platform_driver() - Helper macro for drivers that don't do
+> + * anything special in module init/exit.  This eliminates a lot of
+> + * boilerplate.  Each module may only use this macro once, and
+> + * calling it replaces postcore_initcall() and module_exit()
+> + */
+> +#define postcore_platform_driver(__platform_driver) \
+> +static int __init __platform_driver##_init(void) \
+> +{ \
+> +	return platform_driver_register(&(__platform_driver)); \
+> +} \
+> +postcore_initcall(__platform_driver##_init); \
+> +static void __exit __platform_driver##_exit(void) \
+> +{ \
+> +	platform_driver_unregister(&(__platform_driver)); \
+> +} \
+> +module_exit(__platform_driver##_exit);
+> +
+> +/* subsys_platform_driver() - Helper macro for drivers that don't do
+> + * anything special in module init/exit.  This eliminates a lot of
+> + * boilerplate.  Each module may only use this macro once, and
+> + * calling it replaces subsys_initcall() and module_exit()
+> + */
+> +#define subsys_platform_driver(__platform_driver) \
+> +static int __init __platform_driver##_init(void) \
+> +{ \
+> +	return platform_driver_register(&(__platform_driver)); \
+> +} \
+> +subsys_initcall(__platform_driver##_init); \
+> +static void __exit __platform_driver##_exit(void) \
+> +{ \
+> +	platform_driver_unregister(&(__platform_driver)); \
+> +} \
+> +module_exit(__platform_driver##_exit);
+
+Would it make sense to do something like:
+
+	#define __module_platform_driver(__platform_driver, __initlvl) \
+	static int __init __platform_driver##_init(void) \
+	{ \
+		return platform_driver_register(&(__platform_driver)); \
+	} \
+	__initlvl ## _initcall(__platform_driver##_init); \
+	static void __exit __platform_driver##_exit(void) \
+	{ \
+		platform_driver_unregister(&(__platform_driver)); \
+	} \
+	module_exit(__platform_driver##_exit);
+
+	#define postcore_platform_driver(__platform_driver) __module_platform_driver(__platform_driver, postcore)
+	#define subsys_platform_driver(__platform_driver) __module_platform_driver(__platform_driver, subsys)
+	...
+
+Which would be more compact and makes the difference between these
+macros a bit more obvious.
+
+Best regards
+Uwe
 
 -- 
-Michal Hocko
-SUSE Labs
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
