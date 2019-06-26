@@ -2,148 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C80A956CA9
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 16:48:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A98C56CAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 16:48:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728461AbfFZOsK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 10:48:10 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:51122 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728398AbfFZOr5 (ORCPT
+        id S1728472AbfFZOsR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 10:48:17 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:52400 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728373AbfFZOrv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 10:47:57 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5QElSHR080337;
-        Wed, 26 Jun 2019 09:47:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1561560448;
-        bh=euKafHZbspwxm0WbBPizKb3mUMGv/MWPwIANUP7B8M8=;
-        h=Subject:To:References:From:Date:In-Reply-To;
-        b=h/IXXlmmt4ncU4+QQRtcmK4UwK9El/hxz7x4t8V/h8ghkG0KJ30UZL6Q+qb/Fc3Z3
-         99h4bwh+AHOjJj2hTZDDdoFzzuj548JusSiIacn7H6KNrdgPah3mV4orod+HhF52YF
-         Yz42z9yZzJLh3P13XA3zwJpZD4x3O+ye1pXGqNiQ=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5QElSp7067781
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 26 Jun 2019 09:47:28 -0500
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 26
- Jun 2019 09:47:27 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 26 Jun 2019 09:47:27 -0500
-Received: from [10.250.96.121] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5QElOE7019579;
-        Wed, 26 Jun 2019 09:47:24 -0500
-Subject: Re: [RFC PATCH v4 net-next 06/11] net: ethernet: ti: introduce cpsw
- switchdev based driver part 1 - dual-emac
-To:     <netdev@vger.kernel.org>,
-        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jiri Pirko <jiri@resnulli.us>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Sekhar Nori <nsekhar@ti.com>, <linux-kernel@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>,
-        Murali Karicheri <m-karicheri2@ti.com>,
-        Ivan Vecera <ivecera@redhat.com>,
-        Rob Herring <robh+dt@kernel.org>, <devicetree@vger.kernel.org>
-References: <20190621181314.20778-1-grygorii.strashko@ti.com>
- <20190621181314.20778-7-grygorii.strashko@ti.com>
- <20190626095839.GE6485@khorivan>
-From:   grygorii <grygorii.strashko@ti.com>
-Message-ID: <d6f1f1fb-21c3-ca5f-2585-8d1c3a4f571d@ti.com>
-Date:   Wed, 26 Jun 2019 17:47:20 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Wed, 26 Jun 2019 10:47:51 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1hg9D8-0007AG-Ck; Wed, 26 Jun 2019 14:47:46 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next][V2] media: vivid: fix potential integer overflow on left shift
+Date:   Wed, 26 Jun 2019 15:47:46 +0100
+Message-Id: <20190626144746.27607-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20190626095839.GE6485@khorivan>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+There is a potential integer overflow when int 2 is left shifted
+as this is evaluated using 32 bit arithmetic but is being used in
+a context that expects an expression of type s64.  Fix this by
+shifting 2ULL to avoid a 32 bit overflow.
 
-On 26/06/2019 12:58, Ivan Khoronzhuk wrote:
-> Hi Grygorii
-> 
-> Too much code, but I've tried pass thru.
-> Probably expectation the devlink to be reviewed, but several
-> common replies that should be reflected in non RFC v.
-> 
-> On Fri, Jun 21, 2019 at 09:13:09PM +0300, Grygorii Strashko wrote:
->> From: Ilias Apalodimas <ilias.apalodimas@linaro.org>
->>
->> Part 1:
->> Introduce basic CPSW dual_mac driver (cpsw_new.c) which is operating in
->> dual-emac mode by default, thus working as 2 individual network interfaces.
->> Main differences from legacy CPSW driver are:
->>
->> - optimized promiscuous mode: The P0_UNI_FLOOD (both ports) is enabled in
->> addition to ALLMULTI (current port) instead of ALE_BYPASS. So, Ports in
->> promiscuous mode will keep possibility of mcast and vlan filtering, which
->> is provides significant benefits when ports are joined to the same bridge,
->> but without enabling "switch" mode, or to different bridges.
->> - learning disabled on ports as it make not too much sense for
->>   segregated ports - no forwarding in HW.
->> - enabled basic support for devlink.
->>
->>     devlink dev show
->>         platform/48484000.ethernet_switch
->>
->>     devlink dev param show
->>      platform/48484000.ethernet_switch:
->>     name ale_bypass type driver-specific
->>      values:
->>         cmode runtime value false
->>
->> - "ale_bypass" devlink driver parameter allows to enable
->> ALE_CONTROL(4).BYPASS mode for debug purposes.
->> - updated DT bindings.
->>
->> Signed-off-by: Ilias Apalodimas <ilias.apalodimas@linaro.org>
->> Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
->
+Addresses-Coverity: ("Unintentional integer overflow")
+Fixes: 8a99e9faa131 ("media: vivid: add HDMI (dis)connect RX emulation")
+Fixes: 79a792dafac6 ("media: vivid: add HDMI (dis)connect TX emulation")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+V2: use intermediate variables for the shifted expression to make code
+    a bit more readable.
+---
+ drivers/media/platform/vivid/vivid-ctrls.c | 24 +++++++++++-----------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-[...]
-
->> +
->> +    /* setup host port priority mapping */
->> +    writel_relaxed(CPDMA_TX_PRIORITY_MAP,
->> +               &cpsw->host_port_regs->cpdma_tx_pri_map);
->> +    writel_relaxed(0, &cpsw->host_port_regs->cpdma_rx_chan_map);
-> 
-> ----
->> +
->> +    /* disable priority elevation */
->> +    writel_relaxed(0, &cpsw->regs->ptype);
->> +
->> +    /* enable statistics collection only on all ports */
->> +    writel_relaxed(0x7, &cpsw->regs->stat_port_en);
->> +
->> +    /* Enable internal fifo flow control */
->> +    writel(0x7, &cpsw->regs->flow_control);
-> ---
-> 
-> Would be nice to do the same in old driver.
-> I mean moving it from ndo_open
-> Also were thoughts about this.
-
-I have no plans to perform any kind of optimization in old driver any more.
-
-Agree with other comments.
-
-[...]
-
-Thank you.
-
+diff --git a/drivers/media/platform/vivid/vivid-ctrls.c b/drivers/media/platform/vivid/vivid-ctrls.c
+index 3e916c8befb7..df1598e81c7a 100644
+--- a/drivers/media/platform/vivid/vivid-ctrls.c
++++ b/drivers/media/platform/vivid/vivid-ctrls.c
+@@ -1613,6 +1613,8 @@ int vivid_create_controls(struct vivid_dev *dev, bool show_ccs_cap,
+ 	}
+ 
+ 	if (dev->num_hdmi_inputs) {
++		s64 hdmi_input = (2ULL << (dev->num_hdmi_inputs - 1)) - 1;
++
+ 		dev->ctrl_dv_timings_signal_mode = v4l2_ctrl_new_custom(hdl_vid_cap,
+ 					&vivid_ctrl_dv_timings_signal_mode, NULL);
+ 
+@@ -1633,12 +1635,13 @@ int vivid_create_controls(struct vivid_dev *dev, bool show_ccs_cap,
+ 			V4L2_CID_DV_RX_RGB_RANGE, V4L2_DV_RGB_RANGE_FULL,
+ 			0, V4L2_DV_RGB_RANGE_AUTO);
+ 		dev->ctrl_rx_power_present = v4l2_ctrl_new_std(hdl_vid_cap,
+-			NULL, V4L2_CID_DV_RX_POWER_PRESENT, 0,
+-			(2 << (dev->num_hdmi_inputs - 1)) - 1, 0,
+-			(2 << (dev->num_hdmi_inputs - 1)) - 1);
++			NULL, V4L2_CID_DV_RX_POWER_PRESENT, 0, hdmi_input,
++			0, hdmi_input);
+ 
+ 	}
+ 	if (dev->num_hdmi_outputs) {
++		s64 hdmi_output = (2ULL << (dev->num_hdmi_outputs - 1)) - 1;
++
+ 		/*
+ 		 * We aren't doing anything with this at the moment, but
+ 		 * HDMI outputs typically have this controls.
+@@ -1652,17 +1655,14 @@ int vivid_create_controls(struct vivid_dev *dev, bool show_ccs_cap,
+ 		dev->ctrl_display_present = v4l2_ctrl_new_custom(hdl_vid_out,
+ 			&vivid_ctrl_display_present, NULL);
+ 		dev->ctrl_tx_hotplug = v4l2_ctrl_new_std(hdl_vid_out,
+-			NULL, V4L2_CID_DV_TX_HOTPLUG, 0,
+-			(2 << (dev->num_hdmi_outputs - 1)) - 1, 0,
+-			(2 << (dev->num_hdmi_outputs - 1)) - 1);
++			NULL, V4L2_CID_DV_TX_HOTPLUG, 0, hdmi_output,
++			0, hdmi_output);
+ 		dev->ctrl_tx_rxsense = v4l2_ctrl_new_std(hdl_vid_out,
+-			NULL, V4L2_CID_DV_TX_RXSENSE, 0,
+-			(2 << (dev->num_hdmi_outputs - 1)) - 1, 0,
+-			(2 << (dev->num_hdmi_outputs - 1)) - 1);
++			NULL, V4L2_CID_DV_TX_RXSENSE, 0, hdmi_output,
++			0, hdmi_output);
+ 		dev->ctrl_tx_edid_present = v4l2_ctrl_new_std(hdl_vid_out,
+-			NULL, V4L2_CID_DV_TX_EDID_PRESENT, 0,
+-			(2 << (dev->num_hdmi_outputs - 1)) - 1, 0,
+-			(2 << (dev->num_hdmi_outputs - 1)) - 1);
++			NULL, V4L2_CID_DV_TX_EDID_PRESENT, 0, hdmi_output,
++			0, hdmi_output);
+ 	}
+ 	if ((dev->has_vid_cap && dev->has_vid_out) ||
+ 	    (dev->has_vbi_cap && dev->has_vbi_out))
 -- 
-Best regards,
-grygorii
+2.20.1
+
