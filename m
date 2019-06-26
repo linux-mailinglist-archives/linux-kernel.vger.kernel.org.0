@@ -2,83 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCF9956DE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 17:41:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2137356DF2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 17:43:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728044AbfFZPlh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 11:41:37 -0400
-Received: from smtprelay0026.hostedemail.com ([216.40.44.26]:60525 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726948AbfFZPlh (ORCPT
+        id S1728286AbfFZPnr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 11:43:47 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:49636 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725958AbfFZPnr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 11:41:37 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 000EF181D3402;
-        Wed, 26 Jun 2019 15:41:35 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::::::::::::::::::::::::::::::::::,RULES_HIT:41:355:379:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1381:1437:1515:1516:1518:1534:1540:1593:1594:1711:1730:1747:1777:1792:1978:1981:2194:2199:2393:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3868:4250:4321:4384:5007:6737:6738:7809:10004:10400:10848:10903:11026:11232:11658:11914:12043:12048:12297:12740:12760:12895:13069:13311:13357:13439:14181:14659:14721:21080:21451:21627:21740:30009:30054:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:26,LUA_SUMMARY:none
-X-HE-Tag: jar47_64850cc308b59
-X-Filterd-Recvd-Size: 2351
-Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf14.hostedemail.com (Postfix) with ESMTPA;
-        Wed, 26 Jun 2019 15:41:30 +0000 (UTC)
-Message-ID: <826354a296645f54a98f22129d006d91cfcff284.camel@perches.com>
-Subject: Re: [tip:timers/vdso] MAINTAINERS: Add entry for the generic VDSO
- library
-From:   Joe Perches <joe@perches.com>
-To:     hpa@zytor.com, luto@kernel.org, salyzyn@android.com,
-        0x7f454c46@gmail.com, arnd@arndb.de, catalin.marinas@arm.com,
-        mingo@kernel.org, avagin@openvz.org, vincenzo.frascino@arm.com,
-        torvalds@linux-foundation.org, dima@arista.com, pcc@google.com,
-        will.deacon@arm.com, paul.burton@mips.com, mikelley@microsoft.com,
-        shuah@kernel.org, sthotton@marvell.com, sashal@kernel.org,
-        andre.przywara@arm.com, daniel.lezcano@linaro.org,
-        huw@codeweavers.com, ralf@linux-mips.org,
-        linux-arm-kernel@lists.infradead.org, linux@armlinux.org.uk,
-        linux-kernel@vger.kernel.org, linux@rasmusvillemoes.dk,
-        tglx@linutronix.de, linux-tip-commits@vger.kernel.org
-Date:   Wed, 26 Jun 2019 08:41:29 -0700
-In-Reply-To: <tip-e70980312a946a56173843cbc0104b3b0e57a0c7@git.kernel.org>
-References: <alpine.DEB.2.21.1906240142000.32342@nanos.tec.linutronix.de>
-         <tip-e70980312a946a56173843cbc0104b3b0e57a0c7@git.kernel.org>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
+        Wed, 26 Jun 2019 11:43:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=DVYqe3tpQ8e1sMTCWOSh9xLpYFRFLHE+hBBBu6gUiVY=; b=JiqZyiWjMhOWaBcr2IrbgLkM4
+        0syeulFERs2blphfx8J9OQQYfDcD66MEDA/eYqMG3YlVaiNtVmnfwdsQ65mUOa5tobSAjIu4o0moB
+        8ozOmeOpYAerFJ54x2vEzjiR8SfnDfyWG+bdR1ZUOZNrlL/SYacZFBNxtNQ7BkGu8CuE2RuIHDLu+
+        CaRHYuI+HSdl81J/22Qtg+UiLTkGUTCTPoK9RgIw1FJLZsPC0ZS5UU4A0RQGMZLPHDKHcZxxfrX3Z
+        j7RrqvM1qVcwEiIAm5WRBQmOct/BZjqliivvm1uRzpyKv/GzpK/wBw3vN8gt+E6H+zEEVMvM/k0vT
+        MgqmUKwSQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hgA4c-0000SB-CS; Wed, 26 Jun 2019 15:43:02 +0000
+Date:   Wed, 26 Jun 2019 08:43:02 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, matthew.garrett@nebula.com,
+        yuchao0@huawei.com, tytso@mit.edu, shaggy@kernel.org,
+        ard.biesheuvel@linaro.org, josef@toxicpanda.com, hch@infradead.org,
+        clm@fb.com, adilger.kernel@dilger.ca, jk@ozlabs.org, jack@suse.com,
+        dsterba@suse.com, jaegeuk@kernel.org, cluster-devel@redhat.com,
+        jfs-discussion@lists.sourceforge.net, linux-efi@vger.kernel.org,
+        Jan Kara <jack@suse.cz>, reiserfs-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
+        linux-nilfs@vger.kernel.org, linux-mtd@lists.infradead.org,
+        ocfs2-devel@oss.oracle.com, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org
+Subject: Re: [PATCH 2/5] vfs: create a generic checking function for
+ FS_IOC_FSSETXATTR
+Message-ID: <20190626154302.GA31445@infradead.org>
+References: <156151632209.2283456.3592379873620132456.stgit@magnolia>
+ <156151633829.2283456.834142172527987802.stgit@magnolia>
+ <20190626041133.GB32272@ZenIV.linux.org.uk>
+ <20190626153542.GE5171@magnolia>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190626153542.GE5171@magnolia>
+User-Agent: Mutt/1.11.4 (2019-03-13)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-06-26 at 05:36 -0700, tip-bot for Thomas Gleixner wrote:
-> MAINTAINERS: Add entry for the generic VDSO library
-[]
-> diff --git a/MAINTAINERS b/MAINTAINERS
-[]
-> @@ -6664,6 +6664,18 @@ L:	kvm@vger.kernel.org
->  S:	Supported
->  F:	drivers/uio/uio_pci_generic.c
->  
-> +GENERIC VDSO LIBRARY:
-> +M:	Andy Lutomirksi <luto@kernel.org>
-> +M:	Thomas Gleixner <tglx@linutronix.de>
-> +M:	Vincenzo Frascino <vincenzo.frascino@arm.com>
-> +L:	linux-kernel@vger.kernel.org
-> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers/vdso
-> +S:	Maintained
-> +F:	lib/vdso
+On Wed, Jun 26, 2019 at 08:35:42AM -0700, Darrick J. Wong wrote:
+> > static inline void simple_fill_fsxattr(struct fsxattr *fa, unsigned xflags)
+> > {
+> > 	memset(fa, 0, sizeof(*fa));
+> > 	fa->fsx_xflags = xflags;
+> > }
+> > 
+> > and let the compiler optimize the crap out?
+> 
+> The v2 series used to do that, but Christoph complained that having a
+> helper for a two-line memset and initialization was silly[1] so now we
+> have this version.
+> 
+> I don't mind reinstating it as a static inline helper, but I'd like some
+> input from any of the btrfs developers (or you, Al) about which form is
+> preferred.
 
-Please use trailing slashes for directories.
+I complained having that helper in btrfs.  I think Al wants a generic
+one, which at least makes a little more sense.
 
-> +F:	kernel/time/vsyscall.c
-> +F:	include/vdso
-
-and here.
-
-> +F:	include/asm-generic/vdso/vsyscall.h
-> +
->  GENWQE (IBM Generic Workqueue Card)
->  M:	Frank Haverkamp <haver@linux.ibm.com>
->  S:	Supported
-
+That being said I wonder if we should lift these attr ioctls to
+file op methods and deal with all that crap in VFS code instead of
+having all those duplicated ioctl parsers.
