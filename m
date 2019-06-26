@@ -2,51 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1AFAC56823
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 14:02:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DEA356822
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 14:01:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727376AbfFZMB7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 08:01:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44332 "EHLO mail.kernel.org"
+        id S1727354AbfFZMB4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 08:01:56 -0400
+Received: from foss.arm.com ([217.140.110.172]:59558 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726484AbfFZMB5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 08:01:57 -0400
-Received: from pobox.suse.cz (prg-ext-pat.suse.com [213.151.95.130])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A6B12080C;
-        Wed, 26 Jun 2019 12:01:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561550517;
-        bh=vheSS1kXqdxt3pqny7qpx7vt14bV6C/mIPWbVOThWds=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=eg+CHsUDJvn40wihQYPF4GUf7BX1MDnCycC0zij6YDbqmj4Nt7n/Y+BTIb3POenEn
-         EbwOiwtjPy/iUKmZvEwBE69Bn7V37dDXA/ySYQChW+1eW6Be7aqYm2pEAdYYOMdAyS
-         7d4QsU+3g3LdbmFyGPUj87bYQwIjbWLbBBmz12ZY=
-Date:   Wed, 26 Jun 2019 14:01:54 +0200 (CEST)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Kyle Godbey <me@kyle.ee>
-cc:     Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] HID: uclogic: Add support for Huion HS64 tablet
-In-Reply-To: <20190615231506.17443-1-me@kyle.ee>
-Message-ID: <nycvar.YFH.7.76.1906261401440.27227@cbobk.fhfr.pm>
-References: <20190615231506.17443-1-me@kyle.ee>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S1726484AbfFZMBz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 08:01:55 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0EC56360;
+        Wed, 26 Jun 2019 05:01:55 -0700 (PDT)
+Received: from [10.162.40.140] (p8cg001049571a15.blr.arm.com [10.162.40.140])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9A35C3F718;
+        Wed, 26 Jun 2019 05:01:53 -0700 (PDT)
+Subject: Re: linux-next: build failure after merge of the akpm-current tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20190626214125.6d313c15@canb.auug.org.au>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <9e850319-8564-5b1f-2e1b-7d327215043f@arm.com>
+Date:   Wed, 26 Jun 2019 17:32:18 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20190626214125.6d313c15@canb.auug.org.au>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 15 Jun 2019, Kyle Godbey wrote:
+Hello Stephen,
 
-> Add support for Huion HS64 drawing tablet to hid-uclogic
+On 06/26/2019 05:11 PM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the akpm-current tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+> 
+> ld: lib/ioremap.o: in function `.ioremap_huge_init':
+> ioremap.c:(.init.text+0x3c): undefined reference to `.arch_ioremap_p4d_supported'
 
-Applied, thanks.
+I believe this might be caused by a patch for powerpc enabling HAVE_ARCH_HUGE_VMAP
+without an arch_ioremap_p4d_supported() definition.
 
--- 
-Jiri Kosina
-SUSE Labs
+> 
+> Caused by commit
+> 
+>   749940680d0b ("mm/ioremap: probe platform for p4d huge map support")
+> 
+> I have reverted that commit for today.
+
+All it needs is a powerpc definition for arch_ioremap_p4d_supported() which can just
+return false if it is not supported. Shall I send a patch for the powerpc fix or just
+re-spin the original patch which added arch_ioremap_p4d_supported(). Please suggest.
+
+Today's linux-next (next-20190625) does not have powerpc subscribing HAVE_ARCH_HUGE_VMAP.
+Could you please point to the branch I should pull for this failure. Thanks !
+
+- Anshuman
 
