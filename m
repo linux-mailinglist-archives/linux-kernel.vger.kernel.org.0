@@ -2,211 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0628556529
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 11:07:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 634955653E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 11:08:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727222AbfFZJHL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 05:07:11 -0400
-Received: from mail-wm1-f46.google.com ([209.85.128.46]:38754 "EHLO
-        mail-wm1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727158AbfFZJGx (ORCPT
+        id S1727269AbfFZJHZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 05:07:25 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:44101 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727136AbfFZJGu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 05:06:53 -0400
-Received: by mail-wm1-f46.google.com with SMTP id s15so1247682wmj.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 02:06:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=9RQ6YaugFGkpRgh3juxH1I5rV90U2Bkw0dj0SZEZKwc=;
-        b=J0NS7bRqNS0ZD9B+lSRFe4le6yXmNDFrR2upnXhCDY5C4V5LEnqtg1cGQuQwS/EfnD
-         JfBSP+JFXSv+TxAihAgDuOJ02RCAacyf9xthx/r/0gVK7VHp1Q04mqoWqz115l6wz4Tg
-         5GGeO1VgatZQvjZPxf+PVdabu+FbJrVvSUBdqNy9zrDeawHHyO/pVOI5wRdj/WLlb52Z
-         vGA4sx71G+qwn4y8vzoNOair6gePijN4Ipj26Q7+3GBKbpugvF352+RtX/+yEKIix+aR
-         njX6Hbjb2DLxusCypboZqfZLYqU3j5VNpolmTezfmqzgcp1IoFoBjpPc8cvBUIS9n3Cz
-         sUdQ==
+        Wed, 26 Jun 2019 05:06:50 -0400
+Received: by mail-ot1-f67.google.com with SMTP id b7so1742942otl.11;
+        Wed, 26 Jun 2019 02:06:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=9RQ6YaugFGkpRgh3juxH1I5rV90U2Bkw0dj0SZEZKwc=;
-        b=cNBShsONGvdMYl9CQh7qgC9ofbQELqQMat555TUBywC/3IpAsNlX4lyeqHzZsOwFJN
-         t4eCEgvUFGbEyCIBYpl8aAGnNrUnO7PukytnZ9NBWTVVICxTMXh4/hVsW8MpxgIA41v2
-         AjQFl2hICtWOt3fOGS+tcvPhiAAsIFr8cQ7nZcYPiRowkfLsehQE1TMCNXFzw37U9qvV
-         8PMjkxAYNozZaiKZNhUOChjsY0loJDDp9yNP8YLYkhSwMGoOPahkMyh+e6ZL9s6l4Owx
-         Q2pXYZvYh7R62/kaH+jPwEhWWh91rV/fcBUQZ/+CGwjOfl+B6vS5F6IObgNN+k3seT6U
-         8lEA==
-X-Gm-Message-State: APjAAAUjcWZO/3t7D52zKggHuZFUK2GcwLemkqK18vm1RlhKULcYjzme
-        22U4fNw2T7yt6qJmt0Fp2hIJQA==
-X-Google-Smtp-Source: APXvYqwxDozI/FKA1vAkTzJa0CO5JhJdf4H6DJgUxSxrWePq7VprAaD6psUV7Ud7fw3drOIzxbfu8g==
-X-Received: by 2002:a1c:a848:: with SMTP id r69mr1887295wme.12.1561540011512;
-        Wed, 26 Jun 2019 02:06:51 -0700 (PDT)
-Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id o6sm1925797wmc.46.2019.06.26.02.06.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 26 Jun 2019 02:06:50 -0700 (PDT)
-From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     jbrunet@baylibre.com, khilman@baylibre.com
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, martin.blumenstingl@googlemail.com,
-        linux-gpio@vger.kernel.org,
-        Neil Armstrong <narmstrong@baylibre.com>
-Subject: [RFC/RFT v2 14/14] arm64: dts: meson-g12b-odroid-n2: enable DVFS
-Date:   Wed, 26 Jun 2019 11:06:32 +0200
-Message-Id: <20190626090632.7540-15-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190626090632.7540-1-narmstrong@baylibre.com>
-References: <20190626090632.7540-1-narmstrong@baylibre.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nXcB2j55vLYg6MDB7LwJc9ADk0v2xKnaarUFg29mB3U=;
+        b=tmCoC4ZGXaK/d3+Y6luqX0OOFDpCJxWrtnsEw98qgMiGm8YjL3E5Uer/21FDIvegDj
+         cFFjxBN+elV02KWn/PcJ5qWwa64CmXnXV8ptrcArpVIFcwDoNFnFy8Au3gnxDZcXsrKC
+         zCtRF4VjuarpKUOdxaWvq6+UtFaLccLGGZwNDPCp9SDOpBQYs+e9ixbal7pl12X8/tn7
+         ZO2w20B8lrM1xOxoJtvpgC/s8ri90IyfUHtvtaB0kI1HK2jAHnDrtNkCrklMg5jeDJp5
+         F5GjlNCISlhsYRxD2q/Q/qDjs/f8mkjDHMhWCtKqynXPYPlU77y8QLUt25lIRCI++VCs
+         n/aQ==
+X-Gm-Message-State: APjAAAVP4ebMZRvs+9f/1wRPbcvuZef9qUbnJtgsKHsaxwTId+MiPst/
+        k0gfJjiE5FFoNmTgTKwt4dzf5CPzNpa0V/W8L1I=
+X-Google-Smtp-Source: APXvYqxAMlqMGoLtV/QmBAgMoUUA9cBy7sBIjE9vyQtzL3Kn6zZnoAHCV0Kt+poYGG0SYlg4n+WaG0SHkySo/zYgcng=
+X-Received: by 2002:a05:6830:1516:: with SMTP id k22mr2300310otp.189.1561540009295;
+ Wed, 26 Jun 2019 02:06:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190625113244.18146-1-daniel.lezcano@linaro.org>
+ <20190625113244.18146-2-daniel.lezcano@linaro.org> <20190626025831.jmyzyypxr6ezpbtu@vireshk-i7>
+ <da1d2603-e30a-d877-54c3-1fad218f9d57@linaro.org> <20190626063716.cechnzsb75q5lclr@vireshk-i7>
+In-Reply-To: <20190626063716.cechnzsb75q5lclr@vireshk-i7>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 26 Jun 2019 11:06:38 +0200
+Message-ID: <CAJZ5v0jFXmJ3ikEPQUp-cLv3+ZSnp1kP8CxdkZVofV1BS3+UwQ@mail.gmail.com>
+Subject: Re: [PATCH V3 2/3] thermal/drivers/cpu_cooling: Unregister with the policy
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Amit Daniel Kachhap <amit.kachhap@gmail.com>,
+        Javi Merino <javi.merino@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Keerthy <j-keerthy@ti.com>,
+        "open list:CPU FREQUENCY DRIVERS - ARM BIG LITTLE" 
+        <linux-pm@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:TI BANDGAP AND THERMAL DRIVER" 
+        <linux-omap@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable DVFS for the Odroid-N2 by setting the clock, OPP and supply
-for each cores of each CPU clusters.
+On Wed, Jun 26, 2019 at 8:37 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+>
+> On 26-06-19, 08:02, Daniel Lezcano wrote:
+> > On 26/06/2019 04:58, Viresh Kumar wrote:
+> > > On 25-06-19, 13:32, Daniel Lezcano wrote:
+> > >> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+> > >> index aee024e42618..f07454249fbc 100644
+> > >> --- a/drivers/cpufreq/cpufreq.c
+> > >> +++ b/drivers/cpufreq/cpufreq.c
+> > >> @@ -1379,8 +1379,8 @@ static int cpufreq_online(unsigned int cpu)
+> > >>            cpufreq_driver->ready(policy);
+> > >>
+> > >>    if (cpufreq_thermal_control_enabled(cpufreq_driver))
+> > >> -          policy->cdev = of_cpufreq_cooling_register(policy);
+> > >> -
+> > >> +          of_cpufreq_cooling_register(policy);
+> > >> +
+> > >
+> > > We don't need any error checking here anymore ?
+> >
+> > There was no error checking initially. This comment and the others below
+> > are for an additional patch IMO, not a change in this one.
+>
+> right, but ...
+>
+> > >> -void cpufreq_cooling_unregister(struct thermal_cooling_device *cdev)
+> > >> +void cpufreq_cooling_unregister(struct cpufreq_policy *policy)
+> > >>  {
+> > >>    struct cpufreq_cooling_device *cpufreq_cdev;
+> > >>    bool last;
+> > >>
+> > >> -  if (!cdev)
+> > >> -          return;
+>
+> we used to return without any errors from here. Now we will have
+> problems if regsitering fails for some reason.
 
-The first cluster uses the "VDDCPU_B" power supply, and the second
-cluster uses the "VDDCPU_A" power supply.
-
-Each power supply can achieve 0.73V to 1.01V using 2 distinct PWM
-outputs clocked at 800KHz with an inverse duty-cycle.
-
-DVFS has been tested by running the arm64 cpuburn at [1] and cycling
-between all the possible cpufreq translations of each cluster and
-checking the final frequency using the clock-measurer, script at [2].
-
-[1] https://github.com/ssvb/cpuburn-arm/blob/master/cpuburn-a53.S
-[2] https://gist.github.com/superna9999/d4de964dbc0f84b7d527e1df2ddea25f
-
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- .../boot/dts/amlogic/meson-g12b-odroid-n2.dts | 96 +++++++++++++++++++
- 1 file changed, 96 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
-index c3e0735e6d9f..0db1547bfb5a 100644
---- a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
-@@ -114,6 +114,44 @@
- 		/* FIXME: actually controlled by VDDCPU_B_EN */
- 	};
- 
-+	vddcpu_a: regulator-vddcpu-a {
-+		/*
-+		 * MP8756GD Regulator.
-+		 */
-+		compatible = "pwm-regulator";
-+
-+		regulator-name = "VDDCPU_A";
-+		regulator-min-microvolt = <721000>;
-+		regulator-max-microvolt = <1022000>;
-+
-+		vin-supply = <&main_12v>;
-+
-+		pwms = <&pwm_ab 0 1250 0>;
-+		pwm-dutycycle-range = <100 0>;
-+
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	vddcpu_b: regulator-vddcpu-b {
-+		/*
-+		 * Silergy SY8120B1ABC Regulator.
-+		 */
-+		compatible = "pwm-regulator";
-+
-+		regulator-name = "VDDCPU_B";
-+		regulator-min-microvolt = <721000>;
-+		regulator-max-microvolt = <1022000>;
-+
-+		vin-supply = <&main_12v>;
-+
-+		pwms = <&pwm_AO_cd 1 1250 0>;
-+		pwm-dutycycle-range = <100 0>;
-+
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
- 	hub_5v: regulator-hub_5v {
- 		compatible = "regulator-fixed";
- 		regulator-name = "HUB_5V";
-@@ -245,6 +283,48 @@
- 	status = "okay";
- };
- 
-+&cpu0 {
-+	cpu-supply = <&vddcpu_b>;
-+	operating-points-v2 = <&cpu_opp_table_0>;
-+	clocks = <&clkc CLKID_CPU_CLK>;
-+	clock-latency = <50000>;
-+};
-+
-+&cpu1 {
-+	cpu-supply = <&vddcpu_b>;
-+	operating-points-v2 = <&cpu_opp_table_0>;
-+	clocks = <&clkc CLKID_CPU_CLK>;
-+	clock-latency = <50000>;
-+};
-+
-+&cpu100 {
-+	cpu-supply = <&vddcpu_a>;
-+	operating-points-v2 = <&cpub_opp_table_1>;
-+	clocks = <&clkc CLKID_CPUB_CLK>;
-+	clock-latency = <50000>;
-+};
-+
-+&cpu101 {
-+	cpu-supply = <&vddcpu_a>;
-+	operating-points-v2 = <&cpub_opp_table_1>;
-+	clocks = <&clkc CLKID_CPUB_CLK>;
-+	clock-latency = <50000>;
-+};
-+
-+&cpu102 {
-+	cpu-supply = <&vddcpu_a>;
-+	operating-points-v2 = <&cpub_opp_table_1>;
-+	clocks = <&clkc CLKID_CPUB_CLK>;
-+	clock-latency = <50000>;
-+};
-+
-+&cpu103 {
-+	cpu-supply = <&vddcpu_a>;
-+	operating-points-v2 = <&cpub_opp_table_1>;
-+	clocks = <&clkc CLKID_CPUB_CLK>;
-+	clock-latency = <50000>;
-+};
-+
- &ext_mdio {
- 	external_phy: ethernet-phy@0 {
- 		/* Realtek RTL8211F (0x001cc916) */	
-@@ -308,6 +388,22 @@
- 	pinctrl-names = "default";
- };
- 
-+&pwm_ab {
-+	pinctrl-0 = <&pwm_a_e_pins>;
-+	pinctrl-names = "default";
-+	clocks = <&xtal>;
-+	clock-names = "clkin0";
-+	status = "okay";
-+};
-+
-+&pwm_AO_cd {
-+	pinctrl-0 = <&pwm_ao_d_e_pins>;
-+	pinctrl-names = "default";
-+	clocks = <&xtal>;
-+	clock-names = "clkin1";
-+	status = "okay";
-+};
-+
- /* SD card */
- &sd_emmc_b {
- 	status = "okay";
--- 
-2.21.0
-
+Specifically, the last cpufreq_cdev in the list will be unregistered
+AFAICS, and without removing it from the list for that matter, which
+isn't what the caller wants.
