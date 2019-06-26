@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED31256CC0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 16:49:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C2CE56CA1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 16:48:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728185AbfFZOsh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 10:48:37 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:39277 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728339AbfFZOrp (ORCPT
+        id S1728392AbfFZOry (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 10:47:54 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:55363 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728351AbfFZOrq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 10:47:45 -0400
-Received: by mail-wm1-f65.google.com with SMTP id z23so2405117wma.4
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 07:47:43 -0700 (PDT)
+        Wed, 26 Jun 2019 10:47:46 -0400
+Received: by mail-wm1-f67.google.com with SMTP id a15so2401249wmj.5
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 07:47:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=4IAtyPcsTx9RzQZd9Z8HcSfwjywt5ILpbuYeShXpAGo=;
-        b=DxmMYVPxorhNSwCea1YEH3jLyk7q+WYZ272bx3DX92dbN34lb4ZaCbJVBPbx6UP9ry
-         lPqdhVvv6Lu+idmdX+4KTIVPn/oUpdhdm0BOyz18hrY8vM3NmSrvPrraDlX9JuEOGFwn
-         fxK/mAN/wJTSlAtJ/HXVqeVgbjN6zzHSMSz+Wd6OwBoul9r5M05mJOXKYGKPDgELs6T8
-         KL3UG+ajbmt8Bsa0lE39vWB4j+ldDQSWK5wwSazT7wPZ82FjjA1yMUvZX4Vq27NePpBH
-         nWdPRfQ1s4gQPDz1SSyRQRSQ5Lzx/56rQ05HOsA9KYJGxYO7Brl8PGKvPMY/isD7tVr8
-         g2rg==
+        bh=DAchjLoGp53ThJdxxXYtoXfJ80Q4DYb4SAa6+caQEjY=;
+        b=xiqkyqpUMCyhR970FBfcZF49AhwK/SFedKuJ5FRBVxNPZjGphDLf8ZqY5lwbop6ozN
+         oY3nkTgayC/91n0TSa61b4ZfKWmnist6N8thv5t4eXM1AEpYGTyiyCdsizlz4O9VBAS+
+         Hj+B1iw81OiFPzqLulhTnWzCm3f/PCMn+18KJzjQ3Y635qkmdvYgUEgG76MGg5Y7n4hS
+         T0XeUfLyfUCYeVnDa9QlbkB8aoQVnDUmm+p36MizQpshTQBEQqDBozwd1wJMErJlIIba
+         ozkF63/2/PzsdhCQQw0UGUPLWt51AWcYhblfhm90HgYMIcB5bv+AhXd+OMCfcE5I5UW0
+         hJlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=4IAtyPcsTx9RzQZd9Z8HcSfwjywt5ILpbuYeShXpAGo=;
-        b=Hgi8XBKn1F9rCm1Z3VabnKu6CqLfI4C4f4sH3t1u0XemTgbGLw5LK36uGqKwmQspXo
-         IBEyiN+1B+yyVxaRdx2rGNEuC4iYwUANMz52ai0iPmajJFGWRG5wAH/pxHwvZ0A+sAF0
-         71Fn6ITBKYqATqivSLof+f4SLpULDe1HdyxLGTGsKEYfIqe7ZdD3s4dHKNLxVDG6R4Xk
-         D1FIT36+67LxJYRm2J6GebEkO3wpbJQ1P22GKVX+YdsIudrICL/bs8OpC1IxyKnsiZOP
-         YrQTzYw2/6LEqurDLsmB6WmlHwaTDPx0Dkzp8Y2/Wa2DGt+tJq+tI0HfanEBLcxz46ln
-         Cfng==
-X-Gm-Message-State: APjAAAWLSXzFgVRNiuNRIBeGwjacvr/pKiOg0Fhor7xtJVwJtrJ1aNaB
-        ndSqx5/XvnbkSt/dhnNOPubrJg==
-X-Google-Smtp-Source: APXvYqyNUdSNruHeIloQDC0KHi0G/o6V9M2IYzlQ9dG2v7llKyzHCqfJ6mQZb2Tj/42yd3EExmmzTg==
-X-Received: by 2002:a1c:ef10:: with SMTP id n16mr2805661wmh.134.1561560462620;
-        Wed, 26 Jun 2019 07:47:42 -0700 (PDT)
+        bh=DAchjLoGp53ThJdxxXYtoXfJ80Q4DYb4SAa6+caQEjY=;
+        b=peKbrLP1w/VeUrrzzCqHvvNSWNwN2tV5P//GjirRGy0VRXgYyaYd/gseX3X++3UYX4
+         +oeerAbC9xZQdAS+6s8KD75wascUkGPGBBFn4jO55Glmw/5YxxlZLrPM50/zmpIlFpI0
+         aduZl399sTYD0zl7qUOLyaozfnLLCQdUj8ydCGV+2Ct7gf0Y2NVTt7pZriI0zZQ9n0Nk
+         YcCPOr67PdrpQ+VoJXEE3Hygf+2Sl1re+Fl8UjzkuCXUqQB2I7zGQr34X9E8lNFgGSaR
+         j7y8ucQDrpRBvvSQHQJHqeI5rSz6SZ3tuwXZHOmbqcFsVMqBw4Hyfzj3l7bRIjo27ZHh
+         +RHA==
+X-Gm-Message-State: APjAAAU0sMW6MZlzuzg/JldqI9IwXdsuX84/u61pNRz3NhTTPYeZ18BR
+        Kud97MOEszWHbno/Ho9exSPx+A==
+X-Google-Smtp-Source: APXvYqz6sc/3QmZZznQnarPJoaco5wIiNAyu1Ktb9fX4GSZIy5IQZ+V+MKhTTcgjM221UKbgx9UA1A==
+X-Received: by 2002:a05:600c:2388:: with SMTP id m8mr2884140wma.23.1561560464072;
+        Wed, 26 Jun 2019 07:47:44 -0700 (PDT)
 Received: from mai.imgcgcw.net (26.92.130.77.rev.sfr.net. [77.130.92.26])
-        by smtp.gmail.com with ESMTPSA id h84sm2718557wmf.43.2019.06.26.07.47.41
+        by smtp.gmail.com with ESMTPSA id h84sm2718557wmf.43.2019.06.26.07.47.42
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 Jun 2019 07:47:41 -0700 (PDT)
+        Wed, 26 Jun 2019 07:47:43 -0700 (PDT)
 From:   Daniel Lezcano <daniel.lezcano@linaro.org>
 To:     tglx@linutronix.de
 Cc:     linux-kernel@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
@@ -51,9 +51,9 @@ Cc:     linux-kernel@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
         Thierry Reding <treding@nvidia.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         linux-tegra@vger.kernel.org (open list:TEGRA ARCHITECTURE SUPPORT)
-Subject: [PATCH 18/25] clocksource/drivers/tegra: Set and use timer's period
-Date:   Wed, 26 Jun 2019 16:46:44 +0200
-Message-Id: <20190626144651.16742-18-daniel.lezcano@linaro.org>
+Subject: [PATCH 19/25] clocksource/drivers/tegra: Drop unneeded typecasting in one place
+Date:   Wed, 26 Jun 2019 16:46:45 +0200
+Message-Id: <20190626144651.16742-19-daniel.lezcano@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190626144651.16742-1-daniel.lezcano@linaro.org>
 References: <adba7d03-e9bd-9542-60bc-0f2d4874a40e@linaro.org>
@@ -65,45 +65,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Dmitry Osipenko <digetx@gmail.com>
 
-The of_clk structure has a period field that is set up initially by
-timer_of_clk_init(), that period value need to be adjusted for a case of
-TIMER1-9 that are running at a fixed rate that doesn't match the clock's
-rate. Note that the period value is currently used only by some of the
-clocksource drivers internally and hence this is just a minor cleanup
-change that doesn't fix anything.
+There is no need to cast void because kernel allows to do that without
+a warning message from a compiler.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 Acked-by: Jon Hunter <jonathanh@nvidia.com>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 Acked-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 ---
- drivers/clocksource/timer-tegra.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/clocksource/timer-tegra.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/clocksource/timer-tegra.c b/drivers/clocksource/timer-tegra.c
-index f172a57cc5fe..41257f89a216 100644
+index 41257f89a216..f7a09d88dacb 100644
 --- a/drivers/clocksource/timer-tegra.c
 +++ b/drivers/clocksource/timer-tegra.c
-@@ -73,9 +73,9 @@ static int tegra_timer_shutdown(struct clock_event_device *evt)
- static int tegra_timer_set_periodic(struct clock_event_device *evt)
+@@ -83,7 +83,7 @@ static int tegra_timer_set_periodic(struct clock_event_device *evt)
+ 
+ static irqreturn_t tegra_timer_isr(int irq, void *dev_id)
  {
+-	struct clock_event_device *evt = (struct clock_event_device *)dev_id;
++	struct clock_event_device *evt = dev_id;
  	void __iomem *reg_base = timer_of_base(to_timer_of(evt));
-+	unsigned long period = timer_of_period(to_timer_of(evt));
  
--	writel_relaxed(TIMER_PTV_EN | TIMER_PTV_PER |
--		       ((timer_of_rate(to_timer_of(evt)) / HZ) - 1),
-+	writel_relaxed(TIMER_PTV_EN | TIMER_PTV_PER | (period - 1),
- 		       reg_base + TIMER_PTV);
- 
- 	return 0;
-@@ -299,6 +299,7 @@ static int __init tegra_init_timer(struct device_node *np, bool tegra20,
- 		cpu_to->clkevt.rating = rating;
- 		cpu_to->clkevt.cpumask = cpumask_of(cpu);
- 		cpu_to->of_base.base = timer_reg_base + base;
-+		cpu_to->of_clk.period = rate / HZ;
- 		cpu_to->of_clk.rate = rate;
- 
- 		irq_set_status_flags(cpu_to->clkevt.irq, IRQ_NOAUTOEN);
+ 	writel_relaxed(TIMER_PCR_INTR_CLR, reg_base + TIMER_PCR);
 -- 
 2.17.1
 
