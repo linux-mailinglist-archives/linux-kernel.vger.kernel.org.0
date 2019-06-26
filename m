@@ -2,112 +2,256 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A37956EBB
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 18:29:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BFC9E56EAF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 18:27:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726694AbfFZQ2z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 12:28:55 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:50324 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726601AbfFZQ2j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 12:28:39 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 3EB0DFA71DF6CE458D6D;
-        Thu, 27 Jun 2019 00:28:36 +0800 (CST)
-Received: from localhost.localdomain (10.67.212.75) by
- DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
- 14.3.439.0; Thu, 27 Jun 2019 00:28:26 +0800
-From:   John Garry <john.garry@huawei.com>
-To:     <xuwei5@huawei.com>
-CC:     <bhelgaas@google.com>, <linuxarm@huawei.com>,
-        <linux-kernel@vger.kernel.org>, <arnd@arndb.de>, <olof@lixom.net>,
-        John Garry <john.garry@huawei.com>
-Subject: [PATCH v3 6/6] lib: logic_pio: Enforce LOGIC_PIO_INDIRECT region ops are set at registration
-Date:   Thu, 27 Jun 2019 00:26:58 +0800
-Message-ID: <1561566418-22714-7-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 2.8.1
-In-Reply-To: <1561566418-22714-1-git-send-email-john.garry@huawei.com>
-References: <1561566418-22714-1-git-send-email-john.garry@huawei.com>
+        id S1726445AbfFZQ1e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 12:27:34 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:5161 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726014AbfFZQ1e (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 12:27:34 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d139cf20000>; Wed, 26 Jun 2019 09:27:30 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 26 Jun 2019 09:27:32 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 26 Jun 2019 09:27:32 -0700
+Received: from [10.2.169.244] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 26 Jun
+ 2019 16:27:28 +0000
+Subject: Re: [PATCH V4 14/18] soc/tegra: pmc: add pmc wake support for
+ tegra210
+To:     Thierry Reding <thierry.reding@gmail.com>
+CC:     <jonathanh@nvidia.com>, <tglx@linutronix.de>,
+        <jason@lakedaemon.net>, <marc.zyngier@arm.com>,
+        <linus.walleij@linaro.org>, <stefan@agner.ch>,
+        <mark.rutland@arm.com>, <pdeschrijver@nvidia.com>,
+        <pgaikwad@nvidia.com>, <sboyd@kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <jckuo@nvidia.com>, <josephl@nvidia.com>, <talho@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
+        <digetx@gmail.com>, <devicetree@vger.kernel.org>
+References: <1561345379-2429-1-git-send-email-skomatineni@nvidia.com>
+ <1561345379-2429-15-git-send-email-skomatineni@nvidia.com>
+ <20190626102614.GF6362@ulmo>
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+Message-ID: <272f25b0-aa1c-eb3c-fcfe-eb4eeec3c346@nvidia.com>
+Date:   Wed, 26 Jun 2019 09:27:26 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20190626102614.GF6362@ulmo>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1561566450; bh=7qRJA9aotziCpz0L/Yu280AftF0lT3W783QhiqlRpK0=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=JRpaYLciMtPeTJNhHTK1LWZxMvmjO3wzjMqDTeHFYT+lkSALH90RyTh7wI8uFMerK
+         7w/mnB6GK8o7I+xCxsC7OAl7JAk1MotXwigSq5AZE7EJQ12YPD2wTHLb5ymemKqgJX
+         LvAi41tzK13MOWoACc5qPYeeTg1iO6kfW39TCCuqNTfPG2pFnZ0POiTsxf97L2srxX
+         WqfdTsVBjuYde5iFyMIeZl59qqw9Ijo9F189TBMqly+UqMNYSE5HyM/MqDxhL9TiOI
+         hXkqN7sYcjA7L1fEOlAbUsHGBgvQIYUvULZzAaupSvB6i4xVig1ZTU2Y6o1CtZLxDw
+         AyfOHj1mfqkGw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since the only LOGIC_PIO_INDIRECT host (hisi-lpc) now sets the ops prior
-to registration, enforce this check at registration instead of in the IO
-port accessors to simplify and marginally optimise the code.
 
-A slight misalignment is also tidied.
-
-Suggested-by: Bjorn Helgaas <bhelgaas@google.com>
-Signed-off-by: John Garry <john.garry@huawei.com>
----
- lib/logic_pio.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
-
-diff --git a/lib/logic_pio.c b/lib/logic_pio.c
-index 905027574e5d..52831a85293a 100644
---- a/lib/logic_pio.c
-+++ b/lib/logic_pio.c
-@@ -39,7 +39,8 @@ int logic_pio_register_range(struct logic_pio_hwaddr *new_range)
- 	resource_size_t iio_sz = MMIO_UPPER_LIMIT;
- 	int ret = 0;
- 
--	if (!new_range || !new_range->fwnode || !new_range->size)
-+	if (!new_range || !new_range->fwnode || !new_range->size ||
-+	    (new_range->flags == LOGIC_PIO_INDIRECT && !new_range->ops))
- 		return -EINVAL;
- 
- 	start = new_range->hw_start;
-@@ -237,7 +238,7 @@ type logic_in##bw(unsigned long addr)					\
- 	} else if (addr >= MMIO_UPPER_LIMIT && addr < IO_SPACE_LIMIT) { \
- 		struct logic_pio_hwaddr *entry = find_io_range(addr);	\
- 									\
--		if (entry && entry->ops)				\
-+		if (entry)						\
- 			ret = entry->ops->in(entry->hostdata,		\
- 					addr, sizeof(type));		\
- 		else							\
-@@ -253,7 +254,7 @@ void logic_out##bw(type value, unsigned long addr)			\
- 	} else if (addr >= MMIO_UPPER_LIMIT && addr < IO_SPACE_LIMIT) {	\
- 		struct logic_pio_hwaddr *entry = find_io_range(addr);	\
- 									\
--		if (entry && entry->ops)				\
-+		if (entry)						\
- 			entry->ops->out(entry->hostdata,		\
- 					addr, value, sizeof(type));	\
- 		else							\
-@@ -261,7 +262,7 @@ void logic_out##bw(type value, unsigned long addr)			\
- 	}								\
- }									\
- 									\
--void logic_ins##bw(unsigned long addr, void *buffer,		\
-+void logic_ins##bw(unsigned long addr, void *buffer,			\
- 		   unsigned int count)					\
- {									\
- 	if (addr < MMIO_UPPER_LIMIT) {					\
-@@ -269,7 +270,7 @@ void logic_ins##bw(unsigned long addr, void *buffer,		\
- 	} else if (addr >= MMIO_UPPER_LIMIT && addr < IO_SPACE_LIMIT) {	\
- 		struct logic_pio_hwaddr *entry = find_io_range(addr);	\
- 									\
--		if (entry && entry->ops)				\
-+		if (entry)						\
- 			entry->ops->ins(entry->hostdata,		\
- 				addr, buffer, sizeof(type), count);	\
- 		else							\
-@@ -286,7 +287,7 @@ void logic_outs##bw(unsigned long addr, const void *buffer,		\
- 	} else if (addr >= MMIO_UPPER_LIMIT && addr < IO_SPACE_LIMIT) {	\
- 		struct logic_pio_hwaddr *entry = find_io_range(addr);	\
- 									\
--		if (entry && entry->ops)				\
-+		if (entry)						\
- 			entry->ops->outs(entry->hostdata,		\
- 				addr, buffer, sizeof(type), count);	\
- 		else							\
--- 
-2.17.1
-
+On 6/26/19 3:26 AM, Thierry Reding wrote:
+> On Sun, Jun 23, 2019 at 08:02:55PM -0700, Sowjanya Komatineni wrote:
+>> This patch implements PMC wakeup sequence for Tegra210 and defines
+>> common used RTC alarm wake event.
+>>
+>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>> ---
+>>   drivers/soc/tegra/pmc.c | 111 ++++++++++++++++++++++++++++++++++++++++++++++++
+>>   1 file changed, 111 insertions(+)
+> One general note, and it's a really pedantic one, which means that this
+> patch is plenty good already: sstart the commit subject with a capital
+> letter after the prefix, and watch the capitalization of the rest of the
+> line:
+>
+> 	soc/tegra: pmc: Add PMC wake support for Tegra210
+>
+> I will usually fix up these trivialities when applying, but you can save
+> me a couple of seconds per patch by doing this right to begin with. =)
+>
+> Thanks again for the great work on this series!
+>
+> Thierry
+Sorry Thierry. Sure will follow that from now on...
+>> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+>> index e87f29a35fcf..603fc3bd73f5 100644
+>> --- a/drivers/soc/tegra/pmc.c
+>> +++ b/drivers/soc/tegra/pmc.c
+>> @@ -57,6 +57,12 @@
+>>   #define  PMC_CNTRL_SYSCLK_OE		BIT(11) /* system clock enable */
+>>   #define  PMC_CNTRL_SYSCLK_POLARITY	BIT(10) /* sys clk polarity */
+>>   #define  PMC_CNTRL_MAIN_RST		BIT(4)
+>> +#define  PMC_CNTRL_LATCH_WAKEUPS	BIT(5)
+>> +
+>> +#define PMC_WAKE_MASK			0x0c
+>> +#define PMC_WAKE_LEVEL			0x10
+>> +#define PMC_WAKE_STATUS			0x14
+>> +#define PMC_SW_WAKE_STATUS		0x18
+>>   
+>>   #define DPD_SAMPLE			0x020
+>>   #define  DPD_SAMPLE_ENABLE		BIT(0)
+>> @@ -87,6 +93,11 @@
+>>   
+>>   #define PMC_SCRATCH41			0x140
+>>   
+>> +#define PMC_WAKE2_MASK			0x160
+>> +#define PMC_WAKE2_LEVEL			0x164
+>> +#define PMC_WAKE2_STATUS		0x168
+>> +#define PMC_SW_WAKE2_STATUS		0x16c
+>> +
+>>   #define PMC_SENSOR_CTRL			0x1b0
+>>   #define  PMC_SENSOR_CTRL_SCRATCH_WRITE	BIT(2)
+>>   #define  PMC_SENSOR_CTRL_ENABLE_RST	BIT(1)
+>> @@ -1921,6 +1932,55 @@ static const struct irq_domain_ops tegra_pmc_irq_domain_ops = {
+>>   	.alloc = tegra_pmc_irq_alloc,
+>>   };
+>>   
+>> +static int tegra210_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
+>> +{
+>> +	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
+>> +	unsigned int offset, bit;
+>> +	u32 value;
+>> +
+>> +	if (data->hwirq == ULONG_MAX)
+>> +		return 0;
+>> +
+>> +	offset = data->hwirq / 32;
+>> +	bit = data->hwirq % 32;
+>> +
+>> +	/*
+>> +	 * latch wakeups to SW_WAKE_STATUS register to capture events
+>> +	 * that would not make it into wakeup event register during LP0 exit.
+>> +	 */
+>> +	value = tegra_pmc_readl(pmc, PMC_CNTRL);
+>> +	value |= PMC_CNTRL_LATCH_WAKEUPS;
+>> +	tegra_pmc_writel(pmc, value, PMC_CNTRL);
+>> +	udelay(120);
+>> +
+>> +	value &= ~PMC_CNTRL_LATCH_WAKEUPS;
+>> +	tegra_pmc_writel(pmc, value, PMC_CNTRL);
+>> +	udelay(120);
+>> +
+>> +	tegra_pmc_writel(pmc, 0, PMC_SW_WAKE_STATUS);
+>> +	tegra_pmc_writel(pmc, 0, PMC_SW_WAKE2_STATUS);
+>> +
+>> +	tegra_pmc_writel(pmc, 0, PMC_WAKE_STATUS);
+>> +	tegra_pmc_writel(pmc, 0, PMC_WAKE2_STATUS);
+>> +
+>> +	/* enable PMC wake */
+>> +	if (data->hwirq >= 32)
+>> +		offset = PMC_WAKE2_MASK;
+>> +	else
+>> +		offset = PMC_WAKE_MASK;
+>> +
+>> +	value = tegra_pmc_readl(pmc, offset);
+>> +
+>> +	if (on)
+>> +		value |= 1 << bit;
+>> +	else
+>> +		value &= ~(1 << bit);
+>> +
+>> +	tegra_pmc_writel(pmc, value, offset);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>   static int tegra186_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
+>>   {
+>>   	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
+>> @@ -1953,6 +2013,49 @@ static int tegra186_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
+>>   	return 0;
+>>   }
+>>   
+>> +static int tegra210_pmc_irq_set_type(struct irq_data *data, unsigned int type)
+>> +{
+>> +	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
+>> +	unsigned int offset, bit;
+>> +	u32 value;
+>> +
+>> +	if (data->hwirq == ULONG_MAX)
+>> +		return 0;
+>> +
+>> +	offset = data->hwirq / 32;
+>> +	bit = data->hwirq % 32;
+>> +
+>> +	if (data->hwirq >= 32)
+>> +		offset = PMC_WAKE2_LEVEL;
+>> +	else
+>> +		offset = PMC_WAKE_LEVEL;
+>> +
+>> +	value = tegra_pmc_readl(pmc, offset);
+>> +
+>> +	switch (type) {
+>> +	case IRQ_TYPE_EDGE_RISING:
+>> +	case IRQ_TYPE_LEVEL_HIGH:
+>> +		value |= 1 << bit;
+>> +		break;
+>> +
+>> +	case IRQ_TYPE_EDGE_FALLING:
+>> +	case IRQ_TYPE_LEVEL_LOW:
+>> +		value &= ~(1 << bit);
+>> +		break;
+>> +
+>> +	case IRQ_TYPE_EDGE_RISING | IRQ_TYPE_EDGE_FALLING:
+>> +		value ^= 1 << bit;
+>> +		break;
+>> +
+>> +	default:
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	tegra_pmc_writel(pmc, value, offset);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>   static int tegra186_pmc_irq_set_type(struct irq_data *data, unsigned int type)
+>>   {
+>>   	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
+>> @@ -2541,6 +2644,10 @@ static const struct pinctrl_pin_desc tegra210_pin_descs[] = {
+>>   	TEGRA210_IO_PAD_TABLE(TEGRA_IO_PIN_DESC)
+>>   };
+>>   
+>> +static const struct tegra_wake_event tegra210_wake_events[] = {
+>> +	TEGRA_WAKE_IRQ("rtc", 16, 2),
+>> +};
+>> +
+>>   static const struct tegra_pmc_soc tegra210_pmc_soc = {
+>>   	.num_powergates = ARRAY_SIZE(tegra210_powergates),
+>>   	.powergates = tegra210_powergates,
+>> @@ -2558,10 +2665,14 @@ static const struct tegra_pmc_soc tegra210_pmc_soc = {
+>>   	.regs = &tegra20_pmc_regs,
+>>   	.init = tegra20_pmc_init,
+>>   	.setup_irq_polarity = tegra20_pmc_setup_irq_polarity,
+>> +	.irq_set_wake = tegra210_pmc_irq_set_wake,
+>> +	.irq_set_type = tegra210_pmc_irq_set_type,
+>>   	.reset_sources = tegra210_reset_sources,
+>>   	.num_reset_sources = ARRAY_SIZE(tegra210_reset_sources),
+>>   	.reset_levels = NULL,
+>>   	.num_reset_levels = 0,
+>> +	.num_wake_events = ARRAY_SIZE(tegra210_wake_events),
+>> +	.wake_events = tegra210_wake_events,
+>>   };
+>>   
+>>   #define TEGRA186_IO_PAD_TABLE(_pad)					     \
+>> -- 
+>> 2.7.4
