@@ -2,91 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD80B573D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 23:46:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CC23573DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 23:47:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726410AbfFZVqE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 17:46:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57170 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726289AbfFZVqD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 17:46:03 -0400
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0750C20665;
-        Wed, 26 Jun 2019 21:46:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561585562;
-        bh=DRHwIYagcxSefxtxUmGepQRlcDBzbp7VVh0IXC49n8Y=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=2UE+8Fn0BnnwdB5XkYfFOQT8enkZJtVG1YenOJ3+ZigNVe+qhyTdKpsJXa8nYNdEn
-         l/7U9IAwZG2JFXhpN3iHoieAPJkqsdQv8ZCkl7v+aTUZ+K0qF2r6AtYYVK3tGz4zfF
-         JufcidEUfCDSdO0ns3YoNaBIegjYlslQsRWiLY5U=
-Subject: Re: [PATCH 4.4 0/1] 4.4.184-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org, shuah <shuah@kernel.org>
-References: <20190626083604.894288021@linuxfoundation.org>
-From:   shuah <shuah@kernel.org>
-Message-ID: <7507a259-5b00-39bd-a76d-6b8b40ba1f82@kernel.org>
-Date:   Wed, 26 Jun 2019 15:46:01 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1726462AbfFZVr4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 17:47:56 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:50412 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726223AbfFZVr4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 17:47:56 -0400
+Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hgFlW-00088d-0n; Wed, 26 Jun 2019 23:47:42 +0200
+Date:   Wed, 26 Jun 2019 23:47:40 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Fenghua Yu <fenghua.yu@intel.com>
+cc:     Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        H Peter Anvin <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim Krcmar <rkrcmar@redhat.com>,
+        Christopherson Sean J <sean.j.christopherson@intel.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Xiaoyao Li <xiaoyao.li@intel.com>,
+        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        x86 <x86@kernel.org>, kvm@vger.kernel.org
+Subject: Re: [PATCH v9 09/17] x86/split_lock: Handle #AC exception for split
+ lock
+In-Reply-To: <20190626203637.GC245468@romley-ivt3.sc.intel.com>
+Message-ID: <alpine.DEB.2.21.1906262338220.32342@nanos.tec.linutronix.de>
+References: <1560897679-228028-1-git-send-email-fenghua.yu@intel.com> <1560897679-228028-10-git-send-email-fenghua.yu@intel.com> <alpine.DEB.2.21.1906262209590.32342@nanos.tec.linutronix.de> <20190626203637.GC245468@romley-ivt3.sc.intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20190626083604.894288021@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/26/19 2:45 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.4.184 release.
-> There are 1 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Fri 28 Jun 2019 08:35:42 AM UTC.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.184-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
-> -------------
-> Pseudo-Shortlog of commits:
-> 
-> Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->      Linux 4.4.184-rc1
-> 
-> Eric Dumazet <edumazet@google.com>
->      tcp: refine memory limit test in tcp_fragment()
-> 
-> 
-> -------------
-> 
-> Diffstat:
-> 
->   Makefile              | 4 ++--
->   net/ipv4/tcp_output.c | 2 +-
->   2 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> 
-> 
+On Wed, 26 Jun 2019, Fenghua Yu wrote:
 
-Compiled and booted on my test system. No dmesg regressions.
+> On Wed, Jun 26, 2019 at 10:20:05PM +0200, Thomas Gleixner wrote:
+> > On Tue, 18 Jun 2019, Fenghua Yu wrote:
+> > > +
+> > > +static atomic_t split_lock_debug;
+> > > +
+> > > +void split_lock_disable(void)
+> > > +{
+> > > +	/* Disable split lock detection on this CPU */
+> > > +	this_cpu_and(msr_test_ctl_cached, ~MSR_TEST_CTL_SPLIT_LOCK_DETECT);
+> > > +	wrmsrl(MSR_TEST_CTL, this_cpu_read(msr_test_ctl_cached));
+> > > +
+> > > +	/*
+> > > +	 * Use the atomic variable split_lock_debug to ensure only the
+> > > +	 * first CPU hitting split lock issue prints one single complete
+> > > +	 * warning. This also solves the race if the split-lock #AC fault
+> > > +	 * is re-triggered by NMI of perf context interrupting one
+> > > +	 * split-lock warning execution while the original WARN_ONCE() is
+> > > +	 * executing.
+> > > +	 */
+> > > +	if (atomic_cmpxchg(&split_lock_debug, 0, 1) == 0) {
+> > > +		WARN_ONCE(1, "split lock operation detected\n");
+> > > +		atomic_set(&split_lock_debug, 0);
+> > 
+> > What's the purpose of this atomic_set()?
+> 
+> atomic_set() releases the split_lock_debug flag after WARN_ONCE() is done.
+> The same split_lock_debug flag will be used in sysfs write for atomic
+> operation as well, as proposed by Ingo in https://lkml.org/lkml/2019/4/25/48
 
-thanks,
--- Shuah
+Your comment above lacks any useful information about that whole thing.
+
+> So that's why the flag needs to be cleared, right?
+
+Errm. No.
+
+CPU 0					CPU 1
+					
+hits AC					hits AC
+  if (atomic_cmpxchg() == success)	  if (atomic_cmpxchg() == success)
+  	warn()	       	  		     warn()
+
+So only one of the CPUs will win the cmpxchg race, set te variable to 1 and
+warn, the other and any subsequent AC on any other CPU will not warn
+either. So you don't need WARN_ONCE() at all. It's redundant and confusing
+along with the atomic_set().
+
+Whithout reading that link [1], what Ingo proposed was surely not the
+trainwreck which you decided to put into that debugfs thing.
+
+Thanks,
+
+	tglx
+
+[1] lkml.org sucks. We have https://lkml.kernel.org/r/$MESSAGEID for
+    that. That actually works.
