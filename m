@@ -2,159 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A85656721
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 12:47:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 846385672A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 12:50:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727223AbfFZKrL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 06:47:11 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:38103 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726387AbfFZKrK (ORCPT
+        id S1727150AbfFZKuK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 06:50:10 -0400
+Received: from esa4.microchip.iphmx.com ([68.232.154.123]:41980 "EHLO
+        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726839AbfFZKuJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 06:47:10 -0400
-Received: by mail-wm1-f67.google.com with SMTP id s15so1579295wmj.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 03:47:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=fSwT7q8BLOXNpzs+danpM3n1/i2uCJHF7PPr1vSLfUI=;
-        b=PS97z0V4J4hvrFU+KNWT9KYw44s2DQgCAUU9WUGDvoPpxuLC6OGdIjueLKdBR7rIMD
-         /c+6iW62x6//m985XD5u0ll7y/SU0ES0Vq1A4U2sZX/i7DvMz1c+3OEv9MelQbHtVti4
-         SkTWJtxzYLtaBybXaTu1kQCt34D96VbpPP+z6mGodaWlxG0MtHvMeBQNn5pf6XWz/8Wq
-         +IYgMuaS7yiGRxDq2Et47sBq6d9qZIYAANakOIRBK6b34dbMGWDFL37AcXCQVfEKJJky
-         aw1DQLorLWmpge7WBYN+IR+yTIKFowXM2Rk5HYT5R1TDhKhL6um8jO4UGWPXCMU5ZcTL
-         rrRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=fSwT7q8BLOXNpzs+danpM3n1/i2uCJHF7PPr1vSLfUI=;
-        b=Wu1GiTJYzTTVpv+/Wav93nthC6GDzrNxVrX7F+oqIMkVVKhu6S2RJPJAm0YgPGMhrB
-         l/r3VdVsZOqg+yxnKwIceaHNArIC7oFGi0GF7h2cFJGoUADclsbbrlP+RLy2B3D9X4P6
-         wny6k7IjKkT9KakMEJrwPGcwv5L1fjW3SNZUK7xmCgh2N83zmLvEeysVQfRcvuuSxa0F
-         j+DQZBjpz/uKq9HhTnzN2OgObRqS6Xqll0CTP1xCU9wBOsg5yfjCP8/c3FrFNRjD6/hl
-         HO++Z4DDNtKtAETqVbv7SAlHprfcSQxOwz1bs1gPas8Z0UyBZdIAUTExB3SHjFRZqKfI
-         UFzQ==
-X-Gm-Message-State: APjAAAXqBK49xU/7oRberddPcWC/phc9SRenxnSOLy2f29FUd4lZempK
-        EonxdN9Zvl9L6WrdxPF3RGMWBQ==
-X-Google-Smtp-Source: APXvYqwfRtRTDwuQHX1TngULVXOfM5NelQlr57zqJTiIB+fKCFHgOpqMp9+Sp2ktppAqj+A2FYeePw==
-X-Received: by 2002:a1c:4054:: with SMTP id n81mr2343827wma.78.1561546027369;
-        Wed, 26 Jun 2019 03:47:07 -0700 (PDT)
-Received: from brauner.io ([212.91.227.56])
-        by smtp.gmail.com with ESMTPSA id d5sm16228435wrc.17.2019.06.26.03.47.06
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 26 Jun 2019 03:47:06 -0700 (PDT)
-Date:   Wed, 26 Jun 2019 12:47:05 +0200
-From:   Christian Brauner <christian@brauner.io>
-To:     Ian Kent <raven@themaw.net>
-Cc:     David Howells <dhowells@redhat.com>, viro@zeniv.linux.org.uk,
-        mszeredi@redhat.com, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/25] VFS: Introduce filesystem information query
- syscall [ver #14]
-Message-ID: <20190626104704.dwjd4urpsmuheirc@brauner.io>
-References: <156138532485.25627.7459410522109581052.stgit@warthog.procyon.org.uk>
- <20190626100525.irdehd24jowz5f75@brauner.io>
- <cf0361c2d1fc09ad0097f0da1e981b97ad39ab07.camel@themaw.net>
+        Wed, 26 Jun 2019 06:50:09 -0400
+Received-SPF: Pass (esa4.microchip.iphmx.com: domain of
+  Codrin.Ciubotariu@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa4.microchip.iphmx.com;
+  envelope-from="Codrin.Ciubotariu@microchip.com";
+  x-sender="Codrin.Ciubotariu@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
+  a:mx2.microchip.iphmx.com include:servers.mcsv.net
+  include:mktomail.com include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa4.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa4.microchip.iphmx.com;
+  envelope-from="Codrin.Ciubotariu@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa4.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Codrin.Ciubotariu@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
+X-IronPort-AV: E=Sophos;i="5.63,419,1557212400"; 
+   d="scan'208";a="38419469"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 26 Jun 2019 03:50:09 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
+ chn-vm-ex01.mchp-main.com (10.10.87.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Wed, 26 Jun 2019 03:50:08 -0700
+Received: from rob-ult-m19940.microchip.com (10.10.85.251) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
+ 15.1.1713.5 via Frontend Transport; Wed, 26 Jun 2019 03:50:04 -0700
+From:   Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+To:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
+CC:     <lars@metafoo.de>, <lgirdwood@gmail.com>, <broonie@kernel.org>,
+        <perex@perex.cz>, <tiwai@suse.com>,
+        Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [PATCH 1/2] ASoC: codecs: ad193x: Fix memory corruption on BE 64b systems
+Date:   Wed, 26 Jun 2019 13:49:46 +0300
+Message-ID: <20190626104947.26547-1-codrin.ciubotariu@microchip.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <cf0361c2d1fc09ad0097f0da1e981b97ad39ab07.camel@themaw.net>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 26, 2019 at 06:42:51PM +0800, Ian Kent wrote:
-> On Wed, 2019-06-26 at 12:05 +0200, Christian Brauner wrote:
-> > On Mon, Jun 24, 2019 at 03:08:45PM +0100, David Howells wrote:
-> > > Hi Al,
-> > > 
-> > > Here are a set of patches that adds a syscall, fsinfo(), that allows
-> > > attributes of a filesystem/superblock to be queried.  Attribute values are
-> > > of four basic types:
-> > > 
-> > >  (1) Version dependent-length structure (size defined by type).
-> > > 
-> > >  (2) Variable-length string (up to PAGE_SIZE).
-> > > 
-> > >  (3) Array of fixed-length structures (up to INT_MAX size).
-> > > 
-> > >  (4) Opaque blob (up to INT_MAX size).
-> > > 
-> > > Attributes can have multiple values in up to two dimensions and all the
-> > > values of a particular attribute must have the same type.
-> > > 
-> > > Note that the attribute values *are* allowed to vary between dentries
-> > > within a single superblock, depending on the specific dentry that you're
-> > > looking at.
-> > > 
-> > > I've tried to make the interface as light as possible, so integer/enum
-> > > attribute selector rather than string and the core does all the allocation
-> > > and extensibility support work rather than leaving that to the filesystems.
-> > > That means that for the first two attribute types, sb->s_op->fsinfo() may
-> > > assume that the provided buffer is always present and always big enough.
-> > > 
-> > > Further, this removes the possibility of the filesystem gaining access to
-> > > the
-> > > userspace buffer.
-> > > 
-> > > 
-> > > fsinfo() allows a variety of information to be retrieved about a filesystem
-> > > and the mount topology:
-> > > 
-> > >  (1) General superblock attributes:
-> > > 
-> > >       - The amount of space/free space in a filesystem (as statfs()).
-> > >       - Filesystem identifiers (UUID, volume label, device numbers, ...)
-> > >       - The limits on a filesystem's capabilities
-> > >       - Information on supported statx fields and attributes and IOC flags.
-> > >       - A variety single-bit flags indicating supported capabilities.
-> > >       - Timestamp resolution and range.
-> > >       - Sources (as per mount(2), but fsconfig() allows multiple sources).
-> > >       - In-filesystem filename format information.
-> > >       - Filesystem parameters ("mount -o xxx"-type things).
-> > >       - LSM parameters (again "mount -o xxx"-type things).
-> > > 
-> > >  (2) Filesystem-specific superblock attributes:
-> > > 
-> > >       - Server names and addresses.
-> > >       - Cell name.
-> > > 
-> > >  (3) Filesystem configuration metadata attributes:
-> > > 
-> > >       - Filesystem parameter type descriptions.
-> > >       - Name -> parameter mappings.
-> > >       - Simple enumeration name -> value mappings.
-> > > 
-> > >  (4) Mount topology:
-> > > 
-> > >       - General information about a mount object.
-> > >       - Mount device name(s).
-> > >       - Children of a mount object and their relative paths.
-> > > 
-> > >  (5) Information about what the fsinfo() syscall itself supports, including
-> > >      the number of attibutes supported and the number of capability bits
-> > >      supported.
-> > 
-> > Phew, this patchset is a lot. It's good of course but can we please cut
-> > some of the more advanced features such as querying by mount id,
-> > submounts etc. pp. for now?
-> 
-> Did you mean the "vfs: Allow fsinfo() to look up a mount object by ID"
-> patch?
-> 
-> We would need to be very careful what was dropped.
+Since change_bit() requires unsigned long*, making this cast on an
+unsigned int variable will change a wrong bit on BE platforms, causing
+memory corruption. Replace this function with a simple XOR.
 
-Not dropped as in never implement but rather defer it by one merge
-window to give us a) more time to review and settle the interface while
-b) not stalling the overall patch.
+Fixes: 90f6e6803139 ("ASoC: codecs: ad193x: Fix frame polarity for DSP_A format")
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+---
+ sound/soc/codecs/ad193x.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-> 
-> For example, I've found that the patch above is pretty much essential
-> for fsinfo() to be useful from user space.
+diff --git a/sound/soc/codecs/ad193x.c b/sound/soc/codecs/ad193x.c
+index 05f4514048e2..3ebc0524f4b2 100644
+--- a/sound/soc/codecs/ad193x.c
++++ b/sound/soc/codecs/ad193x.c
+@@ -240,10 +240,8 @@ static int ad193x_set_dai_fmt(struct snd_soc_dai *codec_dai,
+ 	}
+ 
+ 	/* For DSP_*, LRCLK's polarity must be inverted */
+-	if (fmt & SND_SOC_DAIFMT_DSP_A) {
+-		change_bit(ffs(AD193X_DAC_LEFT_HIGH) - 1,
+-			   (unsigned long *)&dac_fmt);
+-	}
++	if (fmt & SND_SOC_DAIFMT_DSP_A)
++		dac_fmt ^= AD193X_DAC_LEFT_HIGH;
+ 
+ 	switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
+ 	case SND_SOC_DAIFMT_CBM_CFM: /* codec clk & frm master */
+-- 
+2.20.1
 
-Yeah, but that interface is not clearly defined yet as can be seen from
-the commit message and that's what's bothering me most.
