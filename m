@@ -2,176 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22F7357493
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 00:53:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1F5D57487
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 00:49:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726632AbfFZWxQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 18:53:16 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:39872 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726289AbfFZWxM (ORCPT
+        id S1726595AbfFZWtK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 18:49:10 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:37286 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726472AbfFZWtK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 18:53:12 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5QMmbTt100137;
-        Wed, 26 Jun 2019 22:52:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
- bh=qBZ7pNks6jwo/erAtSEGIYGdwoUp6z0ruzJGXHPePbc=;
- b=OSPFdwXkb8zzsDaUD7p/4rk/q8wqeFrWJluBr0no/A6YEF8DD+FgvoBt0agQagH0KCNI
- j3YW+MyVDcuMp8XF7EzVsoWDCJg16CNILBKVBTJ1J5XTj8P6ohgI5uPccWP0XSafPaVg
- /MELywSlXjEsxjgwk9VS1XzgYqPMSnXRyR9fKNDjHv92F6HK6btE8yflNW9YClSaR+TJ
- OIYccXufbcU0XbRIJqeUl/49zjxjRwnid/QH463+sJnyKRZuN8VOY3r3bkO0gpX+QkSH
- xuxyCwUAThkdOUxbv6TdOObPh8Yc9jcVJrqLSnl07JQg75cOPk3y2iNOAy+yeDkdBeFD IQ== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 2t9brtd1aa-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 26 Jun 2019 22:52:28 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5QMpwXx075672;
-        Wed, 26 Jun 2019 22:52:28 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3030.oracle.com with ESMTP id 2t99f4q9x7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 26 Jun 2019 22:52:28 +0000
-Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5QMqQVF015930;
-        Wed, 26 Jun 2019 22:52:26 GMT
-Received: from smazumda-Precision-T1600.us.oracle.com (/10.132.91.175)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 26 Jun 2019 15:52:26 -0700
-From:   subhra mazumdar <subhra.mazumdar@oracle.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     peterz@infradead.org, mingo@redhat.com, tglx@linutronix.de,
-        prakash.sangappa@oracle.com, dhaval.giani@oracle.com,
-        daniel.lezcano@linaro.org, vincent.guittot@linaro.org,
-        viresh.kumar@linaro.org, tim.c.chen@linux.intel.com,
-        mgorman@techsingularity.net
-Subject: [RFC PATCH 3/3] sched: introduce tunables to control soft affinity
-Date:   Wed, 26 Jun 2019 15:47:18 -0700
-Message-Id: <20190626224718.21973-4-subhra.mazumdar@oracle.com>
-X-Mailer: git-send-email 2.9.3
-In-Reply-To: <20190626224718.21973-1-subhra.mazumdar@oracle.com>
-References: <20190626224718.21973-1-subhra.mazumdar@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9300 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=973
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1906260261
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9300 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1906260262
+        Wed, 26 Jun 2019 18:49:10 -0400
+Received: by mail-oi1-f195.google.com with SMTP id t76so96767oih.4
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 15:49:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=android.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=c0kP6eyZ5Tl3qjozgE4k99bkRxQJ3H09e9k9c5FyUWQ=;
+        b=Tw/gev90iyMsc/dD5bpBpfe6EbDeuQxWxztgIG1Tb0wvkgNK5zj66ER2rhFYtEbxiO
+         ShXF7vBXsz61cy5UGxfGLTeF/jDqCW2uf2qhX4bW0mK7ocWgq5Y9Fs1RCDllx5yiLKP9
+         xc411xHAStEVucb+J3FgI1sIEsS66my+EwH/qJIyasK57+GBEKfJYp7I8IOMy03vMelw
+         PgMBwf3I6nAVD4Jfq6Igz6lM0TzZAwMU0KU6ROsQqd8kCaC/xO0ndSkm7hpG5/MjIfKb
+         yvUrNFU/uaK4p25k85X9Fzce/IY57/WjHzzKten4XsXBCYpFdGmhTIP3Cm0PM7i4CS73
+         iKdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=c0kP6eyZ5Tl3qjozgE4k99bkRxQJ3H09e9k9c5FyUWQ=;
+        b=fPWDfNhE83S0rFCRXhuuRB4DG2NLYYSF5b8S99X4tYxSJSHexM14iujLNgYN6cxmuk
+         OQbZRf2+koAsijgFDgVXNci1C47CXUs9RpNHgDVoSUBN/AVRtBDrLmC6u/b/289RIg/z
+         YNK4BMDBZgxtC0XlFL3ymBX+Bb415G1fRFGCT3rFICgxZ9w02+ZrLfiuxQ7pY1ijtLm+
+         gEWWXaniWS+GSN+j4YYl697kUmG1ST0aPy50xiUcJkcv4eZ9NvbdkVh74ASM+eHcWkVz
+         3mdHDr9SdJoiiR8LKdzgwB3NzXWDz59E9DOBA6B4nM2iAlN0ZEgK7vw6EjeRwEnfsp/N
+         gU6g==
+X-Gm-Message-State: APjAAAVwCY32MGXKZ8K6AwLjz26j2uzLOtJFWV/vD0Z6eE8XDcu0/LH3
+        pLQQSB1oQXKjXMWxUCqux4LyVfilBiPTV0sytEnupA==
+X-Google-Smtp-Source: APXvYqzI32LHQAFCU9npXcsvYo7m4WBrpQOfpOG3SMIRkj+jxIfMrh3RSnLB/Bz/rHPQilhrdSnxafPmLUuOTPKrY8s=
+X-Received: by 2002:aca:af55:: with SMTP id y82mr463012oie.172.1561589349384;
+ Wed, 26 Jun 2019 15:49:09 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190626005449.225796-1-trong@android.com> <20190626011221.GB22454@kroah.com>
+ <CANA+-vBoabFTD=fMz+0d5Sbe9rPwnxcuxJxaMCT3KAwXYHSD7w@mail.gmail.com>
+In-Reply-To: <CANA+-vBoabFTD=fMz+0d5Sbe9rPwnxcuxJxaMCT3KAwXYHSD7w@mail.gmail.com>
+From:   Tri Vo <trong@android.com>
+Date:   Wed, 26 Jun 2019 15:48:58 -0700
+Message-ID: <CANA+-vD+qBqENZrk_7KZzedbzGPMzHniHTE4sY93gnkzzBif6A@mail.gmail.com>
+Subject: Re: [PATCH] PM / wakeup: show wakeup sources stats in sysfs
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Hridya Valsaraju <hridya@google.com>,
+        Sandeep Patil <sspatil@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        "Cc: Android Kernel" <kernel-team@android.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For different workloads the optimal "softness" of soft affinity can be
-different. Introduce tunables sched_allowed and sched_preferred that can
-be tuned via /proc. This allows to chose at what utilization difference
-the scheduler will chose cpus_allowed over cpus_preferred in the first
-level of search. Depending on the extent of data sharing, cache coherency
-overhead of the system etc. the optimal point may vary.
+On Tue, Jun 25, 2019 at 6:33 PM Tri Vo <trong@android.com> wrote:
+>
+> On Tue, Jun 25, 2019 at 6:12 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Tue, Jun 25, 2019 at 05:54:49PM -0700, Tri Vo wrote:
+> > > Embedding a struct kobject into struct wakeup_source changes lifetime
+> > > requirements on the latter. To that end, change deallocation of struct
+> > > wakeup_source using kfree to kobject_put().
+> >
+> > Ick, are you sure you need a new kobject here?  Why wouldn't a named
+> > attribute group work instead?  That should keep this patch much smaller
+> > and simpler.
+>
+> Yeah, named attribute groups might be a much cleaner way to do this.
+> Let me investigate.
 
-Signed-off-by: subhra mazumdar <subhra.mazumdar@oracle.com>
----
- include/linux/sched/sysctl.h |  2 ++
- kernel/sched/fair.c          | 19 ++++++++++++++++++-
- kernel/sched/sched.h         |  2 ++
- kernel/sysctl.c              | 14 ++++++++++++++
- 4 files changed, 36 insertions(+), 1 deletion(-)
-
-diff --git a/include/linux/sched/sysctl.h b/include/linux/sched/sysctl.h
-index 99ce6d7..0e75602 100644
---- a/include/linux/sched/sysctl.h
-+++ b/include/linux/sched/sysctl.h
-@@ -41,6 +41,8 @@ extern unsigned int sysctl_numa_balancing_scan_size;
- #ifdef CONFIG_SCHED_DEBUG
- extern __read_mostly unsigned int sysctl_sched_migration_cost;
- extern __read_mostly unsigned int sysctl_sched_nr_migrate;
-+extern __read_mostly unsigned int sysctl_sched_preferred;
-+extern __read_mostly unsigned int sysctl_sched_allowed;
- 
- int sched_proc_update_handler(struct ctl_table *table, int write,
- 		void __user *buffer, size_t *length,
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 53aa7f2..d222d78 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -85,6 +85,8 @@ unsigned int sysctl_sched_wakeup_granularity			= 1000000UL;
- static unsigned int normalized_sysctl_sched_wakeup_granularity	= 1000000UL;
- 
- const_debug unsigned int sysctl_sched_migration_cost	= 500000UL;
-+const_debug unsigned int sysctl_sched_preferred		= 1UL;
-+const_debug unsigned int sysctl_sched_allowed		= 100UL;
- 
- #ifdef CONFIG_SMP
- /*
-@@ -6739,7 +6741,22 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int sd_flag, int wake_f
- 	int new_cpu = prev_cpu;
- 	int want_affine = 0;
- 	int sync = (wake_flags & WF_SYNC) && !(current->flags & PF_EXITING);
--	struct cpumask *cpus = &p->cpus_preferred;
-+	int cpux, cpuy;
-+	struct cpumask *cpus;
-+
-+	if (!p->affinity_unequal) {
-+		cpus = &p->cpus_allowed;
-+	} else {
-+		cpux = cpumask_any(&p->cpus_preferred);
-+		cpus = this_cpu_cpumask_var_ptr(select_idle_mask);
-+		cpumask_andnot(cpus, &p->cpus_allowed, &p->cpus_preferred);
-+		cpuy = cpumask_any(cpus);
-+		if (sysctl_sched_preferred * cpu_rq(cpux)->cfs.avg.util_avg >
-+		    sysctl_sched_allowed * cpu_rq(cpuy)->cfs.avg.util_avg)
-+			cpus = &p->cpus_allowed;
-+		else
-+			cpus = &p->cpus_preferred;
-+	}
- 
- 	if (sd_flag & SD_BALANCE_WAKE) {
- 		record_wakee(p);
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index b52ed1a..f856bdb 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -1863,6 +1863,8 @@ extern void check_preempt_curr(struct rq *rq, struct task_struct *p, int flags);
- 
- extern const_debug unsigned int sysctl_sched_nr_migrate;
- extern const_debug unsigned int sysctl_sched_migration_cost;
-+extern const_debug unsigned int sysctl_sched_preferred;
-+extern const_debug unsigned int sysctl_sched_allowed;
- 
- #ifdef CONFIG_SCHED_HRTICK
- 
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 7d1008b..bdffb48 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -383,6 +383,20 @@ static struct ctl_table kern_table[] = {
- 		.mode		= 0644,
- 		.proc_handler	= proc_dointvec,
- 	},
-+	{
-+		.procname       = "sched_preferred",
-+		.data           = &sysctl_sched_preferred,
-+		.maxlen         = sizeof(unsigned int),
-+		.mode           = 0644,
-+		.proc_handler   = proc_dointvec,
-+	},
-+	{
-+		.procname       = "sched_allowed",
-+		.data           = &sysctl_sched_allowed,
-+		.maxlen         = sizeof(unsigned int),
-+		.mode           = 0644,
-+		.proc_handler   = proc_dointvec,
-+	},
- #ifdef CONFIG_SCHEDSTATS
- 	{
- 		.procname	= "sched_schedstats",
--- 
-2.9.3
-
+Say, we read /sys/power/wakeup_sources/foo/active_count. This
+attribute's show function needs to find wakeup_source struct of "foo".
+I'm not sure how to do that without embedding a kobject inside of
+wakeup_source.
