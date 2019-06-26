@@ -2,69 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DEA356822
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 14:01:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B7B056825
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 14:02:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727354AbfFZMB4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 08:01:56 -0400
-Received: from foss.arm.com ([217.140.110.172]:59558 "EHLO foss.arm.com"
+        id S1727381AbfFZMCt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 08:02:49 -0400
+Received: from ozlabs.org ([203.11.71.1]:55759 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726484AbfFZMBz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 08:01:55 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0EC56360;
-        Wed, 26 Jun 2019 05:01:55 -0700 (PDT)
-Received: from [10.162.40.140] (p8cg001049571a15.blr.arm.com [10.162.40.140])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9A35C3F718;
-        Wed, 26 Jun 2019 05:01:53 -0700 (PDT)
-Subject: Re: linux-next: build failure after merge of the akpm-current tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Andrew Morton <akpm@linux-foundation.org>
+        id S1726131AbfFZMCs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 08:02:48 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45YhVX2Y9jz9s3C;
+        Wed, 26 Jun 2019 22:02:44 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1561550565;
+        bh=w+QRbv9L2/ZXmnp052EBNEJxLhRrtzCyrMYK4G+/uqU=;
+        h=Date:From:To:Cc:Subject:From;
+        b=aYeWvHghTT7MDezFGVvdSsdRo3/VfdVPeSzVrHCh8vXL+ncKzR/3DS+uX0/LrIUMK
+         FRigKjrMiVHZZfBx37rexsaz/ouZRUMmLgGJwYUVtw9gKMiTlyQtG07bgXxj4azP/l
+         2RpubkVDYAV4wc7xj/rFMrNm/TiXMs7vX6dwPhV6a9cXFWM5qa+V28A/jxHk0tM+uq
+         W/5R9+K5J7PaSPnkbCwMVuSXGYi1gktv2f5xg8bZLNN1hQO2yYslCXagUDYvtIDrcf
+         ZeUZcyYXxtXiW9mrbB4zDfi/HjB0jsSw9Nbs9J7cckmGxmgzvaftXIgwwZcYfBgMcf
+         lDowXfPhYlnhQ==
+Date:   Wed, 26 Jun 2019 22:02:42 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
 Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20190626214125.6d313c15@canb.auug.org.au>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <9e850319-8564-5b1f-2e1b-7d327215043f@arm.com>
-Date:   Wed, 26 Jun 2019 17:32:18 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Eiichi Tsukata <devel@etsukata.com>,
+        Matteo Croce <mcroce@redhat.com>
+Subject: linux-next: manual merge of the akpm tree with the net tree
+Message-ID: <20190626220242.26fc2d3e@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20190626214125.6d313c15@canb.auug.org.au>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/IAiEFUnBd=9XVVSDEnGhKa6"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Stephen,
+--Sig_/IAiEFUnBd=9XVVSDEnGhKa6
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On 06/26/2019 05:11 PM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the akpm-current tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> ld: lib/ioremap.o: in function `.ioremap_huge_init':
-> ioremap.c:(.init.text+0x3c): undefined reference to `.arch_ioremap_p4d_supported'
+Hi all,
 
-I believe this might be caused by a patch for powerpc enabling HAVE_ARCH_HUGE_VMAP
-without an arch_ioremap_p4d_supported() definition.
+Today's linux-next merge of the akpm tree got a conflict in:
 
-> 
-> Caused by commit
-> 
->   749940680d0b ("mm/ioremap: probe platform for p4d huge map support")
-> 
-> I have reverted that commit for today.
+  net/ipv6/route.c
 
-All it needs is a powerpc definition for arch_ioremap_p4d_supported() which can just
-return false if it is not supported. Shall I send a patch for the powerpc fix or just
-re-spin the original patch which added arch_ioremap_p4d_supported(). Please suggest.
+between commit:
 
-Today's linux-next (next-20190625) does not have powerpc subscribing HAVE_ARCH_HUGE_VMAP.
-Could you please point to the branch I should pull for this failure. Thanks !
+  b8e8a86337c2 ("net/ipv6: Fix misuse of proc_dointvec "skip_notify_on_dev_=
+down"")
 
-- Anshuman
+from the net tree and patch:
 
+  "proc/sysctl: add shared variables for range check"
+
+from the akpm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc net/ipv6/route.c
+index a0994415484e,c5125cdff32c..000000000000
+--- a/net/ipv6/route.c
++++ b/net/ipv6/route.c
+@@@ -6077,9 -6074,9 +6074,9 @@@ static struct ctl_table ipv6_route_tabl
+  		.data		=3D	&init_net.ipv6.sysctl.skip_notify_on_dev_down,
+  		.maxlen		=3D	sizeof(int),
+  		.mode		=3D	0644,
+ -		.proc_handler	=3D	proc_dointvec,
+ +		.proc_handler	=3D	proc_dointvec_minmax,
+- 		.extra1		=3D	&zero,
+- 		.extra2		=3D	&one,
++ 		.extra1		=3D	SYSCTL_ZERO,
++ 		.extra2		=3D	SYSCTL_ONE,
+  	},
+  	{ }
+  };
+
+--Sig_/IAiEFUnBd=9XVVSDEnGhKa6
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0TXuIACgkQAVBC80lX
+0GzVGQgAi6KpMwwYvxK6TZnE4Xv4rKpUNWLM+tX4+Z02jY4ue7Igt3X2IRURmt7J
+2jJx0UlDRsExYucQdAQQHwnaKzZ9nFQPGezGoc6KsoYrry9adJkZ2FZeoHj/ZPJ8
+VSsG4hf3pdhHcFoV53bnY0V1Ai0/TXgg80LdXOSY+TdQNtDj9hkIznS3vTOaQ4ar
+dqhoLtKPz4lJr+9unfUACWR1r2TGiZ5tywc3j9/XEo0KLx/yPB0nE+zTVCjX0I65
+dSKLZpo+g3sWrEb77E9Alokj2OXx4qBtnpXzkXXlXjgRUOM2shFDCAUUH9gjRqnx
+RUFR153oJ89iXTbWGO9+FCWZExL+8Q==
+=CNIh
+-----END PGP SIGNATURE-----
+
+--Sig_/IAiEFUnBd=9XVVSDEnGhKa6--
