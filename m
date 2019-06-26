@@ -2,67 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 677E855D55
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 03:26:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37F0F55D77
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 03:29:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726370AbfFZB0Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 21:26:16 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:50886 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726068AbfFZB0Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 21:26:16 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id D0EC81A0916;
-        Wed, 26 Jun 2019 03:26:13 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 31FF21A0F96;
-        Wed, 26 Jun 2019 03:26:07 +0200 (CEST)
-Received: from mega.ap.freescale.net (mega.ap.freescale.net [10.192.208.232])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 4A463402D5;
-        Wed, 26 Jun 2019 09:25:59 +0800 (SGT)
-From:   Anson.Huang@nxp.com
-To:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        leonard.crestez@nxp.com, ping.bai@nxp.com, peng.fan@nxp.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH RESEND 2/2] clk: imx8mm: GPT1 clock mux option #5 should be sys_pll1_80m
-Date:   Wed, 26 Jun 2019 09:28:03 +0800
-Message-Id: <20190626012803.45627-2-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190626012803.45627-1-Anson.Huang@nxp.com>
-References: <20190626012803.45627-1-Anson.Huang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726565AbfFZB2z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 21:28:55 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:31822 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726037AbfFZB2x (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 21:28:53 -0400
+X-UUID: de3f41ae6cfc40ff8934e19b86aaf6f9-20190626
+X-UUID: de3f41ae6cfc40ff8934e19b86aaf6f9-20190626
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
+        (envelope-from <weiyi.lu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1273559969; Wed, 26 Jun 2019 09:28:48 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 26 Jun 2019 09:28:47 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 26 Jun 2019 09:28:47 +0800
+Message-ID: <1561512527.24282.13.camel@mtksdaap41>
+Subject: Re: [PATCH v2] clk: mediatek: mt8183: Register 13MHz clock earlier
+ for clocksource
+From:   Weiyi Lu <weiyi.lu@mediatek.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Rob Herring <robh@kernel.org>,
+        James Liao <jamesjj.liao@mediatek.com>,
+        Fan Chen <fan.chen@mediatek.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>, <stable@vger.kernel.org>,
+        Dehui Sun <dehui.sun@mediatek.com>
+Date:   Wed, 26 Jun 2019 09:28:47 +0800
+In-Reply-To: <20190625221512.B691620883@mail.kernel.org>
+References: <1560132969-1960-1-git-send-email-weiyi.lu@mediatek.com>
+         <20190625221512.B691620883@mail.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anson Huang <Anson.Huang@nxp.com>
+On Tue, 2019-06-25 at 15:15 -0700, Stephen Boyd wrote:
+> Quoting Weiyi Lu (2019-06-09 19:16:09)
+> > The 13MHz clock should be registered before clocksource driver is
+> > initialized. Use CLK_OF_DECLARE_DRIVER() to guarantee.
+> > 
+> > Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+> 
+> Do you have a Fixes: tag in mind? Otherwise, the patch looks OK to me.
 
-i.MX8MM's GPT1 clock mux option #5 should be sys_pll1_80m,
-NOT sys_pll1_800m, correct it.
+Yes, Fixes: acddfc2c261b ("clk: mediatek: Add MT8183 clock support")
+but I forgot to have it in the commit message. Thanks for reminding.
+I'll update a V3 patch with Fixes tag. Many thanks. 
 
-Fixes: ba5625c3e272 ("clk: imx: Add clock driver support for imx8mm")
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- drivers/clk/imx/clk-imx8mm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> 
 
-diff --git a/drivers/clk/imx/clk-imx8mm.c b/drivers/clk/imx/clk-imx8mm.c
-index 516e68d..d1a84f7 100644
---- a/drivers/clk/imx/clk-imx8mm.c
-+++ b/drivers/clk/imx/clk-imx8mm.c
-@@ -293,7 +293,7 @@ static const char *imx8mm_pwm4_sels[] = {"osc_24m", "sys_pll2_100m", "sys_pll1_1
- 					 "sys_pll3_out", "clk_ext2", "sys_pll1_80m", "video_pll1_out", };
- 
- static const char *imx8mm_gpt1_sels[] = {"osc_24m", "sys_pll2_100m", "sys_pll1_400m", "sys_pll1_40m",
--					 "video_pll1_out", "sys_pll1_800m", "audio_pll1_out", "clk_ext1" };
-+					 "video_pll1_out", "sys_pll1_80m", "audio_pll1_out", "clk_ext1" };
- 
- static const char *imx8mm_wdog_sels[] = {"osc_24m", "sys_pll1_133m", "sys_pll1_160m", "vpu_pll_out",
- 					 "sys_pll2_125m", "sys_pll3_out", "sys_pll1_80m", "sys_pll2_166m", };
--- 
-2.7.4
 
