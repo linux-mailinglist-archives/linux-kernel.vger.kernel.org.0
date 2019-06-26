@@ -2,116 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B94256770
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 13:20:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 785085677D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 13:22:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726550AbfFZLUX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 07:20:23 -0400
-Received: from mail-out.m-online.net ([212.18.0.9]:49215 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726077AbfFZLUW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 07:20:22 -0400
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 45YgYZ4R1Qz1rK4n;
-        Wed, 26 Jun 2019 13:20:18 +0200 (CEST)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 45YgYZ3yN7z241LN;
-        Wed, 26 Jun 2019 13:20:18 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id 7rQsGZJVIYVg; Wed, 26 Jun 2019 13:20:17 +0200 (CEST)
-X-Auth-Info: e68ioq+Ekl1AK1FHn0+OQoCo1rtUkKag4oZhL+0k5FA=
-Received: from [IPv6:::1] (unknown [195.140.253.167])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727084AbfFZLWZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 07:22:25 -0400
+Received: from ozlabs.org ([203.11.71.1]:35679 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726104AbfFZLWY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 07:22:24 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Wed, 26 Jun 2019 13:20:17 +0200 (CEST)
-Subject: Re: [RFC][PATCH] regmap: Drop CONFIG_64BIT checks from core
-To:     Mark Brown <broonie@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        "Rafael J . Wysocki" <rafael@kernel.org>
-References: <20190625233116.2889-1-marex@denx.de>
- <20190626111508.GA5316@sirena.org.uk>
-From:   Marek Vasut <marex@denx.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=marex@denx.de; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <f0098753-8219-27c0-d992-a209f3c67d4d@denx.de>
-Date:   Wed, 26 Jun 2019 13:20:17 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45Ygbw4g4rz9s4V;
+        Wed, 26 Jun 2019 21:22:20 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1561548141;
+        bh=O1fng1ydEQKNvr7BKHmOIggvW6lgAw2nYp3TVsn7JsE=;
+        h=Date:From:To:Cc:Subject:From;
+        b=JEtwILZAMBCv+GikHNX4V0QP701EdiuyWYnoMAnlbSlU5XE+Q4p5auonDzFcTvZaE
+         3VZgBg3QARIJDG4u5gZtU2jMgIH5DASc6/mC8E64CR9KceKi4zCPSJbhynqwCDqb6x
+         TuIbk8TJSrtmmlaLw6uzNykR0huTtBSf4t4J2kKQKI8W9RDC/ZP1FwTbl7VF7TQocD
+         q3BAnYD3D3aDC/f0EM1Ht6GLH18JbFnnt07gUqAQE74tl3ljCyM2cKkkmbD5acgtUt
+         qXQLwCS99G0kDtueYfsewaIVxi+CX6Y976tJ6yC0HTWBBK5jtM00Qg3UheHG5SoDb3
+         wrcp5vTePtlUQ==
+Date:   Wed, 26 Jun 2019 21:22:12 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Alex Deucher <alexdeucher@gmail.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hawking Zhang <Hawking.Zhang@amd.com>,
+        Huang Rui <ray.huang@amd.com>
+Subject: linux-next: build failure after merge of the amdgpu tree
+Message-ID: <20190626212212.25b41df4@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20190626111508.GA5316@sirena.org.uk>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/o4FyHtmZuu_71.mcJ3c_DS8"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/26/19 1:15 PM, Mark Brown wrote:
-> On Wed, Jun 26, 2019 at 01:31:16AM +0200, Marek Vasut wrote:
->> Drop the CONFIG_64BIT checks from core regmap code, as it is well
->> possible to access e.g. an SPI device with 64bit registers from a
->> 32bit CPU. The CONFIG_64BIT checks are still left in place in the
->> regmap mmio code however.
-> 
-> The issue with 8 bit
+--Sig_/o4FyHtmZuu_71.mcJ3c_DS8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-byte
+Hi Alex,
 
-> registers was that we use unsigned long for
-> addresses and values and a 64 bit value won't fit in those on a 32 bit
-> system.  Some of the bulk APIs will work but things like individual
-> register writes and the caches will have problems.
+After merging the amdgpu tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-Good thing I sent this as RFC, I realized that shortly after too.
+In file included from drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c:25:
+drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c: In function 'gfx_v10_0_cp_gfx_resum=
+e':
+drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c:2628:27: error: 'CP_RB1_CNTL__BUF_SW=
+AP_MASK' undeclared (first use in this function); did you mean 'CP_RB_CNTL_=
+_BUF_SWAP_MASK'?
+  tmp =3D REG_SET_FIELD(tmp, CP_RB1_CNTL, BUF_SWAP, 1);
+                           ^~~~~~~~~~~
+drivers/gpu/drm/amd/amdgpu/amdgpu.h:1067:36: note: in definition of macro '=
+REG_FIELD_MASK'
+ #define REG_FIELD_MASK(reg, field) reg##__##field##_MASK
+                                    ^~~
+drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c:2628:8: note: in expansion of macro =
+'REG_SET_FIELD'
+  tmp =3D REG_SET_FIELD(tmp, CP_RB1_CNTL, BUF_SWAP, 1);
+        ^~~~~~~~~~~~~
+drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c:2628:27: note: each undeclared ident=
+ifier is reported only once for each function it appears in
+  tmp =3D REG_SET_FIELD(tmp, CP_RB1_CNTL, BUF_SWAP, 1);
+                           ^~~~~~~~~~~
+drivers/gpu/drm/amd/amdgpu/amdgpu.h:1067:36: note: in definition of macro '=
+REG_FIELD_MASK'
+ #define REG_FIELD_MASK(reg, field) reg##__##field##_MASK
+                                    ^~~
+drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c:2628:8: note: in expansion of macro =
+'REG_SET_FIELD'
+  tmp =3D REG_SET_FIELD(tmp, CP_RB1_CNTL, BUF_SWAP, 1);
+        ^~~~~~~~~~~~~
+drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c:2628:27: error: 'CP_RB1_CNTL__BUF_SW=
+AP__SHIFT' undeclared (first use in this function); did you mean 'CP_RB0_CN=
+TL__BUF_SWAP__SHIFT'?
+  tmp =3D REG_SET_FIELD(tmp, CP_RB1_CNTL, BUF_SWAP, 1);
+                           ^~~~~~~~~~~
+drivers/gpu/drm/amd/amdgpu/amdgpu.h:1066:37: note: in definition of macro '=
+REG_FIELD_SHIFT'
+ #define REG_FIELD_SHIFT(reg, field) reg##__##field##__SHIFT
+                                     ^~~
+drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c:2628:8: note: in expansion of macro =
+'REG_SET_FIELD'
+  tmp =3D REG_SET_FIELD(tmp, CP_RB1_CNTL, BUF_SWAP, 1);
+        ^~~~~~~~~~~~~
 
-So, what would be the suggestion here ?
+Caused by commit
 
--- 
-Best regards,
-Marek Vasut
+  a644d85a5cd4 ("drm/amdgpu: add gfx v10 implementation (v10)")
+
+I have disabled that driver for today.  Please let me know when it is
+fixed so that I can enable it again.
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/o4FyHtmZuu_71.mcJ3c_DS8
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0TVWQACgkQAVBC80lX
+0GwLGAf/UfZkehdVWkAXVR10FVfxYTG1qBP5PP//SVPA5WmLupBt3Q3fS2RneViN
++oU/Enn6ooGk5uiT74wkWoz7YjiNPlucyv9DRTF/I8rY6e/GkQZrrjvWn0DhE4q9
+2kpMyfV7CLW7SnfJiXFjPnAbvqiXFp7mIULSvjKcWMNxC+nQ6cFpZBkfXkzSfyD8
+kiq+p8T4+MOyo1HBhFXgybRkZ3fFVz2qIR8RmGMgo0UMz6WX+a90D51XezNHm+44
+ng9vrnwj35RXmuf0fw+HzhCgahCDT3pbXt29ZLGJh97PzKdJ88pTWfdVLeo+r/Mq
+yISDZnFuUtzVJtYwoGKmY1hG+AwVyg==
+=koc3
+-----END PGP SIGNATURE-----
+
+--Sig_/o4FyHtmZuu_71.mcJ3c_DS8--
