@@ -2,88 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B02C6568C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 14:27:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13E3E56930
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 14:29:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727307AbfFZM1h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 08:27:37 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:60516 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726104AbfFZM1h (ORCPT
+        id S1727826AbfFZM3Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 08:29:25 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:42618 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726329AbfFZM1n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 08:27:37 -0400
+        Wed, 26 Jun 2019 08:27:43 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=DvpFXGkn8D3TAMVnH/XfK8pie9+euDypEwPPovS+cDY=; b=WnOodiXsfD4fyL9Z5NzzOmO6b
-        PshG1mD2SemWwT82Ewq0+W5sgLfgnN/7Wy2xLYIvLDJDTAOA7P6ilpPmInXPb6zKSPKJh7Km4YNhI
-        c3mLQ4o36WI78rn3nKWKeBgqIxNUrHaHrWPGkunEuBsb4IXfVtTpLBkX0U4MiJDuloDRc=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=finisterre.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hg70f-0007qs-Sb; Wed, 26 Jun 2019 12:26:45 +0000
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-        id 1ABC1440046; Wed, 26 Jun 2019 13:26:44 +0100 (BST)
-Date:   Wed, 26 Jun 2019 13:26:44 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Amadeusz =?utf-8?B?U8WCYXdpxYRza2k=?= 
-        <amadeuszx.slawinski@linux.intel.com>
-Cc:     alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Jie Yang <yang.jie@linux.intel.com>,
-        Cezary Rojewski <cezary.rojewski@intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 05/11] ASoC: Intel: Skylake: Remove static table index
- when parsing topology
-Message-ID: <20190626122644.GD5316@sirena.org.uk>
-References: <20190617113644.25621-1-amadeuszx.slawinski@linux.intel.com>
- <20190617113644.25621-6-amadeuszx.slawinski@linux.intel.com>
+         bh=YGx69ktqFfd50Mnd66pLKlz3uikDiZWUcfJ3jfUuvQk=; b=e05g33Wex+0CQQ9qi04aK+PPD
+        72YJJQlOybfiI5HDpvAwNw3qyS9BQ2WnPDw3YMr+fSZN7R9d4Tn5T/Kg6qLvyaoDaHQZ0vlVbYbhx
+        sH7r9sk7n9uAVs7ytRQPMUWtpIBu34n75RQsdX09ZN7vTlq63SjgxFL3+W2CGRZnbY4b1uq2QoXC9
+        wfCap12FyOEmQpV3o8HSsJ+3sDUypgYRRenguNdBNIJhO4plDWVryg6VP0j/VmweKz3YUcCgDWjkR
+        wJkxMMcljSkpHVx1W9E80XqfefYKjbk4v/9jvt3SU/bAHja9Xecuu8HugJFvBvJ02cUDAF0fQb/UW
+        LymOmxY1g==;
+Received: from clnet-p19-102.ikbnet.co.at ([83.175.77.102] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hg71L-0001Kf-Nf; Wed, 26 Jun 2019 12:27:28 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Ben Skeggs <bskeggs@redhat.com>
+Cc:     linux-mm@kvack.org, nouveau@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-nvdimm@lists.01.org,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: dev_pagemap related cleanups v3
+Date:   Wed, 26 Jun 2019 14:26:59 +0200
+Message-Id: <20190626122724.13313-1-hch@lst.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="on+I5Kkc+zqLv55g"
-Content-Disposition: inline
-In-Reply-To: <20190617113644.25621-6-amadeuszx.slawinski@linux.intel.com>
-X-Cookie: Editing is a rewording activity.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Dan, Jérôme and Jason,
 
---on+I5Kkc+zqLv55g
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+below is a series that cleans up the dev_pagemap interface so that
+it is more easily usable, which removes the need to wrap it in hmm
+and thus allowing to kill a lot of code
 
-On Mon, Jun 17, 2019 at 01:36:38PM +0200, Amadeusz S=C5=82awi=C5=84ski wrot=
-e:
-> Currently when we remove and reload driver we use previous ref_count
-> value to start iterating over skl->modules which leads to out of table
-> access. To fix this just inline the function and calculate indexes
-> everytime we parse UUID token.
+Note: this series is on top of Linux 5.2-rc5 and has some minor
+conflicts with the hmm tree that are easy to resolve.
 
-This doesn't apply against current code, please check and resend.
+Diffstat summary:
 
---on+I5Kkc+zqLv55g
-Content-Type: application/pgp-signature; name="signature.asc"
+ 32 files changed, 361 insertions(+), 1012 deletions(-)
 
------BEGIN PGP SIGNATURE-----
+Git tree:
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl0TZIQACgkQJNaLcl1U
-h9CIkAf/XqlWXek/c2A2wcZGYAvrtlTTQ8sZ/0UuXaQmIjtdEo1DyARVUHh+Qssv
-Fl4RPsk4Bs9kkVhKIpoBbIzonFCi37z9HmzixNEUG8ohCZZ4T5KP4zM/nkhXkrjC
-dv/CrAIRGAL252YrJEaZHjHs15sKRP3vIKB2gdrgIQbDS/7CbQSo4e8kPc4gFzWp
-iL14YeiHxQxadR9Vx3YkF5c0ArkbsCgHeUQB66a51ENNA9d4dA4J/kZHKczYawv6
-lYiqS2cjv+e8KT1CgtPHEaTchKTOfsoxxDahf7uwzxg+MieeSyf8Q8e6YQVX5ZL5
-qLrUTgT38tJxoRIHV1vLTaGIJ1it3w==
-=H7fM
------END PGP SIGNATURE-----
+    git://git.infradead.org/users/hch/misc.git hmm-devmem-cleanup.3
 
---on+I5Kkc+zqLv55g--
+Gitweb:
+
+    http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/hmm-devmem-cleanup.3
+
+
+Changes since v2:
+ - fix nvdimm kunit build
+ - add a new memory type for device dax
+ - fix a few issues in intermediate patches that didn't show up in the end
+   result
+ - incorporate feedback from Michal Hocko, including killing of
+   the DEVICE_PUBLIC memory type entirely
+
+Changes since v1:
+ - rebase
+ - also switch p2pdma to the internal refcount
+ - add type checking for pgmap->type
+ - rename the migrate method to migrate_to_ram
+ - cleanup the altmap_valid flag
+ - various tidbits from the reviews
