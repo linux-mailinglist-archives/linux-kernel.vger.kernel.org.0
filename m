@@ -2,59 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D95CE566B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 12:28:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DE37566B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 12:28:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727189AbfFZK2J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 06:28:09 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:33290 "EHLO
+        id S1727201AbfFZK2P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 06:28:15 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:43946 "EHLO
         mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726242AbfFZK2H (ORCPT
+        with ESMTP id S1727168AbfFZK2I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 06:28:07 -0400
-Received: by mail-wr1-f66.google.com with SMTP id n9so2127775wru.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 03:28:06 -0700 (PDT)
+        Wed, 26 Jun 2019 06:28:08 -0400
+Received: by mail-wr1-f66.google.com with SMTP id p13so2071295wru.10
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 03:28:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=5uzszV+7Ya3X0Ti8Q3j+2HtrxZYyAMfNJvKRoru6OH8=;
-        b=WxB4RfuruC/yhs4Ah8lZU7dPpnMc3rmfsmOYiXZIjFaaiKpKUyDWvEZrq2JnMwwanr
-         kvhkjQDzMf5yGS0Hfs58/UFdyYu3k6QhNBNNO52M/0j5G3GphUbG1XAnosFEvULcorOb
-         zsUK74hfTp17R+H5cgo4nM/sd5jPhV5XS/q9mwz16sbanKtyJUPXQMqTqy7AEq6p/+nc
-         JiLpwMDy230jq4H7Fuu7lCsSWy3d8tG0TFLnZEXc5NOVyQhIdqhtF3S+HANndt517xhI
-         X51m4mCErjy4cfilG6QuWjoMF3gHYjg8WQt1o/NrhaYZv5yO1CluxMO0grbW6kW5aNoh
-         15Yw==
+        bh=YlUbQ+VAs6rWA6NRDoG6hvS1TSsas8Yc/9cAu2pyMdM=;
+        b=tIP3gvod44Al3x47FF+xsWez/VYa6b2gxC0T7uJxplv8LEGvSgo6R3SDZz492YQ/+/
+         +VovSEh7PJA08ySm+1GfbAQ7HwhQZtiw0BZvRCJLEyLY04OMJybeD+9qINWfh6bVzcnP
+         eEk+ZAJz45tZC9S6V/quFPVTZ68gZspxFQ308vbbm+nRqr2CFveIxzGqVgnGTTi9VsEc
+         J0p9ZnXcLVwOu5s8bAHyS0UxeS3p6cxct4AbJVM33Tat75A44rCL1B990eE9CR6Z0QZA
+         V4VO77aUOjFct0GPFtCcmxZspZhj7MzGSaKkIrvUENsUU9uCCos4vCg6lQCN3VIxteqp
+         JP4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=5uzszV+7Ya3X0Ti8Q3j+2HtrxZYyAMfNJvKRoru6OH8=;
-        b=lqS2Dx0fu1TDRo+2gq3trmYJ5+GypU03Qkj5fUBenfNRzsaLs/Hv82GPdzfs5jka3Z
-         3cz+Av5z+1mZ2XopkW3aDgqeEr0qdVjMmj60jevLZb/1FDpGz1GAlHr/K6RaIFLVJAm7
-         au+mBysx73hdIs6iVRIVeZk0smrKs4Y7aWItD30cPBIysUHr8XymX7tSiOs4oB/zk/Cy
-         wuhs4H/lBg3/rC55OcbJoMVByInQ8nKqSLrWuXYVoaF9DMR+RNnOydC50nQNcGWd44Di
-         rUTqzykTD751UMkTZuUJAqepRUjXYVTk0YiuYE5Rtac4rGBi8Qef058AcEDYzBijdsrm
-         b+vg==
-X-Gm-Message-State: APjAAAUOzsE3v1OGRYzctOuPT/0XuDsqcbfOiXra3/RFH7xm9PIFd54f
-        +BgassKHS5NVCqTYgN0UVMM1wA==
-X-Google-Smtp-Source: APXvYqwOOh/6r5I0clXZFBFcf0kKl5YKJ1PT8erpdFmoxoO6wMDlTANQsMHVrnxZQyWwvy3dHhIdkg==
-X-Received: by 2002:adf:ea8b:: with SMTP id s11mr3069165wrm.100.1561544885665;
-        Wed, 26 Jun 2019 03:28:05 -0700 (PDT)
+        bh=YlUbQ+VAs6rWA6NRDoG6hvS1TSsas8Yc/9cAu2pyMdM=;
+        b=ZWj+6qv/O8cHDmdid1eLLuGYF6bqPSxGiu5xjdsJkAajAu9VlOO7PImfD0XPfkV7mz
+         ENC3A6Ek3wnHMfQhOjpL1KEsWb/TF7+O8VsApaHI2hyPO/KR8QpcT4ukG4eBsQeh1jaI
+         8AeUg1HW1Tj5BzDxSsdglPVdiCkH2qafDejsXo2e7XTU/dgSmFvftNSeknaZzknieT87
+         a/crnNVmRY1jsLuGwA8qcgYYYxVEb1a/hU9dXvKZ6UZGc7kBMNAHI0s1muLzga6KSyy3
+         ES554DRqsdOnz7hNTqY7X3PdHjVco8dPaKO29AwtzHXhrZ6VION5Twp6B5bmHlTD4dgy
+         nUow==
+X-Gm-Message-State: APjAAAWm9UKibwIbxofz4/W5FQXOefJVj7E/pWWKxHiRzxhrqNr3huo5
+        eZJbRThGbUwYEadP1xoVG+mj/0da98M=
+X-Google-Smtp-Source: APXvYqy0iyUV36QbnoqJrZK1ZkJorcCWzYgIAwzSda5IW0mN5/HZ983Vaul2yo84oimlD+IzcatT1w==
+X-Received: by 2002:a5d:430c:: with SMTP id h12mr3100824wrq.163.1561544886476;
+        Wed, 26 Jun 2019 03:28:06 -0700 (PDT)
 Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id z19sm2212042wmi.7.2019.06.26.03.28.04
+        by smtp.gmail.com with ESMTPSA id z19sm2212042wmi.7.2019.06.26.03.28.05
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 26 Jun 2019 03:28:05 -0700 (PDT)
+        Wed, 26 Jun 2019 03:28:06 -0700 (PDT)
 From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 To:     gregkh@linuxfoundation.org
 Cc:     linux-kernel@vger.kernel.org,
-        Bryan O'Donoghue <pure.logic@nexus-software.ie>,
-        Rob Herring <robh@kernel.org>,
         Leonard Crestez <leonard.crestez@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH 5/6] dt-bindings: imx-ocotp: Add i.MX8MM compatible
-Date:   Wed, 26 Jun 2019 11:27:32 +0100
-Message-Id: <20190626102733.11708-6-srinivas.kandagatla@linaro.org>
+Subject: [PATCH 6/6] nvmem: imx-ocotp: imx8mq is compatible with imx6 not imx7
+Date:   Wed, 26 Jun 2019 11:27:33 +0100
+Message-Id: <20190626102733.11708-7-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190626102733.11708-1-srinivas.kandagatla@linaro.org>
 References: <20190626102733.11708-1-srinivas.kandagatla@linaro.org>
@@ -65,30 +64,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+From: Leonard Crestez <leonard.crestez@nxp.com>
 
-Add compatible for i.MX8MM as per arch/arm64/boot/dts/freescale/imx8mm.dtsi
+According to NXP Reference Manuals and uboot/atf sources the OCOTP block
+on imx8m behaves more like imx6 than imx7.
 
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: Rob Herring <robh@kernel.org>
-Reviewed-by: Leonard Crestez <leonard.crestez@nxp.com>
+- Fuses can be read/written 32bits at a time (no imx7-like banking)
+- The OCOTP_HW_OCOTP_TIMING register is like imx6 not imx7
+
+Since nvmem doesn't support uboot-style "sense" and "override" this
+issue only affected "write" which is very rarely used.
+
+Fixes: 163c0dbd0cb1 ("nvmem: imx-ocotp: add support for imx8mq")
+Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+Reviewed-by: Peng Fan <peng.fan@nxp.com>
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- Documentation/devicetree/bindings/nvmem/imx-ocotp.txt | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/nvmem/imx-ocotp.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/nvmem/imx-ocotp.txt b/Documentation/devicetree/bindings/nvmem/imx-ocotp.txt
-index 68f7d6fdd140..96ffd06d2ca8 100644
---- a/Documentation/devicetree/bindings/nvmem/imx-ocotp.txt
-+++ b/Documentation/devicetree/bindings/nvmem/imx-ocotp.txt
-@@ -15,6 +15,7 @@ Required properties:
- 	"fsl,imx6sll-ocotp" (i.MX6SLL),
- 	"fsl,imx7ulp-ocotp" (i.MX7ULP),
- 	"fsl,imx8mq-ocotp" (i.MX8MQ),
-+	"fsl,imx8mm-ocotp" (i.MX8MM),
- 	followed by "syscon".
- - #address-cells : Should be 1
- - #size-cells : Should be 1
+diff --git a/drivers/nvmem/imx-ocotp.c b/drivers/nvmem/imx-ocotp.c
+index 340ab336f987..42d4451e7d67 100644
+--- a/drivers/nvmem/imx-ocotp.c
++++ b/drivers/nvmem/imx-ocotp.c
+@@ -469,8 +469,8 @@ static const struct ocotp_params imx7ulp_params = {
+ 
+ static const struct ocotp_params imx8mq_params = {
+ 	.nregs = 256,
+-	.bank_address_words = 4,
+-	.set_timing = imx_ocotp_set_imx7_timing,
++	.bank_address_words = 0,
++	.set_timing = imx_ocotp_set_imx6_timing,
+ };
+ 
+ static const struct ocotp_params imx8mm_params = {
 -- 
 2.21.0
 
