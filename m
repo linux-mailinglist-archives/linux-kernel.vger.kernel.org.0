@@ -2,64 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1C8F5726D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 22:20:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7BE857274
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 22:20:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726413AbfFZUT6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 16:19:58 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:34648 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726227AbfFZUT6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 16:19:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=NFJko5iqS35FHokxh5n5xZivkEJN2RL+dU9ytPcUk6Y=; b=gK0EQWHG1rl43jfPwy76o+HJZN
-        mp/M8ZnWUoTdIxykxm0EjvHRKoLprEzCtPxjT7+3QOsY57pv+dEoFrISMPUBODx0atyGhYBH/xu31
-        KuJ35aNeevr73iecGSnwcm+1gDOmn06ZTrV2bUhk3U+a5imWoUF+l812nCgbGgLydXzA=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1hgEOX-00043U-LC; Wed, 26 Jun 2019 22:19:53 +0200
-Date:   Wed, 26 Jun 2019 22:19:53 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Jose Abreu <Jose.Abreu@synopsys.com>
-Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-Subject: Re: [PATCH net-next 07/10] net: stmmac: Enable support for > 32 Bits
- addressing in XGMAC
-Message-ID: <20190626201953.GI27733@lunn.ch>
-References: <cover.1561556555.git.joabreu@synopsys.com>
- <64b73591f981b3a280ea61d21a0dc7362a25348a.1561556556.git.joabreu@synopsys.com>
+        id S1726531AbfFZUU0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 16:20:26 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:50285 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726357AbfFZUUZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 16:20:25 -0400
+Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hgEOk-00064v-BB; Wed, 26 Jun 2019 22:20:06 +0200
+Date:   Wed, 26 Jun 2019 22:20:05 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Fenghua Yu <fenghua.yu@intel.com>
+cc:     Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        H Peter Anvin <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim Krcmar <rkrcmar@redhat.com>,
+        Christopherson Sean J <sean.j.christopherson@intel.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Xiaoyao Li <xiaoyao.li@intel.com>,
+        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        x86 <x86@kernel.org>, kvm@vger.kernel.org
+Subject: Re: [PATCH v9 09/17] x86/split_lock: Handle #AC exception for split
+ lock
+In-Reply-To: <1560897679-228028-10-git-send-email-fenghua.yu@intel.com>
+Message-ID: <alpine.DEB.2.21.1906262209590.32342@nanos.tec.linutronix.de>
+References: <1560897679-228028-1-git-send-email-fenghua.yu@intel.com> <1560897679-228028-10-git-send-email-fenghua.yu@intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <64b73591f981b3a280ea61d21a0dc7362a25348a.1561556556.git.joabreu@synopsys.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 18 Jun 2019, Fenghua Yu wrote:
 > +
-> +	if (priv->dma_cap.addr64) {
-> +		ret = dma_set_mask_and_coherent(device,
-> +				DMA_BIT_MASK(priv->dma_cap.addr64));
-> +		if (!ret)
-> +			dev_info(priv->device, "Using %d bits DMA width\n",
-> +				 priv->dma_cap.addr64);
+> +static atomic_t split_lock_debug;
+> +
+> +void split_lock_disable(void)
+> +{
+> +	/* Disable split lock detection on this CPU */
+> +	this_cpu_and(msr_test_ctl_cached, ~MSR_TEST_CTL_SPLIT_LOCK_DETECT);
+> +	wrmsrl(MSR_TEST_CTL, this_cpu_read(msr_test_ctl_cached));
+> +
+> +	/*
+> +	 * Use the atomic variable split_lock_debug to ensure only the
+> +	 * first CPU hitting split lock issue prints one single complete
+> +	 * warning. This also solves the race if the split-lock #AC fault
+> +	 * is re-triggered by NMI of perf context interrupting one
+> +	 * split-lock warning execution while the original WARN_ONCE() is
+> +	 * executing.
+> +	 */
+> +	if (atomic_cmpxchg(&split_lock_debug, 0, 1) == 0) {
+> +		WARN_ONCE(1, "split lock operation detected\n");
+> +		atomic_set(&split_lock_debug, 0);
+
+What's the purpose of this atomic_set()?
+
+> +dotraplinkage void do_alignment_check(struct pt_regs *regs, long error_code)
+> +{
+> +	unsigned int trapnr = X86_TRAP_AC;
+> +	char str[] = "alignment check";
+> +	int signr = SIGBUS;
+> +
+> +	RCU_LOCKDEP_WARN(!rcu_is_watching(), "entry code didn't wake RCU");
+> +
+> +	if (notify_die(DIE_TRAP, str, regs, error_code, trapnr, signr) == NOTIFY_STOP)
+> +		return;
+> +
+> +	cond_local_irq_enable(regs);
+> +	if (!user_mode(regs) && static_cpu_has(X86_FEATURE_SPLIT_LOCK_DETECT)) {
+> +		/*
+> +		 * Only split locks can generate #AC from kernel mode.
+> +		 *
+> +		 * The split-lock detection feature is a one-shot
+> +		 * debugging facility, so we disable it immediately and
+> +		 * print a warning.
+> +		 *
+> +		 * This also solves the instruction restart problem: we
+> +		 * return the faulting instruction right after this it
+
+we return the faulting instruction ... to the store so we get our deposit
+back :)
+
+  the fault handler returns to the faulting instruction which will be then
+  executed without ....
+
+Don't try to impersonate code, cpus or whatever. It doesn't make sense and
+confuses people.
+
+> +		 * will be executed without generating another #AC fault
+> +		 * and getting into an infinite loop, instead it will
+> +		 * continue without side effects to the interrupted
+> +		 * execution context.
+
+That last part 'instead .....' is redundant. It's entirely clear from the
+above that the faulting instruction is reexecuted ....
+
+Please write concise comments and do try to repeat the same information
+with a different painting.
+
+> +		 *
+> +		 * Split-lock detection will remain disabled after this,
+> +		 * until the next reboot.
+> +		 */
+> +		split_lock_disable();
+> +
+> +		return;
 > +	}
-
-Hi Jose
-
-If dma_set_mask_and_coherent() fails, i think you are supposed to fall
-back to 32 bits. So you might want to clear priv->dma_cap.addr64.
-
-But don't trust my, i could be wrong.
-
-    Andrew
+> +
+> +	/* Handle #AC generated in any other cases. */
+> +	do_trap(X86_TRAP_AC, SIGBUS, "alignment check", regs,
+> +		error_code, BUS_ADRALN, NULL);
+> +}
+> +
+>  #ifdef CONFIG_VMAP_STACK
+>  __visible void __noreturn handle_stack_overflow(const char *message,
+>  						struct pt_regs *regs,
+> -- 
+> 2.19.1
+> 
+> 
