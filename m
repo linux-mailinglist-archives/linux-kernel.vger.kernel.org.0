@@ -2,175 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 541245688D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 14:22:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F45B56882
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 14:21:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727414AbfFZMWQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 08:22:16 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:36502 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726104AbfFZMWP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 08:22:15 -0400
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727393AbfFZMVQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 08:21:16 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:59914 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726104AbfFZMVP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 08:21:15 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: bbrezillon)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 7582D2639F9;
-        Wed, 26 Jun 2019 13:22:13 +0100 (BST)
-Date:   Wed, 26 Jun 2019 14:20:21 +0200
-From:   Boris Brezillon <boris.brezillon@collabora.com>
-To:     Naga Sureshkumar Relli <nagasure@xilinx.com>
-Cc:     "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        "helmut.grohne@intenta.de" <helmut.grohne@intenta.de>,
-        "richard@nod.at" <richard@nod.at>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "vigneshr@ti.com" <vigneshr@ti.com>,
-        "bbrezillon@kernel.org" <bbrezillon@kernel.org>,
-        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [LINUX PATCH v17 1/2] mtd: rawnand: nand_micron: Do not over
- write driver's read_page()/write_page()
-Message-ID: <20190626142021.484c4fd8@collabora.com>
-In-Reply-To: <DM6PR02MB4779B5C815FB4DAF33EF4996AFE20@DM6PR02MB4779.namprd02.prod.outlook.com>
-References: <20190625044630.31717-1-naga.sureshkumar.relli@xilinx.com>
-        <20190626084807.3f06e718@collabora.com>
-        <DM6PR02MB47796E3306C166A91E0BAE91AFE20@DM6PR02MB4779.namprd02.prod.outlook.com>
-        <20190626132715.6128d8b1@collabora.com>
-        <DM6PR02MB4779D347620E88BDB943DEB4AFE20@DM6PR02MB4779.namprd02.prod.outlook.com>
-        <20190626140417.440cf762@collabora.com>
-        <DM6PR02MB4779B5C815FB4DAF33EF4996AFE20@DM6PR02MB4779.namprd02.prod.outlook.com>
-Organization: Collabora
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6DBE3308792C;
+        Wed, 26 Jun 2019 12:20:52 +0000 (UTC)
+Received: from colo-mx.corp.redhat.com (colo-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0DAEC5D9C6;
+        Wed, 26 Jun 2019 12:20:49 +0000 (UTC)
+Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
+        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 26F8E1806B0E;
+        Wed, 26 Jun 2019 12:20:43 +0000 (UTC)
+Date:   Wed, 26 Jun 2019 08:20:42 -0400 (EDT)
+From:   Bob Peterson <rpeterso@redhat.com>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     matthew garrett <matthew.garrett@nebula.com>, yuchao0@huawei.com,
+        tytso@mit.edu, shaggy@kernel.org,
+        ard biesheuvel <ard.biesheuvel@linaro.org>,
+        josef@toxicpanda.com, hch@infradead.org, clm@fb.com,
+        adilger kernel <adilger.kernel@dilger.ca>, jk@ozlabs.org,
+        jack@suse.com, dsterba@suse.com, jaegeuk@kernel.org,
+        viro@zeniv.linux.org.uk, linux-xfs@vger.kernel.org,
+        jfs-discussion@lists.sourceforge.net, linux-efi@vger.kernel.org,
+        Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org,
+        reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        cluster-devel@redhat.com, linux-nilfs@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-btrfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        Christoph Hellwig <hch@lst.de>, ocfs2-devel@oss.oracle.com
+Message-ID: <868182386.37358699.1561551642881.JavaMail.zimbra@redhat.com>
+In-Reply-To: <156151633004.2283456.4175543089138173586.stgit@magnolia>
+References: <156151632209.2283456.3592379873620132456.stgit@magnolia> <156151633004.2283456.4175543089138173586.stgit@magnolia>
+Subject: Re: [Cluster-devel] [PATCH 1/5] vfs: create a generic checking and
+ prep function for FS_IOC_SETFLAGS
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.3.116.201, 10.4.195.9]
+Thread-Topic: create a generic checking and prep function for FS_IOC_SETFLAGS
+Thread-Index: 5u1cuSAsKRaw36dS1F+PjLFgFqc7sA==
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Wed, 26 Jun 2019 12:21:15 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 26 Jun 2019 12:12:47 +0000
-Naga Sureshkumar Relli <nagasure@xilinx.com> wrote:
-
-> Hi Boris,
+----- Original Message -----
+> From: Darrick J. Wong <darrick.wong@oracle.com>
 > 
-> > -----Original Message-----
-> > From: Boris Brezillon <boris.brezillon@collabora.com>
-> > Sent: Wednesday, June 26, 2019 5:34 PM
-> > To: Naga Sureshkumar Relli <nagasure@xilinx.com>
-> > Cc: miquel.raynal@bootlin.com; helmut.grohne@intenta.de; richard@nod.at;
-> > dwmw2@infradead.org; computersforpeace@gmail.com; marek.vasut@gmail.com;
-> > vigneshr@ti.com; bbrezillon@kernel.org; yamada.masahiro@socionext.com; linux-
-> > mtd@lists.infradead.org; linux-kernel@vger.kernel.org
-> > Subject: Re: [LINUX PATCH v17 1/2] mtd: rawnand: nand_micron: Do not over write
-> > driver's read_page()/write_page()
-> > 
-> > On Wed, 26 Jun 2019 11:51:12 +0000
-> > Naga Sureshkumar Relli <nagasure@xilinx.com> wrote:
-> >   
-> > > Hi Boris,
-> > >  
-> > > > -----Original Message-----
-> > > > From: Boris Brezillon <boris.brezillon@collabora.com>
-> > > > Sent: Wednesday, June 26, 2019 4:57 PM
-> > > > To: Naga Sureshkumar Relli <nagasure@xilinx.com>
-> > > > Cc: miquel.raynal@bootlin.com; helmut.grohne@intenta.de;
-> > > > richard@nod.at; dwmw2@infradead.org; computersforpeace@gmail.com;
-> > > > marek.vasut@gmail.com; vigneshr@ti.com; bbrezillon@kernel.org;
-> > > > yamada.masahiro@socionext.com; linux- mtd@lists.infradead.org;
-> > > > linux-kernel@vger.kernel.org
-> > > > Subject: Re: [LINUX PATCH v17 1/2] mtd: rawnand: nand_micron: Do not
-> > > > over write driver's read_page()/write_page()
-> > > >
-> > > > On Wed, 26 Jun 2019 11:22:33 +0000
-> > > > Naga Sureshkumar Relli <nagasure@xilinx.com> wrote:
-> > > >  
-> > > > > Hi Boris,
-> > > > >  
-> > > > > > -----Original Message-----
-> > > > > > From: Boris Brezillon <boris.brezillon@collabora.com>
-> > > > > > Sent: Wednesday, June 26, 2019 12:18 PM
-> > > > > > To: Naga Sureshkumar Relli <nagasure@xilinx.com>
-> > > > > > Cc: miquel.raynal@bootlin.com; helmut.grohne@intenta.de;
-> > > > > > richard@nod.at; dwmw2@infradead.org;
-> > > > > > computersforpeace@gmail.com; marek.vasut@gmail.com;
-> > > > > > vigneshr@ti.com; bbrezillon@kernel.org;
-> > > > > > yamada.masahiro@socionext.com; linux- mtd@lists.infradead.org;
-> > > > > > linux-kernel@vger.kernel.org
-> > > > > > Subject: Re: [LINUX PATCH v17 1/2] mtd: rawnand: nand_micron: Do
-> > > > > > not over write driver's read_page()/write_page()
-> > > > > >
-> > > > > > On Mon, 24 Jun 2019 22:46:29 -0600 Naga Sureshkumar Relli
-> > > > > > <naga.sureshkumar.relli@xilinx.com> wrote:
-> > > > > >  
-> > > > > > > Add check before assigning chip->ecc.read_page() and
-> > > > > > > chip->ecc.write_page()
-> > > > > > >
-> > > > > > > Signed-off-by: Naga Sureshkumar Relli
-> > > > > > > <naga.sureshkumar.relli@xilinx.com>
-> > > > > > > ---
-> > > > > > >  drivers/mtd/nand/raw/nand_micron.c | 7 +++++--
-> > > > > > >  1 file changed, 5 insertions(+), 2 deletions(-)
-> > > > > > >
-> > > > > > > diff --git a/drivers/mtd/nand/raw/nand_micron.c
-> > > > > > > b/drivers/mtd/nand/raw/nand_micron.c
-> > > > > > > index cbd4f09ac178..565f2696c747 100644
-> > > > > > > --- a/drivers/mtd/nand/raw/nand_micron.c
-> > > > > > > +++ b/drivers/mtd/nand/raw/nand_micron.c
-> > > > > > > @@ -500,8 +500,11 @@ static int micron_nand_init(struct nand_chip *chip)
-> > > > > > >  		chip->ecc.size = 512;
-> > > > > > >  		chip->ecc.strength = chip->base.eccreq.strength;
-> > > > > > >  		chip->ecc.algo = NAND_ECC_BCH;
-> > > > > > > -		chip->ecc.read_page = micron_nand_read_page_on_die_ecc;
-> > > > > > > -		chip->ecc.write_page = micron_nand_write_page_on_die_ecc;
-> > > > > > > +		if (!chip->ecc.read_page)
-> > > > > > > +			chip->ecc.read_page = micron_nand_read_page_on_die_ecc;
-> > > > > > > +
-> > > > > > > +		if (!chip->ecc.write_page)
-> > > > > > > +			chip->ecc.write_page = micron_nand_write_page_on_die_ecc;  
-> > > > > >
-> > > > > > That's wrong, if you don't want on-die ECC to be used, simply
-> > > > > > don't set nand-ecc-mode to "on- die".  
-> > > > > Ok. But if we want to use on-die ECC then you mean to say it is
-> > > > > mandatory to use  
-> > > > micron_nand_read/write_page_on_die_ecc()?
-> > > >
-> > > > Absolutely, and if it doesn't work that means you driver does not
-> > > > implement raw accesses correctly, which means it's still buggy...  
-> > > I agree. But let's say, if there is a limitation with the controller. Then it is must to have this  
-> > check right?  
-> > > I mean, for pl353 controller, we must clear the CS during the data
-> > > phase, hence we are splitting the Transfer in the pl353_read/write_page_raw().
-> > > +	pl353_nand_read_data_op(chip, buf, mtd->writesize, false);
-> > > +	p = chip->oob_poi;
-> > > +	pl353_nand_read_data_op(chip, p,
-> > > +				(mtd->oobsize -
-> > > +				PL353_NAND_LAST_TRANSFER_LENGTH), false);
-> > > +	p += (mtd->oobsize - PL353_NAND_LAST_TRANSFER_LENGTH);
-> > > +	xnfc->dataphase_addrflags |= PL353_NAND_CLEAR_CS;
-> > > +	pl353_nand_read_data_op(chip, p, PL353_NAND_LAST_TRANSFER_LENGTH,
-> > > +				false);
-> > > As the above sequence is needed even for raw access, PL353 is unable to use the on_die_page  
-> > reads.
-> > 
-> > This "de-assert CS on last access" logic should be done in the
-> > exec_op() implementation. I also wonder how that works for operations that don't have data
-> > cycles. Oh, BTW, most chips are CE-don't-care, which means you can assert/de-assert CS on
-> > each read_data_op() without any issues.  
-> Yes, we can assert/de-assert CS on each read/write_data_op().
-> But what about transfer length splitting?
-> +	p = chip->oob_poi;
-> +	pl353_nand_read_data_op(chip, p,
-> +				(mtd->oobsize -
-> +				PL353_NAND_LAST_TRANSFER_LENGTH), false);
-> +	p += (mtd->oobsize - PL353_NAND_LAST_TRANSFER_LENGTH);
-> This should be done as a part of pl353_raw_read/write() right?
+> Create a generic function to check incoming FS_IOC_SETFLAGS flag values
+> and later prepare the inode for updates so that we can standardize the
+> implementations that follow ext4's flag values.
+> 
+> Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Acked-by: David Sterba <dsterba@suse.com>
+> ---
+>  fs/btrfs/ioctl.c    |   13 +++++--------
+>  fs/efivarfs/file.c  |   26 +++++++++++++++++---------
+>  fs/ext2/ioctl.c     |   16 ++++------------
+>  fs/ext4/ioctl.c     |   13 +++----------
+>  fs/f2fs/file.c      |    7 ++++---
+>  fs/gfs2/file.c      |   42 +++++++++++++++++++++++++++++-------------
+>  fs/hfsplus/ioctl.c  |   21 ++++++++++++---------
+>  fs/inode.c          |   24 ++++++++++++++++++++++++
+>  fs/jfs/ioctl.c      |   22 +++++++---------------
+>  fs/nilfs2/ioctl.c   |    9 ++-------
+>  fs/ocfs2/ioctl.c    |   13 +++----------
+>  fs/orangefs/file.c  |   35 ++++++++++++++++++++++++++---------
+>  fs/reiserfs/ioctl.c |   10 ++++------
+>  fs/ubifs/ioctl.c    |   13 +++----------
+>  include/linux/fs.h  |    3 +++
+>  15 files changed, 146 insertions(+), 121 deletions(-)
 
-Are you sure you need to do that, and if that's the case, do you have
-an idea why this is needed? Is this "read last 4 bytes separately"
-thing is needed, I suspect it's needed for any kind of input-data
-cycles, not just page reads.
+The gfs2 portion looks correct.
+
+Reviewed-by: Bob Peterson <rpeterso@redhat.com>
+
+Regards,
+
+Bob Peterson
