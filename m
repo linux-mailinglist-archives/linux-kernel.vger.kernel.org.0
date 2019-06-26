@@ -2,76 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9E4B55D34
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 03:05:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60FC255D3D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 03:12:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726445AbfFZBF2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 21:05:28 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:46290 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726223AbfFZBF1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 21:05:27 -0400
-X-UUID: 6130bc13c6334e4485ec934b11c452d9-20190626
-X-UUID: 6130bc13c6334e4485ec934b11c452d9-20190626
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
-        (envelope-from <weiyi.lu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 87491432; Wed, 26 Jun 2019 09:05:23 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 26 Jun 2019 09:05:22 +0800
-Received: from [172.21.77.4] (172.21.77.4) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 26 Jun 2019 09:05:22 +0800
-Message-ID: <1561511122.24282.10.camel@mtksdaap41>
-Subject: Re: [RFC v1] clk: core: support clocks that need to be enabled
- during re-parent
-From:   Weiyi Lu <weiyi.lu@mediatek.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-CC:     Matthias Brugger <matthias.bgg@gmail.com>,
-        James Liao <jamesjj.liao@mediatek.com>,
-        Fan Chen <fan.chen@mediatek.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>, Biao Huang <biao.huang@mediatek.com>
-Date:   Wed, 26 Jun 2019 09:05:22 +0800
-In-Reply-To: <20190625221415.B0DC22086D@mail.kernel.org>
-References: <1560138293-4163-1-git-send-email-weiyi.lu@mediatek.com>
-         <20190625221415.B0DC22086D@mail.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        id S1726450AbfFZBMo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 21:12:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38054 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726223AbfFZBMn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 21:12:43 -0400
+Received: from localhost (unknown [172.104.248.44])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AD7AD20659;
+        Wed, 26 Jun 2019 01:12:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561511562;
+        bh=rBZhPauoSDDehq7ofjORYPEEU1ACkLNNLGUBmHlNylk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=P92pQSJjf0QXzLbVFgUxB0WFJM5VkPGPJIlR2oLdKCSMFu+Q5BynoQ3019OkAIX8D
+         s2qlEDU1Ch6lRkUX113g9vzaEW2nlxYXBUatxbYs7ew418d2xsyvs/DQTOU3LLzi6n
+         pCmckF6NrI32unPabnUm7817QITTlXaMCHMarfD4=
+Date:   Wed, 26 Jun 2019 09:07:46 +0800
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Bjorn Helgaas <helgaas@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Myron Stowe <myron.stowe@redhat.com>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: mmap/munmap in sysfs
+Message-ID: <20190626010746.GA22454@kroah.com>
+References: <20190625223608.GB103694@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190625223608.GB103694@google.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-06-25 at 15:14 -0700, Stephen Boyd wrote:
-> Quoting Weiyi Lu (2019-06-09 20:44:53)
-> > When using property assigned-clock-parents to assign parent clocks,
-> > core clocks might still be disabled during re-parent.
-> > Add flag 'CLK_OPS_CORE_ENABLE' for those clocks must be enabled
-> > during re-parent.
-> > 
-> > Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+On Tue, Jun 25, 2019 at 05:36:08PM -0500, Bjorn Helgaas wrote:
+> Hi Greg, et al,
 > 
-> Can you further describe the scenario where this is a problem? Is it
-> some sort of clk that is enabled by default out of the bootloader and is
-> then configured to have an 'assigned-clock-parents' property to change
-> the parent, but that clk needs to be "enabled" so that the framework
-> turns on the parents for the parent switch?
-
-When driver is built as module(.ko) and install at runtime after the
-whole initialization stage. Clk might already be turned off before
-configuring by assigned-clock-parents. For such clock design that need
-to have clock enabled during re-parent, the configuration of
-assigned-clock-parents might be failed. That's the problem we have now.
-Do you have any suggestion for such usage of clocks? Many thanks.
-
+> Userspace can mmap PCI device memory via the resourceN files in sysfs,
+> which use pci_mmap_resource().  I think this path is unaware of power
+> management, so the device may be runtime-suspended, e.g., it may be in
+> D1, D2, or D3, where it will not respond to memory accesses.
 > 
+> Userspace accesses while the device is suspended will cause PCI
+> errors, so I think we need something like the patch below.  But this
+> isn't sufficient by itself because we would need a corresponding
+> pm_runtime_put() when the mapping goes away.  Where should that go?
+> Or is there a better way to do this?
+> 
+> 
+> diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
+> index 6d27475e39b2..aab7a47679a7 100644
+> --- a/drivers/pci/pci-sysfs.c
+> +++ b/drivers/pci/pci-sysfs.c
+> @@ -1173,6 +1173,7 @@ static int pci_mmap_resource(struct kobject *kobj, struct bin_attribute *attr,
+>  
+>  	mmap_type = res->flags & IORESOURCE_MEM ? pci_mmap_mem : pci_mmap_io;
+>  
+> +	pm_runtime_get_sync(pdev);
+>  	return pci_mmap_resource_range(pdev, bar, vma, mmap_type, write_combine);
+>  }
+>  
 
+Ugh, we never thought about this when adding the mmap sysfs interface
+all those years ago :(
 
+I think you are right, this will not properly solve the issue, but I
+don't know off the top of my head where to solve this.  Maybe Rafael has
+a better idea as he knows the pm paths much better than I do?
+
+thanks,
+
+greg k-h
