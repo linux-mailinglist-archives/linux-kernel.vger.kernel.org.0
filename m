@@ -2,130 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6C695748C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 00:50:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B64058A09
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 20:33:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726561AbfFZWuk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 18:50:40 -0400
-Received: from mga04.intel.com ([192.55.52.120]:27478 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726387AbfFZWuk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 18:50:40 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jun 2019 15:50:39 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,421,1557212400"; 
-   d="scan'208";a="170209986"
-Received: from mwsinger-mobl3.ger.corp.intel.com ([10.252.48.211])
-  by FMSMGA003.fm.intel.com with ESMTP; 26 Jun 2019 15:50:37 -0700
-Message-ID: <2595b4f6ce49cc3d413c75f86a63ad9d26f0f1fd.camel@linux.intel.com>
-Subject: [GIT PULL] tpmdd updates for Linux v5.3
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     torvalds@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, jmorris@namei.org,
-        mjg59@google.com
-Date:   Thu, 27 Jun 2019 01:50:47 +0300
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.1-2 
+        id S1726564AbfF0Sda (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 14:33:30 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:50974 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726384AbfF0Sd3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 14:33:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=+YgjLvKpdVc3XIVqhIlEaP3FwXZDp6cS/xcLuWH3SKE=; b=DhFedTGxU8sBirStvD3v2SUEJ
+        wAvytJ3Qr0r9/pdOVaZS12pL7fJPuybdBVRGQgb9RR2JBvAr+2sgwGSRbiebh+EMITIWsh/0B7mCM
+        04Fq5YG+SjWjXvaRW0sd1BKBi3+kdZy5QtIGYMaG/l+kk6C7+a/qLNNiqyJoKHt8uiP9vGRz/RQos
+        sTadM+9isZ7Dt9VsJ/0oIBwxUdi/ihZw5+tzjLdLk7ZZNfgpP9qUMZXNse40nOqStlHgbqa+NwC0U
+        NEzmHWlz+rfnIPIAJpVj5ewE/EaVtOo/cVMrJ91Aawea/ArrtDF0hf+K5XrF3k2C+KsHXgOeBDkNf
+        hiNh55hmA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hgZCc-0002hs-BS; Thu, 27 Jun 2019 18:32:58 +0000
+Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
+        id C1AB598198F; Thu, 27 Jun 2019 00:53:15 +0200 (CEST)
+Date:   Thu, 27 Jun 2019 00:53:15 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     John Ogness <john.ogness@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org, Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [RFC PATCH v2 1/2] printk-rb: add a new printk ringbuffer
+ implementation
+Message-ID: <20190626225315.GB8451@worktop.programming.kicks-ass.net>
+References: <20190607162349.18199-1-john.ogness@linutronix.de>
+ <20190607162349.18199-2-john.ogness@linutronix.de>
+ <20190618114747.GQ3436@hirez.programming.kicks-ass.net>
+ <87k1df28x4.fsf@linutronix.de>
+ <20190626224034.GK2490@worktop.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190626224034.GK2490@worktop.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Thu, Jun 27, 2019 at 12:40:34AM +0200, Peter Zijlstra wrote:
+> You have a single linked list going from the tail to the head, while
+> adding to the head and removing from the tail. And that sounds like a
+> FIFO queue:
+> 
+> 	struct lqueue_head {
+> 		struct lqueue_node *head, *tail;
+> 	};
+> 
+> 	struct lqueue_node {
+> 		struct lqueue_node *next;
+> 	};
+> 
+> 	void lqueue_push(struct lqueue_head *h, struct lqueue_node *n)
+> 	{
+> 		struct lqueue_node *prev;
+> 
+> 		n->next = NULL;
+> 		/*
+> 		 * xchg() implies RELEASE; and thereby ensures @n is
+> 		 * complete before getting published.
+> 		 */
+> 		prev = xchg(&h->head, n);
+> 		/*
+> 		 * xchg() implies ACQUIRE; and thereby ensures @tail is
+> 		 * written after @head, see lqueue_pop()'s smp_rmb().
+> 		 */
+> 		if (prev)
+> 			WRITE_ONCE(prev->next, n);
+> 		else
+> 			WRITE_ONCE(h->tail, n);
+> 	}
+> 
+> 	struct lqueue_node *lqueue_pop(struct lqueue_head *h)
+> 	{
+> 		struct lqueue_node *head, *tail, *next;
+> 
+> 		do {
+> 			tail = READ_ONCE(h->tail);
+> 			/* If the list is empty, nothing to remove. */
+> 			if (!tail)
+> 				return NULL;
+> 
+> 			/*
+> 			 * If we see @tail, we must then also see @head.
+> 			 * Pairs with the xchg() in lqueue_push(),
+> 			 * ensure no false positive on the singleton
+> 			 * test below.
 
-My v5.3 PR contains two critical bug fixes and support for obtaining TPM
-events triggered by ExitBootServices(). For the latter I have to give a
-quite verbose explanation not least because I had to revisit all the
-details myself to remember what was going on in Matthew's patches.
+or is it false negative?, I'm too tired to think staight. What can
+happen without the rmb is that the head load can get hoisted over the
+tail load and then observe a NULL head and a !NULL tail and thus head !=
+tail and we think there's multiple entries on the list and stuff goes
+wobbly.
 
-The preboot software stack maintains an event log that gets entries
-every time something gets hashed to any of the PCR registers. What gets
-hashed could be a component to be run or perhaps log of some actions
-taken just to give couple of coarse examples. In general, anything
-relevant for the boot process that the preboot software does gets hashed
-and a log entry with a specific event type [1].
-
-The main application for this is remote attestation and the reason why
-it is useful is nicely put in the very first section of [1]:
-
-"Attestation is used to provide information about the platform’s state
-to a challenger. However, PCR contents are difficult to interpret;
-therefore, attestation is typically more useful when the PCR contents
-are accompanied by a measurement log. While not trusted on their own,
-the measurement log contains a richer set of information than do the PCR
-contents. The PCR contents are used to provide the validation of the
-measurement log."
-
-Because EFI_TCG2_PROTOCOL.GetEventLog() is not available after calling
-ExitBootServices(), Linux EFI stub copies the event log to a custom
-configuration table. Unfortunately, ExitBootServices() also generates
-events and obviously these events do not get copied to that table.
-Luckily firmware does this for us by providing a configuration table
-identified by EFI_TCG2_FINAL_EVENTS_TABLE_GUID.
-
-This PR essentially contains necessary changes to provide the full
-event log for the use the user space that is concatenated from these
-two partial event logs [2].
-
-[1] 
-https://trustedcomputinggroup.org/resource/pc-client-specific-platform-firmware-profile-specification/
-[2] The final concatenation is done in drivers/char/tpm/eventlog/efi.c
-
-/Jarkko
-
-The following changes since commit c88e40e07cd967dcdf37321a63ab6e8b0d881100:
-
-  Merge tag 'mfd-fixes-5.2-1' of
-git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd (2019-06-25 03:41:03
-+0800)
-
-are available in the Git repository at:
-
-  git://git.infradead.org/users/jjs/linux-tpmdd.git tags/tpmdd-next-20190625
-
-for you to fetch changes up to 166a2809d65b282272c474835ec22c882a39ca1b:
-
-  tpm: Don't duplicate events from the final event log in the TCG2 log (2019-06-
-24 23:57:50 +0300)
-
-----------------------------------------------------------------
-tpmdd updates for Linux v5.3
-
-----------------------------------------------------------------
-Kees Cook (1):
-      tpm: Actually fail on TPM errors during "get random"
-
-Matthew Garrett (6):
-      tpm: Abstract crypto agile event size calculations
-      tpm: Reserve the TPM final events table
-      tpm: Append the final event log to the TPM event log
-      efi: Attempt to get the TCG2 event log in the boot stub
-      Abstract out support for locating an EFI config table
-      tpm: Don't duplicate events from the final event log in the TCG2 log
-
-Vadim Sukhomlinov (1):
-      tpm: Fix TPM 1.2 Shutdown sequence to prevent future TPM operations
-
- drivers/char/tpm/eventlog/efi.c                |  59 ++++++++--
- drivers/char/tpm/eventlog/tpm2.c               |  47 +-------
- drivers/char/tpm/tpm-chip.c                    |   6 +-
- drivers/char/tpm/tpm1-cmd.c                    |   7 +-
- drivers/char/tpm/tpm2-cmd.c                    |   7 +-
- drivers/firmware/efi/efi.c                     |   2 +
- drivers/firmware/efi/libstub/efi-stub-helper.c |  15 +++
- drivers/firmware/efi/libstub/efistub.h         |   2 +
- drivers/firmware/efi/libstub/fdt.c             |  27 ++---
- drivers/firmware/efi/libstub/tpm.c             |  80 ++++++++++---
- drivers/firmware/efi/tpm.c                     |  63 +++++++++-
- include/linux/efi.h                            |  10 ++
- include/linux/tpm_eventlog.h                   | 152 +++++++++++++++++++++++++
- 13 files changed, 378 insertions(+), 99 deletions(-)
-
+> 			 */
+> 			smp_rmb();
+> 			head = READ_ONCE(h->head);
+> 
+> 			/* If there is but one item; fail to remove. */
+> 			if (head == tail)
+> 				return NULL;
+> 
+> 			next = smp_cond_load_relaxed(&tail->next, VAL);
+> 
+> 		} while (cmpxchg(h->tail, tail, next) != tail);
+> 
+> 		return tail;
+> 	}
