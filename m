@@ -2,102 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DE37566B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 12:28:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65E3B566BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 12:29:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727201AbfFZK2P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 06:28:15 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:43946 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727168AbfFZK2I (ORCPT
+        id S1727261AbfFZK23 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 06:28:29 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:43990 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726131AbfFZK22 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 06:28:08 -0400
-Received: by mail-wr1-f66.google.com with SMTP id p13so2071295wru.10
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 03:28:07 -0700 (PDT)
+        Wed, 26 Jun 2019 06:28:28 -0400
+Received: by mail-wr1-f67.google.com with SMTP id p13so2072574wru.10;
+        Wed, 26 Jun 2019 03:28:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=YlUbQ+VAs6rWA6NRDoG6hvS1TSsas8Yc/9cAu2pyMdM=;
-        b=tIP3gvod44Al3x47FF+xsWez/VYa6b2gxC0T7uJxplv8LEGvSgo6R3SDZz492YQ/+/
-         +VovSEh7PJA08ySm+1GfbAQ7HwhQZtiw0BZvRCJLEyLY04OMJybeD+9qINWfh6bVzcnP
-         eEk+ZAJz45tZC9S6V/quFPVTZ68gZspxFQ308vbbm+nRqr2CFveIxzGqVgnGTTi9VsEc
-         J0p9ZnXcLVwOu5s8bAHyS0UxeS3p6cxct4AbJVM33Tat75A44rCL1B990eE9CR6Z0QZA
-         V4VO77aUOjFct0GPFtCcmxZspZhj7MzGSaKkIrvUENsUU9uCCos4vCg6lQCN3VIxteqp
-         JP4w==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=kCaYA/FnXYJJu+TrRy4BKJsDWzoGNXiaayKbDb94w+c=;
+        b=al0bdWjaXkyCAS0ALgnrSOkTpGyasqItumozaBvYJ9hKll3uPqhNuo0j8JBUgn6Bss
+         01ltiSi2eTbREMnFv/OvMWWfICrmgPDqlAT171DJDrMF8UmjtdBxFkmegsK10yg0nfKE
+         Wv/uuLppeicqllMyoUa+xKzwMOKDRnrwuAas2oTHR9muXb3FDJnL9P8Vu0owk/CIRx0o
+         AkK8bRttG1k2XVK+ipSzf1D0UwBFppp5TzLxZJSPmsPacioK/MF8uhRs6m82m1lwDFea
+         QAEQYzw8Se/dXO5TtXcfxr+NUynP6i4FWTg6EIxjBUP+6zYQWu6/W/cqjGxbQdD1DoDB
+         4udg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=YlUbQ+VAs6rWA6NRDoG6hvS1TSsas8Yc/9cAu2pyMdM=;
-        b=ZWj+6qv/O8cHDmdid1eLLuGYF6bqPSxGiu5xjdsJkAajAu9VlOO7PImfD0XPfkV7mz
-         ENC3A6Ek3wnHMfQhOjpL1KEsWb/TF7+O8VsApaHI2hyPO/KR8QpcT4ukG4eBsQeh1jaI
-         8AeUg1HW1Tj5BzDxSsdglPVdiCkH2qafDejsXo2e7XTU/dgSmFvftNSeknaZzknieT87
-         a/crnNVmRY1jsLuGwA8qcgYYYxVEb1a/hU9dXvKZ6UZGc7kBMNAHI0s1muLzga6KSyy3
-         ES554DRqsdOnz7hNTqY7X3PdHjVco8dPaKO29AwtzHXhrZ6VION5Twp6B5bmHlTD4dgy
-         nUow==
-X-Gm-Message-State: APjAAAWm9UKibwIbxofz4/W5FQXOefJVj7E/pWWKxHiRzxhrqNr3huo5
-        eZJbRThGbUwYEadP1xoVG+mj/0da98M=
-X-Google-Smtp-Source: APXvYqy0iyUV36QbnoqJrZK1ZkJorcCWzYgIAwzSda5IW0mN5/HZ983Vaul2yo84oimlD+IzcatT1w==
-X-Received: by 2002:a5d:430c:: with SMTP id h12mr3100824wrq.163.1561544886476;
-        Wed, 26 Jun 2019 03:28:06 -0700 (PDT)
-Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id z19sm2212042wmi.7.2019.06.26.03.28.05
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=kCaYA/FnXYJJu+TrRy4BKJsDWzoGNXiaayKbDb94w+c=;
+        b=Tgc6xAy28eM3DMetuDIePu4KK7iQxOUhK55VDo8iDD1Ki4i5V0EulCrx6ZNSUpwK2J
+         eXs+Iy2uonOhBqxR/BbZXeoRqum2fiHCMY7H+eUpzdf/YwIU4v2mYMn+Bd+b5+ZRGpvI
+         KVQ5MJUbXDHit3mkPM1pgF0jBp3ncgzIV5SC5NuRuFAcnmyzBAhH3pviy2rd7f7xMCCa
+         8Ljt9qqbClSfX0gytR1YYX6jiKLAXJGr42AIDyeeBENciGLlvC6rW7PmDlfKvga/7S4k
+         MzIFgzY9vEu8Ul0TwL4iO4GsX/XV20j6Vy+OPG7zNt1oqug1T3gszhP0x11ybY2aaALD
+         LWtQ==
+X-Gm-Message-State: APjAAAW82xCuifiDx3mSK743vuysRTF4WBkK0WLkQMzv2qwUEYrEotq7
+        itrMSjxIef8sc1XwUk2btqs=
+X-Google-Smtp-Source: APXvYqwzL9B7b8q6dp307iySl6j91+IQ7iFGWkUjNojhUJMBDYWB/J9F0rnm0ZW538lTIC7sUVzO6w==
+X-Received: by 2002:adf:f104:: with SMTP id r4mr3290900wro.140.1561544905806;
+        Wed, 26 Jun 2019 03:28:25 -0700 (PDT)
+Received: from localhost (p2E5BEF36.dip0.t-ipconnect.de. [46.91.239.54])
+        by smtp.gmail.com with ESMTPSA id r79sm1567240wme.2.2019.06.26.03.28.24
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 26 Jun 2019 03:28:06 -0700 (PDT)
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To:     gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH 6/6] nvmem: imx-ocotp: imx8mq is compatible with imx6 not imx7
-Date:   Wed, 26 Jun 2019 11:27:33 +0100
-Message-Id: <20190626102733.11708-7-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190626102733.11708-1-srinivas.kandagatla@linaro.org>
-References: <20190626102733.11708-1-srinivas.kandagatla@linaro.org>
+        Wed, 26 Jun 2019 03:28:24 -0700 (PDT)
+Date:   Wed, 26 Jun 2019 12:28:24 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net,
+        marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch,
+        mark.rutland@arm.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
+        sboyd@kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com,
+        talho@nvidia.com, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mperttunen@nvidia.com,
+        spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH V4 18/18] arm64: dts: tegra210-p2180: Jetson TX1 SC7
+ timings
+Message-ID: <20190626102824.GG6362@ulmo>
+References: <1561345379-2429-1-git-send-email-skomatineni@nvidia.com>
+ <1561345379-2429-19-git-send-email-skomatineni@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="APlYHCtpeOhspHkB"
+Content-Disposition: inline
+In-Reply-To: <1561345379-2429-19-git-send-email-skomatineni@nvidia.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Leonard Crestez <leonard.crestez@nxp.com>
 
-According to NXP Reference Manuals and uboot/atf sources the OCOTP block
-on imx8m behaves more like imx6 than imx7.
+--APlYHCtpeOhspHkB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-- Fuses can be read/written 32bits at a time (no imx7-like banking)
-- The OCOTP_HW_OCOTP_TIMING register is like imx6 not imx7
+On Sun, Jun 23, 2019 at 08:02:59PM -0700, Sowjanya Komatineni wrote:
+> This patch has Jetson TX1 platform specific SC7 timing configuration
+> in device tree.
+>=20
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi | 7 +++++++
+>  1 file changed, 7 insertions(+)
 
-Since nvmem doesn't support uboot-style "sense" and "override" this
-issue only affected "write" which is very rarely used.
+Can you provide a similar patch for Jetson Nano (p3450-0000)? It'd be
+great if we can make new features like this available across all boards.
 
-Fixes: 163c0dbd0cb1 ("nvmem: imx-ocotp: add support for imx8mq")
-Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
-Reviewed-by: Peng Fan <peng.fan@nxp.com>
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
- drivers/nvmem/imx-ocotp.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Thierry
 
-diff --git a/drivers/nvmem/imx-ocotp.c b/drivers/nvmem/imx-ocotp.c
-index 340ab336f987..42d4451e7d67 100644
---- a/drivers/nvmem/imx-ocotp.c
-+++ b/drivers/nvmem/imx-ocotp.c
-@@ -469,8 +469,8 @@ static const struct ocotp_params imx7ulp_params = {
- 
- static const struct ocotp_params imx8mq_params = {
- 	.nregs = 256,
--	.bank_address_words = 4,
--	.set_timing = imx_ocotp_set_imx7_timing,
-+	.bank_address_words = 0,
-+	.set_timing = imx_ocotp_set_imx6_timing,
- };
- 
- static const struct ocotp_params imx8mm_params = {
--- 
-2.21.0
+>=20
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi b/arch/arm64/=
+boot/dts/nvidia/tegra210-p2180.dtsi
+> index 27723829d033..cb58f79deb48 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
+> +++ b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
+> @@ -279,6 +279,13 @@
+> =20
+>  	pmc@7000e400 {
+>  		nvidia,invert-interrupt;
+> +		nvidia,suspend-mode =3D <0>;
+> +		nvidia,cpu-pwr-good-time =3D <0>;
+> +		nvidia,cpu-pwr-off-time =3D <0>;
+> +		nvidia,core-pwr-good-time =3D <4587 3876>;
+> +		nvidia,core-pwr-off-time =3D <39065>;
+> +		nvidia,core-power-req-active-high;
+> +		nvidia,sys-clock-req-active-high;
+>  	};
+> =20
+>  	/* eMMC */
+> --=20
+> 2.7.4
+>=20
 
+--APlYHCtpeOhspHkB
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl0TSMcACgkQ3SOs138+
+s6Hobg//bHL6IZg0MNnz6irMk4CtJYVFtTftwwB09UP8JKkxLxrMaYT9yjBG9AjT
+bjtGZeRdj66yVRCU0sj8xPSNJZjXMepVk6TXaEjuzFtQcJtrSH1kAz8b+dCPHspT
+5+GT3DXacuBqBB6rRQdbSA4MXFC7HWOoMgVPj9afqR4vu50+qhuimRjYQChjE6vF
+OM/IcV1NoGwoYWuWmg6JDgPIydS/XoEfifaSLxnCiJ/Xkx13xdTY7FFrcPWGHIjT
+X68dbzqKk/6nREuQaT/U9xsTkijD92PW0qTK4jfGEFK6d+DrMfNszfDudIYatw1/
+IkP0wgUN7ldmbVCvwArBaSWxZRfIBgAixFniBNjYhaFJ8ctNkXGkedNio20TDdne
+CRxgVQXQtmqgSXCbgFryl1NQk8vJGTOVDsYZlaJEBpPSlANx9IZNTOVpqXnD52FN
+jcJ+PrD83WUVvT1RCRw0p43Bjc2iCpxcfuYsSxU5AWpvf9P/Om6A0WmpMyZADIXB
+K5IUhJtRjBKZblfWPkJv6qX9eYLKx+QqwNy8AAl9Rqf3vjN0aH4J+JWuqSXHK/ko
+9hlH7D2x+dQv4PzCvq/FAmquMz+RIo9fT4IZk4Voi0iZ9Zolm7lbTFcOpFJWye5E
+wHh7HUyfgxxNYKYGzJFqPeBXPO30Ib6MaYUUQZdL4mM5D1M1IUg=
+=DNYf
+-----END PGP SIGNATURE-----
+
+--APlYHCtpeOhspHkB--
