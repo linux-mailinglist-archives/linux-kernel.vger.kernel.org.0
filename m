@@ -2,78 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D4FA563C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 09:55:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD324563DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 09:58:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726462AbfFZHzD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 03:55:03 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:45258 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725379AbfFZHzD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 03:55:03 -0400
-Received: by mail-lf1-f66.google.com with SMTP id u10so873324lfm.12
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 00:55:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=uxdb5wlFiHBkF0SzBr5FCoS6f7qiRJDmJ1nDITQi0Dw=;
-        b=m4n+hEZBjSl7z0DhNNkX163BSsqoZWM4Vv+1gORRGXGEyJ7mgvy8Zc8GCjHlf4UKZz
-         SzMf+PwcnfQVBQlF5KWvIDwyzUIxJ7y8dF0ZlSMbLEux5PVwVzK4/wbX9p4C8vgQ/cLs
-         OUbHAOtvtatcVcy7T1n4ClVtN3VfJxaFeTz9bcmjm4NswEVlKTTEOdLN3B2cSJv7ML0f
-         dvtb1Yp4GYrbdmAvQMxiXVkk1qnZ3vPnuwsJuJsMmiLyQuiZlld8WbxJpyxD51HVUsuJ
-         2K7Yy6aTQwOkloLhCUNTijNxeAkHbkDQA7u5SUW/B8m94CyiFyIogZRFeit4jthgmS/Y
-         vi8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=uxdb5wlFiHBkF0SzBr5FCoS6f7qiRJDmJ1nDITQi0Dw=;
-        b=Qym1wd4aYC39ZLTr6AAETb6jYN0MNUnnsV0tdc5ngfECThrHaNB29Y3l+7zJJxr//i
-         Kra//EL8AnNZsbVSKf6th0US8ikCIKptENTMv/aCZmk2tgZjKThUPuXeOkKgRA1I5t2A
-         Um3jsx2wR1f4t17n5FaH3I6W5/f1sa0EJ1LbxEBAUpHUssDPGVdLcF12xPGjdaTCpxvK
-         5kV/7q8XPS7j3eiUL/62HiG/PdOgs3ePnRQtPvKUiMN8pjA8v5jggodtUnzHlYaS6UOJ
-         Op+IWJv9BpqiW7mz7slrG/Cvy6J/LOCkibyz+/S04LJlfWVKSm3TapDo3q4kdiKArKTK
-         mMVA==
-X-Gm-Message-State: APjAAAVz7HNwt6y3+VtBkO9WBF++FGlU9xZX959RO37EAOYvGEejhy/m
-        rJaLDKZVoi00RX/Y/Ecgd7/LpnPZO+8Br6p5vvNsVyGD
-X-Google-Smtp-Source: APXvYqzo+qALg1dJHN8BZKGNryj1b2QPxrO2/Ylr70oC8XJ11Le0Cn/eflBCqD0MzHpKgDWXJ6rrs+q++1xhp5JnKPs=
-X-Received: by 2002:ac2:50c4:: with SMTP id h4mr1916988lfm.61.1561535701468;
- Wed, 26 Jun 2019 00:55:01 -0700 (PDT)
+        id S1726732AbfFZH6b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 03:58:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48580 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726042AbfFZH6b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 03:58:31 -0400
+Received: from localhost.localdomain (unknown [106.201.40.23])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 04D8F20B7C;
+        Wed, 26 Jun 2019 07:58:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561535910;
+        bh=Zk+32MYTguThwioop8XUIST/Kb6QRvNI4OyCRXpWybg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=tkDQrekH/magwS/N1sfFTI3ovJ/JolYwzPy5d3dv1v26Mgc3y1xVbpi8Re4LjN+6x
+         O0hGZC7IocZm35MyIbH1qaf7AGG/W4S8v6I1AUHyaSWnLZqGt5TsUS4ZysObKEqYG6
+         HcFNmhu8LyPh5dYRUwpUDG1uTi4qwMyO50Bohr1M=
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Mathias Nyman <mathias.nyman@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Christian Lamparter <chunkeey@googlemail.com>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/4] usb: xhci: Add support for Renesas USB controllers
+Date:   Wed, 26 Jun 2019 13:25:05 +0530
+Message-Id: <20190626075509.20445-1-vkoul@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20190626071430.28556-1-andrew@aj.id.au>
-In-Reply-To: <20190626071430.28556-1-andrew@aj.id.au>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 26 Jun 2019 09:54:50 +0200
-Message-ID: <CACRpkdboxjMmeb8feffyG5JJ7fGPR6hqC8sc+XV5We3TC__LXg@mail.gmail.com>
-Subject: Re: [PATCH 0/8] pinctrl: aspeed: Preparation for AST2600
-To:     Andrew Jeffery <andrew@aj.id.au>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Ryan Chen <ryan_chen@aspeedtech.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Joel Stanley <joel@jms.id.au>, linux-aspeed@lists.ozlabs.org,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 26, 2019 at 9:15 AM Andrew Jeffery <andrew@aj.id.au> wrote:
+This series add support for Renesas USB controllers uPD720201 and uPD720202.
+These require firmware to be loaded and in case devices have ROM those can
+also be programmed if empty. If ROM is programmed, it runs from ROM as well.
 
-> The ASPEED AST2600 is in the pipeline, and we have enough information to start
-> preparing to upstream support for it. This series lays some ground work;
-> splitting the bindings and dicing the implementation up a little further to
-> facilitate differences between the 2600 and previous SoC generations.
+This includes two patches from Christian which supported these controllers
+w/o ROM and later my patches for ROM support and multiple firmware versions.
 
-All looks good to me, but Rob should have a glance at the DT bindings
-and YAML syntax before I proceed to apply them.
+Changes in v4:
+ Rollback the delay values as we got device failures
 
-Yours,
-Linus Walleij
+Changes in v3:
+  Dropped patch 2 as discussed with Christian
+  Removed aligned 8 bytes check
+  Change order for firware search from highest version to lowest
+  Added entry for new firmware for device 0x14 as well
+  Add tested by Christian
+
+Changes in v2:
+  used macros for timeout count and delay
+  removed renesas_fw_alive_check
+  cleaned renesas_fw_callback
+  removed recurion for renesas_fw_download
+  added MODULE_FIRMWARE
+  added comment for multiple fw order
+
+Christian Lamparter (1):
+  usb: xhci: add firmware loader for uPD720201 and uPD720202 w/o ROM
+
+Vinod Koul (3):
+  usb: xhci: Use register defined and field names
+  usb: xhci: Add ROM loader for uPD720201
+  usb: xhci: allow multiple firmware versions
+
+ drivers/usb/host/xhci-pci.c | 875 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 875 insertions(+)
+
+-- 
+2.20.1
+
