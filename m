@@ -2,54 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01F8056BFF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 16:31:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC3F756C09
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 16:32:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728097AbfFZObm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 10:31:42 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:60676 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725958AbfFZObm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 10:31:42 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6C56F30832DE;
-        Wed, 26 Jun 2019 14:31:42 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-57.rdu2.redhat.com [10.10.120.57])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 04FE15D717;
-        Wed, 26 Jun 2019 14:31:37 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20190626131902.6xat2ab65arc62td@brauner.io>
-References: <20190626131902.6xat2ab65arc62td@brauner.io> <156138532485.25627.7459410522109581052.stgit@warthog.procyon.org.uk> <20190626100525.irdehd24jowz5f75@brauner.io>
-To:     Christian Brauner <christian@brauner.io>
-Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk, raven@themaw.net,
-        mszeredi@redhat.com, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/25] VFS: Introduce filesystem information query syscall [ver #14]
+        id S1728167AbfFZOcT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 10:32:19 -0400
+Received: from www62.your-server.de ([213.133.104.62]:44660 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725958AbfFZOcS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 10:32:18 -0400
+Received: from [78.46.172.2] (helo=sslproxy05.your-server.de)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1hg8y8-0000Zi-LF; Wed, 26 Jun 2019 16:32:16 +0200
+Received: from [2a02:1205:5054:6d70:b45c:ec96:516a:e956] (helo=linux.home)
+        by sslproxy05.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1hg8y8-000A5w-El; Wed, 26 Jun 2019 16:32:16 +0200
+Subject: Re: [PATCH v2 bpf-next] libbpf: fix max() type mismatch for 32bit
+To:     Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>, ast@kernel.org,
+        netdev@vger.kernel.org
+Cc:     bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190626103837.6455-1-ivan.khoronzhuk@linaro.org>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <44ad3d98-f304-628f-9f8d-dfc1faaabfaa@iogearbox.net>
+Date:   Wed, 26 Jun 2019 16:32:15 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <9359.1561559497.1@warthog.procyon.org.uk>
-Date:   Wed, 26 Jun 2019 15:31:37 +0100
-Message-ID: <9360.1561559497@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Wed, 26 Jun 2019 14:31:42 +0000 (UTC)
+In-Reply-To: <20190626103837.6455-1-ivan.khoronzhuk@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.100.3/25492/Wed Jun 26 10:00:16 2019)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christian Brauner <christian@brauner.io> wrote:
+On 06/26/2019 12:38 PM, Ivan Khoronzhuk wrote:
+> It fixes build error for 32bit caused by type mismatch
+> size_t/unsigned long.
+> 
+> Fixes: bf82927125dd ("libbpf: refactor map initialization")
+> Acked-by: Song Liu <songliubraving@fb.com>
+> Acked-by: Andrii Nakryiko <andriin@fb.com>
+> Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
 
-> And I also very much recommend to remove any potential cross-dependency
-> between the fsinfo() and the notification patchset.
-
-The problem with that is that to make the notification patchset useful for
-mount notifications, you need some information that you would obtain through
-fsinfo().
-
-David
+Applied, thanks!
