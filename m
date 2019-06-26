@@ -2,60 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B58BA56D51
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 17:08:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40F5E56D5B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 17:13:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728230AbfFZPIv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 11:08:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32870 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727481AbfFZPIu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 11:08:50 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 299CC2080C;
-        Wed, 26 Jun 2019 15:08:49 +0000 (UTC)
-Date:   Wed, 26 Jun 2019 11:08:47 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
-Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Scott Wood <swood@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Clark Williams <williams@redhat.com>,
-        linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH RT 4/4] rcutorture: Avoid problematic critical
- section nesting
-Message-ID: <20190626110847.2dfdf72c@gandalf.local.home>
-In-Reply-To: <20190621235955.GK26519@linux.ibm.com>
-References: <20190619011908.25026-1-swood@redhat.com>
-        <20190619011908.25026-5-swood@redhat.com>
-        <20190620211826.GX26519@linux.ibm.com>
-        <20190621163821.rm2rhsnvfo5tnjul@linutronix.de>
-        <20190621235955.GK26519@linux.ibm.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1728199AbfFZPNl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 11:13:41 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:19082 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726157AbfFZPNk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 11:13:40 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 3E7BB3290C7B21BAE097;
+        Wed, 26 Jun 2019 23:13:37 +0800 (CST)
+Received: from S00345302A-PC.china.huawei.com (10.202.227.237) by
+ DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
+ 14.3.439.0; Wed, 26 Jun 2019 23:13:29 +0800
+From:   Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
+To:     <alex.williamson@redhat.com>, <eric.auger@redhat.com>,
+        <pmorel@linux.vnet.ibm.com>
+CC:     <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <iommu@lists.linux-foundation.org>, <linuxarm@huawei.com>,
+        <john.garry@huawei.com>, <xuwei5@hisilicon.com>,
+        <kevin.tian@intel.com>,
+        Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
+Subject: [PATCH v7 0/6] vfio/type1: Add support for valid iova list management
+Date:   Wed, 26 Jun 2019 16:12:42 +0100
+Message-ID: <20190626151248.11776-1-shameerali.kolothum.thodi@huawei.com>
+X-Mailer: git-send-email 2.12.0.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.202.227.237]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 21 Jun 2019 16:59:55 -0700
-"Paul E. McKenney" <paulmck@linux.ibm.com> wrote:
+This is to revive this series which almost made to 4.18 but got dropped
+as Alex found an issue[1] with IGD and USB devices RMRR region being
+reported as reserved regions.
 
-> I have no objection to the outlawing of a number of these sequences in
-> mainline, but am rather pointing out that until they really are outlawed
-> and eliminated, rcutorture must continue to test them in mainline.
-> Of course, an rcutorture running in -rt should avoid testing things that
-> break -rt, including these sequences.
+Thanks to Eric for his work here[2]. It provides a way to exclude
+these regions while reporting the valid iova regions and this respin
+make use of that.
 
-We should update lockdep to complain about these sequences. That would
-"outlaw" them in mainline. That is, after we clean up all the current
-sequences in the code. And we also need to get Linus's approval of this
-as I believe he was against enforcing this in the past.
+Please note that I don't have a platform to verify the reported RMRR
+issue and appreciate testing on those platforms.
 
--- Steve
+Thanks,
+Shameer
+
+[1] https://lkml.org/lkml/2018/6/5/760
+[2] https://lore.kernel.org/patchwork/cover/1083072/
+
+v6-->v7
+ -Rebased to 5.2-rc6 + Eric's patches
+ -Added logic to exclude IOMMU_RESV_DIRECT_RELAXABLE reserved memory
+  region type(patch #2).
+ -Dropped patch #4 of v6 as it is already part of mainline.
+ -Addressed "container with only an mdev device will have an empty list"
+  case(patches 4/6 & 5/6 - Suggested by Alex)
+
+Old
+----
+This series introduces an iova list associated with a vfio 
+iommu. The list is kept updated taking care of iommu apertures,
+and reserved regions. Also this series adds checks for any conflict
+with existing dma mappings whenever a new device group is attached to
+the domain.
+
+User-space can retrieve valid iova ranges using VFIO_IOMMU_GET_INFO
+ioctl capability chains. Any dma map request outside the valid iova
+range will be rejected.
+
+v5 --> v6
+
+ -Rebased to 4.17-rc1
+ -Changed the ordering such that previous patch#7 "iommu/dma: Move
+  PCI window region reservation back...")  is now patch #4. This
+  will avoid any bisection issues pointed out by Alex.
+ -Added Robins's Reviewed-by tag for patch#4
+
+v4 --> v5
+Rebased to next-20180315.
+ 
+ -Incorporated the corner case bug fix suggested by Alex to patch #5.
+ -Based on suggestions by Alex and Robin, added patch#7. This
+  moves the PCI window  reservation back in to DMA specific path.
+  This is to fix the issue reported by Eric[1].
+
+v3 --> v4
+ Addressed comments received for v3.
+ -dma_addr_t instead of phys_addr_t
+ -LIST_HEAD() usage.
+ -Free up iova_copy list in case of error.
+ -updated logic in filling the iova caps info(patch #5)
+
+RFCv2 --> v3
+ Removed RFC tag.
+ Addressed comments from Alex and Eric:
+ - Added comments to make iova list management logic more clear.
+ - Use of iova list copy so that original is not altered in
+   case of failure.
+
+RFCv1 --> RFCv2
+ Addressed comments from Alex:
+-Introduced IOVA list management and added checks for conflicts with 
+ existing dma map entries during attach/detach.
+
+Shameer Kolothum (6):
+  vfio/type1: Introduce iova list and add iommu aperture validity check
+  vfio/type1: Check reserve region conflict and update iova list
+  vfio/type1: Update iova list on detach
+  vfio/type1: check dma map request is within a valid iova range
+  vfio/type1: Add IOVA range capability support
+  vfio/type1: remove duplicate retrieval of reserved regions
+
+ drivers/vfio/vfio_iommu_type1.c | 510 +++++++++++++++++++++++++++++++-
+ include/uapi/linux/vfio.h       |  23 ++
+ 2 files changed, 520 insertions(+), 13 deletions(-)
+
+-- 
+2.17.1
+
+
