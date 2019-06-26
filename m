@@ -2,110 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE38055D51
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 03:22:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 58EFD55D5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 03:27:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726339AbfFZBWm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 21:22:42 -0400
-Received: from mail-eopbgr690081.outbound.protection.outlook.com ([40.107.69.81]:5401
-        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
+        id S1726387AbfFZB1m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 21:27:42 -0400
+Received: from mail-eopbgr80079.outbound.protection.outlook.com ([40.107.8.79]:23008
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726068AbfFZBWm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 21:22:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
- s=selector2;
+        id S1726037AbfFZB1l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 21:27:41 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=testarcselector01; d=microsoft.com; cv=none;
+ b=jHfIavMYi+FmyMgzuYoiMQH/pUffto6ViqIym1Q7U6GXW9ciyKUCCLOIP4HSktiaWvT963SkB7rSGkMPX4PalABv9omuaL1sHaiIzxWVBAR27qbrxayy6cBo3VaDTwC+a4/6mq/A7AQgZdyI6+UzUnw6Zruy2G0c5a7rOMjRNY4=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=testarcselector01;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jtYUzf1Rlh6eCknlBy3bwT7sak82uBvKzQe+gPZnIRE=;
- b=kbM9F44pgRAQ9KJtX4vrktU5HUKnn3YsPe8vsp1pe62VWJY7QpZWMbQIEUFIYtgsDGZvp+AkFJNosUnf0+N+On80n994VqzJzdTFi3xT7PyKQKYJccBhjHBQcZJWXYnUJ6XaClnmnBzRpAFN1t/3QU6eO7JdGTGagV091pSeYgM=
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
- BYAPR05MB4950.namprd05.prod.outlook.com (20.177.228.224) with Microsoft SMTP
+ bh=csQSXRYE+TCUqMsr28qwHWrafGyLL5yibgytYDNIpec=;
+ b=ATJdsswEiZYbK8aUwbU0pExH3wGe6ecpY+F+96vGWyQW8ijKJOcTNOnJBItkKEJHr9OyBM+l0/NSjcu7DvY61HUuzEcPCUm8ROp8imkxI4MRfuSuBP0CqhoTLDzWdCCYHyso2+E+07kJ3Ye02xPOr4lfV0FgnQP6ZYVb0JUZzso=
+ARC-Authentication-Results: i=1; test.office365.com
+ 1;spf=none;dmarc=none;dkim=none;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=csQSXRYE+TCUqMsr28qwHWrafGyLL5yibgytYDNIpec=;
+ b=mPQ0+WgjYTTevhbZvrBpUo3rBjkp7r5NhkpPJcmfN9fBl1HpmjurZ4diBz9OoORlLC4TPO5NrH0NBSd3Sh5O3LtKnmtrcD+/cmXDecdtFi6DLFimY8vpaKNsTyn0FBNeLEQNamArR1dmfU+XX+SA4sSEMlsqNLbc3QZhoGANdQk=
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
+ DB3PR0402MB3932.eurprd04.prod.outlook.com (52.134.72.11) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2032.9; Wed, 26 Jun 2019 01:22:38 +0000
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::f493:3bba:aabf:dd58]) by BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::f493:3bba:aabf:dd58%7]) with mapi id 15.20.2008.007; Wed, 26 Jun 2019
- 01:22:38 +0000
-From:   Nadav Amit <namit@vmware.com>
-To:     Dave Hansen <dave.hansen@intel.com>
-CC:     Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Subject: Re: [PATCH 8/9] x86/tlb: Privatize cpu_tlbstate
-Thread-Topic: [PATCH 8/9] x86/tlb: Privatize cpu_tlbstate
-Thread-Index: AQHVIbQreKn7WfxntEmYeeU24A7ls6as/SuAgAA6s4A=
-Date:   Wed, 26 Jun 2019 01:22:38 +0000
-Message-ID: <E5102C9C-732D-43AC-8A24-9F26F5E2EFD4@vmware.com>
-References: <20190613064813.8102-1-namit@vmware.com>
- <20190613064813.8102-9-namit@vmware.com>
- <aa90347f-d1da-6bd7-dbf0-786f157eb370@intel.com>
-In-Reply-To: <aa90347f-d1da-6bd7-dbf0-786f157eb370@intel.com>
+ 15.20.2008.16; Wed, 26 Jun 2019 01:27:37 +0000
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::3945:fcda:5bdd:8191]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::3945:fcda:5bdd:8191%4]) with mapi id 15.20.2008.014; Wed, 26 Jun 2019
+ 01:27:37 +0000
+From:   Anson Huang <anson.huang@nxp.com>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        Peng Fan <peng.fan@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>
+CC:     dl-linux-imx <linux-imx@nxp.com>
+Subject: RE: [PATCH 2/2] clk: imx8mm: GPT1 clock mux option #5 should be
+ sys_pll1_80m
+Thread-Topic: [PATCH 2/2] clk: imx8mm: GPT1 clock mux option #5 should be
+ sys_pll1_80m
+Thread-Index: AQHVKyQzKPUFbrQbpkOHEAmz7VbUT6as1W6AgABQuHA=
+Date:   Wed, 26 Jun 2019 01:27:37 +0000
+Message-ID: <DB3PR0402MB39164A0E42B9EBE8ED832174F5E20@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+References: <20190625070602.37670-1-Anson.Huang@nxp.com>
+ <20190625070602.37670-2-Anson.Huang@nxp.com>
+ <20190625203751.E2894205ED@mail.kernel.org>
+In-Reply-To: <20190625203751.E2894205ED@mail.kernel.org>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 authentication-results: spf=none (sender IP is )
- smtp.mailfrom=namit@vmware.com; 
-x-originating-ip: [204.134.128.110]
+ smtp.mailfrom=anson.huang@nxp.com; 
+x-originating-ip: [119.31.174.66]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 1144a2a6-a8f6-412f-40ef-08d6f9d4c71c
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BYAPR05MB4950;
-x-ms-traffictypediagnostic: BYAPR05MB4950:
-x-microsoft-antispam-prvs: <BYAPR05MB49506AE51014B687489A832DD0E20@BYAPR05MB4950.namprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-ms-office365-filtering-correlation-id: b6d0ce3e-d7f7-4e9e-d609-08d6f9d57955
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DB3PR0402MB3932;
+x-ms-traffictypediagnostic: DB3PR0402MB3932:
+x-microsoft-antispam-prvs: <DB3PR0402MB3932AAAEFBA49EE8058FA67BF5E20@DB3PR0402MB3932.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:4303;
 x-forefront-prvs: 00808B16F3
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(376002)(346002)(39860400002)(366004)(396003)(189003)(199004)(33656002)(26005)(66066001)(36756003)(6486002)(8936002)(4326008)(186003)(316002)(71190400001)(102836004)(8676002)(3846002)(71200400001)(76176011)(25786009)(81166006)(6916009)(68736007)(6116002)(14454004)(6436002)(81156014)(6512007)(54906003)(53546011)(256004)(66556008)(6246003)(66446008)(73956011)(6506007)(11346002)(476003)(229853002)(64756008)(478600001)(2906002)(2616005)(66476007)(7736002)(446003)(486006)(53936002)(99286004)(91956017)(76116006)(86362001)(305945005)(66946007)(5660300002);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB4950;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: vmware.com does not designate
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(136003)(376002)(396003)(346002)(366004)(189003)(199004)(316002)(52536014)(186003)(7736002)(26005)(99286004)(7696005)(81166006)(8936002)(81156014)(102836004)(68736007)(76176011)(55016002)(305945005)(74316002)(486006)(256004)(6506007)(3846002)(478600001)(229853002)(6436002)(66066001)(6116002)(11346002)(446003)(476003)(33656002)(53936002)(8676002)(5660300002)(71200400001)(4326008)(66946007)(6246003)(110136005)(71190400001)(76116006)(86362001)(66556008)(2906002)(25786009)(9686003)(14454004)(66476007)(64756008)(44832011)(2201001)(4744005)(66446008)(2501003)(73956011)(921003)(32563001)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3932;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: PAmNHgXWZZv1kAg29Kq7BC9oqgee0iLpqwrQnuW9joJ6jaV5toNUKm0GyCDFWOSYn8GZjBIg09+xbIDvoA4Vl7vBE+SKzXedEZqdYx21L+tR2RBmPjCUNCfIdmsQBxP8uFwpKyB3rE69MR62/4s2xcR7QpafR81de5a9vrqx0OqphXsNRSTLMeXro4KiZvtN/x5k3gujLwvJoaVXxrXNxPjT8aZ5TsxyeFwyDk7X554GVGTZS2rVh/n+1SpbgjSt9zrxTgMMc55X5LYnltwTy3D6qVq1ODr+zudaRBI9lYUMQXuds2Y0kZjhzOCV2shibJm8LGG334ILZNAZvS62Ui9GzGAaOfHFvrK8QDXcaOa6+OE4HbTvTEMESIa4kNk+n2FzIRLlnT5qzLZI19vSq1tMZy7ZPDQKvAF7lPPdUQ0=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <6C3CDE5838E8224BBB1CA410E1DDDF1B@namprd05.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+x-microsoft-antispam-message-info: SZCc37DbwxBGy0teEOvuGtwOn2LZ408rjh5tdHR/rr/Li1EpBJ8yEDP8yI+opz0Rkdi6culmGYFFijoES+RwopSoga+CTNxBeGNboPxpMJxHUd2N8RujX2tWPFxqGry4FaiCEDOY8K6J+1KwqwSpll9OxYtUDLYIG20Zjnd9g50lWzfOVMoxy/+1oNk9Ez07LUWPVzv7vkdqh0y5xBRORQpd0QOcc5XVcmRgXJ4bPNPTd6Vj3r9ZKvX5X1yIlNo6Kb6iuT/qipkijMLjjYv2BniLeTymzV6veCClA/dXn6r2IvQQyiVcutn676U3aHjWIClDmTCHYtVVNnTCTlxaQDyop+srpz02OL7lvoxRDY2obbtbRUmlkBTzSFFK9uy93O6AOX66KkHX3Y1dzVw1V27Aso3+c340MSFtW2vZueY=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1144a2a6-a8f6-412f-40ef-08d6f9d4c71c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Jun 2019 01:22:38.7345
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b6d0ce3e-d7f7-4e9e-d609-08d6f9d57955
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Jun 2019 01:27:37.6623
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: namit@vmware.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB4950
+X-MS-Exchange-CrossTenant-userprincipalname: anson.huang@nxp.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3932
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> On Jun 25, 2019, at 2:52 PM, Dave Hansen <dave.hansen@intel.com> wrote:
->=20
-> On 6/12/19 11:48 PM, Nadav Amit wrote:
->> cpu_tlbstate is mostly private and only the variable is_lazy is shared.
->> This causes some false-sharing when TLB flushes are performed.
->=20
-> Presumably, all CPUs doing TLB flushes read 'is_lazy'.  Because of this,
-> when we write to it we have to do the cache coherency dance to get rid
-> of all the CPUs that might have a read-only copy.
->=20
-> I would have *thought* that we only do writes when we enter or exist
-> lazy mode.  That's partially true.  We do write in enter_lazy_tlb(), but
-> we also *unconditionally* write in switch_mm_irqs_off().  That seems
-> like it might be responsible for a chunk (or even a vast majority) of
-> the cacheline bounces.
->=20
-> Is there anything preventing us from turning the switch_mm_irqs_off()
-> write into:
->=20
-> 	if (was_lazy)
-> 		this_cpu_write(cpu_tlbstate.is_lazy, false);
->=20
-> ?
->=20
-> I think this patch is probably still a good general idea, but I just
-> wonder if reducing the writes is a better way to reduce bounces.
-
-Sounds good. I will add another patch based on your idea.
-
+SGksIFN0ZXBoZW4NCg0KPiBRdW90aW5nIEFuc29uLkh1YW5nQG54cC5jb20gKDIwMTktMDYtMjUg
+MDA6MDY6MDIpDQo+ID4gRnJvbTogQW5zb24gSHVhbmcgPEFuc29uLkh1YW5nQG54cC5jb20+DQo+
+ID4NCj4gPiBpLk1YOE1NJ3MgR1BUMSBjbG9jayBtdXggb3B0aW9uICM1IHNob3VsZCBiZSBzeXNf
+cGxsMV84MG0sIE5PVA0KPiA+IHN5c19wbGwxXzgwMG0sIGNvcnJlY3QgaXQuDQo+ID4NCj4gPiBT
+aWduZWQtb2ZmLWJ5OiBBbnNvbiBIdWFuZyA8QW5zb24uSHVhbmdAbnhwLmNvbT4NCj4gDQo+IEFu
+eSBGaXhlcyB0YWdzPw0KDQpPb3BzLCBJIGZvcmdvdCB0byBhZGQgZml4ZWQgdGFncywganVzdCBy
+ZXNlbnQgdGhlIHBhdGNoIHNldCwgc29ycnkgZm9yIHRoYXQuDQoNClRoYW5rcywNCkFuc29uDQoN
+Cg0K
