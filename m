@@ -2,76 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25677564E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 10:47:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 885D6564E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 10:50:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726925AbfFZIrD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 04:47:03 -0400
-Received: from foss.arm.com ([217.140.110.172]:56504 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726006AbfFZIrD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 04:47:03 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BA2F92B;
-        Wed, 26 Jun 2019 01:47:02 -0700 (PDT)
-Received: from en101.cambridge.arm.com (en101.cambridge.arm.com [10.1.196.93])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 092603F71E;
-        Wed, 26 Jun 2019 01:47:01 -0700 (PDT)
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-To:     gregkh@linuxfoundation.org
-Cc:     suzuki.poulose@arm.com, linux-kernel@vger.kernel.org,
-        devel@driverdev.osuosl.org
-Subject: [PATCH] drivers: s390/cio: Fix compilation warning about const qualifiers
-Date:   Wed, 26 Jun 2019 09:46:53 +0100
-Message-Id: <1561538813-19807-1-git-send-email-suzuki.poulose@arm.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <20190626012218.GB24105@kroah.com>
-References: <20190626012218.GB24105@kroah.com>
+        id S1726872AbfFZIuP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 04:50:15 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:40516 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726664AbfFZIuO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 04:50:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=MnbGZyeauwdtRRBuDtpt/nX8iYBnfXaGwgsVnSG6ZVU=; b=GOqCrVY6cjwTuGPiLLiJipoUG
+        x3EFIWHaOUGlDmQy/q6crK2iTtlDI6meLjoeZvQldxzMTHSDApQbrHmi5s33SJVFR0XtY2po/qWLX
+        XBEZJ81BHQ0W8nsYGzgZJDaWASFzBM2iphuH8H1xKVMfPFuQyXoywBJoKTwXTYKwoPSrIcEMpx5O9
+        Tz2cyvXNwTRbL9UjmJtokdq9klvyZThRw4PVYB2rYzyaY35tEaNfqKWUPdyjR0iOSb3NP5N4irZV6
+        w4Op+Re7s4ahGmKtQf3jI6KYZyr8zfv9jtktAxF0tomRPJ0z8HkkhkPXJo392h0+8jt3BglCZ7g2l
+        Pea/4kuhQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hg3cR-0005gU-Cv; Wed, 26 Jun 2019 08:49:31 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 702E5209CEE63; Wed, 26 Jun 2019 10:49:27 +0200 (CEST)
+Date:   Wed, 26 Jun 2019 10:49:27 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Joe Perches <joe@perches.com>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Shawn Landden <shawn@git.icu>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Chandler Carruth <chandlerc@google.com>
+Subject: Re: [PATCH] perf/x86/intel: Mark expected switch fall-throughs
+Message-ID: <20190626084927.GI3419@hirez.programming.kicks-ass.net>
+References: <20190624161913.GA32270@embeddedor>
+ <20190624193123.GI3436@hirez.programming.kicks-ass.net>
+ <b00fc090d83ac6bd41a5db866b02d425d9ab20e4.camel@perches.com>
+ <20190624203737.GL3436@hirez.programming.kicks-ass.net>
+ <3dc75cd4-9a8d-f454-b5fb-64c3e6d1f416@embeddedor.com>
+ <CANiq72mMS6tHcP8MHW63YRmbdFrD3ZCWMbnQEeHUVN49v7wyXQ@mail.gmail.com>
+ <20190625071846.GN3436@hirez.programming.kicks-ass.net>
+ <CANiq72=zzZ+Cx8uM+5UW7HeB9XtbXRhXmC2y2tz5EzPX77gHMw@mail.gmail.com>
+ <CAKwvOdn5j8Hkc_jrLMbhg-4jbNya+agtMJi=c9o01RPCno1Q+w@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKwvOdn5j8Hkc_jrLMbhg-4jbNya+agtMJi=c9o01RPCno1Q+w@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update __ccwdev_check_busid() and __ccwgroupdev_check_busid() to use
-"const" qualifiers to fix the compiler warning.
+On Tue, Jun 25, 2019 at 11:15:57AM -0700, Nick Desaulniers wrote:
 
-Reported-by: kbuild test robot <lkp@intel.com>
-Cc: gregkh@linuxfoundation.org
-Cc: devel@driverdev.osuosl.org
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
----
- drivers/s390/cio/ccwgroup.c | 2 +-
- drivers/s390/cio/device.c   | 4 +---
- 2 files changed, 2 insertions(+), 4 deletions(-)
+> Unreleased versions of Clang built from source can;
 
-diff --git a/drivers/s390/cio/ccwgroup.c b/drivers/s390/cio/ccwgroup.c
-index ea176157..c522e93 100644
---- a/drivers/s390/cio/ccwgroup.c
-+++ b/drivers/s390/cio/ccwgroup.c
-@@ -610,7 +610,7 @@ EXPORT_SYMBOL(ccwgroup_driver_unregister);
- 
- static int __ccwgroupdev_check_busid(struct device *dev, const void *id)
- {
--	char *bus_id = id;
-+	const char *bus_id = id;
- 
- 	return (strcmp(bus_id, dev_name(dev)) == 0);
- }
-diff --git a/drivers/s390/cio/device.c b/drivers/s390/cio/device.c
-index f27536b..1132482 100644
---- a/drivers/s390/cio/device.c
-+++ b/drivers/s390/cio/device.c
-@@ -1655,9 +1655,7 @@ EXPORT_SYMBOL_GPL(ccw_device_force_console);
- static int
- __ccwdev_check_busid(struct device *dev, const void *id)
- {
--	char *bus_id;
--
--	bus_id = id;
-+	const char *bus_id = id;
- 
- 	return (strcmp(bus_id, dev_name(dev)) == 0);
- }
--- 
-2.7.4
+I've bad experiences with using unreleased compilers; life is too short.
 
+> We're currently planning multiple output constraint support w/ asm
+> goto, and have recently implemented things like
+> __GCC_ASM_FLAG_OUTPUTS__.
+
+That's good to hear.
+
+> If there's other features that we should
+> start implementing, please let us know.
+
+If you've got any ideas on how to make this:
+
+  https://lkml.kernel.org/r/20190621120923.GT3463@hirez.programming.kicks-ass.net
+
+work, that'd be nice. Basically I wanted the asm goto to emit a 2 or 5
+byte JMP/NOP depending on the displacement size. We can trivially get
+JMP right by using:
+
+	jmp \l_yes
+
+and letting the assembler sort it, but getting the NOP right has so far
+eluded me:
+
+.if \l_yes - (. + 2) < 127
+	.byte 0x66, 0x90
+.else
+	.byte STATIC_KEY_INIT_NOP
+.endif
+
+doesn't work. We can ofcourse unconditionally emit the JMP and then
+rewrite the binary afterward, and replace the emitted jumps with the
+right size NOP, but that's a bit yuck.
+
+Once it emits the variable size instruction consistently, we can update
+the patching side to use the same condition to select the new
+instruction (and fix objtool).
