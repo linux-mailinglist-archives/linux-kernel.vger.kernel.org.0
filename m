@@ -2,127 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 655D757517
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 01:55:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E9A857513
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 01:55:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726720AbfFZXzd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 19:55:33 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:45001 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726606AbfFZXzd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 19:55:33 -0400
-Received: by mail-io1-f68.google.com with SMTP id s7so642478iob.11
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 16:55:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WFOmBfL98emh/MYkHT7m04HAElQFNQEeVW5ROqlJL+Y=;
-        b=WkdsB90003wZlIbZPOM6yLKQ8fZBLPGqZD10BWCj96jgkU45YwHT5zGBlN5RrS2PjH
-         pieBPX2NOzAKAgDARKZwvKO71cNZl1UlkkjYQCJ8lj0+qHwNg2VtG2cJECKc5bjHTmwr
-         Dg2ykRz1tGxTbqn45qfr393V2c2KX0AW7GsXwEdu8Q6I8bmrjyz6wikBj4K0vP3QtNDL
-         jZOKCHdQbEhllLoUcNHcFkD+UjcVIANEc6MnGoYQIwF0nMdBe1+OFnWXoxpXl1QQf8x0
-         Qi/y2bncdtk52+xsoJb4kKI+4BKc8ZN8XP0Ag9T+uKf8XV9Lhwtg4+3bygxI5ufL+jnq
-         +uUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WFOmBfL98emh/MYkHT7m04HAElQFNQEeVW5ROqlJL+Y=;
-        b=lMWUt3A1+xLCNtwfz2H8bHzHvbBAr6ujqro8HbZh5eiLLJTrJNTxPjKSKJhxq5tc7K
-         DH4R5FNLDgWryTNJfPl8ezzfRuGP7cjY+SUGSga5zWgmYeu9TShAOzJ/98XWoMsiGH9n
-         zwVpQ+ID3YZiqHq06BvGryV/m5U7Rd0B7ZTFm6LCIFZNngh5m+pnakuoBsKYy9Xu9BLm
-         Vg91ofNUjWtisbgUgHo7Db3gyznKPneHTn+pRb7+tl9/D8/c3KJGwu2VXW2b8D6Ks84K
-         HClvDdsdmElyLFvb+okafGT1Mc7PeVg6gE8sXUE1r6dT2m5ioGYnDaiXhL+KgaiYIw1O
-         aYIQ==
-X-Gm-Message-State: APjAAAXEYSiOrUSMqlGXCvFK5TOYibIi0ynlpdrhDnec+5cHay3mNHZo
-        3tC9TdKKjWauU7RURQSiFsJoC12JM1/MXPhMvOs=
-X-Google-Smtp-Source: APXvYqxJskAboHi/EJpGElxVyZ0pbUBPtkqfxFuTpUiQaqkNzIP0fuT6ddNPHhSVOlefT8unJ7Gyt/hPlYS+l8eheig=
-X-Received: by 2002:a02:b10b:: with SMTP id r11mr836507jah.140.1561593331304;
- Wed, 26 Jun 2019 16:55:31 -0700 (PDT)
+        id S1726682AbfFZXz0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 19:55:26 -0400
+Received: from ozlabs.org ([203.11.71.1]:57105 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726410AbfFZXzZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 19:55:25 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45Z0Jq2Tk4z9s3Z;
+        Thu, 27 Jun 2019 09:55:23 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1561593323;
+        bh=SYlgLJfuAa7iCBO1w4Ah7GvEiBB0bTAAJV5lwV4dbv4=;
+        h=Date:From:To:Cc:Subject:From;
+        b=iMfhsWXysePT6XoI2D922UTPbWSH+1GSOnpk4kv920g/lWzI9uOK+C8g9cuZapyfH
+         U9jGFeaBJdSodyFqRZuP7VqttjzoKaixgXO9DyLdue6CWHjHi2FivEAE/1Hc5jZ/YV
+         gyHQEhFmjqZIm5HoraZWDmPcNgQiCytNuAUD1Olmud2nrUGKNTSFli1M6Cb8Aa2krc
+         RpV8DpZlHVu8NTirYtj8iyjZ3XSNIfFwzYbw6ggzNxLHneYVt+sv/acGyC8Ho1sE20
+         ANE33BxEPLZPZxu6FIPeWJIpiY2QW7gWusvzTrzHPi7O/ikNXrrAw+wVBSUx9ukJMb
+         AlBU00M13VGpQ==
+Date:   Thu, 27 Jun 2019 09:55:22 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Jaegeuk Kim <jaegeuk@kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the f2fs tree
+Message-ID: <20190627095522.457b7511@canb.auug.org.au>
 MIME-Version: 1.0
-References: <20190620060726.926-1-kraxel@redhat.com> <20190620060726.926-3-kraxel@redhat.com>
-In-Reply-To: <20190620060726.926-3-kraxel@redhat.com>
-From:   Chia-I Wu <olvaffe@gmail.com>
-Date:   Wed, 26 Jun 2019 16:55:20 -0700
-Message-ID: <CAPaKu7RWpoRkTkoatdYHz6itHZFvUYgaBcQAXnSC2gDc+dFZxQ@mail.gmail.com>
-Subject: Re: [PATCH v4 02/12] drm/virtio: switch virtio_gpu_wait_ioctl() to
- gem helper.
-To:     Gerd Hoffmann <kraxel@redhat.com>
-Cc:     ML dri-devel <dri-devel@lists.freedesktop.org>,
-        David Airlie <airlied@linux.ie>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:VIRTIO GPU DRIVER" 
-        <virtualization@lists.linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/ESojSdprCuyKUx=dFCIuK+U"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 19, 2019 at 11:07 PM Gerd Hoffmann <kraxel@redhat.com> wrote:
->
-> Use drm_gem_reservation_object_wait() in virtio_gpu_wait_ioctl().
-> This also makes the ioctl run lockless.
-The userspace has a BO cache to avoid freeing BOs immediately but to
-reuse them on next allocations.  The BO cache checks if a BO is busy
-before reuse, and I am seeing a big negative perf impact because of
-slow virtio_gpu_wait_ioctl.  I wonder if this helps.
+--Sig_/ESojSdprCuyKUx=dFCIuK+U
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi Jaegeuk,
 
->
-> v2: use reservation_object_test_signaled_rcu for VIRTGPU_WAIT_NOWAIT.
->
-> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-> Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-> ---
->  drivers/gpu/drm/virtio/virtgpu_ioctl.c | 24 ++++++++++--------------
->  1 file changed, 10 insertions(+), 14 deletions(-)
->
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_ioctl.c b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-> index ac60be9b5c19..313c770ea2c5 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-> +++ b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-> @@ -464,23 +464,19 @@ static int virtio_gpu_wait_ioctl(struct drm_device *dev, void *data,
->                             struct drm_file *file)
->  {
->         struct drm_virtgpu_3d_wait *args = data;
-> -       struct drm_gem_object *gobj = NULL;
-> -       struct virtio_gpu_object *qobj = NULL;
-> +       struct drm_gem_object *obj;
-> +       long timeout = 15 * HZ;
->         int ret;
-> -       bool nowait = false;
->
-> -       gobj = drm_gem_object_lookup(file, args->handle);
-> -       if (gobj == NULL)
-> -               return -ENOENT;
-> +       if (args->flags & VIRTGPU_WAIT_NOWAIT) {
-> +               obj = drm_gem_object_lookup(file, args->handle);
-Don't we need a NULL check here?
-> +               ret = reservation_object_test_signaled_rcu(obj->resv, true);
-> +               drm_gem_object_put_unlocked(obj);
-> +               return ret ? 0 : -EBUSY;
-> +       }
->
-> -       qobj = gem_to_virtio_gpu_obj(gobj);
-> -
-> -       if (args->flags & VIRTGPU_WAIT_NOWAIT)
-> -               nowait = true;
-> -       ret = virtio_gpu_object_wait(qobj, nowait);
-> -
-> -       drm_gem_object_put_unlocked(gobj);
-> -       return ret;
-> +       return drm_gem_reservation_object_wait(file, args->handle,
-> +                                              true, timeout);
->  }
->
->  static int virtio_gpu_get_caps_ioctl(struct drm_device *dev,
-> --
-> 2.18.1
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+Commit
+
+  dfc06c892ea3 ("f2fs: fix is_idle() check for discard type")
+
+is missing a Signed-off-by from its committer.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/ESojSdprCuyKUx=dFCIuK+U
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0UBeoACgkQAVBC80lX
+0GyXuggAoeXxyHUiHWIK+hrIrTVxrnFMdGnPthdi8667/8VSXhl83HXB8h7FvGYA
+WChtKHn4RMntdcps6mMoK63HJqmJ5oIM7gekkMsDBDJ6X8yPu0n6g0c00+bmqZto
+A7A1G0WGfc5hB8D1vBMGbwFM8r44qo9qCuLP3M8UfFBgW95yKLBk8tJe4h+D0tuF
+rSTW/w1jgFKcVTopPi1uVe9O64Cosv/ScWzyBOJ9kU3v3Oqlu1pT50hywv+PBhR+
+QkQCWPPiixHt1s0dAZ/J1Zttpjl0fOWoqQR9OeDgkhoOq3+Ht1GbO7HuE39wD08H
+JHv1uHjxGc0r/cp8FjWFC4Tnenh3Ag==
+=Qobp
+-----END PGP SIGNATURE-----
+
+--Sig_/ESojSdprCuyKUx=dFCIuK+U--
