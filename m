@@ -2,78 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B3B95672F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 12:52:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E39CA5674A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 12:59:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726830AbfFZKwV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 06:52:21 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:19080 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726347AbfFZKwU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 06:52:20 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 6E58F3CB74AA66A3D694;
-        Wed, 26 Jun 2019 18:52:18 +0800 (CST)
-Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
- (10.3.19.206) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 26 Jun
- 2019 18:52:08 +0800
-Subject: Re: [PATCH RESEND] staging: erofs: remove unsupported ->datamode
- check in fill_inline_data()
-To:     Yue Hu <zbestahu@gmail.com>, <yuchao0@huawei.com>,
-        <gregkh@linuxfoundation.org>
-CC:     <linux-erofs@lists.ozlabs.org>, <devel@driverdev.osuosl.org>,
-        <linux-kernel@vger.kernel.org>, <huyue2@yulong.com>,
-        Miao Xie <miaoxie@huawei.com>
-References: <20190626103936.9064-1-zbestahu@gmail.com>
-From:   Gao Xiang <gaoxiang25@huawei.com>
-Message-ID: <9c9c656e-2f29-d086-362e-76bf1760191a@huawei.com>
-Date:   Wed, 26 Jun 2019 18:51:55 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        id S1727093AbfFZK6x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 06:58:53 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:38360 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726131AbfFZK6w (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 06:58:52 -0400
+Received: by mail-lj1-f194.google.com with SMTP id r9so1714973ljg.5;
+        Wed, 26 Jun 2019 03:58:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vBnSNkpp1XS13FbQfXNNjthLGvaxRDnVZe4G6iUXAtU=;
+        b=GaqgAuFEfvv3hBS0MaU6uk4aVJXr6o+2pG+er+XZSrXJmKaX1hSvGbNyogXUrcLE1F
+         8uPyzO20cWhgn+6ogJWZGBUDgM/+hmdodS2rGfiJw+hYmHysEcAjmj6xP3Fee5JK8Emq
+         loi84Jm74kjpfhji/XqX0xwnoCYYdgWSjGLQq8wzHtt2nSe0/KvZ6HHheCZpk8jL9kN5
+         ePK310T6x5hfCUeiiB+CAwL2vR/E5Nd3/aRMdJydETRe0FPBo9xfRQRHMxYNWqCI5m8P
+         pUZHLmizbJuiS5WGXpaGO86UWbuiqs23zbiILID8Ga3NGnYbkerHBO9gQa2OE40nmKrC
+         g3Rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vBnSNkpp1XS13FbQfXNNjthLGvaxRDnVZe4G6iUXAtU=;
+        b=cWX+3LE8slfiGr1ef79WOIbIA0KtK2eYL783MjmS4fKxc61YL5w9IG1nNWjNRgiEgp
+         hMzz5xQa37pFSqD1G05ZF88viMe7OT7/1RoA/Cp+k0sq5ccV7hP1V3pCa/rOClvTNONM
+         8ANK2Gcl/WkW5HAvNhU8seIvYeqbkb+FQ5ji5qZAbkM9y8oVIdleTngyPNaQcuNbLAV7
+         E9vTqpSLwfVWlSRO0r6Mqmc0YusEqH3O1CtI/AUFPweGF3513dfBfSjCt9jh0BBA/gmm
+         qqxr4/We5SEpZVlTSN7W+tsBd8XOsMfaXtA42VKdgAlXZQ3ah3I6wcKiWz+MTz2Dl1tz
+         Jcvw==
+X-Gm-Message-State: APjAAAV2vrQdKDSR2xNLb7yBcXQTkU+kSb7WOE2XQpbk1KGw2cR4Tt0c
+        rZ18uF+R88dI0Rp9+tM5ve9NUZ8yIGXDxFqF5pc=
+X-Google-Smtp-Source: APXvYqxgoOFc17kD7+phBGYs9B/nP1o8ns/3dGiVnoxKpmtsSjv06Im4LhGmDTJDnuu5JdispKhyHp6RMeFmjrm7eYo=
+X-Received: by 2002:a2e:8650:: with SMTP id i16mr2529260ljj.178.1561546729355;
+ Wed, 26 Jun 2019 03:58:49 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190626103936.9064-1-zbestahu@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.151.23.176]
-X-CFilter-Loop: Reflected
+References: <1561544420-15572-1-git-send-email-robert.chiras@nxp.com> <1561544420-15572-2-git-send-email-robert.chiras@nxp.com>
+In-Reply-To: <1561544420-15572-2-git-send-email-robert.chiras@nxp.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Wed, 26 Jun 2019 07:58:39 -0300
+Message-ID: <CAOMZO5AKOgcRcyOyz71MyHY5VbGF2OCSdVfREwoNPrVk8rbVAA@mail.gmail.com>
+Subject: Re: [PATCH v5 1/2] dt-bindings: display: panel: Add support for
+ Raydium RM67191 panel
+To:     Robert Chiras <robert.chiras@nxp.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        DRI mailing list <dri-devel@lists.freedesktop.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Yue,
+On Wed, Jun 26, 2019 at 7:21 AM Robert Chiras <robert.chiras@nxp.com> wrote:
+>
+> Add dt-bindings documentation for Raydium RM67191 DSI panel.
+>
+> Signed-off-by: Robert Chiras <robert.chiras@nxp.com>
+> Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
 
-On 2019/6/26 18:39, Yue Hu wrote:
-> From: Yue Hu <huyue2@yulong.com>
-> 
-> Already check if ->datamode is supported in read_inode(), no need to check
-> again in the next fill_inline_data() only called by fill_inode().
-> 
-> Signed-off-by: Yue Hu <huyue2@yulong.com>
-> Reviewed-by: Gao Xiang <gaoxiang25@huawei.com>
-> Reviewed-by: Chao Yu <yuchao0@huawei.com>
-
-Bump the patch version in the title as Greg said...
-Otherwise, it is hard to differ which patch is the latest patch...
-
-Thanks,
-Gao Xiang
-
-> ---
->  drivers/staging/erofs/inode.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/staging/erofs/inode.c b/drivers/staging/erofs/inode.c
-> index e51348f..d6e1e16 100644
-> --- a/drivers/staging/erofs/inode.c
-> +++ b/drivers/staging/erofs/inode.c
-> @@ -129,8 +129,6 @@ static int fill_inline_data(struct inode *inode, void *data,
->  	struct erofs_sb_info *sbi = EROFS_I_SB(inode);
->  	const int mode = vi->datamode;
->  
-> -	DBG_BUGON(mode >= EROFS_INODE_LAYOUT_MAX);
-> -
->  	/* should be inode inline C */
->  	if (mode != EROFS_INODE_LAYOUT_INLINE)
->  		return 0;
-> 
+Reviewed-by: Fabio Estevam <festevam@gmail.com>
