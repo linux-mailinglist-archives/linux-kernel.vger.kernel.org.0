@@ -2,69 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2BA656120
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 06:12:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 427A25612B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 06:15:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726617AbfFZEMY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 00:12:24 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:44482 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725804AbfFZEMY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 00:12:24 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hfzHR-0000Pn-Ag; Wed, 26 Jun 2019 04:11:33 +0000
-Date:   Wed, 26 Jun 2019 05:11:33 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     matthew.garrett@nebula.com, yuchao0@huawei.com, tytso@mit.edu,
-        shaggy@kernel.org, ard.biesheuvel@linaro.org, josef@toxicpanda.com,
-        hch@infradead.org, clm@fb.com, adilger.kernel@dilger.ca,
-        jk@ozlabs.org, jack@suse.com, dsterba@suse.com, jaegeuk@kernel.org,
-        cluster-devel@redhat.com, jfs-discussion@lists.sourceforge.net,
-        linux-efi@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
-        linux-nilfs@vger.kernel.org, linux-mtd@lists.infradead.org,
-        ocfs2-devel@oss.oracle.com, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org
-Subject: Re: [PATCH 2/5] vfs: create a generic checking function for
- FS_IOC_FSSETXATTR
-Message-ID: <20190626041133.GB32272@ZenIV.linux.org.uk>
-References: <156151632209.2283456.3592379873620132456.stgit@magnolia>
- <156151633829.2283456.834142172527987802.stgit@magnolia>
+        id S1726682AbfFZEPE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 00:15:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36252 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725804AbfFZEPD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 00:15:03 -0400
+Received: from mail.kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C827C20645;
+        Wed, 26 Jun 2019 04:15:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561522503;
+        bh=9OfSq3Nvez/cQ8gCs8fVcYUWNfY5Mh1PqqMtSyFqK0Q=;
+        h=From:To:Cc:Subject:Date:From;
+        b=DjnWAOzoNliy6Wem0+ZPQFZpSvdq6ojwqsOtMtlWUjnX1D5mQLnL0FgYJyS/3tcSV
+         9e3xbHkI/Nu4T41cm42s5OYtWqGxWHbgXNKT59S1nk3V3qkGlUd+9uNX+JWFF1Gvza
+         bfC0+JUGUrx3LGNudAgLdaM4XajveynjUOwDa2K0=
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [PATCH 0/2] Unexport __clk_of_table
+Date:   Tue, 25 Jun 2019 21:15:00 -0700
+Message-Id: <20190626041502.237211-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <156151633829.2283456.834142172527987802.stgit@magnolia>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 25, 2019 at 07:32:18PM -0700, Darrick J. Wong wrote:
-> --- a/fs/btrfs/ioctl.c
-> +++ b/fs/btrfs/ioctl.c
-> @@ -373,10 +373,9 @@ static int check_xflags(unsigned int flags)
->  static int btrfs_ioctl_fsgetxattr(struct file *file, void __user *arg)
->  {
->  	struct btrfs_inode *binode = BTRFS_I(file_inode(file));
-> -	struct fsxattr fa;
-> -
-> -	memset(&fa, 0, sizeof(fa));
-> -	fa.fsx_xflags = btrfs_inode_flags_to_xflags(binode->flags);
-> +	struct fsxattr fa = {
-> +		.fsx_xflags = btrfs_inode_flags_to_xflags(binode->flags),
-> +	};
+I found this lying around, not sure if I sent it or not.
 
-Umm...  Sure, there's no padding, but still - you are going to copy that thing
-to userland...  How about
+We don't need to export this symbol anymore. And having COMMON_CLK in
+clk-provider.h seems to be an artifact. Here's a couple patches to clean
+this stuff up.
 
-static inline void simple_fill_fsxattr(struct fsxattr *fa, unsigned xflags)
-{
-	memset(fa, 0, sizeof(*fa));
-	fa->fsx_xflags = xflags;
-}
+Stephen Boyd (2):
+  clk: Remove ifdef for COMMON_CLK in clk-provider.h
+  clk: Unexport __clk_of_table
 
-and let the compiler optimize the crap out?
+ drivers/clk/clk.c            | 1 +
+ include/linux/clk-provider.h | 7 -------
+ 2 files changed, 1 insertion(+), 7 deletions(-)
+
+-- 
+Sent by a computer through tubes
+
