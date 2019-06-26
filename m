@@ -2,226 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5E5256DBE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 17:33:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ADD2356DD2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 17:37:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728120AbfFZPdH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 11:33:07 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:37694 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726104AbfFZPdG (ORCPT
+        id S1728319AbfFZPhN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 11:37:13 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:38166 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726984AbfFZPhM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 11:33:06 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: ezequiel)
-        with ESMTPSA id ED64C28528D
-Message-ID: <7a205885f0599f04da067a7f41a14ee0b0d759f5.camel@collabora.com>
-Subject: Re: [PATCH v2] phy: rockchip-inno-usb2: allow to force the B-Device
- Session Valid bit.
-From:   Ezequiel Garcia <ezequiel@collabora.com>
-To:     =?ISO-8859-1?Q?Ga=EBl?= PORTAY <gael.portay@collabora.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        kernel@collabora.com
-Date:   Wed, 26 Jun 2019 12:32:55 -0300
-In-Reply-To: <20190515222050.15075-1-gael.portay@collabora.com>
-References: <20190515222050.15075-1-gael.portay@collabora.com>
-Organization: Collabora
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5-1.1 
+        Wed, 26 Jun 2019 11:37:12 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5QFXoje151326;
+        Wed, 26 Jun 2019 15:35:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=9G5PiDG0S7gskQAEA+1rG18NFPpT+WoUOG9H+94vGJo=;
+ b=Mr0csDp/6gFDwuuR4WcTjSwEQhZRUvDp0wq3YeKCIR/ppK1h93X/GLwv9+Y3cvXAo/We
+ nBBPCWspqpkQf8Ya9/6yEHadZ9h5/AK9JEwgQLT2OJ63YoS19u03moZ7UXD928KK75Tw
+ IYGgl4G6FFtMYGPdEh6jhDWXC8Gi+dRHPoIK4U9EU9fQhY9zQayETLpTGjqGl7XpA008
+ xvtm1tvTyzmAnCbVLIgcaAr+22UL4c7SemsbRVUkLI8sB/S8GoHCuFEiRRnlmAb3SWPf
+ RtSXc0WG3A/565vb1OMt7fUapvm0eYSNFeeM5VPPlY8RA+hUmYz247kCS97awaKxof1X 1A== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2130.oracle.com with ESMTP id 2t9brtb5ka-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 26 Jun 2019 15:35:48 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5QFZWnl185666;
+        Wed, 26 Jun 2019 15:35:48 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by aserp3030.oracle.com with ESMTP id 2t9accs0fq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 26 Jun 2019 15:35:48 +0000
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x5QFZlgQ186348;
+        Wed, 26 Jun 2019 15:35:47 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3030.oracle.com with ESMTP id 2t9accs0fn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 26 Jun 2019 15:35:47 +0000
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x5QFZjvI031893;
+        Wed, 26 Jun 2019 15:35:45 GMT
+Received: from localhost (/10.159.137.246)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 26 Jun 2019 08:35:45 -0700
+Date:   Wed, 26 Jun 2019 08:35:42 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     matthew.garrett@nebula.com, yuchao0@huawei.com, tytso@mit.edu,
+        shaggy@kernel.org, ard.biesheuvel@linaro.org, josef@toxicpanda.com,
+        hch@infradead.org, clm@fb.com, adilger.kernel@dilger.ca,
+        jk@ozlabs.org, jack@suse.com, dsterba@suse.com, jaegeuk@kernel.org,
+        cluster-devel@redhat.com, jfs-discussion@lists.sourceforge.net,
+        linux-efi@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
+        linux-nilfs@vger.kernel.org, linux-mtd@lists.infradead.org,
+        ocfs2-devel@oss.oracle.com, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org
+Subject: Re: [PATCH 2/5] vfs: create a generic checking function for
+ FS_IOC_FSSETXATTR
+Message-ID: <20190626153542.GE5171@magnolia>
+References: <156151632209.2283456.3592379873620132456.stgit@magnolia>
+ <156151633829.2283456.834142172527987802.stgit@magnolia>
+ <20190626041133.GB32272@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190626041133.GB32272@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9299 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906260182
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-05-15 at 18:20 -0400, Gaël PORTAY wrote:
-> From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+On Wed, Jun 26, 2019 at 05:11:33AM +0100, Al Viro wrote:
+> On Tue, Jun 25, 2019 at 07:32:18PM -0700, Darrick J. Wong wrote:
+> > --- a/fs/btrfs/ioctl.c
+> > +++ b/fs/btrfs/ioctl.c
+> > @@ -373,10 +373,9 @@ static int check_xflags(unsigned int flags)
+> >  static int btrfs_ioctl_fsgetxattr(struct file *file, void __user *arg)
+> >  {
+> >  	struct btrfs_inode *binode = BTRFS_I(file_inode(file));
+> > -	struct fsxattr fa;
+> > -
+> > -	memset(&fa, 0, sizeof(fa));
+> > -	fa.fsx_xflags = btrfs_inode_flags_to_xflags(binode->flags);
+> > +	struct fsxattr fa = {
+> > +		.fsx_xflags = btrfs_inode_flags_to_xflags(binode->flags),
+> > +	};
 > 
-> The OTG disconnection event is generated after the presence/absence of
-> an ID connection, but some platforms don't have the ID pin connected, so
-> the event is not generated. In such case, for detecting the
-> disconnection event, we can get the cable state from an extcon driver.
-> We need, though, to force to set the B-Device Session Valid bit on the
-> PHY to have the device respond to the setup address. Otherwise, the
-> following error is shown:
+> Umm...  Sure, there's no padding, but still - you are going to copy that thing
+> to userland...  How about
 > 
->     usb 2-2: Device not responding to setup address.
->     usb 2-2: device not accepting address 14, error -71
->     usb usb2-port2: unable to enumerate USB device
+> static inline void simple_fill_fsxattr(struct fsxattr *fa, unsigned xflags)
+> {
+> 	memset(fa, 0, sizeof(*fa));
+> 	fa->fsx_xflags = xflags;
+> }
 > 
-> The patch tells the PHY to force the B-Device Session Valid bit when the
-> OTG role is device and clear that bit if the OTG role is host, when an
-> extcon is available.
-> 
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> Signed-off-by: Gaël PORTAY <gael.portay@collabora.com>
-> ---
-> 
-> Hi all,
-> 
-> The main purpose of this patch is have the Type-C port on the Samsung
-> Chromebook Plus work as a device or in OTG mode.
-> 
-> That patch was originally a part of that patchset[1]; all other patches
-> was merged recently in master.
-> 
-> The patch was tested on a Samsung Chromebook Plus by configuring one
-> port to work as device, configure a cdc ethernet gadget and communicate
-> via ethernet gadget my workstation with the chromebook through a usb-a
-> to type-c cable.
-> 
-> Best regards,
-> Gaël
-> 
-> [1]: https://lkml.org/lkml/2018/8/15/141
-> 
-> Changes since v1:
->  - [PATCH 3/4] Remove introduction of dt property "rockchip,force-bvalid"
->                and replace cable state using extcon instead (if set).
-> 
->  drivers/phy/rockchip/phy-rockchip-inno-usb2.c | 51 +++++++++++++++++++
->  1 file changed, 51 insertions(+)
-> 
-> diff --git a/drivers/phy/rockchip/phy-rockchip-inno-usb2.c b/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
-> index ba07121c3eff..5e9d50b5ae16 100644
-> --- a/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
-> +++ b/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
-> @@ -125,6 +125,7 @@ struct rockchip_chg_det_reg {
->   * @bvalid_det_en: vbus valid rise detection enable register.
->   * @bvalid_det_st: vbus valid rise detection status register.
->   * @bvalid_det_clr: vbus valid rise detection clear register.
-> + * @bvalid_session: force B-device session valid register.
->   * @ls_det_en: linestate detection enable register.
->   * @ls_det_st: linestate detection state register.
->   * @ls_det_clr: linestate detection clear register.
-> @@ -138,6 +139,7 @@ struct rockchip_usb2phy_port_cfg {
->  	struct usb2phy_reg	bvalid_det_en;
->  	struct usb2phy_reg	bvalid_det_st;
->  	struct usb2phy_reg	bvalid_det_clr;
-> +	struct usb2phy_reg	bvalid_session;
->  	struct usb2phy_reg	ls_det_en;
->  	struct usb2phy_reg	ls_det_st;
->  	struct usb2phy_reg	ls_det_clr;
-> @@ -169,6 +171,7 @@ struct rockchip_usb2phy_cfg {
->   * @port_id: flag for otg port or host port.
->   * @suspended: phy suspended flag.
->   * @vbus_attached: otg device vbus status.
-> + * @force_bvalid: force the control of the B-device session valid bit.
->   * @bvalid_irq: IRQ number assigned for vbus valid rise detection.
->   * @ls_irq: IRQ number assigned for linestate detection.
->   * @otg_mux_irq: IRQ number which multiplex otg-id/otg-bvalid/linestate
-> @@ -187,6 +190,7 @@ struct rockchip_usb2phy_port {
->  	unsigned int	port_id;
->  	bool		suspended;
->  	bool		vbus_attached;
-> +	bool		force_bvalid;
->  	int		bvalid_irq;
->  	int		ls_irq;
->  	int		otg_mux_irq;
-> @@ -553,6 +557,13 @@ static void rockchip_usb2phy_otg_sm_work(struct work_struct *work)
->  	switch (rport->state) {
->  	case OTG_STATE_UNDEFINED:
->  		rport->state = OTG_STATE_B_IDLE;
-> +		if (rport->force_bvalid) {
-> +			property_enable(rphy->grf,
-> +					&rport->port_cfg->bvalid_session,
-> +					true);
-> +			dev_dbg(&rport->phy->dev,
-> +				"set the B-Device Session Valid\n");
-> +		}
->  		if (!vbus_attach)
->  			rockchip_usb2phy_power_off(rport->phy);
->  		/* fall through */
-> @@ -560,6 +571,14 @@ static void rockchip_usb2phy_otg_sm_work(struct work_struct *work)
->  		if (extcon_get_state(rphy->edev, EXTCON_USB_HOST) > 0) {
->  			dev_dbg(&rport->phy->dev, "usb otg host connect\n");
->  			rport->state = OTG_STATE_A_HOST;
-> +			/* When leaving device mode force end the session */
-> +			if (rport->force_bvalid) {
-> +				property_enable(rphy->grf,
-> +					&rport->port_cfg->bvalid_session,
-> +					false);
-> +				dev_dbg(&rport->phy->dev,
-> +					"clear the B-Device Session Valid\n");
-> +			}
->  			rockchip_usb2phy_power_on(rport->phy);
->  			return;
->  		} else if (vbus_attach) {
-> @@ -634,6 +653,14 @@ static void rockchip_usb2phy_otg_sm_work(struct work_struct *work)
->  		if (extcon_get_state(rphy->edev, EXTCON_USB_HOST) == 0) {
->  			dev_dbg(&rport->phy->dev, "usb otg host disconnect\n");
->  			rport->state = OTG_STATE_B_IDLE;
-> +			/* When leaving host mode force start the session */
-> +			if (rport->force_bvalid) {
-> +				property_enable(rphy->grf,
-> +					&rport->port_cfg->bvalid_session,
-> +					true);
-> +				dev_dbg(&rport->phy->dev,
-> +					"set the B-Device Session Valid\n");
-> +			}
->  			rockchip_usb2phy_power_off(rport->phy);
->  		}
->  		break;
-> @@ -1016,6 +1043,28 @@ static int rockchip_usb2phy_otg_port_init(struct rockchip_usb2phy *rphy,
->  	INIT_DELAYED_WORK(&rport->chg_work, rockchip_chg_detect_work);
->  	INIT_DELAYED_WORK(&rport->otg_sm_work, rockchip_usb2phy_otg_sm_work);
->  
-> +	/*
-> +	 * Some platforms doesn't have the ID pin connected to the phy, hence
-> +	 * the OTD ID event is not generated, but in some cases we can get the
-> +	 * cable state from an extcon driver. In such case we can force to set
-> +	 * the B-Device Session Valid bit on the PHY to have the device working
-> +	 * as a OTG.
-> +	 */
-> +	if (rphy->edev) {
-> +		/*
-> +		 * Check if bvalid_session register is set in the structure
-> +		 * rockchip_usb2phy_cfg for this SoC.
-> +		 */
-> +		if (rport->port_cfg->bvalid_session.offset == 0x0) {
-> +			rport->force_bvalid = false;
-> +			dev_err(rphy->dev,
-> +				"cannot force B-device session, the register is not set for that SoC\n");
-> +		} else {
-> +			rport->force_bvalid = true;
-> +			dev_info(rphy->dev, "force B-device session enabled\n");
-> +		}
-> +	}
-> +
->  	/*
->  	 * Some SoCs use one interrupt with otg-id/otg-bvalid/linestate
->  	 * interrupts muxed together, so probe the otg-mux interrupt first,
-> @@ -1338,6 +1387,7 @@ static const struct rockchip_usb2phy_cfg rk3399_phy_cfgs[] = {
->  				.bvalid_det_en	= { 0xe3c0, 3, 3, 0, 1 },
->  				.bvalid_det_st	= { 0xe3e0, 3, 3, 0, 1 },
->  				.bvalid_det_clr	= { 0xe3d0, 3, 3, 0, 1 },
-> +				.bvalid_session = { 0x4498, 4, 4, 0, 1 },
->  				.utmi_avalid	= { 0xe2ac, 7, 7, 0, 1 },
->  				.utmi_bvalid	= { 0xe2ac, 12, 12, 0, 1 },
->  			},
-> @@ -1373,6 +1423,7 @@ static const struct rockchip_usb2phy_cfg rk3399_phy_cfgs[] = {
->  				.bvalid_det_en  = { 0xe3c0, 8, 8, 0, 1 },
->  				.bvalid_det_st  = { 0xe3e0, 8, 8, 0, 1 },
->  				.bvalid_det_clr = { 0xe3d0, 8, 8, 0, 1 },
-> +				.bvalid_session = { 0x4518, 4, 4, 0, 1 },
->  				.utmi_avalid	= { 0xe2ac, 10, 10, 0, 1 },
->  				.utmi_bvalid    = { 0xe2ac, 16, 16, 0, 1 },
->  			},
-> -- 
-> 2.21.0
-> 
-> 
+> and let the compiler optimize the crap out?
 
-It's been more than a month without any activity here.
+The v2 series used to do that, but Christoph complained that having a
+helper for a two-line memset and initialization was silly[1] so now we
+have this version.
 
-Any news?
+I don't mind reinstating it as a static inline helper, but I'd like some
+input from any of the btrfs developers (or you, Al) about which form is
+preferred.
 
-Thanks,
-Ezequiel
+--D
 
-
+[1] https://lkml.org/lkml/2019/6/25/533
