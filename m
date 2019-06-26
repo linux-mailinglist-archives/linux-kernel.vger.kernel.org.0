@@ -2,100 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1664556941
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 14:35:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D9535694C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 14:35:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727387AbfFZMe6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 08:34:58 -0400
-Received: from ozlabs.org ([203.11.71.1]:44945 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726723AbfFZMe5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 08:34:57 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45YjCf3X9Sz9s3l;
-        Wed, 26 Jun 2019 22:34:54 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1561552494;
-        bh=J5PDmh6SRrKgp6sEYtERooHfMpzUiWLuB1ZBRLYUfIU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=fVrQtcmRPrIzaYqWZEBexxFqXI4UGsfoVYY4+0cuAArY5im1qOy5EZI/npYXBmxnb
-         ggPCK+NMDRJPa0LQ2VKcvyyhcFZMaxCwDAJZXIJg1CnrQT369xHmtu+NC0oyd2ys2M
-         Hor4oWld5F1g5WdV/UD4bSffjAV6TuSSjd5pHNutXnrKbS2fuc4j05v2niVvGnP/wt
-         y+h91wxS2UcjBdiuQQzzyagfDNpV3rr9ITSuu6ii3uxiwGvo11gp+ekHVupapPUM3j
-         HMxno2TFFAxIiFDxGlauQWVrYMxc+RhW9JlherbKQTNqWeCUZwoBN0HbdGGM4BfvG9
-         4nOeuaBU9C+hw==
-Date:   Wed, 26 Jun 2019 22:34:52 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Anshuman Khandual <anshuman.khandual@arm.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the akpm-current tree
-Message-ID: <20190626223452.5a7deab1@canb.auug.org.au>
-In-Reply-To: <9e850319-8564-5b1f-2e1b-7d327215043f@arm.com>
-References: <20190626214125.6d313c15@canb.auug.org.au>
-        <9e850319-8564-5b1f-2e1b-7d327215043f@arm.com>
+        id S1727620AbfFZMfx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 08:35:53 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:33707 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727445AbfFZMfw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 08:35:52 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5QCZEcw4104207
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Wed, 26 Jun 2019 05:35:14 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5QCZEcw4104207
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019061801; t=1561552515;
+        bh=SZTf+2cdXAlpzE8KosxqlFWPqMPl1Kf9lyRbnACO8tM=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=ktILwQSx5F2uydn1wPTtnu3oyApzHJDTAUrVXgWybrsdTf1RdAH1U7IvO+Yua0dws
+         FRTNVv1nfkZGmpdgyO+zi/bMOVvPkXYit+VOJIgQnOTU3AEGZAGNIKQsps7mB/STwT
+         RTFxrAkobcVmPoAuODTikMQL5SupjqH0CtyYHd5zJW7X2kbXbuVrov36v4kzbhvUOc
+         sQhgcionHP+CQs4o7iNnJm9ZUML0cJY1pNRcDLMGCKjJ/cXDQGvN9UaDIiI2goFwNP
+         dfuOQdkMjYl1HB0nUDrGRcoxZ6ERUMiGvVSFVBRV9jPpGzCgYD+cyi/t6rfVukRBtH
+         Ulw6c+Z7i00pA==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5QCZDRs4104203;
+        Wed, 26 Jun 2019 05:35:13 -0700
+Date:   Wed, 26 Jun 2019 05:35:13 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Catalin Marinas <tipbot@zytor.com>
+Message-ID: <tip-94fee4d43752b6022428d9de402632904968e15b@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org, hpa@zytor.com,
+        vincenzo.frascino@arm.com, paul.burton@mips.com,
+        will.deacon@arm.com, andre.przywara@arm.com,
+        catalin.marinas@arm.com, arnd@arndb.de, salyzyn@android.com,
+        huw@codeweavers.com, sthotton@marvell.com,
+        daniel.lezcano@linaro.org, linux@armlinux.org.uk,
+        linux@rasmusvillemoes.dk, tglx@linutronix.de, 0x7f454c46@gmail.com,
+        pcc@google.com, shuah@kernel.org, ralf@linux-mips.org
+Reply-To: andre.przywara@arm.com, arnd@arndb.de, catalin.marinas@arm.com,
+          mingo@kernel.org, linux-kernel@vger.kernel.org,
+          vincenzo.frascino@arm.com, paul.burton@mips.com,
+          will.deacon@arm.com, hpa@zytor.com, pcc@google.com,
+          0x7f454c46@gmail.com, shuah@kernel.org, ralf@linux-mips.org,
+          sthotton@marvell.com, salyzyn@android.com, huw@codeweavers.com,
+          tglx@linutronix.de, linux@rasmusvillemoes.dk,
+          daniel.lezcano@linaro.org, linux@armlinux.org.uk
+In-Reply-To: <20190624135812.GC29120@arrakis.emea.arm.com>
+References: <20190624135812.GC29120@arrakis.emea.arm.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:timers/vdso] arm64: vdso: Remove unnecessary asm-offsets.c
+ definitions
+Git-Commit-ID: 94fee4d43752b6022428d9de402632904968e15b
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/OgO43uiXAj7MuO2GCk80S.I"; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=2.4 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_12_24,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
+        DKIM_VALID_EF,FREEMAIL_FORGED_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Level: **
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/OgO43uiXAj7MuO2GCk80S.I
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Commit-ID:  94fee4d43752b6022428d9de402632904968e15b
+Gitweb:     https://git.kernel.org/tip/94fee4d43752b6022428d9de402632904968e15b
+Author:     Catalin Marinas <catalin.marinas@arm.com>
+AuthorDate: Mon, 24 Jun 2019 14:58:12 +0100
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Wed, 26 Jun 2019 07:28:10 +0200
 
-Hi Anshuman,
+arm64: vdso: Remove unnecessary asm-offsets.c definitions
 
-On Wed, 26 Jun 2019 17:32:18 +0530 Anshuman Khandual <anshuman.khandual@arm=
-.com> wrote:
->
-> I believe this might be caused by a patch for powerpc enabling HAVE_ARCH_=
-HUGE_VMAP
-> without an arch_ioremap_p4d_supported() definition.
+Since the VDSO code has moved to C from assembly, there is no need to
+define and maintain the corresponding asm offsets.
 
-Ah, OK.
+Fixes: 28b1a824a4f4 ("arm64: vdso: Substitute gettimeofday() with C implementation")
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc: linux-arch@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-mips@vger.kernel.org
+Cc: linux-kselftest@vger.kernel.org
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: Paul Burton <paul.burton@mips.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Mark Salyzyn <salyzyn@android.com>
+Cc: Peter Collingbourne <pcc@google.com>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Dmitry Safonov <0x7f454c46@gmail.com>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Huw Davies <huw@codeweavers.com>
+Cc: Shijith Thotton <sthotton@marvell.com>
+Cc: Andre Przywara <andre.przywara@arm.com>
+Link: https://lkml.kernel.org/r/20190624135812.GC29120@arrakis.emea.arm.com
 
-> All it needs is a powerpc definition for arch_ioremap_p4d_supported() whi=
-ch can just
-> return false if it is not supported. Shall I send a patch for the powerpc=
- fix or just
-> re-spin the original patch which added arch_ioremap_p4d_supported(). Plea=
-se suggest.
+---
+ arch/arm64/kernel/asm-offsets.c | 39 ---------------------------------------
+ 1 file changed, 39 deletions(-)
 
-I'll add a merge fix patch tomorrow.  Though if you can send that patch,
-that would be nice :-)
-
-> Today's linux-next (next-20190625) does not have powerpc subscribing HAVE=
-_ARCH_HUGE_VMAP.
-> Could you please point to the branch I should pull for this failure. Than=
-ks !
-
-git://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git branch next
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/OgO43uiXAj7MuO2GCk80S.I
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0TZmwACgkQAVBC80lX
-0GwbvggAmeOxSKwcEb5rsdNxfdUpUYLhDvPlFPZcqPofaMS2laFfVK35iuv40TXB
-gxlU0t21jckOaVkkLl30bGTrmCRgfx/rrtDkDknMK4JJCIk8qaCzkAhCu2htB19r
-mS5Zlph3feMt4md2YoWliS6BRqrIOP8TySs2D6t51fEz906c/81Ldr1+E4L5Qkm5
-ng14uHDLFdYhXU92OctX5ps/MsAAJKHHXeHZQkoZRzmFHqjvgifuTsPjBw9M3zSN
-Aj/RW+mj1Pje2jXBPoeACVKlbHZwEQ9IKM0prj1cIn6aMGyX7AJ1bfahUqgsCXt0
-m2GC0pWSpgxM1DBBDbNsvaJXcz2a9A==
-=viRL
------END PGP SIGNATURE-----
-
---Sig_/OgO43uiXAj7MuO2GCk80S.I--
+diff --git a/arch/arm64/kernel/asm-offsets.c b/arch/arm64/kernel/asm-offsets.c
+index e6f7409a78a4..214685760e1c 100644
+--- a/arch/arm64/kernel/asm-offsets.c
++++ b/arch/arm64/kernel/asm-offsets.c
+@@ -14,7 +14,6 @@
+ #include <linux/kvm_host.h>
+ #include <linux/preempt.h>
+ #include <linux/suspend.h>
+-#include <vdso/datapage.h>
+ #include <asm/cpufeature.h>
+ #include <asm/fixmap.h>
+ #include <asm/thread_info.h>
+@@ -86,44 +85,6 @@ int main(void)
+   BLANK();
+   DEFINE(PREEMPT_DISABLE_OFFSET, PREEMPT_DISABLE_OFFSET);
+   BLANK();
+-  DEFINE(CLOCK_REALTIME,	CLOCK_REALTIME);
+-  DEFINE(CLOCK_MONOTONIC,	CLOCK_MONOTONIC);
+-  DEFINE(CLOCK_MONOTONIC_RAW,	CLOCK_MONOTONIC_RAW);
+-  DEFINE(CLOCK_REALTIME_RES,	offsetof(struct vdso_data, hrtimer_res));
+-  DEFINE(CLOCK_REALTIME_COARSE,	CLOCK_REALTIME_COARSE);
+-  DEFINE(CLOCK_MONOTONIC_COARSE,CLOCK_MONOTONIC_COARSE);
+-  DEFINE(CLOCK_COARSE_RES,	LOW_RES_NSEC);
+-  DEFINE(NSEC_PER_SEC,		NSEC_PER_SEC);
+-  BLANK();
+-  DEFINE(VDSO_SEQ,		offsetof(struct vdso_data, seq));
+-  DEFINE(VDSO_CLK_MODE,		offsetof(struct vdso_data, clock_mode));
+-  DEFINE(VDSO_CYCLE_LAST,	offsetof(struct vdso_data, cycle_last));
+-  DEFINE(VDSO_MASK,		offsetof(struct vdso_data, mask));
+-  DEFINE(VDSO_MULT,		offsetof(struct vdso_data, mult));
+-  DEFINE(VDSO_SHIFT,		offsetof(struct vdso_data, shift));
+-  DEFINE(VDSO_REALTIME_SEC,	offsetof(struct vdso_data, basetime[CLOCK_REALTIME].sec));
+-  DEFINE(VDSO_REALTIME_NSEC,	offsetof(struct vdso_data, basetime[CLOCK_REALTIME].nsec));
+-  DEFINE(VDSO_MONO_SEC,		offsetof(struct vdso_data, basetime[CLOCK_MONOTONIC].sec));
+-  DEFINE(VDSO_MONO_NSEC,	offsetof(struct vdso_data, basetime[CLOCK_MONOTONIC].nsec));
+-  DEFINE(VDSO_MONO_RAW_SEC,	offsetof(struct vdso_data, basetime[CLOCK_MONOTONIC_RAW].sec));
+-  DEFINE(VDSO_MONO_RAW_NSEC,	offsetof(struct vdso_data, basetime[CLOCK_MONOTONIC_RAW].nsec));
+-  DEFINE(VDSO_BOOTTIME_SEC,	offsetof(struct vdso_data, basetime[CLOCK_BOOTTIME].sec));
+-  DEFINE(VDSO_BOOTTIME_NSEC,	offsetof(struct vdso_data, basetime[CLOCK_BOOTTIME].nsec));
+-  DEFINE(VDSO_TAI_SEC,		offsetof(struct vdso_data, basetime[CLOCK_TAI].sec));
+-  DEFINE(VDSO_TAI_NSEC,		offsetof(struct vdso_data, basetime[CLOCK_TAI].nsec));
+-  DEFINE(VDSO_RT_COARSE_SEC,	offsetof(struct vdso_data, basetime[CLOCK_REALTIME_COARSE].sec));
+-  DEFINE(VDSO_RT_COARSE_NSEC,	offsetof(struct vdso_data, basetime[CLOCK_REALTIME_COARSE].nsec));
+-  DEFINE(VDSO_MONO_COARSE_SEC,	offsetof(struct vdso_data, basetime[CLOCK_MONOTONIC_COARSE].sec));
+-  DEFINE(VDSO_MONO_COARSE_NSEC,	offsetof(struct vdso_data, basetime[CLOCK_MONOTONIC_COARSE].nsec));
+-  DEFINE(VDSO_TZ_MINWEST,	offsetof(struct vdso_data, tz_minuteswest));
+-  DEFINE(VDSO_TZ_DSTTIME,	offsetof(struct vdso_data, tz_dsttime));
+-  BLANK();
+-  DEFINE(TVAL_TV_SEC,		offsetof(struct timeval, tv_sec));
+-  DEFINE(TSPEC_TV_SEC,		offsetof(struct timespec, tv_sec));
+-  BLANK();
+-  DEFINE(TZ_MINWEST,		offsetof(struct timezone, tz_minuteswest));
+-  DEFINE(TZ_DSTTIME,		offsetof(struct timezone, tz_dsttime));
+-  BLANK();
+   DEFINE(CPU_BOOT_STACK,	offsetof(struct secondary_data, stack));
+   DEFINE(CPU_BOOT_TASK,		offsetof(struct secondary_data, task));
+   BLANK();
