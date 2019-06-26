@@ -2,152 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8328C56030
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 05:47:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CF3B560D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 05:53:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727898AbfFZDqI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 23:46:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57732 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727877AbfFZDqC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 23:46:02 -0400
-Received: from sasha-vm.mshome.net (mobile-107-77-172-74.mobile.att.net [107.77.172.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 45A5F216E3;
-        Wed, 26 Jun 2019 03:46:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561520761;
-        bh=WUxwv0hCAjnJNC67UAAC9BslRiFPe2IR8oBhsMLTBXI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bbDELLz1eyKocPNq3RxV/VCHegMxgcpAZpaJSMffCMNwWt+begD5/u/MlZsUyegiY
-         hv+yfryCVOrfzyEDMAgSTjUiic3QWkPR6D4geJu+lgzTfNrm/KO0cgmasRy+GADA8U
-         0/2sjcCRlyh47RHJTsh4cnmmY9Xw2C1DikTCUNYc=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Wei Li <liwei391@huawei.com>, Steven Rostedt <rostedt@goodmis.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 21/21] ftrace: Fix NULL pointer dereference in free_ftrace_func_mapper()
-Date:   Tue, 25 Jun 2019 23:45:06 -0400
-Message-Id: <20190626034506.24125-21-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190626034506.24125-1-sashal@kernel.org>
-References: <20190626034506.24125-1-sashal@kernel.org>
+        id S1727674AbfFZDsh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 23:48:37 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:42952 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727620AbfFZDoi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 23:44:38 -0400
+Received: by mail-pg1-f193.google.com with SMTP id k13so483578pgq.9
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 20:44:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=LqmJogVNFsB+g8IvvX5zj4pKPaA/7R5yFx4LbjFnmV4=;
+        b=gANyKfdaTg5/MdqZmJB3zBjd0+SwlPrzaWPrUzkCwurzqStTwtxA6W7Ezglr0+ZcKG
+         9eCN8IhNomZ3gmueFdxUDDnI92q7+xmSDkoV8Q+y2aKdt9v6JzX7ECWnNoAzZwjIEJY6
+         uBgvejbkfXI6KyYweG9b+Xfav4RrlV8zWcSlcnvPRF8Pj94IOxhxpdKvhSYlLG0ifAx2
+         ApzCOOyJU/iDqBIQahCwrH4FOpDF8+Bxa974TiDSoMeB0kn8UwDxZBcAZGjHFyrS9AqF
+         6Ys8h1EtVT1tPJQIdhBKcTSORSoJ0pehqkmmrT90oehqg4SmFXClQL3EOSpLpGQt4pY4
+         Vg2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=LqmJogVNFsB+g8IvvX5zj4pKPaA/7R5yFx4LbjFnmV4=;
+        b=ohuupSq1lW4AUdF3zRrWTzpmEMp6ImnjunMHZkFUEwUNfsYDBCyID6DQ1/+UfpG98j
+         ECu1XLcOwIuCwPVbr+lKD/G9+Bsc+/hDhmLTznwuKidqfsWTxZq0q2p1AEFjl8MnGZPG
+         9uFnpoCaMR+zXlHHt0rqI1uUvuAj0fghdhlVFwlHTfrnbocgctd3WdXweZIV60ySvEp9
+         +OV/KOBkxt8UpE3L0SUu13Sz+fwcgOiy9uG3a60yS6k95ZER8P7XFuCAwkyibJ4ZU2al
+         5oP+C41ul5RlYObjPaCN52TnA6BGi5t9nMoY2HMGUc57iI+50WmrtvGWbE5T7EahVxdm
+         i0XQ==
+X-Gm-Message-State: APjAAAUwVF+xcYlZ+u97jVSetSA1/0NM/gqmOGp5wVjX/YDDK4YOFWVQ
+        KZU72Typ/JP4grBb9wnuT92x+A==
+X-Google-Smtp-Source: APXvYqzB5kIs4zKVnHKkkES7b22zMAzjv6fDHE/nuMQDUGcdoG8vh5I/UyKxYvGsy8yxONWhs9EsNg==
+X-Received: by 2002:a63:8a41:: with SMTP id y62mr607190pgd.38.1561520677526;
+        Tue, 25 Jun 2019 20:44:37 -0700 (PDT)
+Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id v9sm20038199pgj.69.2019.06.25.20.44.35
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 25 Jun 2019 20:44:36 -0700 (PDT)
+Date:   Tue, 25 Jun 2019 20:45:29 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Alim Akhtar <alim.akhtar@samsung.com>
+Cc:     Avri Altman <avri.altman@wdc.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-scsi@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] scsi: ufs: Introduce vops for resetting device
+Message-ID: <20190626034529.GE24205@tuxbook-pro>
+References: <20190608050450.12056-1-bjorn.andersson@linaro.org>
+ <CGME20190608050458epcas1p30f03f6d448eb962a6af56a4c0b021ef0@epcas1p3.samsung.com>
+ <20190608050450.12056-2-bjorn.andersson@linaro.org>
+ <ad1c2a2a-91d6-25ce-9dfb-3b386b572ee2@samsung.com>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ad1c2a2a-91d6-25ce-9dfb-3b386b572ee2@samsung.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wei Li <liwei391@huawei.com>
+On Tue 25 Jun 05:41 PDT 2019, Alim Akhtar wrote:
 
-[ Upstream commit 04e03d9a616c19a47178eaca835358610e63a1dd ]
+> Hi Bjorn,
+> Are you planning to address Bean's comment on patch#2 and want to 
+> re-spin this series?
+> I am ok with taking this patch as it is and take a Softreset patch as a 
+> separate patch.
+> 
 
-The mapper may be NULL when called from register_ftrace_function_probe()
-with probe->data == NULL.
+I still intend to attempt to implement a softreset "fallback", per
+Bean's suggestion - just haven't found the time yet. But I would be
+happy to see these patches merged in the meantime, as they do resolve
+the issue of failing to being up the UFS link on a significant number of
+Qualcomm devices.
 
-This issue can be reproduced as follow (it may be covered by compiler
-optimization sometime):
 
-/ # cat /sys/kernel/debug/tracing/set_ftrace_filter
-#### all functions enabled ####
-/ # echo foo_bar:dump > /sys/kernel/debug/tracing/set_ftrace_filter
-[  206.949100] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
-[  206.952402] Mem abort info:
-[  206.952819]   ESR = 0x96000006
-[  206.955326]   Exception class = DABT (current EL), IL = 32 bits
-[  206.955844]   SET = 0, FnV = 0
-[  206.956272]   EA = 0, S1PTW = 0
-[  206.956652] Data abort info:
-[  206.957320]   ISV = 0, ISS = 0x00000006
-[  206.959271]   CM = 0, WnR = 0
-[  206.959938] user pgtable: 4k pages, 48-bit VAs, pgdp=0000000419f3a000
-[  206.960483] [0000000000000000] pgd=0000000411a87003, pud=0000000411a83003, pmd=0000000000000000
-[  206.964953] Internal error: Oops: 96000006 [#1] SMP
-[  206.971122] Dumping ftrace buffer:
-[  206.973677]    (ftrace buffer empty)
-[  206.975258] Modules linked in:
-[  206.976631] Process sh (pid: 281, stack limit = 0x(____ptrval____))
-[  206.978449] CPU: 10 PID: 281 Comm: sh Not tainted 5.2.0-rc1+ #17
-[  206.978955] Hardware name: linux,dummy-virt (DT)
-[  206.979883] pstate: 60000005 (nZCv daif -PAN -UAO)
-[  206.980499] pc : free_ftrace_func_mapper+0x2c/0x118
-[  206.980874] lr : ftrace_count_free+0x68/0x80
-[  206.982539] sp : ffff0000182f3ab0
-[  206.983102] x29: ffff0000182f3ab0 x28: ffff8003d0ec1700
-[  206.983632] x27: ffff000013054b40 x26: 0000000000000001
-[  206.984000] x25: ffff00001385f000 x24: 0000000000000000
-[  206.984394] x23: ffff000013453000 x22: ffff000013054000
-[  206.984775] x21: 0000000000000000 x20: ffff00001385fe28
-[  206.986575] x19: ffff000013872c30 x18: 0000000000000000
-[  206.987111] x17: 0000000000000000 x16: 0000000000000000
-[  206.987491] x15: ffffffffffffffb0 x14: 0000000000000000
-[  206.987850] x13: 000000000017430e x12: 0000000000000580
-[  206.988251] x11: 0000000000000000 x10: cccccccccccccccc
-[  206.988740] x9 : 0000000000000000 x8 : ffff000013917550
-[  206.990198] x7 : ffff000012fac2e8 x6 : ffff000012fac000
-[  206.991008] x5 : ffff0000103da588 x4 : 0000000000000001
-[  206.991395] x3 : 0000000000000001 x2 : ffff000013872a28
-[  206.991771] x1 : 0000000000000000 x0 : 0000000000000000
-[  206.992557] Call trace:
-[  206.993101]  free_ftrace_func_mapper+0x2c/0x118
-[  206.994827]  ftrace_count_free+0x68/0x80
-[  206.995238]  release_probe+0xfc/0x1d0
-[  206.995555]  register_ftrace_function_probe+0x4a8/0x868
-[  206.995923]  ftrace_trace_probe_callback.isra.4+0xb8/0x180
-[  206.996330]  ftrace_dump_callback+0x50/0x70
-[  206.996663]  ftrace_regex_write.isra.29+0x290/0x3a8
-[  206.997157]  ftrace_filter_write+0x44/0x60
-[  206.998971]  __vfs_write+0x64/0xf0
-[  206.999285]  vfs_write+0x14c/0x2f0
-[  206.999591]  ksys_write+0xbc/0x1b0
-[  206.999888]  __arm64_sys_write+0x3c/0x58
-[  207.000246]  el0_svc_common.constprop.0+0x408/0x5f0
-[  207.000607]  el0_svc_handler+0x144/0x1c8
-[  207.000916]  el0_svc+0x8/0xc
-[  207.003699] Code: aa0003f8 a9025bf5 aa0103f5 f946ea80 (f9400303)
-[  207.008388] ---[ end trace 7b6d11b5f542bdf1 ]---
-[  207.010126] Kernel panic - not syncing: Fatal exception
-[  207.011322] SMP: stopping secondary CPUs
-[  207.013956] Dumping ftrace buffer:
-[  207.014595]    (ftrace buffer empty)
-[  207.015632] Kernel Offset: disabled
-[  207.017187] CPU features: 0x002,20006008
-[  207.017985] Memory Limit: none
-[  207.019825] ---[ end Kernel panic - not syncing: Fatal exception ]---
+I think it's best if you take patch 1 and 2 through your tree and we
+take the dts patch through the Qualcomm/arm-soc tree.
 
-Link: http://lkml.kernel.org/r/20190606031754.10798-1-liwei391@huawei.com
+Thanks,
+Bjorn
 
-Signed-off-by: Wei Li <liwei391@huawei.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- kernel/trace/ftrace.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index 4e4b88047fcc..ff3c8ca907c4 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -4286,10 +4286,13 @@ void free_ftrace_func_mapper(struct ftrace_func_mapper *mapper,
- 	struct ftrace_func_entry *entry;
- 	struct ftrace_func_map *map;
- 	struct hlist_head *hhd;
--	int size = 1 << mapper->hash.size_bits;
--	int i;
-+	int size, i;
-+
-+	if (!mapper)
-+		return;
- 
- 	if (free_func && mapper->hash.count) {
-+		size = 1 << mapper->hash.size_bits;
- 		for (i = 0; i < size; i++) {
- 			hhd = &mapper->hash.buckets[i];
- 			hlist_for_each_entry(entry, hhd, hlist) {
--- 
-2.20.1
-
+> On 6/8/19 10:34 AM, Bjorn Andersson wrote:
+> > Some UFS memory devices needs their reset line toggled in order to get
+> > them into a good state for initialization. Provide a new vops to allow
+> > the platform driver to implement this operation.
+> > 
+> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > ---
+> feel free to add
+> Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+> > 
+> > Changes since v2:
+> > - New patch, to allow moving implementation to platform driver
+> > 
+> >   drivers/scsi/ufs/ufshcd.c | 6 ++++++
+> >   drivers/scsi/ufs/ufshcd.h | 8 ++++++++
+> >   2 files changed, 14 insertions(+)
+> > 
+> > diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+> > index 04d3686511c8..ee895a625456 100644
+> > --- a/drivers/scsi/ufs/ufshcd.c
+> > +++ b/drivers/scsi/ufs/ufshcd.c
+> > @@ -6191,6 +6191,9 @@ static int ufshcd_reset_and_restore(struct ufs_hba *hba)
+> >   	int retries = MAX_HOST_RESET_RETRIES;
+> >   
+> >   	do {
+> > +		/* Reset the attached device */
+> > +		ufshcd_vops_device_reset(hba);
+> > +
+> >   		err = ufshcd_host_reset_and_restore(hba);
+> >   	} while (err && --retries);
+> >   
+> > @@ -8322,6 +8325,9 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
+> >   		goto exit_gating;
+> >   	}
+> >   
+> > +	/* Reset the attached device */
+> > +	ufshcd_vops_device_reset(hba);
+> > +
+> >   	/* Host controller enable */
+> >   	err = ufshcd_hba_enable(hba);
+> >   	if (err) {
+> > diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
+> > index 994d73d03207..cd8139052ed6 100644
+> > --- a/drivers/scsi/ufs/ufshcd.h
+> > +++ b/drivers/scsi/ufs/ufshcd.h
+> > @@ -298,6 +298,7 @@ struct ufs_pwr_mode_info {
+> >    * @resume: called during host controller PM callback
+> >    * @dbg_register_dump: used to dump controller debug information
+> >    * @phy_initialization: used to initialize phys
+> > + * @device_reset: called to issue a reset pulse on the UFS device
+> >    */
+> >   struct ufs_hba_variant_ops {
+> >   	const char *name;
+> > @@ -326,6 +327,7 @@ struct ufs_hba_variant_ops {
+> >   	int     (*resume)(struct ufs_hba *, enum ufs_pm_op);
+> >   	void	(*dbg_register_dump)(struct ufs_hba *hba);
+> >   	int	(*phy_initialization)(struct ufs_hba *);
+> > +	void	(*device_reset)(struct ufs_hba *);
+> >   };
+> >   
+> >   /* clock gating state  */
+> > @@ -1045,6 +1047,12 @@ static inline void ufshcd_vops_dbg_register_dump(struct ufs_hba *hba)
+> >   		hba->vops->dbg_register_dump(hba);
+> >   }
+> >   
+> > +static inline void ufshcd_vops_device_reset(struct ufs_hba *hba)
+> > +{
+> > +	if (hba->vops && hba->vops->device_reset)
+> > +		hba->vops->device_reset(hba);
+> > +}
+> > +
+> >   extern struct ufs_pm_lvl_states ufs_pm_lvl_states[];
+> >   
+> >   /*
+> > 
