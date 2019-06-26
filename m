@@ -2,115 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65A7E562E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 09:07:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97834562DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 09:05:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726860AbfFZHHO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 03:07:14 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:36083 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725790AbfFZHHN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 03:07:13 -0400
-Received: by mail-io1-f67.google.com with SMTP id h6so1080216ioh.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 00:07:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YO3NTtUqQg+q5y+jLevvg6DdA+MqWwydBFISViHdvIg=;
-        b=uSxFPFz1oOhSaCmWOKp7072jHy7BtOTB5oQPPcoEsjkMzC0GDSdCUibZ0FnOAbKoN+
-         V22GqVPuxH+X7LFD3UGeDwKZzHTfEdw2lSv1IxhOB6vL7VEKGE3Eeps4viQAFq8brg8/
-         WHPQs+sZh/FXV83NvXHnx2R06RkWQLPoUDTz5HJiZTbMXv/uqAfA6ji7dkWrHBij0l5N
-         Ngxq0uvzA2UK9pMGLxHQekggDgkrXY7BIgDg3nNPPF5jgXNbTaIwFPQvTLcEYv41Ks7D
-         vmIytaUPzzz3nObxwbEkIppJTv02PwMaGz5QG3iCow7IL/VmILcJ00jcYIGeXtpmi9kT
-         fRrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YO3NTtUqQg+q5y+jLevvg6DdA+MqWwydBFISViHdvIg=;
-        b=gzTi70iwoEDyvyniI9Ay7Svkwl/g/vEwIwAJpl4EB8nCr7e53z1xaaHPXlA/Jhw6xm
-         DZ7ZTWPbV7rRTbThDwnqCTrU8t/5Y+l3gn7f7pZgA1bWewkK4dwjKeT0bR445vrUU43G
-         tsBJf19bdNSxXnm6vXx4ffem8haASIxrwHhXBFmbshRXv4p/CZNin3brbn7UmwclCLmi
-         icU7ABl//cbZhJ4VpWPC/6Uk0J/hGHcWu0AVJ544KJQi5Hhu+AU4ET8vU4ujEEOv6/O9
-         X/HRth9HJ+yXH9CQd1F5y/zTP2Qnpi585Lx+J5UwCn+5yd4/LD16ZVG3j2RAuPWDF7aU
-         PQog==
-X-Gm-Message-State: APjAAAVLru9cfDno3tpvc7ESFnkNvNNqC5JWn4VZoAhGonvD2jgHUzMP
-        V7UyPmLroUcX0a2zv+HJTbNMHKqb/UuRjYnkF+tZo1DlmFc=
-X-Google-Smtp-Source: APXvYqwUVeURJFgq5+tDgeunYYmLvd6FqPHhlPb/ql/shK6VJGGdE9qcDN4/pinr9Th11F4v8t/w1seE5/vbWzXl9qw=
-X-Received: by 2002:a5d:9d83:: with SMTP id 3mr3210336ion.65.1561532832763;
- Wed, 26 Jun 2019 00:07:12 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190626042017.54773-1-natechancellor@gmail.com>
-In-Reply-To: <20190626042017.54773-1-natechancellor@gmail.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Wed, 26 Jun 2019 09:07:00 +0200
-Message-ID: <CAKv+Gu85xLD+-CqwgNQtC3Hr9z2R5bm5th8_zd_jMSzA3JE8og@mail.gmail.com>
-Subject: Re: [PATCH] arm64/efi: Mark __efistub_stext_offset as an absolute
- symbol explicitly
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Fangrui Song <maskray@google.com>,
-        Peter Smith <peter.smith@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1726731AbfFZHFP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 03:05:15 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:47262 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725790AbfFZHFP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 03:05:15 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 43245200256;
+        Wed, 26 Jun 2019 09:05:13 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 6C4E52008FD;
+        Wed, 26 Jun 2019 09:05:08 +0200 (CEST)
+Received: from mega.ap.freescale.net (mega.ap.freescale.net [10.192.208.232])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 405874030F;
+        Wed, 26 Jun 2019 15:05:02 +0800 (SGT)
+From:   Anson.Huang@nxp.com
+To:     shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, aisheng.dong@nxp.com, abel.vesa@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH] soc: imx-scu: Add SoC UID(unique identifier) support
+Date:   Wed, 26 Jun 2019 15:07:06 +0800
+Message-Id: <20190626070706.24930-1-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 26 Jun 2019 at 06:20, Nathan Chancellor
-<natechancellor@gmail.com> wrote:
->
-> After r363059 and r363928 in LLVM, a build using ld.lld as the linker
-> with CONFIG_RANDOMIZE_BASE enabled fails like so:
->
-> ld.lld: error: relocation R_AARCH64_ABS32 cannot be used against symbol
-> __efistub_stext_offset; recompile with -fPIC
->
-> Fangrui and Peter figured out that ld.lld is incorrectly considering
-> __efistub_stext_offset as a relative symbol because of the order in
-> which symbols are evaluated. _text is treated as an absolute symbol
-> and stext is a relative symbol, making __efistub_stext_offset a
-> relative symbol.
->
-> Adding ABSOLUTE will force ld.lld to evalute this expression in the
-> right context and does not change ld.bfd's behavior. ld.lld will
-> need to be fixed but the developers do not see a quick or simple fix
-> without some research (see the linked issue for further explanation).
-> Add this simple workaround so that ld.lld can continue to link kernels.
->
-> Link: https://github.com/ClangBuiltLinux/linux/issues/561
-> Link: https://github.com/llvm/llvm-project/commit/025a815d75d2356f2944136269aa5874721ec236
-> Link: https://github.com/llvm/llvm-project/commit/249fde85832c33f8b06c6b4ac65d1c4b96d23b83
-> Debugged-by: Fangrui Song <maskray@google.com>
-> Debugged-by: Peter Smith <peter.smith@linaro.org>
-> Suggested-by: Fangrui Song <maskray@google.com>
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+From: Anson Huang <Anson.Huang@nxp.com>
 
-Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Add i.MX SCU SoC's UID(unique identifier) support, user
+can read it from sysfs:
 
-> ---
->  arch/arm64/kernel/image.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/arm64/kernel/image.h b/arch/arm64/kernel/image.h
-> index 04ca08086d35..9a2d2227907c 100644
-> --- a/arch/arm64/kernel/image.h
-> +++ b/arch/arm64/kernel/image.h
-> @@ -67,7 +67,7 @@
->
->  #ifdef CONFIG_EFI
->
-> -__efistub_stext_offset = stext - _text;
-> +__efistub_stext_offset = ABSOLUTE(stext - _text);
->
->  /*
->   * The EFI stub has its own symbol namespace prefixed by __efistub_, to
-> --
-> 2.22.0
->
+root@imx8qxpmek:~# cat /sys/devices/soc0/soc_uid
+7B64280B57AC1898
+
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ drivers/soc/imx/soc-imx-scu.c | 35 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
+
+diff --git a/drivers/soc/imx/soc-imx-scu.c b/drivers/soc/imx/soc-imx-scu.c
+index 676f612..8d322a1 100644
+--- a/drivers/soc/imx/soc-imx-scu.c
++++ b/drivers/soc/imx/soc-imx-scu.c
+@@ -27,6 +27,36 @@ struct imx_sc_msg_misc_get_soc_id {
+ 	} data;
+ } __packed;
+ 
++struct imx_sc_msg_misc_get_soc_uid {
++	struct imx_sc_rpc_msg hdr;
++	u32 uid_low;
++	u32 uid_high;
++} __packed;
++
++static ssize_t soc_uid_show(struct device *dev,
++			    struct device_attribute *attr, char *buf)
++{
++	struct imx_sc_msg_misc_get_soc_uid msg;
++	struct imx_sc_rpc_msg *hdr = &msg.hdr;
++	u64 soc_uid;
++
++	hdr->ver = IMX_SC_RPC_VERSION;
++	hdr->svc = IMX_SC_RPC_SVC_MISC;
++	hdr->func = IMX_SC_MISC_FUNC_UNIQUE_ID;
++	hdr->size = 1;
++
++	/* the return value of SCU FW is in correct, skip return value check */
++	imx_scu_call_rpc(soc_ipc_handle, &msg, true);
++
++	soc_uid = msg.uid_high;
++	soc_uid <<= 32;
++	soc_uid |= msg.uid_low;
++
++	return sprintf(buf, "%016llX\n", soc_uid);
++}
++
++static DEVICE_ATTR_RO(soc_uid);
++
+ static int imx_scu_soc_id(void)
+ {
+ 	struct imx_sc_msg_misc_get_soc_id msg;
+@@ -102,6 +132,11 @@ static int imx_scu_soc_probe(struct platform_device *pdev)
+ 		goto free_revision;
+ 	}
+ 
++	ret = device_create_file(soc_device_to_device(soc_dev),
++				 &dev_attr_soc_uid);
++	if (ret)
++		goto free_revision;
++
+ 	return 0;
+ 
+ free_revision:
+-- 
+2.7.4
+
