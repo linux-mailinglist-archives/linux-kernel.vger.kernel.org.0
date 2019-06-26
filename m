@@ -2,140 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC88156135
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 06:20:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 978415616E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 06:28:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726589AbfFZEUc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 00:20:32 -0400
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:44940 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726076AbfFZEUc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 00:20:32 -0400
-Received: by mail-yb1-f196.google.com with SMTP id j15so574618ybh.11
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 21:20:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NgZO8AtV2C/NdSOXt6DcG38OSSlpRBV+WcyoIVx6KVA=;
-        b=AnUkRffO0xVZ1SQ60UmB9V/hFuQN5WA/A2dS6gyKE/n6RAEjhMEwkPsDh0Lu+Sf57A
-         /Iv0j/VW+EOgsh7CtC0NxcWXKJciRo+R4amdHaKfT6P7XPnrtjK4twjpZj8aeaSAO4Oe
-         l4zYvoQ0MiiirQKXYyB4EeT8BZe9/A6bWgPSqxn3k+Fxib8H7lx5bUNkrV9hTcUguQJZ
-         1c+2Ql1flEop7FgexVatImQvhm3AGRKuv6eA201fgocwbcatuhua+XJ0pygj/R3+xesi
-         G7iP8TFskS26KvYsNqWcaySuWrgJyMbWzswuph5m5X485OoQ/UYVW5vURRpzJrJhfIaU
-         ileQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NgZO8AtV2C/NdSOXt6DcG38OSSlpRBV+WcyoIVx6KVA=;
-        b=UGZda1m6Z46ZLHTn6rCHGLzShD8OnPZXBln3aLTFBNrw+Zqg9I+0cggeepMgDBoYz5
-         m96vBvkeK6NfwnIxeQjZEvYy+89EloZtTedNpHqjP1oROYSGtpXuLWG3kK6qOOcgGbef
-         f6y+WrWdREQa1VUabM6p2nTO4rHpJO1sI3zFgiiBIRjaBlkDw7M+Xb+2/XM0jDfvAxpM
-         +bp6I9KVZ5MtHipG/+VDKd4ooBGyjQReV7AwOyrdPr1bfWjudrGIsr7AKFJdRIH0ur6t
-         GsPC7ByQ59VWAyU9qEzhh7dbTz+i8B8KyWdWNruJReqTBDPaOVHWtC9S48LM2QAZULqd
-         izXw==
-X-Gm-Message-State: APjAAAXwcQun7n+ekAthF9By6AUIz5ocrFjRnOXlO4jeweb5EoEI0R2R
-        SiyyS9/kMc81VkutHz24Z77owdwOWgwnG5j5bqkMRA==
-X-Google-Smtp-Source: APXvYqxl6FVdu+gYxZacTmTdplmDWXv5k9CmZ1yc6k7DWSdvTLwBWRzWH2fBYU/7eACqslcJMl3o1joGGM7ULUWAbmM=
-X-Received: by 2002:a25:55d7:: with SMTP id j206mr1420987ybb.234.1561522831028;
- Tue, 25 Jun 2019 21:20:31 -0700 (PDT)
+        id S1726559AbfFZE2n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 00:28:43 -0400
+Received: from ozlabs.org ([203.11.71.1]:38487 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726076AbfFZE2m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 00:28:42 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45YVQb1WZNz9s4V;
+        Wed, 26 Jun 2019 14:28:39 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1561523319;
+        bh=gFfeXbLG/ItocsX/m5ahD7HVvSfQilzaK0UbPwO26vM=;
+        h=Date:From:To:Cc:Subject:From;
+        b=uRtIXozcHqpFEUln+8F6aziRdUNvkRvMrhjpUI9+oPvJia24BluLTL+idPkdxgYFC
+         8w11NDeIEU/ZH24mg15M0bbgyFWkj1CRVA7uvY/CxrYjGzYgA3zDWBvFdSpdaw4OUD
+         N9n5pC2VKN2z8vn5fjoyXIQHXJppqX3/QE+RLII4XmbsQjyxZAxOPY9EF5Wmtqjpqf
+         RPJuH8Wnhyf8Bx0QSAF5mlD3SWv9zR0n6fCLRgpyi9A0HkaOs2qJvQnClltOQw82oQ
+         mueumNqT7ct5USi53zsMTsw20f72Rwgyv5zyOLXbmnR8AVceibpxES4OYy3t3WSnna
+         TlBmQ762F3seQ==
+Date:   Wed, 26 Jun 2019 14:28:38 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     David Howells <dhowells@redhat.com>,
+        Tyler Hicks <tyhicks@canonical.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: linux-next: manual merge of the keys tree with the ecryptfs tree
+Message-ID: <20190626142838.0f9bb5d6@canb.auug.org.au>
 MIME-Version: 1.0
-References: <a624ec85-ea21-c72e-f997-06273d9b9f9e@valvesoftware.com>
- <20190621214139.GA31034@kroah.com> <CAHk-=wgXoBMWdBahuQR9e75ri6oeVBBjoVEnk0rN1QXfSKK2Eg@mail.gmail.com>
- <CANn89iL5+x3n9H9v4O6y39W=jvQs=uuXbzOvN5mBbcj0t+wdeg@mail.gmail.com>
- <CAHk-=wjZ=8VSjWuqeG6JJv4dQfK6M0Jgckq5-6=SJa25aku-vQ@mail.gmail.com>
- <CANn89iLU+NNy7QDPNLYPxNWMx5cXuhziOT7TX2uYt42uUJcNVg@mail.gmail.com>
- <b72599d1-b5d5-1c23-15fc-8e2f9454af05@valvesoftware.com> <CAHk-=wjZ1grLwJsGD+Fjz1_U_W47AFodBiwBX84HECUHt-guuw@mail.gmail.com>
- <20190622073753.GA10516@kroah.com> <20190626020220.GA22548@roeck-us.net>
- <20190626022923.GA14595@kroah.com> <53b23451-f45b-932d-a2f8-15f74f07a849@roeck-us.net>
-In-Reply-To: <53b23451-f45b-932d-a2f8-15f74f07a849@roeck-us.net>
-From:   Eric Dumazet <edumazet@google.com>
-Date:   Wed, 26 Jun 2019 06:20:17 +0200
-Message-ID: <CANn89iL69qDuHDPPk7gksoQvCyVEmBRRs-Kc_EVDkpxZe7DwMw@mail.gmail.com>
-Subject: Re: Steam is broken on new kernels
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Pierre-Loup A. Griffais" <pgriffais@valvesoftware.com>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/FLu3G8RQm6nxi1B=Q=_TPaS"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 26, 2019 at 5:43 AM Guenter Roeck <linux@roeck-us.net> wrote:
->
-> On 6/25/19 7:29 PM, Greg Kroah-Hartman wrote:
-> > On Tue, Jun 25, 2019 at 07:02:20PM -0700, Guenter Roeck wrote:
-> >> Hi Greg,
-> >>
-> >> On Sat, Jun 22, 2019 at 09:37:53AM +0200, Greg Kroah-Hartman wrote:
-> >>> On Fri, Jun 21, 2019 at 10:28:21PM -0700, Linus Torvalds wrote:
-> >>>> On Fri, Jun 21, 2019 at 6:03 PM Pierre-Loup A. Griffais
-> >>>> <pgriffais@valvesoftware.com> wrote:
-> >>>>>
-> >>>>> I applied Eric's path to the tip of the branch and ran that kernel and
-> >>>>> the bug didn't occur through several logout / login cycles, so things
-> >>>>> look good at first glance. I'll keep running that kernel and report back
-> >>>>> if anything crops up in the future, but I believe we're good, beyond
-> >>>>> getting distros to ship this additional fix.
-> >>>>
-> >>>> Good. It's now in my tree, so we can get it quickly into stable and
-> >>>> then quickly to distributions.
-> >>>>
-> >>>> Greg, it's commit b6653b3629e5 ("tcp: refine memory limit test in
-> >>>> tcp_fragment()"), and I'm building it right now and I'll push it out
-> >>>> in a couple of minutes assuming nothing odd is going on.
-> >>>
-> >>> This looks good for 4.19 and 5.1, so I'll push out new stable kernels in
-> >>> a bit for them.
-> >>>
-> >>> But for 4.14 and older, we don't have the "hint" to know this is an
-> >>> outbound going packet and not to apply these checks at that point in
-> >>> time, so this patch doesn't work.
-> >>>
-> >>> I'll see if I can figure anything else later this afternoon for those
-> >>> kernels...
-> >>>
-> >>
-> >> I may have missed it, but I don't see a fix for the problem in
-> >> older stable branches. Any news ?
-> >>
-> >> One possibility might be be to apply the part of 75c119afe14f7 which
-> >> introduces TCP_FRAG_IN_WRITE_QUEUE and TCP_FRAG_IN_RTX_QUEUE, if that
-> >> is acceptable.
-> >
-> > That's what people have already discussed on the stable mailing list a
-> > few hours ago, hopefully a patch shows up soon as I'm traveling at the
-> > moment and can't do it myself...
-> >
->
-> Sounds good. Let me know if nothing shows up; I'll be happy to do it
-> if needed.
+--Sig_/FLu3G8RQm6nxi1B=Q=_TPaS
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-Without the rb-tree for rtx queues, old kernels are vulnerable to SACK
-attacks if sk_sndbuf is too big,
-so I would simply  add a cushion in the test, instead of trying to
-backport an illusion of the rb-tree fixes.
+Today's linux-next merge of the keys tree got a conflict in:
 
+  fs/ecryptfs/keystore.c
 
+between commit:
 
-diff --git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output.c
-index a8772e11dc1cb42d4319b6fc072c625d284c7ad5..a554213afa4ac41120d781fe64b7cd18ff9b56e8
-100644
---- a/net/ipv4/tcp_output.c
-+++ b/net/ipv4/tcp_output.c
-@@ -1274,7 +1274,7 @@ int tcp_fragment(struct sock *sk, struct sk_buff
-*skb, u32 len,
-        if (nsize < 0)
-                nsize = 0;
+  29a51df0609c ("ecryptfs: remove unnessesary null check in ecryptfs_keyrin=
+g_auth_tok_for_sig")
 
--       if (unlikely((sk->sk_wmem_queued >> 1) > sk->sk_sndbuf)) {
-+       if (unlikely((sk->sk_wmem_queued >> 1) > sk->sk_sndbuf + 131072)) {
-                NET_INC_STATS(sock_net(sk), LINUX_MIB_TCPWQUEUETOOBIG);
-                return -ENOMEM;
-        }
+from the ecryptfs tree and commit:
+
+  79512db59dc8 ("keys: Replace uid/gid/perm permissions checking with an AC=
+L")
+
+from the keys tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc fs/ecryptfs/keystore.c
+index 216fbe6a4837,ba382f135918..000000000000
+--- a/fs/ecryptfs/keystore.c
++++ b/fs/ecryptfs/keystore.c
+@@@ -1611,10 -1610,10 +1611,10 @@@ int ecryptfs_keyring_auth_tok_for_sig(s
+  {
+  	int rc =3D 0;
+ =20
+- 	(*auth_tok_key) =3D request_key(&key_type_user, sig, NULL);
++ 	(*auth_tok_key) =3D request_key(&key_type_user, sig, NULL, NULL);
+ -	if (!(*auth_tok_key) || IS_ERR(*auth_tok_key)) {
+ +	if (IS_ERR(*auth_tok_key)) {
+  		(*auth_tok_key) =3D ecryptfs_get_encrypted_key(sig);
+ -		if (!(*auth_tok_key) || IS_ERR(*auth_tok_key)) {
+ +		if (IS_ERR(*auth_tok_key)) {
+  			printk(KERN_ERR "Could not find key with description: [%s]\n",
+  			      sig);
+  			rc =3D process_request_key_err(PTR_ERR(*auth_tok_key));
+
+--Sig_/FLu3G8RQm6nxi1B=Q=_TPaS
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0S9HYACgkQAVBC80lX
+0GyktAgAmlOsnZ667Y1vZXSTAOUSHw1/nk9euAZz+qdTxqKuLDfaNESQBj1GmHe+
+0OtNnZnxz1CmP8ISUZyotLeuM158xwu3jbij8na6/yMvP0B1J28uBvLWcKp019Zi
+XEMERzWeeLuIF/sP5Xv6qUAmtVnhstAI71uiFOR0kpuKFIprhGOH/nzEY1yHV60c
+jrBBzcxDDwZfq6KN8kmrG9gWad+epbyLOJ5ESkqSWKza+ggabOt6urGIyUY0QGQ3
+Mn3a+aV1KEA8gooLzuceq8bUje9OyaHEt107ClAGONcrhH/TlI7aVXzzHTstotqG
+sjsE4EaPH2ymlSFZKukLWQOUlaMe2A==
+=7mAc
+-----END PGP SIGNATURE-----
+
+--Sig_/FLu3G8RQm6nxi1B=Q=_TPaS--
