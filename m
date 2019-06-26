@@ -2,93 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2C05562FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 09:16:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E89B656305
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 09:17:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726867AbfFZHQV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 03:16:21 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:45239 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725876AbfFZHQV (ORCPT
+        id S1726921AbfFZHR0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 03:17:26 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:37290 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725876AbfFZHRZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 03:16:21 -0400
-Received: from localhost ([127.0.0.1] helo=vostro.local)
-        by Galois.linutronix.de with esmtp (Exim 4.80)
-        (envelope-from <john.ogness@linutronix.de>)
-        id 1hg2A8-0006V9-Lf; Wed, 26 Jun 2019 09:16:12 +0200
-From:   John Ogness <john.ogness@linutronix.de>
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     Petr Mladek <pmladek@suse.com>, linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [RFC PATCH v2 1/2] printk-rb: add a new printk ringbuffer implementation
-References: <20190607162349.18199-1-john.ogness@linutronix.de>
-        <20190607162349.18199-2-john.ogness@linutronix.de>
-        <20190618045117.GA7419@jagdpanzerIV> <87imt2bl0k.fsf@linutronix.de>
-        <20190625064543.GA19050@jagdpanzerIV>
-        <20190625071500.GB19050@jagdpanzerIV> <875zoujbq4.fsf@linutronix.de>
-        <20190625090620.wufhvdxxiryumdra@pathway.suse.cz>
-        <20190625100322.GD532@jagdpanzerIV> <87woh9hnxg.fsf@linutronix.de>
-        <20190626020837.GA25178@jagdpanzerIV>
-Date:   Wed, 26 Jun 2019 09:16:11 +0200
-In-Reply-To: <20190626020837.GA25178@jagdpanzerIV> (Sergey Senozhatsky's
-        message of "Wed, 26 Jun 2019 11:08:37 +0900")
-Message-ID: <87mui43jgk.fsf@linutronix.de>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
+        Wed, 26 Jun 2019 03:17:25 -0400
+Received: by mail-wm1-f65.google.com with SMTP id f17so899122wme.2;
+        Wed, 26 Jun 2019 00:17:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=RERYcPC3soW1Vk8htH1oyJ3L3Gz0OePkhqi35k0/p0I=;
+        b=OYdbHp6ktNPuS0z/WMYn7B2z7aZw5V6gZdgMOUxyCZTagqn4f5ClzVq4NELVY3G1qp
+         Myo58k+xbuxDbfFrqJIHWc3nqEsQipwsUs1PjtNgFAqook+ApL8c6LLKaaYPs8bOCkJD
+         BpQEEBVkE8HU1idCaM9tlTHsjEbdemWTB3qV5hqlHnpFuNWh3Xc2TN9zR2ulem/II+Jy
+         NkNUls8ZHdL07Tb4HbhoCxPTApdB74/2KsD1LB5G8XqW7VvnqDv/45li3v1P3hg5PVFp
+         fSZNP3HqKvGXM/uFLzFqcbr9659XfFLOdbgGzOwWn0h/KkzSnm46gfTi6r6acFtB+CUr
+         tU6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RERYcPC3soW1Vk8htH1oyJ3L3Gz0OePkhqi35k0/p0I=;
+        b=H3uFMGbpxBPjAOoQ/stzrJtEDlMUBTgtXTvLDXQ72ZUJ1iHbs43Q5JfN/nUAXbNhVu
+         yS5OxGaGUEsX+iVNk27RFz2/w7Kb8rpPBeyigVbzayH7iAgw2qneWith3UgueFngWpER
+         CDG0eDRC+buojszTuYTWEskH9b2JafltKCjzV3k+TabcMjKhXWs1GE45v9lw0BTndNVs
+         YjWv4sY9dXgFoAfekZhF0pR4GmXTkpgdPMigGMjQcfLhQPJRvJs59hZdyt0hDRvd+8nb
+         WGz9jbgIdQ/9edMKDuy4kkHwm6rZNZwzeqtnifXibp2a4cse1GzD6PgKd0/S4FnLZ5aQ
+         Itzg==
+X-Gm-Message-State: APjAAAXJbds/PvcNw6864RQTX/+8Jqtsp/5DW+yOsN8E9Q589KOaWT8d
+        SGrhjLml60lrz0LKzL5Qitjj9ESQGEmeZdPWgio=
+X-Google-Smtp-Source: APXvYqwU9UitzhmKJ5t/pfR8HxsTFi/sqtvSVbTXtdDxS2SooK3ATbTGPoFE8wuP0Gr+BGzKdjZRLixWxlUEFzSUG/Q=
+X-Received: by 2002:a7b:c313:: with SMTP id k19mr1470647wmj.2.1561533442305;
+ Wed, 26 Jun 2019 00:17:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+References: <20190625121321.10197-1-hch@lst.de>
+In-Reply-To: <20190625121321.10197-1-hch@lst.de>
+From:   Manuel Lauss <manuel.lauss@gmail.com>
+Date:   Wed, 26 Jun 2019 09:16:46 +0200
+Message-ID: <CAOLZvyF0NsB6_e0=Vat48Mq1r-Qy45z509jAgQczG7RoaOqjBA@mail.gmail.com>
+Subject: Re: [PATCH] au1200fb: don't use DMA_ATTR_NON_CONSISTENT
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Linux-MIPS <linux-mips@vger.kernel.org>,
+        linux-fbdev <linux-fbdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-06-26, Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com> wrote:
-> [..]
->> > CPU0								CPU1
->> > printk(...)
->> >  sz = vscprintf(NULL, "Comm %s\n", current->comm);
->> > 								ia64_mca_modify_comm()
->> > 								  snprintf(comm, sizeof(comm), "%s %d", current->comm, previous_current->pid);
->> > 								  memcpy(current->comm, comm, sizeof(current->comm));
->> >  if ((buf = prb_reserve(... sz))) {
->> >    vscnprintf(buf, "Comm %s\n", current->comm);
->> > 				^^^^^^^^^^^^^^ ->comm has changed.
->> > 					       Nothing critical, we
->> > 					       should not corrupt
->> > 					       anything, but we will
->> > 					       truncate ->comm if its
->> > 					       new size is larger than
->> > 					       what it used to be when
->> > 					       we did vscprintf(NULL).
->> >    prb_commit(...);
->> >  }
+On Tue, Jun 25, 2019 at 2:13 PM Christoph Hellwig <hch@lst.de> wrote:
 >
-> [..]
->> In my v1 rfc series, I avoided this issue by having a separate dedicated
->> ringbuffer (rb_sprintf) that was used to allocate a temporary max-size
->> (2KB) buffer for sprinting to. Then _that_ was used for the real
->> ringbuffer input (strlen, prb_reserve, memcpy, prb_commit). That would
->> still be the approach of my choice.
->
-> In other words per-CPU buffering, AKA printk_safe ;)
+> au1200fb allocates DMA memory using DMA_ATTR_NON_CONSISTENT, but never
+> calls dma_cache_sync to synchronize the memory between the CPU and the
+> device.  If it was use on a not cache coherent bus that would be fatal,
+> but as far as I can tell from the naming and the mips platform
+> implementation it always is used in cache coherent systems.  Remove
+> the DMA_ATTR_NON_CONSISTENT flag, which is a no-op in that case.
 
-Actually, no. I made use of a printk_ringbuffer (which is global). It
-was used for temporary memory allocation for sprintf, but the result was
-immediately written into the printk buffer from the same context. In
-contrast, printk_safe triggers a different context to handle the
-insertion.
+Very early au1200 chips, on which this driver apparently was developed on,
+had issues with cache coherency, but this was fixed in a later step,
+none of the 3 steppings I have access to exhibit any problems
+with this patch applied.
 
-It is still my intention to eliminate the buffering component of
-printk_safe.
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-After we get a lockless ringbuffer that we are happy with, my next
-series to integrate the buffer into printk will again use the sprint_rb
-solution to avoid the issue discussed in this thread. Perhaps it would
-be best to continue this discussion after I've posted that series.
-
-John Ogness
+Acked-By: Manuel Lauss <manuel.lauss@gmail.com>
