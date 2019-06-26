@@ -2,190 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F37DA56A02
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 15:07:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0805056A03
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 15:08:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727637AbfFZNHw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 09:07:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52096 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726131AbfFZNHw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 09:07:52 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 422B421670;
-        Wed, 26 Jun 2019 13:07:51 +0000 (UTC)
-Date:   Wed, 26 Jun 2019 09:07:48 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Matthew Garrett <matthewgarrett@google.com>
-Cc:     jmorris@namei.org, linux-security@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Matthew Garrett <mjg59@google.com>
-Subject: Re: [PATCH V33 29/30] tracefs: Restrict tracefs when the kernel is
- locked down
-Message-ID: <20190626090748.23eba868@gandalf.local.home>
-In-Reply-To: <20190621011941.186255-30-matthewgarrett@google.com>
-References: <20190621011941.186255-1-matthewgarrett@google.com>
-        <20190621011941.186255-30-matthewgarrett@google.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1727668AbfFZNH6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 09:07:58 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:47079 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726131AbfFZNH6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 09:07:58 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5QD7nIZ4115566
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Wed, 26 Jun 2019 06:07:49 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5QD7nIZ4115566
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019061801; t=1561554470;
+        bh=PzDv2tC8dj+fVoAB6JmrB2Uz04TK2GwW5VB5+lKwPP8=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=m72knQOb/GZHXDluyXwNz+om8uB7FU5nbRbAsnmMe4jsQAOIfJIphbgQ4sSIp3gTv
+         zoroJytLplZLuHljOKHdw5VESlvCmCbBMJWJSjbi315OeeVrPirfdvgYlNdqjIYxtc
+         H3eRO9j/a2ZB2JFjqAqP7jFkS8vKx+mMZ+1pVYKhmcQFL0cFsTy2NlpIwp1vP+Qvha
+         SAn+FKL7mCl6rduoyz4L+Jd00c1EzkcYLbIpTdtXy1+mp9FfP7Gb3UfKWnYHZT+zlD
+         fgcKQdXzJRg4Td5/RBlxXTcl/uOXQAQFMKQN3UlDH9SVvHS5vxsttKahUxGhpAc2I4
+         vDQrvpnK5uZ4A==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5QD7nmp4115563;
+        Wed, 26 Jun 2019 06:07:49 -0700
+Date:   Wed, 26 Jun 2019 06:07:49 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Zhenzhong Duan <tipbot@zytor.com>
+Message-ID: <tip-ab3765a050f7bea942f114d07278e1775e38199b@git.kernel.org>
+Cc:     hpa@zytor.com, mingo@kernel.org, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, zhenzhong.duan@oracle.com
+Reply-To: zhenzhong.duan@oracle.com, hpa@zytor.com,
+          linux-kernel@vger.kernel.org, mingo@kernel.org,
+          tglx@linutronix.de
+In-Reply-To: <1561260904-29669-2-git-send-email-zhenzhong.duan@oracle.com>
+References: <1561260904-29669-2-git-send-email-zhenzhong.duan@oracle.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/pti] x86/speculation/mds: Eliminate leaks by
+ trace_hardirqs_on()
+Git-Commit-ID: ab3765a050f7bea942f114d07278e1775e38199b
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=0.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_12_24,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
+        DKIM_VALID_EF autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 20 Jun 2019 18:19:40 -0700
-Matthew Garrett <matthewgarrett@google.com> wrote:
+Commit-ID:  ab3765a050f7bea942f114d07278e1775e38199b
+Gitweb:     https://git.kernel.org/tip/ab3765a050f7bea942f114d07278e1775e38199b
+Author:     Zhenzhong Duan <zhenzhong.duan@oracle.com>
+AuthorDate: Sun, 23 Jun 2019 11:35:04 +0800
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Wed, 26 Jun 2019 15:01:50 +0200
 
-> Tracefs may release more information about the kernel than desirable, so
-> restrict it when the kernel is locked down in confidentiality mode by
-> preventing open().
-> 
-> Signed-off-by: Matthew Garrett <mjg59@google.com>
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> ---
->  fs/tracefs/inode.c           | 41 +++++++++++++++++++++++++++++++++++-
->  include/linux/security.h     |  1 +
->  security/lockdown/lockdown.c |  1 +
->  3 files changed, 42 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/tracefs/inode.c b/fs/tracefs/inode.c
-> index 7098c49f3693..f6c04fa8e415 100644
-> --- a/fs/tracefs/inode.c
-> +++ b/fs/tracefs/inode.c
-> @@ -24,6 +24,7 @@
->  #include <linux/parser.h>
->  #include <linux/magic.h>
->  #include <linux/slab.h>
-> +#include <linux/security.h>
->  
->  #define TRACEFS_DEFAULT_MODE	0700
->  
-> @@ -31,6 +32,21 @@ static struct vfsmount *tracefs_mount;
->  static int tracefs_mount_count;
->  static bool tracefs_registered;
->  
-> +static int default_open_file(struct inode *inode, struct file *filp)
-> +{
-> +	struct dentry *dentry = filp->f_path.dentry;
-> +	struct file_operations *real_fops;
-> +
-> +	if (!dentry)
-> +		return -EINVAL;
-> +
-> +	if (security_is_locked_down(LOCKDOWN_TRACEFS))
-> +		return -EPERM;
-> +
-> +	real_fops = dentry->d_fsdata;
-> +	return real_fops->open(inode, filp);
-> +}
-> +
->  static ssize_t default_read_file(struct file *file, char __user *buf,
->  				 size_t count, loff_t *ppos)
->  {
-> @@ -50,6 +66,13 @@ static const struct file_operations tracefs_file_operations = {
->  	.llseek =	noop_llseek,
->  };
->  
-> +static const struct file_operations tracefs_proxy_file_operations = {
-> +	.read =		default_read_file,
-> +	.write =	default_write_file,
-> +	.open =		default_open_file,
-> +	.llseek =	noop_llseek,
-> +};
+x86/speculation/mds: Eliminate leaks by trace_hardirqs_on()
 
-This appears to be unused.
+Move mds_idle_clear_cpu_buffers() after trace_hardirqs_on() to ensure
+all store buffer entries are flushed.
 
-> +
->  static struct tracefs_dir_ops {
->  	int (*mkdir)(const char *name);
->  	int (*rmdir)(const char *name);
-> @@ -225,6 +248,12 @@ static int tracefs_apply_options(struct super_block *sb)
->  	return 0;
->  }
->  
-> +static void tracefs_destroy_inode(struct inode *inode)
-> +{
-> +	if (S_ISREG(inode->i_mode))
-> +		kfree(inode->i_fop);
-> +}
-> +
->  static int tracefs_remount(struct super_block *sb, int *flags, char *data)
->  {
->  	int err;
-> @@ -260,6 +289,7 @@ static int tracefs_show_options(struct seq_file *m, struct dentry *root)
->  
->  static const struct super_operations tracefs_super_operations = {
->  	.statfs		= simple_statfs,
-> +	.destroy_inode  = tracefs_destroy_inode,
->  	.remount_fs	= tracefs_remount,
->  	.show_options	= tracefs_show_options,
->  };
-> @@ -393,6 +423,7 @@ struct dentry *tracefs_create_file(const char *name, umode_t mode,
->  {
->  	struct dentry *dentry;
->  	struct inode *inode;
-> +	struct file_operations *proxy_fops;
->  
->  	if (!(mode & S_IFMT))
->  		mode |= S_IFREG;
-> @@ -406,8 +437,16 @@ struct dentry *tracefs_create_file(const char *name, umode_t mode,
->  	if (unlikely(!inode))
->  		return failed_creating(dentry);
->  
-> +	proxy_fops = kzalloc(sizeof(struct file_operations), GFP_KERNEL);
-> +	if (!proxy_fops)
-> +		return failed_creating(dentry);
-> +
-> +	dentry->d_fsdata = fops ? (void *)fops :
-> +		(void *)&tracefs_file_operations;
-> +	memcpy(proxy_fops, dentry->d_fsdata, sizeof(struct file_operations));
-> +	proxy_fops->open = default_open_file;
->  	inode->i_mode = mode;
-> -	inode->i_fop = fops ? fops : &tracefs_file_operations;
-> +	inode->i_fop = proxy_fops;
+Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: bp@alien8.de
+Cc: hpa@zytor.com
+Cc: jgross@suse.com
+Cc: ndesaulniers@google.com
+Cc: gregkh@linuxfoundation.org
+Link: https://lkml.kernel.org/r/1561260904-29669-2-git-send-email-zhenzhong.duan@oracle.com
 
+---
+ arch/x86/include/asm/mwait.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-I think the above would look cleaner as:
-
-
-	if (!fops)
-		fops = &tracefs_file_operations;
-
-	dentry->d_fsdata = (void *)fops;
-	memcpy(proxy_fops, fops, sizeof(*proxy_fops);
-	proxy_fops->open = default_open_file;
-
--- Steve
-
->  	inode->i_private = data;
->  	d_instantiate(dentry, inode);
->  	fsnotify_create(dentry->d_parent->d_inode, dentry);
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index 2563a9e3b415..040e7fc33397 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -100,6 +100,7 @@ enum lockdown_reason {
->  	LOCKDOWN_KPROBES,
->  	LOCKDOWN_BPF,
->  	LOCKDOWN_PERF,
-> +	LOCKDOWN_TRACEFS,
->  	LOCKDOWN_CONFIDENTIALITY_MAX,
->  };
->  
-> diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
-> index a6f7b0770e78..7dc601f06cd3 100644
-> --- a/security/lockdown/lockdown.c
-> +++ b/security/lockdown/lockdown.c
-> @@ -36,6 +36,7 @@ static char *lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
->  	[LOCKDOWN_KPROBES] = "use of kprobes",
->  	[LOCKDOWN_BPF] = "use of bpf",
->  	[LOCKDOWN_PERF] = "unsafe use of perf",
-> +	[LOCKDOWN_TRACEFS] = "use of tracefs",
->  	[LOCKDOWN_CONFIDENTIALITY_MAX] = "confidentiality",
->  };
->  
-
+diff --git a/arch/x86/include/asm/mwait.h b/arch/x86/include/asm/mwait.h
+index eb0f80ce8524..e28f8b723b5c 100644
+--- a/arch/x86/include/asm/mwait.h
++++ b/arch/x86/include/asm/mwait.h
+@@ -86,9 +86,9 @@ static inline void __mwaitx(unsigned long eax, unsigned long ebx,
+ 
+ static inline void __sti_mwait(unsigned long eax, unsigned long ecx)
+ {
+-	mds_idle_clear_cpu_buffers();
+-
+ 	trace_hardirqs_on();
++
++	mds_idle_clear_cpu_buffers();
+ 	/* "mwait %eax, %ecx;" */
+ 	asm volatile("sti; .byte 0x0f, 0x01, 0xc9;"
+ 		     :: "a" (eax), "c" (ecx));
