@@ -2,131 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9A9156B10
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 15:47:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F015356B0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 15:47:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727904AbfFZNrz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 09:47:55 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:59124 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727282AbfFZNrx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 09:47:53 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D77CF8830F;
-        Wed, 26 Jun 2019 13:47:52 +0000 (UTC)
-Received: from sandy.ghostprotocols.net (ovpn-112-10.phx2.redhat.com [10.3.112.10])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id BE2365C205;
-        Wed, 26 Jun 2019 13:47:50 +0000 (UTC)
-Received: by sandy.ghostprotocols.net (Postfix, from userid 1000)
-        id 6470211A; Wed, 26 Jun 2019 10:47:46 -0300 (BRT)
+        id S1727841AbfFZNrw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 09:47:52 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:43986 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727282AbfFZNrv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 09:47:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=CbAWFSZ5Sx47r3jjoWE+iXA54ydy8tFF/w7EEoqE7Kk=; b=gZN1bUpnk4MY2wG2gakx09dJq
+        Rn1ZtzTSuRicwhRW0Wr1DP2PaTb3VZo1WRc7pNg9cqHZ2i4NpFqzaGB6MSssAoZuCyiNtuN3YvuTg
+        t9PpPY9KrLhNPFLLlYdAToQ43b09S5ac7tnHIP/gERhrhE6ayTjrMgFFK6QdmNhS70UuOWi+Ls0me
+        YpeemGPnCXfBrkTNVZa0/tJXxWr3eLD3nn7CrBGMTopMKIu+h6+I9KcTsQsMW0Ml+/80lyH3xAXSX
+        h+z6747pXIi1lC36D7lYTImT2evS89phjRAlspb9ADO4z0ne/COa74PcQpzyNYqppBRZJMLTN93ip
+        E8B73jISQ==;
+Received: from 177.205.71.220.dynamic.adsl.gvt.net.br ([177.205.71.220] helo=bombadil.infradead.org)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hg8H7-0002oG-SD; Wed, 26 Jun 2019 13:47:49 +0000
+Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
+        (envelope-from <mchehab@bombadil.infradead.org>)
+        id 1hg8H5-0003fm-SX; Wed, 26 Jun 2019 10:47:47 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Emese Revfy <re.emese@gmail.com>
+Subject: [PATCH] docs: move gcc_plugins.txt to core-api and rename to .rst
 Date:   Wed, 26 Jun 2019 10:47:46 -0300
-From:   Arnaldo Carvalho de Melo <acme@redhat.com>
-To:     Masanari Iida <standby24x7@gmail.com>
-Cc:     ak@linux.intel.com, kan.liang@intel.com,
-        linux-kernel@vger.kernel.org, acme@kernel.org
-Subject: Re: [PATCH] perf vendor events intel: Fix typos in
- floating-point.json
-Message-ID: <20190626134746.GA2227@redhat.com>
-References: <20190626110436.22563-1-standby24x7@gmail.com>
+Message-Id: <4937ff4f93282ed57c9859de4300b4d835880ebb.1561556794.git.mchehab+samsung@kernel.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190626110436.22563-1-standby24x7@gmail.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Wed, 26 Jun 2019 13:47:52 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, Jun 26, 2019 at 08:04:36PM +0900, Masanari Iida escreveu:
-> This patch fix some spelling typo in x86/*/floating-point.json
 
-These are auto-generated files, glad that you CCed your fixes to the
-Intel folks, hopefully they will in turn send it internally so that next
-time we get an update with the fixes, ok?
 
-Thanks,
+The gcc_plugins.txt file is already a ReST file. Move it
+to the core-api book while renaming it.
 
-- Arnaldo
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+---
+ Documentation/{gcc-plugins.txt => core-api/gcc-plugins.rst} | 0
+ Documentation/core-api/index.rst                            | 2 +-
+ 2 files changed, 1 insertion(+), 1 deletion(-)
+ rename Documentation/{gcc-plugins.txt => core-api/gcc-plugins.rst} (100%)
+
+diff --git a/Documentation/gcc-plugins.txt b/Documentation/core-api/gcc-plugins.rst
+similarity index 100%
+rename from Documentation/gcc-plugins.txt
+rename to Documentation/core-api/gcc-plugins.rst
+diff --git a/Documentation/core-api/index.rst b/Documentation/core-api/index.rst
+index 2466a4c51031..d1e5b95bf86d 100644
+--- a/Documentation/core-api/index.rst
++++ b/Documentation/core-api/index.rst
+@@ -35,7 +35,7 @@ Core utilities
+    boot-time-mm
+    memory-hotplug
+    protection-keys
+-
++   gcc-plugins
  
-> Signed-off-by: Masanari Iida <standby24x7@gmail.com>
-> ---
->  tools/perf/pmu-events/arch/x86/nehalemep/floating-point.json    | 2 +-
->  tools/perf/pmu-events/arch/x86/nehalemex/floating-point.json    | 2 +-
->  .../perf/pmu-events/arch/x86/westmereep-dp/floating-point.json  | 2 +-
->  .../perf/pmu-events/arch/x86/westmereep-sp/floating-point.json  | 2 +-
->  tools/perf/pmu-events/arch/x86/westmereex/floating-point.json   | 2 +-
->  5 files changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/tools/perf/pmu-events/arch/x86/nehalemep/floating-point.json b/tools/perf/pmu-events/arch/x86/nehalemep/floating-point.json
-> index 7d2f71a9dee3..6b9b9fe74f3b 100644
-> --- a/tools/perf/pmu-events/arch/x86/nehalemep/floating-point.json
-> +++ b/tools/perf/pmu-events/arch/x86/nehalemep/floating-point.json
-> @@ -15,7 +15,7 @@
->          "UMask": "0x4",
->          "EventName": "FP_ASSIST.INPUT",
->          "SampleAfterValue": "20000",
-> -        "BriefDescription": "X87 Floating poiint assists for invalid input value (Precise Event)"
-> +        "BriefDescription": "X87 Floating point assists for invalid input value (Precise Event)"
->      },
->      {
->          "PEBS": "1",
-> diff --git a/tools/perf/pmu-events/arch/x86/nehalemex/floating-point.json b/tools/perf/pmu-events/arch/x86/nehalemex/floating-point.json
-> index 7d2f71a9dee3..6b9b9fe74f3b 100644
-> --- a/tools/perf/pmu-events/arch/x86/nehalemex/floating-point.json
-> +++ b/tools/perf/pmu-events/arch/x86/nehalemex/floating-point.json
-> @@ -15,7 +15,7 @@
->          "UMask": "0x4",
->          "EventName": "FP_ASSIST.INPUT",
->          "SampleAfterValue": "20000",
-> -        "BriefDescription": "X87 Floating poiint assists for invalid input value (Precise Event)"
-> +        "BriefDescription": "X87 Floating point assists for invalid input value (Precise Event)"
->      },
->      {
->          "PEBS": "1",
-> diff --git a/tools/perf/pmu-events/arch/x86/westmereep-dp/floating-point.json b/tools/perf/pmu-events/arch/x86/westmereep-dp/floating-point.json
-> index 7d2f71a9dee3..6b9b9fe74f3b 100644
-> --- a/tools/perf/pmu-events/arch/x86/westmereep-dp/floating-point.json
-> +++ b/tools/perf/pmu-events/arch/x86/westmereep-dp/floating-point.json
-> @@ -15,7 +15,7 @@
->          "UMask": "0x4",
->          "EventName": "FP_ASSIST.INPUT",
->          "SampleAfterValue": "20000",
-> -        "BriefDescription": "X87 Floating poiint assists for invalid input value (Precise Event)"
-> +        "BriefDescription": "X87 Floating point assists for invalid input value (Precise Event)"
->      },
->      {
->          "PEBS": "1",
-> diff --git a/tools/perf/pmu-events/arch/x86/westmereep-sp/floating-point.json b/tools/perf/pmu-events/arch/x86/westmereep-sp/floating-point.json
-> index 7d2f71a9dee3..6b9b9fe74f3b 100644
-> --- a/tools/perf/pmu-events/arch/x86/westmereep-sp/floating-point.json
-> +++ b/tools/perf/pmu-events/arch/x86/westmereep-sp/floating-point.json
-> @@ -15,7 +15,7 @@
->          "UMask": "0x4",
->          "EventName": "FP_ASSIST.INPUT",
->          "SampleAfterValue": "20000",
-> -        "BriefDescription": "X87 Floating poiint assists for invalid input value (Precise Event)"
-> +        "BriefDescription": "X87 Floating point assists for invalid input value (Precise Event)"
->      },
->      {
->          "PEBS": "1",
-> diff --git a/tools/perf/pmu-events/arch/x86/westmereex/floating-point.json b/tools/perf/pmu-events/arch/x86/westmereex/floating-point.json
-> index 7d2f71a9dee3..6b9b9fe74f3b 100644
-> --- a/tools/perf/pmu-events/arch/x86/westmereex/floating-point.json
-> +++ b/tools/perf/pmu-events/arch/x86/westmereex/floating-point.json
-> @@ -15,7 +15,7 @@
->          "UMask": "0x4",
->          "EventName": "FP_ASSIST.INPUT",
->          "SampleAfterValue": "20000",
-> -        "BriefDescription": "X87 Floating poiint assists for invalid input value (Precise Event)"
-> +        "BriefDescription": "X87 Floating point assists for invalid input value (Precise Event)"
->      },
->      {
->          "PEBS": "1",
-> -- 
-> 2.22.0.214.g8dca754b1e87
+ Interfaces for kernel debugging
+ ===============================
+-- 
+2.21.0
+
+
