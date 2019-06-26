@@ -2,173 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AFD8565C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 11:40:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 432C5565D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 11:44:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727010AbfFZJkG convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 26 Jun 2019 05:40:06 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:3190 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725379AbfFZJkF (ORCPT
+        id S1726628AbfFZJoG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 05:44:06 -0400
+Received: from mail-oi1-f170.google.com ([209.85.167.170]:42499 "EHLO
+        mail-oi1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725379AbfFZJoG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 05:40:05 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5Q9cd6m050406
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 05:40:04 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2tc5g1t1a3-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 05:40:04 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <naveen.n.rao@linux.vnet.ibm.com>;
-        Wed, 26 Jun 2019 10:40:02 +0100
-Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 26 Jun 2019 10:39:58 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5Q9dm2T15729130
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 26 Jun 2019 09:39:48 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AC53F4C046;
-        Wed, 26 Jun 2019 09:39:57 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5AD584C044;
-        Wed, 26 Jun 2019 09:39:57 +0000 (GMT)
-Received: from localhost (unknown [9.124.35.28])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 26 Jun 2019 09:39:57 +0000 (GMT)
-Date:   Wed, 26 Jun 2019 15:09:56 +0530
-From:   "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
-Subject: Re: [PATCH 7/7] powerpc/kprobes: Allow probing on any ftrace address
-To:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Joe Perches <joe@perches.com>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Ingo Molnar <mingo@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-References: <cover.1560868106.git.naveen.n.rao@linux.vnet.ibm.com>
-        <d26f5467577ff0aeecea55e7035ea64e303bdf17.1560868106.git.naveen.n.rao@linux.vnet.ibm.com>
-        <20190621235034.acc00fc3e2b2c7e89caa1fd5@kernel.org>
-In-Reply-To: <20190621235034.acc00fc3e2b2c7e89caa1fd5@kernel.org>
-User-Agent: astroid/0.14.0 (https://github.com/astroidmail/astroid)
+        Wed, 26 Jun 2019 05:44:06 -0400
+Received: by mail-oi1-f170.google.com with SMTP id s184so1418799oie.9;
+        Wed, 26 Jun 2019 02:44:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=FWE8M8rx2al2WmpLiaszR8ERWhndI8CHZ91PqS/pz0A=;
+        b=OeRsMz+9cjbakYaf2D3qd+/K+lxO/QrMUGGr/2vAjSRDEDzaKM7JFQS2zDbvrTnlpE
+         jfOPS9PfsjsNEaTNoq+pBDi4uZwyDFTgKtfzhDeB9NxR+fvxFh3Nzo/Tdkxhn/DVtZ8f
+         Yz8D6sYbF91qQXdb3y0z7OKpBrRZU2+R5Pq0xQ7g208v2Prdfqc0DkAbZNo0aPlKIzg7
+         baPSR14ZZjXFooQujIEfkX+LmeWxqhs8ITp9CRiumvsIIZZSINOPTm+WBCn7qFHOpyHs
+         ZN0SNk4nCKt1tQtoFKD7QIFafBXj4mSESsqiksb9BHCk/G1If3zLI0NF8SCuqvYY13pc
+         jSiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=FWE8M8rx2al2WmpLiaszR8ERWhndI8CHZ91PqS/pz0A=;
+        b=JBT4qW9g1PDPWAl0nRi7i8WxeVEUu3odh9/h5+ozGBAOQRt9QlnLtB/USRvxt/rnmR
+         jjTWQ8OJFPyubGzlGfZcwpr17Elz2L5r9jvGCfrtSNgaVyXBTbm6BcT4piVU5+LDwPJe
+         9SL8nf1Yv/qxUHoqPKIW8JAdgTVEOF+1wl+c5+qqXUmq31TYXmHHCx6btuMK4NoAQiaL
+         ObvDzijH37/vfoxVmK9AE6Kdph0jeLx38QvCP4VQg+i5lFIxsuOMQ7om83DqPP/WcBhT
+         517cVRTNXCIPyV9w58rY/Qdlgb+agKzluiAlvrTfqITQWqTda+HqUKKNgUMQjFUXwgEa
+         okOg==
+X-Gm-Message-State: APjAAAU2Y4nJqGMjUZ2YqW7TkX2nlpoJ+SlEseL6ge92StnWluu9cGtc
+        orO06B96P4rC9PZd2UP9EFyUI/E4s7Nn9CWuuB8=
+X-Google-Smtp-Source: APXvYqz+xJQrf+JUKTlVpdGKJZZ1zqONbH4N9BougchUbsGfniXJhXCv4x23r5NorJCiZXPfOOMJBow3JfSicukXlrc=
+X-Received: by 2002:aca:b9d4:: with SMTP id j203mr1199591oif.5.1561542245446;
+ Wed, 26 Jun 2019 02:44:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8BIT
-X-TM-AS-GCONF: 00
-x-cbid: 19062609-0020-0000-0000-0000034D817E
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19062609-0021-0000-0000-000021A0F5C4
-Message-Id: <1561541820.15ifr1qex2.naveen@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-26_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=688 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906260116
+From:   Wanpeng Li <kernellwp@gmail.com>
+Date:   Wed, 26 Jun 2019 17:43:55 +0800
+Message-ID: <CANRm+Cyge6viybs63pt7W-cRdntx+wfyOq5EWE2qmEQ71SzMHg@mail.gmail.com>
+Subject: cputime takes cstate into consideration
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Radim Krcmar <rkrcmar@redhat.com>,
+        Marcelo Tosatti <mtosatti@redhat.com>,
+        KarimAllah <karahmed@amazon.de>,
+        LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Masami Hiramatsu wrote:
-> On Tue, 18 Jun 2019 20:17:06 +0530
-> "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com> wrote:
-> 
->> With KPROBES_ON_FTRACE, kprobe is allowed to be inserted on instructions
->> that branch to _mcount (referred to as ftrace location). With
->> -mprofile-kernel, we now include the preceding 'mflr r0' as being part
->> of the ftrace location.
->> 
->> However, by default, probing on an instruction that is not actually the
->> branch to _mcount() is prohibited, as that is considered to not be at an
->> instruction boundary. This is not the case on powerpc, so allow the same
->> by overriding arch_check_ftrace_location()
->> 
->> In addition, we update kprobe_ftrace_handler() to detect this scenarios
->> and to pass the proper nip to the pre and post probe handlers.
->> 
->> Signed-off-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
->> ---
->>  arch/powerpc/kernel/kprobes-ftrace.c | 30 ++++++++++++++++++++++++++++
->>  1 file changed, 30 insertions(+)
->> 
->> diff --git a/arch/powerpc/kernel/kprobes-ftrace.c b/arch/powerpc/kernel/kprobes-ftrace.c
->> index 972cb28174b2..6a0bd3c16cb6 100644
->> --- a/arch/powerpc/kernel/kprobes-ftrace.c
->> +++ b/arch/powerpc/kernel/kprobes-ftrace.c
->> @@ -12,14 +12,34 @@
->>  #include <linux/preempt.h>
->>  #include <linux/ftrace.h>
->>  
->> +/*
->> + * With -mprofile-kernel, we patch two instructions -- the branch to _mcount
->> + * as well as the preceding 'mflr r0'. Both these instructions are claimed
->> + * by ftrace and we should allow probing on either instruction.
->> + */
->> +int arch_check_ftrace_location(struct kprobe *p)
->> +{
->> +	if (ftrace_location((unsigned long)p->addr))
->> +		p->flags |= KPROBE_FLAG_FTRACE;
->> +	return 0;
->> +}
->> +
->>  /* Ftrace callback handler for kprobes */
->>  void kprobe_ftrace_handler(unsigned long nip, unsigned long parent_nip,
->>  			   struct ftrace_ops *ops, struct pt_regs *regs)
->>  {
->>  	struct kprobe *p;
->> +	int mflr_kprobe = 0;
->>  	struct kprobe_ctlblk *kcb;
->>  
->>  	p = get_kprobe((kprobe_opcode_t *)nip);
->> +	if (unlikely(!p)) {
-> 
-> Hmm, is this really unlikely? If we put a kprobe on the second instruction address,
-> we will see p == NULL always.
-> 
->> +		p = get_kprobe((kprobe_opcode_t *)(nip - MCOUNT_INSN_SIZE));
->> +		if (!p)
-> 
-> Here will be unlikely, because we can not find kprobe at both of nip and
-> nip - MCOUNT_INSN_SIZE.
-> 
->> +			return;
->> +		mflr_kprobe = 1;
->> +	}
->> +
->>  	if (unlikely(!p) || kprobe_disabled(p))
-> 
-> "unlikely(!p)" is not needed here.
+Hi all,
 
-...
+After exposing mwait/monitor into kvm guest, the guest can make
+physical cpu enter deeper cstate through mwait instruction, however,
+the top command on host still observe 100% cpu utilization since qemu
+process is running even though guest who has the power management
+capability executes mwait. Actually we can observe the physical cpu
+has already enter deeper cstate by powertop on host. Could we take
+cstate into consideration when accounting cputime etc?
 
-Joe Perches wrote:
-> On Fri, 2019-06-21 at 23:50 +0900, Masami Hiramatsu wrote:
->> On Tue, 18 Jun 2019 20:17:06 +0530
->> "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com> wrote:
-> 
-> trivia:
-> 
->> > diff --git a/arch/powerpc/kernel/kprobes-ftrace.c b/arch/powerpc/kernel/kprobes-ftrace.c
-> []
->> > @@ -57,6 +82,11 @@ NOKPROBE_SYMBOL(kprobe_ftrace_handler);
->> >  
->> >  int arch_prepare_kprobe_ftrace(struct kprobe *p)
->> >  {
->> > +	if ((unsigned long)p->addr & 0x03) {
->> > +		printk("Attempt to register kprobe at an unaligned address\n");
-> 
-> Please use the appropriate KERN_<LEVEL> or pr_<level>
-> 
-
-All good points. Thanks for the review.
-
-
-- Naveen
-
-
+Regards,
+Wanpeng Li
