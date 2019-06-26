@@ -2,97 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85B85573AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 23:32:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 58FED573AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 23:35:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726399AbfFZVcm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 17:32:42 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:39952 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726289AbfFZVcm (ORCPT
+        id S1726370AbfFZVfF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 17:35:05 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:45979 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726239AbfFZVfE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 17:32:42 -0400
-Received: by mail-pf1-f195.google.com with SMTP id p184so85873pfp.7
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 14:32:42 -0700 (PDT)
+        Wed, 26 Jun 2019 17:35:04 -0400
+Received: by mail-pg1-f196.google.com with SMTP id z19so1806321pgl.12
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 14:35:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=message-id:mime-version:content-transfer-encoding:in-reply-to
-         :references:subject:to:cc:from:user-agent:date;
-        bh=xaNe52gTlH7uRzDXkViS1kydi/Gmc6DAN/0reN+QD/8=;
-        b=HGVs1bclAbOEXXG+00ww1YiAcgPJaUDs8c6KhzZs0qSXho81TRV1hIRDYI4p3P+oS5
-         wxJihsS1sEj2TMViHikFUkrsrQGyTia8SAyrkZaPBkVceiLL4rujCxA/m5LRUoCr2ZpX
-         bS1Ukkj1FBQTy+QAHrTZIcv/ZmCGwUEuolewg=
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=zBiTY+aof0awu/Xo8X9+DPy4wTEMJB7cBXNAKkHCUDU=;
+        b=n5c3kMT06+/8ie71/DK2fx2llZil1PF5c5H5MiUeCQuY9VtC0p0VWff9eOA/Uq04m7
+         MW5B+oggK8aEJu4QGRnKrsMjYp0QhFxe6taqH9mWYtyfsygKw9lrk5+KTb11LBLpcspw
+         Xt8u62wkuWivq7IUy52WkQu+puHmDGrjiybI3bSyT+rRP6VK+gSOw95n6U5McStAyw7f
+         dp4iC5TZB0/ZUm4quvka7rbXztyMFODW48n0A09cA0azGbkOTpLF8JajuK1v3y71rePb
+         2jlixvsxgJl8En1cl+GBAQgMhSDjZ0sQxIYArXX133EjvLongyj+B1vUuId3LTjODI/i
+         jqAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:mime-version
-         :content-transfer-encoding:in-reply-to:references:subject:to:cc:from
-         :user-agent:date;
-        bh=xaNe52gTlH7uRzDXkViS1kydi/Gmc6DAN/0reN+QD/8=;
-        b=XPkIxKdE32of8s+uygSGLWXaU5RFscadFSv7oUBPJXBgB+KzsMh7EArHmrevC/XSY6
-         jzft2LjS7l/aq/J7fOlnSGcrBSvdBERLExIv+K9gA3GsCU9OmtD6I/kCs6OFAC21BmJL
-         HqTWApFCHYnVRB9GvqfOcTSkHsPfG6ZCbSX1BMbL7R/x6Z/5b/azGe4EVX/Uw+N/twF3
-         dIDrPXVDaXZX1wzcYcAVNauECJ3dkYrYdIpNiG4Vkj3Llz/8q6Xm7U17IQ2upntxcuBT
-         CQn5bZEFUqoU/J8xKyiYpextZJJZoHaYATgZrhPb5AZAP3I86AbrqPVvffbduq24XdD3
-         uPNw==
-X-Gm-Message-State: APjAAAWyq0N/iQ1F+CdvKzHvGjPHJD0DEkziSEnRc+yVtozjZmPEfLQm
-        zuKvuvZLmx++Vn9VbZYLK0sCwQ==
-X-Google-Smtp-Source: APXvYqx1s5f135al8fvcz9ybaaaQrPCh6UykGfmm1OcWMXuY9lKQcBeG5D68heUPHZLR1mClZF5ETQ==
-X-Received: by 2002:a17:90a:24e4:: with SMTP id i91mr1546271pje.9.1561584761690;
-        Wed, 26 Jun 2019 14:32:41 -0700 (PDT)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id x3sm5124124pja.4.2019.06.26.14.32.41
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 26 Jun 2019 14:32:41 -0700 (PDT)
-Message-ID: <5d13e479.1c69fb81.dd08b.b1e4@mx.google.com>
-Content-Type: text/plain; charset="utf-8"
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=zBiTY+aof0awu/Xo8X9+DPy4wTEMJB7cBXNAKkHCUDU=;
+        b=O5BUxCQ4Q0rx+7nuLkiEdxpfJJoL4tedb8+Uk/JpIsOYbdwtimasflX0M1s0r5+JpI
+         DUEFkOuqy6Zxpbr8tenlY8SlXSEE7AlPcFqLbiw5DJt/sbpl5qSD/DUm94WutCf7vk6h
+         R8Gm7Qf+NfTaoDrzY1CQWqg3XAGtXeYUT3aIPB83fhb5ybbCs2XfJqj8zKRG6o55hUNN
+         vJH4T7DQVH0j2aOsO9+vHZQ37VjYDYog3Q56dEojFwF6K18okXNrbRgE1/SKr6BwwPJV
+         R5IGhpM3+U1J45LwOHOodO4nWRZ/X/6h63wsyLbPr0jcsTd3YZrthXztt5PonrVrSy2K
+         5XnA==
+X-Gm-Message-State: APjAAAUcXG8ubR1cn3ONdQwkBqo+WB8wxGKYo1CNL4HTe+OoSUiR39hB
+        KaU4ssbN9RtYl1u2oHuqHP1hJQqN7vpkI3+HL9o=
+X-Google-Smtp-Source: APXvYqwUCzeAzBNyIhbiW8hlMeKx3mkr+1s3nPcDp2uLztvYUsJibJYcRB32bIhCbmOApcInrtsbeRcbn2EAGfTRsRw=
+X-Received: by 2002:a63:5c1c:: with SMTP id q28mr120817pgb.288.1561584904347;
+ Wed, 26 Jun 2019 14:35:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1561550047-19600-1-git-send-email-amasule@codeaurora.org>
-References: <1561550047-19600-1-git-send-email-amasule@codeaurora.org>
-Subject: Re: [PATCH] arm64: dts: sdm845: Add video nodes
-To:     Aniket Masule <amasule@codeaurora.org>, andy.gross@linaro.org,
-        david.brown@linaro.org, mark.rutland@arm.com, robh+dt@kernel.org
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, mgottam@codeaurora.org,
-        vgarodia@codeaurora.org, Aniket Masule <amasule@codeaurora.org>
-From:   Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.8.1
-Date:   Wed, 26 Jun 2019 14:32:40 -0700
+Received: by 2002:a17:90a:8b07:0:0:0:0 with HTTP; Wed, 26 Jun 2019 14:35:04
+ -0700 (PDT)
+Reply-To: troxelljway@gmail.com
+From:   Sergeant Major John Wayne Troxell <anitabikomagu@gmail.com>
+Date:   Wed, 26 Jun 2019 14:35:04 -0700
+Message-ID: <CABf8kmNvqGceZyONNrXCNtyC2896BHxUkEUK1Atm4EoagPhPiw@mail.gmail.com>
+Subject: Meu amor
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Aniket Masule (2019-06-26 04:54:07)
-> This adds video nodes to sdm845 based on the examples
-> in the bindings.
->=20
-> Signed-off-by: Malathi Gottam <mgottam@codeaurora.org>
-
-There should be a From: line with this person's name in the email if
-they're the author. Otherwise this sign-off chain doesn't make sense and
-it should most likely have a Co-developed-by tag instead.
-
-> Signed-off-by: Aniket Masule <amasule@codeaurora.org>
-> ---
->  arch/arm64/boot/dts/qcom/sdm845.dtsi | 30 ++++++++++++++++++++++++++++++
->  1 file changed, 30 insertions(+)
->=20
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/q=
-com/sdm845.dtsi
-> index fcb9330..ff94cfa 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> @@ -2437,6 +2437,36 @@
->                                 <GIC_SPI 425 IRQ_TYPE_LEVEL_HIGH>;
->                         iommus =3D <&apps_smmu 0x0040 0x1>;
->                 };
-> +
-> +               video-codec@aa00000 {
-
-This needs to be sorted by address. It doesn't come after 18800000 (the
-address of the node above).
-
-> +                       compatible =3D "qcom,sdm845-venus";
-> +                       reg =3D <0x0aa00000 0xff000>;
-> +                       interrupts =3D <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
+-- 
+Hello My name is Sergeant, Major. John Wayne Troxell, Contact me back
+at this email ( troxelljway@gmail.com
+ ) and i will answer you
