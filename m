@@ -2,14 +2,14 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED93556FFA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 19:51:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CAA5156FF4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 19:51:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726798AbfFZRvx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 13:51:53 -0400
+        id S1726725AbfFZRvd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 13:51:33 -0400
 Received: from mga01.intel.com ([192.55.52.88]:49814 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726524AbfFZRvK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726537AbfFZRvK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 26 Jun 2019 13:51:10 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -17,7 +17,7 @@ Received: from orsmga005.jf.intel.com ([10.7.209.41])
   by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jun 2019 10:51:09 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.63,420,1557212400"; 
-   d="scan'208";a="337288597"
+   d="scan'208";a="337288600"
 Received: from rchatre-s.jf.intel.com ([10.54.70.76])
   by orsmga005.jf.intel.com with ESMTP; 26 Jun 2019 10:51:08 -0700
 From:   Reinette Chatre <reinette.chatre@intel.com>
@@ -26,9 +26,9 @@ To:     tglx@linutronix.de, fenghua.yu@intel.com, bp@alien8.de,
 Cc:     mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
         linux-kernel@vger.kernel.org,
         Reinette Chatre <reinette.chatre@intel.com>
-Subject: [PATCH 06/10] x86/resctrl: Introduce utility to return pseudo-locked cache portion
-Date:   Wed, 26 Jun 2019 10:48:45 -0700
-Message-Id: <f64478fab77211c05df848658ad523ce942ce3b1.1561569068.git.reinette.chatre@intel.com>
+Subject: [PATCH 07/10] x86/resctrl: Remove unnecessary pointer to pseudo-locked region
+Date:   Wed, 26 Jun 2019 10:48:46 -0700
+Message-Id: <589899b1e49c7d5f579e38f1e69b2bc5e3727250.1561569068.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.17.2
 In-Reply-To: <cover.1561569068.git.reinette.chatre@intel.com>
 References: <cover.1561569068.git.reinette.chatre@intel.com>
@@ -39,64 +39,216 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To prevent eviction of pseudo-locked memory it is required that no
-other resource group uses any portion of a cache that is in use by
-a cache pseudo-locked region.
+Each cache domain (struct rdt_domain) contains a pointer to a
+pseudo-locked region that (if set) is associated with it. At the
+same time each resource group (struct rdtgroup) also contains a
+pointer to a pseudo-locked region that (if set) is associated with
+it.
 
-Introduce a utility that will return a Capacity BitMask (CBM) indicating
-all portions of a provided cache instance being used for cache
-pseudo-locking. This CBM can be used in overlap checking as well as
-cache usage reporting.
+If a pointer from a cache domain to its pseudo-locked region is
+maintained then multiple cache domains could point to a single
+pseudo-locked region when a pseudo-locked region spans multiple
+resources. Such an arrangement would make it harder to support the
+current mechanism of iterating over cache domains in order to find all
+pseudo-locked regions.
+
+In preparation for pseudo-locked regions that could span multiple
+resources the pointer from a cache domain to a pseudo-locked region is
+removed. The pointer to a pseudo-locked region from a resource
+group remains - when needing to process all pseudo-locked regions on the
+system an iteration over all resource groups is used instead of an
+iteration over all cache domains.
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
- arch/x86/kernel/cpu/resctrl/internal.h    |  1 +
- arch/x86/kernel/cpu/resctrl/pseudo_lock.c | 23 +++++++++++++++++++++++
- 2 files changed, 24 insertions(+)
+ arch/x86/kernel/cpu/resctrl/ctrlmondata.c |  3 +-
+ arch/x86/kernel/cpu/resctrl/internal.h    |  6 +--
+ arch/x86/kernel/cpu/resctrl/pseudo_lock.c | 46 +++++++++++------------
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c    |  8 ++--
+ 4 files changed, 32 insertions(+), 31 deletions(-)
 
+diff --git a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
+index 072f584cb238..a0383ff80afe 100644
+--- a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
++++ b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
+@@ -217,7 +217,7 @@ int parse_cbm(struct rdt_parse_data *data, struct rdt_resource *r,
+ 
+ 	if ((rdtgrp->mode == RDT_MODE_EXCLUSIVE ||
+ 	     rdtgrp->mode == RDT_MODE_SHAREABLE) &&
+-	    rdtgroup_cbm_overlaps_pseudo_locked(d, cbm_val)) {
++	    rdtgroup_cbm_overlaps_pseudo_locked(r, d, cbm_val)) {
+ 		rdt_last_cmd_puts("CBM overlaps with pseudo-locked region\n");
+ 		return -EINVAL;
+ 	}
+@@ -293,7 +293,6 @@ static int parse_line(char *line, struct rdt_resource *r,
+ 				rdtgrp->plr->r = r;
+ 				rdtgrp->plr->d_id = d->id;
+ 				rdtgrp->plr->cbm = d->new_ctrl;
+-				d->plr = rdtgrp->plr;
+ 				return 0;
+ 			}
+ 			goto next;
 diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
-index 65f558a2e806..f17633cf4776 100644
+index f17633cf4776..892f38899dda 100644
 --- a/arch/x86/kernel/cpu/resctrl/internal.h
 +++ b/arch/x86/kernel/cpu/resctrl/internal.h
-@@ -568,6 +568,7 @@ int rdtgroup_tasks_assigned(struct rdtgroup *r);
+@@ -309,7 +309,6 @@ struct mbm_state {
+  * @mbps_val:	When mba_sc is enabled, this holds the bandwidth in MBps
+  * @new_ctrl:	new ctrl value to be loaded
+  * @have_new_ctrl: did user provide new_ctrl for this domain
+- * @plr:	pseudo-locked region (if any) associated with domain
+  */
+ struct rdt_domain {
+ 	struct list_head		list;
+@@ -326,7 +325,6 @@ struct rdt_domain {
+ 	u32				*mbps_val;
+ 	u32				new_ctrl;
+ 	bool				have_new_ctrl;
+-	struct pseudo_lock_region	*plr;
+ };
+ 
+ /**
+@@ -567,7 +565,9 @@ enum rdtgrp_mode rdtgroup_mode_by_closid(int closid);
+ int rdtgroup_tasks_assigned(struct rdtgroup *r);
  int rdtgroup_locksetup_enter(struct rdtgroup *rdtgrp);
  int rdtgroup_locksetup_exit(struct rdtgroup *rdtgrp);
- bool rdtgroup_cbm_overlaps_pseudo_locked(struct rdt_domain *d, unsigned long cbm);
-+u32 rdtgroup_pseudo_locked_bits(struct rdt_resource *r, struct rdt_domain *d);
+-bool rdtgroup_cbm_overlaps_pseudo_locked(struct rdt_domain *d, unsigned long cbm);
++bool rdtgroup_cbm_overlaps_pseudo_locked(struct rdt_resource *r,
++					 struct rdt_domain *d,
++					 unsigned long cbm);
+ u32 rdtgroup_pseudo_locked_bits(struct rdt_resource *r, struct rdt_domain *d);
  bool rdtgroup_pseudo_locked_in_hierarchy(struct rdt_domain *d);
  int rdt_pseudo_lock_init(void);
- void rdt_pseudo_lock_release(void);
 diff --git a/arch/x86/kernel/cpu/resctrl/pseudo_lock.c b/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
-index 3ad0c5b59d34..9a4dbdb72d3e 100644
+index 9a4dbdb72d3e..8f20af017f7b 100644
 --- a/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
 +++ b/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
-@@ -1630,3 +1630,26 @@ void rdt_pseudo_lock_release(void)
- 	unregister_chrdev(pseudo_lock_major, "pseudo_lock");
- 	pseudo_lock_major = 0;
+@@ -272,17 +272,10 @@ static int pseudo_lock_cstates_constrain(struct pseudo_lock_region *plr,
+  */
+ static void pseudo_lock_region_clear(struct pseudo_lock_region *plr)
+ {
+-	struct rdt_domain *d;
+-
+ 	plr->size = 0;
+ 	plr->line_size = 0;
+ 	kfree(plr->kmem);
+ 	plr->kmem = NULL;
+-	if (plr->r && plr->d_id >= 0) {
+-		d = rdt_find_domain(plr->r, plr->d_id, NULL);
+-		if (!IS_ERR_OR_NULL(d))
+-			d->plr = NULL;
+-	}
+ 	plr->r = NULL;
+ 	plr->d_id = -1;
+ 	plr->cbm = 0;
+@@ -826,6 +819,7 @@ int rdtgroup_locksetup_exit(struct rdtgroup *rdtgrp)
+ 
+ /**
+  * rdtgroup_cbm_overlaps_pseudo_locked - Test if CBM or portion is pseudo-locked
++ * @r: RDT resource to which @d belongs
+  * @d: RDT domain
+  * @cbm: CBM to test
+  *
+@@ -839,17 +833,17 @@ int rdtgroup_locksetup_exit(struct rdtgroup *rdtgrp)
+  * Return: true if @cbm overlaps with pseudo-locked region on @d, false
+  * otherwise.
+  */
+-bool rdtgroup_cbm_overlaps_pseudo_locked(struct rdt_domain *d, unsigned long cbm)
++bool rdtgroup_cbm_overlaps_pseudo_locked(struct rdt_resource *r,
++					 struct rdt_domain *d,
++					 unsigned long cbm)
+ {
++	unsigned long pseudo_locked;
+ 	unsigned int cbm_len;
+-	unsigned long cbm_b;
+ 
+-	if (d->plr) {
+-		cbm_len = d->plr->r->cache.cbm_len;
+-		cbm_b = d->plr->cbm;
+-		if (bitmap_intersects(&cbm, &cbm_b, cbm_len))
+-			return true;
+-	}
++	pseudo_locked = rdtgroup_pseudo_locked_bits(r, d);
++	cbm_len = r->cache.cbm_len;
++	if (bitmap_intersects(&cbm, &pseudo_locked, cbm_len))
++		return true;
+ 	return false;
  }
-+
-+/**
-+ * rdt_pseudo_locked_bits - Portions of cache instance used for pseudo-locking
-+ * @r:		RDT resource to which cache instance belongs
-+ * @d:		Cache instance
-+ *
-+ * Return: bits in CBM of @d that are used for cache pseudo-locking
-+ */
-+u32 rdtgroup_pseudo_locked_bits(struct rdt_resource *r, struct rdt_domain *d)
-+{
+ 
+@@ -863,13 +857,13 @@ bool rdtgroup_cbm_overlaps_pseudo_locked(struct rdt_domain *d, unsigned long cbm
+  * attempts to create new pseudo-locked regions in the same hierarchy.
+  *
+  * Return: true if a pseudo-locked region exists in the hierarchy of @d or
+- *         if it is not possible to test due to memory allocation issue,
+- *         false otherwise.
++ *         if it is not possible to test due to memory allocation or other
++ *         failure, false otherwise.
+  */
+ bool rdtgroup_pseudo_locked_in_hierarchy(struct rdt_domain *d)
+ {
+ 	cpumask_var_t cpu_with_psl;
+-	struct rdt_resource *r;
 +	struct rdtgroup *rdtgrp;
-+	u32 pseudo_locked = 0;
-+
+ 	struct rdt_domain *d_i;
+ 	bool ret = false;
+ 
+@@ -880,11 +874,16 @@ bool rdtgroup_pseudo_locked_in_hierarchy(struct rdt_domain *d)
+ 	 * First determine which cpus have pseudo-locked regions
+ 	 * associated with them.
+ 	 */
+-	for_each_alloc_enabled_rdt_resource(r) {
+-		list_for_each_entry(d_i, &r->domains, list) {
+-			if (d_i->plr)
+-				cpumask_or(cpu_with_psl, cpu_with_psl,
+-					   &d_i->cpu_mask);
 +	list_for_each_entry(rdtgrp, &rdt_all_groups, rdtgroup_list) {
-+		if (!rdtgrp->plr)
-+			continue;
-+		if (rdtgrp->plr->r && rdtgrp->plr->r->rid == r->rid &&
-+		    rdtgrp->plr->d_id == d->id)
-+			pseudo_locked |= rdtgrp->plr->cbm;
-+	}
++		if (rdtgrp->plr && rdtgrp->plr->d_id >= 0) {
++			d_i = rdt_find_domain(rdtgrp->plr->r, rdtgrp->plr->d_id,
++					      NULL);
++			if (IS_ERR_OR_NULL(d_i)) {
++				ret = true;
++				goto out;
++			}
++			cpumask_or(cpu_with_psl, cpu_with_psl,
++				   &d_i->cpu_mask);
+ 		}
+ 	}
+ 
+@@ -895,6 +894,7 @@ bool rdtgroup_pseudo_locked_in_hierarchy(struct rdt_domain *d)
+ 	if (cpumask_intersects(&d->cpu_mask, cpu_with_psl))
+ 		ret = true;
+ 
++out:
+ 	free_cpumask_var(cpu_with_psl);
+ 	return ret;
+ }
+diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+index 8e6bebd62646..c9070cb4b6a5 100644
+--- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
++++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+@@ -845,8 +845,10 @@ static int rdt_bit_usage_show(struct kernfs_open_file *of,
+ 				break;
+ 			}
+ 		}
 +
-+	return pseudo_locked;
-+}
++		pseudo_locked = rdtgroup_pseudo_locked_bits(r, dom);
++
+ 		for (i = r->cache.cbm_len - 1; i >= 0; i--) {
+-			pseudo_locked = dom->plr ? dom->plr->cbm : 0;
+ 			hwb = test_bit(i, &hw_shareable);
+ 			swb = test_bit(i, &sw_shareable);
+ 			excl = test_bit(i, &exclusive);
+@@ -2542,8 +2544,8 @@ static int __init_one_rdt_domain(struct rdt_domain *d, struct rdt_resource *r,
+ 				d->new_ctrl |= *ctrl | peer_ctl;
+ 		}
+ 	}
+-	if (d->plr && d->plr->cbm > 0)
+-		used_b |= d->plr->cbm;
++
++	used_b |= rdtgroup_pseudo_locked_bits(r, d);
+ 	unused_b = used_b ^ (BIT_MASK(r->cache.cbm_len) - 1);
+ 	unused_b &= BIT_MASK(r->cache.cbm_len) - 1;
+ 	d->new_ctrl |= unused_b;
 -- 
 2.17.2
 
