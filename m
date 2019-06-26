@@ -2,61 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FC8E573FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 00:00:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2339573FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 00:00:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726434AbfFZWAB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 18:00:01 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:56434 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726239AbfFZWAB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 18:00:01 -0400
-Received: from ip5f5a6320.dynamic.kabel-deutschland.de ([95.90.99.32] helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1hgFxO-0004KW-UC; Wed, 26 Jun 2019 23:59:58 +0200
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Douglas Anderson <dianders@chromium.org>
-Cc:     linux-rockchip@lists.infradead.org, mka@chromium.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] ARM: dts: rockchip: Configure BT_DEV_WAKE in on rk3288-veyron
-Date:   Wed, 26 Jun 2019 23:59:58 +0200
-Message-ID: <1962605.yMxvVRIssp@phil>
-In-Reply-To: <20190619183425.149470-1-dianders@chromium.org>
-References: <20190619183425.149470-1-dianders@chromium.org>
+        id S1726484AbfFZWAq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 18:00:46 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:50435 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726239AbfFZWAq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 18:00:46 -0400
+Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hgFxt-0008Je-NF; Thu, 27 Jun 2019 00:00:29 +0200
+Date:   Thu, 27 Jun 2019 00:00:28 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Fenghua Yu <fenghua.yu@intel.com>
+cc:     Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        H Peter Anvin <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim Krcmar <rkrcmar@redhat.com>,
+        Christopherson Sean J <sean.j.christopherson@intel.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Xiaoyao Li <xiaoyao.li@intel.com>,
+        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        x86 <x86@kernel.org>, kvm@vger.kernel.org
+Subject: Re: [PATCH v9 17/17] x86/split_lock: Warn on unaligned address in
+ atomic bit operations
+In-Reply-To: <1560897679-228028-18-git-send-email-fenghua.yu@intel.com>
+Message-ID: <alpine.DEB.2.21.1906262352310.32342@nanos.tec.linutronix.de>
+References: <1560897679-228028-1-git-send-email-fenghua.yu@intel.com> <1560897679-228028-18-git-send-email-fenghua.yu@intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Mittwoch, 19. Juni 2019, 20:34:25 CEST schrieb Douglas Anderson:
-> This is the other half of the hacky solution from commit f497ab6b4bb8
-> ("ARM: dts: rockchip: Configure BT_HOST_WAKE as wake-up signal on
-> veyron").  Specifically the LPM driver that the Broadcom Bluetooth
-> expects to have (but is missing in mainline) has two halves of the
-> equation: BT_HOST_WAKE and BT_DEV_WAKE.  The BT_HOST_WAKE (which was
-> handled in the previous commit) is the one that lets the Bluetooth
-> wake the system up.  The BT_DEV_WAKE (this patch) tells the Bluetooth
-> that it's OK to go into a low power mode.  That means we were burning
-> a bit of extra power in S3 without this patch.  Measurements are a bit
-> noisy, but it appears to be a few mA worth of difference.
-> 
-> NOTE: Though these pins don't do much on systems with Marvell
-> Bluetooth, downstream kernels set it on all veyron boards so we'll do
-> the same.
-> 
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+On Tue, 18 Jun 2019, Fenghua Yu wrote:
 
-applied for 5.3
+> An atomic bit operation operates one bit in a single unsigned long location
+> in a bitmap. In 64-bit mode, the location is at:
+> base address of the bitmap + (bit offset in the bitmap / 64) * 8
+> 
+> If the base address is unaligned to unsigned long, each unsigned long
+> location operated by the atomic operation will be unaligned to unsigned
+> long and a split lock issue will happen if the unsigned long location
+> crosses two cache lines.
 
-Thanks
-Heiko
+Stop harping on this split lock stuff.
+
+Unalignedness is a problem per se as myself and others explained you a
+gazillion times now.
+
+The fact that it does not matter on x86 except when it crosses a cacheline
+does not make it in any way a split lock issue.
+
+The root cause is misalignment per se.
+
+Aside of that this debug enhancement wants to be the first patch in the
+series not the last.
+
+Thanks,
+
+	tglx
+	
+
 
 
