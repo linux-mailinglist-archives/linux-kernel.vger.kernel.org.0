@@ -2,76 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F36A564C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 10:44:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42E39564D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 10:45:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726768AbfFZIoQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 04:44:16 -0400
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:56683 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726006AbfFZIoP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 04:44:15 -0400
-X-Originating-IP: 86.250.200.211
-Received: from mc-bl-xps13.lan (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
-        (Authenticated sender: maxime.chevallier@bootlin.com)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 973EFC000C;
-        Wed, 26 Jun 2019 08:44:07 +0000 (UTC)
-From:   Maxime Chevallier <maxime.chevallier@bootlin.com>
-To:     davem@davemloft.net, Pablo Neira Ayuso <pablo@netfilter.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>
-Cc:     Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        thomas.petazzoni@bootlin.com
-Subject: [PATCH net-next] net: ethtool: Allow parsing ETHER_FLOW types when using flow_rule
-Date:   Wed, 26 Jun 2019 10:44:03 +0200
-Message-Id: <20190626084403.17749-1-maxime.chevallier@bootlin.com>
-X-Mailer: git-send-email 2.20.1
+        id S1726932AbfFZIpi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 04:45:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37748 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725379AbfFZIpi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 04:45:38 -0400
+Received: from localhost (unknown [116.247.127.123])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8EBFC20663;
+        Wed, 26 Jun 2019 08:45:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561538737;
+        bh=jvsZqjEQnASdRxZOr3zO9LWRe/Px8twmY6fib3BKxVw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=mBZg3DinbEV2ocovpkySsP0MS+Prmzo2SgUL2iQznltoVocJWxqJ6cNfE/UQ0trQL
+         6YHvl7XXP0KWpiEu6xEWGViJsBwvH1teSgPWZSMrP7G7xVCIa/QyLFDfOByFmQtAp2
+         srUjeS0svWpdKgFkarlR21jsxqx60yppeVQxvDR4=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: [PATCH 4.4 0/1] 4.4.184-stable review
+Date:   Wed, 26 Jun 2019 16:45:04 +0800
+Message-Id: <20190626083604.894288021@linuxfoundation.org>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
+User-Agent: quilt/0.66
+X-stable: review
+X-Patchwork-Hint: ignore
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.184-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-4.4.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 4.4.184-rc1
+X-KernelTest-Deadline: 2019-06-28T08:36+00:00
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When parsing an ethtool_rx_flow_spec, users can specify an ethernet flow
-which could contain matches based on the ethernet header, such as the
-MAC address, the VLAN tag or the ethertype.
+This is the start of the stable review cycle for the 4.4.184 release.
+There are 1 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-Only the ethtype field is specific to the ether flow, the MAC and vlan
-fields are processed using the special FLOW_EXT and FLOW_MAC_EXT flags.
+Responses should be made by Fri 28 Jun 2019 08:35:42 AM UTC.
+Anything received after that time might be too late.
 
-Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
----
- net/core/ethtool.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.184-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+and the diffstat can be found below.
 
-diff --git a/net/core/ethtool.c b/net/core/ethtool.c
-index 4d1011b2e24f..01ceba556341 100644
---- a/net/core/ethtool.c
-+++ b/net/core/ethtool.c
-@@ -2883,6 +2883,18 @@ ethtool_rx_flow_rule_create(const struct ethtool_rx_flow_spec_input *input)
- 	match->mask.basic.n_proto = htons(0xffff);
- 
- 	switch (fs->flow_type & ~(FLOW_EXT | FLOW_MAC_EXT | FLOW_RSS)) {
-+	case ETHER_FLOW: {
-+		const struct ethhdr *ether_spec, *ether_m_spec;
-+
-+		ether_spec = &fs->h_u.ether_spec;
-+		ether_m_spec = &fs->m_u.ether_spec;
-+
-+		if (ether_m_spec->h_proto) {
-+			match->key.basic.n_proto = ether_spec->h_proto;
-+			match->mask.basic.n_proto = ether_m_spec->h_proto;
-+		}
-+		}
-+		break;
- 	case TCP_V4_FLOW:
- 	case UDP_V4_FLOW: {
- 		const struct ethtool_tcpip4_spec *v4_spec, *v4_m_spec;
--- 
-2.20.1
+thanks,
+
+greg k-h
+
+-------------
+Pseudo-Shortlog of commits:
+
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 4.4.184-rc1
+
+Eric Dumazet <edumazet@google.com>
+    tcp: refine memory limit test in tcp_fragment()
+
+
+-------------
+
+Diffstat:
+
+ Makefile              | 4 ++--
+ net/ipv4/tcp_output.c | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
 
