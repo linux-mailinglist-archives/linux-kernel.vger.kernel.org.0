@@ -2,81 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52EFF56BEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 16:29:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 06DF556BF1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 16:30:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728124AbfFZO3Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 10:29:25 -0400
-Received: from mailout2n.rrzn.uni-hannover.de ([130.75.2.113]:57249 "EHLO
-        mailout2n.rrzn.uni-hannover.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726157AbfFZO3Y (ORCPT
+        id S1728061AbfFZOaa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 10:30:30 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:42124 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727282AbfFZOa3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 10:29:24 -0400
-Received: from h2730561.stratoserver.net (h2730561.stratoserver.net [85.214.29.144])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mailout2n.rrzn.uni-hannover.de (Postfix) with ESMTPSA id 544CB1F44E;
-        Wed, 26 Jun 2019 16:29:23 +0200 (CEST)
-From:   =?UTF-8?q?Tobias=20Nie=C3=9Fen?= 
-        <tobias.niessen@stud.uni-hannover.de>
-To:     gregkh@linuxfoundation.org
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        linux-kernel@i4.cs.fau.de,
-        =?UTF-8?q?Tobias=20Nie=C3=9Fen?= 
-        <tobias.niessen@stud.uni-hannover.de>,
-        Sabrina Gaube <sabrina-gaube@web.de>
-Subject: [PATCH 2/2] staging: rts5208: Simplify boolean expression to improve code style
-Date:   Wed, 26 Jun 2019 16:28:57 +0200
-Message-Id: <20190626142857.30155-3-tobias.niessen@stud.uni-hannover.de>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20190626142857.30155-1-tobias.niessen@stud.uni-hannover.de>
-References: <20190626142857.30155-1-tobias.niessen@stud.uni-hannover.de>
+        Wed, 26 Jun 2019 10:30:29 -0400
+Received: by mail-ed1-f67.google.com with SMTP id z25so3642704edq.9
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 07:30:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=oycxIMhWeOjgRZ0/QzcUw1Wm4NjGiCorky0TzSRYEqE=;
+        b=ATxugIl2SCaT9srbmP+Rni5GHifDKlPGbXR7cYJH8NZJPoLZdG+YoE+KGlga5ijBjN
+         0IaYYsPbZbhlbZ+tgs7ixOM0KKMv+5E5aECiVHH+fBYMy1syTxMjneNp9IDNlk7a/jbe
+         M++g+/H/ce1vcxRfKzoZWLaBkn7ISoij6+edI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=oycxIMhWeOjgRZ0/QzcUw1Wm4NjGiCorky0TzSRYEqE=;
+        b=fqtp5kKhnsm4QoZ076fQSrHaM/h00cKv6Dpxv7iTXLEdAyd/WLZZBKmOcMTyjz/8Ju
+         qqY07czqMzP7GUNetl3X8iWtXnl/JG/dc20CoAeSycEuYRorslr+UMCIh3V33ym0mcMp
+         uj0imyDFUne5Y86JFyBJ8B++ph92dpqLEMyey7N0dPKsJJ0L0m0euTy5CR1FP4hJHLy3
+         6ameplSw9bz6nXAczvBKgGs2LY+35oWbsy8P7cuHt+yE8CSI3RYNnZdpb4xnNmvuA6wB
+         bxyGEaXLo/V4PFeiQbxLwL8QLSkWbQKWSWd9fLno0+9k20IjxkIKtif5Ky6iTtMddOrj
+         T2JQ==
+X-Gm-Message-State: APjAAAUdC3L+pLn6IT0+9NJa11uWeCyjAlHpFX80dGfI7yTeLfdXIvsY
+        j4Hg8M7b9eeEkjfVy8yOdAu/Cw==
+X-Google-Smtp-Source: APXvYqzNFt6g8HxgwDJyHbLTfRt/7BCAd97Ph8ib/VE+AghliKNlIAXkR9U7cf7MH6mNrMRncjwmSA==
+X-Received: by 2002:a05:6402:2cb:: with SMTP id b11mr5612295edx.281.1561559427848;
+        Wed, 26 Jun 2019 07:30:27 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id j10sm3037251ejk.23.2019.06.26.07.30.26
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 26 Jun 2019 07:30:27 -0700 (PDT)
+Date:   Wed, 26 Jun 2019 16:30:25 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+Cc:     Robert Beckett <bob.beckett@collabora.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 3/4] drm/vblank: estimate vblank while disabling
+ vblank if interrupt disabled
+Message-ID: <20190626143025.GN12905@phenom.ffwll.local>
+Mail-Followup-To: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>,
+        Robert Beckett <bob.beckett@collabora.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+References: <cover.1561483965.git.bob.beckett@collabora.com>
+ <b96132cef4b63118df1026a99b3c345692e3de26.1561483965.git.bob.beckett@collabora.com>
+ <20190626132732.GP5942@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190626132732.GP5942@intel.com>
+X-Operating-System: Linux phenom 4.19.0-5-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This bitwisen / boolean expression can be made more readable while
-reducing the line lengths at the same time. This commit uses the
-fact that
+On Wed, Jun 26, 2019 at 04:27:32PM +0300, Ville Syrj‰l‰ wrote:
+> On Tue, Jun 25, 2019 at 06:59:14PM +0100, Robert Beckett wrote:
+> > If interrupts are disabled (e.g. via vblank_disable_fn) and we come to
+> > disable vblank, update the vblank count to best guess as to what it
+> > would be had the interrupts remained enabled, and update the timesamp to
+> > now.
+> > 
+> > This avoids a stale vblank event being sent while disabling crtcs during
+> > atomic modeset.
+> > 
+> > Fixes: 68036b08b91bc ("drm/vblank: Do not update vblank count if interrupts
+> > are already disabled.")
+> 
+> I don't understand that commit. drm_vblank_off() should be called
+> when the power is still present, so it looks to me like that
+> commit is actually wrong. So I think we may want to just revert
+> it and figure out what the actual bug was.
 
-    a & (b | c) == (b | c)
+Hm yeah we might need a power domain get/put around our
+drm_crtc_vblank_off() call to make sure it dtrt. Revert sounds like a good
+idea instead of adding more kludges ... a-b: me on the revert, even though
+I did ack the original patch too.
+-Daniel
 
-evaluates to true if and only if
+> 
+> > 
+> > Signed-off-by: Robert Beckett <bob.beckett@collabora.com>
+> > ---
+> >  drivers/gpu/drm/drm_vblank.c | 16 +++++++++++++++-
+> >  1 file changed, 15 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/gpu/drm/drm_vblank.c b/drivers/gpu/drm/drm_vblank.c
+> > index 7dabb2bdb733..db68b8cbf797 100644
+> > --- a/drivers/gpu/drm/drm_vblank.c
+> > +++ b/drivers/gpu/drm/drm_vblank.c
+> > @@ -375,9 +375,23 @@ void drm_vblank_disable_and_save(struct drm_device *dev, unsigned int pipe)
+> >  	 * interrupts were enabled. This avoids calling the ->disable_vblank()
+> >  	 * operation in atomic context with the hardware potentially runtime
+> >  	 * suspended.
+> > +	 * If interrupts are disabled (e.g. via blank_disable_fn) then make
+> > +	 * best guess as to what it would be now and make sure we have an up
+> > +	 * to date timestamp.
+> >  	 */
+> > -	if (!vblank->enabled)
+> > +	if (!vblank->enabled) {
+> > +		ktime_t now = ktime_get();
+> > +		u32 diff = 0;
+> > +		if (vblank->framedur_ns) {
+> > +			u64 diff_ns = ktime_to_ns(ktime_sub(now, vblank->time));
+> > +			diff = DIV_ROUND_CLOSEST_ULL(diff_ns,
+> > +						     vblank->framedur_ns);
+> > +		}
+> > +
+> > +		store_vblank(dev, pipe, diff, now, vblank->count);
+> > +
+> >  		goto out;
+> > +	}
+> >  
+> >  	/*
+> >  	 * Update the count and timestamp to maintain the
+> > -- 
+> > 2.18.0
+> > 
+> > _______________________________________________
+> > dri-devel mailing list
+> > dri-devel@lists.freedesktop.org
+> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> 
+> -- 
+> Ville Syrj‰l‰
+> Intel
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
-    (a & b) && (a & c)
-
-is true. Since b and c are constants with relatively long names,
-using the second form makes the code much more readable and shorter.
-
-Signed-off-by: Tobias Nie√üen <tobias.niessen@stud.uni-hannover.de>
-Signed-off-by: Sabrina Gaube <sabrina-gaube@web.de>
----
- drivers/staging/rts5208/xd.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/staging/rts5208/xd.c b/drivers/staging/rts5208/xd.c
-index c5ee04ecd1c9..f3dc96a4c59d 100644
---- a/drivers/staging/rts5208/xd.c
-+++ b/drivers/staging/rts5208/xd.c
-@@ -1155,10 +1155,10 @@ static int xd_copy_page(struct rtsx_chip *chip, u32 old_blk, u32 new_blk,
- 					return STATUS_FAIL;
- 				}
- 
--				if (((reg & (XD_ECC1_ERROR | XD_ECC1_UNCORRECTABLE)) ==
--						(XD_ECC1_ERROR | XD_ECC1_UNCORRECTABLE)) ||
--					((reg & (XD_ECC2_ERROR | XD_ECC2_UNCORRECTABLE)) ==
--						(XD_ECC2_ERROR | XD_ECC2_UNCORRECTABLE))) {
-+				if (((reg & XD_ECC1_ERROR) &&
-+				     (reg & XD_ECC1_UNCORRECTABLE)) ||
-+				    ((reg & XD_ECC2_ERROR) &&
-+				     (reg & XD_ECC2_UNCORRECTABLE))) {
- 					rtsx_write_register(chip,
- 							    XD_PAGE_STATUS,
- 							    0xFF,
 -- 
-2.17.0
-
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
