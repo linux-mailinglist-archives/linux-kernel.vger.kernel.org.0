@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4CB356CA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 16:48:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E1CB56CBF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 16:49:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728406AbfFZOr5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 10:47:57 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:38166 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728359AbfFZOrr (ORCPT
+        id S1728504AbfFZOsc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 10:48:32 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:36303 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728360AbfFZOrt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 10:47:47 -0400
-Received: by mail-wm1-f65.google.com with SMTP id s15so2403941wmj.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 07:47:46 -0700 (PDT)
+        Wed, 26 Jun 2019 10:47:49 -0400
+Received: by mail-wr1-f67.google.com with SMTP id n4so3087360wrs.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 07:47:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=v71fsQ7QyhP31JuRKVVsI8LiqKCJEYn7OMik1mGoLt0=;
-        b=Nqrwya3TRyYnvJF3BQnilU92ZO48VVczT3CW9qcki1wMMC070R130zAjj4vWi72UUA
-         aF6EIxrsr6nTpaGj2OQnsR9EC3Fg1DkCqBbRXNqDeiBtef+8IqQHuFV0FRLYuozla0dD
-         +DgdswZjhqmGsad9IhlqOoJGbaG96atZOLESva79eNieLVNyUtW48IWgy9pw1ob7viTf
-         4gTZj1d2C0Rv/gikCOyGn/0Ckx6311/9a+h3HrnQ4xoUQUtrbOTydqtg/bXtOJu82oNu
-         7o7DE3NGslZ47KvK/yKDfRfxVcTXlYzBMRvCfODSU+TIDXTV8jWrXM0z5WlEVyhM/DtU
-         wCLg==
+        bh=JJjc1JQr3nhAuAaXUtH5dZp0geSFnyJ4aiNQzKjFRos=;
+        b=SE0BjstOMK/odoLOHXMPQOO9gdXALfQsZWWqOLTLPHSVLSuGlYwN1oKzgxTyxImX5j
+         d2xbYIRU58sAKJJ9lyP6oYLymRwHdnvCm8j1JjmUKESOLfHST5IrxCIKDJl2UieHTunP
+         PRlvQJUSIZbCwWwwuDoJ9+NLBhQ1p/d1Pl2w+oNTBBJZQ6x8Ys/qlsv+qDeTJ/uQk7KB
+         GOyOZv7c7MOnVo+4f8cFPLLD1G5PIXlDI56a+MQduJEb2gMFs5yFfyOeqCTCq76CDxcI
+         jhHf6Ery9blBEbtUxXdBpUuIjyXW/kCuvxE6DiHVioqlZamtBcXpzJ7zlwHGos/xH5A1
+         xS8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=v71fsQ7QyhP31JuRKVVsI8LiqKCJEYn7OMik1mGoLt0=;
-        b=De8HFcOXFZ7Szsx2XZ0V6Q+k+hqU7UQDE6qZUI3FdIxXg/QnATcIh/e/6HuIVM/FJb
-         Sa+ke8mSyakFIedhs/+vjUYg0ZUmTJz2wdzZ3wqbtr5w2ue17ijDMk6YsFURuu7pEP5s
-         z8iJlChctW8bkq+hi2savsPzM4L1ITCLBOU7SgPIjy9DOctOWWEYQ4zY9lMYqbxVWWKR
-         ZtWaPb1MTcPapQdEPbBfsOdik98VlLTMOfD8p6x/YwUO13YuwSfvY7A3R955RljJXOug
-         uTgFdxd/OFVgrJNUt2RQdw3ubsmf9r1/O6bBDevqLxkYeSVuc9ZizsIELPVv/5FYPVHC
-         Eu3g==
-X-Gm-Message-State: APjAAAXU22IQP8RFnpVloIP5V9Y1wSa2Wxa7m7KdNEeC3QrjI6DxI5lg
-        9VhNQnk+vUgf/KO29KWPJqUYnw==
-X-Google-Smtp-Source: APXvYqynXaSxwzqZFYAA9jYXWlOtz58xh3TiXT9jAlfRs+jFVS5cBmnHG9QBgPNkMiFQIpEZ5XKzAw==
-X-Received: by 2002:a05:600c:228b:: with SMTP id 11mr3103332wmf.26.1561560465957;
-        Wed, 26 Jun 2019 07:47:45 -0700 (PDT)
+        bh=JJjc1JQr3nhAuAaXUtH5dZp0geSFnyJ4aiNQzKjFRos=;
+        b=JI4YFaWwharjTvNd7M9zAwnodN1RmO4opP1a9d0I8koZKG09q2nzmZVw+jFJycUfv/
+         sUf1AISVaViVsa4JsNfL2vQR7S8ZIBYZ2fuH2Zur0/56OLIpvsAJzaC9n52+tvBOPXO/
+         +Jboza9YAK+78nwgJSUvkoVS8vl9bxb/2jMFwX7qOZT9DBLvRY03i8lkzI1UKBrK8U9r
+         NyZWatfx7Oxe1kkynmU8cdfhYHMmm8UlS0yhEDP9u/EGIcrdWHTsAzGhUL48oPU7k0IZ
+         3tSDCAGo04JhG4W9U8Ar1qARhR50mOptu5EMRcXH/gMH+R+FwR/QxVWBZDdigv7HL2TU
+         1bfw==
+X-Gm-Message-State: APjAAAXvzuSFu3iJ0TmZdb6hO+PVQyp+CwaqYJ405aoBXAU6pBCFm92p
+        uRgqAVGYlAmVs92wjix0VcEHKw==
+X-Google-Smtp-Source: APXvYqyxEgDaR8PechUZppgNIlEgcO4mmIWW8DDVfGD7qzqiOIaUPSy/TqVv7qajfeQPaYi9BFKBJQ==
+X-Received: by 2002:a5d:4a43:: with SMTP id v3mr4116991wrs.151.1561560467437;
+        Wed, 26 Jun 2019 07:47:47 -0700 (PDT)
 Received: from mai.imgcgcw.net (26.92.130.77.rev.sfr.net. [77.130.92.26])
-        by smtp.gmail.com with ESMTPSA id h84sm2718557wmf.43.2019.06.26.07.47.44
+        by smtp.gmail.com with ESMTPSA id h84sm2718557wmf.43.2019.06.26.07.47.46
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 Jun 2019 07:47:44 -0700 (PDT)
+        Wed, 26 Jun 2019 07:47:46 -0700 (PDT)
 From:   Daniel Lezcano <daniel.lezcano@linaro.org>
 To:     tglx@linutronix.de
 Cc:     linux-kernel@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
@@ -51,9 +51,9 @@ Cc:     linux-kernel@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
         Thierry Reding <treding@nvidia.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         linux-tegra@vger.kernel.org (open list:TEGRA ARCHITECTURE SUPPORT)
-Subject: [PATCH 20/25] clocksource/drivers/tegra: Add verbose definition for 1MHz constant
-Date:   Wed, 26 Jun 2019 16:46:46 +0200
-Message-Id: <20190626144651.16742-20-daniel.lezcano@linaro.org>
+Subject: [PATCH 21/25] clocksource/drivers/tegra: Restore base address before cleanup
+Date:   Wed, 26 Jun 2019 16:46:47 +0200
+Message-Id: <20190626144651.16742-21-daniel.lezcano@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190626144651.16742-1-daniel.lezcano@linaro.org>
 References: <adba7d03-e9bd-9542-60bc-0f2d4874a40e@linaro.org>
@@ -65,62 +65,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Dmitry Osipenko <digetx@gmail.com>
 
-Convert all 1MHz literals to a verbose constant for better readability.
+We're adjusting the timer's base for each per-CPU timer to point to the
+actual start of the timer since device-tree defines a compound registers
+range that includes all of the timers. In this case the original base
+need to be restore before calling iounmap to unmap the proper address.
 
-Suggested-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
 Acked-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 ---
- drivers/clocksource/timer-tegra.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ drivers/clocksource/timer-tegra.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/drivers/clocksource/timer-tegra.c b/drivers/clocksource/timer-tegra.c
-index f7a09d88dacb..cc90f22c559b 100644
+index cc90f22c559b..8e70f38f1898 100644
 --- a/drivers/clocksource/timer-tegra.c
 +++ b/drivers/clocksource/timer-tegra.c
-@@ -46,6 +46,8 @@
- #define TIMER1_IRQ_IDX		0
- #define TIMER10_IRQ_IDX		10
- 
-+#define TIMER_1MHz		1000000
-+
- static u32 usec_config;
- static void __iomem *timer_reg_base;
- 
-@@ -160,7 +162,7 @@ static unsigned long tegra_delay_timer_read_counter_long(void)
- 
- static struct delay_timer tegra_delay_timer = {
- 	.read_current_timer = tegra_delay_timer_read_counter_long,
--	.freq = 1000000,
-+	.freq = TIMER_1MHz,
- };
- #endif
- 
-@@ -226,7 +228,7 @@ static inline unsigned long tegra_rate_for_timer(struct timer_of *to,
- 	 * parent clock.
- 	 */
- 	if (tegra20)
--		return 1000000;
-+		return TIMER_1MHz;
- 
- 	return timer_of_rate(to);
- }
-@@ -315,11 +317,11 @@ static int __init tegra_init_timer(struct device_node *np, bool tegra20,
+@@ -347,6 +347,8 @@ static int __init tegra_init_timer(struct device_node *np, bool tegra20,
+ 			irq_dispose_mapping(cpu_to->clkevt.irq);
  		}
  	}
- 
--	sched_clock_register(tegra_read_sched_clock, 32, 1000000);
-+	sched_clock_register(tegra_read_sched_clock, 32, TIMER_1MHz);
- 
- 	ret = clocksource_mmio_init(timer_reg_base + TIMERUS_CNTR_1US,
--				    "timer_us", 1000000,
--				    300, 32, clocksource_mmio_readl_up);
-+				    "timer_us", TIMER_1MHz, 300, 32,
-+				    clocksource_mmio_readl_up);
- 	if (ret)
- 		pr_err("failed to register clocksource: %d\n", ret);
++
++	to->of_base.base = timer_reg_base;
+ out:
+ 	timer_of_cleanup(to);
  
 -- 
 2.17.1
