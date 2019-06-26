@@ -2,70 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B60D56C88
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 16:46:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3167E56CB9
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 16:49:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728152AbfFZOqm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 10:46:42 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:37107 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727139AbfFZOqm (ORCPT
+        id S1728326AbfFZOrk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 10:47:40 -0400
+Received: from mail-wm1-f42.google.com ([209.85.128.42]:38128 "EHLO
+        mail-wm1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728254AbfFZOre (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 10:46:42 -0400
-Received: by mail-wr1-f65.google.com with SMTP id v14so3072137wrr.4
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 07:46:40 -0700 (PDT)
+        Wed, 26 Jun 2019 10:47:34 -0400
+Received: by mail-wm1-f42.google.com with SMTP id s15so2403163wmj.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 07:47:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=Hi5WFuZb4DAOCK16sGTyPRmar6Qtuu7W42is3MgXUQk=;
-        b=c6f+Gj2KGOA2yVYV/XEelV+KqIrM50QdvTAG8mj47pmLXkBKy1bSyprViIQmEDkr/1
-         hYzJpjjA+edoa3DY93fI3kOghoTsH4FugzVovxDRN0JvzS7EGmLfPSs0+9LSOGzdz0Mk
-         rYUhHODTltaaDU5fMpdy07rTcVPL77evt82N2g3NuLz3i48utP7mrWXD2nk4A+D8f57d
-         6E2wtXKKCWEpaFhGRnmKcdKuwn29qb6eXsvyUlsh3xSlL3zM7T9kuOfHrOF+gUu+Cpw2
-         sLYY9jGDRGN+Sw4TFAKj2m3iez5OxBFNleRFHh+C5Qv8p55bP8QbEahX+KOfClsMkYNg
-         rQEA==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=JvEiCBwyt/FKczphOvHNL3YMIgGxDxP9ixu7/5tHp7M=;
+        b=u+jbMOKdCIDcgNwQ5SKzxdumQXKz+4H/GV1MYi+b0w+rDX9SQoHqjFAawZpxvfsaxT
+         MVvo4u0FeLLKRpMrYCVr6WvteuSo/FxHmlXzHzRHTPz9InQ6AExsJHd8WY3ODYlzOP0F
+         1sf/iJfMEw6yKIlAEu5o2wgAK5/Yedgxz52cdYRjyx7RlS8wbf/Rvd0mwZRJvCM/OoL3
+         0E33X1DK8ePMSOPLrxkIanWPc4EeXZ9gzBj2ULS5JjvFqAMbYF8F5Fq+jsqJ2W1gt/5K
+         YkkpBnbr9DJXFwvFFaj1BIdHKyK4BGJypovS5jC7Q+IhdooN4uTdD1QK7bilfWdJxkKv
+         fo2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=Hi5WFuZb4DAOCK16sGTyPRmar6Qtuu7W42is3MgXUQk=;
-        b=KDi5h3DI1fWVyEXYdiofzXS4dMGokXO4AwCi8kWX1LIzYukabQ3Ekq+N61UnN6xvWv
-         zCjitAp/Fsfo6SiqsRXosgQpHDqVAtO0aN9j2S4qtcYRsWndE4YP94wNV7A0GvlYzr6Y
-         ocCGmMs6LF/3K9F3bMRuwUnEwa/MG+D3XIB6TRA0xlZxvucxWFYUAVbyNwOrS5PcZxLb
-         9jePkrCdQ9s4VjQL8StkyDvAPajJBWQ8imAWh4f/P8s6ExQIR6sUTQQxIJ5kBlZcQFcN
-         YEVPwY7LE8YsxzGwMPCattIK9MO+vC3oiTEKaK+5BcbKbdDtCF142QMihnkVF540mJHe
-         RPUg==
-X-Gm-Message-State: APjAAAUQJ8zGygtnNqYcF3FrRgDm6HrUeFTghlTuTJkjlBb4Zj2NElle
-        N1V7IEx3wW48KTTTq3sWv+EpQiJV4dJn4QW5Kjw=
-X-Google-Smtp-Source: APXvYqwvC042WZx11fxmsZcAJRNA4r+S9tnuBQhEyNGb261NYSyEqh3GkresFSs/16s5D7B7HfZyRmp95qg8xAjBOHQ=
-X-Received: by 2002:adf:ed50:: with SMTP id u16mr3825103wro.108.1561560400282;
- Wed, 26 Jun 2019 07:46:40 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a5d:6241:0:0:0:0:0 with HTTP; Wed, 26 Jun 2019 07:46:39
- -0700 (PDT)
-Reply-To: joeakaba01@gmail.com
-From:   joe akaba <edohkossibrice@gmail.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=JvEiCBwyt/FKczphOvHNL3YMIgGxDxP9ixu7/5tHp7M=;
+        b=HUEUXwObDnTkaGWZhEYUySJxDjPezJAS4GVcUILS+fBENOwBrFRq4o67r8I9Gdgp+Y
+         TMBBQk6AHByI+62pZJ76LwjXW0amgybARUEDAgCcs2rZ1iTl/26AZJidEnCwEtwEy8V4
+         0awhLpo7d4m/74D8Bnldyr9nTF5+NJ7H1DhvHQMGBOQ/jFySNrJ0Z+VYfwnJ3zFlxJQX
+         gfP5T5XCyDU4heAJsqj4HnR7J/DJK04m54ZMa9mBkmb7qJvrvaq8BDh5Iy7QhrULSBP/
+         zfyyEJJn/HebK5LnjquFNVnQY1AErljMo7vqlc5oVHX56R8vWxID/AFzlXR1skbtNOBN
+         D3Cg==
+X-Gm-Message-State: APjAAAUa2ZuEUyDyxgcibHnZePkWOG/1QPCV985Oa9QcwHs0pNWAvuQL
+        yUout9/7up4uJc8aBo1fIfG8Uw==
+X-Google-Smtp-Source: APXvYqxuwZ5g62iGl/0rN5GUTTLzLcVXiaN/QG/LuI6qU97XyWHatljo4pFpid4afVTHBHXc1gYkow==
+X-Received: by 2002:a05:600c:1150:: with SMTP id z16mr2908235wmz.168.1561560452590;
+        Wed, 26 Jun 2019 07:47:32 -0700 (PDT)
+Received: from mai.imgcgcw.net (26.92.130.77.rev.sfr.net. [77.130.92.26])
+        by smtp.gmail.com with ESMTPSA id h84sm2718557wmf.43.2019.06.26.07.47.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 26 Jun 2019 07:47:32 -0700 (PDT)
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+To:     tglx@linutronix.de
+Cc:     linux-kernel@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH 13/25] clocksource/drivers/tegra: Rename timer-tegra20.c to timer-tegra.c
 Date:   Wed, 26 Jun 2019 16:46:39 +0200
-Message-ID: <CAPn8y9LhJ5MyEbgk18UW8zHSS__SWuZ-zV_xjaLVZi9qUZ-OsQ@mail.gmail.com>
-Subject: hello
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Message-Id: <20190626144651.16742-13-daniel.lezcano@linaro.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190626144651.16742-1-daniel.lezcano@linaro.org>
+References: <adba7d03-e9bd-9542-60bc-0f2d4874a40e@linaro.org>
+ <20190626144651.16742-1-daniel.lezcano@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello
+From: Dmitry Osipenko <digetx@gmail.com>
 
-My name is Joe Akaba. I am a lawyer by profession. I would like to offer you
-the closest relatives to my client. They inherit the sum of ($ 14.2 million)
-Dollars that my client left in the bank before he died.
+Rename driver's source file to better reflect that it's not specific to
+older SoC generations.
 
-My client is a citizen of your country who died in a car accident with his wife
-and only son. I will be entitled to 50% of the total fund, while 50%
-be for you.
+Suggested-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+---
+ drivers/clocksource/Makefile                           | 2 +-
+ drivers/clocksource/{timer-tegra20.c => timer-tegra.c} | 0
+ 2 files changed, 1 insertion(+), 1 deletion(-)
+ rename drivers/clocksource/{timer-tegra20.c => timer-tegra.c} (100%)
 
-Please contact my private email here for more information: joeakaba00@gmail.com
+diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
+index 236858fa7fbf..4145b21eaed3 100644
+--- a/drivers/clocksource/Makefile
++++ b/drivers/clocksource/Makefile
+@@ -36,7 +36,7 @@ obj-$(CONFIG_U300_TIMER)	+= timer-u300.o
+ obj-$(CONFIG_SUN4I_TIMER)	+= timer-sun4i.o
+ obj-$(CONFIG_SUN5I_HSTIMER)	+= timer-sun5i.o
+ obj-$(CONFIG_MESON6_TIMER)	+= timer-meson6.o
+-obj-$(CONFIG_TEGRA_TIMER)	+= timer-tegra20.o
++obj-$(CONFIG_TEGRA_TIMER)	+= timer-tegra.o
+ obj-$(CONFIG_VT8500_TIMER)	+= timer-vt8500.o
+ obj-$(CONFIG_NSPIRE_TIMER)	+= timer-zevio.o
+ obj-$(CONFIG_BCM_KONA_TIMER)	+= bcm_kona_timer.o
+diff --git a/drivers/clocksource/timer-tegra20.c b/drivers/clocksource/timer-tegra.c
+similarity index 100%
+rename from drivers/clocksource/timer-tegra20.c
+rename to drivers/clocksource/timer-tegra.c
+-- 
+2.17.1
 
-Thanks in advance,
-Mr.Joe Akaba,
