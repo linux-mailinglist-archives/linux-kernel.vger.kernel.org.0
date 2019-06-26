@@ -2,200 +2,186 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91B1E560EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 05:53:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42A3155FA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 05:41:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727318AbfFZDuH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 23:50:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54394 "EHLO mail.kernel.org"
+        id S1726586AbfFZDlD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 23:41:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51194 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727272AbfFZDnO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 23:43:14 -0400
-Received: from sasha-vm.mshome.net (mobile-107-77-172-74.mobile.att.net [107.77.172.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726077AbfFZDlC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 23:41:02 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3D7B6208CB;
-        Wed, 26 Jun 2019 03:43:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B238520883;
+        Wed, 26 Jun 2019 03:41:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561520593;
-        bh=hUo1DawkrbOiYGwf0Eu8Nmn4EYbfNyvNmAkdzzf0q1E=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xthoMv12TCMXKkxxcJj+0P8Yq3IS0N/7QwxJXBMfLSnn6kWC+p4/HQ9UBp4Ia09zv
-         rx4VZRkV6p6kA5FbnjqyFNrh2lK9IpbTmmChdPlzlM6ApuA/HRhiZTrUlQeULsW9IW
-         t3vqBCtIc4FPHGj9aaFUyMJosF5n20WL5dX4wLM0=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Vadim Pasternak <vadimp@mellanox.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Sasha Levin <sashal@kernel.org>,
-        platform-driver-x86@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.1 42/51] platform/x86: mlx-platform: Fix parent device in i2c-mux-reg device registration
-Date:   Tue, 25 Jun 2019 23:40:58 -0400
-Message-Id: <20190626034117.23247-42-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190626034117.23247-1-sashal@kernel.org>
-References: <20190626034117.23247-1-sashal@kernel.org>
+        s=default; t=1561520460;
+        bh=YjnOrrgSNhT6RWlqKXwtbjuCaQYM6DgeF+J68o3kqsE=;
+        h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
+        b=TozaXDPsvQQt/kVas3URc54NSndgjkoC4JTDYWEqG70XXqn3fWJpPNfLyDu06hZCO
+         ksLT9uE8zoDvTnwOTaGmRz8VF+Rm9bpa8KzXo9tWm3/qM5QRpGdRrtfc1krtZGPl7s
+         UrIkXsoPp/B2GQ3tBVMxOkqmDHBq+Vr71I5oFTqc=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAFd5g46Jhxsz6_VXHEVYvTeDRwwzgKpr=aUWLL5b3S4kUukb8g@mail.gmail.com>
+References: <20190617082613.109131-1-brendanhiggins@google.com> <20190617082613.109131-2-brendanhiggins@google.com> <20190620001526.93426218BE@mail.kernel.org> <CAFd5g46Jhxsz6_VXHEVYvTeDRwwzgKpr=aUWLL5b3S4kUukb8g@mail.gmail.com>
+To:     Brendan Higgins <brendanhiggins@google.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH v5 01/18] kunit: test: add KUnit test runner core
+Cc:     Frank Rowand <frowand.list@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Kees Cook <keescook@google.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rob Herring <robh@kernel.org>, shuah <shuah@kernel.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        kunit-dev@googlegroups.com,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-um@lists.infradead.org,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        "Bird, Timothy" <Tim.Bird@sony.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Knut Omang <knut.omang@oracle.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Petr Mladek <pmladek@suse.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Richard Weinberger <richard@nod.at>,
+        David Rientjes <rientjes@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
+User-Agent: alot/0.8.1
+Date:   Tue, 25 Jun 2019 20:40:59 -0700
+Message-Id: <20190626034100.B238520883@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vadim Pasternak <vadimp@mellanox.com>
+Quoting Brendan Higgins (2019-06-25 13:28:25)
+> On Wed, Jun 19, 2019 at 5:15 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> >
+> > Quoting Brendan Higgins (2019-06-17 01:25:56)
+> > > diff --git a/kunit/test.c b/kunit/test.c
+> > > new file mode 100644
+> > > index 0000000000000..d05d254f1521f
+> > > --- /dev/null
+> > > +++ b/kunit/test.c
+> > > @@ -0,0 +1,210 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +/*
+> > > + * Base unit test (KUnit) API.
+> > > + *
+> > > + * Copyright (C) 2019, Google LLC.
+> > > + * Author: Brendan Higgins <brendanhiggins@google.com>
+> > > + */
+> > > +
+> > > +#include <linux/sched/debug.h>
+> > > +#include <kunit/test.h>
+> > > +
+> > > +static bool kunit_get_success(struct kunit *test)
+> > > +{
+> > > +       unsigned long flags;
+> > > +       bool success;
+> > > +
+> > > +       spin_lock_irqsave(&test->lock, flags);
+> > > +       success =3D test->success;
+> > > +       spin_unlock_irqrestore(&test->lock, flags);
+> >
+> > I still don't understand the locking scheme in this code. Is the
+> > intention to make getter and setter APIs that are "safe" by adding in a
+> > spinlock that is held around getting and setting various members in the
+> > kunit structure?
+>=20
+> Yes, your understanding is correct. It is possible for a user to write
+> a test such that certain elements may be updated in different threads;
+> this would most likely happen in the case where someone wants to make
+> an assertion or an expectation in a thread created by a piece of code
+> under test. Although this should generally be avoided, it is possible,
+> and there are occasionally good reasons to do so, so it is
+> functionality that we should support.
+>=20
+> Do you think I should add a comment to this effect?
 
-[ Upstream commit 160da20b254dd4bfc5828f12c208fa831ad4be6c ]
+No, I think the locking should be removed.
 
-Fix the issue found while running kernel with the option
-CONFIG_DEBUG_TEST_DRIVER_REMOVE.
-Driver 'mlx-platform' registers 'i2c_mlxcpld' device and then registers
-few underlying 'i2c-mux-reg' devices:
-	priv->pdev_i2c = platform_device_register_simple("i2c_mlxcpld", nr,
-							 NULL, 0);
-	...
-	for (i = 0; i < ARRAY_SIZE(mlxplat_mux_data); i++) {
-		priv->pdev_mux[i] = platform_device_register_resndata(
-						&mlxplat_dev->dev,
-						"i2c-mux-reg", i, NULL,
-						0, &mlxplat_mux_data[i],
-						sizeof(mlxplat_mux_data[i]));
+>=20
+> > In what situation is there more than one thread reading or writing the
+> > kunit struct? Isn't it only a single process that is going to be
+>=20
+> As I said above, it is possible that the code under test may spawn a
+> new thread that may make an expectation or an assertion. It is not a
+> super common use case, but it is possible.
 
-But actual parent of "i2c-mux-reg" device is priv->pdev_i2c->dev and
-not mlxplat_dev->dev.
-Patch fixes parent device parameter in a call to
-platform_device_register_resndata() for "i2c-mux-reg".
+Sure, sounds super possible and OK.
 
-It solves the race during initialization flow while 'i2c_mlxcpld.1' is
-removing after probe, while 'i2c-mux-reg.0' is still in probing flow:
-'i2c_mlxcpld.1'	flow:	probe -> remove -> probe.
-'i2c-mux-reg.0'	flow:		  probe -> ...
+>=20
+> > operating on this structure? And why do we need to disable irqs? Are we
+> > expecting to be modifying the unit tests from irq contexts?
+>=20
+> There are instances where someone may want to test a driver which has
+> an interrupt handler in it. I actually have (not the greatest) example
+> here. Now in these cases, I expect someone to use a mock irqchip or
+> some other fake mechanism to trigger the interrupt handler and not
+> actual hardware; technically speaking in this case, it is not going to
+> be accessed from a "real" irq context; however, the code under test
+> should think that it is in an irq context; given that, I figured it is
+> best to just treat it as a real irq context. Does that make sense?
 
-[   12:621096] Registering platform device 'i2c_mlxcpld.1'. Parent at platform
-[   12:621117] device: 'i2c_mlxcpld.1': device_add
-[   12:621155] bus: 'platform': add device i2c_mlxcpld.1
-[   12:621384] Registering platform device 'i2c-mux-reg.0'. Parent at mlxplat
-[   12:621395] device: 'i2c-mux-reg.0': device_add
-[   12:621425] bus: 'platform': add device i2c-mux-reg.0
-[   12:621806] Registering platform device 'i2c-mux-reg.1'. Parent at mlxplat
-[   12:621828] device: 'i2c-mux-reg.1': device_add
-[   12:621892] bus: 'platform': add device i2c-mux-reg.1
-[   12:621906] bus: 'platform': add driver i2c_mlxcpld
-[   12:621996] bus: 'platform': driver_probe_device: matched device i2c_mlxcpld.1 with driver i2c_mlxcpld
-[   12:622003] bus: 'platform': really_probe: probing driver i2c_mlxcpld with device i2c_mlxcpld.1
-[   12:622100] i2c_mlxcpld i2c_mlxcpld.1: no default pinctrl state
-[   12:622293] device: 'i2c-1': device_add
-[   12:627280] bus: 'i2c': add device i2c-1
-[   12:627692] device: 'i2c-1': device_add
-[   12.629639] bus: 'platform': add driver i2c-mux-reg
-[   12.629718] bus: 'platform': driver_probe_device: matched device i2c-mux-reg.0 with driver i2c-mux-reg
-[   12.629723] bus: 'platform': really_probe: probing driver i2c-mux-reg with device i2c-mux-reg.0
-[   12.629818] i2c-mux-reg i2c-mux-reg.0: no default pinctrl state
-[   12.629981] platform i2c-mux-reg.0: Driver i2c-mux-reg requests probe deferral
-[   12.629986] platform i2c-mux-reg.0: Added to deferred list
-[   12.629992] bus: 'platform': driver_probe_device: matched device i2c-mux-reg.1 with driver i2c-mux-reg
-[   12.629997] bus: 'platform': really_probe: probing driver i2c-mux-reg with device i2c-mux-reg.1
-[   12.630091] i2c-mux-reg i2c-mux-reg.1: no default pinctrl state
-[   12.630247] platform i2c-mux-reg.1: Driver i2c-mux-reg requests probe deferral
-[   12.630252] platform i2c-mux-reg.1: Added to deferred list
-[   12.640892] devices_kset: Moving i2c-mux-reg.0 to end of list
-[   12.640900] platform i2c-mux-reg.0: Retrying from deferred list
-[   12.640911] bus: 'platform': driver_probe_device: matched device i2c-mux-reg.0 with driver i2c-mux-reg
-[   12.640919] bus: 'platform': really_probe: probing driver i2c-mux-reg with device i2c-mux-reg.0
-[   12.640999] i2c-mux-reg i2c-mux-reg.0: no default pinctrl state
-[   12.641177] platform i2c-mux-reg.0: Driver i2c-mux-reg requests probe deferral
-[   12.641187] platform i2c-mux-reg.0: Added to deferred list
-[   12.641198] devices_kset: Moving i2c-mux-reg.1 to end of list
-[   12.641219] platform i2c-mux-reg.1: Retrying from deferred list
-[   12.641237] bus: 'platform': driver_probe_device: matched device i2c-mux-reg.1 with driver i2c-mux-reg
-[   12.641247] bus: 'platform': really_probe: probing driver i2c-mux-reg with device i2c-mux-reg.1
-[   12.641331] i2c-mux-reg i2c-mux-reg.1: no default pinctrl state
-[   12.641465] platform i2c-mux-reg.1: Driver i2c-mux-reg requests probe deferral
-[   12.641469] platform i2c-mux-reg.1: Added to deferred list
-[   12.646427] device: 'i2c-1': device_add
-[   12.646647] bus: 'i2c': add device i2c-1
-[   12.647104] device: 'i2c-1': device_add
-[   12.669231] devices_kset: Moving i2c-mux-reg.0 to end of list
-[   12.669240] platform i2c-mux-reg.0: Retrying from deferred list
-[   12.669258] bus: 'platform': driver_probe_device: matched device i2c-mux-reg.0 with driver i2c-mux-reg
-[   12.669263] bus: 'platform': really_probe: probing driver i2c-mux-reg with device i2c-mux-reg.0
-[   12.669343] i2c-mux-reg i2c-mux-reg.0: no default pinctrl state
-[   12.669585] device: 'i2c-2': device_add
-[   12.669795] bus: 'i2c': add device i2c-2
-[   12.670201] device: 'i2c-2': device_add
-[   12.671427] i2c i2c-1: Added multiplexed i2c bus 2
-[   12.671514] device: 'i2c-3': device_add
-[   12.671724] bus: 'i2c': add device i2c-3
-[   12.672136] device: 'i2c-3': device_add
-[   12.673378] i2c i2c-1: Added multiplexed i2c bus 3
-[   12.673472] device: 'i2c-4': device_add
-[   12.673676] bus: 'i2c': add device i2c-4
-[   12.674060] device: 'i2c-4': device_add
-[   12.675861] i2c i2c-1: Added multiplexed i2c bus 4
-[   12.675941] device: 'i2c-5': device_add
-[   12.676150] bus: 'i2c': add device i2c-5
-[   12.676550] device: 'i2c-5': device_add
-[   12.678103] i2c i2c-1: Added multiplexed i2c bus 5
-[   12.678193] device: 'i2c-6': device_add
-[   12.678395] bus: 'i2c': add device i2c-6
-[   12.678774] device: 'i2c-6': device_add
-[   12.679969] i2c i2c-1: Added multiplexed i2c bus 6
-[   12.680065] device: 'i2c-7': device_add
-[   12.680275] bus: 'i2c': add device i2c-7
-[   12.680913] device: 'i2c-7': device_add
-[   12.682506] i2c i2c-1: Added multiplexed i2c bus 7
-[   12.682600] device: 'i2c-8': device_add
-[   12.682808] bus: 'i2c': add device i2c-8
-[   12.683189] device: 'i2c-8': device_add
-[   12.683907] device: 'i2c-1': device_unregister
-[   12.683945] device: 'i2c-1': device_unregister
-[   12.684387] device: 'i2c-1': device_create_release
-[   12.684536] bus: 'i2c': remove device i2c-1
-[   12.686019] i2c i2c-8: Failed to create compatibility class link
-[   12.686086] ------------[ cut here ]------------
-[   12.686087] can't create symlink to mux device
-[   12.686224] Workqueue: events deferred_probe_work_func
-[   12.686135] WARNING: CPU: 7 PID: 436 at drivers/i2c/i2c-mux.c:416 i2c_mux_add_adapter+0x729/0x7d0 [i2c_mux]
-[   12.686232] RIP: 0010:i2c_mux_add_adapter+0x729/0x7d0 [i2c_mux]
-[   0x190/0x190 [i2c_mux]
-[   12.686300]  ? i2c_mux_alloc+0xac/0x110 [i2c_mux]
-[   12.686306]  ? i2c_mux_reg_set+0x200/0x200 [i2c_mux_reg]
-[   12.686313]  i2c_mux_reg_probe+0x22c/0x731 [i2c_mux_reg]
-[   12.686322]  ? i2c_mux_reg_deselect+0x60/0x60 [i2c_mux_reg]
-[   12.686346]  platform_drv_probe+0xa8/0x110
-[   12.686351]  really_probe+0x185/0x720
-[   12.686358]  driver_probe_device+0xdf/0x1f0
-...
-[   12.686522] i2c i2c-1: Added multiplexed i2c bus 8
-[   12.686621] device: 'i2c-9': device_add
-[   12.686626] kobject_add_internal failed for i2c-9 (error: -2 parent: i2c-1)
-[   12.694729] i2c-core: adapter 'i2c-1-mux (chan_id 8)': can't register device (-2)
-[   12.705726] i2c i2c-1: failed to add mux-adapter 8 as bus 9 (error=-2)
-[   12.714494] device: 'i2c-8': device_unregister
-[   12.714537] device: 'i2c-8': device_unregister
+Can you please describe the scenario in which grabbing the lock here,
+updating a single variable, and then releasing the lock right after
+does anything useful vs. not having the lock? I'm looking for a two CPU
+scenario like below, but where it is a problem. There could be three
+CPUs, or even one CPU and three threads if you want to describe the
+extra thread scenario.
 
-Fixes: 6613d18e9038 ("platform/x86: mlx-platform: Move module from arch/x86")
-Signed-off-by: Vadim Pasternak <vadimp@mellanox.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/platform/x86/mlx-platform.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Here's my scenario where it isn't needed:
 
-diff --git a/drivers/platform/x86/mlx-platform.c b/drivers/platform/x86/mlx-platform.c
-index 48fa7573e29b..0e5f073e51bc 100644
---- a/drivers/platform/x86/mlx-platform.c
-+++ b/drivers/platform/x86/mlx-platform.c
-@@ -1828,7 +1828,7 @@ static int __init mlxplat_init(void)
- 
- 	for (i = 0; i < ARRAY_SIZE(mlxplat_mux_data); i++) {
- 		priv->pdev_mux[i] = platform_device_register_resndata(
--						&mlxplat_dev->dev,
-+						&priv->pdev_i2c->dev,
- 						"i2c-mux-reg", i, NULL,
- 						0, &mlxplat_mux_data[i],
- 						sizeof(mlxplat_mux_data[i]));
--- 
-2.20.1
+    CPU0                                      CPU1
+    ----                                      ----
+    kunit_run_test(&test)
+                                              test_case_func()
+					        ....
+                                              [mock hardirq]
+					        kunit_set_success(&test)
+					      [hardirq ends]
+                                                ...
+                                                complete(&test_done)
+      wait_for_completion(&test_done)
+      kunit_get_success(&test)
 
+We don't need to care about having locking here because success or
+failure only happens in one place and it's synchronized with the
+completion.
+
+>=20
+> > > +
+> > > +       return success;
+> > > +}
+> > > +
+> > > +static void kunit_set_success(struct kunit *test, bool success)
+> > > +{
+> > > +       unsigned long flags;
+> > > +
+> > > +       spin_lock_irqsave(&test->lock, flags);
+> > > +       test->success =3D success;
+> > > +       spin_unlock_irqrestore(&test->lock, flags);
+> > > +}
