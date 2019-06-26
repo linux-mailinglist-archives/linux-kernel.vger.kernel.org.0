@@ -2,49 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CCF55561A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 07:19:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9C5C561AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 07:21:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726242AbfFZFTK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 01:19:10 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:45073 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725379AbfFZFTK (ORCPT
+        id S1726441AbfFZFVJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 01:21:09 -0400
+Received: from relay6-d.mail.gandi.net ([217.70.183.198]:47667 "EHLO
+        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725308AbfFZFVJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 01:19:10 -0400
-Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hg0Ke-0003Ol-0w; Wed, 26 Jun 2019 07:18:56 +0200
-Date:   Wed, 26 Jun 2019 07:18:49 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-cc:     Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>,
+        Wed, 26 Jun 2019 01:21:09 -0400
+X-Originating-IP: 79.86.19.127
+Received: from [192.168.0.12] (127.19.86.79.rev.sfr.net [79.86.19.127])
+        (Authenticated sender: alex@ghiti.fr)
+        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id BAAC4C0003;
+        Wed, 26 Jun 2019 05:20:51 +0000 (UTC)
+From:   Alex Ghiti <alex@ghiti.fr>
+To:     Helge Deller <deller@gmx.de>
+Cc:     "James E . J . Bottomley" <james.bottomley@hansenpartnership.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the tip tree
-In-Reply-To: <20190626093250.5c7cc243@canb.auug.org.au>
-Message-ID: <alpine.DEB.2.21.1906260718370.32342@nanos.tec.linutronix.de>
-References: <20190626093250.5c7cc243@canb.auug.org.au>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        linux-parisc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH RESEND 6/8] parisc: Use mmap_base, not mmap_legacy_base,
+ as low_limit for bottom-up mmap
+References: <20190620050328.8942-1-alex@ghiti.fr>
+ <20190620050328.8942-7-alex@ghiti.fr>
+ <438124ff-6838-7ced-044c-ca57a6b9cc91@gmx.de>
+Message-ID: <7fb32983-3444-0747-4e5f-812d1b4d84c2@ghiti.fr>
+Date:   Wed, 26 Jun 2019 01:20:51 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <438124ff-6838-7ced-044c-ca57a6b9cc91@gmx.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 26 Jun 2019, Stephen Rothwell wrote:
-> 
->   53d87b37a2a4 ("arm64: compat: No need for pre-ARMv7 barriers on an ARMv8 system")
->   b4b12aca00d5 ("arm64: vdso: Remove unnecessary asm-offsets.c definitions")
->   4d33ebb02c45 ("vdso: Remove superfluous #ifdef __KERNEL__ in vdso/datapage.h")
-> 
-> are missing a Signed-off-by from their committer.
+On 6/25/19 10:09 AM, Helge Deller wrote:
+> On 20.06.19 07:03, Alexandre Ghiti wrote:
+>> Bottom-up mmap scheme is used twice:
+>>
+>> - for legacy mode, in which mmap_legacy_base and mmap_base are equal.
+>>
+>> - in case of mmap failure in top-down mode, where there is no need to go
+>> through the whole address space again for the bottom-up fallback: the goal
+>> of this fallback is to find, as a last resort, space between the top-down
+>> mmap base and the stack, which is the only place not covered by the
+>> top-down mmap.
+>>
+>> Then this commit removes the usage of mmap_legacy_base field from parisc
+>> code.
+>>
+>> Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
+> Boot-tested on parisc and seems to work nicely, thus:
+>
+> Acked-by: Helge Deller <deller@gmx.de>
 
-Oops.
+Thanks Helge,
+
+Alex
+
+>
+> Helge
+>
+>
+>
+>> ---
+>>   arch/parisc/kernel/sys_parisc.c | 8 +++-----
+>>   1 file changed, 3 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/arch/parisc/kernel/sys_parisc.c b/arch/parisc/kernel/sys_parisc.c
+>> index 5d458a44b09c..e987f3a8eb0b 100644
+>> --- a/arch/parisc/kernel/sys_parisc.c
+>> +++ b/arch/parisc/kernel/sys_parisc.c
+>> @@ -119,7 +119,7 @@ unsigned long arch_get_unmapped_area(struct file *filp, unsigned long addr,
+>>
+>>   	info.flags = 0;
+>>   	info.length = len;
+>> -	info.low_limit = mm->mmap_legacy_base;
+>> +	info.low_limit = mm->mmap_base;
+>>   	info.high_limit = mmap_upper_limit(NULL);
+>>   	info.align_mask = last_mmap ? (PAGE_MASK & (SHM_COLOUR - 1)) : 0;
+>>   	info.align_offset = shared_align_offset(last_mmap, pgoff);
+>> @@ -240,13 +240,11 @@ static unsigned long mmap_legacy_base(void)
+>>    */
+>>   void arch_pick_mmap_layout(struct mm_struct *mm, struct rlimit *rlim_stack)
+>>   {
+>> -	mm->mmap_legacy_base = mmap_legacy_base();
+>> -	mm->mmap_base = mmap_upper_limit(rlim_stack);
+>> -
+>>   	if (mmap_is_legacy()) {
+>> -		mm->mmap_base = mm->mmap_legacy_base;
+>> +		mm->mmap_base = mmap_legacy_base();
+>>   		mm->get_unmapped_area = arch_get_unmapped_area;
+>>   	} else {
+>> +		mm->mmap_base = mmap_upper_limit(rlim_stack);
+>>   		mm->get_unmapped_area = arch_get_unmapped_area_topdown;
+>>   	}
+>>   }
+>>
