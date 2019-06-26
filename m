@@ -2,81 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50C0F56C7F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 16:45:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 44E1D56C7A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 16:45:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728193AbfFZOp1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 10:45:27 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:48888 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728181AbfFZOp1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 10:45:27 -0400
-Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hg9AE-00046N-A6; Wed, 26 Jun 2019 16:44:46 +0200
-Date:   Wed, 26 Jun 2019 16:44:45 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Petr Mladek <pmladek@suse.com>
-cc:     Miroslav Benes <mbenes@suse.cz>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jessica Yu <jeyu@kernel.org>, Jiri Kosina <jikos@kernel.org>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        linux-kernel@vger.kernel.org, live-patching@vger.kernel.org,
-        Johannes Erdfelt <johannes@erdfelt.com>,
-        Ingo Molnar <mingo@kernel.org>, mhiramat@kernel.org,
-        torvalds@linux-foundation.org
-Subject: Re: [PATCH 1/3] module: Fix livepatch/ftrace module text permissions
- race
-In-Reply-To: <20190626133721.ea2iuqqu4to2jpbv@pathway.suse.cz>
-Message-ID: <alpine.DEB.2.21.1906261643200.32342@nanos.tec.linutronix.de>
-References: <cover.1560474114.git.jpoimboe@redhat.com> <ab43d56ab909469ac5d2520c5d944ad6d4abd476.1560474114.git.jpoimboe@redhat.com> <20190614170408.1b1162dc@gandalf.local.home> <alpine.LSU.2.21.1906260908170.22069@pobox.suse.cz>
- <20190626133721.ea2iuqqu4to2jpbv@pathway.suse.cz>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1728090AbfFZOpO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 10:45:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46988 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725958AbfFZOpO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 10:45:14 -0400
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1CC3C216FD;
+        Wed, 26 Jun 2019 14:45:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561560313;
+        bh=LtDwR/1pA64yM+doJnHbbbxGWdTenyvyKZB9O2Un6dE=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=IH/hKEQE4XLYp/c6x/Cp0Y56UhPd6jC0LUkNPVB+y2obrh0Dpz7dHFltPvrz7Qf+l
+         B38mKVa+JpsFnnNjM1SeuOJM2+7njq7BAPtWosLqEuUtSYYGCvJj3tyAjRnp4fXzGI
+         yY+mB0j7A8l9muUQvsM6+VfX3WgiDB167rlEZnuQ=
+Received: by mail-qk1-f176.google.com with SMTP id s22so1822750qkj.12;
+        Wed, 26 Jun 2019 07:45:13 -0700 (PDT)
+X-Gm-Message-State: APjAAAVcmhO5Yjc2jw4xjuy4KTJkQOUYXX8rRDbcXJwzyqQXgtgxWnCd
+        NvPFhkIujGJPGzs+9pXdM64DejTe+X1vYxmJsw==
+X-Google-Smtp-Source: APXvYqxZf1hkz5oMGPuvQ7jDyoDhlhqEjXqCxepoTpB+A7iAMfW5zXwD89GOgm2ZE+DIO7/qKVossVhEOPdfaE5xP0M=
+X-Received: by 2002:a37:6357:: with SMTP id x84mr4142821qkb.393.1561560312364;
+ Wed, 26 Jun 2019 07:45:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+References: <20190625081128.22190-1-mircea.caprioru@analog.com> <20190625081128.22190-5-mircea.caprioru@analog.com>
+In-Reply-To: <20190625081128.22190-5-mircea.caprioru@analog.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Wed, 26 Jun 2019 08:45:01 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+ryELXJNdzZBxzCfMQnMdeGr_xC+ABJ3wGx2tZum6AwA@mail.gmail.com>
+Message-ID: <CAL_Jsq+ryELXJNdzZBxzCfMQnMdeGr_xC+ABJ3wGx2tZum6AwA@mail.gmail.com>
+Subject: Re: [PATCH V4 5/5] dt-bindings: iio: adc: Add buffered input property
+To:     Mircea Caprioru <mircea.caprioru@analog.com>
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Stefan Popa <stefan.popa@analog.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:IIO SUBSYSTEM AND DRIVERS" <linux-iio@vger.kernel.org>,
+        devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 26 Jun 2019, Petr Mladek wrote:
-> On Wed 2019-06-26 10:22:45, Miroslav Benes wrote:
-> It is similar problem that has been solved by 2d1e38f56622b9bb5af8
-> ("kprobes: Cure hotplug lock ordering issues"). This commit solved
-> it by always taking cpu_hotplug_lock.rw_sem before text_mutex inside.
-> 
-> If we follow the lock ordering then ftrace has to take text_mutex
-> only when stop_machine() is not called or from code called via
-> stop_machine() parameter.
-> 
-> This is not easy with the current design. For example, arm calls
-> set_all_modules_text_rw() already in ftrace_arch_code_modify_prepare(),
-> see arch/arm/kernel/ftrace.c. And it is called:
-> 
->   + outside stop_machine() from ftrace_run_update_code()
->   + without stop_machine() from ftrace_module_enable()
-> 
-> A conservative solution for 5.2 release would be to move text_mutex
-> locking from the generic kernel/trace/ftrace.c into
-> arch/x86/kernel/ftrace.c:
-> 
->    ftrace_arch_code_modify_prepare()
->    ftrace_arch_code_modify_post_process()
-> 
-> It should be enough to fix the original problem because
-> x86 is the only architecture that calls set_all_modules_text_rw()
-> in ftrace path and supports livepatching at the same time.
+On Tue, Jun 25, 2019 at 2:12 AM Mircea Caprioru
+<mircea.caprioru@analog.com> wrote:
+>
+> This patch adds the buffered mode device tree property for positive and
+> negative inputs. Each option can be enabled independently.
+>
+> In buffered mode, the input channel feeds into a high impedance input stage
+> of the buffer amplifier. Therefore, the input can tolerate significant
+> source impedances and is tailored for direct connection to external
+> resistive type sensors such as strain gages or RTDs.
+>
+> Signed-off-by: Mircea Caprioru <mircea.caprioru@analog.com>
+> ---
+>
+> Changelog v3:
+> - added this separate commit for adi,buffered-positive and negative
+>   properties
+>
+> Changelog v4:
+> - nothing changed here
+>
+>  .../devicetree/bindings/iio/adc/adi,ad7124.yaml       | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
 
-Looks correct, but I've paged out all the gory details vs. lock ordering in
-that area.
-
-Thanks,
-
-	tglx
+Reviewed-by: Rob Herring <robh@kernel.org>
