@@ -2,143 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3A8257EBA
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 10:54:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B049564FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 10:58:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726498AbfF0IyR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 04:54:17 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:47820 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726059AbfF0IyR (ORCPT
+        id S1726956AbfFZI6i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 04:58:38 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:52955 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726077AbfFZI6i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 04:54:17 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5R8mfOr141100;
-        Thu, 27 Jun 2019 08:53:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id; s=corp-2018-07-02;
- bh=EMb96t5WuJs0JYsPKdZC7E6ogPsiS0s7Bn+LAKFUFOo=;
- b=FF2L+m+K5Ji4zVUmZuucZdiFQjUT6fMfY6bp7vknOnFl3V02rY9Iw1eZUPyG24ChVcqg
- GVxKmMGRgK2PIrSqWN7ZyeAgcVstGJ2OyuqaVx4BasSnCY5lu2s0f8Tqzkd6Y7u3Vv1l
- NTlzbmMGsU+oIajtmLhiEOKTB/g1jN3J4fK5+OclENtgu4FtZ2DXR4qNE7VZwxT6EBpc
- 7wsQGX9SjLV5iu6E70cmcUpieTSljOGGx6sXtc79MBvBttjUWPJsRDWQXzzAtW/CYhym
- Cxw6FX0AxcAbYiXAkWoFg+5IkfYFADJU4SFSQd2aZdYPnkM6UQe4Lo5ysunMJXhFidLw Fg== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2120.oracle.com with ESMTP id 2t9cyqpy43-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 27 Jun 2019 08:53:35 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5R8rZFD153645;
-        Thu, 27 Jun 2019 08:53:35 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3030.oracle.com with ESMTP id 2t9acd4nam-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 27 Jun 2019 08:53:34 +0000
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x5R8rTNX003709;
-        Thu, 27 Jun 2019 08:53:29 GMT
-Received: from z2.cn.oracle.com (/10.182.69.87)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 27 Jun 2019 01:53:28 -0700
-From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Zhenzhong Duan <zhenzhong.duan@oracle.com>,
-        Waiman Long <longman@redhat.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Dou Liyang <douly.fnst@cn.fujitsu.com>
-Subject: [PATCH RESEND] Revert "x86/paravirt: Set up the virt_spin_lock_key after static keys get initialized"
-Date:   Wed, 26 Jun 2019 16:57:09 +0800
-Message-Id: <1561539429-29436-1-git-send-email-zhenzhong.duan@oracle.com>
-X-Mailer: git-send-email 1.8.3.1
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9300 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1906270105
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9300 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1906270104
+        Wed, 26 Jun 2019 04:58:38 -0400
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1hg3l8-0006dR-FY; Wed, 26 Jun 2019 10:58:30 +0200
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1hg3l5-0008VO-Se; Wed, 26 Jun 2019 10:58:27 +0200
+Date:   Wed, 26 Jun 2019 10:58:27 +0200
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Daniel Thompson <daniel.thompson@linaro.org>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Lee Jones <lee.jones@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        od@zcrc.me, linux-pwm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel@pengutronix.de
+Subject: Re: [PATCH] backlight: pwm_bl: Set pin to sleep state when powered
+ down
+Message-ID: <20190626085827.fija4kfzb5uhwosi@pengutronix.de>
+References: <20190522163428.7078-1-paul@crapouillou.net>
+ <5b0f8bb3-e7b0-52c1-1f2f-9709992b76fc@linaro.org>
+ <20190621135608.GB11839@ulmo>
+ <20190624112844.fmwbfpdxjkst3u7r@holly.lan>
+ <20190625093839.GB1516@ulmo>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190625093839.GB1516@ulmo>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit ca5d376e17072c1b60c3fee66f3be58ef018952d.
+On Tue, Jun 25, 2019 at 11:38:39AM +0200, Thierry Reding wrote:
+> On Mon, Jun 24, 2019 at 12:28:44PM +0100, Daniel Thompson wrote:
+> > [...] although given pwm-backlight is essentially a wrapper driver
+> > round a PWM I wondered why the pinctrl was on the backlight node
+> > (rather than the PWM node).
+> 
+> I agree with this. We're defining the pin control state for the PWM pin,
+> so in my opinion it should be the PWM driver that controls it.
+> 
+> One reason why I think this is important is if we ever end up with a
+> device that requires pins from two different controllers to be
+> configured at runtime, then how would we model that? Since pin control
+> states cannot be aggregated, so you'd have to have multiple "default"
+> states, each for the pins that they control.
 
-Commit 8990cac6e5ea ("x86/jump_label: Initialize static branching
-early") adds jump_label_init() call in setup_arch() to make static
-keys initialized early, so we could use the original simpler code
-again.
+I thought you can do:
 
-Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Cc: Waiman Long <longman@redhat.com>
-Cc: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: Stefano Stabellini <sstabellini@kernel.org>
-Cc: Dou Liyang <douly.fnst@cn.fujitsu.com>
----
- arch/x86/kernel/smpboot.c | 3 +--
- arch/x86/xen/spinlock.c   | 6 ++----
- 2 files changed, 3 insertions(+), 6 deletions(-)
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_in_first_pincontroller>, <&pinctrl_in_another_controller>;
 
-diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
-index 362dd89..44472ca 100644
---- a/arch/x86/kernel/smpboot.c
-+++ b/arch/x86/kernel/smpboot.c
-@@ -1308,8 +1308,6 @@ void __init native_smp_prepare_cpus(unsigned int max_cpus)
- 	pr_info("CPU0: ");
- 	print_cpu_info(&cpu_data(0));
+if two (or more) controllers are involved.
  
--	native_pv_lock_init();
--
- 	uv_system_init();
- 
- 	set_mtrr_aps_delayed_init();
-@@ -1339,6 +1337,7 @@ void __init native_smp_prepare_boot_cpu(void)
- 	/* already set me in cpu_online_mask in boot_cpu_init() */
- 	cpumask_set_cpu(me, cpu_callout_mask);
- 	cpu_set_state_online(me);
-+	native_pv_lock_init();
- }
- 
- void __init calculate_max_logical_packages(void)
-diff --git a/arch/x86/xen/spinlock.c b/arch/x86/xen/spinlock.c
-index 3776122..6deb490 100644
---- a/arch/x86/xen/spinlock.c
-+++ b/arch/x86/xen/spinlock.c
-@@ -68,11 +68,8 @@ void xen_init_lock_cpu(int cpu)
- 	int irq;
- 	char *name;
- 
--	if (!xen_pvspin) {
--		if (cpu == 0)
--			static_branch_disable(&virt_spin_lock_key);
-+	if (!xen_pvspin)
- 		return;
--	}
- 
- 	WARN(per_cpu(lock_kicker_irq, cpu) >= 0, "spinlock on CPU%d exists on IRQ%d!\n",
- 	     cpu, per_cpu(lock_kicker_irq, cpu));
-@@ -124,6 +121,7 @@ void __init xen_init_spinlocks(void)
- 
- 	if (!xen_pvspin) {
- 		printk(KERN_DEBUG "xen: PV spinlocks disabled\n");
-+		static_branch_disable(&virt_spin_lock_key);
- 		return;
- 	}
- 	printk(KERN_DEBUG "xen: PV spinlocks enabled\n");
+> On the other hand if we associate the pin control states with each of
+> the resources that need those states, then when those resources are
+> controlled, they will automatically know how to deal with the states.
+> The top-level device (i.e. backlight) doesn't need to concern itself
+> with those details.
+
+So the options are:
+
+ a) put "active" and "inactive" pinctrls into the pwm-node, and nothing
+    related to the involved PWM pins in the consumer
+
+ b) put the PWM pin config in the consumer's "default" pinctrl (and
+    maybe leave it out int "init" if you want smooth taking over).
+
+(Or maybe use "enabled" and "disabled" in a) to match the pwm_states
+.enabled?)
+
+The advantages I see in b) over a) are:
+
+ - "default" and "init" are a known pinctrl concept that most people
+   should have understood.
+
+ - You have all pinctrl config for the backlight in a single place.
+
+ - none of the involved driver must explicitly handle pinctrl stuff
+
+You presume that b) being commonly done is a sign of "our device trees
+and kernel subsystems still maturing". But maybe it's only that the
+capabilities provided by pinctrl subsystem without extra effort is good
+enough?
+
+Best regards
+Uwe
+
 -- 
-1.8.3.1
-
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
