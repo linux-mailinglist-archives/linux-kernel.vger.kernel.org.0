@@ -2,138 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05D6D56ED1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 18:32:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70B9756EC6
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 18:30:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726688AbfFZQcJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 12:32:09 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:47658 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726006AbfFZQcI (ORCPT
+        id S1726566AbfFZQaD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 12:30:03 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:33016 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726179AbfFZQaC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 12:32:08 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5QGU4Wg004218;
-        Wed, 26 Jun 2019 16:30:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=Mz7em8B5BcTHywkzCrR8lugIdy2ootcWo4w3RRWBYaM=;
- b=N/a93ebuSSKM+1UIO0buPOjR9AvCbLsHhw01AwBMp/XW9BUb98JLnzoJbLgwOZFWmGyw
- hJdpkR7HkvPCAWlWLDnQsdQatbUdssqmn37SwPrTcAyE+/9x/iin4aJ6YtVFtP1GNmmr
- W4gQLbQG2SBcdOy5QNpDSE2/3fIVqQVrn7mZXub6KhldCj8Zzx/yQQ7a5EH7pzSZXmup
- IrJvp7zWK9kXgRoeoC8dGqS2tKAzLiR74Ta5S5LQWYLQBZWpbM10fUskgAys8/96vQdr
- G26RY/thy8CrA4lCa0mPtRoigi2YSG7nQksiKL4VCeGiPZV6yAFAimBMe+B5DQlWGUUd ig== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2130.oracle.com with ESMTP id 2t9brtbf85-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 26 Jun 2019 16:30:39 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5QGRxdd192423;
-        Wed, 26 Jun 2019 16:28:38 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by aserp3020.oracle.com with ESMTP id 2t9p6uvctr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 26 Jun 2019 16:28:38 +0000
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x5QGScxQ193859;
-        Wed, 26 Jun 2019 16:28:38 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 2t9p6uvctj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 26 Jun 2019 16:28:38 +0000
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5QGSZWS032167;
-        Wed, 26 Jun 2019 16:28:35 GMT
-Received: from localhost (/10.159.137.246)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 26 Jun 2019 09:28:35 -0700
-Date:   Wed, 26 Jun 2019 09:28:31 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     matthew.garrett@nebula.com, yuchao0@huawei.com, tytso@mit.edu,
-        ard.biesheuvel@linaro.org, josef@toxicpanda.com, hch@infradead.org,
-        clm@fb.com, adilger.kernel@dilger.ca, jack@suse.com,
-        dsterba@suse.com, jaegeuk@kernel.org, jk@ozlabs.org,
-        reiserfs-devel@vger.kernel.org, linux-efi@vger.kernel.org,
-        devel@lists.orangefs.org, linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
-        linux-mm@kvack.org, linux-nilfs@vger.kernel.org,
-        linux-mtd@lists.infradead.org, ocfs2-devel@oss.oracle.com,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-btrfs@vger.kernel.org
-Subject: Re: [PATCH 5/5] vfs: don't allow writes to swap files
-Message-ID: <20190626162831.GF5171@magnolia>
-References: <156151637248.2283603.8458727861336380714.stgit@magnolia>
- <156151641177.2283603.7806026378321236401.stgit@magnolia>
- <20190626035151.GA10613@ZenIV.linux.org.uk>
+        Wed, 26 Jun 2019 12:30:02 -0400
+Received: by mail-ed1-f65.google.com with SMTP id i11so4204110edq.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 09:30:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=pxtWuk1q9NwdLhCWjigp44Ai1m3FAAy67WUlQm2a8yA=;
+        b=F9CIevuQHRyHX0Cb4LbioMn7puTjlO57X0AZlpXpUCdNutm0m2aJ7IS0d8M21OWHZK
+         +TETAqZTKW1TY9VDnAGJK5hZkd6b7xbLie+HSdTg2DDc63QTHsEvYtwx3R/luOMgj16x
+         ehuLvbWfKr7ecteKGqISws5eJ8uiRlMZCBetw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=pxtWuk1q9NwdLhCWjigp44Ai1m3FAAy67WUlQm2a8yA=;
+        b=Jp1wPdCnGNi2SvTemmr6T23fSVVQgjsMPv32sM3iZMkajnsEIKYl5h7F+I+fVVlSIy
+         TS3+FPXuoyvi+FKSZ+cUb7Ji87kWu6k5y3pUA5m5jAjlnUlAaAXIAJC12tF99qu8TkZY
+         kjIAKsGfyw1/yTf35t0jrSv3u2iNSduM7F4q2saqv4G4F26Xz1OnLliiQwFIL9uH+QG1
+         Iy4jqbbOhsLM6VcjAAN62WBLIS4ZejGOSo5kQvjM6n+jvaa2+FojJq58qPpycdpYBRNV
+         hDj9GN6oaXxDFrDjIICob7gXHpQkKZtXPjo+rt5wIDsy12TdjbEyXBdI5eB9DBwSCvUP
+         ktyg==
+X-Gm-Message-State: APjAAAXFl+M545nDLuEftCHKtcv0LAyv1YzIdEoYe6uJ2KPbyT4Q0VUd
+        EJVAVdTBrs5JWQmRHWrq1TOnQnAfQoE=
+X-Google-Smtp-Source: APXvYqw14KV/pLRZOsgSJp+IRx5aZGACL1k4TeWcmneUTB28zjQgI7qKkEuffGFS5EHv4rTsmQzyaA==
+X-Received: by 2002:a50:b4fd:: with SMTP id x58mr6357100edd.97.1561566600740;
+        Wed, 26 Jun 2019 09:30:00 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id g7sm5884310eda.52.2019.06.26.09.29.59
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 26 Jun 2019 09:29:59 -0700 (PDT)
+Date:   Wed, 26 Jun 2019 18:29:57 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Gerd Hoffmann <kraxel@redhat.com>
+Cc:     dri-devel@lists.freedesktop.org, tzimmermann@suse.de,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        "open list:DRM DRIVER FOR BOCHS VIRTUAL GPU" 
+        <virtualization@lists.linux-foundation.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] drm/bochs: fix framebuffer setup.
+Message-ID: <20190626162957.GW12905@phenom.ffwll.local>
+Mail-Followup-To: Gerd Hoffmann <kraxel@redhat.com>,
+        dri-devel@lists.freedesktop.org, tzimmermann@suse.de,
+        David Airlie <airlied@linux.ie>,
+        "open list:DRM DRIVER FOR BOCHS VIRTUAL GPU" <virtualization@lists.linux-foundation.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20190626065551.12956-1-kraxel@redhat.com>
+ <20190626065551.12956-3-kraxel@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190626035151.GA10613@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9300 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1906260193
+In-Reply-To: <20190626065551.12956-3-kraxel@redhat.com>
+X-Operating-System: Linux phenom 4.19.0-5-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 26, 2019 at 04:51:51AM +0100, Al Viro wrote:
-> On Tue, Jun 25, 2019 at 07:33:31PM -0700, Darrick J. Wong wrote:
-> > --- a/fs/attr.c
-> > +++ b/fs/attr.c
-> > @@ -236,6 +236,9 @@ int notify_change(struct dentry * dentry, struct iattr * attr, struct inode **de
-> >  	if (IS_IMMUTABLE(inode))
-> >  		return -EPERM;
-> >  
-> > +	if (IS_SWAPFILE(inode))
-> > +		return -ETXTBSY;
-> > +
-> >  	if ((ia_valid & (ATTR_MODE | ATTR_UID | ATTR_GID | ATTR_TIMES_SET)) &&
-> >  	    IS_APPEND(inode))
-> >  		return -EPERM;
+On Wed, Jun 26, 2019 at 08:55:51AM +0200, Gerd Hoffmann wrote:
+> If bo->width doesn't match fb->width the driver fails to configure
+> the display correctly, resulting in a scrambled display.  Fix it.
 > 
-> Er...  So why exactly is e.g. chmod(2) forbidden for swapfiles?  Or touch(1),
-> for that matter...
-
-Oops, that check is overly broad; I think the only attribute change we
-need to filter here is ATTR_SIZE.... which we could do unconditionally
-in inode_newsize_ok.
-
-What's the use case for allowing userspace to increase the size of an
-active swapfile?  I don't see any; the kernel has a permanent lease on
-the file space mapping (at least until swapoff)...
-
-> > diff --git a/mm/swapfile.c b/mm/swapfile.c
-> > index 596ac98051c5..1ca4ee8c2d60 100644
-> > --- a/mm/swapfile.c
-> > +++ b/mm/swapfile.c
-> > @@ -3165,6 +3165,19 @@ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
-> >  	if (error)
-> >  		goto bad_swap;
-> >  
-> > +	/*
-> > +	 * Flush any pending IO and dirty mappings before we start using this
-> > +	 * swap file.
-> > +	 */
-> > +	if (S_ISREG(inode->i_mode)) {
-> > +		inode->i_flags |= S_SWAPFILE;
-> > +		error = inode_drain_writes(inode);
-> > +		if (error) {
-> > +			inode->i_flags &= ~S_SWAPFILE;
-> > +			goto bad_swap;
-> > +		}
-> > +	}
+> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+> ---
+>  drivers/gpu/drm/bochs/bochs.h     |  2 +-
+>  drivers/gpu/drm/bochs/bochs_hw.c  | 13 +++++++++----
+>  drivers/gpu/drm/bochs/bochs_kms.c |  1 +
+>  3 files changed, 11 insertions(+), 5 deletions(-)
 > 
-> Why are swap partitions any less worthy of protection?
+> diff --git a/drivers/gpu/drm/bochs/bochs.h b/drivers/gpu/drm/bochs/bochs.h
+> index cc35d492142c..78c0283496cc 100644
+> --- a/drivers/gpu/drm/bochs/bochs.h
+> +++ b/drivers/gpu/drm/bochs/bochs.h
+> @@ -86,7 +86,7 @@ void bochs_hw_setmode(struct bochs_device *bochs,
+>  void bochs_hw_setformat(struct bochs_device *bochs,
+>  			const struct drm_format_info *format);
+>  void bochs_hw_setbase(struct bochs_device *bochs,
+> -		      int x, int y, u64 addr);
+> +		      int x, int y, int fbwidth, u64 addr);
+>  int bochs_hw_load_edid(struct bochs_device *bochs);
+>  
+>  /* bochs_mm.c */
+> diff --git a/drivers/gpu/drm/bochs/bochs_hw.c b/drivers/gpu/drm/bochs/bochs_hw.c
+> index 791ab2f79947..141aa02962d3 100644
+> --- a/drivers/gpu/drm/bochs/bochs_hw.c
+> +++ b/drivers/gpu/drm/bochs/bochs_hw.c
+> @@ -255,16 +255,21 @@ void bochs_hw_setformat(struct bochs_device *bochs,
+>  }
+>  
+>  void bochs_hw_setbase(struct bochs_device *bochs,
+> -		      int x, int y, u64 addr)
+> +		      int x, int y, int fbwidth, u64 addr)
+>  {
+> -	unsigned long offset = (unsigned long)addr +
+> +	unsigned long offset;
+> +	unsigned int vx, vy;
+> +
+> +	bochs->stride = fbwidth * (bochs->bpp / 8);
+> +	offset = (unsigned long)addr +
+>  		y * bochs->stride +
+>  		x * (bochs->bpp / 8);
+> -	int vy = offset / bochs->stride;
+> -	int vx = (offset % bochs->stride) * 8 / bochs->bpp;
+> +	vy = offset / bochs->stride;
+> +	vx = (offset % bochs->stride) * 8 / bochs->bpp;
+>  
+>  	DRM_DEBUG_DRIVER("x %d, y %d, addr %llx -> offset %lx, vx %d, vy %d\n",
+>  			 x, y, addr, offset, vx, vy);
+> +	bochs_dispi_write(bochs, VBE_DISPI_INDEX_VIRT_WIDTH, fbwidth);
+>  	bochs_dispi_write(bochs, VBE_DISPI_INDEX_X_OFFSET, vx);
+>  	bochs_dispi_write(bochs, VBE_DISPI_INDEX_Y_OFFSET, vy);
+>  }
+> diff --git a/drivers/gpu/drm/bochs/bochs_kms.c b/drivers/gpu/drm/bochs/bochs_kms.c
+> index 5904eddc83a5..1f6aa11a1dc9 100644
+> --- a/drivers/gpu/drm/bochs/bochs_kms.c
+> +++ b/drivers/gpu/drm/bochs/bochs_kms.c
+> @@ -36,6 +36,7 @@ static void bochs_plane_update(struct bochs_device *bochs,
+>  	bochs_hw_setbase(bochs,
+>  			 state->crtc_x,
+>  			 state->crtc_y,
+> +			 gbo->width,
 
-Hmm, yeah, S_SWAPFILE should apply to block devices too.  I figured that
-the mantra of "sane tools will open block devices with O_EXCL" should
-have sufficed, but there's really no reason to allow that either.
+You want the dimensions of the drm_framebuffer here, not something from
+the underlying gem bo.
 
---D
+>  			 gbo->bo.offset);
+
+I think same here, or at least additionally take into account both
+drm_framebuffer offset _and_ vram offset.
+-Daniel
+
+>  	bochs_hw_setformat(bochs, state->fb->format);
+>  }
+> -- 
+> 2.18.1
+> 
+
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
