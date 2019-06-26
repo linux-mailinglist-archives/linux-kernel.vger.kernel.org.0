@@ -2,54 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B68A856CB8
+	by mail.lfdr.de (Postfix) with ESMTP id 3C0BB56CB7
 	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 16:49:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728302AbfFZOrj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 10:47:39 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:33927 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728276AbfFZOrb (ORCPT
+        id S1728298AbfFZOrg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 10:47:36 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:36044 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728285AbfFZOrc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 10:47:31 -0400
-Received: by mail-wr1-f66.google.com with SMTP id k11so3096963wrl.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 07:47:30 -0700 (PDT)
+        Wed, 26 Jun 2019 10:47:32 -0400
+Received: by mail-wm1-f66.google.com with SMTP id u8so2413201wmm.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 07:47:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=rrEC51agRNRESL/CxKm5Wt0sIDAE+3eNmgw8xbBiCeU=;
-        b=AklW2L6ALoQqSVGAVlBzQswi1iBI2POuGTC91ZvEaUPyHS3o3RFH9VKw8CCth7NvZ6
-         /idnsNFZpBNvQKF4OtvqjAxqlzKw5gLFOmmA0nbw5twOZjCtJrKHuwa0MUclae8RuwAv
-         qsJhO3HbDlUcKZ/oH7W/0UHrMghJyVmqN0WU3cfp0N+LRUbXclVeQgoZ/IIo3KDhnfsf
-         BO4y4RLf4fJD4b9Ny1P0xcgslloXeaJ0gQR3XqaGEJ1A0ioXzCrd2VJSMT5rUcIq7Lue
-         /XfmkBC4jvyCWtJn1RszZDbqR6V4Tw3D8zbQJvlkL/ysjJcBSNOpr8Ps81zDAPj3ZvkU
-         IXIg==
+        bh=wdZ7FecC0TRurfVLmuWoSlgUMuXVwscdG5MO2xNw/Ic=;
+        b=t579sdMYVNudZHexTNI4IPGizIkbNQKDA+IU2XssndcB2dsFhiFL5x++LJga0MG6Sk
+         bsdtLaklcZAatUYpwsAE2a0YTEdMKZcUr0ory80k+eeXAkEzdbcaCAGICSKfetzz8T5T
+         rIopJiNV9agiYtFiTaVsHeUyN228aCUTOhdoTGfxhuICf76LhQiVGdNhPdzb7ip18Fw6
+         1X5BSpAT7GbyKLNq4cqIx9RUIK1Y3kuIFDT3xg7xsAiP+0WXxg1hXueXysA3a5ZhKw1s
+         EPQNllxcS15xjKgqCUYhtRAR1lgV6keRrWbS2wYDlBXR+tfrOrsQIyTscBmTrOmb/IDG
+         qrBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=rrEC51agRNRESL/CxKm5Wt0sIDAE+3eNmgw8xbBiCeU=;
-        b=rdxhZumzYmrTIZ1M46X4jf2ahXTMmvKZ3djiYD0H/yqvo4Rj1yqIAVEaWsCepgA9xe
-         AO/F+4HbVswTvZAVF7WFi1hEZH6FBdIK10VWboGmV/RhW2dFiMvH87oLRoBCkisOPVJ0
-         4G/8LvU1H4sk23gv9LB1vDdJRKEG+p4SC9Jf70KOHeGiSzW2LbeSEn556njdPcF9ZhPq
-         HX1P9T+/UT4918any6DxyDuIz+l8YBmTxk8Vs1kTZXlpwHBhBrTV/lsvLr8iD1KD3M3O
-         +75iCPV6IXPra1jw+H4yfMzSdj/KQifHL0zCV7ATxVrrmpi1n5smFBeqlGBAFC65KpSu
-         8LrQ==
-X-Gm-Message-State: APjAAAXbQ2ZGpvvQGkuLOuCPmfjhRJW7GWKS9o3EqhZqOhhi79k3idKX
-        jOAmaj8YFVHcRa8PGc3xqm0/3GoSE/4=
-X-Google-Smtp-Source: APXvYqyiQxKEOR1Mf7nQ39jP61ZomTuAppAwtJlmocpq9C5VGmpwQM2YbR/zodtFNTOAWVidc/SJjA==
-X-Received: by 2002:a5d:4302:: with SMTP id h2mr3594627wrq.137.1561560449480;
-        Wed, 26 Jun 2019 07:47:29 -0700 (PDT)
+        bh=wdZ7FecC0TRurfVLmuWoSlgUMuXVwscdG5MO2xNw/Ic=;
+        b=bma6YZJuLOZaGKKjWqCc+rQM7ipfwHPgFl7m92/6SOQVZCD3VsW+o4++x88epCf95o
+         e1M7jQNYeWFDarbiHSffY6YU8yuxfufOBlWOchtm19sYAmaIYpO0vEJlOrLASfwHcSy3
+         OlqX3KZZUvJCbdPl3i+qvoPaVBbjhcOfqnPKO5Y2hfYvpw84bkulgoJi9Xr8J1R0Q+6a
+         jBUs8cJEuSLg0SdEiiAaBq7W5UBjigEeAiXeIesk3QanX2M4hHDl+WnxRwKJ7MraK+89
+         rjXTksdnH0mLAQHCMVvgyFIgDfIQJjj5bBxtG9s8NrHwulvefOKElAm8tivwa06N2p1F
+         92LA==
+X-Gm-Message-State: APjAAAVpYqK50YQ6SaGLWQzm6YSZ/lvC+eXUFANyB5pmu+Yju3jlCEkT
+        suV7f7g3qJnEAGqaOVPuhYMUsA==
+X-Google-Smtp-Source: APXvYqyy1OV9Yz61PFs8lU0X/N15FLwXCQNvvHOwhD+YKPKxiC3fsLnBv3dbWUcvK59w05Qw6eoEeg==
+X-Received: by 2002:a1c:b707:: with SMTP id h7mr2968190wmf.45.1561560451162;
+        Wed, 26 Jun 2019 07:47:31 -0700 (PDT)
 Received: from mai.imgcgcw.net (26.92.130.77.rev.sfr.net. [77.130.92.26])
-        by smtp.gmail.com with ESMTPSA id h84sm2718557wmf.43.2019.06.26.07.47.28
+        by smtp.gmail.com with ESMTPSA id h84sm2718557wmf.43.2019.06.26.07.47.29
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 Jun 2019 07:47:28 -0700 (PDT)
+        Wed, 26 Jun 2019 07:47:30 -0700 (PDT)
 From:   Daniel Lezcano <daniel.lezcano@linaro.org>
 To:     tglx@linutronix.de
-Cc:     linux-kernel@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH 11/25] clocksource/drivers/tegra: Support COMPILE_TEST universally
-Date:   Wed, 26 Jun 2019 16:46:37 +0200
-Message-Id: <20190626144651.16742-11-daniel.lezcano@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-tegra@vger.kernel.org (open list:TEGRA ARCHITECTURE SUPPORT)
+Subject: [PATCH 12/25] clocksource/drivers/tegra: Lower clocksource rating for some Tegra's
+Date:   Wed, 26 Jun 2019 16:46:38 +0200
+Message-Id: <20190626144651.16742-12-daniel.lezcano@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190626144651.16742-1-daniel.lezcano@linaro.org>
 References: <adba7d03-e9bd-9542-60bc-0f2d4874a40e@linaro.org>
@@ -61,29 +64,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Dmitry Osipenko <digetx@gmail.com>
 
-Remove build dependency on ARM for compile-testing to allow non-arch
-specific build-bots (like Intel's test robot) to compile the driver and
-report about problems.
+Arch-timer is more preferable for a range of Tegra SoC generations as
+it has higher precision and is not affect by any kind of problems.
 
+Pointed-out-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 ---
- drivers/clocksource/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clocksource/timer-tegra20.c | 30 +++++++++++++++++++++++++----
+ 1 file changed, 26 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-index 3300739edce4..d17a347e813a 100644
---- a/drivers/clocksource/Kconfig
-+++ b/drivers/clocksource/Kconfig
-@@ -140,7 +140,7 @@ config TEGRA_TIMER
- 	bool "Tegra timer driver" if COMPILE_TEST
- 	select CLKSRC_MMIO
- 	select TIMER_OF
--	depends on ARM || ARM64
-+	depends on ARCH_TEGRA || COMPILE_TEST
- 	help
- 	  Enables support for the Tegra driver.
+diff --git a/drivers/clocksource/timer-tegra20.c b/drivers/clocksource/timer-tegra20.c
+index 6a3704142f31..ed1454000ea9 100644
+--- a/drivers/clocksource/timer-tegra20.c
++++ b/drivers/clocksource/timer-tegra20.c
+@@ -109,7 +109,6 @@ static DEFINE_PER_CPU(struct timer_of, tegra_to) = {
+ 
+ 	.clkevt = {
+ 		.name = "tegra_timer",
+-		.rating = 460,
+ 		.features = CLOCK_EVT_FEAT_ONESHOT | CLOCK_EVT_FEAT_PERIODIC,
+ 		.set_next_event = tegra_timer_set_next_event,
+ 		.set_state_shutdown = tegra_timer_shutdown,
+@@ -219,7 +218,8 @@ static inline unsigned int tegra_irq_idx_for_cpu(int cpu, bool tegra20)
+ 	return TIMER10_IRQ_IDX + cpu;
+ }
+ 
+-static int __init tegra_init_timer(struct device_node *np, bool tegra20)
++static int __init tegra_init_timer(struct device_node *np, bool tegra20,
++				   int rating)
+ {
+ 	struct timer_of *to;
+ 	int cpu, ret;
+@@ -282,6 +282,7 @@ static int __init tegra_init_timer(struct device_node *np, bool tegra20)
+ 
+ 		cpu_to = per_cpu_ptr(&tegra_to, cpu);
+ 		cpu_to->of_base.base = timer_reg_base + base;
++		cpu_to->clkevt.rating = rating;
+ 		cpu_to->clkevt.cpumask = cpumask_of(cpu);
+ 		cpu_to->clkevt.irq = irq_of_parse_and_map(np, idx);
+ 		if (!cpu_to->clkevt.irq) {
+@@ -341,13 +342,34 @@ static int __init tegra_init_timer(struct device_node *np, bool tegra20)
+ 
+ static int __init tegra210_init_timer(struct device_node *np)
+ {
+-	return tegra_init_timer(np, false);
++	/*
++	 * Arch-timer can't survive across power cycle of CPU core and
++	 * after CPUPORESET signal due to a system design shortcoming,
++	 * hence tegra-timer is more preferable on Tegra210.
++	 */
++	return tegra_init_timer(np, false, 460);
+ }
+ TIMER_OF_DECLARE(tegra210_timer, "nvidia,tegra210-timer", tegra210_init_timer);
+ 
+ static int __init tegra20_init_timer(struct device_node *np)
+ {
+-	return tegra_init_timer(np, true);
++	int rating;
++
++	/*
++	 * Tegra20 and Tegra30 have Cortex A9 CPU that has a TWD timer,
++	 * that timer runs off the CPU clock and hence is subjected to
++	 * a jitter caused by DVFS clock rate changes. Tegra-timer is
++	 * more preferable for older Tegra's, while later SoC generations
++	 * have arch-timer as a main per-CPU timer and it is not affected
++	 * by DVFS changes.
++	 */
++	if (of_machine_is_compatible("nvidia,tegra20") ||
++	    of_machine_is_compatible("nvidia,tegra30"))
++		rating = 460;
++	else
++		rating = 330;
++
++	return tegra_init_timer(np, true, rating);
+ }
+ TIMER_OF_DECLARE(tegra20_timer, "nvidia,tegra20-timer", tegra20_init_timer);
  
 -- 
 2.17.1
