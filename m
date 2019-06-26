@@ -2,81 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33A6656E41
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 18:01:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D5D256E4D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 18:04:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726506AbfFZQBx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 12:01:53 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:45670 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726157AbfFZQBx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 12:01:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=GnPHeYQAyV1bj18lebqeKcP5mH5ZIM5W4pKT9Ho81xg=; b=tO2G+Zjcc4QuYrS5gBSZXJcGGd
-        xtVkG432/Sdz/qEa6WG6V+xeN9gxQmd38CGR+RW1L/V6opA+js4Vbx8yUdC6FR+Deau+WGuIPf+O+
-        xx+vj/pz8ghtFYvDke3WnfFALJTtQ0HDT8AKbP1f9EACdfndQx/QGDzmJm5C7juX3smTINFmMuUEu
-        Ab5XoyWQidj9J8qhqIT0CEUu0Xigho7q4XiHE9owC6MOUjCTrTCqVDV46CDdRhu0RaUXuZ3GyFuVE
-        Gd1LQurM3QCySstulvWx7YzNA1yu5JIrIQkGqo1kq6NqEqNP/2HlRYeCRLDBSoHlDqekaGpLrHQYB
-        Sjj8u8vQ==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hgAMp-000888-9V; Wed, 26 Jun 2019 16:01:51 +0000
-Subject: Re: linux-next: Tree for Jun 26 (task_struct: cached_requested_key)
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>
-References: <20190626231617.1e858da3@canb.auug.org.au>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <1d868a7a-0a15-e2b1-d73b-13d9229855ad@infradead.org>
-Date:   Wed, 26 Jun 2019 09:01:49 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1726558AbfFZQEc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 12:04:32 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:54374 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725958AbfFZQEb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 12:04:31 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 64C8DDA4DBBAD2CF71A4;
+        Thu, 27 Jun 2019 00:04:11 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.439.0; Thu, 27 Jun 2019
+ 00:04:03 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <davem@davemloft.net>, <sdf@google.com>, <jianbol@mellanox.com>,
+        <jiri@mellanox.com>, <mirq-linux@rere.qmqm.pl>,
+        <willemb@google.com>, <sdf@fomichev.me>, <jiri@resnulli.us>,
+        <j.vosburgh@gmail.com>, <vfalico@gmail.com>, <andy@greyhouse.net>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH] team: Always enable vlan tx offload
+Date:   Thu, 27 Jun 2019 00:03:39 +0800
+Message-ID: <20190626160339.35152-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
+In-Reply-To: <20190624135007.GA17673@nanopsycho>
+References: <20190624135007.GA17673@nanopsycho>
 MIME-Version: 1.0
-In-Reply-To: <20190626231617.1e858da3@canb.auug.org.au>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/26/19 6:16 AM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> The sparc64 builds are broken in this tree, sorry.
-> 
-> Changes since 20190625:
-> 
-> 
-> The keys tree gained conflicts aginst the ecryptfs and integrity trees.
+We should rather have vlan_tci filled all the way down
+to the transmitting netdevice and let it do the hw/sw
+vlan implementation.
 
-Multiple build errors like this when CONFIG_KEYS is not set/enabled:
-(this was seen on one i386 build)
+Suggested-by: Jiri Pirko <jiri@resnulli.us>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/team/team.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-# CONFIG_KEYS is not set
-CONFIG_KEYS_REQUEST_CACHE=y
-
-
-  CC      arch/x86/crypto/crc32-pclmul_glue.o
-In file included from ../include/linux/export.h:45:0,
-                 from ../include/linux/linkage.h:7,
-                 from ../include/linux/kernel.h:8,
-                 from ../arch/x86/entry/common.c:10:
-../include/linux/tracehook.h: In function ‘tracehook_notify_resume’:
-../include/linux/tracehook.h:191:22: error: ‘struct task_struct’ has no member named ‘cached_requested_key’
-  if (unlikely(current->cached_requested_key)) {
-                      ^
-
-
-
+diff --git a/drivers/net/team/team.c b/drivers/net/team/team.c
+index b48006e7fa2f..a8bb25341bed 100644
+--- a/drivers/net/team/team.c
++++ b/drivers/net/team/team.c
+@@ -2128,12 +2128,12 @@ static void team_setup(struct net_device *dev)
+ 	dev->features |= NETIF_F_NETNS_LOCAL;
+ 
+ 	dev->hw_features = TEAM_VLAN_FEATURES |
+-			   NETIF_F_HW_VLAN_CTAG_TX |
+ 			   NETIF_F_HW_VLAN_CTAG_RX |
+ 			   NETIF_F_HW_VLAN_CTAG_FILTER;
+ 
+ 	dev->hw_features |= NETIF_F_GSO_ENCAP_ALL | NETIF_F_GSO_UDP_L4;
+ 	dev->features |= dev->hw_features;
++	dev->features |= NETIF_F_HW_VLAN_CTAG_TX | NETIF_F_HW_VLAN_STAG_TX;
+ }
+ 
+ static int team_newlink(struct net *src_net, struct net_device *dev,
 -- 
-~Randy
+2.20.1
+
+
