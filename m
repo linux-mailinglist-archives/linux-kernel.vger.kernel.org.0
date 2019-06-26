@@ -2,95 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B69D0561EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 08:00:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 787AB561F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 08:00:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726077AbfFZGAS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 02:00:18 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:8366 "EHLO
+        id S1726654AbfFZGAs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 02:00:48 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:29574 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725379AbfFZGAR (ORCPT
+        by vger.kernel.org with ESMTP id S1726416AbfFZGAr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 02:00:17 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5Q5ufvF091349
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 02:00:17 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2tbyjypqej-1
+        Wed, 26 Jun 2019 02:00:47 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5Q5ueJ8109401
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 02:00:47 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2tc0mvcfjt-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 02:00:16 -0400
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 02:00:46 -0400
 Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
-        Wed, 26 Jun 2019 07:00:14 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Wed, 26 Jun 2019 07:00:44 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 26 Jun 2019 07:00:11 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5Q60APB27197552
+        Wed, 26 Jun 2019 07:00:41 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5Q60e0U42991826
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 26 Jun 2019 06:00:10 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 43B304C06D;
-        Wed, 26 Jun 2019 06:00:10 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6BDD24C062;
-        Wed, 26 Jun 2019 06:00:08 +0000 (GMT)
+        Wed, 26 Jun 2019 06:00:40 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CCCA64204C;
+        Wed, 26 Jun 2019 06:00:40 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0141E42047;
+        Wed, 26 Jun 2019 06:00:39 +0000 (GMT)
 Received: from linux.vnet.ibm.com (unknown [9.126.150.29])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with SMTP;
-        Wed, 26 Jun 2019 06:00:08 +0000 (GMT)
-Date:   Wed, 26 Jun 2019 11:30:07 +0530
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with SMTP;
+        Wed, 26 Jun 2019 06:00:38 +0000 (GMT)
+Date:   Wed, 26 Jun 2019 11:30:38 +0530
 From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
 To:     Song Liu <songliubraving@fb.com>
 Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         matthew.wilcox@oracle.com, kirill.shutemov@linux.intel.com,
         peterz@infradead.org, oleg@redhat.com, rostedt@goodmis.org,
         kernel-team@fb.com, william.kucharski@oracle.com
-Subject: Re: [PATCH v7 2/4] uprobe: use original page when all uprobes are
- removed
+Subject: Re: [PATCH v7 4/4] uprobe: use FOLL_SPLIT_PMD instead of FOLL_SPLIT
 Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
 References: <20190625235325.2096441-1-songliubraving@fb.com>
- <20190625235325.2096441-3-songliubraving@fb.com>
+ <20190625235325.2096441-5-songliubraving@fb.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20190625235325.2096441-3-songliubraving@fb.com>
+In-Reply-To: <20190625235325.2096441-5-songliubraving@fb.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 X-TM-AS-GCONF: 00
-x-cbid: 19062606-0008-0000-0000-000002F7136A
+x-cbid: 19062606-4275-0000-0000-000003464FCD
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19062606-0009-0000-0000-0000226446C5
-Message-Id: <20190626060007.GA9158@linux.vnet.ibm.com>
+x-cbparentid: 19062606-4276-0000-0000-000038565359
+Message-Id: <20190626060038.GB9158@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-26_02:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=775 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=790 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1810050000 definitions=main-1906260072
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Song Liu <songliubraving@fb.com> [2019-06-25 16:53:23]:
+* Song Liu <songliubraving@fb.com> [2019-06-25 16:53:25]:
 
-> Currently, uprobe swaps the target page with a anonymous page in both
-> install_breakpoint() and remove_breakpoint(). When all uprobes on a page
-> are removed, the given mm is still using an anonymous page (not the
-> original page).
-> 
-> This patch allows uprobe to use original page when possible (all uprobes
-> on the page are already removed).
+> This patches uses newly added FOLL_SPLIT_PMD in uprobe. This enables easy
+> regroup of huge pmd after the uprobe is disabled (in next patch).
 > 
 > Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 > Signed-off-by: Song Liu <songliubraving@fb.com>
-> 
+> ---
+>  kernel/events/uprobes.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+
 Looks good to me.
 
 Reviewed-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-
 -- 
 Thanks and Regards
 Srikar Dronamraju
