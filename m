@@ -2,231 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E71E56728
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 12:49:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B3B95672F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 12:52:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727005AbfFZKtz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 06:49:55 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:36518 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726077AbfFZKtz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 06:49:55 -0400
-Received: by mail-lj1-f194.google.com with SMTP id i21so1698027ljj.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 03:49:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=DbYsEvBW6F8N7wNO234XyQBFfHMkwstcMZVR/YcSDHw=;
-        b=VsEWkm0MKum6Fuf4raOeZFMKLL6F5QD+CIAWzqOlcXyDeZgZSuaqNcUonl4RMBv/7x
-         /kgGbT97ZXeUXhT9BlRiesPZFqWrXiIGDMgjN7IYOxJUaTkfGOQp3nXTaFE+clonoHv+
-         +3owRGkMDcfqI4MgdCMZQYf/kHYq4VTMfbnGMUsFacARq8FhUoalSx7j1BRJQnhnpObx
-         68Dx3ihI0FP/0BGbVxW0dfJHr601fLSKJvdBIh4T9k8Aj+hIgpcT7eGrG13u0MoqL2ed
-         sQBIHOjxrfgpo/BzJeMXHXJNHK5D2F7iKgDj9AOoDvEjbwSwMfEXwJD0h/vjqyZNefnu
-         HYlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=DbYsEvBW6F8N7wNO234XyQBFfHMkwstcMZVR/YcSDHw=;
-        b=cD7al8vYwO8IsOageAp+iUGuhMhBbdmujcJIAk94wzK+4yiIqYzwB+FgJcqhZe0l/b
-         ILy1UePlWoE3UJeeuxh/OPDqPoey/5ayevMMx2ofcGUh42wGFuzu8o9UwqeOCIv23c/G
-         E2QJysSass2m6Uco8WJCqdKaeQhzyJDdgTXZFHRT+J+atxCIvQobmArFtGI7rf4Y4TA0
-         fIXLX9bZqUgSUqzbQNXmEwar8vFDishi26bnUyoj0C73IJyO06jCVIdHtkzQisRhZiea
-         xpkFSfOnOA4jy1PMgGMRjqsiZzCwzdiFbfd5eVyuCHp7Gt3XGVyaUEzvOzqGI16mqPqB
-         4l9Q==
-X-Gm-Message-State: APjAAAXn299gAsDQIZt9u2JXaNVseifvj9yYr2Dul3utiwsyn/GWZZVD
-        oXfdRoO0KscfoYLUvEKfOhQEIS7Q1vE=
-X-Google-Smtp-Source: APXvYqyf4W3q5MehDftLZSo/IFhASVjHPRiT4GnnAHEmxeIYcMFSDZsrmhFSjrMVhLaA2kVqaSHKYw==
-X-Received: by 2002:a2e:8ed2:: with SMTP id e18mr2469846ljl.235.1561546192452;
-        Wed, 26 Jun 2019 03:49:52 -0700 (PDT)
-Received: from khorivan (59-201-94-178.pool.ukrtel.net. [178.94.201.59])
-        by smtp.gmail.com with ESMTPSA id q2sm2341611lfj.25.2019.06.26.03.49.51
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 26 Jun 2019 03:49:51 -0700 (PDT)
-Date:   Wed, 26 Jun 2019 13:49:49 +0300
-From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-To:     Jesper Dangaard Brouer <brouer@redhat.com>
-Cc:     davem@davemloft.net, grygorii.strashko@ti.com, hawk@kernel.org,
-        saeedm@mellanox.com, leon@kernel.org, ast@kernel.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        xdp-newbies@vger.kernel.org, ilias.apalodimas@linaro.org,
-        netdev@vger.kernel.org, daniel@iogearbox.net,
-        jakub.kicinski@netronome.com, john.fastabend@gmail.com
-Subject: Re: [PATCH v4 net-next 1/4] net: core: page_pool: add user cnt
- preventing pool deletion
-Message-ID: <20190626104948.GF6485@khorivan>
-Mail-Followup-To: Jesper Dangaard Brouer <brouer@redhat.com>,
-        davem@davemloft.net, grygorii.strashko@ti.com, hawk@kernel.org,
-        saeedm@mellanox.com, leon@kernel.org, ast@kernel.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        xdp-newbies@vger.kernel.org, ilias.apalodimas@linaro.org,
-        netdev@vger.kernel.org, daniel@iogearbox.net,
-        jakub.kicinski@netronome.com, john.fastabend@gmail.com
-References: <20190625175948.24771-1-ivan.khoronzhuk@linaro.org>
- <20190625175948.24771-2-ivan.khoronzhuk@linaro.org>
- <20190626124216.494eee86@carbon>
+        id S1726830AbfFZKwV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 06:52:21 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:19080 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726347AbfFZKwU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 06:52:20 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 6E58F3CB74AA66A3D694;
+        Wed, 26 Jun 2019 18:52:18 +0800 (CST)
+Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 26 Jun
+ 2019 18:52:08 +0800
+Subject: Re: [PATCH RESEND] staging: erofs: remove unsupported ->datamode
+ check in fill_inline_data()
+To:     Yue Hu <zbestahu@gmail.com>, <yuchao0@huawei.com>,
+        <gregkh@linuxfoundation.org>
+CC:     <linux-erofs@lists.ozlabs.org>, <devel@driverdev.osuosl.org>,
+        <linux-kernel@vger.kernel.org>, <huyue2@yulong.com>,
+        Miao Xie <miaoxie@huawei.com>
+References: <20190626103936.9064-1-zbestahu@gmail.com>
+From:   Gao Xiang <gaoxiang25@huawei.com>
+Message-ID: <9c9c656e-2f29-d086-362e-76bf1760191a@huawei.com>
+Date:   Wed, 26 Jun 2019 18:51:55 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20190626124216.494eee86@carbon>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190626103936.9064-1-zbestahu@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.151.23.176]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 26, 2019 at 12:42:16PM +0200, Jesper Dangaard Brouer wrote:
->On Tue, 25 Jun 2019 20:59:45 +0300
->Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org> wrote:
->
->> Add user counter allowing to delete pool only when no users.
->> It doesn't prevent pool from flush, only prevents freeing the
->> pool instance. Helps when no need to delete the pool and now
->> it's user responsibility to free it by calling page_pool_free()
->> while destroying procedure. It also makes to use page_pool_free()
->> explicitly, not fully hidden in xdp unreg, which looks more
->> correct after page pool "create" routine.
->
->No, this is wrong.
-below.
+Hi Yue,
 
->
->> Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
->> ---
->>  drivers/net/ethernet/mellanox/mlx5/core/en_main.c | 8 +++++---
->>  include/net/page_pool.h                           | 7 +++++++
->>  net/core/page_pool.c                              | 7 +++++++
->>  net/core/xdp.c                                    | 3 +++
->>  4 files changed, 22 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
->> index 5e40db8f92e6..cb028de64a1d 100644
->> --- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
->> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
->> @@ -545,10 +545,8 @@ static int mlx5e_alloc_rq(struct mlx5e_channel *c,
->>  	}
->>  	err = xdp_rxq_info_reg_mem_model(&rq->xdp_rxq,
->>  					 MEM_TYPE_PAGE_POOL, rq->page_pool);
->> -	if (err) {
->> -		page_pool_free(rq->page_pool);
->> +	if (err)
->>  		goto err_free;
->> -	}
->>
->>  	for (i = 0; i < wq_sz; i++) {
->>  		if (rq->wq_type == MLX5_WQ_TYPE_LINKED_LIST_STRIDING_RQ) {
->> @@ -613,6 +611,8 @@ static int mlx5e_alloc_rq(struct mlx5e_channel *c,
->>  	if (rq->xdp_prog)
->>  		bpf_prog_put(rq->xdp_prog);
->>  	xdp_rxq_info_unreg(&rq->xdp_rxq);
->> +	if (rq->page_pool)
->> +		page_pool_free(rq->page_pool);
->>  	mlx5_wq_destroy(&rq->wq_ctrl);
->>
->>  	return err;
->> @@ -643,6 +643,8 @@ static void mlx5e_free_rq(struct mlx5e_rq *rq)
->>  	}
->>
->>  	xdp_rxq_info_unreg(&rq->xdp_rxq);
->> +	if (rq->page_pool)
->> +		page_pool_free(rq->page_pool);
->
->No, this is wrong.  The hole point with the merged page_pool fixes
->patchset was that page_pool_free() needs to be delayed until no-more
->in-flight packets exist.
+On 2019/6/26 18:39, Yue Hu wrote:
+> From: Yue Hu <huyue2@yulong.com>
+> 
+> Already check if ->datamode is supported in read_inode(), no need to check
+> again in the next fill_inline_data() only called by fill_inode().
+> 
+> Signed-off-by: Yue Hu <huyue2@yulong.com>
+> Reviewed-by: Gao Xiang <gaoxiang25@huawei.com>
+> Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-Probably it's not so obvious, but it's still delayed and deleted only
-after no-more in-flight packets exist. Here question is only who is able
-to do this first based on refcnt.
+Bump the patch version in the title as Greg said...
+Otherwise, it is hard to differ which patch is the latest patch...
 
->
->
->>  	mlx5_wq_destroy(&rq->wq_ctrl);
->>  }
->>
->> diff --git a/include/net/page_pool.h b/include/net/page_pool.h
->> index f07c518ef8a5..1ec838e9927e 100644
->> --- a/include/net/page_pool.h
->> +++ b/include/net/page_pool.h
->> @@ -101,6 +101,7 @@ struct page_pool {
->>  	struct ptr_ring ring;
->>
->>  	atomic_t pages_state_release_cnt;
->> +	atomic_t user_cnt;
->>  };
->>
->>  struct page *page_pool_alloc_pages(struct page_pool *pool, gfp_t gfp);
->> @@ -183,6 +184,12 @@ static inline dma_addr_t page_pool_get_dma_addr(struct page *page)
->>  	return page->dma_addr;
->>  }
->>
->> +/* used to prevent pool from deallocation */
->> +static inline void page_pool_get(struct page_pool *pool)
->> +{
->> +	atomic_inc(&pool->user_cnt);
->> +}
->> +
->>  static inline bool is_page_pool_compiled_in(void)
->>  {
->>  #ifdef CONFIG_PAGE_POOL
->> diff --git a/net/core/page_pool.c b/net/core/page_pool.c
->> index b366f59885c1..169b0e3c870e 100644
->> --- a/net/core/page_pool.c
->> +++ b/net/core/page_pool.c
->> @@ -48,6 +48,7 @@ static int page_pool_init(struct page_pool *pool,
->>  		return -ENOMEM;
->>
->>  	atomic_set(&pool->pages_state_release_cnt, 0);
->> +	atomic_set(&pool->user_cnt, 0);
->>
->>  	if (pool->p.flags & PP_FLAG_DMA_MAP)
->>  		get_device(pool->p.dev);
->> @@ -70,6 +71,8 @@ struct page_pool *page_pool_create(const struct page_pool_params *params)
->>  		kfree(pool);
->>  		return ERR_PTR(err);
->>  	}
->> +
->> +	page_pool_get(pool);
->>  	return pool;
->>  }
->>  EXPORT_SYMBOL(page_pool_create);
->> @@ -356,6 +359,10 @@ static void __warn_in_flight(struct page_pool *pool)
->>
->>  void __page_pool_free(struct page_pool *pool)
->>  {
->> +	/* free only if no users */
->> +	if (!atomic_dec_and_test(&pool->user_cnt))
->> +		return;
->> +
->>  	WARN(pool->alloc.count, "API usage violation");
->>  	WARN(!ptr_ring_empty(&pool->ring), "ptr_ring is not empty");
->>
->> diff --git a/net/core/xdp.c b/net/core/xdp.c
->> index 829377cc83db..04bdcd784d2e 100644
->> --- a/net/core/xdp.c
->> +++ b/net/core/xdp.c
->> @@ -372,6 +372,9 @@ int xdp_rxq_info_reg_mem_model(struct xdp_rxq_info *xdp_rxq,
->>
->>  	mutex_unlock(&mem_id_lock);
->>
->> +	if (type == MEM_TYPE_PAGE_POOL)
->> +		page_pool_get(xdp_alloc->page_pool);
->> +
->>  	trace_mem_connect(xdp_alloc, xdp_rxq);
->>  	return 0;
->>  err:
->
->
->
->-- 
->Best regards,
->  Jesper Dangaard Brouer
->  MSc.CS, Principal Kernel Engineer at Red Hat
->  LinkedIn: http://www.linkedin.com/in/brouer
+Thanks,
+Gao Xiang
 
--- 
-Regards,
-Ivan Khoronzhuk
+> ---
+>  drivers/staging/erofs/inode.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/staging/erofs/inode.c b/drivers/staging/erofs/inode.c
+> index e51348f..d6e1e16 100644
+> --- a/drivers/staging/erofs/inode.c
+> +++ b/drivers/staging/erofs/inode.c
+> @@ -129,8 +129,6 @@ static int fill_inline_data(struct inode *inode, void *data,
+>  	struct erofs_sb_info *sbi = EROFS_I_SB(inode);
+>  	const int mode = vi->datamode;
+>  
+> -	DBG_BUGON(mode >= EROFS_INODE_LAYOUT_MAX);
+> -
+>  	/* should be inode inline C */
+>  	if (mode != EROFS_INODE_LAYOUT_INLINE)
+>  		return 0;
+> 
