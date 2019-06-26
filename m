@@ -2,81 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BBDB56985
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 14:41:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 677B556989
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 14:42:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727648AbfFZMlo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 08:41:44 -0400
-Received: from asavdk3.altibox.net ([109.247.116.14]:35397 "EHLO
-        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726242AbfFZMlo (ORCPT
+        id S1727555AbfFZMmI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 08:42:08 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:38099 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726242AbfFZMmI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 08:41:44 -0400
-Received: from ravnborg.org (unknown [158.248.194.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by asavdk3.altibox.net (Postfix) with ESMTPS id B913F20042;
-        Wed, 26 Jun 2019 14:41:40 +0200 (CEST)
-Date:   Wed, 26 Jun 2019 14:41:39 +0200
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Guido =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Purism Kernel Team <kernel@puri.sm>
-Subject: Re: [PATCH v2 0/4] drm/panel: jh057n0090: Add regulators and drop
- magic value in init
-Message-ID: <20190626124139.GB7337@ravnborg.org>
-References: <cover.1561542477.git.agx@sigxcpu.org>
+        Wed, 26 Jun 2019 08:42:08 -0400
+Received: by mail-wm1-f65.google.com with SMTP id s15so1952625wmj.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 05:42:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/89S57mpuhANqW7P0SQuk594h6BbB5jqPDSQ9Ds3jmA=;
+        b=telupOueO49ezANV6MQ9EP6YOmXIXr3OEqq4W2xMbkHOazxjKzw6L5r+7c3baP7aQw
+         Dy0tp1ggBs4bVBadpnGIQ9dkM+WLRGom/doa5TEgaRI2VYef8ZRiytfaVUaTg0G4BUzk
+         0BbUel2tFKFOJ/xiwl2uTdiG1JgTb0beJ65TZRC+iDFzCizZ+mmDIQ77RutpM4d5mIC2
+         1ygaaz5tnB7cv3SUQV0+W5NbCbzdpp/uc+FY51Dg6cGyY7geNRpWjX/Zxu+jj2xwhgoo
+         4ub8y+pd1gCHMlwMy0SGFnSpG5VQMMbPdbx02mkw+e/jRv26oy7C4WlaZUjet4Za+u0Z
+         avfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/89S57mpuhANqW7P0SQuk594h6BbB5jqPDSQ9Ds3jmA=;
+        b=LlegymJm82vfgBmysYS1byaTw6YJbDcIAjFJbIC2MDaN4MoOG9b2omTxqksrrl0s35
+         AjtO4o+NKc8gCgYUE855QWFk9ze5HOSr09ahetqbgTSF0CTB/s7wBfYfOiatfLrjrT9t
+         IuJKfiNFYdUa3a18cLodK8lDso8Yw11LYJ50Pxprp8Yf/hQa7pMQexYdyndfvMZtc9rm
+         z1WbBZOYO8dKmDzv/3KyHSl0ImXuiiTFkQ2g4CFRS8Fp1MQsjuSBgsmnsXKhiQz3IQkU
+         jfQ/KxZs7EdXaPdJBY5p1b7lCjrTSO/bJcTMsNZC6p6p4H/VJ4V5hAbleib57vms5FH4
+         J/Hw==
+X-Gm-Message-State: APjAAAUjwuCnzSccmG6sDIWwkWZ+0nsyEXVOWe3pvoK7/ZwLK1TZ/o8L
+        vZRXlu4lrTD6uzvPN9C72OkSC8Nt7eBr0GFMcd8=
+X-Google-Smtp-Source: APXvYqzEfG/o6BpKhYhz+f0gbYiJr1+1nFyKt/FO8KIHz8nHEc7l11ldGst5RGwz25NqYdt6zog6+MR/Rj+QBG17bbo=
+X-Received: by 2002:a7b:c051:: with SMTP id u17mr2584418wmc.25.1561552926103;
+ Wed, 26 Jun 2019 05:42:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <cover.1561542477.git.agx@sigxcpu.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=dqr19Wo4 c=1 sm=1 tr=0
-        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=8nJEP1OIZ-IA:10
-        a=UBMrDm-lNqQcMwi2BuQA:9 a=wPNLvfGTeEIA:10
+References: <20190626070706.24930-1-Anson.Huang@nxp.com>
+In-Reply-To: <20190626070706.24930-1-Anson.Huang@nxp.com>
+From:   Daniel Baluta <daniel.baluta@gmail.com>
+Date:   Wed, 26 Jun 2019 15:41:54 +0300
+Message-ID: <CAEnQRZBsT=KY3-Gk8p1byJOqx1_y_EX-KqiBs6WnroWkT5oe_Q@mail.gmail.com>
+Subject: Re: [PATCH] soc: imx-scu: Add SoC UID(unique identifier) support
+To:     Anson Huang <Anson.Huang@nxp.com>
+Cc:     Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <Linux-imx@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Guido.
+On Wed, Jun 26, 2019 at 10:06 AM <Anson.Huang@nxp.com> wrote:
+>
+> From: Anson Huang <Anson.Huang@nxp.com>
+>
+> Add i.MX SCU SoC's UID(unique identifier) support, user
+> can read it from sysfs:
+>
+> root@imx8qxpmek:~# cat /sys/devices/soc0/soc_uid
+> 7B64280B57AC1898
+>
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> ---
+>  drivers/soc/imx/soc-imx-scu.c | 35 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 35 insertions(+)
+>
+> diff --git a/drivers/soc/imx/soc-imx-scu.c b/drivers/soc/imx/soc-imx-scu.c
+> index 676f612..8d322a1 100644
+> --- a/drivers/soc/imx/soc-imx-scu.c
+> +++ b/drivers/soc/imx/soc-imx-scu.c
+> @@ -27,6 +27,36 @@ struct imx_sc_msg_misc_get_soc_id {
+>         } data;
+>  } __packed;
+>
+> +struct imx_sc_msg_misc_get_soc_uid {
+> +       struct imx_sc_rpc_msg hdr;
+> +       u32 uid_low;
+> +       u32 uid_high;
+> +} __packed;
+> +
+> +static ssize_t soc_uid_show(struct device *dev,
+> +                           struct device_attribute *attr, char *buf)
+> +{
+> +       struct imx_sc_msg_misc_get_soc_uid msg;
+> +       struct imx_sc_rpc_msg *hdr = &msg.hdr;
+> +       u64 soc_uid;
+> +
+> +       hdr->ver = IMX_SC_RPC_VERSION;
+> +       hdr->svc = IMX_SC_RPC_SVC_MISC;
+> +       hdr->func = IMX_SC_MISC_FUNC_UNIQUE_ID;
+> +       hdr->size = 1;
+> +
+> +       /* the return value of SCU FW is in correct, skip return value check */
 
-On Wed, Jun 26, 2019 at 12:37:47PM +0200, Guido Günther wrote:
-> Fix the omission of a regulators for the recently added panel and make sure all
-> dsi commands start with a command instead of one having a magic constant (which
-> already caused confusion).
-> 
-> Also adds a mail alias to the panel's MAINTAINER entry to reduce the bus
-> factor.
-> 
-> Changes from v1:
-> * As per review comments from Sam Ravnborg:
->   - Print error on devm_regulator_get() failres
->   - Fix typos in commit messages
-> * Print an error on regulator_enable()
-> * Disable vcc if iovcc fails to enable
-> 
-> Guido Günther (4):
->   MAINTAINERS: Add Purism mail alias as reviewer for their devkit's
->     panel
->   drm/panel: jh057n00900: Don't use magic constant
->   dt-bindings: display/panel: jh057n00900: Document power supply
->     properties
->   drm/panel: jh057n00900: Add regulator support
+Why do you mean by "in correct"?
+> +       imx_scu_call_rpc(soc_ipc_handle, &msg, true);
+> +
+> +       soc_uid = msg.uid_high;
+> +       soc_uid <<= 32;
+> +       soc_uid |= msg.uid_low;
+> +
+> +       return sprintf(buf, "%016llX\n", soc_uid);
 
-Patches applied to drm-misc-next and pushed out
+snprintf?
 
-	Sam
+> +}
+> +
+> +static DEVICE_ATTR_RO(soc_uid);
+> +
+>  static int imx_scu_soc_id(void)
+>  {
+>         struct imx_sc_msg_misc_get_soc_id msg;
+> @@ -102,6 +132,11 @@ static int imx_scu_soc_probe(struct platform_device *pdev)
+>                 goto free_revision;
+>         }
+>
+> +       ret = device_create_file(soc_device_to_device(soc_dev),
+> +                                &dev_attr_soc_uid);
+> +       if (ret)
+> +               goto free_revision;
+> +
+>         return 0;
+>
+>  free_revision:
+> --
+> 2.7.4
+>
