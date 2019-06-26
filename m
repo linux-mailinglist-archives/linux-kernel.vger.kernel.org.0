@@ -2,90 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F1AF564E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 10:50:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 972F857EB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 10:51:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726722AbfFZIuM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 04:50:12 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:27307 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726006AbfFZIuL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 04:50:11 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 90A2D30BB54B;
-        Wed, 26 Jun 2019 08:50:11 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-57.rdu2.redhat.com [10.10.120.57])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5BF6B1001B10;
-        Wed, 26 Jun 2019 08:50:08 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org
-cc:     dhowells@redhat.com, iwienand@redhat.com,
-        linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [GIT PULL] AFS fixes
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <834.1561539007.1@warthog.procyon.org.uk>
-Date:   Wed, 26 Jun 2019 09:50:07 +0100
-Message-ID: <835.1561539007@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Wed, 26 Jun 2019 08:50:11 +0000 (UTC)
+        id S1726553AbfF0Ivz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 04:51:55 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:45104 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726314AbfF0Ivz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 04:51:55 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5R8mXkR135289;
+        Thu, 27 Jun 2019 08:51:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2018-07-02;
+ bh=hUQwZ/Yt5oMGyNid41BWKaqAulxyvbzq7M/4Y2XpoHI=;
+ b=ZYB9sYgZOOFCztrCFxMC8qGlQ5LSAKsYLGJelomFVY5CLrtIw9OyoZ6JcTauvZMfBGDN
+ Hp1RjODNXhs9MIlXqYYRNz+3GcSAq5BgJ8AaPM7MCD+nL6CRwEtNzCRW1MGBTbaWH7Py
+ 2uzNjEDz32AhZCpOqfwhI1eHh7HYsqqMr4DGw71L9xKVSWK61nxEhxt6vptCwVummh9i
+ MR3KE0itrFqEZL4i7GnKvSsXPKgV7pTJSJwDqWCHf2y8QkebjiV5eV3M1rPlaMTdq1Hz
+ mDwA+/W5fe/EeHMuXVzQvrj9w+yjr2J5i8/tX30xxkDl8g4kUMslANzLCU9ttM9QYGtc wg== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 2t9brtf2hp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 27 Jun 2019 08:51:11 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5R8nTZK068444;
+        Thu, 27 Jun 2019 08:51:11 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3020.oracle.com with ESMTP id 2tat7d8qd5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 27 Jun 2019 08:51:10 +0000
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x5R8p9Yk002066;
+        Thu, 27 Jun 2019 08:51:09 GMT
+Received: from z2.cn.oracle.com (/10.182.69.87)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 27 Jun 2019 01:51:09 -0700
+From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Zhenzhong Duan <zhenzhong.duan@oracle.com>,
+        Jan Kiszka <jan.kiszka@siemens.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        jailhouse-dev@googlegroups.com
+Subject: [PATCH RESEND] x86/jailhouse: Mark jailhouse_x2apic_available as __init
+Date:   Wed, 26 Jun 2019 16:54:49 +0800
+Message-Id: <1561539289-29180-1-git-send-email-zhenzhong.duan@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9300 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=910
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1906270104
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9300 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=966 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906270104
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+.. as they are only called at early bootup stage.
 
-Could you pull this please?
+Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Cc: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: jailhouse-dev@googlegroups.com
+---
+ arch/x86/kernel/jailhouse.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-There are four patches:
+diff --git a/arch/x86/kernel/jailhouse.c b/arch/x86/kernel/jailhouse.c
+index 1b2ee55..d96d563 100644
+--- a/arch/x86/kernel/jailhouse.c
++++ b/arch/x86/kernel/jailhouse.c
+@@ -203,7 +203,7 @@ bool jailhouse_paravirt(void)
+ 	return jailhouse_cpuid_base() != 0;
+ }
+ 
+-static bool jailhouse_x2apic_available(void)
++static bool __init jailhouse_x2apic_available(void)
+ {
+ 	/*
+ 	 * The x2APIC is only available if the root cell enabled it. Jailhouse
+-- 
+1.8.3.1
 
- (1) Fix the printing of the "vnode modified" warning to exclude checks on
-     files for which we don't have a callback promise from the server (and
-     so don't expect the server to tell us when it changes).
-
-     Without this, for every file or directory for which we still have an
-     in-core inode that gets changed on the server, we may get a message
-     logged when we next look at it.  This can happen in bulk if, for
-     instance, someone does "vos release" to update a R/O volume from a R/W
-     volume and a whole set of files are all changed together.
-
-     We only really want to log a message if the file changed and the
-     server didn't tell us about it or we failed to track the state
-     internally.
-
- (2) Fix accidental corruption of either afs_vlserver struct objects or the
-     the following memory locations (which could hold anything).  The issue
-     is caused by a union that points to two different structs in struct
-     afs_call (to save space in the struct).  The call cleanup code assumes
-     that it can simply call the cleanup for one of those structs if not
-     NULL - when it might be actually pointing to the other struct.
-
-     This means that every Volume Location RPC op is going to corrupt
-     something.
-
- (3) Fix an uninitialised spinlock.  This isn't too bad, it just causes a
-     one-off warning if lockdep is enabled when "vos release" is called,
-     but the spinlock still behaves correctly.
-
- (4) Fix the setting of i_block in the inode.  This causes du, for example,
-     to produce incorrect results, but otherwise should not be dangerous to
-     the kernel.
-
-The in-kernel AFS client has been undergoing testing on opendev.org on one
-of their mirror machines.  They are using AFS to hold data that is then
-served via apache, and Ian Wienand had reported seeing oopses, spontaneous
-machine reboots and updates to volumes going missing.  This patch series
-appears to have fixed the problem, very probably due to patch (2), but it's
-not 100% certain.
-
-Reviewed-by: Jeffrey Altman <jaltman@auristor.com>
-Tested-by: Marc Dionne <marc.dionne@auristor.com>
-Tested-by: Ian Wienand <iwienand@redhat.com>
