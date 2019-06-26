@@ -2,186 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42A3155FA3
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 05:41:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7414555FEA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 05:44:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726586AbfFZDlD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 23:41:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51194 "EHLO mail.kernel.org"
+        id S1727329AbfFZDnZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 23:43:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54444 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726077AbfFZDlC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 23:41:02 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727278AbfFZDnQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 23:43:16 -0400
+Received: from sasha-vm.mshome.net (mobile-107-77-172-74.mobile.att.net [107.77.172.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B238520883;
-        Wed, 26 Jun 2019 03:41:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C706820883;
+        Wed, 26 Jun 2019 03:43:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561520460;
-        bh=YjnOrrgSNhT6RWlqKXwtbjuCaQYM6DgeF+J68o3kqsE=;
-        h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
-        b=TozaXDPsvQQt/kVas3URc54NSndgjkoC4JTDYWEqG70XXqn3fWJpPNfLyDu06hZCO
-         ksLT9uE8zoDvTnwOTaGmRz8VF+Rm9bpa8KzXo9tWm3/qM5QRpGdRrtfc1krtZGPl7s
-         UrIkXsoPp/B2GQ3tBVMxOkqmDHBq+Vr71I5oFTqc=
-Content-Type: text/plain; charset="utf-8"
+        s=default; t=1561520594;
+        bh=IH+6EZpg08KlszRjbeydaCe8y5/Ljqv5UQz8x6Wzkjo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=hKTa/b5rG0QicFE8ZIa9pBk+kIlMgKydMcMyaLDLtpkTuzuj3mVKBkwyzQlzZjDJ7
+         26YsYjAFcapjoghWpM+wYAqMvlT0Z1gjG1h+3v5RAvl5ZlviPeI2BeAvNWKqQwHH1p
+         8z+/wanNaOoHx8j/nmEQd8rqJQGAKL83R0/594rk=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Vadim Pasternak <vadimp@mellanox.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>,
+        platform-driver-x86@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.1 43/51] platform/mellanox: mlxreg-hotplug: Add devm_free_irq call to remove flow
+Date:   Tue, 25 Jun 2019 23:40:59 -0400
+Message-Id: <20190626034117.23247-43-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190626034117.23247-1-sashal@kernel.org>
+References: <20190626034117.23247-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAFd5g46Jhxsz6_VXHEVYvTeDRwwzgKpr=aUWLL5b3S4kUukb8g@mail.gmail.com>
-References: <20190617082613.109131-1-brendanhiggins@google.com> <20190617082613.109131-2-brendanhiggins@google.com> <20190620001526.93426218BE@mail.kernel.org> <CAFd5g46Jhxsz6_VXHEVYvTeDRwwzgKpr=aUWLL5b3S4kUukb8g@mail.gmail.com>
-To:     Brendan Higgins <brendanhiggins@google.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v5 01/18] kunit: test: add KUnit test runner core
-Cc:     Frank Rowand <frowand.list@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Kees Cook <keescook@google.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rob Herring <robh@kernel.org>, shuah <shuah@kernel.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        kunit-dev@googlegroups.com,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        linux-kbuild <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-um@lists.infradead.org,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        "Bird, Timothy" <Tim.Bird@sony.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Knut Omang <knut.omang@oracle.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Petr Mladek <pmladek@suse.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Richard Weinberger <richard@nod.at>,
-        David Rientjes <rientjes@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
-User-Agent: alot/0.8.1
-Date:   Tue, 25 Jun 2019 20:40:59 -0700
-Message-Id: <20190626034100.B238520883@mail.kernel.org>
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Brendan Higgins (2019-06-25 13:28:25)
-> On Wed, Jun 19, 2019 at 5:15 PM Stephen Boyd <sboyd@kernel.org> wrote:
-> >
-> > Quoting Brendan Higgins (2019-06-17 01:25:56)
-> > > diff --git a/kunit/test.c b/kunit/test.c
-> > > new file mode 100644
-> > > index 0000000000000..d05d254f1521f
-> > > --- /dev/null
-> > > +++ b/kunit/test.c
-> > > @@ -0,0 +1,210 @@
-> > > +// SPDX-License-Identifier: GPL-2.0
-> > > +/*
-> > > + * Base unit test (KUnit) API.
-> > > + *
-> > > + * Copyright (C) 2019, Google LLC.
-> > > + * Author: Brendan Higgins <brendanhiggins@google.com>
-> > > + */
-> > > +
-> > > +#include <linux/sched/debug.h>
-> > > +#include <kunit/test.h>
-> > > +
-> > > +static bool kunit_get_success(struct kunit *test)
-> > > +{
-> > > +       unsigned long flags;
-> > > +       bool success;
-> > > +
-> > > +       spin_lock_irqsave(&test->lock, flags);
-> > > +       success =3D test->success;
-> > > +       spin_unlock_irqrestore(&test->lock, flags);
-> >
-> > I still don't understand the locking scheme in this code. Is the
-> > intention to make getter and setter APIs that are "safe" by adding in a
-> > spinlock that is held around getting and setting various members in the
-> > kunit structure?
->=20
-> Yes, your understanding is correct. It is possible for a user to write
-> a test such that certain elements may be updated in different threads;
-> this would most likely happen in the case where someone wants to make
-> an assertion or an expectation in a thread created by a piece of code
-> under test. Although this should generally be avoided, it is possible,
-> and there are occasionally good reasons to do so, so it is
-> functionality that we should support.
->=20
-> Do you think I should add a comment to this effect?
+From: Vadim Pasternak <vadimp@mellanox.com>
 
-No, I think the locking should be removed.
+[ Upstream commit 8c2eb7b6468ad4aa5600aed01aa0715f921a3f8b ]
 
->=20
-> > In what situation is there more than one thread reading or writing the
-> > kunit struct? Isn't it only a single process that is going to be
->=20
-> As I said above, it is possible that the code under test may spawn a
-> new thread that may make an expectation or an assertion. It is not a
-> super common use case, but it is possible.
+Add devm_free_irq() call to mlxreg-hotplug remove() for clean release
+of devices irq resource. Fix debugobjects warning triggered by rmmod
+It prevents of use-after-free memory, related to
+mlxreg_hotplug_work_handler.
 
-Sure, sounds super possible and OK.
+Issue has been reported as debugobjects warning triggered by
+'rmmod mlxtreg-hotplug' flow, while running kernel with
+CONFIG_DEBUG_OBJECTS* options.
 
->=20
-> > operating on this structure? And why do we need to disable irqs? Are we
-> > expecting to be modifying the unit tests from irq contexts?
->=20
-> There are instances where someone may want to test a driver which has
-> an interrupt handler in it. I actually have (not the greatest) example
-> here. Now in these cases, I expect someone to use a mock irqchip or
-> some other fake mechanism to trigger the interrupt handler and not
-> actual hardware; technically speaking in this case, it is not going to
-> be accessed from a "real" irq context; however, the code under test
-> should think that it is in an irq context; given that, I figured it is
-> best to just treat it as a real irq context. Does that make sense?
+[ 2489.623551] ODEBUG: free active (active state 0) object type: work_struct hint: mlxreg_hotplug_work_handler+0x0/0x7f0 [mlxreg_hotplug]
+[ 2489.637097] WARNING: CPU: 5 PID: 3924 at lib/debugobjects.c:328 debug_print_object+0xfe/0x180
+[ 2489.637165] RIP: 0010:debug_print_object+0xfe/0x180
+?
+[ 2489.637214] Call Trace:
+[ 2489.637225]  __debug_check_no_obj_freed+0x25e/0x320
+[ 2489.637231]  kfree+0x82/0x110
+[ 2489.637238]  release_nodes+0x33c/0x4e0
+[ 2489.637242]  ? devres_remove_group+0x1b0/0x1b0
+[ 2489.637247]  device_release_driver_internal+0x146/0x270
+[ 2489.637251]  driver_detach+0x73/0xe0
+[ 2489.637254]  bus_remove_driver+0xa1/0x170
+[ 2489.637261]  __x64_sys_delete_module+0x29e/0x320
+[ 2489.637265]  ? __ia32_sys_delete_module+0x320/0x320
+[ 2489.637268]  ? blkcg_exit_queue+0x20/0x20
+[ 2489.637273]  ? task_work_run+0x7d/0x100
+[ 2489.637278]  ? exit_to_usermode_loop+0x5b/0xf0
+[ 2489.637281]  do_syscall_64+0x73/0x160
+[ 2489.637287]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[ 2489.637290] RIP: 0033:0x7f95c3596fd7
 
-Can you please describe the scenario in which grabbing the lock here,
-updating a single variable, and then releasing the lock right after
-does anything useful vs. not having the lock? I'm looking for a two CPU
-scenario like below, but where it is a problem. There could be three
-CPUs, or even one CPU and three threads if you want to describe the
-extra thread scenario.
+The difference in release flow with and with no devm_free_irq is listed
+below:
 
-Here's my scenario where it isn't needed:
+bus: 'platform': remove driver mlxreg-hotplug
+ mlxreg_hotplug_remove(start)
+					-> devm_free_irq (with new code)
+ mlxreg_hotplug_remove (end)
+ release_nodes (start)
+  mlxreg-hotplug: DEVRES REL devm_hwmon_release (8 bytes)
+  device: 'hwmon3': device_unregister
+  PM: Removing info for No Bus:hwmon3
+  mlxreg-hotplug: DEVRES REL devm_kzalloc_release (88 bytes)
+  mlxreg-hotplug: DEVRES REL devm_kzalloc_release (6 bytes)
+  mlxreg-hotplug: DEVRES REL devm_kzalloc_release (5 bytes)
+  mlxreg-hotplug: DEVRES REL devm_kzalloc_release (5 bytes)
+  mlxreg-hotplug: DEVRES REL devm_kzalloc_release (5 bytes)
+  mlxreg-hotplug: DEVRES REL devm_kzalloc_release (5 bytes)
+  mlxreg-hotplug: DEVRES REL devm_kzalloc_release (5 bytes)
+  mlxreg-hotplug: DEVRES REL devm_kzalloc_release (5 bytes)
+  mlxreg-hotplug: DEVRES REL devm_kzalloc_release (5 bytes)
+  mlxreg-hotplug: DEVRES REL devm_kzalloc_release (5 bytes)
+  mlxreg-hotplug: DEVRES REL devm_kzalloc_release (5 bytes)
+  mlxreg-hotplug: DEVRES REL devm_kzalloc_release (5 bytes)
+  mlxreg-hotplug: DEVRES REL devm_irq_release (16 bytes) (no new code)
+  mlxreg-hotplug: DEVRES REL devm_kzalloc_release (1376 bytes)
+   ------------[ cut here ]------------ (no new code):
+   ODEBUG: free active (active state 0) object type: work_struct hint: mlxreg_hotplug_work_handler
 
-    CPU0                                      CPU1
-    ----                                      ----
-    kunit_run_test(&test)
-                                              test_case_func()
-					        ....
-                                              [mock hardirq]
-					        kunit_set_success(&test)
-					      [hardirq ends]
-                                                ...
-                                                complete(&test_done)
-      wait_for_completion(&test_done)
-      kunit_get_success(&test)
+ release_nodes(end)
+driver: 'mlxreg-hotplug': driver_release
 
-We don't need to care about having locking here because success or
-failure only happens in one place and it's synchronized with the
-completion.
+Fixes: 1f976f6978bf ("platform/x86: Move Mellanox platform hotplug driver to platform/mellanox")
+Signed-off-by: Vadim Pasternak <vadimp@mellanox.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/platform/mellanox/mlxreg-hotplug.c | 1 +
+ 1 file changed, 1 insertion(+)
 
->=20
-> > > +
-> > > +       return success;
-> > > +}
-> > > +
-> > > +static void kunit_set_success(struct kunit *test, bool success)
-> > > +{
-> > > +       unsigned long flags;
-> > > +
-> > > +       spin_lock_irqsave(&test->lock, flags);
-> > > +       test->success =3D success;
-> > > +       spin_unlock_irqrestore(&test->lock, flags);
-> > > +}
+diff --git a/drivers/platform/mellanox/mlxreg-hotplug.c b/drivers/platform/mellanox/mlxreg-hotplug.c
+index 687ce6817d0d..f85a1b9d129b 100644
+--- a/drivers/platform/mellanox/mlxreg-hotplug.c
++++ b/drivers/platform/mellanox/mlxreg-hotplug.c
+@@ -694,6 +694,7 @@ static int mlxreg_hotplug_remove(struct platform_device *pdev)
+ 
+ 	/* Clean interrupts setup. */
+ 	mlxreg_hotplug_unset_irq(priv);
++	devm_free_irq(&pdev->dev, priv->irq, priv);
+ 
+ 	return 0;
+ }
+-- 
+2.20.1
+
