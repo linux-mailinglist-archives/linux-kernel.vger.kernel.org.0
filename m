@@ -2,17 +2,17 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E540E55CB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 02:03:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C27255CC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 02:04:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726422AbfFZADH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 20:03:07 -0400
-Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:58640 "EHLO
-        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726077AbfFZADG (ORCPT
+        id S1726486AbfFZAD4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 20:03:56 -0400
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:47521 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726455AbfFZADz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 20:03:06 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R411e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0TVCYVJX_1561507375;
+        Tue, 25 Jun 2019 20:03:55 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04446;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0TVCYVJX_1561507375;
 Received: from e19h19392.et15sqa.tbsite.net(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TVCYVJX_1561507375)
           by smtp.aliyun-inc.com(127.0.0.1);
           Wed, 26 Jun 2019 08:03:03 +0800
@@ -22,9 +22,9 @@ To:     kirill.shutemov@linux.intel.com, ktkhai@virtuozzo.com,
         shakeelb@google.com, rientjes@google.com, akpm@linux-foundation.org
 Cc:     yang.shi@linux.alibaba.com, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: [v4 PATCH 2/4] mm: move mem_cgroup_uncharge out of __page_cache_release()
-Date:   Wed, 26 Jun 2019 08:02:39 +0800
-Message-Id: <1561507361-59349-3-git-send-email-yang.shi@linux.alibaba.com>
+Subject: [v4 PATCH 3/4] mm: shrinker: make shrinker not depend on memcg kmem
+Date:   Wed, 26 Jun 2019 08:02:40 +0800
+Message-Id: <1561507361-59349-4-git-send-email-yang.shi@linux.alibaba.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1561507361-59349-1-git-send-email-yang.shi@linux.alibaba.com>
 References: <1561507361-59349-1-git-send-email-yang.shi@linux.alibaba.com>
@@ -33,59 +33,145 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The later patch would make THP deferred split shrinker memcg aware, but
-it needs page->mem_cgroup information in THP destructor, which is called
-after mem_cgroup_uncharge() now.
+Currently shrinker is just allocated and can work when memcg kmem is
+enabled.  But, THP deferred split shrinker is not slab shrinker, it
+doesn't make too much sense to have such shrinker depend on memcg kmem.
+It should be able to reclaim THP even though memcg kmem is disabled.
 
-So, move mem_cgroup_uncharge() from __page_cache_release() to compound
-page destructor, which is called by both THP and other compound pages
-except HugeTLB.  And call it in __put_single_page() for single order
-page.
+Introduce a new shrinker flag, SHRINKER_NONSLAB, for non-slab shrinker.
+When memcg kmem is disabled, just such shrinkers can be called in
+shrinking memcg slab.
 
-Suggested-by: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
 Cc: Kirill Tkhai <ktkhai@virtuozzo.com>
 Cc: Johannes Weiner <hannes@cmpxchg.org>
 Cc: Michal Hocko <mhocko@suse.com>
+Cc: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
 Cc: Hugh Dickins <hughd@google.com>
 Cc: Shakeel Butt <shakeelb@google.com>
 Cc: David Rientjes <rientjes@google.com>
 Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
 ---
- mm/page_alloc.c | 1 +
- mm/swap.c       | 2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
+ include/linux/shrinker.h |  3 ++-
+ mm/vmscan.c              | 36 +++++++++++++++++++-----------------
+ 2 files changed, 21 insertions(+), 18 deletions(-)
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 6c9cf1e..53a7a6c 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -624,6 +624,7 @@ static void bad_page(struct page *page, const char *reason,
+diff --git a/include/linux/shrinker.h b/include/linux/shrinker.h
+index 9443caf..9e112d6 100644
+--- a/include/linux/shrinker.h
++++ b/include/linux/shrinker.h
+@@ -69,7 +69,7 @@ struct shrinker {
  
- void free_compound_page(struct page *page)
+ 	/* These are for internal use */
+ 	struct list_head list;
+-#ifdef CONFIG_MEMCG_KMEM
++#ifdef CONFIG_MEMCG
+ 	/* ID in shrinker_idr */
+ 	int id;
+ #endif
+@@ -81,6 +81,7 @@ struct shrinker {
+ /* Flags */
+ #define SHRINKER_NUMA_AWARE	(1 << 0)
+ #define SHRINKER_MEMCG_AWARE	(1 << 1)
++#define SHRINKER_NONSLAB	(1 << 2)
+ 
+ extern int prealloc_shrinker(struct shrinker *shrinker);
+ extern void register_shrinker_prepared(struct shrinker *shrinker);
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 7889f58..187cacb 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -174,8 +174,7 @@ struct scan_control {
+ static LIST_HEAD(shrinker_list);
+ static DECLARE_RWSEM(shrinker_rwsem);
+ 
+-#ifdef CONFIG_MEMCG_KMEM
+-
++#ifdef CONFIG_MEMCG
+ /*
+  * We allow subsystems to populate their shrinker-related
+  * LRU lists before register_shrinker_prepared() is called
+@@ -227,18 +226,7 @@ static void unregister_memcg_shrinker(struct shrinker *shrinker)
+ 	idr_remove(&shrinker_idr, id);
+ 	up_write(&shrinker_rwsem);
+ }
+-#else /* CONFIG_MEMCG_KMEM */
+-static int prealloc_memcg_shrinker(struct shrinker *shrinker)
+-{
+-	return 0;
+-}
+ 
+-static void unregister_memcg_shrinker(struct shrinker *shrinker)
+-{
+-}
+-#endif /* CONFIG_MEMCG_KMEM */
+-
+-#ifdef CONFIG_MEMCG
+ static bool global_reclaim(struct scan_control *sc)
  {
-+	mem_cgroup_uncharge(page);
- 	__free_pages_ok(page, compound_order(page));
- }
+ 	return !sc->target_mem_cgroup;
+@@ -293,6 +281,15 @@ static bool memcg_congested(pg_data_t *pgdat,
  
-diff --git a/mm/swap.c b/mm/swap.c
-index 7ede3ed..170a725 100644
---- a/mm/swap.c
-+++ b/mm/swap.c
-@@ -71,12 +71,12 @@ static void __page_cache_release(struct page *page)
- 		spin_unlock_irqrestore(&pgdat->lru_lock, flags);
- 	}
- 	__ClearPageWaiters(page);
--	mem_cgroup_uncharge(page);
  }
- 
- static void __put_single_page(struct page *page)
+ #else
++static int prealloc_memcg_shrinker(struct shrinker *shrinker)
++{
++	return 0;
++}
++
++static void unregister_memcg_shrinker(struct shrinker *shrinker)
++{
++}
++
+ static bool global_reclaim(struct scan_control *sc)
  {
- 	__page_cache_release(page);
-+	mem_cgroup_uncharge(page);
- 	free_unref_page(page);
+ 	return true;
+@@ -579,7 +576,7 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
+ 	return freed;
  }
  
+-#ifdef CONFIG_MEMCG_KMEM
++#ifdef CONFIG_MEMCG
+ static unsigned long shrink_slab_memcg(gfp_t gfp_mask, int nid,
+ 			struct mem_cgroup *memcg, int priority)
+ {
+@@ -587,7 +584,7 @@ static unsigned long shrink_slab_memcg(gfp_t gfp_mask, int nid,
+ 	unsigned long ret, freed = 0;
+ 	int i;
+ 
+-	if (!memcg_kmem_enabled() || !mem_cgroup_online(memcg))
++	if (!mem_cgroup_online(memcg))
+ 		return 0;
+ 
+ 	if (!down_read_trylock(&shrinker_rwsem))
+@@ -613,6 +610,11 @@ static unsigned long shrink_slab_memcg(gfp_t gfp_mask, int nid,
+ 			continue;
+ 		}
+ 
++		/* Call non-slab shrinkers even though kmem is disabled */
++		if (!memcg_kmem_enabled() &&
++		    !(shrinker->flags & SHRINKER_NONSLAB))
++			continue;
++
+ 		ret = do_shrink_slab(&sc, shrinker, priority);
+ 		if (ret == SHRINK_EMPTY) {
+ 			clear_bit(i, map->map);
+@@ -649,13 +651,13 @@ static unsigned long shrink_slab_memcg(gfp_t gfp_mask, int nid,
+ 	up_read(&shrinker_rwsem);
+ 	return freed;
+ }
+-#else /* CONFIG_MEMCG_KMEM */
++#else /* CONFIG_MEMCG */
+ static unsigned long shrink_slab_memcg(gfp_t gfp_mask, int nid,
+ 			struct mem_cgroup *memcg, int priority)
+ {
+ 	return 0;
+ }
+-#endif /* CONFIG_MEMCG_KMEM */
++#endif /* CONFIG_MEMCG */
+ 
+ /**
+  * shrink_slab - shrink slab caches
 -- 
 1.8.3.1
 
