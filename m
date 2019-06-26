@@ -2,83 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EECAD564D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 10:45:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BAD06564DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 10:46:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727077AbfFZIpu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 04:45:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38096 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726851AbfFZIpt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 04:45:49 -0400
-Received: from localhost (unknown [116.247.127.123])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 89F30208E3;
-        Wed, 26 Jun 2019 08:45:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561538749;
-        bh=m+r8WZn0JHNESip98hh0zbj8d9dUzzzsVYLBLHsf/5Q=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZBolewu2FJlE249SQz1bC/bW9zxyfNo9J/fZWCSfn3PDZM94kzrdpWCw9avCWu+Nz
-         dbtiHakDeNtUPRV0q2bh2gOJ7wPV3tdW45NWl31EHVnSVv8U98YMIFuN0EM2P9YokJ
-         yoa3Fgh/RIxu94YUfnaPwQ7YmduCRsbRS2ONNoVI=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Christoph Paasch <cpaasch@apple.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 1/1] tcp: refine memory limit test in tcp_fragment()
-Date:   Wed, 26 Jun 2019 16:45:21 +0800
-Message-Id: <20190626083606.343066126@linuxfoundation.org>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190626083606.248422423@linuxfoundation.org>
-References: <20190626083606.248422423@linuxfoundation.org>
-User-Agent: quilt/0.66
-X-stable: review
-X-Patchwork-Hint: ignore
+        id S1727127AbfFZIqD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 04:46:03 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:52213 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727114AbfFZIqC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 04:46:02 -0400
+Received: by mail-wm1-f66.google.com with SMTP id 207so1188772wma.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 01:46:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8W5vMi9MdrqpXAU5Ufa9GPoycXyS4HH7ZnprQ1k/xT4=;
+        b=HdWr1UCkK+SdQQlojDzl40R1zx7OoQrR6zxFq6o7GBW/Rr7kOKEBkWLqqvbAj7FJ7q
+         1E/7hAqK7FymCxRho9h7Puo3OA3c+KBf1t8pCC4LrsCxytS5+908kOBx9SAbyr+eQ26r
+         2CpZafsOxYgG7VhXjmuK4+7EvK2HhJuaPfNkwx0Hc8PdWe8VuwKaUFtpKjbD2gKSW82D
+         I2K8nk9TrPyQq6+YYoeYIpHVOM96UUKcl5R8PoZle1hhHEY1jWUyt99zeiSJGufWHAF4
+         W0KMHahBWXjKLSXchOOGTnNC1U/4RNPdCC0G8jumdobBD9C8SqOkVa9rHciamo7FalHp
+         cMxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8W5vMi9MdrqpXAU5Ufa9GPoycXyS4HH7ZnprQ1k/xT4=;
+        b=jVz6wByI5b5kll4GtM7M/PJlbJU510pcdnDZO88IWIRl9+RcfSeGzOp53kul9qJfzF
+         FVgTZ/3uS0B5HvpRyzacMi86x0w+nnGLK4/FjpFOuY9s2Ehzf+rFhSG0GhLD5MfU0CAg
+         vO1sxhMuBqxiCryjbcs7qvCNp/NaTpkNfKAblNg2FChAZlUQQt1iRmBrDgPGMCZo5Nj0
+         FK2PA4BqqTDJaRFj0oxfaFgnlG+h/h32N+r3KIvYL++wgogZiNg8O9LNmswgOOSb7L9A
+         fcZnVeg+hQk+wB89oYhvLdOXashHNCu0m1gz0t4+IvmRAbO/7UrwIq9XmLx+bThDvVDy
+         M61w==
+X-Gm-Message-State: APjAAAWeRCRzHPaifPz1F5cS0wxcoc3ns1HwVaKMyIxjTc6UNk9AwVtp
+        ar2DzB7FTkWxaP5Qumm3+ggZtqedSnY=
+X-Google-Smtp-Source: APXvYqwV1p7sn9iItWJLAmJOQoTeWjrx2419LxfBi0SgwbNq/Dyd11Gt8JoLHH3NtSQoCcXHrISSYw==
+X-Received: by 2002:a7b:c74a:: with SMTP id w10mr1751412wmk.99.1561538760632;
+        Wed, 26 Jun 2019 01:46:00 -0700 (PDT)
+Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
+        by smtp.gmail.com with ESMTPSA id v204sm1383715wma.20.2019.06.26.01.45.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 26 Jun 2019 01:46:00 -0700 (PDT)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bamvor Jian Zhang <bamv2005@gmail.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v3] gpio: mockup: no need to check return value of debugfs_create functions
+Date:   Wed, 26 Jun 2019 10:45:57 +0200
+Message-Id: <20190626084557.11847-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Dumazet <edumazet@google.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-commit b6653b3629e5b88202be3c9abc44713973f5c4b4 upstream.
+When calling debugfs functions, there is no need to ever check the
+return value.  The function can work or not, but the code logic should
+never do something different based on this.
 
-tcp_fragment() might be called for skbs in the write queue.
-
-Memory limits might have been exceeded because tcp_sendmsg() only
-checks limits at full skb (64KB) boundaries.
-
-Therefore, we need to make sure tcp_fragment() wont punish applications
-that might have setup very low SO_SNDBUF values.
-
-Fixes: f070ef2ac667 ("tcp: tcp_fragment() should apply sane memory limits")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: Christoph Paasch <cpaasch@apple.com>
-Tested-by: Christoph Paasch <cpaasch@apple.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: Bamvor Jian Zhang <bamv2005@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: linux-gpio@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+[Bartosz: removed one more check for debugfs return value]
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- net/ipv4/tcp_output.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v1 -> v2:
+- fix build warning found by kbuild
+- fix build error found by kbuild
 
---- a/net/ipv4/tcp_output.c
-+++ b/net/ipv4/tcp_output.c
-@@ -1274,7 +1274,7 @@ int tcp_fragment(struct sock *sk, struct
- 	if (nsize < 0)
- 		nsize = 0;
+v2 -> v3:
+- remove one more unnecessary ifdef
+
+ drivers/gpio/gpio-mockup.c | 21 +++++----------------
+ 1 file changed, 5 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
+index b6a4efce7c92..f1a9c0544e3f 100644
+--- a/drivers/gpio/gpio-mockup.c
++++ b/drivers/gpio/gpio-mockup.c
+@@ -315,7 +315,6 @@ static void gpio_mockup_debugfs_setup(struct device *dev,
+ 				      struct gpio_mockup_chip *chip)
+ {
+ 	struct gpio_mockup_dbgfs_private *priv;
+-	struct dentry *evfile;
+ 	struct gpio_chip *gc;
+ 	const char *devname;
+ 	char *name;
+@@ -325,32 +324,25 @@ static void gpio_mockup_debugfs_setup(struct device *dev,
+ 	devname = dev_name(&gc->gpiodev->dev);
  
--	if (unlikely((sk->sk_wmem_queued >> 1) > sk->sk_sndbuf)) {
-+	if (unlikely((sk->sk_wmem_queued >> 1) > sk->sk_sndbuf + 0x20000)) {
- 		NET_INC_STATS(sock_net(sk), LINUX_MIB_TCPWQUEUETOOBIG);
- 		return -ENOMEM;
+ 	chip->dbg_dir = debugfs_create_dir(devname, gpio_mockup_dbg_dir);
+-	if (IS_ERR_OR_NULL(chip->dbg_dir))
+-		goto err;
+ 
+ 	for (i = 0; i < gc->ngpio; i++) {
+ 		name = devm_kasprintf(dev, GFP_KERNEL, "%d", i);
+ 		if (!name)
+-			goto err;
++			return;
+ 
+ 		priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+ 		if (!priv)
+-			goto err;
++			return;
+ 
+ 		priv->chip = chip;
+ 		priv->offset = i;
+ 		priv->desc = &gc->gpiodev->descs[i];
+ 
+-		evfile = debugfs_create_file(name, 0200, chip->dbg_dir, priv,
+-					     &gpio_mockup_debugfs_ops);
+-		if (IS_ERR_OR_NULL(evfile))
+-			goto err;
++		debugfs_create_file(name, 0200, chip->dbg_dir, priv,
++				    &gpio_mockup_debugfs_ops);
  	}
-
+ 
+ 	return;
+-
+-err:
+-	dev_err(dev, "error creating debugfs files\n");
+ }
+ 
+ static int gpio_mockup_name_lines(struct device *dev,
+@@ -447,8 +439,7 @@ static int gpio_mockup_probe(struct platform_device *pdev)
+ 	if (rv)
+ 		return rv;
+ 
+-	if (!IS_ERR_OR_NULL(gpio_mockup_dbg_dir))
+-		gpio_mockup_debugfs_setup(dev, chip);
++	gpio_mockup_debugfs_setup(dev, chip);
+ 
+ 	return 0;
+ }
+@@ -501,8 +492,6 @@ static int __init gpio_mockup_init(void)
+ 	}
+ 
+ 	gpio_mockup_dbg_dir = debugfs_create_dir("gpio-mockup", NULL);
+-	if (IS_ERR_OR_NULL(gpio_mockup_dbg_dir))
+-		gpio_mockup_err("error creating debugfs directory\n");
+ 
+ 	err = platform_driver_register(&gpio_mockup_driver);
+ 	if (err) {
+-- 
+2.21.0
 
