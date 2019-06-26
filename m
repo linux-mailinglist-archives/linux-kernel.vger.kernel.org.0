@@ -2,171 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CF3B560D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 05:53:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 30D2B56068
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 05:48:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727674AbfFZDsh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 23:48:37 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:42952 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727620AbfFZDoi (ORCPT
+        id S1727147AbfFZDrs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 23:47:48 -0400
+Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:39821 "EHLO
+        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727807AbfFZDpn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 23:44:38 -0400
-Received: by mail-pg1-f193.google.com with SMTP id k13so483578pgq.9
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 20:44:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=LqmJogVNFsB+g8IvvX5zj4pKPaA/7R5yFx4LbjFnmV4=;
-        b=gANyKfdaTg5/MdqZmJB3zBjd0+SwlPrzaWPrUzkCwurzqStTwtxA6W7Ezglr0+ZcKG
-         9eCN8IhNomZ3gmueFdxUDDnI92q7+xmSDkoV8Q+y2aKdt9v6JzX7ECWnNoAzZwjIEJY6
-         uBgvejbkfXI6KyYweG9b+Xfav4RrlV8zWcSlcnvPRF8Pj94IOxhxpdKvhSYlLG0ifAx2
-         ApzCOOyJU/iDqBIQahCwrH4FOpDF8+Bxa974TiDSoMeB0kn8UwDxZBcAZGjHFyrS9AqF
-         6Ys8h1EtVT1tPJQIdhBKcTSORSoJ0pehqkmmrT90oehqg4SmFXClQL3EOSpLpGQt4pY4
-         Vg2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=LqmJogVNFsB+g8IvvX5zj4pKPaA/7R5yFx4LbjFnmV4=;
-        b=ohuupSq1lW4AUdF3zRrWTzpmEMp6ImnjunMHZkFUEwUNfsYDBCyID6DQ1/+UfpG98j
-         ECu1XLcOwIuCwPVbr+lKD/G9+Bsc+/hDhmLTznwuKidqfsWTxZq0q2p1AEFjl8MnGZPG
-         9uFnpoCaMR+zXlHHt0rqI1uUvuAj0fghdhlVFwlHTfrnbocgctd3WdXweZIV60ySvEp9
-         +OV/KOBkxt8UpE3L0SUu13Sz+fwcgOiy9uG3a60yS6k95ZER8P7XFuCAwkyibJ4ZU2al
-         5oP+C41ul5RlYObjPaCN52TnA6BGi5t9nMoY2HMGUc57iI+50WmrtvGWbE5T7EahVxdm
-         i0XQ==
-X-Gm-Message-State: APjAAAUwVF+xcYlZ+u97jVSetSA1/0NM/gqmOGp5wVjX/YDDK4YOFWVQ
-        KZU72Typ/JP4grBb9wnuT92x+A==
-X-Google-Smtp-Source: APXvYqzB5kIs4zKVnHKkkES7b22zMAzjv6fDHE/nuMQDUGcdoG8vh5I/UyKxYvGsy8yxONWhs9EsNg==
-X-Received: by 2002:a63:8a41:: with SMTP id y62mr607190pgd.38.1561520677526;
-        Tue, 25 Jun 2019 20:44:37 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id v9sm20038199pgj.69.2019.06.25.20.44.35
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 25 Jun 2019 20:44:36 -0700 (PDT)
-Date:   Tue, 25 Jun 2019 20:45:29 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Alim Akhtar <alim.akhtar@samsung.com>
-Cc:     Avri Altman <avri.altman@wdc.com>,
-        Pedro Sousa <pedrom.sousa@synopsys.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-scsi@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] scsi: ufs: Introduce vops for resetting device
-Message-ID: <20190626034529.GE24205@tuxbook-pro>
-References: <20190608050450.12056-1-bjorn.andersson@linaro.org>
- <CGME20190608050458epcas1p30f03f6d448eb962a6af56a4c0b021ef0@epcas1p3.samsung.com>
- <20190608050450.12056-2-bjorn.andersson@linaro.org>
- <ad1c2a2a-91d6-25ce-9dfb-3b386b572ee2@samsung.com>
+        Tue, 25 Jun 2019 23:45:43 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R891e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0TVDVZOt_1561520739;
+Received: from IT-FVFX43SYHV2H.local(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0TVDVZOt_1561520739)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 26 Jun 2019 11:45:39 +0800
+Subject: Re: [PATCH] docs: zh_CN: submitting-drivers.rst: Remove a duplicated
+ Documentation/
+To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc:     Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Harry Wei <harryxiyou@gmail.com>
+References: <47f81418930438d1deab8da1307bcd89ba9afd91.1561225663.git.mchehab+samsung@kernel.org>
+From:   Alex Shi <alex.shi@linux.alibaba.com>
+Message-ID: <4244437a-1209-9dde-a4d2-1c72d041492c@linux.alibaba.com>
+Date:   Wed, 26 Jun 2019 11:45:37 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ad1c2a2a-91d6-25ce-9dfb-3b386b572ee2@samsung.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <47f81418930438d1deab8da1307bcd89ba9afd91.1561225663.git.mchehab+samsung@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 25 Jun 05:41 PDT 2019, Alim Akhtar wrote:
-
-> Hi Bjorn,
-> Are you planning to address Bean's comment on patch#2 and want to 
-> re-spin this series?
-> I am ok with taking this patch as it is and take a Softreset patch as a 
-> separate patch.
-> 
-
-I still intend to attempt to implement a softreset "fallback", per
-Bean's suggestion - just haven't found the time yet. But I would be
-happy to see these patches merged in the meantime, as they do resolve
-the issue of failing to being up the UFS link on a significant number of
-Qualcomm devices.
+Thanks for catching.
 
 
-I think it's best if you take patch 1 and 2 through your tree and we
-take the dts patch through the Qualcomm/arm-soc tree.
+Reviewed-by: Alex Shi
 
-Thanks,
-Bjorn
-
-> On 6/8/19 10:34 AM, Bjorn Andersson wrote:
-> > Some UFS memory devices needs their reset line toggled in order to get
-> > them into a good state for initialization. Provide a new vops to allow
-> > the platform driver to implement this operation.
-> > 
-> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > ---
-> feel free to add
-> Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
-> > 
-> > Changes since v2:
-> > - New patch, to allow moving implementation to platform driver
-> > 
-> >   drivers/scsi/ufs/ufshcd.c | 6 ++++++
-> >   drivers/scsi/ufs/ufshcd.h | 8 ++++++++
-> >   2 files changed, 14 insertions(+)
-> > 
-> > diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-> > index 04d3686511c8..ee895a625456 100644
-> > --- a/drivers/scsi/ufs/ufshcd.c
-> > +++ b/drivers/scsi/ufs/ufshcd.c
-> > @@ -6191,6 +6191,9 @@ static int ufshcd_reset_and_restore(struct ufs_hba *hba)
-> >   	int retries = MAX_HOST_RESET_RETRIES;
-> >   
-> >   	do {
-> > +		/* Reset the attached device */
-> > +		ufshcd_vops_device_reset(hba);
-> > +
-> >   		err = ufshcd_host_reset_and_restore(hba);
-> >   	} while (err && --retries);
-> >   
-> > @@ -8322,6 +8325,9 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
-> >   		goto exit_gating;
-> >   	}
-> >   
-> > +	/* Reset the attached device */
-> > +	ufshcd_vops_device_reset(hba);
-> > +
-> >   	/* Host controller enable */
-> >   	err = ufshcd_hba_enable(hba);
-> >   	if (err) {
-> > diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
-> > index 994d73d03207..cd8139052ed6 100644
-> > --- a/drivers/scsi/ufs/ufshcd.h
-> > +++ b/drivers/scsi/ufs/ufshcd.h
-> > @@ -298,6 +298,7 @@ struct ufs_pwr_mode_info {
-> >    * @resume: called during host controller PM callback
-> >    * @dbg_register_dump: used to dump controller debug information
-> >    * @phy_initialization: used to initialize phys
-> > + * @device_reset: called to issue a reset pulse on the UFS device
-> >    */
-> >   struct ufs_hba_variant_ops {
-> >   	const char *name;
-> > @@ -326,6 +327,7 @@ struct ufs_hba_variant_ops {
-> >   	int     (*resume)(struct ufs_hba *, enum ufs_pm_op);
-> >   	void	(*dbg_register_dump)(struct ufs_hba *hba);
-> >   	int	(*phy_initialization)(struct ufs_hba *);
-> > +	void	(*device_reset)(struct ufs_hba *);
-> >   };
-> >   
-> >   /* clock gating state  */
-> > @@ -1045,6 +1047,12 @@ static inline void ufshcd_vops_dbg_register_dump(struct ufs_hba *hba)
-> >   		hba->vops->dbg_register_dump(hba);
-> >   }
-> >   
-> > +static inline void ufshcd_vops_device_reset(struct ufs_hba *hba)
-> > +{
-> > +	if (hba->vops && hba->vops->device_reset)
-> > +		hba->vops->device_reset(hba);
-> > +}
-> > +
-> >   extern struct ufs_pm_lvl_states ufs_pm_lvl_states[];
-> >   
-> >   /*
-> > 
+在 2019/6/23 上午1:47, Mauro Carvalho Chehab 写道:
+> Somehow, this file ended with Documentation/ twice.
+>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+> ---
+>   Documentation/translations/zh_CN/process/submitting-drivers.rst | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/Documentation/translations/zh_CN/process/submitting-drivers.rst b/Documentation/translations/zh_CN/process/submitting-drivers.rst
+> index 72c6cd935821..72f4f45c98de 100644
+> --- a/Documentation/translations/zh_CN/process/submitting-drivers.rst
+> +++ b/Documentation/translations/zh_CN/process/submitting-drivers.rst
+> @@ -22,7 +22,7 @@
+>   兴趣的是显卡驱动程序，你也许应该访问 XFree86 项目(http://www.xfree86.org/)
+>   和／或 X.org 项目 (http://x.org)。
+>   
+> -另请参阅 Documentation/Documentation/translations/zh_CN/process/submitting-patches.rst 文档。
+> +另请参阅 Documentation/translations/zh_CN/process/submitting-patches.rst 文档。
+>   
+>   
+>   分配设备号
