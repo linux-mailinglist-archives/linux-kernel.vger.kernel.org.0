@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E93F956CC8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 16:49:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6BE356CC2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 16:49:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728253AbfFZOtB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 10:49:01 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:55331 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728261AbfFZOr3 (ORCPT
+        id S1728339AbfFZOsu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 10:48:50 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:42803 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728270AbfFZOra (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 10:47:29 -0400
-Received: by mail-wm1-f66.google.com with SMTP id a15so2400260wmj.5
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 07:47:27 -0700 (PDT)
+        Wed, 26 Jun 2019 10:47:30 -0400
+Received: by mail-wr1-f67.google.com with SMTP id x17so3046092wrl.9
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 07:47:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=8oLgj+UEWnuH/nXzCuT6g/iWSmzVogRXnWTAEILdbE8=;
-        b=s6HgvJ8pz1mFKEtN0S8Kx9pkvKR2hjJZQySOrYD5K1+chU0fVGduV7GZMyF3sPX+XP
-         645jKICzuF/sRqjhGHXYBtile4u0wJRoXk0iR/C/BjVuJ9Yos7KEMttePh5RkgUEUFZY
-         BFWYme23UHytrWrv8RdBL+HhqsGiG7Dg03CXJ7PlKyPswGdl5CQph53Ws44hO8ARRW6U
-         6p9rWDsKFXwbHlMiTUnBK0wuZ0MLTHmPNuup5VGhaMWNqd2BCaTsMVA6NnM9zBumwNTY
-         /N1p+SPM916dXvzl/I8xgVmELNbCNs3Ip8Plv4gBgFS1poaeG7CoOsIQjoWGZaHiADUQ
-         t4kQ==
+        bh=Y/jkAn3vCT4++dqCh3VgpJih6azC2n9WMcpnAYjdo7g=;
+        b=zCRa4KiGwJg3QYoLLuG4sg/cwzELVE1W9AdFPLYWqf58c2G9eBPP6k1fhC5QL3HePt
+         NpSQzTw2sNBsZaQ9hHadaGUDhCFa0UYWILqelTzNejqzsMNGOO1bgWKRZbLRCB1xU5p1
+         DUAHACuOvIui7p+sojRs7xQaMbN6b4teAHpJ81Ewji4F6oER3YeB8uqEAtZPb7ZiVn1a
+         nnh3SeFzvIZSIZnytnRywS5RXNRct3E0MXR24xXzbBjk+lmG9eX/Diwjp2966XFuaLyx
+         XZhjyqY3NCTub2mcttaig1fD3wW9bC2RLaS5lDdd5O7Vtc5LJNIskGkOBnWIIhaTrszi
+         9CJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=8oLgj+UEWnuH/nXzCuT6g/iWSmzVogRXnWTAEILdbE8=;
-        b=QtGvEmnBmgDzYyDmJcEn3auGEcS+5v2UEQEXBwL/BykK64vJhR8whbc/5be87qlL+U
-         48+U7XtBkHsT6A49XJNlR0cQA0Iwod5fkBP/ri3yN/OD9dPMgcGVZdtug7eOc160nknO
-         bIpMQr3rHa6w0L/2e58IUbRsYXUG8IFn1Xscl7Puy3l5JEfghDC0H6E3/tUfYboW0yVv
-         RQHrBmojR9TzjdpIZGD4ppRqI8HCTzOu6NNcHq8e5burE5Hn0i6bfvmU7CVG6uR5L1Pz
-         AKevWa7DxVfx4TUPkgD5s3SWwQioLBdLdH1d+5EiYW4H2aPhBJikRCQ7jxSq0rfOOeln
-         GERw==
-X-Gm-Message-State: APjAAAV8rZKXYkPytsJ339b5q0FchR70VyRddftLEwkIq302LI85Z+dW
-        u2r6lElsI89k10rjUv4gcuDxAz0BEpQ=
-X-Google-Smtp-Source: APXvYqykht4NS8VD1sBSEX2C9Z71CZayXXzjnTsjQySD6gnTuNYoC0X1KZLlRi3p0hL5bCwStcKRLw==
-X-Received: by 2002:a1c:cb4d:: with SMTP id b74mr3154779wmg.43.1561560446690;
-        Wed, 26 Jun 2019 07:47:26 -0700 (PDT)
+        bh=Y/jkAn3vCT4++dqCh3VgpJih6azC2n9WMcpnAYjdo7g=;
+        b=Iq6O+kO39sDGYZeDbH8YBNUtvUPfrKV9efU8KBplVwsFaY8qRhYT+t0aNajR+kmbyg
+         nKGibrPqggKAzgA9O7EZKRyaeAWBPOFvbH1O3L6VwjYm7K4OXk1Ovt3cio1pTZiDJV30
+         bkKKjj47T3OJ/rSvApFwUEXK4hxiZt9rosFi3w6m7nYnzZS3wVl/dO6faKhyn9N74Y2+
+         4wxhGJ/WmpEBFStFApbm5+VBPkd9YyHGkZiMEVsJHc07zQD/QprajK3KOoD9V7KHaDDS
+         mmf94a5PEVbS+wVME1fLxVBHTPMp+qEHnf3eJVbrxMbXgDEPGcM4htf2bmXX1ALFMbYb
+         CYPg==
+X-Gm-Message-State: APjAAAUlQTcmnquZCJ2pL3WtjHVYdrQqAJI86xWvxQ9TzNc9XeKdr5fs
+        S6OvaSjyvewIQNrOtLRuAZMuMQ==
+X-Google-Smtp-Source: APXvYqzsT+EllwSjAVLW5u50pIj2VwYxnsGDw07MjWP59b86AMovA52i7jADVBHYVrr3A7ZkyzE2tw==
+X-Received: by 2002:adf:ce88:: with SMTP id r8mr4325686wrn.42.1561560448173;
+        Wed, 26 Jun 2019 07:47:28 -0700 (PDT)
 Received: from mai.imgcgcw.net (26.92.130.77.rev.sfr.net. [77.130.92.26])
-        by smtp.gmail.com with ESMTPSA id h84sm2718557wmf.43.2019.06.26.07.47.25
+        by smtp.gmail.com with ESMTPSA id h84sm2718557wmf.43.2019.06.26.07.47.26
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 Jun 2019 07:47:26 -0700 (PDT)
+        Wed, 26 Jun 2019 07:47:27 -0700 (PDT)
 From:   Daniel Lezcano <daniel.lezcano@linaro.org>
 To:     tglx@linutronix.de
 Cc:     linux-kernel@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         linux-tegra@vger.kernel.org (open list:TEGRA ARCHITECTURE SUPPORT)
-Subject: [PATCH 09/25] clocksource/drivers/tegra: Release all IRQ's on request_irq() error
-Date:   Wed, 26 Jun 2019 16:46:35 +0200
-Message-Id: <20190626144651.16742-9-daniel.lezcano@linaro.org>
+Subject: [PATCH 10/25] clocksource/drivers/tegra: Minor code clean up
+Date:   Wed, 26 Jun 2019 16:46:36 +0200
+Message-Id: <20190626144651.16742-10-daniel.lezcano@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190626144651.16742-1-daniel.lezcano@linaro.org>
 References: <adba7d03-e9bd-9542-60bc-0f2d4874a40e@linaro.org>
@@ -64,39 +64,145 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Dmitry Osipenko <digetx@gmail.com>
 
-Release all requested IRQ's on the request error to properly clean up
-allocated resources.
+Correct typo and use proper upper casing for acronyms in the comments,
+use common style for error messages, prepend error messages with
+"tegra-timer:", add error message for cpuhp_setup_state() failure and
+clean up whitespaces in the code to fix checkpatch warnings.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 ---
- drivers/clocksource/timer-tegra20.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/clocksource/timer-tegra20.c | 43 ++++++++++++++++-------------
+ 1 file changed, 24 insertions(+), 19 deletions(-)
 
 diff --git a/drivers/clocksource/timer-tegra20.c b/drivers/clocksource/timer-tegra20.c
-index 276b55f6ada0..e2ef6b8211a5 100644
+index e2ef6b8211a5..6a3704142f31 100644
 --- a/drivers/clocksource/timer-tegra20.c
 +++ b/drivers/clocksource/timer-tegra20.c
-@@ -284,7 +284,7 @@ static int __init tegra_init_timer(struct device_node *np, bool tegra20)
- 			pr_err("%s: can't map IRQ for CPU%d\n",
- 			       __func__, cpu);
- 			ret = -EINVAL;
--			goto out;
-+			goto out_irq;
- 		}
+@@ -6,6 +6,8 @@
+  *	Colin Cross <ccross@google.com>
+  */
  
- 		irq_set_status_flags(cpu_to->clkevt.irq, IRQ_NOAUTOEN);
-@@ -294,7 +294,8 @@ static int __init tegra_init_timer(struct device_node *np, bool tegra20)
- 		if (ret) {
- 			pr_err("%s: cannot setup irq %d for CPU%d\n",
- 				__func__, cpu_to->clkevt.irq, cpu);
--			ret = -EINVAL;
-+			irq_dispose_mapping(cpu_to->clkevt.irq);
-+			cpu_to->clkevt.irq = 0;
++#define pr_fmt(fmt)	"tegra-timer: " fmt
++
+ #include <linux/clk.h>
+ #include <linux/clockchips.h>
+ #include <linux/cpu.h>
+@@ -21,13 +23,13 @@
+ 
+ #include "timer-of.h"
+ 
+-#define RTC_SECONDS            0x08
+-#define RTC_SHADOW_SECONDS     0x0c
+-#define RTC_MILLISECONDS       0x10
++#define RTC_SECONDS		0x08
++#define RTC_SHADOW_SECONDS	0x0c
++#define RTC_MILLISECONDS	0x10
+ 
+-#define TIMERUS_CNTR_1US 0x10
+-#define TIMERUS_USEC_CFG 0x14
+-#define TIMERUS_CNTR_FREEZE 0x4c
++#define TIMERUS_CNTR_1US	0x10
++#define TIMERUS_USEC_CFG	0x14
++#define TIMERUS_CNTR_FREEZE	0x4c
+ 
+ #define TIMER_PTV		0x0
+ #define TIMER_PTV_EN		BIT(31)
+@@ -48,7 +50,7 @@ static u32 usec_config;
+ static void __iomem *timer_reg_base;
+ 
+ static int tegra_timer_set_next_event(unsigned long cycles,
+-					 struct clock_event_device *evt)
++				      struct clock_event_device *evt)
+ {
+ 	void __iomem *reg_base = timer_of_base(to_timer_of(evt));
+ 
+@@ -169,15 +171,17 @@ static struct timer_of suspend_rtc_to = {
+ 
+ /*
+  * tegra_rtc_read - Reads the Tegra RTC registers
+- * Care must be taken that this funciton is not called while the
++ * Care must be taken that this function is not called while the
+  * tegra_rtc driver could be executing to avoid race conditions
+  * on the RTC shadow register
+  */
+ static u64 tegra_rtc_read_ms(struct clocksource *cs)
+ {
+ 	void __iomem *reg_base = timer_of_base(&suspend_rtc_to);
++
+ 	u32 ms = readl_relaxed(reg_base + RTC_MILLISECONDS);
+ 	u32 s = readl_relaxed(reg_base + RTC_SHADOW_SECONDS);
++
+ 	return (u64)s * MSEC_PER_SEC + ms;
+ }
+ 
+@@ -222,7 +226,7 @@ static int __init tegra_init_timer(struct device_node *np, bool tegra20)
+ 
+ 	to = this_cpu_ptr(&tegra_to);
+ 	ret = timer_of_init(np, to);
+-	if (ret < 0)
++	if (ret)
+ 		goto out;
+ 
+ 	timer_reg_base = timer_of_base(to);
+@@ -281,8 +285,7 @@ static int __init tegra_init_timer(struct device_node *np, bool tegra20)
+ 		cpu_to->clkevt.cpumask = cpumask_of(cpu);
+ 		cpu_to->clkevt.irq = irq_of_parse_and_map(np, idx);
+ 		if (!cpu_to->clkevt.irq) {
+-			pr_err("%s: can't map IRQ for CPU%d\n",
+-			       __func__, cpu);
++			pr_err("failed to map irq for cpu%d\n", cpu);
+ 			ret = -EINVAL;
  			goto out_irq;
  		}
+@@ -292,8 +295,8 @@ static int __init tegra_init_timer(struct device_node *np, bool tegra20)
+ 				  IRQF_TIMER | IRQF_NOBALANCING,
+ 				  cpu_to->clkevt.name, &cpu_to->clkevt);
+ 		if (ret) {
+-			pr_err("%s: cannot setup irq %d for CPU%d\n",
+-				__func__, cpu_to->clkevt.irq, cpu);
++			pr_err("failed to set up irq for cpu%d: %d\n",
++			       cpu, ret);
+ 			irq_dispose_mapping(cpu_to->clkevt.irq);
+ 			cpu_to->clkevt.irq = 0;
+ 			goto out_irq;
+@@ -312,11 +315,14 @@ static int __init tegra_init_timer(struct device_node *np, bool tegra20)
+ 	register_current_timer_delay(&tegra_delay_timer);
+ #endif
+ 
+-	cpuhp_setup_state(CPUHP_AP_TEGRA_TIMER_STARTING,
+-			  "AP_TEGRA_TIMER_STARTING", tegra_timer_setup,
+-			  tegra_timer_stop);
++	ret = cpuhp_setup_state(CPUHP_AP_TEGRA_TIMER_STARTING,
++				"AP_TEGRA_TIMER_STARTING", tegra_timer_setup,
++				tegra_timer_stop);
++	if (ret)
++		pr_err("failed to set up cpu hp state: %d\n", ret);
+ 
+ 	return ret;
++
+ out_irq:
+ 	for_each_possible_cpu(cpu) {
+ 		struct timer_of *cpu_to;
+@@ -329,6 +335,7 @@ static int __init tegra_init_timer(struct device_node *np, bool tegra20)
  	}
+ out:
+ 	timer_of_cleanup(to);
++
+ 	return ret;
+ }
+ 
+@@ -352,8 +359,6 @@ static int __init tegra20_init_rtc(struct device_node *np)
+ 	if (ret)
+ 		return ret;
+ 
+-	clocksource_register_hz(&suspend_rtc_clocksource, 1000);
+-
+-	return 0;
++	return clocksource_register_hz(&suspend_rtc_clocksource, 1000);
+ }
+ TIMER_OF_DECLARE(tegra20_rtc, "nvidia,tegra20-rtc", tegra20_init_rtc);
 -- 
 2.17.1
 
