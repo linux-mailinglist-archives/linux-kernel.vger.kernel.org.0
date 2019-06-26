@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CCC557000
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 19:52:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A65C956FEF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 19:51:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726783AbfFZRvw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 13:51:52 -0400
-Received: from mga12.intel.com ([192.55.52.136]:19497 "EHLO mga12.intel.com"
+        id S1726688AbfFZRv3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 13:51:29 -0400
+Received: from mga01.intel.com ([192.55.52.88]:49817 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726514AbfFZRvK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 13:51:10 -0400
+        id S1726559AbfFZRvL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 13:51:11 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jun 2019 10:51:09 -0700
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jun 2019 10:51:09 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.63,420,1557212400"; 
-   d="scan'208";a="337288608"
+   d="scan'208";a="337288610"
 Received: from rchatre-s.jf.intel.com ([10.54.70.76])
   by orsmga005.jf.intel.com with ESMTP; 26 Jun 2019 10:51:08 -0700
 From:   Reinette Chatre <reinette.chatre@intel.com>
@@ -26,9 +26,9 @@ To:     tglx@linutronix.de, fenghua.yu@intel.com, bp@alien8.de,
 Cc:     mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
         linux-kernel@vger.kernel.org,
         Reinette Chatre <reinette.chatre@intel.com>
-Subject: [PATCH 09/10] x86/resctrl: Pseudo-lock portions of multiple resources
-Date:   Wed, 26 Jun 2019 10:48:48 -0700
-Message-Id: <918552f95d59d20fb9a09dd3b6666ad2f82bdf0c.1561569068.git.reinette.chatre@intel.com>
+Subject: [PATCH 10/10] x86/resctrl: Only pseudo-lock L3 cache when inclusive
+Date:   Wed, 26 Jun 2019 10:48:49 -0700
+Message-Id: <1e53b953147bca171814305ff764931d71eec09a.1561569068.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.17.2
 In-Reply-To: <cover.1561569068.git.reinette.chatre@intel.com>
 References: <cover.1561569068.git.reinette.chatre@intel.com>
@@ -39,207 +39,90 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A cache pseudo-locked region may span more than one level of cache. A
-part of the pseudo-locked region that falls on one cache level is
-referred to as a pseudo-lock portion that was introduced previously.
+Cache pseudo-locking is a model specific feature and platforms
+supporting this feature are added by adding the x86 model data to the
+source code after cache pseudo-locking has been validated for the
+particular platform.
 
-Now a pseudo-locked region is allowed to have two portions instead of
-the previous limit of one. When a pseudo-locked region consists out of
-two portions it can only span a L2 and L3 resctrl resource.
-When a pseudo-locked region consists out of a L2 and L3 portion then
-there are some requirements:
-- the L2 and L3 cache has to be in same cache hierarchy
-- the L3 portion must be same size or larger than L2 portion
+Indicating support for cache pseudo-locking for an entire platform is
+sufficient when the cache characteristics of the platform is the same
+for all instances of the platform. If this is not the case then an
+additional check needs to be added. In particular, it is currently only
+possible to pseudo-lock an L3 cache region if the L3 cache is inclusive
+of lower level caches. If the L3 cache is not inclusive then any
+pseudo-locked data would be evicted from the pseudo-locked region when
+it is moved to the L2 cache.
 
-As documented in previous changes the list of portions are
-maintained so that the L2 portion would always appear first in the list
-to simplify any information retrieval.
+When some SKUs of a platform may have inclusive cache while other SKUs
+may have non inclusive cache it is necessary to, in addition of checking
+if the platform supports cache pseudo-locking, also check if the cache
+being pseudo-locked is inclusive.
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
- arch/x86/kernel/cpu/resctrl/pseudo_lock.c | 142 +++++++++++++++++++++-
- 1 file changed, 139 insertions(+), 3 deletions(-)
+ arch/x86/kernel/cpu/resctrl/pseudo_lock.c | 35 +++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
 
 diff --git a/arch/x86/kernel/cpu/resctrl/pseudo_lock.c b/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
-index a7fe53447a7e..4e47ad582db6 100644
+index 4e47ad582db6..e79f555d5226 100644
 --- a/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
 +++ b/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
-@@ -339,13 +339,104 @@ static int pseudo_lock_single_portion_valid(struct pseudo_lock_region *plr,
- 	return -1;
+@@ -125,6 +125,30 @@ static unsigned int get_cache_line_size(unsigned int cpu, int level)
+ 	return 0;
  }
  
 +/**
-+ * pseudo_lock_l2_l3_portions_valid - Verify region across L2 and L3
-+ * @plr: Pseudo-Locked region
-+ * @l2_portion: L2 Cache portion of pseudo-locked region
-+ * @l3_portion: L3 Cache portion of pseudo-locked region
++ * get_cache_inclusive - Determine if cache is inclusive of lower levels
++ * @cpu: CPU with which cache is associated
++ * @level: Cache level
 + *
-+ * User requested a pseudo-locked region consisting of a L2 as well as L3
-+ * cache portion. The portions are tested as follows:
-+ *   - L2 and L3 cache instances have to be in the same cache hierarchy.
-+ *     This is tested by ensuring that the L2 portion's cpumask is a
-+ *     subset of the L3 portion's cpumask.
-+ *   - L3 portion must be same size or larger than L2 portion.
-+ *
-+ * Return: -1 if the portions are unable to be used for a pseudo-locked
-+ *         region, 0 if the portions could be used for a pseudo-locked
-+ *         region. When returning 0:
-+ *         - the pseudo-locked region's size, line_size (cache line length)
-+ *           and CPU on which locking thread will be run are set.
-+ *         - CPUs associated with L2 cache portion are constrained from
-+ *           entering C-state that will affect the pseudo-locked region.
++ * Context: @cpu has to be online.
++ * Return: 1 if cache is inclusive of lower cache levels, 0 if cache is not
++ *         inclusive of lower cache levels or on failure.
 + */
-+static int pseudo_lock_l2_l3_portions_valid(struct pseudo_lock_region *plr,
-+					    struct pseudo_lock_portion *l2_p,
-+					    struct pseudo_lock_portion *l3_p)
++static unsigned int get_cache_inclusive(unsigned int cpu, int level)
 +{
-+	struct rdt_domain *l2_d, *l3_d;
-+	unsigned int l2_size, l3_size;
++	struct cpu_cacheinfo *ci;
++	int i;
 +
-+	l2_d = rdt_find_domain(l2_p->r, l2_p->d_id, NULL);
-+	if (IS_ERR_OR_NULL(l2_d)) {
-+		rdt_last_cmd_puts("Cannot locate L2 cache domain\n");
-+		return -1;
-+	}
++	ci = get_cpu_cacheinfo(cpu);
 +
-+	l3_d = rdt_find_domain(l3_p->r, l3_p->d_id, NULL);
-+	if (IS_ERR_OR_NULL(l3_d)) {
-+		rdt_last_cmd_puts("Cannot locate L3 cache domain\n");
-+		return -1;
-+	}
-+
-+	if (!cpumask_subset(&l2_d->cpu_mask, &l3_d->cpu_mask)) {
-+		rdt_last_cmd_puts("L2 and L3 caches need to be in same hierarchy\n");
-+		return -1;
-+	}
-+
-+	if (pseudo_lock_cstates_constrain(plr, &l2_d->cpu_mask)) {
-+		rdt_last_cmd_puts("Cannot limit C-states\n");
-+		return -1;
-+	}
-+
-+	l2_size = rdtgroup_cbm_to_size(l2_p->r, l2_d, l2_p->cbm);
-+	l3_size = rdtgroup_cbm_to_size(l3_p->r, l3_d, l3_p->cbm);
-+
-+	if (l2_size > l3_size) {
-+		rdt_last_cmd_puts("L3 cache portion has to be same size or larger than L2 cache portion\n");
-+		goto err_size;
-+	}
-+
-+	plr->size = l2_size;
-+
-+	l2_size = get_cache_line_size(cpumask_first(&l2_d->cpu_mask),
-+				      l2_p->r->cache_level);
-+	l3_size = get_cache_line_size(cpumask_first(&l3_d->cpu_mask),
-+				      l3_p->r->cache_level);
-+	if (l2_size != l3_size) {
-+		rdt_last_cmd_puts("L2 and L3 caches have different coherency cache line sizes\n");
-+		goto err_line;
-+	}
-+
-+	plr->line_size = l2_size;
-+
-+	plr->cpu = cpumask_first(&l2_d->cpu_mask);
-+
-+	if (!cpu_online(plr->cpu)) {
-+		rdt_last_cmd_printf("CPU %u associated with cache not online\n",
-+				    plr->cpu);
-+		goto err_cpu;
++	for (i = 0; i < ci->num_leaves; i++) {
++		if (ci->info_list[i].level == level)
++			return ci->info_list[i].inclusive;
 +	}
 +
 +	return 0;
-+
-+err_cpu:
-+	plr->line_size = 0;
-+	plr->cpu = 0;
-+err_line:
-+	plr->size = 0;
-+err_size:
-+	pseudo_lock_cstates_relax(plr);
-+	return -1;
 +}
 +
  /**
-  * pseudo_lock_region_init - Initialize pseudo-lock region information
-  * @plr: pseudo-lock region
-  *
-  * Called after user provided a schemata to be pseudo-locked. From the
-  * schemata the &struct pseudo_lock_region is on entry already initialized
-- * with the resource, domain, and capacity bitmask. Here the
-+ * with the resource(s), domain(s), and capacity bitmask(s). Here the
-  * provided data is validated and information required for pseudo-locking
-  * deduced, and &struct pseudo_lock_region initialized further. This
-  * information includes:
-@@ -355,13 +446,24 @@ static int pseudo_lock_single_portion_valid(struct pseudo_lock_region *plr,
-  * - a cpu associated with the cache instance on which the pseudo-locking
-  *   flow can be executed
-  *
-+ * A user provides a schemata for a pseudo-locked region. This schemata may
-+ * contain portions that span different resources, for example, a cache
-+ * pseudo-locked region that spans L2 and L3 cache. After the schemata is
-+ * parsed into portions it needs to be verified that the provided portions
-+ * are valid with the following tests:
-+ *
-+ * - L2 only portion on system that has only L2 resource - OK
-+ * - L3 only portion on any system that supports it - OK
-+ * - L2 portion on system that has L3 resource - require L3 portion
-+ **
-+ *
-  * Return: 0 on success, <0 on failure. Descriptive error will be written
-  * to last_cmd_status buffer.
-  */
- static int pseudo_lock_region_init(struct pseudo_lock_region *plr)
- {
- 	struct rdt_resource *l3_resource = &rdt_resources_all[RDT_RESOURCE_L3];
--	struct pseudo_lock_portion *p;
-+	struct pseudo_lock_portion *p, *n_p, *tmp;
- 	int ret;
- 
- 	if (list_empty(&plr->portions)) {
-@@ -397,8 +499,42 @@ static int pseudo_lock_region_init(struct pseudo_lock_region *plr)
- 			rdt_last_cmd_puts("Invalid resource or just L2 provided when L3 is required\n");
- 			goto out_region;
- 		}
-+	}
-+
-+	/*
-+	 * List is neither empty nor singular, process first and second portions
-+	 */
-+	p = list_first_entry(&plr->portions, struct pseudo_lock_portion, list);
-+	n_p = list_next_entry(p, list);
-+
-+	/*
-+	 * If the second portion is not also the last portion user provided
-+	 * more portions than can be supported.
-+	 */
-+	tmp = list_last_entry(&plr->portions, struct pseudo_lock_portion, list);
-+	if (n_p != tmp) {
-+		rdt_last_cmd_puts("Only two pseudo-lock portions supported\n");
-+		goto out_region;
-+	}
-+
-+	if (p->r->rid == RDT_RESOURCE_L2 && n_p->r->rid == RDT_RESOURCE_L3) {
-+		ret = pseudo_lock_l2_l3_portions_valid(plr, p, n_p);
-+		if (ret < 0)
-+			goto out_region;
-+		return 0;
-+	} else if (p->r->rid == RDT_RESOURCE_L3 &&
-+		   n_p->r->rid == RDT_RESOURCE_L2) {
-+		if (pseudo_lock_l2_l3_portions_valid(plr, n_p, p) == 0) {
-+			/*
-+			 * Let L2 and L3 portions appear in order in the
-+			 * portions list in support of consistent output to
-+			 * user space.
-+			 */
-+			list_rotate_left(&plr->portions);
-+			return 0;
-+		}
- 	} else {
--		rdt_last_cmd_puts("Multiple pseudo-lock portions unsupported\n");
-+		rdt_last_cmd_puts("Invalid combination of resources\n");
+  * pseudo_lock_minor_get - Obtain available minor number
+  * @minor: Pointer to where new minor number will be stored
+@@ -317,6 +341,12 @@ static int pseudo_lock_single_portion_valid(struct pseudo_lock_region *plr,
+ 		goto err_cpu;
  	}
  
- out_region:
++	if (p->r->cache_level == 3 &&
++	    !get_cache_inclusive(plr->cpu, p->r->cache_level)) {
++		rdt_last_cmd_puts("L3 cache not inclusive\n");
++		goto err_cpu;
++	}
++
+ 	plr->line_size = get_cache_line_size(plr->cpu, p->r->cache_level);
+ 	if (plr->line_size == 0) {
+ 		rdt_last_cmd_puts("Unable to compute cache line length\n");
+@@ -418,6 +448,11 @@ static int pseudo_lock_l2_l3_portions_valid(struct pseudo_lock_region *plr,
+ 		goto err_cpu;
+ 	}
+ 
++	if (!get_cache_inclusive(plr->cpu, l3_p->r->cache_level)) {
++		rdt_last_cmd_puts("L3 cache not inclusive\n");
++		goto err_cpu;
++	}
++
+ 	return 0;
+ 
+ err_cpu:
 -- 
 2.17.2
 
