@@ -2,169 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03F27567E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 13:50:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A907567F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 13:51:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726722AbfFZLuW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 07:50:22 -0400
-Received: from mailout2.samsung.com ([203.254.224.25]:59595 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726104AbfFZLuV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 07:50:21 -0400
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20190626115018epoutp022435649e5995fa1af67615789ade8274~rvUlpIcMc3171831718epoutp02Z
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 11:50:18 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20190626115018epoutp022435649e5995fa1af67615789ade8274~rvUlpIcMc3171831718epoutp02Z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1561549818;
-        bh=Rkq7DEDyErtaZQ8jeJ0L+lufdkPG1uI6401iyLHsv3s=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=lMktFmMmpC9cnTeTeebrFpZNJvz3XYN5vUWbczhj1sE22mLWqXzHKBqkq0zwV3dez
-         DBC64eZHXTjxt1l94tx51/G3koNUnVSui8UDDpQrEsDgmoBMf/HCkAKcd8BSTEc/OU
-         eTfmwgvY+HkP5CEoIsUwcoxl1FpH69WMsnxbJdvQ=
-Received: from epsmges1p3.samsung.com (unknown [182.195.40.160]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20190626115017epcas1p2c401e841486df141df1ab3299aec1312~rvUkGlQgI1331813318epcas1p2E;
-        Wed, 26 Jun 2019 11:50:17 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        DE.E8.04143.9FB531D5; Wed, 26 Jun 2019 20:50:17 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-        20190626115016epcas1p455530417de86ea2e72ce1b389ae57a75~rvUjyoO-z2980629806epcas1p46;
-        Wed, 26 Jun 2019 11:50:16 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20190626115016epsmtrp1bef4df790f9b038e22d782e1acac33fe~rvUjvT_Od3121131211epsmtrp12;
-        Wed, 26 Jun 2019 11:50:16 +0000 (GMT)
-X-AuditID: b6c32a37-f19ff7000000102f-32-5d135bf91632
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        16.82.03692.8FB531D5; Wed, 26 Jun 2019 20:50:16 +0900 (KST)
-Received: from U16PB1-0090.tn.corp.samsungelectronics.net (unknown
-        [10.253.235.20]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20190626115016epsmtip1685a43fa3697a0ca0619d3c3da2d53e4~rvUjg8Oa92836328363epsmtip1V;
-        Wed, 26 Jun 2019 11:50:16 +0000 (GMT)
-From:   jinho lim <jordan.lim@samsung.com>
-To:     will.deacon@arm.com
-Cc:     mark.rutland@arm.com, ebiederm@xmission.com, marc.zyngier@arm.com,
-        anshuman.khandual@arm.com, andreyknvl@google.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        seroto7@gmail.com, jinho lim <jordan.lim@samsung.com>
-Subject: [PATCH v3] arm64: rename dump_instr as dump_kernel_instr
-Date:   Wed, 26 Jun 2019 20:50:13 +0900
-Message-Id: <20190626115013.13044-1-jordan.lim@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Se0hTURz27O7lY3WZPU6j1G4FKU53ndNbqRmJXMjCECSrsS7z4MS92t0k
-        I2pQaMh6CEVoWiOblUmaLZnO1JagPawsykKj7PFHkYZa9lCrzavUf9/5zved7+N3fmJMOiaQ
-        iQuNVmQxMnpCGMJvuRMtl//cFa5WfPkpoBzeVh7V0aul/rQcEVEv6nKp5nfPBdTTtmohNTP0
-        W0i5Bvp51ERdKZ/6ONbLTw+hG841ALq16pWIdjbb6BsXD9HH3fWAnmiOoE/5yvjZop36FB1i
-        8pElChm1pvxCY0EqsSVHs1mjSlKQcnIdlUxEGRkDSiUysrLlmYV6fzciqpjR2/xUNsOyRHxa
-        isVks6IonYm1phLInK83kwpzHMsYWJuxIE5rMqwnFYoElV+5R69zPRoDZt/CfX3vvwnswBNW
-        DoLFEE+EtV19vACW4h4A+yYjykGIH48DeNt5F+MOkwBe7hoA8w7fuVEh57gFYFPlMk50lAft
-        lf2zF0J8LXxT6+QH8CJ8KXxQ4Z6NwPAfAJ7xLAvgcHwTfOYe92vEYj6+BnbUUwFagm+AZyvL
-        MS4rEl5t6potAfEGIezp7pgrkQH7L/ziczgcfupxizgsgx9PlIo4w2EAu+6NzrntAFY9+Srk
-        VEp4zPEYCyRjeDRsbIvn6JWwdaoGcEUXwNFvDkFAAnEJPFoq5eBqOH3p4HzUlOP7XCwNawYn
-        5qaohsc8I4KTYEXVv/edANSDJcjMGgoQS5qV//9RM5hdt5hkD2h6mOUDuBgQYRJ7pFQtFTDF
-        bInBB6AYIxZJXAyulkrymZL9yGLSWGx6xPqAyj+8Cky2WGvyL6/RqiFVCUqlkkpMSk5SKYml
-        Ek3oy91SvICxoiKEzMgy7+OJg2V2EDTuRdmrcq9tokLLJFnd26+/jR12TIM8X4JrubvFbY0l
-        w4OaysiiFcqt5zuq6cjMacMHjdXXuVDDJqQj48Y/us6ZQxv2nva+rnDc/5w31NuiTo32Tg/z
-        zoZBa4oXc6YUh/R2t2vba12ZaV8P5lx5MDkiv7lOZt5R3Xggb3AbwWd1DBmDWVjmL7KbOIGE
-        AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrALMWRmVeSWpSXmKPExsWy7bCSnO6PaOFYg5NnVS16du9ksth3Itni
-        /7YWdosby8IsNj2+xmpxedccNou/d/6xWSy9fpHJ4vOyNhaLlx9PsDhweayZt4bRY+esu+we
-        CzaVemxeUu/Rt2UVo8fnTXIeUw61swSwR3HZpKTmZJalFunbJXBlLD3/kbHgEH/F2SdfWRsY
-        d/B0MXJySAiYSBya946ti5GLQ0hgN6PE69cPmCASUhIff3czdzFyANnCEocPF0PUtDFJ/GmZ
-        yQJSwyagIfFg8QIwW0RAXOLMxC1MIEXMAk1MEl/X/WQGSQgLOEpc3fKJBWQQi4CqxL5VFiBh
-        XgFridkzu5ghdslLrN5wgHkCI88CRoZVjJKpBcW56bnFhgWGeanlesWJucWleel6yfm5mxjB
-        4aaluYPx8pL4Q4wCHIxKPLwN8kKxQqyJZcWVuYcYJTiYlUR4lyYKxArxpiRWVqUW5ccXleak
-        Fh9ilOZgURLnfZp3LFJIID2xJDU7NbUgtQgmy8TBKdXAuGCm0fJjAWy3VnHPueHDs/3y5bVF
-        XLc8vVvULyubqn+qYFxbu3Sa9cbeXc9n7PEJ3KI0uSApdKeEY9aJjUsXX53z3GKl77PlB2sd
-        Z9ydv74r+1Vr78Kb3n4z73ZodDwqdTiUvDzY0Kuj7OZX21dCdf1dr9bWXnRawtL34+ufw6uT
-        PzM+iNTYIqPEUpyRaKjFXFScCABUvwvnMwIAAA==
-X-CMS-MailID: 20190626115016epcas1p455530417de86ea2e72ce1b389ae57a75
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20190626115016epcas1p455530417de86ea2e72ce1b389ae57a75
-References: <CGME20190626115016epcas1p455530417de86ea2e72ce1b389ae57a75@epcas1p4.samsung.com>
+        id S1727298AbfFZLv4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 07:51:56 -0400
+Received: from mail-eopbgr740085.outbound.protection.outlook.com ([40.107.74.85]:13939
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726157AbfFZLv4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 07:51:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3MG2vg5mjGpzjv+RMGLlYqUWvE19CepvhBrmIsR8IHk=;
+ b=sydjuiQvddEW6oK0oJTarDQpm9W5Ypev2pUCqy6xH9hB2ipNSR5jDv5YEMfRe3/CFbOOLnYSFDU8l8Qq00QOWVUoacISwSuLeAjKPqdzfkMIniQdUthMSfwTn3P638ZAHcDiaP7IV3H8p8v+PYbziqS0J74U1j7AexyhPuZ5aAc=
+Received: from DM6PR02MB4779.namprd02.prod.outlook.com (20.176.109.16) by
+ DM6PR02MB5836.namprd02.prod.outlook.com (20.179.55.153) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2008.16; Wed, 26 Jun 2019 11:51:12 +0000
+Received: from DM6PR02MB4779.namprd02.prod.outlook.com
+ ([fe80::936:90c8:a385:1513]) by DM6PR02MB4779.namprd02.prod.outlook.com
+ ([fe80::936:90c8:a385:1513%4]) with mapi id 15.20.2008.017; Wed, 26 Jun 2019
+ 11:51:12 +0000
+From:   Naga Sureshkumar Relli <nagasure@xilinx.com>
+To:     Boris Brezillon <boris.brezillon@collabora.com>
+CC:     "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+        "helmut.grohne@intenta.de" <helmut.grohne@intenta.de>,
+        "richard@nod.at" <richard@nod.at>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "vigneshr@ti.com" <vigneshr@ti.com>,
+        "bbrezillon@kernel.org" <bbrezillon@kernel.org>,
+        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [LINUX PATCH v17 1/2] mtd: rawnand: nand_micron: Do not over
+ write driver's read_page()/write_page()
+Thread-Topic: [LINUX PATCH v17 1/2] mtd: rawnand: nand_micron: Do not over
+ write driver's read_page()/write_page()
+Thread-Index: AQHVKxEOKM99KajnN0G2IiFegkrxG6atgBaAgABKdoCAAAOHgIAABNvw
+Date:   Wed, 26 Jun 2019 11:51:12 +0000
+Message-ID: <DM6PR02MB4779D347620E88BDB943DEB4AFE20@DM6PR02MB4779.namprd02.prod.outlook.com>
+References: <20190625044630.31717-1-naga.sureshkumar.relli@xilinx.com>
+        <20190626084807.3f06e718@collabora.com>
+        <DM6PR02MB47796E3306C166A91E0BAE91AFE20@DM6PR02MB4779.namprd02.prod.outlook.com>
+ <20190626132715.6128d8b1@collabora.com>
+In-Reply-To: <20190626132715.6128d8b1@collabora.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=nagasure@xilinx.com; 
+x-originating-ip: [149.199.50.133]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: d9f27aba-db74-4e36-80ae-08d6fa2c9639
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DM6PR02MB5836;
+x-ms-traffictypediagnostic: DM6PR02MB5836:
+x-microsoft-antispam-prvs: <DM6PR02MB5836D1E1FAAA67F049E12961AFE20@DM6PR02MB5836.namprd02.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 00808B16F3
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(39860400002)(396003)(346002)(366004)(136003)(199004)(13464003)(189003)(5660300002)(68736007)(71200400001)(71190400001)(81166006)(81156014)(6246003)(8676002)(54906003)(3846002)(6116002)(229853002)(6916009)(6436002)(7736002)(305945005)(86362001)(53936002)(74316002)(55016002)(486006)(25786009)(8936002)(14454004)(9686003)(478600001)(476003)(6506007)(102836004)(53546011)(66946007)(73956011)(64756008)(66446008)(66476007)(66556008)(7696005)(4326008)(66066001)(2906002)(99286004)(446003)(11346002)(26005)(256004)(316002)(14444005)(76116006)(76176011)(7416002)(186003)(52536014)(33656002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR02MB5836;H:DM6PR02MB4779.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: xilinx.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: t0EguLMoWA3Zfdp+AM0RQtWOz6insG7rklakzmKa+1u9+0MpNjz75m6s+mbVOgYTxZvtDmbBW2qlgNAWd4YSpItkpOpFqCAV6STQmvAriouW2FUk1nfRaAT0wAO62PEBREYThR9oW4VvKAb5e7NPN7KIaOSeQfPjpPu7j4QHvNbpUMxJD9mOQL1192attkNwdCntpBs5O831h5Gmmaih9d8ezMvnGXXVUc2n8Dv2UN7T//9QvQqqmfOrddHGYspK/9lQQTLGbUXdzAHRhPxAqOjgxzprqcT65aLls0WOwrk/j0bHMciifrDxYwAW3J2RJJrG+8gJxnEELve7bpkGwWIOehwTp5ucnxT3w9CWtIj9o7zIFcEaCshuFo/fxv8W8b5KkM1NbuuIFJhInlIhqTlOhK+HCtXQ4Jq0qqQI73c=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d9f27aba-db74-4e36-80ae-08d6fa2c9639
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Jun 2019 11:51:12.3350
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: nagasure@xilinx.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR02MB5836
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In traps.c, only __die calls dump_instr.
-However, this function has sub-function as __dump_instr.
+Hi Boris,
 
-dump_kernel_instr can replace those functions.
-By using aarch64_insn_read, it does not have to change fs to KERNEL_DS.
+> -----Original Message-----
+> From: Boris Brezillon <boris.brezillon@collabora.com>
+> Sent: Wednesday, June 26, 2019 4:57 PM
+> To: Naga Sureshkumar Relli <nagasure@xilinx.com>
+> Cc: miquel.raynal@bootlin.com; helmut.grohne@intenta.de; richard@nod.at;
+> dwmw2@infradead.org; computersforpeace@gmail.com; marek.vasut@gmail.com;
+> vigneshr@ti.com; bbrezillon@kernel.org; yamada.masahiro@socionext.com; li=
+nux-
+> mtd@lists.infradead.org; linux-kernel@vger.kernel.org
+> Subject: Re: [LINUX PATCH v17 1/2] mtd: rawnand: nand_micron: Do not over=
+ write
+> driver's read_page()/write_page()
+>=20
+> On Wed, 26 Jun 2019 11:22:33 +0000
+> Naga Sureshkumar Relli <nagasure@xilinx.com> wrote:
+>=20
+> > Hi Boris,
+> >
+> > > -----Original Message-----
+> > > From: Boris Brezillon <boris.brezillon@collabora.com>
+> > > Sent: Wednesday, June 26, 2019 12:18 PM
+> > > To: Naga Sureshkumar Relli <nagasure@xilinx.com>
+> > > Cc: miquel.raynal@bootlin.com; helmut.grohne@intenta.de;
+> > > richard@nod.at; dwmw2@infradead.org; computersforpeace@gmail.com;
+> > > marek.vasut@gmail.com; vigneshr@ti.com; bbrezillon@kernel.org;
+> > > yamada.masahiro@socionext.com; linux- mtd@lists.infradead.org;
+> > > linux-kernel@vger.kernel.org
+> > > Subject: Re: [LINUX PATCH v17 1/2] mtd: rawnand: nand_micron: Do not
+> > > over write driver's read_page()/write_page()
+> > >
+> > > On Mon, 24 Jun 2019 22:46:29 -0600
+> > > Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com> wrote:
+> > >
+> > > > Add check before assigning chip->ecc.read_page() and
+> > > > chip->ecc.write_page()
+> > > >
+> > > > Signed-off-by: Naga Sureshkumar Relli
+> > > > <naga.sureshkumar.relli@xilinx.com>
+> > > > ---
+> > > >  drivers/mtd/nand/raw/nand_micron.c | 7 +++++--
+> > > >  1 file changed, 5 insertions(+), 2 deletions(-)
+> > > >
+> > > > diff --git a/drivers/mtd/nand/raw/nand_micron.c
+> > > > b/drivers/mtd/nand/raw/nand_micron.c
+> > > > index cbd4f09ac178..565f2696c747 100644
+> > > > --- a/drivers/mtd/nand/raw/nand_micron.c
+> > > > +++ b/drivers/mtd/nand/raw/nand_micron.c
+> > > > @@ -500,8 +500,11 @@ static int micron_nand_init(struct nand_chip *=
+chip)
+> > > >  		chip->ecc.size =3D 512;
+> > > >  		chip->ecc.strength =3D chip->base.eccreq.strength;
+> > > >  		chip->ecc.algo =3D NAND_ECC_BCH;
+> > > > -		chip->ecc.read_page =3D micron_nand_read_page_on_die_ecc;
+> > > > -		chip->ecc.write_page =3D micron_nand_write_page_on_die_ecc;
+> > > > +		if (!chip->ecc.read_page)
+> > > > +			chip->ecc.read_page =3D micron_nand_read_page_on_die_ecc;
+> > > > +
+> > > > +		if (!chip->ecc.write_page)
+> > > > +			chip->ecc.write_page =3D micron_nand_write_page_on_die_ecc;
+> > >
+> > > That's wrong, if you don't want on-die ECC to be used, simply don't
+> > > set nand-ecc-mode to "on- die".
+> > Ok. But if we want to use on-die ECC then you mean to say it is mandato=
+ry to use
+> micron_nand_read/write_page_on_die_ecc()?
+>=20
+> Absolutely, and if it doesn't work that means you driver does not
+> implement raw accesses correctly, which means it's still buggy...
+I agree. But let's say, if there is a limitation with the controller. Then =
+it is must to have this check right?
+I mean, for pl353 controller, we must clear the CS during the data phase, h=
+ence we are splitting the=20
+Transfer in the pl353_read/write_page_raw().
++	pl353_nand_read_data_op(chip, buf, mtd->writesize, false);
++	p =3D chip->oob_poi;
++	pl353_nand_read_data_op(chip, p,
++				(mtd->oobsize -
++				PL353_NAND_LAST_TRANSFER_LENGTH), false);
++	p +=3D (mtd->oobsize - PL353_NAND_LAST_TRANSFER_LENGTH);
++	xnfc->dataphase_addrflags |=3D PL353_NAND_CLEAR_CS;
++	pl353_nand_read_data_op(chip, p, PL353_NAND_LAST_TRANSFER_LENGTH,
++				false);
+As the above sequence is needed even for raw access, PL353 is unable to use=
+ the on_die_page reads.
 
-Signed-off-by: jinho lim <jordan.lim@samsung.com>
----
- arch/arm64/kernel/traps.c | 23 +++++++----------------
- 1 file changed, 7 insertions(+), 16 deletions(-)
-
-diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
-index ccc13b45d9b1..7e69454fd250 100644
---- a/arch/arm64/kernel/traps.c
-+++ b/arch/arm64/kernel/traps.c
-@@ -66,16 +66,19 @@ static void dump_backtrace_entry(unsigned long where)
- 	printk(" %pS\n", (void *)where);
- }
- 
--static void __dump_instr(const char *lvl, struct pt_regs *regs)
-+static void dump_kernel_instr(const char *lvl, struct pt_regs *regs)
- {
- 	unsigned long addr = instruction_pointer(regs);
- 	char str[sizeof("00000000 ") * 5 + 2 + 1], *p = str;
- 	int i;
- 
-+	if (user_mode(regs))
-+		return;
-+
- 	for (i = -4; i < 1; i++) {
- 		unsigned int val, bad;
- 
--		bad = get_user(val, &((u32 *)addr)[i]);
-+		bad = aarch64_insn_read(&((u32 *)addr)[i], &val);
- 
- 		if (!bad)
- 			p += sprintf(p, i == 0 ? "(%08x) " : "%08x ", val);
-@@ -84,19 +87,8 @@ static void __dump_instr(const char *lvl, struct pt_regs *regs)
- 			break;
- 		}
- 	}
--	printk("%sCode: %s\n", lvl, str);
--}
- 
--static void dump_instr(const char *lvl, struct pt_regs *regs)
--{
--	if (!user_mode(regs)) {
--		mm_segment_t fs = get_fs();
--		set_fs(KERNEL_DS);
--		__dump_instr(lvl, regs);
--		set_fs(fs);
--	} else {
--		__dump_instr(lvl, regs);
--	}
-+	printk("%sCode: %s\n", lvl, str);
- }
- 
- void dump_backtrace(struct pt_regs *regs, struct task_struct *tsk)
-@@ -182,8 +174,7 @@ static int __die(const char *str, int err, struct pt_regs *regs)
- 	print_modules();
- 	show_regs(regs);
- 
--	if (!user_mode(regs))
--		dump_instr(KERN_EMERG, regs);
-+	dump_kernel_instr(KERN_EMERG, regs);
- 
- 	return ret;
- }
--- 
-2.17.1
-
+Thanks,
+Naga Sureshkumar Relli
