@@ -2,101 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA2BF56F8C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 19:33:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E16456F94
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 19:34:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726463AbfFZRdC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 13:33:02 -0400
-Received: from mout.kundenserver.de ([217.72.192.74]:41971 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726042AbfFZRdB (ORCPT
+        id S1726525AbfFZReA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 13:34:00 -0400
+Received: from mail-io1-f70.google.com ([209.85.166.70]:37881 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726042AbfFZReA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 13:33:01 -0400
-Received: from [192.168.1.110] ([77.4.50.183]) by mrelayeu.kundenserver.de
- (mreue108 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1M6UVr-1hdirL1gd7-006uGv; Wed, 26 Jun 2019 19:27:06 +0200
-Subject: Re: [PATCH 01/30] include: linux: platform_device: more helpers for
- declaring platform drivers
-To:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        "Enrico Weigelt, metux IT consult" <info@metux.net>
-Cc:     linux-kernel@vger.kernel.org, grygorii.strashko@ti.com,
-        mcoquelin.stm32@gmail.com, thloh@altera.com, festevam@gmail.com,
-        linus.walleij@linaro.org, khilman@kernel.org,
-        patches@opensource.cirrus.com, bgolaszewski@baylibre.com,
-        linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-imx@nxp.com, kernel@pengutronix.de, ssantosh@kernel.org,
-        linux-tegra@vger.kernel.org, andriy.shevchenko@linux.intel.com,
-        shawnguo@kernel.org, s.hauer@pengutronix.de,
-        alexandre.torgue@st.com
-References: <1560796871-18560-1-git-send-email-info@metux.net>
- <20190626061405.qsqq5na4oactuo6f@pengutronix.de>
-From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Organization: metux IT consult
-Message-ID: <30f541a7-ef9d-d687-ab76-22a4544258f8@metux.net>
-Date:   Wed, 26 Jun 2019 19:27:02 +0200
-User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 26 Jun 2019 13:34:00 -0400
+Received: by mail-io1-f70.google.com with SMTP id j18so3403140ioj.4
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 10:33:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=nMT5FioGFdyvzIgPbIYCsZ5hPNKhgIXY/QNeLPVyeZY=;
+        b=jNlA1Vyqf0DW+VsodgcsJCVwCXiJqoeG8Kimkzig5r8YEbiFWsDIcFYbTzTfFCSyF2
+         riXtgC+EMOiVDyNvnY7ImjplpEDCnAR/mJs5j4BYmsLlUkRTIXirL23gBnPm4/iJozT4
+         8fbnCC5GhbCr568b1Ym+rPuy00hacWQ1KHtPxYctui6MIDN/WiA/h7D7+3bcUdret8N5
+         GzeL49aBBEwKo9YaCbpWgxWGgkEsYmjEdWUTnCSWcflKeToUO9k7eCS2m699TUUgQxlQ
+         7czyEOQ3O7juISHjZTXTdF+Nk203OP2ikC/J6GgbVHApFuavwIbUQu9aZzc+ouqAIdbY
+         XiLA==
+X-Gm-Message-State: APjAAAXtckbnoqlQYwIW6T6CFsYOmqNjkBYRVEVbAzmg34qOIu0MDEcz
+        WM85wlNlTCfFB0zRAAyP+5A3LUilcdFOgzAH2oRItBt6ETYs
+X-Google-Smtp-Source: APXvYqwoqbpevi0oNIrYo99AxXhfPlFNWFTySK9Skhyl6+h7eI5rXg1AW5lI8CCkZq75G9V7i8fNEde0WHAryBYgZSdxm5rwYGVE
 MIME-Version: 1.0
-In-Reply-To: <20190626061405.qsqq5na4oactuo6f@pengutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:4cVH4PkCtQv/LUwiS6UCMsXOnJKPoFgtu8YIQh2qre1SlC0rID3
- iH0aKQ/MKkZJ2yEuVJpv7mEkC1UjMv1ovjIFymwEqaJMY5AQyXvkOzmTCMq13end5r0f9xS
- yMx11gxpvqiWbWj5JDclzAGEDJ/U+TuS0GJfpPcHqTpNdKo6+6kBrvObB6Qy47Oj5TZ6PPN
- S2g10gMfdY9wpMg6E4Uzg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:p7DzD82Py24=:LTBxbNA+enqTVtVo1asr5u
- fojJY6VPTEzYaSJmnoo2Q08KvoDIOijxX27ZhdAkutA8pG3r2+igrKbf0Fr1hVHFN+0+Zm563
- xU3yBgs2kIQumCzDZakchFcCbHnWcLq1dDjHduz9l5x8WbJ/QjWvztmVLtLec6s3T/7wn9f4b
- hB94PAd14mx2OzyVmlsrfgS6p7iw5JWUcjH465pyFgPXWaa9f8VjH6xW5ux2bE6+rIMbpk5Ty
- junIYo1id38mTc1V85zeagLxg1x2WbqCQ08z0saH2UrLQj0TODg2fH+jgg1nULwKYD1b7QksU
- 5zYpMwlRIfQk33Hio6mvEahIFHMzJ4ehYRrJnkkp5az6d1WwBProOdeVWTK2qVW4zI/UFgwV6
- NAeOZfNFAsRJkPSNeywmV1Ms6jLg5J6SLBAW/b8VSQxanNDKjFtGLiUsQPGGrygYRASQ/lYRp
- +u8tbOCLBQKNl9ZVrApeSLLH0ksCfzNH+cZ8GNJCnSQitkHKMCw3t+mOxAGy0aif6rXMPdz9Q
- m6ftp/V4ktJEzSCtvq1zGgc6rxZALGDd1jSCx8umIEuSe4utCYnm2NJIpJ58Mh496OnAihtyD
- CHxFOC3zGdx+8PQVDH4pHkwEXG6nvHZfDaSNdRY6hV/UUbFvjekhcfWq+1Ms87SGmTwRNl2hy
- ec01eIhUZI7jd9eRtU9P3gL6qFG8ol+BFr7lrNRSyVSKVmlZmvsK8AlDOczVKKRXRAsYW9qoc
- AjvunGTjxWWoot/j7F503lFwZ0SKs+7YtXKRyB+QgYf4oTlYrIKhATZrRkE=
+X-Received: by 2002:a6b:b7d5:: with SMTP id h204mr6164466iof.188.1561570028284;
+ Wed, 26 Jun 2019 10:27:08 -0700 (PDT)
+Date:   Wed, 26 Jun 2019 10:27:08 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d3f34b058c3d5a4f@google.com>
+Subject: INFO: rcu detected stall in ext4_write_checks
+From:   syzbot <syzbot+4bfbbf28a2e50ab07368@syzkaller.appspotmail.com>
+To:     adilger.kernel@dilger.ca, davem@davemloft.net, eladr@mellanox.com,
+        idosch@mellanox.com, jiri@mellanox.com, john.stultz@linaro.org,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        tglx@linutronix.de, tytso@mit.edu
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26.06.19 08:14, Uwe Kleine-König wrote:
-Hi,
+Hello,
 
-> Would it make sense to do something like:
->
-> 	#define __module_platform_driver(__platform_driver, __initlvl) \
-> 	static int __init __platform_driver##_init(void) \
-> 	{ \
-> 		return platform_driver_register(&(__platform_driver)); \
-> 	} \
-> 	__initlvl ## _initcall(__platform_driver##_init); \
-> 	static void __exit __platform_driver##_exit(void) \
-> 	{ \
-> 		platform_driver_unregister(&(__platform_driver)); \
-> 	} \
-> 	module_exit(__platform_driver##_exit);
->
-> 	#define postcore_platform_driver(__platform_driver)
-__module_platform_driver(__platform_driver, postcore)
-> 	#define subsys_platform_driver(__platform_driver)
-__module_platform_driver(__platform_driver, subsys)
-> 	...
->
-> Which would be more compact and makes the difference between these
-> macros a bit more obvious.
-yeah, could do that, but not sure whether it's really good for
-readability when we have so many nested macros :p
+syzbot found the following crash on:
 
-OTOH, I didn't want to touch the existing macros for now, just trim down
-the actual init boilerplate, postponing further compactions for later.
+HEAD commit:    abf02e29 Merge tag 'pm-5.2-rc6' of git://git.kernel.org/pu..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1435aaf6a00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e5c77f8090a3b96b
+dashboard link: https://syzkaller.appspot.com/bug?extid=4bfbbf28a2e50ab07368
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11234c41a00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15d7f026a00000
 
---mtx
+The bug was bisected to:
 
--- 
-Enrico Weigelt, metux IT consult
-Free software and Linux embedded engineering
-info@metux.net -- +49-151-27565287
+commit 0c81ea5db25986fb2a704105db454a790c59709c
+Author: Elad Raz <eladr@mellanox.com>
+Date:   Fri Oct 28 19:35:58 2016 +0000
+
+     mlxsw: core: Add port type (Eth/IB) set API
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10393a89a00000
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=12393a89a00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=14393a89a00000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+4bfbbf28a2e50ab07368@syzkaller.appspotmail.com
+Fixes: 0c81ea5db259 ("mlxsw: core: Add port type (Eth/IB) set API")
+
+rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+	(detected by 0, t=10502 jiffies, g=8969, q=26)
+rcu: All QSes seen, last rcu_preempt kthread activity 10503  
+(4295056736-4295046233), jiffies_till_next_fqs=1, root ->qsmask 0x0
+syz-executor778 R  running task    26464  9577   9576 0x00004000
+Call Trace:
+  <IRQ>
+  sched_show_task kernel/sched/core.c:5286 [inline]
+  sched_show_task.cold+0x291/0x2fc kernel/sched/core.c:5261
+  print_other_cpu_stall kernel/rcu/tree_stall.h:410 [inline]
+  check_cpu_stall kernel/rcu/tree_stall.h:536 [inline]
+  rcu_pending kernel/rcu/tree.c:2625 [inline]
+  rcu_sched_clock_irq.cold+0xaaf/0xbfd kernel/rcu/tree.c:2161
+  update_process_times+0x32/0x80 kernel/time/timer.c:1639
+  tick_sched_handle+0xa2/0x190 kernel/time/tick-sched.c:167
+  tick_sched_timer+0x47/0x130 kernel/time/tick-sched.c:1298
+  __run_hrtimer kernel/time/hrtimer.c:1389 [inline]
+  __hrtimer_run_queues+0x33b/0xdd0 kernel/time/hrtimer.c:1451
+  hrtimer_interrupt+0x314/0x770 kernel/time/hrtimer.c:1509
+  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1041 [inline]
+  smp_apic_timer_interrupt+0x111/0x550 arch/x86/kernel/apic/apic.c:1066
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:806
+  </IRQ>
+RIP: 0010:ext4_write_checks+0x1/0x260 fs/ext4/file.c:161
+Code: 61 fa ff ff e8 e0 3c 53 ff 55 48 89 e5 41 54 49 89 fc e8 f2 0a 81 ff  
+4c 89 e7 31 f6 e8 98 f9 ff ff 41 5c 5d c3 0f 1f 40 00 55 <48> 89 e5 41 56  
+41 55 49 89 f5 41 54 53 48 89 fb e8 ca 0a 81 ff 48
+RSP: 0018:ffff888093a97640 EFLAGS: 00000293 ORIG_RAX: ffffffffffffff13
+RAX: ffff88809901c100 RBX: ffff888093a977d8 RCX: ffffffff81efcb42
+RDX: 0000000000000000 RSI: ffff888093a97a08 RDI: ffff888093a977d8
+RBP: ffff888093a97768 R08: ffff88809901c100 R09: ffff88809901c9c8
+R10: ffff88809901c9a8 R11: ffff88809901c100 R12: 0000000000000001
+R13: ffff8880995df4f0 R14: ffff888093a97740 R15: 0000000000000000
+  call_write_iter include/linux/fs.h:1872 [inline]
+  do_iter_readv_writev+0x5f8/0x8f0 fs/read_write.c:693
+  do_iter_write fs/read_write.c:970 [inline]
+  do_iter_write+0x184/0x610 fs/read_write.c:951
+  vfs_iter_write+0x77/0xb0 fs/read_write.c:983
+  iter_file_splice_write+0x65c/0xbd0 fs/splice.c:746
+  do_splice_from fs/splice.c:848 [inline]
+  direct_splice_actor+0x123/0x190 fs/splice.c:1020
+  splice_direct_to_actor+0x366/0x970 fs/splice.c:975
+  do_splice_direct+0x1da/0x2a0 fs/splice.c:1063
+  do_sendfile+0x597/0xd00 fs/read_write.c:1464
+  __do_sys_sendfile64 fs/read_write.c:1519 [inline]
+  __se_sys_sendfile64 fs/read_write.c:1511 [inline]
+  __x64_sys_sendfile64+0x15a/0x220 fs/read_write.c:1511
+  do_syscall_64+0xfd/0x680 arch/x86/entry/common.c:301
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x4417c9
+Code: e8 7c e7 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 bb 07 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffce5c38198 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
+RAX: ffffffffffffffda RBX: 00007ffce5c38340 RCX: 00000000004417c9
+RDX: 0000000020000000 RSI: 0000000000000003 RDI: 0000000000000003
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 00008080fffffffe R11: 0000000000000246 R12: 0000000000000000
+R13: 00000000004024a0 R14: 0000000000000000 R15: 0000000000000000
+rcu: rcu_preempt kthread starved for 10549 jiffies! g8969 f0x2  
+RCU_GP_WAIT_FQS(5) ->state=0x0 ->cpu=0
+rcu: RCU grace-period kthread stack dump:
+rcu_preempt     R  running task    29056    10      2 0x80004000
+Call Trace:
+  context_switch kernel/sched/core.c:2818 [inline]
+  __schedule+0x7cb/0x1560 kernel/sched/core.c:3445
+  schedule+0xa8/0x260 kernel/sched/core.c:3509
+  schedule_timeout+0x486/0xc50 kernel/time/timer.c:1807
+  rcu_gp_fqs_loop kernel/rcu/tree.c:1589 [inline]
+  rcu_gp_kthread+0x9b2/0x18b0 kernel/rcu/tree.c:1746
+  kthread+0x354/0x420 kernel/kthread.c:255
+  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
