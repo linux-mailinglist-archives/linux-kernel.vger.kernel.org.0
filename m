@@ -2,190 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8C1056EAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 18:27:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A4A256EB7
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 18:28:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726359AbfFZQ1L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 12:27:11 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51788 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725958AbfFZQ1K (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 12:27:10 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5QGMU4S010958;
-        Wed, 26 Jun 2019 12:26:02 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2tc9u0y0pv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 26 Jun 2019 12:26:00 -0400
-Received: from m0098419.ppops.net (m0098419.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x5QGNWkr013933;
-        Wed, 26 Jun 2019 12:25:59 -0400
-Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2tc9u0y0p8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 26 Jun 2019 12:25:59 -0400
-Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
-        by ppma03dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x5QGOmJo001080;
-        Wed, 26 Jun 2019 16:25:58 GMT
-Received: from b01cxnp22035.gho.pok.ibm.com (b01cxnp22035.gho.pok.ibm.com [9.57.198.25])
-        by ppma03dal.us.ibm.com with ESMTP id 2t9by78acx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 26 Jun 2019 16:25:58 +0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5QGPvxZ50200858
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 26 Jun 2019 16:25:58 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E2A54B205F;
-        Wed, 26 Jun 2019 16:25:57 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B4E24B2065;
-        Wed, 26 Jun 2019 16:25:57 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.26])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed, 26 Jun 2019 16:25:57 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 0353216C2F90; Wed, 26 Jun 2019 09:25:58 -0700 (PDT)
-Date:   Wed, 26 Jun 2019 09:25:58 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Joel Fernandes <joel@joelfernandes.org>
-Subject: Re: [RFC] Deadlock via recursive wakeup via RCU with threadirqs
-Message-ID: <20190626162558.GY26519@linux.ibm.com>
-Reply-To: paulmck@linux.ibm.com
-References: <20190626135447.y24mvfuid5fifwjc@linutronix.de>
+        id S1726650AbfFZQ2o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 12:28:44 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:50166 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726603AbfFZQ2l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 12:28:41 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 423AD8CC4CB42EDAAF54;
+        Thu, 27 Jun 2019 00:28:31 +0800 (CST)
+Received: from localhost.localdomain (10.67.212.75) by
+ DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
+ 14.3.439.0; Thu, 27 Jun 2019 00:28:25 +0800
+From:   John Garry <john.garry@huawei.com>
+To:     <xuwei5@huawei.com>
+CC:     <bhelgaas@google.com>, <linuxarm@huawei.com>,
+        <linux-kernel@vger.kernel.org>, <arnd@arndb.de>, <olof@lixom.net>,
+        John Garry <john.garry@huawei.com>
+Subject: [PATCH v3 0/6] Fixes for HiSilicon LPC driver and logical PIO code
+Date:   Thu, 27 Jun 2019 00:26:52 +0800
+Message-ID: <1561566418-22714-1-git-send-email-john.garry@huawei.com>
+X-Mailer: git-send-email 2.8.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190626135447.y24mvfuid5fifwjc@linutronix.de>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-26_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906260192
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 26, 2019 at 03:54:47PM +0200, Sebastian Andrzej Siewior wrote:
-> one of my boxes boots with "threadirqs" and since commit 05f415715ce45
-> ("rcu: Speed up expedited GPs when interrupting RCU reader") I run
-> reliably into the following deadlock:
-> 
-> | ============================================
-> | WARNING: possible recursive locking detected
-> | 5.2.0-rc6 #279 Not tainted
-> | --------------------------------------------
-> | (cron)/2109 is trying to acquire lock:
-> | 0000000088464daa (&p->pi_lock){-.-.}, at: try_to_wake_up+0x37/0x700
-> |
-> | but task is already holding lock:
-> | 0000000088464daa (&p->pi_lock){-.-.}, at: try_to_wake_up+0x37/0x700
-> |
-> | other info that might help us debug this:
-> |  Possible unsafe locking scenario:
-> |
-> |        CPU0
-> |        ----
-> |   lock(&p->pi_lock);  
-> |   lock(&p->pi_lock);  
-> |
-> |  *** DEADLOCK ***
-> |
-> |  May be due to missing lock nesting notation
-> |
-> | 4 locks held by (cron)/2109:
-> |  #0: 00000000c0ae63d9 (&sb->s_type->i_mutex_key){++++}, at: iterate_dir+0x3d/0x170
-> |  #1: 0000000088464daa (&p->pi_lock){-.-.}, at: try_to_wake_up+0x37/0x700
-> |  #2: 00000000f62f14cf (&rq->lock){-.-.}, at: try_to_wake_up+0x209/0x700
-> |  #3: 000000000d32568e (rcu_read_lock){....}, at: cpuacct_charge+0x37/0x1e0
-> |
-> | stack backtrace:
-> | CPU: 3 PID: 2109 Comm: (cron) Not tainted 5.2.0-rc6 #279
-> | Call Trace:
-> |  <IRQ>
-> |  dump_stack+0x67/0x90 
-> |  __lock_acquire.cold.63+0x142/0x23a
-> |  lock_acquire+0x9b/0x1a0
-> |  ? try_to_wake_up+0x37/0x700
-> |  _raw_spin_lock_irqsave+0x33/0x50
-> |  ? try_to_wake_up+0x37/0x700
-> |  try_to_wake_up+0x37/0x700
-> wake up ksoftirqd
-> 
-> |  rcu_read_unlock_special+0x61/0xa0
-> |  __rcu_read_unlock+0x58/0x60
-> |  cpuacct_charge+0xeb/0x1e0
-> |  update_curr+0x15d/0x350
-> |  enqueue_entity+0x115/0x7e0
-> |  enqueue_task_fair+0x78/0x450
-> |  activate_task+0x41/0x90
-> |  ttwu_do_activate+0x49/0x80
-> |  try_to_wake_up+0x23f/0x700
-> 
-> wake up ksoftirqd
-> 
-> |  irq_exit+0xba/0xc0   
-> |  smp_apic_timer_interrupt+0xb2/0x2a0
-> |  apic_timer_interrupt+0xf/0x20
-> |  </IRQ>
-> 
-> based one the commit it seems the problem was always there but now the
-> mix of raise_softirq_irqoff() and set_tsk_need_resched() seems to hit
-> the window quite reliably. Replacing it with 
-> 
-> diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-> index 1102765f91fd1..baab36f4d0f45 100644
-> --- a/kernel/rcu/tree_plugin.h
-> +++ b/kernel/rcu/tree_plugin.h
-> @@ -627,14 +627,7 @@ static void rcu_read_unlock_special(struct task_struct *t)
->         if (preempt_bh_were_disabled || irqs_were_disabled) {
->                 WRITE_ONCE(t->rcu_read_unlock_special.b.exp_hint, false);
->                 /* Need to defer quiescent state until everything is enabled. */
-> -               if (irqs_were_disabled) {
-> -                       /* Enabling irqs does not reschedule, so... */
-> -                       raise_softirq_irqoff(RCU_SOFTIRQ);
-> -               } else {
-> -                       /* Enabling BH or preempt does reschedule, so... */
-> -                       set_tsk_need_resched(current);
-> -                       set_preempt_need_resched();
-> -               }
-> +               raise_softirq_irqoff(RCU_SOFTIRQ);
->                 local_irq_restore(flags);
->                 return;
->         }
-> 
-> will make it go away.
+As reported in [1], the hisi-lpc driver has certain issues in handling
+logical PIO regions, specifically unregistering regions.
 
-Color me confused.  Neither set_tsk_need_resched() nor
-set_preempt_need_resched() acquire locks or do wakeups.
-Yet raise_softirq_irqoff() can do a wakeup if not called
-from hardirq/softirq/NMI context, so I would instead expect
-raise_softirq_irqoff() to be the source of troubles when
-interrupts are threaded.
+This series add a method to unregister a logical PIO region, and fixes up
+the driver to use them.
 
-What am I missing here?
+RCU usage in logical PIO code looks to always have been broken, so that
+is fixed also. This is not a major fix as the list which RCU protects
+would be rarely modified.
 
-> Any suggestions?
+There is another patch to simplify logical PIO registration, made possible
+by the fixes.
 
-Does something like IRQ work help?  Please see -rcu commit 0864f057b050
-("rcu: Use irq_work to get scheduler's attention in clean context")
-for one way of doing this.  Perhaps in combination with -rcu commit
-a69987a515c8 ("rcu: Simplify rcu_read_unlock_special() deferred wakeups").
+At this point, there are still separate ongoing discussions about how to
+stop the logical PIO and PCI host bridge code leaking ranges, as in [2].
 
-							Thanx, Paul
+Hopefully this series can go through the arm soc tree and the maintainers
+have no issue with that. I'm talking specifically about the logical PIO
+code, which went through PCI tree on only previous upstreaming.
+
+Since we so late in the cycle, it may be best to target v5.3, and I can
+backport the fixes to stable myself.
+
+[1] https://lore.kernel.org/lkml/1560770148-57960-1-git-send-email-john.garry@huawei.com/
+[2] https://lore.kernel.org/lkml/4b24fd36-e716-7c5e-31cc-13da727802e7@huawei.com/
+
+Change since v2:
+- Add hisi_lpc_acpi_remove() stub to fix build for !CONFIG_ACPI
+
+Changes since v1:
+- Add more reasoning in RCU fix patch
+- Create separate patch to change LOGIC_PIO_CPU_MMIO registration to
+  accomodate unregistration
+
+John Garry (6):
+  lib: logic_pio: Fix RCU usage
+  lib: logic_pio: Avoid possible overlap for unregistering regions
+  lib: logic_pio: Add logic_pio_unregister_range()
+  bus: hisi_lpc: Unregister logical PIO range to avoid potential
+    use-after-free
+  bus: hisi_lpc: Add .remove method to avoid driver unbind crash
+  lib: logic_pio: Enforce LOGIC_PIO_INDIRECT region ops are set at
+    registration
+
+ drivers/bus/hisi_lpc.c    | 47 ++++++++++++++++++---
+ include/linux/logic_pio.h |  1 +
+ lib/logic_pio.c           | 86 +++++++++++++++++++++++++++------------
+ 3 files changed, 103 insertions(+), 31 deletions(-)
+
+-- 
+2.17.1
+
