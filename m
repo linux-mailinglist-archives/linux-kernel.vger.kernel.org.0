@@ -2,81 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0494656C06
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 16:32:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7826C56B8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 16:12:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728161AbfFZOcB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 10:32:01 -0400
-Received: from mail.kapsi.fi ([91.232.154.25]:37557 "EHLO mail.kapsi.fi"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727323AbfFZOcA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 10:32:00 -0400
-X-Greylist: delayed 1205 seconds by postgrey-1.27 at vger.kernel.org; Wed, 26 Jun 2019 10:31:59 EDT
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=MIME-Version:Content-Type:Date:Cc:To:From:Subject:Message-ID:
-        Sender:Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:
-        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=keTA49kcFTmiW+xDiXyC1TWyuwYvwy0XCF0h+Kehxjk=; b=BM4EX49b7qlwytNWNpmgO9+Y8M
-        1GD3OyaUVCs1KegazXc1JsEeeRq8VErYh3GpA+lPa2UNikAlX5HSzmyHgcMqXB9R7QlDAeuMYf6Vf
-        LYRCo3j3hPdiScV9T4RNBdNgKSSThOGV5U+VnFU9RNFKtOcA9Ds+R5VE8WGujYvxfB62ZKXa5tUvO
-        nJAXaN+x65x8Kl6t870yr7I5H2Mdc5HzyIQnhkkSMtE4NIwIqBe4fdoUyUASVgcXzXbAP9TGMVtgw
-        yLV+EZhzkDfcOndj+O+LYQkqfNS1Zh5l/ElaZLeijv3vK5C+c6lZqpHBU0tmlhecKm2/uBoiBQ8Hq
-        icSvWITg==;
-Received: from [2001:999:82:7295:8199:173e:7dbf:6fc5] (helo=jsakkine-mobl1)
-        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <jarkko.sakkinen@iki.fi>)
-        id 1hg8eO-0006dp-Ug; Wed, 26 Jun 2019 17:11:53 +0300
-Message-ID: <c9c1e7f83a55bc5fb621e2e4e1dab90c5b3aac01.camel@iki.fi>
-Subject: On Nitrokey Pro's ECC support
-From:   Jarkko Sakkinen <jarkko.sakkinen@iki.fi>
-To:     corbet@lwn.net
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 26 Jun 2019 17:11:46 +0300
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-5zfw+oGv//ZvawvgHwv9"
-User-Agent: Evolution 3.32.1-2 
+        id S1727822AbfFZOMT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 10:12:19 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:48534 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725958AbfFZOMT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 10:12:19 -0400
+Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hg8em-0003AX-BH; Wed, 26 Jun 2019 16:12:16 +0200
+Date:   Wed, 26 Jun 2019 16:12:15 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Tejun Heo <tj@kernel.org>
+cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH 0/6] workqueue: convert to raw_spinlock_t
+In-Reply-To: <20190626140112.GU657710@devbig004.ftw2.facebook.com>
+Message-ID: <alpine.DEB.2.21.1906261608260.32342@nanos.tec.linutronix.de>
+References: <20190613145027.27753-1-bigeasy@linutronix.de> <20190626071719.psyftqdop4ny3zxd@linutronix.de> <20190626134957.GT657710@devbig004.ftw2.facebook.com> <alpine.DEB.2.21.1906261551190.32342@nanos.tec.linutronix.de>
+ <20190626140112.GU657710@devbig004.ftw2.facebook.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2001:999:82:7295:8199:173e:7dbf:6fc5
-X-SA-Exim-Mail-From: jarkko.sakkinen@iki.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Tejun,
 
---=-5zfw+oGv//ZvawvgHwv9
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On Wed, 26 Jun 2019, Tejun Heo wrote:
+> On Wed, Jun 26, 2019 at 03:53:43PM +0200, Thomas Gleixner wrote:
+> > > I don't now what to make of the series.  AFAICS, there's no benefit to
+> > > mainline.  What am I missing?
+> > 
+> > there is no downside either, right?
+> 
+> Sure, but that usually isn't enough for merging patches, right?
 
-Hi
+Depends :)
+ 
+> > It helps with the ongoing RT integration into the mainline kernel and we
+> > would appreciate if we can get the non controversial bits an pieces sorted.
+> 
+> I see.  I understand the intention and it was a lot clearer when the
+> changes were beneficial to mainline kernel too and I'm not sure this
+> is a decision we wanna make per-subsystem.  Maybe I'm just out of
+> loop.  Are we generally doing this?
 
-I was getting myself a smartcard stick and looked for options from [1].
-The documentation says that Nitrokey Pro does not support ECC while it
-actually does [2]. I was already canceling my order when Jan Suhr, the
-CEO of that company, kindly pointed out to me this.
+We are working hard to get the remaining pieces in and to the best of my
+knowledge there is no hard resistance against merging them.
 
-[1] https://www.kernel.org/doc/html/latest/process/maintainer-pgp-guide.htm=
-l
-[2] https://shop.nitrokey.com/shop/product/nitrokey-pro-2-3
+What we are trying at the moment is to reduce the surface of the bulk of RT
+changes and get the 'innocent' ones in. If you feel more comfortable, then
+we can surely redo the series and pick 1,2,6 for now and keep 3-5 for the
+final submission.
 
-/Jarkko
+Thanks,
 
---=-5zfw+oGv//ZvawvgHwv9
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRE6pSOnaBC00OEHEIaerohdGur0gUCXRN9IgAKCRAaerohdGur
-0kmSAQDB06lSbBGO3TqrgxTFhdezWcVxXl9lJ9kdDIu4kR1b8wEA3IQKv9+KGXoN
-HrGHyxmcchSzm03XAKFzO+r17q5+aAw=
-=+ngF
------END PGP SIGNATURE-----
-
---=-5zfw+oGv//ZvawvgHwv9--
+	tglx
 
