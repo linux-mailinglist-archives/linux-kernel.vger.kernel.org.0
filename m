@@ -2,162 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 34749563F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 10:03:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BFFF56400
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 10:06:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726673AbfFZIDJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 04:03:09 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53806 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726242AbfFZIDI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 04:03:08 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 16173AE20;
-        Wed, 26 Jun 2019 08:03:07 +0000 (UTC)
-Date:   Wed, 26 Jun 2019 10:03:03 +0200
-From:   Oscar Salvador <osalvador@suse.de>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     akpm@linux-foundation.org, mhocko@suse.com,
-        dan.j.williams@intel.com, pasha.tatashin@soleen.com,
-        Jonathan.Cameron@huawei.com, anshuman.khandual@arm.com,
-        vbabka@suse.cz, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/5] Allocate memmap from hotadded memory
-Message-ID: <20190626080249.GA30863@linux>
-References: <20190625075227.15193-1-osalvador@suse.de>
- <2ebfbd36-11bd-9576-e373-2964c458185b@redhat.com>
+        id S1726487AbfFZIGX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 04:06:23 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:39804 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725876AbfFZIGW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 04:06:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=2iTCh3reZAKC9g3ThceRYOjvo3XKUmMa8eZRZ5HXM04=; b=E1zOSkc5DpzkVGlg1+h0BYiT7
+        MNUlnpycbkPotCUTu5dSGzW4FgEUo8aPSqy6NjX9R28UbuUkRW++EVwrMUppWTRUo6bx032JuCIvl
+        6GG2Or/2bthcoBUUQWL6hv0WoBVBOjbcE4cS9IOFde2PX2dmMQ9ylZWIODLlhfjH0/OUAb1DVcweV
+        Piqix0RSHvf63fI1RNxYLqN1YRTzhnVyfhC8C8H845eOwowGW/lZeMaseS9I8h29Tf6j/kdFxKM1W
+        2Hz/QVfPQhmNddVgEg8hwI8rI37Rvzlre5/b80Y+lJXLKv4KmYKIM/C6cJ8vC1H0m3gI/J2D1/rKF
+        8usiMwt6Q==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hg2wR-0001T7-Ck; Wed, 26 Jun 2019 08:06:07 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id DF3B8200B848F; Wed, 26 Jun 2019 10:06:05 +0200 (CEST)
+Date:   Wed, 26 Jun 2019 10:06:05 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Joe Perches <joe@perches.com>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Shawn Landden <shawn@git.icu>
+Subject: Re: [PATCH] perf/x86/intel: Mark expected switch fall-throughs
+Message-ID: <20190626080605.GH3419@hirez.programming.kicks-ass.net>
+References: <20190624161913.GA32270@embeddedor>
+ <20190624193123.GI3436@hirez.programming.kicks-ass.net>
+ <b00fc090d83ac6bd41a5db866b02d425d9ab20e4.camel@perches.com>
+ <20190624203737.GL3436@hirez.programming.kicks-ass.net>
+ <3dc75cd4-9a8d-f454-b5fb-64c3e6d1f416@embeddedor.com>
+ <CANiq72mMS6tHcP8MHW63YRmbdFrD3ZCWMbnQEeHUVN49v7wyXQ@mail.gmail.com>
+ <20190625071846.GN3436@hirez.programming.kicks-ass.net>
+ <201906251009.BCB7438@keescook>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2ebfbd36-11bd-9576-e373-2964c458185b@redhat.com>
+In-Reply-To: <201906251009.BCB7438@keescook>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 25, 2019 at 10:25:48AM +0200, David Hildenbrand wrote:
-> > [Coverletter]
-> > 
-> > This is another step to make memory hotplug more usable. The primary
-> > goal of this patchset is to reduce memory overhead of the hot-added
-> > memory (at least for SPARSEMEM_VMEMMAP memory model). The current way we use
-> > to populate memmap (struct page array) has two main drawbacks:
-
-First off, thanks for looking into this :-)
-
+On Tue, Jun 25, 2019 at 10:12:42AM -0700, Kees Cook wrote:
+> On Tue, Jun 25, 2019 at 09:18:46AM +0200, Peter Zijlstra wrote:
+> > Can it build a kernel without patches yet? That is, why should I care
+> > what LLVM does?
 > 
-> Mental note: How will it be handled if a caller specifies "Allocate
-> memmap from hotadded memory", but we are running under SPARSEMEM where
-> we can't do this.
+> Yes. LLVM trunk builds and boots x86 now. As for distro availability,
 
-In add_memory_resource(), we have a call to mhp_check_correct_flags(), which is
-in charge of checking if the flags passed are compliant with our configuration
-among other things.
-It also checks if both flags were passed (_MEMBLOCK|_DEVICE).
-
-If a) any of the flags were specified and we are not on CONFIG_SPARSEMEM_VMEMMAP,
-b) the flags are colliding with each other or c) the flags just do not make sense,
-we print out a warning and drop the flags to 0, so we just ignore them.
-
-I just realized that I can adjust the check even more (something for the next
-version).
-
-But to answer your question, flags are ignored under !CONFIG_SPARSEMEM_VMEMMAP.
-
-> 
-> > 
-> > a) it consumes an additional memory until the hotadded memory itself is
-> >    onlined and
-> > b) memmap might end up on a different numa node which is especially true
-> >    for movable_node configuration.
-> > 
-> > a) it is a problem especially for memory hotplug based memory "ballooning"
-> >    solutions when the delay between physical memory hotplug and the
-> >    onlining can lead to OOM and that led to introduction of hacks like auto
-> >    onlining (see 31bc3858ea3e ("memory-hotplug: add automatic onlining
-> >    policy for the newly added memory")).
-> > 
-> > b) can have performance drawbacks.
-> > 
-> > Another minor case is that I have seen hot-add operations failing on archs
-> > because they were running out of order-x pages.
-> > E.g On powerpc, in certain configurations, we use order-8 pages,
-> > and given 64KB base pagesize, that is 16MB.
-> > If we run out of those, we just fail the operation and we cannot add
-> > more memory.
-> 
-> At least for SPARSEMEM, we fallback to vmalloc() to work around this
-> issue. I haven't looked into the populate_section_memmap() internals
-> yet. Can you point me at the code that performs this allocation?
-
-Yes, on SPARSEMEM we first try to allocate the pages physical configuous, and
-then fallback to vmalloc.
-This is because on CONFIG_SPARSEMEM memory model, the translations pfn_to_page/
-page_to_pfn do not expect the memory to be contiguous.
-
-But that is not the case on CONFIG_SPARSEMEM_VMEMMAP.
-We do expect the memory to be physical contigous there, that is why a simply
-pfn_to_page/page_to_pfn is a matter of adding/substracting vmemmap/pfn.
-
-Powerpc code is at:
-
-https://elixir.bootlin.com/linux/v5.2-rc6/source/arch/powerpc/mm/init_64.c#L175
-
-
-
-> So, assuming we add_memory(1GB, MHP_MEMMAP_DEVICE) and then
-> remove_memory(128MB) of the added memory, this will work?
-
-No, MHP_MEMMAP_DEVICE is meant to be used when hot-adding and hot-removing work
-in the same granularity.
-This is because all memmap pages will be stored at the beginning of the memory
-range.
-Allowing hot-removing in a different granularity on MHP_MEMMAP_DEVICE would imply
-a lot of extra work.
-For example, we would have to parse the vmemmap-head of the hot-removed range,
-and punch a hole in there to clear the vmemmap pages, and then be very carefull
-when deleting those pagetables.
-
-So I followed Michal's advice, and I decided to let the caller specify if he
-either wants to allocate per memory block or per hot-added range(device).
-Where per memory block, allows us to do:
-
-add_memory(1GB, MHP_MEMMAP_MEMBLOCK)
-remove_memory(128MB)
-
-
-> add_memory(8GB, MHP_MEMMAP_DEVICE)
-> 
-> For 8GB, we will need exactly 128MB of memmap if I did the math right.
-> So exactly one section. This section will still be marked as being
-> online (although not pages on it are actually online)?
-
-Yap, 8GB will fill the first section with vmemmap pages.
-It will be marked as online, yes.
-This is not to diverge too much from what we have right now, and starting
-treat some sections different than others.
-E.g: Early sections that are used for memmap pages on early boot stage.
-
-> > 
-> > What we do is that since when we hot-remove a memory-range, sections are being
-> > removed sequentially, we wait until we hit the last section, and then we free
-> > the hole range to vmemmap_free backwards.
-> > We know that it is the last section because in every pass we
-> > decrease head->_refcount, and when it reaches 0, we got our last section.
-> > 
-> > We also have to be careful about those pages during online and offline
-> > operations. They are simply skipped, so online will keep them
-> > reserved and so unusable for any other purpose and offline ignores them
-> > so they do not block the offline operation.
-> 
-> I assume that they will still be dumped normally by user space. (as they
-> are described by a "memory resource" and not PG_Offline)
-
-They are PG_Reserved.
-Anyway, you mean by crash-tool?
-
-
--- 
-Oscar Salvador
-SUSE L3
+If it's not release and not in distros, then no. So then get that same
+trunk to support the __fallthrough crap so it all lands in the same
+release and we done ;-)
