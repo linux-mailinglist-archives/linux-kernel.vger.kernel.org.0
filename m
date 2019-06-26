@@ -2,165 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD71156C7D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 16:45:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4891356C84
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 16:46:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728178AbfFZOpV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 10:45:21 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:40699 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725958AbfFZOpV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 10:45:21 -0400
-Received: by mail-lf1-f68.google.com with SMTP id a9so1763527lff.7
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 07:45:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=N+6gyYOIX1iLLQ6EUiMMl4KP0ddsOthUBAUBxo+bC18=;
-        b=WdYnLT+Kt4GrW0q3Ff1ispHKtr478y9h1PSa08e+AKIdeeI5ytbNvTEO1nD5srU1Hl
-         yRvxlSJSRyNgNss3QYAKbtgWvLEWt55tR0JCIKN+DjxH1tkT4sWazEngy1UEDBaa3jMy
-         eO1BT69VGZYz0SJS4zlQGUv7nIY4X7Aupj8I0yupblAZh3qaoi+gq7bwja0Tq0obKybc
-         HAUqM7bnyAo3n+LDLDpj35bp2bFbTHfqiJKcHVsby2EZIeNtkv3xSRPrj2JTEt6oHYf+
-         6C6PFTi/1Xi1mpoM7cdjwBQ4mzCmUfU+zRcWcs8V1RLD1sJIxJ4SA9M+6RCNyld2kmEl
-         4LUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=N+6gyYOIX1iLLQ6EUiMMl4KP0ddsOthUBAUBxo+bC18=;
-        b=QWkJtIV2rbikv38gn+/zRbR/brjgRnvm24xakE4RURMZ85UE2NNyiqJ8bXuU9Rltoo
-         CJu7BTF1Ngzr0dPzKwD70B0fIuP1orP9oSTKzuD2JDijnWMNpreUU2swFW8Jp7tEWuAP
-         ElSZoQm+oj+/hGbxH2ou/1KeyPZvZiDONQXoOnmUkDu8W4fuTlBHyLaD7UGIP0jzk7po
-         GnHrimpH8i2PSTcyrFmRnuSk2vMpVJBEEmjSDL0eaeLccsetOlhyga0bZHT8cPhJMc1F
-         oVbF0+yRHNtw/akGwiNgPQGunAVZKSZYjeEUe1XPnz8chl5bDaDwNvA6PnHl6ylELcJI
-         RGtA==
-X-Gm-Message-State: APjAAAUNymi0tTBDugcYVx4OZkuXLM8/vM0cciDh4uyFK4XyjOHS4jz+
-        WGrejfdMaQUkqX0qf863v5ZPPvceVNk0amKSNyLngw==
-X-Google-Smtp-Source: APXvYqzIYABUDHv5h8uBMgqOxiOV1B61xnp7XE5VctCxEa1O2V7S15aJux8JuUZYE2Ab8jp/iIPdIJkd7zQEy05SDkY=
-X-Received: by 2002:a19:671c:: with SMTP id b28mr2988270lfc.164.1561560318946;
- Wed, 26 Jun 2019 07:45:18 -0700 (PDT)
+        id S1728198AbfFZOqM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 10:46:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47574 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727139AbfFZOqL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 10:46:11 -0400
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 98AE821783;
+        Wed, 26 Jun 2019 14:46:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561560370;
+        bh=SgyRfp9j7tfDF2c5zsUeeU2JMpNmn9znBEtJ6Ddu9QY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=SIY9hQ9fFwomEsBSURsShUDPM8BvOAH8wO4E5PXLrYtpdkkFLFL4w5AHqpYKu8OQ2
+         OoeUVh8DS/+qnGe0cZfRGU26VizBmkTD9xY4Mue9dLOG58xt/L2GJj4Z4vESrNfeR8
+         LG4/3+MXoaejOefk8OIPn8QpUeAQbbbsDoaYU7Q4=
+Received: by mail-qk1-f179.google.com with SMTP id p144so1824377qke.11;
+        Wed, 26 Jun 2019 07:46:10 -0700 (PDT)
+X-Gm-Message-State: APjAAAUNxGyKdyPE/MnMxzfi8UVPAdyVDZ4v7OFTzjb9dpDsRa7dJ5UI
+        pUQcvm1JDRh3SQ5k6X0V+q5wnt7Zd9I6FDr5cQ==
+X-Google-Smtp-Source: APXvYqw5283L56Gc8KaJlBZugufdawjb75R3b1nrUhcsh0uoda7ucgzw0oPalXh8dy9pMWHJfV2n5NxWNW5JU9n1iCQ=
+X-Received: by 2002:a37:a48e:: with SMTP id n136mr4324838qke.223.1561560369873;
+ Wed, 26 Jun 2019 07:46:09 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190626083606.248422423@linuxfoundation.org>
-In-Reply-To: <20190626083606.248422423@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Wed, 26 Jun 2019 20:15:07 +0530
-Message-ID: <CA+G9fYuaw+eZsGn=cOUWObmf4ZupjBd4U=w34s9k730O+dZjwg@mail.gmail.com>
-Subject: Re: [PATCH 4.14 0/1] 4.14.131-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
+References: <1561389162-26291-1-git-send-email-stefan.popa@analog.com>
+In-Reply-To: <1561389162-26291-1-git-send-email-stefan.popa@analog.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Wed, 26 Jun 2019 08:45:58 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKW5qKYOXD8N=uCdoUxuw9iT+Lw-NhJuUuUPWj0dzdv-Q@mail.gmail.com>
+Message-ID: <CAL_JsqKW5qKYOXD8N=uCdoUxuw9iT+Lw-NhJuUuUPWj0dzdv-Q@mail.gmail.com>
+Subject: Re: [PATCH 3/4] dt-bindings: iio: frequency: Add ADF4372 PLL documentation
+To:     Stefan Popa <stefan.popa@analog.com>
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald <pmeerw@pmeerw.net>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "open list:IIO SUBSYSTEM AND DRIVERS" <linux-iio@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 26 Jun 2019 at 14:15, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+On Mon, Jun 24, 2019 at 9:40 AM Stefan Popa <stefan.popa@analog.com> wrote:
 >
-> This is the start of the stable review cycle for the 4.14.131 release.
-> There are 1 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+> Document support for ADF4372 SPI Wideband Synthesizer.
 >
-> Responses should be made by Fri 28 Jun 2019 08:35:42 AM UTC.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.14.131-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.14.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+> Signed-off-by: Stefan Popa <stefan.popa@analog.com>
+> ---
+>  Documentation/devicetree/bindings/iio/frequency/adf4371.yaml | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
-
-Summary
-------------------------------------------------------------------------
-
-kernel: 4.14.131-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.14.y
-git commit: 2f84eb215456bfd772fc0d9efc8446a66a3faa1b
-git describe: v4.14.130-2-g2f84eb215456
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.14-oe/bu=
-ild/v4.14.130-2-g2f84eb215456
-
-
-No regressions (compared to build v4.14.130)
-
-No fixes (compared to build v4.14.130)
-
-
-Ran 23880 total tests in the following environments and test suites.
-
-Environments
---------------
-- dragonboard-410c - arm64
-- hi6220-hikey - arm64
-- i386
-- juno-r2 - arm64
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-- x86_64
-
-Test Suites
------------
-* build
-* install-android-platform-tools-r2600
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-commands-tests
-* ltp-containers-tests
-* ltp-cpuhotplug-tests
-* ltp-cve-tests
-* ltp-dio-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-mm-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* perf
-* spectre-meltdown-checker-test
-* v4l2-compliance
-* network-basic-tests
-* ltp-open-posix-tests
-* kvm-unit-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
+Reviewed-by: Rob Herring <robh@kernel.org>
