@@ -2,159 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A3D5563E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 09:58:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CDA84563D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 09:56:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726984AbfFZH6u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 03:58:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48864 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726042AbfFZH6t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 03:58:49 -0400
-Received: from localhost.localdomain (unknown [106.201.40.23])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB5B1215EA;
-        Wed, 26 Jun 2019 07:58:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561535928;
-        bh=c5rNobk+Z4eiaYXfyunG8IXEEYMZmjH/Kc17YFLXH08=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m4PG2ujgZoOoxAtGbU69aug2c/14Ek0pQg7CgBaQmPzfEHZXhyoW8Q6vvqCvukSg3
-         XjDnO7ar9sJdiY9Vhzto0gvWgueTcycDHPZJc+dtBV6wBKJnOgxtL26LvcNuTOSKf8
-         XTUdqMLKGhoIKJCiHOfTF9BBigbLvPrTQ4aQiazs=
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Mathias Nyman <mathias.nyman@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Christian Lamparter <chunkeey@googlemail.com>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Christian Lamparter <chunkeey@gmail.com>
-Subject: [PATCH v4 4/4] usb: xhci: allow multiple firmware versions
-Date:   Wed, 26 Jun 2019 13:25:09 +0530
-Message-Id: <20190626075509.20445-5-vkoul@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190626075509.20445-1-vkoul@kernel.org>
-References: <20190626075509.20445-1-vkoul@kernel.org>
+        id S1726537AbfFZH4O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 03:56:14 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:37888 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725379AbfFZH4O (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 03:56:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=liZehjV6yq2WxrgDL5h4NwlwF63olriPQGBcf7kidZk=; b=QhxqLBcNl1rG6mEsaPN11LcDl
+        m33b5go99KfJxgwuiMSZXqc1ssEG023S3UUtSkCT0DILnT4j1Du6IPP7y5avepmcYmwcfAPXGRybe
+        JFEXxjA+7/71H2VFnMcHoXA7M0N2zRu7r5L5VvKJAhVD+5YzRuYQbFcKB/bxFA14ZhSMeh1Cgc5sl
+        nZKAqDbRGL97BAXFf5MtqvUrY4mRWMY4kSJKP/k2xf2UfxfO0mgNvJfWwtuJ0tfKOtIkAKl2G3Z4c
+        7hbhWz1FhtVJD78+1CkEGc3skwsmn3pNj0cRiNRjyS1v67iKvVCqnMDVak2PxeqD4iyhFtoIlTvpK
+        6guZ6U3tQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hg2mD-0006TL-KB; Wed, 26 Jun 2019 07:55:33 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 4BAA6209CEE60; Wed, 26 Jun 2019 09:55:31 +0200 (CEST)
+Date:   Wed, 26 Jun 2019 09:55:31 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     "Phillips, Kim" <kim.phillips@amd.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, Martin Liska <mliska@suse.cz>,
+        "Suthikulpanit, Suravee" <Suravee.Suthikulpanit@amd.com>,
+        "Natarajan, Janakarajan" <Janakarajan.Natarajan@amd.com>,
+        "Hook, Gary" <Gary.Hook@amd.com>, Pu Wen <puwen@hygon.cn>,
+        Stephane Eranian <eranian@google.com>,
+        Vince Weaver <vincent.weaver@maine.edu>,
+        "x86@kernel.org" <x86@kernel.org>
+Subject: Re: [PATCH 1/2 RESEND2] perf/x86/amd/uncore: Do not set ThreadMask
+ and SliceMask for non-L3 PMCs
+Message-ID: <20190626075531.GG3419@hirez.programming.kicks-ass.net>
+References: <20190625145548.11600-1-kim.phillips@amd.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190625145548.11600-1-kim.phillips@amd.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allow multiple firmware file versions in table and load them in
-increasing order as we find them in the file system.
+On Tue, Jun 25, 2019 at 02:56:23PM +0000, Phillips, Kim wrote:
+> From: Kim Phillips <kim.phillips@amd.com>
+> 
+> Commit d7cbbe49a930 ("perf/x86/amd/uncore: Set ThreadMask and SliceMask
+> for L3 Cache perf events") enables L3 PMC events for all threads and
+> slices by writing 1s in ChL3PmcCfg (L3 PMC PERF_CTL) register fields.
+> 
+> Those bitfields overlap with high order event select bits in the Data
+> Fabric PMC control register, however.
+> 
+> So when a user requests raw Data Fabric events (-e amd_df/event=0xYYY/),
+> the two highest order bits get inadvertently set, changing the counter
+> select to events that don't exist, and for which no counts are read.
+> 
+> This patch changes the logic to write the L3 masks only when dealing
+> with L3 PMC counters.
+> 
+> AMD Family 16h and below Northbridge (NB) counters were not affected.
+> 
+> Signed-off-by: Kim Phillips <kim.phillips@amd.com>
 
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Christian Lamparter <chunkeey@googlemail.com>
-Tested-by: Christian Lamparter <chunkeey@gmail.com>
+Still base64 encoded garbage; the actual email reads like below.
+
+Please use a sane MUa and send it plain text.
+
 ---
- drivers/usb/host/xhci-pci.c | 47 +++++++++++++++++++++++++++++++++++--
- 1 file changed, 45 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
-index 996068ead731..c0341e9f37f7 100644
---- a/drivers/usb/host/xhci-pci.c
-+++ b/drivers/usb/host/xhci-pci.c
-@@ -336,13 +336,20 @@ static const struct renesas_fw_entry {
- 	 *  - uPD720201 ES 2.0 sample whose revision ID is 2.
- 	 *  - uPD720201 ES 2.1 sample & CS sample & Mass product, ID is 3.
- 	 *  - uPD720202 ES 2.0 sample & CS sample & Mass product, ID is 2.
-+	 *
-+	 *  Entry expected_version should be kept in increasing order for a
-+	 *  chip, so that driver will pick first version and if that fails
-+	 *  then next one will be picked
- 	 */
- 	{ "K2013080.mem", 0x0014, 0x02, 0x2013 },
-+	{ "K2026090.mem", 0x0014, 0x03, 0x2026 },
- 	{ "K2013080.mem", 0x0014, 0x03, 0x2013 },
-+	{ "K2026090.mem", 0x0015, 0x02, 0x2026 },
- 	{ "K2013080.mem", 0x0015, 0x02, 0x2013 },
- };
- 
- MODULE_FIRMWARE("K2013080.mem");
-+MODULE_FIRMWARE("K2026090.mem");
- 
- static const struct renesas_fw_entry *renesas_needs_fw_dl(struct pci_dev *dev)
- {
-@@ -363,6 +370,24 @@ static const struct renesas_fw_entry *renesas_needs_fw_dl(struct pci_dev *dev)
- 	return NULL;
- }
- 
-+static const struct
-+renesas_fw_entry *renesas_get_next_entry(struct pci_dev *dev,
-+					 const struct renesas_fw_entry *entry)
-+{
-+	const struct renesas_fw_entry *next_entry;
-+	size_t i;
-+
-+	for (i = 0; i < ARRAY_SIZE(renesas_fw_table); i++) {
-+		next_entry = &renesas_fw_table[i];
-+		if (next_entry->device == dev->device &&
-+		    next_entry->revision == dev->revision &&
-+		    next_entry->expected_version < entry->expected_version)
-+			return next_entry;
-+	}
-+
-+	return NULL;
-+}
-+
- static int renesas_fw_download_image(struct pci_dev *dev,
- 				     const u32 *fw,
- 				     size_t step)
-@@ -705,6 +730,7 @@ struct renesas_fw_ctx {
- 	struct pci_dev *pdev;
- 	const struct pci_device_id *id;
- 	bool resume;
-+	const struct renesas_fw_entry *entry;
- };
- 
- static int xhci_pci_probe(struct pci_dev *pdev,
-@@ -964,13 +990,29 @@ static void renesas_fw_callback(const struct firmware *fw,
- 	struct renesas_fw_ctx *ctx = context;
- 	struct pci_dev *pdev = ctx->pdev;
- 	struct device *parent = pdev->dev.parent;
-+	const struct renesas_fw_entry *next_entry;
- 	bool rom;
- 	int err;
- 
- 	if (!fw) {
- 		dev_err(&pdev->dev, "firmware failed to load\n");
--
--		goto cleanup;
-+		/*
-+		 * we didn't find firmware, check if we have another
-+		 * entry for this device
-+		 */
-+		next_entry = renesas_get_next_entry(ctx->pdev, ctx->entry);
-+		if (next_entry) {
-+			ctx->entry = next_entry;
-+			dev_dbg(&pdev->dev, "Found next entry, requesting: %s\n",
-+				next_entry->firmware_name);
-+			request_firmware_nowait(THIS_MODULE, 1,
-+						next_entry->firmware_name,
-+						&pdev->dev, GFP_KERNEL,
-+						ctx, renesas_fw_callback);
-+			return;
-+		} else {
-+			goto cleanup;
-+		}
- 	}
- 
- 	err = renesas_fw_verify(pdev, fw->data, fw->size);
-@@ -1068,6 +1110,7 @@ static int renesas_fw_download_to_hw(struct pci_dev *pdev,
- 	ctx->pdev = pdev;
- 	ctx->resume = do_resume;
- 	ctx->id = id;
-+	ctx->entry = entry;
- 
- 	pci_dev_get(pdev);
- 	err = request_firmware_nowait(THIS_MODULE, 1, entry->firmware_name,
--- 
-2.20.1
 
+Content-Transfer-Encoding: base64
+
+RnJvbTogS2ltIFBoaWxsaXBzIDxraW0ucGhpbGxpcHNAYW1kLmNvbT4NCg0KQ29tbWl0IGQ3Y2Ji
+ZTQ5YTkzMCAoInBlcmYveDg2L2FtZC91bmNvcmU6IFNldCBUaHJlYWRNYXNrIGFuZCBTbGljZU1h
+c2sNCmZvciBMMyBDYWNoZSBwZXJmIGV2ZW50cyIpIGVuYWJsZXMgTDMgUE1DIGV2ZW50cyBmb3Ig
+YWxsIHRocmVhZHMgYW5kDQpzbGljZXMgYnkgd3JpdGluZyAxcyBpbiBDaEwzUG1jQ2ZnIChMMyBQ
+TUMgUEVSRl9DVEwpIHJlZ2lzdGVyIGZpZWxkcy4NCg0KVGhvc2UgYml0ZmllbGRzIG92ZXJsYXAg
+d2l0aCBoaWdoIG9yZGVyIGV2ZW50IHNlbGVjdCBiaXRzIGluIHRoZSBEYXRhDQpGYWJyaWMgUE1D
+IGNvbnRyb2wgcmVnaXN0ZXIsIGhvd2V2ZXIuDQoNClNvIHdoZW4gYSB1c2VyIHJlcXVlc3RzIHJh
