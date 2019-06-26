@@ -2,20 +2,20 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9FBC56242
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 08:21:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7494F5624A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 08:23:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726468AbfFZGVQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 02:21:16 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58912 "EHLO mx1.suse.de"
+        id S1726642AbfFZGXq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 02:23:46 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59306 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725379AbfFZGVQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 02:21:16 -0400
+        id S1725379AbfFZGXq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 02:23:46 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 3619AAD47;
-        Wed, 26 Jun 2019 06:21:15 +0000 (UTC)
-Date:   Wed, 26 Jun 2019 08:21:13 +0200
+        by mx1.suse.de (Postfix) with ESMTP id 0BAE6AD47;
+        Wed, 26 Jun 2019 06:23:45 +0000 (UTC)
+Date:   Wed, 26 Jun 2019 08:23:44 +0200
 From:   Michal Hocko <mhocko@kernel.org>
 To:     Alastair D'Silva <alastair@au1.ibm.com>
 Cc:     alastair@d-silva.org,
@@ -25,104 +25,83 @@ Cc:     alastair@d-silva.org,
         Pavel Tatashin <pasha.tatashin@oracle.com>,
         Oscar Salvador <osalvador@suse.de>,
         Mike Rapoport <rppt@linux.ibm.com>,
-        Baoquan He <bhe@redhat.com>,
-        Wei Yang <richard.weiyang@gmail.com>,
+        Baoquan He <bhe@redhat.com>, Qian Cai <cai@lca.pw>,
         Logan Gunthorpe <logang@deltatee.com>,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v2 1/3] mm: Trigger bug on if a section is not found in
- __section_nr
-Message-ID: <20190626062113.GF17798@dhcp22.suse.cz>
+Subject: Re: [PATCH v2 2/3] mm: don't hide potentially null memmap pointer in
+ sparse_remove_one_section
+Message-ID: <20190626062344.GG17798@dhcp22.suse.cz>
 References: <20190626061124.16013-1-alastair@au1.ibm.com>
- <20190626061124.16013-2-alastair@au1.ibm.com>
+ <20190626061124.16013-3-alastair@au1.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190626061124.16013-2-alastair@au1.ibm.com>
+In-Reply-To: <20190626061124.16013-3-alastair@au1.ibm.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 26-06-19 16:11:21, Alastair D'Silva wrote:
+On Wed 26-06-19 16:11:22, Alastair D'Silva wrote:
 > From: Alastair D'Silva <alastair@d-silva.org>
 > 
-> If a memory section comes in where the physical address is greater than
-> that which is managed by the kernel, this function would not trigger the
-> bug and instead return a bogus section number.
+> By adding offset to memmap before passing it in to clear_hwpoisoned_pages,
+> we hide a potentially null memmap from the null check inside
+> clear_hwpoisoned_pages.
 > 
-> This patch tracks whether the section was actually found, and triggers the
-> bug if not.
+> This patch passes the offset to clear_hwpoisoned_pages instead, allowing
+> memmap to successfully peform it's null check.
 
-Why do we want/need that? In other words the changelog should contina
-WHY and WHAT. This one contains only the later one.
- 
+Same issue with the changelog as the previous patch (missing WHY).
+
+> 
 > Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
 > ---
->  drivers/base/memory.c | 18 +++++++++++++++---
->  mm/sparse.c           |  7 ++++++-
->  2 files changed, 21 insertions(+), 4 deletions(-)
+>  mm/sparse.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
 > 
-> diff --git a/drivers/base/memory.c b/drivers/base/memory.c
-> index f180427e48f4..9244c122abf1 100644
-> --- a/drivers/base/memory.c
-> +++ b/drivers/base/memory.c
-> @@ -585,13 +585,21 @@ int __weak arch_get_memory_phys_device(unsigned long start_pfn)
->  struct memory_block *find_memory_block_hinted(struct mem_section *section,
->  					      struct memory_block *hint)
->  {
-> -	int block_id = base_memory_block_id(__section_nr(section));
-> +	int block_id, section_nr;
->  	struct device *hintdev = hint ? &hint->dev : NULL;
->  	struct device *dev;
->  
-> +	section_nr = __section_nr(section);
-> +	if (section_nr < 0) {
-> +		if (hintdev)
-> +			put_device(hintdev);
-> +		return NULL;
-> +	}
-> +
-> +	block_id = base_memory_block_id(section_nr);
->  	dev = subsys_find_device_by_id(&memory_subsys, block_id, hintdev);
-> -	if (hint)
-> -		put_device(&hint->dev);
-> +	if (hintdev)
-> +		put_device(hintdev);
->  	if (!dev)
->  		return NULL;
->  	return to_memory_block(dev);
-> @@ -664,6 +672,10 @@ static int init_memory_block(struct memory_block **memory,
->  		return -ENOMEM;
->  
->  	scn_nr = __section_nr(section);
-> +
-> +	if (scn_nr < 0)
-> +		return scn_nr;
-> +
->  	mem->start_section_nr =
->  			base_memory_block_id(scn_nr) * sections_per_block;
->  	mem->end_section_nr = mem->start_section_nr + sections_per_block - 1;
 > diff --git a/mm/sparse.c b/mm/sparse.c
-> index fd13166949b5..57a1a3d9c1cf 100644
+> index 57a1a3d9c1cf..1ec32aef5590 100644
 > --- a/mm/sparse.c
 > +++ b/mm/sparse.c
-> @@ -113,10 +113,15 @@ int __section_nr(struct mem_section* ms)
->  			continue;
+> @@ -753,7 +753,8 @@ int __meminit sparse_add_one_section(int nid, unsigned long start_pfn,
 >  
->  		if ((ms >= root) && (ms < (root + SECTIONS_PER_ROOT)))
-> -		     break;
-> +			break;
+>  #ifdef CONFIG_MEMORY_HOTREMOVE
+>  #ifdef CONFIG_MEMORY_FAILURE
+> -static void clear_hwpoisoned_pages(struct page *memmap, int nr_pages)
+> +static void clear_hwpoisoned_pages(struct page *memmap,
+> +		unsigned long start, unsigned long count)
+>  {
+>  	int i;
+>  
+> @@ -769,7 +770,7 @@ static void clear_hwpoisoned_pages(struct page *memmap, int nr_pages)
+>  	if (atomic_long_read(&num_poisoned_pages) == 0)
+>  		return;
+>  
+> -	for (i = 0; i < nr_pages; i++) {
+> +	for (i = start; i < start + count; i++) {
+>  		if (PageHWPoison(&memmap[i])) {
+>  			atomic_long_sub(1, &num_poisoned_pages);
+>  			ClearPageHWPoison(&memmap[i]);
+> @@ -777,7 +778,8 @@ static void clear_hwpoisoned_pages(struct page *memmap, int nr_pages)
+>  	}
+>  }
+>  #else
+> -static inline void clear_hwpoisoned_pages(struct page *memmap, int nr_pages)
+> +static inline void clear_hwpoisoned_pages(struct page *memmap,
+> +		unsigned long start, unsigned long count)
+>  {
+>  }
+>  #endif
+> @@ -824,7 +826,7 @@ void sparse_remove_one_section(struct zone *zone, struct mem_section *ms,
+>  		ms->pageblock_flags = NULL;
 >  	}
 >  
->  	VM_BUG_ON(!root);
-> +	if (root_nr == NR_SECTION_ROOTS) {
-> +		VM_BUG_ON(true);
-> +
-> +		return -EINVAL;
-> +	}
->  
->  	return (root_nr * SECTIONS_PER_ROOT) + (ms - root);
+> -	clear_hwpoisoned_pages(memmap + map_offset,
+> +	clear_hwpoisoned_pages(memmap, map_offset,
+>  			PAGES_PER_SECTION - map_offset);
+>  	free_section_usemap(memmap, usemap, altmap);
 >  }
 > -- 
 > 2.21.0
