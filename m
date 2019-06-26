@@ -2,154 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBC3556479
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 10:24:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 545AC5647F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 10:24:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726931AbfFZIYO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 04:24:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56854 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725379AbfFZIYO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 04:24:14 -0400
-Received: from localhost (unknown [116.247.127.123])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2520120B7C;
-        Wed, 26 Jun 2019 08:24:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561537452;
-        bh=bMRTiDPGMP8fxo+3ckAdavBqCq0bsYHPyLNJZLN2WzQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=gL4Q2EbNYmmurqssvE7tqFn8IOmKUjd4O/Q83vVHRSMBhyncHWG9ky60BEx4kqvN4
-         lXKhOORnoESfU93qBETnxhge7qLvx5bdTmp2ozLqbwFf8DIRFTpW+f+5BqHPel7n2o
-         3KRQ5ZqVt38e1eTjyA4qVFDcyo1VincEHKh7TVes=
-Date:   Wed, 26 Jun 2019 16:23:43 +0800
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Eric Dumazet <edumazet@google.com>
-Cc:     Guenter Roeck <linux@roeck-us.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Pierre-Loup A. Griffais" <pgriffais@valvesoftware.com>,
-        lkml <linux-kernel@vger.kernel.org>
-Subject: Re: Steam is broken on new kernels
-Message-ID: <20190626082343.GB4605@kroah.com>
-References: <CANn89iLU+NNy7QDPNLYPxNWMx5cXuhziOT7TX2uYt42uUJcNVg@mail.gmail.com>
- <b72599d1-b5d5-1c23-15fc-8e2f9454af05@valvesoftware.com>
- <CAHk-=wjZ1grLwJsGD+Fjz1_U_W47AFodBiwBX84HECUHt-guuw@mail.gmail.com>
- <20190622073753.GA10516@kroah.com>
- <20190626020220.GA22548@roeck-us.net>
- <20190626022923.GA14595@kroah.com>
- <53b23451-f45b-932d-a2f8-15f74f07a849@roeck-us.net>
- <CANn89iL69qDuHDPPk7gksoQvCyVEmBRRs-Kc_EVDkpxZe7DwMw@mail.gmail.com>
- <20190626051720.GA575@kroah.com>
- <CANn89iJPcD9cOrFUHR_sSVyjxzqYGwB2mG-Crf5vhxc7L+LgsA@mail.gmail.com>
+        id S1727010AbfFZIYw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 04:24:52 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:34381 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726077AbfFZIYv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 04:24:51 -0400
+Received: by mail-wr1-f66.google.com with SMTP id k11so1650677wrl.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 01:24:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:openpgp:autocrypt:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=9DNJHIe0qI38aHs6zqZk/jm9gpEnYcn1ir7ZTOFghgk=;
+        b=b9t/P33LvmT09EMKcIF/dqMZIzt/imOy4XjK9VeRcY3ci1NkBIF/d40sjvfCuZpGiU
+         CHJrzGD1fomMeyyEob7kR0zvl9AwvfSpoOPde8/RK9xgFFR/xSCysiGX6kG44MZs+wYn
+         JFMfCyhAi2rw3nnMiLaNqLxcR0VKoSTc7SQpoOKtBw6+tvOJZpcsc3e+VihESro2sd2u
+         XhPYKF3ws98z9nnV3QqlHHSNL/einLNmMMkuRw8U2nICg7q7D6L723wClwxpcxpHrei+
+         U3lbt2Z+BrO/B9508QBxJn/NlJl1epkfqJ739P2AJ5iTs2aR2bMQTWOL1fm/f7suLW1G
+         ROtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :organization:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=9DNJHIe0qI38aHs6zqZk/jm9gpEnYcn1ir7ZTOFghgk=;
+        b=X4CGgnghq8eCHnns5dwjFXldd7FD4ZNmL1kvOzamNXygrVM8nFn9XjGqZSsfc3Zem0
+         k1PygPsJQHBXxaSB3QfJxDcgd/bVVtEjCzY2wso3FByngaNMzoiCAvx2+g34v14cUv0C
+         jXvgWoD68JztcVGBhanyWC4/JCbCG6AEMqjSUADMaKJAUaU6VFAUKfOEZ5KEzLaNeKB1
+         gsiIutdMXJsHC+ztOIXHjcAROcedj6kU9t8nIUHvJwJnOT9g0ipDJumhJcZek6PqY2Xd
+         ZGXmIwUKmt4pogZkvfsBNde+3URuS70neEpbObmDJY3K1CfJUdqckqhnaF9SY1p9X81j
+         HcIg==
+X-Gm-Message-State: APjAAAXIZ/BJDWaH5wq7r2N4XdpCRxtk8Uqm8LAEwrAEVG8+WExU34F5
+        44Xn2HTusBbHPRd1AfX7XQvMeA==
+X-Google-Smtp-Source: APXvYqxw4uXdQXnl1JQoMpPwH+BTgm/Vm1yy7dvntOu+4GNB7u/9X8yDsEyIB0PGWAfFOwPV7e2ZYw==
+X-Received: by 2002:a5d:4d81:: with SMTP id b1mr1537872wru.27.1561537488672;
+        Wed, 26 Jun 2019 01:24:48 -0700 (PDT)
+Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id j32sm38163601wrj.43.2019.06.26.01.24.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 26 Jun 2019 01:24:48 -0700 (PDT)
+Subject: Re: [RFC/RFT 05/14] soc: amlogic: meson-clk-measure: protect measure
+ with a mutex
+To:     Stephen Boyd <sboyd@kernel.org>, jbrunet@baylibre.com,
+        khilman@baylibre.com
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, martin.blumenstingl@googlemail.com
+References: <20190620150013.13462-1-narmstrong@baylibre.com>
+ <20190620150013.13462-6-narmstrong@baylibre.com>
+ <20190625202702.B9A9B208CB@mail.kernel.org>
+From:   Neil Armstrong <narmstrong@baylibre.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
+ 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
+ ZaTUOEkgIor5losDrePdPgE=
+Organization: Baylibre
+Message-ID: <2ceca0ca-8f8e-78a8-df39-67a763f28f30@baylibre.com>
+Date:   Wed, 26 Jun 2019 10:24:47 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANn89iJPcD9cOrFUHR_sSVyjxzqYGwB2mG-Crf5vhxc7L+LgsA@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190625202702.B9A9B208CB@mail.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 26, 2019 at 08:38:01AM +0200, Eric Dumazet wrote:
-> On Wed, Jun 26, 2019 at 8:22 AM Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Wed, Jun 26, 2019 at 06:20:17AM +0200, Eric Dumazet wrote:
-> > > On Wed, Jun 26, 2019 at 5:43 AM Guenter Roeck <linux@roeck-us.net> wrote:
-> > > >
-> > > > On 6/25/19 7:29 PM, Greg Kroah-Hartman wrote:
-> > > > > On Tue, Jun 25, 2019 at 07:02:20PM -0700, Guenter Roeck wrote:
-> > > > >> Hi Greg,
-> > > > >>
-> > > > >> On Sat, Jun 22, 2019 at 09:37:53AM +0200, Greg Kroah-Hartman wrote:
-> > > > >>> On Fri, Jun 21, 2019 at 10:28:21PM -0700, Linus Torvalds wrote:
-> > > > >>>> On Fri, Jun 21, 2019 at 6:03 PM Pierre-Loup A. Griffais
-> > > > >>>> <pgriffais@valvesoftware.com> wrote:
-> > > > >>>>>
-> > > > >>>>> I applied Eric's path to the tip of the branch and ran that kernel and
-> > > > >>>>> the bug didn't occur through several logout / login cycles, so things
-> > > > >>>>> look good at first glance. I'll keep running that kernel and report back
-> > > > >>>>> if anything crops up in the future, but I believe we're good, beyond
-> > > > >>>>> getting distros to ship this additional fix.
-> > > > >>>>
-> > > > >>>> Good. It's now in my tree, so we can get it quickly into stable and
-> > > > >>>> then quickly to distributions.
-> > > > >>>>
-> > > > >>>> Greg, it's commit b6653b3629e5 ("tcp: refine memory limit test in
-> > > > >>>> tcp_fragment()"), and I'm building it right now and I'll push it out
-> > > > >>>> in a couple of minutes assuming nothing odd is going on.
-> > > > >>>
-> > > > >>> This looks good for 4.19 and 5.1, so I'll push out new stable kernels in
-> > > > >>> a bit for them.
-> > > > >>>
-> > > > >>> But for 4.14 and older, we don't have the "hint" to know this is an
-> > > > >>> outbound going packet and not to apply these checks at that point in
-> > > > >>> time, so this patch doesn't work.
-> > > > >>>
-> > > > >>> I'll see if I can figure anything else later this afternoon for those
-> > > > >>> kernels...
-> > > > >>>
-> > > > >>
-> > > > >> I may have missed it, but I don't see a fix for the problem in
-> > > > >> older stable branches. Any news ?
-> > > > >>
-> > > > >> One possibility might be be to apply the part of 75c119afe14f7 which
-> > > > >> introduces TCP_FRAG_IN_WRITE_QUEUE and TCP_FRAG_IN_RTX_QUEUE, if that
-> > > > >> is acceptable.
-> > > > >
-> > > > > That's what people have already discussed on the stable mailing list a
-> > > > > few hours ago, hopefully a patch shows up soon as I'm traveling at the
-> > > > > moment and can't do it myself...
-> > > > >
-> > > >
-> > > > Sounds good. Let me know if nothing shows up; I'll be happy to do it
-> > > > if needed.
-> > >
-> > >
-> > > Without the rb-tree for rtx queues, old kernels are vulnerable to SACK
-> > > attacks if sk_sndbuf is too big,
-> > > so I would simply  add a cushion in the test, instead of trying to
-> > > backport an illusion of the rb-tree fixes.
-> > >
-> > >
-> > >
-> > > diff --git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output.c
-> > > index a8772e11dc1cb42d4319b6fc072c625d284c7ad5..a554213afa4ac41120d781fe64b7cd18ff9b56e8
-> > > 100644
-> > > --- a/net/ipv4/tcp_output.c
-> > > +++ b/net/ipv4/tcp_output.c
-> > > @@ -1274,7 +1274,7 @@ int tcp_fragment(struct sock *sk, struct sk_buff
-> > > *skb, u32 len,
-> > >         if (nsize < 0)
-> > >                 nsize = 0;
-> > >
-> > > -       if (unlikely((sk->sk_wmem_queued >> 1) > sk->sk_sndbuf)) {
-> > > +       if (unlikely((sk->sk_wmem_queued >> 1) > sk->sk_sndbuf + 131072)) {
-> > >                 NET_INC_STATS(sock_net(sk), LINUX_MIB_TCPWQUEUETOOBIG);
-> > >                 return -ENOMEM;
-> > >         }
-> >
-> > That's a funny magic number, can we document what it means?
+On 25/06/2019 22:27, Stephen Boyd wrote:
+> Quoting Neil Armstrong (2019-06-20 08:00:04)
+>> In order to protect clock measuring when multiple process asks for
+>> a mesure, protect the main measure function with mutexes.
+>>
+>> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+>> ---
+>>  drivers/soc/amlogic/meson-clk-measure.c | 12 +++++++++++-
+>>  1 file changed, 11 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/soc/amlogic/meson-clk-measure.c b/drivers/soc/amlogic/meson-clk-measure.c
+>> index 19d4cbc93a17..c470e24f1dfa 100644
+>> --- a/drivers/soc/amlogic/meson-clk-measure.c
+>> +++ b/drivers/soc/amlogic/meson-clk-measure.c
+>> @@ -11,6 +11,8 @@
+>>  #include <linux/debugfs.h>
+>>  #include <linux/regmap.h>
+>>  
+>> +static DEFINE_MUTEX(measure_lock);
+>> +
+>>  #define MSR_CLK_DUTY           0x0
+>>  #define MSR_CLK_REG0           0x4
+>>  #define MSR_CLK_REG1           0x8
+>> @@ -360,6 +362,10 @@ static int meson_measure_id(struct meson_msr_id *clk_msr_id,
+>>         unsigned int val;
+>>         int ret;
+>>  
+>> +       ret = mutex_lock_interruptible(&measure_lock);
 > 
-> This is because TCP can cook skb with about 64KB of payload in
-> tcp_sendmsg() before
-> checking if memory limits are exceeded. (This is mentioned in commit
-> b6653b3629e5b88202be3c9abc44713973f5c4b4
-> " tcp: refine memory limit test in tcp_fragment()" changelog)
+> Why interruptible?
+
+
+I supposed _interruptible was needed since it's called from userspace via
+debugfs, locking indefinitely isn't wanted, no ? or maybe I missed something...
+
+Neil
+
 > 
-> Then, if this giant TSO skb needs to be split in ~45 smaller skbs of
-> one segment each,
-> the resulting truesize might be twice bigger.
-> 
-> You could use 2 * 65536 if that looks better, and possibly a macro,
->  but I feel that adding a macro for this one particular spot and
-> stable kernels might be overkill ?
+>> +       if (ret)
+>> +               return ret;
+>> +
+>>         regmap_write(priv->regmap, MSR_CLK_REG0, 0);
+>>  
+>>         /* Set measurement duration */
 
-Ah, yeah, 2*65536 makes more sense to me, seeing 131072 didn't trigger
-the same "power of 2" thing in my brain :)
-
-I'll fix this up and queue it up now, thanks!
-
-greg k-h
