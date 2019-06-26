@@ -2,87 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 897CA55DF1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 03:48:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 396BA55E14
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 04:03:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726460AbfFZBsJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 21:48:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49104 "EHLO mail.kernel.org"
+        id S1726485AbfFZCC7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 22:02:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55934 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726401AbfFZBsJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 21:48:09 -0400
+        id S1726179AbfFZCC7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 22:02:59 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BDC5C204EC;
-        Wed, 26 Jun 2019 01:48:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 75E0A2147A;
+        Wed, 26 Jun 2019 02:02:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561513688;
-        bh=lhOKRprT7HVe0Z8Cz+OabL8qmzBmCh0WUg8YKiJg6kI=;
+        s=default; t=1561514578;
+        bh=tVTDgsYdLLiYUPWFr4QnZca7y3KHBSyDW0AllHKh8mY=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BL8S8BzsOC1JOHpaxjj/CTatmCr1mGi07Q7JwyCKDT+4+v22IeNWUhCXfpmspHgxG
-         cUK/l3MuLXJTLFZSH+DOHSUmj+O8ZYqciueHRuR7ZoT3lqpr5xlAA+jyBRjKq7h60F
-         V9Ii3OEqVpE7rxOOnaIqsvmncQprx25jWE1XQuvA=
-Date:   Wed, 26 Jun 2019 09:46:33 +0800
+        b=NpPO1yNjEl/psxr/tziNJ1y49UDBtgI4SVsr0FaSb1mJ9g4XnnY9bGtWMuGLCOHD+
+         KOjUxxcsTOhNrPP7+iiz11RyWN3JWgPATOtoShGFEYyuEw8RoibdAO7Or8VdOce0J9
+         6K/zIiKU2Z181B5gUOpv8V38QkEZpQeoj8NgmMhM=
+Date:   Wed, 26 Jun 2019 09:53:01 +0800
 From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Tri Vo <trong@android.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Hridya Valsaraju <hridya@google.com>,
-        Sandeep Patil <sspatil@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "Cc: Android Kernel" <kernel-team@android.com>
-Subject: Re: [PATCH] PM / wakeup: show wakeup sources stats in sysfs
-Message-ID: <20190626014633.GA22610@kroah.com>
-References: <20190626005449.225796-1-trong@android.com>
- <20190626011221.GB22454@kroah.com>
- <CANA+-vBoabFTD=fMz+0d5Sbe9rPwnxcuxJxaMCT3KAwXYHSD7w@mail.gmail.com>
+To:     Christian =?iso-8859-1?Q?M=FCller?= <muellerch-privat@web.de>
+Cc:     devel@driverdev.osuosl.org, felix.trommer@hotmail.de,
+        linux-kernel@i4.cs.fau.de, linux-kernel@vger.kernel.org,
+        johnfwhitmore@gmail.com
+Subject: Re: [PATCH 1/2] drivers/staging/rtl8192u: adjust block comments
+Message-ID: <20190626015301.GA30966@kroah.com>
+References: <20190620113308.GA16195@kroah.com>
+ <20190624094640.5459-1-muellerch-privat@web.de>
+ <20190624094640.5459-2-muellerch-privat@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <CANA+-vBoabFTD=fMz+0d5Sbe9rPwnxcuxJxaMCT3KAwXYHSD7w@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190624094640.5459-2-muellerch-privat@web.de>
 User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 25, 2019 at 06:33:08PM -0700, Tri Vo wrote:
-> On Tue, Jun 25, 2019 at 6:12 PM Greg KH <gregkh@linuxfoundation.org> wrote:
-> > > +static ssize_t wakeup_source_count_show(struct wakeup_source *ws,
-> > > +                                     struct wakeup_source_attribute *attr,
-> > > +                                     char *buf)
-> > > +{
-> > > +     unsigned long flags;
-> > > +     unsigned long var;
-> > > +
-> > > +     spin_lock_irqsave(&ws->lock, flags);
-> > > +     if (strcmp(attr->attr.name, "active_count") == 0)
-> > > +             var = ws->active_count;
-> > > +     else if (strcmp(attr->attr.name, "event_count") == 0)
-> > > +             var = ws->event_count;
-> > > +     else if (strcmp(attr->attr.name, "wakeup_count") == 0)
-> > > +             var = ws->wakeup_count;
-> > > +     else
-> > > +             var = ws->expire_count;
-> > > +     spin_unlock_irqrestore(&ws->lock, flags);
-> > > +
-> > > +     return sprintf(buf, "%lu\n", var);
-> > > +}
-> >
-> > Why is this lock always needed to be grabbed?  You are just reading a
-> > value, who cares if it changes inbetween reading it and returning the
-> > buffer string as it can change at that point in time anyway?
-> 
-> Right, we don't care if the value changes in between us reading and
-> printing it. However, IIUC not grabbing this lock results in a data
-> race, which is undefined behavior.
+On Mon, Jun 24, 2019 at 11:46:39AM +0200, Christian Müller wrote:
+> As stated in coding-styles.rst multiline comments should be structured in a way,
+> that the actual comment starts on the second line of the commented portion. E.g:
 
-A data race where?  Writing to the value?  How can that happen?  All you
-are doing is incrementing this variable elsewhere, what is the worst
-that can happen?
+<snip>
+
+You sent 2 patches that did different things, yet have the identical
+subject line :(
+
+Please fix up and resend the series.
 
 thanks,
 
