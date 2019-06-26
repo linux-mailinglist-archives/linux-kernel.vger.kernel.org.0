@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3FA556A97
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 15:33:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6764B56A94
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 15:33:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727919AbfFZNdF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 09:33:05 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:58236 "EHLO inva020.nxp.com"
+        id S1727903AbfFZNdB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 09:33:01 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:58338 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727754AbfFZNc2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 09:32:28 -0400
+        id S1727764AbfFZNc3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 09:32:29 -0400
 Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A147A1A0FC7;
-        Wed, 26 Jun 2019 15:32:26 +0200 (CEST)
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 5D97E1A0A37;
+        Wed, 26 Jun 2019 15:32:27 +0200 (CEST)
 Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 93E311A0FC2;
-        Wed, 26 Jun 2019 15:32:26 +0200 (CEST)
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 517681A0A32;
+        Wed, 26 Jun 2019 15:32:27 +0200 (CEST)
 Received: from fsr-ub1664-120.ea.freescale.net (fsr-ub1664-120.ea.freescale.net [10.171.82.81])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id E2272205DB;
-        Wed, 26 Jun 2019 15:32:25 +0200 (CEST)
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id A25EA205DB;
+        Wed, 26 Jun 2019 15:32:26 +0200 (CEST)
 From:   Robert Chiras <robert.chiras@nxp.com>
 To:     Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>,
         David Airlie <airlied@linux.ie>,
@@ -34,9 +34,9 @@ Cc:     Pengutronix Kernel Team <kernel@pengutronix.de>,
         dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Robert Chiras <robert.chiras@nxp.com>
-Subject: [PATCH 06/10] drm/mxsfb: Add max-res property for MXSFB
-Date:   Wed, 26 Jun 2019 16:32:14 +0300
-Message-Id: <1561555938-21595-7-git-send-email-robert.chiras@nxp.com>
+Subject: [PATCH 07/10] drm/mxsfb: Update mxsfb to support LCD reset
+Date:   Wed, 26 Jun 2019 16:32:15 +0300
+Message-Id: <1561555938-21595-8-git-send-email-robert.chiras@nxp.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1561555938-21595-1-git-send-email-robert.chiras@nxp.com>
 References: <1561555938-21595-1-git-send-email-robert.chiras@nxp.com>
@@ -46,48 +46,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Because of stability issues, we may want to limit the maximum resolution
-supported by the MXSFB (eLCDIF) driver.
-This patch add support for a new property which we can use to impose such
-limitation.
+The eLCDIF controller has control pin for the external LCD reset pin.
+Add support for it and assert this pin in enable and de-assert it in
+disable.
 
 Signed-off-by: Robert Chiras <robert.chiras@nxp.com>
 ---
- drivers/gpu/drm/mxsfb/mxsfb_drv.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/mxsfb/mxsfb_crtc.c | 10 ++++++++--
+ drivers/gpu/drm/mxsfb/mxsfb_regs.h |  1 +
+ 2 files changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/mxsfb/mxsfb_drv.c b/drivers/gpu/drm/mxsfb/mxsfb_drv.c
-index 64575df..9a1ee70 100644
---- a/drivers/gpu/drm/mxsfb/mxsfb_drv.c
-+++ b/drivers/gpu/drm/mxsfb/mxsfb_drv.c
-@@ -260,6 +260,7 @@ static int mxsfb_load(struct drm_device *drm, unsigned long flags)
- 	struct platform_device *pdev = to_platform_device(drm->dev);
- 	struct mxsfb_drm_private *mxsfb;
- 	struct resource *res;
-+	u32 max_res[2] = {0, 0};
- 	int ret;
+diff --git a/drivers/gpu/drm/mxsfb/mxsfb_crtc.c b/drivers/gpu/drm/mxsfb/mxsfb_crtc.c
+index e48396d..d9429fc 100644
+--- a/drivers/gpu/drm/mxsfb/mxsfb_crtc.c
++++ b/drivers/gpu/drm/mxsfb/mxsfb_crtc.c
+@@ -222,9 +222,12 @@ static void mxsfb_enable_controller(struct mxsfb_drm_private *mxsfb)
+ 		clk_prepare_enable(mxsfb->clk_disp_axi);
+ 	clk_prepare_enable(mxsfb->clk);
  
- 	mxsfb = devm_kzalloc(&pdev->dev, sizeof(*mxsfb), GFP_KERNEL);
-@@ -340,10 +341,17 @@ static int mxsfb_load(struct drm_device *drm, unsigned long flags)
- 		}
- 	}
+-	if (mxsfb->devdata->ipversion >= 4)
++	if (mxsfb->devdata->ipversion >= 4) {
+ 		writel(CTRL2_OUTSTANDING_REQS__REQ_16,
+ 		       mxsfb->base + LCDC_V4_CTRL2 + REG_SET);
++		/* Assert LCD Reset bit */
++		writel(CTRL2_LCD_RESET, mxsfb->base + LCDC_V4_CTRL2 + REG_SET);
++	}
  
-+	of_property_read_u32_array(drm->dev->of_node, "max-res",
-+				   &max_res[0], 2);
-+	if (!max_res[0])
-+		max_res[0] = MXSFB_MAX_XRES;
-+	if (!max_res[1])
-+		max_res[1] = MXSFB_MAX_YRES;
-+
- 	drm->mode_config.min_width	= MXSFB_MIN_XRES;
- 	drm->mode_config.min_height	= MXSFB_MIN_YRES;
--	drm->mode_config.max_width	= MXSFB_MAX_XRES;
--	drm->mode_config.max_height	= MXSFB_MAX_YRES;
-+	drm->mode_config.max_width	= max_res[0];
-+	drm->mode_config.max_height	= max_res[1];
- 	drm->mode_config.funcs		= &mxsfb_mode_config_funcs;
- 	drm->mode_config.helper_private	= &mxsfb_mode_config_helpers;
+ 	/* If it was disabled, re-enable the mode again */
+ 	writel(CTRL_DOTCLK_MODE, mxsfb->base + LCDC_CTRL + REG_SET);
+@@ -242,9 +245,12 @@ static void mxsfb_disable_controller(struct mxsfb_drm_private *mxsfb)
+ {
+ 	u32 reg;
  
+-	if (mxsfb->devdata->ipversion >= 4)
++	if (mxsfb->devdata->ipversion >= 4) {
+ 		writel(CTRL2_OUTSTANDING_REQS(0x7),
+ 		       mxsfb->base + LCDC_V4_CTRL2 + REG_CLR);
++		/* De-assert LCD Reset bit */
++		writel(CTRL2_LCD_RESET, mxsfb->base + LCDC_V4_CTRL2 + REG_CLR);
++	}
+ 
+ 	writel(CTRL_RUN, mxsfb->base + LCDC_CTRL + REG_CLR);
+ 
+diff --git a/drivers/gpu/drm/mxsfb/mxsfb_regs.h b/drivers/gpu/drm/mxsfb/mxsfb_regs.h
+index 9ee0d3c7..2583a69 100644
+--- a/drivers/gpu/drm/mxsfb/mxsfb_regs.h
++++ b/drivers/gpu/drm/mxsfb/mxsfb_regs.h
+@@ -87,6 +87,7 @@
+ #define CTRL2_OUTSTANDING_REQS(x)	REG_PUT((x), 23, 21)
+ #define CTRL2_ODD_LINE_PATTERN(x)	REG_PUT((x), 18, 16)
+ #define CTRL2_EVEN_LINE_PATTERN(x)	REG_PUT((x), 14, 12)
++#define CTRL2_LCD_RESET			BIT(0)
+ 
+ #define TRANSFER_COUNT_SET_VCOUNT(x)	(((x) & 0xffff) << 16)
+ #define TRANSFER_COUNT_GET_VCOUNT(x)	(((x) >> 16) & 0xffff)
 -- 
 2.7.4
 
