@@ -2,87 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 632BB5637A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 09:37:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A65B5636E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 09:35:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727014AbfFZHhs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 03:37:48 -0400
-Received: from mx-rz-2.rrze.uni-erlangen.de ([131.188.11.21]:41291 "EHLO
-        mx-rz-2.rrze.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725797AbfFZHhr (ORCPT
+        id S1727017AbfFZHfg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 03:35:36 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:56314 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725876AbfFZHfg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 03:37:47 -0400
-Received: from mx-exchlnx-2.rrze.uni-erlangen.de (mx-exchlnx-2.rrze.uni-erlangen.de [IPv6:2001:638:a000:1025::38])
-        by mx-rz-2.rrze.uni-erlangen.de (Postfix) with ESMTP id 45YZcp2XXhzPkxq;
-        Wed, 26 Jun 2019 09:37:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fau.de; s=fau-2013;
-        t=1561534666; bh=bH4X2CuaDjpodRmVzF7XktQDkJsgyq/GdwVju7mHXLI=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References:From:To:CC:
-         Subject;
-        b=kVphtJm3q0TfRV8j/Cj90JKL3ZT4A+4ZQClujLq2ajz++cNJesb6deeDwSyjT/6Da
-         AlU2Phd3tSyQekTY3GOAF/Q7PBSAV6Tz3DGWDkZlfrX8AI9lmsezeZfcCaLeKSYakq
-         QcsM43P8BjA6/6Dv1DU3wi22z1jNGNiE+WCmJ12eJhyPyR7YCZOcab22G16eXAkdeD
-         1rJMYnAY5MAKNqiudwL1pL57buyFXjQdoX5pW8ufqx7c2dLTHV4gNSo12By54caBNH
-         35bMa83M8Il9bvjKg4KDpHAkWpvEHC7fKhvB6au/WiEz+NKB7kzbz86ANgaryuy3vk
-         VBIIeE/SOsMyA==
-X-Virus-Scanned: amavisd-new at boeck1.rrze.uni-erlangen.de (RRZE)
-X-RRZE-Flag: Not-Spam
-Received: from hbt1.exch.fau.de (hbt1.exch.fau.de [10.15.8.13])
-        by mx-exchlnx-2.rrze.uni-erlangen.de (Postfix) with ESMTP id 45YZcm1LdCzPkDJ;
-        Wed, 26 Jun 2019 09:37:44 +0200 (CEST)
-Received: from MBX3.exch.uni-erlangen.de (10.15.8.45) by hbt1.exch.fau.de
- (10.15.8.13) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 26 Jun 2019
- 09:36:56 +0200
-Received: from TroubleWorld.fritz.box (95.90.221.207) by
- MBX3.exch.uni-erlangen.de (10.15.8.45) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1591.10; Wed, 26 Jun 2019 09:36:56 +0200
-From:   Fabian Krueger <fabian.krueger@fau.de>
-CC:     <fabian.krueger@fau.de>,
-        Michael Scheiderer <michael.scheiderer@fau.de>,
-        <linux-kernel@i4.cs.fau.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <devel@driverdev.osuosl.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH 8/8] staging: kpc2000: remove needless 'break'
-Date:   Wed, 26 Jun 2019 09:35:26 +0200
-Message-ID: <20190626073531.8946-9-fabian.krueger@fau.de>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190626073531.8946-1-fabian.krueger@fau.de>
-References: <20190625115251.GA28859@kadam>
- <20190626073531.8946-1-fabian.krueger@fau.de>
+        Wed, 26 Jun 2019 03:35:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=lDmlG4QlTTriJzFXWbGaRSBBFeeq9DSPhk5L2uu/dys=; b=FEIrxw0fA7wZ2Dgvq5SBxdVmN
+        yhPyT0gCj6Bxbl/m8JShCPjIBGhfUFMREoijyGu6CGikjCKKCpf0b2qqwRam7jR/hlWuYyDPM14ds
+        bqUfT5iAeCLEabNpYahNp1jcOmxfA6iSmh2JpyOpAGQyjm/PM5Ydk9rf9HcVKqWWmuf4OJHVZc+6D
+        rl69Hx7yZb+nynPThSA+wG+PtBSuSdLyPqJw9ARsh/w+6FRPip840hneIcWRmm0HUdymEGBFaMQnZ
+        LldmT8tVf34HugoPD5imjld6/n5Hh1p8tAsqrTrCSR7iV3Rjlzy3Ea9+xB76jwxTfsxNP6/h0qr0F
+        y1s4FQJ5Q==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hg2Sr-0007dW-2T; Wed, 26 Jun 2019 07:35:33 +0000
+Date:   Wed, 26 Jun 2019 00:35:33 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     linux-mm@kvack.org, akpm@linux-foundation.org, will.deacon@arm.com,
+        catalin.marinas@arm.com, anshuman.khandual@arm.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Michal Hocko <mhocko@suse.com>
+Subject: Re: [PATCH v3 0/4] Devmap cleanups + arm64 support
+Message-ID: <20190626073533.GA24199@infradead.org>
+References: <cover.1558547956.git.robin.murphy@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [95.90.221.207]
-X-ClientProxiedBy: MBX3.exch.uni-erlangen.de (10.15.8.45) To
- MBX3.exch.uni-erlangen.de (10.15.8.45)
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1558547956.git.robin.murphy@arm.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The unconditioned jump will prohibit to ever reach the break-statement.
-Deleting this needless statement, the code becomes more understandable.
+Robin, Andrew:
 
-Signed-off-by: Fabian Krueger <fabian.krueger@fau.de>
-Signed-off-by: Michael Scheiderer <michael.scheiderer@fau.de>
-Cc: <linux-kernel@i4.cs.fau.de>
----
- drivers/staging/kpc2000/kpc2000_spi.c | 1 -
- 1 file changed, 1 deletion(-)
+I have a series for the hmm tree, which touches the section size
+bits, and remove device public memory support.
 
-diff --git a/drivers/staging/kpc2000/kpc2000_spi.c b/drivers/staging/kpc2000/kpc2000_spi.c
-index 55bed617b0d8..1e1e747a0f6c 100644
---- a/drivers/staging/kpc2000/kpc2000_spi.c
-+++ b/drivers/staging/kpc2000/kpc2000_spi.c
-@@ -486,7 +486,6 @@ kp_spi_probe(struct platform_device *pldev)
- 	default:
- 		dev_err(&pldev->dev, "Unknown hardware, cant know what partition table to use!\n");
- 		goto free_master;
--		break;
- 	}
- 
- 	return status;
--- 
-2.17.1
-
+It might be best if we include this series in the hmm tree as well
+to avoid conflicts.  Is it ok to include the rebase version of at least
+the cleanup part (which looks like it is not required for the actual
+arm64 support) in the hmm tree to avoid conflicts?
