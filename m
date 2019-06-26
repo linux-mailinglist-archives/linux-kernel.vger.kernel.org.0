@@ -2,97 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A397E56F83
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 19:31:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CEF0256FB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 19:38:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726354AbfFZR35 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 13:29:57 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:46456 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726179AbfFZR35 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 13:29:57 -0400
-Received: by mail-pf1-f196.google.com with SMTP id 81so1696178pfy.13
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 10:29:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=5T6JwdKRjR0/RiG3X8PeL3Pv8Cc3TnWD4IRh13Xy5ag=;
-        b=My7eCbBlW0B5mb2GiL0BF8ubkmwJqvdlp2tjJodqd30zEwBuyaywestOcC28RB/fHl
-         eWqpPYluiFgdQJnQ5cdPaifnUof2fwhquXW/5BbSuJrUrZvfU+F1QWXW7N8qvQRvepYz
-         YuJkQJDQMoSFtGQ7zJtLkvhFrQ6V83tu+W1ALYoHtIHZBew3gtEM2P3hp4tnurJlS/vg
-         CE+jLYwkZgBpNtUXa3L5ysct7ElmiI7l4Hb0u+LZVma+wMG6OLTrCEVuKDZJiJVaIFhe
-         WHzIOALIYKaNa/uV0Ozs1qjve+pxiZpKu8Pa1KXzjfrqyRZkJ69xxlc5+Sf7y1oICyPd
-         SY5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=5T6JwdKRjR0/RiG3X8PeL3Pv8Cc3TnWD4IRh13Xy5ag=;
-        b=o6Iyu7FBk/L0Z9Qd9Pclq+p9oJ5mx5oYQtY2hFHJaG+m6cytRZBa+0UBO2Mo3Ex6Sx
-         w++vMH7qFEg/f+sZrLrv/W5P6ciE17kcSXwBwuVfvk0m7Q6+jzfOnHoVInPjJPelip8I
-         0FffMCrvcEGtzHGRomHwlEbP8Z/x/4LXEt3uonvQkYUWhfyds0/nqqTz7K5H4uMJsNpa
-         +YCbv+pfzFn3m/dwLsUyWs9wXEeEkuuitgCETezJYZefm7OBj/axwdnfHin7FnwktzZp
-         9OrawskIMiRwM2SFdB9HXIRxru5xP903QEEWtCaj13QNF3i0waAvTdkuk44R8x3So9Li
-         CMqw==
-X-Gm-Message-State: APjAAAX0KRf/uEpIPbaiXPou/hbsz7eDmuvG4fcWFh1c0fM060QPRyN4
-        yYjp3r85cVvGMf4dTOEzImw=
-X-Google-Smtp-Source: APXvYqzqQLv6YPA7wFT/1bH52+5xuqCsBHVv8kbrO5obSZEqzQEy5t8+odJ4iW8Nb9Gh6c2C+g2dmw==
-X-Received: by 2002:a17:90a:be08:: with SMTP id a8mr190221pjs.69.1561570196512;
-        Wed, 26 Jun 2019 10:29:56 -0700 (PDT)
-Received: from hari-Inspiron-1545 ([183.83.92.187])
-        by smtp.gmail.com with ESMTPSA id 11sm30296257pfw.33.2019.06.26.10.29.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 Jun 2019 10:29:55 -0700 (PDT)
-Date:   Wed, 26 Jun 2019 22:59:51 +0530
-From:   Hariprasad Kelam <hariprasad.kelam@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hariprasad Kelam <hariprasad.kelam@gmail.com>,
+        id S1726429AbfFZRir (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 13:38:47 -0400
+Received: from mga12.intel.com ([192.55.52.136]:18810 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726179AbfFZRir (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 13:38:47 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jun 2019 10:38:46 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,420,1557212400"; 
+   d="scan'208";a="183217012"
+Received: from yyu32-desk1.sc.intel.com ([10.144.153.205])
+  by fmsmga001.fm.intel.com with ESMTP; 26 Jun 2019 10:38:46 -0700
+Message-ID: <9f7787e255ef859a39ea87e70132a50572f4db65.camel@intel.com>
+Subject: Re: [PATCH] binfmt_elf: Extract .note.gnu.property from an ELF file
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     Andy Lutomirski <luto@kernel.org>,
+        Dave Martin <Dave.Martin@arm.com>
+Cc:     X86 ML <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
         Arnd Bergmann <arnd@arndb.de>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Himadri Pandya <himadri18.07@gmail.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: rtl8723bs: hal: rtl8723b_hal_init: remove set but
- unused variable pHalData
-Message-ID: <20190626172951.GA7521@hari-Inspiron-1545>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
+        Szabolcs Nagy <szabolcs.nagy@arm.com>,
+        libc-alpha <libc-alpha@sourceware.org>
+Date:   Wed, 26 Jun 2019 10:30:24 -0700
+In-Reply-To: <CALCETrVZCzh+KFCF6ijuf4QEPn=R2gJ8FHLpyFd=n+pNOMMMjA@mail.gmail.com>
+References: <20190501211217.5039-1-yu-cheng.yu@intel.com>
+         <20190502111003.GO3567@e103592.cambridge.arm.com>
+         <CALCETrVZCzh+KFCF6ijuf4QEPn=R2gJ8FHLpyFd=n+pNOMMMjA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove set but unsed variable pHalData in hw_var_set_mlme_join
-function
+On Wed, 2019-06-26 at 10:14 -0700, Andy Lutomirski wrote:
+> On Thu, May 2, 2019 at 4:10 AM Dave Martin <Dave.Martin@arm.com> wrote:
+> > 
+> > On Wed, May 01, 2019 at 02:12:17PM -0700, Yu-cheng Yu wrote:
+> > > An ELF file's .note.gnu.property indicates features the executable file
+> > > can support.  For example, the property GNU_PROPERTY_X86_FEATURE_1_AND
+> > > indicates the file supports GNU_PROPERTY_X86_FEATURE_1_IBT and/or
+> > > GNU_PROPERTY_X86_FEATURE_1_SHSTK.
+> > > 
+[...]
+> 
+> Where did PT_GNU_PROPERTY come from?  Are there actual docs for it?
+> Can someone here tell us what the actual semantics of this new ELF
+> thingy are?  From some searching, it seems like it's kind of an ELF
+> note but kind of not.  An actual description would be fantastic.
+> 
+> Also, I don't think there's any actual requirement that the upstream
+> kernel recognize existing CET-enabled RHEL 8 binaries as being
+> CET-enabled.  I tend to think that RHEL 8 jumped the gun here.  While
+> the upstream kernel should make some reasonble effort to make sure
+> that RHEL 8 binaries will continue to run, I don't see why we need to
+> go out of our way to keep the full set of mitigations available for
+> binaries that were developed against a non-upstream kernel.
+> 
+> In fact, if we handle the legacy bitmap differently from RHEL 8, we
+> may *have* to make sure that we don't recognize existing RHEL 8
+> binaries as CET-enabled.
 
-Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
----
- drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c | 2 --
- 1 file changed, 2 deletions(-)
+We have worked out the issue.  Linux will look at only PT_GNU_PROPERTY, which is
+a shortcut pointing directly to .note.gnu.property.  I have an updated patch,
+and will send it out (although it is not yet perfect).
 
-diff --git a/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c b/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
-index 6cfd240..8ca6249 100644
---- a/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
-+++ b/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
-@@ -3579,14 +3579,12 @@ static void hw_var_set_mlme_join(struct adapter *padapter, u8 variable, u8 *val)
- 	u32 val32;
- 	u8 RetryLimit;
- 	u8 type;
--	struct hal_com_data *pHalData;
- 	struct mlme_priv *pmlmepriv;
- 	struct eeprom_priv *pEEPROM;
- 
- 
- 	RetryLimit = 0x30;
- 	type = *(u8 *)val;
--	pHalData = GET_HAL_DATA(padapter);
- 	pmlmepriv = &padapter->mlmepriv;
- 	pEEPROM = GET_EEPROM_EFUSE_PRIV(padapter);
- 
--- 
-2.7.4
+The Linux gABI extension draft is here: https://github.com/hjl-tools/linux-abi/w
+iki/linux-abi-draft.pdf.
+
+Yu-cheng
 
