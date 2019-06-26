@@ -2,87 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09C745671E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 12:46:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A85656721
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 12:47:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727202AbfFZKqj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 06:46:39 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33994 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726387AbfFZKqh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 06:46:37 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id CE25DAD78;
-        Wed, 26 Jun 2019 10:46:35 +0000 (UTC)
-Date:   Wed, 26 Jun 2019 12:46:33 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.cz>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v7 07/10] vsprintf: Consolidate handling of unknown
- pointer specifiers
-Message-ID: <20190626104633.arpobvevpxnkrt5k@pathway.suse.cz>
-References: <20190417115350.20479-1-pmladek@suse.com>
- <20190417115350.20479-8-pmladek@suse.com>
- <CAMuHMdVX+2tRjCabqVNR9HcnWE+EU0bR55KAW9bbD=GBEoE-=w@mail.gmail.com>
+        id S1727223AbfFZKrL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 06:47:11 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:38103 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726387AbfFZKrK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 06:47:10 -0400
+Received: by mail-wm1-f67.google.com with SMTP id s15so1579295wmj.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 03:47:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=fSwT7q8BLOXNpzs+danpM3n1/i2uCJHF7PPr1vSLfUI=;
+        b=PS97z0V4J4hvrFU+KNWT9KYw44s2DQgCAUU9WUGDvoPpxuLC6OGdIjueLKdBR7rIMD
+         /c+6iW62x6//m985XD5u0ll7y/SU0ES0Vq1A4U2sZX/i7DvMz1c+3OEv9MelQbHtVti4
+         SkTWJtxzYLtaBybXaTu1kQCt34D96VbpPP+z6mGodaWlxG0MtHvMeBQNn5pf6XWz/8Wq
+         +IYgMuaS7yiGRxDq2Et47sBq6d9qZIYAANakOIRBK6b34dbMGWDFL37AcXCQVfEKJJky
+         aw1DQLorLWmpge7WBYN+IR+yTIKFowXM2Rk5HYT5R1TDhKhL6um8jO4UGWPXCMU5ZcTL
+         rrRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=fSwT7q8BLOXNpzs+danpM3n1/i2uCJHF7PPr1vSLfUI=;
+        b=Wu1GiTJYzTTVpv+/Wav93nthC6GDzrNxVrX7F+oqIMkVVKhu6S2RJPJAm0YgPGMhrB
+         l/r3VdVsZOqg+yxnKwIceaHNArIC7oFGi0GF7h2cFJGoUADclsbbrlP+RLy2B3D9X4P6
+         wny6k7IjKkT9KakMEJrwPGcwv5L1fjW3SNZUK7xmCgh2N83zmLvEeysVQfRcvuuSxa0F
+         j+DQZBjpz/uKq9HhTnzN2OgObRqS6Xqll0CTP1xCU9wBOsg5yfjCP8/c3FrFNRjD6/hl
+         HO++Z4DDNtKtAETqVbv7SAlHprfcSQxOwz1bs1gPas8Z0UyBZdIAUTExB3SHjFRZqKfI
+         UFzQ==
+X-Gm-Message-State: APjAAAXqBK49xU/7oRberddPcWC/phc9SRenxnSOLy2f29FUd4lZempK
+        EonxdN9Zvl9L6WrdxPF3RGMWBQ==
+X-Google-Smtp-Source: APXvYqwfRtRTDwuQHX1TngULVXOfM5NelQlr57zqJTiIB+fKCFHgOpqMp9+Sp2ktppAqj+A2FYeePw==
+X-Received: by 2002:a1c:4054:: with SMTP id n81mr2343827wma.78.1561546027369;
+        Wed, 26 Jun 2019 03:47:07 -0700 (PDT)
+Received: from brauner.io ([212.91.227.56])
+        by smtp.gmail.com with ESMTPSA id d5sm16228435wrc.17.2019.06.26.03.47.06
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 26 Jun 2019 03:47:06 -0700 (PDT)
+Date:   Wed, 26 Jun 2019 12:47:05 +0200
+From:   Christian Brauner <christian@brauner.io>
+To:     Ian Kent <raven@themaw.net>
+Cc:     David Howells <dhowells@redhat.com>, viro@zeniv.linux.org.uk,
+        mszeredi@redhat.com, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/25] VFS: Introduce filesystem information query
+ syscall [ver #14]
+Message-ID: <20190626104704.dwjd4urpsmuheirc@brauner.io>
+References: <156138532485.25627.7459410522109581052.stgit@warthog.procyon.org.uk>
+ <20190626100525.irdehd24jowz5f75@brauner.io>
+ <cf0361c2d1fc09ad0097f0da1e981b97ad39ab07.camel@themaw.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdVX+2tRjCabqVNR9HcnWE+EU0bR55KAW9bbD=GBEoE-=w@mail.gmail.com>
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <cf0361c2d1fc09ad0097f0da1e981b97ad39ab07.camel@themaw.net>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 2019-06-25 12:59:57, Geert Uytterhoeven wrote:
-> Hi Petr,
+On Wed, Jun 26, 2019 at 06:42:51PM +0800, Ian Kent wrote:
+> On Wed, 2019-06-26 at 12:05 +0200, Christian Brauner wrote:
+> > On Mon, Jun 24, 2019 at 03:08:45PM +0100, David Howells wrote:
+> > > Hi Al,
+> > > 
+> > > Here are a set of patches that adds a syscall, fsinfo(), that allows
+> > > attributes of a filesystem/superblock to be queried.  Attribute values are
+> > > of four basic types:
+> > > 
+> > >  (1) Version dependent-length structure (size defined by type).
+> > > 
+> > >  (2) Variable-length string (up to PAGE_SIZE).
+> > > 
+> > >  (3) Array of fixed-length structures (up to INT_MAX size).
+> > > 
+> > >  (4) Opaque blob (up to INT_MAX size).
+> > > 
+> > > Attributes can have multiple values in up to two dimensions and all the
+> > > values of a particular attribute must have the same type.
+> > > 
+> > > Note that the attribute values *are* allowed to vary between dentries
+> > > within a single superblock, depending on the specific dentry that you're
+> > > looking at.
+> > > 
+> > > I've tried to make the interface as light as possible, so integer/enum
+> > > attribute selector rather than string and the core does all the allocation
+> > > and extensibility support work rather than leaving that to the filesystems.
+> > > That means that for the first two attribute types, sb->s_op->fsinfo() may
+> > > assume that the provided buffer is always present and always big enough.
+> > > 
+> > > Further, this removes the possibility of the filesystem gaining access to
+> > > the
+> > > userspace buffer.
+> > > 
+> > > 
+> > > fsinfo() allows a variety of information to be retrieved about a filesystem
+> > > and the mount topology:
+> > > 
+> > >  (1) General superblock attributes:
+> > > 
+> > >       - The amount of space/free space in a filesystem (as statfs()).
+> > >       - Filesystem identifiers (UUID, volume label, device numbers, ...)
+> > >       - The limits on a filesystem's capabilities
+> > >       - Information on supported statx fields and attributes and IOC flags.
+> > >       - A variety single-bit flags indicating supported capabilities.
+> > >       - Timestamp resolution and range.
+> > >       - Sources (as per mount(2), but fsconfig() allows multiple sources).
+> > >       - In-filesystem filename format information.
+> > >       - Filesystem parameters ("mount -o xxx"-type things).
+> > >       - LSM parameters (again "mount -o xxx"-type things).
+> > > 
+> > >  (2) Filesystem-specific superblock attributes:
+> > > 
+> > >       - Server names and addresses.
+> > >       - Cell name.
+> > > 
+> > >  (3) Filesystem configuration metadata attributes:
+> > > 
+> > >       - Filesystem parameter type descriptions.
+> > >       - Name -> parameter mappings.
+> > >       - Simple enumeration name -> value mappings.
+> > > 
+> > >  (4) Mount topology:
+> > > 
+> > >       - General information about a mount object.
+> > >       - Mount device name(s).
+> > >       - Children of a mount object and their relative paths.
+> > > 
+> > >  (5) Information about what the fsinfo() syscall itself supports, including
+> > >      the number of attibutes supported and the number of capability bits
+> > >      supported.
+> > 
+> > Phew, this patchset is a lot. It's good of course but can we please cut
+> > some of the more advanced features such as querying by mount id,
+> > submounts etc. pp. for now?
 > 
-> On Wed, Apr 17, 2019 at 1:56 PM Petr Mladek <pmladek@suse.com> wrote:
-> > There are few printk formats that make sense only with two or more
-> > specifiers. Also some specifiers make sense only when a kernel feature
-> > is enabled.
-> >
-> > The handling of unknown specifiers is inconsistent and not helpful.
-> > Using WARN() looks like an overkill for this type of error. pr_warn()
-> > is not good either. It would by handled via printk_safe buffer and
-> > it might be hard to match it with the problematic string.
-> >
-> > A reasonable compromise seems to be writing the unknown format specifier
-> > into the original string with a question mark, for example (%pC?).
-> > It should be self-explaining enough. Note that it is in brackets
-> > to follow the (null) style.
-> >
-> > Note that it introduces a warning about that test_hashed() function
-> > is unused. It is going to be used again by a later patch.
-> >
-> > Signed-off-by: Petr Mladek <pmladek@suse.com>
+> Did you mean the "vfs: Allow fsinfo() to look up a mount object by ID"
+> patch?
 > 
-> > --- a/lib/vsprintf.c
-> > +++ b/lib/vsprintf.c
-> > @@ -1706,7 +1712,7 @@ char *clock(char *buf, char *end, struct clk *clk, struct printf_spec spec,
-> >  #ifdef CONFIG_COMMON_CLK
-> >                 return string(buf, end, __clk_get_name(clk), spec);
-> >  #else
-> > -               return ptr_to_id(buf, end, clk, spec);
-> > +               return string_nocheck(buf, end, "(%pC?)", spec);
+> We would need to be very careful what was dropped.
+
+Not dropped as in never implement but rather defer it by one merge
+window to give us a) more time to review and settle the interface while
+b) not stalling the overall patch.
+
 > 
-> What's the reason behind this change? This is not an error case,
-> but for printing the clock pointer as a distinguishable ID when using
-> the legacy clock framework, which does not store names with clocks.
+> For example, I've found that the patch above is pretty much essential
+> for fsinfo() to be useful from user space.
 
-You are right. We should put back ptr_to_id() there.
-
-Would you like to send a patch?
-
-Best Regards,
-Petr
+Yeah, but that interface is not clearly defined yet as can be seen from
+the commit message and that's what's bothering me most.
