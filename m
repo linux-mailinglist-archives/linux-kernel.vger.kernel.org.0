@@ -2,79 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45986562C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 08:56:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A563562C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 08:56:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726879AbfFZG4C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 02:56:02 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:43796 "EHLO mx1.redhat.com"
+        id S1726839AbfFZGz6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 02:55:58 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:52760 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726006AbfFZGz7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 02:55:59 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        id S1726468AbfFZGz6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 02:55:58 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DE765C057F2E;
-        Wed, 26 Jun 2019 06:55:55 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id ACABF307D861;
+        Wed, 26 Jun 2019 06:55:57 +0000 (UTC)
 Received: from sirius.home.kraxel.org (ovpn-116-96.ams2.redhat.com [10.36.116.96])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7AAE05D71B;
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A7900608C1;
         Wed, 26 Jun 2019 06:55:52 +0000 (UTC)
 Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 9B8E016E19; Wed, 26 Jun 2019 08:55:51 +0200 (CEST)
+        id C27E016E1A; Wed, 26 Jun 2019 08:55:51 +0200 (CEST)
 From:   Gerd Hoffmann <kraxel@redhat.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     tzimmermann@suse.de, Gerd Hoffmann <kraxel@redhat.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 1/2] drm/vram: store dumb bo dimensions.
-Date:   Wed, 26 Jun 2019 08:55:50 +0200
-Message-Id: <20190626065551.12956-2-kraxel@redhat.com>
+        virtualization@lists.linux-foundation.org (open list:DRM DRIVER FOR
+        BOCHS VIRTUAL GPU), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 2/2] drm/bochs: fix framebuffer setup.
+Date:   Wed, 26 Jun 2019 08:55:51 +0200
+Message-Id: <20190626065551.12956-3-kraxel@redhat.com>
 In-Reply-To: <20190626065551.12956-1-kraxel@redhat.com>
 References: <20190626065551.12956-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Wed, 26 Jun 2019 06:55:59 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Wed, 26 Jun 2019 06:55:57 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Store width and height of the bo.  Needed in case userspace
-sets up a framebuffer with fb->width != bo->width..
+If bo->width doesn't match fb->width the driver fails to configure
+the display correctly, resulting in a scrambled display.  Fix it.
 
 Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 ---
- include/drm/drm_gem_vram_helper.h     | 1 +
- drivers/gpu/drm/drm_gem_vram_helper.c | 2 ++
- 2 files changed, 3 insertions(+)
+ drivers/gpu/drm/bochs/bochs.h     |  2 +-
+ drivers/gpu/drm/bochs/bochs_hw.c  | 13 +++++++++----
+ drivers/gpu/drm/bochs/bochs_kms.c |  1 +
+ 3 files changed, 11 insertions(+), 5 deletions(-)
 
-diff --git a/include/drm/drm_gem_vram_helper.h b/include/drm/drm_gem_vram_helper.h
-index 1a0ea18e7a74..3692dba167df 100644
---- a/include/drm/drm_gem_vram_helper.h
-+++ b/include/drm/drm_gem_vram_helper.h
-@@ -39,6 +39,7 @@ struct drm_gem_vram_object {
- 	struct drm_gem_object gem;
- 	struct ttm_buffer_object bo;
- 	struct ttm_bo_kmap_obj kmap;
-+	unsigned int width, height;
+diff --git a/drivers/gpu/drm/bochs/bochs.h b/drivers/gpu/drm/bochs/bochs.h
+index cc35d492142c..78c0283496cc 100644
+--- a/drivers/gpu/drm/bochs/bochs.h
++++ b/drivers/gpu/drm/bochs/bochs.h
+@@ -86,7 +86,7 @@ void bochs_hw_setmode(struct bochs_device *bochs,
+ void bochs_hw_setformat(struct bochs_device *bochs,
+ 			const struct drm_format_info *format);
+ void bochs_hw_setbase(struct bochs_device *bochs,
+-		      int x, int y, u64 addr);
++		      int x, int y, int fbwidth, u64 addr);
+ int bochs_hw_load_edid(struct bochs_device *bochs);
  
- 	/* Supported placements are %TTM_PL_VRAM and %TTM_PL_SYSTEM */
- 	struct ttm_placement placement;
-diff --git a/drivers/gpu/drm/drm_gem_vram_helper.c b/drivers/gpu/drm/drm_gem_vram_helper.c
-index 4de782ca26b2..c02bf7694117 100644
---- a/drivers/gpu/drm/drm_gem_vram_helper.c
-+++ b/drivers/gpu/drm/drm_gem_vram_helper.c
-@@ -377,6 +377,8 @@ int drm_gem_vram_fill_create_dumb(struct drm_file *file,
- 	gbo = drm_gem_vram_create(dev, bdev, size, pg_align, interruptible);
- 	if (IS_ERR(gbo))
- 		return PTR_ERR(gbo);
-+	gbo->width = args->width;
-+	gbo->height = args->height;
+ /* bochs_mm.c */
+diff --git a/drivers/gpu/drm/bochs/bochs_hw.c b/drivers/gpu/drm/bochs/bochs_hw.c
+index 791ab2f79947..141aa02962d3 100644
+--- a/drivers/gpu/drm/bochs/bochs_hw.c
++++ b/drivers/gpu/drm/bochs/bochs_hw.c
+@@ -255,16 +255,21 @@ void bochs_hw_setformat(struct bochs_device *bochs,
+ }
  
- 	ret = drm_gem_handle_create(file, &gbo->gem, &handle);
- 	if (ret)
+ void bochs_hw_setbase(struct bochs_device *bochs,
+-		      int x, int y, u64 addr)
++		      int x, int y, int fbwidth, u64 addr)
+ {
+-	unsigned long offset = (unsigned long)addr +
++	unsigned long offset;
++	unsigned int vx, vy;
++
++	bochs->stride = fbwidth * (bochs->bpp / 8);
++	offset = (unsigned long)addr +
+ 		y * bochs->stride +
+ 		x * (bochs->bpp / 8);
+-	int vy = offset / bochs->stride;
+-	int vx = (offset % bochs->stride) * 8 / bochs->bpp;
++	vy = offset / bochs->stride;
++	vx = (offset % bochs->stride) * 8 / bochs->bpp;
+ 
+ 	DRM_DEBUG_DRIVER("x %d, y %d, addr %llx -> offset %lx, vx %d, vy %d\n",
+ 			 x, y, addr, offset, vx, vy);
++	bochs_dispi_write(bochs, VBE_DISPI_INDEX_VIRT_WIDTH, fbwidth);
+ 	bochs_dispi_write(bochs, VBE_DISPI_INDEX_X_OFFSET, vx);
+ 	bochs_dispi_write(bochs, VBE_DISPI_INDEX_Y_OFFSET, vy);
+ }
+diff --git a/drivers/gpu/drm/bochs/bochs_kms.c b/drivers/gpu/drm/bochs/bochs_kms.c
+index 5904eddc83a5..1f6aa11a1dc9 100644
+--- a/drivers/gpu/drm/bochs/bochs_kms.c
++++ b/drivers/gpu/drm/bochs/bochs_kms.c
+@@ -36,6 +36,7 @@ static void bochs_plane_update(struct bochs_device *bochs,
+ 	bochs_hw_setbase(bochs,
+ 			 state->crtc_x,
+ 			 state->crtc_y,
++			 gbo->width,
+ 			 gbo->bo.offset);
+ 	bochs_hw_setformat(bochs, state->fb->format);
+ }
 -- 
 2.18.1
 
