@@ -2,14 +2,14 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05DFD56FED
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 19:51:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED93556FFA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 19:51:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726668AbfFZRvT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 13:51:19 -0400
-Received: from mga01.intel.com ([192.55.52.88]:49817 "EHLO mga01.intel.com"
+        id S1726798AbfFZRvx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 13:51:53 -0400
+Received: from mga01.intel.com ([192.55.52.88]:49814 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726521AbfFZRvK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726524AbfFZRvK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 26 Jun 2019 13:51:10 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -17,7 +17,7 @@ Received: from orsmga005.jf.intel.com ([10.7.209.41])
   by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jun 2019 10:51:09 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.63,420,1557212400"; 
-   d="scan'208";a="337288594"
+   d="scan'208";a="337288597"
 Received: from rchatre-s.jf.intel.com ([10.54.70.76])
   by orsmga005.jf.intel.com with ESMTP; 26 Jun 2019 10:51:08 -0700
 From:   Reinette Chatre <reinette.chatre@intel.com>
@@ -26,9 +26,9 @@ To:     tglx@linutronix.de, fenghua.yu@intel.com, bp@alien8.de,
 Cc:     mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
         linux-kernel@vger.kernel.org,
         Reinette Chatre <reinette.chatre@intel.com>
-Subject: [PATCH 05/10] x86/resctrl: Associate pseudo-locked region's cache instance by id
-Date:   Wed, 26 Jun 2019 10:48:44 -0700
-Message-Id: <3d39a51bd6300db88218d253305f5dbe40ab5068.1561569068.git.reinette.chatre@intel.com>
+Subject: [PATCH 06/10] x86/resctrl: Introduce utility to return pseudo-locked cache portion
+Date:   Wed, 26 Jun 2019 10:48:45 -0700
+Message-Id: <f64478fab77211c05df848658ad523ce942ce3b1.1561569068.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.17.2
 In-Reply-To: <cover.1561569068.git.reinette.chatre@intel.com>
 References: <cover.1561569068.git.reinette.chatre@intel.com>
@@ -39,276 +39,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The properties of a cache pseudo-locked region that are maintained in
-its struct pseudo_lock_region include a pointer to the cache domain to
-which it belongs. A cache domain is a structure that is associated with
-a cache instance and when all CPUs associated with the cache instance go
-offline the cache domain associated with it is removed. When a cache
-domain is removed care is taken to not point to it anymore from the
-pseudo-locked region and all possible references to this removed
-information are ensured to be safe, often resulting in an error message
-to the user.
+To prevent eviction of pseudo-locked memory it is required that no
+other resource group uses any portion of a cache that is in use by
+a cache pseudo-locked region.
 
-Replace the cache domain pointer in the properties of the cache
-pseudo-locked region with the actual cache ID to eliminate the special
-care that needs to be taken when using this data while also making it
-possible to keep displaying cache pseudo-locked region information to
-the user even when the cache domain structure has been removed.
-Associating the cache ID with the pseudo-locked region will also
-simplify the restoration of the pseudo-locked region when the
-cache domain is restored when the CPUs come back online.
+Introduce a utility that will return a Capacity BitMask (CBM) indicating
+all portions of a provided cache instance being used for cache
+pseudo-locking. This CBM can be used in overlap checking as well as
+cache usage reporting.
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
- arch/x86/kernel/cpu/resctrl/core.c        |  7 -----
- arch/x86/kernel/cpu/resctrl/ctrlmondata.c | 14 ++-------
- arch/x86/kernel/cpu/resctrl/internal.h    |  4 +--
- arch/x86/kernel/cpu/resctrl/pseudo_lock.c | 38 +++++++++++++++++------
- arch/x86/kernel/cpu/resctrl/rdtgroup.c    | 21 +++++--------
- 5 files changed, 40 insertions(+), 44 deletions(-)
+ arch/x86/kernel/cpu/resctrl/internal.h    |  1 +
+ arch/x86/kernel/cpu/resctrl/pseudo_lock.c | 23 +++++++++++++++++++++++
+ 2 files changed, 24 insertions(+)
 
-diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
-index 03eb90d00af0..e043074a88cc 100644
---- a/arch/x86/kernel/cpu/resctrl/core.c
-+++ b/arch/x86/kernel/cpu/resctrl/core.c
-@@ -633,13 +633,6 @@ static void domain_remove_cpu(int cpu, struct rdt_resource *r)
- 			cancel_delayed_work(&d->cqm_limbo);
- 		}
- 
--		/*
--		 * rdt_domain "d" is going to be freed below, so clear
--		 * its pointer from pseudo_lock_region struct.
--		 */
--		if (d->plr)
--			d->plr->d = NULL;
--
- 		kfree(d->ctrl_val);
- 		kfree(d->mbps_val);
- 		bitmap_free(d->rmid_busy_llc);
-diff --git a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-index efbd54cc4e69..072f584cb238 100644
---- a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-+++ b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-@@ -291,7 +291,7 @@ static int parse_line(char *line, struct rdt_resource *r,
- 				 * region and return.
- 				 */
- 				rdtgrp->plr->r = r;
--				rdtgrp->plr->d = d;
-+				rdtgrp->plr->d_id = d->id;
- 				rdtgrp->plr->cbm = d->new_ctrl;
- 				d->plr = rdtgrp->plr;
- 				return 0;
-@@ -471,16 +471,8 @@ int rdtgroup_schemata_show(struct kernfs_open_file *of,
- 			for_each_alloc_enabled_rdt_resource(r)
- 				seq_printf(s, "%s:uninitialized\n", r->name);
- 		} else if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKED) {
--			if (!rdtgrp->plr->d) {
--				rdt_last_cmd_clear();
--				rdt_last_cmd_puts("Cache domain offline\n");
--				ret = -ENODEV;
--			} else {
--				seq_printf(s, "%s:%d=%x\n",
--					   rdtgrp->plr->r->name,
--					   rdtgrp->plr->d->id,
--					   rdtgrp->plr->cbm);
--			}
-+			seq_printf(s, "%s:%d=%x\n", rdtgrp->plr->r->name,
-+				   rdtgrp->plr->d_id, rdtgrp->plr->cbm);
- 		} else {
- 			closid = rdtgrp->closid;
- 			for_each_alloc_enabled_rdt_resource(r) {
 diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
-index e49b77283924..65f558a2e806 100644
+index 65f558a2e806..f17633cf4776 100644
 --- a/arch/x86/kernel/cpu/resctrl/internal.h
 +++ b/arch/x86/kernel/cpu/resctrl/internal.h
-@@ -149,7 +149,7 @@ struct mongroup {
-  * struct pseudo_lock_region - pseudo-lock region information
-  * @r:			RDT resource to which this pseudo-locked region
-  *			belongs
-- * @d:			RDT domain to which this pseudo-locked region
-+ * @d_id:		ID of cache instance to which this pseudo-locked region
-  *			belongs
-  * @cbm:		bitmask of the pseudo-locked region
-  * @lock_thread_wq:	waitqueue used to wait on the pseudo-locking thread
-@@ -169,7 +169,7 @@ struct mongroup {
-  */
- struct pseudo_lock_region {
- 	struct rdt_resource	*r;
--	struct rdt_domain	*d;
-+	int			d_id;
- 	u32			cbm;
- 	wait_queue_head_t	lock_thread_wq;
- 	int			thread_done;
+@@ -568,6 +568,7 @@ int rdtgroup_tasks_assigned(struct rdtgroup *r);
+ int rdtgroup_locksetup_enter(struct rdtgroup *rdtgrp);
+ int rdtgroup_locksetup_exit(struct rdtgroup *rdtgrp);
+ bool rdtgroup_cbm_overlaps_pseudo_locked(struct rdt_domain *d, unsigned long cbm);
++u32 rdtgroup_pseudo_locked_bits(struct rdt_resource *r, struct rdt_domain *d);
+ bool rdtgroup_pseudo_locked_in_hierarchy(struct rdt_domain *d);
+ int rdt_pseudo_lock_init(void);
+ void rdt_pseudo_lock_release(void);
 diff --git a/arch/x86/kernel/cpu/resctrl/pseudo_lock.c b/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
-index 3d73b08871cc..3ad0c5b59d34 100644
+index 3ad0c5b59d34..9a4dbdb72d3e 100644
 --- a/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
 +++ b/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
-@@ -272,14 +272,19 @@ static int pseudo_lock_cstates_constrain(struct pseudo_lock_region *plr,
-  */
- static void pseudo_lock_region_clear(struct pseudo_lock_region *plr)
- {
-+	struct rdt_domain *d;
-+
- 	plr->size = 0;
- 	plr->line_size = 0;
- 	kfree(plr->kmem);
- 	plr->kmem = NULL;
-+	if (plr->r && plr->d_id >= 0) {
-+		d = rdt_find_domain(plr->r, plr->d_id, NULL);
-+		if (!IS_ERR_OR_NULL(d))
-+			d->plr = NULL;
-+	}
- 	plr->r = NULL;
--	if (plr->d)
--		plr->d->plr = NULL;
--	plr->d = NULL;
-+	plr->d_id = -1;
- 	plr->cbm = 0;
- 	pseudo_lock_cstates_relax(plr);
- 	plr->debugfs_dir = NULL;
-@@ -305,10 +310,18 @@ static void pseudo_lock_region_clear(struct pseudo_lock_region *plr)
-  */
- static int pseudo_lock_region_init(struct pseudo_lock_region *plr)
- {
-+	struct rdt_domain *d;
- 	int ret;
- 
- 	/* Pick the first cpu we find that is associated with the cache. */
--	plr->cpu = cpumask_first(&plr->d->cpu_mask);
-+	d = rdt_find_domain(plr->r, plr->d_id, NULL);
-+	if (IS_ERR_OR_NULL(d)) {
-+		rdt_last_cmd_puts("Cache domain offline\n");
-+		ret = -ENODEV;
-+		goto out_region;
-+	}
-+
-+	plr->cpu = cpumask_first(&d->cpu_mask);
- 
- 	if (!cpu_online(plr->cpu)) {
- 		rdt_last_cmd_printf("CPU %u associated with cache not online\n",
-@@ -324,9 +337,9 @@ static int pseudo_lock_region_init(struct pseudo_lock_region *plr)
- 		goto out_region;
- 	}
- 
--	plr->size = rdtgroup_cbm_to_size(plr->r, plr->d, plr->cbm);
-+	plr->size = rdtgroup_cbm_to_size(plr->r, d, plr->cbm);
- 
--	ret = pseudo_lock_cstates_constrain(plr, &plr->d->cpu_mask);
-+	ret = pseudo_lock_cstates_constrain(plr, &d->cpu_mask);
- 	if (ret < 0)
- 		goto out_region;
- 
-@@ -358,6 +371,7 @@ static int pseudo_lock_init(struct rdtgroup *rdtgrp)
- 
- 	init_waitqueue_head(&plr->lock_thread_wq);
- 	INIT_LIST_HEAD(&plr->pm_reqs);
-+	plr->d_id = -1;
- 	rdtgrp->plr = plr;
- 	return 0;
+@@ -1630,3 +1630,26 @@ void rdt_pseudo_lock_release(void)
+ 	unregister_chrdev(pseudo_lock_major, "pseudo_lock");
+ 	pseudo_lock_major = 0;
  }
-@@ -1187,6 +1201,7 @@ static int pseudo_lock_measure_cycles(struct rdtgroup *rdtgrp, int sel)
- {
- 	struct pseudo_lock_region *plr = rdtgrp->plr;
- 	struct task_struct *thread;
-+	struct rdt_domain *d;
- 	unsigned int cpu;
- 	int ret = -1;
- 
-@@ -1198,13 +1213,14 @@ static int pseudo_lock_measure_cycles(struct rdtgroup *rdtgrp, int sel)
- 		goto out;
- 	}
- 
--	if (!plr->d) {
-+	d = rdt_find_domain(plr->r, plr->d_id, NULL);
-+	if (IS_ERR_OR_NULL(d)) {
- 		ret = -ENODEV;
- 		goto out;
- 	}
- 
- 	plr->thread_done = 0;
--	cpu = cpumask_first(&plr->d->cpu_mask);
-+	cpu = cpumask_first(&d->cpu_mask);
- 	if (!cpu_online(cpu)) {
- 		ret = -ENODEV;
- 		goto out;
-@@ -1501,6 +1517,7 @@ static int pseudo_lock_dev_mmap(struct file *filp, struct vm_area_struct *vma)
- 	struct pseudo_lock_region *plr;
- 	struct rdtgroup *rdtgrp;
- 	unsigned long physical;
-+	struct rdt_domain *d;
- 	unsigned long psize;
- 
- 	mutex_lock(&rdtgroup_mutex);
-@@ -1514,7 +1531,8 @@ static int pseudo_lock_dev_mmap(struct file *filp, struct vm_area_struct *vma)
- 
- 	plr = rdtgrp->plr;
- 
--	if (!plr->d) {
-+	d = rdt_find_domain(plr->r, plr->d_id, NULL);
-+	if (IS_ERR_OR_NULL(d)) {
- 		mutex_unlock(&rdtgroup_mutex);
- 		return -ENODEV;
- 	}
-@@ -1525,7 +1543,7 @@ static int pseudo_lock_dev_mmap(struct file *filp, struct vm_area_struct *vma)
- 	 * may be scheduled elsewhere and invalidate entries in the
- 	 * pseudo-locked region.
- 	 */
--	if (!cpumask_subset(&current->cpus_allowed, &plr->d->cpu_mask)) {
-+	if (!cpumask_subset(&current->cpus_allowed, &d->cpu_mask)) {
- 		mutex_unlock(&rdtgroup_mutex);
- 		return -EINVAL;
- 	}
-diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-index 721fd7b0b0dc..8e6bebd62646 100644
---- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-+++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-@@ -262,22 +262,23 @@ static int rdtgroup_cpus_show(struct kernfs_open_file *of,
- 			      struct seq_file *s, void *v)
- {
- 	struct rdtgroup *rdtgrp;
--	struct cpumask *mask;
-+	struct rdt_domain *d;
- 	int ret = 0;
- 
- 	rdtgrp = rdtgroup_kn_lock_live(of->kn);
- 
- 	if (rdtgrp) {
- 		if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKED) {
--			if (!rdtgrp->plr->d) {
-+			d = rdt_find_domain(rdtgrp->plr->r, rdtgrp->plr->d_id,
-+					    NULL);
-+			if (IS_ERR_OR_NULL(d)) {
- 				rdt_last_cmd_clear();
- 				rdt_last_cmd_puts("Cache domain offline\n");
- 				ret = -ENODEV;
- 			} else {
--				mask = &rdtgrp->plr->d->cpu_mask;
- 				seq_printf(s, is_cpu_list(of) ?
- 					   "%*pbl\n" : "%*pb\n",
--					   cpumask_pr_args(mask));
-+					   cpumask_pr_args(&d->cpu_mask));
- 			}
- 		} else {
- 			seq_printf(s, is_cpu_list(of) ? "%*pbl\n" : "%*pb\n",
-@@ -1301,16 +1302,8 @@ static int rdtgroup_size_show(struct kernfs_open_file *of,
- 	}
- 
- 	if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKED) {
--		if (!rdtgrp->plr->d) {
--			rdt_last_cmd_clear();
--			rdt_last_cmd_puts("Cache domain offline\n");
--			ret = -ENODEV;
--		} else {
--			seq_printf(s, "%*s:", max_name_width,
--				   rdtgrp->plr->r->name);
--			seq_printf(s, "%d=%u\n", rdtgrp->plr->d->id,
--				   rdtgrp->plr->size);
--		}
-+		seq_printf(s, "%*s:", max_name_width, rdtgrp->plr->r->name);
-+		seq_printf(s, "%d=%u\n", rdtgrp->plr->d_id, rdtgrp->plr->size);
- 		goto out;
- 	}
- 
++
++/**
++ * rdt_pseudo_locked_bits - Portions of cache instance used for pseudo-locking
++ * @r:		RDT resource to which cache instance belongs
++ * @d:		Cache instance
++ *
++ * Return: bits in CBM of @d that are used for cache pseudo-locking
++ */
++u32 rdtgroup_pseudo_locked_bits(struct rdt_resource *r, struct rdt_domain *d)
++{
++	struct rdtgroup *rdtgrp;
++	u32 pseudo_locked = 0;
++
++	list_for_each_entry(rdtgrp, &rdt_all_groups, rdtgroup_list) {
++		if (!rdtgrp->plr)
++			continue;
++		if (rdtgrp->plr->r && rdtgrp->plr->r->rid == r->rid &&
++		    rdtgrp->plr->d_id == d->id)
++			pseudo_locked |= rdtgrp->plr->cbm;
++	}
++
++	return pseudo_locked;
++}
 -- 
 2.17.2
 
