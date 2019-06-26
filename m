@@ -2,127 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A65C956FEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 19:51:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A4EF256FE6
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 19:50:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726688AbfFZRv3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 13:51:29 -0400
-Received: from mga01.intel.com ([192.55.52.88]:49817 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726559AbfFZRvL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 13:51:11 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jun 2019 10:51:09 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,420,1557212400"; 
-   d="scan'208";a="337288610"
-Received: from rchatre-s.jf.intel.com ([10.54.70.76])
-  by orsmga005.jf.intel.com with ESMTP; 26 Jun 2019 10:51:08 -0700
-From:   Reinette Chatre <reinette.chatre@intel.com>
-To:     tglx@linutronix.de, fenghua.yu@intel.com, bp@alien8.de,
-        tony.luck@intel.com
-Cc:     mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org,
-        Reinette Chatre <reinette.chatre@intel.com>
-Subject: [PATCH 10/10] x86/resctrl: Only pseudo-lock L3 cache when inclusive
-Date:   Wed, 26 Jun 2019 10:48:49 -0700
-Message-Id: <1e53b953147bca171814305ff764931d71eec09a.1561569068.git.reinette.chatre@intel.com>
-X-Mailer: git-send-email 2.17.2
-In-Reply-To: <cover.1561569068.git.reinette.chatre@intel.com>
-References: <cover.1561569068.git.reinette.chatre@intel.com>
-In-Reply-To: <cover.1561569068.git.reinette.chatre@intel.com>
-References: <cover.1561569068.git.reinette.chatre@intel.com>
+        id S1726447AbfFZRuR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 13:50:17 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:28116 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726223AbfFZRuR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 13:50:17 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5QHgM3u022896;
+        Wed, 26 Jun 2019 13:49:58 -0400
+Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2tcb7jnq41-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 26 Jun 2019 13:49:58 -0400
+Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
+        by ppma01wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x5QHdmme011574;
+        Wed, 26 Jun 2019 17:49:57 GMT
+Received: from b01cxnp22035.gho.pok.ibm.com (b01cxnp22035.gho.pok.ibm.com [9.57.198.25])
+        by ppma01wdc.us.ibm.com with ESMTP id 2t9by70tak-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 26 Jun 2019 17:49:57 +0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5QHnvj354395304
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 26 Jun 2019 17:49:57 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 28EBBB205F;
+        Wed, 26 Jun 2019 17:49:57 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1621CB2065;
+        Wed, 26 Jun 2019 17:49:57 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.26])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 26 Jun 2019 17:49:57 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 6D20D16C2F90; Wed, 26 Jun 2019 10:49:58 -0700 (PDT)
+Date:   Wed, 26 Jun 2019 10:49:58 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     linux@arm.linux.org.uk, dietmar.eggemann@arm.com,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH arm] Use common outgoing-CPU-notification code
+Message-ID: <20190626174958.GH26519@linux.ibm.com>
+Reply-To: paulmck@linux.ibm.com
+References: <20190611192410.GA27930@linux.ibm.com>
+ <20190617115809.GA3767@lakrids.cambridge.arm.com>
+ <20190617130657.GL26519@linux.ibm.com>
+ <20190626164159.GI20635@lakrids.cambridge.arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190626164159.GI20635@lakrids.cambridge.arm.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-26_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906260208
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cache pseudo-locking is a model specific feature and platforms
-supporting this feature are added by adding the x86 model data to the
-source code after cache pseudo-locking has been validated for the
-particular platform.
+On Wed, Jun 26, 2019 at 05:42:00PM +0100, Mark Rutland wrote:
+> On Mon, Jun 17, 2019 at 06:06:57AM -0700, Paul E. McKenney wrote:
+> > On Mon, Jun 17, 2019 at 12:58:19PM +0100, Mark Rutland wrote:
+> > > On Tue, Jun 11, 2019 at 12:24:10PM -0700, Paul E. McKenney wrote:
+> > > > This commit removes the open-coded CPU-offline notification with new
+> > > > common code.  In particular, this change avoids calling scheduler code
+> > > > using RCU from an offline CPU that RCU is ignoring.  This is a minimal
+> > > > change.  A more intrusive change might invoke the cpu_check_up_prepare()
+> > > > and cpu_set_state_online() functions at CPU-online time, which would
+> > > > allow onlining throw an error if the CPU did not go offline properly.
+> > > > 
+> > > > Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> > > > Cc: linux-arm-kernel@lists.infradead.org
+> > > > Cc: Russell King <linux@arm.linux.org.uk>
+> > > > Cc: Mark Rutland <mark.rutland@arm.com>
+> > > > Tested-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+> > > 
+> > > FWIW:
+> > > 
+> > > Acked-by: Mark Rutland <mark.rutland@arm.com>
+> > > 
+> > > On the assumption that Russell is ok with this, I think this should be
+> > > dropped into the ARM patch system [1].
+> > > 
+> > > Paul, are you familiar with that, or would you prefer that someone else
+> > > submits the patch there? I can do so if you'd like.
+> > 
+> > I never have used this system, so please do drop it in there!  Let me
+> > know when you have done so, and I will then drop it from -rcu.
+> 
+> After testing that multi_v7_defconfig built, I've just submitted this as
+> 8872/1:
+> 
+>   https://www.armlinux.org.uk/developer/patches/viewpatch.php?id=8872/1
 
-Indicating support for cache pseudo-locking for an entire platform is
-sufficient when the cache characteristics of the platform is the same
-for all instances of the platform. If this is not the case then an
-additional check needs to be added. In particular, it is currently only
-possible to pseudo-lock an L3 cache region if the L3 cache is inclusive
-of lower level caches. If the L3 cache is not inclusive then any
-pseudo-locked data would be evicted from the pseudo-locked region when
-it is moved to the L2 cache.
+Very good, thank you!  I will drop this from my -rcu tree.
 
-When some SKUs of a platform may have inclusive cache while other SKUs
-may have non inclusive cache it is necessary to, in addition of checking
-if the platform supports cache pseudo-locking, also check if the cache
-being pseudo-locked is inclusive.
-
-Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
----
- arch/x86/kernel/cpu/resctrl/pseudo_lock.c | 35 +++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
-
-diff --git a/arch/x86/kernel/cpu/resctrl/pseudo_lock.c b/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
-index 4e47ad582db6..e79f555d5226 100644
---- a/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
-+++ b/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
-@@ -125,6 +125,30 @@ static unsigned int get_cache_line_size(unsigned int cpu, int level)
- 	return 0;
- }
- 
-+/**
-+ * get_cache_inclusive - Determine if cache is inclusive of lower levels
-+ * @cpu: CPU with which cache is associated
-+ * @level: Cache level
-+ *
-+ * Context: @cpu has to be online.
-+ * Return: 1 if cache is inclusive of lower cache levels, 0 if cache is not
-+ *         inclusive of lower cache levels or on failure.
-+ */
-+static unsigned int get_cache_inclusive(unsigned int cpu, int level)
-+{
-+	struct cpu_cacheinfo *ci;
-+	int i;
-+
-+	ci = get_cpu_cacheinfo(cpu);
-+
-+	for (i = 0; i < ci->num_leaves; i++) {
-+		if (ci->info_list[i].level == level)
-+			return ci->info_list[i].inclusive;
-+	}
-+
-+	return 0;
-+}
-+
- /**
-  * pseudo_lock_minor_get - Obtain available minor number
-  * @minor: Pointer to where new minor number will be stored
-@@ -317,6 +341,12 @@ static int pseudo_lock_single_portion_valid(struct pseudo_lock_region *plr,
- 		goto err_cpu;
- 	}
- 
-+	if (p->r->cache_level == 3 &&
-+	    !get_cache_inclusive(plr->cpu, p->r->cache_level)) {
-+		rdt_last_cmd_puts("L3 cache not inclusive\n");
-+		goto err_cpu;
-+	}
-+
- 	plr->line_size = get_cache_line_size(plr->cpu, p->r->cache_level);
- 	if (plr->line_size == 0) {
- 		rdt_last_cmd_puts("Unable to compute cache line length\n");
-@@ -418,6 +448,11 @@ static int pseudo_lock_l2_l3_portions_valid(struct pseudo_lock_region *plr,
- 		goto err_cpu;
- 	}
- 
-+	if (!get_cache_inclusive(plr->cpu, l3_p->r->cache_level)) {
-+		rdt_last_cmd_puts("L3 cache not inclusive\n");
-+		goto err_cpu;
-+	}
-+
- 	return 0;
- 
- err_cpu:
--- 
-2.17.2
-
+							Thanx, Paul
