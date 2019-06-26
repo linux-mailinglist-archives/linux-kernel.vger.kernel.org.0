@@ -2,124 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BD9256963
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 14:40:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42E6456977
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 14:41:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727580AbfFZMj6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 08:39:58 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:33465 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726339AbfFZMj5 (ORCPT
+        id S1727642AbfFZMlS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 08:41:18 -0400
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.51]:17764 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727618AbfFZMlP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 08:39:57 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5QCdkDH4105229
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Wed, 26 Jun 2019 05:39:46 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5QCdkDH4105229
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019061801; t=1561552787;
-        bh=/r/AE4ylrOO+lqke/hJ0Mp6Pn97UyIiCRNUe6UMTyb8=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=xek1I5sevC8u9djP9PGzcR2ma9D8m5HCenh3e3qIpZ0iiehKdUAnEnAZUL3v6E9MC
-         zudXh5Z4onlLgpcChUVJF7HrJGgV9GhIuHqmN8+Aa32ZnzuPypuFTSCyTt60AeARF9
-         S3sskxEGIFj38B5DEt7lLu0h7RpG3nQJpsVlyJlVeVWFlQhmiyMeXjKBXVKryAiYyQ
-         AntnpW6tpKcumzXN/hjt97IKmMq7oe5G6moaCywhVetljLTEJCnH/AiLNh0VVSweBk
-         LNNfSest4Dgn2blKGefMLUXaf8WqDb7nu/Hhvfq6DXdQl2c6g03idRXlDOE1aFtj7x
-         Oxu1LHUSoK9/g==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5QCdjcB4105224;
-        Wed, 26 Jun 2019 05:39:45 -0700
-Date:   Wed, 26 Jun 2019 05:39:45 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Vincenzo Frascino <tipbot@zytor.com>
-Message-ID: <tip-3acf4be235280f14d838581a750532219d67facc@git.kernel.org>
-Cc:     vincenzo.frascino@arm.com, cai@lca.pw, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de
-Reply-To: cai@lca.pw, vincenzo.frascino@arm.com, mingo@kernel.org,
-          linux-kernel@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de
-In-Reply-To: <20190626113632.9295-1-vincenzo.frascino@arm.com>
-References: <20190626113632.9295-1-vincenzo.frascino@arm.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:timers/vdso] arm64: vdso: Fix compilation with clang older
- than 8
-Git-Commit-ID: 3acf4be235280f14d838581a750532219d67facc
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=0.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_12_24,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
-        DKIM_VALID_EF autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+        Wed, 26 Jun 2019 08:41:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1561552871;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=E23wCGPFOoYgw+3FSRZ9zJVg+DR9nmCJTrte3qyokfc=;
+        b=Y8eo5W1ExqUMNngchdOKaTtOYjsKtOryH06WybysFl4JiyGpSGlYBgZcizgdF16xeC
+        db2UMaKSjYPEL5kTC3aJmS7bhfb0JGobNMaDj+8zbNiJ7GwoNdNTnHBDymg72irGLNSM
+        UIz5k2yJuWp51yuZCz/SzamaT+mtOMD2bdosIffnI3Vs6aveBodvBgDIv5kIpt3giLmQ
+        I4DFrd07m4X6SbDr4LOSJOOz7Q+9Wk6kyRiT+WbzbeHSkKVT+KJkFesd4pcZ5/VTHIq1
+        gERVn3aXMRuxVJ2fFW4S12AvKJMbOmjlSrUvK2ymxddGoUObOodc5cHmRpzplsiablj4
+        GhGg==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj5Qpw97WFDlSUXA0Pfg=="
+X-RZG-CLASS-ID: mo00
+Received: from imac.fritz.box
+        by smtp.strato.de (RZmta 44.24 DYNA|AUTH)
+        with ESMTPSA id V09459v5QCepbN8
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Wed, 26 Jun 2019 14:40:51 +0200 (CEST)
+Content-Type: text/plain; charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Subject: Re: [PATCH v3 0/5] drm/panel-simple: Add panel parameters for ortustech-com37h3m05dtc/99dtc and sharp-lq070y3dg3b
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <20190626073350.GA15288@ravnborg.org>
+Date:   Wed, 26 Jun 2019 14:40:50 +0200
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        David Airlie <airlied@linux.ie>, marek.belisko@gmail.com,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        tomi.valkeinen@ti.com, Thierry Reding <thierry.reding@gmail.com>,
+        dri-devel@lists.freedesktop.org, letux-kernel@openphoenux.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <CF1D9929-58D2-4E75-932A-870D11BBFBDE@goldelico.com>
+References: <cover.1559905870.git.hns@goldelico.com> <0842FF88-D8E0-441B-837B-769C2EF6C1CB@goldelico.com> <20190625204356.GF18595@ravnborg.org> <20190626073350.GA15288@ravnborg.org>
+To:     Sam Ravnborg <sam@ravnborg.org>
+X-Mailer: Apple Mail (2.3124)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  3acf4be235280f14d838581a750532219d67facc
-Gitweb:     https://git.kernel.org/tip/3acf4be235280f14d838581a750532219d67facc
-Author:     Vincenzo Frascino <vincenzo.frascino@arm.com>
-AuthorDate: Wed, 26 Jun 2019 12:36:32 +0100
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Wed, 26 Jun 2019 14:26:55 +0200
+Hi Sam,
 
-arm64: vdso: Fix compilation with clang older than 8
+> Am 26.06.2019 um 09:33 schrieb Sam Ravnborg <sam@ravnborg.org>:
+>=20
+> Hi Nikolaus.
+>=20
+>>>=20
+>>> any progress towards merging this somewhere? It did not yet arrive =
+in linux-next.
+>>>=20
+>>> BTW: should also be applied to 5.2
+>> The drm bits are reviewed. The DT bits needs OK from DT people.
+>> When we have OK from DT people we can apply them all to =
+drm-misc-next.
+>=20
+> I got OK on irc from Rob to process these.
+> All patches are now applied to drm-misc-next.
 
-clang versions older than 8 do not support -mcmodel=tiny.
+Thanks for taking care of this!
 
-Add a check to the vDSO Makefile for arm64 to remove the flag when
-these versions of the compiler are detected.
+>=20
+> 	Sam
 
-Reported-by: Qian Cai <cai@lca.pw>
-Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Qian Cai <cai@lca.pw>
-Cc: linux-arch@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-mips@vger.kernel.org
-Cc: linux-kselftest@vger.kernel.org
-Cc: catalin.marinas@arm.com
-Cc: will.deacon@arm.com
-Cc: arnd@arndb.de
-Cc: linux@armlinux.org.uk
-Cc: ralf@linux-mips.org
-Cc: paul.burton@mips.com
-Cc: daniel.lezcano@linaro.org
-Cc: salyzyn@android.com
-Cc: pcc@google.com
-Cc: shuah@kernel.org
-Cc: 0x7f454c46@gmail.com
-Cc: linux@rasmusvillemoes.dk
-Cc: huw@codeweavers.com
-Cc: sthotton@marvell.com
-Cc: andre.przywara@arm.com
-Cc: luto@kernel.org
-Link: https://lkml.kernel.org/r/20190626113632.9295-1-vincenzo.frascino@arm.com
+BR,
+Nikolaus
 
----
- arch/arm64/kernel/vdso/Makefile | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/arch/arm64/kernel/vdso/Makefile b/arch/arm64/kernel/vdso/Makefile
-index ec81d28aeb5d..4ab863045188 100644
---- a/arch/arm64/kernel/vdso/Makefile
-+++ b/arch/arm64/kernel/vdso/Makefile
-@@ -38,6 +38,13 @@ else
- CFLAGS_vgettimeofday.o = -O2 -mcmodel=tiny -include $(c-gettimeofday-y)
- endif
- 
-+# Clang versions less than 8 do not support -mcmodel=tiny
-+ifeq ($(CONFIG_CC_IS_CLANG), y)
-+  ifeq ($(shell test $(CONFIG_CLANG_VERSION) -lt 80000; echo $$?),0)
-+    CFLAGS_REMOVE_vgettimeofday.o += -mcmodel=tiny
-+  endif
-+endif
-+
- # Disable gcov profiling for VDSO code
- GCOV_PROFILE := n
- 
