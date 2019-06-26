@@ -2,152 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E752B560E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 05:53:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 85ED855FBB
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 05:42:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727816AbfFZDtk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 23:49:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54856 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727362AbfFZDnf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 23:43:35 -0400
-Received: from sasha-vm.mshome.net (mobile-107-77-172-74.mobile.att.net [107.77.172.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0B02C216E3;
-        Wed, 26 Jun 2019 03:43:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561520613;
-        bh=UFcJ5ROrrZtcdmtox+gU2VxAuKCTi0iW/h7Wdx8cd98=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=t+tNxe4ngtIYYmLPZKzPczShRiBTF7Z9fqiCbOEfGIutIJ+wVBeTrDQ4A4e+acwFe
-         jp1Y66kctlAa+wjGBIZrSTMLdJxKlGIB0iFIaZk16FVJ2numR8aHseax1sGKqKrnZ3
-         A9Kl8K8EMMIl1mnZOtvG0B0MBcp+i0HPLHoBI240=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Wei Li <liwei391@huawei.com>, Steven Rostedt <rostedt@goodmis.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.1 51/51] ftrace: Fix NULL pointer dereference in free_ftrace_func_mapper()
-Date:   Tue, 25 Jun 2019 23:41:07 -0400
-Message-Id: <20190626034117.23247-51-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190626034117.23247-1-sashal@kernel.org>
-References: <20190626034117.23247-1-sashal@kernel.org>
+        id S1726884AbfFZDlo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 23:41:44 -0400
+Received: from mail-eopbgr800083.outbound.protection.outlook.com ([40.107.80.83]:3956
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726867AbfFZDln (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 23:41:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=beT+GnWI52iaZbiNZfwAiwcuJMFMKlvcJrLgDOZUrWw=;
+ b=XZtnwI4n/Zw/eG162D/wwY7bpOjTcW/4DdgtfmUxTezNQtE7/MB0gonkjfkhYU83X71Rayqr6P3K0qX8CI94/fXgluw9jLYX+HSmDPXO3J08R3wxIV4uicVgUbxAyjknp/4crHCla82Nnb6LYFIfI96kWJfS8V5hkdrSt6/kjmY=
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
+ BYAPR05MB4808.namprd05.prod.outlook.com (52.135.235.94) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2008.13; Wed, 26 Jun 2019 03:41:37 +0000
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::f493:3bba:aabf:dd58]) by BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::f493:3bba:aabf:dd58%7]) with mapi id 15.20.2008.007; Wed, 26 Jun 2019
+ 03:41:37 +0000
+From:   Nadav Amit <namit@vmware.com>
+To:     Andy Lutomirski <luto@kernel.org>
+CC:     Dave Hansen <dave.hansen@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
+Subject: Re: [PATCH 6/9] KVM: x86: Provide paravirtualized flush_tlb_multi()
+Thread-Topic: [PATCH 6/9] KVM: x86: Provide paravirtualized flush_tlb_multi()
+Thread-Index: AQHVIbQq2DFUsKveqk6vAXwf0z5KPqas+eUAgABThoCAAA9+AIAAAcoA
+Date:   Wed, 26 Jun 2019 03:41:37 +0000
+Message-ID: <35755C67-E8EB-48C3-8343-BB9ABEB4E32C@vmware.com>
+References: <20190613064813.8102-1-namit@vmware.com>
+ <20190613064813.8102-7-namit@vmware.com>
+ <cb28f2b4-92f0-f075-648e-dddfdbdd2e3c@intel.com>
+ <401C4384-98A1-4C27-8F71-4848F4B4A440@vmware.com>
+ <CALCETrWcUWw8ep-n6RaOeojnL924xOM7g7eb9g=3DRwOHQAgnA@mail.gmail.com>
+In-Reply-To: <CALCETrWcUWw8ep-n6RaOeojnL924xOM7g7eb9g=3DRwOHQAgnA@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=namit@vmware.com; 
+x-originating-ip: [204.134.128.110]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 58e169ea-a6fd-447a-13f4-08d6f9e83183
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BYAPR05MB4808;
+x-ms-traffictypediagnostic: BYAPR05MB4808:
+x-microsoft-antispam-prvs: <BYAPR05MB4808EF17C9331CF062C6DB7AD0E20@BYAPR05MB4808.namprd05.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 00808B16F3
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(136003)(396003)(346002)(376002)(366004)(54534003)(51444003)(189003)(199004)(5660300002)(316002)(36756003)(7416002)(66446008)(2616005)(53546011)(14454004)(2906002)(66476007)(86362001)(99286004)(81166006)(81156014)(64756008)(8936002)(3846002)(102836004)(66946007)(6116002)(6506007)(76176011)(26005)(305945005)(7736002)(486006)(8676002)(476003)(73956011)(68736007)(91956017)(76116006)(54906003)(71190400001)(4326008)(66556008)(478600001)(71200400001)(6436002)(6916009)(229853002)(14444005)(6512007)(33656002)(256004)(66066001)(446003)(25786009)(6246003)(6486002)(11346002)(186003)(53936002);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB4808;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: vmware.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 3ctMZzIE1fOAPiFXBafjRtThAFxcrHMnw30nOzYOFjLuKuURfF+DVu08KbdXd1nniK14f45SJbDiLGIOf+bAHAH9zEUx/cO2O5Y+Lye9GLPEl9TktP3aSDsaF8kExE1vU9ckB7eEjVVnPZGrDkjlxbEn9ebcGFcSM8ebHFGFHRDLTRvMIoRAOjQSKH1fVOMiihH38Xi8ENzyf9Xyrkd8W0YdeL/Ha7JcfKe4MZbiKyksQpbJqLzeC7kuAN25//I+pnrSzfl6Q2w6UjafUwUnVbGqyBr+FDAIV7Wyzqiu09LM4ePn2E0FfO1lJ0K5NqK3LEGuXfPuzHL+3ieHTnxgEyc4ZwXniIxuXlS1A1Wzd/xhF6hJcqFwpDnAsOmwn7YiT01/QVgYUgplt6PyDBKIA9dS77V7Xz6oKCDrXnEz7gE=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <BB0FFD6350543642ACE024F2FCB38150@namprd05.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: vmware.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 58e169ea-a6fd-447a-13f4-08d6f9e83183
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Jun 2019 03:41:37.6757
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: namit@vmware.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB4808
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wei Li <liwei391@huawei.com>
-
-[ Upstream commit 04e03d9a616c19a47178eaca835358610e63a1dd ]
-
-The mapper may be NULL when called from register_ftrace_function_probe()
-with probe->data == NULL.
-
-This issue can be reproduced as follow (it may be covered by compiler
-optimization sometime):
-
-/ # cat /sys/kernel/debug/tracing/set_ftrace_filter
-#### all functions enabled ####
-/ # echo foo_bar:dump > /sys/kernel/debug/tracing/set_ftrace_filter
-[  206.949100] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
-[  206.952402] Mem abort info:
-[  206.952819]   ESR = 0x96000006
-[  206.955326]   Exception class = DABT (current EL), IL = 32 bits
-[  206.955844]   SET = 0, FnV = 0
-[  206.956272]   EA = 0, S1PTW = 0
-[  206.956652] Data abort info:
-[  206.957320]   ISV = 0, ISS = 0x00000006
-[  206.959271]   CM = 0, WnR = 0
-[  206.959938] user pgtable: 4k pages, 48-bit VAs, pgdp=0000000419f3a000
-[  206.960483] [0000000000000000] pgd=0000000411a87003, pud=0000000411a83003, pmd=0000000000000000
-[  206.964953] Internal error: Oops: 96000006 [#1] SMP
-[  206.971122] Dumping ftrace buffer:
-[  206.973677]    (ftrace buffer empty)
-[  206.975258] Modules linked in:
-[  206.976631] Process sh (pid: 281, stack limit = 0x(____ptrval____))
-[  206.978449] CPU: 10 PID: 281 Comm: sh Not tainted 5.2.0-rc1+ #17
-[  206.978955] Hardware name: linux,dummy-virt (DT)
-[  206.979883] pstate: 60000005 (nZCv daif -PAN -UAO)
-[  206.980499] pc : free_ftrace_func_mapper+0x2c/0x118
-[  206.980874] lr : ftrace_count_free+0x68/0x80
-[  206.982539] sp : ffff0000182f3ab0
-[  206.983102] x29: ffff0000182f3ab0 x28: ffff8003d0ec1700
-[  206.983632] x27: ffff000013054b40 x26: 0000000000000001
-[  206.984000] x25: ffff00001385f000 x24: 0000000000000000
-[  206.984394] x23: ffff000013453000 x22: ffff000013054000
-[  206.984775] x21: 0000000000000000 x20: ffff00001385fe28
-[  206.986575] x19: ffff000013872c30 x18: 0000000000000000
-[  206.987111] x17: 0000000000000000 x16: 0000000000000000
-[  206.987491] x15: ffffffffffffffb0 x14: 0000000000000000
-[  206.987850] x13: 000000000017430e x12: 0000000000000580
-[  206.988251] x11: 0000000000000000 x10: cccccccccccccccc
-[  206.988740] x9 : 0000000000000000 x8 : ffff000013917550
-[  206.990198] x7 : ffff000012fac2e8 x6 : ffff000012fac000
-[  206.991008] x5 : ffff0000103da588 x4 : 0000000000000001
-[  206.991395] x3 : 0000000000000001 x2 : ffff000013872a28
-[  206.991771] x1 : 0000000000000000 x0 : 0000000000000000
-[  206.992557] Call trace:
-[  206.993101]  free_ftrace_func_mapper+0x2c/0x118
-[  206.994827]  ftrace_count_free+0x68/0x80
-[  206.995238]  release_probe+0xfc/0x1d0
-[  206.995555]  register_ftrace_function_probe+0x4a8/0x868
-[  206.995923]  ftrace_trace_probe_callback.isra.4+0xb8/0x180
-[  206.996330]  ftrace_dump_callback+0x50/0x70
-[  206.996663]  ftrace_regex_write.isra.29+0x290/0x3a8
-[  206.997157]  ftrace_filter_write+0x44/0x60
-[  206.998971]  __vfs_write+0x64/0xf0
-[  206.999285]  vfs_write+0x14c/0x2f0
-[  206.999591]  ksys_write+0xbc/0x1b0
-[  206.999888]  __arm64_sys_write+0x3c/0x58
-[  207.000246]  el0_svc_common.constprop.0+0x408/0x5f0
-[  207.000607]  el0_svc_handler+0x144/0x1c8
-[  207.000916]  el0_svc+0x8/0xc
-[  207.003699] Code: aa0003f8 a9025bf5 aa0103f5 f946ea80 (f9400303)
-[  207.008388] ---[ end trace 7b6d11b5f542bdf1 ]---
-[  207.010126] Kernel panic - not syncing: Fatal exception
-[  207.011322] SMP: stopping secondary CPUs
-[  207.013956] Dumping ftrace buffer:
-[  207.014595]    (ftrace buffer empty)
-[  207.015632] Kernel Offset: disabled
-[  207.017187] CPU features: 0x002,20006008
-[  207.017985] Memory Limit: none
-[  207.019825] ---[ end Kernel panic - not syncing: Fatal exception ]---
-
-Link: http://lkml.kernel.org/r/20190606031754.10798-1-liwei391@huawei.com
-
-Signed-off-by: Wei Li <liwei391@huawei.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- kernel/trace/ftrace.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index 045e7f46a74a..2469d54b3e43 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -4230,10 +4230,13 @@ void free_ftrace_func_mapper(struct ftrace_func_mapper *mapper,
- 	struct ftrace_func_entry *entry;
- 	struct ftrace_func_map *map;
- 	struct hlist_head *hhd;
--	int size = 1 << mapper->hash.size_bits;
--	int i;
-+	int size, i;
-+
-+	if (!mapper)
-+		return;
- 
- 	if (free_func && mapper->hash.count) {
-+		size = 1 << mapper->hash.size_bits;
- 		for (i = 0; i < size; i++) {
- 			hhd = &mapper->hash.buckets[i];
- 			hlist_for_each_entry(entry, hhd, hlist) {
--- 
-2.20.1
-
+PiBPbiBKdW4gMjUsIDIwMTksIGF0IDg6MzUgUE0sIEFuZHkgTHV0b21pcnNraSA8bHV0b0BrZXJu
+ZWwub3JnPiB3cm90ZToNCj4gDQo+IE9uIFR1ZSwgSnVuIDI1LCAyMDE5IGF0IDc6MzkgUE0gTmFk
+YXYgQW1pdCA8bmFtaXRAdm13YXJlLmNvbT4gd3JvdGU6DQo+Pj4gT24gSnVuIDI1LCAyMDE5LCBh
+dCAyOjQwIFBNLCBEYXZlIEhhbnNlbiA8ZGF2ZS5oYW5zZW5AaW50ZWwuY29tPiB3cm90ZToNCj4+
+PiANCj4+PiBPbiA2LzEyLzE5IDExOjQ4IFBNLCBOYWRhdiBBbWl0IHdyb3RlOg0KPj4+PiBTdXBw
+b3J0IHRoZSBuZXcgaW50ZXJmYWNlIG9mIGZsdXNoX3RsYl9tdWx0aSwgd2hpY2ggYWxzbyBmbHVz
+aGVzIHRoZQ0KPj4+PiBsb2NhbCBDUFUncyBUTEIsIGluc3RlYWQgb2YgZmx1c2hfdGxiX290aGVy
+cyB0aGF0IGRvZXMgbm90LiBUaGlzDQo+Pj4+IGludGVyZmFjZSBpcyBtb3JlIHBlcmZvcm1hbnQg
+c2luY2UgaXQgcGFyYWxsZWxpemUgcmVtb3RlIGFuZCBsb2NhbCBUTEINCj4+Pj4gZmx1c2hlcy4N
+Cj4+Pj4gDQo+Pj4+IFRoZSBhY3R1YWwgaW1wbGVtZW50YXRpb24gb2YgZmx1c2hfdGxiX211bHRp
+KCkgaXMgYWxtb3N0IGlkZW50aWNhbCB0bw0KPj4+PiB0aGF0IG9mIGZsdXNoX3RsYl9vdGhlcnMo
+KS4NCj4+PiANCj4+PiBUaGlzIGNvbmZ1c2VkIG1lIGEgYml0LiAgSSB0aG91Z2h0IHdlIGRpZG4n
+dCBzdXBwb3J0IHBhcmF2aXJ0dWFsaXplZA0KPj4+IGZsdXNoX3RsYl9tdWx0aSgpIGZyb20gcmVh
+ZGluZyBlYXJsaWVyIGluIHRoZSBzZXJpZXMuDQo+Pj4gDQo+Pj4gQnV0LCBpdCBzZWVtcyBsaWtl
+IHRoYXQgbWlnaHQgYmUgWGVuLW9ubHkgYW5kIGRvZXNuJ3QgYXBwbHkgdG8gS1ZNIGFuZA0KPj4+
+IHBhcmF2aXJ0dWFsaXplZCBLVk0gaGFzIG5vIHByb2JsZW0gc3VwcG9ydGluZyBmbHVzaF90bGJf
+bXVsdGkoKS4gIElzDQo+Pj4gdGhhdCByaWdodD8gIEl0IG1pZ2h0IGJlIGdvb2QgdG8gaW5jbHVk
+ZSBzb21lIG9mIHRoYXQgYmFja2dyb3VuZCBpbiB0aGUNCj4+PiBjaGFuZ2Vsb2cgdG8gc2V0IHRo
+ZSBjb250ZXh0Lg0KPj4gDQo+PiBJ4oCZbGwgdHJ5IHRvIGltcHJvdmUgdGhlIGNoYW5nZS1sb2dz
+IGEgYml0LiBUaGVyZSBpcyBubyBpbmhlcmVudCByZWFzb24gZm9yDQo+PiBQViBUTEItZmx1c2hl
+cnMgbm90IHRvIGltcGxlbWVudCB0aGVpciBvd24gZmx1c2hfdGxiX211bHRpKCkuIEl0IGlzIGxl
+ZnQNCj4+IGZvciBmdXR1cmUgd29yaywgYW5kIGhlcmUgYXJlIHNvbWUgcmVhc29uczoNCj4+IA0K
+Pj4gMS4gSHlwZXItVi9YZW4gVExCLWZsdXNoaW5nIGNvZGUgaXMgbm90IHZlcnkgc2ltcGxlDQo+
+PiAyLiBJIGRvbuKAmXQgaGF2ZSBhIHByb3BlciBzZXR1cA0KPj4gMy4gSSBhbSBsYXp5DQo+IA0K
+PiBJbiB0aGUgbG9uZyBydW4sIEkgdGhpbmsgdGhhdCB3ZSdyZSBnb2luZyB0byB3YW50IGEgd2F5
+IGZvciBvbmUgQ1BVIHRvDQo+IGRvIGEgcmVtb3RlIGZsdXNoIGFuZCB0aGVuLCB3aXRoIGFwcHJv
+cHJpYXRlIGxvY2tpbmcsIHVwZGF0ZSB0aGUNCj4gdGxiX2dlbiBmaWVsZHMgZm9yIHRoZSByZW1v
+dGUgQ1BVLiAgR2V0dGluZyB0aGlzIHJpZ2h0IG1heSBiZSBhIGJpdA0KPiBub250cml2aWFsLg0K
+DQpXaGF0IGRvIHlvdSBtZWFuIGJ5IOKAnGRvIGEgcmVtb3RlIGZsdXNo4oCdPw0KDQo=
