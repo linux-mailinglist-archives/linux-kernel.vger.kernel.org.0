@@ -2,71 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47A025719F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 21:23:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E13A3571BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 21:30:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726571AbfFZTXR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 15:23:17 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:50184 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726339AbfFZTXQ (ORCPT
+        id S1726480AbfFZTa3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 15:30:29 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:34202 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726239AbfFZTa2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 15:23:16 -0400
-Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hgDVf-0004JZ-MD; Wed, 26 Jun 2019 21:23:11 +0200
-Date:   Wed, 26 Jun 2019 21:23:10 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     "Raslan, KarimAllah" <karahmed@amazon.de>
-cc:     "boris.ostrovsky@oracle.com" <boris.ostrovsky@oracle.com>,
-        "joao.m.martins@oracle.com" <joao.m.martins@oracle.com>,
-        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
-        "ankur.a.arora@oracle.com" <ankur.a.arora@oracle.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "kernellwp@gmail.com" <kernellwp@gmail.com>,
-        "mtosatti@redhat.com" <mtosatti@redhat.com>
-Subject: Re: cputime takes cstate into consideration
-In-Reply-To: <1561575536.25880.10.camel@amazon.de>
-Message-ID: <alpine.DEB.2.21.1906262119430.32342@nanos.tec.linutronix.de>
-References: <CANRm+Cyge6viybs63pt7W-cRdntx+wfyOq5EWE2qmEQ71SzMHg@mail.gmail.com>  <alpine.DEB.2.21.1906261211410.32342@nanos.tec.linutronix.de>  <20190626145413.GE6753@char.us.oracle.com> <1561575536.25880.10.camel@amazon.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 26 Jun 2019 15:30:28 -0400
+Received: by mail-io1-f66.google.com with SMTP id k8so4455638iot.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 12:30:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZMDBPgUsvp65+GDLE8L0NRSWZecIdZ0UtHWFD2Htqnw=;
+        b=f8TY1v47mlNmVd21P8YuLUhvPcChePJhG5luDNvNOtOVM0rQxgkmqCwMDmf30Pudhf
+         Z2bz0ZwXvpg8OX8mhH5NXCZszTpkwlUwUseq96CumbKwcURP9hZVRxWVqkhb/A+4g1V7
+         DEcJcWvGjKFFkLhlwMo6C03JF99srWG00HP6c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZMDBPgUsvp65+GDLE8L0NRSWZecIdZ0UtHWFD2Htqnw=;
+        b=OsAUheY7SaYpK5/0GCn+kz1ORxy9X40MallgCgek2M++qCzXYNuyvR20Cu4YOqgvnc
+         DsuW6PDGQnE4Vme+5tPvaSVZpTdJhaa3x/BR3LCTBwdCsiNbP9OttL91CxXYLSKXKw+s
+         nrTZZrX7z2fH5IP5R2fU24eaBF1eYjekfmj63NMwjY/po4qtLQUYnIs1E7fQ7d6s5mGr
+         vtuKrYe7FHfgkjSIe9m+sazJKtUtkRCrCb6gdXtetYCZ5w014IwzIv77ppT3WUkmmyM0
+         kEurizJCurGdPTofP8Yw5iVcn45Uvfc/LbG5sWkkynC3aX1JE9MJO0owTQ3hzuxjXMWE
+         Fl7g==
+X-Gm-Message-State: APjAAAXPZ89JW6Gx1ZqemOYcLVDyG5ZSd2r+0TOPg3MDrrR1gWASdUir
+        4jvqxKemMCeLUv8hif4J3CaPESIqRPQ=
+X-Google-Smtp-Source: APXvYqwEIf3Vx+eOPtp+lY//B1U0QFNT/E09Fvha13rS77spEuiw6231i7DSWVG0xldiYEhNwPGrTw==
+X-Received: by 2002:a6b:3b89:: with SMTP id i131mr6484407ioa.33.1561577427995;
+        Wed, 26 Jun 2019 12:30:27 -0700 (PDT)
+Received: from mail-io1-f53.google.com (mail-io1-f53.google.com. [209.85.166.53])
+        by smtp.gmail.com with ESMTPSA id q1sm18552890ios.86.2019.06.26.12.30.27
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Wed, 26 Jun 2019 12:30:27 -0700 (PDT)
+Received: by mail-io1-f53.google.com with SMTP id e5so4533895iok.4
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 12:30:27 -0700 (PDT)
+X-Received: by 2002:a5e:8f08:: with SMTP id c8mr6956221iok.52.1561577085074;
+ Wed, 26 Jun 2019 12:24:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-836335723-1561576991=:32342"
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+References: <CGME20190619211151epcas3p4dbb163c034afa4063869c761b93e24b1@epcas3p4.samsung.com>
+ <20190619210718.134951-1-dianders@chromium.org> <bec87373-48cc-0c55-9662-a74a7d2a47a0@samsung.com>
+ <CAD=FV=WJBkYfRznh6aAyvgKgHb8-AG0hMORdKA0BXCL89wG_7w@mail.gmail.com> <a94d9554-fc93-a2d0-9a30-9604db8c123e@samsung.com>
+In-Reply-To: <a94d9554-fc93-a2d0-9a30-9604db8c123e@samsung.com>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Wed, 26 Jun 2019 12:24:32 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=VNR1z_WL7rrfv-O5cXFjDowq3qZe-3tg9o9YHjQgyCAA@mail.gmail.com>
+Message-ID: <CAD=FV=VNR1z_WL7rrfv-O5cXFjDowq3qZe-3tg9o9YHjQgyCAA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] drm/bridge/synopsys: dw-hdmi: Handle audio for
+ more clock rates
+To:     Andrzej Hajda <a.hajda@samsung.com>
+Cc:     Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Dylan Reid <dgreid@chromium.org>,
+        Cheng-Yi Chiang <cychiang@chromium.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Hi,
 
---8323329-836335723-1561576991=:32342
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+On Wed, Jun 26, 2019 at 2:56 AM Andrzej Hajda <a.hajda@samsung.com> wrote:
+>
+> >   AKA: anyone using auto-CTS won't notice any change
+> > at all.  I guess the question is: with Auto-CTS should you pick the
+> > "ideal" 6272 or a value that allows CTS to be the closest to integral
+> > as possible.  By reading between the lines of the spec, I decided that
+> > it was slightly more important to allow for an integral CTS.  If
+> > achieving an integral CTS wasn't a goal then the spec wouldn't even
+> > have listed special cases for any of the clock rates.  We would just
+> > be using the ideal N and Auto-CTS and be done with it.  The whole
+> > point of the tables they list is to make CTS integral.
+>
+>
+> Specification recommends many contradictory things without explicit
+> prioritization, at least I have not found it.
+>
+> So we should relay on our intuition.
+>
+> I guess that with auto-cts N we should follow recommendation - I guess
+> most sinks have been better tested with recommended values.
+>
+> So what with non-auto-cts case:
+>
+> 1. How many devices do not have auto-cts? how many alternative TMDS
+> clocks we have? Maybe it is theoretical problem.
+>
+> 2. Alternating CTS in software is possible, but quite
+> complicated/annoying, but at least it will follow recommendation :)
 
-On Wed, 26 Jun 2019, Raslan, KarimAllah wrote:
-> On Wed, 2019-06-26 at 10:54 -0400, Konrad Rzeszutek Wilk wrote:
-> > There were some ideas that Ankur (CC-ed) mentioned to me of using the perf
-> > counters (in the host) to sample the guest and construct a better
-> > accounting idea of what the guest does. That way the dashboard
-> > from the host would not show 100% CPU utilization.
-> 
-> You can either use the UNHALTED cycles perf-counter or you can use MPERF/APERF 
-> MSRs for that. (sorry I got distracted and forgot to send the patch)
+It is OK w/ me if we want to drop my patch.  With the auto-CTS patch
+it shouldn't matter anymore.  ...but I still wanted to post it to the
+list for posterity in case it is ever useful for someone else.
 
-Sure, but then you conflict with the other people who fight tooth and nail
-over every single performance counter.
-
-Thanks,
-
-	tglx
---8323329-836335723-1561576991=:32342--
+-Doug
