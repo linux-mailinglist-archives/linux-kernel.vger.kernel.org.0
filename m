@@ -2,148 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B556D56ECE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 18:31:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 90F2056EDB
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 18:33:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726646AbfFZQbn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 12:31:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59582 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726006AbfFZQbm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 12:31:42 -0400
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1C2FA2182B
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 16:31:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561566701;
-        bh=oU6jaBrSnygplxLUyMyEroKctG9J2Ei1tNH+gSDLVAk=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=QgWp2Kq0om1VdQ9V/HwshKaxvMVEWZtAeUAw6z7hc0QFNz6whhSWt/PwQ0JGsE3PZ
-         +seWqralH37FOI19PNx5AAKRJCdn/h7Umb8/kZtWR0QiWcUTx8j31mA0/W/+UCzOkE
-         FS/1Ksn3MM2uhGyacJfoGf9ERdF+PN9RwHfbihTs=
-Received: by mail-wm1-f54.google.com with SMTP id c6so2772998wml.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 09:31:41 -0700 (PDT)
-X-Gm-Message-State: APjAAAW+OQVF19O4hsHQa3J3l/qfE5Xa3Khc7O3UNn1mpeelM/UgnvoC
-        eERK7A2BqoPjF6dRcqlsMahLdE8CWpHgISzswXs4Bg==
-X-Google-Smtp-Source: APXvYqx/2ylJRZBTN4py1K7MyVeOZWZ6QdrhNVtJzeb0bKAaChEP0NR5KWyGfaLK5cttoijS9AYPMt8eZnUj0uGv15Q=
-X-Received: by 2002:a7b:c450:: with SMTP id l16mr3515337wmi.0.1561566697863;
- Wed, 26 Jun 2019 09:31:37 -0700 (PDT)
-MIME-Version: 1.0
-References: <alpine.DEB.2.21.1906240142000.32342@nanos.tec.linutronix.de> <tip-e70980312a946a56173843cbc0104b3b0e57a0c7@git.kernel.org>
-In-Reply-To: <tip-e70980312a946a56173843cbc0104b3b0e57a0c7@git.kernel.org>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Wed, 26 Jun 2019 09:31:26 -0700
-X-Gmail-Original-Message-ID: <CALCETrWaUEnnTiyh-xDoywji1GdfoeoSmy635MYcXMe9CgYkCA@mail.gmail.com>
-Message-ID: <CALCETrWaUEnnTiyh-xDoywji1GdfoeoSmy635MYcXMe9CgYkCA@mail.gmail.com>
-Subject: Re: [tip:timers/vdso] MAINTAINERS: Add entry for the generic VDSO library
-To:     "H. Peter Anvin" <hpa@zytor.com>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Mark Salyzyn <salyzyn@android.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrey Vagin <avagin@openvz.org>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Dmitry Safonov <dima@arista.com>,
-        Peter Collingbourne <pcc@google.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Michael Kelley <mikelley@microsoft.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Shijith Thotton <sthotton@marvell.com>,
-        Sasha Levin <sashal@kernel.org>,
-        Andre Przywara <andre.przywara@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Huw Davies <huw@codeweavers.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Russell King <linux@armlinux.org.uk>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux-tip-commits@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        id S1726470AbfFZQdT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 12:33:19 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:37580 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726006AbfFZQdT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 12:33:19 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id CB29414B5B882;
+        Wed, 26 Jun 2019 09:33:18 -0700 (PDT)
+Date:   Wed, 26 Jun 2019 09:33:18 -0700 (PDT)
+Message-Id: <20190626.093318.2241574529231651608.davem@davemloft.net>
+To:     Jose.Abreu@synopsys.com
+Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        Joao.Pinto@synopsys.com, peppe.cavallaro@st.com,
+        alexandre.torgue@st.com
+Subject: Re: [PATCH net-next 01/10] net: stmmac: dwxgmac: Enable EDMA by
+ default
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <6df599b8c2d57db9d82e42861ce897d7cf003424.1561556555.git.joabreu@synopsys.com>
+References: <cover.1561556555.git.joabreu@synopsys.com>
+        <cover.1561556555.git.joabreu@synopsys.com>
+        <6df599b8c2d57db9d82e42861ce897d7cf003424.1561556555.git.joabreu@synopsys.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 26 Jun 2019 09:33:19 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 26, 2019 at 5:37 AM tip-bot for Thomas Gleixner
-<tipbot@zytor.com> wrote:
->
-> Commit-ID:  e70980312a946a56173843cbc0104b3b0e57a0c7
-> Gitweb:     https://git.kernel.org/tip/e70980312a946a56173843cbc0104b3b0e57a0c7
-> Author:     Thomas Gleixner <tglx@linutronix.de>
-> AuthorDate: Mon, 24 Jun 2019 02:34:24 +0200
-> Committer:  Thomas Gleixner <tglx@linutronix.de>
-> CommitDate: Wed, 26 Jun 2019 07:28:11 +0200
->
-> MAINTAINERS: Add entry for the generic VDSO library
->
-> Assign the following folks in alphabetic order:
->
->  - Andy for being the VDSO wizard of x86 and in general. He's also the
->    performance monitor of choice and the code in the generic library is
->    heavily influenced by his previous x86 VDSO work.
->
->  - Thomas for being the dude who has to deal with any form of time(r)
->    nonsense anyway
->
->  - Vincenzo for being the poor sod who went through all the different
->    architecture implementations in order to unify them. A lot of knowledge
->    gained from VDSO implementation details to the intricacies of taming the
->    build system.
->
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Vincenzo Frascino <vincenzo.frascino@arm.com>
-> Cc: linux-arch@vger.kernel.org
-> Cc: LAK <linux-arm-kernel@lists.infradead.org>
-> Cc: linux-mips@vger.kernel.org
-> Cc: linux-kselftest@vger.kernel.org
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Russell King <linux@armlinux.org.uk>
-> Cc: Ralf Baechle <ralf@linux-mips.org>
-> Cc: Paul Burton <paul.burton@mips.com>
-> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Cc: Mark Salyzyn <salyzyn@android.com>
-> Cc: Peter Collingbourne <pcc@google.com>
-> Cc: Shuah Khan <shuah@kernel.org>
-> Cc: Dmitry Safonov <0x7f454c46@gmail.com>
-> Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-> Cc: Huw Davies <huw@codeweavers.com>
-> Cc: Shijith Thotton <sthotton@marvell.com>
-> Cc: Andre Przywara <andre.przywara@arm.com>
-> Cc: Dmitry Safonov <dima@arista.com>
-> Cc: Andrei Vagin <avagin@openvz.org>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Cc: Michael Kelley <mikelley@microsoft.com>
-> Cc: Sasha Levin <sashal@kernel.org>
-> Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1906240142000.32342@nanos.tec.linutronix.de
->
-> ---
->  MAINTAINERS | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index d0ed735994a5..13ece5479167 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -6664,6 +6664,18 @@ L:       kvm@vger.kernel.org
->  S:     Supported
->  F:     drivers/uio/uio_pci_generic.c
->
-> +GENERIC VDSO LIBRARY:
-> +M:     Andy Lutomirksi <luto@kernel.org>
+From: Jose Abreu <Jose.Abreu@synopsys.com>
+Date: Wed, 26 Jun 2019 15:47:35 +0200
 
-s/ksi/ski :)
+> @@ -122,6 +122,8 @@ static void dwxgmac2_dma_axi(void __iomem *ioaddr, struct stmmac_axi *axi)
+>  	}
+>  
+>  	writel(value, ioaddr + XGMAC_DMA_SYSBUS_MODE);
+> +	writel(GENMASK(29, 0), ioaddr + XGMAC_TX_EDMA_CTRL);
+> +	writel(GENMASK(29, 0), ioaddr + XGMAC_RX_EDMA_CTRL);
+>  }
 
-Yes, it's a mouthful.
+This mask is magic and there is no indication what the bits mean and
+in particular what it means to set bits 0 -- 29
 
---Andy
+You have to document what these bits mean and thus what these register
+writes actually do.
