@@ -2,152 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08A1856019
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 05:47:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BBD955FF1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 05:44:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727729AbfFZDpM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 25 Jun 2019 23:45:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56576 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727672AbfFZDpG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Jun 2019 23:45:06 -0400
-Received: from sasha-vm.mshome.net (mobile-107-77-172-98.mobile.att.net [107.77.172.98])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 110F6216FD;
-        Wed, 26 Jun 2019 03:45:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561520705;
-        bh=L32otJlhOotJHvaUL0gW+XhScroCOoMjmSOftsNo0F4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HvGFUUgenPWYc3tUzf+tyKUJXMepfBG9ty1Coutf2Lz8IUlcpIbZDXQtLQnzUzEIm
-         C1zV76A+jBFRChiNlpDzX4aoIPzE8KKP7suvhUsfV89p2Z4FL8SziSfMFZdH1lxnPL
-         tZ2bePXG2Mjut7JhZednufoa9BKkNNFJn/Pl72lY=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Wei Li <liwei391@huawei.com>, Steven Rostedt <rostedt@goodmis.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 34/34] ftrace: Fix NULL pointer dereference in free_ftrace_func_mapper()
-Date:   Tue, 25 Jun 2019 23:43:35 -0400
-Message-Id: <20190626034335.23767-34-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190626034335.23767-1-sashal@kernel.org>
-References: <20190626034335.23767-1-sashal@kernel.org>
+        id S1727408AbfFZDno (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 23:43:44 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:34047 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727394AbfFZDnm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Jun 2019 23:43:42 -0400
+Received: by mail-pf1-f196.google.com with SMTP id c85so559915pfc.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2019 20:43:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=5hqZ4vROmwNjHn2rcOKub7XQRl/pvhv83x39qcRNpmY=;
+        b=QLjtyp+Iq8FVK2eS5UBbAthW5GOnTsB32WgPl0ymEHCSX2OBegv15pR8TZPeaP1d6o
+         1ALJim7p9CP7xwoLy0D+KXqJth22dqOto5ltKoe+cDKPe6+7Q0x2Zg1x7JDRqbXhNUh4
+         FrybgwZkZ8eyZ0d1rBImQnUT6SaVDklElxNuivxU3MUqhg5fe+W4fubx6ZLJCag14kv1
+         98QsyQ/56bimMYbT0AbQfMajElpS2mKIoz2WdMqcYVgRlk1A7yie4vxr770+MLqQXlot
+         wXM3lG3qdVAVsSVAU6U2tugOSJBzNrwFjJUCoZdzzdPjoxdBtAwGEnJmbHPF+LxMSimt
+         OatA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=5hqZ4vROmwNjHn2rcOKub7XQRl/pvhv83x39qcRNpmY=;
+        b=gEkwJ6EpwVqhDAW2fOwYZlGy9a7Vw7Jj/yy03gqGQ2ff60/X2rCKWfOFjgVQWUN3Lw
+         sWGBQy5KPKRu2ww0cOzJ8N7dwxyyOqq090COfA5EYEXFJ9COyEH6MRiqq8uOVq3UJnEE
+         ob4OrPb2NQKn/MemeGE6tGmobaMFe/vC08tv+u8sciXbCJVRg+xiT4LI+s1YcT/SJAbu
+         5ccNtM5SFiH31L9BmFPtptAlt39Ok/56IW+GfCZ5RqEiMU1bI6dtIfJkX/HtYs6ocP4y
+         wsnkO+bCCziX9MmM6NnAzokq2/GrOguIpGSTk6ucPOhZQKQVmco/pPy4Pcn+SXa86zXJ
+         wCZw==
+X-Gm-Message-State: APjAAAXnBE+Ld1cVZSQBfpUu8fLxIRGewY6iCN6UZ10PGYZGytcJkEKW
+        /Y2kwlowwtgdJE22EafqErxWOR/L
+X-Google-Smtp-Source: APXvYqwGEWjAY4ufSwDooxQon0wAjogh6V87TXfJND3yAh/V5zUOO7nDcshgpaqVtlnG3j9uxrR6+Q==
+X-Received: by 2002:a17:90a:950d:: with SMTP id t13mr1752593pjo.81.1561520621522;
+        Tue, 25 Jun 2019 20:43:41 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id f10sm13298825pgo.14.2019.06.25.20.43.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 25 Jun 2019 20:43:40 -0700 (PDT)
+Subject: Re: Steam is broken on new kernels
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        "Pierre-Loup A. Griffais" <pgriffais@valvesoftware.com>,
+        Eric Dumazet <edumazet@google.com>,
+        lkml <linux-kernel@vger.kernel.org>
+References: <a624ec85-ea21-c72e-f997-06273d9b9f9e@valvesoftware.com>
+ <20190621214139.GA31034@kroah.com>
+ <CAHk-=wgXoBMWdBahuQR9e75ri6oeVBBjoVEnk0rN1QXfSKK2Eg@mail.gmail.com>
+ <CANn89iL5+x3n9H9v4O6y39W=jvQs=uuXbzOvN5mBbcj0t+wdeg@mail.gmail.com>
+ <CAHk-=wjZ=8VSjWuqeG6JJv4dQfK6M0Jgckq5-6=SJa25aku-vQ@mail.gmail.com>
+ <CANn89iLU+NNy7QDPNLYPxNWMx5cXuhziOT7TX2uYt42uUJcNVg@mail.gmail.com>
+ <b72599d1-b5d5-1c23-15fc-8e2f9454af05@valvesoftware.com>
+ <CAHk-=wjZ1grLwJsGD+Fjz1_U_W47AFodBiwBX84HECUHt-guuw@mail.gmail.com>
+ <20190622073753.GA10516@kroah.com> <20190626020220.GA22548@roeck-us.net>
+ <20190626022923.GA14595@kroah.com>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <53b23451-f45b-932d-a2f8-15f74f07a849@roeck-us.net>
+Date:   Tue, 25 Jun 2019 20:43:38 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190626022923.GA14595@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wei Li <liwei391@huawei.com>
+On 6/25/19 7:29 PM, Greg Kroah-Hartman wrote:
+> On Tue, Jun 25, 2019 at 07:02:20PM -0700, Guenter Roeck wrote:
+>> Hi Greg,
+>>
+>> On Sat, Jun 22, 2019 at 09:37:53AM +0200, Greg Kroah-Hartman wrote:
+>>> On Fri, Jun 21, 2019 at 10:28:21PM -0700, Linus Torvalds wrote:
+>>>> On Fri, Jun 21, 2019 at 6:03 PM Pierre-Loup A. Griffais
+>>>> <pgriffais@valvesoftware.com> wrote:
+>>>>>
+>>>>> I applied Eric's path to the tip of the branch and ran that kernel and
+>>>>> the bug didn't occur through several logout / login cycles, so things
+>>>>> look good at first glance. I'll keep running that kernel and report back
+>>>>> if anything crops up in the future, but I believe we're good, beyond
+>>>>> getting distros to ship this additional fix.
+>>>>
+>>>> Good. It's now in my tree, so we can get it quickly into stable and
+>>>> then quickly to distributions.
+>>>>
+>>>> Greg, it's commit b6653b3629e5 ("tcp: refine memory limit test in
+>>>> tcp_fragment()"), and I'm building it right now and I'll push it out
+>>>> in a couple of minutes assuming nothing odd is going on.
+>>>
+>>> This looks good for 4.19 and 5.1, so I'll push out new stable kernels in
+>>> a bit for them.
+>>>
+>>> But for 4.14 and older, we don't have the "hint" to know this is an
+>>> outbound going packet and not to apply these checks at that point in
+>>> time, so this patch doesn't work.
+>>>
+>>> I'll see if I can figure anything else later this afternoon for those
+>>> kernels...
+>>>
+>>
+>> I may have missed it, but I don't see a fix for the problem in
+>> older stable branches. Any news ?
+>>
+>> One possibility might be be to apply the part of 75c119afe14f7 which
+>> introduces TCP_FRAG_IN_WRITE_QUEUE and TCP_FRAG_IN_RTX_QUEUE, if that
+>> is acceptable.
+> 
+> That's what people have already discussed on the stable mailing list a
+> few hours ago, hopefully a patch shows up soon as I'm traveling at the
+> moment and can't do it myself...
+> 
 
-[ Upstream commit 04e03d9a616c19a47178eaca835358610e63a1dd ]
+Sounds good. Let me know if nothing shows up; I'll be happy to do it
+if needed.
 
-The mapper may be NULL when called from register_ftrace_function_probe()
-with probe->data == NULL.
-
-This issue can be reproduced as follow (it may be covered by compiler
-optimization sometime):
-
-/ # cat /sys/kernel/debug/tracing/set_ftrace_filter
-#### all functions enabled ####
-/ # echo foo_bar:dump > /sys/kernel/debug/tracing/set_ftrace_filter
-[  206.949100] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
-[  206.952402] Mem abort info:
-[  206.952819]   ESR = 0x96000006
-[  206.955326]   Exception class = DABT (current EL), IL = 32 bits
-[  206.955844]   SET = 0, FnV = 0
-[  206.956272]   EA = 0, S1PTW = 0
-[  206.956652] Data abort info:
-[  206.957320]   ISV = 0, ISS = 0x00000006
-[  206.959271]   CM = 0, WnR = 0
-[  206.959938] user pgtable: 4k pages, 48-bit VAs, pgdp=0000000419f3a000
-[  206.960483] [0000000000000000] pgd=0000000411a87003, pud=0000000411a83003, pmd=0000000000000000
-[  206.964953] Internal error: Oops: 96000006 [#1] SMP
-[  206.971122] Dumping ftrace buffer:
-[  206.973677]    (ftrace buffer empty)
-[  206.975258] Modules linked in:
-[  206.976631] Process sh (pid: 281, stack limit = 0x(____ptrval____))
-[  206.978449] CPU: 10 PID: 281 Comm: sh Not tainted 5.2.0-rc1+ #17
-[  206.978955] Hardware name: linux,dummy-virt (DT)
-[  206.979883] pstate: 60000005 (nZCv daif -PAN -UAO)
-[  206.980499] pc : free_ftrace_func_mapper+0x2c/0x118
-[  206.980874] lr : ftrace_count_free+0x68/0x80
-[  206.982539] sp : ffff0000182f3ab0
-[  206.983102] x29: ffff0000182f3ab0 x28: ffff8003d0ec1700
-[  206.983632] x27: ffff000013054b40 x26: 0000000000000001
-[  206.984000] x25: ffff00001385f000 x24: 0000000000000000
-[  206.984394] x23: ffff000013453000 x22: ffff000013054000
-[  206.984775] x21: 0000000000000000 x20: ffff00001385fe28
-[  206.986575] x19: ffff000013872c30 x18: 0000000000000000
-[  206.987111] x17: 0000000000000000 x16: 0000000000000000
-[  206.987491] x15: ffffffffffffffb0 x14: 0000000000000000
-[  206.987850] x13: 000000000017430e x12: 0000000000000580
-[  206.988251] x11: 0000000000000000 x10: cccccccccccccccc
-[  206.988740] x9 : 0000000000000000 x8 : ffff000013917550
-[  206.990198] x7 : ffff000012fac2e8 x6 : ffff000012fac000
-[  206.991008] x5 : ffff0000103da588 x4 : 0000000000000001
-[  206.991395] x3 : 0000000000000001 x2 : ffff000013872a28
-[  206.991771] x1 : 0000000000000000 x0 : 0000000000000000
-[  206.992557] Call trace:
-[  206.993101]  free_ftrace_func_mapper+0x2c/0x118
-[  206.994827]  ftrace_count_free+0x68/0x80
-[  206.995238]  release_probe+0xfc/0x1d0
-[  206.995555]  register_ftrace_function_probe+0x4a8/0x868
-[  206.995923]  ftrace_trace_probe_callback.isra.4+0xb8/0x180
-[  206.996330]  ftrace_dump_callback+0x50/0x70
-[  206.996663]  ftrace_regex_write.isra.29+0x290/0x3a8
-[  206.997157]  ftrace_filter_write+0x44/0x60
-[  206.998971]  __vfs_write+0x64/0xf0
-[  206.999285]  vfs_write+0x14c/0x2f0
-[  206.999591]  ksys_write+0xbc/0x1b0
-[  206.999888]  __arm64_sys_write+0x3c/0x58
-[  207.000246]  el0_svc_common.constprop.0+0x408/0x5f0
-[  207.000607]  el0_svc_handler+0x144/0x1c8
-[  207.000916]  el0_svc+0x8/0xc
-[  207.003699] Code: aa0003f8 a9025bf5 aa0103f5 f946ea80 (f9400303)
-[  207.008388] ---[ end trace 7b6d11b5f542bdf1 ]---
-[  207.010126] Kernel panic - not syncing: Fatal exception
-[  207.011322] SMP: stopping secondary CPUs
-[  207.013956] Dumping ftrace buffer:
-[  207.014595]    (ftrace buffer empty)
-[  207.015632] Kernel Offset: disabled
-[  207.017187] CPU features: 0x002,20006008
-[  207.017985] Memory Limit: none
-[  207.019825] ---[ end Kernel panic - not syncing: Fatal exception ]---
-
-Link: http://lkml.kernel.org/r/20190606031754.10798-1-liwei391@huawei.com
-
-Signed-off-by: Wei Li <liwei391@huawei.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- kernel/trace/ftrace.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index 50ba14591996..0a0bb839ac5e 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -4213,10 +4213,13 @@ void free_ftrace_func_mapper(struct ftrace_func_mapper *mapper,
- 	struct ftrace_func_entry *entry;
- 	struct ftrace_func_map *map;
- 	struct hlist_head *hhd;
--	int size = 1 << mapper->hash.size_bits;
--	int i;
-+	int size, i;
-+
-+	if (!mapper)
-+		return;
- 
- 	if (free_func && mapper->hash.count) {
-+		size = 1 << mapper->hash.size_bits;
- 		for (i = 0; i < size; i++) {
- 			hhd = &mapper->hash.buckets[i];
- 			hlist_for_each_entry(entry, hhd, hlist) {
--- 
-2.20.1
-
+Guenter
