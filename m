@@ -2,83 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C90AD565BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 11:36:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76E52565BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2019 11:38:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726329AbfFZJgo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 05:36:44 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:49150 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725379AbfFZJgn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 05:36:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=MfZzo+09y4c4/MlhmBOR83gcoxJ6ThsuRLuH+9ufG7c=; b=mUOX/0VkuieUiDvItDvC9E6Kb
-        fb4y+CTdDes0mRGXQKRJhAtaBu5OC02Q8ZXptbwOUcak1L7iHvRllEMzPnRdfvDWAAuhxKW031djz
-        xSINl5FvUqfkoSRuEfKU+S5RLV1FWU2vmz/rt8fwhOrac2nWoxo/pscnkMWwsVG3hxD2EmAa+wBRD
-        hAPxEFMLqwGzG6lqE8N7zUZT57KjEE/LXvy0PY6pYVX69ye2iozWgmBqqAyqYVaj0FwO9n9N805/z
-        ZsTphZoyHDLmsRA4nZQWP7ikXWJTVI6J4a64iCQ9AGzuGD06VNCmtAp0TdIWOB8zGJJqB6yJ353xL
-        x7PFJno4w==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hg4M1-0002a1-LR; Wed, 26 Jun 2019 09:36:37 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id BF867209CEDD6; Wed, 26 Jun 2019 11:36:35 +0200 (CEST)
-Date:   Wed, 26 Jun 2019 11:36:35 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Joe Perches <joe@perches.com>
-Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] get_maintainer: Add --prefix option
-Message-ID: <20190626093635.GK3419@hirez.programming.kicks-ass.net>
-References: <20190624130323.14137-1-bigeasy@linutronix.de>
- <20190624133333.GW3419@hirez.programming.kicks-ass.net>
- <9528bb2c4455db9e130576120c8b985b9dd94e3d.camel@perches.com>
- <20190625163701.xcb2ue7phpskvfnz@linutronix.de>
- <8d416a7b0dad3933ceb8d12c9efaad541f7cf269.camel@perches.com>
+        id S1726131AbfFZJip (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 05:38:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42246 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726599AbfFZJin (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 05:38:43 -0400
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C3BBA2082F;
+        Wed, 26 Jun 2019 09:38:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561541922;
+        bh=b8yf4lmGvBB1dVa7/Twirj8FFTig4jUndq8vRGsYggw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=CRlfvTtUSHB3ZCrHSBQ6nDjSFcABaixH8GhxBcZLYGVdIL3XgDxMWG0dn5lCMUqPN
+         PXaoFJGnXAUmqCQ+tah3l4bWSK23B/DUTRlQn+s/+BPioJO3OI3lyzzpBFQ1vfrE45
+         uIQcmJeUG7nEqXFBb7wbq3bD1cUiuAkZxpwj+Akg=
+Date:   Wed, 26 Jun 2019 10:38:37 +0100
+From:   Will Deacon <will@kernel.org>
+To:     Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Qian Cai <cai@lca.pw>, Thomas Gleixner <tglx@linutronix.de>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: "arm64: vdso: Substitute gettimeofday() with C implementation"
+ breaks clang build
+Message-ID: <20190626093836.y2lofo54rhxw3xsm@willie-the-truck>
+References: <1561464964.5154.63.camel@lca.pw>
+ <e86774e4-7470-5cb2-fc3e-b7c1f529d253@arm.com>
+ <1561467369.5154.67.camel@lca.pw>
+ <00a78980-6b9c-5d5b-ed01-b28bb34be022@arm.com>
+ <1561470705.5154.68.camel@lca.pw>
+ <5113362e-1256-6712-6ce8-9599b1806cf1@arm.com>
+ <1561472887.5154.72.camel@lca.pw>
+ <668bbe72-b32b-8cee-ccad-d1f6110c6728@arm.com>
+ <CAKwvOdmCFjunXRbninTdqoDGPNJ6b7npgXLAPYGqFZas5ofNjw@mail.gmail.com>
+ <193c179e-16ca-4b4e-2584-75e8f6c1819f@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8d416a7b0dad3933ceb8d12c9efaad541f7cf269.camel@perches.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <193c179e-16ca-4b4e-2584-75e8f6c1819f@arm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 25, 2019 at 10:23:34AM -0700, Joe Perches wrote:
-> There are now simple ways to make sure a patch
-> submission is cc'd to appropriate parties.
+On Tue, Jun 25, 2019 at 06:00:27PM +0100, Vincenzo Frascino wrote:
+> On 25/06/2019 17:26, Nick Desaulniers wrote:
+> > On Tue, Jun 25, 2019 at 7:54 AM Vincenzo Frascino
+> > <vincenzo.frascino@arm.com> wrote:
+> >>> but clang 7.0 is still use in many distros by default, so maybe this commit can
+> >>> be fixed by adding a conditional check to use "small" if clang version < 8.0.
+> >>>
+> >>
+> >> Could you please verify that the patch below works for you?
+> > 
+> > Should it be checking against CONFIG_CLANG_VERSION, or better yet be
+> > using cc-option macro?
+> > 
 > 
-> git send-email supports --cc-cmd
-
-That assumes one is using git; I'm not, git stinks.
-
-> I want to proposed patches to moderated lists
-> and believe everyone really should too.
+> This is what I did in my proposed patch, but I was surprised that clang-7
+> generates relocations that clang-8 does not.
 > 
-> I don't care if moderated lists send a
-> "waiting for moderation" message as long as the
-> list gets the proposed patch eventually.
-> 
-> I think only Peter cares about those, to him,
-> superfluous "being moderated" messages.
+>   LD      arch/arm64/kernel/vdso/vdso.so.dbg
+>   VDSOCHK arch/arm64/kernel/vdso/vdso.so.dbg
+> 00000000000009d0 R_AARCH64_JUMP_SLOT  _mcount
 
-I'm really not alone in that. Not only do you get those annoying
-messages, the people reading that list might get the discussion in
-fragments, because some people that reply are subscribed and do not
-require moderation while others do get caught in the moderation thing
-and then delayed.
+Hmm. It would be nice to understand where the reference to _mcount is coming
+from, since that sounds like ftrace is getting involved where it shouldn't
+be.
 
-It also puts a burden on the moderator, do they allow the whole
-discussion or only part. What if they deem the thing off-topic and want
-to kill it, but then some of their whitelisted people do reply.
-
-Cross-posting to moderated lists has been considered bad form ever since
-I got on the interweb in the early 90s.
-
+Will
