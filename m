@@ -2,143 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74AED58AE2
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 21:20:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3985858AFC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 21:37:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726572AbfF0TT5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 15:19:57 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34538 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726384AbfF0TT5 (ORCPT
+        id S1726514AbfF0Th0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 15:37:26 -0400
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:21131 "EHLO
+        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726441AbfF0Th0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 15:19:57 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5RJHSXo191564
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 15:19:55 -0400
-Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2td0ks12pc-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 15:19:55 -0400
-Received: from localhost
-        by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <eajames@linux.ibm.com>;
-        Thu, 27 Jun 2019 20:19:54 +0100
-Received: from b03cxnp08027.gho.boulder.ibm.com (9.17.130.19)
-        by e35.co.us.ibm.com (192.168.1.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 27 Jun 2019 20:19:50 +0100
-Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
-        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5RJJnLr61145392
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 27 Jun 2019 19:19:50 GMT
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DB5A9136053;
-        Thu, 27 Jun 2019 19:19:49 +0000 (GMT)
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B900213604F;
-        Thu, 27 Jun 2019 19:19:48 +0000 (GMT)
-Received: from [9.85.237.135] (unknown [9.85.237.135])
-        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Thu, 27 Jun 2019 19:19:48 +0000 (GMT)
-Subject: Re: [PATCH v3 1/8] dt-bindings: soc: Add Aspeed XDMA engine binding
- documentation
-To:     Andrew Jeffery <andrew@aj.id.au>, linux-aspeed@lists.ozlabs.org
-Cc:     linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Rob Herring <robh+dt@kernel.org>, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, Joel Stanley <joel@jms.id.au>
-References: <1559153408-31190-1-git-send-email-eajames@linux.ibm.com>
- <1559153408-31190-2-git-send-email-eajames@linux.ibm.com>
- <58b74556-cbf0-4da2-9392-4c4ac40ad760@www.fastmail.com>
-From:   Eddie James <eajames@linux.ibm.com>
-Date:   Thu, 27 Jun 2019 14:19:47 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
-MIME-Version: 1.0
-In-Reply-To: <58b74556-cbf0-4da2-9392-4c4ac40ad760@www.fastmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Thu, 27 Jun 2019 15:37:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1561664246; x=1593200246;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=TJyucWBKKtaJtkuGy3o6AFVlpwa3EjEOoWL9+pX+iQU=;
+  b=UAzpKQ6ZG4Lye2dP3nkhDKRI4qx3llZOu89rw6op6ty0Zk+LWp3vkC2J
+   IsdIzabaTao+7eC7Xr//SGrBQhGSRvbaNN79cWeEmGO/ZUh6b5vaC/kgH
+   PGfDaCybGYRxUhWLPPZs/23KKFfiXqbc6JQ4UWS36jwwXppPLGkg4UdCO
+   QBHVey9MYc6A8wFAXTovHSz5av2wM/D9tvfW7zUZ5CvrDN113ykI1uSMx
+   Z30nBT96GyQFicb2hNoqOVZzbyNZZLLganmrpQK75/iGQiaXwv3AywRFS
+   7jVF+Qc9YNas2jSIeHv9AV+uKolZ8y6IwOjeXd/HRuRBVrPnWtqx7ZJ3F
+   w==;
+X-IronPort-AV: E=Sophos;i="5.63,424,1557158400"; 
+   d="scan'208";a="111720778"
+Received: from mail-sn1nam01lp2059.outbound.protection.outlook.com (HELO NAM01-SN1-obe.outbound.protection.outlook.com) ([104.47.32.59])
+  by ob1.hgst.iphmx.com with ESMTP; 28 Jun 2019 03:37:25 +0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=i29kx4jM7Fn1iLbLaDn/DruOpaNDL+lgs4WwAf8CC0s=;
+ b=XP7t8HWo2d5lRaotn1aBW4za7cJiwtDiJtLQzFQ1DGQGNUAhlv/eUJ8NwvcakYxh+jO699VKEZ80b65f9DIeEbh+PTw7bH0MnMSL2fR4Aah4HgwDTSx7W0HT17K7dGkSRK+yXeXcmuh0eWnCE7919N0cA7SS81RqFcb9L9t2c0w=
+Received: from BYAPR04MB5749.namprd04.prod.outlook.com (20.179.58.26) by
+ BYAPR04MB4664.namprd04.prod.outlook.com (52.135.240.15) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2008.18; Thu, 27 Jun 2019 19:37:23 +0000
+Received: from BYAPR04MB5749.namprd04.prod.outlook.com
+ ([fe80::fc2b:fcd4:7782:53d6]) by BYAPR04MB5749.namprd04.prod.outlook.com
+ ([fe80::fc2b:fcd4:7782:53d6%7]) with mapi id 15.20.2008.018; Thu, 27 Jun 2019
+ 19:37:23 +0000
+From:   Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>
+To:     Fuqian Huang <huangfq.daxian@gmail.com>
+CC:     Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 10/87] block: skd_main.c: Remove call to memset after
+ dma_alloc_coherent
+Thread-Topic: [PATCH 10/87] block: skd_main.c: Remove call to memset after
+ dma_alloc_coherent
+Thread-Index: AQHVLQ61YUY2jSmYOkW/rXYnO0F8bg==
+Date:   Thu, 27 Jun 2019 19:37:23 +0000
+Message-ID: <BYAPR04MB574987E7A45552F8AD8AD6DE86FD0@BYAPR04MB5749.namprd04.prod.outlook.com>
+References: <20190627173516.2351-1-huangfq.daxian@gmail.com>
+Accept-Language: en-US
 Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 19062719-0012-0000-0000-00001749ABD0
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00011342; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000286; SDB=6.01224131; UDB=6.00644264; IPR=6.01005319;
- MB=3.00027493; MTD=3.00000008; XFM=3.00000015; UTC=2019-06-27 19:19:53
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19062719-0013-0000-0000-000057DB5727
-Message-Id: <c8d80e9a-6fa9-aa57-3b5f-e20b20dd0f66@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-27_13:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906270220
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Chaitanya.Kulkarni@wdc.com; 
+x-originating-ip: [199.255.45.63]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 4208cd15-4002-480b-3444-08d6fb36e0b8
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:BYAPR04MB4664;
+x-ms-traffictypediagnostic: BYAPR04MB4664:
+wdcipoutbound: EOP-TRUE
+x-microsoft-antispam-prvs: <BYAPR04MB4664F2756EC47E0982C1AF2186FD0@BYAPR04MB4664.namprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:65;
+x-forefront-prvs: 008184426E
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(346002)(39860400002)(396003)(366004)(136003)(199004)(189003)(14454004)(66946007)(72206003)(2906002)(8936002)(86362001)(6916009)(71190400001)(71200400001)(54906003)(316002)(446003)(476003)(486006)(229853002)(68736007)(14444005)(81166006)(256004)(81156014)(66066001)(8676002)(102836004)(6506007)(4744005)(53546011)(53936002)(3846002)(66446008)(76116006)(33656002)(5660300002)(73956011)(64756008)(6116002)(55016002)(99286004)(186003)(6436002)(74316002)(25786009)(9686003)(6246003)(305945005)(478600001)(4326008)(7696005)(26005)(66556008)(52536014)(66476007)(7736002)(76176011);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR04MB4664;H:BYAPR04MB5749.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: y3xTzZX/ZZQJfRkKYqh1cNqSKPPO6+nC85pZp7zwte2SFUpjRI6f+CsEXrOlrAy2AsMKD5yycf2HqfMEotOXGwKSo9ks83xEGvFohl8bWUTy7b8CVJnCDVyMLxaqRGeGiLPbJe02eL75HKAxWWyT5ipTEpxduUQOCeFs8fkxD96H7NoPyAxZhx9dg5a3HiCVhwtv/X2ytOEmPXss30j2EikahQakSn6QQ3RGJ79FVFXN9kfVYaF0ME1yNn7cfewQ3EFbdW7CldIBCGIy9xf1SIK7olmCHGRGBrw/+LJVAwildm3RGeNyqYltcrIpLHp35eUdL6DXPPosmRSw1a0cPPe0h9mlUjtnJ9CwK1Bbt5lxkD5X+0Zt/vJujUbUbLDZWZqRoiG2SSSXmm2ifWiYE6c9cH7ZkicKPqu3UY2SBnU=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4208cd15-4002-480b-3444-08d6fb36e0b8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Jun 2019 19:37:23.4559
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Chaitanya.Kulkarni@wdc.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB4664
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 5/30/19 12:30 AM, Andrew Jeffery wrote:
->
-> On Thu, 30 May 2019, at 03:40, Eddie James wrote:
->> Document the bindings.
->>
->> Signed-off-by: Eddie James <eajames@linux.ibm.com>
->> ---
->>   .../devicetree/bindings/soc/aspeed/xdma.txt        | 23 ++++++++++++++++++++++
->>   1 file changed, 23 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/soc/aspeed/xdma.txt
->>
->> diff --git a/Documentation/devicetree/bindings/soc/aspeed/xdma.txt
->> b/Documentation/devicetree/bindings/soc/aspeed/xdma.txt
->> new file mode 100644
->> index 0000000..85e82ea
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/soc/aspeed/xdma.txt
->> @@ -0,0 +1,23 @@
->> +* Device tree bindings for the Aspeed XDMA Engine
->> +
->> +The XDMA Engine embedded in the AST2500 SOC can perform automatic DMA
->> +operations over PCI between the AST2500 (acting as a BMC) and a host
->> processor.
->> +
->> +Required properties:
->> +
->> + - compatible		"aspeed,ast2500-xdma"
->> + - reg			contains the offset and length of the memory region
->> +			assigned to the XDMA registers
->> + - resets		reset specifier for the syscon reset associated with
->> +			the XDMA engine
->> + - interrupts		the interrupt associated with the XDMA engine on this
->> +			platform
-> The indentation is quite distracting. If you rev the series can you fix it?
-
-
-I think the diff is throwing it off; it all lines up when applied.
-
-Thanks,
-
-Eddie
-
-
->
-> Otherwise,
->
-> Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
->
->> +
->> +Example:
->> +
->> +    xdma@1e6e7000 {
->> +        compatible = "aspeed,ast2500-xdma";
->> +        reg = <0x1e6e7000 0x100>;
->> +        resets = <&syscon ASPEED_RESET_XDMA>;
->> +        interrupts = <6>;
->> +    };
->> -- 
->> 1.8.3.1
->>
->>
-
+Looks good.=0A=
+=0A=
+Reviewed-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>=0A=
+=0A=
+On 06/27/2019 10:35 AM, Fuqian Huang wrote:=0A=
+> In commit af7ddd8a627c=0A=
+> ("Merge tag 'dma-mapping-4.21' of git://git.infradead.org/users/hch/dma-m=
+apping"),=0A=
+> dma_alloc_coherent has already zeroed the memory.=0A=
+> So memset is not needed.=0A=
+>=0A=
+> Signed-off-by: Fuqian Huang <huangfq.daxian@gmail.com>=0A=
+> ---=0A=
+>   drivers/block/skd_main.c | 1 -=0A=
+>   1 file changed, 1 deletion(-)=0A=
+>=0A=
+> diff --git a/drivers/block/skd_main.c b/drivers/block/skd_main.c=0A=
+> index c479235862e5..51569c199a6c 100644=0A=
+> --- a/drivers/block/skd_main.c=0A=
+> +++ b/drivers/block/skd_main.c=0A=
+> @@ -2694,7 +2694,6 @@ static int skd_cons_skmsg(struct skd_device *skdev)=
+=0A=
+>   		     (FIT_QCMD_ALIGN - 1),=0A=
+>   		     "not aligned: msg_buf %p mb_dma_address %pad\n",=0A=
+>   		     skmsg->msg_buf, &skmsg->mb_dma_address);=0A=
+> -		memset(skmsg->msg_buf, 0, SKD_N_FITMSG_BYTES);=0A=
+>   	}=0A=
+>=0A=
+>   err_out:=0A=
+>=0A=
+=0A=
