@@ -2,105 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1832B58A07
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 20:31:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2E5A589A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 20:16:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726723AbfF0Sb0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 14:31:26 -0400
-Received: from smtp3.jd.com ([59.151.64.88]:2125 "EHLO smtp3.jd.com"
+        id S1726794AbfF0SQi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 14:16:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47568 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726482AbfF0Sb0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 14:31:26 -0400
-Received: from BJMAILD1MBX34.360buyAD.local (172.31.0.34) by
- BJMAILD1MBX47.360buyAD.local (172.31.0.47) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1415.2; Fri, 28 Jun 2019 02:16:12 +0800
-Received: from BJMAILD1MBX36.360buyAD.local (172.31.0.36) by
- BJMAILD1MBX34.360buyAD.local (172.31.0.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1415.2; Fri, 28 Jun 2019 02:16:12 +0800
-Received: from BJMAILD1MBX36.360buyAD.local ([fe80::2116:e90b:d89d:e893]) by
- BJMAILD1MBX36.360buyAD.local ([fe80::2116:e90b:d89d:e893%24]) with mapi id
- 15.01.1415.002; Fri, 28 Jun 2019 02:16:12 +0800
-From:   =?gb2312?B?u8bA1g==?= <huangle1@jd.com>
-To:     "bfields@fieldses.org" <bfields@fieldses.org>,
-        "jlayton@kernel.org" <jlayton@kernel.org>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH] nfsd4: fix a deadlock on state owner replay mutex
-Thread-Topic: [PATCH] nfsd4: fix a deadlock on state owner replay mutex
-Thread-Index: AQHVLRO5+DwH6sZb20Kr9KpGEIfK+A==
-Date:   Thu, 27 Jun 2019 18:16:12 +0000
-Message-ID: <a14e4c797451401cb360e1f9d1bad63c@jd.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.31.14.12]
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+        id S1726508AbfF0SQi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 14:16:38 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5EA752064A;
+        Thu, 27 Jun 2019 18:16:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561659396;
+        bh=2oWUiLUFI+CqOolaOKVa4jJ21rR9UR/fuLhE4nLYjdw=;
+        h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
+        b=zM1PuCQOlI4msEkFixz730kc8/zFbvwJnRkqkjMyx+3IZ/8lQrJkX5bjK8+tcjTpD
+         9YTsqw4mLY9MvEtPAy8WslYPIgMqfSsLuNDFSuTYyeTtiNsbbEN2c2e7JVMq1S+AoJ
+         JJirWvQWTUXBy4OsdUUrOSg+eULRykDPesnCIHuI=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAFd5g46zHAupdUh3wDuqPJti2M+_=oje_5weFe7AVLQfkDDM6A@mail.gmail.com>
+References: <20190617082613.109131-1-brendanhiggins@google.com> <20190617082613.109131-2-brendanhiggins@google.com> <20190620001526.93426218BE@mail.kernel.org> <CAFd5g46Jhxsz6_VXHEVYvTeDRwwzgKpr=aUWLL5b3S4kUukb8g@mail.gmail.com> <20190626034100.B238520883@mail.kernel.org> <CAFd5g46zHAupdUh3wDuqPJti2M+_=oje_5weFe7AVLQfkDDM6A@mail.gmail.com>
+To:     Brendan Higgins <brendanhiggins@google.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH v5 01/18] kunit: test: add KUnit test runner core
+Cc:     Frank Rowand <frowand.list@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Kees Cook <keescook@google.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rob Herring <robh@kernel.org>, shuah <shuah@kernel.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        kunit-dev@googlegroups.com,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-um@lists.infradead.org,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        "Bird, Timothy" <Tim.Bird@sony.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Knut Omang <knut.omang@oracle.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Petr Mladek <pmladek@suse.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Richard Weinberger <richard@nod.at>,
+        David Rientjes <rientjes@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
+User-Agent: alot/0.8.1
+Date:   Thu, 27 Jun 2019 11:16:35 -0700
+Message-Id: <20190627181636.5EA752064A@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ZnJvbTogSHVhbmcgTGUgPGh1YW5nbGUxQGpkLmNvbT4NCg0KSW4gbW92ZV90b19jbG9zZV9scnUo
-KSwgd2hpY2ggb25seSBiZSBjYWxsZWQgb24gcGF0aCBvZiBuZnNkNCBDTE9TRSBvcCwNCnRoZSBj
-b2RlIGNvdWxkIHdhaXQgZm9yIGl0cyBzdGlkIHJlZiBjb3VudCBkcm9wIHRvIDIgd2hpbGUgaG9s
-ZGluZyBpdHMNCnN0YXRlIG93bmVyIHJlcGxheSBtdXRleC4gIEhvd2V2ZXIsIHRoZSBvdGhlciBz
-dGlkIHJlZiBob2xkZXIgKG5vcm1hbGx5DQphIHBhcmFsbGVsIENMT1NFIG9wKSB0aGF0IG1vdmVf
-dG9fY2xvc2VfbHJ1KCkgaXMgd2FpdGluZyBmb3IgbWlnaHQgYmUNCmFjY3F1aXJpbmcgdGhlIHNh
-bWUgcmVwbGF5IG11dGV4Lg0KDQpUaGlzIHBhdGNoIGZpeCB0aGUgaXNzdWUgYnkgY2xlYXJpbmcg
-dGhlIHJlcGxheSBvd25lciBiZWZvcmUgd2FpdGluZywgYW5kDQphc3NpZ24gaXQgYmFjayBhZnRl
-ciB0aGVuLg0KDQpTaWduZWQtb2ZmLWJ5OiBIdWFuZyBMZSA8aHVhbmdsZTFAamQuY29tPg0KLS0t
-DQoNCkkgZ3Vlc3Mgd2Ugc2hvdWxkIGNjIHRoaXMgcGF0Y2ggdG8gc3RhYmxlIHRyZWUsIHNpbmNl
-IGEgbWFsaWNpb3VzIGNsaWVudA0KY291bGQgY3JhZnQgcGFyYWxsZWwgQ0xPU0Ugb3BzIHRvIHB1
-dCBhbGwgbmZzZCB0YXNrcyBpbiBEIHN0YXRlIHNob3J0bHkuDQoNCmRpZmYgLS1naXQgYS9mcy9u
-ZnNkL25mczRzdGF0ZS5jIGIvZnMvbmZzZC9uZnM0c3RhdGUuYw0KaW5kZXggNjE4ZTY2MC4uNWY2
-YTQ4ZiAxMDA2NDQNCi0tLSBhL2ZzL25mc2QvbmZzNHN0YXRlLmMNCisrKyBiL2ZzL25mc2QvbmZz
-NHN0YXRlLmMNCkBAIC0zODI5LDEyICszODI5LDEyIEBAIHN0YXRpYyB2b2lkIG5mczRfZnJlZV9v
-cGVub3duZXIoc3RydWN0IG5mczRfc3RhdGVvd25lciAqc28pDQogICogdGhlbSBiZWZvcmUgcmV0
-dXJuaW5nIGhvd2V2ZXIuDQogICovDQogc3RhdGljIHZvaWQNCi1tb3ZlX3RvX2Nsb3NlX2xydShz
-dHJ1Y3QgbmZzNF9vbF9zdGF0ZWlkICpzLCBzdHJ1Y3QgbmV0ICpuZXQpDQorbW92ZV90b19jbG9z
-ZV9scnUoc3RydWN0IG5mc2Q0X2NvbXBvdW5kX3N0YXRlICpjc3RhdGUsIHN0cnVjdCBuZnM0X29s
-X3N0YXRlaWQgKnMsDQorCQlzdHJ1Y3QgbmV0ICpuZXQpDQogew0KIAlzdHJ1Y3QgbmZzNF9vbF9z
-dGF0ZWlkICpsYXN0Ow0KIAlzdHJ1Y3QgbmZzNF9vcGVub3duZXIgKm9vID0gb3Blbm93bmVyKHMt
-PnN0X3N0YXRlb3duZXIpOw0KLQlzdHJ1Y3QgbmZzZF9uZXQgKm5uID0gbmV0X2dlbmVyaWMocy0+
-c3Rfc3RpZC5zY19jbGllbnQtPm5ldCwNCi0JCQkJCQluZnNkX25ldF9pZCk7DQorCXN0cnVjdCBu
-ZnNkX25ldCAqbm4gPSBuZXRfZ2VuZXJpYyhuZXQsIG5mc2RfbmV0X2lkKTsNCiANCiAJZHByaW50
-aygiTkZTRDogbW92ZV90b19jbG9zZV9scnUgbmZzNF9vcGVub3duZXIgJXBcbiIsIG9vKTsNCiAN
-CkBAIC0zODQ2LDggKzM4NDYsMTkgQEAgc3RhdGljIHZvaWQgbmZzNF9mcmVlX29wZW5vd25lcihz
-dHJ1Y3QgbmZzNF9zdGF0ZW93bmVyICpzbykNCiAJICogV2FpdCBmb3IgdGhlIHJlZmNvdW50IHRv
-IGRyb3AgdG8gMi4gU2luY2UgaXQgaGFzIGJlZW4gdW5oYXNoZWQsDQogCSAqIHRoZXJlIHNob3Vs
-ZCBiZSBubyBkYW5nZXIgb2YgdGhlIHJlZmNvdW50IGdvaW5nIGJhY2sgdXAgYWdhaW4gYXQNCiAJ
-ICogdGhpcyBwb2ludC4NCisJICoNCisJICogQmVmb3JlIHdhaXRpbmcsIHdlIGNsZWFyIGNzdGF0
-ZS0+cmVwbGF5X293bmVyIHRvIHJlbGVhc2UgaXRzDQorCSAqIHNvX3JlcGxheS5ycF9tdXRleCwg
-c2luY2Ugb3RoZXIgcmVmZXJlbmNlIGhvbGRlciBtaWdodCBiZSBhY2NxdWlyaW5nDQorCSAqIHRo
-ZSBzYW1lIG11dGV4IGJlZm9yZSB0aGV5IGNvdWxkIGRyb3AgdGhlIHJlZmVyZW5jZXMuICBUaGUg
-cmVwbGF5X293bmVyDQorCSAqIGNhbiBiZSBhc3NpZ25lZCBiYWNrIHNhZmVseSBhZnRlciB0aGV5
-IGRvbmUgdGhlaXIgam9icy4NCiAJICovDQotCXdhaXRfZXZlbnQoY2xvc2Vfd3EsIHJlZmNvdW50
-X3JlYWQoJnMtPnN0X3N0aWQuc2NfY291bnQpID09IDIpOw0KKwlpZiAocmVmY291bnRfcmVhZCgm
-cy0+c3Rfc3RpZC5zY19jb3VudCkgIT0gMikgew0KKwkJc3RydWN0IG5mczRfc3RhdGVvd25lciAq
-c28gPSBjc3RhdGUtPnJlcGxheV9vd25lcjsNCisNCisJCW5mc2Q0X2NzdGF0ZV9jbGVhcl9yZXBs
-YXkoY3N0YXRlKTsNCisJCXdhaXRfZXZlbnQoY2xvc2Vfd3EsIHJlZmNvdW50X3JlYWQoJnMtPnN0
-X3N0aWQuc2NfY291bnQpID09IDIpOw0KKwkJbmZzZDRfY3N0YXRlX2Fzc2lnbl9yZXBsYXkoY3N0
-YXRlLCBzbyk7DQorCX0NCiANCiAJcmVsZWFzZV9hbGxfYWNjZXNzKHMpOw0KIAlpZiAocy0+c3Rf
-c3RpZC5zY19maWxlKSB7DQpAQCAtNTUzMSw3ICs1NTQyLDggQEAgc3RhdGljIGlubGluZSB2b2lk
-IG5mczRfc3RhdGVpZF9kb3duZ3JhZGUoc3RydWN0IG5mczRfb2xfc3RhdGVpZCAqc3RwLCB1MzIg
-dG9fYWMNCiAJcmV0dXJuIHN0YXR1czsNCiB9DQogDQotc3RhdGljIHZvaWQgbmZzZDRfY2xvc2Vf
-b3Blbl9zdGF0ZWlkKHN0cnVjdCBuZnM0X29sX3N0YXRlaWQgKnMpDQorc3RhdGljIHZvaWQgbmZz
-ZDRfY2xvc2Vfb3Blbl9zdGF0ZWlkKHN0cnVjdCBuZnNkNF9jb21wb3VuZF9zdGF0ZSAqY3N0YXRl
-LA0KKwkJc3RydWN0IG5mczRfb2xfc3RhdGVpZCAqcykNCiB7DQogCXN0cnVjdCBuZnM0X2NsaWVu
-dCAqY2xwID0gcy0+c3Rfc3RpZC5zY19jbGllbnQ7DQogCWJvb2wgdW5oYXNoZWQ7DQpAQCAtNTU0
-OSw3ICs1NTYxLDcgQEAgc3RhdGljIHZvaWQgbmZzZDRfY2xvc2Vfb3Blbl9zdGF0ZWlkKHN0cnVj
-dCBuZnM0X29sX3N0YXRlaWQgKnMpDQogCQlzcGluX3VubG9jaygmY2xwLT5jbF9sb2NrKTsNCiAJ
-CWZyZWVfb2xfc3RhdGVpZF9yZWFwbGlzdCgmcmVhcGxpc3QpOw0KIAkJaWYgKHVuaGFzaGVkKQ0K
-LQkJCW1vdmVfdG9fY2xvc2VfbHJ1KHMsIGNscC0+bmV0KTsNCisJCQltb3ZlX3RvX2Nsb3NlX2xy
-dShjc3RhdGUsIHMsIGNscC0+bmV0KTsNCiAJfQ0KIH0NCiANCkBAIC01NTg3LDcgKzU1OTksNyBA
-QCBzdGF0aWMgdm9pZCBuZnNkNF9jbG9zZV9vcGVuX3N0YXRlaWQoc3RydWN0IG5mczRfb2xfc3Rh
-dGVpZCAqcykNCiAJICovDQogCW5mczRfaW5jX2FuZF9jb3B5X3N0YXRlaWQoJmNsb3NlLT5jbF9z
-dGF0ZWlkLCAmc3RwLT5zdF9zdGlkKTsNCiANCi0JbmZzZDRfY2xvc2Vfb3Blbl9zdGF0ZWlkKHN0
-cCk7DQorCW5mc2Q0X2Nsb3NlX29wZW5fc3RhdGVpZChjc3RhdGUsIHN0cCk7DQogCW11dGV4X3Vu
-bG9jaygmc3RwLT5zdF9tdXRleCk7DQogDQogCS8qIHY0LjErIHN1Z2dlc3RzIHRoYXQgd2Ugc2Vu
-ZCBhIHNwZWNpYWwgc3RhdGVpZCBpbiBoZXJlLCBzaW5jZSB0aGUNCg==
+Quoting Brendan Higgins (2019-06-26 16:00:40)
+> On Tue, Jun 25, 2019 at 8:41 PM Stephen Boyd <sboyd@kernel.org> wrote:
+>=20
+> > scenario like below, but where it is a problem. There could be three
+> > CPUs, or even one CPU and three threads if you want to describe the
+> > extra thread scenario.
+> >
+> > Here's my scenario where it isn't needed:
+> >
+> >     CPU0                                      CPU1
+> >     ----                                      ----
+> >     kunit_run_test(&test)
+> >                                               test_case_func()
+> >                                                 ....
+> >                                               [mock hardirq]
+> >                                                 kunit_set_success(&test)
+> >                                               [hardirq ends]
+> >                                                 ...
+> >                                                 complete(&test_done)
+> >       wait_for_completion(&test_done)
+> >       kunit_get_success(&test)
+> >
+> > We don't need to care about having locking here because success or
+> > failure only happens in one place and it's synchronized with the
+> > completion.
+>=20
+> Here is the scenario I am concerned about:
+>=20
+> CPU0                      CPU1                       CPU2
+> ----                      ----                       ----
+> kunit_run_test(&test)
+>                           test_case_func()
+>                             ....
+>                             schedule_work(foo_func)
+>                           [mock hardirq]             foo_func()
+>                             ...                        ...
+>                             kunit_set_success(false)   kunit_set_success(=
+false)
+>                           [hardirq ends]               ...
+>                             ...
+>                             complete(&test_done)
+>   wait_for_completion(...)
+>   kunit_get_success(&test)
+>=20
+> In my scenario, since both CPU1 and CPU2 update the success status of
+> the test simultaneously, even though they are setting it to the same
+> value. If my understanding is correct, this could result in a
+> write-tear on some architectures in some circumstances. I suppose we
+> could just make it an atomic boolean, but I figured locking is also
+> fine, and generally preferred.
+
+This is what we have WRITE_ONCE() and READ_ONCE() for. Maybe you could
+just use that in the getter and setters and remove the lock if it isn't
+used for anything else.
+
+It may also be a good idea to have a kunit_fail_test() API that fails
+the test passed in with a WRITE_ONCE(false). Otherwise, the test is
+assumed successful and it isn't even possible for a test to change the
+state from failure to success due to a logical error because the API
+isn't available. Then we don't really need to have a generic
+kunit_set_success() function at all. We could have a kunit_test_failed()
+function too that replaces the kunit_get_success() function. That would
+read better in an if condition.
+
+>=20
+> Also, to be clear, I am onboard with dropping then IRQ stuff for now.
+> I am fine moving to a mutex for the time being.
+>=20
+
+Ok.
+
