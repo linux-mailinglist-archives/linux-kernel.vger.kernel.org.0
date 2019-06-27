@@ -2,105 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EA8857DA7
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 10:01:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17F5B57DC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 10:02:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726596AbfF0IBk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 04:01:40 -0400
-Received: from mailgw02.mediatek.com ([1.203.163.81]:57889 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726101AbfF0IBi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 04:01:38 -0400
-X-UUID: 1854cc0e78d043c5841c57b9d9beb845-20190627
-X-UUID: 1854cc0e78d043c5841c57b9d9beb845-20190627
-Received: from mtkcas32.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
-        (envelope-from <jitao.shi@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1741848921; Thu, 27 Jun 2019 16:01:32 +0800
-Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS33DR.mediatek.inc
- (172.27.6.106) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 27 Jun
- 2019 16:01:30 +0800
-Received: from mszsdclx1018.gcn.mediatek.inc (172.27.4.253) by
- MTKCAS36.mediatek.inc (172.27.4.170) with Microsoft SMTP Server id
- 15.0.1395.4 via Frontend Transport; Thu, 27 Jun 2019 16:01:28 +0800
-From:   Jitao Shi <jitao.shi@mediatek.com>
-To:     Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-        "Mark Rutland" <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        <linux-pwm@vger.kernel.org>, David Airlie <airlied@linux.ie>,
-        "Matthias Brugger" <matthias.bgg@gmail.com>
-CC:     Jitao Shi <jitao.shi@mediatek.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Ajay Kumar <ajaykumar.rs@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        "Rahul Sharma" <rahul.sharma@samsung.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        "Vincent Palatin" <vpalatin@chromium.org>,
-        Andy Yan <andy.yan@rock-chips.com>,
-        "Philipp Zabel" <p.zabel@pengutronix.de>,
-        Russell King <rmk+kernel@arm.linux.org.uk>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>,
-        "Sascha Hauer" <kernel@pengutronix.de>,
-        <yingjoe.chen@mediatek.com>, <eddie.huang@mediatek.com>,
-        <cawa.cheng@mediatek.com>, <bibby.hsieh@mediatek.com>,
-        <ck.hu@mediatek.com>, <stonea168@163.com>
-Subject: [v5 7/7] drm: mediatek: adjust dsi and mipi_tx probe sequence
-Date:   Thu, 27 Jun 2019 16:01:15 +0800
-Message-ID: <20190627080116.40264-8-jitao.shi@mediatek.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190627080116.40264-1-jitao.shi@mediatek.com>
-References: <20190627080116.40264-1-jitao.shi@mediatek.com>
+        id S1726678AbfF0ICM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 04:02:12 -0400
+Received: from foss.arm.com ([217.140.110.172]:48718 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726359AbfF0ICM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 04:02:12 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 91D48360;
+        Thu, 27 Jun 2019 01:02:11 -0700 (PDT)
+Received: from mbp (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9C2673F246;
+        Thu, 27 Jun 2019 01:02:10 -0700 (PDT)
+Date:   Thu, 27 Jun 2019 09:02:08 +0100
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Alexander Potapenko <glider@google.com>, Qian Cai <cai@lca.pw>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: Re: [PATCH] arm64: Move jump_label_init() before parse_early_param()
+Message-ID: <20190627080207.sdpwjoi4wnc664gp@mbp>
+References: <201906261343.5F26328@keescook>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-TM-AS-Product-Ver: SMEX-12.5.0.1684-8.5.1010-24720.003
-X-TM-AS-Result: No-5.013200-8.000000-10
-X-TMASE-MatchedRID: jDDvEWr+SwHYi2pRKW3Q1vqifdI85BZh3WFaxVW7M2hwkdIrVt8X1WMg
-        VHfStGn65UUUZCVUbO+bHAuQ1dUnuWJZXQNDzktSGjzBgnFZvQ4zAx8HYox0h0YlGywuH9uc+rE
-        c9YP7ZaPi8zVgXoAltmHJPdY2OmlS0C1sQRfQzEHEQdG7H66TyH4gKq42LRYk9Tu3ibJR6eVOyv
-        c/Wa4OW6RXKfY/AJJQK/xHXrr321p+3BndfXUhXQ==
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--5.013200-8.000000
-X-TMASE-Version: SMEX-12.5.0.1684-8.5.1010-24720.003
-X-TM-SNTS-SMTP: FEDE5F3E307DE948241EF76F11C72F417CD4B7A4639B3C4CB141BA5B401DE9052000:8
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201906261343.5F26328@keescook>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-mtk_mipi_tx is the phy of mtk_dsi.
-mtk_dsi get the phy(mtk_mipi_tx) in probe().
+Hi Kees,
 
-So,  mtk_mipi_tx init should be ahead of mtk_dsi. Or mtk_dsi will
-defer to wait mtk_mipi_tx probe done.
+On Wed, Jun 26, 2019 at 01:51:15PM -0700, Kees Cook wrote:
+> This moves arm64 jump_label_init() from smp_prepare_boot_cpu() to
+> setup_arch(), as done already on x86, in preparation from early param
+> usage in the init_on_alloc/free() series:
+> https://lkml.kernel.org/r/1561572949.5154.81.camel@lca.pw
 
-Signed-off-by: Jitao Shi <jitao.shi@mediatek.com>
-Reviewed-by: CK Hu <ck.hu@mediatek.com>
----
- drivers/gpu/drm/mediatek/mtk_drm_drv.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This looks fine to me. Is there any other series to be merged soon that
+depends on this patch (the init_on_alloc/fail one)? If not, I can queue
+it for 5.3.
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-index 57ce4708ef1b..fc809a61fab9 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-@@ -640,8 +640,8 @@ static struct platform_driver * const mtk_drm_drivers[] = {
- 	&mtk_disp_rdma_driver,
- 	&mtk_dpi_driver,
- 	&mtk_drm_platform_driver,
--	&mtk_dsi_driver,
- 	&mtk_mipi_tx_driver,
-+	&mtk_dsi_driver,
- };
- 
- static int __init mtk_drm_init(void)
 -- 
-2.21.0
-
+Catalin
