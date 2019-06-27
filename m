@@ -2,107 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9232E58538
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 17:07:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 217445853E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 17:08:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726974AbfF0PHu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 11:07:50 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40656 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726405AbfF0PHu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 11:07:50 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5F70CAC37;
-        Thu, 27 Jun 2019 15:07:48 +0000 (UTC)
-Date:   Thu, 27 Jun 2019 17:07:46 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>, linux-mm@kvack.org,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>
-Subject: Re: [PATCH 1/2] mm, memcontrol: Add memcg_iterate_all()
-Message-ID: <20190627150746.GD5303@dhcp22.suse.cz>
-References: <20190624174219.25513-1-longman@redhat.com>
- <20190624174219.25513-2-longman@redhat.com>
+        id S1727043AbfF0PI0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 11:08:26 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:58904 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726431AbfF0PIY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 11:08:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=4CZwDA7Pj4HoUqoimtFG6dWxz1lB8O8Y9IowCuyvjuo=; b=UWo6VtIXVEJUQFD02J/NXsl1wM
+        dksFvEed5QUKJoHfH5JDzfNzWNvVYRJdhlJedBY+a7xGjEJkkV1DyQzILnoLXCOtpAPk6gpxXhWCd
+        /bywSwc445dDB7Yc/btARPRov91Qe/os/xxO0dhqnmXVwRuCcpGUqyw/6D69aBX0almWfrGXonzbG
+        BnT/W9EyfkP9tx3HmuTk9NYes5OwqyUC2/yHlS3/t8E52Jn8sAGbRLwzMvPbCiQOaDJaNKuzO+yHj
+        oPp199PgJLgRw4Q/CzVPdgLpUs0iEmpT6q3e3sI09KgfkxXP4yFtVtlFqskFipbBHzLCf+0wa4WZk
+        8wVY9SDA==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hgW0a-00014f-Om; Thu, 27 Jun 2019 15:08:20 +0000
+Subject: Re: linux-next: Tree for Jun 26 (security/integrity/ima/)
+To:     David Howells <dhowells@redhat.com>,
+        Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-integrity@vger.kernel.org,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+References: <1561640534.4101.124.camel@linux.ibm.com>
+ <20190626231617.1e858da3@canb.auug.org.au>
+ <ee503bc1-a588-81f5-47e0-1762f590662f@infradead.org>
+ <9446.1561642145@warthog.procyon.org.uk>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <596322b1-1c89-0538-5c26-cd132b03e3eb@infradead.org>
+Date:   Thu, 27 Jun 2019 08:08:17 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190624174219.25513-2-longman@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <9446.1561642145@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 24-06-19 13:42:18, Waiman Long wrote:
-> Add a memcg_iterate_all() function for iterating all the available
-> memory cgroups and call the given callback function for each of the
-> memory cgruops.
-
-Why is a trivial wrapper any better than open coded usage of the
-iterator?
-
-> Signed-off-by: Waiman Long <longman@redhat.com>
-> ---
->  include/linux/memcontrol.h |  3 +++
->  mm/memcontrol.c            | 13 +++++++++++++
->  2 files changed, 16 insertions(+)
+On 6/27/19 6:29 AM, David Howells wrote:
+> Mimi Zohar <zohar@linux.ibm.com> wrote:
 > 
-> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> index 1dcb763bb610..0e31418e5a47 100644
-> --- a/include/linux/memcontrol.h
-> +++ b/include/linux/memcontrol.h
-> @@ -1268,6 +1268,9 @@ static inline bool mem_cgroup_under_socket_pressure(struct mem_cgroup *memcg)
->  struct kmem_cache *memcg_kmem_get_cache(struct kmem_cache *cachep);
->  void memcg_kmem_put_cache(struct kmem_cache *cachep);
->  
-> +extern void memcg_iterate_all(void (*callback)(struct mem_cgroup *memcg,
-> +					       void *arg), void *arg);
-> +
->  #ifdef CONFIG_MEMCG_KMEM
->  int __memcg_kmem_charge(struct page *page, gfp_t gfp, int order);
->  void __memcg_kmem_uncharge(struct page *page, int order);
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index ba9138a4a1de..c1c4706f7696 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -443,6 +443,19 @@ static int memcg_alloc_shrinker_maps(struct mem_cgroup *memcg)
->  static void memcg_free_shrinker_maps(struct mem_cgroup *memcg) { }
->  #endif /* CONFIG_MEMCG_KMEM */
->  
-> +/*
-> + * Iterate all the memory cgroups and call the given callback function
-> + * for each of the memory cgroups.
-> + */
-> +void memcg_iterate_all(void (*callback)(struct mem_cgroup *memcg, void *arg),
-> +		       void *arg)
-> +{
-> +	struct mem_cgroup *memcg;
-> +
-> +	for_each_mem_cgroup(memcg)
-> +		callback(memcg, arg);
-> +}
-> +
->  /**
->   * mem_cgroup_css_from_page - css of the memcg associated with a page
->   * @page: page of interest
-> -- 
-> 2.18.1
+>>>   CC      security/integrity/ima/ima_fs.o
+>>> In file included from ../security/integrity/ima/ima.h:25:0,
+>>>                  from ../security/integrity/ima/ima_fs.c:26:
+>>> ../security/integrity/ima/../integrity.h:170:18: warning: ‘struct key_acl’ declared inside parameter list [enabled by default]
+>>>            struct key_acl *acl)
+>>>                   ^
+>>> ../security/integrity/ima/../integrity.h:170:18: warning: its scope is only this definition or declaration, which is probably not what you want [enabled by default]
+>>
+>> David, CONFIG_INTEGRITY_SIGNATURE is dependent on KEYS being enabled,
+>> but the stub functions are not.  There's now a dependency on
+>> key_acl().
+> 
+> I added a forward declaration for struct key_acl into
+> security/integrity/integrity.h as you can see here:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/diff/security/integrity/integrity.h?h=keys-acl&id=75ce113a1d56880e5abd37fa664ea9af399d2bcd
+> 
+> which might not have made it into linux-next before you used it.
+
+No problem in linux-next 20190627.
+
+Thanks.
 
 -- 
-Michal Hocko
-SUSE Labs
+~Randy
