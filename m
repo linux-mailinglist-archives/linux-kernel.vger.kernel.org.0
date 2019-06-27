@@ -2,224 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 734D0577CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 02:49:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42E83577B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 02:49:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728202AbfF0AtB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 20:49:01 -0400
-Received: from lgeamrelo13.lge.com ([156.147.23.53]:55510 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726862AbfF0As7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 20:48:59 -0400
-Received: from unknown (HELO lgeamrelo01.lge.com) (156.147.1.125)
-        by 156.147.23.53 with ESMTP; 27 Jun 2019 09:48:56 +0900
-X-Original-SENDERIP: 156.147.1.125
-X-Original-MAILFROM: byungchul.park@lge.com
-Received: from unknown (HELO X58A-UD3R) (10.177.222.33)
-        by 156.147.1.125 with ESMTP; 27 Jun 2019 09:48:56 +0900
-X-Original-SENDERIP: 10.177.222.33
-X-Original-MAILFROM: byungchul.park@lge.com
-Date:   Thu, 27 Jun 2019 09:48:16 +0900
-From:   Byungchul Park <byungchul.park@lge.com>
-To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
-Cc:     Joel Fernandes <joel@joelfernandes.org>, josh@joshtriplett.org,
-        rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
-        jiangshanlai@gmail.com, rcu@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-team@lge.com
-Subject: Re: [RFC] rcu: Warn that rcu ktheads cannot be spawned
-Message-ID: <20190627004816.GA7427@X58A-UD3R>
-References: <1561364852-5113-1-git-send-email-byungchul.park@lge.com>
- <20190624164624.GA41314@google.com>
- <20190624172551.GI26519@linux.ibm.com>
- <20190625024100.GA10912@X58A-UD3R>
- <20190625133115.GV26519@linux.ibm.com>
- <20190626025120.GA3452@X58A-UD3R>
- <20190626163045.GB26519@linux.ibm.com>
+        id S1728825AbfF0Asb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 20:48:31 -0400
+Received: from mail-eopbgr60067.outbound.protection.outlook.com ([40.107.6.67]:19936
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726862AbfF0As2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 20:48:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QwmSDdNmX4wepY6JoJZmubKfzNFEHYtW6KdWw5XpZ6g=;
+ b=iatkcrjvttC+FJ/lHgHFOKaNyuXtSMoAJtaR8eD8REcUld2TVa8xmnf1Ss4BcKPExQZMBKaKi4Odo3DbyIAwBX5KwSmTTtk3XamNChO2mLBoSDSGiuG92IOtAfJBG05fbqa/X1Jl8P9qGDf/5IGvRLRfd6DdVOvo/XFXptdCGDU=
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
+ DB3PR0402MB3914.eurprd04.prod.outlook.com (52.134.71.157) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2008.16; Thu, 27 Jun 2019 00:48:22 +0000
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::3945:fcda:5bdd:8191]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::3945:fcda:5bdd:8191%4]) with mapi id 15.20.2008.014; Thu, 27 Jun 2019
+ 00:48:22 +0000
+From:   Anson Huang <anson.huang@nxp.com>
+To:     Daniel Baluta <daniel.baluta@gmail.com>
+CC:     Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>
+Subject: RE: [PATCH] soc: imx-scu: Add SoC UID(unique identifier) support
+Thread-Topic: [PATCH] soc: imx-scu: Add SoC UID(unique identifier) support
+Thread-Index: AQHVK+2BIBe0XayoFkyLTDr8gJYgQqat4TYAgADJtNA=
+Date:   Thu, 27 Jun 2019 00:48:22 +0000
+Message-ID: <DB3PR0402MB3916A4093CFB363B51523AA7F5FD0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+References: <20190626070706.24930-1-Anson.Huang@nxp.com>
+ <CAEnQRZBsT=KY3-Gk8p1byJOqx1_y_EX-KqiBs6WnroWkT5oe_Q@mail.gmail.com>
+In-Reply-To: <CAEnQRZBsT=KY3-Gk8p1byJOqx1_y_EX-KqiBs6WnroWkT5oe_Q@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com; 
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 2a8cc862-0c94-4c60-f182-08d6fa992817
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DB3PR0402MB3914;
+x-ms-traffictypediagnostic: DB3PR0402MB3914:
+x-microsoft-antispam-prvs: <DB3PR0402MB3914CFCD446B0A6BBCD7E3C4F5FD0@DB3PR0402MB3914.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:5236;
+x-forefront-prvs: 008184426E
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(366004)(396003)(39860400002)(376002)(346002)(13464003)(199004)(189003)(52536014)(7696005)(71200400001)(5660300002)(66556008)(4326008)(76176011)(64756008)(53546011)(53936002)(73956011)(66446008)(55016002)(6436002)(14454004)(68736007)(229853002)(26005)(6506007)(66946007)(25786009)(7736002)(6246003)(66476007)(9686003)(74316002)(305945005)(99286004)(102836004)(478600001)(76116006)(66066001)(2906002)(6116002)(54906003)(8936002)(6916009)(86362001)(11346002)(8676002)(186003)(33656002)(486006)(316002)(44832011)(81166006)(446003)(71190400001)(476003)(81156014)(3846002)(256004);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3914;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 04gtP1sBHQqE6AzyJYO0unrSzbtefpGomM9Sb6JbNE7hd8r/xHMbDfipF8L7yfaNT1DnwRwVigU0o076xYGUOw529QXlZjrfZxUIrAIW1GwQJKfG0SI4hZlwqh3tQ6itohk8ZnprfuvrttPDWuieW9R+nRZ7nHrTgr5fbntNiQdYVCnWFIfa2oSD/mCmiDyh87e33Jqhx3L6Bloo1POBWeB6eHijz/ElDZBY+UD20F/NtIjn8OqQ/Dz5+Cm2qrKPmh8AxDOedT5fWyBHSMXx/lxsxdrQn5BbCsVU+nhbjdDBNNLpdJGhEMub+HUhGajDmcKCQaSXaa6DOUrbzH/MQBk3Uqi2W11HYcu70kOax1BuGBDtnLMB5tCYfQFBMsuy+939iz6Miok5bRFhUZZsBBzQbCeJz+9HTszhOrLw0Sg=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190626163045.GB26519@linux.ibm.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2a8cc862-0c94-4c60-f182-08d6fa992817
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Jun 2019 00:48:22.7742
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: anson.huang@nxp.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3914
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 26, 2019 at 09:30:45AM -0700, Paul E. McKenney wrote:
-> On Wed, Jun 26, 2019 at 11:51:20AM +0900, Byungchul Park wrote:
-> > On Tue, Jun 25, 2019 at 06:31:15AM -0700, Paul E. McKenney wrote:
-> > > On Tue, Jun 25, 2019 at 11:41:00AM +0900, Byungchul Park wrote:
-> > > > On Mon, Jun 24, 2019 at 10:25:51AM -0700, Paul E. McKenney wrote:
-> > > > > On Mon, Jun 24, 2019 at 12:46:24PM -0400, Joel Fernandes wrote:
-> > > > > > On Mon, Jun 24, 2019 at 05:27:32PM +0900, Byungchul Park wrote:
-> > > > > > > Hello rcu folks,
-> > > > > > > 
-> > > > > > > I thought it'd better to announce it if those spawnings fail because of
-> > > > > > > !rcu_scheduler_fully_active.
-> > > > > > > 
-> > > > > > > Of course, with the current code, it never happens though.
-> > > > > > > 
-> > > > > > > Thoughts?
-> > > > > > 
-> > > > > > It seems in the right spirit, but with your patch a warning always fires.
-> > > > > > rcu_prepare_cpu() is called multiple times, once from rcu_init() and then
-> > > > > > from hotplug paths.
-> > > > > > 
-> > > > > > Warning splat stack looks like:
-> > > > > > 
-> > > > > > [    0.398767] Call Trace:
-> > > > > > [    0.398775]  rcu_init+0x6aa/0x724
-> > > > > > [    0.398779]  start_kernel+0x220/0x4a2
-> > > > > > [    0.398780]  ? copy_bootdata+0x12/0xac
-> > > > > > [    0.398782]  secondary_startup_64+0xa4/0xb0
-> > > > > 
-> > > > > Thank you both, and I will remove this from my testing queue.
-> > > > > 
-> > > > > As Joel says, this is called at various points in the boot sequence, not
-> > > > > all of which are far enough along to support spawning kthreads.
-> > > > > 
-> > > > > The real question here is "What types of bugs are we trying to defend
-> > > > > against?"  But keeping in mind existing diagnostics.  For example, are
-> > > > > there any kthreads for which a persistent failure to spawn would not
-> > > > > emit any error message.  My belief is that any such persistent failure
-> > > > > would result in either an in-kernel diagnostic or an rcutorture failure,
-> > > > > but I might well be missing something.
-> > > > > 
-> > > > > Thoughts?  Or, more to the point, tests demonstrating silence in face
-> > > > > of such a persistent failure?
-> > > > 
-> > > > You are right. There wouldn't be a persistent failure because the path
-> > > > turning cpus on always tries to spawn them, *even* in case that the
-> > > > booting sequence is wrong. The current code anyway goes right though.
-> > > > 
-> > > > I thought a hole can be there if the code changes so that those kthreads
-> > > > cannot be spawned until the cpu being up, which is the case I was
-> > > > interested in. Again, it's gonna never happen with the current code
-> > > > because it spawns them after setting rcu_scheduler_fully_active to 1 in
-> > > > rcu_spawn_gp_kthead().
-> > > > 
-> > > > And I wrongly thought you placed the rcu_scheduler_fully_active check on
-> > > > spawning just in case. But it seems to be not the case.
-> > > > 
-> > > > So I'd better stop working on the warning patch. :) Instead, please
-> > > > check the following trivial fix.
-> > > > 
-> > > > Thanks,
-> > > > Byungchul
-> > > > 
-> > > > ---8<---
-> > > > >From 1293d19bb7abf7553d656c81182118eff54e7dc9 Mon Sep 17 00:00:00 2001
-> > > > From: Byungchul Park <byungchul.park@lge.com>
-> > > > Date: Mon, 24 Jun 2019 16:22:11 +0900
-> > > > Subject: [PATCH] rcu: Make rcu_spawn_one_boost_kthread() return void
-> > > > 
-> > > > The return value of rcu_spawn_one_boost_kthread() is not used any
-> > > > longer. Change the return type from int to void.
-> > > > 
-> > > > Signed-off-by: Byungchul Park <byungchul.park@lge.com>
-> > > 
-> > > Looks pretty good, just one comment below.  Plus could you please tell
-> > > me what you are developing this against?
-> > 
-> > Only for removing out-dated code. Not for funcational change.
-> 
-> I was actually expecting an answer of the form "current mainline",
-> "v5.2-rc3", "-rcu branch dev", or some such.  If need be, I will ask
-> again for your next version.  ;-)
-
-OMG. It was linux-rcu.git rcu/next. :(
-
-Thank you!
-Byungchul
-
-> > And simple answer below...
-> > 
-> > > 
-> > > 							Thanx, Paul
-> > > 
-> > > > ---
-> > > >  kernel/rcu/tree_plugin.h | 15 +++++++--------
-> > > >  1 file changed, 7 insertions(+), 8 deletions(-)
-> > > > 
-> > > > diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-> > > > index 1102765..4e11aa4 100644
-> > > > --- a/kernel/rcu/tree_plugin.h
-> > > > +++ b/kernel/rcu/tree_plugin.h
-> > > > @@ -1131,7 +1131,7 @@ static void rcu_preempt_boost_start_gp(struct rcu_node *rnp)
-> > > >   * already exist.  We only create this kthread for preemptible RCU.
-> > > >   * Returns zero if all is well, a negated errno otherwise.
-> > > >   */
-> > > > -static int rcu_spawn_one_boost_kthread(struct rcu_node *rnp)
-> > > > +static void rcu_spawn_one_boost_kthread(struct rcu_node *rnp)
-> > > >  {
-> > > >  	int rnp_index = rnp - rcu_get_root();
-> > > >  	unsigned long flags;
-> > > > @@ -1139,25 +1139,24 @@ static int rcu_spawn_one_boost_kthread(struct rcu_node *rnp)
-> > > >  	struct task_struct *t;
-> > > >  
-> > > >  	if (!IS_ENABLED(CONFIG_PREEMPT_RCU))
-> > > > -		return 0;
-> > > > +		return;
-> > > >  
-> > > >  	if (!rcu_scheduler_fully_active || rcu_rnp_online_cpus(rnp) == 0)
-> > > > -		return 0;
-> > > > +		return;
-> > > >  
-> > > >  	rcu_state.boost = 1;
-> > > >  	if (rnp->boost_kthread_task != NULL)
-> > > > -		return 0;
-> > > > +		return;
-> > > >  	t = kthread_create(rcu_boost_kthread, (void *)rnp,
-> > > >  			   "rcub/%d", rnp_index);
-> > > >  	if (IS_ERR(t))
-> > > 
-> > > This would be a change in behavior, but it might be good to have a
-> > > WARN_ON_ONCE() above.  Assuming that it doesn't splat on every boot.  ;-)
-> > 
-> > Yes. Normally it shouldn't. Right? I will resend this after testing with
-> > my machine. :)
-> 
-> My guess is that it will not splat, but if it does, it would not be the
-> first time that RCU has surprised me.  ;-)
-> 
-> 							Thanx, Paul
-> 
-> > Thanks,
-> > Byungchul
-> > 
-> > > 
-> > > > -		return PTR_ERR(t);
-> > > > +		return;
-> > > >  	raw_spin_lock_irqsave_rcu_node(rnp, flags);
-> > > >  	rnp->boost_kthread_task = t;
-> > > >  	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
-> > > >  	sp.sched_priority = kthread_prio;
-> > > >  	sched_setscheduler_nocheck(t, SCHED_FIFO, &sp);
-> > > >  	wake_up_process(t); /* get to TASK_INTERRUPTIBLE quickly. */
-> > > > -	return 0;
-> > > >  }
-> > > >  
-> > > >  static void rcu_cpu_kthread_setup(unsigned int cpu)
-> > > > @@ -1265,7 +1264,7 @@ static void __init rcu_spawn_boost_kthreads(void)
-> > > >  	if (WARN_ONCE(smpboot_register_percpu_thread(&rcu_cpu_thread_spec), "%s: Could not start rcub kthread, OOM is now expected behavior\n", __func__))
-> > > >  		return;
-> > > >  	rcu_for_each_leaf_node(rnp)
-> > > > -		(void)rcu_spawn_one_boost_kthread(rnp);
-> > > > +		rcu_spawn_one_boost_kthread(rnp);
-> > > >  }
-> > > >  
-> > > >  static void rcu_prepare_kthreads(int cpu)
-> > > > @@ -1275,7 +1274,7 @@ static void rcu_prepare_kthreads(int cpu)
-> > > >  
-> > > >  	/* Fire up the incoming CPU's kthread and leaf rcu_node kthread. */
-> > > >  	if (rcu_scheduler_fully_active)
-> > > > -		(void)rcu_spawn_one_boost_kthread(rnp);
-> > > > +		rcu_spawn_one_boost_kthread(rnp);
-> > > >  }
-> > > >  
-> > > >  #else /* #ifdef CONFIG_RCU_BOOST */
-> > > > -- 
-> > > > 1.9.1
-> > > > 
-> > 
+SGksIERhbmllbA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IERhbmll
+bCBCYWx1dGEgPGRhbmllbC5iYWx1dGFAZ21haWwuY29tPg0KPiBTZW50OiBXZWRuZXNkYXksIEp1
+bmUgMjYsIDIwMTkgODo0MiBQTQ0KPiBUbzogQW5zb24gSHVhbmcgPGFuc29uLmh1YW5nQG54cC5j
+b20+DQo+IENjOiBTaGF3biBHdW8gPHNoYXduZ3VvQGtlcm5lbC5vcmc+OyBTYXNjaGEgSGF1ZXIN
+Cj4gPHMuaGF1ZXJAcGVuZ3V0cm9uaXguZGU+OyBQZW5ndXRyb25peCBLZXJuZWwgVGVhbQ0KPiA8
+a2VybmVsQHBlbmd1dHJvbml4LmRlPjsgRmFiaW8gRXN0ZXZhbSA8ZmVzdGV2YW1AZ21haWwuY29t
+PjsgQWlzaGVuZw0KPiBEb25nIDxhaXNoZW5nLmRvbmdAbnhwLmNvbT47IEFiZWwgVmVzYSA8YWJl
+bC52ZXNhQG54cC5jb20+OyBsaW51eC0NCj4gYXJtLWtlcm5lbCA8bGludXgtYXJtLWtlcm5lbEBs
+aXN0cy5pbmZyYWRlYWQub3JnPjsgTGludXggS2VybmVsIE1haWxpbmcgTGlzdA0KPiA8bGludXgt
+a2VybmVsQHZnZXIua2VybmVsLm9yZz47IGRsLWxpbnV4LWlteCA8bGludXgtaW14QG54cC5jb20+
+OyBEYW5pZWwNCj4gQmFsdXRhIDxkYW5pZWwuYmFsdXRhQG54cC5jb20+DQo+IFN1YmplY3Q6IFJl
+OiBbUEFUQ0hdIHNvYzogaW14LXNjdTogQWRkIFNvQyBVSUQodW5pcXVlIGlkZW50aWZpZXIpIHN1
+cHBvcnQNCj4gDQo+IE9uIFdlZCwgSnVuIDI2LCAyMDE5IGF0IDEwOjA2IEFNIDxBbnNvbi5IdWFu
+Z0BueHAuY29tPiB3cm90ZToNCj4gPg0KPiA+IEZyb206IEFuc29uIEh1YW5nIDxBbnNvbi5IdWFu
+Z0BueHAuY29tPg0KPiA+DQo+ID4gQWRkIGkuTVggU0NVIFNvQydzIFVJRCh1bmlxdWUgaWRlbnRp
+Zmllcikgc3VwcG9ydCwgdXNlciBjYW4gcmVhZCBpdA0KPiA+IGZyb20gc3lzZnM6DQo+ID4NCj4g
+PiByb290QGlteDhxeHBtZWs6fiMgY2F0IC9zeXMvZGV2aWNlcy9zb2MwL3NvY191aWQNCj4gPiA3
+QjY0MjgwQjU3QUMxODk4DQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBBbnNvbiBIdWFuZyA8QW5z
+b24uSHVhbmdAbnhwLmNvbT4NCj4gPiAtLS0NCj4gPiAgZHJpdmVycy9zb2MvaW14L3NvYy1pbXgt
+c2N1LmMgfCAzNQ0KPiA+ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrDQo+ID4g
+IDEgZmlsZSBjaGFuZ2VkLCAzNSBpbnNlcnRpb25zKCspDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEv
+ZHJpdmVycy9zb2MvaW14L3NvYy1pbXgtc2N1LmMNCj4gPiBiL2RyaXZlcnMvc29jL2lteC9zb2Mt
+aW14LXNjdS5jIGluZGV4IDY3NmY2MTIuLjhkMzIyYTEgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVy
+cy9zb2MvaW14L3NvYy1pbXgtc2N1LmMNCj4gPiArKysgYi9kcml2ZXJzL3NvYy9pbXgvc29jLWlt
+eC1zY3UuYw0KPiA+IEBAIC0yNyw2ICsyNywzNiBAQCBzdHJ1Y3QgaW14X3NjX21zZ19taXNjX2dl
+dF9zb2NfaWQgew0KPiA+ICAgICAgICAgfSBkYXRhOw0KPiA+ICB9IF9fcGFja2VkOw0KPiA+DQo+
+ID4gK3N0cnVjdCBpbXhfc2NfbXNnX21pc2NfZ2V0X3NvY191aWQgew0KPiA+ICsgICAgICAgc3Ry
+dWN0IGlteF9zY19ycGNfbXNnIGhkcjsNCj4gPiArICAgICAgIHUzMiB1aWRfbG93Ow0KPiA+ICsg
+ICAgICAgdTMyIHVpZF9oaWdoOw0KPiA+ICt9IF9fcGFja2VkOw0KPiA+ICsNCj4gPiArc3RhdGlj
+IHNzaXplX3Qgc29jX3VpZF9zaG93KHN0cnVjdCBkZXZpY2UgKmRldiwNCj4gPiArICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgc3RydWN0IGRldmljZV9hdHRyaWJ1dGUgKmF0dHIsIGNoYXIgKmJ1
+ZikNCj4gPiArew0KPiA+ICsgICAgICAgc3RydWN0IGlteF9zY19tc2dfbWlzY19nZXRfc29jX3Vp
+ZCBtc2c7DQo+ID4gKyAgICAgICBzdHJ1Y3QgaW14X3NjX3JwY19tc2cgKmhkciA9ICZtc2cuaGRy
+Ow0KPiA+ICsgICAgICAgdTY0IHNvY191aWQ7DQo+ID4gKw0KPiA+ICsgICAgICAgaGRyLT52ZXIg
+PSBJTVhfU0NfUlBDX1ZFUlNJT047DQo+ID4gKyAgICAgICBoZHItPnN2YyA9IElNWF9TQ19SUENf
+U1ZDX01JU0M7DQo+ID4gKyAgICAgICBoZHItPmZ1bmMgPSBJTVhfU0NfTUlTQ19GVU5DX1VOSVFV
+RV9JRDsNCj4gPiArICAgICAgIGhkci0+c2l6ZSA9IDE7DQo+ID4gKw0KPiA+ICsgICAgICAgLyog
+dGhlIHJldHVybiB2YWx1ZSBvZiBTQ1UgRlcgaXMgaW4gY29ycmVjdCwgc2tpcCByZXR1cm4gdmFs
+dWUNCj4gPiArIGNoZWNrICovDQo+IA0KPiBXaHkgZG8geW91IG1lYW4gYnkgImluIGNvcnJlY3Qi
+Pw0KDQpJIG1hZGUgYSBtaXN0YWtlLCBpdCBzaG91bGQgYmUgImluY29ycmVjdCIsIHRoZSBleGlz
+dGluZyBTQ0ZXIG9mIHRoaXMgQVBJIHJldHVybnMNCmFuIGVycm9yIHZhbHVlIGV2ZW4gdGhpcyBB
+UEkgaXMgc3VjY2Vzc2Z1bGx5IGNhbGxlZCwgdG8gbWFrZSBpdCB3b3JrIHdpdGggY3VycmVudA0K
+U0NGVywgSSBoYXZlIHRvIHNraXAgdGhlIHJldHVybiB2YWx1ZSBjaGVjayBmb3IgdGhpcyBBUEkg
+Zm9yIG5vdy4gV2lsbCBzZW5kIFYyIHBhdGNoDQp0byBmaXggdGhpcyB0eXBvLg0KDQo+ID4gKyAg
+ICAgICBpbXhfc2N1X2NhbGxfcnBjKHNvY19pcGNfaGFuZGxlLCAmbXNnLCB0cnVlKTsNCj4gPiAr
+DQo+ID4gKyAgICAgICBzb2NfdWlkID0gbXNnLnVpZF9oaWdoOw0KPiA+ICsgICAgICAgc29jX3Vp
+ZCA8PD0gMzI7DQo+ID4gKyAgICAgICBzb2NfdWlkIHw9IG1zZy51aWRfbG93Ow0KPiA+ICsNCj4g
+PiArICAgICAgIHJldHVybiBzcHJpbnRmKGJ1ZiwgIiUwMTZsbFhcbiIsIHNvY191aWQpOw0KPiAN
+Cj4gc25wcmludGY/DQoNClRoZSBzbnByaW50ZiBpcyB0byBhdm9pZCBidWZmZXIgb3ZlcmZsb3cs
+IHdoaWNoIGluIHRoaXMgY2FzZSwgSSBkb24ndCBrbm93IHRoZSBzaXplDQpvZiAiYnVmIiwgYW5k
+IHRoZSB2YWx1ZSh1NjQpIHRvIGJlIHByaW50ZWQgaXMgd2l0aCBmaXhlZCBsZW5ndGggb2YgNjQs
+IHNvIEkgdGhpbmsNCnNwcmludCBpcyBqdXN0IE9LLg0KDQpBbnNvbi4NCj4gDQo+ID4gK30NCj4g
+PiArDQo+ID4gK3N0YXRpYyBERVZJQ0VfQVRUUl9STyhzb2NfdWlkKTsNCj4gPiArDQo+ID4gIHN0
+YXRpYyBpbnQgaW14X3NjdV9zb2NfaWQodm9pZCkNCj4gPiAgew0KPiA+ICAgICAgICAgc3RydWN0
+IGlteF9zY19tc2dfbWlzY19nZXRfc29jX2lkIG1zZzsgQEAgLTEwMiw2ICsxMzIsMTEgQEANCj4g
+PiBzdGF0aWMgaW50IGlteF9zY3Vfc29jX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBk
+ZXYpDQo+ID4gICAgICAgICAgICAgICAgIGdvdG8gZnJlZV9yZXZpc2lvbjsNCj4gPiAgICAgICAg
+IH0NCj4gPg0KPiA+ICsgICAgICAgcmV0ID0gZGV2aWNlX2NyZWF0ZV9maWxlKHNvY19kZXZpY2Vf
+dG9fZGV2aWNlKHNvY19kZXYpLA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICZkZXZfYXR0cl9zb2NfdWlkKTsNCj4gPiArICAgICAgIGlmIChyZXQpDQo+ID4gKyAgICAgICAg
+ICAgICAgIGdvdG8gZnJlZV9yZXZpc2lvbjsNCj4gPiArDQo+ID4gICAgICAgICByZXR1cm4gMDsN
+Cj4gPg0KPiA+ICBmcmVlX3JldmlzaW9uOg0KPiA+IC0tDQo+ID4gMi43LjQNCj4gPg0K
