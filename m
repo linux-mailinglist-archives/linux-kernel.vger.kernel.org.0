@@ -2,160 +2,184 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC36C58172
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 13:25:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 044DB5818E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 13:29:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726890AbfF0LZo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 07:25:44 -0400
-Received: from mga01.intel.com ([192.55.52.88]:50450 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726375AbfF0LZn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 07:25:43 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jun 2019 04:25:42 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,423,1557212400"; 
-   d="scan'208";a="183428308"
-Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.150])
-  by fmsmga001.fm.intel.com with ESMTP; 27 Jun 2019 04:25:40 -0700
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kbuild@vger.kernel.org
-Cc:     Sam Ravnborg <sam@ravnborg.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        Michal Marek <michal.lkml@markovi.net>
-Subject: Re: [PATCH v2 3/4] kbuild: support header-test-pattern-y
-In-Reply-To: <20190627014617.600-4-yamada.masahiro@socionext.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20190627014617.600-1-yamada.masahiro@socionext.com> <20190627014617.600-4-yamada.masahiro@socionext.com>
-Date:   Thu, 27 Jun 2019 14:28:26 +0300
-Message-ID: <871rzfqnc5.fsf@intel.com>
+        id S1726587AbfF0L3v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 07:29:51 -0400
+Received: from mail-eopbgr710139.outbound.protection.outlook.com ([40.107.71.139]:56850
+        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726429AbfF0L3v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 07:29:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=Analogixsemi.onmicrosoft.com; s=selector1-Analogixsemi-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QDWKXlpxu98HCogElK4jEUKX/2hU/aZhK5XO2ZF0fFI=;
+ b=TzU7ruEtKE/Omz0K6G7YqA18Dw8stdbR2F0aIUKItNRrwnHabW6VXhRJc/htaV1RY8X5HSsSdZjZm2EcifUQ07qQQ5u7UYz/oKH47N6iBFA+yHqP+PSkuWuLYf+95Ty4lbuufm0nGhVD5+x4dOHtZJ2OvDSmPgzwSo/r8bvd554=
+Received: from MN2PR04MB5886.namprd04.prod.outlook.com (20.179.22.213) by
+ MN2PR04MB6110.namprd04.prod.outlook.com (20.178.248.27) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2032.17; Thu, 27 Jun 2019 11:29:47 +0000
+Received: from MN2PR04MB5886.namprd04.prod.outlook.com
+ ([fe80::397b:3922:4027:f635]) by MN2PR04MB5886.namprd04.prod.outlook.com
+ ([fe80::397b:3922:4027:f635%3]) with mapi id 15.20.2032.016; Thu, 27 Jun 2019
+ 11:29:47 +0000
+From:   Xin Ji <xji@analogixsemi.com>
+To:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        Andrzej Hajda <a.hajda@samsung.com>
+CC:     "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "sjoerd.simons@collabora.co.uk" <sjoerd.simons@collabora.co.uk>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Sheng Pan <span@analogixsemi.com>
+Subject: [PATCH v1] Adjust analogix chip driver location
+Thread-Topic: [PATCH v1] Adjust analogix chip driver location
+Thread-Index: AQHVLNugE9/A6NeXyUKRWvLnNCDN2w==
+Date:   Thu, 27 Jun 2019 11:29:47 +0000
+Message-ID: <20190627112939.GA4832@xin-VirtualBox>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: HK0PR01CA0056.apcprd01.prod.exchangelabs.com
+ (2603:1096:203:a6::20) To MN2PR04MB5886.namprd04.prod.outlook.com
+ (2603:10b6:208:a3::21)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=xji@analogixsemi.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [114.247.245.252]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: e06ecaa8-4e44-4947-5b6a-08d6faf2c2a9
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MN2PR04MB6110;
+x-ms-traffictypediagnostic: MN2PR04MB6110:
+x-microsoft-antispam-prvs: <MN2PR04MB61106D0F54D9B3B1524CD31EC7FD0@MN2PR04MB6110.namprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:177;
+x-forefront-prvs: 008184426E
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(7916004)(136003)(396003)(366004)(39840400004)(376002)(346002)(189003)(199004)(54906003)(110136005)(7736002)(316002)(25786009)(2906002)(476003)(53936002)(256004)(52116002)(486006)(6486002)(6436002)(99286004)(305945005)(4326008)(6512007)(9686003)(86362001)(14454004)(26005)(8676002)(66066001)(1076003)(107886003)(8936002)(81166006)(81156014)(33716001)(33656002)(66476007)(66556008)(64756008)(66446008)(66946007)(73956011)(5660300002)(71190400001)(186003)(71200400001)(2501003)(478600001)(6506007)(102836004)(6116002)(3846002)(386003)(68736007);DIR:OUT;SFP:1102;SCL:1;SRVR:MN2PR04MB6110;H:MN2PR04MB5886.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: analogixsemi.com does not
+ designate permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 6LDYImq0SYySngHQljdx99KpHYWHZpZLYPnjGWiAQdmaRZG7MSn/Z/5vFdccvS6F8gnyFBElK8KZIZ7dRgVKdtsGEdOH8N9HZTpRzvVQ2zhPxoY3Wfu5MMsMEwB6IzYDegzjunjcKfo0YwaXM/hFlvbiNSVn7cuaU/RfuvAk4ACEUMH3oIuaj6GEaJOOwZRsjYRUCIlpEOuLbDxcSHows1gLeHmP83RskLEWW7va1CudoTWxB/hnH5ZOal+A9YgEUCQjp3a02zIpkpHdicOXfzIitU2ANPxX0OeIrH18YbvojNRzoq1dR9AzFcqmtt7ZYGJoAitIHunAhD62UqCVHvyCkS0xe1WPTw4XSJLZW290lJ0dxNtuK8WaBBK+2YbKob7cLcYSA+jI1R+43FgVnBh3bbJeLTuB56w2CpCSzyA=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <34B723CC14C47F4FB2A9966795AFA4EE@namprd04.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain
+X-OriginatorOrg: analogixsemi.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e06ecaa8-4e44-4947-5b6a-08d6faf2c2a9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Jun 2019 11:29:47.6990
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b099b0b4-f26c-4cf5-9a0f-d5be9acab205
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: xji@analogixsemi.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR04MB6110
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 27 Jun 2019, Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
-> In my view, most of headers can be self-contained. So, it would be
-> tedious to add every header to header-test-y explicitly. We usually
-> end up with "all headers with some exceptions".
->
-> There are two types in exceptions:
->
-> [1] headers that are never compiled as standalone units
->
->   For examples, include/linux/compiler-gcc.h is not intended to be
->   included directly. We should always exclude such ones.
->
-> [2] headers that are conditionally compiled as standalone units
->
->   Some headers can be compiled only for particular architectures.
->   For example, include/linux/arm-cci.h can be compiled only for
->   arm/arm64 because it requires <asm/arm-cci.h> to exist.
->   Clang can compile include/soc/nps/mtm.h only for arc because
->   it contains an arch-specific register in inline assembler.
->
-> For [2], we can write Makefile like this:
->
->   header-test-$(CONFIG_ARM) += linux/arm-cci.h
->
-> The new syntax header-test-pattern-y will be useful to specify
-> "the rest".
->
-> The typical usage is like this:
->
->   header-test-pattern-y += */*.h
->
-> This adds all the headers in sub-directories to the test coverage,
-> but headers added to header-test- are excluded. In this regards,
-> header-test-pattern-y behaves like a weaker variant of header-test-y.
->
-> Caveat:
-> The patterns in header-test-pattern-y are prefixed with $(srctree)/$(src)/
-> but not $(objtree)/$(obj)/. Stale generated patterns are often left over.
-> For example, you will have ones when you traverse the git history for
-> 'git bisect' without cleaning. If a wildcard is used for generated
-> headers, it may match to stale headers.
->
-> If you really want to compile-test generated headers, I recommend to
-> add them to header-test-y explicitly. One pitfall is $(srctree)/$(src)/
-> and $(objtree)/$(obj)/ point to the same directory for in-tree building.
-> So, header-test-pattern-y should be used with care. It can potentially
-> match to generated headers, which may be stale and fail to compile.
->
-> Caveat2:
-> You could use wildcard for header-test-. For example,
->
->   header-test- += asm-generic/%
->
-> ... will exclude headers in asm-generic directory. Unfortunately, the
-> wildcard character is '%' instead of '*' because this is evaluated by
-> $(filter-out ...) whereas header-test-pattern-y is evaluated by
-> $(wildcard ...). This is a kludge, but seems useful in some places...
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Move analogix chip ANX78XX bridge driver into "analogix" directory.
 
-Awesome! This will let us get rid of our local $(wildcard) hacks.
+Signed-off-by: Xin Ji <xji@analogixsemi.com>
+---
+ drivers/gpu/drm/bridge/Kconfig                           | 10 ----------
+ drivers/gpu/drm/bridge/Makefile                          |  3 +--
+ drivers/gpu/drm/bridge/analogix/Kconfig                  | 10 ++++++++++
+ drivers/gpu/drm/bridge/analogix/Makefile                 |  2 ++
+ drivers/gpu/drm/bridge/{ =3D> analogix}/analogix-anx78xx.c |  0
+ drivers/gpu/drm/bridge/{ =3D> analogix}/analogix-anx78xx.h |  0
+ 6 files changed, 13 insertions(+), 12 deletions(-)
+ rename drivers/gpu/drm/bridge/{ =3D> analogix}/analogix-anx78xx.c (100%)
+ rename drivers/gpu/drm/bridge/{ =3D> analogix}/analogix-anx78xx.h (100%)
 
-Tested-by: Jani Nikula <jani.nikula@intel.com>
+diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfi=
+g
+index ee77746..862789b 100644
+--- a/drivers/gpu/drm/bridge/Kconfig
++++ b/drivers/gpu/drm/bridge/Kconfig
+@@ -16,16 +16,6 @@ config DRM_PANEL_BRIDGE
+ menu "Display Interface Bridges"
+ 	depends on DRM && DRM_BRIDGE
+=20
+-config DRM_ANALOGIX_ANX78XX
+-	tristate "Analogix ANX78XX bridge"
+-	select DRM_KMS_HELPER
+-	select REGMAP_I2C
+-	---help---
+-	  ANX78XX is an ultra-low Full-HD SlimPort transmitter
+-	  designed for portable devices. The ANX78XX transforms
+-	  the HDMI output of an application processor to MyDP
+-	  or DisplayPort.
+-
+ config DRM_CDNS_DSI
+ 	tristate "Cadence DPI/DSI bridge"
+ 	select DRM_KMS_HELPER
+diff --git a/drivers/gpu/drm/bridge/Makefile b/drivers/gpu/drm/bridge/Makef=
+ile
+index 4934fcf..02cb4cd 100644
+--- a/drivers/gpu/drm/bridge/Makefile
++++ b/drivers/gpu/drm/bridge/Makefile
+@@ -1,5 +1,4 @@
+ # SPDX-License-Identifier: GPL-2.0
+-obj-$(CONFIG_DRM_ANALOGIX_ANX78XX) +=3D analogix-anx78xx.o
+ obj-$(CONFIG_DRM_CDNS_DSI) +=3D cdns-dsi.o
+ obj-$(CONFIG_DRM_DUMB_VGA_DAC) +=3D dumb-vga-dac.o
+ obj-$(CONFIG_DRM_LVDS_ENCODER) +=3D lvds-encoder.o
+@@ -12,8 +11,8 @@ obj-$(CONFIG_DRM_SII9234) +=3D sii9234.o
+ obj-$(CONFIG_DRM_THINE_THC63LVD1024) +=3D thc63lvd1024.o
+ obj-$(CONFIG_DRM_TOSHIBA_TC358764) +=3D tc358764.o
+ obj-$(CONFIG_DRM_TOSHIBA_TC358767) +=3D tc358767.o
+-obj-$(CONFIG_DRM_ANALOGIX_DP) +=3D analogix/
+ obj-$(CONFIG_DRM_I2C_ADV7511) +=3D adv7511/
+ obj-$(CONFIG_DRM_TI_SN65DSI86) +=3D ti-sn65dsi86.o
+ obj-$(CONFIG_DRM_TI_TFP410) +=3D ti-tfp410.o
+ obj-y +=3D synopsys/
++obj-y +=3D analogix/
+diff --git a/drivers/gpu/drm/bridge/analogix/Kconfig b/drivers/gpu/drm/brid=
+ge/analogix/Kconfig
+index e930ff9..dfe84f5 100644
+--- a/drivers/gpu/drm/bridge/analogix/Kconfig
++++ b/drivers/gpu/drm/bridge/analogix/Kconfig
+@@ -1,4 +1,14 @@
+ # SPDX-License-Identifier: GPL-2.0-only
++config DRM_ANALOGIX_ANX78XX
++	tristate "Analogix ANX78XX bridge"
++	select DRM_KMS_HELPER
++	select REGMAP_I2C
++	---help---
++	  ANX78XX is an ultra-low Full-HD SlimPort transmitter
++	  designed for portable devices. The ANX78XX transforms
++	  the HDMI output of an application processor to MyDP
++	  or DisplayPort.
++
+ config DRM_ANALOGIX_DP
+ 	tristate
+ 	depends on DRM
+diff --git a/drivers/gpu/drm/bridge/analogix/Makefile b/drivers/gpu/drm/bri=
+dge/analogix/Makefile
+index fdbf3fd..d4c54ac 100644
+--- a/drivers/gpu/drm/bridge/analogix/Makefile
++++ b/drivers/gpu/drm/bridge/analogix/Makefile
+@@ -1,3 +1,5 @@
+ # SPDX-License-Identifier: GPL-2.0-only
++obj-$(CONFIG_DRM_ANALOGIX_ANX78XX) +=3D analogix-anx78xx.o
++
+ analogix_dp-objs :=3D analogix_dp_core.o analogix_dp_reg.o
+ obj-$(CONFIG_DRM_ANALOGIX_DP) +=3D analogix_dp.o
+diff --git a/drivers/gpu/drm/bridge/analogix-anx78xx.c b/drivers/gpu/drm/br=
+idge/analogix/analogix-anx78xx.c
+similarity index 100%
+rename from drivers/gpu/drm/bridge/analogix-anx78xx.c
+rename to drivers/gpu/drm/bridge/analogix/analogix-anx78xx.c
+diff --git a/drivers/gpu/drm/bridge/analogix-anx78xx.h b/drivers/gpu/drm/br=
+idge/analogix/analogix-anx78xx.h
+similarity index 100%
+rename from drivers/gpu/drm/bridge/analogix-anx78xx.h
+rename to drivers/gpu/drm/bridge/analogix/analogix-anx78xx.h
+--=20
+2.7.4
 
-> ---
->
-> Changes in v2:
->   - New patch
->
->  Documentation/kbuild/makefiles.txt | 10 ++++++++++
->  scripts/Makefile.lib               | 10 ++++++++++
->  2 files changed, 20 insertions(+)
->
-> diff --git a/Documentation/kbuild/makefiles.txt b/Documentation/kbuild/makefiles.txt
-> index 5080fec34609..b817e6cefb77 100644
-> --- a/Documentation/kbuild/makefiles.txt
-> +++ b/Documentation/kbuild/makefiles.txt
-> @@ -1025,6 +1025,16 @@ When kbuild executes, the following steps are followed (roughly):
->  	i.e. compilable as standalone units. If CONFIG_HEADER_TEST is enabled,
->  	this builds them as part of extra-y.
->  
-> +    header-test-pattern-y
-> +
-> +	This works as a weaker version of header-test-y, and accepts wildcard
-> +	patterns. The typical usage is:
-> +
-> +		  header-test-pattern-y += *.h
-> +
-> +	This specifies all the files that matches to '*.h' in the current
-> +	directory, but the files in 'header-test-' are excluded.
-> +
->  --- 6.7 Commands useful for building a boot image
->  
->  	Kbuild provides a few macros that are useful when building a
-> diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
-> index 55ae1ec65342..54444933bbab 100644
-> --- a/scripts/Makefile.lib
-> +++ b/scripts/Makefile.lib
-> @@ -67,6 +67,16 @@ extra-$(CONFIG_OF_ALL_DTBS) += $(patsubst %.dtb,%.dt.yaml, $(dtb-))
->  endif
->  
->  # Test self-contained headers
-> +
-> +# Wildcard searches in $(srctree)/$(src)/, but not in $(objtree)/$(obj)/.
-> +# Stale generated headers are often left over, so wildcard matching should
-> +# be avoided. Please notice $(srctree)/$(src)/ and $(objtree)/$(obj) point
-> +# to the same location for in-tree building.
-> +header-test-y	+= $(filter-out $(header-test-), \
-> +		$(patsubst $(srctree)/$(src)/%, %, \
-> +		$(wildcard $(addprefix $(srctree)/$(src)/, \
-> +		$(header-test-pattern-y)))))
-> +
->  extra-$(CONFIG_HEADER_TEST) += $(addsuffix .s, $(header-test-y))
->  
->  # Add subdir path
-
--- 
-Jani Nikula, Intel Open Source Graphics Center
