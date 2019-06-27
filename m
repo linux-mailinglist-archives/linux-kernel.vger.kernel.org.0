@@ -2,114 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 303B8583CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 15:47:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3039D583D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 15:48:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726631AbfF0Nrx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 09:47:53 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:46357 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726370AbfF0Nrw (ORCPT
+        id S1726974AbfF0Nsd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 09:48:33 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:33757 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726370AbfF0Nsc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 09:47:52 -0400
-Received: by mail-wr1-f65.google.com with SMTP id n4so2633668wrw.13
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 06:47:51 -0700 (PDT)
+        Thu, 27 Jun 2019 09:48:32 -0400
+Received: by mail-wm1-f65.google.com with SMTP id h19so7135982wme.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 06:48:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=pibKCnI+c/rSlOBpb0r95ES5GvDfOsIXxIlsP9rgtNk=;
-        b=ZGIqytnafn9W9KYHdRvIPI0mnz+wDCfqvovREHwYm2fi9m5/4xTx97D+OnH4DvFtG9
-         IeddSszuzt6bcu0IrL8EMQ/p0xls7alc4GB0yjkOQ+lGtGFoZFWcn4inwOvzmfXRalDY
-         D0tnk8eJ15qqAmI5OZynqo1Z+txwc7T7thL92PG2o69nAByEGwyN+PDuFsEVfbvy7l74
-         eaj9iYj9d1RuzpuIEp7l6o/JSZCn1ghaIRWU4xhubctPxKYvABnsAhm9qcm0mkYWPTob
-         j5lXCvBWCdncEICavkGfc6VtZCegNigooNRzP4HeXJIdDo6TZwN4d2MAUFXU8yACIZgX
-         mhfw==
+        bh=wE1PAp4MHXALqCCVusUAqoCtyEzbEOvw3nFbp39o+9U=;
+        b=RsjFuiT9rMad5Q9PIoyVIM7BSFrPdPoqZnQzdHKlydHUP69gx1nq9MYzIiacZkcPmh
+         Zn7CdU/0HbeBV6hglksqYyijhTbIdorSrlmwOv1qEhc+XDMMGklFdzvPgtuNcwTYFj+W
+         hDTngUkvknNqed6xqDLnvymmPtU30R81sTFgoPzoxhxH9AYkx5DRBaTlzH586IhoEq7G
+         bpIBmLWFep8yNlqxGRmQdxojJT6PJIXgLF52KQJmcWB4j5LDMVHSwsc3iImEkP4QBCs0
+         jLjAR3GQInnyuEsKDZyvsaKysSPDgsjqFMSjsFUiQnwA73v5fkoEtoA/O94/x0PfOTrZ
+         b2tw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=pibKCnI+c/rSlOBpb0r95ES5GvDfOsIXxIlsP9rgtNk=;
-        b=gszfLvUq6Aapw+kCBZ2C/QMa/AvDStmVxzGYc40XsxOpelevgf06F1AUK8GHD1w3ez
-         +4vFbvuk9rxtkztEGexSCAaA0lblWRyqOwNNmwYYmT9PxW9CZ2H+KkZ5mQoCH7yBYkoJ
-         iNySvUCrhLlNdQPGHuzXshUHz1Zg7j7LkTdZknH1M4mBEYmvXjCcKwzXF4BjyOfuYx2S
-         ALQyNSCVWFcBhlyKJhdNUkCr3r1sEpoVorTsHdJWSjJCxsDYRmV3Aeb6jrhsVPFY9GZr
-         yfD7/t+7QSBgJr2Su3eNtXtV+CCNb83fQhuxNWBBX/nBzlfvT6nmj2IQyoEHp8+byedl
-         Mc/g==
-X-Gm-Message-State: APjAAAVq15XCmPNomdDaRS0/alZjk75jNwSQh3C0ojNguDhBE2z6PlVo
-        t+Wd8rlLW4lPTHR1bH7rX96vYcnkp98=
-X-Google-Smtp-Source: APXvYqwp714jRoQiiBTfOVZdMMYMNpk0wu1ZV9lBtDnLP5BSZdcXUmTdATLmoLgA6vGxS7PjMRwJng==
-X-Received: by 2002:a5d:4087:: with SMTP id o7mr3398342wrp.277.1561643270675;
-        Thu, 27 Jun 2019 06:47:50 -0700 (PDT)
+        bh=wE1PAp4MHXALqCCVusUAqoCtyEzbEOvw3nFbp39o+9U=;
+        b=NIupxM+0StL5h0iWr0b1Qpj0ax3JAMpQ9EgHeTRFHKfqGhfceZXZqPxvxj+QU5zy4r
+         hxs5OSF6UuvDAlgSTa9X1HGsQ41FAMXhxkj59+9xEN+fZ4Zbi03KgoBuOpijqPn9L1i/
+         XoHvQBYTjsQSEeufyS/C8bvJKVs01uWFGL/nFEN4Sxb/lNYSI9gNuU/aW4S1U5YIxsHM
+         2Nb/PunNRrERUvI+XFyFje2C/io4LqUV1TmWTgYJuP7S5AaifYl5+3ImPVr1aASQyUu6
+         +ARSif3guS1YfXH2Vzu6Or+1uDpbEG2juaJU/LAFRemjpdg6VY0PqJrgsgPaQzRnG7l6
+         6r/A==
+X-Gm-Message-State: APjAAAW7/bCgir1PLd+555IrcRKWhd8s+noIzg21c1Hk5hvMgzzXD+1j
+        rnxJb42WvcaHOsu2I1Gc2WlE2g==
+X-Google-Smtp-Source: APXvYqy6pxzkEm1GFr8Ojt5atRppKQODIgFO8CkGNkxitxJs+DxYnmKnRFL/jbGBUXzzRgTMpdVwpQ==
+X-Received: by 2002:a1c:63d7:: with SMTP id x206mr3364766wmb.19.1561643310573;
+        Thu, 27 Jun 2019 06:48:30 -0700 (PDT)
 Received: from dell ([2.27.35.164])
-        by smtp.gmail.com with ESMTPSA id j32sm4600419wrj.43.2019.06.27.06.47.49
+        by smtp.gmail.com with ESMTPSA id s188sm6942557wmf.40.2019.06.27.06.48.29
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 27 Jun 2019 06:47:50 -0700 (PDT)
-Date:   Thu, 27 Jun 2019 14:47:48 +0100
+        Thu, 27 Jun 2019 06:48:29 -0700 (PDT)
+Date:   Thu, 27 Jun 2019 14:48:28 +0100
 From:   Lee Jones <lee.jones@linaro.org>
 To:     Axel Lin <axel.lin@ingics.com>
-Cc:     Chen Feng <puck.chen@hisilicon.com>,
-        LKML <linux-kernel@vger.kernel.org>
+Cc:     Chen Feng <puck.chen@hisilicon.com>, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH RESEND] mfd: hi655x-pmic: Fix missing return value check
  for devm_regmap_init_mmio_clk
-Message-ID: <20190627134748.GG2000@dell>
+Message-ID: <20190627134828.GH2000@dell>
 References: <20190626133007.591-1-axel.lin@ingics.com>
- <40ae33d4-10fd-852a-30e6-db56d709ef1c@hisilicon.com>
- <CAFRkauDFf0qWpovNaaMkB48RXAsRsGEQ_=osSM7+Ze59C8DEkw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAFRkauDFf0qWpovNaaMkB48RXAsRsGEQ_=osSM7+Ze59C8DEkw@mail.gmail.com>
+In-Reply-To: <20190626133007.591-1-axel.lin@ingics.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 27 Jun 2019, Axel Lin wrote:
+On Wed, 26 Jun 2019, Axel Lin wrote:
 
-> Hi Chen,
+> Since devm_regmap_init_mmio_clk can fail, add return value checking.
 > 
-> Chen Feng <puck.chen@hisilicon.com> 於 2019年6月27日 週四 上午10:03寫道：
-> >
-> > Thanks
-> I assume this is an Ack.
-> If you can add your Acked-by in the reply, it's easier for maintainer to accept
-> the patch.
+> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+> Acked-by: Chen Feng <puck.chen@hisilicon.com>
+> ---
+> This was sent on https://lkml.org/lkml/2019/3/6/904
+> 
+>  drivers/mfd/hi655x-pmic.c | 2 ++
+>  1 file changed, 2 insertions(+)
 
-Looks to me like he already Acked it.
-
-Which is looks like you already applied?
-
-> > On 2019/6/26 21:30, Axel Lin wrote:
-> > > Since devm_regmap_init_mmio_clk can fail, add return value checking.
-> > >
-> > > Signed-off-by: Axel Lin <axel.lin@ingics.com>
-> > > Acked-by: Chen Feng <puck.chen@hisilicon.com>
-> > > ---
-> > > This was sent on https://lkml.org/lkml/2019/3/6/904
-> > >
-> > >   drivers/mfd/hi655x-pmic.c | 2 ++
-> > >   1 file changed, 2 insertions(+)
-> > >
-> > > diff --git a/drivers/mfd/hi655x-pmic.c b/drivers/mfd/hi655x-pmic.c
-> > > index 96c07fa1802a..6693f74aa6ab 100644
-> > > --- a/drivers/mfd/hi655x-pmic.c
-> > > +++ b/drivers/mfd/hi655x-pmic.c
-> > > @@ -112,6 +112,8 @@ static int hi655x_pmic_probe(struct platform_device *pdev)
-> > >
-> > >       pmic->regmap = devm_regmap_init_mmio_clk(dev, NULL, base,
-> > >                                                &hi655x_regmap_config);
-> > > +     if (IS_ERR(pmic->regmap))
-> > > +             return PTR_ERR(pmic->regmap);
-> > >
-> > >       regmap_read(pmic->regmap, HI655X_BUS_ADDR(HI655X_VER_REG), &pmic->ver);
-> > >       if ((pmic->ver < PMU_VER_START) || (pmic->ver > PMU_VER_END)) {
-> > >
-> >
+Applied, thanks.
 
 -- 
 Lee Jones [李琼斯]
