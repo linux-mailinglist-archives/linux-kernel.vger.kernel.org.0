@@ -2,80 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1ECD0583FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 15:58:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D3AD58401
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 15:59:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727022AbfF0N62 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 09:58:28 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:35581 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726472AbfF0N61 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 09:58:27 -0400
-Received: by mail-wm1-f67.google.com with SMTP id c6so5817614wml.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 06:58:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=yPxiusgytclyAbyFq6njmSSLiDoSuvAd67bVV9/V9fo=;
-        b=P6iCfd+KcP3OHawcKNeOOQV8cD7yZ1eOVnRFUiZc39lB2Cy63bVQ20KHlB+zXjL+6x
-         QE5ReDNfuYirh1g3MBwY+v0B36xTxb+lbLFjyQ/KotEVvOflTKQmBccjqz98FMpTKIp0
-         ABmJA03WF+Tk1TKkaaPVC6Ky5cc2qMabsXeLGOL00DJc4wWukHXeXnik0ZIbIc9/vgza
-         XclQ8HkponLdIXHaqmUdLZ7ukk2gzmzD9vBvtm96ZHwBl40weg6nP9J6r8cyC7ILd2Vc
-         UMvu1YQL1MdZ5JZG4qdBFaVquwr2sfzsI++IqBS9Tzj9eBBlN8LruV1F6JwHZxLpihc7
-         L/xA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=yPxiusgytclyAbyFq6njmSSLiDoSuvAd67bVV9/V9fo=;
-        b=WIEu+/nYJpZQaTpyueVy0IkdZGwzmdU4DZ18gLO1zct5qxfMAm+hFWRsnbEyAnOBB1
-         ssFLysVAl2C48WOsptawzt+qEHEhi+4KHXiu9yalkgstSjh4wneOCSw9xOZ/wFv+oSgh
-         xlOVRKbEMECaASIr0aI6euYJjcPJ2bS8W9FCl2hr5xhO3iuNqk7GfJvS4HSG3fThQYGJ
-         USYjZpbTjglR0jrSPDQyx7vVZrYom/eVDC3Z0nqml221QFuGsWYa4ez+dCqW6wfJouGz
-         9DEkMUwaCXfRN6LjkYNU4EB03MmQfbVopLY7GG0uO0GBAuBYPKGZjI5nBw1rfgI5aR+K
-         kP6w==
-X-Gm-Message-State: APjAAAXwKZ8iLXFSSIkofQ2c0ikUPp1FjTwaPESNyxC2oNL6JiYmmL85
-        +a4T6J7aRb6bAQhDG03+LeBjOQyRNhc=
-X-Google-Smtp-Source: APXvYqymA0gPaOh8rlePb3B92zmbWrn0bYiouuseCQLkHVt9qjLYhXySZ7ih8v16HkNhLDDL1js8HA==
-X-Received: by 2002:a1c:b6d4:: with SMTP id g203mr3346926wmf.19.1561643905702;
-        Thu, 27 Jun 2019 06:58:25 -0700 (PDT)
-Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.googlemail.com with ESMTPSA id z19sm7059597wmi.7.2019.06.27.06.58.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Jun 2019 06:58:25 -0700 (PDT)
-Subject: Re: [PATCH] dt-bindings: nvmem: Add YAML schemas for the generic
- NVMEM bindings
-To:     Rob Herring <robh@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-References: <20190627080959.4488-1-srinivas.kandagatla@linaro.org>
- <CAL_Jsq+er-MZY-Vuez3B48fb05AH9UzNZck=BK6xHutuXdfDTQ@mail.gmail.com>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <6775b9b9-b712-0b37-fa4c-ace9527f5fc9@linaro.org>
-Date:   Thu, 27 Jun 2019 14:58:24 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <CAL_Jsq+er-MZY-Vuez3B48fb05AH9UzNZck=BK6xHutuXdfDTQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1726890AbfF0N7u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 09:59:50 -0400
+Received: from smtp5-g21.free.fr ([212.27.42.5]:8946 "EHLO smtp5-g21.free.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726443AbfF0N7u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 09:59:50 -0400
+Received: from heffalump.sk2.org (unknown [88.186.243.14])
+        by smtp5-g21.free.fr (Postfix) with ESMTPS id 3A85E5FFA1;
+        Thu, 27 Jun 2019 15:59:48 +0200 (CEST)
+Received: from steve by heffalump.sk2.org with local (Exim 4.89)
+        (envelope-from <steve@sk2.org>)
+        id 1hgUwF-0000yt-9u; Thu, 27 Jun 2019 15:59:47 +0200
+From:   Stephen Kitt <steve@sk2.org>
+To:     corbet@lwn.net, linux-doc@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Stephen Kitt <steve@sk2.org>
+Subject: [PATCH] docs: format kernel-parameters -- as code
+Date:   Thu, 27 Jun 2019 15:59:38 +0200
+Message-Id: <20190627135938.3722-1-steve@sk2.org>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+The current ReStructuredText formatting results in "--", used to
+indicate the end of the kernel command-line parameters, appearing as
+an en-dash instead of two hyphens; this patch formats them as code,
+"``--``", as done elsewhere in the documentation.
 
-On 27/06/2019 14:55, Rob Herring wrote:
-> But you didn't update the license to (GPL-2.0 OR BSD-2-Clause). See below.
+Signed-off-by: Stephen Kitt <steve@sk2.org>
+---
+ Documentation/admin-guide/kernel-parameters.rst | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-I did forward what Maxime has sent me.
+diff --git a/Documentation/admin-guide/kernel-parameters.rst b/Documentation/admin-guide/kernel-parameters.rst
+index 0124980dca2d..b8d479b76648 100644
+--- a/Documentation/admin-guide/kernel-parameters.rst
++++ b/Documentation/admin-guide/kernel-parameters.rst
+@@ -9,11 +9,11 @@ and sorted into English Dictionary order (defined as ignoring all
+ punctuation and sorting digits before letters in a case insensitive
+ manner), and with descriptions where known.
+ 
+-The kernel parses parameters from the kernel command line up to "--";
++The kernel parses parameters from the kernel command line up to "``--``";
+ if it doesn't recognize a parameter and it doesn't contain a '.', the
+ parameter gets passed to init: parameters with '=' go into init's
+ environment, others are passed as command line arguments to init.
+-Everything after "--" is passed as an argument to init.
++Everything after "``--``" is passed as an argument to init.
+ 
+ Module parameters can be specified in two ways: via the kernel command
+ line with a module name prefix, or via modprobe, e.g.::
+-- 
+2.11.0
 
-Maxime, are you okay if I do that changes to this patch and resend?
-
---srini
