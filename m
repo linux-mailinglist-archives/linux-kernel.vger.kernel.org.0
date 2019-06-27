@@ -2,95 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E02A057974
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 04:27:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FF1A57987
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 04:34:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727086AbfF0C1P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 22:27:15 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:53010 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726833AbfF0C1P (ORCPT
+        id S1727285AbfF0CeB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 22:34:01 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:41165 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727218AbfF0CeA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 22:27:15 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5R2OJCr158484;
-        Thu, 27 Jun 2019 02:27:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2018-07-02;
- bh=wTJmtSmsKZEwIH7KReMQGmLwFMGAH0weuV2WcidpqCI=;
- b=4R5vNhuy3qrtDpQ/trcm6kBkzz2g5W/b7NUGmRp8OzyZk8dBJCRT9EHIrX5/5RJ8tr1A
- weSIeBS9TvK6iathXYhQxUZ4GZXyZRGY7Dh/HveNReVm6tFvy8up5jXGL7BANcNl4OXM
- ZE98hYNKMztuWAl4D1y73yX7wPEgEQxP1FrrGtCqEOxamNbPE7twbO53c5UCJHnURx8U
- s/XMYYn2D/V/oS71pq8Jo1ImbfgxRkVKiBUS3W1yF3ytM+7RAT7xgtmcrYdT1rWf2DHq
- 34vJA1LfrzqjQtIKh21zNU1jvU4SBlWF4IOTnUV6dRr6rpYTkJxVrTTjv/nNWkvfm81G 4A== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 2t9c9pwh19-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 27 Jun 2019 02:26:59 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5R2PSuV097622;
-        Thu, 27 Jun 2019 02:26:59 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3020.oracle.com with ESMTP id 2tat7d4p47-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 27 Jun 2019 02:26:59 +0000
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5R2QumM032359;
-        Thu, 27 Jun 2019 02:26:56 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 26 Jun 2019 19:26:56 -0700
-To:     "Bean Huo \(beanhuo\)" <beanhuo@micron.com>
-Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        Pedro Sousa <pedrom.sousa@synopsys.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        Evan Green <evgreen@chromium.org>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-scsi\@vger.kernel.org" <linux-scsi@vger.kernel.org>
-Subject: Re: [PATCH v2 0/3] scsi: ufs: typo fixes and improvement
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <BN7PR08MB5684A44F56972BCE0972B28EDBE10@BN7PR08MB5684.namprd08.prod.outlook.com>
-Date:   Wed, 26 Jun 2019 22:26:53 -0400
-In-Reply-To: <BN7PR08MB5684A44F56972BCE0972B28EDBE10@BN7PR08MB5684.namprd08.prod.outlook.com>
-        (Bean Huo's message of "Sun, 23 Jun 2019 17:37:56 +0000")
-Message-ID: <yq1k1d7lq4y.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
+        Wed, 26 Jun 2019 22:34:00 -0400
+Received: by mail-lj1-f194.google.com with SMTP id 205so633699ljj.8
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 19:33:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Q52VmEfyzODDUjexrWxHmYGjGvFn+xuEHsx+LScKSTg=;
+        b=bVK5unloG/mSghdXaDDGNyMd521dXDj5UMzHvjjJjLf/fGTyHkQ6Me7+chzBNGypQG
+         ZWVL2Ht1gXRiciWwYohLBjDpSGIzLL7d5C59BfjKNcldb7/ENjzQMF0HIQmMbTUEjdOA
+         kmrviGPuSb5hYjextJKmqZAPKs1oP78bkkJYdHnk9wJOSAJkY4ayFh4lI4SbGm6DOJ6o
+         biPJZ7aUZFbsloDbPJTwSAkD6ZrJ7kpseRCSjRK1Z4tDkFueMLNj7c0YAQhYzXrw8jTU
+         7nvUw/gztvfeALt7C9fwze3nUy85yQrCmTHRZY7+kMo3GKyoom+xADxtrSehx4Jaavne
+         ynZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Q52VmEfyzODDUjexrWxHmYGjGvFn+xuEHsx+LScKSTg=;
+        b=BYpXa5VJqM1KN/Dkdnke/uKC0NaAoMLVqn7a1fopu/FzTZPCaqS6KvUQuGMyUzMtLp
+         NfI3EzNIMhqYO0i4l/3HfLxrMGdhrbYVVOaPUQms2NV73CA/5UuCGmv4sdiPI7PohvvL
+         nAweVEEwYfKSSjNMdJv7S49qWSf23ZTXEiZn9PB1HHSkQ47YTdF+HArqVaLa29O21CXS
+         swgJt49VM/nZfziJP30/TT5WtQCndWve0+VxvCMRineTqlqpR40i9Xph1abWir0ayS5q
+         qw57i8Ja/ygfc6IQqQLXaXKWo23WIqERpd+nuDvYAxwQJtSAVQLy2xUnaBmsf3J7+prJ
+         hy5A==
+X-Gm-Message-State: APjAAAXhSui58t2ou32ZPEcPC/FSEN5b0CTRMveM1eNJpqH0TJggfFtV
+        84LnknIenxv1DrImQtx3r/zdSA==
+X-Google-Smtp-Source: APXvYqyj92gPoEoAWjZ93sFwLUMCNj7Ql/zysxuhQK9eStj8fDbV1Uye+s1koXqor7RwDwo9j6dfVQ==
+X-Received: by 2002:a2e:5c09:: with SMTP id q9mr898785ljb.120.1561602838511;
+        Wed, 26 Jun 2019 19:33:58 -0700 (PDT)
+Received: from localhost (h85-30-9-151.cust.a3fiber.se. [85.30.9.151])
+        by smtp.gmail.com with ESMTPSA id v15sm107830lfd.53.2019.06.26.19.33.57
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 26 Jun 2019 19:33:57 -0700 (PDT)
+Date:   Wed, 26 Jun 2019 19:27:48 -0700
+From:   Olof Johansson <olof@lixom.net>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, arm@kernel.org,
+        Kukjin Kim <kgene@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL 1/4] ARM: defconfig: Samsung/Exynos for v5.3
+Message-ID: <20190627022748.327vqldfpfykpww5@localhost>
+References: <20190625193451.7696-1-krzk@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9300 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=945
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1906270027
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9300 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=990 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1906270027
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190625193451.7696-1-krzk@kernel.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Jun 25, 2019 at 09:34:48PM +0200, Krzysztof Kozlowski wrote:
+> The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
+> 
+>   Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
+> 
+> are available in the Git repository at:
+> 
+>   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-defconfig-5.3
+> 
+> for you to fetch changes up to dd50a69b5697532666023766688c6ea642e5a443:
+> 
+>   ARM: exynos_defconfig: Enable Panfrost and Lima drivers (2019-06-19 19:23:35 +0200)
+> 
+> ----------------------------------------------------------------
+> Samsung defconfig changes for v5.3
+> 
+> 1. Trim several configs with savedefconfig.
+> 2. Enable Lima and Panfrost drivers for Mali GPU.
+> 
+> ----------------------------------------------------------------
+> Krzysztof Kozlowski (4):
+>       ARM: exynos_defconfig: Trim and reorganize with savedefconfig
+>       ARM: defconfig: samsung: Cleanup with savedefconfig
+>       ARM: multi_v7_defconfig: Enable Panfrost and Lima drivers
+>       ARM: exynos_defconfig: Enable Panfrost and Lima drivers
 
-Bean,
 
-> This series patch is to fix several typos and fix one issue of twice
-> completing ufs-bsg job in case of UPIU/DME command failed.
->
-> Changed since v1:
->     - split v1 patch
->     - add fixes tag
->     - delete needless blank line
+Merged, thanks!
 
-Applied to 5.3/scsi-queue. Mostly by hand. Please use git send-email to
-post patches. Thanks!
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+-Olof
