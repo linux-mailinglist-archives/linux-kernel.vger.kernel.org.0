@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1BC857635
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 02:37:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7670857612
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 02:36:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727233AbfF0AgZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 20:36:25 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:42560 "EHLO mx1.redhat.com"
+        id S1728216AbfF0AfH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 20:35:07 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:38724 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728181AbfF0AfA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 20:35:00 -0400
+        id S1728194AbfF0AfD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 20:35:03 -0400
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 861D9C057F2F;
-        Thu, 27 Jun 2019 00:35:00 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4F27F37F43;
+        Thu, 27 Jun 2019 00:35:03 +0000 (UTC)
 Received: from treble.redhat.com (ovpn-126-66.rdu2.redhat.com [10.10.126.66])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 294FF5D9C6;
-        Thu, 27 Jun 2019 00:34:57 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 32F7B5D9D6;
+        Thu, 27 Jun 2019 00:35:00 +0000 (UTC)
 From:   Josh Poimboeuf <jpoimboe@redhat.com>
 To:     x86@kernel.org
 Cc:     linux-kernel@vger.kernel.org,
@@ -28,80 +28,64 @@ Cc:     linux-kernel@vger.kernel.org,
         Steven Rostedt <rostedt@goodmis.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH v3 2/4] objtool: Add support for C jump tables
-Date:   Wed, 26 Jun 2019 19:33:53 -0500
-Message-Id: <426541f62dad525078ee732c09bc206289e994aa.1561595111.git.jpoimboe@redhat.com>
+Subject: [PATCH v3 3/4] bpf: Fix ORC unwinding in non-JIT BPF code
+Date:   Wed, 26 Jun 2019 19:33:54 -0500
+Message-Id: <a5a486434d31d77297d39c4adccea22fac3027c1.1561595111.git.jpoimboe@redhat.com>
 In-Reply-To: <cover.1561595111.git.jpoimboe@redhat.com>
 References: <cover.1561595111.git.jpoimboe@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Thu, 27 Jun 2019 00:35:00 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Thu, 27 Jun 2019 00:35:03 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Objtool doesn't know how to read C jump tables, so it has to whitelist
-functions which use them, causing missing ORC unwinder data for such
-functions, e.g. ___bpf_prog_run().
+Objtool previously ignored ___bpf_prog_run() because it didn't
+understand the jump table.  This resulted in the ORC unwinder not being
+able to unwind through non-JIT BPF code.
 
-C jump tables are very similar to GCC switch jump tables, which objtool
-already knows how to read.  So adding support for C jump tables is easy.
-It just needs to be able to find the tables and distinguish them from
-other data.
+Now that objtool knows how to read jump tables, remove the whitelist and
+rename the variable to "jump_table" so objtool can recognize it.
 
-To allow the jump tables to be found, create a standard: objtool will
-automatically recognize any static local jump table named "jump_table".
-
+Fixes: d15d356887e7 ("perf/x86: Make perf callchains work without CONFIG_FRAME_POINTER")
+Reported-by: Song Liu <songliubraving@fb.com>
 Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- tools/objtool/check.c | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+ kernel/bpf/core.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index 172f99195726..8341c2fff14f 100644
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -18,6 +18,8 @@
+diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
+index 080e2bb644cc..ff66294882f8 100644
+--- a/kernel/bpf/core.c
++++ b/kernel/bpf/core.c
+@@ -1299,7 +1299,7 @@ static u64 ___bpf_prog_run(u64 *regs, const struct bpf_insn *insn, u64 *stack)
+ {
+ #define BPF_INSN_2_LBL(x, y)    [BPF_##x | BPF_##y] = &&x##_##y
+ #define BPF_INSN_3_LBL(x, y, z) [BPF_##x | BPF_##y | BPF_##z] = &&x##_##y##_##z
+-	static const void *jumptable[256] = {
++	static const void *jump_table[256] = {
+ 		[0 ... 255] = &&default_label,
+ 		/* Now overwrite non-defaults ... */
+ 		BPF_INSN_MAP(BPF_INSN_2_LBL, BPF_INSN_3_LBL),
+@@ -1315,7 +1315,7 @@ static u64 ___bpf_prog_run(u64 *regs, const struct bpf_insn *insn, u64 *stack)
+ #define CONT_JMP ({ insn++; goto select_insn; })
  
- #define FAKE_JUMP_OFFSET -1
+ select_insn:
+-	goto *jumptable[insn->code];
++	goto *jump_table[insn->code];
  
-+#define JUMP_TABLE_SYM_PREFIX "jump_table."
-+
- struct alternative {
- 	struct list_head list;
- 	struct instruction *insn;
-@@ -997,6 +999,7 @@ static struct rela *find_switch_table(struct objtool_file *file,
- 	struct instruction *orig_insn = insn;
- 	struct section *rodata_sec;
- 	unsigned long table_offset;
-+	struct symbol *sym;
+ 	/* ALU */
+ #define ALU(OPCODE, OP)			\
+@@ -1558,7 +1558,6 @@ static u64 ___bpf_prog_run(u64 *regs, const struct bpf_insn *insn, u64 *stack)
+ 		BUG_ON(1);
+ 		return 0;
+ }
+-STACK_FRAME_NON_STANDARD(___bpf_prog_run); /* jump table */
  
- 	/*
- 	 * Backward search using the @first_jump_src links, these help avoid
-@@ -1035,9 +1038,18 @@ static struct rela *find_switch_table(struct objtool_file *file,
- 
- 		/*
- 		 * Make sure the .rodata address isn't associated with a
--		 * symbol.  gcc jump tables are anonymous data.
-+		 * symbol.  GCC jump tables are anonymous data.
-+		 *
-+		 * Also support C jump tables which are in the same format as
-+		 * switch jump tables.  Each jump table should be a static
-+		 * local const array named "jump_table" for objtool to
-+		 * recognize it.  Note: GCC will add a numbered suffix to the
-+		 * ELF symbol name, like "jump_table.12345", which it does for
-+		 * all static local variables.
- 		 */
--		if (find_symbol_containing(rodata_sec, table_offset))
-+		sym = find_symbol_containing(rodata_sec, table_offset);
-+		if (sym && strncmp(sym->name, JUMP_TABLE_SYM_PREFIX,
-+				   strlen(JUMP_TABLE_SYM_PREFIX)))
- 			continue;
- 
- 		rodata_rela = find_rela_by_dest(rodata_sec, table_offset);
+ #define PROG_NAME(stack_size) __bpf_prog_run##stack_size
+ #define DEFINE_BPF_PROG_RUN(stack_size) \
 -- 
 2.20.1
 
