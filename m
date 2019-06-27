@@ -2,81 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B81E157892
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 02:54:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D209E57867
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 02:53:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728037AbfF0AxX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 20:53:23 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:37030 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727581AbfF0Acq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 20:32:46 -0400
-Received: by mail-qt1-f193.google.com with SMTP id y57so627507qtk.4
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 17:32:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=w03qy6EFSZddlaeR4XXdByXLhXgkUgXil3c6GHJxhvU=;
-        b=D5wRjxHq9V5XbBgZSnROW+7DALOrUfCiALI8vABHmruViVFI0BRgspDKxnC0HJ5HT2
-         2HA4bSMYcmJ79NZlDerGsvkniJ9FTvqcEe17W+wpYWqKKBRI/9ocf3rsBrF/osJJSbmW
-         JZOQjYpfnFOVm9Yu0Dpgy/tjUjQMRGr6xKCQI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=w03qy6EFSZddlaeR4XXdByXLhXgkUgXil3c6GHJxhvU=;
-        b=nuHkTi0lu1s6bxgzB/D9nwGMQ+X7ImWzXOc412DiOv5B5p3Kmoa1d7vASj9TBtqbfJ
-         ZLnXcQKC84VmSkmjEVNeVHoTQcbj6fEH/BS2DnA8RnJLDbHbWN2SirCjB3bfFmegMDzG
-         3591Y4CkYC0UYaCv8RkWqAZoXvWq8GLRR62uoqVf196ZAsE5UiCw3sJ4JrLGlCKkc0XE
-         n3bNXiz1+G7m66Xcja/CCrXR9I4jE+aa7wN2+oYtW9iNgVLqNJkppG7j4rm3KCGFdpQG
-         lHfTrw5QzUMAi1WgBgXXrA9zvFa3UjlBQMus0D4YQuSBtGDPXTkPGUk/DMclYH9zMdDM
-         GziA==
-X-Gm-Message-State: APjAAAWXD5KHxfUIuRL5nHBbdtiK86xLT87yZH3l50tmdqRI9IoSjtcF
-        WC5soo/vUDrfXx42CjpMNON7cqscjcezux1XYkhtXbkd1cM=
-X-Google-Smtp-Source: APXvYqwBiufSpaNS4K0NRDMFfS68Z7VQqnw29e4Y3PdeVHTHONuH06tjKC8sgyVCBx0XYwXFHzsWTD7QTp1HGjEJ65s=
-X-Received: by 2002:a0c:9591:: with SMTP id s17mr674217qvs.100.1561595565741;
- Wed, 26 Jun 2019 17:32:45 -0700 (PDT)
+        id S1727964AbfF0Awz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 20:52:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36956 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726677AbfF0AdH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 20:33:07 -0400
+Received: from localhost (unknown [116.247.127.123])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 54CA720815;
+        Thu, 27 Jun 2019 00:33:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561595586;
+        bh=BYIgDo5cCQfVbW8i8SCiF93UcvF7GAgQK8hJSiVY1Pw=;
+        h=Date:From:To:Cc:Subject:From;
+        b=UKR9fga2AyvPfhC/HcY5tQ9OfEZgh49y/uA/hFNK11Ycr7leM0/RIlLw476KK1vUA
+         F5tLTVNab0cCaeeBfDHNB2GxVlWh1ILzLGlyP2YpSZwmMhtyjrTq6gchy+AgUn+9v/
+         +iCVQLv15TT1vvyvIGNgI+jwucBrfCho5zqlZamc=
+Date:   Thu, 27 Jun 2019 08:32:45 +0800
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        torvalds@linux-foundation.org, stable@vger.kernel.org
+Cc:     lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
+Subject: Linux 4.9.184
+Message-ID: <20190627003245.GA10794@kroah.com>
 MIME-Version: 1.0
-References: <20190626235011.7b449eb0@canb.auug.org.au> <CACRpkdaHyb=o=9YzSvKWRbbyPCbsOUxC=zoz+acnTWNvp=vu5w@mail.gmail.com>
-In-Reply-To: <CACRpkdaHyb=o=9YzSvKWRbbyPCbsOUxC=zoz+acnTWNvp=vu5w@mail.gmail.com>
-From:   Nicolas Boichat <drinkcat@chromium.org>
-Date:   Thu, 27 Jun 2019 08:32:34 +0800
-Message-ID: <CANMq1KCUfsKdJD8=DKR7ya-zhV0fgpHBi=PUtD030nFo8k9_ng@mail.gmail.com>
-Subject: Re: linux-next: Fixes tag needs some work in the pinctrl tree
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="7AUc2qLy4jB3hD7Z"
+Content-Disposition: inline
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 26, 2019 at 10:11 PM Linus Walleij <linus.walleij@linaro.org> wrote:
->
-> On Wed, Jun 26, 2019 at 3:50 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> > In commit
-> >
-> >   99fd24aa4a45 ("pinctrl: mediatek: Ignore interrupts that are wake only during resume")
-> >
-> > Fixes tag
-> >
-> >   Fixes: bf22ff45bed ("genirq: Avoid unnecessary low level irq function calls")
-> >
-> > has these problem(s):
-> >
-> >   - SHA1 should be at least 12 digits long
-> >     Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-> >     or later) just making sure it is not set (or set to "auto").
->
-> Thanks Stephen, fixed this.
 
-Ouch, sorry, for some reasons I thought it was 10, not 12...
+--7AUc2qLy4jB3hD7Z
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
->
-> Yours,
-> Linus Walleij
+I'm announcing the release of the 4.9.184 kernel.
+
+All users of the 4.9 kernel series must upgrade.
+
+The updated 4.9.y git tree can be found at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linux-4.9.y
+and can be browsed at the normal kernel.org git web browser:
+	https://git.kernel.org/?p=linux/kernel/git/stable/linux-stable.git;a=summary
+
+thanks,
+
+greg k-h
+
+------------
+
+ Makefile              |    2 +-
+ net/ipv4/tcp_output.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+Eric Dumazet (1):
+      tcp: refine memory limit test in tcp_fragment()
+
+Greg Kroah-Hartman (1):
+      Linux 4.9.184
+
+
+--7AUc2qLy4jB3hD7Z
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEZH8oZUiU471FcZm+ONu9yGCSaT4FAl0UDq0ACgkQONu9yGCS
+aT7/HQ//bva1g4CLqwPsqe3ant+SeUHTPIfsLzvsqw8Ec4N1esX9ImJ+sxlRp174
+Wm6/DMR41vs4eoECm0EOIuEV1mn3bXxWYmiUj/HuZHRlFZw9CjiqKwU34QVRf282
+pw2H8eTTQBR7YZZkgwirZilitHpliWNfFB6lMIRYlS/oba8xUmfiDF0bjFAPBcZM
+/LUxFpeNXQgFyvfJ2KVD9N6daxkU2HOvjvGSFgzDrrsb1Tm7CPM05i5z0T8UEO2E
+nrBJCZbtdLAstKjlkDZffhcqchny+5Y5qE8tRda6ZtYX8NSj1JitP7fnBowy7ffL
+QZwbtC8NqIz82pt3ItguW4Qi9cYfE6M1ZEa1dz/XHEBBFTAyZrddJTYgKs/Kyy1+
+HIHmm2Oco65ymT5c6E1jl3Lp0r34n43kiHzmlMNPfh2WadgiQ7zVyNTFofaydXdm
+q6/Qd8S4G/DMoPbZSxJfR/1PNIrdCQ6NQBFzje0c/8g8tL3t7CmMnYX9MfDsWNMc
+Ke+VBUo28tqhcEnk56Hta6SzvHqRIvfBfC469uZTSyHCUNwJTZP3B7OHPIp3cLwc
+Kqn8k8UGrdjv+6HSqLc4Nce51vjaNdystHtW1Ma3Xf4CCK5GV0jvXxNtlXBtawsr
+wXx+vRWN6Z4w78YCyBtJwiUZPKaPrsJ6q3OYUNkk9ZpkKt1SDyo=
+=RkZj
+-----END PGP SIGNATURE-----
+
+--7AUc2qLy4jB3hD7Z--
