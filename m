@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BD135781A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 02:51:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1BC857635
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 02:37:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727948AbfF0Aul (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 20:50:41 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:41738 "EHLO mx1.redhat.com"
+        id S1727233AbfF0AgZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 20:36:25 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:42560 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728172AbfF0Ae5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 20:34:57 -0400
+        id S1728181AbfF0AfA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 20:35:00 -0400
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C0B842F8BFE;
-        Thu, 27 Jun 2019 00:34:57 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 861D9C057F2F;
+        Thu, 27 Jun 2019 00:35:00 +0000 (UTC)
 Received: from treble.redhat.com (ovpn-126-66.rdu2.redhat.com [10.10.126.66])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4C35C5D9DE;
-        Thu, 27 Jun 2019 00:34:51 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 294FF5D9C6;
+        Thu, 27 Jun 2019 00:34:57 +0000 (UTC)
 From:   Josh Poimboeuf <jpoimboe@redhat.com>
 To:     x86@kernel.org
 Cc:     linux-kernel@vger.kernel.org,
@@ -28,66 +28,80 @@ Cc:     linux-kernel@vger.kernel.org,
         Steven Rostedt <rostedt@goodmis.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH v3 1/4] perf/x86: Always store regs->ip in perf_callchain_kernel()
-Date:   Wed, 26 Jun 2019 19:33:52 -0500
-Message-Id: <3975a298fa52b506fea32666d8ff6a13467eee6d.1561595111.git.jpoimboe@redhat.com>
+Subject: [PATCH v3 2/4] objtool: Add support for C jump tables
+Date:   Wed, 26 Jun 2019 19:33:53 -0500
+Message-Id: <426541f62dad525078ee732c09bc206289e994aa.1561595111.git.jpoimboe@redhat.com>
 In-Reply-To: <cover.1561595111.git.jpoimboe@redhat.com>
 References: <cover.1561595111.git.jpoimboe@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 27 Jun 2019 00:34:57 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Thu, 27 Jun 2019 00:35:00 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Song Liu <songliubraving@fb.com>
+Objtool doesn't know how to read C jump tables, so it has to whitelist
+functions which use them, causing missing ORC unwinder data for such
+functions, e.g. ___bpf_prog_run().
 
-The stacktrace_map_raw_tp BPF selftest is failing because the RIP saved
-by perf_arch_fetch_caller_regs() isn't getting saved by
-perf_callchain_kernel().
+C jump tables are very similar to GCC switch jump tables, which objtool
+already knows how to read.  So adding support for C jump tables is easy.
+It just needs to be able to find the tables and distinguish them from
+other data.
 
-This was broken by the following commit:
+To allow the jump tables to be found, create a standard: objtool will
+automatically recognize any static local jump table named "jump_table".
 
-  d15d356887e7 ("perf/x86: Make perf callchains work without CONFIG_FRAME_POINTER")
-
-With that change, when starting with non-HW regs, the unwinder starts
-with the current stack frame and unwinds until it passes up the frame
-which called perf_arch_fetch_caller_regs().  So regs->ip needs to be
-saved deliberately.
-
-Fixes: d15d356887e7 ("perf/x86: Make perf callchains work without CONFIG_FRAME_POINTER")
-Signed-off-by: Song Liu <songliubraving@fb.com>
 Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
 Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- arch/x86/events/core.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ tools/objtool/check.c | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-index b9ccfe8f7d87..8bc3a7203552 100644
---- a/arch/x86/events/core.c
-+++ b/arch/x86/events/core.c
-@@ -2328,13 +2328,13 @@ perf_callchain_kernel(struct perf_callchain_entry_ctx *entry, struct pt_regs *re
- 		return;
- 	}
+diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+index 172f99195726..8341c2fff14f 100644
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -18,6 +18,8 @@
  
--	if (perf_hw_regs(regs)) {
--		if (perf_callchain_store(entry, regs->ip))
--			return;
-+	if (perf_callchain_store(entry, regs->ip))
-+		return;
+ #define FAKE_JUMP_OFFSET -1
+ 
++#define JUMP_TABLE_SYM_PREFIX "jump_table."
 +
-+	if (perf_hw_regs(regs))
- 		unwind_start(&state, current, regs, NULL);
--	} else {
-+	else
- 		unwind_start(&state, current, NULL, (void *)regs->sp);
--	}
+ struct alternative {
+ 	struct list_head list;
+ 	struct instruction *insn;
+@@ -997,6 +999,7 @@ static struct rela *find_switch_table(struct objtool_file *file,
+ 	struct instruction *orig_insn = insn;
+ 	struct section *rodata_sec;
+ 	unsigned long table_offset;
++	struct symbol *sym;
  
- 	for (; !unwind_done(&state); unwind_next_frame(&state)) {
- 		addr = unwind_get_return_address(&state);
+ 	/*
+ 	 * Backward search using the @first_jump_src links, these help avoid
+@@ -1035,9 +1038,18 @@ static struct rela *find_switch_table(struct objtool_file *file,
+ 
+ 		/*
+ 		 * Make sure the .rodata address isn't associated with a
+-		 * symbol.  gcc jump tables are anonymous data.
++		 * symbol.  GCC jump tables are anonymous data.
++		 *
++		 * Also support C jump tables which are in the same format as
++		 * switch jump tables.  Each jump table should be a static
++		 * local const array named "jump_table" for objtool to
++		 * recognize it.  Note: GCC will add a numbered suffix to the
++		 * ELF symbol name, like "jump_table.12345", which it does for
++		 * all static local variables.
+ 		 */
+-		if (find_symbol_containing(rodata_sec, table_offset))
++		sym = find_symbol_containing(rodata_sec, table_offset);
++		if (sym && strncmp(sym->name, JUMP_TABLE_SYM_PREFIX,
++				   strlen(JUMP_TABLE_SYM_PREFIX)))
+ 			continue;
+ 
+ 		rodata_rela = find_rela_by_dest(rodata_sec, table_offset);
 -- 
 2.20.1
 
