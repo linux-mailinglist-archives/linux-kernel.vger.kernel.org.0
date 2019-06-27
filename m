@@ -2,61 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44AA857ED6
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 11:01:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C13257EE4
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 11:02:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726587AbfF0JBR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 05:01:17 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:39314 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725385AbfF0JBR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 05:01:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=q3tCNAVxddI/QHJQExO0pnzOA4z7aTNyOfjRp+/T+To=; b=GNp4P0L3ZHZIsV1n4nV8Mlovp
-        uytP8vB0gzlcMhIMhR9nFTE+wG6ROkzh8IpwmFIani/0kKoG4V5Hr9u9TThw9/HyRmr5HgnKYlPki
-        ZhNPZvAGJgBB+5UK2spWwrgYynOpbs2PdRFMjrAMH6zFN2q3brsTEfNTBGooQ3PyJMIdNd0wVMDMm
-        6DDJadSCYEdodQUhmthWLeKxG32YHi14CjcRaQFrEgHg8588ixmNwsil2uY+t+7CNakDP1/uV0gP2
-        jEMizhgAvRFXx12vm6x/PHHRGVu/XYlvBY4i/o3rHF8rYpqd+TzTwcwOLYVX/KznjEp14L0UHQxLa
-        R3ohZ+NLA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hgQHM-0007f0-SE; Thu, 27 Jun 2019 09:01:16 +0000
-Date:   Thu, 27 Jun 2019 02:01:16 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Paul Walmsley <paul.walmsley@sifive.com>
-Cc:     linux-riscv@lists.infradead.org, palmer@sifive.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: change the arch/riscv git tree to the new
- shared tree
-Message-ID: <20190627090116.GB23838@infradead.org>
-References: <20190613070721.8341-1-paul.walmsley@sifive.com>
- <20190613072518.GA1327@infradead.org>
+        id S1726667AbfF0JC3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 05:02:29 -0400
+Received: from verein.lst.de ([213.95.11.211]:50822 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725385AbfF0JC2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 05:02:28 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id 75ECC68BFE; Thu, 27 Jun 2019 11:01:54 +0200 (CEST)
+Date:   Thu, 27 Jun 2019 11:01:54 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Logan Gunthorpe <logang@deltatee.com>
+Cc:     Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-pci@vger.kernel.org, linux-rdma@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Keith Busch <kbusch@kernel.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Stephen Bates <sbates@raithlin.com>
+Subject: Re: [RFC PATCH 00/28] Removing struct page from P2PDMA
+Message-ID: <20190627090154.GA11548@lst.de>
+References: <20190620161240.22738-1-logang@deltatee.com> <20190624072752.GA3954@lst.de> <558a27ba-e7c9-9d94-cad0-377b8ee374a6@deltatee.com> <20190625072008.GB30350@lst.de> <f0f002bf-2b94-cd18-d18f-5d0b08311495@deltatee.com> <20190625170115.GA9746@lst.de> <41235a05-8ed1-e69a-e7cd-48cae7d8a676@deltatee.com> <20190626065708.GB24531@lst.de> <c15d5997-9ba4-f7db-0e7a-a69e75df316c@deltatee.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190613072518.GA1327@infradead.org>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <c15d5997-9ba4-f7db-0e7a-a69e75df316c@deltatee.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 12:25:18AM -0700, Christoph Hellwig wrote:
-> On Thu, Jun 13, 2019 at 12:07:21AM -0700, Paul Walmsley wrote:
-> > Palmer, with Konstantin's gracious help, set up a shared kernel.org
-> > git tree for arch/riscv patches going forward.  Change the MAINTAINERS
-> > file accordingly.
-> > 
-> > Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
-> > Cc: Palmer Dabbelt <palmer@sifive.com>
+On Wed, Jun 26, 2019 at 12:31:08PM -0600, Logan Gunthorpe wrote:
+> > we have a hole behind len where we could store flag.  Preferably
+> > optionally based on a P2P or other magic memory types config
+> > option so that 32-bit systems with 32-bit phys_addr_t actually
+> > benefit from the smaller and better packing structure.
 > 
-> Should you be added to the maintainers?  Is Albert still around, as
-> I see a lot of people Ccing him, but never getting an answer?
+> That seems sensible. The one thing that's unclear though is how to get
+> the PCI Bus address when appropriate. Can we pass that in instead of the
+> phys_addr with an appropriate flag? Or will we need to pass the actual
+> physical address and then, at the map step, the driver has to some how
+> lookup the PCI device to figure out the bus offset?
 
-ping?
+Yes, I think we'll need a lookup mechanism of some kind.
