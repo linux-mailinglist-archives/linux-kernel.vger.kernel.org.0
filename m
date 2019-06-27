@@ -2,195 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 004CC5807A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 12:34:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 688BA580AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 12:41:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726514AbfF0Ke0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 06:34:26 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:33805 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726315AbfF0KeZ (ORCPT
+        id S1726754AbfF0Kku (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 06:40:50 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:44914 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726416AbfF0Kkt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 06:34:25 -0400
-Received: by mail-wm1-f65.google.com with SMTP id w9so6727913wmd.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 03:34:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=UKhEVSzNYhuLc7bB+Vv+QK/Ge2ckuEBmrCEQh4DWmKo=;
-        b=PQMBg8ucdEMhBRC5xmxUcn5xjXfJn2NBQ33ZDtCqzs8AiScwd6IBvKiYV80bRnIdD3
-         Sm9P+LwGBXszBCn1mh0TRk35gb1OqWbqxfZI0lN6ZzSc9axAl7swa5cEIVGBmLOxvRXe
-         fk7Gwgg2M4i8wG3UsX4gqWElRxwBHcf/o3WHIwAlO0+P3DYInhoKc4eEtz/axYr6JIY5
-         RFhT1ah/Iq10sGX5K5LHQ2kjl20GA1rGmcUqIWWiP8948LjpB+LEKpDiJBbUDA9bZeoe
-         Gine1+CccltfF71ORIzN0USF0NhXJnpzpEHb3TfUYlp+xZwS8I3tFSzRMCkhevJlwocN
-         omAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=UKhEVSzNYhuLc7bB+Vv+QK/Ge2ckuEBmrCEQh4DWmKo=;
-        b=E55cTmyq4k0LIhngakNKlAoY9l1Ft3za1s5bgnB2rrnrvPbCfGCrxntXtKGnwb5UvK
-         DYE7fOvOLuEt2zXd+aLN9ILYQ/t27hfxvFvdYFIoNL7XnTAA2PrN83L4L9m6Uo+xRxNK
-         Px9LQuhEk74gNZ5hP1j5+Gcm89QQq1XY5D5NvfMSU1xeJSHL4shyfWlOqy2vKQOSUy37
-         o2MO2d8/uuIFKf0yjIWLdBsp3qUWE3dh/zoTHlBWahHED939nndf8XJXz6Z5rQjXRvOC
-         yjyZHTz/oAjTxIdbdgw9Z+tvmh7X+nlJL+CDD0scV2VIGF2uaCCkFPmPgJK6YLo5MHah
-         dE3A==
-X-Gm-Message-State: APjAAAW7wYOZjQRZ2SeSTwpgSEILNHHFEeOHd+i3q9Vco4jewhRvmdl9
-        jCzD5SBoDG2rDw6WNV24PrxO5A==
-X-Google-Smtp-Source: APXvYqwJdiMNqcGIqlp3qRgPLBWLDsDkg/syR4BBrAtbtB1o8YLYfzNdH12h4+uIIkI33Zh1viOq0Q==
-X-Received: by 2002:a7b:cbcb:: with SMTP id n11mr2652393wmi.146.1561631662433;
-        Thu, 27 Jun 2019 03:34:22 -0700 (PDT)
-Received: from [192.168.0.41] (113.102.130.77.rev.sfr.net. [77.130.102.113])
-        by smtp.googlemail.com with ESMTPSA id l16sm2253662wrw.42.2019.06.27.03.34.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Jun 2019 03:34:21 -0700 (PDT)
-Subject: Re: [PATCH RESEND V2 1/3] clocksource/drivers/sysctr: Add optional
- clock-frequency property
-To:     Anson.Huang@nxp.com, tglx@linutronix.de, robh+dt@kernel.org,
-        mark.rutland@arm.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, l.stach@pengutronix.de,
-        abel.vesa@nxp.com, ccaione@baylibre.com, angus@akkea.ca,
-        andrew.smirnov@gmail.com, agx@sigxcpu.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Linux-imx@nxp.com
-References: <20190623123850.22584-1-Anson.Huang@nxp.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=daniel.lezcano@linaro.org; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <bb362db6-9c50-5d2c-349a-4097dea0449f@linaro.org>
-Date:   Thu, 27 Jun 2019 12:34:19 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Thu, 27 Jun 2019 06:40:49 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id 4462F284FAF
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Benson Leung <bleung@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Collabora kernel ML <kernel@collabora.com>
+Subject: [PATCH v4 00/11] Move part of cros-ec out of MFD subsystem
+Date:   Thu, 27 Jun 2019 12:40:28 +0200
+Message-Id: <20190627104039.26285-1-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20190623123850.22584-1-Anson.Huang@nxp.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23/06/2019 14:38, Anson.Huang@nxp.com wrote:
-> From: Anson Huang <Anson.Huang@nxp.com>
-> 
-> Systems which use platform driver model for clock driver require the
-> clock frequency to be supplied via device tree when system counter
-> driver is enabled.
-> 
-> This is necessary as in the platform driver model the of_clk operations
-> do not work correctly because system counter driver is initialized in
-> early phase of system boot up, and clock driver using platform driver
-> model is NOT ready at that time, it will cause system counter driver
-> initialization failed.
-> 
-> Add the optinal clock-frequency to the device tree bindings of the NXP
-> system counter, so the frequency can be handed in and the of_clk
-> operations can be skipped.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
-> Changes since V1:
-> 	- improve commit log, no content change.
-> ---
->  Documentation/devicetree/bindings/timer/nxp,sysctr-timer.txt | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/timer/nxp,sysctr-timer.txt b/Documentation/devicetree/bindings/timer/nxp,sysctr-timer.txt
-> index d576599..c9907a0 100644
-> --- a/Documentation/devicetree/bindings/timer/nxp,sysctr-timer.txt
-> +++ b/Documentation/devicetree/bindings/timer/nxp,sysctr-timer.txt
-> @@ -14,6 +14,11 @@ Required properties:
->  - clocks : 	    Specifies the counter clock.
->  - clock-names: 	    Specifies the clock's name of this module
->  
-> +Optional properties:
-> +
-> +- clock-frequency : Specifies system counter clock frequency and indicates system
-> +		    counter driver to skip clock operations.
-> +
+Hi,
 
-Shouldn't it be required and mutually exclusive with clocks/clock-names?
+This is another attempt to clean up a bit more the cros-ec driver
+to have a better separation on what is part of the MFD subsystem and
+what is part of platform/chrome.
 
->  Example:
->  
->  	system_counter: timer@306a0000 {
-> @@ -22,4 +27,5 @@ Example:
->  		clocks = <&clk_8m>;
->  		clock-names = "per";
->  		interrupts = <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>;
-> +		clock-frequency = <8333333>;
->  	};
-> 
+It'd be really nice have some reviews, acks and tested on different
+platforms from the chromiumos people before merge all this patchset,
+as this moves a lot of code.
 
+The major changes introduced by this patchset are:
+1. Move the core driver to platform/chrome, as is not really related
+   to an MFD device driver.
+2. Create a new misc chardev driver to replace the chardev bits from
+   cros-ec-dev (MFD)
+3. Added some convenience structs on cros-ec-dev (MFD) to easy add
+   more subdrivers avoiding to add more boiler plate.
+
+Once applied we have moved all the code to platform/chrome except
+the cros-ec-dev driver, which is the one that instantiates the different
+subdrivers as cells of the MFD driver.
+
+I tested the following patches on Veyron, Kevin, Samus, Peach Pi and
+Peach Pit without noticing any problem, but they would need more
+tests.
+
+Waiting for your feedback,
+  Enric
+
+Changes in v4:
+- Rebase against on top of for-mfd-next to avoid conflicts.
+
+Changes in v3:
+- Collect more acks an tested-by
+- Fix 'linux/mfd/cros_ec.h' is not exported (reported by lkp)
+- Use mfd_add_hotplug_devices helper (Gwendal)
+- Add a new patch to use mfd_add_hoplug_devices to register subdevices
+
+Changes in v2:
+- Collect acks received.
+- Remove '[PATCH 07/10] mfd: cros_ec: Update with SPDX Licence identifier
+  and fix description' to avoid conflicts with some tree-wide patches
+  that actually updates the Licence identifier.
+- Add '[PATCH 10/10] arm/arm64: defconfig: Update configs to use the new
+  CROS_EC options' to update the defconfigs after change some config
+  symbols.
+- Remove the list, and the lock, as are not needed (Greg Kroah-Hartman)
+- Remove dev_info in probe, anyway we will see the chardev or not if the
+  probe fails (Greg Kroah-Hartman)
+
+Enric Balletbo i Serra (11):
+  mfd / platform: cros_ec: Handle chained ECs as platform devices
+  mfd / platform: cros_ec: Move cros-ec core driver out from MFD
+  mfd / platform: cros_ec: Miscellaneous character device to talk with
+    the EC
+  mfd: cros_ec: Switch to use the new cros-ec-chardev driver
+  mfd / platform: cros_ec: Rename config to a better name
+  mfd / platform: cros_ec: Reorganize platform and mfd includes
+  mfd: cros_ec: Use kzalloc and cros_ec_cmd_xfer_status helper
+  mfd: cros_ec: Add convenience struct to define dedicated CrOS EC MCUs
+  mfd: cros_ec: Add convenience struct to define autodetectable CrOS EC
+    subdevices
+  mfd: cros_ec: Use mfd_add_hotplug_devices() helper
+  arm/arm64: defconfig: Update configs to use the new CROS_EC options
+
+ Documentation/ioctl/ioctl-number.txt          |   2 +-
+ arch/arm/configs/exynos_defconfig             |   4 +-
+ arch/arm/configs/multi_v7_defconfig           |   6 +-
+ arch/arm/configs/pxa_defconfig                |   4 +-
+ arch/arm64/configs/defconfig                  |   6 +-
+ drivers/extcon/Kconfig                        |   2 +-
+ drivers/extcon/extcon-usbc-cros-ec.c          |   3 +-
+ drivers/hid/Kconfig                           |   2 +-
+ drivers/hid/hid-google-hammer.c               |   4 +-
+ drivers/i2c/busses/Kconfig                    |   2 +-
+ drivers/i2c/busses/i2c-cros-ec-tunnel.c       |   4 +-
+ drivers/iio/accel/cros_ec_accel_legacy.c      |   3 +-
+ drivers/iio/common/cros_ec_sensors/Kconfig    |   2 +-
+ .../common/cros_ec_sensors/cros_ec_sensors.c  |   3 +-
+ .../cros_ec_sensors/cros_ec_sensors_core.c    |   3 +-
+ drivers/iio/light/cros_ec_light_prox.c        |   3 +-
+ drivers/iio/pressure/cros_ec_baro.c           |   3 +-
+ drivers/input/keyboard/Kconfig                |   2 +-
+ drivers/input/keyboard/cros_ec_keyb.c         |   4 +-
+ drivers/media/platform/Kconfig                |   3 +-
+ .../media/platform/cros-ec-cec/cros-ec-cec.c  |   5 +-
+ drivers/mfd/Kconfig                           |  26 +-
+ drivers/mfd/Makefile                          |   4 +-
+ drivers/mfd/cros_ec_dev.c                     | 461 +++++-------------
+ drivers/platform/chrome/Kconfig               |  48 +-
+ drivers/platform/chrome/Makefile              |   2 +
+ drivers/{mfd => platform/chrome}/cros_ec.c    |  64 +--
+ drivers/platform/chrome/cros_ec_chardev.c     | 254 ++++++++++
+ drivers/platform/chrome/cros_ec_debugfs.c     |   3 +-
+ drivers/platform/chrome/cros_ec_i2c.c         |  12 +-
+ drivers/platform/chrome/cros_ec_lightbar.c    |   3 +-
+ drivers/platform/chrome/cros_ec_lpc.c         |   7 +-
+ drivers/platform/chrome/cros_ec_lpc_reg.c     |   4 +-
+ drivers/platform/chrome/cros_ec_proto.c       |   3 +-
+ drivers/platform/chrome/cros_ec_rpmsg.c       |   6 +-
+ drivers/platform/chrome/cros_ec_spi.c         |  12 +-
+ drivers/platform/chrome/cros_ec_sysfs.c       |   3 +-
+ drivers/platform/chrome/cros_ec_trace.c       |   2 +-
+ drivers/platform/chrome/cros_ec_trace.h       |   4 +-
+ drivers/platform/chrome/cros_ec_vbc.c         |   3 +-
+ drivers/platform/chrome/cros_usbpd_logger.c   |   5 +-
+ drivers/power/supply/Kconfig                  |   2 +-
+ drivers/power/supply/cros_usbpd-charger.c     |   5 +-
+ drivers/pwm/Kconfig                           |   2 +-
+ drivers/pwm/pwm-cros-ec.c                     |   4 +-
+ drivers/rtc/Kconfig                           |   2 +-
+ drivers/rtc/rtc-cros-ec.c                     |   3 +-
+ .../linux/iio/common/cros_ec_sensors_core.h   |   3 +-
+ include/linux/mfd/cros_ec.h                   | 291 -----------
+ .../{mfd => platform_data}/cros_ec_commands.h |   0
+ include/linux/platform_data/cros_ec_proto.h   | 316 ++++++++++++
+ .../uapi/linux/cros_ec_chardev.h              |  21 +-
+ sound/soc/codecs/Kconfig                      |   4 +-
+ sound/soc/codecs/cros_ec_codec.c              |   4 +-
+ sound/soc/qcom/Kconfig                        |   2 +-
+ 55 files changed, 896 insertions(+), 759 deletions(-)
+ rename drivers/{mfd => platform/chrome}/cros_ec.c (85%)
+ create mode 100644 drivers/platform/chrome/cros_ec_chardev.c
+ rename include/linux/{mfd => platform_data}/cros_ec_commands.h (100%)
+ create mode 100644 include/linux/platform_data/cros_ec_proto.h
+ rename drivers/mfd/cros_ec_dev.h => include/uapi/linux/cros_ec_chardev.h (50%)
 
 -- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+2.20.1
 
