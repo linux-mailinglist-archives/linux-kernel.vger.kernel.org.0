@@ -2,95 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0780578FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 03:37:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D3E5578ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 03:30:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726968AbfF0BhC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 21:37:02 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:37904 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726410AbfF0BhB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 21:37:01 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5R1YiH8013914;
-        Thu, 27 Jun 2019 01:36:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
- bh=Tct/r78PzAI1Nw33grKOwsL1YAYVa9bkSMicZSxpV80=;
- b=kacUom4TNyk1mlggbtCdX0kflSN9NbJIaehCoEwjwwdqnDvhJpIoGj2Ju79k4uK8b0PB
- WVyPJVHkwy9THcMafJBvEtOsgG1/a6NZ3l8eZTyh9PmtktrHV8B59HbX4BoBDQxVJvfy
- OgcKXwGxJVsJ21o2/rwyVXiOZkiTfJc5P89RAMP/Zv0sj3dzhvXK9Y+iK81UQqZLwHUv
- EGTDMytPFBlIIjnsbgZkapoQp2TbjOdOzIIVkKOxhKPCH/2qqm01yF53MMXwuOOTEP9/
- wafPUfm2bEFrIkGA0fPb0RTjpXev0TlTgHZqZ+Zblf8MHcxoygaCOt7N4BA9OULnamsV Ow== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2130.oracle.com with ESMTP id 2t9brtdfkx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 27 Jun 2019 01:36:31 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5R1XdUv017552;
-        Thu, 27 Jun 2019 01:34:31 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3020.oracle.com with ESMTP id 2tat7d4a44-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 27 Jun 2019 01:34:31 +0000
-Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5R1YUIF007575;
-        Thu, 27 Jun 2019 01:34:30 GMT
-Received: from smazumda-Precision-T1600.us.oracle.com (/10.132.91.175)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 26 Jun 2019 18:34:30 -0700
-From:   subhra mazumdar <subhra.mazumdar@oracle.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     peterz@infradead.org, mingo@redhat.com, tglx@linutronix.de,
-        steven.sistare@oracle.com, dhaval.giani@oracle.com,
-        daniel.lezcano@linaro.org, vincent.guittot@linaro.org,
-        viresh.kumar@linaro.org, tim.c.chen@linux.intel.com,
-        mgorman@techsingularity.net
-Subject: [PATCH v3 7/7] sched: use per-cpu variable cpumask_weight_sibling
-Date:   Wed, 26 Jun 2019 18:29:19 -0700
-Message-Id: <20190627012919.4341-8-subhra.mazumdar@oracle.com>
-X-Mailer: git-send-email 2.9.3
-In-Reply-To: <20190627012919.4341-1-subhra.mazumdar@oracle.com>
-References: <20190627012919.4341-1-subhra.mazumdar@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9300 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=783
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1906270016
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9300 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=829 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1906270017
+        id S1726859AbfF0Baj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 21:30:39 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:52648 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726731AbfF0Baj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 21:30:39 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 54CDB8666F;
+        Thu, 27 Jun 2019 01:30:38 +0000 (UTC)
+Received: from treble (ovpn-126-66.rdu2.redhat.com [10.10.126.66])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id AC2DC60BE5;
+        Thu, 27 Jun 2019 01:30:36 +0000 (UTC)
+Date:   Wed, 26 Jun 2019 20:30:34 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Song Liu <songliubraving@fb.com>,
+        Kairui Song <kasong@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH v3 3/4] bpf: Fix ORC unwinding in non-JIT BPF code
+Message-ID: <20190627013034.cgyb7ytusvapmsqq@treble>
+References: <cover.1561595111.git.jpoimboe@redhat.com>
+ <a5a486434d31d77297d39c4adccea22fac3027c1.1561595111.git.jpoimboe@redhat.com>
+ <CAADnVQL2z4BPUvtem-1C_JxzSgc_L8ED=VjGLu7ypPSq3wwC4w@mail.gmail.com>
+ <20190627010653.yovvztgmimaywaz5@treble>
+ <CAADnVQ+hZvNEx6pjWKEomn=Nh8zM1451kVscvCyyWaJ-DmcehA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAADnVQ+hZvNEx6pjWKEomn=Nh8zM1451kVscvCyyWaJ-DmcehA@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Thu, 27 Jun 2019 01:30:38 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use per-cpu var cpumask_weight_sibling for quick lookup in select_idle_cpu.
-This is the fast path of scheduler and every cycle is worth saving. Usage
-of cpumask_weight can result in iterations.
+On Wed, Jun 26, 2019 at 06:22:48PM -0700, Alexei Starovoitov wrote:
+> On Wed, Jun 26, 2019 at 6:07 PM Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+> >
+> > On Wed, Jun 26, 2019 at 05:57:08PM -0700, Alexei Starovoitov wrote:
+> > > On Wed, Jun 26, 2019 at 5:36 PM Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+> > > >
+> > > > Objtool previously ignored ___bpf_prog_run() because it didn't
+> > > > understand the jump table.  This resulted in the ORC unwinder not being
+> > > > able to unwind through non-JIT BPF code.
+> > > >
+> > > > Now that objtool knows how to read jump tables, remove the whitelist and
+> > > > rename the variable to "jump_table" so objtool can recognize it.
+> > > >
+> > > > Fixes: d15d356887e7 ("perf/x86: Make perf callchains work without CONFIG_FRAME_POINTER")
+> > > > Reported-by: Song Liu <songliubraving@fb.com>
+> > > > Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+> > > > ---
+> > > >  kernel/bpf/core.c | 5 ++---
+> > > >  1 file changed, 2 insertions(+), 3 deletions(-)
+> > > >
+> > > > diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
+> > > > index 080e2bb644cc..ff66294882f8 100644
+> > > > --- a/kernel/bpf/core.c
+> > > > +++ b/kernel/bpf/core.c
+> > > > @@ -1299,7 +1299,7 @@ static u64 ___bpf_prog_run(u64 *regs, const struct bpf_insn *insn, u64 *stack)
+> > > >  {
+> > > >  #define BPF_INSN_2_LBL(x, y)    [BPF_##x | BPF_##y] = &&x##_##y
+> > > >  #define BPF_INSN_3_LBL(x, y, z) [BPF_##x | BPF_##y | BPF_##z] = &&x##_##y##_##z
+> > > > -       static const void *jumptable[256] = {
+> > > > +       static const void *jump_table[256] = {
+> > > >                 [0 ... 255] = &&default_label,
+> > > >                 /* Now overwrite non-defaults ... */
+> > > >                 BPF_INSN_MAP(BPF_INSN_2_LBL, BPF_INSN_3_LBL),
+> > > > @@ -1315,7 +1315,7 @@ static u64 ___bpf_prog_run(u64 *regs, const struct bpf_insn *insn, u64 *stack)
+> > > >  #define CONT_JMP ({ insn++; goto select_insn; })
+> > > >
+> > > >  select_insn:
+> > > > -       goto *jumptable[insn->code];
+> > > > +       goto *jump_table[insn->code];
+> > >
+> > > I thought we were clear that it is a nack?
+> > > Either live it alone or rename to something like jump_table_bpf_interpreter
+> > > or bpf_interpreter_jump_table.
+> >
+> > As I have said many times:
+> >
+> > The jump table detection is a generic objtool feature.  It makes no
+> > sense to give a bpf-specific name to a generic objtool feature which can
+> > be used by other components.
+> 
+> Nacked-by: Alexei Starovoitov <ast@kernel.org>
 
-Signed-off-by: subhra mazumdar <subhra.mazumdar@oracle.com>
----
- kernel/sched/fair.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Whatever, it's your code...
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 6a74808..878f11c 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -6206,7 +6206,7 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, int t
- 
- 	if (sched_feat(SIS_PROP)) {
- 		u64 span_avg = sd->span_weight * avg_idle;
--		floor = cpumask_weight(topology_sibling_cpumask(target));
-+		floor = topology_sibling_weight(target);
- 		if (floor < 2)
- 			floor = 2;
- 		limit = floor << 1;
+To the -tip maintainers: patches 1 and 4 are independent of this change
+and can be merged regardless.
+
 -- 
-2.9.3
-
+Josh
