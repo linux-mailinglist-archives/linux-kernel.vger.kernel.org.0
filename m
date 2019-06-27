@@ -2,57 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BAA8C588C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 19:40:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 47A7B588CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 19:40:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726946AbfF0RkD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 13:40:03 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:33983 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726508AbfF0RkC (ORCPT
+        id S1727015AbfF0RkX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 13:40:23 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:38023 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726508AbfF0RkV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 13:40:02 -0400
-Received: by mail-pf1-f196.google.com with SMTP id c85so1596068pfc.1;
-        Thu, 27 Jun 2019 10:40:02 -0700 (PDT)
+        Thu, 27 Jun 2019 13:40:21 -0400
+Received: by mail-pf1-f193.google.com with SMTP id y15so1589142pfn.5
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 10:40:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=sTaNIRgFBqMQPDw0TPcpG7R1iaHcLwdE4qgc0/lS9Dk=;
-        b=DFjSpVI+QyiqRRwnKxUVzTbhIPMReAv5xG9MDT2+gqDowmz/pv9J/9oe/9ATvtWKm2
-         CFWmBbLxSHh7rUj6QzUdDcYhBXL92prABGBWr0MiwWyx/+SpdnGZCQiMjZQYc9Hw7j7s
-         /L0RBB5JX8rO2YKrg6a736ylnh3i9J4BLG0CR80tAP2vX9KuyXa6fWH6TemWm1B6yaR6
-         HrK3EftUi2rsPEEe0PLz9p/HLeo34KgGhDGEqXE7VI1YBjTH+4QTc7l2OY1kkFK/Rpc5
-         R4ewKRt0BsitJzky/9+gdzN+gm+zSZBgdF51GrgUqfs5z3xMpg0/t9fLrynE+WG1k4KZ
-         Ak0A==
+        bh=L6opFpOThEdquXvnOb5s3Hkh5g3O4IQcltwmgth5DiA=;
+        b=CZA3oppJRGpRVbOhcz/P3IO6tE1VhnhxzuflMacV8+o/y/T9vbqL25HKnIukmZc1Y2
+         Jl7ngPoG98WaMJmN8ZPliPHljkGZjbjznSIxw+c9bp29CamtqAL4eFbgybvTb6iGVlY4
+         aupFWu1YDInGmCyB4iownB507+ppAwz7EnBD1Q3OX7cxhSJmKAQt6fFpF8NBxBt8ukCC
+         3tN0dSVf6P0kbTXuA4pYOaBRGJN2D8Sc1a11ZLmM4uG+dZ8tH9RWQnCvtxuSsVNR6crM
+         RyEzYCNdblj33qwjsHXfPxCWDGK9k7mByIscSOnmvylDNKq5fiCNMmvP5K9ksBYzTfYg
+         6d6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=sTaNIRgFBqMQPDw0TPcpG7R1iaHcLwdE4qgc0/lS9Dk=;
-        b=FA61a+PZgqcilzNjLePq/hqQmgHXiuq0Me5wntfy5gFod3lVNYeS2It1XnaNKZCaoD
-         nPJcgY5+g+vAuDFMi5QXTpGfIpabBCbvnXYmG5c2+Gpy6qTVl5USYzfTPBDWWcpEN7ym
-         bUBPEfWKb+VTE3Knd1YK5IFSxA+d9lT/eFXKf4NswMKuiZsYplmpDG1IYNKFyeySNuDE
-         v2Ke7uaLkKigHdU86US1O1Ki8WX9O9Ss0q5GRPg8lHOApqTrn1N1D8tX1vXM/QrA/3kK
-         QNvHWVnjv4TYyFnoqVqwsGrqKg9xwZvErEQKY5cSKG4utLWMucQWgwluqVhNZ7xwA5Ix
-         3NhA==
-X-Gm-Message-State: APjAAAWD+xr129v0FPy8NHLM5jN/wxfKMQVdeKU4TIcIcIN04R05iPYD
-        TxupCaZ6E1G3ubbNHFzbc5M=
-X-Google-Smtp-Source: APXvYqyv44uwLwZ85+ZWtuNVuMXPbhhpAeuFG0N8jYFYoehGCLNQEDxGQjrXZnFlRHg6p3HAlO3XUw==
-X-Received: by 2002:a63:d0:: with SMTP id 199mr4884238pga.85.1561657201964;
-        Thu, 27 Jun 2019 10:40:01 -0700 (PDT)
+        bh=L6opFpOThEdquXvnOb5s3Hkh5g3O4IQcltwmgth5DiA=;
+        b=DQ6hS23VLxY8dp7uQMa++eqmAi9fya52W+yWRgxR+D66wLmODrAr4vA7/N8tb2KuaQ
+         99FfiL5cw6WSBBlsyIDztp4b4VIXzwp/CW0DdaR9b5tKX4NTjCLxmHowS5qYlWSf9Sfp
+         E2wlmvMYTkWXVWm82OqGTnjuSptZBjyGeX+DyNzljjBfoCe3NOfOHDnGmv7nrjMYDM5/
+         KUOSRrCBSPWXjMX/qlu2gniJcwU1NrusinXddBGaz9PfyRKxdpGeeb3dJ4nh3vWGDyKM
+         rAbYndA73QxGgG/HFyouGkzhDw3RdSbXtlKJbELnBTXoSWtvli5QX8i7FtcMUitSOzES
+         rLJw==
+X-Gm-Message-State: APjAAAUQHUPIoeR06t8Svdl1UZSLdjRaIqJuIUtViEYeTsSF3Pkw53P4
+        euP1cEkZpFCPQkQhPHrgMJ4=
+X-Google-Smtp-Source: APXvYqxrzUs8DeUHPssnnwWLTuDDk6JJL7Yrqlo13ODapk3BAIjulA+x5zBhBOQ7DfHZad+5QbPjlw==
+X-Received: by 2002:a63:5002:: with SMTP id e2mr2522564pgb.216.1561657220675;
+        Thu, 27 Jun 2019 10:40:20 -0700 (PDT)
 Received: from hfq-skylake.ipads-lab.se.sjtu.edu.cn ([202.120.40.82])
-        by smtp.googlemail.com with ESMTPSA id n89sm11449259pjc.0.2019.06.27.10.39.59
+        by smtp.googlemail.com with ESMTPSA id h62sm5865256pgc.54.2019.06.27.10.40.17
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Jun 2019 10:40:01 -0700 (PDT)
+        Thu, 27 Jun 2019 10:40:20 -0700 (PDT)
 From:   Fuqian Huang <huangfq.daxian@gmail.com>
-Cc:     Fuqian Huang <huangfq.daxian@gmail.com>,
-        Derek Chickles <dchickles@marvell.com>,
-        Satanand Burla <sburla@marvell.com>,
-        Felix Manlunas <fmanlunas@marvell.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 40/87] ethernet: cavium: replace vmalloc and memset with vzalloc
-Date:   Fri, 28 Jun 2019 01:39:54 +0800
-Message-Id: <20190627173954.3943-1-huangfq.daxian@gmail.com>
+Cc:     Fuqian Huang <huangfq.daxian@gmail.com>, Rex Zhu <rex.zhu@amd.com>,
+        Evan Quan <evan.quan@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 15/87] gpu: drm: Remove call to memset after kzalloc in process_pptable_v1_0.c
+Date:   Fri, 28 Jun 2019 01:40:10 +0800
+Message-Id: <20190627174012.4062-1-huangfq.daxian@gmail.com>
 X-Mailer: git-send-email 2.11.0
 To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -60,50 +62,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-vmalloc + memset(0) -> vzalloc
+kzalloc has already zeroes the memory.
+So memset is not needed.
 
 Signed-off-by: Fuqian Huang <huangfq.daxian@gmail.com>
 ---
- drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c | 4 +---
- drivers/net/ethernet/cavium/liquidio/cn23xx_vf_device.c | 4 +---
- 2 files changed, 2 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/amd/powerplay/hwmgr/process_pptables_v1_0.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c b/drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c
-index 43d11c38b38a..cf3835da32c8 100644
---- a/drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c
-+++ b/drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c
-@@ -719,12 +719,10 @@ static int cn23xx_setup_pf_mbox(struct octeon_device *oct)
- 	for (i = 0; i < oct->sriov_info.max_vfs; i++) {
- 		q_no = i * oct->sriov_info.rings_per_vf;
+diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/process_pptables_v1_0.c b/drivers/gpu/drm/amd/powerplay/hwmgr/process_pptables_v1_0.c
+index ae64ff7153d6..eb7757443bdd 100644
+--- a/drivers/gpu/drm/amd/powerplay/hwmgr/process_pptables_v1_0.c
++++ b/drivers/gpu/drm/amd/powerplay/hwmgr/process_pptables_v1_0.c
+@@ -1065,8 +1065,6 @@ static int pp_tables_v1_0_initialize(struct pp_hwmgr *hwmgr)
+ 	PP_ASSERT_WITH_CODE((NULL != hwmgr->pptable),
+ 			    "Failed to allocate hwmgr->pptable!", return -ENOMEM);
  
--		mbox = vmalloc(sizeof(*mbox));
-+		mbox = vzalloc(sizeof(*mbox));
- 		if (!mbox)
- 			goto free_mbox;
- 
--		memset(mbox, 0, sizeof(struct octeon_mbox));
+-	memset(hwmgr->pptable, 0x00, sizeof(struct phm_ppt_v1_information));
 -
- 		spin_lock_init(&mbox->lock);
+ 	powerplay_table = get_powerplay_table(hwmgr);
  
- 		mbox->oct_dev = oct;
-diff --git a/drivers/net/ethernet/cavium/liquidio/cn23xx_vf_device.c b/drivers/net/ethernet/cavium/liquidio/cn23xx_vf_device.c
-index fda49404968c..b3bd2767d3dd 100644
---- a/drivers/net/ethernet/cavium/liquidio/cn23xx_vf_device.c
-+++ b/drivers/net/ethernet/cavium/liquidio/cn23xx_vf_device.c
-@@ -279,12 +279,10 @@ static int cn23xx_setup_vf_mbox(struct octeon_device *oct)
- {
- 	struct octeon_mbox *mbox = NULL;
- 
--	mbox = vmalloc(sizeof(*mbox));
-+	mbox = vzalloc(sizeof(*mbox));
- 	if (!mbox)
- 		return 1;
- 
--	memset(mbox, 0, sizeof(struct octeon_mbox));
--
- 	spin_lock_init(&mbox->lock);
- 
- 	mbox->oct_dev = oct;
+ 	PP_ASSERT_WITH_CODE((NULL != powerplay_table),
 -- 
 2.11.0
 
