@@ -2,172 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0129758DC5
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 00:15:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1448358DC0
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 00:14:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726860AbfF0WO5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 18:14:57 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:51731 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726445AbfF0WO4 (ORCPT
+        id S1726822AbfF0WOj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 18:14:39 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:44839 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726445AbfF0WOi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 18:14:56 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5RMEaDF472501
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Thu, 27 Jun 2019 15:14:36 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5RMEaDF472501
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019061801; t=1561673677;
-        bh=TdcGloUbyqQ/luaBLnxjyqNVk1Xv5mfcOZdI2GjSl9k=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=B32g3G2Yd+wiCKIQPHLOHe3hxw9UvMBN2Xaz87Sax9h4oTZlTEk92++PRfDKuqGvb
-         kRgBVrqnCV8IpGGlKElKdXqc7Am75osIRQWCg2vE8b1mqzvOuujpUt4JpL9S1CIhzP
-         b2IkCXyAtKKgvGZLZ/WaFyhxilfx6SgrSewbyAMJUCi7mGEyajrsiQaxow7E9loT/b
-         zz6Gt3Eq0HfrcM/Sxs6wGVHmQP4hlY17mH+gZbhBjN52kV6Fd7Lagxi0vBUc8/jna1
-         xNa7SOuOAXiD0YMx98/mUfLVAn0s2dCm3UuVZCgE+yvtE9SQvr/DPjun5JjI9W7A41
-         Tf3AKIIWfej4Q==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5RMEakm472493;
-        Thu, 27 Jun 2019 15:14:36 -0700
+        Thu, 27 Jun 2019 18:14:38 -0400
+Received: by mail-pg1-f194.google.com with SMTP id n2so1621641pgp.11;
+        Thu, 27 Jun 2019 15:14:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=NZXRbshkIzDoSjsEe6DOCALRS5cAnDLBAFY0PCjxxcU=;
+        b=cBdX4LpeL+5vcJzIjdWukBMVOC25dcs8gOFk8FaXLeZh4mPQ1IqFwisSjMlNNNaHZZ
+         vyULpV6qOd2TK95gmTBDrlWV40A+36b0wKcUNdXPqrYsHR5eOSVDTXeapan3VLKFTClX
+         OZxaSnKCMbx/0JiYw40Sqp2SFmJjzz+1SJlbWTe3eeVKiOD05lMcOfTRF183iEoeZuaa
+         +JcwA0nz5Vgd/nycUDCVEnFKH27S7GrEP4p9YLv2OF0s6KhhNf7tDC1jhm8ApnuYNIej
+         lo5Lx/SGn7UeDl3q2IOxeyIl4y721mVaKAin81Ne7L2+M4K8z3ex1FcNzNVUCnfS773j
+         33jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=NZXRbshkIzDoSjsEe6DOCALRS5cAnDLBAFY0PCjxxcU=;
+        b=X3tuDAXatyxYKTO3EGV7+CrqbTViU3siTc0szAs01Sniy4l1mq2UU4CKhmvLqn3zne
+         d/yKci752zX7AbOGXZqasT5QJMI2WslkLzpmW4uraN0IXzyhq2xE0HGDR1hx47Y1d658
+         N38mrTKGOkX/PQ66Kw7qWyYVAQMj/8SD9wToiapDbBKQ//ohYPux0tsHgfpXCy03OJZ9
+         BouHdWer6JN1LRaGZlENT6DDLjVm7xUtsAdEYWkjRcfz9xMruyQKq0MCSlYya13+fKIC
+         q/+XuUPcgXvKNnoaeJW34YMKBHv5V5q1nmMbRd/PVK1GdAgC5ZwrJuPYdq2qThYvkwMo
+         BM/w==
+X-Gm-Message-State: APjAAAXLhE6OUA1MB9B+PNyDYggtJ0B6QVmDclckMv5lEY5qJ5TVrL2q
+        j46r4FDl+NnVljASSCOC0CM=
+X-Google-Smtp-Source: APXvYqzgUPfbteOtdizfNvJDkNBveWB5fGZbGGCcUfGxHAzouvZj2SyT/6FKfztouZ9ftzAfbsE4oQ==
+X-Received: by 2002:a63:e156:: with SMTP id h22mr5909967pgk.370.1561673678002;
+        Thu, 27 Jun 2019 15:14:38 -0700 (PDT)
+Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:200::1:305a])
+        by smtp.gmail.com with ESMTPSA id j2sm81162pfn.135.2019.06.27.15.14.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 27 Jun 2019 15:14:37 -0700 (PDT)
 Date:   Thu, 27 Jun 2019 15:14:36 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Andy Lutomirski <tipbot@zytor.com>
-Message-ID: <tip-918ce325098a4eef99daad7b6796da33cebaf03a@git.kernel.org>
-Cc:     keescook@chromium.org, tglx@linutronix.de, mingo@kernel.org,
-        luto@kernel.org, fweimer@redhat.com, linux-kernel@vger.kernel.org,
-        hpa@zytor.com, jannh@google.com
-Reply-To: luto@kernel.org, mingo@kernel.org, fweimer@redhat.com,
-          keescook@chromium.org, tglx@linutronix.de, jannh@google.com,
-          linux-kernel@vger.kernel.org, hpa@zytor.com
-In-Reply-To: <8016afffe0eab497be32017ad7f6f7030dc3ba66.1561610354.git.luto@kernel.org>
-References: <8016afffe0eab497be32017ad7f6f7030dc3ba66.1561610354.git.luto@kernel.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/entry] x86/vsyscall: Show something useful on a read fault
-Git-Commit-ID: 918ce325098a4eef99daad7b6796da33cebaf03a
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Brian Vazquez <brianvv@google.com>
+Cc:     Brian Vazquez <brianvv.kernel@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        "David S . Miller" <davem@davemloft.net>,
+        Stanislav Fomichev <sdf@google.com>,
+        Willem de Bruijn <willemb@google.com>,
+        Petar Penkov <ppenkov@google.com>,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org
+Subject: Re: [RFC PATCH bpf-next v2 0/6]  bpf: add BPF_MAP_DUMP command to
+Message-ID: <20190627221434.tz2fscw2cjvrqiop@ast-mbp.dhcp.thefacebook.com>
+References: <20190627202417.33370-1-brianvv@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Spam-Status: No, score=0.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_12_24,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
-        DKIM_VALID_EF autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+In-Reply-To: <20190627202417.33370-1-brianvv@google.com>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  918ce325098a4eef99daad7b6796da33cebaf03a
-Gitweb:     https://git.kernel.org/tip/918ce325098a4eef99daad7b6796da33cebaf03a
-Author:     Andy Lutomirski <luto@kernel.org>
-AuthorDate: Wed, 26 Jun 2019 21:45:04 -0700
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Fri, 28 Jun 2019 00:04:39 +0200
+On Thu, Jun 27, 2019 at 01:24:11PM -0700, Brian Vazquez wrote:
+> This introduces a new command to retrieve a variable number of entries
+> from a bpf map.
+> 
+> This new command can be executed from the existing BPF syscall as
+> follows:
+> 
+> err =  bpf(BPF_MAP_DUMP, union bpf_attr *attr, u32 size)
+> using attr->dump.map_fd, attr->dump.prev_key, attr->dump.buf,
+> attr->dump.buf_len
+> returns zero or negative error, and populates buf and buf_len on
+> succees
+> 
+> This implementation is wrapping the existing bpf methods:
+> map_get_next_key and map_lookup_elem
+> the results show that even with a 1-elem_size buffer, it runs ~40 faster
+> than the current implementation, improvements of ~85% are reported when
+> the buffer size is increased, although, after the buffer size is around
+> 5% of the total number of entries there's no huge difference in
+> increasing
+> it.
 
-x86/vsyscall: Show something useful on a read fault
+was it with kpti and retpoline mitigations?
 
-Just segfaulting the application when it tries to read the vsyscall page in
-xonly mode is not helpful for those who need to debug it.
-
-Emit a hint.
-
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Cc: Florian Weimer <fweimer@redhat.com>
-Cc: Jann Horn <jannh@google.com>
-Link: https://lkml.kernel.org/r/8016afffe0eab497be32017ad7f6f7030dc3ba66.1561610354.git.luto@kernel.org
-
----
- arch/x86/entry/vsyscall/vsyscall_64.c | 19 ++++++++++++++++++-
- arch/x86/include/asm/vsyscall.h       |  6 ++++--
- arch/x86/mm/fault.c                   | 11 +++++------
- 3 files changed, 27 insertions(+), 9 deletions(-)
-
-diff --git a/arch/x86/entry/vsyscall/vsyscall_64.c b/arch/x86/entry/vsyscall/vsyscall_64.c
-index fedd7628f3a6..9c58ab807aeb 100644
---- a/arch/x86/entry/vsyscall/vsyscall_64.c
-+++ b/arch/x86/entry/vsyscall/vsyscall_64.c
-@@ -117,7 +117,8 @@ static bool write_ok_or_segv(unsigned long ptr, size_t size)
- 	}
- }
- 
--bool emulate_vsyscall(struct pt_regs *regs, unsigned long address)
-+bool emulate_vsyscall(unsigned long error_code,
-+		      struct pt_regs *regs, unsigned long address)
- {
- 	struct task_struct *tsk;
- 	unsigned long caller;
-@@ -126,6 +127,22 @@ bool emulate_vsyscall(struct pt_regs *regs, unsigned long address)
- 	long ret;
- 	unsigned long orig_dx;
- 
-+	/* Write faults or kernel-privilege faults never get fixed up. */
-+	if ((error_code & (X86_PF_WRITE | X86_PF_USER)) != X86_PF_USER)
-+		return false;
-+
-+	if (!(error_code & X86_PF_INSTR)) {
-+		/* Failed vsyscall read */
-+		if (vsyscall_mode == EMULATE)
-+			return false;
-+
-+		/*
-+		 * User code tried and failed to read the vsyscall page.
-+		 */
-+		warn_bad_vsyscall(KERN_INFO, regs, "vsyscall read attempt denied -- look up the vsyscall kernel parameter if you need a workaround");
-+		return false;
-+	}
-+
- 	/*
- 	 * No point in checking CS -- the only way to get here is a user mode
- 	 * trap to a high address, which means that we're in 64-bit user code.
-diff --git a/arch/x86/include/asm/vsyscall.h b/arch/x86/include/asm/vsyscall.h
-index b986b2ca688a..ab60a71a8dcb 100644
---- a/arch/x86/include/asm/vsyscall.h
-+++ b/arch/x86/include/asm/vsyscall.h
-@@ -13,10 +13,12 @@ extern void set_vsyscall_pgtable_user_bits(pgd_t *root);
-  * Called on instruction fetch fault in vsyscall page.
-  * Returns true if handled.
-  */
--extern bool emulate_vsyscall(struct pt_regs *regs, unsigned long address);
-+extern bool emulate_vsyscall(unsigned long error_code,
-+			     struct pt_regs *regs, unsigned long address);
- #else
- static inline void map_vsyscall(void) {}
--static inline bool emulate_vsyscall(struct pt_regs *regs, unsigned long address)
-+static inline bool emulate_vsyscall(unsigned long error_code,
-+				    struct pt_regs *regs, unsigned long address)
- {
- 	return false;
- }
-diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index 46df4c6aae46..288a5462076f 100644
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -1369,16 +1369,15 @@ void do_user_addr_fault(struct pt_regs *regs,
- 
- #ifdef CONFIG_X86_64
- 	/*
--	 * Instruction fetch faults in the vsyscall page might need
--	 * emulation.  The vsyscall page is at a high address
--	 * (>PAGE_OFFSET), but is considered to be part of the user
--	 * address space.
-+	 * Faults in the vsyscall page might need emulation.  The
-+	 * vsyscall page is at a high address (>PAGE_OFFSET), but is
-+	 * considered to be part of the user address space.
- 	 *
- 	 * The vsyscall page does not have a "real" VMA, so do this
- 	 * emulation before we go searching for VMAs.
- 	 */
--	if ((hw_error_code & X86_PF_INSTR) && is_vsyscall_vaddr(address)) {
--		if (emulate_vsyscall(regs, address))
-+	if (is_vsyscall_vaddr(address)) {
-+		if (emulate_vsyscall(hw_error_code, regs, address))
- 			return;
- 	}
- #endif
