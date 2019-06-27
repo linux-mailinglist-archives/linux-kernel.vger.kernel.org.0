@@ -2,32 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9132D582DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 14:52:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BB99582DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 14:52:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726590AbfF0MwA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 08:52:00 -0400
+        id S1726873AbfF0MwF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 08:52:05 -0400
 Received: from mga04.intel.com ([192.55.52.120]:36562 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726431AbfF0MwA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 08:52:00 -0400
+        id S1726431AbfF0MwC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 08:52:02 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jun 2019 05:52:00 -0700
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jun 2019 05:52:01 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.63,423,1557212400"; 
-   d="scan'208";a="245805946"
+   d="scan'208";a="245805951"
 Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
-  by orsmga001.jf.intel.com with ESMTP; 27 Jun 2019 05:51:58 -0700
+  by orsmga001.jf.intel.com with ESMTP; 27 Jun 2019 05:52:00 -0700
 From:   Alexander Shishkin <alexander.shishkin@linux.intel.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     linux-kernel@vger.kernel.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Subject: [GIT PULL 0/9] intel_th: Updates for v5.3
-Date:   Thu, 27 Jun 2019 15:51:43 +0300
-Message-Id: <20190627125152.54905-1-alexander.shishkin@linux.intel.com>
+        Shaokun Zhang <zhangshaokun@hisilicon.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [GIT PULL 1/9] intel_th: msu: Fix unused variable warning on arm64 platform
+Date:   Thu, 27 Jun 2019 15:51:44 +0300
+Message-Id: <20190627125152.54905-2-alexander.shishkin@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190627125152.54905-1-alexander.shishkin@linux.intel.com>
+References: <20190627125152.54905-1-alexander.shishkin@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -36,65 +40,114 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
+From: Shaokun Zhang <zhangshaokun@hisilicon.com>
 
-There are the updates for the Intel TH driver that I have for the next
-cycle. These are multi-window mode buffer management changes, mainly to
-add support for software trace sinks.
+Commit ba39bd8306057 ("intel_th: msu: Switch over to scatterlist")
+introduced the following warnings on non-x86 architectures, as a result
+of reordering the multi mode buffer allocation sequence:
 
-One patch at the top is a dependency, from a pull request I sent last week
-with fixes for v5.2 [1].
+> drivers/hwtracing/intel_th/msu.c: In function ‘msc_buffer_win_alloc’:
+> drivers/hwtracing/intel_th/msu.c:783:21: warning: unused variable ‘i’
+> [-Wunused-variable]
+> int ret = -ENOMEM, i;
+>                    ^
+> drivers/hwtracing/intel_th/msu.c: In function ‘msc_buffer_win_free’:
+> drivers/hwtracing/intel_th/msu.c:863:6: warning: unused variable ‘i’
+> [-Wunused-variable]
+> int i;
+>     ^
 
-Individual patches are in follow-up emails, a signed tag is also pushed
-out and available at the URL below. Please consider pulling or applying.
-Thanks!
+Fix this compiler warning by factoring out set_memory sequences and making
+them x86-only.
 
-[1] https://marc.info/?l=linux-kernel&m=156113401304637
+Suggested-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Signed-off-by: Shaokun Zhang <zhangshaokun@hisilicon.com>
+Fixes: ba39bd8306057 ("intel_th: msu: Switch over to scatterlist")
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+---
+ drivers/hwtracing/intel_th/msu.c | 40 +++++++++++++++++++++-----------
+ 1 file changed, 27 insertions(+), 13 deletions(-)
 
-The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
-
-  Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/ash/stm.git tags/intel_th-for-greg-20190627
-
-for you to fetch changes up to 4fe4659624b7cf6fa7c2197eb5588f1be1123e17:
-
-  intel_th: msu: Preserve pre-existing buffer configuration (2019-06-27 15:21:25 +0300)
-
-----------------------------------------------------------------
-intel_th: Updates for v5.3
-
-These are:
-  * Support for software trace sinks / buffer drivers
-  * Various reworks in buffer management code
-
-----------------------------------------------------------------
-Alexander Shishkin (8):
-      intel_th: msu: Support multipage blocks
-      intel_th: msu: Split sgt array and pointer in multiwindow mode
-      intel_th: msu: Start read iterator from a non-empty window
-      intel_th: msu: Introduce buffer driver interface
-      intel_th: msu: Prevent freeing buffers while locked windows exist
-      intel_th: msu: Get rid of the window size limit
-      intel_th: msu-sink: An example msu buffer driver
-      intel_th: msu: Preserve pre-existing buffer configuration
-
-Shaokun Zhang (1):
-      intel_th: msu: Fix unused variable warning on arm64 platform
-
- .../ABI/testing/sysfs-bus-intel_th-devices-msc     |   3 +-
- MAINTAINERS                                        |   1 +
- drivers/hwtracing/intel_th/Makefile                |   3 +
- drivers/hwtracing/intel_th/msu-sink.c              | 127 +++++
- drivers/hwtracing/intel_th/msu.c                   | 609 +++++++++++++++++----
- drivers/hwtracing/intel_th/msu.h                   |  23 +-
- include/linux/intel_th.h                           |  67 +++
- 7 files changed, 710 insertions(+), 123 deletions(-)
- create mode 100644 drivers/hwtracing/intel_th/msu-sink.c
- create mode 100644 include/linux/intel_th.h
-
+diff --git a/drivers/hwtracing/intel_th/msu.c b/drivers/hwtracing/intel_th/msu.c
+index 81bb54fa3ce8..8c568b5c8920 100644
+--- a/drivers/hwtracing/intel_th/msu.c
++++ b/drivers/hwtracing/intel_th/msu.c
+@@ -767,6 +767,30 @@ static int __msc_buffer_win_alloc(struct msc_window *win,
+ 	return -ENOMEM;
+ }
+ 
++#ifdef CONFIG_X86
++static void msc_buffer_set_uc(struct msc_window *win, unsigned int nr_blocks)
++{
++	int i;
++
++	for (i = 0; i < nr_blocks; i++)
++		/* Set the page as uncached */
++		set_memory_uc((unsigned long)msc_win_block(win, i), 1);
++}
++
++static void msc_buffer_set_wb(struct msc_window *win)
++{
++	int i;
++
++	for (i = 0; i < win->nr_blocks; i++)
++		/* Reset the page to write-back */
++		set_memory_wb((unsigned long)msc_win_block(win, i), 1);
++}
++#else /* !X86 */
++static inline void
++msc_buffer_set_uc(struct msc_window *win, unsigned int nr_blocks) {}
++static inline void msc_buffer_set_wb(struct msc_window *win) {}
++#endif /* CONFIG_X86 */
++
+ /**
+  * msc_buffer_win_alloc() - alloc a window for a multiblock mode
+  * @msc:	MSC device
+@@ -780,7 +804,7 @@ static int __msc_buffer_win_alloc(struct msc_window *win,
+ static int msc_buffer_win_alloc(struct msc *msc, unsigned int nr_blocks)
+ {
+ 	struct msc_window *win;
+-	int ret = -ENOMEM, i;
++	int ret = -ENOMEM;
+ 
+ 	if (!nr_blocks)
+ 		return 0;
+@@ -811,11 +835,7 @@ static int msc_buffer_win_alloc(struct msc *msc, unsigned int nr_blocks)
+ 	if (ret < 0)
+ 		goto err_nomem;
+ 
+-#ifdef CONFIG_X86
+-	for (i = 0; i < ret; i++)
+-		/* Set the page as uncached */
+-		set_memory_uc((unsigned long)msc_win_block(win, i), 1);
+-#endif
++	msc_buffer_set_uc(win, ret);
+ 
+ 	win->nr_blocks = ret;
+ 
+@@ -860,8 +880,6 @@ static void __msc_buffer_win_free(struct msc *msc, struct msc_window *win)
+  */
+ static void msc_buffer_win_free(struct msc *msc, struct msc_window *win)
+ {
+-	int i;
+-
+ 	msc->nr_pages -= win->nr_blocks;
+ 
+ 	list_del(&win->entry);
+@@ -870,11 +888,7 @@ static void msc_buffer_win_free(struct msc *msc, struct msc_window *win)
+ 		msc->base_addr = 0;
+ 	}
+ 
+-#ifdef CONFIG_X86
+-	for (i = 0; i < win->nr_blocks; i++)
+-		/* Reset the page to write-back */
+-		set_memory_wb((unsigned long)msc_win_block(win, i), 1);
+-#endif
++	msc_buffer_set_wb(win);
+ 
+ 	__msc_buffer_win_free(msc, win);
+ 
 -- 
 2.20.1
 
