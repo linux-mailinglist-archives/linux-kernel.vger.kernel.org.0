@@ -2,100 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61DA4585E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 17:34:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 621BD585F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 17:35:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726712AbfF0PeT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 11:34:19 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48262 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726587AbfF0PeT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 11:34:19 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C1667ABC4;
-        Thu, 27 Jun 2019 15:34:16 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id 7744ADA811; Thu, 27 Jun 2019 17:35:02 +0200 (CEST)
-Date:   Thu, 27 Jun 2019 17:35:02 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     Naohiro Aota <Naohiro.Aota@wdc.com>
-Cc:     "dsterba@suse.cz" <dsterba@suse.cz>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        David Sterba <dsterba@suse.com>, Chris Mason <clm@fb.com>,
-        Josef Bacik <josef@toxicpanda.com>, Qu Wenruo <wqu@suse.com>,
-        Nikolay Borisov <nborisov@suse.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Hannes Reinecke <hare@suse.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Matias =?iso-8859-1?Q?Bj=F8rling?= <mb@lightnvm.io>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Bart Van Assche <bvanassche@acm.org>
-Subject: Re: [PATCH 09/19] btrfs: limit super block locations in HMZONED mode
-Message-ID: <20190627153502.GD20977@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Naohiro Aota <Naohiro.Aota@wdc.com>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        David Sterba <dsterba@suse.com>, Chris Mason <clm@fb.com>,
-        Josef Bacik <josef@toxicpanda.com>, Qu Wenruo <wqu@suse.com>,
-        Nikolay Borisov <nborisov@suse.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Hannes Reinecke <hare@suse.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Matias =?iso-8859-1?Q?Bj=F8rling?= <mb@lightnvm.io>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Bart Van Assche <bvanassche@acm.org>
-References: <20190607131025.31996-1-naohiro.aota@wdc.com>
- <20190607131025.31996-10-naohiro.aota@wdc.com>
- <20190617225356.GJ19057@twin.jikos.cz>
- <SN6PR04MB523133E2B4DA6705F79A48FF8CEA0@SN6PR04MB5231.namprd04.prod.outlook.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SN6PR04MB523133E2B4DA6705F79A48FF8CEA0@SN6PR04MB5231.namprd04.prod.outlook.com>
-User-Agent: Mutt/1.5.23.1 (2014-03-12)
+        id S1726572AbfF0Pfq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 11:35:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43568 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726440AbfF0Pfo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 11:35:44 -0400
+Received: from localhost.localdomain (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AC2A220B1F;
+        Thu, 27 Jun 2019 15:35:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561649744;
+        bh=/4h+ONBgi96kmLFUK3aNMR+0Nf/soN2dsmTEDJ58TlA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=E4JaFDusIJNP6oyyqK7SuYpdHoFiV1aup93/k0m6wLBGHTbAvhezYBW0J6Su41vur
+         VM0GVoCPR1nKrYGyl+fd2AeDgc4Z24uE82q2Ks3TpDEiGNmb7JVjyoaICmFjwgYPPW
+         l/rsoHOheoxpuy8iATahkGnh7Xnp7TaezWIojN+8=
+From:   Tom Zanussi <zanussi@kernel.org>
+To:     rostedt@goodmis.org
+Cc:     mhiramat@kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/4] tracing: Improve error messages for histogram sorting
+Date:   Thu, 27 Jun 2019 10:35:15 -0500
+Message-Id: <cover.1561647046.git.zanussi@kernel.org>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 18, 2019 at 09:01:35AM +0000, Naohiro Aota wrote:
-> On 2019/06/18 7:53, David Sterba wrote:
-> > On Fri, Jun 07, 2019 at 10:10:15PM +0900, Naohiro Aota wrote:
-> >> When in HMZONED mode, make sure that device super blocks are located in
-> >> randomly writable zones of zoned block devices. That is, do not write super
-> >> blocks in sequential write required zones of host-managed zoned block
-> >> devices as update would not be possible.
-> > 
-> > This could be explained in more detail. My understanding is that the 1st
-> > and 2nd copy superblocks is skipped at write time but the zone
-> > containing the superblocks is not excluded from allocations. Ie. regular
-> > data can appear in place where the superblocks would exist on
-> > non-hmzoned filesystem. Is that correct?
-> 
-> Correct. You can see regular data stored at usually SB location on HMZONED fs.
-> 
-> > The other option is to completely exclude the zone that contains the
-> > superblock copies.
-> > 
-> > primary sb			 64K
-> > 1st copy			 64M
-> > 2nd copy			256G
-> > 
-> > Depends on the drives, but I think the size of the random write zone
-> > will very often cover primary and 1st copy. So there's at least some
-> > backup copy.
-> > 
-> > The 2nd copy will be in the sequential-only zone, so the whole zone
-> > needs to be excluded in exclude_super_stripes. But it's not, so this
-> > means data can go there.  I think the zone should be left empty.
-> > 
-> 
-> I see. That's more safe for the older kernel/userland, right? By keeping that zone empty,
-> we can avoid old ones to mis-interpret data to be SB.
+Hi,
 
-That's not only for older kernels, the superblock locations are known
-and the contents should not depend on the type of device on which it was
-created. This can be considered part of the on-disk format.
+These patches add some improvements for histogram sorting, addressing
+some shortcomings pointed out by Masami.
+
+In order to address the specific problem pointed out by Masami, as
+well as add additional related error messages, the first patch
+does some simplification of assignment parsing.
+
+The second patch actually adds the new error messages.
+
+The fourth patch adds a new testcase for hist trigger parsing, similar
+to the same kind of tests for kprobes and uprobes.  Additional tests
+covering all possible hist trigger errors should/will be added here in
+the future.
+
+The third patch just adds a missing hist: prefix to the error log so
+that the testcases work properly, and which should have been there
+anyway.
+
+Thanks,
+
+Tom
+
+The following changes since commit a124692b698b00026a58d89831ceda2331b2e1d0:
+
+  ftrace: Enable trampoline when rec count returns back to one (2019-05-25 23:04:43 -0400)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/zanussi/linux-trace.git ftrace-hist-sort-err-msgs-v1
+
+Tom Zanussi (4):
+  tracing: Simplify assignment parsing for hist triggers
+  tracing: Add hist trigger error messages for sort specification
+  tracing: Add 'hist:' to hist trigger error log error string
+  tracing: Add new testcases for hist trigger parsing errors
+
+ kernel/trace/trace_events_hist.c                   | 94 +++++++++++-----------
+ .../test.d/trigger/trigger-hist-syntax-errors.tc   | 32 ++++++++
+ 2 files changed, 78 insertions(+), 48 deletions(-)
+ create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/trigger-hist-syntax-errors.tc
+
+-- 
+2.14.1
+
