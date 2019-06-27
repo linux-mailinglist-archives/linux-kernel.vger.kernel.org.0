@@ -2,84 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F267581B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 13:38:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E63E581BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 13:39:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726659AbfF0LiS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 07:38:18 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:41828 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726375AbfF0LiS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 07:38:18 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 8D32E6085C; Thu, 27 Jun 2019 11:38:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1561635497;
-        bh=4hOE5ZThruSSEEWDMxq0Dt5OhPpzapnURhse53Dk5WQ=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=lwil+HeSAfxdGvKxmoaw6YeXNX2Q6NsLoqoEDS2MzGNzNbTjbxtsj5ZSKe071yz8+
-         hyf1zP2isDURMIa6B6KhpnJdWBdqoJI5vJYGkmrDnNZvBXxn9Xq90CG+oNS+NLgya4
-         IM0mZAdpURaPL2Vh6j2KJaA1mMAVEpRmnxmRFGOY=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,MISSING_DATE,MISSING_MID,SPF_NONE autolearn=no
-        autolearn_force=no version=3.4.0
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8D560602F8;
-        Thu, 27 Jun 2019 11:38:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1561635496;
-        bh=4hOE5ZThruSSEEWDMxq0Dt5OhPpzapnURhse53Dk5WQ=;
-        h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=nbJM51t6Tkkmm0S+B5u4FYHEfiaoABBMPuYY4uR2R7uqpVDXOdrr0Tp50RYv1K9Wq
-         W6QKiDH7waGw/3JhH8TaOkNXVPzfTHhAguI8BNznqvS6DAox6ihC4kcqsg0mz2VDfM
-         a2a1iDrEdiP3KKigYv8nZO561Vzt7TWeF0LrkYHE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8D560602F8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        id S1726750AbfF0LjI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 07:39:08 -0400
+Received: from muru.com ([72.249.23.125]:53712 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726375AbfF0LjI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 07:39:08 -0400
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 43780805C;
+        Thu, 27 Jun 2019 11:39:30 +0000 (UTC)
+Date:   Thu, 27 Jun 2019 04:39:04 -0700
+From:   Tony Lindgren <tony@atomide.com>
+To:     Faiz Abbas <faiz_abbas@ti.com>
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-omap@vger.kernel.org, mark.rutland@arm.com,
+        robh+dt@kernel.org, robertcnelson@gmail.com
+Subject: Re: [PATCH] ARM: dts: am57xx: Disable voltage switching for SD card
+Message-ID: <20190627113904.GI5447@atomide.com>
+References: <20190619102454.5097-1-faiz_abbas@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH 1/4] b43legacy: remove b43legacy_dma_set_mask
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20190625102932.32257-2-hch@lst.de>
-References: <20190625102932.32257-2-hch@lst.de>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Larry Finger <Larry.Finger@lwfinger.net>,
-        b43-dev@lists.infradead.org, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20190627113817.8D32E6085C@smtp.codeaurora.org>
-Date:   Thu, 27 Jun 2019 11:38:17 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190619102454.5097-1-faiz_abbas@ti.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christoph Hellwig <hch@lst.de> wrote:
-
-> These days drivers are not required to fallback to smaller DMA masks,
-> but can just set the largest mask they support, removing the need for
-> this trial and error logic.
+* Faiz Abbas <faiz_abbas@ti.com> [190619 03:25]:
+> If UHS speed modes are enabled, a compatible SD card switches down to
+> 1.8V during enumeration. If after this a software reboot/crash takes
+> place and on-chip ROM tries to enumerate the SD card, the difference in
+> IO voltages (host @ 3.3V and card @ 1.8V) may end up damaging the card.
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> Tested-by: Larry Finger <Larry.Finger@lwfinger.net>
+> The fix for this is to have support for power cycling the card in
+> hardware (with a PORz/soft-reset line causing a power cycle of the
+> card). Because the beaglebone X15 (rev A,B and C), am57xx-idks and
+> am57xx-evms don't have this capability, disable voltage switching for
+> these boards.
+> 
+> The major effect of this is that the maximum supported speed
+> mode is now high speed(50 MHz) down from SDR104(200 MHz).
+> 
+> commit 88a748419b84 ("ARM: dts: am57xx-idk: Remove support for voltage
+> switching for SD card") did this only for idk boards. Do it for all
+> affected boards.
 
-4 patches applied to wireless-drivers-next.git, thanks.
+Thanks applying into fixes.
 
-258989000849 b43legacy: remove b43legacy_dma_set_mask
-80372782e4cb b43legacy: simplify engine type / DMA mask selection
-c897523febae b43: remove b43_dma_set_mask
-288aa4ee7acf b43: simplify engine type / DMA mask selection
+Regards,
 
--- 
-https://patchwork.kernel.org/patch/11015245/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+Tony
