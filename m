@@ -2,137 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FA67575B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 02:32:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 499C057891
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 02:54:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726721AbfF0Abo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 20:31:44 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:36937 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727193AbfF0Abj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 20:31:39 -0400
-Received: by mail-io1-f66.google.com with SMTP id e5so864411iok.4
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 17:31:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=ne57qfOBbrpWTmSwKmjlTjKmsCo+Sn2qKc5QwP4b3qo=;
-        b=MH3wkoDXHfXF5fF0q+4ozL7+zgvn5SeiKtLiHYzCNIcqFHXPkPAwLMDAdDzk2aiIwQ
-         J78PjhZZ31NuKv8zy1/s8y3MRPBSFAVisSCw3pC/YBe5ea4C6Y+uFm5wHpal8nsxZLgB
-         17lsiKG0OIZo1/fcOW8X2bMD/PSdyDvCVff3iu2G8wmtMH1QHqrOcCB6eOgDt4VuNjyk
-         Poo9nGwiL6andopg9rnVNY+S336HW1WgpryVcFd4HvLr9UhpPKVIrzsbJAzaKITb3fvh
-         sahpopsxSkGUr9VegYM/UOtFcnxFerQwnrKs330QIqOEtyCvWxY78rUw69KxygSiqpv1
-         hjdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=ne57qfOBbrpWTmSwKmjlTjKmsCo+Sn2qKc5QwP4b3qo=;
-        b=t6Re5+X86nR0LgzHr4bHd8GCRuPBlFKmfFTA1OcpLGqlHdHwOAl8TBNGipmBqYll/C
-         CzQsV2wh4ncYDqTibmDMsQJeLa4U/dTc2yOPA/Nx2b/YRcICo8hLDpPnaUSq8RwJ3+PN
-         5xay0CyJTAnyCglWJgwaO/d2Ba95Wi4snXSS3ctKvRAVp2C2csFQYOb9sV6IV1jMwyHa
-         jQnMdV9kwCJZxIO/iGECB1sOY0EbCmQakXQVLU70fc3uVpy/KGNx9rrC8T7WxyPickDs
-         ybUUjfPF5G3RQ4kl2bkJNC79phdYgDPOkMiN+4bCD3CLn92TxA/AZK35QaKikV8m6Kjw
-         kHzw==
-X-Gm-Message-State: APjAAAUVyAeGB06p24M6obOiIV+RjuxxjjpfhRV/lt/t8StDZQ3a2LPe
-        n0nhuFQJ+jl5gzndRR87CWgXUQ==
-X-Google-Smtp-Source: APXvYqzkfD/79362o4UBWtnH1yN59+5ocrB6dWn1PQrF9lxmChizX5AwqLnfXA+vMES0ciXEXr5ebA==
-X-Received: by 2002:a6b:3c0a:: with SMTP id k10mr1187601iob.271.1561595498768;
-        Wed, 26 Jun 2019 17:31:38 -0700 (PDT)
-Received: from localhost (c-73-95-159-87.hsd1.co.comcast.net. [73.95.159.87])
-        by smtp.gmail.com with ESMTPSA id n26sm410757ioc.74.2019.06.26.17.31.37
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 26 Jun 2019 17:31:38 -0700 (PDT)
-Date:   Wed, 26 Jun 2019 17:31:37 -0700 (PDT)
-From:   Paul Walmsley <paul.walmsley@sifive.com>
-X-X-Sender: paulw@viisi.sifive.com
-To:     Sudeep Holla <sudeep.holla@arm.com>,
-        Atish Patra <atish.patra@wdc.com>
-cc:     linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Anup Patel <anup@brainfault.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        devicetree@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-riscv@lists.infradead.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Otto Sabart <ottosabart@seberm.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Richard Fontana <rfontana@redhat.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Russell King <linux@armlinux.org.uk>
-Subject: Re: [PATCH v7 1/7] Documentation: DT: arm: add support for sockets
- defining package boundaries
-In-Reply-To: <20190617185920.29581-2-atish.patra@wdc.com>
-Message-ID: <alpine.DEB.2.21.9999.1906261724000.23534@viisi.sifive.com>
-References: <20190617185920.29581-1-atish.patra@wdc.com> <20190617185920.29581-2-atish.patra@wdc.com>
-User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
+        id S1728024AbfF0AxR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 20:53:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36606 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727594AbfF0Act (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 20:32:49 -0400
+Received: from localhost (unknown [116.247.127.123])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3024421726;
+        Thu, 27 Jun 2019 00:32:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561595568;
+        bh=Li+vIJnqrc/kPaTgtlczdnW8Xa77lC4PVo4VW35qzlc=;
+        h=Date:From:To:Cc:Subject:From;
+        b=LpVxVek8b/yKtYPAJ794bZnHpCIlLO5t8i10J5GMym1KkWokLxshNPbRhRRhIFXBg
+         ZXaFDu53LvNzFz15gepYQ7IcXtgfhx829aAMBgfxLsaiPk6PYaqLZi1h7kA0bwkdmz
+         mAt4UAlJWo4eHN8sA25L6AmNm3srtTvQredj0laQ=
+Date:   Thu, 27 Jun 2019 08:32:24 +0800
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        torvalds@linux-foundation.org, stable@vger.kernel.org
+Cc:     lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
+Subject: Linux 4.4.184
+Message-ID: <20190627003224.GA10733@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sudeep, Atish,
+I'm announcing the release of the 4.4.184 kernel.
 
-On Mon, 17 Jun 2019, Atish Patra wrote:
+All users of the 4.4 kernel series must upgrade.
 
-> From: Sudeep Holla <sudeep.holla@arm.com>
-> 
-> The current ARM DT topology description provides the operating system
-> with a topological view of the system that is based on leaf nodes
-> representing either cores or threads (in an SMT system) and a
-> hierarchical set of cluster nodes that creates a hierarchical topology
-> view of how those cores and threads are grouped.
-> 
-> However this hierarchical representation of clusters does not allow to
-> describe what topology level actually represents the physical package or
-> the socket boundary, which is a key piece of information to be used by
-> an operating system to optimize resource allocation and scheduling.
-> 
-> Lets add a new "socket" node type in the cpu-map node to describe the
-> same.
-> 
-> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
+The updated 4.4.y git tree can be found at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linux-4.4.y
+and can be browsed at the normal kernel.org git web browser:
+	https://git.kernel.org/?p=linux/kernel/git/stable/linux-stable.git;a=summary
 
-This one doesn't apply cleanly here on top of v5.2-rc2, Linus's master 
-branch, and next-20190626.  The reject file is below.  Am I missing 
-a patch?
+thanks,
 
+greg k-h
 
-- Paul
+------------
 
---- Documentation/devicetree/bindings/arm/topology.txt
-+++ Documentation/devicetree/bindings/arm/topology.txt
-@@ -185,13 +206,15 @@ Bindings for cluster/cpu/thread nodes are defined as follows:
- 4 - Example dts
- ===========================================
- 
--Example 1 (ARM 64-bit, 16-cpu system, two clusters of clusters):
-+Example 1 (ARM 64-bit, 16-cpu system, two clusters of clusters in a single
-+physical socket):
- 
- cpus {
- 	#size-cells = <0>;
- 	#address-cells = <2>;
- 
- 	cpu-map {
-+		socket0 {
- 			cluster0 {
- 				cluster0 {
- 					core0 {
+ Makefile              |    2 +-
+ net/ipv4/tcp_output.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+Eric Dumazet (1):
+      tcp: refine memory limit test in tcp_fragment()
+
+Greg Kroah-Hartman (1):
+      Linux 4.4.184
+
