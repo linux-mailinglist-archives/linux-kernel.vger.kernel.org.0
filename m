@@ -2,137 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68ACA58ED3
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 01:54:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A646B58ED8
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 01:56:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726819AbfF0XyK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 19:54:10 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:53521 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726579AbfF0XyK (ORCPT
+        id S1726653AbfF0X41 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 19:56:27 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:43114 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726506AbfF0X41 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 19:54:10 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5RNrsiE504144
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Thu, 27 Jun 2019 16:53:54 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5RNrsiE504144
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019061801; t=1561679635;
-        bh=vRn26elBWa1X3UcNtcg5obuHPGs3EzBusaXblIOPBjg=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=oHltirZkbXSneXfNfO1cv0xX5YPe3BjKlE8zISVqHHFH7hIO9rsctOy79y3H8cUET
-         iQcFoCQds0qaGgTEubUPvRp+IUWClo7T1b4B/g/Z9s/beJHjntXs5H3dznKQvyfQG2
-         3FEsi8gdOtTzqYa2P2PDM1B272hgPizBs3cC0eiSv3Fc9u+QfRopLG753uYW+pVDAC
-         6feguaE7eKprojk7VCwgF1OoCdKS/KQ22B6Gz/Xl1kh/8XD/25WOns2vy+JwM47dKP
-         hZ/j2FlTynAAxsrVehO8emsFM/lD2UvcsMfQLmpgePGuRs9VVrPYiSk7X+HJ7atlPS
-         GKgNl5WIG2g+g==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5RNrr61504141;
-        Thu, 27 Jun 2019 16:53:53 -0700
-Date:   Thu, 27 Jun 2019 16:53:53 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
-Message-ID: <tip-e44252f4fe79dd9ca93bcf4e8f74389a5b8452f5@git.kernel.org>
-Cc:     hpa@zytor.com, andi.kleen@intel.com, Suravee.Suthikulpanit@amd.com,
-        ricardo.neri-calderon@linux.intel.com, peterz@infradead.org,
-        eranian@google.com, ashok.raj@intel.com, ravi.v.shankar@intel.com,
-        mingo@kernel.org, linux-kernel@vger.kernel.org, tglx@linutronix.de
-Reply-To: ashok.raj@intel.com, ravi.v.shankar@intel.com,
-          tglx@linutronix.de, Suravee.Suthikulpanit@amd.com,
-          andi.kleen@intel.com, hpa@zytor.com, mingo@kernel.org,
-          eranian@google.com, linux-kernel@vger.kernel.org,
-          peterz@infradead.org, ricardo.neri-calderon@linux.intel.com
-In-Reply-To: <20190623132436.737689919@linutronix.de>
-References: <20190623132436.737689919@linutronix.de>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/timers] x86/hpet: Use channel for legacy clockevent
- storage
-Git-Commit-ID: e44252f4fe79dd9ca93bcf4e8f74389a5b8452f5
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 27 Jun 2019 19:56:27 -0400
+Received: by mail-pg1-f195.google.com with SMTP id f25so1720595pgv.10;
+        Thu, 27 Jun 2019 16:56:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=CLj4gZCTfK/NAoTIvU2cEk9DiiqDuv0OJwpnaduKmqA=;
+        b=TD/Y9ETxzwIz92B9+E24f8PXv4qRImq4vZCpEFH0DQAK0HYr9/LCzuC51LYrglkt9H
+         x107u1OY4skzs+uUyX/5RNDgKbdmpfJ8q6NcbT0lRYiwUwQqAQXplH4P8knqbVMuCLfr
+         r/QQe6OnL2EdKXhlSxyR6ooko9ZkW529nCwU12nL1zwuVwh8bQieBXaxA9q9y5G+xBqY
+         JuztrCRRnJKg3B6VfnSKAdOn3ZHw5uh4V1BpQH+y3R+eK1C30Ajm+GSGH2SLlqmnzRb5
+         Oq2itXwjtvyt4k1Z1Jlm5GX+GuhGPQJiPvrankJmbqYBzY2I7Rr8KdQBdGF8XuhmHrYj
+         vdvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=CLj4gZCTfK/NAoTIvU2cEk9DiiqDuv0OJwpnaduKmqA=;
+        b=JdblmkY8OVO4EA6r017peX+ZP0oxInKF8xEVAd8R9dRgcfqbK1VDSiun12D+rmCHiU
+         txn8Z+GD7o8ovcrypvrO1UKYyK6RBK/jRUWA9brEnAOXrDUtb5mtFikm9FSUlUo9Tw8v
+         i97VgHKmQNT/Txhb/y4y9Ko9Uj0SsVmsIg681Hx3VhNKfCGoLfkg/CFD/HVbjhpWq/IK
+         edb8C2RBSHdKOLM/FdTEavZMghIj9V6gi7/FrRxHJPMsqJMo+No6jpYqZlBn0yaDI1tD
+         wjLwXEO0FGuk5zcxzc4ymQwRgUSwijl2r2m/z+KXVC1J0QTHgLWaEyFp7DC7nexeCIon
+         QKtA==
+X-Gm-Message-State: APjAAAUBsCC0LwGK7gA/35/xdzyYma4ALA1nUM+3YH/reuLwoUCEBGDq
+        EAI7HDjG5q0erJozET/3TyE=
+X-Google-Smtp-Source: APXvYqwioUiNv41x01aQdRcQnt8g3CLHIHh9zwhAz5EQgEvfxKBbPX0L6hoApe0uDHiYVFbY+15cDA==
+X-Received: by 2002:a63:4c46:: with SMTP id m6mr6527455pgl.59.1561679786207;
+        Thu, 27 Jun 2019 16:56:26 -0700 (PDT)
+Received: from google.com ([2401:fa00:d:0:98f1:8b3d:1f37:3e8])
+        by smtp.gmail.com with ESMTPSA id a3sm319767pje.3.2019.06.27.16.56.21
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 27 Jun 2019 16:56:24 -0700 (PDT)
+Date:   Fri, 28 Jun 2019 08:56:18 +0900
+From:   Minchan Kim <minchan@kernel.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Dave Hansen <dave.hansen@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-api@vger.kernel.org,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tim Murray <timmurray@google.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Daniel Colascione <dancol@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Sonny Rao <sonnyrao@google.com>, oleksandr@redhat.com,
+        hdanton@sina.com, lizeb@google.com,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: Re: [PATCH v3 1/5] mm: introduce MADV_COLD
+Message-ID: <20190627235618.GC33052@google.com>
+References: <20190627115405.255259-1-minchan@kernel.org>
+ <20190627115405.255259-2-minchan@kernel.org>
+ <343599f9-3d99-b74f-1732-368e584fa5ef@intel.com>
+ <20190627140203.GB5303@dhcp22.suse.cz>
+ <d9341eb3-08eb-3c2b-9786-00b8a4f59953@intel.com>
+ <20190627145302.GC5303@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Spam-Status: No, score=0.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_12_24,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
-        DKIM_VALID_EF autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+In-Reply-To: <20190627145302.GC5303@dhcp22.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  e44252f4fe79dd9ca93bcf4e8f74389a5b8452f5
-Gitweb:     https://git.kernel.org/tip/e44252f4fe79dd9ca93bcf4e8f74389a5b8452f5
-Author:     Thomas Gleixner <tglx@linutronix.de>
-AuthorDate: Sun, 23 Jun 2019 15:24:09 +0200
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Fri, 28 Jun 2019 00:57:27 +0200
+On Thu, Jun 27, 2019 at 04:53:02PM +0200, Michal Hocko wrote:
+> On Thu 27-06-19 07:36:50, Dave Hansen wrote:
+> [...]
+> > For MADV_COLD, if we defined it like this, I think we could use it for
+> > both purposes (demotion and LRU movement):
+> > 
+> > 	Pages in the specified regions will be treated as less-recently-
+> > 	accessed compared to pages in the system with similar access
+> > 	frequencies.  In contrast to MADV_DONTNEED, the contents of the
+> 
+> you meant s@MADV_DONTNEED@MADV_FREE@ I suppose
 
-x86/hpet: Use channel for legacy clockevent storage
+Right, MADV_FREE is more proper because it's aging related.
 
-All preparations are done. Use the channel storage for the legacy
-clockevent and remove the static variable.
+> 
+> > 	region are preserved.
+> > 
+> > It would be nice not to talk about reclaim at all since we're not
+> > promising reclaim per se.
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-Cc: Ashok Raj <ashok.raj@intel.com>
-Cc: Andi Kleen <andi.kleen@intel.com>
-Cc: Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Ravi Shankar <ravi.v.shankar@intel.com>
-Link: https://lkml.kernel.org/r/20190623132436.737689919@linutronix.de
+Your suggestion doesn't expose any implementation detail and could meet your
+needs later. I'm okay. I will change it if others are not against of it.
 
----
- arch/x86/kernel/hpet.c | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
-
-diff --git a/arch/x86/kernel/hpet.c b/arch/x86/kernel/hpet.c
-index 35633e577d21..c43e96a938d0 100644
---- a/arch/x86/kernel/hpet.c
-+++ b/arch/x86/kernel/hpet.c
-@@ -66,11 +66,6 @@ bool					boot_hpet_disable;
- bool					hpet_force_user;
- static bool				hpet_verbose;
- 
--/*
-- * The HPET clock event device wrapped in a channel for conversion
-- */
--static struct hpet_channel		hpet_channel0;
--
- static inline
- struct hpet_channel *clockevent_to_channel(struct clock_event_device *evt)
- {
-@@ -904,7 +899,7 @@ int __init hpet_enable(void)
- 	clocksource_register_hz(&clocksource_hpet, (u32)hpet_freq);
- 
- 	if (id & HPET_ID_LEGSUP) {
--		hpet_legacy_clockevent_register(&hpet_channel0);
-+		hpet_legacy_clockevent_register(&hpet_base.channels[0]);
- 		hpet_base.channels[0].mode = HPET_MODE_LEGACY;
- 		if (IS_ENABLED(CONFIG_HPET_EMULATE_RTC))
- 			hpet_base.channels[1].mode = HPET_MODE_LEGACY;
-@@ -1089,7 +1084,7 @@ int hpet_rtc_timer_init(void)
- 		return 0;
- 
- 	if (!hpet_default_delta) {
--		struct clock_event_device *evt = &hpet_channel0.evt;
-+		struct clock_event_device *evt = &hpet_base.channels[0].evt;
- 		uint64_t clc;
- 
- 		clc = (uint64_t) evt->mult * NSEC_PER_SEC;
-@@ -1187,7 +1182,7 @@ int hpet_set_periodic_freq(unsigned long freq)
- 	if (freq <= DEFAULT_RTC_INT_FREQ) {
- 		hpet_pie_limit = DEFAULT_RTC_INT_FREQ / freq;
- 	} else {
--		struct clock_event_device *evt = &hpet_channel0.evt;
-+		struct clock_event_device *evt = &hpet_base.channels[0].evt;
- 
- 		clc = (uint64_t) evt->mult * NSEC_PER_SEC;
- 		do_div(clc, freq);
+Thanks, Dave.
