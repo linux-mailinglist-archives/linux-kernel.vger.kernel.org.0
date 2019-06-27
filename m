@@ -2,81 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E7335814D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 13:18:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BB9D58160
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 13:24:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726674AbfF0LSf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 07:18:35 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:38107 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726370AbfF0LSf (ORCPT
+        id S1726671AbfF0LYK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 07:24:10 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:61484 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726308AbfF0LYJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 07:18:35 -0400
-Received: by mail-lj1-f193.google.com with SMTP id r9so1934512ljg.5
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 04:18:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8n9+wAZmn5Fd4Bzu+75sf62mEboo0TEMxpHy4S/JDDc=;
-        b=cEL9oCZ+zomWJ2LmSGc4fuxflwhDPejxyVo6c+Rrs/G5ajtyDASQo492gEPQbHBHeC
-         kq2jja8VgsqeyP+QTo5k9C1iud716f33VVhYiaF0S1ifrCTPqGBA3agxt3h4qp8PogBb
-         HAjqSFBfrIo3Brf1SoGU3Lrycq3Z/djnv+/ohRmtMo8JSvOptyWZ4wR2DbecRgcyamsL
-         sAkedb2FQ4o9w3DtYSfbMDvQNMVvQ36osCybYA/9i+32Df7OcVRSOfvO1IubOE+6SGOy
-         pCkSz7JgrJFkWpR8mCBCB7y10iOSH5pbaz+CXHodmK0K3BaNNWlRFQbn954OwIf5nzV0
-         hYUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8n9+wAZmn5Fd4Bzu+75sf62mEboo0TEMxpHy4S/JDDc=;
-        b=BhDCVuaea6Ru1FsIbuc/JJhk3Vlri9vbYmY/GH+bpRJJ6tdL7gFQa2lU4UVk92J11n
-         98B1j2vP+IOJiQcV2q6HJyHspx7/kcqUc2eATRoFrdPpYy1YQrwcjjh1bu4pIAypGZu8
-         8fVgJllf+H2Krt+YUVCbbEnX0yDJq/4/3oRl0/UOIPrsVpO1QUD1ZV2c80WOLDqra5nW
-         /kR+OHkppkTN4rcUX0eWjKcO/6PKkZylHTm3YdZIYZBdoJS0WuUXB9SAotwflOIbrEgw
-         weu/hXLVekjn9XL0bNKgfZoMmdUytDemTQCmg1Ijt0QEEo1hdQlAHTPtqOnwBV2mbBei
-         y41g==
-X-Gm-Message-State: APjAAAXEoH7rO4D3u3GVnBji/K3IFHmWKpzl/N9oKM6bsT4mNqbAKjnc
-        31OD/a0R6L0Fo6wi54oeMa803ZeeC+5mIc6ZIWwvYS1x6uo=
-X-Google-Smtp-Source: APXvYqyJgd2+Ftd/iJyvgwExAYZa4Qg2yTKy4cVImG+ErCp4ffuDePBsvOgPaNQqma8bvu1LdZ28/ackt3s9WUPQPiw=
-X-Received: by 2002:a2e:2c14:: with SMTP id s20mr2275133ljs.54.1561634312954;
- Thu, 27 Jun 2019 04:18:32 -0700 (PDT)
+        Thu, 27 Jun 2019 07:24:09 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5RBNspp007103
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 07:24:08 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2tctec6w4w-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 07:24:07 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <naveen.n.rao@linux.vnet.ibm.com>;
+        Thu, 27 Jun 2019 12:24:06 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 27 Jun 2019 12:24:03 +0100
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5RBO2PK27328584
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 27 Jun 2019 11:24:02 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7E46AA405B;
+        Thu, 27 Jun 2019 11:24:02 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7F0D7A405F;
+        Thu, 27 Jun 2019 11:24:00 +0000 (GMT)
+Received: from naverao1-tp.ibmuc.com (unknown [9.85.73.27])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 27 Jun 2019 11:24:00 +0000 (GMT)
+From:   "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Nicholas Piggin <npiggin@gmail.com>
+Cc:     <linuxppc-dev@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 0/7] powerpc/ftrace: Patch out -mprofile-kernel instructions
+Date:   Thu, 27 Jun 2019 16:53:48 +0530
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-References: <20190625163434.13620-1-brgl@bgdev.pl> <20190625163434.13620-9-brgl@bgdev.pl>
-In-Reply-To: <20190625163434.13620-9-brgl@bgdev.pl>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 27 Jun 2019 12:18:21 +0100
-Message-ID: <CACRpkdanZPmKrRwY9nvEGx=BzoVFxzU7ENgvoOzH+0u=-YTC0A@mail.gmail.com>
-Subject: Re: [PATCH 08/12] ARM: davinci: da850-evm: switch to using a fixed
- regulator for lcdc
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        David Lechner <david@lechnology.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        linux-fbdev@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19062711-0016-0000-0000-0000028CD918
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19062711-0017-0000-0000-000032EA5657
+Message-Id: <cover.1561634177.git.naveen.n.rao@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-27_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=718 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906270133
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 25, 2019 at 5:35 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+Changes since v1 
+(https://patchwork.ozlabs.org/project/linuxppc-dev/list/?series=114556):
+- Patches 1,2,3 and 6: No changes
+- Patch 4: Add smp_call_function() to flush icache on all cpus after 
+  patching in the 'mflr r0' instruction.
+- Patch 5: Changes as per Steven Rostedt's suggestions.
+- Patch 7: Changes as per Masami and Joe Perches.
 
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->
-> Now that the da8xx fbdev driver supports power control with an actual
-> regulator, switch to using a fixed power supply for da850-evm.
->
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+--
+On powerpc64, -mprofile-kernel results in two instructions being 
+emitted: 'mflr r0' and 'bl _mcount'. So far, we were only nop'ing out 
+the branch to _mcount(). This series implements an approach to also nop 
+out the preceding mflr.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Yours,
-Linus Walleij
+- Naveen
+
+
+Naveen N. Rao (7):
+  ftrace: Expose flags used for ftrace_replace_code()
+  x86/ftrace: Fix use of flags in ftrace_replace_code()
+  ftrace: Expose __ftrace_replace_code()
+  powerpc/ftrace: Additionally nop out the preceding mflr with
+    -mprofile-kernel
+  ftrace: Update ftrace_location() for powerpc -mprofile-kernel
+  kprobes/ftrace: Use ftrace_location() when [dis]arming probes
+  powerpc/kprobes: Allow probing on any ftrace address
+
+ arch/powerpc/include/asm/ftrace.h    |   8 +
+ arch/powerpc/kernel/kprobes-ftrace.c |  32 +++-
+ arch/powerpc/kernel/trace/ftrace.c   | 258 ++++++++++++++++++++++++---
+ arch/x86/kernel/ftrace.c             |   3 +-
+ include/linux/ftrace.h               |  15 ++
+ kernel/kprobes.c                     |  10 +-
+ kernel/trace/ftrace.c                |  15 +-
+ 7 files changed, 302 insertions(+), 39 deletions(-)
+
+-- 
+2.22.0
+
