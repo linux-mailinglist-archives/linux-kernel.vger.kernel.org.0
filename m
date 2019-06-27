@@ -2,99 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 292FA583F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 15:57:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1ECD0583FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 15:58:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726970AbfF0N5q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 09:57:46 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:36256 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726480AbfF0N5p (ORCPT
+        id S1727022AbfF0N62 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 09:58:28 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:35581 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726472AbfF0N61 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 09:57:45 -0400
-Received: by mail-io1-f68.google.com with SMTP id h6so4958334ioh.3
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 06:57:45 -0700 (PDT)
+        Thu, 27 Jun 2019 09:58:27 -0400
+Received: by mail-wm1-f67.google.com with SMTP id c6so5817614wml.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 06:58:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/XyALr5qJRsJTMcLA/D+aC0kMlYtWn91PnkhNGpSRtM=;
-        b=TARbsryt5eoK7wH3/0VoLs9AjeUYpobcuF4ODQ+DWtG18hc32alo/6Fha/qPWCQJ0Y
-         sxRqw3LuY+1e07fKhS95PEi8W2l8/O0QD6WyURMMD+oXr+UC7saUgs7XRKFuOMnu9yYH
-         xg+qMr2R497swI7SAV8IrKb8C/nFt40C2XvvHhPOUXYpSwjUZ5AgZtypX/oJ86SMSJBE
-         m7VFnuhaG05hHX8r9soUjDtuh+zdTJ/gJqXhOlMv9WI4NJjcf/tMQFIkOi0iRRJlMpP8
-         muIFOfLXPS1NMgj9J8vPWEpLB2zqF8wh/OhAtkDeVEWBWXy/TGGF9ta6nbT6xZaeKre/
-         9Img==
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=yPxiusgytclyAbyFq6njmSSLiDoSuvAd67bVV9/V9fo=;
+        b=P6iCfd+KcP3OHawcKNeOOQV8cD7yZ1eOVnRFUiZc39lB2Cy63bVQ20KHlB+zXjL+6x
+         QE5ReDNfuYirh1g3MBwY+v0B36xTxb+lbLFjyQ/KotEVvOflTKQmBccjqz98FMpTKIp0
+         ABmJA03WF+Tk1TKkaaPVC6Ky5cc2qMabsXeLGOL00DJc4wWukHXeXnik0ZIbIc9/vgza
+         XclQ8HkponLdIXHaqmUdLZ7ukk2gzmzD9vBvtm96ZHwBl40weg6nP9J6r8cyC7ILd2Vc
+         UMvu1YQL1MdZ5JZG4qdBFaVquwr2sfzsI++IqBS9Tzj9eBBlN8LruV1F6JwHZxLpihc7
+         L/xA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/XyALr5qJRsJTMcLA/D+aC0kMlYtWn91PnkhNGpSRtM=;
-        b=ijMWFO7wH/02/ohtemj6Ulfy7JUXUbvZvE4D5Y6qbSlO3kqacNprKuoWXFuhaWDH7B
-         36D8k8IFtFKUSGtk0F4lDiqnbBml29kPAZSuYy/pl5BY0vIYQPwdXNl4ajQ2O9wWIR4Q
-         U+yqJORwKb6BfpEw+qrmDCTZ280o3NyyJ8+PTucuaDm3cLZI+ZSAp4iSN4Na8GlLLB3V
-         FOvvcSTLfk5Orr0TT1hadAEn1CCgsRo+rb0BliJCSKKP06XSzFYWKh3trmGCJGdVNUw0
-         hKENC7/lIiQ1jXmKde9fkS8CYx9M+r/iXqVB21wXjwGw/TJN8imchtk6PnBZ/HYPSwR0
-         RtzQ==
-X-Gm-Message-State: APjAAAVY/s6715AoKbbo/hdgFrdy3WRYTihY+7Uv/PxH8xvinfoXJY2J
-        hQa4/m/IMUrANVMg5cRRGi+fdOPzcXtwGII1JMc=
-X-Google-Smtp-Source: APXvYqyE7mm8EAZx9kCmIftM3PSFefXChkPMObDwk0LccEKSxDMufjhyaxWFITvm9tFc8tln6uJLGaUPqyZt9Oo3gNY=
-X-Received: by 2002:a02:7420:: with SMTP id o32mr4850594jac.117.1561643865009;
- Thu, 27 Jun 2019 06:57:45 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=yPxiusgytclyAbyFq6njmSSLiDoSuvAd67bVV9/V9fo=;
+        b=WIEu+/nYJpZQaTpyueVy0IkdZGwzmdU4DZ18gLO1zct5qxfMAm+hFWRsnbEyAnOBB1
+         ssFLysVAl2C48WOsptawzt+qEHEhi+4KHXiu9yalkgstSjh4wneOCSw9xOZ/wFv+oSgh
+         xlOVRKbEMECaASIr0aI6euYJjcPJ2bS8W9FCl2hr5xhO3iuNqk7GfJvS4HSG3fThQYGJ
+         USYjZpbTjglR0jrSPDQyx7vVZrYom/eVDC3Z0nqml221QFuGsWYa4ez+dCqW6wfJouGz
+         9DEkMUwaCXfRN6LjkYNU4EB03MmQfbVopLY7GG0uO0GBAuBYPKGZjI5nBw1rfgI5aR+K
+         kP6w==
+X-Gm-Message-State: APjAAAXwKZ8iLXFSSIkofQ2c0ikUPp1FjTwaPESNyxC2oNL6JiYmmL85
+        +a4T6J7aRb6bAQhDG03+LeBjOQyRNhc=
+X-Google-Smtp-Source: APXvYqymA0gPaOh8rlePb3B92zmbWrn0bYiouuseCQLkHVt9qjLYhXySZ7ih8v16HkNhLDDL1js8HA==
+X-Received: by 2002:a1c:b6d4:: with SMTP id g203mr3346926wmf.19.1561643905702;
+        Thu, 27 Jun 2019 06:58:25 -0700 (PDT)
+Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.googlemail.com with ESMTPSA id z19sm7059597wmi.7.2019.06.27.06.58.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 27 Jun 2019 06:58:25 -0700 (PDT)
+Subject: Re: [PATCH] dt-bindings: nvmem: Add YAML schemas for the generic
+ NVMEM bindings
+To:     Rob Herring <robh@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+References: <20190627080959.4488-1-srinivas.kandagatla@linaro.org>
+ <CAL_Jsq+er-MZY-Vuez3B48fb05AH9UzNZck=BK6xHutuXdfDTQ@mail.gmail.com>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <6775b9b9-b712-0b37-fa4c-ace9527f5fc9@linaro.org>
+Date:   Thu, 27 Jun 2019 14:58:24 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <1561604670-11476-1-git-send-email-yang.bin18@zte.com.cn>
-In-Reply-To: <1561604670-11476-1-git-send-email-yang.bin18@zte.com.cn>
-From:   =?UTF-8?Q?Andreas_Gr=C3=BCnbacher?= <andreas.gruenbacher@gmail.com>
-Date:   Thu, 27 Jun 2019 15:57:33 +0200
-Message-ID: <CAHpGcM+6p_TtHh=YSa1Mxyjr+w+V5_8RR2TgnN-s5TbbHjGhng@mail.gmail.com>
-Subject: Re: [PATCH] sub sd_rgrps When clear rgrp
-To:     Yang Bin <yang.bin18@zte.com.cn>
-Cc:     Bob Peterson <rpeterso@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        cluster-devel <cluster-devel@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        wang.yi59@zte.com.cn
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAL_Jsq+er-MZY-Vuez3B48fb05AH9UzNZck=BK6xHutuXdfDTQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Yang Bin,
+Hi Rob,
 
-Am Do., 27. Juni 2019 um 05:08 Uhr schrieb Yang Bin <yang.bin18@zte.com.cn>:
-> From: " Yang Bin "<yang.bin18@zte.com.cn>
->
-> When clear rgrp,sub sd_rgrps after erased from rindex_tree
+On 27/06/2019 14:55, Rob Herring wrote:
+> But you didn't update the license to (GPL-2.0 OR BSD-2-Clause). See below.
 
-this patch isn't incorrect, but all it does it ensure that sd_rgrps
-reaches zero before we destroy a struct gfs2_sbd. However, sd_rgrps is
-only ever used when a filesystem is active, and while that is the
-case, it can never decrease. It will grow when the filesystem is grown
-though.
+I did forward what Maxime has sent me.
 
-So what are you trying to achieve with this patch?
+Maxime, are you okay if I do that changes to this patch and resend?
 
-> Signed-off-by: Yang Bin <yang.bin18@zte.com.cn>
-> ---
->  fs/gfs2/rgrp.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/fs/gfs2/rgrp.c b/fs/gfs2/rgrp.c
-> index 15d6e32..a4b2e83
-> --- a/fs/gfs2/rgrp.c
-> +++ b/fs/gfs2/rgrp.c
-> @@ -730,6 +730,7 @@ void gfs2_clear_rgrpd(struct gfs2_sbd *sdp)
->                 gl = rgd->rd_gl;
->
->                 rb_erase(n, &sdp->sd_rindex_tree);
-> +               sdp->sd_rgrps--;
->
->                 if (gl) {
->                         glock_clear_object(gl, rgd);
-> --
-> 1.8.3.1
->
-
-Thanks,
-Andreas
+--srini
