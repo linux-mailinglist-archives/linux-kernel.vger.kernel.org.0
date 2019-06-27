@@ -2,95 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E9DB5862C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 17:42:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61DA4585E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 17:34:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726599AbfF0Pmh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 11:42:37 -0400
-Received: from esa3.hc3370-68.iphmx.com ([216.71.145.155]:26690 "EHLO
-        esa3.hc3370-68.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726497AbfF0Pmh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 11:42:37 -0400
-X-Greylist: delayed 426 seconds by postgrey-1.27 at vger.kernel.org; Thu, 27 Jun 2019 11:42:36 EDT
-Authentication-Results: esa3.hc3370-68.iphmx.com; dkim=none (message not signed) header.i=none; spf=None smtp.pra=ross.lagerwall@citrix.com; spf=Pass smtp.mailfrom=ross.lagerwall@citrix.com; spf=None smtp.helo=postmaster@mail.citrix.com
-Received-SPF: None (esa3.hc3370-68.iphmx.com: no sender
-  authenticity information available from domain of
-  ross.lagerwall@citrix.com) identity=pra;
-  client-ip=162.221.158.21; receiver=esa3.hc3370-68.iphmx.com;
-  envelope-from="ross.lagerwall@citrix.com";
-  x-sender="ross.lagerwall@citrix.com";
-  x-conformance=sidf_compatible
-Received-SPF: Pass (esa3.hc3370-68.iphmx.com: domain of
-  ross.lagerwall@citrix.com designates 162.221.158.21 as
-  permitted sender) identity=mailfrom;
-  client-ip=162.221.158.21; receiver=esa3.hc3370-68.iphmx.com;
-  envelope-from="ross.lagerwall@citrix.com";
-  x-sender="ross.lagerwall@citrix.com";
-  x-conformance=sidf_compatible; x-record-type="v=spf1";
-  x-record-text="v=spf1 ip4:209.167.231.154 ip4:178.63.86.133
-  ip4:195.66.111.40/30 ip4:85.115.9.32/28 ip4:199.102.83.4
-  ip4:192.28.146.160 ip4:192.28.146.107 ip4:216.52.6.88
-  ip4:216.52.6.188 ip4:162.221.158.21 ip4:162.221.156.83 ~all"
-Received-SPF: None (esa3.hc3370-68.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@mail.citrix.com) identity=helo;
-  client-ip=162.221.158.21; receiver=esa3.hc3370-68.iphmx.com;
-  envelope-from="ross.lagerwall@citrix.com";
-  x-sender="postmaster@mail.citrix.com";
-  x-conformance=sidf_compatible
-IronPort-SDR: 52+Xcdg6sTgsb8rJ7oQOG/BqE2PUQuUlf+sUGPHsEfMzM8mAfVaO7o5+uCsyeYJz5VeVW8MqoF
- mBdZVPhiyipu+MxAEghzOMR8fP5MKKTQHSTipNXBn4daTCmPGBKKtBEe5OuLl6kWFIfMZaPBfP
- o1/LHvL1JXj8xV8BrsM6FlTFddZfEws3QCuc9MvcHYPqPMYMl1sLk0Rh4OEimk9vYTuVVaCH9O
- Izmgjntf5kY3TsMPNY+PoV4YA6TCcJVVAZxD5lJ2UCcROgeDavFprY6HeYm1jDpKNRv2BIXLsv
- J18=
-X-SBRS: 2.7
-X-MesageID: 2324821
-X-Ironport-Server: esa3.hc3370-68.iphmx.com
-X-Remote-IP: 162.221.158.21
-X-Policy: $RELAYED
-X-IronPort-AV: E=Sophos;i="5.63,424,1557201600"; 
-   d="scan'208";a="2324821"
-From:   Ross Lagerwall <ross.lagerwall@citrix.com>
-To:     Peter Jones <pjones@redhat.com>,
-        Konrad Rzeszutek Wilk <konrad@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>,
-        Ross Lagerwall <ross.lagerwall@citrix.com>
-Subject: [PATCH] iscsi_ibft: Use a field width for target lun sysfs entry
-Date:   Thu, 27 Jun 2019 16:34:58 +0100
-Message-ID: <20190627153458.22520-1-ross.lagerwall@citrix.com>
-X-Mailer: git-send-email 2.17.2
+        id S1726712AbfF0PeT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 11:34:19 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48262 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726587AbfF0PeT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 11:34:19 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id C1667ABC4;
+        Thu, 27 Jun 2019 15:34:16 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id 7744ADA811; Thu, 27 Jun 2019 17:35:02 +0200 (CEST)
+Date:   Thu, 27 Jun 2019 17:35:02 +0200
+From:   David Sterba <dsterba@suse.cz>
+To:     Naohiro Aota <Naohiro.Aota@wdc.com>
+Cc:     "dsterba@suse.cz" <dsterba@suse.cz>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        David Sterba <dsterba@suse.com>, Chris Mason <clm@fb.com>,
+        Josef Bacik <josef@toxicpanda.com>, Qu Wenruo <wqu@suse.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Hannes Reinecke <hare@suse.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Matias =?iso-8859-1?Q?Bj=F8rling?= <mb@lightnvm.io>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Bart Van Assche <bvanassche@acm.org>
+Subject: Re: [PATCH 09/19] btrfs: limit super block locations in HMZONED mode
+Message-ID: <20190627153502.GD20977@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Naohiro Aota <Naohiro.Aota@wdc.com>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        David Sterba <dsterba@suse.com>, Chris Mason <clm@fb.com>,
+        Josef Bacik <josef@toxicpanda.com>, Qu Wenruo <wqu@suse.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Hannes Reinecke <hare@suse.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Matias =?iso-8859-1?Q?Bj=F8rling?= <mb@lightnvm.io>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Bart Van Assche <bvanassche@acm.org>
+References: <20190607131025.31996-1-naohiro.aota@wdc.com>
+ <20190607131025.31996-10-naohiro.aota@wdc.com>
+ <20190617225356.GJ19057@twin.jikos.cz>
+ <SN6PR04MB523133E2B4DA6705F79A48FF8CEA0@SN6PR04MB5231.namprd04.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SN6PR04MB523133E2B4DA6705F79A48FF8CEA0@SN6PR04MB5231.namprd04.prod.outlook.com>
+User-Agent: Mutt/1.5.23.1 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The target lun sysfs entry contains the contents of an 8 byte LUN id
-formatted as hex. Because a field width is not specified for each byte,
-the resulting string is variable length and impossible for userspace to
-unambiguously parse. Fix this by using a field width of 2 for each byte
-so that the string can be parsed correctly.
+On Tue, Jun 18, 2019 at 09:01:35AM +0000, Naohiro Aota wrote:
+> On 2019/06/18 7:53, David Sterba wrote:
+> > On Fri, Jun 07, 2019 at 10:10:15PM +0900, Naohiro Aota wrote:
+> >> When in HMZONED mode, make sure that device super blocks are located in
+> >> randomly writable zones of zoned block devices. That is, do not write super
+> >> blocks in sequential write required zones of host-managed zoned block
+> >> devices as update would not be possible.
+> > 
+> > This could be explained in more detail. My understanding is that the 1st
+> > and 2nd copy superblocks is skipped at write time but the zone
+> > containing the superblocks is not excluded from allocations. Ie. regular
+> > data can appear in place where the superblocks would exist on
+> > non-hmzoned filesystem. Is that correct?
+> 
+> Correct. You can see regular data stored at usually SB location on HMZONED fs.
+> 
+> > The other option is to completely exclude the zone that contains the
+> > superblock copies.
+> > 
+> > primary sb			 64K
+> > 1st copy			 64M
+> > 2nd copy			256G
+> > 
+> > Depends on the drives, but I think the size of the random write zone
+> > will very often cover primary and 1st copy. So there's at least some
+> > backup copy.
+> > 
+> > The 2nd copy will be in the sequential-only zone, so the whole zone
+> > needs to be excluded in exclude_super_stripes. But it's not, so this
+> > means data can go there.  I think the zone should be left empty.
+> > 
+> 
+> I see. That's more safe for the older kernel/userland, right? By keeping that zone empty,
+> we can avoid old ones to mis-interpret data to be SB.
 
-Signed-off-by: Ross Lagerwall <ross.lagerwall@citrix.com>
----
- drivers/firmware/iscsi_ibft.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/firmware/iscsi_ibft.c b/drivers/firmware/iscsi_ibft.c
-index ab3aa3983833..5900edcb6334 100644
---- a/drivers/firmware/iscsi_ibft.c
-+++ b/drivers/firmware/iscsi_ibft.c
-@@ -371,7 +371,7 @@ static ssize_t ibft_attr_show_target(void *data, int type, char *buf)
- 		break;
- 	case ISCSI_BOOT_TGT_LUN:
- 		for (i = 0; i < 8; i++)
--			str += sprintf(str, "%x", (u8)tgt->lun[i]);
-+			str += sprintf(str, "%02x", (u8)tgt->lun[i]);
- 		str += sprintf(str, "\n");
- 		break;
- 	case ISCSI_BOOT_TGT_NIC_ASSOC:
--- 
-2.17.2
-
+That's not only for older kernels, the superblock locations are known
+and the contents should not depend on the type of device on which it was
+created. This can be considered part of the on-disk format.
