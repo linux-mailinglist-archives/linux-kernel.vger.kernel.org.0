@@ -2,169 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 335C257F8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 11:45:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3382157F90
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 11:46:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726641AbfF0JpW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 05:45:22 -0400
-Received: from mail-qt1-f201.google.com ([209.85.160.201]:41607 "EHLO
-        mail-qt1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726498AbfF0JpU (ORCPT
+        id S1726472AbfF0Jqo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 05:46:44 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:45244 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726308AbfF0Jqo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 05:45:20 -0400
-Received: by mail-qt1-f201.google.com with SMTP id e39so1784305qte.8
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 02:45:20 -0700 (PDT)
+        Thu, 27 Jun 2019 05:46:44 -0400
+Received: by mail-pf1-f194.google.com with SMTP id r1so937226pfq.12
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 02:46:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=dExuKDG1Vocm7R5NxDrIVnD2CUOvxrQiPu2P2B60v+w=;
-        b=WhKnnvq+eH098gHUsu9ljm8u7NiCcoAvG7V0jrd0jshrongcUzOBhvAkJkf73ihZp+
-         x3Y9xDvb/jKeuWHH2u6ckxKlX4aRRtMTvzfpLyoRC8ULamnLUoUk7RmzaQm3Pu+0A4e1
-         TVRXpAoOz57i7ofZgEmZe1BUe1IKn0PYDS/TQatmUcXMJo3QYgnPKgaJ7aOyp490eCa5
-         9/4AAlnsh7gejuJ1dXHGMgR2RQoI5pSXa+juORIs7YAWHwbX6FFBA3ntOIo9VgB1s9h6
-         itvb8QOBVqFPE3dXzuyMQc+JONF1LgPbfJqic6PD68Aab3oqz8ROjmqia26Mp4ZETGOh
-         eYSQ==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=uMmVaqGs6Qzw1v02Xne45iZzGkIbUBWZpJMKSMkhWCo=;
+        b=s7enxB+IExQARnhO0Qax0ABS2Hi6if5hn8MT8/E9KB4L+I8bWQEYmgRCgrbAoBA5PZ
+         8/ENKEDKnCFRMDJPKphqSHG+Wfb1srI7LDWUfcv6SyGcIXuW8r2byhT6R6LW9/QW1XbK
+         S0VmYxJGA0bCxTFxrItDMEye/uFBR95uyHbq+8RdjXlNQXxAchyFRzfFp/oE7VylKZ8c
+         tFAk/jv0V6dgRI+BVy7G2ud84jqP71+C82mrfD2usIBsg18ed01xUNkA6hPsjB4vdynO
+         kDiQAFpPoFdGLnJnIbB+Ggy8V7qb0Zemn76gL1DZ8OyLIGB4rJoFFGGqAQkga9fz1wuB
+         WQWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=dExuKDG1Vocm7R5NxDrIVnD2CUOvxrQiPu2P2B60v+w=;
-        b=nHDJNpOHtyRvf22CRyanvvPYxBrGVtFQO7UpaNgxywDAwB7gHoHeYi+vnvWV4Vf31q
-         JBSDEIq8FYwECdvYT0mwillWl+SJ1vmXdCv6/R3uuKopRa6YDN+KOao+SLR5y1YVm7E0
-         TeQxvPNCsrVRmKNmtbEQ7gjKTEpU5K4D5PIWaKbH19lG/S+hj6qDgbvo+5gJHs6HyUFq
-         tlk1dOFMmvu9z+lJ687FWswh7qUf3Bm8ihD5x1JcH/MNlhXneHYF1W4rMHpzMO9YAKt2
-         qJBIEPrEqXnsSUGGzqpM8ptieTNC6asQ8iS8FcWiIhZgey9DOrWtebOZDbsw2M2obW5a
-         owgw==
-X-Gm-Message-State: APjAAAVQqGl7uSNKg/7qlaJOOUiMKt706BRqzPrX9/oKLv7Y9hQ39n0T
-        /QDU6LoAxj9xmip4sSx7b+s83heQuQ==
-X-Google-Smtp-Source: APXvYqyL0gF7qx89YSATj6wfEvyEQdk9uqASJ2qWX9sOEiRzrIlqUKvFG2sTfdKb+6/6XSohTv4Fsmd10g==
-X-Received: by 2002:a05:620a:1228:: with SMTP id v8mr1133045qkj.357.1561628719562;
- Thu, 27 Jun 2019 02:45:19 -0700 (PDT)
-Date:   Thu, 27 Jun 2019 11:44:45 +0200
-In-Reply-To: <20190627094445.216365-1-elver@google.com>
-Message-Id: <20190627094445.216365-6-elver@google.com>
-Mime-Version: 1.0
-References: <20190627094445.216365-1-elver@google.com>
-X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
-Subject: [PATCH v4 5/5] mm/kasan: Add object validation in ksize()
-From:   Marco Elver <elver@google.com>
-To:     elver@google.com
-Cc:     linux-kernel@vger.kernel.org,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Alexander Potapenko <glider@google.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kees Cook <keescook@chromium.org>, kasan-dev@googlegroups.com,
-        linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=uMmVaqGs6Qzw1v02Xne45iZzGkIbUBWZpJMKSMkhWCo=;
+        b=Vungjs4HMNdO6EITW6k1+tA3rF8AxMB9pbWAKHJs6sh5uGDMFTb+u/rKt0mo6YckBK
+         XPGty1BSSr2335Tqfi93jTLYBNrwRY+gLP959tFZ10frwJo2I1cpihN9AxyshyXpU+2U
+         CHr1LUEBWkiQY+JI/MtxHer3qmvxOt3CewlPIw+uDQ8j01QY8wfHcRc+UjK5/gtw80K5
+         FJuAYGTXIOZL6Etez0mbP31H0dIf+OsKmMQo41/NDU3OWJ1vkyeNnUQk9TrrOc0Ldtv1
+         LtT2/fNZWxKaUeM5pniQWER7Q/Lcjxfpp5m93mClcoZ3xyUkg8+QJLkKypfIxEmee+a4
+         r8RA==
+X-Gm-Message-State: APjAAAWDphXS3S2c+Icw7lupQuqNg4FsuEg+LTS3VptVQkhW4dsq+CiR
+        92AObdWL5hbS+PN4v+jVR1I=
+X-Google-Smtp-Source: APXvYqzV988AIws0jlsYMBuVHSS5AnNS0myfaZDDR3n7w9cPoWvRFgrEcd3t71Hz1fqgEMUY3UzZ0w==
+X-Received: by 2002:a63:f746:: with SMTP id f6mr2945161pgk.56.1561628803496;
+        Thu, 27 Jun 2019 02:46:43 -0700 (PDT)
+Received: from huyue2.ccdomain.com ([218.189.10.173])
+        by smtp.gmail.com with ESMTPSA id 64sm4653324pfe.128.2019.06.27.02.46.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 27 Jun 2019 02:46:42 -0700 (PDT)
+From:   Yue Hu <zbestahu@gmail.com>
+To:     gaoxiang25@huawei.com, yuchao0@huawei.com,
+        gregkh@linuxfoundation.org
+Cc:     linux-erofs@lists.ozlabs.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, huyue2@yulong.com
+Subject: [PATCH RESEND v2] staging: erofs: return the error value if fill_inline_data() fails
+Date:   Thu, 27 Jun 2019 17:46:15 +0800
+Message-Id: <20190627094615.2224-1-zbestahu@gmail.com>
+X-Mailer: git-send-email 2.17.1.windows.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ksize() has been unconditionally unpoisoning the whole shadow memory region
-associated with an allocation. This can lead to various undetected bugs,
-for example, double-kzfree().
+From: Yue Hu <huyue2@yulong.com>
 
-Specifically, kzfree() uses ksize() to determine the actual allocation
-size, and subsequently zeroes the memory. Since ksize() used to just
-unpoison the whole shadow memory region, no invalid free was detected.
+We should consider the error returned by fill_inline_data() when filling
+last page in fill_inode(). If not getting inode will be successful even
+though last page is bad. That is illogical. Also change -EAGAIN to 0 in
+fill_inline_data() to stand for successful filling.
 
-This patch addresses this as follows:
-
-1. Add a check in ksize(), and only then unpoison the memory region.
-
-2. Preserve kasan_unpoison_slab() semantics by explicitly unpoisoning
-   the shadow memory region using the size obtained from __ksize().
-
-Tested:
-1. With SLAB allocator: a) normal boot without warnings; b) verified the
-   added double-kzfree() is detected.
-2. With SLUB allocator: a) normal boot without warnings; b) verified the
-   added double-kzfree() is detected.
-
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=199359
-Signed-off-by: Marco Elver <elver@google.com>
-Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: Alexander Potapenko <glider@google.com>
-Cc: Andrey Konovalov <andreyknvl@google.com>
-Cc: Christoph Lameter <cl@linux.com>
-Cc: Pekka Enberg <penberg@kernel.org>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: kasan-dev@googlegroups.com
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org
+Signed-off-by: Yue Hu <huyue2@yulong.com>
+Reviewed-by: Gao Xiang <gaoxiang25@huawei.com>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 ---
-v4:
-* Prefer WARN_ON_ONCE() instead of BUG_ON().
----
- include/linux/kasan.h |  7 +++++--
- mm/slab_common.c      | 22 +++++++++++++++++++++-
- 2 files changed, 26 insertions(+), 3 deletions(-)
+no change
 
-diff --git a/include/linux/kasan.h b/include/linux/kasan.h
-index b40ea104dd36..cc8a03cc9674 100644
---- a/include/linux/kasan.h
-+++ b/include/linux/kasan.h
-@@ -76,8 +76,11 @@ void kasan_free_shadow(const struct vm_struct *vm);
- int kasan_add_zero_shadow(void *start, unsigned long size);
- void kasan_remove_zero_shadow(void *start, unsigned long size);
+ drivers/staging/erofs/inode.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/staging/erofs/inode.c b/drivers/staging/erofs/inode.c
+index d6e1e16..1433f25 100644
+--- a/drivers/staging/erofs/inode.c
++++ b/drivers/staging/erofs/inode.c
+@@ -156,7 +156,7 @@ static int fill_inline_data(struct inode *inode, void *data,
+ 		inode->i_link = lnk;
+ 		set_inode_fast_symlink(inode);
+ 	}
+-	return -EAGAIN;
++	return 0;
+ }
  
--size_t ksize(const void *);
--static inline void kasan_unpoison_slab(const void *ptr) { ksize(ptr); }
-+size_t __ksize(const void *);
-+static inline void kasan_unpoison_slab(const void *ptr)
-+{
-+	kasan_unpoison_shadow(ptr, __ksize(ptr));
-+}
- size_t kasan_metadata_size(struct kmem_cache *cache);
+ static int fill_inode(struct inode *inode, int isdir)
+@@ -223,7 +223,7 @@ static int fill_inode(struct inode *inode, int isdir)
+ 		inode->i_mapping->a_ops = &erofs_raw_access_aops;
  
- bool kasan_save_enable_multi_shot(void);
-diff --git a/mm/slab_common.c b/mm/slab_common.c
-index b7c6a40e436a..a09bb10aa026 100644
---- a/mm/slab_common.c
-+++ b/mm/slab_common.c
-@@ -1613,7 +1613,27 @@ EXPORT_SYMBOL(kzfree);
-  */
- size_t ksize(const void *objp)
- {
--	size_t size = __ksize(objp);
-+	size_t size;
-+
-+	if (WARN_ON_ONCE(!objp))
-+		return 0;
-+	/*
-+	 * We need to check that the pointed to object is valid, and only then
-+	 * unpoison the shadow memory below. We use __kasan_check_read(), to
-+	 * generate a more useful report at the time ksize() is called (rather
-+	 * than later where behaviour is undefined due to potential
-+	 * use-after-free or double-free).
-+	 *
-+	 * If the pointed to memory is invalid we return 0, to avoid users of
-+	 * ksize() writing to and potentially corrupting the memory region.
-+	 *
-+	 * We want to perform the check before __ksize(), to avoid potentially
-+	 * crashing in __ksize() due to accessing invalid metadata.
-+	 */
-+	if (unlikely(objp == ZERO_SIZE_PTR) || !__kasan_check_read(objp, 1))
-+		return 0;
-+
-+	size = __ksize(objp);
- 	/*
- 	 * We assume that ksize callers could use whole allocated area,
- 	 * so we need to unpoison this area.
+ 		/* fill last page if inline data is available */
+-		fill_inline_data(inode, data, ofs);
++		err = fill_inline_data(inode, data, ofs);
+ 	}
+ 
+ out_unlock:
 -- 
-2.22.0.410.gd8fdbe21b5-goog
+1.9.1
 
