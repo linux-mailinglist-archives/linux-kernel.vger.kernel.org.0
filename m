@@ -2,148 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 172B657CB6
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 09:05:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA16157CBA
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 09:05:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726524AbfF0HFS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 03:05:18 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:38128 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726049AbfF0HFS (ORCPT
+        id S1726566AbfF0HFc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 03:05:32 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:33285 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726049AbfF0HFb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 03:05:18 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 6253460DAD; Thu, 27 Jun 2019 07:05:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1561619117;
-        bh=4sMYL/vEnFR3JJT1yrTXKeeZBriSZ99gcmBVQPeanvA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=ou36ma9pIfK8dHNclgs1noT/MtX+sA0jszvw2qqktBI0k/jiXntFE9wnYEXwFXhCz
-         eV/0NdpCw1OP/InYN6MODkWArQCj05X6ScVlHBn1eTpLiS3WIrm/cjYJjoR5neJevQ
-         wLMRqjxMU7DZOsP7gPkKNAuzGhZjgi3cRU+llTmI=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 660F160A97;
-        Thu, 27 Jun 2019 07:05:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1561619116;
-        bh=4sMYL/vEnFR3JJT1yrTXKeeZBriSZ99gcmBVQPeanvA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=T5JUl9dOKs584jzJCP5evvyeb+cbHKsbUC9uA/y/6lVmoqUfm2nICNb2OL0x5Hv5D
-         LDrkfdjzofe4VU1Rd71dSZtTXQ+tmoP+ylLpOelUKnfBOWhHQL4sAcnh7qRFrAYseH
-         GHui+PNF0pjVTEJqsQ5j/lR/pRM8NPkFEznQcV3M=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 660F160A97
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-Received: by mail-ed1-f47.google.com with SMTP id k21so6016284edq.3;
-        Thu, 27 Jun 2019 00:05:16 -0700 (PDT)
-X-Gm-Message-State: APjAAAVT4wSofyO8o16Bfw+zTCFnyv9jjpksaMsDXAMUW8U8aZGdR2sb
-        Os6h9VOL/faa2T9Mc73J6piqq6PDcA5LgFb35Ok=
-X-Google-Smtp-Source: APXvYqy6/T0+BAERf4oMw5abJsW76giuCjeiXeBDMRRBEFACHq6VcztnGhX1IL9uJkMy8ums6cUkmiXVqPScbQRjh1Y=
-X-Received: by 2002:a17:906:3c1:: with SMTP id c1mr1624686eja.221.1561619115146;
- Thu, 27 Jun 2019 00:05:15 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190612071554.13573-1-vivek.gautam@codeaurora.org>
- <20190612071554.13573-4-vivek.gautam@codeaurora.org> <20190614040520.GK22737@tuxbook-pro>
- <3e1f5e03-6448-8730-056d-fc47bdd71b3f@codeaurora.org> <20190618175218.GH4270@fuggles.cambridge.arm.com>
- <CAFp+6iEynLa=Jt_-oAwt4zmzxzhEXtWNCmghz6rFzcpQVGwrMg@mail.gmail.com>
- <20190624170348.7dncuc5qezqeyvq2@willie-the-truck> <CAFp+6iF0TQtAy2JFXk6zjX5GpjeLFesqPZV6ezbDXmc85yvMEA@mail.gmail.com>
- <20190625133924.fqq3y7p3i3fqem5p@willie-the-truck> <CAFp+6iH-KzX7x1j8AAuKJcOP6v=fyP-yLvaeeE_Ly3oueu_ngg@mail.gmail.com>
- <20190626144844.key3n6ueb6skgkp4@willie-the-truck>
-In-Reply-To: <20190626144844.key3n6ueb6skgkp4@willie-the-truck>
-From:   Vivek Gautam <vivek.gautam@codeaurora.org>
-Date:   Thu, 27 Jun 2019 12:35:02 +0530
-X-Gmail-Original-Message-ID: <CAFp+6iGvUd6QhmEO0rSSXAZnYt3x_5G0HuGUJYZ203W1_ER+=w@mail.gmail.com>
-Message-ID: <CAFp+6iGvUd6QhmEO0rSSXAZnYt3x_5G0HuGUJYZ203W1_ER+=w@mail.gmail.com>
-Subject: Re: [PATCH v3 3/4] iommu/arm-smmu: Add support to handle Qcom's
- wait-for-safe logic
-To:     Will Deacon <will@kernel.org>
-Cc:     "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
-        "robh+dt" <robh+dt@kernel.org>, Andy Gross <agross@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Rob Clark <robdclark@gmail.com>
+        Thu, 27 Jun 2019 03:05:31 -0400
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1hgOTI-0007Bx-DH; Thu, 27 Jun 2019 09:05:28 +0200
+Message-ID: <1561619128.4216.3.camel@pengutronix.de>
+Subject: Re: [PATCH] reset: Add driver for dispmix reset
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Fancy Fang <chen.fang@nxp.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>
+Cc:     "festevam@gmail.com" <festevam@gmail.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Date:   Thu, 27 Jun 2019 09:05:28 +0200
+In-Reply-To: <AM6PR04MB49369AD1DE69A51B38471608F3E20@AM6PR04MB4936.eurprd04.prod.outlook.com>
+References: <20190625055557.7507-1-chen.fang@nxp.com>
+         <1561474623.5559.4.camel@pengutronix.de>
+         <AM6PR04MB49369AD1DE69A51B38471608F3E20@AM6PR04MB4936.eurprd04.prod.outlook.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 26, 2019 at 8:18 PM Will Deacon <will@kernel.org> wrote:
+On Wed, 2019-06-26 at 06:46 +0000, Fancy Fang wrote:
+[...]
+> > The same goes for the clock soft enable bits on i.MX8MM. If those 
+> > bits actually control clock gates, they should not be described as 
+> > reset controls in the device tree.
 >
-> On Wed, Jun 26, 2019 at 12:03:02PM +0530, Vivek Gautam wrote:
-> > On Tue, Jun 25, 2019 at 7:09 PM Will Deacon <will@kernel.org> wrote:
-> > >
-> > > On Tue, Jun 25, 2019 at 12:34:56PM +0530, Vivek Gautam wrote:
-> > > > On Mon, Jun 24, 2019 at 10:33 PM Will Deacon <will@kernel.org> wrote:
-> > > > > Instead, I think this needs to be part of a separate file that is maintained
-> > > > > by you, which follows on from the work that Krishna is doing for nvidia
-> > > > > built on top of Robin's prototype patches:
-> > > > >
-> > > > > http://linux-arm.org/git?p=linux-rm.git;a=shortlog;h=refs/heads/iommu/smmu-impl
-> > > >
-> > > > Looking at this branch quickly, it seem there can be separate implementation
-> > > > level configuration file that can be added.
-> > > > But will this also handle separate page table ops when required in future.
-> > >
-> > > Nothing's set in stone, but having the implementation-specific code
-> > > constrain the page-table format (especially wrt quirks) sounds reasonable to
-> > > me. I'm currently waiting for Krishna to respin the nvidia changes [1] on
-> > > top of this so that we can see how well the abstractions are holding up.
-> >
-> > Sure. Would you want me to try Robin's branch and take out the qualcomm
-> > related stuff to its own implementation? Or, would you like me to respin this
-> > series so that you can take it in to enable SDM845 boards such as, MTP
-> > and dragonboard to have a sane build - debian, etc. so people benefit
-> > out of it.
+> [FF] Make sense. The functions provided by the "dispmix reset" is more
+> likely to be a combination of a clock gating module and a reset
+> control than a standard reset controller. The reason why I choose
+> reset framework to implement this device is that: First, this module
+> is named as "dispmix reset" in the dispmix's design spec, so it gives
+> me the first impression that it should be acted as a reset controller.
+> And I'll check this with the IC designer.
+
+Thank you.
+
+> Second, the "dispmix reset" is separated from the CCM LPCG module
+> which is used as the only clock controller device for the whole
+> platform. So the CCM clock driver seems cannot cover this device.
+> Last, the "dispmix reset" is shared by all the submodules in the
+> dispmix, so I abstract this device to be a reset controller driver to
+> simplify the 'reset' logic for all the submodules drivers.
+
+Agreed on both points.
+
+> If using clock framework to cover this device, another driver needs to
+> be implemented. I'll take a close look at it to see if this can
+> happen.
+
+Yes, if my assumptions are correct, it would be good if this could be
+rewritten as a combined clock and reset driver. There are quite a few
+examples for this in drivers/clk already.
+
+[...]
+> > Is there any reason not to just use straight readl/writel besides 
+> > the automatic clock handling?
 >
-> I can't take this series without Acks on the firmware calling changes, and I
-> plan to send my 5.3 patches to Joerg at the end of the week so they get some
-> time in -next. In which case, I think it may be worth you having a play with
-> the branch above so we can get a better idea of any additional smmu_impl hooks
-> you may need.
+> [FF] Use regmap is for simplifying the register modifications since
+> the register has no SET or CLR shadow, so when set or clear one bit,
+> the register needs to be read-and-modify. And besides, the register
+> access requires disp-apb clock open, and regmap can handle this
+> properly.
 
-Cool. I will play around with it and get something tangible and meaningful.
+Ok, this makes sense to me.
 
->
-> > Qualcomm stuff is lying in qcom-smmu and arm-smmu and may take some
-> > time to stub out the implementation related details.
->
-> Not sure I follow you here. Are you talking about qcom_iommu.c?
-
-That's right. The qcom_iommu.c solved a different issue of secure context bank
-allocations, when Rob forked out this driver and reused some of the
-arm-smmu.c stuff.
-
-We will take a look at that once we start adding the qcom implementation.
-
-Thanks
-Vivek
-
->
-> Will
-> _______________________________________________
-> iommu mailing list
-> iommu@lists.linux-foundation.org
-> https://lists.linuxfoundation.org/mailman/listinfo/iommu
-
-
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+regards
+Philipp
