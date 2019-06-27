@@ -2,105 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 927FA58B63
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 22:06:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2901358B65
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 22:08:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726525AbfF0UGg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 16:06:36 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:41895 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726384AbfF0UGg (ORCPT
+        id S1726550AbfF0UIX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 16:08:23 -0400
+Received: from smtprelay0070.hostedemail.com ([216.40.44.70]:33985 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726384AbfF0UIX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 16:06:36 -0400
-Received: by mail-qt1-f196.google.com with SMTP id d17so3866453qtj.8;
-        Thu, 27 Jun 2019 13:06:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:subject:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=s+ZWn/RCRJ3CsjrQtB3J8Syz+Z54G249wMsbVlPVU5Q=;
-        b=N6Yl/Mhye5YzFjWqZiW8CQI03B/gz8aFoEQcUjO5cf3txvJBGsFNSU3EAwUlww2pKf
-         rN7pcwAZoFZypLULgib8YuFzqXFVsSd0DuesHBIvHQCRzAU7m+ghVYBV4jLsNKLfMbbG
-         +PHd0Z5xwtYgrK6RTJzlS049lW2melX3+8BG4xXdYZYKYIrVukTnSrm9PYnCXp3Xa0O1
-         Hg1nzZg4Je3lPQkxX3aHOMA19K6KncMyMKT0T9iFECw9oG6dJ3/Q0VBF4E0Hi5A7Bl3d
-         O/VwI1dHEPIdZjLpJvMU3v9NzYgqH0HMyTa16d0JQtxbfHDm1MV70Vxl5jW989Syjf9i
-         BuPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=s+ZWn/RCRJ3CsjrQtB3J8Syz+Z54G249wMsbVlPVU5Q=;
-        b=RIP7Ax8/hMhxVXzwGgpv4Gd60sNunMvlwF93P5yABBqYhp0JXpB2LaH9puLqcVk+vB
-         qpox8Tcmw9x66vc2xFGzCBzJq1HHiFKHZW12W2hl+lqrGKFfkG0JtTTuswLmGrGUGr5k
-         zKaD4vXsColWcJ0a+p/cPVXH1wrH4X3NK26brLFDzDHfW6vmnAtTH5Xqqest7gcyYeG5
-         HPVLCRHDW4X8Qx2VKMgskTNEeY+Y1gJDM3ORAkP2eQulMKjP2PCo3V/bYlpxp/zgGx6u
-         MdJ9SFTBBMs64gdjaS8fnlO/dAZJKhBel+suuQjvUXQHfMQu3kXOsK0byWwR1xqI2d76
-         PnzQ==
-X-Gm-Message-State: APjAAAX5Po1Dvv4hrEk7foAcJxTHjnztvLr5uCj45K+X7WaHFy6Wor1N
-        FePnMft9VYt4Gv/WwgqQPox1TdGTR+E=
-X-Google-Smtp-Source: APXvYqzGB8WazRbgEhe3RfAs7LKvFr/dr1BJUpIop6eQJcUCYNXP+TZwedgFix67cRVLinUpIDiqBQ==
-X-Received: by 2002:ad4:5405:: with SMTP id f5mr2478523qvt.242.1561665994589;
-        Thu, 27 Jun 2019 13:06:34 -0700 (PDT)
-Received: from ?IPv6:2620:10d:c0a8:11c1::103b? ([2620:10d:c091:480::e001])
-        by smtp.gmail.com with ESMTPSA id u26sm41319qkk.52.2019.06.27.13.06.33
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Jun 2019 13:06:33 -0700 (PDT)
-From:   Jes Sorensen <jes.sorensen@gmail.com>
-X-Google-Original-From: Jes Sorensen <Jes.Sorensen@gmail.com>
-Subject: Re: [PATCH 80/87] net: hippi: remove memset after
- pci_alloc_consistent
-To:     Fuqian Huang <huangfq.daxian@gmail.com>
-Cc:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        Thu, 27 Jun 2019 16:08:23 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 16720180A8155;
+        Thu, 27 Jun 2019 20:08:22 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::,RULES_HIT:41:355:379:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:1801:1981:2194:2199:2393:2559:2562:2828:3138:3139:3140:3141:3142:3353:3622:3865:3866:3868:3870:3872:3874:4321:4605:5007:7903:9149:10004:10400:10848:11026:11232:11658:11914:12043:12296:12297:12438:12740:12760:12895:13069:13311:13357:13439:14659:14721:21080:21324:21451:21627:30054:30070:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:30,LUA_SUMMARY:none
+X-HE-Tag: lunch72_ea9665a28052
+X-Filterd-Recvd-Size: 2578
+Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf18.hostedemail.com (Postfix) with ESMTPA;
+        Thu, 27 Jun 2019 20:08:20 +0000 (UTC)
+Message-ID: <55dc85b3e405821baafe9d8868ef921f99b6d103.camel@perches.com>
+Subject: Re: [PATCH v2] powerpc/setup_64: fix -Wempty-body warnings
+From:   Joe Perches <joe@perches.com>
+To:     Qian Cai <cai@lca.pw>, mpe@ellerman.id.au
+Cc:     paulus@samba.org, benh@kernel.crashing.org,
+        tyreld@linux.vnet.ibm.com, linuxppc-dev@lists.ozlabs.org,
         linux-kernel@vger.kernel.org
-References: <20190627174452.5677-1-huangfq.daxian@gmail.com>
-Message-ID: <518f3f6a-9d1b-11f8-e900-fcdc9e140110@gmail.com>
-Date:   Thu, 27 Jun 2019 16:06:32 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+Date:   Thu, 27 Jun 2019 13:08:19 -0700
+In-Reply-To: <1561665166.5154.90.camel@lca.pw>
+References: <1559768018-7665-1-git-send-email-cai@lca.pw>
+         <1561665166.5154.90.camel@lca.pw>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
 MIME-Version: 1.0
-In-Reply-To: <20190627174452.5677-1-huangfq.daxian@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/27/19 1:44 PM, Fuqian Huang wrote:
-> pci_alloc_consistent calls dma_alloc_coherent directly.
-> In commit af7ddd8a627c
-> ("Merge tag 'dma-mapping-4.21' of git://git.infradead.org/users/hch/dma-mapping"),
-> dma_alloc_coherent has already zeroed the memory.
-> So memset is not needed.
-> 
-> Signed-off-by: Fuqian Huang <huangfq.daxian@gmail.com>
-> ---
->  drivers/net/hippi/rrunner.c | 2 --
->  1 file changed, 2 deletions(-)
+On Thu, 2019-06-27 at 15:52 -0400, Qian Cai wrote:
+> On Wed, 2019-06-05 at 16:53 -0400, Qian Cai wrote:
+> > At the beginning of setup_64.c, it has,
+> > 
+> >   #ifdef DEBUG
+> >   #define DBG(fmt...) udbg_printf(fmt)
+> >   #else
+> >   #define DBG(fmt...)
+> >   #endif
+> > 
+> > where DBG() could be compiled away, and generate warnings,
+> > 
+> > arch/powerpc/kernel/setup_64.c: In function 'initialize_cache_info':
+> > arch/powerpc/kernel/setup_64.c:579:49: warning: suggest braces around
+> > empty body in an 'if' statement [-Wempty-body]
+> >     DBG("Argh, can't find dcache properties !\n");
+> >                                                  ^
+> > arch/powerpc/kernel/setup_64.c:582:49: warning: suggest braces around
+> > empty body in an 'if' statement [-Wempty-body]
+> >     DBG("Argh, can't find icache properties !\n");
+[]
+> > diff --git a/arch/powerpc/kernel/setup_64.c b/arch/powerpc/kernel/setup_64.c
+[]
+> > @@ -71,7 +71,7 @@
+> >  #ifdef DEBUG
+> >  #define DBG(fmt...) udbg_printf(fmt)
+> >  #else
+> > -#define DBG(fmt...)
+> > +#define DBG(fmt...) do { } while (0)
 
-Acked-by: Jes Sorensen <Jes.Sorensen@gmail.com>
+I suggest
 
-> diff --git a/drivers/net/hippi/rrunner.c b/drivers/net/hippi/rrunner.c
-> index 7b9350dbebdd..2a6ec5394966 100644
-> --- a/drivers/net/hippi/rrunner.c
-> +++ b/drivers/net/hippi/rrunner.c
-> @@ -1196,7 +1196,6 @@ static int rr_open(struct net_device *dev)
->  		goto error;
->  	}
->  	rrpriv->rx_ctrl_dma = dma_addr;
-> -	memset(rrpriv->rx_ctrl, 0, 256*sizeof(struct ring_ctrl));
->  
->  	rrpriv->info = pci_alloc_consistent(pdev, sizeof(struct rr_info),
->  					    &dma_addr);
-> @@ -1205,7 +1204,6 @@ static int rr_open(struct net_device *dev)
->  		goto error;
->  	}
->  	rrpriv->info_dma = dma_addr;
-> -	memset(rrpriv->info, 0, sizeof(struct rr_info));
->  	wmb();
->  
->  	spin_lock_irqsave(&rrpriv->lock, flags);
-> 
+#define DBG(fmt...) do { if (0) udbg_printf(fmt); } while (0)
+
+so that format and argument are always verified by the compiler.
+
+I would also prefer a more generic form using ##__VA_ARGS__
+
+#ifdef DEBUG
+#define DBG(fmt, ...) udbg_printf(fmt, ##__VA_ARGS__)
+#else
+#define DBG(fmt, ...) do { if (0) udbg_printf(fmt, ##__VA_ARGS__); } while (0)
+#endif
+
+or maybe use the no_printk macro like
+
+#ifdef DEBUG
+#define DBG(fmt, ...) udbg_printf(fmt, ##__VA_ARGS__)
+#else
+#define DBG(fmt, ...) no_printk(fmt, ##__VA_ARGS__)
+#endif
+
 
