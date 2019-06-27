@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC2B557D01
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 09:17:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C237C57D05
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 09:18:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726545AbfF0HRu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 03:17:50 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:47715 "EHLO
+        id S1726587AbfF0HSA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 03:18:00 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:47724 "EHLO
         mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725787AbfF0HRs (ORCPT
+        with ESMTP id S1726516AbfF0HRs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 27 Jun 2019 03:17:48 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190627071746euoutp023d0db8c3480bbdf75390a32f2578c13d~r-P6a_c1b2044920449euoutp02A;
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190627071746euoutp029723f62e89c482599e05322598b1dd1e~r-P7AhdVh2029320293euoutp02d;
         Thu, 27 Jun 2019 07:17:46 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190627071746euoutp023d0db8c3480bbdf75390a32f2578c13d~r-P6a_c1b2044920449euoutp02A
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190627071746euoutp029723f62e89c482599e05322598b1dd1e~r-P7AhdVh2029320293euoutp02d
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
         s=mail20170921; t=1561619866;
-        bh=ijdorqqTkcn1o5m8sGtGI6GyhJS7V9aRwUoQkFw7p7U=;
+        bh=01kyvHj/JU4j5qOUAe5VfR1X7QHg7wasRsZbbGpVbbw=;
         h=From:To:Cc:Subject:Date:In-reply-to:References:From;
-        b=qOv2ErHzIekbzYxR/pZ3xlmMWP5Ld5MDBIOylDL9LAnFPV09aZmXU0OKaOokpx4f1
-         Z+NAqu20suNXBfOnOanu1lW5ZTmQNEjkslEUys8hHbNe601tqiCzx+wFkZWU8SlDkQ
-         ub3ZBu99Ok2QuHE+uKLTYSxo3rTvLCMaDLiGr/OA=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        b=E/yhBor6ZVpi/rnR27i5Tdi7K+zxt3YxLolJaxBpAKZpJ0dbz8fBZecP2m4y8MVZU
+         Eu4sSZ18+75yKcaPqz9yi9KhBEd0iIsCo7N2DIcsNg2jo5wsljjcVsDXKEeuSbLf+c
+         wmSbZu/N1wtWWzQbCyq3a6FOCmXgtLpAUscQQRDU=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20190627071746eucas1p24a7e1eec98d8e78a1f7a848bdde63816~r-P6nTk9s1039310393eucas1p2N;
+        Thu, 27 Jun 2019 07:17:46 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id BB.62.04298.A9D641D5; Thu, 27
+        Jun 2019 08:17:46 +0100 (BST)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
         eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20190627071745eucas1p1559f45320f6ea101c65ce9487dba63f9~r-P6EfmdH2386123861eucas1p1v;
+        20190627071745eucas1p1c171dcafd92fe51c99dc102949de6c99~r-P56WsyL2388423884eucas1p1x;
         Thu, 27 Jun 2019 07:17:45 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 95.96.04377.99D641D5; Thu, 27
-        Jun 2019 08:17:45 +0100 (BST)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20190627071745eucas1p1fa1b9d46e67b131522f49d73ac12d8ed~r-P5dDztj2388423884eucas1p1w;
-        Thu, 27 Jun 2019 07:17:45 +0000 (GMT)
-X-AuditID: cbfec7f4-113ff70000001119-bb-5d146d999ce4
+X-AuditID: cbfec7f2-3615e9c0000010ca-18-5d146d9a0a2a
 Received: from eusync4.samsung.com ( [203.254.199.214]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id CA.9A.04146.99D641D5; Thu, 27
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id EA.F3.04140.99D641D5; Thu, 27
         Jun 2019 08:17:45 +0100 (BST)
 Received: from AMDC2765.DIGITAL.local ([106.120.51.73]) by
         eusync4.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0 64bit
@@ -53,216 +53,78 @@ Cc:     linux-kernel@vger.kernel.org,
         Krzysztof Kozlowski <krzk@kernel.org>,
         Jochen Sprickerhof <jochen@sprickerhof.de>,
         Anand Moon <linux.amoon@gmail.com>
-Subject: [PATCH 2/3] usb: dwc3: exynos: Use Exynos specific XHCI-plat driver
- variant
-Date:   Thu, 27 Jun 2019 09:17:25 +0200
-Message-id: <20190627071726.30467-3-m.szyprowski@samsung.com>
+Subject: [PATCH 3/3] usb: dwc3: Remove generic PHY calibrate() calls
+Date:   Thu, 27 Jun 2019 09:17:26 +0200
+Message-id: <20190627071726.30467-4-m.szyprowski@samsung.com>
 X-Mailer: git-send-email 2.17.1
 In-reply-to: <20190627071726.30467-1-m.szyprowski@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrDIsWRmVeSWpSXmKPExsWy7djPc7ozc0ViDfacV7PYOGM9q8Wxtifs
-        Fs2L17NZLP17j9Hi/PkN7BaXd81hs5hxfh+TxaJlrcwW6zbeYrdYe+QuUN2mKawO3B47Z91l
-        91i85yWTx6ZVnWwe++euYffo27KK0WPDln8sHp83yQWwR3HZpKTmZJalFunbJXBlzPqyh7Hg
-        rnbFrNbNTA2MO1W6GDk5JARMJPavecrexcjFISSwglHi0aE7bBDOZ0aJD/Na2GGq/l9ZzQJi
-        CwksY5S4d7wMoug/o0THxhdMIAk2AUOJrrddbCC2iICDxJKlEJOYBf4zSUy/cYIVJCEsECYx
-        82gD2FQWAVWJby+ngk3lFbCV6D2whBVim7zE6g0HmEFsTgE7iaPTJoPdJyGwhk1i2bkzzBBF
-        LhJvp/9khLBlJDo7DjJBFDUzSjw8txaqo4dR4nLTDKgqa4nDxy+CrWAW4JOYtG060CQOoDiv
-        REebEESJh8SO0zuZIf6cyChxfq3uBEaJBYwMqxjFU0uLc9NTi43yUsv1ihNzi0vz0vWS83M3
-        MQLj9PS/4192MO76k3SIUYCDUYmHl2GPcKwQa2JZcWXuIUYJDmYlEd78MJFYId6UxMqq1KL8
-        +KLSnNTiQ4zSHCxK4rzVDA+ihQTSE0tSs1NTC1KLYLJMHJxSDYzRvHd2yCYv6jqwmyvg2YaI
-        Jq3Glam8s27ZyuftZ8iOe8T67u9z1jndfoECx1aLLXxWFpBiJpDpFFkyYfNE0TDzSWcaPGc7
-        XfxjXyzx68DTT7N1N/hsjfMVZNqk0jN/yrnKpvj/Udzlkxa7dRw78tN5SmgXY+Tehd+8rYPa
-        r3wLlffe1rTlBJsSS3FGoqEWc1FxIgCy+3ohzwIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrCLMWRmVeSWpSXmKPExsVy+t/xa7ozc0ViDVqXs1tsnLGe1eJY2xN2
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrDIsWRmVeSWpSXmKPExsWy7djP87qzckViDZp/8lhsnLGe1eJY2xN2
         i+bF69kslv69x2hx/vwGdovLu+awWcw4v4/JYtGyVmaLdRtvsVusPXIXqG7TFFYHbo+ds+6y
-        eyze85LJY9OqTjaP/XPXsHv0bVnF6LFhyz8Wj8+b5ALYo7hsUlJzMstSi/TtErgyZn3Zw1hw
-        V7tiVutmpgbGnSpdjJwcEgImEv+vrGYBsYUEljBKzN9ZAWE3Mkm8/CMIYrMJGEp0ve1iA7FF
-        BBwkliy9A2RzcTALNDJL/N5xlhUkISwQJjHzaAM7iM0ioCrx7eVUsKG8ArYSvQeWsEIsk5dY
-        veEAM4jNKWAncXTaZHaIZbYSV9vXs09g5FnAyLCKUSS1tDg3PbfYUK84Mbe4NC9dLzk/dxMj
-        MOy2Hfu5eQfjpY3BhxgFOBiVeHhX7BSOFWJNLCuuzD3EKMHBrCTCmx8mEivEm5JYWZValB9f
-        VJqTWnyIUZqDRUmct0PgYIyQQHpiSWp2ampBahFMlomDU6qBMWfLblMZ47meaZnhL763mZ7d
-        XRl6bv8r5+D9HDM7n76+7X0rJ3rymU+zrH5dW9oTsNniyZQ10XpPxawXvlRd5baoujf/z7Lf
-        zUwCP97GOMs+PTnvIHvK8U0/LnBu3fPmfRen1i0x14/SgY6xriEf3oZJm5e8P+wn/3VJo0im
-        ZKga455JuUEMEUosxRmJhlrMRcWJAIazBdE3AgAA
-X-CMS-MailID: 20190627071745eucas1p1fa1b9d46e67b131522f49d73ac12d8ed
+        eyze85LJY9OqTjaP/XPXsHv0bVnF6LFhyz8Wj8+b5ALYo7hsUlJzMstSi/TtErgyLlw/x1Lw
+        m6vi0qXVTA2MfZxdjJwcEgImEvdnzmTqYuTiEBJYwShxYtYcRpCEkMBnRolVt8S6GDnAinb9
+        r4aoWcYo8ezyLqiG/4wSHRtfMIE0sAkYSnS97WIDsUUEHCSWLL3DBlLELPCfSWL6jROsIAlh
+        AReJ5beawRpYBFQlps0+zA5i8wrYSrR8f88OcZK8xOoNB5hBbE4BO4mj0yazgwySENjCJrH/
+        4xeoIheJ92f2skDYMhKXJ3ezQBQ1M0o8PLcWqqOHUeJy0wxGiCpricPHL4KdwSzAJzFp23Rm
+        iOd4JTrahCBKPCTuHtzGAvHbREaJSbP3ME5glFjAyLCKUTy1tDg3PbXYMC+1XK84Mbe4NC9d
+        Lzk/dxMjME5P/zv+aQfj10tJhxgFOBiVeHgZ9gjHCrEmlhVX5h5ilOBgVhLhzQ8TiRXiTUms
+        rEotyo8vKs1JLT7EKM3BoiTOW83wIFpIID2xJDU7NbUgtQgmy8TBKdXAuKRkwr/St1//m3Ic
+        anee57BI7c70FyFeM8w/Zp2sk/bbxpu2Kv/I9Uv5c+cfvttzY6JkeMwpT9WVjyL0FnLwrrV8
+        9Man8ZqMbp/6Fe5mO0nm7V1+9mczlcSFreP7Ui/PZTdzamC2WyXhtX1n8seWh5slqvY/fqvu
+        niupL7zKUlQjc5PyjlemSizFGYmGWsxFxYkAxmRefM8CAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrCLMWRmVeSWpSXmKPExsVy+t/xa7ozc0ViDf63qFtsnLGe1eJY2xN2
+        i+bF69kslv69x2hx/vwGdovLu+awWcw4v4/JYtGyVmaLdRtvsVusPXIXqG7TFFYHbo+ds+6y
+        eyze85LJY9OqTjaP/XPXsHv0bVnF6LFhyz8Wj8+b5ALYo7hsUlJzMstSi/TtErgyLlw/x1Lw
+        m6vi0qXVTA2MfZxdjBwcEgImErv+V3cxcnEICSxhlHjQ+4mxi5ETyGlkknj5RxDEZhMwlOh6
+        28UGYosIOEgsWXqHDaSBWaCRWeL3jrOsIAlhAReJ5beamUBsFgFViWmzD7OD2LwCthIt39+D
+        2RIC8hKrNxxgBrE5Bewkjk6bzA6xzFbiavt69gmMPAsYGVYxiqSWFuem5xYb6RUn5haX5qXr
+        JefnbmIEht22Yz+37GDsehd8iFGAg1GJh3fFTuFYIdbEsuLK3EOMEhzMSiK8+WEisUK8KYmV
+        ValF+fFFpTmpxYcYpTlYlMR5OwQOxggJpCeWpGanphakFsFkmTg4pRoYmz9f8Oq7xJd8R9Eo
+        Q2aViKuc3MEjX2Wl5Qw+WbZf359rYTD/x2f+M7u5Jj7JMf56e8bSteorHCdMepyf+dZNSaF5
+        xfnE7cZ7PYLnvhIXKRH0mHXt34e9Nz+kuueHcNn9qm891VJT+cbUVnG5hRyvp22f5JMM2Rei
+        Exd+0bjzOMt475pz5dMClViKMxINtZiLihMBqBqAYzcCAAA=
+X-CMS-MailID: 20190627071745eucas1p1c171dcafd92fe51c99dc102949de6c99
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20190627071745eucas1p1fa1b9d46e67b131522f49d73ac12d8ed
+X-CMS-RootMailID: 20190627071745eucas1p1c171dcafd92fe51c99dc102949de6c99
 References: <20190627071726.30467-1-m.szyprowski@samsung.com>
-        <CGME20190627071745eucas1p1fa1b9d46e67b131522f49d73ac12d8ed@eucas1p1.samsung.com>
+        <CGME20190627071745eucas1p1c171dcafd92fe51c99dc102949de6c99@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Exynos5 SoCs needs to calibrate USB3.0 DRD PHY after every XHCI HCD
-reset. This patch adds support for instantiating Exynos5-specific variant
-of XHCI-plat driver, which handles the required USB3.0 DRD PHY
-calibration.
+Calls to USB2 generic PHY calibrate() method were added by commit
+d8c80bb3b55b ("phy: exynos5-usbdrd: Calibrate LOS levels for
+exynos5420/5800"), but it turned out that the mentioned patch worked only
+by the pure luck and fixed only one use case. To fix the issues with PHY
+calibration it has been moved to XHCI HCD driver, what allows to perform
+calibration in the proper time window. This patch removes those calls
+from DWC3 driver, as they are no longer needed there.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- drivers/usb/dwc3/Kconfig       |  1 +
- drivers/usb/dwc3/core.c        |  1 +
- drivers/usb/dwc3/core.h        |  1 +
- drivers/usb/dwc3/dwc3-exynos.c | 64 +++++++++++++++++++++++-----------
- drivers/usb/dwc3/host.c        |  2 +-
- 5 files changed, 47 insertions(+), 22 deletions(-)
+ drivers/usb/dwc3/core.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/usb/dwc3/Kconfig b/drivers/usb/dwc3/Kconfig
-index 89abc6078703..badf86dfb027 100644
---- a/drivers/usb/dwc3/Kconfig
-+++ b/drivers/usb/dwc3/Kconfig
-@@ -67,6 +67,7 @@ config USB_DWC3_OMAP
- config USB_DWC3_EXYNOS
- 	tristate "Samsung Exynos Platform"
- 	depends on (ARCH_EXYNOS || COMPILE_TEST) && OF
-+	select USB_XHCI_EXYNOS if USB_XHCI_PLATFORM
- 	default USB_DWC3
- 	help
- 	  Recent Exynos5 SoCs ship with one DesignWare Core USB3 IP inside,
 diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-index c9bb93a2c81e..baa029ceede9 100644
+index baa029ceede9..f62e8442c614 100644
 --- a/drivers/usb/dwc3/core.c
 +++ b/drivers/usb/dwc3/core.c
-@@ -1303,6 +1303,7 @@ static void dwc3_get_properties(struct dwc3 *dwc)
- 				    &dwc->hsphy_interface);
- 	device_property_read_u32(dev, "snps,quirk-frame-length-adjustment",
- 				 &dwc->fladj);
-+	device_property_read_string(dev, "snps,xhci_variant", &dwc->hcd_name);
- 
- 	dwc->dis_metastability_quirk = device_property_read_bool(dev,
- 				"snps,dis_metastability_quirk");
-diff --git a/drivers/usb/dwc3/core.h b/drivers/usb/dwc3/core.h
-index 3dd783b889cb..1b8f5f5814a4 100644
---- a/drivers/usb/dwc3/core.h
-+++ b/drivers/usb/dwc3/core.h
-@@ -1176,6 +1176,7 @@ struct dwc3 {
- 	u8			tx_max_burst_prd;
- 
- 	const char		*hsphy_interface;
-+	const char		*hcd_name;
- 
- 	unsigned		connected:1;
- 	unsigned		delayed_status:1;
-diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-exynos.c
-index c1e9ea621f41..4e847073e85e 100644
---- a/drivers/usb/dwc3/dwc3-exynos.c
-+++ b/drivers/usb/dwc3/dwc3-exynos.c
-@@ -13,6 +13,7 @@
- #include <linux/slab.h>
- #include <linux/platform_device.h>
- #include <linux/clk.h>
-+#include <linux/dma-mapping.h>
- #include <linux/of.h>
- #include <linux/of_platform.h>
- #include <linux/regulator/consumer.h>
-@@ -35,22 +36,20 @@ struct dwc3_exynos {
- 
- 	struct regulator	*vdd33;
- 	struct regulator	*vdd10;
-+	struct platform_device	*dwc3;
- };
- 
--static int dwc3_exynos_remove_child(struct device *dev, void *unused)
--{
--	struct platform_device *pdev = to_platform_device(dev);
--
--	platform_device_unregister(pdev);
--
--	return 0;
--}
-+static const struct property_entry dwc3_exynos_properties[] = {
-+	PROPERTY_ENTRY_STRING("snps,xhci_variant", "exynos5-dwc3-xhci"),
-+	{}
-+};
- 
- static int dwc3_exynos_probe(struct platform_device *pdev)
- {
- 	struct dwc3_exynos	*exynos;
- 	struct device		*dev = &pdev->dev;
--	struct device_node	*node = dev->of_node;
-+	struct device_node	*node = dev->of_node, *child;
-+	struct platform_device	*dwc3;
- 	const struct dwc3_exynos_driverdata *driver_data;
- 	int			i, ret;
- 
-@@ -109,21 +108,43 @@ static int dwc3_exynos_probe(struct platform_device *pdev)
- 		goto vdd10_err;
- 	}
- 
--	if (node) {
--		ret = of_platform_populate(node, NULL, NULL, dev);
--		if (ret) {
--			dev_err(dev, "failed to add dwc3 core\n");
--			goto populate_err;
--		}
--	} else {
--		dev_err(dev, "no device node, failed to add dwc3 core\n");
--		ret = -ENODEV;
--		goto populate_err;
-+	child = of_get_next_child(node, NULL);
-+	if (!child) {
-+		dev_err(dev, "Failed to find DWC3 core device node\n");
-+		goto dwc3_child_err;
-+	}
-+
-+	dwc3 = of_device_alloc(child, NULL, dev);
-+	if (!dwc3) {
-+		dev_err(dev, "Failed to allocate DWC3 core device\n");
-+		goto dwc3_alloc_err;
-+	}
-+
-+	dwc3->dev.coherent_dma_mask = DMA_BIT_MASK(32);
-+	dwc3->dev.dma_mask = &dwc3->dev.coherent_dma_mask;
-+	dwc3->dev.bus = &platform_bus_type;
-+
-+	ret = platform_device_add_properties(dwc3, dwc3_exynos_properties);
-+	if (ret < 0) {
-+		dev_err(dev, "Failed to add properties to DWC3 device\n");
-+		goto dwc3_props_err;
-+	}
-+
-+	ret = of_device_add(dwc3);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Failed to register DWC3 core device\n");
-+		goto dwc3_props_err;
- 	}
-+	exynos->dwc3 = dwc3;
-+	of_node_put(child);
- 
- 	return 0;
- 
--populate_err:
-+dwc3_props_err:
-+	platform_device_put(dwc3);
-+dwc3_alloc_err:
-+	of_node_put(child);
-+dwc3_child_err:
- 	regulator_disable(exynos->vdd10);
- vdd10_err:
- 	regulator_disable(exynos->vdd33);
-@@ -142,7 +163,8 @@ static int dwc3_exynos_remove(struct platform_device *pdev)
- 	struct dwc3_exynos	*exynos = platform_get_drvdata(pdev);
- 	int i;
- 
--	device_for_each_child(&pdev->dev, NULL, dwc3_exynos_remove_child);
-+	of_device_unregister(exynos->dwc3);
-+	platform_device_put(exynos->dwc3);
- 
- 	for (i = exynos->num_clks - 1; i >= 0; i--)
- 		clk_disable_unprepare(exynos->clks[i]);
-diff --git a/drivers/usb/dwc3/host.c b/drivers/usb/dwc3/host.c
-index f55947294f7c..b526d0c78c3b 100644
---- a/drivers/usb/dwc3/host.c
-+++ b/drivers/usb/dwc3/host.c
-@@ -71,7 +71,7 @@ int dwc3_host_init(struct dwc3 *dwc)
- 	dwc->xhci_resources[1].flags = res->flags;
- 	dwc->xhci_resources[1].name = res->name;
- 
--	xhci = platform_device_alloc("xhci-hcd", PLATFORM_DEVID_AUTO);
-+	xhci = platform_device_alloc(dwc->hcd_name, PLATFORM_DEVID_AUTO);
- 	if (!xhci) {
- 		dev_err(dwc->dev, "couldn't allocate xHCI device\n");
- 		return -ENOMEM;
+@@ -168,7 +168,6 @@ static void __dwc3_set_mode(struct work_struct *work)
+ 				otg_set_vbus(dwc->usb2_phy->otg, true);
+ 			phy_set_mode(dwc->usb2_generic_phy, PHY_MODE_USB_HOST);
+ 			phy_set_mode(dwc->usb3_generic_phy, PHY_MODE_USB_HOST);
+-			phy_calibrate(dwc->usb2_generic_phy);
+ 		}
+ 		break;
+ 	case DWC3_GCTL_PRTCAP_DEVICE:
+@@ -1166,7 +1165,6 @@ static int dwc3_core_init_mode(struct dwc3 *dwc)
+ 				dev_err(dev, "failed to initialize host\n");
+ 			return ret;
+ 		}
+-		phy_calibrate(dwc->usb2_generic_phy);
+ 		break;
+ 	case USB_DR_MODE_OTG:
+ 		INIT_WORK(&dwc->drd_work, __dwc3_set_mode);
 -- 
 2.17.1
 
