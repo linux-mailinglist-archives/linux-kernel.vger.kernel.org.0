@@ -2,89 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CC7E578F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 03:34:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF58D578EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 03:31:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726991AbfF0BeC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 21:34:02 -0400
-Received: from mxhk.zte.com.cn ([63.217.80.70]:44400 "EHLO mxhk.zte.com.cn"
+        id S1726963AbfF0Bba (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 21:31:30 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:49004 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726829AbfF0BeC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 21:34:02 -0400
-Received: from mse-fl2.zte.com.cn (unknown [10.30.14.239])
-        by Forcepoint Email with ESMTPS id F12E77F48397E624B942;
-        Thu, 27 Jun 2019 09:33:59 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse-fl2.zte.com.cn with ESMTP id x5R1XKP8032512;
-        Thu, 27 Jun 2019 09:33:20 +0800 (GMT-8)
-        (envelope-from ran.xiaokai@zte.com.cn)
-Received: from fox-host8.localdomain ([10.74.120.8])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2019062709334724-1749299 ;
-          Thu, 27 Jun 2019 09:33:47 +0800 
-From:   Ran Xiaokai <ran.xiaokai@zte.com.cn>
-To:     mingo@redhat.com
-Cc:     peterz@infradead.org, linux-kernel@vger.kernel.org,
-        wang.yi59@zte.com.cn, Ran Xiaokai <ran.xiaokai@zte.com.cn>
-Subject: [PATCH] sched/rt: Remove unnecessary (!rt_rq->tg) check
-Date:   Thu, 27 Jun 2019 09:30:58 +0800
-Message-Id: <1561599058-11857-1-git-send-email-ran.xiaokai@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2019-06-27 09:33:47,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2019-06-27 09:33:25,
-        Serialize complete at 2019-06-27 09:33:25
-X-MAIL: mse-fl2.zte.com.cn x5R1XKP8032512
+        id S1726631AbfF0Bba (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 21:31:30 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B150E308213C;
+        Thu, 27 Jun 2019 01:31:29 +0000 (UTC)
+Received: from xz-x1 (ovpn-12-42.pek2.redhat.com [10.72.12.42])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C83CF19936;
+        Thu, 27 Jun 2019 01:31:24 +0000 (UTC)
+Date:   Thu, 27 Jun 2019 09:31:20 +0800
+From:   Peter Xu <peterx@redhat.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org,
+        Marcelo Tosatti <mtosatti@redhat.com>,
+        Luiz Capitulino <lcapitulino@redhat.com>
+Subject: Re: [PATCH] timer: document TIMER_PINNED
+Message-ID: <20190627013119.GA17087@xz-x1>
+References: <20190618004356.10357-1-peterx@redhat.com>
+ <alpine.DEB.2.21.1906270034520.32342@nanos.tec.linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1906270034520.32342@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.11.4 (2019-03-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Thu, 27 Jun 2019 01:31:29 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-if CONFIG_RT_GROUP_SCHED is configured, every rt_rq belongs to
-a certain task_group. Even top rt_rq belongs to root_task_group.
-So NULL check in sched_rt_runtime() is unnecessary.
+On Thu, Jun 27, 2019 at 12:43:03AM +0200, Thomas Gleixner wrote:
+> Peter,
+> 
+> On Tue, 18 Jun 2019, Peter Xu wrote:
+> > -/*
+> > - * A deferrable timer will work normally when the system is busy, but
+> > - * will not cause a CPU to come out of idle just to service it; instead,
+> > - * the timer will be serviced when the CPU eventually wakes up with a
+> > - * subsequent non-deferrable timer.
+> > +/**
+> > + * @TIMER_DEFERRABLE: A deferrable timer will work normally when the
+> > + * system is busy, but will not cause a CPU to come out of idle just
+> > + * to service it; instead, the timer will be serviced when the CPU
+> > + * eventually wakes up with a subsequent non-deferrable timer.
+> >   *
+> > - * An irqsafe timer is executed with IRQ disabled and it's safe to wait for
+> > - * the completion of the running instance from IRQ handlers, for example,
+> > - * by calling del_timer_sync().
+> > + * @TIMER_IRQSAFE: An irqsafe timer is executed with IRQ disabled and
+> > + * it's safe to wait for the completion of the running instance from
+> > + * IRQ handlers, for example, by calling del_timer_sync().
+> >   *
+> >   * Note: The irq disabled callback execution is a special case for
+> >   * workqueue locking issues. It's not meant for executing random crap
+> >   * with interrupts disabled. Abuse is monitored!
+> > + *
+> > + * @TIMER_PINNED: A pinned timer will not be affected by timer
+> > + * migration so it will always be run on a static cpu that was
+> > + * specified.
+> 
+> That's a bit misleading.
+> 
+> The timer pinned flag prevents the MOHZ timer placement heuristics to take
+> effect. That means that the timer is enqueued on the CPU on which the
+> enqueue function is invoked. 
 
-Signed-off-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
----
- kernel/sched/rt.c | 12 ++----------
- 1 file changed, 2 insertions(+), 10 deletions(-)
+Right.  I thought these details could be hidden from the API layer so
+timer users won't need to know these details (neither about NOHZ, nor
+about the fact that the action of queuing the timer is the thing that
+really matters, because add_timer_on() can hide all these), but it's
+also ok to me if you prefer them to be exposed to the users.
 
-diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-index 1e6b909dca36..803e8b86c6f5 100644
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -436,16 +436,13 @@ static inline int on_rt_rq(struct sched_rt_entity *rt_se)
- 	return rt_se->on_rq;
- }
- 
--#ifdef CONFIG_RT_GROUP_SCHED
--
- static inline u64 sched_rt_runtime(struct rt_rq *rt_rq)
- {
--	if (!rt_rq->tg)
--		return RUNTIME_INF;
--
- 	return rt_rq->rt_runtime;
- }
- 
-+#ifdef CONFIG_RT_GROUP_SCHED
-+
- static inline u64 sched_rt_period(struct rt_rq *rt_rq)
- {
- 	return ktime_to_ns(rt_rq->tg->rt_bandwidth.rt_period);
-@@ -561,11 +558,6 @@ static inline struct rt_bandwidth *sched_rt_bandwidth(struct rt_rq *rt_rq)
- 
- #else /* !CONFIG_RT_GROUP_SCHED */
- 
--static inline u64 sched_rt_runtime(struct rt_rq *rt_rq)
--{
--	return rt_rq->rt_runtime;
--}
--
- static inline u64 sched_rt_period(struct rt_rq *rt_rq)
- {
- 	return ktime_to_ns(def_rt_bandwidth.rt_period);
+> 
+> > + * Note: neither timer_setup() nor mod_timer() will
+> > + * guarantee correct pinning of timers.  One should always use
+> > + * add_timer_on() when arm the timer to guarantee that the timer will
+> > + * be pinned to the target CPU correctly.
+> 
+> I'd rather say:
+> 
+>     That means that pinned timers are not guaranteed to stay on the
+>     initialy selected CPU. They move to the CPU on which the enqueue
+>     function is invoked via mod_timer() or add_timer().
+> 
+>     If the timer should be placed on a particular CPU then add_timer_on()
+>     has to be used.
+> 
+> Or something like that. Too tired to think about it right now, but you get
+> the idea.
+
+Yes, let me give it another shot soon...  Thanks,
+
 -- 
-2.15.2
-
+Peter Xu
