@@ -2,62 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BAA4E58D66
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 23:52:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4704F58D69
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 23:52:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726579AbfF0Vwe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 17:52:34 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:50247 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726384AbfF0Vwd (ORCPT
+        id S1726667AbfF0Vww (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 17:52:52 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:42901 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726384AbfF0Vwv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 17:52:33 -0400
-Received: from 79.184.254.216.ipv4.supernova.orange.pl (79.184.254.216) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.267)
- id 85ea1641cc35ec6f; Thu, 27 Jun 2019 23:52:31 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2 1/5] cpufreq: Remove the redundant !setpolicy check
-Date:   Thu, 27 Jun 2019 23:52:31 +0200
-Message-ID: <2485108.CxIRPt9KNH@kreacher>
-In-Reply-To: <b9bac95bcc36f5f70e910e4801be5d4f8fd32d0c.1560999838.git.viresh.kumar@linaro.org>
-References: <cover.1560999838.git.viresh.kumar@linaro.org> <b9bac95bcc36f5f70e910e4801be5d4f8fd32d0c.1560999838.git.viresh.kumar@linaro.org>
+        Thu, 27 Jun 2019 17:52:51 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5RLqiID465029
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Thu, 27 Jun 2019 14:52:44 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5RLqiID465029
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019061801; t=1561672365;
+        bh=khn3r00Mh/oll3SSxEsnbv3xA1Z7S/uSRwMBTSlDevs=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=pANqH+EeH7+SsPxR8hRgsSImY+lQBHI7vFclhD/uxnBHAnMj23FVqX2ChvW2mCfhA
+         yfzUV6xYd8Ku2MbnvJZpp8C7k2VuBe6jsaYC/2nsmWODgZs8/iPyuDdV07duqOd1h6
+         wfTidXLvVuvGtgYNmx06nnvj5YJ7cwVFlpzGtMebutUIjadIq5jRVTfTrbhi6rNcN3
+         jTMpqQaIneAO5J7x2Ul4PbM2oOfLFi46/U1lDUmbFbUgoafqtvCxcY3sWqW0leHwFL
+         bB6cEaOPpaczbG9xXWMdZLvlLj8+g/z8+VyynygT6girD3QJ0TL+x94W3fPjuZBIDw
+         hWQ4gJ7sjsxdw==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5RLqirW465026;
+        Thu, 27 Jun 2019 14:52:44 -0700
+Date:   Thu, 27 Jun 2019 14:52:44 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Dianzhang Chen <tipbot@zytor.com>
+Message-ID: <tip-993773d11d45c90cb1c6481c2638c3d9f092ea5b@git.kernel.org>
+Cc:     dianzhangchen0@gmail.com, hpa@zytor.com, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de
+Reply-To: tglx@linutronix.de, mingo@kernel.org,
+          linux-kernel@vger.kernel.org, hpa@zytor.com,
+          dianzhangchen0@gmail.com
+In-Reply-To: <1561524630-3642-1-git-send-email-dianzhangchen0@gmail.com>
+References: <1561524630-3642-1-git-send-email-dianzhangchen0@gmail.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/pti] x86/tls: Fix possible spectre-v1 in
+ do_get_thread_area()
+Git-Commit-ID: 993773d11d45c90cb1c6481c2638c3d9f092ea5b
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=2.4 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_12_24,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
+        DKIM_VALID_EF,FREEMAIL_FORGED_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Level: **
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday, June 20, 2019 5:05:46 AM CEST Viresh Kumar wrote:
-> cpufreq_start_governor() is only called for !setpolicy case, checking it
-> again is not required.
-> 
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
->  drivers/cpufreq/cpufreq.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-> index 85ff958e01f1..54befd775bd6 100644
-> --- a/drivers/cpufreq/cpufreq.c
-> +++ b/drivers/cpufreq/cpufreq.c
-> @@ -2153,7 +2153,7 @@ static int cpufreq_start_governor(struct cpufreq_policy *policy)
->  
->  	pr_debug("%s: for CPU %u\n", __func__, policy->cpu);
->  
-> -	if (cpufreq_driver->get && !cpufreq_driver->setpolicy)
-> +	if (cpufreq_driver->get)
->  		cpufreq_update_current_freq(policy);
->  
->  	if (policy->governor->start) {
-> 
+Commit-ID:  993773d11d45c90cb1c6481c2638c3d9f092ea5b
+Gitweb:     https://git.kernel.org/tip/993773d11d45c90cb1c6481c2638c3d9f092ea5b
+Author:     Dianzhang Chen <dianzhangchen0@gmail.com>
+AuthorDate: Wed, 26 Jun 2019 12:50:30 +0800
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Thu, 27 Jun 2019 23:48:04 +0200
 
-Applied, thanks!
+x86/tls: Fix possible spectre-v1 in do_get_thread_area()
 
+The index to access the threads tls array is controlled by userspace
+via syscall: sys_ptrace(), hence leading to a potential exploitation
+of the Spectre variant 1 vulnerability.
 
+The index can be controlled from:
+        ptrace -> arch_ptrace -> do_get_thread_area.
 
+Fix this by sanitizing the user supplied index before using it to access
+the p->thread.tls_array.
+
+Signed-off-by: Dianzhang Chen <dianzhangchen0@gmail.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: bp@alien8.de
+Cc: hpa@zytor.com
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/1561524630-3642-1-git-send-email-dianzhangchen0@gmail.com
+
+---
+ arch/x86/kernel/tls.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/kernel/tls.c b/arch/x86/kernel/tls.c
+index a5b802a12212..71d3fef1edc9 100644
+--- a/arch/x86/kernel/tls.c
++++ b/arch/x86/kernel/tls.c
+@@ -5,6 +5,7 @@
+ #include <linux/user.h>
+ #include <linux/regset.h>
+ #include <linux/syscalls.h>
++#include <linux/nospec.h>
+ 
+ #include <linux/uaccess.h>
+ #include <asm/desc.h>
+@@ -220,6 +221,7 @@ int do_get_thread_area(struct task_struct *p, int idx,
+ 		       struct user_desc __user *u_info)
+ {
+ 	struct user_desc info;
++	int index;
+ 
+ 	if (idx == -1 && get_user(idx, &u_info->entry_number))
+ 		return -EFAULT;
+@@ -227,8 +229,11 @@ int do_get_thread_area(struct task_struct *p, int idx,
+ 	if (idx < GDT_ENTRY_TLS_MIN || idx > GDT_ENTRY_TLS_MAX)
+ 		return -EINVAL;
+ 
+-	fill_user_desc(&info, idx,
+-		       &p->thread.tls_array[idx - GDT_ENTRY_TLS_MIN]);
++	index = idx - GDT_ENTRY_TLS_MIN;
++	index = array_index_nospec(index,
++			GDT_ENTRY_TLS_MAX - GDT_ENTRY_TLS_MIN + 1);
++
++	fill_user_desc(&info, idx, &p->thread.tls_array[index]);
+ 
+ 	if (copy_to_user(u_info, &info, sizeof(info)))
+ 		return -EFAULT;
