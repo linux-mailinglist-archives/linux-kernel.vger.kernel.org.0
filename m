@@ -2,195 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 745B057D6E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 09:46:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E76857D72
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 09:47:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726440AbfF0HqS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 03:46:18 -0400
-Received: from lb3-smtp-cloud7.xs4all.net ([194.109.24.31]:42561 "EHLO
-        lb3-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726059AbfF0HqS (ORCPT
+        id S1726526AbfF0HrO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 03:47:14 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:52652 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726375AbfF0HrL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 03:46:18 -0400
-Received: from [192.168.2.10] ([46.9.252.75])
-        by smtp-cloud7.xs4all.net with ESMTPA
-        id gP6ihdi1JF85OgP6lhnC3c; Thu, 27 Jun 2019 09:46:16 +0200
-Subject: Re: [Linux-kernel-mentees] [PATCH v4 RESEND] Media: Radio: Change
- devm_k*alloc to k*alloc
-To:     Luke Nowakowski-Krijger <lnowakow@eng.ucsd.edu>
-Cc:     mchehab@kernel.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org
-References: <20190622010438.GA10125@luke-XPS-13>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <a573b294-a6e6-be8c-d5ec-1080166773d7@xs4all.nl>
-Date:   Thu, 27 Jun 2019 09:46:12 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Thu, 27 Jun 2019 03:47:11 -0400
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1hgP7Z-0004VY-F2; Thu, 27 Jun 2019 09:47:05 +0200
+Date:   Thu, 27 Jun 2019 09:47:05 +0200
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
+Cc:     rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Joel Fernandes <joel@joelfernandes.org>
+Subject: Re: [RFC] Deadlock via recursive wakeup via RCU with threadirqs
+Message-ID: <20190627074705.utzk757w4jgpiqtn@linutronix.de>
+References: <20190626135447.y24mvfuid5fifwjc@linutronix.de>
+ <20190626162558.GY26519@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20190622010438.GA10125@luke-XPS-13>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfH/BHMZiytsX8ZZmsaoJpkZqGXJfr/oG9F/51zmWhayYKT/X2vNqPqJBQwEJATluHP8UqtaeQ6fTKP7E40GwU1OGXpvAZrdWcOL7zYLLNzQaKWA70dRl
- cAIl+6jSBRsWbrDBA0fwp8zhXPW4FAX/NT1eI1Ur6/5alUbbIAvrQ8Drun2422gy66EsVmLmorZgjmNEZsnhFy2qTOEL8qyZ3GB3OUEnvvsyFZ2kgBjsgRan
- 7WH/KPkyevLORYHB0CBJXrtxzSLgz92wEl20tPJLJzkLcWIYeijqzob2cCStuhhc5JBGqsHay6xzL1QTE4ZWcMcPQ/NbyUYgxdnjghWBssKpilawMA/ej1Ic
- MUkM8V/n
+Content-Disposition: inline
+In-Reply-To: <20190626162558.GY26519@linux.ibm.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Luke,
-
-On 6/22/19 3:04 AM, Luke Nowakowski-Krijger wrote:
-> Change devm_k*alloc to k*alloc to manually allocate memory 
+On 2019-06-26 09:25:58 [-0700], Paul E. McKenney wrote:
+> On Wed, Jun 26, 2019 at 03:54:47PM +0200, Sebastian Andrzej Siewior wrote:
+> > one of my boxes boots with "threadirqs" and since commit 05f415715ce45
+> > ("rcu: Speed up expedited GPs when interrupting RCU reader") I run
+> > reliably into the following deadlock:
+> > 
+> > | ============================================
+> > | WARNING: possible recursive locking detected
+> > | 5.2.0-rc6 #279 Not tainted
+> > | --------------------------------------------
+> > | (cron)/2109 is trying to acquire lock:
+> > | 0000000088464daa (&p->pi_lock){-.-.}, at: try_to_wake_up+0x37/0x700
+> > |
+> > | but task is already holding lock:
+> > | 0000000088464daa (&p->pi_lock){-.-.}, at: try_to_wake_up+0x37/0x700
+> > |
+> > | other info that might help us debug this:
+> > |  Possible unsafe locking scenario:
+> > |
+> > |        CPU0
+> > |        ----
+> > |   lock(&p->pi_lock);  
+> > |   lock(&p->pi_lock);  
+> > |
+> > |  *** DEADLOCK ***
+> > |
+> > |  May be due to missing lock nesting notation
+> > |
+> > | 4 locks held by (cron)/2109:
+> > |  #0: 00000000c0ae63d9 (&sb->s_type->i_mutex_key){++++}, at: iterate_dir+0x3d/0x170
+> > |  #1: 0000000088464daa (&p->pi_lock){-.-.}, at: try_to_wake_up+0x37/0x700
+> > |  #2: 00000000f62f14cf (&rq->lock){-.-.}, at: try_to_wake_up+0x209/0x700
+> > |  #3: 000000000d32568e (rcu_read_lock){....}, at: cpuacct_charge+0x37/0x1e0
+> > |
+> > | stack backtrace:
+> > | CPU: 3 PID: 2109 Comm: (cron) Not tainted 5.2.0-rc6 #279
+> > | Call Trace:
+> > |  <IRQ>
+> > |  dump_stack+0x67/0x90 
+> > |  __lock_acquire.cold.63+0x142/0x23a
+> > |  lock_acquire+0x9b/0x1a0
+> > |  ? try_to_wake_up+0x37/0x700
+> > |  _raw_spin_lock_irqsave+0x33/0x50
+> > |  ? try_to_wake_up+0x37/0x700
+> > |  try_to_wake_up+0x37/0x700
+> > wake up ksoftirqd
+> > 
+> > |  rcu_read_unlock_special+0x61/0xa0
+> > |  __rcu_read_unlock+0x58/0x60
+> > |  cpuacct_charge+0xeb/0x1e0
+> > |  update_curr+0x15d/0x350
+> > |  enqueue_entity+0x115/0x7e0
+> > |  enqueue_task_fair+0x78/0x450
+> > |  activate_task+0x41/0x90
+> > |  ttwu_do_activate+0x49/0x80
+> > |  try_to_wake_up+0x23f/0x700
+> > 
+> > wake up ksoftirqd
+> > 
+> > |  irq_exit+0xba/0xc0   
+> > |  smp_apic_timer_interrupt+0xb2/0x2a0
+> > |  apic_timer_interrupt+0xf/0x20
+> > |  </IRQ>
+> > 
+> > based one the commit it seems the problem was always there but now the
+> > mix of raise_softirq_irqoff() and set_tsk_need_resched() seems to hit
+> > the window quite reliably. Replacing it with 
+> > 
+> > diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+> > index 1102765f91fd1..baab36f4d0f45 100644
+> > --- a/kernel/rcu/tree_plugin.h
+> > +++ b/kernel/rcu/tree_plugin.h
+> > @@ -627,14 +627,7 @@ static void rcu_read_unlock_special(struct task_struct *t)
+> >         if (preempt_bh_were_disabled || irqs_were_disabled) {
+> >                 WRITE_ONCE(t->rcu_read_unlock_special.b.exp_hint, false);
+> >                 /* Need to defer quiescent state until everything is enabled. */
+> > -               if (irqs_were_disabled) {
+> > -                       /* Enabling irqs does not reschedule, so... */
+> > -                       raise_softirq_irqoff(RCU_SOFTIRQ);
+> > -               } else {
+> > -                       /* Enabling BH or preempt does reschedule, so... */
+> > -                       set_tsk_need_resched(current);
+> > -                       set_preempt_need_resched();
+> > -               }
+> > +               raise_softirq_irqoff(RCU_SOFTIRQ);
+> >                 local_irq_restore(flags);
+> >                 return;
+> >         }
+> > 
+> > will make it go away.
 > 
-> The manual allocation and freeing of memory is necessary because when
-> the USB radio is disconnected, the memory associated with devm_k*alloc
-> is freed. Meaning if we still have unresolved references to the radio
-> device, then we get use-after-free errors. 
+> Color me confused.  Neither set_tsk_need_resched() nor
+> set_preempt_need_resched() acquire locks or do wakeups.
+
+This is correct.
+
+> Yet raise_softirq_irqoff() can do a wakeup if not called
+> from hardirq/softirq/NMI context, so I would instead expect
+> raise_softirq_irqoff() to be the source of troubles when
+> interrupts are threaded.
+
+also correct and it is.
+
+> What am I missing here?
+
+Timing. If raise_softirq_irqoff() is always invoked then we end up in a
+state where the thread either isn't invoked or is already running and
+the wake up is skipped early (because ->state == TASK_RUNNING or
+something).
+Please be aware that timing is crucial here to trigger it. I have a
+test-case running as an init-script which triggers the bug. Running the
+tast-case later manually does not trigger it.
+
+> > Any suggestions?
 > 
-> This patch fixes this by manually allocating memory, and freeing it in 
-> the v4l2.release callback that gets called when the last radio device
-> exits. 
-> 
-> Reported-and-tested-by: syzbot+a4387f5b6b799f6becbf@syzkaller.appspotmail.com
-> Signed-off-by: Luke Nowakowski-Krijger <lnowakow@eng.ucsd.edu>
+> Does something like IRQ work help?  Please see -rcu commit 0864f057b050
+> ("rcu: Use irq_work to get scheduler's attention in clean context")
+> for one way of doing this.  Perhaps in combination with -rcu commit
+> a69987a515c8 ("rcu: Simplify rcu_read_unlock_special() deferred wakeups").
 
-I've tested this patch with my raremono (I must be the last person on earth
-to 1) have one, and 2) run it under linux!) and it works!
+I don't think this will help. The problem is that irq_exit() invokes
+wake_up_process(ksoftirqd). This function will invoke itself on the same
+task as part of rcu_unlock() / rcu_read_unlock_special(). I don't think
+this changes here.
 
-I'm accepting this patch, but I made some small changes, so for future reference:
+> 							Thanx, Paul
 
-1) The subject should have the driver name as prefix, so:
-
-   media: radio-raremono: change devm_k*alloc to k*alloc
-
-   That way reviewers can see based on the prefix who should review the patch.
-   Radio driver are my responsibility, so that would be me.
-
-2) Always run 'checkpatch.pl --strict'. It reported some minor issues:
-
-CHECK: Please don't use multiple blank lines
-#17: FILE: drivers/media/radio/radio-raremono.c:280:
-+
-+
-
-CHECK: Prefer kzalloc(sizeof(*radio)...) over kzalloc(sizeof(struct raremono_device)...)
-#30: FILE: drivers/media/radio/radio-raremono.c:305:
-+       radio = kzalloc(sizeof(struct raremono_device), GFP_KERNEL);
-
-
-I've fixed these issues, but next time remember to run checkpatch before submitting
-the patch.
-
-Regards,
-
-	Hans
-
-> ---
-> Changes in RESEND: 
-> + Added reported-and-tested-by tag
-> + Further updated description
-> - Removed whitespace in patch description
-> Changes in v4:
-> - Removed whitespace to fix checkpatch.pl errors
-> Changes in v3:
-> + Update release method in v2 for v4l2.release callback 
-> + Assign v4l2.release callback to release method
-> - Remove vdev.release callback used in v2
-> Changes in v2:
-> + Create raremono_device_release method
-> + Assign vdev.release to release method
-> + Added gotos for better memory cleanup
-> - Removed incorrect kfrees in usb_release in v1
-> Changes in v1: 
-> + Added k*allocs to raremono_device struct, and buffs
-> + Added kfrees on error conditions in usb_probe
-> + Added kfrees in usb_release
-> - Removed devm_k*allocs
-> 
->  drivers/media/radio/radio-raremono.c | 31 +++++++++++++++++++++-------
->  1 file changed, 24 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/media/radio/radio-raremono.c b/drivers/media/radio/radio-raremono.c
-> index 5e782b3c2fa9..a5b12372eccb 100644
-> --- a/drivers/media/radio/radio-raremono.c
-> +++ b/drivers/media/radio/radio-raremono.c
-> @@ -271,6 +271,15 @@ static int vidioc_g_frequency(struct file *file, void *priv,
->  	return 0;
->  }
->  
-> +static void raremono_device_release(struct v4l2_device *v4l2_dev)
-> +{
-> +	struct raremono_device *radio = to_raremono_dev(v4l2_dev);
-> +
-> +	kfree(radio->buffer);
-> +	kfree(radio);
-> +}
-> +
-> +
->  /* File system interface */
->  static const struct v4l2_file_operations usb_raremono_fops = {
->  	.owner		= THIS_MODULE,
-> @@ -295,12 +304,14 @@ static int usb_raremono_probe(struct usb_interface *intf,
->  	struct raremono_device *radio;
->  	int retval = 0;
->  
-> -	radio = devm_kzalloc(&intf->dev, sizeof(struct raremono_device), GFP_KERNEL);
-> -	if (radio)
-> -		radio->buffer = devm_kmalloc(&intf->dev, BUFFER_LENGTH, GFP_KERNEL);
-> -
-> -	if (!radio || !radio->buffer)
-> +	radio = kzalloc(sizeof(struct raremono_device), GFP_KERNEL);
-> +	if (!radio)
-> +		return -ENOMEM;
-> +	radio->buffer = kmalloc(BUFFER_LENGTH, GFP_KERNEL);
-> +	if (!radio->buffer) {
-> +		kfree(radio);
->  		return -ENOMEM;
-> +	}
->  
->  	radio->usbdev = interface_to_usbdev(intf);
->  	radio->intf = intf;
-> @@ -324,7 +335,8 @@ static int usb_raremono_probe(struct usb_interface *intf,
->  	if (retval != 3 ||
->  	    (get_unaligned_be16(&radio->buffer[1]) & 0xfff) == 0x0242) {
->  		dev_info(&intf->dev, "this is not Thanko's Raremono.\n");
-> -		return -ENODEV;
-> +		retval = -ENODEV;
-> +		goto free_mem;
->  	}
->  
->  	dev_info(&intf->dev, "Thanko's Raremono connected: (%04X:%04X)\n",
-> @@ -333,7 +345,7 @@ static int usb_raremono_probe(struct usb_interface *intf,
->  	retval = v4l2_device_register(&intf->dev, &radio->v4l2_dev);
->  	if (retval < 0) {
->  		dev_err(&intf->dev, "couldn't register v4l2_device\n");
-> -		return retval;
-> +		goto free_mem;
->  	}
->  
->  	mutex_init(&radio->lock);
-> @@ -345,6 +357,7 @@ static int usb_raremono_probe(struct usb_interface *intf,
->  	radio->vdev.ioctl_ops = &usb_raremono_ioctl_ops;
->  	radio->vdev.lock = &radio->lock;
->  	radio->vdev.release = video_device_release_empty;
-> +	radio->v4l2_dev.release = raremono_device_release;
->  
->  	usb_set_intfdata(intf, &radio->v4l2_dev);
->  
-> @@ -360,6 +373,10 @@ static int usb_raremono_probe(struct usb_interface *intf,
->  	}
->  	dev_err(&intf->dev, "could not register video device\n");
->  	v4l2_device_unregister(&radio->v4l2_dev);
-> +
-> +free_mem:
-> +	kfree(radio->buffer);
-> +	kfree(radio);
->  	return retval;
->  }
->  
-> 
-
+Sebastian
