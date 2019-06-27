@@ -2,58 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E22B158920
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 19:46:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2991758926
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 19:46:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727229AbfF0Rpx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 13:45:53 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:45975 "EHLO
+        id S1726903AbfF0RqE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 13:46:04 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:40898 "EHLO
         mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726673AbfF0Rpw (ORCPT
+        with ESMTP id S1726673AbfF0RqC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 13:45:52 -0400
-Received: by mail-pf1-f196.google.com with SMTP id r1so1575050pfq.12;
-        Thu, 27 Jun 2019 10:45:52 -0700 (PDT)
+        Thu, 27 Jun 2019 13:46:02 -0400
+Received: by mail-pf1-f196.google.com with SMTP id p184so1589109pfp.7;
+        Thu, 27 Jun 2019 10:46:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=YPi4AE8LxuYHFBBgFOmJZOFeT/d8VNiM/d5F7Gh71kU=;
-        b=qc257Vlq5v3rz8tkmg54SqUeROUxhOFmh2IPr9SxiwUKQHob3vswRZggYISuxnQkUE
-         xPypkdOYiyDI4FWKxNqg22SUW7z9e+xA5b8GxpnKTmEQzvaCLUqVJb0wDaTo5o551TDj
-         /z99YLG+gpEM/N14Tumu+/j/UpAlWLyO19PmDoku8BnXwmGoeSUr42Xh4+blMAHOqKqI
-         lF+Z6F12SD2xOYA+RFNh6jQyOBhodeDwcbrlCzNMzlZ1JxS3Frnp2kOdLwYxc9NkOZIK
-         tiNWx4gqsR7hzXw04EYraUWRlQ9XE3GI8mKpW0SY1cJm9dmupubQFL7A3Cm83grnfyBD
-         M9tg==
+        bh=o+36uH8gml1ZGrQYdSI5lxoYpgHdYwkkvcnlEpAcvxc=;
+        b=VLc3SIuFHR72K59KZtvjOHJR/Pb65re/R0PSiTa7GgEJCKa4LwkgAGkv6XffTvPnDf
+         1yTzNqpIX8etis+JYRNEEpn0giOtH+huaUymEw8KXFLfhhLQli1fNGNIVLxNQew4NGya
+         O1hpQd+hHdTsNy7wBMXxRnK+CXdZRODKyD+MP/oULWok3L2ZACH2gxxKUW4OLolSBmDj
+         X7jJ4/9ZbJDbA9Kj8BVHXQdKUPHKnQs1CUITfwxEmpWeWLPTazDx+Hf9v3G2I0ZZ0M5C
+         VDCtYrOmtFEn1WIKY+rtog90+Jas3FkIcB/2qNadRIW7WiD/dRYDtqpMehWVjAqDuezq
+         Stxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=YPi4AE8LxuYHFBBgFOmJZOFeT/d8VNiM/d5F7Gh71kU=;
-        b=Iwtdq1zzjp42oDfc1BitdVG2u9IStBiwP8Q9Imcuffoe/A3mV66u9KojXwX9ZST1W4
-         S1/acBx5So5L+wEpfYdbvIhuq3TD9jzvKl88wbon/RdlB2wjH5+hx8FS6sOFj7eAFd0P
-         l9oy8C5/y4imFcQqm07+zpZawXrrqWCE8K8yGs8gmSP4OZuzEELP49/3jV3xDnLxEo8A
-         CHgnJIlrM6/mW1j1FzAul8lt3kFZv0FW8S2Urc/cP7WioyhRuXeLnoUEyNKA3lctWKBU
-         Ez330f81DsGfy490ZE03IpFMilK1FouAt2oAXlr8hNaBvOulmr4RoJ5ALH9yVAHKAWlQ
-         yaBA==
-X-Gm-Message-State: APjAAAVNoh6UM9NtO6ZhjztzhIahH9n7QdCDNjLYM+KCLCZjdDLTBniB
-        MYpQq54Ve1ysoectsZhNxdM=
-X-Google-Smtp-Source: APXvYqzvyYWWf3xC0vIBqtCIreSYFokq6bqpYgaYx6wEZKhRVl/Gzon5TUvkit6x5VXJcWrBkvrQ4Q==
-X-Received: by 2002:a17:90a:2343:: with SMTP id f61mr7535840pje.130.1561657551910;
-        Thu, 27 Jun 2019 10:45:51 -0700 (PDT)
+        bh=o+36uH8gml1ZGrQYdSI5lxoYpgHdYwkkvcnlEpAcvxc=;
+        b=qcbLcdhFrpMsN/+qhYLs6k89unRZGIyAPyRt+ZINbXy4+GqUAvvJp0IeQQ9XK9Hm/j
+         dm3A6UjHEEvzTUMsBDupny91k5zwL9tQiD4WqyCuv3MCEPxyOpqBIC30kIEpzw4hS/1p
+         RcNC9w1Tlaidv4xtynpM5/kPQx1TW+9qevFqDP6SVOMwzZ5+zlPpmEHQi43K1n6MMcE6
+         OXHO019AAyAEjcma4JkNU2x0bVcTPCkhk5RLtdkPv15IkA4KITPWBw43JPs9mK3IMcJ9
+         OIMLcH8ktEvjar0dro+sUD3VPiiT6kZgMexDsygTdHpLae40xMutM2yRybAKVGjRlDcf
+         tTTg==
+X-Gm-Message-State: APjAAAXQ8YOSrv9Js8TjTWuSs4HhHjQjuzXknFe6wk9RoAnqSiWazS64
+        YDZPKaTD+O5D3Q6HxIqDtkxUxbKTLU4mVg==
+X-Google-Smtp-Source: APXvYqy92XNMInm4ZAyBxfWWY7IUZN67sKW9UCkJ/NmXuwjrYc7ozMB0cXMD2ituSSV+LXP3GbuBfQ==
+X-Received: by 2002:a63:4d63:: with SMTP id n35mr4891540pgl.43.1561657561653;
+        Thu, 27 Jun 2019 10:46:01 -0700 (PDT)
 Received: from hfq-skylake.ipads-lab.se.sjtu.edu.cn ([202.120.40.82])
-        by smtp.googlemail.com with ESMTPSA id s17sm2378226pgi.9.2019.06.27.10.45.49
+        by smtp.googlemail.com with ESMTPSA id h1sm3452403pfo.152.2019.06.27.10.45.59
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Jun 2019 10:45:51 -0700 (PDT)
+        Thu, 27 Jun 2019 10:46:01 -0700 (PDT)
 From:   Fuqian Huang <huangfq.daxian@gmail.com>
 Cc:     Fuqian Huang <huangfq.daxian@gmail.com>,
-        Subbu Seetharaman <subbu.seetharaman@broadcom.com>,
-        Ketan Mukadam <ketan.mukadam@broadcom.com>,
-        Jitendra Bhivare <jitendra.bhivare@broadcom.com>,
         "James E.J. Bottomley" <jejb@linux.ibm.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Ching Huang <ching2048@areca.com.tw>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 68/87] scsi: be2iscsi: remove memset after dma_alloc_coherent in be_iscsi.c
-Date:   Fri, 28 Jun 2019 01:45:44 +0800
-Message-Id: <20190627174545.6098-1-huangfq.daxian@gmail.com>
+Subject: [PATCH 69/87] scsi: arcmsr: remove memset after dma_coherent in arcmsr_hba.c
+Date:   Fri, 28 Jun 2019 01:45:53 +0800
+Message-Id: <20190627174554.6206-1-huangfq.daxian@gmail.com>
 X-Mailer: git-send-email 2.11.0
 To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -68,21 +67,21 @@ So memset is not needed.
 
 Signed-off-by: Fuqian Huang <huangfq.daxian@gmail.com>
 ---
- drivers/scsi/be2iscsi/be_iscsi.c | 1 -
+ drivers/scsi/arcmsr/arcmsr_hba.c | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/drivers/scsi/be2iscsi/be_iscsi.c b/drivers/scsi/be2iscsi/be_iscsi.c
-index 2058d50d62e1..09d63bac6d80 100644
---- a/drivers/scsi/be2iscsi/be_iscsi.c
-+++ b/drivers/scsi/be2iscsi/be_iscsi.c
-@@ -1081,7 +1081,6 @@ static int beiscsi_open_conn(struct iscsi_endpoint *ep,
- 		return -ENOMEM;
+diff --git a/drivers/scsi/arcmsr/arcmsr_hba.c b/drivers/scsi/arcmsr/arcmsr_hba.c
+index 88053b15c363..a0d0dc83184f 100644
+--- a/drivers/scsi/arcmsr/arcmsr_hba.c
++++ b/drivers/scsi/arcmsr/arcmsr_hba.c
+@@ -727,7 +727,6 @@ static int arcmsr_alloc_ccb_pool(struct AdapterControlBlock *acb)
  	}
- 	nonemb_cmd.size = req_memsize;
--	memset(nonemb_cmd.va, 0, nonemb_cmd.size);
- 	tag = mgmt_open_connection(phba, dst_addr, beiscsi_ep, &nonemb_cmd);
- 	if (!tag) {
- 		beiscsi_log(phba, KERN_ERR, BEISCSI_LOG_CONFIG,
+ 	acb->dma_coherent = dma_coherent;
+ 	acb->dma_coherent_handle = dma_coherent_handle;
+-	memset(dma_coherent, 0, acb->uncache_size);
+ 	acb->ccbsize = roundup_ccbsize;
+ 	ccb_tmp = dma_coherent;
+ 	curr_phy_upper32 = upper_32_bits(dma_coherent_handle);
 -- 
 2.11.0
 
