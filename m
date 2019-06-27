@@ -2,95 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A970957B1A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 07:04:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E41A857B54
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 07:26:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727337AbfF0FEb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 01:04:31 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:46771 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727279AbfF0FE3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 01:04:29 -0400
-Received: by mail-ot1-f68.google.com with SMTP id z23so916070ote.13;
-        Wed, 26 Jun 2019 22:04:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=nsP4OPoyyuGVsj56a75vPqGS9PQmlg/dei1pXS0wrVA=;
-        b=H4s1vftufXCodbOeURMTzz5H0zLx9FKRH5i4Lj1xJRnjKWBNUaMIvJRVpY3+WZm1wB
-         d0oP9wM38G6/W7VbvJSsHCT4k5e60hSEnqZDbbshh05nthhn0nnFTZH2RYy2W6aglkee
-         28VbZDzty8L2VLUBapKwa5oSY70Lh3LFwiadchO8ygReuPSJSO/lXLxFrFgvzoCjbK3C
-         3l/he5/QsKgc4CLrWaXilKEQNbTUOoqqMvF9mlgGdoFzt3j+PPRjPolllNXXPvOp7k+i
-         NjLVsZ2eu1wPm764ESk1JEcgR0YTBzw64uAepMmxF+s6WIfkWCiNNR5Y6XlDP0QJI4Ns
-         XtAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=nsP4OPoyyuGVsj56a75vPqGS9PQmlg/dei1pXS0wrVA=;
-        b=N7MNr0jiqTZYNF5frdxJY48ia1gMjoXXO47sMCwxZE4It6eSOiA4wotYOLda0BkLdq
-         rwWVI3ma+w5xNeMrG9gi4pQIl+a2W4tB9DsNGJVJoVdQXKWT9eXSGTJqPO7JD3Cspdn0
-         1nRKjFJ7uOf48YclA7LZWOJr+SrHrFQelTVVLSybj29/lhd6QenJXv60MWAccQp1sfXx
-         /cjJlrnWGWdrPMK5JeeaWEVM5eAtYBsGBfKAfx0pNnzkDDWw+3v1thZgeXrRe27Z78CD
-         +lkXbca7EbKX38zVPjFwNc2U+WxlfYEG6mB6YnbJiwFvheP/D0PEf3PsrBc3IzQb9slw
-         brqA==
-X-Gm-Message-State: APjAAAX+t2rkqrNU6lThM0UPY39izbWMFAemxi4RSodJ/rMsZDtULbTG
-        OqW1p2RmZ5DVtkmobqWWwCQ=
-X-Google-Smtp-Source: APXvYqwxKC3A5AYTVKV6MY6xj+cu9+9YYA6FAWmYeB4ViGjNN5w8dp6BdGXjNfxZc2fl9W7cLd/a7A==
-X-Received: by 2002:a9d:588a:: with SMTP id x10mr1832241otg.144.1561611869236;
-        Wed, 26 Jun 2019 22:04:29 -0700 (PDT)
-Received: from rYz3n.attlocal.net ([2600:1700:210:3790::48])
-        by smtp.googlemail.com with ESMTPSA id v18sm613318otn.17.2019.06.26.22.04.28
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 26 Jun 2019 22:04:28 -0700 (PDT)
-From:   Jiunn Chang <c0d1n61at3@gmail.com>
-To:     skhan@linuxfoundation.org
-Cc:     linux-kernel-mentees@lists.linuxfoundation.org,
-        linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-        johannes@sipsolutions.net
-Subject: [Linux-kernel-mentees][PATCH v3] nl80211: Fix undefined behavior in bit shift
-Date:   Thu, 27 Jun 2019 00:04:26 -0500
-Message-Id: <20190627050426.17925-3-c0d1n61at3@gmail.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190627032532.18374-4-c0d1n61at3@gmail.com>
-References: <20190627032532.18374-4-c0d1n61at3@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1726465AbfF0F0m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 01:26:42 -0400
+Received: from mga17.intel.com ([192.55.52.151]:36381 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725385AbfF0F0l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 01:26:41 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jun 2019 22:26:40 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,422,1557212400"; 
+   d="scan'208";a="183367026"
+Received: from hao-dev.bj.intel.com ([10.238.157.65])
+  by fmsmga001.fm.intel.com with ESMTP; 26 Jun 2019 22:26:38 -0700
+From:   Wu Hao <hao.wu@intel.com>
+To:     mdf@kernel.org, linux-fpga@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     linux-api@vger.kernel.org, gregkh@linuxfoundation.org,
+        atull@kernel.org, Wu Hao <hao.wu@intel.com>
+Subject: [PATCH v4 0/2] add performance reporting support to FPGA DFL drivers
+Date:   Thu, 27 Jun 2019 13:09:53 +0800
+Message-Id: <1561612195-6081-1-git-send-email-hao.wu@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Shifting signed 32-bit value by 31 bits is undefined.  Changing most
-significant bit to unsigned.
+This patchset adds performance reporting support for FPGA DFL drivers. It
+introduces one pmu to expose userspace interfaces via standard perf API.
+User could use standard perf tool to access perf events exposed via pmu.
 
-Signed-off-by: Jiunn Chang <c0d1n61at3@gmail.com>
----
-Changes included in v3:
-  - remove change log from patch description
+This patchset is splitted from patchset[1] for better review, and version 3
+patch could be found here[2]. Please note that this patchset needs to be
+applied on top of patchset[3][4].
 
-Changes included in v2:
-  - use subsystem specific subject lines
-  - CC required mailing lists
+Main changes from v3:
+ - add more descriptions in doc, including how to use perf tool for these
+   hardware counters. (patch #1)
+ - use standard perf API instead of sysfs entries. (patch #2)
 
- include/uapi/linux/nl80211.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+[1]https://lkml.org/lkml/2019/5/27/11
+[2]https://lkml.org/lkml/2019/5/27/18
+[3]https://lkml.org/lkml/2019/6/27/29
+[4]https://lkml.org/lkml/2019/6/27/49
 
-diff --git a/include/uapi/linux/nl80211.h b/include/uapi/linux/nl80211.h
-index 6f09d1500960..fa7ebbc6ff27 100644
---- a/include/uapi/linux/nl80211.h
-+++ b/include/uapi/linux/nl80211.h
-@@ -5314,7 +5314,7 @@ enum nl80211_feature_flags {
- 	NL80211_FEATURE_TDLS_CHANNEL_SWITCH		= 1 << 28,
- 	NL80211_FEATURE_SCAN_RANDOM_MAC_ADDR		= 1 << 29,
- 	NL80211_FEATURE_SCHED_SCAN_RANDOM_MAC_ADDR	= 1 << 30,
--	NL80211_FEATURE_ND_RANDOM_MAC_ADDR		= 1 << 31,
-+	NL80211_FEATURE_ND_RANDOM_MAC_ADDR		= 1U << 31,
- };
- 
- /**
+Wu Hao (1):
+  fpga: dfl: fme: add performance reporting support
+
+Xu Yilun (1):
+  Documentation: fpga: dfl: add description for performance reporting
+    support
+
+ Documentation/fpga/dfl.txt  |  83 +++++
+ drivers/fpga/Makefile       |   1 +
+ drivers/fpga/dfl-fme-main.c |   4 +
+ drivers/fpga/dfl-fme-perf.c | 871 ++++++++++++++++++++++++++++++++++++++++++++
+ drivers/fpga/dfl-fme.h      |   2 +
+ 5 files changed, 961 insertions(+)
+ create mode 100644 drivers/fpga/dfl-fme-perf.c
+
 -- 
-2.22.0
+1.8.3.1
 
