@@ -2,100 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B36D158271
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 14:24:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 858BA5827C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 14:24:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726952AbfF0MYC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 08:24:02 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:34736 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726308AbfF0MX7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 08:23:59 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0B1AD305E23A;
-        Thu, 27 Jun 2019 12:23:59 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-96.ams2.redhat.com [10.36.116.96])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A6D46600CC;
-        Thu, 27 Jun 2019 12:23:57 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 78CFC9DB6; Thu, 27 Jun 2019 14:23:49 +0200 (CEST)
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     tzimmermann@suse.de, Gerd Hoffmann <kraxel@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        virtualization@lists.linux-foundation.org (open list:DRM DRIVER FOR
-        BOCHS VIRTUAL GPU), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3 5/5] drm/bochs: move bochs_hw_setformat() call
-Date:   Thu, 27 Jun 2019 14:23:48 +0200
-Message-Id: <20190627122348.5833-6-kraxel@redhat.com>
-In-Reply-To: <20190627122348.5833-1-kraxel@redhat.com>
-References: <20190627122348.5833-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Thu, 27 Jun 2019 12:23:59 +0000 (UTC)
+        id S1727002AbfF0MYY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 08:24:24 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:53513 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726375AbfF0MYX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 08:24:23 -0400
+Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hgTRs-00026w-11; Thu, 27 Jun 2019 14:24:20 +0200
+Date:   Thu, 27 Jun 2019 14:24:19 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Zhenzhong Duan <zhenzhong.duan@oracle.com>
+cc:     linux-kernel@vger.kernel.org, mingo@kernel.org, bp@alien8.de,
+        hpa@zytor.com, boris.ostrovsky@oracle.com, jgross@suse.com,
+        sstabellini@kernel.org, peterz@infradead.org,
+        srinivas.eeda@oracle.com
+Subject: Re: [PATCH v2 0/7] misc fixes to PV extentions code
+In-Reply-To: <ab80e007-1d7e-ff13-d11a-10999d198ad3@oracle.com>
+Message-ID: <alpine.DEB.2.21.1906271423310.32342@nanos.tec.linutronix.de>
+References: <1561377779-28036-1-git-send-email-zhenzhong.duan@oracle.com> <alpine.DEB.2.21.1906261511180.32342@nanos.tec.linutronix.de> <ab80e007-1d7e-ff13-d11a-10999d198ad3@oracle.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="8323329-1429891856-1561638260=:32342"
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Call it from bochs_hw_setfb().
-This also allows to make bochs_hw_setformat static.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
----
- drivers/gpu/drm/bochs/bochs.h     | 2 --
- drivers/gpu/drm/bochs/bochs_hw.c  | 5 +++--
- drivers/gpu/drm/bochs/bochs_kms.c | 1 -
- 3 files changed, 3 insertions(+), 5 deletions(-)
+--8323329-1429891856-1561638260=:32342
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 
-diff --git a/drivers/gpu/drm/bochs/bochs.h b/drivers/gpu/drm/bochs/bochs.h
-index 4081b3aba28d..528b8e8dde40 100644
---- a/drivers/gpu/drm/bochs/bochs.h
-+++ b/drivers/gpu/drm/bochs/bochs.h
-@@ -80,8 +80,6 @@ void bochs_hw_fini(struct drm_device *dev);
- 
- void bochs_hw_setmode(struct bochs_device *bochs,
- 		      struct drm_display_mode *mode);
--void bochs_hw_setformat(struct bochs_device *bochs,
--			const struct drm_format_info *format);
- void bochs_hw_setfb(struct bochs_device *bochs,
- 		    struct drm_framebuffer *fb,
- 		    int x, int y);
-diff --git a/drivers/gpu/drm/bochs/bochs_hw.c b/drivers/gpu/drm/bochs/bochs_hw.c
-index 178715c6755d..daa4fda3d322 100644
---- a/drivers/gpu/drm/bochs/bochs_hw.c
-+++ b/drivers/gpu/drm/bochs/bochs_hw.c
-@@ -224,8 +224,8 @@ void bochs_hw_setmode(struct bochs_device *bochs,
- 			  VBE_DISPI_ENABLED | VBE_DISPI_LFB_ENABLED);
- }
- 
--void bochs_hw_setformat(struct bochs_device *bochs,
--			const struct drm_format_info *format)
-+static void bochs_hw_setformat(struct bochs_device *bochs,
-+			       const struct drm_format_info *format)
- {
- 	DRM_DEBUG_DRIVER("format %c%c%c%c\n",
- 			 (format->format >>  0) & 0xff,
-@@ -263,4 +263,5 @@ void bochs_hw_setfb(struct bochs_device *bochs,
- 	bochs_dispi_write(bochs, VBE_DISPI_INDEX_VIRT_WIDTH, vw);
- 	bochs_dispi_write(bochs, VBE_DISPI_INDEX_X_OFFSET, vx);
- 	bochs_dispi_write(bochs, VBE_DISPI_INDEX_Y_OFFSET, vy);
-+	bochs_hw_setformat(bochs, fb->format);
- }
-diff --git a/drivers/gpu/drm/bochs/bochs_kms.c b/drivers/gpu/drm/bochs/bochs_kms.c
-index 28edfb2772ff..368803bd12e5 100644
---- a/drivers/gpu/drm/bochs/bochs_kms.c
-+++ b/drivers/gpu/drm/bochs/bochs_kms.c
-@@ -33,7 +33,6 @@ static void bochs_plane_update(struct bochs_device *bochs,
- 	bochs_hw_setfb(bochs, state->fb,
- 		       state->crtc_x,
- 		       state->crtc_y);
--	bochs_hw_setformat(bochs, state->fb->format);
- }
- 
- static void bochs_pipe_enable(struct drm_simple_display_pipe *pipe,
--- 
-2.18.1
+Zhenzhong,
 
+On Thu, 27 Jun 2019, Zhenzhong Duan wrote:
+> On 2019/6/26 21:39, Thomas Gleixner wrote:
+> > Documentation/process/submitting-patches.rst clearly explains why it is a
+> > bad idea to send random collections of patches especially if some patches
+> > are independent and contain bug fixes.
+> > 
+> > These rules exist for a reason and are not subject to personal
+> > interpretation. You want your patches to be reviewed and merged, so pretty
+> > please make the life of those who need to do that as easy as possible.
+> > 
+> > It's not the job of reviewers and maintainers to distangle your randomly
+> > ordered patch series.
+> 
+> Ok，understood.  I'll send independent and unrelated patch seperately.
+
+Much appreciated.
+
+Thanks,
+
+	tglx
+--8323329-1429891856-1561638260=:32342--
