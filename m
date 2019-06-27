@@ -2,83 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB91D58EA7
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 01:41:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D87AE58EB1
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 01:42:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726832AbfF0Xlx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 19:41:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57638 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726566AbfF0Xlx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 19:41:53 -0400
-Received: from gmail.com (unknown [104.132.1.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DC31F208E3;
-        Thu, 27 Jun 2019 23:41:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561678912;
-        bh=78SChau8nc/c1cE2Dc8hBwWP8MHlNLa/2/RRRHYTTBo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WY42jKzHRez627ToGgM55/WghYYH2Kd/+jPHX6Bn8WWc+PNCFMvfO8Ms8jKvtvqEq
-         m+4id6Is6WVNgVPDJ4B7svfCYUI4T4NeIIH/uolDIlsQLR8LOqMDxgWesIKgYb1WDj
-         5d/i1PKbaPL+t3T5LyL001tJIEHEXuDdUotEqFh4=
-Date:   Thu, 27 Jun 2019 16:41:50 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Jaskaran Khurana <jaskarankhurana@linux.microsoft.com>
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, agk@redhat.com, snitzer@redhat.com,
-        dm-devel@redhat.com, jmorris@namei.org, scottsh@microsoft.com,
-        mpatocka@redhat.com, gmazyland@gmail.com
-Subject: Re: [RFC PATCH v5 1/1] Add dm verity root hash pkcs7 sig validation.
-Message-ID: <20190627234149.GA212823@gmail.com>
-References: <20190619191048.20365-1-jaskarankhurana@linux.microsoft.com>
- <20190619191048.20365-2-jaskarankhurana@linux.microsoft.com>
+        id S1726788AbfF0Xmt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 19:42:49 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:42765 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726506AbfF0Xmt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 19:42:49 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5RNgWIe500839
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Thu, 27 Jun 2019 16:42:32 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5RNgWIe500839
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019061801; t=1561678953;
+        bh=BE1HEW3k5GX/FfdMHnPQTGObh2G/blSZMM7So1yWJqM=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=lvOAti9itUPOjptlTazjEoW+vhe4v6PKgFDZU2W+KvMa0ac9Xz4jkBs7w/HAEv62S
+         ul0xplv/BfEEsXGDZCyOgkJxX8qBQMfOPd7u8j7Xvl1nX1SrTvqNMIZI6jXEnZvSSG
+         cHnKkfheTP5NxWrrGWYio2Uh6sSrETWEQ+L9o3+YeTJcLeyZFDneEHTCoysg+Ds6bj
+         JtzA3zsSz1bHXpDY7umu4UHnDRLuzm9UtFWLcnK+Ia/2Uk2LMnhC2F4TEXZ0SN5XNq
+         QZd/DqJd9xANRzMvt3YjQ9jurS4+bRry2gRz9MZVT2J9c2CV+lITny+ObmUzSLBVcC
+         Lf1xYR9N/Dcsg==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5RNgUwv500833;
+        Thu, 27 Jun 2019 16:42:30 -0700
+Date:   Thu, 27 Jun 2019 16:42:30 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
+Message-ID: <tip-3535aa12f7f26fc755514b13aee8fac15741267e@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
+        peterz@infradead.org, eranian@google.com, ravi.v.shankar@intel.com,
+        ricardo.neri-calderon@linux.intel.com,
+        Suravee.Suthikulpanit@amd.com, andi.kleen@intel.com, hpa@zytor.com,
+        ashok.raj@intel.com, tglx@linutronix.de
+Reply-To: linux-kernel@vger.kernel.org, hpa@zytor.com, ashok.raj@intel.com,
+          mingo@kernel.org, Suravee.Suthikulpanit@amd.com,
+          andi.kleen@intel.com, ricardo.neri-calderon@linux.intel.com,
+          ravi.v.shankar@intel.com, eranian@google.com, tglx@linutronix.de,
+          peterz@infradead.org
+In-Reply-To: <20190623132435.241032433@linutronix.de>
+References: <20190623132435.241032433@linutronix.de>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/timers] x86/hpet: Decapitalize and rename EVT_TO_HPET_DEV
+Git-Commit-ID: 3535aa12f7f26fc755514b13aee8fac15741267e
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20190619191048.20365-2-jaskarankhurana@linux.microsoft.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Spam-Status: No, score=0.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_12_24,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
+        DKIM_VALID_EF autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jaskaran, one comment (I haven't reviewed this in detail):
+Commit-ID:  3535aa12f7f26fc755514b13aee8fac15741267e
+Gitweb:     https://git.kernel.org/tip/3535aa12f7f26fc755514b13aee8fac15741267e
+Author:     Thomas Gleixner <tglx@linutronix.de>
+AuthorDate: Sun, 23 Jun 2019 15:23:53 +0200
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Fri, 28 Jun 2019 00:57:19 +0200
 
-On Wed, Jun 19, 2019 at 12:10:48PM -0700, Jaskaran Khurana wrote:
-> diff --git a/drivers/md/Kconfig b/drivers/md/Kconfig
-> index db269a348b20..2d658a3512cb 100644
-> --- a/drivers/md/Kconfig
-> +++ b/drivers/md/Kconfig
-> @@ -475,6 +475,7 @@ config DM_VERITY
->  	select CRYPTO
->  	select CRYPTO_HASH
->  	select DM_BUFIO
-> +	select SYSTEM_DATA_VERIFICATION
->  	---help---
->  	  This device-mapper target creates a read-only device that
->  	  transparently validates the data on one underlying device against
-> diff --git a/drivers/md/Makefile b/drivers/md/Makefile
-> index be7a6eb92abc..3b47b256b15e 100644
-> --- a/drivers/md/Makefile
-> +++ b/drivers/md/Makefile
-> @@ -18,7 +18,7 @@ dm-cache-y	+= dm-cache-target.o dm-cache-metadata.o dm-cache-policy.o \
->  		    dm-cache-background-tracker.o
->  dm-cache-smq-y   += dm-cache-policy-smq.o
->  dm-era-y	+= dm-era-target.o
-> -dm-verity-y	+= dm-verity-target.o
-> +dm-verity-y	+= dm-verity-target.o dm-verity-verify-sig.o
->  md-mod-y	+= md.o md-bitmap.o
->  raid456-y	+= raid5.o raid5-cache.o raid5-ppl.o
->  dm-zoned-y	+= dm-zoned-target.o dm-zoned-metadata.o dm-zoned-reclaim.o
+x86/hpet: Decapitalize and rename EVT_TO_HPET_DEV
 
-Perhaps this should be made optional and controlled by a kconfig option
-CONFIG_DM_VERITY_SIGNATURE_VERIFICATION, similar to CONFIG_DM_VERITY_FEC?
+It's a function not a macro and the upcoming changes use channel for the
+individual hpet timer units to allow a step by step refactoring approach.
 
-CONFIG_SYSTEM_DATA_VERIFICATION brings in a lot of stuff, which might be
-unnecessary for some dm-verity users.  Also, you've already separated most of
-the code out into a separate .c file anyway.
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Ingo Molnar <mingo@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+Cc: Ashok Raj <ashok.raj@intel.com>
+Cc: Andi Kleen <andi.kleen@intel.com>
+Cc: Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Ravi Shankar <ravi.v.shankar@intel.com>
+Link: https://lkml.kernel.org/r/20190623132435.241032433@linutronix.de
 
-- Eric
+---
+ arch/x86/kernel/hpet.c | 27 ++++++++++-----------------
+ 1 file changed, 10 insertions(+), 17 deletions(-)
+
+diff --git a/arch/x86/kernel/hpet.c b/arch/x86/kernel/hpet.c
+index 74756c0a3a10..4cf93294bacc 100644
+--- a/arch/x86/kernel/hpet.c
++++ b/arch/x86/kernel/hpet.c
+@@ -69,9 +69,10 @@ static bool				hpet_verbose;
+ 
+ static struct clock_event_device	hpet_clockevent;
+ 
+-static inline struct hpet_dev *EVT_TO_HPET_DEV(struct clock_event_device *evtdev)
++static inline
++struct hpet_dev *clockevent_to_channel(struct clock_event_device *evt)
+ {
+-	return container_of(evtdev, struct hpet_dev, evt);
++	return container_of(evt, struct hpet_dev, evt);
+ }
+ 
+ inline unsigned int hpet_readl(unsigned int a)
+@@ -458,28 +459,22 @@ void hpet_msi_write(struct hpet_dev *hdev, struct msi_msg *msg)
+ 
+ static int hpet_msi_shutdown(struct clock_event_device *evt)
+ {
+-	struct hpet_dev *hdev = EVT_TO_HPET_DEV(evt);
+-
+-	return hpet_shutdown(evt, hdev->num);
++	return hpet_shutdown(evt, clockevent_to_channel(evt)->num);
+ }
+ 
+ static int hpet_msi_set_oneshot(struct clock_event_device *evt)
+ {
+-	struct hpet_dev *hdev = EVT_TO_HPET_DEV(evt);
+-
+-	return hpet_set_oneshot(evt, hdev->num);
++	return hpet_set_oneshot(evt, clockevent_to_channel(evt)->num);
+ }
+ 
+ static int hpet_msi_set_periodic(struct clock_event_device *evt)
+ {
+-	struct hpet_dev *hdev = EVT_TO_HPET_DEV(evt);
+-
+-	return hpet_set_periodic(evt, hdev->num);
++	return hpet_set_periodic(evt, clockevent_to_channel(evt)->num);
+ }
+ 
+ static int hpet_msi_resume(struct clock_event_device *evt)
+ {
+-	struct hpet_dev *hdev = EVT_TO_HPET_DEV(evt);
++	struct hpet_dev *hdev = clockevent_to_channel(evt);
+ 	struct irq_data *data = irq_get_irq_data(hdev->irq);
+ 	struct msi_msg msg;
+ 
+@@ -491,16 +486,14 @@ static int hpet_msi_resume(struct clock_event_device *evt)
+ }
+ 
+ static int hpet_msi_next_event(unsigned long delta,
+-				struct clock_event_device *evt)
++			       struct clock_event_device *evt)
+ {
+-	struct hpet_dev *hdev = EVT_TO_HPET_DEV(evt);
+-
+-	return hpet_next_event(delta, hdev->num);
++	return hpet_next_event(delta, clockevent_to_channel(evt)->num);
+ }
+ 
+ static irqreturn_t hpet_interrupt_handler(int irq, void *data)
+ {
+-	struct hpet_dev *dev = (struct hpet_dev *)data;
++	struct hpet_dev *dev = data;
+ 	struct clock_event_device *hevt = &dev->evt;
+ 
+ 	if (!hevt->event_handler) {
