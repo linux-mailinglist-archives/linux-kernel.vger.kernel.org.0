@@ -2,87 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65C7B57D68
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 09:45:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 382B457D3F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 09:38:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726619AbfF0Ho6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 03:44:58 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:39673 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726369AbfF0Ho6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 03:44:58 -0400
-Received: by mail-wr1-f67.google.com with SMTP id x4so1311722wrt.6
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 00:44:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=fRhMiuM9D6lNqKr68YbS2wqBEbQrlCyklKLmB7I52L8=;
-        b=suTzBU5N6EkJIWq35Uka0kDQWuiTo+/EbommBMOxKid8dyF8atsySar5l1rISdF5JR
-         f1dVxxzOTVLOYT+9jr8Xo4LjspHImaKHMTyB3tKX9Ce0ynQZXuq4dQog6CKBQ/FuWkpu
-         fmX6UACWyV2k/iUc8MJXIX85prldCEDIXbgyUmFj/d8ufh7+mS+4TlexuAmELOZvsWNB
-         ahXwnfENQVhhSDaHIK9wn3UvyzUJjSN7R43zgCAiY0yxvErWtGnj5UyBLocx58h6VXlI
-         D70lvpUjxbHGtZuvXXGW0463m8XLAQZTViUjJOVU6cYzkKVa690fn0vm+sL1mmaW1hqq
-         7pPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=fRhMiuM9D6lNqKr68YbS2wqBEbQrlCyklKLmB7I52L8=;
-        b=aIyfxQJiH14dbZRfRfhSRe93jaE770sVgHkQxxIiDtXNVpSs0f2+xJQbj5vLgjW0t0
-         wIIbC2s49UJXm3Ba4X0njIuMnupk9Me+riyLEJPwubciohwlN3Z+osF6o7t3HxtCO5S9
-         /C6whSX4wL11tsy9AzLbhcpijFRAqGouklek7ammWwNrc+T9ud6nt9hhUk4LGjwEj7mT
-         KE1JTuCSve1+aVuZUR4Y3pEgY1NBBV1QoCle9y/1xxqA+q6c+4+z6iS2mGqn/d2+gWSL
-         LsyuDro+5s+7hDzZjEitc8s90W5CBgGy5itC2CwBBxRnEiK3bnEdGJhU/4lTdqVXLfjp
-         xyow==
-X-Gm-Message-State: APjAAAUsWcAn+5vPTrxHNcbXzSKb5i4QAhVZFff3bONbyhau5QFyPtY3
-        FDuZ//shQfCwY/htUpuU4CE4wQ==
-X-Google-Smtp-Source: APXvYqy00J8Sq1s22y/DIkO4hpql2w3C4VePv+24bHNULGhow+wfUwNhXVnqYGuPu8qdzdLk1r7p7w==
-X-Received: by 2002:adf:ea92:: with SMTP id s18mr1831696wrm.257.1561621496090;
-        Thu, 27 Jun 2019 00:44:56 -0700 (PDT)
-Received: from localhost (ip-89-176-222-26.net.upcbroadband.cz. [89.176.222.26])
-        by smtp.gmail.com with ESMTPSA id g10sm1487752wrw.60.2019.06.27.00.44.55
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 27 Jun 2019 00:44:55 -0700 (PDT)
-Date:   Thu, 27 Jun 2019 09:44:55 +0200
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     David Miller <davem@davemloft.net>
-Cc:     yuehaibing@huawei.com, sdf@google.com, jianbol@mellanox.com,
-        jiri@mellanox.com, mirq-linux@rere.qmqm.pl, willemb@google.com,
-        sdf@fomichev.me, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH v2] flow_dissector: Fix vlan header offset in
- __skb_flow_dissect
-Message-ID: <20190627074455.GE2424@nanopsycho>
-References: <20190622.161955.2030310177158651781.davem@davemloft.net>
- <20190624034913.40328-1-yuehaibing@huawei.com>
- <20190626.192829.1694521513812984310.davem@davemloft.net>
+        id S1726557AbfF0Him (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 03:38:42 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:19087 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726059AbfF0Hil (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 03:38:41 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 6318C72101FAD001921F;
+        Thu, 27 Jun 2019 15:38:39 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
+ 14.3.439.0; Thu, 27 Jun 2019 15:38:33 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     Alex Deucher <alexander.deucher@amd.com>,
+        <christian.koenig@amd.com>, <David1.Zhou@amd.com>,
+        <airlied@linux.ie>, <daniel@ffwll.ch>, <dan.carpenter@oracle.com>,
+        <sam@ravnborg.org>, <Kevin1.Wang@amd.com>, <Jack.Xiao@amd.com>,
+        <Hawking.Zhang@amd.com>, <ray.huang@amd.com>
+CC:     YueHaibing <yuehaibing@huawei.com>,
+        <amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] drm/amdgpu: fix debugfs_simple_attr.cocci warnings
+Date:   Thu, 27 Jun 2019 07:45:24 +0000
+Message-ID: <20190627074524.84150-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190626.192829.1694521513812984310.davem@davemloft.net>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thu, Jun 27, 2019 at 04:28:29AM CEST, davem@davemloft.net wrote:
->From: YueHaibing <yuehaibing@huawei.com>
->Date: Mon, 24 Jun 2019 11:49:13 +0800
->
->> @@ -998,6 +998,9 @@ bool __skb_flow_dissect(const struct net *net,
->>  		    skb && skb_vlan_tag_present(skb)) {
->>  			proto = skb->protocol;
->>  		} else {
->> +			if (dissector_vlan == FLOW_DISSECTOR_KEY_MAX)
->> +				nhoff -= sizeof(*vlan);
->> +
->
->But this is wrong when we are being called via eth_get_headlen(), in
->that case nhoff will be sizeof(struct ethhdr).
+Use DEFINE_DEBUGFS_ATTRIBUTE rather than DEFINE_SIMPLE_ATTRIBUTE
+for debugfs files.
 
-This patch was replaced by:
-[PATCH] bonding: Always enable vlan tx offload
-http://patchwork.ozlabs.org/patch/1122886/
+Semantic patch information:
+Rationale: DEFINE_SIMPLE_ATTRIBUTE + debugfs_create_file()
+imposes some significant overhead as compared to
+DEFINE_DEBUGFS_ATTRIBUTE + debugfs_create_file_unsafe().
+
+Generated by: scripts/coccinelle/api/debugfs/debugfs_simple_attr.cocci
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c
+index 20ce158490db..9d9f4cbbc4bd 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c
+@@ -1082,15 +1082,15 @@ static int amdgpu_debugfs_ib_preempt(void *data, u64 val)
+ 	return 0;
+ }
+ 
+-DEFINE_SIMPLE_ATTRIBUTE(fops_ib_preempt, NULL,
+-			amdgpu_debugfs_ib_preempt, "%llu\n");
++DEFINE_DEBUGFS_ATTRIBUTE(fops_ib_preempt, NULL, amdgpu_debugfs_ib_preempt,
++			 "%llu\n");
+ 
+ int amdgpu_debugfs_init(struct amdgpu_device *adev)
+ {
+ 	adev->debugfs_preempt =
+-		debugfs_create_file("amdgpu_preempt_ib", 0600,
+-				    adev->ddev->primary->debugfs_root,
+-				    (void *)adev, &fops_ib_preempt);
++		debugfs_create_file_unsafe("amdgpu_preempt_ib", 0600,
++					   adev->ddev->primary->debugfs_root,
++					   (void *)adev, &fops_ib_preempt);
+ 	if (!(adev->debugfs_preempt)) {
+ 		DRM_ERROR("unable to create amdgpu_preempt_ib debugsfs file\n");
+ 		return -EIO;
+
+
+
+
+
