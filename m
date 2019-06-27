@@ -2,114 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3AA457613
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 02:36:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83113577EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 02:51:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728224AbfF0AfJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 20:35:09 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:39062 "EHLO mx1.redhat.com"
+        id S1727704AbfF0AgX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 20:36:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40742 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728210AbfF0AfG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 20:35:06 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726799AbfF0AgV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 20:36:21 -0400
+Received: from sasha-vm.mshome.net (unknown [107.242.116.147])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BC4D630832D3;
-        Thu, 27 Jun 2019 00:35:05 +0000 (UTC)
-Received: from treble.redhat.com (ovpn-126-66.rdu2.redhat.com [10.10.126.66])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A88235D9D6;
-        Thu, 27 Jun 2019 00:35:03 +0000 (UTC)
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     x86@kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Song Liu <songliubraving@fb.com>,
-        Kairui Song <kasong@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH v3 4/4] x86/unwind/orc: Fall back to using frame pointers for generated code
-Date:   Wed, 26 Jun 2019 19:33:55 -0500
-Message-Id: <b6f69208ddff4343d56b7bfac1fc7cfcd62689e8.1561595111.git.jpoimboe@redhat.com>
-In-Reply-To: <cover.1561595111.git.jpoimboe@redhat.com>
-References: <cover.1561595111.git.jpoimboe@redhat.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 864E9217F4;
+        Thu, 27 Jun 2019 00:36:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561595780;
+        bh=GNN0sR4e16+0nWy1iWP+tAoGWftpGYQrJW02a8FU0ZM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=YCVxxbKFebNXTj8jsQ8BlVB0amCsEcEDcUjBu1Ltjj8tcVYrELN63tHMmFrj1XLAf
+         ZL4wU9ujYT7j0Pz40i1QqhjSZ2mTl3INDzlFdpW59BpAcVjPF6G4PZDGVgZMJzPbSG
+         opW/wrKUkEiV9G21fcTe6mxFBDzQzAgat2k62ie4=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 01/60] soc: brcmstb: Fix error path for unsupported CPUs
+Date:   Wed, 26 Jun 2019 20:35:16 -0400
+Message-Id: <20190627003616.20767-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Thu, 27 Jun 2019 00:35:05 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The ORC unwinder can't unwind through BPF JIT generated code because
-there are no ORC entries associated with the code.
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-If an ORC entry isn't available, try to fall back to frame pointers.  If
-BPF and other generated code always do frame pointer setup (even with
-CONFIG_FRAME_POINTERS=n) then this will allow ORC to unwind through most
-generated code despite there being no corresponding ORC entries.
+[ Upstream commit 490cad5a3ad6ef0bfd3168a5063140b982f3b22a ]
 
-Fixes: d15d356887e7 ("perf/x86: Make perf callchains work without CONFIG_FRAME_POINTER")
-Reported-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+In case setup_hifcpubiuctrl_regs() returns an error, because of e.g:
+an unsupported CPU type, just catch that error and return instead of
+blindly continuing with the initialization. This fixes a NULL pointer
+de-reference with the code continuing without having a proper array of
+registers to use.
+
+Fixes: 22f7a9116eba ("soc: brcmstb: Correct CPU_CREDIT_REG offset for Brahma-B53 CPUs")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/unwind_orc.c | 26 ++++++++++++++++++++++----
- 1 file changed, 22 insertions(+), 4 deletions(-)
+ drivers/soc/bcm/brcmstb/biuctrl.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/unwind_orc.c b/arch/x86/kernel/unwind_orc.c
-index 33b66b5c5aec..72b997eaa1fc 100644
---- a/arch/x86/kernel/unwind_orc.c
-+++ b/arch/x86/kernel/unwind_orc.c
-@@ -82,9 +82,9 @@ static struct orc_entry *orc_find(unsigned long ip);
-  * But they are copies of the ftrace entries that are static and
-  * defined in ftrace_*.S, which do have orc entries.
-  *
-- * If the undwinder comes across a ftrace trampoline, then find the
-+ * If the unwinder comes across a ftrace trampoline, then find the
-  * ftrace function that was used to create it, and use that ftrace
-- * function's orc entrie, as the placement of the return code in
-+ * function's orc entry, as the placement of the return code in
-  * the stack will be identical.
-  */
- static struct orc_entry *orc_ftrace_find(unsigned long ip)
-@@ -128,6 +128,16 @@ static struct orc_entry null_orc_entry = {
- 	.type = ORC_TYPE_CALL
- };
+diff --git a/drivers/soc/bcm/brcmstb/biuctrl.c b/drivers/soc/bcm/brcmstb/biuctrl.c
+index 6d89ebf13b8a..c16273b31b94 100644
+--- a/drivers/soc/bcm/brcmstb/biuctrl.c
++++ b/drivers/soc/bcm/brcmstb/biuctrl.c
+@@ -246,7 +246,9 @@ static int __init brcmstb_biuctrl_init(void)
+ 	if (!np)
+ 		return 0;
  
-+/* Fake frame pointer entry -- used as a fallback for generated code */
-+static struct orc_entry orc_fp_entry = {
-+	.type		= ORC_TYPE_CALL,
-+	.sp_reg		= ORC_REG_BP,
-+	.sp_offset	= 16,
-+	.bp_reg		= ORC_REG_PREV_SP,
-+	.bp_offset	= -16,
-+	.end		= 0,
-+};
-+
- static struct orc_entry *orc_find(unsigned long ip)
- {
- 	static struct orc_entry *orc;
-@@ -392,8 +402,16 @@ bool unwind_next_frame(struct unwind_state *state)
- 	 * calls and calls to noreturn functions.
- 	 */
- 	orc = orc_find(state->signal ? state->ip : state->ip - 1);
--	if (!orc)
--		goto err;
-+	if (!orc) {
-+		/*
-+		 * As a fallback, try to assume this code uses a frame pointer.
-+		 * This is useful for generated code, like BPF, which ORC
-+		 * doesn't know about.  This is just a guess, so the rest of
-+		 * the unwind is no longer considered reliable.
-+		 */
-+		orc = &orc_fp_entry;
-+		state->error = true;
-+	}
+-	setup_hifcpubiuctrl_regs(np);
++	ret = setup_hifcpubiuctrl_regs(np);
++	if (ret)
++		return ret;
  
- 	/* End-of-stack check for kernel threads: */
- 	if (orc->sp_reg == ORC_REG_UNDEFINED) {
+ 	ret = mcp_write_pairing_set();
+ 	if (ret) {
 -- 
 2.20.1
 
