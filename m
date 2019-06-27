@@ -2,32 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99B06589BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 20:21:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 291B9589C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 20:21:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726734AbfF0SVY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 14:21:24 -0400
-Received: from outils.crapouillou.net ([89.234.176.41]:46260 "EHLO
+        id S1726796AbfF0SV2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 14:21:28 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:46278 "EHLO
         crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726508AbfF0SVY (ORCPT
+        with ESMTP id S1726719AbfF0SVZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 14:21:24 -0400
+        Thu, 27 Jun 2019 14:21:25 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1561659683; h=from:from:sender:reply-to:subject:subject:date:date:
+        s=mail; t=1561659684; h=from:from:sender:reply-to:subject:subject:date:date:
          message-id:message-id:to:to:cc:cc:mime-version:mime-version:
          content-type:content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:references; bh=hxYTvnQO/eZbO0T4ZUdUxSRmfpX1wgQggO720gFQx6M=;
-        b=kByL8G0YFql9ZKH6WiEaGOaw+1sMNHBgy9YTjP+eh3g32qZmd7N2ySNirSap30FnNXuGfC
-        qY4HCO4iEy9lG5cU1XYddxBfE3YA9O6rnp3KpiAtzjVWRhvX80TCaxAjhQ8cwllJp9OwnU
-        cOAMztb2EctpEZVeLcqrSyOSIyKkHmw=
+         in-reply-to:in-reply-to:references:references;
+        bh=qCrv3tbrvvRWxIKr3e7PpU42XhOUTA3WgBASRFjc4Eo=;
+        b=qGxfcSqN8lH5/Lgil8GmYw4Z5ephVzOX4ZiP0zkJjyW/3tNdU9PL/mXA/kMD1nbQp95P0F
+        su5ngoU0a9U5J7ShdxBzMJx23EEL1cwNDglQ/eTT7m44wCN3oNRRhsf7LULOwDuvasSFgQ
+        TQfpnTaIBMfuqsS1HpzBXAolaPBh7x8=
 From:   Paul Cercueil <paul@crapouillou.net>
 To:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>
 Cc:     Sam Ravnborg <sam@ravnborg.org>, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org, od@zcrc.me,
         Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH 1/3] DRM: ingenic: Use devm_platform_ioremap_resource
-Date:   Thu, 27 Jun 2019 20:21:12 +0200
-Message-Id: <20190627182114.27299-1-paul@crapouillou.net>
+Subject: [PATCH 2/3] DRM: ingenic: Add support for Sharp panels
+Date:   Thu, 27 Jun 2019 20:21:13 +0200
+Message-Id: <20190627182114.27299-2-paul@crapouillou.net>
+In-Reply-To: <20190627182114.27299-1-paul@crapouillou.net>
+References: <20190627182114.27299-1-paul@crapouillou.net>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -35,37 +38,113 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Simplify a bit the probe function by using the newly introduced
-devm_platform_ioremap_resource(), instead of having to call
-platform_get_resource() followed by devm_ioremap_resource().
+Add support for the LCD panels that must be driven with the
+Sharp-specific signals SPL, CLS, REV, PS.
+
+An example of such panel is the LS020B1DD01D supported by the
+panel-simple DRM panel driver.
 
 Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 ---
- drivers/gpu/drm/ingenic/ingenic-drm.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/gpu/drm/ingenic/ingenic-drm.c | 64 +++++++++++++++++----------
+ 1 file changed, 41 insertions(+), 23 deletions(-)
 
 diff --git a/drivers/gpu/drm/ingenic/ingenic-drm.c b/drivers/gpu/drm/ingenic/ingenic-drm.c
-index a069579ca749..02c4788ef1c7 100644
+index 02c4788ef1c7..da966f3dc1f7 100644
 --- a/drivers/gpu/drm/ingenic/ingenic-drm.c
 +++ b/drivers/gpu/drm/ingenic/ingenic-drm.c
-@@ -580,7 +580,6 @@ static int ingenic_drm_probe(struct platform_device *pdev)
- 	struct drm_bridge *bridge;
- 	struct drm_panel *panel;
- 	struct drm_device *drm;
--	struct resource *mem;
- 	void __iomem *base;
- 	long parent_rate;
- 	int ret, irq;
-@@ -614,8 +613,7 @@ static int ingenic_drm_probe(struct platform_device *pdev)
- 	drm->mode_config.max_height = 600;
- 	drm->mode_config.funcs = &ingenic_drm_mode_config_funcs;
+@@ -166,6 +166,8 @@ struct ingenic_drm {
  
--	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	base = devm_ioremap_resource(dev, mem);
-+	base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(base)) {
- 		dev_err(dev, "Failed to get memory resource");
- 		return PTR_ERR(base);
+ 	struct ingenic_dma_hwdesc *dma_hwdesc;
+ 	dma_addr_t dma_hwdesc_phys;
++
++	bool panel_is_sharp;
+ };
+ 
+ static const u32 ingenic_drm_primary_formats[] = {
+@@ -283,6 +285,13 @@ static void ingenic_drm_crtc_update_timings(struct ingenic_drm *priv,
+ 	regmap_write(priv->map, JZ_REG_LCD_DAV,
+ 		     vds << JZ_LCD_DAV_VDS_OFFSET |
+ 		     vde << JZ_LCD_DAV_VDE_OFFSET);
++
++	if (priv->panel_is_sharp) {
++		regmap_write(priv->map, JZ_REG_LCD_PS, hde << 16 | (hde + 1));
++		regmap_write(priv->map, JZ_REG_LCD_CLS, hde << 16 | (hde + 1));
++		regmap_write(priv->map, JZ_REG_LCD_SPL, hpe << 16 | (hpe + 1));
++		regmap_write(priv->map, JZ_REG_LCD_REV, mode->htotal << 16);
++	}
+ }
+ 
+ static void ingenic_drm_crtc_update_ctrl(struct ingenic_drm *priv,
+@@ -378,11 +387,18 @@ static void ingenic_drm_encoder_atomic_mode_set(struct drm_encoder *encoder,
+ {
+ 	struct ingenic_drm *priv = drm_encoder_get_priv(encoder);
+ 	struct drm_display_mode *mode = &crtc_state->adjusted_mode;
+-	struct drm_display_info *info = &conn_state->connector->display_info;
+-	unsigned int cfg = JZ_LCD_CFG_PS_DISABLE
+-			 | JZ_LCD_CFG_CLS_DISABLE
+-			 | JZ_LCD_CFG_SPL_DISABLE
+-			 | JZ_LCD_CFG_REV_DISABLE;
++	struct drm_connector *conn = conn_state->connector;
++	struct drm_display_info *info = &conn->display_info;
++	unsigned int cfg;
++
++	priv->panel_is_sharp = info->bus_flags & DRM_BUS_FLAG_SHARP_SIGNALS;
++
++	if (priv->panel_is_sharp) {
++		cfg = JZ_LCD_CFG_MODE_SPECIAL_TFT_1 | JZ_LCD_CFG_REV_POLARITY;
++	} else {
++		cfg = JZ_LCD_CFG_PS_DISABLE | JZ_LCD_CFG_CLS_DISABLE
++		    | JZ_LCD_CFG_SPL_DISABLE | JZ_LCD_CFG_REV_DISABLE;
++	}
+ 
+ 	if (mode->flags & DRM_MODE_FLAG_NHSYNC)
+ 		cfg |= JZ_LCD_CFG_HSYNC_ACTIVE_LOW;
+@@ -393,24 +409,26 @@ static void ingenic_drm_encoder_atomic_mode_set(struct drm_encoder *encoder,
+ 	if (info->bus_flags & DRM_BUS_FLAG_PIXDATA_NEGEDGE)
+ 		cfg |= JZ_LCD_CFG_PCLK_FALLING_EDGE;
+ 
+-	if (conn_state->connector->connector_type == DRM_MODE_CONNECTOR_TV) {
+-		if (mode->flags & DRM_MODE_FLAG_INTERLACE)
+-			cfg |= JZ_LCD_CFG_MODE_TV_OUT_I;
+-		else
+-			cfg |= JZ_LCD_CFG_MODE_TV_OUT_P;
+-	} else {
+-		switch (*info->bus_formats) {
+-		case MEDIA_BUS_FMT_RGB565_1X16:
+-			cfg |= JZ_LCD_CFG_MODE_GENERIC_16BIT;
+-			break;
+-		case MEDIA_BUS_FMT_RGB666_1X18:
+-			cfg |= JZ_LCD_CFG_MODE_GENERIC_18BIT;
+-			break;
+-		case MEDIA_BUS_FMT_RGB888_1X24:
+-			cfg |= JZ_LCD_CFG_MODE_GENERIC_24BIT;
+-			break;
+-		default:
+-			break;
++	if (!priv->panel_is_sharp) {
++		if (conn->connector_type == DRM_MODE_CONNECTOR_TV) {
++			if (mode->flags & DRM_MODE_FLAG_INTERLACE)
++				cfg |= JZ_LCD_CFG_MODE_TV_OUT_I;
++			else
++				cfg |= JZ_LCD_CFG_MODE_TV_OUT_P;
++		} else {
++			switch (*info->bus_formats) {
++			case MEDIA_BUS_FMT_RGB565_1X16:
++				cfg |= JZ_LCD_CFG_MODE_GENERIC_16BIT;
++				break;
++			case MEDIA_BUS_FMT_RGB666_1X18:
++				cfg |= JZ_LCD_CFG_MODE_GENERIC_18BIT;
++				break;
++			case MEDIA_BUS_FMT_RGB888_1X24:
++				cfg |= JZ_LCD_CFG_MODE_GENERIC_24BIT;
++				break;
++			default:
++				break;
++			}
+ 		}
+ 	}
+ 
 -- 
 2.21.0.593.g511ec345e18
 
