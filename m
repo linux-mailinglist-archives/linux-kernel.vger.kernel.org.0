@@ -2,109 +2,195 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EEAF058B1E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 21:52:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C88E58B25
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 21:55:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726508AbfF0Twt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 15:52:49 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:38254 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726426AbfF0Twt (ORCPT
+        id S1726599AbfF0TzZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 15:55:25 -0400
+Received: from esa5.hgst.iphmx.com ([216.71.153.144]:23412 "EHLO
+        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726384AbfF0TzY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 15:52:49 -0400
-Received: by mail-qk1-f193.google.com with SMTP id a27so2842672qkk.5
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 12:52:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=qQvtIolaIhbEj7zQCdzCY/FMnc1dfYBybIqVXd3KZ8Y=;
-        b=is1HU+ggY8nhSOnAQI/VX7rUG8dfJ3gGIIegNI9BVXfIesWy5VLF4zh7WUrsqCOnqB
-         ikg5x6cEt2YFLNh/o/vy+ITlF970QkFbOx5kYJ5Z7Oe3G8liFvatPNcmmKMbn4+QUov6
-         mbKPoj0t4y6YqqcAsVb3+2XEPtY2R/tcXkptmHCU83/GJucXehVUt+CwKgySB8sMGzc9
-         Q3HhHPkn99sdp+xZlnDk85aR87UlQvBs+PhhwF4J/o60rrixXxSEpjxs0CSGMdVD30bK
-         FV9EwDfNdcXpK1Dfv86SaUzx5gx7GW2c6ZCWEZgScTBygh+A5ccUyjt6kI8KAOsBypOQ
-         1GsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=qQvtIolaIhbEj7zQCdzCY/FMnc1dfYBybIqVXd3KZ8Y=;
-        b=OdAwNz6z0biTJFGGi5OI7h1vuIFtv2LX2pXVPo2LrYFExz6WkeQeo4hE5hUvtsi677
-         NW3uRMSO4hYzC2uGMnfcSASEJ4AAJk4hW8WocauwRYcEy5Gq3W+Q142BVLeyManIvza5
-         MqeXuEJl9dIH4gfD5sGn+2OFB81jYQQqgwz0+yawfx4h4l1t1nDWRJ5PGMozuwJismJX
-         PVOQ6/F+hhoeyLFMgHnu//phcfL0IfSF5YWNhAeUqpiBHwH5Fr2/pBebMYxy53nXqne/
-         PjZnrqpYiokRCrd34g1v+ZUppWCbVjvkS9mUrzXc+T978eUo/pLtTXiruCx0iBepGx4I
-         tuAQ==
-X-Gm-Message-State: APjAAAUygt2eQV6blKRBwnSsnsNK0HmKoWtJtyzGUMrODQ2WghEsbfO2
-        msJVmFhxWWxqNpJzBdjkhrV5Ew==
-X-Google-Smtp-Source: APXvYqwqsUW/Hfuw+7OIqqajGDQc9UBxmD94kwLGNZOhmicRCyFC0z+2aPwr1Mw8fSs39S+PHsN01g==
-X-Received: by 2002:a37:a2cc:: with SMTP id l195mr5019652qke.362.1561665168691;
-        Thu, 27 Jun 2019 12:52:48 -0700 (PDT)
-Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id a15sm63894qtb.43.2019.06.27.12.52.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Jun 2019 12:52:48 -0700 (PDT)
-Message-ID: <1561665166.5154.90.camel@lca.pw>
-Subject: Re: [PATCH v2] powerpc/setup_64: fix -Wempty-body warnings
-From:   Qian Cai <cai@lca.pw>
-To:     mpe@ellerman.id.au
-Cc:     paulus@samba.org, benh@kernel.crashing.org,
-        tyreld@linux.vnet.ibm.com, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-Date:   Thu, 27 Jun 2019 15:52:46 -0400
-In-Reply-To: <1559768018-7665-1-git-send-email-cai@lca.pw>
-References: <1559768018-7665-1-git-send-email-cai@lca.pw>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
-Mime-Version: 1.0
+        Thu, 27 Jun 2019 15:55:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1561665324; x=1593201324;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=OBRreVPl8/1uZ8733sksixlMzFip9pXYBiHmIUFSRKk=;
+  b=hHQuEBikoDVNqYu5S9ImCiCDXG+j0zA2JJ61G8AOFezRlbrlF7pa44Hc
+   E3lFe3+pVATKkWNjCcB8dyT8Njud1/0DQjgJAhnSG35i3Y+6DlwDI3qU0
+   U3+VKVfb0ZTDr8JIQl83foL7Vqyjg/P5x1TjHQC70MUB/QIfxBn/fXvjA
+   upQ+4HFg6cncgMyRlVPnNWFnIr/obvYHX8FxNKTw+F+/E9McrOlNZ4tHg
+   5XkI4fdCybwpJSf88+YRfugvYC+GZ47F8MjVkxE8JiiJLRkEtHk/W1bfK
+   RpSH/YCioKe9qPhnBvw2dAie8cCbUF0n9ODKMGsZyLIcM1+TjEgIlEe2m
+   w==;
+X-IronPort-AV: E=Sophos;i="5.63,424,1557158400"; 
+   d="scan'208";a="112927430"
+Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 28 Jun 2019 03:55:24 +0800
+IronPort-SDR: mJ0v9LQzpOE575mcO+Uky+5JQpAmy1umCE8ica4I+p/BgVI84fXfKvtw760Cm1Li7dt3bNdDKE
+ UPjW9pa9wIqz1xu+zCEl5NNw9+gAirnftykAN+hUjfKyxdiQqluiv2zpxv+CCbOkB2rcaSJMwI
+ 6P+5LWC8X79LjV0JMSlyDHxhA0VWi1PxVw2H60W7QIEI9DwWNnLMD0PVtZZ9ZaJfiRQ6eGtzRv
+ DsaXKTGOgYeTQrhUK0lpdztKXvLxdFY2UWHFxtAAEUTXnEd7J+JDfR+Vmy0daWP6zz39gUZxde
+ XDnKf1vNxyz9beStapibOaUJ
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep02.wdc.com with ESMTP; 27 Jun 2019 12:54:37 -0700
+IronPort-SDR: QZfOZnobUoIlq7QA0oz41TT5jgDsxp1aB5nnN69VvT8K1DSzCnndUMF1HY+s5RqvAZhZkmY3GM
+ VeO1OT8mI7wZ8eNBVoevsc8J4zeiVtbeP4YuEDFs+vyzRxulRFVm1xKLfyFoRel7EPkrWt+r1s
+ Gr0RKX4GZwvu7o3r8YE903nVlo7x9/xuzE48qkgcppHDtM5y4R0iEBPW36hKiSlJqf1vmAMgdo
+ Tu3PwJnlsUqC3/ImjypBeOVyoY6LLqCMolukiGhrI2NsOAFHrEkRr5N9Y2Jfrq/x/bt30aPhzA
+ EzI=
+Received: from jedi-01.sdcorp.global.sandisk.com (HELO jedi-01.int.fusionio.com) ([10.11.143.218])
+  by uls-op-cesaip01.wdc.com with ESMTP; 27 Jun 2019 12:55:23 -0700
+From:   Atish Patra <atish.patra@wdc.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Atish Patra <atish.patra@wdc.com>,
+        Jeremy Linton <jeremy.linton@arm.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Anup Patel <anup@brainfault.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        devicetree@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Johan Hovold <johan@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-riscv@lists.infradead.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Otto Sabart <ottosabart@seberm.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Will Deacon <will@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Russell King <linux@armlinux.org.uk>
+Subject: [PATCH v8 0/7] Unify CPU topology across ARM & RISC-V 
+Date:   Thu, 27 Jun 2019 12:52:55 -0700
+Message-Id: <20190627195302.28300-1-atish.patra@wdc.com>
+X-Mailer: git-send-email 2.21.0
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ping.
+The cpu-map DT entry in ARM can describe the CPU topology in much better
+way compared to other existing approaches. RISC-V can easily adopt this
+binding to represent its own CPU topology. Thus, both cpu-map DT
+binding and topology parsing code can be moved to a common location so
+that RISC-V or any other architecture can leverage that.
 
-On Wed, 2019-06-05 at 16:53 -0400, Qian Cai wrote:
-> At the beginning of setup_64.c, it has,
-> 
->   #ifdef DEBUG
->   #define DBG(fmt...) udbg_printf(fmt)
->   #else
->   #define DBG(fmt...)
->   #endif
-> 
-> where DBG() could be compiled away, and generate warnings,
-> 
-> arch/powerpc/kernel/setup_64.c: In function 'initialize_cache_info':
-> arch/powerpc/kernel/setup_64.c:579:49: warning: suggest braces around
-> empty body in an 'if' statement [-Wempty-body]
->     DBG("Argh, can't find dcache properties !\n");
->                                                  ^
-> arch/powerpc/kernel/setup_64.c:582:49: warning: suggest braces around
-> empty body in an 'if' statement [-Wempty-body]
->     DBG("Argh, can't find icache properties !\n");
-> 
-> Suggested-by: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
-> Signed-off-by: Qian Cai <cai@lca.pw>
-> ---
-> 
-> v2: fix it by using a NOP while loop.
-> 
->  arch/powerpc/kernel/setup_64.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/powerpc/kernel/setup_64.c b/arch/powerpc/kernel/setup_64.c
-> index 44b4c432a273..bed4ae8d338c 100644
-> --- a/arch/powerpc/kernel/setup_64.c
-> +++ b/arch/powerpc/kernel/setup_64.c
-> @@ -71,7 +71,7 @@
->  #ifdef DEBUG
->  #define DBG(fmt...) udbg_printf(fmt)
->  #else
-> -#define DBG(fmt...)
-> +#define DBG(fmt...) do { } while (0)
->  #endif
->  
->  int spinning_secondaries;
+The relevant discussion regarding unifying cpu topology can be found in
+[1].
+
+arch_topology seems to be a perfect place to move the common code. I
+have not introduced any significant functional changes in the moved code.
+The only downside in this approach is that the capacity code will be
+executed for RISC-V as well. But, it will exit immediately after not
+able to find the appropriate DT node. If the overhead is considered too
+much, we can always compile out capacity related functions under a
+different config for the architectures that do not support them.
+
+There was an opportunity to unify topology data structure for ARM32 done
+by patch 3/4. But, I refrained from making any other changes as I am not
+very well versed with original intention for some functions that
+are present in arch_topology.c. I hope this patch series can be served
+as a baseline for such changes in the future.
+
+The patches have been tested for RISC-V, ARM64, ARM32 & compile tested for
+x86.
+
+From Jeremy,
+
+"I applied these to 5.2rc2, along with my PPTT/MT change and verified the 
+system & scheduler topology/etc on DAWN and ThunderX2 using ACPI on arm64.
+They appear to be working correctly.
+
+so for the series,
+Tested-by: Jeremy Linton <jeremy.linton@arm.com>"
+
+The socket change[2] is also now part of this series.
+
+[1] https://lkml.org/lkml/2018/11/6/19
+[2] https://lkml.org/lkml/2018/11/7/918
+
+This patch series can also be found at
+https://github.com/atishp04/linux/tree/5.2-rc6_topology
+
+QEMU changes for RISC-V topology are available here
+https://lists.nongnu.org/archive/html/qemu-devel/2019-06/msg05974.html
+
+HiFive Unleashed DT with topology node is available here.
+https://patchwork.kernel.org/patch/11014313/
+
+Changes from v7->v8
+1. Regenerated the patch series without -b option in git format-patch.
+   Without that, git apply from email won't work because ignored space
+   changes.
+ 
+Changes from v6->v7
+1. Added socket to HiFive Unleashed topology example.
+2. Added Acked-by & Reviewed-by.
+
+Changes from v5->v6
+1. Added two more patches from Sudeep about maintainership of arch_topology.c
+   and Kconfig update.
+2. Added Tested-by & Reviewed-by
+3. Fixed a nit (reordering of variables)
+
+Changes from v4-v5
+1. Removed the arch_topology.h header inclusion from topology.c and arch_topology.c
+file. Added it in linux/topology.h.
+2. core_id is set to -1 upon reset. Otherwise, ARM topology store function does not
+work.
+
+Changes from v3->v4
+1. Get rid of ARM32 specific information in topology structure.
+2. Remove redundant functions from ARM32 and use common code instead. 
+
+Changes from v2->v3
+1. Cover letter update with experiment DT for topology changes.
+2. Added the patch for [2].
+
+Changes from v1->v2
+1. ARM32 can now use the common code as well.
+
+Atish Patra (4):
+dt-binding: cpu-topology: Move cpu-map to a common binding.
+cpu-topology: Move cpu topology code to common code.
+arm: Use common cpu_topology structure and functions.
+RISC-V: Parse cpu topology during boot.
+
+Sudeep Holla (3):
+Documentation: DT: arm: add support for sockets defining package
+boundaries
+base: arch_topology: update Kconfig help description
+MAINTAINERS: Add an entry for generic architecture topology
+
+.../topology.txt => cpu/cpu-topology.txt}     | 256 ++++++++++-----
+MAINTAINERS                                   |   7 +
+arch/arm/include/asm/topology.h               |  20 --
+arch/arm/kernel/topology.c                    |  60 +---
+arch/arm64/include/asm/topology.h             |  23 --
+arch/arm64/kernel/topology.c                  | 303 +-----------------
+arch/riscv/Kconfig                            |   1 +
+arch/riscv/kernel/smpboot.c                   |   3 +
+drivers/base/Kconfig                          |   2 +-
+drivers/base/arch_topology.c                  | 298 +++++++++++++++++
+include/linux/arch_topology.h                 |  26 ++
+include/linux/topology.h                      |   1 +
+12 files changed, 514 insertions(+), 486 deletions(-)
+rename Documentation/devicetree/bindings/{arm/topology.txt => cpu/cpu-topology.txt} (66%)
+
+--
+2.21.0
+
