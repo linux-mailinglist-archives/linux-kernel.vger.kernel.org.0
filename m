@@ -2,91 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A263958870
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 19:34:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BDB258871
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 19:34:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726747AbfF0Re1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 13:34:27 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:45426 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726557AbfF0Re0 (ORCPT
+        id S1726720AbfF0ReZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 13:34:25 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:56962 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726405AbfF0ReZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 13:34:26 -0400
-Received: by mail-pg1-f194.google.com with SMTP id z19so1322024pgl.12;
-        Thu, 27 Jun 2019 10:34:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=cFX/Hroy8JhGNcWKVgvUThIxX3llgz/HND0HFdXYwxY=;
-        b=jG81AaIgPNJ48aUwfThvJxNL2urKXSbstAsexVme2UGgWQ1bJ/St85auPVnOB2vwf0
-         zzoYMqj5dxtytrpbnaARpmkyN73bDdft7LJv7eNHHQJWCYVAPph9S79CO/t3IWpJqZwu
-         ShMKNL67tdOgWZWXJEiMX3cTbE+Goz80p3ily4LXZfecMCRaBNySGiFO/xKqb5MsB4GX
-         PLn8kdrA/3VDN+O+1A5ZhGOFQUa/ib8qKHEdtIFm93z70pQ9AHAXJCxGFxnZbA9rntdO
-         oqkzJA0OrWvpPXQU4l6Lr4yEP5OceDKErEQoWIvx4e7Rg6oEpHzIlOxe/S+wrtMu3UWu
-         yrIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=cFX/Hroy8JhGNcWKVgvUThIxX3llgz/HND0HFdXYwxY=;
-        b=DVGpQKUYkwBPkzz7Zq0Qy+gIrKgzRTXMGIVKddFss05Ecl7RUO20zaITBIWfBLAeMT
-         crTbMyFhOWqfHXTU3vP6ZdVpPvkTHAvJ24NzNspKQzSex58sbkTICB8yvngJPXHzbpzk
-         qCYRJhrMjDf1sqFYgSbZcVqTl4WtjKE7CF6Im1aKKa4rBWYwHFoawSitha7OA8sBxW1r
-         MNp/livbqzt9HPxau+uNwXYuNIRKKQGNtWzbmGrpQfvtId3AZF9XlliNfbvvGwouubeE
-         n4XHzynT/2YJNyZy+4GqPBzfDW6S9i/bp4hlGlvSDa79ckkWDwvBIgkkZ688QtkAInph
-         Q0Lw==
-X-Gm-Message-State: APjAAAVqSl200VXrOIy+wv86BIPAIhUPBpQG27fwZQFyGpYflGS/qwd7
-        UEzRB1hWYswwgWfOpCv/z2s=
-X-Google-Smtp-Source: APXvYqxwTk/Fq6axi9N+BbOMaeI4oTfkGCGHgcpIOzd38CM7C5g7j9k2yvahCuvCEdO4pMIqBODmVA==
-X-Received: by 2002:a63:5a0a:: with SMTP id o10mr4962990pgb.282.1561656865138;
-        Thu, 27 Jun 2019 10:34:25 -0700 (PDT)
-Received: from hfq-skylake.ipads-lab.se.sjtu.edu.cn ([202.120.40.82])
-        by smtp.googlemail.com with ESMTPSA id 201sm7437093pfz.24.2019.06.27.10.34.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 27 Jun 2019 13:34:25 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id D377914DB8767;
         Thu, 27 Jun 2019 10:34:24 -0700 (PDT)
-From:   Fuqian Huang <huangfq.daxian@gmail.com>
-Cc:     Fuqian Huang <huangfq.daxian@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, linux-ide@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 05/87] ata: sata_nv: Remove call to memset after dmam_alloc_coherent
-Date:   Fri, 28 Jun 2019 01:34:18 +0800
-Message-Id: <20190627173418.2089-1-huangfq.daxian@gmail.com>
-X-Mailer: git-send-email 2.11.0
-To:     unlisted-recipients:; (no To-header on input)
+Date:   Thu, 27 Jun 2019 10:34:24 -0700 (PDT)
+Message-Id: <20190627.103424.2376390104509352.davem@davemloft.net>
+To:     c0d1n61at3@gmail.com
+Cc:     skhan@linuxfoundation.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [Linux-kernel-mentees][PATCH v2] packet: Fix undefined
+ behavior in bit shift
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20190627165726.p6k3tugjs2gzgnjh@rYz3n>
+References: <7f6f44b2-3fe4-85f6-df3c-ad59f2eadba2@linuxfoundation.org>
+        <20190627.092253.1878691006683087825.davem@davemloft.net>
+        <20190627165726.p6k3tugjs2gzgnjh@rYz3n>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 27 Jun 2019 10:34:25 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In commit af7ddd8a627c
-("Merge tag 'dma-mapping-4.21' of git://git.infradead.org/users/hch/dma-mapping"),
-dmam_alloc_coherent has already zeroed the memory.
-So memset is not needed.
+From: Jiunn Chang <c0d1n61at3@gmail.com>
+Date: Thu, 27 Jun 2019 11:57:28 -0500
 
-Signed-off-by: Fuqian Huang <huangfq.daxian@gmail.com>
----
- drivers/ata/sata_nv.c | 2 --
- 1 file changed, 2 deletions(-)
+> On Thu, Jun 27, 2019 at 09:22:53AM -0700, David Miller wrote:
+>> From: Shuah Khan <skhan@linuxfoundation.org>
+>> Date: Wed, 26 Jun 2019 21:32:52 -0600
+>> 
+>> > On 6/26/19 9:25 PM, Jiunn Chang wrote:
+>> >> Shifting signed 32-bit value by 31 bits is undefined.  Changing most
+>> >> significant bit to unsigned.
+>> >> Changes included in v2:
+>> >>    - use subsystem specific subject lines
+>> >>    - CC required mailing lists
+>> >> 
+>> > 
+>> > These version change lines don't belong in the change log.
+>> 
+>> For networking changes I actually like the change lines to be in the
+>> commit log.  So please don't stray people this way, thanks.
+> 
+> Hello David,
+> 
+> Would you like me to send v3 with the change log in the patch description?
 
-diff --git a/drivers/ata/sata_nv.c b/drivers/ata/sata_nv.c
-index 54bfab15c74a..b44b4b64354c 100644
---- a/drivers/ata/sata_nv.c
-+++ b/drivers/ata/sata_nv.c
-@@ -1136,7 +1136,6 @@ static int nv_adma_port_start(struct ata_port *ap)
- 				  &mem_dma, GFP_KERNEL);
- 	if (!mem)
- 		return -ENOMEM;
--	memset(mem, 0, NV_ADMA_PORT_PRIV_DMA_SZ);
- 
- 	/*
- 	 * First item in chunk of DMA memory:
-@@ -1946,7 +1945,6 @@ static int nv_swncq_port_start(struct ata_port *ap)
- 				      &pp->prd_dma, GFP_KERNEL);
- 	if (!pp->prd)
- 		return -ENOMEM;
--	memset(pp->prd, 0, ATA_PRD_TBL_SZ * ATA_MAX_QUEUE);
- 
- 	ap->private_data = pp;
- 	pp->sactive_block = ap->ioaddr.scr_addr + 4 * SCR_ACTIVE;
--- 
-2.11.0
-
+I'll use v2 which had this done correctly.
