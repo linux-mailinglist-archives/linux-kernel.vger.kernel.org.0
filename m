@@ -2,57 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6439578C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 02:56:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7D5E578CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 02:57:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726935AbfF0A4b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 20:56:31 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:34356 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726677AbfF0A4a (ORCPT
+        id S1727015AbfF0A5X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 20:57:23 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:37372 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726728AbfF0A5W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 20:56:30 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hgIiC-0002Xh-Fu; Thu, 27 Jun 2019 00:56:28 +0000
-Date:   Thu, 27 Jun 2019 01:56:28 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        tj@kernel.org
-Subject: Re: misuse of fget_raw() in perf_event_get()
-Message-ID: <20190627005628.GP17978@ZenIV.linux.org.uk>
-References: <20190413210242.GP2217@ZenIV.linux.org.uk>
- <20190415044158.5goa2je57j63kwaz@ast-mbp.dhcp.thefacebook.com>
- <20190415090406.GJ2490@worktop.programming.kicks-ass.net>
+        Wed, 26 Jun 2019 20:57:22 -0400
+Received: by mail-lf1-f67.google.com with SMTP id d11so360813lfb.4
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 17:57:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5lMZ1piiT78tmacK8Hh1QGTfmPTfuG8GnhzPjO+SIDU=;
+        b=fyLyUJt0cAtc+SmMP1iYSE3DjsxUXmn0roX+f9Mkcv9Up1/0CDuQR5RQA9zGPOwsun
+         0jYqtCw5YT8TMU1sFTFBvvtpfNl9w7Adk9IQijj2MGrsE6XUsJq4RIrou19wummjt+ha
+         JLJ5x571vac2cVP5Vc/3Zjq3swYa7JXEMVsB8uh+ZjQeJnlLMb/S0K/nBV5BpE90L4rk
+         1zI84s3247WnDWzjUEAN/8FUQRnB/jvuiADCHNqh+DCLleFzxd2eYX6GkGzWEpzGpFxq
+         raI+1wdvCgmOmsJUSDv3sUCuYNjWPUtALBsKyxlqsHdysd5vjVdXL7RMUKbS1rX8lDVA
+         KGLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5lMZ1piiT78tmacK8Hh1QGTfmPTfuG8GnhzPjO+SIDU=;
+        b=H6+Viy4Ri57s9WkCk2cUhvFEQNKbi5pt9bCE+VN/tAorGtipyeysmyAaPyVq5mB/EP
+         UxQwuRYl6EHouBO8qV1/oDuctTz/WuOXkNq7DIXHe1XjWCaKbLjd8wCYrelc6Hy7M7Ph
+         7wtWL6fpa+o2mqk83QpW+6dslcYKjSkXQcOIQoCA6+hEp/e1r6oLKtR7Au4c4Qe2SGLo
+         BMwrQW41F2PDVHrIU6MtWPkiLKhErv0FRQ1qNz14y7zeOxiZb8EyP0x/Ig9u1MwRnSTo
+         Jcp4ggAiW5/SpU2mXN00F1ezCEY0kQB/o0i5FX4fMcKZo4PBrYStw32eQXTD6ix6yHEN
+         ytiA==
+X-Gm-Message-State: APjAAAWI9KJmNf+kDLyygTdaGdMJgr4XKnqpHvxf1Kqp4KxfYZI1k97O
+        oveSbL3L64ViCpP/bG/jmzdfpbdvo1UQD/1s9mw=
+X-Google-Smtp-Source: APXvYqwTLieOueKiUwNGGZ5/kwOpfwqURhlDkGx3yQenIoS3xc7sYF1Qcd+0XEItLs1oUd4IP60Ijkvt/shn6IrTF10=
+X-Received: by 2002:a19:4:: with SMTP id 4mr463017lfa.162.1561597040095; Wed,
+ 26 Jun 2019 17:57:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190415090406.GJ2490@worktop.programming.kicks-ass.net>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+References: <cover.1561595111.git.jpoimboe@redhat.com> <a5a486434d31d77297d39c4adccea22fac3027c1.1561595111.git.jpoimboe@redhat.com>
+In-Reply-To: <a5a486434d31d77297d39c4adccea22fac3027c1.1561595111.git.jpoimboe@redhat.com>
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date:   Wed, 26 Jun 2019 17:57:08 -0700
+Message-ID: <CAADnVQL2z4BPUvtem-1C_JxzSgc_L8ED=VjGLu7ypPSq3wwC4w@mail.gmail.com>
+Subject: Re: [PATCH v3 3/4] bpf: Fix ORC unwinding in non-JIT BPF code
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Song Liu <songliubraving@fb.com>,
+        Kairui Song <kasong@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 15, 2019 at 11:04:06AM +0200, Peter Zijlstra wrote:
-> On Sun, Apr 14, 2019 at 09:42:00PM -0700, Alexei Starovoitov wrote:
-> > On Sat, Apr 13, 2019 at 10:02:42PM +0100, Al Viro wrote:
-> > > 	What's the point of using fget_raw(), if you do
-> > > _not_ accept O_PATH descriptors?  That should be fget()...
-> > 
-> > I think you're talking about commit e03e7ee34fdd ("perf/bpf: Convert perf_event_array to use struct file")
-> > I don't really remember why we went with this instead of fget().
-> > There was a bunch of back and forth back then with Peter.
-> 
-> That was mostly on what refcount to use, you wanted to use the event
-> refcount, and I suggested using the file refcount.
-> 
-> If you look at:
-> 
->   lkml.kernel.org/r/20160126161637.GF6357@twins.programming.kicks-ass.net
-> 
-> I too wondered about the fget_raw() at the time, whatever Al wants
-> though, I never quite remember how that file stuff works :/
+On Wed, Jun 26, 2019 at 5:36 PM Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+>
+> Objtool previously ignored ___bpf_prog_run() because it didn't
+> understand the jump table.  This resulted in the ORC unwinder not being
+> able to unwind through non-JIT BPF code.
+>
+> Now that objtool knows how to read jump tables, remove the whitelist and
+> rename the variable to "jump_table" so objtool can recognize it.
+>
+> Fixes: d15d356887e7 ("perf/x86: Make perf callchains work without CONFIG_FRAME_POINTER")
+> Reported-by: Song Liu <songliubraving@fb.com>
+> Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+> ---
+>  kernel/bpf/core.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+>
+> diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
+> index 080e2bb644cc..ff66294882f8 100644
+> --- a/kernel/bpf/core.c
+> +++ b/kernel/bpf/core.c
+> @@ -1299,7 +1299,7 @@ static u64 ___bpf_prog_run(u64 *regs, const struct bpf_insn *insn, u64 *stack)
+>  {
+>  #define BPF_INSN_2_LBL(x, y)    [BPF_##x | BPF_##y] = &&x##_##y
+>  #define BPF_INSN_3_LBL(x, y, z) [BPF_##x | BPF_##y | BPF_##z] = &&x##_##y##_##z
+> -       static const void *jumptable[256] = {
+> +       static const void *jump_table[256] = {
+>                 [0 ... 255] = &&default_label,
+>                 /* Now overwrite non-defaults ... */
+>                 BPF_INSN_MAP(BPF_INSN_2_LBL, BPF_INSN_3_LBL),
+> @@ -1315,7 +1315,7 @@ static u64 ___bpf_prog_run(u64 *regs, const struct bpf_insn *insn, u64 *stack)
+>  #define CONT_JMP ({ insn++; goto select_insn; })
+>
+>  select_insn:
+> -       goto *jumptable[insn->code];
+> +       goto *jump_table[insn->code];
 
-Anyway, fget() it becomes...
+I thought we were clear that it is a nack?
+Either live it alone or rename to something like jump_table_bpf_interpreter
+or bpf_interpreter_jump_table.
