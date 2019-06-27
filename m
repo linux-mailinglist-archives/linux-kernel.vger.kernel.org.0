@@ -2,61 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7DC557543
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 02:09:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52E4157546
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 02:11:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726693AbfF0AJt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 20:09:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55344 "EHLO mail.kernel.org"
+        id S1726723AbfF0ALh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 20:11:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55892 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726385AbfF0AJt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 20:09:49 -0400
+        id S1726385AbfF0ALg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 20:11:36 -0400
 Received: from localhost (unknown [116.247.127.123])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CA24D216C8;
-        Thu, 27 Jun 2019 00:09:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2C81F216C8;
+        Thu, 27 Jun 2019 00:11:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561594188;
-        bh=ioBuFqxpeUQlfT3g2vZqjrx7gAuxCKeuHhhrm2EnJOY=;
+        s=default; t=1561594295;
+        bh=5DDui4iuonpz2LKxoAqKGqJHGkisAqRFtDT76gTVIZU=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jubfDBaA96j06IAIky6Aq21kLrXu5B9l3kJR3hyBUAopqtRSzq4ZZxz9Pnn4jE0fG
-         EqDBBx7QuP0P377511UggMSYt7GpOWV6BSYXIL/9IWiUnNWGaW1fOdQ9gUChi689u6
-         TltIvgk0mP24JiXizNhIDSfX2X+dOO7DQ+L1PakU=
-Date:   Thu, 27 Jun 2019 08:09:35 +0800
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Mark Greer <mgreer@animalcreek.com>
-Cc:     linux-serial@vger.kernel.org, Jiri Slaby <jslaby@suse.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] serial: mpsc: Remove obsolete MPSC driver
-Message-ID: <20190627000935.GC527@kroah.com>
-References: <20190626160553.28518-1-mgreer@animalcreek.com>
+        b=xnUBYpkMsoNlcxxdFEH/u6Re9a8PnM4kljxwPlwIhZb5tF95iDqMKzKbhQXGkX/+M
+         8gQQ8gvPz3aEByYOTHaBAsOL80uA661mbpbj9wg5zNjWIh3JIsbQR8j85M51dLuX3g
+         7IhbB/4TUrXLcrWfjKoBBXYvN+ME7mkb/OJRXetU=
+Date:   Thu, 27 Jun 2019 08:11:32 +0800
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.14 0/1] 4.14.131-stable review
+Message-ID: <20190627001132.GD527@kroah.com>
+References: <20190626083606.248422423@linuxfoundation.org>
+ <20190626173613.GB2530@roeck-us.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190626160553.28518-1-mgreer@animalcreek.com>
+In-Reply-To: <20190626173613.GB2530@roeck-us.net>
 User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 26, 2019 at 09:05:53AM -0700, Mark Greer wrote:
-> Support for the Marvell MV64x60 line of bridge chips that contained
-> MPSC controllers has been removed and there are no other components
-> that have that controller so remove its driver.
+On Wed, Jun 26, 2019 at 10:36:13AM -0700, Guenter Roeck wrote:
+> On Wed, Jun 26, 2019 at 04:45:20PM +0800, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 4.14.131 release.
+> > There are 1 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Fri 28 Jun 2019 08:35:42 AM UTC.
+> > Anything received after that time might be too late.
+> > 
 > 
-> Signed-off-by: Mark Greer <mgreer@animalcreek.com>
-> ---
->  Documentation/admin-guide/devices.txt |    4 +-
->  drivers/tty/serial/Kconfig            |   14 -
->  drivers/tty/serial/Makefile           |    1 -
->  drivers/tty/serial/mpsc.c             | 2138 -------------------------
->  include/linux/mv643xx.h               |   46 -
->  include/uapi/linux/serial_core.h      |    2 +-
->  6 files changed, 3 insertions(+), 2202 deletions(-)
->  delete mode 100644 drivers/tty/serial/mpsc.c
+> Build results:
+> 	total: 172 pass: 172 fail: 0
+> Qemu test results:
+> 	total: 346 pass: 346 fail: 0
 
-I like patches that delete code, thanks for doing this!
+Wonderful, thanks for testing these and letting me know.
 
 greg k-h
