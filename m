@@ -2,18 +2,18 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33365587E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 19:02:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C997587E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 19:01:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726558AbfF0RBv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 13:01:51 -0400
-Received: from verein.lst.de ([213.95.11.210]:40323 "EHLO newverein.lst.de"
+        id S1726620AbfF0RBw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 13:01:52 -0400
+Received: from verein.lst.de ([213.95.11.210]:40324 "EHLO newverein.lst.de"
         rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726315AbfF0RBv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726405AbfF0RBv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 27 Jun 2019 13:01:51 -0400
 Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 4B57968C4E; Thu, 27 Jun 2019 18:53:49 +0200 (CEST)
-Date:   Thu, 27 Jun 2019 18:53:49 +0200
+        id D884D68C7B; Thu, 27 Jun 2019 18:54:28 +0200 (CEST)
+Date:   Thu, 27 Jun 2019 18:54:28 +0200
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jason Gunthorpe <jgg@mellanox.com>
 Cc:     Christoph Hellwig <hch@lst.de>,
@@ -26,40 +26,37 @@ Cc:     Christoph Hellwig <hch@lst.de>,
         "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
         "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Ralph Campbell <rcampbell@nvidia.com>
-Subject: Re: [PATCH 12/25] memremap: add a migrate_to_ram method to struct
- dev_pagemap_ops
-Message-ID: <20190627165349.GB10652@lst.de>
-References: <20190626122724.13313-1-hch@lst.de> <20190626122724.13313-13-hch@lst.de> <20190627162439.GD9499@mellanox.com>
+        John Hubbard <jhubbard@nvidia.com>,
+        Michal Hocko <mhocko@suse.com>
+Subject: Re: [PATCH 03/25] mm: remove hmm_devmem_add_resource
+Message-ID: <20190627165428.GC10652@lst.de>
+References: <20190626122724.13313-1-hch@lst.de> <20190626122724.13313-4-hch@lst.de> <20190627161813.GB9499@mellanox.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190627162439.GD9499@mellanox.com>
+In-Reply-To: <20190627161813.GB9499@mellanox.com>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 27, 2019 at 04:29:45PM +0000, Jason Gunthorpe wrote:
-> I'ver heard there are some other use models for fault() here beyond
-> migrate to ram, but we can rename it if we ever see them.
-
-Well, it absolutely needs to migrate to some piece of addressable
-and coherent memory, so ram might be a nice shortcut for that.
-
-> > +static vm_fault_t hmm_devmem_migrate_to_ram(struct vm_fault *vmf)
-> >  {
-> > -	struct hmm_devmem *devmem = page->pgmap->data;
-> > +	struct hmm_devmem *devmem = vmf->page->pgmap->data;
-> >  
-> > -	return devmem->ops->fault(devmem, vma, addr, page, flags, pmdp);
-> > +	return devmem->ops->fault(devmem, vmf->vma, vmf->address, vmf->page,
-> > +			vmf->flags, vmf->pmd);
-> >  }
+On Thu, Jun 27, 2019 at 04:18:22PM +0000, Jason Gunthorpe wrote:
+> On Wed, Jun 26, 2019 at 02:27:02PM +0200, Christoph Hellwig wrote:
+> > This function has never been used since it was first added to the kernel
+> > more than a year and a half ago, and if we ever grow a consumer of the
+> > MEMORY_DEVICE_PUBLIC infrastructure it can easily use devm_memremap_pages
+> > directly.
+> > 
+> > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> > Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
+> > Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+> > Acked-by: Michal Hocko <mhocko@suse.com>
+> > ---
+> >  include/linux/hmm.h |  3 ---
+> >  mm/hmm.c            | 50 ---------------------------------------------
+> >  2 files changed, 53 deletions(-)
 > 
-> Next cycle we should probably rename this fault to migrate_to_ram as
-> well and pass in the vmf..
+> This should be squashed to the new earlier patch?
 
-That ->fault op goes away entirely in one of the next patches in the
-series.
+We could do that.  Do you just want to do that when you apply it?
