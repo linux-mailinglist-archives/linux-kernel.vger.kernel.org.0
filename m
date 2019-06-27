@@ -2,74 +2,213 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72DC95767B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 02:39:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C3B55766D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 02:39:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727341AbfF0Aj1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 20:39:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43588 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728199AbfF0AjW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 20:39:22 -0400
-Received: from sasha-vm.mshome.net (unknown [107.242.116.147])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5515921855;
-        Thu, 27 Jun 2019 00:39:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561595961;
-        bh=yso73BmTMDqJZ5UXPhwZnb/Q5o9FgmQEh5o4fbZC4Mk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EUtqSXaYK/qCpJL1iq8CEqMs9KrHvm97Uc3baz2Xcg3kIgagbcF4M6dIN994Xc+w/
-         S2WMT9F0Uf0iGKPFpTlYAv6IEsrdlbMHW0qyJF4lriEsFcGZGfEW93TRSentCRGSNF
-         uNxGt4sCuoJ5y3Rxxj5q2EVALTPoQ8IPHe47K5HU=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Lin Yi <teroincn@163.com>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>,
-        Sasha Levin <sashal@kernel.org>, linux-nfs@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 60/60] net :sunrpc :clnt :Fix xps refcount imbalance on the error path
-Date:   Wed, 26 Jun 2019 20:36:15 -0400
-Message-Id: <20190627003616.20767-60-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190627003616.20767-1-sashal@kernel.org>
-References: <20190627003616.20767-1-sashal@kernel.org>
+        id S1728311AbfF0Aiq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 20:38:46 -0400
+Received: from wout1-smtp.messagingengine.com ([64.147.123.24]:38397 "EHLO
+        wout1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728920AbfF0Aio (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 20:38:44 -0400
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailout.west.internal (Postfix) with ESMTP id 2B4A473A;
+        Wed, 26 Jun 2019 20:38:43 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute1.internal (MEProxy); Wed, 26 Jun 2019 20:38:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
+        message-id:subject:from:to:cc:date:in-reply-to:references
+        :content-type:mime-version:content-transfer-encoding; s=fm3; bh=
+        ihe2qn6NE+dbP+hWMlfokm/JcFPS71JobWB9K4KtgEg=; b=bltSty7+CDPS15nf
+        c8/dLStnwJjH2NiKy4QOWUFT9A+sNuK5buS60w06U6GqBAfGaMmkdD3SSj13Qdh1
+        xyZ3IOYHsDCqVaHdu2QBIZyJUkvUR2+BrUA3B5ItPLCbBd5HQv12Gns89LPaSSNL
+        c1ByuK51IU+sLMl5Z6dYFu8OkkRsf3NTje+rokUV9sNmufP7+tu3XfQkuXxfW3TK
+        5VMg3VvcOQSc/Dvx7pFTBSS6H7TqSt8c1NL2jyHCFSag3Q55stGp8SSebqCJ8L2S
+        vY/bQRdtLbp4C/CoJ9DVrXE+kz1UkS8W9cXItauqCXTDrzLU5ufdNIHDBHGg2Zlb
+        fhJPFA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; bh=ihe2qn6NE+dbP+hWMlfokm/JcFPS71JobWB9K4Ktg
+        Eg=; b=sL4w0IvwD3VR2WqVm1ezJJA78jXzqiLfGDSowz5eLKjBPWNo04mKaBYUZ
+        G4/puI0sbPxvRBELpDERrk6jctUQ/iVpmMF+2NMhnKPYJdvBbyHtQ+U+NryO9LQO
+        Tn6Pwjagdh82EEsxP0Q0wS0uihzuXNVwOtOWdle9xQAJySft2JJCin3fzBd1Y+Sj
+        qQF5PajEfs5yKbbQXlHu0NZSWoXAE95HeqH+ORH44pU3Bg3OrWIu9S1y4Zqa1eb6
+        XSLCGt952x9kxw8U5c09Jwv/1jotNWVd2yvPWOAaqZRkABWgwuRPHDs/lJEt3kJ7
+        QE8Ly5pf64Exvef/mZecRXAVByP5w==
+X-ME-Sender: <xms:EhAUXVi4U1pTNKiEm_sd60PRZJ6YABwrGoedFA7B7P1Jsh_ap1oiQw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrudejgdefkecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefkuffhvfffjghftggfggfgsehtjeertddtreejnecuhfhrohhmpefkrghnucfm
+    vghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecukfhppeduudekrddvtdekrd
+    dujeefrdehfeenucfrrghrrghmpehmrghilhhfrhhomheprhgrvhgvnhesthhhvghmrgif
+    rdhnvghtnecuvehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:EhAUXelumfsj5Io6oWJaTY0o0N2iPJsck6zWKm2a8lOdgYROj6aXuQ>
+    <xmx:EhAUXQ-ArL1oaer84lmWcy7HoO8HQH6APgq9sYRffXPFPlM9sa2RCQ>
+    <xmx:EhAUXW8wyKQIDL3k079GsD-vQmIkR2FLWJ4-gbWPNXfn6J29PRwwfw>
+    <xmx:EhAUXaqScpSfHZTVBudsytkn_PQCgvLyX0pFnhFPAPTNz2DQ_2hfxg>
+Received: from pluto.themaw.net (unknown [118.208.173.53])
+        by mail.messagingengine.com (Postfix) with ESMTPA id B76EC380083;
+        Wed, 26 Jun 2019 20:38:41 -0400 (EDT)
+Received: from localhost (localhost [127.0.0.1])
+        by pluto.themaw.net (Postfix) with ESMTP id 4415D1C0064;
+        Thu, 27 Jun 2019 08:38:37 +0800 (AWST)
+Message-ID: <c9f8a840e7555648bc79a34512dbbbdb834e6ba3.camel@themaw.net>
+Subject: Re: [PATCH 00/25] VFS: Introduce filesystem information query
+ syscall [ver #14]
+From:   Ian Kent <raven@themaw.net>
+To:     Christian Brauner <christian@brauner.io>
+Cc:     David Howells <dhowells@redhat.com>, viro@zeniv.linux.org.uk,
+        mszeredi@redhat.com, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Thu, 27 Jun 2019 08:38:37 +0800
+In-Reply-To: <20190626104704.dwjd4urpsmuheirc@brauner.io>
+References: <156138532485.25627.7459410522109581052.stgit@warthog.procyon.org.uk>
+         <20190626100525.irdehd24jowz5f75@brauner.io>
+         <cf0361c2d1fc09ad0097f0da1e981b97ad39ab07.camel@themaw.net>
+         <20190626104704.dwjd4urpsmuheirc@brauner.io>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lin Yi <teroincn@163.com>
+On Wed, 2019-06-26 at 12:47 +0200, Christian Brauner wrote:
+> On Wed, Jun 26, 2019 at 06:42:51PM +0800, Ian Kent wrote:
+> > On Wed, 2019-06-26 at 12:05 +0200, Christian Brauner wrote:
+> > > On Mon, Jun 24, 2019 at 03:08:45PM +0100, David Howells wrote:
+> > > > Hi Al,
+> > > > 
+> > > > Here are a set of patches that adds a syscall, fsinfo(), that allows
+> > > > attributes of a filesystem/superblock to be queried.  Attribute values
+> > > > are
+> > > > of four basic types:
+> > > > 
+> > > >  (1) Version dependent-length structure (size defined by type).
+> > > > 
+> > > >  (2) Variable-length string (up to PAGE_SIZE).
+> > > > 
+> > > >  (3) Array of fixed-length structures (up to INT_MAX size).
+> > > > 
+> > > >  (4) Opaque blob (up to INT_MAX size).
+> > > > 
+> > > > Attributes can have multiple values in up to two dimensions and all the
+> > > > values of a particular attribute must have the same type.
+> > > > 
+> > > > Note that the attribute values *are* allowed to vary between dentries
+> > > > within a single superblock, depending on the specific dentry that you're
+> > > > looking at.
+> > > > 
+> > > > I've tried to make the interface as light as possible, so integer/enum
+> > > > attribute selector rather than string and the core does all the
+> > > > allocation
+> > > > and extensibility support work rather than leaving that to the
+> > > > filesystems.
+> > > > That means that for the first two attribute types, sb->s_op->fsinfo()
+> > > > may
+> > > > assume that the provided buffer is always present and always big enough.
+> > > > 
+> > > > Further, this removes the possibility of the filesystem gaining access
+> > > > to
+> > > > the
+> > > > userspace buffer.
+> > > > 
+> > > > 
+> > > > fsinfo() allows a variety of information to be retrieved about a
+> > > > filesystem
+> > > > and the mount topology:
+> > > > 
+> > > >  (1) General superblock attributes:
+> > > > 
+> > > >       - The amount of space/free space in a filesystem (as statfs()).
+> > > >       - Filesystem identifiers (UUID, volume label, device numbers, ...)
+> > > >       - The limits on a filesystem's capabilities
+> > > >       - Information on supported statx fields and attributes and IOC
+> > > > flags.
+> > > >       - A variety single-bit flags indicating supported capabilities.
+> > > >       - Timestamp resolution and range.
+> > > >       - Sources (as per mount(2), but fsconfig() allows multiple
+> > > > sources).
+> > > >       - In-filesystem filename format information.
+> > > >       - Filesystem parameters ("mount -o xxx"-type things).
+> > > >       - LSM parameters (again "mount -o xxx"-type things).
+> > > > 
+> > > >  (2) Filesystem-specific superblock attributes:
+> > > > 
+> > > >       - Server names and addresses.
+> > > >       - Cell name.
+> > > > 
+> > > >  (3) Filesystem configuration metadata attributes:
+> > > > 
+> > > >       - Filesystem parameter type descriptions.
+> > > >       - Name -> parameter mappings.
+> > > >       - Simple enumeration name -> value mappings.
+> > > > 
+> > > >  (4) Mount topology:
+> > > > 
+> > > >       - General information about a mount object.
+> > > >       - Mount device name(s).
+> > > >       - Children of a mount object and their relative paths.
+> > > > 
+> > > >  (5) Information about what the fsinfo() syscall itself supports,
+> > > > including
+> > > >      the number of attibutes supported and the number of capability bits
+> > > >      supported.
+> > > 
+> > > Phew, this patchset is a lot. It's good of course but can we please cut
+> > > some of the more advanced features such as querying by mount id,
+> > > submounts etc. pp. for now?
+> > 
+> > Did you mean the "vfs: Allow fsinfo() to look up a mount object by ID"
+> > patch?
+> > 
+> > We would need to be very careful what was dropped.
+> 
+> Not dropped as in never implement but rather defer it by one merge
+> window to give us a) more time to review and settle the interface while
+> b) not stalling the overall patch.
 
-[ Upstream commit b96226148491505318228ac52624956bd98f9e0c ]
+Sure, and I'm not saying something like what you recommend shouldn't
+be done.
 
-rpc_clnt_add_xprt take a reference to struct rpc_xprt_switch, but forget
-to release it before return, may lead to a memory leak.
+I'm working on user space mount table improvements that I want to
+get done ahead of the merge.
 
-Signed-off-by: Lin Yi <teroincn@163.com>
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- net/sunrpc/clnt.c | 1 +
- 1 file changed, 1 insertion(+)
+Well, I would be but there's still mount-api conversions that need
+to be done so that fsinfo() patches don't end up with endless merge
+conflicts. The fsinfo() super block method will result in changes
+in the same area as the mount-api changes.
 
-diff --git a/net/sunrpc/clnt.c b/net/sunrpc/clnt.c
-index 1fc812ba9871..d568076cd573 100644
---- a/net/sunrpc/clnt.c
-+++ b/net/sunrpc/clnt.c
-@@ -2714,6 +2714,7 @@ int rpc_clnt_add_xprt(struct rpc_clnt *clnt,
- 	xprt = xprt_iter_xprt(&clnt->cl_xpi);
- 	if (xps == NULL || xprt == NULL) {
- 		rcu_read_unlock();
-+		xprt_switch_put(xps);
- 		return -EAGAIN;
- 	}
- 	resvport = xprt->resvport;
--- 
-2.20.1
+The mount-api changes are proving to be a bit of a challenge.
+
+Anyway, the plan is to use the mount table handling improvements to
+try and
+locate bugs and missing or not quite right functionality.
+
+> 
+> > For example, I've found that the patch above is pretty much essential
+> > for fsinfo() to be useful from user space.
+> 
+> Yeah, but that interface is not clearly defined yet as can be seen from
+> the commit message and that's what's bothering me most.
+
+Yeah, but updating my cloned branch hasn't been difficult.
+
+There's a certain amount of functionality that I'd like to see
+retained for when I get back to the user space development.
+
+Using the notifications changes are something I'm not likely
+to get to for quite some time so breaking those out into a
+separate branch (like they were not so long ago) would be
+more sensible IMHO.
+
+There may be some other bits that David can identify too.
+
+Ian
 
