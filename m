@@ -2,311 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 544A658183
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 13:27:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC36C58172
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 13:25:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726841AbfF0L1i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 07:27:38 -0400
-Received: from foss.arm.com ([217.140.110.172]:52296 "EHLO foss.arm.com"
+        id S1726890AbfF0LZo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 07:25:44 -0400
+Received: from mga01.intel.com ([192.55.52.88]:50450 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726429AbfF0L1i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 07:27:38 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2A0FA2B;
-        Thu, 27 Jun 2019 04:27:37 -0700 (PDT)
-Received: from e103592.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 72D633F718;
-        Thu, 27 Jun 2019 04:27:34 -0700 (PDT)
-Date:   Thu, 27 Jun 2019 12:27:32 +0100
-From:   Dave Martin <Dave.Martin@arm.com>
-To:     Vincenzo Frascino <vincenzo.frascino@arm.com>
-Cc:     linux-arch@vger.kernel.org, Shijith Thotton <sthotton@marvell.com>,
-        Peter Collingbourne <pcc@google.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Huw Davies <huw@codeweavers.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-kernel@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>,
-        Mark Salyzyn <salyzyn@android.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        linux-kselftest@vger.kernel.org,
-        Andre Przywara <andre.przywara@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        linux-mips@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v7 04/25] arm64: Substitute gettimeofday with C
- implementation
-Message-ID: <20190627112731.GF2790@e103592.cambridge.arm.com>
-References: <20190621095252.32307-1-vincenzo.frascino@arm.com>
- <20190621095252.32307-5-vincenzo.frascino@arm.com>
- <20190625153336.GZ2790@e103592.cambridge.arm.com>
- <f5ac379a-731d-0662-2f5b-bd046e3bd1c5@arm.com>
- <20190626161413.GA2790@e103592.cambridge.arm.com>
- <19ebd45a-b666-d7de-fd9e-2b72e18892d9@arm.com>
- <20190627100150.GC2790@e103592.cambridge.arm.com>
- <85808e79-27a0-d3ab-3fb0-445f79ff87a4@arm.com>
+        id S1726375AbfF0LZn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 07:25:43 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jun 2019 04:25:42 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,423,1557212400"; 
+   d="scan'208";a="183428308"
+Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.150])
+  by fmsmga001.fm.intel.com with ESMTP; 27 Jun 2019 04:25:40 -0700
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kbuild@vger.kernel.org
+Cc:     Sam Ravnborg <sam@ravnborg.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        Michal Marek <michal.lkml@markovi.net>
+Subject: Re: [PATCH v2 3/4] kbuild: support header-test-pattern-y
+In-Reply-To: <20190627014617.600-4-yamada.masahiro@socionext.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20190627014617.600-1-yamada.masahiro@socionext.com> <20190627014617.600-4-yamada.masahiro@socionext.com>
+Date:   Thu, 27 Jun 2019 14:28:26 +0300
+Message-ID: <871rzfqnc5.fsf@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <85808e79-27a0-d3ab-3fb0-445f79ff87a4@arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 27, 2019 at 11:57:36AM +0100, Vincenzo Frascino wrote:
-> Hi Dave,
-> 
-> Overall, I want to thank you for bringing out the topic. It helped me to
-> question some decisions and make sure that we have no holes left in
-> the approach.
+On Thu, 27 Jun 2019, Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
+> In my view, most of headers can be self-contained. So, it would be
+> tedious to add every header to header-test-y explicitly. We usually
+> end up with "all headers with some exceptions".
+>
+> There are two types in exceptions:
+>
+> [1] headers that are never compiled as standalone units
+>
+>   For examples, include/linux/compiler-gcc.h is not intended to be
+>   included directly. We should always exclude such ones.
+>
+> [2] headers that are conditionally compiled as standalone units
+>
+>   Some headers can be compiled only for particular architectures.
+>   For example, include/linux/arm-cci.h can be compiled only for
+>   arm/arm64 because it requires <asm/arm-cci.h> to exist.
+>   Clang can compile include/soc/nps/mtm.h only for arc because
+>   it contains an arch-specific register in inline assembler.
+>
+> For [2], we can write Makefile like this:
+>
+>   header-test-$(CONFIG_ARM) += linux/arm-cci.h
+>
+> The new syntax header-test-pattern-y will be useful to specify
+> "the rest".
+>
+> The typical usage is like this:
+>
+>   header-test-pattern-y += */*.h
+>
+> This adds all the headers in sub-directories to the test coverage,
+> but headers added to header-test- are excluded. In this regards,
+> header-test-pattern-y behaves like a weaker variant of header-test-y.
+>
+> Caveat:
+> The patterns in header-test-pattern-y are prefixed with $(srctree)/$(src)/
+> but not $(objtree)/$(obj)/. Stale generated patterns are often left over.
+> For example, you will have ones when you traverse the git history for
+> 'git bisect' without cleaning. If a wildcard is used for generated
+> headers, it may match to stale headers.
+>
+> If you really want to compile-test generated headers, I recommend to
+> add them to header-test-y explicitly. One pitfall is $(srctree)/$(src)/
+> and $(objtree)/$(obj)/ point to the same directory for in-tree building.
+> So, header-test-pattern-y should be used with care. It can potentially
+> match to generated headers, which may be stale and fail to compile.
+>
+> Caveat2:
+> You could use wildcard for header-test-. For example,
+>
+>   header-test- += asm-generic/%
+>
+> ... will exclude headers in asm-generic directory. Unfortunately, the
+> wildcard character is '%' instead of '*' because this is evaluated by
+> $(filter-out ...) whereas header-test-pattern-y is evaluated by
+> $(wildcard ...). This is a kludge, but seems useful in some places...
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-Fair enough.
+Awesome! This will let us get rid of our local $(wildcard) hacks.
 
-This is really just a nasty compiler corner-case... the validity of the
-overall approach isn't affected.
+Tested-by: Jani Nikula <jani.nikula@intel.com>
 
-> >>
-> >> vDSO library is a shared object not compiled with LTO as far as I can
-> >> see, hence if this involved LTO should not applicable in this case.
-> > 
-> > That turned to be a spurious hypothesis on my part -- LTO isn't the
-> > smoking gun.  (See below.)
-> >
-> 
-> Ok.
-> 
-> >>> The classic example of this (triggered directly and not due to inlining)
-> >>> would be something like:
-> >>>
-> >>> int bar(int, int);
-> >>>
-> >>> void foo(int x, int y)
-> >>> {
-> >>> 	register int x_ asm("r0") = x;
-> >>> 	register int y_ asm("r1") = bar(x, y);
-> >>>
-> >>> 	asm volatile (
-> >>> 		"svc	#0"
-> >>> 		:: "r" (x_), "r" (y_)
-> >>> 		: "memory"
-> >>> 	);
-> >>> }
-> >>>
-> >>> ->
-> >>>
-> >>> 0000000000000000 <foo>:
-> >>>    0:   a9bf7bfd        stp     x29, x30, [sp, #-16]!
-> >>>    4:   910003fd        mov     x29, sp
-> >>>    8:   94000000        bl      0 <bar>
-> >>>    c:   2a0003e1        mov     w1, w0
-> >>>   10:   d4000001        svc     #0x0
-> >>>   14:   a8c17bfd        ldp     x29, x30, [sp], #16
-> >>>   18:   d65f03c0        ret
-> >>>
-> >>
-> >> Contextualized to what my vdso fallback functions do, this should not be a
-> >> concern because in no case a function result is directly set to a variable
-> >> declared as register.
-> >>
-> >> Since the vdso fallback functions serve a very specific and limited purpose, I
-> >> do not expect that that code is going to change much in future.
-> >>
-> >> The only thing that can happen is something similar to what I wrote in my
-> >> example, which as I empirically proved does not trigger the problematic behavior.
-> >>
-> >>>
-> >>> The gcc documentation is vague and ambiguous about precisely whan this
-> >>> can happen and about how to avoid it.
-> >>>
-> >>
-> >> On this I agree, it is not very clear, but this seems more something to raise
-> >> with the gcc folks in order to have a more "explicit" description that leaves no
-> >> room to the interpretation.
-> >>
-> >> ...
-> >>
-> >>>
-> >>> However, the workaround is cheap, and to avoid the chance of subtle
-> >>> intermittent code gen bugs it may be worth it:
-> >>>
-> >>> void foo(int x, int y)
-> >>> {
-> >>> 	asm volatile (
-> >>> 		"mov	x0, %0\n\t"
-> >>> 		"mov	x1, %1\n\t"
-> >>> 		"svc	#0"
-> >>> 		:: "r" (x), "r" (bar(x, y))
-> >>> 		: "r0", "r1", "memory"
-> >>> 	);
-> >>> }
-> >>>
-> >>> ->
-> >>>
-> >>> 0000000000000000 <foo>:
-> >>>    0:   a9be7bfd        stp     x29, x30, [sp, #-32]!
-> >>>    4:   910003fd        mov     x29, sp
-> >>>    8:   f9000bf3        str     x19, [sp, #16]
-> >>>    c:   2a0003f3        mov     w19, w0
-> >>>   10:   94000000        bl      0 <bar>
-> >>>   14:   2a0003e2        mov     w2, w0
-> >>>   18:   aa1303e0        mov     x0, x19
-> >>>   1c:   aa0203e1        mov     x1, x2
-> >>>   20:   d4000001        svc     #0x0
-> >>>   24:   f9400bf3        ldr     x19, [sp, #16]
-> >>>   28:   a8c27bfd        ldp     x29, x30, [sp], #32
-> >>>   2c:   d65f03c0        ret
-> >>>
-> >>>
-> >>> What do you think?
-> >>>
-> >>
-> >> The solution seems ok, thanks for providing it, but IMHO I think we
-> >> should find a workaround for something that is broken, which, unless
-> >> I am missing something major, this seems not the case.
-> > 
-> > So, after a bit of further experimentation, I found that I could trigger
-> > it with implicit function calls on an older compiler.  I couldn't show
-> > it with explicit function calls (as in your example).
-> > 
-> > With the following code, inlining if an expression that causes an
-> > implicit call to a libgcc helper can trigger this issue, but I had to
-> > try an older compiler:
-> > 
-> > int foo(int x, int y)
-> > {
-> > 	register int res asm("r0");
-> > 	register const int x_ asm("r0") = x;
-> > 	register const int y_ asm("r1") = y;
-> > 
-> > 	asm volatile (
-> > 		"svc	#0"
-> > 		: "=r" (res)
-> > 		: "r" (x_), "r" (y_)
-> > 		: "memory"
-> > 	);
-> > 
-> > 	return res;
-> > }
-> > 
-> > int bar(int x, int y)
-> > {
-> > 	return foo(x, x / y);
-> > }
-> > 
-> > -> (arm-linux-gnueabihf-gcc 9.1 -O2)
-> > 
-> > 00000000 <foo>:
-> >    0:   df00            svc     0
-> >    2:   4770            bx      lr
-> > 
-> > 00000004 <bar>:
-> >    4:   b510            push    {r4, lr}
-> >    6:   4604            mov     r4, r0
-> >    8:   f7ff fffe       bl      0 <__aeabi_idiv>
-> >    c:   4601            mov     r1, r0
-> >    e:   4620            mov     r0, r4
-> >   10:   df00            svc     0
-> >   12:   bd10            pop     {r4, pc}
-> > 
-> > -> (arm-linux-gnueabihf-gcc 5.1 -O2)
-> > 
-> > 00000000 <foo>:
-> >    0:   df00            svc     0
-> >    2:   4770            bx      lr
-> > 
-> > 00000004 <bar>:
-> >    4:   b508            push    {r3, lr}
-> >    6:   f7ff fffe       bl      0 <__aeabi_idiv>
-> >    a:   4601            mov     r1, r0
-> >    c:   df00            svc     0
-> >    e:   bd08            pop     {r3, pc}
-> > 
-> 
-> Thanks for reporting this. I had a go with gcc-5.1 on the vDSO library and seems
-> Ok, but it was worth trying.
-> 
-> For obvious reasons I am not reporting the objdump here :)
-> 
-> > I was struggling to find a way to emit an implicit function call for
-> > AArch64, except for 128-bit divide, which would complicate things since
-> > uint128_t doesn't fit in a single register anyway.
-> > 
-> > Maybe this was considered a bug and fixed sometime after GCC 5, but I
-> > think the GCC documentation is still quite unclear on the semantics of
-> > register asm vars that alias call-clobbered registers in the PCS.
-> > 
-> > If we can get a promise out of the GCC folks that this will not happen
-> > with any future compiler, then maybe we could just require a new enough
-> > compiler to be used.
-> > 
-> 
-> On this I fully agree, the compiler should never change an "expected" behavior.
-> 
-> If the issue comes from a gray area in the documentation, we have to address it
-> and have it fixed there.
-> 
-> The minimum version of the compiler from linux-4.19 is 4.6, hence I had to try
-> that the vDSO lib does not break with 5.1 [1].
-> 
-> [1]
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=cafa0010cd51fb711fdcb50fc55f394c5f167a0a
+> ---
+>
+> Changes in v2:
+>   - New patch
+>
+>  Documentation/kbuild/makefiles.txt | 10 ++++++++++
+>  scripts/Makefile.lib               | 10 ++++++++++
+>  2 files changed, 20 insertions(+)
+>
+> diff --git a/Documentation/kbuild/makefiles.txt b/Documentation/kbuild/makefiles.txt
+> index 5080fec34609..b817e6cefb77 100644
+> --- a/Documentation/kbuild/makefiles.txt
+> +++ b/Documentation/kbuild/makefiles.txt
+> @@ -1025,6 +1025,16 @@ When kbuild executes, the following steps are followed (roughly):
+>  	i.e. compilable as standalone units. If CONFIG_HEADER_TEST is enabled,
+>  	this builds them as part of extra-y.
+>  
+> +    header-test-pattern-y
+> +
+> +	This works as a weaker version of header-test-y, and accepts wildcard
+> +	patterns. The typical usage is:
+> +
+> +		  header-test-pattern-y += *.h
+> +
+> +	This specifies all the files that matches to '*.h' in the current
+> +	directory, but the files in 'header-test-' are excluded.
+> +
+>  --- 6.7 Commands useful for building a boot image
+>  
+>  	Kbuild provides a few macros that are useful when building a
+> diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
+> index 55ae1ec65342..54444933bbab 100644
+> --- a/scripts/Makefile.lib
+> +++ b/scripts/Makefile.lib
+> @@ -67,6 +67,16 @@ extra-$(CONFIG_OF_ALL_DTBS) += $(patsubst %.dtb,%.dt.yaml, $(dtb-))
+>  endif
+>  
+>  # Test self-contained headers
+> +
+> +# Wildcard searches in $(srctree)/$(src)/, but not in $(objtree)/$(obj)/.
+> +# Stale generated headers are often left over, so wildcard matching should
+> +# be avoided. Please notice $(srctree)/$(src)/ and $(objtree)/$(obj) point
+> +# to the same location for in-tree building.
+> +header-test-y	+= $(filter-out $(header-test-), \
+> +		$(patsubst $(srctree)/$(src)/%, %, \
+> +		$(wildcard $(addprefix $(srctree)/$(src)/, \
+> +		$(header-test-pattern-y)))))
+> +
+>  extra-$(CONFIG_HEADER_TEST) += $(addsuffix .s, $(header-test-y))
+>  
+>  # Add subdir path
 
-OK
-
-> > Then of course there is clang.
-> > 
-> 
-> I could not help myself and I tried clang.8 and clang.7 as well with my example,
-> just to make sure that we are fine even in that case. Please find below the
-> results (pretty identical).
-> 
-> main.clang.7.o:	file format ELF64-aarch64-little
-> 
-> Disassembly of section .text:
-> 0000000000000000 show_it:
->        0:	e8 03 1f aa 	mov	x8, xzr
->        4:	09 68 68 38 	ldrb	w9, [x0, x8]
->        8:	08 05 00 91 	add	x8, x8, #1
->        c:	c9 ff ff 34 	cbz	w9, #-8 <show_it+0x4>
->       10:	02 05 00 51 	sub	w2, w8, #1
->       14:	e1 03 00 aa 	mov	x1, x0
->       18:	08 08 80 d2 	mov	x8, #64
->       1c:	01 00 00 d4 	svc	#0
->       20:	c0 03 5f d6 	ret
-> 
-> main.clang.8.o:	file format ELF64-aarch64-little
-> 
-> Disassembly of section .text:
-> 0000000000000000 show_it:
->        0:	e8 03 1f aa 	mov	x8, xzr
->        4:	09 68 68 38 	ldrb	w9, [x0, x8]
->        8:	08 05 00 91 	add	x8, x8, #1
->        c:	c9 ff ff 34 	cbz	w9, #-8 <show_it+0x4>
->       10:	02 05 00 51 	sub	w2, w8, #1
->       14:	e1 03 00 aa 	mov	x1, x0
->       18:	08 08 80 d2 	mov	x8, #64
->       1c:	01 00 00 d4 	svc	#0
->       20:	c0 03 5f d6 	ret
-> 
-> Commands used:
-> 
-> $ clang -target aarch64-linux-gnueabi main.c -O -c -o main.clang.<x>.o
-> $ llvm-objdump -d main.clang.<x>.o
-
-Actually, I'm not sure this is comparable with the reproducer I quoted
-in my last reply.
-
-The compiler can see the definition of strlen and fully inlines it.
-I only ever saw the problem when the compiler emits an out-of-line
-implicit function call.
-
-What does clang do with my example on 32-bit?
-
-Cheers
----Dave
+-- 
+Jani Nikula, Intel Open Source Graphics Center
