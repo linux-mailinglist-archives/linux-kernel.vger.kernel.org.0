@@ -2,112 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6272E57F41
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 11:24:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ADDAE57F49
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 11:25:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726464AbfF0JY2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 05:24:28 -0400
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:13068 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726293AbfF0JY2 (ORCPT
+        id S1726673AbfF0JY7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 05:24:59 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:39549 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726658AbfF0JY6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 05:24:28 -0400
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5R9JbL0012627;
-        Thu, 27 Jun 2019 04:24:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=PODMain02222019;
- bh=LDfSe40WQTF2vrFIW1EbCXF2xsg9VsrEA/n3kgFm+bg=;
- b=On/eEP554W4CY93ATqTsSjtilrsHGQSosAnZrAfNug5Pf/f8dwlGj8a/lFpcXNTfaBNf
- herzW7B3Wnw/u8/yVguZzzs2lc6vE22NcqNDNFaACjD57d0uJ0yyNcBxtvclzdqgZNj0
- wV2F9ijawJRUSArrC357wpSN2RF7ZPAa/en87I7oRqwtmvHMvpncRhtTvo7chGxIWkAl
- aLEO0vCRc7HsScU9ySpeFKMAHt9inxue80FmD49XvVbR6ZTcDP+bRr9MaB5sJiQyzn7A
- kFHZYeN4XmAduL/2KkXSo4ae70qvxK49YjJY8Xby4itU9MDrYuAB6vdlb+IZegyS+TO2 UA== 
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from mail4.cirrus.com ([87.246.98.35])
-        by mx0a-001ae601.pphosted.com with ESMTP id 2t9hr2gr54-1;
-        Thu, 27 Jun 2019 04:24:13 -0500
-Received: from EDIEX02.ad.cirrus.com (ediex02.ad.cirrus.com [198.61.84.81])
-        by mail4.cirrus.com (Postfix) with ESMTP id C55AB611C8B4;
-        Thu, 27 Jun 2019 04:24:14 -0500 (CDT)
-Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Thu, 27 Jun
- 2019 10:24:12 +0100
-Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server id 15.1.1591.10 via Frontend
- Transport; Thu, 27 Jun 2019 10:24:12 +0100
-Received: from algalon.ad.cirrus.com (algalon.ad.cirrus.com [198.90.251.122])
-        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 2DDCC2DA;
-        Thu, 27 Jun 2019 10:24:12 +0100 (BST)
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     <wsa@the-dreams.de>, <mika.westerberg@linux.intel.com>
-CC:     <jarkko.nikula@linux.intel.com>,
-        <andriy.shevchenko@linux.intel.com>, <linux-i2c@vger.kernel.org>,
-        <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <benjamin.tissoires@redhat.com>, <jbroadus@gmail.com>,
-        <patches@opensource.cirrus.com>
-Subject: [PATCH v8 6/6] i2c: core: Tidy up handling of init_irq
-Date:   Thu, 27 Jun 2019 10:24:11 +0100
-Message-ID: <20190627092411.26123-7-ckeepax@opensource.cirrus.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20190627092411.26123-1-ckeepax@opensource.cirrus.com>
-References: <20190627092411.26123-1-ckeepax@opensource.cirrus.com>
+        Thu, 27 Jun 2019 05:24:58 -0400
+Received: by mail-wr1-f66.google.com with SMTP id x4so1681260wrt.6
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 02:24:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=LDEo8sY3vpdehIJiLNOJb41+3SEg4OJB1McKdbsbLIA=;
+        b=rxjj862CxQk8EcoCFKXxBXec7q2dUTnfV23dSWU3s6L44wRwVyzKQI9LaItmJJBCYr
+         CCunUbf0DyHes+96gfl0uMFK7u1ofaigi6tzk8foroRtjW67UkxmOjGR6pS8kxcMHMQf
+         gfDC+UhYjbyEUkiMyFnCXp19uDzY8x/EIFJkHM36kWk82KVh6kEh17ORV4Ap0dqDjQeP
+         eodW+lpOR5ylkyFRmF441elJYxUkOm61ILlY1XXEY0Qjg+u0/dV1FxmGel1jFTcSljsA
+         mWoLPSgxDbcZ1/DraVDtzbuYhHkXnZ+w/hbhz5oruBYDlQJrnauT9rMlNjkp6tmEGn5i
+         i8sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=LDEo8sY3vpdehIJiLNOJb41+3SEg4OJB1McKdbsbLIA=;
+        b=Kj4I4nxtu93LGjwbmy9r8JBLZlWlV4S5bQ5PtXIvHLsW488UeoimbrvcUCcY+P8ogY
+         1rB/B9Apcf2Sn3ubxk84jjVLlZi+xG44pgLO2d7P8y18oT7zOmiLWlhBbRiRtLO0062F
+         grcFKer/sSQ6UaPHR6XOhe5UAld7x11v59B4jowLdZ1k3HX7gcIr6ipJU3b3j/8APfQC
+         TnlXuH56U8d6pRIkXEHKYcRetTmzTfti89QmgGtZMICK5di/y+bTcsTWPDFk1SFkcCep
+         KpHeKvddat7cSbdsCw2yflO1E886XHl6t9h8qkEO/YAD/Qk11ovEww4h1GoBFzsTOpaR
+         Is8A==
+X-Gm-Message-State: APjAAAUc0tm79pa2QJblvyqcooA88XyfWA5wDg+hTgCM5kuCPdH3G+b7
+        ZgYNs/M89GEZ+wi1dqFIUAxJYg==
+X-Google-Smtp-Source: APXvYqwlvlqQ9PBpwP6Ua8UBVUJ+rHq8wSy378IO2LZ07NL/lYMF4gUKV993A67XO9U+QjopyAUeqg==
+X-Received: by 2002:adf:cc85:: with SMTP id p5mr2224711wrj.47.1561627496119;
+        Thu, 27 Jun 2019 02:24:56 -0700 (PDT)
+Received: from dell ([2.27.35.164])
+        by smtp.gmail.com with ESMTPSA id h84sm5790048wmf.43.2019.06.27.02.24.55
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 27 Jun 2019 02:24:55 -0700 (PDT)
+Date:   Thu, 27 Jun 2019 10:24:53 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Daniel Thompson <daniel.thompson@linaro.org>
+Cc:     Matthias Kaehlcke <mka@chromium.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-pwm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Brian Norris <briannorris@chromium.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH 3/4] backlight: pwm_bl: Set scale type for CIE 1931 curves
+Message-ID: <20190627092453.GB2000@dell>
+References: <20190613194326.180889-1-mka@chromium.org>
+ <20190613194326.180889-4-mka@chromium.org>
+ <61ed137c-31bb-c695-4174-0484fe667d6c@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1906270109
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <61ed137c-31bb-c695-4174-0484fe667d6c@linaro.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Only set init_irq during i2c_device_new and only handle client->irq on
-the probe/remove paths.
+On Fri, 21 Jun 2019, Daniel Thompson wrote:
 
-Suggested-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
----
- drivers/i2c/i2c-core-base.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+> On 13/06/2019 20:43, Matthias Kaehlcke wrote:
+> > For backlight curves calculated with the CIE 1931 algorithm set
+> > the brightness scale type property accordingly. This makes the
+> > scale type available to userspace via the 'scale' sysfs attribute.
+> > 
+> > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> 
+> I'd like to keep discussion on patch 2 open a bit longer (it's not part of
+> the thread below patch 2 but Pavel had concerns about the sysfs interface)
+> so this ack won't really push things forward but FWIW:
+> 
+> Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
 
-diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
-index f0e1d338c7ddf..f26ed495d3842 100644
---- a/drivers/i2c/i2c-core-base.c
-+++ b/drivers/i2c/i2c-core-base.c
-@@ -314,6 +314,8 @@ static int i2c_device_probe(struct device *dev)
- 
- 	driver = to_i2c_driver(dev->driver);
- 
-+	client->irq = client->init_irq;
-+
- 	if (!client->irq && !driver->disable_i2c_core_irq_mapping) {
- 		int irq = -ENOENT;
- 
-@@ -424,7 +426,7 @@ static int i2c_device_remove(struct device *dev)
- 	dev_pm_clear_wake_irq(&client->dev);
- 	device_init_wakeup(&client->dev, false);
- 
--	client->irq = client->init_irq;
-+	client->irq = 0;
- 	if (client->flags & I2C_CLIENT_HOST_NOTIFY)
- 		pm_runtime_put(&client->adapter->dev);
- 
-@@ -741,7 +743,6 @@ i2c_new_client_device(struct i2c_adapter *adap, struct i2c_board_info const *inf
- 	if (!client->init_irq)
- 		client->init_irq = i2c_dev_irq_from_resources(info->resources,
- 							 info->num_resources);
--	client->irq = client->init_irq;
- 
- 	strlcpy(client->name, info->type, sizeof(client->name));
- 
+Does this depend on patch 2, or is it orthogonal?
+
+> > ---
+> >   drivers/video/backlight/pwm_bl.c | 5 ++++-
+> >   1 file changed, 4 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
+> > index fb45f866b923..f067fe7aa35d 100644
+> > --- a/drivers/video/backlight/pwm_bl.c
+> > +++ b/drivers/video/backlight/pwm_bl.c
+> > @@ -553,6 +553,8 @@ static int pwm_backlight_probe(struct platform_device *pdev)
+> >   		goto err_alloc;
+> >   	}
+> > +	memset(&props, 0, sizeof(struct backlight_properties));
+> > +
+> >   	if (data->levels) {
+> >   		/*
+> >   		 * For the DT case, only when brightness levels is defined
+> > @@ -591,6 +593,8 @@ static int pwm_backlight_probe(struct platform_device *pdev)
+> >   			pb->levels = data->levels;
+> >   		}
+> > +
+> > +		props.scale = BACKLIGHT_SCALE_CIE1931;
+> >   	} else {
+> >   		/*
+> >   		 * That only happens for the non-DT case, where platform data
+> > @@ -601,7 +605,6 @@ static int pwm_backlight_probe(struct platform_device *pdev)
+> >   	pb->lth_brightness = data->lth_brightness * (state.period / pb->scale);
+> > -	memset(&props, 0, sizeof(struct backlight_properties));
+> >   	props.type = BACKLIGHT_RAW;
+> >   	props.max_brightness = data->max_brightness;
+> >   	bl = backlight_device_register(dev_name(&pdev->dev), &pdev->dev, pb,
+> > 
+> 
+
 -- 
-2.11.0
-
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
