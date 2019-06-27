@@ -2,65 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41BEB58E7F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 01:25:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE6E158E85
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 01:26:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726687AbfF0XZR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 19:25:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48332 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726566AbfF0XZQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 19:25:16 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 940992147A;
-        Thu, 27 Jun 2019 23:25:14 +0000 (UTC)
-Date:   Thu, 27 Jun 2019 19:25:13 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Petr Mladek <pmladek@suse.com>,
-        Miroslav Benes <mbenes@suse.cz>, Jessica Yu <jeyu@kernel.org>,
-        Jiri Kosina <jikos@kernel.org>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        linux-kernel@vger.kernel.org, live-patching@vger.kernel.org,
-        Johannes Erdfelt <johannes@erdfelt.com>,
-        Ingo Molnar <mingo@kernel.org>, mhiramat@kernel.org,
-        torvalds@linux-foundation.org
-Subject: Re: [PATCH] ftrace: Remove possible deadlock between
- register_kprobe() and ftrace_run_update_code()
-Message-ID: <20190627192513.31abac73@gandalf.local.home>
-In-Reply-To: <20190627231952.nqkbtcculvo2ddif@treble>
-References: <20190627081334.12793-1-pmladek@suse.com>
-        <20190627224729.tshtq4bhzhneq24w@treble>
-        <20190627190457.703a486e@gandalf.local.home>
-        <alpine.DEB.2.21.1906280106360.32342@nanos.tec.linutronix.de>
-        <20190627231952.nqkbtcculvo2ddif@treble>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726650AbfF0X0p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 19:26:45 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57784 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726574AbfF0X0o (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 19:26:44 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5RNQcIV111569
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 19:26:43 -0400
+Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2td695teb7-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 19:26:43 -0400
+Received: from localhost
+        by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <bauerman@linux.ibm.com>;
+        Fri, 28 Jun 2019 00:26:42 +0100
+Received: from b03cxnp08025.gho.boulder.ibm.com (9.17.130.17)
+        by e35.co.us.ibm.com (192.168.1.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 28 Jun 2019 00:26:39 +0100
+Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
+        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5RNQbRX59703622
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 27 Jun 2019 23:26:38 GMT
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E22737805E;
+        Thu, 27 Jun 2019 23:26:37 +0000 (GMT)
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 89E317805C;
+        Thu, 27 Jun 2019 23:26:36 +0000 (GMT)
+Received: from morokweng.localdomain.com (unknown [9.85.218.134])
+        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Thu, 27 Jun 2019 23:26:36 +0000 (GMT)
+From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>
+Subject: [PATCH] ima: Update MAX_TEMPLATE_NAME_LEN to fit largest reasonable definition
+Date:   Thu, 27 Jun 2019 20:25:46 -0300
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19062723-0012-0000-0000-00001749BB66
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00011343; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000286; SDB=6.01224213; UDB=6.00644313; IPR=6.01005401;
+ MB=3.00027497; MTD=3.00000008; XFM=3.00000015; UTC=2019-06-27 23:26:41
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19062723-0013-0000-0000-000057DBE90C
+Message-Id: <20190627232546.28746-1-bauerman@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-27_15:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906270272
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 27 Jun 2019 18:19:52 -0500
-Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+MAX_TEMPLATE_NAME_LEN is used when restoring measurements carried over from
+a kexec. It should be set to the length of a template containing all fields
+except for 'd' and 'n', which don't need to be accounted for since they
+shouldn't be defined in the same template description as 'd-ng' and 'n-ng'.
 
-> /me dodges frozen shark
-> 
-> You are right of course.  My brain has apparently already shut off for
-> the day.
+That length is greater than the current 15, so update using a sizeof() to
+show where the number comes from and also can be visually shown to be
+correct. The sizeof() is calculated at compile time.
 
-And I agreed with your miscalculation. I guess I should have looked
-deeper into it. Or have less faith in you ;-)
+Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+---
+ security/integrity/ima/ima_template.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-> 
-> Maybe a comment or two would help though.
+diff --git a/security/integrity/ima/ima_template.c b/security/integrity/ima/ima_template.c
+index a01a17e5c581..7343e8e0ae2f 100644
+--- a/security/integrity/ima/ima_template.c
++++ b/security/integrity/ima/ima_template.c
+@@ -47,7 +47,13 @@ static const struct ima_template_field supported_fields[] = {
+ 	{.field_id = "buf", .field_init = ima_eventbuf_init,
+ 	 .field_show = ima_show_template_buf},
+ };
+-#define MAX_TEMPLATE_NAME_LEN 15
++
++/*
++ * Used when restoring measurements carried over from a kexec. 'd' and 'n' don't
++ * need to be accounted for since they shouldn't be defined in the same template
++ * description as 'd-ng' and 'n-ng' respectively.
++ */
++#define MAX_TEMPLATE_NAME_LEN sizeof("d-ng|n-ng|sig|buf")
+ 
+ static struct ima_template_desc *ima_template;
+ 
 
-Agreed, this is fragile. I'll just add a patch on top of it with some
-comments and pull this in today.
-
--- Steve
