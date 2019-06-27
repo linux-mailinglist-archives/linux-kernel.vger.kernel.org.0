@@ -2,128 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A5735800D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 12:17:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EBF555801B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 12:21:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726505AbfF0KR1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 06:17:27 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:3926 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726187AbfF0KR1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 06:17:27 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5RAG7xj121954
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 06:17:25 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2tcrvq8f7d-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 06:17:25 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <s1seetee@linux.vnet.ibm.com>;
-        Thu, 27 Jun 2019 11:17:23 +0100
-Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 27 Jun 2019 11:17:19 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5RAH8Cb34275654
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 27 Jun 2019 10:17:08 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 07AAD52051;
-        Thu, 27 Jun 2019 10:17:18 +0000 (GMT)
-Received: from oc2388111647.ibm.com (unknown [9.85.112.4])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTPS id E311A52067;
-        Thu, 27 Jun 2019 10:17:15 +0000 (GMT)
-From:   Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>
-To:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, sandipan@linux.ibm.com, mpetlan@redhat.com,
-        kim.phillips@arm.com, brueckner@linux.ibm.com,
-        linux-kernel@vger.kernel.org
-Cc:     s1seetee@linux.vnet.ibm.com
-Subject: [PATCH] perf tests: Fix record+probe_libc_inet_pton.sh for powerpc64
-Date:   Thu, 27 Jun 2019 15:46:54 +0530
-X-Mailer: git-send-email 1.8.3.1
-X-TM-AS-GCONF: 00
-x-cbid: 19062710-0012-0000-0000-0000032CDC2C
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19062710-0013-0000-0000-000021661995
-Message-Id: <1561630614-3216-1-git-send-email-s1seetee@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-27_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906270120
+        id S1726539AbfF0KVL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 06:21:11 -0400
+Received: from app1.whu.edu.cn ([202.114.64.88]:49312 "EHLO whu.edu.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726441AbfF0KVL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 06:21:11 -0400
+Received: from localhost (unknown [111.202.192.3])
+        by email1 (Coremail) with SMTP id AQBjCgDHUWOJmBRdKbQaAA--.41508S2;
+        Thu, 27 Jun 2019 18:21:02 +0800 (CST)
+From:   Peng Wang <rocking@whu.edu.cn>
+To:     tj@kernel.org, lizefan@huawei.com, hannes@cmpxchg.org
+Cc:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peng Wang <rocking@whu.edu.cn>
+Subject: [PATCH] cgroup: provide a macro helper to iterate a cgroup's ancestors
+Date:   Thu, 27 Jun 2019 18:19:01 +0800
+Message-Id: <20190627101901.26714-1-rocking@whu.edu.cn>
+X-Mailer: git-send-email 2.19.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: AQBjCgDHUWOJmBRdKbQaAA--.41508S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxWr43Kw17uF1fuF1fJFW5Jrb_yoW5KF15pF
+        4kAa43t3yakr1UtrWvq34qvFnagw4Fqw1UGw48tw1Syr43Jwn0qr1DCFy3WFyjyFZ2kFW3
+        Xr4Yy34jkw40yF7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUkq14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+        1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+        6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+        Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+        I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+        4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY02Avz4vE14v_Gw1l
+        42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJV
+        WUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAK
+        I48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r
+        4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF
+        0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7VUboKZJUUUUU==
+X-CM-SenderInfo: qsqrijaqrviiqqxyq4lkxovvfxof0/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-'probe libc's inet_pton & backtrace it with ping' testcase sometimes
-fails on powerpc because distro ping binary does not have symbol
-information and thus it prints "[unknown]" function name in the
-backtrace.
+Use for_each_ancestor macro to iterate a cgroup's ancestors for clarity.
 
-Accept "[unknown]" as valid function name for powerpc as well.
-
- # perf test -v "probe libc's inet_pton & backtrace it with ping"
-
-Before:
-
-  59: probe libc's inet_pton & backtrace it with ping       :
-  --- start ---
-  test child forked, pid 79695
-  ping 79718 [077] 96483.787025: probe_libc:inet_pton: (7fff83a754c8)
-  7fff83a754c8 __GI___inet_pton+0x8 (/usr/lib64/power9/libc-2.28.so)
-  7fff83a2b7a0 gaih_inet.constprop.7+0x1020
-  (/usr/lib64/power9/libc-2.28.so)
-  7fff83a2c170 getaddrinfo+0x160 (/usr/lib64/power9/libc-2.28.so)
-  1171830f4 [unknown] (/usr/bin/ping)
-  FAIL: expected backtrace entry
-  ".*\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$"
-  got "1171830f4 [unknown] (/usr/bin/ping)"
-  test child finished with -1
-  ---- end ----
-  probe libc's inet_pton & backtrace it with ping: FAILED!
-
-After:
-
-  59: probe libc's inet_pton & backtrace it with ping       :
-  --- start ---
-  test child forked, pid 79085
-  ping 79108 [045] 96400.214177: probe_libc:inet_pton: (7fffbb9654c8)
-  7fffbb9654c8 __GI___inet_pton+0x8 (/usr/lib64/power9/libc-2.28.so)
-  7fffbb91b7a0 gaih_inet.constprop.7+0x1020
-  (/usr/lib64/power9/libc-2.28.so)
-  7fffbb91c170 getaddrinfo+0x160 (/usr/lib64/power9/libc-2.28.so)
-  132e830f4 [unknown] (/usr/bin/ping)
-  test child finished with 0
-  ---- end ----
-  probe libc's inet_pton & backtrace it with ping: Ok
-
-Signed-off-by: Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>
+Signed-off-by: Peng Wang <rocking@whu.edu.cn>
 ---
- tools/perf/tests/shell/record+probe_libc_inet_pton.sh | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/cgroup.h  | 11 +++++++++++
+ kernel/cgroup/cgroup.c  |  7 +++----
+ kernel/cgroup/freezer.c |  2 +-
+ kernel/cgroup/rstat.c   |  4 ++--
+ 4 files changed, 17 insertions(+), 7 deletions(-)
 
-diff --git a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-index 61c9f8f..58a99a2 100755
---- a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-+++ b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-@@ -44,7 +44,7 @@ trace_libc_inet_pton_backtrace() {
- 		eventattr='max-stack=4'
- 		echo "gaih_inet.*\+0x[[:xdigit:]]+[[:space:]]\($libc\)$" >> $expected
- 		echo "getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc\)$" >> $expected
--		echo ".*\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$" >> $expected
-+		echo ".*(\+0x[[:xdigit:]]+|\[unknown\])[[:space:]]\(.*/bin/ping.*\)$" >> $expected
- 		;;
- 	*)
- 		eventattr='max-stack=3'
+diff --git a/include/linux/cgroup.h b/include/linux/cgroup.h
+index 0297f930a56e..00b0a16bbc30 100644
+--- a/include/linux/cgroup.h
++++ b/include/linux/cgroup.h
+@@ -298,6 +298,17 @@ void css_task_iter_end(struct css_task_iter *it);
+ 			;						\
+ 		else
+ 
++/**
++ * for_each_ancestor - iterate a cgroup's ancestors
++ * @tcgrp: the loop cursor
++ * @cgrp: cgroup whose ancestors to iterate
++ *
++ * Iterate ancestors of @cgrp.
++ */
++#define for_each_ancestor(tcgrp, cgrp)					\
++	for ((tcgrp) = cgroup_parent((cgrp)); (tcgrp);			\
++		(tcgrp) = cgroup_parent((tcgrp)))
++
+ /*
+  * Inline functions.
+  */
+diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+index bf9dbffd46b1..32fa09679209 100644
+--- a/kernel/cgroup/cgroup.c
++++ b/kernel/cgroup/cgroup.c
+@@ -404,7 +404,7 @@ static bool cgroup_is_valid_domain(struct cgroup *cgrp)
+ 		return false;
+ 
+ 	/* but the ancestors can't be unless mixable */
+-	while ((cgrp = cgroup_parent(cgrp))) {
++	for_each_ancestor(cgrp, cgrp) {
+ 		if (!cgroup_is_mixable(cgrp) && cgroup_is_thread_root(cgrp))
+ 			return false;
+ 		if (cgroup_is_threaded(cgrp))
+@@ -4987,8 +4987,7 @@ static void css_release_work_fn(struct work_struct *work)
+ 			cgroup_rstat_flush(cgrp);
+ 
+ 		spin_lock_irq(&css_set_lock);
+-		for (tcgrp = cgroup_parent(cgrp); tcgrp;
+-		     tcgrp = cgroup_parent(tcgrp))
++		for_each_ancestor(tcgrp, cgrp)
+ 			tcgrp->nr_dying_descendants--;
+ 		spin_unlock_irq(&css_set_lock);
+ 
+@@ -5518,7 +5517,7 @@ static int cgroup_destroy_locked(struct cgroup *cgrp)
+ 		parent->nr_threaded_children--;
+ 
+ 	spin_lock_irq(&css_set_lock);
+-	for (tcgrp = cgroup_parent(cgrp); tcgrp; tcgrp = cgroup_parent(tcgrp)) {
++	for_each_ancestor(tcgrp, cgrp) {
+ 		tcgrp->nr_descendants--;
+ 		tcgrp->nr_dying_descendants++;
+ 		/*
+diff --git a/kernel/cgroup/freezer.c b/kernel/cgroup/freezer.c
+index 8cf010680678..4dfc2f04a82d 100644
+--- a/kernel/cgroup/freezer.c
++++ b/kernel/cgroup/freezer.c
+@@ -21,7 +21,7 @@ static void cgroup_propagate_frozen(struct cgroup *cgrp, bool frozen)
+ 	 *
+ 	 * Otherwise, all ancestor cgroups are forced into the non-frozen state.
+ 	 */
+-	while ((cgrp = cgroup_parent(cgrp))) {
++	for_each_ancestor(cgrp, cgrp) {
+ 		if (frozen) {
+ 			cgrp->freezer.nr_frozen_descendants += desc;
+ 			if (!test_bit(CGRP_FROZEN, &cgrp->flags) &&
+diff --git a/kernel/cgroup/rstat.c b/kernel/cgroup/rstat.c
+index ca19b4c8acf5..58d352e0d76a 100644
+--- a/kernel/cgroup/rstat.c
++++ b/kernel/cgroup/rstat.c
+@@ -49,8 +49,7 @@ void cgroup_rstat_updated(struct cgroup *cgrp, int cpu)
+ 	raw_spin_lock_irqsave(cpu_lock, flags);
+ 
+ 	/* put @cgrp and all ancestors on the corresponding updated lists */
+-	for (parent = cgroup_parent(cgrp); parent;
+-	     cgrp = parent, parent = cgroup_parent(cgrp)) {
++	for_each_ancestor(parent, cgrp) {
+ 		struct cgroup_rstat_cpu *rstatc = cgroup_rstat_cpu(cgrp, cpu);
+ 		struct cgroup_rstat_cpu *prstatc = cgroup_rstat_cpu(parent, cpu);
+ 
+@@ -63,6 +62,7 @@ void cgroup_rstat_updated(struct cgroup *cgrp, int cpu)
+ 
+ 		rstatc->updated_next = prstatc->updated_children;
+ 		prstatc->updated_children = cgrp;
++		cgrp = parent;
+ 	}
+ 
+ 	raw_spin_unlock_irqrestore(cpu_lock, flags);
 -- 
-1.8.3.1
+2.19.1
 
