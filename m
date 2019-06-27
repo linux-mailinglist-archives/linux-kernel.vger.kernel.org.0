@@ -2,285 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58593579BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 04:57:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95099579C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 04:59:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726872AbfF0C5g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 22:57:36 -0400
-Received: from mail-eopbgr40042.outbound.protection.outlook.com ([40.107.4.42]:17063
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726658AbfF0C5f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 22:57:35 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=testarcselector01; d=microsoft.com; cv=none;
- b=tOhWnQGUggjc0NrH4Cynrk2iUY0ZDWTRFqnALJYxpFLExukBn7AUkzvdoma8a+MIBJk1PRK/7Jw3cjGtqqi54F88ZcjcrQSbI6VMPGYuq5GQ+UXkaJM9/KwickEqbfqQh2JsC4wu0qKX5r0TaR1Y01gTqrCtAHe/EevYEDXX21U=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=testarcselector01;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zawpGzvPwLkyLIFLktx3aKwjXRoW8HmGzbuvKkpuV44=;
- b=AUGNoVdJSFIVYPuF9n0xg1tNKKHQ0QMxxpRG8zhCb71Yy1R3mLlhlbWtbHD1HKa+svkHGtADBP5rpfy/YL+dmWpurTyoD7UJulc9XDXISX+rIbsxPWUgWL6GaTh9KYMOCUfB66kkewbgiHQhLb8L4+xw6ZENoQ92oHBQo9d/qjM=
-ARC-Authentication-Results: i=1; test.office365.com
- 1;spf=none;dmarc=none;dkim=none;arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector2-armh-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zawpGzvPwLkyLIFLktx3aKwjXRoW8HmGzbuvKkpuV44=;
- b=IOKcT5Z+7nKMn95QGXZ7kUlbuDxs9jl0IBpd4QUwwSMP8+yHGT9jykNynjEfjNS/DCERVWQkmGo9mCX8npniY0h7KcrgyF3g+Bq6/p2r+Gk6FVTgMeYQdcs23cgxP18U9hbVf2hDAXUq7NgAWvHB1vp+roMLfj0430MnF+FPeng=
-Received: from VE1PR08MB5006.eurprd08.prod.outlook.com (10.255.159.31) by
- VE1PR08MB5279.eurprd08.prod.outlook.com (20.179.31.156) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2008.16; Thu, 27 Jun 2019 02:57:28 +0000
-Received: from VE1PR08MB5006.eurprd08.prod.outlook.com
- ([fe80::81b4:f737:4690:8605]) by VE1PR08MB5006.eurprd08.prod.outlook.com
- ([fe80::81b4:f737:4690:8605%2]) with mapi id 15.20.2008.014; Thu, 27 Jun 2019
- 02:57:28 +0000
-From:   "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
-To:     "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>
-CC:     Liviu Dudau <Liviu.Dudau@arm.com>,
-        "maarten.lankhorst@linux.intel.com" 
-        <maarten.lankhorst@linux.intel.com>,
-        "seanpaul@chromium.org" <seanpaul@chromium.org>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        Brian Starkey <Brian.Starkey@arm.com>,
-        "Julien Yin (Arm Technology China)" <Julien.Yin@arm.com>,
-        "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
-        Ayan Halder <Ayan.Halder@arm.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        nd <nd@arm.com>
-Subject: Re: [PATCH] drm/komeda: Adds register dump support for gcu, lup and
- dou
-Thread-Topic: [PATCH] drm/komeda: Adds register dump support for gcu, lup and
- dou
-Thread-Index: AQHVLJQNtdiaLQx0v0eTPMMNOHuPOw==
-Date:   Thu, 27 Jun 2019 02:57:27 +0000
-Message-ID: <20190627025720.GA18620@james-ThinkStation-P300>
-References: <1561544365-23862-1-git-send-email-lowry.li@arm.com>
-In-Reply-To: <1561544365-23862-1-git-send-email-lowry.li@arm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mutt/1.9.4 (2018-02-28)
-x-originating-ip: [113.29.88.7]
-x-clientproxiedby: HK0PR01CA0009.apcprd01.prod.exchangelabs.com
- (2603:1096:203:92::21) To VE1PR08MB5006.eurprd08.prod.outlook.com
- (2603:10a6:803:113::31)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=james.qian.wang@arm.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: ef777917-b4e8-499c-635b-08d6faab2f54
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VE1PR08MB5279;
-x-ms-traffictypediagnostic: VE1PR08MB5279:
-nodisclaimer: True
-x-microsoft-antispam-prvs: <VE1PR08MB5279CF3B81AB9248B44F8C15B3FD0@VE1PR08MB5279.eurprd08.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2276;
-x-forefront-prvs: 008184426E
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(376002)(39860400002)(396003)(366004)(136003)(346002)(199004)(189003)(6636002)(11346002)(66946007)(476003)(386003)(81156014)(66476007)(68736007)(76176011)(186003)(5660300002)(71200400001)(52116002)(6246003)(6436002)(256004)(1076003)(6506007)(54906003)(3846002)(25786009)(6116002)(71190400001)(2906002)(66066001)(33716001)(305945005)(55236004)(446003)(64756008)(99286004)(8936002)(102836004)(229853002)(14454004)(26005)(6862004)(6512007)(73956011)(486006)(7736002)(86362001)(66556008)(4326008)(6486002)(316002)(9686003)(53936002)(8676002)(58126008)(33656002)(478600001)(81166006)(66446008);DIR:OUT;SFP:1101;SCL:1;SRVR:VE1PR08MB5279;H:VE1PR08MB5006.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: arm.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: Bav2U7IPysDsgyWkyojKVhAiZ9yFHC82qJ+7BDoFoXpq8k+7i+6tibcqKG6hl1jpOICHg+Gu5thpx+N0ACtz9+m3O8r2tSv0umYfxdfu/RFEhmLDjpY4Qa+C+WTVJBfwAx2PB6Q0bwFKJVrnnE9LmxNx1bCI8e8WF8IhUNsgZmkyRuVjxf8LnNpLRSdQ2mLrGaE5l4b66R71BBMY4H9IzxX6NJ0AhkyFf3YqRLPXmJDnj56l5A5vH2s/AnW5X/nkL+HOPeNt/ZxDihi5VFlLd3sE25GODSpxfoA+mz2bgBOknU5yFeHII83OuTn48XaJno0ii3WOmG6d7UfZMeZDFFOsRgTHVjXpBWqek2v2fesv/zeL//ifMW0Y53b2yLVTLUW37GiOkLo+SKbqNt9v/UVME0jiBkjROa4p0BuXkJ8=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <5E8DE44315EBD4419F7920547458EBA1@eurprd08.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        id S1726909AbfF0C7L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 22:59:11 -0400
+Received: from mailgw02.mediatek.com ([1.203.163.81]:40235 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726658AbfF0C7L (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 22:59:11 -0400
+X-UUID: ffb4565af9e24d95817df2acd956c6be-20190627
+X-UUID: ffb4565af9e24d95817df2acd956c6be-20190627
+Received: from mtkcas35.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
+        (envelope-from <jitao.shi@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 275571923; Thu, 27 Jun 2019 10:59:05 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS33N2.mediatek.inc
+ (172.27.4.76) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 27 Jun
+ 2019 10:59:04 +0800
+Received: from mszsdclx1018.gcn.mediatek.inc (172.27.4.253) by
+ MTKCAS36.mediatek.inc (172.27.4.170) with Microsoft SMTP Server id
+ 15.0.1395.4 via Frontend Transport; Thu, 27 Jun 2019 10:59:02 +0800
+From:   Jitao Shi <jitao.shi@mediatek.com>
+To:     Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        <linux-pwm@vger.kernel.org>, David Airlie <airlied@linux.ie>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+CC:     Jitao Shi <jitao.shi@mediatek.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Ajay Kumar <ajaykumar.rs@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Rahul Sharma <rahul.sharma@samsung.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Vincent Palatin <vpalatin@chromium.org>,
+        Andy Yan <andy.yan@rock-chips.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Russell King <rmk+kernel@arm.linux.org.uk>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        <yingjoe.chen@mediatek.com>, <eddie.huang@mediatek.com>,
+        <cawa.cheng@mediatek.com>, <bibby.hsieh@mediatek.com>,
+        <ck.hu@mediatek.com>, <stonea168@163.com>
+Subject: [v5 0/3] Support mipitx for mt8183
+Date:   Thu, 27 Jun 2019 10:58:58 +0800
+Message-ID: <20190627025901.28418-1-jitao.shi@mediatek.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ef777917-b4e8-499c-635b-08d6faab2f54
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Jun 2019 02:57:28.4191
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: james.qian.wang@arm.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR08MB5279
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 26, 2019 at 06:20:09PM +0800, Lowry Li (Arm Technology China) w=
-rote:
-> Adds to support register dump on lpu and dou of pipeline and gcu on D71
->=20
-> Signed-off-by: Lowry Li (Arm Technology China) <lowry.li@arm.com>
-> ---
->  .../gpu/drm/arm/display/komeda/d71/d71_component.c | 86 ++++++++++++++++=
-+++++-
->  drivers/gpu/drm/arm/display/komeda/d71/d71_dev.c   | 23 +++---
->  drivers/gpu/drm/arm/display/komeda/d71/d71_dev.h   |  2 +
->  drivers/gpu/drm/arm/display/komeda/komeda_dev.c    |  2 +
->  4 files changed, 101 insertions(+), 12 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/arm/display/komeda/d71/d71_component.c b/dri=
-vers/gpu/drm/arm/display/komeda/d71/d71_component.c
-> index ecec6ce..ed3f273 100644
-> --- a/drivers/gpu/drm/arm/display/komeda/d71/d71_component.c
-> +++ b/drivers/gpu/drm/arm/display/komeda/d71/d71_component.c
-> @@ -1253,6 +1253,90 @@ int d71_probe_block(struct d71_dev *d71,
->  	return err;
->  }
-> =20
-> +static void d71_gcu_dump(struct d71_dev *d71, struct seq_file *sf)
-> +{
-> +	u32 v[5];
-> +
-> +	seq_printf(sf, "\n------ GCU ------\n");
-> +
-> +	get_values_from_reg(d71->gcu_addr, 0, 3, v);
-> +	seq_printf(sf, "GLB_ARCH_ID:\t\t0x%X\n", v[0]);
-> +	seq_printf(sf, "GLB_CORE_ID:\t\t0x%X\n", v[1]);
-> +	seq_printf(sf, "GLB_CORE_INFO:\t\t0x%X\n", v[2]);
-> +
-> +	get_values_from_reg(d71->gcu_addr, 0x10, 1, v);
-> +	seq_printf(sf, "GLB_IRQ_STATUS:\t\t0x%X\n", v[0]);
-> +
-> +	get_values_from_reg(d71->gcu_addr, 0xA0, 5, v);
-> +	seq_printf(sf, "GCU_IRQ_RAW_STATUS:\t0x%X\n", v[0]);
-> +	seq_printf(sf, "GCU_IRQ_CLEAR:\t\t0x%X\n", v[1]);
-> +	seq_printf(sf, "GCU_IRQ_MASK:\t\t0x%X\n", v[2]);
-> +	seq_printf(sf, "GCU_IRQ_STATUS:\t\t0x%X\n", v[3]);
-> +	seq_printf(sf, "GCU_STATUS:\t\t0x%X\n", v[4]);
-> +
-> +	get_values_from_reg(d71->gcu_addr, 0xD0, 3, v);
-> +	seq_printf(sf, "GCU_CONTROL:\t\t0x%X\n", v[0]);
-> +	seq_printf(sf, "GCU_CONFIG_VALID0:\t0x%X\n", v[1]);
-> +	seq_printf(sf, "GCU_CONFIG_VALID1:\t0x%X\n", v[2]);
-> +}
-> +
-> +static void d71_lpu_dump(struct d71_pipeline *pipe, struct seq_file *sf)
-> +{
-> +	u32 v[6];
-> +
-> +	seq_printf(sf, "\n------ LPU%d ------\n", pipe->base.id);
-> +
-> +	dump_block_header(sf, pipe->lpu_addr);
-> +
-> +	get_values_from_reg(pipe->lpu_addr, 0xA0, 6, v);
-> +	seq_printf(sf, "LPU_IRQ_RAW_STATUS:\t0x%X\n", v[0]);
-> +	seq_printf(sf, "LPU_IRQ_CLEAR:\t\t0x%X\n", v[1]);
-> +	seq_printf(sf, "LPU_IRQ_MASK:\t\t0x%X\n", v[2]);
-> +	seq_printf(sf, "LPU_IRQ_STATUS:\t\t0x%X\n", v[3]);
-> +	seq_printf(sf, "LPU_STATUS:\t\t0x%X\n", v[4]);
-> +	seq_printf(sf, "LPU_TBU_STATUS:\t\t0x%X\n", v[5]);
-> +
-> +	get_values_from_reg(pipe->lpu_addr, 0xC0, 1, v);
-> +	seq_printf(sf, "LPU_INFO:\t\t0x%X\n", v[0]);
-> +
-> +	get_values_from_reg(pipe->lpu_addr, 0xD0, 3, v);
-> +	seq_printf(sf, "LPU_RAXI_CONTROL:\t0x%X\n", v[0]);
-> +	seq_printf(sf, "LPU_WAXI_CONTROL:\t0x%X\n", v[1]);
-> +	seq_printf(sf, "LPU_TBU_CONTROL:\t0x%X\n", v[2]);
-> +}
-> +
-> +static void d71_dou_dump(struct d71_pipeline *pipe, struct seq_file *sf)
-> +{
-> +	u32 v[5];
-> +
-> +	seq_printf(sf, "\n------ DOU%d ------\n", pipe->base.id);
-> +
-> +	dump_block_header(sf, pipe->dou_addr);
-> +
-> +	get_values_from_reg(pipe->dou_addr, 0xA0, 5, v);
-> +	seq_printf(sf, "DOU_IRQ_RAW_STATUS:\t0x%X\n", v[0]);
-> +	seq_printf(sf, "DOU_IRQ_CLEAR:\t\t0x%X\n", v[1]);
-> +	seq_printf(sf, "DOU_IRQ_MASK:\t\t0x%X\n", v[2]);
-> +	seq_printf(sf, "DOU_IRQ_STATUS:\t\t0x%X\n", v[3]);
-> +	seq_printf(sf, "DOU_STATUS:\t\t0x%X\n", v[4]);
-> +}
-> +
-> +static void d71_pipeline_dump(struct komeda_pipeline *pipe, struct seq_f=
-ile *sf)
-> +{
-> +	struct d71_pipeline *d71_pipe =3D to_d71_pipeline(pipe);
-> +
-> +	d71_lpu_dump(d71_pipe, sf);
-> +	d71_dou_dump(d71_pipe, sf);
-> +}
-> +
->  const struct komeda_pipeline_funcs d71_pipeline_funcs =3D {
-> -	.downscaling_clk_check =3D d71_downscaling_clk_check,
-> +	.downscaling_clk_check	=3D d71_downscaling_clk_check,
-> +	.dump_register		=3D d71_pipeline_dump,
->  };
-> +
-> +void d71_dump(struct komeda_dev *mdev, struct seq_file *sf)
-> +{
-> +	struct d71_dev *d71 =3D mdev->chip_data;
-> +
-> +	d71_gcu_dump(d71, sf);
-> +}
-> diff --git a/drivers/gpu/drm/arm/display/komeda/d71/d71_dev.c b/drivers/g=
-pu/drm/arm/display/komeda/d71/d71_dev.c
-> index caaa2b2..7e7c9e9 100644
-> --- a/drivers/gpu/drm/arm/display/komeda/d71/d71_dev.c
-> +++ b/drivers/gpu/drm/arm/display/komeda/d71/d71_dev.c
-> @@ -561,17 +561,18 @@ static int d71_disconnect_iommu(struct komeda_dev *=
-mdev)
->  }
-> =20
->  static const struct komeda_dev_funcs d71_chip_funcs =3D {
-> -	.init_format_table =3D d71_init_fmt_tbl,
-> -	.enum_resources	=3D d71_enum_resources,
-> -	.cleanup	=3D d71_cleanup,
-> -	.irq_handler	=3D d71_irq_handler,
-> -	.enable_irq	=3D d71_enable_irq,
-> -	.disable_irq	=3D d71_disable_irq,
-> -	.on_off_vblank	=3D d71_on_off_vblank,
-> -	.change_opmode	=3D d71_change_opmode,
-> -	.flush		=3D d71_flush,
-> -	.connect_iommu	=3D d71_connect_iommu,
-> -	.disconnect_iommu =3D d71_disconnect_iommu,
-> +	.init_format_table	=3D d71_init_fmt_tbl,
-> +	.enum_resources		=3D d71_enum_resources,
-> +	.cleanup		=3D d71_cleanup,
-> +	.irq_handler		=3D d71_irq_handler,
-> +	.enable_irq		=3D d71_enable_irq,
-> +	.disable_irq		=3D d71_disable_irq,
-> +	.on_off_vblank		=3D d71_on_off_vblank,
-> +	.change_opmode		=3D d71_change_opmode,
-> +	.flush			=3D d71_flush,
-> +	.connect_iommu		=3D d71_connect_iommu,
-> +	.disconnect_iommu	=3D d71_disconnect_iommu,
-> +	.dump_register		=3D d71_dump,
->  };
-> =20
->  const struct komeda_dev_funcs *
-> diff --git a/drivers/gpu/drm/arm/display/komeda/d71/d71_dev.h b/drivers/g=
-pu/drm/arm/display/komeda/d71/d71_dev.h
-> index 84f1878..c7357c2 100644
-> --- a/drivers/gpu/drm/arm/display/komeda/d71/d71_dev.h
-> +++ b/drivers/gpu/drm/arm/display/komeda/d71/d71_dev.h
-> @@ -49,4 +49,6 @@ int d71_probe_block(struct d71_dev *d71,
->  		    struct block_header *blk, u32 __iomem *reg);
->  void d71_read_block_header(u32 __iomem *reg, struct block_header *blk);
-> =20
-> +void d71_dump(struct komeda_dev *mdev, struct seq_file *sf);
-> +
->  #endif /* !_D71_DEV_H_ */
-> diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_dev.c b/drivers/gp=
-u/drm/arm/display/komeda/komeda_dev.c
-> index 4218d6e..85b8604 100644
-> --- a/drivers/gpu/drm/arm/display/komeda/komeda_dev.c
-> +++ b/drivers/gpu/drm/arm/display/komeda/komeda_dev.c
-> @@ -23,6 +23,8 @@ static int komeda_register_show(struct seq_file *sf, vo=
-id *x)
->  	struct komeda_dev *mdev =3D sf->private;
->  	int i;
-> =20
-> +	seq_printf(sf, "\n=3D=3D=3D=3D=3D=3D Komeda register dump =3D=3D=3D=3D=
-=3D=3D=3D=3D=3D\n");
-> +
->  	if (mdev->funcs->dump_register)
->  		mdev->funcs->dump_register(mdev, sf);
-> =20
-> --=20
-> 1.9.1
->=20
+Change since v4:
+ - fine tune the mipi_tx->ref_clk and mipi_tx->pll sequence
+   1. Prepare mipi_tx->ref_clk
+   2. Prepare mipi_tx->pll
+   3. Enable mipi_tx->ref_clk
+   4. Enable mipi_tx->pll
 
-Looks good to me.
+Changes since v3:
+ - turn off PLL before setting PLL parameters.
 
-Reviewed-by: James Qian Wang (Arm Technology China) <james.qian.wang@arm.co=
-m>
+Changes since v2:
+ - update Acked-by: Rob Herring <robh@kernel.org>
+ - update mt8183 max bit rate support
+
+Changes since v1:
+ - update dt-bindings document for mt8183 mipitx.
+ - remove mtk_mipitx_clk_get_ops and assign clk_ops in probe.
+ - fix the lincence
+ - remove txdiv1 from mtk_mipi_tx_pll_prepare
+
+Jitao Shi (3):
+  dt-bindings: display: mediatek: update dsi supported chips
+  drm/mediatek: separate mipi_tx to different file
+  drm/mediatek: add mipi_tx driver for mt8183
+
+ .../display/mediatek/mediatek,dsi.txt         |   4 +-
+ drivers/gpu/drm/mediatek/Makefile             |   2 +
+ drivers/gpu/drm/mediatek/mtk_mipi_tx.c        | 345 ++----------------
+ drivers/gpu/drm/mediatek/mtk_mipi_tx.h        |  50 +++
+ drivers/gpu/drm/mediatek/mtk_mt8173_mipi_tx.c | 289 +++++++++++++++
+ drivers/gpu/drm/mediatek/mtk_mt8183_mipi_tx.c | 181 +++++++++
+ 6 files changed, 550 insertions(+), 321 deletions(-)
+ create mode 100644 drivers/gpu/drm/mediatek/mtk_mipi_tx.h
+ create mode 100644 drivers/gpu/drm/mediatek/mtk_mt8173_mipi_tx.c
+ create mode 100644 drivers/gpu/drm/mediatek/mtk_mt8183_mipi_tx.c
+
+-- 
+2.21.0
+
