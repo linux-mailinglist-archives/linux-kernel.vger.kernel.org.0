@@ -2,117 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C750257EF9
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 11:09:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AABA57F03
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 11:11:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726462AbfF0JJJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 05:09:09 -0400
-Received: from foss.arm.com ([217.140.110.172]:49694 "EHLO foss.arm.com"
+        id S1726445AbfF0JLq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 05:11:46 -0400
+Received: from mga04.intel.com ([192.55.52.120]:60140 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725385AbfF0JJI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 05:09:08 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E0B772B;
-        Thu, 27 Jun 2019 02:09:07 -0700 (PDT)
-Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 06B373F718;
-        Thu, 27 Jun 2019 02:09:05 -0700 (PDT)
-Date:   Thu, 27 Jun 2019 10:09:03 +0100
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Jassi Brar <jassisinghbrar@gmail.com>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Peng Fan <peng.fan@nxp.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        ", Sascha Hauer" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        Devicetree List <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Andre Przywara <andre.przywara@arm.com>,
-        "van.freenix@gmail.com" <van.freenix@gmail.com>,
-        Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH V2 2/2] mailbox: introduce ARM SMC based mailbox
-Message-ID: <20190627090903.GD13572@e107155-lin>
-References: <20190603083005.4304-1-peng.fan@nxp.com>
- <20190603083005.4304-3-peng.fan@nxp.com>
- <CABb+yY1wW-arSMQSYjrezXOZ0Ar_shAr78MOyUD3hBxXohWx3g@mail.gmail.com>
- <AM0PR04MB44813A4DE544E53EB7B6F02B88E30@AM0PR04MB4481.eurprd04.prod.outlook.com>
- <CABb+yY38MAZqVOhjyV+GByPvpFcTfKbNG1rJ8YDRd1vi1F4fqg@mail.gmail.com>
- <AM0PR04MB44814D3BD59033ECDDE3094C88E20@AM0PR04MB4481.eurprd04.prod.outlook.com>
- <e49278ba-f734-e019-ab44-53afe558bd85@gmail.com>
- <CABb+yY2B_bGqZhd3HRm2qOwGNXG8UYvRo0_uBmwGbx_1gA-vfA@mail.gmail.com>
+        id S1725385AbfF0JLp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 05:11:45 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jun 2019 02:11:45 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,423,1557212400"; 
+   d="scan'208";a="167366720"
+Received: from fmsmsx106.amr.corp.intel.com ([10.18.124.204])
+  by orsmga006.jf.intel.com with ESMTP; 27 Jun 2019 02:11:44 -0700
+Received: from fmsmsx113.amr.corp.intel.com (10.18.116.7) by
+ FMSMSX106.amr.corp.intel.com (10.18.124.204) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Thu, 27 Jun 2019 02:11:44 -0700
+Received: from shsmsx154.ccr.corp.intel.com (10.239.6.54) by
+ FMSMSX113.amr.corp.intel.com (10.18.116.7) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Thu, 27 Jun 2019 02:11:44 -0700
+Received: from shsmsx101.ccr.corp.intel.com ([169.254.1.87]) by
+ SHSMSX154.ccr.corp.intel.com ([169.254.7.156]) with mapi id 14.03.0439.000;
+ Thu, 27 Jun 2019 17:11:41 +0800
+From:   "Zhang, Tina" <tina.zhang@intel.com>
+To:     Gerd Hoffmann <kraxel@redhat.com>
+CC:     "Tian, Kevin" <kevin.tian@intel.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "zhenyuw@linux.intel.com" <zhenyuw@linux.intel.com>,
+        "Yuan, Hang" <hang.yuan@intel.com>,
+        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+        "Lv, Zhiyuan" <zhiyuan.lv@intel.com>,
+        "intel-gvt-dev@lists.freedesktop.org" 
+        <intel-gvt-dev@lists.freedesktop.org>,
+        "Wang, Zhi A" <zhi.a.wang@intel.com>
+Subject: RE: [RFC PATCH v3 2/4] vfio: Introduce vGPU display irq type
+Thread-Topic: [RFC PATCH v3 2/4] vfio: Introduce vGPU display irq type
+Thread-Index: AQHVLJqW0JiZUS7UW0uPEvNgUIeas6augZSAgACxdSA=
+Date:   Thu, 27 Jun 2019 09:11:40 +0000
+Message-ID: <237F54289DF84E4997F34151298ABEBC876836C6@SHSMSX101.ccr.corp.intel.com>
+References: <20190627033802.1663-1-tina.zhang@intel.com>
+ <20190627033802.1663-3-tina.zhang@intel.com>
+ <20190627062043.63wpwgefbsnackbg@sirius.home.kraxel.org>
+In-Reply-To: <20190627062043.63wpwgefbsnackbg@sirius.home.kraxel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZTZmZWE0MzgtODUyMi00ZDY4LWFlMTAtZjgxMzVlNzFkMTY0IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiVWttS050MFdHZ3c1VXFJdVpxeDgzWnNMNWVOQm1nNmEwMFpRYVJsXC9ZT2s1cU1pWnNubUJTOG1cL0RcL1REaE1EZSJ9
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.600.7
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CABb+yY2B_bGqZhd3HRm2qOwGNXG8UYvRo0_uBmwGbx_1gA-vfA@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 26, 2019 at 01:27:41PM -0500, Jassi Brar wrote:
-> On Wed, Jun 26, 2019 at 11:44 AM Florian Fainelli <f.fainelli@gmail.com> wrote:
-> >
-> > On 6/26/19 6:31 AM, Peng Fan wrote:
-> > >>> The firmware driver might not have func-id, such as SCMI/SCPI.
-> > >>> So add an optional func-id to let smc mailbox driver could
-> > >>> use smc SiP func id.
-> > >>>
-> > >> There is no end to conforming to protocols. Controller drivers should
-> > >> be written having no particular client in mind.
-> > >
-> > > If the func-id needs be passed from user, then the chan_id suggested
-> > > by Sudeep should also be passed from user, not in mailbox driver.
-> > >
-> > > Jassi, so from your point, arm_smc_send_data just send a0 - a6
-> > > to firmware, right?
-> > >
-> > > Sudeep, Andre, Florian,
-> > >
-> > > What's your suggestion? SCMI not support, do you have
-> > > plan to add smc transport in SCMI?
-> >
-> > On the platforms that I work with, we have taken the liberty of
-> > implementing SCMI in our monitor firmware because the other MCU we use
-> > for dynamic voltage and frequency scaling did not have enough memory to
-> > support that and we still had the ability to make that firmware be
-> > trusted enough we could give it power management responsibilities. I
-> > would certainly feel more comfortable if the SCMI specification was
-> > amended to indicate that the Agent could be such a software entity,
-> > still residing on the same host CPU as the Platform(s), but if not,
-> > that's fine.
-> >
-> > This has lead us to implement a mailbox driver that uses a proprietary
-> > SMC call for the P2A path ("tx" channel) and the return being done via
-> > either that same SMC or through SGI. You can take a look at it in our
-> > downstream tree here actually:
-> >
-> > https://github.com/Broadcom/stblinux-4.9/blob/master/linux/drivers/mailbox/brcmstb-mailbox.c
-> >
-> > If we can get rid of our own driver and uses a standard SMC based
-> > mailbox driver that supports our use case that involves interrupts (we
-> > can always change their kind without our firmware/boot loader since FDT
-> > is generated from that component), that would be great.
-> >
-> static irqreturn_t brcm_isr(void)
-> {
->          mbox_chan_received_data(&chans[0], NULL);
->          return IRQ_HANDLED;
-> }
-> 
-> Sorry, I fail to understand why the irq can't be moved inside the
-> client driver itself? There can't be more cost to it and there
-> definitely is no functionality lost.
-
-What if there are multiple clients ?
-And I assume you are referring to case like this where IRQ is not tied
-to the mailbox IP.
-
---
-Regards,
-Sudeep
-
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogaW50ZWwtZ3Z0LWRldiBb
+bWFpbHRvOmludGVsLWd2dC1kZXYtYm91bmNlc0BsaXN0cy5mcmVlZGVza3RvcC5vcmddIE9uDQo+
+IEJlaGFsZiBPZiBHZXJkIEhvZmZtYW5uDQo+IFNlbnQ6IFRodXJzZGF5LCBKdW5lIDI3LCAyMDE5
+IDI6MjEgUE0NCj4gVG86IFpoYW5nLCBUaW5hIDx0aW5hLnpoYW5nQGludGVsLmNvbT4NCj4gQ2M6
+IFRpYW4sIEtldmluIDxrZXZpbi50aWFuQGludGVsLmNvbT47IGt2bUB2Z2VyLmtlcm5lbC5vcmc7
+IGxpbnV4LQ0KPiBrZXJuZWxAdmdlci5rZXJuZWwub3JnOyB6aGVueXV3QGxpbnV4LmludGVsLmNv
+bTsgWXVhbiwgSGFuZw0KPiA8aGFuZy55dWFuQGludGVsLmNvbT47IGFsZXgud2lsbGlhbXNvbkBy
+ZWRoYXQuY29tOyBMdiwgWmhpeXVhbg0KPiA8emhpeXVhbi5sdkBpbnRlbC5jb20+OyBpbnRlbC1n
+dnQtZGV2QGxpc3RzLmZyZWVkZXNrdG9wLm9yZzsgV2FuZywgWmhpIEENCj4gPHpoaS5hLndhbmdA
+aW50ZWwuY29tPg0KPiBTdWJqZWN0OiBSZTogW1JGQyBQQVRDSCB2MyAyLzRdIHZmaW86IEludHJv
+ZHVjZSB2R1BVIGRpc3BsYXkgaXJxIHR5cGUNCj4gDQo+IE9uIFRodSwgSnVuIDI3LCAyMDE5IGF0
+IDExOjM4OjAwQU0gKzA4MDAsIFRpbmEgWmhhbmcgd3JvdGU6DQo+ID4gSW50cm9kdWNlIHZHUFUg
+c3BlY2lmaWMgaXJxIHR5cGUgVkZJT19JUlFfVFlQRV9HRlgsIGFuZA0KPiA+IFZGSU9fSVJRX1NV
+QlRZUEVfR0ZYX0RJU1BMQVlfSVJRIGFzIHRoZSBzdWJ0eXBlIGZvciB2R1BVIGRpc3BsYXkNCj4g
+Pg0KPiA+IFNpZ25lZC1vZmYtYnk6IFRpbmEgWmhhbmcgPHRpbmEuemhhbmdAaW50ZWwuY29tPg0K
+PiA+IC0tLQ0KPiA+ICBpbmNsdWRlL3VhcGkvbGludXgvdmZpby5oIHwgMyArKysNCj4gPiAgMSBm
+aWxlIGNoYW5nZWQsIDMgaW5zZXJ0aW9ucygrKQ0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL2luY2x1
+ZGUvdWFwaS9saW51eC92ZmlvLmggYi9pbmNsdWRlL3VhcGkvbGludXgvdmZpby5oDQo+ID4gaW5k
+ZXggNjAwNzg0YWNjNGFjLi5jM2U5YzgyMWE1Y2IgMTAwNjQ0DQo+ID4gLS0tIGEvaW5jbHVkZS91
+YXBpL2xpbnV4L3ZmaW8uaA0KPiA+ICsrKyBiL2luY2x1ZGUvdWFwaS9saW51eC92ZmlvLmgNCj4g
+PiBAQCAtNDY1LDYgKzQ2NSw5IEBAIHN0cnVjdCB2ZmlvX2lycV9pbmZvX2NhcF90eXBlIHsNCj4g
+PiAgCV9fdTMyIHN1YnR5cGU7ICAvKiB0eXBlIHNwZWNpZmljICovDQo+ID4gIH07DQo+ID4NCj4g
+PiArI2RlZmluZSBWRklPX0lSUV9UWVBFX0dGWAkJCQkoMSkNCj4gPiArI2RlZmluZSBWRklPX0lS
+UV9TVUJUWVBFX0dGWF9ESVNQTEFZX0lSUQkJKDEpDQo+IA0KPiBWRklPX0lSUV9UWVBFX0dGWF9W
+QkxBTksgPw0KVkZJT19JUlFfU1VCVFlQRV9HRlhfRElTUExBWV9JUlEgaXMgcHJvcG9zZWQgdG8g
+Y292ZXIgYWxsIHRoZSBkaXNwbGF5IHJlbGF0ZWQgZXZlbnRzLiBJbiB0aGlzIHZlcnNpb24sIHdl
+IG9ubHkgdXNlIFZGSU9fSVJRX1NVQlRZUEVfR0ZYX0RJU1BMQVlfSVJRIHRvIGRlbGl2ZXIgdmJs
+YW5rIGV2ZW50LiBIb3dldmVyLCB3ZSBtaWdodCBzdGlsbCB3YW50IHRvIHJlc2VydmUgc2VhdCBm
+b3Igb3RoZXIgZGlzcGxheSBldmVudCwgbGlrZSBwYWdlIGZsaXAgZXZlbnQuDQpUaGFua3MuDQoN
+CkJSLA0KVGluYQ0KPiANCj4gY2hlZXJzLA0KPiAgIEdlcmQNCj4gDQo+IF9fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fDQo+IGludGVsLWd2dC1kZXYgbWFpbGlu
+ZyBsaXN0DQo+IGludGVsLWd2dC1kZXZAbGlzdHMuZnJlZWRlc2t0b3Aub3JnDQo+IGh0dHBzOi8v
+bGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vaW50ZWwtZ3Z0LWRldg0K
