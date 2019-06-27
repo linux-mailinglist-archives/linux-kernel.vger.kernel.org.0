@@ -2,321 +2,238 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D702358BDB
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 22:40:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EEE3F58BF2
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 22:45:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726851AbfF0UkO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 16:40:14 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:39475 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726830AbfF0UkM (ORCPT
+        id S1726559AbfF0Uo5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 16:44:57 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:33078 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726443AbfF0Uoy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 16:40:12 -0400
-Received: by mail-qt1-f193.google.com with SMTP id i34so3979365qta.6;
-        Thu, 27 Jun 2019 13:40:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=asaU2u3+qE2V/tXvNuPV0itByGZXwrnNGauZ3AE0x8Q=;
-        b=mWIjFi6ksn5M294UtD6OzjBoCcGAe+stAI7ZEU++C0SLPFQDR1HBVYjwQJCYLPaUlL
-         wgPZe4orHMigt/L29ffRXdcLiUyd+1zty+hko8XcOLFP85nKpVkRPaPWPYiDj5H7iqgx
-         pC5XDK6I0MHokMJ5E9gVGffJBBFLXPtPkpPIgs3jRXt/bDf2pgkCQzNKfnoO9D+ag2Ph
-         jybYItkKi6WJHM/vxAeDgtZ3bh0bYcGRZ1anuBwPj2iQLxLyDoXSINEpVF/8d5j1QYSq
-         cU7qp5tB9tLDjlvEdqwP04/TIf4lVNRgweY1tu98OiJaJnAyqchLjGCv4bqCEnCvy01F
-         838A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references;
-        bh=asaU2u3+qE2V/tXvNuPV0itByGZXwrnNGauZ3AE0x8Q=;
-        b=j7IFaXETdf2cwn7kxQM9KmimTzNeWAc7LvlM9Vb2VFRIsVN/pVzMPaUrU7Px2ah0f2
-         3KgHkbXIgyI3BbDPOYD2hzyQixjjj15BTzuAEmABLLDCbJVN9ZYjcmfol9Zn3W0P329E
-         OM0IjqWAAvN2qyv6HZt8YuLgTl+sjTwhA5NxE9X4mTvGFD03gJpMoCGesrnA2hxYOD8D
-         v6f4YTh47YLb2KLf9ufG414nks/4z+46fO8HOqeLgmdNqk2lRHOmmf1OKO0Rdnm56Yhe
-         RkslnWIhlSgRLxVe5YXVCKZ6poHlUWJYrQ8N47Dur09o7cN0F5rtwwRO0I5H8gxo0xu/
-         N1xw==
-X-Gm-Message-State: APjAAAUQi4I4wF8bygQwmwed4ldiLJ3vxJQcEl+MCm9jFx4KhHaqHrnC
-        KQ5cL2v3KyRbJlsTgHFoznk=
-X-Google-Smtp-Source: APXvYqxEisVOKnA5w+z3iVn+487JJc2VnADsPPw/D/sgNAIpFIMI0h6sXlh2IuEY4rPXtLOql2AbEA==
-X-Received: by 2002:a0c:93a3:: with SMTP id f32mr5198677qvf.14.1561668010735;
-        Thu, 27 Jun 2019 13:40:10 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:480::5a51])
-        by smtp.gmail.com with ESMTPSA id h18sm60802qkj.134.2019.06.27.13.40.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Jun 2019 13:40:10 -0700 (PDT)
-From:   Tejun Heo <tj@kernel.org>
-To:     axboe@kernel.dk
-Cc:     jack@suse.cz, josef@toxicpanda.com, clm@fb.com, dsterba@suse.com,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, kernel-team@fb.com,
-        Tejun Heo <tj@kernel.org>
-Subject: [PATCH 5/5] blkcg: implement REQ_CGROUP_PUNT
-Date:   Thu, 27 Jun 2019 13:39:52 -0700
-Message-Id: <20190627203952.386785-6-tj@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190627203952.386785-1-tj@kernel.org>
-References: <20190627203952.386785-1-tj@kernel.org>
+        Thu, 27 Jun 2019 16:44:54 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5RKiJrE129590;
+        Thu, 27 Jun 2019 20:44:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=GvvOJ3ZYe39vy53jEnW495wz4/bZAY4T5Xov8m3s0XE=;
+ b=CNn8y1LseFDIlhOujGjb1tAvXJRWmLRCU8FPquuYHswqDlwkh8p/9a/MR/ZFbDKsF570
+ oNR2te3FjFFO2PYOE7hOmsvNJAzsbtM77Herv1UuOPj5jk70/mClcflAdAoI0w+rH1B4
+ tKt3aGYpw+3/pl6e34yIy8QFUA10NvRCEB4ZdCW9aXjwKYWC9Ll+24afbNCL7Sytdg+y
+ iUzQx5YJZeUDknOvM2z69JmGOhzXAb5rX+5hBLG8HG/e2+PAY4DEM0rdHWVu4CfcBxYm
+ ZJXSEd2ygLUN0QrW8CboN+6X2Geht9pFPasjX8wDptpJHIytTZI3bJfQmaQ5q+/kT0G2 rw== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 2t9brtjeq8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 27 Jun 2019 20:44:29 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5RKhVPR104544;
+        Thu, 27 Jun 2019 20:44:29 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3020.oracle.com with ESMTP id 2tat7dkgsr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 27 Jun 2019 20:44:29 +0000
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5RKiR0U021951;
+        Thu, 27 Jun 2019 20:44:27 GMT
+Received: from localhost (/10.145.179.81)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 27 Jun 2019 13:44:26 -0700
+Date:   Thu, 27 Jun 2019 13:44:26 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 04/13] xfs: initialize iomap->flags in xfs_bmbt_to_iomap
+Message-ID: <20190627204426.GQ5171@magnolia>
+References: <20190627104836.25446-1-hch@lst.de>
+ <20190627104836.25446-5-hch@lst.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190627104836.25446-5-hch@lst.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9301 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1906270238
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9301 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906270239
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a shared kthread needs to issue a bio for a cgroup, doing so
-synchronously can lead to priority inversions as the kthread can be
-trapped waiting for that cgroup.  This patch implements
-REQ_CGROUP_PUNT flag which makes submit_bio() punt the actual issuing
-to a dedicated per-blkcg work item to avoid such priority inversions.
+On Thu, Jun 27, 2019 at 12:48:27PM +0200, Christoph Hellwig wrote:
+> Currently we don't overwrite the flags field in the iomap in
+> xfs_bmbt_to_iomap.  This works fine with 0-initialized iomaps on stack,
+> but is harmful once we want to be able to reuse an iomap in the
+> writeback code.  Replace the shared paramter with a set of initial
+> flags an thus ensures the flags field is always reinitialized.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-This will be used to fix priority inversions in btrfs compression and
-should be generally useful as we grow filesystem support for
-comprehensive IO control.
+Looks ok,
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
 
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Cc: Chris Mason <clm@fb.com>
----
- block/blk-cgroup.c          | 53 +++++++++++++++++++++++++++++++++++++
- block/blk-core.c            |  3 +++
- include/linux/backing-dev.h |  1 +
- include/linux/blk-cgroup.h  | 16 ++++++++++-
- include/linux/blk_types.h   | 10 +++++++
- include/linux/writeback.h   | 13 ++++++---
- 6 files changed, 92 insertions(+), 4 deletions(-)
+--D
 
-diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
-index 3319ab4ff262..921a3ef329aa 100644
---- a/block/blk-cgroup.c
-+++ b/block/blk-cgroup.c
-@@ -54,6 +54,7 @@ static struct blkcg_policy *blkcg_policy[BLKCG_MAX_POLS];
- static LIST_HEAD(all_blkcgs);		/* protected by blkcg_pol_mutex */
- 
- static bool blkcg_debug_stats = false;
-+static struct workqueue_struct *blkcg_punt_bio_wq;
- 
- static bool blkcg_policy_enabled(struct request_queue *q,
- 				 const struct blkcg_policy *pol)
-@@ -88,6 +89,8 @@ static void __blkg_release(struct rcu_head *rcu)
- {
- 	struct blkcg_gq *blkg = container_of(rcu, struct blkcg_gq, rcu_head);
- 
-+	WARN_ON(!bio_list_empty(&blkg->async_bios));
-+
- 	/* release the blkcg and parent blkg refs this blkg has been holding */
- 	css_put(&blkg->blkcg->css);
- 	if (blkg->parent)
-@@ -113,6 +116,23 @@ static void blkg_release(struct percpu_ref *ref)
- 	call_rcu(&blkg->rcu_head, __blkg_release);
- }
- 
-+static void blkg_async_bio_workfn(struct work_struct *work)
-+{
-+	struct blkcg_gq *blkg = container_of(work, struct blkcg_gq,
-+					     async_bio_work);
-+	struct bio_list bios = BIO_EMPTY_LIST;
-+	struct bio *bio;
-+
-+	/* as long as there are pending bios, @blkg can't go away */
-+	spin_lock_bh(&blkg->async_bio_lock);
-+	bio_list_merge(&bios, &blkg->async_bios);
-+	bio_list_init(&blkg->async_bios);
-+	spin_unlock_bh(&blkg->async_bio_lock);
-+
-+	while ((bio = bio_list_pop(&bios)))
-+		submit_bio(bio);
-+}
-+
- /**
-  * blkg_alloc - allocate a blkg
-  * @blkcg: block cgroup the new blkg is associated with
-@@ -141,6 +161,9 @@ static struct blkcg_gq *blkg_alloc(struct blkcg *blkcg, struct request_queue *q,
- 
- 	blkg->q = q;
- 	INIT_LIST_HEAD(&blkg->q_node);
-+	spin_lock_init(&blkg->async_bio_lock);
-+	bio_list_init(&blkg->async_bios);
-+	INIT_WORK(&blkg->async_bio_work, blkg_async_bio_workfn);
- 	blkg->blkcg = blkcg;
- 
- 	for (i = 0; i < BLKCG_MAX_POLS; i++) {
-@@ -1527,6 +1550,25 @@ void blkcg_policy_unregister(struct blkcg_policy *pol)
- }
- EXPORT_SYMBOL_GPL(blkcg_policy_unregister);
- 
-+bool __blkcg_punt_bio_submit(struct bio *bio)
-+{
-+	struct blkcg_gq *blkg = bio->bi_blkg;
-+
-+	/* consume the flag first */
-+	bio->bi_opf &= ~REQ_CGROUP_PUNT;
-+
-+	/* never bounce for the root cgroup */
-+	if (!blkg->parent)
-+		return false;
-+
-+	spin_lock_bh(&blkg->async_bio_lock);
-+	bio_list_add(&blkg->async_bios, bio);
-+	spin_unlock_bh(&blkg->async_bio_lock);
-+
-+	queue_work(blkcg_punt_bio_wq, &blkg->async_bio_work);
-+	return true;
-+}
-+
- /*
-  * Scale the accumulated delay based on how long it has been since we updated
-  * the delay.  We only call this when we are adding delay, in case it's been a
-@@ -1727,5 +1769,16 @@ void blkcg_add_delay(struct blkcg_gq *blkg, u64 now, u64 delta)
- 	atomic64_add(delta, &blkg->delay_nsec);
- }
- 
-+static int __init blkcg_init(void)
-+{
-+	blkcg_punt_bio_wq = alloc_workqueue("blkcg_punt_bio",
-+					    WQ_MEM_RECLAIM | WQ_FREEZABLE |
-+					    WQ_UNBOUND | WQ_SYSFS, 0);
-+	if (!blkcg_punt_bio_wq)
-+		return -ENOMEM;
-+	return 0;
-+}
-+subsys_initcall(blkcg_init);
-+
- module_param(blkcg_debug_stats, bool, 0644);
- MODULE_PARM_DESC(blkcg_debug_stats, "True if you want debug stats, false if not");
-diff --git a/block/blk-core.c b/block/blk-core.c
-index 5d1fc8e17dd1..812052c835fc 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -1127,6 +1127,9 @@ EXPORT_SYMBOL_GPL(direct_make_request);
-  */
- blk_qc_t submit_bio(struct bio *bio)
- {
-+	if (blkcg_punt_bio_submit(bio))
-+		return BLK_QC_T_NONE;
-+
- 	/*
- 	 * If it's a regular read/write or a barrier with data attached,
- 	 * go through the normal accounting stuff before submission.
-diff --git a/include/linux/backing-dev.h b/include/linux/backing-dev.h
-index f9b029180241..35b31d176f74 100644
---- a/include/linux/backing-dev.h
-+++ b/include/linux/backing-dev.h
-@@ -48,6 +48,7 @@ extern spinlock_t bdi_lock;
- extern struct list_head bdi_list;
- 
- extern struct workqueue_struct *bdi_wq;
-+extern struct workqueue_struct *bdi_async_bio_wq;
- 
- static inline bool wb_has_dirty_io(struct bdi_writeback *wb)
- {
-diff --git a/include/linux/blk-cgroup.h b/include/linux/blk-cgroup.h
-index 33f23a858438..689a58231288 100644
---- a/include/linux/blk-cgroup.h
-+++ b/include/linux/blk-cgroup.h
-@@ -132,13 +132,17 @@ struct blkcg_gq {
- 
- 	struct blkg_policy_data		*pd[BLKCG_MAX_POLS];
- 
--	struct rcu_head			rcu_head;
-+	spinlock_t			async_bio_lock;
-+	struct bio_list			async_bios;
-+	struct work_struct		async_bio_work;
- 
- 	atomic_t			use_delay;
- 	atomic64_t			delay_nsec;
- 	atomic64_t			delay_start;
- 	u64				last_delay;
- 	int				last_use;
-+
-+	struct rcu_head			rcu_head;
- };
- 
- typedef struct blkcg_policy_data *(blkcg_pol_alloc_cpd_fn)(gfp_t gfp);
-@@ -701,6 +705,15 @@ static inline bool blk_throtl_bio(struct request_queue *q, struct blkcg_gq *blkg
- 				  struct bio *bio) { return false; }
- #endif
- 
-+bool __blkcg_punt_bio_submit(struct bio *bio);
-+
-+static inline bool blkcg_punt_bio_submit(struct bio *bio)
-+{
-+	if (bio->bi_opf & REQ_CGROUP_PUNT)
-+		return __blkcg_punt_bio_submit(bio);
-+	else
-+		return false;
-+}
- 
- static inline void blkcg_bio_issue_init(struct bio *bio)
- {
-@@ -848,6 +861,7 @@ static inline char *blkg_path(struct blkcg_gq *blkg) { return NULL; }
- static inline void blkg_get(struct blkcg_gq *blkg) { }
- static inline void blkg_put(struct blkcg_gq *blkg) { }
- 
-+static inline bool blkcg_punt_bio_submit(struct bio *bio) { return false; }
- static inline void blkcg_bio_issue_init(struct bio *bio) { }
- static inline bool blkcg_bio_issue_check(struct request_queue *q,
- 					 struct bio *bio) { return true; }
-diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
-index 6a53799c3fe2..feff3fe4467e 100644
---- a/include/linux/blk_types.h
-+++ b/include/linux/blk_types.h
-@@ -311,6 +311,14 @@ enum req_flag_bits {
- 	__REQ_RAHEAD,		/* read ahead, can fail anytime */
- 	__REQ_BACKGROUND,	/* background IO */
- 	__REQ_NOWAIT,           /* Don't wait if request will block */
-+	/*
-+	 * When a shared kthread needs to issue a bio for a cgroup, doing
-+	 * so synchronously can lead to priority inversions as the kthread
-+	 * can be trapped waiting for that cgroup.  CGROUP_PUNT flag makes
-+	 * submit_bio() punt the actual issuing to a dedicated per-blkcg
-+	 * work item to avoid such priority inversions.
-+	 */
-+	__REQ_CGROUP_PUNT,
- 
- 	/* command specific flags for REQ_OP_WRITE_ZEROES: */
- 	__REQ_NOUNMAP,		/* do not free blocks when zeroing */
-@@ -337,6 +345,8 @@ enum req_flag_bits {
- #define REQ_RAHEAD		(1ULL << __REQ_RAHEAD)
- #define REQ_BACKGROUND		(1ULL << __REQ_BACKGROUND)
- #define REQ_NOWAIT		(1ULL << __REQ_NOWAIT)
-+#define REQ_CGROUP_PUNT		(1ULL << __REQ_CGROUP_PUNT)
-+
- #define REQ_NOUNMAP		(1ULL << __REQ_NOUNMAP)
- #define REQ_HIPRI		(1ULL << __REQ_HIPRI)
- 
-diff --git a/include/linux/writeback.h b/include/linux/writeback.h
-index e056a22075cf..8945aac31392 100644
---- a/include/linux/writeback.h
-+++ b/include/linux/writeback.h
-@@ -78,6 +78,8 @@ struct writeback_control {
- 	 */
- 	unsigned no_cgroup_owner:1;
- 
-+	unsigned punt_to_cgroup:1;	/* cgrp punting, see __REQ_CGROUP_PUNT */
-+
- #ifdef CONFIG_CGROUP_WRITEBACK
- 	struct bdi_writeback *wb;	/* wb this writeback is issued under */
- 	struct inode *inode;		/* inode being written out */
-@@ -94,12 +96,17 @@ struct writeback_control {
- 
- static inline int wbc_to_write_flags(struct writeback_control *wbc)
- {
-+	int flags = 0;
-+
-+	if (wbc->punt_to_cgroup)
-+		flags = REQ_CGROUP_PUNT;
-+
- 	if (wbc->sync_mode == WB_SYNC_ALL)
--		return REQ_SYNC;
-+		flags |= REQ_SYNC;
- 	else if (wbc->for_kupdate || wbc->for_background)
--		return REQ_BACKGROUND;
-+		flags |= REQ_BACKGROUND;
- 
--	return 0;
-+	return flags;
- }
- 
- static inline struct cgroup_subsys_state *
--- 
-2.17.1
-
+> ---
+>  fs/xfs/xfs_iomap.c | 28 +++++++++++++++++-----------
+>  fs/xfs/xfs_iomap.h |  2 +-
+>  fs/xfs/xfs_pnfs.c  |  2 +-
+>  3 files changed, 19 insertions(+), 13 deletions(-)
+> 
+> diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
+> index 63d323916bba..6b29452bfba0 100644
+> --- a/fs/xfs/xfs_iomap.c
+> +++ b/fs/xfs/xfs_iomap.c
+> @@ -57,7 +57,7 @@ xfs_bmbt_to_iomap(
+>  	struct xfs_inode	*ip,
+>  	struct iomap		*iomap,
+>  	struct xfs_bmbt_irec	*imap,
+> -	bool			shared)
+> +	u16			flags)
+>  {
+>  	struct xfs_mount	*mp = ip->i_mount;
+>  
+> @@ -82,12 +82,11 @@ xfs_bmbt_to_iomap(
+>  	iomap->length = XFS_FSB_TO_B(mp, imap->br_blockcount);
+>  	iomap->bdev = xfs_find_bdev_for_inode(VFS_I(ip));
+>  	iomap->dax_dev = xfs_find_daxdev_for_inode(VFS_I(ip));
+> +	iomap->flags = flags;
+>  
+>  	if (xfs_ipincount(ip) &&
+>  	    (ip->i_itemp->ili_fsync_fields & ~XFS_ILOG_TIMESTAMP))
+>  		iomap->flags |= IOMAP_F_DIRTY;
+> -	if (shared)
+> -		iomap->flags |= IOMAP_F_SHARED;
+>  	return 0;
+>  }
+>  
+> @@ -543,6 +542,7 @@ xfs_file_iomap_begin_delay(
+>  	struct xfs_iext_cursor	icur, ccur;
+>  	xfs_fsblock_t		prealloc_blocks = 0;
+>  	bool			eof = false, cow_eof = false, shared = false;
+> +	u16			iomap_flags = 0;
+>  	int			whichfork = XFS_DATA_FORK;
+>  	int			error = 0;
+>  
+> @@ -710,7 +710,7 @@ xfs_file_iomap_begin_delay(
+>  	 * Flag newly allocated delalloc blocks with IOMAP_F_NEW so we punch
+>  	 * them out if the write happens to fail.
+>  	 */
+> -	iomap->flags |= IOMAP_F_NEW;
+> +	iomap_flags |= IOMAP_F_NEW;
+>  	trace_xfs_iomap_alloc(ip, offset, count, whichfork,
+>  			whichfork == XFS_DATA_FORK ? &imap : &cmap);
+>  done:
+> @@ -718,14 +718,17 @@ xfs_file_iomap_begin_delay(
+>  		if (imap.br_startoff > offset_fsb) {
+>  			xfs_trim_extent(&cmap, offset_fsb,
+>  					imap.br_startoff - offset_fsb);
+> -			error = xfs_bmbt_to_iomap(ip, iomap, &cmap, true);
+> +			error = xfs_bmbt_to_iomap(ip, iomap, &cmap,
+> +					IOMAP_F_SHARED);
+>  			goto out_unlock;
+>  		}
+>  		/* ensure we only report blocks we have a reservation for */
+>  		xfs_trim_extent(&imap, cmap.br_startoff, cmap.br_blockcount);
+>  		shared = true;
+>  	}
+> -	error = xfs_bmbt_to_iomap(ip, iomap, &imap, shared);
+> +	if (shared)
+> +		iomap_flags |= IOMAP_F_SHARED;
+> +	error = xfs_bmbt_to_iomap(ip, iomap, &imap, iomap_flags);
+>  out_unlock:
+>  	xfs_iunlock(ip, XFS_ILOCK_EXCL);
+>  	return error;
+> @@ -933,6 +936,7 @@ xfs_file_iomap_begin(
+>  	xfs_fileoff_t		offset_fsb, end_fsb;
+>  	int			nimaps = 1, error = 0;
+>  	bool			shared = false;
+> +	u16			iomap_flags = 0;
+>  	unsigned		lockmode;
+>  
+>  	if (XFS_FORCED_SHUTDOWN(mp))
+> @@ -1048,11 +1052,13 @@ xfs_file_iomap_begin(
+>  	if (error)
+>  		return error;
+>  
+> -	iomap->flags |= IOMAP_F_NEW;
+> +	iomap_flags |= IOMAP_F_NEW;
+>  	trace_xfs_iomap_alloc(ip, offset, length, XFS_DATA_FORK, &imap);
+>  
+>  out_finish:
+> -	return xfs_bmbt_to_iomap(ip, iomap, &imap, shared);
+> +	if (shared)
+> +		iomap_flags |= IOMAP_F_SHARED;
+> +	return xfs_bmbt_to_iomap(ip, iomap, &imap, iomap_flags);
+>  
+>  out_found:
+>  	ASSERT(nimaps);
+> @@ -1196,7 +1202,7 @@ xfs_seek_iomap_begin(
+>  		if (data_fsb < cow_fsb + cmap.br_blockcount)
+>  			end_fsb = min(end_fsb, data_fsb);
+>  		xfs_trim_extent(&cmap, offset_fsb, end_fsb);
+> -		error = xfs_bmbt_to_iomap(ip, iomap, &cmap, true);
+> +		error = xfs_bmbt_to_iomap(ip, iomap, &cmap, IOMAP_F_SHARED);
+>  		/*
+>  		 * This is a COW extent, so we must probe the page cache
+>  		 * because there could be dirty page cache being backed
+> @@ -1218,7 +1224,7 @@ xfs_seek_iomap_begin(
+>  	imap.br_state = XFS_EXT_NORM;
+>  done:
+>  	xfs_trim_extent(&imap, offset_fsb, end_fsb);
+> -	error = xfs_bmbt_to_iomap(ip, iomap, &imap, false);
+> +	error = xfs_bmbt_to_iomap(ip, iomap, &imap, 0);
+>  out_unlock:
+>  	xfs_iunlock(ip, lockmode);
+>  	return error;
+> @@ -1264,7 +1270,7 @@ xfs_xattr_iomap_begin(
+>  	if (error)
+>  		return error;
+>  	ASSERT(nimaps);
+> -	return xfs_bmbt_to_iomap(ip, iomap, &imap, false);
+> +	return xfs_bmbt_to_iomap(ip, iomap, &imap, 0);
+>  }
+>  
+>  const struct iomap_ops xfs_xattr_iomap_ops = {
+> diff --git a/fs/xfs/xfs_iomap.h b/fs/xfs/xfs_iomap.h
+> index 5c2f6aa6d78f..71d0ae460c44 100644
+> --- a/fs/xfs/xfs_iomap.h
+> +++ b/fs/xfs/xfs_iomap.h
+> @@ -16,7 +16,7 @@ int xfs_iomap_write_direct(struct xfs_inode *, xfs_off_t, size_t,
+>  int xfs_iomap_write_unwritten(struct xfs_inode *, xfs_off_t, xfs_off_t, bool);
+>  
+>  int xfs_bmbt_to_iomap(struct xfs_inode *, struct iomap *,
+> -		struct xfs_bmbt_irec *, bool shared);
+> +		struct xfs_bmbt_irec *, u16);
+>  xfs_extlen_t xfs_eof_alignment(struct xfs_inode *ip, xfs_extlen_t extsize);
+>  
+>  static inline xfs_filblks_t
+> diff --git a/fs/xfs/xfs_pnfs.c b/fs/xfs/xfs_pnfs.c
+> index 2d95355a8a0a..97cdb57e58bc 100644
+> --- a/fs/xfs/xfs_pnfs.c
+> +++ b/fs/xfs/xfs_pnfs.c
+> @@ -186,7 +186,7 @@ xfs_fs_map_blocks(
+>  	}
+>  	xfs_iunlock(ip, XFS_IOLOCK_EXCL);
+>  
+> -	error = xfs_bmbt_to_iomap(ip, iomap, &imap, false);
+> +	error = xfs_bmbt_to_iomap(ip, iomap, &imap, 0);
+>  	*device_generation = mp->m_generation;
+>  	return error;
+>  out_unlock:
+> -- 
+> 2.20.1
+> 
