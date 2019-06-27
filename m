@@ -2,66 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11EE057AE7
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 07:01:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7031A57ABC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 06:45:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727216AbfF0FBw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 01:01:52 -0400
-Received: from mga11.intel.com ([192.55.52.93]:22916 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726563AbfF0FBw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 01:01:52 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jun 2019 22:01:51 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,422,1557212400"; 
-   d="scan'208";a="173005017"
-Received: from hao-dev.bj.intel.com ([10.238.157.65])
-  by orsmga002.jf.intel.com with ESMTP; 26 Jun 2019 22:01:49 -0700
-From:   Wu Hao <hao.wu@intel.com>
-To:     mdf@kernel.org, linux-fpga@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     linux-api@vger.kernel.org, yilun.xu@intel.com, hao.wu@intel.com,
-        gregkh@linuxfoundation.org, atull@kernel.org
-Subject: [PATCH v4 01/15] fpga: dfl-fme-mgr: fix FME_PR_INTFC_ID register address.
-Date:   Thu, 27 Jun 2019 12:44:41 +0800
-Message-Id: <1561610695-5414-2-git-send-email-hao.wu@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1561610695-5414-1-git-send-email-hao.wu@intel.com>
-References: <1561610695-5414-1-git-send-email-hao.wu@intel.com>
+        id S1726937AbfF0Eo7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 00:44:59 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:41436 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725385AbfF0Eo7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 00:44:59 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 9C1E060AE0; Thu, 27 Jun 2019 04:44:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1561610698;
+        bh=xcVtg5zfJpAaPqWmKdZvrhg6l+boP2yFtIErksXuDNA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=ESzDhR8PIE0Y3EX+uYYSluJHiIcWsjBYjt6Kl/SLDg9ogJkOHNkldqnXx0jc2JR6n
+         E8gVb9Ltvf1El4HT5k+fVpXZYGsusCEz6UFZt3l5FP/S6/4WO9TYikE9VLFD195je/
+         K2gUll6eU8c6/2MjHjJmZp19aZQO/8HK0OwGIIuo=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from blr-ubuntu-311.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: saiprakash.ranjan@codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 165C260909;
+        Thu, 27 Jun 2019 04:44:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1561610697;
+        bh=xcVtg5zfJpAaPqWmKdZvrhg6l+boP2yFtIErksXuDNA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=al/qui08bseXmFy75eEdJMgW6kdAjL5jAVBnWBZJoT4G169Kz8CPTO1R3gU1wLBrI
+         sBXILX/7mvLFxxEkWUhTwpPTz/aWGLXh2iQaVI9645HkorVk0ItKJxQJmqqurCMFdB
+         kXYckg7doHfw8ffHQXTyXnORd/qUPtW3aRER4CZk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 165C260909
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
+From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Leo Yan <leo.yan@linaro.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        David Brown <david.brown@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Subject: [RESEND PATCHv4 0/1] coresight: Do not default to CPU0 for missing CPU phandle
+Date:   Thu, 27 Jun 2019 10:14:41 +0530
+Message-Id: <cover.1561610498.git.saiprakash.ranjan@codeaurora.org>
+X-Mailer: git-send-email 2.22.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-FME_PR_INTFC_ID is used as compat_id for fpga manager and region,
-but high 64 bits and low 64 bits of the compat_id are swapped by
-mistake. This patch fixes this problem by fixing register address.
+In case of missing CPU phandle, the affinity is set default to
+CPU0 which is not a correct assumption. Fix this in coresight
+platform to set affinity to invalid and abort the probe in drivers.
+Also update the dt-bindings accordingly.
 
-Signed-off-by: Wu Hao <hao.wu@intel.com>
-Acked-by: Alan Tull <atull@kernel.org>
-Acked-by: Moritz Fischer <mdf@kernel.org>
----
- drivers/fpga/dfl-fme-mgr.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Resent with Reviewed tag by Suzuki.
 
-diff --git a/drivers/fpga/dfl-fme-mgr.c b/drivers/fpga/dfl-fme-mgr.c
-index 76f3770..b3f7eee 100644
---- a/drivers/fpga/dfl-fme-mgr.c
-+++ b/drivers/fpga/dfl-fme-mgr.c
-@@ -30,8 +30,8 @@
- #define FME_PR_STS		0x10
- #define FME_PR_DATA		0x18
- #define FME_PR_ERR		0x20
--#define FME_PR_INTFC_ID_H	0xA8
--#define FME_PR_INTFC_ID_L	0xB0
-+#define FME_PR_INTFC_ID_L	0xA8
-+#define FME_PR_INTFC_ID_H	0xB0
- 
- /* FME PR Control Register Bitfield */
- #define FME_PR_CTRL_PR_RST	BIT_ULL(0)  /* Reset PR engine */
+v4:
+ * Fix return for !CONFIG_ACPI and !CONFIG_OF.
+
+v3:
+ * Addressed review comments from Suzuki and updated
+   acpi_coresight_get_cpu.
+ * Removed patch 2 which had invalid check for online
+   cpus.
+
+v2:
+ * Addressed review comments from Suzuki and Mathieu.
+ * Allows the probe of etm and cpu-debug to abort earlier
+   in case of unavailability of respective cpus.
+
+Sai Prakash Ranjan (1):
+  coresight: Do not default to CPU0 for missing CPU phandle
+
+ .../bindings/arm/coresight-cpu-debug.txt      |  4 ++--
+ .../devicetree/bindings/arm/coresight.txt     |  8 +++++---
+ .../hwtracing/coresight/coresight-cpu-debug.c |  3 +++
+ drivers/hwtracing/coresight/coresight-etm3x.c |  3 +++
+ drivers/hwtracing/coresight/coresight-etm4x.c |  3 +++
+ .../hwtracing/coresight/coresight-platform.c  | 20 +++++++++----------
+ 6 files changed, 26 insertions(+), 15 deletions(-)
+
 -- 
-1.8.3.1
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
 
