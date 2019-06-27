@@ -2,95 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1448358DC0
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 00:14:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D829558DC8
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 00:15:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726822AbfF0WOj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 18:14:39 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:44839 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726445AbfF0WOi (ORCPT
+        id S1726879AbfF0WPe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 18:15:34 -0400
+Received: from mail-pf1-f201.google.com ([209.85.210.201]:49954 "EHLO
+        mail-pf1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726563AbfF0WPd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 18:14:38 -0400
-Received: by mail-pg1-f194.google.com with SMTP id n2so1621641pgp.11;
-        Thu, 27 Jun 2019 15:14:38 -0700 (PDT)
+        Thu, 27 Jun 2019 18:15:33 -0400
+Received: by mail-pf1-f201.google.com with SMTP id x9so2426328pfm.16
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 15:15:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=NZXRbshkIzDoSjsEe6DOCALRS5cAnDLBAFY0PCjxxcU=;
-        b=cBdX4LpeL+5vcJzIjdWukBMVOC25dcs8gOFk8FaXLeZh4mPQ1IqFwisSjMlNNNaHZZ
-         vyULpV6qOd2TK95gmTBDrlWV40A+36b0wKcUNdXPqrYsHR5eOSVDTXeapan3VLKFTClX
-         OZxaSnKCMbx/0JiYw40Sqp2SFmJjzz+1SJlbWTe3eeVKiOD05lMcOfTRF183iEoeZuaa
-         +JcwA0nz5Vgd/nycUDCVEnFKH27S7GrEP4p9YLv2OF0s6KhhNf7tDC1jhm8ApnuYNIej
-         lo5Lx/SGn7UeDl3q2IOxeyIl4y721mVaKAin81Ne7L2+M4K8z3ex1FcNzNVUCnfS773j
-         33jg==
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=Symvyf/Uz9S5oKdNsFmtumlityXOKZm70HtIggCwFnk=;
+        b=FUoTSiWGUAtMmT6Erkt4yAeuT0+qjeYcWls6gB3JPv82xDHkgN1hirWiFjVAqnnOVq
+         j3Z9Td4BjBrcCMOH4skPnJx3La72XnsWPgIHKbkYMkKrnLi/LFiskUO8f5MhH+PQ6C4e
+         KObEoLRcNyNt5RjzC3mElSNiGYJYULWFrsg3bezwh3jABhgWyneK+vjFogRmjHykQlLG
+         pWevR8tpcYknyHIgomouTnrqo+1ywloJhMER3s2boTItwF3cssClvvIVSZ0lh6YyFYQq
+         9Ik5+4zmwGMCXlH03L6WSLUMi7or2zDUnDFVYXyfNH8gVHiYWki8yp+UMawuPW1mVK8/
+         yMgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=NZXRbshkIzDoSjsEe6DOCALRS5cAnDLBAFY0PCjxxcU=;
-        b=X3tuDAXatyxYKTO3EGV7+CrqbTViU3siTc0szAs01Sniy4l1mq2UU4CKhmvLqn3zne
-         d/yKci752zX7AbOGXZqasT5QJMI2WslkLzpmW4uraN0IXzyhq2xE0HGDR1hx47Y1d658
-         N38mrTKGOkX/PQ66Kw7qWyYVAQMj/8SD9wToiapDbBKQ//ohYPux0tsHgfpXCy03OJZ9
-         BouHdWer6JN1LRaGZlENT6DDLjVm7xUtsAdEYWkjRcfz9xMruyQKq0MCSlYya13+fKIC
-         q/+XuUPcgXvKNnoaeJW34YMKBHv5V5q1nmMbRd/PVK1GdAgC5ZwrJuPYdq2qThYvkwMo
-         BM/w==
-X-Gm-Message-State: APjAAAXLhE6OUA1MB9B+PNyDYggtJ0B6QVmDclckMv5lEY5qJ5TVrL2q
-        j46r4FDl+NnVljASSCOC0CM=
-X-Google-Smtp-Source: APXvYqzgUPfbteOtdizfNvJDkNBveWB5fGZbGGCcUfGxHAzouvZj2SyT/6FKfztouZ9ftzAfbsE4oQ==
-X-Received: by 2002:a63:e156:: with SMTP id h22mr5909967pgk.370.1561673678002;
-        Thu, 27 Jun 2019 15:14:38 -0700 (PDT)
-Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:200::1:305a])
-        by smtp.gmail.com with ESMTPSA id j2sm81162pfn.135.2019.06.27.15.14.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Jun 2019 15:14:37 -0700 (PDT)
-Date:   Thu, 27 Jun 2019 15:14:36 -0700
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     Brian Vazquez <brianvv@google.com>
-Cc:     Brian Vazquez <brianvv.kernel@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        "David S . Miller" <davem@davemloft.net>,
-        Stanislav Fomichev <sdf@google.com>,
-        Willem de Bruijn <willemb@google.com>,
-        Petar Penkov <ppenkov@google.com>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org
-Subject: Re: [RFC PATCH bpf-next v2 0/6]  bpf: add BPF_MAP_DUMP command to
-Message-ID: <20190627221434.tz2fscw2cjvrqiop@ast-mbp.dhcp.thefacebook.com>
-References: <20190627202417.33370-1-brianvv@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190627202417.33370-1-brianvv@google.com>
-User-Agent: NeoMutt/20180223
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=Symvyf/Uz9S5oKdNsFmtumlityXOKZm70HtIggCwFnk=;
+        b=k7Yzv72FErCSGg91VRd2UydN8ZUiuMo17/I7RuauhgB7L1dnzfGf4lXypy7YDcAzf3
+         Y7H7xWbKDEMb3LToDCTXwKSBtzzCjrh5Sn/P+EVC5heIg0YkU5nEONny5TV9n72U3Xud
+         /BAM1vRyE5YyOGu/BmFdUMvmmxEsXLZb7eZN+yi05uykLqxPFkMCzJ++x6JQiXmlsKGx
+         fP/MdprgwNjiU8p7H+gQ3tuqCCb0uCaEdADEp7INW5NfiPmD+5yf45HJjSbn4Jc+0seH
+         PMjbYEu350RcwAJ2P5ljEruIGhngiGXMoG8l/m7ITsbULx4/Ed+jHpaNi4FigYDXlpJy
+         d+BQ==
+X-Gm-Message-State: APjAAAVvgirfYkZ8EsnrzKZRBJ6TFZUjFijpz3V68MVkJicp8LZAE1BX
+        W+t+HUZxwFv82hEQUfUTb2F2oVe0jw==
+X-Google-Smtp-Source: APXvYqxUVrAymwj/ugIGi6sQXo8Sqq04CVHfX4dFLvmyXHderTB1493KLtyO4xlY6inwpt5jVs2FxtQjAQ==
+X-Received: by 2002:a65:6656:: with SMTP id z22mr5733329pgv.197.1561673732735;
+ Thu, 27 Jun 2019 15:15:32 -0700 (PDT)
+Date:   Thu, 27 Jun 2019 15:15:07 -0700
+Message-Id: <20190627221507.83942-1-nhuck@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
+Subject: [PATCH] clk: mediatek: Fix -Wunused-const-variable
+From:   Nathan Huckleberry <nhuck@google.com>
+To:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
+        fparent@baylibre.com
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Nathan Huckleberry <nhuck@google.com>,
+        clang-built-linux@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 27, 2019 at 01:24:11PM -0700, Brian Vazquez wrote:
-> This introduces a new command to retrieve a variable number of entries
-> from a bpf map.
-> 
-> This new command can be executed from the existing BPF syscall as
-> follows:
-> 
-> err =  bpf(BPF_MAP_DUMP, union bpf_attr *attr, u32 size)
-> using attr->dump.map_fd, attr->dump.prev_key, attr->dump.buf,
-> attr->dump.buf_len
-> returns zero or negative error, and populates buf and buf_len on
-> succees
-> 
-> This implementation is wrapping the existing bpf methods:
-> map_get_next_key and map_lookup_elem
-> the results show that even with a 1-elem_size buffer, it runs ~40 faster
-> than the current implementation, improvements of ~85% are reported when
-> the buffer size is increased, although, after the buffer size is around
-> 5% of the total number of entries there's no huge difference in
-> increasing
-> it.
+Clang produces the following warning
 
-was it with kpti and retpoline mitigations?
+drivers/clk/mediatek/clk-mt8516.c:234:27: warning: unused variable
+'ddrphycfg_parents' [-Wunused-const-variable] static const char * const
+ddrphycfg_parents[] __initconst = {
+
+This variable has never been used. Deleting it to cleanup the warning.
+
+Cc: clang-built-linux@googlegroups.com
+Link: https://github.com/ClangBuiltLinux/linux/issues/523
+Signed-off-by: Nathan Huckleberry <nhuck@google.com>
+---
+ drivers/clk/mediatek/clk-mt8516.c | 5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/drivers/clk/mediatek/clk-mt8516.c b/drivers/clk/mediatek/clk-mt8516.c
+index 26fe43cc9ea2..9d4261ecc760 100644
+--- a/drivers/clk/mediatek/clk-mt8516.c
++++ b/drivers/clk/mediatek/clk-mt8516.c
+@@ -231,11 +231,6 @@ static const char * const nfi1x_pad_parents[] __initconst = {
+ 	"nfi1x_ck"
+ };
+ 
+-static const char * const ddrphycfg_parents[] __initconst = {
+-	"clk26m_ck",
+-	"mainpll_d16"
+-};
+-
+ static const char * const usb_78m_parents[] __initconst = {
+ 	"clk_null",
+ 	"clk26m_ck",
+-- 
+2.22.0.410.gd8fdbe21b5-goog
 
