@@ -2,161 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63B49584CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 16:48:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8ED12584D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 16:49:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726953AbfF0OsO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 10:48:14 -0400
-Received: from esa1.microchip.iphmx.com ([68.232.147.91]:5226 "EHLO
-        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726497AbfF0OsO (ORCPT
+        id S1727000AbfF0OtQ convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 27 Jun 2019 10:49:16 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38842 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726441AbfF0OtP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 10:48:14 -0400
-Received-SPF: Pass (esa1.microchip.iphmx.com: domain of
-  Claudiu.Beznea@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa1.microchip.iphmx.com;
-  envelope-from="Claudiu.Beznea@microchip.com";
-  x-sender="Claudiu.Beznea@microchip.com";
-  x-conformance=spf_only; x-record-type="v=spf1";
-  x-record-text="v=spf1 mx a:ushub1.microchip.com
-  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
-  a:mx2.microchip.iphmx.com include:servers.mcsv.net
-  include:mktomail.com include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa1.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa1.microchip.iphmx.com;
-  envelope-from="Claudiu.Beznea@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa1.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Claudiu.Beznea@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
-X-IronPort-AV: E=Sophos;i="5.63,424,1557212400"; 
-   d="scan'208";a="40662887"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 27 Jun 2019 07:48:12 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.87.71) by
- chn-vm-ex01.mchp-main.com (10.10.87.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Thu, 27 Jun 2019 07:48:10 -0700
-Received: from m18063-ThinkPad-T460p.mchp-main.com (10.10.85.251) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.1713.5 via Frontend Transport; Thu, 27 Jun 2019 07:48:07 -0700
-From:   Claudiu Beznea <claudiu.beznea@microchip.com>
-To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-        <ludovic.desroches@microchip.com>
-CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>
-Subject: [PATCH v5 4/4] clk: at91: sckc: add support for SAM9X60
-Date:   Thu, 27 Jun 2019 17:47:21 +0300
-Message-ID: <1561646841-7663-5-git-send-email-claudiu.beznea@microchip.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1561646841-7663-1-git-send-email-claudiu.beznea@microchip.com>
-References: <1561646841-7663-1-git-send-email-claudiu.beznea@microchip.com>
+        Thu, 27 Jun 2019 10:49:15 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5RElq0k096722
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 10:49:14 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2tcwr3qevm-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 10:49:14 -0400
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <naveen.n.rao@linux.vnet.ibm.com>;
+        Thu, 27 Jun 2019 15:49:12 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 27 Jun 2019 15:49:09 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5REn8R040370222
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 27 Jun 2019 14:49:08 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 90F2DAE051;
+        Thu, 27 Jun 2019 14:49:08 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EE059AE055;
+        Thu, 27 Jun 2019 14:49:07 +0000 (GMT)
+Received: from localhost (unknown [9.199.59.170])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 27 Jun 2019 14:49:07 +0000 (GMT)
+Date:   Thu, 27 Jun 2019 20:19:06 +0530
+From:   "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
+Subject: Re: [PATCH v2 2/7] x86/ftrace: Fix use of flags in
+ ftrace_replace_code()
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>
+References: <cover.1561634177.git.naveen.n.rao@linux.vnet.ibm.com>
+        <abc56ad177f370ec423edcfc538d35b418c1808e.1561634177.git.naveen.n.rao@linux.vnet.ibm.com>
+        <20190627092902.253971d2@gandalf.local.home>
+In-Reply-To: <20190627092902.253971d2@gandalf.local.home>
+User-Agent: astroid/0.14.0 (https://github.com/astroidmail/astroid)
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8BIT
+X-TM-AS-GCONF: 00
+x-cbid: 19062714-0028-0000-0000-0000037E3FDE
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19062714-0029-0000-0000-0000243E6A81
+Message-Id: <1561646838.7py5mwzawl.naveen@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-27_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=640 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906270172
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for SAM9X60's slow clock.
+Steven Rostedt wrote:
+> On Thu, 27 Jun 2019 16:53:50 +0530
+> "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com> wrote:
+> 
+>> In commit a0572f687fb3c ("ftrace: Allow ftrace_replace_code() to be
+>> schedulable), the generic ftrace_replace_code() function was modified to
+>> accept a flags argument in place of a single 'enable' flag. However, the
+>> x86 version of this function was not updated. Fix the same.
+>> 
+>> Fixes: a0572f687fb3c ("ftrace: Allow ftrace_replace_code() to be schedulable")
+> 
+> I don't mind this change, but it's not a bug, and I'm not sure it
+> should have the fixes tag. The reason being, the
+> FTRACE_MODIFY_ENABLE_FL is only set when ftrace is called by with the
+> command flag FTRACE_MAY_SLEEP, which is never done on x86.
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- drivers/clk/at91/sckc.c | 74 +++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 74 insertions(+)
+I guess you meant to say that *FTRACE_MODIFY_MAY_SLEEP_FL* is only set 
+with FTRACE_MAY_SLEEP.
 
-diff --git a/drivers/clk/at91/sckc.c b/drivers/clk/at91/sckc.c
-index ab18b1da269f..1f0f1cd06387 100644
---- a/drivers/clk/at91/sckc.c
-+++ b/drivers/clk/at91/sckc.c
-@@ -410,6 +410,80 @@ static void __init of_sama5d3_sckc_setup(struct device_node *np)
- CLK_OF_DECLARE(sama5d3_clk_sckc, "atmel,sama5d3-sckc",
- 	       of_sama5d3_sckc_setup);
- 
-+static const struct clk_slow_bits at91sam9x60_bits = {
-+	.cr_osc32en = BIT(1),
-+	.cr_osc32byp = BIT(2),
-+	.cr_oscsel = BIT(24),
-+};
-+
-+static void __init of_sam9x60_sckc_setup(struct device_node *np)
-+{
-+	void __iomem *regbase = of_iomap(np, 0);
-+	struct clk_hw_onecell_data *clk_data;
-+	struct clk_hw *slow_rc, *slow_osc;
-+	const char *xtal_name;
-+	const char *parent_names[2] = { "slow_rc_osc", "slow_osc" };
-+	bool bypass;
-+	int ret;
-+
-+	if (!regbase)
-+		return;
-+
-+	slow_rc = clk_hw_register_fixed_rate(NULL, parent_names[0], NULL, 0,
-+					     32768);
-+	if (IS_ERR(slow_rc))
-+		return;
-+
-+	xtal_name = of_clk_get_parent_name(np, 0);
-+	if (!xtal_name)
-+		goto unregister_slow_rc;
-+
-+	bypass = of_property_read_bool(np, "atmel,osc-bypass");
-+	slow_osc = at91_clk_register_slow_osc(regbase, parent_names[1],
-+					      xtal_name, 5000000, bypass,
-+					      &at91sam9x60_bits);
-+	if (IS_ERR(slow_osc))
-+		goto unregister_slow_rc;
-+
-+	clk_data = kzalloc(sizeof(*clk_data) + (2 * sizeof(struct clk_hw *)),
-+			   GFP_KERNEL);
-+	if (!clk_data)
-+		goto unregister_slow_osc;
-+
-+	/* MD_SLCK and TD_SLCK. */
-+	clk_data->num = 2;
-+	clk_data->hws[0] = clk_hw_register_fixed_rate(NULL, "md_slck",
-+						      parent_names[0],
-+						      0, 32768);
-+	if (IS_ERR(clk_data->hws[0]))
-+		goto clk_data_free;
-+
-+	clk_data->hws[1] = at91_clk_register_sam9x5_slow(regbase, "td_slck",
-+							 parent_names, 2,
-+							 &at91sam9x60_bits);
-+	if (IS_ERR(clk_data->hws[1]))
-+		goto unregister_md_slck;
-+
-+	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_data);
-+	if (WARN_ON(ret))
-+		goto unregister_td_slck;
-+
-+	return;
-+
-+unregister_td_slck:
-+	clk_hw_unregister(clk_data->hws[1]);
-+unregister_md_slck:
-+	clk_hw_unregister(clk_data->hws[0]);
-+clk_data_free:
-+	kfree(clk_data);
-+unregister_slow_osc:
-+	clk_hw_unregister(slow_osc);
-+unregister_slow_rc:
-+	clk_hw_unregister(slow_rc);
-+}
-+CLK_OF_DECLARE(sam9x60_clk_sckc, "microchip,sam9x60-sckc",
-+	       of_sam9x60_sckc_setup);
-+
- static int clk_sama5d4_slow_osc_prepare(struct clk_hw *hw)
- {
- 	struct clk_sama5d4_slow_osc *osc = to_clk_sama5d4_slow_osc(hw);
--- 
-2.7.4
+> 
+> That said, I'm fine with the change as it makes it more robust, but by
+> adding the fixes tag, you're going to get this into all the stable
+> code, and I'm not sure that's really necessary.
+
+Agreed. Thanks for pointing this out. We can drop this patch from this 
+series and I will re-post this as a simpler cleanup later on.
+
+
+Thanks,
+Naveen
+
 
