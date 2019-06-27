@@ -2,212 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE3AE58032
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 12:26:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DA715803A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 12:27:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726545AbfF0K0y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 06:26:54 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:44771 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726382AbfF0K0y (ORCPT
+        id S1726620AbfF0K1N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 06:27:13 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:47394 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726370AbfF0K1M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 06:26:54 -0400
-Received: by mail-wr1-f67.google.com with SMTP id r16so44922wrl.11
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 03:26:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=pEVgzphJNxLhRnDpU8kjVDD93/VZEyHkl6ALzu+tFhk=;
-        b=uio/lI6rXwSpdGY9fIb3fS+pQpHlOaqvPmVjLC1xyiQP2mbCj+Z4Pk5tgQkfOj3tpH
-         /xboiU3PSutbNyZv4ORa4huHATwO5aQWBPbUmoUOXnS54aW1ruXJ/QuksWzWpxZLWcHh
-         Q7KxXyo6FomATCrUmVe9y7Oj5/AfnqPCZCh6IOcN2sCi1MOE24mjWGDRp5wwfDdC7nML
-         e0f4S/qPpxXqK33mcuK15qJmYMlcMTlJ5dAUM98vMkieR5vy3ls873AWzn0VDcAvI3kA
-         RkF6OMPHvSCinzfRVKaCqu0PEYEZzCFvZvwmA1xUYVM/6C18Zd4pQ9mq6tLKKsaCLtIp
-         F5Mg==
-X-Gm-Message-State: APjAAAXUuaRrpJzsTV1xNUxGbd0vYGzNRJ4QgfA8SJvLOuX/ofqs04Cr
-        j0unlPIUAurPA0uYdQfFYvlxLQ==
-X-Google-Smtp-Source: APXvYqzA7x+KX45ErC+136mEWBQw3MPqr4dD2ch2iq4LJkk81G6Ik8/EeJ9botnnoqjhz+hAEEwMKQ==
-X-Received: by 2002:adf:ebc4:: with SMTP id v4mr2646600wrn.113.1561631211101;
-        Thu, 27 Jun 2019 03:26:51 -0700 (PDT)
-Received: from steredhat.homenet.telecomitalia.it (host21-207-dynamic.52-79-r.retail.telecomitalia.it. [79.52.207.21])
-        by smtp.gmail.com with ESMTPSA id v15sm1300437wrt.25.2019.06.27.03.26.49
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 27 Jun 2019 03:26:50 -0700 (PDT)
-Date:   Thu, 27 Jun 2019 12:26:47 +0200
-From:   Stefano Garzarella <sgarzare@redhat.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     "Michael S . Tsirkin" <mst@redhat.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: Re: [PATCH 3/4] vsock/virtio: fix flush of works during the .remove()
-Message-ID: <20190627102647.7oorfdvwed7kxnll@steredhat.homenet.telecomitalia.it>
-References: <20190528105623.27983-4-sgarzare@redhat.com>
- <9ac9fc4b-5c39-2503-dfbb-660a7bdcfbfd@redhat.com>
- <20190529105832.oz3sagbne5teq3nt@steredhat>
- <8c9998c8-1b9c-aac6-42eb-135fcb966187@redhat.com>
- <20190530101036.wnjphmajrz6nz6zc@steredhat.homenet.telecomitalia.it>
- <4c881585-8fee-0a53-865c-05d41ffb8ed1@redhat.com>
- <20190531081824.p6ylsgvkrbckhqpx@steredhat>
- <dbc9964c-65b1-0993-488b-cb44aea55e90@redhat.com>
- <20190606081109.gdx4rsly5i6gtg57@steredhat>
- <b1fa0b2f-f7d0-8117-0bde-0cb78d1a3d07@redhat.com>
+        Thu, 27 Jun 2019 06:27:12 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5RAQvPC015217;
+        Thu, 27 Jun 2019 05:26:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1561631217;
+        bh=QyQZ1LuzFa7iQdI9xKG1JGokv1FyrU+3emS36t/clzQ=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=FNVHYVFA3B5uIOP3tqDJMRSvCsxt3XNUwKYHvFDkEdqNkdc919jOpf9i2Gafv+0d7
+         DLH1tjlSxLJFEYZai8BxeGh5uZDzhsyEud5BYPFm9ACTocNbN/QaIM1eXnVXHisrpX
+         JFMb7/+PPElFf1FM+UJuNNT0C4nhKTUF28hmGkhU=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5RAQv1A025865
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 27 Jun 2019 05:26:57 -0500
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 27
+ Jun 2019 05:26:56 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Thu, 27 Jun 2019 05:26:56 -0500
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5RAQs6p055909;
+        Thu, 27 Jun 2019 05:26:54 -0500
+Subject: Re: [PATCH v6 00/15] tc358767 driver improvements
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        <dri-devel@lists.freedesktop.org>
+CC:     Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Andrey Gusakov <andrey.gusakov@cogentembedded.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Cory Tusar <cory.tusar@zii.aero>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        <linux-kernel@vger.kernel.org>
+References: <20190619052716.16831-1-andrew.smirnov@gmail.com>
+From:   Tomi Valkeinen <tomi.valkeinen@ti.com>
+Message-ID: <a3fdbb02-586b-66d3-1857-1ed6d90d2537@ti.com>
+Date:   Thu, 27 Jun 2019 13:26:54 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b1fa0b2f-f7d0-8117-0bde-0cb78d1a3d07@redhat.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190619052716.16831-1-andrew.smirnov@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 04:57:15PM +0800, Jason Wang wrote:
+On 19/06/2019 08:27, Andrey Smirnov wrote:
+> Everyone:
 > 
-> On 2019/6/6 下午4:11, Stefano Garzarella wrote:
-> > On Fri, May 31, 2019 at 05:56:39PM +0800, Jason Wang wrote:
-> > > On 2019/5/31 下午4:18, Stefano Garzarella wrote:
-> > > > On Thu, May 30, 2019 at 07:59:14PM +0800, Jason Wang wrote:
-> > > > > On 2019/5/30 下午6:10, Stefano Garzarella wrote:
-> > > > > > On Thu, May 30, 2019 at 05:46:18PM +0800, Jason Wang wrote:
-> > > > > > > On 2019/5/29 下午6:58, Stefano Garzarella wrote:
-> > > > > > > > On Wed, May 29, 2019 at 11:22:40AM +0800, Jason Wang wrote:
-> > > > > > > > > On 2019/5/28 下午6:56, Stefano Garzarella wrote:
-> > > > > > > > > > @@ -690,6 +693,9 @@ static void virtio_vsock_remove(struct virtio_device *vdev)
-> > > > > > > > > >       	vsock->event_run = false;
-> > > > > > > > > >       	mutex_unlock(&vsock->event_lock);
-> > > > > > > > > > +	/* Flush all pending works */
-> > > > > > > > > > +	virtio_vsock_flush_works(vsock);
-> > > > > > > > > > +
-> > > > > > > > > >       	/* Flush all device writes and interrupts, device will not use any
-> > > > > > > > > >       	 * more buffers.
-> > > > > > > > > >       	 */
-> > > > > > > > > > @@ -726,6 +732,11 @@ static void virtio_vsock_remove(struct virtio_device *vdev)
-> > > > > > > > > >       	/* Delete virtqueues and flush outstanding callbacks if any */
-> > > > > > > > > >       	vdev->config->del_vqs(vdev);
-> > > > > > > > > > +	/* Other works can be queued before 'config->del_vqs()', so we flush
-> > > > > > > > > > +	 * all works before to free the vsock object to avoid use after free.
-> > > > > > > > > > +	 */
-> > > > > > > > > > +	virtio_vsock_flush_works(vsock);
-> > > > > > > > > Some questions after a quick glance:
-> > > > > > > > > 
-> > > > > > > > > 1) It looks to me that the work could be queued from the path of
-> > > > > > > > > vsock_transport_cancel_pkt() . Is that synchronized here?
-> > > > > > > > > 
-> > > > > > > > Both virtio_transport_send_pkt() and vsock_transport_cancel_pkt() can
-> > > > > > > > queue work from the upper layer (socket).
-> > > > > > > > 
-> > > > > > > > Setting the_virtio_vsock to NULL, should synchronize, but after a careful look
-> > > > > > > > a rare issue could happen:
-> > > > > > > > we are setting the_virtio_vsock to NULL at the start of .remove() and we
-> > > > > > > > are freeing the object pointed by it at the end of .remove(), so
-> > > > > > > > virtio_transport_send_pkt() or vsock_transport_cancel_pkt() may still be
-> > > > > > > > running, accessing the object that we are freed.
-> > > > > > > Yes, that's my point.
-> > > > > > > 
-> > > > > > > 
-> > > > > > > > Should I use something like RCU to prevent this issue?
-> > > > > > > > 
-> > > > > > > >         virtio_transport_send_pkt() and vsock_transport_cancel_pkt()
-> > > > > > > >         {
-> > > > > > > >             rcu_read_lock();
-> > > > > > > >             vsock = rcu_dereference(the_virtio_vsock_mutex);
-> > > > > > > RCU is probably a way to go. (Like what vhost_transport_send_pkt() did).
-> > > > > > > 
-> > > > > > Okay, I'm going this way.
-> > > > > > 
-> > > > > > > >             ...
-> > > > > > > >             rcu_read_unlock();
-> > > > > > > >         }
-> > > > > > > > 
-> > > > > > > >         virtio_vsock_remove()
-> > > > > > > >         {
-> > > > > > > >             rcu_assign_pointer(the_virtio_vsock_mutex, NULL);
-> > > > > > > >             synchronize_rcu();
-> > > > > > > > 
-> > > > > > > >             ...
-> > > > > > > > 
-> > > > > > > >             free(vsock);
-> > > > > > > >         }
-> > > > > > > > 
-> > > > > > > > Could there be a better approach?
-> > > > > > > > 
-> > > > > > > > 
-> > > > > > > > > 2) If we decide to flush after dev_vqs(), is tx_run/rx_run/event_run still
-> > > > > > > > > needed? It looks to me we've already done except that we need flush rx_work
-> > > > > > > > > in the end since send_pkt_work can requeue rx_work.
-> > > > > > > > The main reason of tx_run/rx_run/event_run is to prevent that a worker
-> > > > > > > > function is running while we are calling config->reset().
-> > > > > > > > 
-> > > > > > > > E.g. if an interrupt comes between virtio_vsock_flush_works() and
-> > > > > > > > config->reset(), it can queue new works that can access the device while
-> > > > > > > > we are in config->reset().
-> > > > > > > > 
-> > > > > > > > IMHO they are still needed.
-> > > > > > > > 
-> > > > > > > > What do you think?
-> > > > > > > I mean could we simply do flush after reset once and without tx_rx/rx_run
-> > > > > > > tricks?
-> > > > > > > 
-> > > > > > > rest();
-> > > > > > > 
-> > > > > > > virtio_vsock_flush_work();
-> > > > > > > 
-> > > > > > > virtio_vsock_free_buf();
-> > > > > > My only doubt is:
-> > > > > > is it safe to call config->reset() while a worker function could access
-> > > > > > the device?
-> > > > > > 
-> > > > > > I had this doubt reading the Michael's advice[1] and looking at
-> > > > > > virtnet_remove() where there are these lines before the config->reset():
-> > > > > > 
-> > > > > > 	/* Make sure no work handler is accessing the device. */
-> > > > > > 	flush_work(&vi->config_work);
-> > > > > > 
-> > > > > > Thanks,
-> > > > > > Stefano
-> > > > > > 
-> > > > > > [1] https://lore.kernel.org/netdev/20190521055650-mutt-send-email-mst@kernel.org
-> > > > > Good point. Then I agree with you. But if we can use the RCU to detect the
-> > > > > detach of device from socket for these, it would be even better.
-> > > > > 
-> > > > What about checking 'the_virtio_vsock' in the worker functions in a RCU
-> > > > critical section?
-> > > > In this way, I can remove the rx_run/tx_run/event_run.
-> > > > 
-> > > > Do you think it's cleaner?
-> > > 
-> > > Yes, I think so.
-> > > 
-> > Hi Jason,
-> > while I was trying to use RCU also for workers, I discovered that it can
-> > not be used if we can sleep. (Workers have mutex, memory allocation, etc.).
-> > There is SRCU, but I think the rx_run/tx_run/event_run is cleaner.
-> > 
-> > So, if you agree I'd send a v2 using RCU only for the
-> > virtio_transport_send_pkt() or vsock_transport_cancel_pkt(), and leave
-> > this patch as is to be sure that no one is accessing the device while we
-> > call config->reset().
-> > 
-> > Thanks,
-> > Stefano
+> This series contains various improvements (at least in my mind) and
+> fixes that I made to tc358767 while working with the code of the
+> driver. Hopefuly each patch is self explanatory.
 > 
-> 
-> If it work, I don't object to use that consider it was suggested by Michael.
-> You can go this way and let's see.
+> Feedback is welcome!
 
-Okay, I'll try if it works.
+I think this looks fine, so:
 
-> 
-> Personally I would like something more cleaner. E.g RCU + some kind of
-> reference count (kref?).
+Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
 
-I'll try to check if kref can help to have a cleaner solution in this
-case.
+Unfortunately I don't have my DP equipment for the time being, so I'm 
+not able to test this on our board. I'm fine with merging, as the 
+previous series worked ok after reverting the single regression (which 
+is fixed in this series).
 
-Thanks for your comments,
-Stefano
+  Tomi
+
+-- 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
