@@ -2,148 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58DC158673
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 17:55:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 532355867A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 17:56:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726559AbfF0Py5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 11:54:57 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52050 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726405AbfF0Py5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 11:54:57 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8CAD7AD12;
-        Thu, 27 Jun 2019 15:54:55 +0000 (UTC)
-Subject: Re: [PATCH v3 1/5] gem/vram: pin to vram in vmap
-To:     Gerd Hoffmann <kraxel@redhat.com>
-Cc:     dri-devel@lists.freedesktop.org,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        David Airlie <airlied@linux.ie>, Sean Paul <sean@poorly.run>
-References: <20190627122348.5833-1-kraxel@redhat.com>
- <20190627122348.5833-2-kraxel@redhat.com>
- <8a52b578-b255-3e11-3a0c-0b68f0cb649e@suse.de>
- <20190627151633.j3xf3lkihklb2wzh@sirius.home.kraxel.org>
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNKFRob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmNvbT7CwJQEEwEIAD4W
- IQRyF/usjOnPY0ShaOVoDcEdUwt6IwUCWznTtgIbAwUJA8JnAAULCQgHAgYVCgkICwIEFgID
- AQIeAQIXgAAKCRBoDcEdUwt6I7D7CACBK42XW+7mCiK8ioXMEy1NzGbXC51RzGea8N83oEJS
- 1KVUtQxrkDxgrW/WLSl/TfqHFsJpdEFOv1XubWbleun3uKPy0e5vZCd5UjZPkeNjnqfCYTDy
- hVVsdOuFbtWDppJyJrThLqr9AgSFmoCNNUt1SVpYEEOLNE6C32BhlnSq21VLC+YXTgO/ZHTa
- YXkq54hHj63jwrcjkBSCkXLh37kHeqnl++GHpN+3R+o3w2OpwHAlvVjdKPT27v1tVkiydsFG
- 65Vd0n3m/ft+IOrGgxQM1C20uqKvsZGB4r3OGR50ekAybO7sjEJJ1Obl4ge/6RRqcvKz4LMb
- tGs85D6tPIeFzsBNBFs50uABCADGJj+DP1fk+UWOWrf4O61HTbC4Vr9QD2K4fUUHnzg2B6zU
- R1BPXqLGG0+lzK8kfYU/F5RjmEcClsIkAaFkg4kzKP14tvY1J5+AV3yNqcdg018HNtiyrSwI
- E0Yz/qm1Ot2NMZ0DdvVBg22IMsiudQ1tx9CH9mtyTbIXgACvl3PW2o9CxiHPE/bohFhwZwh/
- kXYYAE51lhinQ3oFEeQZA3w4OTvxSEspiQR8dg8qJJb+YOAc5IKk6sJmmM7JfFMWSr22satM
- 23oQ3WvJb4RV6HTRTAIEyyZS7g2DhiytgMG60t0qdABG5KXSQW+OKlZRpuWwKWaLh3if/p/u
- 69dvpanbABEBAAHCwHwEGAEIACYWIQRyF/usjOnPY0ShaOVoDcEdUwt6IwUCWznS4AIbDAUJ
- A8JnAAAKCRBoDcEdUwt6I6X3CACJ8D+TpXBCqJE5xwog08+Dp8uBpx0T9n1wE0GQisZruACW
- NofYn8PTX9k4wmegDLwt7YQDdKxQ4+eTfZeLNQqWg6OCftH5Kx7sjWnJ09tOgniVdROzWJ7c
- VJ/i0okazncsJ+nq48UYvRGE1Swh3A4QRIyphWX4OADOBmTFl9ZYNPnh23eaC9WrNvFr7yP7
- iGjMlfEW8l6Lda//EC5VpXVNza0xeae0zFNst2R9pn+bLkihwDLWxOIyifGRxTqNxoS4I1aw
- VhxPSVztPMSpIA/sOr/N/p6JrBLn+gui2K6mP7bGb8hF+szfArYqz3T1rv1VzUWAJf5Wre5U
- iNx9uqqx
-Message-ID: <bd472b0a-faec-c97f-39a6-ffd0bd8fdd78@suse.de>
-Date:   Thu, 27 Jun 2019 17:54:50 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
+        id S1726579AbfF0P4A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 11:56:00 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:14020 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726405AbfF0Pz7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 11:55:59 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5RFpbSY106098;
+        Thu, 27 Jun 2019 11:55:08 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2tcy4redr3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 27 Jun 2019 11:55:07 -0400
+Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x5RFruBQ112277;
+        Thu, 27 Jun 2019 11:55:07 -0400
+Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2tcy4redpd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 27 Jun 2019 11:55:06 -0400
+Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
+        by ppma01wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x5RFneD7027772;
+        Thu, 27 Jun 2019 15:55:05 GMT
+Received: from b01cxnp23032.gho.pok.ibm.com (b01cxnp23032.gho.pok.ibm.com [9.57.198.27])
+        by ppma01wdc.us.ibm.com with ESMTP id 2t9by77bub-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 27 Jun 2019 15:55:05 +0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5RFt4x749414456
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 27 Jun 2019 15:55:04 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9EB08B2065;
+        Thu, 27 Jun 2019 15:55:04 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 80B42B2064;
+        Thu, 27 Jun 2019 15:55:04 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.26])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu, 27 Jun 2019 15:55:04 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 6515716C2F90; Thu, 27 Jun 2019 08:55:06 -0700 (PDT)
+Date:   Thu, 27 Jun 2019 08:55:06 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>
+Subject: Re: [RFC] Deadlock via recursive wakeup via RCU with threadirqs
+Message-ID: <20190627155506.GU26519@linux.ibm.com>
+Reply-To: paulmck@linux.ibm.com
+References: <20190626135447.y24mvfuid5fifwjc@linutronix.de>
+ <20190626162558.GY26519@linux.ibm.com>
+ <20190627142436.GD215968@google.com>
+ <20190627103455.01014276@gandalf.local.home>
+ <20190627153031.GA249127@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20190627151633.j3xf3lkihklb2wzh@sirius.home.kraxel.org>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="tBTTJRDtS7CMLIYpOYJXPvr7feH33XgYO"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190627153031.GA249127@google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-27_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906270181
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---tBTTJRDtS7CMLIYpOYJXPvr7feH33XgYO
-Content-Type: multipart/mixed; boundary="5aKuOwci0HBAv9zVXFDlQwFppkudXPOMv";
- protected-headers="v1"
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: Gerd Hoffmann <kraxel@redhat.com>
-Cc: dri-devel@lists.freedesktop.org, Maxime Ripard
- <maxime.ripard@bootlin.com>, open list <linux-kernel@vger.kernel.org>,
- David Airlie <airlied@linux.ie>, Sean Paul <sean@poorly.run>
-Message-ID: <bd472b0a-faec-c97f-39a6-ffd0bd8fdd78@suse.de>
-Subject: Re: [PATCH v3 1/5] gem/vram: pin to vram in vmap
-References: <20190627122348.5833-1-kraxel@redhat.com>
- <20190627122348.5833-2-kraxel@redhat.com>
- <8a52b578-b255-3e11-3a0c-0b68f0cb649e@suse.de>
- <20190627151633.j3xf3lkihklb2wzh@sirius.home.kraxel.org>
-In-Reply-To: <20190627151633.j3xf3lkihklb2wzh@sirius.home.kraxel.org>
+On Thu, Jun 27, 2019 at 11:30:31AM -0400, Joel Fernandes wrote:
+> On Thu, Jun 27, 2019 at 10:34:55AM -0400, Steven Rostedt wrote:
+> > On Thu, 27 Jun 2019 10:24:36 -0400
+> > Joel Fernandes <joel@joelfernandes.org> wrote:
+> > 
+> > > > What am I missing here?  
+> > > 
+> > > This issue I think is
+> > > 
+> > > (in normal process context)
+> > > spin_lock_irqsave(rq_lock); // which disables both preemption and interrupt
+> > > 			   // but this was done in normal process context,
+> > > 			   // not from IRQ handler
+> > > rcu_read_lock();
+> > >           <---------- IPI comes in and sets exp_hint
+> > 
+> > How would an IPI come in here with interrupts disabled?
+> > 
+> > -- Steve
+> 
+> This is true, could it be rcu_read_unlock_special() got called for some
+> *other* reason other than the IPI then?
+> 
+> Per Sebastian's stack trace of the recursive lock scenario, it is happening
+> during cpu_acct_charge() which is called with the rq_lock held. 
+> 
+> The only other reasons I know off to call rcu_read_unlock_special() are if
+> 1. the tick indicated that the CPU has to report a QS
+> 2. an IPI in the middle of the reader section for expedited GPs
+> 3. preemption in the middle of a preemptible RCU reader section
 
---5aKuOwci0HBAv9zVXFDlQwFppkudXPOMv
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+4. Some previous reader section was IPIed or preempted, but either
+   interrupts, softirqs, or preemption was disabled across the
+   rcu_read_unlock() of that previous reader section.
 
-Hi
+I -think- that this is what Sebastian is seeing.
 
-Am 27.06.19 um 17:16 schrieb Gerd Hoffmann:
->   Hi,
->=20
->>  1) Introduce a default_placement field in struct drm_gem_vram_helper
->> where this flag can be configured. I'd favor this option.
->=20
->>  2) Introduce a separate callback function for pinning to vram. The
->> driver would have to set the correct function pointers.
->=20
->>  3) Pin the fb console buffer manually from within the bochs driver.
->=20
-> Hmm.  Before calling drm_fbdev_generic_setup() the bo doesn't exist yet=
+							Thanx, Paul
 
-> and when the function returns it is already vmapped and pinned I think.=
-
->=20
-> So (3) isn't easily doable.  (1) looks best to me.
-
-For my patches, it's OK to have to BO pinned to VRAM by default. As the
-BO will be unmapped most of the time, I can change this flag at any time.=
-
-
-Best regards
-Thomas
-
-> cheers,
->   Gerd
->=20
-
---=20
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Linux GmbH, Maxfeldstrasse 5, 90409 Nuernberg, Germany
-GF: Felix Imend=C3=B6rffer, Mary Higgins, Sri Rasiah
-HRB 21284 (AG N=C3=BCrnberg)
-
-
---5aKuOwci0HBAv9zVXFDlQwFppkudXPOMv--
-
---tBTTJRDtS7CMLIYpOYJXPvr7feH33XgYO
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEchf7rIzpz2NEoWjlaA3BHVMLeiMFAl0U5soACgkQaA3BHVML
-eiNQeAf+NnjuxqrjNx6kGfqn9NwnbfJLfP67MLbaMk5zgiP57zfMw/CAdHENVBtT
-fVlNbTQ2Y5894tk+TgvZUmtAbql242FJ8nPLTYoWoipUN5IgZ6m+dt/kCSZ80ci7
-jffxxMeosDdXc8RGLIntkKJn/axK0S+L3h3dt8Jd6LyOhd7pUu4JM76IknYY6pUr
-TEJpYUzwiUW7OD7+eXBNxfK5fshT/gGmWUIItkWwCVMNQegPIHAfvqkpv4BHK+A2
-3U38OZLODh64Z+Xnzz01mm+QM7jlXizRtVPAz6LzqUJtApf3OrnSSvMxhC+e1Ela
-A2NOCN5NpkxMCmsfPnmS3C1Sdux9yg==
-=USKJ
------END PGP SIGNATURE-----
-
---tBTTJRDtS7CMLIYpOYJXPvr7feH33XgYO--
+> 1. and 2. are not possible because interrupts are disabled, that's why the
+> wakeup_softirq even happened.
+> 3. is not possible because we are holding rq_lock in the RCU reader section.
+> 
+> So I am at a bit of a loss how this can happen :-(
+> 
+> Spurious call to rcu_read_unlock_special() may be when it should not have
+> been called?
+> 
+> thanks,
+> 
+> - Joel
