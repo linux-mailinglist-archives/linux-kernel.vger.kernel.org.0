@@ -2,101 +2,234 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DDA458E92
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 01:34:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C622758E9E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 01:39:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726633AbfF0XeZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 19:34:25 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:33740 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726574AbfF0XeY (ORCPT
+        id S1726722AbfF0XjG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 19:39:06 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:56977 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726506AbfF0XjF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 19:34:24 -0400
-Received: by mail-io1-f67.google.com with SMTP id u13so8654550iop.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 16:34:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=l89hBvZrEHLPxhxyxMlfDGOIe5uXPNhT8ICPgxlxf2E=;
-        b=LaEBtdw97EYwVjhQ2He+QVwcePOM+u4DJj74JjBzsoEmaYokSHAj68OTsYT1baTKfn
-         0CpDvbNi+OFuNBVzKms0fRzzPcUbOQPoKyCTOXBKfdq9EjiNpTBFupVWEeGRNzo40xcq
-         BQTtO2ZMq69zkSGlhefUHt3X8816bflaE3pSQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=l89hBvZrEHLPxhxyxMlfDGOIe5uXPNhT8ICPgxlxf2E=;
-        b=jMIuG16hvGKORE3yaiEAMOsXhtJi4l+65knW543gP602VCWEQLLcPZA1L2oT8KypZ5
-         AgqdmEfoFL30nFHkEwD/S0C5iaWVA/0uGjgx/1GkFHnhRZ9e1A51z/D4mUSyFbH4EzsZ
-         u3ZI0Fg1CFRPSU6d3kTXgI3iO7wZSUn7Ajh3roCJYe8AX0MPUIqn1sNBo4AR4hlx0iRg
-         EqxWzviQZozPN2LXZX3MvGLT1QTQGalJh1bpGRmydS0Q1pdq09PXRtPeEUobsgKi7dbK
-         wY0US9nAfdkrWx90DmTgjZz9l0AIjv6NmhrJs3mDsCfNaEbcKmaG3lPruptzHKQfED4J
-         EClQ==
-X-Gm-Message-State: APjAAAXh163mk+YzVaSKcnrVk1atLhu2T/ksDzOZeL75T5HWNk1wCj+d
-        scZ5YuoKuhlIv99IyqaRoGYMHw==
-X-Google-Smtp-Source: APXvYqwj4rkWd8isFJNVQVTJ3enNTztWl/NXzCy6FgXuC6/2rhi87XUFdhvu6dzltHCuykaP0MNqJA==
-X-Received: by 2002:a5d:885a:: with SMTP id t26mr3561199ios.218.1561678463873;
-        Thu, 27 Jun 2019 16:34:23 -0700 (PDT)
-Received: from shuah-t480s.internal (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
-        by smtp.gmail.com with ESMTPSA id i23sm538506ioj.24.2019.06.27.16.34.22
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 27 Jun 2019 16:34:23 -0700 (PDT)
-From:   Shuah Khan <skhan@linuxfoundation.org>
-To:     shuah@kernel.org, allison@lohutok.net, gregkh@linuxfoundation.org,
-        alexios.zavras@intel.com, tglx@linutronix.de
-Cc:     Shuah Khan <skhan@linuxfoundation.org>,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] selftests: timestamping: Fix SIOCGSTAMP undeclared build failure
-Date:   Thu, 27 Jun 2019 17:34:21 -0600
-Message-Id: <20190627233421.30340-1-skhan@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
+        Thu, 27 Jun 2019 19:39:05 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5RNYkfG499224
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Thu, 27 Jun 2019 16:34:46 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5RNYkfG499224
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019061801; t=1561678487;
+        bh=4zh2A0ju8nvmprth77/9ulfUQhf61S0lkDS16uIQ+2w=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=fYanVgHS1kF62oK2oZw+ogtLlnuY3gsGDM8o8MVnw4c/VrYFG1z9XwnoMBZg+y4YE
+         NQfvzTryLna8+qQckPQlJq3ZnMAQ40MaMrL5g5QEazUZKFb0S5XlSQIDZIH0OI7v2e
+         WyM3xwmEsvlWIRBf68QUfvz1m+4dM4lcssBrwdkZ6dxEbguhgxpKBuTR0Rv4pjlshE
+         utNe4c9rpqdcQKgFlqSceJTrBqcf6ph62ZxcYY/9oGplgyD78iufTCq4xqm7NJxC92
+         VvYkOiFwplZbxA1UD8zHMoknV0iK0bfG80DqMh8zxGFINFlc8fGHYmBhEiZ2K+7zZm
+         g749Yl/PofBMQ==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5RNYjpi499221;
+        Thu, 27 Jun 2019 16:34:45 -0700
+Date:   Thu, 27 Jun 2019 16:34:45 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
+Message-ID: <tip-46e5b64fdeb49e6f95b875fa4702cedf6c37188d@git.kernel.org>
+Cc:     tglx@linutronix.de, eranian@google.com,
+        linux-kernel@vger.kernel.org, peterz@infradead.org,
+        mingo@kernel.org, ricardo.neri-calderon@linux.intel.com,
+        ashok.raj@intel.com, Suravee.Suthikulpanit@amd.com,
+        ravi.v.shankar@intel.com, hpa@zytor.com, andi.kleen@intel.com
+Reply-To: ravi.v.shankar@intel.com, ricardo.neri-calderon@linux.intel.com,
+          peterz@infradead.org, linux-kernel@vger.kernel.org,
+          mingo@kernel.org, Suravee.Suthikulpanit@amd.com,
+          ashok.raj@intel.com, hpa@zytor.com, andi.kleen@intel.com,
+          tglx@linutronix.de, eranian@google.com
+In-Reply-To: <20190623132434.140411339@linutronix.de>
+References: <20190623132434.140411339@linutronix.de>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/timers] x86/hpet: Replace printk(KERN...) with pr_...()
+Git-Commit-ID: 46e5b64fdeb49e6f95b875fa4702cedf6c37188d
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=0.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_12_24,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
+        DKIM_VALID_EF autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add missing linux/sockios.h include to fix the following SIOCGSTAMP
-undeclared build error. In addition, remove the local defines for
-SIOCGSTAMPNS and SIOCSHWTSTAMP and pick them up from linux/sockios.h.
+Commit-ID:  46e5b64fdeb49e6f95b875fa4702cedf6c37188d
+Gitweb:     https://git.kernel.org/tip/46e5b64fdeb49e6f95b875fa4702cedf6c37188d
+Author:     Thomas Gleixner <tglx@linutronix.de>
+AuthorDate: Sun, 23 Jun 2019 15:23:42 +0200
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Fri, 28 Jun 2019 00:57:15 +0200
 
-timestamping.c:249:19: error: SIOCGSTAMP undeclared
-   if (ioctl(sock, SIOCGSTAMP, &tv))
+x86/hpet: Replace printk(KERN...) with pr_...()
 
-Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
+And sanitize the format strings while at it.
+
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Ingo Molnar <mingo@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+Cc: Ashok Raj <ashok.raj@intel.com>
+Cc: Andi Kleen <andi.kleen@intel.com>
+Cc: Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Ravi Shankar <ravi.v.shankar@intel.com>
+Link: https://lkml.kernel.org/r/20190623132434.140411339@linutronix.de
+
 ---
- .../selftests/networking/timestamping/timestamping.c     | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+ arch/x86/kernel/hpet.c | 45 +++++++++++++++++++--------------------------
+ 1 file changed, 19 insertions(+), 26 deletions(-)
 
-diff --git a/tools/testing/selftests/networking/timestamping/timestamping.c b/tools/testing/selftests/networking/timestamping/timestamping.c
-index 0fbed67bf4f6..aca3491174a1 100644
---- a/tools/testing/selftests/networking/timestamping/timestamping.c
-+++ b/tools/testing/selftests/networking/timestamping/timestamping.c
-@@ -32,6 +32,7 @@
- #include <asm/types.h>
- #include <linux/net_tstamp.h>
- #include <linux/errqueue.h>
-+#include <linux/sockios.h>
+diff --git a/arch/x86/kernel/hpet.c b/arch/x86/kernel/hpet.c
+index a6aa22677768..cf3dbf43e548 100644
+--- a/arch/x86/kernel/hpet.c
++++ b/arch/x86/kernel/hpet.c
+@@ -20,6 +20,9 @@
+ #include <asm/hpet.h>
+ #include <asm/time.h>
  
- #ifndef SO_TIMESTAMPING
- # define SO_TIMESTAMPING         37
-@@ -42,14 +43,6 @@
- # define SO_TIMESTAMPNS 35
- #endif
++#undef  pr_fmt
++#define pr_fmt(fmt) "hpet: " fmt
++
+ #define HPET_MASK			CLOCKSOURCE_MASK(32)
  
--#ifndef SIOCGSTAMPNS
--# define SIOCGSTAMPNS 0x8907
--#endif
--
--#ifndef SIOCSHWTSTAMP
--# define SIOCSHWTSTAMP 0x89b0
--#endif
--
- static void usage(const char *error)
+ #define HPET_DEV_USED_BIT		2
+@@ -137,31 +140,28 @@ EXPORT_SYMBOL_GPL(is_hpet_enabled);
+ static void _hpet_print_config(const char *function, int line)
  {
- 	if (error)
--- 
-2.17.1
-
+ 	u32 i, timers, l, h;
+-	printk(KERN_INFO "hpet: %s(%d):\n", function, line);
++	pr_info("%s(%d):\n", function, line);
+ 	l = hpet_readl(HPET_ID);
+ 	h = hpet_readl(HPET_PERIOD);
+ 	timers = ((l & HPET_ID_NUMBER) >> HPET_ID_NUMBER_SHIFT) + 1;
+-	printk(KERN_INFO "hpet: ID: 0x%x, PERIOD: 0x%x\n", l, h);
++	pr_info("ID: 0x%x, PERIOD: 0x%x\n", l, h);
+ 	l = hpet_readl(HPET_CFG);
+ 	h = hpet_readl(HPET_STATUS);
+-	printk(KERN_INFO "hpet: CFG: 0x%x, STATUS: 0x%x\n", l, h);
++	pr_info("CFG: 0x%x, STATUS: 0x%x\n", l, h);
+ 	l = hpet_readl(HPET_COUNTER);
+ 	h = hpet_readl(HPET_COUNTER+4);
+-	printk(KERN_INFO "hpet: COUNTER_l: 0x%x, COUNTER_h: 0x%x\n", l, h);
++	pr_info("COUNTER_l: 0x%x, COUNTER_h: 0x%x\n", l, h);
+ 
+ 	for (i = 0; i < timers; i++) {
+ 		l = hpet_readl(HPET_Tn_CFG(i));
+ 		h = hpet_readl(HPET_Tn_CFG(i)+4);
+-		printk(KERN_INFO "hpet: T%d: CFG_l: 0x%x, CFG_h: 0x%x\n",
+-		       i, l, h);
++		pr_info("T%d: CFG_l: 0x%x, CFG_h: 0x%x\n", i, l, h);
+ 		l = hpet_readl(HPET_Tn_CMP(i));
+ 		h = hpet_readl(HPET_Tn_CMP(i)+4);
+-		printk(KERN_INFO "hpet: T%d: CMP_l: 0x%x, CMP_h: 0x%x\n",
+-		       i, l, h);
++		pr_info("T%d: CMP_l: 0x%x, CMP_h: 0x%x\n", i, l, h);
+ 		l = hpet_readl(HPET_Tn_ROUTE(i));
+ 		h = hpet_readl(HPET_Tn_ROUTE(i)+4);
+-		printk(KERN_INFO "hpet: T%d ROUTE_l: 0x%x, ROUTE_h: 0x%x\n",
+-		       i, l, h);
++		pr_info("T%d ROUTE_l: 0x%x, ROUTE_h: 0x%x\n", i, l, h);
+ 	}
+ }
+ 
+@@ -287,7 +287,7 @@ static void hpet_legacy_clockevent_register(void)
+ 	clockevents_config_and_register(&hpet_clockevent, hpet_freq,
+ 					HPET_MIN_PROG_DELTA, 0x7FFFFFFF);
+ 	global_clock_event = &hpet_clockevent;
+-	printk(KERN_DEBUG "hpet clockevent registered\n");
++	pr_debug("Clockevent registered\n");
+ }
+ 
+ static int hpet_set_periodic(struct clock_event_device *evt, int timer)
+@@ -520,8 +520,7 @@ static irqreturn_t hpet_interrupt_handler(int irq, void *data)
+ 	struct clock_event_device *hevt = &dev->evt;
+ 
+ 	if (!hevt->event_handler) {
+-		printk(KERN_INFO "Spurious HPET timer interrupt on HPET timer %d\n",
+-				dev->num);
++		pr_info("Spurious interrupt HPET timer %d\n", dev->num);
+ 		return IRQ_HANDLED;
+ 	}
+ 
+@@ -541,8 +540,7 @@ static int hpet_setup_irq(struct hpet_dev *dev)
+ 	irq_set_affinity(dev->irq, cpumask_of(dev->cpu));
+ 	enable_irq(dev->irq);
+ 
+-	printk(KERN_DEBUG "hpet: %s irq %d for MSI\n",
+-			 dev->name, dev->irq);
++	pr_debug("%s irq %d for MSI\n", dev->name, dev->irq);
+ 
+ 	return 0;
+ }
+@@ -638,7 +636,7 @@ static void hpet_msi_capability_lookup(unsigned int start_timer)
+ 			break;
+ 	}
+ 
+-	printk(KERN_INFO "HPET: %d timers in total, %d timers will be used for per-cpu timer\n",
++	pr_info("%d channels of %d reserved for per-cpu timers\n",
+ 		num_timers, num_timers_used);
+ }
+ 
+@@ -856,8 +854,7 @@ static int hpet_clocksource_register(void)
+ 	} while ((now - start) < 200000UL);
+ 
+ 	if (t1 == hpet_readl(HPET_COUNTER)) {
+-		printk(KERN_WARNING
+-		       "HPET counter not counting. HPET disabled\n");
++		pr_warn("Counter not counting. HPET disabled\n");
+ 		return -ENODEV;
+ 	}
+ 
+@@ -903,9 +900,7 @@ int __init hpet_enable(void)
+ 	 */
+ 	for (i = 0; hpet_readl(HPET_CFG) == 0xFFFFFFFF; i++) {
+ 		if (i == 1000) {
+-			printk(KERN_WARNING
+-			       "HPET config register value = 0xFFFFFFFF. "
+-			       "Disabling HPET\n");
++			pr_warn("Config register invalid. Disabling HPET\n");
+ 			goto out_nohpet;
+ 		}
+ 	}
+@@ -949,7 +944,7 @@ int __init hpet_enable(void)
+ 	cfg &= ~(HPET_CFG_ENABLE | HPET_CFG_LEGACY);
+ 	hpet_writel(cfg, HPET_CFG);
+ 	if (cfg)
+-		pr_warn("Unrecognized bits %#x set in global cfg\n", cfg);
++		pr_warn("Global config: Unknown bits %#x\n", cfg);
+ 
+ 	for (i = 0; i <= last; ++i) {
+ 		cfg = hpet_readl(HPET_Tn_CFG(i));
+@@ -961,8 +956,7 @@ int __init hpet_enable(void)
+ 			 | HPET_TN_64BIT_CAP | HPET_TN_32BIT | HPET_TN_ROUTE
+ 			 | HPET_TN_FSB | HPET_TN_FSB_CAP);
+ 		if (cfg)
+-			pr_warn("Unrecognized bits %#x set in cfg#%u\n",
+-				cfg, i);
++			pr_warn("Channel #%u config: Unknown bits %#x\n", i, cfg);
+ 	}
+ 	hpet_print_config();
+ 
+@@ -1290,8 +1284,7 @@ static void hpet_rtc_timer_reinit(void)
+ 		if (hpet_rtc_flags & RTC_PIE)
+ 			hpet_pie_count += lost_ints;
+ 		if (printk_ratelimit())
+-			printk(KERN_WARNING "hpet1: lost %d rtc interrupts\n",
+-				lost_ints);
++			pr_warn("Lost %d RTC interrupts\n", lost_ints);
+ 	}
+ }
+ 
