@@ -2,107 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C945C58845
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 19:26:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E72B58843
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 19:26:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726616AbfF0R0Y convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 27 Jun 2019 13:26:24 -0400
-Received: from relay12.mail.gandi.net ([217.70.178.232]:47667 "EHLO
-        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726315AbfF0R0Y (ORCPT
+        id S1726576AbfF0R0N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 13:26:13 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:33272 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726315AbfF0R0N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 13:26:24 -0400
-Received: from xps13 (unknown [91.224.148.103])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay12.mail.gandi.net (Postfix) with ESMTPSA id A5B4D200004;
-        Thu, 27 Jun 2019 17:26:12 +0000 (UTC)
-Date:   Thu, 27 Jun 2019 19:26:09 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Mason Yang <masonccyang@mxic.com.tw>
-Cc:     marek.vasut@gmail.com, linux-kernel@vger.kernel.org,
-        linux-mtd@lists.infradead.org, bbrezillon@kernel.org,
-        dwmw2@infradead.org, computersforpeace@gmail.com, vigneshr@ti.com,
-        paul.burton@mips.com, liang.yang@amlogic.com, richard@nod.at,
-        anders.roxell@linaro.org, christophe.kerello@st.com,
-        paul@crapouillou.net, jianxin.pan@amlogic.com, stefan@agner.ch,
-        devicetree@vger.kernel.org, juliensu@mxic.com.tw,
-        lee.jones@linaro.org, broonie@kernel.org
-Subject: Re: [PATCH v4 2/2] dt-bindings: mtd: Document Macronix raw NAND
- controller bindings
-Message-ID: <20190627192609.0965f6d5@xps13>
-In-Reply-To: <1561443056-13766-3-git-send-email-masonccyang@mxic.com.tw>
-References: <1561443056-13766-1-git-send-email-masonccyang@mxic.com.tw>
-        <1561443056-13766-3-git-send-email-masonccyang@mxic.com.tw>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Thu, 27 Jun 2019 13:26:13 -0400
+Received: by mail-pf1-f194.google.com with SMTP id x15so1578228pfq.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 10:26:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=yC2k06ZrEbrPsihnFyfnuoaYxoQZIAB/UpnmdloBBeM=;
+        b=M4aPeAy351r9m7DiPtmkWbyW8Ee0+gq/RD1Lg9wqwC8OOoQUCONycYei3PscpDyOhk
+         OkKPaUedgsFtCO1shdwjpN4h163e76jNh/Co8Wn7gl19QplRZcMrhqfV5KsibtyZlnn4
+         hPQtpynZ7mgK5bBWvSUIRosOTKb186+XC2IUI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=yC2k06ZrEbrPsihnFyfnuoaYxoQZIAB/UpnmdloBBeM=;
+        b=qwOE4K/CNFJVOC+FDkZMFZtVpT7XZnsFl1rjoW/+tjI4c6HT8/SJIvnOVAKVE+ldEM
+         Dar3RopCiUk/igfPOFie0aBkWSGE6uz53XbD3545tzg4tHFzFF3TCLtdHpoRnXeXkLsT
+         ynibTYdQw/HWL0jAg3GHOlR7eeKZOJreNU16NWnVho2z5lpE3Xlil82yXJsqH8kQ6Mep
+         +bwV6Nc6MVQjwT3NumzVlYeK3S+AG8c835+MY5SBmPtITdOaGN7fK7aVdhdA+etlTG+G
+         gy3+KMKoPPOCkLYAiYuur4DBRlZ3Q9f0wK+7sQYQsn2taO6SVD47e/WZ9yJt6p6V3jpb
+         csGQ==
+X-Gm-Message-State: APjAAAW75NohxJIqgG7Z1owFDbDeu22Iw3VEcNAxZdYbbaAHqvjFQ5qk
+        vb+5RJqTLjCcwi2IPyLhZDU88g==
+X-Google-Smtp-Source: APXvYqwf1jdzj0nrLT8fzBbcq9r+JxRpv7xWxbAyaYhGiAa9jeVaHMzeWiFPuJE8tePBzv+dt30lhA==
+X-Received: by 2002:a17:90a:26ef:: with SMTP id m102mr7318879pje.50.1561656372771;
+        Thu, 27 Jun 2019 10:26:12 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id h18sm4658023pfr.75.2019.06.27.10.26.11
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 27 Jun 2019 10:26:12 -0700 (PDT)
+Date:   Thu, 27 Jun 2019 10:26:11 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        Jann Horn <jannh@google.com>, stable@vger.kernel.org,
+        Borislav Petkov <bp@alien8.de>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v2 1/8] x86/vsyscall: Remove the vsyscall=native
+ documentation
+Message-ID: <201906271026.6AB1D9493@keescook>
+References: <cover.1561610354.git.luto@kernel.org>
+ <d77c7105eb4c57c1a95a95b6a5b8ba194a18e764.1561610354.git.luto@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d77c7105eb4c57c1a95a95b6a5b8ba194a18e764.1561610354.git.luto@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mason,
-
-Mason Yang <masonccyang@mxic.com.tw> wrote on Tue, 25 Jun 2019 14:10:56
-+0800:
-
-> Document the bindings used by the Macronix raw NAND controller.
+On Wed, Jun 26, 2019 at 09:45:02PM -0700, Andy Lutomirski wrote:
+> The vsyscall=native feature is gone -- remove the docs.
 > 
-> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
+> Fixes: 076ca272a14c ("x86/vsyscall/64: Drop "native" vsyscalls")
+> Cc: stable@vger.kernel.org
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: Kernel Hardening <kernel-hardening@lists.openwall.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Signed-off-by: Andy Lutomirski <luto@kernel.org>
+
+Acked-by: Kees Cook <keescook@chromium.org>
+
+-Kees
+
 > ---
->  .../devicetree/bindings/mtd/mxic-nand.txt          | 26 ++++++++++++++++++++++
->  1 file changed, 26 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mtd/mxic-nand.txt
+>  Documentation/admin-guide/kernel-parameters.txt | 6 ------
+>  1 file changed, 6 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/mtd/mxic-nand.txt b/Documentation/devicetree/bindings/mtd/mxic-nand.txt
-> new file mode 100644
-> index 0000000..3d198e4
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mtd/mxic-nand.txt
-> @@ -0,0 +1,26 @@
-> +Macronix Raw NAND Controller Device Tree Bindings
-> +-------------------------------------------------
-> +
-> +Required properties:
-> +- compatible: should be "mxic,raw-nand-ctlr"
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index 138f6664b2e2..0082d1e56999 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -5102,12 +5102,6 @@
+>  			emulate     [default] Vsyscalls turn into traps and are
+>  			            emulated reasonably safely.
+>  
+> -			native      Vsyscalls are native syscall instructions.
+> -			            This is a little bit faster than trapping
+> -			            and makes a few dynamic recompilers work
+> -			            better than they would in emulation mode.
+> -			            It also makes exploits much easier to write.
+> -
+>  			none        Vsyscalls don't work at all.  This makes
+>  			            them quite hard to use for exploits but
+>  			            might break your system.
+> -- 
+> 2.21.0
+> 
 
-I would prefer "macronix,nand-controller"
-
-> +- reg: should contain 1 entrie for the registers
-
-                           entry
-
-> +- reg-names: should contain "regs"
-
-Not sure you need that?
-
-> +- interrupts: interrupt line connected to this NAND controller
-> +- clock-names: should contain "ps_clk", "send_clk" and "send_dly_clk"
-> +- clocks: should contain 3 entries for the "ps_clk", "send_clk" and
-> +	 "send_dly_clk" clocks
-
-s/entries/phandles/ ?
-
-> +
-> +Example:
-> +
-> +	nand: mxic-nfc@43c30000 {
-> +		compatible = "mxic,raw-nand-ctlr";
-> +		reg = <0x43c30000 0x10000>;
-> +		reg-names = "regs";
-> +		clocks = <&clkwizard 0>, <&clkwizard 1>, <&clkc 15>;
-> +		clock-names = "send_clk", "send_dly_clk", "ps_clk";
-> +
-> +		nand-ecc-mode = "soft";
-> +		nand-ecc-algo = "bch";
-> +		nand-ecc-step-size = <512>;
-> +		nand-ecc-strength = <8>;
-
-The last 4 lines are probably not needed.
-
-> +	};
-
-Thanks,
-Miquèl
+-- 
+Kees Cook
