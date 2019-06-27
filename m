@@ -2,67 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09A4858278
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 14:24:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FF8058270
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 14:24:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726734AbfF0MX5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 08:23:57 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:48482 "EHLO mx1.redhat.com"
+        id S1726969AbfF0MYE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 08:24:04 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:36176 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726511AbfF0MX5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 08:23:57 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        id S1726931AbfF0MYA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 08:24:00 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 09B73C04FFF1;
-        Thu, 27 Jun 2019 12:23:57 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 89FB3308793B;
+        Thu, 27 Jun 2019 12:23:59 +0000 (UTC)
 Received: from sirius.home.kraxel.org (ovpn-116-96.ams2.redhat.com [10.36.116.96])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 86BF21A8F5;
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BAC531001B0E;
         Thu, 27 Jun 2019 12:23:54 +0000 (UTC)
 Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id D2EA216E19; Thu, 27 Jun 2019 14:23:48 +0200 (CEST)
+        id 05CF116E1A; Thu, 27 Jun 2019 14:23:49 +0200 (CEST)
 From:   Gerd Hoffmann <kraxel@redhat.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     tzimmermann@suse.de, Gerd Hoffmann <kraxel@redhat.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3 1/5] gem/vram: pin to vram in vmap
-Date:   Thu, 27 Jun 2019 14:23:44 +0200
-Message-Id: <20190627122348.5833-2-kraxel@redhat.com>
+        virtualization@lists.linux-foundation.org (open list:DRM DRIVER FOR
+        BOCHS VIRTUAL GPU), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v3 2/5] drm/bochs: pass framebuffer to bochs_hw_setbase
+Date:   Thu, 27 Jun 2019 14:23:45 +0200
+Message-Id: <20190627122348.5833-3-kraxel@redhat.com>
 In-Reply-To: <20190627122348.5833-1-kraxel@redhat.com>
 References: <20190627122348.5833-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Thu, 27 Jun 2019 12:23:57 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Thu, 27 Jun 2019 12:23:59 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-drm clients like the generic framebuffer emulation keep a permanent
-vmap active, which in turn has a permanent pin.  This pin needs to
-be in vram, otherwise we can't display the framebuffer.
+Also rename to bochs_hw_setfb, we have to set more
+than just the base address.
 
 Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 ---
- drivers/gpu/drm/drm_gem_vram_helper.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/bochs/bochs.h     |  5 +++--
+ drivers/gpu/drm/bochs/bochs_hw.c  | 10 +++++-----
+ drivers/gpu/drm/bochs/bochs_kms.c | 10 +++-------
+ 3 files changed, 11 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_gem_vram_helper.c b/drivers/gpu/drm/drm_gem_vram_helper.c
-index 4de782ca26b2..c724876c6f2a 100644
---- a/drivers/gpu/drm/drm_gem_vram_helper.c
-+++ b/drivers/gpu/drm/drm_gem_vram_helper.c
-@@ -592,7 +592,7 @@ void *drm_gem_vram_driver_gem_prime_vmap(struct drm_gem_object *gem)
- 	int ret;
- 	void *base;
+diff --git a/drivers/gpu/drm/bochs/bochs.h b/drivers/gpu/drm/bochs/bochs.h
+index cc35d492142c..246f05f4a711 100644
+--- a/drivers/gpu/drm/bochs/bochs.h
++++ b/drivers/gpu/drm/bochs/bochs.h
+@@ -85,8 +85,9 @@ void bochs_hw_setmode(struct bochs_device *bochs,
+ 		      struct drm_display_mode *mode);
+ void bochs_hw_setformat(struct bochs_device *bochs,
+ 			const struct drm_format_info *format);
+-void bochs_hw_setbase(struct bochs_device *bochs,
+-		      int x, int y, u64 addr);
++void bochs_hw_setfb(struct bochs_device *bochs,
++		    struct drm_framebuffer *fb,
++		    int x, int y);
+ int bochs_hw_load_edid(struct bochs_device *bochs);
  
--	ret = drm_gem_vram_pin(gbo, 0);
-+	ret = drm_gem_vram_pin(gbo, DRM_GEM_VRAM_PL_FLAG_VRAM);
- 	if (ret)
- 		return NULL;
- 	base = drm_gem_vram_kmap(gbo, true, NULL);
+ /* bochs_mm.c */
+diff --git a/drivers/gpu/drm/bochs/bochs_hw.c b/drivers/gpu/drm/bochs/bochs_hw.c
+index 791ab2f79947..67101c85029c 100644
+--- a/drivers/gpu/drm/bochs/bochs_hw.c
++++ b/drivers/gpu/drm/bochs/bochs_hw.c
+@@ -254,17 +254,17 @@ void bochs_hw_setformat(struct bochs_device *bochs,
+ 	};
+ }
+ 
+-void bochs_hw_setbase(struct bochs_device *bochs,
+-		      int x, int y, u64 addr)
++void bochs_hw_setfb(struct bochs_device *bochs,
++		    struct drm_framebuffer *fb,
++		    int x, int y)
+ {
+-	unsigned long offset = (unsigned long)addr +
++	struct drm_gem_vram_object *bo = drm_gem_vram_of_gem(fb->obj[0]);
++	unsigned long offset = bo->bo.offset +
+ 		y * bochs->stride +
+ 		x * (bochs->bpp / 8);
+ 	int vy = offset / bochs->stride;
+ 	int vx = (offset % bochs->stride) * 8 / bochs->bpp;
+ 
+-	DRM_DEBUG_DRIVER("x %d, y %d, addr %llx -> offset %lx, vx %d, vy %d\n",
+-			 x, y, addr, offset, vx, vy);
+ 	bochs_dispi_write(bochs, VBE_DISPI_INDEX_X_OFFSET, vx);
+ 	bochs_dispi_write(bochs, VBE_DISPI_INDEX_Y_OFFSET, vy);
+ }
+diff --git a/drivers/gpu/drm/bochs/bochs_kms.c b/drivers/gpu/drm/bochs/bochs_kms.c
+index 5904eddc83a5..ddbf0802138d 100644
+--- a/drivers/gpu/drm/bochs/bochs_kms.c
++++ b/drivers/gpu/drm/bochs/bochs_kms.c
+@@ -27,16 +27,12 @@ static const uint32_t bochs_formats[] = {
+ static void bochs_plane_update(struct bochs_device *bochs,
+ 			       struct drm_plane_state *state)
+ {
+-	struct drm_gem_vram_object *gbo;
+-
+ 	if (!state->fb || !bochs->stride)
+ 		return;
+ 
+-	gbo = drm_gem_vram_of_gem(state->fb->obj[0]);
+-	bochs_hw_setbase(bochs,
+-			 state->crtc_x,
+-			 state->crtc_y,
+-			 gbo->bo.offset);
++	bochs_hw_setfb(bochs, state->fb,
++		       state->crtc_x,
++		       state->crtc_y);
+ 	bochs_hw_setformat(bochs, state->fb->format);
+ }
+ 
 -- 
 2.18.1
 
