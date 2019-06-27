@@ -2,110 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D59AC585F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 17:35:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AA74585F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 17:36:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726508AbfF0Pfl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 11:35:41 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48634 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726463AbfF0Pfl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 11:35:41 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 50103ABC4;
-        Thu, 27 Jun 2019 15:35:40 +0000 (UTC)
-Subject: Re: [Xen-devel] [PATCH] mm: fix regression with deferred struct page
- init
-To:     xen-devel@lists.xenproject.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Cc:     Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>, pasha.tatashin@soleen.com,
-        rppt@linux.ibm.com
-References: <20190620160821.4210-1-jgross@suse.com>
- <79797c17-58d6-b09c-3aad-73e375a7f208@suse.com>
-From:   Juergen Gross <jgross@suse.com>
-Message-ID: <a9b02905-8b4f-48ac-8638-8ff99bd3b0e6@suse.com>
-Date:   Thu, 27 Jun 2019 17:35:39 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1726822AbfF0PgF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 11:36:05 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:42082 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726487AbfF0PgF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 11:36:05 -0400
+Received: by mail-qt1-f194.google.com with SMTP id s15so2877590qtk.9;
+        Thu, 27 Jun 2019 08:36:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/typNmvfpo6n2nRWYXCSUtwpwFH0hbL1yifmGXDUXjA=;
+        b=peRBWqan6O6qEXFrXMteK+MS/S6EgfTXZknPJIwL1M5qATYKuCAnVnswVGIz0kw/3l
+         1eh1hRoMzqQpJPcZzgMzjbgit1Gd+w7m0vxVe6gzt7+gns0LL0Vvsu0FovJBw4qY3jBW
+         cVCY/3llpZSz+tCeYEYkKg3W9++z02KrtN9gunaamIdgAVfZUxEDWsXSQbbDurVQ9CY0
+         1XxBO8+i3JTX7cf7l9SLAlLSwFGYEWOgy0QMlwzfsSotEfr+dk8uGELV1Tkuf9V7cN0K
+         kKVDbFZCz5bPh6NWJOuvrfrdiQSFy3dVPPNG0xmr9lRBFPgyR3pNflPytw8EHZZw4F67
+         qPEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/typNmvfpo6n2nRWYXCSUtwpwFH0hbL1yifmGXDUXjA=;
+        b=dk/33UOLxaB2yvvEYpEAET1hDquLob4Q5iFpteUpR4HZ1YGZXYwi5bNWBRa7mBAXwM
+         VSs3X9UWpTeTEMIDbtyiS1GuL6pgJrmtRD4GH3yjjbMCLrZqCYR4OGmlC7pH3/c7wY7i
+         8JQctS/uPNH7nbnU81UTtYHXb8eqN7Dsy4j+rvp9Xxus1HqOm9bWl6P9FhamieKHRLZz
+         upOnD/IoFnf33znkyvp0ZMZhr6HXppk0QmQHq/uKOcgEWO1fJIiQssDMtAQVIwHBmRJa
+         GBHXZi8uKkNqahiMFrGS6whP+LYSlngj7c9NG1jjul0lIlay0LKaKLOoD4d8LQzNigTt
+         WYog==
+X-Gm-Message-State: APjAAAWD6wVMLLxZFSbTDz54gVOa0U4Y4k+cC9Wswh6js/Acqw1goY1P
+        2cQRwoic8xMWKM70zY9xOUuZAb5KyetXZFPnGHg=
+X-Google-Smtp-Source: APXvYqwRhORZGW0V54k9ULDweW2/6DUQ4z65MN7Pekp9eOnYcCEx+B33+W4hd8MKVTFRI3t5MsdqRzBWYOChM2ngRfY=
+X-Received: by 2002:ac8:336a:: with SMTP id u39mr3710752qta.178.1561649764161;
+ Thu, 27 Jun 2019 08:36:04 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <79797c17-58d6-b09c-3aad-73e375a7f208@suse.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: de-DE
-Content-Transfer-Encoding: 8bit
+References: <20190624225312.131745-1-gwendal@chromium.org> <20190624225312.131745-3-gwendal@chromium.org>
+ <CAD=FV=WYg8d8ZHqcH7LWsSXx5-9kNP+nC+eS84=XNdaZi_7_-w@mail.gmail.com>
+In-Reply-To: <CAD=FV=WYg8d8ZHqcH7LWsSXx5-9kNP+nC+eS84=XNdaZi_7_-w@mail.gmail.com>
+From:   Enric Balletbo Serra <eballetbo@gmail.com>
+Date:   Thu, 27 Jun 2019 17:35:52 +0200
+Message-ID: <CAFqH_52MDbGL+ixpf7bueLcdV_oo3AJ9iDZGfxVyga0W3VK25g@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] iio: cros_ec: Extend legacy support to ARM device
+To:     Doug Anderson <dianders@chromium.org>
+Cc:     Gwendal Grignou <gwendal@chromium.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Benson Leung <bleung@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Guenter Roeck <groeck@chromium.org>,
+        Fabien Lahoudere <fabien.lahoudere@collabora.com>,
+        linux-iio <linux-iio@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25.06.19 10:25, Juergen Gross wrote:
-> Gentle ping.
-> 
-> I'd really like to have that in 5.2 in order to avoid the regression
-> introduced with 5.2-rc1.
+Hi,
 
-Adding some maintainers directly...
+Missatge de Doug Anderson <dianders@chromium.org> del dia dc., 26 de
+juny 2019 a les 23:06:
+>
+> Hi,
+>
+> On Mon, Jun 24, 2019 at 3:53 PM Gwendal Grignou <gwendal@chromium.org> wrote:
+> >
+> > -static int read_ec_accel_data(struct cros_ec_accel_legacy_state *st,
+> > -                             unsigned long scan_mask, s16 *data)
+> > +int cros_ec_accel_legacy_read_cmd(struct iio_dev *indio_dev,
+> > +                                 unsigned long scan_mask, s16 *data)
+>
+> As found by 0day (see https://crrev.com/c/1678822), the
+> cros_ec_accel_legacy_read_cmd() should have been static.
+>
+> I presume this will cause less confusion if a maintainer just fixes
+> this up when landing the patch so Gwendal shouldn't send out a new
+> version to fix it.  ...but if this is not the case then yell!  :-)
+>
 
+As probably will go through the chrome-platform tree I'll fix this
+when I apply the patch. No need to resend.
 
-Juergen
+Gwendal, Doug, to have cros-ec-sensors legacy support for ARM in
+upstream, could you spend 5 min reviewing the following patch?
 
-> 
-> 
-> Juergen
-> 
-> On 20.06.19 18:08, Juergen Gross wrote:
->> Commit 0e56acae4b4dd4a9 ("mm: initialize MAX_ORDER_NR_PAGES at a time
->> instead of doing larger sections") is causing a regression on some
->> systems when the kernel is booted as Xen dom0.
->>
->> The system will just hang in early boot.
->>
->> Reason is an endless loop in get_page_from_freelist() in case the first
->> zone looked at has no free memory. deferred_grow_zone() is always
->> returning true due to the following code snipplet:
->>
->>    /* If the zone is empty somebody else may have cleared out the zone */
->>    if (!deferred_init_mem_pfn_range_in_zone(&i, zone, &spfn, &epfn,
->>                                             first_deferred_pfn)) {
->>            pgdat->first_deferred_pfn = ULONG_MAX;
->>            pgdat_resize_unlock(pgdat, &flags);
->>            return true;
->>    }
->>
->> This in turn results in the loop as get_page_from_freelist() is
->> assuming forward progress can be made by doing some more struct page
->> initialization.
->>
->> Cc: Alexander Duyck <alexander.h.duyck@linux.intel.com>
->> Fixes: 0e56acae4b4dd4a9 ("mm: initialize MAX_ORDER_NR_PAGES at a time 
->> instead of doing larger sections")
->> Suggested-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
->> Signed-off-by: Juergen Gross <jgross@suse.com>
->> ---
->>   mm/page_alloc.c | 3 ++-
->>   1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
->> index d66bc8abe0af..8e3bc949ebcc 100644
->> --- a/mm/page_alloc.c
->> +++ b/mm/page_alloc.c
->> @@ -1826,7 +1826,8 @@ deferred_grow_zone(struct zone *zone, unsigned 
->> int order)
->>                            first_deferred_pfn)) {
->>           pgdat->first_deferred_pfn = ULONG_MAX;
->>           pgdat_resize_unlock(pgdat, &flags);
->> -        return true;
->> +        /* Retry only once. */
->> +        return first_deferred_pfn != ULONG_MAX;
->>       }
->>       /*
->>
-> 
-> 
-> _______________________________________________
-> Xen-devel mailing list
-> Xen-devel@lists.xenproject.org
-> https://lists.xenproject.org/mailman/listinfo/xen-devel
+https://lore.kernel.org/patchwork/patch/1094790/
 
+I'll also test it.
+
+Thanks,
+~ Enric
+
+> -Doug
