@@ -2,100 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54DD05892C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 19:46:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC30558932
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 19:46:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726679AbfF0Rq0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 13:46:26 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:40151 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726540AbfF0RqZ (ORCPT
+        id S1727202AbfF0Rqo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 13:46:44 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:44674 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726796AbfF0Rqk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 13:46:25 -0400
-Received: by mail-pl1-f196.google.com with SMTP id a93so1688390pla.7;
-        Thu, 27 Jun 2019 10:46:24 -0700 (PDT)
+        Thu, 27 Jun 2019 13:46:40 -0400
+Received: by mail-lf1-f67.google.com with SMTP id r15so2123592lfm.11
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 10:46:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=PIRPhI/UMnvi08tcprrRrj6ERaBMz8yibtguFMM+LZU=;
-        b=BCtDioW4dEpvPLoJf3TTXi+A7STbvxDOR+CivoGxs1TOGswespN6j0/TugrsFlHGML
-         yfWDjKKtGlTm5vC2WEKtg+6T7dtga+O7PkZhxEirr7PdSsjCnCDCqdsbVZQoJgtSYBGK
-         fetg679xQIQM/WnstgMP50wgO8UmyXH95YcKQp+SFqil2yrzIFlNGrtqa0zEkqglF7I4
-         rmR+oqNPfUzO4ZqX+neyoPGQObCyHrLE4jL832/5Eh53vvmua2uixAOA6H9fQXRnvNQr
-         0fofAiO3i1JEC7GBqX0RpeHT9S8XHWSyhntKLc6Wo824Y0VpaUfSMyL7S5O6iZI2RkIz
-         thgg==
+        d=joelfernandes.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=W6W2K1b/3xwaEs6Qc9I8DS4+zNASP1N/uvlbH7rl76E=;
+        b=QWWe0qbfaNHsWfqWaCYdMOBPZHNLceVVMR6vo2C0NhBVUEkOfYuBTroEj8kpUTMql1
+         rXzc3hbrJRRsVASyBuBynXo0SCOy7RhsLn+Y3VerNa+90OQyEGkwypBsKGlss90teIQ1
+         4Ymwesw1pbrDbXIg/UidFML1hwz2CZ6XGbKI0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=PIRPhI/UMnvi08tcprrRrj6ERaBMz8yibtguFMM+LZU=;
-        b=Cnjq8weZoVU9VdQEPzhT2CyY9S4ffXuoA4dlmPDycugPsun15TssqfHOBDtHDAgTmc
-         fitqOUTIpx6S/U0fNa4xAXxJ3zuUIhs4inBIjmC5JWDABeWeR1xICHPoqki4RNOHrLAY
-         9wAA8YKKDhalk8m9+Ca31Mhst9x+EEqQslO/UHVGRXKcMjJ88z4Or1xTqXddS4aCF0oB
-         JlzNwtVes79cO97fuv0moLXR9DgDUhQwWhcqbvjxoH3Ixtgp7/qfkCTQBhNUMR9s9ewG
-         PMh/0b2ST0mJE0okO2Oisj/lTbBnpFcj4N9DYsZZrsbBIxYAd3gn0wFaPNeWEWdiKwir
-         1zNA==
-X-Gm-Message-State: APjAAAXxu7j+7uInNv6fNjN0NYoRzuwkxkOxeZjQXfbgFf4rmdZZrUON
-        HShEDQUcJmt6Pov8uKQqoSE=
-X-Google-Smtp-Source: APXvYqw17O07SCOj8UceZp3DgyEdO56/1F6KUbC0eBBxKuzwbpMiaPsKtg/aeYIyTf41ZnxkCutoFQ==
-X-Received: by 2002:a17:902:8207:: with SMTP id x7mr6046456pln.63.1561657584494;
-        Thu, 27 Jun 2019 10:46:24 -0700 (PDT)
-Received: from hfq-skylake.ipads-lab.se.sjtu.edu.cn ([202.120.40.82])
-        by smtp.googlemail.com with ESMTPSA id e188sm4453637pfh.99.2019.06.27.10.46.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Jun 2019 10:46:24 -0700 (PDT)
-From:   Fuqian Huang <huangfq.daxian@gmail.com>
-Cc:     Fuqian Huang <huangfq.daxian@gmail.com>,
-        Adam Radford <aradford@gmail.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 71/87] scsi: 3w-xxxx: remove memset after dma_alloc_coherent
-Date:   Fri, 28 Jun 2019 01:46:12 +0800
-Message-Id: <20190627174612.6366-1-huangfq.daxian@gmail.com>
-X-Mailer: git-send-email 2.11.0
-To:     unlisted-recipients:; (no To-header on input)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=W6W2K1b/3xwaEs6Qc9I8DS4+zNASP1N/uvlbH7rl76E=;
+        b=cKaX1VI/gXB1eMTkiPDkKo5uOIuqbFDaxNEsYBTHn4JjnPwWkz7GbhAFNwKGkNOoZP
+         F2uGBVjTFXgVHXhQ4d48+zLpB+wBrO7j8Mc4FQa37/Xufqc6LmtrL4dV05Ick8HrJllE
+         KPAe+u9AxKwJAoKBLw9S+t9uXwM1rPnSWjdazT5po6IusPRx2Ccok1s0TgIoCSJPqZdJ
+         Qex3yK/HccCuiJpVp/nRpKKZGaZPnN0feQfimWGZYcf/LGZ3A5we40ARA3DQ/w+jawpt
+         w2UGZ325pY1/KVBp345DQSqKb7rpOohftcj83DC7OWZsvS7LEs1Z2Lz4VMxcMLqjlhUY
+         jCiw==
+X-Gm-Message-State: APjAAAXwTJMOCDyXE7Iz+2oDqPVqt2NJ7FvaZ94+YN/xkr7NqyoX6QYq
+        ijaZy8qRxzEk1ECqkOSRjuP/ChYqM9PtO5iz7p794g==
+X-Google-Smtp-Source: APXvYqz9iEOx/i8x1nneYf64spCLIhIGQctI2cYF2AgnsIMMkq0ImZOf1fr5lkeGoyZnYomWg+JLp/yWoIKJfv8smD0=
+X-Received: by 2002:a19:ed0c:: with SMTP id y12mr2596505lfy.191.1561657598836;
+ Thu, 27 Jun 2019 10:46:38 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190626135447.y24mvfuid5fifwjc@linutronix.de>
+ <20190626162558.GY26519@linux.ibm.com> <20190627142436.GD215968@google.com>
+ <20190627103455.01014276@gandalf.local.home> <20190627153031.GA249127@google.com>
+ <CAEXW_YT5LgdP_9SrachU4ZrhV9a7o_DM8eBfgxj=n7yRRyS-TQ@mail.gmail.com>
+ <20190627154011.vbje64x6auaknhx4@linutronix.de> <CAEXW_YTvkSTqwi_jOE2Pr+uD-GC4Xv0CtBEL9YO7=LvJcM3FBQ@mail.gmail.com>
+In-Reply-To: <CAEXW_YTvkSTqwi_jOE2Pr+uD-GC4Xv0CtBEL9YO7=LvJcM3FBQ@mail.gmail.com>
+From:   Joel Fernandes <joel@joelfernandes.org>
+Date:   Thu, 27 Jun 2019 13:46:27 -0400
+Message-ID: <CAEXW_YTmx3wFKuiLyrQO6uSPYAL179EPa6N3WO7qZahccCs-pg@mail.gmail.com>
+Subject: Re: [RFC] Deadlock via recursive wakeup via RCU with threadirqs
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        rcu <rcu@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In commit af7ddd8a627c
-("Merge tag 'dma-mapping-4.21' of git://git.infradead.org/users/hch/dma-mapping"),
-dma_alloc_coherent has already zeroed the memory.
-So memset is not needed.
+On Thu, Jun 27, 2019 at 1:43 PM Joel Fernandes <joel@joelfernandes.org> wrote:
+>
+> On Thu, Jun 27, 2019 at 11:40 AM Sebastian Andrzej Siewior
+> <bigeasy@linutronix.de> wrote:
+> >
+> > On 2019-06-27 11:37:10 [-0400], Joel Fernandes wrote:
+> > > Sebastian it would be nice if possible to trace where the
+> > > t->rcu_read_unlock_special is set for this scenario of calling
+> > > rcu_read_unlock_special, to give a clear idea about whether it was
+> > > really because of an IPI. I guess we could also add additional RCU
+> > > debug fields to task_struct (just for debugging) to see where there
+> > > unlock_special is set.
+> > >
+> > > Is there a test to reproduce this, or do I just boot an intel x86_64
+> > > machine with "threadirqs" and run into it?
+> >
+> > Do you want to send me a patch or should I send you my kvm image which
+> > triggers the bug on boot?
+>
+> I could reproduce this as well just booting Linus tree with threadirqs
+> command line and running rcutorture. In 15 seconds or so it locks
+> up... gdb backtrace shows the recursive lock:
 
-Signed-off-by: Fuqian Huang <huangfq.daxian@gmail.com>
----
- drivers/scsi/3w-9xxx.c | 2 --
- drivers/scsi/3w-xxxx.c | 2 --
- 2 files changed, 4 deletions(-)
-
-diff --git a/drivers/scsi/3w-9xxx.c b/drivers/scsi/3w-9xxx.c
-index 3337b1e80412..da17d9104e6b 100644
---- a/drivers/scsi/3w-9xxx.c
-+++ b/drivers/scsi/3w-9xxx.c
-@@ -534,8 +534,6 @@ static int twa_allocate_memory(TW_Device_Extension *tw_dev, int size, int which)
- 		goto out;
- 	}
- 
--	memset(cpu_addr, 0, size*TW_Q_LENGTH);
--
- 	for (i = 0; i < TW_Q_LENGTH; i++) {
- 		switch(which) {
- 		case 0:
-diff --git a/drivers/scsi/3w-xxxx.c b/drivers/scsi/3w-xxxx.c
-index 2b1e0d503020..26703ef52a2e 100644
---- a/drivers/scsi/3w-xxxx.c
-+++ b/drivers/scsi/3w-xxxx.c
-@@ -848,8 +848,6 @@ static int tw_allocate_memory(TW_Device_Extension *tw_dev, int size, int which)
- 		return 1;
- 	}
- 
--	memset(cpu_addr, 0, size*TW_Q_LENGTH);
--
- 	for (i=0;i<TW_Q_LENGTH;i++) {
- 		switch(which) {
- 		case 0:
--- 
-2.11.0
-
+Sorry that got badly wrapped, so I pasted it here:
+https://hastebin.com/ajivofomik.shell
