@@ -2,257 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CAA5458A1B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 20:41:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6390358A20
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 20:43:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726511AbfF0Sl3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 14:41:29 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:34687 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726384AbfF0Sl3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 14:41:29 -0400
-Received: by mail-qk1-f195.google.com with SMTP id t8so2652847qkt.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 11:41:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Zp2l4O4LWB1oYN3F7c8FUspudG1FPkSVquIdBgKKNr8=;
-        b=UDng4QJMv1LWzYnKCztVQrCNsQ7Xm4otaD1vwxegRokBDPjtcWCzhLj1b0tPvoH+5G
-         e/wZZXygpBylg98sPuyuv5mbBgHjHPIhEGIY/4sXfGrI6hEsUakCdci1fKEcwYL664EC
-         Ltd0eFTtccFg22S/AnCRO2+x3kM7m3mE76PbjYGJA3XX88l8d1RfTL8naCRYhwRRt0hN
-         kyZi2ZsrwRjkdf7keArGTkmIEQdAUv5kF+i4bxZDaZkTJbnUfBtuvb8kgZ4DSAN0ClWA
-         9uUXZkU+VDLLI8Wljm/1SQ0dpnn2hWHmINCPPoWh84Ec+rb3cevpyvhRbTvWyf7P5pkm
-         ioRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Zp2l4O4LWB1oYN3F7c8FUspudG1FPkSVquIdBgKKNr8=;
-        b=gxp6BK5bbqJ9Zp+L/f8qJEuTfcKDw9pI75dgS/TjBs9VeCr/unHDLsWcQDwLZTsmJA
-         ZJfcI5Diof8beSe2I4l1h2v08xldOt5BTafVxX5g3eebVbnJj7RMde37NUY3I2C08xDP
-         WNqp9dm7ZyIMHVX5WTUrccJVu3gAg3FA1BQ2k617h2Hemn8Nrwz2CvQriu9dRcPKnmUj
-         aAD26ozG4fkZu2xsAiKuQx9TMKC9V64vwR1bjLRlZ4RyhR6VUSH048eSTJvrsjjzkztJ
-         FDPVZWLZPPTp+urq4eYsMe3NSQqAKr4MSbIImXpO1owfynarNQaHqqkPZdnCtysVv3X/
-         zBhQ==
-X-Gm-Message-State: APjAAAWRRvTCQ/SG8DITX34y6kGiFEvWD7d60PE//+FEb4ttes65bj/G
-        9jWxA5IUFAir8wgR/kPLmpGrOQ==
-X-Google-Smtp-Source: APXvYqzuAHF37eGCzmzOTvKs0gfWaevOeNG3BEuhoGjpmd7NajpcCkq1aEtP0oryKkwjtmcGiGqZAA==
-X-Received: by 2002:a05:620a:13b9:: with SMTP id m25mr5020959qki.246.1561660885669;
-        Thu, 27 Jun 2019 11:41:25 -0700 (PDT)
-Received: from localhost (pool-108-27-252-85.nycmny.fios.verizon.net. [108.27.252.85])
-        by smtp.gmail.com with ESMTPSA id t29sm1418301qtt.42.2019.06.27.11.41.24
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 27 Jun 2019 11:41:24 -0700 (PDT)
-Date:   Thu, 27 Jun 2019 14:41:23 -0400
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Kuo-Hsin Yang <vovoy@chromium.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Sonny Rao <sonnyrao@chromium.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH] mm: vmscan: fix not scanning anonymous pages when
- detecting file refaults
-Message-ID: <20190627184123.GA11181@cmpxchg.org>
-References: <20190619080835.GA68312@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190619080835.GA68312@google.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+        id S1726506AbfF0Snx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 14:43:53 -0400
+Received: from mga17.intel.com ([192.55.52.151]:56448 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726384AbfF0Snx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 14:43:53 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jun 2019 11:43:52 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,424,1557212400"; 
+   d="scan'208";a="313893963"
+Received: from unknown (HELO luv-build.sc.intel.com) ([172.25.110.25])
+  by orsmga004.jf.intel.com with ESMTP; 27 Jun 2019 11:43:51 -0700
+From:   Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@suse.de>
+Cc:     Alan Cox <alan.cox@intel.com>, Tony Luck <tony.luck@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Andi Kleen <andi.kleen@intel.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jordan Borgner <mail@jordan-borgner.de>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Mohammad Etemadi <mohammad.etemadi@intel.com>,
+        Ricardo Neri <ricardo.neri@intel.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+Subject: [PATCH 0/2] Speed MTRR programming up when we can
+Date:   Thu, 27 Jun 2019 11:43:15 -0700
+Message-Id: <1561660997-21562-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 19, 2019 at 04:08:35PM +0800, Kuo-Hsin Yang wrote:
-> When file refaults are detected and there are many inactive file pages,
-> the system never reclaim anonymous pages, the file pages are dropped
-> aggressively when there are still a lot of cold anonymous pages and
-> system thrashes. This issue impacts the performance of applications with
-> large executable, e.g. chrome.
-> 
-> When file refaults are detected. inactive_list_is_low() may return
-> different values depends on the actual_reclaim parameter, the following
-> 2 conditions could be satisfied at the same time.
-> 
-> 1) inactive_list_is_low() returns false in get_scan_count() to trigger
->    scanning file lists only.
-> 2) inactive_list_is_low() returns true in shrink_list() to allow
->    scanning active file list.
-> 
-> In that case vmscan would only scan file lists, and as active file list
-> is also scanned, inactive_list_is_low() may keep returning false in
-> get_scan_count() until file cache is very low.
-> 
-> Before commit 2a2e48854d70 ("mm: vmscan: fix IO/refault regression in
-> cache workingset transition"), inactive_list_is_low() never returns
-> different value in get_scan_count() and shrink_list() in one
-> shrink_node_memcg() run. The original design should be that when
-> inactive_list_is_low() returns false for file lists, vmscan only scan
-> inactive file list. As only inactive file list is scanned,
-> inactive_list_is_low() would soon return true.
-> 
-> This patch makes the return value of inactive_list_is_low() independent
-> of actual_reclaim.
-> 
-> The problem can be reproduced by the following test program.
-> 
-> ---8<---
-> void fallocate_file(const char *filename, off_t size)
-> {
-> 	struct stat st;
-> 	int fd;
-> 
-> 	if (!stat(filename, &st) && st.st_size >= size)
-> 		return;
-> 
-> 	fd = open(filename, O_WRONLY | O_CREAT, 0600);
-> 	if (fd < 0) {
-> 		perror("create file");
-> 		exit(1);
-> 	}
-> 	if (posix_fallocate(fd, 0, size)) {
-> 		perror("fallocate");
-> 		exit(1);
-> 	}
-> 	close(fd);
-> }
-> 
-> long *alloc_anon(long size)
-> {
-> 	long *start = malloc(size);
-> 	memset(start, 1, size);
-> 	return start;
-> }
-> 
-> long access_file(const char *filename, long size, long rounds)
-> {
-> 	int fd, i;
-> 	volatile char *start1, *end1, *start2;
-> 	const int page_size = getpagesize();
-> 	long sum = 0;
-> 
-> 	fd = open(filename, O_RDONLY);
-> 	if (fd == -1) {
-> 		perror("open");
-> 		exit(1);
-> 	}
-> 
-> 	/*
-> 	 * Some applications, e.g. chrome, use a lot of executable file
-> 	 * pages, map some of the pages with PROT_EXEC flag to simulate
-> 	 * the behavior.
-> 	 */
-> 	start1 = mmap(NULL, size / 2, PROT_READ | PROT_EXEC, MAP_SHARED,
-> 		      fd, 0);
-> 	if (start1 == MAP_FAILED) {
-> 		perror("mmap");
-> 		exit(1);
-> 	}
-> 	end1 = start1 + size / 2;
-> 
-> 	start2 = mmap(NULL, size / 2, PROT_READ, MAP_SHARED, fd, size / 2);
-> 	if (start2 == MAP_FAILED) {
-> 		perror("mmap");
-> 		exit(1);
-> 	}
-> 
-> 	for (i = 0; i < rounds; ++i) {
-> 		struct timeval before, after;
-> 		volatile char *ptr1 = start1, *ptr2 = start2;
-> 		gettimeofday(&before, NULL);
-> 		for (; ptr1 < end1; ptr1 += page_size, ptr2 += page_size)
-> 			sum += *ptr1 + *ptr2;
-> 		gettimeofday(&after, NULL);
-> 		printf("File access time, round %d: %f (sec)\n", i,
-> 		       (after.tv_sec - before.tv_sec) +
-> 		       (after.tv_usec - before.tv_usec) / 1000000.0);
-> 	}
-> 	return sum;
-> }
-> 
-> int main(int argc, char *argv[])
-> {
-> 	const long MB = 1024 * 1024;
-> 	long anon_mb, file_mb, file_rounds;
-> 	const char filename[] = "large";
-> 	long *ret1;
-> 	long ret2;
-> 
-> 	if (argc != 4) {
-> 		printf("usage: thrash ANON_MB FILE_MB FILE_ROUNDS\n");
-> 		exit(0);
-> 	}
-> 	anon_mb = atoi(argv[1]);
-> 	file_mb = atoi(argv[2]);
-> 	file_rounds = atoi(argv[3]);
-> 
-> 	fallocate_file(filename, file_mb * MB);
-> 	printf("Allocate %ld MB anonymous pages\n", anon_mb);
-> 	ret1 = alloc_anon(anon_mb * MB);
-> 	printf("Access %ld MB file pages\n", file_mb);
-> 	ret2 = access_file(filename, file_mb * MB, file_rounds);
-> 	printf("Print result to prevent optimization: %ld\n",
-> 	       *ret1 + ret2);
-> 	return 0;
-> }
-> ---8<---
-> 
-> Running the test program on 2GB RAM VM with kernel 5.2.0-rc5, the
-> program fills ram with 2048 MB memory, access a 200 MB file for 10
-> times. Without this patch, the file cache is dropped aggresively and
-> every access to the file is from disk.
-> 
->   $ ./thrash 2048 200 10
->   Allocate 2048 MB anonymous pages
->   Access 200 MB file pages
->   File access time, round 0: 2.489316 (sec)
->   File access time, round 1: 2.581277 (sec)
->   File access time, round 2: 2.487624 (sec)
->   File access time, round 3: 2.449100 (sec)
->   File access time, round 4: 2.420423 (sec)
->   File access time, round 5: 2.343411 (sec)
->   File access time, round 6: 2.454833 (sec)
->   File access time, round 7: 2.483398 (sec)
->   File access time, round 8: 2.572701 (sec)
->   File access time, round 9: 2.493014 (sec)
-> 
-> With this patch, these file pages can be cached.
-> 
->   $ ./thrash 2048 200 10
->   Allocate 2048 MB anonymous pages
->   Access 200 MB file pages
->   File access time, round 0: 2.475189 (sec)
->   File access time, round 1: 2.440777 (sec)
->   File access time, round 2: 2.411671 (sec)
->   File access time, round 3: 1.955267 (sec)
->   File access time, round 4: 0.029924 (sec)
->   File access time, round 5: 0.000808 (sec)
->   File access time, round 6: 0.000771 (sec)
->   File access time, round 7: 0.000746 (sec)
->   File access time, round 8: 0.000738 (sec)
->   File access time, round 9: 0.000747 (sec)
-> 
-> Fixes: 2a2e48854d70 ("mm: vmscan: fix IO/refault regression in cache workingset transition")
-> Signed-off-by: Kuo-Hsin Yang <vovoy@chromium.org>
+Programming MTRR registers in multi-processor systems is a rather lengthy
+process. Furthermore, all processors must program these registers in lock
+step and with interrupts disabled; the process also involves flushing
+caches and TLBs twice. As a result, the process may take a considerable
+amount of time.
 
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+In some platforms, this can lead to a large skew of the refined-jiffies
+clock source. Early when booting, if no other clock is available (e.g.,
+booting with hpet=disabled), the refined-jiffies clock source is used to
+monitor the TSC clock source. If the skew of refined-jiffies is too large,
+Linux wrongly assumes that the TSC is unstable:
 
-Your change makes sense - we should indeed not force cache trimming
-only while the page cache is experiencing refaults.
+     clocksource: timekeeping watchdog on CPU1: Marking clocksource
+          'tsc-early' as unstable because the skew is too large:
+     clocksource: 'refined-jiffies' wd_now: fffedc10 wd_last:
+          fffedb90 mask: ffffffff
+     clocksource: 'tsc-early' cs_now: 5eccfddebc cs_last: 5e7e3303d4
+          mask: ffffffffffffffff
+     tsc: Marking TSC unstable due to clocksource watchdog
 
-I can't say I fully understand the changelog, though. The problem of
-forcing cache trimming while there is enough page cache is older than
-the commit you refer to. It could be argued that this commit is
-incomplete - it could have added refault detection not just to
-inactive:active file balancing, but also the file:anon balancing; but
-it didn't *cause* this problem.
+As per my measurements, around 98% of the time needed by the procedure to
+program MTRRs in multi-processor systems is spent flushing caches with
+wbinvd(). As per the Section 11.11.8 of the Intel 64 and IA 32
+Architectures Software Developer's Manual, it is not necessary to flush
+caches if the CPU supports cache self-snooping. Thus, skipping the cache
+flushes can reduce by several tens of milliseconds the time needed to
+complete the programming of the MTRR registers.
 
-Shouldn't this be
+By measuring the execution time of mtrr_aps_init() (from which MTRRs
+in all CPUs are programmed in lock-step at boot), I find savings in the
+time required to program MTRRs as follows:
 
-Fixes: e9868505987a ("mm,vmscan: only evict file pages when we have plenty")
-Fixes: 7c5bd705d8f9 ("mm: memcg: only evict file pages when we have plenty")
+Platform                      time-with-wbinvd(ms) time-no-wbinvd(ms)
+104-core (208 LP) Skylake            1437                 28
+2-core (4 LP) Haswell                 114                  2
 
-instead?
+However, there exist CPU models with errata that affect their self-
+snooping capability. Such errata may cause unpredictable behavior, machine
+check errors, or hangs. For instance:
+
+     "Where two different logical processors have the same code page
+      mapped with two different memory types Specifically if one code
+      page is mapped by one logical processor as write back and by
+      another as uncacheable and certain instruction timing conditions
+      occur the system may experience unpredictable behaviour." [1].
+
+Similar errata are reported in other processors as well [2], [3], [4],
+[5], and [6].
+
+Thus, in order to confidently leverage self-snooping for the MTRR
+programming algorithm, we must first clear such feature in models with
+known errata.
+
+
+Thanks and BR,
+Ricardo
+
+LP = Logical Processor
+
+[1]. Erratum BF52, 
+https://www.intel.com/content/dam/www/public/us/en/documents/specification-updates/xeon-3600-specification-update.pdf
+[2]. Erratum BK47, 
+https://www.mouser.com/pdfdocs/2ndgencorefamilymobilespecificationupdate.pdf
+[3]. Erratum AAO54, 
+https://www.intel.com/content/dam/www/public/us/en/documents/specification-updates/xeon-c5500-c3500-spec-update.pdf
+[4]. Errata AZ39, AZ42, 
+https://www.intel.com/content/dam/support/us/en/documents/processors/mobile/celeron/sb/320121.pdf
+[5]. Errata AQ51, AQ102, AQ104, 
+https://www.intel.com/content/dam/www/public/us/en/documents/specification-updates/pentium-dual-core-desktop-e2000-specification-update.pdf
+[6]. Errata AN107, AN109, 
+https://www.intel.com/content/dam/www/public/us/en/documents/specification-updates/pentium-dual-core-specification-update.pdf
+
+Ricardo Neri (2):
+  x86/cpu/intel: Clear cache self-snoop capability in CPUs with known
+    errata
+  x86, mtrr: generic: Skip cache flushes on CPUs with cache
+    self-snooping
+
+ arch/x86/kernel/cpu/intel.c        | 30 ++++++++++++++++++++++++++++++
+ arch/x86/kernel/cpu/mtrr/generic.c |  8 ++++++--
+ 2 files changed, 36 insertions(+), 2 deletions(-)
+
+-- 
+2.17.1
+
