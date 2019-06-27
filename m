@@ -2,93 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64D8758DED
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 00:28:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 282E158DDF
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 00:21:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726659AbfF0W17 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 18:27:59 -0400
-Received: from one.firstfloor.org ([193.170.194.197]:49284 "EHLO
-        one.firstfloor.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726445AbfF0W16 (ORCPT
+        id S1726852AbfF0WVH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 18:21:07 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:59973 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726445AbfF0WVH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 18:27:58 -0400
-X-Greylist: delayed 446 seconds by postgrey-1.27 at vger.kernel.org; Thu, 27 Jun 2019 18:27:57 EDT
-Received: from firstfloor.org (c-71-238-43-142.hsd1.or.comcast.net [71.238.43.142])
-        (using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by one.firstfloor.org (Postfix) with ESMTPSA id 1CBCF86712;
-        Fri, 28 Jun 2019 00:20:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=firstfloor.org;
-        s=mail; t=1561674026;
-        bh=XoR8yTCqfAt67Rp1x+70ueZjQuZxGxj6NraAHdT9T4c=;
-        h=From:To:Cc:Subject:Date:From;
-        b=CzGrhDebeLcx+ftjos04x7Yk3/Mn/0Fgyw6VOBTCXxuDhUq3EBbeTMOO7DjHbmq0v
-         B29hTrYmSipwXDgDlV/NMlWfpHIO11cAlGADaRWyZ7+UxIeXcbjPzrgiTWLHgZSSiR
-         EFZ0F/YAZ3XqLYgRuvc7k5uiHPRt2WASw4OzJjBQ=
-Received: by firstfloor.org (Postfix, from userid 1000)
-        id 4DB7FA0B2E; Thu, 27 Jun 2019 15:20:22 -0700 (PDT)
-From:   Andi Kleen <andi@firstfloor.org>
-To:     acme@kernel.org
-Cc:     jolsa@kernel.org, linux-kernel@vger.kernel.org,
-        Andi Kleen <ak@linux.intel.com>
-Subject: [PATCH] perf tools: Fix bison warnings for pure parser
-Date:   Thu, 27 Jun 2019 15:20:21 -0700
-Message-Id: <20190627222021.14980-1-andi@firstfloor.org>
-X-Mailer: git-send-email 2.21.0
+        Thu, 27 Jun 2019 18:21:07 -0400
+Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hgclK-0001fn-2g; Fri, 28 Jun 2019 00:21:02 +0200
+Date:   Fri, 28 Jun 2019 00:21:01 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Arnd Bergmann <arnd@arndb.de>
+cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/2] timekeeping: cleanup _fast_ variety of functions
+In-Reply-To: <CAK8P3a3nnrm0pebbA2fx9dHYwH7vkYWuJAQVWRzzQikOkXYqcQ@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1906280019460.32342@nanos.tec.linutronix.de>
+References: <20190625081912.14813-1-Jason@zx2c4.com> <CAK8P3a3nnrm0pebbA2fx9dHYwH7vkYWuJAQVWRzzQikOkXYqcQ@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andi Kleen <ak@linux.intel.com>
+On Tue, 25 Jun 2019, Arnd Bergmann wrote:
+> On Tue, Jun 25, 2019 at 10:19 AM Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+> >
+> > When Arnd and I discussed this prior, he thought it best that I separate
+> > these two commits out into a separate patchset, because they might
+> > require additional discussion or consideration from you. They seem
+> > straightforward enough to me, but if deliberations require me to make
+> > some tweaks, I'm happy to do so.
+> 
+> One concern I had was whether we want to replace 'fast' with something
+> else, such as 'in_nmi' that might be less confusing.  The current naming
+> might be easy to confuse between 'fast' and 'coarse'.
+> 
+> Another point might be whether we actually need more than one
+> kind of accessor for each time domain, given how rarely these are
+> used. In theory we could have the full set of combinations of fast:
+> monotonic/real/boottime/raw (but not clocktai) with ktime_t/ns/seconds/ts64
+> for 16 versions.  We currently have four, and you are adding another
+> four, but not the final eight. I'm not saying this is wrong, but
+> it feels a bit arbitrary and could use an explanation why you feel that
+> is the right subset.
+> 
+> For coarse, we have ktime_t and ts64. The _seconds() accessors are
+> coarse by definition, but we probably don't want to add _ns().
+> We also don't have the combination of 'raw' with 'coarse' or 'seconds',
+> as that seems to have no use case.
 
-bison 3.4.1 complains during a perf build:
+Can we please just add those which are actually needed. If new code misses
+something we can add them anytime later.
 
-util/parse-events.y:1.1-12: warning: deprecated directive, use ‘%define api.pure’ [-Wdeprecated]
-    1 | %pure-parser
-      | ^~~~~~~~~~~~
-  CC       /home/andi/lsrc/obj-perf/ui/browsers/map.o
-util/parse-events.y: warning: fix-its can be applied.  Rerun with option '--update'. [-Wother]
+Thanks,
 
-util/expr.y:13.1-12: warning: deprecated directive, use ‘%define api.pure’ [-Wdeprecated]
-   13 | %pure-parser
-      | ^~~~~~~~~~~~
-util/expr.y: warning: fix-its can be applied.  Rerun with option '--update'. [-Wother]
-
-Change the declarations to %define api.pure
-
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
----
- tools/perf/util/expr.y         | 2 +-
- tools/perf/util/parse-events.y | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/tools/perf/util/expr.y b/tools/perf/util/expr.y
-index 432b8560cf51..803c0929c205 100644
---- a/tools/perf/util/expr.y
-+++ b/tools/perf/util/expr.y
-@@ -10,7 +10,7 @@
- #define MAXIDLEN 256
- %}
- 
--%pure-parser
-+%define api.pure
- %parse-param { double *final_val }
- %parse-param { struct parse_ctx *ctx }
- %parse-param { const char **pp }
-diff --git a/tools/perf/util/parse-events.y b/tools/perf/util/parse-events.y
-index 6ad8d4914969..4eb10c27c30f 100644
---- a/tools/perf/util/parse-events.y
-+++ b/tools/perf/util/parse-events.y
-@@ -1,4 +1,4 @@
--%pure-parser
-+%define api.pure
- %parse-param {void *_parse_state}
- %parse-param {void *scanner}
- %lex-param {void* scanner}
--- 
-2.21.0
-
+	tglx
