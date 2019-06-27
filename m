@@ -2,116 +2,201 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6396D587A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 18:51:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A5983587AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 18:52:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726564AbfF0Qv3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 12:51:29 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:42876 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726524AbfF0Qv1 (ORCPT
+        id S1726659AbfF0QwQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 12:52:16 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:14316 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726619AbfF0QwN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 12:51:27 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id F0DCE60159; Thu, 27 Jun 2019 16:51:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1561654287;
-        bh=irekG6thQX34gyXWtiXWY57LwZBdDKVmXlbJNG5ysvc=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=dZ1TsDWWkdoep4Ac4dCC1D/vEIuRPPNQAj3/D9k7VUaeDJQPN4MxohdBwW1d3yEab
-         Ys8jmftJPwu1aQfTQz9MVDTr+HQEai707HzkqUaeYE2KPeu+fmy8OOAJ428NLGpuYk
-         O5/LNB4dAMvqlYNON0pI//FZNiHA4dMSaAn3CNUM=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,MISSING_DATE,MISSING_MID,SPF_NONE autolearn=no
-        autolearn_force=no version=3.4.0
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 60BF660159;
-        Thu, 27 Jun 2019 16:51:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1561654286;
-        bh=irekG6thQX34gyXWtiXWY57LwZBdDKVmXlbJNG5ysvc=;
-        h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=h9aAGd2ub/FCnsr/gPGaEFths60IuSW0AQfcJSof80rzky6ODMjIYPWQvWTrmmJMc
-         x+GP8Rd6t80WzhAV5GSR2s1V5U2sfv207PfTMb+raUexgcH/HllF2ySuVJESOv0c/Z
-         pF9t4RygKBPVgVP2uHz56BCQUJ0NzGnucbvZcbVU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 60BF660159
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Thu, 27 Jun 2019 12:52:13 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d14f43a0000>; Thu, 27 Jun 2019 09:52:10 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 27 Jun 2019 09:52:12 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 27 Jun 2019 09:52:12 -0700
+Received: from [10.25.73.176] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 27 Jun
+ 2019 16:52:06 +0000
+Subject: Re: [PATCH V11 03/12] PCI: dwc: Perform dbi regs write lock towards
+ the end
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+CC:     <bhelgaas@google.com>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <kishon@ti.com>, <catalin.marinas@arm.com>,
+        <will.deacon@arm.com>, <jingoohan1@gmail.com>,
+        <gustavo.pimentel@synopsys.com>, <digetx@gmail.com>,
+        <mperttunen@nvidia.com>, <linux-pci@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <kthota@nvidia.com>,
+        <mmaddireddy@nvidia.com>, <sagar.tv@gmail.com>
+References: <20190624091505.1711-1-vidyas@nvidia.com>
+ <20190624091505.1711-4-vidyas@nvidia.com>
+ <20190627145800.GD3782@e121166-lin.cambridge.arm.com>
+ <ecae46b4-54cc-7f4d-5a86-908431fd472a@nvidia.com>
+ <20190627155047.GF3782@e121166-lin.cambridge.arm.com>
+X-Nvconfidentiality: public
+From:   Vidya Sagar <vidyas@nvidia.com>
+Message-ID: <fbef2fee-1ca9-b894-6d1a-f2a9449968a5@nvidia.com>
+Date:   Thu, 27 Jun 2019 22:22:03 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
+In-Reply-To: <20190627155047.GF3782@e121166-lin.cambridge.arm.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH v2 1/2] mwifiex: dispatch/rotate from reorder table
- atomically
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20190625174045.125223-2-briannorris@chromium.org>
-References: <20190625174045.125223-2-briannorris@chromium.org>
-To:     Brian Norris <briannorris@chromium.org>
-Cc:     Ganapathi Bhat <gbhat@marvell.com>,
-        Nishant Sarmukadam <nishants@marvell.com>,
-        Amitkumar Karwar <amitkarwar@gmail.com>,
-        Xinming Hu <huxinming820@gmail.com>,
-        <linux-kernel@vger.kernel.org>, linux-wireless@vger.kernel.org,
-        Brian Norris <briannorris@chromium.org>
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20190627165126.F0DCE60159@smtp.codeaurora.org>
-Date:   Thu, 27 Jun 2019 16:51:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1561654330; bh=yvZTQ4IOvwV6hxGeLW9GOQ2PqNDwou5Z7nhqxb2MGzs=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=iYpJIifkIFk1Yn0Eghy9VIv8CWqVmaUl2NjkJCcCnw4fa44o14waMoJZ5wiY2vv4i
+         AonS5CXCnMzgLrRHT3pgAav4AlJ6wHA79wV19iTR2hU3lKQPkXn5ZeZN30IhnSEuTl
+         7j+nz+zLL7eMFU1AYZsTIvEY7gReETQa/nmiCqdp/KsBYN1ZLNckPodg5tL8PvbqWq
+         qyy9BkbegqMYkCWBvxKzXSi8ha/QC9Q0lbPnkvEN07Bphh/8hxtwnaBr0qB8/Js98s
+         qDXzoUxEMVyK/6y0EGWf0UF0sCYc+P7x/uEBCX5HiehRt9Opb3Ipyiu4L+dzJi0aHz
+         4x3HfLnIFxTEQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Brian Norris <briannorris@chromium.org> wrote:
+On 6/27/2019 9:20 PM, Lorenzo Pieralisi wrote:
+> On Thu, Jun 27, 2019 at 09:03:08PM +0530, Vidya Sagar wrote:
+>> On 6/27/2019 8:28 PM, Lorenzo Pieralisi wrote:
+>>> On Mon, Jun 24, 2019 at 02:44:56PM +0530, Vidya Sagar wrote:
+>>>> Remove multiple write enable and disable sequences of dbi registers as
+>>>> Tegra194 implements writes to BAR-0 register (offset: 0x10) controlled by
+>>>> DBI write-lock enable bit thereby not allowing any further writes to BAR-0
+>>>> register in config space to take place. Hence enabling write permission at
+>>>> the start of function and disabling the same only towards the end.
+>>>
+>>> I do not understand what this patch does, I would like to rephrase
+>>> the commit log in a way that is easier to parse.
+>>>
+>>> In particular I do not get what you mean in relation to BAR-0, I am
+>>> confused, please clarify.
+>>>
+>>> Lorenzo
+>> Well, some of the Synopsys DesignWare core's DBI registers are
+>> protected with a lock without which, they are read-only by default.
+>> Existing code in dw_pcie_setup_rc() API tries to unlock and lock
+>> multiple times whenever it wants to update those write-protected
+>> registers. This patch attempts to unlock all such write-protected
+>> registers for writing once in the beginning of the function and lock
+>> them back towards the end.  As far as BAR-0 register (which is at
+>> offset 0x10 in DBI space... nothing but the config space) in Tegra194
+>> is concerned, it is one of those registers to which writes are
+>> protected. I could have added unlock/lock pair around accessing this
+>> register, but that would bloat this API with one more pair of
+>> unlock/lock, instead I chose to remove unlock/lock pairs for all
+>> protected registers and have unlock in the beginning and lock towards
+>> the end.
+> 
+> Ok, so DBI space registers that require write permissions are per-IP.
+> This is clearer so the commit log must be rewritten, it is not clear at
+> all in this respect at least not as-is, if you read it you will
+> notice ;-)
+Ok. I'll update commit message in next patch series.
 
-> mwifiex_11n_scan_and_dispatch() and
-> mwifiex_11n_dispatch_pkt_until_start_win() share similar patterns, where
-> they perform a few different actions on the same table, using the same
-> lock, but non-atomically. There have been other attempts to clean up
-> this sort of behavior, but they have had problems (incomplete;
-> introducing new deadlocks).
+-Vidya Sagar
 > 
-> We can improve these functions' atomicity by queueing up our RX packets
-> in a list, to dispatch at the end of the function. This avoids problems
-> of another operation modifying the table in between our dispatch and
-> rotation operations.
+> Lorenzo
 > 
-> This was inspired by investigations around this:
-> 
->   http://lkml.kernel.org/linux-wireless/20181130175957.167031-1-briannorris@chromium.org
->   Subject: [4.20 PATCH] Revert "mwifiex: restructure rx_reorder_tbl_lock usage"
-> 
-> While the original (now-reverted) patch had good intentions in
-> restructuring some of the locking patterns in this driver, it missed an
-> important detail: we cannot defer to softirq contexts while already in
-> an atomic context. We can help avoid this sort of problem by separating
-> the two steps of:
-> (1) iterating / clearing the mwifiex reordering table
-> (2) dispatching received packets to upper layers
-> 
-> This makes it much harder to make lock recursion mistakes, as these
-> two steps no longer need to hold the same locks.
-> 
-> Testing: I've played with a variety of stress tests, including download
-> stress tests on the same APs which caught regressions with commit
-> 5188d5453bc9 ("mwifiex: restructure rx_reorder_tbl_lock usage"). I've
-> primarily tested on Marvell 8997 / PCIe, although I've given 8897 / SDIO
-> a quick spin as well.
-> 
-> Signed-off-by: Brian Norris <briannorris@chromium.org>
-> Acked-by: Ganapathi Bhat <gbhat@marvell.com>
-
-2 patches applied to wireless-drivers-next.git, thanks.
-
-ce2e942e32e8 mwifiex: dispatch/rotate from reorder table atomically
-8a7f9fd8a3e0 mwifiex: don't disable hardirqs; just softirqs
-
--- 
-https://patchwork.kernel.org/patch/11016151/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+>>
+>> -Vidya Sagar
+>>
+>>>
+>>>> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+>>>> Reviewed-by: Thierry Reding <treding@nvidia.com>
+>>>> Acked-by: Jingoo Han <jingoohan1@gmail.com>
+>>>> ---
+>>>> Changes since [v10]:
+>>>> * None
+>>>>
+>>>> Changes since [v9]:
+>>>> * None
+>>>>
+>>>> Changes since [v8]:
+>>>> * None
+>>>>
+>>>> Changes since [v7]:
+>>>> * None
+>>>>
+>>>> Changes since [v6]:
+>>>> * None
+>>>>
+>>>> Changes since [v5]:
+>>>> * Moved write enable to the beginning of the API and write disable to the end
+>>>>
+>>>> Changes since [v4]:
+>>>> * None
+>>>>
+>>>> Changes since [v3]:
+>>>> * None
+>>>>
+>>>> Changes since [v2]:
+>>>> * None
+>>>>
+>>>> Changes since [v1]:
+>>>> * None
+>>>>
+>>>>    drivers/pci/controller/dwc/pcie-designware-host.c | 14 ++++++++------
+>>>>    1 file changed, 8 insertions(+), 6 deletions(-)
+>>>>
+>>>> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+>>>> index f93252d0da5b..d3156446ff27 100644
+>>>> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+>>>> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+>>>> @@ -628,6 +628,12 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
+>>>>    	u32 val, ctrl, num_ctrls;
+>>>>    	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+>>>> +	/*
+>>>> +	 * Enable DBI read-only registers for writing/updating configuration.
+>>>> +	 * Write permission gets disabled towards the end of this function.
+>>>> +	 */
+>>>> +	dw_pcie_dbi_ro_wr_en(pci);
+>>>> +
+>>>>    	dw_pcie_setup(pci);
+>>>>    	if (!pp->ops->msi_host_init) {
+>>>> @@ -650,12 +656,10 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
+>>>>    	dw_pcie_writel_dbi(pci, PCI_BASE_ADDRESS_1, 0x00000000);
+>>>>    	/* Setup interrupt pins */
+>>>> -	dw_pcie_dbi_ro_wr_en(pci);
+>>>>    	val = dw_pcie_readl_dbi(pci, PCI_INTERRUPT_LINE);
+>>>>    	val &= 0xffff00ff;
+>>>>    	val |= 0x00000100;
+>>>>    	dw_pcie_writel_dbi(pci, PCI_INTERRUPT_LINE, val);
+>>>> -	dw_pcie_dbi_ro_wr_dis(pci);
+>>>>    	/* Setup bus numbers */
+>>>>    	val = dw_pcie_readl_dbi(pci, PCI_PRIMARY_BUS);
+>>>> @@ -687,15 +691,13 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
+>>>>    	dw_pcie_wr_own_conf(pp, PCI_BASE_ADDRESS_0, 4, 0);
+>>>> -	/* Enable write permission for the DBI read-only register */
+>>>> -	dw_pcie_dbi_ro_wr_en(pci);
+>>>>    	/* Program correct class for RC */
+>>>>    	dw_pcie_wr_own_conf(pp, PCI_CLASS_DEVICE, 2, PCI_CLASS_BRIDGE_PCI);
+>>>> -	/* Better disable write permission right after the update */
+>>>> -	dw_pcie_dbi_ro_wr_dis(pci);
+>>>>    	dw_pcie_rd_own_conf(pp, PCIE_LINK_WIDTH_SPEED_CONTROL, 4, &val);
+>>>>    	val |= PORT_LOGIC_SPEED_CHANGE;
+>>>>    	dw_pcie_wr_own_conf(pp, PCIE_LINK_WIDTH_SPEED_CONTROL, 4, val);
+>>>> +
+>>>> +	dw_pcie_dbi_ro_wr_dis(pci);
+>>>>    }
+>>>>    EXPORT_SYMBOL_GPL(dw_pcie_setup_rc);
+>>>> -- 
+>>>> 2.17.1
+>>>>
+>>
 
