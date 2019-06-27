@@ -2,34 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69FEA585F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 17:35:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A1AB5585F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 17:36:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726725AbfF0Pfv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 11:35:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43596 "EHLO mail.kernel.org"
+        id S1726668AbfF0Pft (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 11:35:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43642 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726440AbfF0Pfr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 11:35:47 -0400
+        id S1726586AbfF0Pfs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 11:35:48 -0400
 Received: from localhost.localdomain (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7F40520B7C;
-        Thu, 27 Jun 2019 15:35:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B016E2146E;
+        Thu, 27 Jun 2019 15:35:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561649746;
-        bh=7yr0LLssavmOR9OL4dvTzpg/GoEvAZy6unbBQ20P33c=;
+        s=default; t=1561649748;
+        bh=oMQqoZTTHUmTQiqJcOaUDewMwpqi+f3Um0R+ZcVoUCw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
          References:From;
-        b=a7B48gaBDLwf58ht6Eq1+ZxxWkaAnYzUSKSN9rAHsRaHGYp6TL2P5dN+rktnzLTEI
-         YDncT9poGI3vtApYyrokz2b93qpxsEEcRzRrqqCjowfvq7WUB9Rcbst3L2igBdmRhL
-         Ng8LnZD5g3hMJGOtiXoekgmNu0kpsYWXkA63xi24=
+        b=bIDA4qTpddrOGlWSblljO6o+i6/XRJ6O0FEwnDTLJRVHxCcpf2+lH55m8I5d84nKR
+         uIE1er1xlVDbCAVeNwR1Y+5dm3sl3HsF8XO4PEF9pvAgJ3jU4xHl63I2pvUYNDPrET
+         quFf7bILM+ekQGMZjOzg1RMb1OahVJ9Mby21PAyU=
 From:   Tom Zanussi <zanussi@kernel.org>
 To:     rostedt@goodmis.org
 Cc:     mhiramat@kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/4] tracing: Add hist trigger error messages for sort specification
-Date:   Thu, 27 Jun 2019 10:35:17 -0500
-Message-Id: <cc9870354048b5933f1de03386e5b67056306840.1561647046.git.zanussi@kernel.org>
+Subject: [PATCH 3/4] tracing: Add 'hist:' to hist trigger error log error string
+Date:   Thu, 27 Jun 2019 10:35:18 -0500
+Message-Id: <333b59c7f7e42d852f3da908f8f3369fdc8c9fda.1561647046.git.zanussi@kernel.org>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <cover.1561647046.git.zanussi@kernel.org>
 References: <cover.1561647046.git.zanussi@kernel.org>
@@ -40,108 +40,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add error codes and messages for all the error paths leading to sort
-specification parsing errors.
+The 'hist:' prefix gets stripped from the command text during command
+processing, but should be added back when displaying the command
+during error processing.
+
+Not only because it's what should be displayed but also because not
+having it means the test cases fail because the caret is miscalculated
+by the length of the prefix string.
 
 Signed-off-by: Tom Zanussi <zanussi@kernel.org>
 ---
- kernel/trace/trace_events_hist.c | 21 +++++++++++++++++----
- 1 file changed, 17 insertions(+), 4 deletions(-)
+ kernel/trace/trace_events_hist.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index 964d032f51c6..d33c94a1cfa9 100644
+index d33c94a1cfa9..79768f22d5c5 100644
 --- a/kernel/trace/trace_events_hist.c
 +++ b/kernel/trace/trace_events_hist.c
-@@ -61,7 +61,12 @@
- 	C(INVALID_SUBSYS_EVENT,	"Invalid subsystem or event name"),	\
- 	C(INVALID_REF_KEY,	"Using variable references in keys not supported"), \
- 	C(VAR_NOT_FOUND,	"Couldn't find variable"),		\
--	C(FIELD_NOT_FOUND,	"Couldn't find field"),
-+	C(FIELD_NOT_FOUND,	"Couldn't find field"),			\
-+	C(EMPTY_ASSIGNMENT,	"Empty assignment"),			\
-+	C(INVALID_SORT_MODIFIER,"Invalid sort modifier"),		\
-+	C(EMPTY_SORT_FIELD,	"Empty sort field"),			\
-+	C(TOO_MANY_SORT_FIELDS,	"Too many sort fields (Max = 2)"),	\
-+	C(INVALID_SORT_FIELD,	"Sort field must be a key or a val"),
- 
- #undef C
- #define C(a, b)		HIST_ERR_##a
-@@ -2129,6 +2134,7 @@ parse_hist_trigger_attrs(struct trace_array *tr, char *trigger_str)
- 		if (rhs) {
- 			if (!strlen(++rhs)) {
- 				ret = -EINVAL;
-+				hist_err(tr, HIST_ERR_EMPTY_ASSIGNMENT, errpos(str));
- 				goto free;
- 			}
- 			ret = parse_assignment(tr, str, attrs);
-@@ -4680,7 +4686,7 @@ static int create_hist_fields(struct hist_trigger_data *hist_data,
- 	return ret;
- }
- 
--static int is_descending(const char *str)
-+static int is_descending(struct trace_array *tr, const char *str)
- {
+@@ -607,7 +607,8 @@ static void last_cmd_set(struct trace_event_file *file, char *str)
  	if (!str)
- 		return 0;
-@@ -4691,11 +4697,14 @@ static int is_descending(const char *str)
- 	if (strcmp(str, "ascending") == 0)
- 		return 0;
+ 		return;
  
-+	hist_err(tr, HIST_ERR_INVALID_SORT_MODIFIER, errpos((char *)str));
-+
- 	return -EINVAL;
- }
+-	strncpy(last_cmd, str, MAX_FILTER_STR_VAL - 1);
++	strcpy(last_cmd, "hist:");
++	strncat(last_cmd, str, MAX_FILTER_STR_VAL - 1 - sizeof("hist:"));
  
- static int create_sort_keys(struct hist_trigger_data *hist_data)
- {
-+	struct trace_array *tr = hist_data->event_file->tr;
- 	char *fields_str = hist_data->attrs->sort_key_str;
- 	struct tracing_map_sort_key *sort_key;
- 	int descending, ret = 0;
-@@ -4719,10 +4728,12 @@ static int create_sort_keys(struct hist_trigger_data *hist_data)
- 
- 		if (!*field_str) {
- 			ret = -EINVAL;
-+			hist_err(tr, HIST_ERR_EMPTY_SORT_FIELD, errpos("sort="));
- 			break;
- 		}
- 
- 		if ((i == TRACING_MAP_SORT_KEYS_MAX - 1) && fields_str) {
-+			hist_err(tr, HIST_ERR_TOO_MANY_SORT_FIELDS, errpos("sort="));
- 			ret = -EINVAL;
- 			break;
- 		}
-@@ -4730,11 +4741,12 @@ static int create_sort_keys(struct hist_trigger_data *hist_data)
- 		field_name = strsep(&field_str, ".");
- 		if (!field_name || !*field_name) {
- 			ret = -EINVAL;
-+			hist_err(tr, HIST_ERR_EMPTY_SORT_FIELD, errpos("sort="));
- 			break;
- 		}
- 
- 		if (strcmp(field_name, "hitcount") == 0) {
--			descending = is_descending(field_str);
-+			descending = is_descending(tr, field_str);
- 			if (descending < 0) {
- 				ret = descending;
- 				break;
-@@ -4756,7 +4768,7 @@ static int create_sort_keys(struct hist_trigger_data *hist_data)
- 
- 			if (strcmp(field_name, test_name) == 0) {
- 				sort_key->field_idx = idx;
--				descending = is_descending(field_str);
-+				descending = is_descending(tr, field_str);
- 				if (descending < 0) {
- 					ret = descending;
- 					goto out;
-@@ -4767,6 +4779,7 @@ static int create_sort_keys(struct hist_trigger_data *hist_data)
- 		}
- 		if (j == hist_data->n_fields) {
- 			ret = -EINVAL;
-+			hist_err(tr, HIST_ERR_INVALID_SORT_FIELD, errpos(field_name));
- 			break;
- 		}
- 	}
+ 	if (file) {
+ 		call = file->event_call;
 -- 
 2.14.1
 
