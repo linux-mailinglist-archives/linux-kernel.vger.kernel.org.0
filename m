@@ -2,133 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42101579AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 04:50:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65D38579A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 04:46:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726925AbfF0Cuk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 22:50:40 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:42711 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726762AbfF0Cuk (ORCPT
+        id S1726841AbfF0Cqt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 22:46:49 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:40649 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726762AbfF0Cqt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 22:50:40 -0400
-Received: by mail-lj1-f195.google.com with SMTP id t28so658987lje.9
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 19:50:39 -0700 (PDT)
+        Wed, 26 Jun 2019 22:46:49 -0400
+Received: by mail-io1-f67.google.com with SMTP id n5so1366035ioc.7
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 19:46:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :content-transfer-encoding:user-agent;
-        bh=BTKCxnhTazrPesoHKDV4p8sRapqVbrsGw9bOncK6AZU=;
-        b=gO9JdY7D9q0BkzIBQI9C0ktBuctOyqDjPah6J+45Rj43WFfPDhuCyeicU4enOUY7dm
-         VuIyQqJxWnIaqzMkznyd2uO7XSahMortHR8YUaG7dOv+zCmmJ1Y5eauotob7cR/Fhb5L
-         jFqiM8NrmAZAiUMZPgccGP9QABRsB2l3TGnhyfYqVFeObOsabYQoXlipLoE+C17oT6JQ
-         4zvPZFUI4RneAwmz1DI/eqPpfh20xre5+hOY/hCX4s1JxzqgMEXwfBIZ6HSG2js3uXB6
-         dLDFyLYu+Q5PLs40TzONI8rcJRjDLyJ5Iz7buRXtJbYjJcEzM+R2CEUAvHQKrpwPA0hj
-         auyQ==
+        d=digidescorp.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=ovBaKS+quEQiCRn3kHJDpPT3ZUV34WzUrRfi6mmIZto=;
+        b=i7r9iMo/69vzH40oE3GhJbESSPj/0PUMG//YslEizmRURkBQDgHl0+jCkDXAYyzN/j
+         320oYPpocZjp+DIZNxXd4rEF+QkuRdJSU71ZjLAoN9joCWLaEjyLndMrtX4ZlnHNvQ8C
+         2HSSSyPRglAZdV3p/CZyc1kYsEO7qpDjq0A9Q=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:content-transfer-encoding:user-agent;
-        bh=BTKCxnhTazrPesoHKDV4p8sRapqVbrsGw9bOncK6AZU=;
-        b=E74gYjT8xKyjPWdNT3wSCYZpTwRt5raX/ReokjCYNK/Us6JdnjPl9XfQp/VkrQQjdq
-         wKscgh4Fxt4E3tR6ijGLZr/FTbpDsgERklIE8QeDWHuR/UUAj12dOK8kSJVM4yBcuZET
-         biGHN14M4mMO9METT56pA/eKRp38piU2qyHpmZJUjxy8Z0YymZZ6hJ6ZiuWMeY9loiq2
-         mRR+TZiGlqH9XrwJ7TxwmHsxgDm4KWglpgn/XVNWT/vF+pHVMUdgBGdIKuXHkpvi/UIo
-         M0dEucyWJQtxAGLbIb8gJ0HGVtQRixnDcY5wLs4h4NFTv0ZGK5dXsBg2aEm73/st30CC
-         SlTA==
-X-Gm-Message-State: APjAAAVW3y9NB7ZVJ9b1uUTgmYblw+elaMKtAffaCJe96ObmgsCZwvwY
-        hOug9BrlT1tUHWLOzsqNFlp5Zg==
-X-Google-Smtp-Source: APXvYqwhLURgl+MsgWvofjbyRiAKbfjz5hDylTAkGa/+UG0J4j7UGT0bxctq8zcKUe2fAy2VfDC4bg==
-X-Received: by 2002:a2e:9198:: with SMTP id f24mr914481ljg.221.1561603838424;
-        Wed, 26 Jun 2019 19:50:38 -0700 (PDT)
-Received: from localhost (h85-30-9-151.cust.a3fiber.se. [85.30.9.151])
-        by smtp.gmail.com with ESMTPSA id g68sm111896ljg.47.2019.06.26.19.50.37
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 26 Jun 2019 19:50:37 -0700 (PDT)
-Date:   Wed, 26 Jun 2019 19:45:08 -0700
-From:   Olof Johansson <olof@lixom.net>
-To:     torvalds@linux-foundation.org, gregkh@linuxfoundation.org
-Cc:     olof@lixom.net, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL] ARM: SoC fixes
-Message-ID: <20190627024508.x5opgsq4tjk32m6j@localhost>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=ovBaKS+quEQiCRn3kHJDpPT3ZUV34WzUrRfi6mmIZto=;
+        b=UHp9R7lwbSEY5vrf46PVqPtnMrK50NANvblBbX9Wx44lZK5eWyQhtRFfecKcvmTw/B
+         BliR2Cd9E8hJZ+XQ1tuc0MCokMby2UHBKyYm7SS1gOXLBZ7lbgzO4sd5pSH4w5vecglf
+         SgfpJJvP4fh8K5Zt3gJTNSMRMLL00vIjDWqUj6qypQYgpA5jPjPIjOoSWzKhgGNVUywK
+         R7i1W9Q53mF42S8UwWt6SiIEU+ATqP8evplT90YfYLZlWj9R90+Z1x9u2Y2TQu2OSk5x
+         br+qeIJrsjWqIT+yWp9hg0qCdOJWJTHnuZAmLMyZ+Ca6cupAuzqnBjWyOIJj40ARubbp
+         +/wg==
+X-Gm-Message-State: APjAAAUQhOuoxaf8XGCi8RYyTc3WeFkabdclSc6rt1QtvSSVH+HF5BaB
+        LqElixRyZx3GaQPb3cDTBRB0KUEMKik=
+X-Google-Smtp-Source: APXvYqw67C0XVSIwijfJChMa3ktR+PB5t3JyxMGrD5O9kXazcX+0ba3hj/XIbiMFvUfs5VXpsaArvA==
+X-Received: by 2002:a6b:6b14:: with SMTP id g20mr1809225ioc.28.1561603608085;
+        Wed, 26 Jun 2019 19:46:48 -0700 (PDT)
+Received: from [10.10.2.64] (104-51-28-62.lightspeed.cicril.sbcglobal.net. [104.51.28.62])
+        by smtp.googlemail.com with ESMTPSA id p9sm745485ioj.49.2019.06.26.19.46.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 26 Jun 2019 19:46:47 -0700 (PDT)
+Subject: Re: [PATCH 1/1] udf: Fix incorrect final NOT_ALLOCATED (hole) extent
+ length
+To:     Jan Kara <jack@suse.cz>
+Cc:     Jan Kara <jack@suse.com>, linux-kernel@vger.kernel.org,
+        "Steven J . Magnani" <steve@digidescorp.com>
+References: <20190604123158.12741-1-steve@digidescorp.com>
+ <20190604123158.12741-2-steve@digidescorp.com>
+ <20190625103019.GA1994@quack2.suse.cz>
+From:   Steve Magnani <steve.magnani@digidescorp.com>
+Message-ID: <b5fcfef0-5fd4-f10a-4cce-78244aa1b227@digidescorp.com>
+Date:   Wed, 26 Jun 2019 21:46:46 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20190625103019.GA1994@quack2.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus, Greg,
+Hi Jan,
 
-The following changes since commit cd3967bee004bcbd142403698d658166fa618c9e:
+On 6/25/19 5:30 AM, Jan Kara wrote:
+> On Tue 04-06-19 07:31:58, Steve Magnani wrote:
+>> In some cases, using the 'truncate' command to extend a UDF file results
+>> in a mismatch between the length of the file's extents (specifically, due
+>> to incorrect length of the final NOT_ALLOCATED extent) and the information
+>> (file) length. The discrepancy can prevent other operating systems
+>> (i.e., Windows 10) from opening the file.
+>>
+>> Two particular errors have been observed when extending a file:
+>>
+>> 1. The final extent is larger than it should be, having been rounded up
+>>     to a multiple of the block size.
+>>
+>> B. The final extent is not shorter than it should be, due to not having
+>>     been updated when the file's information length was increased.
+>>
+>> The first case could represent a design error, if coded intentionally
+>> due to a misinterpretation of scantily-documented ECMA-167 "file tail"
+>> rules. The standard specifies that the tail, if present, consists of
+>> a sequence of "unrecorded and allocated" extents (only).
+>>
+>> Signed-off-by: Steven J. Magnani <steve@digidescorp.com>
+> Thanks for the testcase and the patch! I finally got to reading through
+> this in detail. In udf driver in Linux we are generally fine with the last
+> extent being rounded up to the block size. udf_truncate_tail_extent() is
+> generally responsible for truncating the last extent to appropriate size
+> once we are done with the inode. However there are two problems with this:
+>
+> 1) We used to do this inside udf_clear_inode() back in the old days but
+> then switched to a different scheme in commit 2c948b3f86e5f "udf: Avoid IO
+> in udf_clear_inode". So this actually breaks workloads where user calls
+> truncate(2) directly and there's no place where udf_truncate_tail_extent()
+> gets called.
+>
+> 2) udf_extend_file() sets i_lenExtents == i_size although the last extent
+> isn't properly rounded so even if udf_truncate_tail_extent() gets called
+> (which is actually the case for truncate(1) which does open, ftruncate,
+> close), it will think it has nothing to do and exit.
+>
+> Now 2) is easily fixed by setting i_lenExtents to real length of extents we
+> have created. However that still leaves problem 1) which isn't easy to deal
+> with. After some though I think that your solution of making
+> udf_do_extend_file() always create appropriately sized extents makes
+> sense. However I dislike the calling convention you've chosen. When
+> udf_do_extend_file() needs to now byte length, then why not pass it to it
+> directly, instead of somewhat cumbersome "sector length + byte offset"
+> pair?
+>
+> Will you update the patch please? Thanks!
 
-  soc: ixp4xx: npe: Fix an IS_ERR() vs NULL check in probe (2019-06-18 06:47:59 -0700)
+That sounds reasonable, but at first glance I think it might be more 
+confusing. The API as I reworked it now communicates two different 
+(although related) things - the number of blocks that need to be added, 
+and the number of bytes within the last block that are part of the file. 
+This is able to cover both the corner case of extending within the last 
+file block and extending beyond that:
 
-are available in the git repository at:
+    	partial_final_block = newsize & (sb->s_blocksize - 1);
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/armsoc-fixes
+    	/* File has extent covering the new size (could happen when extending
+    	 * inside a block)? */
+    	if (etype == -1) {
+    		if (partial_final_block)
+    			offset++;
+    	} else {
+    		/* Extending file within the last file block */
+    		offset = 0;  /* Don't add any new blocks */
+    	}
 
-for you to fetch changes up to e73f65930f8880fafaccf2cc1e5c44272e9523ec:
+If it were as simple as passing to udf_do_extend_file() a loff_t 
+specifying the number of bytes to add, including both full blocks and a 
+final partial block, I would agree with you. But this isn't enough 
+information for udf_do_extend_file() to know whether the final partial 
+block requires a new block or not.
 
-  Merge tag 'imx-fixes-5.2-3' of git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux into arm/fixes (2019-06-25 04:20:08 -0700)
+I will think about it some more. Maybe moving the 'extending within the 
+last file block' case out to udf_extend_file() would help.
 
-----------------------------------------------------------------
-ARM: SoC fixes
+Steve
 
-A smaller batch of fixes, nothing that stands out as risky or scary.
-
-Mostly DTS tweaks for a few issues:
- - GPU fixlets for Meson
- - CPU idle fix for LS1028A
- - PWM interrupt fixes for i.MX6UL
-
-Also, enable a driver (FSL_EDMA) on arm64 defconfig, and a warning and
-two MAINTAINER tweaks.
-
-----------------------------------------------------------------
-Arnd Bergmann (1):
-      ARM: omap2: remove incorrect __init annotation
-
-Florian Fainelli (2):
-      MAINTAINERS: BCM2835: Add internal Broadcom mailing list
-      MAINTAINERS: BCM53573: Add internal Broadcom mailing list
-
-Li Yang (1):
-      arm64: defconfig: Enable FSL_EDMA driver
-
-Linus Walleij (2):
-      ARM: dts: Blank D-Link DIR-685 console
-      ARM: dts: gemini Fix up DNS-313 compatible string
-
-Martin Blumenstingl (3):
-      ARM: dts: meson8: fix GPU interrupts and drop an undocumented property
-      ARM: dts: meson8b: drop undocumented property from the Mali GPU node
-      ARM: dts: meson8b: fix the operating voltage of the Mali GPU
-
-Olof Johansson (5):
-      Merge tag 'imx-fixes-5.2-2' of git://git.kernel.org/.../shawnguo/linux into arm/fixes
-      Merge tag 'gemini-dts-v5.2' of git://git.kernel.org/.../linusw/linux-nomadik into arm/fixes
-      Merge tag 'arm-soc/for-5.3/maintainers' of https://github.com/Broadcom/stblinux into arm/fixes
-      Merge tag 'amlogic-fixes' of https://git.kernel.org/.../khilman/linux-amlogic into arm/fixes
-      Merge tag 'imx-fixes-5.2-3' of git://git.kernel.org/.../shawnguo/linux into arm/fixes
-
-Ran Wang (1):
-      arm64: dts: ls1028a: Fix CPU idle fail.
-
-Sébastien Szymanski (1):
-      ARM: dts: imx6ul: fix PWM[1-4] interrupts
-
- MAINTAINERS                                    |  2 ++
- arch/arm/boot/dts/gemini-dlink-dir-685.dts     |  2 +-
- arch/arm/boot/dts/gemini-dlink-dns-313.dts     |  2 +-
- arch/arm/boot/dts/imx6ul.dtsi                  |  8 ++++----
- arch/arm/boot/dts/meson8.dtsi                  |  5 ++---
- arch/arm/boot/dts/meson8b.dtsi                 | 11 +++++------
- arch/arm/mach-omap2/prm3xxx.c                  |  2 +-
- arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi | 18 +++++++++---------
- arch/arm64/configs/defconfig                   |  1 +
- 9 files changed, 26 insertions(+), 25 deletions(-)
