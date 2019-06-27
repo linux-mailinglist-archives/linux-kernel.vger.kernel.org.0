@@ -2,155 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49B6D5836A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 15:27:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E20558372
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 15:29:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726545AbfF0N1r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 09:27:47 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:41396 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726370AbfF0N1q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 09:27:46 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5RDRXvw060752;
-        Thu, 27 Jun 2019 08:27:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1561642053;
-        bh=xq/Qn8cyjc0wU5dUtTeO+f9uJWKfCB/3ok/DX4zAubo=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=bOz1LZTIoZSzGVnXJ3yCUWh1AF44gQjGDX6nm8ZYYVMH3Fz4shwBBmOMbaHaFx2qS
-         IZC3aQAXO9a17k/3I4i5gMw3MXFkezydNtljdXrS6wBfjnjiSidxJeHGA+kGXzxNXD
-         ErgjRNGrHhjRmTJ7of8pOpoR6cpwy1BlEhL9g7wY=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5RDRXA1102542
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 27 Jun 2019 08:27:33 -0500
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 27
- Jun 2019 08:27:33 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Thu, 27 Jun 2019 08:27:33 -0500
-Received: from [172.24.190.89] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5RDRUfv111336;
-        Thu, 27 Jun 2019 08:27:31 -0500
-Subject: Re: [PATCHv6 2/2] mtd: spi-nor: cadence-quadspi: add reset control
-To:     Dinh Nguyen <dinguyen@kernel.org>, <linux-mtd@lists.infradead.org>
-CC:     <marex@denx.de>, Tien-Fong Chee <tien.fong.chee@intel.com>,
-        <bbrezillon@kernel.org>, <tudor.ambarus@microchip.com>,
-        <linux-kernel@vger.kernel.org>, <computersforpeace@gmail.com>,
-        <dwmw2@infradead.org>
-References: <20190613113138.8280-1-dinguyen@kernel.org>
- <20190613113138.8280-2-dinguyen@kernel.org>
-From:   Vignesh Raghavendra <vigneshr@ti.com>
-Message-ID: <ea6000bd-51ec-d9bd-7d48-e5bebcc621dd@ti.com>
-Date:   Thu, 27 Jun 2019 18:58:15 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1726773AbfF0N3F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 09:29:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45274 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726370AbfF0N3F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 09:29:05 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9CF132083B;
+        Thu, 27 Jun 2019 13:29:03 +0000 (UTC)
+Date:   Thu, 27 Jun 2019 09:29:02 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        <linuxppc-dev@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/7] x86/ftrace: Fix use of flags in
+ ftrace_replace_code()
+Message-ID: <20190627092902.253971d2@gandalf.local.home>
+In-Reply-To: <abc56ad177f370ec423edcfc538d35b418c1808e.1561634177.git.naveen.n.rao@linux.vnet.ibm.com>
+References: <cover.1561634177.git.naveen.n.rao@linux.vnet.ibm.com>
+        <abc56ad177f370ec423edcfc538d35b418c1808e.1561634177.git.naveen.n.rao@linux.vnet.ibm.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20190613113138.8280-2-dinguyen@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 27 Jun 2019 16:53:50 +0530
+"Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com> wrote:
+
+> In commit a0572f687fb3c ("ftrace: Allow ftrace_replace_code() to be
+> schedulable), the generic ftrace_replace_code() function was modified to
+> accept a flags argument in place of a single 'enable' flag. However, the
+> x86 version of this function was not updated. Fix the same.
+> 
+> Fixes: a0572f687fb3c ("ftrace: Allow ftrace_replace_code() to be schedulable")
+
+I don't mind this change, but it's not a bug, and I'm not sure it
+should have the fixes tag. The reason being, the
+FTRACE_MODIFY_ENABLE_FL is only set when ftrace is called by with the
+command flag FTRACE_MAY_SLEEP, which is never done on x86.
+
+That said, I'm fine with the change as it makes it more robust, but by
+adding the fixes tag, you're going to get this into all the stable
+code, and I'm not sure that's really necessary.
+
+-- Steve
 
 
-On 13/06/19 5:01 PM, Dinh Nguyen wrote:
-> Get the reset control properties for the QSPI controller and bring them
-> out of reset. Most will have just one reset bit, but there is an additional
-> OCP reset bit that is used ECC. The OCP reset bit will also need to get
-> de-asserted as well. [1]
-> 
-> The reason this patch is needed is in the case where a bootloader leaves
-> the QSPI controller in a reset state, or a state where init cannot occur
-> successfully, the patch will put the QSPI controller into a clean state.
-> 
-> [1] https://www.intel.com/content/www/us/en/programmable/hps/arria-10/hps.html#reg_soc_top/sfo1429890575955.html
-> 
-> Suggested-by: Tien-Fong Chee <tien.fong.chee@intel.com>
-> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+> Signed-off-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
 > ---
-
-
-Reviewed-by: Vignesh Raghavendra <vigneshr@ti.com>
-
-Regards
-Vignesh
-
-> v6: no need to check for reset pointer in assert/deassert as the call to
->     assert/deassert is already doing the checking
-> v5: remove udelay(not needed) on tested hardware
->     group reset assert/deassert together
->     update commit message with reasoning for patch
-> v4: fix compile error
-> v3: return full error by using PTR_ERR(rtsc)
->     move reset control calls until after the clock enables
->     use udelay(2) to be safe
->     Add optional OCP(Open Core Protocol) reset signal
-> v2: use devm_reset_control_get_optional_exclusive
->     print an error message
->     return -EPROBE_DEFER
-> ---
->  drivers/mtd/spi-nor/cadence-quadspi.c | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
+>  arch/x86/kernel/ftrace.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/mtd/spi-nor/cadence-quadspi.c b/drivers/mtd/spi-nor/cadence-quadspi.c
-> index 792628750eec..732323c2adb1 100644
-> --- a/drivers/mtd/spi-nor/cadence-quadspi.c
-> +++ b/drivers/mtd/spi-nor/cadence-quadspi.c
-> @@ -34,6 +34,7 @@
->  #include <linux/of.h>
->  #include <linux/platform_device.h>
->  #include <linux/pm_runtime.h>
-> +#include <linux/reset.h>
->  #include <linux/sched.h>
->  #include <linux/spi/spi.h>
->  #include <linux/timer.h>
-> @@ -1336,6 +1337,8 @@ static int cqspi_probe(struct platform_device *pdev)
->  	struct cqspi_st *cqspi;
->  	struct resource *res;
->  	struct resource *res_ahb;
-> +	struct reset_control *rstc;
-> +	struct reset_control *rstc_ocp;
->  	const struct cqspi_driver_platdata *ddata;
->  	int ret;
->  	int irq;
-> @@ -1402,6 +1405,25 @@ static int cqspi_probe(struct platform_device *pdev)
->  		goto probe_clk_failed;
->  	}
+> diff --git a/arch/x86/kernel/ftrace.c b/arch/x86/kernel/ftrace.c
+> index 0927bb158ffc..f34005a17051 100644
+> --- a/arch/x86/kernel/ftrace.c
+> +++ b/arch/x86/kernel/ftrace.c
+> @@ -573,8 +573,9 @@ static void run_sync(void)
+>  		local_irq_disable();
+>  }
 >  
-> +	/* Obtain QSPI reset control */
-> +	rstc = devm_reset_control_get_optional_exclusive(dev, "qspi");
-> +	if (IS_ERR(rstc)) {
-> +		dev_err(dev, "Cannot get QSPI reset.\n");
-> +		return PTR_ERR(rstc);
-> +	}
-> +
-> +	rstc_ocp = devm_reset_control_get_optional_exclusive(dev, "qspi-ocp");
-> +	if (IS_ERR(rstc_ocp)) {
-> +		dev_err(dev, "Cannot get QSPI OCP reset.\n");
-> +		return PTR_ERR(rstc_ocp);
-> +	}
-> +
-> +	reset_control_assert(rstc);
-> +	reset_control_deassert(rstc);
-> +
-> +	reset_control_assert(rstc_ocp);
-> +	reset_control_deassert(rstc_ocp);
-> +
->  	cqspi->master_ref_clk_hz = clk_get_rate(cqspi->clk);
->  	ddata  = of_device_get_match_data(dev);
->  	if (ddata && (ddata->quirks & CQSPI_NEEDS_WR_DELAY))
-> 
+> -void ftrace_replace_code(int enable)
+> +void ftrace_replace_code(int mod_flags)
+>  {
+> +	int enable = mod_flags & FTRACE_MODIFY_ENABLE_FL;
+>  	struct ftrace_rec_iter *iter;
+>  	struct dyn_ftrace *rec;
+>  	const char *report = "adding breakpoints";
 
--- 
-Regards
-Vignesh
