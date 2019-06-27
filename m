@@ -2,268 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D559957930
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 04:00:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15C5A57929
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 03:57:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726974AbfF0CAo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 22:00:44 -0400
-Received: from mga14.intel.com ([192.55.52.115]:32083 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726863AbfF0CAn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 22:00:43 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jun 2019 19:00:42 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,422,1557212400"; 
-   d="scan'208";a="337421637"
-Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
-  by orsmga005.jf.intel.com with ESMTP; 26 Jun 2019 19:00:39 -0700
-Cc:     baolu.lu@linux.intel.com, Yi Liu <yi.l.liu@intel.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        Raj Ashok <ashok.raj@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Andriy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v4 15/22] iommu/vt-d: Replace Intel specific PASID
- allocator with IOASID
-To:     Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Eric Auger <eric.auger@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-References: <1560087862-57608-1-git-send-email-jacob.jun.pan@linux.intel.com>
- <1560087862-57608-16-git-send-email-jacob.jun.pan@linux.intel.com>
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-Message-ID: <1cffc7c7-b71b-767a-a35f-d6063dc64b2b@linux.intel.com>
-Date:   Thu, 27 Jun 2019 09:53:11 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
+        id S1727080AbfF0B5M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 21:57:12 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:44214 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726727AbfF0B5L (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 21:57:11 -0400
+Received: by mail-ed1-f67.google.com with SMTP id k8so5421199edr.11;
+        Wed, 26 Jun 2019 18:57:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+RYkXAvqY8Ibx3IpyCaGL2CQcHDuy3e5cBUf4u/Tp/M=;
+        b=EKmuAx0YE8zGnIn16nAVwfLy8jupcGyNhEpKgRhlRVTs/JbVjBDzwFMLg8b5Thbjf3
+         JBTkK0v4uy4NmZiGqSK3y5yNqqFCN6gh2y3rN/h+sIDsx6ingt26hFUTEZBH+Uq6oe10
+         R94ppMNzcI1fJPqbM6Lx/UmigIJvy6v7kjnniG1IISPLU53pflf0DCNWx2dgZe841g9k
+         NyELytBCDan+NYVVDzWlMmXkSVpDsfNxRpI9mm0IKihuSlXKtoE+skbdugYIJ8o1yNt6
+         oV9oBOOys6tzr3B0lNmhmRcbKxrxWrqlVvx3ZyWdYiCLHxoV6Nm5glZyyZphJeU39ZOP
+         PDPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+RYkXAvqY8Ibx3IpyCaGL2CQcHDuy3e5cBUf4u/Tp/M=;
+        b=QrXeSlEwBr3vjJZ1Ae+de9HFVaaQqRAgFlDpc2KOHcdwX5MOgEF9hnBdDpHonfytOA
+         7YHVwHoJiHIiIfTed8upPyJaW9aRl6k5Ub3qg/ZEHVwENtMRDm2Ea25/+gM2wYQsdXgs
+         MpKUgdIz+JWfrTjOvNY0HWWD3n71OYn1nDS70ig1kEWW6cMUMYyGehZSuGM9+/VZXqLj
+         SudEEKZn4Y2IM9c3k+4outSss8+5FwahXIKIDLPGi/PmLkuVuyi2U2n+IYg6zhSAj7tg
+         VLB9lMrvQ8HnrwxCNolp52zVXpDNK94hvhpLB45zWq8FvXHvhWnKu+XjIdd1P6uJ9lwM
+         j9OQ==
+X-Gm-Message-State: APjAAAWi4W4Z78bDTRPF+RRCEbOoHpzhyGczlspZw0xsrWBwLhMxA30o
+        Z6QYBuR9GTsrqhYPtnsX6QLOdNIFG0R/ElMH5u4=
+X-Google-Smtp-Source: APXvYqxxvl9NPGvEuUHgHk0kixOVXn9H07WTnpiqX6Y5Ae5tVNuS4k9zysYn1D9KqeMJGvpUUZfpMlEU/0Qtlqwz1qE=
+X-Received: by 2002:a50:b1db:: with SMTP id n27mr1094773edd.62.1561600628882;
+ Wed, 26 Jun 2019 18:57:08 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1560087862-57608-16-git-send-email-jacob.jun.pan@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190624083352.29257-1-rasmus.villemoes@prevas.dk>
+ <CA+FuTSeHhz1kntLyeUfAB4ZbtYjO1=Ornwse-yQbPwo5c-_2=g@mail.gmail.com>
+ <ff8160d4-3357-9b4f-1840-bbe46195da5a@prevas.dk> <CAF=yD-KyWJwdESFmY=CvbkTBT8yey2atKDY-tgd19yAeMf525g@mail.gmail.com>
+ <838ce911-7205-f828-4fc5-79cebc32322a@prevas.dk>
+In-Reply-To: <838ce911-7205-f828-4fc5-79cebc32322a@prevas.dk>
+From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Date:   Wed, 26 Jun 2019 21:56:32 -0400
+Message-ID: <CAF=yD-L5AmCeHiDA8RUr_E41FFzGdnudCVzTAHFi-Q1rHGPazQ@mail.gmail.com>
+Subject: Re: [PATCH net-next] can: dev: call netif_carrier_off() in register_candev()
+To:     Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+Cc:     Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacob,
+On Wed, Jun 26, 2019 at 5:19 PM Rasmus Villemoes
+<rasmus.villemoes@prevas.dk> wrote:
+>
+> On 26/06/2019 16.17, Willem de Bruijn wrote:
+> > On Wed, Jun 26, 2019 at 5:31 AM Rasmus Villemoes
+> > <rasmus.villemoes@prevas.dk> wrote:
+> >>
+> >> On 24/06/2019 19.26, Willem de Bruijn wrote:
+> >>> On Mon, Jun 24, 2019 at 4:34 AM Rasmus Villemoes
+> >>> <rasmus.villemoes@prevas.dk> wrote:
+> >>>>
+> >>>> Make sure the LED always reflects the state of the CAN device.
+> >>>
+> >>> Should this target net?
+> >>
+> >> No, I think this should go through the CAN tree. Perhaps I've
+> >> misunderstood when to use the net-next prefix - is that only for things
+> >> that should be applied directly to the net-next tree? If so, sorry.
+> >
+> > I don't see consistent behavior on the list, so this is probably fine.
+> > It would probably help to target can (for fixes) or can-next (for new
+> > features).
+> >
+> > Let me reframe the question: should this target can, instead of can-next?
+>
+> Ah, now I see what you meant, but at least I learned when to use
+> net/net-next.
+>
+> I think can-next is fine, especially this late in the rc cycle. But I'll
+> leave it to the CAN maintainer(s).
+>
+> >>> Regardless of CONFIG_CAN_LEDS deprecation,
+> >>> this is already not initialized properly if that CONFIG is disabled
+> >>> and a can_led_event call at device probe is a noop.
+> >>
+> >> I'm not sure I understand this part. The CONFIG_CAN_LEDS support for
+> >> showing the state of the interface is implemented via hooking into the
+> >> ndo_open/ndo_stop callbacks, and does not look at or touch the
+> >> __LINK_STATE_NOCARRIER bit at all.
+> >>
+> >> Other than via the netdev LED trigger I don't think one can even observe
+> >> the slightly odd initial state of the __LINK_STATE_NOCARRIER bit for CAN
+> >> devices,
+> >
+> > it's still incorrect, though I guess that's moot in practice.
+> Exactly.
+>
+> >> which is why I framed this as a fix purely to allow the netdev
+> >> trigger to be a closer drop-in replacement for CONFIG_CAN_LEDS.
+> >
+> > So the entire CONFIG_CAN_LEDS code is to be removed? What exactly is
+> > this netdev trigger replacement, if not can_led_event? Sorry, I
+> > probably miss some context.
+>
+> drivers/net/can/Kconfig contains these comments
+>
+>         # The netdev trigger (LEDS_TRIGGER_NETDEV) should be able to do
+>         # everything that this driver is doing. This is marked as broken
+>         # because it uses stuff that is intended to be changed or removed.
+>         # Please consider switching to the netdev trigger and confirm it
+>         # fulfills your needs instead of fixing this driver.
+>
+> introduced by the commit 30f3b42147ba6 which also marked CONFIG_CAN_LEDS
+> as (depends on) BROKEN. So while a .dts for using the CAN led trigger
+> might be
+>
+>                 cana {
+>                         label = "cana:green:activity";
+>                         gpios = <&gpio0 10 0>;
+>                         default-state = "off";
+>                         linux,default-trigger = "can0-rxtx";
+>                 };
+>
+> one can achieve mostly the same thing with CAN_LEDS=n,
+> LEDS_TRIGGER_NETDEV=y setting linux,default-trigger = "netdev" plus a
+> small init script (or udev rule or whatever works) that does
+>
+> d=/sys/class/leds/cana:green:activity
+> echo can0 > $d/device_name
+> echo 1 > $d/link
+> echo 1 > $d/rx
+> echo 1 > $d/tx
+>
+> to tie the cana LED to the can0 device, plus configure it to show "link"
+> state as well as blink on rx and tx.
+>
+> This works just fine, except for the initial state of the LED. AFAIU,
+> the netdev trigger doesn't need cooperation from each device driver
+> since it simply works of a timer that periodically checks for changes in
+> dev_get_stats().
 
-On 6/9/19 9:44 PM, Jacob Pan wrote:
-> Make use of generic IOASID code to manage PASID allocation,
-> free, and lookup. Replace Intel specific code.
-> 
-> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> ---
->   drivers/iommu/intel-iommu.c | 11 +++++------
->   drivers/iommu/intel-pasid.c | 36 ------------------------------------
->   drivers/iommu/intel-svm.c   | 37 +++++++++++++++++++++----------------
->   3 files changed, 26 insertions(+), 58 deletions(-)
-> 
-> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-> index 5b84994..39b63fe 100644
-> --- a/drivers/iommu/intel-iommu.c
-> +++ b/drivers/iommu/intel-iommu.c
-> @@ -5167,7 +5167,7 @@ static void auxiliary_unlink_device(struct dmar_domain *domain,
->   	domain->auxd_refcnt--;
->   
->   	if (!domain->auxd_refcnt && domain->default_pasid > 0)
-> -		intel_pasid_free_id(domain->default_pasid);
-> +		ioasid_free(domain->default_pasid);
->   }
->   
->   static int aux_domain_add_dev(struct dmar_domain *domain,
-> @@ -5185,10 +5185,9 @@ static int aux_domain_add_dev(struct dmar_domain *domain,
->   	if (domain->default_pasid <= 0) {
->   		int pasid;
->   
-> -		pasid = intel_pasid_alloc_id(domain, PASID_MIN,
-> -					     pci_max_pasids(to_pci_dev(dev)),
-> -					     GFP_KERNEL);
-> -		if (pasid <= 0) {
-> +		pasid = ioasid_alloc(NULL, PASID_MIN, pci_max_pasids(to_pci_dev(dev)) - 1,
-> +				domain);
-> +		if (pasid == INVALID_IOASID) {
->   			pr_err("Can't allocate default pasid\n");
->   			return -ENODEV;
->   		}
-> @@ -5224,7 +5223,7 @@ static int aux_domain_add_dev(struct dmar_domain *domain,
->   	spin_unlock(&iommu->lock);
->   	spin_unlock_irqrestore(&device_domain_lock, flags);
->   	if (!domain->auxd_refcnt && domain->default_pasid > 0)
-> -		intel_pasid_free_id(domain->default_pasid);
-> +		ioasid_free(domain->default_pasid);
->   
->   	return ret;
->   }
-> diff --git a/drivers/iommu/intel-pasid.c b/drivers/iommu/intel-pasid.c
-> index 69fddd3..1e25539 100644
-> --- a/drivers/iommu/intel-pasid.c
-> +++ b/drivers/iommu/intel-pasid.c
-> @@ -26,42 +26,6 @@
->    */
->   static DEFINE_SPINLOCK(pasid_lock);
->   u32 intel_pasid_max_id = PASID_MAX;
-> -static DEFINE_IDR(pasid_idr);
-> -
-> -int intel_pasid_alloc_id(void *ptr, int start, int end, gfp_t gfp)
-> -{
-> -	int ret, min, max;
-> -
-> -	min = max_t(int, start, PASID_MIN);
-> -	max = min_t(int, end, intel_pasid_max_id);
-> -
-> -	WARN_ON(in_interrupt());
-> -	idr_preload(gfp);
-> -	spin_lock(&pasid_lock);
-> -	ret = idr_alloc(&pasid_idr, ptr, min, max, GFP_ATOMIC);
-> -	spin_unlock(&pasid_lock);
-> -	idr_preload_end();
-> -
-> -	return ret;
-> -}
-> -
-> -void intel_pasid_free_id(int pasid)
-> -{
-> -	spin_lock(&pasid_lock);
-> -	idr_remove(&pasid_idr, pasid);
-> -	spin_unlock(&pasid_lock);
-> -}
-> -
-> -void *intel_pasid_lookup_id(int pasid)
-> -{
-> -	void *p;
-> -
-> -	spin_lock(&pasid_lock);
-> -	p = idr_find(&pasid_idr, pasid);
-> -	spin_unlock(&pasid_lock);
-> -
-> -	return p;
-> -}
->   
->   int vcmd_alloc_pasid(struct intel_iommu *iommu, unsigned int *pasid)
->   {
-> diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
-> index 8f87304..9cbcc1f 100644
-> --- a/drivers/iommu/intel-svm.c
-> +++ b/drivers/iommu/intel-svm.c
-> @@ -25,6 +25,7 @@
->   #include <linux/dmar.h>
->   #include <linux/interrupt.h>
->   #include <linux/mm_types.h>
-> +#include <linux/ioasid.h>
->   #include <asm/page.h>
->   
->   #include "intel-pasid.h"
-> @@ -332,16 +333,15 @@ int intel_svm_bind_mm(struct device *dev, int *pasid, int flags, struct svm_dev_
->   		if (pasid_max > intel_pasid_max_id)
->   			pasid_max = intel_pasid_max_id;
->   
-> -		/* Do not use PASID 0 in caching mode (virtualised IOMMU) */
-> -		ret = intel_pasid_alloc_id(svm,
-> -					   !!cap_caching_mode(iommu->cap),
-> -					   pasid_max - 1, GFP_KERNEL);
-> -		if (ret < 0) {
-> +		/* Do not use PASID 0, reserved for RID to PASID */
-> +		svm->pasid = ioasid_alloc(NULL, PASID_MIN,
-> +					pasid_max - 1, svm);
-> +		if (svm->pasid == INVALID_IOASID) {
->   			kfree(svm);
->   			kfree(sdev);
-> +			ret = ENOSPC;
->   			goto out;
->   		}
-> -		svm->pasid = ret;
->   		svm->notifier.ops = &intel_mmuops;
->   		svm->mm = mm;
->   		svm->flags = flags;
-> @@ -351,7 +351,7 @@ int intel_svm_bind_mm(struct device *dev, int *pasid, int flags, struct svm_dev_
->   		if (mm) {
->   			ret = mmu_notifier_register(&svm->notifier, mm);
->   			if (ret) {
-> -				intel_pasid_free_id(svm->pasid);
-> +				ioasid_free(svm->pasid);
->   				kfree(svm);
->   				kfree(sdev);
->   				goto out;
-> @@ -367,7 +367,7 @@ int intel_svm_bind_mm(struct device *dev, int *pasid, int flags, struct svm_dev_
->   		if (ret) {
->   			if (mm)
->   				mmu_notifier_unregister(&svm->notifier, mm);
-> -			intel_pasid_free_id(svm->pasid);
-> +			ioasid_free(svm->pasid);
->   			kfree(svm);
->   			kfree(sdev);
->   			goto out;
-> @@ -400,7 +400,12 @@ int intel_svm_unbind_mm(struct device *dev, int pasid)
->   	if (!iommu)
->   		goto out;
->   
-> -	svm = intel_pasid_lookup_id(pasid);
-> +	svm = ioasid_find(NULL, pasid, NULL);
-> +	if (IS_ERR(svm)) {
-> +		ret = PTR_ERR(svm);
-> +		goto out;
-> +	}
-> +
->   	if (!svm)
->   		goto out;
->   
+Thanks, I had to read up on that code. Makes sense.
 
-How about using IS_ERR_OR_NULL() here?
-
-> @@ -422,7 +427,7 @@ int intel_svm_unbind_mm(struct device *dev, int pasid)
->   				kfree_rcu(sdev, rcu);
->   
->   				if (list_empty(&svm->devs)) {
-> -					intel_pasid_free_id(svm->pasid);
-> +					ioasid_free(svm->pasid);
->   					if (svm->mm)
->   						mmu_notifier_unregister(&svm->notifier, svm->mm);
->   
-> @@ -457,10 +462,11 @@ int intel_svm_is_pasid_valid(struct device *dev, int pasid)
->   	if (!iommu)
->   		goto out;
->   
-> -	svm = intel_pasid_lookup_id(pasid);
-> -	if (!svm)
-> +	svm = ioasid_find(NULL, pasid, NULL);
-> +	if (IS_ERR(svm)) {
-
-Same here.
-
-> +		ret = PTR_ERR(svm);
->   		goto out;
-> -
-> +	}
->   	/* init_mm is used in this case */
->   	if (!svm->mm)
->   		ret = 1;
-> @@ -567,13 +573,12 @@ static irqreturn_t prq_event_thread(int irq, void *d)
->   
->   		if (!svm || svm->pasid != req->pasid) {
->   			rcu_read_lock();
-> -			svm = intel_pasid_lookup_id(req->pasid);
-> +			svm = ioasid_find(NULL, req->pasid, NULL);
->   			/* It *can't* go away, because the driver is not permitted
->   			 * to unbind the mm while any page faults are outstanding.
->   			 * So we only need RCU to protect the internal idr code. */
->   			rcu_read_unlock();
-> -
-> -			if (!svm) {
-> +			if (IS_ERR(svm) || !svm) {
-
-Ditto.
-
->   				pr_err("%s: Page request for invalid PASID %d: %08llx %08llx\n",
->   				       iommu->name, req->pasid, ((unsigned long long *)req)[0],
->   				       ((unsigned long long *)req)[1]);
-> 
-
-Best regards,
-Baolu
+Acked-by: Willem de Bruijn <willemb@google.com>
