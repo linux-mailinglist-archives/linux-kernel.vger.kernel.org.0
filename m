@@ -2,99 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 610A457D80
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 09:53:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82A3A57D71
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 09:47:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726441AbfF0HxV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 03:53:21 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:41522 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725787AbfF0HxU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 03:53:20 -0400
-Received: by mail-wr1-f66.google.com with SMTP id c2so1326099wrm.8;
-        Thu, 27 Jun 2019 00:53:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VLH1G/xrhuaSchHrCbt7xaDv1QIvzTYbR4ToRYC3nAM=;
-        b=DQ8xRApRETpcFLzwK5rKCkAIi+vGxhFXPqVccou4Utrk8ApA7v96BExWn4/4acmFTQ
-         7JuIWLycnRdxpKBEw4E7Ed5LJdsEg0k/iarcMDU97r1D1iDJyS6b68ZDqElHLTODU4CP
-         e5jy5tQh782Rg1vjJrL2cQws5X+PBSmLoRsstne1qNeLEnFMHPTDijWauAAYENgROGOF
-         hpagsUuFd35IOtOX2v5hyqv5zpspQHvLbuZ6qphGuAuKMQfaRoi66x6rRKjwCVgM5prd
-         IvWfkLry+1GEnQL4Hx47zZVAeLGm3VCCdcYi1Vu3CqMQYJCYoYfzoJtS2neYH/yWK/Fw
-         jkQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VLH1G/xrhuaSchHrCbt7xaDv1QIvzTYbR4ToRYC3nAM=;
-        b=pCkPLDUVNKq7kKBJlmjVXFDyy2lhEs3gwSz4O+2iFnOi/SvIOK6oXUcCRies2qA/Hf
-         tclO7FvS5Fud5htsN0apGrH8xpjFgk2l6upZB8GqZ3Vz2TOILJ6XB9Kb+fxP0PN46/ZH
-         dbBat34buQQR9OF6TVjPjUrURfnhByEIZgiF2r3EmOithcVbhzqc9chwUiErAVRSZxZL
-         Q7Tcqa88Y0ovAyTDOYEzaYsHFE918hPIEbT54JYNw21y0ThFhRcI6SzG/PR24/etDb6+
-         MofDnLW6WJ1kfQUvuqMzHEHFflI2pS6HGxR/MbUXoqk/4dvQ+CEnPPEeAu7+BQADsEA2
-         BiiA==
-X-Gm-Message-State: APjAAAUzL1pEoYlLFF1QwIyqTgxgD2iJWQGvZp32K7w29v7WJDLHi8T9
-        02dn0vs3Fu0ifb431PPcoQCIDVsRFP8VIQIHOzA=
-X-Google-Smtp-Source: APXvYqyOMmxDqyz32IcJEYNiHUT1bm+99KTVYSEbMt7gw2e5jIgFT+aQ4ioTQhLLt++vcs1+vGuDkNmZklIp8DN0OCo=
-X-Received: by 2002:a5d:6389:: with SMTP id p9mr2039270wru.297.1561621998678;
- Thu, 27 Jun 2019 00:53:18 -0700 (PDT)
+        id S1726500AbfF0HrK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 03:47:10 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:39364 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726059AbfF0HrK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 03:47:10 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 1D3A0223FB14CDAE4233;
+        Thu, 27 Jun 2019 15:47:07 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
+ 14.3.439.0; Thu, 27 Jun 2019 15:46:58 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <alexander.deucher@amd.com>, <christian.koenig@amd.com>,
+        <David1.Zhou@amd.com>, <airlied@linux.ie>, <daniel@ffwll.ch>,
+        <harry.wentland@amd.com>, <tianci.yin@amd.com>,
+        <tao.zhou1@amd.com>, <leo.liu@amd.com>, <ray.huang@amd.com>,
+        <Jack.Xiao@amd.com>, <Hawking.Zhang@amd.com>,
+        <kenneth.feng@amd.com>
+CC:     YueHaibing <yuehaibing@huawei.com>,
+        <amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] drm/amdgpu: remove set but not used variable 'psp_enabled'
+Date:   Thu, 27 Jun 2019 07:53:50 +0000
+Message-ID: <20190627075350.86800-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20190522011504.19342-1-zhang.chunyan@linaro.org>
- <20190522011504.19342-2-zhang.chunyan@linaro.org> <20190626181637.CFA6321726@mail.kernel.org>
-In-Reply-To: <20190626181637.CFA6321726@mail.kernel.org>
-From:   Chunyan Zhang <zhang.lyra@gmail.com>
-Date:   Thu, 27 Jun 2019 15:52:42 +0800
-Message-ID: <CAAfSe-v6F-8F5YtunuHVmZVrGh5vAAFbkYLP1kThqoJd04BmBw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] clk: sprd: Switch from of_iomap() to devm_ioremap_resource()
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Chunyan Zhang <zhang.chunyan@linaro.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 27 Jun 2019 at 02:16, Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Chunyan Zhang (2019-05-21 18:15:01)
-> > devm_ioremap_resources() automatically requests resources and devm_ wrappers
-> > do better error handling and unmapping of the I/O region when needed,
-> > that would make drivers more clean and simple.
-> >
-> > Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
->
-> Applied to clk-next
->
-> > diff --git a/drivers/clk/sprd/common.c b/drivers/clk/sprd/common.c
-> > index e038b0447206..9ce690999eaa 100644
-> > --- a/drivers/clk/sprd/common.c
-> > +++ b/drivers/clk/sprd/common.c
-> > @@ -50,7 +51,11 @@ int sprd_clk_regmap_init(struct platform_device *pdev,
-> >                         return PTR_ERR(regmap);
-> >                 }
-> >         } else {
-> > -               base = of_iomap(node, 0);
-> > +               res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> > +               base = devm_ioremap_resource(&pdev->dev, res);
-> > +               if (IS_ERR(base))
->
-> There's also devm_platform_ioremap_resource() if you want to save even
-> more lines!
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Yes indeed, thanks for the information.
-Considering this patch was queued to your tree, I decide to use this
-more integrated function later :)
+drivers/gpu/drm/amd/amdgpu/nv.c: In function 'nv_common_early_init':
+drivers/gpu/drm/amd/amdgpu/nv.c:471:7: warning:
+ variable 'psp_enabled' set but not used [-Wunused-but-set-variable]
 
-Cheers,
-Chunyan
+It's not used since inroduction in
+commit c6b6a42175f5 ("drm/amdgpu: add navi10 common ip block (v3)")
 
->
-> > +                       return PTR_ERR(base);
-> > +
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/gpu/drm/amd/amdgpu/nv.c | 5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/amdgpu/nv.c b/drivers/gpu/drm/amd/amdgpu/nv.c
+index af20ffb55c54..8b9fa3db8daa 100644
+--- a/drivers/gpu/drm/amd/amdgpu/nv.c
++++ b/drivers/gpu/drm/amd/amdgpu/nv.c
+@@ -468,7 +468,6 @@ static const struct amdgpu_asic_funcs nv_asic_funcs =
+ 
+ static int nv_common_early_init(void *handle)
+ {
+-	bool psp_enabled = false;
+ 	struct amdgpu_device *adev = (struct amdgpu_device *)handle;
+ 
+ 	adev->smc_rreg = NULL;
+@@ -485,10 +484,6 @@ static int nv_common_early_init(void *handle)
+ 
+ 	adev->asic_funcs = &nv_asic_funcs;
+ 
+-	if (amdgpu_device_ip_get_ip_block(adev, AMD_IP_BLOCK_TYPE_PSP) &&
+-	    (amdgpu_ip_block_mask & (1 << AMD_IP_BLOCK_TYPE_PSP)))
+-		psp_enabled = true;
+-
+ 	adev->rev_id = nv_get_rev_id(adev);
+ 	adev->external_rev_id = 0xff;
+ 	switch (adev->asic_type) {
+
+
+
