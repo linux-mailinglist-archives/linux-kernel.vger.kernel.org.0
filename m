@@ -2,204 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7850586F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 18:25:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA148586D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 18:18:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726571AbfF0QZ0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 12:25:26 -0400
-Received: from smtp-out.ssi.gouv.fr ([86.65.182.90]:63556 "EHLO
-        smtp-out.ssi.gouv.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726315AbfF0QZ0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 12:25:26 -0400
-X-Greylist: delayed 435 seconds by postgrey-1.27 at vger.kernel.org; Thu, 27 Jun 2019 12:25:25 EDT
-Received: from smtp-out.ssi.gouv.fr (localhost [127.0.0.1])
-        by smtp-out.ssi.gouv.fr (Postfix) with ESMTP id 12E14D00073;
-        Thu, 27 Jun 2019 18:18:16 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ssi.gouv.fr;
-        s=20160407; t=1561652296;
-        bh=e/9/soaXxtPOLGylT6FEbrJeqf5CH04oQATLaTVtYYU=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To:From:Subject;
-        b=W6wClXcUUlkKnnGLJvw4aTCMWkm09TDrSTk9aM9xnwww4FBi0ejQRAcafStv5/PaJ
-         TqrbxB0HJK5AlaMj+32Fv5C+eIXElxPDgSsWmy8WNE0FLMTpJKJCXCDNGJH1h32ujf
-         j3MYKbBu4YcvZG46mgjJZp8EBFnFZqhYxuyHP8lyHu4ZI8r+dYtyn+iL/vL6YOtxyy
-         QU6Mq5Q0bVZHHLEXz3klncr6GlMrRPDL9Tn4C2pQLuLAfn5TywxxeMwPSIi/Fs+lCq
-         gy/tTNJzdYhegMvZKVrDR2iD1hhhEK7jXeI+DDvom0fHd4UcejWmedP6Ns5bAcnTlx
-         feTNxO0qXLdaw==
-Subject: Re: [PATCH bpf-next v9 05/10] bpf,landlock: Add a new map type: inode
-To:     Al Viro <viro@zeniv.linux.org.uk>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-CC:     <linux-kernel@vger.kernel.org>, Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        David Drysdale <drysdale@google.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
-        John Johansen <john.johansen@canonical.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>, Tejun Heo <tj@kernel.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Thomas Graf <tgraf@suug.ch>, Tycho Andersen <tycho@tycho.ws>,
-        Will Drewry <wad@chromium.org>,
-        <kernel-hardening@lists.openwall.com>, <linux-api@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>
-References: <20190625215239.11136-1-mic@digikod.net>
- <20190625215239.11136-6-mic@digikod.net>
- <20190625225201.GJ17978@ZenIV.linux.org.uk>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>
-Message-ID: <79bac827-4092-8a4d-9dc6-6019419b2486@ssi.gouv.fr>
-Date:   Thu, 27 Jun 2019 18:18:12 +0200
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101
- Thunderbird/52.9.0
-MIME-Version: 1.0
-In-Reply-To: <20190625225201.GJ17978@ZenIV.linux.org.uk>
-Content-Type: text/plain; charset="utf-8"
+        id S1726545AbfF0QS0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 12:18:26 -0400
+Received: from mail-eopbgr30050.outbound.protection.outlook.com ([40.107.3.50]:65462
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726464AbfF0QSZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 12:18:25 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=testarcselector01; d=microsoft.com; cv=none;
+ b=LBJCwUQhZNZ7JO6Lm19Nly1Wj8bCpXKqTCKdgBXsd6H55hzx7W1wAb6hUJJrD5FqcHqpTPQWmGOjeeJB8iX/pkbU1eeUm2bF+4gSiCpHD3NQDYjzq9HHS7zfgVocvCuAlQZQxkhvFkyt3jKqK1xJXCcqBX6vSIItewtdUWpzMPc=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=testarcselector01;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UQKJZidBThddtQhWQZohKcjkCp3iYRBt7c0S6siQ09M=;
+ b=UtnblwRey3svlmUCbu+2ebcVAuSz5M+zsn+H8ORaEAtxvjgk96dUT6WBtbwkfbuiBC3bcUK96/X+QfQh7GO/4zgdibmsu0eYLFCKZzvsQlth1qResb22s9dFROK5zbAkTX5ZOcpgmeXJbziLc3phdsi3SLaNm0i00WScr2FO9xE=
+ARC-Authentication-Results: i=1; test.office365.com
+ 1;spf=none;dmarc=none;dkim=none;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UQKJZidBThddtQhWQZohKcjkCp3iYRBt7c0S6siQ09M=;
+ b=J2dMlcNPZlD5N3vpQW1JjZMZcMPSA86ZsmMs/EA5ArN364tGhM/lbJBxFeL8QjH9sUmtmFktOVRL7mywOKEaFOcd259xase/Xs5EwItur4p4WBEUMAcCj0JbdS9MN5foY/pEt0x+MnDGkFVMwyd7bcVx8mwkr8hnhSOMGkaySa4=
+Received: from VI1PR05MB4141.eurprd05.prod.outlook.com (10.171.182.144) by
+ VI1PR05MB5886.eurprd05.prod.outlook.com (20.178.125.203) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2008.16; Thu, 27 Jun 2019 16:18:22 +0000
+Received: from VI1PR05MB4141.eurprd05.prod.outlook.com
+ ([fe80::f5d8:df9:731:682e]) by VI1PR05MB4141.eurprd05.prod.outlook.com
+ ([fe80::f5d8:df9:731:682e%5]) with mapi id 15.20.2008.014; Thu, 27 Jun 2019
+ 16:18:22 +0000
+From:   Jason Gunthorpe <jgg@mellanox.com>
+To:     Christoph Hellwig <hch@lst.de>
+CC:     Dan Williams <dan.j.williams@intel.com>,
+        =?iso-8859-1?Q?J=E9r=F4me_Glisse?= <jglisse@redhat.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Michal Hocko <mhocko@suse.com>
+Subject: Re: [PATCH 03/25] mm: remove hmm_devmem_add_resource
+Thread-Topic: [PATCH 03/25] mm: remove hmm_devmem_add_resource
+Thread-Index: AQHVLBqRvJE5RWoAFEuwP/I4qHQ7paavr6GA
+Date:   Thu, 27 Jun 2019 16:18:22 +0000
+Message-ID: <20190627161813.GB9499@mellanox.com>
+References: <20190626122724.13313-1-hch@lst.de>
+ <20190626122724.13313-4-hch@lst.de>
+In-Reply-To: <20190626122724.13313-4-hch@lst.de>
+Accept-Language: en-US
 Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: BYAPR02CA0011.namprd02.prod.outlook.com
+ (2603:10b6:a02:ee::24) To VI1PR05MB4141.eurprd05.prod.outlook.com
+ (2603:10a6:803:4d::16)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=jgg@mellanox.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [12.199.206.50]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 9c526e6d-f839-4214-2861-08d6fb1b12e9
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR05MB5886;
+x-ms-traffictypediagnostic: VI1PR05MB5886:
+x-microsoft-antispam-prvs: <VI1PR05MB5886C35E617535FD2443239DCFFD0@VI1PR05MB5886.eurprd05.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6430;
+x-forefront-prvs: 008184426E
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(366004)(346002)(396003)(376002)(39860400002)(199004)(189003)(6436002)(66556008)(81166006)(99286004)(2616005)(3846002)(8936002)(6512007)(33656002)(6246003)(68736007)(4326008)(102836004)(53936002)(4744005)(8676002)(6486002)(73956011)(86362001)(81156014)(66946007)(478600001)(5660300002)(36756003)(54906003)(1076003)(186003)(66446008)(25786009)(66066001)(316002)(229853002)(71190400001)(76176011)(6116002)(26005)(66476007)(476003)(2906002)(7736002)(446003)(386003)(52116002)(14454004)(6916009)(256004)(305945005)(486006)(64756008)(11346002)(6506007)(7416002)(71200400001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR05MB5886;H:VI1PR05MB4141.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: MPZH6fxej22oS7mLYEZmxFyn20waja4eRFeHmir8gtV1hjF9WJIgHwtjY4C36d2npItR/CWyxfgPjCQ+e19S8i/WruQpqNIHjrH8CZ+IYxP/SAf5mBH7mWcVbuKjO5vst38yOem1FSeiQc+UM2HMfjmCGzZa1IsRZcLs0/bJZFvSDMd7v8/irZB5vT9QtJv1uBJ3h7xdhz/QMy1Uw26YL0jRvCcMQ/atQgGDIJsmelkfWdS/PbSyMm+AYLLH079WJ+KZtdpsYfSGGYocok7klunoms3nZiojM8Wl2c8TBBunzsbCb3Y4kJbM5C/sD1C0N8RqfQHigF8REGgBv/QvoepFXUnYnPM6uoUomO356Lzf/kFxS5R31l4fpw9RbxA78tBT/LQENWHD6dP3CjqH5nHlGfE0H/4aTEuIRyx7Vjo=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-ID: <0E26856B4495E64E8EFED3F814341B4B@eurprd05.prod.outlook.com>
 Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9c526e6d-f839-4214-2861-08d6fb1b12e9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Jun 2019 16:18:22.2670
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: jgg@mellanox.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR05MB5886
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Jun 26, 2019 at 02:27:02PM +0200, Christoph Hellwig wrote:
+> This function has never been used since it was first added to the kernel
+> more than a year and a half ago, and if we ever grow a consumer of the
+> MEMORY_DEVICE_PUBLIC infrastructure it can easily use devm_memremap_pages
+> directly.
+>=20
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
+> Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+> Acked-by: Michal Hocko <mhocko@suse.com>
+> ---
+>  include/linux/hmm.h |  3 ---
+>  mm/hmm.c            | 50 ---------------------------------------------
+>  2 files changed, 53 deletions(-)
 
-On 26/06/2019 00:52, Al Viro wrote:
-> On Tue, Jun 25, 2019 at 11:52:34PM +0200, Micka=C3=ABl Sala=C3=BCn wrote:
->> +/* must call iput(inode) after this call */
->> +static struct inode *inode_from_fd(int ufd, bool check_access)
->> +{
->> +    struct inode *ret;
->> +    struct fd f;
->> +    int deny;
->> +
->> +    f =3D fdget(ufd);
->> +    if (unlikely(!f.file || !file_inode(f.file))) {
->> +            ret =3D ERR_PTR(-EBADF);
->> +            goto put_fd;
->> +    }
->
-> Just when does one get a NULL file_inode()?  The reason I'm asking is
-> that arseloads of code would break if one managed to create such
-> a beast...
+This should be squashed to the new earlier patch?
 
-I didn't find any API documentation about this guarantee, so I followed
-a defensive programming approach. I'll remove the file_inode() check.
-
->
-> Incidentally, that should be return ERR_PTR(-EBADF); fdput() is wrong the=
-re.
-
-Right, I'll fix that.
-
->
->> +    }
->> +    /* check if the FD is tied to a mount point */
->> +    /* TODO: add this check when called from an eBPF program too */
->> +    if (unlikely(!f.file->f_path.mnt
->
-> Again, the same question - when the hell can that happen?
-
-Defensive programming again, I'll remove it.
-
-> If you are
-> sitting on an exploitable roothole, do share it...
->
->  || f.file->f_path.mnt->mnt_flags &
->> +                            MNT_INTERNAL)) {
->> +            ret =3D ERR_PTR(-EINVAL);
->> +            goto put_fd;
->
-> What does it have to do with mountpoints, anyway?
-
-I want to only manage inodes tied to a userspace-visible file system
-(this check may not be enough though). It doesn't make sense to be able
-to add inodes which are not mounted, to this kind of map.
-
->
->> +/* called from syscall */
->> +static int sys_inode_map_delete_elem(struct bpf_map *map, struct inode =
-*key)
->> +{
->> +    struct inode_array *array =3D container_of(map, struct inode_array,=
- map);
->> +    struct inode *inode;
->> +    int i;
->> +
->> +    WARN_ON_ONCE(!rcu_read_lock_held());
->> +    for (i =3D 0; i < array->map.max_entries; i++) {
->> +            if (array->elems[i].inode =3D=3D key) {
->> +                    inode =3D xchg(&array->elems[i].inode, NULL);
->> +                    array->nb_entries--;
->
-> Umm...  Is that intended to be atomic in any sense?
-
-nb_entries is not used as a bound check but to avoid walking uselessly
-through the (pre-allocated) array when adding a new element, but I'll
-use an atomic to avoid inconsistencies anyway.
-
->
->> +                    iput(inode);
->> +                    return 0;
->> +            }
->> +    }
->> +    return -ENOENT;
->> +}
->> +
->> +/* called from syscall */
->> +int bpf_inode_map_delete_elem(struct bpf_map *map, int *key)
->> +{
->> +    struct inode *inode;
->> +    int err;
->> +
->> +    inode =3D inode_from_fd(*key, false);
->> +    if (IS_ERR(inode))
->> +            return PTR_ERR(inode);
->> +    err =3D sys_inode_map_delete_elem(map, inode);
->> +    iput(inode);
->> +    return err;
->> +}
->
-> Wait a sec...  So we have those beasties that can have long-term
-> references to arbitrary inodes stuck in them?  What will happen
-> if you get umount(2) called while such a thing exists?
-
-I though an umount would be denied but no, we get a self-destructed busy
-inode and a bug!
-What about wrapping the inode's superblock->s_op->destroy_inode() to
-first remove the element from the map and then call the real
-destroy_inode(), if any?
-Or I could update fs/inode.c:destroy_inode() to call inode->free_inode()
-if it is set, and set it when such inode is referenced by a map?
-Or maybe I could hold the referencing file in the map and then wrap its
-f_op?
-
-
---
-Micka=C3=ABl Sala=C3=BCn
-ANSSI/SDE/ST/LAM
-
-Les donn=C3=A9es =C3=A0 caract=C3=A8re personnel recueillies et trait=C3=A9=
-es dans le cadre de cet =C3=A9change, le sont =C3=A0 seule fin d=E2=80=99ex=
-=C3=A9cution d=E2=80=99une relation professionnelle et s=E2=80=99op=C3=A8re=
-nt dans cette seule finalit=C3=A9 et pour la dur=C3=A9e n=C3=A9cessaire =C3=
-=A0 cette relation. Si vous souhaitez faire usage de vos droits de consulta=
-tion, de rectification et de suppression de vos donn=C3=A9es, veuillez cont=
-acter contact.rgpd@sgdsn.gouv.fr. Si vous avez re=C3=A7u ce message par err=
-eur, nous vous remercions d=E2=80=99en informer l=E2=80=99exp=C3=A9diteur e=
-t de d=C3=A9truire le message. The personal data collected and processed du=
-ring this exchange aims solely at completing a business relationship and is=
- limited to the necessary duration of that relationship. If you wish to use=
- your rights of consultation, rectification and deletion of your data, plea=
-se contact: contact.rgpd@sgdsn.gouv.fr. If you have received this message i=
-n error, we thank you for informing the sender and destroying the message.
+Jason
