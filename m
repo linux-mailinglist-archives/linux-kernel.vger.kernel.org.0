@@ -2,130 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2888757A19
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 05:37:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2207C57A18
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 05:37:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727022AbfF0Dhs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 23:37:48 -0400
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:30194 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726462AbfF0Dhr (ORCPT
+        id S1726884AbfF0Dhp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 23:37:45 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:38718 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726462AbfF0Dhp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 23:37:47 -0400
-Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45]) (authenticated)
-        by conssluserg-04.nifty.com with ESMTP id x5R3ba8H028567;
-        Thu, 27 Jun 2019 12:37:37 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com x5R3ba8H028567
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1561606657;
-        bh=cHU/2P+9AoyIrIzIGKHe8ERCeZ+lRTgiCzEUTACqf6Y=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=jVMFTq54d6d2hfPxEsCFhJq0pGa1yE9ekpJ5aU6xIPvBurX0hYTIM2VOwo1MvyWDZ
-         4czCSoGV/B16FwvkDfQzn7mbCcLh/bfwv6hzQTRur9ujBbn56q0ndbrV2FGAhpHByK
-         yTHGNTpdny4Kj2io3mJIFaJxTjoanGRe/aHWYmUEGIg11nbMqYcsmrEcOBRr9KzcrJ
-         lGgr0mwR/HWoNMIxi9fdnHybUFtsKw7SZHbT6vukxWn7UbnTPBsujOBI4CUjTSgt+a
-         24MP32KJBfj2gtizZrXUGeI/Ie8YU0tunbHpdR6pOV8dfOuSB1v8XoD/gl52piRAfZ
-         Q0vnuNZ3YlUAw==
-X-Nifty-SrcIP: [209.85.222.45]
-Received: by mail-ua1-f45.google.com with SMTP id 34so297023uar.8;
-        Wed, 26 Jun 2019 20:37:37 -0700 (PDT)
-X-Gm-Message-State: APjAAAWZk2OHVJ/ayli/NveT2n/9k6Avu+zc0HjZoprwcxfojfIf9KN3
-        MJp0L77cuAC0tMIM7MGN6rfpCab8kPxcya6EZWg=
-X-Google-Smtp-Source: APXvYqxnTaJrFrMjuBoXEoiAN+DrkrbXhQiwMUAtqVh/FSoRuIgZnVV8242KrVAiYzqrGsKWX8k8KZMQVT7KGH9LF+4=
-X-Received: by 2002:ab0:234e:: with SMTP id h14mr991265uao.25.1561606656202;
- Wed, 26 Jun 2019 20:37:36 -0700 (PDT)
+        Wed, 26 Jun 2019 23:37:45 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5R3Y2ko095743;
+        Thu, 27 Jun 2019 03:37:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2018-07-02;
+ bh=nxMs4h/6RcJBUFEIvJBgo9aJwQP29EP3zQ4e3KQb5VQ=;
+ b=km8f7oZ3aB83RO1CQMYX9+GN0qW7qia7dHvNVe4nfJyyfLWh9C5Bied10WW3/OO+5til
+ TYwF7HZIykSG2G3TwRj+uxcB3ax6AJbPjMzrkY+F1e/PJQUGq1bR1MLat/XtGHlC5TrO
+ Oz2hdJg6q59SaLFIwVuAz9ZkBaMTd6BoPKCJr/uBMog7tNBRytXODuuUb/kRcyy4ZeNo
+ /KJLVkvQFDM5VGmzUd0YihQdwqFWFvnFNCshcL9NScArhrJtQFOscHUbbpyjTkLxBUuf
+ TKOXw5G7YFOiHRQaKjqr18yg+VaOIncP1wPsbJtH7Jo7BmhKFFooD0ygRXPZ0GE3KPrm og== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 2t9cyqnm13-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 27 Jun 2019 03:37:37 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5R3bZbq099738;
+        Thu, 27 Jun 2019 03:37:37 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3030.oracle.com with ESMTP id 2t9acd15hk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 27 Jun 2019 03:37:36 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x5R3bZwH019756;
+        Thu, 27 Jun 2019 03:37:36 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 26 Jun 2019 20:37:34 -0700
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        jejb@linux.ibm.com, martin.petersen@oracle.com,
+        linux-scsi@vger.kernel.org, stefanha@redhat.com
+Subject: Re: [PATCH 0/2] scsi: add support for request batching
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20190530112811.3066-1-pbonzini@redhat.com>
+        <746ad64a-4047-1597-a0d4-f14f3529cc19@redhat.com>
+Date:   Wed, 26 Jun 2019 23:37:32 -0400
+In-Reply-To: <746ad64a-4047-1597-a0d4-f14f3529cc19@redhat.com> (Paolo
+        Bonzini's message of "Wed, 26 Jun 2019 15:51:32 +0200")
+Message-ID: <yq1lfxnk8ar.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
 MIME-Version: 1.0
-References: <20190621163931.19397-1-yamada.masahiro@socionext.com>
- <20190621175134.GB16409@ravnborg.org> <CAK7LNATz1iuG0Moab60gMSbVU8PJAmrLn27K8HK_1zQ0qeh26w@mail.gmail.com>
- <20190622130635.GA24262@ravnborg.org> <20190624214027.GA14740@ravnborg.org> <20190625061120.GA7561@ravnborg.org>
-In-Reply-To: <20190625061120.GA7561@ravnborg.org>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Thu, 27 Jun 2019 12:36:59 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARMnsC+tm13VRV3kvRQNUWOrH1NxEwvFHwVJbFav50idg@mail.gmail.com>
-Message-ID: <CAK7LNARMnsC+tm13VRV3kvRQNUWOrH1NxEwvFHwVJbFav50idg@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: compile-test global headers to ensure they are self-contained
-To:     Sam Ravnborg <sam@ravnborg.org>
-Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9300 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=808
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1906270039
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9300 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=874 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906270039
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sam,
 
-On Tue, Jun 25, 2019 at 3:11 PM Sam Ravnborg <sam@ravnborg.org> wrote:
->
-> >
-> > When all header files below include/drm are self-contained it will be a
-> > single line:
-> >
-> >     header-test-y += $(all_headers_with_subdir)
-> In reality it will likely be the above, and then a list of
->
-> header-test-n += foo.h
->
-> For the header files that we for one or the other reason do not want to
-> make self-contained.
-> It would be nice to have the list of ignored files close to their home
-> and not a full list in one Makefile in include/
->
-> > diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
-> > index 3e630fcaffd1..e2f765e9d1e1 100644
-> > --- a/scripts/Makefile.lib
-> > +++ b/scripts/Makefile.lib
-> > @@ -67,6 +67,7 @@ extra-$(CONFIG_OF_ALL_DTBS) += $(patsubst %.dtb,%.dt.yaml, $(dtb-))
-> >  endif
-> >
-> >  # Test self-contained headers
-> > +header-test-y := $(filter-out $(header-test-n), $(header-test-y))
-> This part should include the logic to filter out duplicates too.
-> I think we may do something wrong if the same header is listed twice.
->
-> We could also extend this with a check that all files in header-test-n
-> exits.
->
->         Sam
+Paolo,
 
-Thanks for your comments.
+> Ping?  Are there any more objections?
 
-Some followups:
-
-[1] I prefer 'header-test-' to 'header-test-n'
-for excluding headers.
-In some places, it will be useful to
-be able to write like this:
-header-test-$(CONFIG_FOO) += foo.h
-
-
-[2] I proposed somewhat generalized header-test-pattern-y instead of
-providing both of 'all_headers' and 'all_headers_with_subdir'
-
-BTW, "all headers" should be added with care.
-scripts/Makefile.asm-generic and scripts/Makefile.headersinst
-cater to removing stale headers.
-But, we do not explicitly clean other headers.
-We always be careful about potential matching to stale headers.
-
-
-[3] I tried both 'one big single Makefile' and
-    'each Makefile in sub-directories'
-
-I am slightly in favor of the former. Maybe I could be wrong,
-and we may switch to the other approach.
-But, I'd like to start with a single Makefile, and see how bad it is.
-
-
-I sent v2:
-https://patchwork.kernel.org/project/linux-kbuild/list/?series=138507
-
+It's a core change so we'll need some more reviews. I suggest you
+resubmit.
 
 -- 
-Best Regards
-Masahiro Yamada
+Martin K. Petersen	Oracle Linux Engineering
