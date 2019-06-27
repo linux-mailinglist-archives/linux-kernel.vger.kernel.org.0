@@ -2,97 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 804B758DF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 00:28:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2216858DF4
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 00:29:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726739AbfF0W2x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 18:28:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56326 "EHLO mail.kernel.org"
+        id S1726766AbfF0W3m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 18:29:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56722 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726445AbfF0W2x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 18:28:53 -0400
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        id S1726445AbfF0W3l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 18:29:41 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 542FE2063F;
-        Thu, 27 Jun 2019 22:28:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561674532;
-        bh=6gDuV+DVL5Bbj1QRS6t+kNeAHKtQQVMNQqIxE+766Lk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Owhjj5MUM+bk7m39E3qMZJQshMRs1inLMvVheIBkFQTyF1mnp8ZzEOlEORXuaAObe
-         AiLVAMrJZMh39QZV0FMyLxhbhwTS09aSMZuyntRYJwA8vHGiH5h1bGgws0e2EAdF66
-         r1e6HA5Vs/cItxOEJOsnHPmiikj34gPmTPz2Ji3A=
-Date:   Thu, 27 Jun 2019 18:28:51 -0400
-From:   Sasha Levin <sashal@kernel.org>
-To:     Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@kernel.org,
-        bp@alien8.de, hpa@zytor.com, boris.ostrovsky@oracle.com,
-        jgross@suse.com, sstabellini@kernel.org, peterz@infradead.org,
-        srinivas.eeda@oracle.com, Waiman Long <longman@redhat.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Ingo Molnar <mingo@redhat.com>, linux-hyperv@vger.kernel.org
-Subject: Re: [PATCH v2 6/7] locking/spinlocks, paravirt, hyperv: Correct the
- hv_nopvspin case
-Message-ID: <20190627222851.GC11506@sasha-vm>
-References: <1561377779-28036-1-git-send-email-zhenzhong.duan@oracle.com>
- <1561377779-28036-7-git-send-email-zhenzhong.duan@oracle.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id D364C2063F;
+        Thu, 27 Jun 2019 22:29:39 +0000 (UTC)
+Date:   Thu, 27 Jun 2019 18:29:38 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
+Cc:     Shuah Khan <skhan@linuxfoundation.org>,
+        Jiunn Chang <c0d1n61at3@gmail.com>,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        josh@joshtriplett.org, mathieu.desnoyers@efficios.com,
+        jiangshanlai@gmail.com, joel@joelfernandes.org, corbet@lwn.net,
+        rcu@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [Linux-kernel-mentees][PATCH] doc: RCU callback locks need only
+ _bh, not necessarily _irq
+Message-ID: <20190627182938.306ab9d9@gandalf.local.home>
+In-Reply-To: <20190627221045.GH26519@linux.ibm.com>
+References: <20190627210147.19510-1-c0d1n61at3@gmail.com>
+        <bc2ce605-56ab-33aa-c94d-d7774e6ce8cd@linuxfoundation.org>
+        <20190627221045.GH26519@linux.ibm.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <1561377779-28036-7-git-send-email-zhenzhong.duan@oracle.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 08:02:58PM +0800, Zhenzhong Duan wrote:
->With the boot parameter "hv_nopvspin" specified a Hyperv guest should
->not make use of paravirt spinlocks, but behave as if running on bare
->metal. This is not true, however, as the qspinlock code will fall back
->to a test-and-set scheme when it is detecting a hypervisor.
->
->In order to avoid this disable the virt_spin_lock_key.
->
->Same change for XEN is already in Commit e6fd28eb3522
->("locking/spinlocks, paravirt, xen: Correct the xen_nopvspin case")
->
->Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
->Cc: Waiman Long <longman@redhat.com>
->Cc: Peter Zijlstra (Intel) <peterz@infradead.org>
->Cc: "K. Y. Srinivasan" <kys@microsoft.com>
->Cc: Haiyang Zhang <haiyangz@microsoft.com>
->Cc: Stephen Hemminger <sthemmin@microsoft.com>
->Cc: Sasha Levin <sashal@kernel.org>
->Cc: Thomas Gleixner <tglx@linutronix.de>
->Cc: Ingo Molnar <mingo@redhat.com>
->Cc: Borislav Petkov <bp@alien8.de>
->Cc: linux-hyperv@vger.kernel.org
->---
-> arch/x86/hyperv/hv_spinlock.c | 3 +++
-> 1 file changed, 3 insertions(+)
->
->diff --git a/arch/x86/hyperv/hv_spinlock.c b/arch/x86/hyperv/hv_spinlock.c
->index 07f21a0..d90b4b0 100644
->--- a/arch/x86/hyperv/hv_spinlock.c
->+++ b/arch/x86/hyperv/hv_spinlock.c
->@@ -64,6 +64,9 @@ __visible bool hv_vcpu_is_preempted(int vcpu)
->
-> void __init hv_init_spinlocks(void)
-> {
->+	if (unlikely(!hv_pvspin))
->+		static_branch_disable(&virt_spin_lock_key);
+On Thu, 27 Jun 2019 15:10:45 -0700
+"Paul E. McKenney" <paulmck@linux.ibm.com> wrote:
 
-This should be combined in the conditional under it, which already
-attempts to disable PV spinlocks, note how hv_pvspin is checked there.
-hc_pvspin isn't the only reason we would disable PV spinlocks on hyperv.
+> On Thu, Jun 27, 2019 at 04:01:35PM -0600, Shuah Khan wrote:
+> > On 6/27/19 3:01 PM, Jiunn Chang wrote:  
+> > >The UP.rst file calls for locks acquired within RCU callback functions
+> > >to use _irq variants (spin_lock_irqsave() or similar), which does work,
+> > >but can be overkill.  This commit therefore instead calls for _bh variants
+> > >(spin_lock_bh() or similar), while noting that _irq does work.
+> > >
+> > >Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>  
+> > 
+> > Should this by Suggested-by?  
+> 
+> I wrote it and Jiunn converted my change to .rst, so I believe that
+> this is correct as is.
 
-Also, there's no need for the unlikely() here, it's only getting called
-once...
+Note, you did send Jiunn an explicit Signed-off-by when you wrote it,
+correct? As Signed-off-by is equivalent to a signature.
 
---
-Thanks,
-Sasha
+-- Steve
