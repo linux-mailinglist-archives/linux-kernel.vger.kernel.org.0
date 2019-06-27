@@ -2,33 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6020457EB6
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 10:52:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A4CB57EBC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 10:54:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726599AbfF0Iwb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 04:52:31 -0400
-Received: from relay12.mail.gandi.net ([217.70.178.232]:33327 "EHLO
-        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726314AbfF0Iwb (ORCPT
+        id S1726566AbfF0Iy1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 04:54:27 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:32854 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726059AbfF0Iy1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 04:52:31 -0400
-Received: from mc-bl-xps13.lan (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
-        (Authenticated sender: maxime.chevallier@bootlin.com)
-        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 7CC8A200003;
-        Thu, 27 Jun 2019 08:52:27 +0000 (UTC)
-From:   Maxime Chevallier <maxime.chevallier@bootlin.com>
-To:     davem@davemloft.net, Pablo Neira Ayuso <pablo@netfilter.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>
-Cc:     Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        thomas.petazzoni@bootlin.com
-Subject: [PATCH net-next v2] net: ethtool: Allow parsing ETHER_FLOW types when using flow_rule
-Date:   Thu, 27 Jun 2019 10:52:26 +0200
-Message-Id: <20190627085226.7658-1-maxime.chevallier@bootlin.com>
+        Thu, 27 Jun 2019 04:54:27 -0400
+Received: by mail-pf1-f195.google.com with SMTP id x15so893231pfq.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 01:54:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=uE7UhkaemzZrZY8DroeOZDa2kTMOR+lb/8mv5OZuH0o=;
+        b=Xklg8qf/JLBEkmP48mtlbR9QUhuJP+MsQZ8PL3MnIbvLutj2UWnrwelO4wYfLhmsHs
+         q+KrDx+BC6tyl+CHfS+6JKsM9Oo8SZdQWHdSpisbwst0BECYw/W6dfz+TXxc5Uj1JdQ0
+         zd8ESi7N5PrMcTXwSHvePkH5yVrXjW3PMoj4+8kxL2RUAQ1jPDsGG3mI8T321U2YbCwx
+         vi3k6Ppzp8GMvtCcBTgmPxCiA/XCzl5UY/Xq6riVcsosQCp4p4SRkqt7DRRnM7HRcEgM
+         B4PJ/zVgEF9IYlVCQf+KPBhkTorX4qNuyB6U3WVlqapD3HBlIQ94oWxSbl4gDWqX9/az
+         Mp/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=uE7UhkaemzZrZY8DroeOZDa2kTMOR+lb/8mv5OZuH0o=;
+        b=k8OjrYTKEOHuAlqDk67ESg0wlDoLW5i0R3NVLvIjamYN9jXaxQYqcfeywc8uJNsbd2
+         LCd9ysEXj6Dbzp9adXtiq3ZTRcKFhbTMF9BbYaneXNPlVCm2a8EPWn61QsvscGi9wMwK
+         fo3INaT2U0V3yMvzVAm7O2IcaWNvp2BUSPyPdFdehbScr+H4qIU3fcdIPw1X1gKf3DNR
+         Mk3zQHmg5BUTn285RjdWiqoks0lFPX5cwTquN+rvZcVlvAUWRwHJqNnoXgkrTYYXi7az
+         fKVGsIdzuZx/HpOTj+zxQ9bzPMAqnpHSrh1W4E3yqE8fLeVqrdOIc8Jslg1cC7u4yMh9
+         gwMQ==
+X-Gm-Message-State: APjAAAVQ99syewVYQHdqoBiaYb1wUEo3tQgQ/foVHNVYJpdkH4Gm2xdo
+        WgW7287YJyoe/dI5i03c5twLw4i07TkmyA==
+X-Google-Smtp-Source: APXvYqwdQMOqKfGcEmEvEHKgSADdx37xsc4hPqaVIjTB+3A97knfEIdB5xFBGhuaRRMtaTtJlMg5dw==
+X-Received: by 2002:a65:4085:: with SMTP id t5mr2736464pgp.109.1561625665874;
+        Thu, 27 Jun 2019 01:54:25 -0700 (PDT)
+Received: from limbo.local (123-204-46-122.static.seed.net.tw. [123.204.46.122])
+        by smtp.gmail.com with ESMTPSA id d6sm3892185pjo.32.2019.06.27.01.54.22
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 27 Jun 2019 01:54:25 -0700 (PDT)
+From:   Daniel Drake <drake@endlessm.com>
+To:     tglx@linutronix.de
+Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com, bp@alien8.de,
+        hdegoede@redhat.com, david.e.box@linux.intel.com,
+        linux@endlessm.com, rafael.j.wysocki@intel.com, x86@kernel.org
+Subject: Re: No 8254 PIT & no HPET on new Intel N3350 platforms causes kernel panic during early boot
+Date:   Thu, 27 Jun 2019 16:54:19 +0800
+Message-Id: <20190627085419.27854-1-drake@endlessm.com>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <alpine.DEB.2.21.1904031206440.1967@nanos.tec.linutronix.de>
+References: <alpine.DEB.2.21.1904031206440.1967@nanos.tec.linutronix.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -36,56 +63,117 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When parsing an ethtool_rx_flow_spec, users can specify an ethernet flow
-which could contain matches based on the ethernet header, such as the
-MAC address, the VLAN tag or the ethertype.
+Hi Thomas,
 
-ETHER_FLOW uses the src and dst ethernet addresses, along with the
-ethertype as keys. Matches based on the vlan tag are also possible, but
-they are specified using the special FLOW_EXT flag.
+Picking up this issue again after a break!
 
-Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+We made some progress last time on reducing PIT usage in the TSC
+calibration code, but we still have the bigger issue to resolve:
+IO-APIC code panicing when the PIT isn't ticking.
+
+On Wed, Apr 3, 2019 at 7:21 PM Thomas Gleixner <tglx@linutronix.de> wrote:
+> For newer CPUs we might assume that:
+>
+>  1) The TSC and APIC timer are actually usable
+>
+>  2) The frequencies can be retrieved from CPUID or MSRs
+>
+> If #1 and #2 are reliable we can avoid the whole calibration and interrupt
+> delivery mess.
+>
+> That means we need the following decision logic:
+>
+>   1) If HPET is available in ACPI, boot normal.
+>
+>   2) If HPET is not available, verify that the PIT actually counts. If it
+>      does, boot normal.
+>
+>      If it does not either:
+>
+>      2A) Verify that this is a PCH 300/C240 and fiddle with that ISST bit.
+>
+>          But that means that we need to chase PCH ids forever...
+>
+>      2B) Shrug and just avoid the whole PIT/HPET magic all over the place:
+>
+>          - Avoid the interrupt delivery check in the IOAPIC code as it's
+>            uninteresting in that case. Trivial to do.
+
+I tried to explore this idea here:
+https://lore.kernel.org/patchwork/patch/1064972/
+https://lore.kernel.org/patchwork/patch/1064971/
+
+But I can't say I really knew what I was doing there, and you
+pointed out some problems.
+
+Any new ideas that I can experiment with?
+
+Being more conservative, how about something like this?
 ---
-V2 : Add src and dst mac address parsing, as suggested by Pablo.
+ arch/x86/kernel/apic/io_apic.c | 23 +++++++++++++++++++----
+ 1 file changed, 19 insertions(+), 4 deletions(-)
 
- net/core/ethtool.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
-
-diff --git a/net/core/ethtool.c b/net/core/ethtool.c
-index 4d1011b2e24f..6288e69e94fc 100644
---- a/net/core/ethtool.c
-+++ b/net/core/ethtool.c
-@@ -2883,6 +2883,30 @@ ethtool_rx_flow_rule_create(const struct ethtool_rx_flow_spec_input *input)
- 	match->mask.basic.n_proto = htons(0xffff);
+diff --git a/arch/x86/kernel/apic/io_apic.c b/arch/x86/kernel/apic/io_apic.c
+index 53aa234a6803..36b1e7d5b657 100644
+--- a/arch/x86/kernel/apic/io_apic.c
++++ b/arch/x86/kernel/apic/io_apic.c
+@@ -2073,7 +2073,7 @@ static int mp_alloc_timer_irq(int ioapic, int pin)
+  *
+  * FIXME: really need to revamp this for all platforms.
+  */
+-static inline void __init check_timer(void)
++static inline void __init check_timer(int timer_was_working)
+ {
+ 	struct irq_data *irq_data = irq_get_irq_data(0);
+ 	struct mp_chip_data *data = irq_data->chip_data;
+@@ -2216,8 +2216,15 @@ static inline void __init check_timer(void)
+ 		apic_printk(APIC_QUIET, KERN_INFO
+ 			    "Perhaps problem with the pre-enabled x2apic mode\n"
+ 			    "Try booting with x2apic and interrupt-remapping disabled in the bios.\n");
+-	panic("IO-APIC + timer doesn't work!  Boot with apic=debug and send a "
+-		"report.  Then try booting with the 'noapic' option.\n");
++
++	if (timer_was_working)
++		panic("IO-APIC + timer doesn't work!  Boot with apic=debug and send a "
++			"report.  Then try booting with the 'noapic' option.\n");
++	else
++		apic_printk(APIC_QUIET, KERN_INFO
++			    "Continuing anyway with no 8254 timer, as it was not working even before IO-APIC setup was attempted.\n"
++			    "Boot will fail unless another working clocksource is found.\n");
++
+ out:
+ 	local_irq_restore(flags);
+ }
+@@ -2304,12 +2311,20 @@ static void ioapic_destroy_irqdomain(int idx)
+ void __init setup_IO_APIC(void)
+ {
+ 	int ioapic;
++	int timer_was_working = 0;
  
- 	switch (fs->flow_type & ~(FLOW_EXT | FLOW_MAC_EXT | FLOW_RSS)) {
-+	case ETHER_FLOW: {
-+		const struct ethhdr *ether_spec, *ether_m_spec;
+ 	if (skip_ioapic_setup || !nr_ioapics)
+ 		return;
+ 
+ 	io_apic_irqs = nr_legacy_irqs() ? ~PIC_IRQS : ~0UL;
+ 
++	/*
++	 * Record if the timer was in working state before we do any
++	 * IO-APIC setup.
++	 */
++	if (nr_legacy_irqs())
++		timer_was_working = timer_irq_works();
 +
-+		ether_spec = &fs->h_u.ether_spec;
-+		ether_m_spec = &fs->m_u.ether_spec;
-+
-+		if (!is_zero_ether_addr(ether_m_spec->h_source)) {
-+			ether_addr_copy(match->key.eth_addrs.src,
-+					ether_spec->h_source);
-+			ether_addr_copy(match->mask.eth_addrs.src,
-+					ether_m_spec->h_source);
-+		}
-+		if (!is_zero_ether_addr(ether_m_spec->h_dest)) {
-+			ether_addr_copy(match->key.eth_addrs.dst,
-+					ether_spec->h_dest);
-+			ether_addr_copy(match->mask.eth_addrs.dst,
-+					ether_m_spec->h_dest);
-+		}
-+		if (ether_m_spec->h_proto) {
-+			match->key.basic.n_proto = ether_spec->h_proto;
-+			match->mask.basic.n_proto = ether_m_spec->h_proto;
-+		}
-+		}
-+		break;
- 	case TCP_V4_FLOW:
- 	case UDP_V4_FLOW: {
- 		const struct ethtool_tcpip4_spec *v4_spec, *v4_m_spec;
+ 	apic_printk(APIC_VERBOSE, "ENABLING IO-APIC IRQs\n");
+ 	for_each_ioapic(ioapic)
+ 		BUG_ON(mp_irqdomain_create(ioapic));
+@@ -2323,7 +2338,7 @@ void __init setup_IO_APIC(void)
+ 	setup_IO_APIC_irqs();
+ 	init_IO_APIC_traps();
+ 	if (nr_legacy_irqs())
+-		check_timer();
++		check_timer(timer_was_working);
+ 
+ 	ioapic_initialized = 1;
+ }
 -- 
 2.20.1
 
