@@ -2,71 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 282E158DDF
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 00:21:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63D0758DE6
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 00:23:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726852AbfF0WVH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 18:21:07 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:59973 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726445AbfF0WVH (ORCPT
+        id S1726674AbfF0WXA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 18:23:00 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:39279 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726445AbfF0WXA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 18:21:07 -0400
-Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hgclK-0001fn-2g; Fri, 28 Jun 2019 00:21:02 +0200
-Date:   Fri, 28 Jun 2019 00:21:01 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Arnd Bergmann <arnd@arndb.de>
-cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/2] timekeeping: cleanup _fast_ variety of functions
-In-Reply-To: <CAK8P3a3nnrm0pebbA2fx9dHYwH7vkYWuJAQVWRzzQikOkXYqcQ@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1906280019460.32342@nanos.tec.linutronix.de>
-References: <20190625081912.14813-1-Jason@zx2c4.com> <CAK8P3a3nnrm0pebbA2fx9dHYwH7vkYWuJAQVWRzzQikOkXYqcQ@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 27 Jun 2019 18:23:00 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5RMM20M474297
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Thu, 27 Jun 2019 15:22:02 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5RMM20M474297
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019061801; t=1561674122;
+        bh=ZeyvB4LFyjvlaOlXgO/EO++131ZgvyCNUdJVBPCe35s=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=DP1H8WGKHAKzhFwjNdjuekq3kI2uJ/FiGWO7ogstevfeHlwnLmbijd9dlNHKJHIKL
+         cbO54/jKZlsFXhyaNWsYGr7LpbQVhEXhFa0dA0haN8Vg/Aq3inIS7+gYX6NfdYHdMf
+         HHDoX243rMGSuXSFJe3m039g2LQFSmqDY80lU6IVWFy2fAMyTpDA+LDGtQVu/72cZm
+         k97koBVziSFnxf/p5qyTxzjfEnjOGOdkKLM8Efb0c31/oNkqFOcsA90GDy9FI9EhCC
+         4ZHF8u+xTpM01GG01Oc4SK3SoHA6Q9jn2NtdwE03WuMydLGAGkbvk5lRn0Qw0v9PVm
+         UCishPIaNaNtQ==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5RMM17R474294;
+        Thu, 27 Jun 2019 15:22:01 -0700
+Date:   Thu, 27 Jun 2019 15:22:01 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Song Liu <tipbot@zytor.com>
+Message-ID: <tip-83f44ae0f8afcc9da659799db8693f74847e66b3@git.kernel.org>
+Cc:     jpoimboe@redhat.com, tglx@linutronix.de, songliubraving@fb.com,
+        kasong@redhat.com, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, rostedt@goodmis.org, hpa@zytor.com,
+        bp@alien8.de, mingo@kernel.org
+Reply-To: mingo@kernel.org, bp@alien8.de, rostedt@goodmis.org,
+          hpa@zytor.com, linux-kernel@vger.kernel.org,
+          peterz@infradead.org, kasong@redhat.com, songliubraving@fb.com,
+          tglx@linutronix.de, jpoimboe@redhat.com
+In-Reply-To: <3975a298fa52b506fea32666d8ff6a13467eee6d.1561595111.git.jpoimboe@redhat.com>
+References: <3975a298fa52b506fea32666d8ff6a13467eee6d.1561595111.git.jpoimboe@redhat.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] perf/x86: Always store regs->ip in
+ perf_callchain_kernel()
+Git-Commit-ID: 83f44ae0f8afcc9da659799db8693f74847e66b3
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=0.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_12_24,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
+        DKIM_VALID_EF autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 25 Jun 2019, Arnd Bergmann wrote:
-> On Tue, Jun 25, 2019 at 10:19 AM Jason A. Donenfeld <Jason@zx2c4.com> wrote:
-> >
-> > When Arnd and I discussed this prior, he thought it best that I separate
-> > these two commits out into a separate patchset, because they might
-> > require additional discussion or consideration from you. They seem
-> > straightforward enough to me, but if deliberations require me to make
-> > some tweaks, I'm happy to do so.
-> 
-> One concern I had was whether we want to replace 'fast' with something
-> else, such as 'in_nmi' that might be less confusing.  The current naming
-> might be easy to confuse between 'fast' and 'coarse'.
-> 
-> Another point might be whether we actually need more than one
-> kind of accessor for each time domain, given how rarely these are
-> used. In theory we could have the full set of combinations of fast:
-> monotonic/real/boottime/raw (but not clocktai) with ktime_t/ns/seconds/ts64
-> for 16 versions.  We currently have four, and you are adding another
-> four, but not the final eight. I'm not saying this is wrong, but
-> it feels a bit arbitrary and could use an explanation why you feel that
-> is the right subset.
-> 
-> For coarse, we have ktime_t and ts64. The _seconds() accessors are
-> coarse by definition, but we probably don't want to add _ns().
-> We also don't have the combination of 'raw' with 'coarse' or 'seconds',
-> as that seems to have no use case.
+Commit-ID:  83f44ae0f8afcc9da659799db8693f74847e66b3
+Gitweb:     https://git.kernel.org/tip/83f44ae0f8afcc9da659799db8693f74847e66b3
+Author:     Song Liu <songliubraving@fb.com>
+AuthorDate: Wed, 26 Jun 2019 19:33:52 -0500
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Fri, 28 Jun 2019 00:11:20 +0200
 
-Can we please just add those which are actually needed. If new code misses
-something we can add them anytime later.
+perf/x86: Always store regs->ip in perf_callchain_kernel()
 
-Thanks,
+The stacktrace_map_raw_tp BPF selftest is failing because the RIP saved by
+perf_arch_fetch_caller_regs() isn't getting saved by perf_callchain_kernel().
 
-	tglx
+This was broken by the following commit:
+
+  d15d356887e7 ("perf/x86: Make perf callchains work without CONFIG_FRAME_POINTER")
+
+With that change, when starting with non-HW regs, the unwinder starts
+with the current stack frame and unwinds until it passes up the frame
+which called perf_arch_fetch_caller_regs().  So regs->ip needs to be
+saved deliberately.
+
+Fixes: d15d356887e7 ("perf/x86: Make perf callchains work without CONFIG_FRAME_POINTER")
+Signed-off-by: Song Liu <songliubraving@fb.com>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Kairui Song <kasong@redhat.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Link: https://lkml.kernel.org/r/3975a298fa52b506fea32666d8ff6a13467eee6d.1561595111.git.jpoimboe@redhat.com
+
+---
+ arch/x86/events/core.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+index f315425d8468..4fb3ca1e699d 100644
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -2402,13 +2402,13 @@ perf_callchain_kernel(struct perf_callchain_entry_ctx *entry, struct pt_regs *re
+ 		return;
+ 	}
+ 
+-	if (perf_hw_regs(regs)) {
+-		if (perf_callchain_store(entry, regs->ip))
+-			return;
++	if (perf_callchain_store(entry, regs->ip))
++		return;
++
++	if (perf_hw_regs(regs))
+ 		unwind_start(&state, current, regs, NULL);
+-	} else {
++	else
+ 		unwind_start(&state, current, NULL, (void *)regs->sp);
+-	}
+ 
+ 	for (; !unwind_done(&state); unwind_next_frame(&state)) {
+ 		addr = unwind_get_return_address(&state);
