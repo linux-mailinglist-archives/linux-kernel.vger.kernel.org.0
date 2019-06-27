@@ -2,103 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7B945897C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 20:08:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65AE258988
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 20:11:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726691AbfF0SIJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 14:08:09 -0400
-Received: from namei.org ([65.99.196.166]:49158 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726519AbfF0SII (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 14:08:08 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id x5RI6c5Z018737;
-        Thu, 27 Jun 2019 18:06:38 GMT
-Date:   Fri, 28 Jun 2019 04:06:38 +1000 (AEST)
-From:   James Morris <jmorris@namei.org>
-To:     Stephen Smalley <sds@tycho.nsa.gov>
-cc:     Andy Lutomirski <luto@amacapital.net>,
-        Andy Lutomirski <luto@kernel.org>,
-        Matthew Garrett <matthewgarrett@google.com>,
-        linux-security@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Network Development <netdev@vger.kernel.org>,
-        Chun-Yi Lee <jlee@suse.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH V33 24/30] bpf: Restrict bpf when kernel lockdown is in
- confidentiality mode
-In-Reply-To: <bce70c8b-9efd-6362-d536-cfbbcf70b0b7@tycho.nsa.gov>
-Message-ID: <alpine.LRH.2.21.1906280332500.17363@namei.org>
-References: <20190621011941.186255-1-matthewgarrett@google.com> <20190621011941.186255-25-matthewgarrett@google.com> <CALCETrVUwQP7roLnW6kFG80Cc5U6X_T6AW+BTAftLccYGp8+Ow@mail.gmail.com> <alpine.LRH.2.21.1906270621080.28132@namei.org>
- <6E53376F-01BB-4795-BC02-24F9CAE00001@amacapital.net> <bce70c8b-9efd-6362-d536-cfbbcf70b0b7@tycho.nsa.gov>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        id S1726671AbfF0SLi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 14:11:38 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:59958 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726498AbfF0SLi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 14:11:38 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5RI9MIv127411;
+        Thu, 27 Jun 2019 18:09:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : from : to :
+ cc : references : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=t/rruMnao2wR61MPFoLKt9zfyEZplrn1UsBge3sXHjc=;
+ b=mxwGBgo6P/4M62KLP3A86hDTWZOF/CX7Ejy3CZTQKmD3ZyCo2ckpBT7qYCR4SAK7PHaq
+ TtDTW6VWyO5sg1ciq25hYpWjWOQkJguDjbFkDiE9OJuJjniigy0p6vgSgcm6+1co8iJ3
+ CRxjIi8xmNL/Ekzf98KaYOJLr/QI7o3pw4fJObUYVIBM5pqV2lY2eUX4KdfRpuETcpVo
+ VvxoJlKqqWOU+Mg7tjZ4x1e010nheAklNM/3LNwGnzlkuJ7ryGhw0PxupqlcoFVmrgbS
+ pDahFNsaHcZW3RzFinHP0R6ihqR+jfb1zdO5IkyCUPOrjSx/1Q1nvLAZi2dFu31GKXXa 3Q== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 2t9c9q1tfd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 27 Jun 2019 18:09:21 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5RI876F020980;
+        Thu, 27 Jun 2019 18:09:21 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 2t9acddck4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 27 Jun 2019 18:09:21 +0000
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5RI9HMH015017;
+        Thu, 27 Jun 2019 18:09:19 GMT
+Received: from [192.168.1.222] (/71.63.128.209)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 27 Jun 2019 11:09:17 -0700
+Subject: Re: LTP hugemmap05 test case failure on arm64 with linux-next
+ (next-20190613)
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+To:     Qian Cai <cai@lca.pw>, Will Deacon <will@kernel.org>
+Cc:     Anshuman Khandual <anshuman.khandual@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <1560461641.5154.19.camel@lca.pw>
+ <20190614102017.GC10659@fuggles.cambridge.arm.com>
+ <1560514539.5154.20.camel@lca.pw>
+ <054b6532-a867-ec7c-0a72-6a58d4b2723e@arm.com>
+ <EC704BC3-62FF-4DCE-8127-40279ED50D65@lca.pw>
+ <20190624093507.6m2quduiacuot3ne@willie-the-truck>
+ <1561381129.5154.55.camel@lca.pw> <1561411839.5154.60.camel@lca.pw>
+ <ed517a19-7804-c679-da94-279565001ca1@oracle.com>
+Message-ID: <15651f16-8d30-412f-8064-41ff03f3f47d@oracle.com>
+Date:   Thu, 27 Jun 2019 11:09:16 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <ed517a19-7804-c679-da94-279565001ca1@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9301 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1906270208
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9301 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906270208
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 27 Jun 2019, Stephen Smalley wrote:
-
-> There are two scenarios where finer-grained distinctions make sense:
+On 6/24/19 2:53 PM, Mike Kravetz wrote:
+> On 6/24/19 2:30 PM, Qian Cai wrote:
+>> So the problem is that ipcget_public() has held the semaphore "ids->rwsem" for
+>> too long seems unnecessarily and then goes to sleep sometimes due to direct
+>> reclaim (other times LTP hugemmap05 [1] has hugetlb_file_setup() returns
+>> -ENOMEM),
 > 
-> - Users may need to enable specific functionality that falls under the
-> umbrella of "confidentiality" or "integrity" lockdown.  Finer-grained lockdown
-> reasons free them from having to make an all-or-nothing choice between lost
-> functionality or no lockdown at all.
-
-Agreed. This will be used for more than just UEFI secure boot on desktops, 
-e.g. embedded systems using verified boot, where finer grained policy will 
-be needed for what are sometimes very specific use-cases (which may be 
-also covered by other mitigations).
-
-> This can be supported directly by the
-> lockdown module without any help from SELinux or other security modules; we
-> just need the ability to specify these finer-grained lockdown levels via the
-> boot parameters and securityfs nodes.
-
-If the lockdown LSM implements fine grained policy (rather than the simple 
-coarse grained policy), I'd suggest adding a new lockdown level of 
-'custom' which by default enables all hooks but allows selective 
-disablement via params/sysfs.
-
-This would be simpler than telling users to use a different lockdown LSM 
-for this.
-
-> - Different processes/programs may need to use different sets of functionality
-> restricted via lockdown confidentiality or integrity categories.  If we have
-> to allow all-or-none for the set of interfaces/functionality covered by the
-> generic confidentiality or integrity categories, then we'll end up having to
-> choose between lost functionality or overprivileged processes, neither of
-> which is optimal.
+> Thanks for looking into this!  I noticed that recent kernels could take a
+> VERY long time trying to do high order allocations.  In my case it was trying
+> to do dynamic hugetlb page allocations as well [1].  But, IMO this is more
+> of a general direct reclaim/compation issue than something hugetlb specific.
 > 
-> Is it truly the case that everything under the "confidentiality" category
-> poses the same level of risk to kernel confidentiality, and similarly for
-> everything under the "integrity" category?  If not, then being able to
-> distinguish them definitely has benefit.
 
-Good question. We can't know the answer to this unless we know how an 
-attacker might leverage access.
+<snip>
 
-The value here IMHO is more in allowing tradeoffs to be made by system 
-designers vs. disabling lockdown entirely.
+>> Ideally, it seems only ipc_findkey() and newseg() in this path needs to hold the
+>> semaphore to protect concurrency access, so it could just be converted to a
+>> spinlock instead.
+> 
+> I do not have enough experience with this ipc code to comment on your proposed
+> change.  But, I will look into it.
+> 
+> [1] https://lkml.org/lkml/2019/4/23/2
 
-> I'm still not clear though on how/if this will compose with or be overridden
-> by other security modules.  We would need some means for another security
-> module to take over lockdown decisions once it has initialized (including
-> policy load), and to be able to access state that is currently private to the
-> lockdown module, like the level.
+I only took a quick look at the ipc code, but there does not appear to be
+a quick/easy change to make.  The issue is that shared memory creation could
+take a long time.  With issue [1] above unresolved, creation of hugetlb backed
+shared memory segments could take a VERY long time.
 
-Why not utilize stacking (restrictively), similarly to capabilities?
+I do not believe the test failure is arm specific.  Most likely, it is just
+because testing was done on a system with memory size to trigger this issue?
 
-
+My plan is to focus on [1].  When that is resolved, this issue should go away.
 -- 
-James Morris
-<jmorris@namei.org>
-
+Mike Kravetz
