@@ -2,183 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4555E5791B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 03:50:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB6E957921
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 03:50:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727204AbfF0Btj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 21:49:39 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:36980 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727185AbfF0Bth (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 21:49:37 -0400
-Received: by mail-pl1-f193.google.com with SMTP id bh12so350834plb.4
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 18:49:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=axtens.net; s=google;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=WM6uPUMLAmx7AP//rA8fowctOYQ/AmGg6H1et0/fxeQ=;
-        b=GPMwtTE+s4FHnzPCcPaRaca9fFeyCQYdJ+4Pqg5rcV3ZwX+TwMkiFLiXjV7VmYZu0A
-         1nqQJfF8eMw4jnIntXT1hv8EkQ40QlF4yk/dLswm4q4y2Feza716oSK+ZuJdrAXPJBj2
-         6ox2mI9ni7ucak56kwY5tWcZ650K94V5UXoNE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=WM6uPUMLAmx7AP//rA8fowctOYQ/AmGg6H1et0/fxeQ=;
-        b=J9dE+fFz5z2eU7InKtnliaEJuypgOn/GAoHLfhQ76CPvbX5/0EZlOv8J18br/WPxa/
-         zApdL91TbJ/96hL3jpEtc3ZVwRLR6Y4BEmPgPlFqpqV6+Qvdy/UptDcYrMvn5RBrUeLR
-         Su+j9Gc62mCAR7IXmy6XnklMgy5rttdvs1bbgZWJWMA1y/6M1cqBW2YyRd9G0k3IzDWJ
-         Ivf2dObrsy/UYWVMvRkpz1B0wfSKK0Qb/f5EWWppEpfDuvLt9BQHh54okttfoNny6z0W
-         mGU7pA0vH/ei+fYrVn31xeesHd2dHjtA7qKId90FEWxSjxH/nRABDjgaR7HQpyQMY6vA
-         GYbA==
-X-Gm-Message-State: APjAAAUx4ifwcwepPnMSaHvNOjUlDoRyiwVn57G+TV1eM/ArrYZl+z/I
-        vTekLSnywknPALU9NCXwHalCUQ==
-X-Google-Smtp-Source: APXvYqz+uoebBzItdHu2Us8YV0WufO2pkkQ1yhMaFQpW1MFBuEml17h0fcZryss2oo99cskp93paUw==
-X-Received: by 2002:a17:902:e582:: with SMTP id cl2mr1492748plb.60.1561600176417;
-        Wed, 26 Jun 2019 18:49:36 -0700 (PDT)
-Received: from localhost (ppp167-251-205.static.internode.on.net. [59.167.251.205])
-        by smtp.gmail.com with ESMTPSA id o16sm395909pgi.36.2019.06.26.18.49.34
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 26 Jun 2019 18:49:35 -0700 (PDT)
-From:   Daniel Axtens <dja@axtens.net>
-To:     Matthew Garrett <matthewgarrett@google.com>, jmorris@namei.org
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        David Howells <dhowells@redhat.com>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        Matthew Garrett <mjg59@google.com>
-Subject: Re: [PATCH V34 19/29] Lock down module params that specify hardware parameters (eg. ioport)
-In-Reply-To: <20190622000358.19895-20-matthewgarrett@google.com>
-References: <20190622000358.19895-1-matthewgarrett@google.com> <20190622000358.19895-20-matthewgarrett@google.com>
-Date:   Thu, 27 Jun 2019 11:49:30 +1000
-Message-ID: <87ef3f3ihh.fsf@dja-thinkpad.axtens.net>
+        id S1727105AbfF0Buj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 21:50:39 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:53176 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726891AbfF0Bui (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 21:50:38 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 124E33082B6B;
+        Thu, 27 Jun 2019 01:50:33 +0000 (UTC)
+Received: from xz-x1.redhat.com (ovpn-12-42.pek2.redhat.com [10.72.12.42])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3BBA55D9C6;
+        Thu, 27 Jun 2019 01:50:23 +0000 (UTC)
+From:   Peter Xu <peterx@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Marcelo Tosatti <mtosatti@redhat.com>,
+        Luiz Capitulino <lcapitulino@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, peterx@redhat.com
+Subject: [PATCH v2] timer: document TIMER_PINNED
+Date:   Thu, 27 Jun 2019 09:50:19 +0800
+Message-Id: <20190627015019.21964-1-peterx@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Thu, 27 Jun 2019 01:50:38 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Matthew Garrett <matthewgarrett@google.com> writes:
+The flag hints the user that the pinned timers will always be run on a
+static CPU (because that should be what "pinned" means...) but that's
+not the truth, at least with current implementation.
 
-> From: David Howells <dhowells@redhat.com>
->
-> Provided an annotation for module parameters that specify hardware
-> parameters (such as io ports, iomem addresses, irqs, dma channels, fixed
-> dma buffers and other types).
->
-> Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> Signed-off-by: Matthew Garrett <mjg59@google.com>
-> ---
->  include/linux/security.h     |  1 +
->  kernel/params.c              | 27 ++++++++++++++++++++++-----
->  security/lockdown/lockdown.c |  1 +
->  3 files changed, 24 insertions(+), 5 deletions(-)
->
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index 61e3f4a62d16..88064d7f6827 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -92,6 +92,7 @@ enum lockdown_reason {
->  	LOCKDOWN_ACPI_TABLES,
->  	LOCKDOWN_PCMCIA_CIS,
->  	LOCKDOWN_TIOCSSERIAL,
-> +	LOCKDOWN_MODULE_PARAMETERS,
->  	LOCKDOWN_INTEGRITY_MAX,
->  	LOCKDOWN_CONFIDENTIALITY_MAX,
->  };
-> diff --git a/kernel/params.c b/kernel/params.c
-> index ce89f757e6da..f94fe79e331d 100644
-> --- a/kernel/params.c
-> +++ b/kernel/params.c
-> @@ -24,6 +24,7 @@
->  #include <linux/err.h>
->  #include <linux/slab.h>
->  #include <linux/ctype.h>
-> +#include <linux/security.h>
->  
->  #ifdef CONFIG_SYSFS
->  /* Protects all built-in parameters, modules use their own param_lock */
-> @@ -108,13 +109,19 @@ bool parameq(const char *a, const char *b)
->  	return parameqn(a, b, strlen(a)+1);
->  }
->  
-> -static void param_check_unsafe(const struct kernel_param *kp)
-> +static bool param_check_unsafe(const struct kernel_param *kp,
-> +			       const char *doing)
->  {
->  	if (kp->flags & KERNEL_PARAM_FL_UNSAFE) {
->  		pr_notice("Setting dangerous option %s - tainting kernel\n",
->  			  kp->name);
->  		add_taint(TAINT_USER, LOCKDEP_STILL_OK);
->  	}
-> +
-> +	if (kp->flags & KERNEL_PARAM_FL_HWPARAM &&
-> +	    security_locked_down(LOCKDOWN_MODULE_PARAMETERS))
-> +		return false;
-> +	return true;
->  }
+For example, currently if we setup a pinned timer but later on we call
+mod_timer() upon the pinned timer, the mod_timer() will still try to
+run the timer on the current processor and migrate the timer if
+necessary.  In other words, the suggested way to arm a pinned timer
+should be add_timer_on() always.  mod_timer() can be used in this case
+only if current processor is the one that we want to pin the timer on.
 
-Should this test occur before tainting the kernel?
+Document it a bit with the definition of TIMER_PINNED so that all
+future users will use it correctly.
 
-Regards,
-Daniel
+CC: Thomas Gleixner <tglx@linutronix.de>
+CC: linux-kernel@vger.kernel.org
+Signed-off-by: Peter Xu <peterx@redhat.com>
+---
+ include/linux/timer.h | 28 ++++++++++++++++++++--------
+ 1 file changed, 20 insertions(+), 8 deletions(-)
 
->  
->  static int parse_one(char *param,
-> @@ -144,8 +151,10 @@ static int parse_one(char *param,
->  			pr_debug("handling %s with %p\n", param,
->  				params[i].ops->set);
->  			kernel_param_lock(params[i].mod);
-> -			param_check_unsafe(&params[i]);
-> -			err = params[i].ops->set(val, &params[i]);
-> +			if (param_check_unsafe(&params[i], doing))
-> +				err = params[i].ops->set(val, &params[i]);
-> +			else
-> +				err = -EPERM;
->  			kernel_param_unlock(params[i].mod);
->  			return err;
->  		}
-> @@ -553,6 +562,12 @@ static ssize_t param_attr_show(struct module_attribute *mattr,
->  	return count;
->  }
->  
-> +#ifdef CONFIG_MODULES
-> +#define mod_name(mod) (mod)->name
-> +#else
-> +#define mod_name(mod) "unknown"
-> +#endif
-> +
->  /* sysfs always hands a nul-terminated string in buf.  We rely on that. */
->  static ssize_t param_attr_store(struct module_attribute *mattr,
->  				struct module_kobject *mk,
-> @@ -565,8 +580,10 @@ static ssize_t param_attr_store(struct module_attribute *mattr,
->  		return -EPERM;
->  
->  	kernel_param_lock(mk->mod);
-> -	param_check_unsafe(attribute->param);
-> -	err = attribute->param->ops->set(buf, attribute->param);
-> +	if (param_check_unsafe(attribute->param, mod_name(mk->mod)))
-> +		err = attribute->param->ops->set(buf, attribute->param);
-> +	else
-> +		err = -EPERM;
->  	kernel_param_unlock(mk->mod);
->  	if (!err)
->  		return len;
-> diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
-> index c89046dc2155..d03c4c296af7 100644
-> --- a/security/lockdown/lockdown.c
-> +++ b/security/lockdown/lockdown.c
-> @@ -28,6 +28,7 @@ static char *lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
->  	[LOCKDOWN_ACPI_TABLES] = "modified ACPI tables",
->  	[LOCKDOWN_PCMCIA_CIS] = "direct PCMCIA CIS storage",
->  	[LOCKDOWN_TIOCSSERIAL] = "reconfiguration of serial port IO",
-> +	[LOCKDOWN_MODULE_PARAMETERS] = "unsafe module parameters",
->  	[LOCKDOWN_INTEGRITY_MAX] = "integrity",
->  	[LOCKDOWN_CONFIDENTIALITY_MAX] = "confidentiality",
->  };
-> -- 
-> 2.22.0.410.gd8fdbe21b5-goog
+diff --git a/include/linux/timer.h b/include/linux/timer.h
+index 7b066fd38248..1b96cc623a12 100644
+--- a/include/linux/timer.h
++++ b/include/linux/timer.h
+@@ -36,19 +36,31 @@ struct timer_list {
+ #define __TIMER_LOCKDEP_MAP_INITIALIZER(_kn)
+ #endif
+ 
+-/*
+- * A deferrable timer will work normally when the system is busy, but
+- * will not cause a CPU to come out of idle just to service it; instead,
+- * the timer will be serviced when the CPU eventually wakes up with a
+- * subsequent non-deferrable timer.
++/**
++ * @TIMER_DEFERRABLE: A deferrable timer will work normally when the
++ * system is busy, but will not cause a CPU to come out of idle just
++ * to service it; instead, the timer will be serviced when the CPU
++ * eventually wakes up with a subsequent non-deferrable timer.
+  *
+- * An irqsafe timer is executed with IRQ disabled and it's safe to wait for
+- * the completion of the running instance from IRQ handlers, for example,
+- * by calling del_timer_sync().
++ * @TIMER_IRQSAFE: An irqsafe timer is executed with IRQ disabled and
++ * it's safe to wait for the completion of the running instance from
++ * IRQ handlers, for example, by calling del_timer_sync().
+  *
+  * Note: The irq disabled callback execution is a special case for
+  * workqueue locking issues. It's not meant for executing random crap
+  * with interrupts disabled. Abuse is monitored!
++ *
++ * @TIMER_PINNED: A pinned timer will not be affected by any timer
++ * placement heuristics (like, NOHZ) and will always be run on the CPU
++ * when the timer was enqueued.
++ *
++ * Note: Because enqueuing of timers can actually migrate the timer
++ * from one CPU to another, pinned timers are not guaranteed to stay
++ * on the initialy selected CPU.  They move to the CPU on which the
++ * enqueue function is invoked via mod_timer() or add_timer().  If the
++ * timer should be placed on a particular CPU, then add_timer_on() has
++ * to be used.  It is also suggested that the user should always use
++ * add_timer_on() explicitly for pinned timers.
+  */
+ #define TIMER_CPUMASK		0x0003FFFF
+ #define TIMER_MIGRATING		0x00040000
+-- 
+2.21.0
+
