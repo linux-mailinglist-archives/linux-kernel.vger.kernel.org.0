@@ -2,54 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E949B58EA5
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 01:41:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B34CF58E9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 01:39:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726681AbfF0Xli (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 19:41:38 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:59233 "EHLO
+        id S1726748AbfF0XjT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 19:39:19 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:40471 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726567AbfF0Xli (ORCPT
+        with ESMTP id S1726506AbfF0XjT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 19:41:38 -0400
+        Thu, 27 Jun 2019 19:39:19 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5RNcLFh499829
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5RNd2sn499951
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Thu, 27 Jun 2019 16:38:21 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5RNcLFh499829
+        Thu, 27 Jun 2019 16:39:02 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5RNd2sn499951
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019061801; t=1561678702;
-        bh=BxmF73YzvbBY3dwzGpz/7ke1kcNU3bQb9Zt5QKmAw2o=;
+        s=2019061801; t=1561678745;
+        bh=r3+YokSaxPkSU25VQUGEv3owDZ8kozG3eCEyXXJiklU=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=hSAi2vDJJ8esjmD2ky+UetkxbWqx4QVfjqm18C/r1NsLaxXd63g7T2kJdegNUic5x
-         3yNF+T4V/qE46WaRCP6cpTlOKZm5GJL1hMdv2hkYd4Cy81rEKQCTkL/DeZj/B3Bw3s
-         uxyiSb39Go+HC+vAoXuKsuGaJzbET7Nec1CCPhVv2yUSpc4q+va3UNCtr/7ZhOg6ws
-         k2MQabEpI7tOV0Jbjixc+4LG6gowxJ1cbhK91vwpclDSh43G3Ev2Hs3wNsR0/QZGUK
-         3vNUKXsE7a+O+q3vp4iw4nXQ/X+6wF4C3I/khSITAH1wY79xvdU0lRXy+cIHd+Mwrk
-         iGSCIJzIGscGQ==
+        b=cJ5MloTDiib9uHeiZ2PtQaWKQOvj+6glT4SECk3kuO+YoKM1m4s3Cp9bI7DPiB6C8
+         0nTj1vrtV7QovCsabvV7bT/YWub7whJ/KbKuK1N9ZcBkQ76kcMbmKNHlwK3JAhfxck
+         qHvYduE2WfWOsutrC8aHekFM1IaTYxz/hUbbC2YrtqTXdwiqiUOwfxzgdAVx56qUmJ
+         kJoU3vdMuTxGwiL4DTYftpJbR6cv/NvPTsd7id8sHdwsR60Bb4ZCbpYAlqRFm2io0z
+         XRmK2PtGMo9eZmuMCQfhUa/a3HvBf2zdy6Pn7oQERHrGduG1Z5sYs211+TDZaBbmBM
+         e9NVF72WBFKFw==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5RNcKuA499824;
-        Thu, 27 Jun 2019 16:38:20 -0700
-Date:   Thu, 27 Jun 2019 16:38:20 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5RNd26Q499921;
+        Thu, 27 Jun 2019 16:39:02 -0700
+Date:   Thu, 27 Jun 2019 16:39:02 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
-Message-ID: <tip-433526cc0502ff13d9b2fd63ba546a202dac0463@git.kernel.org>
-Cc:     ravi.v.shankar@intel.com, mingo@kernel.org, eranian@google.com,
-        andi.kleen@intel.com, tglx@linutronix.de,
+Message-ID: <tip-4ce78e2094fc2736f8ecd04ec85e5566acaed516@git.kernel.org>
+Cc:     eranian@google.com, peterz@infradead.org, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, hpa@zytor.com, mingo@kernel.org,
+        ashok.raj@intel.com, andi.kleen@intel.com,
         ricardo.neri-calderon@linux.intel.com,
-        linux-kernel@vger.kernel.org, hpa@zytor.com,
-        Suravee.Suthikulpanit@amd.com, peterz@infradead.org,
-        ashok.raj@intel.com
-Reply-To: mingo@kernel.org, ravi.v.shankar@intel.com, eranian@google.com,
-          tglx@linutronix.de, andi.kleen@intel.com,
-          linux-kernel@vger.kernel.org,
-          ricardo.neri-calderon@linux.intel.com, peterz@infradead.org,
-          Suravee.Suthikulpanit@amd.com, hpa@zytor.com, ashok.raj@intel.com
-In-Reply-To: <20190623132434.645357869@linutronix.de>
-References: <20190623132434.645357869@linutronix.de>
+        Suravee.Suthikulpanit@amd.com, ravi.v.shankar@intel.com
+Reply-To: eranian@google.com, peterz@infradead.org, tglx@linutronix.de,
+          linux-kernel@vger.kernel.org, mingo@kernel.org, hpa@zytor.com,
+          andi.kleen@intel.com, ashok.raj@intel.com,
+          ricardo.neri-calderon@linux.intel.com,
+          Suravee.Suthikulpanit@amd.com, ravi.v.shankar@intel.com
+In-Reply-To: <20190623132434.754768274@linutronix.de>
+References: <20190623132434.754768274@linutronix.de>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/timers] x86/hpet: Mark init functions __init
-Git-Commit-ID: 433526cc0502ff13d9b2fd63ba546a202dac0463
+Subject: [tip:x86/timers] x86/hpet: Sanitize stub functions
+Git-Commit-ID: 4ce78e2094fc2736f8ecd04ec85e5566acaed516
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -67,16 +66,16 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  433526cc0502ff13d9b2fd63ba546a202dac0463
-Gitweb:     https://git.kernel.org/tip/433526cc0502ff13d9b2fd63ba546a202dac0463
+Commit-ID:  4ce78e2094fc2736f8ecd04ec85e5566acaed516
+Gitweb:     https://git.kernel.org/tip/4ce78e2094fc2736f8ecd04ec85e5566acaed516
 Author:     Thomas Gleixner <tglx@linutronix.de>
-AuthorDate: Sun, 23 Jun 2019 15:23:47 +0200
+AuthorDate: Sun, 23 Jun 2019 15:23:48 +0200
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Fri, 28 Jun 2019 00:57:17 +0200
 
-x86/hpet: Mark init functions __init
+x86/hpet: Sanitize stub functions
 
-They are only called from init code.
+Mark them inline and remove the pointless 'return;' statement.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Ingo Molnar <mingo@kernel.org>
@@ -87,40 +86,41 @@ Cc: Andi Kleen <andi.kleen@intel.com>
 Cc: Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>
 Cc: Stephane Eranian <eranian@google.com>
 Cc: Ravi Shankar <ravi.v.shankar@intel.com>
-Link: https://lkml.kernel.org/r/20190623132434.645357869@linutronix.de
+Link: https://lkml.kernel.org/r/20190623132434.754768274@linutronix.de
 
 ---
- arch/x86/kernel/hpet.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/x86/kernel/hpet.c | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
 
 diff --git a/arch/x86/kernel/hpet.c b/arch/x86/kernel/hpet.c
-index 69cd0829f432..638aaff39819 100644
+index 638aaff39819..cb120e412dc6 100644
 --- a/arch/x86/kernel/hpet.c
 +++ b/arch/x86/kernel/hpet.c
-@@ -176,7 +176,7 @@ do {								\
- 
- static void hpet_reserve_msi_timers(struct hpet_data *hd);
- 
--static void hpet_reserve_platform_timers(unsigned int id)
-+static void __init hpet_reserve_platform_timers(unsigned int id)
- {
- 	struct hpet __iomem *hpet = hpet_virt_address;
- 	struct hpet_timer __iomem *timer = &hpet->hpet_timers[2];
-@@ -572,7 +572,7 @@ static void init_one_hpet_msi_clockevent(struct hpet_dev *hdev, int cpu)
- #define RESERVE_TIMERS 0
- #endif
+@@ -692,16 +692,10 @@ static int hpet_cpuhp_dead(unsigned int cpu)
+ }
+ #else
  
 -static void hpet_msi_capability_lookup(unsigned int start_timer)
-+static void __init hpet_msi_capability_lookup(unsigned int start_timer)
- {
- 	unsigned int id;
- 	unsigned int num_timers;
-@@ -631,7 +631,7 @@ static void hpet_msi_capability_lookup(unsigned int start_timer)
- }
+-{
+-	return;
+-}
++static inline void hpet_msi_capability_lookup(unsigned int start_timer) { }
  
  #ifdef CONFIG_HPET
 -static void hpet_reserve_msi_timers(struct hpet_data *hd)
-+static void __init hpet_reserve_msi_timers(struct hpet_data *hd)
- {
- 	int i;
+-{
+-	return;
+-}
++static inline void hpet_reserve_msi_timers(struct hpet_data *hd) { }
+ #endif
  
+ #define hpet_cpuhp_online	NULL
+@@ -820,7 +814,7 @@ static struct clocksource clocksource_hpet = {
+ 	.resume		= hpet_resume_counter,
+ };
+ 
+-static int hpet_clocksource_register(void)
++static int __init hpet_clocksource_register(void)
+ {
+ 	u64 start, now;
+ 	u64 t1;
