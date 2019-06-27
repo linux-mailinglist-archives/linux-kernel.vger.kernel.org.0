@@ -2,62 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A59CD57B1D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 07:08:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E861C57ADC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 06:56:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727180AbfF0FIg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 01:08:36 -0400
-Received: from mga04.intel.com ([192.55.52.120]:46663 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726578AbfF0FIf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 01:08:35 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jun 2019 22:08:34 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,422,1557212400"; 
-   d="scan'208";a="162522642"
-Received: from lxy-clx-4s.sh.intel.com ([10.239.48.10])
-  by fmsmga008.fm.intel.com with ESMTP; 26 Jun 2019 22:08:31 -0700
-From:   Xiaoyao Li <xiaoyao.li@linux.intel.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>
-Cc:     Xiaoyao Li <xiaoyao.li@linux.intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] x86/boot: Make gdt 8-byte aligned
-Date:   Thu, 27 Jun 2019 12:55:25 +0800
-Message-Id: <20190627045525.105266-1-xiaoyao.li@linux.intel.com>
-X-Mailer: git-send-email 2.19.1
+        id S1727093AbfF0E4H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 00:56:07 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:54196 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725385AbfF0E4H (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 00:56:07 -0400
+Received: by mail-wm1-f68.google.com with SMTP id x15so4266805wmj.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 21:56:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=+8atdZXcP26doj8gcmpkPizKujo7rTZABpJLivd+l/g=;
+        b=Al8t9OvvZ+xRpBu862DxLn2RyIAoI4BpdiwOst38nWRc7z78jeXonDgzrkCfBcNzcA
+         iTaLpPNA8eHJXrQipyG6IEFSEl6a146SbFTv7dApD8s3dmi/cLyPXSxs92uJ1x8wco68
+         QsvBjYxL0JYrrNzBXc20B4utdvwI95Zwojm3nFHtmJYwKOYwYrYR7rbmqvgao/wQhodY
+         Hvr/qT2Fv2NIgVOBnVNxZq1M0ZXOAs8UhBUl/+HDQQ0sUU1LRqz+FrXtz05Tmy4LrP8/
+         8Lvl0JV2gIsNgLM+jd+0XCUyzfEBLwyLPJSkXns/u671anTr0BdKUKFxEef1dDezGAcZ
+         A2XA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+8atdZXcP26doj8gcmpkPizKujo7rTZABpJLivd+l/g=;
+        b=sFnXy2EDWQi9kljlo63uLBMJI99PvzGIK6jwEFfcLhj5aIFNDdBwlBG/2aEirXCZZX
+         9W1X5tknQ1WLxexN+5Gooq6y6eSeRcpIFQv6k6Le7zaXrEeqMbDDdJeU86gLBVfdduv6
+         vFsUi1Taq7B0FnGn8F9B8lSD4Zzu7HlPUD1s408bqdjSZAiuOicwUHOY4k4AO/yhCJC0
+         koOxE6g01swk/yw6df7N1LbJMtUW7QdfNNbXNkKUGI64RB5e5qmoqw96KFl/W6pFR3Vi
+         hpHck3fRMDXvS8A6/nthQSnt+FgxP9/BasMPQqmLm8X++rCZ3/lnGQWnfqwc1vcCHLhU
+         VZfg==
+X-Gm-Message-State: APjAAAUi4I07+nnRUWi8dEJIOtIjmkPgrnnsRpuoYYf62N3VJBTyhMD7
+        lYalhXMFaVvOHQ/pVml+S4rE0/HcTnYU5A==
+X-Google-Smtp-Source: APXvYqz1m3a2TbnplJx7nYo9bbjJS2sXbm2gOlY2m5pZNQjtNAf/U+H1t6zR8Yk7ya4XjgqGfgC/uA==
+X-Received: by 2002:a05:600c:c6:: with SMTP id u6mr1561236wmm.153.1561611365093;
+        Wed, 26 Jun 2019 21:56:05 -0700 (PDT)
+Received: from brauner.io ([212.91.227.56])
+        by smtp.gmail.com with ESMTPSA id w7sm2689028wmc.46.2019.06.26.21.56.04
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 26 Jun 2019 21:56:04 -0700 (PDT)
+Date:   Thu, 27 Jun 2019 06:56:03 +0200
+From:   Christian Brauner <christian@brauner.io>
+To:     torvalds@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, ldv@altlinux.org,
+        viro@zeniv.linux.org.uk, jannh@google.com
+Subject: Re: [GIT PULL] fixes for v5.2-rc7
+Message-ID: <20190627045602.pqv67qxjj7ooaqir@brauner.io>
+References: <20190626140733.21538-1-christian@brauner.io>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190626140733.21538-1-christian@brauner.io>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When loading segment descriptor, it uses lock implicitly. Align gdt here
-to avoid potential split lock from crossing cache lines case.
+On Wed, Jun 26, 2019 at 04:07:33PM +0200, Christian Brauner wrote:
+> Hi Linus,
+> 
+> This pull request removes the validation of the pidfd return argument if
+> CLONE_PIDFD is specified:
+> 
+> The following changes since commit 4b972a01a7da614b4796475f933094751a295a2f:
+> 
+>   Linux 5.2-rc6 (2019-06-22 16:01:36 -0700)
+> 
+> are available in the Git repository at:
+> 
+>   git@gitolite.kernel.org:pub/scm/linux/kernel/git/brauner/linux tags/for-linus-20190626
+> 
+> for you to fetch changes up to bee19cd8f241ab3cd1bf79e03884e5371f9ef514:
+> 
+>   samples: make pidfd-metadata fail gracefully on older kernels (2019-06-24 15:55:50 +0200)
+> 
+> Userspace tools and libraries such as strace or glibc need a cheap and
+> reliable way to tell whether CLONE_PIDFD is supported.
+> The easiest way is to pass an invalid fd value in the return argument,
+> perform the syscall and verify the value in the return argument has been
+> changed to a valid fd.
+> 
+> However, if CLONE_PIDFD is specified we currently check if pidfd == 0 and
+> return EINVAL if not.
+> 
+> The check for pidfd == 0 was originally added to enable us to abuse the
+> return argument for passing additional flags along with CLONE_PIDFD in the
+> future.
+> 
+> However, extending legacy clone this way would be a terrible idea and with
+> clone3 on the horizon and the ability to reuse CLONE_DETACHED with
+> CLONE_PIDFD there's no real need for this clutch. So remove the pidfd == 0
+> check and help userspace out.
+> 
+> Please consider pulling these changes from the signed for-linus-20190626 tag.
 
-Signed-off-by: Xiaoyao Li <xiaoyao.li@linux.intel.com>
----
- arch/x86/boot/compressed/head_64.S | 1 +
- 1 file changed, 1 insertion(+)
+Al has another patch that removes the use of anon_inode_getfd() for the
+sake of anon_inode_getfile() + fd_install() to avoid the use of
+ksys_close().
+I'll put it in my fixes branch and send a new PR with all those fixes in
+a few hours.
 
-diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
-index fafb75c6c592..6233ae35d0d9 100644
---- a/arch/x86/boot/compressed/head_64.S
-+++ b/arch/x86/boot/compressed/head_64.S
-@@ -659,6 +659,7 @@ no_longmode:
- gdt64:
- 	.word	gdt_end - gdt
- 	.quad   0
-+	.balign	8
- gdt:
- 	.word	gdt_end - gdt
- 	.long	gdt
--- 
-2.19.1
-
+Thanks!
+Christian
