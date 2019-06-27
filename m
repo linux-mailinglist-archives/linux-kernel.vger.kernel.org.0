@@ -2,125 +2,210 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D29A5816E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 13:25:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 099975815B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 13:22:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726614AbfF0LZb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 07:25:31 -0400
-Received: from foss.arm.com ([217.140.110.172]:52192 "EHLO foss.arm.com"
+        id S1726565AbfF0LWn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 07:22:43 -0400
+Received: from mga05.intel.com ([192.55.52.43]:55508 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726315AbfF0LZb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 07:25:31 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 09DE22B;
-        Thu, 27 Jun 2019 04:25:29 -0700 (PDT)
-Received: from e121166-lin.cambridge.arm.com (unknown [10.1.196.255])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 725E73F718;
-        Thu, 27 Jun 2019 04:25:27 -0700 (PDT)
-Date:   Thu, 27 Jun 2019 12:25:22 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Vidya Sagar <vidyas@nvidia.com>
-Cc:     jingoohan1@gmail.com, gustavo.pimentel@synopsys.com,
-        bhelgaas@google.com, Jisheng.Zhang@synaptics.com,
-        thierry.reding@gmail.com, kishon@ti.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kthota@nvidia.com,
-        mmaddireddy@nvidia.com, sagar.tv@gmail.com
-Subject: Re: [PATCH V9 1/3] PCI: dwc: Add API support to de-initialize host
-Message-ID: <20190627112522.GA3782@e121166-lin.cambridge.arm.com>
-References: <20190625092238.13207-1-vidyas@nvidia.com>
+        id S1726308AbfF0LWn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 07:22:43 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jun 2019 04:22:42 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,423,1557212400"; 
+   d="scan'208";a="183427733"
+Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.150])
+  by fmsmga001.fm.intel.com with ESMTP; 27 Jun 2019 04:22:38 -0700
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kbuild@vger.kernel.org
+Cc:     Sam Ravnborg <sam@ravnborg.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        linux-kernel@vger.kernel.org,
+        Michal Marek <michal.lkml@markovi.net>
+Subject: Re: [PATCH v2 2/4] kbuild: do not create wrappers for header-test-y
+In-Reply-To: <20190627014617.600-3-yamada.masahiro@socionext.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20190627014617.600-1-yamada.masahiro@socionext.com> <20190627014617.600-3-yamada.masahiro@socionext.com>
+Date:   Thu, 27 Jun 2019 14:25:25 +0300
+Message-ID: <875zorqnh6.fsf@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190625092238.13207-1-vidyas@nvidia.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 25, 2019 at 02:52:36PM +0530, Vidya Sagar wrote:
-> Add an API to group all the tasks to be done to de-initialize host which
-> can then be called by any DesignWare core based driver implementations
-> while adding .remove() support in their respective drivers.
-> 
-> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-> Acked-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+On Thu, 27 Jun 2019, Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
+> header-test-y does not work with headers in sub-directories.
+>
+> For example, you can write a Makefile, like this:
+>
+> include/linux/Kbuild:
+>
+>   header-test-y += mtd/nand.h
+>
+> This entry creates a wrapper include/linux/mtd/nand.hdrtest.c with
+> the following content:
+>
+>   #include "mtd/nand.h"
+>
+> To make this work, we need to add $(srctree)/include/linux to the
+> header search path. It would be tedious to add ccflags-y.
+>
+> We could change the *.hdrtest.c rule to wrap:
+>
+>   #include "nand.h"
+>
+> This works for in-tree build since #include "..." searches in the
+> relative path from the header with this directive. For O=... build,
+> we need to add $(srctree)/include/linux/mtd to the header search path,
+> which will be even more tedious.
+>
+> After all, I thought it would be handier to compile headers directly
+> without creating wrappers.
+>
+> I added a new build rule to compile %.h into %.h.s
+>
+> I chose %.h.s instead of %.h.o because it was a little bit faster.
+> Also, for GCC, an empty assembly is smaller than an empty object.
+>
+> I wrote the build rule:
+>
+>   $(CC) $(c_flags) -S -o $@ -x c /dev/null -include $<
+>
+> instead of:
+>
+>   $(CC) $(c_flags) -S -o $@ -x c $<
+>
+> Both work fine with GCC, but the latter is not good for Clang.
+>
+> This comes down to the difference in the -Wunused-function policy.
+> GCC does not warn about unused 'static inline' functions at all.
+> Clang does not warn about the ones in included headers, but does
+> about the ones in the source. So, we should handle headers as
+> headers, not as source files.
+>
+> In fact, this has been hidden since commit abb2ea7dfd82 ("compiler,
+> clang: suppress warning for unused static inline functions"), but we
+> should not rely on that.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 > ---
-> Changes from v8:
-> * None
-> 
-> Changes from v7:
-> * None
-> 
-> Changes from v6:
-> * None
-> 
-> Changes from v5:
-> * None
-> 
-> Changes from v4:
-> * None
-> 
-> Changes from v3:
-> * Added check if (pci_msi_enabled() && !pp->ops->msi_host_init) before calling
->   dw_pcie_free_msi() API to mimic init path
-> 
-> Changes from v2:
-> * Rebased on top of linux-next top of the tree branch
-> 
-> Changes from v1:
-> * s/Designware/DesignWare
-> 
->  drivers/pci/controller/dwc/pcie-designware-host.c | 8 ++++++++
->  drivers/pci/controller/dwc/pcie-designware.h      | 5 +++++
->  2 files changed, 13 insertions(+)
-
-I have applied the series in pci/dwc for v5.3, thanks.
-
-Lorenzo
-
-> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-> index 77db32529319..d069e4290180 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-> @@ -496,6 +496,14 @@ int dw_pcie_host_init(struct pcie_port *pp)
->  	return ret;
->  }
+>
+> Changes in v2:
+>   - New patch
+>
+>  .gitignore                         |  1 -
+>  Documentation/dontdiff             |  1 -
+>  Documentation/kbuild/makefiles.txt |  3 +--
+>  Makefile                           |  1 -
+>  scripts/Makefile.build             | 10 +++++-----
+>  scripts/Makefile.lib               |  2 +-
+>  6 files changed, 7 insertions(+), 11 deletions(-)
+>
+> diff --git a/.gitignore b/.gitignore
+> index 4bb60f0fa23b..7587ef56b92d 100644
+> --- a/.gitignore
+> +++ b/.gitignore
+> @@ -22,7 +22,6 @@
+>  *.elf
+>  *.gcno
+>  *.gz
+> -*.hdrtest.c
+>  *.i
+>  *.ko
+>  *.lex.c
+> diff --git a/Documentation/dontdiff b/Documentation/dontdiff
+> index 554dfe4883d2..5eba889ea84d 100644
+> --- a/Documentation/dontdiff
+> +++ b/Documentation/dontdiff
+> @@ -19,7 +19,6 @@
+>  *.grep
+>  *.grp
+>  *.gz
+> -*.hdrtest.c
+>  *.html
+>  *.i
+>  *.jpeg
+> diff --git a/Documentation/kbuild/makefiles.txt b/Documentation/kbuild/makefiles.txt
+> index ca4b24ec0399..5080fec34609 100644
+> --- a/Documentation/kbuild/makefiles.txt
+> +++ b/Documentation/kbuild/makefiles.txt
+> @@ -1023,8 +1023,7 @@ When kbuild executes, the following steps are followed (roughly):
+>  	header-test-y specifies headers (*.h) in the current directory that
+>  	should be compile tested to ensure they are self-contained,
+>  	i.e. compilable as standalone units. If CONFIG_HEADER_TEST is enabled,
+> -	this autogenerates dummy sources to include the headers, and builds them
+> -	as part of extra-y.
+> +	this builds them as part of extra-y.
 >  
-> +void dw_pcie_host_deinit(struct pcie_port *pp)
-> +{
-> +	pci_stop_root_bus(pp->root_bus);
-> +	pci_remove_root_bus(pp->root_bus);
-> +	if (pci_msi_enabled() && !pp->ops->msi_host_init)
-> +		dw_pcie_free_msi(pp);
-> +}
-> +
->  static int dw_pcie_access_other_conf(struct pcie_port *pp, struct pci_bus *bus,
->  				     u32 devfn, int where, int size, u32 *val,
->  				     bool write)
-> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-> index b8993f2b78df..14762e262758 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware.h
-> +++ b/drivers/pci/controller/dwc/pcie-designware.h
-> @@ -351,6 +351,7 @@ void dw_pcie_msi_init(struct pcie_port *pp);
->  void dw_pcie_free_msi(struct pcie_port *pp);
->  void dw_pcie_setup_rc(struct pcie_port *pp);
->  int dw_pcie_host_init(struct pcie_port *pp);
-> +void dw_pcie_host_deinit(struct pcie_port *pp);
->  int dw_pcie_allocate_domains(struct pcie_port *pp);
->  #else
->  static inline irqreturn_t dw_handle_msi_irq(struct pcie_port *pp)
-> @@ -375,6 +376,10 @@ static inline int dw_pcie_host_init(struct pcie_port *pp)
->  	return 0;
->  }
+>  --- 6.7 Commands useful for building a boot image
 >  
-> +static inline void dw_pcie_host_deinit(struct pcie_port *pp)
-> +{
-> +}
-> +
->  static inline int dw_pcie_allocate_domains(struct pcie_port *pp)
->  {
->  	return 0;
-> -- 
-> 2.17.1
-> 
+> diff --git a/Makefile b/Makefile
+> index f23516980796..7f293b0431fe 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -1648,7 +1648,6 @@ clean: $(clean-dirs)
+>  		-o -name '*.dwo' -o -name '*.lst' \
+>  		-o -name '*.su'  \
+>  		-o -name '.*.d' -o -name '.*.tmp' -o -name '*.mod.c' \
+> -		-o -name '*.hdrtest.c' \
+>  		-o -name '*.lex.c' -o -name '*.tab.[ch]' \
+>  		-o -name '*.asn1.[ch]' \
+>  		-o -name '*.symtypes' -o -name 'modules.order' \
+> diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+> index ee0319560513..776842b7e6a3 100644
+> --- a/scripts/Makefile.build
+> +++ b/scripts/Makefile.build
+> @@ -294,14 +294,14 @@ quiet_cmd_cc_lst_c = MKLST   $@
+>  $(obj)/%.lst: $(src)/%.c FORCE
+>  	$(call if_changed_dep,cc_lst_c)
+>  
+> -# Dummy C sources for header test (header-test-y target)
+> +# header test (header-test-y target)
+>  # ---------------------------------------------------------------------------
+>  
+> -quiet_cmd_header_test = HDRTEST $@
+> -      cmd_header_test = echo "\#include \"$*.h\"" > $@
+> +quiet_cmd_cc_s_h = CC      $@
+> +      cmd_cc_s_h = $(CC) $(c_flags) -S -o $@ -x c /dev/null -include $<
+
+I think I'd prefer HDRTEST or something more informative than just CC in
+the quiet cmd to distinguish this from the usual build lines. Especially
+now that the file name is also just .h.s.
+
+Other than that, good job getting rid of the intermediate file. I
+couldn't figure it out when I did the original.
+
+Acked-by: Jani Nikula <jani.nikula@intel.com>
+Tested-by: Jani Nikula <jani.nikula@intel.com>
+
+>  
+> -$(obj)/%.hdrtest.c:
+> -	$(call cmd,header_test)
+> +$(obj)/%.h.s: $(src)/%.h FORCE
+> +	$(call if_changed_dep,cc_s_h)
+>  
+>  # Compile assembler sources (.S)
+>  # ---------------------------------------------------------------------------
+> diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
+> index 3e630fcaffd1..55ae1ec65342 100644
+> --- a/scripts/Makefile.lib
+> +++ b/scripts/Makefile.lib
+> @@ -67,7 +67,7 @@ extra-$(CONFIG_OF_ALL_DTBS) += $(patsubst %.dtb,%.dt.yaml, $(dtb-))
+>  endif
+>  
+>  # Test self-contained headers
+> -extra-$(CONFIG_HEADER_TEST) += $(patsubst %.h,%.hdrtest.o,$(header-test-y))
+> +extra-$(CONFIG_HEADER_TEST) += $(addsuffix .s, $(header-test-y))
+>  
+>  # Add subdir path
+
+-- 
+Jani Nikula, Intel Open Source Graphics Center
