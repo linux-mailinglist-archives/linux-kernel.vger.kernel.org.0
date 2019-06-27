@@ -2,173 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BBF6358986
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 20:11:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E77158989
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 20:11:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726633AbfF0SLS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 14:11:18 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:16986 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726498AbfF0SLR (ORCPT
+        id S1726710AbfF0SLo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 14:11:44 -0400
+Received: from mail-pg1-f181.google.com ([209.85.215.181]:35662 "EHLO
+        mail-pg1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726498AbfF0SLo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 14:11:17 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5RI74Hu126637
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 14:11:16 -0400
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2td2fh13xp-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 14:11:15 -0400
-Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Thu, 27 Jun 2019 19:11:15 +0100
-Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
-        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 27 Jun 2019 19:11:11 +0100
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5RIBALb42402090
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 27 Jun 2019 18:11:10 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4805AB2071;
-        Thu, 27 Jun 2019 18:11:10 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 24866B2068;
-        Thu, 27 Jun 2019 18:11:10 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.26])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu, 27 Jun 2019 18:11:10 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 286E716C1C01; Thu, 27 Jun 2019 11:11:12 -0700 (PDT)
-Date:   Thu, 27 Jun 2019 11:11:12 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        rcu <rcu@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>
-Subject: Re: [RFC] Deadlock via recursive wakeup via RCU with threadirqs
-Reply-To: paulmck@linux.ibm.com
-References: <20190626135447.y24mvfuid5fifwjc@linutronix.de>
- <20190626162558.GY26519@linux.ibm.com>
- <20190627142436.GD215968@google.com>
- <20190627103455.01014276@gandalf.local.home>
- <20190627153031.GA249127@google.com>
- <CAEXW_YT5LgdP_9SrachU4ZrhV9a7o_DM8eBfgxj=n7yRRyS-TQ@mail.gmail.com>
- <20190627154011.vbje64x6auaknhx4@linutronix.de>
- <CAEXW_YTvkSTqwi_jOE2Pr+uD-GC4Xv0CtBEL9YO7=LvJcM3FBQ@mail.gmail.com>
- <CAEXW_YTmx3wFKuiLyrQO6uSPYAL179EPa6N3WO7qZahccCs-pg@mail.gmail.com>
+        Thu, 27 Jun 2019 14:11:44 -0400
+Received: by mail-pg1-f181.google.com with SMTP id s27so1382595pgl.2
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 11:11:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=sLO/22DEBzZ9YzTHvB2P+aBIyX6ZIdYPZ+AVLvQyXi4=;
+        b=HNSET3Kig7XJjnUZ5Ide0hWJLXMNYu4LDZNoOkqz4fD8Nvu7FQ34UkprOrWYo6owJ4
+         vTuGd6jnk5DnxXAzUEAjOZFsaTBpnGtMp0x+6ygF+Rdlgxda05fHM00tsY+nCq4+jtzu
+         9mJChOYEI8b/UWtbKtKCPmmDYhiryvT8QViNBdB0LQePzpf+yTMiDeimcgpszUDWk82A
+         rBq7gNZC8D4FZPeZVAMEiYmSMZH0MummDiSmFg9ThGDsoWt2qNnHjfg5nnIKWlAAINTs
+         o6Od8P+zUREbwBetxIzOtRDLIcudV3caDibd2Ou9lFEAjS6fG7wA2hzsFuLz/JWoEHRJ
+         ASMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=sLO/22DEBzZ9YzTHvB2P+aBIyX6ZIdYPZ+AVLvQyXi4=;
+        b=ApGyKtRZeEGBAIemyJx2leRLdYnX17Xr0paWM7qVgiAf3B+XVt5JivCEEEwwOykiZJ
+         0RXOXEHYNCameFAItsZ+QMIBBgXMHvQCtkYLsYbk4rVB2wuDl4R2FJjCIqAoba8C8Z4u
+         9NueMRalugvsG/CVLHqFnlfK7i28sffsIfTyqv50g6Sm5Yy9fKbSE/X6gPjWbxh9mOcG
+         KI3Tj+7EEq5S4ZAirtxqJZI4fgCUCydzVd6vlIe+kNJtfEFBK+iVwfyVEqCp4TFMCeeT
+         0gk9tmFenQRdfm+D87XBNLM8vhhvxB+NfY/NB97UgLpERbq2A5EbeX4u4y/FXS7E+6aA
+         b1lQ==
+X-Gm-Message-State: APjAAAWwsHlNqIAIK4CwvcZVpjDIav1EEo4EiC9zF4ZppsHAwuNNyNFC
+        pnSje4xzeNWjPP/niOEZbEyP00Z3
+X-Google-Smtp-Source: APXvYqxSatuFQ8yuiFVOeRSZca4Eqd35/lgTnQRyBP+9mFROutEq01OWVr/WY20fT5YHYuHBK60dLg==
+X-Received: by 2002:a17:90a:346c:: with SMTP id o99mr7475164pjb.20.1561659103600;
+        Thu, 27 Jun 2019 11:11:43 -0700 (PDT)
+Received: from hari-Inspiron-1545 ([183.83.92.187])
+        by smtp.gmail.com with ESMTPSA id j5sm3690249pfi.104.2019.06.27.11.11.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 27 Jun 2019 11:11:42 -0700 (PDT)
+Date:   Thu, 27 Jun 2019 23:41:39 +0530
+From:   Hariprasad Kelam <hariprasad.kelam@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hariprasad Kelam <hariprasad.kelam@gmail.com>,
+        Nishka Dasgupta <nishkadg.linux@gmail.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: [Patch v3] staging: rtl8723bs: hal: sdio_halinit: Remove set but
+ unused varilable pHalData
+Message-ID: <20190627181139.GA3503@hari-Inspiron-1545>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAEXW_YTmx3wFKuiLyrQO6uSPYAL179EPa6N3WO7qZahccCs-pg@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 19062718-0052-0000-0000-000003D70729
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00011342; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000286; SDB=6.01224108; UDB=6.00644250; IPR=6.01005296;
- MB=3.00027492; MTD=3.00000008; XFM=3.00000015; UTC=2019-06-27 18:11:14
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19062718-0053-0000-0000-0000617B9650
-Message-Id: <20190627181112.GY26519@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-27_12:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906270207
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 27, 2019 at 01:46:27PM -0400, Joel Fernandes wrote:
-> On Thu, Jun 27, 2019 at 1:43 PM Joel Fernandes <joel@joelfernandes.org> wrote:
-> >
-> > On Thu, Jun 27, 2019 at 11:40 AM Sebastian Andrzej Siewior
-> > <bigeasy@linutronix.de> wrote:
-> > >
-> > > On 2019-06-27 11:37:10 [-0400], Joel Fernandes wrote:
-> > > > Sebastian it would be nice if possible to trace where the
-> > > > t->rcu_read_unlock_special is set for this scenario of calling
-> > > > rcu_read_unlock_special, to give a clear idea about whether it was
-> > > > really because of an IPI. I guess we could also add additional RCU
-> > > > debug fields to task_struct (just for debugging) to see where there
-> > > > unlock_special is set.
-> > > >
-> > > > Is there a test to reproduce this, or do I just boot an intel x86_64
-> > > > machine with "threadirqs" and run into it?
-> > >
-> > > Do you want to send me a patch or should I send you my kvm image which
-> > > triggers the bug on boot?
-> >
-> > I could reproduce this as well just booting Linus tree with threadirqs
-> > command line and running rcutorture. In 15 seconds or so it locks
-> > up... gdb backtrace shows the recursive lock:
-> 
-> Sorry that got badly wrapped, so I pasted it here:
-> https://hastebin.com/ajivofomik.shell
+Remove set but unsed variable pHalData in below functions
+_InitOperationMode, SetHwReg8723BS.
 
-Which rcutorture scenario would that be?  TREE03 is thus far refusing
-to fail for me when run this way:
+Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
+---
+v2 add clean change log
+v3 remove unneeded blank lines
+---
+ drivers/staging/rtl8723bs/hal/sdio_halinit.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-$ tools/testing/selftests/rcutorture/bin/kvm.sh --cpus 8 --duration 5 --trust-make --configs "TREE03" --bootargs "threadirqs"
-
-If it had failed, I would have tried the patch shown below.  I know that
-Sebastian has some concerns about the bug happening anyway, but we have
-to start somewhere!  ;-)
-
-							Thanx, Paul
-
-------------------------------------------------------------------------
-
-diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-index 82c925df1d92..be7bafc2c0a0 100644
---- a/kernel/rcu/tree_plugin.h
-+++ b/kernel/rcu/tree_plugin.h
-@@ -624,25 +624,16 @@ static void rcu_read_unlock_special(struct task_struct *t)
- 		      (rdp->grpmask & rnp->expmask) ||
- 		      tick_nohz_full_cpu(rdp->cpu);
- 		// Need to defer quiescent state until everything is enabled.
--		if ((exp || in_irq()) && irqs_were_disabled && use_softirq &&
--		    (in_irq() || !t->rcu_read_unlock_special.b.deferred_qs)) {
--			// Using softirq, safe to awaken, and we get
--			// no help from enabling irqs, unlike bh/preempt.
--			raise_softirq_irqoff(RCU_SOFTIRQ);
--		} else {
--			// Enabling BH or preempt does reschedule, so...
--			// Also if no expediting or NO_HZ_FULL, slow is OK.
--			set_tsk_need_resched(current);
--			set_preempt_need_resched();
--			if (IS_ENABLED(CONFIG_IRQ_WORK) && irqs_were_disabled &&
--			    !rdp->defer_qs_iw_pending && exp) {
--				// Get scheduler to re-evaluate and call hooks.
--				// If !IRQ_WORK, FQS scan will eventually IPI.
--				init_irq_work(&rdp->defer_qs_iw,
--					      rcu_preempt_deferred_qs_handler);
--				rdp->defer_qs_iw_pending = true;
--				irq_work_queue_on(&rdp->defer_qs_iw, rdp->cpu);
--			}
-+		set_tsk_need_resched(current);
-+		set_preempt_need_resched();
-+		if (IS_ENABLED(CONFIG_IRQ_WORK) && irqs_were_disabled &&
-+		    !rdp->defer_qs_iw_pending && exp) {
-+			// Get scheduler to re-evaluate and call hooks.
-+			// If !IRQ_WORK, FQS scan will eventually IPI.
-+			init_irq_work(&rdp->defer_qs_iw,
-+				      rcu_preempt_deferred_qs_handler);
-+			rdp->defer_qs_iw_pending = true;
-+			irq_work_queue_on(&rdp->defer_qs_iw, rdp->cpu);
- 		}
- 		t->rcu_read_unlock_special.b.deferred_qs = true;
- 		local_irq_restore(flags);
+diff --git a/drivers/staging/rtl8723bs/hal/sdio_halinit.c b/drivers/staging/rtl8723bs/hal/sdio_halinit.c
+index 4d06ab7..5b72d61 100644
+--- a/drivers/staging/rtl8723bs/hal/sdio_halinit.c
++++ b/drivers/staging/rtl8723bs/hal/sdio_halinit.c
+@@ -606,11 +606,9 @@ static void _initSdioAggregationSetting(struct adapter *padapter)
+ 
+ static void _InitOperationMode(struct adapter *padapter)
+ {
+-	struct hal_com_data *pHalData;
+ 	struct mlme_ext_priv *pmlmeext;
+ 	u8 regBwOpMode = 0;
+ 
+-	pHalData = GET_HAL_DATA(padapter);
+ 	pmlmeext = &padapter->mlmeextpriv;
+ 
+ 	/* 1 This part need to modified according to the rate set we filtered!! */
+@@ -1413,7 +1411,6 @@ static void ReadAdapterInfo8723BS(struct adapter *padapter)
+  */
+ static void SetHwReg8723BS(struct adapter *padapter, u8 variable, u8 *val)
+ {
+-	struct hal_com_data *pHalData;
+ 	u8 val8;
+ 
+ #if defined(CONFIG_WOWLAN) || defined(CONFIG_AP_WOWLAN)
+@@ -1433,8 +1430,6 @@ static void SetHwReg8723BS(struct adapter *padapter, u8 variable, u8 *val)
+ #endif
+ #endif
+ 
+-	pHalData = GET_HAL_DATA(padapter);
+-
+ 	switch (variable) {
+ 	case HW_VAR_SET_RPWM:
+ 		/*  rpwm value only use BIT0(clock bit) , BIT6(Ack bit), and BIT7(Toggle bit) */
+-- 
+2.7.4
 
