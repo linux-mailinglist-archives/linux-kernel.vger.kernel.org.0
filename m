@@ -2,395 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3413D58EC0
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 01:49:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A14458EC4
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 01:49:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726822AbfF0XtW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 19:49:22 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:45755 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726563AbfF0XtV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 19:49:21 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5RNn0vl503423
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Thu, 27 Jun 2019 16:49:00 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5RNn0vl503423
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019061801; t=1561679341;
-        bh=72MTXwqmz2exs8DUk8Urn0gxAnubLwtgfdQmE9JmzTw=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=0WhP1NS+ZnR3HsqJWGtrh0kWv1fL5WbO8pzU9hW57aHFHaSXVsZ3gX5yklkunTt61
-         HVSIJ09jfBunTAO5lPLyJwXaF8QhK/B9ALd19ch5s4n87enXwmY73wuHP/Q0xvuiZI
-         9hpGj+tQXtr9wq0tr+f+DSNnjOUzebaJ4DTaaZfjmDRzdkgeOmZNuvVhez4BSnhNp1
-         zxblD6Zv+Li/xAotfagBpTQL/gtAS1bPwfZYtLOzGL4/4vaQce4/0xtKKPHcnm/qZ1
-         rX/QflpbeUA2gckc9C8T1W5S7CCfaX6tEeSuMsbT5+O5wH3UJE+U4bl+39DSvcFhJ9
-         4HvmPFaYuc69A==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5RNn0n9503420;
-        Thu, 27 Jun 2019 16:49:00 -0700
-Date:   Thu, 27 Jun 2019 16:49:00 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Ingo Molnar <tipbot@zytor.com>
-Message-ID: <tip-d415c7543140f77fe1d2d9d3942cbf51a9737993@git.kernel.org>
-Cc:     hpa@zytor.com, ravi.v.shankar@intel.com,
-        linux-kernel@vger.kernel.org, andi.kleen@intel.com,
-        eranian@google.com, mingo@kernel.org,
-        Suravee.Suthikulpanit@amd.com,
-        ricardo.neri-calderon@linux.intel.com, peterz@infradead.org,
-        tglx@linutronix.de, ashok.raj@intel.com
-Reply-To: hpa@zytor.com, ricardo.neri-calderon@linux.intel.com,
-          peterz@infradead.org, andi.kleen@intel.com,
-          ravi.v.shankar@intel.com, linux-kernel@vger.kernel.org,
-          eranian@google.com, mingo@kernel.org, ashok.raj@intel.com,
-          Suravee.Suthikulpanit@amd.com, tglx@linutronix.de
-In-Reply-To: <20190623132436.093113681@linutronix.de>
-References: <20190623132436.093113681@linutronix.de>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/timers] x86/hpet: Rename variables to prepare for
- switching to channels
-Git-Commit-ID: d415c7543140f77fe1d2d9d3942cbf51a9737993
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1726872AbfF0Xtb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 19:49:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34384 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726563AbfF0Xtb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 19:49:31 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B78E520815;
+        Thu, 27 Jun 2019 23:49:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561679369;
+        bh=DPfoFDaQ0osnbl2xTlc3KM41TZ8uixeInq46nR6zOn8=;
+        h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
+        b=IrbogHQm/l14pPv3a7QeEDVXQO+JiyRJfBAx8wE5snW7UwJrjnxkFdi9V7lmzOrEI
+         Po5a7CnbBM7me/pNjIdZI04CJsyHvfrzlPfc/a2oGLR6ITPsI+ae6RjFZEeC2G5GqO
+         XJhBZob3sGfJRIJcZsst0xI8yhZJf56ux8RpTtHQ=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=0.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_12_24,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
-        DKIM_VALID_EF autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190625005434.GA6401@onstation.org>
+References: <20190516085018.2207-1-masneyb@onstation.org> <20190520142149.D56DA214AE@mail.kernel.org> <CACRpkdZxu1LfK11OHEx5L_4kyjMZ7qERpvDzFj5u3Pk2kD1qRA@mail.gmail.com> <20190529101231.GA14540@basecamp> <CACRpkdY-TcF7rizbPz=UcHrFvDgPJD68vbovNdcWP-aBYppp=g@mail.gmail.com> <20190623105332.GA25506@onstation.org> <CACRpkdYTaM+sBs-bhaXVtAwFtp6+_PWWJ_k9jobd7qB41HubDg@mail.gmail.com> <20190625005434.GA6401@onstation.org>
+To:     Brian Masney <masneyb@onstation.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH RESEND] ARM: dts: qcom: msm8974-hammerhead: add device tree bindings for vibrator
+Cc:     "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        Andy Gross <agross@kernel.org>,
+        David Brown <david.brown@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+User-Agent: alot/0.8.1
+Date:   Thu, 27 Jun 2019 16:49:28 -0700
+Message-Id: <20190627234929.B78E520815@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  d415c7543140f77fe1d2d9d3942cbf51a9737993
-Gitweb:     https://git.kernel.org/tip/d415c7543140f77fe1d2d9d3942cbf51a9737993
-Author:     Ingo Molnar <mingo@kernel.org>
-AuthorDate: Sun, 23 Jun 2019 15:24:02 +0200
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Fri, 28 Jun 2019 00:57:24 +0200
+Quoting Brian Masney (2019-06-24 17:54:34)
+> On Tue, Jun 25, 2019 at 12:29:29AM +0200, Linus Walleij wrote:
+> > On Sun, Jun 23, 2019 at 12:53 PM Brian Masney <masneyb@onstation.org> w=
+rote:
+> >=20
+> > > 2) Do what Linus suggests above. We can use v1 of this series from la=
+st
+> > >    September (see below for link) that adds this to the pwm subsystem.
+> > >    The locking would need to be added so that it won't conflict with =
+the
+> > >    clk subsystem. This can be tied into the input subsystem with the
+> > >    existing pwm-vibra driver.
+> >=20
+> > What I imagined was that the clk driver would double as a pwm driver.
+> > Just register both interfaces.
+> >=20
+> > There are already plenty of combines clk+reset drivers for example.
+> >=20
+> > Otherwise I'm all for this approach (but that's just me).
+>=20
+> I agree that this makes sense. I especially like that it'll allow us
+> to use the existing pwm-vibra driver in the input subsystem with this
+> approach.
+>=20
 
-x86/hpet: Rename variables to prepare for switching to channels
+This whole discussion is ignoring that clk_set_duty_cycle() exists.
+Maybe you can look back on the history of why the duty cycle API was
+added to the clk framework to make a strong argument for the replacement
+of this API with your proposal of registering to two different
+frameworks instead?
 
-struct hpet_dev is gone with the next change as the clockevent storage
-moves into struct hpet_channel. So the variable name hdev will not make
-sense anymore. Ditto for timer vs. channel and similar details.
+Here's the first few parts of the commit text of 9fba738a53dd ("clk: add
+duty cycle support"):
 
-Doing the rename in the change makes the patch harder to review. Doing it
-afterward is problematic vs. tracking down issues.  Doing it upfront is the
-easiest solution as it does not change functionality.
+    Add the possibility to apply and query the clock signal duty cycle rati=
+o.
 
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-Cc: Ashok Raj <ashok.raj@intel.com>
-Cc: Andi Kleen <andi.kleen@intel.com>
-Cc: Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Ravi Shankar <ravi.v.shankar@intel.com>
-Link: https://lkml.kernel.org/r/20190623132436.093113681@linutronix.de
+    This is useful when the duty cycle of the clock signal depends on some
+    other parameters controlled by the clock framework.
 
----
- arch/x86/kernel/hpet.c | 124 ++++++++++++++++++++++++-------------------------
- 1 file changed, 62 insertions(+), 62 deletions(-)
+    For example, the duty cycle of a divider may depends on the raw divider
+    setting (ratio =3D N / div) , which is controlled by the CCF. In such c=
+ase,
+    going through the pwm framework to control the duty cycle ratio of this
+    clock would be a burden.
 
-diff --git a/arch/x86/kernel/hpet.c b/arch/x86/kernel/hpet.c
-index 640ff75cc523..32f21b429881 100644
---- a/arch/x86/kernel/hpet.c
-+++ b/arch/x86/kernel/hpet.c
-@@ -315,7 +315,7 @@ static void hpet_legacy_clockevent_register(void)
- 	pr_debug("Clockevent registered\n");
- }
- 
--static int hpet_set_periodic(struct clock_event_device *evt, int timer)
-+static int hpet_set_periodic(struct clock_event_device *evt, int channel)
- {
- 	unsigned int cfg, cmp, now;
- 	uint64_t delta;
-@@ -325,11 +325,11 @@ static int hpet_set_periodic(struct clock_event_device *evt, int timer)
- 	delta >>= evt->shift;
- 	now = hpet_readl(HPET_COUNTER);
- 	cmp = now + (unsigned int)delta;
--	cfg = hpet_readl(HPET_Tn_CFG(timer));
-+	cfg = hpet_readl(HPET_Tn_CFG(channel));
- 	cfg |= HPET_TN_ENABLE | HPET_TN_PERIODIC | HPET_TN_SETVAL |
- 	       HPET_TN_32BIT;
--	hpet_writel(cfg, HPET_Tn_CFG(timer));
--	hpet_writel(cmp, HPET_Tn_CMP(timer));
-+	hpet_writel(cfg, HPET_Tn_CFG(channel));
-+	hpet_writel(cmp, HPET_Tn_CMP(channel));
- 	udelay(1);
- 	/*
- 	 * HPET on AMD 81xx needs a second write (with HPET_TN_SETVAL
-@@ -338,32 +338,32 @@ static int hpet_set_periodic(struct clock_event_device *evt, int timer)
- 	 * (See AMD-8111 HyperTransport I/O Hub Data Sheet,
- 	 * Publication # 24674)
- 	 */
--	hpet_writel((unsigned int)delta, HPET_Tn_CMP(timer));
-+	hpet_writel((unsigned int)delta, HPET_Tn_CMP(channel));
- 	hpet_start_counter();
- 	hpet_print_config();
- 
- 	return 0;
- }
- 
--static int hpet_set_oneshot(struct clock_event_device *evt, int timer)
-+static int hpet_set_oneshot(struct clock_event_device *evt, int channel)
- {
- 	unsigned int cfg;
- 
--	cfg = hpet_readl(HPET_Tn_CFG(timer));
-+	cfg = hpet_readl(HPET_Tn_CFG(channel));
- 	cfg &= ~HPET_TN_PERIODIC;
- 	cfg |= HPET_TN_ENABLE | HPET_TN_32BIT;
--	hpet_writel(cfg, HPET_Tn_CFG(timer));
-+	hpet_writel(cfg, HPET_Tn_CFG(channel));
- 
- 	return 0;
- }
- 
--static int hpet_shutdown(struct clock_event_device *evt, int timer)
-+static int hpet_shutdown(struct clock_event_device *evt, int channel)
- {
- 	unsigned int cfg;
- 
--	cfg = hpet_readl(HPET_Tn_CFG(timer));
-+	cfg = hpet_readl(HPET_Tn_CFG(channel));
- 	cfg &= ~HPET_TN_ENABLE;
--	hpet_writel(cfg, HPET_Tn_CFG(timer));
-+	hpet_writel(cfg, HPET_Tn_CFG(channel));
- 
- 	return 0;
- }
-@@ -460,30 +460,30 @@ static struct clock_event_device hpet_clockevent = {
- 
- void hpet_msi_unmask(struct irq_data *data)
- {
--	struct hpet_dev *hdev = irq_data_get_irq_handler_data(data);
-+	struct hpet_dev *hc = irq_data_get_irq_handler_data(data);
- 	unsigned int cfg;
- 
- 	/* unmask it */
--	cfg = hpet_readl(HPET_Tn_CFG(hdev->num));
-+	cfg = hpet_readl(HPET_Tn_CFG(hc->num));
- 	cfg |= HPET_TN_ENABLE | HPET_TN_FSB;
--	hpet_writel(cfg, HPET_Tn_CFG(hdev->num));
-+	hpet_writel(cfg, HPET_Tn_CFG(hc->num));
- }
- 
- void hpet_msi_mask(struct irq_data *data)
- {
--	struct hpet_dev *hdev = irq_data_get_irq_handler_data(data);
-+	struct hpet_dev *hc = irq_data_get_irq_handler_data(data);
- 	unsigned int cfg;
- 
- 	/* mask it */
--	cfg = hpet_readl(HPET_Tn_CFG(hdev->num));
-+	cfg = hpet_readl(HPET_Tn_CFG(hc->num));
- 	cfg &= ~(HPET_TN_ENABLE | HPET_TN_FSB);
--	hpet_writel(cfg, HPET_Tn_CFG(hdev->num));
-+	hpet_writel(cfg, HPET_Tn_CFG(hc->num));
- }
- 
--void hpet_msi_write(struct hpet_dev *hdev, struct msi_msg *msg)
-+void hpet_msi_write(struct hpet_dev *hc, struct msi_msg *msg)
- {
--	hpet_writel(msg->data, HPET_Tn_ROUTE(hdev->num));
--	hpet_writel(msg->address_lo, HPET_Tn_ROUTE(hdev->num) + 4);
-+	hpet_writel(msg->data, HPET_Tn_ROUTE(hc->num));
-+	hpet_writel(msg->address_lo, HPET_Tn_ROUTE(hc->num) + 4);
- }
- 
- static int hpet_msi_shutdown(struct clock_event_device *evt)
-@@ -503,13 +503,13 @@ static int hpet_msi_set_periodic(struct clock_event_device *evt)
- 
- static int hpet_msi_resume(struct clock_event_device *evt)
- {
--	struct hpet_dev *hdev = clockevent_to_channel(evt);
--	struct irq_data *data = irq_get_irq_data(hdev->irq);
-+	struct hpet_dev *hc = clockevent_to_channel(evt);
-+	struct irq_data *data = irq_get_irq_data(hc->irq);
- 	struct msi_msg msg;
- 
- 	/* Restore the MSI msg and unmask the interrupt */
- 	irq_chip_compose_msi_msg(data, &msg);
--	hpet_msi_write(hdev, &msg);
-+	hpet_msi_write(hc, &msg);
- 	hpet_msi_unmask(data);
- 	return 0;
- }
-@@ -522,11 +522,11 @@ static int hpet_msi_next_event(unsigned long delta,
- 
- static irqreturn_t hpet_interrupt_handler(int irq, void *data)
- {
--	struct hpet_dev *dev = data;
--	struct clock_event_device *evt = &dev->evt;
-+	struct hpet_dev *hc = data;
-+	struct clock_event_device *evt = &hc->evt;
- 
- 	if (!evt->event_handler) {
--		pr_info("Spurious interrupt HPET timer %d\n", dev->num);
-+		pr_info("Spurious interrupt HPET channel %d\n", hc->num);
- 		return IRQ_HANDLED;
- 	}
- 
-@@ -551,22 +551,22 @@ static int hpet_setup_irq(struct hpet_dev *dev)
- 	return 0;
- }
- 
--static void init_one_hpet_msi_clockevent(struct hpet_dev *hdev, int cpu)
-+static void init_one_hpet_msi_clockevent(struct hpet_dev *hc, int cpu)
- {
--	struct clock_event_device *evt = &hdev->evt;
-+	struct clock_event_device *evt = &hc->evt;
- 
--	if (!(hdev->flags & HPET_DEV_VALID))
-+	if (!(hc->flags & HPET_DEV_VALID))
- 		return;
- 
--	hdev->cpu = cpu;
--	per_cpu(cpu_hpet_dev, cpu) = hdev;
--	evt->name = hdev->name;
--	hpet_setup_irq(hdev);
--	evt->irq = hdev->irq;
-+	hc->cpu = cpu;
-+	per_cpu(cpu_hpet_dev, cpu) = hc;
-+	evt->name = hc->name;
-+	hpet_setup_irq(hc);
-+	evt->irq = hc->irq;
- 
- 	evt->rating = 110;
- 	evt->features = CLOCK_EVT_FEAT_ONESHOT;
--	if (hdev->flags & HPET_DEV_PERI_CAP) {
-+	if (hc->flags & HPET_DEV_PERI_CAP) {
- 		evt->features |= CLOCK_EVT_FEAT_PERIODIC;
- 		evt->set_state_periodic = hpet_msi_set_periodic;
- 	}
-@@ -575,7 +575,7 @@ static void init_one_hpet_msi_clockevent(struct hpet_dev *hdev, int cpu)
- 	evt->set_state_oneshot = hpet_msi_set_oneshot;
- 	evt->tick_resume = hpet_msi_resume;
- 	evt->set_next_event = hpet_msi_next_event;
--	evt->cpumask = cpumask_of(hdev->cpu);
-+	evt->cpumask = cpumask_of(hc->cpu);
- 
- 	clockevents_config_and_register(evt, hpet_freq, HPET_MIN_PROG_DELTA,
- 					0x7FFFFFFF);
-@@ -589,35 +589,35 @@ static struct hpet_dev *hpet_get_unused_timer(void)
- 		return NULL;
- 
- 	for (i = 0; i < hpet_base.nr_channels; i++) {
--		struct hpet_dev *hdev = &hpet_devs[i];
-+		struct hpet_dev *hc = &hpet_devs[i];
- 
--		if (!(hdev->flags & HPET_DEV_VALID))
-+		if (!(hc->flags & HPET_DEV_VALID))
- 			continue;
- 		if (test_and_set_bit(HPET_DEV_USED_BIT,
--			(unsigned long *)&hdev->flags))
-+			(unsigned long *)&hc->flags))
- 			continue;
--		return hdev;
-+		return hc;
- 	}
- 	return NULL;
- }
- 
- static int hpet_cpuhp_online(unsigned int cpu)
- {
--	struct hpet_dev *hdev = hpet_get_unused_timer();
-+	struct hpet_dev *hc = hpet_get_unused_timer();
- 
--	if (hdev)
--		init_one_hpet_msi_clockevent(hdev, cpu);
-+	if (hc)
-+		init_one_hpet_msi_clockevent(hc, cpu);
- 	return 0;
- }
- 
- static int hpet_cpuhp_dead(unsigned int cpu)
- {
--	struct hpet_dev *hdev = per_cpu(cpu_hpet_dev, cpu);
-+	struct hpet_dev *hc = per_cpu(cpu_hpet_dev, cpu);
- 
--	if (!hdev)
-+	if (!hc)
- 		return 0;
--	free_irq(hdev->irq, hdev);
--	hdev->flags &= ~HPET_DEV_USED;
-+	free_irq(hc->irq, hc);
-+	hc->flags &= ~HPET_DEV_USED;
- 	per_cpu(cpu_hpet_dev, cpu) = NULL;
- 	return 0;
- }
-@@ -653,26 +653,26 @@ static void __init hpet_msi_capability_lookup(unsigned int start_timer)
- 		return;
- 
- 	for (i = start_timer; i < num_timers - RESERVE_TIMERS; i++) {
--		struct hpet_dev *hdev = &hpet_devs[num_timers_used];
-+		struct hpet_dev *hc = &hpet_devs[num_timers_used];
- 		unsigned int cfg = hpet_base.channels[i].boot_cfg;
- 
- 		/* Only consider HPET timer with MSI support */
- 		if (!(cfg & HPET_TN_FSB_CAP))
- 			continue;
- 
--		hdev->flags = 0;
-+		hc->flags = 0;
- 		if (cfg & HPET_TN_PERIODIC_CAP)
--			hdev->flags |= HPET_DEV_PERI_CAP;
--		sprintf(hdev->name, "hpet%d", i);
--		hdev->num = i;
-+			hc->flags |= HPET_DEV_PERI_CAP;
-+		sprintf(hc->name, "hpet%d", i);
-+		hc->num = i;
- 
--		irq = hpet_assign_irq(hpet_domain, hdev, hdev->num);
-+		irq = hpet_assign_irq(hpet_domain, hc, hc->num);
- 		if (irq <= 0)
- 			continue;
- 
--		hdev->irq = irq;
--		hdev->flags |= HPET_DEV_FSB_CAP;
--		hdev->flags |= HPET_DEV_VALID;
-+		hc->irq = irq;
-+		hc->flags |= HPET_DEV_FSB_CAP;
-+		hc->flags |= HPET_DEV_VALID;
- 		num_timers_used++;
- 		if (num_timers_used == num_possible_cpus())
- 			break;
-@@ -691,13 +691,13 @@ static void __init hpet_reserve_msi_timers(struct hpet_data *hd)
- 		return;
- 
- 	for (i = 0; i < hpet_base.nr_channels; i++) {
--		struct hpet_dev *hdev = &hpet_devs[i];
-+		struct hpet_dev *hc = &hpet_devs[i];
- 
--		if (!(hdev->flags & HPET_DEV_VALID))
-+		if (!(hc->flags & HPET_DEV_VALID))
- 			continue;
- 
--		hd->hd_irq[hdev->num] = hdev->irq;
--		hpet_reserve_timer(hd, hdev->num);
-+		hd->hd_irq[hc->num] = hc->irq;
-+		hpet_reserve_timer(hd, hc->num);
- 	}
- }
- #endif
-@@ -1138,8 +1138,8 @@ void hpet_unregister_irq_handler(rtc_irq_handler handler)
- EXPORT_SYMBOL_GPL(hpet_unregister_irq_handler);
- 
- /*
-- * Timer 1 for RTC emulation. We use one shot mode, as periodic mode
-- * is not supported by all HPET implementations for timer 1.
-+ * Channel 1 for RTC emulation. We use one shot mode, as periodic mode
-+ * is not supported by all HPET implementations for channel 1.
-  *
-  * hpet_rtc_timer_init() is called when the rtc is initialized.
-  */
+In the case of qcom clks, I seem to recall the frequency of the clk
+depends on the duty cycle settings. The duty cycle is constrained by the
+M/N values which determine the frequency of the clk after it's
+pre-divided. We did some sort of bit trick to set the duty cycle to the
+N value inverted or something so that we always got 50% duty cycle.
+
