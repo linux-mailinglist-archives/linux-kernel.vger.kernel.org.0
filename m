@@ -2,67 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BDB258871
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 19:34:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93C7558875
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 19:34:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726720AbfF0ReZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 13:34:25 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:56962 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726405AbfF0ReZ (ORCPT
+        id S1726572AbfF0Ref (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 13:34:35 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:41879 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726557AbfF0Red (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 13:34:25 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id D377914DB8767;
-        Thu, 27 Jun 2019 10:34:24 -0700 (PDT)
-Date:   Thu, 27 Jun 2019 10:34:24 -0700 (PDT)
-Message-Id: <20190627.103424.2376390104509352.davem@davemloft.net>
-To:     c0d1n61at3@gmail.com
-Cc:     skhan@linuxfoundation.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [Linux-kernel-mentees][PATCH v2] packet: Fix undefined
- behavior in bit shift
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190627165726.p6k3tugjs2gzgnjh@rYz3n>
-References: <7f6f44b2-3fe4-85f6-df3c-ad59f2eadba2@linuxfoundation.org>
-        <20190627.092253.1878691006683087825.davem@davemloft.net>
-        <20190627165726.p6k3tugjs2gzgnjh@rYz3n>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 27 Jun 2019 10:34:25 -0700 (PDT)
+        Thu, 27 Jun 2019 13:34:33 -0400
+Received: by mail-pl1-f194.google.com with SMTP id m7so1658779pls.8;
+        Thu, 27 Jun 2019 10:34:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=+kSecBPDQ3wKiG0c4Aix4ApQzupSauK2asU/f8XLmXs=;
+        b=pYBq2wjIhDEwZCjUpeJb8Of8BX1OB9EXHtDiNReRLhBoLjJ/y4FTJyxlxRgiu6M6VS
+         u4oiiQJyLP5sumLrhVwHJ2Y/F/QCujoEJAWfb5ZfCxcenOAsKK+iFXYmTyAfNdt9YVP5
+         4dIPsEXwfTzAnod0Ge18suOBJrJEAxol/ZS+fonnxEiox6pTRnvWg7YqeAnYfQrsBrnr
+         JtqIhkYsmZccKUv2nj6BjSGhYHz2XXESZemSTFzAizpwSFk5ybZ/5X0MJAGYmL39oFev
+         TOMBMxoEB6gx2jabposFneLxrcpwHHhQb8jQIllAab8WSYX1M0vVaLeZBPsEMKvgcH72
+         EFEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=+kSecBPDQ3wKiG0c4Aix4ApQzupSauK2asU/f8XLmXs=;
+        b=g8cIY6PvAzC4IKuWwI41tM22Zs5vcTXDpBwSPIJQ0yyao24y1NsjdTqVRTrDsclLAk
+         8JdAX7bKmxahLN1I6Wz/6dbjBmAelIvrXG0X6ox0CPMMUmyoLfoGkTIQ293CNNcwEohu
+         un0STVhWh7cBxqZSUOKeHfOE3Gp1zlCJpTnLxEYXvkQQUK7Dibpdae9rLntJDDaBQUmb
+         Wr5S4pvAjhgY7AmmvN9fLKbf65Hmn4x7lD/IRahRNsLQ+Um03HvTm8twty0wLZ1kwarX
+         RbPKhcm033LpKSG40vI4NNNrTkQx+qvp7PiI1mq22P+9uNvxa0QEzn3RLYgm0ltdzpmW
+         LAbA==
+X-Gm-Message-State: APjAAAXSBXhhAbtUinbnCF4sBjBEPwMkyIfpmlCIidipx7gptWDEPPUQ
+        FD7idz8lOH/c5N0WKqULVEUTbb4nJhU=
+X-Google-Smtp-Source: APXvYqyAWLmymCdfToklsBLshEYLpeHEZ/CLPTmIo6bRU0ae9CCo1O4lQx5HVwWnqypnPGOD/LMCyQ==
+X-Received: by 2002:a17:902:9689:: with SMTP id n9mr6065578plp.241.1561656872909;
+        Thu, 27 Jun 2019 10:34:32 -0700 (PDT)
+Received: from hfq-skylake.ipads-lab.se.sjtu.edu.cn ([202.120.40.82])
+        by smtp.googlemail.com with ESMTPSA id d12sm3320008pfd.96.2019.06.27.10.34.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 27 Jun 2019 10:34:32 -0700 (PDT)
+From:   Fuqian Huang <huangfq.daxian@gmail.com>
+Cc:     Fuqian Huang <huangfq.daxian@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, linux-ide@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 06/87] ata:sata_qstor: Remove call to memset after dmam_alloc_coherent
+Date:   Fri, 28 Jun 2019 01:34:26 +0800
+Message-Id: <20190627173426.2141-1-huangfq.daxian@gmail.com>
+X-Mailer: git-send-email 2.11.0
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiunn Chang <c0d1n61at3@gmail.com>
-Date: Thu, 27 Jun 2019 11:57:28 -0500
+In commit af7ddd8a627c
+("Merge tag 'dma-mapping-4.21' of git://git.infradead.org/users/hch/dma-mapping"),
+dmam_alloc_coherent has already zeroed the memory.
+So memset is not needed.
 
-> On Thu, Jun 27, 2019 at 09:22:53AM -0700, David Miller wrote:
->> From: Shuah Khan <skhan@linuxfoundation.org>
->> Date: Wed, 26 Jun 2019 21:32:52 -0600
->> 
->> > On 6/26/19 9:25 PM, Jiunn Chang wrote:
->> >> Shifting signed 32-bit value by 31 bits is undefined.  Changing most
->> >> significant bit to unsigned.
->> >> Changes included in v2:
->> >>    - use subsystem specific subject lines
->> >>    - CC required mailing lists
->> >> 
->> > 
->> > These version change lines don't belong in the change log.
->> 
->> For networking changes I actually like the change lines to be in the
->> commit log.  So please don't stray people this way, thanks.
-> 
-> Hello David,
-> 
-> Would you like me to send v3 with the change log in the patch description?
+Signed-off-by: Fuqian Huang <huangfq.daxian@gmail.com>
+---
+ drivers/ata/sata_qstor.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-I'll use v2 which had this done correctly.
+diff --git a/drivers/ata/sata_qstor.c b/drivers/ata/sata_qstor.c
+index 7ec0c216a6a6..865e5c58bd94 100644
+--- a/drivers/ata/sata_qstor.c
++++ b/drivers/ata/sata_qstor.c
+@@ -477,7 +477,6 @@ static int qs_port_start(struct ata_port *ap)
+ 				      GFP_KERNEL);
+ 	if (!pp->pkt)
+ 		return -ENOMEM;
+-	memset(pp->pkt, 0, QS_PKT_BYTES);
+ 	ap->private_data = pp;
+ 
+ 	qs_enter_reg_mode(ap);
+-- 
+2.11.0
+
