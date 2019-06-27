@@ -2,108 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D3E5578ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 03:30:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CC7E578F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 03:34:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726859AbfF0Baj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 21:30:39 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:52648 "EHLO mx1.redhat.com"
+        id S1726991AbfF0BeC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 21:34:02 -0400
+Received: from mxhk.zte.com.cn ([63.217.80.70]:44400 "EHLO mxhk.zte.com.cn"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726731AbfF0Baj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 21:30:39 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 54CDB8666F;
-        Thu, 27 Jun 2019 01:30:38 +0000 (UTC)
-Received: from treble (ovpn-126-66.rdu2.redhat.com [10.10.126.66])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id AC2DC60BE5;
-        Thu, 27 Jun 2019 01:30:36 +0000 (UTC)
-Date:   Wed, 26 Jun 2019 20:30:34 -0500
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Song Liu <songliubraving@fb.com>,
-        Kairui Song <kasong@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH v3 3/4] bpf: Fix ORC unwinding in non-JIT BPF code
-Message-ID: <20190627013034.cgyb7ytusvapmsqq@treble>
-References: <cover.1561595111.git.jpoimboe@redhat.com>
- <a5a486434d31d77297d39c4adccea22fac3027c1.1561595111.git.jpoimboe@redhat.com>
- <CAADnVQL2z4BPUvtem-1C_JxzSgc_L8ED=VjGLu7ypPSq3wwC4w@mail.gmail.com>
- <20190627010653.yovvztgmimaywaz5@treble>
- <CAADnVQ+hZvNEx6pjWKEomn=Nh8zM1451kVscvCyyWaJ-DmcehA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAADnVQ+hZvNEx6pjWKEomn=Nh8zM1451kVscvCyyWaJ-DmcehA@mail.gmail.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Thu, 27 Jun 2019 01:30:38 +0000 (UTC)
+        id S1726829AbfF0BeC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 21:34:02 -0400
+Received: from mse-fl2.zte.com.cn (unknown [10.30.14.239])
+        by Forcepoint Email with ESMTPS id F12E77F48397E624B942;
+        Thu, 27 Jun 2019 09:33:59 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse-fl2.zte.com.cn with ESMTP id x5R1XKP8032512;
+        Thu, 27 Jun 2019 09:33:20 +0800 (GMT-8)
+        (envelope-from ran.xiaokai@zte.com.cn)
+Received: from fox-host8.localdomain ([10.74.120.8])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2019062709334724-1749299 ;
+          Thu, 27 Jun 2019 09:33:47 +0800 
+From:   Ran Xiaokai <ran.xiaokai@zte.com.cn>
+To:     mingo@redhat.com
+Cc:     peterz@infradead.org, linux-kernel@vger.kernel.org,
+        wang.yi59@zte.com.cn, Ran Xiaokai <ran.xiaokai@zte.com.cn>
+Subject: [PATCH] sched/rt: Remove unnecessary (!rt_rq->tg) check
+Date:   Thu, 27 Jun 2019 09:30:58 +0800
+Message-Id: <1561599058-11857-1-git-send-email-ran.xiaokai@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2019-06-27 09:33:47,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2019-06-27 09:33:25,
+        Serialize complete at 2019-06-27 09:33:25
+X-MAIL: mse-fl2.zte.com.cn x5R1XKP8032512
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 26, 2019 at 06:22:48PM -0700, Alexei Starovoitov wrote:
-> On Wed, Jun 26, 2019 at 6:07 PM Josh Poimboeuf <jpoimboe@redhat.com> wrote:
-> >
-> > On Wed, Jun 26, 2019 at 05:57:08PM -0700, Alexei Starovoitov wrote:
-> > > On Wed, Jun 26, 2019 at 5:36 PM Josh Poimboeuf <jpoimboe@redhat.com> wrote:
-> > > >
-> > > > Objtool previously ignored ___bpf_prog_run() because it didn't
-> > > > understand the jump table.  This resulted in the ORC unwinder not being
-> > > > able to unwind through non-JIT BPF code.
-> > > >
-> > > > Now that objtool knows how to read jump tables, remove the whitelist and
-> > > > rename the variable to "jump_table" so objtool can recognize it.
-> > > >
-> > > > Fixes: d15d356887e7 ("perf/x86: Make perf callchains work without CONFIG_FRAME_POINTER")
-> > > > Reported-by: Song Liu <songliubraving@fb.com>
-> > > > Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-> > > > ---
-> > > >  kernel/bpf/core.c | 5 ++---
-> > > >  1 file changed, 2 insertions(+), 3 deletions(-)
-> > > >
-> > > > diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
-> > > > index 080e2bb644cc..ff66294882f8 100644
-> > > > --- a/kernel/bpf/core.c
-> > > > +++ b/kernel/bpf/core.c
-> > > > @@ -1299,7 +1299,7 @@ static u64 ___bpf_prog_run(u64 *regs, const struct bpf_insn *insn, u64 *stack)
-> > > >  {
-> > > >  #define BPF_INSN_2_LBL(x, y)    [BPF_##x | BPF_##y] = &&x##_##y
-> > > >  #define BPF_INSN_3_LBL(x, y, z) [BPF_##x | BPF_##y | BPF_##z] = &&x##_##y##_##z
-> > > > -       static const void *jumptable[256] = {
-> > > > +       static const void *jump_table[256] = {
-> > > >                 [0 ... 255] = &&default_label,
-> > > >                 /* Now overwrite non-defaults ... */
-> > > >                 BPF_INSN_MAP(BPF_INSN_2_LBL, BPF_INSN_3_LBL),
-> > > > @@ -1315,7 +1315,7 @@ static u64 ___bpf_prog_run(u64 *regs, const struct bpf_insn *insn, u64 *stack)
-> > > >  #define CONT_JMP ({ insn++; goto select_insn; })
-> > > >
-> > > >  select_insn:
-> > > > -       goto *jumptable[insn->code];
-> > > > +       goto *jump_table[insn->code];
-> > >
-> > > I thought we were clear that it is a nack?
-> > > Either live it alone or rename to something like jump_table_bpf_interpreter
-> > > or bpf_interpreter_jump_table.
-> >
-> > As I have said many times:
-> >
-> > The jump table detection is a generic objtool feature.  It makes no
-> > sense to give a bpf-specific name to a generic objtool feature which can
-> > be used by other components.
-> 
-> Nacked-by: Alexei Starovoitov <ast@kernel.org>
+if CONFIG_RT_GROUP_SCHED is configured, every rt_rq belongs to
+a certain task_group. Even top rt_rq belongs to root_task_group.
+So NULL check in sched_rt_runtime() is unnecessary.
 
-Whatever, it's your code...
+Signed-off-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
+---
+ kernel/sched/rt.c | 12 ++----------
+ 1 file changed, 2 insertions(+), 10 deletions(-)
 
-To the -tip maintainers: patches 1 and 4 are independent of this change
-and can be merged regardless.
-
+diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+index 1e6b909dca36..803e8b86c6f5 100644
+--- a/kernel/sched/rt.c
++++ b/kernel/sched/rt.c
+@@ -436,16 +436,13 @@ static inline int on_rt_rq(struct sched_rt_entity *rt_se)
+ 	return rt_se->on_rq;
+ }
+ 
+-#ifdef CONFIG_RT_GROUP_SCHED
+-
+ static inline u64 sched_rt_runtime(struct rt_rq *rt_rq)
+ {
+-	if (!rt_rq->tg)
+-		return RUNTIME_INF;
+-
+ 	return rt_rq->rt_runtime;
+ }
+ 
++#ifdef CONFIG_RT_GROUP_SCHED
++
+ static inline u64 sched_rt_period(struct rt_rq *rt_rq)
+ {
+ 	return ktime_to_ns(rt_rq->tg->rt_bandwidth.rt_period);
+@@ -561,11 +558,6 @@ static inline struct rt_bandwidth *sched_rt_bandwidth(struct rt_rq *rt_rq)
+ 
+ #else /* !CONFIG_RT_GROUP_SCHED */
+ 
+-static inline u64 sched_rt_runtime(struct rt_rq *rt_rq)
+-{
+-	return rt_rq->rt_runtime;
+-}
+-
+ static inline u64 sched_rt_period(struct rt_rq *rt_rq)
+ {
+ 	return ktime_to_ns(def_rt_bandwidth.rt_period);
 -- 
-Josh
+2.15.2
+
