@@ -2,91 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54458589BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 20:19:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 99B06589BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 20:21:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726754AbfF0STx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 14:19:53 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:35124 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726508AbfF0STx (ORCPT
+        id S1726734AbfF0SVY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 14:21:24 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:46260 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726508AbfF0SVY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 14:19:53 -0400
-Received: by mail-pg1-f194.google.com with SMTP id s27so1392207pgl.2;
-        Thu, 27 Jun 2019 11:19:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:message-id:in-reply-to:references:subject
-         :mime-version:content-transfer-encoding;
-        bh=YxWB64ryDTAukr5Ntc6C0h8QlbYoWm2vudWLQPZyntg=;
-        b=EXCmGp9PEcUVA3irnDJK4OVTXv2Sl7cZRSj65JU9vsOjqWmuqs6yDubTP2RMCaRb3O
-         dZWfwZjkGqxIMxgfzcl035UUwoyGCHsKBd1VHFoCnMpOToT2/gzA4FzeYgdIPIJY2tZb
-         1Oh6tqb2JlvLHyHpaRoMRvOifmqtBhB5Z2GL77f59yBXVsG45GhQ36yi9Uw/vgEaGtiu
-         GyNDMsbV7CjlTFkXJT+mTAdS+0HLn3bEGURNT6Ss/wiAGmZlQvGPVPscLLdwiWiKFH3M
-         cN/PkxDdNmBto3PnfR96yTh54RoE7sCklobvdymQkw7jxrmW4XhtG5hVLPmspclg0z97
-         8L5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:message-id:in-reply-to
-         :references:subject:mime-version:content-transfer-encoding;
-        bh=YxWB64ryDTAukr5Ntc6C0h8QlbYoWm2vudWLQPZyntg=;
-        b=cwuTXEIDw3bpgFfD4t9aNwlUO8m5Kf/NgWrr+U8PpLfyWSNdcUVtPnT8oLm5KPGnCR
-         jpb0RqKt8H3gxfD5EweswuOViWv5PhSCt2PoeUnF0aGFfU8pR8KilL9pzgaLra5vBa1I
-         fGNnuinMXJr32SjbaNPCc/nA/nLu8+NYaTglU2vw803ZfpEx+g4CENmAkajurZRWdbfY
-         4HpGrXSdE9W49ZeZALnMN6ZXciiU1VrvWxl+IFuzhWxNF3fMkpmJV8E+1bI32tbKBxcm
-         oho41zf/cym7Kp1kn8jor5ra7ZIHN9eGiu/BmrlNHPHI46VhYaRj97CMEzKS8CWyeGmw
-         Qjzg==
-X-Gm-Message-State: APjAAAXQKsGqdXOg7T3x73Clx3M20GE25Fca5JicQfRKKnaQ5tPyNXji
-        ws9BLZXa2JCpxVOPzqvlsX0=
-X-Google-Smtp-Source: APXvYqywhigCjvf0V8jWgrcntEPT022im+5ozHdT/lBYAjP4szKy6nZXorPGKYUK8vvBZC64HEZtNQ==
-X-Received: by 2002:a65:62c4:: with SMTP id m4mr4889096pgv.243.1561659592672;
-        Thu, 27 Jun 2019 11:19:52 -0700 (PDT)
-Received: from localhost ([67.136.128.119])
-        by smtp.gmail.com with ESMTPSA id a6sm6803714pfa.51.2019.06.27.11.19.51
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 27 Jun 2019 11:19:52 -0700 (PDT)
-Date:   Thu, 27 Jun 2019 11:19:51 -0700
-From:   John Fastabend <john.fastabend@gmail.com>
-To:     Eric Biggers <ebiggers@kernel.org>,
-        Boris Pismenny <borisp@mellanox.com>,
-        Aviad Yehezkel <aviadye@mellanox.com>,
-        Dave Watson <davejwatson@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Daniel Borkmann <daniel@iogearbox.net>, netdev@vger.kernel.org
-Cc:     davem@davemloft.net, glider@google.com,
-        herbert@gondor.apana.org.au, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        syzbot <syzbot+6f50c99e8f6194bf363f@syzkaller.appspotmail.com>
-Message-ID: <5d1508c79587a_e392b1ee39f65b45b@john-XPS-13-9370.notmuch>
-In-Reply-To: <20190627164627.GF686@sol.localdomain>
-References: <000000000000a97a15058c50c52e@google.com>
- <20190627164627.GF686@sol.localdomain>
-Subject: RE: [net/tls] Re: KMSAN: uninit-value in aesti_encrypt
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+        Thu, 27 Jun 2019 14:21:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1561659683; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:references; bh=hxYTvnQO/eZbO0T4ZUdUxSRmfpX1wgQggO720gFQx6M=;
+        b=kByL8G0YFql9ZKH6WiEaGOaw+1sMNHBgy9YTjP+eh3g32qZmd7N2ySNirSap30FnNXuGfC
+        qY4HCO4iEy9lG5cU1XYddxBfE3YA9O6rnp3KpiAtzjVWRhvX80TCaxAjhQ8cwllJp9OwnU
+        cOAMztb2EctpEZVeLcqrSyOSIyKkHmw=
+From:   Paul Cercueil <paul@crapouillou.net>
+To:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>
+Cc:     Sam Ravnborg <sam@ravnborg.org>, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, od@zcrc.me,
+        Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH 1/3] DRM: ingenic: Use devm_platform_ioremap_resource
+Date:   Thu, 27 Jun 2019 20:21:12 +0200
+Message-Id: <20190627182114.27299-1-paul@crapouillou.net>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Eric Biggers wrote:
-> [+TLS maintainers]
-> 
-> Very likely a net/tls bug, not a crypto bug.
-> 
-> Possibly a duplicate of other reports such as "KMSAN: uninit-value in gf128mul_4k_lle (3)"
-> 
-> See https://lore.kernel.org/netdev/20190625055019.GD17703@sol.localdomain/ for
-> the list of 17 other open syzbot bugs I've assigned to the TLS subsystem.  TLS
-> maintainers, when are you planning to look into these?
-> 
-> On Thu, Jun 27, 2019 at 09:37:05AM -0700, syzbot wrote:
+Simplify a bit the probe function by using the newly introduced
+devm_platform_ioremap_resource(), instead of having to call
+platform_get_resource() followed by devm_ioremap_resource().
 
-I'm looking at this issue now. There is a series on bpf list now to address
-many of those 17 open issues but this is a separate issue. I can reproduce
-it locally so should have a fix soon.
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ drivers/gpu/drm/ingenic/ingenic-drm.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Thanks,
-John
+diff --git a/drivers/gpu/drm/ingenic/ingenic-drm.c b/drivers/gpu/drm/ingenic/ingenic-drm.c
+index a069579ca749..02c4788ef1c7 100644
+--- a/drivers/gpu/drm/ingenic/ingenic-drm.c
++++ b/drivers/gpu/drm/ingenic/ingenic-drm.c
+@@ -580,7 +580,6 @@ static int ingenic_drm_probe(struct platform_device *pdev)
+ 	struct drm_bridge *bridge;
+ 	struct drm_panel *panel;
+ 	struct drm_device *drm;
+-	struct resource *mem;
+ 	void __iomem *base;
+ 	long parent_rate;
+ 	int ret, irq;
+@@ -614,8 +613,7 @@ static int ingenic_drm_probe(struct platform_device *pdev)
+ 	drm->mode_config.max_height = 600;
+ 	drm->mode_config.funcs = &ingenic_drm_mode_config_funcs;
+ 
+-	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	base = devm_ioremap_resource(dev, mem);
++	base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(base)) {
+ 		dev_err(dev, "Failed to get memory resource");
+ 		return PTR_ERR(base);
+-- 
+2.21.0.593.g511ec345e18
+
