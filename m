@@ -2,63 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38AEF58334
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 15:16:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A7815833F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 15:18:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726671AbfF0NQo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 09:16:44 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:52935 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726480AbfF0NQo (ORCPT
+        id S1726757AbfF0NSX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 09:18:23 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:56802 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726059AbfF0NSX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 09:16:44 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1hgUGV-000212-Kg; Thu, 27 Jun 2019 13:16:39 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Keerthy <j-keerthy@ti.com>, Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] regulator: lp87565: fix missing break in switch statement
-Date:   Thu, 27 Jun 2019 14:16:39 +0100
-Message-Id: <20190627131639.6394-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.20.1
+        Thu, 27 Jun 2019 09:18:23 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5RDIM8T095093;
+        Thu, 27 Jun 2019 08:18:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1561641502;
+        bh=rHpj0mT9tggfORmwu7tiNcTVTbNMHVQathpDxVOS0yY=;
+        h=Subject:From:To:CC:References:Date:In-Reply-To;
+        b=x2D9uYjDWhRkaRr/gD53SrHIwFEa/UXCDrsXqRF0bO1DhZ4lfCApJol6IrKvQYHRO
+         bRavzSiw83mhnUC1AmdvajJe4AG3Tq5KX4w7uW77zdvCBj0mvS0vscki2j/LFp+CZF
+         4D0LX+ioH/l5Nh6Ag3ujVdnr17oa3hkcKIR6c9/s=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5RDIMOg091462
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 27 Jun 2019 08:18:22 -0500
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 27
+ Jun 2019 08:18:22 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Thu, 27 Jun 2019 08:18:22 -0500
+Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5RDIKwb026763;
+        Thu, 27 Jun 2019 08:18:21 -0500
+Subject: Re: [GIT PULL v2] PHY: for 5.2-rc
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     <linux-kernel@vger.kernel.org>
+References: <20190612102803.25398-1-kishon@ti.com>
+ <3c16d177-adb3-5c42-7e90-49ddae9723cb@ti.com>
+ <20190621064019.GA12643@kroah.com>
+ <105a126a-5897-5607-e371-1af958523631@ti.com>
+Message-ID: <194c1b99-aff4-6118-b853-6745b306567f@ti.com>
+Date:   Thu, 27 Jun 2019 18:46:50 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
+In-Reply-To: <105a126a-5897-5607-e371-1af958523631@ti.com>
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Hi Greg,
 
-Currently the LP87565_DEVICE_TYPE_LP87561_Q1 case does not have a
-break statement, causing it to fall through to a dev_err message.
-Fix this by adding in the missing break statement.
+On 21/06/19 12:50 PM, Kishon Vijay Abraham I wrote:
+> 
+> 
+> On 21/06/19 12:10 PM, Greg Kroah-Hartman wrote:
+>> On Fri, Jun 21, 2019 at 11:41:26AM +0530, Kishon Vijay Abraham I wrote:
+>>> Hi Greg,
+>>>
+>>> On 12/06/19 3:57 PM, Kishon Vijay Abraham I wrote:
+>>>> Hi Greg,
+>>>>
+>>>> Please find the updated pull request for 5.2 -rc cycle. Here I dropped
+>>>> the patch that added "static" for a function to fix sparse warning.
+>>>>
+>>>> I'm also sending the patches along with this pull request in case you'd
+>>>> like to look them.
+>>>>
+>>>> Consider merging it in this -rc cycle and let me know if you want me
+>>>> to make any further changes.
+>>>
+>>> Are you planning to merge this?
+>>
+>> Ugh, fell through the cracks of my huge TODO mbox at the moment, sorry.
+>> It's still there, should get to it next week...
+> 
+> All right, thanks!
 
-Addresses-Coverity: ("Missing break in switch")
-Fixes: 7ee63bd74750 ("regulator: lp87565: Add 4-phase lp87561 regulator support")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/regulator/lp87565-regulator.c | 1 +
- 1 file changed, 1 insertion(+)
+I think it's not merged yet. If you think it's too late, I can send it along
+with the merge window pull request.
 
-diff --git a/drivers/regulator/lp87565-regulator.c b/drivers/regulator/lp87565-regulator.c
-index 993c11702083..5d067f7c2116 100644
---- a/drivers/regulator/lp87565-regulator.c
-+++ b/drivers/regulator/lp87565-regulator.c
-@@ -180,6 +180,7 @@ static int lp87565_regulator_probe(struct platform_device *pdev)
- 	case LP87565_DEVICE_TYPE_LP87561_Q1:
- 		min_idx = LP87565_BUCK_3210;
- 		max_idx = LP87565_BUCK_3210;
-+		break;
- 	default:
- 		dev_err(lp87565->dev, "Invalid lp config %d\n",
- 			lp87565->dev_type);
--- 
-2.20.1
-
+Thanks
+Kishon
