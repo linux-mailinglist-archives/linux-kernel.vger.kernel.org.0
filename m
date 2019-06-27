@@ -2,362 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73B54580D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 12:49:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E9DF580ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 12:51:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726918AbfF0KtW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 06:49:22 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:52196 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726877AbfF0KtR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 06:49:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=W1ba97vqj5fSXcVc3Fg0+/SxTpVq+Cf6Jfltd57wrXE=; b=JnlFKjeAVzpIZSsUphHn8XsiHd
-        Dlp1mHk1n6YRXj8QOaBSJhPEseZXBpAOz91p09O+AVjWD4XK45M31xaaEqwNMd1B7XGe98qak5K4b
-        SGsXKLtPPDhfxuFpOWFwT9UcJtBBkBOmg5uMMQsxXH101W//+otWiGTqGiNTTT0xpYe6TV+f12keY
-        DUpKdckdJ7sx16y7vDIAz7Fp9RmYo4wAyHr3T+BFeWpWIUYrZ2p4Q5oxgHf5xN+sNmvmLEPgMUY0g
-        y4U99IE7HGtEanB/Sbx8PX3JGLoIzcz3M1eRRVNNCrBGtIfH5hKQQJ1+rVmpE72zJwOpVZwlMzArC
-        eqH5d2cA==;
-Received: from 089144214055.atnat0023.highway.a1.net ([89.144.214.55] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hgRxr-0005AG-Ep; Thu, 27 Jun 2019 10:49:15 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     "Darrick J . Wong" <darrick.wong@oracle.com>
-Cc:     Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 13/13] iomap: add tracing for the address space operations
-Date:   Thu, 27 Jun 2019 12:48:36 +0200
-Message-Id: <20190627104836.25446-14-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190627104836.25446-1-hch@lst.de>
-References: <20190627104836.25446-1-hch@lst.de>
+        id S1726590AbfF0KvB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 06:51:01 -0400
+Received: from mail-eopbgr10076.outbound.protection.outlook.com ([40.107.1.76]:30947
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726422AbfF0KvB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 06:51:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lUM8k4FmT9GXCoQAase0IMMolH9VA/ThvqXPbwPHCpA=;
+ b=czNwe+UPDrdHoVYT0+tUMsFFw/BD4jFwGAj3xceOVRMZLLUbGrHFG1BX7IEEcyjh4F5VykZ6oDdbkNfuWJ9qIrcCriqJZkPydqVAdvDCh1CBzNtGUkxYOpZxb0wWSq+Shxr9G9Ph19RTA+MwLuMPV81Sk9lneDY3ecXQ02vULss=
+Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com (52.134.3.153) by
+ VI1PR0402MB2816.eurprd04.prod.outlook.com (10.175.24.22) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2008.13; Thu, 27 Jun 2019 10:50:56 +0000
+Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com
+ ([fe80::14c8:b254:33f0:fdba]) by VI1PR0402MB3485.eurprd04.prod.outlook.com
+ ([fe80::14c8:b254:33f0:fdba%6]) with mapi id 15.20.2008.014; Thu, 27 Jun 2019
+ 10:50:56 +0000
+From:   Horia Geanta <horia.geanta@nxp.com>
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>
+CC:     Chris Spencer <christopher.spencer@sea.co.uk>,
+        Cory Tusar <cory.tusar@zii.aero>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 1/5] crypto: caam - move DMA mask selection into a
+ function
+Thread-Topic: [PATCH v3 1/5] crypto: caam - move DMA mask selection into a
+ function
+Thread-Index: AQHVJSZHrfiT286a+kWx5sqHeT0JfA==
+Date:   Thu, 27 Jun 2019 10:50:56 +0000
+Message-ID: <VI1PR0402MB3485542286BC0F8814DE4EB098FD0@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+References: <20190617160339.29179-1-andrew.smirnov@gmail.com>
+ <20190617160339.29179-2-andrew.smirnov@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=horia.geanta@nxp.com; 
+x-originating-ip: [212.146.100.6]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: e39a149b-f2d7-454e-ed80-08d6faed5525
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR0402MB2816;
+x-ms-traffictypediagnostic: VI1PR0402MB2816:
+x-microsoft-antispam-prvs: <VI1PR0402MB281633DE0A9DF7C13C24875E98FD0@VI1PR0402MB2816.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6790;
+x-forefront-prvs: 008184426E
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(396003)(376002)(39860400002)(346002)(136003)(199004)(189003)(6116002)(446003)(3846002)(71200400001)(76176011)(8676002)(2501003)(64756008)(110136005)(2906002)(71190400001)(256004)(25786009)(66446008)(54906003)(66556008)(7696005)(316002)(102836004)(8936002)(6506007)(53546011)(53936002)(66946007)(6246003)(4744005)(478600001)(476003)(86362001)(26005)(486006)(66066001)(68736007)(99286004)(44832011)(76116006)(186003)(14454004)(66476007)(52536014)(55016002)(73956011)(9686003)(305945005)(229853002)(7736002)(6436002)(74316002)(5660300002)(4326008)(81166006)(33656002)(81156014);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB2816;H:VI1PR0402MB3485.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: zR4sSnS3pFNxtckoPB2AzQpXEugP1Phj+bgPzpM6t/SsBiOPsUlzK0pz1khDh4ZI0bsINCBTHSYJf+2cPnTVzVwukBB7jXNjcV3LrJtkzj76V9IVVHZGFUqM9TKiHQtMfsAwAJkQuYABxeJLZEoxyFIxpeiHuuSu5wT7whiAAklCbmFVDbggAP3D2wfFTHw9fWqrWeKZcyZkc1TatLas0gkKm0kF8toCdeqm4TqOYBv1vJsVB4fnjoCDUKW9XDO/6sVZ2JL5f/71u3Hi1Jkc0rMNvSgzB2QovQAYCuxVeKg1RZwe4nbgfcPT5YQ4Emswm6RLjP5TuLmACP46WaNpy9Xw5EMj5j+tEsShgSB7D0AF+zH2OLM9wc09XBdksPjTK2Zx18Y+WIyOFO3KHYznek2jJE9cYmfu/U+zkUzu95I=
+Content-Type: text/plain; charset="iso-8859-2"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e39a149b-f2d7-454e-ed80-08d6faed5525
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Jun 2019 10:50:56.1346
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: horia.geanta@nxp.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB2816
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Lift the xfs code for tracing address space operations to the iomap
-layer.
-
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- fs/iomap.c                   | 13 +++++-
- fs/xfs/xfs_aops.c            | 27 ++----------
- fs/xfs/xfs_trace.h           | 65 ---------------------------
- include/trace/events/iomap.h | 85 ++++++++++++++++++++++++++++++++++++
- 4 files changed, 100 insertions(+), 90 deletions(-)
- create mode 100644 include/trace/events/iomap.h
-
-diff --git a/fs/iomap.c b/fs/iomap.c
-index bb5c42561398..5db939468499 100644
---- a/fs/iomap.c
-+++ b/fs/iomap.c
-@@ -23,7 +23,8 @@
- #include <linux/task_io_accounting_ops.h>
- #include <linux/dax.h>
- #include <linux/sched/signal.h>
--
-+#define CREATE_TRACE_POINTS
-+#include <trace/events/iomap.h>
- #include "internal.h"
- 
- static struct bio_set iomap_ioend_bioset;
-@@ -369,6 +370,8 @@ iomap_readpage(struct page *page, const struct iomap_ops *ops)
- 	unsigned poff;
- 	loff_t ret;
- 
-+	trace_iomap_readpage(page->mapping->host, 1);
-+
- 	for (poff = 0; poff < PAGE_SIZE; poff += ret) {
- 		ret = iomap_apply(inode, page_offset(page) + poff,
- 				PAGE_SIZE - poff, 0, ops, &ctx,
-@@ -465,6 +468,8 @@ iomap_readpages(struct address_space *mapping, struct list_head *pages,
- 	loff_t last = page_offset(list_entry(pages->next, struct page, lru));
- 	loff_t length = last - pos + PAGE_SIZE, ret = 0;
- 
-+	trace_iomap_readpages(mapping->host, nr_pages);
-+
- 	while (length > 0) {
- 		ret = iomap_apply(mapping->host, pos, length, 0, ops,
- 				&ctx, iomap_readpages_actor);
-@@ -531,6 +536,8 @@ EXPORT_SYMBOL_GPL(iomap_is_partially_uptodate);
- int
- iomap_releasepage(struct page *page, gfp_t gfp_mask)
- {
-+	trace_iomap_releasepage(page->mapping->host, page, 0, 0);
-+
- 	/*
- 	 * mm accommodates an old ext3 case where clean pages might not have had
- 	 * the dirty bit cleared. Thus, it can send actual dirty pages to
-@@ -546,6 +553,8 @@ EXPORT_SYMBOL_GPL(iomap_releasepage);
- void
- iomap_invalidatepage(struct page *page, unsigned int offset, unsigned int len)
- {
-+	trace_iomap_invalidatepage(page->mapping->host, page, offset, len);
-+
- 	/*
- 	 * If we are invalidating the entire page, clear the dirty state from it
- 	 * and release it to avoid unnecessary buildup of the LRU.
-@@ -2586,6 +2595,8 @@ iomap_do_writepage(struct page *page, struct writeback_control *wbc, void *data)
- 	u64 end_offset;
- 	loff_t offset;
- 
-+	trace_iomap_writepage(inode, page, 0, 0);
-+
- 	/*
- 	 * Refuse to write the page out if we are called from reclaim context.
- 	 *
-diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-index 072750f34fe6..bdcde2ece779 100644
---- a/fs/xfs/xfs_aops.c
-+++ b/fs/xfs/xfs_aops.c
-@@ -540,16 +540,6 @@ xfs_submit_ioend(
- 	return status;
- }
- 
--STATIC void
--xfs_vm_invalidatepage(
--	struct page		*page,
--	unsigned int		offset,
--	unsigned int		length)
--{
--	trace_xfs_invalidatepage(page->mapping->host, page, offset, length);
--	iomap_invalidatepage(page, offset, length);
--}
--
- /*
-  * If the page has delalloc blocks on it, we need to punch them out before we
-  * invalidate the page.  If we don't, we leave a stale delalloc mapping on the
-@@ -584,7 +574,7 @@ xfs_discard_page(
- 	if (error && !XFS_FORCED_SHUTDOWN(mp))
- 		xfs_alert(mp, "page discard unable to remove delalloc mapping.");
- out_invalidate:
--	xfs_vm_invalidatepage(page, 0, PAGE_SIZE);
-+	iomap_invalidatepage(page, 0, PAGE_SIZE);
- }
- 
- static const struct iomap_writeback_ops xfs_writeback_ops = {
-@@ -624,15 +614,6 @@ xfs_dax_writepages(
- 			xfs_find_bdev_for_inode(mapping->host), wbc);
- }
- 
--STATIC int
--xfs_vm_releasepage(
--	struct page		*page,
--	gfp_t			gfp_mask)
--{
--	trace_xfs_releasepage(page->mapping->host, page, 0, 0);
--	return iomap_releasepage(page, gfp_mask);
--}
--
- STATIC sector_t
- xfs_vm_bmap(
- 	struct address_space	*mapping,
-@@ -661,7 +642,6 @@ xfs_vm_readpage(
- 	struct file		*unused,
- 	struct page		*page)
- {
--	trace_xfs_vm_readpage(page->mapping->host, 1);
- 	return iomap_readpage(page, &xfs_iomap_ops);
- }
- 
-@@ -672,7 +652,6 @@ xfs_vm_readpages(
- 	struct list_head	*pages,
- 	unsigned		nr_pages)
- {
--	trace_xfs_vm_readpages(mapping->host, nr_pages);
- 	return iomap_readpages(mapping, pages, nr_pages, &xfs_iomap_ops);
- }
- 
-@@ -692,8 +671,8 @@ const struct address_space_operations xfs_address_space_operations = {
- 	.writepage		= xfs_vm_writepage,
- 	.writepages		= xfs_vm_writepages,
- 	.set_page_dirty		= iomap_set_page_dirty,
--	.releasepage		= xfs_vm_releasepage,
--	.invalidatepage		= xfs_vm_invalidatepage,
-+	.releasepage		= iomap_releasepage,
-+	.invalidatepage		= iomap_invalidatepage,
- 	.bmap			= xfs_vm_bmap,
- 	.direct_IO		= noop_direct_IO,
- 	.migratepage		= iomap_migrate_page,
-diff --git a/fs/xfs/xfs_trace.h b/fs/xfs/xfs_trace.h
-index 65c920554b96..c44dadb6faba 100644
---- a/fs/xfs/xfs_trace.h
-+++ b/fs/xfs/xfs_trace.h
-@@ -1153,71 +1153,6 @@ DEFINE_RW_EVENT(xfs_file_buffered_write);
- DEFINE_RW_EVENT(xfs_file_direct_write);
- DEFINE_RW_EVENT(xfs_file_dax_write);
- 
--DECLARE_EVENT_CLASS(xfs_page_class,
--	TP_PROTO(struct inode *inode, struct page *page, unsigned long off,
--		 unsigned int len),
--	TP_ARGS(inode, page, off, len),
--	TP_STRUCT__entry(
--		__field(dev_t, dev)
--		__field(xfs_ino_t, ino)
--		__field(pgoff_t, pgoff)
--		__field(loff_t, size)
--		__field(unsigned long, offset)
--		__field(unsigned int, length)
--	),
--	TP_fast_assign(
--		__entry->dev = inode->i_sb->s_dev;
--		__entry->ino = XFS_I(inode)->i_ino;
--		__entry->pgoff = page_offset(page);
--		__entry->size = i_size_read(inode);
--		__entry->offset = off;
--		__entry->length = len;
--	),
--	TP_printk("dev %d:%d ino 0x%llx pgoff 0x%lx size 0x%llx offset %lx "
--		  "length %x",
--		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  __entry->ino,
--		  __entry->pgoff,
--		  __entry->size,
--		  __entry->offset,
--		  __entry->length)
--)
--
--#define DEFINE_PAGE_EVENT(name)		\
--DEFINE_EVENT(xfs_page_class, name,	\
--	TP_PROTO(struct inode *inode, struct page *page, unsigned long off, \
--		 unsigned int len),	\
--	TP_ARGS(inode, page, off, len))
--DEFINE_PAGE_EVENT(xfs_writepage);
--DEFINE_PAGE_EVENT(xfs_releasepage);
--DEFINE_PAGE_EVENT(xfs_invalidatepage);
--
--DECLARE_EVENT_CLASS(xfs_readpage_class,
--	TP_PROTO(struct inode *inode, int nr_pages),
--	TP_ARGS(inode, nr_pages),
--	TP_STRUCT__entry(
--		__field(dev_t, dev)
--		__field(xfs_ino_t, ino)
--		__field(int, nr_pages)
--	),
--	TP_fast_assign(
--		__entry->dev = inode->i_sb->s_dev;
--		__entry->ino = inode->i_ino;
--		__entry->nr_pages = nr_pages;
--	),
--	TP_printk("dev %d:%d ino 0x%llx nr_pages %d",
--		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  __entry->ino,
--		  __entry->nr_pages)
--)
--
--#define DEFINE_READPAGE_EVENT(name)		\
--DEFINE_EVENT(xfs_readpage_class, name,	\
--	TP_PROTO(struct inode *inode, int nr_pages), \
--	TP_ARGS(inode, nr_pages))
--DEFINE_READPAGE_EVENT(xfs_vm_readpage);
--DEFINE_READPAGE_EVENT(xfs_vm_readpages);
--
- DECLARE_EVENT_CLASS(xfs_imap_class,
- 	TP_PROTO(struct xfs_inode *ip, xfs_off_t offset, ssize_t count,
- 		 int whichfork, struct xfs_bmbt_irec *irec),
-diff --git a/include/trace/events/iomap.h b/include/trace/events/iomap.h
-new file mode 100644
-index 000000000000..1da90e743e6e
---- /dev/null
-+++ b/include/trace/events/iomap.h
-@@ -0,0 +1,85 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2009-2019, Christoph Hellwig
-+ * All Rights Reserved.
-+ *
-+ * NOTE: none of these tracepoints shall be consider a stable kernel ABI
-+ * as they can change at any time.
-+ */
-+#undef TRACE_SYSTEM
-+#define TRACE_SYSTEM iomap
-+
-+#if !defined(_TRACE_IOMAP_H) || defined(TRACE_HEADER_MULTI_READ)
-+#define _TRACE_IOMAP_H
-+
-+#include <linux/tracepoint.h>
-+
-+DECLARE_EVENT_CLASS(iomap_page_class,
-+	TP_PROTO(struct inode *inode, struct page *page, unsigned long off,
-+		 unsigned int len),
-+	TP_ARGS(inode, page, off, len),
-+	TP_STRUCT__entry(
-+		__field(dev_t, dev)
-+		__field(u64, ino)
-+		__field(pgoff_t, pgoff)
-+		__field(loff_t, size)
-+		__field(unsigned long, offset)
-+		__field(unsigned int, length)
-+	),
-+	TP_fast_assign(
-+		__entry->dev = inode->i_sb->s_dev;
-+		__entry->ino = inode->i_ino;
-+		__entry->pgoff = page_offset(page);
-+		__entry->size = i_size_read(inode);
-+		__entry->offset = off;
-+		__entry->length = len;
-+	),
-+	TP_printk("dev %d:%d ino 0x%llx pgoff 0x%lx size 0x%llx offset %lx "
-+		  "length %x",
-+		  MAJOR(__entry->dev), MINOR(__entry->dev),
-+		  __entry->ino,
-+		  __entry->pgoff,
-+		  __entry->size,
-+		  __entry->offset,
-+		  __entry->length)
-+)
-+
-+#define DEFINE_PAGE_EVENT(name)		\
-+DEFINE_EVENT(iomap_page_class, name,	\
-+	TP_PROTO(struct inode *inode, struct page *page, unsigned long off, \
-+		 unsigned int len),	\
-+	TP_ARGS(inode, page, off, len))
-+DEFINE_PAGE_EVENT(iomap_writepage);
-+DEFINE_PAGE_EVENT(iomap_releasepage);
-+DEFINE_PAGE_EVENT(iomap_invalidatepage);
-+
-+DECLARE_EVENT_CLASS(iomap_readpage_class,
-+	TP_PROTO(struct inode *inode, int nr_pages),
-+	TP_ARGS(inode, nr_pages),
-+	TP_STRUCT__entry(
-+		__field(dev_t, dev)
-+		__field(u64, ino)
-+		__field(int, nr_pages)
-+	),
-+	TP_fast_assign(
-+		__entry->dev = inode->i_sb->s_dev;
-+		__entry->ino = inode->i_ino;
-+		__entry->nr_pages = nr_pages;
-+	),
-+	TP_printk("dev %d:%d ino 0x%llx nr_pages %d",
-+		  MAJOR(__entry->dev), MINOR(__entry->dev),
-+		  __entry->ino,
-+		  __entry->nr_pages)
-+)
-+
-+#define DEFINE_READPAGE_EVENT(name)		\
-+DEFINE_EVENT(iomap_readpage_class, name,	\
-+	TP_PROTO(struct inode *inode, int nr_pages), \
-+	TP_ARGS(inode, nr_pages))
-+DEFINE_READPAGE_EVENT(iomap_readpage);
-+DEFINE_READPAGE_EVENT(iomap_readpages);
-+
-+#endif /* _TRACE_IOMAP_H */
-+
-+/* This part must be outside protection */
-+#include <trace/define_trace.h>
--- 
-2.20.1
-
+On 6/17/2019 7:04 PM, Andrey Smirnov wrote:=0A=
+> Exactly the same code to figure out DMA mask is repeated twice in the=0A=
+> driver code. To avoid repetition, move that logic into a standalone=0A=
+> subroutine in intern.h. While at it re-shuffle the code to make it=0A=
+> more readable with early returns.=0A=
+> =0A=
+> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>=0A=
+> Cc: Chris Spencer <christopher.spencer@sea.co.uk>=0A=
+> Cc: Cory Tusar <cory.tusar@zii.aero>=0A=
+> Cc: Chris Healy <cphealy@gmail.com>=0A=
+> Cc: Lucas Stach <l.stach@pengutronix.de>=0A=
+> Cc: Horia Geant=E3 <horia.geanta@nxp.com>=0A=
+> Cc: Aymen Sghaier <aymen.sghaier@nxp.com>=0A=
+> Cc: Leonard Crestez <leonard.crestez@nxp.com>=0A=
+> Cc: linux-crypto@vger.kernel.org=0A=
+> Cc: linux-kernel@vger.kernel.org=0A=
+Reviewed-by: Horia Geant=E3 <horia.geanta@nxp.com>=0A=
+=0A=
+Being the 1st patch in the series and not i.MX8-specific, I'd say it should=
+=0A=
+be merged separately.=0A=
+=0A=
+Thanks,=0A=
+Horia=0A=
