@@ -2,87 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 681E257859
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 02:53:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6439578C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 02:56:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727715AbfF0AwP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 20:52:15 -0400
-Received: from ushosting.nmnhosting.com ([66.55.73.32]:33608 "EHLO
-        ushosting.nmnhosting.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726894AbfF0AwO (ORCPT
+        id S1726935AbfF0A4b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 20:56:31 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:34356 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726677AbfF0A4a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 20:52:14 -0400
-Received: from mail2.nmnhosting.com (unknown [202.169.106.97])
-        by ushosting.nmnhosting.com (Postfix) with ESMTPS id 84AB62DC005B;
-        Wed, 26 Jun 2019 20:52:13 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=d-silva.org;
-        s=201810a; t=1561596733;
-        bh=e3ADJwfA6t0sBRcoRZyK9kX07Ioi4er/mJ665+7Q8Ig=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=DsrHWidoX5Aqd+bpgeRHA0G0YHP7sXuAJiwPE5gJUOzci098HotAInkFcMjsT/YN7
-         SI3UNuXoc/t4Y41zWiB3tADVwkwSgWSgSXaxeZ/6UiqXj6gDrAmx4UjO6sKqUx6cao
-         bo9ienJHM/UiopRop7DgCsOV0MGLf2Y7t+pNLV58gHHYF9kXSdNP0gZOwaGUm4mg7r
-         KXqFlTlusei4k8sjM1pjoCSIdHQ5gT538EhyOVQYYQZoTZQzpOS7H4weGYGUQ1uO0H
-         Vhxc15wTIVtIevbbKezWLlSUiAclivCLNq3Y5M1jWPzhFtrFVnhKOkwFxpIEIwPUyo
-         9NupOCJlOOKEbmrSbY7tKiasZTj20HEhskmhMcAkRVakCU+wJeAw5LIqXD21DJYuiF
-         OqHLL1MNjSaDusclE56RkmfomCpU4u0Oj9fLMpX1/8L08yfDs3UGoDnzjz7pB9k64s
-         aJHRqCStrFqIpvpl4LExXvc2lZ8e7RG5RSwTJVHHbAqgR3XWCBQ96lIpLEbJIz8v9T
-         0pWInnqTsfc+r3dHBDXo8LcFF4jNdViyasxrQDjbxF5yLGZXqY42CHprL0NuaT3nbT
-         8n6keTtnbViGAWerKi1H6eEnD/zn4abzzRmc64I9u4Ykf6wWvG03NgVPboVhLaWv4b
-         8vJVIQbf9iWiOtLoFE9jtCZo=
-Received: from adsilva.ozlabs.ibm.com (static-82-10.transact.net.au [122.99.82.10] (may be forged))
-        (authenticated bits=0)
-        by mail2.nmnhosting.com (8.15.2/8.15.2) with ESMTPSA id x5R0prWE037614
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 27 Jun 2019 10:52:09 +1000 (AEST)
-        (envelope-from alastair@d-silva.org)
-Message-ID: <ecf246b3b9c7069a04e0046e1aa906c7f6322960.camel@d-silva.org>
-Subject: Re: [PATCH v2 0/3] mm: Cleanup & allow modules to hotplug memory
-From:   "Alastair D'Silva" <alastair@d-silva.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Baoquan He <bhe@redhat.com>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Date:   Thu, 27 Jun 2019 10:51:53 +1000
-In-Reply-To: <20190626075753.GA24711@infradead.org>
-References: <20190626061124.16013-1-alastair@au1.ibm.com>
-         <20190626075753.GA24711@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.2 (3.32.2-1.fc30) 
+        Wed, 26 Jun 2019 20:56:30 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hgIiC-0002Xh-Fu; Thu, 27 Jun 2019 00:56:28 +0000
+Date:   Thu, 27 Jun 2019 01:56:28 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tj@kernel.org
+Subject: Re: misuse of fget_raw() in perf_event_get()
+Message-ID: <20190627005628.GP17978@ZenIV.linux.org.uk>
+References: <20190413210242.GP2217@ZenIV.linux.org.uk>
+ <20190415044158.5goa2je57j63kwaz@ast-mbp.dhcp.thefacebook.com>
+ <20190415090406.GJ2490@worktop.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.2 (mail2.nmnhosting.com [10.0.1.20]); Thu, 27 Jun 2019 10:52:09 +1000 (AEST)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190415090406.GJ2490@worktop.programming.kicks-ass.net>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-06-26 at 00:57 -0700, Christoph Hellwig wrote:
-> On Wed, Jun 26, 2019 at 04:11:20PM +1000, Alastair D'Silva wrote:
-> >   - Drop mm/hotplug: export try_online_node
-> >         (not necessary)
+On Mon, Apr 15, 2019 at 11:04:06AM +0200, Peter Zijlstra wrote:
+> On Sun, Apr 14, 2019 at 09:42:00PM -0700, Alexei Starovoitov wrote:
+> > On Sat, Apr 13, 2019 at 10:02:42PM +0100, Al Viro wrote:
+> > > 	What's the point of using fget_raw(), if you do
+> > > _not_ accept O_PATH descriptors?  That should be fget()...
+> > 
+> > I think you're talking about commit e03e7ee34fdd ("perf/bpf: Convert perf_event_array to use struct file")
+> > I don't really remember why we went with this instead of fget().
+> > There was a bunch of back and forth back then with Peter.
 > 
-> With this the subject line of the cover letter seems incorrect now :)
+> That was mostly on what refcount to use, you wanted to use the event
+> refcount, and I suggested using the file refcount.
 > 
+> If you look at:
+> 
+>   lkml.kernel.org/r/20160126161637.GF6357@twins.programming.kicks-ass.net
+> 
+> I too wondered about the fget_raw() at the time, whatever Al wants
+> though, I never quite remember how that file stuff works :/
 
-Indeed :)
-
-I left it as I was unsure whether changing the series title would make
-it harder to track revisions.
-
-
--- 
-Alastair D'Silva           mob: 0423 762 819
-skype: alastair_dsilva    
-Twitter: @EvilDeece
-blog: http://alastair.d-silva.org
-
-
+Anyway, fget() it becomes...
