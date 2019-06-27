@@ -2,294 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16A8F57ED2
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 11:01:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45BAC57EE0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 11:02:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726557AbfF0JBI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 05:01:08 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:46626 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725385AbfF0JBI (ORCPT
+        id S1726646AbfF0JCX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 05:02:23 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:38529 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725385AbfF0JCX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 05:01:08 -0400
-Received: by mail-wr1-f68.google.com with SMTP id n4so1555630wrw.13
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 02:01:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=5yFNTNnYD7AZEAM6W7oabAyA0yimjLZpguXQ1Xm49Vg=;
-        b=CFDV7CfOV2SJdhiXOFJzFWZSUa0+9azsQyqHbGb7JaZXEDNJu8G2ggwXsoYG3y4bO5
-         XZ/xytS6NhoXMe4CGyOJJJb4Yh5oiKRvnutFxuTF7cAGAWgpGKVKfQO0hF8C4+/tYgp8
-         JIC1qwS2jv4/Tgx9+jAOkpknvbQLJ9l2YxGmw6fVAWVcNNMBM48Fo0xR5J1IdAwXZP3M
-         blnKXig95Q662W+6nfZiuQF33YMrYt+aYM+F4/E1wmrGxb735SjeB4hLbhWIK4PEvqCn
-         NA7jrdITJCqAxOvcnMlNy/Ja8U4woLp0e5xeYc8LAKSykNOTwTv7qS5lteHyjGW/juTD
-         eI1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=5yFNTNnYD7AZEAM6W7oabAyA0yimjLZpguXQ1Xm49Vg=;
-        b=MbPhiDkuo+8qjdQ1JVyW4t0/a9/ptPSXi0hXOFUR+2maZiuThKDFeMp+l1xag6AjcV
-         AllTv0XiGpKT+u28xubXj9gl8FSW+ZuZE3q82IVfnzAdijpxjzFEhqi8A47XZei4vLpv
-         lqeZco+iGn6mG/oItJutxnegWDkSk7hGAi/bQo2z+aJo4stSnXODQH0+s8j3M6CE8v8e
-         xXpVh808MGNtjAvoNITgVeGLT2aiI0H06mxoAuXLTzuTL84/9jY247NiUxngD8jFmxo3
-         benl76xmjOLCj82JajGTKy8KHuhhlfFFVfjhZSUPjCa7v5SQek7ZVWkdWR+6ENpjHaYO
-         7Q7A==
-X-Gm-Message-State: APjAAAWn5Xacm5RJ6SEd6Rchc0yB/M/YjrIXjPA1ABPIJw1DnM8HAmTa
-        8Md2g1BFeQgUNfMOenul4dzunA==
-X-Google-Smtp-Source: APXvYqzstXSmcKcm/aUFC5bedh0bUG3qltP+jnjnJm3BgcuiWoAt0Fg1yN82dJApydf41ZpPu5vZtg==
-X-Received: by 2002:a5d:6b90:: with SMTP id n16mr2328097wrx.206.1561626064958;
-        Thu, 27 Jun 2019 02:01:04 -0700 (PDT)
-Received: from dell ([2.27.35.164])
-        by smtp.gmail.com with ESMTPSA id g123sm1063998wme.12.2019.06.27.02.01.03
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 27 Jun 2019 02:01:04 -0700 (PDT)
-Date:   Thu, 27 Jun 2019 10:01:02 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Mathieu Malaterre <malat@debian.org>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org, od@zcrc.me
-Subject: Re: [PATCH v12 04/13] mfd: Add Ingenic TCU driver
-Message-ID: <20190627090102.GA2000@dell>
-References: <20190521145141.9813-1-paul@crapouillou.net>
- <20190521145141.9813-5-paul@crapouillou.net>
- <20190626131850.GW21119@dell>
- <1561557350.1872.0@crapouillou.net>
- <20190627065808.GY21119@dell>
- <1561625387.1745.0@crapouillou.net>
+        Thu, 27 Jun 2019 05:02:23 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5R916VP204146
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Thu, 27 Jun 2019 02:01:06 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5R916VP204146
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019061801; t=1561626067;
+        bh=HpbNo9Qe7lPUyV2D2rP07ZTdrh3ANbJinCRhdfyfJ/0=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=yOPKf6xwbptWGtvZzlBxWdgMP80tsnwakW4J8QFALtuIlJa7S7ZpykjH2BJ8Yvce6
+         MGsGNeUHOz72jjAhiLPIHXlDVoZDVKAiAJ28mMI+sHtF3UtVdPYnJkgrquJunjdTWJ
+         DQVcLzGh6ZmQ5LNudd6IV7efZ/nywJ6jPnN97FEj/Q6gHniXve/StBORKgm0hX9I/t
+         JPRB+ItdDeMM6YRVypmLMCMgdSG0zg7lHDwMgNBVdDYPsJYRZI6OSt9ClAYTf7VSl6
+         1WpLHBDueCna3VJCicnXDLl0zR/wuHP6puNe9JfBhhBvW42q3uWA/wd6Zgyk8DsGjm
+         P0ApbBdtyiolA==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5R915rQ204143;
+        Thu, 27 Jun 2019 02:01:05 -0700
+Date:   Thu, 27 Jun 2019 02:01:05 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Xiaoyao Li <tipbot@zytor.com>
+Message-ID: <tip-2238246ff8d533a5f2327d1f953375876d8a013c@git.kernel.org>
+Cc:     mingo@kernel.org, tglx@linutronix.de, hpa@zytor.com, bp@alien8.de,
+        linux-kernel@vger.kernel.org, fenghua.yu@intel.com,
+        xiaoyao.li@linux.intel.com
+Reply-To: fenghua.yu@intel.com, mingo@kernel.org,
+          linux-kernel@vger.kernel.org, xiaoyao.li@linux.intel.com,
+          tglx@linutronix.de, hpa@zytor.com, bp@alien8.de
+In-Reply-To: <20190627045525.105266-1-xiaoyao.li@linux.intel.com>
+References: <20190627045525.105266-1-xiaoyao.li@linux.intel.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/boot] x86/boot: Make the GDT 8-byte aligned
+Git-Commit-ID: 2238246ff8d533a5f2327d1f953375876d8a013c
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1561625387.1745.0@crapouillou.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=0.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_12_24,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
+        DKIM_VALID_EF autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 27 Jun 2019, Paul Cercueil wrote:
-> Le jeu. 27 juin 2019 à 8:58, Lee Jones <lee.jones@linaro.org> a écrit :
-> > On Wed, 26 Jun 2019, Paul Cercueil wrote:
-> > >  Le mer. 26 juin 2019 à 15:18, Lee Jones <lee.jones@linaro.org> a
-> > > écrit :
-> > >  > On Tue, 21 May 2019, Paul Cercueil wrote:
-> > >  >
-> > >  > >  This driver will provide a regmap that can be retrieved very
-> > > early
-> > >  > > in
-> > >  > >  the boot process through the API function
-> > > ingenic_tcu_get_regmap().
-> > >  > >
-> > >  > >  Additionally, it will call devm_of_platform_populate() so that
-> > > all
-> > >  > > the
-> > >  > >  children devices will be probed.
-> > >  > >
-> > >  > >  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> > >  > >  ---
-> > >  > >
-> > >  > >  Notes:
-> > >  > >      v12: New patch
-> > >  > >
-> > >  > >   drivers/mfd/Kconfig             |   8 +++
-> > >  > >   drivers/mfd/Makefile            |   1 +
-> > >  > >   drivers/mfd/ingenic-tcu.c       | 113
-> > >  > > ++++++++++++++++++++++++++++++++
-> > >  > >   include/linux/mfd/ingenic-tcu.h |   8 +++
-> > >  > >   4 files changed, 130 insertions(+)
-> > >  > >   create mode 100644 drivers/mfd/ingenic-tcu.c
-> > 
-> > [...]
-> > 
-> > >  > >  +static struct regmap * __init ingenic_tcu_create_regmap(struct
-> > >  > > device_node *np)
-> > >  > >  +{
-> > >  > >  +	struct resource res;
-> > >  > >  +	void __iomem *base;
-> > >  > >  +	struct regmap *map;
-> > >  > >  +
-> > >  > >  +	if (!of_match_node(ingenic_tcu_of_match, np))
-> > >  > >  +		return ERR_PTR(-EINVAL);
-> > 
-> > Drop this check.
-> > 
-> > >  > >  +	base = of_io_request_and_map(np, 0, "TCU");
-> > >  > >  +	if (IS_ERR(base))
-> > >  > >  +		return ERR_PTR(PTR_ERR(base));
-> > >  > >  +
-> > >  > >  +	map = regmap_init_mmio(NULL, base,
-> > > &ingenic_tcu_regmap_config);
-> > >  > >  +	if (IS_ERR(map))
-> > >  > >  +		goto err_iounmap;
-> > 
-> > Place this inside probe().
-> > 
-> > >  > >  +	return map;
-> > >  > >  +
-> > >  > >  +err_iounmap:
-> > >  > >  +	iounmap(base);
-> > >  > >  +	of_address_to_resource(np, 0, &res);
-> > >  > >  +	release_mem_region(res.start, resource_size(&res));
-> > >  > >  +
-> > >  > >  +	return map;
-> > >  > >  +}
-> > >  >
-> > >  > Why does this need to be set-up earlier than probe()?
-> > > 
-> > >  See the explanation below.
-> > 
-> > I think the answer is, it doesn't.
-> > 
-> > >  > >  +static int __init ingenic_tcu_probe(struct platform_device
-> > > *pdev)
-> > >  > >  +{
-> > >  > >  +	struct regmap *map =
-> > > ingenic_tcu_get_regmap(pdev->dev.of_node);
-> > >  > >  +
-> > >  > >  +	platform_set_drvdata(pdev, map);
-> > >  > >  +
-> > >  > >  +	regmap_attach_dev(&pdev->dev, map,
-> > > &ingenic_tcu_regmap_config);
-> > >  > >  +
-> > >  > >  +	return devm_of_platform_populate(&pdev->dev);
-> > >  > >  +}
-> > >  > >  +
-> > >  > >  +static struct platform_driver ingenic_tcu_driver = {
-> > >  > >  +	.driver = {
-> > >  > >  +		.name = "ingenic-tcu",
-> > >  > >  +		.of_match_table = ingenic_tcu_of_match,
-> > >  > >  +	},
-> > >  > >  +};
-> > >  > >  +
-> > >  > >  +static int __init ingenic_tcu_platform_init(void)
-> > >  > >  +{
-> > >  > >  +	return platform_driver_probe(&ingenic_tcu_driver,
-> > >  > >  +				     ingenic_tcu_probe);
-> > >  >
-> > >  > What?  Why?
-> > > 
-> > >  The device driver probed here will populate the children devices,
-> > >  which will be able to retrieve the pointer to the regmap through
-> > >  device_get_regmap(dev->parent).
-> > 
-> > I've never heard of this call.  Where is it?
-> 
-> dev_get_regmap, in <linux/regmap.h>.
-> 
-> > >  The children devices are normal platform drivers that can be probed
-> > >  the normal way. These are the PWM driver, the watchdog driver, and
-> > > the
-> > >  OST (OS Timer) clocksource driver, all part of the same hardware
-> > > block
-> > >  (the Timer/Counter Unit or TCU).
-> > 
-> > If they are normal devices, then there is no need to roll your own
-> > regmap-getter implementation like this.
-> > 
-> > >  > >  +}
-> > >  > >  +subsys_initcall(ingenic_tcu_platform_init);
-> > >  > >  +
-> > >  > >  +struct regmap * __init ingenic_tcu_get_regmap(struct
-> > > device_node
-> > >  > > *np)
-> > >  > >  +{
-> > >  > >  +	if (!tcu_regmap)
-> > >  > >  +		tcu_regmap = ingenic_tcu_create_regmap(np);
-> > >  > >  +
-> > >  > >  +	return tcu_regmap;
-> > >  > >  +}
-> > >  >
-> > >  > This makes me pretty uncomfortable.
-> > >  >
-> > >  > What calls it?
-> > > 
-> > >  The TCU IRQ driver (patch [06/13]), clocks driver (patch [05/13]),
-> > > and the
-> > >  non-OST clocksource driver (patch [07/13]) all probe very early in
-> > > the boot
-> > >  process, and share the same devicetree node. They call this
-> > > function to get
-> > >  a pointer to the regmap.
-> > 
-> > Horrible!
-> > 
-> > Instead, you should send it through platform_set_drvdata() and collect
-> > it in the child drivers with platform_get_drvdata(dev->parent).
-> 
-> The IRQ, clocks and clocksource driver do NOT have a "struct device" to
-> begin with. They are not platform drivers, and cannot be platform drivers,
-> as they must register so early in the boot process, before "struct device"
-> is even a thing.
-> 
-> All they get is a pointer to the same devicetree node. Since all of these
-> have to use the same registers, they need to use a shared regmap, which
-> they obtain by calling ingenic_tcu_get_regmap() below.
-> 
-> Then, when this driver's probe gets called, the regmap is retrieved and
-> attached to the struct device, and then the children devices will be
-> probed: the watchdog device, the PWM device, the OST device. These three
-> will retrieve the regmap by calling dev_get_regmap(dev->parent, NULL).
+Commit-ID:  2238246ff8d533a5f2327d1f953375876d8a013c
+Gitweb:     https://git.kernel.org/tip/2238246ff8d533a5f2327d1f953375876d8a013c
+Author:     Xiaoyao Li <xiaoyao.li@linux.intel.com>
+AuthorDate: Thu, 27 Jun 2019 12:55:25 +0800
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Thu, 27 Jun 2019 10:56:11 +0200
 
-That makes sense.
+x86/boot: Make the GDT 8-byte aligned
 
-This explanation certainly belongs in the commit log.
+The segment descriptors are loaded with an implicitly LOCK-ed instruction,
+which could trigger the split lock #AC exception if the variable is not
+properly aligned and crosses a cache line.
 
-Can you send your v14, as you intended.  I will re-review it with new
-eyes when you do.
+Align the GDT properly so the descriptors are all 8 byte aligned.
 
-> > >  > >  +bool ingenic_tcu_pwm_can_use_chn(struct device *dev, unsigned
-> > > int
-> > >  > > channel)
-> > >  > >  +{
-> > >  > >  +	const struct ingenic_soc_info *soc =
-> > >  > > device_get_match_data(dev->parent);
-> > >  > >  +
-> > >  > >  +	/* Enable all TCU channels for PWM use by default except
-> > > channels
-> > >  > > 0/1 */
-> > >  > >  +	u32 pwm_channels_mask = GENMASK(soc->num_channels - 1, 2);
-> > >  > >  +
-> > >  > >  +	device_property_read_u32(dev->parent,
-> > > "ingenic,pwm-channels-mask",
-> > >  > >  +				 &pwm_channels_mask);
-> > 
-> > Doesn't this call overwrite the previous assignment above?
-> 
-> Yes, that's intended. You have a default value, that can be overriden
-> by a device property.
+Signed-off-by: Xiaoyao Li <xiaoyao.li@linux.intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Fenghua Yu <fenghua.yu@intel.com>
+Link: https://lkml.kernel.org/r/20190627045525.105266-1-xiaoyao.li@linux.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/boot/compressed/head_64.S | 1 +
+ 1 file changed, 1 insertion(+)
 
-You should provide a comment here to make your intentions clear.
-
-> > >  > >  +	return !!(pwm_channels_mask & BIT(channel));
-> > >  > >  +}
-> > >  > >  +EXPORT_SYMBOL_GPL(ingenic_tcu_pwm_can_use_chn);
-> > 
-> > Where is this called from?
-> 
-> This is called from the PWM driver.
-
-Why can't it live in the PWM driver?
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
+index fafb75c6c592..6233ae35d0d9 100644
+--- a/arch/x86/boot/compressed/head_64.S
++++ b/arch/x86/boot/compressed/head_64.S
+@@ -659,6 +659,7 @@ no_longmode:
+ gdt64:
+ 	.word	gdt_end - gdt
+ 	.quad   0
++	.balign	8
+ gdt:
+ 	.word	gdt_end - gdt
+ 	.long	gdt
