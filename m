@@ -2,78 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AAAFC57AD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 06:51:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26A6457B1F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 07:10:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727043AbfF0Ev2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 00:51:28 -0400
-Received: from verein.lst.de ([213.95.11.211]:49015 "EHLO newverein.lst.de"
+        id S1727222AbfF0FKg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 01:10:36 -0400
+Received: from mga11.intel.com ([192.55.52.93]:23286 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726578AbfF0Ev2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 00:51:28 -0400
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 610AB68B05; Thu, 27 Jun 2019 06:50:52 +0200 (CEST)
-Date:   Thu, 27 Jun 2019 06:50:52 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Cristina Moraru <cristina.moraru09@gmail.com>,
-        "vegard.nossum@gmail.com" <vegard.nossum@gmail.com>,
-        Valentin Rothberg <valentinrothberg@gmail.com>,
-        Hannes Reinecke <hare@suse.de>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Michal Marek <mmarek@suse.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Tom Gundersen <teg@jklm.no>, Kay Sievers <kay@vrfy.org>,
-        Rusty Russell <rusty@rustcorp.com.au>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        backports@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "rafael.j.wysocki" <rafael.j.wysocki@intel.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Takashi Iwai <tiwai@suse.de>,
-        Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Hauke Mehrtens <hauke@hauke-m.de>,
-        Paul Bolle <pebolle@tiscali.nl>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Alexey Khoroshilov <khoroshilov@ispras.ru>,
-        Sathya Prakash Veerichetty <sathya.prakash@broadcom.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Laurence Oberman <loberman@redhat.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Tejun Heo <tj@kernel.org>,
-        Jej B <James.Bottomley@hansenpartnership.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Daniel Jonsson <danijons@student.chalmers.se>,
-        Andrzej Wasowski <wasowski@itu.dk>
-Subject: Re: [RFC PATCH 0/5] Add CONFIG symbol as module attribute
-Message-ID: <20190627045052.GA7594@lst.de>
-References: <1471462023-119645-1-git-send-email-cristina.moraru09@gmail.com> <20160818175505.GM3296@wotan.suse.de> <20160825074313.GC18622@lst.de> <20160825201919.GE3296@wotan.suse.de> <CAB=NE6UfkNN5kES6QmkM-dVC=HzKsZEkevH+Y3beXhVb2gC5vg@mail.gmail.com> <CAB=NE6XEnZ1uH2nidRbn6myvdQJ+vArpTTT6iSJebUmyfdaLcQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAB=NE6XEnZ1uH2nidRbn6myvdQJ+vArpTTT6iSJebUmyfdaLcQ@mail.gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+        id S1725385AbfF0FKf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 01:10:35 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jun 2019 22:10:34 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,422,1557212400"; 
+   d="scan'208";a="313672744"
+Received: from hao-dev.bj.intel.com ([10.238.157.65])
+  by orsmga004.jf.intel.com with ESMTP; 26 Jun 2019 22:10:32 -0700
+From:   Wu Hao <hao.wu@intel.com>
+To:     mdf@kernel.org, linux-fpga@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     linux-api@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        jdelvare@suse.com, linux@roeck-us.net, atull@kernel.org,
+        gregkh@linuxfoundation.org, Wu Hao <hao.wu@intel.com>
+Subject: [PATCH v4 0/3] add thermal/power management features for FPGA DFL drivers
+Date:   Thu, 27 Jun 2019 12:53:35 +0800
+Message-Id: <1561611218-5800-1-git-send-email-hao.wu@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 26, 2019 at 03:21:08PM -0700, Luis Chamberlain wrote:
-> On Tue, Feb 5, 2019 at 2:07 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
-> > In lieu of no Luke Skywalker, if you will, for a large kconfig revamp
-> > on this, I'm inclined to believe *at least* having some kconfig_symb
-> > exposed for some modules is better than nothing. Christoph are you
-> > totally opposed to this effort until we get a non-reverse engineered
-> > effort in place? It just seems like an extraordinary amount of work
-> > and I'm not quite sure who's volunteering to do it.
-> >
-> > Other stakeholders may benefit from at least having some config -->
-> > module mapping for now. Not just backports or building slimmer
-> > kernels.
-> 
-> Christoph, *poke*
+This patchset adds thermal and power management features for FPGA DFL
+drivers. Both patches are using hwmon as userspace interfaces.
 
-Yes, I'm still totally opposed to a half-backed hack like this.
+Main changes from v3:
+ - use HWMON_CHANNEL_INFO.
+
+Main changes from v2:
+ - switch to standard hwmon APIs for thermal hwmon:
+     temp1_alarm        --> temp1_max
+     temp1_alarm_status --> temp1_max_alarm
+     temp1_crit_status  --> temp1_crit_alarm
+     temp1_alarm_policy --> temp1_max_policy
+ - switch to standard hwmon APIs for power hwmon:
+     power1_cap         --> power1_max
+     power1_cap_status  --> power1_max_alarm
+     power1_crit_status --> power1_crit_alarm
+
+Please note that this patchset is generated on top of this patchset.
+[PATCH v4 00/15] add new features for FPGA DFL drivers
+ - https://lkml.org/lkml/2019/6/27/29
+
+Wu Hao (2):
+  fpga: dfl: fme: add thermal management support
+  fpga: dfl: fme: add power management support
+
+Xu Yilun (1):
+  Documentation: fpga: dfl: add descriptions for thermal/power
+    management interfaces
+
+ Documentation/ABI/testing/sysfs-platform-dfl-fme | 131 ++++++++
+ Documentation/fpga/dfl.txt                       |  10 +
+ drivers/fpga/Kconfig                             |   2 +-
+ drivers/fpga/dfl-fme-main.c                      | 408 +++++++++++++++++++++++
+ 4 files changed, 550 insertions(+), 1 deletion(-)
+
+-- 
+1.8.3.1
+
