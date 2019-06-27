@@ -2,147 +2,254 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06FAB58821
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 19:16:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 812895883F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 19:24:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726688AbfF0RQ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 13:16:28 -0400
-Received: from foss.arm.com ([217.140.110.172]:59266 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726667AbfF0RQ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 13:16:26 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A4FF0147A;
-        Thu, 27 Jun 2019 10:16:25 -0700 (PDT)
-Received: from e107049-lin.arm.com (e107049-lin.cambridge.arm.com [10.1.195.43])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 4EB723F718;
-        Thu, 27 Jun 2019 10:16:24 -0700 (PDT)
-From:   Douglas RAILLARD <douglas.raillard@arm.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-pm@vger.kernel.org, mingo@redhat.com, peterz@infradead.org,
-        rjw@rjwysocki.net, viresh.kumar@linaro.org, quentin.perret@arm.com,
-        douglas.raillard@arm.com, patrick.bellasi@arm.com,
-        dietmar.eggemann@arm.com
-Subject: [RFC PATCH v2 5/5] sched/cpufreq: Boost schedutil frequency ramp up
-Date:   Thu, 27 Jun 2019 18:16:03 +0100
-Message-Id: <20190627171603.14767-6-douglas.raillard@arm.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190627171603.14767-1-douglas.raillard@arm.com>
-References: <20190627171603.14767-1-douglas.raillard@arm.com>
+        id S1726562AbfF0RYf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 13:24:35 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:37479 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726315AbfF0RYe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 13:24:34 -0400
+Received: by mail-io1-f65.google.com with SMTP id e5so6492240iok.4
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 10:24:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9v2iiSjAaTJ1r5YqmO0hmrqnNhRTBGFMcqsHyGmeaMY=;
+        b=Vmpr/oTq5Ou+Qb2MRPKwRXdiQDbkSbkhoOl3ccrHWFmGHq8kkuCrfwi92Ftt4pHJow
+         FCqjS3lMZa2p+MobvExHsUsC9fhzyBdrlBWh+C2Jl5i+hyr8Baja8UkS0sKliDf3TI0R
+         T20YpBu1jySkURCkZH9w6j68A6c3mDC+gTbl0OGiVQcrYP6xjcu9vJMJtcQiK2Aiw94n
+         IxRvf1Waw4SpWqYJVfh/qP/1dfT8ZtTc2eLih1yiBUCI7LMvbHMSqGNPeBq1+G5gGLlf
+         uuz7AtcxHVb6TG3a2Rkm7ptxZXhTqQzGaeV9LRp4yp6DWmAU99phX3/SPG+JBLpyQ9ab
+         AiGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9v2iiSjAaTJ1r5YqmO0hmrqnNhRTBGFMcqsHyGmeaMY=;
+        b=lLctmsmoiRBu6I9sT5C5TsLjSYD9WrT1rk7qeFWrtKt7BtUx4P+K0TQ+x8bN1/eX1c
+         XOTFDORt2zKG7t2ZwdYbX3Bb64fhsNS0utlPQdnqm8tIvDvSK+F5KRbvByyrd5OvWB1D
+         UiFXBWfAuyhEqLog8rn0YtG/HSA9P1HDxqcgsuVRReYDYoCbyjxdFagm6divlbijQBMQ
+         PjtlnjhiGPaPcI8zbPqz76cAAqxMKJEyZ2m+lZo6hvdPilTPNvYxAIEqr3hcUTYccMXy
+         9472CHyVbKXtx2UEjRxisWsIg/LOeaCJ2Ftj0TN6b9HsEa1YDzfWTYf7wwa3XrG6aJvU
+         Q/fg==
+X-Gm-Message-State: APjAAAVZYas9qS8atJqY07UZpAgVagZr5EUT/p2NeG6e9Q9cvE7bg17b
+        leM7l6HZMmKOl7Yt2LPUTchys3nSrer8+4EGsjgw+A==
+X-Google-Smtp-Source: APXvYqzjIWF22i4IBu+1m0dwUXHWtEuQtdZqPiwFgZbGnjhUXcnbRP1Dh2mIxgqOkvKN2pfkKScecafBVSjGUfmbpWo=
+X-Received: by 2002:a6b:2c96:: with SMTP id s144mr5811605ios.57.1561656273509;
+ Thu, 27 Jun 2019 10:24:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1561610498.git.saiprakash.ranjan@codeaurora.org> <0a20cf9eb34b14a191381af98af1694bbc222734.1561610498.git.saiprakash.ranjan@codeaurora.org>
+In-Reply-To: <0a20cf9eb34b14a191381af98af1694bbc222734.1561610498.git.saiprakash.ranjan@codeaurora.org>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Thu, 27 Jun 2019 11:24:22 -0600
+Message-ID: <CANLsYkyaeroow1dRaffy5pxSCH7ocb9=EMeZeSjgpjDWXu18vg@mail.gmail.com>
+Subject: Re: [RESEND PATCHv4 1/1] coresight: Do not default to CPU0 for
+ missing CPU phandle
+To:     Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Cc:     Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Leo Yan <leo.yan@linaro.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        David Brown <david.brown@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In some situations, it can be interesting to spend temporarily more
-power if that can give a useful frequency boost.
+On Wed, 26 Jun 2019 at 22:45, Sai Prakash Ranjan
+<saiprakash.ranjan@codeaurora.org> wrote:
+>
+> Coresight platform support assumes that a missing "cpu" phandle
+> defaults to CPU0. This could be problematic and unnecessarily binds
+> components to CPU0, where they may not be. Let us make the DT binding
+> rules a bit stricter by not defaulting to CPU0 for missing "cpu"
+> affinity information.
+>
+> Also in coresight etm and cpu-debug drivers, abort the probe
+> for such cases.
+>
+> Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+> Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> ---
+>  .../bindings/arm/coresight-cpu-debug.txt      |  4 ++--
+>  .../devicetree/bindings/arm/coresight.txt     |  8 +++++---
+>  .../hwtracing/coresight/coresight-cpu-debug.c |  3 +++
+>  drivers/hwtracing/coresight/coresight-etm3x.c |  3 +++
+>  drivers/hwtracing/coresight/coresight-etm4x.c |  3 +++
+>  .../hwtracing/coresight/coresight-platform.c  | 20 +++++++++----------
+>  6 files changed, 26 insertions(+), 15 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/arm/coresight-cpu-debug.txt b/Documentation/devicetree/bindings/arm/coresight-cpu-debug.txt
+> index 298291211ea4..f1de3247c1b7 100644
+> --- a/Documentation/devicetree/bindings/arm/coresight-cpu-debug.txt
+> +++ b/Documentation/devicetree/bindings/arm/coresight-cpu-debug.txt
+> @@ -26,8 +26,8 @@ Required properties:
+>                 processor core is clocked by the internal CPU clock, so it
+>                 is enabled with CPU clock by default.
+>
+> -- cpu : the CPU phandle the debug module is affined to. When omitted
+> -       the module is considered to belong to CPU0.
+> +- cpu : the CPU phandle the debug module is affined to. Do not assume it
+> +        to default to CPU0 if omitted.
+>
+>  Optional properties:
+>
+> diff --git a/Documentation/devicetree/bindings/arm/coresight.txt b/Documentation/devicetree/bindings/arm/coresight.txt
+> index 8a88ddebc1a2..fcc3bacfd8bc 100644
+> --- a/Documentation/devicetree/bindings/arm/coresight.txt
+> +++ b/Documentation/devicetree/bindings/arm/coresight.txt
+> @@ -59,6 +59,11 @@ its hardware characteristcs.
+>
+>         * port or ports: see "Graph bindings for Coresight" below.
+>
+> +* Additional required property for Embedded Trace Macrocell (version 3.x and
+> +  version 4.x):
+> +       * cpu: the cpu phandle this ETM/PTM is affined to. Do not
+> +         assume it to default to CPU0 if omitted.
+> +
+>  * Additional required properties for System Trace Macrocells (STM):
+>         * reg: along with the physical base address and length of the register
+>           set as described above, another entry is required to describe the
+> @@ -87,9 +92,6 @@ its hardware characteristcs.
+>         * arm,cp14: must be present if the system accesses ETM/PTM management
+>           registers via co-processor 14.
+>
+> -       * cpu: the cpu phandle this ETM/PTM is affined to. When omitted the
+> -         source is considered to belong to CPU0.
+> -
+>  * Optional property for TMC:
+>
+>         * arm,buffer-size: size of contiguous buffer space for TMC ETR
+> diff --git a/drivers/hwtracing/coresight/coresight-cpu-debug.c b/drivers/hwtracing/coresight/coresight-cpu-debug.c
+> index 07a1367c733f..58bfd6319f65 100644
+> --- a/drivers/hwtracing/coresight/coresight-cpu-debug.c
+> +++ b/drivers/hwtracing/coresight/coresight-cpu-debug.c
+> @@ -579,6 +579,9 @@ static int debug_probe(struct amba_device *adev, const struct amba_id *id)
+>                 return -ENOMEM;
+>
+>         drvdata->cpu = coresight_get_cpu(dev);
+> +       if (drvdata->cpu < 0)
+> +               return drvdata->cpu;
+> +
+>         if (per_cpu(debug_drvdata, drvdata->cpu)) {
+>                 dev_err(dev, "CPU%d drvdata has already been initialized\n",
+>                         drvdata->cpu);
+> diff --git a/drivers/hwtracing/coresight/coresight-etm3x.c b/drivers/hwtracing/coresight/coresight-etm3x.c
+> index 225c2982e4fe..e2cb6873c3f2 100644
+> --- a/drivers/hwtracing/coresight/coresight-etm3x.c
+> +++ b/drivers/hwtracing/coresight/coresight-etm3x.c
+> @@ -816,6 +816,9 @@ static int etm_probe(struct amba_device *adev, const struct amba_id *id)
+>         }
+>
+>         drvdata->cpu = coresight_get_cpu(dev);
+> +       if (drvdata->cpu < 0)
+> +               return drvdata->cpu;
+> +
+>         desc.name  = devm_kasprintf(dev, GFP_KERNEL, "etm%d", drvdata->cpu);
+>         if (!desc.name)
+>                 return -ENOMEM;
+> diff --git a/drivers/hwtracing/coresight/coresight-etm4x.c b/drivers/hwtracing/coresight/coresight-etm4x.c
+> index 7fe266194ab5..7bcac8896fc1 100644
+> --- a/drivers/hwtracing/coresight/coresight-etm4x.c
+> +++ b/drivers/hwtracing/coresight/coresight-etm4x.c
+> @@ -1101,6 +1101,9 @@ static int etm4_probe(struct amba_device *adev, const struct amba_id *id)
+>         spin_lock_init(&drvdata->spinlock);
+>
+>         drvdata->cpu = coresight_get_cpu(dev);
+> +       if (drvdata->cpu < 0)
+> +               return drvdata->cpu;
+> +
+>         desc.name = devm_kasprintf(dev, GFP_KERNEL, "etm%d", drvdata->cpu);
+>         if (!desc.name)
+>                 return -ENOMEM;
+> diff --git a/drivers/hwtracing/coresight/coresight-platform.c b/drivers/hwtracing/coresight/coresight-platform.c
+> index 3c5ceda8db24..cf580ffbc27c 100644
+> --- a/drivers/hwtracing/coresight/coresight-platform.c
+> +++ b/drivers/hwtracing/coresight/coresight-platform.c
+> @@ -159,16 +159,16 @@ static int of_coresight_get_cpu(struct device *dev)
+>         struct device_node *dn;
+>
+>         if (!dev->of_node)
+> -               return 0;
+> +               return -ENODEV;
+> +
+>         dn = of_parse_phandle(dev->of_node, "cpu", 0);
+> -       /* Affinity defaults to CPU0 */
+>         if (!dn)
+> -               return 0;
+> +               return -ENODEV;
+> +
+>         cpu = of_cpu_node_to_id(dn);
+>         of_node_put(dn);
+>
+> -       /* Affinity to CPU0 if no cpu nodes are found */
+> -       return (cpu < 0) ? 0 : cpu;
+> +       return cpu;
+>  }
+>
+>  /*
+> @@ -310,7 +310,7 @@ of_get_coresight_platform_data(struct device *dev,
+>
+>  static inline int of_coresight_get_cpu(struct device *dev)
+>  {
+> -       return 0;
+> +       return -ENODEV;
+>  }
+>  #endif
+>
+> @@ -734,14 +734,14 @@ static int acpi_coresight_get_cpu(struct device *dev)
+>         struct acpi_device *adev = ACPI_COMPANION(dev);
+>
+>         if (!adev)
+> -               return 0;
+> +               return -ENODEV;
+>         status = acpi_get_parent(adev->handle, &cpu_handle);
+>         if (ACPI_FAILURE(status))
+> -               return 0;
+> +               return -ENODEV;
+>
+>         cpu = acpi_handle_to_logical_cpuid(cpu_handle);
+>         if (cpu >= nr_cpu_ids)
+> -               return 0;
+> +               return -ENODEV;
+>         return cpu;
+>  }
+>
+> @@ -769,7 +769,7 @@ acpi_get_coresight_platform_data(struct device *dev,
+>
+>  static inline int acpi_coresight_get_cpu(struct device *dev)
+>  {
+> -       return 0;
+> +       return -ENODEV;
+>  }
+>  #endif
 
-Use the new sugov_cpu_ramp_boost() function to drive an energy-aware
-boost, on top of the minimal required frequency.
+Thank you for adding this.
 
-As that boost number is not accurate (and cannot be without a crystal
-ball), we only use it in a way that allows direct control over the power
-it is going to cost. This allows keeping a platform-independant level of
-control over the average power, while allowing for frequency bursts when
-we know a (set of) tasks can make use of it.
+I want to apply your code to my tree but it isn't easy for me to do
+so.  Did you notice the checkpatch.pl warning about the DT bindings
+being in a separate patch?  In this case it is not a new binding but
+following the process gives the DT maintainers the opportunity to at
+least look at your patch.  Because the changes are trivial they may
+decide to ignore it but that choice it theirs to make.
 
-In shared policies, the maximum of all CPU's boost is used. Since the
-extra power expenditure is bounded, it cannot skyrocket even on
-platforms with a large number of cores in the same frequency domain
-and/or very high ratio between lowest and highest OPP cost.
+Regards,
+Mathieu
 
-Signed-off-by: Douglas RAILLARD <douglas.raillard@arm.com>
----
- kernel/sched/cpufreq_schedutil.c | 23 +++++++++++++++++------
- 1 file changed, 17 insertions(+), 6 deletions(-)
-
-diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-index 3eabfd815195..d70bbbeaa5cf 100644
---- a/kernel/sched/cpufreq_schedutil.c
-+++ b/kernel/sched/cpufreq_schedutil.c
-@@ -217,6 +217,9 @@ static unsigned long sugov_cpu_ramp_boost_update(struct sugov_cpu *sg_cpu,
-  * @sg_policy: schedutil policy object to compute the new frequency for.
-  * @util: Current CPU utilization.
-  * @max: CPU capacity.
-+ * @boost: Extra power that can be spent on top of the minimum amount of power
-+ *	required to meet capacity requirements, as a percentage between 0 and
-+ *	EM_COST_MARGIN_SCALE.
-  *
-  * If the utilization is frequency-invariant, choose the new frequency to be
-  * proportional to it, that is
-@@ -235,7 +238,8 @@ static unsigned long sugov_cpu_ramp_boost_update(struct sugov_cpu *sg_cpu,
-  * cpufreq driver limitations.
-  */
- static unsigned int get_next_freq(struct sugov_policy *sg_policy,
--				  unsigned long util, unsigned long max)
-+				  unsigned long util, unsigned long max,
-+				  unsigned long boost)
- {
- 	struct cpufreq_policy *policy = sg_policy->policy;
- 	unsigned int freq = arch_scale_freq_invariant() ?
-@@ -248,7 +252,7 @@ static unsigned int get_next_freq(struct sugov_policy *sg_policy,
- 	 * Try to get a higher frequency if one is available, given the extra
- 	 * power we are ready to spend.
- 	 */
--	freq = em_pd_get_higher_freq(pd, freq, 0);
-+	freq = em_pd_get_higher_freq(pd, freq, boost);
- 
- 	if (freq == sg_policy->cached_raw_freq && !sg_policy->need_freq_update)
- 		return sg_policy->next_freq;
-@@ -530,6 +534,7 @@ static void sugov_update_single(struct update_util_data *hook, u64 time,
- 	unsigned long util, max;
- 	unsigned int next_f;
- 	bool busy;
-+	unsigned long ramp_boost = 0;
- 
- 	sugov_iowait_boost(sg_cpu, time, flags);
- 	sg_cpu->last_update = time;
-@@ -542,10 +547,10 @@ static void sugov_update_single(struct update_util_data *hook, u64 time,
- 	busy = sugov_cpu_is_busy(sg_cpu);
- 
- 	util = sugov_get_util(sg_cpu);
--	sugov_cpu_ramp_boost_update(sg_cpu, util);
-+	ramp_boost = sugov_cpu_ramp_boost_update(sg_cpu, util);
- 	max = sg_cpu->max;
- 	util = sugov_iowait_apply(sg_cpu, time, util, max);
--	next_f = get_next_freq(sg_policy, util, max);
-+	next_f = get_next_freq(sg_policy, util, max, ramp_boost);
- 	/*
- 	 * Do not reduce the frequency if the CPU has not been idle
- 	 * recently, as the reduction is likely to be premature then.
-@@ -577,6 +582,8 @@ static unsigned int sugov_next_freq_shared(struct sugov_cpu *sg_cpu, u64 time)
- 	struct cpufreq_policy *policy = sg_policy->policy;
- 	unsigned long util = 0, max = 1;
- 	unsigned int j;
-+	unsigned long ramp_boost = 0;
-+	unsigned long j_ramp_boost = 0;
- 
- 	for_each_cpu(j, policy->cpus) {
- 		struct sugov_cpu *j_sg_cpu = &per_cpu(sugov_cpu, j);
-@@ -584,7 +591,11 @@ static unsigned int sugov_next_freq_shared(struct sugov_cpu *sg_cpu, u64 time)
- 
- 		j_util = sugov_get_util(j_sg_cpu);
- 		if (j_sg_cpu == sg_cpu)
--			sugov_cpu_ramp_boost_update(sg_cpu, j_util);
-+			j_ramp_boost = sugov_cpu_ramp_boost_update(sg_cpu, j_util);
-+		else
-+			j_ramp_boost = sugov_cpu_ramp_boost(j_sg_cpu);
-+		ramp_boost = max(ramp_boost, j_ramp_boost);
-+
- 		j_max = j_sg_cpu->max;
- 		j_util = sugov_iowait_apply(j_sg_cpu, time, j_util, j_max);
- 
-@@ -595,7 +606,7 @@ static unsigned int sugov_next_freq_shared(struct sugov_cpu *sg_cpu, u64 time)
- 	}
- 
- 
--	return get_next_freq(sg_policy, util, max);
-+	return get_next_freq(sg_policy, util, max, ramp_boost);
- }
- 
- static void
--- 
-2.22.0
-
+>
+> --
+> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+> of Code Aurora Forum, hosted by The Linux Foundation
+>
