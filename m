@@ -2,305 +2,294 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E668558A17
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 20:37:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69E4458A1C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 20:42:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726597AbfF0Sh4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 14:37:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35680 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726384AbfF0Sh4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 14:37:56 -0400
-Received: from earth.universe (unknown [185.62.205.103])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 93EC22064A;
-        Thu, 27 Jun 2019 18:37:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561660675;
-        bh=WtgVWv3h3e6GjUeYM72+oOL3QStDuHufllKTBP4Cqjw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GblNFDB4+qPQZ2cNTxdiAQ8mhnWmjEhqcOFBbvX5LW7NPvYajqpwl6iBWf6XGGn9Y
-         UEQt+CsfWcbMOSS+teKpMqLOs+HpsGVS23yuUohkkradaXvMtrDPoTDzejSw39uBK7
-         VjRf4ciUwyl90j95mp7yV/jNna4htgYcUsDgXqHc=
-Received: by earth.universe (Postfix, from userid 1000)
-        id 4ED403C08D5; Thu, 27 Jun 2019 20:37:52 +0200 (CEST)
-Date:   Thu, 27 Jun 2019 20:37:52 +0200
-From:   Sebastian Reichel <sre@kernel.org>
-To:     Enric Balletbo Serra <eballetbo@gmail.com>
-Cc:     Benson Leung <bleung@google.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Sameer Nanda <snanda@chromium.org>,
-        Benson Leung <bleung@chromium.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Len Brown <len.brown@intel.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        Adam.Thomson.Opensource@diasemi.com,
-        Collabora Kernel ML <kernel@collabora.com>,
-        Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v4 1/2] power: supply: add input power and voltage limit
- properties
-Message-ID: <20190627183752.4amfttcvd7bswom6@earth.universe>
-References: <20190507095248.17915-1-enric.balletbo@collabora.com>
- <20190523195438.GA110498@google.com>
- <CAFqH_52mdHKGN6gA3HuRJrcBvG1GpE+LzAyLgJD_xeZAiHruFw@mail.gmail.com>
+        id S1726561AbfF0SmA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 14:42:00 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58016 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726384AbfF0SmA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 14:42:00 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5RIbDqw071829;
+        Thu, 27 Jun 2019 14:41:08 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2td0mmqmju-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 27 Jun 2019 14:41:07 -0400
+Received: from m0098410.ppops.net (m0098410.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x5RIdflO079093;
+        Thu, 27 Jun 2019 14:41:07 -0400
+Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2td0mmqmj0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 27 Jun 2019 14:41:07 -0400
+Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
+        by ppma01dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x5RIda18024206;
+        Thu, 27 Jun 2019 18:41:06 GMT
+Received: from b01cxnp23032.gho.pok.ibm.com (b01cxnp23032.gho.pok.ibm.com [9.57.198.27])
+        by ppma01dal.us.ibm.com with ESMTP id 2t9by7g8k1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 27 Jun 2019 18:41:06 +0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5RIf5Sd53936468
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 27 Jun 2019 18:41:05 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3402CB206A;
+        Thu, 27 Jun 2019 18:41:05 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 069DDB2064;
+        Thu, 27 Jun 2019 18:41:05 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.26])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu, 27 Jun 2019 18:41:04 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 1104E16C6BA0; Thu, 27 Jun 2019 11:41:07 -0700 (PDT)
+Date:   Thu, 27 Jun 2019 11:41:07 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        rcu <rcu@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>
+Subject: Re: [RFC] Deadlock via recursive wakeup via RCU with threadirqs
+Message-ID: <20190627184107.GA26519@linux.ibm.com>
+Reply-To: paulmck@linux.ibm.com
+References: <20190626135447.y24mvfuid5fifwjc@linutronix.de>
+ <20190626162558.GY26519@linux.ibm.com>
+ <20190627142436.GD215968@google.com>
+ <20190627103455.01014276@gandalf.local.home>
+ <20190627153031.GA249127@google.com>
+ <20190627155506.GU26519@linux.ibm.com>
+ <CAEXW_YSEN_OL3ftTLN=M-W70WSuCgHJqU-R9VhS=A3uVj_AL+A@mail.gmail.com>
+ <20190627173831.GW26519@linux.ibm.com>
+ <20190627181638.GA209455@google.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="e4ghregrusiggzmz"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAFqH_52mdHKGN6gA3HuRJrcBvG1GpE+LzAyLgJD_xeZAiHruFw@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190627181638.GA209455@google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-27_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906270212
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Jun 27, 2019 at 02:16:38PM -0400, Joel Fernandes wrote:
+> On Thu, Jun 27, 2019 at 10:38:31AM -0700, Paul E. McKenney wrote:
+> > On Thu, Jun 27, 2019 at 12:47:24PM -0400, Joel Fernandes wrote:
+> > > On Thu, Jun 27, 2019 at 11:55 AM Paul E. McKenney <paulmck@linux.ibm.com> wrote:
+> > > >
+> > > > On Thu, Jun 27, 2019 at 11:30:31AM -0400, Joel Fernandes wrote:
+> > > > > On Thu, Jun 27, 2019 at 10:34:55AM -0400, Steven Rostedt wrote:
+> > > > > > On Thu, 27 Jun 2019 10:24:36 -0400
+> > > > > > Joel Fernandes <joel@joelfernandes.org> wrote:
+> > > > > >
+> > > > > > > > What am I missing here?
+> > > > > > >
+> > > > > > > This issue I think is
+> > > > > > >
+> > > > > > > (in normal process context)
+> > > > > > > spin_lock_irqsave(rq_lock); // which disables both preemption and interrupt
+> > > > > > >                      // but this was done in normal process context,
+> > > > > > >                      // not from IRQ handler
+> > > > > > > rcu_read_lock();
+> > > > > > >           <---------- IPI comes in and sets exp_hint
+> > > > > >
+> > > > > > How would an IPI come in here with interrupts disabled?
+> > > > > >
+> > > > > > -- Steve
+> > > > >
+> > > > > This is true, could it be rcu_read_unlock_special() got called for some
+> > > > > *other* reason other than the IPI then?
+> > > > >
+> > > > > Per Sebastian's stack trace of the recursive lock scenario, it is happening
+> > > > > during cpu_acct_charge() which is called with the rq_lock held.
+> > > > >
+> > > > > The only other reasons I know off to call rcu_read_unlock_special() are if
+> > > > > 1. the tick indicated that the CPU has to report a QS
+> > > > > 2. an IPI in the middle of the reader section for expedited GPs
+> > > > > 3. preemption in the middle of a preemptible RCU reader section
+> > > >
+> > > > 4. Some previous reader section was IPIed or preempted, but either
+> > > >    interrupts, softirqs, or preemption was disabled across the
+> > > >    rcu_read_unlock() of that previous reader section.
+> > > 
+> > > Hi Paul, I did not fully understand 4. The previous RCU reader section
+> > > could not have been IPI'ed or been preempted if interrupts were
+> > > disabled across. Also, if softirq/preempt is disabled across the
+> > > previous reader section, the previous reader could not be preempted in
+> > > these case.
+> > 
+> > Like this, courtesy of the consolidation of RCU flavors:
+> > 
+> > 	previous_reader()
+> > 	{
+> > 		rcu_read_lock();
+> > 		do_something(); /* Preemption happened here. */
+> > 		local_irq_disable(); /* Cannot be the scheduler! */
+> > 		do_something_else();
+> > 		rcu_read_unlock();  /* Must defer QS, task still queued. */
+> > 		do_some_other_thing();
+> > 		local_irq_enable();
+> > 	}
+> > 
+> > 	current_reader() /* QS from previous_reader() is still deferred. */
+> > 	{
+> > 		local_irq_disable();  /* Might be the scheduler. */
+> > 		do_whatever();
+> > 		rcu_read_lock();
+> > 		do_whatever_else();
+> > 		rcu_read_unlock();  /* Must still defer reporting QS. */
+> > 		do_whatever_comes_to_mind();
+> > 		local_irq_enable();
+> > 	}
+> > 
+> > Both instances of rcu_read_unlock() need to cause some later thing
+> > to report the quiescent state, and in some cases it will do a wakeup.
+> > Now, previous_reader()'s IRQ disabling cannot be due to scheduler rq/pi
+> > locks due to the rule about holding them across the entire RCU reader
+> > if they are held across the rcu_read_unlock().  But current_reader()'s
+> > IRQ disabling might well be due to the scheduler rq/pi locks, so
+> > current_reader() must be careful about doing wakeups.
+> 
+> Makes sense now, thanks.
+> 
+> > > That leaves us with the only scenario where the previous reader was
+> > > IPI'ed while softirq/preempt was disabled across it. Is that what you
+> > > meant?
+> > 
+> > No, but that can also happen.
+> > 
+> > >        But in this scenario, the previous reader should have set
+> > > exp_hint to false in the previous reader's rcu_read_unlock_special()
+> > > invocation itself. So I would think t->rcu_read_unlock_special should
+> > > be 0 during the new reader's invocation thus I did not understand how
+> > > rcu_read_unlock_special can be called because of a previous reader.
+> > 
+> > Yes, exp_hint would unconditionally be set to false in the first
+> > reader's rcu_read_unlock().  But .blocked won't be.
+> 
+> Makes sense.
+> 
+> > > I'll borrow some of that confused color paint if you don't mind ;-)
+> > > And we should document this somewhere for future sanity preservation
+> > > :-D
+> > 
+> > Or adjust the code and requirements to make it more sane, if feasible.
+> > 
+> > My current (probably wildly unreliable) guess that the conditions in
+> > rcu_read_unlock_special() need adjusting.  I was assuming that in_irq()
+> > implies a hardirq context, in other words that in_irq() would return
+> > false from a threaded interrupt handler.  If in_irq() instead returns
+> > true from within a threaded interrupt handler, then this code in
+> > rcu_read_unlock_special() needs fixing:
+> > 
+> > 		if ((exp || in_irq()) && irqs_were_disabled && use_softirq &&
+> > 		    (in_irq() || !t->rcu_read_unlock_special.b.deferred_qs)) {
+> > 			// Using softirq, safe to awaken, and we get
+> > 			// no help from enabling irqs, unlike bh/preempt.
+> > 			raise_softirq_irqoff(RCU_SOFTIRQ);
+> > 
+> > The fix would be replacing the calls to in_irq() with something that
+> > returns true only if called from within a hardirq context.
+> > Thoughts?
+> 
+> I am not sure if this will fix all cases though?
+> 
+> I think the crux of the problem is doing a recursive wake up. The threaded
+> IRQ probably just happens to be causing it here, it seems to me this problem
+> can also occur on a non-threaded irq system (say current_reader() in your
+> example executed in a scheduler path in process-context and not from an
+> interrupt). Is that not possible?
 
---e4ghregrusiggzmz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In the non-threaded case, invoking raise_softirq*() from hardirq context
+just sets a bit in a per-CPU variable.  Now, to Sebastian's point, we
+are only sort of in hardirq context in this case due to being called
+from irq_exit(), but the failure we are seeing might well be a ways
+downstream of the actual root-cause bug.
 
-Hi,
+> I think the fix should be to prevent the wake-up not based on whether we are
+> in hard/soft-interrupt mode but that we are doing the rcu_read_unlock() from
+> a scheduler path (if we can detect that)
 
-I just queued both patches. Thanks for the detailed description and
-documentation.
+Or just don't do the wakeup at all, if it comes to that.  I don't know
+of any way to determine whether rcu_read_unlock() is being called from
+the scheduler, but it has been some time since I asked Peter Zijlstra
+about that.
 
--- Sebastian
+Of course, unconditionally refusing to do the wakeup might not be happy
+thing for NO_HZ_FULL kernels that don't implement IRQ work.
 
-On Tue, Jun 25, 2019 at 12:04:13PM +0200, Enric Balletbo Serra wrote:
-> Hi Sebastian, Pavel,
->=20
-> Missatge de Benson Leung <bleung@google.com> del dia dj., 23 de maig
-> 2019 a les 21:55:
-> >
-> > Hi Enric,
-> >
-> > On Tue, May 07, 2019 at 11:52:47AM +0200, Enric Balletbo i Serra wrote:
-> > > For thermal management strategy you might be interested on limit the
-> > > input power for a power supply. We already have current limit but
-> > > basically what we probably want is to limit power. So, introduce the
-> > > input_power_limit property.
-> > >
-> > > Although the common use case is limit the input power, in some
-> > > specific cases it is the voltage that is problematic (i.e some regula=
-tors
-> > > have different efficiencies at higher voltage resulting in more heat).
-> > > So introduce also the input_voltage_limit property.
-> > >
-> > > This happens in one Chromebook and is used on the Pixel C's thermal
-> > > management strategy to effectively limit the input power to 5V 3A when
-> > > the screen is on. When the screen is on, the display, the CPU, and th=
-e GPU
-> > > all contribute more heat to the system than while the screen is off, =
-and
-> > > we made a tradeoff to throttle the charger in order to give more of t=
-he
-> > > thermal budget to those other components.
-> > >
-> > > So there's nothing fundamentally broken about the hardware that would
-> > > cause the Pixel C to malfunction if we were charging at 9V or 12V ins=
-tead
-> > > of 5V when the screen is on, i.e. if userspace doesn't change this.
-> > >
-> > > What would happen is that you wouldn't meet Google's skin temperature
-> > > targets on the system if the charger was allowed to run at 9V or 12V =
-with
-> > > the screen on.
-> > >
-> > > For folks hacking on Pixel Cs (which is now outside of Google's offic=
-ial
-> > > support window for Android) and customizing their own kernel and user=
-space
-> > > this would be acceptable, but we wanted to expose this feature in the
-> > > power supply properties because the feature does exist in the Emedded
-> > > Controller firmware of the Pixel C and all of Google's Chromebooks wi=
-th
-> > > USB-C made since 2015 in case someone running an up to date kernel wa=
-nted
-> > > to limit the charging power for thermal or other reasons.
-> > >
-> > > This patch exposes a new property, similar to input current limit, to
-> > > re-configure the maximum voltage from the external supply at runtime
-> > > based on system-level knowledge or user input.
-> > >
-> > > Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> > > Reviewed-by: Guenter Roeck <groeck@chromium.org>
-> > > Acked-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-> >
-> > Reviewed-by: Benson Leung <bleung@chromium.org>
-> >
->=20
-> We're close to the merge window so I'm wondering if there are more
-> concerns on this patchset?
->=20
-> Thanks,
-> ~ Enric
->=20
-> > > ---
-> > >
-> > > Changes in v4:
-> > > - Add also input_power_limit.
-> > >
-> > > Changes in v3:
-> > > - Improve commit log and documentation with Benson comments.
-> > >
-> > > Changes in v2:
-> > > - Document the new property in ABI/testing/sysfs-class-power.
-> > > - Add the Reviewed-by Guenter Roeck tag.
-> > >
-> > >  Documentation/ABI/testing/sysfs-class-power | 32 +++++++++++++++++++=
-++
-> > >  Documentation/power/power_supply_class.txt  |  4 +++
-> > >  drivers/power/supply/power_supply_sysfs.c   |  2 ++
-> > >  include/linux/power_supply.h                |  2 ++
-> > >  4 files changed, 40 insertions(+)
-> > >
-> > > diff --git a/Documentation/ABI/testing/sysfs-class-power b/Documentat=
-ion/ABI/testing/sysfs-class-power
-> > > index 5e23e22dce1b..962a27a1daf8 100644
-> > > --- a/Documentation/ABI/testing/sysfs-class-power
-> > > +++ b/Documentation/ABI/testing/sysfs-class-power
-> > > @@ -331,10 +331,42 @@ Description:
-> > >               supply. Normally this is configured based on the type of
-> > >               connection made (e.g. A configured SDP should output a =
-maximum
-> > >               of 500mA so the input current limit is set to the same =
-value).
-> > > +             Use preferably input_power_limit, and for problems that=
- can be
-> > > +             solved using power limit use input_current_limit.
-> > >
-> > >               Access: Read, Write
-> > >               Valid values: Represented in microamps
-> > >
-> > > +What:                /sys/class/power_supply/<supply_name>/input_vol=
-tage_limit
-> > > +Date:                May 2019
-> > > +Contact:     linux-pm@vger.kernel.org
-> > > +Description:
-> > > +             This entry configures the incoming VBUS voltage limit c=
-urrently
-> > > +             set in the supply. Normally this is configured based on
-> > > +             system-level knowledge or user input (e.g. This is part=
- of the
-> > > +             Pixel C's thermal management strategy to effectively li=
-mit the
-> > > +             input power to 5V when the screen is on to meet Google'=
-s skin
-> > > +             temperature targets). Note that this feature should not=
- be
-> > > +             used for safety critical things.
-> > > +             Use preferably input_power_limit, and for problems that=
- can be
-> > > +             solved using power limit use input_voltage_limit.
-> > > +
-> > > +             Access: Read, Write
-> > > +             Valid values: Represented in microvolts
-> > > +
-> > > +What:                /sys/class/power_supply/<supply_name>/input_pow=
-er_limit
-> > > +Date:                May 2019
-> > > +Contact:     linux-pm@vger.kernel.org
-> > > +Description:
-> > > +             This entry configures the incoming power limit currentl=
-y set
-> > > +             in the supply. Normally this is configured based on
-> > > +             system-level knowledge or user input. Use preferably th=
-is
-> > > +             feature to limit the incoming power and use current/vol=
-tage
-> > > +             limit only for problems that can be solved using power =
-limit.
-> > > +
-> > > +             Access: Read, Write
-> > > +             Valid values: Represented in microwatts
-> > > +
-> > >  What:                /sys/class/power_supply/<supply_name>/online,
-> > >  Date:                May 2007
-> > >  Contact:     linux-pm@vger.kernel.org
-> > > diff --git a/Documentation/power/power_supply_class.txt b/Documentati=
-on/power/power_supply_class.txt
-> > > index 300d37896e51..1e3c705111db 100644
-> > > --- a/Documentation/power/power_supply_class.txt
-> > > +++ b/Documentation/power/power_supply_class.txt
-> > > @@ -137,6 +137,10 @@ power supply object.
-> > >
-> > >  INPUT_CURRENT_LIMIT - input current limit programmed by charger. Ind=
-icates
-> > >  the current drawn from a charging source.
-> > > +INPUT_VOLTAGE_LIMIT - input voltage limit programmed by charger. Ind=
-icates
-> > > +the voltage limit from a charging source.
-> > > +INPUT_POWER_LIMIT - input power limit programmed by charger. Indicat=
-es
-> > > +the power limit from a charging source.
-> > >
-> > >  CHARGE_CONTROL_LIMIT - current charge control limit setting
-> > >  CHARGE_CONTROL_LIMIT_MAX - maximum charge control limit setting
-> > > diff --git a/drivers/power/supply/power_supply_sysfs.c b/drivers/powe=
-r/supply/power_supply_sysfs.c
-> > > index 5358a80d854f..860db617d241 100644
-> > > --- a/drivers/power/supply/power_supply_sysfs.c
-> > > +++ b/drivers/power/supply/power_supply_sysfs.c
-> > > @@ -275,6 +275,8 @@ static struct device_attribute power_supply_attrs=
-[] =3D {
-> > >       POWER_SUPPLY_ATTR(charge_control_limit),
-> > >       POWER_SUPPLY_ATTR(charge_control_limit_max),
-> > >       POWER_SUPPLY_ATTR(input_current_limit),
-> > > +     POWER_SUPPLY_ATTR(input_voltage_limit),
-> > > +     POWER_SUPPLY_ATTR(input_power_limit),
-> > >       POWER_SUPPLY_ATTR(energy_full_design),
-> > >       POWER_SUPPLY_ATTR(energy_empty_design),
-> > >       POWER_SUPPLY_ATTR(energy_full),
-> > > diff --git a/include/linux/power_supply.h b/include/linux/power_suppl=
-y.h
-> > > index 2f9c201a54d1..ba135a5d8996 100644
-> > > --- a/include/linux/power_supply.h
-> > > +++ b/include/linux/power_supply.h
-> > > @@ -122,6 +122,8 @@ enum power_supply_property {
-> > >       POWER_SUPPLY_PROP_CHARGE_CONTROL_LIMIT,
-> > >       POWER_SUPPLY_PROP_CHARGE_CONTROL_LIMIT_MAX,
-> > >       POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT,
-> > > +     POWER_SUPPLY_PROP_INPUT_VOLTAGE_LIMIT,
-> > > +     POWER_SUPPLY_PROP_INPUT_POWER_LIMIT,
-> > >       POWER_SUPPLY_PROP_ENERGY_FULL_DESIGN,
-> > >       POWER_SUPPLY_PROP_ENERGY_EMPTY_DESIGN,
-> > >       POWER_SUPPLY_PROP_ENERGY_FULL,
-> > > --
-> > > 2.20.1
-> > >
-> >
-> > --
-> > Benson Leung
-> > Staff Software Engineer
-> > Chrome OS Kernel
-> > Google Inc.
-> > bleung@google.com
-> > Chromium OS Project
-> > bleung@chromium.org
+> I lost track of this code:
+>  		if ((exp || in_irq()) && irqs_were_disabled && use_softirq &&
+>  		    (in_irq() || !t->rcu_read_unlock_special.b.deferred_qs)) {
+> 
+> Was this patch posted to the list? I will blame it to try to get some
+> context. It sounds like you added more conditions on when to kick the
+> softirq.
 
---e4ghregrusiggzmz
-Content-Type: application/pgp-signature; name="signature.asc"
+This is from the dev branch of my -rcu tree.  It has at least one
+patch in this area that is currently slated for v5.4, so I would not
+have sent that as part of an official patch series.
 
------BEGIN PGP SIGNATURE-----
+> > Ugh.  Same question about IRQ work.  Will the current use of it by
+> > rcu_read_unlock_special() cause breakage in the presence of threaded
+> > interrupt handlers?
+> 
+> /me needs to understand why the irq work stuff was added here as well. Have
+> my work cut out for the day! ;-)
 
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAl0VDQAACgkQ2O7X88g7
-+pqkhhAAlWCKoKEY+olvQ7v5gHO3kZB0Z5j8HEgtWE7KbkzVR0RmMq+dm0w7jOcu
-VNn9iYY/buXIRP/ey66XuQ8nYS/b9FGFsoxDsm7UVG9ps/7LTpgvhpIiN3hR5Aue
-BvwkIbBrE4lJSEtwuKKskOMP4+tUh6SLxVIuWkYBi3j9iW8+TquKLzIk/VLDqLlF
-jK+RlynXef5Ge+RNa8yAt0kz0GaRyDGIZf67FPQIvJ7qL/bjlsyJ21Bstq9wZqdf
-Ny06XGiY4nerdJelxnPIbLZrcZx9M4mb+LJSmJJ1ZNE2ofTduPv3FT5zMI4vq8+K
-/8aoKnp3DbpoQ/ubreqWAYpG1e/5Hs7kn1B3rDOXilOB4f96470f+ydDPzQ9aKuh
-SYxWkVEFoi2RcfsaLkYSC2JLTrHJG3n0IGEAxfdiV2Zd5orSlVfoz59EJR75EUAc
-nazikzvj62E2VHsUt3VvNpi1Gz2ojNhMqr2j4DJckvALujtORB38D65WfRlXbvej
-tJ0GLs3ItHnwe961+GWQOC/V/Wyon821hvigrlRhJHh17VZCWEFL3WnAuw51NejF
-F8VrrYbqkVNWCBTBEcjQ8L5RGz/uofBxg8g6mtHv7l+fSagk7KhVFO3N3Bm5FfJn
-5rjIYw3/kID8EK7U82sMnG+QsR4TRJ8hqOeTtUXbZZV95rNmKHo=
-=Cf/l
------END PGP SIGNATURE-----
+New code, so more likely to contain bugs than usual.  ;-)
 
---e4ghregrusiggzmz--
+The point was to get a wakeup soonish without risk of rq/pi deadlocks.
+
+							Thanx, Paul
+
+> thanks,
+> 
+>  - Joel
+> 
+> 
+> > 
+> > 							Thanx, Paul
+> > 
+> > > thanks,
+> > >  - Joel
+> > > 
+> > > 
+> > > 
+> > > >
+> > > > I -think- that this is what Sebastian is seeing.
+> > > >
+> > > >                                                         Thanx, Paul
+> > > >
+> > > > > 1. and 2. are not possible because interrupts are disabled, that's why the
+> > > > > wakeup_softirq even happened.
+> > > > > 3. is not possible because we are holding rq_lock in the RCU reader section.
+> > > > >
+> > > > > So I am at a bit of a loss how this can happen :-(
+> > > > >
+> > > > > Spurious call to rcu_read_unlock_special() may be when it should not have
+> > > > > been called?
+> > > > >
+> > > > > thanks,
+> > > > >
+> > > > > - Joel
+> > 
+> 
