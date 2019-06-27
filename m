@@ -2,54 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B19A658EA0
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 01:40:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 47A5658EB2
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 01:43:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726811AbfF0XkB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 19:40:01 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:56291 "EHLO
+        id S1726712AbfF0Xnm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 19:43:42 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:36043 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726586AbfF0XkB (ORCPT
+        with ESMTP id S1726506AbfF0Xnm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 19:40:01 -0400
+        Thu, 27 Jun 2019 19:43:42 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5RNdi0p500242
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5RNeRer500405
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Thu, 27 Jun 2019 16:39:44 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5RNdi0p500242
+        Thu, 27 Jun 2019 16:40:27 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5RNeRer500405
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019061801; t=1561678785;
-        bh=UF/5RgKS3YlCbiA2098FEgjOdoW6PbBFLEYLpeCHZ8w=;
+        s=2019061801; t=1561678827;
+        bh=HYMo7V5MKBTB1MqwDpXm+3PxdI5PVUVHNhLcBgZ2O24=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=TDEr68RDQzrCNgybuh6gVGpGIzXGbqrK60JS2NDmp6XRV/yadneXE7g9Sr+xrP16W
-         98Vo9sDGoxzKWOWFf+4Y42sVcLtjfIA3YC9/qkTmmjXBnuTuE2jGB+Ne9Gb2CkcT2x
-         in7V/W3SAB5laFFe5nZQyv5LizdgxbnHyTMHWu5Ric+UzxgLgNCwViUJV2b6K1+y8r
-         dmeAF/MlKM/sB9S4t1kjQV0CplHZQgh2hAt/6e1R9kbCR8F7dvjvb8epW/dq+R1WlC
-         5Dl9Ch54ZSvXAKgDgQPNCw/Yh9PvXAJ5rTdvQvsKzrV2db/ZXV7n38gcsR07bBaCBT
-         3MJZ0W5WU0oqA==
+        b=Mcg3vD7Pb6FTJD1gxdgrbUYYRwZGEYLBr8hLpyXA+ihN2FXZt4hSHlyflaIuQmd+o
+         xFUydiXp1jx51Zn6h0LKfOPRMvQBxhgU8xRK3RTxx++ANhgDsBDbBVe0joOfMPjWl0
+         tyaE7lK4MIiIsBQ1uomgV6aKAVA4jTuKKxoHj373d8pQXiDf/EMjdtfxDHSjP2sdOs
+         j4dl2ty9F+60Od+dhjndtUcqNzSFV+m0MYIXUnVgAZ1lB9d1ltfRQYQjEVRrJWCyl5
+         Ei9inQxGsc4ucvC+Cc07kPOYukrrNA6HJ7YSEyojCUD0n8n1K+LKPcTigR17Flja60
+         jK9f/pj8uAtgQ==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5RNdhWD500237;
-        Thu, 27 Jun 2019 16:39:43 -0700
-Date:   Thu, 27 Jun 2019 16:39:43 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5RNeQH9500402;
+        Thu, 27 Jun 2019 16:40:26 -0700
+Date:   Thu, 27 Jun 2019 16:40:26 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
-Message-ID: <tip-8c273f2c81f0756f65b24771196c0eff7ac90e7b@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, Suravee.Suthikulpanit@amd.com,
-        ricardo.neri-calderon@linux.intel.com, ashok.raj@intel.com,
-        andi.kleen@intel.com, peterz@infradead.org,
-        ravi.v.shankar@intel.com, tglx@linutronix.de, mingo@kernel.org,
-        hpa@zytor.com, eranian@google.com
-Reply-To: peterz@infradead.org, ashok.raj@intel.com,
-          ricardo.neri-calderon@linux.intel.com, andi.kleen@intel.com,
-          Suravee.Suthikulpanit@amd.com, linux-kernel@vger.kernel.org,
-          eranian@google.com, hpa@zytor.com, ravi.v.shankar@intel.com,
-          tglx@linutronix.de, mingo@kernel.org
-In-Reply-To: <20190623132434.860549134@linutronix.de>
-References: <20190623132434.860549134@linutronix.de>
+Message-ID: <tip-6bdec41a0cbcbda35c9044915fc8f45503a595a0@git.kernel.org>
+Cc:     eranian@google.com, ravi.v.shankar@intel.com, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, andi.kleen@intel.com,
+        peterz@infradead.org, ricardo.neri-calderon@linux.intel.com,
+        tglx@linutronix.de, Suravee.Suthikulpanit@amd.com,
+        ashok.raj@intel.com, hpa@zytor.com
+Reply-To: peterz@infradead.org, andi.kleen@intel.com,
+          linux-kernel@vger.kernel.org, mingo@kernel.org,
+          eranian@google.com, ravi.v.shankar@intel.com, hpa@zytor.com,
+          ashok.raj@intel.com, Suravee.Suthikulpanit@amd.com,
+          tglx@linutronix.de, ricardo.neri-calderon@linux.intel.com
+In-Reply-To: <20190623132434.951733064@linutronix.de>
+References: <20190623132434.951733064@linutronix.de>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/timers] x86/hpet: Move static and global variables to one
- place
-Git-Commit-ID: 8c273f2c81f0756f65b24771196c0eff7ac90e7b
+Subject: [tip:x86/timers] x86/hpet: Shuffle code around for readability sake
+Git-Commit-ID: 6bdec41a0cbcbda35c9044915fc8f45503a595a0
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -67,17 +66,20 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  8c273f2c81f0756f65b24771196c0eff7ac90e7b
-Gitweb:     https://git.kernel.org/tip/8c273f2c81f0756f65b24771196c0eff7ac90e7b
+Commit-ID:  6bdec41a0cbcbda35c9044915fc8f45503a595a0
+Gitweb:     https://git.kernel.org/tip/6bdec41a0cbcbda35c9044915fc8f45503a595a0
 Author:     Thomas Gleixner <tglx@linutronix.de>
-AuthorDate: Sun, 23 Jun 2019 15:23:49 +0200
+AuthorDate: Sun, 23 Jun 2019 15:23:50 +0200
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Fri, 28 Jun 2019 00:57:17 +0200
+CommitDate: Fri, 28 Jun 2019 00:57:18 +0200
 
-x86/hpet: Move static and global variables to one place
+x86/hpet: Shuffle code around for readability sake
 
-Having static and global variables sprinkled all over the code is just
-annoying to read. Move them all to the top of the file.
+It doesn't make sense to have init functions in the middle of other
+code. Aside of that, further changes in that area create horrible diffs if
+the code stays where it is.
+
+No functional change
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Ingo Molnar <mingo@kernel.org>
@@ -88,109 +90,108 @@ Cc: Andi Kleen <andi.kleen@intel.com>
 Cc: Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>
 Cc: Stephane Eranian <eranian@google.com>
 Cc: Ravi Shankar <ravi.v.shankar@intel.com>
-Link: https://lkml.kernel.org/r/20190623132434.860549134@linutronix.de
+Link: https://lkml.kernel.org/r/20190623132434.951733064@linutronix.de
 
 ---
- arch/x86/kernel/hpet.c | 50 ++++++++++++++++++++++----------------------------
- 1 file changed, 22 insertions(+), 28 deletions(-)
+ arch/x86/kernel/hpet.c | 81 +++++++++++++++++++++++++-------------------------
+ 1 file changed, 41 insertions(+), 40 deletions(-)
 
 diff --git a/arch/x86/kernel/hpet.c b/arch/x86/kernel/hpet.c
-index cb120e412dc6..d6bd0ed6885b 100644
+index d6bd0ed6885b..71533f53fa1d 100644
 --- a/arch/x86/kernel/hpet.c
 +++ b/arch/x86/kernel/hpet.c
-@@ -23,6 +23,15 @@
- #undef  pr_fmt
- #define pr_fmt(fmt) "hpet: " fmt
- 
-+struct hpet_dev {
-+	struct clock_event_device	evt;
-+	unsigned int			num;
-+	int				cpu;
-+	unsigned int			irq;
-+	unsigned int			flags;
-+	char				name[10];
-+};
-+
- #define HPET_MASK			CLOCKSOURCE_MASK(32)
- 
- #define HPET_DEV_USED_BIT		2
-@@ -43,18 +52,22 @@ bool					hpet_msi_disable;
- 
- #ifdef CONFIG_PCI_MSI
- static unsigned int			hpet_num_timers;
-+static struct hpet_dev			*hpet_devs;
-+static DEFINE_PER_CPU(struct hpet_dev *, cpu_hpet_dev);
-+static struct irq_domain		*hpet_domain;
- #endif
-+
- static void __iomem			*hpet_virt_address;
- static u32				*hpet_boot_cfg;
- 
--struct hpet_dev {
--	struct clock_event_device	evt;
--	unsigned int			num;
--	int				cpu;
--	unsigned int			irq;
--	unsigned int			flags;
--	char				name[10];
--};
-+static bool				hpet_legacy_int_enabled;
-+static unsigned long			hpet_freq;
-+
-+bool					boot_hpet_disable;
-+bool					hpet_force_user;
-+static bool				hpet_verbose;
-+
-+static struct clock_event_device	hpet_clockevent;
- 
- static inline struct hpet_dev *EVT_TO_HPET_DEV(struct clock_event_device *evtdev)
- {
-@@ -85,10 +98,6 @@ static inline void hpet_clear_mapping(void)
- /*
-  * HPET command line enable / disable
-  */
--bool boot_hpet_disable;
--bool hpet_force_user;
--static bool hpet_verbose;
--
- static int __init hpet_setup(char *str)
- {
- 	while (str) {
-@@ -120,11 +129,6 @@ static inline int is_hpet_capable(void)
- 	return !boot_hpet_disable && hpet_address;
+@@ -559,6 +559,47 @@ static void init_one_hpet_msi_clockevent(struct hpet_dev *hdev, int cpu)
+ 					0x7FFFFFFF);
  }
  
--/*
-- * HPET timer interrupt enable / disable
-- */
--static bool hpet_legacy_int_enabled;
--
- /**
-  * is_hpet_enabled - check whether the hpet timer interrupt is enabled
-  */
-@@ -217,13 +221,7 @@ static void __init hpet_reserve_platform_timers(unsigned int id)
- static void hpet_reserve_platform_timers(unsigned int id) { }
++static struct hpet_dev *hpet_get_unused_timer(void)
++{
++	int i;
++
++	if (!hpet_devs)
++		return NULL;
++
++	for (i = 0; i < hpet_num_timers; i++) {
++		struct hpet_dev *hdev = &hpet_devs[i];
++
++		if (!(hdev->flags & HPET_DEV_VALID))
++			continue;
++		if (test_and_set_bit(HPET_DEV_USED_BIT,
++			(unsigned long *)&hdev->flags))
++			continue;
++		return hdev;
++	}
++	return NULL;
++}
++
++static int hpet_cpuhp_online(unsigned int cpu)
++{
++	struct hpet_dev *hdev = hpet_get_unused_timer();
++
++	if (hdev)
++		init_one_hpet_msi_clockevent(hdev, cpu);
++	return 0;
++}
++
++static int hpet_cpuhp_dead(unsigned int cpu)
++{
++	struct hpet_dev *hdev = per_cpu(cpu_hpet_dev, cpu);
++
++	if (!hdev)
++		return 0;
++	free_irq(hdev->irq, hdev);
++	hdev->flags &= ~HPET_DEV_USED;
++	per_cpu(cpu_hpet_dev, cpu) = NULL;
++	return 0;
++}
++
+ #ifdef CONFIG_HPET
+ /* Reserve at least one timer for userspace (/dev/hpet) */
+ #define RESERVE_TIMERS 1
+@@ -644,46 +685,6 @@ static void __init hpet_reserve_msi_timers(struct hpet_data *hd)
+ }
  #endif
  
--/*
-- * Common hpet info
-- */
--static unsigned long hpet_freq;
+-static struct hpet_dev *hpet_get_unused_timer(void)
+-{
+-	int i;
 -
--static struct clock_event_device hpet_clockevent;
+-	if (!hpet_devs)
+-		return NULL;
 -
-+/* Common hpet functions */
- static void hpet_stop_counter(void)
- {
- 	u32 cfg = hpet_readl(HPET_CFG);
-@@ -430,10 +428,6 @@ static struct clock_event_device hpet_clockevent = {
-  */
- #ifdef CONFIG_PCI_MSI
+-	for (i = 0; i < hpet_num_timers; i++) {
+-		struct hpet_dev *hdev = &hpet_devs[i];
+-
+-		if (!(hdev->flags & HPET_DEV_VALID))
+-			continue;
+-		if (test_and_set_bit(HPET_DEV_USED_BIT,
+-			(unsigned long *)&hdev->flags))
+-			continue;
+-		return hdev;
+-	}
+-	return NULL;
+-}
+-
+-static int hpet_cpuhp_online(unsigned int cpu)
+-{
+-	struct hpet_dev *hdev = hpet_get_unused_timer();
+-
+-	if (hdev)
+-		init_one_hpet_msi_clockevent(hdev, cpu);
+-	return 0;
+-}
+-
+-static int hpet_cpuhp_dead(unsigned int cpu)
+-{
+-	struct hpet_dev *hdev = per_cpu(cpu_hpet_dev, cpu);
+-
+-	if (!hdev)
+-		return 0;
+-	free_irq(hdev->irq, hdev);
+-	hdev->flags &= ~HPET_DEV_USED;
+-	per_cpu(cpu_hpet_dev, cpu) = NULL;
+-	return 0;
+-}
+ #else
  
--static DEFINE_PER_CPU(struct hpet_dev *, cpu_hpet_dev);
--static struct hpet_dev	*hpet_devs;
--static struct irq_domain *hpet_domain;
--
- void hpet_msi_unmask(struct irq_data *data)
- {
- 	struct hpet_dev *hdev = irq_data_get_irq_handler_data(data);
+ static inline void hpet_msi_capability_lookup(unsigned int start_timer) { }
