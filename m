@@ -2,95 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70516583CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 15:46:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A615583CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 15:48:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726961AbfF0NqO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 09:46:14 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:39525 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726370AbfF0NqO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 09:46:14 -0400
-Received: by mail-wr1-f65.google.com with SMTP id x4so2653508wrt.6
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 06:46:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=/919te5EBO6kM914CpYGsOFLurxjc/NmMo/1QG/Xa5A=;
-        b=BTBKI9dx+mpus8NIgL8rNZrseG0p0dmEql/3XYjBX2kUKXj9ECVmhx6IvT3FV+qnnU
-         /u3zb0JXUVXZ1GqpRjMtBoCObTp5aEsYQoiWEHDm0TnaZt3hPTTJBb/KGcqGOY7sFkKL
-         TiLqV6ZhTKVP8HEx5hJkSQO9lRSdTHz/NgqzDdUu6nRk2S/yZ7sdYd/cvF80phZK6UjW
-         1KoEwAiUCoumsxJpWunQvkVNeBgTZP1FiCdjcUlP7OkWuEm4LiICXfOb4RZ+0JOcJHPV
-         YRgi1J2mJy6vvKWwKm3M3IWc/iLDaqRve6qoMshfNMxqhTSt356qB7DdSAjxDbrNL4Rt
-         O5Mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=/919te5EBO6kM914CpYGsOFLurxjc/NmMo/1QG/Xa5A=;
-        b=MJ1uWcJ/R9zWAysvShyIfPjHwsI9we/3CeS6o46gFpJFniAVYKoIzwAfki3uiRppt9
-         vPpwbI+eVjfNlQ4QuhJ/Uu7IetZUVt57imh021qJZAh4HOz9AA7Y7hO5x6NuCNFFdjbg
-         WZXEgECCfQgJI3J5tXc1kNifiTOngImjmcwGREiaYz9MmMn1wDxVW6Qi6mG2f+rNd0aG
-         xM2i2Uq2Mz3LxmrVTIjTFsU3tWNd3UFSyUrAmL3YTM4uBLqKZcwYvsAZDLHwhijB5VoH
-         IVHhk+eKBXxZoLYTDXai+TWTlqwbk3jNncZaMdanmpk8j79MDWPCf/VEntyv053ZPw19
-         a93Q==
-X-Gm-Message-State: APjAAAVPvHRAqyzfs4g5PODEX6ZU+NxkXjnT9DWqP+lDC9RtA46/b5Tl
-        W1SssqjnK0Qc8cf9zlZuyzMQoQ==
-X-Google-Smtp-Source: APXvYqyzaI4+6KntP+zl6u1fbjYwGBVRfBIJ4qdqo0Zs/e5ASJSedLfMzV+TX57WdgXVuCe/Vq14ww==
-X-Received: by 2002:adf:8028:: with SMTP id 37mr3363716wrk.106.1561643172103;
-        Thu, 27 Jun 2019 06:46:12 -0700 (PDT)
-Received: from dell ([2.27.35.164])
-        by smtp.gmail.com with ESMTPSA id s10sm1516126wrt.49.2019.06.27.06.46.11
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 27 Jun 2019 06:46:11 -0700 (PDT)
-Date:   Thu, 27 Jun 2019 14:46:10 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc:     linux-kernel@vger.kernel.org, patches@opensource.cirrus.com
-Subject: Re: [PATCH 2/2] mfd: madera: Fixup SPDX headers
-Message-ID: <20190627134610.GF2000@dell>
-References: <20190626133336.12466-1-ckeepax@opensource.cirrus.com>
- <20190626133336.12466-2-ckeepax@opensource.cirrus.com>
+        id S1726876AbfF0Nr7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 09:47:59 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:38032 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726370AbfF0Nr7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 09:47:59 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 34860883BA;
+        Thu, 27 Jun 2019 13:47:46 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-85.bos.redhat.com [10.18.17.85])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BE13B5D707;
+        Thu, 27 Jun 2019 13:47:40 +0000 (UTC)
+Subject: Re: [PATCH] memcg: Add kmem.slabinfo to v2 for debugging purpose
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
+        cgroups@vger.kernel.org, linux-mm@kvack.org,
+        Shakeel Butt <shakeelb@google.com>
+References: <20190626165614.18586-1-longman@redhat.com>
+ <20190626152553.6f9178a0361e699a5d53e360@linux-foundation.org>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <78c5ba55-b755-1997-edcc-9ee03a3f3300@redhat.com>
+Date:   Thu, 27 Jun 2019 09:47:40 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
+In-Reply-To: <20190626152553.6f9178a0361e699a5d53e360@linux-foundation.org>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190626133336.12466-2-ckeepax@opensource.cirrus.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Thu, 27 Jun 2019 13:47:58 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 26 Jun 2019, Charles Keepax wrote:
+On 6/26/19 6:25 PM, Andrew Morton wrote:
+> On Wed, 26 Jun 2019 12:56:14 -0400 Waiman Long <longman@redhat.com> wrote:
+>
+>> With memory cgroup v1, there is a kmem.slabinfo file that can be
+>> used to view what slabs are allocated to the memory cgroup. There
+>> is currently no such equivalent in memory cgroup v2. This file can
+>> be useful for debugging purpose.
+>>
+>> This patch adds an equivalent kmem.slabinfo to v2 with the caveat that
+>> this file will only show up as ".__DEBUG__.memory.kmem.slabinfo" when the
+>> "cgroup_debug" parameter is specified in the kernel boot command line.
+>> This is to avoid cluttering the cgroup v2 interface with files that
+>> are seldom used by end users.
+>>
+>> ...
+>>
+>> mm/memcontrol.c | 16 ++++++++++++++++
+>> 1 file changed, 16 insertions(+)
+> A change to the kernel's user interface triggers a change to the
+> kernel's user interface documentation.  This should be automatic by
+> now :(
+>
+>
+We don't usually document debugging only files as they are subject to
+change with no stability guarantee. That is the point of marking it for
+debugging instead of a regular file that we need to support forever.
 
-> GPL-2.0-only is the preferred way of expressing v2 of the GPL, so switch
-> to that. Remove some redundant copyright notices and correct some
-> instances where the wrong comment type has been used in header files.
-> 
-> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-> ---
->  drivers/mfd/cs47l15-tables.c         | 2 +-
->  drivers/mfd/cs47l35-tables.c         | 6 +-----
->  drivers/mfd/cs47l85-tables.c         | 6 +-----
->  drivers/mfd/cs47l90-tables.c         | 6 +-----
->  drivers/mfd/cs47l92-tables.c         | 2 +-
->  drivers/mfd/madera-core.c            | 6 +-----
->  drivers/mfd/madera-i2c.c             | 6 +-----
->  drivers/mfd/madera-spi.c             | 6 +-----
->  include/linux/mfd/madera/core.h      | 6 +-----
->  include/linux/mfd/madera/pdata.h     | 6 +-----
->  include/linux/mfd/madera/registers.h | 6 +-----
->  11 files changed, 11 insertions(+), 47 deletions(-)
+Cheers,
+Longman
 
-Applied, thanks.
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
