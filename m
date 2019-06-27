@@ -2,85 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DE8D5862A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 17:42:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2098658630
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 17:43:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726549AbfF0Pmd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 11:42:33 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:33484 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726497AbfF0Pmc (ORCPT
+        id S1726550AbfF0Pnr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 11:43:47 -0400
+Received: from smtprelay0036.hostedemail.com ([216.40.44.36]:54977 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726370AbfF0Pnq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 11:42:32 -0400
-Received: by mail-lf1-f66.google.com with SMTP id y17so1923192lfe.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 08:42:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=QdgaUYT2PaAKZsPsTmWsJv5fjayE9ehNV1SbDkzjewA=;
-        b=EovcUH634m6WUf69St5UAzSvsrpd5u/ghfbOaLlVWaDekoh12bRgmDTX959HEC+u9Z
-         /r80EGYTHU4SJWk0AosG7kfKYQW26oRj335YeGD476/k/tN5EHX5BsSTO8ob7Jl5hWDX
-         Psqz8iXxB9d3pt0BZqZtyIGFIxcLhOVtxsqx4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=QdgaUYT2PaAKZsPsTmWsJv5fjayE9ehNV1SbDkzjewA=;
-        b=W2K8QXKDoNi+bBo4sEX3xDYlsYaod1/WqemHcI8tc3Ge65FygyTeQcJgN8LKYZq3o/
-         B3ud2cvpQ6ltvaqO+21lHi3uJvjYjSenelPUqD1Q92ormS3AAAffJ1O0MR85HYJ8tZOZ
-         gYGs8/RIiKjcXBFLKBwgr7YJxQ2CnJ2Lj4onu0C3RMJ7D/9nUOc4VxwkC/jElH/1Q7gj
-         9KzN4TZD+R4v7aDNJHGvWtndt1On42XmZGqYsBon6JhcowqakXdpEMe7P02WWzS33fEl
-         yo/DXuPdDig9CCW769pz9hkyuP5pqftjKOz8nURRXKTIQvWipfQRwEQeKMNYTph5ViDH
-         C9YA==
-X-Gm-Message-State: APjAAAUmvtRbrJKSsu+bxq064oJM7A7japFqy28638GvfU3vDw/NFOJg
-        1RVelEOKqyukXEZaWxeeF0+xAVijInwYm2xjSt5UiQ==
-X-Google-Smtp-Source: APXvYqz8Ya261fforiM9i5nm3BHn+klzpDbAH0n2lKlRCRQYmgV4/4JWiB8Gw5jFTVHIVOXFvr/SzSHV9FTjZJ3EzLg=
-X-Received: by 2002:a19:7912:: with SMTP id u18mr2159784lfc.81.1561650150827;
- Thu, 27 Jun 2019 08:42:30 -0700 (PDT)
+        Thu, 27 Jun 2019 11:43:46 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 4EEEB182CF670;
+        Thu, 27 Jun 2019 15:43:45 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::,RULES_HIT:41:355:379:599:968:982:988:989:1260:1277:1311:1313:1314:1345:1359:1381:1437:1515:1516:1518:1534:1539:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3698:3865:3866:3867:3868:3871:3872:4250:4321:4605:5007:9010:10004:10400:10848:11232:11658:11914:12043:12296:12297:12740:12760:12895:13069:13311:13357:13439:14659:14721:14777:21080:21433:21627:21819:30054:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.14.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:25,LUA_SUMMARY:none
+X-HE-Tag: whip50_2088efb52ed39
+X-Filterd-Recvd-Size: 1590
+Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf17.hostedemail.com (Postfix) with ESMTPA;
+        Thu, 27 Jun 2019 15:43:43 +0000 (UTC)
+Message-ID: <d28bb3dce55ade3024109d8e808b58cdd4441181.camel@perches.com>
+Subject: Re: [PATCH] scripts: helper for mailing patches from git to the
+ maintainers
+From:   Joe Perches <joe@perches.com>
+To:     "Enrico Weigelt, metux IT consult" <info@metux.net>,
+        linux-kernel@vger.kernel.org
+Date:   Thu, 27 Jun 2019 08:43:42 -0700
+In-Reply-To: <1561647544-12685-1-git-send-email-info@metux.net>
+References: <1561647544-12685-1-git-send-email-info@metux.net>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
 MIME-Version: 1.0
-References: <20190626135447.y24mvfuid5fifwjc@linutronix.de>
- <20190626162558.GY26519@linux.ibm.com> <20190627142436.GD215968@google.com>
- <20190627103455.01014276@gandalf.local.home> <20190627153031.GA249127@google.com>
- <CAEXW_YT5LgdP_9SrachU4ZrhV9a7o_DM8eBfgxj=n7yRRyS-TQ@mail.gmail.com> <20190627154011.vbje64x6auaknhx4@linutronix.de>
-In-Reply-To: <20190627154011.vbje64x6auaknhx4@linutronix.de>
-From:   Joel Fernandes <joel@joelfernandes.org>
-Date:   Thu, 27 Jun 2019 11:42:19 -0400
-Message-ID: <CAEXW_YR6=3mxcoSW7hq3GxAE6LKP5-N5bV0iQf43gujSatVs3g@mail.gmail.com>
-Subject: Re: [RFC] Deadlock via recursive wakeup via RCU with threadirqs
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        rcu <rcu@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 27, 2019 at 11:40 AM Sebastian Andrzej Siewior
-<bigeasy@linutronix.de> wrote:
->
-> On 2019-06-27 11:37:10 [-0400], Joel Fernandes wrote:
-> > Sebastian it would be nice if possible to trace where the
-> > t->rcu_read_unlock_special is set for this scenario of calling
-> > rcu_read_unlock_special, to give a clear idea about whether it was
-> > really because of an IPI. I guess we could also add additional RCU
-> > debug fields to task_struct (just for debugging) to see where there
-> > unlock_special is set.
-> >
-> > Is there a test to reproduce this, or do I just boot an intel x86_64
-> > machine with "threadirqs" and run into it?
->
-> Do you want to send me a patch or should I send you my kvm image which
-> triggers the bug on boot?
+On Thu, 2019-06-27 at 16:59 +0200, Enrico Weigelt, metux IT consult
+wrote:
+> This is a little helper script for mailing patches out of a git
+> branch to the corresponding maintainers.
+> 
+> Essentially, it scans the touched files, asks get_maintainer.pl
+> for their maintainers and calls git-send-email for mailing out
+> the patches.
+[]
+> +get_maintainers() {
+> +    $KERNELSRC/scripts/get_maintainer.pl --m --l --remove-duplicates `get_files` |
 
-I think the kvm image would be better so I reproduce it on my side.
-After that I can share any debug patches with you if they are useful.
-Thanks.
+--noroles --norolestats
+
+It's also useful to separate the --to and --cc lines
+where the --to goes only to direct maintainers and
+--cc goes to others.
+
+> +        grep -v "$LKML" | \
+> +        grep -E "(maintainer|reviewer|open list)" | \
+> +        grep -o '[[:alnum:]+\.\_\-]*@[[:alnum:]+\.\_\-]*'
+
+
