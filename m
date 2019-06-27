@@ -2,165 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 929865816A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 13:24:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CAA245816C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 13:24:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726845AbfF0LYe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 07:24:34 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:18132 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726816AbfF0LYa (ORCPT
+        id S1726885AbfF0LYq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 07:24:46 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:42166 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726437AbfF0LYp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 07:24:30 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5RBMnXJ085959
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 07:24:29 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2tcunubfqn-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 07:24:29 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <naveen.n.rao@linux.vnet.ibm.com>;
-        Thu, 27 Jun 2019 12:24:27 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 27 Jun 2019 12:24:23 +0100
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5RBOMYd51314740
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 27 Jun 2019 11:24:22 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7CCA6A405B;
-        Thu, 27 Jun 2019 11:24:22 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7ED1CA4062;
-        Thu, 27 Jun 2019 11:24:20 +0000 (GMT)
-Received: from naverao1-tp.ibmuc.com (unknown [9.85.73.27])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 27 Jun 2019 11:24:20 +0000 (GMT)
-From:   "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Nicholas Piggin <npiggin@gmail.com>
-Cc:     <linuxppc-dev@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 7/7] powerpc/kprobes: Allow probing on any ftrace address
-Date:   Thu, 27 Jun 2019 16:53:55 +0530
+        Thu, 27 Jun 2019 07:24:45 -0400
+Received: by mail-wr1-f68.google.com with SMTP id x17so2106466wrl.9
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 04:24:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=+R8cZh89FEOeHcIUvPlsxuC14AmG6N9OhNcwtNtA4EA=;
+        b=IU/KbskaBCUjKs+HsVZOriBfDVGNmyOJj1EBy5NhRvtb5iOp15a3Y3aIUXNcUGA3/I
+         0Vcufe+9lsoYsN5tOnH9YrUI2EtMlV87yldccWBxGvyMPbSoJH3+sNWT8+sKYnTr5Yss
+         bp3XeaBv3TMYAHDlEBFGARlv1383v9CXkoMXpdRGujjz+pfaDp0JGf85uPPfD6lGhLDC
+         hhjv74ZQKNSqOnktKQE9uMP5YiUHrKDXVb392dnVRxGJp9c3RMG7bAvE/uu2U3wUoADd
+         9ehi2H5bk4LOPi2m/ZNhxKiZWVKEyLs8JLT0ny6iTKZH7w80J8Jzq8tHUPvamxs6vGEq
+         Df5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=+R8cZh89FEOeHcIUvPlsxuC14AmG6N9OhNcwtNtA4EA=;
+        b=oP6dZwJZ9e4+1eAkhv5qgdcMGUpRqdeh8CJxPEhVqD4LpKgrwgDsjGHh7FnJkgKmAZ
+         q+2yUZmbXq1S9gTkqtETQhTKEQt4ChRONMhu0hxSHN2lbM6RQ8COLNK4fvYiJrCK/05i
+         HB2JXHiyPK0nwoxb0WQAHVVAETtpw7brdoTwixzKA4wCKOIIWlZ3ZsIBZsx6LrTakGYp
+         Yjf08NnnB41qhK8dKqIolzwK0lpt7hUTMvPGzztXOFdwQsNI476Z87VU2a1P0Nd6ryNB
+         F4zxnU0QMiA9zi7cxegFNebLncNx5WF17gIlFjcQjxsobOV+6Pb57olJa/VPeCya6yw3
+         CWXQ==
+X-Gm-Message-State: APjAAAUCL3tj8MF5afbtFrulTe+5KgdgM1NEGKSHrDrPNJWTEgO/Wqqc
+        GSF/7KSTA1o2yj3fdCGAy8Z5bA==
+X-Google-Smtp-Source: APXvYqx2YMcDUdg8JmgKZtH2/yTcwwMyDZtWbBzZY1eJ7ooNk+VXizpTZdGwagViKvB6Hm1FzSUs9w==
+X-Received: by 2002:a5d:4484:: with SMTP id j4mr2892379wrq.143.1561634683056;
+        Thu, 27 Jun 2019 04:24:43 -0700 (PDT)
+Received: from localhost.localdomain ([212.91.227.56])
+        by smtp.gmail.com with ESMTPSA id z126sm7563789wmb.32.2019.06.27.04.24.42
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 27 Jun 2019 04:24:42 -0700 (PDT)
+From:   Christian Brauner <christian@brauner.io>
+To:     torvalds@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, ldv@altlinux.org,
+        viro@zeniv.linux.org.uk, jannh@google.com
+Subject: [GIT PULL] fixes for v5.2-rc7
+Date:   Thu, 27 Jun 2019 13:24:30 +0200
+Message-Id: <20190627112430.6590-1-christian@brauner.io>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <cover.1561634177.git.naveen.n.rao@linux.vnet.ibm.com>
-References: <cover.1561634177.git.naveen.n.rao@linux.vnet.ibm.com>
+In-Reply-To: <20190627045602.pqv67qxjj7ooaqir@brauner.io>
+References: 
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19062711-0020-0000-0000-0000034DDFCC
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19062711-0021-0000-0000-000021A15A29
-Message-Id: <da4200e511f4863b153b0721f3913a75aa3bf80d.1561634177.git.naveen.n.rao@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-27_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=1 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=1
- clxscore=1015 lowpriorityscore=0 mlxscore=1 impostorscore=0
- mlxlogscore=223 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906270133
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With KPROBES_ON_FTRACE, kprobe is allowed to be inserted on instructions
-that branch to _mcount (referred to as ftrace location). With
--mprofile-kernel, we now include the preceding 'mflr r0' as being part
-of the ftrace location.
+Hi Linus,
 
-However, by default, probing on an instruction that is not actually the
-branch to _mcount() is prohibited, as that is considered to not be at an
-instruction boundary. This is not the case on powerpc, so allow the same
-by overriding arch_check_ftrace_location()
+This contains a couple of fixes for the pidfd api by Dmitry, Al, and
+myself:
 
-In addition, we update kprobe_ftrace_handler() to detect this scenarios
-and to pass the proper nip to the pre and post probe handlers.
+The following changes since commit 4b972a01a7da614b4796475f933094751a295a2f:
 
-Signed-off-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
----
- arch/powerpc/kernel/kprobes-ftrace.c | 32 +++++++++++++++++++++++++++-
- 1 file changed, 31 insertions(+), 1 deletion(-)
+  Linux 5.2-rc6 (2019-06-22 16:01:36 -0700)
 
-diff --git a/arch/powerpc/kernel/kprobes-ftrace.c b/arch/powerpc/kernel/kprobes-ftrace.c
-index 972cb28174b2..23c840748183 100644
---- a/arch/powerpc/kernel/kprobes-ftrace.c
-+++ b/arch/powerpc/kernel/kprobes-ftrace.c
-@@ -12,15 +12,35 @@
- #include <linux/preempt.h>
- #include <linux/ftrace.h>
- 
-+/*
-+ * With -mprofile-kernel, we patch two instructions -- the branch to _mcount
-+ * as well as the preceding 'mflr r0'. Both these instructions are claimed
-+ * by ftrace and we should allow probing on either instruction.
-+ */
-+int arch_check_ftrace_location(struct kprobe *p)
-+{
-+	if (ftrace_location((unsigned long)p->addr))
-+		p->flags |= KPROBE_FLAG_FTRACE;
-+	return 0;
-+}
-+
- /* Ftrace callback handler for kprobes */
- void kprobe_ftrace_handler(unsigned long nip, unsigned long parent_nip,
- 			   struct ftrace_ops *ops, struct pt_regs *regs)
- {
- 	struct kprobe *p;
-+	int mflr_kprobe = 0;
- 	struct kprobe_ctlblk *kcb;
- 
- 	p = get_kprobe((kprobe_opcode_t *)nip);
--	if (unlikely(!p) || kprobe_disabled(p))
-+	if (!p) {
-+		p = get_kprobe((kprobe_opcode_t *)(nip - MCOUNT_INSN_SIZE));
-+		if (unlikely(!p))
-+			return;
-+		mflr_kprobe = 1;
-+	}
-+
-+	if (kprobe_disabled(p))
- 		return;
- 
- 	kcb = get_kprobe_ctlblk();
-@@ -33,6 +53,9 @@ void kprobe_ftrace_handler(unsigned long nip, unsigned long parent_nip,
- 		 */
- 		regs->nip -= MCOUNT_INSN_SIZE;
- 
-+		if (mflr_kprobe)
-+			regs->nip -= MCOUNT_INSN_SIZE;
-+
- 		__this_cpu_write(current_kprobe, p);
- 		kcb->kprobe_status = KPROBE_HIT_ACTIVE;
- 		if (!p->pre_handler || !p->pre_handler(p, regs)) {
-@@ -45,6 +68,8 @@ void kprobe_ftrace_handler(unsigned long nip, unsigned long parent_nip,
- 				kcb->kprobe_status = KPROBE_HIT_SSDONE;
- 				p->post_handler(p, regs, 0);
- 			}
-+			if (mflr_kprobe)
-+				regs->nip += MCOUNT_INSN_SIZE;
- 		}
- 		/*
- 		 * If pre_handler returns !0, it changes regs->nip. We have to
-@@ -57,6 +82,11 @@ NOKPROBE_SYMBOL(kprobe_ftrace_handler);
- 
- int arch_prepare_kprobe_ftrace(struct kprobe *p)
- {
-+	if ((unsigned long)p->addr & 0x03) {
-+		pr_err("Attempt to register kprobe at an unaligned address\n");
-+		return -EILSEQ;
-+	}
-+
- 	p->ainsn.insn = NULL;
- 	p->ainsn.boostable = -1;
- 	return 0;
--- 
-2.22.0
+are available in the Git repository at:
 
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/brauner/linux tags/for-linus-20190627
+
+for you to fetch changes up to 30d158b143b6575261ab610ae7b1b4f7fe3830b3:
+
+  proc: remove useless d_is_dir() check (2019-06-27 12:25:09 +0200)
+
+/* Remove check for pidfd == 0 with CLONE_PIDFD */
+Userspace tools and libraries such as strace or glibc need a cheap and
+reliable way to tell whether CLONE_PIDFD is supported.
+The easiest way is to pass an invalid fd value in the return argument,
+perform the syscall and verify the value in the return argument has been
+changed to a valid fd.
+
+However, if CLONE_PIDFD is specified we currently check if pidfd == 0 and
+return EINVAL if not.
+
+The check for pidfd == 0 was originally added to enable us to abuse the
+return argument for passing additional flags along with CLONE_PIDFD in the
+future.
+
+Since extending legacy clone this way would be a terrible idea and with
+clone3 on the horizon and the ability to reuse CLONE_DETACHED with
+CLONE_PIDFD there's no real need for this clutch. So remove the pidfd == 0
+check and help userspace out.
+
+/* Avoid using anon_inode_getfd() and ksys_close() */
+Accordig to Al, anon_inode_getfd() should only be used past the point of no
+failure and ksys_close() should not be used at all since it is far too easy
+to get wrong. Al's motto being "basically, once it's in descriptor table,
+it's out of your control".
+So Al's patch switches back to what we already had in v1 of the original
+patchset and uses a anon_inode_getfile() + put_user() + fd_install()
+sequence in the success path and a fput() + put_unused_fd() in the failure
+path.
+
+The other two changes should be trivial.
+
+Please consider pulling these changes from the signed for-linus-20190627 tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+for-linus-20190627
+
+----------------------------------------------------------------
+Al Viro (1):
+      copy_process(): don't use ksys_close() on cleanups
+
+Christian Brauner (1):
+      proc: remove useless d_is_dir() check
+
+Dmitry V. Levin (2):
+      fork: don't check parent_tidptr with CLONE_PIDFD
+      samples: make pidfd-metadata fail gracefully on older kernels
+
+ fs/proc/base.c                 |  3 +--
+ kernel/fork.c                  | 58 +++++++++++++-----------------------------
+ samples/pidfd/pidfd-metadata.c |  8 ++++--
+ 3 files changed, 25 insertions(+), 44 deletions(-)
