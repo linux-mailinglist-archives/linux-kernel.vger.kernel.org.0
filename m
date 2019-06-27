@@ -2,133 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A31E57D3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 09:37:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 518E557D44
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 09:39:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726544AbfF0Hh3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 03:37:29 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:59901 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726059AbfF0Hh3 (ORCPT
+        id S1726590AbfF0HjJ convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 27 Jun 2019 03:39:09 -0400
+Received: from lithops.sigma-star.at ([195.201.40.130]:41424 "EHLO
+        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726059AbfF0HjI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 03:37:29 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5R7bAJg177138
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Thu, 27 Jun 2019 00:37:10 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5R7bAJg177138
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019061801; t=1561621031;
-        bh=4LQhO5iKOeqHsEwFapxOyCS0pfnKvdjPzTYio4diccA=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=oBkAdZLATCASnJM0AXQjrrvlC7qmQMNjs4A5HdZ9+SVOj6sHqoL2qRh0hmTS3wVd0
-         5Rtpb3/S/2XLMrA8H1ksZw2T/BBbb+YDdzHAnSkG0aaHAI71tjNFSB52/dyiwnWob7
-         I/SR1r5+ET0s46WcZjnxC5qNMKLI0Bs9qeOvD/onDZ6l/Qmso2/xydODkrV3UjgxXl
-         O8oLqjOXaP6HHL2R+0o8grV4F2tdocfeeWRcW3dQmM54fojzPglPctNqqVPj7ZCzlu
-         b1inHcI0KMKUah9+u2iuPIT27ZdSXTvTrP5GuDxBKz8H/IAIvO7mha4dQuyNIsQHby
-         TKhvvKChnIIMw==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5R7bATa177135;
-        Thu, 27 Jun 2019 00:37:10 -0700
-Date:   Thu, 27 Jun 2019 00:37:10 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Eiichi Tsukata <tipbot@zytor.com>
-Message-ID: <tip-33d4a5a7a5b4d02915d765064b2319e90a11cbde@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org, hpa@zytor.com,
-        devel@etsukata.com, tglx@linutronix.de
-Reply-To: mingo@kernel.org, linux-kernel@vger.kernel.org, hpa@zytor.com,
-          devel@etsukata.com, tglx@linutronix.de
-In-Reply-To: <20190627024732.31672-1-devel@etsukata.com>
-References: <20190627024732.31672-1-devel@etsukata.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:smp/urgent] cpu/hotplug: Fix out-of-bounds read when setting
- fail state
-Git-Commit-ID: 33d4a5a7a5b4d02915d765064b2319e90a11cbde
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 27 Jun 2019 03:39:08 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 94EBF608933C;
+        Thu, 27 Jun 2019 09:39:05 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id Ivp6XWU4T35t; Thu, 27 Jun 2019 09:39:03 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id D96256058370;
+        Thu, 27 Jun 2019 09:39:03 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id egR4gjt9nay2; Thu, 27 Jun 2019 09:39:03 +0200 (CEST)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 97FE5608F445;
+        Thu, 27 Jun 2019 09:39:03 +0200 (CEST)
+Date:   Thu, 27 Jun 2019 09:39:03 +0200 (CEST)
+From:   Richard Weinberger <richard@nod.at>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Vignesh Raghavendra <vigneshr@ti.com>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Message-ID: <957967732.18164.1561621143523.JavaMail.zimbra@nod.at>
+In-Reply-To: <CAK7LNARA62uqi8rkDeJ=zjA6vnruTAH2VGOBd4=sQMhF+FHMLA@mail.gmail.com>
+References: <20190618030926.30616-1-yamada.masahiro@socionext.com> <1318390798.95477.1560838785550.JavaMail.zimbra@nod.at> <CAK7LNARA62uqi8rkDeJ=zjA6vnruTAH2VGOBd4=sQMhF+FHMLA@mail.gmail.com>
+Subject: Re: [PATCH v2] jffs2: remove C++ style comments from uapi header
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=0.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_12_24,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
-        DKIM_VALID_EF autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-Originating-IP: [195.201.40.130]
+X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF60 (Linux)/8.8.12_GA_3809)
+Thread-Topic: jffs2: remove C++ style comments from uapi header
+Thread-Index: mLkG8opj4qiXCqlqmfdzmCV5mc5Zxg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  33d4a5a7a5b4d02915d765064b2319e90a11cbde
-Gitweb:     https://git.kernel.org/tip/33d4a5a7a5b4d02915d765064b2319e90a11cbde
-Author:     Eiichi Tsukata <devel@etsukata.com>
-AuthorDate: Thu, 27 Jun 2019 11:47:32 +0900
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Thu, 27 Jun 2019 09:34:04 +0200
+----- Ursprüngliche Mail -----
+> Von: "Masahiro Yamada" <yamada.masahiro@socionext.com>
+> An: "richard" <richard@nod.at>
+> CC: "Vignesh Raghavendra" <vigneshr@ti.com>, "Boris Brezillon" <bbrezillon@kernel.org>, "linux-kernel"
+> <linux-kernel@vger.kernel.org>, "Marek Vasut" <marek.vasut@gmail.com>, "linux-mtd" <linux-mtd@lists.infradead.org>,
+> "Miquel Raynal" <miquel.raynal@bootlin.com>, "Brian Norris" <computersforpeace@gmail.com>, "David Woodhouse"
+> <dwmw2@infradead.org>
+> Gesendet: Donnerstag, 27. Juni 2019 09:06:31
+> Betreff: Re: [PATCH v2] jffs2: remove C++ style comments from uapi header
 
-cpu/hotplug: Fix out-of-bounds read when setting fail state
+> On Tue, Jun 18, 2019 at 3:20 PM Richard Weinberger <richard@nod.at> wrote:
+>>
+>> ----- Ursprüngliche Mail -----
+>> > Von: "Masahiro Yamada" <yamada.masahiro@socionext.com>
+>> > An: "linux-mtd" <linux-mtd@lists.infradead.org>
+>> > CC: "Boris Brezillon" <bbrezillon@kernel.org>, "Miquel Raynal"
+>> > <miquel.raynal@bootlin.com>, "Brian Norris"
+>> > <computersforpeace@gmail.com>, "Vignesh Raghavendra" <vigneshr@ti.com>, "Marek
+>> > Vasut" <marek.vasut@gmail.com>,
+>> > "Masahiro Yamada" <yamada.masahiro@socionext.com>, "richard" <richard@nod.at>,
+>> > "David Woodhouse" <dwmw2@infradead.org>,
+>> > "linux-kernel" <linux-kernel@vger.kernel.org>
+>> > Gesendet: Dienstag, 18. Juni 2019 05:09:26
+>> > Betreff: [PATCH v2] jffs2: remove C++ style comments from uapi header
+>>
+>> > Linux kernel tolerates C++ style comments these days. Actually, the
+>> > SPDX License tags for .c files start with //.
+>> >
+>> > On the other hand, uapi headers are written in more strict C, where
+>> > the C++ comment style is forbidden.
+>> >
+>> > I simply dropped these lines instead of fixing the comment style.
+>> >
+>> > This code has been always commented out since it was added around
+>> > Linux 2.4.9 (i.e. commented out for more than 17 years).
+>> >
+>> > 'Maybe later...' will never happen.
+>>
+>> :-)
+>>
+>> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>>
+>> Acked-by: Richard Weinberger <richard@nod.at>
+>>
+>> Thanks,
+>> //richard
+> 
+> 
+> Will this be picked up for v5.3-rc1 ?
 
-Setting invalid value to /sys/devices/system/cpu/cpuX/hotplug/fail
-can control `struct cpuhp_step *sp` address, results in the following
-global-out-of-bounds read.
+Yes.
 
-Reproducer:
-
-  # echo -2 > /sys/devices/system/cpu/cpu0/hotplug/fail
-
-KASAN report:
-
-  BUG: KASAN: global-out-of-bounds in write_cpuhp_fail+0x2cd/0x2e0
-  Read of size 8 at addr ffffffff89734438 by task bash/1941
-
-  CPU: 0 PID: 1941 Comm: bash Not tainted 5.2.0-rc6+ #31
-  Call Trace:
-   write_cpuhp_fail+0x2cd/0x2e0
-   dev_attr_store+0x58/0x80
-   sysfs_kf_write+0x13d/0x1a0
-   kernfs_fop_write+0x2bc/0x460
-   vfs_write+0x1e1/0x560
-   ksys_write+0x126/0x250
-   do_syscall_64+0xc1/0x390
-   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-  RIP: 0033:0x7f05e4f4c970
-
-  The buggy address belongs to the variable:
-   cpu_hotplug_lock+0x98/0xa0
-
-  Memory state around the buggy address:
-   ffffffff89734300: fa fa fa fa 00 00 00 00 00 00 00 00 00 00 00 00
-   ffffffff89734380: fa fa fa fa 00 00 00 00 00 00 00 00 00 00 00 00
-  >ffffffff89734400: 00 00 00 00 fa fa fa fa 00 00 00 00 fa fa fa fa
-                                          ^
-   ffffffff89734480: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-   ffffffff89734500: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-
-Add a sanity check for the value written from user space.
-
-Fixes: 1db49484f21ed ("smp/hotplug: Hotplug state fail injection")
-Signed-off-by: Eiichi Tsukata <devel@etsukata.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: peterz@infradead.org
-Link: https://lkml.kernel.org/r/20190627024732.31672-1-devel@etsukata.com
-
----
- kernel/cpu.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/kernel/cpu.c b/kernel/cpu.c
-index 551db494f153..ef1c565edc5d 100644
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -1964,6 +1964,9 @@ static ssize_t write_cpuhp_fail(struct device *dev,
- 	if (ret)
- 		return ret;
- 
-+	if (fail < CPUHP_OFFLINE || fail > CPUHP_ONLINE)
-+		return -EINVAL;
-+
- 	/*
- 	 * Cannot fail STARTING/DYING callbacks.
- 	 */
+Thanks,
+//richard
