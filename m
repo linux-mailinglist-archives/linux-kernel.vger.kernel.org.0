@@ -2,57 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 199505873F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 18:39:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34E0658752
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 18:40:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726524AbfF0QjZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 12:39:25 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:56170 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725770AbfF0QjY (ORCPT
+        id S1726645AbfF0Qkx convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 27 Jun 2019 12:40:53 -0400
+Received: from relay7-d.mail.gandi.net ([217.70.183.200]:55849 "EHLO
+        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725770AbfF0Qkx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 12:39:24 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 26F7714DB597A;
-        Thu, 27 Jun 2019 09:39:24 -0700 (PDT)
-Date:   Thu, 27 Jun 2019 09:39:23 -0700 (PDT)
-Message-Id: <20190627.093923.1974740159331605623.davem@davemloft.net>
-To:     maxime.chevallier@bootlin.com
-Cc:     pablo@netfilter.org, f.fainelli@gmail.com, jiri@mellanox.com,
-        jakub.kicinski@netronome.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, antoine.tenart@bootlin.com,
-        thomas.petazzoni@bootlin.com
-Subject: Re: [PATCH net-next v2] net: ethtool: Allow parsing ETHER_FLOW
- types when using flow_rule
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190627085226.7658-1-maxime.chevallier@bootlin.com>
-References: <20190627085226.7658-1-maxime.chevallier@bootlin.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 27 Jun 2019 09:39:24 -0700 (PDT)
+        Thu, 27 Jun 2019 12:40:53 -0400
+X-Originating-IP: 91.224.148.103
+Received: from xps13 (unknown [91.224.148.103])
+        (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id 15D332000E;
+        Thu, 27 Jun 2019 16:40:48 +0000 (UTC)
+Date:   Thu, 27 Jun 2019 18:40:47 +0200
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Arnd Bergmann <arnd@arndb.de>, Paul Cercueil <paul@crapouillou.net>
+Cc:     David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mtd: rawnand: ingenic: fix ingenic_ecc dependency
+Message-ID: <20190627184047.6faa058a@xps13>
+In-Reply-To: <20190617141659.376c0271@xps13>
+References: <20190617111110.2103786-1-arnd@arndb.de>
+        <1560770644.1774.0@crapouillou.net>
+        <CAK8P3a28NrvLP1nE7TQUCqwYXVwrSnVUJoH0yTSqRpz93f4g2Q@mail.gmail.com>
+        <20190617141659.376c0271@xps13>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Date: Thu, 27 Jun 2019 10:52:26 +0200
+Hi Paul,
 
-> When parsing an ethtool_rx_flow_spec, users can specify an ethernet flow
-> which could contain matches based on the ethernet header, such as the
-> MAC address, the VLAN tag or the ethertype.
-> 
-> ETHER_FLOW uses the src and dst ethernet addresses, along with the
-> ethertype as keys. Matches based on the vlan tag are also possible, but
-> they are specified using the special FLOW_EXT flag.
-> 
-> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-> ---
-> V2 : Add src and dst mac address parsing, as suggested by Pablo.
+Miquel Raynal <miquel.raynal@bootlin.com> wrote on Mon, 17 Jun 2019
+14:16:59 +0200:
 
-Applied, thanks.
+> Hello,
+> 
+> Arnd Bergmann <arnd@arndb.de> wrote on Mon, 17 Jun 2019 14:12:48 +0200:
+> 
+> > On Mon, Jun 17, 2019 at 1:24 PM Paul Cercueil <paul@crapouillou.net> wrote:
+> >   
+> > > I think there's a better way to fix it, only in Kconfig.
+> > >
+> > > * Add a bool symbol MTD_NAND_INGENIC_USE_HW_ECC
+> > > * Have the three ECC/BCH drivers select this symbol instead of
+> > >   MTD_NAND_INGENIC_ECC
+> > > * Add the following to the MTD_NAND_JZ4780 config option:
+> > >   "select MTD_NAND_INGENIC_ECC if MTD_NAND_INGENIC_USE_HW_ECC"    
+> > 
+> > I don't see much difference to my approach here, but if you want
+> > to submit that version with 'Reported-by: Arnd Bergmann <arnd@arndb.de>',
+> > please do so.
+> > 
+> > Yet another option would be to use Makefile code to link both
+> > files into one module, and remove the EXPORT_SYMBOL statements:
+> > 
+> > obj-$(CONFIG_MTD_NAND_JZ4780) += jz4780_nand.o
+> > jz4780_nand-y += ingenic_nand.o
+> > jz4780_nand-$(CONFIG_MTD_NAND_INGENIC_ECC) += ingenic_ecc.o
+> >   
+> 
+> I personally have a preference for this one.
+
+Would you mind sending the above change? I forgot about it but I would
+like to queue it for the next release. Preferably the last version Arnd
+proposed.
+
+
+Thanks,
+Miquèl
