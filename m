@@ -2,238 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 261E058EC6
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 01:50:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E1E158EBC
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 01:47:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726759AbfF0XuJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 19:50:09 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:39221 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726563AbfF0XuJ (ORCPT
+        id S1726690AbfF0XrB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 19:47:01 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:43457 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726567AbfF0XrA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 19:50:09 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5RNkpEl503019
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Thu, 27 Jun 2019 16:46:52 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5RNkpEl503019
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019061801; t=1561679213;
-        bh=xU0Hg5ZNYgEEbybxxMs12dKLCgHm0S9z86kkddPXLdg=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=PqFDaURQ9Hyc5AdDMPrNcSVQQ/AbM7R1MI+pgCAOkX/EeStt4s12YeynDLJs5/188
-         9i+M/f8xkNY3LZmshiF9HncP0xTXbr2+l/+04WYtar39UQuJtUimUMLt7yUQKveht9
-         32avslPygldkgW+jlQ+5BLAP2DwinkAc7RTcu2eNfhGhoqaV7p5z0UPAF8+xgA/eXr
-         YEIXIugFgsg9tGn8X3Ph3XNk6KeGkjadGyJt7Lh+l2sUD7aubnuSaYsMJmzSJjOIEt
-         wcH8jmmSiejHvPAZFicjB/iUFUbKYAy4sH8AayepmJMa+kVlMCRwpEqSigCy2c59AN
-         miYXYRL7hjdsg==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5RNko3q503016;
-        Thu, 27 Jun 2019 16:46:50 -0700
-Date:   Thu, 27 Jun 2019 16:46:50 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
-Message-ID: <tip-2460d5878ad69c178f9ff1cc3eee9f09b017e15f@git.kernel.org>
-Cc:     hpa@zytor.com, tglx@linutronix.de, andi.kleen@intel.com,
-        linux-kernel@vger.kernel.org, ashok.raj@intel.com,
-        ricardo.neri-calderon@linux.intel.com, mingo@kernel.org,
-        ravi.v.shankar@intel.com, Suravee.Suthikulpanit@amd.com,
-        peterz@infradead.org, eranian@google.com
-Reply-To: andi.kleen@intel.com, ravi.v.shankar@intel.com,
-          Suravee.Suthikulpanit@amd.com, peterz@infradead.org,
-          hpa@zytor.com, mingo@kernel.org, tglx@linutronix.de,
-          ricardo.neri-calderon@linux.intel.com, eranian@google.com,
-          ashok.raj@intel.com, linux-kernel@vger.kernel.org
-In-Reply-To: <20190623132435.821728550@linutronix.de>
-References: <20190623132435.821728550@linutronix.de>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/timers] x86/hpet: Use cached channel data
-Git-Commit-ID: 2460d5878ad69c178f9ff1cc3eee9f09b017e15f
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 27 Jun 2019 19:47:00 -0400
+Received: by mail-pf1-f196.google.com with SMTP id i189so1983107pfg.10;
+        Thu, 27 Jun 2019 16:47:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=tqaLuK1L6bNY5cuzUVYngg+bgb4Q6R92tXoWTRxzMkI=;
+        b=iIbAJ0+HhXrBNS1hsYpHT5C8buG1Mj/g0OAh2U5znFpi+186BSN2teqxdBdTVnG77F
+         kdmHZoJFZTmnQcuWpqWSsFQ7aV3JXDpLk2CMUhfdtzimCljVRwmrNReQEth9UZ8hLlJp
+         muc1DByzKkRp7dKSApxi5Ni4p2ChvaDByCNBv13j548c+icCoMjfhS6Oh6rl/Va/KCvB
+         p7mes9TkQtNb26gesa/N8zHNnrTaGRRtgvjKTr8VcKGMHdr9h7HjZ8ueQi7wmBRV1PcN
+         ftvXHt1qCDylmsN++jRgEpNLeXmJCPojhhNR7rTKPKAbVkaC2ruAdiG9DIyM+OD2/SQe
+         cBEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=tqaLuK1L6bNY5cuzUVYngg+bgb4Q6R92tXoWTRxzMkI=;
+        b=UFKKbcbLZZiF2L9XEEotHqvtRaBNfa6I/MyRUjb4KTpRVoo29pIC5o0cn08koxaB+3
+         KLpX3bAZbW74rWCpyOAfBfmyfHcaUpo/78s/3Ge77M+hWoL4xYCJ0qKto8vCz4tYvUbW
+         cSKBkd4gtGzHskKOegW93DXTR6fE51H3QDco3VmmaDZtKbG8+P0QFeVlN6gA/GCVC1aP
+         I+Tr0dPkJENc/sO2uR5ifT1c7rEJzhXW5nvxcFShnSLT0GaF8PFwsc1daEuK3iGzndl/
+         od2C99znnL77hAnV/tbDm3rFt7l5Zo6CHATWldfX44zb8F/eFFFhNXhJdFCwFon9yXPZ
+         QLDw==
+X-Gm-Message-State: APjAAAUKs8t2uojgx6EQVyRY7NRNfQKDxfTNvvPhqb35hlm3xJ07ZSae
+        eVczhZPVDJouUzA73R2VIu4=
+X-Google-Smtp-Source: APXvYqzpbRDUIvQ5FKcZ778NrsrMCXHQoQCWNiYvEEW/PsDymyV52tRB/FTO9qLcw1VQh1WcXNh5Cg==
+X-Received: by 2002:a17:90a:9bc5:: with SMTP id b5mr9330442pjw.109.1561679220004;
+        Thu, 27 Jun 2019 16:47:00 -0700 (PDT)
+Received: from google.com ([2401:fa00:d:0:98f1:8b3d:1f37:3e8])
+        by smtp.gmail.com with ESMTPSA id e6sm197854pfn.71.2019.06.27.16.46.54
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 27 Jun 2019 16:46:58 -0700 (PDT)
+Date:   Fri, 28 Jun 2019 08:46:52 +0900
+From:   Minchan Kim <minchan@kernel.org>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-api@vger.kernel.org,
+        Michal Hocko <mhocko@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tim Murray <timmurray@google.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Daniel Colascione <dancol@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Sonny Rao <sonnyrao@google.com>, oleksandr@redhat.com,
+        hdanton@sina.com, lizeb@google.com,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: Re: [PATCH v3 1/5] mm: introduce MADV_COLD
+Message-ID: <20190627234652.GB33052@google.com>
+References: <20190627115405.255259-1-minchan@kernel.org>
+ <20190627115405.255259-2-minchan@kernel.org>
+ <343599f9-3d99-b74f-1732-368e584fa5ef@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Spam-Status: No, score=0.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_12_24,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
-        DKIM_VALID_EF autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+In-Reply-To: <343599f9-3d99-b74f-1732-368e584fa5ef@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  2460d5878ad69c178f9ff1cc3eee9f09b017e15f
-Gitweb:     https://git.kernel.org/tip/2460d5878ad69c178f9ff1cc3eee9f09b017e15f
-Author:     Thomas Gleixner <tglx@linutronix.de>
-AuthorDate: Sun, 23 Jun 2019 15:23:59 +0200
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Fri, 28 Jun 2019 00:57:22 +0200
+On Thu, Jun 27, 2019 at 06:13:36AM -0700, Dave Hansen wrote:
+> On 6/27/19 4:54 AM, Minchan Kim wrote:
+> > This patch introduces the new MADV_COLD hint to madvise(2) syscall.
+> > MADV_COLD can be used by a process to mark a memory range as not expected
+> > to be used in the near future. The hint can help kernel in deciding which
+> > pages to evict early during memory pressure.
+> > 
+> > It works for every LRU pages like MADV_[DONTNEED|FREE]. IOW, It moves
+> > 
+> > 	active file page -> inactive file LRU
+> > 	active anon page -> inacdtive anon LRU
+> 
+> Is the LRU behavior part of the interface or the implementation?
 
-x86/hpet: Use cached channel data
+It's a just implementation. What user should expect with this API is they just
+informs to the kernel "this memory in the regions wouldn't access in the near
+future" so how kernel will handle memory in there is up to the kernel.
 
-Instead of rereading the HPET registers over and over use the information
-which was cached in hpet_enable().
+> 
+> I ask because we've got something in between tossing something down the
+> LRU and swapping it: page migration.  Specifically, on a system with
+> slower memory media (like persistent memory) we just migrate a page
+> instead of discarding it at reclaim:
+> 
+> > https://lore.kernel.org/linux-mm/20190321200157.29678-4-keith.busch@intel.com/
+> 
+> So let's say I have a page I want to evict from DRAM to the next slower
+> tier of memory.  Do I use MADV_COLD or MADV_PAGEOUT?  If the LRU
+> behavior is part of the interface itself, then MADV_COLD doesn't work.
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-Cc: Ashok Raj <ashok.raj@intel.com>
-Cc: Andi Kleen <andi.kleen@intel.com>
-Cc: Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Ravi Shankar <ravi.v.shankar@intel.com>
-Link: https://lkml.kernel.org/r/20190623132435.821728550@linutronix.de
+IMHO, if it's one of storage in the memory hierarchy, that shouldn't be transparent
+for the user? What I meant is VM moves inactive pages to the persistent memory
+before the reclaiming. IOW, VM would have one more level LRU or extened inactive
+LRU to cover the persistent memory.
 
----
- arch/x86/kernel/hpet.c | 41 ++++++++++++++++-------------------------
- 1 file changed, 16 insertions(+), 25 deletions(-)
+> 
+> Do you think we'll need a third MADV_ flag for our automatic migration
+> behavior?  MADV_REALLYCOLD?  MADV_MIGRATEOUT?
 
-diff --git a/arch/x86/kernel/hpet.c b/arch/x86/kernel/hpet.c
-index 59a81d7fd05b..8711f1fdef8f 100644
---- a/arch/x86/kernel/hpet.c
-+++ b/arch/x86/kernel/hpet.c
-@@ -24,6 +24,7 @@ struct hpet_dev {
- 
- struct hpet_channel {
- 	unsigned int			num;
-+	unsigned int			irq;
- 	unsigned int			boot_cfg;
- };
- 
-@@ -52,7 +53,6 @@ u8					hpet_blockid; /* OS timer block num */
- bool					hpet_msi_disable;
- 
- #ifdef CONFIG_PCI_MSI
--static unsigned int			hpet_num_timers;
- static struct hpet_dev			*hpet_devs;
- static DEFINE_PER_CPU(struct hpet_dev *, cpu_hpet_dev);
- static struct irq_domain		*hpet_domain;
-@@ -189,19 +189,15 @@ do {								\
- 
- static void hpet_reserve_msi_timers(struct hpet_data *hd);
- 
--static void __init hpet_reserve_platform_timers(unsigned int id)
-+static void __init hpet_reserve_platform_timers(void)
- {
--	struct hpet __iomem *hpet = hpet_virt_address;
--	struct hpet_timer __iomem *timer = &hpet->hpet_timers[2];
--	unsigned int nrtimers, i;
- 	struct hpet_data hd;
--
--	nrtimers = ((id & HPET_ID_NUMBER) >> HPET_ID_NUMBER_SHIFT) + 1;
-+	unsigned int i;
- 
- 	memset(&hd, 0, sizeof(hd));
- 	hd.hd_phys_address	= hpet_address;
--	hd.hd_address		= hpet;
--	hd.hd_nirqs		= nrtimers;
-+	hd.hd_address		= hpet_virt_address;
-+	hd.hd_nirqs		= hpet_base.nr_channels;
- 	hpet_reserve_timer(&hd, 0);
- 
- #ifdef CONFIG_HPET_EMULATE_RTC
-@@ -216,10 +212,8 @@ static void __init hpet_reserve_platform_timers(unsigned int id)
- 	hd.hd_irq[0] = HPET_LEGACY_8254;
- 	hd.hd_irq[1] = HPET_LEGACY_RTC;
- 
--	for (i = 2; i < nrtimers; timer++, i++) {
--		hd.hd_irq[i] = (readl(&timer->hpet_config) &
--			Tn_INT_ROUTE_CNF_MASK) >> Tn_INT_ROUTE_CNF_SHIFT;
--	}
-+	for (i = 2; i < hpet_base.nr_channels; i++)
-+		hd.hd_irq[i] = hpet_base.channels[i].irq;
- 
- 	hpet_reserve_msi_timers(&hd);
- 
-@@ -227,7 +221,7 @@ static void __init hpet_reserve_platform_timers(unsigned int id)
- 
- }
- #else
--static void hpet_reserve_platform_timers(unsigned int id) { }
-+static inline void hpet_reserve_platform_timers(void) { }
- #endif
- 
- /* Common HPET functions */
-@@ -569,7 +563,7 @@ static struct hpet_dev *hpet_get_unused_timer(void)
- 	if (!hpet_devs)
- 		return NULL;
- 
--	for (i = 0; i < hpet_num_timers; i++) {
-+	for (i = 0; i < hpet_base.nr_channels; i++) {
- 		struct hpet_dev *hdev = &hpet_devs[i];
- 
- 		if (!(hdev->flags & HPET_DEV_VALID))
-@@ -612,7 +606,6 @@ static int hpet_cpuhp_dead(unsigned int cpu)
- 
- static void __init hpet_msi_capability_lookup(unsigned int start_timer)
- {
--	unsigned int id;
- 	unsigned int num_timers;
- 	unsigned int num_timers_used = 0;
- 	int i, irq;
-@@ -622,10 +615,8 @@ static void __init hpet_msi_capability_lookup(unsigned int start_timer)
- 
- 	if (boot_cpu_has(X86_FEATURE_ARAT))
- 		return;
--	id = hpet_readl(HPET_ID);
- 
--	num_timers = ((id & HPET_ID_NUMBER) >> HPET_ID_NUMBER_SHIFT);
--	num_timers++; /* Value read out starts from 0 */
-+	num_timers = hpet_base.nr_channels;
- 	hpet_print_config();
- 
- 	hpet_domain = hpet_create_irq_domain(hpet_blockid);
-@@ -636,11 +627,9 @@ static void __init hpet_msi_capability_lookup(unsigned int start_timer)
- 	if (!hpet_devs)
- 		return;
- 
--	hpet_num_timers = num_timers;
--
- 	for (i = start_timer; i < num_timers - RESERVE_TIMERS; i++) {
- 		struct hpet_dev *hdev = &hpet_devs[num_timers_used];
--		unsigned int cfg = hpet_readl(HPET_Tn_CFG(i));
-+		unsigned int cfg = hpet_base.channels[i].boot_cfg;
- 
- 		/* Only consider HPET timer with MSI support */
- 		if (!(cfg & HPET_TN_FSB_CAP))
-@@ -676,7 +665,7 @@ static void __init hpet_reserve_msi_timers(struct hpet_data *hd)
- 	if (!hpet_devs)
- 		return;
- 
--	for (i = 0; i < hpet_num_timers; i++) {
-+	for (i = 0; i < hpet_base.nr_channels; i++) {
- 		struct hpet_dev *hdev = &hpet_devs[i];
- 
- 		if (!(hdev->flags & HPET_DEV_VALID))
-@@ -869,7 +858,7 @@ static bool __init hpet_counting(void)
-  */
- int __init hpet_enable(void)
- {
--	u32 hpet_period, cfg, id;
-+	u32 hpet_period, cfg, id, irq;
- 	unsigned int i, channels;
- 	struct hpet_channel *hc;
- 	u64 freq;
-@@ -940,6 +929,8 @@ int __init hpet_enable(void)
- 
- 		cfg = hpet_readl(HPET_Tn_CFG(i));
- 		hc->boot_cfg = cfg;
-+		irq = (cfg & Tn_INT_ROUTE_CNF_MASK) >> Tn_INT_ROUTE_CNF_SHIFT;
-+		hc->irq = irq;
- 
- 		cfg &= ~(HPET_TN_ENABLE | HPET_TN_LEVEL | HPET_TN_FSB);
- 		hpet_writel(cfg, HPET_Tn_CFG(i));
-@@ -993,7 +984,7 @@ static __init int hpet_late_init(void)
- 	else
- 		hpet_msi_capability_lookup(0);
- 
--	hpet_reserve_platform_timers(hpet_readl(HPET_ID));
-+	hpet_reserve_platform_timers();
- 	hpet_print_config();
- 
- 	if (hpet_msi_disable)
+I believe it depends on how we abstract the persistent memory of cache hierarchy.
+If we abstract it as diffrent storage with DRAM, manybe, that should be part of
+other syscall like like move_pages. 
+If we abstract it as part of DRAM, that should be part of additional LRU
+or extended inactive LRU.
