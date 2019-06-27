@@ -2,109 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BA575865C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 17:53:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6649F58660
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 17:53:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726596AbfF0Pxb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 11:53:31 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:37047 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726187AbfF0Px3 (ORCPT
+        id S1726599AbfF0Pxu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 11:53:50 -0400
+Received: from esa2.microchip.iphmx.com ([68.232.149.84]:30546 "EHLO
+        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726405AbfF0Pxt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 11:53:29 -0400
-Received: by mail-pg1-f195.google.com with SMTP id 25so1215121pgy.4
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 08:53:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=IB0Lsqqxe3Za1ul6K6Pq1h1ixj5UtpjRHMz7zj1j1YM=;
-        b=XycpPK1CI5JMKTpIwljMWofpXCFUnjuMSbTxvj3tSwU+N6pesTsiguF6tXP2YOv/RK
-         0SV0Pc++fA7yQT4iMOsmk5EaUwppi2O0YX2prmAFBNEKsX2gYDmiJ5Ry7PHA3n5rVq31
-         kbGxWSIcc0U2t95vEEjJWLkRnyUBsNj/UQg2A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=IB0Lsqqxe3Za1ul6K6Pq1h1ixj5UtpjRHMz7zj1j1YM=;
-        b=hZJvvEqlWbwt69UpFmwHb1lVWK7Y8telKfn2Zv60X9VPsYsQLJscfPduIlFmLXTuFU
-         bjs4YUvoIkv3yULFOLqyvdw8JJstkWxV9bmNWV2Wa5/XB0/5Tkptti6RJXjRHAf+mln8
-         yvlwzE62Yf4nD5yFJjvQ8W3LPu7ndNK9C7EI59Dsm3KV41hjIhBbS1XkPk5+UypXmhOM
-         o5aTjT7U/18tcDjoyPiZb0fCde/88m5fFcPC3rRPw/qu3fq/GE5P01RO8qGprTs4IwtO
-         n14tSWdD8iqfufcRz0XZfmkwDntDzELNJpFpK5mnBnY2vmFcfDMEGA8Hql56Nwtf4eKH
-         uhYQ==
-X-Gm-Message-State: APjAAAXMjX7dKAwhordMpojYC16DMGWZ1dVVWdlPUyiS5uyRdBpgJkPC
-        Gfj6yfP0lfEMCgk8hmLjREh3LQ==
-X-Google-Smtp-Source: APXvYqzyQ8VhCfbGmiP5t6hfyuPjbzTLkDZwV/chxJREBt2vwgawqo7kscJ4w+dvLcJmYjU/wFp1aw==
-X-Received: by 2002:a17:90a:ad41:: with SMTP id w1mr6845225pjv.52.1561650808121;
-        Thu, 27 Jun 2019 08:53:28 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id b8sm8013075pff.20.2019.06.27.08.53.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 27 Jun 2019 08:53:27 -0700 (PDT)
-Date:   Thu, 27 Jun 2019 08:53:26 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org,
-        Florian Weimer <fweimer@redhat.com>,
-        Jann Horn <jannh@google.com>
-Subject: Re: [PATCH] mm/gup: Remove some BUG_ONs from get_gate_page()
-Message-ID: <201906270853.CB6DA7BC8@keescook>
-References: <a1d9f4efb75b9d464e59fd6af00104b21c58f6f7.1561610798.git.luto@kernel.org>
+        Thu, 27 Jun 2019 11:53:49 -0400
+Received-SPF: Pass (esa2.microchip.iphmx.com: domain of
+  Claudiu.Beznea@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa2.microchip.iphmx.com;
+  envelope-from="Claudiu.Beznea@microchip.com";
+  x-sender="Claudiu.Beznea@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
+  a:mx2.microchip.iphmx.com include:servers.mcsv.net
+  include:mktomail.com include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa2.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa2.microchip.iphmx.com;
+  envelope-from="Claudiu.Beznea@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa2.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Claudiu.Beznea@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
+X-IronPort-AV: E=Sophos;i="5.63,424,1557212400"; 
+   d="scan'208";a="39173426"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 27 Jun 2019 08:53:48 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
+ chn-vm-ex03.mchp-main.com (10.10.87.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Thu, 27 Jun 2019 08:53:48 -0700
+Received: from m18063-ThinkPad-T460p.mchp-main.com (10.10.85.251) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
+ 15.1.1713.5 via Frontend Transport; Thu, 27 Jun 2019 08:53:45 -0700
+From:   Claudiu Beznea <claudiu.beznea@microchip.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <ludovic.desroches@microchip.com>
+CC:     <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>
+Subject: [PATCH v2 0/7] clk: at91: sckc: improve error path
+Date:   Thu, 27 Jun 2019 18:53:38 +0300
+Message-ID: <1561650825-11213-1-git-send-email-claudiu.beznea@microchip.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a1d9f4efb75b9d464e59fd6af00104b21c58f6f7.1561610798.git.luto@kernel.org>
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 26, 2019 at 09:47:30PM -0700, Andy Lutomirski wrote:
-> If we end up without a PGD or PUD entry backing the gate area, don't
-> BUG -- just fail gracefully.
-> 
-> It's not entirely implausible that this could happen some day on
-> x86.  It doesn't right now even with an execute-only emulated
-> vsyscall page because the fixmap shares the PUD, but the core mm
-> code shouldn't rely on that particular detail to avoid OOPSing.
-> 
-> Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Hi,
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+This series tries to improve error path for slow clock registrations
+by adding functions to free resources and using them on failures.
 
--Kees
+It is created on top of patch series at [1].
 
-> ---
->  mm/gup.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/mm/gup.c b/mm/gup.c
-> index ddde097cf9e4..9883b598fd6f 100644
-> --- a/mm/gup.c
-> +++ b/mm/gup.c
-> @@ -585,11 +585,14 @@ static int get_gate_page(struct mm_struct *mm, unsigned long address,
->  		pgd = pgd_offset_k(address);
->  	else
->  		pgd = pgd_offset_gate(mm, address);
-> -	BUG_ON(pgd_none(*pgd));
-> +	if (pgd_none(*pgd))
-> +		return -EFAULT;
->  	p4d = p4d_offset(pgd, address);
-> -	BUG_ON(p4d_none(*p4d));
-> +	if (p4d_none(*p4d))
-> +		return -EFAULT;
->  	pud = pud_offset(p4d, address);
-> -	BUG_ON(pud_none(*pud));
-> +	if (pud_none(*pud))
-> +		return -EFAULT;
->  	pmd = pmd_offset(pud, address);
->  	if (!pmd_present(*pmd))
->  		return -EFAULT;
-> -- 
-> 2.21.0
-> 
+Thank you,
+Claudiu Beznea
+
+[1] https://lore.kernel.org/lkml/1558433454-27971-1-git-send-email-claudiu.beznea@microchip.com/
+
+Changes in v2:
+- collect Reviewed-by tags
+- get rid of Content-Transfer-Encoding: base64
+
+Claudiu Beznea (7):
+  clk: at91: sckc: add support to free slow oscillator
+  clk: at91: sckc: add support to free slow rc oscillator
+  clk: at91: sckc: add support to free slow clock osclillator
+  clk: at91: sckc: improve error path for sam9x5 sck register
+  clk: at91: sckc: remove unnecessary line
+  clk: at91: sckc: improve error path for sama5d4 sck registration
+  clk: at91: sckc: use dedicated functions to unregister clock
+
+ drivers/clk/at91/sckc.c | 122 ++++++++++++++++++++++++++++++++++--------------
+ 1 file changed, 86 insertions(+), 36 deletions(-)
 
 -- 
-Kees Cook
+2.7.4
+
