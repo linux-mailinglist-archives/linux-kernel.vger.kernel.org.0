@@ -2,100 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5FFA58DC6
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 00:15:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C32FC58DCD
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 00:16:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726869AbfF0WPW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 18:15:22 -0400
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:42668 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726445AbfF0WPW (ORCPT
+        id S1726884AbfF0WP4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 18:15:56 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:33229 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726563AbfF0WP4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 18:15:22 -0400
-Received: by mail-yb1-f193.google.com with SMTP id w9so2402866ybe.9
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 15:15:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=854kgvZIGVmpx/zJerLitPu72zAj/sPCDRSpo5mcVm8=;
-        b=UVBQ6nLgJ7hyBK0VTX31wB+Js1VvwXnP/nwFcgPtwaFJewTCuj1osJwrFqHfTvwRhj
-         oIEIEkV6bUU7HdJznqd+1RtNHgQN60jvIObmjdR9ZV6sXOox4bxgplduaGihqvQpxbvl
-         /CXqzEI/lNWPklsLCFGyCyO1foahYXwHMW0q74DVX3P0B/psWgckT6IoYyN0X7S0cTQC
-         9Iymb0dP/l61XFeczgOkCa0eM7NbRnqpXJTxNSm5iVfCS2ry7VGHBJveWCE/2qDtz0bf
-         HRZalvnhhWyQm037wDc+4cY+nzn9yf2PfyzaG8fcy2SYeTDplVyStgoCZDdma/1jWHz7
-         5xtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=854kgvZIGVmpx/zJerLitPu72zAj/sPCDRSpo5mcVm8=;
-        b=fuBEn+MnVA4Nqbz6FdD2iC7HRyOw3yg2uj35Jy4vJQSR9kIDFXFwJnnDcZecAxlAL4
-         fp3Xg7JsydbrZiWhTVIk0wv0TxVwMdU42dvSKT/harDXQCv8e4NPa8IudcUhfkkBJqLf
-         DBUdSCsbj11dlgOcg7OcB9sqCVo1zy8/ae+4joUVcyCXNVCJQi5zmOqtE6xBZLAXp+2a
-         09XTZ5ux6Xo4OYtB8IioJuj99xLSYr8uLXY/FwiJRETMinS6hHdnbc44NCWSTdu/tWnx
-         4EPxyn5nQlrr30EzzlrD5rlr3MACEo4m+H9U4dkEtGLFqwV8J//DC+G2/VeFVRouQZPv
-         OBLA==
-X-Gm-Message-State: APjAAAW3keVNOtMLXdjdvpWDh1iIWsfZ49aVZwt863c758NW6I1iA6OW
-        oWX/64DwnQ7tWLKbyTe/r9a4R7GLQ2WvDuuTggbf2Q==
-X-Google-Smtp-Source: APXvYqxMzrMu9bHCfF1krZKE2+fiz57EFVSx8H1XhM1TKzJ4TURRZ421f3iW3YcRI3sBA2MZJWPVsd1sDFh4dqVLNZQ=
-X-Received: by 2002:a25:d156:: with SMTP id i83mr4645824ybg.67.1561673721316;
- Thu, 27 Jun 2019 15:15:21 -0700 (PDT)
+        Thu, 27 Jun 2019 18:15:56 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5RMFImh472851
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Thu, 27 Jun 2019 15:15:19 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5RMFImh472851
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019061801; t=1561673719;
+        bh=8ZTuFEkOgg6P4ySct4Z1PzgcWHbNGCdp1oLL8agGzvs=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=eLCHTMjYgAxz6SBFeKpoHl3LPl/4iksicuPt06p+S2RjpJBTXxx3NWq2r5tzSOGnT
+         71+eNG7vDDRUdMm1ORNy2alTpHQ90Pa66jYglckghCLFFqmo/lcZn4XpjjB67u87Ns
+         b236J1zdoNTYaXMsV3QMMw6eLe4TGuprUQDcfspLc7K0TTAB6ukRyR9jq2fka5C7CG
+         iFIcLyZDIzGBPT76n+H9aF/bp1ywLVmUI2S+HgZ6yOJ6SMFmT29vFjxmO6JtSNNu6t
+         jNB5ZS2nY2sHTfddNBR/KcZEH3de20ZJSGpS0+3T1by62iJLxlgT3+8F8S6OOoGysF
+         oP8UIkNiaJmiQ==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5RMFIxv472848;
+        Thu, 27 Jun 2019 15:15:18 -0700
+Date:   Thu, 27 Jun 2019 15:15:18 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Andy Lutomirski <tipbot@zytor.com>
+Message-ID: <tip-e0a446ce394a7915f2ffc03f9bb610c5ac4dbbf1@git.kernel.org>
+Cc:     hpa@zytor.com, mingo@kernel.org,
+        kernel-hardening@lists.openwall.com, keescook@chromium.org,
+        fweimer@redhat.com, luto@kernel.org, bp@alien8.de,
+        jannh@google.com, tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        peterz@infradead.org
+Reply-To: linux-kernel@vger.kernel.org, peterz@infradead.org,
+          jannh@google.com, tglx@linutronix.de, bp@alien8.de,
+          luto@kernel.org, fweimer@redhat.com,
+          kernel-hardening@lists.openwall.com, keescook@chromium.org,
+          hpa@zytor.com, mingo@kernel.org
+In-Reply-To: <75c91855fd850649ace162eec5495a1354221aaa.1561610354.git.luto@kernel.org>
+References: <75c91855fd850649ace162eec5495a1354221aaa.1561610354.git.luto@kernel.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/entry] x86/vsyscall: Document odd SIGSEGV error code for
+ vsyscalls
+Git-Commit-ID: e0a446ce394a7915f2ffc03f9bb610c5ac4dbbf1
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-References: <20190627214738.112614-1-rajatja@google.com>
-In-Reply-To: <20190627214738.112614-1-rajatja@google.com>
-From:   Gwendal Grignou <gwendal@google.com>
-Date:   Thu, 27 Jun 2019 15:15:08 -0700
-Message-ID: <CAMHSBOWrzQ6NEDEML-Jk8Y+M5iE6yHXn8FWpUP77VZAV7HGzhQ@mail.gmail.com>
-Subject: Re: [PATCH] platform/chrome: lightbar: Get drvdata from parent in suspend/resume
-To:     Rajat Jain <rajatja@google.com>
-Cc:     Benson Leung <bleung@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        rajatxjain@gmail.com, Evan Green <evgreen@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=0.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_12_24,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
+        DKIM_VALID_EF autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
+Commit-ID:  e0a446ce394a7915f2ffc03f9bb610c5ac4dbbf1
+Gitweb:     https://git.kernel.org/tip/e0a446ce394a7915f2ffc03f9bb610c5ac4dbbf1
+Author:     Andy Lutomirski <luto@kernel.org>
+AuthorDate: Wed, 26 Jun 2019 21:45:05 -0700
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Fri, 28 Jun 2019 00:04:39 +0200
 
+x86/vsyscall: Document odd SIGSEGV error code for vsyscalls
 
-On Thu, Jun 27, 2019 at 2:47 PM Rajat Jain <rajatja@google.com> wrote:
->
-> The lightbar driver never assigned the drvdata in probe method, and
-> thus there is nothing there. Need to get the ec_dev from the parent's
-> drvdata.
->
-> Signed-off-by: Rajat Jain <rajatja@google.com>
-> ---
->  drivers/platform/chrome/cros_ec_lightbar.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/platform/chrome/cros_ec_lightbar.c b/drivers/platform/chrome/cros_ec_lightbar.c
-> index d30a6650b0b5..26117a8991b3 100644
-> --- a/drivers/platform/chrome/cros_ec_lightbar.c
-> +++ b/drivers/platform/chrome/cros_ec_lightbar.c
-> @@ -600,7 +600,7 @@ static int cros_ec_lightbar_remove(struct platform_device *pd)
->
->  static int __maybe_unused cros_ec_lightbar_resume(struct device *dev)
->  {
-> -       struct cros_ec_dev *ec_dev = dev_get_drvdata(dev);
-> +       struct cros_ec_dev *ec_dev = dev_get_drvdata(dev->parent);
->
->         if (userspace_control)
->                 return 0;
-> @@ -610,7 +610,7 @@ static int __maybe_unused cros_ec_lightbar_resume(struct device *dev)
->
->  static int __maybe_unused cros_ec_lightbar_suspend(struct device *dev)
->  {
-> -       struct cros_ec_dev *ec_dev = dev_get_drvdata(dev);
-> +       struct cros_ec_dev *ec_dev = dev_get_drvdata(dev->parent);
->
->         if (userspace_control)
->                 return 0;
-> --
-> 2.22.0.410.gd8fdbe21b5-goog
->
+Even if vsyscall=none, user page faults on the vsyscall page are reported
+as though the PROT bit in the error code was set.  Add a comment explaining
+why this is probably okay and display the value in the test case.
+
+While at it, explain why the behavior is correct with respect to PKRU.
+
+Modify also the selftest to print the odd error code so that there is a
+way to demonstrate the odd behaviour.
+
+If anyone really cares about more accurate emulation, the behaviour could
+be changed. But that needs a real good justification.
+
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Cc: Florian Weimer <fweimer@redhat.com>
+Cc: Jann Horn <jannh@google.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Kernel Hardening <kernel-hardening@lists.openwall.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: https://lkml.kernel.org/r/75c91855fd850649ace162eec5495a1354221aaa.1561610354.git.luto@kernel.org
+
+---
+ arch/x86/mm/fault.c                         | 7 +++++++
+ tools/testing/selftests/x86/test_vsyscall.c | 9 ++++++++-
+ 2 files changed, 15 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+index 288a5462076f..58e4f1f00bbc 100644
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@ -710,6 +710,10 @@ static void set_signal_archinfo(unsigned long address,
+ 	 * To avoid leaking information about the kernel page
+ 	 * table layout, pretend that user-mode accesses to
+ 	 * kernel addresses are always protection faults.
++	 *
++	 * NB: This means that failed vsyscalls with vsyscall=none
++	 * will have the PROT bit.  This doesn't leak any
++	 * information and does not appear to cause any problems.
+ 	 */
+ 	if (address >= TASK_SIZE_MAX)
+ 		error_code |= X86_PF_PROT;
+@@ -1375,6 +1379,9 @@ void do_user_addr_fault(struct pt_regs *regs,
+ 	 *
+ 	 * The vsyscall page does not have a "real" VMA, so do this
+ 	 * emulation before we go searching for VMAs.
++	 *
++	 * PKRU never rejects instruction fetches, so we don't need
++	 * to consider the PF_PK bit.
+ 	 */
+ 	if (is_vsyscall_vaddr(address)) {
+ 		if (emulate_vsyscall(hw_error_code, regs, address))
+diff --git a/tools/testing/selftests/x86/test_vsyscall.c b/tools/testing/selftests/x86/test_vsyscall.c
+index 0b4f1cc2291c..4c9a8d76dba0 100644
+--- a/tools/testing/selftests/x86/test_vsyscall.c
++++ b/tools/testing/selftests/x86/test_vsyscall.c
+@@ -183,9 +183,13 @@ static inline long sys_getcpu(unsigned * cpu, unsigned * node,
+ }
+ 
+ static jmp_buf jmpbuf;
++static volatile unsigned long segv_err;
+ 
+ static void sigsegv(int sig, siginfo_t *info, void *ctx_void)
+ {
++	ucontext_t *ctx = (ucontext_t *)ctx_void;
++
++	segv_err =  ctx->uc_mcontext.gregs[REG_ERR];
+ 	siglongjmp(jmpbuf, 1);
+ }
+ 
+@@ -416,8 +420,11 @@ static int test_vsys_r(void)
+ 	} else if (!can_read && should_read_vsyscall) {
+ 		printf("[FAIL]\tWe don't have read access, but we should\n");
+ 		return 1;
++	} else if (can_read) {
++		printf("[OK]\tWe have read access\n");
+ 	} else {
+-		printf("[OK]\tgot expected result\n");
++		printf("[OK]\tWe do not have read access: #PF(0x%lx)\n",
++		       segv_err);
+ 	}
+ #endif
+ 
