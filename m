@@ -2,149 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFD0757C45
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 08:34:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 777D357C37
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 08:32:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726519AbfF0Gem (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 02:34:42 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:4520 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725770AbfF0Gel (ORCPT
+        id S1726420AbfF0Gc0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 02:32:26 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:45529 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726049AbfF0GcZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 02:34:41 -0400
-Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5R6UKfm025319;
-        Wed, 26 Jun 2019 23:31:29 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=h8pU6xF38JB3r9LlEsuLt4wH985rRUbhoyuS6lhAxts=;
- b=LCuuA8yKcAhk7DukG7j+j0QQSZ8q3DLfcshEEep9vv5NPQj6/TfmwTQXEdRMMdc8+L8C
- syHsc56iIFIJeos5/pd/T4RwNqIRvokxaV+qpjOoQpiEobrLZCcTFf7l8MDCdk7u6xAm
- YIqBqf9+21IefoSpZRdpVBm6UA+jk7hhYtY= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com with ESMTP id 2tcgav9h16-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Wed, 26 Jun 2019 23:31:29 -0700
-Received: from ash-exopmbx101.TheFacebook.com (2620:10d:c0a8:82::b) by
- ash-exhub104.TheFacebook.com (2620:10d:c0a8:82::d) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Wed, 26 Jun 2019 23:31:28 -0700
-Received: from ash-exhub203.TheFacebook.com (2620:10d:c0a8:83::5) by
- ash-exopmbx101.TheFacebook.com (2620:10d:c0a8:82::b) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Wed, 26 Jun 2019 23:31:28 -0700
-Received: from NAM05-CO1-obe.outbound.protection.outlook.com (100.104.31.183)
- by o365-in.thefacebook.com (100.104.36.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5
- via Frontend Transport; Wed, 26 Jun 2019 23:31:28 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector1-fb-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=h8pU6xF38JB3r9LlEsuLt4wH985rRUbhoyuS6lhAxts=;
- b=toe00VUwFum1VsoZ3radHSBd36BaaFmuWFVSXLilMCk8VKR/ONCp9SX6mIM/jGMSHaDWEUTY4ufzs05lbfl9yrcdR5IMpz8/6MDdDTUHk8GJmiJ0LbaoB3oKNqiGHfe9fyv4r9Kem294GxflBANlbOetF17rgRKBtXDmlhFU6ug=
-Received: from MWHPR15MB1165.namprd15.prod.outlook.com (10.175.3.22) by
- MWHPR15MB1951.namprd15.prod.outlook.com (10.175.9.12) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2008.16; Thu, 27 Jun 2019 06:31:26 +0000
-Received: from MWHPR15MB1165.namprd15.prod.outlook.com
- ([fe80::400e:e329:ea98:aa0d]) by MWHPR15MB1165.namprd15.prod.outlook.com
- ([fe80::400e:e329:ea98:aa0d%6]) with mapi id 15.20.2008.018; Thu, 27 Jun 2019
- 06:31:26 +0000
-From:   Song Liu <songliubraving@fb.com>
-To:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-CC:     LKML <linux-kernel@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>,
-        Matthew Wilcox <matthew.wilcox@oracle.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Kernel Team <Kernel-team@fb.com>,
-        "william.kucharski@oracle.com" <william.kucharski@oracle.com>
-Subject: Re: [PATCH v7 4/4] uprobe: use FOLL_SPLIT_PMD instead of FOLL_SPLIT
-Thread-Topic: [PATCH v7 4/4] uprobe: use FOLL_SPLIT_PMD instead of FOLL_SPLIT
-Thread-Index: AQHVK7E785+oCFqbhUC2jl0BeioYsaatcZEAgAGa74A=
-Date:   Thu, 27 Jun 2019 06:31:26 +0000
-Message-ID: <AE9CD0A1-14EB-4919-B14F-23B077C57891@fb.com>
-References: <20190625235325.2096441-1-songliubraving@fb.com>
- <20190625235325.2096441-5-songliubraving@fb.com>
- <20190626060038.GB9158@linux.vnet.ibm.com>
-In-Reply-To: <20190626060038.GB9158@linux.vnet.ibm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Apple Mail (2.3445.104.11)
-x-originating-ip: [2620:10d:c090:180::1:6ea5]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 2880b3e6-e60d-4289-66fa-08d6fac914f6
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MWHPR15MB1951;
-x-ms-traffictypediagnostic: MWHPR15MB1951:
-x-microsoft-antispam-prvs: <MWHPR15MB1951FA57F2B389231202505BB3FD0@MWHPR15MB1951.namprd15.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 008184426E
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(39860400002)(396003)(366004)(346002)(136003)(199004)(189003)(68736007)(53546011)(6506007)(76176011)(36756003)(305945005)(8936002)(7736002)(6246003)(6486002)(186003)(6436002)(14454004)(229853002)(57306001)(4326008)(66446008)(64756008)(66556008)(66476007)(73956011)(102836004)(76116006)(316002)(99286004)(54906003)(110136005)(66946007)(25786009)(6116002)(4744005)(33656002)(5660300002)(50226002)(86362001)(8676002)(81156014)(81166006)(478600001)(6512007)(2906002)(71190400001)(71200400001)(53936002)(46003)(7416002)(11346002)(2616005)(486006)(476003)(446003)(14444005)(256004);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1951;H:MWHPR15MB1165.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: hG+2Udvs0PDKgyESMlOCFnBsWbcJUdh09mID884t3JnFcFu/jA/TjncZLvFQdHNNnKWYBwaHAxPehm1Z9VE8rcb3peOPA7WQwUrHI4kjMeAGGc4MqPpda0vG/sJjnGj8M7II1cbaWqo+1w6v7bayVexgqKj40ex4601kULRxPSyYvypBKK5FshLHpXNlQEh4O7lv8Kxw7jqCV1cgEtw+eOvlBWjA/VaskOwJGB+QyNelqgU1zHHKcM466m3D0Vq0qO9Nk00AVDuxc24hTPWs9WXFnzAx4grh/+gxo9tKWC3MFMojV+PrvN7UPOlmcPvl4WoMVyAtqODGtQgUvw06JOfqKarmVGkuIwUznAXrbw79N/KwX3wgSY8YDwK1nX/hwsn7cSxunE1Y4DEJXFvcA4CJ96XqSQ3PkswPnz2tYXs=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <902646C75C382B46BB3D455B995697F5@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Thu, 27 Jun 2019 02:32:25 -0400
+Received: by mail-pl1-f194.google.com with SMTP id bi6so697493plb.12
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 23:32:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=CxcmhcduYl1f+p8Q6K2P2tN31Ue+lZEcvfx29yQXcTA=;
+        b=m4qtlRsuSk58BwN1KjuVxv1OBILIvoJnLL/W5x8gKQGKClqscPAZtSz5HIvZkBZeaP
+         3YNDZbTITdkT9d4NODS4YBRtUWymp+dc1Frl9vN52KgPgeSBy8PuVOd1wpDqdViUXGuU
+         TaoL6w12s1LCWVE6nAVStEUf6ToOh2LrH0l4rAjW0YWcykR1wBUiW/kiHYkRyaFw/b+m
+         5RKkHPbZrlfJtX/jysSBDiQyarjXby+MLOi6XZdFtLwkUxPqEd3s89nrZCy07o0cLs07
+         /nNhohMH1gqtNbY5OQLkVy7sE3hn5AauPYz18DSUKOmknEkjo7985c+vomp74sOA3gvV
+         PN8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=CxcmhcduYl1f+p8Q6K2P2tN31Ue+lZEcvfx29yQXcTA=;
+        b=LSrHZC5Nk7wo7V5Bkz1/OM+OJSpZeD+jvQl1sR+6VRsiTtC0GAiZKuWJV9tsikoOOE
+         wtosR+q5CYf+5TOS9w0X2fqKnhLCJrOPizOVqS0bF5NRQAhI+mSrMgaedF/udbdbS5gi
+         osT6s3XfYu1xIGUJvhuRAX6rG0F7viH5ooPkzRXrW57VIFOPEmVeHybRLINmROkgDn6s
+         m1twNixw1X4kYRxVEwqCwDkq/NVbfqCfIaZLO4O5Zctvx5LGGKj4AOKRxU+zJDaBMehO
+         UCrTiiE7vpiuepI/V/RSKvIizG9XUUoYUu53e2hirpcX5iNS0kmD5J6P26YrS+V+z0OE
+         zThw==
+X-Gm-Message-State: APjAAAUm7XgJWBQaAsMr5oxz0LtDVNHmLLjqx73R3ja0/tqmrOHue2KO
+        oFUInlnsui27IXz0a/LX50YpjQ==
+X-Google-Smtp-Source: APXvYqwZ07G5863ndEAB+RksF+e+99jGlEHoSljL/kmhY9ivkki8aBvxOy/aBdnHgI3TPZQaVOsxJA==
+X-Received: by 2002:a17:902:549:: with SMTP id 67mr2700794plf.86.1561617144785;
+        Wed, 26 Jun 2019 23:32:24 -0700 (PDT)
+Received: from ziepe.ca ([12.199.206.50])
+        by smtp.gmail.com with ESMTPSA id k184sm1017237pgk.7.2019.06.26.23.32.24
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 26 Jun 2019 23:32:24 -0700 (PDT)
+Received: from jgg by jggl.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1hgNxH-00029V-At; Thu, 27 Jun 2019 03:32:23 -0300
+Date:   Thu, 27 Jun 2019 03:32:23 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Logan Gunthorpe <logang@deltatee.com>
+Cc:     Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-pci@vger.kernel.org, linux-rdma@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Keith Busch <kbusch@kernel.org>,
+        Stephen Bates <sbates@raithlin.com>
+Subject: Re: [RFC PATCH 00/28] Removing struct page from P2PDMA
+Message-ID: <20190627063223.GA7736@ziepe.ca>
+References: <20190625072008.GB30350@lst.de>
+ <f0f002bf-2b94-cd18-d18f-5d0b08311495@deltatee.com>
+ <20190625170115.GA9746@lst.de>
+ <41235a05-8ed1-e69a-e7cd-48cae7d8a676@deltatee.com>
+ <20190626065708.GB24531@lst.de>
+ <c15d5997-9ba4-f7db-0e7a-a69e75df316c@deltatee.com>
+ <20190626202107.GA5850@ziepe.ca>
+ <8a0a08c3-a537-bff6-0852-a5f337a70688@deltatee.com>
+ <20190626210018.GB6392@ziepe.ca>
+ <c25d3333-dcd5-3313-089b-7fbbd6fbd876@deltatee.com>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2880b3e6-e60d-4289-66fa-08d6fac914f6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Jun 2019 06:31:26.5305
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: songliubraving@fb.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1951
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-27_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=954 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906270074
-X-FB-Internal: deliver
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c25d3333-dcd5-3313-089b-7fbbd6fbd876@deltatee.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Jun 26, 2019 at 03:18:07PM -0600, Logan Gunthorpe wrote:
+> > I don't think we should make drives do that. What if it got CMB memory
+> > on some other device?
+> 
+> Huh? A driver submitting P2P requests finds appropriate memory to use
+> based on the DMA device that will be doing the mapping. It *has* to. It
+> doesn't necessarily have control over which P2P provider it might find
+> (ie. it may get CMB memory from a random NVMe device), but it easily
+> knows the NVMe device it got the CMB memory for. Look at the existing
+> code in the nvme target.
 
+No, this all thinking about things from the CMB perspective. With CMB
+you don't care about the BAR location because it is just a temporary
+buffer. That is a unique use model.
 
-> On Jun 25, 2019, at 11:00 PM, Srikar Dronamraju <srikar@linux.vnet.ibm.co=
-m> wrote:
->=20
-> * Song Liu <songliubraving@fb.com> [2019-06-25 16:53:25]:
->=20
->> This patches uses newly added FOLL_SPLIT_PMD in uprobe. This enables eas=
-y
->> regroup of huge pmd after the uprobe is disabled (in next patch).
->>=20
->> Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
->> Signed-off-by: Song Liu <songliubraving@fb.com>
->> ---
->> kernel/events/uprobes.c | 6 ++----
->> 1 file changed, 2 insertions(+), 4 deletions(-)
->=20
-> Looks good to me.
->=20
-> Reviewed-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Every other case has data residing in BAR memory that can really only
+reside in that one place (ie on a GPU/FPGA DRAM or something). When an IO
+against that is run it should succeed, even if that means bounce
+buffering the IO - as the user has really asked for this transfer to
+happen.
 
-Thanks Srikar!
+We certainly don't get to generally pick where the data resides before
+starting the IO, that luxury is only for CMB.
 
-I guess these 4 patches are ready to go?=20
+> > I think with some simple caching this will become negligible for cases
+> > you care about
+> 
+> Well *maybe* it will be negligible performance wise, but it's also a lot
+> more complicated, code wise. Tree lookups will always be a lot more
+> expensive than just checking a flag.
 
-Hi Andrew,=20
+Interval trees are pretty simple API wise, and if we only populate
+them with P2P providers you probably find the tree depth is negligible
+in current systems with one or two P2P providers.
 
-Could you please route them via the mm tree?=20
-
-Thanks,
-Song
-
-
+Jason
