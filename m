@@ -2,133 +2,211 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98D2358C1A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 22:54:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0632B58C20
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 22:56:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726559AbfF0Uy3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 16:54:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35942 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726426AbfF0Uy2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 16:54:28 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5C3482075E;
-        Thu, 27 Jun 2019 20:54:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561668867;
-        bh=Z5QvOd8pHIoUG6s1AirGhc9EeMrk127DpjRm00Mhy6I=;
-        h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
-        b=Ux339EseDEG1zm6ub2l6+3BbhXcfiuwMj1t2rRtTs4cE6zE2CrXKO0Zdc38l8Scvt
-         ia5++5ZaF7MzNbWgMk6OtSadeV51ZISQD4U7Lwznl4IkeIC3a+6eiwWCFlUE7+Vd4x
-         XqrHjQpfE9bwP7aqGk+3SnZYwqAqgZB/P4DyT9f0=
-Content-Type: text/plain; charset="utf-8"
+        id S1726537AbfF0U4J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 16:56:09 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:46263 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726384AbfF0U4I (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 16:56:08 -0400
+Received: by mail-ed1-f66.google.com with SMTP id d4so8369903edr.13;
+        Thu, 27 Jun 2019 13:56:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5hQN5lyIHEpTv7mFta9htRreGSrkPoUPCfBEx1FHIS8=;
+        b=nkpdkb28HbplV1bfy7uvGah0hsYcvrLasORikLtmvxoS46eMqkWvdYMa+2+/00UeaQ
+         lnMO0fXVsd812yWSY9uamDr/FSlfXtn9P1mZMC/0KNP4219GBbYQPtjoi29R8YxWnhFi
+         fPiDYRVx6OHlIamr6YZy56FrF2oEOD3CWGmsY8CTA+T+O0hpaI8qJo9ZzI/VxURaVo2f
+         EEw5RbZ5ICe5wi9T5cjCKj0KN6mWgoIufgOdatq9yBWVdEBKn4k33TIzNX0qoWuCxxyW
+         oJ65d45MkOj7l/+Yxr6EI0bBotmYjq79h9WdcpQVxu/C1qDhIKna+jObqKE13Mtgsiy5
+         rakQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5hQN5lyIHEpTv7mFta9htRreGSrkPoUPCfBEx1FHIS8=;
+        b=QP5B6H3SyI3qd6ZgphIf2aSVCW/Vq5TQUzY6d+dMfgjAB+3wHAYU2DkIPeGN54G2cu
+         UeJrfviEuhDxCUiLrqdUU/+hz3N52onRiCyx/6scRwX22heJlGC4dggbvS/JJhyNsDCK
+         PbqD71DiK23JZuvj+lhGGOqKYq3dxjsAVpENP4Ewzak3EYuyyTqCNV86r22P1DyW3JJK
+         9fP5/DYQCdFBB1yZzT4d1SnhHmSWhVY+Czg521oRGcEylJz2MhmBUsA7BGixX3rZMDKR
+         gss8EXStto+vkrWWHvC4SSIK2kO87YVh9Fi+N6AgHOWTUFIqF37MC0DCPLJLdriw28Ss
+         2o+g==
+X-Gm-Message-State: APjAAAUCI7WNvUPYbG5yWzkhht1EseYnjXoSwgmzTqoazDyyop/bPNDY
+        q77jeZQalQM7iOu4MBlEezRmyHoBDpABEgX1Ta/C1g==
+X-Google-Smtp-Source: APXvYqzDC9Ne5Od8zZD5gMzJSAbOt1FAMQ+X01MBXVaKuIZbOyjWpuDQ0yh1sKMjvGwyiTXig8YKo5kiEO8Cdob+wG0=
+X-Received: by 2002:a17:906:1108:: with SMTP id h8mr5028549eja.229.1561668965618;
+ Thu, 27 Jun 2019 13:56:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <61fae574-2cea-cbdc-bc8a-3cc34c681d01@topic.nl>
-References: <20190424090216.18417-1-mike.looijmans@topic.nl> <155623344648.15276.18213024444708122458@swboyd.mtv.corp.google.com> <3ea2d720-f49b-586c-e402-07db289b39a8@topic.nl> <155632584222.168659.9675557812377718927@swboyd.mtv.corp.google.com> <cd52a35b-d289-24e1-70db-9d63fd9f6448@topic.nl> <155658342800.168659.4922821141203707564@swboyd.mtv.corp.google.com> <c7f5184f-f484-e8ad-33ae-36b0da061113@topic.nl> <20190626212409.9C0E6208E3@mail.kernel.org> <61fae574-2cea-cbdc-bc8a-3cc34c681d01@topic.nl>
-To:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Mike Looijmans <mike.looijmans@topic.nl>
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH] dt-bindings: Add silabs,si5341
-Cc:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-User-Agent: alot/0.8.1
-Date:   Thu, 27 Jun 2019 13:54:26 -0700
-Message-Id: <20190627205427.5C3482075E@mail.kernel.org>
+References: <156096279115.28733.8761881995303698232.stgit@warthog.procyon.org.uk>
+ <156096287188.28733.15342608110117616221.stgit@warthog.procyon.org.uk>
+In-Reply-To: <156096287188.28733.15342608110117616221.stgit@warthog.procyon.org.uk>
+From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Date:   Thu, 27 Jun 2019 16:55:29 -0400
+Message-ID: <CAF=yD-Kgdwt5=0iboxhvZz4zvNewSGow74U15mQQvO1u8VUGcw@mail.gmail.com>
+Subject: Re: [PATCH 8/9] keys: Network namespace domain tag [ver #4]
+To:     David Howells <dhowells@redhat.com>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        keyrings@vger.kernel.org, linux-cifs@vger.kernel.org,
+        linux-nfs@vger.kernel.org,
+        Network Development <netdev@vger.kernel.org>,
+        linux-afs@lists.infradead.org, dwalsh@redhat.com,
+        vgoyal@redhat.com, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Mike Looijmans (2019-06-27 04:38:16)
-> On 26-06-19 23:24, Stephen Boyd wrote:
-> > Sorry, I'm getting through my inbox pile and saw this one.
-> >=20
-> > Quoting Mike Looijmans (2019-04-30 22:46:55)
-> >> On 30-04-19 02:17, Stephen Boyd wrote:
-> >>>
-> >>> Why can't that driver call clk_prepare_enable()? Is there some sort of
-> >>> assumption that this clk will always be enabled and not have a driver
-> >>> that configures the rate and gates/ungates it?
-> >>
-> >> Not only clk_prepare_enable(), but the driver could also call clk_set_=
-rate()
-> >> and clk_set_parent() and the likes, but it doesn't, so that's why ther=
-e is
-> >> "assigned-clocks" right?
-> >>
-> >> There are multiple scenario's, similar to why regulators also have pro=
-perties
-> >> like these.
-> >>
-> >> - The clock is related to hardware that the kernel is not aware of.
-> >> - The clock is for a driver that isn't aware of its clock requirements=
-. It
-> >> might be an extra clock for an FPGA implemented controller that mimics
-> >> existing hardware.
-> >=20
-> > Are these hypothetical scenarios or actual scenarios you need to
-> > support?
->=20
-> Actual scenario's.
->=20
-> Clocks are required for FPGA logic, and a some of those do not involve=20
-> software drivers at all.
->=20
-> The GTR transceivers on the Xilinx ZynqMP chips use these clocks for SATA=
- and=20
-> PCIe, but the driver implementation from Xilinx for these is far from mat=
-ure,=20
-> for example it passes the clock frequency as a PHY parameter and isn't ev=
-en=20
-> aware of the clk framework at the moment. Xilinx hasn't even attempted=20
-> submitting this 3 year old driver to mainline.
+On Wed, Jun 19, 2019 at 12:49 PM David Howells <dhowells@redhat.com> wrote:
+>
+> Create key domain tags for network namespaces and make it possible to
+> automatically tag keys that are used by networked services (e.g. AF_RXRPC,
+> AFS, DNS) with the default network namespace if not set by the caller.
+>
+> This allows keys with the same description but in different namespaces to
+> coexist within a keyring.
+>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: netdev@vger.kernel.org
+> cc: linux-nfs@vger.kernel.org
+> cc: linux-cifs@vger.kernel.org
+> cc: linux-afs@lists.infradead.org
+> ---
 
-I think they may have submitted the "fixed rate from PHY parameter"
-support. I merged it because I suspected it would help in those rare
-cases where an MMIO register is used to express information about the
-configuration and the bootloader does nothing to help create a fixed
-rate clk in DT.
+> diff --git a/net/core/net_namespace.c b/net/core/net_namespace.c
+> index 711b161505ac..076a75c73c9e 100644
+> --- a/net/core/net_namespace.c
+> +++ b/net/core/net_namespace.c
+> @@ -38,9 +38,16 @@ EXPORT_SYMBOL_GPL(net_namespace_list);
+>  DECLARE_RWSEM(net_rwsem);
+>  EXPORT_SYMBOL_GPL(net_rwsem);
+>
+> +#ifdef CONFIG_KEYS
+> +static struct key_tag init_net_key_domain = { .usage = REFCOUNT_INIT(1) };
+> +#endif
+> +
+>  struct net init_net = {
+>         .count          = REFCOUNT_INIT(1),
+>         .dev_base_head  = LIST_HEAD_INIT(init_net.dev_base_head),
+> +#ifdef CONFIG_KEYS
+> +       .key_domain     = &init_net_key_domain,
+> +#endif
+>  };
+>  EXPORT_SYMBOL(init_net);
+>
+> @@ -386,10 +393,21 @@ static struct net *net_alloc(void)
+>         if (!net)
+>                 goto out_free;
+>
+> +#ifdef CONFIG_KEYS
+> +       net->key_domain = kzalloc(sizeof(struct key_tag), GFP_KERNEL);
+> +       if (!net->key_domain)
+> +               goto out_free_2;
+> +       refcount_set(&net->key_domain->usage, 1);
+> +#endif
+> +
+>         rcu_assign_pointer(net->gen, ng);
+>  out:
+>         return net;
+>
+> +#ifdef CONFIG_KEYS
+> +out_free_2:
+> +       kmem_cache_free(net_cachep, net);
 
-> >=20
-> > To put it another way, I'm looking to describe how the board is designed
-> > and to indicate that certain clks are always enabled at power on or are
-> > enabled by the bootloader. Configuration has it's place too, just that
-> > configuration is a oneshot sort of thing that never needs to change at
-> > runtime.
-> >=20
->=20
-> I can see where you going with this, and yes, we definitely should promot=
-e=20
-> that drivers should take care of their clock (enable) requirements.
->=20
-> For the case of 'clock-critical', that would serve the purpose quite well=
-=20
-> indeed. It does add the risk of people sprinkling that all over the devic=
-etree.
->=20
-> Short term, I guess the best thing to do here is to remove the "always-on=
-"=20
-> property from my patch.
+needs
+            net = NULL;
 
-Ok. Will you resend or should I look at the latest binding patch and
-remove always-on? I don't see it there so maybe everything is fine.
+to signal failure
 
->=20
-> I'll put the "clock-critical" idea on my list of generic clock patches to=
-=20
-> sneak in on other budgets, it'll be right behind "allow sub-1Hz or fracti=
-onal=20
-> clock rate accuracy" (yes I actually have a use case for that) and "allow=
-=20
-> frequencies over 4GHz" (the 14GHz clock in the Si5341 luckily isn't avail=
-able=20
-> on the outside so I can cheat)...
+> +#endif
+>  out_free:
+>         kfree(ng);
+>         goto out;
 
-Ok. Good to know it's not as high a priority as these other things.
+Reported-by: syzbot <syzkaller@googlegroups.com>
 
+BUG: KASAN: use-after-free in atomic_set
+include/asm-generic/atomic-instrumented.h:44 [inline]
+BUG: KASAN: use-after-free in refcount_set include/linux/refcount.h:32 [inline]
+BUG: KASAN: use-after-free in copy_net_ns+0x1e8/0x431
+net/core/net_namespace.c:466
+Write of size 4 at addr ffff88809c9de080 by task syz-executor.1/12624
+
+CPU: 1 PID: 12624 Comm: syz-executor.1 Not tainted 5.2.0-rc6-next-20190626 #23
+Hardware name: Google Google Compute Engine/Google Compute Engine,
+BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+ print_address_description.cold+0xd4/0x306 mm/kasan/report.c:351
+ __kasan_report.cold+0x1b/0x36 mm/kasan/report.c:482
+ kasan_report+0x12/0x17 mm/kasan/common.c:614
+ check_memory_region_inline mm/kasan/generic.c:185 [inline]
+ check_memory_region+0x123/0x190 mm/kasan/generic.c:191
+ kasan_check_write+0x14/0x20 mm/kasan/common.c:100
+ atomic_set include/asm-generic/atomic-instrumented.h:44 [inline]
+ refcount_set include/linux/refcount.h:32 [inline]
+ copy_net_ns+0x1e8/0x431 net/core/net_namespace.c:466
+ create_new_namespaces+0x400/0x7b0 kernel/nsproxy.c:103
+ unshare_nsproxy_namespaces+0xc2/0x200 kernel/nsproxy.c:202
+ ksys_unshare+0x444/0x980 kernel/fork.c:2828
+ __do_sys_unshare kernel/fork.c:2896 [inline]
+ __se_sys_unshare kernel/fork.c:2894 [inline]
+ __x64_sys_unshare+0x31/0x40 kernel/fork.c:2894
+ do_syscall_64+0xfd/0x6a0 arch/x86/entry/common.c:301
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x459519
+Code: fd b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48
+89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d
+01 f0 ff ff 0f 83 cb b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f2202261c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000110
+RAX: ffffffffffffffda RBX: 00007f2202261c90 RCX: 0000000000459519
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000040000000
+RBP: 000000000075bf20 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f22022626d4
+R13: 00000000004c8a2c R14: 00000000004df7d0 R15: 0000000000000006
+
+Allocated by task 12624:
+ save_stack+0x23/0x90 mm/kasan/common.c:71
+ set_track mm/kasan/common.c:79 [inline]
+ __kasan_kmalloc mm/kasan/common.c:489 [inline]
+ __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:462
+ kasan_slab_alloc+0xf/0x20 mm/kasan/common.c:497
+ slab_post_alloc_hook mm/slab.h:520 [inline]
+ slab_alloc mm/slab.c:3320 [inline]
+ kmem_cache_alloc+0x121/0x710 mm/slab.c:3484
+ kmem_cache_zalloc include/linux/slab.h:737 [inline]
+ net_alloc net/core/net_namespace.c:410 [inline]
+ copy_net_ns+0xf1/0x431 net/core/net_namespace.c:461
+ create_new_namespaces+0x400/0x7b0 kernel/nsproxy.c:103
+ unshare_nsproxy_namespaces+0xc2/0x200 kernel/nsproxy.c:202
+ ksys_unshare+0x444/0x980 kernel/fork.c:2828
+ __do_sys_unshare kernel/fork.c:2896 [inline]
+ __se_sys_unshare kernel/fork.c:2894 [inline]
+ __x64_sys_unshare+0x31/0x40 kernel/fork.c:2894
+ do_syscall_64+0xfd/0x6a0 arch/x86/entry/common.c:301
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 12624:
+ save_stack+0x23/0x90 mm/kasan/common.c:71
+ set_track mm/kasan/common.c:79 [inline]
+ __kasan_slab_free+0x102/0x150 mm/kasan/common.c:451
+ kasan_slab_free+0xe/0x10 mm/kasan/common.c:459
+ __cache_free mm/slab.c:3426 [inline]
+ kmem_cache_free+0x86/0x320 mm/slab.c:3694
+ net_alloc net/core/net_namespace.c:427 [inline]
+ copy_net_ns+0x3b1/0x431 net/core/net_namespace.c:461
+ create_new_namespaces+0x400/0x7b0 kernel/nsproxy.c:103
+ unshare_nsproxy_namespaces+0xc2/0x200 kernel/nsproxy.c:202
+ ksys_unshare+0x444/0x980 kernel/fork.c:2828
+ __do_sys_unshare kernel/fork.c:2896 [inline]
+ __se_sys_unshare kernel/fork.c:2894 [inline]
+ __x64_sys_unshare+0x31/0x40 kernel/fork.c:2894
+ do_syscall_64+0xfd/0x6a0 arch/x86/entry/common.c:301
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
