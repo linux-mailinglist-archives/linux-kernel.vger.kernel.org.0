@@ -2,102 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA531586B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 18:09:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69C64586BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 18:10:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726511AbfF0QJ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 12:09:58 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:35960 "EHLO ale.deltatee.com"
+        id S1726558AbfF0QK2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 12:10:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39700 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726384AbfF0QJ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 12:09:58 -0400
-Received: from s01061831bf6ec98c.cg.shawcable.net ([68.147.80.180] helo=[192.168.6.132])
-        by ale.deltatee.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1hgWy1-0002ZY-Gh; Thu, 27 Jun 2019 10:09:46 -0600
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-pci@vger.kernel.org, linux-rdma@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Keith Busch <kbusch@kernel.org>,
-        Stephen Bates <sbates@raithlin.com>
-References: <20190625072008.GB30350@lst.de>
- <f0f002bf-2b94-cd18-d18f-5d0b08311495@deltatee.com>
- <20190625170115.GA9746@lst.de>
- <41235a05-8ed1-e69a-e7cd-48cae7d8a676@deltatee.com>
- <20190626065708.GB24531@lst.de>
- <c15d5997-9ba4-f7db-0e7a-a69e75df316c@deltatee.com>
- <20190626202107.GA5850@ziepe.ca>
- <8a0a08c3-a537-bff6-0852-a5f337a70688@deltatee.com>
- <20190626210018.GB6392@ziepe.ca>
- <c25d3333-dcd5-3313-089b-7fbbd6fbd876@deltatee.com>
- <20190627063223.GA7736@ziepe.ca>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <6afe4027-26c8-df4e-65ce-49df07dec54d@deltatee.com>
-Date:   Thu, 27 Jun 2019 10:09:41 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1726370AbfF0QK2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 12:10:28 -0400
+Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 903C520659;
+        Thu, 27 Jun 2019 16:10:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561651827;
+        bh=CTJeHFiaI+d+UKYintxuxasCkLNX1nctu8884Q3ttz8=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=0Y82Gp1bKUV2zB4N2Yev8eOWxhDpl1pmDfR4dFvhNWtdXjs4D7CAgGiHF6nMxFtHE
+         t5Jdnm7hJVMhK4pPWOYhISl/dOiaPVVdqZ+lKs/rebhq1vjgY2Wou1wRK2oQBEVE7T
+         dk2cZfMI0RNLu93Zqsx9DRIMGosda+RKhhvSsEz8=
+Message-ID: <c7fc812e444fee2fa7243044da5a48d1ad5b63ab.camel@kernel.org>
+Subject: Re: [RFC PATCH] ceph: initialize superblock s_time_gran to 1
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Sage Weil <sweil@redhat.com>
+Cc:     Luis Henriques <lhenriques@suse.com>,
+        "Yan, Zheng" <zyan@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
+        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Thu, 27 Jun 2019 12:10:25 -0400
+In-Reply-To: <alpine.DEB.2.11.1906271543440.17148@piezo.novalocal>
+References: <20190627135122.12817-1-lhenriques@suse.com>
+         <0459c2a46200194c14b7474f55071b12fbc3d594.camel@kernel.org>
+         <alpine.DEB.2.11.1906271543440.17148@piezo.novalocal>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.3 (3.32.3-1.fc30) 
 MIME-Version: 1.0
-In-Reply-To: <20190627063223.GA7736@ziepe.ca>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 68.147.80.180
-X-SA-Exim-Rcpt-To: sbates@raithlin.com, kbusch@kernel.org, sagi@grimberg.me, dan.j.williams@intel.com, bhelgaas@google.com, axboe@kernel.dk, linux-rdma@vger.kernel.org, linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, hch@lst.de, jgg@ziepe.ca
-X-SA-Exim-Mail-From: logang@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE autolearn=ham autolearn_force=no version=3.4.2
-Subject: Re: [RFC PATCH 00/28] Removing struct page from P2PDMA
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2019-06-27 12:32 a.m., Jason Gunthorpe wrote:
-> On Wed, Jun 26, 2019 at 03:18:07PM -0600, Logan Gunthorpe wrote:
->>> I don't think we should make drives do that. What if it got CMB memory
->>> on some other device?
->>
->> Huh? A driver submitting P2P requests finds appropriate memory to use
->> based on the DMA device that will be doing the mapping. It *has* to. It
->> doesn't necessarily have control over which P2P provider it might find
->> (ie. it may get CMB memory from a random NVMe device), but it easily
->> knows the NVMe device it got the CMB memory for. Look at the existing
->> code in the nvme target.
+On Thu, 2019-06-27 at 15:44 +0000, Sage Weil wrote:
+> On Thu, 27 Jun 2019, Jeff Layton wrote:
+> > On Thu, 2019-06-27 at 14:51 +0100, Luis Henriques wrote:
+> > > Having granularity set to 1us results in having inode timestamps with a
+> > > accurancy different from the fuse client (i.e. atime, ctime and mtime will
+> > > always end with '000').  This patch normalizes this behaviour and sets the
+> > > granularity to 1.
+> > > 
+> > > Signed-off-by: Luis Henriques <lhenriques@suse.com>
+> > > ---
+> > >  fs/ceph/super.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > Hi!
+> > > 
+> > > As far as I could see there are no other side-effects of changing
+> > > s_time_gran but I'm really not sure why it was initially set to 1000 in
+> > > the first place so I may be missing something.
+> > > 
+> > > diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+> > > index d57fa60dcd43..35dd75bc9cd0 100644
+> > > --- a/fs/ceph/super.c
+> > > +++ b/fs/ceph/super.c
+> > > @@ -980,7 +980,7 @@ static int ceph_set_super(struct super_block *s, void *data)
+> > >     s->s_d_op = &ceph_dentry_ops;
+> > >     s->s_export_op = &ceph_export_ops;
+> > >  
+> > > -   s->s_time_gran = 1000;  /* 1000 ns == 1 us */
+> > > +   s->s_time_gran = 1;
+> > >  
+> > >     ret = set_anon_super(s, NULL);  /* what is that second arg for? */
+> > >     if (ret != 0)
+> > 
+> > 
+> > Looks like it was set that way since the client code was originally
+> > merged. Was this an earlier limitation of ceph that is no longer
+> > applicable?
+> > 
+> > In any case, I see no need at all to keep this at 1000, so:
 > 
-> No, this all thinking about things from the CMB perspective. With CMB
-> you don't care about the BAR location because it is just a temporary
-> buffer. That is a unique use model.
+> As long as the encoded on-write time value is at ns resolution, I 
+> agree!  No recollection of why I did this :(
 > 
-> Every other case has data residing in BAR memory that can really only
-> reside in that one place (ie on a GPU/FPGA DRAM or something). When an IO
-> against that is run it should succeed, even if that means bounce
-> buffering the IO - as the user has really asked for this transfer to
-> happen.
-> 
-> We certainly don't get to generally pick where the data resides before
-> starting the IO, that luxury is only for CMB.
+> Reviewed-by: Sage Weil <sage@redhat.com>
 
-I disagree. If we we're going to implement a "bounce" we'd probably want
-to do it in two DMA requests. So the GPU/FPGA driver would first decide
-whether it can do it P2P directly and, if it can't, would want to submit
-a DMA request copy the data to host memory and then submit an IO
-normally to the data's final destination.
+Good enough for me. I went ahead and merged this into the testing
+branch. Assuming nothing breaks, this should make v5.3.
 
-I think it would be a larger layering violation to have the NVMe driver
-(for example) memcpy data off a GPU's bar during a dma_map step to
-support this bouncing. And it's even crazier to expect a DMA transfer to
-be setup in the map step.
+Thanks,
+-- 
+Jeff Layton <jlayton@kernel.org>
 
-Logan
