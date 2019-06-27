@@ -2,84 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8EC3958938
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 19:47:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 831625893A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 19:47:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727309AbfF0Rq5 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 27 Jun 2019 13:46:57 -0400
-Received: from relay12.mail.gandi.net ([217.70.178.232]:50743 "EHLO
-        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727438AbfF0Rqy (ORCPT
+        id S1727464AbfF0RrE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 13:47:04 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:42672 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727058AbfF0Rq4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 13:46:54 -0400
-Received: from xps13 (unknown [91.224.148.103])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 5B41B20000A;
-        Thu, 27 Jun 2019 17:46:47 +0000 (UTC)
-Date:   Thu, 27 Jun 2019 19:46:45 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Fuqian Huang <huangfq.daxian@gmail.com>
-Cc:     Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 35/87] mtd: nand: replace kmalloc and memset with
- kzalloc in nand_bch.c
-Message-ID: <20190627194645.3d0af6b8@xps13>
-In-Reply-To: <20190627173906.3675-1-huangfq.daxian@gmail.com>
-References: <20190627173906.3675-1-huangfq.daxian@gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+        Thu, 27 Jun 2019 13:46:56 -0400
+Received: by mail-pl1-f195.google.com with SMTP id ay6so1669633plb.9;
+        Thu, 27 Jun 2019 10:46:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=3wa5l7pG8nLarObGGKN3KC/Gb1Kl6rdRUespqtYtHG8=;
+        b=fyt47It0FsoAa43d3HHQUuYgnPjg0K6miz356RanzK/2I24lD7i7WNXbVmjt/A5n2Z
+         t4Y0nyxSStJeQDCRUGjyM7xaQw8H+ZGJwhvLD/b4r9KBzr1LAEbR69QADE0K+/VYT+k/
+         yDUPkxZIj2zmuU+rSHUWiiRi59L9CfbEqqr7hibtaJ4ar8+HDPLuthKg5A5gg17fcOlS
+         tHic8COMI65R5N7PZbUto8u21yhxpM2/kLgR79pAYvwhioaMNWG/K0ZaWySYuGiwkN2t
+         bNB2S+8lDR4cOKS5LcTbSvtQaKvnwGliOwkU63oX753qKTHHIjTpi32zruFBsxoFBD8H
+         qHKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=3wa5l7pG8nLarObGGKN3KC/Gb1Kl6rdRUespqtYtHG8=;
+        b=fcjOTlQekj4aAmkQs8R7zAJbNyZSiWgmsDJV0P/2OLgFlvRlHz1F0WZbAQFLwmBoJk
+         0RlmMbxmXbygzn6o1F05qg3kWKPD6EfPu2COmCrjIyMW8pkKSsfuQgLXbO2lsBZriX41
+         xJFKYLdpk39K2CmXezBmAHN7eDEIpmOCrzFsuJzl8qEycZyBgjZJpBp4dHNBXYXypbFV
+         XR8U8gz4nipzSujcdWyVw4YNGXNpHgCkeGnmPh2nbJR9jrK7JkQipZjD0c7vVbbRnd/u
+         MzHdvb4ba/OmZvjxv5wYQIatZghgKgR8PIpLBBkC/jL+kIqGCL6h0N5NlOhlQh2cSfFM
+         uiMg==
+X-Gm-Message-State: APjAAAXfbJBKamHDDD1WzUlxFu4yaG94ujhDTXd3AwLcnrsL3cqfQOWN
+        BHXcDcyiErXpRPadSD+q37k=
+X-Google-Smtp-Source: APXvYqxXu+B9kCvR5mIxJJI6LdGLiS/TAYqKF49tPPw1HLFdZI9/AshW4sZ39kReUVjuMpv2Uz4icQ==
+X-Received: by 2002:a17:902:b20d:: with SMTP id t13mr5748282plr.229.1561657616140;
+        Thu, 27 Jun 2019 10:46:56 -0700 (PDT)
+Received: from hfq-skylake.ipads-lab.se.sjtu.edu.cn ([202.120.40.82])
+        by smtp.googlemail.com with ESMTPSA id o13sm9559352pje.28.2019.06.27.10.46.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 27 Jun 2019 10:46:55 -0700 (PDT)
+From:   Fuqian Huang <huangfq.daxian@gmail.com>
+Cc:     Fuqian Huang <huangfq.daxian@gmail.com>,
+        Guo-Fu Tseng <cooldavid@cooldavid.org>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 74/87] ethernet: jme.c: remove memset after dma_alloc_coherent
+Date:   Fri, 28 Jun 2019 01:46:49 +0800
+Message-Id: <20190627174649.6580-1-huangfq.daxian@gmail.com>
+X-Mailer: git-send-email 2.11.0
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Fuqian,
+In commit af7ddd8a627c
+("Merge tag 'dma-mapping-4.21' of git://git.infradead.org/users/hch/dma-mapping"),
+dma_alloc_coherent has already zeroed the memory.
+So memset is not needed.
 
-Fuqian Huang <huangfq.daxian@gmail.com> wrote on Fri, 28 Jun 2019
-01:39:05 +0800:
+Signed-off-by: Fuqian Huang <huangfq.daxian@gmail.com>
+---
+ drivers/net/ethernet/jme.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-> kmalloc + memset(0) -> kzalloc
-> 
-> Signed-off-by: Fuqian Huang <huangfq.daxian@gmail.com>
-> ---
->  drivers/mtd/nand/raw/nand_bch.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/mtd/nand/raw/nand_bch.c b/drivers/mtd/nand/raw/nand_bch.c
-> index 55aa4c1cd414..17527310c3a1 100644
-> --- a/drivers/mtd/nand/raw/nand_bch.c
-> +++ b/drivers/mtd/nand/raw/nand_bch.c
-> @@ -170,7 +170,7 @@ struct nand_bch_control *nand_bch_init(struct mtd_info *mtd)
->  		goto fail;
->  	}
->  
-> -	nbc->eccmask = kmalloc(eccbytes, GFP_KERNEL);
-> +	nbc->eccmask = kzalloc(eccbytes, GFP_KERNEL);
->  	nbc->errloc = kmalloc_array(t, sizeof(*nbc->errloc), GFP_KERNEL);
->  	if (!nbc->eccmask || !nbc->errloc)
->  		goto fail;
-> @@ -182,7 +182,6 @@ struct nand_bch_control *nand_bch_init(struct mtd_info *mtd)
->  		goto fail;
->  
->  	memset(erased_page, 0xff, eccsize);
-> -	memset(nbc->eccmask, 0, eccbytes);
->  	encode_bch(nbc->bch, erased_page, eccsize, nbc->eccmask);
->  	kfree(erased_page);
->  
+diff --git a/drivers/net/ethernet/jme.c b/drivers/net/ethernet/jme.c
+index 76b7b7b85e35..0b668357db4d 100644
+--- a/drivers/net/ethernet/jme.c
++++ b/drivers/net/ethernet/jme.c
+@@ -582,11 +582,6 @@ jme_setup_tx_resources(struct jme_adapter *jme)
+ 	if (unlikely(!(txring->bufinf)))
+ 		goto err_free_txring;
+ 
+-	/*
+-	 * Initialize Transmit Descriptors
+-	 */
+-	memset(txring->alloc, 0, TX_RING_ALLOC_SIZE(jme->tx_ring_size));
+-
+ 	return 0;
+ 
+ err_free_txring:
+-- 
+2.11.0
 
-Are there any guidelines on this topic that I missed? Otherwise I don't
-think this is important to change.
-
-
-Thanks,
-Miquèl
