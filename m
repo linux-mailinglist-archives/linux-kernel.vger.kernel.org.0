@@ -2,58 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E63E581BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 13:39:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61CAE581AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 13:36:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726750AbfF0LjI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 07:39:08 -0400
-Received: from muru.com ([72.249.23.125]:53712 "EHLO muru.com"
+        id S1726663AbfF0Lgq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 07:36:46 -0400
+Received: from mga04.intel.com ([192.55.52.120]:32844 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726375AbfF0LjI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 07:39:08 -0400
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 43780805C;
-        Thu, 27 Jun 2019 11:39:30 +0000 (UTC)
-Date:   Thu, 27 Jun 2019 04:39:04 -0700
-From:   Tony Lindgren <tony@atomide.com>
-To:     Faiz Abbas <faiz_abbas@ti.com>
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-omap@vger.kernel.org, mark.rutland@arm.com,
-        robh+dt@kernel.org, robertcnelson@gmail.com
-Subject: Re: [PATCH] ARM: dts: am57xx: Disable voltage switching for SD card
-Message-ID: <20190627113904.GI5447@atomide.com>
-References: <20190619102454.5097-1-faiz_abbas@ti.com>
+        id S1726429AbfF0Lgp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 07:36:45 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jun 2019 04:36:45 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,423,1557212400"; 
+   d="scan'208";a="183430789"
+Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.150])
+  by fmsmga001.fm.intel.com with ESMTP; 27 Jun 2019 04:36:37 -0700
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kbuild@vger.kernel.org
+Cc:     Sam Ravnborg <sam@ravnborg.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Tony Luck <tony.luck@intel.com>, linux-doc@vger.kernel.org,
+        John Fastabend <john.fastabend@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        linux-riscv@lists.infradead.org,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        xdp-newbies@vger.kernel.org, Anton Vorontsov <anton@enomsg.org>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Colin Cross <ccross@android.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Kees Cook <keescook@chromium.org>,
+        Alexei Starovoitov <ast@kernel.org>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH v2 0/4] Compile-test UAPI and kernel headers
+In-Reply-To: <20190627014617.600-1-yamada.masahiro@socionext.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20190627014617.600-1-yamada.masahiro@socionext.com>
+Date:   Thu, 27 Jun 2019 14:39:24 +0300
+Message-ID: <87y31np89f.fsf@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190619102454.5097-1-faiz_abbas@ti.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Faiz Abbas <faiz_abbas@ti.com> [190619 03:25]:
-> If UHS speed modes are enabled, a compatible SD card switches down to
-> 1.8V during enumeration. If after this a software reboot/crash takes
-> place and on-chip ROM tries to enumerate the SD card, the difference in
-> IO voltages (host @ 3.3V and card @ 1.8V) may end up damaging the card.
-> 
-> The fix for this is to have support for power cycling the card in
-> hardware (with a PORz/soft-reset line causing a power cycle of the
-> card). Because the beaglebone X15 (rev A,B and C), am57xx-idks and
-> am57xx-evms don't have this capability, disable voltage switching for
-> these boards.
-> 
-> The major effect of this is that the maximum supported speed
-> mode is now high speed(50 MHz) down from SDR104(200 MHz).
-> 
-> commit 88a748419b84 ("ARM: dts: am57xx-idk: Remove support for voltage
-> switching for SD card") did this only for idk boards. Do it for all
-> affected boards.
+On Thu, 27 Jun 2019, Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
+> 1/4: reworked v2.
+>
+> 2/4: fix a flaw I noticed when I was working on this series
+>
+> 3/4: maybe useful for 4/4 and in some other places
+>
+> 4/4: v2. compile as many headers as possible.
+>
+>
+> Changes in v2:
+>  - Add CONFIG_CPU_{BIG,LITTLE}_ENDIAN guard to avoid build error
+>  - Use 'header-test-' instead of 'no-header-test'
+>  - Avoid weird 'find' warning when cleaning
+>   - New patch
+>   - New patch
+>   - Add everything to test coverage, and exclude broken ones
+>   - Rename 'Makefile' to 'Kbuild'
+>   - Add CONFIG_KERNEL_HEADER_TEST option
+>
+> Masahiro Yamada (4):
+>   kbuild: compile-test UAPI headers to ensure they are self-contained
+>   kbuild: do not create wrappers for header-test-y
+>   kbuild: support header-test-pattern-y
+>   kbuild: compile-test kernel headers to ensure they are self-contained
 
-Thanks applying into fixes.
+[responding here because I didn't receive the actual patch]
 
-Regards,
+This looks like it's doing what it's supposed to, but I ran into a bunch
+of build fails with CONFIG_OF=n. Sent a fix to one [1], but stopped at
+the next. Looks like you'll have to exclude more. And I'm pretty sure
+we'll uncover more configurations where this will fail.
 
-Tony
+But I do applaud the goal, and I'm committed to making all include/drm
+headers self-contained. I wouldn't block this based on the issues, it's
+pretty much the only way to expose them and get them fixed/excluded, and
+it's behind a config knob after all.
+
+With the caveat that I didn't finish the build, but OTOH tested the
+rainy day scenario and had the patch find issues it's meant to find:
+
+Tested-by: Jani Nikula <jani.nikula@intel.com>
+
+
+[1] http://patchwork.freedesktop.org/patch/msgid/20190627110103.7539-1-jani.nikula@intel.com
+
+>
+>  .gitignore                         |    1 -
+>  Documentation/dontdiff             |    1 -
+>  Documentation/kbuild/makefiles.txt |   13 +-
+>  Makefile                           |    4 +-
+>  include/Kbuild                     | 1134 ++++++++++++++++++++++++++++
+>  init/Kconfig                       |   22 +
+>  scripts/Makefile.build             |   10 +-
+>  scripts/Makefile.lib               |   12 +-
+>  scripts/cc-system-headers.sh       |    8 +
+>  usr/.gitignore                     |    1 -
+>  usr/Makefile                       |    2 +
+>  usr/include/.gitignore             |    3 +
+>  usr/include/Makefile               |  133 ++++
+>  13 files changed, 1331 insertions(+), 13 deletions(-)
+>  create mode 100644 include/Kbuild
+>  create mode 100755 scripts/cc-system-headers.sh
+>  create mode 100644 usr/include/.gitignore
+>  create mode 100644 usr/include/Makefile
+
+-- 
+Jani Nikula, Intel Open Source Graphics Center
