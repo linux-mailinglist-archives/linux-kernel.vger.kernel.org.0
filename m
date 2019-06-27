@@ -2,100 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DDF557988
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 04:34:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B6265797D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 04:31:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727309AbfF0CeF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 22:34:05 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:36909 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727267AbfF0CeC (ORCPT
+        id S1727163AbfF0CbL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 22:31:11 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:34866 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726786AbfF0CbK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 22:34:02 -0400
-Received: by mail-lj1-f195.google.com with SMTP id 131so655175ljf.4
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 19:34:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=YfeVGiINGvcAL0ylcIiHvWlPZAP7LI/BWFr7j7u+Ma8=;
-        b=sAfqDvGMAcNLiFr36fLugkcYKTHTYqWGqR+DQH4MoHxYQay0f3uqvRcAG5APx+IHyk
-         w1xSZLlLM0yaMsIrS7gfZM3FsTGTYVNyKaUMpnMspaRbpwpSc1P3rftfh11sTf3ko0JR
-         dy4up0doEZpK5BGyCa4P4xssnDTwhbSR0KRdwJromVUxKLK/x3CCof7M3jKz4AHdKZfj
-         YokdCmbzbQKUMLm2w6xj3hMiAYn8aw0zjSnQ2JxSM7QWpqZWQmUS0Ulqe8bV3f8mLQkL
-         J2Wlz842sGj602Acn+0iV2uDg1jmTQ6XJ7Re60v2onqcugRBmiSGLpIVBlfXd3eWi0TF
-         h+0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=YfeVGiINGvcAL0ylcIiHvWlPZAP7LI/BWFr7j7u+Ma8=;
-        b=siX9NY2igsURVZENt6c8tTckUiCVOUftD9G5eeAcYNS8R2lfnLwg3b/VzOQkQCxR/R
-         lUwOws+wTmhjVZLLqQBGfHNGJwlwLPfFxShMsu81MPHHD23KuBnSKbl1domRvZ4zksv8
-         8lRbfuK5jBTIHuDwPCVTvjkVVCjGjhupwGpzGez8e1yz6PNpJQlLsmCFbur8magQMVrG
-         DweVS4GZVtGc+E94x/S1KGV/MFWMKtvhkhhJxqMrIWkvQOzLl4t+HF/ld0zKEpzkYvlT
-         Hw9wTO1eDBAqtfVp3McFqHw8dfLCBUnyQmcfgDmjawDDns7UWkKrEu9EoOTw2XDKByFF
-         yXFA==
-X-Gm-Message-State: APjAAAUcDv5Z9qVZvvmMJl7L7p0QrO0UXCix2mFXmuwsURneQ4zJcW52
-        e1DiP583CDNWsyK53s3NQammMQ==
-X-Google-Smtp-Source: APXvYqwZ7Y+xuY7WVTjN9K0TZJUIVEdEoWWFv6u/0pgw4bKbyu+FElNlkWjxmys8iw+aEojM9sjLvQ==
-X-Received: by 2002:a2e:5c88:: with SMTP id q130mr913537ljb.176.1561602840483;
-        Wed, 26 Jun 2019 19:34:00 -0700 (PDT)
-Received: from localhost (h85-30-9-151.cust.a3fiber.se. [85.30.9.151])
-        by smtp.gmail.com with ESMTPSA id 25sm106720ljn.62.2019.06.26.19.33.59
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 26 Jun 2019 19:33:59 -0700 (PDT)
-Date:   Wed, 26 Jun 2019 19:28:42 -0700
-From:   Olof Johansson <olof@lixom.net>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, arm@kernel.org,
-        Kukjin Kim <kgene@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL 1/4] ARM: defconfig: Samsung/Exynos for v5.3
-Message-ID: <20190627022842.k4gccn6enqd75ufs@localhost>
-References: <20190625193451.7696-1-krzk@kernel.org>
- <CAJKOXPeCQZPsF1kGKmhSWgxsWSsb4cre6mhS=n=kJbH63LjmUQ@mail.gmail.com>
+        Wed, 26 Jun 2019 22:31:10 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5R2SnvF047884;
+        Thu, 27 Jun 2019 02:31:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2018-07-02;
+ bh=zg0x7Svr8qwxFsMB29+OQ71V6+KWvwCETWrr3FsL1Xo=;
+ b=IR6nEpA4HZ9hf3qKC35UquLxiyBi086uFU3YfNrgZ5gqSIovGkLeS9BSzEvsSv8+Csu4
+ h87iZYTuubDYCymo1VDqpBBCTEzbTcXEIUPXczsxj998FlLMnzvXYrsrHsCdtrQfQGrw
+ /Sg/Nh4Sj8gw3NhLgoypi7K/bR3+ughrJ9Os5wnSFxXN0x49OJEyWxQcXqf00RROwsN+
+ 1mTnO2PlBIKrT4osKtDm+WJnb5mQ8cHLauWV1BWJDV1Qi9KeAYJuYC/j6WcAcOWM3UqT
+ OyjVU1dDLZM6Zd0Af5HdFxlxQNgIbjvoLPfj8OxktmmaK5IXxdFHwDZdsYSC5HufEe3d XQ== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 2t9brtdk4t-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 27 Jun 2019 02:31:02 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5R2RiWP101022;
+        Thu, 27 Jun 2019 02:29:02 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 2tat7d4phw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 27 Jun 2019 02:29:02 +0000
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5R2T1OV001650;
+        Thu, 27 Jun 2019 02:29:01 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 26 Jun 2019 19:29:00 -0700
+To:     Adrian Hunter <adrian.hunter@intel.com>
+Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>
+Subject: Re: [PATCH] scsi: ufshdc-pci: Add Intel PCI Ids for EHL
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20190621121942.25769-1-adrian.hunter@intel.com>
+Date:   Wed, 26 Jun 2019 22:28:58 -0400
+In-Reply-To: <20190621121942.25769-1-adrian.hunter@intel.com> (Adrian Hunter's
+        message of "Fri, 21 Jun 2019 15:19:42 +0300")
+Message-ID: <yq1ftnvlq1h.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJKOXPeCQZPsF1kGKmhSWgxsWSsb4cre6mhS=n=kJbH63LjmUQ@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9300 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=805
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1906270028
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9300 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=872 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906270029
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 26, 2019 at 11:14:04AM +0200, Krzysztof Kozlowski wrote:
-> On Tue, 25 Jun 2019 at 21:35, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> >
-> > The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
-> >
-> >   Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
-> >
-> > are available in the Git repository at:
-> >
-> >   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-defconfig-5.3
-> >
-> > for you to fetch changes up to dd50a69b5697532666023766688c6ea642e5a443:
-> >
-> >   ARM: exynos_defconfig: Enable Panfrost and Lima drivers (2019-06-19 19:23:35 +0200)
-> >
-> > ----------------------------------------------------------------
-> > Samsung defconfig changes for v5.3
-> >
-> > 1. Trim several configs with savedefconfig.
-> > 2. Enable Lima and Panfrost drivers for Mali GPU.
-> 
-> Hi,
-> 
-> I forgot to mention possible merge conflicts (although Stephen Cc-ed
-> you on mails). Resolution is to accept both sides:
-> 
 
-Some of this could have been avoided by basing your branch on our fixes, but
-not a big deal in this case. Thanks for the heads up!
+Adrian,
 
+> Add more Intel PCI Ids.
 
--Olof
+Applied to 5.3/scsi-queue, thanks!
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
