@@ -2,113 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 682EA586E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 18:22:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7518586EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 18:22:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726520AbfF0QWn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 12:22:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50284 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726315AbfF0QWn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 12:22:43 -0400
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4B7A32080C;
-        Thu, 27 Jun 2019 16:22:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561652562;
-        bh=XANE2VhVUGz0tCaYce+E3tgK+iSMPwffhn6oVDGjCZw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=LVg0EcdyXbOBXgTkd2XcOQaBxPyrPhiaqbNwgyqfwF/QwNgvl6UCKJ50T0o/RjiC4
-         sDeBKd+ZeEM/5/qPs4soGGqNMWpA0kr7j5WkTng2+O1OeDYYMcO0fMrlHY7/x17Kli
-         kVFw/fJcFWHDzB35wrdWFUO0CZj8yp0b4LBvKvtA=
-Date:   Thu, 27 Jun 2019 17:22:37 +0100
-From:   Will Deacon <will@kernel.org>
-To:     Ganapatrao Kulkarni <gkulkarni@marvell.com>
-Cc:     "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "Will.Deacon@arm.com" <Will.Deacon@arm.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "jnair@caviumnetworks.com" <jnair@caviumnetworks.com>,
-        "Robert.Richter@cavium.com" <Robert.Richter@cavium.com>,
-        "Jan.Glauber@cavium.com" <Jan.Glauber@cavium.com>,
-        "gklkml16@gmail.com" <gklkml16@gmail.com>
-Subject: Re: [PATCH 1/2] Documentation: perf: Update documentation for
- ThunderX2 PMU uncore driver
-Message-ID: <20190627162236.y3wb5sle6yjbwtzm@willie-the-truck>
-References: <1560534144-13896-1-git-send-email-gkulkarni@marvell.com>
- <1560534144-13896-2-git-send-email-gkulkarni@marvell.com>
- <20190627100118.nfveq4oktomqybtx@willie-the-truck>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190627100118.nfveq4oktomqybtx@willie-the-truck>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S1726579AbfF0QWz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 12:22:55 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:55864 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726315AbfF0QWy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 12:22:54 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 37D7D14DB52E6;
+        Thu, 27 Jun 2019 09:22:54 -0700 (PDT)
+Date:   Thu, 27 Jun 2019 09:22:53 -0700 (PDT)
+Message-Id: <20190627.092253.1878691006683087825.davem@davemloft.net>
+To:     skhan@linuxfoundation.org
+Cc:     c0d1n61at3@gmail.com,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [Linux-kernel-mentees][PATCH v2] packet: Fix undefined
+ behavior in bit shift
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <7f6f44b2-3fe4-85f6-df3c-ad59f2eadba2@linuxfoundation.org>
+References: <20190627010137.5612-1-c0d1n61at3@gmail.com>
+        <20190627032532.18374-2-c0d1n61at3@gmail.com>
+        <7f6f44b2-3fe4-85f6-df3c-ad59f2eadba2@linuxfoundation.org>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 27 Jun 2019 09:22:54 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 27, 2019 at 11:01:18AM +0100, Will Deacon wrote:
-> On Fri, Jun 14, 2019 at 05:42:45PM +0000, Ganapatrao Kulkarni wrote:
-> > From: Ganapatrao Kulkarni <ganapatrao.kulkarni@marvell.com>
-> > 
-> > Add documentation for Cavium Coherent Processor Interconnect (CCPI2) PMU.
-> > 
-> > Signed-off-by: Ganapatrao Kulkarni <gkulkarni@marvell.com>
-> > ---
-> >  Documentation/perf/thunderx2-pmu.txt | 20 +++++++++++---------
-> >  1 file changed, 11 insertions(+), 9 deletions(-)
-> > 
-> > diff --git a/Documentation/perf/thunderx2-pmu.txt b/Documentation/perf/thunderx2-pmu.txt
-> > index dffc57143736..62243230abc3 100644
-> > --- a/Documentation/perf/thunderx2-pmu.txt
-> > +++ b/Documentation/perf/thunderx2-pmu.txt
-> > @@ -2,24 +2,26 @@ Cavium ThunderX2 SoC Performance Monitoring Unit (PMU UNCORE)
-> >  =============================================================
-> >  
-> >  The ThunderX2 SoC PMU consists of independent, system-wide, per-socket
-> > -PMUs such as the Level 3 Cache (L3C) and DDR4 Memory Controller (DMC).
-> > +PMUs such as the Level 3 Cache (L3C), DDR4 Memory Controller (DMC) and
-> > +Cavium Coherent Processor Interconnect (CCPI2).
-> >  
-> >  The DMC has 8 interleaved channels and the L3C has 16 interleaved tiles.
-> >  Events are counted for the default channel (i.e. channel 0) and prorated
-> >  to the total number of channels/tiles.
-> >  
-> > -The DMC and L3C support up to 4 counters. Counters are independently
-> > -programmable and can be started and stopped individually. Each counter
-> > -can be set to a different event. Counters are 32-bit and do not support
-> > -an overflow interrupt; they are read every 2 seconds.
-> > +The DMC, L3C support up to 4 counters and CCPI2 support up to 8 counters.
-> 
-> The DMC and L3C support up to 4 counters, while the CCPI2 supports up to 8
-> counters.
-> 
-> > +Counters are independently programmable and can be started and stopped
-> > +individually. Each counter can be set to a different event. DMC and L3C
-> > +Counters are 32-bit and do not support an overflow interrupt; they are read
-> 
-> Counters -> counters
-> 
-> > +every 2 seconds. CCPI2 counters are 64-bit.
-> 
-> Assuming CCPI2 also doesn't support an overflow interrupt, I'd reword these
-> two sentences as:
-> 
->   None of the counters support an overflow interrupt and therefore sampling
->   events are unsupported. The DMC and L3C counters are 32-bit and read every
->   2 seconds. The CCPI2 counters are 64-bit and assumed not to overflow in
->   normal operation.
+From: Shuah Khan <skhan@linuxfoundation.org>
+Date: Wed, 26 Jun 2019 21:32:52 -0600
 
-Mark reminded me that these are system PMUs and therefore sampling is
-unsupported irrespective of the presence of an overflow interrupt, so you
-can drop that part from the text.
+> On 6/26/19 9:25 PM, Jiunn Chang wrote:
+>> Shifting signed 32-bit value by 31 bits is undefined.  Changing most
+>> significant bit to unsigned.
+>> Changes included in v2:
+>>    - use subsystem specific subject lines
+>>    - CC required mailing lists
+>> 
+> 
+> These version change lines don't belong in the change log.
 
-Sorry for the confusion,
-
-Will
+For networking changes I actually like the change lines to be in the
+commit log.  So please don't stray people this way, thanks.
