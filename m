@@ -2,55 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6F8758EBD
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 01:47:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F3D458EBF
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 01:48:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726730AbfF0Xry (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 19:47:54 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:47863 "EHLO
+        id S1726809AbfF0Xsi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 19:48:38 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:44995 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726567AbfF0Xry (ORCPT
+        with ESMTP id S1726567AbfF0Xsh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 19:47:54 -0400
+        Thu, 27 Jun 2019 19:48:37 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5RNlZsV503085
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5RNmHVm503360
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Thu, 27 Jun 2019 16:47:36 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5RNlZsV503085
+        Thu, 27 Jun 2019 16:48:17 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5RNmHVm503360
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019061801; t=1561679256;
-        bh=dHC6ig0/remYSbb17ANAbzepvA3ymaeJEI2Ue7UCDc8=;
+        s=2019061801; t=1561679298;
+        bh=r4TIRP/RJYPjwamCMfyx60Lm6LGclzml/cVv1FYCkdc=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=e3R8zpyyl8tZZnK3tY7mIdvSaGtolUGKVr0PNKqlUtG550YGfkluyx3btLCFpNred
-         axcgu/gd6oa3GjVsKfkSwZF3mNJ8AKcKwzjDiVU7V4UsKC0GaDRQ70j2JwNzPHRRlj
-         U5/HILVHjvHmw4o08dN0bvsZxz8MpiG/mvQl3To8GIGxlPxi3IDDmfWcpe2f8Aq/SU
-         HAjWV4eSxB/fuUFA8xxyaScKT9F1bbBknO2QZrm+UacwxXOF9O7MNxKwA4nzS558qu
-         15SLq1dj+2cM36cuVXExwd6s982jqfL4qeKFhVx3ZX8JuwnfRZyoXcrZNHGbT6mnOo
-         8/GCNzjKivHBA==
+        b=koGQ4EWElXr82CNezO6RrQYCNEty5tocqmcXclAu+mNS8J7WQmtupmCkxxYav/0p9
+         iNr5rcppUrAK7RNIpvwek6jH4aGVV4xpIhWw2XREDflzQbe223G4lz2GWbmqn7N05S
+         zTLBXLjEowuYYeaKUSCD3brMV0bAnAFpGk2tIBhmfBNeNsLsL4e41WOyQHO7UAeYMr
+         4DcggE/o6CPx17Th0LCaPWEfNoQiRddg9YsuTFikuDZAjqB/UWoIl5azWle3HcLaz5
+         xxU3tt0r66AEVtnTeO0qOky3qwdvmFmcoMJo/HyYWfEGcF5rPsaAEYPeWjeyA73QZt
+         W5ZoaNFos3ZWw==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5RNlZ9Z503082;
-        Thu, 27 Jun 2019 16:47:35 -0700
-Date:   Thu, 27 Jun 2019 16:47:35 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5RNmHk4503357;
+        Thu, 27 Jun 2019 16:48:17 -0700
+Date:   Thu, 27 Jun 2019 16:48:17 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
-Message-ID: <tip-9e16e4933e48819a259b8967e72e5765349953b1@git.kernel.org>
-Cc:     ricardo.neri-calderon@linux.intel.com,
-        linux-kernel@vger.kernel.org, peterz@infradead.org,
-        ashok.raj@intel.com, hpa@zytor.com, mingo@kernel.org,
-        ravi.v.shankar@intel.com, eranian@google.com, andi.kleen@intel.com,
-        tglx@linutronix.de, Suravee.Suthikulpanit@amd.com
-Reply-To: peterz@infradead.org, ashok.raj@intel.com,
-          linux-kernel@vger.kernel.org,
-          ricardo.neri-calderon@linux.intel.com,
-          Suravee.Suthikulpanit@amd.com, andi.kleen@intel.com,
-          tglx@linutronix.de, eranian@google.com, ravi.v.shankar@intel.com,
-          mingo@kernel.org, hpa@zytor.com
-In-Reply-To: <20190623132435.911652981@linutronix.de>
-References: <20190623132435.911652981@linutronix.de>
+Message-ID: <tip-af5a1dadf3fcf673906af1a1129b2b7528494ee5@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, eranian@google.com,
+        Suravee.Suthikulpanit@amd.com, tglx@linutronix.de,
+        ashok.raj@intel.com, mingo@kernel.org, ravi.v.shankar@intel.com,
+        peterz@infradead.org, hpa@zytor.com, andi.kleen@intel.com,
+        ricardo.neri-calderon@linux.intel.com
+Reply-To: hpa@zytor.com, ricardo.neri-calderon@linux.intel.com,
+          ashok.raj@intel.com, andi.kleen@intel.com, mingo@kernel.org,
+          ravi.v.shankar@intel.com, eranian@google.com,
+          linux-kernel@vger.kernel.org, peterz@infradead.org,
+          Suravee.Suthikulpanit@amd.com, tglx@linutronix.de
+In-Reply-To: <20190623132436.002758910@linutronix.de>
+References: <20190623132436.002758910@linutronix.de>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/timers] x86/hpet: Add mode information to struct
- hpet_channel
-Git-Commit-ID: 9e16e4933e48819a259b8967e72e5765349953b1
+Subject: [tip:x86/timers] x86/hpet: Add function to select a /dev/hpet
+ channel
+Git-Commit-ID: af5a1dadf3fcf673906af1a1129b2b7528494ee5
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -68,25 +67,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  9e16e4933e48819a259b8967e72e5765349953b1
-Gitweb:     https://git.kernel.org/tip/9e16e4933e48819a259b8967e72e5765349953b1
+Commit-ID:  af5a1dadf3fcf673906af1a1129b2b7528494ee5
+Gitweb:     https://git.kernel.org/tip/af5a1dadf3fcf673906af1a1129b2b7528494ee5
 Author:     Thomas Gleixner <tglx@linutronix.de>
-AuthorDate: Sun, 23 Jun 2019 15:24:00 +0200
+AuthorDate: Sun, 23 Jun 2019 15:24:01 +0200
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Fri, 28 Jun 2019 00:57:23 +0200
 
-x86/hpet: Add mode information to struct hpet_channel
+x86/hpet: Add function to select a /dev/hpet channel
 
-The usage of the individual HPET channels is not tracked in a central
-place. The information is scattered in different data structures. Also the
-HPET reservation in the HPET character device is split out into several
-places which makes the code hard to follow.
+If CONFIG_HPET=y is enabled the x86 specific HPET code should reserve at
+least one channel for the /dev/hpet character device, so that not all
+channels are absorbed for per CPU clockevent devices.
 
-Assigning a mode to the channel allows to consolidate the reservation code
-and paves the way for further simplifications.
+Create a function to assign HPET_MODE_DEVICE so the rework of the
+clockevents allocation code can utilize the mode information instead of
+reducing the number of evaluated channels by #ifdef hackery.
 
-As a first step set the mode of the legacy channels when the HPET is in
-legacy mode.
+The function is not yet used, but provided as a separate patch for ease of
+review. It will be used when the rework of the clockevent selection takes
+place.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Ingo Molnar <mingo@kernel.org>
@@ -97,41 +97,39 @@ Cc: Andi Kleen <andi.kleen@intel.com>
 Cc: Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>
 Cc: Stephane Eranian <eranian@google.com>
 Cc: Ravi Shankar <ravi.v.shankar@intel.com>
-Link: https://lkml.kernel.org/r/20190623132435.911652981@linutronix.de
+Link: https://lkml.kernel.org/r/20190623132436.002758910@linutronix.de
 
 ---
- arch/x86/kernel/hpet.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ arch/x86/kernel/hpet.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
 diff --git a/arch/x86/kernel/hpet.c b/arch/x86/kernel/hpet.c
-index 8711f1fdef8f..3a8ec363d569 100644
+index 3a8ec363d569..640ff75cc523 100644
 --- a/arch/x86/kernel/hpet.c
 +++ b/arch/x86/kernel/hpet.c
-@@ -22,9 +22,17 @@ struct hpet_dev {
- 	char				name[10];
- };
+@@ -228,8 +228,25 @@ static void __init hpet_reserve_platform_timers(void)
+ 	hpet_alloc(&hd);
  
-+enum hpet_mode {
-+	HPET_MODE_UNUSED,
-+	HPET_MODE_LEGACY,
-+	HPET_MODE_CLOCKEVT,
-+	HPET_MODE_DEVICE,
-+};
+ }
 +
- struct hpet_channel {
- 	unsigned int			num;
- 	unsigned int			irq;
-+	enum hpet_mode			mode;
- 	unsigned int			boot_cfg;
- };
++static void __init hpet_select_device_channel(void)
++{
++	int i;
++
++	for (i = 0; i < hpet_base.nr_channels; i++) {
++		struct hpet_channel *hc = hpet_base.channels + i;
++
++		/* Associate the first unused channel to /dev/hpet */
++		if (hc->mode == HPET_MODE_UNUSED) {
++			hc->mode = HPET_MODE_DEVICE;
++			return;
++		}
++	}
++}
++
+ #else
+ static inline void hpet_reserve_platform_timers(void) { }
++static inline void hpet_select_device_channel(void) {}
+ #endif
  
-@@ -947,6 +955,9 @@ int __init hpet_enable(void)
- 
- 	if (id & HPET_ID_LEGSUP) {
- 		hpet_legacy_clockevent_register();
-+		hpet_base.channels[0].mode = HPET_MODE_LEGACY;
-+		if (IS_ENABLED(CONFIG_HPET_EMULATE_RTC))
-+			hpet_base.channels[1].mode = HPET_MODE_LEGACY;
- 		return 1;
- 	}
- 	return 0;
+ /* Common HPET functions */
