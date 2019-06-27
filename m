@@ -2,62 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7430258ECB
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 01:52:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98B1858ED9
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 01:56:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726660AbfF0XwI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 19:52:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36562 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726514AbfF0XwI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 19:52:08 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E247D20815;
-        Thu, 27 Jun 2019 23:52:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561679527;
-        bh=TLxkXBYcOQkQ2yiDZYNy+ckFRMqJ/xF6bF/ER5dH6oo=;
-        h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
-        b=brVVYSMICoK5hJs7dp/cs8rUY0QUpRVWtXg25ZwxXq52vfljx9TT0QgDsRoejgLlf
-         4QJuOH7kQ5OusWkYZryl5zcVBZmswpFhB4Unz5099QZkzeLozf+kVTfZJeVXqx0iIO
-         FFRAtvZJfHgfRH+t8U0NVC+bZMYFqGVF/oaItmBQ=
-Content-Type: text/plain; charset="utf-8"
+        id S1726694AbfF0X4r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 19:56:47 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:47211 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726506AbfF0X4r (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 19:56:47 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5RNqVRZ504028
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Thu, 27 Jun 2019 16:52:31 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5RNqVRZ504028
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019061801; t=1561679551;
+        bh=IoJULm3a/vW3dHXLoW/C9JQt9qoXF9dTAoa50hiV2RM=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=ktAdQ9SFfpiEoClKa+ShnDFP7UxsBid4qkJMBPpM9Rz2z1g45mBje7t9fEMWh0asq
+         VoX665BppHbxbaJNQpAjo3TlIjfUagc3XNJhgKySZ/8r2Q7D/KWl74sn7jyU9OTv0E
+         K9nI2/C+EwKWA5DAbqkOthT5d+jTuzsyILk/6LxtFPB7WiLtJsAsffqp+F/uKetqlM
+         QawwKNnLq7rsDhGudJIpp2GTlhjflYHsbwBmAWAexFqsbdVISTFHkTnKOUIzc83feH
+         6DuPRchT0IQKO5cLeRtW8nSvymm5dHzh6Ln1003MyeWnMcXLQLbh+zdShqAvv35GMR
+         fijk7L19Xv9cA==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5RNqU5j504025;
+        Thu, 27 Jun 2019 16:52:30 -0700
+Date:   Thu, 27 Jun 2019 16:52:30 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
+Message-ID: <tip-ea99110dd024d2f31bde19dda049f3fbf3816a70@git.kernel.org>
+Cc:     andi.kleen@intel.com, mingo@kernel.org, hpa@zytor.com,
+        Suravee.Suthikulpanit@amd.com, linux-kernel@vger.kernel.org,
+        ricardo.neri-calderon@linux.intel.com, tglx@linutronix.de,
+        peterz@infradead.org, ashok.raj@intel.com,
+        ravi.v.shankar@intel.com, eranian@google.com
+Reply-To: Suravee.Suthikulpanit@amd.com, linux-kernel@vger.kernel.org,
+          ricardo.neri-calderon@linux.intel.com, tglx@linutronix.de,
+          peterz@infradead.org, ashok.raj@intel.com,
+          ravi.v.shankar@intel.com, eranian@google.com, mingo@kernel.org,
+          andi.kleen@intel.com, hpa@zytor.com
+In-Reply-To: <20190623132436.552451082@linutronix.de>
+References: <20190623132436.552451082@linutronix.de>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/timers] x86/hpet: Carve out shareable parts of
+ init_one_hpet_msi_clockevent()
+Git-Commit-ID: ea99110dd024d2f31bde19dda049f3fbf3816a70
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190627221507.83942-1-nhuck@google.com>
-References: <20190627221507.83942-1-nhuck@google.com>
-To:     Nathan Huckleberry <nhuck@google.com>, fparent@baylibre.com,
-        matthias.bgg@gmail.com, mturquette@baylibre.com
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH] clk: mediatek: Fix -Wunused-const-variable
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Nathan Huckleberry <nhuck@google.com>,
-        clang-built-linux@googlegroups.com
-User-Agent: alot/0.8.1
-Date:   Thu, 27 Jun 2019 16:52:06 -0700
-Message-Id: <20190627235206.E247D20815@mail.kernel.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=0.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_12_24,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
+        DKIM_VALID_EF autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Nathan Huckleberry (2019-06-27 15:15:07)
-> Clang produces the following warning
->=20
-> drivers/clk/mediatek/clk-mt8516.c:234:27: warning: unused variable
-> 'ddrphycfg_parents' [-Wunused-const-variable] static const char * const
-> ddrphycfg_parents[] __initconst =3D {
->=20
-> This variable has never been used. Deleting it to cleanup the warning.
->=20
-> Cc: clang-built-linux@googlegroups.com
-> Link: https://github.com/ClangBuiltLinux/linux/issues/523
-> Signed-off-by: Nathan Huckleberry <nhuck@google.com>
+Commit-ID:  ea99110dd024d2f31bde19dda049f3fbf3816a70
+Gitweb:     https://git.kernel.org/tip/ea99110dd024d2f31bde19dda049f3fbf3816a70
+Author:     Thomas Gleixner <tglx@linutronix.de>
+AuthorDate: Sun, 23 Jun 2019 15:24:07 +0200
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Fri, 28 Jun 2019 00:57:26 +0200
 
-This patch has already been applied. It would be great if you could try
-applying the patch to linux-next first before sending patches to make
-sure they're still relevant.
+x86/hpet: Carve out shareable parts of init_one_hpet_msi_clockevent()
 
+To finally remove the static channel0/clockevent storage and to utilize the
+channel 0 storage in hpet_base, it's required to run time initialize the
+clockevent. The MSI clockevents already have a run time init function.
+
+Carve out the parts which can be shared between the legacy and the MSI
+implementation.
+
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Ingo Molnar <mingo@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+Cc: Ashok Raj <ashok.raj@intel.com>
+Cc: Andi Kleen <andi.kleen@intel.com>
+Cc: Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Ravi Shankar <ravi.v.shankar@intel.com>
+Link: https://lkml.kernel.org/r/20190623132436.552451082@linutronix.de
+
+---
+ arch/x86/kernel/hpet.c | 33 ++++++++++++++++++++-------------
+ 1 file changed, 20 insertions(+), 13 deletions(-)
+
+diff --git a/arch/x86/kernel/hpet.c b/arch/x86/kernel/hpet.c
+index 47eb4d36864e..80497fe5354c 100644
+--- a/arch/x86/kernel/hpet.c
++++ b/arch/x86/kernel/hpet.c
+@@ -411,6 +411,25 @@ hpet_clkevt_set_next_event(unsigned long delta, struct clock_event_device *evt)
+ 	return res < HPET_MIN_CYCLES ? -ETIME : 0;
+ }
+ 
++static void hpet_init_clockevent(struct hpet_channel *hc, unsigned int rating)
++{
++	struct clock_event_device *evt = &hc->evt;
++
++	evt->rating		= rating;
++	evt->irq		= hc->irq;
++	evt->name		= hc->name;
++	evt->cpumask		= cpumask_of(hc->cpu);
++	evt->set_state_oneshot	= hpet_clkevt_set_state_oneshot;
++	evt->set_next_event	= hpet_clkevt_set_next_event;
++	evt->set_state_shutdown	= hpet_clkevt_set_state_shutdown;
++
++	evt->features = CLOCK_EVT_FEAT_ONESHOT;
++	if (hc->boot_cfg & HPET_TN_PERIODIC) {
++		evt->features		|= CLOCK_EVT_FEAT_PERIODIC;
++		evt->set_state_periodic	= hpet_clkevt_set_state_periodic;
++	}
++}
++
+ /*
+  * The HPET clock event device wrapped in a channel for conversion
+  */
+@@ -510,22 +529,10 @@ static void init_one_hpet_msi_clockevent(struct hpet_channel *hc, int cpu)
+ 
+ 	hc->cpu = cpu;
+ 	per_cpu(cpu_hpet_channel, cpu) = hc;
+-	evt->name = hc->name;
+ 	hpet_setup_msi_irq(hc);
+-	evt->irq = hc->irq;
+ 
+-	evt->rating = 110;
+-	evt->features = CLOCK_EVT_FEAT_ONESHOT;
+-	if (hc->boot_cfg & HPET_TN_PERIODIC) {
+-		evt->features |= CLOCK_EVT_FEAT_PERIODIC;
+-		evt->set_state_periodic = hpet_clkevt_set_state_periodic;
+-	}
+-
+-	evt->set_state_shutdown	= hpet_clkevt_set_state_shutdown;
+-	evt->set_state_oneshot = hpet_clkevt_set_state_oneshot;
+-	evt->set_next_event = hpet_clkevt_set_next_event;
++	hpet_init_clockevent(hc, 110);
+ 	evt->tick_resume = hpet_clkevt_msi_resume;
+-	evt->cpumask = cpumask_of(hc->cpu);
+ 
+ 	clockevents_config_and_register(evt, hpet_freq, HPET_MIN_PROG_DELTA,
+ 					0x7FFFFFFF);
