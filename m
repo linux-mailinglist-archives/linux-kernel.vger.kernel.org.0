@@ -2,88 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C97B757BE0
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 08:20:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 817215843F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 16:10:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726652AbfF0GUR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 02:20:17 -0400
-Received: from mga03.intel.com ([134.134.136.65]:39130 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726619AbfF0GUM (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 02:20:12 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jun 2019 23:20:12 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,422,1557212400"; 
-   d="scan'208";a="156135578"
-Received: from skl.sh.intel.com ([10.239.159.132])
-  by orsmga008.jf.intel.com with ESMTP; 26 Jun 2019 23:20:10 -0700
-From:   Jin Yao <yao.jin@linux.intel.com>
-To:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com
-Cc:     Linux-kernel@vger.kernel.org, ak@linux.intel.com,
-        kan.liang@intel.com, yao.jin@intel.com,
-        Jin Yao <yao.jin@linux.intel.com>
-Subject: [PATCH v5 7/7] perf diff: Documentation -c cycles option
-Date:   Thu, 27 Jun 2019 22:09:29 +0800
-Message-Id: <1561644569-22306-8-git-send-email-yao.jin@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1561644569-22306-1-git-send-email-yao.jin@linux.intel.com>
-References: <1561644569-22306-1-git-send-email-yao.jin@linux.intel.com>
+        id S1727030AbfF0OJ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 10:09:59 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:37683 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726425AbfF0OJ7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 10:09:59 -0400
+Received: by mail-ed1-f68.google.com with SMTP id w13so7251337eds.4
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 07:09:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:sender:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=YNhbtTN788Cq3sg7wZU1LsJt26Oq7/hAE3XZAFS1vDc=;
+        b=YdgyBDKiw9joEMp2HPmde0huwPcFJAjWcthg08mnRM6KwuJIwX88S8yr2Hqv3tcS2k
+         sRLYs6iJr5Uru9rZL3K3kJQcDTMb+WL4SQAYGs3Rsfu3oQbRe+hZ6jEet2sOKAxZFv7m
+         22a71OnqrjbBw8qnv7KmOM5rh1hm8C+bQ2zw9wJdH1Z3YGUDVla15QcTOktttdvx/ehT
+         +nz/cFq8g8AP0KdS38+kozYKhQxShv5O7nA8LtQ8QiyeNYy29udAZOLaFqxGcnD/jXXp
+         U1PFzt5NWOphnNc/2P5PlsBX0VcFWQY/sZFV9JljOe1uUfR5H1clBMAxU1zlWMhI2dmm
+         yN8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:sender:from:date
+         :message-id:subject:to:content-transfer-encoding;
+        bh=YNhbtTN788Cq3sg7wZU1LsJt26Oq7/hAE3XZAFS1vDc=;
+        b=G0Fl54/oEtKvCvJFY+2mIvJQBNp/XBFw3YqlNFTEhtt1BlYcEyRUV+yAd2220TRiBJ
+         f2PGtAFrdmWGzrI3KuCA//TugOzHyM7uawnmV+xsvxJjZDEoUpMjL2IBqOoP7ZIvm+4X
+         GTVoWc5IpA/jOTWiiU1t7ZfSP7Uy0+jQmiQ9sm4jXO/zfL/H1O8rcIMKZlF+oCm9LilY
+         lfelG9UIV+lNoZkKWwxM5V27MJnVhRyRCFJebLD+9P9K6l/jjAn/R48OBNbIlXM03PRp
+         XtHLazciJciJha334aSmaVyKqd8+IlnvOKbGeN/4jrD6LsfLwNOpOnhVgMNXGi6XGiQE
+         GKXg==
+X-Gm-Message-State: APjAAAVQ6uObtHV9obFd3O8DfxkB7PFPChyFQJ7eCcaeNaDBQqgxInDn
+        zFbWEIJ38Psw7dZchm/Vkkk/xtKPgh8BtSFHsdI=
+X-Google-Smtp-Source: APXvYqyZMxf0WSao1TFkTBldA2D0qQaKVtr66W94hm4A/WqPRv9XJgcW0Ra5YN7fNA9HXF/xLc00U82UwLTge0jA5pk=
+X-Received: by 2002:a50:8934:: with SMTP id e49mr4545368ede.156.1561644596875;
+ Thu, 27 Jun 2019 07:09:56 -0700 (PDT)
+MIME-Version: 1.0
+Reply-To: zia412@outlook.com
+Received: by 2002:a50:b830:0:0:0:0:0 with HTTP; Thu, 27 Jun 2019 07:09:55
+ -0700 (PDT)
+From:   Ahmed Zama <zaaama250@gmail.com>
+Date:   Thu, 27 Jun 2019 16:09:55 +0200
+X-Google-Sender-Auth: okkVB7ZtrsqpQJzDwtOL_hn-jlI
+Message-ID: <CAOOCFv10Opk274qiDR-SxvtytUaHJ-tcvAsiO324SPfmZoED_Q@mail.gmail.com>
+Subject: OK
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Documentation the new computation selection 'cycles'.
+Dear Friend,
 
- v4:
- ---
- Change the column 'Block cycles diff [start:end]' to
- '[Program Block Range] Cycles Diff'
+An oil business man made a fixed deposit of =E2=82=AC15 million Euros in my
+bank branch where I am a director and he died with his entire family
+in a plane crash leaving behind no next of kin. I Propose to present
+you as next of kin /Business associate to claim the funds, if
+interested contact me with  Your full name and telephone number to
+reach you and most importantly, a confirmation of acceptance from you.
 
-Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
----
- tools/perf/Documentation/perf-diff.txt | 17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
-
-diff --git a/tools/perf/Documentation/perf-diff.txt b/tools/perf/Documentation/perf-diff.txt
-index facd91e..d5cc15e 100644
---- a/tools/perf/Documentation/perf-diff.txt
-+++ b/tools/perf/Documentation/perf-diff.txt
-@@ -90,9 +90,10 @@ OPTIONS
- 
- -c::
- --compute::
--        Differential computation selection - delta, ratio, wdiff, delta-abs
--        (default is delta-abs).  Default can be changed using diff.compute
--        config option.  See COMPARISON METHODS section for more info.
-+        Differential computation selection - delta, ratio, wdiff, cycles,
-+        delta-abs (default is delta-abs).  Default can be changed using
-+        diff.compute config option.  See COMPARISON METHODS section for
-+        more info.
- 
- -p::
- --period::
-@@ -280,6 +281,16 @@ If specified the 'Weighted diff' column is displayed with value 'd' computed as:
-     - WEIGHT-A being the weight of the data file
-     - WEIGHT-B being the weight of the baseline data file
- 
-+cycles
-+~~~~~~
-+If specified the '[Program Block Range] Cycles Diff' column is displayed.
-+It displays the cycles difference of same program basic block amongst
-+two perf.data. The program basic block is the code between two branches.
-+
-+'[Program Block Range]' indicates the range of a program basic block.
-+Source line is reported if it can be found otherwise uses symbol+offset
-+instead.
-+
- SEE ALSO
- --------
- linkperf:perf-record[1], linkperf:perf-report[1]
--- 
-2.7.4
-
+Thanks
+Ahmed Zama
+Ouagadougou Burkina Faso
