@@ -2,83 +2,183 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A7485790F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 03:48:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4555E5791B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 03:50:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727114AbfF0Bsf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 21:48:35 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:44573 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726727AbfF0Bsf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 21:48:35 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45Z2qN1gymz9s8m;
-        Thu, 27 Jun 2019 11:48:32 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1561600112;
-        bh=nrNGhtMBTI3QrHkPUsVro/17jM5J9mt4TL5ByIs8mBQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=BM/uExDZz0w0Ey0xtkCg+GIPFMzLeYuBmwANJdEF3FH2Jy3hTr33VoYMl3FKfTObL
-         zJWNUcTV6nFGBebV+oUoZCWeWFg87TXoK/HvajMNBj//k2KKcYZ+g9Mz5Y6FYxud9m
-         z+6Dokx5nFIzDqbvSo6zH7fKCU+evixMzaqvx2sxiqCXbB/PmCVbhr6tp3s4AP1fsj
-         2b33gItM2ce9Li96TDKWOqJBeEYta+O0G1hazc7I2U1mBIkdgSJtmJ+4N0JNlGvBHJ
-         +0zcgnp+2EQ4wG4g0Dt2+OtWM8dcYTctZ49bJItoltmBsstkGoRBVxevhG4+WogcAV
-         sHc/K29KoaPzQ==
-Date:   Thu, 27 Jun 2019 11:48:31 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Nicolas Boichat <drinkcat@chromium.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: Fixes tag needs some work in the pinctrl tree
-Message-ID: <20190627114831.5a13dc0c@canb.auug.org.au>
-In-Reply-To: <CANMq1KCUfsKdJD8=DKR7ya-zhV0fgpHBi=PUtD030nFo8k9_ng@mail.gmail.com>
-References: <20190626235011.7b449eb0@canb.auug.org.au>
-        <CACRpkdaHyb=o=9YzSvKWRbbyPCbsOUxC=zoz+acnTWNvp=vu5w@mail.gmail.com>
-        <CANMq1KCUfsKdJD8=DKR7ya-zhV0fgpHBi=PUtD030nFo8k9_ng@mail.gmail.com>
+        id S1727204AbfF0Btj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 21:49:39 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:36980 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727185AbfF0Bth (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Jun 2019 21:49:37 -0400
+Received: by mail-pl1-f193.google.com with SMTP id bh12so350834plb.4
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 18:49:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=axtens.net; s=google;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=WM6uPUMLAmx7AP//rA8fowctOYQ/AmGg6H1et0/fxeQ=;
+        b=GPMwtTE+s4FHnzPCcPaRaca9fFeyCQYdJ+4Pqg5rcV3ZwX+TwMkiFLiXjV7VmYZu0A
+         1nqQJfF8eMw4jnIntXT1hv8EkQ40QlF4yk/dLswm4q4y2Feza716oSK+ZuJdrAXPJBj2
+         6ox2mI9ni7ucak56kwY5tWcZ650K94V5UXoNE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=WM6uPUMLAmx7AP//rA8fowctOYQ/AmGg6H1et0/fxeQ=;
+        b=J9dE+fFz5z2eU7InKtnliaEJuypgOn/GAoHLfhQ76CPvbX5/0EZlOv8J18br/WPxa/
+         zApdL91TbJ/96hL3jpEtc3ZVwRLR6Y4BEmPgPlFqpqV6+Qvdy/UptDcYrMvn5RBrUeLR
+         Su+j9Gc62mCAR7IXmy6XnklMgy5rttdvs1bbgZWJWMA1y/6M1cqBW2YyRd9G0k3IzDWJ
+         Ivf2dObrsy/UYWVMvRkpz1B0wfSKK0Qb/f5EWWppEpfDuvLt9BQHh54okttfoNny6z0W
+         mGU7pA0vH/ei+fYrVn31xeesHd2dHjtA7qKId90FEWxSjxH/nRABDjgaR7HQpyQMY6vA
+         GYbA==
+X-Gm-Message-State: APjAAAUx4ifwcwepPnMSaHvNOjUlDoRyiwVn57G+TV1eM/ArrYZl+z/I
+        vTekLSnywknPALU9NCXwHalCUQ==
+X-Google-Smtp-Source: APXvYqz+uoebBzItdHu2Us8YV0WufO2pkkQ1yhMaFQpW1MFBuEml17h0fcZryss2oo99cskp93paUw==
+X-Received: by 2002:a17:902:e582:: with SMTP id cl2mr1492748plb.60.1561600176417;
+        Wed, 26 Jun 2019 18:49:36 -0700 (PDT)
+Received: from localhost (ppp167-251-205.static.internode.on.net. [59.167.251.205])
+        by smtp.gmail.com with ESMTPSA id o16sm395909pgi.36.2019.06.26.18.49.34
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 26 Jun 2019 18:49:35 -0700 (PDT)
+From:   Daniel Axtens <dja@axtens.net>
+To:     Matthew Garrett <matthewgarrett@google.com>, jmorris@namei.org
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        David Howells <dhowells@redhat.com>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        Matthew Garrett <mjg59@google.com>
+Subject: Re: [PATCH V34 19/29] Lock down module params that specify hardware parameters (eg. ioport)
+In-Reply-To: <20190622000358.19895-20-matthewgarrett@google.com>
+References: <20190622000358.19895-1-matthewgarrett@google.com> <20190622000358.19895-20-matthewgarrett@google.com>
+Date:   Thu, 27 Jun 2019 11:49:30 +1000
+Message-ID: <87ef3f3ihh.fsf@dja-thinkpad.axtens.net>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/3dwd/mVe8ynlYMOSM14lbGD"; protocol="application/pgp-signature"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/3dwd/mVe8ynlYMOSM14lbGD
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Matthew Garrett <matthewgarrett@google.com> writes:
 
-Hi Nicolas,
-
-On Thu, 27 Jun 2019 08:32:34 +0800 Nicolas Boichat <drinkcat@chromium.org> =
-wrote:
+> From: David Howells <dhowells@redhat.com>
 >
-> Ouch, sorry, for some reasons I thought it was 10, not 12...
+> Provided an annotation for module parameters that specify hardware
+> parameters (such as io ports, iomem addresses, irqs, dma channels, fixed
+> dma buffers and other types).
+>
+> Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> Signed-off-by: Matthew Garrett <mjg59@google.com>
+> ---
+>  include/linux/security.h     |  1 +
+>  kernel/params.c              | 27 ++++++++++++++++++++++-----
+>  security/lockdown/lockdown.c |  1 +
+>  3 files changed, 24 insertions(+), 5 deletions(-)
+>
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 61e3f4a62d16..88064d7f6827 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -92,6 +92,7 @@ enum lockdown_reason {
+>  	LOCKDOWN_ACPI_TABLES,
+>  	LOCKDOWN_PCMCIA_CIS,
+>  	LOCKDOWN_TIOCSSERIAL,
+> +	LOCKDOWN_MODULE_PARAMETERS,
+>  	LOCKDOWN_INTEGRITY_MAX,
+>  	LOCKDOWN_CONFIDENTIALITY_MAX,
+>  };
+> diff --git a/kernel/params.c b/kernel/params.c
+> index ce89f757e6da..f94fe79e331d 100644
+> --- a/kernel/params.c
+> +++ b/kernel/params.c
+> @@ -24,6 +24,7 @@
+>  #include <linux/err.h>
+>  #include <linux/slab.h>
+>  #include <linux/ctype.h>
+> +#include <linux/security.h>
+>  
+>  #ifdef CONFIG_SYSFS
+>  /* Protects all built-in parameters, modules use their own param_lock */
+> @@ -108,13 +109,19 @@ bool parameq(const char *a, const char *b)
+>  	return parameqn(a, b, strlen(a)+1);
+>  }
+>  
+> -static void param_check_unsafe(const struct kernel_param *kp)
+> +static bool param_check_unsafe(const struct kernel_param *kp,
+> +			       const char *doing)
+>  {
+>  	if (kp->flags & KERNEL_PARAM_FL_UNSAFE) {
+>  		pr_notice("Setting dangerous option %s - tainting kernel\n",
+>  			  kp->name);
+>  		add_taint(TAINT_USER, LOCKDEP_STILL_OK);
+>  	}
+> +
+> +	if (kp->flags & KERNEL_PARAM_FL_HWPARAM &&
+> +	    security_locked_down(LOCKDOWN_MODULE_PARAMETERS))
+> +		return false;
+> +	return true;
+>  }
 
-It used to be 10, but will slowly grow over time.  That's why setting
-core.abbrev to "auto" is best (or leaving it unset).
+Should this test occur before tainting the kernel?
 
---=20
-Cheers,
-Stephen Rothwell
+Regards,
+Daniel
 
---Sig_/3dwd/mVe8ynlYMOSM14lbGD
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0UIG8ACgkQAVBC80lX
-0GzObQf5Adf6xqgI70td5WRzqCmRyvIdd+Bsj6mhn60GOY301LMIRsTo24YO4QsZ
-hUgz1yLtvX76p0b09AFePePpP9yDlM5B9paOirhM3/XMYwVBbo5G2Btcsvah3gGK
-fPjFB57bohqU0cTrZupS16KLo62/PVXZbO6Gjv9Bh2/MHGGU1M4kNNQ7i/uCZqgo
-6gX3VQgmf8hueCHbqRP/sl3ADV4hXisuZv6DjtbW9rpML0ta3uKMPFmQLA9Ksxlw
-1VLzQiwQkSdG9Pz1taMtL4LsgyjV7k69oUulxL+hK1mGSc0y4so1aYITBi5KRATL
-NiEcZOVnriLwKjmY7/ic70PCQtk8rg==
-=fVsj
------END PGP SIGNATURE-----
-
---Sig_/3dwd/mVe8ynlYMOSM14lbGD--
+>  
+>  static int parse_one(char *param,
+> @@ -144,8 +151,10 @@ static int parse_one(char *param,
+>  			pr_debug("handling %s with %p\n", param,
+>  				params[i].ops->set);
+>  			kernel_param_lock(params[i].mod);
+> -			param_check_unsafe(&params[i]);
+> -			err = params[i].ops->set(val, &params[i]);
+> +			if (param_check_unsafe(&params[i], doing))
+> +				err = params[i].ops->set(val, &params[i]);
+> +			else
+> +				err = -EPERM;
+>  			kernel_param_unlock(params[i].mod);
+>  			return err;
+>  		}
+> @@ -553,6 +562,12 @@ static ssize_t param_attr_show(struct module_attribute *mattr,
+>  	return count;
+>  }
+>  
+> +#ifdef CONFIG_MODULES
+> +#define mod_name(mod) (mod)->name
+> +#else
+> +#define mod_name(mod) "unknown"
+> +#endif
+> +
+>  /* sysfs always hands a nul-terminated string in buf.  We rely on that. */
+>  static ssize_t param_attr_store(struct module_attribute *mattr,
+>  				struct module_kobject *mk,
+> @@ -565,8 +580,10 @@ static ssize_t param_attr_store(struct module_attribute *mattr,
+>  		return -EPERM;
+>  
+>  	kernel_param_lock(mk->mod);
+> -	param_check_unsafe(attribute->param);
+> -	err = attribute->param->ops->set(buf, attribute->param);
+> +	if (param_check_unsafe(attribute->param, mod_name(mk->mod)))
+> +		err = attribute->param->ops->set(buf, attribute->param);
+> +	else
+> +		err = -EPERM;
+>  	kernel_param_unlock(mk->mod);
+>  	if (!err)
+>  		return len;
+> diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
+> index c89046dc2155..d03c4c296af7 100644
+> --- a/security/lockdown/lockdown.c
+> +++ b/security/lockdown/lockdown.c
+> @@ -28,6 +28,7 @@ static char *lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
+>  	[LOCKDOWN_ACPI_TABLES] = "modified ACPI tables",
+>  	[LOCKDOWN_PCMCIA_CIS] = "direct PCMCIA CIS storage",
+>  	[LOCKDOWN_TIOCSSERIAL] = "reconfiguration of serial port IO",
+> +	[LOCKDOWN_MODULE_PARAMETERS] = "unsafe module parameters",
+>  	[LOCKDOWN_INTEGRITY_MAX] = "integrity",
+>  	[LOCKDOWN_CONFIDENTIALITY_MAX] = "confidentiality",
+>  };
+> -- 
+> 2.22.0.410.gd8fdbe21b5-goog
