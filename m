@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F165857BE1
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 08:20:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD23B57BF3
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 08:20:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726675AbfF0GUU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 02:20:20 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:63376 "EHLO
+        id S1726706AbfF0GUW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 02:20:22 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:40631 "EHLO
         mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726574AbfF0GUQ (ORCPT
+        with ESMTP id S1726659AbfF0GUT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 02:20:16 -0400
-X-UUID: 6d2ae7baf97e4b42b91c088026646861-20190627
-X-UUID: 6d2ae7baf97e4b42b91c088026646861-20190627
-Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw01.mediatek.com
+        Thu, 27 Jun 2019 02:20:19 -0400
+X-UUID: 16f967d38ec24c14854b7234732c9099-20190627
+X-UUID: 16f967d38ec24c14854b7234732c9099-20190627
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
         (envelope-from <bibby.hsieh@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1740339247; Thu, 27 Jun 2019 14:20:10 +0800
+        with ESMTP id 442555387; Thu, 27 Jun 2019 14:20:11 +0800
 Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
  15.0.1395.4; Thu, 27 Jun 2019 14:20:06 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas09.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 27 Jun 2019 14:20:06 +0800
+ Transport; Thu, 27 Jun 2019 14:20:07 +0800
 From:   Bibby Hsieh <bibby.hsieh@mediatek.com>
 To:     Jassi Brar <jassisinghbrar@gmail.com>,
         Matthias Brugger <matthias.bgg@gmail.com>,
@@ -43,78 +43,83 @@ CC:     Daniel Kurtz <djkurtz@chromium.org>,
         Dennis-YC Hsieh <dennis-yc.hsieh@mediatek.com>,
         Houlong Wei <houlong.wei@mediatek.com>,
         <ginny.chen@mediatek.com>, Bibby Hsieh <bibby.hsieh@mediatek.com>
-Subject: [PATCH v9 03/12] dt-binding: gce: add binding for gce client reg property
-Date:   Thu, 27 Jun 2019 14:19:49 +0800
-Message-ID: <20190627061958.9488-4-bibby.hsieh@mediatek.com>
+Subject: [PATCH v9 04/12] mailbox: mediatek: cmdq: move the CMDQ_IRQ_MASK into cmdq driver data
+Date:   Thu, 27 Jun 2019 14:19:50 +0800
+Message-ID: <20190627061958.9488-5-bibby.hsieh@mediatek.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20190627061958.9488-1-bibby.hsieh@mediatek.com>
 References: <20190627061958.9488-1-bibby.hsieh@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-TM-SNTS-SMTP: A403D55FC2C0D1C72E1883F29D4900D4ABBCE68141B749B59D1AF65143CBCF842000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-cmdq driver provide a function that get the relationship
-of sub system number from device node for client.
-add specification for #subsys-cells, mediatek,gce-client-reg.
+The interrupt mask and thread number has positive correlation,
+so we move the CMDQ_IRQ_MASK into cmdq driver data and calculate
+it by thread number.
 
 Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
+Reviewed-by: CK Hu <ck.hu@mediatek.com>
 ---
- .../devicetree/bindings/mailbox/mtk-gce.txt    | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
+ drivers/mailbox/mtk-cmdq-mailbox.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/mailbox/mtk-gce.txt b/Documentation/devicetree/bindings/mailbox/mtk-gce.txt
-index 1f7f8f2a3f49..d48282d6b02d 100644
---- a/Documentation/devicetree/bindings/mailbox/mtk-gce.txt
-+++ b/Documentation/devicetree/bindings/mailbox/mtk-gce.txt
-@@ -21,12 +21,21 @@ Required properties:
- 	priority: Priority of GCE thread.
- 	atomic_exec: GCE processing continuous packets of commands in atomic
- 		way.
-+- #subsys-cells: Should be 3.
-+	<&phandle subsys_number start_offset size>
-+	phandle: Label name of a gce node.
-+	subsys_number: specify the sub-system id which is corresponding
-+		       to the register address.
-+	start_offset: the start offset of register address that GCE can access.
-+	size: the total size of register address that GCE can access.
+diff --git a/drivers/mailbox/mtk-cmdq-mailbox.c b/drivers/mailbox/mtk-cmdq-mailbox.c
+index 00d5219094e5..8fddd26288e8 100644
+--- a/drivers/mailbox/mtk-cmdq-mailbox.c
++++ b/drivers/mailbox/mtk-cmdq-mailbox.c
+@@ -18,7 +18,6 @@
+ #include <linux/of_device.h>
  
- Required properties for a client device:
- - mboxes: Client use mailbox to communicate with GCE, it should have this
-   property and list of phandle, mailbox specifiers.
--- mediatek,gce-subsys: u32, specify the sub-system id which is corresponding
--  to the register address.
-+Optional properties for a client device:
-+- mediatek,gce-client-reg: Specify the sub-system id which is corresponding
-+  to the register address, it should have this property and list of phandle,
-+  sub-system specifiers.
+ #define CMDQ_OP_CODE_MASK		(0xff << CMDQ_OP_CODE_SHIFT)
+-#define CMDQ_IRQ_MASK			0xffff
+ #define CMDQ_NUM_CMD(t)			(t->cmd_buf_size / CMDQ_INST_SIZE)
  
- Some vaules of properties are defined in 'dt-bindings/gce/mt8173-gce.h'
- or 'dt-binding/gce/mt8183-gce.h'. Such as sub-system ids, thread priority, event ids.
-@@ -40,6 +49,7 @@ Example:
- 		clocks = <&infracfg CLK_INFRA_GCE>;
- 		clock-names = "gce";
- 		#mbox-cells = <3>;
-+		#subsys-cells = <3>;
- 	};
+ #define CMDQ_CURR_IRQ_STATUS		0x10
+@@ -72,6 +71,7 @@ struct cmdq {
+ 	void __iomem		*base;
+ 	u32			irq;
+ 	u32			thread_nr;
++	u32			irq_mask;
+ 	struct cmdq_thread	*thread;
+ 	struct clk		*clock;
+ 	bool			suspended;
+@@ -285,11 +285,11 @@ static irqreturn_t cmdq_irq_handler(int irq, void *dev)
+ 	unsigned long irq_status, flags = 0L;
+ 	int bit;
  
- Example for a client device:
-@@ -48,9 +58,9 @@ Example for a client device:
- 		compatible = "mediatek,mt8173-mmsys";
- 		mboxes = <&gce 0 CMDQ_THR_PRIO_LOWEST 1>,
- 			 <&gce 1 CMDQ_THR_PRIO_LOWEST 1>;
--		mediatek,gce-subsys = <SUBSYS_1400XXXX>;
- 		mutex-event-eof = <CMDQ_EVENT_MUTEX0_STREAM_EOF
- 				CMDQ_EVENT_MUTEX1_STREAM_EOF>;
--
-+		mediatek,gce-client-reg = <&gce SUBSYS_1400XXXX 0x3000 0x1000>,
-+					  <&gce SUBSYS_1401XXXX 0x2000 0x100>;
- 		...
- 	};
+-	irq_status = readl(cmdq->base + CMDQ_CURR_IRQ_STATUS) & CMDQ_IRQ_MASK;
+-	if (!(irq_status ^ CMDQ_IRQ_MASK))
++	irq_status = readl(cmdq->base + CMDQ_CURR_IRQ_STATUS) & cmdq->irq_mask;
++	if (!(irq_status ^ cmdq->irq_mask))
+ 		return IRQ_NONE;
+ 
+-	for_each_clear_bit(bit, &irq_status, fls(CMDQ_IRQ_MASK)) {
++	for_each_clear_bit(bit, &irq_status, cmdq->thread_nr) {
+ 		struct cmdq_thread *thread = &cmdq->thread[bit];
+ 
+ 		spin_lock_irqsave(&thread->chan->lock, flags);
+@@ -473,6 +473,9 @@ static int cmdq_probe(struct platform_device *pdev)
+ 		dev_err(dev, "failed to get irq\n");
+ 		return -EINVAL;
+ 	}
++
++	cmdq->thread_nr = (u32)(unsigned long)of_device_get_match_data(dev);
++	cmdq->irq_mask = GENMASK(cmdq->thread_nr - 1, 0);
+ 	err = devm_request_irq(dev, cmdq->irq, cmdq_irq_handler, IRQF_SHARED,
+ 			       "mtk_cmdq", cmdq);
+ 	if (err < 0) {
+@@ -489,7 +492,6 @@ static int cmdq_probe(struct platform_device *pdev)
+ 		return PTR_ERR(cmdq->clock);
+ 	}
+ 
+-	cmdq->thread_nr = (u32)(unsigned long)of_device_get_match_data(dev);
+ 	cmdq->mbox.dev = dev;
+ 	cmdq->mbox.chans = devm_kcalloc(dev, cmdq->thread_nr,
+ 					sizeof(*cmdq->mbox.chans), GFP_KERNEL);
 -- 
 2.18.0
 
