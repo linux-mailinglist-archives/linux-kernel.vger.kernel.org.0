@@ -2,288 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB7D0578F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 03:33:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C40E357900
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 03:43:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726953AbfF0BdL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 26 Jun 2019 21:33:11 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:36437 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726631AbfF0BdK (ORCPT
+        id S1726787AbfF0Bm4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 26 Jun 2019 21:42:56 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:38775 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726612AbfF0Bm4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Jun 2019 21:33:10 -0400
-Received: by mail-io1-f67.google.com with SMTP id h6so1121818ioh.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 18:33:09 -0700 (PDT)
+        Wed, 26 Jun 2019 21:42:56 -0400
+Received: by mail-lj1-f194.google.com with SMTP id r9so563447ljg.5
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2019 18:42:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=eZogRr2EBu+1m923ifEoDqvQCpyj7+EI0wqHn3aRB44=;
-        b=cKGxxlrP+ukoth4289HEWH7g9Ws3BMTPxYjebaKo0dY1w2lBNYYa2MBC0kxcaUhM7m
-         RKq2bLZHCWXGYVmaxQju0LpWt4taKscNRB/xRspide7269gs1sfkvvI5+1NoovIfrX7T
-         2kBZnXsVbx9IbKbJYnZIlrYq9EJwiiRh78i+djCESrvTEvhQCNrjVsVkeaz5cBvNmiXZ
-         wPOzQaxshY2diBQQCyxfDCpAtepal5pdOrrMrRlVyw9iRwc3gRqVVb92mdiaPQgrlNyo
-         SQtwlScIEOP+kj3VoaZXi+viTUHuEU0KClbyyrW9q7P5Y1ZG5HB2EcYCT5F5Wee19Z9B
-         JGWA==
+        bh=KVb/Y6glWIWB7wEHcORRZuH9XfM2nYOaiwKwDNV84XQ=;
+        b=HexkE8auAfT9XS2t4CecqwNCA1BOxOvU4oRFUbTU8BEArXiTmvqbwfnNmh7+kNMvgN
+         PI/6M/mmozaebV05j6HuCtufjxivV41VCnqwFkJ1F+4Zw8Iz6PDTzYWS9fqOwUHscyX1
+         DLdEWW5sHbNd1VpOqCVAMrmoXTDxv+gd/ZIKpSbcX4+N06mpXccO28hvpPq1+rJeOfe2
+         IGOLjBjTX6Hor3m0Ez4ttuOJnRReGJV08pgV3sz3nqcd1We8i8cacEHFJM1452MU8wyq
+         Cxw2gn103yqeeK2wobNY86H1IbxikIBG1zQ+WE4P/2tcolOQMRhEeNpd87Yq0uyGx/WT
+         mRwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=eZogRr2EBu+1m923ifEoDqvQCpyj7+EI0wqHn3aRB44=;
-        b=UoIbRNn9U1Hst8B9xgHHL/UMzrCdsICIgYAPdJjZnlFpvNRp6hdw601uIoXsdDs4l7
-         t5fjcbjqBGXn1wh6lCt+h1Dt6Qt6TJAflv/ngrQL5mPnYAjUPcaCoFJ3D6fVkXXID9VQ
-         ZNH9YeebXc0OOYQ5qsxB0+ST3i/ZmQQesVzpIyXE0Na7fIKLpM4kQ+75Yyu5YSvyIfFE
-         H7VeXQDdPpzTTU3uXmtcFu15cvDo4CNFUaH5Bp7Nv3rU9pt5XnUwOT2D1XbA5mt974Bb
-         YKW24wQ5O/W1R3upftKAdkmbYhb5lO5jrDG1l/G58W/PIatbw56ET4x66Lnd6LPqYnR2
-         2ElQ==
-X-Gm-Message-State: APjAAAXLPSin5r7HFUntesinZ6CrWUHtmU6UuD212LKOK7hK0YitJ4bs
-        Mw0nLU2hQihTZqn3o0CbyrcqVPMi9btHmmx0Gzo=
-X-Google-Smtp-Source: APXvYqzXlkQi43eEmZx4veNTJdbtZaN7YI/bz8RMmLtiro9vL8rNPdnc0Z+aO0Vl7GivKmo8XkncLttYWM7k5u/owfA=
-X-Received: by 2002:a05:6602:104:: with SMTP id s4mr1515842iot.200.1561599188807;
- Wed, 26 Jun 2019 18:33:08 -0700 (PDT)
+        bh=KVb/Y6glWIWB7wEHcORRZuH9XfM2nYOaiwKwDNV84XQ=;
+        b=FHv/9NW7EDnydp2GzBAc12Ku9DIZ1vScDcXzl+3qWq45JtC6U+5Mvm0YWk2RmV01Hu
+         4Q3z6cjbz+/li+JrSHlyLu7q+2OtouQfzCSFQeB+Q3KVmA+5f5IXZhnQ0TpDCdDlwozK
+         iVe1BFXHuJ8rR1Ce/hyW2Jc+hkig06QoDpOl9pGi55XoyQoUr2RyJ2caTxc2/NMYk2UM
+         K83fz6DHp72UOtzsKDdtLxj/fhThyZtUvvHbnqikW1C1lVPQT+YbJKRvvm7qLIH6koaS
+         KZHSS+u4Z4XUFP3mXV6rK5U8GA5+izn1lX9v9579aOi9RXz5tRW2JrUJgIADHk6vm92n
+         Hf2g==
+X-Gm-Message-State: APjAAAXKLwELYRlTNH+fvQB4MNFCXhhPghx1ovnOMsgzr7GDmVE9HS/g
+        pSx7b2h4+7QmwItjXfYSsEzEN78LmKF6Y8VPo2w=
+X-Google-Smtp-Source: APXvYqwQLCNDpRNU0O/KLxQUdZvN+d3OhMFrCvjNmjF3pV2emCMXXWcLTH6WjvSTQa2kb5BZ613x3SxadB1GrU+MaYE=
+X-Received: by 2002:a2e:93cc:: with SMTP id p12mr777027ljh.11.1561599772479;
+ Wed, 26 Jun 2019 18:42:52 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190620060726.926-1-kraxel@redhat.com> <20190620060726.926-9-kraxel@redhat.com>
-In-Reply-To: <20190620060726.926-9-kraxel@redhat.com>
-From:   Chia-I Wu <olvaffe@gmail.com>
-Date:   Wed, 26 Jun 2019 18:32:57 -0700
-Message-ID: <CAPaKu7QjuKMJfhTVOzBsUb8cT9cGgesG_-skQeBO8hL8UqcAzw@mail.gmail.com>
-Subject: Re: [PATCH v4 08/12] drm/virtio: rework virtio_gpu_execbuffer_ioctl fencing
-To:     Gerd Hoffmann <kraxel@redhat.com>
-Cc:     ML dri-devel <dri-devel@lists.freedesktop.org>,
-        David Airlie <airlied@linux.ie>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:VIRTIO GPU DRIVER" 
-        <virtualization@lists.linux-foundation.org>
+References: <cover.1561595111.git.jpoimboe@redhat.com> <426541f62dad525078ee732c09bc206289e994aa.1561595111.git.jpoimboe@redhat.com>
+In-Reply-To: <426541f62dad525078ee732c09bc206289e994aa.1561595111.git.jpoimboe@redhat.com>
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date:   Wed, 26 Jun 2019 18:42:40 -0700
+Message-ID: <CAADnVQ+veayfD70Xsu8UnNrLdRW6rh9jxPb=OGoiYT-O=_zW=A@mail.gmail.com>
+Subject: Re: [PATCH v3 2/4] objtool: Add support for C jump tables
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Song Liu <songliubraving@fb.com>,
+        Kairui Song <kasong@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 19, 2019 at 11:08 PM Gerd Hoffmann <kraxel@redhat.com> wrote:
+On Wed, Jun 26, 2019 at 5:38 PM Josh Poimboeuf <jpoimboe@redhat.com> wrote:
 >
-> Use gem reservation helpers and direct reservation_object_* calls
-> instead of ttm.
+> Objtool doesn't know how to read C jump tables, so it has to whitelist
+> functions which use them, causing missing ORC unwinder data for such
+> functions, e.g. ___bpf_prog_run().
 >
-> v3: Also attach the array of gem objects to the virtio command buffer,
-> so we can drop the object references in the completion callback.  Needed
-> because ttm fence helpers grab a reference for us, but gem helpers
-> don't.
+> C jump tables are very similar to GCC switch jump tables, which objtool
+> already knows how to read.  So adding support for C jump tables is easy.
+> It just needs to be able to find the tables and distinguish them from
+> other data.
 >
-> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-> Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+> To allow the jump tables to be found, create a standard: objtool will
+> automatically recognize any static local jump table named "jump_table".
+>
+> Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 > ---
->  drivers/gpu/drm/virtio/virtgpu_drv.h   |  5 ++-
->  drivers/gpu/drm/virtio/virtgpu_ioctl.c | 62 +++++++++++---------------
->  drivers/gpu/drm/virtio/virtgpu_vq.c    | 16 ++++---
->  3 files changed, 40 insertions(+), 43 deletions(-)
+>  tools/objtool/check.c | 16 ++++++++++++++--
+>  1 file changed, 14 insertions(+), 2 deletions(-)
 >
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.h b/drivers/gpu/drm/virtio/virtgpu_drv.h
-> index 98d646789d23..65f5ce41c341 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_drv.h
-> +++ b/drivers/gpu/drm/virtio/virtgpu_drv.h
-> @@ -120,9 +120,9 @@ struct virtio_gpu_vbuffer {
+> diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+> index 172f99195726..8341c2fff14f 100644
+> --- a/tools/objtool/check.c
+> +++ b/tools/objtool/check.c
+> @@ -18,6 +18,8 @@
 >
->         char *resp_buf;
->         int resp_size;
-> -
->         virtio_gpu_resp_cb resp_cb;
+>  #define FAKE_JUMP_OFFSET -1
 >
-> +       struct virtio_gpu_object_array *objs;
-This can use a comment (e.g., objects referenced by the vbuffer)
+> +#define JUMP_TABLE_SYM_PREFIX "jump_table."
+> +
+>  struct alternative {
 >         struct list_head list;
->  };
+>         struct instruction *insn;
+> @@ -997,6 +999,7 @@ static struct rela *find_switch_table(struct objtool_file *file,
+>         struct instruction *orig_insn = insn;
+>         struct section *rodata_sec;
+>         unsigned long table_offset;
+> +       struct symbol *sym;
 >
-> @@ -311,7 +311,8 @@ void virtio_gpu_cmd_context_detach_resource(struct virtio_gpu_device *vgdev,
->                                             uint32_t resource_id);
->  void virtio_gpu_cmd_submit(struct virtio_gpu_device *vgdev,
->                            void *data, uint32_t data_size,
-> -                          uint32_t ctx_id, struct virtio_gpu_fence *fence);
-> +                          uint32_t ctx_id, struct virtio_gpu_fence *fence,
-> +                          struct virtio_gpu_object_array *objs);
-Can we keep fence, which is updated, as the last parameter?
->  void virtio_gpu_cmd_transfer_from_host_3d(struct virtio_gpu_device *vgdev,
->                                           uint32_t resource_id, uint32_t ctx_id,
->                                           uint64_t offset, uint32_t level,
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_ioctl.c b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-> index 5cffd2e54c04..c3901c397b8a 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-> +++ b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-> @@ -105,14 +105,11 @@ static int virtio_gpu_execbuffer_ioctl(struct drm_device *dev, void *data,
->         struct drm_virtgpu_execbuffer *exbuf = data;
->         struct virtio_gpu_device *vgdev = dev->dev_private;
->         struct virtio_gpu_fpriv *vfpriv = drm_file->driver_priv;
-> -       struct drm_gem_object *gobj;
->         struct virtio_gpu_fence *out_fence;
-> -       struct virtio_gpu_object *qobj;
->         int ret;
->         uint32_t *bo_handles = NULL;
->         void __user *user_bo_handles = NULL;
-> -       struct list_head validate_list;
-> -       struct ttm_validate_buffer *buflist = NULL;
-> +       struct virtio_gpu_object_array *buflist = NULL;
->         int i;
->         struct ww_acquire_ctx ticket;
->         struct sync_file *sync_file;
-> @@ -155,15 +152,10 @@ static int virtio_gpu_execbuffer_ioctl(struct drm_device *dev, void *data,
->                         return out_fence_fd;
->         }
+>         /*
+>          * Backward search using the @first_jump_src links, these help avoid
+> @@ -1035,9 +1038,18 @@ static struct rela *find_switch_table(struct objtool_file *file,
 >
-> -       INIT_LIST_HEAD(&validate_list);
->         if (exbuf->num_bo_handles) {
-> -
->                 bo_handles = kvmalloc_array(exbuf->num_bo_handles,
-> -                                          sizeof(uint32_t), GFP_KERNEL);
-> -               buflist = kvmalloc_array(exbuf->num_bo_handles,
-> -                                          sizeof(struct ttm_validate_buffer),
-> -                                          GFP_KERNEL | __GFP_ZERO);
-> -               if (!bo_handles || !buflist) {
-> +                                           sizeof(uint32_t), GFP_KERNEL);
-> +               if (!bo_handles) {
->                         ret = -ENOMEM;
->                         goto out_unused_fd;
->                 }
-> @@ -175,25 +167,22 @@ static int virtio_gpu_execbuffer_ioctl(struct drm_device *dev, void *data,
->                         goto out_unused_fd;
->                 }
->
-> -               for (i = 0; i < exbuf->num_bo_handles; i++) {
-> -                       gobj = drm_gem_object_lookup(drm_file, bo_handles[i]);
-> -                       if (!gobj) {
-> -                               ret = -ENOENT;
-> -                               goto out_unused_fd;
-> -                       }
-> -
-> -                       qobj = gem_to_virtio_gpu_obj(gobj);
-> -                       buflist[i].bo = &qobj->tbo;
-> -
-> -                       list_add(&buflist[i].head, &validate_list);
-> +               buflist = virtio_gpu_array_from_handles(drm_file, bo_handles,
-> +                                                       exbuf->num_bo_handles);
-> +               if (!buflist) {
-> +                       ret = -ENOENT;
-> +                       goto out_unused_fd;
->                 }
->                 kvfree(bo_handles);
->                 bo_handles = NULL;
->         }
->
-> -       ret = virtio_gpu_object_list_validate(&ticket, &validate_list);
-> -       if (ret)
-> -               goto out_free;
-> +       if (buflist) {
-> +               ret = drm_gem_lock_reservations(buflist->objs, buflist->nents,
-> +                                               &ticket);
-> +               if (ret)
-> +                       goto out_unused_fd;
-> +       }
->
->         buf = memdup_user(u64_to_user_ptr(exbuf->command), exbuf->size);
->         if (IS_ERR(buf)) {
-> @@ -219,25 +208,26 @@ static int virtio_gpu_execbuffer_ioctl(struct drm_device *dev, void *data,
->                 fd_install(out_fence_fd, sync_file->file);
->         }
->
-> +       if (buflist) {
-> +               for (i = 0; i < exbuf->num_bo_handles; i++)
-> +                       reservation_object_add_excl_fence(buflist->objs[i]->resv,
-> +                                                         &out_fence->f);
-> +               drm_gem_unlock_reservations(buflist->objs, buflist->nents,
-> +                                           &ticket);
-> +       }
-We used to unlock after virtio_gpu_cmd_submit.
+>                 /*
+>                  * Make sure the .rodata address isn't associated with a
+> -                * symbol.  gcc jump tables are anonymous data.
+> +                * symbol.  GCC jump tables are anonymous data.
+> +                *
+> +                * Also support C jump tables which are in the same format as
+> +                * switch jump tables.  Each jump table should be a static
+> +                * local const array named "jump_table" for objtool to
+> +                * recognize it.
 
-I guess, the fence is considered signaled (because its seqno is still
-0) until after virtio_gpu_cmd_submit.  We probably don't want other
-processes to see the semi-initialized fence.
+Nacked-by: Alexei Starovoitov <ast@kernel.org>
 
-
-> +
->         virtio_gpu_cmd_submit(vgdev, buf, exbuf->size,
-> -                             vfpriv->ctx_id, out_fence);
-> -
-> -       ttm_eu_fence_buffer_objects(&ticket, &validate_list, &out_fence->f);
-> -
-> -       /* fence the command bo */
-> -       virtio_gpu_unref_list(&validate_list);
-> -       kvfree(buflist);
-> +                             vfpriv->ctx_id, out_fence, buflist);
->         return 0;
->
->  out_memdup:
->         kfree(buf);
->  out_unresv:
-> -       ttm_eu_backoff_reservation(&ticket, &validate_list);
-> -out_free:
-> -       virtio_gpu_unref_list(&validate_list);
-Keeping out_free to free buflist seems just fine.
-> +       drm_gem_unlock_reservations(buflist->objs, buflist->nents, &ticket);
->  out_unused_fd:
->         kvfree(bo_handles);
-> -       kvfree(buflist);
-> +       if (buflist)
-> +               virtio_gpu_array_put_free(buflist);
->
->         if (out_fence_fd >= 0)
->                 put_unused_fd(out_fence_fd);
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_vq.c b/drivers/gpu/drm/virtio/virtgpu_vq.c
-> index 6c1a90717535..dc2c2c003200 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_vq.c
-> +++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
-> @@ -191,7 +191,7 @@ void virtio_gpu_dequeue_ctrl_func(struct work_struct *work)
->         } while (!virtqueue_enable_cb(vgdev->ctrlq.vq));
->         spin_unlock(&vgdev->ctrlq.qlock);
->
-> -       list_for_each_entry_safe(entry, tmp, &reclaim_list, list) {
-> +       list_for_each_entry(entry, &reclaim_list, list) {
->                 resp = (struct virtio_gpu_ctrl_hdr *)entry->resp_buf;
->
->                 trace_virtio_gpu_cmd_response(vgdev->ctrlq.vq, resp);
-> @@ -218,14 +218,18 @@ void virtio_gpu_dequeue_ctrl_func(struct work_struct *work)
->                 }
->                 if (entry->resp_cb)
->                         entry->resp_cb(vgdev, entry);
-> -
-> -               list_del(&entry->list);
-> -               free_vbuf(vgdev, entry);
->         }
->         wake_up(&vgdev->ctrlq.ack_queue);
->
->         if (fence_id)
->                 virtio_gpu_fence_event_process(vgdev, fence_id);
-> +
-> +       list_for_each_entry_safe(entry, tmp, &reclaim_list, list) {
-> +               if (entry->objs)
-> +                       virtio_gpu_array_put_free(entry->objs);
-> +               list_del(&entry->list);
-We are clearing the list.  I guess list_del is not needed.
-> +               free_vbuf(vgdev, entry);
-> +       }
->  }
->
->  void virtio_gpu_dequeue_cursor_func(struct work_struct *work)
-> @@ -939,7 +943,8 @@ void virtio_gpu_cmd_transfer_from_host_3d(struct virtio_gpu_device *vgdev,
->
->  void virtio_gpu_cmd_submit(struct virtio_gpu_device *vgdev,
->                            void *data, uint32_t data_size,
-> -                          uint32_t ctx_id, struct virtio_gpu_fence *fence)
-> +                          uint32_t ctx_id, struct virtio_gpu_fence *fence,
-> +                          struct virtio_gpu_object_array *objs)
->  {
->         struct virtio_gpu_cmd_submit *cmd_p;
->         struct virtio_gpu_vbuffer *vbuf;
-> @@ -949,6 +954,7 @@ void virtio_gpu_cmd_submit(struct virtio_gpu_device *vgdev,
->
->         vbuf->data_buf = data;
->         vbuf->data_size = data_size;
-> +       vbuf->objs = objs;
->
->         cmd_p->hdr.type = cpu_to_le32(VIRTIO_GPU_CMD_SUBMIT_3D);
->         cmd_p->hdr.ctx_id = cpu_to_le32(ctx_id);
-> --
-> 2.18.1
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+It's not acceptable for objtool to dictate kernel naming convention.
