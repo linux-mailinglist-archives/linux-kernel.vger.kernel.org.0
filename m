@@ -2,84 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C35BB57D31
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 09:33:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F2AF557D33
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 09:34:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726420AbfF0Hd5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 03:33:57 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:19086 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726059AbfF0Hd4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 03:33:56 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 582B4B17A415822EB0EA;
-        Thu, 27 Jun 2019 15:33:53 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS414-HUB.china.huawei.com
- (10.3.19.214) with Microsoft SMTP Server id 14.3.439.0; Thu, 27 Jun 2019
- 15:33:44 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <darrick.wong@oracle.com>, <hch@lst.de>, <dchinner@redhat.com>
-CC:     <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] xfs: remove duplicated include
-Date:   Thu, 27 Jun 2019 15:33:23 +0800
-Message-ID: <20190627073323.45516-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1726508AbfF0Hem (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 03:34:42 -0400
+Received: from mga07.intel.com ([134.134.136.100]:10758 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726059AbfF0Hel (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 03:34:41 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jun 2019 00:34:40 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,423,1557212400"; 
+   d="scan'208";a="173039705"
+Received: from yjin15-mobl.ccr.corp.intel.com (HELO [10.239.196.106]) ([10.239.196.106])
+  by orsmga002.jf.intel.com with ESMTP; 27 Jun 2019 00:34:38 -0700
+Subject: Re: [PATCH v5 4/7] perf diff: Use hists to manage basic blocks per
+ symbol
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com,
+        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        kan.liang@intel.com, yao.jin@intel.com
+References: <1561644569-22306-1-git-send-email-yao.jin@linux.intel.com>
+ <1561644569-22306-5-git-send-email-yao.jin@linux.intel.com>
+ <20190627072718.GA24279@krava>
+From:   "Jin, Yao" <yao.jin@linux.intel.com>
+Message-ID: <ceae45ed-f1e7-ad4e-78ab-a56f0ae0d11e@linux.intel.com>
+Date:   Thu, 27 Jun 2019 15:34:38 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20190627072718.GA24279@krava>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove duplicated include.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- fs/xfs/xfs_extfree_item.c | 1 -
- fs/xfs/xfs_filestream.c   | 1 -
- fs/xfs/xfs_pnfs.c         | 1 -
- 3 files changed, 3 deletions(-)
 
-diff --git a/fs/xfs/xfs_extfree_item.c b/fs/xfs/xfs_extfree_item.c
-index 99fd40eb..e515506 100644
---- a/fs/xfs/xfs_extfree_item.c
-+++ b/fs/xfs/xfs_extfree_item.c
-@@ -13,7 +13,6 @@
- #include "xfs_mount.h"
- #include "xfs_defer.h"
- #include "xfs_trans.h"
--#include "xfs_trans.h"
- #include "xfs_trans_priv.h"
- #include "xfs_buf_item.h"
- #include "xfs_extfree_item.h"
-diff --git a/fs/xfs/xfs_filestream.c b/fs/xfs/xfs_filestream.c
-index b1869ae..a6d228c 100644
---- a/fs/xfs/xfs_filestream.c
-+++ b/fs/xfs/xfs_filestream.c
-@@ -21,7 +21,6 @@
- #include "xfs_trace.h"
- #include "xfs_ag_resv.h"
- #include "xfs_trans.h"
--#include "xfs_shared.h"
- 
- struct xfs_fstrm_item {
- 	struct xfs_mru_cache_elem	mru;
-diff --git a/fs/xfs/xfs_pnfs.c b/fs/xfs/xfs_pnfs.c
-index 2d95355..6018e1c 100644
---- a/fs/xfs/xfs_pnfs.c
-+++ b/fs/xfs/xfs_pnfs.c
-@@ -17,7 +17,6 @@
- #include "xfs_bmap_util.h"
- #include "xfs_error.h"
- #include "xfs_iomap.h"
--#include "xfs_shared.h"
- #include "xfs_bit.h"
- #include "xfs_pnfs.h"
- 
--- 
-2.7.4
+On 6/27/2019 3:27 PM, Jiri Olsa wrote:
+> On Thu, Jun 27, 2019 at 10:09:26PM +0800, Jin Yao wrote:
+> 
+> SNIP
+> 
+>> +
+>> +static int process_block_per_sym(struct hist_entry *he)
+>> +{
+>> +	struct annotation *notes;
+>> +	struct cyc_hist *ch;
+>> +	struct block_hist *bh;
+>> +
+>> +	if (!he->ms.map || !he->ms.sym)
+>> +		return 0;
+>> +
+>> +	notes = symbol__annotation(he->ms.sym);
+>> +	if (!notes || !notes->src || !notes->src->cycles_hist)
+>> +		return 0;
+>> +
+>> +	bh = container_of(he, struct block_hist, he);
+>> +	init_block_hist(bh);
+>> +
+>> +	ch = notes->src->cycles_hist;
+>> +	for (unsigned int i = 0; i < symbol__size(he->ms.sym); i++) {
+>> +		if (ch[i].num_aggr) {
+>> +			struct block_info *bi;
+>> +			struct hist_entry *he_block;
+>> +
+>> +			bi = block_info__new();
+>> +			if (!bi)
+>> +				return -1;
+>> +
+>> +			init_block_info(bi, he->ms.sym, &ch[i], i);
+>> +			he_block = hists__add_entry_block(&bh->block_hists,
+>> +							  NULL, &dummy_al, bi);
+> 
+> nit, it's the only caller of hists__add_entry_block, so we don't need
+> the 'ops' argument in there
+> 
+> other than this, this all looks good to me
+> 
+> Reviewed-by: Jiri Olsa <jolsa@kernel.org>
+> 
+> thanks,
+> jirka
+> 
 
+Hi Jiri,
+
+Thanks so much!
+
+Do you need me to send v6 which only removes the 'ops' argument from 
+hists__add_entry_block? Or this v5 should be OK either?
+
+
+Thanks
+Jin Yao
 
