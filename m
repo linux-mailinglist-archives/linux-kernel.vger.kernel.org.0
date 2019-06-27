@@ -2,78 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DED0586C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 18:14:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 67266586C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 18:14:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726557AbfF0QN6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 12:13:58 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:40004 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726384AbfF0QN6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 12:13:58 -0400
-Received: by mail-io1-f66.google.com with SMTP id n5so5978313ioc.7
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 09:13:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=YuETa3oDVUrfM1AlnG0XabGhzbNGHx9EIaL7BfD2Dwk=;
-        b=CbXK4cnlfsLqgcWbk9J1O19cC7jqM5R1GyFC5RXTsmRqwoUEV2NJ9LPi2EmzXe+1vG
-         qCoPj1cMOEmcGu7KLw8WXb3lc/xVqslxMXana0Sg4KkAdtyQUoLcgGJ7QdndwmAR188i
-         8DcpkgAbLey+JqExVPrENeLIes2OsFyyBDyedRY3g3n6pmy8gKn7GuNEHTTBhGBZBNh9
-         bPMLkc/2qSQ8GfEfUbzTK7euEZicmfeApx6Ym7qA9lay+DlWcKVsFYcKuE5E8I6BLdiG
-         M+chfQoe+Vq9l2wmRUZRlBOEZeQhj9ljVpVNOQyC15iPt4MJWD1zPw60BZIChkPn2p5Q
-         hSIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=YuETa3oDVUrfM1AlnG0XabGhzbNGHx9EIaL7BfD2Dwk=;
-        b=FHqE+d+licZK84amZfWmlhelY8XbPrzEUxPS+U+i0xwY0HwZnu12UlAX3Yb9bjI6q6
-         HtwVfbfyLdpGVtq2Ef7re+wtaesvxpTrjM7ymTLozfuQpMr5ch0xhHpgXeboYuG6Z62z
-         nzyvzqLgglJMP1FeKwdmU8Oinv65QpTXFREOektyXpK38JZT6wnwtHHsFW3wB5usb9Cb
-         TNw2/Z+uX2auDBJpvSzOZQhBAVZLXL1yy4FF+SpoX0NXaHx88B0YcO9hbyRPshwjUI2b
-         BlBzPnbQfl6xtenKlRT0NsvOQ6WlzAASziTi/sMsIgjU6TzBK8PCiJb/zOqq8IF7jtWH
-         r/Iw==
-X-Gm-Message-State: APjAAAW4rZ1Yt1ufg1jF8iu2tEtGb/W5K3fQcldUamGbJXBN6VnwnuF3
-        iB6A+eBrUR/tJDnH1XVveV8Jwq0NPFo=
-X-Google-Smtp-Source: APXvYqzBXnSDmyScYxc36jaGMDBkMY9zvxNr9TAKEWXWOEcTbptqw9f6F4ZC/j0rxrwTCJUPKOYG0w==
-X-Received: by 2002:a05:6638:3d6:: with SMTP id r22mr5561768jaq.71.1561652037218;
-        Thu, 27 Jun 2019 09:13:57 -0700 (PDT)
-Received: from localhost (c-73-95-159-87.hsd1.co.comcast.net. [73.95.159.87])
-        by smtp.gmail.com with ESMTPSA id p3sm2749248iog.70.2019.06.27.09.13.56
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 27 Jun 2019 09:13:56 -0700 (PDT)
-Date:   Thu, 27 Jun 2019 09:13:55 -0700 (PDT)
-From:   Paul Walmsley <paul.walmsley@sifive.com>
-X-X-Sender: paulw@viisi.sifive.com
-To:     Yash Shah <yash.shah@sifive.com>
-cc:     linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        palmer@sifive.com, aou@eecs.berkeley.edu, sachin.ghadi@sifive.com
-Subject: Re: [PATCH] riscv: ccache: Remove unused variable
-In-Reply-To: <1561624486-22867-1-git-send-email-yash.shah@sifive.com>
-Message-ID: <alpine.DEB.2.21.9999.1906270911270.12689@viisi.sifive.com>
-References: <1561624486-22867-1-git-send-email-yash.shah@sifive.com>
-User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1726646AbfF0QOV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 12:14:21 -0400
+Received: from relay.sw.ru ([185.231.240.75]:44580 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726464AbfF0QOR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 12:14:17 -0400
+Received: from [10.94.4.83] (helo=finist-ce7.sw.ru)
+        by relay.sw.ru with esmtp (Exim 4.92)
+        (envelope-from <khorenko@virtuozzo.com>)
+        id 1hgX2H-00047n-6O; Thu, 27 Jun 2019 19:14:09 +0300
+From:   Konstantin Khorenko <khorenko@virtuozzo.com>
+To:     Adaptec OEM Raid Solutions <aacraid@microsemi.com>,
+        Prasad B Munirathnam <prasad.munirathnam@microsemi.com>,
+        Raghava Aditya Renukunta 
+        <RaghavaAditya.Renukunta@microsemi.com>
+Cc:     Konstantin Khorenko <khorenko@virtuozzo.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 0/1] aacraid: Host adapter Adaptec 6405 constantly resets under high io load
+Date:   Thu, 27 Jun 2019 19:14:07 +0300
+Message-Id: <20190627161408.10295-1-khorenko@virtuozzo.com>
+X-Mailer: git-send-email 2.15.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 27 Jun 2019, Yash Shah wrote:
+Problem description:
+====================
+A node with Adaptec 6405 controller, latest BIOS V5.3-0[19204]
+A lot of disks attached to the controller.
+Simple test: running mkfs.ext4 on many disks on the same controller in
+parallel
+(mkfs is not important here, any serious io load triggers controller aborts)
 
-> Reading the count register clears the interrupt signal. Currently, the
-> count registers are read into 'regval' variable but the variable is
-> never used. Therefore remove it.
-> 
-> Signed-off-by: Yash Shah <yash.shah@sifive.com>
+Results:
+* no problems (controller resets) with kernels prior to
+  395e5df79a95 ("scsi: aacraid: Remove reference to Series-9")
 
-This is a good start.  Could you also add comments in the code that 
-describe what those reads are doing, as you did in the patch description?  
-Otherwise they look pretty mysterious.
+* latest ms kernel v5.2-rc6-15-g249155c20f9b - mkfs processes are in D state,
+  lot of complains in logs like:
+
+  [  654.894633] aacraid: Host adapter abort request.
+  aacraid: Outstanding commands on (0,1,43,0):
+  [  699.441034] aacraid: Host adapter abort request.
+  aacraid: Outstanding commands on (0,1,40,0):
+  [  699.442950] aacraid: Host adapter reset request. SCSI hang ?
+  [  714.457428] aacraid: Host adapter reset request. SCSI hang ?
+  ...
+  [  759.514759] aacraid: Host adapter reset request. SCSI hang ?
+  [  759.514869] aacraid 0000:03:00.0: outstanding cmd: midlevel-0
+  [  759.514870] aacraid 0000:03:00.0: outstanding cmd: lowlevel-0
+  [  759.514872] aacraid 0000:03:00.0: outstanding cmd: error handler-498
+  [  759.514873] aacraid 0000:03:00.0: outstanding cmd: firmware-471
+  [  759.514875] aacraid 0000:03:00.0: outstanding cmd: kernel-60
+  [  759.514912] aacraid 0000:03:00.0: Controller reset type is 3
+  [  759.515013] aacraid 0000:03:00.0: Issuing IOP reset
+  [  850.296705] aacraid 0000:03:00.0: IOP reset succeeded
+
+Same complains on Ubuntu kernel 4.15.0-50-generic:
+https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1777586
+
+Controller:
+===========
+03:00.0 RAID bus controller: Adaptec Series 6 - 6G SAS/PCIe 2 (rev 01)
+         Subsystem: Adaptec Series 6 - ASR-6405 - 4 internal 6G SAS ports
+
+Test:
+=====
+# cat dev.list
+/dev/sdq1
+/dev/sde1
+/dev/sds1
+/dev/sdb1
+/dev/sdk1
+/dev/sdaj1
+/dev/sdaf1
+/dev/sdd1
+/dev/sdac1
+/dev/sdai1
+/dev/sdz1
+/dev/sdj1
+/dev/sdy1
+/dev/sdn1
+/dev/sdae1
+/dev/sdg1
+/dev/sdi1
+/dev/sdc1
+/dev/sdf1
+/dev/sdl1
+/dev/sda1
+/dev/sdab1
+/dev/sdr1
+/dev/sdo1
+/dev/sdah1
+/dev/sdm1
+/dev/sdt1
+/dev/sdp1
+/dev/sdad1
+/dev/sdh1
+
+===========================================
+# cat run_mkfs.sh
+#!/bin/bash
+
+while read i; do
+   mkfs.ext4 $i -q -E lazy_itable_init=1 -O uninit_bg -m 0 &
+done
+
+=================================
+# cat dev.list | ./run_mkfs.sh
+
+The issue is 100% reproducible.
+
+i've bisected to the culprit patch, it's
+395e5df79a95 ("scsi: aacraid: Remove reference to Series-9")
+
+it changes arc ctrl checks for Series-6 controllers
+and i've checked that resurrection of original logic in arc ctrl checks
+eliminates controller hangs/resets.
 
 
-- Paul
+Konstantin Khorenko (1):
+  scsi: aacraid: resurrect correct arc ctrl checks for Series-6
+
+ drivers/scsi/aacraid/aacraid.h  | 11 -----------
+ drivers/scsi/aacraid/comminit.c | 14 ++++++++++----
+ drivers/scsi/aacraid/commsup.c  |  4 +++-
+ drivers/scsi/aacraid/linit.c    |  7 +++++--
+ 4 files changed, 18 insertions(+), 18 deletions(-)
+
+-- 
+2.15.1
+
