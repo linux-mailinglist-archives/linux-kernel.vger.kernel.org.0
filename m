@@ -2,210 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 099975815B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 13:22:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B59958174
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2019 13:26:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726565AbfF0LWn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 07:22:43 -0400
-Received: from mga05.intel.com ([192.55.52.43]:55508 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726308AbfF0LWn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 07:22:43 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jun 2019 04:22:42 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,423,1557212400"; 
-   d="scan'208";a="183427733"
-Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.150])
-  by fmsmga001.fm.intel.com with ESMTP; 27 Jun 2019 04:22:38 -0700
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kbuild@vger.kernel.org
-Cc:     Sam Ravnborg <sam@ravnborg.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        linux-kernel@vger.kernel.org,
-        Michal Marek <michal.lkml@markovi.net>
-Subject: Re: [PATCH v2 2/4] kbuild: do not create wrappers for header-test-y
-In-Reply-To: <20190627014617.600-3-yamada.masahiro@socionext.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20190627014617.600-1-yamada.masahiro@socionext.com> <20190627014617.600-3-yamada.masahiro@socionext.com>
-Date:   Thu, 27 Jun 2019 14:25:25 +0300
-Message-ID: <875zorqnh6.fsf@intel.com>
+        id S1726760AbfF0L0X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 07:26:23 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:35832 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726375AbfF0L0X (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 07:26:23 -0400
+Received: by mail-lf1-f66.google.com with SMTP id a25so1331267lfg.2
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 04:26:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yf/4QsQz71xnsufXmplIhM5PQjWjtA8iRNvCLywUsCI=;
+        b=HiozRSV9jjoEd8lgVneXDXnUBP1+IEYIg+jfVj3yu3YE2rDCh0mQf6PCltXafOZuRQ
+         wgzquUBxyhWo7PDBS9m/LWFwnCANPBpvCZrQYE2oHj20GZq/2E9ThKk3E8NPw81Lz1IR
+         6wqLETMA8WyJzKNmXnDzqbNY6sUIuKzxUMVE+GnlYNfor+m9ZCB+VLKecag/t5wKJ6Jd
+         T9zmH0RwA2Aq86TTmuzE2Qjhpw0IXYMX8T1nY+VIb685SluVHK84SiGlfHixp33uk0NX
+         kmZSALvd+oLO52Ab1ZdDT5vg1sdlJ8tHsJXVo/3VFxdWskcobVYms8f/hqACvEI3a+uf
+         LmpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yf/4QsQz71xnsufXmplIhM5PQjWjtA8iRNvCLywUsCI=;
+        b=Y9U4aCxxXjLP0hm0oOKbFvYZVlMGgx3w7jpY+Mvb4Yi4MfzsU469ayaPbnrI+yVc3X
+         dEB+W01zpWXWHP5iWGELhmCVSlICpQcM4C2F2hqHcWPBOsU/XjDY55L5a67j3dIDovM1
+         ax1FtvRkq8DHC0Q7edoe6U0FHk3g9OgQmDVrgZQm6r+imkFyYpyb6UB2xzoZ+9615y0+
+         ZO9CN2PS8bAXQmlug648ll9okG9xVcC3fiZm5WZYv4ZcuSMHDRr7ubSG7H3zGw4bNxf1
+         Owdt3lD890hhN1ZPFE/ioRU7IN3YXh0UENTjLEtNa3epU2Lk8rip9i8TI0ARjc45uo+F
+         0csg==
+X-Gm-Message-State: APjAAAVJ/3pKJ3OsDstvLZ1uCUUq0qPEQ+WPuYlVrdhtSRc8kt5QcLDw
+        +qtAZHgCHIIdnGVA/I2XW4Vt15pJ1XORT+HLdoEzBw==
+X-Google-Smtp-Source: APXvYqzeLT9m0qZPhFXMQe7bGeM0G0YNhFKZNBdroL1getpvV13XvxWgav2h1PfavnIunwZFc7NAtBe9miLt5qxA34s=
+X-Received: by 2002:a19:dc0d:: with SMTP id t13mr1687908lfg.152.1561634781537;
+ Thu, 27 Jun 2019 04:26:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20190626071430.28556-1-andrew@aj.id.au> <20190626071430.28556-2-andrew@aj.id.au>
+ <CACPK8Xfdd1ReAHr9f6zRbZ-WJRquDJsTdUQeT_JuEBhOzS8tig@mail.gmail.com>
+In-Reply-To: <CACPK8Xfdd1ReAHr9f6zRbZ-WJRquDJsTdUQeT_JuEBhOzS8tig@mail.gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 27 Jun 2019 12:26:10 +0100
+Message-ID: <CACRpkdZtTy-HHu2O4aOaqV5ZdxcYYPFRuxK2jjnw+_O1xcF1rg@mail.gmail.com>
+Subject: Re: [PATCH 1/8] dt-bindings: pinctrl: aspeed: Split bindings document
+ in two
+To:     Joel Stanley <joel@jms.id.au>
+Cc:     Andrew Jeffery <andrew@aj.id.au>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Ryan Chen <ryan_chen@aspeedtech.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-aspeed@lists.ozlabs.org,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 27 Jun 2019, Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
-> header-test-y does not work with headers in sub-directories.
->
-> For example, you can write a Makefile, like this:
->
-> include/linux/Kbuild:
->
->   header-test-y += mtd/nand.h
->
-> This entry creates a wrapper include/linux/mtd/nand.hdrtest.c with
-> the following content:
->
->   #include "mtd/nand.h"
->
-> To make this work, we need to add $(srctree)/include/linux to the
-> header search path. It would be tedious to add ccflags-y.
->
-> We could change the *.hdrtest.c rule to wrap:
->
->   #include "nand.h"
->
-> This works for in-tree build since #include "..." searches in the
-> relative path from the header with this directive. For O=... build,
-> we need to add $(srctree)/include/linux/mtd to the header search path,
-> which will be even more tedious.
->
-> After all, I thought it would be handier to compile headers directly
-> without creating wrappers.
->
-> I added a new build rule to compile %.h into %.h.s
->
-> I chose %.h.s instead of %.h.o because it was a little bit faster.
-> Also, for GCC, an empty assembly is smaller than an empty object.
->
-> I wrote the build rule:
->
->   $(CC) $(c_flags) -S -o $@ -x c /dev/null -include $<
->
-> instead of:
->
->   $(CC) $(c_flags) -S -o $@ -x c $<
->
-> Both work fine with GCC, but the latter is not good for Clang.
->
-> This comes down to the difference in the -Wunused-function policy.
-> GCC does not warn about unused 'static inline' functions at all.
-> Clang does not warn about the ones in included headers, but does
-> about the ones in the source. So, we should handle headers as
-> headers, not as source files.
->
-> In fact, this has been hidden since commit abb2ea7dfd82 ("compiler,
-> clang: suppress warning for unused static inline functions"), but we
-> should not rely on that.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
->
-> Changes in v2:
->   - New patch
->
->  .gitignore                         |  1 -
->  Documentation/dontdiff             |  1 -
->  Documentation/kbuild/makefiles.txt |  3 +--
->  Makefile                           |  1 -
->  scripts/Makefile.build             | 10 +++++-----
->  scripts/Makefile.lib               |  2 +-
->  6 files changed, 7 insertions(+), 11 deletions(-)
->
-> diff --git a/.gitignore b/.gitignore
-> index 4bb60f0fa23b..7587ef56b92d 100644
-> --- a/.gitignore
-> +++ b/.gitignore
-> @@ -22,7 +22,6 @@
->  *.elf
->  *.gcno
->  *.gz
-> -*.hdrtest.c
->  *.i
->  *.ko
->  *.lex.c
-> diff --git a/Documentation/dontdiff b/Documentation/dontdiff
-> index 554dfe4883d2..5eba889ea84d 100644
-> --- a/Documentation/dontdiff
-> +++ b/Documentation/dontdiff
-> @@ -19,7 +19,6 @@
->  *.grep
->  *.grp
->  *.gz
-> -*.hdrtest.c
->  *.html
->  *.i
->  *.jpeg
-> diff --git a/Documentation/kbuild/makefiles.txt b/Documentation/kbuild/makefiles.txt
-> index ca4b24ec0399..5080fec34609 100644
-> --- a/Documentation/kbuild/makefiles.txt
-> +++ b/Documentation/kbuild/makefiles.txt
-> @@ -1023,8 +1023,7 @@ When kbuild executes, the following steps are followed (roughly):
->  	header-test-y specifies headers (*.h) in the current directory that
->  	should be compile tested to ensure they are self-contained,
->  	i.e. compilable as standalone units. If CONFIG_HEADER_TEST is enabled,
-> -	this autogenerates dummy sources to include the headers, and builds them
-> -	as part of extra-y.
-> +	this builds them as part of extra-y.
->  
->  --- 6.7 Commands useful for building a boot image
->  
-> diff --git a/Makefile b/Makefile
-> index f23516980796..7f293b0431fe 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -1648,7 +1648,6 @@ clean: $(clean-dirs)
->  		-o -name '*.dwo' -o -name '*.lst' \
->  		-o -name '*.su'  \
->  		-o -name '.*.d' -o -name '.*.tmp' -o -name '*.mod.c' \
-> -		-o -name '*.hdrtest.c' \
->  		-o -name '*.lex.c' -o -name '*.tab.[ch]' \
->  		-o -name '*.asn1.[ch]' \
->  		-o -name '*.symtypes' -o -name 'modules.order' \
-> diff --git a/scripts/Makefile.build b/scripts/Makefile.build
-> index ee0319560513..776842b7e6a3 100644
-> --- a/scripts/Makefile.build
-> +++ b/scripts/Makefile.build
-> @@ -294,14 +294,14 @@ quiet_cmd_cc_lst_c = MKLST   $@
->  $(obj)/%.lst: $(src)/%.c FORCE
->  	$(call if_changed_dep,cc_lst_c)
->  
-> -# Dummy C sources for header test (header-test-y target)
-> +# header test (header-test-y target)
->  # ---------------------------------------------------------------------------
->  
-> -quiet_cmd_header_test = HDRTEST $@
-> -      cmd_header_test = echo "\#include \"$*.h\"" > $@
-> +quiet_cmd_cc_s_h = CC      $@
-> +      cmd_cc_s_h = $(CC) $(c_flags) -S -o $@ -x c /dev/null -include $<
+On Thu, Jun 27, 2019 at 4:32 AM Joel Stanley <joel@jms.id.au> wrote:
 
-I think I'd prefer HDRTEST or something more informative than just CC in
-the quiet cmd to distinguish this from the usual build lines. Especially
-now that the file name is also just .h.s.
+> I think we can use this as an opportunity to drop the unused g4-scu
+> compatible from the bindings. Similarly for the g5.
+>
+> Acked-by: Joel Stanley <joel@jms.id.au>
 
-Other than that, good job getting rid of the intermediate file. I
-couldn't figure it out when I did the original.
+I assume I should wait for a new version of the patches that does
+this?
 
-Acked-by: Jani Nikula <jani.nikula@intel.com>
-Tested-by: Jani Nikula <jani.nikula@intel.com>
-
->  
-> -$(obj)/%.hdrtest.c:
-> -	$(call cmd,header_test)
-> +$(obj)/%.h.s: $(src)/%.h FORCE
-> +	$(call if_changed_dep,cc_s_h)
->  
->  # Compile assembler sources (.S)
->  # ---------------------------------------------------------------------------
-> diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
-> index 3e630fcaffd1..55ae1ec65342 100644
-> --- a/scripts/Makefile.lib
-> +++ b/scripts/Makefile.lib
-> @@ -67,7 +67,7 @@ extra-$(CONFIG_OF_ALL_DTBS) += $(patsubst %.dtb,%.dt.yaml, $(dtb-))
->  endif
->  
->  # Test self-contained headers
-> -extra-$(CONFIG_HEADER_TEST) += $(patsubst %.h,%.hdrtest.o,$(header-test-y))
-> +extra-$(CONFIG_HEADER_TEST) += $(addsuffix .s, $(header-test-y))
->  
->  # Add subdir path
-
--- 
-Jani Nikula, Intel Open Source Graphics Center
+Yours,
+Linus Walleij
