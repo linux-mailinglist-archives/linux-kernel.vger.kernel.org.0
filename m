@@ -2,124 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63D0758DE6
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 00:23:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40D5358DE3
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 00:22:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726674AbfF0WXA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 18:23:00 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:39279 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726445AbfF0WXA (ORCPT
+        id S1726833AbfF0WWc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 18:22:32 -0400
+Received: from mail-pl1-f201.google.com ([209.85.214.201]:35290 "EHLO
+        mail-pl1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726445AbfF0WWc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 18:23:00 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5RMM20M474297
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Thu, 27 Jun 2019 15:22:02 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5RMM20M474297
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019061801; t=1561674122;
-        bh=ZeyvB4LFyjvlaOlXgO/EO++131ZgvyCNUdJVBPCe35s=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=DP1H8WGKHAKzhFwjNdjuekq3kI2uJ/FiGWO7ogstevfeHlwnLmbijd9dlNHKJHIKL
-         cbO54/jKZlsFXhyaNWsYGr7LpbQVhEXhFa0dA0haN8Vg/Aq3inIS7+gYX6NfdYHdMf
-         HHDoX243rMGSuXSFJe3m039g2LQFSmqDY80lU6IVWFy2fAMyTpDA+LDGtQVu/72cZm
-         k97koBVziSFnxf/p5qyTxzjfEnjOGOdkKLM8Efb0c31/oNkqFOcsA90GDy9FI9EhCC
-         4ZHF8u+xTpM01GG01Oc4SK3SoHA6Q9jn2NtdwE03WuMydLGAGkbvk5lRn0Qw0v9PVm
-         UCishPIaNaNtQ==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5RMM17R474294;
-        Thu, 27 Jun 2019 15:22:01 -0700
-Date:   Thu, 27 Jun 2019 15:22:01 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Song Liu <tipbot@zytor.com>
-Message-ID: <tip-83f44ae0f8afcc9da659799db8693f74847e66b3@git.kernel.org>
-Cc:     jpoimboe@redhat.com, tglx@linutronix.de, songliubraving@fb.com,
-        kasong@redhat.com, peterz@infradead.org,
-        linux-kernel@vger.kernel.org, rostedt@goodmis.org, hpa@zytor.com,
-        bp@alien8.de, mingo@kernel.org
-Reply-To: mingo@kernel.org, bp@alien8.de, rostedt@goodmis.org,
-          hpa@zytor.com, linux-kernel@vger.kernel.org,
-          peterz@infradead.org, kasong@redhat.com, songliubraving@fb.com,
-          tglx@linutronix.de, jpoimboe@redhat.com
-In-Reply-To: <3975a298fa52b506fea32666d8ff6a13467eee6d.1561595111.git.jpoimboe@redhat.com>
-References: <3975a298fa52b506fea32666d8ff6a13467eee6d.1561595111.git.jpoimboe@redhat.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] perf/x86: Always store regs->ip in
- perf_callchain_kernel()
-Git-Commit-ID: 83f44ae0f8afcc9da659799db8693f74847e66b3
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=0.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_12_24,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
-        DKIM_VALID_EF autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+        Thu, 27 Jun 2019 18:22:32 -0400
+Received: by mail-pl1-f201.google.com with SMTP id bb9so2220679plb.2
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 15:22:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=oX4nX7Je7bFeJ+xtEsKgjynmAqj73RNM30dvkWhgvsQ=;
+        b=u6SlpeiCjQGV5rE4yogrmSSkVZ43A8E5N6bKYKjy5TX4t8pbsrRRF9GSDcsxe+5XzD
+         waGb2JTgqg+tTulN5BPPf+VqpjEptpmBs6DdyVgw7RfwK8PF8bmfqu8pLJofZoU5PIEb
+         Kj3FKoiC/6L/gkMotLHT4aB/DGPvtBb9jGk8MY+tUS3gOocY4PEemi6MUJKx1H992F5K
+         GSVi99x53zSc0+lXP6Fn6Mi7G5UJ+v4x0VjuC3Nw/zsJxN0mgrCZgcSVGvpqvlvYJkGH
+         IM3Zt9xGBETZoaCBOmfbhevkuZjxNEaJ0Qm++R6L/06tU/5xVQglwV6olNEjSZMU+Eqr
+         I7Uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=oX4nX7Je7bFeJ+xtEsKgjynmAqj73RNM30dvkWhgvsQ=;
+        b=HsWvj8SmSkiBykIQMrVL8+QL/acJ61fnsRJtyXYVevrH9SuW/XuhKhYyiFPrCTiPKN
+         +1aGUX6fgTK33197+WhMtIfTxmVSFH6zzhtS2Kt4SXLJ55/3WufmbNva01Xij+pwBY1S
+         oRJ4RV7OgWNEt4DK21HhDQHeeOylRnAzk3vbr4rXQbr0El494JoMNJ9p5wxp5DNIPuM0
+         2NLaDRWvboEcSNwgBU9xw/A6aYU+ZwY2m/RNwS7aELVkZHt5mIsmXZg+eFwiwtm+uZYs
+         1wDFhFdh308D4Nvc1RVDr8p7v8a2PpPEPZCGWC7k5QrsyUWPFtWKvtty9S0ksGt0/Xl4
+         Uycw==
+X-Gm-Message-State: APjAAAWlQkWCwPWXPgT2EHYsKISZfvVyut1gI/9FLwCja122fCu60KEF
+        PEtkZKCXwwH48ApUNP/sB/DYn4bYlQ==
+X-Google-Smtp-Source: APXvYqwHdCQ9FmNfXU+U4FhmBmrMgqd++q8o9kCPOcsO7E5yJTw5lhpjjg+JoI0rSKl+FpJ1fCN7HC5W5Q==
+X-Received: by 2002:a65:41c6:: with SMTP id b6mr5812268pgq.399.1561674151183;
+ Thu, 27 Jun 2019 15:22:31 -0700 (PDT)
+Date:   Thu, 27 Jun 2019 15:22:20 -0700
+Message-Id: <20190627222220.89175-1-nhuck@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
+Subject: [PATCH] clk: rockchip: Fix -Wunused-const-variable
+From:   Nathan Huckleberry <nhuck@google.com>
+To:     mturquette@baylibre.com, sboyd@kernel.org, heiko@sntech.de,
+        andy.yan@rock-chips.com, zhangqing@rock-chips.com
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Nathan Huckleberry <nhuck@google.com>,
+        clang-built-linux@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  83f44ae0f8afcc9da659799db8693f74847e66b3
-Gitweb:     https://git.kernel.org/tip/83f44ae0f8afcc9da659799db8693f74847e66b3
-Author:     Song Liu <songliubraving@fb.com>
-AuthorDate: Wed, 26 Jun 2019 19:33:52 -0500
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Fri, 28 Jun 2019 00:11:20 +0200
+Clang produces the following warning
 
-perf/x86: Always store regs->ip in perf_callchain_kernel()
+drivers/clk/rockchip/clk-rv1108.c:125:7: warning: unused variable
+'mux_pll_src_3plls_p' [-Wunused-const-variable]
+PNAME(mux_pll_src_3plls_p)      = { "apll", "gpll", "dpll" };
 
-The stacktrace_map_raw_tp BPF selftest is failing because the RIP saved by
-perf_arch_fetch_caller_regs() isn't getting saved by perf_callchain_kernel().
+Looks like this variable was never used. Deleting it to remove the
+warning.
 
-This was broken by the following commit:
-
-  d15d356887e7 ("perf/x86: Make perf callchains work without CONFIG_FRAME_POINTER")
-
-With that change, when starting with non-HW regs, the unwinder starts
-with the current stack frame and unwinds until it passes up the frame
-which called perf_arch_fetch_caller_regs().  So regs->ip needs to be
-saved deliberately.
-
-Fixes: d15d356887e7 ("perf/x86: Make perf callchains work without CONFIG_FRAME_POINTER")
-Signed-off-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Kairui Song <kasong@redhat.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Link: https://lkml.kernel.org/r/3975a298fa52b506fea32666d8ff6a13467eee6d.1561595111.git.jpoimboe@redhat.com
-
+Cc: clang-built-linux@googlegroups.com
+Link: https://github.com/ClangBuiltLinux/linux/issues/524
+Signed-off-by: Nathan Huckleberry <nhuck@google.com>
 ---
- arch/x86/events/core.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/clk/rockchip/clk-rv1108.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-index f315425d8468..4fb3ca1e699d 100644
---- a/arch/x86/events/core.c
-+++ b/arch/x86/events/core.c
-@@ -2402,13 +2402,13 @@ perf_callchain_kernel(struct perf_callchain_entry_ctx *entry, struct pt_regs *re
- 		return;
- 	}
- 
--	if (perf_hw_regs(regs)) {
--		if (perf_callchain_store(entry, regs->ip))
--			return;
-+	if (perf_callchain_store(entry, regs->ip))
-+		return;
-+
-+	if (perf_hw_regs(regs))
- 		unwind_start(&state, current, regs, NULL);
--	} else {
-+	else
- 		unwind_start(&state, current, NULL, (void *)regs->sp);
--	}
- 
- 	for (; !unwind_done(&state); unwind_next_frame(&state)) {
- 		addr = unwind_get_return_address(&state);
+diff --git a/drivers/clk/rockchip/clk-rv1108.c b/drivers/clk/rockchip/clk-rv1108.c
+index 96cc6af5632c..5947d3192866 100644
+--- a/drivers/clk/rockchip/clk-rv1108.c
++++ b/drivers/clk/rockchip/clk-rv1108.c
+@@ -122,7 +122,6 @@ PNAME(mux_usb480m_pre_p)	= { "usbphy", "xin24m" };
+ PNAME(mux_hdmiphy_phy_p)	= { "hdmiphy", "xin24m" };
+ PNAME(mux_dclk_hdmiphy_pre_p)	= { "dclk_hdmiphy_src_gpll", "dclk_hdmiphy_src_dpll" };
+ PNAME(mux_pll_src_4plls_p)	= { "dpll", "gpll", "hdmiphy", "usb480m" };
+-PNAME(mux_pll_src_3plls_p)	= { "apll", "gpll", "dpll" };
+ PNAME(mux_pll_src_2plls_p)	= { "dpll", "gpll" };
+ PNAME(mux_pll_src_apll_gpll_p)	= { "apll", "gpll" };
+ PNAME(mux_aclk_peri_src_p)	= { "aclk_peri_src_gpll", "aclk_peri_src_dpll" };
+-- 
+2.22.0.410.gd8fdbe21b5-goog
+
