@@ -2,147 +2,313 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 154775A62E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 23:19:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EC695A63E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 23:23:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726682AbfF1VS6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 17:18:58 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:48175 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725783AbfF1VS5 (ORCPT
+        id S1726852AbfF1VXb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 17:23:31 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:50806 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726818AbfF1VX3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 17:18:57 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212])
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1hgyGk-0006CC-JA; Fri, 28 Jun 2019 21:18:54 +0000
-Subject: Re: [PATCH][next] regulator: lp87565: fix missing break in switch
- statement
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Keerthy <j-keerthy@ti.com>, Liam Girdwood <lgirdwood@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190627131639.6394-1-colin.king@canonical.com>
- <20190628143628.GJ5379@sirena.org.uk>
-From:   Colin Ian King <colin.king@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=colin.king@canonical.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <4cb0e4ab-66c7-2b3d-27d3-fd5cfde8988f@canonical.com>
-Date:   Fri, 28 Jun 2019 22:18:53 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Fri, 28 Jun 2019 17:23:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=oT08YEQUDLqVqzFxgcIkHyl/r2ihBR8REh3Hrnc8vGU=; b=OEOJj5EOPj7GGmZBMhuAWMeHW
+        LMATdNuwRnzPP8MZI91r0pnW8M/WZAaJ68nzmmSX1j9uTFsQhaPSyeMGYeAxYtsf2nKXo1Tv7Ps2n
+        fHdUXKH4hdF+IjzDccAyLJKlbNbKe8QXCc7YpSrSVlRSQg2yb1d8voSS7hJ6hpZBzB9DYaF1CPsNy
+        ++DOQ7l4Zitjw4RekJJJwqaQhYgE9SKozhjYh0KYBK0AGLdIruTCGZsd58e2ans9uwoPDQ+QZew9n
+        6b66ZZ62LlKV8CGmWlBFmsgrKbTu1iNHQYKRtzCVPH/FuONRb4kV9btAnqsxSE8h68Uh6rl9/69R8
+        QdZmtIBsQ==;
+Received: from [187.113.3.250] (helo=bombadil.infradead.org)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hgyL2-0001VD-K7; Fri, 28 Jun 2019 21:23:21 +0000
+Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
+        (envelope-from <mchehab@bombadil.infradead.org>)
+        id 1hgyKz-0002dj-SB; Fri, 28 Jun 2019 18:23:17 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Darren Hart <dvhart@infradead.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        linux-spi@vger.kernel.org, Seth Heasley <seth.heasley@intel.com>,
+        Ajay Gupta <ajayg@nvidia.com>,
+        Jim Cromie <jim.cromie@gmail.com>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        Rudolf Marek <r.marek@assembler.cz>,
+        Andreas Werner <andreas.werner@men.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Peter Rosin <peda@axentia.se>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Mark Brown <broonie@kernel.org>, linux-rtc@vger.kernel.org,
+        Wolfram Sang <wsa@the-dreams.de>, linux-hwmon@vger.kernel.org,
+        Vadim Pasternak <vadimp@mellanox.com>,
+        Peter Korsgaard <peter@korsgaard.com>,
+        Eric Piel <eric.piel@tremplin-utc.net>,
+        Evgeniy Polyakov <zbr@ioremap.net>, linux-iio@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        platform-driver-x86@vger.kernel.org,
+        Andy Shevchenko <andy@infradead.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Guenter Roeck <linux@roeck-us.net>, linux-i2c@vger.kernel.org,
+        Michael Shych <michaelsh@mellanox.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Andrew Lunn <andrew@lunn.ch>, devicetree@vger.kernel.org,
+        Jean Delvare <jdelvare@suse.com>,
+        Lars-Peter Clausen <lars@metafoo.de>
+Subject: [PATCH 0/5] Convert misc-devices, i2c, w1, spi and some markdown files to ReST
+Date:   Fri, 28 Jun 2019 18:23:11 -0300
+Message-Id: <cover.1561756511.git.mchehab+samsung@kernel.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-In-Reply-To: <20190628143628.GJ5379@sirena.org.uk>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="oEKD0TuaAUSDAgkxvBRIrIF2rNVkuo2dS"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---oEKD0TuaAUSDAgkxvBRIrIF2rNVkuo2dS
-Content-Type: multipart/mixed; boundary="tQHFnbd530JsHQTzVsockgDr2aN6yzYeZ";
- protected-headers="v1"
-From: Colin Ian King <colin.king@canonical.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Keerthy <j-keerthy@ti.com>, Liam Girdwood <lgirdwood@gmail.com>,
- Lee Jones <lee.jones@linaro.org>, kernel-janitors@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Message-ID: <4cb0e4ab-66c7-2b3d-27d3-fd5cfde8988f@canonical.com>
-Subject: Re: [PATCH][next] regulator: lp87565: fix missing break in switch
- statement
-References: <20190627131639.6394-1-colin.king@canonical.com>
- <20190628143628.GJ5379@sirena.org.uk>
-In-Reply-To: <20190628143628.GJ5379@sirena.org.uk>
+There are some files under Documentation/ that don't end with .txt but
+as plain text files. If I did the math right, ~140 of such files make sense
+to convert, IMO. 
 
---tQHFnbd530JsHQTzVsockgDr2aN6yzYeZ
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+This series convert most of them. After this series, there will be around
+30-40 files without any extension to be converted.
 
-On 28/06/2019 15:36, Mark Brown wrote:
-> On Thu, Jun 27, 2019 at 02:16:39PM +0100, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> Currently the LP87565_DEVICE_TYPE_LP87561_Q1 case does not have a
->> break statement, causing it to fall through to a dev_err message.
->> Fix this by adding in the missing break statement.
->=20
-> This doesn't apply against current code, please check and resend.
->=20
-So it applies cleanly against linux-next, I think the original code
-landed in mfd/for-mfd-next - c.f. https://lkml.org/lkml/2019/5/28/550
+The results of this conversion (applied after my big conversion series)
+can be seen at:
 
-Colin
+	https://www.infradead.org/~mchehab/rst_conversion/
+
+In order to make easier to merge, I'm placing one patch per subsystem,
+plus a patch for the markdown->ReST conversion.
+
+Mauro Carvalho Chehab (5):
+  docs: convert markdown documents to ReST
+  docs: misc-devices: convert files without extension to ReST
+  docs: i2c: convert to ReST and add to driver-api bookset
+  docs: w1: convert to ReST and add to the kAPI group of docs
+  docs: spi: convert to ReST and add it to the kABI bookset
+
+ Documentation/ABI/stable/sysfs-bus-w1         |   2 +-
+ .../ABI/stable/sysfs-driver-w1_ds28e04        |   4 +-
+ .../ABI/stable/sysfs-driver-w1_ds28ea00       |   2 +-
+ Documentation/IPMB.txt                        |   2 +-
+ .../devicetree/bindings/i2c/i2c-mux-gpmux.txt |   2 +-
+ Documentation/devicetree/writing-schema.md    | 130 ------------
+ Documentation/devicetree/writing-schema.rst   | 153 ++++++++++++++
+ ...entication.md => ubifs-authentication.rst} |  70 ++++---
+ Documentation/hwmon/adm1021.rst               |   2 +-
+ Documentation/hwmon/adm1275.rst               |   2 +-
+ Documentation/hwmon/hih6130.rst               |   2 +-
+ Documentation/hwmon/ibm-cffps.rst             |   2 +-
+ Documentation/hwmon/lm25066.rst               |   2 +-
+ Documentation/hwmon/max16064.rst              |   2 +-
+ Documentation/hwmon/max16065.rst              |   2 +-
+ Documentation/hwmon/max20751.rst              |   2 +-
+ Documentation/hwmon/max34440.rst              |   2 +-
+ Documentation/hwmon/max6650.rst               |   2 +-
+ Documentation/hwmon/max8688.rst               |   2 +-
+ Documentation/hwmon/menf21bmc.rst             |   2 +-
+ Documentation/hwmon/pcf8591.rst               |   2 +-
+ Documentation/hwmon/sht3x.rst                 |   2 +-
+ Documentation/hwmon/shtc1.rst                 |   2 +-
+ Documentation/hwmon/tmp103.rst                |   2 +-
+ Documentation/hwmon/tps40422.rst              |   2 +-
+ Documentation/hwmon/ucd9000.rst               |   2 +-
+ Documentation/hwmon/ucd9200.rst               |   2 +-
+ Documentation/hwmon/via686a.rst               |   2 +-
+ Documentation/hwmon/zl6100.rst                |   2 +-
+ .../busses/{i2c-ali1535 => i2c-ali1535.rst}   |  13 +-
+ .../busses/{i2c-ali1563 => i2c-ali1563.rst}   |   3 +
+ .../busses/{i2c-ali15x3 => i2c-ali15x3.rst}   |  63 +++---
+ Documentation/i2c/busses/i2c-amd-mp2          |  23 ---
+ Documentation/i2c/busses/i2c-amd-mp2.rst      |  25 +++
+ .../i2c/busses/{i2c-amd756 => i2c-amd756.rst} |   8 +-
+ .../busses/{i2c-amd8111 => i2c-amd8111.rst}   |  14 +-
+ .../{i2c-diolan-u2c => i2c-diolan-u2c.rst}    |   3 +
+ .../i2c/busses/{i2c-i801 => i2c-i801.rst}     |  31 ++-
+ .../i2c/busses/{i2c-ismt => i2c-ismt.rst}     |  20 +-
+ .../busses/{i2c-mlxcpld => i2c-mlxcpld.rst}   |   6 +
+ .../busses/{i2c-nforce2 => i2c-nforce2.rst}   |  23 ++-
+ .../{i2c-nvidia-gpu => i2c-nvidia-gpu.rst}    |   6 +-
+ .../i2c/busses/{i2c-ocores => i2c-ocores.rst} |  22 +-
+ Documentation/i2c/busses/i2c-parport          | 178 ----------------
+ ...2c-parport-light => i2c-parport-light.rst} |   2 +
+ Documentation/i2c/busses/i2c-parport.rst      | 190 +++++++++++++++++
+ .../busses/{i2c-pca-isa => i2c-pca-isa.rst}   |   9 +-
+ .../i2c/busses/{i2c-piix4 => i2c-piix4.rst}   |  14 +-
+ .../busses/{i2c-sis5595 => i2c-sis5595.rst}   |  18 +-
+ Documentation/i2c/busses/i2c-sis630           |  58 ------
+ Documentation/i2c/busses/i2c-sis630.rst       |  64 ++++++
+ .../i2c/busses/{i2c-sis96x => i2c-sis96x.rst} |  28 ++-
+ .../busses/{i2c-taos-evm => i2c-taos-evm.rst} |   8 +-
+ .../i2c/busses/{i2c-via => i2c-via.rst}       |  20 +-
+ .../i2c/busses/{i2c-viapro => i2c-viapro.rst} |  12 +-
+ Documentation/i2c/busses/index.rst            |  33 +++
+ .../i2c/busses/{scx200_acb => scx200_acb.rst} |   9 +-
+ .../i2c/{dev-interface => dev-interface.rst}  |  94 +++++----
+ ...-considerations => dma-considerations.rst} |   0
+ .../i2c/{fault-codes => fault-codes.rst}      |   4 +
+ .../i2c/{functionality => functionality.rst}  |  18 +-
+ ...ult-injection => gpio-fault-injection.rst} |  12 +-
+ .../i2c/{i2c-protocol => i2c-protocol.rst}    |  28 ++-
+ Documentation/i2c/{i2c-stub => i2c-stub.rst}  |  19 +-
+ .../i2c/{i2c-topology => i2c-topology.rst}    |  68 +++---
+ Documentation/i2c/index.rst                   |  38 ++++
+ ...ting-devices => instantiating-devices.rst} |  45 ++--
+ .../muxes/{i2c-mux-gpio => i2c-mux-gpio.rst}  |  26 +--
+ ...e-parameters => old-module-parameters.rst} |  27 ++-
+ ...eprom-backend => slave-eeprom-backend.rst} |   3 +-
+ .../{slave-interface => slave-interface.rst}  |  32 +--
+ .../{smbus-protocol => smbus-protocol.rst}    |  74 ++++---
+ Documentation/i2c/{summary => summary.rst}    |   4 +-
+ ...en-bit-addresses => ten-bit-addresses.rst} |   5 +
+ ...pgrading-clients => upgrading-clients.rst} | 194 +++++++++---------
+ .../{writing-clients => writing-clients.rst}  |  94 +++++----
+ Documentation/index.rst                       |   3 +
+ .../misc-devices/{eeprom => eeprom.rst}       |  43 ++--
+ .../{ics932s401 => ics932s401.rst}            |   7 +-
+ Documentation/misc-devices/index.rst          |   5 +
+ .../misc-devices/{isl29003 => isl29003.rst}   |  15 +-
+ .../misc-devices/{lis3lv02d => lis3lv02d.rst} |  20 +-
+ .../misc-devices/{max6875 => max6875.rst}     |  52 +++--
+ .../spi/{butterfly => butterfly.rst}          |  44 ++--
+ Documentation/spi/index.rst                   |  23 +++
+ Documentation/spi/{pxa2xx => pxa2xx.rst}      |  94 +++++----
+ .../spi/{spi-lm70llp => spi-lm70llp.rst}      |  17 +-
+ .../spi/{spi-sc18is602 => spi-sc18is602.rst}  |   5 +-
+ .../spi/{spi-summary => spi-summary.rst}      | 103 ++++++----
+ Documentation/spi/{spidev => spidev.rst}      |  30 ++-
+ Documentation/w1/index.rst                    |  22 ++
+ .../w1/masters/{ds2482 => ds2482.rst}         |  17 +-
+ .../w1/masters/{ds2490 => ds2490.rst}         |   6 +-
+ Documentation/w1/masters/index.rst            |  14 ++
+ Documentation/w1/masters/mxc-w1               |  12 --
+ Documentation/w1/masters/mxc-w1.rst           |  17 ++
+ .../w1/masters/{omap-hdq => omap-hdq.rst}     |  12 +-
+ .../w1/masters/{w1-gpio => w1-gpio.rst}       |  21 +-
+ Documentation/w1/slaves/index.rst             |  16 ++
+ .../w1/slaves/{w1_ds2406 => w1_ds2406.rst}    |   2 +
+ .../w1/slaves/{w1_ds2413 => w1_ds2413.rst}    |   9 +
+ Documentation/w1/slaves/w1_ds2423             |  47 -----
+ Documentation/w1/slaves/w1_ds2423.rst         |  54 +++++
+ .../w1/slaves/{w1_ds2438 => w1_ds2438.rst}    |  10 +-
+ .../w1/slaves/{w1_ds28e04 => w1_ds28e04.rst}  |   5 +
+ .../w1/slaves/{w1_ds28e17 => w1_ds28e17.rst}  |  15 +-
+ .../w1/slaves/{w1_therm => w1_therm.rst}      |  11 +-
+ .../w1/{w1.generic => w1-generic.rst}         |  88 ++++----
+ .../w1/{w1.netlink => w1-netlink.rst}         |  83 ++++----
+ MAINTAINERS                                   |  52 ++---
+ Next/merge.log                                |   6 +-
+ drivers/hwmon/atxp1.c                         |   2 +-
+ drivers/hwmon/smm665.c                        |   2 +-
+ drivers/i2c/Kconfig                           |   4 +-
+ drivers/i2c/busses/Kconfig                    |   2 +-
+ drivers/i2c/busses/i2c-i801.c                 |   2 +-
+ drivers/i2c/busses/i2c-taos-evm.c             |   2 +-
+ drivers/i2c/i2c-core-base.c                   |   4 +-
+ drivers/iio/dummy/iio_simple_dummy.c          |   4 +-
+ drivers/misc/isl29003.c                       |   2 +-
+ drivers/platform/x86/Kconfig                  |   2 +-
+ drivers/rtc/rtc-ds1374.c                      |   2 +-
+ drivers/spi/Kconfig                           |   2 +-
+ drivers/spi/spi-butterfly.c                   |   2 +-
+ drivers/spi/spi-lm70llp.c                     |   2 +-
+ include/linux/i2c.h                           |   2 +-
+ include/linux/platform_data/sc18is602.h       |   2 +-
+ 127 files changed, 1874 insertions(+), 1239 deletions(-)
+ delete mode 100644 Documentation/devicetree/writing-schema.md
+ create mode 100644 Documentation/devicetree/writing-schema.rst
+ rename Documentation/filesystems/{ubifs-authentication.md => ubifs-authentication.rst} (95%)
+ rename Documentation/i2c/busses/{i2c-ali1535 => i2c-ali1535.rst} (82%)
+ rename Documentation/i2c/busses/{i2c-ali1563 => i2c-ali1563.rst} (93%)
+ rename Documentation/i2c/busses/{i2c-ali15x3 => i2c-ali15x3.rst} (72%)
+ delete mode 100644 Documentation/i2c/busses/i2c-amd-mp2
+ create mode 100644 Documentation/i2c/busses/i2c-amd-mp2.rst
+ rename Documentation/i2c/busses/{i2c-amd756 => i2c-amd756.rst} (79%)
+ rename Documentation/i2c/busses/{i2c-amd8111 => i2c-amd8111.rst} (66%)
+ rename Documentation/i2c/busses/{i2c-diolan-u2c => i2c-diolan-u2c.rst} (91%)
+ rename Documentation/i2c/busses/{i2c-i801 => i2c-i801.rst} (89%)
+ rename Documentation/i2c/busses/{i2c-ismt => i2c-ismt.rst} (81%)
+ rename Documentation/i2c/busses/{i2c-mlxcpld => i2c-mlxcpld.rst} (88%)
+ rename Documentation/i2c/busses/{i2c-nforce2 => i2c-nforce2.rst} (68%)
+ rename Documentation/i2c/busses/{i2c-nvidia-gpu => i2c-nvidia-gpu.rst} (63%)
+ rename Documentation/i2c/busses/{i2c-ocores => i2c-ocores.rst} (82%)
+ delete mode 100644 Documentation/i2c/busses/i2c-parport
+ rename Documentation/i2c/busses/{i2c-parport-light => i2c-parport-light.rst} (92%)
+ create mode 100644 Documentation/i2c/busses/i2c-parport.rst
+ rename Documentation/i2c/busses/{i2c-pca-isa => i2c-pca-isa.rst} (72%)
+ rename Documentation/i2c/busses/{i2c-piix4 => i2c-piix4.rst} (92%)
+ rename Documentation/i2c/busses/{i2c-sis5595 => i2c-sis5595.rst} (74%)
+ delete mode 100644 Documentation/i2c/busses/i2c-sis630
+ create mode 100644 Documentation/i2c/busses/i2c-sis630.rst
+ rename Documentation/i2c/busses/{i2c-sis96x => i2c-sis96x.rst} (75%)
+ rename Documentation/i2c/busses/{i2c-taos-evm => i2c-taos-evm.rst} (91%)
+ rename Documentation/i2c/busses/{i2c-via => i2c-via.rst} (61%)
+ rename Documentation/i2c/busses/{i2c-viapro => i2c-viapro.rst} (87%)
+ create mode 100644 Documentation/i2c/busses/index.rst
+ rename Documentation/i2c/busses/{scx200_acb => scx200_acb.rst} (86%)
+ rename Documentation/i2c/{dev-interface => dev-interface.rst} (71%)
+ rename Documentation/i2c/{DMA-considerations => dma-considerations.rst} (100%)
+ rename Documentation/i2c/{fault-codes => fault-codes.rst} (98%)
+ rename Documentation/i2c/{functionality => functionality.rst} (91%)
+ rename Documentation/i2c/{gpio-fault-injection => gpio-fault-injection.rst} (97%)
+ rename Documentation/i2c/{i2c-protocol => i2c-protocol.rst} (83%)
+ rename Documentation/i2c/{i2c-stub => i2c-stub.rst} (93%)
+ rename Documentation/i2c/{i2c-topology => i2c-topology.rst} (89%)
+ create mode 100644 Documentation/i2c/index.rst
+ rename Documentation/i2c/{instantiating-devices => instantiating-devices.rst} (93%)
+ rename Documentation/i2c/muxes/{i2c-mux-gpio => i2c-mux-gpio.rst} (85%)
+ rename Documentation/i2c/{old-module-parameters => old-module-parameters.rst} (75%)
+ rename Documentation/i2c/{slave-eeprom-backend => slave-eeprom-backend.rst} (90%)
+ rename Documentation/i2c/{slave-interface => slave-interface.rst} (94%)
+ rename Documentation/i2c/{smbus-protocol => smbus-protocol.rst} (84%)
+ rename Documentation/i2c/{summary => summary.rst} (96%)
+ rename Documentation/i2c/{ten-bit-addresses => ten-bit-addresses.rst} (95%)
+ rename Documentation/i2c/{upgrading-clients => upgrading-clients.rst} (56%)
+ rename Documentation/i2c/{writing-clients => writing-clients.rst} (91%)
+ rename Documentation/misc-devices/{eeprom => eeprom.rst} (76%)
+ rename Documentation/misc-devices/{ics932s401 => ics932s401.rst} (94%)
+ rename Documentation/misc-devices/{isl29003 => isl29003.rst} (77%)
+ rename Documentation/misc-devices/{lis3lv02d => lis3lv02d.rst} (90%)
+ rename Documentation/misc-devices/{max6875 => max6875.rst} (83%)
+ rename Documentation/spi/{butterfly => butterfly.rst} (71%)
+ create mode 100644 Documentation/spi/index.rst
+ rename Documentation/spi/{pxa2xx => pxa2xx.rst} (83%)
+ rename Documentation/spi/{spi-lm70llp => spi-lm70llp.rst} (88%)
+ rename Documentation/spi/{spi-sc18is602 => spi-sc18is602.rst} (92%)
+ rename Documentation/spi/{spi-summary => spi-summary.rst} (93%)
+ rename Documentation/spi/{spidev => spidev.rst} (90%)
+ create mode 100644 Documentation/w1/index.rst
+ rename Documentation/w1/masters/{ds2482 => ds2482.rst} (71%)
+ rename Documentation/w1/masters/{ds2490 => ds2490.rst} (98%)
+ create mode 100644 Documentation/w1/masters/index.rst
+ delete mode 100644 Documentation/w1/masters/mxc-w1
+ create mode 100644 Documentation/w1/masters/mxc-w1.rst
+ rename Documentation/w1/masters/{omap-hdq => omap-hdq.rst} (90%)
+ rename Documentation/w1/masters/{w1-gpio => w1-gpio.rst} (75%)
+ create mode 100644 Documentation/w1/slaves/index.rst
+ rename Documentation/w1/slaves/{w1_ds2406 => w1_ds2406.rst} (97%)
+ rename Documentation/w1/slaves/{w1_ds2413 => w1_ds2413.rst} (81%)
+ delete mode 100644 Documentation/w1/slaves/w1_ds2423
+ create mode 100644 Documentation/w1/slaves/w1_ds2423.rst
+ rename Documentation/w1/slaves/{w1_ds2438 => w1_ds2438.rst} (93%)
+ rename Documentation/w1/slaves/{w1_ds28e04 => w1_ds28e04.rst} (93%)
+ rename Documentation/w1/slaves/{w1_ds28e17 => w1_ds28e17.rst} (88%)
+ rename Documentation/w1/slaves/{w1_therm => w1_therm.rst} (95%)
+ rename Documentation/w1/{w1.generic => w1-generic.rst} (59%)
+ rename Documentation/w1/{w1.netlink => w1-netlink.rst} (79%)
+
+-- 
+2.21.0
 
 
-
---tQHFnbd530JsHQTzVsockgDr2aN6yzYeZ--
-
---oEKD0TuaAUSDAgkxvBRIrIF2rNVkuo2dS
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEcGLapPABucZhZwDPaMKH38aoAiYFAl0WhD0ACgkQaMKH38ao
-AiYXqhAAgNjTAegXGgSCgEaVLMbaflCz6y02yhmBbwEtjXJsbDREpATHmq4Gbt+j
-erzMKu9kEXGF0arOAmBOkAVyvtWatjvF0Za6/vvjgUrFS5hBmukxGvzET0H9bTGz
-YNJnIxm1YROmQc8zlJDk/JTChddEsHTdmQaz4oMvhI415EyyMnXXHBnIPKKnt4de
-WRLO6cSk0wtE3uU2ueEBR9RTyaaPzvYYCCrB8ln6muXr1cBI1f2823t8Ty0PRBHS
-TxCKUjTwg1ZBWPwCkk6jqS39ET2sn8NFkhkTbvWccvhTI+EB8vNy3JeNhv/7m+BD
-EX0suKNfuOovcfZISF6ngtnSgZo4YgpuYA+ekfu8hNML2rA7hkLNGa3ykLhGv9L4
-PxqlSI8ejX94A/mAZKHzHE29J+b+LAb7lGSFecFBqOpC1sv7G8Jsv2ftdfOs1qZN
-LkIXVhFRT2dsTAVZb8HyTuDGY4KoP4nAze9ew0VDHw40QCJHwtcBUZIDlKzN+ayN
-FgfXCA3e2RT8VAxNfWU0HRpFoZRbwmfhuvjMMvvUR7ee4VUyNLD0oabI3IoEjFnh
-UXRoq6rHqDQ+aN2iz7Ya4qj+m2QKo7fEo+04uchuKWuBgewNe1Nx9vDHZFJlnw9l
-kuRZPk8KyoUWmzx2BC3j2dae2miEk9gxfZHF2L/8OwNeXYzp8CQ=
-=U/PE
------END PGP SIGNATURE-----
-
---oEKD0TuaAUSDAgkxvBRIrIF2rNVkuo2dS--
