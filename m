@@ -2,61 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 774E25A431
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 20:37:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BA845A476
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 20:47:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726931AbfF1Shb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 14:37:31 -0400
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:47867 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726631AbfF1Shb (ORCPT
+        id S1726844AbfF1SrU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 14:47:20 -0400
+Received: from 7.mo6.mail-out.ovh.net ([46.105.59.196]:56781 "EHLO
+        7.mo6.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726586AbfF1SrU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 14:37:31 -0400
-X-Originating-IP: 81.185.164.234
-Received: from localhost.localdomain (234.164.185.81.rev.sfr.net [81.185.164.234])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id 54B2020004;
-        Fri, 28 Jun 2019 18:37:27 +0000 (UTC)
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Jeff Kletsky <lede@allycomm.com>,
-        Schrempf Frieder <frieder.schrempf@kontron.de>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>
-Cc:     linux-mtd@lists.infradead.org,
-        Jeff Kletsky <git-commits@allycomm.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] mtd: spinand: Add initial support for Paragon PN26G0xA
-Date:   Fri, 28 Jun 2019 20:37:19 +0200
-Message-Id: <20190628183719.18941-1-miquel.raynal@bootlin.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190618170805.7187-1-lede@allycomm.com>
-References: 
+        Fri, 28 Jun 2019 14:47:20 -0400
+X-Greylist: delayed 512 seconds by postgrey-1.27 at vger.kernel.org; Fri, 28 Jun 2019 14:47:19 EDT
+Received: from player772.ha.ovh.net (unknown [10.109.146.5])
+        by mo6.mail-out.ovh.net (Postfix) with ESMTP id 6ECB21D1D2B
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2019 20:38:46 +0200 (CEST)
+Received: from sk2.org (gw.sk2.org [88.186.243.14])
+        (Authenticated sender: steve@sk2.org)
+        by player772.ha.ovh.net (Postfix) with ESMTPSA id D8A3A759C830;
+        Fri, 28 Jun 2019 18:38:42 +0000 (UTC)
+Date:   Fri, 28 Jun 2019 20:38:41 +0200
+From:   Stephen Kitt <steve@sk2.org>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] docs: format kernel-parameters -- as code
+Message-ID: <20190628203841.723ccd9c@heffalump.sk2.org>
+In-Reply-To: <20190628091021.457d0301@lwn.net>
+References: <20190627135938.3722-1-steve@sk2.org>
+        <20190628091021.457d0301@lwn.net>
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-X-linux-mtd-patch-notification: thanks
-X-linux-mtd-patch-commit: 3552691616c940a7c4125c2678ba816653cd725e
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ boundary="Sig_/+Q2ZDCvK8guFHmIkhT+Ru1w"; protocol="application/pgp-signature"
+X-Ovh-Tracer-Id: 6824642289615850885
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeduvddrvddtgdduvdelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddm
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-06-18 at 17:08:05 UTC, Jeff Kletsky wrote:
-> From: Jeff Kletsky <git-commits@allycomm.com>
-> 
-> Add initial support for Paragon Technology
-> PN26G01Axxxxx and PN26G02Axxxxx SPI NAND
-> 
-> Datasheets available at
-> http://www.xtxtech.com/upfile/2016082517274590.pdf
-> http://www.xtxtech.com/upfile/2016082517282329.pdf
-> 
-> Signed-off-by: Jeff Kletsky <git-commits@allycomm.com>
-> Reviewed-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+--Sig_/+Q2ZDCvK8guFHmIkhT+Ru1w
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git nand/next, thanks.
+On Fri, 28 Jun 2019 09:10:21 -0600, Jonathan Corbet <corbet@lwn.net> wrote:
+> On Thu, 27 Jun 2019 15:59:38 +0200
+> > The current ReStructuredText formatting results in "--", used to
+> > indicate the end of the kernel command-line parameters, appearing as
+> > an en-dash instead of two hyphens; this patch formats them as code,
+> > "``--``", as done elsewhere in the documentation.
+> >=20
+> > Signed-off-by: Stephen Kitt <steve@sk2.org> =20
+>=20
+> A worthy fix, I've applied it.  This seems like the sort of annoyance that
+> will bite us over and over, though.  We might want to find a more
+> comprehensive way to turn this behavior off.
 
-Miquel
+Right, looking further shows a large number of places where -- is handled
+incorrectly. The following patch disables this =E2=80=9Csmart=E2=80=9D hand=
+ling wholesale;
+I=E2=80=99ll follow up (in the next few days) with patches to use real em- =
+and
+en-dashes where appropriate.
+
+Regards,
+
+Stephen
+
+=46rom 3b10d01decfec38a124be75739b398a3dcd9d5ce Mon Sep 17 00:00:00 2001
+From: Stephen Kitt <steve@sk2.org>
+Date: Fri, 28 Jun 2019 20:34:31 +0200
+Subject: [PATCH] Disable Sphinx SmartyPants in HTML output
+
+The handling of dashes in particular results in confusing
+documentation in a number of instances, since "--" becomes an
+en-dash. This disables SmartyPants wholesale, losing smart quotes
+along with smart dashes.
+
+With Sphinx 1.6 we could fine-tune the conversion, using the new
+smartquotes and smartquotes_action settings.
+
+Signed-off-by: Stephen Kitt <steve@sk2.org>
+---
+ Documentation/conf.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Documentation/conf.py b/Documentation/conf.py
+index 7ace3f8852bd..966dbdfafcd1 100644
+--- a/Documentation/conf.py
++++ b/Documentation/conf.py
+@@ -200,7 +200,7 @@ html_context =3D {
+=20
+ # If true, SmartyPants will be used to convert quotes and dashes to
+ # typographically correct entities.
+-#html_use_smartypants =3D True
++html_use_smartypants =3D False
+=20
+ # Custom sidebar templates, maps document names to template names.
+ #html_sidebars =3D {}
+--=20
+2.11.0
+
+
+--Sig_/+Q2ZDCvK8guFHmIkhT+Ru1w
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEnPVX/hPLkMoq7x0ggNMC9Yhtg5wFAl0WXrEACgkQgNMC9Yht
+g5zEiA//UWxO0D8Gj4guz7JvI59f1scnIIvc/bjVR5KM2wr1nDuL32FbRP4KjU0n
+x5vWte2gM2GR5txA7SQAcuOmWd9+lLH25iKJVFug+0l0EcS8rtclH4B8YaPLU07H
+D4dDsaN1sl4+w6aUlU7vEmD2ly+Xu3NlARutOhaIhHIyOpUVASkt2G+Rfb0bpNQs
+YntKIwWPrnAUFYaFd5PXY3okqlLc4RNVT1TrKubS9pqgFMT6jPBMEYcbhbogH3ok
+zta4ZdUHJfIMA7mPzVXHD0haoXFitn7CuvPqP7buOrjbke6Kw7YiR7ciidUZkxdp
+1xqGzqzcF45K2j1lIyOOAr2e1Lmp8r2mNuZWZ+cJGT/zdR0tn9+VNGo0ZDUw8CGu
+yNF3ho/tGaZ58cOmtfhLjoI2Ln0wOhObh9fiDy6TXKfjyBsDikc6JOcg9flwPhcU
+c+GGxoNGj+Cw41drldqgM0I6Dm8Ir7osUbdz0/Pv5JjRu3aWWcrH684noM1NX28p
+yazGhrtVDAHSEjePneKtya2NPjFyc8x1oAEFO62lRSuvtgILGIEionrKeRmaqfP6
+KnRUa1BEUqRzV1fXnV5HTgDfq94Z6pqMdtmWZ4lAkq0xd2MvsAXiNKUTXNnUh1cI
+7Cv2Z9PoehoZZRfgL9weSorwV1cFvZSCXpqHNxTeSmgqsaQWDn0=
+=BYN7
+-----END PGP SIGNATURE-----
+
+--Sig_/+Q2ZDCvK8guFHmIkhT+Ru1w--
