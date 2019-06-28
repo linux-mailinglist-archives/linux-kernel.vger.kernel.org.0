@@ -2,88 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBB0F58FC9
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 03:34:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8131859762
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 11:24:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726873AbfF1Bd5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 21:33:57 -0400
-Received: from mga05.intel.com ([192.55.52.43]:41605 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726846AbfF1Bdx (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 21:33:53 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jun 2019 18:33:53 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,425,1557212400"; 
-   d="scan'208";a="189283653"
-Received: from skl.sh.intel.com ([10.239.159.132])
-  by fmsmga002.fm.intel.com with ESMTP; 27 Jun 2019 18:33:51 -0700
-From:   Jin Yao <yao.jin@linux.intel.com>
-To:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com
-Cc:     Linux-kernel@vger.kernel.org, ak@linux.intel.com,
-        kan.liang@intel.com, yao.jin@intel.com,
-        Jin Yao <yao.jin@linux.intel.com>
-Subject: [PATCH v6 7/7] perf diff: Documentation -c cycles option
-Date:   Fri, 28 Jun 2019 17:23:04 +0800
-Message-Id: <1561713784-30533-8-git-send-email-yao.jin@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1561713784-30533-1-git-send-email-yao.jin@linux.intel.com>
-References: <1561713784-30533-1-git-send-email-yao.jin@linux.intel.com>
+        id S1726604AbfF1JYL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 05:24:11 -0400
+Received: from twhmllg3.macronix.com ([122.147.135.201]:13685 "EHLO
+        TWHMLLG3.macronix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726385AbfF1JYL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Jun 2019 05:24:11 -0400
+Received: from twhfmlp1.macronix.com (twhfm1p1.macronix.com [172.17.20.91])
+        by TWHMLLG3.macronix.com with ESMTP id x5S9N5J1024487;
+        Fri, 28 Jun 2019 17:23:05 +0800 (GMT-8)
+        (envelope-from masonccyang@mxic.com.tw)
+Received: from MXML06C.mxic.com.tw (mxml06c.mxic.com.tw [172.17.14.55])
+        by Forcepoint Email with ESMTP id 81A3434E844D647A2747;
+        Fri, 28 Jun 2019 17:23:05 +0800 (CST)
+In-Reply-To: <20190628111250.34da11be@xps13>
+References: <1561443056-13766-1-git-send-email-masonccyang@mxic.com.tw> <1561443056-13766-3-git-send-email-masonccyang@mxic.com.tw>
+        <20190627192609.0965f6d5@xps13> <OFFBD1710A.54AC467B-ON48258427.0023FCA3-48258427.00255B71@mxic.com.tw>
+        <20190628094250.1fd84505@xps13> <OFF895B48A.00F391C1-ON48258427.002F8256-48258427.003249E0@mxic.com.tw> <20190628111250.34da11be@xps13>
+To:     "Miquel Raynal" <miquel.raynal@bootlin.com>
+Cc:     anders.roxell@linaro.org, bbrezillon@kernel.org,
+        broonie@kernel.org, christophe.kerello@st.com,
+        computersforpeace@gmail.com, devicetree@vger.kernel.org,
+        dwmw2@infradead.org, jianxin.pan@amlogic.com, juliensu@mxic.com.tw,
+        lee.jones@linaro.org, liang.yang@amlogic.com,
+        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+        marek.vasut@gmail.com, paul@crapouillou.net, paul.burton@mips.com,
+        richard@nod.at, robh+dt@kernel.org, stefan@agner.ch,
+        vigneshr@ti.com
+Subject: Re: [PATCH v4 2/2] dt-bindings: mtd: Document Macronix raw NAND controller
+ bindings
+MIME-Version: 1.0
+X-KeepSent: 450D351D:F05AB6C7-48258427:00335A39;
+ type=4; name=$KeepSent
+X-Mailer: Lotus Notes Release 8.5.3FP4 SHF90 June 10, 2013
+Message-ID: <OF450D351D.F05AB6C7-ON48258427.00335A39-48258427.00338DC1@mxic.com.tw>
+From:   masonccyang@mxic.com.tw
+Date:   Fri, 28 Jun 2019 17:23:06 +0800
+X-MIMETrack: Serialize by Router on MXML06C/TAIWAN/MXIC(Release 9.0.1FP10 HF265|July 25, 2018) at
+ 2019/06/28 PM 05:23:05,
+        Serialize complete at 2019/06/28 PM 05:23:05
+Content-Type: text/plain; charset="US-ASCII"
+X-MAIL: TWHMLLG3.macronix.com x5S9N5J1024487
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Documentation the new computation selection 'cycles'.
 
- v4:
- ---
- Change the column 'Block cycles diff [start:end]' to
- '[Program Block Range] Cycles Diff'
+Hi Miquel,
 
-Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
----
- tools/perf/Documentation/perf-diff.txt | 17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+> > > 
+> > > > > > +- interrupts: interrupt line connected to this NAND 
+controller
+> > > > > > +- clock-names: should contain "ps_clk", "send_clk" and 
+> > "send_dly_clk"
+> > > > > > +- clocks: should contain 3 entries for the "ps_clk", 
+"send_clk" 
+> > and
+> > > > > > +    "send_dly_clk" clocks 
+> > > > > 
+> > > > > s/entries/phandles/ ? 
+> > > > 
+> > > > ?
+> > > > as I know that kernel views the phandle values as device tree 
+> > structure
+> > > > information instead of device tree data and thus does not store 
+them 
+> > as
+> > > > properties. 
+> > > 
+> > > The bindings have nothing to do with the kernel views. They might
+> > > actually be merged in a different project, out of the kernel.
+> > > 
+> > 
+> > if patch to phandle, should we also patch driver to of_xxx_phandle()?
+> 
+> I don't understand your question. <&clk 1> is a phandle, you already
+> use phandles, it's just more precise than the word "entries".
 
-diff --git a/tools/perf/Documentation/perf-diff.txt b/tools/perf/Documentation/perf-diff.txt
-index facd91e..d5cc15e 100644
---- a/tools/perf/Documentation/perf-diff.txt
-+++ b/tools/perf/Documentation/perf-diff.txt
-@@ -90,9 +90,10 @@ OPTIONS
- 
- -c::
- --compute::
--        Differential computation selection - delta, ratio, wdiff, delta-abs
--        (default is delta-abs).  Default can be changed using diff.compute
--        config option.  See COMPARISON METHODS section for more info.
-+        Differential computation selection - delta, ratio, wdiff, cycles,
-+        delta-abs (default is delta-abs).  Default can be changed using
-+        diff.compute config option.  See COMPARISON METHODS section for
-+        more info.
- 
- -p::
- --period::
-@@ -280,6 +281,16 @@ If specified the 'Weighted diff' column is displayed with value 'd' computed as:
-     - WEIGHT-A being the weight of the data file
-     - WEIGHT-B being the weight of the baseline data file
- 
-+cycles
-+~~~~~~
-+If specified the '[Program Block Range] Cycles Diff' column is displayed.
-+It displays the cycles difference of same program basic block amongst
-+two perf.data. The program basic block is the code between two branches.
-+
-+'[Program Block Range]' indicates the range of a program basic block.
-+Source line is reported if it can be found otherwise uses symbol+offset
-+instead.
-+
- SEE ALSO
- --------
- linkperf:perf-record[1], linkperf:perf-report[1]
--- 
-2.7.4
+Oops, I misunderstood your meaning.
+
+thanks for your interpretation.
+best regards,
+
+Mason
+
+
+CONFIDENTIALITY NOTE:
+
+This e-mail and any attachments may contain confidential information 
+and/or personal data, which is protected by applicable laws. Please be 
+reminded that duplication, disclosure, distribution, or use of this e-mail 
+(and/or its attachments) or any part thereof is prohibited. If you receive 
+this e-mail in error, please notify us immediately and delete this mail as 
+well as its attachment(s) from your system. In addition, please be 
+informed that collection, processing, and/or use of personal data is 
+prohibited unless expressly permitted by personal data protection laws. 
+Thank you for your attention and cooperation.
+
+Macronix International Co., Ltd.
+
+=====================================================================
+
+
+
+============================================================================
+
+CONFIDENTIALITY NOTE:
+
+This e-mail and any attachments may contain confidential information and/or personal data, which is protected by applicable laws. Please be reminded that duplication, disclosure, distribution, or use of this e-mail (and/or its attachments) or any part thereof is prohibited. If you receive this e-mail in error, please notify us immediately and delete this mail as well as its attachment(s) from your system. In addition, please be informed that collection, processing, and/or use of personal data is prohibited unless expressly permitted by personal data protection laws. Thank you for your attention and cooperation.
+
+Macronix International Co., Ltd.
+
+=====================================================================
 
