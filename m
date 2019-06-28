@@ -2,79 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1CA15921F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 05:44:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11D4459225
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 05:45:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727185AbfF1Do1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 23:44:27 -0400
-Received: from foss.arm.com ([217.140.110.172]:39698 "EHLO foss.arm.com"
+        id S1727266AbfF1Dpu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 23:45:50 -0400
+Received: from ozlabs.org ([203.11.71.1]:36923 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726686AbfF1DoZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 23:44:25 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BC1A92B;
-        Thu, 27 Jun 2019 20:44:24 -0700 (PDT)
-Received: from [10.162.40.144] (p8cg001049571a15.blr.arm.com [10.162.40.144])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2BE923F706;
-        Thu, 27 Jun 2019 20:44:20 -0700 (PDT)
-Subject: Re: [PATCH] powerpc/64s/radix: Define arch_ioremap_p4d_supported()
-To:     Michael Ellerman <mpe@ellerman.id.au>, linux-mm@kvack.org
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        linux-next@vger.kernel.org
-References: <1561555260-17335-1-git-send-email-anshuman.khandual@arm.com>
- <87d0iztz0f.fsf@concordia.ellerman.id.au>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <6d201cb8-4c39-b7ea-84e6-f84607cc8b4f@arm.com>
-Date:   Fri, 28 Jun 2019 09:14:46 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1727075AbfF1Dpu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 23:45:50 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45ZjNB1lQjz9s3l;
+        Fri, 28 Jun 2019 13:45:46 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1561693547;
+        bh=8mUj2KRXvTU5FS/z0xXNOweWk6tKKmKVr7agiirZ1s4=;
+        h=Date:From:To:Cc:Subject:From;
+        b=Qmeuxf9MpFQq0XOVT0qU/oGC3pXppHD0PsmtG2ZoNwFJ+gVaDMO/aT1vOvlU7qv4O
+         QKAzmSh1tHRTBbOXi18SAv/9pqi2NaWnGxiIVXAevBbe2h3k5UpFxDSpB1on0BCjLY
+         MnaNlSt+KH/MeHF+NyuxgOL1Lc4K5JZwDe3S9FqbanZhH6KPRm/MKAtTR8CM2CUJvJ
+         nvBh38+yDTd4Hoipi3cn5XdayWrZU74Y5FufDIk9EgjYTZuYBrx7pCCcBSyRi0V3/h
+         aW385tQwVpw3I/ahX3bLtGroeFr2HL5SDcexS4miNyxtW+2lB79/6RgOrhwzFlYW1L
+         /GnvApe2vWYQg==
+Date:   Fri, 28 Jun 2019 13:45:45 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Sebastian Reichel <sre@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        Nick Crews <ncrews@chromium.org>
+Subject: linux-next: manual merge of the battery tree with the mfd tree
+Message-ID: <20190628134545.4b9b8625@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <87d0iztz0f.fsf@concordia.ellerman.id.au>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/ue4zsQO11Nz+tbA_o9EUmS="; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--Sig_/ue4zsQO11Nz+tbA_o9EUmS=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-On 06/27/2019 10:18 AM, Michael Ellerman wrote:
-> Anshuman Khandual <anshuman.khandual@arm.com> writes:
->> Recent core ioremap changes require HAVE_ARCH_HUGE_VMAP subscribing archs
->> provide arch_ioremap_p4d_supported() failing which will result in a build
->> failure like the following.
->>
->> ld: lib/ioremap.o: in function `.ioremap_huge_init':
->> ioremap.c:(.init.text+0x3c): undefined reference to
->> `.arch_ioremap_p4d_supported'
->>
->> This defines a stub implementation for arch_ioremap_p4d_supported() keeping
->> it disabled for now to fix the build problem.
-> 
-> The easiest option is for this to be folded into your patch that creates
-> the requirement for arch_ioremap_p4d_supported().
-> 
-> Andrew might do that for you, or you could send a v2.
-> 
-> This looks fine from a powerpc POV:
-> 
-> Acked-by: Michael Ellerman <mpe@ellerman.id.au>
-> 
-> cheers
+Today's linux-next merge of the battery tree got conflicts in:
 
-Hello Stephen/Michael/Andrew,
+  drivers/power/supply/Kconfig
+  drivers/power/supply/Makefile
 
-On linux-next (next-20190627) this change has already been applied though a
-merge commit 153083a99fe431 ("Merge branch 'akpm-current/current'"). So we
-are good on this ? Or shall I send out a V2 for the original patch. Please
-suggest. Thank you.
+between commit:
 
-- Anshuman
+  f8c7f7ddd8ef ("power: supply: Initial support for ROHM BD70528 PMIC charg=
+er block")
+
+from the mfd tree and commit:
+
+  0736343e4c56 ("power_supply: wilco_ec: Add charging config driver")
+
+from the battery tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/power/supply/Kconfig
+index 4a3cd679295b,4c01598f5ccb..000000000000
+--- a/drivers/power/supply/Kconfig
++++ b/drivers/power/supply/Kconfig
+@@@ -689,13 -702,13 +703,22 @@@ config CHARGER_UCS100
+  	  Say Y to enable support for Microchip UCS1002 Programmable
+  	  USB Port Power Controller with Charger Emulation.
+ =20
+ +config CHARGER_BD70528
+ +	tristate "ROHM bd70528 charger driver"
+ +	depends on MFD_ROHM_BD70528
+ +	default n
+ +	help
+ +	 Say Y here to enable support for getting battery status
+ +	 information and altering charger configurations from charger
+ +	 block of the ROHM BD70528 Power Management IC.
+ +
++ config CHARGER_WILCO
++ 	tristate "Wilco EC based charger for ChromeOS"
++ 	depends on WILCO_EC
++ 	help
++ 	  Say Y here to enable control of the charging routines performed
++ 	  by the Embedded Controller on the Chromebook named Wilco. Further
++ 	  information can be found in
++ 	  Documentation/ABI/testing/sysfs-class-power-wilco
++=20
+  endif # POWER_SUPPLY
+diff --cc drivers/power/supply/Makefile
+index 346a8ef5f348,d2263e1e2b6f..000000000000
+--- a/drivers/power/supply/Makefile
++++ b/drivers/power/supply/Makefile
+@@@ -90,4 -91,4 +91,5 @@@ obj-$(CONFIG_CHARGER_CROS_USBPD)	+=3D cro
+  obj-$(CONFIG_CHARGER_SC2731)	+=3D sc2731_charger.o
+  obj-$(CONFIG_FUEL_GAUGE_SC27XX)	+=3D sc27xx_fuel_gauge.o
+  obj-$(CONFIG_CHARGER_UCS1002)	+=3D ucs1002_power.o
+ +obj-$(CONFIG_CHARGER_BD70528)	+=3D bd70528-charger.o
++ obj-$(CONFIG_CHARGER_WILCO)	+=3D wilco-charger.o
+
+--Sig_/ue4zsQO11Nz+tbA_o9EUmS=
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0VjWkACgkQAVBC80lX
+0GysYwf/Y+uE1npkXa982jebG95zEkW/vQvUUvOGav6bb/j6IvtMFgd+jz/P95hV
+dHNm3D9WI36uA9T+wuxPLOUd75m2TiTGkMczUSKOirj8wcLagsKzIS8yJpCZkXPl
+NnDVSIXK6e9+r7kMkemngBt8TNrRLoqeR4S9PhOfzAmxjimcnt6NZ3fN9RRUfh4+
+6Vsyj2pZSrLwMWs7T4kqzdZOElf5x/TBSdgCx7A6R4slWLhXuGFabXplUFvaqCrW
+oy2sUqMqWLpb9SzPaG8fqJAPZ4T7OA1LHg4Rl/h4IHioCy+UcJSOmDRaBrED6gTl
+8ZcRtTLzJh6z4JMOfhmoS/GGydMFQg==
+=JKFi
+-----END PGP SIGNATURE-----
+
+--Sig_/ue4zsQO11Nz+tbA_o9EUmS=--
