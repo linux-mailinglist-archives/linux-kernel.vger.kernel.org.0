@@ -2,63 +2,266 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 508C459858
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 12:26:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 583D85984D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 12:25:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726729AbfF1K0w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 06:26:52 -0400
-Received: from sonic309-42.consmr.mail.bf2.yahoo.com ([74.6.129.216]:35704
-        "EHLO sonic309-42.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726502AbfF1K0v (ORCPT
+        id S1726632AbfF1KZI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 06:25:08 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:56240 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726502AbfF1KZI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 06:26:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1561717610; bh=j5mdRk0FDy84HzZpdNEePcyF7efRPWFS/pXKk6qNhnM=; h=Date:From:Reply-To:Subject:From:Subject; b=scSeIzHu23iG1oS5sg9IBk6d5FlIZdDroi44dxQTxsEBv9Kw6uRb83G7nnRqfjbD9gw5qcA+5lNZvqE9zr+vZDHukLBzJPknwvXnwRMqbYaAqeumNZCN8xxRbPeybc0FNhPYF5ZMp9IFfrTzKO8yE8KqjC0hLsZ7+QWRwnJneSVBWp9NYYJNtLHZnvkUdqAa2EqVsfspNCItPMmVSx9463a5t1d6ybo8X9Kd71CXUw20srHd1Al6JhXHACxyHLt3k56m8k+qMK9gF+qLj7XJmmy/80byaaQCSryNuQObBHr0Q9SBHaheYuTDDTnGZuOM3wO8fhzGkNYxK5ChrLivJQ==
-X-YMail-OSG: HG2Ui.cVM1kYoPQAxYnJUUinwYSVEWSvRf4WaqVSHVJtSTEb7pyob8UclnRrv8j
- coFH3LzZuXGMqR5Spstq.6eb4spcEfBoUgc7KyaTxSMWUpT2ZcHA9ORrsc6HwBzuNubVkgiauPSV
- u_p_XT9_fA1e_7FLqyDsN4KQ9A53rNiTve88R4upTORzEIvJhIhmmINu5eRqH7A8VRGtFvOEFp1V
- hJr9ncu9NFW1shwj9k44OwTVAtUwZ7RUVIZ6hC0nnuMwlXQJ05jmQdrmYEaQ2yC72tiZXm_XcLDY
- hX5y1BpqJHVZq8SzIVi4H1DYJGETAKwVcY_YxZfUvr6_n0wRfOv0WlSEkEbgDcCdR9Wb2bLJP_8m
- XV_pjTT4slWw4CI53z6E8IyvfqYUWtP.irLlqfCXlJeD.g.cO6ANR5y6LvmFFb9OnTCF8A58bubx
- gdjPFWsClKMBIFcL_5nyZe5vZ49xZRE8B8ScyxLpskoxnAJxDsxisYUjJYp6ZaPKGlpIqMvKuZnJ
- jLooxtw_5uAvFJvBrAjVoNhOZiK5cIPE.uW11961WwmnkL1Bo8B7u.dhxHenRycQzsZ2w3imLo1n
- 1y93Y7255Q0_Rh_iwkX6HBSx3xZA2yMczLM.62in.d3tZ1m5Zkxp4spuey6PrtHEQ4SfY9PnJHxf
- qMDNJravPyMzILHhbIqrl59GX.lV8AatTiK9BDgj6RVycBetjKxG0DUt8T9Mcrz0sjXIhClvi2oA
- tY9z4JdzxI.KFQElIZyfpc9rOHtVzG8bJKn4Y8Rwk9GejAwwqWXYqfuEUWKL6bp6NC0ANi67AbFk
- FkCh.gJyF0_znNBcp60WUk3exMfC5Vb.8dxZFcT0KtZIILMRq6kZjAjrO_vcXcZWd1wuHo9oegoX
- 0t7MsTVsDqYglEQ23YJr3gHNc4f9qNYRA1dSdqUZ5u.m4nUgx.zbAKEmVC7Mn69pXNO0Vj15CHqg
- XSlRhQcQr8dFkKzZWWftVymAbxC7AoytWrbGtCDPH6P5H0m4XnAWccj27rGYulLv09XxQ41nOB.c
- 5ijUlkjZwdPmE0k.O6lQiK6TtKoKhWCbN9ZOe4fH2sKMBcwoq4UQY2cWGlxcpp5DHz6exq7iO9QS
- t3qZ71lBpfIh02KK00EXMiYYRdZ7gwawPxT.dvs_U_lGmuNAIoS9Pt8vUIX0BPzPcduzI5uYAR.8
- 0al9.wwGFNei5ExaCdnFZz3aWtHQSnW_YCpakcVhb9je1qYiH.fvru_WGymm8unVbYVVpQhCr3e.
- 9a_X7ZFh3KDW2t7K00jlnSlVUmIcwo0qg8NzjZdy0LIk0gbo-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.bf2.yahoo.com with HTTP; Fri, 28 Jun 2019 10:26:50 +0000
-Date:   Fri, 28 Jun 2019 10:24:49 +0000 (UTC)
-From:   Mrs Alice Johnson <davidmark6682@gmail.com>
-Reply-To: mrsalicejohnson4@gmail.com
-Message-ID: <1145470982.120669.1561717489232@mail.yahoo.com>
-Subject: Dear Friend,
+        Fri, 28 Jun 2019 06:25:08 -0400
+Received: by mail-wm1-f68.google.com with SMTP id a15so8562625wmj.5;
+        Fri, 28 Jun 2019 03:25:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=+gSDQlprC3wNVZJTkEDEwtkD07MIUVX5qMZNbzm3ynQ=;
+        b=PxCcngHcfZRARVD6NmZbBJD4QlvgXY6SEXWfEYyJypBHAtTPANXPXiB0N778DL4zG5
+         /6tf2wO9OHv+aH1YOdgfj5j4OsFTc5jZPNRAEzsCHN45rF4yDVTMWTL7UJpaEukHjOff
+         PryTnfTmZC95X9cgOK8ky/KSdrCi3SyuYjbE5qtZOMk2332CNK4/UDKCkHSYbRZGwmsr
+         Jjgq1TMLfUOn5wNKSpo4oQU7/Yg5QKFJjkFPTL9LZLUjBPqtjVsIqs+CtS1MHoXSyNv7
+         x2GzJQSiMZbmcV/Vfcuuxbgkscrj14UApQqt1b4bYgcWNTC2WoXKrnsjaBWB033xS8Fa
+         JZjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=+gSDQlprC3wNVZJTkEDEwtkD07MIUVX5qMZNbzm3ynQ=;
+        b=DWMvbtWuTjriENYfrVWOMxDynAouJSoDsLdSY/7bKWwDn380AM5YHS4xp8kaQmP07w
+         c65Z5C3rJ2lCdAn+Pl9nSEU9j1nth49lUwJ3bYaT1kEmlZiPpHTwezcuGcG1gKKDsAiV
+         nkbRLhh8hlmpHyTPoQ7ocS29T5QXxbzbFoB6OlSTsXqAHv1qQdn399EebeXsVsIWI5Hp
+         wUIpI1VfUgJK+oQ7StJTNcC+brPPrjSSqwpim6GUXEU/J5K4ephquzXsA4Oide7QXzUr
+         SDYiuOoSg3za1cHmw9dXQ/SnhJ1wwMdWQma/fJJcS8nCoB9EGcvp6pE1c7ugfvkoc5TG
+         EaOQ==
+X-Gm-Message-State: APjAAAWA62FuNpZAO4VoVVNt4br0FXqaYnohK3arvbLSI6ANj80gmBQa
+        IyK3hKUU/y5P8Y+G28S/rKbNC4HvBlVxKHZefAQ=
+X-Google-Smtp-Source: APXvYqxM13BhXdAFu5qp47wTYBemlGsB9zTErhcOOBhxiB0lkff6jlFmCfZ1EdLSkLO+KM5c9OxqtFufIMjqnL37XcM=
+X-Received: by 2002:a1c:96c7:: with SMTP id y190mr6191140wmd.87.1561717504973;
+ Fri, 28 Jun 2019 03:25:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <20190614081650.11880-1-daniel.baluta@nxp.com> <20190614081650.11880-3-daniel.baluta@nxp.com>
+ <CAL_JsqJKgMB1PNA33gmFju4AQTc2WaSBoOGQExVaGd9LZRmk_g@mail.gmail.com>
+ <CAEnQRZBNA4ndSL1vMStHemYkzt9TxqjgdWWjqFwnBFQ+ha+egA@mail.gmail.com>
+ <CAL_JsqJQRbuWKgON+ukZ3GRwyq8SvTZ=PRGwMhQjAxKPSP-Fkw@mail.gmail.com>
+ <CAEnQRZCjp9dUt0JTjhN0CnV0+Xzc+q1EHCnJn_TNOQoUWZBTsg@mail.gmail.com> <CAL_Jsq+rWn+vVfBGdAB23Xu0RaFV1HwSdBbfj9F4M3W1EUo9_A@mail.gmail.com>
+In-Reply-To: <CAL_Jsq+rWn+vVfBGdAB23Xu0RaFV1HwSdBbfj9F4M3W1EUo9_A@mail.gmail.com>
+From:   Daniel Baluta <daniel.baluta@gmail.com>
+Date:   Fri, 28 Jun 2019 13:24:53 +0300
+Message-ID: <CAEnQRZCLUKxWD31bMS_Smc-dj0W0qWz7YsO6txftWX9nm9R_6Q@mail.gmail.com>
+Subject: Re: [PATCH 2/2] dt-bindings: arm: fsl: Add DSP IPC binding support
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     Daniel Baluta <daniel.baluta@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        "S.j. Wang" <shengjiu.wang@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Devicetree List <devicetree@vger.kernel.org>,
+        Oleksij Rempel <o.rempel@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Jun 27, 2019 at 6:59 PM Rob Herring <robh+dt@kernel.org> wrote:
+>
+> On Thu, Jun 27, 2019 at 1:40 AM Daniel Baluta <daniel.baluta@gmail.com> w=
+rote:
+> >
+> > <snip>
+> >
+> > > > > > +  mboxes:
+> > > > > > +    description:
+> > > > > > +      List of phandle of 2 MU channels for TXDB, 2 MU channels=
+ for RXDB
+> > > > > > +      (see mailbox/fsl,mu.txt)
+> > > > > > +    maxItems: 1
+> > > > >
+> > > > > Should be 4?
+> > > >
+> > > > Actually is just a list with 1 item. I think is the terminology:
+> > > >
+> > > > You can have an example here of the mboxes defined for SCU.
+> > > > https://github.com/torvalds/linux/blob/master/arch/arm64/boot/dts/f=
+reescale/imx8qxp.dtsi#L123
+> > >
+> > > mboxes =3D <&lsio_mu1 0 0
+> > > &lsio_mu1 0 1
+> > > &lsio_mu1 0 2
+> > > &lsio_mu1 0 3
+> > > &lsio_mu1 1 0
+> > > &lsio_mu1 1 1
+> > > &lsio_mu1 1 2
+> > > &lsio_mu1 1 3
+> > > &lsio_mu1 3 3>;
+> > >
+> > > Logically, this is 9 entries and each entry is 3 cells ( or phandle
+> > > plus 2 cells). More below...
+> >
+> > Ok..
+> >
+> > >
+> > > > > > +
+> > > > > > +  mbox-names
+> > >
+> > > Also, missing a ':' here. This won't build. Make sure you build this
+> > > (make dt_binding_check). See
+> > > Documentation/devicetree/writing-schemas.md.
+> > >
+> > Fixed in v2. Awesome!
+> >
+> > I thought that Documentation/devicetree/bindings/dsp/fsl,dsp_ipc.yaml
+> > is purely decorative and used as an example. But it's actually the sche=
+ma for
+> > the newly yaml dts, right?
+>
+> Yes, that's the point. Enforcing that dts files contain what the
+> binding docs say.
+>
+> >
+> > Used make dt_binding_check everything looks OK now.
+> >
+> > > > > > +    description:
+> > > > > > +      Mailboxes names
+> > > > > > +    allOf:
+> > > > > > +      - $ref: "/schemas/types.yaml#/definitions/string"
+> > > > >
+> > > > > No need for this, '*-names' already has a defined type.
+> > > > So, should I remove the above two lines ?
+> > >
+> > > Actually, all 4. There's no need to describe what 'mbox-names' is.
+> > >
+> > > > > > +      - enum: [ "txdb0", "txdb1", "rxdb0", "rxdb1" ]
+> > > > >
+> > > > > Should be an 'items' list with 4 entries?
+> > > >
+> > > > Let me better read the yaml spec. But "items" list indeed sounds be=
+tter.
+> > >
+> > > What you should end up with is:
+> > >
+> > > items:
+> > >   - const: txdb0
+> > >   - const: txdb1
+> > >   - const: rxdb0
+> > >   - const: rxdb1
+> > >
+> > > This is saying you have 4 strings in the listed order. The enum you
+> > > had would be a single string of one of the 4 values.
+> > >
+> > I see! Thanks.
+> >
+> > > > > > +required:
+> > > > > > +  - compatible
+> > > > > > +  - mboxes
+> > > > > > +  - mbox-names
+> > > > >
+> > > > > This seems incomplete. How does one boot the DSP? Load firmware? =
+No
+> > > > > resources that Linux has to manage. Shared memory?
+> > > >
+> > > > This is only the IPC mailboxes used by DSP to communicate with Linu=
+x. The
+> > > > loading of the firmware, the resources needed to be managed by Linu=
+x, etc
+> > > > are part of the DSP node.
+> > >
+> > > You should just add the mailboxes to the DSP node then. I suppose you
+> > > didn't because you want 2 drivers? If so, that's the OS's problem and
+> > > not part of DT. A Linux driver can instantiate devices for other
+> > > drivers.
+> >
+> > Yes, I want the DSP IPC driver to be separated. And then the SOF Linux
+> > driver that needs
+> > to communicate with DSP just gets a handle to DSP IPC driver and does
+> > the communication.
+> >
+> > dts relevant nodes look like this now:
+> >
+> > =C2=BB       dsp_ipc: dsp_ipc {
+> > =C2=BB       =C2=BB       compatible =3D "fsl,imx8qxp-dsp";
+> > =C2=BB       =C2=BB       mbox-names =3D "txdb0", "txdb1",
+> > =C2=BB       =C2=BB       =C2=BB            "rxdb0", "rxdb1";
+> > =C2=BB       =C2=BB       mboxes =3D <&lsio_mu13 2 0>,
+> > =C2=BB       =C2=BB       =C2=BB        <&lsio_mu13 2 1>,
+> > =C2=BB       =C2=BB       =C2=BB        <&lsio_mu13 3 0>,
+> > =C2=BB       =C2=BB       =C2=BB        <&lsio_mu13 3 1>;
+> > =C2=BB       };
+> >
+> > =C2=BB       adma_dsp: dsp@596e8000 {
+> > =C2=BB       =C2=BB       compatible =3D "fsl,imx8qxp-sof-dsp";
+> > =C2=BB       =C2=BB       reg =3D <0x596e8000 0x88000>;
+> > =C2=BB       =C2=BB       reserved-region =3D <&dsp_reserved>;
+> > =C2=BB       =C2=BB       ipc =3D <&dsp_ipc>;
+> > =C2=BB       };
+> >
+> > Your suggeston would be to have something like this:
+> >
+> > =C2=BB       adma_dsp: dsp@596e8000 {
+> > =C2=BB       =C2=BB       compatible =3D "fsl,imx8qxp-sof-dsp";
+> > =C2=BB       =C2=BB       reg =3D <0x596e8000 0x88000>;
+> > =C2=BB       =C2=BB       reserved-region =3D <&dsp_reserved>;
+> > =C2=BB                mbox-names =3D "txdb0", "txdb1",
+> > =C2=BB       =C2=BB       =C2=BB            "rxdb0", "rxdb1";
+> > =C2=BB       =C2=BB       mboxes =3D <&lsio_mu13 2 0>,
+> > =C2=BB       =C2=BB       =C2=BB        <&lsio_mu13 2 1>,
+> > =C2=BB       =C2=BB       =C2=BB        <&lsio_mu13 3 0>,
+> > =C2=BB       =C2=BB       =C2=BB        <&lsio_mu13 3 1>;
+> > =C2=BB       };
+> >
+> > Not sure exactly how to instantiate IPC DSP driver then.
+>
+> DT is not the only way to instantiate drivers. A driver can create a
+> platform device itself which will then instantiate a 2nd driver.
+>
+> Presumably the DSP needs to be booted, resources enabled, and firmware
+> loaded before IPC will work. The DSP driver controlling the lifetime
+> of the IPC driver is the right way to manage the dependencies.
 
+I see your point. This way I will resolve the dependency problem. So far
+SOF driver was probed before IPC driver and I needed to return -EPROBE_DEFF=
+ER.
 
-Dear=C2=A0Friend,
+The "sad" part is that SOF driver also needs in the same way the
+System Controller
+Firmware driver to be probed.
 
-I=C2=A0am=C2=A0Mrs=C2=A0Alice=C2=A0Johnson.am=C2=A0sending=C2=A0you=C2=A0th=
-is=C2=A0brief=C2=A0letter=C2=A0to=C2=A0solicit=C2=A0your
-partnership=C2=A0to=C2=A0transfer=C2=A0$18.5=C2=A0million=C2=A0US=C2=A0Doll=
-ars.I=C2=A0shall=C2=A0send=C2=A0you=C2=A0more
-information=C2=A0and=C2=A0procedures=C2=A0when=C2=A0I=C2=A0receive=C2=A0pos=
-itive=C2=A0response=C2=A0from=C2=A0you.
-please=C2=A0send=C2=A0me=C2=A0a=C2=A0message=C2=A0in=C2=A0my=C2=A0Email=C2=
-=A0box=C2=A0(mrsalicejohnson4@gmail.com)
-as=C2=A0i=C2=A0wait=C2=A0to=C2=A0hear=C2=A0from=C2=A0you.
+But the SC driver is already accepted with an interface that looks
+like my old approach.
 
-Best=C2=A0regard
-Mrs=C2=A0Alice=C2=A0Johnson
+https://elixir.bootlin.com/linux/v5.2-rc6/source/drivers/firmware/imx/imx-s=
+cu.c#L93
+
+Oh, well.
+>
+> >
+> > I already have prepared v2 with most of your feedback incorporated,
+> > but not this latest
+> > change with moving mboxes inside dsp driver.
+> >
+> > More than that I have followed the model of SCFW IPC and having to
+> > different approach
+> > for similar IPC mechanism is a little bit confusing.
+>
+> SC is system controller? Maybe I missed it, but I don't think system
+> controllers usually have 2 nodes. You only have the communications
+> interface exposed as the SC provides services to Linux and Linux
+> doesn't manage the SC resources.
+
+Yes, SC is the system controller.
+
+https://elixir.bootlin.com/linux/v5.2-rc6/source/drivers/firmware/imx/imx-s=
+cu.c
+
+I see your point of only have 1 node and I will implement it like that.
