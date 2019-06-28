@@ -2,195 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFC1959927
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 13:23:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A41575992C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 13:24:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726911AbfF1LXu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 07:23:50 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:54938 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726587AbfF1LXq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 07:23:46 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 727CC85362;
-        Fri, 28 Jun 2019 11:23:43 +0000 (UTC)
-Received: from vitty.brq.redhat.com (unknown [10.43.2.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2AC075DD61;
-        Fri, 28 Jun 2019 11:23:40 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     kvm@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Liran Alon <liran.alon@oracle.com>
-Subject: [PATCH v2 2/2] x86/kvm/nVMX: fix VMCLEAR when Enlightened VMCS is in use
-Date:   Fri, 28 Jun 2019 13:23:33 +0200
-Message-Id: <20190628112333.31165-3-vkuznets@redhat.com>
-In-Reply-To: <20190628112333.31165-1-vkuznets@redhat.com>
-References: <20190628112333.31165-1-vkuznets@redhat.com>
+        id S1726879AbfF1LYM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 07:24:12 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:46994 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726656AbfF1LYM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Jun 2019 07:24:12 -0400
+Received: by mail-qt1-f194.google.com with SMTP id h21so5770222qtn.13
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2019 04:24:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=X/Ug5dzWgzAo254GigTyB3K1N9vqEmjljvMsZ1gZJ+s=;
+        b=mYrk7KIObHI2/13Kp27Vl24AfH1GeS822BC9Blo1INXT9dMN8zg1hOJrqg0OUujE9r
+         o/sACm63p6WZMySZR7m28wnwBaSvEaJE65i+L0PXmSg8id7jHR/maNMUwPP1xoB6OFpK
+         d55TI5ehAD9OWc3poyR68Yx5AxYZlp1MwGf0A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=X/Ug5dzWgzAo254GigTyB3K1N9vqEmjljvMsZ1gZJ+s=;
+        b=YXkjXUC+C29V6nPhnGA8f7vzQZXiMTwiJVES/huJMPFG/dFw2ltYlE2k2fw7jZZ8S8
+         cpYCRyfFI9UkXP1s5/xXs+aLg2EFtz93rpTZqyq9vAflLFmmOIQtjIUcUzq0uojZn/lM
+         xZggAJhc/ABFAknr1QzyuzZk6o0/M8K03EuYJzI1v7Td1iV5Zx2U2nX/Z6h4TyjcOxl8
+         VyMzxoACQNUqC2kQ+pm5y678zajirpVfJXF8VjONiYAkPJVnTI7aeqOg7KdZxn7Go+hD
+         Ke9I/cb28whZXYd0cGiMaui0R21TYD1c0cuKiYcIoyN8QUSJP+DH6avS6coxJv0QsUQw
+         y4HA==
+X-Gm-Message-State: APjAAAU3z/U3wRNNNAuaqYJB2GiWnzdhXas0JYWgIo18pdbgP/2lDEol
+        Y9dpdqSVYd1T4RWhYNApDOb/rRU9uT1UUzIP+ToG4A==
+X-Google-Smtp-Source: APXvYqyma+rIlgBTxFdrPMygxhmPVjGgIj7WgGfVJNGUReXJEloaTE7RwdyJzDCp0z57gIOQR4eTrJoCGDnA/EKAxmI=
+X-Received: by 2002:ac8:4601:: with SMTP id p1mr7671783qtn.181.1561721051369;
+ Fri, 28 Jun 2019 04:24:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Fri, 28 Jun 2019 11:23:46 +0000 (UTC)
+References: <20190612043258.166048-1-hsinyi@chromium.org> <20190612043258.166048-3-hsinyi@chromium.org>
+ <20190628093529.GB36437@lakrids.cambridge.arm.com>
+In-Reply-To: <20190628093529.GB36437@lakrids.cambridge.arm.com>
+From:   Hsin-Yi Wang <hsinyi@chromium.org>
+Date:   Fri, 28 Jun 2019 19:23:45 +0800
+Message-ID: <CAJMQK-g_9bDHJgKr-qKpQ6HwombB+6Asg_z3r6nv+pC4q4j-Aw@mail.gmail.com>
+Subject: Re: [PATCH v6 2/3] fdt: add support for rng-seed
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        lkml <linux-kernel@vger.kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Miles Chen <miles.chen@mediatek.com>,
+        James Morse <james.morse@arm.com>,
+        Andrew Murray <andrew.murray@arm.com>,
+        Jun Yao <yaojun8558363@gmail.com>, Yu Zhao <yuzhao@google.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When Enlightened VMCS is in use, it is valid to do VMCLEAR and,
-according to TLFS, this should "transition an enlightened VMCS from the
-active to the non-active state". It is, however, wrong to assume that
-it is only valid to do VMCLEAR for the eVMCS which is currently active
-on the vCPU performing VMCLEAR.
+On Fri, Jun 28, 2019 at 5:35 PM Mark Rutland <mark.rutland@arm.com> wrote:
+>
+> On Wed, Jun 12, 2019 at 12:33:00PM +0800, Hsin-Yi Wang wrote:
+> > Introducing a chosen node, rng-seed, which is an entropy that can be
+> > passed to kernel called very early to increase initial device
+> > randomness. Bootloader should provide this entropy and the value is
+> > read from /chosen/rng-seed in DT.
+>
+> Could you please elaborate on this?
+>
+> * What is this initial entropy used by, and why is this important? I
+>   assume that devices which can populate this will have a HW RNG that
+>   the kernel will eventually make use of.
+There are a few discussions here[0]. We basically want to add more
+randomness for stack canary when device just boot and not much device
+randomness was added.
+[0] https://lore.kernel.org/patchwork/patch/1070974/#1268553
 
-Currently, the logic in handle_vmclear() is broken: in case, there is no
-active eVMCS on the vCPU doing VMCLEAR we treat the argument as a 'normal'
-VMCS and kvm_vcpu_write_guest() to the 'launch_state' field irreversibly
-corrupts the memory area.
+On Thu, May 9, 2019 at 1:00 AM Hsin-Yi Wang <hsinyi@chromium.org> wrote:
+> This early added entropy is also going to be used for stack canary. At
+> the time it's created there's not be much entropy (before
+> boot_init_stack_canary(), there's only add_latent_entropy() and
+> command_line).
+> On arm64, there is a single canary for all tasks. If RNG is weak or
+> the seed can be read, it might be easier to figure out the canary.
 
-So, in case the VMCLEAR argument is not the current active eVMCS on the
-vCPU, how can we know if the area it is pointing to is a normal or an
-enlightened VMCS?
-Thanks to the bug in Hyper-V (see commit 72aeb60c52bf7 ("KVM: nVMX: Verify
-eVMCS revision id match supported eVMCS version on eVMCS VMPTRLD")) we can
-not, the revision can't be used to distinguish between them. So let's
-assume it is always enlightened in case enlightened vmentry is enabled in
-the assist page. Also, check if vmx->nested.enlightened_vmcs_enabled to
-minimize the impact for 'unenlightened' workloads.
+With newer compilers[1] there will be a per-task canary on arm64[2],
+which will improve this situation, but many architectures lack a
+per-task canary, unfortunately. I've also recently rearranged the RNG
+initialization[3] which should also help with better entropy mixing.
+But each of these are kind of band-aids against not having sufficient
+initial entropy, which leaves the canary potentially exposed.
 
-Fixes: b8bbab928fb1 ("KVM: nVMX: implement enlightened VMPTRLD and VMCLEAR")
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
----
- arch/x86/kvm/vmx/evmcs.c  | 18 ++++++++++++++++++
- arch/x86/kvm/vmx/evmcs.h  |  1 +
- arch/x86/kvm/vmx/nested.c | 32 ++++++++++++++++++--------------
- 3 files changed, 37 insertions(+), 14 deletions(-)
+-Kees
 
-diff --git a/arch/x86/kvm/vmx/evmcs.c b/arch/x86/kvm/vmx/evmcs.c
-index 1a6b3e1581aa..758462a565b3 100644
---- a/arch/x86/kvm/vmx/evmcs.c
-+++ b/arch/x86/kvm/vmx/evmcs.c
-@@ -3,6 +3,7 @@
- #include <linux/errno.h>
- #include <linux/smp.h>
- 
-+#include "../hyperv.h"
- #include "evmcs.h"
- #include "vmcs.h"
- #include "vmx.h"
-@@ -309,6 +310,23 @@ void evmcs_sanitize_exec_ctrls(struct vmcs_config *vmcs_conf)
- }
- #endif
- 
-+bool nested_enlightened_vmentry(struct kvm_vcpu *vcpu, u64 *evmcs_gpa)
-+{
-+	struct hv_vp_assist_page assist_page;
-+
-+	*evmcs_gpa = -1ull;
-+
-+	if (unlikely(!kvm_hv_get_assist_page(vcpu, &assist_page)))
-+		return false;
-+
-+	if (unlikely(!assist_page.enlighten_vmentry))
-+		return false;
-+
-+	*evmcs_gpa = assist_page.current_nested_vmcs;
-+
-+	return true;
-+}
-+
- uint16_t nested_get_evmcs_version(struct kvm_vcpu *vcpu)
- {
-        struct vcpu_vmx *vmx = to_vmx(vcpu);
-diff --git a/arch/x86/kvm/vmx/evmcs.h b/arch/x86/kvm/vmx/evmcs.h
-index e0fcef85b332..39a24eec8884 100644
---- a/arch/x86/kvm/vmx/evmcs.h
-+++ b/arch/x86/kvm/vmx/evmcs.h
-@@ -195,6 +195,7 @@ static inline void evmcs_sanitize_exec_ctrls(struct vmcs_config *vmcs_conf) {}
- static inline void evmcs_touch_msr_bitmap(void) {}
- #endif /* IS_ENABLED(CONFIG_HYPERV) */
- 
-+bool nested_enlightened_vmentry(struct kvm_vcpu *vcpu, u64 *evmcs_gpa);
- uint16_t nested_get_evmcs_version(struct kvm_vcpu *vcpu);
- int nested_enable_evmcs(struct kvm_vcpu *vcpu,
- 			uint16_t *vmcs_version);
-diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-index f1dfb8ef4634..e7a4931bc914 100644
---- a/arch/x86/kvm/vmx/nested.c
-+++ b/arch/x86/kvm/vmx/nested.c
-@@ -1765,27 +1765,22 @@ static int nested_vmx_handle_enlightened_vmptrld(struct kvm_vcpu *vcpu,
- 						 bool from_launch)
- {
- 	struct vcpu_vmx *vmx = to_vmx(vcpu);
--	struct hv_vp_assist_page assist_page;
- 	bool evmcs_gpa_changed = false;
-+	u64 evmcs_gpa;
- 
- 	if (likely(!vmx->nested.enlightened_vmcs_enabled))
- 		return 1;
- 
--	if (unlikely(!kvm_hv_get_assist_page(vcpu, &assist_page)))
-+	if (!nested_enlightened_vmentry(vcpu, &evmcs_gpa))
- 		return 1;
- 
--	if (unlikely(!assist_page.enlighten_vmentry))
--		return 1;
--
--	if (unlikely(assist_page.current_nested_vmcs !=
--		     vmx->nested.hv_evmcs_vmptr)) {
--
-+	if (unlikely(evmcs_gpa != vmx->nested.hv_evmcs_vmptr)) {
- 		if (!vmx->nested.hv_evmcs)
- 			vmx->nested.current_vmptr = -1ull;
- 
- 		nested_release_evmcs(vcpu);
- 
--		if (kvm_vcpu_map(vcpu, gpa_to_gfn(assist_page.current_nested_vmcs),
-+		if (kvm_vcpu_map(vcpu, gpa_to_gfn(evmcs_gpa),
- 				 &vmx->nested.hv_evmcs_map))
- 			return 0;
- 
-@@ -1820,7 +1815,7 @@ static int nested_vmx_handle_enlightened_vmptrld(struct kvm_vcpu *vcpu,
- 		}
- 
- 		vmx->nested.dirty_vmcs12 = true;
--		vmx->nested.hv_evmcs_vmptr = assist_page.current_nested_vmcs;
-+		vmx->nested.hv_evmcs_vmptr = evmcs_gpa;
- 
- 		evmcs_gpa_changed = true;
- 		/*
-@@ -4335,6 +4330,7 @@ static int handle_vmclear(struct kvm_vcpu *vcpu)
- 	struct vcpu_vmx *vmx = to_vmx(vcpu);
- 	u32 zero = 0;
- 	gpa_t vmptr;
-+	u64 evmcs_gpa;
- 
- 	if (!nested_vmx_check_permission(vcpu))
- 		return 1;
-@@ -4350,10 +4346,18 @@ static int handle_vmclear(struct kvm_vcpu *vcpu)
- 		return nested_vmx_failValid(vcpu,
- 			VMXERR_VMCLEAR_VMXON_POINTER);
- 
--	if (vmx->nested.hv_evmcs_map.hva) {
--		if (vmptr == vmx->nested.hv_evmcs_vmptr)
--			nested_release_evmcs(vcpu);
--	} else {
-+	/*
-+	 * When Enlightened VMEntry is enabled on the calling CPU we treat
-+	 * memory area pointer by vmptr as Enlightened VMCS (as there's no good
-+	 * way to distinguish it from VMCS12) and we must not corrupt it by
-+	 * writing to the non-existent 'launch_state' field. The area doesn't
-+	 * have to be the currently active EVMCS on the calling CPU and there's
-+	 * nothing KVM has to do to transition it from 'active' to 'non-active'
-+	 * state. It is possible that the area will stay mapped as
-+	 * vmx->nested.hv_evmcs but this shouldn't be a problem.
-+	 */
-+	if (likely(!vmx->nested.enlightened_vmcs_enabled ||
-+		   !nested_enlightened_vmentry(vcpu, &evmcs_gpa))) {
- 		if (vmptr == vmx->nested.current_vmptr)
- 			nested_release_vmcs12(vcpu);
- 
--- 
-2.20.1
+[1] https://gcc.gnu.org/git/?p=gcc.git;a=commitdiff;h=359c1bf35e3109d2f3882980b47a5eae46123259
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=0a1213fa7432778b71a1c0166bf56660a3aab030
+[3] https://git.kernel.org/pub/scm/linux/kernel/git/tytso/random.git/commit/?h=dev&id=d55535232c3dbde9a523a9d10d68670f5fe5dec3
+>
+> * How much entropy is necessary or sufficient?
+64 bytes should be enough. But depends on how much bootloader can provide.
+>
+> * Why is the DT the right mechanism for this?
+EFI based systems can inject randomness in early boot. This is aimed
+to support DT based systems to also have this feature.
 
+https://github.com/torvalds/linux/commit/636259880a7e7d3446a707dddebc799da94bdd0b#diff-3ded2fe21b37c6f3e86c2a8418507714
+
+Thanks
