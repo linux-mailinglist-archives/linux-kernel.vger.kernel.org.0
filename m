@@ -2,273 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A29AE59772
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 11:27:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 667205976B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 11:26:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726632AbfF1J1W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 05:27:22 -0400
-Received: from smtp-fw-4101.amazon.com ([72.21.198.25]:6495 "EHLO
-        smtp-fw-4101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726877AbfF1J1T (ORCPT
+        id S1726774AbfF1J0x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 05:26:53 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:40899 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726572AbfF1J0t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 05:27:19 -0400
+        Fri, 28 Jun 2019 05:26:49 -0400
+Received: by mail-lf1-f67.google.com with SMTP id a9so3518909lff.7
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2019 02:26:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1561714037; x=1593250037;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version;
-  bh=C/tK+eqyZfG3DvgrHIxJojkuSm1mtm+8YcEFaCfljVI=;
-  b=cPvbsvWja2/24yNlu/GXN6j/rMdJ4FrrXk5jTSuo2lOGlvAAvLF+ZW0/
-   Fjah368Wa1fxUQbKUS7lX9RU1ng5Vydbkw5zgMy2D7clK8buW9VOiesBO
-   LdgEEcWvtI52uy2xka1yEENy2Z1JwZiiYZPtqoIzk9n0aLlCL6NznUEdc
-   Q=;
-X-IronPort-AV: E=Sophos;i="5.62,427,1554768000"; 
-   d="scan'208";a="772444188"
-Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1d-2c665b5d.us-east-1.amazon.com) ([10.124.125.6])
-  by smtp-border-fw-out-4101.iad4.amazon.com with ESMTP; 28 Jun 2019 09:27:15 +0000
-Received: from EX13MTAUEA001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
-        by email-inbound-relay-1d-2c665b5d.us-east-1.amazon.com (Postfix) with ESMTPS id 1E467A0565;
-        Fri, 28 Jun 2019 09:27:11 +0000 (UTC)
-Received: from EX13D08UEE001.ant.amazon.com (10.43.62.126) by
- EX13MTAUEA001.ant.amazon.com (10.43.61.82) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Fri, 28 Jun 2019 09:26:54 +0000
-Received: from EX13MTAUWB001.ant.amazon.com (10.43.161.207) by
- EX13D08UEE001.ant.amazon.com (10.43.62.126) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Fri, 28 Jun 2019 09:26:53 +0000
-Received: from u6cf1b7119fa15b.ant.amazon.com (10.28.85.98) by
- mail-relay.amazon.com (10.43.161.249) with Microsoft SMTP Server id
- 15.0.1367.3 via Frontend Transport; Fri, 28 Jun 2019 09:26:49 +0000
-From:   Sam Caccavale <samcacc@amazon.de>
-CC:     <samcaccavale@gmail.com>, <nmanthey@amazon.de>,
-        <wipawel@amazon.de>, <dwmw@amazon.co.uk>, <mpohlack@amazon.de>,
-        <graf@amazon.de>, <karahmed@amazon.de>,
-        <andrew.cooper3@citrix.com>, <JBeulich@suse.com>,
-        <pbonzini@redhat.com>, <rkrcmar@redhat.com>, <tglx@linutronix.de>,
-        <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>,
-        <paullangton4@gmail.com>, <x86@kernel.org>, <kvm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Sam Caccavale <samcacc@amazon.de>
-Subject: [PATCH v4 5/5] Development scripts for crash triage and deploy
-Date:   Fri, 28 Jun 2019 11:26:21 +0200
-Message-ID: <20190628092621.17823-6-samcacc@amazon.de>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190628092621.17823-1-samcacc@amazon.de>
-References: <20190628092621.17823-1-samcacc@amazon.de>
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=wq4uV6TuyH2wgrXO6dLo0IFjBcNz+4TUFVVmynqQmqA=;
+        b=T7nBZsHZw/8UcjeYFRks7+Eva2K/3e1j/QIWRpChWFd+dTtuHZWRuEcXs11S5mYn8e
+         Dd7FOfioX2ifWa2RmYXPNgdL/eqFHZqZWmU6somvzxCLtxUcAo+QVbkfcI+B8nbkjXM8
+         xJsHXeV9Bg5176S1omOvyVoveyhBcnzLKAKVPnDZBTXCHeq5w+3ohntbyyxJ5zanrsRT
+         6YEOrzTKleaMpv0j2Uvgb4NMXyqBhJKmBD/6dZMVFhbYRB0BTstXeHUB06Pgg/g/jVNR
+         8jJ834GpUUrM05TY2aJxTSDjuUP+QqFpQv8/cWR+BR3eKBln2zW+tU6DtO0jGCONJyuc
+         Eg/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=wq4uV6TuyH2wgrXO6dLo0IFjBcNz+4TUFVVmynqQmqA=;
+        b=C77owOpebyS81q/BCE2FqTygALqn8TeWXmVHa14+nJCzUSqvfv5KjqqmweEXq56o1V
+         p6fN3rvJlaWSkbe2i/jPNfz19L+so/msmXgNzsI0hAUT7WR7OiFyX8whCKiG23jH8T8p
+         Br4arSBBs6VrUfgzbbT3fKW5lzO+eg++E8eQT8rqbu76vXEQmJCr4/iolMPjeS4gYBCo
+         6djnNhvF06VnoRBt8LZC0lZzlbOQDGH304VQTSKm6vxpFxRB8ntpEbBf4ORyDRrWPBzN
+         og5BsQVzrWCZHjQvcajifmleXqp7g1B0aZQygjwqpGVaKR7Py7Je1/pUwBDPDHVtVMTK
+         EP7Q==
+X-Gm-Message-State: APjAAAW1lrtzCWvgJYeU5LnFqAnCwe0ONRwWvLc/6fH+8aOEqaPfz9TU
+        eUn7kFHFkTlJSHisv7zIENQUsZJ75PAlz7JdDmX39w==
+X-Google-Smtp-Source: APXvYqxZow6JTfEigRwpH8n/PtdL/0nTxAip4vmcDqLYc1cX/YUDxITdfUsmFNehMEuUFoW/17Gqvjs/oZenFRcn7MY=
+X-Received: by 2002:ac2:48a5:: with SMTP id u5mr4624411lfg.62.1561714007021;
+ Fri, 28 Jun 2019 02:26:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-To:     unlisted-recipients:; (no To-header on input)
+References: <201906261343.5F26328@keescook> <20190627080207.sdpwjoi4wnc664gp@mbp>
+ <201906270856.8CF50064@keescook> <20190627162505.GD9894@arrakis.emea.arm.com>
+In-Reply-To: <20190627162505.GD9894@arrakis.emea.arm.com>
+From:   Alexander Potapenko <glider@google.com>
+Date:   Fri, 28 Jun 2019 11:26:34 +0200
+Message-ID: <CAG_fn=UhdoyWjFPxdFOJ7XFRHb62RErxFjOKnFeHtMJWTib7pg@mail.gmail.com>
+Subject: Re: [PATCH] arm64: Move jump_label_init() before parse_early_param()
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>, Qian Cai <cai@lca.pw>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>, will@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Not meant for upstream consumption.
-
----
-
-v2 -> v3:
- - Introduced this patch as a place for non-essential dev scripts
-
-v3 -> v4:
- - Made deploy_remote.sh use a 1d timeout
- - Removed core dump setup from install_afl.sh
- - Added core dump setup into deploy_remote.sh
-
-Signed-off-by: Sam Caccavale <samcacc@amazon.de>
----
- tools/fuzz/x86ie/scripts/bin.sh               | 49 +++++++++++++++++++
- tools/fuzz/x86ie/scripts/coalesce.sh          |  5 ++
- tools/fuzz/x86ie/scripts/deploy.sh            |  9 ++++
- tools/fuzz/x86ie/scripts/deploy_remote.sh     | 10 ++++
- tools/fuzz/x86ie/scripts/gen_output.sh        | 11 +++++
- tools/fuzz/x86ie/scripts/install_afl.sh       |  2 -
- .../fuzz/x86ie/scripts/install_deps_ubuntu.sh |  5 ++
- tools/fuzz/x86ie/scripts/rebuild.sh           |  6 +++
- tools/fuzz/x86ie/scripts/summarize.sh         |  9 ++++
- 9 files changed, 104 insertions(+), 2 deletions(-)
- create mode 100755 tools/fuzz/x86ie/scripts/bin.sh
- create mode 100755 tools/fuzz/x86ie/scripts/coalesce.sh
- create mode 100644 tools/fuzz/x86ie/scripts/deploy.sh
- create mode 100755 tools/fuzz/x86ie/scripts/deploy_remote.sh
- create mode 100755 tools/fuzz/x86ie/scripts/gen_output.sh
- create mode 100755 tools/fuzz/x86ie/scripts/install_deps_ubuntu.sh
- create mode 100755 tools/fuzz/x86ie/scripts/rebuild.sh
- create mode 100755 tools/fuzz/x86ie/scripts/summarize.sh
-
-diff --git a/tools/fuzz/x86ie/scripts/bin.sh b/tools/fuzz/x86ie/scripts/bin.sh
-new file mode 100755
-index 000000000000..6383a883ff33
---- /dev/null
-+++ b/tools/fuzz/x86ie/scripts/bin.sh
-@@ -0,0 +1,49 @@
-+#!/bin/bash
-+# SPDX-License-Identifier: GPL-2.0+
-+
-+if [ "$#" -lt 3 ]; then
-+  echo "Usage: './bin path/to/afl-harness path/to/afl_crash [path/to/linux/src/root]'"
-+  exit
-+fi
-+
-+export AFL_HARNESS="$1"
-+export LINUX_SRC="$3"
-+
-+diagnose_segfault() {
-+  SOURCE=$(gdb -batch -ex r -ex 'bt 2' --args $@ 2>&1 | grep -Po '#1.* \K([^ ]+:[0-9]+)');
-+  IFS=: read FILE LINE <<< "$SOURCE"
-+
-+  OP="$(sed -n "${LINE}p" "$LINUX_SRC/$FILE" 2>/dev/null)"
-+  if [ $? -ne 0 ]; then
-+    OP="$(sed -n "${LINE}p" "$LINUX_SRC/tools/fuzz/x86_instruction_emulation/$FILE" 2>/dev/null)"
-+  fi
-+
-+  OP="$(echo $OP | grep -Po 'ops->\K([^(]+)')"
-+  if [ -z "$OP" ]; then
-+    echo "SEGV: unknown, in $FILE:$LINE"
-+  else
-+    echo "Expected: segfaulting on emulator->$OP"
-+  fi
-+}
-+export -f diagnose_segfault
-+
-+bin() {
-+  OUTPUT=$(bash -c "timeout 1s $AFL_HARNESS $1 2>&1" 2>&1)
-+  RETVAL=$?
-+
-+  echo "$OUTPUT"
-+  if [ $RETVAL -eq 0 ]; then
-+    echo "Terminated successfully"
-+  elif [ $RETVAL -eq 124 ]; then
-+    echo "Unknown: killed due to timeout.  Loop likely."
-+  elif echo "$OUTPUT" | grep -q "SEGV"; then
-+    echo "$(diagnose_segfault $AFL_HARNESS $1)"
-+  elif echo "$OUTPUT" | grep -q "FPE"; then
-+    echo "Expected: floating point exception."
-+  else
-+    echo "Unknown cause of crash."
-+  fi
-+}
-+export -f bin
-+
-+echo "$(bin $2 2>&1)"
-diff --git a/tools/fuzz/x86ie/scripts/coalesce.sh b/tools/fuzz/x86ie/scripts/coalesce.sh
-new file mode 100755
-index 000000000000..b15d583c2c32
---- /dev/null
-+++ b/tools/fuzz/x86ie/scripts/coalesce.sh
-@@ -0,0 +1,5 @@
-+#!/bin/bash
-+
-+mkdir -p all
-+rm -rf all/*
-+find . -type f -wholename '*crashes/id*' | parallel 'cp {} ./all/$(basename $(dirname {//})):{/}'
-diff --git a/tools/fuzz/x86ie/scripts/deploy.sh b/tools/fuzz/x86ie/scripts/deploy.sh
-new file mode 100644
-index 000000000000..f95c3aa2b5b5
---- /dev/null
-+++ b/tools/fuzz/x86ie/scripts/deploy.sh
-@@ -0,0 +1,9 @@
-+#!/bin/bash
-+# SPDX-License-Identifier: GPL-2.0+
-+
-+REMOTE=$1
-+DSTDIR=/dev/shm
-+
-+rsync -av $(pwd) $REMOTE:$DSTDIR
-+
-+ssh $REMOTE "cd $DSTDIR/$(basename $(pwd)); bash -s tools/fuzz/x86_instruction_emulation/scripts/deploy_remote.sh"
-diff --git a/tools/fuzz/x86ie/scripts/deploy_remote.sh b/tools/fuzz/x86ie/scripts/deploy_remote.sh
-new file mode 100755
-index 000000000000..a903294e145a
---- /dev/null
-+++ b/tools/fuzz/x86ie/scripts/deploy_remote.sh
-@@ -0,0 +1,10 @@
-+#!/bin/bash
-+# SPDX-License-Identifier: GPL-2.0+
-+
-+SCRIPTDIR=$(pwd)/tools/fuzz/x86ie/scripts
-+
-+$SCRIPTDIR/install_deps_ubuntu.sh
-+source $SCRIPTDIR/install_afl.sh
-+CC=$AFLPATH/afl-gcc $SCRIPTDIR/build.sh
-+sudo bash -c "echo core >/proc/sys/kernel/core_pattern"
-+TIMEOUT="${TIMEOUT:-1d}" FUZZDIR="${FUZZDIR:-$(pwd)/fuzz}" $SCRIPTDIR/run.sh
-diff --git a/tools/fuzz/x86ie/scripts/gen_output.sh b/tools/fuzz/x86ie/scripts/gen_output.sh
-new file mode 100755
-index 000000000000..6c0707eb6d08
---- /dev/null
-+++ b/tools/fuzz/x86ie/scripts/gen_output.sh
-@@ -0,0 +1,11 @@
-+#!/bin/bash
-+# SPDX-License-Identifier: GPL-2.0+
-+
-+if [ "$#" -lt 3 ]; then
-+  echo "Usage: '$0 path/to/afl-harness path/to/afl_crash_dir path/to/linux/src/root'"
-+  exit
-+fi
-+
-+mkdir -p output
-+rm -rf output/*
-+find $2 -type f | parallel ./bin.sh $1 {} $3 '>' ./output/{/}.out
-diff --git a/tools/fuzz/x86ie/scripts/install_afl.sh b/tools/fuzz/x86ie/scripts/install_afl.sh
-index 3bdbdf2a040b..e05e9942cc19 100755
---- a/tools/fuzz/x86ie/scripts/install_afl.sh
-+++ b/tools/fuzz/x86ie/scripts/install_afl.sh
-@@ -13,5 +13,3 @@ set AFL_USE_ASAN
- make clean all
- export AFLPATH="$(pwd)"
- popd
--
--sudo bash -c "echo core >/proc/sys/kernel/core_pattern"
-diff --git a/tools/fuzz/x86ie/scripts/install_deps_ubuntu.sh b/tools/fuzz/x86ie/scripts/install_deps_ubuntu.sh
-new file mode 100755
-index 000000000000..5525bc8b659c
---- /dev/null
-+++ b/tools/fuzz/x86ie/scripts/install_deps_ubuntu.sh
-@@ -0,0 +1,5 @@
-+#!/bin/bash
-+# SPDX-License-Identifier: GPL-2.0+
-+
-+sudo apt update
-+sudo apt install -y make gcc wget screen build-essential libssh-dev flex bison libelf-dev bc
-diff --git a/tools/fuzz/x86ie/scripts/rebuild.sh b/tools/fuzz/x86ie/scripts/rebuild.sh
-new file mode 100755
-index 000000000000..809a4551cb0c
---- /dev/null
-+++ b/tools/fuzz/x86ie/scripts/rebuild.sh
-@@ -0,0 +1,6 @@
-+#!/bin/bash
-+# SPDX-License-Identifier: GPL-2.0+
-+
-+make clean
-+make tools/fuzz_clean
-+FUZZDIR="./fuzz" ./tools/fuzz/x86ie/scripts/build.sh
-diff --git a/tools/fuzz/x86ie/scripts/summarize.sh b/tools/fuzz/x86ie/scripts/summarize.sh
-new file mode 100755
-index 000000000000..27761f283ee3
---- /dev/null
-+++ b/tools/fuzz/x86ie/scripts/summarize.sh
-@@ -0,0 +1,9 @@
-+#!/bin/bash
-+# SPDX-License-Identifier: GPL-2.0+
-+
-+if [ "$#" -lt 1 ]; then
-+  echo "Usage: '$0 path/to/output/dir'"
-+  exit
-+fi
-+
-+time bash -c "find $1 -type f -exec tail -n 1 {} \; | sort | uniq -c | sort -rn"
--- 
-2.17.1
+On Thu, Jun 27, 2019 at 6:25 PM Catalin Marinas <catalin.marinas@arm.com> w=
+rote:
+>
+> On Thu, Jun 27, 2019 at 08:58:03AM -0700, Kees Cook wrote:
+> > On Thu, Jun 27, 2019 at 09:02:08AM +0100, Catalin Marinas wrote:
+> > > On Wed, Jun 26, 2019 at 01:51:15PM -0700, Kees Cook wrote:
+> > > > This moves arm64 jump_label_init() from smp_prepare_boot_cpu() to
+> > > > setup_arch(), as done already on x86, in preparation from early par=
+am
+> > > > usage in the init_on_alloc/free() series:
+> > > > https://lkml.kernel.org/r/1561572949.5154.81.camel@lca.pw
+> > >
+> > > This looks fine to me. Is there any other series to be merged soon th=
+at
+> > > depends on this patch (the init_on_alloc/fail one)? If not, I can que=
+ue
+> > > it for 5.3.
+> >
+> > Yes, but that series will be in 5.3 also, so there's rush for 5.2. Do
+> > you want Alexander (via akpm) to include it in his series instead of it=
+ going
+> > through the arm64 tree?
+>
+> It's pretty late for 5.2, especially since it hasn't had extensive
+> testing (though I'm fairly sure it won't break). Anyway, it's better if
+> it goes together with Alexander's series.
+Am I understanding right this is already covered by Kees having sent
+his patch to -mm tree and I don't need to explicitly include it into
+my series?
+> Acked-by: Catalin Marinas <catalin.marinas@arm.com>
 
 
 
+--=20
+Alexander Potapenko
+Software Engineer
 
-Amazon Development Center Germany GmbH
-Krausenstr. 38
-10117 Berlin
-Geschaeftsfuehrung: Christian Schlaeger, Ralf Herbrich
-Eingetragen am Amtsgericht Charlottenburg unter HRB 149173 B
-Sitz: Berlin
-Ust-ID: DE 289 237 879
+Google Germany GmbH
+Erika-Mann-Stra=C3=9Fe, 33
+80636 M=C3=BCnchen
 
-
-
+Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Halimah DeLaine Prado
+Registergericht und -nummer: Hamburg, HRB 86891
+Sitz der Gesellschaft: Hamburg
