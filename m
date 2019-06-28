@@ -2,96 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B25D8591F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 05:28:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 320295920F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 05:39:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727086AbfF1D2L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 23:28:11 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:51606 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726686AbfF1D2L (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 23:28:11 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5S3S6lZ006317;
-        Thu, 27 Jun 2019 22:28:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1561692486;
-        bh=lHtPKETdLi4mz0hSNNJnuE1V/UMtFP6OzWRnYrjP7po=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=cJYYRBPy3RiT5CHxIoh9lbCAyGUZ0Jyhh3HTYiu4pNLfmNYAgv2nPP7/sub8ekxnm
-         unBkNLYeyn0mBZoAM9EsEzy4aMImJe5bhcvJgIyTMMfRpo8qqUf5U3tLLAb1qKanrm
-         7BudChPInpqWkneMujwpafOdwJS6oIOQrxzMfrWY=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5S3S6uH083741
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 27 Jun 2019 22:28:06 -0500
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 27
- Jun 2019 22:28:06 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Thu, 27 Jun 2019 22:28:05 -0500
-Received: from [172.24.191.45] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5S3S3Ej112735;
-        Thu, 27 Jun 2019 22:28:04 -0500
-Subject: Re: [PATCH][next] regulator: lp87565: fix missing break in switch
- statement
-To:     Colin King <colin.king@canonical.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>
-CC:     <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20190627131639.6394-1-colin.king@canonical.com>
-From:   Keerthy <j-keerthy@ti.com>
-Message-ID: <1a17ea61-a164-d61f-6416-637d47668f1b@ti.com>
-Date:   Fri, 28 Jun 2019 08:58:41 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
-MIME-Version: 1.0
-In-Reply-To: <20190627131639.6394-1-colin.king@canonical.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        id S1727110AbfF1Dj5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 23:39:57 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:58604 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726759AbfF1Dj4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 23:39:56 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id DEF1E200307;
+        Fri, 28 Jun 2019 05:39:53 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id E19A2200304;
+        Fri, 28 Jun 2019 05:39:42 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id DE51D402F6;
+        Fri, 28 Jun 2019 11:39:29 +0800 (SGT)
+From:   Anson.Huang@nxp.com
+To:     daniel.lezcano@linaro.org, tglx@linutronix.de, robh+dt@kernel.org,
+        mark.rutland@arm.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, leonard.crestez@nxp.com,
+        viresh.kumar@linaro.org, daniel.baluta@nxp.com, ping.bai@nxp.com,
+        l.stach@pengutronix.de, abel.vesa@nxp.com,
+        andrew.smirnov@gmail.com, ccaione@baylibre.com, angus@akkea.ca,
+        agx@sigxcpu.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH V3 1/5] clocksource: timer-of: Support getting clock frequency from DT
+Date:   Fri, 28 Jun 2019 11:30:37 +0800
+Message-Id: <20190628033041.8513-1-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.14.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Anson Huang <Anson.Huang@nxp.com>
 
+More and more platforms use platform driver model for clock driver,
+so the clock driver is NOT ready during timer initialization phase,
+it will cause timer initialization failed.
 
-On 27/06/19 6:46 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently the LP87565_DEVICE_TYPE_LP87561_Q1 case does not have a
-> break statement, causing it to fall through to a dev_err message.
-> Fix this by adding in the missing break statement.
-> 
-> Addresses-Coverity: ("Missing break in switch")
-> Fixes: 7ee63bd74750 ("regulator: lp87565: Add 4-phase lp87561 regulator support")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->   drivers/regulator/lp87565-regulator.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/regulator/lp87565-regulator.c b/drivers/regulator/lp87565-regulator.c
-> index 993c11702083..5d067f7c2116 100644
-> --- a/drivers/regulator/lp87565-regulator.c
-> +++ b/drivers/regulator/lp87565-regulator.c
-> @@ -180,6 +180,7 @@ static int lp87565_regulator_probe(struct platform_device *pdev)
->   	case LP87565_DEVICE_TYPE_LP87561_Q1:
->   		min_idx = LP87565_BUCK_3210;
->   		max_idx = LP87565_BUCK_3210;
-> +		break;
+To support those platforms with upper scenario, introducing a new
+flag TIMER_OF_CLOCK_FREQUENCY which is mutually exclusive with
+TIMER_OF_CLOCK flag to support getting timer clock frequency from
+DT, then of_clk operations can be skipped.
 
-Thanks Colin.
+User needs to select either TIMER_OF_CLOCK_FREQUENCY or TIMER_OF_CLOCK
+flag if want to use timer-of driver to initialize the clock rate,
+and the corresponding clock name or property name needs to be specified.
 
-Reviewed-by: Keerthy <j-keerthy@ti.com>
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+New patch:
+	- Add new flag of TIMER_OF_CLOCK_FREQUENCY, mutually exclusive with TIMER_OF_CLOCK, to support
+	  getting clock frequency from DT directly;
+	- Add prop_name to of_timer_clk structure, if using TIMER_OF_CLOCK_FREQUENCY flag, user needs
+	  to pass the property name for timer-of driver to get clock frequency from DT, this is to avoid
+	  the couple of timer-of driver and DT, so timer-of driver does NOT use a fixed property name.
+---
+ drivers/clocksource/timer-of.c | 23 +++++++++++++++++++++++
+ drivers/clocksource/timer-of.h |  8 +++++---
+ 2 files changed, 28 insertions(+), 3 deletions(-)
 
->   	default:
->   		dev_err(lp87565->dev, "Invalid lp config %d\n",
->   			lp87565->dev_type);
-> 
+diff --git a/drivers/clocksource/timer-of.c b/drivers/clocksource/timer-of.c
+index 8054228..c91a8b6 100644
+--- a/drivers/clocksource/timer-of.c
++++ b/drivers/clocksource/timer-of.c
+@@ -161,6 +161,21 @@ static __init int timer_of_base_init(struct device_node *np,
+ 	return 0;
+ }
+ 
++static __init int timer_of_clk_frequency_init(struct device_node *np,
++					      struct of_timer_clk *of_clk)
++{
++	int ret;
++	u32 rate;
++
++	ret = of_property_read_u32(np, of_clk->prop_name, &rate);
++	if (!ret) {
++		of_clk->rate = rate;
++		of_clk->period = DIV_ROUND_UP(rate, HZ);
++	}
++
++	return ret;
++}
++
+ int __init timer_of_init(struct device_node *np, struct timer_of *to)
+ {
+ 	int ret = -EINVAL;
+@@ -178,6 +193,11 @@ int __init timer_of_init(struct device_node *np, struct timer_of *to)
+ 		if (ret)
+ 			goto out_fail;
+ 		flags |= TIMER_OF_CLOCK;
++	} else if (to->flags & TIMER_OF_CLOCK_FREQUENCY) {
++		ret = timer_of_clk_frequency_init(np, &to->of_clk);
++		if (ret)
++			goto out_fail;
++		flags |= TIMER_OF_CLOCK_FREQUENCY;
+ 	}
+ 
+ 	if (to->flags & TIMER_OF_IRQ) {
+@@ -201,6 +221,9 @@ int __init timer_of_init(struct device_node *np, struct timer_of *to)
+ 	if (flags & TIMER_OF_CLOCK)
+ 		timer_of_clk_exit(&to->of_clk);
+ 
++	if (flags & TIMER_OF_CLOCK_FREQUENCY)
++		to->of_clk.rate = 0;
++
+ 	if (flags & TIMER_OF_BASE)
+ 		timer_of_base_exit(&to->of_base);
+ 	return ret;
+diff --git a/drivers/clocksource/timer-of.h b/drivers/clocksource/timer-of.h
+index a5478f3..f1a083e 100644
+--- a/drivers/clocksource/timer-of.h
++++ b/drivers/clocksource/timer-of.h
+@@ -4,9 +4,10 @@
+ 
+ #include <linux/clockchips.h>
+ 
+-#define TIMER_OF_BASE	0x1
+-#define TIMER_OF_CLOCK	0x2
+-#define TIMER_OF_IRQ	0x4
++#define TIMER_OF_BASE			0x1
++#define TIMER_OF_CLOCK			0x2
++#define TIMER_OF_IRQ			0x4
++#define TIMER_OF_CLOCK_FREQUENCY	0x8
+ 
+ struct of_timer_irq {
+ 	int irq;
+@@ -26,6 +27,7 @@ struct of_timer_base {
+ struct of_timer_clk {
+ 	struct clk *clk;
+ 	const char *name;
++	const char *prop_name;
+ 	int index;
+ 	unsigned long rate;
+ 	unsigned long period;
+-- 
+2.7.4
+
