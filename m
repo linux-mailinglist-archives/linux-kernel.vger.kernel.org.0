@@ -2,45 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55E4A59A87
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 14:21:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E59C59AD0
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 14:23:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727096AbfF1MVB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 08:21:01 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:58844 "EHLO
+        id S1727391AbfF1MXe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 08:23:34 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:58762 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726832AbfF1MUr (ORCPT
+        with ESMTP id S1726786AbfF1MUp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 08:20:47 -0400
+        Fri, 28 Jun 2019 08:20:45 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=0VLakIBup/yQlJkWn9nXbGqz30AP75CDLkGAfkQkgYU=; b=JpNruLwOb9/ASADtGv1f2/6FRd
-        WYtEfSb0TP4LGfIQfEnj5Q/SEVO6PQN5fK9tKj0e6nC0pkBReutfjNg3JKePRSz0XyRB67Cye27rF
-        cP43PWjaT9aDxv7KKM9J6DVJEfGlhmRKXvek6iG3vyNajaEND1Aqi/6HBF48DKC8yBKveg20ojDf7
-        1HVXvOTJg+U09rX/5JNERWgKBMFOU3Mcy8y+yOzrwCwYiAdiaM77ugCu+x/cXguXImlTeZy0jDX+i
-        nmc6Hv8D9qmWC/5/jAuUrOLdAooMDM0kLG0GpTPXbGbU8Zzz8bPk1TEijHf/S+gvNx4xGv7VXwH5a
-        m1RQkfZw==;
+        bh=cezNa+/SrJlGLyHHIrMODuEUH4YfnTfH3rjk4VDYllU=; b=ByG0lzsJ141F8kpfRUpDMUqi9E
+        kinD+KC1TqyAtzE4G4hfRYW2c8Sq1KY6WbMoQ1RKtXBBroSrtwA5PWTc626G6z1lb2TFZ2TLW2s50
+        ZjaKhKnQ60uBCF/IUxGq+kUF3Au+NsN4ZiUDO5AA5weLCDmkXJziyOaqfadA375cjsFyVM2Ae9Lpl
+        VnlIiMqiT/SBZis0dtvx2jfYafRV2JHXSPXwzoNWacMhFDEB2yQ1G8Hd2b63w0t52aU0iIPeWFL4d
+        84aHoqSowYJTzV1N79+3KV7cMl2z++Qz1bsB44Ji/zeJe+BhztUbX+ZDgTii/4+9MOM6loTNVhi4J
+        sdVMk52Q==;
 Received: from [186.213.242.156] (helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hgprv-0000AJ-RB; Fri, 28 Jun 2019 12:20:44 +0000
+        id 1hgprw-0000AK-1N; Fri, 28 Jun 2019 12:20:44 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hgprt-00059I-TM; Fri, 28 Jun 2019 09:20:41 -0300
+        id 1hgprt-00059N-UA; Fri, 28 Jun 2019 09:20:41 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        linux-xtensa@linux-xtensa.org
-Subject: [PATCH 31/43] docs: xtensa: convert to ReST
-Date:   Fri, 28 Jun 2019 09:20:27 -0300
-Message-Id: <8da4c72a421fdf464b1aa291e699f99a1506e8e5.1561723980.git.mchehab+samsung@kernel.org>
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
+Subject: [PATCH 32/43] docs: mmc: convert to ReST
+Date:   Fri, 28 Jun 2019 09:20:28 -0300
+Message-Id: <a35ed2e9655b0f8cb09d96c771218b0e2e9ee2a4.1561723980.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <cover.1561723979.git.mchehab+samsung@kernel.org>
 References: <cover.1561723979.git.mchehab+samsung@kernel.org>
@@ -51,7 +48,7 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rename the xtensa documentation files to ReST, add an
+Rename the mmc documentation files to ReST, add an
 index for them and adjust in order to produce a nice html
 output via the Sphinx build system.
 
@@ -60,513 +57,296 @@ the main index.rst file, in order to avoid build warnings.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- .../xtensa/{atomctl.txt => atomctl.rst}       |  13 +-
- .../xtensa/{booting.txt => booting.rst}       |   5 +-
- Documentation/xtensa/index.rst                |  12 ++
- Documentation/xtensa/mmu.rst                  | 195 ++++++++++++++++++
- Documentation/xtensa/mmu.txt                  | 189 -----------------
- arch/xtensa/include/asm/initialize_mmu.h      |   2 +-
- 6 files changed, 222 insertions(+), 194 deletions(-)
- rename Documentation/xtensa/{atomctl.txt => atomctl.rst} (81%)
- rename Documentation/xtensa/{booting.txt => booting.rst} (91%)
- create mode 100644 Documentation/xtensa/index.rst
- create mode 100644 Documentation/xtensa/mmu.rst
- delete mode 100644 Documentation/xtensa/mmu.txt
+ Documentation/mmc/index.rst                   | 13 +++++
+ .../{mmc-async-req.txt => mmc-async-req.rst}  | 53 +++++++++++--------
+ .../{mmc-dev-attrs.txt => mmc-dev-attrs.rst}  | 32 +++++++----
+ .../{mmc-dev-parts.txt => mmc-dev-parts.rst}  | 13 ++---
+ .../mmc/{mmc-tools.txt => mmc-tools.rst}      |  5 +-
+ 5 files changed, 79 insertions(+), 37 deletions(-)
+ create mode 100644 Documentation/mmc/index.rst
+ rename Documentation/mmc/{mmc-async-req.txt => mmc-async-req.rst} (75%)
+ rename Documentation/mmc/{mmc-dev-attrs.txt => mmc-dev-attrs.rst} (73%)
+ rename Documentation/mmc/{mmc-dev-parts.txt => mmc-dev-parts.rst} (83%)
+ rename Documentation/mmc/{mmc-tools.txt => mmc-tools.rst} (92%)
 
-diff --git a/Documentation/xtensa/atomctl.txt b/Documentation/xtensa/atomctl.rst
-similarity index 81%
-rename from Documentation/xtensa/atomctl.txt
-rename to Documentation/xtensa/atomctl.rst
-index 1da783ac200c..1ecbd0ba9a2e 100644
---- a/Documentation/xtensa/atomctl.txt
-+++ b/Documentation/xtensa/atomctl.rst
-@@ -1,3 +1,7 @@
-+===========================================
-+Atomic Operation Control (ATOMCTL) Register
-+===========================================
-+
- We Have Atomic Operation Control (ATOMCTL) Register.
- This register determines the effect of using a S32C1I instruction
- with various combinations of:
-@@ -8,7 +12,7 @@ with various combinations of:
-      2. With and without An Intelligent Memory Controller which
-         can do Atomic Transactions itself.
- 
--The Core comes up with a default value of for the three types of cache ops:
-+The Core comes up with a default value of for the three types of cache ops::
- 
-       0x28: (WB: Internal, WT: Internal, BY:Exception)
- 
-@@ -30,15 +34,18 @@ CUSTOMER-WARNING:
- Developers might find using RCW in Bypass mode convenient when testing
- with the cache being bypassed; for example studying cache alias problems.
- 
--See Section 4.3.12.4 of ISA; Bits:
-+See Section 4.3.12.4 of ISA; Bits::
- 
-                              WB     WT      BY
-                            5   4 | 3   2 | 1   0
-+
-+=========    ==================      ==================      ===============
-   2 Bit
-   Field
-   Values     WB - Write Back         WT - Write Thru         BY - Bypass
-----------    ---------------         -----------------     ----------------
-+=========    ==================      ==================      ===============
-     0        Exception               Exception               Exception
-     1        RCW Transaction         RCW Transaction         RCW Transaction
-     2        Internal Operation      Internal Operation      Reserved
-     3        Reserved                Reserved                Reserved
-+=========    ==================      ==================      ===============
-diff --git a/Documentation/xtensa/booting.txt b/Documentation/xtensa/booting.rst
-similarity index 91%
-rename from Documentation/xtensa/booting.txt
-rename to Documentation/xtensa/booting.rst
-index 402b33a2619f..e1b83707e5b6 100644
---- a/Documentation/xtensa/booting.txt
-+++ b/Documentation/xtensa/booting.rst
-@@ -1,10 +1,13 @@
--Passing boot parameters to the kernel.
-+=====================================
-+Passing boot parameters to the kernel
-+=====================================
- 
- Boot parameters are represented as a TLV list in the memory. Please see
- arch/xtensa/include/asm/bootparam.h for definition of the bp_tag structure and
- tag value constants. First entry in the list must have type BP_TAG_FIRST, last
- entry must have type BP_TAG_LAST. The address of the first list entry is
- passed to the kernel in the register a2. The address type depends on MMU type:
-+
- - For configurations without MMU, with region protection or with MPU the
-   address must be the physical address.
- - For configurations with region translarion MMU or with MMUv3 and CONFIG_MMU=n
-diff --git a/Documentation/xtensa/index.rst b/Documentation/xtensa/index.rst
+diff --git a/Documentation/mmc/index.rst b/Documentation/mmc/index.rst
 new file mode 100644
-index 000000000000..5a24e365e35f
+index 000000000000..3305478ddadb
 --- /dev/null
-+++ b/Documentation/xtensa/index.rst
-@@ -0,0 +1,12 @@
++++ b/Documentation/mmc/index.rst
+@@ -0,0 +1,13 @@
 +:orphan:
 +
-+===================
-+Xtensa Architecture
-+===================
++========================
++MMC/SD/SDIO card support
++========================
 +
 +.. toctree::
 +   :maxdepth: 1
 +
-+   atomctl
-+   booting
-+   mmu
-diff --git a/Documentation/xtensa/mmu.rst b/Documentation/xtensa/mmu.rst
-new file mode 100644
-index 000000000000..e52a12960fdc
---- /dev/null
-+++ b/Documentation/xtensa/mmu.rst
-@@ -0,0 +1,195 @@
-+=============================
-+MMUv3 initialization sequence
-+=============================
++   mmc-dev-attrs
++   mmc-dev-parts
++   mmc-async-req
++   mmc-tools
+diff --git a/Documentation/mmc/mmc-async-req.txt b/Documentation/mmc/mmc-async-req.rst
+similarity index 75%
+rename from Documentation/mmc/mmc-async-req.txt
+rename to Documentation/mmc/mmc-async-req.rst
+index ae1907b10e4a..0f7197c9c3b5 100644
+--- a/Documentation/mmc/mmc-async-req.txt
++++ b/Documentation/mmc/mmc-async-req.rst
+@@ -1,13 +1,20 @@
++========================
++MMC Asynchronous Request
++========================
 +
-+The code in the initialize_mmu macro sets up MMUv3 memory mapping
-+identically to MMUv2 fixed memory mapping. Depending on
-+CONFIG_INITIALIZE_XTENSA_MMU_INSIDE_VMLINUX symbol this code is
-+located in addresses it was linked for (symbol undefined), or not
-+(symbol defined), so it needs to be position-independent.
+ Rationale
+ =========
+ 
+ How significant is the cache maintenance overhead?
 +
-+The code has the following assumptions:
+ It depends. Fast eMMC and multiple cache levels with speculative cache
+ pre-fetch makes the cache overhead relatively significant. If the DMA
+ preparations for the next request are done in parallel with the current
+ transfer, the DMA preparation overhead would not affect the MMC performance.
 +
-+  - This code fragment is run only on an MMU v3.
-+  - TLBs are in their reset state.
-+  - ITLBCFG and DTLBCFG are zero (reset state).
-+  - RASID is 0x04030201 (reset state).
-+  - PS.RING is zero (reset state).
-+  - LITBASE is zero (reset state, PC-relative literals); required to be PIC.
+ The intention of non-blocking (asynchronous) MMC requests is to minimize the
+ time between when an MMC request ends and another MMC request begins.
 +
-+TLB setup proceeds along the following steps.
+ Using mmc_wait_for_req(), the MMC controller is idle while dma_map_sg and
+ dma_unmap_sg are processing. Using non-blocking MMC requests makes it
+ possible to prepare the caches for next job in parallel with an active
+@@ -17,6 +24,7 @@ MMC block driver
+ ================
+ 
+ The mmc_blk_issue_rw_rq() in the MMC block driver is made non-blocking.
 +
-+  Legend:
+ The increase in throughput is proportional to the time it takes to
+ prepare (major part of preparations are dma_map_sg() and dma_unmap_sg())
+ a request and how fast the memory is. The faster the MMC/SD is the
+@@ -35,6 +43,7 @@ MMC core API extension
+ ======================
+ 
+ There is one new public function mmc_start_req().
 +
-+    - VA = virtual address (two upper nibbles of it);
-+    - PA = physical address (two upper nibbles of it);
-+    - pc = physical range that contains this code;
+ It starts a new MMC command request for a host. The function isn't
+ truly non-blocking. If there is an ongoing async request it waits
+ for completion of that request and starts the new one and returns. It
+@@ -47,6 +56,7 @@ MMC host extensions
+ There are two optional members in the mmc_host_ops -- pre_req() and
+ post_req() -- that the host driver may implement in order to move work
+ to before and after the actual mmc_host_ops.request() function is called.
 +
-+After step 2, we jump to virtual address in the range 0x40000000..0x5fffffff
-+or 0x00000000..0x1fffffff, depending on whether the kernel was loaded below
-+0x40000000 or above. That address corresponds to next instruction to execute
-+in this code. After step 4, we jump to intended (linked) address of this code.
-+The scheme below assumes that the kernel is loaded below 0x40000000.
+ In the DMA case pre_req() may do dma_map_sg() and prepare the DMA
+ descriptor, and post_req() runs the dma_unmap_sg().
+ 
+@@ -55,33 +65,34 @@ Optimize for the first request
+ 
+ The first request in a series of requests can't be prepared in parallel
+ with the previous transfer, since there is no previous request.
 +
-+ ====== =====  =====  =====  =====   ====== =====  =====
-+ -      Step0  Step1  Step2  Step3          Step4  Step5
+ The argument is_first_req in pre_req() indicates that there is no previous
+ request. The host driver may optimize for this scenario to minimize
+ the performance loss. A way to optimize for this is to split the current
+ request in two chunks, prepare the first chunk and start the request,
+ and finally prepare the second chunk and start the transfer.
+ 
+-Pseudocode to handle is_first_req scenario with minimal prepare overhead:
++Pseudocode to handle is_first_req scenario with minimal prepare overhead::
+ 
+-if (is_first_req && req->size > threshold)
+-   /* start MMC transfer for the complete transfer size */
+-   mmc_start_command(MMC_CMD_TRANSFER_FULL_SIZE);
++  if (is_first_req && req->size > threshold)
++     /* start MMC transfer for the complete transfer size */
++     mmc_start_command(MMC_CMD_TRANSFER_FULL_SIZE);
+ 
+-   /*
+-    * Begin to prepare DMA while cmd is being processed by MMC.
+-    * The first chunk of the request should take the same time
+-    * to prepare as the "MMC process command time".
+-    * If prepare time exceeds MMC cmd time
+-    * the transfer is delayed, guesstimate max 4k as first chunk size.
+-    */
+-    prepare_1st_chunk_for_dma(req);
+-    /* flush pending desc to the DMAC (dmaengine.h) */
+-    dma_issue_pending(req->dma_desc);
++     /*
++      * Begin to prepare DMA while cmd is being processed by MMC.
++      * The first chunk of the request should take the same time
++      * to prepare as the "MMC process command time".
++      * If prepare time exceeds MMC cmd time
++      * the transfer is delayed, guesstimate max 4k as first chunk size.
++      */
++      prepare_1st_chunk_for_dma(req);
++      /* flush pending desc to the DMAC (dmaengine.h) */
++      dma_issue_pending(req->dma_desc);
+ 
+-    prepare_2nd_chunk_for_dma(req);
+-    /*
+-     * The second issue_pending should be called before MMC runs out
+-     * of the first chunk. If the MMC runs out of the first data chunk
+-     * before this call, the transfer is delayed.
+-     */
+-    dma_issue_pending(req->dma_desc);
++      prepare_2nd_chunk_for_dma(req);
++      /*
++       * The second issue_pending should be called before MMC runs out
++       * of the first chunk. If the MMC runs out of the first data chunk
++       * before this call, the transfer is delayed.
++       */
++      dma_issue_pending(req->dma_desc);
+diff --git a/Documentation/mmc/mmc-dev-attrs.txt b/Documentation/mmc/mmc-dev-attrs.rst
+similarity index 73%
+rename from Documentation/mmc/mmc-dev-attrs.txt
+rename to Documentation/mmc/mmc-dev-attrs.rst
+index 4ad0bb17f343..4f44b1b730d6 100644
+--- a/Documentation/mmc/mmc-dev-attrs.txt
++++ b/Documentation/mmc/mmc-dev-attrs.rst
+@@ -1,3 +1,4 @@
++==================================
+ SD and MMC Block Device Attributes
+ ==================================
+ 
+@@ -6,23 +7,29 @@ SD or MMC device.
+ 
+ The following attributes are read/write.
+ 
+-	force_ro		Enforce read-only access even if write protect switch is off.
++	========		===============================================
++	force_ro		Enforce read-only access even if write protect 					switch is off.
++	========		===============================================
+ 
+ SD and MMC Device Attributes
+ ============================
+ 
+ All attributes are read-only.
+ 
++	======================	===============================================
+ 	cid			Card Identification Register
+ 	csd			Card Specific Data Register
+ 	scr			SD Card Configuration Register (SD only)
+ 	date			Manufacturing Date (from CID Register)
+-	fwrev			Firmware/Product Revision (from CID Register) (SD and MMCv1 only)
+-	hwrev			Hardware/Product Revision (from CID Register) (SD and MMCv1 only)
++	fwrev			Firmware/Product Revision (from CID Register)
++				(SD and MMCv1 only)
++	hwrev			Hardware/Product Revision (from CID Register)
++				(SD and MMCv1 only)
+ 	manfid			Manufacturer ID (from CID Register)
+ 	name			Product Name (from CID Register)
+ 	oemid			OEM/Application ID (from CID Register)
+-	prv			Product Revision (from CID Register) (SD and MMCv4 only)
++	prv			Product Revision (from CID Register)
++				(SD and MMCv4 only)
+ 	serial			Product Serial Number (from CID Register)
+ 	erase_size		Erase group size
+ 	preferred_erase_size	Preferred erase size
+@@ -30,7 +37,10 @@ All attributes are read-only.
+ 	rel_sectors		Reliable write sector count
+ 	ocr 			Operation Conditions Register
+ 	dsr			Driver Stage Register
+-	cmdq_en			Command Queue enabled: 1 => enabled, 0 => not enabled
++	cmdq_en			Command Queue enabled:
 +
-+   VA      PA     PA     PA     PA     VA      PA     PA
-+ ====== =====  =====  =====  =====   ====== =====  =====
-+ E0..FF -> E0  -> E0  -> E0          F0..FF -> F0  -> F0
-+ C0..DF -> C0  -> C0  -> C0          E0..EF -> F0  -> F0
-+ A0..BF -> A0  -> A0  -> A0          D8..DF -> 00  -> 00
-+ 80..9F -> 80  -> 80  -> 80          D0..D7 -> 00  -> 00
-+ 60..7F -> 60  -> 60  -> 60
-+ 40..5F -> 40         -> pc  -> pc   40..5F -> pc
-+ 20..3F -> 20  -> 20  -> 20
-+ 00..1F -> 00  -> 00  -> 00
-+ ====== =====  =====  =====  =====   ====== =====  =====
++					1 => enabled, 0 => not enabled
++	======================	===============================================
+ 
+ Note on Erase Size and Preferred Erase Size:
+ 
+@@ -44,14 +54,15 @@ Note on Erase Size and Preferred Erase Size:
+ 	SD/MMC cards can erase an arbitrarily large area up to and
+ 	including the whole card.  When erasing a large area it may
+ 	be desirable to do it in smaller chunks for three reasons:
+-		1. A single erase command will make all other I/O on
 +
-+The default location of IO peripherals is above 0xf0000000. This may be changed
-+using a "ranges" property in a device tree simple-bus node. See the Devicetree
-+Specification, section 4.5 for details on the syntax and semantics of
-+simple-bus nodes. The following limitations apply:
++	     1. A single erase command will make all other I/O on
+ 		the card wait.  This is not a problem if the whole card
+ 		is being erased, but erasing one partition will make
+ 		I/O for another partition on the same card wait for the
+ 		duration of the erase - which could be a several
+ 		minutes.
+-		2. To be able to inform the user of erase progress.
+-		3. The erase timeout becomes too large to be very
++	     2. To be able to inform the user of erase progress.
++	     3. The erase timeout becomes too large to be very
+ 		useful.  Because the erase timeout contains a margin
+ 		which is multiplied by the size of the erase area,
+ 		the value can end up being several minutes for large
+@@ -72,6 +83,9 @@ Note on Erase Size and Preferred Erase Size:
+ 	"preferred_erase_size" is in bytes.
+ 
+ Note on raw_rpmb_size_mult:
 +
-+1. Only top level simple-bus nodes are considered
+ 	"raw_rpmb_size_mult" is a multiple of 128kB block.
 +
-+2. Only one (first) simple-bus node is considered
+ 	RPMB size in byte is calculated by using the following equation:
+-	RPMB partition size = 128kB x raw_rpmb_size_mult
 +
-+3. Empty "ranges" properties are not supported
-+
-+4. Only the first triplet in the "ranges" property is considered
-+
-+5. The parent-bus-address value is rounded down to the nearest 256MB boundary
-+
-+6. The IO area covers the entire 256MB segment of parent-bus-address; the
-+   "ranges" triplet length field is ignored
-+
-+
-+MMUv3 address space layouts.
++		RPMB partition size = 128kB x raw_rpmb_size_mult
+diff --git a/Documentation/mmc/mmc-dev-parts.txt b/Documentation/mmc/mmc-dev-parts.rst
+similarity index 83%
+rename from Documentation/mmc/mmc-dev-parts.txt
+rename to Documentation/mmc/mmc-dev-parts.rst
+index f08d078d43cf..995922f1f744 100644
+--- a/Documentation/mmc/mmc-dev-parts.txt
++++ b/Documentation/mmc/mmc-dev-parts.rst
+@@ -1,3 +1,4 @@
 +============================
+ SD and MMC Device Partitions
+ ============================
+ 
+@@ -18,18 +19,18 @@ platform, write access is disabled by default to reduce the chance of
+ accidental bricking.
+ 
+ To enable write access to /dev/mmcblkXbootY, disable the forced read-only
+-access with:
++access with::
+ 
+-echo 0 > /sys/block/mmcblkXbootY/force_ro
++	echo 0 > /sys/block/mmcblkXbootY/force_ro
+ 
+-To re-enable read-only access:
++To re-enable read-only access::
+ 
+-echo 1 > /sys/block/mmcblkXbootY/force_ro
++	echo 1 > /sys/block/mmcblkXbootY/force_ro
+ 
+ The boot partitions can also be locked read only until the next power on,
+-with:
++with::
+ 
+-echo 1 > /sys/block/mmcblkXbootY/ro_lock_until_next_power_on
++	echo 1 > /sys/block/mmcblkXbootY/ro_lock_until_next_power_on
+ 
+ This is a feature of the card and not of the kernel. If the card does
+ not support boot partition locking, the file will not exist. If the
+diff --git a/Documentation/mmc/mmc-tools.txt b/Documentation/mmc/mmc-tools.rst
+similarity index 92%
+rename from Documentation/mmc/mmc-tools.txt
+rename to Documentation/mmc/mmc-tools.rst
+index 735509c165d5..54406093768b 100644
+--- a/Documentation/mmc/mmc-tools.txt
++++ b/Documentation/mmc/mmc-tools.rst
+@@ -1,14 +1,17 @@
++======================
+ MMC tools introduction
+ ======================
+ 
+ There is one MMC test tools called mmc-utils, which is maintained by Chris Ball,
+ you can find it at the below public git repository:
+-http://git.kernel.org/cgit/linux/kernel/git/cjb/mmc-utils.git/
 +
-+Default MMUv2-compatible layout::
++	http://git.kernel.org/cgit/linux/kernel/git/cjb/mmc-utils.git/
+ 
+ Functions
+ =========
+ 
+ The mmc-utils tools can do the following:
 +
-+                        Symbol                   VADDR       Size
-+  +------------------+
-+  | Userspace        |                           0x00000000  TASK_SIZE
-+  +------------------+                           0x40000000
-+  +------------------+
-+  | Page table       |  XCHAL_PAGE_TABLE_VADDR   0x80000000  XCHAL_PAGE_TABLE_SIZE
-+  +------------------+
-+  | KASAN shadow map |  KASAN_SHADOW_START       0x80400000  KASAN_SHADOW_SIZE
-+  +------------------+                           0x8e400000
-+  +------------------+
-+  | VMALLOC area     |  VMALLOC_START            0xc0000000  128MB - 64KB
-+  +------------------+  VMALLOC_END
-+  | Cache aliasing   |  TLBTEMP_BASE_1           0xc7ff0000  DCACHE_WAY_SIZE
-+  | remap area 1     |
-+  +------------------+
-+  | Cache aliasing   |  TLBTEMP_BASE_2                       DCACHE_WAY_SIZE
-+  | remap area 2     |
-+  +------------------+
-+  +------------------+
-+  | KMAP area        |  PKMAP_BASE                           PTRS_PER_PTE *
-+  |                  |                                       DCACHE_N_COLORS *
-+  |                  |                                       PAGE_SIZE
-+  |                  |                                       (4MB * DCACHE_N_COLORS)
-+  +------------------+
-+  | Atomic KMAP area |  FIXADDR_START                        KM_TYPE_NR *
-+  |                  |                                       NR_CPUS *
-+  |                  |                                       DCACHE_N_COLORS *
-+  |                  |                                       PAGE_SIZE
-+  +------------------+  FIXADDR_TOP              0xcffff000
-+  +------------------+
-+  | Cached KSEG      |  XCHAL_KSEG_CACHED_VADDR  0xd0000000  128MB
-+  +------------------+
-+  | Uncached KSEG    |  XCHAL_KSEG_BYPASS_VADDR  0xd8000000  128MB
-+  +------------------+
-+  | Cached KIO       |  XCHAL_KIO_CACHED_VADDR   0xe0000000  256MB
-+  +------------------+
-+  | Uncached KIO     |  XCHAL_KIO_BYPASS_VADDR   0xf0000000  256MB
-+  +------------------+
-+
-+
-+256MB cached + 256MB uncached layout::
-+
-+                        Symbol                   VADDR       Size
-+  +------------------+
-+  | Userspace        |                           0x00000000  TASK_SIZE
-+  +------------------+                           0x40000000
-+  +------------------+
-+  | Page table       |  XCHAL_PAGE_TABLE_VADDR   0x80000000  XCHAL_PAGE_TABLE_SIZE
-+  +------------------+
-+  | KASAN shadow map |  KASAN_SHADOW_START       0x80400000  KASAN_SHADOW_SIZE
-+  +------------------+                           0x8e400000
-+  +------------------+
-+  | VMALLOC area     |  VMALLOC_START            0xa0000000  128MB - 64KB
-+  +------------------+  VMALLOC_END
-+  | Cache aliasing   |  TLBTEMP_BASE_1           0xa7ff0000  DCACHE_WAY_SIZE
-+  | remap area 1     |
-+  +------------------+
-+  | Cache aliasing   |  TLBTEMP_BASE_2                       DCACHE_WAY_SIZE
-+  | remap area 2     |
-+  +------------------+
-+  +------------------+
-+  | KMAP area        |  PKMAP_BASE                           PTRS_PER_PTE *
-+  |                  |                                       DCACHE_N_COLORS *
-+  |                  |                                       PAGE_SIZE
-+  |                  |                                       (4MB * DCACHE_N_COLORS)
-+  +------------------+
-+  | Atomic KMAP area |  FIXADDR_START                        KM_TYPE_NR *
-+  |                  |                                       NR_CPUS *
-+  |                  |                                       DCACHE_N_COLORS *
-+  |                  |                                       PAGE_SIZE
-+  +------------------+  FIXADDR_TOP              0xaffff000
-+  +------------------+
-+  | Cached KSEG      |  XCHAL_KSEG_CACHED_VADDR  0xb0000000  256MB
-+  +------------------+
-+  | Uncached KSEG    |  XCHAL_KSEG_BYPASS_VADDR  0xc0000000  256MB
-+  +------------------+
-+  +------------------+
-+  | Cached KIO       |  XCHAL_KIO_CACHED_VADDR   0xe0000000  256MB
-+  +------------------+
-+  | Uncached KIO     |  XCHAL_KIO_BYPASS_VADDR   0xf0000000  256MB
-+  +------------------+
-+
-+
-+512MB cached + 512MB uncached layout::
-+
-+                        Symbol                   VADDR       Size
-+  +------------------+
-+  | Userspace        |                           0x00000000  TASK_SIZE
-+  +------------------+                           0x40000000
-+  +------------------+
-+  | Page table       |  XCHAL_PAGE_TABLE_VADDR   0x80000000  XCHAL_PAGE_TABLE_SIZE
-+  +------------------+
-+  | KASAN shadow map |  KASAN_SHADOW_START       0x80400000  KASAN_SHADOW_SIZE
-+  +------------------+                           0x8e400000
-+  +------------------+
-+  | VMALLOC area     |  VMALLOC_START            0x90000000  128MB - 64KB
-+  +------------------+  VMALLOC_END
-+  | Cache aliasing   |  TLBTEMP_BASE_1           0x97ff0000  DCACHE_WAY_SIZE
-+  | remap area 1     |
-+  +------------------+
-+  | Cache aliasing   |  TLBTEMP_BASE_2                       DCACHE_WAY_SIZE
-+  | remap area 2     |
-+  +------------------+
-+  +------------------+
-+  | KMAP area        |  PKMAP_BASE                           PTRS_PER_PTE *
-+  |                  |                                       DCACHE_N_COLORS *
-+  |                  |                                       PAGE_SIZE
-+  |                  |                                       (4MB * DCACHE_N_COLORS)
-+  +------------------+
-+  | Atomic KMAP area |  FIXADDR_START                        KM_TYPE_NR *
-+  |                  |                                       NR_CPUS *
-+  |                  |                                       DCACHE_N_COLORS *
-+  |                  |                                       PAGE_SIZE
-+  +------------------+  FIXADDR_TOP              0x9ffff000
-+  +------------------+
-+  | Cached KSEG      |  XCHAL_KSEG_CACHED_VADDR  0xa0000000  512MB
-+  +------------------+
-+  | Uncached KSEG    |  XCHAL_KSEG_BYPASS_VADDR  0xc0000000  512MB
-+  +------------------+
-+  | Cached KIO       |  XCHAL_KIO_CACHED_VADDR   0xe0000000  256MB
-+  +------------------+
-+  | Uncached KIO     |  XCHAL_KIO_BYPASS_VADDR   0xf0000000  256MB
-+  +------------------+
-diff --git a/Documentation/xtensa/mmu.txt b/Documentation/xtensa/mmu.txt
-deleted file mode 100644
-index 318114de63f3..000000000000
---- a/Documentation/xtensa/mmu.txt
-+++ /dev/null
-@@ -1,189 +0,0 @@
--MMUv3 initialization sequence.
--
--The code in the initialize_mmu macro sets up MMUv3 memory mapping
--identically to MMUv2 fixed memory mapping. Depending on
--CONFIG_INITIALIZE_XTENSA_MMU_INSIDE_VMLINUX symbol this code is
--located in addresses it was linked for (symbol undefined), or not
--(symbol defined), so it needs to be position-independent.
--
--The code has the following assumptions:
--  This code fragment is run only on an MMU v3.
--  TLBs are in their reset state.
--  ITLBCFG and DTLBCFG are zero (reset state).
--  RASID is 0x04030201 (reset state).
--  PS.RING is zero (reset state).
--  LITBASE is zero (reset state, PC-relative literals); required to be PIC.
--
--TLB setup proceeds along the following steps.
--
--  Legend:
--    VA = virtual address (two upper nibbles of it);
--    PA = physical address (two upper nibbles of it);
--    pc = physical range that contains this code;
--
--After step 2, we jump to virtual address in the range 0x40000000..0x5fffffff
--or 0x00000000..0x1fffffff, depending on whether the kernel was loaded below
--0x40000000 or above. That address corresponds to next instruction to execute
--in this code. After step 4, we jump to intended (linked) address of this code.
--The scheme below assumes that the kernel is loaded below 0x40000000.
--
--        Step0  Step1  Step2  Step3          Step4  Step5
--        =====  =====  =====  =====          =====  =====
--   VA      PA     PA     PA     PA     VA      PA     PA
-- ------    --     --     --     --   ------    --     --
-- E0..FF -> E0  -> E0  -> E0          F0..FF -> F0  -> F0
-- C0..DF -> C0  -> C0  -> C0          E0..EF -> F0  -> F0
-- A0..BF -> A0  -> A0  -> A0          D8..DF -> 00  -> 00
-- 80..9F -> 80  -> 80  -> 80          D0..D7 -> 00  -> 00
-- 60..7F -> 60  -> 60  -> 60
-- 40..5F -> 40         -> pc  -> pc   40..5F -> pc
-- 20..3F -> 20  -> 20  -> 20
-- 00..1F -> 00  -> 00  -> 00
--
--The default location of IO peripherals is above 0xf0000000. This may be changed
--using a "ranges" property in a device tree simple-bus node. See the Devicetree
--Specification, section 4.5 for details on the syntax and semantics of
--simple-bus nodes. The following limitations apply:
--
--1. Only top level simple-bus nodes are considered
--
--2. Only one (first) simple-bus node is considered
--
--3. Empty "ranges" properties are not supported
--
--4. Only the first triplet in the "ranges" property is considered
--
--5. The parent-bus-address value is rounded down to the nearest 256MB boundary
--
--6. The IO area covers the entire 256MB segment of parent-bus-address; the
--   "ranges" triplet length field is ignored
--
--
--MMUv3 address space layouts.
--============================
--
--Default MMUv2-compatible layout.
--
--                      Symbol                   VADDR       Size
--+------------------+
--| Userspace        |                           0x00000000  TASK_SIZE
--+------------------+                           0x40000000
--+------------------+
--| Page table       |  XCHAL_PAGE_TABLE_VADDR   0x80000000  XCHAL_PAGE_TABLE_SIZE
--+------------------+
--| KASAN shadow map |  KASAN_SHADOW_START       0x80400000  KASAN_SHADOW_SIZE
--+------------------+                           0x8e400000
--+------------------+
--| VMALLOC area     |  VMALLOC_START            0xc0000000  128MB - 64KB
--+------------------+  VMALLOC_END
--| Cache aliasing   |  TLBTEMP_BASE_1           0xc7ff0000  DCACHE_WAY_SIZE
--| remap area 1     |
--+------------------+
--| Cache aliasing   |  TLBTEMP_BASE_2                       DCACHE_WAY_SIZE
--| remap area 2     |
--+------------------+
--+------------------+
--| KMAP area        |  PKMAP_BASE                           PTRS_PER_PTE *
--|                  |                                       DCACHE_N_COLORS *
--|                  |                                       PAGE_SIZE
--|                  |                                       (4MB * DCACHE_N_COLORS)
--+------------------+
--| Atomic KMAP area |  FIXADDR_START                        KM_TYPE_NR *
--|                  |                                       NR_CPUS *
--|                  |                                       DCACHE_N_COLORS *
--|                  |                                       PAGE_SIZE
--+------------------+  FIXADDR_TOP              0xcffff000
--+------------------+
--| Cached KSEG      |  XCHAL_KSEG_CACHED_VADDR  0xd0000000  128MB
--+------------------+
--| Uncached KSEG    |  XCHAL_KSEG_BYPASS_VADDR  0xd8000000  128MB
--+------------------+
--| Cached KIO       |  XCHAL_KIO_CACHED_VADDR   0xe0000000  256MB
--+------------------+
--| Uncached KIO     |  XCHAL_KIO_BYPASS_VADDR   0xf0000000  256MB
--+------------------+
--
--
--256MB cached + 256MB uncached layout.
--
--                      Symbol                   VADDR       Size
--+------------------+
--| Userspace        |                           0x00000000  TASK_SIZE
--+------------------+                           0x40000000
--+------------------+
--| Page table       |  XCHAL_PAGE_TABLE_VADDR   0x80000000  XCHAL_PAGE_TABLE_SIZE
--+------------------+
--| KASAN shadow map |  KASAN_SHADOW_START       0x80400000  KASAN_SHADOW_SIZE
--+------------------+                           0x8e400000
--+------------------+
--| VMALLOC area     |  VMALLOC_START            0xa0000000  128MB - 64KB
--+------------------+  VMALLOC_END
--| Cache aliasing   |  TLBTEMP_BASE_1           0xa7ff0000  DCACHE_WAY_SIZE
--| remap area 1     |
--+------------------+
--| Cache aliasing   |  TLBTEMP_BASE_2                       DCACHE_WAY_SIZE
--| remap area 2     |
--+------------------+
--+------------------+
--| KMAP area        |  PKMAP_BASE                           PTRS_PER_PTE *
--|                  |                                       DCACHE_N_COLORS *
--|                  |                                       PAGE_SIZE
--|                  |                                       (4MB * DCACHE_N_COLORS)
--+------------------+
--| Atomic KMAP area |  FIXADDR_START                        KM_TYPE_NR *
--|                  |                                       NR_CPUS *
--|                  |                                       DCACHE_N_COLORS *
--|                  |                                       PAGE_SIZE
--+------------------+  FIXADDR_TOP              0xaffff000
--+------------------+
--| Cached KSEG      |  XCHAL_KSEG_CACHED_VADDR  0xb0000000  256MB
--+------------------+
--| Uncached KSEG    |  XCHAL_KSEG_BYPASS_VADDR  0xc0000000  256MB
--+------------------+
--+------------------+
--| Cached KIO       |  XCHAL_KIO_CACHED_VADDR   0xe0000000  256MB
--+------------------+
--| Uncached KIO     |  XCHAL_KIO_BYPASS_VADDR   0xf0000000  256MB
--+------------------+
--
--
--512MB cached + 512MB uncached layout.
--
--                      Symbol                   VADDR       Size
--+------------------+
--| Userspace        |                           0x00000000  TASK_SIZE
--+------------------+                           0x40000000
--+------------------+
--| Page table       |  XCHAL_PAGE_TABLE_VADDR   0x80000000  XCHAL_PAGE_TABLE_SIZE
--+------------------+
--| KASAN shadow map |  KASAN_SHADOW_START       0x80400000  KASAN_SHADOW_SIZE
--+------------------+                           0x8e400000
--+------------------+
--| VMALLOC area     |  VMALLOC_START            0x90000000  128MB - 64KB
--+------------------+  VMALLOC_END
--| Cache aliasing   |  TLBTEMP_BASE_1           0x97ff0000  DCACHE_WAY_SIZE
--| remap area 1     |
--+------------------+
--| Cache aliasing   |  TLBTEMP_BASE_2                       DCACHE_WAY_SIZE
--| remap area 2     |
--+------------------+
--+------------------+
--| KMAP area        |  PKMAP_BASE                           PTRS_PER_PTE *
--|                  |                                       DCACHE_N_COLORS *
--|                  |                                       PAGE_SIZE
--|                  |                                       (4MB * DCACHE_N_COLORS)
--+------------------+
--| Atomic KMAP area |  FIXADDR_START                        KM_TYPE_NR *
--|                  |                                       NR_CPUS *
--|                  |                                       DCACHE_N_COLORS *
--|                  |                                       PAGE_SIZE
--+------------------+  FIXADDR_TOP              0x9ffff000
--+------------------+
--| Cached KSEG      |  XCHAL_KSEG_CACHED_VADDR  0xa0000000  512MB
--+------------------+
--| Uncached KSEG    |  XCHAL_KSEG_BYPASS_VADDR  0xc0000000  512MB
--+------------------+
--| Cached KIO       |  XCHAL_KIO_CACHED_VADDR   0xe0000000  256MB
--+------------------+
--| Uncached KIO     |  XCHAL_KIO_BYPASS_VADDR   0xf0000000  256MB
--+------------------+
-diff --git a/arch/xtensa/include/asm/initialize_mmu.h b/arch/xtensa/include/asm/initialize_mmu.h
-index 323d05789159..3b054d2bede0 100644
---- a/arch/xtensa/include/asm/initialize_mmu.h
-+++ b/arch/xtensa/include/asm/initialize_mmu.h
-@@ -42,7 +42,7 @@
- #if XCHAL_HAVE_S32C1I && (XCHAL_HW_MIN_VERSION >= XTENSA_HWVERSION_RC_2009_0)
- /*
-  * We Have Atomic Operation Control (ATOMCTL) Register; Initialize it.
-- * For details see Documentation/xtensa/atomctl.txt
-+ * For details see Documentation/xtensa/atomctl.rst
-  */
- #if XCHAL_DCACHE_IS_COHERENT
- 	movi	a3, 0x25	/* For SMP/MX -- internal for writeback,
+  - Print and parse extcsd data.
+  - Determine the eMMC writeprotect status.
+  - Set the eMMC writeprotect status.
 -- 
 2.21.0
 
