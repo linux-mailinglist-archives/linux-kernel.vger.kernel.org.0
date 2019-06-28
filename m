@@ -2,90 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AB4E5959D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 10:07:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DFCD595AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 10:08:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726884AbfF1IG4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 04:06:56 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:50399 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726828AbfF1IGr (ORCPT
+        id S1726794AbfF1IIc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 04:08:32 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:60932 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725792AbfF1IIb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 04:06:47 -0400
-Received: by mail-wm1-f68.google.com with SMTP id c66so8126661wmf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2019 01:06:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=CCKTOX94dJMJaIi336ahfQwlG37S0yGGcCoKC+X5aD4=;
-        b=D5fq92o5SRB81qL0haOeI9smb4BnjU2TdY2ryZb+IZv2zg1zoLHqDneXH+/WclNZpp
-         zbHyquPL6IU/VQQ8PEY0fCJRnz7hKwF0c2xc6qa/BcGtTzs0YddLSeCUd+25TxbDya9v
-         YoRNryGGgas2K3D9HAr3kydyO4vye250fwEzOvWWBBv+DAXe59YhrwDHttNNlah1SWtU
-         vJZvB6fw1VPniefh4ySCC4LpFtkNSRxKQ1KUdYRi/iPMAeoXgCNRm0HTgGSNEuMHRv84
-         VqXB+90NgNrPLdFQ9rqll2Up+2cMRQDIgQSKu34mTyCH7mfaLQjVJebt5YkZvt0fZBhm
-         wFBw==
-X-Gm-Message-State: APjAAAW5tmad+aqb6cPnC26cJSZ40F9dn1/+wlyEyXau/eEOehuJ/zAw
-        JhWXPiuEMsVGVdZboSF8n48ksQ==
-X-Google-Smtp-Source: APXvYqzAsUT+533HfWPDIvW6mCpCh1TTKCdObNW67mDZ8ojUOZbvV3FebhVmYfJcgNWue1+BgE/Zyg==
-X-Received: by 2002:a1c:ef10:: with SMTP id n16mr5706288wmh.134.1561709205292;
-        Fri, 28 Jun 2019 01:06:45 -0700 (PDT)
-Received: from localhost.localdomain.com ([151.29.165.245])
-        by smtp.gmail.com with ESMTPSA id z19sm1472774wmi.7.2019.06.28.01.06.43
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 28 Jun 2019 01:06:44 -0700 (PDT)
-From:   Juri Lelli <juri.lelli@redhat.com>
-To:     peterz@infradead.org, mingo@redhat.com, rostedt@goodmis.org,
-        tj@kernel.org
-Cc:     linux-kernel@vger.kernel.org, luca.abeni@santannapisa.it,
-        claudio@evidence.eu.com, tommaso.cucinotta@santannapisa.it,
-        bristot@redhat.com, mathieu.poirier@linaro.org, lizefan@huawei.com,
-        cgroups@vger.kernel.org, Juri Lelli <juri.lelli@redhat.com>
-Subject: [PATCH v8 8/8] rcu/tree: Setschedule gp ktread to SCHED_FIFO outside of atomic region
-Date:   Fri, 28 Jun 2019 10:06:18 +0200
-Message-Id: <20190628080618.522-9-juri.lelli@redhat.com>
-X-Mailer: git-send-email 2.17.2
-In-Reply-To: <20190628080618.522-1-juri.lelli@redhat.com>
-References: <20190628080618.522-1-juri.lelli@redhat.com>
+        Fri, 28 Jun 2019 04:08:31 -0400
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5S86bL9020381;
+        Fri, 28 Jun 2019 10:08:15 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=OkJkWdO3ZoRZHiMztQUd9Pc0c3rpuXyKwA33SFtPdis=;
+ b=xMZPk79Nw36AwFGsijRPGGVDagkAqM4WO+0RiHwIGMHiIqaZjqsAKo3y9N5X0uPR2Ogs
+ FdXLh7nt5Xivm/T0Ugd3M1eBy6XCczmS+cSngYs+FFM3A+X9nw2gSAgLf6/3DInv7Phs
+ c2QI/TTpDnVM3wH/bBu/wTIYUU+0h5aoQe8DBDV/Aaotb52iQObeqNUSEZitstXzvjIj
+ amzsL6YfcM4T8MjYoeoQwFBfv5rTQxRpCnqT9JunHoZ+N3jaKkzl30YNkY5RU/1NYs8y
+ CqX2qjsJw+bmoYwo96rtICsd2SPkyxGs9tJ8V/kYoM/RcceIjknW3gYM+RzuuRc5PBOj fA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2t9d2gvcwq-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Fri, 28 Jun 2019 10:08:15 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 7149431;
+        Fri, 28 Jun 2019 08:08:14 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 51A6616AF;
+        Fri, 28 Jun 2019 08:08:14 +0000 (GMT)
+Received: from localhost (10.75.127.47) by SFHDAG5NODE3.st.com (10.75.127.15)
+ with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 28 Jun 2019 10:08:13
+ +0200
+From:   Fabrice Gasnier <fabrice.gasnier@st.com>
+To:     <broonie@kernel.org>, <lgirdwood@gmail.com>, <robh+dt@kernel.org>,
+        <alexandre.torgue@st.com>
+CC:     <mcoquelin.stm32@gmail.com>, <fabrice.gasnier@st.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <devicetree@vger.kernel.org>
+Subject: [PATCH 0/4] regulator: add support for the STM32 ADC booster
+Date:   Fri, 28 Jun 2019 10:08:05 +0200
+Message-ID: <1561709289-11174-1-git-send-email-fabrice.gasnier@st.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.47]
+X-ClientProxiedBy: SFHDAG1NODE3.st.com (10.75.127.3) To SFHDAG5NODE3.st.com
+ (10.75.127.15)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-28_03:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-sched_setscheduler() needs to acquire cpuset_rwsem, but it is currently
-called from an invalid (atomic) context by rcu_spawn_gp_kthread().
+Add support for the 3.3V booster regulator embedded in stm32h7 and stm32mp1
+devices, that can be used to supply ADC analog input switches.
+It's useful to reach full ADC performance when their supply is below 2.7V
+(vdda by default).
 
-Fix that by simply moving sched_setscheduler_nocheck() call outside of
-the atomic region, as it doesn't actually require to be guarded by
-rcu_node lock.
+Fabrice Gasnier (4):
+  dt-bindings: regulator: add support for the stm32-booster
+  regulator: add support for the stm32-booster
+  ARM: multi_v7_defconfig: enable STM32 booster regulator
+  ARM: dts: stm32: add booster for ADC analog switches on stm32mp157c
 
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
----
- kernel/rcu/tree.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ .../bindings/regulator/st,stm32-booster.txt        |  18 +++
+ arch/arm/boot/dts/stm32mp157c.dtsi                 |   6 +
+ arch/arm/configs/multi_v7_defconfig                |   1 +
+ drivers/regulator/Kconfig                          |  11 ++
+ drivers/regulator/Makefile                         |   1 +
+ drivers/regulator/stm32-booster.c                  | 132 +++++++++++++++++++++
+ 6 files changed, 169 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/regulator/st,stm32-booster.txt
+ create mode 100644 drivers/regulator/stm32-booster.c
 
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 980ca3ca643f..32ea75acba14 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -3123,13 +3123,13 @@ static int __init rcu_spawn_gp_kthread(void)
- 	t = kthread_create(rcu_gp_kthread, NULL, "%s", rcu_state.name);
- 	if (WARN_ONCE(IS_ERR(t), "%s: Could not start grace-period kthread, OOM is now expected behavior\n", __func__))
- 		return 0;
-+	if (kthread_prio)
-+		sched_setscheduler_nocheck(t, SCHED_FIFO, &sp);
- 	rnp = rcu_get_root();
- 	raw_spin_lock_irqsave_rcu_node(rnp, flags);
- 	rcu_state.gp_kthread = t;
--	if (kthread_prio) {
-+	if (kthread_prio)
- 		sp.sched_priority = kthread_prio;
--		sched_setscheduler_nocheck(t, SCHED_FIFO, &sp);
--	}
- 	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
- 	wake_up_process(t);
- 	rcu_spawn_nocb_kthreads();
 -- 
-2.17.2
+2.7.4
 
