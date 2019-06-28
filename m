@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CACC059D01
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 15:36:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D44859D07
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 15:36:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726812AbfF1NgY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 09:36:24 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:43242 "EHLO
+        id S1726913AbfF1Ngd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 09:36:33 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:43256 "EHLO
         merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726616AbfF1NgW (ORCPT
+        with ESMTP id S1726616AbfF1NgZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 09:36:22 -0400
+        Fri, 28 Jun 2019 09:36:25 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
         Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=PBCXNPhXznSRLpWZ9dW03ymmoYfbGlwE23D94T1zegA=; b=fUC/0wOVuJpVlWIBVBvOevCS5E
-        sb+a257Ku+6xC+bWaAe/F6crBvSiNS70oxlMCHYPXymMMhHgtOn18d5+Nmx2GXanXljGwZ31IaQ8i
-        /YXg8q+oGgfDQT96+BxE7WXyXFnO0fRpt8ukWq5myrQPsjlKDsRQaPChcmlYWTZy0bSFjf5D4j4E1
-        h/IeRbkHZi3KlkFIJKXGZGESdiwUuHh7tfh1wTBXYISwp7RXeDslBbiggUCUs3p4ACbee1PIhnEqP
-        AcrqgciUx/BvGKpn7kc6rDI1St7NnD5czYhMfH5ID4Y3H/Hl9Jvo0PUdezua80yOAVLgCVc7vEhM9
-        CHb+tHsQ==;
+        bh=vnE+x2ECRCteGktx7zBzJWESW14d+4IL+cy0q0uzTns=; b=cn9+BQDxkRTs0PCdZAnuNiaXKG
+        y1cqbEMAkbqkRszRWPcP6YuKfw8hR84HEi1VKNEquWIUQcwltqduhSyoFrNHgCRoPNTOsuKh4eluH
+        GQ3+Rw5rT6vwQ+t/SnyIyW9pqp03oxOBTMsW3LLPjmzGWollv/EPbLypAXmwWTWddwtuZIv7uHv9g
+        rcpNBoh48etcn8SKckpXSdroxMCpOdrOJgt120WuNzRwLYwZFzylthWhCzHFkeH9HErWc45oBBssK
+        Rmis6oBhfj+wzgBRvKdadRyVDjY2CEgb+jGJF4bFe0qOHL7tgvE0e1M2Jzi9cljYVWNWLGctxk0iM
+        ZE47IIcA==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
         by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hgr2s-0000nF-HO; Fri, 28 Jun 2019 13:36:07 +0000
+        id 1hgr2s-0000nG-Ht; Fri, 28 Jun 2019 13:36:07 +0000
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 9644B20AB8994; Fri, 28 Jun 2019 15:36:03 +0200 (CEST)
-Message-Id: <20190628103224.830851505@infradead.org>
+        id 9A77D20AB8995; Fri, 28 Jun 2019 15:36:03 +0200 (CEST)
+Message-Id: <20190628103224.888336008@infradead.org>
 User-Agent: quilt/0.65
-Date:   Fri, 28 Jun 2019 12:21:20 +0200
+Date:   Fri, 28 Jun 2019 12:21:21 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     x86@kernel.org, peterz@infradead.org, linux-kernel@vger.kernel.org
 Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
@@ -42,7 +42,7 @@ Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
         Andy Lutomirski <luto@kernel.org>,
         Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
         Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Subject: [RFC][PATCH 7/8] jump_label, x86: Introduce jump_entry_size()
+Subject: [RFC][PATCH 8/8] jump_label, x86: Enable JMP8/NOP2 support
 References: <20190628102113.360432762@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -51,81 +51,94 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This allows architectures to have variable sized jumps.
+Enable and emit short JMP/NOP jump_label entries.
+
+Much thanks to Josh for (re)discovering the .skip trick to
+conditionally emit variable length text.
+
+Due to how early we enable jump_labels on x86, if any of this comes
+apart, the machine is completely dead. Qemu+GDB saved the day this
+time.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- arch/x86/include/asm/jump_label.h |    4 ++--
- arch/x86/kernel/jump_label.c      |    8 ++++++++
- include/linux/jump_label.h        |    9 +++++++++
- kernel/jump_label.c               |    2 +-
- 4 files changed, 20 insertions(+), 3 deletions(-)
+ arch/x86/include/asm/jump_label.h |   37 +++++++++++++++++++++++++++++++------
+ arch/x86/kernel/jump_label.c      |    5 ++++-
+ 2 files changed, 35 insertions(+), 7 deletions(-)
 
 --- a/arch/x86/include/asm/jump_label.h
 +++ b/arch/x86/include/asm/jump_label.h
-@@ -4,8 +4,6 @@
- 
- #define HAVE_JUMP_LABEL_BATCH
- 
--#define JUMP_LABEL_NOP_SIZE 5
--
- #ifdef CONFIG_X86_64
- # define STATIC_KEY_NOP2 P6_NOP2
- # define STATIC_KEY_NOP5 P6_NOP5_ATOMIC
-@@ -55,6 +53,8 @@ static __always_inline bool arch_static_
- 	return true;
- }
- 
-+extern int arch_jump_entry_size(struct jump_entry *entry);
+@@ -31,7 +31,35 @@
+ static __always_inline bool arch_static_branch(struct static_key *key, bool branch)
+ {
+ 	asm_volatile_goto("1:"
+-		".byte " __stringify(STATIC_KEY_INIT_NOP) "\n\t"
 +
- #else	/* __ASSEMBLY__ */
++		".set disp, %l[l_yes] - (1b + 2) \n\t"
++		".set sign, disp >> 31 \n\t"
++		".set res, (disp >> 7) ^ sign \n\t"
++		".set is_byte, -(res == 0) \n\t"
++		".set is_long, -(res != 0) \n\t"
++
++#ifdef CONFIG_X86_64
++		".skip is_byte, 0x66 \n\t"
++		".skip is_byte, 0x90 \n\t"
++#else
++		".skip is_byte, 0x89 \n\t"
++		".skip is_byte, 0xf6 \n\t"
++#endif
++
++#ifdef CONFIG_X86_64
++		".skip is_long, 0x0f \n\t"
++		".skip is_long, 0x1f \n\t"
++		".skip is_long, 0x44 \n\t"
++		".skip is_long, 0x00 \n\t"
++		".skip is_long, 0x00 \n\t"
++#else
++		".skip is_long, 0x3e \n\t"
++		".skip is_long, 0x8d \n\t"
++		".skip is_long, 0x74 \n\t"
++		".skip is_long, 0x26 \n\t"
++		".skip is_long, 0x00 \n\t"
++#endif
++
+ 		JUMP_TABLE_ENTRY
+ 		: :  "i" (key), "i" (branch) : : l_yes);
+ 
+@@ -43,8 +71,7 @@ static __always_inline bool arch_static_
+ static __always_inline bool arch_static_branch_jump(struct static_key *key, bool branch)
+ {
+ 	asm_volatile_goto("1:"
+-		".byte 0xe9 \n\t"
+-		".long %l[l_yes] - (. + 4) \n\t"
++		"jmp %l[l_yes] \n\t"
+ 		JUMP_TABLE_ENTRY
+ 		: :  "i" (key), "i" (branch) : : l_yes);
+ 
+@@ -59,9 +86,7 @@ extern int arch_jump_entry_size(struct j
  
  .macro STATIC_BRANCH_FALSE_LIKELY target, key
+ .Lstatic_jump_\@:
+-	/* Equivalent to "jmp.d32 \target" */
+-	.byte		0xe9
+-	.long		\target - (. + 4)
++	jmp \target
+ 
+ 	.pushsection __jump_table, "aw"
+ 	_ASM_ALIGN
 --- a/arch/x86/kernel/jump_label.c
 +++ b/arch/x86/kernel/jump_label.c
-@@ -32,6 +32,14 @@ static inline bool __jump_disp_is_byte(s
- 	return false;
- }
+@@ -29,7 +29,10 @@ union jump_code_union {
  
-+int arch_jump_entry_size(struct jump_entry *entry)
-+{
-+	s32 disp = jump_entry_target(entry) - jump_entry_code(entry);
-+	if (__jump_disp_is_byte(disp))
-+		return JMP8_INSN_SIZE;
-+	return JMP32_INSN_SIZE;
-+}
-+
- static int __jump_label_set_jump_code(struct jump_entry *entry,
- 				      enum jump_label_type type,
- 				      union jump_code_union *code,
---- a/include/linux/jump_label.h
-+++ b/include/linux/jump_label.h
-@@ -176,6 +176,15 @@ static inline void jump_entry_set_init(s
- 	entry->key |= 2;
- }
- 
-+static inline int jump_entry_size(struct jump_entry *entry)
-+{
-+#ifdef JUMP_LABEL_NOP_SIZE
-+	return JUMP_LABEL_NOP_SIZE;
-+#else
-+	return arch_jump_entry_size(entry);
-+#endif
-+}
-+
- #endif
- #endif
- 
---- a/kernel/jump_label.c
-+++ b/kernel/jump_label.c
-@@ -309,7 +309,7 @@ EXPORT_SYMBOL_GPL(jump_label_rate_limit)
- static int addr_conflict(struct jump_entry *entry, void *start, void *end)
+ static inline bool __jump_disp_is_byte(s32 disp)
  {
- 	if (jump_entry_code(entry) <= (unsigned long)end &&
--	    jump_entry_code(entry) + JUMP_LABEL_NOP_SIZE > (unsigned long)start)
-+	    jump_entry_code(entry) + jump_entry_size(entry) > (unsigned long)start)
- 		return 1;
+-	return false;
++	s32 sign;
++	disp -= JMP8_INSN_SIZE;
++	sign = disp >> 31;
++	return ((disp >> 7) ^ sign) == 0;
+ }
  
- 	return 0;
+ int arch_jump_entry_size(struct jump_entry *entry)
 
 
