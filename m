@@ -2,102 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9E1759D94
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 16:15:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23F3A59D99
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 16:17:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726786AbfF1OPr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 10:15:47 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:43644 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726616AbfF1OPr (ORCPT
+        id S1726865AbfF1OQ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 10:16:59 -0400
+Received: from relay8-d.mail.gandi.net ([217.70.183.201]:37675 "EHLO
+        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726657AbfF1OQ6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 10:15:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=KGyxyb6C9C36jd3MUag3X49JqaizbydoeqxFEKojv6k=; b=shIOtJ5Qnv0SN0BmGMmEU85BH
-        SOLnXtGR4diAGHxmbXBVtYWSTszrr6hEE5zK9mDNqOjaWnbqydFVS8NyWGUPL//1ZDl+nBAnROyFx
-        lJqT4dwEH3BsOwh3ULkv16SXLb/g31gaRS8EJ7/xCtVPU7nEAlYtgTUx2a5SnXUla3TAwkLnAMaWm
-        D9pFMkH8vCiqJICV/G2UN/a2gA1jkDj8cVb8kjwdiOuJDsyvnlFhs14H3adUVTPFcMRSnQ6uaUEvk
-        XPJzJm51Uf3+DdMkdwK3hu10u/3gdEKrk867Ro5T1wlY878pBWemvPWjC6OjMJBso+HFftng2Y/he
-        /8hKJmSFQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hgreu-0000wl-B2; Fri, 28 Jun 2019 14:15:24 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 69AF620215B79; Fri, 28 Jun 2019 16:15:22 +0200 (CEST)
-Date:   Fri, 28 Jun 2019 16:15:22 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
-Cc:     Scott Wood <swood@redhat.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        rcu <rcu@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>
-Subject: Re: [RFC] Deadlock via recursive wakeup via RCU with threadirqs
-Message-ID: <20190628141522.GF3402@hirez.programming.kicks-ass.net>
-References: <20190627142436.GD215968@google.com>
- <20190627103455.01014276@gandalf.local.home>
- <20190627153031.GA249127@google.com>
- <20190627155506.GU26519@linux.ibm.com>
- <CAEXW_YSEN_OL3ftTLN=M-W70WSuCgHJqU-R9VhS=A3uVj_AL+A@mail.gmail.com>
- <20190627173831.GW26519@linux.ibm.com>
- <20190627181638.GA209455@google.com>
- <20190627184107.GA26519@linux.ibm.com>
- <13761fee4b71cc004ad0d6709875ce917ff28fce.camel@redhat.com>
- <20190627203612.GD26519@linux.ibm.com>
+        Fri, 28 Jun 2019 10:16:58 -0400
+X-Originating-IP: 86.250.200.211
+Received: from mc-bl-xps13.lan (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
+        (Authenticated sender: maxime.chevallier@bootlin.com)
+        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id 56A001BF205;
+        Fri, 28 Jun 2019 14:16:48 +0000 (UTC)
+From:   Maxime Chevallier <maxime.chevallier@bootlin.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>
+Cc:     Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        David Miller <davem@davemloft.net>, brian.brooks@linaro.org,
+        linux-kernel@vger.kernel.org,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
+        nadavh@marvell.com, stefanc@marvell.com,
+        Russell King <rmk+kernel@armlinux.org.uk>
+Subject: [PATCH] driver core: platform: Allow using a dedicated dma_mask for platform_device
+Date:   Fri, 28 Jun 2019 16:15:50 +0200
+Message-Id: <20190628141550.22938-1-maxime.chevallier@bootlin.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190627203612.GD26519@linux.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 27, 2019 at 01:36:12PM -0700, Paul E. McKenney wrote:
-> On Thu, Jun 27, 2019 at 03:17:27PM -0500, Scott Wood wrote:
-> > On Thu, 2019-06-27 at 11:41 -0700, Paul E. McKenney wrote:
-> > > On Thu, Jun 27, 2019 at 02:16:38PM -0400, Joel Fernandes wrote:
-> > > > 
-> > > > I think the fix should be to prevent the wake-up not based on whether we
-> > > > are
-> > > > in hard/soft-interrupt mode but that we are doing the rcu_read_unlock()
-> > > > from
-> > > > a scheduler path (if we can detect that)
-> > > 
-> > > Or just don't do the wakeup at all, if it comes to that.  I don't know
-> > > of any way to determine whether rcu_read_unlock() is being called from
-> > > the scheduler, but it has been some time since I asked Peter Zijlstra
-> > > about that.
-> > > 
-> > > Of course, unconditionally refusing to do the wakeup might not be happy
-> > > thing for NO_HZ_FULL kernels that don't implement IRQ work.
-> > 
-> > Couldn't smp_send_reschedule() be used instead?
-> 
-> Good point.  If current -rcu doesn't fix things for Sebastian's case,
-> that would be well worth looking at.  But there must be some reason
-> why Peter Zijlstra didn't suggest it when he instead suggested using
-> the IRQ work approach.
-> 
-> Peter, thoughts?
+This patch attempts to solve a long standing situation where
+dev->dma_mask is a pointer to dev->dma_coherent_mask, meaning that any
+change to the coherent mask will affect the streaming mask.
 
-I've not exactly kept up with the thread; but irq_work allows you to run
-some actual code on the remote CPU which is often useful and it is only
-a little more expensive than smp_send_reschedule().
+The API allows to use different values for both masks, but for now
+platform_device built from DT will simply make the dma_mask point to the
+coherent mask.
 
-Also, just smp_send_reschedule() doesn't really do anything without
-first poking TIF_NEED_RESCHED (or other scheduler state) and if you want
-to do both, there's other helpers you should use, like resched_cpu().
+This is a problem on a least one driver, the PPv2 network driver, which
+needs different streaming and coherent masks to overcome a HW
+limitation. In this case, the issue is a performance degradation since
+the streaming mask isn't as big as it ought to be, causing a lot of
+buffer bounces.
 
+There were previous attempts to fix this issue. One of them by Brian
+Brooks, where the dma_mask is reallocated in the driver itself,
+which wasn't considered to be the best approach :
+
+https://lore.kernel.org/netdev/20180820024730.9147-1-brian.brooks@linaro.org/
+
+This lead to a discussion pointing to another attempt to solve the issue,
+by Christoph Hellwig :
+
+https://lore.kernel.org/lkml/20180829062401.8701-2-hch@lst.de/
+
+This more generic approach ended-up causing regressions on some mfd
+drivers (the sm501 was one of the reports).
+
+The current patch tries to be a bit less generic, and allows setting-up
+the dma_mask for platform devices using a dedicated helper. In this case,
+the dma_mask is allocated in struct platform_object, as suggested by
+Russell King.
+
+This helper is then used in platform_device creation code from the DT.
+
+Suggested-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+---
+Hi everyone,
+
+This patch, if suitable, would require a lot of testing to detect
+drivers that rely on the streaming mask being the same as the coherent
+mask.
+
+Thanks,
+
+Maxime
+
+ drivers/base/platform.c         | 17 +++++++++++++++++
+ drivers/of/platform.c           |  7 +++++--
+ include/linux/platform_device.h |  1 +
+ 3 files changed, 23 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+index 4d1729853d1a..35e7bdb8576c 100644
+--- a/drivers/base/platform.c
++++ b/drivers/base/platform.c
+@@ -256,9 +256,26 @@ EXPORT_SYMBOL_GPL(platform_add_devices);
+ 
+ struct platform_object {
+ 	struct platform_device pdev;
++	u64 dma_mask;
+ 	char name[];
+ };
+ 
++/**
++ * platform_device_setup_dma_mask - Sets the dma_mask pointer
++ * @pdev: platform device to configure the device's mask
++ *
++ * Sets the dma_mask of the underlying device to point to a dedicated region,
++ * that belongs to the platform_device.
++ */
++void platform_device_setup_dma_mask(struct platform_device *pdev)
++{
++	struct platform_object *pa = container_of(pdev, struct platform_object,
++						  pdev);
++
++	pa->pdev.dev.dma_mask = &pa->dma_mask;
++}
++EXPORT_SYMBOL_GPL(platform_device_setup_dma_mask);
++
+ /**
+  * platform_device_put - destroy a platform device
+  * @pdev: platform device to free
+diff --git a/drivers/of/platform.c b/drivers/of/platform.c
+index 04ad312fd85b..4a6980e3356c 100644
+--- a/drivers/of/platform.c
++++ b/drivers/of/platform.c
+@@ -186,8 +186,11 @@ static struct platform_device *of_platform_device_create_pdata(
+ 		goto err_clear_flag;
+ 
+ 	dev->dev.coherent_dma_mask = DMA_BIT_MASK(32);
+-	if (!dev->dev.dma_mask)
+-		dev->dev.dma_mask = &dev->dev.coherent_dma_mask;
++	if (!dev->dev.dma_mask) {
++		platform_device_setup_dma_mask(dev);
++		*dev->dev.dma_mask = dev->dev.coherent_dma_mask;
++	}
++
+ 	dev->dev.bus = &platform_bus_type;
+ 	dev->dev.platform_data = platform_data;
+ 	of_msi_configure(&dev->dev, dev->dev.of_node);
+diff --git a/include/linux/platform_device.h b/include/linux/platform_device.h
+index cc464850b71e..a95c2d224de9 100644
+--- a/include/linux/platform_device.h
++++ b/include/linux/platform_device.h
+@@ -181,6 +181,7 @@ extern int platform_device_add_properties(struct platform_device *pdev,
+ extern int platform_device_add(struct platform_device *pdev);
+ extern void platform_device_del(struct platform_device *pdev);
+ extern void platform_device_put(struct platform_device *pdev);
++extern void platform_device_setup_dma_mask(struct platform_device *pdev);
+ 
+ struct platform_driver {
+ 	int (*probe)(struct platform_device *);
+-- 
+2.20.1
 
