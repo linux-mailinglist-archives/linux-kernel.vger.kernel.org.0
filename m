@@ -2,97 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D156859BAD
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 14:38:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E18259BB3
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 14:39:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727180AbfF1MiS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 08:38:18 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:42600 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726675AbfF1MiS (ORCPT
+        id S1726903AbfF1Mja (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 08:39:30 -0400
+Received: from smtprelay0145.hostedemail.com ([216.40.44.145]:57514 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726675AbfF1Mj3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 08:38:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=FojrDMPPmqbimK77TYezVK4kRVrgRTN5l96O/2ImwMI=; b=JmMzddkUbEhnT2ek+gUHcvRWv
-        5t1OvaVQKIG9pjj6czOKMGxqFBa7R+IFEDTXCE3RqUuUi6hahTdkmrLmWxZ7ruPre7DCTY+VKOzWw
-        IzF/VyJFtMqho2QRWVnSSUsAuIJkfYLm8FrDfghiGPWUz29C80lOubuS/9V2lmuAsP6vy2vemIenm
-        oepwbbKxoEktwhjlyvXolby5NKaSlo+uHUWdt4yxgMhCMYudzl9Qu4dx81QMA6skh6GltsfgkWVKr
-        fjbSqxoDBI05scDRTX2arf6pWFcQr0qg6xLdOJUzVV5SQo3EgPlFbWTC/yun1Oj71RygB8jMcaSVt
-        A/wxz8WoA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hgq8h-0000WE-Ka; Fri, 28 Jun 2019 12:38:03 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 6BB47201F4619; Fri, 28 Jun 2019 14:38:00 +0200 (CEST)
-Date:   Fri, 28 Jun 2019 14:38:00 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Patrick Bellasi <patrick.bellasi@arm.com>
-Cc:     Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Douglas Raillard <douglas.raillard@arm.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>
-Subject: Re: [PATCH] sched/fair: util_est: fast ramp-up EWMA on utilization
- increases
-Message-ID: <20190628123800.GS3419@hirez.programming.kicks-ass.net>
-References: <20190620150555.15717-1-patrick.bellasi@arm.com>
- <CAKfTPtDTfyBvfwE6_gtjxJoPNS6YGQ7rrLcjg_M-jr=YSc+FNA@mail.gmail.com>
- <20190628100751.lpcwsouacsi2swkm@e110439-lin>
+        Fri, 28 Jun 2019 08:39:29 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 4C9CD180AA4E7;
+        Fri, 28 Jun 2019 12:39:28 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::,RULES_HIT:41:355:379:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2198:2199:2393:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3871:3874:4321:5007:9012:10004:10400:10848:11026:11232:11473:11658:11914:12043:12294:12297:12438:12555:12740:12760:12895:13069:13311:13357:13439:14096:14097:14181:14659:14721:21080:21451:21627:30012:30054:30060:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:29,LUA_SUMMARY:none
+X-HE-Tag: heart62_527ff926a3836
+X-Filterd-Recvd-Size: 2281
+Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf15.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 28 Jun 2019 12:39:26 +0000 (UTC)
+Message-ID: <951e47de7dd6d86516c25ceb855c4b64f13fb65d.camel@perches.com>
+Subject: Re: [PATCH 1/9] hrtimer: Use a bullet for the returns bullet list
+From:   Joe Perches <joe@perches.com>
+To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc:     Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>
+Date:   Fri, 28 Jun 2019 05:39:25 -0700
+In-Reply-To: <8176c9089f66796de6f62e74499eb3d3015f785d.1561723736.git.mchehab+samsung@kernel.org>
+References: <cover.1561723736.git.mchehab+samsung@kernel.org>
+         <8176c9089f66796de6f62e74499eb3d3015f785d.1561723736.git.mchehab+samsung@kernel.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190628100751.lpcwsouacsi2swkm@e110439-lin>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 28, 2019 at 11:08:14AM +0100, Patrick Bellasi wrote:
-> On 26-Jun 13:40, Vincent Guittot wrote:
-> > Hi Patrick,
-> > 
-> > On Thu, 20 Jun 2019 at 17:06, Patrick Bellasi <patrick.bellasi@arm.com> wrote:
-> > >
-> > > The estimated utilization for a task is currently defined based on:
-> > >  - enqueued: the utilization value at the end of the last activation
-> > >  - ewma:     an exponential moving average which samples are the enqueued values
-> > >
-> > > According to this definition, when a task suddenly change it's bandwidth
-> > > requirements from small to big, the EWMA will need to collect multiple
-> > > samples before converging up to track the new big utilization.
-> > >
-> > > Moreover, after the PELT scale invariance update [1], in the above scenario we
-> > > can see that the utilization of the task has a significant drop from the first
-> > > big activation to the following one. That's implied by the new "time-scaling"
-> > 
-> > Could you give us more details about this? I'm not sure to understand
-> > what changes between the 1st big activation and the following one ?
+On Fri, 2019-06-28 at 09:12 -0300, Mauro Carvalho Chehab wrote:
+> That gets rid of this warning:
 > 
-> We are after a solution for the problem Douglas Raillard discussed at
-> OSPM, specifically the "Task util drop after 1st idle" highlighted in
-> slide 6 of his presentation:
+> 	./kernel/time/hrtimer.c:1119: WARNING: Block quote ends without a blank line; unexpected unindent.
 > 
->   http://retis.sssup.it/ospm-summit/Downloads/02_05-Douglas_Raillard-How_can_we_make_schedutil_even_more_effective.pdf
+> and displays nicely both at the source code and at the produced
+> documentation.
 > 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+> ---
+>  kernel/time/hrtimer.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
+> index edb230aba3d1..5ee77f1a8a92 100644
+> --- a/kernel/time/hrtimer.c
+> +++ b/kernel/time/hrtimer.c
+> @@ -1114,9 +1114,10 @@ EXPORT_SYMBOL_GPL(hrtimer_start_range_ns);
+>   * @timer:	hrtimer to stop
+>   *
+>   * Returns:
+> - *  0 when the timer was not active
+> - *  1 when the timer was active
+> - * -1 when the timer is currently executing the callback function and
+> + *
+> + *  *  0 when the timer was not active
+> + *  *  1 when the timer was active
+> + *  * -1 when the timer is currently executing the callback function and
+>   *    cannot be stopped
 
-So I see the problem, and I don't hate the patch, but I'm still
-struggling to understand how exactly it related to the time-scaling
-stuff. Afaict the fundamental problem here is layering two averages. The
-second (EWMA in our case) will always lag/delay the input of the first
-(PELT).
+I think this last line should be indented 3 more spaces too
 
-The time-scaling thing might make matters worse, because that helps PELT
-ramp up faster, but that is not the primary issue.
 
-Or am I missing something?
