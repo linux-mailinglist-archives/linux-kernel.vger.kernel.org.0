@@ -2,42 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BF4559B6D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 14:33:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A251459B1D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 14:31:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727575AbfF1MdB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 08:33:01 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:39250 "EHLO
+        id S1727191AbfF1Mas (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 08:30:48 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:39182 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726689AbfF1Mak (ORCPT
+        with ESMTP id S1727034AbfF1Man (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 08:30:40 -0400
+        Fri, 28 Jun 2019 08:30:43 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=b8lFdv2twqPqRr7SfjLTC0bbtFhcebH6eseqNOm/6hk=; b=D+tSXJchu7mkgCW5N/IdCIW18O
-        CBwUVbGDLINtRCLu8ffcMDqF+l3uNHKJ1IMMUqwtESlzA3IYfA/Wmgo1yk5sSA6fFwDLwe9zoY4p/
-        SFZltEf0uS9alkMeqn0lgNiymeeJhfGbqZTslMk9RZr73vghlLFZRDh+g5lRPo1ABSUcd0OUfFAKm
-        cwdcnUWig4fj9ZLx7Y4CGrqPZoWd9G/7CRZ4jmTCJa8zT/ET/5TWfrLmZNBj3e0iYXiGeHiBy99HI
-        w9fkFOhWVJi/ZGJOWpM9VzaPYJEI62JgE2Z1HXhADtDJvBJM+vbfbTGzb7pedNV3rIfd0DfiGsqjs
-        vPaa4zcA==;
+        bh=e7PI9xcipbF07o8l7bOvfTR9teu/JtxbkDUbu2d3wzA=; b=ky2z+0udABzsP4et8Uaot7GiuW
+        2Yotbf4DBoCpouCXHDKG2WipZYhqQD1MhrS/+Cbc4YL+VCbF8KDtldJXibnZHkvpIh3XyFkRUU7Ye
+        HTt8ThFJN1QBmcZKGPVcqoy43iR09f2NNULlBM9I2jUksBA6rMvInjyftg/9Hhr8JhVRhAS48QQnI
+        rYJD9KGmRNCMiyWW/t99iZ2SL7UXGwrU0wcpJzyRDqbBYpvmqfelcF5HHIrjkM8Tb7VM5whwMUT5R
+        p+P9LeMW5MWg1kwJCl20kxZK2BDi+ZJ4FFF859YQl3rPxx5rvK3YUbDtfU8PPeKSBfWPiFtsKf10i
+        hYclQnZw==;
 Received: from [186.213.242.156] (helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hgq1U-00055Z-Jr; Fri, 28 Jun 2019 12:30:36 +0000
+        id 1hgq1U-00055a-Lt; Fri, 28 Jun 2019 12:30:36 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hgq1S-0005Sv-JN; Fri, 28 Jun 2019 09:30:34 -0300
+        id 1hgq1S-0005Sz-KA; Fri, 28 Jun 2019 09:30:34 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH 25/39] docs: add some documentation dirs to the driver-api book
-Date:   Fri, 28 Jun 2019 09:30:18 -0300
-Message-Id: <625e2df5006632e5c657749433e5aeee8cf211a9.1561724493.git.mchehab+samsung@kernel.org>
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Justin Sanders <justin@coraid.com>
+Subject: [PATCH 26/39] docs: aoe: add it to the driver-api book
+Date:   Fri, 28 Jun 2019 09:30:19 -0300
+Message-Id: <654ed60bf8a921e162b46c487c6c77cf76419918.1561724493.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <cover.1561724493.git.mchehab+samsung@kernel.org>
 References: <cover.1561724493.git.mchehab+samsung@kernel.org>
@@ -48,74 +49,129 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Those are subsystem docs, with a mix of kABI and user-faced
-docs. While they're not split, keep the dirs where they are,
-adding just a pointer to the main index.
+Those files belong to the admin guide, so add them.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- Documentation/accounting/index.rst | 2 +-
- Documentation/block/index.rst      | 2 +-
- Documentation/hid/index.rst        | 2 +-
- Documentation/iio/index.rst        | 2 +-
- Documentation/index.rst            | 4 ++++
- 5 files changed, 8 insertions(+), 4 deletions(-)
+ Documentation/{ => admin-guide}/aoe/aoe.rst         | 4 ++--
+ Documentation/{ => admin-guide}/aoe/autoload.sh     | 0
+ Documentation/{ => admin-guide}/aoe/examples.rst    | 0
+ Documentation/{ => admin-guide}/aoe/index.rst       | 2 --
+ Documentation/{ => admin-guide}/aoe/status.sh       | 0
+ Documentation/{ => admin-guide}/aoe/todo.rst        | 0
+ Documentation/{ => admin-guide}/aoe/udev-install.sh | 0
+ Documentation/{ => admin-guide}/aoe/udev.txt        | 2 +-
+ Documentation/admin-guide/index.rst                 | 1 +
+ MAINTAINERS                                         | 2 +-
+ 10 files changed, 5 insertions(+), 6 deletions(-)
+ rename Documentation/{ => admin-guide}/aoe/aoe.rst (97%)
+ rename Documentation/{ => admin-guide}/aoe/autoload.sh (100%)
+ rename Documentation/{ => admin-guide}/aoe/examples.rst (100%)
+ rename Documentation/{ => admin-guide}/aoe/index.rst (95%)
+ rename Documentation/{ => admin-guide}/aoe/status.sh (100%)
+ rename Documentation/{ => admin-guide}/aoe/todo.rst (100%)
+ rename Documentation/{ => admin-guide}/aoe/udev-install.sh (100%)
+ rename Documentation/{ => admin-guide}/aoe/udev.txt (93%)
 
-diff --git a/Documentation/accounting/index.rst b/Documentation/accounting/index.rst
-index e1f6284b5ff3..9369d8bf32be 100644
---- a/Documentation/accounting/index.rst
-+++ b/Documentation/accounting/index.rst
-@@ -1,4 +1,4 @@
+diff --git a/Documentation/aoe/aoe.rst b/Documentation/admin-guide/aoe/aoe.rst
+similarity index 97%
+rename from Documentation/aoe/aoe.rst
+rename to Documentation/admin-guide/aoe/aoe.rst
+index 58747ecec71d..a05e751363a0 100644
+--- a/Documentation/aoe/aoe.rst
++++ b/Documentation/admin-guide/aoe/aoe.rst
+@@ -20,7 +20,7 @@ driver.  The aoetools are on sourceforge.
+ 
+   http://aoetools.sourceforge.net/
+ 
+-The scripts in this Documentation/aoe directory are intended to
++The scripts in this Documentation/admin-guide/aoe directory are intended to
+ document the use of the driver and are not necessary if you install
+ the aoetools.
+ 
+@@ -86,7 +86,7 @@ Using sysfs
+   a convenient way.  Users with aoetools should use the aoe-stat
+   command::
+ 
+-    root@makki root# sh Documentation/aoe/status.sh
++    root@makki root# sh Documentation/admin-guide/aoe/status.sh
+        e10.0            eth3              up
+        e10.1            eth3              up
+        e10.2            eth3              up
+diff --git a/Documentation/aoe/autoload.sh b/Documentation/admin-guide/aoe/autoload.sh
+similarity index 100%
+rename from Documentation/aoe/autoload.sh
+rename to Documentation/admin-guide/aoe/autoload.sh
+diff --git a/Documentation/aoe/examples.rst b/Documentation/admin-guide/aoe/examples.rst
+similarity index 100%
+rename from Documentation/aoe/examples.rst
+rename to Documentation/admin-guide/aoe/examples.rst
+diff --git a/Documentation/aoe/index.rst b/Documentation/admin-guide/aoe/index.rst
+similarity index 95%
+rename from Documentation/aoe/index.rst
+rename to Documentation/admin-guide/aoe/index.rst
+index 4394b9b7913c..d71c5df15922 100644
+--- a/Documentation/aoe/index.rst
++++ b/Documentation/admin-guide/aoe/index.rst
+@@ -1,5 +1,3 @@
 -:orphan:
-+.. SPDX-License-Identifier: GPL-2.0
+-
+ =======================
+ ATA over Ethernet (AoE)
+ =======================
+diff --git a/Documentation/aoe/status.sh b/Documentation/admin-guide/aoe/status.sh
+similarity index 100%
+rename from Documentation/aoe/status.sh
+rename to Documentation/admin-guide/aoe/status.sh
+diff --git a/Documentation/aoe/todo.rst b/Documentation/admin-guide/aoe/todo.rst
+similarity index 100%
+rename from Documentation/aoe/todo.rst
+rename to Documentation/admin-guide/aoe/todo.rst
+diff --git a/Documentation/aoe/udev-install.sh b/Documentation/admin-guide/aoe/udev-install.sh
+similarity index 100%
+rename from Documentation/aoe/udev-install.sh
+rename to Documentation/admin-guide/aoe/udev-install.sh
+diff --git a/Documentation/aoe/udev.txt b/Documentation/admin-guide/aoe/udev.txt
+similarity index 93%
+rename from Documentation/aoe/udev.txt
+rename to Documentation/admin-guide/aoe/udev.txt
+index 54feda5a0772..5fb756466bc7 100644
+--- a/Documentation/aoe/udev.txt
++++ b/Documentation/admin-guide/aoe/udev.txt
+@@ -11,7 +11,7 @@
+ #   udev_rules="/etc/udev/rules.d/"
+ #   bash# ls /etc/udev/rules.d/
+ #   10-wacom.rules  50-udev.rules
+-#   bash# cp /path/to/linux/Documentation/aoe/udev.txt \
++#   bash# cp /path/to/linux/Documentation/admin-guide/aoe/udev.txt \
+ #           /etc/udev/rules.d/60-aoe.rules
+ #  
  
- ==========
- Accounting
-diff --git a/Documentation/block/index.rst b/Documentation/block/index.rst
-index 8cd226a0e86e..3fa7a52fafa4 100644
---- a/Documentation/block/index.rst
-+++ b/Documentation/block/index.rst
-@@ -1,4 +1,4 @@
--:orphan:
-+.. SPDX-License-Identifier: GPL-2.0
+diff --git a/Documentation/admin-guide/index.rst b/Documentation/admin-guide/index.rst
+index c073af461cdf..be3b86db8171 100644
+--- a/Documentation/admin-guide/index.rst
++++ b/Documentation/admin-guide/index.rst
+@@ -82,6 +82,7 @@ configure specific aspects of kernel behavior to your liking.
+    namespaces/index
+    perf-security
+    acpi/index
++   aoe/index
+    device-mapper/index
+    laptops/index
  
- =====
- Block
-diff --git a/Documentation/hid/index.rst b/Documentation/hid/index.rst
-index af4324902622..737d66dc16a1 100644
---- a/Documentation/hid/index.rst
-+++ b/Documentation/hid/index.rst
-@@ -1,4 +1,4 @@
--:orphan:
-+.. SPDX-License-Identifier: GPL-2.0
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 664e2a827544..2791b443ab8e 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2650,7 +2650,7 @@ ATA OVER ETHERNET (AOE) DRIVER
+ M:	"Justin Sanders" <justin@coraid.com>
+ W:	http://www.openaoe.org/
+ S:	Supported
+-F:	Documentation/aoe/
++F:	Documentation/admin-guide/aoe/
+ F:	drivers/block/aoe/
  
- =============================
- Human Interface Devices (HID)
-diff --git a/Documentation/iio/index.rst b/Documentation/iio/index.rst
-index 0593dca89a94..58b7a4ebac51 100644
---- a/Documentation/iio/index.rst
-+++ b/Documentation/iio/index.rst
-@@ -1,4 +1,4 @@
--:orphan:
-+.. SPDX-License-Identifier: GPL-2.0
- 
- ==============
- Industrial I/O
-diff --git a/Documentation/index.rst b/Documentation/index.rst
-index f898def833f4..879849b60c02 100644
---- a/Documentation/index.rst
-+++ b/Documentation/index.rst
-@@ -92,6 +92,10 @@ needed).
- 
-    driver-api/index
-    core-api/index
-+   accounting/index
-+   block/index
-+   hid/index
-+   iio/index
-    leds/index
-    media/index
-    networking/index
+ ATHEROS 71XX/9XXX GPIO DRIVER
 -- 
 2.21.0
 
