@@ -2,132 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30A1D59A51
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 14:14:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA70B59A5F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 14:15:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727258AbfF1MOI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 08:14:08 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:34422 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727091AbfF1MOH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 08:14:07 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C01B9C057F3B;
-        Fri, 28 Jun 2019 12:13:51 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-96.ams2.redhat.com [10.36.116.96])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 189C31001B02;
-        Fri, 28 Jun 2019 12:13:45 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 9A50D9D74; Fri, 28 Jun 2019 14:13:40 +0200 (CEST)
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     Chia-I Wu <olvaffe@gmail.com>, Gerd Hoffmann <kraxel@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        virtualization@lists.linux-foundation.org (open list:VIRTIO GPU DRIVER),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v5 12/12] drm/virtio: remove virtio_gpu_alloc_object
-Date:   Fri, 28 Jun 2019 14:13:38 +0200
-Message-Id: <20190628121338.24398-13-kraxel@redhat.com>
-In-Reply-To: <20190628121338.24398-1-kraxel@redhat.com>
-References: <20190628121338.24398-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Fri, 28 Jun 2019 12:14:06 +0000 (UTC)
+        id S1726983AbfF1MPD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 08:15:03 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:33211 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726542AbfF1MPC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Jun 2019 08:15:02 -0400
+Received: by mail-qk1-f196.google.com with SMTP id r6so4587553qkc.0;
+        Fri, 28 Jun 2019 05:15:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1TAwC61JS4eXqZ82OujM9dlobazLqVa1FIeOqHjXlt0=;
+        b=Yhs8q16ww190EQsZo2yQwQr8JXW0IK8KDmoshG9U73ABjiE+FENH8UCQH4MKnQnRzp
+         vUGK55+3w5xZMPiHlwxnIXWzYEsnLspqvchDdXAoQxk91klCmy+3peLowrsE3iqzrj3A
+         dgnBp/WuyJNTYIcv9PuEX9IcrKGhmvpj6pB/tT7SU6hBwRWfJQC/Qa//y5ZjCqCp82/f
+         9tjQ2pnBU8zJkhkP3DwIRYYB9rw9BL1ANvcoAZj/1uSSqlcigg28PufETdzUkVpFKLYf
+         0OMODFSWoj6w6ifhDW62rdNjjB1NoZ/ubZOuefC/3lVcGTAWcONuNEAA6qrLSvPMT6BJ
+         pWGg==
+X-Gm-Message-State: APjAAAU0qa7x1iyRAUMBISbgF33ea5/UCXbjgKeEYRV9pF04boZ6/cPQ
+        yDruNcCdlGNcnK1o41/ywn81Xaj7K9Mmpln6AjzZUr+N
+X-Google-Smtp-Source: APXvYqwNxgHRzw4z0Rr9Q4yX5hm7cI8WvoLsLEbd5pABPHANQdawqiZmtxqhSSYgYnw4qgfGuspgeXqzbjHf70WenTY=
+X-Received: by 2002:a37:ad12:: with SMTP id f18mr8197153qkm.3.1561724101537;
+ Fri, 28 Jun 2019 05:15:01 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190313211709.486583-1-arnd@arndb.de> <20190403163444.2psjymq5kb3c6ok6@gofer.mess.org>
+In-Reply-To: <20190403163444.2psjymq5kb3c6ok6@gofer.mess.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 28 Jun 2019 14:14:42 +0200
+Message-ID: <CAK8P3a0w0AWCotSSDpLORgOPHq-Cmy7u+AWzs1thU7V_bqNRNw@mail.gmail.com>
+Subject: Re: [PATCH] media: dib0700: fix link error for dibx000_i2c_set_speed
+To:     Sean Young <sean@mess.org>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thin wrapper around virtio_gpu_object_create(),
-but calling that directly works equally well.
+On Wed, Apr 3, 2019 at 6:34 PM Sean Young <sean@mess.org> wrote:
+>
+> On Wed, Mar 13, 2019 at 10:16:53PM +0100, Arnd Bergmann wrote:
+> > When CONFIG_DVB_DIB9000 is disabled, we can still compile code that
+> > now fails to link against dibx000_i2c_set_speed:
+> >
+> > drivers/media/usb/dvb-usb/dib0700_devices.o: In function `dib01x0_pmu_update.constprop.7':
+> > dib0700_devices.c:(.text.unlikely+0x1c9c): undefined reference to `dibx000_i2c_set_speed'
+> >
+> > The call sites are both through dib01x0_pmu_update(), which gets
+> > passed an 'i2c' pointer from dib9000_get_i2c_master(), which has
+> > returned NULL. Checking this pointer seems to be a good idea
+> > anyway, and it avoids the link failure.
+>
+> So I reproduced the link failure with attached config, and your patch
+> does not fix it.
 
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
----
- drivers/gpu/drm/virtio/virtgpu_drv.h   |  4 ----
- drivers/gpu/drm/virtio/virtgpu_gem.c   | 23 ++++-------------------
- drivers/gpu/drm/virtio/virtgpu_ioctl.c |  6 +++---
- 3 files changed, 7 insertions(+), 26 deletions(-)
+I ran into the old problem I reported once more, and checked my
+original patch, as well as your configuration file, which indeed shows
+the same symptom.
 
-diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.h b/drivers/gpu/drm/virtio/virtgpu_drv.h
-index 78f4d6211812..8b60bc39d00b 100644
---- a/drivers/gpu/drm/virtio/virtgpu_drv.h
-+++ b/drivers/gpu/drm/virtio/virtgpu_drv.h
-@@ -228,10 +228,6 @@ int virtio_gpu_gem_object_open(struct drm_gem_object *obj,
- 			       struct drm_file *file);
- void virtio_gpu_gem_object_close(struct drm_gem_object *obj,
- 				 struct drm_file *file);
--struct virtio_gpu_object*
--virtio_gpu_alloc_object(struct drm_device *dev,
--			struct virtio_gpu_object_params *params,
--			struct virtio_gpu_fence *fence);
- int virtio_gpu_mode_dumb_create(struct drm_file *file_priv,
- 				struct drm_device *dev,
- 				struct drm_mode_create_dumb *args);
-diff --git a/drivers/gpu/drm/virtio/virtgpu_gem.c b/drivers/gpu/drm/virtio/virtgpu_gem.c
-index fc4aba8f7bf8..61153fbedbd5 100644
---- a/drivers/gpu/drm/virtio/virtgpu_gem.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_gem.c
-@@ -26,35 +26,20 @@
- #include <drm/drmP.h>
- #include "virtgpu_drv.h"
- 
--struct virtio_gpu_object*
--virtio_gpu_alloc_object(struct drm_device *dev,
--			struct virtio_gpu_object_params *params,
--			struct virtio_gpu_fence *fence)
--{
--	struct virtio_gpu_device *vgdev = dev->dev_private;
--	struct virtio_gpu_object *obj;
--	int ret;
--
--	ret = virtio_gpu_object_create(vgdev, params, &obj, fence);
--	if (ret)
--		return ERR_PTR(ret);
--
--	return obj;
--}
--
- int virtio_gpu_gem_create(struct drm_file *file,
- 			  struct drm_device *dev,
- 			  struct virtio_gpu_object_params *params,
- 			  struct drm_gem_object **obj_p,
- 			  uint32_t *handle_p)
- {
-+	struct virtio_gpu_device *vgdev = dev->dev_private;
- 	struct virtio_gpu_object *obj;
- 	int ret;
- 	u32 handle;
- 
--	obj = virtio_gpu_alloc_object(dev, params, NULL);
--	if (IS_ERR(obj))
--		return PTR_ERR(obj);
-+	ret = virtio_gpu_object_create(vgdev, params, &obj, NULL);
-+	if (ret < 0)
-+		return ret;
- 
- 	ret = drm_gem_handle_create(file, &obj->base.base, &handle);
- 	if (ret) {
-diff --git a/drivers/gpu/drm/virtio/virtgpu_ioctl.c b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-index 43380786bb96..fa9fb2d50b56 100644
---- a/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-@@ -266,10 +266,10 @@ static int virtio_gpu_resource_create_ioctl(struct drm_device *dev, void *data,
- 	fence = virtio_gpu_fence_alloc(vgdev);
- 	if (!fence)
- 		return -ENOMEM;
--	qobj = virtio_gpu_alloc_object(dev, &params, fence);
-+	ret = virtio_gpu_object_create(vgdev, &params, &qobj, fence);
- 	dma_fence_put(&fence->f);
--	if (IS_ERR(qobj))
--		return PTR_ERR(qobj);
-+	if (ret < 0)
-+		return ret;
- 	obj = &qobj->base.base;
- 
- 	ret = drm_gem_handle_create(file_priv, obj, &handle);
--- 
-2.18.1
+Interestingly, the link error after my patch appears to be the result
+of a compiler bug, as the function reference is from dead code that
+should have been eliminated. Sending a replacement patch now.
 
+        Arnd
