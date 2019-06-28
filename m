@@ -2,89 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C557598ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 13:01:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CC4A59242
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 06:03:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726696AbfF1LBA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 07:01:00 -0400
-Received: from mga09.intel.com ([134.134.136.24]:11057 "EHLO mga09.intel.com"
+        id S1727129AbfF1EDI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 00:03:08 -0400
+Received: from ozlabs.org ([203.11.71.1]:58479 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726476AbfF1LA7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 07:00:59 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jun 2019 04:00:59 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,427,1557212400"; 
-   d="scan'208";a="361035901"
-Received: from ramaling-i9x.iind.intel.com (HELO intel.com) ([10.99.66.154])
-  by fmsmga005.fm.intel.com with ESMTP; 28 Jun 2019 04:00:55 -0700
-Date:   Fri, 28 Jun 2019 09:32:15 +0530
-From:   Ramalingam C <ramalingam.c@intel.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Noralf =?utf-8?Q?Tr=C3=B8nnes?= <noralf@tronnes.org>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
-        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
-        Lyude Paul <lyude@redhat.com>,
-        Uma Shankar <uma.shankar@intel.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Radhakrishna Sripada <radhakrishna.sripada@intel.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm: connector: remove bogus NULL check
-Message-ID: <20190628040215.GA24852@intel.com>
-References: <20190628103925.2686249-1-arnd@arndb.de>
+        id S1725792AbfF1EDI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Jun 2019 00:03:08 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45Zjm92mlYz9s7h;
+        Fri, 28 Jun 2019 14:03:05 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1561694585;
+        bh=1xxaUcHXNZx9a9L4jaTe1rLO2EjfRqlBYzQY8OCcWtI=;
+        h=Date:From:To:Cc:Subject:From;
+        b=OoHZWIRk/N/E3O1e01DpotdFRqSgWmM/gWPqezDHwWmsUiFUf8dndBJR7/ZtdAMoz
+         ztRZ2b9Wi/hdnpb/51asJFbauMLs6cpiBOtbQLMLY/g1dsamlbXA9QKiZ3P9r+grB1
+         nIOpb1iKe6b0psoBus2KvkEktWNRkUQqT2X7hicm88HE19x53H/bPi9NBGirmzDeX3
+         yxo67Bme57WJwFrXmGy6PUd3jBQxlTIjnQouh3UGXHV8jH9Fcu55xWXcmEq8r910kQ
+         oUNAlpfMBpY2VYqX09YgNhgXWskgIzLv06LA68u0kokuDYP80PSe8UciVCyD8NkiBn
+         z8tl79RvYCk0Q==
+Date:   Fri, 28 Jun 2019 14:03:04 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Sebastian Reichel <sre@kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nick Crews <ncrews@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Subject: linux-next: build failure after merge of the battery tree
+Message-ID: <20190628140304.76caf572@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190628103925.2686249-1-arnd@arndb.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/+DcRGNVT1eLZ5KLQYd.lr_3"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-06-28 at 12:39:05 +0200, Arnd Bergmann wrote:
-> mode->name is a character array in a structure, checking it's
-> address is pointless and causes a warning with some compilers:
-> 
-> drivers/gpu/drm/drm_connector.c:144:15: error: address of array 'mode->name' will always evaluate to 'true'
->       [-Werror,-Wpointer-bool-conversion]
->                       mode->name ? mode->name : "",
->                       ~~~~~~^~~~ ~
-> include/drm/drm_print.h:366:29: note: expanded from macro 'DRM_DEBUG_KMS'
->         drm_dbg(DRM_UT_KMS, fmt, ##__VA_ARGS__)
->                                    ^~~~~~~~~~~
-> 
-> Remove the check here.
-> 
-> Fixes: 3aeeb13d8996 ("drm/modes: Support modes names on the command line")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/gpu/drm/drm_connector.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_connector.c b/drivers/gpu/drm/drm_connector.c
-> index 3afed5677946..b3f2cf7eae9c 100644
-> --- a/drivers/gpu/drm/drm_connector.c
-> +++ b/drivers/gpu/drm/drm_connector.c
-> @@ -141,7 +141,7 @@ static void drm_connector_get_cmdline_mode(struct drm_connector *connector)
->  
->  	DRM_DEBUG_KMS("cmdline mode for connector %s %s %dx%d@%dHz%s%s%s\n",
->  		      connector->name,
-> -		      mode->name ? mode->name : "",
-> +		      mode->name,
-Looks good to me.
+--Sig_/+DcRGNVT1eLZ5KLQYd.lr_3
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Ramalingam C <ramlaingam.c@intel.com>
->  		      mode->xres, mode->yres,
->  		      mode->refresh_specified ? mode->refresh : 60,
->  		      mode->rb ? " reduced blanking" : "",
-> -- 
-> 2.20.0
-> 
+Hi all,
+
+After merging the battery tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
+
+drivers/power/supply/wilco-charger.c: In function 'wilco_charge_get_propert=
+y':
+drivers/power/supply/wilco-charger.c:104:8: error: implicit declaration of =
+function 'wilco_ec_get_byte_property'; did you mean 'wilco_charge_get_prope=
+rty'? [-Werror=3Dimplicit-function-declaration]
+  ret =3D wilco_ec_get_byte_property(ec, property_id, &raw);
+        ^~~~~~~~~~~~~~~~~~~~~~~~~~
+        wilco_charge_get_property
+drivers/power/supply/wilco-charger.c: In function 'wilco_charge_set_propert=
+y':
+drivers/power/supply/wilco-charger.c:130:10: error: implicit declaration of=
+ function 'wilco_ec_set_byte_property'; did you mean 'wilco_charge_set_prop=
+erty'? [-Werror=3Dimplicit-function-declaration]
+   return wilco_ec_set_byte_property(ec, PID_CHARGE_MODE, mode);
+          ^~~~~~~~~~~~~~~~~~~~~~~~~~
+          wilco_charge_set_property
+
+Caused by commit
+
+  0736343e4c56 ("power_supply: wilco_ec: Add charging config driver")
+
+I have reverted that commit for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/+DcRGNVT1eLZ5KLQYd.lr_3
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0VkXgACgkQAVBC80lX
+0GyXFAgAoCNNVdJJBy+QZElB1nIow/MKshUWleBAyuiAgntwnubop5lc2yDDk52n
+BR8DQDvTbOn0IxEKXEawJcQt9RxgECQ28UvdvaeRnXZKR54YQbPEudqrCIrmzTWx
+bVyUMMkTZVi/juXZUnOdOlh95TqTJE0vu3Bt/uGm6ygi5JUBLRdq+nmU2aHmmSUM
+B+Gvot4+/B5zAqYQ4viMEkk5aD12thD1/X5bcqwd2ejhrPmSZ/H4kT/kGa4eSwh6
+wix5qGr0PIDFgnQhVgzszG1cvNPNFC8ZgCul4NXwih1U31k/wWjrpidrdmU7+hZp
+m6TXQskkvPhcPiOw9YN2DOgFeCtuUA==
+=aDy1
+-----END PGP SIGNATURE-----
+
+--Sig_/+DcRGNVT1eLZ5KLQYd.lr_3--
