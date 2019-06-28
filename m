@@ -2,46 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52BE559A82
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 14:21:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F6A459A91
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 14:21:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727130AbfF1MVC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 08:21:02 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:58900 "EHLO
+        id S1727054AbfF1MU7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 08:20:59 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:58830 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726846AbfF1MUs (ORCPT
+        with ESMTP id S1726828AbfF1MUr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 08:20:48 -0400
+        Fri, 28 Jun 2019 08:20:47 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=e/p5s9kPh9Okxti6tiCjNShPYmr+P3zu5C1O3NkUEuw=; b=XfHIw9jFUlDujWMe5N+7LKUGTH
-        QDiwsd8VwPyDr0oKJBm0XOAIyktiMg02OFVgvGp4ydTV+Zq1lEJqlYcuOhjdB/qVCFGNpaCr8OqCK
-        ++Xh4D7cxbf5zLT3uAj+lA9hL3JH785sVTEbbdTyhbAD8fUBfZDNhU/57RFGNalBqU4H1vs0ebVTj
-        HRU+8X8CcRDG8lP3usczTVgwB26Ni5FdiZSqXgYJVNNasDTm4MfRJXLU7T5NrLBvjMtXBzaNtYDue
-        LAGoO0kTaXbOTFwD7Uf7zOjXtoadh4ZLyl7erCduqPf4PoXQvbdy1j+lmfLW3BriWHgBZf95LLxaX
-        ySmlOACA==;
+        bh=iH19Eomt9tt7WC2PMNB05lbgQlaUjJpUyUxesC2gN4k=; b=qw6kQuOjP6oW2cYh6RZFkAHTRN
+        7fNdQNSf2fVJPdWuY7C6RT/OVM6foUNFva9pvD+H5tECDHCjHnqY+Wm0ilYLEVul0XSs+Ecxaxsue
+        YOlSO+sg+Lt5CP0Gdrv2I8Vo1XjEau+rTyz0YygNOJvUmf/9WuNNA8iBBcqAE8W/uh8CTmYk6ETWH
+        dW5UFPlmJ2UhuOsVXz+LAV17vtRkuvtnqyQ87VcHl9qDsPpRp3ulm6lA5gf6dPfEKHGoBB2TJ9JAm
+        p1YMB/BpVFEgx8mcS6tXOvlJDdlpqiIpBpdKJQr/D++YjIanodKkEwzh+zFRzpbEVgjeJY+udQ769
+        RFMukT8A==;
 Received: from [186.213.242.156] (helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hgprx-00009p-2Z; Fri, 28 Jun 2019 12:20:45 +0000
+        id 1hgprw-00009u-Vc; Fri, 28 Jun 2019 12:20:45 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hgpru-0005A6-70; Fri, 28 Jun 2019 09:20:42 -0300
+        id 1hgpru-0005AB-7o; Fri, 28 Jun 2019 09:20:42 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org
-Subject: [PATCH 41/43] docs: extcon: convert it to ReST and move to acpi dir
-Date:   Fri, 28 Jun 2019 09:20:37 -0300
-Message-Id: <bce6d8c98a188ec5f0efe78962aa12839c7442e9.1561723980.git.mchehab+samsung@kernel.org>
+        Kees Cook <keescook@chromium.org>,
+        Emese Revfy <re.emese@gmail.com>
+Subject: [PATCH 42/43] docs: move gcc_plugins.txt to core-api and rename to .rst
+Date:   Fri, 28 Jun 2019 09:20:38 -0300
+Message-Id: <bfcbd5a6cbbbdb10122b30176c3bb907bf1731fc.1561723980.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <cover.1561723979.git.mchehab+samsung@kernel.org>
 References: <cover.1561723979.git.mchehab+samsung@kernel.org>
@@ -52,101 +50,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The intel-int3496.txt file is a documentation for an ACPI driver.
-
-There's no reason to keep it on a separate directory.
-
-So, instead of keeping it on some random location, move it
-to a sub-directory inside the ACPI documentation dir,
-renaming it to .rst.
+The gcc_plugins.txt file is already a ReST file. Move it
+to the core-api book while renaming it.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- .../acpi/extcon-intel-int3496.rst}                 | 14 ++++++++++----
- Documentation/firmware-guide/acpi/index.rst        |  1 +
- MAINTAINERS                                        |  6 +++---
- 3 files changed, 14 insertions(+), 7 deletions(-)
- rename Documentation/{extcon/intel-int3496.txt => firmware-guide/acpi/extcon-intel-int3496.rst} (66%)
+ Documentation/{gcc-plugins.txt => core-api/gcc-plugins.rst} | 0
+ Documentation/core-api/index.rst                            | 2 +-
+ MAINTAINERS                                                 | 2 +-
+ scripts/gcc-plugins/Kconfig                                 | 2 +-
+ 4 files changed, 3 insertions(+), 3 deletions(-)
+ rename Documentation/{gcc-plugins.txt => core-api/gcc-plugins.rst} (100%)
 
-diff --git a/Documentation/extcon/intel-int3496.txt b/Documentation/firmware-guide/acpi/extcon-intel-int3496.rst
-similarity index 66%
-rename from Documentation/extcon/intel-int3496.txt
-rename to Documentation/firmware-guide/acpi/extcon-intel-int3496.rst
-index 8155dbc7fad3..5137ca834b54 100644
---- a/Documentation/extcon/intel-int3496.txt
-+++ b/Documentation/firmware-guide/acpi/extcon-intel-int3496.rst
-@@ -1,5 +1,6 @@
-+=====================================================
- Intel INT3496 ACPI device extcon driver documentation
-------------------------------------------------------
-+=====================================================
+diff --git a/Documentation/gcc-plugins.txt b/Documentation/core-api/gcc-plugins.rst
+similarity index 100%
+rename from Documentation/gcc-plugins.txt
+rename to Documentation/core-api/gcc-plugins.rst
+diff --git a/Documentation/core-api/index.rst b/Documentation/core-api/index.rst
+index 2466a4c51031..d1e5b95bf86d 100644
+--- a/Documentation/core-api/index.rst
++++ b/Documentation/core-api/index.rst
+@@ -35,7 +35,7 @@ Core utilities
+    boot-time-mm
+    memory-hotplug
+    protection-keys
+-
++   gcc-plugins
  
- The Intel INT3496 ACPI device extcon driver is a driver for ACPI
- devices with an acpi-id of INT3496, such as found for example on
-@@ -13,15 +14,20 @@ between an USB host and an USB peripheral controller.
- The ACPI devices exposes this functionality by returning an array with up
- to 3 gpio descriptors from its ACPI _CRS (Current Resource Settings) call:
- 
--Index 0: The input gpio for the id-pin, this is always present and valid
--Index 1: The output gpio for enabling Vbus output from the device to the otg
-+=======  =====================================================================
-+Index 0  The input gpio for the id-pin, this is always present and valid
-+Index 1  The output gpio for enabling Vbus output from the device to the otg
-          port, write 1 to enable the Vbus output (this gpio descriptor may
-          be absent or invalid)
--Index 2: The output gpio for muxing of the data pins between the USB host and
-+Index 2  The output gpio for muxing of the data pins between the USB host and
-          the USB peripheral controller, write 1 to mux to the peripheral
-          controller
-+=======  =====================================================================
- 
- There is a mapping between indices and GPIO connection IDs as follows
-+
-+	======= =======
- 	id	index 0
- 	vbus	index 1
- 	mux	index 2
-+	======= =======
-diff --git a/Documentation/firmware-guide/acpi/index.rst b/Documentation/firmware-guide/acpi/index.rst
-index ae609eec4679..90c90d42d9ad 100644
---- a/Documentation/firmware-guide/acpi/index.rst
-+++ b/Documentation/firmware-guide/acpi/index.rst
-@@ -24,3 +24,4 @@ ACPI Support
-    acpi-lid
-    lpit
-    video_extension
-+   extcon-intel-int3496
+ Interfaces for kernel debugging
+ ===============================
 diff --git a/MAINTAINERS b/MAINTAINERS
-index fd6fab0dec77..2cf8abf6d48e 100644
+index 2cf8abf6d48e..7ba6d174f49f 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -321,7 +321,7 @@ F:	drivers/pnp/pnpacpi/
- F:	include/linux/acpi.h
- F:	include/linux/fwnode.h
- F:	include/acpi/
--F:	Documentation/acpi/
-+F:	Documentation/firmware-guide/acpi/
- F:	Documentation/ABI/testing/sysfs-bus-acpi
- F:	Documentation/ABI/testing/configfs-acpi
- F:	drivers/pci/*acpi*
-@@ -4896,7 +4896,7 @@ S:	Maintained
- F:	Documentation/
- F:	scripts/kernel-doc
- X:	Documentation/ABI/
--X:	Documentation/acpi/
-+X:	Documentation/firmware-guide/acpi/
- X:	Documentation/devicetree/
- X:	Documentation/i2c/
- X:	Documentation/media/
-@@ -6073,7 +6073,7 @@ S:	Maintained
- F:	drivers/extcon/
- F:	include/linux/extcon/
- F:	include/linux/extcon.h
--F:	Documentation/extcon/
-+F:	Documentation/firmware-guide/acpi/extcon-intel-int3496.rst
- F:	Documentation/devicetree/bindings/extcon/
+@@ -6609,7 +6609,7 @@ S:	Maintained
+ F:	scripts/gcc-plugins/
+ F:	scripts/gcc-plugin.sh
+ F:	scripts/Makefile.gcc-plugins
+-F:	Documentation/gcc-plugins.txt
++F:	Documentation/core-api/gcc-plugins.rst
  
- EXYNOS DP DRIVER
+ GASKET DRIVER FRAMEWORK
+ M:	Rob Springer <rspringer@google.com>
+diff --git a/scripts/gcc-plugins/Kconfig b/scripts/gcc-plugins/Kconfig
+index e9c677a53c74..d33de0b9f4f5 100644
+--- a/scripts/gcc-plugins/Kconfig
++++ b/scripts/gcc-plugins/Kconfig
+@@ -23,7 +23,7 @@ config GCC_PLUGINS
+ 	  GCC plugins are loadable modules that provide extra features to the
+ 	  compiler. They are useful for runtime instrumentation and static analysis.
+ 
+-	  See Documentation/gcc-plugins.txt for details.
++	  See Documentation/core-api/gcc-plugins.rst for details.
+ 
+ menu "GCC plugins"
+ 	depends on GCC_PLUGINS
 -- 
 2.21.0
 
