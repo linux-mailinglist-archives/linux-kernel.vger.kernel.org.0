@@ -2,129 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DD3059C39
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 15:00:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C8D759C43
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 15:00:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727096AbfF1M77 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 08:59:59 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:58927 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726674AbfF1M77 (ORCPT
+        id S1727244AbfF1NAj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 09:00:39 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:40655 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727169AbfF1NAd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 08:59:59 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190628125958euoutp0240bf3f39d93a57232b2c39e34db10f52~sXj_tn05i0935709357euoutp02N
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2019 12:59:58 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190628125958euoutp0240bf3f39d93a57232b2c39e34db10f52~sXj_tn05i0935709357euoutp02N
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1561726798;
-        bh=OUDwoCQGsl9WTT2taNQCoc/tSY0rgy7kUD5RRoWSEP0=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=lpN08RJkHhMm8gvjKXXe9mEQuSVd64G/vr7yuIEOkO2FKNFG3Me+yhCRXRdGKhotQ
-         Ujbhs4dqHWw1B/8QV3lnvIf42GAtkBsOrGVmACOat4v8YMzvGPauVIVUe3D7VtIrph
-         8EsB5CLs63fuTJt+m8+b3/Xo1ofFLhde1+tJjT5E=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20190628125957eucas1p27033429a12c8ea16f19ec34e72e83a78~sXj_FgENY0785107851eucas1p2N;
-        Fri, 28 Jun 2019 12:59:57 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id D9.B5.04298.D4F061D5; Fri, 28
-        Jun 2019 13:59:57 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20190628125956eucas1p11973850c636bc43d0208f4c4bab19d30~sXj9UJ0Yy2289622896eucas1p1i;
-        Fri, 28 Jun 2019 12:59:56 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20190628125956eusmtrp22d896bdd5128a321cc2e8677b1963048~sXj9F7-uJ0792407924eusmtrp2b;
-        Fri, 28 Jun 2019 12:59:56 +0000 (GMT)
-X-AuditID: cbfec7f2-f13ff700000010ca-98-5d160f4d2074
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 1C.7B.04146.C4F061D5; Fri, 28
-        Jun 2019 13:59:56 +0100 (BST)
-Received: from [106.120.51.71] (unknown [106.120.51.71]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20190628125956eusmtip10a728d1d09434b2484bc6b3dffc3dd51~sXj8gz6aU0865708657eusmtip1N;
-        Fri, 28 Jun 2019 12:59:55 +0000 (GMT)
-Subject: Re: [PATCH 03/12] backlight: gpio: pull the non-pdata device
- probing code into probe()
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        David Lechner <david@lechnology.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Message-ID: <cb6b2f51-f1cb-74f9-2638-fa7becd0b2c4@samsung.com>
-Date:   Fri, 28 Jun 2019 14:59:55 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <20190625163434.13620-4-brgl@bgdev.pl>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRjHe8/ZOTuOtk5z6WNG5UC7QKXUh9NNEqQOkaRBoJXayoNZ3tpJ
-        ywwyzLSFaSnIRqF4d4mNmZqmXWY5tUhyKXbRjTKyyDJvFWnl2VHy2/+5/N/n+T28FK50EEup
-        mPhTnDZeE6smZZL6tl9d64IWuYX7frF6MuM3OyVMk6OeZJ596ZcyxWluzMuJbyRTOa6XMh9q
-        32OMfeIJYvKnKjDG/L6XYNqvjhCMrekGyTzINmE75Oy3vgwpW9L7hmAbDf1S1my8TLKjOR0E
-        +7a3mWTtV6wYW1t6nrX2NWDsmHl5sOyAbFsUFxuTzGk3+B+WHSuxjGKJJZIzF6uaURrqwHXI
-        hQJ6E7wxv5XqkIxS0pUIRqwWXAzGEVTWF2JiMIag89mlmQrltOS3+Ir5CgTl3VOEGAwjmMyr
-        w4QmV1oDRT1bhBEqehUU1Qw4H8LpJzh8st0ihQJJb4FrmUYkaDntDzk/fjt3ktDeUOQwEoJe
-        QoeCvc1EiD2LoUM/KBG0C70RurImnV6cdofXg8Kmgl4BDcM3nAhAZ1DQZyghRdBAyLZVS0Xt
-        Cp+td2b1MvjbKGICXYNgOmto1t2AoCLvz6x7K7RaXxACGk6vgdtNG8R0AOQP6UjxLAroG14s
-        LqGA6/UFs9eSQ9YlpdjtA6ZyEzk3VtdYhecitWEemmEejmEejuH/3CIkMSJ3LomPi+Z4v3ju
-        9HpeE8cnxUevP5oQZ0Yz/+7pH+voXTTRfcSCaAqpF8p/LnQLVxKaZD4lzoKAwtUqucdzVbhS
-        HqVJOctpEyK1SbEcb0GelETtLk9d4DiopKM1p7gTHJfIaeeqGOWyNA2FeTwKUhXqUlM2Zger
-        Qne0bg+u1bfYWturTWXp9wfM9t0N8sLS74qBi157e3zLQnayx6e8jPty39n6BzffK3B8PPRw
-        KDij30c7EbF/ejxCEZlx4bQ+U+X5caUi5HOq7+C5ukA+X7UrOexk6avH6VOuD/Wr96TbiwOa
-        7d5R9q+VWQq1hD+m8VuLa3nNPzn1rkxzAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrIIsWRmVeSWpSXmKPExsVy+t/xu7o+/GKxBpOmKFp8mXuKxWLXg21s
-        Fmfe3GW3WNQgZnHl63s2ixVfZrJbPN38mMni/tejjBZT/ixnstj0+BqrxYm+D6wWl3fNYbPY
-        37uByYHX4/2NVnaPxddus3rsnHWX3WPTqk42j0/9J1k97lzbw+Zxv/s4k8fmJfUex29sZ/L4
-        vEkugCtKz6Yov7QkVSEjv7jEVina0MJIz9DSQs/IxFLP0Ng81srIVEnfziYlNSezLLVI3y5B
-        L2PxoU9MBYtZKlpW7mFsYDzJ3MXIwSEhYCIxZa9BFyMXh5DAUkaJRy+3M0LEZSSOry/rYuQE
-        MoUl/lzrYgOxhQReM0p0HRUBsYUFEiV6Xr5kAbFFBNQlFqy7xwQyh1ngOLPEwhdT2CCGrmeU
-        uDNtJTNIFZuAlcTE9lWMIDavgJ1E//ffYHEWAVWJBQ9WsYLYogIREmfer2CBqBGUODnzCZjN
-        KWAscb7jG1gvM9C2P/MuMUPY4hK3nsxngrDlJba/ncM8gVFoFpL2WUhaZiFpmYWkZQEjyypG
-        kdTS4tz03GJDveLE3OLSvHS95PzcTYzA6N527OfmHYyXNgYfYhTgYFTi4V3AJRYrxJpYVlyZ
-        e4hRgoNZSYRX8pxIrBBvSmJlVWpRfnxRaU5q8SFGU6DnJjJLiSbnAxNPXkm8oamhuYWlobmx
-        ubGZhZI4b4fAwRghgfTEktTs1NSC1CKYPiYOTqkGRkeTzFUPuMrW9ur5/1jbX5FaulttboNI
-        sOWh5fa/5z99JaRxI+l+AWeweHWQ0kfTDTeNWEWu35a/Wr+n0Nu9xy42p/PUzoYFO+TMXj/q
-        SrvEw8LEmHC0u/RsW9BOw8X9O1kXHWU27WVbNfX11NVxOcn//MV2XrnRHvoktS1E37JPOy07
-        cLu1EktxRqKhFnNRcSIAL20C+QQDAAA=
-X-CMS-MailID: 20190628125956eucas1p11973850c636bc43d0208f4c4bab19d30
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20190625163459epcas3p1331f76cb55291f41c5a4c3e37e0713fe
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20190625163459epcas3p1331f76cb55291f41c5a4c3e37e0713fe
-References: <20190625163434.13620-1-brgl@bgdev.pl>
-        <CGME20190625163459epcas3p1331f76cb55291f41c5a4c3e37e0713fe@epcas3p1.samsung.com>
-        <20190625163434.13620-4-brgl@bgdev.pl>
+        Fri, 28 Jun 2019 09:00:33 -0400
+Received: by mail-wr1-f67.google.com with SMTP id p11so6203270wre.7
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2019 06:00:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=VYK6CuTcwUpXBzrv+57CELDw4v8ANQ9M8j2TEI8QevU=;
+        b=OIaKx5bzcFJ9iQHFSo+vkoZWC/Js1VgIC5YdEtJwkq7wImjmgHDI3Uzb744irl1vpQ
+         lSddEYDCwDSh34+o4ro84ykmsc9xLCAayQqTNUgOTO6rqSUotym41jym5H/msjWYLD3l
+         kJHcPqhpcmB23hEAcomtgsmv89peFjdasBXG9H3Ajmt1aENoGFFc/V1RnUzHCoNTR9fD
+         zBO62HZL75a3W5rtJ785/KdQG9CPnx03rCAAk525/vZK4LHr+b/HBGU+7E4EQS6GZ8R9
+         LjE0IN3KSd4yjsSa1QhUIwN74CjyczAOVlT/xu/Pih7CgJTXqMyMKTQkZw5htQgLQLLY
+         QuWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=VYK6CuTcwUpXBzrv+57CELDw4v8ANQ9M8j2TEI8QevU=;
+        b=kJMko/7ljclTFjrgkM4uo6sT0gw4bDgNEOGQJ9AWYsUzFjIqLuvwX7fpXMocDnTTRm
+         0x2ukEI3313WB0sTffV0Vzdvn3ex6VtRhBqBDGTulSEaboyki6McV5/BMgfmmi8r1TLF
+         y0L3qk8FlFlWw6VfmQStHfPy13u1QYPMlLXgE8dbEf1k6LdMIEzg15O4+O3SOYdWzVVH
+         oz564UUON4aXIlZnjWCUSBNhaChz6dRW9ODkC3XmLH7m/N1DG+loGhTsRuH8Co825Fg4
+         yF35FO06qdvod6QVCXov+ahu6NlsB1MOWCCawG2oeDX0dAx2hkrz2STOFkTRBgehe9x8
+         YGyQ==
+X-Gm-Message-State: APjAAAUStooefUkXvFaq3CvD0IImGOSWSHOebDPieLWmUqTLj4OChi1t
+        fR8K12e5/aJE/iU8RDug8XrF1Q==
+X-Google-Smtp-Source: APXvYqxPm7/w3dC2Be75DCjYjTGgOTR+ITso4/oe/Ozp4FTCj2vyklT8/WnkYPF9RrqfphHcRujieQ==
+X-Received: by 2002:adf:ee03:: with SMTP id y3mr3958702wrn.128.1561726831149;
+        Fri, 28 Jun 2019 06:00:31 -0700 (PDT)
+Received: from localhost.localdomain ([37.157.136.206])
+        by smtp.gmail.com with ESMTPSA id w20sm3717174wra.96.2019.06.28.06.00.30
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 28 Jun 2019 06:00:30 -0700 (PDT)
+From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
+To:     linux-media@vger.kernel.org
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Vikash Garodia <vgarodia@codeaurora.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Subject: [PATCH v2 04/11] venus: hfi: export few HFI functions
+Date:   Fri, 28 Jun 2019 15:59:55 +0300
+Message-Id: <20190628130002.24293-5-stanimir.varbanov@linaro.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190628130002.24293-1-stanimir.varbanov@linaro.org>
+References: <20190628130002.24293-1-stanimir.varbanov@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Export few HFI functions to use them from decoder to implement
+more granular control needed for stateful Codec API compliance.
 
-On 6/25/19 6:34 PM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> There's no good reason to have the generic probing code in a separate
-> routine. This function is short and is inlined by the compiler anyway.
-> Move it into probe under the pdata-specific part.
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+---
+ drivers/media/platform/qcom/venus/hfi.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+diff --git a/drivers/media/platform/qcom/venus/hfi.c b/drivers/media/platform/qcom/venus/hfi.c
+index 7c5bf5cb32de..82eb889ab541 100644
+--- a/drivers/media/platform/qcom/venus/hfi.c
++++ b/drivers/media/platform/qcom/venus/hfi.c
+@@ -276,6 +276,7 @@ int hfi_session_start(struct venus_inst *inst)
+ 
+ 	return 0;
+ }
++EXPORT_SYMBOL_GPL(hfi_session_start);
+ 
+ int hfi_session_stop(struct venus_inst *inst)
+ {
+@@ -299,6 +300,7 @@ int hfi_session_stop(struct venus_inst *inst)
+ 
+ 	return 0;
+ }
++EXPORT_SYMBOL_GPL(hfi_session_stop);
+ 
+ int hfi_session_continue(struct venus_inst *inst)
+ {
+@@ -328,6 +330,7 @@ int hfi_session_abort(struct venus_inst *inst)
+ 
+ 	return 0;
+ }
++EXPORT_SYMBOL_GPL(hfi_session_abort);
+ 
+ int hfi_session_load_res(struct venus_inst *inst)
+ {
+@@ -374,6 +377,7 @@ int hfi_session_unload_res(struct venus_inst *inst)
+ 
+ 	return 0;
+ }
++EXPORT_SYMBOL_GPL(hfi_session_unload_res);
+ 
+ int hfi_session_flush(struct venus_inst *inst, u32 type)
+ {
+-- 
+2.17.1
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
