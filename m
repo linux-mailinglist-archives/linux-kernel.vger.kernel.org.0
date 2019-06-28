@@ -2,85 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D12D59223
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 05:45:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 380E95921E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 05:44:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727258AbfF1DpI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 23:45:08 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:34283 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726686AbfF1DpI (ORCPT
+        id S1727095AbfF1DoX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 23:44:23 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:46708 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726686AbfF1DoX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 23:45:08 -0400
-Received: by mail-pl1-f196.google.com with SMTP id i2so2438411plt.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 20:45:07 -0700 (PDT)
+        Thu, 27 Jun 2019 23:44:23 -0400
+Received: by mail-io1-f67.google.com with SMTP id i10so9468949iol.13
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 20:44:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=KXeTyYem+OqmfXAB9jLbUiQJPmVsVcB9d5ZOaBgKddE=;
-        b=texMjThj9ELOsjSLEq9Y653PtH5SuvN1GG5Y4WjBzQ78DmK8vothKCoDarMC/zabdf
-         dOx030cYIzc2IAzYObguAgEwet0sMRx14n3TP0n0+MNWPt5RHK6rrxHbh6XcVYO1rEVP
-         DEUVrqxC1J13RZ3/9TWHkAHH+H4YTqjlMVaweakNMu2a9f5z/XGDci/PJiQkZBgrKGyh
-         6NDYgauYnoWeIRAl79kkIBELWXk2PqWWLlBtvxyeJkj/4GI9anNqNBhwRP2gLP9G+xuE
-         ZnkeLoPywR6luGzYn0SGkGMvfKGXJk7XdVD2taqRfYJM/ermdOONmkpTjndt+g10z4Wf
-         i4sQ==
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=H94wx8BA9J9GrxF8s1ReCKmwP5vlxA1zO/6P1Z9SjDk=;
+        b=jdecO9TBf25X5vOPSzeZ6Q4Ub0nwztKuiukrJk0YmMpJGrQ+ZiSaFzZuw0B5MNNJKz
+         kcDBVaWNphJ1LgXyee3sUAIP2DCieVutHU8EhQnsUDHISPESChbnx3yePpe5tyvhS0k6
+         1ffm+c1WspOZlgOIE9I+ki+KVft/O87Wizxw/Hz5MhjtK1URq0zDwUK8uWHBGzkk0o33
+         ca/ZDi2qfNvAwBJ7up4l/em+s1655WtwzAdCVowMPrkkah/D4dB5L5TNFuxU7X7UwbzS
+         TyOapXZLKsEKvXeiesdHoc+yq87LUrG4ax6oxGM1kaBXTYqYKeFltfNmDSHmJJWtotWp
+         ziIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=KXeTyYem+OqmfXAB9jLbUiQJPmVsVcB9d5ZOaBgKddE=;
-        b=QWuZjp73F+RmJ1m510LSN1vexSIf1i0Qtw6R9DEv4aJJ8/Y+ZZPtpUe32iTSA2WgLG
-         iANap8Wj6RJUnUxvRie4eM5n7IOqvJpzFm29mG1z5noxBGrAuc1QHiLjeeGP/S7rukvV
-         mwau8VApSKO+kM/CvxhB7jyrexd/Yvcr9QIsidJOMT1ttGhuw9rcJ9XXlF0kG22qmWY1
-         TzfofCAyJttqhqB1eM4pjBZmW910PgzOxhZyZTeIpIFEnP+A9EUocPl02EKiUwFt+yQz
-         IZK2fVdYxC0Yf5gK/1SRh0a/fNU4+P6jzybPLntziS1zPqsv0XBvLahz2e6YWKkbYv0c
-         Vq3A==
-X-Gm-Message-State: APjAAAUzfvMlNey8E6IKkg6F8dDHB6vOakh+Q84vYUGI23yiPWFJufFk
-        hScQiinKNoB7J7IrdQ5PgNI3p2wp
-X-Google-Smtp-Source: APXvYqziLzLlQJalN1m0zwRWAZgf0EFjLz1Ds/0ZjyAtyiCKJGWj0KUtdxBH5Eh1IDYaR6xlQFjF5w==
-X-Received: by 2002:a17:902:aa83:: with SMTP id d3mr8633526plr.74.1561693507494;
-        Thu, 27 Jun 2019 20:45:07 -0700 (PDT)
-Received: from huyue2.ccdomain.com ([218.189.10.173])
-        by smtp.gmail.com with ESMTPSA id c69sm629715pje.6.2019.06.27.20.45.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Jun 2019 20:45:06 -0700 (PDT)
-From:   Yue Hu <zbestahu@gmail.com>
-To:     gaoxiang25@huawei.com, yuchao0@huawei.com,
-        gregkh@linuxfoundation.org
-Cc:     linux-erofs@lists.ozlabs.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, huyue2@yulong.com
-Subject: [PATCH] staging: erofs: don't check special inode layout
-Date:   Fri, 28 Jun 2019 11:42:34 +0800
-Message-Id: <20190628034234.8832-1-zbestahu@gmail.com>
-X-Mailer: git-send-email 2.17.1.windows.2
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=H94wx8BA9J9GrxF8s1ReCKmwP5vlxA1zO/6P1Z9SjDk=;
+        b=Oxw/cUrsXrAKchgSTguRSOAE9qWpIciRZkprZtrLrHGi11uCq4HDEOr3XVKDI4XKlK
+         AVMxECflRJXMeox4Jb6nomvdx6WWGGuZCXN688It+zx60lEM+oy7Wai5LVaUTngkl/fZ
+         X5vBIe7fR5DnI2b1nUKfIsts/RoYxfs39uukt0HeKc1uW3FuI1h7MQg0mbqjf+E+UjJB
+         z5Uh7wvRzcB9tm+a/ecpPEaIkfGZ8C3kh3gDixqjThxGEKZ+dbMguRwKi9cGP1us7v9I
+         GHmZhLFDdsUwkm7d9d5G6oVCOUfcvJD2kwKoA1S8YZyrSKiTNPEphwYpvUxXgLiShFg8
+         SZTg==
+X-Gm-Message-State: APjAAAXr0XEH5cQLnZ5AqAwBRQ25IjIQWfcwoxW4Zs3UINXtaD4m2dRs
+        zIB0yItOE8LrtU8FTxYLNnly5hR5kHK9CklVwX6gQw==
+X-Google-Smtp-Source: APXvYqyw4c0/vIh1E6dBJwb49Zf7BaKQa7FwdAtik0IPSMljBy6iQV1QjStKVAh/l+dSKdDkRtw6KqRyH4Gy8jCzw4k=
+X-Received: by 2002:a6b:ee15:: with SMTP id i21mr7951115ioh.281.1561693462611;
+ Thu, 27 Jun 2019 20:44:22 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190619120337.78624-1-olof@lixom.net> <20190628000033.ipcypg4kny2whfz7@treble>
+In-Reply-To: <20190628000033.ipcypg4kny2whfz7@treble>
+From:   Olof Johansson <olof@lixom.net>
+Date:   Fri, 28 Jun 2019 11:44:10 +0800
+Message-ID: <CAOesGMjqhEi8rEnYy8JxvRV8HE_eRxfiXtmZNErWYwAX6ni12Q@mail.gmail.com>
+Subject: Re: [PATCH] objtool: Be lenient about -Wundef
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yue Hu <huyue2@yulong.com>
+On Fri, Jun 28, 2019 at 8:00 AM Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+>
+> On Wed, Jun 19, 2019 at 05:03:37AM -0700, Olof Johansson wrote:
+> > Some libelf versions use undefined macros, which combined with newer GCC
+> > makes for errors from system headers. This isn't overly useful to fail
+> > compiling objtool for.
+> >
+> > Error as seen:
+> >
+> > cc1: all warnings being treated as errors
+> > In file included from arch/x86/../../elf.h:10,
+> >                  from arch/x86/decode.c:14:
+> > /usr/include/libelf/gelf.h:25:5: error: "__LIBELF_INTERNAL__" is not defined, evaluates to 0 [-Werror=undef]
+> >  #if __LIBELF_INTERNAL__
+> >      ^~~~~~~~~~~~~~~~~~~
+> >
+> > For this reason, skip -Wundef on objtool.
+> >
+> > Signed-off-by: Olof Johansson <olof@lixom.net>
+>
+> Sorry for the delay, I was out last week and I'm still getting caught
+> up.
+>
+> Which libelf was this?  I'm guessing it's the old non-elfutils version
+> which has been unmaintained for 10 years (and which doesn't work with
+> objtool anyway).
+>
+> It would be nice if we could figure out a way to detect that libelf and
+> report a more useful error for it.
 
-Currently, we will check if inode layout is compression or inline if
-the inode is special in fill_inode(). Also set ->i_mapping->a_ops for
-it. That is pointless since the both modes won't be set for special
-inode when creating EROFS filesystem image. So, let's avoid it.
+Yeah, looks like my docker image pulled in the very old libelf 0.8.13,
+but has elfutils available. I'll switch it over locally to resolve
+this.
 
-Signed-off-by: Yue Hu <huyue2@yulong.com>
----
- drivers/staging/erofs/inode.c | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/staging/erofs/inode.c b/drivers/staging/erofs/inode.c
-index 1433f25..2fe0f6d 100644
---- a/drivers/staging/erofs/inode.c
-+++ b/drivers/staging/erofs/inode.c
-@@ -205,6 +205,7 @@ static int fill_inode(struct inode *inode, int isdir)
- 			S_ISFIFO(inode->i_mode) || S_ISSOCK(inode->i_mode)) {
- 			inode->i_op = &erofs_generic_iops;
- 			init_special_inode(inode, inode->i_mode, inode->i_rdev);
-+			goto out_unlock;
- 		} else {
- 			err = -EIO;
- 			goto out_unlock;
--- 
-1.9.1
-
+-Olof
