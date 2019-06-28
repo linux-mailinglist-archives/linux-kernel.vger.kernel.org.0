@@ -2,145 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D5FA59979
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 13:52:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CA185998A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 13:55:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727085AbfF1Lwo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 07:52:44 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:56946 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726957AbfF1LwQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 07:52:16 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 0EF133EF71519E55BB0D;
-        Fri, 28 Jun 2019 19:52:11 +0800 (CST)
-Received: from localhost.localdomain (10.67.212.132) by
- DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 28 Jun 2019 19:52:02 +0800
-From:   Huazhong Tan <tanhuazhong@huawei.com>
-To:     <davem@davemloft.net>
-CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
-        <linuxarm@huawei.com>, Peng Li <lipeng321@huawei.com>,
-        Huazhong Tan <tanhuazhong@huawei.com>
-Subject: [PATCH net-next 12/12] net: hns3: optimize the CSQ cmd error handling
-Date:   Fri, 28 Jun 2019 19:50:18 +0800
-Message-ID: <1561722618-12168-13-git-send-email-tanhuazhong@huawei.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1561722618-12168-1-git-send-email-tanhuazhong@huawei.com>
-References: <1561722618-12168-1-git-send-email-tanhuazhong@huawei.com>
+        id S1726891AbfF1Lyz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 07:54:55 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:16674 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726564AbfF1Lyy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Jun 2019 07:54:54 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5SBqcYR048949
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2019 07:54:53 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2tdgnvm8nj-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2019 07:54:52 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
+        Fri, 28 Jun 2019 12:54:51 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 28 Jun 2019 12:54:45 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5SBsiUv41812068
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 28 Jun 2019 11:54:44 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 994BFAE053;
+        Fri, 28 Jun 2019 11:54:44 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 60B62AE045;
+        Fri, 28 Jun 2019 11:54:42 +0000 (GMT)
+Received: from linux.vnet.ibm.com (unknown [9.126.150.29])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with SMTP;
+        Fri, 28 Jun 2019 11:54:42 +0000 (GMT)
+Date:   Fri, 28 Jun 2019 11:54:41 +0000
+From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+To:     subhra mazumdar <subhra.mazumdar@oracle.com>
+Cc:     linux-kernel@vger.kernel.org, peterz@infradead.org,
+        mingo@redhat.com, tglx@linutronix.de, steven.sistare@oracle.com,
+        dhaval.giani@oracle.com, daniel.lezcano@linaro.org,
+        vincent.guittot@linaro.org, viresh.kumar@linaro.org,
+        tim.c.chen@linux.intel.com, mgorman@techsingularity.net
+Subject: Re: [PATCH v3 3/7] sched: rotate the cpu search window for better
+ spread
+Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+References: <20190627012919.4341-1-subhra.mazumdar@oracle.com>
+ <20190627012919.4341-4-subhra.mazumdar@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.132]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <20190627012919.4341-4-subhra.mazumdar@oracle.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-TM-AS-GCONF: 00
+x-cbid: 19062811-0016-0000-0000-0000028D5718
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19062811-0017-0000-0000-000032EADA7F
+Message-Id: <20190628115441.GA30685@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-28_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906280143
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peng Li <lipeng321@huawei.com>
+* subhra mazumdar <subhra.mazumdar@oracle.com> [2019-06-26 18:29:15]:
 
-If CMDQ ring is full, hclge_cmd_send may return directly, but IMP still
-working and HW pointer changed, SW ring pointer do not match the HW
-pointer. This patch update the SW pointer every time when the space is
-full, so it can work normally next time if IMP and HW still working.
+> Rotate the cpu search window for better spread of threads. This will ensure
+> an idle cpu will quickly be found if one exists.
 
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
----
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c    | 15 ++++++++++++---
- .../net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.c  | 19 ++++++++++++++-----
- 2 files changed, 26 insertions(+), 8 deletions(-)
+While rotating the cpu search window is good, not sure if this can find a
+idle cpu quickly. The probability of finding an idle cpu still should remain
+the same. No?
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c
-index 7a3bde7..667c3be 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c
-@@ -232,6 +232,7 @@ static int hclge_cmd_check_retval(struct hclge_hw *hw, struct hclge_desc *desc,
- int hclge_cmd_send(struct hclge_hw *hw, struct hclge_desc *desc, int num)
- {
- 	struct hclge_dev *hdev = container_of(hw, struct hclge_dev, hw);
-+	struct hclge_cmq_ring *csq = &hw->cmq.csq;
- 	struct hclge_desc *desc_to_use;
- 	bool complete = false;
- 	u32 timeout = 0;
-@@ -241,8 +242,16 @@ int hclge_cmd_send(struct hclge_hw *hw, struct hclge_desc *desc, int num)
- 
- 	spin_lock_bh(&hw->cmq.csq.lock);
- 
--	if (num > hclge_ring_space(&hw->cmq.csq) ||
--	    test_bit(HCLGE_STATE_CMD_DISABLE, &hdev->state)) {
-+	if (test_bit(HCLGE_STATE_CMD_DISABLE, &hdev->state)) {
-+		spin_unlock_bh(&hw->cmq.csq.lock);
-+		return -EBUSY;
-+	}
-+
-+	if (num > hclge_ring_space(&hw->cmq.csq)) {
-+		/* If CMDQ ring is full, SW HEAD and HW HEAD may be different,
-+		 * need update the SW HEAD pointer csq->next_to_clean
-+		 */
-+		csq->next_to_clean = hclge_read_dev(hw, HCLGE_NIC_CSQ_HEAD_REG);
- 		spin_unlock_bh(&hw->cmq.csq.lock);
- 		return -EBUSY;
- 	}
-@@ -280,7 +289,7 @@ int hclge_cmd_send(struct hclge_hw *hw, struct hclge_desc *desc, int num)
- 	}
- 
- 	if (!complete) {
--		retval = -EAGAIN;
-+		retval = -EBADE;
- 	} else {
- 		retval = hclge_cmd_check_retval(hw, desc, num, ntc);
- 	}
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.c b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.c
-index e1588c0..31db6d6 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.c
-@@ -188,6 +188,7 @@ void hclgevf_cmd_setup_basic_desc(struct hclgevf_desc *desc,
- int hclgevf_cmd_send(struct hclgevf_hw *hw, struct hclgevf_desc *desc, int num)
- {
- 	struct hclgevf_dev *hdev = (struct hclgevf_dev *)hw->hdev;
-+	struct hclgevf_cmq_ring *csq = &hw->cmq.csq;
- 	struct hclgevf_desc *desc_to_use;
- 	bool complete = false;
- 	u32 timeout = 0;
-@@ -199,8 +200,17 @@ int hclgevf_cmd_send(struct hclgevf_hw *hw, struct hclgevf_desc *desc, int num)
- 
- 	spin_lock_bh(&hw->cmq.csq.lock);
- 
--	if (num > hclgevf_ring_space(&hw->cmq.csq) ||
--	    test_bit(HCLGEVF_STATE_CMD_DISABLE, &hdev->state)) {
-+	if (test_bit(HCLGEVF_STATE_CMD_DISABLE, &hdev->state)) {
-+		spin_unlock_bh(&hw->cmq.csq.lock);
-+		return -EBUSY;
-+	}
-+
-+	if (num > hclgevf_ring_space(&hw->cmq.csq)) {
-+		/* If CMDQ ring is full, SW HEAD and HW HEAD may be different,
-+		 * need update the SW HEAD pointer csq->next_to_clean
-+		 */
-+		csq->next_to_clean = hclgevf_read_dev(hw,
-+						      HCLGEVF_NIC_CSQ_HEAD_REG);
- 		spin_unlock_bh(&hw->cmq.csq.lock);
- 		return -EBUSY;
- 	}
-@@ -263,14 +273,13 @@ int hclgevf_cmd_send(struct hclgevf_hw *hw, struct hclgevf_desc *desc, int num)
- 	}
- 
- 	if (!complete)
--		status = -EAGAIN;
-+		status = -EBADE;
- 
- 	/* Clean the command send queue */
- 	handle = hclgevf_cmd_csq_clean(hw);
--	if (handle != num) {
-+	if (handle != num)
- 		dev_warn(&hdev->pdev->dev,
- 			 "cleaned %d, need to clean %d\n", handle, num);
--	}
- 
- 	spin_unlock_bh(&hw->cmq.csq.lock);
- 
+> 
+> Signed-off-by: subhra mazumdar <subhra.mazumdar@oracle.com>
+> ---
+>  kernel/sched/fair.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+> 
+> @@ -6219,9 +6219,15 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, int t
+>  		}
+>  	}
+>  
+> +	if (per_cpu(next_cpu, target) != -1)
+> +		target_tmp = per_cpu(next_cpu, target);
+> +	else
+> +		target_tmp = target;
+> +
+>  	time = local_clock();
+>  
+> -	for_each_cpu_wrap(cpu, sched_domain_span(sd), target) {
+> +	for_each_cpu_wrap(cpu, sched_domain_span(sd), target_tmp) {
+> +		per_cpu(next_cpu, target) = cpu;
+
+Shouldn't this assignment be outside the for loop.
+With the current code,
+1. We keep reassigning multiple times.
+2. The last assignment happes for idle_cpu and sometimes the
+assignment is for non-idle cpu.
+
+>  		if (!--nr)
+>  			return -1;
+>  		if (!cpumask_test_cpu(cpu, &p->cpus_allowed))
+> -- 
+> 2.9.3
+> 
+
 -- 
-2.7.4
+Thanks and Regards
+Srikar Dronamraju
 
