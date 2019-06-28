@@ -2,73 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 040A559205
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 05:37:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B25D8591F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 05:28:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727124AbfF1DhR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 23:37:17 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:49798 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726565AbfF1DhO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 23:37:14 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 410E91A0DAE;
-        Fri, 28 Jun 2019 05:37:13 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 7156B1A1043;
-        Fri, 28 Jun 2019 05:37:03 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 71D67402B3;
-        Fri, 28 Jun 2019 11:36:51 +0800 (SGT)
-From:   Anson.Huang@nxp.com
-To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        leonard.crestez@nxp.com, viresh.kumar@linaro.org, ping.bai@nxp.com,
-        daniel.baluta@nxp.com, l.stach@pengutronix.de, abel.vesa@nxp.com,
-        andrew.smirnov@gmail.com, ccaione@baylibre.com, angus@akkea.ca,
-        agx@sigxcpu.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH 2/2] arm64: dts: imx8mm: Correct OPP table according to latest datasheet
-Date:   Fri, 28 Jun 2019 11:28:00 +0800
-Message-Id: <20190628032800.8428-2-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20190628032800.8428-1-Anson.Huang@nxp.com>
-References: <20190628032800.8428-1-Anson.Huang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1727086AbfF1D2L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 23:28:11 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:51606 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726686AbfF1D2L (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 23:28:11 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5S3S6lZ006317;
+        Thu, 27 Jun 2019 22:28:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1561692486;
+        bh=lHtPKETdLi4mz0hSNNJnuE1V/UMtFP6OzWRnYrjP7po=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=cJYYRBPy3RiT5CHxIoh9lbCAyGUZ0Jyhh3HTYiu4pNLfmNYAgv2nPP7/sub8ekxnm
+         unBkNLYeyn0mBZoAM9EsEzy4aMImJe5bhcvJgIyTMMfRpo8qqUf5U3tLLAb1qKanrm
+         7BudChPInpqWkneMujwpafOdwJS6oIOQrxzMfrWY=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5S3S6uH083741
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 27 Jun 2019 22:28:06 -0500
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 27
+ Jun 2019 22:28:06 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Thu, 27 Jun 2019 22:28:05 -0500
+Received: from [172.24.191.45] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5S3S3Ej112735;
+        Thu, 27 Jun 2019 22:28:04 -0500
+Subject: Re: [PATCH][next] regulator: lp87565: fix missing break in switch
+ statement
+To:     Colin King <colin.king@canonical.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>
+CC:     <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20190627131639.6394-1-colin.king@canonical.com>
+From:   Keerthy <j-keerthy@ti.com>
+Message-ID: <1a17ea61-a164-d61f-6416-637d47668f1b@ti.com>
+Date:   Fri, 28 Jun 2019 08:58:41 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
+MIME-Version: 1.0
+In-Reply-To: <20190627131639.6394-1-colin.king@canonical.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anson Huang <Anson.Huang@nxp.com>
 
-According to latest datasheet (Rev.0.2, 04/2019) from below links,
-1.8GHz is ONLY available for consumer part, so the market segment
-bits for 1.8GHz opp should ONLY available for consumer part accordingly.
 
-https://www.nxp.com/docs/en/data-sheet/IMX8MMIEC.pdf
-https://www.nxp.com/docs/en/data-sheet/IMX8MMCEC.pdf
+On 27/06/19 6:46 PM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Currently the LP87565_DEVICE_TYPE_LP87561_Q1 case does not have a
+> break statement, causing it to fall through to a dev_err message.
+> Fix this by adding in the missing break statement.
+> 
+> Addresses-Coverity: ("Missing break in switch")
+> Fixes: 7ee63bd74750 ("regulator: lp87565: Add 4-phase lp87561 regulator support")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>   drivers/regulator/lp87565-regulator.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/regulator/lp87565-regulator.c b/drivers/regulator/lp87565-regulator.c
+> index 993c11702083..5d067f7c2116 100644
+> --- a/drivers/regulator/lp87565-regulator.c
+> +++ b/drivers/regulator/lp87565-regulator.c
+> @@ -180,6 +180,7 @@ static int lp87565_regulator_probe(struct platform_device *pdev)
+>   	case LP87565_DEVICE_TYPE_LP87561_Q1:
+>   		min_idx = LP87565_BUCK_3210;
+>   		max_idx = LP87565_BUCK_3210;
+> +		break;
 
-Fixes: f403a26c865b (arm64: dts: imx8mm: Add cpu speed grading and all OPPs)
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- arch/arm64/boot/dts/freescale/imx8mm.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks Colin.
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mm.dtsi b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-index c38813d..ab0d135 100644
---- a/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-@@ -135,7 +135,7 @@
- 			opp-hz = /bits/ 64 <1800000000>;
- 			opp-microvolt = <1000000>;
- 			/* Consumer only but rely on speed grading */
--			opp-supported-hw = <0x8>, <0x7>;
-+			opp-supported-hw = <0x8>, <0x3>;
- 			clock-latency-ns = <150000>;
- 		};
- 	};
--- 
-2.7.4
+Reviewed-by: Keerthy <j-keerthy@ti.com>
 
+>   	default:
+>   		dev_err(lp87565->dev, "Invalid lp config %d\n",
+>   			lp87565->dev_type);
+> 
