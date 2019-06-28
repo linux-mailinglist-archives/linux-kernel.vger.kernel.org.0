@@ -2,89 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB7E95989D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 12:42:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65B47598A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 12:45:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726917AbfF1KmA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 06:42:00 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:53208 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726909AbfF1KmA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 06:42:00 -0400
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726663AbfF1KpG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 06:45:06 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:42348 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726476AbfF1KpG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Jun 2019 06:45:06 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: bbrezillon)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 0571827EA8A;
-        Fri, 28 Jun 2019 11:41:57 +0100 (BST)
-Date:   Fri, 28 Jun 2019 12:41:54 +0200
-From:   Boris Brezillon <boris.brezillon@collabora.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Noralf =?UTF-8?B?VHLDuG5uZXM=?= <noralf@tronnes.org>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Ville =?UTF-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
-        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
-        Lyude Paul <lyude@redhat.com>,
-        Uma Shankar <uma.shankar@intel.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Ramalingam C <ramalingam.c@intel.com>,
-        Radhakrishna Sripada <radhakrishna.sripada@intel.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm: connector: remove bogus NULL check
-Message-ID: <20190628124154.5245f629@collabora.com>
-In-Reply-To: <20190628103925.2686249-1-arnd@arndb.de>
-References: <20190628103925.2686249-1-arnd@arndb.de>
-Organization: Collabora
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        by mx1.redhat.com (Postfix) with ESMTPS id 71AB381F0E;
+        Fri, 28 Jun 2019 10:44:48 +0000 (UTC)
+Received: from xz-x1.redhat.com (ovpn-12-71.pek2.redhat.com [10.72.12.71])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DB5785D705;
+        Fri, 28 Jun 2019 10:44:34 +0000 (UTC)
+From:   Peter Xu <peterx@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     David Hildenbrand <david@redhat.com>,
+        Hugh Dickins <hughd@google.com>,
+        Maya Gokhale <gokhale2@llnl.gov>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, peterx@redhat.com,
+        Martin Cracauer <cracauer@cons.org>, Shaohua Li <shli@fb.com>,
+        Marty McFadden <mcfadden8@llnl.gov>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Denis Plotnikov <dplotnikov@virtuozzo.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Mel Gorman <mgorman@suse.de>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
+Subject: [PATCH 0/7] mm: Page fault enhancements
+Date:   Fri, 28 Jun 2019 18:44:25 +0800
+Message-Id: <20190628104432.12799-1-peterx@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Fri, 28 Jun 2019 10:45:06 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 28 Jun 2019 12:39:05 +0200
-Arnd Bergmann <arnd@arndb.de> wrote:
+This series is split out of userfaultfd-wp series to only cover the
+general page fault changes, since it seems to make sense itself.
 
-> mode->name is a character array in a structure, checking it's
-> address is pointless and causes a warning with some compilers:
-> 
-> drivers/gpu/drm/drm_connector.c:144:15: error: address of array 'mode->name' will always evaluate to 'true'
->       [-Werror,-Wpointer-bool-conversion]
->                       mode->name ? mode->name : "",
->                       ~~~~~~^~~~ ~
-> include/drm/drm_print.h:366:29: note: expanded from macro 'DRM_DEBUG_KMS'
->         drm_dbg(DRM_UT_KMS, fmt, ##__VA_ARGS__)
->                                    ^~~~~~~~~~~
-> 
-> Remove the check here.
-> 
-> Fixes: 3aeeb13d8996 ("drm/modes: Support modes names on the command line")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Basically it does two things:
 
-Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+  (a) Allows the page fault handlers to be more interactive on not
+      only SIGKILL, but also the rest of userspace signals (especially
+      for user-mode faults), and,
 
-> ---
->  drivers/gpu/drm/drm_connector.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_connector.c b/drivers/gpu/drm/drm_connector.c
-> index 3afed5677946..b3f2cf7eae9c 100644
-> --- a/drivers/gpu/drm/drm_connector.c
-> +++ b/drivers/gpu/drm/drm_connector.c
-> @@ -141,7 +141,7 @@ static void drm_connector_get_cmdline_mode(struct drm_connector *connector)
->  
->  	DRM_DEBUG_KMS("cmdline mode for connector %s %s %dx%d@%dHz%s%s%s\n",
->  		      connector->name,
-> -		      mode->name ? mode->name : "",
-> +		      mode->name,
->  		      mode->xres, mode->yres,
->  		      mode->refresh_specified ? mode->refresh : 60,
->  		      mode->rb ? " reduced blanking" : "",
+  (b) Allows the page fault retry (VM_FAULT_RETRY) to happen for more
+      than once.
+
+I'm keeping the CC list as in uffd-wp v5, hopefully I'm not sending
+too much spams...
+
+And, instead of writting again the cover letter, I'm just copy-pasting
+my previous link here which has more details on why we do this:
+
+  https://patchwork.kernel.org/cover/10691991/
+
+The major change from that latest version should be that we introduced
+a new page fault flag FAULT_FLAG_INTERRUPTIBLE as suggested by Linus
+[1] to represents that we would like the fault handler to respond to
+non-fatal signals.  Also, we're more careful now on when to do the
+immediate return of the page fault for such signals.  For example, now
+we'll only check against signal_pending() for user-mode page faults
+and we keep the kernel-mode page fault patch untouched for it.  More
+information can be found in separate patches.
+
+The patchset is only lightly tested on x86.
+
+All comments are greatly welcomed.  Thanks,
+
+[1] https://lkml.org/lkml/2019/6/25/1382
+
+Peter Xu (7):
+  mm/gup: Rename "nonblocking" to "locked" where proper
+  mm: Introduce FAULT_FLAG_DEFAULT
+  mm: Introduce FAULT_FLAG_INTERRUPTIBLE
+  mm: Return faster for non-fatal signals in user mode faults
+  userfaultfd: Don't retake mmap_sem to emulate NOPAGE
+  mm: Allow VM_FAULT_RETRY for multiple times
+  mm/gup: Allow VM_FAULT_RETRY for multiple times
+
+ arch/alpha/mm/fault.c           |  7 +--
+ arch/arc/mm/fault.c             | 17 ++-----
+ arch/arm/mm/fault.c             | 14 +++---
+ arch/arm64/mm/fault.c           | 16 +++----
+ arch/hexagon/mm/vm_fault.c      |  6 +--
+ arch/ia64/mm/fault.c            |  6 +--
+ arch/m68k/mm/fault.c            | 10 ++--
+ arch/microblaze/mm/fault.c      |  6 +--
+ arch/mips/mm/fault.c            |  6 +--
+ arch/nds32/mm/fault.c           | 12 ++---
+ arch/nios2/mm/fault.c           |  8 ++--
+ arch/openrisc/mm/fault.c        |  6 +--
+ arch/parisc/mm/fault.c          |  9 ++--
+ arch/powerpc/mm/fault.c         | 10 ++--
+ arch/riscv/mm/fault.c           | 12 ++---
+ arch/s390/mm/fault.c            | 11 ++---
+ arch/sh/mm/fault.c              |  7 ++-
+ arch/sparc/mm/fault_32.c        |  5 +-
+ arch/sparc/mm/fault_64.c        |  6 +--
+ arch/um/kernel/trap.c           |  7 +--
+ arch/unicore32/mm/fault.c       | 11 ++---
+ arch/x86/mm/fault.c             |  6 +--
+ arch/xtensa/mm/fault.c          |  6 +--
+ drivers/gpu/drm/ttm/ttm_bo_vm.c | 12 +++--
+ fs/userfaultfd.c                | 28 +-----------
+ include/linux/mm.h              | 81 +++++++++++++++++++++++++++++----
+ include/linux/sched/signal.h    | 12 +++++
+ mm/filemap.c                    |  2 +-
+ mm/gup.c                        | 61 ++++++++++++++-----------
+ mm/hugetlb.c                    | 14 +++---
+ mm/shmem.c                      |  2 +-
+ 31 files changed, 226 insertions(+), 190 deletions(-)
+
+-- 
+2.21.0
 
