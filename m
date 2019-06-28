@@ -2,101 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 331F159E32
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 16:50:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61E0C59E30
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 16:49:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726901AbfF1OuB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 10:50:01 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:45490 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726655AbfF1OuA (ORCPT
+        id S1726888AbfF1Otx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 10:49:53 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:35231 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726655AbfF1Otw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 10:50:00 -0400
-Received: by mail-pl1-f195.google.com with SMTP id bi6so3366366plb.12;
-        Fri, 28 Jun 2019 07:50:00 -0700 (PDT)
+        Fri, 28 Jun 2019 10:49:52 -0400
+Received: by mail-qt1-f196.google.com with SMTP id d23so6596084qto.2
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2019 07:49:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9Yox1Etvd/O+wwizvg1jrjE81RtPEp0HNcZ5IkOo3Ak=;
-        b=YaNMjaTPCrB+bDLeQKq/X2mMqux5lvGVZPIzqMFreBdBTmpuScV01jzfHx3U6QaE7M
-         2aUSFp84Nv1IZIedckhwYFiFKlgNp5UOJvODsN2M/t5Pdydmvnwd+migHm1obnidoR2u
-         JblGFygQzhf8sE8WvrrJCsf4d7BXR6kssAnihJicnTu6RL/oUw9i4CL5aYjBulp2OZOg
-         VD9+SpNpvumFvIDkvnYhocFuL4+DgCnFxZgZ0wiC0lG8Dziyw8mwaB7RuQqCgR5ausm0
-         SD1H6tDbI2fZqYxqfPFnTX12Qq+C0nwghmlY326QyIWl4K1ik6YFIdRSVF0REueiz3/f
-         6rrA==
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=uqY6PGSVOH60Q9P7eeF+/s5SkeEkdPNroJqE757Jcuc=;
+        b=FfuRFusN/GIVn3QIDKTZ3tizo5lrJ+gMb7hV4vbU8shN0iWnnMIG76nOT+PfzijcMW
+         TkvpqtyBHhlu7tZR5DmMWwksUGiseQ0XcBkizbexcZgaE9jh4T+B/SKfRXus/CJ2fOif
+         KF8Bkh4Mz98r2N8w9M9U6zHf6i3AiIuuga5bEYm87//Y6BPzBLFTYTu8um638Cqyxs5+
+         5E7BDzg6efHdU6BJPJPQGQAl/bAmqaqSWzz2fwu7drjdWFwrS5xcHLB3sLfqEBzdAxBc
+         vKXACIGVClyuOcw3btt5qFx1Z7rndfyCB8Gqqb3Lk0ZJCL6DGRR5i51XzX/x4ulfSvSG
+         T7hQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9Yox1Etvd/O+wwizvg1jrjE81RtPEp0HNcZ5IkOo3Ak=;
-        b=sipIiEN2lN6BMLoLorUNArFGhBysL6bMpjdA/lSpQ2mphJ0JCAEwxUJRqWayLqwYtf
-         F+sv+5LZk5ULKgW0kS2kYbBYnpCQlMqnwc12GtwmugZOe4nzsOIGvxTtH73B2qYNPPAs
-         V7A6C2JygACqwWi057YuBhQBgVok8akuEd0DYoGO32eGXqGFpWx3haFAeBMOfZpn+Eh7
-         RPkiun0OZjoiJxDJL4dv0TYaz0Kgzar7Vz5yibdLJG3JK3RgjcLTHb4S5EbY+1u1zyUw
-         DDRJNhBTwfDurEk1seile61fBCQ1w4FgWrBZr6N0/KCcYSeQa+1/nVvWZQsEJL3qDQeQ
-         qyjw==
-X-Gm-Message-State: APjAAAXuPnGeaYRaJfObhYZYnI9zKPzPn1+8HGmT7+PnXrmowqjNU4wl
-        ZzSzPXNvvOBzZa6S6FYppz3tQBuANqENy1nc2R0tosE1RW0=
-X-Google-Smtp-Source: APXvYqz2CJc5HkKnMGYkO9OkYVTfzYJVA8oK2MsisH/DY8ZSO3O1PjNfe5djKMOja8J3xJgvIWxCVEpVxT59Iu992iU=
-X-Received: by 2002:a17:902:694a:: with SMTP id k10mr11968167plt.255.1561733399956;
- Fri, 28 Jun 2019 07:49:59 -0700 (PDT)
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=uqY6PGSVOH60Q9P7eeF+/s5SkeEkdPNroJqE757Jcuc=;
+        b=N9bK7Jul37SjJ+QmBbwnbLWDPmwegDjv73t5AWC4cm9q0m7LpbdoVN3ULKx749fccR
+         UGuE1GZSut+WNge0RIktVizo+dO+832mrKS2AirXxC72fHSsZOfZo1e370sBitiIcdA/
+         YZVGPJ4tZkauwO+V318esxw52UswBCh4rC1wyPpNJX85VrqE8ffUiI0ftyYfDUaMRRSC
+         wW3vGxC8hrmhX1s+z+w4tYVBG9y4SkqFqMnVoWkKzT8Gca4eJcj3O1pwbUBzRBcZ/rEQ
+         hpW+zXAnyG6cgJOyzy8YZ5JqgRp6xaZT89ZMVjfKNr+T8vGy3bnjemanvm25Mi+GRSrh
+         nCdQ==
+X-Gm-Message-State: APjAAAUMRECn8W61zW1RBWtsDxk8Rnf0EkWD2nPoMet7QVpCrEgHkBbC
+        w2LJ56aa25n2iJUUtOT7FcrTHsgqLr4T8orNYxE=
+X-Google-Smtp-Source: APXvYqzeCiRYLwP2MJd4bSig4W1rObFyTr4xqLXIQu5bIkW9gjn7s6PQCMyQU7bJj+batoVhQSuuXPlEl6tOMP3D4Hc=
+X-Received: by 2002:a05:6214:10c5:: with SMTP id r5mr8119980qvs.224.1561733391661;
+ Fri, 28 Jun 2019 07:49:51 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1561723736.git.mchehab+samsung@kernel.org> <9472251c3ff159b832b4e82d77836c44f89b49b0.1561723736.git.mchehab+samsung@kernel.org>
-In-Reply-To: <9472251c3ff159b832b4e82d77836c44f89b49b0.1561723736.git.mchehab+samsung@kernel.org>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Fri, 28 Jun 2019 17:49:48 +0300
-Message-ID: <CAHp75VfkWkVvvufTje1G+w=7gjsr7D2On-NsOsOoTEBNLVLJzQ@mail.gmail.com>
-Subject: Re: [PATCH 9/9] platform: x86: get rid of a non-existent document
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>
+Received: by 2002:ac8:3451:0:0:0:0:0 with HTTP; Fri, 28 Jun 2019 07:49:51
+ -0700 (PDT)
+Reply-To: joeakaba01@gmail.com
+From:   joe akaba <pagentsif6@gmail.com>
+Date:   Fri, 28 Jun 2019 16:49:51 +0200
+Message-ID: <CAKiDfoVaRQToEOrPsszdEFXHbkzVaumk2Ly19VmxkAbq20X85w@mail.gmail.com>
+Subject: hello
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 28, 2019 at 3:12 PM Mauro Carvalho Chehab
-<mchehab+samsung@kernel.org> wrote:
->
-> Changeset 163ede97a9a2 ("Documentation: platform: Delete x86-laptop-drivers.txt")
-> removed the x86-laptop-drivers.txt file, but forgot to update its
-> Kconfig.
+Hello
 
-Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+My name is Joe Akaba. I am a lawyer by profession. I would like to offer you
+the closest relatives to my client. They inherit the sum of ($ 14.2 million)
+Dollars that my client left in the bank before he died.
 
->
-> Fixes: 163ede97a9a2 ("Documentation: platform: Delete x86-laptop-drivers.txt")
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-> ---
->  drivers/platform/x86/Kconfig | 3 ---
->  1 file changed, 3 deletions(-)
->
-> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-> index bd15b47abcb4..c318501773bc 100644
-> --- a/drivers/platform/x86/Kconfig
-> +++ b/drivers/platform/x86/Kconfig
-> @@ -433,9 +433,6 @@ config COMPAL_LAPTOP
->           It adds support for rfkill, Bluetooth, WLAN, LCD brightness, hwmon
->           and battery charging level control.
->
-> -         For a (possibly incomplete) list of supported laptops, please refer
-> -         to: Documentation/platform/x86-laptop-drivers.txt
-> -
->  config SONY_LAPTOP
->         tristate "Sony Laptop Extras"
->         depends on ACPI
-> --
-> 2.21.0
->
+My client is a citizen of your country who died in a car accident with his wife
+and only son. I will be entitled to 50% of the total fund, while 50%
+be for you.
 
+Please contact my private email here for more information: joeakaba00@gmail.com
 
--- 
-With Best Regards,
-Andy Shevchenko
+Thanks in advance,
+Mr. Joe Akaba,
