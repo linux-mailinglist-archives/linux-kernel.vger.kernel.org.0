@@ -2,45 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 405B459B5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 14:32:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E367F59B50
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 14:32:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727553AbfF1Mco (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 08:32:44 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:39214 "EHLO
+        id S1727231AbfF1McM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 08:32:12 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:39380 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726936AbfF1Mak (ORCPT
+        with ESMTP id S1727047AbfF1Man (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 08:30:40 -0400
+        Fri, 28 Jun 2019 08:30:43 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=W01P5QS3uRV3PL5GrkuJuIMkN8UN/CJyWU+iu5QOvQA=; b=ByUoDHNg+0H8Qs/m1RN9jnjl/g
-        PhZlReBVQCQ3ubxdw/1nfki4i9C5SCMEmdI5EK0zLPc/vtAimnvml3RD5uzaSgL1ieLaEcBU5L9hh
-        WqE3AvSTzrPjsXctTwJgmEkewDkOHrMYoRPGlmnopzJnnnsHviXNLdbtpRRXKJpvQdnhsO8l4K9OR
-        zJCA5B68YSVtoweOX3wcUK7mtgCp50FtvkFedNESwqKroYKhsou4+04rIhVM4LpoXDRfFX1bLDYHP
-        3ujCWwkxnzB11zGX5d8rBGrRibdqgaCwlhGsiwHlbiwfAPHihY/JS6TrVuoWqHLc9mn/h1jU8QtS1
-        /T8MUoXA==;
+        bh=9x6MnELpm41+8+il8SzONc8VzOlbzKYgL1wPINAhEuU=; b=JTRIUwajdrDihDEkBt/zx/3w+b
+        U67j76+Puudo7N4rJUEJ6sU9zLuGZKUBOdsRnW/R5JsgtnxgT9M+8wIzVvoEgLsh3v1DskXsW+EyK
+        zidvAYPNYnWaBDtfUuOIfXodjjOxrrrrNiuX2l5sIat4zAZDzqv7hUZ4kMh0q87WNPHohB6hqU1DI
+        VeUPT4BzyvKLUwPnd2OMY0e28x+bPcN3uuQGYK8sgcNMdue3MsnhKya/GcoQGN7VhoPLPJnL+3EWZ
+        LiKjtuxM7kRBNSWjTlMYoFm3E0RzHPJOTIeiJskH5ZAjZXPBGXpB9tHZZ3M5W+6K0fcnlGJmvTI2r
+        qO36jZtg==;
 Received: from [186.213.242.156] (helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hgq1U-00055o-O0; Fri, 28 Jun 2019 12:30:36 +0000
+        id 1hgq1U-00055r-Od; Fri, 28 Jun 2019 12:30:36 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hgq1S-0005TR-PP; Fri, 28 Jun 2019 09:30:34 -0300
+        id 1hgq1S-0005TY-QB; Fri, 28 Jun 2019 09:30:34 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, Timur Tabi <timur@kernel.org>,
-        linuxppc-dev@lists.ozlabs.org, linux-serial@vger.kernel.org
-Subject: [PATCH 32/39] docs: serial: move it to the driver-api
-Date:   Fri, 28 Jun 2019 09:30:25 -0300
-Message-Id: <98ded3b9747e187413aab3406da2d5e7c89f53cb.1561724493.git.mchehab+samsung@kernel.org>
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kamil Debski <kamil@wypas.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        devicetree@vger.kernel.org
+Subject: [PATCH 33/39] docs: phy: place documentation under driver-api
+Date:   Fri, 28 Jun 2019 09:30:26 -0300
+Message-Id: <df0337d37a924dcfa1f528734ffd3bae430d93c4.1561724493.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <cover.1561724493.git.mchehab+samsung@kernel.org>
 References: <cover.1561724493.git.mchehab+samsung@kernel.org>
@@ -51,183 +54,112 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The contents of this directory is mostly driver-api stuff.
+This subsystem-specific documentation belongs to the
+driver-api.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- Documentation/driver-api/index.rst                       | 1 +
- Documentation/{ => driver-api}/serial/cyclades_z.rst     | 0
- Documentation/{ => driver-api}/serial/driver.rst         | 2 +-
- Documentation/{ => driver-api}/serial/index.rst          | 2 +-
- Documentation/{ => driver-api}/serial/moxa-smartio.rst   | 0
- Documentation/{ => driver-api}/serial/n_gsm.rst          | 0
- Documentation/{ => driver-api}/serial/rocket.rst         | 0
- Documentation/{ => driver-api}/serial/serial-iso7816.rst | 0
- Documentation/{ => driver-api}/serial/serial-rs485.rst   | 0
- Documentation/{ => driver-api}/serial/tty.rst            | 0
- MAINTAINERS                                              | 6 +++---
- drivers/tty/Kconfig                                      | 4 ++--
- drivers/tty/serial/ucc_uart.c                            | 2 +-
- include/linux/serial_core.h                              | 2 +-
- 14 files changed, 10 insertions(+), 9 deletions(-)
- rename Documentation/{ => driver-api}/serial/cyclades_z.rst (100%)
- rename Documentation/{ => driver-api}/serial/driver.rst (99%)
- rename Documentation/{ => driver-api}/serial/index.rst (90%)
- rename Documentation/{ => driver-api}/serial/moxa-smartio.rst (100%)
- rename Documentation/{ => driver-api}/serial/n_gsm.rst (100%)
- rename Documentation/{ => driver-api}/serial/rocket.rst (100%)
- rename Documentation/{ => driver-api}/serial/serial-iso7816.rst (100%)
- rename Documentation/{ => driver-api}/serial/serial-rs485.rst (100%)
- rename Documentation/{ => driver-api}/serial/tty.rst (100%)
+ .../devicetree/bindings/phy/phy-bindings.txt     |  2 +-
+ .../devicetree/bindings/phy/phy-pxa-usb.txt      |  2 +-
+ Documentation/driver-api/index.rst               |  1 +
+ Documentation/driver-api/phy/index.rst           | 16 ++++++++++++++++
+ .../{phy.txt => driver-api/phy/phy.rst}          |  0
+ .../{ => driver-api}/phy/samsung-usb2.rst        |  0
+ Documentation/index.rst                          |  1 -
+ MAINTAINERS                                      |  2 +-
+ 8 files changed, 20 insertions(+), 4 deletions(-)
+ create mode 100644 Documentation/driver-api/phy/index.rst
+ rename Documentation/{phy.txt => driver-api/phy/phy.rst} (100%)
+ rename Documentation/{ => driver-api}/phy/samsung-usb2.rst (100%)
 
+diff --git a/Documentation/devicetree/bindings/phy/phy-bindings.txt b/Documentation/devicetree/bindings/phy/phy-bindings.txt
+index a403b81d0679..c4eb38902533 100644
+--- a/Documentation/devicetree/bindings/phy/phy-bindings.txt
++++ b/Documentation/devicetree/bindings/phy/phy-bindings.txt
+@@ -1,5 +1,5 @@
+ This document explains only the device tree data binding. For general
+-information about PHY subsystem refer to Documentation/phy.txt
++information about PHY subsystem refer to Documentation/driver-api/phy/phy.rst
+ 
+ PHY device node
+ ===============
+diff --git a/Documentation/devicetree/bindings/phy/phy-pxa-usb.txt b/Documentation/devicetree/bindings/phy/phy-pxa-usb.txt
+index 93fc09c12954..d80e36a77ec5 100644
+--- a/Documentation/devicetree/bindings/phy/phy-pxa-usb.txt
++++ b/Documentation/devicetree/bindings/phy/phy-pxa-usb.txt
+@@ -15,4 +15,4 @@ Example:
+ 	};
+ 
+ This document explains the device tree binding. For general
+-information about PHY subsystem refer to Documentation/phy.txt
++information about PHY subsystem refer to Documentation/driver-api/phy/phy.rst
 diff --git a/Documentation/driver-api/index.rst b/Documentation/driver-api/index.rst
-index f44a3140f95d..d6f532c8d824 100644
+index d6f532c8d824..12d68c3ab792 100644
 --- a/Documentation/driver-api/index.rst
 +++ b/Documentation/driver-api/index.rst
-@@ -88,6 +88,7 @@ available subsections can be seen below.
+@@ -85,6 +85,7 @@ available subsections can be seen below.
+    parport-lowlevel
+    pps
+    ptp
++   phy/index
     pti_intel_mid
     pwm
     rfkill
-+   serial/index
-    sgi-ioc4
-    sm501
-    smsc_ece1099
-diff --git a/Documentation/serial/cyclades_z.rst b/Documentation/driver-api/serial/cyclades_z.rst
+diff --git a/Documentation/driver-api/phy/index.rst b/Documentation/driver-api/phy/index.rst
+new file mode 100644
+index 000000000000..fce9ffae2812
+--- /dev/null
++++ b/Documentation/driver-api/phy/index.rst
+@@ -0,0 +1,16 @@
++=====================
++Generic PHY Framework
++=====================
++
++.. toctree::
++
++   phy
++   samsung-usb2
++
++.. only::  subproject and html
++
++   Indices
++   =======
++
++   * :ref:`genindex`
++
+diff --git a/Documentation/phy.txt b/Documentation/driver-api/phy/phy.rst
 similarity index 100%
-rename from Documentation/serial/cyclades_z.rst
-rename to Documentation/driver-api/serial/cyclades_z.rst
-diff --git a/Documentation/serial/driver.rst b/Documentation/driver-api/serial/driver.rst
-similarity index 99%
-rename from Documentation/serial/driver.rst
-rename to Documentation/driver-api/serial/driver.rst
-index 4537119bf624..31bd4e16fb1f 100644
---- a/Documentation/serial/driver.rst
-+++ b/Documentation/driver-api/serial/driver.rst
-@@ -311,7 +311,7 @@ hardware.
- 	This call must not sleep
+rename from Documentation/phy.txt
+rename to Documentation/driver-api/phy/phy.rst
+diff --git a/Documentation/phy/samsung-usb2.rst b/Documentation/driver-api/phy/samsung-usb2.rst
+similarity index 100%
+rename from Documentation/phy/samsung-usb2.rst
+rename to Documentation/driver-api/phy/samsung-usb2.rst
+diff --git a/Documentation/index.rst b/Documentation/index.rst
+index 28e6b5ef17b4..ea33cbbccd9d 100644
+--- a/Documentation/index.rst
++++ b/Documentation/index.rst
+@@ -112,7 +112,6 @@ needed).
+    usb/index
+    misc-devices/index
+    mic/index
+-   phy/samsung-usb2
+    scheduler/index
  
-   set_ldisc(port,termios)
--	Notifier for discipline change. See Documentation/serial/tty.rst.
-+	Notifier for discipline change. See Documentation/driver-api/serial/tty.rst.
- 
- 	Locking: caller holds tty_port->mutex
- 
-diff --git a/Documentation/serial/index.rst b/Documentation/driver-api/serial/index.rst
-similarity index 90%
-rename from Documentation/serial/index.rst
-rename to Documentation/driver-api/serial/index.rst
-index d0ba22ea23bf..33ad10d05b26 100644
---- a/Documentation/serial/index.rst
-+++ b/Documentation/driver-api/serial/index.rst
-@@ -1,4 +1,4 @@
--:orphan:
-+.. SPDX-License-Identifier: GPL-2.0
- 
- ==========================
- Support for Serial devices
-diff --git a/Documentation/serial/moxa-smartio.rst b/Documentation/driver-api/serial/moxa-smartio.rst
-similarity index 100%
-rename from Documentation/serial/moxa-smartio.rst
-rename to Documentation/driver-api/serial/moxa-smartio.rst
-diff --git a/Documentation/serial/n_gsm.rst b/Documentation/driver-api/serial/n_gsm.rst
-similarity index 100%
-rename from Documentation/serial/n_gsm.rst
-rename to Documentation/driver-api/serial/n_gsm.rst
-diff --git a/Documentation/serial/rocket.rst b/Documentation/driver-api/serial/rocket.rst
-similarity index 100%
-rename from Documentation/serial/rocket.rst
-rename to Documentation/driver-api/serial/rocket.rst
-diff --git a/Documentation/serial/serial-iso7816.rst b/Documentation/driver-api/serial/serial-iso7816.rst
-similarity index 100%
-rename from Documentation/serial/serial-iso7816.rst
-rename to Documentation/driver-api/serial/serial-iso7816.rst
-diff --git a/Documentation/serial/serial-rs485.rst b/Documentation/driver-api/serial/serial-rs485.rst
-similarity index 100%
-rename from Documentation/serial/serial-rs485.rst
-rename to Documentation/driver-api/serial/serial-rs485.rst
-diff --git a/Documentation/serial/tty.rst b/Documentation/driver-api/serial/tty.rst
-similarity index 100%
-rename from Documentation/serial/tty.rst
-rename to Documentation/driver-api/serial/tty.rst
+ Architecture-specific documentation
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 055db86fdd77..856db8015edd 100644
+index 856db8015edd..cda68bbd9d1c 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -10723,7 +10723,7 @@ F:	include/uapi/linux/meye.h
- MOXA SMARTIO/INDUSTIO/INTELLIO SERIAL CARD
- M:	Jiri Slaby <jirislaby@gmail.com>
- S:	Maintained
--F:	Documentation/serial/moxa-smartio.rst
-+F:	Documentation/driver-api/serial/moxa-smartio.rst
- F:	drivers/tty/mxser.*
- 
- MR800 AVERMEDIA USB FM RADIO DRIVER
-@@ -13637,7 +13637,7 @@ ROCKETPORT DRIVER
- P:	Comtrol Corp.
- W:	http://www.comtrol.com
- S:	Maintained
--F:	Documentation/serial/rocket.rst
-+F:	Documentation/driver-api/serial/rocket.rst
- F:	drivers/tty/rocket*
- 
- ROCKETPORT EXPRESS/INFINITY DRIVER
-@@ -16170,7 +16170,7 @@ M:	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
- M:	Jiri Slaby <jslaby@suse.com>
+@@ -14031,7 +14031,7 @@ M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
+ L:	linux-kernel@vger.kernel.org
  S:	Supported
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git
--F:	Documentation/serial/
-+F:	Documentation/driver-api/serial/
- F:	drivers/tty/
- F:	drivers/tty/serial/serial_core.c
- F:	include/linux/serial_core.h
-diff --git a/drivers/tty/Kconfig b/drivers/tty/Kconfig
-index ee51b9514225..c7623f99ac0f 100644
---- a/drivers/tty/Kconfig
-+++ b/drivers/tty/Kconfig
-@@ -175,7 +175,7 @@ config ROCKETPORT
- 	  This driver supports Comtrol RocketPort and RocketModem PCI boards.   
-           These boards provide 2, 4, 8, 16, or 32 high-speed serial ports or
-           modems.  For information about the RocketPort/RocketModem  boards
--          and this driver read <file:Documentation/serial/rocket.rst>.
-+          and this driver read <file:Documentation/driver-api/serial/rocket.rst>.
- 
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called rocket.
-@@ -193,7 +193,7 @@ config CYCLADES
- 	  your Linux box, for instance in order to become a dial-in server.
- 
- 	  For information about the Cyclades-Z card, read
--	  <file:Documentation/serial/cyclades_z.rst>.
-+	  <file:Documentation/driver-api/serial/cyclades_z.rst>.
- 
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called cyclades.
-diff --git a/drivers/tty/serial/ucc_uart.c b/drivers/tty/serial/ucc_uart.c
-index 6e3c66ab0e62..a0555ae2b1ef 100644
---- a/drivers/tty/serial/ucc_uart.c
-+++ b/drivers/tty/serial/ucc_uart.c
-@@ -1081,7 +1081,7 @@ static int qe_uart_verify_port(struct uart_port *port,
- }
- /* UART operations
-  *
-- * Details on these functions can be found in Documentation/serial/driver.rst
-+ * Details on these functions can be found in Documentation/driver-api/serial/driver.rst
-  */
- static const struct uart_ops qe_uart_pops = {
- 	.tx_empty       = qe_uart_tx_empty,
-diff --git a/include/linux/serial_core.h b/include/linux/serial_core.h
-index 05b179015d6c..2b78cc734719 100644
---- a/include/linux/serial_core.h
-+++ b/include/linux/serial_core.h
-@@ -32,7 +32,7 @@ struct device;
- 
- /*
-  * This structure describes all the operations that can be done on the
-- * physical hardware.  See Documentation/serial/driver.rst for details.
-+ * physical hardware.  See Documentation/driver-api/serial/driver.rst for details.
-  */
- struct uart_ops {
- 	unsigned int	(*tx_empty)(struct uart_port *);
+ F:	Documentation/devicetree/bindings/phy/samsung-phy.txt
+-F:	Documentation/phy/samsung-usb2.rst
++F:	Documentation/driver-api/phy/samsung-usb2.rst
+ F:	drivers/phy/samsung/phy-exynos4210-usb2.c
+ F:	drivers/phy/samsung/phy-exynos4x12-usb2.c
+ F:	drivers/phy/samsung/phy-exynos5250-usb2.c
 -- 
 2.21.0
 
