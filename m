@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38C5459C59
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 15:01:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D639E59C44
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 15:00:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727372AbfF1NBK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 09:01:10 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:38015 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727140AbfF1NAh (ORCPT
+        id S1727265AbfF1NAm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 09:00:42 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:51656 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727207AbfF1NAi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 09:00:37 -0400
-Received: by mail-wr1-f65.google.com with SMTP id d18so6213663wrs.5
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2019 06:00:34 -0700 (PDT)
+        Fri, 28 Jun 2019 09:00:38 -0400
+Received: by mail-wm1-f66.google.com with SMTP id 207so9031874wma.1
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2019 06:00:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=iIPMb9M330BFTKiYEMbJPjGasEIFSJBAqHuplkfgTXU=;
-        b=ahTFGj2kh3K11SbQbt7t2A+bOhVM9w7V1NcNq7xDZlfsEqailhNG8GwipjuTM9zFZo
-         Ab9hlm4ctVySSs3wPGHrFFYLROgYEshCp0EbdilgEcVO00YkcM5bt8SpLK63K62z/5FZ
-         KCndSQxmExgpFcmUsxIODF3yN8T7zQjTApuNnIh0ON++b0vdXhjtM6ICR4Hc6hajNYtb
-         7vtbOVqqydLF6SFYhKZXf6uBazVsYQwAedP7Go1lUnE0cTqUhWayJADTI8SYdt7ZnYbq
-         lUmxhYWzooWpLiAoAHU9y4+VDoOb8A/kzkU4Z+Ch9dKVgZlYVrX0Vfzrbe0pn4lvn8du
-         q2xQ==
+        bh=/R2v+8TpXScwDvoUwTQ+DYnf6CWYu7956kORYsc7udM=;
+        b=MOqIunXyl2CU/i32HIF3+ixSLh9DS96LVGO5I+JmUdbfMibDIDbmg+sRsWopc8cgCE
+         9qtE+tC7H6BydqLvfRkmzFaNO/ol+OmjNzlNZXWudGpw6l7n46EHluju0TVVqqbDiO5+
+         aKma7viTE1x6DUn5NOFpD/X1hliLP5Je23Y7x7S2p2zKo29VdrQ2YP4diZzxjp+LkYrp
+         nPAHlRoSTOGRaTPpFKWlYdSvzMC2IPFSb9gx9u3kaoi8lUSmXstXQbcQxwE5FyS/SLo9
+         4y/qCLg/ijGyWWGzyioBt83WGDxsnTvLsT1FrzEO5w36K2bQglWkh3sWUB3ueot2hDwX
+         hkmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=iIPMb9M330BFTKiYEMbJPjGasEIFSJBAqHuplkfgTXU=;
-        b=iIk3DO9xASNXUpx66edI7ZP8aP4H0TPdUIx6VX1EymXPrunT8siBsT9flzbuyUGLZt
-         BlCU3Zsih9qVtnw0cIfD82XGlyUB53FstkZ4idI/v0qMvBheu922gJlnBwghZWeP6q9+
-         SGkL6GBl2lUVlWxPE259N8haBPXUlyayxCcIO3nleQRydbAJnlXoMFx5cxXdG3QXFqcm
-         t0gMQVIlvN1F3mpfcdULHlm7EPWN4e5a8SUhRnxvePgxQqw9K04fM7O6gW0JdEoCyvQW
-         6awetAMYm5cDXsjYSKvPD5qYKBwUgspvH0wOp07D7X4wchWsj5JCoHXdTIiKtgSfA5dZ
-         zvow==
-X-Gm-Message-State: APjAAAXdXWToHdBn23CyjJsE2mr6A2JNamHCT7TGJHhq9CXMLWQi9vi3
-        u+nCqkh8v2D6g1dPMBCSCjkhPg==
-X-Google-Smtp-Source: APXvYqwROanUwgqc+3i5q1ibO6XDuauO0I2FYtxjjciJOruumU2A636loDJTHBEJlQI/To8dJDhTYg==
-X-Received: by 2002:a5d:4950:: with SMTP id r16mr7982736wrs.136.1561726834250;
-        Fri, 28 Jun 2019 06:00:34 -0700 (PDT)
+        bh=/R2v+8TpXScwDvoUwTQ+DYnf6CWYu7956kORYsc7udM=;
+        b=CGanxm5uduYvztlkSMD4BOPJkoRKjv2MHFlTRWQjJbXoAWM8Ve8BAgO+yLGLlqfJOk
+         GJ7iKfIJ4rEG4VtXUa11DV/wKqTHcQ1QS9Ay+46ooN74NcLRe3DCYZvPI6y2sj6UOvmL
+         6Qnf8WOGrgWdNeJXDaGUBuzSF0moxx2v47gXOpiUJVxBu/tSCN97Y0eOqqLP9Ef6MoPa
+         OhCH4fLLymocpTnYlPmMNXPWKx/TKZQ2vjsfw5d20UKNvnGrPkhejALldOnRa1/d/AUS
+         R1KQx5TFhqyW/r7kvAbJRagmL7BKXYlZ/HLphmKS/uLNN7IgowF3dWCfPzHouFNzrjem
+         efOg==
+X-Gm-Message-State: APjAAAWPsMbX8/Y9NE+0Aj2tHQfnjwnUlPwgS2tCsBNWF71/2Mi3Toem
+        oBvUaRM8VyIsP5htjcoQuzqtWA==
+X-Google-Smtp-Source: APXvYqzjUM9HPfSq1Rl5vK8m3SrIQAbqkdvVWKrAMIcQ1R9Y0NuwqXMn990yjFW21GfpYI4dun5zUQ==
+X-Received: by 2002:a1c:9cd1:: with SMTP id f200mr7006239wme.157.1561726835808;
+        Fri, 28 Jun 2019 06:00:35 -0700 (PDT)
 Received: from localhost.localdomain ([37.157.136.206])
-        by smtp.gmail.com with ESMTPSA id w20sm3717174wra.96.2019.06.28.06.00.33
+        by smtp.gmail.com with ESMTPSA id w20sm3717174wra.96.2019.06.28.06.00.34
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 28 Jun 2019 06:00:33 -0700 (PDT)
+        Fri, 28 Jun 2019 06:00:35 -0700 (PDT)
 From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
 To:     linux-media@vger.kernel.org
 Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
@@ -53,9 +53,9 @@ Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
         Tomasz Figa <tfiga@chromium.org>,
         Alexandre Courbot <acourbot@chromium.org>,
         Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Subject: [PATCH v2 06/11] venus: helpers: add three more helper functions
-Date:   Fri, 28 Jun 2019 15:59:57 +0300
-Message-Id: <20190628130002.24293-7-stanimir.varbanov@linaro.org>
+Subject: [PATCH v2 07/11] venus: vdec_ctrls: get real minimum buffers for capture
+Date:   Fri, 28 Jun 2019 15:59:58 +0300
+Message-Id: <20190628130002.24293-8-stanimir.varbanov@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190628130002.24293-1-stanimir.varbanov@linaro.org>
 References: <20190628130002.24293-1-stanimir.varbanov@linaro.org>
@@ -64,135 +64,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds three more helper functions:
- * for internal buffers reallocation, applicable when we are doing
-dynamic resolution change
- * for initial buffer processing of capture and output queue buffer
-types
-
-All of them will be needed for stateful Codec API support.
+Until now we returned num_output_bufs set during reqbuf but
+that could be wrong when we implement stateful Codec API. So
+get the minimum buffers for capture from HFI. This is supposed
+to be called after stream header parsing, i.e. after dequeue
+v4l2 event for change resolution.
 
 Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
 ---
- drivers/media/platform/qcom/venus/helpers.c | 82 +++++++++++++++++++++
- drivers/media/platform/qcom/venus/helpers.h |  3 +
- 2 files changed, 85 insertions(+)
+ drivers/media/platform/qcom/venus/vdec_ctrls.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/qcom/venus/helpers.c b/drivers/media/platform/qcom/venus/helpers.c
-index 63af69acc068..ab20fd3b36d9 100644
---- a/drivers/media/platform/qcom/venus/helpers.c
-+++ b/drivers/media/platform/qcom/venus/helpers.c
-@@ -313,6 +313,52 @@ int venus_helper_intbufs_free(struct venus_inst *inst)
- }
- EXPORT_SYMBOL_GPL(venus_helper_intbufs_free);
+diff --git a/drivers/media/platform/qcom/venus/vdec_ctrls.c b/drivers/media/platform/qcom/venus/vdec_ctrls.c
+index 300350bfe8bd..3a963cbd342a 100644
+--- a/drivers/media/platform/qcom/venus/vdec_ctrls.c
++++ b/drivers/media/platform/qcom/venus/vdec_ctrls.c
+@@ -7,6 +7,7 @@
+ #include <media/v4l2-ctrls.h>
  
-+int venus_helper_intbufs_realloc(struct venus_inst *inst)
-+{
+ #include "core.h"
++#include "helpers.h"
+ #include "vdec.h"
+ 
+ static int vdec_op_s_ctrl(struct v4l2_ctrl *ctrl)
+@@ -38,7 +39,9 @@ static int vdec_op_g_volatile_ctrl(struct v4l2_ctrl *ctrl)
+ {
+ 	struct venus_inst *inst = ctrl_to_inst(ctrl);
+ 	struct vdec_controls *ctr = &inst->controls.dec;
++	struct hfi_buffer_requirements bufreq;
+ 	union hfi_get_property hprop;
 +	enum hfi_version ver = inst->core->res->hfi_version;
-+	struct hfi_buffer_desc bd;
-+	struct intbuf *buf, *n;
-+	int ret;
-+
-+	list_for_each_entry_safe(buf, n, &inst->internalbufs, list) {
-+		if (buf->type == HFI_BUFFER_INTERNAL_PERSIST ||
-+		    buf->type == HFI_BUFFER_INTERNAL_PERSIST_1)
-+			continue;
-+
-+		memset(&bd, 0, sizeof(bd));
-+		bd.buffer_size = buf->size;
-+		bd.buffer_type = buf->type;
-+		bd.num_buffers = 1;
-+		bd.device_addr = buf->da;
-+		bd.response_required = true;
-+
-+		ret = hfi_session_unset_buffers(inst, &bd);
-+
-+		dma_free_attrs(inst->core->dev, buf->size, buf->va, buf->da,
-+			       buf->attrs);
-+
-+		list_del_init(&buf->list);
-+		kfree(buf);
-+	}
-+
-+	ret = intbufs_set_buffer(inst, HFI_BUFFER_INTERNAL_SCRATCH(ver));
-+	if (ret)
-+		goto err;
-+
-+	ret = intbufs_set_buffer(inst, HFI_BUFFER_INTERNAL_SCRATCH_1(ver));
-+	if (ret)
-+		goto err;
-+
-+	ret = intbufs_set_buffer(inst, HFI_BUFFER_INTERNAL_SCRATCH_2(ver));
-+	if (ret)
-+		goto err;
-+
-+	return 0;
-+err:
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(venus_helper_intbufs_realloc);
-+
- static u32 load_per_instance(struct venus_inst *inst)
- {
- 	u32 mbs;
-@@ -1041,6 +1087,42 @@ void venus_helper_vb2_stop_streaming(struct vb2_queue *q)
- }
- EXPORT_SYMBOL_GPL(venus_helper_vb2_stop_streaming);
+ 	u32 ptype = HFI_PROPERTY_PARAM_PROFILE_LEVEL_CURRENT;
+ 	int ret;
  
-+int venus_helper_process_initial_cap_bufs(struct venus_inst *inst)
-+{
-+	struct v4l2_m2m_ctx *m2m_ctx = inst->m2m_ctx;
-+	struct v4l2_m2m_buffer *buf, *n;
-+	int ret;
-+
-+	v4l2_m2m_for_each_dst_buf_safe(m2m_ctx, buf, n) {
-+		ret = session_process_buf(inst, &buf->vb);
-+		if (ret) {
-+			return_buf_error(inst, &buf->vb);
-+			return ret;
-+		}
-+	}
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(venus_helper_process_initial_cap_bufs);
-+
-+int venus_helper_process_initial_out_bufs(struct venus_inst *inst)
-+{
-+	struct v4l2_m2m_ctx *m2m_ctx = inst->m2m_ctx;
-+	struct v4l2_m2m_buffer *buf, *n;
-+	int ret;
-+
-+	v4l2_m2m_for_each_src_buf_safe(m2m_ctx, buf, n) {
-+		ret = session_process_buf(inst, &buf->vb);
-+		if (ret) {
-+			return_buf_error(inst, &buf->vb);
-+			return ret;
-+		}
-+	}
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(venus_helper_process_initial_out_bufs);
-+
- int venus_helper_vb2_start_streaming(struct venus_inst *inst)
- {
- 	struct venus_core *core = inst->core;
-diff --git a/drivers/media/platform/qcom/venus/helpers.h b/drivers/media/platform/qcom/venus/helpers.h
-index 70288dc860ff..486598d52811 100644
---- a/drivers/media/platform/qcom/venus/helpers.h
-+++ b/drivers/media/platform/qcom/venus/helpers.h
-@@ -56,7 +56,10 @@ int venus_helper_power_enable(struct venus_core *core, u32 session_type,
- 			      bool enable);
- int venus_helper_intbufs_alloc(struct venus_inst *inst);
- int venus_helper_intbufs_free(struct venus_inst *inst);
-+int venus_helper_intbufs_realloc(struct venus_inst *inst);
- int venus_helper_queue_dpb_bufs(struct venus_inst *inst);
- int venus_helper_unregister_bufs(struct venus_inst *inst);
- int venus_helper_load_scale_clocks(struct venus_core *core);
-+int venus_helper_process_initial_cap_bufs(struct venus_inst *inst);
-+int venus_helper_process_initial_out_bufs(struct venus_inst *inst);
- #endif
+@@ -62,7 +65,9 @@ static int vdec_op_g_volatile_ctrl(struct v4l2_ctrl *ctrl)
+ 		ctrl->val = ctr->post_loop_deb_mode;
+ 		break;
+ 	case V4L2_CID_MIN_BUFFERS_FOR_CAPTURE:
+-		ctrl->val = inst->num_output_bufs;
++		ret = venus_helper_get_bufreq(inst, HFI_BUFFER_OUTPUT, &bufreq);
++		if (!ret)
++			ctrl->val = HFI_BUFREQ_COUNT_MIN(&bufreq, ver);
+ 		break;
+ 	default:
+ 		return -EINVAL;
 -- 
 2.17.1
 
