@@ -2,91 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C5D459050
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 04:13:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 512A859075
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 04:14:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726520AbfF1CNA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 22:13:00 -0400
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:45485 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725770AbfF1CNA (ORCPT
+        id S1726877AbfF1COI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 22:14:08 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:17636 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726657AbfF1CNi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 22:13:00 -0400
-Received: by mail-yw1-f68.google.com with SMTP id m16so2577655ywh.12
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 19:12:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ESdzyALH+b44/HL+ukDoP4QdSzem8V/icNADS0o9wFw=;
-        b=bNoMT+YuH7ItGziVtsdIPXsPVFdbcyoeQtMerqHWvQsnSinptdEeivENVNdUr7TGgH
-         xs9S8RJdpFaJ/u8yifB/4AFCuclR6vey0K+VFkrCKxc7CD6VrygNTDddQFT8XoS2xY5k
-         B0Azomfo3EFsSKBuzaSHT3/t1S7yKCBAYqaGhu+vKwVWDDYJcPXiRDEvfz3vBgwHqKPu
-         UsV5N6XCFxj3SDFFkwHdx0PVbh5PMzCj1A6FXBI+G9ad/eqnis4qroBq2Ejk94ZhomLv
-         /FcfOTAjaVHiMdNxlTpO4YuYAz9aatDHVh/RxmZCxsrQJrFPI3InGgc6lXuv/sSzNAfk
-         SCtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ESdzyALH+b44/HL+ukDoP4QdSzem8V/icNADS0o9wFw=;
-        b=RF3ma975mvc9MNW2uIErOUPsek7TQffwLNkxfQvwd/6O0C93q0STKVETvEGxEIrmtz
-         ljm+qvPWYsgmSlvx3u1XLORn6Jfe8gjp9x6bHuHTxAXfNR31GPup7+9HIp5RV6BKOHBi
-         T/KqfnIQQ9JtlOXP9x6Wt4PX7AwC33Mq8vzHTQ34X2CyCDJ9uCXIZ7uWIXjMjdKOM/J3
-         dDsimWIXIJj2nPrArBhhqws5GImStd2zZg2Lfjs91EVkbBWswYFYx8Mp81/abeY+A6yi
-         f2nSmKiKUhYZLHZkGOc4148bn01121ua2rpgMBaOnBkg/mPdSlZpwkez/b91i+oDa6YZ
-         MtNw==
-X-Gm-Message-State: APjAAAU6IyjjzCzOTb/9eO65NJmWtu3EBGCfxreQ/f6tN2RHTTROyNxa
-        2Sd7aTbiBLGVja9udjLZiH9611yP7LeSd3wYoDwYEw==
-X-Google-Smtp-Source: APXvYqz0Cii6IBq9YH7EmbunOU8BzavnHLsl7DRlxEB5WcJVW9lCfnYlLvilIE/eHTA8PvLerwqJhx3puAdd8M0dbfo=
-X-Received: by 2002:a81:a55:: with SMTP id 82mr4680020ywk.205.1561687978995;
- Thu, 27 Jun 2019 19:12:58 -0700 (PDT)
+        Thu, 27 Jun 2019 22:13:38 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d1577cf0002>; Thu, 27 Jun 2019 19:13:35 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Thu, 27 Jun 2019 19:13:36 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Thu, 27 Jun 2019 19:13:36 -0700
+Received: from HQMAIL108.nvidia.com (172.18.146.13) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 28 Jun
+ 2019 02:13:35 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL108.nvidia.com
+ (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Fri, 28 Jun 2019 02:13:35 +0000
+Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.102.155]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5d1577cf0005>; Thu, 27 Jun 2019 19:13:35 -0700
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <tglx@linutronix.de>, <jason@lakedaemon.net>,
+        <marc.zyngier@arm.com>, <linus.walleij@linaro.org>,
+        <stefan@agner.ch>, <mark.rutland@arm.com>
+CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
+        <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <jckuo@nvidia.com>,
+        <josephl@nvidia.com>, <talho@nvidia.com>, <skomatineni@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
+        <digetx@gmail.com>, <devicetree@vger.kernel.org>
+Subject: [PATCH V5 15/18] soc/tegra: pmc: Configure core power request polarity
+Date:   Thu, 27 Jun 2019 19:12:49 -0700
+Message-ID: <1561687972-19319-16-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1561687972-19319-1-git-send-email-skomatineni@nvidia.com>
+References: <1561687972-19319-1-git-send-email-skomatineni@nvidia.com>
+X-NVConfidentiality: public
 MIME-Version: 1.0
-References: <20190624212631.87212-1-shakeelb@google.com> <20190624212631.87212-2-shakeelb@google.com>
- <20190626063755.GI17798@dhcp22.suse.cz>
-In-Reply-To: <20190626063755.GI17798@dhcp22.suse.cz>
-From:   Shakeel Butt <shakeelb@google.com>
-Date:   Thu, 27 Jun 2019 19:12:48 -0700
-Message-ID: <CALvZod6_EDG=WMvrcrSFK4yJ69Mc-sqWJ3_HycCUdW=FpxzGVQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] mm, oom: remove redundant task_in_mem_cgroup() check
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>,
-        David Rientjes <rientjes@google.com>,
-        KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Paul Jackson <pj@sgi.com>, Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1561688015; bh=ERKuxl3VXTCSt7ZlOTdJl+Ti8kkBSY5vvhGXUlExL9k=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
+         Content-Type;
+        b=b+Nz4QhuQfKLjQwtpiYRZWIrNdsgN2oCg/p16Y4NbBHhONFZAhUu+6OyyXIdjXza3
+         zYrXVr2TU0enjfReEok1xsRyisdZ6pzhNQypP+yUVqJJAY+sS33y+Tuu1UNUuZt4qe
+         ldS+nXLouvRbvxKKdZSLhKSB3Hg0RJ/vsN388BT1b3BY3SuZojLWM6PRFo9d9xP2wy
+         jprVaoo1cDMog7nBGtrnz/huM19gDtfF7NCAvilkkUxeD3itB0Azx+yaqFAr1qX4OQ
+         IIX6SVqrc0MVJPWfG5xeRRq1wP1LwTrVDNF38PF2MLkE/74ymDmwIg8CZXajjAPa5m
+         fINxzSVbQiKnQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 25, 2019 at 11:38 PM Michal Hocko <mhocko@kernel.org> wrote:
->
-> On Mon 24-06-19 14:26:30, Shakeel Butt wrote:
-> > oom_unkillable_task() can be called from three different contexts i.e.
-> > global OOM, memcg OOM and oom_score procfs interface. At the moment
-> > oom_unkillable_task() does a task_in_mem_cgroup() check on the given
-> > process. Since there is no reason to perform task_in_mem_cgroup()
-> > check for global OOM and oom_score procfs interface, those contexts
-> > provide NULL memcg and skips the task_in_mem_cgroup() check. However for
-> > memcg OOM context, the oom_unkillable_task() is always called from
-> > mem_cgroup_scan_tasks() and thus task_in_mem_cgroup() check becomes
-> > redundant. So, just remove the task_in_mem_cgroup() check altogether.
->
-> Just a nit. Not only it is redundant but it is effectively a dead code
-> after your previous patch.
->
+This patch configures polarity of the core power request signal
+in PMC control register based on the device tree property.
 
-I will update the commit message.
+PMC asserts and de-asserts power request signal based on it polarity
+when it need to power-up and power-down the core rail during SC7.
 
-> > Signed-off-by: Shakeel Butt <shakeelb@google.com>
-> > Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
->
-> Acked-by: Michal Hocko <mhocko@suse.com>
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+---
+ drivers/soc/tegra/pmc.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Thanks
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index 194100d77243..ed83c0cd09a3 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -56,6 +56,7 @@
+ #define  PMC_CNTRL_SIDE_EFFECT_LP0	BIT(14) /* LP0 when CPU pwr gated */
+ #define  PMC_CNTRL_SYSCLK_OE		BIT(11) /* system clock enable */
+ #define  PMC_CNTRL_SYSCLK_POLARITY	BIT(10) /* sys clk polarity */
++#define  PMC_CNTRL_PWRREQ_POLARITY	BIT(8)
+ #define  PMC_CNTRL_MAIN_RST		BIT(4)
+ #define  PMC_CNTRL_LATCH_WAKEUPS	BIT(5)
+ 
+@@ -2303,6 +2304,11 @@ static void tegra20_pmc_init(struct tegra_pmc *pmc)
+ 	else
+ 		value |= PMC_CNTRL_SYSCLK_POLARITY;
+ 
++	if (pmc->corereq_high)
++		value &= ~PMC_CNTRL_PWRREQ_POLARITY;
++	else
++		value |= PMC_CNTRL_PWRREQ_POLARITY;
++
+ 	/* configure the output polarity while the request is tristated */
+ 	tegra_pmc_writel(pmc, value, PMC_CNTRL);
+ 
+-- 
+2.7.4
+
