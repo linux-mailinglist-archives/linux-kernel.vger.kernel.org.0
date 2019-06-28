@@ -2,197 +2,188 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E05B5A65C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 23:37:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FF2D5A67F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 23:40:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726807AbfF1Vhf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 17:37:35 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:34405 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725783AbfF1Vhe (ORCPT
+        id S1727037AbfF1VkX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 17:40:23 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:41790 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726856AbfF1VkV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 17:37:34 -0400
-Received: by mail-pl1-f194.google.com with SMTP id i2so3949722plt.1;
-        Fri, 28 Jun 2019 14:37:34 -0700 (PDT)
+        Fri, 28 Jun 2019 17:40:21 -0400
+Received: by mail-pf1-f194.google.com with SMTP id m30so3611633pff.8
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2019 14:40:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=jCvsK07ThrOtm2mRIw4Un4YwGsJ6vhB4AB5ORa0vWlA=;
+        b=yKqjPVkrhteNdaJFFV0U8q0RPi2SdXcKjQBfSnERCv5I82XNoHDvuVoU4+4lrpuzVW
+         xBiNdLXdFnjYXsnraBWekglpLudT+Y0+2SbJBJJEpq/JpTHKQqHDFAPmKhLjMtI38DrQ
+         Dd7WliyG25HBEeMzndnad9A5ee3SjSi9uKtUg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=JgAuNdeYgPOaJAXJWPitQxb9O77ltQQoo3H5OkHlS/c=;
-        b=W86MRcxAJItkgXU1P+HfAJjX07YuDT/2EuPIvaTR3j2MhsGyMwaS0H6CirI+ZihPXQ
-         Rw9m/FSLLqbr+3BxsQGXD6Rh7uiIwQkRap2tvV38M2seKlycVAjBrkaFs8xOCgAEhlgR
-         RCz+w/+EfsTWjav2xZjZxTnxQ3KkBmrrcuKIPtkelRFLMXMxMZbCfrdlEr8yn5H+E6MD
-         Q9FOz04k+RVYoJynZSKDtaLKoM5LnrgnJGjYpLJCWrWC621eJ6eUF+bbD5n9JFzIEo3M
-         l2PiACCLzfWOqBf+h8w73uxLJY+ujnvZ8J38SB/ZTLhl3mnwPb0JsTdaYgpeeDNC+P1Y
-         bJNw==
-X-Gm-Message-State: APjAAAUwSq/44dHOh8Z1frsVpK2h4PhfHOOSADoAEsklNkpd7UQb6Fym
-        XlCfdqTeLzZx0nORh6MPm5E=
-X-Google-Smtp-Source: APXvYqy5ELfDL2fyyn/y9lJ8x6ZZyU+/eE48fR92CyznGhgcBuNDCxdNuVcUesc0a2YsMUSVisIbkg==
-X-Received: by 2002:a17:902:a60d:: with SMTP id u13mr6000172plq.144.1561757853454;
-        Fri, 28 Jun 2019 14:37:33 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id b15sm3215119pfi.141.2019.06.28.14.37.31
+        bh=jCvsK07ThrOtm2mRIw4Un4YwGsJ6vhB4AB5ORa0vWlA=;
+        b=BZULJnSGITEWg3mIt0GUod/yG/I3uqR5qpNguanJhbnwsVfguyujdI6huOkHyngrCq
+         cY2gOP0rco6nVDEnZiuJesHP1R30NdAjcRGZDjJxFsgrp+3duzDE8fZvG7boY0S5RjVm
+         mKRm4fi4DRrXkiHQsO6+eZKNDgZQZMzy29unUVWOCjTzbwdFgBXB0ucIbES0MjTAWypj
+         FSMlzL/CrYWS0Po3Gaps0lj0nmsQ84SMA6zbUodRfT1PFrWnoxEiYwv12QB6R4G1aaQS
+         OKXxF2ZkIGRBwUoLfXC5BGdwcoMWkrGLuEy5ssfhGvIZ00DBk34HRVJmWkrFG4B4JGB2
+         ouBw==
+X-Gm-Message-State: APjAAAXAmbeM0lMXDazeU3Wl+MJkvzfWiH0ezmvd7NOufTn2tmvcJliP
+        go+hWUTACsEL50wFhXPmN5OyiQ==
+X-Google-Smtp-Source: APXvYqxBx5u0xr36Tcf97zl0hZo7eVtkw7YHeeMp2wx3eeAqCz8qRWMLu7NjD/ppqvtv9qtx6AEhCg==
+X-Received: by 2002:a17:90a:bb8b:: with SMTP id v11mr15505765pjr.64.1561758021129;
+        Fri, 28 Jun 2019 14:40:21 -0700 (PDT)
+Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id e11sm5472318pfm.35.2019.06.28.14.40.19
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 28 Jun 2019 14:37:32 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 8049D402AC; Fri, 28 Jun 2019 21:37:31 +0000 (UTC)
-Date:   Fri, 28 Jun 2019 21:37:31 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Brendan Higgins <brendanhiggins@google.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>
-Cc:     Iurii Zaikin <yzaikin@google.com>, linux-api@vger.kernel.org,
-        "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Kees Cook <keescook@google.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Fri, 28 Jun 2019 14:40:20 -0700 (PDT)
+Date:   Fri, 28 Jun 2019 17:40:18 -0400
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
+Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
         Peter Zijlstra <peterz@infradead.org>,
-        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        shuah <shuah@kernel.org>, Theodore Ts'o <tytso@mit.edu>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        kunit-dev@googlegroups.com,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        linux-kbuild <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-um@lists.infradead.org,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        "Bird, Timothy" <Tim.Bird@sony.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Knut Omang <knut.omang@oracle.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Petr Mladek <pmladek@suse.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Richard Weinberger <richard@nod.at>,
-        David Rientjes <rientjes@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
-Subject: Re: [PATCH v5 17/18] kernel/sysctl-test: Add null pointer test for
- sysctl.c:proc_dointvec()
-Message-ID: <20190628213731.GJ19023@42.do-not-panic.com>
-References: <20190617082613.109131-1-brendanhiggins@google.com>
- <20190617082613.109131-18-brendanhiggins@google.com>
- <20190626021744.GU19023@42.do-not-panic.com>
- <CAAXuY3p+kVhjQ4LYtzormqVcH2vKu1abc_K9Z0XY=JX=bp8NcQ@mail.gmail.com>
- <20190627061021.GE19023@42.do-not-panic.com>
- <CAFd5g45VJ9yfuESUc=E0ydJyN+mk1b1kyHSCYvO2x9KPC7+3GQ@mail.gmail.com>
+        Steven Rostedt <rostedt@goodmis.org>,
+        rcu <rcu@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>
+Subject: Re: [RFC] Deadlock via recursive wakeup via RCU with threadirqs
+Message-ID: <20190628214018.GB249127@google.com>
+References: <CAEXW_YSEN_OL3ftTLN=M-W70WSuCgHJqU-R9VhS=A3uVj_AL+A@mail.gmail.com>
+ <20190627173831.GW26519@linux.ibm.com>
+ <20190627181638.GA209455@google.com>
+ <20190627184107.GA26519@linux.ibm.com>
+ <20190628135433.GE3402@hirez.programming.kicks-ass.net>
+ <20190628153050.GU26519@linux.ibm.com>
+ <20190628184026.fds6scgi2pnjnc5p@linutronix.de>
+ <20190628185219.GA26519@linux.ibm.com>
+ <20190628192407.GA89956@google.com>
+ <20190628200423.GB26519@linux.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAFd5g45VJ9yfuESUc=E0ydJyN+mk1b1kyHSCYvO2x9KPC7+3GQ@mail.gmail.com>
+In-Reply-To: <20190628200423.GB26519@linux.ibm.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 28, 2019 at 01:01:54AM -0700, Brendan Higgins wrote:
-> On Wed, Jun 26, 2019 at 11:10 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
-> >
-> > On Wed, Jun 26, 2019 at 09:07:43PM -0700, Iurii Zaikin wrote:
-> > > On Tue, Jun 25, 2019 at 7:17 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
-> > > > > +static void sysctl_test_dointvec_table_maxlen_unset(struct kunit *test)
-> > > > > +{
-> > > > > +     struct ctl_table table = {
-> > > > > +             .procname = "foo",
-> > > > > +             .data           = &test_data.int_0001,
-> > > > > +             .maxlen         = 0,
-> > > > > +             .mode           = 0644,
-> > > > > +             .proc_handler   = proc_dointvec,
-> > > > > +             .extra1         = &i_zero,
-> > > > > +             .extra2         = &i_one_hundred,
-> > > > > +     };
-> > > > > +     void  *buffer = kunit_kzalloc(test, sizeof(int), GFP_USER);
-> > > > > +     size_t len;
-> > > > > +     loff_t pos;
-> > > > > +
-> > > > > +     len = 1234;
-> > > > > +     KUNIT_EXPECT_EQ(test, 0, proc_dointvec(&table, 0, buffer, &len, &pos));
-> > > > > +     KUNIT_EXPECT_EQ(test, (size_t)0, len);
-> > > > > +     len = 1234;
-> > > > > +     KUNIT_EXPECT_EQ(test, 0, proc_dointvec(&table, 1, buffer, &len, &pos));
-> > > > > +     KUNIT_EXPECT_EQ(test, (size_t)0, len);
-> > > > > +}
-> > > >
-> > > > In a way this is also testing for general kernel API changes. This is and the
-> > > > last one were good examples. So this is not just testing functionality
-> > > > here. There is no wrong or write answer if 0 or -EINVAL was returned
-> > > > other than the fact that we have been doing this for years.
-> > > >
-> > > > Its a perhaps small but important difference for some of these tests.  I
-> > > > *do* think its worth clarifying through documentation which ones are
-> > > > testing for API consistency Vs proper correctness.
-> > >
-> > > You make a good point that the test codifies the existing behavior of
-> > > the function in lieu of formal documentation.  However, the test cases
-> > > were derived from examining the source code of the function under test
-> > > and attempting to cover all branches. The assertions were added only
-> > > for the values that appeared to be set deliberately in the
-> > > implementation. And it makes sense to me to test that the code does
-> > > exactly what the implementation author intended.
-> >
-> > I'm not arguing against adding them. I'm suggesting that it is different
-> > to test for API than for correctness of intended functionality, and
-> > it would be wise to make it clear which test cases are for API and which
-> > for correctness.
+Hi Paul,
+
+On Fri, Jun 28, 2019 at 01:04:23PM -0700, Paul E. McKenney wrote:
+[snip]
+> > > > Commit
+> > > > - 23634ebc1d946 ("rcu: Check for wakeup-safe conditions in
+> > > >    rcu_read_unlock_special()") does not trigger the bug within 94
+> > > >    attempts.
+> > > > 
+> > > > - 48d07c04b4cc1 ("rcu: Enable elimination of Tree-RCU softirq
+> > > >   processing") needed 12 attempts to trigger the bug.
+> > > 
+> > > That matches my belief that 23634ebc1d946 ("rcu: Check for wakeup-safe
+> > > conditions in rcu_read_unlock_special()") will at least greatly decrease
+> > > the probability of this bug occurring.
+> > 
+> > I was just typing a reply that I can't reproduce it with:
+> >   rcu: Check for wakeup-safe conditions in rcu_read_unlock_special()
+> > 
+> > I am trying to revert enough of this patch to see what would break things,
+> > however I think a better exercise might be to understand more what the patch
+> > does why it fixes things in the first place ;-) It is probably the
+> > deferred_qs thing.
 > 
-> I see later on that some of the API stuff you are talking about is
-> public APIs from the standpoint of user (outside of LInux) visible.
+> The deferred_qs flag is part of it!  Looking forward to hearing what
+> you come up with as being the critical piece of this commit.
 
-Right, UAPI.
+The new deferred_qs flag indeed saves the machine from the dead-lock.
 
-> To
-> be clear, is that what you mean by public APIs throughout, or would
-> you distinguish between correctness tests, internal API tests, and
-> external API tests?
+If we don't want the deferred_qs, then the below patch also fixes the issue.
+However, I am more sure than not that it does not handle all cases (such as
+what if we previously had an expedited grace period IPI in a previous reader
+section and had to to defer processing. Then it seems a similar deadlock
+would present. But anyway, the below patch does fix it for me! It is based on
+your -rcu tree commit 23634ebc1d946f19eb112d4455c1d84948875e31 (rcu: Check
+for wakeup-safe conditions in rcu_read_unlock_special()).
 
-I would definitely recommend distingishing between all of these.
-Kernel API (or just call it API), UAPI, and correctness.
+---8<-----------------------
 
-> > This will come up later for other kunit tests and it would be great
-> > to set precendent so that other kunit tests can follow similar
-> > practices to ensure its clear what is API realted Vs correctness of
-> > intended functionality.
-> >
-> > In fact, I'm not yet sure if its possible to test public kernel API to
-> > userspace with kunit, but if it is possible... well, that could make
-> > linux-api folks happy as they could enable us to codify interpreation of
-> > what is expected into kunit test cases, and we'd ensure that the
-> > codified interpretation is not only documented in man pages but also
-> > through formal kunit test cases.
-> >
-> > A regression in linux-api then could be formalized through a proper
-> > kunit tests case. And if an API evolves, it would force developers to
-> > update the respective kunit which codifies that contract.
-> 
-> Yep, I think that is long term hope. Some of the file system interface
-> stuff that requires a filesystem to be mounted somewhere might get a
-> little weird/difficult, but I suspect we should be able to do it
-> eventually. I mean it's all just C code right? Should mostly boil down
-> to someone figuring out how to do it the first time.
+From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+Subject: [PATCH] Fix RCU recursive deadlock
 
-There used to be hacks in the kernel the call syscalls in a few places.
-This was cleaned up and addressed via Dominik Brodowski's series last
-year in March:
+Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+---
+ include/linux/sched.h    |  2 +-
+ kernel/rcu/tree_plugin.h | 17 +++++++++++++----
+ 2 files changed, 14 insertions(+), 5 deletions(-)
 
-http://lkml.kernel.org/r/20180325162527.GA17492@light.dominikbrodowski.net
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 942a44c1b8eb..347e6dfcc91b 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -565,7 +565,7 @@ union rcu_special {
+ 		u8			blocked;
+ 		u8			need_qs;
+ 		u8			exp_hint; /* Hint for performance. */
+-		u8			deferred_qs;
++		u8			pad;
+ 	} b; /* Bits. */
+ 	u32 s; /* Set of bits. */
+ };
+diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+index 75110ea75d01..5b9b12c1ba5c 100644
+--- a/kernel/rcu/tree_plugin.h
++++ b/kernel/rcu/tree_plugin.h
+@@ -455,7 +455,6 @@ rcu_preempt_deferred_qs_irqrestore(struct task_struct *t, unsigned long flags)
+ 		local_irq_restore(flags);
+ 		return;
+ 	}
+-	t->rcu_read_unlock_special.b.deferred_qs = false;
+ 	if (special.b.need_qs) {
+ 		rcu_qs();
+ 		t->rcu_read_unlock_special.b.need_qs = false;
+@@ -608,13 +607,24 @@ static void rcu_read_unlock_special(struct task_struct *t)
+ 	if (preempt_bh_were_disabled || irqs_were_disabled) {
+ 		t->rcu_read_unlock_special.b.exp_hint = false;
+ 		// Need to defer quiescent state until everything is enabled.
++
++		/* If unlock_special was called in the current reader section
++		 * just because we were blocked in a previous reader section,
++		 * then raising softirqs can deadlock. This is because the
++		 * scheduler executes RCU sections with preemption disabled,
++		 * however it may have previously blocked in a previous
++		 * non-scheduler reader section and .blocked got set.  It is
++		 * never safe to call unlock_special from the scheduler path
++		 * due to recursive wake ups (unless we are in_irq(), so
++		 * prevent this by checking if we were previously blocked.
++		 */
+ 		if (irqs_were_disabled && use_softirq &&
+-		    (in_irq() || !t->rcu_read_unlock_special.b.deferred_qs)) {
++		    (!t->rcu_read_unlock_special.b.blocked || in_irq())) {
+ 			// Using softirq, safe to awaken, and we get
+ 			// no help from enabling irqs, unlike bh/preempt.
+ 			raise_softirq_irqoff(RCU_SOFTIRQ);
+ 		} else if (irqs_were_disabled && !use_softirq &&
+-			   !t->rcu_read_unlock_special.b.deferred_qs) {
++			   !t->rcu_read_unlock_special.b.blocked) {
+ 			// Safe to awaken and we get no help from enabling
+ 			// irqs, unlike bh/preempt.
+ 			invoke_rcu_core();
+@@ -623,7 +633,6 @@ static void rcu_read_unlock_special(struct task_struct *t)
+ 			set_tsk_need_resched(current);
+ 			set_preempt_need_resched();
+ 		}
+-		t->rcu_read_unlock_special.b.deferred_qs = true;
+ 		local_irq_restore(flags);
+ 		return;
+ 	}
+-- 
+2.22.0.410.gd8fdbe21b5-goog
 
-An example commit: d300b610812f3 ("kernel: use kernel_wait4() instead of
-sys_wait4()").
-
-So it would seem the work is done, and you'd just have to use the
-respective exposed kernel_syscallname() calls, or add some if you
-want to test a specific syscall in kernel space.
-
-  Luis
