@@ -2,76 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BB89594FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 09:31:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C8D8459507
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 09:32:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726690AbfF1Hbd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 03:31:33 -0400
-Received: from mx2.suse.de ([195.135.220.15]:32908 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726426AbfF1Hbd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 03:31:33 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D3DF7B167;
-        Fri, 28 Jun 2019 07:31:30 +0000 (UTC)
-Date:   Fri, 28 Jun 2019 09:31:28 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>, linux-mm@kvack.org,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>
-Subject: Re: [PATCH 2/2] mm, slab: Extend vm/drop_caches to shrink kmem slabs
-Message-ID: <20190628073128.GC2751@dhcp22.suse.cz>
-References: <20190624174219.25513-1-longman@redhat.com>
- <20190624174219.25513-3-longman@redhat.com>
- <20190627151506.GE5303@dhcp22.suse.cz>
- <5cb05d2c-39a7-f138-b0b9-4b03d6008999@redhat.com>
+        id S1726650AbfF1HcW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 03:32:22 -0400
+Received: from lgeamrelo12.lge.com ([156.147.23.52]:41197 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726408AbfF1HcW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Jun 2019 03:32:22 -0400
+Received: from unknown (HELO lgeamrelo04.lge.com) (156.147.1.127)
+        by 156.147.23.52 with ESMTP; 28 Jun 2019 16:32:19 +0900
+X-Original-SENDERIP: 156.147.1.127
+X-Original-MAILFROM: byungchul.park@lge.com
+Received: from unknown (HELO X58A-UD3R) (10.177.222.33)
+        by 156.147.1.127 with ESMTP; 28 Jun 2019 16:32:19 +0900
+X-Original-SENDERIP: 10.177.222.33
+X-Original-MAILFROM: byungchul.park@lge.com
+Date:   Fri, 28 Jun 2019 16:31:38 +0900
+From:   Byungchul Park <byungchul.park@lge.com>
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
+Cc:     Scott Wood <swood@redhat.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        rcu <rcu@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>
+Subject: Re: [RFC] Deadlock via recursive wakeup via RCU with threadirqs
+Message-ID: <20190628073138.GB13650@X58A-UD3R>
+References: <20190627142436.GD215968@google.com>
+ <20190627103455.01014276@gandalf.local.home>
+ <20190627153031.GA249127@google.com>
+ <20190627155506.GU26519@linux.ibm.com>
+ <CAEXW_YSEN_OL3ftTLN=M-W70WSuCgHJqU-R9VhS=A3uVj_AL+A@mail.gmail.com>
+ <20190627173831.GW26519@linux.ibm.com>
+ <20190627181638.GA209455@google.com>
+ <20190627184107.GA26519@linux.ibm.com>
+ <13761fee4b71cc004ad0d6709875ce917ff28fce.camel@redhat.com>
+ <20190627203612.GD26519@linux.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5cb05d2c-39a7-f138-b0b9-4b03d6008999@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190627203612.GD26519@linux.ibm.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 27-06-19 17:16:04, Waiman Long wrote:
-> On 6/27/19 11:15 AM, Michal Hocko wrote:
-> > On Mon 24-06-19 13:42:19, Waiman Long wrote:
-> >> With the slub memory allocator, the numbers of active slab objects
-> >> reported in /proc/slabinfo are not real because they include objects
-> >> that are held by the per-cpu slab structures whether they are actually
-> >> used or not.  The problem gets worse the more CPUs a system have. For
-> >> instance, looking at the reported number of active task_struct objects,
-> >> one will wonder where all the missing tasks gone.
-> >>
-> >> I know it is hard and costly to get a real count of active objects.
-> > What exactly is expensive? Why cannot slabinfo reduce the number of
-> > active objects by per-cpu cached objects?
-> >
-> The number of cachelines that needs to be accessed in order to get an
-> accurate count will be much higher if we need to iterate through all the
-> per-cpu structures. In addition, accessing the per-cpu partial list will
-> be racy.
+On Thu, Jun 27, 2019 at 01:36:12PM -0700, Paul E. McKenney wrote:
+> On Thu, Jun 27, 2019 at 03:17:27PM -0500, Scott Wood wrote:
+> > On Thu, 2019-06-27 at 11:41 -0700, Paul E. McKenney wrote:
+> > > On Thu, Jun 27, 2019 at 02:16:38PM -0400, Joel Fernandes wrote:
+> > > > 
+> > > > I think the fix should be to prevent the wake-up not based on whether we
+> > > > are
+> > > > in hard/soft-interrupt mode but that we are doing the rcu_read_unlock()
+> > > > from
+> > > > a scheduler path (if we can detect that)
+> > > 
+> > > Or just don't do the wakeup at all, if it comes to that.  I don't know
+> > > of any way to determine whether rcu_read_unlock() is being called from
+> > > the scheduler, but it has been some time since I asked Peter Zijlstra
+> > > about that.
+> > > 
+> > > Of course, unconditionally refusing to do the wakeup might not be happy
+> > > thing for NO_HZ_FULL kernels that don't implement IRQ work.
+> > 
+> > Couldn't smp_send_reschedule() be used instead?
+> 
+> Good point.  If current -rcu doesn't fix things for Sebastian's case,
+> that would be well worth looking at.  But there must be some reason
+> why Peter Zijlstra didn't suggest it when he instead suggested using
+> the IRQ work approach.
+> 
+> Peter, thoughts?
 
-Why is all that a problem for a root only interface that should be used
-quite rarely (it is not something that you should be reading hundreds
-time per second, right)?
--- 
-Michal Hocko
-SUSE Labs
+Hello,
+
+Isn't the following scenario possible?
+
+The original code
+-----------------
+rcu_read_lock();
+...
+/* Experdite */
+WRITE_ONCE(t->rcu_read_unlock_special.b.exp_hint, true);
+...
+__rcu_read_unlock();
+	if (unlikely(READ_ONCE(t->rcu_read_unlock_special.s)))
+		rcu_read_unlock_special(t);
+			WRITE_ONCE(t->rcu_read_unlock_special.b.exp_hint, false);
+			rcu_preempt_deferred_qs_irqrestore(t, flags);
+		barrier();  /* ->rcu_read_unlock_special load before assign */
+		t->rcu_read_lock_nesting = 0;
+
+The reordered code by machine
+-----------------------------
+rcu_read_lock();
+...
+/* Experdite */
+WRITE_ONCE(t->rcu_read_unlock_special.b.exp_hint, true);
+...
+__rcu_read_unlock();
+	if (unlikely(READ_ONCE(t->rcu_read_unlock_special.s)))
+		rcu_read_unlock_special(t);
+		t->rcu_read_lock_nesting = 0; <--- LOOK AT THIS!!!
+			WRITE_ONCE(t->rcu_read_unlock_special.b.exp_hint, false);
+			rcu_preempt_deferred_qs_irqrestore(t, flags);
+		barrier();  /* ->rcu_read_unlock_special load before assign */
+
+An interrupt happens
+--------------------
+rcu_read_lock();
+...
+/* Experdite */
+WRITE_ONCE(t->rcu_read_unlock_special.b.exp_hint, true);
+...
+__rcu_read_unlock();
+	if (unlikely(READ_ONCE(t->rcu_read_unlock_special.s)))
+		rcu_read_unlock_special(t);
+		t->rcu_read_lock_nesting = 0; <--- LOOK AT THIS!!!
+<--- Handle an (any) irq
+	rcu_read_lock();
+	/* This call should be skipped */
+	rcu_read_unlock_special(t);
+			WRITE_ONCE(t->rcu_read_unlock_special.b.exp_hint, false);
+			rcu_preempt_deferred_qs_irqrestore(t, flags);
+		barrier();  /* ->rcu_read_unlock_special load before assign */
+
+We don't have to handle the special thing twice like this which is one
+reason to cause the problem even though another problem is of course to
+call ttwu w/o being aware it's within a context holding pi lock.
+
+Apart from the discussion about how to avoid ttwu in an improper
+condition, I think the following is necessary. I may have something
+missing. It would be appreciated if you let me know in case I'm wrong.
+
+Anyway, logically I think we should prevent reordering between
+t->rcu_read_lock_nesting and t->rcu_read_unlock_special.b.exp_hint not
+only by compiler but also by machine like the below.
+
+Do I miss something?
+
+Thanks,
+Byungchul
+
+---8<---
+diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+index 3c8444e..9b137f1 100644
+--- a/kernel/rcu/tree_plugin.h
++++ b/kernel/rcu/tree_plugin.h
+@@ -412,7 +412,13 @@ void __rcu_read_unlock(void)
+ 		barrier();  /* assign before ->rcu_read_unlock_special load */
+ 		if (unlikely(READ_ONCE(t->rcu_read_unlock_special.s)))
+ 			rcu_read_unlock_special(t);
+-		barrier();  /* ->rcu_read_unlock_special load before assign */
++		/*
++		 * Prevent reordering between clearing
++		 * t->rcu_reak_unlock_special in
++		 * rcu_read_unlock_special() and the following
++		 * assignment to t->rcu_read_lock_nesting.
++		 */
++		smp_wmb();
+ 		t->rcu_read_lock_nesting = 0;
+ 	}
+ 	if (IS_ENABLED(CONFIG_PROVE_LOCKING)) {
+
+
+
