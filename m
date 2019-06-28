@@ -2,109 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C6CE5A480
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 20:48:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E4D55A486
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 20:51:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726983AbfF1SsR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 14:48:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57298 "EHLO mail.kernel.org"
+        id S1726829AbfF1Sv4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 14:51:56 -0400
+Received: from verein.lst.de ([213.95.11.211]:40863 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726702AbfF1SsR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 14:48:17 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3C973208CB;
-        Fri, 28 Jun 2019 18:48:16 +0000 (UTC)
-Date:   Fri, 28 Jun 2019 14:48:14 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Eiichi Tsukata <devel@etsukata.com>
-Cc:     mingo@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tracing/snapshot: resize spare buffer if size changed
-Message-ID: <20190628144814.748460d0@gandalf.local.home>
-In-Reply-To: <20190625012910.13109-1-devel@etsukata.com>
-References: <20190625012910.13109-1-devel@etsukata.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726563AbfF1Svz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Jun 2019 14:51:55 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id EDD11227A81; Fri, 28 Jun 2019 20:51:52 +0200 (CEST)
+Date:   Fri, 28 Jun 2019 20:51:52 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Jason Gunthorpe <jgg@mellanox.com>, Christoph Hellwig <hch@lst.de>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH 16/25] device-dax: use the dev_pagemap internal refcount
+Message-ID: <20190628185152.GA9117@lst.de>
+References: <20190626122724.13313-1-hch@lst.de> <20190626122724.13313-17-hch@lst.de> <20190628153827.GA5373@mellanox.com> <CAPcyv4joSiFMeYq=D08C-QZSkHz0kRpvRfseNQWrN34Rrm+S7g@mail.gmail.com> <20190628170219.GA3608@mellanox.com> <CAPcyv4ja9DVL2zuxuSup8x3VOT_dKAOS8uBQweE9R81vnYRNWg@mail.gmail.com> <CAPcyv4iWTe=vOXUqkr_CguFrFRqgA7hJSt4J0B3RpuP-Okz0Vw@mail.gmail.com> <20190628182922.GA15242@mellanox.com> <CAPcyv4g+zk9pnLcj6Xvwh-svKM+w4hxfYGikcmuoBAFGCr-HAw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4g+zk9pnLcj6Xvwh-svKM+w4hxfYGikcmuoBAFGCr-HAw@mail.gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 25 Jun 2019 10:29:10 +0900
-Eiichi Tsukata <devel@etsukata.com> wrote:
+On Fri, Jun 28, 2019 at 11:44:35AM -0700, Dan Williams wrote:
+> There is a problem with the series in CH's tree. It removes the
+> ->page_free() callback from the release_pages() path because it goes
+> too far and removes the put_devmap_managed_page() call.
 
-> Current snapshot implementation swaps two ring_buffers even though their
-> sizes are different from each other, that can cause an inconsistency
-> between the contents of buffer_size_kb file and the current buffer size.
-> 
-> For example:
-> 
->   # cat buffer_size_kb
->   7 (expanded: 1408)
->   # echo 1 > events/enable
->   # grep bytes per_cpu/cpu0/stats
->   bytes: 1441020
->   # echo 1 > snapshot             // current:1408, spare:1408
->   # echo 123 > buffer_size_kb     // current:123,  spare:1408
->   # echo 1 > snapshot             // current:1408, spare:123
->   # grep bytes per_cpu/cpu0/stats
->   bytes: 1443700
->   # cat buffer_size_kb
->   123                             // != current:1408
-> 
-> And also, a similar per-cpu case hits the following WARNING:
-> 
-> Reproducer:
-> 
->   # echo 1 > per_cpu/cpu0/snapshot
->   # echo 123 > buffer_size_kb
->   # echo 1 > per_cpu/cpu0/snapshot
-> 
-> WARNING:
-> 
->   WARNING: CPU: 0 PID: 1946 at kernel/trace/trace.c:1607 update_max_tr_single.part.0+0x2b8/0x380
->   Modules linked in:
->   CPU: 0 PID: 1946 Comm: bash Not tainted 5.2.0-rc6 #20
->   Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.12.0-2.fc30 04/01/2014
->   RIP: 0010:update_max_tr_single.part.0+0x2b8/0x380
->   Code: ff e8 dc da f9 ff 0f 0b e9 88 fe ff ff e8 d0 da f9 ff 44 89 ee bf f5 ff ff ff e8 33 dc f9 ff 41 83 fd f5 74 96 e8 b8 da f9 ff <0f> 0b eb 8d e8 af da f9 ff 0f 0b e9 bf fd ff ff e8 a3 da f9 ff 48
->   RSP: 0018:ffff888063e4fca0 EFLAGS: 00010093
->   RAX: ffff888066214380 RBX: ffffffff99850fe0 RCX: ffffffff964298a8
->   RDX: 0000000000000000 RSI: 00000000fffffff5 RDI: 0000000000000005
->   RBP: 1ffff1100c7c9f96 R08: ffff888066214380 R09: ffffed100c7c9f9b
->   R10: ffffed100c7c9f9a R11: 0000000000000003 R12: 0000000000000000
->   R13: 00000000ffffffea R14: ffff888066214380 R15: ffffffff99851060
->   FS:  00007f9f8173c700(0000) GS:ffff88806d000000(0000) knlGS:0000000000000000
->   CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->   CR2: 0000000000714dc0 CR3: 0000000066fa6000 CR4: 00000000000006f0
->   Call Trace:
->    ? trace_array_printk_buf+0x140/0x140
->    ? __mutex_lock_slowpath+0x10/0x10
->    tracing_snapshot_write+0x4c8/0x7f0
->    ? trace_printk_init_buffers+0x60/0x60
->    ? selinux_file_permission+0x3b/0x540
->    ? tracer_preempt_off+0x38/0x506
->    ? trace_printk_init_buffers+0x60/0x60
->    __vfs_write+0x81/0x100
->    vfs_write+0x1e1/0x560
->    ksys_write+0x126/0x250
->    ? __ia32_sys_read+0xb0/0xb0
->    ? do_syscall_64+0x1f/0x390
->    do_syscall_64+0xc1/0x390
->    entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> 
-> This patch adds resize_buffer_duplicate_size() to check if there is a
-> difference between current/spare buffer sizes and resize a spare buffer
-> if necessary.
-> 
-> Signed-off-by: Eiichi Tsukata <devel@etsukata.com>
->
-
-Applied, thanks Eiichi!
-
--- Steve
-
-
+release_pages only called put_devmap_managed_page for device public
+pages.  So I can't see how that is in any way a problem.
