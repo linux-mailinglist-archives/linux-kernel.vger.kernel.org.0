@@ -2,70 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60BE55949A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 09:10:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D19B5949D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 09:11:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727287AbfF1HKz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 03:10:55 -0400
-Received: from mx2.suse.de ([195.135.220.15]:57106 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726574AbfF1HKy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 03:10:54 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A3B15B16F;
-        Fri, 28 Jun 2019 07:10:51 +0000 (UTC)
-Date:   Fri, 28 Jun 2019 09:10:49 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>, linux-mm@kvack.org,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>
-Subject: Re: [PATCH 1/2] mm, memcontrol: Add memcg_iterate_all()
-Message-ID: <20190628071049.GA2751@dhcp22.suse.cz>
-References: <20190624174219.25513-1-longman@redhat.com>
- <20190624174219.25513-2-longman@redhat.com>
- <20190627150746.GD5303@dhcp22.suse.cz>
- <2213070d-34c3-4f40-d780-ac371a9cbbbe@redhat.com>
+        id S1727325AbfF1HLE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 03:11:04 -0400
+Received: from verein.lst.de ([213.95.11.210]:45762 "EHLO newverein.lst.de"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726574AbfF1HLD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Jun 2019 03:11:03 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id 8945268CFE; Fri, 28 Jun 2019 09:11:00 +0200 (CEST)
+Date:   Fri, 28 Jun 2019 09:11:00 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        linux-nvme@lists.infradead.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] nvme-trace: fix spelling mistake "spcecific" ->
+ "specific"
+Message-ID: <20190628071100.GE28268@lst.de>
+References: <20190626124323.5925-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2213070d-34c3-4f40-d780-ac371a9cbbbe@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190626124323.5925-1-colin.king@canonical.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 27-06-19 17:03:06, Waiman Long wrote:
-> On 6/27/19 11:07 AM, Michal Hocko wrote:
-> > On Mon 24-06-19 13:42:18, Waiman Long wrote:
-> >> Add a memcg_iterate_all() function for iterating all the available
-> >> memory cgroups and call the given callback function for each of the
-> >> memory cgruops.
-> > Why is a trivial wrapper any better than open coded usage of the
-> > iterator?
-> 
-> Because the iterator is only defined within memcontrol.c. So an
-> alternative may be to put the iterator into a header file that can be
-> used by others. Will take a look at that.
+Thanks,
 
-That would be preferred.
-
-Thanks!
--- 
-Michal Hocko
-SUSE Labs
+applied to nvme-5.3.
