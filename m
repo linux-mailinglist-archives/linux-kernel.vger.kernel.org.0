@@ -2,275 +2,221 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E38759F18
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 17:44:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ACF5359F22
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 17:44:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726921AbfF1PoH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 11:44:07 -0400
-Received: from asavdk3.altibox.net ([109.247.116.14]:33727 "EHLO
-        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726657AbfF1PoD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 11:44:03 -0400
-Received: from ravnborg.org (unknown [158.248.194.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726970AbfF1PoY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 11:44:24 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:44003 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726657AbfF1PoX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Jun 2019 11:44:23 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by asavdk3.altibox.net (Postfix) with ESMTPS id 97FC720022;
-        Fri, 28 Jun 2019 17:43:52 +0200 (CEST)
-Date:   Fri, 28 Jun 2019 17:43:49 +0200
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-kbuild@vger.kernel.org, Jani Nikula <jani.nikula@intel.com>,
-        Song Liu <songliubraving@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>, netdev@vger.kernel.org,
-        Yonghong Song <yhs@fb.com>, linux-kernel@vger.kernel.org,
-        linux-riscv@lists.infradead.org,
-        Michal Marek <michal.lkml@markovi.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Palmer Dabbelt <palmer@sifive.com>, bpf@vger.kernel.org,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Albert Ou <aou@eecs.berkeley.edu>
-Subject: Re: [PATCH v3 1/4] kbuild: compile-test UAPI headers to ensure they
- are self-contained
-Message-ID: <20190628154349.GA12826@ravnborg.org>
-References: <20190627163903.28398-1-yamada.masahiro@socionext.com>
- <20190627163903.28398-2-yamada.masahiro@socionext.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id CA3D530C319F;
+        Fri, 28 Jun 2019 15:44:22 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-219.rdu2.redhat.com [10.10.120.219])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 40CF8608D0;
+        Fri, 28 Jun 2019 15:43:56 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH 02/11] fsinfo: Add syscalls to other arches [ver #15]
+From:   David Howells <dhowells@redhat.com>
+To:     viro@zeniv.linux.org.uk
+Cc:     dhowells@redhat.com, raven@themaw.net, mszeredi@redhat.com,
+        christian@brauner.io, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 28 Jun 2019 16:43:56 +0100
+Message-ID: <156173663623.14042.2521085650951014036.stgit@warthog.procyon.org.uk>
+In-Reply-To: <156173661696.14042.17822154531324224780.stgit@warthog.procyon.org.uk>
+References: <156173661696.14042.17822154531324224780.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190627163903.28398-2-yamada.masahiro@socionext.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=dqr19Wo4 c=1 sm=1 tr=0
-        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=7gkXJVJtAAAA:8
-        a=VwQbUJbxAAAA:8 a=c-n4J4-pAAAA:8 a=Z0GOsA-a0XePTZBfY68A:9
-        a=EPyczOORS10Pyz25:21 a=NOQbmmdwHI87PwOY:21 a=CjuIK1q_8ugA:10
-        a=fqMFh-b0cAUA:10 a=E9Po1WZjFZOl8hwRPBS3:22 a=AjGcO6oz07-iQ99wixmX:22
-        a=L0NDqeB7ZLmQzAogN4cw:22
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Fri, 28 Jun 2019 15:44:22 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Masahiro.
+Add the fsinfo syscall to the other arches.
 
-On Fri, Jun 28, 2019 at 01:38:59AM +0900, Masahiro Yamada wrote:
-> Multiple people have suggested compile-testing UAPI headers to ensure
-> they can be really included from user-space. "make headers_check" is
-> obviously not enough to catch bugs, and we often leak references to
-> kernel-space definition to user-space.
-> 
-> Use the new header-test-y syntax to implement it. Please note exported
-> headers are compile-tested with a completely different set of compiler
-> flags. The header search path is set to $(objtree)/usr/include since
-> exported headers should not include unexported ones.
+Signed-off-by: David Howells <dhowells@redhat.com>
+---
 
-This patchset introduce a new set of tests for uapi headers.
-Can we somehow consolidate so we have only one way to verify the uapi
-headers?
-It can be confusing for users that they see errors from testing the
-uapi headers during normal build and a new class or error if they
-run a "make headers_check" sometimes later.
+ arch/alpha/kernel/syscalls/syscall.tbl      |    1 +
+ arch/arm/tools/syscall.tbl                  |    1 +
+ arch/arm64/include/asm/unistd.h             |    2 +-
+ arch/arm64/include/asm/unistd32.h           |    2 +-
+ arch/ia64/kernel/syscalls/syscall.tbl       |    1 +
+ arch/m68k/kernel/syscalls/syscall.tbl       |    1 +
+ arch/microblaze/kernel/syscalls/syscall.tbl |    1 +
+ arch/mips/kernel/syscalls/syscall_n32.tbl   |    1 +
+ arch/mips/kernel/syscalls/syscall_n64.tbl   |    1 +
+ arch/mips/kernel/syscalls/syscall_o32.tbl   |    1 +
+ arch/parisc/kernel/syscalls/syscall.tbl     |    1 +
+ arch/powerpc/kernel/syscalls/syscall.tbl    |    1 +
+ arch/s390/kernel/syscalls/syscall.tbl       |    1 +
+ arch/sh/kernel/syscalls/syscall.tbl         |    1 +
+ arch/sparc/kernel/syscalls/syscall.tbl      |    1 +
+ arch/xtensa/kernel/syscalls/syscall.tbl     |    1 +
+ 16 files changed, 16 insertions(+), 2 deletions(-)
 
-This can be a next step to consolidate this.
-With the suggestions below considered you can add my:
-Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
+diff --git a/arch/alpha/kernel/syscalls/syscall.tbl b/arch/alpha/kernel/syscalls/syscall.tbl
+index 9e7704e44f6d..624d01c3c8eb 100644
+--- a/arch/alpha/kernel/syscalls/syscall.tbl
++++ b/arch/alpha/kernel/syscalls/syscall.tbl
+@@ -473,3 +473,4 @@
+ 541	common	fsconfig			sys_fsconfig
+ 542	common	fsmount				sys_fsmount
+ 543	common	fspick				sys_fspick
++544	common	fsinfo				sys_fsinfo
+diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
+index aaf479a9e92d..ad608b49808c 100644
+--- a/arch/arm/tools/syscall.tbl
++++ b/arch/arm/tools/syscall.tbl
+@@ -447,3 +447,4 @@
+ 431	common	fsconfig			sys_fsconfig
+ 432	common	fsmount				sys_fsmount
+ 433	common	fspick				sys_fspick
++434	common	fsinfo				sys_fsinfo
+diff --git a/arch/arm64/include/asm/unistd.h b/arch/arm64/include/asm/unistd.h
+index 70e6882853c0..e8f7d95a1481 100644
+--- a/arch/arm64/include/asm/unistd.h
++++ b/arch/arm64/include/asm/unistd.h
+@@ -44,7 +44,7 @@
+ #define __ARM_NR_compat_set_tls		(__ARM_NR_COMPAT_BASE + 5)
+ #define __ARM_NR_COMPAT_END		(__ARM_NR_COMPAT_BASE + 0x800)
+ 
+-#define __NR_compat_syscalls		434
++#define __NR_compat_syscalls		435
+ #endif
+ 
+ #define __ARCH_WANT_SYS_CLONE
+diff --git a/arch/arm64/include/asm/unistd32.h b/arch/arm64/include/asm/unistd32.h
+index c39e90600bb3..52d0c148b557 100644
+--- a/arch/arm64/include/asm/unistd32.h
++++ b/arch/arm64/include/asm/unistd32.h
+@@ -884,7 +884,7 @@ __SYSCALL(__NR_fsopen, sys_fsopen)
+ __SYSCALL(__NR_fsconfig, sys_fsconfig)
+ #define __NR_fsmount 432
+ __SYSCALL(__NR_fsmount, sys_fsmount)
+-#define __NR_fspick 433
++#define __NR_fspick 434
+ __SYSCALL(__NR_fspick, sys_fspick)
+ 
+ /*
+diff --git a/arch/ia64/kernel/syscalls/syscall.tbl b/arch/ia64/kernel/syscalls/syscall.tbl
+index e01df3f2f80d..68314763ad16 100644
+--- a/arch/ia64/kernel/syscalls/syscall.tbl
++++ b/arch/ia64/kernel/syscalls/syscall.tbl
+@@ -354,3 +354,4 @@
+ 431	common	fsconfig			sys_fsconfig
+ 432	common	fsmount				sys_fsmount
+ 433	common	fspick				sys_fspick
++434	common	fsinfo				sys_fsinfo
+diff --git a/arch/m68k/kernel/syscalls/syscall.tbl b/arch/m68k/kernel/syscalls/syscall.tbl
+index 7e3d0734b2f3..ee73a7534b1b 100644
+--- a/arch/m68k/kernel/syscalls/syscall.tbl
++++ b/arch/m68k/kernel/syscalls/syscall.tbl
+@@ -433,3 +433,4 @@
+ 431	common	fsconfig			sys_fsconfig
+ 432	common	fsmount				sys_fsmount
+ 433	common	fspick				sys_fspick
++434	common	fsinfo				sys_fsinfo
+diff --git a/arch/microblaze/kernel/syscalls/syscall.tbl b/arch/microblaze/kernel/syscalls/syscall.tbl
+index 26339e417695..7bc067f4b713 100644
+--- a/arch/microblaze/kernel/syscalls/syscall.tbl
++++ b/arch/microblaze/kernel/syscalls/syscall.tbl
+@@ -439,3 +439,4 @@
+ 431	common	fsconfig			sys_fsconfig
+ 432	common	fsmount				sys_fsmount
+ 433	common	fspick				sys_fspick
++434	common	fsinfo				sys_fsinfo
+diff --git a/arch/mips/kernel/syscalls/syscall_n32.tbl b/arch/mips/kernel/syscalls/syscall_n32.tbl
+index 0e2dd68ade57..29b76bd67cc0 100644
+--- a/arch/mips/kernel/syscalls/syscall_n32.tbl
++++ b/arch/mips/kernel/syscalls/syscall_n32.tbl
+@@ -372,3 +372,4 @@
+ 431	n32	fsconfig			sys_fsconfig
+ 432	n32	fsmount				sys_fsmount
+ 433	n32	fspick				sys_fspick
++434	n32	fsinfo				sys_fsinfo
+diff --git a/arch/mips/kernel/syscalls/syscall_n64.tbl b/arch/mips/kernel/syscalls/syscall_n64.tbl
+index 5eebfa0d155c..349fb30bb8b5 100644
+--- a/arch/mips/kernel/syscalls/syscall_n64.tbl
++++ b/arch/mips/kernel/syscalls/syscall_n64.tbl
+@@ -348,3 +348,4 @@
+ 431	n64	fsconfig			sys_fsconfig
+ 432	n64	fsmount				sys_fsmount
+ 433	n64	fspick				sys_fspick
++434	n64	fsinfo				sys_fsinfo
+diff --git a/arch/mips/kernel/syscalls/syscall_o32.tbl b/arch/mips/kernel/syscalls/syscall_o32.tbl
+index 3cc1374e02d0..71057426b503 100644
+--- a/arch/mips/kernel/syscalls/syscall_o32.tbl
++++ b/arch/mips/kernel/syscalls/syscall_o32.tbl
+@@ -421,3 +421,4 @@
+ 431	o32	fsconfig			sys_fsconfig
+ 432	o32	fsmount				sys_fsmount
+ 433	o32	fspick				sys_fspick
++434	o32	fsinfo				sys_fsinfo
+diff --git a/arch/parisc/kernel/syscalls/syscall.tbl b/arch/parisc/kernel/syscalls/syscall.tbl
+index c9e377d59232..32cff48a1ebd 100644
+--- a/arch/parisc/kernel/syscalls/syscall.tbl
++++ b/arch/parisc/kernel/syscalls/syscall.tbl
+@@ -430,3 +430,4 @@
+ 431	common	fsconfig			sys_fsconfig
+ 432	common	fsmount				sys_fsmount
+ 433	common	fspick				sys_fspick
++434	common	fsinfo				sys_fsinfo
+diff --git a/arch/powerpc/kernel/syscalls/syscall.tbl b/arch/powerpc/kernel/syscalls/syscall.tbl
+index 103655d84b4b..e5755eb6fb84 100644
+--- a/arch/powerpc/kernel/syscalls/syscall.tbl
++++ b/arch/powerpc/kernel/syscalls/syscall.tbl
+@@ -515,3 +515,4 @@
+ 431	common	fsconfig			sys_fsconfig
+ 432	common	fsmount				sys_fsmount
+ 433	common	fspick				sys_fspick
++434	common	fsinfo				sys_fsinfo
+diff --git a/arch/s390/kernel/syscalls/syscall.tbl b/arch/s390/kernel/syscalls/syscall.tbl
+index e822b2964a83..bcd54116e107 100644
+--- a/arch/s390/kernel/syscalls/syscall.tbl
++++ b/arch/s390/kernel/syscalls/syscall.tbl
+@@ -436,3 +436,4 @@
+ 431  common	fsconfig		sys_fsconfig			sys_fsconfig
+ 432  common	fsmount			sys_fsmount			sys_fsmount
+ 433  common	fspick			sys_fspick			sys_fspick
++434	common	fsinfo			sys_fsinfo			sys_fsinfo
+diff --git a/arch/sh/kernel/syscalls/syscall.tbl b/arch/sh/kernel/syscalls/syscall.tbl
+index 016a727d4357..0320a5c63cbd 100644
+--- a/arch/sh/kernel/syscalls/syscall.tbl
++++ b/arch/sh/kernel/syscalls/syscall.tbl
+@@ -436,3 +436,4 @@
+ 431	common	fsconfig			sys_fsconfig
+ 432	common	fsmount				sys_fsmount
+ 433	common	fspick				sys_fspick
++434	common	fsinfo				sys_fsinfo
+diff --git a/arch/sparc/kernel/syscalls/syscall.tbl b/arch/sparc/kernel/syscalls/syscall.tbl
+index e047480b1605..f81b1f9402bd 100644
+--- a/arch/sparc/kernel/syscalls/syscall.tbl
++++ b/arch/sparc/kernel/syscalls/syscall.tbl
+@@ -479,3 +479,4 @@
+ 431	common	fsconfig			sys_fsconfig
+ 432	common	fsmount				sys_fsmount
+ 433	common	fspick				sys_fspick
++434	common	fsinfo				sys_fsinfo
+diff --git a/arch/xtensa/kernel/syscalls/syscall.tbl b/arch/xtensa/kernel/syscalls/syscall.tbl
+index 5fa0ee1c8e00..729795148850 100644
+--- a/arch/xtensa/kernel/syscalls/syscall.tbl
++++ b/arch/xtensa/kernel/syscalls/syscall.tbl
+@@ -404,3 +404,4 @@
+ 431	common	fsconfig			sys_fsconfig
+ 432	common	fsmount				sys_fsmount
+ 433	common	fspick				sys_fspick
++434	common	fsinfo				sys_fsinfo
 
-> 
-> We use -std=gnu89 for the kernel space since the kernel code highly
-> depends on GNU extensions. On the other hand, UAPI headers should be
-> written in more standardized C, so they are compiled with -std=c90.
-> This will emit errors if C++ style comments, the keyword 'inline', etc.
-> are used. Please use C style comments (/* ... */), '__inline__', etc.
-> in UAPI headers.
-> 
-> There is additional compiler requirement to enable this test because
-> many of UAPI headers include <stdlib.h>, <sys/ioctl.h>, <sys/time.h>,
-> etc. directly or indirectly. You cannot use kernel.org pre-built
-> toolchains [1] since they lack <stdlib.h>.
-> 
-> I added scripts/cc-system-headers.sh to check the system header
-> availability, which CONFIG_UAPI_HEADER_TEST depends on.
-> 
-> For now, a lot of headers need to be excluded because they cannot
-> be compiled standalone, but this is a good start point.
-> 
-> [1] https://mirrors.edge.kernel.org/pub/tools/crosstool/index.html
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
-> 
-> Changes in v3: None
-> Changes in v2:
->  - Add CONFIG_CPU_{BIG,LITTLE}_ENDIAN guard to avoid build error
->  - Use 'header-test-' instead of 'no-header-test'
->  - Avoid weird 'find' warning when cleaning
-> 
->  Makefile                     |   2 +-
->  init/Kconfig                 |  11 +++
->  scripts/cc-system-headers.sh |   8 +++
->  usr/.gitignore               |   1 -
->  usr/Makefile                 |   2 +
->  usr/include/.gitignore       |   3 +
->  usr/include/Makefile         | 134 +++++++++++++++++++++++++++++++++++
->  7 files changed, 159 insertions(+), 2 deletions(-)
->  create mode 100755 scripts/cc-system-headers.sh
->  create mode 100644 usr/include/.gitignore
->  create mode 100644 usr/include/Makefile
-> 
-> diff --git a/Makefile b/Makefile
-> index 1f35aca4fe05..f23516980796 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -1363,7 +1363,7 @@ CLEAN_DIRS  += $(MODVERDIR) include/ksym
->  CLEAN_FILES += modules.builtin.modinfo
->  
->  # Directories & files removed with 'make mrproper'
-> -MRPROPER_DIRS  += include/config usr/include include/generated          \
-> +MRPROPER_DIRS  += include/config include/generated          \
->  		  arch/$(SRCARCH)/include/generated .tmp_objdiff
->  MRPROPER_FILES += .config .config.old .version \
->  		  Module.symvers tags TAGS cscope* GPATH GTAGS GRTAGS GSYMS \
-> diff --git a/init/Kconfig b/init/Kconfig
-> index df5bba27e3fe..667d68e1cdf4 100644
-> --- a/init/Kconfig
-> +++ b/init/Kconfig
-> @@ -105,6 +105,17 @@ config HEADER_TEST
->  	  If you are a developer or tester and want to ensure the requested
->  	  headers are self-contained, say Y here. Otherwise, choose N.
->  
-> +config UAPI_HEADER_TEST
-> +	bool "Compile test UAPI headers"
-> +	depends on HEADER_TEST && HEADERS_INSTALL
-> +	depends on $(success,$(srctree)/scripts/cc-system-headers.sh $(CC))
-> +	help
-> +	  Compile test headers exported to user-space to ensure they are
-> +	  self-contained, i.e. compilable as standalone units.
-> +
-> +	  If you are a developer or tester and want to ensure the exported
-> +	  headers are self-contained, say Y here. Otherwise, choose N.
-> +
->  config LOCALVERSION
->  	string "Local version - append to kernel release"
->  	help
-> diff --git a/scripts/cc-system-headers.sh b/scripts/cc-system-headers.sh
-> new file mode 100755
-> index 000000000000..1b3db369828c
-> --- /dev/null
-> +++ b/scripts/cc-system-headers.sh
-> @@ -0,0 +1,8 @@
-> +#!/bin/sh
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +
-> +cat << "END" | $@ -E -x c - -o /dev/null >/dev/null 2>&1
-> +#include <stdlib.h>
-> +#include <sys/ioctl.h>
-> +#include <sys/time.h>
-> +END
-
-Add comment to this file that explains that it is used to verify that the
-toolchain provides the minimal set of header-files required by uapi
-headers.
-
-> diff --git a/usr/.gitignore b/usr/.gitignore
-> index 8e48117a3f3d..be5eae1df7eb 100644
-> --- a/usr/.gitignore
-> +++ b/usr/.gitignore
-> @@ -7,4 +7,3 @@ initramfs_data.cpio.gz
->  initramfs_data.cpio.bz2
->  initramfs_data.cpio.lzma
->  initramfs_list
-> -include
-> diff --git a/usr/Makefile b/usr/Makefile
-> index 4a70ae43c9cb..6a89eb019275 100644
-> --- a/usr/Makefile
-> +++ b/usr/Makefile
-> @@ -56,3 +56,5 @@ $(deps_initramfs): klibcdirs
->  $(obj)/$(datafile_y): $(obj)/gen_init_cpio $(deps_initramfs) klibcdirs
->  	$(Q)$(initramfs) -l $(ramfs-input) > $(obj)/$(datafile_d_y)
->  	$(call if_changed,initfs)
-> +
-> +subdir-$(CONFIG_UAPI_HEADER_TEST) += include
-> diff --git a/usr/include/.gitignore b/usr/include/.gitignore
-> new file mode 100644
-> index 000000000000..a0991ff4402b
-> --- /dev/null
-> +++ b/usr/include/.gitignore
-> @@ -0,0 +1,3 @@
-> +*
-> +!.gitignore
-> +!Makefile
-> diff --git a/usr/include/Makefile b/usr/include/Makefile
-> new file mode 100644
-> index 000000000000..58ce96fa1701
-> --- /dev/null
-> +++ b/usr/include/Makefile
-> @@ -0,0 +1,134 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +
-> +# Unlike the kernel space, uapi headers are written in standard C.
-> +#  - Forbid C++ style comments
-> +#  - Use '__inline__', '__asm__' instead of 'inline', 'asm'
-> +#
-> +# -std=c90 (equivalent to -ansi) catches the violation of those.
-> +# We cannot go as far as adding -Wpedantic since it emits too many warnings.
-> +#
-> +# REVISIT: re-consider the proper set of compiler flags for uapi compile-test.
-> +
-> +UAPI_CFLAGS := -std=c90 -Wall -Werror=implicit-function-declaration
-> +
-> +override c_flags = $(UAPI_CFLAGS) -Wp,-MD,$(depfile) -I$(objtree)/usr/include
-> +
-> +# The following are excluded for now because they fail to build.
-> +# The cause of errors are mostly missing include directives.
-> +# Check one by one, and send a patch to each subsystem.
-> +#
-> +# Do not add a new header to the blacklist without legitimate reason.
-> +# Please consider to fix the header first.
-
-Maybe add comment that the alphabetical sort by filename must be preserved.
-Not too relevant, as we hopefully do not see files being added.
-
-> +header-test- += asm/ipcbuf.h
-> +header-test- += asm/msgbuf.h
-Consider same syntax like in include/Makefile where you use
-header-test-<tab><tab>...+= file
-
-Then the alignment looks betters.
-
-> +header-test- += asm/sembuf.h
-> +header-test- += asm/shmbuf.h
-> +header-test- += asm/signal.h
-> +header-test- += asm/ucontext.h
-> +header-test- += drm/vmwgfx_drm.h
-> +header-test- += linux/am437x-vpfe.h
-> +header-test- += linux/android/binderfs.h
-> +header-test- += linux/android/binder.h
-> +header-test-$(CONFIG_CPU_BIG_ENDIAN) += linux/byteorder/big_endian.h
-> +header-test-$(CONFIG_CPU_LITTLE_ENDIAN) += linux/byteorder/little_endian.h
-> +header-test- += linux/coda.h
-...
-List is shorter than I feared. Seems quite doable to get down to a
-small number of files.
-
-> +
-> +# more headers are broken in some architectures
-> +
-> +ifeq ($(SRCARCH),arc)
-> +header-test- += linux/bpf_perf_event.h
-> +endif
-Again a manageable number.
-
-> +
-> +
-> +# asm-generic/*.h is used by asm/*.h, and should not be included directly
-> +header-test- += asm-generic/%
-> +
-> +# The rest are compile-tested
-> +header-test-y += $(filter-out $(header-test-), \
-> +			$(patsubst $(obj)/%,%, $(wildcard \
-> +			$(addprefix $(obj)/, *.h */*.h */*/*.h */*/*/*.h))))
-Could you use header-test-pattern-y here?
-
-	Sam
