@@ -2,298 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AD1A59E39
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 16:51:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5EAF59E3E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 16:54:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726860AbfF1Ovo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 10:51:44 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:37756 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726655AbfF1Ovo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 10:51:44 -0400
-Received: by mail-pg1-f193.google.com with SMTP id g15so797210pgi.4;
-        Fri, 28 Jun 2019 07:51:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vrM3FvmBCbPYQ2NinJ38ellKrJziDThKo2p7l1cubIc=;
-        b=Evisap28no3DoZp+1blRLNe/MsMHoJrcwrgHTfdfp8oS5fsRkJ+KCBzFA7qBqE0Vc2
-         rVf1InKKJ6mTno89RnaySGqORWzBsExbN9/5+xxNgPnxdchEtV+hmVTHqnbC2H0odcrS
-         +8RdOGBo2M99nXQA19y3EbKotHiIm8swiSpulOqAQvUOo62V3qhRBPgydoVsFAOdybJd
-         osWRDmY1U65BlvffsjIuQGkWYAaKwenpQv+SMrp/VVseg/aZMBXeT6dji5hgNQzuF4hU
-         mxNnPJsiHvs+D3DTs6J8cJrmKQ8GpMOkA2AzaJfDsSRDjYDIL8lAI4PDIa+HplkEqJ2A
-         lV6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vrM3FvmBCbPYQ2NinJ38ellKrJziDThKo2p7l1cubIc=;
-        b=uKpV4XLickvpSocqv9YbQBU3xnSn9I4vU5EAGRfoEn0m5zLyIizzlfC6yQcIwcBaSH
-         6ygu9nD5mQQg5GnuR56wp6NHLOLkUf+E+supAfLl0G24/i1m4UwwODB5cvQD6fieBpRg
-         HkLrfB7hBQZl/ajtWvBCSydZAlARdKM/R4UgBZkGK+VJBG9Hj8YMpbBjyiqhYPa2cMG8
-         cAYuJ2CvAU3/90z94WX12Nj4Uk3HpIM68F/xYDsf3uPAC5lIrE47r0cfa/vvax+dSq2M
-         CxOf0SnB5totGnLExohmDYjJvHIHnf9eRf7ExlCt+uCfDEGVXZaSb8fKsg7Gw4nmRAs1
-         BF2g==
-X-Gm-Message-State: APjAAAWPvRNyFFf6ImFLREiTKQVL45Dr6+TPsvtPpzv7XrC9KD9yH7x2
-        raUAvsEFDvYz4DMm0lmx844eaKBNHkf4DYlIy/k=
-X-Google-Smtp-Source: APXvYqzHLJIE8Yt/TpTlK9owcdKJsXTjlr5IAE1/te81nDAdbtjpqFSCX9d6vfvsxsCEpaRj3456gIxXkyusfGx9XwI=
-X-Received: by 2002:a63:f346:: with SMTP id t6mr10077691pgj.203.1561733503232;
- Fri, 28 Jun 2019 07:51:43 -0700 (PDT)
+        id S1726770AbfF1OyS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 10:54:18 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:54580 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726616AbfF1OyS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Jun 2019 10:54:18 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5AEB6C057F88;
+        Fri, 28 Jun 2019 14:54:15 +0000 (UTC)
+Received: from krava (unknown [10.43.17.81])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 396295D704;
+        Fri, 28 Jun 2019 14:54:06 +0000 (UTC)
+Date:   Fri, 28 Jun 2019 16:54:06 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     John Garry <john.garry@huawei.com>
+Cc:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, namhyung@kernel.org,
+        tmricht@linux.ibm.com, brueckner@linux.ibm.com,
+        kan.liang@linux.intel.com, ben@decadent.org.uk,
+        mathieu.poirier@linaro.org, mark.rutland@arm.com,
+        will.deacon@arm.com, linux-kernel@vger.kernel.org,
+        linuxarm@huawei.com, linux-arm-kernel@lists.infradead.org,
+        zhangshaokun@hisilicon.com, ak@linux.intel.com
+Subject: Re: [PATCH v3 0/4] Perf uncore PMU event alias support for Hisi
+ hip08 ARM64 platform
+Message-ID: <20190628145406.GA22863@krava>
+References: <1561732552-143038-1-git-send-email-john.garry@huawei.com>
 MIME-Version: 1.0
-References: <cover.1561724493.git.mchehab+samsung@kernel.org> <f5c35189e421a5fa02075d611f58506bffe77028.1561724493.git.mchehab+samsung@kernel.org>
-In-Reply-To: <f5c35189e421a5fa02075d611f58506bffe77028.1561724493.git.mchehab+samsung@kernel.org>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Fri, 28 Jun 2019 17:51:32 +0300
-Message-ID: <CAHp75VeJy2qEakb5Eag0MV7zuao0aHQCVu6ZMMZpy1JnZDJjYw@mail.gmail.com>
-Subject: Re: [PATCH 17/39] docs: admin-guide: add laptops documentation
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Matan Ziv-Av <matan@svgalib.org>,
-        Mattia Dongili <malattia@linux.it>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1561732552-143038-1-git-send-email-john.garry@huawei.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Fri, 28 Jun 2019 14:54:17 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 28, 2019 at 3:30 PM Mauro Carvalho Chehab
-<mchehab+samsung@kernel.org> wrote:
->
-> The docs under Documentation/laptops contain users specific
-> information.
->
+On Fri, Jun 28, 2019 at 10:35:48PM +0800, John Garry wrote:
+> This patchset adds support for uncore PMU event aliasing for HiSilicon
+> hip08 ARM64 platform.
+> 
+> We can now get proper event description for uncore events for the
+> perf tool.
+> 
+> For HHA, DDRC, and L3C JSONs, we don't have all the event info yet, so
+> I will seek it out to update the JSONs later.
+> 
+> Changes to v3:
+> - Omit "perf pmu: Fix uncore PMU alias list for ARM64", as it has already
+>   been picked up
+> - Add comment for pmu_uncore_alias_match()
 
-Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-> ---
->  Documentation/ABI/testing/sysfs-block-device                  | 2 +-
->  Documentation/ABI/testing/sysfs-platform-asus-laptop          | 2 +-
->  Documentation/admin-guide/index.rst                           | 1 +
->  Documentation/admin-guide/kernel-parameters.txt               | 2 +-
->  Documentation/{ => admin-guide}/laptops/asus-laptop.rst       | 0
->  .../{ => admin-guide}/laptops/disk-shock-protection.rst       | 0
->  Documentation/{ => admin-guide}/laptops/index.rst             | 1 -
->  Documentation/{ => admin-guide}/laptops/laptop-mode.rst       | 0
->  Documentation/{ => admin-guide}/laptops/lg-laptop.rst         | 1 -
->  Documentation/{ => admin-guide}/laptops/sony-laptop.rst       | 0
->  Documentation/{ => admin-guide}/laptops/sonypi.rst            | 0
->  Documentation/{ => admin-guide}/laptops/thinkpad-acpi.rst     | 0
->  Documentation/{ => admin-guide}/laptops/toshiba_haps.rst      | 0
->  Documentation/admin-guide/sysctl/vm.rst                       | 4 ++--
->  MAINTAINERS                                                   | 4 ++--
->  drivers/char/Kconfig                                          | 2 +-
->  drivers/platform/x86/Kconfig                                  | 4 ++--
->  17 files changed, 11 insertions(+), 12 deletions(-)
->  rename Documentation/{ => admin-guide}/laptops/asus-laptop.rst (100%)
->  rename Documentation/{ => admin-guide}/laptops/disk-shock-protection.rst (100%)
->  rename Documentation/{ => admin-guide}/laptops/index.rst (95%)
->  rename Documentation/{ => admin-guide}/laptops/laptop-mode.rst (100%)
->  rename Documentation/{ => admin-guide}/laptops/lg-laptop.rst (99%)
->  rename Documentation/{ => admin-guide}/laptops/sony-laptop.rst (100%)
->  rename Documentation/{ => admin-guide}/laptops/sonypi.rst (100%)
->  rename Documentation/{ => admin-guide}/laptops/thinkpad-acpi.rst (100%)
->  rename Documentation/{ => admin-guide}/laptops/toshiba_haps.rst (100%)
->
-> diff --git a/Documentation/ABI/testing/sysfs-block-device b/Documentation/ABI/testing/sysfs-block-device
-> index 0d57bbb4fddc..17f2bc7dd261 100644
-> --- a/Documentation/ABI/testing/sysfs-block-device
-> +++ b/Documentation/ABI/testing/sysfs-block-device
-> @@ -45,7 +45,7 @@ Description:
->                 - Values below -2 are rejected with -EINVAL
->
->                 For more information, see
-> -               Documentation/laptops/disk-shock-protection.rst
-> +               Documentation/admin-guide/laptops/disk-shock-protection.rst
->
->
->  What:          /sys/block/*/device/ncq_prio_enable
-> diff --git a/Documentation/ABI/testing/sysfs-platform-asus-laptop b/Documentation/ABI/testing/sysfs-platform-asus-laptop
-> index d67fa4bafa70..8b0e8205a6a2 100644
-> --- a/Documentation/ABI/testing/sysfs-platform-asus-laptop
-> +++ b/Documentation/ABI/testing/sysfs-platform-asus-laptop
-> @@ -31,7 +31,7 @@ Description:
->                 To control the LED display, use the following :
->                     echo 0x0T000DDD > /sys/devices/platform/asus_laptop/
->                 where T control the 3 letters display, and DDD the 3 digits display.
-> -               The DDD table can be found in Documentation/laptops/asus-laptop.rst
-> +               The DDD table can be found in Documentation/admin-guide/laptops/asus-laptop.rst
->
->  What:          /sys/devices/platform/asus_laptop/bluetooth
->  Date:          January 2007
-> diff --git a/Documentation/admin-guide/index.rst b/Documentation/admin-guide/index.rst
-> index acd0efa46e9d..9899b78dbe50 100644
-> --- a/Documentation/admin-guide/index.rst
-> +++ b/Documentation/admin-guide/index.rst
-> @@ -81,6 +81,7 @@ configure specific aspects of kernel behavior to your liking.
->     perf-security
->     acpi/index
->     device-mapper/index
-> +   laptops/index
->
->  .. only::  subproject and html
->
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index a3d3da5baacb..e38b96d061f4 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -4373,7 +4373,7 @@
->                         Format: <integer>
->
->         sonypi.*=       [HW] Sony Programmable I/O Control Device driver
-> -                       See Documentation/laptops/sonypi.rst
-> +                       See Documentation/admin-guide/laptops/sonypi.rst
->
->         spectre_v2=     [X86] Control mitigation of Spectre variant 2
->                         (indirect branch speculation) vulnerability.
-> diff --git a/Documentation/laptops/asus-laptop.rst b/Documentation/admin-guide/laptops/asus-laptop.rst
-> similarity index 100%
-> rename from Documentation/laptops/asus-laptop.rst
-> rename to Documentation/admin-guide/laptops/asus-laptop.rst
-> diff --git a/Documentation/laptops/disk-shock-protection.rst b/Documentation/admin-guide/laptops/disk-shock-protection.rst
-> similarity index 100%
-> rename from Documentation/laptops/disk-shock-protection.rst
-> rename to Documentation/admin-guide/laptops/disk-shock-protection.rst
-> diff --git a/Documentation/laptops/index.rst b/Documentation/admin-guide/laptops/index.rst
-> similarity index 95%
-> rename from Documentation/laptops/index.rst
-> rename to Documentation/admin-guide/laptops/index.rst
-> index 001a30910d09..6b554e39863b 100644
-> --- a/Documentation/laptops/index.rst
-> +++ b/Documentation/admin-guide/laptops/index.rst
-> @@ -1,4 +1,3 @@
-> -:orphan:
->
->  ==============
->  Laptop Drivers
-> diff --git a/Documentation/laptops/laptop-mode.rst b/Documentation/admin-guide/laptops/laptop-mode.rst
-> similarity index 100%
-> rename from Documentation/laptops/laptop-mode.rst
-> rename to Documentation/admin-guide/laptops/laptop-mode.rst
-> diff --git a/Documentation/laptops/lg-laptop.rst b/Documentation/admin-guide/laptops/lg-laptop.rst
-> similarity index 99%
-> rename from Documentation/laptops/lg-laptop.rst
-> rename to Documentation/admin-guide/laptops/lg-laptop.rst
-> index f2c2ffe31101..ce9b14671cb9 100644
-> --- a/Documentation/laptops/lg-laptop.rst
-> +++ b/Documentation/admin-guide/laptops/lg-laptop.rst
-> @@ -1,6 +1,5 @@
->  .. SPDX-License-Identifier: GPL-2.0+
->
-> -:orphan:
->
->  LG Gram laptop extra features
->  =============================
-> diff --git a/Documentation/laptops/sony-laptop.rst b/Documentation/admin-guide/laptops/sony-laptop.rst
-> similarity index 100%
-> rename from Documentation/laptops/sony-laptop.rst
-> rename to Documentation/admin-guide/laptops/sony-laptop.rst
-> diff --git a/Documentation/laptops/sonypi.rst b/Documentation/admin-guide/laptops/sonypi.rst
-> similarity index 100%
-> rename from Documentation/laptops/sonypi.rst
-> rename to Documentation/admin-guide/laptops/sonypi.rst
-> diff --git a/Documentation/laptops/thinkpad-acpi.rst b/Documentation/admin-guide/laptops/thinkpad-acpi.rst
-> similarity index 100%
-> rename from Documentation/laptops/thinkpad-acpi.rst
-> rename to Documentation/admin-guide/laptops/thinkpad-acpi.rst
-> diff --git a/Documentation/laptops/toshiba_haps.rst b/Documentation/admin-guide/laptops/toshiba_haps.rst
-> similarity index 100%
-> rename from Documentation/laptops/toshiba_haps.rst
-> rename to Documentation/admin-guide/laptops/toshiba_haps.rst
-> diff --git a/Documentation/admin-guide/sysctl/vm.rst b/Documentation/admin-guide/sysctl/vm.rst
-> index 5aceb5cd5ce7..64aeee1009ca 100644
-> --- a/Documentation/admin-guide/sysctl/vm.rst
-> +++ b/Documentation/admin-guide/sysctl/vm.rst
-> @@ -108,7 +108,7 @@ block_dump
->  ==========
->
->  block_dump enables block I/O debugging when set to a nonzero value. More
-> -information on block I/O debugging is in Documentation/laptops/laptop-mode.rst.
-> +information on block I/O debugging is in Documentation/admin-guide/laptops/laptop-mode.rst.
->
->
->  compact_memory
-> @@ -298,7 +298,7 @@ laptop_mode
->  ===========
->
->  laptop_mode is a knob that controls "laptop mode". All the things that are
-> -controlled by this knob are discussed in Documentation/laptops/laptop-mode.rst.
-> +controlled by this knob are discussed in Documentation/admin-guide/laptops/laptop-mode.rst.
->
->
->  legacy_va_layout
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 40d057631004..d35ff73f718a 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -8978,7 +8978,7 @@ M:        Matan Ziv-Av <matan@svgalib.org>
->  L:     platform-driver-x86@vger.kernel.org
->  S:     Maintained
->  F:     Documentation/ABI/testing/sysfs-platform-lg-laptop
-> -F:     Documentation/laptops/lg-laptop.rst
-> +F:     Documentation/admin-guide/laptops/lg-laptop.rst
->  F:     drivers/platform/x86/lg-laptop.c
->
->  LG2160 MEDIA DRIVER
-> @@ -14830,7 +14830,7 @@ M:      Mattia Dongili <malattia@linux.it>
->  L:     platform-driver-x86@vger.kernel.org
->  W:     http://www.linux.it/~malattia/wiki/index.php/Sony_drivers
->  S:     Maintained
-> -F:     Documentation/laptops/sony-laptop.rst
-> +F:     Documentation/admin-guide/laptops/sony-laptop.rst
->  F:     drivers/char/sonypi.c
->  F:     drivers/platform/x86/sony-laptop.c
->  F:     include/linux/sony-laptop.h
-> diff --git a/drivers/char/Kconfig b/drivers/char/Kconfig
-> index bb734066075f..442403abd73a 100644
-> --- a/drivers/char/Kconfig
-> +++ b/drivers/char/Kconfig
-> @@ -382,7 +382,7 @@ config SONYPI
->           Device which can be found in many (all ?) Sony Vaio laptops.
->
->           If you have one of those laptops, read
-> -         <file:Documentation/laptops/sonypi.rst>, and say Y or M here.
-> +         <file:Documentation/admin-guide/laptops/sonypi.rst>, and say Y or M here.
->
->           To compile this driver as a module, choose M here: the
->           module will be called sonypi.
-> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-> index 1f616844fb87..85101c678693 100644
-> --- a/drivers/platform/x86/Kconfig
-> +++ b/drivers/platform/x86/Kconfig
-> @@ -448,7 +448,7 @@ config SONY_LAPTOP
->           screen brightness control, Fn keys and allows powering on/off some
->           devices.
->
-> -         Read <file:Documentation/laptops/sony-laptop.rst> for more information.
-> +         Read <file:Documentation/admin-guide/laptops/sony-laptop.rst> for more information.
->
->  config SONYPI_COMPAT
->         bool "Sonypi compatibility"
-> @@ -500,7 +500,7 @@ config THINKPAD_ACPI
->           support for Fn-Fx key combinations, Bluetooth control, video
->           output switching, ThinkLight control, UltraBay eject and more.
->           For more information about this driver see
-> -         <file:Documentation/laptops/thinkpad-acpi.rst> and
-> +         <file:Documentation/admin-guide/laptops/thinkpad-acpi.rst> and
->           <http://ibm-acpi.sf.net/> .
->
->           This driver was formerly known as ibm-acpi.
-> --
-> 2.21.0
->
+thanks,
+jirka
 
-
--- 
-With Best Regards,
-Andy Shevchenko
+> 
+> Changes to v2:
+> - Use strtok_r() in pmu_uncore_alias_match()
+> - from "sccl" from uncore aliases
+> 
+> John Garry (4):
+>   perf pmu: Support more complex PMU event aliasing
+>   perf jevents: Add support for Hisi hip08 DDRC PMU aliasing
+>   perf jevents: Add support for Hisi hip08 HHA PMU aliasing
+>   perf jevents: Add support for Hisi hip08 L3C PMU aliasing
+> 
+>  .../arm64/hisilicon/hip08/uncore-ddrc.json    | 44 ++++++++++++++++
+>  .../arm64/hisilicon/hip08/uncore-hha.json     | 51 +++++++++++++++++++
+>  .../arm64/hisilicon/hip08/uncore-l3c.json     | 37 ++++++++++++++
+>  tools/perf/pmu-events/jevents.c               |  3 ++
+>  tools/perf/util/pmu.c                         | 46 +++++++++++++++--
+>  5 files changed, 176 insertions(+), 5 deletions(-)
+>  create mode 100644 tools/perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-ddrc.json
+>  create mode 100644 tools/perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-hha.json
+>  create mode 100644 tools/perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-l3c.json
+> 
+> -- 
+> 2.17.1
+> 
