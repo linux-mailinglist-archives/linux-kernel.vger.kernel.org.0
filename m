@@ -2,109 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A18A7599FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 14:05:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8920599B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 14:00:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726894AbfF1MFw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 08:05:52 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:33473 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726514AbfF1MFv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 08:05:51 -0400
-Received: by mail-lf1-f68.google.com with SMTP id y17so3835586lfe.0;
-        Fri, 28 Jun 2019 05:05:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=HA/mPpQJOKYmVDyeCe0ETFHFBZHAQQF5tQSIphSoyfk=;
-        b=unBDizVA3kYuY0YF8aLYmRhRZrrqklXZDHk1SvjbwIEQuEmA87L1/au6QBeUR0gnNm
-         gKZfpFreasGnUWIuaFOpP8M6475t1ynfTv7VoOwWF7LjU84m5F2xONdilbuR256ErgcK
-         udQnRpeNuHB8WN8isFNQshf9NwXiK+iaLIhqQY8Em4os6fkb+nLL3lY98B+HkYmQrvlX
-         8vVi3ZYS9pKxz5bsYFgeyCKveeNnu8dp2NrDRpt3quWe5YnVz7UxrSlH4N9vD8JcKNj+
-         9qdFki+pvKdT6N7wjczDD04WMJZiHUAmtbEgOqExdqzcMUj8k136X6GGbsUMMCc6Hkxa
-         kutQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=HA/mPpQJOKYmVDyeCe0ETFHFBZHAQQF5tQSIphSoyfk=;
-        b=tR4d2xI/K1zh2Oi5GqI4mB0s4nKAbwoJDwfr9GhMwKfTXoVw+TNulbzHJqDfxyCBdO
-         x1DpyiLr+VS6r+iIdmtm3+BA+RSh6jQYuRnaRmek1amB8y8sTl3/nwxAuxzt57nxHyxG
-         11HVhvFbi7hs+uakTQtD1yaW3eKDWa4LbiKE9zN4+2Rn4pX3XxlvpNjUvUJ9VB5Vp9WA
-         v6cd6Ovxqh08xsuxaRoe8vuDIML4/yT0ln8R44NQzD/IGzX79A8TacwYfj102s0rUPit
-         MYpcvqYDF0Qo8OJTLgeKE/izOr+xl6u3zmmujaJwEXjHJ/NG9GGdN5zIPN4KcBlXAFkY
-         YYTg==
-X-Gm-Message-State: APjAAAWVHFv3jvk78os1JrOc2N24zyRqveVsJP8lt1Te9rj714c7TBuC
-        WnEMPkY6uVb1U4r6FL3oTAAUs8ED
-X-Google-Smtp-Source: APXvYqxYiX9E8tGPpW2NlAcJ5oa6Bfp5m9cKFDQysAJTMIDvJhIFywx9lJeV13Ji3iPVX/JLRCw5QQ==
-X-Received: by 2002:ac2:5446:: with SMTP id d6mr4727924lfn.138.1561723548837;
-        Fri, 28 Jun 2019 05:05:48 -0700 (PDT)
-Received: from [192.168.2.145] (ppp79-139-233-208.pppoe.spdop.ru. [79.139.233.208])
-        by smtp.googlemail.com with ESMTPSA id a17sm561986lfk.0.2019.06.28.05.05.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 28 Jun 2019 05:05:48 -0700 (PDT)
-Subject: Re: [PATCH V5 02/18] pinctrl: tegra: Add suspend and resume support
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de,
-        jason@lakedaemon.net, marc.zyngier@arm.com,
-        linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
-Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org,
-        devicetree@vger.kernel.org
-References: <1561687972-19319-1-git-send-email-skomatineni@nvidia.com>
- <1561687972-19319-3-git-send-email-skomatineni@nvidia.com>
- <0409f478-e425-4e7f-5fff-8c3a94f47ee8@gmail.com>
-Message-ID: <ca8199af-43db-c878-a93f-66c275acf864@gmail.com>
-Date:   Fri, 28 Jun 2019 15:05:46 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
+        id S1726935AbfF1MAw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 08:00:52 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:36468 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726721AbfF1MAw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Jun 2019 08:00:52 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id E603A6D45061BF9FB631;
+        Fri, 28 Jun 2019 20:00:49 +0800 (CST)
+Received: from huawei.com (10.90.53.225) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Fri, 28 Jun 2019
+ 20:00:42 +0800
+From:   Zhihao Cheng <chengzhihao1@huawei.com>
+To:     <david.oberhollenzer@sigma-star.at>, <richard@nod.at>,
+        <david@sigma-star.at>, <boris.brezillon@free-electrons.com>,
+        <yi.zhang@huawei.com>
+CC:     <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <chengzhihao1@huawei.com>
+Subject: [PATCH RFC v2] mtd: ubi: Add fastmap sysfs attribute
+Date:   Fri, 28 Jun 2019 20:06:21 +0800
+Message-ID: <1561723581-70340-1-git-send-email-chengzhihao1@huawei.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <0409f478-e425-4e7f-5fff-8c3a94f47ee8@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.90.53.225]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-28.06.2019 14:56, Dmitry Osipenko пишет:
-> 28.06.2019 5:12, Sowjanya Komatineni пишет:
->> This patch adds support for Tegra pinctrl driver suspend and resume.
->>
->> During suspend, context of all pinctrl registers are stored and
->> on resume they are all restored to have all the pinmux and pad
->> configuration for normal operation.
->>
->> Acked-by: Thierry Reding <treding@nvidia.com>
->> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->> ---
+The UBI device can be attached to a MTD device via fastmap by setting
+CONFIG_MTD_UBI_FASTMAP to 'y' (If there already exists a fastmap on the
+UBI device). To support some debugging scenarios, attaching process by
+fastmap can be confirmed in dmesg. If the UBI device is attached by
+fastmap, logs like following will appear in dmesg:
 
->>  int tegra_pinctrl_probe(struct platform_device *pdev,
->>  			const struct tegra_pinctrl_soc_data *soc_data);
->>  #endif
->> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra210.c b/drivers/pinctrl/tegra/pinctrl-tegra210.c
->> index 0b56ad5c9c1c..edd3f4606cdb 100644
->> --- a/drivers/pinctrl/tegra/pinctrl-tegra210.c
->> +++ b/drivers/pinctrl/tegra/pinctrl-tegra210.c
->> @@ -1571,6 +1571,7 @@ static struct platform_driver tegra210_pinctrl_driver = {
->>  	.driver = {
->>  		.name = "tegra210-pinctrl",
->>  		.of_match_table = tegra210_pinctrl_of_match,
->> +		.pm = &tegra_pinctrl_pm,
->>  	},
->>  	.probe = tegra210_pinctrl_probe,
->>  };
->>
-> 
-> Could you please address my comments in the next revision if there will be one?
-> 
+  ubi0: attached by fastmap
 
-Also, what about adding ".pm' for other Tegras? I'm sure Jon could test them for you.
+If multiple UBI devices are attached to multiple MTD devices at the same
+time, how to distinguish which UBI devices are successfully attached by
+fastmap? Extracting attaching information for each UBI device one by one
+from dmesg is a way. A better method is to record fastmap existence in
+sysfs, so it can be obtained by userspace tools.
+
+This patch exposes fastmap on sysfs. Suppose you attach an UBI device to a
+MTD device by fastmap: if fastmap equals to '1', that is, the fastmap
+generated before last detaching operation is confirmed valid. Else, there
+may be some problems with old fastmap. Besides, userspace tool can also
+check whether the fastmap updating triggered by other operations (such as
+resize volume) is successful by reading this sysfs attribute.
+
+Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
+---
+ Documentation/ABI/stable/sysfs-class-ubi | 15 +++++++++++++++
+ drivers/mtd/ubi/build.c                  |  9 ++++++++-
+ 2 files changed, 23 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/ABI/stable/sysfs-class-ubi b/Documentation/ABI/stable/sysfs-class-ubi
+index a6b3240..1d96cf0 100644
+--- a/Documentation/ABI/stable/sysfs-class-ubi
++++ b/Documentation/ABI/stable/sysfs-class-ubi
+@@ -116,6 +116,21 @@ Description:
+ 		device, and "0\n" if it is cleared. UBI devices mark themselves
+ 		as read-only when they detect an unrecoverable error.
+ 
++What:		/sys/class/ubi/ubiX/fastmap
++Date:		June 2019
++KernelVersion:	5.2
++Contact:	linux-mtd@lists.infradead.org
++Description:
++		Contains ASCII "1\n" if there exists a fastmap on UBI device,
++		and "0\n" if there not exists a fastmap on UBI device. After
++		attaching the UBI device to a MTD device via fastmap, userspace
++		tool can sense that there is a fastmap on UBI device  by
++		checking sysfs attribute 'fastmap', that is, the fastmap
++		generated before last detaching operation is valid. In addition,
++		userspace tool can also check whether the fastmap updating
++		triggered by volume operation is successful by reading this
++		sysfs attribute.
++
+ What:		/sys/class/ubi/ubiX/total_eraseblocks
+ Date:		July 2006
+ KernelVersion:	2.6.22
+diff --git a/drivers/mtd/ubi/build.c b/drivers/mtd/ubi/build.c
+index d636bbe..0cd6b8e 100644
+--- a/drivers/mtd/ubi/build.c
++++ b/drivers/mtd/ubi/build.c
+@@ -140,6 +140,8 @@ static struct device_attribute dev_mtd_num =
+ 	__ATTR(mtd_num, S_IRUGO, dev_attribute_show, NULL);
+ static struct device_attribute dev_ro_mode =
+ 	__ATTR(ro_mode, S_IRUGO, dev_attribute_show, NULL);
++static struct device_attribute dev_fastmap =
++	__ATTR(fastmap, S_IRUGO, dev_attribute_show, NULL);
+ 
+ /**
+  * ubi_volume_notify - send a volume change notification.
+@@ -378,7 +380,11 @@ static ssize_t dev_attribute_show(struct device *dev,
+ 		ret = sprintf(buf, "%d\n", ubi->mtd->index);
+ 	else if (attr == &dev_ro_mode)
+ 		ret = sprintf(buf, "%d\n", ubi->ro_mode);
+-	else
++	else if (attr == &dev_fastmap) {
++		down_write(&ubi->fm_protect);
++		ret = sprintf(buf, "%d\n", ubi->fm ? 1 : 0);
++		up_write(&ubi->fm_protect);
++	} else
+ 		ret = -EINVAL;
+ 
+ 	ubi_put_device(ubi);
+@@ -398,6 +404,7 @@ static struct attribute *ubi_dev_attrs[] = {
+ 	&dev_bgt_enabled.attr,
+ 	&dev_mtd_num.attr,
+ 	&dev_ro_mode.attr,
++	&dev_fastmap.attr,
+ 	NULL
+ };
+ ATTRIBUTE_GROUPS(ubi_dev);
+-- 
+2.7.4
+
