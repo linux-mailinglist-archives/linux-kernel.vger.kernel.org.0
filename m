@@ -2,125 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2D6E598B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 12:46:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13287598B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 12:46:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726913AbfF1KqQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 06:46:16 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:35110 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726900AbfF1KqP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 06:46:15 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 72157308424E;
-        Fri, 28 Jun 2019 10:46:15 +0000 (UTC)
-Received: from xz-x1.redhat.com (ovpn-12-71.pek2.redhat.com [10.72.12.71])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1B9FC5D756;
-        Fri, 28 Jun 2019 10:46:08 +0000 (UTC)
-From:   Peter Xu <peterx@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     David Hildenbrand <david@redhat.com>,
-        Hugh Dickins <hughd@google.com>,
-        Maya Gokhale <gokhale2@llnl.gov>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Johannes Weiner <hannes@cmpxchg.org>, peterx@redhat.com,
-        Martin Cracauer <cracauer@cons.org>, Shaohua Li <shli@fb.com>,
-        Marty McFadden <mcfadden8@llnl.gov>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Denis Plotnikov <dplotnikov@virtuozzo.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Mel Gorman <mgorman@suse.de>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
-Subject: [PATCH 7/7] mm/gup: Allow VM_FAULT_RETRY for multiple times
-Date:   Fri, 28 Jun 2019 18:44:32 +0800
-Message-Id: <20190628104432.12799-8-peterx@redhat.com>
-In-Reply-To: <20190628104432.12799-1-peterx@redhat.com>
-References: <20190628104432.12799-1-peterx@redhat.com>
+        id S1726875AbfF1KqD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 06:46:03 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:54492 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726578AbfF1KqD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Jun 2019 06:46:03 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 2E14F48D31486AA4B2C7;
+        Fri, 28 Jun 2019 18:46:01 +0800 (CST)
+Received: from [127.0.0.1] (10.202.227.238) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Fri, 28 Jun 2019
+ 18:45:51 +0800
+Subject: Re: [PATCH v2 2/5] perf pmu: Support more complex PMU event aliasing
+To:     Jiri Olsa <jolsa@redhat.com>
+References: <1560521283-73314-1-git-send-email-john.garry@huawei.com>
+ <1560521283-73314-3-git-send-email-john.garry@huawei.com>
+ <20190616095844.GC2500@krava>
+ <a27e65b4-b487-9206-6dd0-6f9dcec0f1f5@huawei.com>
+ <20190620182519.GA15239@krava>
+ <6257fc79-b737-e6ca-2fce-f71afa36e9aa@huawei.com>
+ <cafed7d6-13c7-3a92-a826-024698bc6cc8@huawei.com>
+ <20190628104040.GA15960@krava>
+CC:     <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
+        <alexander.shishkin@linux.intel.com>, <namhyung@kernel.org>,
+        <tmricht@linux.ibm.com>, <brueckner@linux.ibm.com>,
+        <kan.liang@linux.intel.com>, <ben@decadent.org.uk>,
+        <mathieu.poirier@linaro.org>, <mark.rutland@arm.com>,
+        <will.deacon@arm.com>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>, <linux-arm-kernel@lists.infradead.org>,
+        <zhangshaokun@hisilicon.com>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <004cb11b-e0ee-5af1-33d4-437fb8be03c0@huawei.com>
+Date:   Fri, 28 Jun 2019 11:45:43 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Fri, 28 Jun 2019 10:46:15 +0000 (UTC)
+In-Reply-To: <20190628104040.GA15960@krava>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.227.238]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the gup counterpart of the change that allows the VM_FAULT_RETRY
-to happen for more than once.
+On 28/06/2019 11:40, Jiri Olsa wrote:
+> On Thu, Jun 27, 2019 at 05:27:32PM +0100, John Garry wrote:
+>
+> SNIP
+>
+>>>>
+>>>> heya,
+>>>> sry for late reply
+>>>>
+>>>>>
+>>>>>> if tok is NULL in here we crash
+>>>>>>
+>>>>>
+>>>>> As I see, tok could not be NULL. If str contains no delimiters, then
+>>>>> we just
+>>>>> return same as str in tok.
+>>>>>
+>>>>> Can you see tok being NULL?
+>>>>
+>>>> well, if there's no ',' in the str it returns NULL, right?
+>>>
+>>> No, it would return str in tok.
+>
+> ok
+>
+>>>
+>>>> and IIUC this function is still called for standard uncore
+>>>> pmu names
+>>>>
+>>>>>
+>>>>>>> +        res = false;
+>>>>>>> +        goto out;
+>>>>>>> +    }
+>>>>>>> +
+>>>>>>> +    for (; tok; name += strlen(tok), tok = strtok_r(NULL, ",",
+>>>>>>> &tmp)) {
+>>>>>>
+>>>>>> why is name shifted in here?
+>>>>>
+>>>>> I want to ensure that we match the tokens in order and also guard
+>>>>> against
+>>>>> possible repeated token matches in 'name'.
+>>>>
+>>>> i might not understand this correctly.. so
+>>>>
+>>>> str is the alias name that can contain ',' now, like:
+>>>>   hisi_sccl,ddrc
+>>>
+>>> For example of pmu_nmame=hisi_sccl,ddrc and pmu=hisi_sccl1_ddrc0, we
+>>> match in this sequence:
+>>>
+>>> loop 1. tok=hisi_sccl name=hisi_sccl1_ddrc0
+>>> loop 2. tok=ddrc name=ddrc0
+>>> loop 3. tok=NULL -> breakout and return true
+>
 
-Reviewed-by: Jerome Glisse <jglisse@redhat.com>
-Signed-off-by: Peter Xu <peterx@redhat.com>
----
- mm/gup.c     | 17 +++++++++++++----
- mm/hugetlb.c |  6 ++++--
- 2 files changed, 17 insertions(+), 6 deletions(-)
+Hi jirka,
 
-diff --git a/mm/gup.c b/mm/gup.c
-index 58d282115d9b..ac8d5b73c212 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -647,7 +647,10 @@ static int faultin_page(struct task_struct *tsk, struct vm_area_struct *vma,
- 	if (*flags & FOLL_NOWAIT)
- 		fault_flags |= FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_RETRY_NOWAIT;
- 	if (*flags & FOLL_TRIED) {
--		VM_WARN_ON_ONCE(fault_flags & FAULT_FLAG_ALLOW_RETRY);
-+		/*
-+		 * Note: FAULT_FLAG_ALLOW_RETRY and FAULT_FLAG_TRIED
-+		 * can co-exist
-+		 */
- 		fault_flags |= FAULT_FLAG_TRIED;
- 	}
- 
-@@ -1062,17 +1065,23 @@ static __always_inline long __get_user_pages_locked(struct task_struct *tsk,
- 		if (likely(pages))
- 			pages += ret;
- 		start += ret << PAGE_SHIFT;
-+		lock_dropped = true;
- 
-+retry:
- 		/*
- 		 * Repeat on the address that fired VM_FAULT_RETRY
--		 * without FAULT_FLAG_ALLOW_RETRY but with
-+		 * with both FAULT_FLAG_ALLOW_RETRY and
- 		 * FAULT_FLAG_TRIED.
- 		 */
- 		*locked = 1;
--		lock_dropped = true;
- 		down_read(&mm->mmap_sem);
- 		ret = __get_user_pages(tsk, mm, start, 1, flags | FOLL_TRIED,
--				       pages, NULL, NULL);
-+				       pages, NULL, locked);
-+		if (!*locked) {
-+			/* Continue to retry until we succeeded */
-+			BUG_ON(ret != 0);
-+			goto retry;
-+		}
- 		if (ret != 1) {
- 			BUG_ON(ret > 1);
- 			if (!pages_done)
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index ba179c2fa8fb..d9c739f9a28e 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -4317,8 +4317,10 @@ long follow_hugetlb_page(struct mm_struct *mm, struct vm_area_struct *vma,
- 				fault_flags |= FAULT_FLAG_ALLOW_RETRY |
- 					FAULT_FLAG_RETRY_NOWAIT;
- 			if (flags & FOLL_TRIED) {
--				VM_WARN_ON_ONCE(fault_flags &
--						FAULT_FLAG_ALLOW_RETRY);
-+				/*
-+				 * Note: FAULT_FLAG_ALLOW_RETRY and
-+				 * FAULT_FLAG_TRIED can co-exist
-+				 */
- 				fault_flags |= FAULT_FLAG_TRIED;
- 			}
- 			ret = hugetlb_fault(mm, vma, vaddr, fault_flags);
--- 
-2.21.0
+> ok, plz put something like above into comment
+>
+
+ok, can do.
+
+Thanks again,
+John
+
+> thanks,
+> jirka
+>
+> .
+>
+
 
