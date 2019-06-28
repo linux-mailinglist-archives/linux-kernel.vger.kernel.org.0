@@ -2,125 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9E9259318
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 06:56:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F3285932F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 07:07:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726844AbfF1E45 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 00:56:57 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:19089 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725783AbfF1E45 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 00:56:57 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 295CAA1E14ACAA62F426;
-        Fri, 28 Jun 2019 12:56:54 +0800 (CST)
-Received: from huawei.com (10.90.53.225) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.439.0; Fri, 28 Jun 2019
- 12:56:44 +0800
-From:   Zhihao@vger.kernel.org, Cheng@vger.kernel.org
-To:     <david.oberhollenzer@sigma-star.at>, <richard@nod.at>,
-        <david@sigma-star.at>, <boris.brezillon@free-electrons.com>,
-        <yi.zhang@huawei.com>
-CC:     <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <chengzhihao1@huawei.com>
-Subject: [PATCH RFC] mtd: ubi: Add fastmap sysfs attribute
-Date:   Fri, 28 Jun 2019 13:02:23 +0800
-Message-ID: <1561698143-5027-1-git-send-email-chengzhihao1@huawei.com>
-X-Mailer: git-send-email 2.7.4
+        id S1726713AbfF1FHs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 01:07:48 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:33915 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726240AbfF1FHs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Jun 2019 01:07:48 -0400
+Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hgj6s-0001zy-0d; Fri, 28 Jun 2019 07:07:42 +0200
+Date:   Fri, 28 Jun 2019 07:07:40 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Daniel Drake <drake@endlessm.com>
+cc:     Linux Kernel <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Hans de Goede <hdegoede@redhat.com>,
+        david.e.box@linux.intel.com,
+        Linux Upstreaming Team <linux@endlessm.com>,
+        "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>, x86@kernel.org
+Subject: Re: No 8254 PIT & no HPET on new Intel N3350 platforms causes kernel
+ panic during early boot
+In-Reply-To: <CAD8Lp46XnwQu4NWaXurz5ZcBs7dGb1gY=0Fy83w9EC9_V-7Oeg@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1906280707020.32342@nanos.tec.linutronix.de>
+References: <alpine.DEB.2.21.1904031206440.1967@nanos.tec.linutronix.de> <20190627085419.27854-1-drake@endlessm.com> <alpine.DEB.2.21.1906271546010.32342@nanos.tec.linutronix.de> <CAD8Lp46XnwQu4NWaXurz5ZcBs7dGb1gY=0Fy83w9EC9_V-7Oeg@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.90.53.225]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhihao Cheng <chengzhihao1@huawei.com>
+On Fri, 28 Jun 2019, Daniel Drake wrote:
+> On Thu, Jun 27, 2019 at 10:07 PM Thomas Gleixner <tglx@linutronix.de> wrote:
+> > Nah. That extra timer works thing is just another bandaid.
+> >
+> > What I had in mind is something like the below. That's on top of
+> >
+> >    git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/apic
+> >
+> > Be warned. It's neither compiled nor tested, so keep a fire extinguisher
+> > handy. If it explodes you own the pieces.
+> 
+> Thanks, it works, and makes sense!
+> 
+> I'll add a commit message and send it as a patch, just one quick
+> function naming question... did you mean apic_and_tsc_needs_pit() or
+> apic_needs_pit()? That's the only compile fix needed.
 
-The UBI device can be attached to a MTD device via fastmap by set
-CONFIG_MTD_UBI_FASTMAP to 'y' (If there already exists a fastmap on the
-UBI device). To support some debugging scenarios, attaching process by
-fastmap can be confirmed in dmesg. If the UBI device is attached by
-fastmap, logs like following will appear in dmesg:
+I'd say apic_needs_pit(). Less places to change :)
 
-  ubi0: attached by fastmap
+Thanks,
 
-If multiple UBI devices are attached to multiple MTD devices at the same
-time, how to distinguish which UBI devices are successfully attached by
-fastmap? Extracting attaching information for each UBI device one by one
-from dmesg is a way. A better method is to record fastmap existence in
-sysfs, so it can be obtained by userspace tools.
-
-This patch exposes fastmap on sysfs. Suppose you attach an UBI device to a
-MTD device by fastmap: if fastmap equals to '1', that is, the fastmap
-generated before last detaching operation is confirmed valid. Else, there
-may be some problems with old fastmap. Besides, userspace tool can also
-check whether the fastmap updating triggered by other operations (such as
-resize volume) is successful by reading this sysfs attribute.
-
-Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
----
- Documentation/ABI/stable/sysfs-class-ubi | 15 +++++++++++++++
- drivers/mtd/ubi/build.c                  |  5 +++++
- 2 files changed, 20 insertions(+)
-
-diff --git a/Documentation/ABI/stable/sysfs-class-ubi b/Documentation/ABI/stable/sysfs-class-ubi
-index a6b3240..1d96cf0 100644
---- a/Documentation/ABI/stable/sysfs-class-ubi
-+++ b/Documentation/ABI/stable/sysfs-class-ubi
-@@ -116,6 +116,21 @@ Description:
- 		device, and "0\n" if it is cleared. UBI devices mark themselves
- 		as read-only when they detect an unrecoverable error.
- 
-+What:		/sys/class/ubi/ubiX/fastmap
-+Date:		June 2019
-+KernelVersion:	5.2
-+Contact:	linux-mtd@lists.infradead.org
-+Description:
-+		Contains ASCII "1\n" if there exists a fastmap on UBI device,
-+		and "0\n" if there not exists a fastmap on UBI device. After
-+		attaching the UBI device to a MTD device via fastmap, userspace
-+		tool can sense that there is a fastmap on UBI device  by
-+		checking sysfs attribute 'fastmap', that is, the fastmap
-+		generated before last detaching operation is valid. In addition,
-+		userspace tool can also check whether the fastmap updating
-+		triggered by volume operation is successful by reading this
-+		sysfs attribute.
-+
- What:		/sys/class/ubi/ubiX/total_eraseblocks
- Date:		July 2006
- KernelVersion:	2.6.22
-diff --git a/drivers/mtd/ubi/build.c b/drivers/mtd/ubi/build.c
-index d636bbe..7cce44f 100644
---- a/drivers/mtd/ubi/build.c
-+++ b/drivers/mtd/ubi/build.c
-@@ -140,6 +140,8 @@ static struct device_attribute dev_mtd_num =
- 	__ATTR(mtd_num, S_IRUGO, dev_attribute_show, NULL);
- static struct device_attribute dev_ro_mode =
- 	__ATTR(ro_mode, S_IRUGO, dev_attribute_show, NULL);
-+static struct device_attribute dev_fastmap =
-+	__ATTR(fastmap, S_IRUGO, dev_attribute_show, NULL);
- 
- /**
-  * ubi_volume_notify - send a volume change notification.
-@@ -378,6 +380,8 @@ static ssize_t dev_attribute_show(struct device *dev,
- 		ret = sprintf(buf, "%d\n", ubi->mtd->index);
- 	else if (attr == &dev_ro_mode)
- 		ret = sprintf(buf, "%d\n", ubi->ro_mode);
-+	else if (attr == &dev_fastmap)
-+		ret = sprintf(buf, "%d\n", ubi->fm ? 1 : 0);
- 	else
- 		ret = -EINVAL;
- 
-@@ -398,6 +402,7 @@ static struct attribute *ubi_dev_attrs[] = {
- 	&dev_bgt_enabled.attr,
- 	&dev_mtd_num.attr,
- 	&dev_ro_mode.attr,
-+	&dev_fastmap.attr,
- 	NULL
- };
- ATTRIBUTE_GROUPS(ubi_dev);
--- 
-2.7.4
-
+	tglx
