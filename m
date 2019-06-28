@@ -2,66 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 052E0594C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 09:25:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A2D7594D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 09:26:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727368AbfF1HZY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 03:25:24 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:49804 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726574AbfF1HZV (ORCPT
+        id S1726525AbfF1H0U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 03:26:20 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:45789 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726315AbfF1H0U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 03:25:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=L59glztjBFdzd0vpM/vAEVkumpBm6raQTV6rgoEfnoA=; b=Zer0a/jPvQOc99VEP2rbwm2/r
-        584J1SYdkxFucp5cUWZZtRfM2ngZMJlyoVBRF7VAcuc9sdLj4zpuDbbeDkVeZ7SE2NFhttNNXosU4
-        vVv5+fJP/Yfs975tI2b2X3ophH2KxjRVMrFHOUsdEsHpaPWhmD8RtnDj6skxrqp6ERc7mGcKHBWHC
-        3xG9cHW7TpLICuZD6pgbV07Wi6izh7qeZmTFqyTl6lkqlBv9GQnZMm3F0S2sQ9khVB1bBCAkN+4Se
-        BpfeStB3nggiwQp3CYx98ofVBk9bQxwWNPyq7Izwiad12RzO1bJ/LVqYNjVgfidNRGBtM7eGj65dx
-        4/jZ5dS9g==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hglG2-0001az-TF; Fri, 28 Jun 2019 07:25:18 +0000
-Date:   Fri, 28 Jun 2019 00:25:18 -0700
-From:   'Christoph Hellwig' <hch@infradead.org>
-To:     kanchan <joshi.k@samsung.com>
-Cc:     'Christoph Hellwig' <hch@infradead.org>, 'Jan Kara' <jack@suse.cz>,
-        "'Martin K. Petersen'" <martin.petersen@oracle.com>,
-        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-block@vger.kernel.org, anshul@samsung.com,
-        linux-fsdevel@vger.kernel.org, prakash.v@samsung.com,
-        linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v5 0/7] Extend write-hint framework, and add write-hint
- for Ext4 journal
-Message-ID: <20190628072518.GA25577@infradead.org>
-References: <CGME20190425112347epcas2p1f7be48b8f0d2203252b8c9dd510c1b61@epcas2p1.samsung.com>
- <1556191202-3245-1-git-send-email-joshi.k@samsung.com>
- <20190510170249.GA26907@infradead.org>
- <00fb01d50c71$dd358e50$97a0aaf0$@samsung.com>
- <20190520142719.GA15705@infradead.org>
- <20190521082528.GA17709@quack2.suse.cz>
- <20190521082846.GA11024@infradead.org>
- <20190522102530.GK17019@quack2.suse.cz>
- <00f301d52c1d$58f1e820$0ad5b860$@samsung.com>
+        Fri, 28 Jun 2019 03:26:20 -0400
+Received: by mail-qt1-f196.google.com with SMTP id j19so5223618qtr.12
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2019 00:26:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=D/QdUNDcGRTIn4Mm1UmaweKSH9RuZF0BWTBRT3JrMYA=;
+        b=U2/XpaCZZAGxGXBysk14pwxKFeBZknZSzVbGUajAjQnFulC4yADxymGFGlJrAhAobU
+         Vnt4S4ERl2Hb4S/Hf40jdRkOgvVg5xThytoFkowCyZEtRFFK1J79VVfWdWPiSSi6sUe0
+         mtDZwYbIJP81SfRPSxT/7/ET4VQLa6U2K54eG0TFMU28U/oRd6brXSHybCLk0PE3QCDt
+         3ns5245/0b2D1CUtVjDMu3VFUvxDFofCaQ6S8SIj8gaoWP/br0IgAeO6zVQNYiSU4WhB
+         RbjtLa6xAJyoHTsGBryD9Uj5vV+A27mdYYFoih+XNbo1UEO5uYb3NHLGX9pnOqY97SPH
+         10/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=D/QdUNDcGRTIn4Mm1UmaweKSH9RuZF0BWTBRT3JrMYA=;
+        b=e6oqTKuLi4qjo6HmmXPYR3uAyrG8AefJanEGn0DG2EyBLfB0yCqKieqq6l4oIRYnmF
+         gI0Bi7NxoS12yTC86q/WGsnG/qdUcHMgXnsG9X4Qn0llYZt6O2LhxMWUM6ftMpghJsa/
+         7Ugs6lvwp515o1NYrYFP6nSU8RWmMa5Y3qZN9ogKR+KVQqpLBSZdxSQb6bUOsKCWgv1+
+         bc/GFZt1D+YoInXI/rvZUtBh+d6Ga0Bl8SYXDbtmhUOy1jall/LMWOZyeW6Av8LoiXF+
+         cwa/nlnDjGMmSGjU/bTOCqUAHEyvgrKIgTmSG1pgXOCGbnfDNsdNa7ByVdXGRAo0Ks0n
+         mPDQ==
+X-Gm-Message-State: APjAAAXJOQmWCZf9jr3OiSMEOjct/2srNuomYQ7xL/C33N5ESYXoD2Rf
+        S4eM612RJY2tYbIRrycdKxz4NOIA4jrnaLZNOG5bze7e/gdq6g==
+X-Google-Smtp-Source: APXvYqy76jBgXLP94PRu+jSfGP37fpyVr0djqBetr+sqr/L6y14YqWlVTXhs5Lar1aYlHNFKkG78ZzIlsVS4Q8kbips=
+X-Received: by 2002:a0c:895b:: with SMTP id 27mr6622552qvq.94.1561706778916;
+ Fri, 28 Jun 2019 00:26:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <00f301d52c1d$58f1e820$0ad5b860$@samsung.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <20190628072307.24678-1-drake@endlessm.com>
+In-Reply-To: <20190628072307.24678-1-drake@endlessm.com>
+From:   Daniel Drake <drake@endlessm.com>
+Date:   Fri, 28 Jun 2019 15:26:07 +0800
+Message-ID: <CAD8Lp4577Vd109p2ax22WtXUH=bEXYP8o8Ak5Gk9texCw9+x5Q@mail.gmail.com>
+Subject: Re: [PATCH] x86: skip PIT initialization on modern chipsets
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>
+Cc:     hpa@zytor.com, x86@kernel.org,
+        Linux Upstreaming Team <linux@endlessm.com>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>,
+        Hans de Goede <hdegoede@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 26, 2019 at 06:17:29PM +0530, kanchan wrote:
-> Christoph, 
-> May I know if you have thoughts about what Jan mentioned below? 
+Oops, please also add a reference to the main thread:
 
-As said I fundamentally disagree with exposting the streams mess at
-the block layer.  I have no problem with setting a hint on the journal,
-but I do object to exposting the streams mess even more.
+On Fri, Jun 28, 2019 at 3:23 PM Daniel Drake <drake@endlessm.com> wrote:
+> Detect modern setups where we have no need for the PIT (e.g. where
+> we already know the TSC and LAPIC timer frequencies, so no need
+> to calibrate them against the PIT), and skip initialization PIT in
+> such cases.
+>
+> Skip the IO-APIC timer-checking code when we don't have a PIT
+> to test against (this was causing the panic).
+
+Link: https://lore.kernel.org/lkml/CAD8Lp45fedoPLnK=UmUhhtkjy5u2h04sYKrx3U+m04U6FpVZ4A@mail.gmail.com
+
+> Tested-by: Daniel Drake <drake@endlessm.com>
