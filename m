@@ -2,46 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BD8958F3A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 02:50:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A1D058F66
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 02:51:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726759AbfF1AuP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 20:50:15 -0400
-Received: from mail-pg1-f176.google.com ([209.85.215.176]:46471 "EHLO
-        mail-pg1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726595AbfF1AuP (ORCPT
+        id S1726801AbfF1AuT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 20:50:19 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:33000 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726606AbfF1AuR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 20:50:15 -0400
-Received: by mail-pg1-f176.google.com with SMTP id v9so1760104pgr.13
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 17:50:14 -0700 (PDT)
+        Thu, 27 Jun 2019 20:50:17 -0400
+Received: by mail-pl1-f196.google.com with SMTP id c14so2223062plo.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 17:50:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=/2sb9hYyfsw8WeSVT5nzjFqwXBw7n6CAVVqtEtqe5yo=;
-        b=lRvyXSQsS2U/HHANHUkIFKkmeGd6aFPfOTTAFeWHsMWnUOQOW/dp/M9J7cb5xcNZG1
-         gNpL8dUJCCvQjCiiWT7R8f2WxzLfHBTgowMfraYUinDytjw6jELgg8QxyVDuMoE4aGTn
-         fh0Od2jvO3KHQj5Sl37WuwFb9oDthueH5M3sFHnL+c5JlGZ39fr3f2kKERMEKN7gLufn
-         9TVFHVDABdFsnBAtc4C8gylQ2rC3n/IvaSdbfJJ39/PlRVsMTmZyjyWvJH/L3RT32K4y
-         NGepclZT+dsGm7nThkQVEwP3UqgE70meJdNUt1vPrUwttfgiS6nN5Xn79Epz7TnFkkqj
-         QQEg==
-X-Gm-Message-State: APjAAAVa3MyUoJ5vJ7l0wEQg0zuf31XOT1cE86ZHhULqC0obcH8awhSB
-        xXIP13aLzrakqP9FlQyiQVG6Bw==
-X-Google-Smtp-Source: APXvYqxgwYFE0x/C7FEGII/7g2GTw0w2jtCjz9Dt3boSx0JghIsMGG6LzP+pgOPkeurX1/r+fwbtKg==
-X-Received: by 2002:a63:593:: with SMTP id 141mr5704119pgf.78.1561683014046;
-        Thu, 27 Jun 2019 17:50:14 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=m+CwaiEJYAeRor4kEz6OTKmpKkJwK4ZSop7mjZ0336M=;
+        b=CDJ4kJXUZHPcpwFJsiFcek7U8bU+x+L/3cCmfVeQZ1gi7Xl+mHVIbD/XKvnemkrEEo
+         t1+uVPVssuDrPSdgyWmsX1R0iPekttqQu8lfx5x+wnAdwaobAlOfmIes+2dlPmGu7cPa
+         3KMf4w0sQeGR7oU+d6UGKJ588wqOPKekHhv/nRIO/RFACo4fRa2qQ/5sGnBk+BzW0wuD
+         iWMNbfN1M6i4bYLMjr8+cCpP+5GBpXNbP416z9nfUTpV/AdGmMAs7NME932cyMTLhAdR
+         XlE5OFPgGEI2U5VOzXieQHPPTnejq9YCDNpt3sM291HP470Opm2ppbjZd35Znsg0uDW6
+         WXCw==
+X-Gm-Message-State: APjAAAVXj4LnKO7INAJishSLOok4t2zkwL4R1BiblgpJfOacuAkUsukY
+        8KeT8niI3HG6vRCz3m/vw2+hsw==
+X-Google-Smtp-Source: APXvYqxzsP8xXGKl/Qhpt656m8uctj1yVi0IGiMIRv0+QZIxubDjbGfRWK4tm5YMCPI/V1y2ZpPiEg==
+X-Received: by 2002:a17:902:7443:: with SMTP id e3mr8041660plt.176.1561683016190;
+        Thu, 27 Jun 2019 17:50:16 -0700 (PDT)
 Received: from localhost (c-76-21-109-208.hsd1.ca.comcast.net. [76.21.109.208])
-        by smtp.gmail.com with ESMTPSA id n7sm280544pff.59.2019.06.27.17.50.12
+        by smtp.gmail.com with ESMTPSA id i3sm270313pfo.138.2019.06.27.17.50.14
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 27 Jun 2019 17:50:12 -0700 (PDT)
+        Thu, 27 Jun 2019 17:50:15 -0700 (PDT)
 From:   Moritz Fischer <mdf@kernel.org>
 To:     linux-fpga@vger.kernel.org, gregkh@linuxfoundation.org
 Cc:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        Wu Hao <hao.wu@intel.com>, Alan Tull <atull@kernel.org>,
         Moritz Fischer <mdf@kernel.org>
-Subject: [PATCH 00/15] FPGA DFL updates
-Date:   Thu, 27 Jun 2019 17:49:36 -0700
-Message-Id: <20190628004951.6202-1-mdf@kernel.org>
+Subject: [PATCH 01/15] fpga: dfl-fme-mgr: fix FME_PR_INTFC_ID register address.
+Date:   Thu, 27 Jun 2019 17:49:37 -0700
+Message-Id: <20190628004951.6202-2-mdf@kernel.org>
 X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190628004951.6202-1-mdf@kernel.org>
+References: <20190628004951.6202-1-mdf@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -49,62 +52,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
+From: Wu Hao <hao.wu@intel.com>
 
-can you please take the following patches. They're mostly new features
-and some cleanup of the DFL internals.
+FME_PR_INTFC_ID is used as compat_id for fpga manager and region,
+but high 64 bits and low 64 bits of the compat_id are swapped by
+mistake. This patch fixes this problem by fixing register address.
 
-They've been on the mailing list and have been reviewed.
+Signed-off-by: Wu Hao <hao.wu@intel.com>
+Acked-by: Alan Tull <atull@kernel.org>
+Acked-by: Moritz Fischer <mdf@kernel.org>
+Signed-off-by: Moritz Fischer <mdf@kernel.org>
+---
+ drivers/fpga/dfl-fme-mgr.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Note: I've seen that Mauro touched Documentation/fpga/dfl.rst in linux-next
-      commit c220a1fae6c5d ("docs: fpga: convert docs to ReST and rename to *.rst")
-      and fixed up PATCH 05/15 to apply on top of that.
-
-If you prefer the original series against char-misc-next let me know,
-and I'll resubmit.
-
-Thanks,
-
-Moritz
-
-Wu Hao (15):
-  fpga: dfl-fme-mgr: fix FME_PR_INTFC_ID register address.
-  fpga: dfl: fme: remove copy_to_user() in ioctl for PR
-  fpga: dfl: fme: align PR buffer size per PR datawidth
-  fpga: dfl: fme: support 512bit data width PR
-  Documentation: fpga: dfl: add descriptions for virtualization and new
-    interfaces.
-  fpga: dfl: fme: add DFL_FPGA_FME_PORT_RELEASE/ASSIGN ioctl support.
-  fpga: dfl: pci: enable SRIOV support.
-  fpga: dfl: afu: add AFU state related sysfs interfaces
-  fpga: dfl: afu: add userclock sysfs interfaces.
-  fpga: dfl: add id_table for dfl private feature driver
-  fpga: dfl: afu: export __port_enable/disable function.
-  fpga: dfl: afu: add error reporting support.
-  fpga: dfl: afu: add STP (SignalTap) support
-  fpga: dfl: fme: add capability sysfs interfaces
-  fpga: dfl: fme: add global error reporting support
-
- .../ABI/testing/sysfs-platform-dfl-fme        |  98 +++++
- .../ABI/testing/sysfs-platform-dfl-port       | 104 +++++
- Documentation/fpga/dfl.rst                    | 100 +++++
- drivers/fpga/Makefile                         |   3 +-
- drivers/fpga/dfl-afu-error.c                  | 225 ++++++++++
- drivers/fpga/dfl-afu-main.c                   | 330 ++++++++++++++-
- drivers/fpga/dfl-afu.h                        |   7 +
- drivers/fpga/dfl-fme-error.c                  | 385 ++++++++++++++++++
- drivers/fpga/dfl-fme-main.c                   | 120 +++++-
- drivers/fpga/dfl-fme-mgr.c                    | 117 +++++-
- drivers/fpga/dfl-fme-pr.c                     |  65 +--
- drivers/fpga/dfl-fme.h                        |   7 +-
- drivers/fpga/dfl-pci.c                        |  40 ++
- drivers/fpga/dfl.c                            | 169 +++++++-
- drivers/fpga/dfl.h                            |  54 ++-
- include/uapi/linux/fpga-dfl.h                 |  32 ++
- 16 files changed, 1776 insertions(+), 80 deletions(-)
- create mode 100644 drivers/fpga/dfl-afu-error.c
- create mode 100644 drivers/fpga/dfl-fme-error.c
-
+diff --git a/drivers/fpga/dfl-fme-mgr.c b/drivers/fpga/dfl-fme-mgr.c
+index 76f37709dd1a..b3f7eee3c93f 100644
+--- a/drivers/fpga/dfl-fme-mgr.c
++++ b/drivers/fpga/dfl-fme-mgr.c
+@@ -30,8 +30,8 @@
+ #define FME_PR_STS		0x10
+ #define FME_PR_DATA		0x18
+ #define FME_PR_ERR		0x20
+-#define FME_PR_INTFC_ID_H	0xA8
+-#define FME_PR_INTFC_ID_L	0xB0
++#define FME_PR_INTFC_ID_L	0xA8
++#define FME_PR_INTFC_ID_H	0xB0
+ 
+ /* FME PR Control Register Bitfield */
+ #define FME_PR_CTRL_PR_RST	BIT_ULL(0)  /* Reset PR engine */
 -- 
 2.22.0
 
