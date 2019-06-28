@@ -2,30 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 925E25A60D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 22:49:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD0405A611
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 22:50:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726882AbfF1Uth (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 16:49:37 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:38476 "EHLO
+        id S1726950AbfF1Ut7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 16:49:59 -0400
+Received: from shelob.surriel.com ([96.67.55.147]:38464 "EHLO
         shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726788AbfF1Utf (ORCPT
+        with ESMTP id S1726787AbfF1Utg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 16:49:35 -0400
+        Fri, 28 Jun 2019 16:49:36 -0400
 Received: from imladris.surriel.com ([96.67.55.152])
         by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
         (Exim 4.92)
         (envelope-from <riel@shelob.surriel.com>)
-        id 1hgxo6-0007TL-KI; Fri, 28 Jun 2019 16:49:18 -0400
+        id 1hgxo6-0007TL-Le; Fri, 28 Jun 2019 16:49:18 -0400
 From:   Rik van Riel <riel@surriel.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     kernel-team@fb.com, pjt@google.com, dietmar.eggemann@arm.com,
         peterz@infradead.org, mingo@redhat.com, morten.rasmussen@arm.com,
         tglx@linutronix.de, mgorman@techsingularity.net,
         vincent.guittot@linaro.org, Rik van Riel <riel@surriel.com>
-Subject: [PATCH 05/10] sched,fair: remove cfs rqs from leaf_cfs_rq_list bottom up
-Date:   Fri, 28 Jun 2019 16:49:08 -0400
-Message-Id: <20190628204913.10287-6-riel@surriel.com>
+Subject: [PATCH 06/10] sched,cfs: use explicit cfs_rq of parent se helper
+Date:   Fri, 28 Jun 2019 16:49:09 -0400
+Message-Id: <20190628204913.10287-7-riel@surriel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190628204913.10287-1-riel@surriel.com>
 References: <20190628204913.10287-1-riel@surriel.com>
@@ -36,82 +36,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reducing the overhead of the CPU controller is achieved by not walking
-all the sched_entities every time a task is enqueued or dequeued.
+Use an explicit "cfs_rq of parent sched_entity" helper in a few
+strategic places, where cfs_rq_of(se) may no longer point at the
+right runqueue once we flatten the hierarchical cgroup runqueues.
 
-One of the things being checked every single time is whether the cfs_rq
-is on the rq->leaf_cfs_rq_list.
-
-By only removing a cfs_rq from the list once it no longer has children
-on the list, we can avoid walking the sched_entity hierarchy if the bottom
-cfs_rq is on the list, once the runqueues have been flattened.
+No functional change.
 
 Signed-off-by: Rik van Riel <riel@surriel.com>
 ---
- kernel/sched/fair.c  | 17 +++++++++++++++++
- kernel/sched/sched.h |  1 +
- 2 files changed, 18 insertions(+)
+ kernel/sched/fair.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 63cb40253b26..e41feacc45d9 100644
+index e41feacc45d9..d48bff5118fc 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -286,6 +286,13 @@ static inline bool list_add_leaf_cfs_rq(struct cfs_rq *cfs_rq)
- 
- 	cfs_rq->on_list = 1;
- 
-+	/*
-+	 * If the tmp_alone_branch cursor was moved, it means a child cfs_rq
-+	 * is already on the list ahead of us.
-+	 */
-+	if (rq->tmp_alone_branch != &rq->leaf_cfs_rq_list)
-+		cfs_rq->children_on_list++;
-+
- 	/*
- 	 * Ensure we either appear before our parent (if already
- 	 * enqueued) or force our parent to appear after us when it is
-@@ -311,6 +318,7 @@ static inline bool list_add_leaf_cfs_rq(struct cfs_rq *cfs_rq)
- 		 * list.
- 		 */
- 		rq->tmp_alone_branch = &rq->leaf_cfs_rq_list;
-+		cfs_rq->tg->parent->cfs_rq[cpu]->children_on_list++;
- 		return true;
- 	}
- 
-@@ -359,6 +367,11 @@ static inline void list_del_leaf_cfs_rq(struct cfs_rq *cfs_rq)
- 		if (rq->tmp_alone_branch == &cfs_rq->leaf_cfs_rq_list)
- 			rq->tmp_alone_branch = cfs_rq->leaf_cfs_rq_list.prev;
- 
-+		if (cfs_rq->tg->parent) {
-+			int cpu = cpu_of(rq);
-+			cfs_rq->tg->parent->cfs_rq[cpu]->children_on_list--;
-+		}
-+
- 		list_del_rcu(&cfs_rq->leaf_cfs_rq_list);
- 		cfs_rq->on_list = 0;
- 	}
-@@ -7687,6 +7700,10 @@ static inline bool cfs_rq_is_decayed(struct cfs_rq *cfs_rq)
- 	if (cfs_rq->avg.util_sum)
- 		return false;
- 
-+	/* Remove decayed parents once their decayed children are gone. */
-+	if (cfs_rq->children_on_list)
-+		return false;
-+
- 	return true;
+@@ -276,6 +276,15 @@ static inline struct cfs_rq *group_cfs_rq(struct sched_entity *grp)
+ 	return grp->my_q;
  }
  
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 32978a8de8ce..4f8acbab0fb2 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -557,6 +557,7 @@ struct cfs_rq {
- 	 * This list is used during load balance.
- 	 */
- 	int			on_list;
-+	int			children_on_list;
- 	struct list_head	leaf_cfs_rq_list;
- 	struct task_group	*tg;	/* group that "owns" this runqueue */
++/* runqueue owned by the parent entity; the root cfs_rq for a top level se */
++static inline struct cfs_rq *group_cfs_rq_of_parent(struct sched_entity *se)
++{
++	if (se->parent)
++		return group_cfs_rq(se->parent);
++
++	return cfs_rq_of(se);
++}
++
+ static inline bool list_add_leaf_cfs_rq(struct cfs_rq *cfs_rq)
+ {
+ 	struct rq *rq = rq_of(cfs_rq);
+@@ -3297,7 +3306,7 @@ static inline int propagate_entity_load_avg(struct sched_entity *se)
+ 
+ 	gcfs_rq->propagate = 0;
+ 
+-	cfs_rq = cfs_rq_of(se);
++	cfs_rq = group_cfs_rq_of_parent(se);
+ 
+ 	add_tg_cfs_propagate(cfs_rq, gcfs_rq->prop_runnable_sum);
+ 
+@@ -7778,7 +7787,7 @@ static void update_cfs_rq_h_load(struct cfs_rq *cfs_rq)
+ 
+ 	WRITE_ONCE(cfs_rq->h_load_next, NULL);
+ 	for_each_sched_entity(se) {
+-		cfs_rq = cfs_rq_of(se);
++		cfs_rq = group_cfs_rq_of_parent(se);
+ 		WRITE_ONCE(cfs_rq->h_load_next, se);
+ 		if (cfs_rq->last_h_load_update == now)
+ 			break;
+@@ -7801,7 +7810,7 @@ static void update_cfs_rq_h_load(struct cfs_rq *cfs_rq)
+ 
+ static unsigned long task_se_h_load(struct sched_entity *se)
+ {
+-	struct cfs_rq *cfs_rq = cfs_rq_of(se);
++	struct cfs_rq *cfs_rq = group_cfs_rq_of_parent(se);
+ 
+ 	update_cfs_rq_h_load(cfs_rq);
+ 	return div64_ul(se->avg.load_avg * cfs_rq->h_load,
+@@ -10148,7 +10157,7 @@ static void task_tick_fair(struct rq *rq, struct task_struct *curr, int queued)
+ 	struct sched_entity *se = &curr->se;
+ 
+ 	for_each_sched_entity(se) {
+-		cfs_rq = cfs_rq_of(se);
++		cfs_rq = group_cfs_rq_of_parent(se);
+ 		entity_tick(cfs_rq, se, queued);
+ 	}
  
 -- 
 2.20.1
