@@ -2,112 +2,216 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA3EB59776
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 11:27:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B67505977A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 11:28:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726900AbfF1J1g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 05:27:36 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:51404 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726539AbfF1J1f (ORCPT
+        id S1726686AbfF1J2u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 05:28:50 -0400
+Received: from lgeamrelo13.lge.com ([156.147.23.53]:52317 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726550AbfF1J2u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 05:27:35 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5S9RPEV126238;
-        Fri, 28 Jun 2019 04:27:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1561714045;
-        bh=4lzPTixTG6HYSgsn449rIrKsahuLP+3PBJPmON8xrr4=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=UNTDR6Vxo0+1Ve9+XKa4fqdgbb4dTQfBP3P/TemSWllJ36pW7/Vkibve6y7pozgvI
-         jyaaOCIn670GkXKsQomRv4snxP7ddP/uR7CbJqZlOM8V1SuPZC5IStmsW712rX+Ef8
-         bXZsH05AYCfBwF9pB0MgKMadJHQ1RBKVXzFUO9g0=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5S9RP7W009488
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 28 Jun 2019 04:27:25 -0500
-Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 28
- Jun 2019 04:27:24 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Fri, 28 Jun 2019 04:27:24 -0500
-Received: from [172.24.190.229] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5S9RLiG100189;
-        Fri, 28 Jun 2019 04:27:22 -0500
-Subject: Re: [PATCH] iommu/arm-smmu-v3: Fix incorrect fields being passed to
- prefetch command
-To:     <will@kernel.org>, <robin.murphy@arm.com>, <joro@8bytes.org>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>,
-        <wmills@ti.com>, <nsekhar@ti.com>, <lokeshvutla@ti.com>
-References: <20190628090953.23606-1-p-yadav1@ti.com>
-From:   Pratyush Yadav <p-yadav1@ti.com>
-Message-ID: <b0866cd5-d073-601c-f95e-95a7128d4d75@ti.com>
-Date:   Fri, 28 Jun 2019 14:57:43 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
+        Fri, 28 Jun 2019 05:28:50 -0400
+Received: from unknown (HELO lgeamrelo04.lge.com) (156.147.1.127)
+        by 156.147.23.53 with ESMTP; 28 Jun 2019 18:28:47 +0900
+X-Original-SENDERIP: 156.147.1.127
+X-Original-MAILFROM: byungchul.park@lge.com
+Received: from unknown (HELO X58A-UD3R) (10.177.222.33)
+        by 156.147.1.127 with ESMTP; 28 Jun 2019 18:28:47 +0900
+X-Original-SENDERIP: 10.177.222.33
+X-Original-MAILFROM: byungchul.park@lge.com
+Date:   Fri, 28 Jun 2019 18:28:06 +0900
+From:   Byungchul Park <byungchul.park@lge.com>
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
+Cc:     Scott Wood <swood@redhat.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        rcu <rcu@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>, kernel-team@lge.com
+Subject: Re: [RFC] Deadlock via recursive wakeup via RCU with threadirqs
+Message-ID: <20190628092806.GB11339@X58A-UD3R>
+References: <20190627155506.GU26519@linux.ibm.com>
+ <CAEXW_YSEN_OL3ftTLN=M-W70WSuCgHJqU-R9VhS=A3uVj_AL+A@mail.gmail.com>
+ <20190627173831.GW26519@linux.ibm.com>
+ <20190627181638.GA209455@google.com>
+ <20190627184107.GA26519@linux.ibm.com>
+ <13761fee4b71cc004ad0d6709875ce917ff28fce.camel@redhat.com>
+ <20190627203612.GD26519@linux.ibm.com>
+ <20190628073138.GB13650@X58A-UD3R>
+ <20190628074350.GA11214@X58A-UD3R>
+ <20190628091042.GA11339@X58A-UD3R>
 MIME-Version: 1.0
-In-Reply-To: <20190628090953.23606-1-p-yadav1@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190628091042.GA11339@X58A-UD3R>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 28/06/19 2:39 PM, Pratyush Yadav wrote:> According to the SMMUv3 spec [0] section 4.2.1, command 0x1
-> (CMD_PREFETCH_CONFIG) does not take address and size as parameters. It
-> only takes  StreamID, SSec, SubstreamID, and SSV. Address and Size are
-> parameters for command 0x2 (CMD_PREFETCH_ADDR).
+On Fri, Jun 28, 2019 at 06:10:42PM +0900, Byungchul Park wrote:
+> On Fri, Jun 28, 2019 at 04:43:50PM +0900, Byungchul Park wrote:
+> > On Fri, Jun 28, 2019 at 04:31:38PM +0900, Byungchul Park wrote:
+> > > On Thu, Jun 27, 2019 at 01:36:12PM -0700, Paul E. McKenney wrote:
+> > > > On Thu, Jun 27, 2019 at 03:17:27PM -0500, Scott Wood wrote:
+> > > > > On Thu, 2019-06-27 at 11:41 -0700, Paul E. McKenney wrote:
+> > > > > > On Thu, Jun 27, 2019 at 02:16:38PM -0400, Joel Fernandes wrote:
+> > > > > > > 
+> > > > > > > I think the fix should be to prevent the wake-up not based on whether we
+> > > > > > > are
+> > > > > > > in hard/soft-interrupt mode but that we are doing the rcu_read_unlock()
+> > > > > > > from
+> > > > > > > a scheduler path (if we can detect that)
+> > > > > > 
+> > > > > > Or just don't do the wakeup at all, if it comes to that.  I don't know
+> > > > > > of any way to determine whether rcu_read_unlock() is being called from
+> > > > > > the scheduler, but it has been some time since I asked Peter Zijlstra
+> > > > > > about that.
+> > > > > > 
+> > > > > > Of course, unconditionally refusing to do the wakeup might not be happy
+> > > > > > thing for NO_HZ_FULL kernels that don't implement IRQ work.
+> > > > > 
+> > > > > Couldn't smp_send_reschedule() be used instead?
+> > > > 
+> > > > Good point.  If current -rcu doesn't fix things for Sebastian's case,
+> > > > that would be well worth looking at.  But there must be some reason
+> > > > why Peter Zijlstra didn't suggest it when he instead suggested using
+> > > > the IRQ work approach.
+> > > > 
+> > > > Peter, thoughts?
+> > > 
+> > 
+> > +cc kernel-team@lge.com
+> > (I'm sorry for more noise on the thread.)
+> > 
+> > > Hello,
+> > > 
+> > > Isn't the following scenario possible?
+> > > 
+> > > The original code
+> > > -----------------
+> > > rcu_read_lock();
+> > > ...
+> > > /* Experdite */
+> > > WRITE_ONCE(t->rcu_read_unlock_special.b.exp_hint, true);
+> > > ...
+> > > __rcu_read_unlock();
+> > > 	if (unlikely(READ_ONCE(t->rcu_read_unlock_special.s)))
+> > > 		rcu_read_unlock_special(t);
+> > > 			WRITE_ONCE(t->rcu_read_unlock_special.b.exp_hint, false);
+> > > 			rcu_preempt_deferred_qs_irqrestore(t, flags);
+> > > 		barrier();  /* ->rcu_read_unlock_special load before assign */
+> > > 		t->rcu_read_lock_nesting = 0;
+> > > 
+> > > The reordered code by machine
+> > > -----------------------------
+> > > rcu_read_lock();
+> > > ...
+> > > /* Experdite */
+> > > WRITE_ONCE(t->rcu_read_unlock_special.b.exp_hint, true);
+> > > ...
+> > > __rcu_read_unlock();
+> > > 	if (unlikely(READ_ONCE(t->rcu_read_unlock_special.s)))
+> > > 		rcu_read_unlock_special(t);
+> > > 		t->rcu_read_lock_nesting = 0; <--- LOOK AT THIS!!!
+> > > 			WRITE_ONCE(t->rcu_read_unlock_special.b.exp_hint, false);
+> > > 			rcu_preempt_deferred_qs_irqrestore(t, flags);
+> > > 		barrier();  /* ->rcu_read_unlock_special load before assign */
+> > > 
+> > > An interrupt happens
+> > > --------------------
+> > > rcu_read_lock();
+> > > ...
+> > > /* Experdite */
+> > > WRITE_ONCE(t->rcu_read_unlock_special.b.exp_hint, true);
+> > > ...
+> > > __rcu_read_unlock();
+> > > 	if (unlikely(READ_ONCE(t->rcu_read_unlock_special.s)))
+> > > 		rcu_read_unlock_special(t);
+> > > 		t->rcu_read_lock_nesting = 0; <--- LOOK AT THIS!!!
+> > > <--- Handle an (any) irq
+> > > 	rcu_read_lock();
+> > > 	/* This call should be skipped */
+> > > 	rcu_read_unlock_special(t);
+> > > 			WRITE_ONCE(t->rcu_read_unlock_special.b.exp_hint, false);
+> > > 			rcu_preempt_deferred_qs_irqrestore(t, flags);
+> > > 		barrier();  /* ->rcu_read_unlock_special load before assign */
 > 
-> Tested on kernel 4.19 on TI J721E SOC.
+> I was confused it was a LOAD access. The example should be changed a bit.
+> 
+> 
+> 
+> The original code
+> -----------------
+> rcu_read_lock();
+> ...
+> /* Experdite */
+> WRITE_ONCE(t->rcu_read_unlock_special.b.exp_hint, true);
+> ...
+> __rcu_read_unlock();
+> 	if (unlikely(READ_ONCE(t->rcu_read_unlock_special.s)))
+> 		rcu_read_unlock_special(t);
+> 			WRITE_ONCE(t->rcu_read_unlock_special.b.exp_hint, false);
+> 			rcu_preempt_deferred_qs_irqrestore(t, flags);
+> 		barrier();  /* ->rcu_read_unlock_special load before assign */
+> 		t->rcu_read_lock_nesting = 0;
+> 
+> The reordered code by machine
+> -----------------------------
+> rcu_read_lock();
+> ...
+> /* Experdite */
+> WRITE_ONCE(t->rcu_read_unlock_special.b.exp_hint, true);
+> ...
+> __rcu_read_unlock();
+> 	if (unlikely(READ_ONCE(t->rcu_read_unlock_special.s)))
+> 		rcu_read_unlock_special(t);
+> 			rcu_preempt_deferred_qs_irqrestore(t, flags);
+> 		barrier();  /* ->rcu_read_unlock_special load before assign */
+> 		t->rcu_read_lock_nesting = 0;
+> 			WRITE_ONCE(t->rcu_read_unlock_special.b.exp_hint, false);
+> 
+> An interrupt happens
+> --------------------
+> rcu_read_lock();
+> ...
+> /* Experdite */
+> WRITE_ONCE(t->rcu_read_unlock_special.b.exp_hint, true);
+> ...
+> __rcu_read_unlock();
+> 	if (unlikely(READ_ONCE(t->rcu_read_unlock_special.s)))
+> 		rcu_read_unlock_special(t);
+> 			rcu_preempt_deferred_qs_irqrestore(t, flags);
+> 		barrier();  /* ->rcu_read_unlock_special load before assign */
+> 		t->rcu_read_lock_nesting = 0;
+> <--- Handle an (any) irq
+> rcu_read_lock();
+> /* This call should be skipped */
+> rcu_read_unlock_special(t);
+> 			WRITE_ONCE(t->rcu_read_unlock_special.b.exp_hint, false);
+> 
+> 
+> 
+> Now that I re-made the example, I'm afraid it'd be no problem because
+> anyway it'd be within a cpu so it can see inside of the store-buffer of
+> the cpu.
+> 
+> I'm sorry. Please ignore my suggestion here.
 
-Even though I only tested on 4.19 because I don't have the setup to run 
-mainline master on this SOC, the patch is based on mainline master and I
-did compile-test it.
+Even though the example is wrong but I think you can get confused with
+about what I was trying to tell. It was about (1) LOAD in advance and
+(2) reordering within a store buffer within a cpu, but not about
+reordering instructions - I wrote the example as if it's about the
+latter though.
 
-> [0] https://static.docs.arm.com/ihi0070/a/IHI_0070A_SMMUv3.pdf
-> 
-> Signed-off-by: Pratyush Yadav <p-yadav1@ti.com>
-> ---
->  drivers/iommu/arm-smmu-v3.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
-> index 4d5a694f02c2..2d4dfd909436 100644
-> --- a/drivers/iommu/arm-smmu-v3.c
-> +++ b/drivers/iommu/arm-smmu-v3.c
-> @@ -413,6 +413,7 @@ struct arm_smmu_cmdq_ent {
->  	/* Command-specific fields */
->  	union {
->  		#define CMDQ_OP_PREFETCH_CFG	0x1
-> +		#define CMDQ_OP_PREFETCH_ADDR	0x2
->  		struct {
->  			u32			sid;
->  			u8			size;
-> @@ -805,10 +806,12 @@ static int arm_smmu_cmdq_build_cmd(u64 *cmd, struct arm_smmu_cmdq_ent *ent)
->  	case CMDQ_OP_TLBI_EL2_ALL:
->  	case CMDQ_OP_TLBI_NSNH_ALL:
->  		break;
-> -	case CMDQ_OP_PREFETCH_CFG:
-> -		cmd[0] |= FIELD_PREP(CMDQ_PREFETCH_0_SID, ent->prefetch.sid);
-> +	case CMDQ_OP_PREFETCH_ADDR:
->  		cmd[1] |= FIELD_PREP(CMDQ_PREFETCH_1_SIZE, ent->prefetch.size);
->  		cmd[1] |= ent->prefetch.addr & CMDQ_PREFETCH_1_ADDR_MASK;
-> +		/* Fallthrough */
-> +	case CMDQ_OP_PREFETCH_CFG:
-> +		cmd[0] |= FIELD_PREP(CMDQ_PREFETCH_0_SID, ent->prefetch.sid);
->  		break;
->  	case CMDQ_OP_CFGI_STE:
->  		cmd[0] |= FIELD_PREP(CMDQ_CFGI_0_SID, ent->cfgi.sid);
-> 
--- 
-Regards,
-Pratyush Yadav
+Sorry for noise again.
+
+Thanks,
+Byungchul
