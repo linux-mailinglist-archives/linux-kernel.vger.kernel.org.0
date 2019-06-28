@@ -2,81 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1DC959F4E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 17:47:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1878559F53
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 17:47:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727163AbfF1Pqb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 11:46:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57660 "EHLO mail.kernel.org"
+        id S1727065AbfF1PrK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 11:47:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58494 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726686AbfF1Pqa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 11:46:30 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726707AbfF1PrJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Jun 2019 11:47:09 -0400
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CE2DA2063F;
-        Fri, 28 Jun 2019 15:46:28 +0000 (UTC)
-Date:   Fri, 28 Jun 2019 11:46:27 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Miroslav Benes <mbenes@suse.cz>,
-        Johannes Erdfelt <johannes@erdfelt.com>,
-        Jessica Yu <jeyu@kernel.org>, Jiri Kosina <jikos@kernel.org>,
-        mhiramat@kernel.org, Ingo Molnar <mingo@kernel.org>,
-        tglx@linutronix.de, torvalds@linux-foundation.org,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        linux-kernel@vger.kernel.org, live-patching@vger.kernel.org
-Subject: Re: [PATCH] ftrace: Remove possible deadlock between
- register_kprobe() and ftrace_run_update_code()
-Message-ID: <20190628114627.411af7c2@gandalf.local.home>
-In-Reply-To: <20190628095424.1be42e21@gandalf.local.home>
-References: <20190627081334.12793-1-pmladek@suse.com>
-        <alpine.LSU.2.21.1906280928410.17146@pobox.suse.cz>
-        <20190628105232.6arwis5u33li6twr@pathway.suse.cz>
-        <20190628095424.1be42e21@gandalf.local.home>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3B2692133F;
+        Fri, 28 Jun 2019 15:47:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561736828;
+        bh=IvQrseI2FT7GlH+2IVTYalj+9dZqPkQ+umge7Io8BYs=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=qiBPRUh2Rl/4JkSewXW0u5fTbCvxhNAiAvyoKPvWUekoyPQH5NWCaeHqoHo8wrx/z
+         +F+dnsHWd+I11+gyHYSrt7TBj0HOf3gNZZL6EP0gSEQayXinWtxuzoeLJlLC3Nqneu
+         JmWm7oUz6pJSL2mRKcrxq7zpVd4D504DPYgODGcs=
+Received: by mail-qt1-f182.google.com with SMTP id h21so6754833qtn.13;
+        Fri, 28 Jun 2019 08:47:08 -0700 (PDT)
+X-Gm-Message-State: APjAAAVm769vb6eCqE84DT2Z2CnllTQdbZLG/vJ5dBUMAkJ7crySoC/b
+        phL8pUeNGz9wUrZhhh/urajHJ/jDG3244mntIg==
+X-Google-Smtp-Source: APXvYqzI7nz1Eud6yl97g4IKf/vW5/y3ZQY7AiYHNAFU5cp6XG9kpOIjyOkxG/G+hIZCgCZpbktv/2gOhf4y7pIKPB0=
+X-Received: by 2002:aed:3f10:: with SMTP id p16mr8736951qtf.110.1561736827529;
+ Fri, 28 Jun 2019 08:47:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20190628023838.15426-1-andrew@aj.id.au> <20190628023838.15426-3-andrew@aj.id.au>
+In-Reply-To: <20190628023838.15426-3-andrew@aj.id.au>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Fri, 28 Jun 2019 09:46:56 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKjDyuDjeBBqhF=2ceG2h0WiJC6QKtHJ-=yL3XqxXF0Hw@mail.gmail.com>
+Message-ID: <CAL_JsqKjDyuDjeBBqhF=2ceG2h0WiJC6QKtHJ-=yL3XqxXF0Hw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/8] dt-bindings: pinctrl: aspeed: Convert AST2400
+ bindings to json-schema
+To:     Andrew Jeffery <andrew@aj.id.au>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Ryan Chen <ryan_chen@aspeedtech.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Joel Stanley <joel@jms.id.au>, linux-aspeed@lists.ozlabs.org,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        devicetree@vger.kernel.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Johnny Huang <johnny_huang@aspeedtech.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 28 Jun 2019 09:54:24 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+On Thu, Jun 27, 2019 at 8:39 PM Andrew Jeffery <andrew@aj.id.au> wrote:
+>
+> Convert ASPEED pinctrl bindings to DT schema format using json-schema
+>
+> Cc: Johnny Huang <johnny_huang@aspeedtech.com>
+> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+> ---
+> In v2:
+>
+> * Enforce function/group names in bindings
+> * Move description above properties
+> * Simplify specification of compatible
+> * Cleanup license specification
+>
+>  .../pinctrl/aspeed,ast2400-pinctrl.txt        | 80 ------------------
+>  .../pinctrl/aspeed,ast2400-pinctrl.yaml       | 81 +++++++++++++++++++
+>  2 files changed, 81 insertions(+), 80 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/pinctrl/aspeed,ast2400-pinctrl.txt
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/aspeed,ast2400-pinctrl.yaml
 
-> On Fri, 28 Jun 2019 12:52:32 +0200
-> Petr Mladek <pmladek@suse.com> wrote:
-> 
-> > On Fri 2019-06-28 09:32:03, Miroslav Benes wrote:  
-> > > On Thu, 27 Jun 2019, Petr Mladek wrote:    
-> > > > @@ -2611,12 +2610,10 @@ static void ftrace_run_update_code(int command)
-> > > >  {
-> > > >  	int ret;
-> > > >  
-> > > > -	mutex_lock(&text_mutex);
-> > > > -
-> > > >  	ret = ftrace_arch_code_modify_prepare();
-> > > >  	FTRACE_WARN_ON(ret);
-> > > >  	if (ret)
-> > > > -		goto out_unlock;
-> > > > +		return ret;    
-> > > 
-> > > Should be just "return;", because the function is "static void".    
-> > 
-> > Grr, I usually check compiler warnings but I evidently skipped it
-> > in this case :-(
-> > 
-> > Steven, should I send a fixed/folloup patch or will you just
-> > fix it when pushing?
-> >   
-> 
-> I'll fix it up.
-
-Also note, this would have been caught with my test suite, as it checks
-for any new warnings.
-
--- Steve
-
+Reviewed-by: Rob Herring <robh@kernel.org>
