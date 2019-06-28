@@ -2,111 +2,214 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D98CD596B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 11:03:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D645B596C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 11:03:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726605AbfF1JDL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 05:03:11 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:33702 "EHLO mx1.redhat.com"
+        id S1726830AbfF1JDg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 05:03:36 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:41866 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726426AbfF1JDL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 05:03:11 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        id S1726709AbfF1JDQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Jun 2019 05:03:16 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 449A583F3C;
-        Fri, 28 Jun 2019 09:03:09 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id CFB8859449;
+        Fri, 28 Jun 2019 09:03:13 +0000 (UTC)
 Received: from sirius.home.kraxel.org (ovpn-116-96.ams2.redhat.com [10.36.116.96])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4676E1001B12;
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4EB1860BEC;
         Fri, 28 Jun 2019 09:03:06 +0000 (UTC)
 Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 7CD4C17472; Fri, 28 Jun 2019 11:03:03 +0200 (CEST)
+        id E747F17473; Fri, 28 Jun 2019 11:03:03 +0200 (CEST)
 From:   Gerd Hoffmann <kraxel@redhat.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     ckoenig.leichtzumerken@gmail.com, thomas@shipmail.org,
         tzimmermann@suse.de, daniel@ffwll.ch, bskeggs@redhat.com,
         Gerd Hoffmann <kraxel@redhat.com>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Huang Rui <ray.huang@amd.com>, David Airlie <airlied@linux.ie>,
+        Dave Airlie <airlied@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>,
+        Xinliang Liu <z.liuxinliang@hisilicon.com>,
+        Rongrong Zou <zourongrong@gmail.com>,
+        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
+        Chen Feng <puck.chen@hisilicon.com>,
+        Hans de Goede <hdegoede@redhat.com>,
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3 01/18] drm/ttm: add gem base object
-Date:   Fri, 28 Jun 2019 11:02:46 +0200
-Message-Id: <20190628090303.29467-2-kraxel@redhat.com>
+Subject: [PATCH v3 02/18] drm/vram: use embedded gem object
+Date:   Fri, 28 Jun 2019 11:02:47 +0200
+Message-Id: <20190628090303.29467-3-kraxel@redhat.com>
 In-Reply-To: <20190628090303.29467-1-kraxel@redhat.com>
 References: <20190628090303.29467-1-kraxel@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Fri, 28 Jun 2019 09:03:11 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Fri, 28 Jun 2019 09:03:16 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add drm_gem_object struct to ttm_buffer_object, so ttm objects are a gdm
-object superclass.  Add a function to check whenever a given bo actually
-uses the embedded drm_gem_object, for the transition period.
+Drop drm_gem_object from drm_gem_vram_object, use the
+ttm_buffer_object.base instead.
 
 Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 Reviewed-by: Christian König <christian.koenig@amd.com>
+Acked-by: Thomas Zimmermann <tzimmermann@suse.de>
 ---
- include/drm/ttm/ttm_bo_api.h | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ include/drm/drm_gem_vram_helper.h           |  3 +--
+ drivers/gpu/drm/ast/ast_main.c              |  2 +-
+ drivers/gpu/drm/drm_gem_vram_helper.c       | 16 ++++++++--------
+ drivers/gpu/drm/hisilicon/hibmc/hibmc_ttm.c |  2 +-
+ drivers/gpu/drm/mgag200/mgag200_main.c      |  2 +-
+ drivers/gpu/drm/vboxvideo/vbox_main.c       |  2 +-
+ 6 files changed, 13 insertions(+), 14 deletions(-)
 
-diff --git a/include/drm/ttm/ttm_bo_api.h b/include/drm/ttm/ttm_bo_api.h
-index 49d9cdfc58f2..082550cac92c 100644
---- a/include/drm/ttm/ttm_bo_api.h
-+++ b/include/drm/ttm/ttm_bo_api.h
-@@ -31,6 +31,7 @@
- #ifndef _TTM_BO_API_H_
- #define _TTM_BO_API_H_
- 
-+#include <drm/drm_gem.h>
- #include <drm/drm_hashtab.h>
- #include <drm/drm_vma_manager.h>
- #include <linux/kref.h>
-@@ -127,6 +128,7 @@ struct ttm_tt;
- /**
-  * struct ttm_buffer_object
-  *
-+ * @base: drm_gem_object superclass data.
-  * @bdev: Pointer to the buffer object device structure.
-  * @type: The bo type.
-  * @destroy: Destruction function. If NULL, kfree is used.
-@@ -169,6 +171,8 @@ struct ttm_tt;
+diff --git a/include/drm/drm_gem_vram_helper.h b/include/drm/drm_gem_vram_helper.h
+index 1a0ea18e7a74..2627bb618979 100644
+--- a/include/drm/drm_gem_vram_helper.h
++++ b/include/drm/drm_gem_vram_helper.h
+@@ -36,7 +36,6 @@ struct vm_area_struct;
+  * video memory becomes scarce.
   */
+ struct drm_gem_vram_object {
+-	struct drm_gem_object gem;
+ 	struct ttm_buffer_object bo;
+ 	struct ttm_bo_kmap_obj kmap;
  
- struct ttm_buffer_object {
-+	struct drm_gem_object base;
-+
- 	/**
- 	 * Members constant at init.
+@@ -68,7 +67,7 @@ static inline struct drm_gem_vram_object *drm_gem_vram_of_bo(
+ static inline struct drm_gem_vram_object *drm_gem_vram_of_gem(
+ 	struct drm_gem_object *gem)
+ {
+-	return container_of(gem, struct drm_gem_vram_object, gem);
++	return container_of(gem, struct drm_gem_vram_object, bo.base);
+ }
+ 
+ struct drm_gem_vram_object *drm_gem_vram_create(struct drm_device *dev,
+diff --git a/drivers/gpu/drm/ast/ast_main.c b/drivers/gpu/drm/ast/ast_main.c
+index 4c7e31cb45ff..74e6e471d283 100644
+--- a/drivers/gpu/drm/ast/ast_main.c
++++ b/drivers/gpu/drm/ast/ast_main.c
+@@ -609,6 +609,6 @@ int ast_gem_create(struct drm_device *dev,
+ 			DRM_ERROR("failed to allocate GEM object\n");
+ 		return ret;
+ 	}
+-	*obj = &gbo->gem;
++	*obj = &gbo->bo.base;
+ 	return 0;
+ }
+diff --git a/drivers/gpu/drm/drm_gem_vram_helper.c b/drivers/gpu/drm/drm_gem_vram_helper.c
+index 4de782ca26b2..61d9520cc15f 100644
+--- a/drivers/gpu/drm/drm_gem_vram_helper.c
++++ b/drivers/gpu/drm/drm_gem_vram_helper.c
+@@ -24,7 +24,7 @@ static void drm_gem_vram_cleanup(struct drm_gem_vram_object *gbo)
+ 	 * TTM buffer object in 'bo' has already been cleaned
+ 	 * up; only release the GEM object.
  	 */
-@@ -768,4 +772,23 @@ int ttm_bo_swapout(struct ttm_bo_global *glob,
- 			struct ttm_operation_ctx *ctx);
- void ttm_bo_swapout_all(struct ttm_bo_device *bdev);
- int ttm_bo_wait_unreserved(struct ttm_buffer_object *bo);
-+
-+/**
-+ * ttm_bo_uses_embedded_gem_object - check if the given bo uses the
-+ * embedded drm_gem_object.
-+ *
-+ * Most ttm drivers are using gem too, so the embedded
-+ * ttm_buffer_object.base will be initialized by the driver (before
-+ * calling ttm_bo_init).  It is also possible to use ttm without gem
-+ * though (vmwgfx does that).
-+ *
-+ * This helper will figure whenever a given ttm bo is a gem object too
-+ * or not.
-+ *
-+ * @bo: The bo to check.
-+ */
-+static inline bool ttm_bo_uses_embedded_gem_object(struct ttm_buffer_object *bo)
-+{
-+	return bo->base.dev != NULL;
-+}
- #endif
+-	drm_gem_object_release(&gbo->gem);
++	drm_gem_object_release(&gbo->bo.base);
+ }
+ 
+ static void drm_gem_vram_destroy(struct drm_gem_vram_object *gbo)
+@@ -80,7 +80,7 @@ static int drm_gem_vram_init(struct drm_device *dev,
+ 	int ret;
+ 	size_t acc_size;
+ 
+-	ret = drm_gem_object_init(dev, &gbo->gem, size);
++	ret = drm_gem_object_init(dev, &gbo->bo.base, size);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -98,7 +98,7 @@ static int drm_gem_vram_init(struct drm_device *dev,
+ 	return 0;
+ 
+ err_drm_gem_object_release:
+-	drm_gem_object_release(&gbo->gem);
++	drm_gem_object_release(&gbo->bo.base);
+ 	return ret;
+ }
+ 
+@@ -378,11 +378,11 @@ int drm_gem_vram_fill_create_dumb(struct drm_file *file,
+ 	if (IS_ERR(gbo))
+ 		return PTR_ERR(gbo);
+ 
+-	ret = drm_gem_handle_create(file, &gbo->gem, &handle);
++	ret = drm_gem_handle_create(file, &gbo->bo.base, &handle);
+ 	if (ret)
+ 		goto err_drm_gem_object_put_unlocked;
+ 
+-	drm_gem_object_put_unlocked(&gbo->gem);
++	drm_gem_object_put_unlocked(&gbo->bo.base);
+ 
+ 	args->pitch = pitch;
+ 	args->size = size;
+@@ -391,7 +391,7 @@ int drm_gem_vram_fill_create_dumb(struct drm_file *file,
+ 	return 0;
+ 
+ err_drm_gem_object_put_unlocked:
+-	drm_gem_object_put_unlocked(&gbo->gem);
++	drm_gem_object_put_unlocked(&gbo->bo.base);
+ 	return ret;
+ }
+ EXPORT_SYMBOL(drm_gem_vram_fill_create_dumb);
+@@ -441,7 +441,7 @@ int drm_gem_vram_bo_driver_verify_access(struct ttm_buffer_object *bo,
+ {
+ 	struct drm_gem_vram_object *gbo = drm_gem_vram_of_bo(bo);
+ 
+-	return drm_vma_node_verify_access(&gbo->gem.vma_node,
++	return drm_vma_node_verify_access(&gbo->bo.base.vma_node,
+ 					  filp->private_data);
+ }
+ EXPORT_SYMBOL(drm_gem_vram_bo_driver_verify_access);
+@@ -635,7 +635,7 @@ int drm_gem_vram_driver_gem_prime_mmap(struct drm_gem_object *gem,
+ {
+ 	struct drm_gem_vram_object *gbo = drm_gem_vram_of_gem(gem);
+ 
+-	gbo->gem.vma_node.vm_node.start = gbo->bo.vma_node.vm_node.start;
++	gbo->bo.base.vma_node.vm_node.start = gbo->bo.vma_node.vm_node.start;
+ 	return drm_gem_prime_mmap(gem, vma);
+ }
+ EXPORT_SYMBOL(drm_gem_vram_driver_gem_prime_mmap);
+diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_ttm.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_ttm.c
+index 5d4a03cd7d50..998eb6014395 100644
+--- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_ttm.c
++++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_ttm.c
+@@ -60,7 +60,7 @@ int hibmc_gem_create(struct drm_device *dev, u32 size, bool iskernel,
+ 			DRM_ERROR("failed to allocate GEM object: %d\n", ret);
+ 		return ret;
+ 	}
+-	*obj = &gbo->gem;
++	*obj = &gbo->bo.base;
+ 	return 0;
+ }
+ 
+diff --git a/drivers/gpu/drm/mgag200/mgag200_main.c b/drivers/gpu/drm/mgag200/mgag200_main.c
+index dd61ccc5af5c..071b55ce4795 100644
+--- a/drivers/gpu/drm/mgag200/mgag200_main.c
++++ b/drivers/gpu/drm/mgag200/mgag200_main.c
+@@ -285,6 +285,6 @@ int mgag200_gem_create(struct drm_device *dev,
+ 			DRM_ERROR("failed to allocate GEM object\n");
+ 		return ret;
+ 	}
+-	*obj = &gbo->gem;
++	*obj = &gbo->bo.base;
+ 	return 0;
+ }
+diff --git a/drivers/gpu/drm/vboxvideo/vbox_main.c b/drivers/gpu/drm/vboxvideo/vbox_main.c
+index 18693e2bf72a..02fa8277ff1e 100644
+--- a/drivers/gpu/drm/vboxvideo/vbox_main.c
++++ b/drivers/gpu/drm/vboxvideo/vbox_main.c
+@@ -292,7 +292,7 @@ int vbox_gem_create(struct vbox_private *vbox,
+ 		return ret;
+ 	}
+ 
+-	*obj = &gbo->gem;
++	*obj = &gbo->bo.base;
+ 
+ 	return 0;
+ }
 -- 
 2.18.1
 
