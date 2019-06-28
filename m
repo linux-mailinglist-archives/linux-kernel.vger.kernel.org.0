@@ -2,117 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10EF059124
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 04:27:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83EE759131
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 04:36:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726671AbfF1C0x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 22:26:53 -0400
-Received: from mail-eopbgr70087.outbound.protection.outlook.com ([40.107.7.87]:3087
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726476AbfF1C0x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 22:26:53 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=testarcselector01; d=microsoft.com; cv=none;
- b=XDJAR6K4cRJQQxnK3+tVBD3yXiPT+luj5+UIq+WtM6Ua2ZZCwB/nCB2dcCZ5Fnh0Ewy1dovP/O/mouD3lMFVyZTguRDdoTp5CBviCFF3lWprq1NrS7DPcUy2E6HI3Qzt2OeJv8PmanoLXmnpi0g7XZ6rXoHRa7GYwJNnys9zxkE=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=testarcselector01;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gNe8FQY0oO0mUyMyJHV0bS74mcC1fkFw8/32dVb065k=;
- b=DHfbxZ2gFKMSAjX6r8Wnh7QxaUWsOqHvbfFx5Flr136zqJTw03IijxKQrBQVAFKn7yQkRokWblCEkUUP7opRnIVx617gu1tnCv2GtCGnf49KLSpBZ5nrdkxNzXsqzUJ/3OPMMgKDtquBPw5jnorfM8V8mr/wKLzVTB3FAujC9+U=
-ARC-Authentication-Results: i=1; test.office365.com
- 1;spf=none;dmarc=none;dkim=none;arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gNe8FQY0oO0mUyMyJHV0bS74mcC1fkFw8/32dVb065k=;
- b=aeU3RBjfPQqkTp9njQsbtv9ye1OpsVKR+Y6FuI4egCEVySu6c75j95FU340fo4dotqA5aBhDQKXvEqc5pe9qyUqIPGLMicaJBt7ffexxUEMuNZF4Q0XybLsnB2WIZ9vsFiWV3paQq1nS7FeFUJVP6V7THLJchQycjfVkRJFSsJk=
-Received: from VI1PR0402MB3600.eurprd04.prod.outlook.com (52.134.5.23) by
- VI1PR0402MB2863.eurprd04.prod.outlook.com (10.175.20.18) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2008.16; Fri, 28 Jun 2019 02:26:49 +0000
-Received: from VI1PR0402MB3600.eurprd04.prod.outlook.com
- ([fe80::c8a7:d048:2a1a:8b67]) by VI1PR0402MB3600.eurprd04.prod.outlook.com
- ([fe80::c8a7:d048:2a1a:8b67%7]) with mapi id 15.20.2008.014; Fri, 28 Jun 2019
- 02:26:49 +0000
-From:   Andy Duan <fugang.duan@nxp.com>
-To:     Fuqian Huang <huangfq.daxian@gmail.com>
-CC:     "David S. Miller" <davem@davemloft.net>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [EXT] [PATCH 73/87] ethernet: freescale: Remove memset after
- dma_alloc_coherent
-Thread-Topic: [EXT] [PATCH 73/87] ethernet: freescale: Remove memset after
- dma_alloc_coherent
-Thread-Index: AQHVLRBMPnd9CZnblUeiibuiURDi+qawV5JQ
-Date:   Fri, 28 Jun 2019 02:26:48 +0000
-Message-ID: <VI1PR0402MB360017A5AA5A0E8470F44DE9FFFC0@VI1PR0402MB3600.eurprd04.prod.outlook.com>
-References: <20190627174641.6474-1-huangfq.daxian@gmail.com>
-In-Reply-To: <20190627174641.6474-1-huangfq.daxian@gmail.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=fugang.duan@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: edc8f6ec-bf25-41f9-7102-08d6fb7012ea
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR0402MB2863;
-x-ms-traffictypediagnostic: VI1PR0402MB2863:
-x-microsoft-antispam-prvs: <VI1PR0402MB2863100506235ABB81FF8FF3FFFC0@VI1PR0402MB2863.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:37;
-x-forefront-prvs: 00826B6158
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(39860400002)(346002)(366004)(376002)(136003)(199004)(189003)(86362001)(2906002)(256004)(478600001)(446003)(76116006)(73956011)(33656002)(52536014)(99286004)(5660300002)(3846002)(6116002)(54906003)(4744005)(66446008)(74316002)(7736002)(66946007)(316002)(4326008)(66556008)(66476007)(66066001)(71190400001)(71200400001)(6916009)(64756008)(55016002)(6436002)(8936002)(6246003)(76176011)(229853002)(186003)(68736007)(102836004)(8676002)(25786009)(11346002)(486006)(7696005)(81156014)(53936002)(26005)(81166006)(9686003)(6506007)(14454004)(476003)(305945005);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB2863;H:VI1PR0402MB3600.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: u2tDQtCAIUxvZvrQ0uJq95qaXU9UY13Dp3aMtrjsTWtppmhzHijwOCN/KXJdL4Gowjcmut9aVucI/aCV+CMWoPEPL5szm1DgYL10YEc4+b1qSNKUWYIH9w9wk5N5XG+GZh8T6IzmbZkkO1z2t7BvwCV36B3tUitikqrNZdQVc3Pq8TIhfHV0soKXUhyUpFcB7SQKqz7+2RUIOHNmF4zkWBfFPsybLa3GCn9QxPfSWRWuLA+TmR+7mMQIIe5qzS+xB3rqmli8Z6jUhcf+oZuq4GuHQCZFZhs1xcqnQ9UNPjWkFvhEhtoJUZtNUEfKQfhTT0aLXZ51pYS3221VIjNe3K9B2ckReQl2Lj1ZreDpjD7++6yyrjfUWH6X67Te3vF8busiBsxSleyJSfNgoFVF+9DwDlbiVQ3CYekYGDNYzZU=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: edc8f6ec-bf25-41f9-7102-08d6fb7012ea
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Jun 2019 02:26:48.9068
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: fugang.duan@nxp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB2863
+        id S1726605AbfF1CgN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 22:36:13 -0400
+Received: from mga06.intel.com ([134.134.136.31]:22507 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725770AbfF1CgN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 22:36:13 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jun 2019 19:36:12 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,426,1557212400"; 
+   d="scan'208";a="189296330"
+Received: from unknown (HELO luv-build.sc.intel.com) ([172.25.110.25])
+  by fmsmga002.fm.intel.com with ESMTP; 27 Jun 2019 19:36:11 -0700
+From:   Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@suse.de>
+Cc:     Alan Cox <alan.cox@intel.com>, Tony Luck <tony.luck@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Andi Kleen <andi.kleen@intel.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jordan Borgner <mail@jordan-borgner.de>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Mohammad Etemadi <mohammad.etemadi@intel.com>,
+        Ricardo Neri <ricardo.neri@intel.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+Subject: [PATCH v2 0/2] Speed MTRR programming up when we can
+Date:   Thu, 27 Jun 2019 19:35:35 -0700
+Message-Id: <1561689337-19390-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Fuqian Huang <huangfq.daxian@gmail.com> Sent: Friday, June 28, 2019 1=
-:47 AM
-> In commit af7ddd8a627c
-> ("Merge tag 'dma-mapping-4.21' of
-> git://git.infradead.org/users/hch/dma-mapping"),
-> dma_alloc_coherent has already zeroed the memory.
-> So memset is not needed.
->=20
-> Signed-off-by: Fuqian Huang <huangfq.daxian@gmail.com>
+This is the second iteration of this patchset. The first iteration can be
+viewed here [1]. 
 
-Acked-by: Fugang Duan <fugang.duan@nxp.com>
-> ---
->  drivers/net/ethernet/freescale/fec_main.c | 2 --
->  1 file changed, 2 deletions(-)
->=20
-> diff --git a/drivers/net/ethernet/freescale/fec_main.c
-> b/drivers/net/ethernet/freescale/fec_main.c
-> index 38f10f7dcbc3..ec87b8b78d21 100644
-> --- a/drivers/net/ethernet/freescale/fec_main.c
-> +++ b/drivers/net/ethernet/freescale/fec_main.c
-> @@ -3143,8 +3143,6 @@ static int fec_enet_init(struct net_device *ndev)
->                 return -ENOMEM;
->         }
->=20
-> -       memset(cbd_base, 0, bd_size);
-> -
->         /* Get the Ethernet address */
->         fec_get_mac(ndev);
->         /* make sure MAC we just acquired is programmed into the hw */
-> --
-> 2.11.0
+Programming MTRR registers in multi-processor systems is a rather lengthy
+process. Furthermore, all processors must program these registers in lock
+step and with interrupts disabled; the process also involves flushing
+caches and TLBs twice. As a result, the process may take a considerable
+amount of time.
+
+In some platforms, this can lead to a large skew of the refined-jiffies
+clock source. Early when booting, if no other clock is available (e.g.,
+booting with hpet=disabled), the refined-jiffies clock source is used to
+monitor the TSC clock source. If the skew of refined-jiffies is too large,
+Linux wrongly assumes that the TSC is unstable:
+
+     clocksource: timekeeping watchdog on CPU1: Marking clocksource
+          'tsc-early' as unstable because the skew is too large:
+     clocksource: 'refined-jiffies' wd_now: fffedc10 wd_last:
+          fffedb90 mask: ffffffff
+     clocksource: 'tsc-early' cs_now: 5eccfddebc cs_last: 5e7e3303d4
+          mask: ffffffffffffffff
+     tsc: Marking TSC unstable due to clocksource watchdog
+
+As per my measurements, around 98% of the time needed by the procedure to
+program MTRRs in multi-processor systems is spent flushing caches with
+wbinvd(). As per the Section 11.11.8 of the Intel 64 and IA 32
+Architectures Software Developer's Manual, it is not necessary to flush
+caches if the CPU supports cache self-snooping. Thus, skipping the cache
+flushes can reduce by several tens of milliseconds the time needed to
+complete the programming of the MTRR registers.
+
+However, there exist CPU models with errata that affect their self-
+snooping capabilities. Such errata may cause unpredictable behavior,
+machine check errors, or hangs. For instance:
+
+     "Where two different logical processors have the same code page
+      mapped with two different memory types Specifically if one code
+      page is mapped by one logical processor as write back and by
+      another as uncacheable and certain instruction timing conditions
+      occur the system may experience unpredictable behaviour." [2].
+
+Similar errata are reported in other processors as well [3], [4], [5],
+[6], and [7].
+
+Thus, in order to confidently leverage self-snooping for the MTRR
+programming algorithm, we must first clear such feature in models with
+known errata.
+
+By measuring the execution time of mtrr_aps_init() (from which MTRRs
+in all CPUs are programmed in lock-step at boot), I find savings in the
+time required to program MTRRs as follows:
+
+Platform                      time-with-wbinvd(ms) time-no-wbinvd(ms)
+104-core (208 LP) Skylake            1437                 28
+2-core (4 LP) Haswell                 114                  2
+
+LP = Logical Processor
+
+Thanks and BR,
+Ricardo
+
+Changes since v1:
+
+ * Relocated comment on the utility of cache self-snooping from
+   check_memory_type_self_snoop_errata() to the prepare_set() function
+   of the generic MTRR programming ops (Thomas Gleixner).
+ * In early_init_intel(), moved check_memory_type_self_snoop_errata()
+   next to check_mpx_erratum() for improved readability.
+
+[1]. https://lkml.org/lkml/2019/6/27/828
+[2]. Erratum BF52, 
+https://www.intel.com/content/dam/www/public/us/en/documents/specification-updates/xeon-3600-specification-update.pdf
+[3]. Erratum BK47, 
+https://www.mouser.com/pdfdocs/2ndgencorefamilymobilespecificationupdate.pdf
+[4]. Erratum AAO54, 
+https://www.intel.com/content/dam/www/public/us/en/documents/specification-updates/xeon-c5500-c3500-spec-update.pdf
+[5]. Errata AZ39, AZ42, 
+https://www.intel.com/content/dam/support/us/en/documents/processors/mobile/celeron/sb/320121.pdf
+[6]. Errata AQ51, AQ102, AQ104, 
+https://www.intel.com/content/dam/www/public/us/en/documents/specification-updates/pentium-dual-core-desktop-e2000-specification-update.pdf
+[7]. Errata AN107, AN109, 
+https://www.intel.com/content/dam/www/public/us/en/documents/specification-updates/pentium-dual-core-specification-update.pdf
+
+Ricardo Neri (2):
+  x86/cpu/intel: Clear cache self-snoop capability in CPUs with known
+    errata
+  x86, mtrr: generic: Skip cache flushes on CPUs with cache
+    self-snooping
+
+ arch/x86/kernel/cpu/intel.c        | 27 +++++++++++++++++++++++++++
+ arch/x86/kernel/cpu/mtrr/generic.c | 15 +++++++++++++--
+ 2 files changed, 40 insertions(+), 2 deletions(-)
+
+-- 
+2.17.1
 
