@@ -2,62 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C93D59AA2
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 14:22:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5E6A59A83
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 14:21:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727232AbfF1MWF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 08:22:05 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:58944 "EHLO
+        id S1727112AbfF1MVC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 08:21:02 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:58840 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726867AbfF1MUt (ORCPT
+        with ESMTP id S1726829AbfF1MUs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 08:20:49 -0400
+        Fri, 28 Jun 2019 08:20:48 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Content-Type:MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:
+        To:From:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=EBY7tSIDWUyW/whIT1J1+wf2lUEr6y2Cgo92pH5yIlU=; b=QlC5cuZ1VgFCKvdklv3zeWqdu2
-        0hzsAYka9q/Y5oSPZEM5RlWyd+qdgFHmhv/+2mwMNAu7KwIq0TzJTan2gIdGxIaenGjoa76CsEwz2
-        sa17Q/8xAKFJtNmtm0sA2BIQqPrOItJyk4fleRl68t79mmTe5iFr0GxcpLayupeB2/cPZgPnOBbDg
-        pJbpIxI2avMqCz0V4w0y4hlZd/kISlk2xGQSHMn33bKjmPTDjBxKOGZnNTrO2IqYClor3gIimKOs1
-        FNpmpEf9nQDqbTkYqv2oOkSCbKVyoKUIAd+PvfXCGU15UtWWtdpBXNtGNpXPQUIA6P9jarbnINIKy
-        M6LmrnBg==;
+        bh=mws5ZUAYJORyhbWS+iozr2URaBZfes1dN4yn3Y1M3+Q=; b=KjgzvTOSg2oL/VOqA4A5y6TIMr
+        cywsz+lveZKqtetbGMcmD3QPmcLPEK6gM1lryPU99xQkBqBtXtXM3lPx6L9T/3KMgvfSTiG1nGZLt
+        GyF5TYuu0lgDpZohmyvARjCzEQ/gu2J2QLN6IhLocuH5XTh6ViVayB7bPnzBH/C2Xge6Sp6eJmNjh
+        0hNsU47S9682fEFGfPLwyXHsei27UX7lM1QKPd3e5UONkNG1fEoDc7IbBa2NxoIrnoIzOApb12ZzQ
+        xFDOjrwBC8aD3Ln9c3eKUZXp4n4lyfPbY+Iabg1em7xHVLsKHghlulv0KvNWZOCmwpyeaSTPykMry
+        zwWaKWmA==;
 Received: from [186.213.242.156] (helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hgprv-0000AC-Jy; Fri, 28 Jun 2019 12:20:45 +0000
+        id 1hgprv-0000AD-Lp; Fri, 28 Jun 2019 12:20:45 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hgprt-00058k-MV; Fri, 28 Jun 2019 09:20:41 -0300
+        id 1hgprt-00058p-Nc; Fri, 28 Jun 2019 09:20:41 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Vadim Pasternak <vadimp@mellanox.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@netfilter.org>,
-        Florian Westphal <fw@strlen.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-leds@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org, netdev@vger.kernel.org
-Subject: [PATCH 24/43] docs: leds: convert to ReST
-Date:   Fri, 28 Jun 2019 09:20:20 -0300
-Message-Id: <2fecbe9a9cefda64771b43c5fc67495d897dd722.1561723980.git.mchehab+samsung@kernel.org>
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        platform-driver-x86@vger.kernel.org,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: [PATCH 25/43] docs: laptops: convert to ReST
+Date:   Fri, 28 Jun 2019 09:20:21 -0300
+Message-Id: <420bb36a0e85b8c582ec1b857f30009b7abb996d.1561723980.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <cover.1561723979.git.mchehab+samsung@kernel.org>
 References: <cover.1561723979.git.mchehab+samsung@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rename the leds documentation files to ReST, add an
+Rename the laptops documentation files to ReST, add an
 index for them and adjust in order to produce a nice html
 output via the Sphinx build system.
 
@@ -65,2345 +63,2319 @@ At its new index.rst, let's add a :orphan: while this is not linked to
 the main index.rst file, in order to avoid build warnings.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Acked-by: Pavel Machek <pavel@ucw.cz>
+Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 ---
- Documentation/laptops/thinkpad-acpi.txt       |   4 +-
- Documentation/leds/index.rst                  |  25 ++
- .../leds/{leds-blinkm.txt => leds-blinkm.rst} |  64 ++---
- ...s-class-flash.txt => leds-class-flash.rst} |  49 ++--
- .../leds/{leds-class.txt => leds-class.rst}   |  15 +-
- .../leds/{leds-lm3556.txt => leds-lm3556.rst} | 100 ++++++--
- .../leds/{leds-lp3944.txt => leds-lp3944.rst} |  23 +-
- Documentation/leds/leds-lp5521.rst            | 115 +++++++++
- Documentation/leds/leds-lp5521.txt            | 101 --------
- Documentation/leds/leds-lp5523.rst            | 147 ++++++++++++
- Documentation/leds/leds-lp5523.txt            | 130 ----------
- Documentation/leds/leds-lp5562.rst            | 137 +++++++++++
- Documentation/leds/leds-lp5562.txt            | 120 ----------
- Documentation/leds/leds-lp55xx.rst            | 224 ++++++++++++++++++
- Documentation/leds/leds-lp55xx.txt            | 194 ---------------
- Documentation/leds/leds-mlxcpld.rst           | 118 +++++++++
- Documentation/leds/leds-mlxcpld.txt           | 110 ---------
- ...edtrig-oneshot.txt => ledtrig-oneshot.rst} |  11 +-
- ...ig-transient.txt => ledtrig-transient.rst} |  63 +++--
- ...edtrig-usbport.txt => ledtrig-usbport.rst} |  11 +-
- Documentation/leds/{uleds.txt => uleds.rst}   |   5 +-
+ Documentation/ABI/testing/sysfs-block-device  |   2 +-
+ .../ABI/testing/sysfs-platform-asus-laptop    |   2 +-
+ .../admin-guide/kernel-parameters.txt         |   2 +-
+ .../{asus-laptop.txt => asus-laptop.rst}      |  92 ++--
+ ...otection.txt => disk-shock-protection.rst} |  32 +-
+ Documentation/laptops/index.rst               |  17 +
+ .../{laptop-mode.txt => laptop-mode.rst}      | 509 +++++++++---------
+ .../{sony-laptop.txt => sony-laptop.rst}      |  58 +-
+ .../laptops/{sonypi.txt => sonypi.rst}        |  28 +-
+ .../{thinkpad-acpi.txt => thinkpad-acpi.rst}  | 363 ++++++++-----
+ .../{toshiba_haps.txt => toshiba_haps.rst}    |  47 +-
+ Documentation/sysctl/vm.txt                   |   4 +-
  MAINTAINERS                                   |   2 +-
- drivers/leds/trigger/Kconfig                  |   2 +-
- drivers/leds/trigger/ledtrig-transient.c      |   2 +-
- net/netfilter/Kconfig                         |   2 +-
- 25 files changed, 996 insertions(+), 778 deletions(-)
- create mode 100644 Documentation/leds/index.rst
- rename Documentation/leds/{leds-blinkm.txt => leds-blinkm.rst} (57%)
- rename Documentation/leds/{leds-class-flash.txt => leds-class-flash.rst} (74%)
- rename Documentation/leds/{leds-class.txt => leds-class.rst} (92%)
- rename Documentation/leds/{leds-lm3556.txt => leds-lm3556.rst} (70%)
- rename Documentation/leds/{leds-lp3944.txt => leds-lp3944.rst} (78%)
- create mode 100644 Documentation/leds/leds-lp5521.rst
- delete mode 100644 Documentation/leds/leds-lp5521.txt
- create mode 100644 Documentation/leds/leds-lp5523.rst
- delete mode 100644 Documentation/leds/leds-lp5523.txt
- create mode 100644 Documentation/leds/leds-lp5562.rst
- delete mode 100644 Documentation/leds/leds-lp5562.txt
- create mode 100644 Documentation/leds/leds-lp55xx.rst
- delete mode 100644 Documentation/leds/leds-lp55xx.txt
- create mode 100644 Documentation/leds/leds-mlxcpld.rst
- delete mode 100644 Documentation/leds/leds-mlxcpld.txt
- rename Documentation/leds/{ledtrig-oneshot.txt => ledtrig-oneshot.rst} (90%)
- rename Documentation/leds/{ledtrig-transient.txt => ledtrig-transient.rst} (81%)
- rename Documentation/leds/{ledtrig-usbport.txt => ledtrig-usbport.rst} (86%)
- rename Documentation/leds/{uleds.txt => uleds.rst} (95%)
+ drivers/char/Kconfig                          |   2 +-
+ drivers/platform/x86/Kconfig                  |   4 +-
+ 15 files changed, 660 insertions(+), 504 deletions(-)
+ rename Documentation/laptops/{asus-laptop.txt => asus-laptop.rst} (84%)
+ rename Documentation/laptops/{disk-shock-protection.txt => disk-shock-protection.rst} (91%)
+ create mode 100644 Documentation/laptops/index.rst
+ rename Documentation/laptops/{laptop-mode.txt => laptop-mode.rst} (62%)
+ rename Documentation/laptops/{sony-laptop.txt => sony-laptop.rst} (85%)
+ rename Documentation/laptops/{sonypi.txt => sonypi.rst} (87%)
+ rename Documentation/laptops/{thinkpad-acpi.txt => thinkpad-acpi.rst} (89%)
+ rename Documentation/laptops/{toshiba_haps.txt => toshiba_haps.rst} (60%)
 
-diff --git a/Documentation/laptops/thinkpad-acpi.txt b/Documentation/laptops/thinkpad-acpi.txt
-index 6cced88de6da..75ef063622d2 100644
---- a/Documentation/laptops/thinkpad-acpi.txt
-+++ b/Documentation/laptops/thinkpad-acpi.txt
-@@ -679,7 +679,7 @@ status as "unknown". The available commands are:
- sysfs notes:
+diff --git a/Documentation/ABI/testing/sysfs-block-device b/Documentation/ABI/testing/sysfs-block-device
+index 82ef6eab042d..0d57bbb4fddc 100644
+--- a/Documentation/ABI/testing/sysfs-block-device
++++ b/Documentation/ABI/testing/sysfs-block-device
+@@ -45,7 +45,7 @@ Description:
+ 		- Values below -2 are rejected with -EINVAL
  
- The ThinkLight sysfs interface is documented by the LED class
--documentation, in Documentation/leds/leds-class.txt.  The ThinkLight LED name
-+documentation, in Documentation/leds/leds-class.rst.  The ThinkLight LED name
- is "tpacpi::thinklight".
+ 		For more information, see
+-		Documentation/laptops/disk-shock-protection.txt
++		Documentation/laptops/disk-shock-protection.rst
  
- Due to limitations in the sysfs LED class, if the status of the ThinkLight
-@@ -779,7 +779,7 @@ All of the above can be turned on and off and can be made to blink.
- sysfs notes:
  
- The ThinkPad LED sysfs interface is described in detail by the LED class
--documentation, in Documentation/leds/leds-class.txt.
-+documentation, in Documentation/leds/leds-class.rst.
+ What:		/sys/block/*/device/ncq_prio_enable
+diff --git a/Documentation/ABI/testing/sysfs-platform-asus-laptop b/Documentation/ABI/testing/sysfs-platform-asus-laptop
+index cd9d667c3da2..d67fa4bafa70 100644
+--- a/Documentation/ABI/testing/sysfs-platform-asus-laptop
++++ b/Documentation/ABI/testing/sysfs-platform-asus-laptop
+@@ -31,7 +31,7 @@ Description:
+ 		To control the LED display, use the following :
+ 		    echo 0x0T000DDD > /sys/devices/platform/asus_laptop/
+ 		where T control the 3 letters display, and DDD the 3 digits display.
+-		The DDD table can be found in Documentation/laptops/asus-laptop.txt
++		The DDD table can be found in Documentation/laptops/asus-laptop.rst
  
- The LEDs are named (in LED ID order, from 0 to 12):
- "tpacpi::power", "tpacpi:orange:batt", "tpacpi:green:batt",
-diff --git a/Documentation/leds/index.rst b/Documentation/leds/index.rst
+ What:		/sys/devices/platform/asus_laptop/bluetooth
+ Date:		January 2007
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index e5eb04f673ae..92d335837c52 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -4373,7 +4373,7 @@
+ 			Format: <integer>
+ 
+ 	sonypi.*=	[HW] Sony Programmable I/O Control Device driver
+-			See Documentation/laptops/sonypi.txt
++			See Documentation/laptops/sonypi.rst
+ 
+ 	spectre_v2=	[X86] Control mitigation of Spectre variant 2
+ 			(indirect branch speculation) vulnerability.
+diff --git a/Documentation/laptops/asus-laptop.txt b/Documentation/laptops/asus-laptop.rst
+similarity index 84%
+rename from Documentation/laptops/asus-laptop.txt
+rename to Documentation/laptops/asus-laptop.rst
+index 5f2858712aa0..95176321a25a 100644
+--- a/Documentation/laptops/asus-laptop.txt
++++ b/Documentation/laptops/asus-laptop.rst
+@@ -1,6 +1,9 @@
++==================
+ Asus Laptop Extras
++==================
+ 
+ Version 0.1
++
+ August 6, 2009
+ 
+ Corentin Chary <corentincj@iksaif.net>
+@@ -10,11 +13,12 @@ http://acpi4asus.sf.net/
+  It may also support some MEDION, JVC or VICTOR laptops (such as MEDION 9675 or
+  VICTOR XP7210 for example). It makes all the extra buttons generate input
+  events (like keyboards).
++
+  On some models adds support for changing the display brightness and output,
+  switching the LCD backlight on and off, and most importantly, allows you to
+  blink those fancy LEDs intended for reporting mail and wireless status.
+ 
+-This driver supercedes the old asus_acpi driver.
++This driver supersedes the old asus_acpi driver.
+ 
+ Requirements
+ ------------
+@@ -49,7 +53,7 @@ Usage
+   see some lines like this :
+ 
+       Asus Laptop Extras version 0.42
+-        L2D model detected.
++        - L2D model detected.
+ 
+   If it is not the output you have on your laptop, send it (and the laptop's
+   DSDT) to me.
+@@ -68,9 +72,12 @@ Usage
+ LEDs
+ ----
+ 
+-  You can modify LEDs be echoing values to /sys/class/leds/asus::*/brightness :
++  You can modify LEDs be echoing values to `/sys/class/leds/asus/*/brightness`::
++
+     echo 1 >  /sys/class/leds/asus::mail/brightness
++
+   will switch the mail LED on.
++
+   You can also know if they are on/off by reading their content and use
+   kernel triggers like disk-activity or heartbeat.
+ 
+@@ -81,7 +88,7 @@ Backlight
+   /sys/class/backlight/asus-laptop/. Brightness Values are between 0 and 15.
+ 
+ Wireless devices
+----------------
++----------------
+ 
+   You can turn the internal Bluetooth adapter on/off with the bluetooth entry
+   (only on models with Bluetooth). This usually controls the associated LED.
+@@ -93,18 +100,20 @@ Display switching
+   Note: the display switching code is currently considered EXPERIMENTAL.
+ 
+   Switching works for the following models:
+-    L3800C
+-    A2500H
+-    L5800C
+-    M5200N
+-    W1000N (albeit with some glitches)
+-    M6700R
+-    A6JC
+-    F3J
++
++    - L3800C
++    - A2500H
++    - L5800C
++    - M5200N
++    - W1000N (albeit with some glitches)
++    - M6700R
++    - A6JC
++    - F3J
+ 
+   Switching doesn't work for the following:
+-    M3700N
+-    L2X00D (locks the laptop under certain conditions)
++
++    - M3700N
++    - L2X00D (locks the laptop under certain conditions)
+ 
+   To switch the displays, echo values from 0 to 15 to
+   /sys/devices/platform/asus-laptop/display. The significance of those values
+@@ -113,48 +122,51 @@ Display switching
+   +-------+-----+-----+-----+-----+-----+
+   | Bin   | Val | DVI | TV  | CRT | LCD |
+   +-------+-----+-----+-----+-----+-----+
+-  + 0000  +   0 +     +     +     +     +
++  | 0000  |   0 |     |     |     |     |
+   +-------+-----+-----+-----+-----+-----+
+-  + 0001  +   1 +     +     +     +  X  +
++  | 0001  |   1 |     |     |     |  X  |
+   +-------+-----+-----+-----+-----+-----+
+-  + 0010  +   2 +     +     +  X  +     +
++  | 0010  |   2 |     |     |  X  |     |
+   +-------+-----+-----+-----+-----+-----+
+-  + 0011  +   3 +     +     +  X  +  X  +
++  | 0011  |   3 |     |     |  X  |  X  |
+   +-------+-----+-----+-----+-----+-----+
+-  + 0100  +   4 +     +  X  +     +     +
++  | 0100  |   4 |     |  X  |     |     |
+   +-------+-----+-----+-----+-----+-----+
+-  + 0101  +   5 +     +  X  +     + X   +
++  | 0101  |   5 |     |  X  |     | X   |
+   +-------+-----+-----+-----+-----+-----+
+-  + 0110  +   6 +     +  X  +  X  +     +
++  | 0110  |   6 |     |  X  |  X  |     |
+   +-------+-----+-----+-----+-----+-----+
+-  + 0111  +   7 +     +  X  +  X  +  X  +
++  | 0111  |   7 |     |  X  |  X  |  X  |
+   +-------+-----+-----+-----+-----+-----+
+-  + 1000  +   8 +  X  +     +     +     +
++  | 1000  |   8 |  X  |     |     |     |
+   +-------+-----+-----+-----+-----+-----+
+-  + 1001  +   9 +  X  +     +     +  X  +
++  | 1001  |   9 |  X  |     |     |  X  |
+   +-------+-----+-----+-----+-----+-----+
+-  + 1010  +  10 +  X  +     +  X  +     +
++  | 1010  |  10 |  X  |     |  X  |     |
+   +-------+-----+-----+-----+-----+-----+
+-  + 1011  +  11 +  X  +     +  X  +  X  +
++  | 1011  |  11 |  X  |     |  X  |  X  |
+   +-------+-----+-----+-----+-----+-----+
+-  + 1100  +  12 +  X  +  X  +     +     +
++  | 1100  |  12 |  X  |  X  |     |     |
+   +-------+-----+-----+-----+-----+-----+
+-  + 1101  +  13 +  X  +  X  +     +  X  +
++  | 1101  |  13 |  X  |  X  |     |  X  |
+   +-------+-----+-----+-----+-----+-----+
+-  + 1110  +  14 +  X  +  X  +  X  +     +
++  | 1110  |  14 |  X  |  X  |  X  |     |
+   +-------+-----+-----+-----+-----+-----+
+-  + 1111  +  15 +  X  +  X  +  X  +  X  +
++  | 1111  |  15 |  X  |  X  |  X  |  X  |
+   +-------+-----+-----+-----+-----+-----+
+ 
+   In most cases, the appropriate displays must be plugged in for the above
+   combinations to work. TV-Out may need to be initialized at boot time.
+ 
+   Debugging:
++
+   1) Check whether the Fn+F8 key:
++
+      a) does not lock the laptop (try a boot with noapic / nolapic if it does)
+      b) generates events (0x6n, where n is the value corresponding to the
+         configuration above)
+      c) actually works
++
+      Record the disp value at every configuration.
+   2) Echo values from 0 to 15 to /sys/devices/platform/asus-laptop/display.
+      Record its value, note any change. If nothing changes, try a broader range,
+@@ -164,7 +176,7 @@ Display switching
+ 
+   Note: on some machines (e.g. L3C), after the module has been loaded, only 0x6n
+   events are generated and no actual switching occurs. In such a case, a line
+-  like:
++  like::
+ 
+     echo $((10#$arg-60)) > /sys/devices/platform/asus-laptop/display
+ 
+@@ -180,15 +192,16 @@ LED display
+   several items of information.
+ 
+   LED display works for the following models:
+-    W1000N
+-    W1J
+ 
+-  To control the LED display, use the following :
++    - W1000N
++    - W1J
++
++  To control the LED display, use the following::
+ 
+     echo 0x0T000DDD > /sys/devices/platform/asus-laptop/
+ 
+   where T control the 3 letters display, and DDD the 3 digits display,
+-  according to the tables below.
++  according to the tables below::
+ 
+          DDD (digits)
+          000 to 999 = display digits
+@@ -208,8 +221,8 @@ LED display
+   For example "echo 0x01000001 >/sys/devices/platform/asus-laptop/ledd"
+   would display "DVD001".
+ 
+-Driver options:
+----------------
++Driver options
++--------------
+ 
+  Options can be passed to the asus-laptop driver using the standard
+  module argument syntax (<param>=<value> when passing the option to the
+@@ -219,6 +232,7 @@ Driver options:
+ 	     wapf: WAPF defines the behavior of the Fn+Fx wlan key
+ 		   The significance of values is yet to be found, but
+ 		   most of the time:
++
+ 		   - 0x0 should do nothing
+ 		   - 0x1 should allow to control the device with Fn+Fx key.
+ 		   - 0x4 should send an ACPI event (0x88) while pressing the Fn+Fx key
+@@ -237,7 +251,7 @@ Unsupported models
+  - ASUS L7300G
+  - ASUS L8400
+ 
+-Patches, Errors, Questions:
++Patches, Errors, Questions
+ --------------------------
+ 
+  I appreciate any success or failure
+@@ -253,5 +267,5 @@ Patches, Errors, Questions:
+  Any other comments or patches are also more than welcome.
+ 
+  acpi4asus-user@lists.sourceforge.net
++
+  http://sourceforge.net/projects/acpi4asus
+-
+diff --git a/Documentation/laptops/disk-shock-protection.txt b/Documentation/laptops/disk-shock-protection.rst
+similarity index 91%
+rename from Documentation/laptops/disk-shock-protection.txt
+rename to Documentation/laptops/disk-shock-protection.rst
+index 0e6ba2663834..e97c5f78d8c3 100644
+--- a/Documentation/laptops/disk-shock-protection.txt
++++ b/Documentation/laptops/disk-shock-protection.rst
+@@ -1,17 +1,18 @@
++==========================
+ Hard disk shock protection
+ ==========================
+ 
+ Author: Elias Oltmanns <eo@nebensachen.de>
++
+ Last modified: 2008-10-03
+ 
+ 
+-0. Contents
+------------
++.. 0. Contents
+ 
+-1. Intro
+-2. The interface
+-3. References
+-4. CREDITS
++   1. Intro
++   2. The interface
++   3. References
++   4. CREDITS
+ 
+ 
+ 1. Intro
+@@ -36,8 +37,8 @@ that).
+ ----------------
+ 
+ For each ATA device, the kernel exports the file
+-block/*/device/unload_heads in sysfs (here assumed to be mounted under
+-/sys). Access to /sys/block/*/device/unload_heads is denied with
++`block/*/device/unload_heads` in sysfs (here assumed to be mounted under
++/sys). Access to `/sys/block/*/device/unload_heads` is denied with
+ -EOPNOTSUPP if the device does not support the unload feature.
+ Otherwise, writing an integer value to this file will take the heads
+ of the respective drive off the platter and block all I/O operations
+@@ -54,18 +55,18 @@ cancel a previously set timeout and resume normal operation
+ immediately by specifying a timeout of 0. Values below -2 are rejected
+ with -EINVAL (see below for the special meaning of -1 and -2). If the
+ timeout specified for a recent head park request has not yet expired,
+-reading from /sys/block/*/device/unload_heads will report the number
++reading from `/sys/block/*/device/unload_heads` will report the number
+ of milliseconds remaining until normal operation will be resumed;
+ otherwise, reading the unload_heads attribute will return 0.
+ 
+ For example, do the following in order to park the heads of drive
+-/dev/sda and stop all I/O operations for five seconds:
++/dev/sda and stop all I/O operations for five seconds::
+ 
+-# echo 5000 > /sys/block/sda/device/unload_heads
++	# echo 5000 > /sys/block/sda/device/unload_heads
+ 
+-A simple
++A simple::
+ 
+-# cat /sys/block/sda/device/unload_heads
++	# cat /sys/block/sda/device/unload_heads
+ 
+ will show you how many milliseconds are left before normal operation
+ will be resumed.
+@@ -112,9 +113,9 @@ unload_heads attribute. If you know that your device really does
+ support the unload feature (for instance, because the vendor of your
+ laptop or the hard drive itself told you so), then you can tell the
+ kernel to enable the usage of this feature for that drive by writing
+-the special value -1 to the unload_heads attribute:
++the special value -1 to the unload_heads attribute::
+ 
+-# echo -1 > /sys/block/sda/device/unload_heads
++	# echo -1 > /sys/block/sda/device/unload_heads
+ 
+ will enable the feature for /dev/sda, and giving -2 instead of -1 will
+ disable it again.
+@@ -135,6 +136,7 @@ for use. Please feel free to add projects that have been the victims
+ of my ignorance.
+ 
+ - http://www.thinkwiki.org/wiki/HDAPS
++
+   See this page for information about Linux support of the hard disk
+   active protection system as implemented in IBM/Lenovo Thinkpads.
+ 
+diff --git a/Documentation/laptops/index.rst b/Documentation/laptops/index.rst
 new file mode 100644
-index 000000000000..9885f7c1b75d
+index 000000000000..001a30910d09
 --- /dev/null
-+++ b/Documentation/leds/index.rst
-@@ -0,0 +1,25 @@
++++ b/Documentation/laptops/index.rst
+@@ -0,0 +1,17 @@
 +:orphan:
 +
-+====
-+LEDs
-+====
++==============
++Laptop Drivers
++==============
 +
 +.. toctree::
 +   :maxdepth: 1
 +
-+   leds-class
-+   leds-class-flash
-+   ledtrig-oneshot
-+   ledtrig-transient
-+   ledtrig-usbport
++   asus-laptop
++   disk-shock-protection
++   laptop-mode
++   lg-laptop
++   sony-laptop
++   sonypi
++   thinkpad-acpi
++   toshiba_haps
+diff --git a/Documentation/laptops/laptop-mode.txt b/Documentation/laptops/laptop-mode.rst
+similarity index 62%
+rename from Documentation/laptops/laptop-mode.txt
+rename to Documentation/laptops/laptop-mode.rst
+index 1c707fc9b141..c984c4262f2e 100644
+--- a/Documentation/laptops/laptop-mode.txt
++++ b/Documentation/laptops/laptop-mode.rst
+@@ -1,8 +1,11 @@
++===============================================
+ How to conserve battery power using laptop-mode
+------------------------------------------------
++===============================================
+ 
+ Document Author: Bart Samwel (bart@samwel.tk)
 +
-+   uleds
+ Date created: January 2, 2004
 +
-+   leds-blinkm
-+   leds-lm3556
-+   leds-lp3944
-+   leds-lp5521
-+   leds-lp5523
-+   leds-lp5562
-+   leds-lp55xx
-+   leds-mlxcpld
-diff --git a/Documentation/leds/leds-blinkm.txt b/Documentation/leds/leds-blinkm.rst
-similarity index 57%
-rename from Documentation/leds/leds-blinkm.txt
-rename to Documentation/leds/leds-blinkm.rst
-index 9dd92f4cf4e1..c74b5bc877b1 100644
---- a/Documentation/leds/leds-blinkm.txt
-+++ b/Documentation/leds/leds-blinkm.rst
-@@ -1,3 +1,7 @@
-+==================
-+Leds BlinkM driver
-+==================
-+
- The leds-blinkm driver supports the devices of the BlinkM family.
+ Last modified: December 06, 2004
  
- They are RGB-LED modules driven by a (AT)tiny microcontroller and
-@@ -14,35 +18,36 @@ The interface this driver provides is 2-fold:
- a) LED class interface for use with triggers
- ############################################
+ Introduction
+@@ -12,17 +15,16 @@ Laptop mode is used to minimize the time that the hard disk needs to be spun up,
+ to conserve battery power on laptops. It has been reported to cause significant
+ power savings.
  
--The registration follows the scheme:
--blinkm-<i2c-bus-nr>-<i2c-device-nr>-<color>
-+The registration follows the scheme::
+-Contents
+---------
++.. Contents
  
--$ ls -h /sys/class/leds/blinkm-6-*
--/sys/class/leds/blinkm-6-9-blue:
--brightness  device  max_brightness  power  subsystem  trigger  uevent
-+  blinkm-<i2c-bus-nr>-<i2c-device-nr>-<color>
- 
--/sys/class/leds/blinkm-6-9-green:
--brightness  device  max_brightness  power  subsystem  trigger  uevent
-+  $ ls -h /sys/class/leds/blinkm-6-*
-+  /sys/class/leds/blinkm-6-9-blue:
-+  brightness  device  max_brightness  power  subsystem  trigger  uevent
- 
--/sys/class/leds/blinkm-6-9-red:
--brightness  device  max_brightness  power  subsystem  trigger  uevent
-+  /sys/class/leds/blinkm-6-9-green:
-+  brightness  device  max_brightness  power  subsystem  trigger  uevent
-+
-+  /sys/class/leds/blinkm-6-9-red:
-+  brightness  device  max_brightness  power  subsystem  trigger  uevent
- 
- (same is /sys/bus/i2c/devices/6-0009/leds)
- 
- We can control the colors separated into red, green and blue and
- assign triggers on each color.
- 
--E.g.:
-+E.g.::
- 
--$ cat blinkm-6-9-blue/brightness
--05
-+  $ cat blinkm-6-9-blue/brightness
-+  05
- 
--$ echo 200 > blinkm-6-9-blue/brightness
--$
-+  $ echo 200 > blinkm-6-9-blue/brightness
-+  $
- 
--$ modprobe ledtrig-heartbeat
--$ echo heartbeat > blinkm-6-9-green/trigger
--$
-+  $ modprobe ledtrig-heartbeat
-+  $ echo heartbeat > blinkm-6-9-green/trigger
-+  $
+-* Introduction
+-* Installation
+-* Caveats
+-* The Details
+-* Tips & Tricks
+-* Control script
+-* ACPI integration
+-* Monitoring tool
++   * Introduction
++   * Installation
++   * Caveats
++   * The Details
++   * Tips & Tricks
++   * Control script
++   * ACPI integration
++   * Monitoring tool
  
  
- b) Sysfs group to control rgb, fade, hsb, scripts ...
-@@ -52,29 +57,28 @@ This extended interface is available as folder blinkm
- in the sysfs folder of the I2C device.
- E.g. below /sys/bus/i2c/devices/6-0009/blinkm
+ Installation
+@@ -33,7 +35,7 @@ or anything. Simply install all the files included in this document, and
+ laptop mode will automatically be started when you're on battery. For
+ your convenience, a tarball containing an installer can be downloaded at:
  
--$ ls -h /sys/bus/i2c/devices/6-0009/blinkm/
--blue  green  red  test
-+  $ ls -h /sys/bus/i2c/devices/6-0009/blinkm/
-+  blue  green  red  test
+-http://www.samwel.tk/laptop_mode/laptop_mode/
++	http://www.samwel.tk/laptop_mode/laptop_mode/
  
- Currently supported is just setting red, green, blue
- and a test sequence.
+ To configure laptop mode, you need to edit the configuration file, which is
+ located in /etc/default/laptop-mode on Debian-based systems, or in
+@@ -209,7 +211,7 @@ Tips & Tricks
+   this on powerbooks too. I hope that this is a piece of information that
+   might be useful to the Laptop Mode patch or its users."
  
--E.g.:
-+E.g.::
+-* In syslog.conf, you can prefix entries with a dash ``-'' to omit syncing the
++* In syslog.conf, you can prefix entries with a dash `-` to omit syncing the
+   file after every logging. When you're using laptop-mode and your disk doesn't
+   spin down, this is a likely culprit.
  
--$ cat *
--00
--00
--00
--#Write into test to start test sequence!#
-+  $ cat *
-+  00
-+  00
-+  00
-+  #Write into test to start test sequence!#
+@@ -233,83 +235,82 @@ configuration file
+ It should be installed as /etc/default/laptop-mode on Debian, and as
+ /etc/sysconfig/laptop-mode on Red Hat, SUSE, Mandrake, and other work-alikes.
  
--$ echo 1 > test
--$
-+  $ echo 1 > test
-+  $
+---------------------CONFIG FILE BEGIN-------------------------------------------
+-# Maximum time, in seconds, of hard drive spindown time that you are
+-# comfortable with. Worst case, it's possible that you could lose this
+-# amount of work if your battery fails you while in laptop mode.
+-#MAX_AGE=600
++Config file::
  
--$ echo 255 > red
--$
-+  $ echo 255 > red
-+  $
+-# Automatically disable laptop mode when the number of minutes of battery
+-# that you have left goes below this threshold.
+-MINIMUM_BATTERY_MINUTES=10
++  # Maximum time, in seconds, of hard drive spindown time that you are
++  # comfortable with. Worst case, it's possible that you could lose this
++  # amount of work if your battery fails you while in laptop mode.
++  #MAX_AGE=600
  
+-# Read-ahead, in 512-byte sectors. You can spin down the disk while playing MP3/OGG
+-# by setting the disk readahead to 8MB (READAHEAD=16384). Effectively, the disk
+-# will read a complete MP3 at once, and will then spin down while the MP3/OGG is
+-# playing.
+-#READAHEAD=4096
++  # Automatically disable laptop mode when the number of minutes of battery
++  # that you have left goes below this threshold.
++  MINIMUM_BATTERY_MINUTES=10
  
+-# Shall we remount journaled fs. with appropriate commit interval? (1=yes)
+-#DO_REMOUNTS=1
++  # Read-ahead, in 512-byte sectors. You can spin down the disk while playing MP3/OGG
++  # by setting the disk readahead to 8MB (READAHEAD=16384). Effectively, the disk
++  # will read a complete MP3 at once, and will then spin down while the MP3/OGG is
++  # playing.
++  #READAHEAD=4096
  
- as of 6/2012
+-# And shall we add the "noatime" option to that as well? (1=yes)
+-#DO_REMOUNT_NOATIME=1
++  # Shall we remount journaled fs. with appropriate commit interval? (1=yes)
++  #DO_REMOUNTS=1
  
- dl9pf <at> gmx <dot> de
--
-diff --git a/Documentation/leds/leds-class-flash.txt b/Documentation/leds/leds-class-flash.rst
-similarity index 74%
-rename from Documentation/leds/leds-class-flash.txt
-rename to Documentation/leds/leds-class-flash.rst
-index 8da3c6f4b60b..6ec12c5a1a0e 100644
---- a/Documentation/leds/leds-class-flash.txt
-+++ b/Documentation/leds/leds-class-flash.rst
-@@ -1,9 +1,9 @@
--
-+==============================
- Flash LED handling under Linux
- ==============================
+-# Dirty synchronous ratio.  At this percentage of dirty pages the process
+-# which
+-# calls write() does its own writeback
+-#DIRTY_RATIO=40
++  # And shall we add the "noatime" option to that as well? (1=yes)
++  #DO_REMOUNT_NOATIME=1
  
- Some LED devices provide two modes - torch and flash. In the LED subsystem
--those modes are supported by LED class (see Documentation/leds/leds-class.txt)
-+those modes are supported by LED class (see Documentation/leds/leds-class.rst)
- and LED Flash class respectively. The torch mode related features are enabled
- by default and the flash ones only if a driver declares it by setting
- LED_DEV_CAP_FLASH flag.
-@@ -14,6 +14,7 @@ registered in the LED subsystem with led_classdev_flash_register function.
+-#
+-# Allowed dirty background ratio, in percent.  Once DIRTY_RATIO has been
+-# exceeded, the kernel will wake flusher threads which will then reduce the
+-# amount of dirty memory to dirty_background_ratio.  Set this nice and low,
+-# so once some writeout has commenced, we do a lot of it.
+-#
+-#DIRTY_BACKGROUND_RATIO=5
++  # Dirty synchronous ratio.  At this percentage of dirty pages the process
++  # which
++  # calls write() does its own writeback
++  #DIRTY_RATIO=40
  
- Following sysfs attributes are exposed for controlling flash LED devices:
- (see Documentation/ABI/testing/sysfs-class-led-flash)
-+
- 	- flash_brightness
- 	- max_flash_brightness
- 	- flash_timeout
-@@ -31,30 +32,46 @@ be defined in the kernel config.
+-# kernel default dirty buffer age
+-#DEF_AGE=30
+-#DEF_UPDATE=5
+-#DEF_DIRTY_BACKGROUND_RATIO=10
+-#DEF_DIRTY_RATIO=40
+-#DEF_XFS_AGE_BUFFER=15
+-#DEF_XFS_SYNC_INTERVAL=30
+-#DEF_XFS_BUFD_INTERVAL=1
++  #
++  # Allowed dirty background ratio, in percent.  Once DIRTY_RATIO has been
++  # exceeded, the kernel will wake flusher threads which will then reduce the
++  # amount of dirty memory to dirty_background_ratio.  Set this nice and low,
++  # so once some writeout has commenced, we do a lot of it.
++  #
++  #DIRTY_BACKGROUND_RATIO=5
  
- The driver must call the v4l2_flash_init function to get registered in the
- V4L2 subsystem. The function takes six arguments:
--- dev       : flash device, e.g. an I2C device
--- of_node   : of_node of the LED, may be NULL if the same as device's
--- fled_cdev : LED flash class device to wrap
--- iled_cdev : LED flash class device representing indicator LED associated with
--	      fled_cdev, may be NULL
--- ops : V4L2 specific ops
--	* external_strobe_set - defines the source of the flash LED strobe -
-+
-+- dev:
-+	flash device, e.g. an I2C device
-+- of_node:
-+	of_node of the LED, may be NULL if the same as device's
-+- fled_cdev:
-+	LED flash class device to wrap
-+- iled_cdev:
-+	LED flash class device representing indicator LED associated with
-+	fled_cdev, may be NULL
-+- ops:
-+	V4L2 specific ops
-+
-+	* external_strobe_set
-+		defines the source of the flash LED strobe -
- 		V4L2_CID_FLASH_STROBE control or external source, typically
- 		a sensor, which makes it possible to synchronise the flash
- 		strobe start with exposure start,
--	* intensity_to_led_brightness and led_brightness_to_intensity - perform
-+	* intensity_to_led_brightness and led_brightness_to_intensity
-+		perform
- 		enum led_brightness <-> V4L2 intensity conversion in a device
- 		specific manner - they can be used for devices with non-linear
- 		LED current scale.
--- config : configuration for V4L2 Flash sub-device
--	* dev_name - the name of the media entity, unique in the system,
--	* flash_faults - bitmask of flash faults that the LED flash class
-+- config:
-+	configuration for V4L2 Flash sub-device
-+
-+	* dev_name
-+		the name of the media entity, unique in the system,
-+	* flash_faults
-+		bitmask of flash faults that the LED flash class
- 		device can report; corresponding LED_FAULT* bit definitions are
- 		available in <linux/led-class-flash.h>,
--	* torch_intensity - constraints for the LED in TORCH mode
-+	* torch_intensity
-+		constraints for the LED in TORCH mode
- 		in microamperes,
--	* indicator_intensity - constraints for the indicator LED
-+	* indicator_intensity
-+		constraints for the indicator LED
- 		in microamperes,
--	* has_external_strobe - determines whether the flash strobe source
-+	* has_external_strobe
-+		determines whether the flash strobe source
- 		can be switched to external,
+-# This must be adjusted manually to the value of HZ in the running kernel
+-# on 2.4, until the XFS people change their 2.4 external interfaces to work in
+-# centisecs. This can be automated, but it's a work in progress that still
+-# needs# some fixes. On 2.6 kernels, XFS uses USER_HZ instead of HZ for
+-# external interfaces, and that is currently always set to 100. So you don't
+-# need to change this on 2.6.
+-#XFS_HZ=100
++  # kernel default dirty buffer age
++  #DEF_AGE=30
++  #DEF_UPDATE=5
++  #DEF_DIRTY_BACKGROUND_RATIO=10
++  #DEF_DIRTY_RATIO=40
++  #DEF_XFS_AGE_BUFFER=15
++  #DEF_XFS_SYNC_INTERVAL=30
++  #DEF_XFS_BUFD_INTERVAL=1
  
- On remove the v4l2_flash_release function has to be called, which takes one
-diff --git a/Documentation/leds/leds-class.txt b/Documentation/leds/leds-class.rst
-similarity index 92%
-rename from Documentation/leds/leds-class.txt
-rename to Documentation/leds/leds-class.rst
-index 8b39cc6b03ee..df0120a1ee3c 100644
---- a/Documentation/leds/leds-class.txt
-+++ b/Documentation/leds/leds-class.rst
-@@ -1,4 +1,4 @@
--
-+========================
- LED handling under Linux
- ========================
+-# Should the maximum CPU frequency be adjusted down while on battery?
+-# Requires CPUFreq to be setup.
+-# See Documentation/admin-guide/pm/cpufreq.rst for more info
+-#DO_CPU=0
++  # This must be adjusted manually to the value of HZ in the running kernel
++  # on 2.4, until the XFS people change their 2.4 external interfaces to work in
++  # centisecs. This can be automated, but it's a work in progress that still
++  # needs# some fixes. On 2.6 kernels, XFS uses USER_HZ instead of HZ for
++  # external interfaces, and that is currently always set to 100. So you don't
++  # need to change this on 2.6.
++  #XFS_HZ=100
  
-@@ -43,7 +43,7 @@ LED Device Naming
+-# When on battery what is the maximum CPU speed that the system should
+-# use? Legal values are "slowest" for the slowest speed that your
+-# CPU is able to operate at, or a value listed in:
+-# /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_frequencies
+-# Only applicable if DO_CPU=1.
+-#CPU_MAXFREQ=slowest
++  # Should the maximum CPU frequency be adjusted down while on battery?
++  # Requires CPUFreq to be setup.
++  # See Documentation/admin-guide/pm/cpufreq.rst for more info
++  #DO_CPU=0
  
- Is currently of the form:
+-# Idle timeout for your hard drive (man hdparm for valid values, -S option)
+-# Default is 2 hours on AC (AC_HD=244) and 20 seconds for battery (BATT_HD=4).
+-#AC_HD=244
+-#BATT_HD=4
++  # When on battery what is the maximum CPU speed that the system should
++  # use? Legal values are "slowest" for the slowest speed that your
++  # CPU is able to operate at, or a value listed in:
++  # /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_frequencies
++  # Only applicable if DO_CPU=1.
++  #CPU_MAXFREQ=slowest
  
--"devicename:colour:function"
-+	"devicename:colour:function"
+-# The drives for which to adjust the idle timeout. Separate them by a space,
+-# e.g. HD="/dev/hda /dev/hdb".
+-#HD="/dev/hda"
++  # Idle timeout for your hard drive (man hdparm for valid values, -S option)
++  # Default is 2 hours on AC (AC_HD=244) and 20 seconds for battery (BATT_HD=4).
++  #AC_HD=244
++  #BATT_HD=4
  
- There have been calls for LED properties such as colour to be exported as
- individual led class attributes. As a solution which doesn't incur as much
-@@ -57,9 +57,12 @@ Brightness setting API
+-# Set the spindown timeout on a hard drive?
+-#DO_HD=1
++  # The drives for which to adjust the idle timeout. Separate them by a space,
++  # e.g. HD="/dev/hda /dev/hdb".
++  #HD="/dev/hda"
  
- LED subsystem core exposes following API for setting brightness:
- 
--    - led_set_brightness : it is guaranteed not to sleep, passing LED_OFF stops
-+    - led_set_brightness:
-+		it is guaranteed not to sleep, passing LED_OFF stops
- 		blinking,
--    - led_set_brightness_sync : for use cases when immediate effect is desired -
-+
-+    - led_set_brightness_sync:
-+		for use cases when immediate effect is desired -
- 		it can block the caller for the time required for accessing
- 		device registers and can sleep, passing LED_OFF stops hardware
- 		blinking, returns -EBUSY if software blink fallback is enabled.
-@@ -70,7 +73,7 @@ LED registration API
- 
- A driver wanting to register a LED classdev for use by other drivers /
- userspace needs to allocate and fill a led_classdev struct and then call
--[devm_]led_classdev_register. If the non devm version is used the driver
-+`[devm_]led_classdev_register`. If the non devm version is used the driver
- must call led_classdev_unregister from its remove function before
- free-ing the led_classdev struct.
- 
-@@ -94,7 +97,7 @@ with brightness value LED_OFF, which should stop any software
- timers that may have been required for blinking.
- 
- The blink_set() function should choose a user friendly blinking value
--if it is called with *delay_on==0 && *delay_off==0 parameters. In this
-+if it is called with `*delay_on==0` && `*delay_off==0` parameters. In this
- case the driver should give back the chosen value through delay_on and
- delay_off parameters to the leds subsystem.
- 
-diff --git a/Documentation/leds/leds-lm3556.txt b/Documentation/leds/leds-lm3556.rst
-similarity index 70%
-rename from Documentation/leds/leds-lm3556.txt
-rename to Documentation/leds/leds-lm3556.rst
-index 62278e871b50..1ef17d7d800e 100644
---- a/Documentation/leds/leds-lm3556.txt
-+++ b/Documentation/leds/leds-lm3556.rst
-@@ -1,68 +1,118 @@
-+========================
- Kernel driver for lm3556
- ========================
- 
--*Texas Instrument:
-- 1.5 A Synchronous Boost LED Flash Driver w/ High-Side Current Source
-+* Texas Instrument:
-+  1.5 A Synchronous Boost LED Flash Driver w/ High-Side Current Source
- * Datasheet: http://www.national.com/ds/LM/LM3556.pdf
- 
- Authors:
--	Daniel Jeong
-+      - Daniel Jeong
-+
- 	Contact:Daniel Jeong(daniel.jeong-at-ti.com, gshark.jeong-at-gmail.com)
- 
- Description
- -----------
- There are 3 functions in LM3556, Flash, Torch and Indicator.
- 
--FLASH MODE
-+Flash Mode
-+^^^^^^^^^^
-+
- In Flash Mode, the LED current source(LED) provides 16 target current levels
- from 93.75 mA to 1500 mA.The Flash currents are adjusted via the CURRENT
- CONTROL REGISTER(0x09).Flash mode is activated by the ENABLE REGISTER(0x0A),
- or by pulling the STROBE pin HIGH.
-+
- LM3556 Flash can be controlled through sys/class/leds/flash/brightness file
-+
- * if STROBE pin is enabled, below example control brightness only, and
--ON / OFF will be controlled by STROBE pin.
-+  ON / OFF will be controlled by STROBE pin.
- 
- Flash Example:
--OFF     : #echo 0 > sys/class/leds/flash/brightness
--93.75 mA: #echo 1 > sys/class/leds/flash/brightness
--... .....
--1500  mA: #echo 16 > sys/class/leds/flash/brightness
- 
--TORCH MODE
-+OFF::
-+
-+	#echo 0 > sys/class/leds/flash/brightness
-+
-+93.75 mA::
-+
-+	#echo 1 > sys/class/leds/flash/brightness
-+
-+...
-+
-+1500  mA::
-+
-+	#echo 16 > sys/class/leds/flash/brightness
-+
-+Torch Mode
-+^^^^^^^^^^
-+
- In Torch Mode, the current source(LED) is programmed via the CURRENT CONTROL
- REGISTER(0x09).Torch Mode is activated by the ENABLE REGISTER(0x0A) or by the
- hardware TORCH input.
-+
- LM3556 torch can be controlled through sys/class/leds/torch/brightness file.
- * if TORCH pin is enabled, below example control brightness only,
- and ON / OFF will be controlled by TORCH pin.
- 
- Torch Example:
--OFF     : #echo 0 > sys/class/leds/torch/brightness
--46.88 mA: #echo 1 > sys/class/leds/torch/brightness
--... .....
--375 mA  : #echo 8 > sys/class/leds/torch/brightness
- 
--INDICATOR MODE
-+OFF::
-+
-+	#echo 0 > sys/class/leds/torch/brightness
-+
-+46.88 mA::
-+
-+	#echo 1 > sys/class/leds/torch/brightness
-+
-+...
-+
-+375 mA::
-+
-+	#echo 8 > sys/class/leds/torch/brightness
-+
-+Indicator Mode
-+^^^^^^^^^^^^^^
-+
- Indicator pattern can be set through sys/class/leds/indicator/pattern file,
- and 4 patterns are pre-defined in indicator_pattern array.
-+
- According to N-lank, Pulse time and N Period values, different pattern wiill
- be generated.If you want new patterns for your own device, change
- indicator_pattern array with your own values and INDIC_PATTERN_SIZE.
-+
- Please refer datasheet for more detail about N-Blank, Pulse time and N Period.
- 
- Indicator pattern example:
--pattern 0: #echo 0 > sys/class/leds/indicator/pattern
--....
--pattern 3: #echo 3 > sys/class/leds/indicator/pattern
-+
-+pattern 0::
-+
-+	#echo 0 > sys/class/leds/indicator/pattern
-+
-+...
-+
-+pattern 3::
-+
-+	#echo 3 > sys/class/leds/indicator/pattern
- 
- Indicator brightness can be controlled through
- sys/class/leds/indicator/brightness file.
- 
- Example:
--OFF      : #echo 0 > sys/class/leds/indicator/brightness
--5.86 mA  : #echo 1 > sys/class/leds/indicator/brightness
--........
--46.875mA : #echo 8 > sys/class/leds/indicator/brightness
-+
-+OFF::
-+
-+	#echo 0 > sys/class/leds/indicator/brightness
-+
-+5.86 mA::
-+
-+	#echo 1 > sys/class/leds/indicator/brightness
-+
-+...
-+
-+46.875mA::
-+
-+	#echo 8 > sys/class/leds/indicator/brightness
- 
- Notes
- -----
-@@ -70,7 +120,8 @@ Driver expects it is registered using the i2c_board_info mechanism.
- To register the chip at address 0x63 on specific adapter, set the platform data
- according to include/linux/platform_data/leds-lm3556.h, set the i2c board info
- 
--Example:
-+Example::
-+
- 	static struct i2c_board_info board_i2c_ch4[] __initdata = {
- 		{
- 			 I2C_BOARD_INFO(LM3556_NAME, 0x63),
-@@ -80,6 +131,7 @@ Example:
- 
- and register it in the platform init function
- 
--Example:
-+Example::
-+
- 	board_register_i2c_bus(4, 400,
- 				board_i2c_ch4, ARRAY_SIZE(board_i2c_ch4));
-diff --git a/Documentation/leds/leds-lp3944.txt b/Documentation/leds/leds-lp3944.rst
-similarity index 78%
-rename from Documentation/leds/leds-lp3944.txt
-rename to Documentation/leds/leds-lp3944.rst
-index e88ac3b60c08..c2f87dc1a3a9 100644
---- a/Documentation/leds/leds-lp3944.txt
-+++ b/Documentation/leds/leds-lp3944.rst
-@@ -1,14 +1,20 @@
-+====================
- Kernel driver lp3944
- ====================
- 
-   * National Semiconductor LP3944 Fun-light Chip
-+
-     Prefix: 'lp3944'
-+
-     Addresses scanned: None (see the Notes section below)
--    Datasheet: Publicly available at the National Semiconductor website
--               http://www.national.com/pf/LP/LP3944.html
-+
-+    Datasheet:
-+
-+	Publicly available at the National Semiconductor website
-+	http://www.national.com/pf/LP/LP3944.html
- 
- Authors:
--        Antonio Ospite <ospite@studenti.unina.it>
-+	Antonio Ospite <ospite@studenti.unina.it>
+---------------------CONFIG FILE END---------------------------------------------
++  # Set the spindown timeout on a hard drive?
++  #DO_HD=1
  
  
- Description
-@@ -19,8 +25,11 @@ is used as a led controller.
+ Control script
+@@ -318,125 +319,126 @@ Control script
+ Please note that this control script works for the Linux 2.4 and 2.6 series (thanks
+ to Kiko Piris).
  
- The DIM modes are used to set _blink_ patterns for leds, the pattern is
- specified supplying two parameters:
--  - period: from 0s to 1.6s
--  - duty cycle: percentage of the period the led is on, from 0 to 100
-+
-+  - period:
-+	from 0s to 1.6s
-+  - duty cycle:
-+	percentage of the period the led is on, from 0 to 100
+---------------------CONTROL SCRIPT BEGIN----------------------------------------
+-#!/bin/bash
++Control script::
  
- Setting a led in DIM0 or DIM1 mode makes it blink according to the pattern.
- See the datasheet for details.
-@@ -35,7 +44,7 @@ The chip is used mainly in embedded contexts, so this driver expects it is
- registered using the i2c_board_info mechanism.
+-# start or stop laptop_mode, best run by a power management daemon when
+-# ac gets connected/disconnected from a laptop
+-#
+-# install as /sbin/laptop_mode
+-#
+-# Contributors to this script:   Kiko Piris
+-#				 Bart Samwel
+-#				 Micha Feigin
+-#				 Andrew Morton
+-#				 Herve Eychenne
+-#				 Dax Kelson
+-#
+-# Original Linux 2.4 version by: Jens Axboe
++  #!/bin/bash
  
- To register the chip at address 0x60 on adapter 0, set the platform data
--according to include/linux/leds-lp3944.h, set the i2c board info:
-+according to include/linux/leds-lp3944.h, set the i2c board info::
+-#############################################################################
++  # start or stop laptop_mode, best run by a power management daemon when
++  # ac gets connected/disconnected from a laptop
++  #
++  # install as /sbin/laptop_mode
++  #
++  # Contributors to this script:   Kiko Piris
++  #				 Bart Samwel
++  #				 Micha Feigin
++  #				 Andrew Morton
++  #				 Herve Eychenne
++  #				 Dax Kelson
++  #
++  # Original Linux 2.4 version by: Jens Axboe
  
- 	static struct i2c_board_info a910_i2c_board_info[] __initdata = {
- 		{
-@@ -44,7 +53,7 @@ according to include/linux/leds-lp3944.h, set the i2c board info:
- 		},
- 	};
+-# Source config
+-if [ -f /etc/default/laptop-mode ] ; then
++  #############################################################################
++
++  # Source config
++  if [ -f /etc/default/laptop-mode ] ; then
+ 	# Debian
+ 	. /etc/default/laptop-mode
+-elif [ -f /etc/sysconfig/laptop-mode ] ; then
++  elif [ -f /etc/sysconfig/laptop-mode ] ; then
+ 	# Others
+-        . /etc/sysconfig/laptop-mode
+-fi
++          . /etc/sysconfig/laptop-mode
++  fi
  
--and register it in the platform init function
-+and register it in the platform init function::
+-# Don't raise an error if the config file is incomplete
+-# set defaults instead:
++  # Don't raise an error if the config file is incomplete
++  # set defaults instead:
  
- 	i2c_register_board_info(0, a910_i2c_board_info,
- 			ARRAY_SIZE(a910_i2c_board_info));
-diff --git a/Documentation/leds/leds-lp5521.rst b/Documentation/leds/leds-lp5521.rst
-new file mode 100644
-index 000000000000..0432615b083d
---- /dev/null
-+++ b/Documentation/leds/leds-lp5521.rst
-@@ -0,0 +1,115 @@
-+========================
-+Kernel driver for lp5521
-+========================
-+
-+* National Semiconductor LP5521 led driver chip
-+* Datasheet: http://www.national.com/pf/LP/LP5521.html
-+
-+Authors: Mathias Nyman, Yuri Zaporozhets, Samu Onkalo
-+
-+Contact: Samu Onkalo (samu.p.onkalo-at-nokia.com)
-+
-+Description
-+-----------
-+
-+LP5521 can drive up to 3 channels. Leds can be controlled directly via
-+the led class control interface. Channels have generic names:
-+lp5521:channelx, where x is 0 .. 2
-+
-+All three channels can be also controlled using the engine micro programs.
-+More details of the instructions can be found from the public data sheet.
-+
-+LP5521 has the internal program memory for running various LED patterns.
-+There are two ways to run LED patterns.
-+
-+1) Legacy interface - enginex_mode and enginex_load
-+   Control interface for the engines:
-+
-+   x is 1 .. 3
-+
-+   enginex_mode:
-+	disabled, load, run
-+   enginex_load:
-+	store program (visible only in engine load mode)
-+
-+  Example (start to blink the channel 2 led)::
-+
-+	cd   /sys/class/leds/lp5521:channel2/device
-+	echo "load" > engine3_mode
-+	echo "037f4d0003ff6000" > engine3_load
-+	echo "run" > engine3_mode
-+
-+  To stop the engine::
-+
-+	echo "disabled" > engine3_mode
-+
-+2) Firmware interface - LP55xx common interface
-+
-+For the details, please refer to 'firmware' section in leds-lp55xx.txt
-+
-+sysfs contains a selftest entry.
-+
-+The test communicates with the chip and checks that
-+the clock mode is automatically set to the requested one.
-+
-+Each channel has its own led current settings.
-+
-+- /sys/class/leds/lp5521:channel0/led_current - RW
-+- /sys/class/leds/lp5521:channel0/max_current - RO
-+
-+Format: 10x mA i.e 10 means 1.0 mA
-+
-+example platform data::
-+
-+  static struct lp55xx_led_config lp5521_led_config[] = {
-+	  {
-+		.name = "red",
-+		  .chan_nr        = 0,
-+		  .led_current    = 50,
-+		.max_current    = 130,
-+	  }, {
-+		.name = "green",
-+		  .chan_nr        = 1,
-+		  .led_current    = 0,
-+		.max_current    = 130,
-+	  }, {
-+		.name = "blue",
-+		  .chan_nr        = 2,
-+		  .led_current    = 0,
-+		.max_current    = 130,
-+	  }
-+  };
-+
-+  static int lp5521_setup(void)
-+  {
-+	/* setup HW resources */
+-# Maximum time, in seconds, of hard drive spindown time that you are
+-# comfortable with. Worst case, it's possible that you could lose this
+-# amount of work if your battery fails you while in laptop mode.
+-MAX_AGE=${MAX_AGE:-'600'}
++  # Maximum time, in seconds, of hard drive spindown time that you are
++  # comfortable with. Worst case, it's possible that you could lose this
++  # amount of work if your battery fails you while in laptop mode.
++  MAX_AGE=${MAX_AGE:-'600'}
+ 
+-# Read-ahead, in kilobytes
+-READAHEAD=${READAHEAD:-'4096'}
++  # Read-ahead, in kilobytes
++  READAHEAD=${READAHEAD:-'4096'}
+ 
+-# Shall we remount journaled fs. with appropriate commit interval? (1=yes)
+-DO_REMOUNTS=${DO_REMOUNTS:-'1'}
++  # Shall we remount journaled fs. with appropriate commit interval? (1=yes)
++  DO_REMOUNTS=${DO_REMOUNTS:-'1'}
+ 
+-# And shall we add the "noatime" option to that as well? (1=yes)
+-DO_REMOUNT_NOATIME=${DO_REMOUNT_NOATIME:-'1'}
++  # And shall we add the "noatime" option to that as well? (1=yes)
++  DO_REMOUNT_NOATIME=${DO_REMOUNT_NOATIME:-'1'}
+ 
+-# Shall we adjust the idle timeout on a hard drive?
+-DO_HD=${DO_HD:-'1'}
++  # Shall we adjust the idle timeout on a hard drive?
++  DO_HD=${DO_HD:-'1'}
+ 
+-# Adjust idle timeout on which hard drive?
+-HD="${HD:-'/dev/hda'}"
++  # Adjust idle timeout on which hard drive?
++  HD="${HD:-'/dev/hda'}"
+ 
+-# spindown time for HD (hdparm -S values)
+-AC_HD=${AC_HD:-'244'}
+-BATT_HD=${BATT_HD:-'4'}
++  # spindown time for HD (hdparm -S values)
++  AC_HD=${AC_HD:-'244'}
++  BATT_HD=${BATT_HD:-'4'}
+ 
+-# Dirty synchronous ratio.  At this percentage of dirty pages the process which
+-# calls write() does its own writeback
+-DIRTY_RATIO=${DIRTY_RATIO:-'40'}
++  # Dirty synchronous ratio.  At this percentage of dirty pages the process which
++  # calls write() does its own writeback
++  DIRTY_RATIO=${DIRTY_RATIO:-'40'}
+ 
+-# cpu frequency scaling
+-# See Documentation/admin-guide/pm/cpufreq.rst for more info
+-DO_CPU=${CPU_MANAGE:-'0'}
+-CPU_MAXFREQ=${CPU_MAXFREQ:-'slowest'}
++  # cpu frequency scaling
++  # See Documentation/admin-guide/pm/cpufreq.rst for more info
++  DO_CPU=${CPU_MANAGE:-'0'}
++  CPU_MAXFREQ=${CPU_MAXFREQ:-'slowest'}
+ 
+-#
+-# Allowed dirty background ratio, in percent.  Once DIRTY_RATIO has been
+-# exceeded, the kernel will wake flusher threads which will then reduce the
+-# amount of dirty memory to dirty_background_ratio.  Set this nice and low,
+-# so once some writeout has commenced, we do a lot of it.
+-#
+-DIRTY_BACKGROUND_RATIO=${DIRTY_BACKGROUND_RATIO:-'5'}
++  #
++  # Allowed dirty background ratio, in percent.  Once DIRTY_RATIO has been
++  # exceeded, the kernel will wake flusher threads which will then reduce the
++  # amount of dirty memory to dirty_background_ratio.  Set this nice and low,
++  # so once some writeout has commenced, we do a lot of it.
++  #
++  DIRTY_BACKGROUND_RATIO=${DIRTY_BACKGROUND_RATIO:-'5'}
+ 
+-# kernel default dirty buffer age
+-DEF_AGE=${DEF_AGE:-'30'}
+-DEF_UPDATE=${DEF_UPDATE:-'5'}
+-DEF_DIRTY_BACKGROUND_RATIO=${DEF_DIRTY_BACKGROUND_RATIO:-'10'}
+-DEF_DIRTY_RATIO=${DEF_DIRTY_RATIO:-'40'}
+-DEF_XFS_AGE_BUFFER=${DEF_XFS_AGE_BUFFER:-'15'}
+-DEF_XFS_SYNC_INTERVAL=${DEF_XFS_SYNC_INTERVAL:-'30'}
+-DEF_XFS_BUFD_INTERVAL=${DEF_XFS_BUFD_INTERVAL:-'1'}
++  # kernel default dirty buffer age
++  DEF_AGE=${DEF_AGE:-'30'}
++  DEF_UPDATE=${DEF_UPDATE:-'5'}
++  DEF_DIRTY_BACKGROUND_RATIO=${DEF_DIRTY_BACKGROUND_RATIO:-'10'}
++  DEF_DIRTY_RATIO=${DEF_DIRTY_RATIO:-'40'}
++  DEF_XFS_AGE_BUFFER=${DEF_XFS_AGE_BUFFER:-'15'}
++  DEF_XFS_SYNC_INTERVAL=${DEF_XFS_SYNC_INTERVAL:-'30'}
++  DEF_XFS_BUFD_INTERVAL=${DEF_XFS_BUFD_INTERVAL:-'1'}
+ 
+-# This must be adjusted manually to the value of HZ in the running kernel
+-# on 2.4, until the XFS people change their 2.4 external interfaces to work in
+-# centisecs. This can be automated, but it's a work in progress that still needs
+-# some fixes. On 2.6 kernels, XFS uses USER_HZ instead of HZ for external
+-# interfaces, and that is currently always set to 100. So you don't need to
+-# change this on 2.6.
+-XFS_HZ=${XFS_HZ:-'100'}
++  # This must be adjusted manually to the value of HZ in the running kernel
++  # on 2.4, until the XFS people change their 2.4 external interfaces to work in
++  # centisecs. This can be automated, but it's a work in progress that still needs
++  # some fixes. On 2.6 kernels, XFS uses USER_HZ instead of HZ for external
++  # interfaces, and that is currently always set to 100. So you don't need to
++  # change this on 2.6.
++  XFS_HZ=${XFS_HZ:-'100'}
+ 
+-#############################################################################
++  #############################################################################
+ 
+-KLEVEL="$(uname -r |
+-             {
++  KLEVEL="$(uname -r |
++               {
+ 	       IFS='.' read a b c
+ 	       echo $a.$b
+ 	     }
+-)"
+-case "$KLEVEL" in
++  )"
++  case "$KLEVEL" in
+ 	"2.4"|"2.6")
+ 		;;
+ 	*)
+ 		echo "Unhandled kernel version: $KLEVEL ('uname -r' = '$(uname -r)')" >&2
+ 		exit 1
+ 		;;
+-esac
++  esac
+ 
+-if [ ! -e /proc/sys/vm/laptop_mode ] ; then
++  if [ ! -e /proc/sys/vm/laptop_mode ] ; then
+ 	echo "Kernel is not patched with laptop_mode patch." >&2
+ 	exit 1
+-fi
++  fi
+ 
+-if [ ! -w /proc/sys/vm/laptop_mode ] ; then
++  if [ ! -w /proc/sys/vm/laptop_mode ] ; then
+ 	echo "You do not have enough privileges to enable laptop_mode." >&2
+ 	exit 1
+-fi
++  fi
+ 
+-# Remove an option (the first parameter) of the form option=<number> from
+-# a mount options string (the rest of the parameters).
+-parse_mount_opts () {
++  # Remove an option (the first parameter) of the form option=<number> from
++  # a mount options string (the rest of the parameters).
++  parse_mount_opts () {
+ 	OPT="$1"
+ 	shift
+ 	echo ",$*," | sed		\
+@@ -444,11 +446,11 @@ parse_mount_opts () {
+ 	 -e 's/,,*/,/g'			\
+ 	 -e 's/^,//'			\
+ 	 -e 's/,$//'
+-}
 +  }
-+
-+  static void lp5521_release(void)
-+  {
-+	/* Release HW resources */
+ 
+-# Remove an option (the first parameter) without any arguments from
+-# a mount option string (the rest of the parameters).
+-parse_nonumber_mount_opts () {
++  # Remove an option (the first parameter) without any arguments from
++  # a mount option string (the rest of the parameters).
++  parse_nonumber_mount_opts () {
+ 	OPT="$1"
+ 	shift
+ 	echo ",$*," | sed		\
+@@ -456,20 +458,20 @@ parse_nonumber_mount_opts () {
+ 	 -e 's/,,*/,/g'			\
+ 	 -e 's/^,//'			\
+ 	 -e 's/,$//'
+-}
 +  }
-+
-+  static void lp5521_enable(bool state)
-+  {
-+	/* Control of chip enable signal */
+ 
+-# Find out the state of a yes/no option (e.g. "atime"/"noatime") in
+-# fstab for a given filesystem, and use this state to replace the
+-# value of the option in another mount options string. The device
+-# is the first argument, the option name the second, and the default
+-# value the third. The remainder is the mount options string.
+-#
+-# Example:
+-# parse_yesno_opts_wfstab /dev/hda1 atime atime defaults,noatime
+-#
+-# If fstab contains, say, "rw" for this filesystem, then the result
+-# will be "defaults,atime".
+-parse_yesno_opts_wfstab () {
++  # Find out the state of a yes/no option (e.g. "atime"/"noatime") in
++  # fstab for a given filesystem, and use this state to replace the
++  # value of the option in another mount options string. The device
++  # is the first argument, the option name the second, and the default
++  # value the third. The remainder is the mount options string.
++  #
++  # Example:
++  # parse_yesno_opts_wfstab /dev/hda1 atime atime defaults,noatime
++  #
++  # If fstab contains, say, "rw" for this filesystem, then the result
++  # will be "defaults,atime".
++  parse_yesno_opts_wfstab () {
+ 	L_DEV="$1"
+ 	OPT="$2"
+ 	DEF_OPT="$3"
+@@ -491,21 +493,21 @@ parse_yesno_opts_wfstab () {
+ 		# option not specified in fstab -- choose the default.
+ 		echo "$PARSEDOPTS1,$DEF_OPT"
+ 	fi
+-}
 +  }
-+
-+  static struct lp55xx_platform_data lp5521_platform_data = {
-+	  .led_config     = lp5521_led_config,
-+	  .num_channels   = ARRAY_SIZE(lp5521_led_config),
-+	  .clock_mode     = LP55XX_CLOCK_EXT,
-+	  .setup_resources   = lp5521_setup,
-+	  .release_resources = lp5521_release,
-+	  .enable            = lp5521_enable,
-+  };
-+
-+Note:
-+  chan_nr can have values between 0 and 2.
-+  The name of each channel can be configurable.
-+  If the name field is not defined, the default name will be set to 'xxxx:channelN'
-+  (XXXX : pdata->label or i2c client name, N : channel number)
-+
-+
-+If the current is set to 0 in the platform data, that channel is
-+disabled and it is not visible in the sysfs.
-diff --git a/Documentation/leds/leds-lp5521.txt b/Documentation/leds/leds-lp5521.txt
-deleted file mode 100644
-index d08d8c179f85..000000000000
---- a/Documentation/leds/leds-lp5521.txt
-+++ /dev/null
-@@ -1,101 +0,0 @@
--Kernel driver for lp5521
--========================
--
--* National Semiconductor LP5521 led driver chip
--* Datasheet: http://www.national.com/pf/LP/LP5521.html
--
--Authors: Mathias Nyman, Yuri Zaporozhets, Samu Onkalo
--Contact: Samu Onkalo (samu.p.onkalo-at-nokia.com)
--
--Description
-------------
--
--LP5521 can drive up to 3 channels. Leds can be controlled directly via
--the led class control interface. Channels have generic names:
--lp5521:channelx, where x is 0 .. 2
--
--All three channels can be also controlled using the engine micro programs.
--More details of the instructions can be found from the public data sheet.
--
--LP5521 has the internal program memory for running various LED patterns.
--There are two ways to run LED patterns.
--
--1) Legacy interface - enginex_mode and enginex_load
--  Control interface for the engines:
--  x is 1 .. 3
--  enginex_mode : disabled, load, run
--  enginex_load : store program (visible only in engine load mode)
--
--  Example (start to blink the channel 2 led):
--  cd   /sys/class/leds/lp5521:channel2/device
--  echo "load" > engine3_mode
--  echo "037f4d0003ff6000" > engine3_load
--  echo "run" > engine3_mode
--
--  To stop the engine:
--  echo "disabled" > engine3_mode
--
--2) Firmware interface - LP55xx common interface
--  For the details, please refer to 'firmware' section in leds-lp55xx.txt
--
--sysfs contains a selftest entry.
--The test communicates with the chip and checks that
--the clock mode is automatically set to the requested one.
--
--Each channel has its own led current settings.
--/sys/class/leds/lp5521:channel0/led_current - RW
--/sys/class/leds/lp5521:channel0/max_current - RO
--Format: 10x mA i.e 10 means 1.0 mA
--
--example platform data:
--
--Note: chan_nr can have values between 0 and 2.
--The name of each channel can be configurable.
--If the name field is not defined, the default name will be set to 'xxxx:channelN'
--(XXXX : pdata->label or i2c client name, N : channel number)
--
--static struct lp55xx_led_config lp5521_led_config[] = {
--        {
--		.name = "red",
--                .chan_nr        = 0,
--                .led_current    = 50,
--		.max_current    = 130,
--        }, {
--		.name = "green",
--                .chan_nr        = 1,
--                .led_current    = 0,
--		.max_current    = 130,
--        }, {
--		.name = "blue",
--                .chan_nr        = 2,
--                .led_current    = 0,
--		.max_current    = 130,
--        }
--};
--
--static int lp5521_setup(void)
--{
--	/* setup HW resources */
+ 
+-# Find out the state of a numbered option (e.g. "commit=NNN") in
+-# fstab for a given filesystem, and use this state to replace the
+-# value of the option in another mount options string. The device
+-# is the first argument, and the option name the second. The
+-# remainder is the mount options string in which the replacement
+-# must be done.
+-#
+-# Example:
+-# parse_mount_opts_wfstab /dev/hda1 commit defaults,commit=7
+-#
+-# If fstab contains, say, "commit=3,rw" for this filesystem, then the
+-# result will be "rw,commit=3".
+-parse_mount_opts_wfstab () {
++  # Find out the state of a numbered option (e.g. "commit=NNN") in
++  # fstab for a given filesystem, and use this state to replace the
++  # value of the option in another mount options string. The device
++  # is the first argument, and the option name the second. The
++  # remainder is the mount options string in which the replacement
++  # must be done.
++  #
++  # Example:
++  # parse_mount_opts_wfstab /dev/hda1 commit defaults,commit=7
++  #
++  # If fstab contains, say, "commit=3,rw" for this filesystem, then the
++  # result will be "rw,commit=3".
++  parse_mount_opts_wfstab () {
+ 	L_DEV="$1"
+ 	OPT="$2"
+ 	shift 2
+@@ -523,9 +525,9 @@ parse_mount_opts_wfstab () {
+ 		# option not specified in fstab: set it to 0
+ 		echo "$PARSEDOPTS1,$OPT=0"
+ 	fi
 -}
--
--static void lp5521_release(void)
--{
--	/* Release HW resources */
++  }
+ 
+-deduce_fstype () {
++  deduce_fstype () {
+ 	MP="$1"
+ 	# My root filesystem unfortunately has
+ 	# type "unknown" in /etc/mtab. If we encounter
+@@ -538,13 +540,13 @@ deduce_fstype () {
+ 			exit 0
+ 		fi
+ 	done
 -}
--
--static void lp5521_enable(bool state)
--{
--	/* Control of chip enable signal */
--}
--
--static struct lp55xx_platform_data lp5521_platform_data = {
--        .led_config     = lp5521_led_config,
--        .num_channels   = ARRAY_SIZE(lp5521_led_config),
--        .clock_mode     = LP55XX_CLOCK_EXT,
--        .setup_resources   = lp5521_setup,
--        .release_resources = lp5521_release,
--        .enable            = lp5521_enable,
--};
--
--If the current is set to 0 in the platform data, that channel is
--disabled and it is not visible in the sysfs.
-diff --git a/Documentation/leds/leds-lp5523.rst b/Documentation/leds/leds-lp5523.rst
-new file mode 100644
-index 000000000000..7d7362a1dd57
---- /dev/null
-+++ b/Documentation/leds/leds-lp5523.rst
-@@ -0,0 +1,147 @@
-+========================
-+Kernel driver for lp5523
-+========================
-+
-+* National Semiconductor LP5523 led driver chip
-+* Datasheet: http://www.national.com/pf/LP/LP5523.html
-+
-+Authors: Mathias Nyman, Yuri Zaporozhets, Samu Onkalo
-+Contact: Samu Onkalo (samu.p.onkalo-at-nokia.com)
-+
-+Description
-+-----------
-+LP5523 can drive up to 9 channels. Leds can be controlled directly via
-+the led class control interface.
-+The name of each channel is configurable in the platform data - name and label.
-+There are three options to make the channel name.
-+
-+a) Define the 'name' in the platform data
-+
-+To make specific channel name, then use 'name' platform data.
-+
-+- /sys/class/leds/R1               (name: 'R1')
-+- /sys/class/leds/B1               (name: 'B1')
-+
-+b) Use the 'label' with no 'name' field
-+
-+For one device name with channel number, then use 'label'.
-+- /sys/class/leds/RGB:channelN     (label: 'RGB', N: 0 ~ 8)
-+
-+c) Default
-+
-+If both fields are NULL, 'lp5523' is used by default.
-+- /sys/class/leds/lp5523:channelN  (N: 0 ~ 8)
-+
-+LP5523 has the internal program memory for running various LED patterns.
-+There are two ways to run LED patterns.
-+
-+1) Legacy interface - enginex_mode, enginex_load and enginex_leds
-+
-+  Control interface for the engines:
-+
-+  x is 1 .. 3
-+
-+  enginex_mode:
-+	disabled, load, run
-+  enginex_load:
-+	microcode load
-+  enginex_leds:
-+	led mux control
-+
-+  ::
-+
-+	cd /sys/class/leds/lp5523:channel2/device
-+	echo "load" > engine3_mode
-+	echo "9d80400004ff05ff437f0000" > engine3_load
-+	echo "111111111" > engine3_leds
-+	echo "run" > engine3_mode
-+
-+  To stop the engine::
-+
-+	echo "disabled" > engine3_mode
-+
-+2) Firmware interface - LP55xx common interface
-+
-+For the details, please refer to 'firmware' section in leds-lp55xx.txt
-+
-+LP5523 has three master faders. If a channel is mapped to one of
-+the master faders, its output is dimmed based on the value of the master
-+fader.
-+
-+For example::
-+
-+  echo "123000123" > master_fader_leds
-+
-+creates the following channel-fader mappings::
-+
-+  channel 0,6 to master_fader1
-+  channel 1,7 to master_fader2
-+  channel 2,8 to master_fader3
-+
-+Then, to have 25% of the original output on channel 0,6::
-+
-+  echo 64 > master_fader1
-+
-+To have 0% of the original output (i.e. no output) channel 1,7::
-+
-+  echo 0 > master_fader2
-+
-+To have 100% of the original output (i.e. no dimming) on channel 2,8::
-+
-+  echo 255 > master_fader3
-+
-+To clear all master fader controls::
-+
-+  echo "000000000" > master_fader_leds
-+
-+Selftest uses always the current from the platform data.
-+
-+Each channel contains led current settings.
-+- /sys/class/leds/lp5523:channel2/led_current - RW
-+- /sys/class/leds/lp5523:channel2/max_current - RO
-+
-+Format: 10x mA i.e 10 means 1.0 mA
-+
-+Example platform data::
-+
-+	static struct lp55xx_led_config lp5523_led_config[] = {
-+		{
-+			.name		= "D1",
-+			.chan_nr        = 0,
-+			.led_current    = 50,
-+			.max_current    = 130,
-+		},
-+	...
-+		{
-+			.chan_nr        = 8,
-+			.led_current    = 50,
-+			.max_current    = 130,
-+		}
-+	};
-+
-+	static int lp5523_setup(void)
-+	{
-+		/* Setup HW resources */
-+	}
-+
-+	static void lp5523_release(void)
-+	{
-+		/* Release HW resources */
-+	}
-+
-+	static void lp5523_enable(bool state)
-+	{
-+		/* Control chip enable signal */
-+	}
-+
-+	static struct lp55xx_platform_data lp5523_platform_data = {
-+		.led_config     = lp5523_led_config,
-+		.num_channels   = ARRAY_SIZE(lp5523_led_config),
-+		.clock_mode     = LP55XX_CLOCK_EXT,
-+		.setup_resources   = lp5523_setup,
-+		.release_resources = lp5523_release,
-+		.enable            = lp5523_enable,
-+	};
-+
-+Note
-+  chan_nr can have values between 0 and 8.
-diff --git a/Documentation/leds/leds-lp5523.txt b/Documentation/leds/leds-lp5523.txt
-deleted file mode 100644
-index 0961a060fc4d..000000000000
---- a/Documentation/leds/leds-lp5523.txt
-+++ /dev/null
-@@ -1,130 +0,0 @@
--Kernel driver for lp5523
--========================
--
--* National Semiconductor LP5523 led driver chip
--* Datasheet: http://www.national.com/pf/LP/LP5523.html
--
--Authors: Mathias Nyman, Yuri Zaporozhets, Samu Onkalo
--Contact: Samu Onkalo (samu.p.onkalo-at-nokia.com)
--
--Description
-------------
--LP5523 can drive up to 9 channels. Leds can be controlled directly via
--the led class control interface.
--The name of each channel is configurable in the platform data - name and label.
--There are three options to make the channel name.
--
--a) Define the 'name' in the platform data
--To make specific channel name, then use 'name' platform data.
--/sys/class/leds/R1               (name: 'R1')
--/sys/class/leds/B1               (name: 'B1')
--
--b) Use the 'label' with no 'name' field
--For one device name with channel number, then use 'label'.
--/sys/class/leds/RGB:channelN     (label: 'RGB', N: 0 ~ 8)
--
--c) Default
--If both fields are NULL, 'lp5523' is used by default.
--/sys/class/leds/lp5523:channelN  (N: 0 ~ 8)
--
--LP5523 has the internal program memory for running various LED patterns.
--There are two ways to run LED patterns.
--
--1) Legacy interface - enginex_mode, enginex_load and enginex_leds
--  Control interface for the engines:
--  x is 1 .. 3
--  enginex_mode : disabled, load, run
--  enginex_load : microcode load
--  enginex_leds : led mux control
--
--  cd /sys/class/leds/lp5523:channel2/device
--  echo "load" > engine3_mode
--  echo "9d80400004ff05ff437f0000" > engine3_load
--  echo "111111111" > engine3_leds
--  echo "run" > engine3_mode
--
--  To stop the engine:
--  echo "disabled" > engine3_mode
--
--2) Firmware interface - LP55xx common interface
--  For the details, please refer to 'firmware' section in leds-lp55xx.txt
--
--LP5523 has three master faders. If a channel is mapped to one of
--the master faders, its output is dimmed based on the value of the master
--fader.
--
--For example,
--
--  echo "123000123" > master_fader_leds
--
--creates the following channel-fader mappings:
--
--  channel 0,6 to master_fader1
--  channel 1,7 to master_fader2
--  channel 2,8 to master_fader3
--
--Then, to have 25% of the original output on channel 0,6:
--
--  echo 64 > master_fader1
--
--To have 0% of the original output (i.e. no output) channel 1,7:
--
--  echo 0 > master_fader2
--
--To have 100% of the original output (i.e. no dimming) on channel 2,8:
--
--  echo 255 > master_fader3
--
--To clear all master fader controls:
--
--  echo "000000000" > master_fader_leds
--
--Selftest uses always the current from the platform data.
--
--Each channel contains led current settings.
--/sys/class/leds/lp5523:channel2/led_current - RW
--/sys/class/leds/lp5523:channel2/max_current - RO
--Format: 10x mA i.e 10 means 1.0 mA
--
--Example platform data:
--
--Note - chan_nr can have values between 0 and 8.
--
--static struct lp55xx_led_config lp5523_led_config[] = {
--        {
--		.name		= "D1",
--                .chan_nr        = 0,
--                .led_current    = 50,
--		.max_current    = 130,
--        },
--...
--        {
--                .chan_nr        = 8,
--                .led_current    = 50,
--		.max_current    = 130,
--        }
--};
--
--static int lp5523_setup(void)
--{
--	/* Setup HW resources */
--}
--
--static void lp5523_release(void)
--{
--	/* Release HW resources */
--}
--
--static void lp5523_enable(bool state)
--{
--	/* Control chip enable signal */
--}
--
--static struct lp55xx_platform_data lp5523_platform_data = {
--        .led_config     = lp5523_led_config,
--        .num_channels   = ARRAY_SIZE(lp5523_led_config),
--        .clock_mode     = LP55XX_CLOCK_EXT,
--        .setup_resources   = lp5523_setup,
--        .release_resources = lp5523_release,
--        .enable            = lp5523_enable,
--};
-diff --git a/Documentation/leds/leds-lp5562.rst b/Documentation/leds/leds-lp5562.rst
-new file mode 100644
-index 000000000000..79bbb2487ff6
---- /dev/null
-+++ b/Documentation/leds/leds-lp5562.rst
-@@ -0,0 +1,137 @@
-+========================
-+Kernel driver for lp5562
-+========================
-+
-+* TI LP5562 LED Driver
-+
-+Author: Milo(Woogyom) Kim <milo.kim@ti.com>
-+
-+Description
-+===========
-+
-+  LP5562 can drive up to 4 channels. R/G/B and White.
-+  LEDs can be controlled directly via the led class control interface.
-+
-+  All four channels can be also controlled using the engine micro programs.
-+  LP5562 has the internal program memory for running various LED patterns.
-+  For the details, please refer to 'firmware' section in leds-lp55xx.txt
-+
-+Device attribute
-+================
-+
-+engine_mux
-+  3 Engines are allocated in LP5562, but the number of channel is 4.
-+  Therefore each channel should be mapped to the engine number.
-+
-+  Value: RGB or W
-+
-+  This attribute is used for programming LED data with the firmware interface.
-+  Unlike the LP5521/LP5523/55231, LP5562 has unique feature for the engine mux,
-+  so additional sysfs is required
-+
-+  LED Map
-+
-+  ===== === ===============================
-+  Red   ... Engine 1 (fixed)
-+  Green ... Engine 2 (fixed)
-+  Blue  ... Engine 3 (fixed)
-+  White ... Engine 1 or 2 or 3 (selective)
-+  ===== === ===============================
-+
-+How to load the program data using engine_mux
-+=============================================
-+
-+  Before loading the LP5562 program data, engine_mux should be written between
-+  the engine selection and loading the firmware.
-+  Engine mux has two different mode, RGB and W.
-+  RGB is used for loading RGB program data, W is used for W program data.
-+
-+  For example, run blinking green channel pattern::
-+
-+    echo 2 > /sys/bus/i2c/devices/xxxx/select_engine     # 2 is for green channel
-+    echo "RGB" > /sys/bus/i2c/devices/xxxx/engine_mux    # engine mux for RGB
-+    echo 1 > /sys/class/firmware/lp5562/loading
-+    echo "4000600040FF6000" > /sys/class/firmware/lp5562/data
-+    echo 0 > /sys/class/firmware/lp5562/loading
-+    echo 1 > /sys/bus/i2c/devices/xxxx/run_engine
-+
-+  To run a blinking white pattern::
-+
-+    echo 1 or 2 or 3 > /sys/bus/i2c/devices/xxxx/select_engine
-+    echo "W" > /sys/bus/i2c/devices/xxxx/engine_mux
-+    echo 1 > /sys/class/firmware/lp5562/loading
-+    echo "4000600040FF6000" > /sys/class/firmware/lp5562/data
-+    echo 0 > /sys/class/firmware/lp5562/loading
-+    echo 1 > /sys/bus/i2c/devices/xxxx/run_engine
-+
-+How to load the predefined patterns
-+===================================
-+
-+  Please refer to 'leds-lp55xx.txt"
-+
-+Setting Current of Each Channel
-+===============================
-+
-+  Like LP5521 and LP5523/55231, LP5562 provides LED current settings.
-+  The 'led_current' and 'max_current' are used.
-+
-+Example of Platform data
-+========================
++  }
+ 
+-if [ $DO_REMOUNT_NOATIME -eq 1 ] ; then
++  if [ $DO_REMOUNT_NOATIME -eq 1 ] ; then
+ 	NOATIME_OPT=",noatime"
+-fi
++  fi
+ 
+-case "$1" in
++  case "$1" in
+ 	start)
+ 		AGE=$((100*$MAX_AGE))
+ 		XFS_AGE=$(($XFS_HZ*$MAX_AGE))
+@@ -687,10 +689,9 @@ case "$1" in
+ 		exit 1
+ 		;;
+ 
+-esac
++  esac
+ 
+-exit 0
+---------------------CONTROL SCRIPT END------------------------------------------
++  exit 0
+ 
+ 
+ ACPI integration
+@@ -701,78 +702,76 @@ kick off the laptop_mode script and run hdparm. The part that
+ automatically disables laptop mode when the battery is low was
+ written by Jan Topinski.
+ 
+------------------/etc/acpi/events/ac_adapter BEGIN------------------------------
+-event=ac_adapter
+-action=/etc/acpi/actions/ac.sh %e
+-----------------/etc/acpi/events/ac_adapter END---------------------------------
++/etc/acpi/events/ac_adapter::
+ 
++	event=ac_adapter
++	action=/etc/acpi/actions/ac.sh %e
+ 
+------------------/etc/acpi/events/battery BEGIN---------------------------------
+-event=battery.*
+-action=/etc/acpi/actions/battery.sh %e
+-----------------/etc/acpi/events/battery END------------------------------------
++/etc/acpi/events/battery::
+ 
++	event=battery.*
++	action=/etc/acpi/actions/battery.sh %e
+ 
+-----------------/etc/acpi/actions/ac.sh BEGIN-----------------------------------
+-#!/bin/bash
++/etc/acpi/actions/ac.sh::
+ 
+-# ac on/offline event handler
++  #!/bin/bash
+ 
+-status=`awk '/^state: / { print $2 }' /proc/acpi/ac_adapter/$2/state`
++  # ac on/offline event handler
+ 
+-case $status in
+-        "on-line")
+-                /sbin/laptop_mode stop
+-                exit 0
+-        ;;
+-        "off-line")
+-                /sbin/laptop_mode start
+-                exit 0
+-        ;;
+-esac
+----------------------------/etc/acpi/actions/ac.sh END--------------------------
++  status=`awk '/^state: / { print $2 }' /proc/acpi/ac_adapter/$2/state`
+ 
++  case $status in
++          "on-line")
++                  /sbin/laptop_mode stop
++                  exit 0
++          ;;
++          "off-line")
++                  /sbin/laptop_mode start
++                  exit 0
++          ;;
++  esac
+ 
+----------------------------/etc/acpi/actions/battery.sh BEGIN-------------------
+-#! /bin/bash
+ 
+-# Automatically disable laptop mode when the battery almost runs out.
++/etc/acpi/actions/battery.sh::
+ 
+-BATT_INFO=/proc/acpi/battery/$2/state
++  #! /bin/bash
+ 
+-if [[ -f /proc/sys/vm/laptop_mode ]]
+-then
+-   LM=`cat /proc/sys/vm/laptop_mode`
+-   if [[ $LM -gt 0 ]]
+-   then
+-     if [[ -f $BATT_INFO ]]
++  # Automatically disable laptop mode when the battery almost runs out.
++
++  BATT_INFO=/proc/acpi/battery/$2/state
++
++  if [[ -f /proc/sys/vm/laptop_mode ]]
++  then
++     LM=`cat /proc/sys/vm/laptop_mode`
++     if [[ $LM -gt 0 ]]
+      then
+-        # Source the config file only now that we know we need
+-        if [ -f /etc/default/laptop-mode ] ; then
+-                # Debian
+-                . /etc/default/laptop-mode
+-        elif [ -f /etc/sysconfig/laptop-mode ] ; then
+-                # Others
+-                . /etc/sysconfig/laptop-mode
+-        fi
+-        MINIMUM_BATTERY_MINUTES=${MINIMUM_BATTERY_MINUTES:-'10'}
++       if [[ -f $BATT_INFO ]]
++       then
++          # Source the config file only now that we know we need
++          if [ -f /etc/default/laptop-mode ] ; then
++                  # Debian
++                  . /etc/default/laptop-mode
++          elif [ -f /etc/sysconfig/laptop-mode ] ; then
++                  # Others
++                  . /etc/sysconfig/laptop-mode
++          fi
++          MINIMUM_BATTERY_MINUTES=${MINIMUM_BATTERY_MINUTES:-'10'}
+ 
+-        ACTION="`cat $BATT_INFO | grep charging | cut -c 26-`"
+-        if [[ ACTION -eq "discharging" ]]
+-        then
+-           PRESENT_RATE=`cat $BATT_INFO | grep "present rate:" | sed  "s/.* \([0-9][0-9]* \).*/\1/" `
+-           REMAINING=`cat $BATT_INFO | grep "remaining capacity:" | sed  "s/.* \([0-9][0-9]* \).*/\1/" `
+-        fi
+-        if (($REMAINING * 60 / $PRESENT_RATE < $MINIMUM_BATTERY_MINUTES))
+-        then
+-           /sbin/laptop_mode stop
+-        fi
+-     else
+-       logger -p daemon.warning "You are using laptop mode and your battery interface $BATT_INFO is missing. This may lead to loss of data when the battery runs out. Check kernel ACPI support and /proc/acpi/battery folder, and edit /etc/acpi/battery.sh to set BATT_INFO to the correct path."
++          ACTION="`cat $BATT_INFO | grep charging | cut -c 26-`"
++          if [[ ACTION -eq "discharging" ]]
++          then
++             PRESENT_RATE=`cat $BATT_INFO | grep "present rate:" | sed  "s/.* \([0-9][0-9]* \).*/\1/" `
++             REMAINING=`cat $BATT_INFO | grep "remaining capacity:" | sed  "s/.* \([0-9][0-9]* \).*/\1/" `
++          fi
++          if (($REMAINING * 60 / $PRESENT_RATE < $MINIMUM_BATTERY_MINUTES))
++          then
++             /sbin/laptop_mode stop
++          fi
++       else
++         logger -p daemon.warning "You are using laptop mode and your battery interface $BATT_INFO is missing. This may lead to loss of data when the battery runs out. Check kernel ACPI support and /proc/acpi/battery folder, and edit /etc/acpi/battery.sh to set BATT_INFO to the correct path."
++       fi
+      fi
+-   fi
+-fi
+----------------------------/etc/acpi/actions/battery.sh END--------------------
++  fi
+ 
+ 
+ Monitoring tool
+diff --git a/Documentation/laptops/sony-laptop.txt b/Documentation/laptops/sony-laptop.rst
+similarity index 85%
+rename from Documentation/laptops/sony-laptop.txt
+rename to Documentation/laptops/sony-laptop.rst
+index 978b1e615155..9edcc7f6612f 100644
+--- a/Documentation/laptops/sony-laptop.txt
++++ b/Documentation/laptops/sony-laptop.rst
+@@ -1,7 +1,9 @@
++=========================================
+ Sony Notebook Control Driver (SNC) Readme
+------------------------------------------
+-	Copyright (C) 2004- 2005 Stelian Pop <stelian@popies.net>
+-	Copyright (C) 2007 Mattia Dongili <malattia@linux.it>
++=========================================
++
++	- Copyright (C) 2004- 2005 Stelian Pop <stelian@popies.net>
++	- Copyright (C) 2007 Mattia Dongili <malattia@linux.it>
+ 
+ This mini-driver drives the SNC and SPIC device present in the ACPI BIOS of the
+ Sony Vaio laptops. This driver mixes both devices functions under the same
+@@ -10,6 +12,7 @@ obsoleted by sony-laptop now.
+ 
+ Fn keys (hotkeys):
+ ------------------
++
+ Some models report hotkeys through the SNC or SPIC devices, such events are
+ reported both through the ACPI subsystem as acpi events and through the INPUT
+ subsystem. See the logs of /proc/bus/input/devices to find out what those
+@@ -28,11 +31,14 @@ If your laptop model supports it, you will find sysfs files in the
+ /sys/class/backlight/sony/
+ directory. You will be able to query and set the current screen
+ brightness:
++
++	======================	=========================================
+ 	brightness		get/set screen brightness (an integer
+ 				between 0 and 7)
+ 	actual_brightness	reading from this file will query the HW
+ 				to get real brightness value
+ 	max_brightness		the maximum brightness value
++	======================	=========================================
+ 
+ 
+ Platform specific:
+@@ -45,6 +51,8 @@ You then read/write integer values from/to those files by using
+ standard UNIX tools.
+ 
+ The files are:
++
++	======================	==========================================
+ 	brightness_default	screen brightness which will be set
+ 				when the laptop will be rebooted
+ 	cdpower			power on/off the internal CD drive
+@@ -53,21 +61,39 @@ The files are:
+ 				(only in debug mode)
+ 	bluetoothpower		power on/off the internal bluetooth device
+ 	fanspeed		get/set the fan speed
++	======================	==========================================
+ 
+ Note that some files may be missing if they are not supported
+ by your particular laptop model.
+ 
+-Example usage:
++Example usage::
++
+ 	# echo "1" > /sys/devices/platform/sony-laptop/brightness_default
+-sets the lowest screen brightness for the next and later reboots,
++
++sets the lowest screen brightness for the next and later reboots
 +
 +::
 +
-+	static struct lp55xx_led_config lp5562_led_config[] = {
-+		{
-+			.name 		= "R",
-+			.chan_nr	= 0,
-+			.led_current	= 20,
-+			.max_current	= 40,
-+		},
-+		{
-+			.name 		= "G",
-+			.chan_nr	= 1,
-+			.led_current	= 20,
-+			.max_current	= 40,
-+		},
-+		{
-+			.name 		= "B",
-+			.chan_nr	= 2,
-+			.led_current	= 20,
-+			.max_current	= 40,
-+		},
-+		{
-+			.name 		= "W",
-+			.chan_nr	= 3,
-+			.led_current	= 20,
-+			.max_current	= 40,
-+		},
-+	};
+ 	# echo "8" > /sys/devices/platform/sony-laptop/brightness_default
+-sets the highest screen brightness for the next and later reboots,
 +
-+	static int lp5562_setup(void)
-+	{
-+		/* setup HW resources */
-+	}
++sets the highest screen brightness for the next and later reboots
 +
-+	static void lp5562_release(void)
-+	{
-+		/* Release HW resources */
-+	}
++::
 +
-+	static void lp5562_enable(bool state)
-+	{
-+		/* Control of chip enable signal */
-+	}
+ 	# cat /sys/devices/platform/sony-laptop/brightness_default
+-retrieves the value.
 +
-+	static struct lp55xx_platform_data lp5562_platform_data = {
-+		.led_config     = lp5562_led_config,
-+		.num_channels   = ARRAY_SIZE(lp5562_led_config),
-+		.setup_resources   = lp5562_setup,
-+		.release_resources = lp5562_release,
-+		.enable            = lp5562_enable,
-+	};
++retrieves the value
 +
-+To configure the platform specific data, lp55xx_platform_data structure is used
-+
-+
-+If the current is set to 0 in the platform data, that channel is
-+disabled and it is not visible in the sysfs.
-diff --git a/Documentation/leds/leds-lp5562.txt b/Documentation/leds/leds-lp5562.txt
-deleted file mode 100644
-index 5a823ff6b393..000000000000
---- a/Documentation/leds/leds-lp5562.txt
-+++ /dev/null
-@@ -1,120 +0,0 @@
--Kernel driver for LP5562
--========================
--
--* TI LP5562 LED Driver
--
--Author: Milo(Woogyom) Kim <milo.kim@ti.com>
--
--Description
--
--  LP5562 can drive up to 4 channels. R/G/B and White.
--  LEDs can be controlled directly via the led class control interface.
--
--  All four channels can be also controlled using the engine micro programs.
--  LP5562 has the internal program memory for running various LED patterns.
--  For the details, please refer to 'firmware' section in leds-lp55xx.txt
--
--Device attribute: engine_mux
--
--  3 Engines are allocated in LP5562, but the number of channel is 4.
--  Therefore each channel should be mapped to the engine number.
--  Value : RGB or W
--
--  This attribute is used for programming LED data with the firmware interface.
--  Unlike the LP5521/LP5523/55231, LP5562 has unique feature for the engine mux,
--  so additional sysfs is required.
--
--  LED Map
--  Red   ... Engine 1 (fixed)
--  Green ... Engine 2 (fixed)
--  Blue  ... Engine 3 (fixed)
--  White ... Engine 1 or 2 or 3 (selective)
--
--How to load the program data using engine_mux
--
--  Before loading the LP5562 program data, engine_mux should be written between
--  the engine selection and loading the firmware.
--  Engine mux has two different mode, RGB and W.
--  RGB is used for loading RGB program data, W is used for W program data.
--
--  For example, run blinking green channel pattern,
--  echo 2 > /sys/bus/i2c/devices/xxxx/select_engine     # 2 is for green channel
--  echo "RGB" > /sys/bus/i2c/devices/xxxx/engine_mux    # engine mux for RGB
--  echo 1 > /sys/class/firmware/lp5562/loading
--  echo "4000600040FF6000" > /sys/class/firmware/lp5562/data
--  echo 0 > /sys/class/firmware/lp5562/loading
--  echo 1 > /sys/bus/i2c/devices/xxxx/run_engine
--
--  To run a blinking white pattern,
--  echo 1 or 2 or 3 > /sys/bus/i2c/devices/xxxx/select_engine
--  echo "W" > /sys/bus/i2c/devices/xxxx/engine_mux
--  echo 1 > /sys/class/firmware/lp5562/loading
--  echo "4000600040FF6000" > /sys/class/firmware/lp5562/data
--  echo 0 > /sys/class/firmware/lp5562/loading
--  echo 1 > /sys/bus/i2c/devices/xxxx/run_engine
--
--How to load the predefined patterns
--
--  Please refer to 'leds-lp55xx.txt"
--
--Setting Current of Each Channel
--
--  Like LP5521 and LP5523/55231, LP5562 provides LED current settings.
--  The 'led_current' and 'max_current' are used.
--
--(Example of Platform data)
--
--To configure the platform specific data, lp55xx_platform_data structure is used.
--
--static struct lp55xx_led_config lp5562_led_config[] = {
--	{
--		.name 		= "R",
--		.chan_nr	= 0,
--		.led_current	= 20,
--		.max_current	= 40,
--	},
--	{
--		.name 		= "G",
--		.chan_nr	= 1,
--		.led_current	= 20,
--		.max_current	= 40,
--	},
--	{
--		.name 		= "B",
--		.chan_nr	= 2,
--		.led_current	= 20,
--		.max_current	= 40,
--	},
--	{
--		.name 		= "W",
--		.chan_nr	= 3,
--		.led_current	= 20,
--		.max_current	= 40,
--	},
--};
--
--static int lp5562_setup(void)
--{
--	/* setup HW resources */
--}
--
--static void lp5562_release(void)
--{
--	/* Release HW resources */
--}
--
--static void lp5562_enable(bool state)
--{
--	/* Control of chip enable signal */
--}
--
--static struct lp55xx_platform_data lp5562_platform_data = {
--        .led_config     = lp5562_led_config,
--        .num_channels   = ARRAY_SIZE(lp5562_led_config),
--        .setup_resources   = lp5562_setup,
--        .release_resources = lp5562_release,
--        .enable            = lp5562_enable,
--};
--
--If the current is set to 0 in the platform data, that channel is
--disabled and it is not visible in the sysfs.
-diff --git a/Documentation/leds/leds-lp55xx.rst b/Documentation/leds/leds-lp55xx.rst
-new file mode 100644
-index 000000000000..632e41cec0b5
---- /dev/null
-+++ b/Documentation/leds/leds-lp55xx.rst
-@@ -0,0 +1,224 @@
-+=================================================
-+LP5521/LP5523/LP55231/LP5562/LP8501 Common Driver
-+=================================================
-+
-+Authors: Milo(Woogyom) Kim <milo.kim@ti.com>
-+
-+Description
-+-----------
-+LP5521, LP5523/55231, LP5562 and LP8501 have common features as below.
-+
-+  Register access via the I2C
-+  Device initialization/deinitialization
-+  Create LED class devices for multiple output channels
-+  Device attributes for user-space interface
-+  Program memory for running LED patterns
-+
-+The LP55xx common driver provides these features using exported functions.
-+
-+  lp55xx_init_device() / lp55xx_deinit_device()
-+  lp55xx_register_leds() / lp55xx_unregister_leds()
-+  lp55xx_regsister_sysfs() / lp55xx_unregister_sysfs()
-+
-+( Driver Structure Data )
-+
-+In lp55xx common driver, two different data structure is used.
-+
-+* lp55xx_led
-+    control multi output LED channels such as led current, channel index.
-+* lp55xx_chip
-+    general chip control such like the I2C and platform data.
-+
-+For example, LP5521 has maximum 3 LED channels.
-+LP5523/55231 has 9 output channels::
-+
-+  lp55xx_chip for LP5521 ... lp55xx_led #1
-+			     lp55xx_led #2
-+			     lp55xx_led #3
-+
-+  lp55xx_chip for LP5523 ... lp55xx_led #1
-+			     lp55xx_led #2
-+				   .
-+				   .
-+			     lp55xx_led #9
-+
-+( Chip Dependent Code )
-+
-+To support device specific configurations, special structure
-+'lpxx_device_config' is used.
-+
-+  - Maximum number of channels
-+  - Reset command, chip enable command
-+  - Chip specific initialization
-+  - Brightness control register access
-+  - Setting LED output current
-+  - Program memory address access for running patterns
-+  - Additional device specific attributes
-+
-+( Firmware Interface )
-+
-+LP55xx family devices have the internal program memory for running
-+various LED patterns.
-+
-+This pattern data is saved as a file in the user-land or
-+hex byte string is written into the memory through the I2C.
-+
-+LP55xx common driver supports the firmware interface.
-+
-+LP55xx chips have three program engines.
-+
-+To load and run the pattern, the programming sequence is following.
-+
-+  (1) Select an engine number (1/2/3)
-+  (2) Mode change to load
-+  (3) Write pattern data into selected area
-+  (4) Mode change to run
-+
-+The LP55xx common driver provides simple interfaces as below.
-+
-+select_engine:
-+	Select which engine is used for running program
-+run_engine:
-+	Start program which is loaded via the firmware interface
-+firmware:
-+	Load program data
-+
-+In case of LP5523, one more command is required, 'enginex_leds'.
-+It is used for selecting LED output(s) at each engine number.
-+In more details, please refer to 'leds-lp5523.txt'.
-+
-+For example, run blinking pattern in engine #1 of LP5521::
-+
-+	echo 1 > /sys/bus/i2c/devices/xxxx/select_engine
-+	echo 1 > /sys/class/firmware/lp5521/loading
-+	echo "4000600040FF6000" > /sys/class/firmware/lp5521/data
-+	echo 0 > /sys/class/firmware/lp5521/loading
-+	echo 1 > /sys/bus/i2c/devices/xxxx/run_engine
-+
-+For example, run blinking pattern in engine #3 of LP55231
-+
-+Two LEDs are configured as pattern output channels::
-+
-+	echo 3 > /sys/bus/i2c/devices/xxxx/select_engine
-+	echo 1 > /sys/class/firmware/lp55231/loading
-+	echo "9d0740ff7e0040007e00a0010000" > /sys/class/firmware/lp55231/data
-+	echo 0 > /sys/class/firmware/lp55231/loading
-+	echo "000001100" > /sys/bus/i2c/devices/xxxx/engine3_leds
-+	echo 1 > /sys/bus/i2c/devices/xxxx/run_engine
-+
-+To start blinking patterns in engine #2 and #3 simultaneously::
-+
-+	for idx in 2 3
-+	do
-+	echo $idx > /sys/class/leds/red/device/select_engine
-+	sleep 0.1
-+	echo 1 > /sys/class/firmware/lp5521/loading
-+	echo "4000600040FF6000" > /sys/class/firmware/lp5521/data
-+	echo 0 > /sys/class/firmware/lp5521/loading
-+	done
-+	echo 1 > /sys/class/leds/red/device/run_engine
-+
-+Here is another example for LP5523.
-+
-+Full LED strings are selected by 'engine2_leds'::
-+
-+	echo 2 > /sys/bus/i2c/devices/xxxx/select_engine
-+	echo 1 > /sys/class/firmware/lp5523/loading
-+	echo "9d80400004ff05ff437f0000" > /sys/class/firmware/lp5523/data
-+	echo 0 > /sys/class/firmware/lp5523/loading
-+	echo "111111111" > /sys/bus/i2c/devices/xxxx/engine2_leds
-+	echo 1 > /sys/bus/i2c/devices/xxxx/run_engine
-+
-+As soon as 'loading' is set to 0, registered callback is called.
-+Inside the callback, the selected engine is loaded and memory is updated.
-+To run programmed pattern, 'run_engine' attribute should be enabled.
-+
-+The pattern sequence of LP8501 is similar to LP5523.
-+
-+However pattern data is specific.
-+
-+Ex 1) Engine 1 is used::
-+
-+	echo 1 > /sys/bus/i2c/devices/xxxx/select_engine
-+	echo 1 > /sys/class/firmware/lp8501/loading
-+	echo "9d0140ff7e0040007e00a001c000" > /sys/class/firmware/lp8501/data
-+	echo 0 > /sys/class/firmware/lp8501/loading
-+	echo 1 > /sys/bus/i2c/devices/xxxx/run_engine
-+
-+Ex 2) Engine 2 and 3 are used at the same time::
-+
-+	echo 2 > /sys/bus/i2c/devices/xxxx/select_engine
-+	sleep 1
-+	echo 1 > /sys/class/firmware/lp8501/loading
-+	echo "9d0140ff7e0040007e00a001c000" > /sys/class/firmware/lp8501/data
-+	echo 0 > /sys/class/firmware/lp8501/loading
-+	sleep 1
-+	echo 3 > /sys/bus/i2c/devices/xxxx/select_engine
-+	sleep 1
-+	echo 1 > /sys/class/firmware/lp8501/loading
-+	echo "9d0340ff7e0040007e00a001c000" > /sys/class/firmware/lp8501/data
-+	echo 0 > /sys/class/firmware/lp8501/loading
-+	sleep 1
-+	echo 1 > /sys/class/leds/d1/device/run_engine
-+
-+( 'run_engine' and 'firmware_cb' )
-+
-+The sequence of running the program data is common.
-+
-+But each device has own specific register addresses for commands.
-+
-+To support this, 'run_engine' and 'firmware_cb' are configurable in each driver.
-+
-+run_engine:
-+	Control the selected engine
-+firmware_cb:
-+	The callback function after loading the firmware is done.
-+
-+	Chip specific commands for loading and updating program memory.
-+
-+( Predefined pattern data )
-+
-+Without the firmware interface, LP55xx driver provides another method for
-+loading a LED pattern. That is 'predefined' pattern.
-+
-+A predefined pattern is defined in the platform data and load it(or them)
-+via the sysfs if needed.
-+
-+To use the predefined pattern concept, 'patterns' and 'num_patterns' should be
-+configured.
-+
-+Example of predefined pattern data::
-+
-+  /* mode_1: blinking data */
-+  static const u8 mode_1[] = {
-+		0x40, 0x00, 0x60, 0x00, 0x40, 0xFF, 0x60, 0x00,
-+		};
-+
-+  /* mode_2: always on */
-+  static const u8 mode_2[] = { 0x40, 0xFF, };
-+
-+  struct lp55xx_predef_pattern board_led_patterns[] = {
-+	{
-+		.r = mode_1,
-+		.size_r = ARRAY_SIZE(mode_1),
-+	},
-+	{
-+		.b = mode_2,
-+		.size_b = ARRAY_SIZE(mode_2),
-+	},
-+  }
-+
-+  struct lp55xx_platform_data lp5562_pdata = {
-+  ...
-+	.patterns      = board_led_patterns,
-+	.num_patterns  = ARRAY_SIZE(board_led_patterns),
-+  };
-+
-+Then, mode_1 and mode_2 can be run via through the sysfs::
-+
-+  echo 1 > /sys/bus/i2c/devices/xxxx/led_pattern    # red blinking LED pattern
-+  echo 2 > /sys/bus/i2c/devices/xxxx/led_pattern    # blue LED always on
-+
-+To stop running pattern::
-+
-+  echo 0 > /sys/bus/i2c/devices/xxxx/led_pattern
-diff --git a/Documentation/leds/leds-lp55xx.txt b/Documentation/leds/leds-lp55xx.txt
-deleted file mode 100644
-index e23fa91ea722..000000000000
---- a/Documentation/leds/leds-lp55xx.txt
-+++ /dev/null
-@@ -1,194 +0,0 @@
--LP5521/LP5523/LP55231/LP5562/LP8501 Common Driver
--=================================================
--
--Authors: Milo(Woogyom) Kim <milo.kim@ti.com>
--
--Description
-------------
--LP5521, LP5523/55231, LP5562 and LP8501 have common features as below.
--
--  Register access via the I2C
--  Device initialization/deinitialization
--  Create LED class devices for multiple output channels
--  Device attributes for user-space interface
--  Program memory for running LED patterns
--
--The LP55xx common driver provides these features using exported functions.
--  lp55xx_init_device() / lp55xx_deinit_device()
--  lp55xx_register_leds() / lp55xx_unregister_leds()
--  lp55xx_regsister_sysfs() / lp55xx_unregister_sysfs()
--
--( Driver Structure Data )
--
--In lp55xx common driver, two different data structure is used.
--
--o lp55xx_led
--  control multi output LED channels such as led current, channel index.
--o lp55xx_chip
--  general chip control such like the I2C and platform data.
--
--For example, LP5521 has maximum 3 LED channels.
--LP5523/55231 has 9 output channels.
--
--lp55xx_chip for LP5521 ... lp55xx_led #1
--                           lp55xx_led #2
--                           lp55xx_led #3
--
--lp55xx_chip for LP5523 ... lp55xx_led #1
--                           lp55xx_led #2
--                                 .
--                                 .
--                           lp55xx_led #9
--
--( Chip Dependent Code )
--
--To support device specific configurations, special structure
--'lpxx_device_config' is used.
--
--  Maximum number of channels
--  Reset command, chip enable command
--  Chip specific initialization
--  Brightness control register access
--  Setting LED output current
--  Program memory address access for running patterns
--  Additional device specific attributes
--
--( Firmware Interface )
--
--LP55xx family devices have the internal program memory for running
--various LED patterns.
--This pattern data is saved as a file in the user-land or
--hex byte string is written into the memory through the I2C.
--LP55xx common driver supports the firmware interface.
--
--LP55xx chips have three program engines.
--To load and run the pattern, the programming sequence is following.
--  (1) Select an engine number (1/2/3)
--  (2) Mode change to load
--  (3) Write pattern data into selected area
--  (4) Mode change to run
--
--The LP55xx common driver provides simple interfaces as below.
--select_engine : Select which engine is used for running program
--run_engine    : Start program which is loaded via the firmware interface
--firmware      : Load program data
--
--In case of LP5523, one more command is required, 'enginex_leds'.
--It is used for selecting LED output(s) at each engine number.
--In more details, please refer to 'leds-lp5523.txt'.
--
--For example, run blinking pattern in engine #1 of LP5521
--echo 1 > /sys/bus/i2c/devices/xxxx/select_engine
--echo 1 > /sys/class/firmware/lp5521/loading
--echo "4000600040FF6000" > /sys/class/firmware/lp5521/data
--echo 0 > /sys/class/firmware/lp5521/loading
--echo 1 > /sys/bus/i2c/devices/xxxx/run_engine
--
--For example, run blinking pattern in engine #3 of LP55231
--Two LEDs are configured as pattern output channels.
--echo 3 > /sys/bus/i2c/devices/xxxx/select_engine
--echo 1 > /sys/class/firmware/lp55231/loading
--echo "9d0740ff7e0040007e00a0010000" > /sys/class/firmware/lp55231/data
--echo 0 > /sys/class/firmware/lp55231/loading
--echo "000001100" > /sys/bus/i2c/devices/xxxx/engine3_leds
--echo 1 > /sys/bus/i2c/devices/xxxx/run_engine
--
--To start blinking patterns in engine #2 and #3 simultaneously,
--for idx in 2 3
--do
--  echo $idx > /sys/class/leds/red/device/select_engine
--  sleep 0.1
--  echo 1 > /sys/class/firmware/lp5521/loading
--  echo "4000600040FF6000" > /sys/class/firmware/lp5521/data
--  echo 0 > /sys/class/firmware/lp5521/loading
--done
--echo 1 > /sys/class/leds/red/device/run_engine
--
--Here is another example for LP5523.
--Full LED strings are selected by 'engine2_leds'.
--echo 2 > /sys/bus/i2c/devices/xxxx/select_engine
--echo 1 > /sys/class/firmware/lp5523/loading
--echo "9d80400004ff05ff437f0000" > /sys/class/firmware/lp5523/data
--echo 0 > /sys/class/firmware/lp5523/loading
--echo "111111111" > /sys/bus/i2c/devices/xxxx/engine2_leds
--echo 1 > /sys/bus/i2c/devices/xxxx/run_engine
--
--As soon as 'loading' is set to 0, registered callback is called.
--Inside the callback, the selected engine is loaded and memory is updated.
--To run programmed pattern, 'run_engine' attribute should be enabled.
--
--The pattern sequence of LP8501 is similar to LP5523.
--However pattern data is specific.
--Ex 1) Engine 1 is used
--echo 1 > /sys/bus/i2c/devices/xxxx/select_engine
--echo 1 > /sys/class/firmware/lp8501/loading
--echo "9d0140ff7e0040007e00a001c000" > /sys/class/firmware/lp8501/data
--echo 0 > /sys/class/firmware/lp8501/loading
--echo 1 > /sys/bus/i2c/devices/xxxx/run_engine
--
--Ex 2) Engine 2 and 3 are used at the same time
--echo 2 > /sys/bus/i2c/devices/xxxx/select_engine
--sleep 1
--echo 1 > /sys/class/firmware/lp8501/loading
--echo "9d0140ff7e0040007e00a001c000" > /sys/class/firmware/lp8501/data
--echo 0 > /sys/class/firmware/lp8501/loading
--sleep 1
--echo 3 > /sys/bus/i2c/devices/xxxx/select_engine
--sleep 1
--echo 1 > /sys/class/firmware/lp8501/loading
--echo "9d0340ff7e0040007e00a001c000" > /sys/class/firmware/lp8501/data
--echo 0 > /sys/class/firmware/lp8501/loading
--sleep 1
--echo 1 > /sys/class/leds/d1/device/run_engine
--
--( 'run_engine' and 'firmware_cb' )
--The sequence of running the program data is common.
--But each device has own specific register addresses for commands.
--To support this, 'run_engine' and 'firmware_cb' are configurable in each driver.
--run_engine  : Control the selected engine
--firmware_cb : The callback function after loading the firmware is done.
--              Chip specific commands for loading and updating program memory.
--
--( Predefined pattern data )
--
--Without the firmware interface, LP55xx driver provides another method for
--loading a LED pattern. That is 'predefined' pattern.
--A predefined pattern is defined in the platform data and load it(or them)
--via the sysfs if needed.
--To use the predefined pattern concept, 'patterns' and 'num_patterns' should be
--configured.
--
--  Example of predefined pattern data:
--
--  /* mode_1: blinking data */
--  static const u8 mode_1[] = {
--		0x40, 0x00, 0x60, 0x00, 0x40, 0xFF, 0x60, 0x00,
--		};
--
--  /* mode_2: always on */
--  static const u8 mode_2[] = { 0x40, 0xFF, };
--
--  struct lp55xx_predef_pattern board_led_patterns[] = {
--	{
--		.r = mode_1,
--		.size_r = ARRAY_SIZE(mode_1),
--	},
--	{
--		.b = mode_2,
--		.size_b = ARRAY_SIZE(mode_2),
--	},
--  }
--
--  struct lp55xx_platform_data lp5562_pdata = {
--  ...
--	.patterns      = board_led_patterns,
--	.num_patterns  = ARRAY_SIZE(board_led_patterns),
--  };
--
--Then, mode_1 and mode_2 can be run via through the sysfs.
--
--  echo 1 > /sys/bus/i2c/devices/xxxx/led_pattern    # red blinking LED pattern
--  echo 2 > /sys/bus/i2c/devices/xxxx/led_pattern    # blue LED always on
--
--To stop running pattern,
--  echo 0 > /sys/bus/i2c/devices/xxxx/led_pattern
-diff --git a/Documentation/leds/leds-mlxcpld.rst b/Documentation/leds/leds-mlxcpld.rst
-new file mode 100644
-index 000000000000..528582429e0b
---- /dev/null
-+++ b/Documentation/leds/leds-mlxcpld.rst
-@@ -0,0 +1,118 @@
-+=======================================
-+Kernel driver for Mellanox systems LEDs
-+=======================================
-+
-+Provide system LED support for the nex Mellanox systems:
-+"msx6710", "msx6720", "msb7700", "msn2700", "msx1410",
-+"msn2410", "msb7800", "msn2740", "msn2100".
-+
-+Description
-+-----------
-+Driver provides the following LEDs for the systems "msx6710", "msx6720",
-+"msb7700", "msn2700", "msx1410", "msn2410", "msb7800", "msn2740":
-+
-+  - mlxcpld:fan1:green
-+  - mlxcpld:fan1:red
-+  - mlxcpld:fan2:green
-+  - mlxcpld:fan2:red
-+  - mlxcpld:fan3:green
-+  - mlxcpld:fan3:red
-+  - mlxcpld:fan4:green
-+  - mlxcpld:fan4:red
-+  - mlxcpld:psu:green
-+  - mlxcpld:psu:red
-+  - mlxcpld:status:green
-+  - mlxcpld:status:red
-+
-+ "status"
-+  - CPLD reg offset: 0x20
-+  - Bits [3:0]
-+
-+ "psu"
-+  - CPLD reg offset: 0x20
-+  - Bits [7:4]
-+
-+ "fan1"
-+  - CPLD reg offset: 0x21
-+  - Bits [3:0]
-+
-+ "fan2"
-+  - CPLD reg offset: 0x21
-+  - Bits [7:4]
-+
-+ "fan3"
-+  - CPLD reg offset: 0x22
-+  - Bits [3:0]
-+
-+ "fan4"
-+  - CPLD reg offset: 0x22
-+  - Bits [7:4]
-+
-+ Color mask for all the above LEDs:
-+
-+  [bit3,bit2,bit1,bit0] or
-+  [bit7,bit6,bit5,bit4]:
-+
-+	- [0,0,0,0] = LED OFF
-+	- [0,1,0,1] = Red static ON
-+	- [1,1,0,1] = Green static ON
-+	- [0,1,1,0] = Red blink 3Hz
-+	- [1,1,1,0] = Green blink 3Hz
-+	- [0,1,1,1] = Red blink 6Hz
-+	- [1,1,1,1] = Green blink 6Hz
-+
-+Driver provides the following LEDs for the system "msn2100":
-+
-+  - mlxcpld:fan:green
-+  - mlxcpld:fan:red
-+  - mlxcpld:psu1:green
-+  - mlxcpld:psu1:red
-+  - mlxcpld:psu2:green
-+  - mlxcpld:psu2:red
-+  - mlxcpld:status:green
-+  - mlxcpld:status:red
-+  - mlxcpld:uid:blue
-+
-+ "status"
-+  - CPLD reg offset: 0x20
-+  - Bits [3:0]
-+
-+ "fan"
-+  - CPLD reg offset: 0x21
-+  - Bits [3:0]
-+
-+ "psu1"
-+  - CPLD reg offset: 0x23
-+  - Bits [3:0]
-+
-+ "psu2"
-+  - CPLD reg offset: 0x23
-+  - Bits [7:4]
-+
-+ "uid"
-+  - CPLD reg offset: 0x24
-+  - Bits [3:0]
-+
-+ Color mask for all the above LEDs, excepted uid:
-+
-+  [bit3,bit2,bit1,bit0] or
-+  [bit7,bit6,bit5,bit4]:
-+
-+	- [0,0,0,0] = LED OFF
-+	- [0,1,0,1] = Red static ON
-+	- [1,1,0,1] = Green static ON
-+	- [0,1,1,0] = Red blink 3Hz
-+	- [1,1,1,0] = Green blink 3Hz
-+	- [0,1,1,1] = Red blink 6Hz
-+	- [1,1,1,1] = Green blink 6Hz
-+
-+ Color mask for uid LED:
-+  [bit3,bit2,bit1,bit0]:
-+
-+	- [0,0,0,0] = LED OFF
-+	- [1,1,0,1] = Blue static ON
-+	- [1,1,1,0] = Blue blink 3Hz
-+	- [1,1,1,1] = Blue blink 6Hz
-+
-+Driver supports HW blinking at 3Hz and 6Hz frequency (50% duty cycle).
-+For 3Hz duty cylce is about 167 msec, for 6Hz is about 83 msec.
-diff --git a/Documentation/leds/leds-mlxcpld.txt b/Documentation/leds/leds-mlxcpld.txt
-deleted file mode 100644
-index a0e8fd457117..000000000000
---- a/Documentation/leds/leds-mlxcpld.txt
-+++ /dev/null
-@@ -1,110 +0,0 @@
--Kernel driver for Mellanox systems LEDs
--=======================================
--
--Provide system LED support for the nex Mellanox systems:
--"msx6710", "msx6720", "msb7700", "msn2700", "msx1410",
--"msn2410", "msb7800", "msn2740", "msn2100".
--
--Description
-------------
--Driver provides the following LEDs for the systems "msx6710", "msx6720",
--"msb7700", "msn2700", "msx1410", "msn2410", "msb7800", "msn2740":
--  mlxcpld:fan1:green
--  mlxcpld:fan1:red
--  mlxcpld:fan2:green
--  mlxcpld:fan2:red
--  mlxcpld:fan3:green
--  mlxcpld:fan3:red
--  mlxcpld:fan4:green
--  mlxcpld:fan4:red
--  mlxcpld:psu:green
--  mlxcpld:psu:red
--  mlxcpld:status:green
--  mlxcpld:status:red
--
-- "status"
--  CPLD reg offset: 0x20
--  Bits [3:0]
--
-- "psu"
--  CPLD reg offset: 0x20
--  Bits [7:4]
--
-- "fan1"
--  CPLD reg offset: 0x21
--  Bits [3:0]
--
-- "fan2"
--  CPLD reg offset: 0x21
--  Bits [7:4]
--
-- "fan3"
--  CPLD reg offset: 0x22
--  Bits [3:0]
--
-- "fan4"
--  CPLD reg offset: 0x22
--  Bits [7:4]
--
-- Color mask for all the above LEDs:
--  [bit3,bit2,bit1,bit0] or
--  [bit7,bit6,bit5,bit4]:
--	[0,0,0,0] = LED OFF
--	[0,1,0,1] = Red static ON
--	[1,1,0,1] = Green static ON
--	[0,1,1,0] = Red blink 3Hz
--	[1,1,1,0] = Green blink 3Hz
--	[0,1,1,1] = Red blink 6Hz
--	[1,1,1,1] = Green blink 6Hz
--
--Driver provides the following LEDs for the system "msn2100":
--  mlxcpld:fan:green
--  mlxcpld:fan:red
--  mlxcpld:psu1:green
--  mlxcpld:psu1:red
--  mlxcpld:psu2:green
--  mlxcpld:psu2:red
--  mlxcpld:status:green
--  mlxcpld:status:red
--  mlxcpld:uid:blue
--
-- "status"
--  CPLD reg offset: 0x20
--  Bits [3:0]
--
-- "fan"
--  CPLD reg offset: 0x21
--  Bits [3:0]
--
-- "psu1"
--  CPLD reg offset: 0x23
--  Bits [3:0]
--
-- "psu2"
--  CPLD reg offset: 0x23
--  Bits [7:4]
--
-- "uid"
--  CPLD reg offset: 0x24
--  Bits [3:0]
--
-- Color mask for all the above LEDs, excepted uid:
--  [bit3,bit2,bit1,bit0] or
--  [bit7,bit6,bit5,bit4]:
--	[0,0,0,0] = LED OFF
--	[0,1,0,1] = Red static ON
--	[1,1,0,1] = Green static ON
--	[0,1,1,0] = Red blink 3Hz
--	[1,1,1,0] = Green blink 3Hz
--	[0,1,1,1] = Red blink 6Hz
--	[1,1,1,1] = Green blink 6Hz
--
-- Color mask for uid LED:
--  [bit3,bit2,bit1,bit0]:
--	[0,0,0,0] = LED OFF
--	[1,1,0,1] = Blue static ON
--	[1,1,1,0] = Blue blink 3Hz
--	[1,1,1,1] = Blue blink 6Hz
--
--Driver supports HW blinking at 3Hz and 6Hz frequency (50% duty cycle).
--For 3Hz duty cylce is about 167 msec, for 6Hz is about 83 msec.
-diff --git a/Documentation/leds/ledtrig-oneshot.txt b/Documentation/leds/ledtrig-oneshot.rst
-similarity index 90%
-rename from Documentation/leds/ledtrig-oneshot.txt
-rename to Documentation/leds/ledtrig-oneshot.rst
-index fe57474a12e2..69fa3ea1d554 100644
---- a/Documentation/leds/ledtrig-oneshot.txt
-+++ b/Documentation/leds/ledtrig-oneshot.rst
-@@ -1,3 +1,4 @@
-+====================
- One-shot LED Trigger
- ====================
++::
  
-@@ -17,27 +18,27 @@ additional "invert" property specifies if the LED has to stay off (normal) or
- on (inverted) when not rearmed.
+ 	# echo "0" > /sys/devices/platform/sony-laptop/audiopower
+-powers off the sound card,
++
++powers off the sound card
++
++::
++
+ 	# echo "1" > /sys/devices/platform/sony-laptop/audiopower
++
+ powers on the sound card.
  
- The trigger can be activated from user space on led class devices as shown
--below:
-+below::
  
-   echo oneshot > trigger
+@@ -76,7 +102,8 @@ RFkill control:
+ More recent Vaio models expose a consistent set of ACPI methods to
+ control radio frequency emitting devices. If you are a lucky owner of
+ such a laptop you will find the necessary rfkill devices under
+-/sys/class/rfkill. Check those starting with sony-* in
++/sys/class/rfkill. Check those starting with sony-* in::
++
+ 	# grep . /sys/class/rfkill/*/{state,name}
  
- This adds sysfs attributes to the LED that are documented in:
- Documentation/ABI/testing/sysfs-class-led-trigger-oneshot
  
--Example use-case: network devices, initialization:
-+Example use-case: network devices, initialization::
+@@ -88,26 +115,29 @@ you are not afraid of any side effects doing strange things with
+ your ACPI BIOS could have on your laptop), load the driver and
+ pass the option 'debug=1'.
  
-   echo oneshot > trigger # set trigger for this led
-   echo 33 > delay_on     # blink at 1 / (33 + 33) Hz on continuous traffic
-   echo 33 > delay_off
+-REPEAT: DON'T DO THIS IF YOU DON'T LIKE RISKY BUSINESS.
++REPEAT:
++	**DON'T DO THIS IF YOU DON'T LIKE RISKY BUSINESS.**
  
--interface goes up:
-+interface goes up::
+ In your kernel logs you will find the list of all ACPI methods
+ the SNC device has on your laptop.
  
-   echo 1 > invert # set led as normally-on, turn the led on
+ * For new models you will see a long list of meaningless method names,
+-reading the DSDT table source should reveal that:
++  reading the DSDT table source should reveal that:
++
+ (1) the SNC device uses an internal capability lookup table
+ (2) SN00 is used to find values in the lookup table
+ (3) SN06 and SN07 are used to call into the real methods based on
+     offsets you can obtain iterating the table using SN00
+ (4) SN02 used to enable events.
++
+ Some values in the capability lookup table are more or less known, see
+ the code for all sony_call_snc_handle calls, others are more obscure.
  
--packet received/transmitted:
-+packet received/transmitted::
+ * For old models you can see the GCDP/GCDP methods used to pwer on/off
+-the CD drive, but there are others and they are usually different from
+-model to model.
++  the CD drive, but there are others and they are usually different from
++  model to model.
  
-   echo 1 > shot # led starts blinking, ignored if already blinking
+-I HAVE NO IDEA WHAT THOSE METHODS DO.
++**I HAVE NO IDEA WHAT THOSE METHODS DO.**
  
--interface goes down
-+interface goes down::
+ The sony-laptop driver creates, for some of those methods (the most
+ current ones found on several Vaio models), an entry under
+diff --git a/Documentation/laptops/sonypi.txt b/Documentation/laptops/sonypi.rst
+similarity index 87%
+rename from Documentation/laptops/sonypi.txt
+rename to Documentation/laptops/sonypi.rst
+index 606bdb9ce036..2a1975ed7ee4 100644
+--- a/Documentation/laptops/sonypi.txt
++++ b/Documentation/laptops/sonypi.rst
+@@ -1,11 +1,13 @@
++==================================================
+ Sony Programmable I/O Control Device Driver Readme
+---------------------------------------------------
+-	Copyright (C) 2001-2004 Stelian Pop <stelian@popies.net>
+-	Copyright (C) 2001-2002 Alcôve <www.alcove.com>
+-	Copyright (C) 2001 Michael Ashley <m.ashley@unsw.edu.au>
+-	Copyright (C) 2001 Junichi Morita <jun1m@mars.dti.ne.jp>
+-	Copyright (C) 2000 Takaya Kinjo <t-kinjo@tc4.so-net.ne.jp>
+-	Copyright (C) 2000 Andrew Tridgell <tridge@samba.org>
++==================================================
++
++	- Copyright (C) 2001-2004 Stelian Pop <stelian@popies.net>
++	- Copyright (C) 2001-2002 Alcôve <www.alcove.com>
++	- Copyright (C) 2001 Michael Ashley <m.ashley@unsw.edu.au>
++	- Copyright (C) 2001 Junichi Morita <jun1m@mars.dti.ne.jp>
++	- Copyright (C) 2000 Takaya Kinjo <t-kinjo@tc4.so-net.ne.jp>
++	- Copyright (C) 2000 Andrew Tridgell <tridge@samba.org>
  
-   echo 0 > invert # set led as normally-off, turn the led off
-diff --git a/Documentation/leds/ledtrig-transient.txt b/Documentation/leds/ledtrig-transient.rst
-similarity index 81%
-rename from Documentation/leds/ledtrig-transient.txt
-rename to Documentation/leds/ledtrig-transient.rst
-index 3bd38b487df1..d921dc830cd0 100644
---- a/Documentation/leds/ledtrig-transient.txt
-+++ b/Documentation/leds/ledtrig-transient.rst
-@@ -1,3 +1,4 @@
-+=====================
- LED Transient Trigger
- =====================
+ This driver enables access to the Sony Programmable I/O Control Device which
+ can be found in many Sony Vaio laptops. Some newer Sony laptops (seems to be
+@@ -14,6 +16,7 @@ sonypi device and are not supported at all by this driver.
  
-@@ -62,12 +63,13 @@ non-transient state. When driver gets suspended, irrespective of the transient
- state, the LED state changes to LED_OFF.
+ It will give access (through a user space utility) to some events those laptops
+ generate, like:
++
+ 	- jogdial events (the small wheel on the side of Vaios)
+ 	- capture button events (only on Vaio Picturebook series)
+ 	- Fn keys
+@@ -49,6 +52,7 @@ module argument syntax (<param>=<value> when passing the option to the
+ module or sonypi.<param>=<value> on the kernel boot line when sonypi is
+ statically linked into the kernel). Those options are:
  
- Transient trigger can be enabled and disabled from user space on led class
--devices, that support this trigger as shown below:
-+devices, that support this trigger as shown below::
++	=============== =======================================================
+ 	minor: 		minor number of the misc device /dev/sonypi,
+ 			default is -1 (automatic allocation, see /proc/misc
+ 			or kernel logs)
+@@ -86,6 +90,8 @@ statically linked into the kernel). Those options are:
+ 			will be tried. You can use the following bits to
+ 			construct your own event mask (from
+ 			drivers/char/sonypi.h):
++
++				========================	======
+ 				SONYPI_JOGGER_MASK 		0x0001
+ 				SONYPI_CAPTURE_MASK 		0x0002
+ 				SONYPI_FNKEY_MASK 		0x0004
+@@ -100,22 +106,24 @@ statically linked into the kernel). Those options are:
+ 				SONYPI_MEMORYSTICK_MASK		0x0800
+ 				SONYPI_BATTERY_MASK		0x1000
+ 				SONYPI_WIRELESS_MASK		0x2000
++				========================	======
  
--echo transient > trigger
--echo none > trigger
-+	echo transient > trigger
-+	echo none > trigger
+ 	useinput:	if set (which is the default) two input devices are
+ 			created, one which interprets the jogdial events as
+ 			mouse events, the other one which acts like a
+ 			keyboard reporting the pressing of the special keys.
++	=============== =======================================================
  
--NOTE: Add a new property trigger state to control the state.
+ Module use:
+ -----------
+ 
+ In order to automatically load the sonypi module on use, you can put those
+-lines a configuration file in /etc/modprobe.d/:
++lines a configuration file in /etc/modprobe.d/::
+ 
+ 	alias char-major-10-250 sonypi
+ 	options sonypi minor=250
+ 
+-This supposes the use of minor 250 for the sonypi device:
++This supposes the use of minor 250 for the sonypi device::
+ 
+ 	# mknod /dev/sonypi c 10 250
+ 
+@@ -148,5 +156,5 @@ Bugs:
+ 	  http://www.acc.umu.se/~erikw/program/smartdimmer-0.1.tar.bz2
+ 
+ 	- since all development was done by reverse engineering, there is
+-	  _absolutely no guarantee_ that this driver will not crash your
++	  *absolutely no guarantee* that this driver will not crash your
+ 	  laptop. Permanently.
+diff --git a/Documentation/laptops/thinkpad-acpi.txt b/Documentation/laptops/thinkpad-acpi.rst
+similarity index 89%
+rename from Documentation/laptops/thinkpad-acpi.txt
+rename to Documentation/laptops/thinkpad-acpi.rst
+index 75ef063622d2..19d52fc3c5e9 100644
+--- a/Documentation/laptops/thinkpad-acpi.txt
++++ b/Documentation/laptops/thinkpad-acpi.rst
+@@ -1,12 +1,15 @@
+-		     ThinkPad ACPI Extras Driver
++===========================
++ThinkPad ACPI Extras Driver
++===========================
+ 
+-                            Version 0.25
+-                        October 16th,  2013
++Version 0.25
+ 
+-               Borislav Deianov <borislav@users.sf.net>
+-             Henrique de Moraes Holschuh <hmh@hmh.eng.br>
+-                      http://ibm-acpi.sf.net/
++October 16th,  2013
+ 
++- Borislav Deianov <borislav@users.sf.net>
++- Henrique de Moraes Holschuh <hmh@hmh.eng.br>
++
++http://ibm-acpi.sf.net/
+ 
+ This is a Linux driver for the IBM and Lenovo ThinkPad laptops. It
+ supports various features of these laptops which are accessible
+@@ -91,7 +94,8 @@ yet ready or stabilized, it is expected that this interface will change,
+ and any and all userspace programs must deal with it.
+ 
+ 
+-Notes about the sysfs interface:
++Notes about the sysfs interface
++^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 
+ Unlike what was done with the procfs interface, correctness when talking
+ to the sysfs interfaces will be enforced, as will correctness in the
+@@ -129,6 +133,7 @@ Driver version
+ --------------
+ 
+ procfs: /proc/acpi/ibm/driver
++
+ sysfs driver attribute: version
+ 
+ The driver name and version. No commands can be written to this file.
+@@ -141,9 +146,13 @@ sysfs driver attribute: interface_version
+ 
+ Version of the thinkpad-acpi sysfs interface, as an unsigned long
+ (output in hex format: 0xAAAABBCC), where:
+-	AAAA - major revision
+-	BB - minor revision
+-	CC - bugfix revision
++
++	AAAA
++	  - major revision
++	BB
++	  - minor revision
++	CC
++	  - bugfix revision
+ 
+ The sysfs interface version changelog for the driver can be found at the
+ end of this document.  Changes to the sysfs interface done by the kernel
+@@ -170,6 +179,7 @@ Hot keys
+ --------
+ 
+ procfs: /proc/acpi/ibm/hotkey
++
+ sysfs device attribute: hotkey_*
+ 
+ In a ThinkPad, the ACPI HKEY handler is responsible for communicating
+@@ -181,7 +191,7 @@ firmware will behave in many situations.
+ The driver enables the HKEY ("hot key") event reporting automatically
+ when loaded, and disables it when it is removed.
+ 
+-The driver will report HKEY events in the following format:
++The driver will report HKEY events in the following format::
+ 
+ 	ibm/hotkey HKEY 00000080 0000xxxx
+ 
+@@ -217,9 +227,10 @@ ThinkPads, it is still possible to support some extra hotkeys by
+ polling the "CMOS NVRAM" at least 10 times per second.  The driver
+ attempts to enables this functionality automatically when required.
+ 
+-procfs notes:
++procfs notes
++^^^^^^^^^^^^
+ 
+-The following commands can be written to the /proc/acpi/ibm/hotkey file:
++The following commands can be written to the /proc/acpi/ibm/hotkey file::
+ 
+ 	echo 0xffffffff > /proc/acpi/ibm/hotkey -- enable all hot keys
+ 	echo 0 > /proc/acpi/ibm/hotkey -- disable all possible hot keys
+@@ -227,7 +238,7 @@ The following commands can be written to the /proc/acpi/ibm/hotkey file:
+ 	echo reset > /proc/acpi/ibm/hotkey -- restore the recommended mask
+ 
+ The following commands have been deprecated and will cause the kernel
+-to log a warning:
++to log a warning::
+ 
+ 	echo enable > /proc/acpi/ibm/hotkey -- does nothing
+ 	echo disable > /proc/acpi/ibm/hotkey -- returns an error
+@@ -237,7 +248,8 @@ maintain maximum bug-to-bug compatibility, it does not report any masks,
+ nor does it allow one to manipulate the hot key mask when the firmware
+ does not support masks at all, even if NVRAM polling is in use.
+ 
+-sysfs notes:
++sysfs notes
++^^^^^^^^^^^
+ 
+ 	hotkey_bios_enabled:
+ 		DEPRECATED, WILL BE REMOVED SOON.
+@@ -349,7 +361,8 @@ sysfs notes:
+ 
+ 		This attribute has poll()/select() support.
+ 
+-input layer notes:
++input layer notes
++^^^^^^^^^^^^^^^^^
+ 
+ A Hot key is mapped to a single input layer EV_KEY event, possibly
+ followed by an EV_MSC MSC_SCAN event that shall contain that key's scan
+@@ -362,11 +375,13 @@ remapping KEY_UNKNOWN keys.
+ 
+ The events are available in an input device, with the following id:
+ 
+-	Bus:		BUS_HOST
+-	vendor:		0x1014 (PCI_VENDOR_ID_IBM)  or
++	==============  ==============================
++	Bus		BUS_HOST
++	vendor		0x1014 (PCI_VENDOR_ID_IBM)  or
+ 			0x17aa (PCI_VENDOR_ID_LENOVO)
+-	product:	0x5054 ("TP")
+-	version:	0x4101
++	product		0x5054 ("TP")
++	version		0x4101
++	==============  ==============================
+ 
+ The version will have its LSB incremented if the keymap changes in a
+ backwards-compatible way.  The MSB shall always be 0x41 for this input
+@@ -380,9 +395,10 @@ backwards-compatible change for this input device.
+ 
+ Thinkpad-acpi Hot Key event map (version 0x4101):
+ 
++=======	=======	==============	==============================================
+ ACPI	Scan
+ event	code	Key		Notes
+-
++=======	=======	==============	==============================================
+ 0x1001	0x00	FN+F1		-
+ 
+ 0x1002	0x01	FN+F2		IBM: battery (rare)
+@@ -426,7 +442,9 @@ event	code	Key		Notes
+ 				or toggle screen expand
+ 
+ 0x1009	0x08	FN+F9		-
+-	..	..		..
++
++...	...	...		...
++
+ 0x100B	0x0A	FN+F11		-
+ 
+ 0x100C	0x0B	FN+F12		Sleep to disk.  You are always
+@@ -480,8 +498,11 @@ event	code	Key		Notes
+ 0x1018	0x17	THINKPAD	ThinkPad/Access IBM/Lenovo key
+ 
+ 0x1019	0x18	unknown
+-..	..	..
++
++...	...	...
++
+ 0x1020	0x1F	unknown
++=======	=======	==============	==============================================
+ 
+ The ThinkPad firmware does not allow one to differentiate when most hot
+ keys are pressed or released (either that, or we don't know how to, yet).
+@@ -499,14 +520,17 @@ generate input device EV_KEY events.
+ In addition to the EV_KEY events, thinkpad-acpi may also issue EV_SW
+ events for switches:
+ 
++==============	==============================================
+ SW_RFKILL_ALL	T60 and later hardware rfkill rocker switch
+ SW_TABLET_MODE	Tablet ThinkPads HKEY events 0x5009 and 0x500A
++==============	==============================================
+ 
+-Non hotkey ACPI HKEY event map:
+--------------------------------
++Non hotkey ACPI HKEY event map
++------------------------------
+ 
+ Events that are never propagated by the driver:
+ 
++======		==================================================
+ 0x2304		System is waking up from suspend to undock
+ 0x2305		System is waking up from suspend to eject bay
+ 0x2404		System is waking up from hibernation to undock
+@@ -519,10 +543,12 @@ Events that are never propagated by the driver:
+ 0x6000		KEYBOARD: Numlock key pressed
+ 0x6005		KEYBOARD: Fn key pressed (TO BE VERIFIED)
+ 0x7000		Radio Switch may have changed state
++======		==================================================
+ 
+ 
+ Events that are propagated by the driver to userspace:
+ 
++======		=====================================================
+ 0x2313		ALARM: System is waking up from suspend because
+ 		the battery is nearly empty
+ 0x2413		ALARM: System is waking up from hibernation because
+@@ -544,6 +570,7 @@ Events that are propagated by the driver to userspace:
+ 0x6040		Nvidia Optimus/AC adapter related (TO BE VERIFIED)
+ 0x60C0		X1 Yoga 2016, Tablet mode status changed
+ 0x60F0		Thermal Transformation changed (GMTS, Windows)
++======		=====================================================
+ 
+ Battery nearly empty alarms are a last resort attempt to get the
+ operating system to hibernate or shutdown cleanly (0x2313), or shutdown
+@@ -562,7 +589,8 @@ cycle, or a system shutdown.  Obviously, something is very wrong if this
+ happens.
+ 
+ 
+-Brightness hotkey notes:
++Brightness hotkey notes
++^^^^^^^^^^^^^^^^^^^^^^^
+ 
+ Don't mess with the brightness hotkeys in a Thinkpad.  If you want
+ notifications for OSD, use the sysfs backlight class event support.
+@@ -579,7 +607,9 @@ Bluetooth
+ ---------
+ 
+ procfs: /proc/acpi/ibm/bluetooth
++
+ sysfs device attribute: bluetooth_enable (deprecated)
++
+ sysfs rfkill class: switch "tpacpi_bluetooth_sw"
+ 
+ This feature shows the presence and current state of a ThinkPad
+@@ -588,22 +618,25 @@ Bluetooth device in the internal ThinkPad CDC slot.
+ If the ThinkPad supports it, the Bluetooth state is stored in NVRAM,
+ so it is kept across reboots and power-off.
+ 
+-Procfs notes:
++Procfs notes
++^^^^^^^^^^^^
+ 
+-If Bluetooth is installed, the following commands can be used:
++If Bluetooth is installed, the following commands can be used::
+ 
+ 	echo enable > /proc/acpi/ibm/bluetooth
+ 	echo disable > /proc/acpi/ibm/bluetooth
+ 
+-Sysfs notes:
++Sysfs notes
++^^^^^^^^^^^
+ 
+ 	If the Bluetooth CDC card is installed, it can be enabled /
+ 	disabled through the "bluetooth_enable" thinkpad-acpi device
+ 	attribute, and its current status can also be queried.
+ 
+ 	enable:
+-		0: disables Bluetooth / Bluetooth is disabled
+-		1: enables Bluetooth / Bluetooth is enabled.
++
++		- 0: disables Bluetooth / Bluetooth is disabled
++		- 1: enables Bluetooth / Bluetooth is enabled.
+ 
+ 	Note: this interface has been superseded by the	generic rfkill
+ 	class.  It has been deprecated, and it will be removed in year
+@@ -617,7 +650,7 @@ Video output control -- /proc/acpi/ibm/video
+ --------------------------------------------
+ 
+ This feature allows control over the devices used for video output -
+-LCD, CRT or DVI (if available). The following commands are available:
++LCD, CRT or DVI (if available). The following commands are available::
+ 
+ 	echo lcd_enable > /proc/acpi/ibm/video
+ 	echo lcd_disable > /proc/acpi/ibm/video
+@@ -630,9 +663,10 @@ LCD, CRT or DVI (if available). The following commands are available:
+ 	echo expand_toggle > /proc/acpi/ibm/video
+ 	echo video_switch > /proc/acpi/ibm/video
+ 
+-NOTE: Access to this feature is restricted to processes owning the
+-CAP_SYS_ADMIN capability for safety reasons, as it can interact badly
+-enough with some versions of X.org to crash it.
 +NOTE:
-+	Add a new property trigger state to control the state.
++  Access to this feature is restricted to processes owning the
++  CAP_SYS_ADMIN capability for safety reasons, as it can interact badly
++  enough with some versions of X.org to crash it.
  
- This trigger exports three properties, activate, state, and duration. When
- transient trigger is activated these properties are set to default values.
-@@ -79,7 +81,8 @@ transient trigger is activated these properties are set to default values.
- - state allows user to specify a transient state to be held for the specified
-   duration.
+ Each video output device can be enabled or disabled individually.
+ Reading /proc/acpi/ibm/video shows the status of each device.
+@@ -665,18 +699,21 @@ ThinkLight control
+ ------------------
  
--	activate - one shot timer activate mechanism.
-+	activate
-+	      - one shot timer activate mechanism.
- 		1 when activated, 0 when deactivated.
- 		default value is zero when transient trigger is enabled,
- 		to allow duration to be set.
-@@ -89,12 +92,14 @@ transient trigger is activated these properties are set to default values.
- 		deactivated state indicates that there is no active timer
- 		running.
- 
--	duration - one shot timer value. When activate is set, duration value
-+	duration
-+	      - one shot timer value. When activate is set, duration value
- 		is used to start a timer that runs once. This value doesn't
- 		get changed by the trigger unless user does a set via
- 		echo new_value > duration
- 
--	state - transient state to be held. It has two values 0 or 1. 0 maps
-+	state
-+	      - transient state to be held. It has two values 0 or 1. 0 maps
- 		to LED_OFF and 1 maps to LED_FULL. The specified state is
- 		held for the duration of the one shot timer and then the
- 		state gets changed to the non-transient state which is the
-@@ -114,39 +119,49 @@ When timer expires activate goes back to deactivated state, duration is left
- at the set value to be used when activate is set at a future time. This will
- allow user app to set the time once and activate it to run it once for the
- specified value as needed. When timer expires, state is restored to the
--non-transient state which is the inverse of the transient state.
-+non-transient state which is the inverse of the transient state:
- 
--	echo 1 > activate - starts timer = duration when duration is not 0.
--	echo 0 > activate - cancels currently running timer.
--	echo n > duration - stores timer value to be used upon next
--                            activate. Currently active timer if
--                            any, continues to run for the specified time.
--	echo 0 > duration - stores timer value to be used upon next
--                            activate. Currently active timer if any,
--                            continues to run for the specified time.
--	echo 1 > state    - stores desired transient state LED_FULL to be
-+	=================   ===============================================
-+	echo 1 > activate   starts timer = duration when duration is not 0.
-+	echo 0 > activate   cancels currently running timer.
-+	echo n > duration   stores timer value to be used upon next
-+			    activate. Currently active timer if
-+			    any, continues to run for the specified time.
-+	echo 0 > duration   stores timer value to be used upon next
-+			    activate. Currently active timer if any,
-+			    continues to run for the specified time.
-+	echo 1 > state      stores desired transient state LED_FULL to be
- 			    held for the specified duration.
--	echo 0 > state    - stores desired transient state LED_OFF to be
-+	echo 0 > state      stores desired transient state LED_OFF to be
- 			    held for the specified duration.
-+	=================   ===============================================
+ procfs: /proc/acpi/ibm/light
 +
-+What is not supported
-+=====================
+ sysfs attributes: as per LED class, for the "tpacpi::thinklight" LED
  
--What is not supported:
--======================
- - Timer activation is one shot and extending and/or shortening the timer
-   is not supported.
+-procfs notes:
++procfs notes
++^^^^^^^^^^^^
  
--Example use-case 1:
-+Examples
-+========
+ The ThinkLight status can be read and set through the procfs interface.  A
+ few models which do not make the status available will show the ThinkLight
+-status as "unknown". The available commands are:
++status as "unknown". The available commands are::
+ 
+ 	echo on  > /proc/acpi/ibm/light
+ 	echo off > /proc/acpi/ibm/light
+ 
+-sysfs notes:
++sysfs notes
++^^^^^^^^^^^
+ 
+ The ThinkLight sysfs interface is documented by the LED class
+ documentation, in Documentation/leds/leds-class.rst.  The ThinkLight LED name
+@@ -691,6 +728,7 @@ CMOS/UCMS control
+ -----------------
+ 
+ procfs: /proc/acpi/ibm/cmos
 +
-+use-case 1::
+ sysfs device attribute: cmos_command
+ 
+ This feature is mostly used internally by the ACPI firmware to keep the legacy
+@@ -707,16 +745,16 @@ The range of valid cmos command numbers is 0 to 21, but not all have an
+ effect and the behavior varies from model to model.  Here is the behavior
+ on the X40 (tpb is the ThinkPad Buttons utility):
+ 
+-	0 - Related to "Volume down" key press
+-	1 - Related to "Volume up" key press
+-	2 - Related to "Mute on" key press
+-	3 - Related to "Access IBM" key press
+-	4 - Related to "LCD brightness up" key press
+-	5 - Related to "LCD brightness down" key press
+-	11 - Related to "toggle screen expansion" key press/function
+-	12 - Related to "ThinkLight on"
+-	13 - Related to "ThinkLight off"
+-	14 - Related to "ThinkLight" key press (toggle ThinkLight)
++	- 0 - Related to "Volume down" key press
++	- 1 - Related to "Volume up" key press
++	- 2 - Related to "Mute on" key press
++	- 3 - Related to "Access IBM" key press
++	- 4 - Related to "LCD brightness up" key press
++	- 5 - Related to "LCD brightness down" key press
++	- 11 - Related to "toggle screen expansion" key press/function
++	- 12 - Related to "ThinkLight on"
++	- 13 - Related to "ThinkLight off"
++	- 14 - Related to "ThinkLight" key press (toggle ThinkLight)
+ 
+ The cmos command interface is prone to firmware split-brain problems, as
+ in newer ThinkPads it is just a compatibility layer.  Do not use it, it is
+@@ -748,9 +786,10 @@ are aware of the consequences are welcome to enabling it.
+ Audio mute and microphone mute LEDs are supported, but currently not
+ visible to userspace. They are used by the snd-hda-intel audio driver.
+ 
+-procfs notes:
++procfs notes
++^^^^^^^^^^^^
+ 
+-The available commands are:
++The available commands are::
+ 
+ 	echo '<LED number> on' >/proc/acpi/ibm/led
+ 	echo '<LED number> off' >/proc/acpi/ibm/led
+@@ -760,23 +799,24 @@ The <LED number> range is 0 to 15. The set of LEDs that can be
+ controlled varies from model to model. Here is the common ThinkPad
+ mapping:
+ 
+-	0 - power
+-	1 - battery (orange)
+-	2 - battery (green)
+-	3 - UltraBase/dock
+-	4 - UltraBay
+-	5 - UltraBase battery slot
+-	6 - (unknown)
+-	7 - standby
+-	8 - dock status 1
+-	9 - dock status 2
+-	10, 11 - (unknown)
+-	12 - thinkvantage
+-	13, 14, 15 - (unknown)
++	- 0 - power
++	- 1 - battery (orange)
++	- 2 - battery (green)
++	- 3 - UltraBase/dock
++	- 4 - UltraBay
++	- 5 - UltraBase battery slot
++	- 6 - (unknown)
++	- 7 - standby
++	- 8 - dock status 1
++	- 9 - dock status 2
++	- 10, 11 - (unknown)
++	- 12 - thinkvantage
++	- 13, 14, 15 - (unknown)
+ 
+ All of the above can be turned on and off and can be made to blink.
+ 
+-sysfs notes:
++sysfs notes
++^^^^^^^^^^^
+ 
+ The ThinkPad LED sysfs interface is described in detail by the LED class
+ documentation, in Documentation/leds/leds-class.rst.
+@@ -815,7 +855,7 @@ The BEEP method is used internally by the ACPI firmware to provide
+ audible alerts in various situations. This feature allows the same
+ sounds to be triggered manually.
+ 
+-The commands are non-negative integer numbers:
++The commands are non-negative integer numbers::
+ 
+ 	echo <number> >/proc/acpi/ibm/beep
+ 
+@@ -823,25 +863,26 @@ The valid <number> range is 0 to 17. Not all numbers trigger sounds
+ and the sounds vary from model to model. Here is the behavior on the
+ X40:
+ 
+-	0 - stop a sound in progress (but use 17 to stop 16)
+-	2 - two beeps, pause, third beep ("low battery")
+-	3 - single beep
+-	4 - high, followed by low-pitched beep ("unable")
+-	5 - single beep
+-	6 - very high, followed by high-pitched beep ("AC/DC")
+-	7 - high-pitched beep
+-	9 - three short beeps
+-	10 - very long beep
+-	12 - low-pitched beep
+-	15 - three high-pitched beeps repeating constantly, stop with 0
+-	16 - one medium-pitched beep repeating constantly, stop with 17
+-	17 - stop 16
++	- 0 - stop a sound in progress (but use 17 to stop 16)
++	- 2 - two beeps, pause, third beep ("low battery")
++	- 3 - single beep
++	- 4 - high, followed by low-pitched beep ("unable")
++	- 5 - single beep
++	- 6 - very high, followed by high-pitched beep ("AC/DC")
++	- 7 - high-pitched beep
++	- 9 - three short beeps
++	- 10 - very long beep
++	- 12 - low-pitched beep
++	- 15 - three high-pitched beeps repeating constantly, stop with 0
++	- 16 - one medium-pitched beep repeating constantly, stop with 17
++	- 17 - stop 16
+ 
+ 
+ Temperature sensors
+ -------------------
+ 
+ procfs: /proc/acpi/ibm/thermal
 +
- 	echo transient > trigger
- 	echo n > duration
- 	echo 1 > state
--repeat the following step as needed:
+ sysfs device attributes: (hwmon "thinkpad") temp*_input
+ 
+ Most ThinkPads include six or more separate temperature sensors but only
+@@ -850,10 +891,14 @@ feature shows readings from up to eight different sensors on older
+ ThinkPads, and up to sixteen different sensors on newer ThinkPads.
+ 
+ For example, on the X40, a typical output may be:
+-temperatures:   42 42 45 41 36 -128 33 -128
 +
-+repeat the following step as needed::
++temperatures:
++	42 42 45 41 36 -128 33 -128
+ 
+ On the T43/p, a typical output may be:
+-temperatures:   48 48 36 52 38 -128 31 -128 48 52 48 -128 -128 -128 -128 -128
 +
- 	echo 1 > activate - start timer = duration to run once
- 	echo 1 > activate - start timer = duration to run once
- 	echo none > trigger
++temperatures:
++	48 48 36 52 38 -128 31 -128 48 52 48 -128 -128 -128 -128 -128
  
- This trigger is intended to be used for for the following example use cases:
+ The mapping of thermal sensors to physical locations varies depending on
+ system-board model (and thus, on ThinkPad model).
+@@ -863,46 +908,53 @@ tries to track down these locations for various models.
+ 
+ Most (newer?) models seem to follow this pattern:
+ 
+-1:  CPU
+-2:  (depends on model)
+-3:  (depends on model)
+-4:  GPU
+-5:  Main battery: main sensor
+-6:  Bay battery: main sensor
+-7:  Main battery: secondary sensor
+-8:  Bay battery: secondary sensor
+-9-15: (depends on model)
++- 1:  CPU
++- 2:  (depends on model)
++- 3:  (depends on model)
++- 4:  GPU
++- 5:  Main battery: main sensor
++- 6:  Bay battery: main sensor
++- 7:  Main battery: secondary sensor
++- 8:  Bay battery: secondary sensor
++- 9-15: (depends on model)
+ 
+ For the R51 (source: Thomas Gruber):
+-2:  Mini-PCI
+-3:  Internal HDD
 +
-  - Control of vibrate (phones, tablets etc.) hardware by user space app.
-  - Use of LED by user space app as activity indicator.
-  - Use of LED by user space app as a kind of watchdog indicator -- as
--       long as the app is alive, it can keep the LED illuminated, if it dies
--       the LED will be extinguished automatically.
-+   long as the app is alive, it can keep the LED illuminated, if it dies
-+   the LED will be extinguished automatically.
-  - Use by any user space app that needs a transient GPIO output.
-diff --git a/Documentation/leds/ledtrig-usbport.txt b/Documentation/leds/ledtrig-usbport.rst
-similarity index 86%
-rename from Documentation/leds/ledtrig-usbport.txt
-rename to Documentation/leds/ledtrig-usbport.rst
-index 69f54bfb4789..37c2505bfd57 100644
---- a/Documentation/leds/ledtrig-usbport.txt
-+++ b/Documentation/leds/ledtrig-usbport.rst
-@@ -1,3 +1,4 @@
-+====================
- USB port LED trigger
- ====================
++- 2:  Mini-PCI
++- 3:  Internal HDD
  
-@@ -10,14 +11,18 @@ listed as separated entries in a "ports" subdirectory. Selecting is handled by
- echoing "1" to a chosen port.
- 
- Please note that this trigger allows selecting multiple USB ports for a single
--LED. This can be useful in two cases:
-+LED.
+ For the T43, T43/p (source: Shmidoax/Thinkwiki.org)
+ http://thinkwiki.org/wiki/Thermal_Sensors#ThinkPad_T43.2C_T43p
+-2:  System board, left side (near PCMCIA slot), reported as HDAPS temp
+-3:  PCMCIA slot
+-9:  MCH (northbridge) to DRAM Bus
+-10: Clock-generator, mini-pci card and ICH (southbridge), under Mini-PCI
+-    card, under touchpad
+-11: Power regulator, underside of system board, below F2 key
 +
-+This can be useful in two cases:
++- 2:  System board, left side (near PCMCIA slot), reported as HDAPS temp
++- 3:  PCMCIA slot
++- 9:  MCH (northbridge) to DRAM Bus
++- 10: Clock-generator, mini-pci card and ICH (southbridge), under Mini-PCI
++      card, under touchpad
++- 11: Power regulator, underside of system board, below F2 key
  
- 1) Device with single USB LED and few physical ports
-+====================================================
+ The A31 has a very atypical layout for the thermal sensors
+ (source: Milos Popovic, http://thinkwiki.org/wiki/Thermal_Sensors#ThinkPad_A31)
+-1:  CPU
+-2:  Main Battery: main sensor
+-3:  Power Converter
+-4:  Bay Battery: main sensor
+-5:  MCH (northbridge)
+-6:  PCMCIA/ambient
+-7:  Main Battery: secondary sensor
+-8:  Bay Battery: secondary sensor
  
- In such a case LED will be turned on as long as there is at least one connected
- USB device.
++- 1:  CPU
++- 2:  Main Battery: main sensor
++- 3:  Power Converter
++- 4:  Bay Battery: main sensor
++- 5:  MCH (northbridge)
++- 6:  PCMCIA/ambient
++- 7:  Main Battery: secondary sensor
++- 8:  Bay Battery: secondary sensor
++
++
++Procfs notes
++^^^^^^^^^^^^
  
- 2) Device with a physical port handled by few controllers
-+=========================================================
+-Procfs notes:
+ 	Readings from sensors that are not available return -128.
+ 	No commands can be written to this file.
  
- Some devices may have one controller per PHY standard. E.g. USB 3.0 physical
- port may be handled by ohci-platform, ehci-platform and xhci-hcd. If there is
-@@ -25,14 +30,14 @@ only one LED user will most likely want to assign ports from all 3 hubs.
+-Sysfs notes:
++Sysfs notes
++^^^^^^^^^^^
++
+ 	Sensors that are not available return the ENXIO error.  This
+ 	status may change at runtime, as there are hotplug thermal
+ 	sensors, like those inside the batteries and docks.
+@@ -921,6 +973,7 @@ ftp://ftp.suse.com/pub/people/trenn/sources/ec
+ 
+ Use it to determine the register holding the fan
+ speed on some models. To do that, do the following:
++
+ 	- make sure the battery is fully charged
+ 	- make sure the fan is running
+ 	- use above mentioned tool to read out the EC
+@@ -941,6 +994,7 @@ LCD brightness control
+ ----------------------
+ 
+ procfs: /proc/acpi/ibm/brightness
++
+ sysfs backlight device "thinkpad_screen"
+ 
+ This feature allows software control of the LCD brightness on ThinkPad
+@@ -985,15 +1039,17 @@ brightness_enable=0 forces it to be disabled.  brightness_enable=1
+ forces it to be enabled when available, even if the standard ACPI
+ interface is also available.
+ 
+-Procfs notes:
++Procfs notes
++^^^^^^^^^^^^
+ 
+-	The available commands are:
++The available commands are::
+ 
+ 	echo up   >/proc/acpi/ibm/brightness
+ 	echo down >/proc/acpi/ibm/brightness
+ 	echo 'level <level>' >/proc/acpi/ibm/brightness
+ 
+-Sysfs notes:
++Sysfs notes
++^^^^^^^^^^^
+ 
+ The interface is implemented through the backlight sysfs class, which is
+ poorly documented at this time.
+@@ -1038,6 +1094,7 @@ Volume control (Console Audio control)
+ --------------------------------------
+ 
+ procfs: /proc/acpi/ibm/volume
++
+ ALSA: "ThinkPad Console Audio Control", default ID: "ThinkPadEC"
+ 
+ NOTE: by default, the volume control interface operates in read-only
+@@ -1053,7 +1110,8 @@ Software volume control should be done only in the main AC97/HDA
+ mixer.
  
  
- This trigger can be activated from user space on led class devices as shown
--below:
-+below::
+-About the ThinkPad Console Audio control:
++About the ThinkPad Console Audio control
++^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
  
-   echo usbport > trigger
+ ThinkPads have a built-in amplifier and muting circuit that drives the
+ console headphone and speakers.  This circuit is after the main AC97
+@@ -1092,13 +1150,14 @@ normal key presses to the operating system (thinkpad-acpi is not
+ involved).
  
- This adds sysfs attributes to the LED that are documented in:
- Documentation/ABI/testing/sysfs-class-led-trigger-usbport
  
--Example use-case:
-+Example use-case::
+-The ThinkPad-ACPI volume control:
++The ThinkPad-ACPI volume control
++^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
  
-   echo usbport > trigger
-   echo 1 > ports/usb1-port1
-diff --git a/Documentation/leds/uleds.txt b/Documentation/leds/uleds.rst
-similarity index 95%
-rename from Documentation/leds/uleds.txt
-rename to Documentation/leds/uleds.rst
-index 13e375a580f9..83221098009c 100644
---- a/Documentation/leds/uleds.txt
-+++ b/Documentation/leds/uleds.rst
-@@ -1,3 +1,4 @@
-+==============
- Userspace LEDs
- ==============
+ The preferred way to interact with the Console Audio control is the
+ ALSA interface.
  
-@@ -10,12 +11,12 @@ Usage
+ The legacy procfs interface allows one to read the current state,
+-and if volume control is enabled, accepts the following commands:
++and if volume control is enabled, accepts the following commands::
  
- When the driver is loaded, a character device is created at /dev/uleds. To
- create a new LED class device, open /dev/uleds and write a uleds_user_dev
--structure to it (found in kernel public header file linux/uleds.h).
-+structure to it (found in kernel public header file linux/uleds.h)::
+ 	echo up   >/proc/acpi/ibm/volume
+ 	echo down >/proc/acpi/ibm/volume
+@@ -1137,13 +1196,15 @@ Fan control and monitoring: fan speed, fan enable/disable
+ ---------------------------------------------------------
  
-     #define LED_MAX_NAME_SIZE 64
+ procfs: /proc/acpi/ibm/fan
+-sysfs device attributes: (hwmon "thinkpad") fan1_input, pwm1,
+-			  pwm1_enable, fan2_input
++
++sysfs device attributes: (hwmon "thinkpad") fan1_input, pwm1, pwm1_enable, fan2_input
++
+ sysfs hwmon driver attributes: fan_watchdog
  
-     struct uleds_user_dev {
--        char name[LED_MAX_NAME_SIZE];
-+	char name[LED_MAX_NAME_SIZE];
-     };
+-NOTE NOTE NOTE: fan control operations are disabled by default for
+-safety reasons.  To enable them, the module parameter "fan_control=1"
+-must be given to thinkpad-acpi.
++NOTE NOTE NOTE:
++   fan control operations are disabled by default for
++   safety reasons.  To enable them, the module parameter "fan_control=1"
++   must be given to thinkpad-acpi.
  
- A new LED class device will be created with the name given. The name can be
+ This feature attempts to show the current fan speed, control mode and
+ other fan data that might be available.  The speed is read directly
+@@ -1154,7 +1215,8 @@ value on other models.
+ Some Lenovo ThinkPads support a secondary fan.  This fan cannot be
+ controlled separately, it shares the main fan control.
+ 
+-Fan levels:
++Fan levels
++^^^^^^^^^^
+ 
+ Most ThinkPad fans work in "levels" at the firmware interface.  Level 0
+ stops the fan.  The higher the level, the higher the fan speed, although
+@@ -1209,9 +1271,10 @@ therefore, not suitable to protect against fan mode changes made through
+ means other than the "enable", "disable", and "level" procfs fan
+ commands, or the hwmon fan control sysfs interface.
+ 
+-Procfs notes:
++Procfs notes
++^^^^^^^^^^^^
+ 
+-The fan may be enabled or disabled with the following commands:
++The fan may be enabled or disabled with the following commands::
+ 
+ 	echo enable  >/proc/acpi/ibm/fan
+ 	echo disable >/proc/acpi/ibm/fan
+@@ -1219,7 +1282,7 @@ The fan may be enabled or disabled with the following commands:
+ Placing a fan on level 0 is the same as disabling it.  Enabling a fan
+ will try to place it in a safe level if it is too slow or disabled.
+ 
+-The fan level can be controlled with the command:
++The fan level can be controlled with the command::
+ 
+ 	echo 'level <level>' > /proc/acpi/ibm/fan
+ 
+@@ -1231,7 +1294,7 @@ compatibility.
+ 
+ On the X31 and X40 (and ONLY on those models), the fan speed can be
+ controlled to a certain degree.  Once the fan is running, it can be
+-forced to run faster or slower with the following command:
++forced to run faster or slower with the following command::
+ 
+ 	echo 'speed <speed>' > /proc/acpi/ibm/fan
+ 
+@@ -1241,13 +1304,14 @@ effect or the fan speed eventually settles somewhere in that range.  The
+ fan cannot be stopped or started with this command.  This functionality
+ is incomplete, and not available through the sysfs interface.
+ 
+-To program the safety watchdog, use the "watchdog" command.
++To program the safety watchdog, use the "watchdog" command::
+ 
+ 	echo 'watchdog <interval in seconds>' > /proc/acpi/ibm/fan
+ 
+ If you want to disable the watchdog, use 0 as the interval.
+ 
+-Sysfs notes:
++Sysfs notes
++^^^^^^^^^^^
+ 
+ The sysfs interface follows the hwmon subsystem guidelines for the most
+ part, and the exception is the fan safety watchdog.
+@@ -1261,10 +1325,10 @@ to the firmware).
+ Features not yet implemented by the driver return ENOSYS.
+ 
+ hwmon device attribute pwm1_enable:
+-	0: PWM offline (fan is set to full-speed mode)
+-	1: Manual PWM control (use pwm1 to set fan level)
+-	2: Hardware PWM control (EC "auto" mode)
+-	3: reserved (Software PWM control, not implemented yet)
++	- 0: PWM offline (fan is set to full-speed mode)
++	- 1: Manual PWM control (use pwm1 to set fan level)
++	- 2: Hardware PWM control (EC "auto" mode)
++	- 3: reserved (Software PWM control, not implemented yet)
+ 
+ 	Modes 0 and 2 are not supported by all ThinkPads, and the
+ 	driver is not always able to detect this.  If it does know a
+@@ -1304,7 +1368,9 @@ WAN
+ ---
+ 
+ procfs: /proc/acpi/ibm/wan
++
+ sysfs device attribute: wwan_enable (deprecated)
++
+ sysfs rfkill class: switch "tpacpi_wwan_sw"
+ 
+ This feature shows the presence and current state of the built-in
+@@ -1316,22 +1382,24 @@ so it is kept across reboots and power-off.
+ It was tested on a Lenovo ThinkPad X60. It should probably work on other
+ ThinkPad models which come with this module installed.
+ 
+-Procfs notes:
++Procfs notes
++^^^^^^^^^^^^
+ 
+-If the W-WAN card is installed, the following commands can be used:
++If the W-WAN card is installed, the following commands can be used::
+ 
+ 	echo enable > /proc/acpi/ibm/wan
+ 	echo disable > /proc/acpi/ibm/wan
+ 
+-Sysfs notes:
++Sysfs notes
++^^^^^^^^^^^
+ 
+ 	If the W-WAN card is installed, it can be enabled /
+ 	disabled through the "wwan_enable" thinkpad-acpi device
+ 	attribute, and its current status can also be queried.
+ 
+ 	enable:
+-		0: disables WWAN card / WWAN card is disabled
+-		1: enables WWAN card / WWAN card is enabled.
++		- 0: disables WWAN card / WWAN card is disabled
++		- 1: enables WWAN card / WWAN card is enabled.
+ 
+ 	Note: this interface has been superseded by the	generic rfkill
+ 	class.  It has been deprecated, and it will be removed in year
+@@ -1354,7 +1422,8 @@ sysfs rfkill class: switch "tpacpi_uwb_sw"
+ This feature exports an rfkill controller for the UWB device, if one is
+ present and enabled in the BIOS.
+ 
+-Sysfs notes:
++Sysfs notes
++^^^^^^^^^^^
+ 
+ 	rfkill controller switch "tpacpi_uwb_sw": refer to
+ 	Documentation/rfkill.txt for details.
+@@ -1368,11 +1437,11 @@ This sysfs attribute controls the keyboard "face" that will be shown on the
+ Lenovo X1 Carbon 2nd gen (2014)'s adaptive keyboard. The value can be read
+ and set.
+ 
+-1 = Home mode
+-2 = Web-browser mode
+-3 = Web-conference mode
+-4 = Function mode
+-5 = Layflat mode
++- 1 = Home mode
++- 2 = Web-browser mode
++- 3 = Web-conference mode
++- 4 = Function mode
++- 5 = Layflat mode
+ 
+ For more details about which buttons will appear depending on the mode, please
+ review the laptop's user guide:
+@@ -1382,13 +1451,13 @@ Multiple Commands, Module Parameters
+ ------------------------------------
+ 
+ Multiple commands can be written to the proc files in one shot by
+-separating them with commas, for example:
++separating them with commas, for example::
+ 
+ 	echo enable,0xffff > /proc/acpi/ibm/hotkey
+ 	echo lcd_disable,crt_enable > /proc/acpi/ibm/video
+ 
+ Commands can also be specified when loading the thinkpad-acpi module,
+-for example:
++for example::
+ 
+ 	modprobe thinkpad_acpi hotkey=enable,0xffff video=auto_disable
+ 
+@@ -1397,14 +1466,16 @@ Enabling debugging output
+ -------------------------
+ 
+ The module takes a debug parameter which can be used to selectively
+-enable various classes of debugging output, for example:
++enable various classes of debugging output, for example::
+ 
+ 	 modprobe thinkpad_acpi debug=0xffff
+ 
+ will enable all debugging output classes.  It takes a bitmask, so
+ to enable more than one output class, just add their values.
+ 
++	=============		======================================
+ 	Debug bitmask		Description
++	=============		======================================
+ 	0x8000			Disclose PID of userspace programs
+ 				accessing some functions of the driver
+ 	0x0001			Initialization and probing
+@@ -1415,6 +1486,7 @@ to enable more than one output class, just add their values.
+ 	0x0010			Fan control
+ 	0x0020			Backlight brightness
+ 	0x0040			Audio mixer/volume control
++	=============		======================================
+ 
+ There is also a kernel build option to enable more debugging
+ information, which may be necessary to debug driver problems.
+@@ -1432,8 +1504,10 @@ the module parameter force_load=1.  Regardless of whether this works or
+ not, please contact ibm-acpi-devel@lists.sourceforge.net with a report.
+ 
+ 
+-Sysfs interface changelog:
++Sysfs interface changelog
++^^^^^^^^^^^^^^^^^^^^^^^^^
+ 
++=========	===============================================================
+ 0x000100:	Initial sysfs support, as a single platform driver and
+ 		device.
+ 0x000200:	Hot key support for 32 hot keys, and radio slider switch
+@@ -1485,3 +1559,4 @@ Sysfs interface changelog:
+ 0x030000:	Thermal and fan sysfs attributes were moved to the hwmon
+ 		device instead of being attached to the backing platform
+ 		device.
++=========	===============================================================
+diff --git a/Documentation/laptops/toshiba_haps.txt b/Documentation/laptops/toshiba_haps.rst
+similarity index 60%
+rename from Documentation/laptops/toshiba_haps.txt
+rename to Documentation/laptops/toshiba_haps.rst
+index 0c1d88dedbde..11dfc428c080 100644
+--- a/Documentation/laptops/toshiba_haps.txt
++++ b/Documentation/laptops/toshiba_haps.rst
+@@ -1,18 +1,19 @@
+-Kernel driver toshiba_haps
++====================================
+ Toshiba HDD Active Protection Sensor
+ ====================================
+ 
++Kernel driver: toshiba_haps
++
+ Author: Azael Avalos <coproscefalo@gmail.com>
+ 
+ 
+-0. Contents
+------------
++.. 0. Contents
+ 
+-1. Description
+-2. Interface
+-3. Accelerometer axes
+-4. Supported devices
+-5. Usage
++   1. Description
++   2. Interface
++   3. Accelerometer axes
++   4. Supported devices
++   5. Usage
+ 
+ 
+ 1. Description
+@@ -32,17 +33,20 @@ file to set the desired protection level or sensor sensibility.
+ ------------
+ 
+ This device comes with 3 methods:
+-_STA -  Checks existence of the device, returning Zero if the device does not
++
++====	=====================================================================
++_STA    Checks existence of the device, returning Zero if the device does not
+ 	exists or is not supported.
+-PTLV -  Sets the desired protection level.
+-RSSS -  Shuts down the HDD protection interface for a few seconds,
++PTLV    Sets the desired protection level.
++RSSS    Shuts down the HDD protection interface for a few seconds,
+ 	then restores normal operation.
++====	=====================================================================
+ 
+ Note:
+-The presence of Solid State Drives (SSD) can make this driver to fail loading,
+-given the fact that such drives have no movable parts, and thus, not requiring
+-any "protection" as well as failing during the evaluation of the _STA method
+-found under this device.
++  The presence of Solid State Drives (SSD) can make this driver to fail loading,
++  given the fact that such drives have no movable parts, and thus, not requiring
++  any "protection" as well as failing during the evaluation of the _STA method
++  found under this device.
+ 
+ 
+ 3. Accelerometer axes
+@@ -66,11 +70,18 @@ conventional HDD and not only SSD, or a combination of both HDD and SSD.
+ --------
+ 
+ The sysfs files under /sys/devices/LNXSYSTM:00/LNXSYBUS:00/TOS620A:00/ are:
+-protection_level - The protection_level is readable and writeable, and
++
++================   ============================================================
++protection_level   The protection_level is readable and writeable, and
+ 		   provides a way to let userspace query the current protection
+ 		   level, as well as set the desired protection level, the
+ 		   available protection levels are:
+-		   0 - Disabled | 1 - Low | 2 - Medium | 3 - High
+-reset_protection - The reset_protection entry is writeable only, being "1"
++
++		   ============   =======   ==========   ========
++		   0 - Disabled   1 - Low   2 - Medium   3 - High
++		   ============   =======   ==========   ========
++
++reset_protection   The reset_protection entry is writeable only, being "1"
+ 		   the only parameter it accepts, it is used to trigger
+ 		   a reset of the protection interface.
++================   ============================================================
+diff --git a/Documentation/sysctl/vm.txt b/Documentation/sysctl/vm.txt
+index 749322060f10..c5f0d44433a2 100644
+--- a/Documentation/sysctl/vm.txt
++++ b/Documentation/sysctl/vm.txt
+@@ -102,7 +102,7 @@ Changing this takes effect whenever an application requests memory.
+ block_dump
+ 
+ block_dump enables block I/O debugging when set to a nonzero value. More
+-information on block I/O debugging is in Documentation/laptops/laptop-mode.txt.
++information on block I/O debugging is in Documentation/laptops/laptop-mode.rst.
+ 
+ ==============================================================
+ 
+@@ -286,7 +286,7 @@ shared memory segment using hugetlb page.
+ laptop_mode
+ 
+ laptop_mode is a knob that controls "laptop mode". All the things that are
+-controlled by this knob are discussed in Documentation/laptops/laptop-mode.txt.
++controlled by this knob are discussed in Documentation/laptops/laptop-mode.rst.
+ 
+ ==============================================================
+ 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index f4f24d0e7954..cc8a52d2ce83 100644
+index cc8a52d2ce83..8aa3d0bd5b80 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -10244,7 +10244,7 @@ L:	linux-leds@vger.kernel.org
- S:	Supported
- F:	drivers/leds/leds-mlxcpld.c
- F:	drivers/leds/leds-mlxreg.c
--F:	Documentation/leds/leds-mlxcpld.txt
-+F:	Documentation/leds/leds-mlxcpld.rst
+@@ -14830,7 +14830,7 @@ M:	Mattia Dongili <malattia@linux.it>
+ L:	platform-driver-x86@vger.kernel.org
+ W:	http://www.linux.it/~malattia/wiki/index.php/Sony_drivers
+ S:	Maintained
+-F:	Documentation/laptops/sony-laptop.txt
++F:	Documentation/laptops/sony-laptop.rst
+ F:	drivers/char/sonypi.c
+ F:	drivers/platform/x86/sony-laptop.c
+ F:	include/linux/sony-laptop.h
+diff --git a/drivers/char/Kconfig b/drivers/char/Kconfig
+index 466ebd84ad17..bb734066075f 100644
+--- a/drivers/char/Kconfig
++++ b/drivers/char/Kconfig
+@@ -382,7 +382,7 @@ config SONYPI
+ 	  Device which can be found in many (all ?) Sony Vaio laptops.
  
- MELLANOX PLATFORM DRIVER
- M:	Vadim Pasternak <vadimp@mellanox.com>
-diff --git a/drivers/leds/trigger/Kconfig b/drivers/leds/trigger/Kconfig
-index 7fa9d174a40c..ce9429ca6dde 100644
---- a/drivers/leds/trigger/Kconfig
-+++ b/drivers/leds/trigger/Kconfig
-@@ -15,7 +15,7 @@ config LEDS_TRIGGER_TIMER
- 	  This allows LEDs to be controlled by a programmable timer
- 	  via sysfs. Some LED hardware can be programmed to start
- 	  blinking the LED without any further software interaction.
--	  For more details read Documentation/leds/leds-class.txt.
-+	  For more details read Documentation/leds/leds-class.rst.
+ 	  If you have one of those laptops, read
+-	  <file:Documentation/laptops/sonypi.txt>, and say Y or M here.
++	  <file:Documentation/laptops/sonypi.rst>, and say Y or M here.
  
- 	  If unsure, say Y.
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called sonypi.
+diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+index c318501773bc..1f616844fb87 100644
+--- a/drivers/platform/x86/Kconfig
++++ b/drivers/platform/x86/Kconfig
+@@ -448,7 +448,7 @@ config SONY_LAPTOP
+ 	  screen brightness control, Fn keys and allows powering on/off some
+ 	  devices.
  
-diff --git a/drivers/leds/trigger/ledtrig-transient.c b/drivers/leds/trigger/ledtrig-transient.c
-index a80bb82aacc2..80635183fac8 100644
---- a/drivers/leds/trigger/ledtrig-transient.c
-+++ b/drivers/leds/trigger/ledtrig-transient.c
-@@ -3,7 +3,7 @@
- // LED Kernel Transient Trigger
- //
- // Transient trigger allows one shot timer activation. Please refer to
--// Documentation/leds/ledtrig-transient.txt for details
-+// Documentation/leds/ledtrig-transient.rst for details
- // Copyright (C) 2012 Shuah Khan <shuahkhan@gmail.com>
- //
- // Based on Richard Purdie's ledtrig-timer.c and Atsushi Nemoto's
-diff --git a/net/netfilter/Kconfig b/net/netfilter/Kconfig
-index dd2af7be3eea..1837734ce85b 100644
---- a/net/netfilter/Kconfig
-+++ b/net/netfilter/Kconfig
-@@ -906,7 +906,7 @@ config NETFILTER_XT_TARGET_LED
- 	    echo netfilter-ssh > /sys/class/leds/<ledname>/trigger
+-	  Read <file:Documentation/laptops/sony-laptop.txt> for more information.
++	  Read <file:Documentation/laptops/sony-laptop.rst> for more information.
  
- 	  For more information on the LEDs available on your system, see
--	  Documentation/leds/leds-class.txt
-+	  Documentation/leds/leds-class.rst
+ config SONYPI_COMPAT
+ 	bool "Sonypi compatibility"
+@@ -500,7 +500,7 @@ config THINKPAD_ACPI
+ 	  support for Fn-Fx key combinations, Bluetooth control, video
+ 	  output switching, ThinkLight control, UltraBay eject and more.
+ 	  For more information about this driver see
+-	  <file:Documentation/laptops/thinkpad-acpi.txt> and
++	  <file:Documentation/laptops/thinkpad-acpi.rst> and
+ 	  <http://ibm-acpi.sf.net/> .
  
- config NETFILTER_XT_TARGET_LOG
- 	tristate "LOG target support"
+ 	  This driver was formerly known as ibm-acpi.
 -- 
 2.21.0
 
