@@ -2,54 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 406EB59405
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 08:11:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F35095940E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 08:13:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726867AbfF1GLJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 02:11:09 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41466 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726572AbfF1GLJ (ORCPT
+        id S1726838AbfF1GNA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 02:13:00 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:51668 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726553AbfF1GM7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 02:11:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=yZmT2yBFz9XaMtbDgptCtQnCRAeMpxb84f3k5jPuy1M=; b=gMhCCGTeDa/dPzOxRso3F8AIF
-        3jbXPr7F+/3Mi602ih/8smhqwTBdQ5fjIhoNC5cIzEPtL59FDPlBn0ffypCHmXZcNOaL6cwQB1Yhw
-        u5N5CnXV7K2qCPMoEDlCO2kl6131Roypvz9g+nHFvWtX+icLx2cuhj4hJp+BiHji1BoBMTtlxIrLA
-        PDmzCrmh8YE1jRjTAoLQ6Jv/Ly6GyWsSgNEfialQ9QkeXIYEglIU09jNyGlHDd92tyai92PoyGH+m
-        3fNgnnj1b6Wt2/GLuGiMJuen9s1xZOMn4hGP3x56Ei6hiPxdECldThAIJ9t/oCPFlNT/TojXtQJ/f
-        fIg47TZzw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hgk6G-00043w-BW; Fri, 28 Jun 2019 06:11:08 +0000
-Date:   Thu, 27 Jun 2019 23:11:08 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Palmer Dabbelt <palmer@sifive.com>
-Cc:     linux-riscv@lists.infradead.org,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: Add Paul as a RISC-V maintainer
-Message-ID: <20190628061108.GA9834@infradead.org>
-References: <20190628002753.5573-1-palmer@sifive.com>
+        Fri, 28 Jun 2019 02:12:59 -0400
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: bbrezillon)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 8E5D9285324;
+        Fri, 28 Jun 2019 07:12:58 +0100 (BST)
+Date:   Fri, 28 Jun 2019 08:12:56 +0200
+From:   Boris Brezillon <boris.brezillon@collabora.com>
+To:     Sam Ravnborg <sam@ravnborg.org>
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Peter Rosin <peda@axentia.se>
+Subject: Re: [PATCH] MAINTAINERS: add Sam Ravnborg for drm/atmel_hlcdc
+Message-ID: <20190628081256.230165ae@collabora.com>
+In-Reply-To: <20190627211643.GA19853@ravnborg.org>
+References: <20190627211643.GA19853@ravnborg.org>
+Organization: Collabora
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190628002753.5573-1-palmer@sifive.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->  RISC-V ARCHITECTURE
-> +M:	Paul Walmsley <paul.walmsley@sifive.com>
->  M:	Palmer Dabbelt <palmer@sifive.com>
->  M:	Albert Ou <aou@eecs.berkeley.edu>
+On Thu, 27 Jun 2019 23:16:43 +0200
+Sam Ravnborg <sam@ravnborg.org> wrote:
 
-Is Albert going to come back to actively maintain anything?  I've
-not actually seen him active ever since the port went mainline.
+> I have agreed with Boris Brezillon that we will share the
+> maintainer role for the drm/atmel_hlcdc driver.
+> Nicolas Ferre from Microchip has donated a few boards that
+> allows me to test things - thanks!
+> 
+> Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
+> Cc: Boris Brezillon <bbrezillon@kernel.org>
+
+Acked-by: Boris Brezillon <boris.brezillon@collabora.com>
+
+> Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
+> Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> Cc: Claudiu Beznea <claudiu.beznea@microchip.com>
+> Cc: Peter Rosin <peda@axentia.se>
+> ---
+>  MAINTAINERS | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 515a81fdb7d6..0a76716874bd 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -5251,6 +5251,7 @@ F:	Documentation/gpu/meson.rst
+>  T:	git git://anongit.freedesktop.org/drm/drm-misc
+>  
+>  DRM DRIVERS FOR ATMEL HLCDC
+> +M:	Sam Ravnborg <sam@ravnborg.org>
+>  M:	Boris Brezillon <bbrezillon@kernel.org>
+>  L:	dri-devel@lists.freedesktop.org
+>  S:	Supported
+
