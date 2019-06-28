@@ -2,158 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E581D59466
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 08:49:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C32B05945E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 08:48:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727283AbfF1GtY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 02:49:24 -0400
-Received: from twhmllg3.macronix.com ([211.75.127.131]:44851 "EHLO
-        TWHMLLG3.macronix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726827AbfF1GtX (ORCPT
+        id S1727168AbfF1Gsd convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 28 Jun 2019 02:48:33 -0400
+Received: from lithops.sigma-star.at ([195.201.40.130]:36596 "EHLO
+        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726648AbfF1Gsc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 02:49:23 -0400
-Received: from twhfmlp1.macronix.com (twhfm1p1.macronix.com [172.17.20.91])
-        by TWHMLLG3.macronix.com with ESMTP id x5S6m1Tv035815;
-        Fri, 28 Jun 2019 14:48:01 +0800 (GMT-8)
-        (envelope-from masonccyang@mxic.com.tw)
-Received: from MXML06C.mxic.com.tw (mxml06c.mxic.com.tw [172.17.14.55])
-        by Forcepoint Email with ESMTP id C8B2B7E87EA3F2CAB608;
-        Fri, 28 Jun 2019 14:48:01 +0800 (CST)
-In-Reply-To: <20190627192609.0965f6d5@xps13>
-References: <1561443056-13766-1-git-send-email-masonccyang@mxic.com.tw> <1561443056-13766-3-git-send-email-masonccyang@mxic.com.tw> <20190627192609.0965f6d5@xps13>
-To:     "Miquel Raynal" <miquel.raynal@bootlin.com>
-Cc:     anders.roxell@linaro.org, bbrezillon@kernel.org,
-        broonie@kernel.org, christophe.kerello@st.com,
-        computersforpeace@gmail.com, devicetree@vger.kernel.org,
-        dwmw2@infradead.org, jianxin.pan@amlogic.com, juliensu@mxic.com.tw,
-        lee.jones@linaro.org, liang.yang@amlogic.com,
-        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
-        marek.vasut@gmail.com, paul@crapouillou.net, paul.burton@mips.com,
-        richard@nod.at, stefan@agner.ch, vigneshr@ti.com
-Subject: Re: [PATCH v4 2/2] dt-bindings: mtd: Document Macronix raw NAND controller
- bindings
+        Fri, 28 Jun 2019 02:48:32 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id CEDF46089331;
+        Fri, 28 Jun 2019 08:48:28 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id 3lpGg--qV6w5; Fri, 28 Jun 2019 08:48:28 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 817816089332;
+        Fri, 28 Jun 2019 08:48:28 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id vZ0P4sgDZbfv; Fri, 28 Jun 2019 08:48:28 +0200 (CEST)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 46B946089331;
+        Fri, 28 Jun 2019 08:48:28 +0200 (CEST)
+Date:   Fri, 28 Jun 2019 08:48:28 +0200 (CEST)
+From:   Richard Weinberger <richard@nod.at>
+To:     chengzhihao1@huawei.com
+Cc:     david oberhollenzer <david.oberhollenzer@sigma-star.at>,
+        david <david@sigma-star.at>,
+        boris brezillon <boris.brezillon@free-electrons.com>,
+        yi zhang <yi.zhang@huawei.com>,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Message-ID: <455367016.19242.1561704508169.JavaMail.zimbra@nod.at>
+In-Reply-To: <1561698143-5027-1-git-send-email-chengzhihao1@huawei.com>
+References: <1561698143-5027-1-git-send-email-chengzhihao1@huawei.com>
+Subject: Re: [PATCH RFC] mtd: ubi: Add fastmap sysfs attribute
 MIME-Version: 1.0
-X-KeepSent: FBD1710A:54AC467B-48258427:0023FCA3;
- type=4; name=$KeepSent
-X-Mailer: Lotus Notes Release 8.5.3FP4 SHF90 June 10, 2013
-Message-ID: <OFFBD1710A.54AC467B-ON48258427.0023FCA3-48258427.00255B71@mxic.com.tw>
-From:   masonccyang@mxic.com.tw
-Date:   Fri, 28 Jun 2019 14:48:02 +0800
-X-MIMETrack: Serialize by Router on MXML06C/TAIWAN/MXIC(Release 9.0.1FP10 HF265|July 25, 2018) at
- 2019/06/28 PM 02:48:01,
-        Serialize complete at 2019/06/28 PM 02:48:01
-Content-Type: text/plain; charset="US-ASCII"
-X-MAIL: TWHMLLG3.macronix.com x5S6m1Tv035815
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-Originating-IP: [195.201.40.130]
+X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF60 (Linux)/8.8.12_GA_3809)
+Thread-Topic: Add fastmap sysfs attribute
+Thread-Index: LGtMcgAbFQrQ8WTgV4gLe2Q2i5xyZw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Zhihao Cheng,
 
-Hi Miquel,
+----- Ursprüngliche Mail -----
+> +	else if (attr == &dev_fastmap)
+> +		ret = sprintf(buf, "%d\n", ubi->fm ? 1 : 0);
+> 	else
 
-> > Document the bindings used by the Macronix raw NAND controller.
-> > 
-> > Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
-> > ---
-> >  .../devicetree/bindings/mtd/mxic-nand.txt          | 26 
-++++++++++++++++++++++
-> >  1 file changed, 26 insertions(+)
-> >  create mode 100644 
-Documentation/devicetree/bindings/mtd/mxic-nand.txt
-> > 
-> > diff --git a/Documentation/devicetree/bindings/mtd/mxic-nand.txt b/
-> Documentation/devicetree/bindings/mtd/mxic-nand.txt
-> > new file mode 100644
-> > index 0000000..3d198e4
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/mtd/mxic-nand.txt
-> > @@ -0,0 +1,26 @@
-> > +Macronix Raw NAND Controller Device Tree Bindings
-> > +-------------------------------------------------
-> > +
-> > +Required properties:
-> > +- compatible: should be "mxic,raw-nand-ctlr"
-> 
-> I would prefer "macronix,nand-controller"
+I fear this is not correct. ubi->fm is an internal data structure
+of UBI.
+UBI sets it to NULL while it updates fastmap, and updates it later.
+So userspace would see false negatives.
 
-okay, will patch it.
-
-> 
-> > +- reg: should contain 1 entrie for the registers
-> 
->                            entry
-> 
-> > +- reg-names: should contain "regs"
-> 
-> Not sure you need that?
-
-for a base address of ctlr registers.
-
-> 
-> > +- interrupts: interrupt line connected to this NAND controller
-> > +- clock-names: should contain "ps_clk", "send_clk" and "send_dly_clk"
-> > +- clocks: should contain 3 entries for the "ps_clk", "send_clk" and
-> > +    "send_dly_clk" clocks
-> 
-> s/entries/phandles/ ?
-
-?
-as I know that kernel views the phandle values as device tree structure
-information instead of device tree data and thus does not store them as
-properties.
-
-
-> 
-> > +
-> > +Example:
-> > +
-> > +   nand: mxic-nfc@43c30000 {
-> > +      compatible = "mxic,raw-nand-ctlr";
-> > +      reg = <0x43c30000 0x10000>;
-> > +      reg-names = "regs";
-> > +      clocks = <&clkwizard 0>, <&clkwizard 1>, <&clkc 15>;
-> > +      clock-names = "send_clk", "send_dly_clk", "ps_clk";
-> > +
-> > +      nand-ecc-mode = "soft";
-> > +      nand-ecc-algo = "bch";
-> > +      nand-ecc-step-size = <512>;
-> > +      nand-ecc-strength = <8>;
-> 
-> The last 4 lines are probably not needed.
-
-okay, will remove them.
-
-thanks for your review.
-best regards,
-Mason
-
-
-CONFIDENTIALITY NOTE:
-
-This e-mail and any attachments may contain confidential information 
-and/or personal data, which is protected by applicable laws. Please be 
-reminded that duplication, disclosure, distribution, or use of this e-mail 
-(and/or its attachments) or any part thereof is prohibited. If you receive 
-this e-mail in error, please notify us immediately and delete this mail as 
-well as its attachment(s) from your system. In addition, please be 
-informed that collection, processing, and/or use of personal data is 
-prohibited unless expressly permitted by personal data protection laws. 
-Thank you for your attention and cooperation.
-
-Macronix International Co., Ltd.
-
-=====================================================================
-
-
-
-============================================================================
-
-CONFIDENTIALITY NOTE:
-
-This e-mail and any attachments may contain confidential information and/or personal data, which is protected by applicable laws. Please be reminded that duplication, disclosure, distribution, or use of this e-mail (and/or its attachments) or any part thereof is prohibited. If you receive this e-mail in error, please notify us immediately and delete this mail as well as its attachment(s) from your system. In addition, please be informed that collection, processing, and/or use of personal data is prohibited unless expressly permitted by personal data protection laws. Thank you for your attention and cooperation.
-
-Macronix International Co., Ltd.
-
-=====================================================================
-
+Thanks,
+//richard
