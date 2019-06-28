@@ -2,177 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4B2959DB3
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 16:26:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DCC259DA4
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 16:23:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726807AbfF1O0w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 10:26:52 -0400
-Received: from mail.parknet.co.jp ([210.171.160.6]:52996 "EHLO
-        mail.parknet.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726657AbfF1O0w (ORCPT
+        id S1726730AbfF1OW4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 10:22:56 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:41862 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726657AbfF1OWz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 10:26:52 -0400
-X-Greylist: delayed 510 seconds by postgrey-1.27 at vger.kernel.org; Fri, 28 Jun 2019 10:26:51 EDT
-Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
-        by mail.parknet.co.jp (Postfix) with ESMTPSA id DCD4B1B457C;
-        Fri, 28 Jun 2019 23:18:20 +0900 (JST)
-Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
-        by ibmpc.myhome.or.jp (8.15.2/8.15.2/Debian-12) with ESMTPS id x5SEIJXb030638
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-        Fri, 28 Jun 2019 23:18:20 +0900
-Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
-        by devron.myhome.or.jp (8.15.2/8.15.2/Debian-12) with ESMTPS id x5SEIJNM008995
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-        Fri, 28 Jun 2019 23:18:19 +0900
-Received: (from hirofumi@localhost)
-        by devron.myhome.or.jp (8.15.2/8.15.2/Submit) id x5SEIJDd008994;
-        Fri, 28 Jun 2019 23:18:19 +0900
-From:   OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH] fat: Add nobarrier to workaround the strange behavior of device
-Date:   Fri, 28 Jun 2019 23:18:19 +0900
-Message-ID: <871rzdrdxw.fsf@mail.parknet.co.jp>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.0.50 (gnu/linux)
+        Fri, 28 Jun 2019 10:22:55 -0400
+Received: by mail-qt1-f196.google.com with SMTP id d17so6439675qtj.8
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2019 07:22:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=WVmn8V88QNGADn+4BzJOKwnY0rFHsOXAlq7BOgZNCGc=;
+        b=aOPp1i7+egoyuX5dPs0fEwpuD7ncaPsKMaTb1fJp8cn029yB84Cj38CXVf1K4HPO4m
+         krk0DXWdBm48vEnib3lJ9PqOpql7Ei1s0A/1v8zu9VR0yqF2cFObMA+mxywr/6B3Rm2O
+         tdSuJRsaGxJqDExu234qVW3Y/4KtiQ7+a+wY3I2ERadQD79lz8xKYQhi6xQ2Qsi5rNOJ
+         qSQT3jk9apBhR+XgkF94YcowU2zU1m4lrnwKy4HXqzHIyEQo69uoV6QhrWXESQhqlaqZ
+         EQlOfVcrLWqq5Q83LbfyVq7+xFnyE8uJBirXQHeY7ZfeByGsXRD9k0uf4i1lhCmNojoZ
+         XkOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=WVmn8V88QNGADn+4BzJOKwnY0rFHsOXAlq7BOgZNCGc=;
+        b=X3r9bwXromYHvZKndY3qL0ALpDnyJOkJeYDog2OdDD8Gtrj+QW5/DkpSLGmi2c3/pm
+         i+CeQefRCyLio2XD7pzX5FKEzbLuZqf+VbQnzsuBOhBmsHhzLX01S79R+j6l2tIoB0tk
+         2dBOR/Gc8EFYgVQDNAnAlsrdpPqRGuQ0ewne9gXtQ8h/G/tcio+Ha/HdOgtS9Zhou7J9
+         GZ7tZH+H/Zyl1O0jYLMB0uUoyaGoQS2qpQk5YKTfZqYZbERUd3S4HM7H5vu8WBkK4hlQ
+         p54daJFT4ICwyME403WQm2gM61UDjJo9XwTOrT48w85hV7wpe/JYHDn66urkD2AaYG8z
+         WXTA==
+X-Gm-Message-State: APjAAAU2mLz6U/uSBTQgq62Y/vAUQoujv9cz5tYRFkdd0f2wKY6cOCDJ
+        DhL8DBHI/YnUAB7YdS92BioUYw==
+X-Google-Smtp-Source: APXvYqwlKuuePWTEY5Qzqm6s281P+8lxu1QGtHORWcJsC2Yq1uv3z28Uf6CKqeoG1nDZmsyvrE+hiA==
+X-Received: by 2002:ac8:2ae8:: with SMTP id c37mr8359022qta.267.1561731774569;
+        Fri, 28 Jun 2019 07:22:54 -0700 (PDT)
+Received: from localhost (pool-108-27-252-85.nycmny.fios.verizon.net. [108.27.252.85])
+        by smtp.gmail.com with ESMTPSA id x205sm1049020qka.56.2019.06.28.07.22.53
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 28 Jun 2019 07:22:53 -0700 (PDT)
+Date:   Fri, 28 Jun 2019 10:22:52 -0400
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Minchan Kim <minchan@kernel.org>
+Cc:     Kuo-Hsin Yang <vovoy@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Sonny Rao <sonnyrao@chromium.org>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH] mm: vmscan: fix not scanning anonymous pages when
+ detecting file refaults
+Message-ID: <20190628142252.GA17212@cmpxchg.org>
+References: <20190619080835.GA68312@google.com>
+ <20190627184123.GA11181@cmpxchg.org>
+ <20190628065138.GA251482@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190628065138.GA251482@google.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Minchan,
 
-There was the report of strange behavior of device with recent
-blkdev_issue_flush() position change.
+On Fri, Jun 28, 2019 at 03:51:38PM +0900, Minchan Kim wrote:
+> On Thu, Jun 27, 2019 at 02:41:23PM -0400, Johannes Weiner wrote:
+> > On Wed, Jun 19, 2019 at 04:08:35PM +0800, Kuo-Hsin Yang wrote:
+> > > Fixes: 2a2e48854d70 ("mm: vmscan: fix IO/refault regression in cache workingset transition")
+> > > Signed-off-by: Kuo-Hsin Yang <vovoy@chromium.org>
+> > 
+> > Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+> > 
+> > Your change makes sense - we should indeed not force cache trimming
+> > only while the page cache is experiencing refaults.
+> > 
+> > I can't say I fully understand the changelog, though. The problem of
+> 
+> I guess the point of the patch is "actual_reclaim" paramter made divergency
+> to balance file vs. anon LRU in get_scan_count. Thus, it ends up scanning
+> file LRU active/inactive list at file thrashing state.
 
-The following is simplified usbmon trace.
+Look at the patch again. The parameter was only added to retain
+existing behavior. We *always* did file-only reclaim while thrashing -
+all the way back to the two commits I mentioned below.
 
- 4203   9.160230         host -> 1.25.1       USBMS 95 SCSI: Synchronize Cache(10) LUN: 0x00 (LBA: 0x00000000, Len: 0)
- 4206   9.164911       1.25.1 -> host         USBMS 77 SCSI: Response LUN: 0x00 (Synchronize Cache(10)) (Good)
- 4207   9.323927         host -> 1.25.1       USBMS 95 SCSI: Read(10) LUN: 0x00 (LBA: 0x00279950, Len: 240)
- 4212   9.327138       1.25.1 -> host         USBMS 77 SCSI: Response LUN: 0x00 (Read(10)) (Good)
+> So, Fixes: 2a2e48854d70 ("mm: vmscan: fix IO/refault regression in cache workingset transition")
+> would make sense to me since it introduces the parameter.
 
-[...]
+What is the observable behavior problem that this patch introduced?
 
- 7323  10.202167         host -> 1.25.1       USBMS 95 SCSI: Synchronize Cache(10) LUN: 0x00 (LBA: 0x00000000, Len: 0)
- 7326  10.432266       1.25.1 -> host         USBMS 77 SCSI: Response LUN: 0x00 (Synchronize Cache(10)) (Good)
- 7327  10.769092         host -> 1.25.1       USBMS 95 SCSI: Test Unit Ready LUN: 0x00 
- 7330  10.769192       1.25.1 -> host         USBMS 77 SCSI: Response LUN: 0x00 (Test Unit Ready) (Good)
- 7335  12.849093         host -> 1.25.1       USBMS 95 SCSI: Test Unit Ready LUN: 0x00 
- 7338  12.849206       1.25.1 -> host         USBMS 77 SCSI: Response LUN: 0x00 (Test Unit Ready) (Check Condition)
- 7339  12.849209         host -> 1.25.1       USBMS 95 SCSI: Request Sense LUN: 0x00
- 
-If "Synchronize Cache" command issued then there is idle time, the
-device stop to process further commands, and behave as like no media.
-(it returns NOT_READY [MEDIUM NOT PRESENT] for SENSE command, and this
-happened on Kindle) [just a guess, the device is trying to detect the
-"safe-unplug" operation of Windows or such?]
+> > forcing cache trimming while there is enough page cache is older than
+> > the commit you refer to. It could be argued that this commit is
+> > incomplete - it could have added refault detection not just to
+> > inactive:active file balancing, but also the file:anon balancing; but
+> > it didn't *cause* this problem.
+> > 
+> > Shouldn't this be
+> > 
+> > Fixes: e9868505987a ("mm,vmscan: only evict file pages when we have plenty")
+> > Fixes: 7c5bd705d8f9 ("mm: memcg: only evict file pages when we have plenty")
+> 
+> That would affect, too but it would be trouble to have stable backport
+> since we don't have refault machinery in there.
 
-To workaround those devices and provide flexibility, this adds
-"barrier"/"nobarrier" mount options to fat driver.
-
-Cc: <stable@vger.kernel.org>
-Signed-off-by: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
----
-
- fs/fat/fat.h   |    1 +
- fs/fat/file.c  |    8 ++++++--
- fs/fat/inode.c |   16 ++++++++++++++--
- 3 files changed, 21 insertions(+), 4 deletions(-)
-
-diff -puN fs/fat/fat.h~fat-nobarrier fs/fat/fat.h
---- linux/fs/fat/fat.h~fat-nobarrier	2019-06-28 21:22:18.146191739 +0900
-+++ linux-hirofumi/fs/fat/fat.h	2019-06-28 21:59:11.693934616 +0900
-@@ -51,6 +51,7 @@ struct fat_mount_options {
- 		 tz_set:1,	   /* Filesystem timestamps' offset set */
- 		 rodir:1,	   /* allow ATTR_RO for directory */
- 		 discard:1,	   /* Issue discard requests on deletions */
-+		 barrier:1,	   /* Issue FLUSH command */
- 		 dos1xfloppy:1;	   /* Assume default BPB for DOS 1.x floppies */
- };
- 
-diff -puN fs/fat/file.c~fat-nobarrier fs/fat/file.c
---- linux/fs/fat/file.c~fat-nobarrier	2019-06-28 21:22:18.147191734 +0900
-+++ linux-hirofumi/fs/fat/file.c	2019-06-28 21:59:11.693934616 +0900
-@@ -193,17 +193,21 @@ static int fat_file_release(struct inode
- int fat_file_fsync(struct file *filp, loff_t start, loff_t end, int datasync)
- {
- 	struct inode *inode = filp->f_mapping->host;
-+	struct msdos_sb_info *sbi = MSDOS_SB(inode->i_sb);
- 	int err;
- 
- 	err = __generic_file_fsync(filp, start, end, datasync);
- 	if (err)
- 		return err;
- 
--	err = sync_mapping_buffers(MSDOS_SB(inode->i_sb)->fat_inode->i_mapping);
-+	err = sync_mapping_buffers(sbi->fat_inode->i_mapping);
- 	if (err)
- 		return err;
- 
--	return blkdev_issue_flush(inode->i_sb->s_bdev, GFP_KERNEL, NULL);
-+	if (sbi->options.barrier)
-+		err = blkdev_issue_flush(inode->i_sb->s_bdev, GFP_KERNEL, NULL);
-+
-+	return err;
- }
- 
- 
-diff -puN fs/fat/inode.c~fat-nobarrier fs/fat/inode.c
---- linux/fs/fat/inode.c~fat-nobarrier	2019-06-28 21:22:18.148191730 +0900
-+++ linux-hirofumi/fs/fat/inode.c	2019-06-28 21:59:11.694934611 +0900
-@@ -1016,6 +1016,8 @@ static int fat_show_options(struct seq_f
- 		seq_puts(m, ",nfs=stale_rw");
- 	if (opts->discard)
- 		seq_puts(m, ",discard");
-+	if (!opts->barrier)
-+		seq_puts(m, ",nobarrier");
- 	if (opts->dos1xfloppy)
- 		seq_puts(m, ",dos1xfloppy");
- 
-@@ -1031,8 +1033,9 @@ enum {
- 	Opt_shortname_winnt, Opt_shortname_mixed, Opt_utf8_no, Opt_utf8_yes,
- 	Opt_uni_xl_no, Opt_uni_xl_yes, Opt_nonumtail_no, Opt_nonumtail_yes,
- 	Opt_obsolete, Opt_flush, Opt_tz_utc, Opt_rodir, Opt_err_cont,
--	Opt_err_panic, Opt_err_ro, Opt_discard, Opt_nfs, Opt_time_offset,
--	Opt_nfs_stale_rw, Opt_nfs_nostale_ro, Opt_err, Opt_dos1xfloppy,
-+	Opt_err_panic, Opt_err_ro, Opt_discard, Opt_barrier, Opt_nobarrier,
-+	Opt_nfs, Opt_time_offset, Opt_nfs_stale_rw, Opt_nfs_nostale_ro,
-+	Opt_err, Opt_dos1xfloppy,
- };
- 
- static const match_table_t fat_tokens = {
-@@ -1062,6 +1065,8 @@ static const match_table_t fat_tokens =
- 	{Opt_err_panic, "errors=panic"},
- 	{Opt_err_ro, "errors=remount-ro"},
- 	{Opt_discard, "discard"},
-+	{Opt_barrier, "barrier"},
-+	{Opt_nobarrier, "nobarrier"},
- 	{Opt_nfs_stale_rw, "nfs"},
- 	{Opt_nfs_stale_rw, "nfs=stale_rw"},
- 	{Opt_nfs_nostale_ro, "nfs=nostale_ro"},
-@@ -1146,6 +1151,7 @@ static int parse_options(struct super_bl
- 	opts->numtail = 1;
- 	opts->usefree = opts->nocase = 0;
- 	opts->tz_set = 0;
-+	opts->barrier = 1;
- 	opts->nfs = 0;
- 	opts->errors = FAT_ERRORS_RO;
- 	*debug = 0;
-@@ -1335,6 +1341,12 @@ static int parse_options(struct super_bl
- 		case Opt_discard:
- 			opts->discard = 1;
- 			break;
-+		case Opt_barrier:
-+			opts->barrier = 1;
-+			break;
-+		case Opt_nobarrier:
-+			opts->barrier = 0;
-+			break;
- 
- 		/* obsolete mount options */
- 		case Opt_obsolete:
-_
-
--- 
-OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Hm? The problematic behavior is that we force-scan file while file is
+thrashing. We can obviously only solve this in kernels that can
+actually detect thrashing.
