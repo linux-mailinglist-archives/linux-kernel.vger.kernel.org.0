@@ -2,75 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2A4D59E5D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 17:03:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A28C59E62
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 17:04:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726843AbfF1PDw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 11:03:52 -0400
-Received: from mail.parknet.co.jp ([210.171.160.6]:53002 "EHLO
-        mail.parknet.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726616AbfF1PDw (ORCPT
+        id S1726882AbfF1PET (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 11:04:19 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:35306 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726770AbfF1PES (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 11:03:52 -0400
-Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
-        by mail.parknet.co.jp (Postfix) with ESMTPSA id 0412D7C8;
-        Sat, 29 Jun 2019 00:03:51 +0900 (JST)
-Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
-        by ibmpc.myhome.or.jp (8.15.2/8.15.2/Debian-12) with ESMTPS id x5SF3nPq031179
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-        Sat, 29 Jun 2019 00:03:50 +0900
-Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
-        by devron.myhome.or.jp (8.15.2/8.15.2/Debian-12) with ESMTPS id x5SF3n8r014176
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-        Sat, 29 Jun 2019 00:03:49 +0900
-Received: (from hirofumi@localhost)
-        by devron.myhome.or.jp (8.15.2/8.15.2/Submit) id x5SF3kNS014175;
-        Sat, 29 Jun 2019 00:03:46 +0900
-From:   OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fat: Add nobarrier to workaround the strange behavior of device
-References: <871rzdrdxw.fsf@mail.parknet.co.jp>
-        <20190628143216.GA538@infradead.org>
-Date:   Sat, 29 Jun 2019 00:03:46 +0900
-In-Reply-To: <20190628143216.GA538@infradead.org> (Christoph Hellwig's message
-        of "Fri, 28 Jun 2019 07:32:16 -0700")
-Message-ID: <87pnmxpx9p.fsf@mail.parknet.co.jp>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.0.50 (gnu/linux)
+        Fri, 28 Jun 2019 11:04:18 -0400
+Received: by mail-io1-f65.google.com with SMTP id m24so13239111ioo.2
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2019 08:04:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=g1IzoFsZk5LqS2cRTEBVCjz3mGbTcz0MMJeXo87+63Y=;
+        b=MvNSFWpzsxFk5AIIkgaYDKXyzPk9/PdAzXLETkZQRaEZNrrn0vJ5XRQ5uKEwAvKaxl
+         3qfYCTNQ0+MZYbbxx+5z8j/jY7b2vw2ufX1y4uSh9wloSEW5WHlDzz7n/lyyCM8jlcKC
+         PQnUQb1C9oKq3eCZBErmQTCpb/YoV6paGj5tE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=g1IzoFsZk5LqS2cRTEBVCjz3mGbTcz0MMJeXo87+63Y=;
+        b=HztimWG+E3n1iTrkSKz1r/8v+D0yw8zHZ1WG/mKrBLl9z/1R3QkStLoRq2HjRzXPd1
+         /EES2z4Ax0QqmMQiVNsn+eYVFdmExMw0QqhrnoHxH+3xGwHCLK4er5QHWWgJ3IT1GG0x
+         5wJI2CFUZUz5jFGjeI1IyH6Lf/4d3POZu8qW8+qccb2O6le4Y2hmboMFx/P6Ri+hTWWS
+         LzQ4AvOHJjwJZHX8zIaP2/12hwQecfRiF8xzztHT6+hQKrvLhO1GCg8U4XmHVGQ6K2mo
+         mcjT6m4sLxg+JwGtic47KEnBHGuAbAn3onWK7iBBUSlk5z1JbwuntjWBQOfBi3p0OLPl
+         +M2g==
+X-Gm-Message-State: APjAAAUIeyQP+drouPNkKUDr2XaiDd6LIshJm61kit0HeHgJiEEiH+SB
+        qYZgGnO1LVJszHg34UmQhcwViA==
+X-Google-Smtp-Source: APXvYqymBA+yRdMC+IAMhiuSMnvDgZNtIJg/DM/UGr3vhxnQF81pj8UzRIlvdsQNe/Pn6XZ7mdgZVg==
+X-Received: by 2002:a5d:9e48:: with SMTP id i8mr696097ioi.51.1561734258040;
+        Fri, 28 Jun 2019 08:04:18 -0700 (PDT)
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
+        by smtp.gmail.com with ESMTPSA id j23sm2401337ioo.6.2019.06.28.08.04.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 28 Jun 2019 08:04:17 -0700 (PDT)
+Subject: Re: [Linux-kernel-mentees][PATCH v2] nl80211: Fix undefined behavior
+ in bit shift
+To:     Johannes Berg <johannes@sipsolutions.net>,
+        Jiunn Chang <c0d1n61at3@gmail.com>
+Cc:     linux-kernel-mentees@lists.linuxfoundation.org,
+        linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Shuah Khan <skhan@linuxfoundation.org>
+References: <20190627010137.5612-4-c0d1n61at3@gmail.com>
+ <20190627032532.18374-4-c0d1n61at3@gmail.com>
+ <c20a0a94-ab50-bb85-7c78-e02a465c5a40@linuxfoundation.org>
+ <8b8c44c3ecb8626d9bb5a8f786b1d2b7488df86b.camel@sipsolutions.net>
+From:   Shuah Khan <skhan@linuxfoundation.org>
+Message-ID: <9e17c585-bd42-8c65-a37a-add6aa4d5ca4@linuxfoundation.org>
+Date:   Fri, 28 Jun 2019 09:04:16 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <8b8c44c3ecb8626d9bb5a8f786b1d2b7488df86b.camel@sipsolutions.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christoph Hellwig <hch@infradead.org> writes:
+On 6/28/19 7:57 AM, Johannes Berg wrote:
+> On Wed, 2019-06-26 at 21:34 -0600, Shuah Khan wrote:
+>> On 6/26/19 9:25 PM, Jiunn Chang wrote:
+>>> Shifting signed 32-bit value by 31 bits is undefined.  Changing most
+>>> significant bit to unsigned.
+>>>
+>>> Changes included in v2:
+>>>     - use subsystem specific subject lines
+>>>     - CC required mailing lists
+>>>
+>>> Signed-off-by: Jiunn Chang <c0d1n61at3@gmail.com>
+>>> ---
+>>
+>> Move version change lines here. They don't belong in the commit log.
+> 
+> FWIW, in many cases people (maintainers) now *do* want them in the
+> commit log. Here, they're just editorial, so agree, but if real
+> technical changes were made due to reviews, they can indeed be useful.
+> 
+> johannes
+> 
 
-> On Fri, Jun 28, 2019 at 11:18:19PM +0900, OGAWA Hirofumi wrote:
->> To workaround those devices and provide flexibility, this adds
->> "barrier"/"nobarrier" mount options to fat driver.
->
-> We have deprecated these rather misnamed options, and now instead allow
-> tweaking the 'cache_type' attribute on the SCSI device.
+I went looking in the git log. Looks like there are several commits with
+"Changes since" included in the commit log. It still appears to be
+maintainer preference. Probably from networking and networking related
+areas - wireless being one of them. This trend is recent it appears in
+any case.
 
-I see, sounds like good though. Does it work for all stable versions?
-Can it disable only flush command without other effect? And it would be
-better to be normal user controllable easily.
+There is a value to seeing changes as the work evolves. However, there
+is the concern that how log should it be.
 
-This happened on normal user's calibre app that mount via udisks.  With
-this option, user can workaround with /etc/fstab for immediate users.
+This example commit has history from RFC stage and no doubt very useful
+since this is a new driver.
 
-> That being said if the device behave this buggy you should also report
-> it to to the usb-storage and scsi maintainers so that we can add a
-> quirk for it.
+8ef988b914bd449458eb2174febb67b0f137b33c
 
-It might not be able to say as buggy simply. The device looks work if no
-idle and not hit pattern of usage, so quirk can be overkill.
+If we make this more of a norm, we do want to make sure, we evolve
+from informal nature of these "Changes since", to "Commit log" text.
 
-Anyway, I don't have the device, if you can get the device and
-investigate, it can be fine.
-
-Thanks.
--- 
-OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+thanks,
+-- Shuah
