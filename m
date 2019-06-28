@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47DC359D03
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 15:36:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33BDD59D05
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 15:36:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726856AbfF1Ng1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 09:36:27 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:43258 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726711AbfF1NgZ (ORCPT
+        id S1726889AbfF1Ngb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 09:36:31 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:54510 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726827AbfF1NgZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 28 Jun 2019 09:36:25 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
+        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
         Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=anCtZSSKBswa15L3XwFcRjCLWE8G9OZyId+z8B3LRsc=; b=luzBeIDL3uxKquAWg/Rhs79Rhn
-        wXUW+y4jTzz6QTK/ct6u2tRy5+3luQ6/y8xDJLR9XsAwbNF9DsIO3fykXG9638dAaFFE910sPVW4n
-        y5DpOKQKlqEW8rYY3loArYfAH8E2pzu2hLDMsf+LYCJJs3UrsYfwuc1NMGK7wCjEGDAEbDgfIibj2
-        7fug3Gz+EVotZL8/uNJ+WOeQ/KpBsJtIU0kOPic3bZOrxBFzC3jpF7HTQalu1tZdnVWDiZP+34W0c
-        4LTY/hl5XpF5eVxpafz21E2cf2FF4gcIvuuBsVmZEe2gaAGKAUqhD+wvI/zXAI/ykb3gXXUKgnAj8
-        I/7rPKgw==;
+        bh=9VFSmflzVfL3h4M0s7noQx6gwkm4hG7pGZRkMRfLWbM=; b=JPWl/bblnW5cuPRxlspzM1rMuX
+        nNMSWENzk6AlZebLCBkpObaj0DJt5+6d4qayunBc2TEu8ZXcWewCWM2y9Ip9o/Bq6E8GhZ93xlSgr
+        v8LLDmqcddMe7SgqN07yB7+W0LZmiv70Ks9hHnsnHFYQyN2e6zcT6RHd8x/r6CUBBbM5kx2+xJSwC
+        jt3fSPW/0BMf8vDgb1lJh1Dq/jzd3084Y/TPcfC/j3dOjasW9vQsm97ZUirptpp9Ip/Tcxo7j+wyG
+        ZqN/uMC5IMIU6Ap+cLdo7vQUWUBCIv77I4+RsPx24Znp+wFC4gcxOj/u13ooXVfdfeBGI87/8JpNI
+        X8oigppw==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hgr2q-0000n9-QQ; Fri, 28 Jun 2019 13:36:05 +0000
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hgr2r-0006t3-3Q; Fri, 28 Jun 2019 13:36:05 +0000
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 83C8020AB8990; Fri, 28 Jun 2019 15:36:03 +0200 (CEST)
-Message-Id: <20190628103224.602848654@infradead.org>
+        id 8853F20AB8991; Fri, 28 Jun 2019 15:36:03 +0200 (CEST)
+Message-Id: <20190628103224.659817235@infradead.org>
 User-Agent: quilt/0.65
-Date:   Fri, 28 Jun 2019 12:21:16 +0200
+Date:   Fri, 28 Jun 2019 12:21:17 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     x86@kernel.org, peterz@infradead.org, linux-kernel@vger.kernel.org
 Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
@@ -42,7 +42,7 @@ Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
         Andy Lutomirski <luto@kernel.org>,
         Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
         Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Subject: [RFC][PATCH 3/8] jump_label, x86: Factor out the __jump_table generation
+Subject: [RFC][PATCH 4/8] jump_label, x86: Remove init NOP optimization
 References: <20190628102113.360432762@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -51,57 +51,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Both arch_static_branch() and arch_static_branch_jump() have the same
-blurb to generate the __jump_table entry, share it.
+Instead of checking if the emitted (default) NOP is the ideal NOP, and
+conditionally rewrite the NOP, just rewrite the NOP.
+
+This shouldn't be a problem because init / module_load uses
+text_poke_early() which is cheap and this saves us from having to go
+figure out which NOP to compare against when we go variable size.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- arch/x86/include/asm/jump_label.h |   24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+ arch/x86/kernel/jump_label.c |   19 ++++---------------
+ 1 file changed, 4 insertions(+), 15 deletions(-)
 
---- a/arch/x86/include/asm/jump_label.h
-+++ b/arch/x86/include/asm/jump_label.h
-@@ -20,15 +20,19 @@
- #include <linux/stringify.h>
- #include <linux/types.h>
- 
-+#define JUMP_TABLE_ENTRY				\
-+	".pushsection __jump_table,  \"aw\" \n\t"	\
-+	_ASM_ALIGN "\n\t"				\
-+	".long 1b - . \n\t"				\
-+	".long %l[l_yes] - . \n\t"			\
-+	_ASM_PTR "%c0 + %c1 - .\n\t"			\
-+	".popsection \n\t"
-+
- static __always_inline bool arch_static_branch(struct static_key *key, bool branch)
+--- a/arch/x86/kernel/jump_label.c
++++ b/arch/x86/kernel/jump_label.c
+@@ -177,21 +177,10 @@ __init_or_module void arch_jump_label_tr
+ 				      enum jump_label_type type)
  {
- 	asm_volatile_goto("1:"
- 		".byte " __stringify(STATIC_KEY_INIT_NOP) "\n\t"
--		".pushsection __jump_table,  \"aw\" \n\t"
--		_ASM_ALIGN "\n\t"
--		".long 1b - ., %l[l_yes] - . \n\t"
--		_ASM_PTR "%c0 + %c1 - .\n\t"
--		".popsection \n\t"
-+		JUMP_TABLE_ENTRY
- 		: :  "i" (key), "i" (branch) : : l_yes);
- 
- 	return false;
-@@ -39,13 +43,9 @@ static __always_inline bool arch_static_
- static __always_inline bool arch_static_branch_jump(struct static_key *key, bool branch)
- {
- 	asm_volatile_goto("1:"
--		".byte 0xe9\n\t .long %l[l_yes] - 2f\n\t"
--		"2:\n\t"
--		".pushsection __jump_table,  \"aw\" \n\t"
--		_ASM_ALIGN "\n\t"
--		".long 1b - ., %l[l_yes] - . \n\t"
--		_ASM_PTR "%c0 + %c1 - .\n\t"
--		".popsection \n\t"
-+		".byte 0xe9 \n\t"
-+		".long %l[l_yes] - (. + 4) \n\t"
-+		JUMP_TABLE_ENTRY
- 		: :  "i" (key), "i" (branch) : : l_yes);
- 
- 	return false;
+ 	/*
+-	 * This function is called at boot up and when modules are
+-	 * first loaded. Check if the default nop, the one that is
+-	 * inserted at compile time, is the ideal nop. If it is, then
+-	 * we do not need to update the nop, and we can leave it as is.
+-	 * If it is not, then we need to update the nop to the ideal nop.
++	 * Rewrite the NOP on init / module-load to ensure we got the ideal
++	 * nop.  Don't bother with trying to figure out what size and what nop
++	 * it should be for now, simply do an unconditional rewrite.
+ 	 */
+-	if (jlstate == JL_STATE_START) {
+-		const unsigned char default_nop[] = { STATIC_KEY_INIT_NOP };
+-		const unsigned char *ideal_nop = ideal_nops[NOP_ATOMIC5];
+-
+-		if (memcmp(ideal_nop, default_nop, 5) != 0)
+-			jlstate = JL_STATE_UPDATE;
+-		else
+-			jlstate = JL_STATE_NO_UPDATE;
+-	}
+-	if (jlstate == JL_STATE_UPDATE)
++	if (jlstate == JL_STATE_UPDATE || jlstate == JL_STATE_START)
+ 		__jump_label_transform(entry, type, 1);
+ }
 
 
