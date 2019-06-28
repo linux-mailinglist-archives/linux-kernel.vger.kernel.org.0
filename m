@@ -2,80 +2,311 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 515C6594E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 09:29:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F29C594F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 09:30:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726823AbfF1H3i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 03:29:38 -0400
-Received: from smtprelay-out1.synopsys.com ([198.182.47.102]:48020 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726498AbfF1H3Z (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 03:29:25 -0400
-Received: from mailhost.synopsys.com (mdc-mailhost2.synopsys.com [10.225.0.210])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 50DA7C0BF4;
-        Fri, 28 Jun 2019 07:29:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1561706965; bh=7+tT87aSu+blEqvLvV7U9GKQj6WhSqKHVNxkfVuOqns=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-         References:From;
-        b=CAD71Sci7+fmBoozvKGyAZ1hh8sViFlOZ5KDH3T7tV2LnsE18wTnRjyLH32lRh57S
-         uzV9aBNyIEI/bP8ohaUuO+mNjG0s8pt2EutCCRBJqLw5NjXcZwCabNjibK2njgPhhC
-         DMZZvCxu+a5WXeub7sUltNI/bx3KyKaSrHZ7OcgjTQNZVdU2Oa6ubvkqwN14q9GZo2
-         eXkqVUy3Gh7lOlkd6Frm5U2RJMNa9s4J6gemcW+Iww3qxMn/HUUqR8cZZmu65++4oG
-         Vu//UM0LP/euilEN7FrRYukRTrqHEcdvIRZfoG7tB0YMZPtderZ99hNbXTMOisX21p
-         wiVQkODweBuMw==
-Received: from de02.synopsys.com (de02.internal.synopsys.com [10.225.17.21])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 14577A0242;
-        Fri, 28 Jun 2019 07:29:24 +0000 (UTC)
-Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
-        by de02.synopsys.com (Postfix) with ESMTP id 054F83E96D;
-        Fri, 28 Jun 2019 09:29:24 +0200 (CEST)
-From:   Jose Abreu <Jose.Abreu@synopsys.com>
-To:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Cc:     Jose Abreu <Jose.Abreu@synopsys.com>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-Subject: [PATCH net-next v2 10/10] net: stmmac: Update Kconfig entry
-Date:   Fri, 28 Jun 2019 09:29:21 +0200
-Message-Id: <68d80ab64c72f881d25cbb2691f10b1933292da6.1561706801.git.joabreu@synopsys.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1561706800.git.joabreu@synopsys.com>
-References: <cover.1561706800.git.joabreu@synopsys.com>
-In-Reply-To: <cover.1561706800.git.joabreu@synopsys.com>
-References: <cover.1561706800.git.joabreu@synopsys.com>
+        id S1726865AbfF1HaC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 03:30:02 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60692 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726476AbfF1HaB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Jun 2019 03:30:01 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 9E22EB187;
+        Fri, 28 Jun 2019 07:29:59 +0000 (UTC)
+Subject: Re: [PATCH v2 02/18] drm/vram: use embedded gem object
+To:     Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        ckoenig.leichtzumerken@gmail.com,
+        open list <linux-kernel@vger.kernel.org>,
+        Xinliang Liu <z.liuxinliang@hisilicon.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
+        Chen Feng <puck.chen@hisilicon.com>,
+        Rongrong Zou <zourongrong@gmail.com>,
+        Dave Airlie <airlied@redhat.com>, Sean Paul <sean@poorly.run>
+References: <20190621115755.8481-1-kraxel@redhat.com>
+ <20190621115755.8481-3-kraxel@redhat.com>
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNKFRob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmNvbT7CwJQEEwEIAD4W
+ IQRyF/usjOnPY0ShaOVoDcEdUwt6IwUCWznTtgIbAwUJA8JnAAULCQgHAgYVCgkICwIEFgID
+ AQIeAQIXgAAKCRBoDcEdUwt6I7D7CACBK42XW+7mCiK8ioXMEy1NzGbXC51RzGea8N83oEJS
+ 1KVUtQxrkDxgrW/WLSl/TfqHFsJpdEFOv1XubWbleun3uKPy0e5vZCd5UjZPkeNjnqfCYTDy
+ hVVsdOuFbtWDppJyJrThLqr9AgSFmoCNNUt1SVpYEEOLNE6C32BhlnSq21VLC+YXTgO/ZHTa
+ YXkq54hHj63jwrcjkBSCkXLh37kHeqnl++GHpN+3R+o3w2OpwHAlvVjdKPT27v1tVkiydsFG
+ 65Vd0n3m/ft+IOrGgxQM1C20uqKvsZGB4r3OGR50ekAybO7sjEJJ1Obl4ge/6RRqcvKz4LMb
+ tGs85D6tPIeFzsBNBFs50uABCADGJj+DP1fk+UWOWrf4O61HTbC4Vr9QD2K4fUUHnzg2B6zU
+ R1BPXqLGG0+lzK8kfYU/F5RjmEcClsIkAaFkg4kzKP14tvY1J5+AV3yNqcdg018HNtiyrSwI
+ E0Yz/qm1Ot2NMZ0DdvVBg22IMsiudQ1tx9CH9mtyTbIXgACvl3PW2o9CxiHPE/bohFhwZwh/
+ kXYYAE51lhinQ3oFEeQZA3w4OTvxSEspiQR8dg8qJJb+YOAc5IKk6sJmmM7JfFMWSr22satM
+ 23oQ3WvJb4RV6HTRTAIEyyZS7g2DhiytgMG60t0qdABG5KXSQW+OKlZRpuWwKWaLh3if/p/u
+ 69dvpanbABEBAAHCwHwEGAEIACYWIQRyF/usjOnPY0ShaOVoDcEdUwt6IwUCWznS4AIbDAUJ
+ A8JnAAAKCRBoDcEdUwt6I6X3CACJ8D+TpXBCqJE5xwog08+Dp8uBpx0T9n1wE0GQisZruACW
+ NofYn8PTX9k4wmegDLwt7YQDdKxQ4+eTfZeLNQqWg6OCftH5Kx7sjWnJ09tOgniVdROzWJ7c
+ VJ/i0okazncsJ+nq48UYvRGE1Swh3A4QRIyphWX4OADOBmTFl9ZYNPnh23eaC9WrNvFr7yP7
+ iGjMlfEW8l6Lda//EC5VpXVNza0xeae0zFNst2R9pn+bLkihwDLWxOIyifGRxTqNxoS4I1aw
+ VhxPSVztPMSpIA/sOr/N/p6JrBLn+gui2K6mP7bGb8hF+szfArYqz3T1rv1VzUWAJf5Wre5U
+ iNx9uqqx
+Message-ID: <e3d8d1ee-c033-0402-6058-7c2410cc250b@suse.de>
+Date:   Fri, 28 Jun 2019 09:29:54 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
+MIME-Version: 1.0
+In-Reply-To: <20190621115755.8481-3-kraxel@redhat.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="BtMQccqzopt56oczlTQEKgFG9Me4QiQDV"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We support more speeds now. Update the Kconfig entry.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--BtMQccqzopt56oczlTQEKgFG9Me4QiQDV
+Content-Type: multipart/mixed; boundary="DJ9HlhJD9L2dklPFOiy3KC57KeCfP5uxU";
+ protected-headers="v1"
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org
+Cc: Hans de Goede <hdegoede@redhat.com>, David Airlie <airlied@linux.ie>,
+ ckoenig.leichtzumerken@gmail.com, open list <linux-kernel@vger.kernel.org>,
+ Xinliang Liu <z.liuxinliang@hisilicon.com>,
+ Maxime Ripard <maxime.ripard@bootlin.com>,
+ Xinwei Kong <kong.kongxinwei@hisilicon.com>,
+ Chen Feng <puck.chen@hisilicon.com>, Rongrong Zou <zourongrong@gmail.com>,
+ Dave Airlie <airlied@redhat.com>, Sean Paul <sean@poorly.run>
+Message-ID: <e3d8d1ee-c033-0402-6058-7c2410cc250b@suse.de>
+Subject: Re: [PATCH v2 02/18] drm/vram: use embedded gem object
+References: <20190621115755.8481-1-kraxel@redhat.com>
+ <20190621115755.8481-3-kraxel@redhat.com>
+In-Reply-To: <20190621115755.8481-3-kraxel@redhat.com>
 
-Signed-off-by: Jose Abreu <joabreu@synopsys.com>
-Cc: Joao Pinto <jpinto@synopsys.com>
-Cc: David S. Miller <davem@davemloft.net>
-Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
-Cc: Alexandre Torgue <alexandre.torgue@st.com>
----
- drivers/net/ethernet/stmicro/stmmac/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--DJ9HlhJD9L2dklPFOiy3KC57KeCfP5uxU
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/Kconfig b/drivers/net/ethernet/stmicro/stmmac/Kconfig
-index c43e2da4e7e3..2acb999b7f63 100644
---- a/drivers/net/ethernet/stmicro/stmmac/Kconfig
-+++ b/drivers/net/ethernet/stmicro/stmmac/Kconfig
-@@ -1,6 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0-only
- config STMMAC_ETH
--	tristate "STMicroelectronics 10/100/1000/EQOS Ethernet driver"
-+	tristate "STMicroelectronics 10/100/1000/EQOS/2500/5000/10000 Ethernet driver"
- 	depends on HAS_IOMEM && HAS_DMA
- 	select MII
- 	select PHYLINK
--- 
-2.7.4
+Hi
 
+Am 21.06.19 um 13:57 schrieb Gerd Hoffmann:
+> Drop drm_gem_object from drm_gem_vram_object, use the
+> ttm_buffer_object.base instead.
+>=20
+> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+> ---
+>  include/drm/drm_gem_vram_helper.h           |  3 +--
+>  drivers/gpu/drm/ast/ast_main.c              |  2 +-
+>  drivers/gpu/drm/drm_gem_vram_helper.c       | 16 ++++++++--------
+>  drivers/gpu/drm/hisilicon/hibmc/hibmc_ttm.c |  2 +-
+>  drivers/gpu/drm/mgag200/mgag200_main.c      |  2 +-
+>  drivers/gpu/drm/vboxvideo/vbox_main.c       |  2 +-
+>  6 files changed, 13 insertions(+), 14 deletions(-)
+>=20
+> diff --git a/include/drm/drm_gem_vram_helper.h b/include/drm/drm_gem_vr=
+am_helper.h
+> index 9581ea0a4f7e..7b9f50ba3fce 100644
+> --- a/include/drm/drm_gem_vram_helper.h
+> +++ b/include/drm/drm_gem_vram_helper.h
+> @@ -36,7 +36,6 @@ struct vm_area_struct;
+>   * video memory becomes scarce.
+>   */
+>  struct drm_gem_vram_object {
+> -	struct drm_gem_object gem;
+>  	struct ttm_buffer_object bo;
+>  	struct ttm_bo_kmap_obj kmap;
+> =20
+> @@ -68,7 +67,7 @@ static inline struct drm_gem_vram_object *drm_gem_vra=
+m_of_bo(
+>  static inline struct drm_gem_vram_object *drm_gem_vram_of_gem(
+>  	struct drm_gem_object *gem)
+
+To avoid ambiguities, I used the form <destination type name>_of_<field
+name>() to name these cast functions. The canonical name here would now
+be drm_gem_vram_of_bo_base(). But that's just nitpicking. If you don't
+want to change the name (and all its callers), maybe leave a FIXME commen=
+t.
+
+Acked-by: Thomas Zimmermann <tzimmermann@suse.de>
+
+Best regards
+Thomas
+
+>  {
+> -	return container_of(gem, struct drm_gem_vram_object, gem);
+> +	return container_of(gem, struct drm_gem_vram_object, bo.base);
+>  }
+> =20
+>  struct drm_gem_vram_object *drm_gem_vram_create(struct drm_device *dev=
+,
+> diff --git a/drivers/gpu/drm/ast/ast_main.c b/drivers/gpu/drm/ast/ast_m=
+ain.c
+> index 4c7e31cb45ff..74e6e471d283 100644
+> --- a/drivers/gpu/drm/ast/ast_main.c
+> +++ b/drivers/gpu/drm/ast/ast_main.c
+> @@ -609,6 +609,6 @@ int ast_gem_create(struct drm_device *dev,
+>  			DRM_ERROR("failed to allocate GEM object\n");
+>  		return ret;
+>  	}
+> -	*obj =3D &gbo->gem;
+> +	*obj =3D &gbo->bo.base;
+>  	return 0;
+>  }
+> diff --git a/drivers/gpu/drm/drm_gem_vram_helper.c b/drivers/gpu/drm/dr=
+m_gem_vram_helper.c
+> index 4de782ca26b2..61d9520cc15f 100644
+> --- a/drivers/gpu/drm/drm_gem_vram_helper.c
+> +++ b/drivers/gpu/drm/drm_gem_vram_helper.c
+> @@ -24,7 +24,7 @@ static void drm_gem_vram_cleanup(struct drm_gem_vram_=
+object *gbo)
+>  	 * TTM buffer object in 'bo' has already been cleaned
+>  	 * up; only release the GEM object.
+>  	 */
+> -	drm_gem_object_release(&gbo->gem);
+> +	drm_gem_object_release(&gbo->bo.base);
+>  }
+> =20
+>  static void drm_gem_vram_destroy(struct drm_gem_vram_object *gbo)
+> @@ -80,7 +80,7 @@ static int drm_gem_vram_init(struct drm_device *dev,
+>  	int ret;
+>  	size_t acc_size;
+> =20
+> -	ret =3D drm_gem_object_init(dev, &gbo->gem, size);
+> +	ret =3D drm_gem_object_init(dev, &gbo->bo.base, size);
+>  	if (ret)
+>  		return ret;
+> =20
+> @@ -98,7 +98,7 @@ static int drm_gem_vram_init(struct drm_device *dev,
+>  	return 0;
+> =20
+>  err_drm_gem_object_release:
+> -	drm_gem_object_release(&gbo->gem);
+> +	drm_gem_object_release(&gbo->bo.base);
+>  	return ret;
+>  }
+> =20
+> @@ -378,11 +378,11 @@ int drm_gem_vram_fill_create_dumb(struct drm_file=
+ *file,
+>  	if (IS_ERR(gbo))
+>  		return PTR_ERR(gbo);
+> =20
+> -	ret =3D drm_gem_handle_create(file, &gbo->gem, &handle);
+> +	ret =3D drm_gem_handle_create(file, &gbo->bo.base, &handle);
+>  	if (ret)
+>  		goto err_drm_gem_object_put_unlocked;
+> =20
+> -	drm_gem_object_put_unlocked(&gbo->gem);
+> +	drm_gem_object_put_unlocked(&gbo->bo.base);
+> =20
+>  	args->pitch =3D pitch;
+>  	args->size =3D size;
+> @@ -391,7 +391,7 @@ int drm_gem_vram_fill_create_dumb(struct drm_file *=
+file,
+>  	return 0;
+> =20
+>  err_drm_gem_object_put_unlocked:
+> -	drm_gem_object_put_unlocked(&gbo->gem);
+> +	drm_gem_object_put_unlocked(&gbo->bo.base);
+>  	return ret;
+>  }
+>  EXPORT_SYMBOL(drm_gem_vram_fill_create_dumb);
+> @@ -441,7 +441,7 @@ int drm_gem_vram_bo_driver_verify_access(struct ttm=
+_buffer_object *bo,
+>  {
+>  	struct drm_gem_vram_object *gbo =3D drm_gem_vram_of_bo(bo);
+> =20
+> -	return drm_vma_node_verify_access(&gbo->gem.vma_node,
+> +	return drm_vma_node_verify_access(&gbo->bo.base.vma_node,
+>  					  filp->private_data);
+>  }
+>  EXPORT_SYMBOL(drm_gem_vram_bo_driver_verify_access);
+> @@ -635,7 +635,7 @@ int drm_gem_vram_driver_gem_prime_mmap(struct drm_g=
+em_object *gem,
+>  {
+>  	struct drm_gem_vram_object *gbo =3D drm_gem_vram_of_gem(gem);
+> =20
+> -	gbo->gem.vma_node.vm_node.start =3D gbo->bo.vma_node.vm_node.start;
+> +	gbo->bo.base.vma_node.vm_node.start =3D gbo->bo.vma_node.vm_node.star=
+t;
+>  	return drm_gem_prime_mmap(gem, vma);
+>  }
+>  EXPORT_SYMBOL(drm_gem_vram_driver_gem_prime_mmap);
+> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_ttm.c b/drivers/gpu/=
+drm/hisilicon/hibmc/hibmc_ttm.c
+> index 52fba8cb8ddd..f2a63b5f0425 100644
+> --- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_ttm.c
+> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_ttm.c
+> @@ -65,7 +65,7 @@ int hibmc_gem_create(struct drm_device *dev, u32 size=
+, bool iskernel,
+>  			DRM_ERROR("failed to allocate GEM object: %d\n", ret);
+>  		return ret;
+>  	}
+> -	*obj =3D &gbo->gem;
+> +	*obj =3D &gbo->bo.base;
+>  	return 0;
+>  }
+> =20
+> diff --git a/drivers/gpu/drm/mgag200/mgag200_main.c b/drivers/gpu/drm/m=
+gag200/mgag200_main.c
+> index 0d7fc00e5d8a..c17440d3e6bc 100644
+> --- a/drivers/gpu/drm/mgag200/mgag200_main.c
+> +++ b/drivers/gpu/drm/mgag200/mgag200_main.c
+> @@ -288,6 +288,6 @@ int mgag200_gem_create(struct drm_device *dev,
+>  			DRM_ERROR("failed to allocate GEM object\n");
+>  		return ret;
+>  	}
+> -	*obj =3D &gbo->gem;
+> +	*obj =3D &gbo->bo.base;
+>  	return 0;
+>  }
+> diff --git a/drivers/gpu/drm/vboxvideo/vbox_main.c b/drivers/gpu/drm/vb=
+oxvideo/vbox_main.c
+> index 18693e2bf72a..02fa8277ff1e 100644
+> --- a/drivers/gpu/drm/vboxvideo/vbox_main.c
+> +++ b/drivers/gpu/drm/vboxvideo/vbox_main.c
+> @@ -292,7 +292,7 @@ int vbox_gem_create(struct vbox_private *vbox,
+>  		return ret;
+>  	}
+> =20
+> -	*obj =3D &gbo->gem;
+> +	*obj =3D &gbo->bo.base;
+> =20
+>  	return 0;
+>  }
+>=20
+
+--=20
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Linux GmbH, Maxfeldstrasse 5, 90409 Nuernberg, Germany
+GF: Felix Imend=C3=B6rffer, Mary Higgins, Sri Rasiah
+HRB 21284 (AG N=C3=BCrnberg)
+
+
+--DJ9HlhJD9L2dklPFOiy3KC57KeCfP5uxU--
+
+--BtMQccqzopt56oczlTQEKgFG9Me4QiQDV
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEchf7rIzpz2NEoWjlaA3BHVMLeiMFAl0VwfYACgkQaA3BHVML
+eiM5nAgAr8QjHp6GlhpJqv8IP12NFNyGR6jQWj1hjUPl1m/cu1KsfuPPc3JYcn/X
+rtq048TlKhgM30jloAj2yslkywrGVznhx8Dm5Z/IPYK0PFYRJeLIXfmwhvXEO6Xd
+4rStCxsi83Dc7eTMTzv2f4JSTV+baKYwAbdL7G1MERbfF98YHfHuxQp9xqAsLFie
+obxhBT3ym6aU2MicqSbmLq1hifZWjD5nAD6gH688stMYz4jnTSeIaHTVm88e9YWu
+mWJT9noohZjuY3wA0xRZG+5NCPxBcJ7wZqC3kdwvzNYMjfyZHYrThH8Gm18A3vwx
+oDcAIsdHDbyJGqvX7e/3xxlh2KitKA==
+=fsj5
+-----END PGP SIGNATURE-----
+
+--BtMQccqzopt56oczlTQEKgFG9Me4QiQDV--
