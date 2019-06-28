@@ -2,236 +2,200 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E731C59386
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 07:39:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C1655938B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 07:41:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726920AbfF1Fjq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 01:39:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57254 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726240AbfF1Fjp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 01:39:45 -0400
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D29F42133F;
-        Fri, 28 Jun 2019 05:39:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561700384;
-        bh=6aZeyquE37yylW+f6DBNbaMYSjXvL7vQzuyLohuFmT4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=VANttZFySgX0Q9/V5gt6b69RzBWlwwOpGTqaYaU4PknmJW8L431qvIgF6jXBLDyo/
-         JF3zEO6FbvZHndI/MJMncjWH0dhaGixbaGFkcwjzNo12zQ2l/L3YBcParOziwW7ynC
-         CvtMUR6eaBTK/C4JDRF8jpCKy61wAVX+8MWDM+vM=
-Date:   Fri, 28 Jun 2019 14:39:40 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Tom Zanussi <zanussi@kernel.org>
-Cc:     rostedt@goodmis.org, mhiramat@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] tracing: Simplify assignment parsing for hist
- triggers
-Message-Id: <20190628143940.23b8f53f0ef754e9c6a5b947@kernel.org>
-In-Reply-To: <17ac912dcec67c85e371b47dd2f55ae7c082b5f6.1561647046.git.zanussi@kernel.org>
-References: <cover.1561647046.git.zanussi@kernel.org>
-        <17ac912dcec67c85e371b47dd2f55ae7c082b5f6.1561647046.git.zanussi@kernel.org>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
+        id S1726915AbfF1Fl0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 01:41:26 -0400
+Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:9790 "EHLO
+        mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726566AbfF1FlZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Jun 2019 01:41:25 -0400
+X-IronPort-AV: E=Sophos;i="5.63,426,1557180000"; 
+   d="scan'208";a="311715816"
+Received: from abo-12-105-68.mrs.modulonet.fr (HELO hadrien) ([85.68.105.12])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jun 2019 07:41:21 +0200
+Date:   Fri, 28 Jun 2019 07:41:21 +0200 (CEST)
+From:   Julia Lawall <julia.lawall@lip6.fr>
+X-X-Sender: jll@hadrien
+To:     Fuqian Huang <huangfq.daxian@gmail.com>
+cc:     Larry Finger <Larry.Finger@lwfinger.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Florian Schilhabel <florian.c.schilhabel@googlemail.com>,
+        Michael Straube <straube.linux@gmail.com>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Dafna Hirschfeld <dafna3@gmail.com>,
+        Omer Efrat <omer.efrat@tandemg.com>,
+        Quytelda Kahja <quytelda@tamalin.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Mamta Shukla <mamtashukla555@gmail.com>,
+        Emanuel Bennici <benniciemanuel78@gmail.com>,
+        Wen Yang <wen.yang99@zte.com.cn>,
+        Payal Kshirsagar <payal.s.kshirsagar.98@gmail.com>,
+        Jia-Ju Bai <baijiaju1990@gmail.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 19/27] staging: rtl8*: use zeroing allocator rather
+ than allocator followed with memset 0
+In-Reply-To: <20190628024935.15806-1-huangfq.daxian@gmail.com>
+Message-ID: <alpine.DEB.2.21.1906280738460.2703@hadrien>
+References: <20190628024935.15806-1-huangfq.daxian@gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 27 Jun 2019 10:35:16 -0500
-Tom Zanussi <zanussi@kernel.org> wrote:
 
-> In the process of adding better error messages for sorting, I realized
-> that strsep was being used incorrectly and some of the error paths I
-> was expecting to be hit weren't and just fell through to the common
-> invalid key error case.
 
-Would you mean this includes a bugfix too?
+On Fri, 28 Jun 2019, Fuqian Huang wrote:
 
-> 
-> It also became obvious that for keyword assignments, it wasn't
-> necessary to save the full assignment and reparse it later, and having
-> a common empty-assignment check would also make more sense in terms of
-> error processing.
-> 
-> Change the code to fix these problems and simplify it for new error
-> message changes in a subsequent patch.
-> 
-> Signed-off-by: Tom Zanussi <zanussi@kernel.org>
+> Use zeroing allocator rather than allocator followed with memset 0.
 
-Anyway looks good to me.
+Maybe it would be better to just change these to the appropriate kmalloc
+and kzalloc calls.
 
-Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
+You will need to check on whether locks are held to know whether the secon
+argument should be GFP_ATOMIC or GFP_KERNEL.  The current code doesn't
+address this issue in a correct manner.
 
-Thanks,
+You may also want to add some options to your get_maintainer call to not
+send patches to everyone who has ever worked on the driver.
 
+julia
+
+>
+> Signed-off-by: Fuqian Huang <huangfq.daxian@gmail.com>
 > ---
->  kernel/trace/trace_events_hist.c | 70 ++++++++++++++++------------------------
->  1 file changed, 27 insertions(+), 43 deletions(-)
-> 
-> diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-> index ca6b0dff60c5..964d032f51c6 100644
-> --- a/kernel/trace/trace_events_hist.c
-> +++ b/kernel/trace/trace_events_hist.c
-> @@ -1985,12 +1985,6 @@ static int parse_map_size(char *str)
->  	unsigned long size, map_bits;
->  	int ret;
->  
-> -	strsep(&str, "=");
-> -	if (!str) {
-> -		ret = -EINVAL;
-> -		goto out;
-> -	}
+>  drivers/staging/rtl8188eu/os_dep/mlme_linux.c     |  3 +--
+>  drivers/staging/rtl8712/rtl871x_io.c              |  4 +---
+>  drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c |  8 ++------
+>  drivers/staging/rtl8723bs/os_dep/ioctl_linux.c    | 12 +++---------
+>  4 files changed, 7 insertions(+), 20 deletions(-)
+>
+> diff --git a/drivers/staging/rtl8188eu/os_dep/mlme_linux.c b/drivers/staging/rtl8188eu/os_dep/mlme_linux.c
+> index 9db11b16cb93..250acb01d1a9 100644
+> --- a/drivers/staging/rtl8188eu/os_dep/mlme_linux.c
+> +++ b/drivers/staging/rtl8188eu/os_dep/mlme_linux.c
+> @@ -98,10 +98,9 @@ void rtw_report_sec_ie(struct adapter *adapter, u8 authmode, u8 *sec_ie)
+>  	if (authmode == _WPA_IE_ID_) {
+>  		RT_TRACE(_module_mlme_osdep_c_, _drv_info_,
+>  			 ("rtw_report_sec_ie, authmode=%d\n", authmode));
+> -		buff = rtw_malloc(IW_CUSTOM_MAX);
+> +		buff = rtw_zmalloc(IW_CUSTOM_MAX);
+>  		if (!buff)
+>  			return;
+> -		memset(buff, 0, IW_CUSTOM_MAX);
+>  		p = buff;
+>  		p += sprintf(p, "ASSOCINFO(ReqIEs =");
+>  		len = sec_ie[1] + 2;
+> diff --git a/drivers/staging/rtl8712/rtl871x_io.c b/drivers/staging/rtl8712/rtl871x_io.c
+> index 17dafeffd6f4..87024d6a465e 100644
+> --- a/drivers/staging/rtl8712/rtl871x_io.c
+> +++ b/drivers/staging/rtl8712/rtl871x_io.c
+> @@ -107,13 +107,11 @@ uint r8712_alloc_io_queue(struct _adapter *adapter)
+>  	INIT_LIST_HEAD(&pio_queue->processing);
+>  	INIT_LIST_HEAD(&pio_queue->pending);
+>  	spin_lock_init(&pio_queue->lock);
+> -	pio_queue->pallocated_free_ioreqs_buf = kmalloc(NUM_IOREQ *
+> +	pio_queue->pallocated_free_ioreqs_buf = kzalloc(NUM_IOREQ *
+>  						(sizeof(struct io_req)) + 4,
+>  						GFP_ATOMIC);
+>  	if ((pio_queue->pallocated_free_ioreqs_buf) == NULL)
+>  		goto alloc_io_queue_fail;
+> -	memset(pio_queue->pallocated_free_ioreqs_buf, 0,
+> -			(NUM_IOREQ * (sizeof(struct io_req)) + 4));
+>  	pio_queue->free_ioreqs_buf = pio_queue->pallocated_free_ioreqs_buf + 4
+>  			- ((addr_t)(pio_queue->pallocated_free_ioreqs_buf)
+>  			& 3);
+> diff --git a/drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c b/drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c
+> index db553f2e4c0b..f8e0723f5d1f 100644
+> --- a/drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c
+> +++ b/drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c
+> @@ -1078,12 +1078,10 @@ static int cfg80211_rtw_add_key(struct wiphy *wiphy, struct net_device *ndev,
+>  	DBG_871X("pairwise =%d\n", pairwise);
+>
+>  	param_len = sizeof(struct ieee_param) + params->key_len;
+> -	param = rtw_malloc(param_len);
+> +	param = rtw_zmalloc(param_len);
+>  	if (param == NULL)
+>  		return -1;
+>
+> -	memset(param, 0, param_len);
 > -
->  	ret = kstrtoul(str, 0, &size);
->  	if (ret)
->  		goto out;
-> @@ -2050,25 +2044,25 @@ static int parse_action(char *str, struct hist_trigger_attrs *attrs)
->  static int parse_assignment(struct trace_array *tr,
->  			    char *str, struct hist_trigger_attrs *attrs)
->  {
-> -	int ret = 0;
-> +	int len, ret = 0;
->  
-> -	if ((str_has_prefix(str, "key=")) ||
-> -	    (str_has_prefix(str, "keys="))) {
-> -		attrs->keys_str = kstrdup(str, GFP_KERNEL);
-> +	if ((len = str_has_prefix(str, "key=")) ||
-> +	    (len = str_has_prefix(str, "keys="))) {
-> +		attrs->keys_str = kstrdup(str + len, GFP_KERNEL);
->  		if (!attrs->keys_str) {
->  			ret = -ENOMEM;
->  			goto out;
->  		}
-> -	} else if ((str_has_prefix(str, "val=")) ||
-> -		   (str_has_prefix(str, "vals=")) ||
-> -		   (str_has_prefix(str, "values="))) {
-> -		attrs->vals_str = kstrdup(str, GFP_KERNEL);
-> +	} else if ((len = str_has_prefix(str, "val=")) ||
-> +		   (len = str_has_prefix(str, "vals=")) ||
-> +		   (len = str_has_prefix(str, "values="))) {
-> +		attrs->vals_str = kstrdup(str + len, GFP_KERNEL);
->  		if (!attrs->vals_str) {
->  			ret = -ENOMEM;
->  			goto out;
->  		}
-> -	} else if (str_has_prefix(str, "sort=")) {
-> -		attrs->sort_key_str = kstrdup(str, GFP_KERNEL);
-> +	} else if ((len = str_has_prefix(str, "sort="))) {
-> +		attrs->sort_key_str = kstrdup(str + len, GFP_KERNEL);
->  		if (!attrs->sort_key_str) {
->  			ret = -ENOMEM;
->  			goto out;
-> @@ -2079,12 +2073,8 @@ static int parse_assignment(struct trace_array *tr,
->  			ret = -ENOMEM;
->  			goto out;
->  		}
-> -	} else if (str_has_prefix(str, "clock=")) {
-> -		strsep(&str, "=");
-> -		if (!str) {
-> -			ret = -EINVAL;
-> -			goto out;
-> -		}
-> +	} else if ((len = str_has_prefix(str, "clock="))) {
-> +		str += len;
->  
->  		str = strstrip(str);
->  		attrs->clock = kstrdup(str, GFP_KERNEL);
-> @@ -2092,8 +2082,8 @@ static int parse_assignment(struct trace_array *tr,
->  			ret = -ENOMEM;
->  			goto out;
->  		}
-> -	} else if (str_has_prefix(str, "size=")) {
-> -		int map_bits = parse_map_size(str);
-> +	} else if ((len = str_has_prefix(str, "size="))) {
-> +		int map_bits = parse_map_size(str + len);
->  
->  		if (map_bits < 0) {
->  			ret = map_bits;
-> @@ -2133,8 +2123,14 @@ parse_hist_trigger_attrs(struct trace_array *tr, char *trigger_str)
->  
->  	while (trigger_str) {
->  		char *str = strsep(&trigger_str, ":");
-> +		char *rhs;
->  
-> -		if (strchr(str, '=')) {
-> +		rhs = strchr(str, '=');
-> +		if (rhs) {
-> +			if (!strlen(++rhs)) {
-> +				ret = -EINVAL;
-> +				goto free;
-> +			}
->  			ret = parse_assignment(tr, str, attrs);
->  			if (ret)
->  				goto free;
-> @@ -4459,10 +4455,6 @@ static int create_val_fields(struct hist_trigger_data *hist_data,
->  	if (!fields_str)
->  		goto out;
->  
-> -	strsep(&fields_str, "=");
-> -	if (!fields_str)
-> -		goto out;
+>  	param->cmd = IEEE_CMD_SET_ENCRYPTION;
+>  	memset(param->sta_addr, 0xff, ETH_ALEN);
+>
+> @@ -2167,15 +2165,13 @@ static int cfg80211_rtw_connect(struct wiphy *wiphy, struct net_device *ndev,
+>  		{
+>  			wep_key_len = wep_key_len <= 5 ? 5 : 13;
+>  			wep_total_len = wep_key_len + FIELD_OFFSET(struct ndis_802_11_wep, KeyMaterial);
+> -			pwep = rtw_malloc(wep_total_len);
+> +			pwep = rtw_zmalloc(wep_total_len);
+>  			if (pwep == NULL) {
+>  				DBG_871X(" wpa_set_encryption: pwep allocate fail !!!\n");
+>  				ret = -ENOMEM;
+>  				goto exit;
+>  			}
+>
+> -			memset(pwep, 0, wep_total_len);
 > -
->  	for (i = 0, j = 1; i < TRACING_MAP_VALS_MAX &&
->  		     j < TRACING_MAP_VALS_MAX; i++) {
->  		field_str = strsep(&fields_str, ",");
-> @@ -4557,10 +4549,6 @@ static int create_key_fields(struct hist_trigger_data *hist_data,
->  	if (!fields_str)
->  		goto out;
->  
-> -	strsep(&fields_str, "=");
-> -	if (!fields_str)
-> -		goto out;
+>  			pwep->KeyLength = wep_key_len;
+>  			pwep->Length = wep_total_len;
+>
+> diff --git a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
+> index e3d356952875..1491d420929c 100644
+> --- a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
+> +++ b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
+> @@ -478,14 +478,12 @@ static int wpa_set_encryption(struct net_device *dev, struct ieee_param *param,
+>  		if (wep_key_len > 0) {
+>  			wep_key_len = wep_key_len <= 5 ? 5 : 13;
+>  			wep_total_len = wep_key_len + FIELD_OFFSET(struct ndis_802_11_wep, KeyMaterial);
+> -			pwep = rtw_malloc(wep_total_len);
+> +			pwep = rtw_zmalloc(wep_total_len);
+>  			if (pwep == NULL) {
+>  				RT_TRACE(_module_rtl871x_ioctl_os_c, _drv_err_, (" wpa_set_encryption: pwep allocate fail !!!\n"));
+>  				goto exit;
+>  			}
+>
+> -			memset(pwep, 0, wep_total_len);
 > -
->  	for (i = n_vals; i < n_vals + TRACING_MAP_KEYS_MAX; i++) {
->  		field_str = strsep(&fields_str, ",");
->  		if (!field_str)
-> @@ -4718,12 +4706,6 @@ static int create_sort_keys(struct hist_trigger_data *hist_data)
->  	if (!fields_str)
->  		goto out;
->  
-> -	strsep(&fields_str, "=");
-> -	if (!fields_str) {
-> -		ret = -EINVAL;
-> -		goto out;
-> -	}
+>  			pwep->KeyLength = wep_key_len;
+>  			pwep->Length = wep_total_len;
+>
+> @@ -2144,12 +2142,10 @@ static int rtw_wx_set_enc_ext(struct net_device *dev,
+>  	int ret = 0;
+>
+>  	param_len = sizeof(struct ieee_param) + pext->key_len;
+> -	param = rtw_malloc(param_len);
+> +	param = rtw_zmalloc(param_len);
+>  	if (param == NULL)
+>  		return -1;
+>
+> -	memset(param, 0, param_len);
 > -
->  	for (i = 0; i < TRACING_MAP_SORT_KEYS_MAX; i++) {
->  		struct hist_field *hist_field;
->  		char *field_str, *field_name;
-> @@ -4732,9 +4714,11 @@ static int create_sort_keys(struct hist_trigger_data *hist_data)
->  		sort_key = &hist_data->sort_keys[i];
->  
->  		field_str = strsep(&fields_str, ",");
-> -		if (!field_str) {
-> -			if (i == 0)
-> -				ret = -EINVAL;
-> +		if (!field_str)
-> +			break;
-> +
-> +		if (!*field_str) {
-> +			ret = -EINVAL;
->  			break;
->  		}
->  
-> @@ -4744,7 +4728,7 @@ static int create_sort_keys(struct hist_trigger_data *hist_data)
->  		}
->  
->  		field_name = strsep(&field_str, ".");
-> -		if (!field_name) {
-> +		if (!field_name || !*field_name) {
->  			ret = -EINVAL;
->  			break;
->  		}
-> -- 
-> 2.14.1
-> 
-
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+>  	param->cmd = IEEE_CMD_SET_ENCRYPTION;
+>  	memset(param->sta_addr, 0xff, ETH_ALEN);
+>
+> @@ -3522,14 +3518,12 @@ static int rtw_set_encryption(struct net_device *dev, struct ieee_param *param,
+>  		if (wep_key_len > 0) {
+>  			wep_key_len = wep_key_len <= 5 ? 5 : 13;
+>  			wep_total_len = wep_key_len + FIELD_OFFSET(struct ndis_802_11_wep, KeyMaterial);
+> -			pwep = rtw_malloc(wep_total_len);
+> +			pwep = rtw_zmalloc(wep_total_len);
+>  			if (pwep == NULL) {
+>  				DBG_871X(" r871x_set_encryption: pwep allocate fail !!!\n");
+>  				goto exit;
+>  			}
+>
+> -			memset(pwep, 0, wep_total_len);
+> -
+>  			pwep->KeyLength = wep_key_len;
+>  			pwep->Length = wep_total_len;
+>
+> --
+> 2.11.0
+>
+>
