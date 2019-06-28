@@ -2,117 +2,247 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF3E159C65
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 15:03:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CC8A59C73
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 15:03:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726801AbfF1NDL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 09:03:11 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:36318 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726566AbfF1NDL (ORCPT
+        id S1726907AbfF1NDo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 09:03:44 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:42904 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726558AbfF1NDn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 09:03:11 -0400
+        Fri, 28 Jun 2019 09:03:43 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
-        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=RHFB6j7SDnBGNVDtypLVfMNOkUqCQLUXwY/TQLvDA8s=; b=qE9PNjHbHSh2Jre+S5SOlJr9Y
-        zEntbtsPZyLP8hokouxEVHnMiwUccMZZf/FIKL6irWypETJlw+SW60ck31+NW4gCgtEOa5VqJxzUl
-        lfXcrHmWtqQbqdxTPj+ob2dexyoDtzggxSwH2nmu6MMPSxSfEVrJXGqapyqyxh4V2veHCgRzZqspQ
-        8YMZVcYwIh6IV4Liijazq3G3KYKDv7V8NH41BPpenB4Whh/5gnqznWPHcUCN7LscDGoGNDD41tQ70
-        l2H6/5Hh/ZQm80C8EUas5vM+ZlMg1DFMSdILlp1VAsfy6vWSFRutVLAA00/A6CQTlnIkjkgVMy1Sq
-        u+MsvPMrg==;
-Received: from [186.213.242.156] (helo=coco.lan)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hgqWz-000270-1v; Fri, 28 Jun 2019 13:03:09 +0000
-Date:   Fri, 28 Jun 2019 10:03:05 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Joe Perches <joe@perches.com>
-Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 1/9] hrtimer: Use a bullet for the returns bullet list
-Message-ID: <20190628100305.4c5729fd@coco.lan>
-In-Reply-To: <951e47de7dd6d86516c25ceb855c4b64f13fb65d.camel@perches.com>
-References: <cover.1561723736.git.mchehab+samsung@kernel.org>
-        <8176c9089f66796de6f62e74499eb3d3015f785d.1561723736.git.mchehab+samsung@kernel.org>
-        <951e47de7dd6d86516c25ceb855c4b64f13fb65d.camel@perches.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+         bh=hNhbRK+lgaslS8SRTtf5siA3u2w3EzBwsK7J6J2XYis=; b=jNV5Y6ICUWEomVh/T/H1PUORD
+        Xmc/50YdpSCSitGdcfnblqm8K9MqezT5JWiFd0pJHJym9GRt9EpxtOTORcsSP8e1cSNaZh4e+HqW9
+        woWHRiXoepn/GKPrXO0PlpKT0vpgW62XocEMSxeXaqh6U03q6TZ5pduhuMJJkmZ0tWhAqVpfxQOh8
+        HTRkUnmIE1qRifuJZWHh+2ksixAx+iGLc72/JVL6NQXv1N+D7lAaQGY3n7AAtOO+eAO/S1XEgVDeP
+        OIxYJ8lrLsvH8SdLFVvFbDj2XGQ+wwM4FuH1TlGhLWafYJze9JqeK2k+vRUXP1ElPQM0QqNlLJKSR
+        9p8Vffm6A==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hgqWz-0000eb-W6; Fri, 28 Jun 2019 13:03:10 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id AB49D2021621E; Fri, 28 Jun 2019 15:03:08 +0200 (CEST)
+Date:   Fri, 28 Jun 2019 15:03:08 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Juri Lelli <juri.lelli@redhat.com>
+Cc:     mingo@redhat.com, rostedt@goodmis.org, tj@kernel.org,
+        linux-kernel@vger.kernel.org, luca.abeni@santannapisa.it,
+        claudio@evidence.eu.com, tommaso.cucinotta@santannapisa.it,
+        bristot@redhat.com, mathieu.poirier@linaro.org, lizefan@huawei.com,
+        cgroups@vger.kernel.org, Prateek Sood <prsood@codeaurora.org>
+Subject: Re: [PATCH v8 6/8] cgroup/cpuset: Change cpuset_rwsem and hotplug
+ lock order
+Message-ID: <20190628130308.GU3419@hirez.programming.kicks-ass.net>
+References: <20190628080618.522-1-juri.lelli@redhat.com>
+ <20190628080618.522-7-juri.lelli@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190628080618.522-7-juri.lelli@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, 28 Jun 2019 05:39:25 -0700
-Joe Perches <joe@perches.com> escreveu:
-
-> On Fri, 2019-06-28 at 09:12 -0300, Mauro Carvalho Chehab wrote:
-> > That gets rid of this warning:
-> > 
-> > 	./kernel/time/hrtimer.c:1119: WARNING: Block quote ends without a blank line; unexpected unindent.
-> > 
-> > and displays nicely both at the source code and at the produced
-> > documentation.
-> > 
-> > Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-> > ---
-> >  kernel/time/hrtimer.c | 7 ++++---
-> >  1 file changed, 4 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
-> > index edb230aba3d1..5ee77f1a8a92 100644
-> > --- a/kernel/time/hrtimer.c
-> > +++ b/kernel/time/hrtimer.c
-> > @@ -1114,9 +1114,10 @@ EXPORT_SYMBOL_GPL(hrtimer_start_range_ns);
-> >   * @timer:	hrtimer to stop
-> >   *
-> >   * Returns:
-> > - *  0 when the timer was not active
-> > - *  1 when the timer was active
-> > - * -1 when the timer is currently executing the callback function and
-> > + *
-> > + *  *  0 when the timer was not active
-> > + *  *  1 when the timer was active
-> > + *  * -1 when the timer is currently executing the callback function and
-> >   *    cannot be stopped  
+On Fri, Jun 28, 2019 at 10:06:16AM +0200, Juri Lelli wrote:
+> cpuset_rwsem is going to be acquired from sched_setscheduler() with a
+> following patch. There are however paths (e.g., spawn_ksoftirqd) in
+> which sched_scheduler() is eventually called while holding hotplug lock;
+> this creates a dependecy between hotplug lock (to be always acquired
+> first) and cpuset_rwsem (to be always acquired after hotplug lock).
 > 
-> I think this last line should be indented 3 more spaces too
+> Fix paths which currently take the two locks in the wrong order (after
+> a following patch is applied).
+> Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
 
-That would produce a warning, and will change the font for the content of 
-the first line to bold. 
+This all reminds me of this:
 
-ReST is pedantic with whitespaces, as it uses it to identify continuation
-lines.
+  https://lkml.kernel.org/r/1510755615-25906-1-git-send-email-prsood@codeaurora.org
 
-For it to consider one line as a continuation of the previous one, the texts
-on both lines (after markups) should start at the same place.
+Which sadly got reverted again. If we do this now (I've always been a
+proponent), then we can make that rebuild synchronous again, which
+should also help here IIRC.
 
-So, on:
-
-	* foo
-	  bar
-
-"bar" is considered a continuation of the first line. So, identical to:
-
-	* foo bar
-
-But:
-
-	* foo bar
-	      foobar
-
-the whitespace doesn't match. it will change the font for the first line
-to bold, and place foobar on a separate line.
-
-
-(yeah, I know that, for kernel-doc, this sucks)
-
-
-Thanks,
-Mauro
+> ---
+>  include/linux/cpuset.h |  8 ++++----
+>  kernel/cgroup/cpuset.c | 22 +++++++++++++++++-----
+>  2 files changed, 21 insertions(+), 9 deletions(-)
+> 
+> diff --git a/include/linux/cpuset.h b/include/linux/cpuset.h
+> index 934633a05d20..7f1478c26a33 100644
+> --- a/include/linux/cpuset.h
+> +++ b/include/linux/cpuset.h
+> @@ -40,14 +40,14 @@ static inline bool cpusets_enabled(void)
+>  
+>  static inline void cpuset_inc(void)
+>  {
+> -	static_branch_inc(&cpusets_pre_enable_key);
+> -	static_branch_inc(&cpusets_enabled_key);
+> +	static_branch_inc_cpuslocked(&cpusets_pre_enable_key);
+> +	static_branch_inc_cpuslocked(&cpusets_enabled_key);
+>  }
+>  
+>  static inline void cpuset_dec(void)
+>  {
+> -	static_branch_dec(&cpusets_enabled_key);
+> -	static_branch_dec(&cpusets_pre_enable_key);
+> +	static_branch_dec_cpuslocked(&cpusets_enabled_key);
+> +	static_branch_dec_cpuslocked(&cpusets_pre_enable_key);
+>  }
+>  
+>  extern int cpuset_init(void);
+> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+> index a7c0c8d8f132..d92b351f89e3 100644
+> --- a/kernel/cgroup/cpuset.c
+> +++ b/kernel/cgroup/cpuset.c
+> @@ -1026,8 +1026,8 @@ static void rebuild_sched_domains_locked(void)
+>  	cpumask_var_t *doms;
+>  	int ndoms;
+>  
+> +	lockdep_assert_cpus_held();
+>  	percpu_rwsem_assert_held(&cpuset_rwsem);
+> -	get_online_cpus();
+>  
+>  	/*
+>  	 * We have raced with CPU hotplug. Don't do anything to avoid
+> @@ -1036,19 +1036,17 @@ static void rebuild_sched_domains_locked(void)
+>  	 */
+>  	if (!top_cpuset.nr_subparts_cpus &&
+>  	    !cpumask_equal(top_cpuset.effective_cpus, cpu_active_mask))
+> -		goto out;
+> +		return;
+>  
+>  	if (top_cpuset.nr_subparts_cpus &&
+>  	   !cpumask_subset(top_cpuset.effective_cpus, cpu_active_mask))
+> -		goto out;
+> +		return;
+>  
+>  	/* Generate domain masks and attrs */
+>  	ndoms = generate_sched_domains(&doms, &attr);
+>  
+>  	/* Have scheduler rebuild the domains */
+>  	partition_and_rebuild_sched_domains(ndoms, doms, attr);
+> -out:
+> -	put_online_cpus();
+>  }
+>  #else /* !CONFIG_SMP */
+>  static void rebuild_sched_domains_locked(void)
+> @@ -1058,9 +1056,11 @@ static void rebuild_sched_domains_locked(void)
+>  
+>  void rebuild_sched_domains(void)
+>  {
+> +	get_online_cpus();
+>  	percpu_down_write(&cpuset_rwsem);
+>  	rebuild_sched_domains_locked();
+>  	percpu_up_write(&cpuset_rwsem);
+> +	put_online_cpus();
+>  }
+>  
+>  /**
+> @@ -2298,6 +2298,7 @@ static int cpuset_write_u64(struct cgroup_subsys_state *css, struct cftype *cft,
+>  	cpuset_filetype_t type = cft->private;
+>  	int retval = 0;
+>  
+> +	get_online_cpus();
+>  	percpu_down_write(&cpuset_rwsem);
+>  	if (!is_cpuset_online(cs)) {
+>  		retval = -ENODEV;
+> @@ -2335,6 +2336,7 @@ static int cpuset_write_u64(struct cgroup_subsys_state *css, struct cftype *cft,
+>  	}
+>  out_unlock:
+>  	percpu_up_write(&cpuset_rwsem);
+> +	put_online_cpus();
+>  	return retval;
+>  }
+>  
+> @@ -2345,6 +2347,7 @@ static int cpuset_write_s64(struct cgroup_subsys_state *css, struct cftype *cft,
+>  	cpuset_filetype_t type = cft->private;
+>  	int retval = -ENODEV;
+>  
+> +	get_online_cpus();
+>  	percpu_down_write(&cpuset_rwsem);
+>  	if (!is_cpuset_online(cs))
+>  		goto out_unlock;
+> @@ -2359,6 +2362,7 @@ static int cpuset_write_s64(struct cgroup_subsys_state *css, struct cftype *cft,
+>  	}
+>  out_unlock:
+>  	percpu_up_write(&cpuset_rwsem);
+> +	put_online_cpus();
+>  	return retval;
+>  }
+>  
+> @@ -2397,6 +2401,7 @@ static ssize_t cpuset_write_resmask(struct kernfs_open_file *of,
+>  	kernfs_break_active_protection(of->kn);
+>  	flush_work(&cpuset_hotplug_work);
+>  
+> +	get_online_cpus();
+>  	percpu_down_write(&cpuset_rwsem);
+>  	if (!is_cpuset_online(cs))
+>  		goto out_unlock;
+> @@ -2422,6 +2427,7 @@ static ssize_t cpuset_write_resmask(struct kernfs_open_file *of,
+>  	free_cpuset(trialcs);
+>  out_unlock:
+>  	percpu_up_write(&cpuset_rwsem);
+> +	put_online_cpus();
+>  	kernfs_unbreak_active_protection(of->kn);
+>  	css_put(&cs->css);
+>  	flush_workqueue(cpuset_migrate_mm_wq);
+> @@ -2552,6 +2558,7 @@ static ssize_t sched_partition_write(struct kernfs_open_file *of, char *buf,
+>  		return -EINVAL;
+>  
+>  	css_get(&cs->css);
+> +	get_online_cpus();
+>  	percpu_down_write(&cpuset_rwsem);
+>  	if (!is_cpuset_online(cs))
+>  		goto out_unlock;
+> @@ -2559,6 +2566,7 @@ static ssize_t sched_partition_write(struct kernfs_open_file *of, char *buf,
+>  	retval = update_prstate(cs, val);
+>  out_unlock:
+>  	percpu_up_write(&cpuset_rwsem);
+> +	put_online_cpus();
+>  	css_put(&cs->css);
+>  	return retval ?: nbytes;
+>  }
+> @@ -2764,6 +2772,7 @@ static int cpuset_css_online(struct cgroup_subsys_state *css)
+>  	if (!parent)
+>  		return 0;
+>  
+> +	get_online_cpus();
+>  	percpu_down_write(&cpuset_rwsem);
+>  
+>  	set_bit(CS_ONLINE, &cs->flags);
+> @@ -2816,6 +2825,7 @@ static int cpuset_css_online(struct cgroup_subsys_state *css)
+>  	spin_unlock_irq(&callback_lock);
+>  out_unlock:
+>  	percpu_up_write(&cpuset_rwsem);
+> +	put_online_cpus();
+>  	return 0;
+>  }
+>  
+> @@ -2834,6 +2844,7 @@ static void cpuset_css_offline(struct cgroup_subsys_state *css)
+>  {
+>  	struct cpuset *cs = css_cs(css);
+>  
+> +	get_online_cpus();
+>  	percpu_down_write(&cpuset_rwsem);
+>  
+>  	if (is_partition_root(cs))
+> @@ -2854,6 +2865,7 @@ static void cpuset_css_offline(struct cgroup_subsys_state *css)
+>  	clear_bit(CS_ONLINE, &cs->flags);
+>  
+>  	percpu_up_write(&cpuset_rwsem);
+> +	put_online_cpus();
+>  }
+>  
+>  static void cpuset_css_free(struct cgroup_subsys_state *css)
+> -- 
+> 2.17.2
+> 
