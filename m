@@ -2,106 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CE98596A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 10:59:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A16D596AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 11:01:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726528AbfF1I7x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 04:59:53 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:30451 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726385AbfF1I7x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 04:59:53 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 45ZrLb32q7z9v1dq;
-        Fri, 28 Jun 2019 10:59:51 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=hCseVWrz; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id wg0kRk6LpBEP; Fri, 28 Jun 2019 10:59:51 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 45ZrLb0JB7z9v1dW;
-        Fri, 28 Jun 2019 10:59:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1561712391; bh=3PExFE1N6IiyQSDeWR2v89tJ9QeiWcAN1N4Hjay3PlI=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=hCseVWrzRRQQXlskmPHp+o3zZeA9GBRK4q98IdoDLwuXYMJZ0gqNOJzJu4lD6Mxqb
-         cA/OiFk6yj7OXXXZDbS9ktAYJzXSFIfIfzeuxOXNEijxaOSJN+wsUKbnOH/ZnZ0Lmi
-         Pgc6B8sCSvQ3DAwq+DJQJ9XYrlUTJvBjOpWEWRUQ=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 256308B966;
-        Fri, 28 Jun 2019 10:59:52 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id mul6Zychpueb; Fri, 28 Jun 2019 10:59:52 +0200 (CEST)
-Received: from [172.25.230.101] (po15451.idsi0.si.c-s.fr [172.25.230.101])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id E11848B961;
-        Fri, 28 Jun 2019 10:59:51 +0200 (CEST)
-Subject: Re: [PATCH v2 27/27] sound: ppc: remove unneeded memset after
- dma_alloc_coherent
-To:     Fuqian Huang <huangfq.daxian@gmail.com>
-Cc:     Rob Herring <robh@kernel.org>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Richard Fontana <rfontana@redhat.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linuxppc-dev@lists.ozlabs.org, Allison Randal <allison@lohutok.net>
-References: <20190628025055.16242-1-huangfq.daxian@gmail.com>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Followup-To: Takashi Iwai <tiwai@suse.com>
-Message-ID: <83108dee-72f7-e56f-95f6-26162c9a0ccc@c-s.fr>
-Date:   Fri, 28 Jun 2019 10:59:51 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
-MIME-Version: 1.0
-In-Reply-To: <20190628025055.16242-1-huangfq.daxian@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+        id S1726648AbfF1JBX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 05:01:23 -0400
+Received: from mail.steuer-voss.de ([85.183.69.95]:40954 "EHLO
+        mail.steuer-voss.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726520AbfF1JBX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Jun 2019 05:01:23 -0400
+X-Virus-Scanned: Debian amavisd-new at mail.steuer-voss.de
+Received: from pc-niv.weinmann.com (localhost [127.0.0.1])
+        by mail.steuer-voss.de (Postfix) with ESMTP id B9C964B8A3;
+        Fri, 28 Jun 2019 11:01:20 +0200 (CEST)
+From:   Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
+To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, nv@vosn.de
+Subject: [PATCH 1/2] drivers/usb/typec/tps6598x.c: fix portinfo width
+Date:   Fri, 28 Jun 2019 11:01:08 +0200
+Message-Id: <f8daf204d49fff00db33e2b417a20afcc58ad56e.1561712364.git.nikolaus.voss@loewensteinmedical.de>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190628083417.GA21701@kuha.fi.intel.com>
+References: <20190628083417.GA21701@kuha.fi.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Portinfo bit field is 3 bits wide, not 2 bits. This led to
+a wrong driver configuration for some tps6598x configurations.
 
+Fixes: 0a4c005bd171 ("usb: typec: driver for TI TPS6598x USB Power Delivery controllers")
+Signed-off-by: Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
+---
+ drivers/usb/typec/tps6598x.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Le 28/06/2019 à 04:50, Fuqian Huang a écrit :
-> In commit af7ddd8a627c
-> ("Merge tag 'dma-mapping-4.21' of git://git.infradead.org/users/hch/dma-mapping"),
-> dma_alloc_coherent has already zeroed the memory.
-> So memset is not needed.
+diff --git a/drivers/usb/typec/tps6598x.c b/drivers/usb/typec/tps6598x.c
+index c674abe3cf99..a170c49c2542 100644
+--- a/drivers/usb/typec/tps6598x.c
++++ b/drivers/usb/typec/tps6598x.c
+@@ -41,7 +41,7 @@
+ #define TPS_STATUS_VCONN(s)		(!!((s) & BIT(7)))
+ 
+ /* TPS_REG_SYSTEM_CONF bits */
+-#define TPS_SYSCONF_PORTINFO(c)		((c) & 3)
++#define TPS_SYSCONF_PORTINFO(c)		((c) & 7)
+ 
+ enum {
+ 	TPS_PORTINFO_SINK,
+-- 
+2.17.1
 
-You are refering to a merge commit, is that correct ?
-
-I can't see anything related in that commit, can you please pinpoint it ?
-
-As far as I can see, on powerpc the memory has always been zeroized 
-(since 2005 at least).
-
-Christophe
-
-> 
-> Signed-off-by: Fuqian Huang <huangfq.daxian@gmail.com>
-> ---
->   sound/ppc/pmac.c | 1 -
->   1 file changed, 1 deletion(-)
-> 
-> diff --git a/sound/ppc/pmac.c b/sound/ppc/pmac.c
-> index 1b11e53f6a62..1ab12f4f8631 100644
-> --- a/sound/ppc/pmac.c
-> +++ b/sound/ppc/pmac.c
-> @@ -56,7 +56,6 @@ static int snd_pmac_dbdma_alloc(struct snd_pmac *chip, struct pmac_dbdma *rec, i
->   	if (rec->space == NULL)
->   		return -ENOMEM;
->   	rec->size = size;
-> -	memset(rec->space, 0, rsize);
->   	rec->cmds = (void __iomem *)DBDMA_ALIGN(rec->space);
->   	rec->addr = rec->dma_base + (unsigned long)((char *)rec->cmds - (char *)rec->space);
->   
-> 
