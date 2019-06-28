@@ -2,69 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D94C59E85
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 17:14:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF44A59E91
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 17:15:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726873AbfF1PN7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 11:13:59 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:32903 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726835AbfF1PN7 (ORCPT
+        id S1726925AbfF1PPO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 11:15:14 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:37284 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726725AbfF1PPN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 11:13:59 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1hgsZW-00039M-Qd; Fri, 28 Jun 2019 15:13:54 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Kevin Wang <kevin1.wang@amd.com>, Rex Zhu <rex.zhu@amd.com>,
-        Evan Quan <evan.quan@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        David Zhou <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/amd/powerplay: fix out of memory check on od8_settings
-Date:   Fri, 28 Jun 2019 16:13:54 +0100
-Message-Id: <20190628151354.14107-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.20.1
+        Fri, 28 Jun 2019 11:15:13 -0400
+Received: by mail-ed1-f68.google.com with SMTP id w13so11291605eds.4
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2019 08:15:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=codeblueprint-co-uk.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=jaTwaRaq1pQyZRn8h7WxYAhQfyGnsb7JF7WEsqkcdCs=;
+        b=FopxHQvajE42NY5N5u5hiOPkAIZqH3PHAbJbocZrfNO1SdSvH7NGm1FR7nNGgXvzeA
+         tXd6OxxP0fTK9j83FCHwALQLXDUkN+IS1ouVYikPUUYg2JeNdqxaykyqF70iQJGz9Tcx
+         nCByMjjmi06M8IWkhpYzxoXTqqMjeoErcwJRDuyz/jz/s8lS0DsDwfb3zKiDPb5UlXwx
+         J1InixDlED6pJOvbfiwYrKgWiXBVIVCkVLLUm3N+UAHr8Ka+qR6gQBkgXGU4fDFD8YD6
+         rS/9nE4RpCRHm6QYgulTMkbpvikhNMIB1qSw0vsdvruZGGSbgtGiPIj5P7mPakumcWsL
+         IeZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=jaTwaRaq1pQyZRn8h7WxYAhQfyGnsb7JF7WEsqkcdCs=;
+        b=R+A4DgGAp+ZY4igbVLrhW76pe4cb6jTfEcv3D66Nxg3crCyKaSxEdAtPrQ8FcOmGkt
+         H7ZL0zccGnVdyz015hGsShPz67w8C6GW6qKHFjPeKnKXtV77pqkq+r2FYRS8exGI3CYs
+         /YGdPso7Zvw7+KeKPAKtiZuEkvRyaKfGg7QHdHVzSf/cLIsdngDkh8ZUYSVufnUs9baz
+         GQ/2xUolvycRn1YANQEwbRRDjdiVmDgrU2OYWe83j5UIuaL42iULr1ixccP8/wCWC2J+
+         /QstkdkOKuXUYoqESkKj5MYAyAPd4/B7WSOk9wLp9Bt5FaNgBTRIQhvTay6l0KTPMrTC
+         jfrQ==
+X-Gm-Message-State: APjAAAWRXcx9HSVAQwdDQH01Z9deROxx6qK6nxbVI8iUE6nQjk5kCQkX
+        ceIkZQOxgF2sQFmqyQac/h7JZg==
+X-Google-Smtp-Source: APXvYqz4JBuvSw1LcvfY60hRe9sE1lnwo6cyodIongubhJVDHGMsOF9zbLGaqnanIIQ/dUitr0A9Yg==
+X-Received: by 2002:a50:a56a:: with SMTP id z39mr12112533edb.107.1561734911733;
+        Fri, 28 Jun 2019 08:15:11 -0700 (PDT)
+Received: from localhost ([94.1.151.203])
+        by smtp.gmail.com with ESMTPSA id c53sm783442ede.84.2019.06.28.08.15.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 28 Jun 2019 08:15:10 -0700 (PDT)
+Date:   Fri, 28 Jun 2019 16:15:08 +0100
+From:   Matt Fleming <matt@codeblueprint.co.uk>
+To:     "Suthikulpanit, Suravee" <Suravee.Suthikulpanit@amd.com>
+Cc:     Mel Gorman <mgorman@techsingularity.net>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Borislav Petkov <bp@alien8.de>
+Subject: Re: [PATCH] sched/topology: Improve load balancing on AMD EPYC
+Message-ID: <20190628151508.GB6909@codeblueprint.co.uk>
+References: <20190605155922.17153-1-matt@codeblueprint.co.uk>
+ <20190605180035.GA3402@hirez.programming.kicks-ass.net>
+ <20190610212620.GA4772@codeblueprint.co.uk>
+ <18994abb-a2a8-47f4-9a35-515165c75942@amd.com>
+ <20190618104319.GB4772@codeblueprint.co.uk>
+ <20190618123318.GG3419@hirez.programming.kicks-ass.net>
+ <20190619213437.GA6909@codeblueprint.co.uk>
+ <20190624142420.GC2978@techsingularity.net>
+ <989944bc-6c3a-43b5-4f95-0bdfcc6d6c29@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <989944bc-6c3a-43b5-4f95-0bdfcc6d6c29@amd.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
-
-The null pointer check on od8_settings is currently the opposite of what
-it is intended to do. Fix this by adding in the missing ! operator.
-
-Addressed-Coverity: ("Resource leak")
-Fixes: 0c83d32c565c ("drm/amd/powerplay: simplified od_settings for each asic")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/gpu/drm/amd/powerplay/vega20_ppt.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/amd/powerplay/vega20_ppt.c b/drivers/gpu/drm/amd/powerplay/vega20_ppt.c
-index 0f14fe14ecd8..eb9e6b3a5265 100644
---- a/drivers/gpu/drm/amd/powerplay/vega20_ppt.c
-+++ b/drivers/gpu/drm/amd/powerplay/vega20_ppt.c
-@@ -1501,8 +1501,7 @@ static int vega20_set_default_od8_setttings(struct smu_context *smu)
- 		return -EINVAL;
+On Wed, 26 Jun, at 09:18:01PM, Suthikulpanit, Suravee wrote:
+> 
+> We use 16 to designate 1-hop latency (for different node within the same socket).
+> For across-socket access, since the latency is greater, we set the latency to 32
+> (twice the latency of 1-hop) not aware of the RECLAIM_DISTANCE at the time.
  
- 	od8_settings = kzalloc(sizeof(struct vega20_od8_settings), GFP_KERNEL);
--
--	if (od8_settings)
-+	if (!od8_settings)
- 		return -ENOMEM;
- 
- 	smu->od_settings = (void *)od8_settings;
--- 
-2.20.1
-
+I guess the question is: Is the memory latency of a remote node 1 hop
+away 1.6x the local node latency?
