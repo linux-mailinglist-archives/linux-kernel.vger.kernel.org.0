@@ -2,143 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E12F85A6E9
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2019 00:34:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE6915A718
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2019 00:40:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726789AbfF1WeC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 18:34:02 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41902 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726563AbfF1WeB (ORCPT
+        id S1726856AbfF1Wkg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 18:40:36 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:50432 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726563AbfF1Wkg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 18:34:01 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5SMVtVc097104;
-        Fri, 28 Jun 2019 18:33:37 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2tdtv11n5s-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 28 Jun 2019 18:33:37 -0400
-Received: from m0098393.ppops.net (m0098393.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x5SMWAlp097783;
-        Fri, 28 Jun 2019 18:33:37 -0400
-Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2tdtv11n5f-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 28 Jun 2019 18:33:37 -0400
-Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
-        by ppma03dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x5SMTYEn010551;
-        Fri, 28 Jun 2019 22:33:36 GMT
-Received: from b03cxnp08028.gho.boulder.ibm.com (b03cxnp08028.gho.boulder.ibm.com [9.17.130.20])
-        by ppma03dal.us.ibm.com with ESMTP id 2t9by7r9vc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 28 Jun 2019 22:33:36 +0000
-Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
-        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5SMXX1G64618938
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 28 Jun 2019 22:33:33 GMT
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B5303BE04F;
-        Fri, 28 Jun 2019 22:33:33 +0000 (GMT)
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 64C9DBE051;
-        Fri, 28 Jun 2019 22:33:30 +0000 (GMT)
-Received: from morokweng.localdomain (unknown [9.85.221.58])
-        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTPS;
-        Fri, 28 Jun 2019 22:33:30 +0000 (GMT)
-References: <20190521044912.1375-1-bauerman@linux.ibm.com> <20190521044912.1375-4-bauerman@linux.ibm.com> <3b45cc84-273b-b333-831c-85c501b7e78e@ozlabs.ru>
-User-agent: mu4e 1.2.0; emacs 26.2
-From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
-To:     Alexey Kardashevskiy <aik@ozlabs.ru>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        Anshuman Khandual <anshuman.linux@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Mike Anderson <andmike@linux.ibm.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Ram Pai <linuxram@us.ibm.com>,
-        Claudio Carvalho <cclaudio@linux.ibm.com>
-Subject: Re: [RFC PATCH 03/12] powerpc/prom_init: Add the ESM call to prom_init
-In-reply-to: <3b45cc84-273b-b333-831c-85c501b7e78e@ozlabs.ru>
-Date:   Fri, 28 Jun 2019 19:33:24 -0300
-Message-ID: <87mui1732j.fsf@morokweng.localdomain>
+        Fri, 28 Jun 2019 18:40:36 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5SMYjXD075488;
+        Fri, 28 Jun 2019 22:39:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=kjjlgFi6AgD2bzIvdYF4FhcBGFgr7Z4+4fAYVr9/hzg=;
+ b=NmrPSDVm9DEiOab3SuM1JEoN7CXABw5E1fcd81Jy/AIjA4QOa9vy16k/AWUCEab/j/U4
+ 9rXlDLMcQxGvJu8l6fqckrdUeFOlsIDcxukt0KBYCYmA/Y1Fb5mECYhUi65GN6Tqe21v
+ KFqKnSVARnFrcSfosCqMBBUSu0XQ96XEHnnTaY/rsr9QBQ8j94moBNaneFJeky7af5l2
+ h5PT5sBEi7Us/uTzpduMtpO8imMeUyOKJNsndVjWUXIzQk0t+sIb42zdSX+kujkUi7yN
+ +ontIoOvgI3q/qofC7qGADL1NdC9K6ZyO+/duAIudWRm+cZodCBOXLMKEgz/EtWWWwCa tA== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 2t9brtqs3h-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 28 Jun 2019 22:39:35 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5SMdGDH067305;
+        Fri, 28 Jun 2019 22:39:34 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 2t9p6w4ufh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 28 Jun 2019 22:39:34 +0000
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x5SMdWYA004877;
+        Fri, 28 Jun 2019 22:39:32 GMT
+Received: from [10.132.91.175] (/10.132.91.175)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 28 Jun 2019 15:39:32 -0700
+Subject: Re: [PATCH v3 3/7] sched: rotate the cpu search window for better
+ spread
+To:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, peterz@infradead.org,
+        mingo@redhat.com, tglx@linutronix.de, steven.sistare@oracle.com,
+        dhaval.giani@oracle.com, daniel.lezcano@linaro.org,
+        vincent.guittot@linaro.org, viresh.kumar@linaro.org,
+        tim.c.chen@linux.intel.com, mgorman@techsingularity.net
+References: <20190627012919.4341-1-subhra.mazumdar@oracle.com>
+ <20190627012919.4341-4-subhra.mazumdar@oracle.com>
+ <20190628115441.GA30685@linux.vnet.ibm.com>
+From:   Subhra Mazumdar <subhra.mazumdar@oracle.com>
+Message-ID: <0dbdf3d0-8547-3290-0ad6-adf65d8aa976@oracle.com>
+Date:   Fri, 28 Jun 2019 15:34:25 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-28_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=8 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906280258
+In-Reply-To: <20190628115441.GA30685@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9302 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1906280259
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9302 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906280259
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-Hello Alexey,
-
-Thanks for reviewing this patch!
-
-Alexey Kardashevskiy <aik@ozlabs.ru> writes:
-
-> On 21/05/2019 14:49, Thiago Jung Bauermann wrote:
->> @@ -1707,6 +1723,43 @@ static void __init prom_close_stdin(void)
->>  	}
->>  }
->>  
->> +#ifdef CONFIG_PPC_SVM
->> +static int prom_rtas_os_term_hcall(uint64_t args)
+On 6/28/19 4:54 AM, Srikar Dronamraju wrote:
+> * subhra mazumdar <subhra.mazumdar@oracle.com> [2019-06-26 18:29:15]:
 >
+>> Rotate the cpu search window for better spread of threads. This will ensure
+>> an idle cpu will quickly be found if one exists.
+> While rotating the cpu search window is good, not sure if this can find a
+> idle cpu quickly. The probability of finding an idle cpu still should remain
+> the same. No?
 >
-> This is just an rtas hcall, nothing special about "os-term".
+>> Signed-off-by: subhra mazumdar <subhra.mazumdar@oracle.com>
+>> ---
+>>   kernel/sched/fair.c | 10 ++++++++--
+>>   1 file changed, 8 insertions(+), 2 deletions(-)
+>>
+>> @@ -6219,9 +6219,15 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, int t
+>>   		}
+>>   	}
+>>   
+>> +	if (per_cpu(next_cpu, target) != -1)
+>> +		target_tmp = per_cpu(next_cpu, target);
+>> +	else
+>> +		target_tmp = target;
+>> +
+>>   	time = local_clock();
+>>   
+>> -	for_each_cpu_wrap(cpu, sched_domain_span(sd), target) {
+>> +	for_each_cpu_wrap(cpu, sched_domain_span(sd), target_tmp) {
+>> +		per_cpu(next_cpu, target) = cpu;
+> Shouldn't this assignment be outside the for loop.
+> With the current code,
+> 1. We keep reassigning multiple times.
+> 2. The last assignment happes for idle_cpu and sometimes the
+> assignment is for non-idle cpu.
+We want the last assignment irrespective of it was an idle cpu or not since
+in both cases we want to track the boundary of search.
 
-Sorry, unfortunately I don't understand how we're treating os-term
-especially. Do you mean that we should inline this function directly
-into prom_rtas_os_term()?
-
->> +{
->> +	register uint64_t arg1 asm("r3") = 0xf000;
->> +	register uint64_t arg2 asm("r4") = args;
->> +
->> +	asm volatile("sc 1\n" : "=r" (arg1) :
->> +			"r" (arg1),
->> +			"r" (arg2) :);
->> +	return arg1;
->> +}
->> +
->> +static struct rtas_args __prombss os_term_args;
->> +
->> +static void __init prom_rtas_os_term(char *str)
->> +{
->> +	phandle rtas_node;
->> +	__be32 val;
->> +	u32 token;
->> +
->> +	prom_printf("%s: start...\n", __func__);
->> +	rtas_node = call_prom("finddevice", 1, 1, ADDR("/rtas"));
->> +	prom_printf("rtas_node: %x\n", rtas_node);
->> +	if (!PHANDLE_VALID(rtas_node))
->> +		return;
->> +
->> +	val = 0;
->> +	prom_getprop(rtas_node, "ibm,os-term", &val, sizeof(val));
->> +	token = be32_to_cpu(val);
->> +	prom_printf("ibm,os-term: %x\n", token);
->> +	if (token == 0)
->> +		prom_panic("Could not get token for ibm,os-term\n");
->> +	os_term_args.token = cpu_to_be32(token);
->> +	prom_rtas_os_term_hcall((uint64_t)&os_term_args);
->> +}
->> +#endif /* CONFIG_PPC_SVM */
->> +
->>  /*
->>   * Allocate room for and instantiate RTAS
->>   */
-
--- 
-Thiago Jung Bauermann
-IBM Linux Technology Center
+Thanks,
+Subhra
