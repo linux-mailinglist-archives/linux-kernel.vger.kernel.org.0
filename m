@@ -2,153 +2,310 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A784559F00
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 17:35:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61FDC59F05
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 17:36:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726869AbfF1PfU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 11:35:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49894 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726657AbfF1PfU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 11:35:20 -0400
-Received: from earth.universe (dyndsl-091-096-035-018.ewe-ip-backbone.de [91.96.35.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B1A702064A;
-        Fri, 28 Jun 2019 15:35:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561736119;
-        bh=hsS93llGa74pwP3iTaDdxgzOA6ouLPERwTv8Ckp8yKY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=xJT6Vu+o7jXfi6XyhXuQnNgmA7E9FnokeaBJhelPRj6lYwbLgqEinHCE9r9Z807Ef
-         9/mr4SWs1PgpxGGkzBB9v0F8VwBUukP2YpLBke8DmGEen14RFJyzQDg/fZHMqJXhwx
-         Nbmig9WdkjWEbvDk+IUdY9xs/sOIT9r9LSkRLS7s=
-Received: by earth.universe (Postfix, from userid 1000)
-        id 08B013C08D5; Fri, 28 Jun 2019 17:35:17 +0200 (CEST)
-Date:   Fri, 28 Jun 2019 17:35:16 +0200
-From:   Sebastian Reichel <sre@kernel.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Lee Jones <lee.jones@linaro.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        Nick Crews <ncrews@chromium.org>
-Subject: Re: linux-next: manual merge of the battery tree with the mfd tree
-Message-ID: <20190628153516.zgdeajulrzghot5e@earth.universe>
-References: <20190628134545.4b9b8625@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="i43rqq5flm3u7kll"
-Content-Disposition: inline
-In-Reply-To: <20190628134545.4b9b8625@canb.auug.org.au>
-User-Agent: NeoMutt/20180716
+        id S1726867AbfF1Pgt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 11:36:49 -0400
+Received: from mx0b-002e3701.pphosted.com ([148.163.143.35]:65130 "EHLO
+        mx0b-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726657AbfF1Pgt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Jun 2019 11:36:49 -0400
+Received: from pps.filterd (m0134424.ppops.net [127.0.0.1])
+        by mx0b-002e3701.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5SFaDOi014358;
+        Fri, 28 Jun 2019 15:36:23 GMT
+Received: from g9t5008.houston.hpe.com (g9t5008.houston.hpe.com [15.241.48.72])
+        by mx0b-002e3701.pphosted.com with ESMTP id 2tdkwdgx1r-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 28 Jun 2019 15:36:23 +0000
+Received: from stormcage.eag.rdlabs.hpecorp.net (unknown [128.162.236.70])
+        by g9t5008.houston.hpe.com (Postfix) with ESMTP id 1400C64;
+        Fri, 28 Jun 2019 15:36:21 +0000 (UTC)
+Received: by stormcage.eag.rdlabs.hpecorp.net (Postfix, from userid 48777)
+        id C842720204956; Fri, 28 Jun 2019 10:36:20 -0500 (CDT)
+From:   Kyle Meyer <meyerk@hpe.com>
+Cc:     Kyle Meyer <meyerk@hpe.com>, Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Russ Anderson <russ.anderson@hpe.com>,
+        Kyle Meyer <kyle.meyer@hpe.com>
+Subject: [PATCH] [PATCH v2] perf: Modify MAX_NR_CPUS and MAX_CACHES
+Date:   Fri, 28 Jun 2019 10:35:55 -0500
+Message-Id: <20190628153555.172539-1-meyerk@stormcage.eag.rdlabs.hpecorp.net>
+X-Mailer: git-send-email 2.12.3
+X-HPE-SCL: -1
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-28_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906280180
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Perf surpasses the limit of MAX_NR_CPUS and MAX_CACHES while attempting to
+profile 1024 or more CPUs. Increase and/or make each limit dynamic to
+regain normal functionality.
 
---i43rqq5flm3u7kll
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Before:
+	perf record -a
+	[ perf record: Woken up X times to write data ]
+	way too many cpu caches..
+	[ perf record: Captured and wrote X MB perf.data (X samples) ]
 
-Hi Stephen,
+	perf report -C 1024
+	Error: failed to set  cpu bitmap
+	Requested CPU 1024 too large. Consider raising MAX_NR_CPUS
 
-On Fri, Jun 28, 2019 at 01:45:45PM +1000, Stephen Rothwell wrote:
-> Hi all,
->=20
-> Today's linux-next merge of the battery tree got conflicts in:
->=20
->   drivers/power/supply/Kconfig
->   drivers/power/supply/Makefile
->=20
-> between commit:
->=20
->   f8c7f7ddd8ef ("power: supply: Initial support for ROHM BD70528 PMIC cha=
-rger block")
->=20
-> from the mfd tree and commit:
->=20
->   0736343e4c56 ("power_supply: wilco_ec: Add charging config driver")
->=20
-> from the battery tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+After:
+	perf record -a
+	[ perf record: Woken up X times to write data ]
+	[ perf record: Captured and wrote X MB perf.data (X samples) ]
 
-This one should no longer appear on next tree update, since I
-dropped 0736343e4c56.
+	perf report -C 1024
+	...
 
--- Sebastian
+The variables nr_cpus_onln and max_caches are alternatives for MAX_NR_CPUS
+and MAX_CACHES, they are initialized at runtime. MAX_NR_CPUS is increased
+from 1024 to 2048 as it is still used by DECLARE_BITMAP() at compile time,
+nr_cpus_onln replaces it elsewhere throughout perf.
 
->=20
-> --=20
-> Cheers,
-> Stephen Rothwell
->=20
-> diff --cc drivers/power/supply/Kconfig
-> index 4a3cd679295b,4c01598f5ccb..000000000000
-> --- a/drivers/power/supply/Kconfig
-> +++ b/drivers/power/supply/Kconfig
-> @@@ -689,13 -702,13 +703,22 @@@ config CHARGER_UCS100
->   	  Say Y to enable support for Microchip UCS1002 Programmable
->   	  USB Port Power Controller with Charger Emulation.
->  =20
->  +config CHARGER_BD70528
->  +	tristate "ROHM bd70528 charger driver"
->  +	depends on MFD_ROHM_BD70528
->  +	default n
->  +	help
->  +	 Say Y here to enable support for getting battery status
->  +	 information and altering charger configurations from charger
->  +	 block of the ROHM BD70528 Power Management IC.
->  +
-> + config CHARGER_WILCO
-> + 	tristate "Wilco EC based charger for ChromeOS"
-> + 	depends on WILCO_EC
-> + 	help
-> + 	  Say Y here to enable control of the charging routines performed
-> + 	  by the Embedded Controller on the Chromebook named Wilco. Further
-> + 	  information can be found in
-> + 	  Documentation/ABI/testing/sysfs-class-power-wilco
-> +=20
->   endif # POWER_SUPPLY
-> diff --cc drivers/power/supply/Makefile
-> index 346a8ef5f348,d2263e1e2b6f..000000000000
-> --- a/drivers/power/supply/Makefile
-> +++ b/drivers/power/supply/Makefile
-> @@@ -90,4 -91,4 +91,5 @@@ obj-$(CONFIG_CHARGER_CROS_USBPD)	+=3D cro
->   obj-$(CONFIG_CHARGER_SC2731)	+=3D sc2731_charger.o
->   obj-$(CONFIG_FUEL_GAUGE_SC27XX)	+=3D sc27xx_fuel_gauge.o
->   obj-$(CONFIG_CHARGER_UCS1002)	+=3D ucs1002_power.o
->  +obj-$(CONFIG_CHARGER_BD70528)	+=3D bd70528-charger.o
-> + obj-$(CONFIG_CHARGER_WILCO)	+=3D wilco-charger.o
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Cc: Russ Anderson <russ.anderson@hpe.com>
+Signed-off-by: Kyle Meyer <kyle.meyer@hpe.com>
+---
+ tools/perf/perf.c           |  6 ++++++
+ tools/perf/perf.h           |  3 ++-
+ tools/perf/util/cpumap.c    |  6 +++---
+ tools/perf/util/header.c    |  7 +++----
+ tools/perf/util/machine.c   | 11 +++++------
+ tools/perf/util/session.c   |  5 ++---
+ tools/perf/util/stat.c      |  4 ++--
+ tools/perf/util/svghelper.c | 10 +++++-----
+ 8 files changed, 28 insertions(+), 24 deletions(-)
 
+diff --git a/tools/perf/perf.c b/tools/perf/perf.c
+index 72df4b6fa36f..c2c22476a65f 100644
+--- a/tools/perf/perf.c
++++ b/tools/perf/perf.c
+@@ -427,6 +427,12 @@ int main(int argc, const char **argv)
+ 	const char *cmd;
+ 	char sbuf[STRERR_BUFSIZE];
+ 
++	nr_cpus_onln = sysconf(_SC_NPROCESSORS_ONLN);
++	if (nr_cpus_onln < 0) {
++		fprintf(stderr, "Cannot determine the number of CPUs currently online.\n");
++		goto out;
++	}
++	
+ 	/* libsubcmd init */
+ 	exec_cmd_init("perf", PREFIX, PERF_EXEC_PATH, EXEC_PATH_ENVIRONMENT);
+ 	pager_init(PERF_PAGER_ENVIRONMENT);
+diff --git a/tools/perf/perf.h b/tools/perf/perf.h
+index 711e009381ec..603391cac85b 100644
+--- a/tools/perf/perf.h
++++ b/tools/perf/perf.h
+@@ -26,9 +26,10 @@ static inline unsigned long long rdclock(void)
+ }
+ 
+ #ifndef MAX_NR_CPUS
+-#define MAX_NR_CPUS			1024
++#define MAX_NR_CPUS			2048
+ #endif
+ 
++int nr_cpus_onln;
+ extern const char *input_name;
+ extern bool perf_host, perf_guest;
+ extern const char perf_version_string[];
+diff --git a/tools/perf/util/cpumap.c b/tools/perf/util/cpumap.c
+index c11a459ca582..83c05afef063 100644
+--- a/tools/perf/util/cpumap.c
++++ b/tools/perf/util/cpumap.c
+@@ -72,7 +72,7 @@ struct cpu_map *cpu_map__read(FILE *file)
+ 			int new_max = nr_cpus + cpu - prev - 1;
+ 
+ 			if (new_max >= max_entries) {
+-				max_entries = new_max + MAX_NR_CPUS / 2;
++				max_entries = new_max + nr_cpus_onln / 2;
+ 				tmp = realloc(tmp_cpus, max_entries * sizeof(int));
+ 				if (tmp == NULL)
+ 					goto out_free_tmp;
+@@ -83,7 +83,7 @@ struct cpu_map *cpu_map__read(FILE *file)
+ 				tmp_cpus[nr_cpus++] = prev;
+ 		}
+ 		if (nr_cpus == max_entries) {
+-			max_entries += MAX_NR_CPUS;
++			max_entries += nr_cpus_onln;
+ 			tmp = realloc(tmp_cpus, max_entries * sizeof(int));
+ 			if (tmp == NULL)
+ 				goto out_free_tmp;
+@@ -170,7 +170,7 @@ struct cpu_map *cpu_map__new(const char *cpu_list)
+ 					goto invalid;
+ 
+ 			if (nr_cpus == max_entries) {
+-				max_entries += MAX_NR_CPUS;
++				max_entries += nr_cpus_onln;
+ 				tmp = realloc(tmp_cpus, max_entries * sizeof(int));
+ 				if (tmp == NULL)
+ 					goto invalid;
+diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+index 06ddb6618ef3..78f1acb069ed 100644
+--- a/tools/perf/util/header.c
++++ b/tools/perf/util/header.c
+@@ -1121,16 +1121,15 @@ static int build_caches(struct cpu_cache_level caches[], u32 size, u32 *cntp)
+ 	return 0;
+ }
+ 
+-#define MAX_CACHES 2000
+-
+ static int write_cache(struct feat_fd *ff,
+ 		       struct perf_evlist *evlist __maybe_unused)
+ {
+-	struct cpu_cache_level caches[MAX_CACHES];
++	u32 max_caches = (nr_cpus_onln * 4);
++	struct cpu_cache_level caches[max_caches];
+ 	u32 cnt = 0, i, version = 1;
+ 	int ret;
+ 
+-	ret = build_caches(caches, MAX_CACHES, &cnt);
++	ret = build_caches(caches, max_caches, &cnt);
+ 	if (ret)
+ 		goto out;
+ 
+diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+index 17eec39e775e..b4d792dbeb1f 100644
+--- a/tools/perf/util/machine.c
++++ b/tools/perf/util/machine.c
+@@ -2593,7 +2593,7 @@ int __machine__synthesize_threads(struct machine *machine, struct perf_tool *too
+ 
+ pid_t machine__get_current_tid(struct machine *machine, int cpu)
+ {
+-	if (cpu < 0 || cpu >= MAX_NR_CPUS || !machine->current_tid)
++	if (cpu < 0 || cpu >= nr_cpus_onln || !machine->current_tid)
+ 		return -1;
+ 
+ 	return machine->current_tid[cpu];
+@@ -2610,16 +2610,15 @@ int machine__set_current_tid(struct machine *machine, int cpu, pid_t pid,
+ 	if (!machine->current_tid) {
+ 		int i;
+ 
+-		machine->current_tid = calloc(MAX_NR_CPUS, sizeof(pid_t));
++		machine->current_tid = calloc(nr_cpus_onln, sizeof(pid_t));
+ 		if (!machine->current_tid)
+ 			return -ENOMEM;
+-		for (i = 0; i < MAX_NR_CPUS; i++)
++		for (i = 0; i < nr_cpus_onln; i++)
+ 			machine->current_tid[i] = -1;
+ 	}
+ 
+-	if (cpu >= MAX_NR_CPUS) {
+-		pr_err("Requested CPU %d too large. ", cpu);
+-		pr_err("Consider raising MAX_NR_CPUS\n");
++	if (cpu >= nr_cpus_onln) {
++		pr_err("Requested CPU %d too large, there are %d CPUs currently online.\n", cpu, nr_cpus_onln);
+ 		return -EINVAL;
+ 	}
+ 
+diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
+index 54cf163347f7..8641364555fb 100644
+--- a/tools/perf/util/session.c
++++ b/tools/perf/util/session.c
+@@ -2289,9 +2289,8 @@ int perf_session__cpu_bitmap(struct perf_session *session,
+ 	for (i = 0; i < map->nr; i++) {
+ 		int cpu = map->map[i];
+ 
+-		if (cpu >= MAX_NR_CPUS) {
+-			pr_err("Requested CPU %d too large. "
+-			       "Consider raising MAX_NR_CPUS\n", cpu);
++		if (cpu >= nr_cpus_onln) {
++			pr_err("Requested CPU %d too large, there are %d CPUs currently online.\n", cpu, nr_cpus_onln);
+ 			goto out_delete_map;
+ 		}
+ 
+diff --git a/tools/perf/util/stat.c b/tools/perf/util/stat.c
+index d91fe754b6d2..9d4a3b96496a 100644
+--- a/tools/perf/util/stat.c
++++ b/tools/perf/util/stat.c
+@@ -207,7 +207,7 @@ void perf_evlist__reset_stats(struct perf_evlist *evlist)
+ static void zero_per_pkg(struct perf_evsel *counter)
+ {
+ 	if (counter->per_pkg_mask)
+-		memset(counter->per_pkg_mask, 0, MAX_NR_CPUS);
++		memset(counter->per_pkg_mask, 0, nr_cpus_onln);
+ }
+ 
+ static int check_per_pkg(struct perf_evsel *counter,
+@@ -226,7 +226,7 @@ static int check_per_pkg(struct perf_evsel *counter,
+ 		return 0;
+ 
+ 	if (!mask) {
+-		mask = zalloc(MAX_NR_CPUS);
++		mask = zalloc(nr_cpus_onln);
+ 		if (!mask)
+ 			return -ENOMEM;
+ 
+diff --git a/tools/perf/util/svghelper.c b/tools/perf/util/svghelper.c
+index fab8a048d31b..6a8241932dce 100644
+--- a/tools/perf/util/svghelper.c
++++ b/tools/perf/util/svghelper.c
+@@ -705,7 +705,7 @@ static void scan_thread_topology(int *map, struct topology *t, int cpu, int *pos
+ 
+ 		for_each_set_bit(thr,
+ 				 cpumask_bits(&t->sib_thr[i]),
+-				 MAX_NR_CPUS)
++				 nr_cpus_onln)
+ 			if (map[thr] == -1)
+ 				map[thr] = (*pos)++;
+ 	}
+@@ -720,7 +720,7 @@ static void scan_core_topology(int *map, struct topology *t)
+ 	for (i = 0; i < t->sib_core_nr; i++)
+ 		for_each_set_bit(cpu,
+ 				 cpumask_bits(&t->sib_core[i]),
+-				 MAX_NR_CPUS)
++				 nr_cpus_onln)
+ 			scan_thread_topology(map, t, cpu, &pos);
+ }
+ 
+@@ -737,7 +737,7 @@ static int str_to_bitmap(char *s, cpumask_t *b)
+ 
+ 	for (i = 0; i < m->nr; i++) {
+ 		c = m->map[i];
+-		if (c >= MAX_NR_CPUS) {
++		if (c >= nr_cpus_onln) {
+ 			ret = -1;
+ 			break;
+ 		}
+@@ -784,13 +784,13 @@ int svg_build_topology_map(char *sib_core, int sib_core_nr,
+ 		sib_thr += strlen(sib_thr) + 1;
+ 	}
+ 
+-	topology_map = malloc(sizeof(int) * MAX_NR_CPUS);
++	topology_map = malloc(sizeof(int) * nr_cpus_onln);
+ 	if (!topology_map) {
+ 		fprintf(stderr, "topology: no memory\n");
+ 		goto exit;
+ 	}
+ 
+-	for (i = 0; i < MAX_NR_CPUS; i++)
++	for (i = 0; i < nr_cpus_onln; i++)
+ 		topology_map[i] = -1;
+ 
+ 	scan_core_topology(topology_map, &t);
+-- 
+2.12.3
 
-
---i43rqq5flm3u7kll
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAl0WM7QACgkQ2O7X88g7
-+pounw/9EqmUID4oeUiAGjAbFp62w5mFxTXa8MrwmXScDqhoxED/KwcaUnx1CYnz
-TZUooj/eLbN2+NJEhE6uiGzOwDbQK+ZgljXSg4ckN/3Jc5kWleQMjB4IPhFseDw5
-Vu/TNZwVOwGOPVASN9hvu/FV7KzneVYmk17vWKuwjzSXQXMPO+a6Zr5ub8XYMDFx
-uDlE6X+uGtYCmR985sATL/dEd8XiQQ7zFNdmBz4A+ko520zljDPldcd4uHNfzkte
-zMgCyoT/EMs6JKj3V4IXOpm4hP26F+BwH8qHyHcmfE3eoaTgE+8TGcedYa5KsbJs
-oRkD0CJrWlSTvgWeWxGTyzLOMXIPxNSwKqd8rSusc7q7B6TzQzUHRCm/Nioe7EiX
-TSczRP+OudVh/VqnVg0D0RxPt4+0kqi5QiR6py9TmEnNGADcZzyqV/5ymy7zrlBl
-P4TsXXiAbMIaD3qUVGCTCg7rwNCd63RW/J/hSqXvIQmOS+iQRepYT3CrF4Bcy1fU
-2ADtRUAdo8mpyO2peIJMjEEduXWBmB5fNTdK0nmmItoac0XC6ZPyEXBHM9MYSH7m
-lKYutmYZH8mhqy5cLDkugseFa/crB/bCyRVEuEFSSjA35ud4QUGOmW4MOB2+tir4
-7cfOdX1oGE+oi1XH2fpz6C2U23g3WZKPMdniiEGhxK009JmP6Bk=
-=fye5
------END PGP SIGNATURE-----
-
---i43rqq5flm3u7kll--
