@@ -2,128 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BA845A476
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 20:47:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 028E95A452
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 20:40:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726844AbfF1SrU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 14:47:20 -0400
-Received: from 7.mo6.mail-out.ovh.net ([46.105.59.196]:56781 "EHLO
-        7.mo6.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726586AbfF1SrU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 14:47:20 -0400
-X-Greylist: delayed 512 seconds by postgrey-1.27 at vger.kernel.org; Fri, 28 Jun 2019 14:47:19 EDT
-Received: from player772.ha.ovh.net (unknown [10.109.146.5])
-        by mo6.mail-out.ovh.net (Postfix) with ESMTP id 6ECB21D1D2B
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2019 20:38:46 +0200 (CEST)
-Received: from sk2.org (gw.sk2.org [88.186.243.14])
-        (Authenticated sender: steve@sk2.org)
-        by player772.ha.ovh.net (Postfix) with ESMTPSA id D8A3A759C830;
-        Fri, 28 Jun 2019 18:38:42 +0000 (UTC)
-Date:   Fri, 28 Jun 2019 20:38:41 +0200
-From:   Stephen Kitt <steve@sk2.org>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] docs: format kernel-parameters -- as code
-Message-ID: <20190628203841.723ccd9c@heffalump.sk2.org>
-In-Reply-To: <20190628091021.457d0301@lwn.net>
-References: <20190627135938.3722-1-steve@sk2.org>
-        <20190628091021.457d0301@lwn.net>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1726827AbfF1Ski (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 14:40:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54344 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726498AbfF1Skh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Jun 2019 14:40:37 -0400
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F3D48214DA;
+        Fri, 28 Jun 2019 18:40:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561747236;
+        bh=wA9zq4EpB5GqEIS9VlPDCB89AZFN6Q0nB2eYYfARfi0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=z6HYNfmX9kFc4w+8yOcEA2a0W0JoABYa4XASgS/vCr3NcqtOsUJoi4DxceUc2z/H1
+         bYZuRgQxI0fWjLLWiDbMAfMqr4xFGK048bbG4j2mX9gEM3223XSY4uHZnDxaSthnkO
+         eCy8KUbzy/yToi1cM7qvO+8M3NhEfsc3vIxOGpCs=
+Received: by mail-vs1-f53.google.com with SMTP id k9so4699699vso.5;
+        Fri, 28 Jun 2019 11:40:35 -0700 (PDT)
+X-Gm-Message-State: APjAAAUBHKEJrjbFwnxK65jYXRgqoq50OtHDkWqouCicT0BP3gr1rMeo
+        F1eyden1D+EGqMoIGwnKIlhgXWSRn5nHTfAyUf8=
+X-Google-Smtp-Source: APXvYqwI+s3J32kSzDN2Pf0FHVdBRudHvcqvrBkJn5WxInId0W1w+T/pntjZ252Ld9snZUKr/Hrfdry0i4qvBqqaix4=
+X-Received: by 2002:a67:f2d3:: with SMTP id a19mr7217210vsn.240.1561747235159;
+ Fri, 28 Jun 2019 11:40:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
- boundary="Sig_/+Q2ZDCvK8guFHmIkhT+Ru1w"; protocol="application/pgp-signature"
-X-Ovh-Tracer-Id: 6824642289615850885
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeduvddrvddtgdduvdelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddm
+References: <1471462023-119645-1-git-send-email-cristina.moraru09@gmail.com>
+ <20160818175505.GM3296@wotan.suse.de> <20160825074313.GC18622@lst.de>
+ <20160825201919.GE3296@wotan.suse.de> <CAB=NE6UfkNN5kES6QmkM-dVC=HzKsZEkevH+Y3beXhVb2gC5vg@mail.gmail.com>
+ <CAB=NE6XEnZ1uH2nidRbn6myvdQJ+vArpTTT6iSJebUmyfdaLcQ@mail.gmail.com> <20190627045052.GA7594@lst.de>
+In-Reply-To: <20190627045052.GA7594@lst.de>
+From:   Luis Chamberlain <mcgrof@kernel.org>
+Date:   Fri, 28 Jun 2019 11:40:22 -0700
+X-Gmail-Original-Message-ID: <CAB=NE6Xa525g+3oWROjCyDT3eD0sw-6O+7o97HGX8zORJfYw4w@mail.gmail.com>
+Message-ID: <CAB=NE6Xa525g+3oWROjCyDT3eD0sw-6O+7o97HGX8zORJfYw4w@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/5] Add CONFIG symbol as module attribute
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Brendan Higgins <brendanhiggins@google.com>,
+        Cristina Moraru <cristina.moraru09@gmail.com>,
+        "vegard.nossum@gmail.com" <vegard.nossum@gmail.com>,
+        Valentin Rothberg <valentinrothberg@gmail.com>,
+        Hannes Reinecke <hare@suse.de>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Michal Marek <mmarek@suse.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Tom Gundersen <teg@jklm.no>, Kay Sievers <kay@vrfy.org>,
+        Rusty Russell <rusty@rustcorp.com.au>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        backports@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "rafael.j.wysocki" <rafael.j.wysocki@intel.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Takashi Iwai <tiwai@suse.de>,
+        Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Hauke Mehrtens <hauke@hauke-m.de>,
+        Paul Bolle <pebolle@tiscali.nl>,
+        Paul Gortmaker <paul.gortmaker@windriver.com>,
+        Alexey Khoroshilov <khoroshilov@ispras.ru>,
+        Sathya Prakash Veerichetty <sathya.prakash@broadcom.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Laurence Oberman <loberman@redhat.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Tejun Heo <tj@kernel.org>,
+        Jej B <James.Bottomley@hansenpartnership.com>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Daniel Jonsson <danijons@student.chalmers.se>,
+        Andrzej Wasowski <wasowski@itu.dk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/+Q2ZDCvK8guFHmIkhT+Ru1w
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+On Wed, Jun 26, 2019 at 9:51 PM Christoph Hellwig <hch@lst.de> wrote:
+>
+> On Wed, Jun 26, 2019 at 03:21:08PM -0700, Luis Chamberlain wrote:
+> > On Tue, Feb 5, 2019 at 2:07 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
+> > > In lieu of no Luke Skywalker, if you will, for a large kconfig revamp
+> > > on this, I'm inclined to believe *at least* having some kconfig_symb
+> > > exposed for some modules is better than nothing. Christoph are you
+> > > totally opposed to this effort until we get a non-reverse engineered
+> > > effort in place? It just seems like an extraordinary amount of work
+> > > and I'm not quite sure who's volunteering to do it.
+> > >
+> > > Other stakeholders may benefit from at least having some config -->
+> > > module mapping for now. Not just backports or building slimmer
+> > > kernels.
+> >
+> > Christoph, *poke*
+>
+> Yes, I'm still totally opposed to a half-backed hack like this.
 
-On Fri, 28 Jun 2019 09:10:21 -0600, Jonathan Corbet <corbet@lwn.net> wrote:
-> On Thu, 27 Jun 2019 15:59:38 +0200
-> > The current ReStructuredText formatting results in "--", used to
-> > indicate the end of the kernel command-line parameters, appearing as
-> > an en-dash instead of two hyphens; this patch formats them as code,
-> > "``--``", as done elsewhere in the documentation.
-> >=20
-> > Signed-off-by: Stephen Kitt <steve@sk2.org> =20
->=20
-> A worthy fix, I've applied it.  This seems like the sort of annoyance that
-> will bite us over and over, though.  We might want to find a more
-> comprehensive way to turn this behavior off.
+The solution puts forward a mechanism to add a kconfig_symb where we
+are 100% certain we have a direct module --> config mapping.
 
-Right, looking further shows a large number of places where -- is handled
-incorrectly. The following patch disables this =E2=80=9Csmart=E2=80=9D hand=
-ling wholesale;
-I=E2=80=99ll follow up (in the next few days) with patches to use real em- =
-and
-en-dashes where appropriate.
+This is *currently* determined when the streamline_config.pl finds
+that an object has only *one* associated config symbol associated. As
+Cristina noted, of 62 modules on a running system 58 of them ended up
+getting the kconfig_symb assigned, that is 93.5% of all modules on the
+system being tested. For the other modules, if they did want this
+association, we could allow a way for modules to define their own
+KBUILD_KCONF variable so that this could be considered as well, or
+they can look at their own kconfig stuff to try to fit the model that
+does work. To be clear, the heuristics *can* be updated if there is
+confidence in alternative methods for resolution. But since it is
+reflective of our current situation, I cannot consider it a hack.
 
-Regards,
+This implementation is a reflection of our reality in the kernel, and
+as has been discussed in this thread, if we want to correct the gaps
+we need to do a lot of work. And *no one* is working towards these
+goals.
 
-Stephen
+That said, even if you go forward with an intrusive solution like the
+one you proposed we could still use the same kconfig_symb...
 
-=46rom 3b10d01decfec38a124be75739b398a3dcd9d5ce Mon Sep 17 00:00:00 2001
-From: Stephen Kitt <steve@sk2.org>
-Date: Fri, 28 Jun 2019 20:34:31 +0200
-Subject: [PATCH] Disable Sphinx SmartyPants in HTML output
+So no, I don't see this as a hack. It's a reflection as to our current
+reality. And I cannot see how the kconfig_symb can lie or be
+incorrect. So in fact I think that pushing this forward also makes the
+problem statement clearer for the future of what semantics needs to be
+addressed, and helps us even annotate the problematic areas of the
+kernel.
 
-The handling of dashes in particular results in confusing
-documentation in a number of instances, since "--" becomes an
-en-dash. This disables SmartyPants wholesale, losing smart quotes
-along with smart dashes.
+What negative aspects do you see with this being merged in practice?
 
-With Sphinx 1.6 we could fine-tune the conversion, using the new
-smartquotes and smartquotes_action settings.
-
-Signed-off-by: Stephen Kitt <steve@sk2.org>
----
- Documentation/conf.py | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/Documentation/conf.py b/Documentation/conf.py
-index 7ace3f8852bd..966dbdfafcd1 100644
---- a/Documentation/conf.py
-+++ b/Documentation/conf.py
-@@ -200,7 +200,7 @@ html_context =3D {
-=20
- # If true, SmartyPants will be used to convert quotes and dashes to
- # typographically correct entities.
--#html_use_smartypants =3D True
-+html_use_smartypants =3D False
-=20
- # Custom sidebar templates, maps document names to template names.
- #html_sidebars =3D {}
---=20
-2.11.0
-
-
---Sig_/+Q2ZDCvK8guFHmIkhT+Ru1w
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEnPVX/hPLkMoq7x0ggNMC9Yhtg5wFAl0WXrEACgkQgNMC9Yht
-g5zEiA//UWxO0D8Gj4guz7JvI59f1scnIIvc/bjVR5KM2wr1nDuL32FbRP4KjU0n
-x5vWte2gM2GR5txA7SQAcuOmWd9+lLH25iKJVFug+0l0EcS8rtclH4B8YaPLU07H
-D4dDsaN1sl4+w6aUlU7vEmD2ly+Xu3NlARutOhaIhHIyOpUVASkt2G+Rfb0bpNQs
-YntKIwWPrnAUFYaFd5PXY3okqlLc4RNVT1TrKubS9pqgFMT6jPBMEYcbhbogH3ok
-zta4ZdUHJfIMA7mPzVXHD0haoXFitn7CuvPqP7buOrjbke6Kw7YiR7ciidUZkxdp
-1xqGzqzcF45K2j1lIyOOAr2e1Lmp8r2mNuZWZ+cJGT/zdR0tn9+VNGo0ZDUw8CGu
-yNF3ho/tGaZ58cOmtfhLjoI2Ln0wOhObh9fiDy6TXKfjyBsDikc6JOcg9flwPhcU
-c+GGxoNGj+Cw41drldqgM0I6Dm8Ir7osUbdz0/Pv5JjRu3aWWcrH684noM1NX28p
-yazGhrtVDAHSEjePneKtya2NPjFyc8x1oAEFO62lRSuvtgILGIEionrKeRmaqfP6
-KnRUa1BEUqRzV1fXnV5HTgDfq94Z6pqMdtmWZ4lAkq0xd2MvsAXiNKUTXNnUh1cI
-7Cv2Z9PoehoZZRfgL9weSorwV1cFvZSCXpqHNxTeSmgqsaQWDn0=
-=BYN7
------END PGP SIGNATURE-----
-
---Sig_/+Q2ZDCvK8guFHmIkhT+Ru1w--
+ Luis
