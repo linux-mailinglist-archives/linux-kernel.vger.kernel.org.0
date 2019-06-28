@@ -2,131 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFB4A59C24
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 14:57:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0B9D59C30
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 14:58:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726803AbfF1M5g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 08:57:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36176 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726558AbfF1M5g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 08:57:36 -0400
-Received: from localhost.localdomain (unknown [60.186.221.217])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AD1F82063F;
-        Fri, 28 Jun 2019 12:57:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561726655;
-        bh=XEYDarb8NSLXAMTxaRlXcywzzmI5a0jxNDElYQMapA4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=A+yLbvKdzNksnNInnFSB+NO+OkPfr+84GXHFoD7NIWw+B1ukMT10UITZCWrS3N2lp
-         lf+3RS+tLBE8PfiM6tO6bW9nb9Kiq9My83vHCYlUXdtYreeh9WDvdG76X99a1rKA/+
-         32ZGOv9Y5ljQtbtN33aPrQ2y11WGyjB+2NkgYqkY=
-From:   guoren@kernel.org
-To:     arnd@arndb.de
-Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-csky@vger.kernel.org, Guo Ren <ren_guo@c-sky.com>
-Subject: [PATCH] csky: Fixup abiv1 memset error
-Date:   Fri, 28 Jun 2019 20:57:28 +0800
-Message-Id: <1561726648-24871-1-git-send-email-guoren@kernel.org>
-X-Mailer: git-send-email 2.7.4
+        id S1727054AbfF1M6k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 08:58:40 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:58513 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726558AbfF1M6k (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Jun 2019 08:58:40 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190628125838euoutp023ff7696965fe6d5d061433d89bcf68a8~sXi0laFBb0793207932euoutp021
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2019 12:58:38 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190628125838euoutp023ff7696965fe6d5d061433d89bcf68a8~sXi0laFBb0793207932euoutp021
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1561726718;
+        bh=+fXjqMD80dTEeznXW+urjzkEHk1O/732pqOUC3IDfkY=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=ZkaWLVUL/EDXvoRU+nPTD+5uB4JPBVfqwGgNBXD662dRx11Kh6eZQk3XZAse4DO8E
+         8dLELWVvCGbqSzbr7mzD6px75tuYqA64KoyUkuOyWvhUdWG4OI94vEbExQeN+c1AKC
+         vacLiBG9VSo9sPkdgYgmskyWCT2TGCHyIUeH3FnQ=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20190628125837eucas1p117ade18f8ad2f92ca5b5d444c1f33336~sXiz1d8Ax0757307573eucas1p1P;
+        Fri, 28 Jun 2019 12:58:37 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 30.5A.04377.DFE061D5; Fri, 28
+        Jun 2019 13:58:37 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20190628125836eucas1p26db88c2fc26c7fdfbc9015a0c5252e1a~sXiy5cATZ1701517015eucas1p2P;
+        Fri, 28 Jun 2019 12:58:36 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20190628125836eusmtrp282053a9d728b660cbaafa6575e430aee~sXiyrSAiU0722007220eusmtrp2m;
+        Fri, 28 Jun 2019 12:58:36 +0000 (GMT)
+X-AuditID: cbfec7f4-12dff70000001119-98-5d160efdb846
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id C9.34.04140.CFE061D5; Fri, 28
+        Jun 2019 13:58:36 +0100 (BST)
+Received: from [106.120.51.71] (unknown [106.120.51.71]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20190628125836eusmtip27d2be573ba8b7c8512826cc4a44f92b2~sXiyJxH5i0729607296eusmtip2e;
+        Fri, 28 Jun 2019 12:58:36 +0000 (GMT)
+Subject: Re: [PATCH 01/12] backlight: gpio: allow to probe non-pdata devices
+ from board files
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        David Lechner <david@lechnology.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Message-ID: <bec514d8-a005-5c10-7770-d6fcd541ded4@samsung.com>
+Date:   Fri, 28 Jun 2019 14:58:34 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <20190625163434.13620-2-brgl@bgdev.pl>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0hTYRjG+87ZOTuOJp9z6atdGVRU5OwGJ5OoMDgFZf0RpCG68jStbcqW
+        ZVclcuUiK5PKZSp2MS10WGhTKVrNaRdDFBPNZrXAyqXorAztcjxK/vf73vd5eJ8HPoZUuKlQ
+        JtlwgDcaNDoVLZNUN4w0Lx3zD4oLf9eygPVdfy5ha3uqafZlX7eULckMYtuG+2n2ji9fyn66
+        /5Fg3cNOxOaNlhJs1cd2im3MGaDY1toCmn18zkask3P9HVlS7kZ7F8XZrd1Srqo8m+YGzzdR
+        3Nv2eppzn3UR3P2bGZyro4bghqrmbJPFyiITeV3yQd6oXpsgS3p9y0ekmun0rnOjVCbKpizI
+        jwG8ErJa+0iBFfgOgpF6nQXJ/rEPwaClUSIuhhD0tYVNGjqbPlGiqBTBo+91SHx4EXwtyScs
+        iGECcTw4zGrBoMQLobjiHSFoSOwk4XPrXVpY0DgCLp4uRwLL8Vp44jk1HkmC50OXrWw80gy8
+        E9wNNkrUBEBTvmc8kR9eAa/sDwmBSRwMnZ6iCZ4LNd4CUjgGOIsBxw2xG+AoKDHfo0UOhC+u
+        B1KRZ8EfexEhGioQjJ3pnXDXICi99HvCsQaeuloooRqJF0FlrVocr4fON3VSYQzYHzq8AWII
+        f8itvkKKYzmcMStE9QKw3bbRk2ct9jLyAlJZp1SzTqljnVLH+v9uMZKUo2A+zaTX8qblBv5Q
+        mEmjN6UZtGF7UvRV6N+3e/Hb5XuIakd3OxBmkGq6vFgWFKegNAdNh/UOBAypUspDmpVxCnmi
+        5vAR3pgSb0zT8SYHmslIVMHyo9N6dimwVnOA38/zqbxxckswfqGZaEflhwFlSERjfMyJTH3q
+        htXHCzce2/d+3q+o06OXyZMDCf3DGRtio3d7vkWPBRZm5zuznUMGr3azetpQ3pX4gNUPml/+
+        yaMcWauW6LzK3Nl30323gut/aq0/7OqYZw05m9JnNbRtPau8djXIKf/s2dITFrX9UG/C4NwX
+        4bgjci+lt6okpiTNssWk0aT5C0HcfRJyAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrIIsWRmVeSWpSXmKPExsVy+t/xe7p/+MRiDc5c07L4MvcUi8WuB9vY
+        LM68uctusahBzOLK1/dsFiu+zGS3eLr5MZPF/a9HGS2m/FnOZLHp8TVWixN9H1gtLu+aw2ax
+        v3cDkwOvx/sbrewei6/dZvXYOesuu8emVZ1sHp/6T7J63Lm2h83jfvdxJo/NS+o9jt/YzuTx
+        eZNcAFeUnk1RfmlJqkJGfnGJrVK0oYWRnqGlhZ6RiaWeobF5rJWRqZK+nU1Kak5mWWqRvl2C
+        Xsb5pV+YCtrYKm73/mFtYOxk7WLk5JAQMJG4dfIpkM3FISSwlFHi6bImti5GDqCEjMTx9WUQ
+        NcISf651sUHUvGaU6J/zjxGkRlggXuJQmz5IjYiAusSCdfeYQGqYBY4zSyx8MYUNJCEksJ5R
+        YtMSTxCbTcBKYmL7KkYQm1fATuLgkxawI1gEVCVub1jJDGKLCkRInHm/ggWiRlDi5MwnYDan
+        gLHE2Z07mEBsZqBlf+ZdYoawxSVuPZkPFZeX2P52DvMERqFZSNpnIWmZhaRlFpKWBYwsqxhF
+        UkuLc9Nzi430ihNzi0vz0vWS83M3MQKje9uxn1t2MHa9Cz7EKMDBqMTDu4BLLFaINbGsuDL3
+        EKMEB7OSCK/kOZFYId6UxMqq1KL8+KLSnNTiQ4ymQM9NZJYSTc4HJp68knhDU0NzC0tDc2Nz
+        YzMLJXHeDoGDMUIC6YklqdmpqQWpRTB9TBycUg2MGldzvQSD45nTk++qz/W3jRc7Fi+Y08f9
+        VMd/gb/FUaUtznyRJ9s/zm59oHDm8oG7H7LCl0/64in6Q3vPulP/+pTOBZyd/sx/boxD3eU+
+        89PKUzynRMza8rmYy/vs7saKNZ0hfHzGKTHxXnOW7L2ksJGFbx7fdo7o1y+19R1NJ/L/cdif
+        eilJiaU4I9FQi7moOBEAbTZJqwQDAAA=
+X-CMS-MailID: 20190628125836eucas1p26db88c2fc26c7fdfbc9015a0c5252e1a
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190625163457epcas3p2e246a27cb3ec0f0ffa48d32561ff3972
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190625163457epcas3p2e246a27cb3ec0f0ffa48d32561ff3972
+References: <20190625163434.13620-1-brgl@bgdev.pl>
+        <CGME20190625163457epcas3p2e246a27cb3ec0f0ffa48d32561ff3972@epcas3p2.samsung.com>
+        <20190625163434.13620-2-brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Guo Ren <ren_guo@c-sky.com>
 
-Current memset implementation in abiv1 is wrong and it'll cause unalign
-access. Just remove it and use the generic one. This patch will cause
-performance degradation and we will improve it with a new design in next
-patchset.
+On 6/25/19 6:34 PM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> Currently we can only probe devices that either use device tree or pass
+> platform data to probe(). Rename gpio_backlight_probe_dt() to
+> gpio_backlight_probe_prop() and use generic device properties instead
+> of OF specific helpers. Reverse the logic checking the presence of
+> platform data in probe(). This way we can probe devices() registered
+> from machine code that neither have a DT node nor use platform data.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Signed-off-by: Guo Ren <ren_guo@c-sky.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
----
- arch/csky/abiv1/Makefile         |  1 -
- arch/csky/abiv1/inc/abi/string.h |  3 ---
- arch/csky/abiv1/memset.c         | 37 -------------------------------------
- arch/csky/abiv1/strksyms.c       |  1 -
- 4 files changed, 42 deletions(-)
- delete mode 100644 arch/csky/abiv1/memset.c
+Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-diff --git a/arch/csky/abiv1/Makefile b/arch/csky/abiv1/Makefile
-index e52b42b..601ce3b 100644
---- a/arch/csky/abiv1/Makefile
-+++ b/arch/csky/abiv1/Makefile
-@@ -5,5 +5,4 @@ obj-y					+= bswapsi.o
- obj-y					+= cacheflush.o
- obj-y					+= mmap.o
- obj-y					+= memcpy.o
--obj-y					+= memset.o
- obj-y					+= strksyms.o
-diff --git a/arch/csky/abiv1/inc/abi/string.h b/arch/csky/abiv1/inc/abi/string.h
-index 5abe80b..0cd4338 100644
---- a/arch/csky/abiv1/inc/abi/string.h
-+++ b/arch/csky/abiv1/inc/abi/string.h
-@@ -7,7 +7,4 @@
- #define __HAVE_ARCH_MEMCPY
- extern void *memcpy(void *, const void *, __kernel_size_t);
- 
--#define __HAVE_ARCH_MEMSET
--extern void *memset(void *, int, __kernel_size_t);
--
- #endif /* __ABI_CSKY_STRING_H */
-diff --git a/arch/csky/abiv1/memset.c b/arch/csky/abiv1/memset.c
-deleted file mode 100644
-index b4aa75b..0000000
---- a/arch/csky/abiv1/memset.c
-+++ /dev/null
-@@ -1,37 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
--
--#include <linux/types.h>
--
--void *memset(void *dest, int c, size_t l)
--{
--	char *d = dest;
--	int ch = c & 0xff;
--	int tmp = (ch | ch << 8 | ch << 16 | ch << 24);
--
--	while (((uintptr_t)d & 0x3) && l--)
--		*d++ = ch;
--
--	while (l >= 16) {
--		*(((u32 *)d))   = tmp;
--		*(((u32 *)d)+1) = tmp;
--		*(((u32 *)d)+2) = tmp;
--		*(((u32 *)d)+3) = tmp;
--		l -= 16;
--		d += 16;
--	}
--
--	while (l > 3) {
--		*(((u32 *)d)) = tmp;
--		l -= 4;
--		d += 4;
--	}
--
--	while (l) {
--		*d = ch;
--		l--;
--		d++;
--	}
--
--	return dest;
--}
-diff --git a/arch/csky/abiv1/strksyms.c b/arch/csky/abiv1/strksyms.c
-index 436995c..c7ccbb2 100644
---- a/arch/csky/abiv1/strksyms.c
-+++ b/arch/csky/abiv1/strksyms.c
-@@ -4,4 +4,3 @@
- #include <linux/module.h>
- 
- EXPORT_SYMBOL(memcpy);
--EXPORT_SYMBOL(memset);
--- 
-2.7.4
-
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
