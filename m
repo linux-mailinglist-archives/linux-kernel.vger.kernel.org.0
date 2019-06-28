@@ -2,70 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFC4F5A542
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 21:39:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EAE2F5A565
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 21:50:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726996AbfF1TjC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 15:39:02 -0400
-Received: from mail-io1-f70.google.com ([209.85.166.70]:42613 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726695AbfF1TjC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 15:39:02 -0400
-Received: by mail-io1-f70.google.com with SMTP id f22so7738927ioj.9
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2019 12:39:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=6MBa60ZEQW0KfIiP0tSSYs5YVeMvKCMq2VKhW00PUqk=;
-        b=skpJIel+UUTIepuA3H/dTdFRbdfBhzd2NcJjQJgKU42T8X669S4Q0EStQ3KqLZHy6j
-         Ymrj0Fkp9xgSXOnZsXYFWKehKy4PzPzL1Pq1Ga9P8zLxvwr3T+MNFdi/o0F5WDxkda1S
-         o/d+khiuK1T9fyZV16pIWh4Aw/THnwDp00SfwaKvds/jCZMsiOaKWpl/fsOVqByr37Pm
-         yVEdELqEwdh4xhsDxwrrFgIR7mDfF8TouM5Q9dXmj2RNHq7mXQd9SqizThOA3c0KNz4I
-         dqDPN37QrQdTZGF8UmFtFPVZjSJblu1tbJgRuhX+NQmUI4if9bTn+leoorAiDFQx0B0e
-         YADQ==
-X-Gm-Message-State: APjAAAUboqIrxWzl+1OY1cjWdCvwG3liO+v+0+wX3RtXlESXss9T3Wr3
-        F95ovB66ukS3Guh8mfD8aX3Wg6Az0ON8NvAeA7Y+HDgk8zfU
-X-Google-Smtp-Source: APXvYqyG9FhR3Hf0uDF4YrYl41IirAkp07VFEYWJqDIdjxISRyPh+xrAnO1HB/EouuP8G7Ie0xNGvLv/dNZy32m373iQYOFow0fw
-MIME-Version: 1.0
-X-Received: by 2002:a5d:97d8:: with SMTP id k24mr9240612ios.84.1561750741066;
- Fri, 28 Jun 2019 12:39:01 -0700 (PDT)
-Date:   Fri, 28 Jun 2019 12:39:01 -0700
-In-Reply-To: <0000000000001c03bf058baf488a@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000002628bf058c676e46@google.com>
-Subject: Re: BUG: unable to handle kernel paging request in hrtimer_interrupt
-From:   syzbot <syzbot+037e18398ba8c655a652@syzkaller.appspotmail.com>
-To:     ast@kernel.org, bpf@vger.kernel.org, daniel@iogearbox.net,
-        dvyukov@google.com, hdanton@sina.com, john.fastabend@gmail.com,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        id S1727100AbfF1Tu2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 15:50:28 -0400
+Received: from mga05.intel.com ([192.55.52.43]:42462 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726819AbfF1Tu1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Jun 2019 15:50:27 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jun 2019 12:50:27 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,428,1557212400"; 
+   d="scan'208";a="164756004"
+Received: from yyu32-desk1.sc.intel.com ([10.144.153.205])
+  by fmsmga007.fm.intel.com with ESMTP; 28 Jun 2019 12:50:26 -0700
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
+        Dave Martin <Dave.Martin@arm.com>
+Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>
+Subject: [RFC PATCH 1/3] mm: Introduce VM_IBT for CET legacy code bitmap
+Date:   Fri, 28 Jun 2019 12:41:56 -0700
+Message-Id: <20190628194158.2431-1-yu-cheng.yu@intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has bisected this bug to:
+The previous discussion of the IBT legacy code bitmap is here:
 
-commit e9db4ef6bf4ca9894bb324c76e01b8f1a16b2650
-Author: John Fastabend <john.fastabend@gmail.com>
-Date:   Sat Jun 30 13:17:47 2018 +0000
+    https://lkml.org/lkml/2019/6/6/1032
 
-     bpf: sockhash fix omitted bucket lock in sock_close
+When CET Indirect Branch Tracking (IBT) is enabled, the processor expects
+every branch target is an ENDBR instruction, or the target's address is
+marked as legacy in the legacy code bitmap.  The bitmap covers the whole
+user-mode address space (TASK_SIZE_MAX for 64-bit, TASK_SIZE for IA32),
+and each bit represents one page of linear address range.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14436833a00000
-start commit:   29f785ff Merge branch 'fixes' of git://git.kernel.org/pub/..
-git tree:       upstream
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=16436833a00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=12436833a00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e5c77f8090a3b96b
-dashboard link: https://syzkaller.appspot.com/bug?extid=037e18398ba8c655a652
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16da8cc9a00000
+This patch introduces VM_IBT for the bitmap.
 
-Reported-by: syzbot+037e18398ba8c655a652@syzkaller.appspotmail.com
-Fixes: e9db4ef6bf4c ("bpf: sockhash fix omitted bucket lock in sock_close")
+Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+---
+ fs/proc/task_mmu.c | 3 +++
+ include/linux/mm.h | 8 ++++++++
+ 2 files changed, 11 insertions(+)
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index 66725e262a77..d707390285d3 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -663,6 +663,9 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
+ #endif /* CONFIG_ARCH_HAS_PKEYS */
+ #ifdef CONFIG_X86_INTEL_SHADOW_STACK_USER
+ 		[ilog2(VM_SHSTK)]	= "ss",
++#endif
++#ifdef CONFIG_X86_INTEL_BRANCH_TRACKING_USER
++		[ilog2(VM_IBT)]		= "bt",
+ #endif
+ 	};
+ 	size_t i;
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 921bae5fa7ab..a8da5bdfd7c9 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -299,12 +299,14 @@ extern unsigned int kobjsize(const void *objp);
+ #define VM_HIGH_ARCH_BIT_3	35	/* bit only usable on 64-bit architectures */
+ #define VM_HIGH_ARCH_BIT_4	36	/* bit only usable on 64-bit architectures */
+ #define VM_HIGH_ARCH_BIT_5	37	/* bit only usable on 64-bit architectures */
++#define VM_HIGH_ARCH_BIT_6	38	/* bit only usable on 64-bit architectures */
+ #define VM_HIGH_ARCH_0	BIT(VM_HIGH_ARCH_BIT_0)
+ #define VM_HIGH_ARCH_1	BIT(VM_HIGH_ARCH_BIT_1)
+ #define VM_HIGH_ARCH_2	BIT(VM_HIGH_ARCH_BIT_2)
+ #define VM_HIGH_ARCH_3	BIT(VM_HIGH_ARCH_BIT_3)
+ #define VM_HIGH_ARCH_4	BIT(VM_HIGH_ARCH_BIT_4)
+ #define VM_HIGH_ARCH_5	BIT(VM_HIGH_ARCH_BIT_5)
++#define VM_HIGH_ARCH_6	BIT(VM_HIGH_ARCH_BIT_6)
+ #endif /* CONFIG_ARCH_USES_HIGH_VMA_FLAGS */
+ 
+ #ifdef CONFIG_ARCH_HAS_PKEYS
+@@ -348,6 +350,12 @@ extern unsigned int kobjsize(const void *objp);
+ # define VM_SHSTK	VM_NONE
+ #endif
+ 
++#ifdef CONFIG_X86_INTEL_BRANCH_TRACKING_USER
++# define VM_IBT		VM_HIGH_ARCH_6
++#else
++# define VM_IBT		VM_NONE
++#endif
++
+ #ifndef VM_GROWSUP
+ # define VM_GROWSUP	VM_NONE
+ #endif
+-- 
+2.17.1
+
