@@ -2,106 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 667205976B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 11:26:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA3EB59776
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 11:27:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726774AbfF1J0x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 05:26:53 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:40899 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726572AbfF1J0t (ORCPT
+        id S1726900AbfF1J1g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 05:27:36 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:51404 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726539AbfF1J1f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 05:26:49 -0400
-Received: by mail-lf1-f67.google.com with SMTP id a9so3518909lff.7
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2019 02:26:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=wq4uV6TuyH2wgrXO6dLo0IFjBcNz+4TUFVVmynqQmqA=;
-        b=T7nBZsHZw/8UcjeYFRks7+Eva2K/3e1j/QIWRpChWFd+dTtuHZWRuEcXs11S5mYn8e
-         Dd7FOfioX2ifWa2RmYXPNgdL/eqFHZqZWmU6somvzxCLtxUcAo+QVbkfcI+B8nbkjXM8
-         xJsHXeV9Bg5176S1omOvyVoveyhBcnzLKAKVPnDZBTXCHeq5w+3ohntbyyxJ5zanrsRT
-         6YEOrzTKleaMpv0j2Uvgb4NMXyqBhJKmBD/6dZMVFhbYRB0BTstXeHUB06Pgg/g/jVNR
-         8jJ834GpUUrM05TY2aJxTSDjuUP+QqFpQv8/cWR+BR3eKBln2zW+tU6DtO0jGCONJyuc
-         Eg/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=wq4uV6TuyH2wgrXO6dLo0IFjBcNz+4TUFVVmynqQmqA=;
-        b=C77owOpebyS81q/BCE2FqTygALqn8TeWXmVHa14+nJCzUSqvfv5KjqqmweEXq56o1V
-         p6fN3rvJlaWSkbe2i/jPNfz19L+so/msmXgNzsI0hAUT7WR7OiFyX8whCKiG23jH8T8p
-         Br4arSBBs6VrUfgzbbT3fKW5lzO+eg++E8eQT8rqbu76vXEQmJCr4/iolMPjeS4gYBCo
-         6djnNhvF06VnoRBt8LZC0lZzlbOQDGH304VQTSKm6vxpFxRB8ntpEbBf4ORyDRrWPBzN
-         og5BsQVzrWCZHjQvcajifmleXqp7g1B0aZQygjwqpGVaKR7Py7Je1/pUwBDPDHVtVMTK
-         EP7Q==
-X-Gm-Message-State: APjAAAW1lrtzCWvgJYeU5LnFqAnCwe0ONRwWvLc/6fH+8aOEqaPfz9TU
-        eUn7kFHFkTlJSHisv7zIENQUsZJ75PAlz7JdDmX39w==
-X-Google-Smtp-Source: APXvYqxZow6JTfEigRwpH8n/PtdL/0nTxAip4vmcDqLYc1cX/YUDxITdfUsmFNehMEuUFoW/17Gqvjs/oZenFRcn7MY=
-X-Received: by 2002:ac2:48a5:: with SMTP id u5mr4624411lfg.62.1561714007021;
- Fri, 28 Jun 2019 02:26:47 -0700 (PDT)
+        Fri, 28 Jun 2019 05:27:35 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5S9RPEV126238;
+        Fri, 28 Jun 2019 04:27:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1561714045;
+        bh=4lzPTixTG6HYSgsn449rIrKsahuLP+3PBJPmON8xrr4=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=UNTDR6Vxo0+1Ve9+XKa4fqdgbb4dTQfBP3P/TemSWllJ36pW7/Vkibve6y7pozgvI
+         jyaaOCIn670GkXKsQomRv4snxP7ddP/uR7CbJqZlOM8V1SuPZC5IStmsW712rX+Ef8
+         bXZsH05AYCfBwF9pB0MgKMadJHQ1RBKVXzFUO9g0=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5S9RP7W009488
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 28 Jun 2019 04:27:25 -0500
+Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 28
+ Jun 2019 04:27:24 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Fri, 28 Jun 2019 04:27:24 -0500
+Received: from [172.24.190.229] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5S9RLiG100189;
+        Fri, 28 Jun 2019 04:27:22 -0500
+Subject: Re: [PATCH] iommu/arm-smmu-v3: Fix incorrect fields being passed to
+ prefetch command
+To:     <will@kernel.org>, <robin.murphy@arm.com>, <joro@8bytes.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>,
+        <wmills@ti.com>, <nsekhar@ti.com>, <lokeshvutla@ti.com>
+References: <20190628090953.23606-1-p-yadav1@ti.com>
+From:   Pratyush Yadav <p-yadav1@ti.com>
+Message-ID: <b0866cd5-d073-601c-f95e-95a7128d4d75@ti.com>
+Date:   Fri, 28 Jun 2019 14:57:43 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
-References: <201906261343.5F26328@keescook> <20190627080207.sdpwjoi4wnc664gp@mbp>
- <201906270856.8CF50064@keescook> <20190627162505.GD9894@arrakis.emea.arm.com>
-In-Reply-To: <20190627162505.GD9894@arrakis.emea.arm.com>
-From:   Alexander Potapenko <glider@google.com>
-Date:   Fri, 28 Jun 2019 11:26:34 +0200
-Message-ID: <CAG_fn=UhdoyWjFPxdFOJ7XFRHb62RErxFjOKnFeHtMJWTib7pg@mail.gmail.com>
-Subject: Re: [PATCH] arm64: Move jump_label_init() before parse_early_param()
-To:     Catalin Marinas <catalin.marinas@arm.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>, Qian Cai <cai@lca.pw>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>, will@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190628090953.23606-1-p-yadav1@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 27, 2019 at 6:25 PM Catalin Marinas <catalin.marinas@arm.com> w=
-rote:
->
-> On Thu, Jun 27, 2019 at 08:58:03AM -0700, Kees Cook wrote:
-> > On Thu, Jun 27, 2019 at 09:02:08AM +0100, Catalin Marinas wrote:
-> > > On Wed, Jun 26, 2019 at 01:51:15PM -0700, Kees Cook wrote:
-> > > > This moves arm64 jump_label_init() from smp_prepare_boot_cpu() to
-> > > > setup_arch(), as done already on x86, in preparation from early par=
-am
-> > > > usage in the init_on_alloc/free() series:
-> > > > https://lkml.kernel.org/r/1561572949.5154.81.camel@lca.pw
-> > >
-> > > This looks fine to me. Is there any other series to be merged soon th=
-at
-> > > depends on this patch (the init_on_alloc/fail one)? If not, I can que=
-ue
-> > > it for 5.3.
-> >
-> > Yes, but that series will be in 5.3 also, so there's rush for 5.2. Do
-> > you want Alexander (via akpm) to include it in his series instead of it=
- going
-> > through the arm64 tree?
->
-> It's pretty late for 5.2, especially since it hasn't had extensive
-> testing (though I'm fairly sure it won't break). Anyway, it's better if
-> it goes together with Alexander's series.
-Am I understanding right this is already covered by Kees having sent
-his patch to -mm tree and I don't need to explicitly include it into
-my series?
-> Acked-by: Catalin Marinas <catalin.marinas@arm.com>
 
 
+On 28/06/19 2:39 PM, Pratyush Yadav wrote:> According to the SMMUv3 spec [0] section 4.2.1, command 0x1
+> (CMD_PREFETCH_CONFIG) does not take address and size as parameters. It
+> only takes  StreamID, SSec, SubstreamID, and SSV. Address and Size are
+> parameters for command 0x2 (CMD_PREFETCH_ADDR).
+> 
+> Tested on kernel 4.19 on TI J721E SOC.
 
---=20
-Alexander Potapenko
-Software Engineer
+Even though I only tested on 4.19 because I don't have the setup to run 
+mainline master on this SOC, the patch is based on mainline master and I
+did compile-test it.
 
-Google Germany GmbH
-Erika-Mann-Stra=C3=9Fe, 33
-80636 M=C3=BCnchen
-
-Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Halimah DeLaine Prado
-Registergericht und -nummer: Hamburg, HRB 86891
-Sitz der Gesellschaft: Hamburg
+> [0] https://static.docs.arm.com/ihi0070/a/IHI_0070A_SMMUv3.pdf
+> 
+> Signed-off-by: Pratyush Yadav <p-yadav1@ti.com>
+> ---
+>  drivers/iommu/arm-smmu-v3.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+> index 4d5a694f02c2..2d4dfd909436 100644
+> --- a/drivers/iommu/arm-smmu-v3.c
+> +++ b/drivers/iommu/arm-smmu-v3.c
+> @@ -413,6 +413,7 @@ struct arm_smmu_cmdq_ent {
+>  	/* Command-specific fields */
+>  	union {
+>  		#define CMDQ_OP_PREFETCH_CFG	0x1
+> +		#define CMDQ_OP_PREFETCH_ADDR	0x2
+>  		struct {
+>  			u32			sid;
+>  			u8			size;
+> @@ -805,10 +806,12 @@ static int arm_smmu_cmdq_build_cmd(u64 *cmd, struct arm_smmu_cmdq_ent *ent)
+>  	case CMDQ_OP_TLBI_EL2_ALL:
+>  	case CMDQ_OP_TLBI_NSNH_ALL:
+>  		break;
+> -	case CMDQ_OP_PREFETCH_CFG:
+> -		cmd[0] |= FIELD_PREP(CMDQ_PREFETCH_0_SID, ent->prefetch.sid);
+> +	case CMDQ_OP_PREFETCH_ADDR:
+>  		cmd[1] |= FIELD_PREP(CMDQ_PREFETCH_1_SIZE, ent->prefetch.size);
+>  		cmd[1] |= ent->prefetch.addr & CMDQ_PREFETCH_1_ADDR_MASK;
+> +		/* Fallthrough */
+> +	case CMDQ_OP_PREFETCH_CFG:
+> +		cmd[0] |= FIELD_PREP(CMDQ_PREFETCH_0_SID, ent->prefetch.sid);
+>  		break;
+>  	case CMDQ_OP_CFGI_STE:
+>  		cmd[0] |= FIELD_PREP(CMDQ_CFGI_0_SID, ent->cfgi.sid);
+> 
+-- 
+Regards,
+Pratyush Yadav
