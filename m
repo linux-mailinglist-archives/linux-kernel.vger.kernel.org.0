@@ -2,130 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82D5259CF8
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 15:35:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E991459D0B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 15:37:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726720AbfF1NfE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 09:35:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39486 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726669AbfF1NfE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 09:35:04 -0400
-Received: from tzanussi-mobl (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9C6AF208E3;
-        Fri, 28 Jun 2019 13:35:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561728904;
-        bh=NK7VdWZqj61oGMb7hOSZNcUxWzYCDi723Oci2tLSdBQ=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=HrlX0lesqTCm+/fJVu0E4yRRUJ+soSBltekK4jUjqbIZjTW2DcZRd985IeBqC94jX
-         eGyqW6PutiXw/Ba+ZxiuhS5PRU57vzG8HKx+fk4/odLWdLKhr4qfrbTkkl2fydwIB1
-         CGaQg94QmU2j6NvKfTB8OxGB7enne7VngyMchuyo=
-Message-ID: <1561728902.9333.2.camel@kernel.org>
-Subject: Re: [PATCH v2] tracing: Fix memory leak in tracing_err_log_open()
-From:   Tom Zanussi <zanussi@kernel.org>
-To:     Takeshi Misawa <jeliantsurux@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
-Date:   Fri, 28 Jun 2019 08:35:02 -0500
-In-Reply-To: <20190628105640.GA1863@DESKTOP>
-References: <20190628105640.GA1863@DESKTOP>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.1-1 
-Mime-Version: 1.0
+        id S1727007AbfF1NhT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 09:37:19 -0400
+Received: from lb1-smtp-cloud9.xs4all.net ([194.109.24.22]:45915 "EHLO
+        lb1-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726664AbfF1NhT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Jun 2019 09:37:19 -0400
+Received: from [192.168.2.10] ([46.9.252.75])
+        by smtp-cloud9.xs4all.net with ESMTPA
+        id gr3vhmL0sSfvXgr3yhS9im; Fri, 28 Jun 2019 15:37:17 +0200
+Subject: Re: [PATCH v2 00/11] Venus stateful Codec API
+To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        linux-media@vger.kernel.org
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Vikash Garodia <vgarodia@codeaurora.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>
+References: <20190628130002.24293-1-stanimir.varbanov@linaro.org>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <9c3399a8-4fc6-3117-10ee-3395cee034da@xs4all.nl>
+Date:   Fri, 28 Jun 2019 15:37:11 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <20190628130002.24293-1-stanimir.varbanov@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfK9Yvy8TSAOpVdctQbKSiaJLdA9YrUHCjxTdzggXbbTuxa7REtky8kGOIOb0Go0+ghoOFhwS6Sd+J15tIhOPYuG6KaD46wEG65xvFborgAFOOOuojzqe
+ f0k8c45tWPL0tji79rPDFc5usfkKvGzp6rVkp6TjCYuqYWLptx/W6m0x4y07y4k+XwUXjc9NyQGqgOnSIGP+WY0wOwA61KAHWqhS4n0Pmc9rKk3K2hF7XKAB
+ eeVoBlkv1c+GDBvdy9YCsLTei+5Wk4e9z7qwx/Vw4ZoRdebqJmCA7JWp2hn8NlpxW2hyIyu0+c9Te/GslgwaCEv1LcdChXm0AjLWnmVZ6+lgaw4VPfhTdOYd
+ wHOWhr7oK9yBfEPFHbzfaV/1QQlaISRQ3M+xqbiugi7arRhp1gc9wjCZQG4zNBq+DZ6xra5BbUmMTZf8izG5Rn6ssTJacw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Fri, 2019-06-28 at 19:56 +0900, Takeshi Misawa wrote:
-> If tracing_err_log_open() call seq_open(), allocated memory is not
-> freed.
+On 6/28/19 2:59 PM, Stanimir Varbanov wrote:
+> Hello,
 > 
-> kmemleak report:
+> Here is v2 of the Venus transition to stateful codec API
+> compliance. The v2 can be found at [1].
 > 
-> unreferenced object 0xffff92c0781d1100 (size 128):
->   comm "tail", pid 15116, jiffies 4295163855 (age 22.704s)
->   hex dump (first 32 bytes):
->     00 f0 08 e5 c0 92 ff ff 00 10 00 00 00 00 00 00  ................
->     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->   backtrace:
->     [<000000000d0687d5>] kmem_cache_alloc+0x11f/0x1e0
->     [<000000003e3039a8>] seq_open+0x2f/0x90
->     [<000000008dd36b7d>] tracing_err_log_open+0x67/0x140
->     [<000000005a431ae2>] do_dentry_open+0x1df/0x3a0
->     [<00000000a2910603>] vfs_open+0x2f/0x40
->     [<0000000038b0a383>] path_openat+0x2e8/0x1690
->     [<00000000fe025bda>] do_filp_open+0x9b/0x110
->     [<00000000483a5091>] do_sys_open+0x1ba/0x260
->     [<00000000c558b5fd>] __x64_sys_openat+0x20/0x30
->     [<000000006881ec07>] do_syscall_64+0x5a/0x130
->     [<00000000571c2e94>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> Changes since v1:
+>  * codec_state is now enum
+>  * dropped IS_OUT and IS_CAP macros and use vb2_start_streaming_called()
+>  * corrected g_fmt and reconfig logic
+>  * s/vdec_dst_buffers_done/vdec_cancel_dst_buffers
+>  * use v4l2_m2m_ioctl_try_decoder_cmd M2M helper
+>  * various fixes to make v4l2-compliance pass the streaming test
 > 
-> Fix this by calling seq_release() in tracing_err_log_fops.release().
+> To test the streaming with --stream-from-hdr v4l2-compliance option I have
+> to make the following hack (it is needed because the size of decoder input
+> buffers (OUTPUT queue) is not enough for the h264 bitstream, i.e the driver
+> default resolution is 64x64 but the h264 stream is 320x240):
 > 
-> Signed-off-by: Takeshi Misawa <jeliantsurux@gmail.com>
-> ---
-> Dear Steven Rostedt
-> 
-> Thanks for reviewing.
-> 
-> > Actually, I think it is safer to have the condition be:
-> > 
-> >         if (file->f_mode & FMODE_READ)
-> > 
-> > As that would match the open.
-> > 
-> > Can you send a v2?
-> 
-> I send a v2 patch.
-> 
-> Regards.
-> ---
->  kernel/trace/trace.c | 14 +++++++++++++-
->  1 file changed, 13 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-> index 83e08b78dbee..4122ccde6ec2 100644
-> --- a/kernel/trace/trace.c
-> +++ b/kernel/trace/trace.c
-> @@ -7126,12 +7126,24 @@ static ssize_t tracing_err_log_write(struct
-> file *file,
->  	return count;
->  }
->  
-> +static int tracing_err_log_release(struct inode *inode, struct file
-> *file)
-> +{
-> +	struct trace_array *tr = inode->i_private;
+> diff --git a/utils/v4l2-compliance/v4l2-test-buffers.cpp b/utils/v4l2-compliance/v4l2-test-buffers.cpp
+> index c71dcf65b721..dc0fcf20d3e4 100644
+> --- a/utils/v4l2-compliance/v4l2-test-buffers.cpp
+> +++ b/utils/v4l2-compliance/v4l2-test-buffers.cpp
+> @@ -1294,6 +1294,11 @@ int testMmap(struct node *node, unsigned frame_count, enum poll_mode pollmode)
+>                                         fmt.s_sizeimage(fmt.g_sizeimage(p) * 2, p);
+>                         }
+>                         fail_on_test(q.create_bufs(node, 1, &fmt));
 > +
-> +	trace_array_put(tr);
+> +                       for (unsigned p = 0; p < fmt.g_num_planes(); p++)
+> +                               fmt.s_sizeimage(fmt.g_sizeimage(p) * 2, p);
+> +                       node->s_fmt(fmt);
 > +
-> +	if (file->f_mode & FMODE_READ)
-> +		seq_release(inode, file);
-> +
-> +	return 0;
-> +}
-> +
->  static const struct file_operations tracing_err_log_fops = {
->  	.open           = tracing_err_log_open,
->  	.write		= tracing_err_log_write,
->  	.read           = seq_read,
->  	.llseek         = seq_lseek,
-> -	.release	= tracing_release_generic_tr,
-> +	.release        = tracing_err_log_release,
->  };
->  
+>                         fail_on_test(q.reqbufs(node, 2));
+>                 }
+>                 if (v4l_type_is_output(type))
 
-v2 looks good to me, thanks for sending this fix.
+Does the venus driver set sizeimage based on the given output resolution?
 
-Reviewed-by: Tom Zanussi <zanussi@kernel.org>
+E.g. if v4l2-compliance would first set the output resolution to 320x240,
+is the returned sizeimage value OK in that case?
 
+And this also means that the venus driver requires each buffer to have
+a single compressed frame, right? I.e. it can't be spread over multiple
+OUTPUT buffers.
 
->  static int tracing_buffers_open(struct inode *inode, struct file
-> *filp)
+We really need to let userspace know about such restrictions.
+
+Stanimir, can you list the restrictions of the decoder for the various
+codecs?
+
+Regards,
+
+	Hans
