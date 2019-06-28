@@ -2,56 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B38D5A505
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 21:17:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 703AE5A506
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 21:17:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726891AbfF1TRY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 15:17:24 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:38888 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726819AbfF1TRX (ORCPT
+        id S1727015AbfF1TR2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 15:17:28 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:45020 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726819AbfF1TRZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 15:17:23 -0400
-Received: by mail-pg1-f193.google.com with SMTP id z75so3009079pgz.5
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2019 12:17:23 -0700 (PDT)
+        Fri, 28 Jun 2019 15:17:25 -0400
+Received: by mail-pg1-f196.google.com with SMTP id n2so2993690pgp.11
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2019 12:17:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8q9yQqX5qZYX/nKn+QuYc3/3y+Tw6e7npxoxu3lD4U4=;
-        b=JYJhZDX4L8FidcKCWfChOysOK0tDYUdXHFqNULJe1cx1mJ2jHtWlSYC9LvCJDM61Hp
-         SkChCDVyLCWHly45CjTZ+6U5uffPfANA0U6Ibge2y2P8ELmeyql/pHqcc5aD+UgQHxpx
-         LC8JubRzPLXSfHuphNKElDSjiH4ucmtHV04xw=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=qTpLIapDj/rrqGy08Nrm9SBzOMwkMreL8u7668CeXy0=;
+        b=UYHUlmfCpyp/Rq/Sh84vW7D38yShCRvel4pWMlhyR+FoG65rk/+3VnEY5fxJchI62X
+         AGM8glZTsjjQYiMLYxYfEScRzsL/dCl0bSiyMzV0L+uJ3pGXcEMM5E1l/9BMzZ4Eul+T
+         f5FOYAZUh89WVxJaxVTPSFRltZXK9qGGizeug=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8q9yQqX5qZYX/nKn+QuYc3/3y+Tw6e7npxoxu3lD4U4=;
-        b=OuZA/RNGxTK95CmuIaAz6eFsPigt2Pz9bJXsrxiEcR2tiTWxktTrQCzE+KsUzvg9y8
-         CmQ5+a4mwv6RpYmYdhrcNy1C9QFAJDmhqfav0Wvja+zqYKXKivYyj+9pbnJP+CsOX3ak
-         OetrxolcQewu9cH8McSUEOx3VG3ZkvTYEy5bsLt+cmN869N0BYkJhjCI+pqimtrVEnkN
-         gVkzJvbpUTbVccVu/GyGok4SecTNUlYHO9PXmLnL3lpSMhWZOPURpTXapwS5QKHua+Sn
-         wX15rAoJyrTw4R5POs1S3a9KbzlKNnoeOHSKVbzmorqa1JN6TYEgfg5FGl8rehOeIpkV
-         19gQ==
-X-Gm-Message-State: APjAAAV3zMAa752OWzQW57oPW0tfMXhk6PtBvZqC/14+cTtyo6i6HHQH
-        boC9dkZjnLX3xLbgBpZAt1fq9g==
-X-Google-Smtp-Source: APXvYqyQbuEulNlP6eXe4cVeX5cwXgAycVHoW9wLousAYKKfFBngw+uC5XTkOIBMOYUBg78WGwf+9g==
-X-Received: by 2002:a17:90a:a008:: with SMTP id q8mr15238102pjp.114.1561749442988;
-        Fri, 28 Jun 2019 12:17:22 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=qTpLIapDj/rrqGy08Nrm9SBzOMwkMreL8u7668CeXy0=;
+        b=eG9NeWO34HC1RCjDnTZctfM4DQanR0c61+rSUxRWqeIjdfNHiG8o4Elw9X3hme5oH0
+         NERnTf3476HfW1fxUKwsuAq1EyqMJ2BmWNj9dJO8lhXKvUrErM1TDdFgrpK8gZBONOEv
+         i9512QCsaqpSJ88mLVgK6Nl692tRzZc6kBbjagOeB/MAqlpIo54HZTfGkCJtLquea/0s
+         1LRp/2W4TZ02bpw7yiwr3+QJ58KrxL2fLpUrZX+29zwgDw91UPka48T45ehiWg9+jywC
+         i6kUng730ycF7NddPiJqy9IzCTwJnEFTGmUB6E7T8MfTJnXX5w1Khxnbb2/iVkvi+skc
+         zu2Q==
+X-Gm-Message-State: APjAAAX96CCn2hor3Nm955S/dgC8rwooomkrA6F47jHl52XnaESCXDhT
+        L87vvPFqwLNZJ0bVlKlWPNg2/g==
+X-Google-Smtp-Source: APXvYqxFI1diBCJYCGIBbL5Ayng8s2supWGZgkAkhSjaPVKvRZQT9z6SdHP6K6Gv2lLVrYGzrI1zuw==
+X-Received: by 2002:a17:90a:1aa4:: with SMTP id p33mr15305071pjp.27.1561749444272;
+        Fri, 28 Jun 2019 12:17:24 -0700 (PDT)
 Received: from localhost ([2620:15c:202:1:3c8f:512b:3522:dfaf])
-        by smtp.gmail.com with ESMTPSA id m31sm3230830pjb.6.2019.06.28.12.17.22
+        by smtp.gmail.com with ESMTPSA id s5sm2614097pgj.60.2019.06.28.12.17.23
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 28 Jun 2019 12:17:22 -0700 (PDT)
+        Fri, 28 Jun 2019 12:17:23 -0700 (PDT)
 From:   Gwendal Grignou <gwendal@chromium.org>
 To:     jic23@kernel.org, bleung@chromium.org,
         enric.balletbo@collabora.com, groeck@chromium.org,
         fabien.lahoudere@collabora.com, dianders@chromium.org
 Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Gwendal Grignou <gwendal@chromium.org>
-Subject: [PATCH v4 0/4] Support accelerometers for veyron_minnie
-Date:   Fri, 28 Jun 2019 12:17:07 -0700
-Message-Id: <20190628191711.23584-1-gwendal@chromium.org>
+Subject: [PATCH v4 1/4] iio: cros_ec: Add sign vector in core for backward compatibility
+Date:   Fri, 28 Jun 2019 12:17:08 -0700
+Message-Id: <20190628191711.23584-2-gwendal@chromium.org>
 X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
+In-Reply-To: <20190628191711.23584-1-gwendal@chromium.org>
+References: <20190628191711.23584-1-gwendal@chromium.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -59,43 +61,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-veyron_minnie - ASUS Chromebook Flip C100PA - embedded controller
-controls two accelerometers, one in the lid, one in the base.
-However, the EC firmware does not follow the new interface that
-cros_ec_accel driver use.
-Extend the legacy driver used on glimmer - Lenovo ThinkPad 11e
-Chromebook - to veyron_minnie.
-veyron_minnie being ARM based, issue command over the I2C bus to the EC
-instead of relying on the shared registers over LPC.
+To allow cros_ec iio core library to be used with legacy device, add a
+vector to rotate sensor data if necessary: legacy devices are not
+reporting data in HTML5/Android sensor referential.
 
-Gwendal Grignou (4):
-  iio: cros_ec: Add sign vector in core for backward compatibility
-  iio: cros_ec_accel_legacy: Fix incorrect channel setting
-  iio: cros_ec_accel_legacy: Use cros_ec_sensors_core
-  iio: cros_ec_accel_legacy: Add support for veyron-minnie
+Check the data is not rotated on recent chromebooks that use the HTML5
+standard to present sensor data.
 
-Changes in v4:
-- No change in iio/common/cros_ec_sensors
-- Split cros_ec_accel_legacy code in 3:
-  - fix an error in channel setting.
-  - remove duplicate code in cros_ec_accel, use cros_ec_sensors_core.
-  - extend cros_ec_accel to ARM device.
-- Define cros_ec_accel_legacy_read_cmd() as static.
+Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
+---
+ drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c | 4 ++++
+ include/linux/iio/common/cros_ec_sensors_core.h           | 1 +
+ 2 files changed, 5 insertions(+)
 
-Changes in v3:
-- Fix commit message, add reviewed-by for first patch.
-
-Changes in v2:
-- Readd empty line to reduce amount of change in patch.
-- Remove Keywords used by ChromeOS commit queue.
-
-
- drivers/iio/accel/Kconfig                     |   4 +-
- drivers/iio/accel/cros_ec_accel_legacy.c      | 350 ++++--------------
- .../cros_ec_sensors/cros_ec_sensors_core.c    |   4 +
- .../linux/iio/common/cros_ec_sensors_core.h   |   1 +
- 4 files changed, 84 insertions(+), 275 deletions(-)
-
+diff --git a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
+index 719a0df5aeeb..e8a4d78659c8 100644
+--- a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
++++ b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
+@@ -66,6 +66,9 @@ int cros_ec_sensors_core_init(struct platform_device *pdev,
+ 		}
+ 		state->type = state->resp->info.type;
+ 		state->loc = state->resp->info.location;
++
++		/* Set sign vector, only used for backward compatibility. */
++		memset(state->sign, 1, CROS_EC_SENSOR_MAX_AXIS);
+ 	}
+ 
+ 	return 0;
+@@ -254,6 +257,7 @@ static int cros_ec_sensors_read_data_unsafe(struct iio_dev *indio_dev,
+ 		if (ret < 0)
+ 			return ret;
+ 
++		*data *= st->sign[i];
+ 		data++;
+ 	}
+ 
+diff --git a/include/linux/iio/common/cros_ec_sensors_core.h b/include/linux/iio/common/cros_ec_sensors_core.h
+index ce16445411ac..a1c85ad4df91 100644
+--- a/include/linux/iio/common/cros_ec_sensors_core.h
++++ b/include/linux/iio/common/cros_ec_sensors_core.h
+@@ -71,6 +71,7 @@ struct cros_ec_sensors_core_state {
+ 	enum motionsensor_location loc;
+ 
+ 	s16 calib[CROS_EC_SENSOR_MAX_AXIS];
++	s8 sign[CROS_EC_SENSOR_MAX_AXIS];
+ 
+ 	u8 samples[CROS_EC_SAMPLE_SIZE];
+ 
 -- 
 2.22.0.410.gd8fdbe21b5-goog
 
