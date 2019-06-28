@@ -2,137 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BA815A071
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 18:10:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64E0A5A099
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 18:14:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726832AbfF1QKX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 12:10:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46362 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726542AbfF1QKX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 12:10:23 -0400
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DB68721726;
-        Fri, 28 Jun 2019 16:10:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561738222;
-        bh=JT2+LjdeGYwAzgiQO03rJyeR6d1ItE4i/2D95RggsE0=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=2jPfie8PRDa4umctnjlAEeWpw3BkCmoC0WH18fW0TkvsFQ7RsdkA1hCqoVP0ei99p
-         DiYQXIXkyt2+Mt+6ZLrCD09gMxB2R29SmABRJMeRvyvKaERRxanck59+m1nOVipH+B
-         x6rjzkLBBU1UFtKGMM5ebhZp3sbY2dzzZoPP7kl4=
-Received: by mail-qk1-f175.google.com with SMTP id r6so5294974qkc.0;
-        Fri, 28 Jun 2019 09:10:21 -0700 (PDT)
-X-Gm-Message-State: APjAAAWSQGxFpD7L/A6bbyl7f2ksTFD+s+1f2bFRUcQPDIM7yBv1D5Ux
-        B7+pznqjOEM/PyOei6JzJq5H/oxEalwefzYTFQ==
-X-Google-Smtp-Source: APXvYqyWvAhqS9/ekWTKjDusvBvbzTg0jA8Pn2h4OITXjwQUgHtqy5AWS+DPlCXsn23dZ+IMB0pxlEQeYQRMQrLcvXU=
-X-Received: by 2002:a05:620a:1447:: with SMTP id i7mr9535724qkl.254.1561738221012;
- Fri, 28 Jun 2019 09:10:21 -0700 (PDT)
+        id S1726846AbfF1QO0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 12:14:26 -0400
+Received: from charlotte.tuxdriver.com ([70.61.120.58]:33694 "EHLO
+        smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726542AbfF1QOZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Jun 2019 12:14:25 -0400
+Received: from cpe-2606-a000-111b-405a-0-0-0-162e.dyn6.twc.com ([2606:a000:111b:405a::162e] helo=localhost)
+        by smtp.tuxdriver.com with esmtpsa (TLSv1:AES256-SHA:256)
+        (Exim 4.63)
+        (envelope-from <nhorman@tuxdriver.com>)
+        id 1hgtVq-0004MM-RK; Fri, 28 Jun 2019 12:14:13 -0400
+Date:   Fri, 28 Jun 2019 12:13:43 -0400
+From:   Neil Horman <nhorman@tuxdriver.com>
+To:     Fuqian Huang <huangfq.daxian@gmail.com>
+Cc:     Seth Heasley <seth.heasley@intel.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 19/87] i2c: busses: Remove call to memset after
+ dmam_alloc_coherent
+Message-ID: <20190628161343.GB14635@hmswarspite.think-freely.org>
+References: <20190627173653.2833-1-huangfq.daxian@gmail.com>
 MIME-Version: 1.0
-References: <20190401171724.215780-1-dianders@chromium.org>
- <20190626130007.GE23428@ravnborg.org> <CAD=FV=U4UU8q+CS76uuuGUP=EVnE6+BTUf8U=j7uwfczNgkrZw@mail.gmail.com>
- <CAD=FV=Vi2C7s2oWBDD0n+HK=_SuBYhRM9saMK-y6Qa0+k-g17w@mail.gmail.com>
-In-Reply-To: <CAD=FV=Vi2C7s2oWBDD0n+HK=_SuBYhRM9saMK-y6Qa0+k-g17w@mail.gmail.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Fri, 28 Jun 2019 10:10:09 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJGtUTpJL+SDEKi09aDT4yDzY4x9KwYmz08NaZcn=nHfA@mail.gmail.com>
-Message-ID: <CAL_JsqJGtUTpJL+SDEKi09aDT4yDzY4x9KwYmz08NaZcn=nHfA@mail.gmail.com>
-Subject: Re: [PATCH v5 0/7] drm/panel: simple: Add mode support to devicetree
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     Sam Ravnborg <sam@ravnborg.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Sean Paul <seanpaul@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Brian Norris <briannorris@chromium.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        Klaus Goger <klaus.goger@theobroma-systems.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        =?UTF-8?Q?Enric_Balletb=C3=B2?= <enric.balletbo@collabora.com>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190627173653.2833-1-huangfq.daxian@gmail.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
+X-Spam-Score: -2.9 (--)
+X-Spam-Status: No
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 28, 2019 at 9:55 AM Doug Anderson <dianders@chromium.org> wrote:
->
-> Hi,
->
-> On Wed, Jun 26, 2019 at 7:41 AM Doug Anderson <dianders@chromium.org> wrote:
-> >
-> > Hi,
-> >
-> > On Wed, Jun 26, 2019 at 6:00 AM Sam Ravnborg <sam@ravnborg.org> wrote:
-> > >
-> > > Hi Douglas.
-> > >
-> > > On Mon, Apr 01, 2019 at 10:17:17AM -0700, Douglas Anderson wrote:
-> > > > I'm reviving Sean Paul's old patchset to get mode support in device
-> > > > tree.  The cover letter for his v3 is at:
-> > > > https://lists.freedesktop.org/archives/dri-devel/2018-February/165162.html
-> > > >
-> > > > No code is different between v4 and v5, just commit messages and text
-> > > > in the bindings.
-> > > >
-> > > > I've pulled together the patches that didn't land in v3, addressed
-> > > > outstanding feedback, and reposted.  Atop them I've added patches for
-> > > > rk3288-veyron-chromebook (used for jaq, jerry, mighty, speedy) and
-> > > > rk3288-veryon-minnie.
-> > > >
-> > > > Please let me know how they look.
-> > > >
-> > > > In general I have added people to the whole series who I think would
-> > > > like the whole series and then let get_maintainer pick extra people it
-> > > > thinks are relevant to each individual patch.  If I see you respond to
-> > > > any of the patches in the series, though, I'll add you to the whole
-> > > > series Cc list next time.
-> > > >
-> > > > Changes in v5:
-> > > > - Removed bit about OS may ignore (Rob/Ezequiel)
-> > > > - Added Heiko's Tested-by
-> > > > - It's not just jerry, it's most rk3288 Chromebooks (Heiko)
-> > >
-> > > What are the plans to move forward with this?
-> > > Or did you drop the whole idea again?
-> >
-> > At the moment I'm blocked on Thierry responding, either taking the
-> > patch or telling me what I need to do to fix it.  I saw Sean Paul ping
-> > Thierry on IRC on June 3rd and as far as I could tell there was no
-> > response.
-> >
-> > https://people.freedesktop.org/~cbrill/dri-log/?channel=dri-devel&highlight_names=&date=2019-06-03&show_html=true
-> >
-> > ...and as you can see Heiko pinged this thread on June 14th.
-> >
-> > Thierry: can you help give us some direction?  Are you uninterested in
-> > reviewing them and would prefer that I find someone to land them in
-> > drm-misc directly?
->
-> Sam: Oh!  I hadn't noticed that you've been added as a panel
-> maintainer in commit ef0db94f94a0 ("MAINTAINERS: Add Sam as reviewer
-> for drm/panel").  Does that mean you are able to provide some advice
-> for how to land this series?  As far as I know everything is in order
-> for it to land, but if you are aware of something I need to do to spin
-> it then please let me know!
-
-BTW, at least for the binding, this will get implicitly supported in
-the schema conversion[1] as simple-panel as a binding is gone and
-panel-common already had timing node defined. A schema for the timing
-node is still needed though (hint :) ).
-
-Rob
-
-[1] https://patchwork.ozlabs.org/patch/1121538/
+On Fri, Jun 28, 2019 at 01:36:51AM +0800, Fuqian Huang wrote:
+> In commit af7ddd8a627c
+> ("Merge tag 'dma-mapping-4.21' of git://git.infradead.org/users/hch/dma-mapping"),
+> dmam_alloc_coherent has already zeroed the memory.
+> So memset is not needed.
+> 
+> Signed-off-by: Fuqian Huang <huangfq.daxian@gmail.com>
+> ---
+>  drivers/i2c/busses/i2c-ismt.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-ismt.c b/drivers/i2c/busses/i2c-ismt.c
+> index 02d23edb2fb1..2f95e25a10f7 100644
+> --- a/drivers/i2c/busses/i2c-ismt.c
+> +++ b/drivers/i2c/busses/i2c-ismt.c
+> @@ -781,8 +781,6 @@ static int ismt_dev_init(struct ismt_priv *priv)
+>  	if (!priv->hw)
+>  		return -ENOMEM;
+>  
+> -	memset(priv->hw, 0, (ISMT_DESC_ENTRIES * sizeof(struct ismt_desc)));
+> -
+>  	priv->head = 0;
+>  	init_completion(&priv->cmp);
+>  
+> -- 
+> 2.11.0
+> 
+> 
+Acked-by: Neil Horman <nhorman@tuxdriver.com>
