@@ -2,619 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7F9259B1A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 14:31:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 680C159EA4
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 17:19:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727375AbfF1MbI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 08:31:08 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:39816 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727180AbfF1Mas (ORCPT
+        id S1726832AbfF1PTD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 11:19:03 -0400
+Received: from mx0b-00128a01.pphosted.com ([148.163.139.77]:55538 "EHLO
+        mx0b-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726716AbfF1PTC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 08:30:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=t2SlvlYO6vN68ooBWcFQh21aLIzOtka8Klr/M76soBU=; b=GPcFupf5dzfyT165XdM5l7atm7
-        NpunVR4RVyW430xRFKelq2/bs7dtPeXB4qL/NAe4wUu90z3hkDS/UIfIGdcLRgNR2UNHiStAIHDWk
-        b5ipZ/rh5zP1MANqlxnbENYD/fVy7fINuTz8hI/7Xxd5uRjSAc/v12+G6v77fOA6pvH51AXLu2qLr
-        m1H6iZl3askKHReK+jify63bqpxZ2aZmSjKnEi33cR7epWYwKUNyxM6iw0XhbwlMf1Q1R8eIlnGAY
-        g2vrko1I5YdrDNVcbwUdqvarlbeC++auL6Ldh/LGX2VSxCdN+UgvNr4MOiHvRW17Y0Xbs+VJlMxkY
-        FFszEwYQ==;
-Received: from [186.213.242.156] (helo=bombadil.infradead.org)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hgq1U-00055h-OB; Fri, 28 Jun 2019 12:30:37 +0000
-Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
-        (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hgq1S-0005TB-Lz; Fri, 28 Jun 2019 09:30:34 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Willy Tarreau <willy@haproxy.com>,
-        Ksenija Stanojevic <ksenija.stanojevic@gmail.com>,
-        "Richard Russon (FlatCap)" <ldm@flatcap.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Martin Mares <mj@ucw.cz>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Russell King <linux@armlinux.org.uk>,
-        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-        Helge Deller <deller@gmx.de>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-efi@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-ntfs-dev@lists.sourceforge.net, linux-rtc@vger.kernel.org,
-        linux-video@atrey.karlin.mff.cuni.cz,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-parisc@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-block@vger.kernel.org
-Subject: [PATCH 28/39] docs: admin-guide: add a series of orphaned documents
-Date:   Fri, 28 Jun 2019 09:30:21 -0300
-Message-Id: <7ee0e33575633f689203f582259c2cbdce477176.1561724493.git.mchehab+samsung@kernel.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <cover.1561724493.git.mchehab+samsung@kernel.org>
-References: <cover.1561724493.git.mchehab+samsung@kernel.org>
+        Fri, 28 Jun 2019 11:19:02 -0400
+X-Greylist: delayed 10110 seconds by postgrey-1.27 at vger.kernel.org; Fri, 28 Jun 2019 11:19:01 EDT
+Received: from pps.filterd (m0167091.ppops.net [127.0.0.1])
+        by mx0b-00128a01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5SCS8mD025966;
+        Fri, 28 Jun 2019 08:30:20 -0400
+Received: from nam05-co1-obe.outbound.protection.outlook.com (mail-co1nam05lp2052.outbound.protection.outlook.com [104.47.48.52])
+        by mx0b-00128a01.pphosted.com with ESMTP id 2tdasvh9yw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Fri, 28 Jun 2019 08:30:19 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=testarcselector01; d=microsoft.com; cv=none;
+ b=tUmkv5XEQ1AaiIqU6cn1k5wEitm0dHMOHpH+glijM5CLlka5W6zCN4SCINAxctQtL6H9v2VUw/B2LyXYzw+WZiZulJxknz5rtP9z+uJrTugXKNxtDqFP6HJ6w1zsFr76VK0qp4FoLQN+cxHx8+VHSzDDgQt8KOyHLEzet5Jbc3w=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=testarcselector01;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cRn7T/55qU1uKDWRES7M0wi6sof63Ze/Idsd+VAxxm8=;
+ b=qCAtlDRoXtk/xQ0/fMXs5oaTgjzowTFGxFLLNZj4Xi/cI8txoaVNWrowFvnIFTLHexi1jNgFk1x7/JAyX9Ok00YPjz+McYuXHGNY9e062Neju5lnPOXF+7UBme2CyUR5cIFAecvMEYa200SnUXQC6SQz0CcoZJEZ1TEh6yVX00M=
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass (sender ip is
+ 137.71.25.57) smtp.rcpttodomain=gmail.com
+ smtp.mailfrom=analog.com;dmarc=bestguesspass action=none
+ header.from=analog.com;dkim=none (message not signed);arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=analog.onmicrosoft.com; s=selector1-analog-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cRn7T/55qU1uKDWRES7M0wi6sof63Ze/Idsd+VAxxm8=;
+ b=Mid3C5b/Bs6acKnBlB9HCEwtiWaw7Ww1WFL1hCNYgr5NnlHiN3OoitAtMQXqReB+9JN7ZT0S8GVWq4FhxQ2pzuiWu+yrIUcNyq1P6auumBo+UuzTIMGFc0UZ52HorKBWMoc3CAnzyDVaWmGi8CdJegKpoYo7b1pLb9oYzAB8Fho=
+Received: from DM3PR03CA0012.namprd03.prod.outlook.com (2603:10b6:0:50::22) by
+ BN7PR03MB3506.namprd03.prod.outlook.com (2603:10b6:406:c2::18) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2008.16; Fri, 28 Jun 2019 12:30:17 +0000
+Received: from BL2NAM02FT056.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e46::200) by DM3PR03CA0012.outlook.office365.com
+ (2603:10b6:0:50::22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2032.17 via Frontend
+ Transport; Fri, 28 Jun 2019 12:30:16 +0000
+Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
+ 137.71.25.57 as permitted sender) receiver=protection.outlook.com;
+ client-ip=137.71.25.57; helo=nwd2mta2.analog.com;
+Received: from nwd2mta2.analog.com (137.71.25.57) by
+ BL2NAM02FT056.mail.protection.outlook.com (10.152.77.221) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2032.15
+ via Frontend Transport; Fri, 28 Jun 2019 12:30:16 +0000
+Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
+        by nwd2mta2.analog.com (8.13.8/8.13.8) with ESMTP id x5SCUGMV025536
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
+        Fri, 28 Jun 2019 05:30:16 -0700
+Received: from nsa.ad.analog.com (10.44.3.90) by NWD2HUBCAS7.ad.analog.com
+ (10.64.69.107) with Microsoft SMTP Server (TLS) id 14.3.408.0; Fri, 28 Jun
+ 2019 08:30:15 -0400
+From:   =?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>
+To:     <broonie@kernel.org>, <eric@anholt.net>, <wahrenst@gmx.net>,
+        <f.fainelli@gmail.com>, <rjui@broadcom.com>,
+        <sbranden@broadcom.com>
+CC:     <bcm-kernel-feedback-list@broadcom.com>,
+        <linux-spi@vger.kernel.org>,
+        <linux-rpi-kernel@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] spi: spi-bcm2835.c: Fix 3-wire mode
+Date:   Fri, 28 Jun 2019 14:30:23 +0200
+Message-ID: <20190628123023.4696-1-nuno.sa@analog.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.44.3.90]
+X-ADIRoutedOnPrem: True
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(39860400002)(396003)(376002)(136003)(2980300002)(199004)(189003)(70206006)(7636002)(7736002)(70586007)(110136005)(54906003)(2201001)(2616005)(316002)(2906002)(486006)(126002)(476003)(50466002)(305945005)(86362001)(47776003)(426003)(336012)(7696005)(356004)(6666004)(5820100001)(23676004)(1076003)(246002)(966005)(4326008)(36756003)(5660300002)(8936002)(8676002)(16526019)(186003)(478600001)(77096007)(7416002)(2870700001)(3846002)(106002)(6116002)(50226002)(6306002)(72206003)(45776006)(26005);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR03MB3506;H:nwd2mta2.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail11.analog.com;A:1;MX:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 3e46d08e-f1c8-4382-5484-08d6fbc4601f
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(4709080)(1401327)(2017052603328)(7193020);SRVR:BN7PR03MB3506;
+X-MS-TrafficTypeDiagnostic: BN7PR03MB3506:
+X-MS-Exchange-PUrlCount: 1
+X-Microsoft-Antispam-PRVS: <BN7PR03MB3506F9C580C3F3741244EB6D99FC0@BN7PR03MB3506.namprd03.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
+X-Forefront-PRVS: 00826B6158
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Message-Info: Mrsz+ndzEtD1SS4tOD0vciCwg7EsnOkWTHrlYGcR5VLVpzMOyICdm+exHRW36vLW2RJW+C7g0JymUsHSLIQ+h8/+WbdvruAMltONewXT247xH5TTZQiqNDA5XymbuahMmZkIK0YeQ3Z8rtIMHSYdt4HCUek1k98vSoBTWi29bMNSsxRLCc2OTpWKFW6H27gQL8ptYZzPai20Vl9XqQuIbQvQHWr9L9Mzh2N8LrzV/iMrCC6vD/k2heXP8oT8LOz1djsi1DFWe46ZNc7wBvLk+YOw/0fe+Ezc2VmX4eR0Yug/GcohLIs5Cml+A409uov/Z7pIHmInxKyVq3lrBPw/pUDdEiR9Uk3zae6wQLQAXizTuRzStUHEFQgCN6s23aJMqrSstqz2JYmguNrntPoRvhLoUiiBeq+sg2Jwu0jnS5k=
+X-OriginatorOrg: analog.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jun 2019 12:30:16.3450
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3e46d08e-f1c8-4382-5484-08d6fbc4601f
+X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.57];Helo=[nwd2mta2.analog.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR03MB3506
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-28_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=959 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906280148
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are lots of documents that belong to the admin-guide but
-are on random places (most under Documentation root dir).
+As stated in
+https://www.raspberrypi.org/documentation/hardware/raspberrypi/spi/README.md,
+one of rx or tx buffer's must be null. However, if DMA is enabled, the
+driver sets the SPI_CONTROLLER_MUST_RX | SPI_CONTROLLER_MUST_TX on the
+controller flags. Hence, the spi core will provide dummy buffers even if
+one of the buffers was set to null by the device driver. Thus, the
+communication with the 3-wire device fails.
 
-Move them to the admin guide.
+This patch uses the prepare_message callback to look for the device mode
+and sets/clears the SPI_CONTROLLER_MUST_RX | SPI_CONTROLLER_MUST_TX on a
+per spi message basis. It also assumes that DMA is not supported on
+half-duplex devices.
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Nuno Sá <nuno.sa@analog.com>
 ---
- Documentation/ABI/stable/sysfs-devices-node     |  2 +-
- Documentation/ABI/testing/procfs-diskstats      |  2 +-
- Documentation/ABI/testing/sysfs-block           |  2 +-
- .../ABI/testing/sysfs-devices-system-cpu        |  4 ++--
- .../{btmrvl.txt => admin-guide/btmrvl.rst}      |  0
- .../clearing-warn-once.rst}                     |  0
- .../{cpu-load.txt => admin-guide/cpu-load.rst}  |  0
- .../cputopology.rst}                            |  0
- .../admin-guide/device-mapper/statistics.rst    |  4 ++--
- .../{efi-stub.txt => admin-guide/efi-stub.rst}  |  0
- .../{highuid.txt => admin-guide/highuid.rst}    |  0
- Documentation/admin-guide/hw-vuln/l1tf.rst      |  2 +-
- .../hw_random.rst}                              |  0
- Documentation/admin-guide/index.rst             | 17 +++++++++++++++++
- .../{iostats.txt => admin-guide/iostats.rst}    |  0
- Documentation/admin-guide/kernel-parameters.txt |  2 +-
- .../kernel-per-CPU-kthreads.rst}                |  0
- .../lcd-panel-cgram.rst                         |  2 --
- Documentation/{ldm.txt => admin-guide/ldm.rst}  |  0
- .../lockup-watchdogs.rst}                       |  0
- .../mm/cma_debugfs.rst}                         |  2 --
- Documentation/admin-guide/mm/index.rst          |  1 +
- .../{numastat.txt => admin-guide/numastat.rst}  |  0
- Documentation/{pnp.txt => admin-guide/pnp.rst}  |  0
- Documentation/{rtc.txt => admin-guide/rtc.rst}  |  0
- .../{svga.txt => admin-guide/svga.rst}          |  0
- Documentation/admin-guide/sysctl/kernel.rst     |  2 +-
- .../video-output.rst}                           |  0
- Documentation/fb/vesafb.rst                     |  2 +-
- Documentation/x86/topology.rst                  |  2 +-
- MAINTAINERS                                     | 12 ++++++------
- arch/arm/Kconfig                                |  2 +-
- arch/parisc/Kconfig                             |  2 +-
- arch/sh/Kconfig                                 |  2 +-
- arch/sparc/Kconfig                              |  2 +-
- arch/x86/Kconfig                                |  4 ++--
- block/partitions/Kconfig                        |  2 +-
- drivers/char/Kconfig                            |  4 ++--
- drivers/char/hw_random/core.c                   |  2 +-
- include/linux/hw_random.h                       |  2 +-
- 40 files changed, 47 insertions(+), 33 deletions(-)
- rename Documentation/{btmrvl.txt => admin-guide/btmrvl.rst} (100%)
- rename Documentation/{clearing-warn-once.txt => admin-guide/clearing-warn-once.rst} (100%)
- rename Documentation/{cpu-load.txt => admin-guide/cpu-load.rst} (100%)
- rename Documentation/{cputopology.txt => admin-guide/cputopology.rst} (100%)
- rename Documentation/{efi-stub.txt => admin-guide/efi-stub.rst} (100%)
- rename Documentation/{highuid.txt => admin-guide/highuid.rst} (100%)
- rename Documentation/{hw_random.txt => admin-guide/hw_random.rst} (100%)
- rename Documentation/{iostats.txt => admin-guide/iostats.rst} (100%)
- rename Documentation/{kernel-per-CPU-kthreads.txt => admin-guide/kernel-per-CPU-kthreads.rst} (100%)
- rename Documentation/{auxdisplay => admin-guide}/lcd-panel-cgram.rst (99%)
- rename Documentation/{ldm.txt => admin-guide/ldm.rst} (100%)
- rename Documentation/{lockup-watchdogs.txt => admin-guide/lockup-watchdogs.rst} (100%)
- rename Documentation/{cma/debugfs.rst => admin-guide/mm/cma_debugfs.rst} (98%)
- rename Documentation/{numastat.txt => admin-guide/numastat.rst} (100%)
- rename Documentation/{pnp.txt => admin-guide/pnp.rst} (100%)
- rename Documentation/{rtc.txt => admin-guide/rtc.rst} (100%)
- rename Documentation/{svga.txt => admin-guide/svga.rst} (100%)
- rename Documentation/{video-output.txt => admin-guide/video-output.rst} (100%)
+ drivers/spi/spi-bcm2835.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/Documentation/ABI/stable/sysfs-devices-node b/Documentation/ABI/stable/sysfs-devices-node
-index f7ce68fbd4b9..df8413cf1468 100644
---- a/Documentation/ABI/stable/sysfs-devices-node
-+++ b/Documentation/ABI/stable/sysfs-devices-node
-@@ -61,7 +61,7 @@ Date:		October 2002
- Contact:	Linux Memory Management list <linux-mm@kvack.org>
- Description:
- 		The node's hit/miss statistics, in units of pages.
--		See Documentation/numastat.txt
-+		See Documentation/admin-guide/numastat.rst
+diff --git a/drivers/spi/spi-bcm2835.c b/drivers/spi/spi-bcm2835.c
+index 6f243a90c844..8993a15a4684 100644
+--- a/drivers/spi/spi-bcm2835.c
++++ b/drivers/spi/spi-bcm2835.c
+@@ -674,6 +674,10 @@ static bool bcm2835_spi_can_dma(struct spi_controller *ctlr,
+ 	if (tfr->len < BCM2835_SPI_DMA_MIN_LENGTH)
+ 		return false;
  
- What:		/sys/devices/system/node/nodeX/distance
- Date:		October 2002
-diff --git a/Documentation/ABI/testing/procfs-diskstats b/Documentation/ABI/testing/procfs-diskstats
-index abac31d216de..2c44b4f1b060 100644
---- a/Documentation/ABI/testing/procfs-diskstats
-+++ b/Documentation/ABI/testing/procfs-diskstats
-@@ -29,4 +29,4 @@ Description:
- 		17 - sectors discarded
- 		18 - time spent discarding
++	/* Do not DMA on half-duplex devices */
++	if (spi->mode & SPI_3WIRE)
++		return false;
++
+ 	/* return OK */
+ 	return true;
+ }
+@@ -902,6 +906,15 @@ static int bcm2835_spi_prepare_message(struct spi_controller *ctlr,
+ 		cs |= BCM2835_SPI_CS_CPOL;
+ 	if (spi->mode & SPI_CPHA)
+ 		cs |= BCM2835_SPI_CS_CPHA;
++	/*
++	 * For half-duplex devices, one of tx or rx buffers must be null
++	 * for one spi transfer. Hence, we need to clear the spi controller
++	 * flags so that we don't get dummy buffers...
++	 */
++	if (spi->mode & SPI_3WIRE)
++		master->flags &= ~(SPI_MASTER_MUST_RX | SPI_MASTER_MUST_TX);
++	else if (master->can_dma)
++		master->flags |= (SPI_MASTER_MUST_RX | SPI_MASTER_MUST_TX);
  
--		For more details refer to Documentation/iostats.txt
-+		For more details refer to Documentation/admin-guide/iostats.rst
-diff --git a/Documentation/ABI/testing/sysfs-block b/Documentation/ABI/testing/sysfs-block
-index dfad7427817c..f8c7c7126bb1 100644
---- a/Documentation/ABI/testing/sysfs-block
-+++ b/Documentation/ABI/testing/sysfs-block
-@@ -15,7 +15,7 @@ Description:
- 		 9 - I/Os currently in progress
- 		10 - time spent doing I/Os (ms)
- 		11 - weighted time spent doing I/Os (ms)
--		For more details refer Documentation/iostats.txt
-+		For more details refer Documentation/admin-guide/iostats.rst
+ 	bcm2835_wr(bs, BCM2835_SPI_CS, cs);
  
- 
- What:		/sys/block/<disk>/<part>/stat
-diff --git a/Documentation/ABI/testing/sysfs-devices-system-cpu b/Documentation/ABI/testing/sysfs-devices-system-cpu
-index d404603c6b52..5f7d7b14fa44 100644
---- a/Documentation/ABI/testing/sysfs-devices-system-cpu
-+++ b/Documentation/ABI/testing/sysfs-devices-system-cpu
-@@ -34,7 +34,7 @@ Description:	CPU topology files that describe kernel limits related to
- 		present: cpus that have been identified as being present in
- 		the system.
- 
--		See Documentation/cputopology.txt for more information.
-+		See Documentation/admin-guide/cputopology.rst for more information.
- 
- 
- What:		/sys/devices/system/cpu/probe
-@@ -103,7 +103,7 @@ Description:	CPU topology files that describe a logical CPU's relationship
- 		thread_siblings_list: human-readable list of cpu#'s hardware
- 		threads within the same core as cpu#
- 
--		See Documentation/cputopology.txt for more information.
-+		See Documentation/admin-guide/cputopology.rst for more information.
- 
- 
- What:		/sys/devices/system/cpu/cpuidle/current_driver
-diff --git a/Documentation/btmrvl.txt b/Documentation/admin-guide/btmrvl.rst
-similarity index 100%
-rename from Documentation/btmrvl.txt
-rename to Documentation/admin-guide/btmrvl.rst
-diff --git a/Documentation/clearing-warn-once.txt b/Documentation/admin-guide/clearing-warn-once.rst
-similarity index 100%
-rename from Documentation/clearing-warn-once.txt
-rename to Documentation/admin-guide/clearing-warn-once.rst
-diff --git a/Documentation/cpu-load.txt b/Documentation/admin-guide/cpu-load.rst
-similarity index 100%
-rename from Documentation/cpu-load.txt
-rename to Documentation/admin-guide/cpu-load.rst
-diff --git a/Documentation/cputopology.txt b/Documentation/admin-guide/cputopology.rst
-similarity index 100%
-rename from Documentation/cputopology.txt
-rename to Documentation/admin-guide/cputopology.rst
-diff --git a/Documentation/admin-guide/device-mapper/statistics.rst b/Documentation/admin-guide/device-mapper/statistics.rst
-index 3d80a9f850cc..41ded0bc5933 100644
---- a/Documentation/admin-guide/device-mapper/statistics.rst
-+++ b/Documentation/admin-guide/device-mapper/statistics.rst
-@@ -13,7 +13,7 @@ the range specified.
- 
- The I/O statistics counters for each step-sized area of a region are
- in the same format as `/sys/block/*/stat` or `/proc/diskstats` (see:
--Documentation/iostats.txt).  But two extra counters (12 and 13) are
-+Documentation/admin-guide/iostats.rst).  But two extra counters (12 and 13) are
- provided: total time spent reading and writing.  When the histogram
- argument is used, the 14th parameter is reported that represents the
- histogram of latencies.  All these counters may be accessed by sending
-@@ -151,7 +151,7 @@ Messages
- 	  The first 11 counters have the same meaning as
- 	  `/sys/block/*/stat or /proc/diskstats`.
- 
--	  Please refer to Documentation/iostats.txt for details.
-+	  Please refer to Documentation/admin-guide/iostats.rst for details.
- 
- 	  1. the number of reads completed
- 	  2. the number of reads merged
-diff --git a/Documentation/efi-stub.txt b/Documentation/admin-guide/efi-stub.rst
-similarity index 100%
-rename from Documentation/efi-stub.txt
-rename to Documentation/admin-guide/efi-stub.rst
-diff --git a/Documentation/highuid.txt b/Documentation/admin-guide/highuid.rst
-similarity index 100%
-rename from Documentation/highuid.txt
-rename to Documentation/admin-guide/highuid.rst
-diff --git a/Documentation/admin-guide/hw-vuln/l1tf.rst b/Documentation/admin-guide/hw-vuln/l1tf.rst
-index 656aee262e23..f83212fae4d5 100644
---- a/Documentation/admin-guide/hw-vuln/l1tf.rst
-+++ b/Documentation/admin-guide/hw-vuln/l1tf.rst
-@@ -241,7 +241,7 @@ Guest mitigation mechanisms
-    For further information about confining guests to a single or to a group
-    of cores consult the cpusets documentation:
- 
--   https://www.kernel.org/doc/Documentation/cgroup-v1/cpusets.rst
-+   https://www.kernel.org/doc/Documentation/admin-guide/cgroup-v1/cpusets.rst
- 
- .. _interrupt_isolation:
- 
-diff --git a/Documentation/hw_random.txt b/Documentation/admin-guide/hw_random.rst
-similarity index 100%
-rename from Documentation/hw_random.txt
-rename to Documentation/admin-guide/hw_random.rst
-diff --git a/Documentation/admin-guide/index.rst b/Documentation/admin-guide/index.rst
-index d5064f1802c1..2c20607e90cd 100644
---- a/Documentation/admin-guide/index.rst
-+++ b/Documentation/admin-guide/index.rst
-@@ -84,8 +84,25 @@ configure specific aspects of kernel behavior to your liking.
-    perf-security
-    acpi/index
-    aoe/index
-+   btmrvl
-+   clearing-warn-once
-+   cpu-load
-+   cputopology
-    device-mapper/index
-+   efi-stub
-+   highuid
-+   hw_random
-+   iostats
-+   kernel-per-CPU-kthreads
-    laptops/index
-+   lcd-panel-cgram
-+   ldm
-+   lockup-watchdogs
-+   numastat
-+   pnp
-+   rtc
-+   svga
-+   video-output
- 
- .. only::  subproject and html
- 
-diff --git a/Documentation/iostats.txt b/Documentation/admin-guide/iostats.rst
-similarity index 100%
-rename from Documentation/iostats.txt
-rename to Documentation/admin-guide/iostats.rst
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index e833133c8897..713d6f378fbe 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -5092,7 +5092,7 @@
- 
- 	vga=		[BOOT,X86-32] Select a particular video mode
- 			See Documentation/x86/boot.rst and
--			Documentation/svga.txt.
-+			Documentation/admin-guide/svga.rst.
- 			Use vga=ask for menu.
- 			This is actually a boot loader parameter; the value is
- 			passed to the kernel using a special protocol.
-diff --git a/Documentation/kernel-per-CPU-kthreads.txt b/Documentation/admin-guide/kernel-per-CPU-kthreads.rst
-similarity index 100%
-rename from Documentation/kernel-per-CPU-kthreads.txt
-rename to Documentation/admin-guide/kernel-per-CPU-kthreads.rst
-diff --git a/Documentation/auxdisplay/lcd-panel-cgram.rst b/Documentation/admin-guide/lcd-panel-cgram.rst
-similarity index 99%
-rename from Documentation/auxdisplay/lcd-panel-cgram.rst
-rename to Documentation/admin-guide/lcd-panel-cgram.rst
-index dfef50286018..a3eb00c62f53 100644
---- a/Documentation/auxdisplay/lcd-panel-cgram.rst
-+++ b/Documentation/admin-guide/lcd-panel-cgram.rst
-@@ -1,5 +1,3 @@
--:orphan:
--
- ======================================
- Parallel port LCD/Keypad Panel support
- ======================================
-diff --git a/Documentation/ldm.txt b/Documentation/admin-guide/ldm.rst
-similarity index 100%
-rename from Documentation/ldm.txt
-rename to Documentation/admin-guide/ldm.rst
-diff --git a/Documentation/lockup-watchdogs.txt b/Documentation/admin-guide/lockup-watchdogs.rst
-similarity index 100%
-rename from Documentation/lockup-watchdogs.txt
-rename to Documentation/admin-guide/lockup-watchdogs.rst
-diff --git a/Documentation/cma/debugfs.rst b/Documentation/admin-guide/mm/cma_debugfs.rst
-similarity index 98%
-rename from Documentation/cma/debugfs.rst
-rename to Documentation/admin-guide/mm/cma_debugfs.rst
-index 518fe401b5ee..4e06ffabd78a 100644
---- a/Documentation/cma/debugfs.rst
-+++ b/Documentation/admin-guide/mm/cma_debugfs.rst
-@@ -1,5 +1,3 @@
--:orphan:
--
- =====================
- CMA Debugfs Interface
- =====================
-diff --git a/Documentation/admin-guide/mm/index.rst b/Documentation/admin-guide/mm/index.rst
-index 5f61a6c429e0..11db46448354 100644
---- a/Documentation/admin-guide/mm/index.rst
-+++ b/Documentation/admin-guide/mm/index.rst
-@@ -26,6 +26,7 @@ the Linux memory management.
-    :maxdepth: 1
- 
-    concepts
-+   cma_debugfs
-    hugetlbpage
-    idle_page_tracking
-    ksm
-diff --git a/Documentation/numastat.txt b/Documentation/admin-guide/numastat.rst
-similarity index 100%
-rename from Documentation/numastat.txt
-rename to Documentation/admin-guide/numastat.rst
-diff --git a/Documentation/pnp.txt b/Documentation/admin-guide/pnp.rst
-similarity index 100%
-rename from Documentation/pnp.txt
-rename to Documentation/admin-guide/pnp.rst
-diff --git a/Documentation/rtc.txt b/Documentation/admin-guide/rtc.rst
-similarity index 100%
-rename from Documentation/rtc.txt
-rename to Documentation/admin-guide/rtc.rst
-diff --git a/Documentation/svga.txt b/Documentation/admin-guide/svga.rst
-similarity index 100%
-rename from Documentation/svga.txt
-rename to Documentation/admin-guide/svga.rst
-diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
-index a0c1d4ce403a..032c7cd3cede 100644
---- a/Documentation/admin-guide/sysctl/kernel.rst
-+++ b/Documentation/admin-guide/sysctl/kernel.rst
-@@ -327,7 +327,7 @@ when a hard lockup is detected.
-    0 - don't panic on hard lockup
-    1 - panic on hard lockup
- 
--See Documentation/lockup-watchdogs.txt for more information.  This can
-+See Documentation/admin-guide/lockup-watchdogs.rst for more information.  This can
- also be set using the nmi_watchdog kernel parameter.
- 
- 
-diff --git a/Documentation/video-output.txt b/Documentation/admin-guide/video-output.rst
-similarity index 100%
-rename from Documentation/video-output.txt
-rename to Documentation/admin-guide/video-output.rst
-diff --git a/Documentation/fb/vesafb.rst b/Documentation/fb/vesafb.rst
-index 2ed0dfb661cf..6821c87b7893 100644
---- a/Documentation/fb/vesafb.rst
-+++ b/Documentation/fb/vesafb.rst
-@@ -30,7 +30,7 @@ How to use it?
- ==============
- 
- Switching modes is done using the vga=... boot parameter.  Read
--Documentation/svga.txt for details.
-+Documentation/admin-guide/svga.rst for details.
- 
- You should compile in both vgacon (for text mode) and vesafb (for
- graphics mode). Which of them takes over the console depends on
-diff --git a/Documentation/x86/topology.rst b/Documentation/x86/topology.rst
-index 8e9704f61017..e29739904e37 100644
---- a/Documentation/x86/topology.rst
-+++ b/Documentation/x86/topology.rst
-@@ -9,7 +9,7 @@ representation in the kernel. Update/change when doing changes to the
- respective code.
- 
- The architecture-agnostic topology definitions are in
--Documentation/cputopology.txt. This file holds x86-specific
-+Documentation/admin-guide/cputopology.rst. This file holds x86-specific
- differences/specialities which must not necessarily apply to the generic
- definitions. Thus, the way to read up on Linux topology on x86 is to start
- with the generic one and look at this one in parallel for the x86 specifics.
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 82222aa618c5..76b52a20663e 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6054,7 +6054,7 @@ M:	Ard Biesheuvel <ard.biesheuvel@linaro.org>
- L:	linux-efi@vger.kernel.org
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/efi/efi.git
- S:	Maintained
--F:	Documentation/efi-stub.txt
-+F:	Documentation/admin-guide/efi-stub.rst
- F:	arch/*/kernel/efi.c
- F:	arch/x86/boot/compressed/eboot.[ch]
- F:	arch/*/include/asm/efi.h
-@@ -7033,7 +7033,7 @@ M:	Herbert Xu <herbert@gondor.apana.org.au>
- L:	linux-crypto@vger.kernel.org
- S:	Odd fixes
- F:	Documentation/devicetree/bindings/rng/
--F:	Documentation/hw_random.txt
-+F:	Documentation/admin-guide/hw_random.rst
- F:	drivers/char/hw_random/
- F:	include/linux/hw_random.h
- 
-@@ -9347,7 +9347,7 @@ M:	"Richard Russon (FlatCap)" <ldm@flatcap.org>
- L:	linux-ntfs-dev@lists.sourceforge.net
- W:	http://www.linux-ntfs.org/content/view/19/37/
- S:	Maintained
--F:	Documentation/ldm.txt
-+F:	Documentation/admin-guide/ldm.rst
- F:	block/partitions/ldm.*
- 
- LSILOGIC MPT FUSION DRIVERS (FC/SAS/SPI)
-@@ -12000,7 +12000,7 @@ PARALLEL LCD/KEYPAD PANEL DRIVER
- M:	Willy Tarreau <willy@haproxy.com>
- M:	Ksenija Stanojevic <ksenija.stanojevic@gmail.com>
- S:	Odd Fixes
--F:	Documentation/auxdisplay/lcd-panel-cgram.rst
-+F:	Documentation/admin-guide/lcd-panel-cgram.rst
- F:	drivers/auxdisplay/panel.c
- 
- PARALLEL PORT SUBSYSTEM
-@@ -13419,7 +13419,7 @@ Q:	http://patchwork.ozlabs.org/project/rtc-linux/list/
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux.git
- S:	Maintained
- F:	Documentation/devicetree/bindings/rtc/
--F:	Documentation/rtc.txt
-+F:	Documentation/admin-guide/rtc.rst
- F:	drivers/rtc/
- F:	include/linux/rtc.h
- F:	include/uapi/linux/rtc.h
-@@ -15248,7 +15248,7 @@ SVGA HANDLING
- M:	Martin Mares <mj@ucw.cz>
- L:	linux-video@atrey.karlin.mff.cuni.cz
- S:	Maintained
--F:	Documentation/svga.txt
-+F:	Documentation/admin-guide/svga.rst
- F:	arch/x86/boot/video*
- 
- SWIOTLB SUBSYSTEM
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index d5bd4350fcbd..b1ab350b9d60 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -1286,7 +1286,7 @@ config SMP
- 	  will run faster if you say N here.
- 
- 	  See also <file:Documentation/x86/i386/IO-APIC.rst>,
--	  <file:Documentation/lockup-watchdogs.txt> and the SMP-HOWTO available at
-+	  <file:Documentation/admin-guide/lockup-watchdogs.rst> and the SMP-HOWTO available at
- 	  <http://tldp.org/HOWTO/SMP-HOWTO.html>.
- 
- 	  If you don't know what to do here, say N.
-diff --git a/arch/parisc/Kconfig b/arch/parisc/Kconfig
-index 42875ff15671..6d732e451071 100644
---- a/arch/parisc/Kconfig
-+++ b/arch/parisc/Kconfig
-@@ -277,7 +277,7 @@ config SMP
- 	  machines, but will use only one CPU of a multiprocessor machine.
- 	  On a uniprocessor machine, the kernel will run faster if you say N.
- 
--	  See also <file:Documentation/lockup-watchdogs.txt> and the SMP-HOWTO
-+	  See also <file:Documentation/admin-guide/lockup-watchdogs.rst> and the SMP-HOWTO
- 	  available at <http://www.tldp.org/docs.html#howto>.
- 
- 	  If you don't know what to do here, say N.
-diff --git a/arch/sh/Kconfig b/arch/sh/Kconfig
-index c2858ac6a46a..6b1b5941b618 100644
---- a/arch/sh/Kconfig
-+++ b/arch/sh/Kconfig
-@@ -679,7 +679,7 @@ config SMP
- 	  People using multiprocessor machines who say Y here should also say
- 	  Y to "Enhanced Real Time Clock Support", below.
- 
--	  See also <file:Documentation/lockup-watchdogs.txt> and the SMP-HOWTO
-+	  See also <file:Documentation/admin-guide/lockup-watchdogs.rst> and the SMP-HOWTO
- 	  available at <http://www.tldp.org/docs.html#howto>.
- 
- 	  If you don't know what to do here, say N.
-diff --git a/arch/sparc/Kconfig b/arch/sparc/Kconfig
-index e9f5d62e9817..7926a2e11bdc 100644
---- a/arch/sparc/Kconfig
-+++ b/arch/sparc/Kconfig
-@@ -180,7 +180,7 @@ config SMP
- 	  Y to "Enhanced Real Time Clock Support", below. The "Advanced Power
- 	  Management" code will be disabled if you say Y here.
- 
--	  See also <file:Documentation/lockup-watchdogs.txt> and the SMP-HOWTO
-+	  See also <file:Documentation/admin-guide/lockup-watchdogs.rst> and the SMP-HOWTO
- 	  available at <http://www.tldp.org/docs.html#howto>.
- 
- 	  If you don't know what to do here, say N.
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 489fd833b980..2ca471ae6756 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -402,7 +402,7 @@ config SMP
- 	  Management" code will be disabled if you say Y here.
- 
- 	  See also <file:Documentation/x86/i386/IO-APIC.rst>,
--	  <file:Documentation/lockup-watchdogs.txt> and the SMP-HOWTO available at
-+	  <file:Documentation/admin-guide/lockup-watchdogs.rst> and the SMP-HOWTO available at
- 	  <http://www.tldp.org/docs.html#howto>.
- 
- 	  If you don't know what to do here, say N.
-@@ -1959,7 +1959,7 @@ config EFI_STUB
-           This kernel feature allows a bzImage to be loaded directly
- 	  by EFI firmware without the use of a bootloader.
- 
--	  See Documentation/efi-stub.txt for more information.
-+	  See Documentation/admin-guide/efi-stub.rst for more information.
- 
- config EFI_MIXED
- 	bool "EFI mixed-mode support"
-diff --git a/block/partitions/Kconfig b/block/partitions/Kconfig
-index 37b9710cc80a..702689a628f0 100644
---- a/block/partitions/Kconfig
-+++ b/block/partitions/Kconfig
-@@ -194,7 +194,7 @@ config LDM_PARTITION
- 	  Normal partitions are now called Basic Disks under Windows 2000, XP,
- 	  and Vista.
- 
--	  For a fuller description read <file:Documentation/ldm.txt>.
-+	  For a fuller description read <file:Documentation/admin-guide/ldm.rst>.
- 
- 	  If unsure, say N.
- 
-diff --git a/drivers/char/Kconfig b/drivers/char/Kconfig
-index 442403abd73a..3e866885a405 100644
---- a/drivers/char/Kconfig
-+++ b/drivers/char/Kconfig
-@@ -291,7 +291,7 @@ config RTC
- 	  and set the RTC in an SMP compatible fashion.
- 
- 	  If you think you have a use for such a device (such as periodic data
--	  sampling), then say Y here, and read <file:Documentation/rtc.txt>
-+	  sampling), then say Y here, and read <file:Documentation/admin-guide/rtc.rst>
- 	  for details.
- 
- 	  To compile this driver as a module, choose M here: the
-@@ -313,7 +313,7 @@ config JS_RTC
- 	  /dev/rtc.
- 
- 	  If you think you have a use for such a device (such as periodic data
--	  sampling), then say Y here, and read <file:Documentation/rtc.txt>
-+	  sampling), then say Y here, and read <file:Documentation/admin-guide/rtc.rst>
- 	  for details.
- 
- 	  To compile this driver as a module, choose M here: the
-diff --git a/drivers/char/hw_random/core.c b/drivers/char/hw_random/core.c
-index 95be7228f327..9044d31ab1a1 100644
---- a/drivers/char/hw_random/core.c
-+++ b/drivers/char/hw_random/core.c
-@@ -4,7 +4,7 @@
-  * Copyright 2006 Michael Buesch <m@bues.ch>
-  * Copyright 2005 (c) MontaVista Software, Inc.
-  *
-- * Please read Documentation/hw_random.txt for details on use.
-+ * Please read Documentation/admin-guide/hw_random.rst for details on use.
-  *
-  * This software may be used and distributed according to the terms
-  * of the GNU General Public License, incorporated herein by reference.
-diff --git a/include/linux/hw_random.h b/include/linux/hw_random.h
-index c0b93e0ff0c0..8e6dd908da21 100644
---- a/include/linux/hw_random.h
-+++ b/include/linux/hw_random.h
-@@ -1,7 +1,7 @@
- /*
- 	Hardware Random Number Generator
- 
--	Please read Documentation/hw_random.txt for details on use.
-+	Please read Documentation/admin-guide/hw_random.rst for details on use.
- 
- 	----------------------------------------------------------
- 	This software may be used and distributed according to the terms
 -- 
-2.21.0
+2.22.0
 
