@@ -2,42 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72FF359ADF
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 14:24:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8226659A7D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 14:21:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727139AbfF1MYH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 08:24:07 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:58696 "EHLO
+        id S1726952AbfF1MUw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 08:20:52 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:58748 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726697AbfF1MUo (ORCPT
+        with ESMTP id S1726759AbfF1MUp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 08:20:44 -0400
+        Fri, 28 Jun 2019 08:20:45 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=wrhHYkVqalJudClQ5Slfu9mOYqnzTc7imFqa6mcZE60=; b=H4zOhDNpvicaOy52SIH6GeSY5i
-        LlGyryBrVOuqfJz6SMidf2NO77gUGhmiLx/DN9JnOo2Ov9PQPRjmmcRRuVeT6mtYoFGjXD8g30CO0
-        Sd8Omn4CeRrzHYkBVzQNEKxHR7J588gkp/cqG2YbLidj+TdY3eoG0liarJeHWrrJoWxU9TeoLslVR
-        ZvWBAeTHiEFuE1Uwi5Rf0VbMQL+mNZ3f1MRwJEL6SSPaBl9SdrBUM4Vxh320MEk/+t2QVmBzcMUVS
-        Aqgk+z4iu+iMz8bZwQ5GnLf41sPaVtSFMgndpxNYT46QBtBz+eicx1Ivqdgq1nh/1arZqw81ePDQH
-        SNd2Au2Q==;
+        bh=kz7NpCoqFlQivUcHWgI6dJqevP9W6MEo67gi223n7jc=; b=Ih8r+LTZmA+cAU8X/EC+KpPvZs
+        MD+AN7Hujj7nIqr3cGqiwnAlSN3/GRD8AJrEbrZbDcz4dM9a6gMKw0vbSL/4nPDFOXVSPZuJVPYUg
+        l9rJ/t0ceuu4mTavQlqtdSIW2J0B1NSNTRRT8rdXeXc1lhA2ooT0ZTrfMfDc066qncZxUYPnJ22Ia
+        JEuLCveOrkJOHUQAb94Dv7lAuzJjl7eQ4OlReJr7tyiQno7q0DxrG4+aHjlJHBpt/+xl8lcXu2Grt
+        6ROcBVmWFmVIjghN1WZCc7XGACsGDVKLaOMChQ/q7r5bhn3VaGxy0+emhFXbLeunFaNe8PGAfox2M
+        6B3X3XdQ==;
 Received: from [186.213.242.156] (helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hgprv-0000A4-Cp; Fri, 28 Jun 2019 12:20:43 +0000
+        id 1hgprv-0000A5-EL; Fri, 28 Jun 2019 12:20:43 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hgprt-000589-GH; Fri, 28 Jun 2019 09:20:41 -0300
+        id 1hgprt-00058F-H6; Fri, 28 Jun 2019 09:20:41 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH 17/43] docs: bus-devices: ti-gpmc.rst: convert it to ReST
-Date:   Fri, 28 Jun 2019 09:20:13 -0300
-Message-Id: <fbee6bacf08d0f04cb0323ec8231bd2083a1f002.1561723980.git.mchehab+samsung@kernel.org>
+Subject: [PATCH 18/43] docs: nvmem: convert docs to ReST and rename to *.rst
+Date:   Fri, 28 Jun 2019 09:20:14 -0300
+Message-Id: <601be92c030ca1a73fb84dc2c9e004fcb33dd6b8.1561723980.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <cover.1561723979.git.mchehab+samsung@kernel.org>
 References: <cover.1561723979.git.mchehab+samsung@kernel.org>
@@ -48,218 +48,228 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to be able to add this file to a book, it needs
-first to be converted to ReST and renamed.
+In order to be able to add it into a doc book, we need first
+convert it to ReST.
+
+The conversion is actually:
+  - add blank lines and identation in order to identify paragraphs;
+  - mark literal blocks;
+  - adjust title markups.
 
 While this is not part of any book, mark it as :orphan:, in order
 to avoid build warnings.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- .../bus-devices/{ti-gpmc.txt => ti-gpmc.rst}  | 159 ++++++++++++------
- 1 file changed, 108 insertions(+), 51 deletions(-)
- rename Documentation/bus-devices/{ti-gpmc.txt => ti-gpmc.rst} (58%)
+ Documentation/nvmem/{nvmem.txt => nvmem.rst} | 112 ++++++++++---------
+ 1 file changed, 59 insertions(+), 53 deletions(-)
+ rename Documentation/nvmem/{nvmem.txt => nvmem.rst} (62%)
 
-diff --git a/Documentation/bus-devices/ti-gpmc.txt b/Documentation/bus-devices/ti-gpmc.rst
-similarity index 58%
-rename from Documentation/bus-devices/ti-gpmc.txt
-rename to Documentation/bus-devices/ti-gpmc.rst
-index cc9ce57e0a26..87c366e418be 100644
---- a/Documentation/bus-devices/ti-gpmc.txt
-+++ b/Documentation/bus-devices/ti-gpmc.rst
-@@ -1,8 +1,12 @@
--GPMC (General Purpose Memory Controller):
--=========================================
+diff --git a/Documentation/nvmem/nvmem.txt b/Documentation/nvmem/nvmem.rst
+similarity index 62%
+rename from Documentation/nvmem/nvmem.txt
+rename to Documentation/nvmem/nvmem.rst
+index fc2fe4b18655..3866b6e066d5 100644
+--- a/Documentation/nvmem/nvmem.txt
++++ b/Documentation/nvmem/nvmem.rst
+@@ -1,5 +1,10 @@
+-			    NVMEM SUBSYSTEM
+-	  Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 +:orphan:
 +
-+========================================
-+GPMC (General Purpose Memory Controller)
-+========================================
- 
- GPMC is an unified memory controller dedicated to interfacing external
- memory devices like
++===============
++NVMEM Subsystem
++===============
 +
-  * Asynchronous SRAM like memories and application specific integrated
-    circuit devices.
-  * Asynchronous, synchronous, and page mode burst NOR flash devices
-@@ -48,75 +52,128 @@ most of the datasheets & hardware (to be exact none of those supported
- in mainline having custom timing routine) and by simulation.
++ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
  
- gpmc timing dependency on peripheral timings:
+ This document explains the NVMEM Framework along with the APIs provided,
+ and how to use it.
+@@ -40,54 +45,54 @@ nvmem_device pointer.
+ 
+ nvmem_unregister(nvmem) is used to unregister a previously registered provider.
+ 
+-For example, a simple qfprom case:
++For example, a simple qfprom case::
+ 
+-static struct nvmem_config econfig = {
++  static struct nvmem_config econfig = {
+ 	.name = "qfprom",
+ 	.owner = THIS_MODULE,
+-};
++  };
+ 
+-static int qfprom_probe(struct platform_device *pdev)
+-{
++  static int qfprom_probe(struct platform_device *pdev)
++  {
+ 	...
+ 	econfig.dev = &pdev->dev;
+ 	nvmem = nvmem_register(&econfig);
+ 	...
+-}
++  }
+ 
+ It is mandatory that the NVMEM provider has a regmap associated with its
+ struct device. Failure to do would return error code from nvmem_register().
+ 
+ Users of board files can define and register nvmem cells using the
+-nvmem_cell_table struct:
++nvmem_cell_table struct::
+ 
+-static struct nvmem_cell_info foo_nvmem_cells[] = {
++  static struct nvmem_cell_info foo_nvmem_cells[] = {
+ 	{
+ 		.name		= "macaddr",
+ 		.offset		= 0x7f00,
+ 		.bytes		= ETH_ALEN,
+ 	}
+-};
++  };
+ 
+-static struct nvmem_cell_table foo_nvmem_cell_table = {
++  static struct nvmem_cell_table foo_nvmem_cell_table = {
+ 	.nvmem_name		= "i2c-eeprom",
+ 	.cells			= foo_nvmem_cells,
+ 	.ncells			= ARRAY_SIZE(foo_nvmem_cells),
+-};
++  };
+ 
+-nvmem_add_cell_table(&foo_nvmem_cell_table);
++  nvmem_add_cell_table(&foo_nvmem_cell_table);
+ 
+ Additionally it is possible to create nvmem cell lookup entries and register
+-them with the nvmem framework from machine code as shown in the example below:
++them with the nvmem framework from machine code as shown in the example below::
+ 
+-static struct nvmem_cell_lookup foo_nvmem_lookup = {
++  static struct nvmem_cell_lookup foo_nvmem_lookup = {
+ 	.nvmem_name		= "i2c-eeprom",
+ 	.cell_name		= "macaddr",
+ 	.dev_id			= "foo_mac.0",
+ 	.con_id			= "mac-address",
+-};
++  };
+ 
+-nvmem_add_cell_lookups(&foo_nvmem_lookup, 1);
++  nvmem_add_cell_lookups(&foo_nvmem_lookup, 1);
+ 
+ NVMEM Consumers
+ +++++++++++++++
+@@ -99,43 +104,43 @@ read from and to NVMEM.
+ =================================
+ 
+ NVMEM cells are the data entries/fields in the NVMEM.
+-The NVMEM framework provides 3 APIs to read/write NVMEM cells.
++The NVMEM framework provides 3 APIs to read/write NVMEM cells::
+ 
+-struct nvmem_cell *nvmem_cell_get(struct device *dev, const char *name);
+-struct nvmem_cell *devm_nvmem_cell_get(struct device *dev, const char *name);
++  struct nvmem_cell *nvmem_cell_get(struct device *dev, const char *name);
++  struct nvmem_cell *devm_nvmem_cell_get(struct device *dev, const char *name);
+ 
+-void nvmem_cell_put(struct nvmem_cell *cell);
+-void devm_nvmem_cell_put(struct device *dev, struct nvmem_cell *cell);
++  void nvmem_cell_put(struct nvmem_cell *cell);
++  void devm_nvmem_cell_put(struct device *dev, struct nvmem_cell *cell);
+ 
+-void *nvmem_cell_read(struct nvmem_cell *cell, ssize_t *len);
+-int nvmem_cell_write(struct nvmem_cell *cell, void *buf, ssize_t len);
++  void *nvmem_cell_read(struct nvmem_cell *cell, ssize_t *len);
++  int nvmem_cell_write(struct nvmem_cell *cell, void *buf, ssize_t len);
+ 
+-*nvmem_cell_get() apis will get a reference to nvmem cell for a given id,
++`*nvmem_cell_get()` apis will get a reference to nvmem cell for a given id,
+ and nvmem_cell_read/write() can then read or write to the cell.
+-Once the usage of the cell is finished the consumer should call *nvmem_cell_put()
+-to free all the allocation memory for the cell.
++Once the usage of the cell is finished the consumer should call
++`*nvmem_cell_put()` to free all the allocation memory for the cell.
+ 
+ 4. Direct NVMEM device based consumer APIs
+ ==========================================
+ 
+ In some instances it is necessary to directly read/write the NVMEM.
+-To facilitate such consumers NVMEM framework provides below apis.
++To facilitate such consumers NVMEM framework provides below apis::
+ 
+-struct nvmem_device *nvmem_device_get(struct device *dev, const char *name);
+-struct nvmem_device *devm_nvmem_device_get(struct device *dev,
++  struct nvmem_device *nvmem_device_get(struct device *dev, const char *name);
++  struct nvmem_device *devm_nvmem_device_get(struct device *dev,
+ 					   const char *name);
+-void nvmem_device_put(struct nvmem_device *nvmem);
+-int nvmem_device_read(struct nvmem_device *nvmem, unsigned int offset,
++  void nvmem_device_put(struct nvmem_device *nvmem);
++  int nvmem_device_read(struct nvmem_device *nvmem, unsigned int offset,
+ 		      size_t bytes, void *buf);
+-int nvmem_device_write(struct nvmem_device *nvmem, unsigned int offset,
++  int nvmem_device_write(struct nvmem_device *nvmem, unsigned int offset,
+ 		       size_t bytes, void *buf);
+-int nvmem_device_cell_read(struct nvmem_device *nvmem,
++  int nvmem_device_cell_read(struct nvmem_device *nvmem,
+ 			   struct nvmem_cell_info *info, void *buf);
+-int nvmem_device_cell_write(struct nvmem_device *nvmem,
++  int nvmem_device_cell_write(struct nvmem_device *nvmem,
+ 			    struct nvmem_cell_info *info, void *buf);
+ 
+ Before the consumers can read/write NVMEM directly, it should get hold
+-of nvmem_controller from one of the *nvmem_device_get() api.
++of nvmem_controller from one of the `*nvmem_device_get()` api.
+ 
+ The difference between these apis and cell based apis is that these apis always
+ take nvmem_device as parameter.
+@@ -145,12 +150,12 @@ take nvmem_device as parameter.
+ 
+ When a consumer no longer needs the NVMEM, it has to release the reference
+ to the NVMEM it has obtained using the APIs mentioned in the above section.
+-The NVMEM framework provides 2 APIs to release a reference to the NVMEM.
++The NVMEM framework provides 2 APIs to release a reference to the NVMEM::
+ 
+-void nvmem_cell_put(struct nvmem_cell *cell);
+-void devm_nvmem_cell_put(struct device *dev, struct nvmem_cell *cell);
+-void nvmem_device_put(struct nvmem_device *nvmem);
+-void devm_nvmem_device_put(struct device *dev, struct nvmem_device *nvmem);
++  void nvmem_cell_put(struct nvmem_cell *cell);
++  void devm_nvmem_cell_put(struct device *dev, struct nvmem_cell *cell);
++  void nvmem_device_put(struct nvmem_device *nvmem);
++  void devm_nvmem_device_put(struct device *dev, struct nvmem_device *nvmem);
+ 
+ Both these APIs are used to release a reference to the NVMEM and
+ devm_nvmem_cell_put and devm_nvmem_device_put destroys the devres associated
+@@ -162,20 +167,21 @@ Userspace
+ 6. Userspace binary interface
+ ==============================
+ 
+-Userspace can read/write the raw NVMEM file located at
+-/sys/bus/nvmem/devices/*/nvmem
++Userspace can read/write the raw NVMEM file located at::
+ 
+-ex:
++	/sys/bus/nvmem/devices/*/nvmem
+ 
+-hexdump /sys/bus/nvmem/devices/qfprom0/nvmem
++ex::
+ 
+-0000000 0000 0000 0000 0000 0000 0000 0000 0000
+-*
+-00000a0 db10 2240 0000 e000 0c00 0c00 0000 0c00
+-0000000 0000 0000 0000 0000 0000 0000 0000 0000
+-...
+-*
+-0001000
++  hexdump /sys/bus/nvmem/devices/qfprom0/nvmem
 +
- [<gpmc_timing>: <peripheral timing1>, <peripheral timing2> ...]
++  0000000 0000 0000 0000 0000 0000 0000 0000 0000
++  *
++  00000a0 db10 2240 0000 e000 0c00 0c00 0000 0c00
++  0000000 0000 0000 0000 0000 0000 0000 0000 0000
++  ...
++  *
++  0001000
  
- 1. common
--cs_on: t_ceasu
--adv_on: t_avdasu, t_ceavd
-+
-+cs_on:
-+	t_ceasu
-+adv_on:
-+	t_avdasu, t_ceavd
- 
- 2. sync common
--sync_clk: clk
--page_burst_access: t_bacc
--clk_activation: t_ces, t_avds
-+
-+sync_clk:
-+	clk
-+page_burst_access:
-+	t_bacc
-+clk_activation:
-+	t_ces, t_avds
- 
- 3. read async muxed
--adv_rd_off: t_avdp_r
--oe_on: t_oeasu, t_aavdh
--access: t_iaa, t_oe, t_ce, t_aa
--rd_cycle: t_rd_cycle, t_cez_r, t_oez
-+
-+adv_rd_off:
-+	t_avdp_r
-+oe_on:
-+	t_oeasu, t_aavdh
-+access:
-+	t_iaa, t_oe, t_ce, t_aa
-+rd_cycle:
-+	t_rd_cycle, t_cez_r, t_oez
- 
- 4. read async non-muxed
--adv_rd_off: t_avdp_r
--oe_on: t_oeasu
--access: t_iaa, t_oe, t_ce, t_aa
--rd_cycle: t_rd_cycle, t_cez_r, t_oez
-+
-+adv_rd_off:
-+	t_avdp_r
-+oe_on:
-+	t_oeasu
-+access:
-+	t_iaa, t_oe, t_ce, t_aa
-+rd_cycle:
-+	t_rd_cycle, t_cez_r, t_oez
- 
- 5. read sync muxed
--adv_rd_off: t_avdp_r, t_avdh
--oe_on: t_oeasu, t_ach, cyc_aavdh_oe
--access: t_iaa, cyc_iaa, cyc_oe
--rd_cycle: t_cez_r, t_oez, t_ce_rdyz
-+
-+adv_rd_off:
-+	t_avdp_r, t_avdh
-+oe_on:
-+	t_oeasu, t_ach, cyc_aavdh_oe
-+access:
-+	t_iaa, cyc_iaa, cyc_oe
-+rd_cycle:
-+	t_cez_r, t_oez, t_ce_rdyz
- 
- 6. read sync non-muxed
--adv_rd_off: t_avdp_r
--oe_on: t_oeasu
--access: t_iaa, cyc_iaa, cyc_oe
--rd_cycle: t_cez_r, t_oez, t_ce_rdyz
-+
-+adv_rd_off:
-+	t_avdp_r
-+oe_on:
-+	t_oeasu
-+access:
-+	t_iaa, cyc_iaa, cyc_oe
-+rd_cycle:
-+	t_cez_r, t_oez, t_ce_rdyz
- 
- 7. write async muxed
--adv_wr_off: t_avdp_w
--we_on, wr_data_mux_bus: t_weasu, t_aavdh, cyc_aavhd_we
--we_off: t_wpl
--cs_wr_off: t_wph
--wr_cycle: t_cez_w, t_wr_cycle
-+
-+adv_wr_off:
-+	t_avdp_w
-+we_on, wr_data_mux_bus:
-+	t_weasu, t_aavdh, cyc_aavhd_we
-+we_off:
-+	t_wpl
-+cs_wr_off:
-+	t_wph
-+wr_cycle:
-+	t_cez_w, t_wr_cycle
- 
- 8. write async non-muxed
--adv_wr_off: t_avdp_w
--we_on, wr_data_mux_bus: t_weasu
--we_off: t_wpl
--cs_wr_off: t_wph
--wr_cycle: t_cez_w, t_wr_cycle
-+
-+adv_wr_off:
-+	t_avdp_w
-+we_on, wr_data_mux_bus:
-+	t_weasu
-+we_off:
-+	t_wpl
-+cs_wr_off:
-+	t_wph
-+wr_cycle:
-+	t_cez_w, t_wr_cycle
- 
- 9. write sync muxed
--adv_wr_off: t_avdp_w, t_avdh
--we_on, wr_data_mux_bus: t_weasu, t_rdyo, t_aavdh, cyc_aavhd_we
--we_off: t_wpl, cyc_wpl
--cs_wr_off: t_wph
--wr_cycle: t_cez_w, t_ce_rdyz
-+
-+adv_wr_off:
-+	t_avdp_w, t_avdh
-+we_on, wr_data_mux_bus:
-+	t_weasu, t_rdyo, t_aavdh, cyc_aavhd_we
-+we_off:
-+	t_wpl, cyc_wpl
-+cs_wr_off:
-+	t_wph
-+wr_cycle:
-+	t_cez_w, t_ce_rdyz
- 
- 10. write sync non-muxed
--adv_wr_off: t_avdp_w
--we_on, wr_data_mux_bus: t_weasu, t_rdyo
--we_off: t_wpl, cyc_wpl
--cs_wr_off: t_wph
--wr_cycle: t_cez_w, t_ce_rdyz
- 
-+adv_wr_off:
-+	t_avdp_w
-+we_on, wr_data_mux_bus:
-+	t_weasu, t_rdyo
-+we_off:
-+	t_wpl, cyc_wpl
-+cs_wr_off:
-+	t_wph
-+wr_cycle:
-+	t_cez_w, t_ce_rdyz
- 
--Note: Many of gpmc timings are dependent on other gpmc timings (a few
--gpmc timings purely dependent on other gpmc timings, a reason that
--some of the gpmc timings are missing above), and it will result in
--indirect dependency of peripheral timings to gpmc timings other than
--mentioned above, refer timing routine for more details. To know what
--these peripheral timings correspond to, please see explanations in
--struct gpmc_device_timings definition. And for gpmc timings refer
--IP details (link above).
-+
-+Note:
-+  Many of gpmc timings are dependent on other gpmc timings (a few
-+  gpmc timings purely dependent on other gpmc timings, a reason that
-+  some of the gpmc timings are missing above), and it will result in
-+  indirect dependency of peripheral timings to gpmc timings other than
-+  mentioned above, refer timing routine for more details. To know what
-+  these peripheral timings correspond to, please see explanations in
-+  struct gpmc_device_timings definition. And for gpmc timings refer
-+  IP details (link above).
+ 7. DeviceTree Binding
+ =====================
 -- 
 2.21.0
 
