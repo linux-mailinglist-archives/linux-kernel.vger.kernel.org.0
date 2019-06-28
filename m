@@ -2,70 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7980659E7C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 17:12:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2993659E88
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 17:14:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726781AbfF1PM3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 11:12:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34094 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726711AbfF1PM3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 11:12:29 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 26901208E3;
-        Fri, 28 Jun 2019 15:12:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561734748;
-        bh=+ZbXIcvRp5Qmho+u63VDjM/Qf/GfS2IXDAt3/rMml+E=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Uf3fQtJGO0vrZZnYpQ0n7anY7cN+9C39YrTwd9tYSPpgd8Kf2Mm9p2ap3elUABous
-         DeTCsB03QbHbgnfV0GIoYupeJXZdNKxjSD4O53FlFKt6FO25kyVbfTsLIIqyFFg9SB
-         96615WCgmGVzA3BwqpSo4yCwtN/iUJzIjX8czr0Q=
-Date:   Fri, 28 Jun 2019 17:12:26 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Enrico Weigelt <info@metux.net>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] devres: allow const resource arguments
-Message-ID: <20190628151226.GA14736@kroah.com>
-References: <20190628150049.1108048-1-arnd@arndb.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190628150049.1108048-1-arnd@arndb.de>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        id S1726921AbfF1POJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 11:14:09 -0400
+Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:37008 "EHLO
+        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726835AbfF1POI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Jun 2019 11:14:08 -0400
+Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
+        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id x5SFDUEl004543;
+        Fri, 28 Jun 2019 18:13:30 +0300
+Received: by taln60.nuvoton.co.il (Postfix, from userid 20053)
+        id 58EE361FCC; Fri, 28 Jun 2019 18:13:30 +0300 (IDT)
+From:   Oshri Alkoby <oshrialkoby85@gmail.com>
+To:     robh+dt@kernel.org, mark.rutland@arm.com, peterhuewe@gmx.de,
+        jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca, arnd@arndb.de,
+        gregkh@linuxfoundation.org, oshrialkoby85@gmail.com,
+        oshri.alkoby@nuvoton.com
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org, gcwilson@us.ibm.com,
+        kgoldman@us.ibm.com, nayna@linux.vnet.ibm.com,
+        dan.morav@nuvoton.com, tomer.maimon@nuvoton.com
+Subject: [PATCH v2 0/2] char: tpm: add new driver for tpm i2c ptp
+Date:   Fri, 28 Jun 2019 18:13:25 +0300
+Message-Id: <20190628151327.206818-1-oshrialkoby85@gmail.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 28, 2019 at 04:59:45PM +0200, Arnd Bergmann wrote:
-> devm_ioremap_resource() does not currently take 'const' arguments,
-> which results in a warning from the first driver trying to do it
-> anyway:
-> 
-> drivers/gpio/gpio-amd-fch.c: In function 'amd_fch_gpio_probe':
-> drivers/gpio/gpio-amd-fch.c:171:49: error: passing argument 2 of 'devm_ioremap_resource' discards 'const' qualifier from pointer target type [-Werror=discarded-qualifiers]
->   priv->base = devm_ioremap_resource(&pdev->dev, &amd_fch_gpio_iores);
->                                                  ^~~~~~~~~~~~~~~~~~~
-> 
-> Change the prototype to allow it, as there is no real reason not to.
-> 
-> Fixes: 9bb2e0452508 ("gpio: amd: Make resource struct const")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-> The warning is currently in Linus Walleij's gpio tree, so I would
-> suggest he can queue up this fix as well, if Greg (or whoever
-> feels responsible for devres) agrees.
+This patch set adds support for TPM devices that implement the I2C
+interface defined by TCG PTP specification:
+https://trustedcomputinggroup.org/wp-content/uploads/TCG_PC_Client_Platform_TPM_Profile_PTP_2.0_r1.03_v22.pdf
 
-That's fine with me if Linus takes it:
+The driver was tested on Raspberry-Pie 3, using Nuvoton NPCT75X TPM.
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+changes
+-------
+
+v2:
+- Extended device tree binding description
+
+v1:
+- Initial version
+
+Oshri Alkoby (2):
+  dt-bindings: tpm: add the TPM I2C PTP device tree binding
+    documentation
+  char: tpm: add new driver for tpm i2c ptp
+
+ .../bindings/security/tpm/tpm-i2c-ptp.txt     |   24 +
+ drivers/char/tpm/Kconfig                      |   22 +
+ drivers/char/tpm/Makefile                     |    1 +
+ drivers/char/tpm/tpm_i2c_ptp.c                | 1099 +++++++++++++++++
+ 4 files changed, 1146 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/security/tpm/tpm-i2c-ptp.txt
+ create mode 100644 drivers/char/tpm/tpm_i2c_ptp.c
+
+-- 
+2.18.0
+
