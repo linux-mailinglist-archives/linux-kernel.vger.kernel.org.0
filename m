@@ -2,92 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 175B3591D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 05:02:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 991E7591DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 05:11:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727023AbfF1DCV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 23:02:21 -0400
-Received: from wout3-smtp.messagingengine.com ([64.147.123.19]:40623 "EHLO
-        wout3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726542AbfF1DCV (ORCPT
+        id S1726811AbfF1DLB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 23:11:01 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:36442 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726542AbfF1DLB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 23:02:21 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.west.internal (Postfix) with ESMTP id F20F13BD;
-        Thu, 27 Jun 2019 23:02:19 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Thu, 27 Jun 2019 23:02:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=russell.cc; h=
-        message-id:subject:from:to:cc:date:in-reply-to:references
-        :content-type:mime-version:content-transfer-encoding; s=fm2; bh=
-        0nIuPza9JXPm3s5p5IiEosU7RutHY/f00ebuDHdt7wE=; b=yBmL4jvp7rsPCcLb
-        IFhKyImO+XZO73g5TJWxS8NOeQ5IbHCf7weaSg5c4SRoAy7LhC5Tnu4REDcKdS16
-        GDTwQMxvlucc2qIRQ2+5u5cryC5vZhqMQNCYsk6Lopy2CyveX3N0g35P99xUK+32
-        QSei7TgwqhnavXquPrZhUTG+NPimxeOKCaRMlXRv1ljVJQSZymj6u+aoMvBSLli8
-        QO1qzdatYoyqNHPAADcsxX7W9bY6lod/m7z72c0r5clLVeIIpFXzx75nFUAM3m+x
-        ag6smrGFXtHT/GL8CXwi3ZF7BIbm4ULFiS0vLO6qtOGP3T61M78/Oj2ESKJL9Eat
-        R47dIw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; bh=0nIuPza9JXPm3s5p5IiEosU7RutHY/f00ebuDHdt7
-        wE=; b=VWqN69+vW80b8fJeaUpDr3ZtpRa5initaPO3nllJh1y8C09Ny2bps/qtv
-        Am5Lm85JkJW5fPAJUAYQBqzxTnXYfhjxp2b5iN+bs8bVhSmb0vApwpklxozJz8nN
-        9pGguPWYeG+A9XHKJYvqyWnErNWAGdFOp4xB9MeIuRL7ZcONCKBVQJtLdCkJlFur
-        QTpGEicvP3gNnMYCjjdH0b4dzzeJGm7k8e97SKNQ+bGdeJCdhoiXb7SV211QEJ/B
-        yW/ELRvOLIXOCKNKuGcczLyjBRYx3sf/bf71uHkF2GPW2puBlAN4EA5RCsQrqc4l
-        0b8n5UF0WkfJsGArK+pjpgpHSxo+g==
-X-ME-Sender: <xms:OYMVXdWSnAhGXFUij_cwVzqcpyRXb60ehByjbd6TZe9afTgioDttCw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrudelgdeiiecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecufghrlhcuvffnffculdeftddmnecujfgurhepkffuhf
-    fvffgjfhgtfggggfesthejredttderjeenucfhrhhomheptfhushhsvghllhcuvehurhhr
-    vgihuceorhhushgtuhhrsehruhhsshgvlhhlrdgttgeqnecukfhppeduvdegrddujedurd
-    ejvddrudegfeenucfrrghrrghmpehmrghilhhfrhhomheprhhushgtuhhrsehruhhsshgv
-    lhhlrdgttgenucevlhhushhtvghrufhiiigvpedt
-X-ME-Proxy: <xmx:OYMVXRgqHDdtoR6Hjpq70ACrAlC9WqVYKFF3C0Pspeen7-kJZgmOFQ>
-    <xmx:OYMVXR68rKtKTSmx-QPU2ES6WC5DvklTpYGDzFYDsutFxxMnYThzKA>
-    <xmx:OYMVXZ4dEytgzHDjJXuQ7kSI5Az4q9MRwIRzQPt5OUShJNAULBiNQQ>
-    <xmx:O4MVXTt8JfGAHUz5QQQXn31QqxAwrUUWv21HndsriD6gcJ40BiobZQ>
-Received: from crackle.ozlabs.ibm.com (124-171-72-143.dyn.iinet.net.au [124.171.72.143])
-        by mail.messagingengine.com (Postfix) with ESMTPA id EA70C380076;
-        Thu, 27 Jun 2019 23:02:14 -0400 (EDT)
-Message-ID: <b21dc7e6aa44f984fe64a2bd6c9a3158c6a10bf8.camel@russell.cc>
-Subject: Re: [PATCH] powerpc/eeh_cache: fix a W=1 kernel-doc warning
-From:   Russell Currey <ruscur@russell.cc>
-To:     Qian Cai <cai@lca.pw>, mpe@ellerman.id.au
-Cc:     sbobroff@linux.ibm.com, oohall@gmail.com, benh@kernel.crashing.org,
-        paulus@samba.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 28 Jun 2019 13:02:11 +1000
-In-Reply-To: <1559767579-7151-1-git-send-email-cai@lca.pw>
-References: <1559767579-7151-1-git-send-email-cai@lca.pw>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.3 
+        Thu, 27 Jun 2019 23:11:01 -0400
+Received: by mail-io1-f66.google.com with SMTP id h6so9484927ioh.3
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 20:11:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=3an8xkdD/hzVPbbvgTnxXA33dOKRmSHUjpIJuQZqGvA=;
+        b=JrDwtixMw/3IlOWIM41ySM9lxTxda7b5hi8+7ZSQSKlOM0qEsMmefPmS6lnIukM792
+         rJLcpnxJPLBtyHdBTKEU95fMJyoTW6j4QVsPsrKb9+NdQdGHv53Y6VhcjdkHaMtGrfL3
+         lB6U7omhyz445enMU2nMTV10DZ1ybovtuMYUlxBYFgoEZ3eDbK197yh16Yke5NZaRysG
+         cJi/9IhaybCnP4SVuDjSeNurFbQS1LOiIB8jSb0swifI1V2dCqmBMSXPHm2iDX6as/UI
+         a+tuuakpmXoGaF5jHPHtk25VaOpP9wD9bbaDBXRo258SCCQMvPo5Qn2d7huyxS0vY9Ri
+         /7HQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=3an8xkdD/hzVPbbvgTnxXA33dOKRmSHUjpIJuQZqGvA=;
+        b=OMPkd5zl5TUvIuvbEPK150gmA4TiTKwr1H0hOOesRn3nX5ieKNpd3bXMcn1kxBoOcH
+         ry8wVUcCJqKBnfOU/O3AdsCerSP2nGujjqNacoVoCwHkG9KzXPbVrJe6sV4wyYOPGXwv
+         tDLtpp8tawoOQ19Lm89jbw9f1objzK5lWfFB+r7scnOPafV8AI8Fmtv+YY9rz1COORPg
+         Oz/nvLJhAMHBTbRRk4CRO+8VsYWc/a0lX8Xxi7twMt2pWr68FLCfLz2XKqC84njEy6SG
+         BMxjfLzstjuM6QhO33nCTIHFuxePcBKPKtz6A/Hrx15P/jNqeiDgdMcCdZL3yOPjDPk1
+         qh2w==
+X-Gm-Message-State: APjAAAVMlIYy3eiRCzYEl2qXnmPUYrYYpwC6HuAkcXiQsUpi7+EdBGUs
+        72EfYOEUiaGaACdxX7TP0t4G+bEC47c=
+X-Google-Smtp-Source: APXvYqzzedYsmPMz6paqYM6clmX/4PiLCsiEE/jsoyj1Qo/J8MkgXEwQvtF7zSVFKDSYWMZk7TrDDQ==
+X-Received: by 2002:a02:9a0f:: with SMTP id b15mr8932363jal.32.1561691460545;
+        Thu, 27 Jun 2019 20:11:00 -0700 (PDT)
+Received: from localhost (c-73-95-159-87.hsd1.co.comcast.net. [73.95.159.87])
+        by smtp.gmail.com with ESMTPSA id a15sm813161ioc.27.2019.06.27.20.10.59
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 27 Jun 2019 20:11:00 -0700 (PDT)
+Date:   Thu, 27 Jun 2019 20:10:59 -0700 (PDT)
+From:   Paul Walmsley <paul.walmsley@sifive.com>
+X-X-Sender: paulw@viisi.sifive.com
+To:     Loys Ollivier <lollivier@baylibre.com>
+cc:     Palmer Dabbelt <palmer@sifive.com>,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>
+Subject: Re: [PATCH 0/3] riscv: add SOC_SIFIVE config for SiFive specific
+ resource
+In-Reply-To: <1560799790-20287-1-git-send-email-lollivier@baylibre.com>
+Message-ID: <alpine.DEB.2.21.9999.1906272006410.3867@viisi.sifive.com>
+References: <1560799790-20287-1-git-send-email-lollivier@baylibre.com>
+User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-06-05 at 16:46 -0400, Qian Cai wrote:
-> The opening comment mark "/**" is reserved for kernel-doc comments,
-> so
-> it will generate a warning with "make W=1".
-> 
-> arch/powerpc/kernel/eeh_cache.c:37: warning: cannot understand
-> function
-> prototype: 'struct pci_io_addr_range
-> 
-> Since this is not a kernel-doc for the struct below, but rather an
-> overview of this source eeh_cache.c, just use the free-form comments
-> kernel-doc syntax instead.
-> 
-> Signed-off-by: Qian Cai <cai@lca.pw>
+Hi Loys,
 
-Looks good to me.
+On Mon, 17 Jun 2019, Loys Ollivier wrote:
 
-Acked-by: Russell Currey <ruscur@russell.cc>
+> Following is a patch series that adds a SOC_SIFIVE config.
+> The purpose of this config is to group all the code specific to the SiFive
+> architecture such as device tree and platform drivers.
+> 
+> The initial thought/discussion came from [0].
+> 
+> [0] https://lore.kernel.org/linux-riscv/20190602080500.31700-1-paul.walmsley@sifive.com/
 
+Thanks for giving us a good start here.  Queued for v5.3 with Palmer's 
+Reviewed-by:s.
+
+
+- Paul
