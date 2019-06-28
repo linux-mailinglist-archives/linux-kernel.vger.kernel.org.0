@@ -2,118 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE93959F69
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 17:48:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02EAE59F79
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 17:49:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726916AbfF1Pr4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 11:47:56 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:53262 "EHLO mx1.redhat.com"
+        id S1727348AbfF1Psh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 11:48:37 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:44786 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727204AbfF1Pry (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 11:47:54 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3A8E8308624A;
-        Fri, 28 Jun 2019 15:47:54 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-219.rdu2.redhat.com [10.10.120.219])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CC2C35B683;
-        Fri, 28 Jun 2019 15:47:52 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 6/6] fsinfo: Add documentation for mount and sb watches [ver
- #15]
-From:   David Howells <dhowells@redhat.com>
-To:     viro@zeniv.linux.org.uk
-Cc:     dhowells@redhat.com, raven@themaw.net, mszeredi@redhat.com,
-        christian@brauner.io, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 28 Jun 2019 16:47:51 +0100
-Message-ID: <156173687101.14728.6401356872306559415.stgit@warthog.procyon.org.uk>
-In-Reply-To: <156173681842.14728.9331700785061885270.stgit@warthog.procyon.org.uk>
-References: <156173681842.14728.9331700785061885270.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Fri, 28 Jun 2019 15:47:54 +0000 (UTC)
+        id S1726686AbfF1Prz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Jun 2019 11:47:55 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 45b1PN540LzB09ZS;
+        Fri, 28 Jun 2019 17:47:52 +0200 (CEST)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=NzqGAvxs; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id jIDfCeUKZQ4E; Fri, 28 Jun 2019 17:47:52 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 45b1PN3sqGzB09ZN;
+        Fri, 28 Jun 2019 17:47:52 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1561736872; bh=550P1CoXgG6ywMpcxaUOSrNayar1hHXACatHa7PwUDQ=;
+        h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
+        b=NzqGAvxsE54Z2woHZ+SUPok9D8ZkgU3mB2YPF/pWL7DxaT/V4wNJWi+C5mzqqzxWF
+         /27PL9BOX19m91/Y+ZOsVmv/XLC9eiWuAob+cknxLwfQ4/SXLFI71XF5OQ6aPw9OL6
+         kPnqFRohz6kORRMR8PHba6KDs3Xd3BLw7Rjz4ywM=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id DC0C48B955;
+        Fri, 28 Jun 2019 17:47:53 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id jbLOjUbh2oYv; Fri, 28 Jun 2019 17:47:53 +0200 (CEST)
+Received: from localhost.localdomain (po15451.idsi0.si.c-s.fr [172.25.230.101])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 00D5E8B978;
+        Fri, 28 Jun 2019 17:47:52 +0200 (CEST)
+Received: by localhost.localdomain (Postfix, from userid 0)
+        id B01FD68DD7; Fri, 28 Jun 2019 15:47:52 +0000 (UTC)
+Message-Id: <c308b286e4fac4bea6544079b450aef7d3510dc8.1561735587.git.christophe.leroy@c-s.fr>
+In-Reply-To: <cover.1561735587.git.christophe.leroy@c-s.fr>
+References: <cover.1561735587.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [RFC PATCH v2 03/12] powerpc/ptrace: drop PARAMETER_SAVE_AREA_OFFSET
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, mikey@neuling.org
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Fri, 28 Jun 2019 15:47:52 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update the fsinfo documentation to mention mount and sb watches.
+PARAMETER_SAVE_AREA_OFFSET is not used, drop it.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
+ arch/powerpc/kernel/ptrace/ptrace.c | 10 ----------
+ 1 file changed, 10 deletions(-)
 
- Documentation/filesystems/fsinfo.rst |   38 +++++++++++++++++++++++++++++++++-
- 1 file changed, 37 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/filesystems/fsinfo.rst b/Documentation/filesystems/fsinfo.rst
-index 86c187a46396..ef79582b991d 100644
---- a/Documentation/filesystems/fsinfo.rst
-+++ b/Documentation/filesystems/fsinfo.rst
-@@ -7,7 +7,8 @@ security information beyond what stat(), statx() and statfs() can query.  It
- does not require a file to be opened as does ioctl().
+diff --git a/arch/powerpc/kernel/ptrace/ptrace.c b/arch/powerpc/kernel/ptrace/ptrace.c
+index 0afb223c4d57..cc8efcb404d6 100644
+--- a/arch/powerpc/kernel/ptrace/ptrace.c
++++ b/arch/powerpc/kernel/ptrace/ptrace.c
+@@ -48,16 +48,6 @@
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/syscalls.h>
  
- fsinfo() may be called on a path, an open file descriptor, a filesystem-context
--file descriptor as allocated by fsopen() or fspick().
-+file descriptor as allocated by fsopen() or fspick() or a mount ID (allowing
-+for mounts concealed by overmounts to be accessed).
- 
- The fsinfo() system call needs to be configured on by enabling:
- 
-@@ -235,6 +236,10 @@ To summarise the attributes that are defined::
-   FSINFO_ATTR_SERVER_NAME		N × string
-   FSINFO_ATTR_SERVER_ADDRESS		N × M × struct
-   FSINFO_ATTR_AFS_CELL_NAME		string
-+  FSINFO_ATTR_MOUNT_INFO		struct
-+  FSINFO_ATTR_MOUNT_DEVNAME		string
-+  FSINFO_ATTR_MOUNT_CHILDREN		array
-+  FSINFO_ATTR_MOUNT_SUBMOUNT		N × string
- 
- 
- Attribute Catalogue
-@@ -386,6 +391,37 @@ before any superblock is attached:
-     before noting any other parameters.
- 
- 
-+Then there are attributes that convey information about the mount topology:
-+
-+ *  ``FSINFO_ATTR_MOUNT_INFO``
-+
-+    This struct-type attribute conveys information about a mount topology node
-+    rather than a superblock.  This includes the ID of the superblock mounted
-+    there and the ID of the mount node, its parent, group, master and
-+    propagation source.  It also contains the attribute flags for the mount and
-+    a change counter so that it can be quickly determined if that node changed.
-+
-+ *  ``FSINFO_ATTR_MOUNT_DEVNAME``
-+
-+    This string-type attribute returns the "device name" that was supplied when
-+    the mount object was created.
-+
-+ *  ``FSINFO_ATTR_MOUNT_CHILDREN``
-+
-+    This is an array-type attribute that conveys a set of structs, each of
-+    which indicates the mount ID of a child and the change counter for that
-+    child.  The kernel also tags an extra element on the end that indicates the
-+    ID and change counter of the queried object.  This allows a conflicting
-+    change to be quickly detected by comparing the before and after counters.
-+
-+ *  ``FSINFO_ATTR_MOUNT_SUBMOUNT``
-+
-+    This is a string-type attribute that conveys the pathname of the Nth
-+    mountpoint under the target mount, relative to the mount root or the
-+    chroot, whichever is closer.  These correspond on a 1:1 basis with the
-+    elements in the FSINFO_ATTR_MOUNT_CHILDREN list.
-+
-+
- Then there are filesystem-specific attributes.
- 
-  *  ``FSINFO_ATTR_SERVER_NAME``
+-/*
+- * The parameter save area on the stack is used to store arguments being passed
+- * to callee function and is located at fixed offset from stack pointer.
+- */
+-#ifdef CONFIG_PPC32
+-#define PARAMETER_SAVE_AREA_OFFSET	24  /* bytes */
+-#else /* CONFIG_PPC32 */
+-#define PARAMETER_SAVE_AREA_OFFSET	48  /* bytes */
+-#endif
+-
+ struct pt_regs_offset {
+ 	const char *name;
+ 	int offset;
+-- 
+2.13.3
 
