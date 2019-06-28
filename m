@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D639E59C44
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 15:00:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2295C59C4F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 15:01:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727265AbfF1NAm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 09:00:42 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:51656 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727207AbfF1NAi (ORCPT
+        id S1727358AbfF1NBC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 09:01:02 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:32979 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727230AbfF1NAj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 09:00:38 -0400
-Received: by mail-wm1-f66.google.com with SMTP id 207so9031874wma.1
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2019 06:00:36 -0700 (PDT)
+        Fri, 28 Jun 2019 09:00:39 -0400
+Received: by mail-wm1-f67.google.com with SMTP id h19so9322320wme.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2019 06:00:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=/R2v+8TpXScwDvoUwTQ+DYnf6CWYu7956kORYsc7udM=;
-        b=MOqIunXyl2CU/i32HIF3+ixSLh9DS96LVGO5I+JmUdbfMibDIDbmg+sRsWopc8cgCE
-         9qtE+tC7H6BydqLvfRkmzFaNO/ol+OmjNzlNZXWudGpw6l7n46EHluju0TVVqqbDiO5+
-         aKma7viTE1x6DUn5NOFpD/X1hliLP5Je23Y7x7S2p2zKo29VdrQ2YP4diZzxjp+LkYrp
-         nPAHlRoSTOGRaTPpFKWlYdSvzMC2IPFSb9gx9u3kaoi8lUSmXstXQbcQxwE5FyS/SLo9
-         4y/qCLg/ijGyWWGzyioBt83WGDxsnTvLsT1FrzEO5w36K2bQglWkh3sWUB3ueot2hDwX
-         hkmQ==
+        bh=FBLKO27dHaQrao2r2KD0kPHzW+2HdrGXpaJBaZnrR7A=;
+        b=ZAzZ4lAoYkAvxfaNWBiUuUnyQCQbbNKsMpfDtAC8redcT2OJnWdYZ5zLYRV7OxhU0M
+         cTvnN9rKm0edBhzNW9YvVCIQfxKH1oCMLpqOI9D0kamX1Q+OxtfE/rRgXdoOfqDORyb2
+         vo271veLtKQtd02Alrb9H2WZE3BF+ts+V99Qc9+pjEAoC5QzJqRgx5ykA6hd81UQ75dB
+         BQF+FFDizh+8du1kybPRkxbff3Znk4xJz/0hhnoODYbwrd9hvmfJ/A1ommLfNWXLsbtA
+         cEV4z2oRMm33vpwCmMFwuicwduGxtF7d03NUcgpzs+7xA/eeTwYATtYAaZI8gbHrVCrO
+         Y9yA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=/R2v+8TpXScwDvoUwTQ+DYnf6CWYu7956kORYsc7udM=;
-        b=CGanxm5uduYvztlkSMD4BOPJkoRKjv2MHFlTRWQjJbXoAWM8Ve8BAgO+yLGLlqfJOk
-         GJ7iKfIJ4rEG4VtXUa11DV/wKqTHcQ1QS9Ay+46ooN74NcLRe3DCYZvPI6y2sj6UOvmL
-         6Qnf8WOGrgWdNeJXDaGUBuzSF0moxx2v47gXOpiUJVxBu/tSCN97Y0eOqqLP9Ef6MoPa
-         OhCH4fLLymocpTnYlPmMNXPWKx/TKZQ2vjsfw5d20UKNvnGrPkhejALldOnRa1/d/AUS
-         R1KQx5TFhqyW/r7kvAbJRagmL7BKXYlZ/HLphmKS/uLNN7IgowF3dWCfPzHouFNzrjem
-         efOg==
-X-Gm-Message-State: APjAAAWPsMbX8/Y9NE+0Aj2tHQfnjwnUlPwgS2tCsBNWF71/2Mi3Toem
-        oBvUaRM8VyIsP5htjcoQuzqtWA==
-X-Google-Smtp-Source: APXvYqzjUM9HPfSq1Rl5vK8m3SrIQAbqkdvVWKrAMIcQ1R9Y0NuwqXMn990yjFW21GfpYI4dun5zUQ==
-X-Received: by 2002:a1c:9cd1:: with SMTP id f200mr7006239wme.157.1561726835808;
-        Fri, 28 Jun 2019 06:00:35 -0700 (PDT)
+        bh=FBLKO27dHaQrao2r2KD0kPHzW+2HdrGXpaJBaZnrR7A=;
+        b=CKfp7uF63y5gHyRg0juHpMUUHm8CGcRWtUCFhy6p00gH7jGNuKoc/5EqcPN8tg/kRc
+         inQpPahiSgr53FzNzxjM/PqjaQ5AorYhbHqIwqPNpZy2np2TCCAb+fArAImwo2NFsG3m
+         jqMEYIWGsuhIgEcJL1zvT6ZCEvGaWv1vFaLMR4+WuTQ8HOUZu+jwoOXvCIACkhOZa7YZ
+         7iPWqDZ4UjfXjbp82UpF0RqwU1tK7U0/ASci543Z/G/2hDFj8+LpszZnCohgutmjr1f9
+         9q2gh9cMalQKUC1/5g8P9tO56zQ4Jf7p1XyDLXwQNELgeWU70YUgp+vlw+Of0mDmy8Da
+         FR9w==
+X-Gm-Message-State: APjAAAXQAteLJExZA24W2EnLO238Pm0/W8sWa9x376yLbng1Ozwit2EP
+        J1S5b9BoV1EtY0nWlccIYZJiQg==
+X-Google-Smtp-Source: APXvYqwqflrL3YrHtECcS2DZIVdWIdGzjH/ag05XABo4jCqYYqZOkm2MrVFedP1fWcXviFy1AABI6w==
+X-Received: by 2002:a1c:9a03:: with SMTP id c3mr7324818wme.101.1561726837254;
+        Fri, 28 Jun 2019 06:00:37 -0700 (PDT)
 Received: from localhost.localdomain ([37.157.136.206])
-        by smtp.gmail.com with ESMTPSA id w20sm3717174wra.96.2019.06.28.06.00.34
+        by smtp.gmail.com with ESMTPSA id w20sm3717174wra.96.2019.06.28.06.00.36
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 28 Jun 2019 06:00:35 -0700 (PDT)
+        Fri, 28 Jun 2019 06:00:36 -0700 (PDT)
 From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
 To:     linux-media@vger.kernel.org
 Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
@@ -53,9 +53,9 @@ Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
         Tomasz Figa <tfiga@chromium.org>,
         Alexandre Courbot <acourbot@chromium.org>,
         Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Subject: [PATCH v2 07/11] venus: vdec_ctrls: get real minimum buffers for capture
-Date:   Fri, 28 Jun 2019 15:59:58 +0300
-Message-Id: <20190628130002.24293-8-stanimir.varbanov@linaro.org>
+Subject: [PATCH v2 08/11] venus: vdec: allow bigger sizeimage set by clients
+Date:   Fri, 28 Jun 2019 15:59:59 +0300
+Message-Id: <20190628130002.24293-9-stanimir.varbanov@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190628130002.24293-1-stanimir.varbanov@linaro.org>
 References: <20190628130002.24293-1-stanimir.varbanov@linaro.org>
@@ -64,50 +64,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Until now we returned num_output_bufs set during reqbuf but
-that could be wrong when we implement stateful Codec API. So
-get the minimum buffers for capture from HFI. This is supposed
-to be called after stream header parsing, i.e. after dequeue
-v4l2 event for change resolution.
+In most of the cases the client will know better what could be
+the maximum size for compressed data buffers. Change the driver
+to permit the user to set bigger size for the compressed buffer
+but make reasonable sanitation.
 
 Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
 ---
- drivers/media/platform/qcom/venus/vdec_ctrls.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/media/platform/qcom/venus/vdec.c | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/media/platform/qcom/venus/vdec_ctrls.c b/drivers/media/platform/qcom/venus/vdec_ctrls.c
-index 300350bfe8bd..3a963cbd342a 100644
---- a/drivers/media/platform/qcom/venus/vdec_ctrls.c
-+++ b/drivers/media/platform/qcom/venus/vdec_ctrls.c
-@@ -7,6 +7,7 @@
- #include <media/v4l2-ctrls.h>
+diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
+index e1f998656c07..fb9afee76793 100644
+--- a/drivers/media/platform/qcom/venus/vdec.c
++++ b/drivers/media/platform/qcom/venus/vdec.c
+@@ -133,6 +133,7 @@ vdec_try_fmt_common(struct venus_inst *inst, struct v4l2_format *f)
+ 	struct v4l2_pix_format_mplane *pixmp = &f->fmt.pix_mp;
+ 	struct v4l2_plane_pix_format *pfmt = pixmp->plane_fmt;
+ 	const struct venus_format *fmt;
++	u32 szimage;
  
- #include "core.h"
-+#include "helpers.h"
- #include "vdec.h"
+ 	memset(pfmt[0].reserved, 0, sizeof(pfmt[0].reserved));
+ 	memset(pixmp->reserved, 0, sizeof(pixmp->reserved));
+@@ -161,14 +162,17 @@ vdec_try_fmt_common(struct venus_inst *inst, struct v4l2_format *f)
+ 	pixmp->num_planes = fmt->num_planes;
+ 	pixmp->flags = 0;
  
- static int vdec_op_s_ctrl(struct v4l2_ctrl *ctrl)
-@@ -38,7 +39,9 @@ static int vdec_op_g_volatile_ctrl(struct v4l2_ctrl *ctrl)
- {
- 	struct venus_inst *inst = ctrl_to_inst(ctrl);
- 	struct vdec_controls *ctr = &inst->controls.dec;
-+	struct hfi_buffer_requirements bufreq;
- 	union hfi_get_property hprop;
-+	enum hfi_version ver = inst->core->res->hfi_version;
- 	u32 ptype = HFI_PROPERTY_PARAM_PROFILE_LEVEL_CURRENT;
- 	int ret;
+-	pfmt[0].sizeimage = venus_helper_get_framesz(pixmp->pixelformat,
+-						     pixmp->width,
+-						     pixmp->height);
++	szimage = venus_helper_get_framesz(pixmp->pixelformat, pixmp->width,
++					   pixmp->height);
  
-@@ -62,7 +65,9 @@ static int vdec_op_g_volatile_ctrl(struct v4l2_ctrl *ctrl)
- 		ctrl->val = ctr->post_loop_deb_mode;
- 		break;
- 	case V4L2_CID_MIN_BUFFERS_FOR_CAPTURE:
--		ctrl->val = inst->num_output_bufs;
-+		ret = venus_helper_get_bufreq(inst, HFI_BUFFER_OUTPUT, &bufreq);
-+		if (!ret)
-+			ctrl->val = HFI_BUFREQ_COUNT_MIN(&bufreq, ver);
- 		break;
- 	default:
- 		return -EINVAL;
+-	if (f->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE)
++	if (f->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) {
++		pfmt[0].sizeimage = szimage;
+ 		pfmt[0].bytesperline = ALIGN(pixmp->width, 128);
+-	else
++	} else {
++		pfmt[0].sizeimage = clamp_t(u32, pfmt[0].sizeimage, 0, SZ_8M);
++		pfmt[0].sizeimage = max(pfmt[0].sizeimage, szimage);
+ 		pfmt[0].bytesperline = 0;
++	}
+ 
+ 	return fmt;
+ }
+@@ -266,6 +270,7 @@ static int vdec_s_fmt(struct file *file, void *fh, struct v4l2_format *f)
+ 		inst->ycbcr_enc = pixmp->ycbcr_enc;
+ 		inst->quantization = pixmp->quantization;
+ 		inst->xfer_func = pixmp->xfer_func;
++		inst->input_buf_size = pixmp->plane_fmt[0].sizeimage;
+ 	}
+ 
+ 	memset(&format, 0, sizeof(format));
+@@ -728,6 +733,7 @@ static int vdec_queue_setup(struct vb2_queue *q,
+ 		sizes[0] = venus_helper_get_framesz(inst->fmt_out->pixfmt,
+ 						    inst->out_width,
+ 						    inst->out_height);
++		sizes[0] = max(sizes[0], inst->input_buf_size);
+ 		inst->input_buf_size = sizes[0];
+ 		*num_buffers = max(*num_buffers, in_num);
+ 		inst->num_input_bufs = *num_buffers;
 -- 
 2.17.1
 
