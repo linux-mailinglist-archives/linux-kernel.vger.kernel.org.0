@@ -2,91 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AF865A4AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 21:00:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 061745A4BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 21:02:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726902AbfF1TA0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 15:00:26 -0400
-Received: from bmailout2.hostsharing.net ([83.223.90.240]:36543 "EHLO
-        bmailout2.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726565AbfF1TAZ (ORCPT
+        id S1727050AbfF1TCt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 15:02:49 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34368 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726565AbfF1TCs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 15:00:25 -0400
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
-        by bmailout2.hostsharing.net (Postfix) with ESMTPS id 3B9872800BC1C;
-        Fri, 28 Jun 2019 21:00:23 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-        id D2E9316F24; Fri, 28 Jun 2019 21:00:22 +0200 (CEST)
-Date:   Fri, 28 Jun 2019 21:00:22 +0200
-From:   Lukas Wunner <lukas@wunner.de>
-To:     Stefan Wahren <wahrenst@gmx.net>
-Cc:     Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-        broonie@kernel.org, eric@anholt.net,
-        Martin Sperl <kernel@martin.sperl.org>, f.fainelli@gmail.com,
-        rjui@broadcom.com, sbranden@broadcom.com,
-        linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org
-Subject: Re: [PATCH] spi: spi-bcm2835.c: Fix 3-wire mode
-Message-ID: <20190628190022.vya4h2lihm6x2xpb@wunner.de>
-References: <20190628123023.4696-1-nuno.sa@analog.com>
- <1b932c61-982b-aae0-1fef-3c574e7d17eb@gmx.net>
+        Fri, 28 Jun 2019 15:02:48 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5SJ2c1P171187
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2019 15:02:45 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2tdnvsx713-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2019 15:02:42 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <parth@linux.ibm.com>;
+        Fri, 28 Jun 2019 20:01:57 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 28 Jun 2019 20:01:52 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5SJ1prF45088940
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 28 Jun 2019 19:01:52 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D1DABA4057;
+        Fri, 28 Jun 2019 19:01:51 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 15248A404D;
+        Fri, 28 Jun 2019 19:01:38 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.199.62.39])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 28 Jun 2019 19:01:37 +0000 (GMT)
+Subject: Re: [PATCH v3 5/7] sched: SIS_CORE to disable idle core search
+To:     subhra mazumdar <subhra.mazumdar@oracle.com>,
+        linux-kernel@vger.kernel.org
+Cc:     peterz@infradead.org, mingo@redhat.com, tglx@linutronix.de,
+        steven.sistare@oracle.com, dhaval.giani@oracle.com,
+        daniel.lezcano@linaro.org, vincent.guittot@linaro.org,
+        viresh.kumar@linaro.org, tim.c.chen@linux.intel.com,
+        mgorman@techsingularity.net
+References: <20190627012919.4341-1-subhra.mazumdar@oracle.com>
+ <20190627012919.4341-6-subhra.mazumdar@oracle.com>
+From:   Parth Shah <parth@linux.ibm.com>
+Date:   Sat, 29 Jun 2019 00:31:36 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1b932c61-982b-aae0-1fef-3c574e7d17eb@gmx.net>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20190627012919.4341-6-subhra.mazumdar@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19062819-0020-0000-0000-0000034E755E
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19062819-0021-0000-0000-000021A1F79B
+Message-Id: <0e0f3347-c262-2917-76d7-88dddf4e9122@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-28_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906280215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 28, 2019 at 05:23:54PM +0200, Stefan Wahren wrote:
-> Am 28.06.19 um 14:30 schrieb Nuno Sá:
-> > As stated in
-> > https://www.raspberrypi.org/documentation/hardware/raspberrypi/spi/README.md,
-> > one of rx or tx buffer's must be null. However, if DMA is enabled, the
-> > driver sets the SPI_CONTROLLER_MUST_RX | SPI_CONTROLLER_MUST_TX on the
-> > controller flags. Hence, the spi core will provide dummy buffers even if
-> > one of the buffers was set to null by the device driver. Thus, the
-> > communication with the 3-wire device fails.
-> >
-> > This patch uses the prepare_message callback to look for the device mode
-> > and sets/clears the SPI_CONTROLLER_MUST_RX | SPI_CONTROLLER_MUST_TX on a
-> > per spi message basis. It also assumes that DMA is not supported on
-> > half-duplex devices.
-> >
-> > Signed-off-by: Nuno Sá <nuno.sa@analog.com>
+
+
+On 6/27/19 6:59 AM, subhra mazumdar wrote:
+> Use SIS_CORE to disable idle core search. For some workloads
+> select_idle_core becomes a scalability bottleneck, removing it improves
+> throughput. Also there are workloads where disabling it can hurt latency,
+> so need to have an option.
 > 
-> i never tested the 3-wire mode. Could you please describe your test setup?
+> Signed-off-by: subhra mazumdar <subhra.mazumdar@oracle.com>
+> ---
+>  kernel/sched/fair.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+> 
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index c1ca88e..6a74808 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -6280,9 +6280,11 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
+>  	if (!sd)
+>  		return target;
+> 
+> -	i = select_idle_core(p, sd, target);
+> -	if ((unsigned)i < nr_cpumask_bits)
+> -		return i;
+> +	if (sched_feat(SIS_CORE)) {
+> +		i = select_idle_core(p, sd, target);
+> +		if ((unsigned)i < nr_cpumask_bits)
+> +			return i;
+> +	}
 
-__spi_validate() returns -EINVAL if 3-wire mode is used and both buffers
-are non-NULL, I guess that's the problem.
+This can have significant performance loss if disabled. The select_idle_core spreads
+workloads quickly across the cores, hence disabling this leaves much of the work to
+be offloaded to load balancer to move task across the cores. Latency sensitive
+and long running multi-threaded workload should see the regression under this conditions.
+
+Also, systems like POWER9 has sd_llc as a pair of core only. So it
+won't benefit from the limits and hence also hiding your code in select_idle_cpu
+behind static keys will be much preferred.
+
+> 
+>  	i = select_idle_cpu(p, sd, target);
+>  	if ((unsigned)i < nr_cpumask_bits)
+> 
 
 
-> @Martin, @Lukas Are you fine with this patch?
+Best,
+Parth
 
-I have a patch set in the pipeline to drop SPI_CONTROLLER_MUST_RX
-and SPI_CONTROLLER_MUST_TX from spi-bcm2835.c.
-
-Latest snapshot is available here (top-most 10 commits):
-https://github.com/l1k/linux/commits/revpi_staging
-
-@Nuno, could you give this branch a spin and see if it fixes the
-issue for you?  If so, this might be a better solution.  Your patch
-is fine in principle since it works around the problem, but the
-patch set on the above-linked branch fixes it at the root.
-It also provides a nice welcome speedup and reduces resource
-consumption.
-
-I've been working on this on-and-off for about half a year,
-I think the patch set is in pretty good shape now so I was
-planning to submit it probably in 2 weeks or so.
-
-Thanks,
-
-Lukas
