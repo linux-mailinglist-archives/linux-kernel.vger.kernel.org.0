@@ -2,101 +2,179 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB28A594F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 09:30:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E7AD594FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 09:30:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726885AbfF1HaM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 03:30:12 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:40444 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726465AbfF1HaK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 03:30:10 -0400
-Received: by mail-oi1-f193.google.com with SMTP id w196so3572490oie.7;
-        Fri, 28 Jun 2019 00:30:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rPmAc12QB/dObXVaxjhcY1vUDZ7bOEFU41CSHx26tMU=;
-        b=XFw2v0vUl8eRU/wUY4labQGC/L3Xpzfs0JErb+60DwJAFeE71kvau/gD2oXLIvctoJ
-         wLnkCpZ0WoE3jJt2GlComIIxLpzIsjP4ZIBuQMdkwFGB2rj+ETsNSCuH+hYVOByQPSYz
-         Uwr8ogq5xo/jiXPV0GkONlcLvUzzWYxYN68s7Hzu767HeNiNOvBH+KH6lmUm80Q3Gdi8
-         BXtnkifah9yfJAWxdLth5dWVhb9CKWZqhaEMOU+Dc1ApZoSiDsDLmGKVm5igVdxjvQ5Q
-         K82ZuIJMdcI7ek+r64pQ0eYvotbuAV/IS8gexPBJFeAdRv5qcrl6XCJwsqo45OkzNYgL
-         +Qfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rPmAc12QB/dObXVaxjhcY1vUDZ7bOEFU41CSHx26tMU=;
-        b=YUnQITPBEV2RUb2krGGU7zQHevrNxrNe0pFiM7rZ/UhXM0lUXZnvNi5qbU5Po9k69i
-         1M6s2EiUYvRLnCa4xkrmEzB0ouWIUYYQPxJqlwjrJqlmfM5Gv4jinpFGR6PvApQXgTCd
-         +oKv5Z+zQGtKkS/0sPc8sc99AAZcXlSom7EBtP7c8GzinTkJ3jJn4VPnbqMx90INGLTc
-         rLShRcLv9+nBnJs+MGG9yZc0DEosKb6dEQgPUuSSOFQInH4hCscLCH6gV0tI8TfuUNik
-         14/V6Yo9qOuLKLgqZDBiYmuOCwkhcjdgGI3wtoAcfisTa6T/0RdOOCoJp5PPuWXT834Y
-         h3Cw==
-X-Gm-Message-State: APjAAAV8l1sG/itWGnoRDsVdE4J5WkJq+2bnsYBI2H0ux7Fft26peGe7
-        AMROpIWWQuTsc9A3ubDky1mSZHVxT6K46ukeUE5gG3Zx
-X-Google-Smtp-Source: APXvYqxceegnIIzidgYPuyNqFkqwb4errG5wPWapwIBSFWnQsfooB5k7ZDHMtD1YCtRxXhmdT7wAuB4Thjs6r4joL2s=
-X-Received: by 2002:aca:544b:: with SMTP id i72mr909821oib.174.1561707009875;
- Fri, 28 Jun 2019 00:30:09 -0700 (PDT)
+        id S1726930AbfF1Hal (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 03:30:41 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60936 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726484AbfF1Hak (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Jun 2019 03:30:40 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 27D27B609;
+        Fri, 28 Jun 2019 07:30:39 +0000 (UTC)
+Subject: Re: [PATCH v2 09/18] drm/vram: drop
+ drm_gem_vram_driver_gem_prime_mmap
+To:     Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        ckoenig.leichtzumerken@gmail.com,
+        open list <linux-kernel@vger.kernel.org>,
+        David Airlie <airlied@linux.ie>, Sean Paul <sean@poorly.run>
+References: <20190621115755.8481-1-kraxel@redhat.com>
+ <20190621115755.8481-10-kraxel@redhat.com>
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNKFRob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmNvbT7CwJQEEwEIAD4W
+ IQRyF/usjOnPY0ShaOVoDcEdUwt6IwUCWznTtgIbAwUJA8JnAAULCQgHAgYVCgkICwIEFgID
+ AQIeAQIXgAAKCRBoDcEdUwt6I7D7CACBK42XW+7mCiK8ioXMEy1NzGbXC51RzGea8N83oEJS
+ 1KVUtQxrkDxgrW/WLSl/TfqHFsJpdEFOv1XubWbleun3uKPy0e5vZCd5UjZPkeNjnqfCYTDy
+ hVVsdOuFbtWDppJyJrThLqr9AgSFmoCNNUt1SVpYEEOLNE6C32BhlnSq21VLC+YXTgO/ZHTa
+ YXkq54hHj63jwrcjkBSCkXLh37kHeqnl++GHpN+3R+o3w2OpwHAlvVjdKPT27v1tVkiydsFG
+ 65Vd0n3m/ft+IOrGgxQM1C20uqKvsZGB4r3OGR50ekAybO7sjEJJ1Obl4ge/6RRqcvKz4LMb
+ tGs85D6tPIeFzsBNBFs50uABCADGJj+DP1fk+UWOWrf4O61HTbC4Vr9QD2K4fUUHnzg2B6zU
+ R1BPXqLGG0+lzK8kfYU/F5RjmEcClsIkAaFkg4kzKP14tvY1J5+AV3yNqcdg018HNtiyrSwI
+ E0Yz/qm1Ot2NMZ0DdvVBg22IMsiudQ1tx9CH9mtyTbIXgACvl3PW2o9CxiHPE/bohFhwZwh/
+ kXYYAE51lhinQ3oFEeQZA3w4OTvxSEspiQR8dg8qJJb+YOAc5IKk6sJmmM7JfFMWSr22satM
+ 23oQ3WvJb4RV6HTRTAIEyyZS7g2DhiytgMG60t0qdABG5KXSQW+OKlZRpuWwKWaLh3if/p/u
+ 69dvpanbABEBAAHCwHwEGAEIACYWIQRyF/usjOnPY0ShaOVoDcEdUwt6IwUCWznS4AIbDAUJ
+ A8JnAAAKCRBoDcEdUwt6I6X3CACJ8D+TpXBCqJE5xwog08+Dp8uBpx0T9n1wE0GQisZruACW
+ NofYn8PTX9k4wmegDLwt7YQDdKxQ4+eTfZeLNQqWg6OCftH5Kx7sjWnJ09tOgniVdROzWJ7c
+ VJ/i0okazncsJ+nq48UYvRGE1Swh3A4QRIyphWX4OADOBmTFl9ZYNPnh23eaC9WrNvFr7yP7
+ iGjMlfEW8l6Lda//EC5VpXVNza0xeae0zFNst2R9pn+bLkihwDLWxOIyifGRxTqNxoS4I1aw
+ VhxPSVztPMSpIA/sOr/N/p6JrBLn+gui2K6mP7bGb8hF+szfArYqz3T1rv1VzUWAJf5Wre5U
+ iNx9uqqx
+Message-ID: <d3610263-421b-4c4f-faaa-0b8a8d905f07@suse.de>
+Date:   Fri, 28 Jun 2019 09:30:38 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
-References: <1560255830-8656-1-git-send-email-wanpengli@tencent.com> <CANRm+CwfXViF34eLma5ZnqjT96Sq=XehpBiTZTj1TfJnkevVMA@mail.gmail.com>
-In-Reply-To: <CANRm+CwfXViF34eLma5ZnqjT96Sq=XehpBiTZTj1TfJnkevVMA@mail.gmail.com>
-From:   Wanpeng Li <kernellwp@gmail.com>
-Date:   Fri, 28 Jun 2019 15:29:58 +0800
-Message-ID: <CANRm+Cz6vX587uLV__FheXuiOe7pzfGeUZb++ZJ1y9Cmk6GkoA@mail.gmail.com>
-Subject: Re: [PATCH v4 0/3] KVM: Yield to IPI target if necessary
-To:     LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190621115755.8481-10-kraxel@redhat.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="SjuG3ISsctN3WUhn3ZUuTIOWBXlLTl6ww"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ping again,
-On Tue, 18 Jun 2019 at 17:00, Wanpeng Li <kernellwp@gmail.com> wrote:
->
-> ping, :)
-> On Tue, 11 Jun 2019 at 20:23, Wanpeng Li <kernellwp@gmail.com> wrote:
-> >
-> > The idea is from Xen, when sending a call-function IPI-many to vCPUs,
-> > yield if any of the IPI target vCPUs was preempted. 17% performance
-> > increasement of ebizzy benchmark can be observed in an over-subscribe
-> > environment. (w/ kvm-pv-tlb disabled, testing TLB flush call-function
-> > IPI-many since call-function is not easy to be trigged by userspace
-> > workload).
-> >
-> > v3 -> v4:
-> >  * check map->phys_map[dest_id]
-> >  * more cleaner kvm_sched_yield()
-> >
-> > v2 -> v3:
-> >  * add bounds-check on dest_id
-> >
-> > v1 -> v2:
-> >  * check map is not NULL
-> >  * check map->phys_map[dest_id] is not NULL
-> >  * make kvm_sched_yield static
-> >  * change dest_id to unsinged long
-> >
-> > Wanpeng Li (3):
-> >   KVM: X86: Yield to IPI target if necessary
-> >   KVM: X86: Implement PV sched yield hypercall
-> >   KVM: X86: Expose PV_SCHED_YIELD CPUID feature bit to guest
-> >
-> >  Documentation/virtual/kvm/cpuid.txt      |  4 ++++
-> >  Documentation/virtual/kvm/hypercalls.txt | 11 +++++++++++
-> >  arch/x86/include/uapi/asm/kvm_para.h     |  1 +
-> >  arch/x86/kernel/kvm.c                    | 21 +++++++++++++++++++++
-> >  arch/x86/kvm/cpuid.c                     |  3 ++-
-> >  arch/x86/kvm/x86.c                       | 21 +++++++++++++++++++++
-> >  include/uapi/linux/kvm_para.h            |  1 +
-> >  7 files changed, 61 insertions(+), 1 deletion(-)
-> >
-> > --
-> > 2.7.4
-> >
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--SjuG3ISsctN3WUhn3ZUuTIOWBXlLTl6ww
+Content-Type: multipart/mixed; boundary="ICaAVP5Xc9uWp5y40PIWZuKzwVKaFAzz8";
+ protected-headers="v1"
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+ ckoenig.leichtzumerken@gmail.com, open list <linux-kernel@vger.kernel.org>,
+ David Airlie <airlied@linux.ie>, Sean Paul <sean@poorly.run>
+Message-ID: <d3610263-421b-4c4f-faaa-0b8a8d905f07@suse.de>
+Subject: Re: [PATCH v2 09/18] drm/vram: drop
+ drm_gem_vram_driver_gem_prime_mmap
+References: <20190621115755.8481-1-kraxel@redhat.com>
+ <20190621115755.8481-10-kraxel@redhat.com>
+In-Reply-To: <20190621115755.8481-10-kraxel@redhat.com>
+
+--ICaAVP5Xc9uWp5y40PIWZuKzwVKaFAzz8
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+
+Acked-by: Thomas Zimmermann <tzimmermann@suse.de>
+
+Am 21.06.19 um 13:57 schrieb Gerd Hoffmann:
+> The wrapper doesn't do anything any more, drop it.
+>=20
+> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+> ---
+>  include/drm/drm_gem_vram_helper.h     |  4 +---
+>  drivers/gpu/drm/drm_gem_vram_helper.c | 17 -----------------
+>  2 files changed, 1 insertion(+), 20 deletions(-)
+>=20
+> diff --git a/include/drm/drm_gem_vram_helper.h b/include/drm/drm_gem_vr=
+am_helper.h
+> index 7b9f50ba3fce..2ada671a2a6b 100644
+> --- a/include/drm/drm_gem_vram_helper.h
+> +++ b/include/drm/drm_gem_vram_helper.h
+> @@ -137,8 +137,6 @@ void drm_gem_vram_driver_gem_prime_unpin(struct drm=
+_gem_object *obj);
+>  void *drm_gem_vram_driver_gem_prime_vmap(struct drm_gem_object *obj);
+>  void drm_gem_vram_driver_gem_prime_vunmap(struct drm_gem_object *obj,
+>  					  void *vaddr);
+> -int drm_gem_vram_driver_gem_prime_mmap(struct drm_gem_object *obj,
+> -				       struct vm_area_struct *vma);
+> =20
+>  #define DRM_GEM_VRAM_DRIVER_PRIME \
+>  	.gem_prime_export =3D drm_gem_prime_export, \
+> @@ -147,6 +145,6 @@ int drm_gem_vram_driver_gem_prime_mmap(struct drm_g=
+em_object *obj,
+>  	.gem_prime_unpin  =3D drm_gem_vram_driver_gem_prime_unpin, \
+>  	.gem_prime_vmap	  =3D drm_gem_vram_driver_gem_prime_vmap, \
+>  	.gem_prime_vunmap =3D drm_gem_vram_driver_gem_prime_vunmap, \
+> -	.gem_prime_mmap	  =3D drm_gem_vram_driver_gem_prime_mmap
+> +	.gem_prime_mmap	  =3D drm_gem_prime_mmap
+> =20
+>  #endif
+> diff --git a/drivers/gpu/drm/drm_gem_vram_helper.c b/drivers/gpu/drm/dr=
+m_gem_vram_helper.c
+> index 2e474dee30df..d78761802374 100644
+> --- a/drivers/gpu/drm/drm_gem_vram_helper.c
+> +++ b/drivers/gpu/drm/drm_gem_vram_helper.c
+> @@ -619,20 +619,3 @@ void drm_gem_vram_driver_gem_prime_vunmap(struct d=
+rm_gem_object *gem,
+>  	drm_gem_vram_unpin(gbo);
+>  }
+>  EXPORT_SYMBOL(drm_gem_vram_driver_gem_prime_vunmap);
+> -
+> -/**
+> - * drm_gem_vram_driver_gem_prime_mmap() - \
+> -	Implements &struct drm_driver.gem_prime_mmap
+> - * @gem:	The GEM object to map
+> - * @vma:	The VMA describing the mapping
+> - *
+> - * Returns:
+> - * 0 on success, or
+> - * a negative errno code otherwise.
+> - */
+> -int drm_gem_vram_driver_gem_prime_mmap(struct drm_gem_object *gem,
+> -				       struct vm_area_struct *vma)
+> -{
+> -	return drm_gem_prime_mmap(gem, vma);
+> -}
+> -EXPORT_SYMBOL(drm_gem_vram_driver_gem_prime_mmap);
+>=20
+
+--=20
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Linux GmbH, Maxfeldstrasse 5, 90409 Nuernberg, Germany
+GF: Felix Imend=C3=B6rffer, Mary Higgins, Sri Rasiah
+HRB 21284 (AG N=C3=BCrnberg)
+
+
+--ICaAVP5Xc9uWp5y40PIWZuKzwVKaFAzz8--
+
+--SjuG3ISsctN3WUhn3ZUuTIOWBXlLTl6ww
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEchf7rIzpz2NEoWjlaA3BHVMLeiMFAl0Vwh4ACgkQaA3BHVML
+eiOMUQf+PZ8j9q4zK3Eq6XY9xecI/H6s1jGpv8Dlt7GOlTitpIYDEca5p0rtecHV
+hwGkLB7me8EsfPyt1tWlEuizxBbZFuaKSzViPfvy75ug/Xzc0rugUv2zW4Uv44v7
+cAfswUkI42HBGXDscxcwYO3cyIGnVrK50yWzbJfvS4XfD13oE+lRBs0OvZ4ltDps
+Pb+sH0X5vGE1HunXO0w+HcpbjfHXEokKsSRuSN4HpbxwV+qE5MMfJXfEH+YzNFpo
+K4/XL5PydjkbHn48Hh2S3Vs0OVy3xySC6MDtwYaxJdPOdQej9SrjHUb8bN5n5Wyj
+37b8Lz3kqSlpLfcxChTpZpkqHo3l6g==
+=u0ug
+-----END PGP SIGNATURE-----
+
+--SjuG3ISsctN3WUhn3ZUuTIOWBXlLTl6ww--
