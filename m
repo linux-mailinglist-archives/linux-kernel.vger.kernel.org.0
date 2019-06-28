@@ -2,111 +2,203 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0415259765
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 11:25:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31E2859768
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 11:26:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726652AbfF1JZJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 05:25:09 -0400
-Received: from smtprelay0134.hostedemail.com ([216.40.44.134]:41952 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726385AbfF1JZI (ORCPT
+        id S1726729AbfF1J0p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 05:26:45 -0400
+Received: from smtp-fw-9101.amazon.com ([207.171.184.25]:28000 "EHLO
+        smtp-fw-9101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726431AbfF1J0n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 05:25:08 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay06.hostedemail.com (Postfix) with ESMTP id CAF27182251A2;
-        Fri, 28 Jun 2019 09:25:07 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::,RULES_HIT:41:355:379:800:960:968:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1431:1437:1515:1516:1518:1534:1542:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3353:3653:3698:3865:3866:3867:3868:4321:5007:7903:8957:9010:9040:10004:10400:10432:10433:10848:11026:11658:11914:12043:12296:12297:12438:12555:12681:12760:13138:13161:13172:13229:13231:13439:14181:14394:14659:14721:19903:19997:21080:21433:21451:21627:21819:30022:30029:30030:30046:30054:30055:30062,0,RBL:error,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:40,LUA_SUMMARY:none
-X-HE-Tag: smash77_83fc0cecf740c
-X-Filterd-Recvd-Size: 3559
-Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf15.hostedemail.com (Postfix) with ESMTPA;
-        Fri, 28 Jun 2019 09:25:06 +0000 (UTC)
-Message-ID: <6f23c2918ad9fc744269feb8f909bdfb105c5afc.camel@perches.com>
-Subject: [PATCH] get_maintainer: Add ability to skip moderated mailing lists
-From:   Joe Perches <joe@perches.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org
-Date:   Fri, 28 Jun 2019 02:25:05 -0700
-In-Reply-To: <20190624202512.GK3436@hirez.programming.kicks-ass.net>
-References: <20190624130323.14137-1-bigeasy@linutronix.de>
-         <20190624133333.GW3419@hirez.programming.kicks-ass.net>
-         <9528bb2c4455db9e130576120c8b985b9dd94e3d.camel@perches.com>
-         <20190624202512.GK3436@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
+        Fri, 28 Jun 2019 05:26:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1561714003; x=1593250003;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=J2ajxUE4jXGVCtZSDbaR4rrIINZuPje5eD3Z8F3Mr+M=;
+  b=Z6ZR2ehm4h1tvI9TApOVi3EIZMyWTU74K/68T820emj4dF3tSyHnR06T
+   q3IFkPZuJMDcGX8YSnJusgrfkkwejFhKAZ15G+R+sUHkP0cYvHEEc7Yth
+   OySLh3PzUL/mj0UCmoR55ZglKo73sprA2tNaN+g9aHrNkdLXzH8CBGLv9
+   w=;
+X-IronPort-AV: E=Sophos;i="5.62,427,1554768000"; 
+   d="scan'208";a="813262319"
+Received: from sea3-co-svc-lb6-vlan2.sea.amazon.com (HELO email-inbound-relay-1a-e34f1ddc.us-east-1.amazon.com) ([10.47.22.34])
+  by smtp-border-fw-out-9101.sea19.amazon.com with ESMTP; 28 Jun 2019 09:26:34 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
+        by email-inbound-relay-1a-e34f1ddc.us-east-1.amazon.com (Postfix) with ESMTPS id 1710FA1E9E;
+        Fri, 28 Jun 2019 09:26:29 +0000 (UTC)
+Received: from EX13D08UEE004.ant.amazon.com (10.43.62.182) by
+ EX13MTAUEA001.ant.amazon.com (10.43.61.82) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Fri, 28 Jun 2019 09:26:29 +0000
+Received: from EX13MTAUWB001.ant.amazon.com (10.43.161.207) by
+ EX13D08UEE004.ant.amazon.com (10.43.62.182) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Fri, 28 Jun 2019 09:26:29 +0000
+Received: from u6cf1b7119fa15b.ant.amazon.com (10.28.85.98) by
+ mail-relay.amazon.com (10.43.161.249) with Microsoft SMTP Server id
+ 15.0.1367.3 via Frontend Transport; Fri, 28 Jun 2019 09:26:24 +0000
+From:   Sam Caccavale <samcacc@amazon.de>
+CC:     <samcaccavale@gmail.com>, <nmanthey@amazon.de>,
+        <wipawel@amazon.de>, <dwmw@amazon.co.uk>, <mpohlack@amazon.de>,
+        <graf@amazon.de>, <karahmed@amazon.de>,
+        <andrew.cooper3@citrix.com>, <JBeulich@suse.com>,
+        <pbonzini@redhat.com>, <rkrcmar@redhat.com>, <tglx@linutronix.de>,
+        <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>,
+        <paullangton4@gmail.com>, <x86@kernel.org>, <kvm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Sam Caccavale <samcacc@amazon.de>
+Subject: [PATCH v4 0/5] x86 instruction emulator fuzzing
+Date:   Fri, 28 Jun 2019 11:26:16 +0200
+Message-ID: <20190628092621.17823-1-samcacc@amazon.de>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a command line switch --no-moderated to skip L: mailing
-lists marked with 'moderated'.
+Dear all,
 
-Some people prefer not emailing moderated mailing lists as
-the moderation time can be indeterminate and some emails
-can be intentionally dropped by a moderator.
+This series aims to provide an entrypoint for, and fuzz KVM's x86 instruction
+emulator from userspace.  It mirrors Xen's application of the AFL fuzzer to
+it's instruction emulator in the hopes of discovering vulnerabilities.
+Since this entrypoint also allows arbitrary execution of the emulators code
+from userspace, it may also be useful for testing.
 
-This can cause fragmentation of email threads when some are
-subscribed to a moderated list but others are not and emails
-are dropped.
+The current 4 patches build the emulator and 2 harnesses: simple-harness is
+an example of unit testing; afl-harness is a frontend for the AFL fuzzer.
+The fifth patch contains useful scripts for development but is not intended
+for usptream consumption.
 
-Signed-off-by: Joe Perches <joe@perches.com>
-Tested-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- scripts/get_maintainer.pl | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+Patches
+=======
 
-diff --git a/scripts/get_maintainer.pl b/scripts/get_maintainer.pl
-index c1c088ef1420..8c2fc22f3a11 100755
---- a/scripts/get_maintainer.pl
-+++ b/scripts/get_maintainer.pl
-@@ -27,6 +27,7 @@ my $email_usename = 1;
- my $email_maintainer = 1;
- my $email_reviewer = 1;
- my $email_list = 1;
-+my $email_moderated_list = 1;
- my $email_subscriber_list = 0;
- my $email_git_penguin_chiefs = 0;
- my $email_git = 0;
-@@ -248,6 +249,7 @@ if (!GetOptions(
- 		'r!' => \$email_reviewer,
- 		'n!' => \$email_usename,
- 		'l!' => \$email_list,
-+		'moderated!' => \$email_moderated_list,
- 		's!' => \$email_subscriber_list,
- 		'multiline!' => \$output_multiline,
- 		'roles!' => \$output_roles,
-@@ -1023,7 +1025,8 @@ MAINTAINER field selection options:
-     --r => include reviewer(s) if any
-     --n => include name 'Full Name <addr\@domain.tld>'
-     --l => include list(s) if any
--    --s => include subscriber only list(s) if any
-+    --moderated => include moderated lists(s) if any (default: true)
-+    --s => include subscriber only list(s) if any (default: false)
-     --remove-duplicates => minimize duplicate email names/addresses
-     --roles => show roles (status:subsystem, git-signer, list, etc...)
-     --rolestats => show roles and statistics (commits/total_commits, %)
-@@ -1313,11 +1316,14 @@ sub add_categories {
- 		} else {
- 		    if ($email_list) {
- 			if (!$hash_list_to{lc($list_address)}) {
--			    $hash_list_to{lc($list_address)} = 1;
- 			    if ($list_additional =~ m/moderated/) {
--				push(@list_to, [$list_address,
--						"moderated list${list_role}"]);
-+				if ($email_moderated_list) {
-+				    $hash_list_to{lc($list_address)} = 1;
-+				    push(@list_to, [$list_address,
-+						    "moderated list${list_role}"]);
-+				}
- 			    } else {
-+				$hash_list_to{lc($list_address)} = 1;
- 				push(@list_to, [$list_address,
- 						"open list${list_role}"]);
- 			    }
+- 01: Builds and links afl-harness with the required kernel objects.
+- 02: Introduces the minimal set of emulator operations and supporting code
+to emulate simple instructions.
+- 03: Demonstrates simple-harness as a unit test.
+- 04: Adds scripts for install and building.
+- 05: Useful scripts for development
+
+
+Issues
+=======
+
+Currently, fuzzing results in a large amount of FPU related crashes.  Xen's
+fuzzing efforts had this issue too.  Their (temporary?) solution was to
+disable FPU exceptions after every instruction iteration?  Some solution
+is desired for this project.
+
+
+Changelog
+=======
+
+v1 -> v2:
+ - Moved -O0 to ifdef DEBUG
+ - Building with ASAN by default
+ - Removed a number of macros from emulator_ops.c and moved them as
+   static inline functions in emulator_ops.h
+ - Accidentally changed the example in simple-harness (reverted in v3)
+ - Introduced patch 4 for scripts
+
+v2 -> v3:
+ - Removed a workaround for printf smashing the stack when compiled
+   with -mcmodel=kernel, and stopped compiling with -mcmodel=kernel
+ - Added a null check for malloc's return value
+ - Moved more macros from emulator_ops.c into emulator_ops.h as
+   static inline functions
+ - Removed commented out code
+ - Moved changes to emulator_ops.h into the first patch
+ - Moved addition of afl-many script to the script patch
+ - Fixed spelling mistakes in documentation
+ - Reverted the simple-harness example back to the more useful original one
+ - Moved non-essential development scripts from patch 4 to new patch 5
+
+v3 -> v4:
+ - Stubbed out all unimplemented emulator_ops with a unimplemented_op macro
+ - Setting FAIL_ON_UNIMPLEMENTED_OP on compile decides whether calling these
+   is treated as a crash or ignored
+ - Moved setting up core dumps out of the default build/install path and
+   detailed this change in the README
+ - Added a .sh extention to afl-many
+ - Added an optional timeout to afl-many.sh and made deploy_remote.sh use it
+ - Building no longer creates a new .config each time and does not force any
+   config options
+ - Fixed a path bug in afl-many.sh
+
+Any comments/suggestions are greatly appreciated.
+
+Best,
+Sam Caccavale
+
+Sam Caccavale (5):
+  Build target for emulate.o as a userspace binary
+  Emulate simple x86 instructions in userspace
+  Demonstrating unit testing via simple-harness
+  Added build and install scripts
+  Development scripts for crash triage and deploy
+
+ tools/Makefile                                |   9 +
+ tools/fuzz/x86ie/.gitignore                   |   2 +
+ tools/fuzz/x86ie/Makefile                     |  54 ++
+ tools/fuzz/x86ie/README.md                    |  21 +
+ tools/fuzz/x86ie/afl-harness.c                | 151 +++++
+ tools/fuzz/x86ie/common.h                     |  87 +++
+ tools/fuzz/x86ie/emulator_ops.c               | 590 ++++++++++++++++++
+ tools/fuzz/x86ie/emulator_ops.h               | 134 ++++
+ tools/fuzz/x86ie/scripts/afl-many.sh          |  31 +
+ tools/fuzz/x86ie/scripts/bin.sh               |  49 ++
+ tools/fuzz/x86ie/scripts/build.sh             |  34 +
+ tools/fuzz/x86ie/scripts/coalesce.sh          |   5 +
+ tools/fuzz/x86ie/scripts/deploy.sh            |   9 +
+ tools/fuzz/x86ie/scripts/deploy_remote.sh     |  10 +
+ tools/fuzz/x86ie/scripts/gen_output.sh        |  11 +
+ tools/fuzz/x86ie/scripts/install_afl.sh       |  15 +
+ .../fuzz/x86ie/scripts/install_deps_ubuntu.sh |   5 +
+ tools/fuzz/x86ie/scripts/rebuild.sh           |   6 +
+ tools/fuzz/x86ie/scripts/run.sh               |  10 +
+ tools/fuzz/x86ie/scripts/summarize.sh         |   9 +
+ tools/fuzz/x86ie/simple-harness.c             |  49 ++
+ tools/fuzz/x86ie/stubs.c                      |  59 ++
+ tools/fuzz/x86ie/stubs.h                      |  52 ++
+ 23 files changed, 1402 insertions(+)
+ create mode 100644 tools/fuzz/x86ie/.gitignore
+ create mode 100644 tools/fuzz/x86ie/Makefile
+ create mode 100644 tools/fuzz/x86ie/README.md
+ create mode 100644 tools/fuzz/x86ie/afl-harness.c
+ create mode 100644 tools/fuzz/x86ie/common.h
+ create mode 100644 tools/fuzz/x86ie/emulator_ops.c
+ create mode 100644 tools/fuzz/x86ie/emulator_ops.h
+ create mode 100755 tools/fuzz/x86ie/scripts/afl-many.sh
+ create mode 100755 tools/fuzz/x86ie/scripts/bin.sh
+ create mode 100755 tools/fuzz/x86ie/scripts/build.sh
+ create mode 100755 tools/fuzz/x86ie/scripts/coalesce.sh
+ create mode 100644 tools/fuzz/x86ie/scripts/deploy.sh
+ create mode 100755 tools/fuzz/x86ie/scripts/deploy_remote.sh
+ create mode 100755 tools/fuzz/x86ie/scripts/gen_output.sh
+ create mode 100755 tools/fuzz/x86ie/scripts/install_afl.sh
+ create mode 100755 tools/fuzz/x86ie/scripts/install_deps_ubuntu.sh
+ create mode 100755 tools/fuzz/x86ie/scripts/rebuild.sh
+ create mode 100755 tools/fuzz/x86ie/scripts/run.sh
+ create mode 100755 tools/fuzz/x86ie/scripts/summarize.sh
+ create mode 100644 tools/fuzz/x86ie/simple-harness.c
+ create mode 100644 tools/fuzz/x86ie/stubs.c
+ create mode 100644 tools/fuzz/x86ie/stubs.h
+
+--
+2.17.1
+
+
+
+
+Amazon Development Center Germany GmbH
+Krausenstr. 38
+10117 Berlin
+Geschaeftsfuehrung: Christian Schlaeger, Ralf Herbrich
+Eingetragen am Amtsgericht Charlottenburg unter HRB 149173 B
+Sitz: Berlin
+Ust-ID: DE 289 237 879
+
 
 
