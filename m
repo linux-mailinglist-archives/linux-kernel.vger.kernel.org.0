@@ -2,30 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D0835A612
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 22:50:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F2C085A60C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 22:49:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726966AbfF1UuF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 16:50:05 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:38438 "EHLO
+        id S1726839AbfF1Utg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 16:49:36 -0400
+Received: from shelob.surriel.com ([96.67.55.147]:38548 "EHLO
         shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726785AbfF1Utg (ORCPT
+        with ESMTP id S1726789AbfF1Utg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 28 Jun 2019 16:49:36 -0400
 Received: from imladris.surriel.com ([96.67.55.152])
         by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
         (Exim 4.92)
         (envelope-from <riel@shelob.surriel.com>)
-        id 1hgxo6-0007TL-Mt; Fri, 28 Jun 2019 16:49:18 -0400
+        id 1hgxo6-0007TL-Nu; Fri, 28 Jun 2019 16:49:18 -0400
 From:   Rik van Riel <riel@surriel.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     kernel-team@fb.com, pjt@google.com, dietmar.eggemann@arm.com,
         peterz@infradead.org, mingo@redhat.com, morten.rasmussen@arm.com,
         tglx@linutronix.de, mgorman@techsingularity.net,
         vincent.guittot@linaro.org, Rik van Riel <riel@surriel.com>
-Subject: [PATCH 07/10] sched,cfs: fix zero length timeslice calculation
-Date:   Fri, 28 Jun 2019 16:49:10 -0400
-Message-Id: <20190628204913.10287-8-riel@surriel.com>
+Subject: [PATCH 08/10] sched,fair: refactor enqueue/dequeue_entity
+Date:   Fri, 28 Jun 2019 16:49:11 -0400
+Message-Id: <20190628204913.10287-9-riel@surriel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190628204913.10287-1-riel@surriel.com>
 References: <20190628204913.10287-1-riel@surriel.com>
@@ -36,73 +36,159 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The way the time slice length is currently calculated, not only do high
-priority tasks get longer time slices than low priority tasks, but due
-to fixed point math, low priority tasks could end up with a zero length
-time slice. This can lead to cache thrashing and other inefficiencies.
+Refactor enqueue_entity, dequeue_entity, and update_load_avg, in order
+to split out the things we still want to happen at every level in the
+cgroup hierarchy with a flat runqueue from the things we only need to
+happen once.
 
-Simplify the logic a little bit, and cap the minimum time slice length
-to sysctl_sched_min_granularity.
-
-Tasks that end up getting a time slice length too long for their relative
-priority will simply end up having their vruntime advanced much faster than
-other tasks, resulting in them receiving time slices less frequently.
+No functional changes.
 
 Signed-off-by: Rik van Riel <riel@surriel.com>
 ---
- kernel/sched/fair.c | 25 ++++++++-----------------
- 1 file changed, 8 insertions(+), 17 deletions(-)
+ kernel/sched/fair.c | 64 +++++++++++++++++++++++++++++----------------
+ 1 file changed, 42 insertions(+), 22 deletions(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index d48bff5118fc..8da2823401ca 100644
+index 8da2823401ca..a751e7a9b228 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -671,22 +671,6 @@ static inline u64 calc_delta_fair(u64 delta, struct sched_entity *se)
- 	return delta;
+@@ -3480,7 +3480,7 @@ static void detach_entity_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *s
+ #define DO_ATTACH	0x4
+ 
+ /* Update task and its cfs_rq load average */
+-static inline void update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
++static inline bool update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+ {
+ 	u64 now = cfs_rq_clock_pelt(cfs_rq);
+ 	int decayed;
+@@ -3509,6 +3509,8 @@ static inline void update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *s
+ 
+ 	} else if (decayed && (flags & UPDATE_TG))
+ 		update_tg_load_avg(cfs_rq, 0);
++
++	return decayed;
  }
  
--/*
-- * The idea is to set a period in which each task runs once.
-- *
-- * When there are too many tasks (sched_nr_latency) we have to stretch
-- * this period because otherwise the slices get too small.
-- *
-- * p = (nr <= nl) ? l : l*nr/nl
-- */
--static u64 __sched_period(unsigned long nr_running)
--{
--	if (unlikely(nr_running > sched_nr_latency))
--		return nr_running * sysctl_sched_min_granularity;
--	else
--		return sysctl_sched_latency;
--}
--
- /*
-  * We calculate the wall-time slice from the period by taking a part
-  * proportional to the weight.
-@@ -695,7 +679,7 @@ static u64 __sched_period(unsigned long nr_running)
-  */
- static u64 sched_slice(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ #ifndef CONFIG_64BIT
+@@ -3725,9 +3727,10 @@ static inline void update_misfit_status(struct task_struct *p, struct rq *rq)
+ #define SKIP_AGE_LOAD	0x0
+ #define DO_ATTACH	0x0
+ 
+-static inline void update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se, int not_used1)
++static inline bool update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se, int not_used1)
  {
--	u64 slice = __sched_period(cfs_rq->nr_running + !se->on_rq);
-+	u64 slice = sysctl_sched_latency;
+ 	cfs_rq_util_change(cfs_rq, 0);
++	return false;
+ }
+ 
+ static inline void remove_entity_load_avg(struct sched_entity *se) {}
+@@ -3850,6 +3853,24 @@ static inline void check_schedstat_required(void)
+  * CPU and an up-to-date min_vruntime on the destination CPU.
+  */
+ 
++static bool
++enqueue_entity_groups(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
++{
++	/*
++	 * When enqueuing a sched_entity, we must:
++	 *   - Update loads to have both entity and cfs_rq synced with now.
++	 *   - Add its load to cfs_rq->runnable_avg
++	 *   - For group_entity, update its weight to reflect the new share of
++	 *     its group cfs_rq
++	 *   - Add its new weight to cfs_rq->load.weight
++	 */
++	if (!update_load_avg(cfs_rq, se, UPDATE_TG | DO_ATTACH))
++		return false;
++
++	update_cfs_group(se);
++	return true;
++}
++
+ static void
+ enqueue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+ {
+@@ -3874,16 +3895,6 @@ enqueue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+ 	if (renorm && !curr)
+ 		se->vruntime += cfs_rq->min_vruntime;
+ 
+-	/*
+-	 * When enqueuing a sched_entity, we must:
+-	 *   - Update loads to have both entity and cfs_rq synced with now.
+-	 *   - Add its load to cfs_rq->runnable_avg
+-	 *   - For group_entity, update its weight to reflect the new share of
+-	 *     its group cfs_rq
+-	 *   - Add its new weight to cfs_rq->load.weight
+-	 */
+-	update_load_avg(cfs_rq, se, UPDATE_TG | DO_ATTACH);
+-	update_cfs_group(se);
+ 	enqueue_runnable_load_avg(cfs_rq, se);
+ 	account_entity_enqueue(cfs_rq, se);
+ 
+@@ -3950,14 +3961,9 @@ static void clear_buddies(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ 
+ static __always_inline void return_cfs_rq_runtime(struct cfs_rq *cfs_rq);
+ 
+-static void
+-dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
++static bool
++dequeue_entity_groups(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+ {
+-	/*
+-	 * Update run-time statistics of the 'current'.
+-	 */
+-	update_curr(cfs_rq);
+-
+ 	/*
+ 	 * When dequeuing a sched_entity, we must:
+ 	 *   - Update loads to have both entity and cfs_rq synced with now.
+@@ -3966,7 +3972,21 @@ dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+ 	 *   - For group entity, update its weight to reflect the new share
+ 	 *     of its group cfs_rq.
+ 	 */
+-	update_load_avg(cfs_rq, se, UPDATE_TG);
++	if (!update_load_avg(cfs_rq, se, UPDATE_TG))
++		return false;
++	update_cfs_group(se);
++
++	return true;
++}
++
++static void
++dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
++{
++	/*
++	 * Update run-time statistics of the 'current'.
++	 */
++	update_curr(cfs_rq);
++
+ 	dequeue_runnable_load_avg(cfs_rq, se);
+ 
+ 	update_stats_dequeue(cfs_rq, se, flags);
+@@ -3990,8 +4010,6 @@ dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+ 	/* return excess runtime on last dequeue */
+ 	return_cfs_rq_runtime(cfs_rq);
+ 
+-	update_cfs_group(se);
+-
+ 	/*
+ 	 * Now advance min_vruntime if @se was the entity holding it back,
+ 	 * except when: DEQUEUE_SAVE && !DEQUEUE_MOVE, in this case we'll be
+@@ -5156,6 +5174,7 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+ 		if (se->on_rq)
+ 			break;
+ 		cfs_rq = cfs_rq_of(se);
++		enqueue_entity_groups(cfs_rq, se, flags);
+ 		enqueue_entity(cfs_rq, se, flags);
+ 
+ 		/*
+@@ -5238,6 +5257,7 @@ static void dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
  
  	for_each_sched_entity(se) {
- 		struct load_weight *load;
-@@ -712,6 +696,13 @@ static u64 sched_slice(struct cfs_rq *cfs_rq, struct sched_entity *se)
- 		}
- 		slice = __calc_delta(slice, se->load.weight, load);
- 	}
-+
-+	/*
-+	 * To avoid cache thrashing, run at least sysctl_sched_min_granularity.
-+	 * The vruntime of a low priority task advances faster; those tasks
-+	 * will simply get time slices less frequently.
-+	 */
-+	slice = max_t(u64, slice, sysctl_sched_min_granularity);
- 	return slice;
- }
+ 		cfs_rq = cfs_rq_of(se);
++		dequeue_entity_groups(cfs_rq, se, flags);
+ 		dequeue_entity(cfs_rq, se, flags);
  
+ 		/*
 -- 
 2.20.1
 
