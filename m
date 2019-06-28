@@ -2,93 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA95F591B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 04:51:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A76F55917F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 04:47:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727079AbfF1CvD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 22:51:03 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:37944 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726441AbfF1CvD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 22:51:03 -0400
-Received: by mail-pl1-f194.google.com with SMTP id 9so1585829ple.5
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 19:51:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=FR72I8Co0+MJGxYGED+5/dqb9dBV7h2vnmoy22KZs5Q=;
-        b=IhxJ2cyQo1/nvunCFvFfS0lEbh/0091c04NKKkhNShMj9sWqyfADIGoFXQl05TpjYZ
-         7j9A1FXpIIEdEwYze1FTKINBI27EiSaozaS7oQ9bNK1BFztQRxa22TtkmWEFmUKAQ+ZB
-         Nzy0w3v1kP9zev1mkPZoA9lp3fLcgU4t6y3NmEjraSL8V+oHQ6LknVwFeNHupu+NLP73
-         Q8YBHbhPZtOVyBiwviEQHq0703WzQ6nsqSlyYrcGslLgXO3uwcIsdDebNOqrEuhe0uPS
-         29oPRFdsznFFLxhrSOb7M5UCeR5+K1sx5WNlxrRdHaRg5YW1mkMs3kIi/offf8HJ0AZ8
-         ngdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=FR72I8Co0+MJGxYGED+5/dqb9dBV7h2vnmoy22KZs5Q=;
-        b=rj1gcqm7F+5yh+zJZd3nTapILy0PE09F1217YbJaWnn7PYICiJAOaz0orvSJCHWV0I
-         yHkHw9R0SNOwNPuG6vOxfm9LuUFs1UhD51+fDCMyFZnjM2vDoN/AgQMSKgD4sPC97KvG
-         Vq9tK0UZtG00V4yIWpb75I5mUE66p0AuCg7TT7KVUXpRpARU7GVKDfcr605FPW320S4+
-         6mSyZCxFPoJrku7nDk8LZUc2V02/ZFLiR+yQrzfyP4k0lSktnxiq/Lx7dE8MQ8+cZB49
-         P8nlvWwl2bz3JcRQXM39INsK0B1CjXwEMy7PmCXJObPT8ES4orA+V3WkSLOR+eh50rjp
-         /RrA==
-X-Gm-Message-State: APjAAAWlW8+jwC6VunRkA+aJRG14btg2V38Mqt305XUI2dQRRd18u56q
-        C03DjLRtGkXSJSSoNnkzRxs=
-X-Google-Smtp-Source: APXvYqzL32mC6au/7C3TzD/kwMbOVnb1DJlzl+HtOU7wDCsXVoSrKw2C4o6YPmea15yYB/y61C1tKg==
-X-Received: by 2002:a17:902:868f:: with SMTP id g15mr8558096plo.67.1561690262921;
-        Thu, 27 Jun 2019 19:51:02 -0700 (PDT)
-Received: from hfq-skylake.ipads-lab.se.sjtu.edu.cn ([202.120.40.82])
-        by smtp.googlemail.com with ESMTPSA id b1sm457294pfi.91.2019.06.27.19.50.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Jun 2019 19:51:02 -0700 (PDT)
-From:   Fuqian Huang <huangfq.daxian@gmail.com>
-Cc:     Fuqian Huang <huangfq.daxian@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Rob Herring <robh@kernel.org>,
-        Allison Randal <allison@lohutok.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Richard Fontana <rfontana@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org,
+        id S1727065AbfF1Cqp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 22:46:45 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:40188 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726833AbfF1Cqm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 22:46:42 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 14D8CC057E65;
+        Fri, 28 Jun 2019 02:46:42 +0000 (UTC)
+Received: from localhost (dhcp-12-102.nay.redhat.com [10.66.12.102])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6ECAB1001B16;
+        Fri, 28 Jun 2019 02:46:41 +0000 (UTC)
+Date:   Fri, 28 Jun 2019 10:52:04 +0800
+From:   Zorro Lang <zlang@redhat.com>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 27/27] sound: ppc: remove unneeded memset after dma_alloc_coherent
-Date:   Fri, 28 Jun 2019 10:50:54 +0800
-Message-Id: <20190628025055.16242-1-huangfq.daxian@gmail.com>
-X-Mailer: git-send-email 2.11.0
-To:     unlisted-recipients:; (no To-header on input)
+Subject: Re: [PATCH 07/13] xfs: allow merging ioends over append boundaries
+Message-ID: <20190628025204.GI30864@dhcp-12-102.nay.redhat.com>
+References: <20190627104836.25446-1-hch@lst.de>
+ <20190627104836.25446-8-hch@lst.de>
+ <20190627182309.GP5171@magnolia>
+ <20190627214304.GB30113@42.do-not-panic.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190627214304.GB30113@42.do-not-panic.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Fri, 28 Jun 2019 02:46:42 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In commit af7ddd8a627c
-("Merge tag 'dma-mapping-4.21' of git://git.infradead.org/users/hch/dma-mapping"),
-dma_alloc_coherent has already zeroed the memory.
-So memset is not needed.
+On Thu, Jun 27, 2019 at 09:43:04PM +0000, Luis Chamberlain wrote:
+> On Thu, Jun 27, 2019 at 11:23:09AM -0700, Darrick J. Wong wrote:
+> > On Thu, Jun 27, 2019 at 12:48:30PM +0200, Christoph Hellwig wrote:
+> > > There is no real problem merging ioends that go beyond i_size into an
+> > > ioend that doesn't.  We just need to move the append transaction to the
+> > > base ioend.  Also use the opportunity to use a real error code instead
+> > > of the magic 1 to cancel the transactions, and write a comment
+> > > explaining the scheme.
+> > > 
+> > > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> > 
+> > Reading through this patch, I have a feeling it fixes the crash that
+> > Zorro has been seeing occasionally with generic/475...
+> > 
+> > Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+> 
+> Zorro, can you confirm? If so it would be great to also refer to
+> the respective bugzilla entry #203947 [0].
 
-Signed-off-by: Fuqian Huang <huangfq.daxian@gmail.com>
----
- sound/ppc/pmac.c | 1 -
- 1 file changed, 1 deletion(-)
+Sure, I'll give it a test. But it's so hard to reproduce, I need long enough
+time to prove "the panic's gone".
 
-diff --git a/sound/ppc/pmac.c b/sound/ppc/pmac.c
-index 1b11e53f6a62..1ab12f4f8631 100644
---- a/sound/ppc/pmac.c
-+++ b/sound/ppc/pmac.c
-@@ -56,7 +56,6 @@ static int snd_pmac_dbdma_alloc(struct snd_pmac *chip, struct pmac_dbdma *rec, i
- 	if (rec->space == NULL)
- 		return -ENOMEM;
- 	rec->size = size;
--	memset(rec->space, 0, rsize);
- 	rec->cmds = (void __iomem *)DBDMA_ALIGN(rec->space);
- 	rec->addr = rec->dma_base + (unsigned long)((char *)rec->cmds - (char *)rec->space);
- 
--- 
-2.11.0
+BTW, should I only merge this single patch to test, or merge your whole patchset
+with 13 patches?
 
+Thanks,
+Zorro
+
+> 
+> [0] https://bugzilla.kernel.org/show_bug.cgi?id=203947
+> 
+>   Luis
