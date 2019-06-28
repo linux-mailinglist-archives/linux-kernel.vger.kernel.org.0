@@ -2,95 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AEA4F597F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 11:53:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43F7B597FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 11:55:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726590AbfF1Jw5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 05:52:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52472 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726487AbfF1Jw5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 05:52:57 -0400
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 79956208CB;
-        Fri, 28 Jun 2019 09:52:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561715576;
-        bh=Q51/eiDzEzpnoVj8ctpxa2Tb4BnIqmcroS/9YKQAmM0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hq+GGSFHJu+Su/Qp+Won4cfcJSWBlnH5u2+yXwLrlWgefD7I5ddjIRtd1Ido8Zd8C
-         eqxUlwz4AASP7UYd8rThtRn2ldTpBqBRDKz1ePOsKAsVxNQAzRj7fRPFoNV3ol8czJ
-         Um5PfXAeX1d5vDpn5HoJ0NOgQQfIbQmwIe8dr3DI=
-Date:   Fri, 28 Jun 2019 10:52:51 +0100
-From:   Will Deacon <will@kernel.org>
-To:     Pratyush Yadav <p-yadav1@ti.com>
-Cc:     robin.murphy@arm.com, joro@8bytes.org,
-        linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        wmills@ti.com, nsekhar@ti.com, lokeshvutla@ti.com
-Subject: Re: [PATCH] iommu/arm-smmu-v3: Fix incorrect fields being passed to
- prefetch command
-Message-ID: <20190628095250.bzq4aqyuczt47y4i@willie-the-truck>
-References: <20190628090953.23606-1-p-yadav1@ti.com>
+        id S1726655AbfF1JzB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 05:55:01 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:52390 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726487AbfF1JzA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Jun 2019 05:55:00 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1hgnaP-00008U-QV; Fri, 28 Jun 2019 09:54:29 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ALSA: seq: fix incorrect order of dest_client/dest_ports arguments
+Date:   Fri, 28 Jun 2019 10:54:29 +0100
+Message-Id: <20190628095429.13369-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190628090953.23606-1-p-yadav1@ti.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 28, 2019 at 02:39:53PM +0530, Pratyush Yadav wrote:
-> According to the SMMUv3 spec [0] section 4.2.1, command 0x1
-> (CMD_PREFETCH_CONFIG) does not take address and size as parameters. It
-> only takes  StreamID, SSec, SubstreamID, and SSV. Address and Size are
-> parameters for command 0x2 (CMD_PREFETCH_ADDR).
-> 
-> Tested on kernel 4.19 on TI J721E SOC.
-> 
-> [0] https://static.docs.arm.com/ihi0070/a/IHI_0070A_SMMUv3.pdf
-> 
-> Signed-off-by: Pratyush Yadav <p-yadav1@ti.com>
-> ---
->  drivers/iommu/arm-smmu-v3.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
-> index 4d5a694f02c2..2d4dfd909436 100644
-> --- a/drivers/iommu/arm-smmu-v3.c
-> +++ b/drivers/iommu/arm-smmu-v3.c
-> @@ -413,6 +413,7 @@ struct arm_smmu_cmdq_ent {
->  	/* Command-specific fields */
->  	union {
->  		#define CMDQ_OP_PREFETCH_CFG	0x1
-> +		#define CMDQ_OP_PREFETCH_ADDR	0x2
->  		struct {
->  			u32			sid;
->  			u8			size;
-> @@ -805,10 +806,12 @@ static int arm_smmu_cmdq_build_cmd(u64 *cmd, struct arm_smmu_cmdq_ent *ent)
->  	case CMDQ_OP_TLBI_EL2_ALL:
->  	case CMDQ_OP_TLBI_NSNH_ALL:
->  		break;
-> -	case CMDQ_OP_PREFETCH_CFG:
-> -		cmd[0] |= FIELD_PREP(CMDQ_PREFETCH_0_SID, ent->prefetch.sid);
-> +	case CMDQ_OP_PREFETCH_ADDR:
->  		cmd[1] |= FIELD_PREP(CMDQ_PREFETCH_1_SIZE, ent->prefetch.size);
->  		cmd[1] |= ent->prefetch.addr & CMDQ_PREFETCH_1_ADDR_MASK;
-> +		/* Fallthrough */
-> +	case CMDQ_OP_PREFETCH_CFG:
-> +		cmd[0] |= FIELD_PREP(CMDQ_PREFETCH_0_SID, ent->prefetch.sid);
+From: Colin Ian King <colin.king@canonical.com>
 
-Hmm, but there's no issue here because the onus is on the caller not to
-initialise size and addr if they are using PREFETCH_CFG (and this is
-currently the case). Are you seeing a problem in practice?
+There are two occurrances of a call to snd_seq_oss_fill_addr where
+the dest_client and dest_port arguments are in the wrong order. Fix
+this by swapping them around.
 
-I'm happy to take a patch adding support for PREFETCH_ADDR, but we'd need
-a caller first.
+Addresses-Coverity: ("Arguments in wrong order")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/core/seq/oss/seq_oss_ioctl.c | 2 +-
+ sound/core/seq/oss/seq_oss_rw.c    | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Also -- fancy sending me a board? ;)
+diff --git a/sound/core/seq/oss/seq_oss_ioctl.c b/sound/core/seq/oss/seq_oss_ioctl.c
+index 96ad01fb668c..ccf682689ec9 100644
+--- a/sound/core/seq/oss/seq_oss_ioctl.c
++++ b/sound/core/seq/oss/seq_oss_ioctl.c
+@@ -49,7 +49,7 @@ static int snd_seq_oss_oob_user(struct seq_oss_devinfo *dp, void __user *arg)
+ 	if (copy_from_user(ev, arg, 8))
+ 		return -EFAULT;
+ 	memset(&tmpev, 0, sizeof(tmpev));
+-	snd_seq_oss_fill_addr(dp, &tmpev, dp->addr.port, dp->addr.client);
++	snd_seq_oss_fill_addr(dp, &tmpev, dp->addr.client, dp->addr.port);
+ 	tmpev.time.tick = 0;
+ 	if (! snd_seq_oss_process_event(dp, (union evrec *)ev, &tmpev)) {
+ 		snd_seq_oss_dispatch(dp, &tmpev, 0, 0);
+diff --git a/sound/core/seq/oss/seq_oss_rw.c b/sound/core/seq/oss/seq_oss_rw.c
+index 79ef430e56e1..537d5f423e20 100644
+--- a/sound/core/seq/oss/seq_oss_rw.c
++++ b/sound/core/seq/oss/seq_oss_rw.c
+@@ -161,7 +161,7 @@ insert_queue(struct seq_oss_devinfo *dp, union evrec *rec, struct file *opt)
+ 	memset(&event, 0, sizeof(event));
+ 	/* set dummy -- to be sure */
+ 	event.type = SNDRV_SEQ_EVENT_NOTEOFF;
+-	snd_seq_oss_fill_addr(dp, &event, dp->addr.port, dp->addr.client);
++	snd_seq_oss_fill_addr(dp, &event, dp->addr.client, dp->addr.port);
+ 
+ 	if (snd_seq_oss_process_event(dp, rec, &event))
+ 		return 0; /* invalid event - no need to insert queue */
+-- 
+2.20.1
 
-Will
