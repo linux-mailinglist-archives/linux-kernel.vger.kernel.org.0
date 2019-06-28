@@ -2,86 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A4FD5986A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 12:30:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83DD75986E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 12:32:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726750AbfF1KaG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 06:30:06 -0400
-Received: from mout.kundenserver.de ([212.227.126.130]:55213 "EHLO
+        id S1726734AbfF1KcW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 06:32:22 -0400
+Received: from mout.kundenserver.de ([212.227.17.10]:57693 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726514AbfF1KaG (ORCPT
+        with ESMTP id S1726484AbfF1KcV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 06:30:06 -0400
+        Fri, 28 Jun 2019 06:32:21 -0400
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue010 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1N7zW7-1ic3kn1u4Z-0155ao; Fri, 28 Jun 2019 12:29:54 +0200
+ (mreue108 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1M6ltQ-1he45c1Zlu-008HB7; Fri, 28 Jun 2019 12:32:02 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
+To:     Aviad Krawczyk <aviad.krawczyk@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>
 Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Manikanta Maddireddy <mmaddireddy@nvidia.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Vidya Sagar <vidyas@nvidia.com>, linux-tegra@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] pci: tegra: use correct gpio/consumer.h header
-Date:   Fri, 28 Jun 2019 12:29:45 +0200
-Message-Id: <20190628102953.2369879-1-arnd@arndb.de>
+        Xue Chaojing <xuechaojing@huawei.com>,
+        Jesse Brandeburg <jesse.brandeburg@intel.com>,
+        Zhao Chen <zhaochen6@huawei.com>,
+        Eric Dumazet <edumazet@google.com>,
+        dann frazier <dann.frazier@canonical.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] hinic: reduce rss_init stack usage
+Date:   Fri, 28 Jun 2019 12:31:44 +0200
+Message-Id: <20190628103158.2446356-1-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:zzUOH1RM+MdToDOSOYUpqwuJhko3ET3hxBn0kGPsim+JIxZYxG1
- XL97K10O0FLtJdhcC8TvvrZ+HcsVaob78pOqwoRHayQtkPzyUnXYmeRdZiooYnSWvlgaDLJ
- UX1HF8WDmnop1ec+ErULmE0rOEZyKM9nbU1B5YxhZUgpe/PXfZSN184ruVBbzJmE9JY+IqL
- 1bg1JEOXFUbYd0uZnb7tg==
+X-Provags-ID: V03:K1:QYqTtvUivST2IBpYNwbYUeyahFSQ0lBwtIbf+kVFvKJocTNobD3
+ 6oZnmk2BXjTOixp0JMhOYp5ecOqypzq2WAcggP2YyxYJ4gHZ+MT4EQM1++vHGj2/KQ5+oyn
+ SI7TwHlzuPyA2DXGEAhyFDj3op66U9AI3PoPKSpxIZQNa5G7pmFPfX/AqplBNEs+94s6dVQ
+ 5ZrbusWR4PJB7Msx7reMQ==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:uOgGL06hKEA=:hS06+fwf1oiScunEXCJ/Q9
- FPwbQ2nNg3RcBK2Z9OxHw/n6hxX2YWAfAAjYU7fMzaedv9Y426SIChlRpgYSQ+5t+eUhN8oSz
- aaw315oUK2DmZfIALtX85tDBJM+OoAGBWE50jGYGYdnmTvobIpZFJUqEl0uVJ5Qoq+WJ0F62O
- 2hX5thowapEb41Jc2InElhRBOz8qRdnLXZ4bSldmCez5V+/wxUakjVTnRUQGDJHW74vufTVMT
- WsXmutUVJyujUC3x2gmo35hOjKY6wnekr8ldjGC/KVYXIBxMtdDPLYuDv3pfOgSF1TTHiH7an
- eIrvajVlLiZhCD6rNogHzfZarweSFnJMmqm569guG0m/111LCUqrYSj2X3Qs7m1Ots2MZQ+Vg
- klsnxXrX2LR8NWpc7GCIh4JnKdpyoWtRUssI8pa/zhtNwF51/rgpELL57qCf3kTOyXWwt6r6U
- jMev3IoHVG9fBcjSenEVIfDLoxLo/hIbHvAc/rIP6EvIJQ+w26caYlYXB/A2sBu48oexCAhNQ
- md1cRiV8C6nvA6qekQ142FAUBnJoxm46ZbIGa4VtDxzQ86TvT9FYY4UyriUWcT/j1+axePGRX
- mPclptMg0uriMqyRMZWrVOT/Lv1QwUlRgavwu3iPKYG40LqwsaxvBPWKSpmrmweCYz9uxETKg
- zl66Dzbhcab4Xoq2Azb7Hlkd4Nx71qBL/isG7n3a6Hc/VXc90NuYFE+CeKXGZ49ZHrfb7UTfP
- RmamvsxPm1j3TdFlCE1Ls3psNS/Anqx2Zf/P0w==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:vAu+k/1Jipc=:/rgUdU+92MUy0Czi/8OOPu
+ jzWuggmU0hfDPFjrql2B5uc4F+INBBT8E2TRB1fksflWdlRQyJRl6sitiElZmKCpViSAOXcX3
+ URC7WkRgP2PvaN7etopF27r35pyIXb1OVP9AdyrXMHvJRe6OT7dWN1TE5scXiEmWaQNhjEhSz
+ awEHcf+UIaeyw9MOz5oC0PGlIXuvO5F3EPj40CNT1A4PdHjx+d20z2JeXSu6r7nSorWpJTtbR
+ xqo6h5tiuVeaXX+H99SOgn8UaPfjh4W7QUVY3AbWl/1JhBHA9IqYuMxbUyF/hBPs0WQgR2Yse
+ qmQsa/f97SamCv0kQd+bezG/OmavEadLt1Q21hOf52Y+RESnK89MC3pghP7eon+iT4vMnI1c/
+ u9tP7chOcrOTG2D0zdMJydgHgoVVDyucPaNu0GmHl0fVQ88HR8K3CpQBAWejAgzyZI/eOAWaZ
+ 9DkIBf6akZ8m5fzT7Z4WSYqUdA+wWS0gX71P6RQEiz+vgb5CzEmm7LKlBsENWUAEHVAIaU4no
+ 6pIA6NQ3EYT9t77av15TU/ZjiavLwoVDQXPXsP7aIZo4XHR+LYLZ1VvTzKLUt+BlV6j2+OW3u
+ PXJ8zfCb09ALH1hQDj2k39PcEKDKaj6EHEMVwrnNHuzmqsI2OfIpIQCRb6ggoIPIf45dEYENj
+ IdmytUJN8Du2MtJu9wLjrKsNlzA9+uC1hCRrKuG1jQxGLOK1DhKhKWDWjOEMFW4wluoBCG3zi
+ DeEjPwBPphsOLL/EUMMa83I1jO4S4J5JGUI2CA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-linux/gpio.h is not the correct header for modern interfaces and
-causes a build failure without CONFIG_GPIOLIB:
+On 32-bit architectures, putting an array of 256 u32 values on the
+stack uses more space than the warning limit:
 
-drivers/pci/controller/pci-tegra.c: In function 'tegra_pcie_port_reset':
-drivers/pci/controller/pci-tegra.c:551:3: error: implicit declaration of function 'gpiod_set_value'; did you mean 'gpio_set_value'? [-Werror=implicit-function-declaration]
-   gpiod_set_value(port->reset_gpio, 1);
-   ^~~~~~~~~~~~~~~
+drivers/net/ethernet/huawei/hinic/hinic_main.c: In function 'hinic_rss_init':
+drivers/net/ethernet/huawei/hinic/hinic_main.c:286:1: error: the frame size of 1068 bytes is larger than 1024 bytes [-Werror=frame-larger-than=]
 
-Use linux/gpio/consumer.h instead.
+I considered changing the code to use u8 values here, since that's
+all the hardware supports, but dynamically allocating the array is
+a more isolated fix here.
 
-Fixes: 5e5e9c23f82a ("PCI: tegra: Add support for GPIO based PERST#")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/pci/controller/pci-tegra.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../net/ethernet/huawei/hinic/hinic_main.c    | 20 ++++++++++++-------
+ 1 file changed, 13 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
-index 9cc03a2549c0..1775b88c0aec 100644
---- a/drivers/pci/controller/pci-tegra.c
-+++ b/drivers/pci/controller/pci-tegra.c
-@@ -17,7 +17,7 @@
- #include <linux/debugfs.h>
- #include <linux/delay.h>
- #include <linux/export.h>
--#include <linux/gpio.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/interrupt.h>
- #include <linux/iopoll.h>
- #include <linux/irq.h>
+diff --git a/drivers/net/ethernet/huawei/hinic/hinic_main.c b/drivers/net/ethernet/huawei/hinic/hinic_main.c
+index 1b917543feac..ceb0e247f52d 100644
+--- a/drivers/net/ethernet/huawei/hinic/hinic_main.c
++++ b/drivers/net/ethernet/huawei/hinic/hinic_main.c
+@@ -256,37 +256,43 @@ static int hinic_configure_max_qnum(struct hinic_dev *nic_dev)
+ 
+ static int hinic_rss_init(struct hinic_dev *nic_dev)
+ {
+-	u32 indir_tbl[HINIC_RSS_INDIR_SIZE] = { 0 };
+ 	u8 default_rss_key[HINIC_RSS_KEY_SIZE];
+ 	u8 tmpl_idx = nic_dev->rss_tmpl_idx;
++	u32 *indir_tbl;
+ 	int err, i;
+ 
++	indir_tbl = kcalloc(HINIC_RSS_INDIR_SIZE, sizeof(u32), GFP_KERNEL);
++	if (!indir_tbl)
++		return -ENOMEM;
++
+ 	netdev_rss_key_fill(default_rss_key, sizeof(default_rss_key));
+ 	for (i = 0; i < HINIC_RSS_INDIR_SIZE; i++)
+ 		indir_tbl[i] = ethtool_rxfh_indir_default(i, nic_dev->num_rss);
+ 
+ 	err = hinic_rss_set_template_tbl(nic_dev, tmpl_idx, default_rss_key);
+ 	if (err)
+-		return err;
++		goto out;
+ 
+ 	err = hinic_rss_set_indir_tbl(nic_dev, tmpl_idx, indir_tbl);
+ 	if (err)
+-		return err;
++		goto out;
+ 
+ 	err = hinic_set_rss_type(nic_dev, tmpl_idx, nic_dev->rss_type);
+ 	if (err)
+-		return err;
++		goto out;
+ 
+ 	err = hinic_rss_set_hash_engine(nic_dev, tmpl_idx,
+ 					nic_dev->rss_hash_engine);
+ 	if (err)
+-		return err;
++		goto out;
+ 
+ 	err = hinic_rss_cfg(nic_dev, 1, tmpl_idx);
+ 	if (err)
+-		return err;
++		goto out;
+ 
+-	return 0;
++out:
++	kfree(indir_tbl);
++	return err;
+ }
+ 
+ static void hinic_rss_deinit(struct hinic_dev *nic_dev)
 -- 
 2.20.0
 
