@@ -2,169 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A075D5A26B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 19:31:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A3A45A262
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 19:30:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726873AbfF1RbZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 13:31:25 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:63464 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726408AbfF1RbY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 13:31:24 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5SHQjDB116033;
-        Fri, 28 Jun 2019 13:30:15 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2tdn2x5qpy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 28 Jun 2019 13:30:15 -0400
-Received: from m0098419.ppops.net (m0098419.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x5SHQpQZ116372;
-        Fri, 28 Jun 2019 13:30:14 -0400
-Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2tdn2x5qn2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 28 Jun 2019 13:30:14 -0400
-Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
-        by ppma04dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x5SHRWQs007534;
-        Fri, 28 Jun 2019 17:30:12 GMT
-Received: from b01cxnp23033.gho.pok.ibm.com (b01cxnp23033.gho.pok.ibm.com [9.57.198.28])
-        by ppma04dal.us.ibm.com with ESMTP id 2t9by7exub-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 28 Jun 2019 17:30:12 +0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5SHUAbs51118498
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 28 Jun 2019 17:30:11 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D5922B206A;
-        Fri, 28 Jun 2019 17:30:10 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A8BA4B2067;
-        Fri, 28 Jun 2019 17:30:10 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.26])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri, 28 Jun 2019 17:30:10 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 51AED16C39B7; Fri, 28 Jun 2019 10:30:11 -0700 (PDT)
-Date:   Fri, 28 Jun 2019 10:30:11 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        rcu <rcu@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>
-Subject: Re: [RFC] Deadlock via recursive wakeup via RCU with threadirqs
-Message-ID: <20190628173011.GX26519@linux.ibm.com>
-Reply-To: paulmck@linux.ibm.com
-References: <20190627142436.GD215968@google.com>
- <20190627103455.01014276@gandalf.local.home>
- <20190627153031.GA249127@google.com>
- <20190627155506.GU26519@linux.ibm.com>
- <CAEXW_YSEN_OL3ftTLN=M-W70WSuCgHJqU-R9VhS=A3uVj_AL+A@mail.gmail.com>
- <20190627173831.GW26519@linux.ibm.com>
- <20190627181638.GA209455@google.com>
- <20190627184107.GA26519@linux.ibm.com>
- <20190628164008.GB240964@google.com>
- <20190628164559.GC240964@google.com>
+        id S1726835AbfF1Rab (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 13:30:31 -0400
+Received: from mail.us.es ([193.147.175.20]:49310 "EHLO mail.us.es"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726514AbfF1Raa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Jun 2019 13:30:30 -0400
+Received: from antivirus1-rhel7.int (unknown [192.168.2.11])
+        by mail.us.es (Postfix) with ESMTP id C777119D8BF
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2019 19:30:28 +0200 (CEST)
+Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
+        by antivirus1-rhel7.int (Postfix) with ESMTP id AE18C1021B2
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2019 19:30:28 +0200 (CEST)
+Received: by antivirus1-rhel7.int (Postfix, from userid 99)
+        id 8CEC54EDAF; Fri, 28 Jun 2019 19:30:28 +0200 (CEST)
+X-Spam-Checker-Version: SpamAssassin 3.4.1 (2015-04-28) on antivirus1-rhel7.int
+X-Spam-Level: 
+X-Spam-Status: No, score=-108.2 required=7.5 tests=ALL_TRUSTED,BAYES_50,
+        SMTPAUTH_US2,USER_IN_WHITELIST autolearn=disabled version=3.4.1
+Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
+        by antivirus1-rhel7.int (Postfix) with ESMTP id 684BFA5B8;
+        Fri, 28 Jun 2019 19:30:24 +0200 (CEST)
+Received: from 192.168.1.97 (192.168.1.97)
+ by antivirus1-rhel7.int (F-Secure/fsigk_smtp/550/antivirus1-rhel7.int);
+ Fri, 28 Jun 2019 19:30:24 +0200 (CEST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/antivirus1-rhel7.int)
+Received: from us.es (unknown [31.4.195.66])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: 1984lsi)
+        by entrada.int (Postfix) with ESMTPSA id 282454265A2F;
+        Fri, 28 Jun 2019 19:30:24 +0200 (CEST)
+Date:   Fri, 28 Jun 2019 19:30:23 +0200
+X-SMTPAUTHUS: auth mail.us.es
+From:   Pablo Neira Ayuso <pablo@netfilter.org>
+To:     zhe.he@windriver.com
+Cc:     kadlec@blackhole.kfki.hu, fw@strlen.de, davem@davemloft.net,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] netfilter: Fix remainder of pseudo-header protocol 0
+Message-ID: <20190628173023.f45mvwcdhnavnt42@salvia>
+References: <1561346258-272481-1-git-send-email-zhe.he@windriver.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190628164559.GC240964@google.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-28_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906280200
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1561346258-272481-1-git-send-email-zhe.he@windriver.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 28, 2019 at 12:45:59PM -0400, Joel Fernandes wrote:
-> On Fri, Jun 28, 2019 at 12:40:08PM -0400, Joel Fernandes wrote:
-> > On Thu, Jun 27, 2019 at 11:41:07AM -0700, Paul E. McKenney wrote:
-> > [snip]
-> > > > > > And we should document this somewhere for future sanity preservation
-> > > > > > :-D
-> > > > > 
-> > > > > Or adjust the code and requirements to make it more sane, if feasible.
-> > > > > 
-> > > > > My current (probably wildly unreliable) guess that the conditions in
-> > > > > rcu_read_unlock_special() need adjusting.  I was assuming that in_irq()
-> > > > > implies a hardirq context, in other words that in_irq() would return
-> > > > > false from a threaded interrupt handler.  If in_irq() instead returns
-> > > > > true from within a threaded interrupt handler, then this code in
-> > > > > rcu_read_unlock_special() needs fixing:
-> > > > > 
-> > > > > 		if ((exp || in_irq()) && irqs_were_disabled && use_softirq &&
-> > > > > 		    (in_irq() || !t->rcu_read_unlock_special.b.deferred_qs)) {
-> > > > > 			// Using softirq, safe to awaken, and we get
-> > > > > 			// no help from enabling irqs, unlike bh/preempt.
-> > > > > 			raise_softirq_irqoff(RCU_SOFTIRQ);
-> > > > > 
-> > > > > The fix would be replacing the calls to in_irq() with something that
-> > > > > returns true only if called from within a hardirq context.
-> > > > > Thoughts?
-> > > > 
-> > > > I am not sure if this will fix all cases though?
-> > > > 
-> > > > I think the crux of the problem is doing a recursive wake up. The threaded
-> > > > IRQ probably just happens to be causing it here, it seems to me this problem
-> > > > can also occur on a non-threaded irq system (say current_reader() in your
-> > > > example executed in a scheduler path in process-context and not from an
-> > > > interrupt). Is that not possible?
-> > > 
-> > > In the non-threaded case, invoking raise_softirq*() from hardirq context
-> > > just sets a bit in a per-CPU variable.  Now, to Sebastian's point, we
-> > > are only sort of in hardirq context in this case due to being called
-> > > from irq_exit(), but the failure we are seeing might well be a ways
-> > > downstream of the actual root-cause bug.
-> > 
-> > Hi Paul,
-> > I was talking about calling of rcu_read_unlock_special from a normal process
-> > context from the scheduler.
-> > 
-> > In the below traces, it shows that only the PREEMPT_MASK offset is set at the
-> > time of the issue. Both HARD AND SOFT IRQ masks are not enabled, which means
-> > the lock up is from a normal process context.
-> > 
-> > I think I finally understood why the issue shows up only with threadirqs in
-> > my setup. If I build x86_64_defconfig, the CONFIG_IRQ_FORCED_THREADING=y
-> > option is set. And booting this with threadirqs, it always tries to
-> > wakeup_ksoftirqd in invoke_softirq.
-> > 
-> > I believe what happens is, at an in-opportune time when the .blocked field is
-> > set for the preempted task, an interrupt is received. This timing is quite in
-> > auspicious because t->rcu_read_unlock_special just happens to have its
-> > .blocked field set even though it is not in a reader-section.
+On Mon, Jun 24, 2019 at 11:17:38AM +0800, zhe.he@windriver.com wrote:
+> From: He Zhe <zhe.he@windriver.com>
+> 
+> Since v5.1-rc1, some types of packets do not get unreachable reply with the
+> following iptables setting. Fox example,
+> 
+> $ iptables -A INPUT -p icmp --icmp-type 8 -j REJECT
+> $ ping 127.0.0.1 -c 1
+> PING 127.0.0.1 (127.0.0.1) 56(84) bytes of data.
+> — 127.0.0.1 ping statistics —
+> 1 packets transmitted, 0 received, 100% packet loss, time 0ms
+> 
+> We should have got the following reply from command line, but we did not.
+> From 127.0.0.1 icmp_seq=1 Destination Port Unreachable
+> 
+> Yi Zhao reported it and narrowed it down to:
+> 7fc38225363d ("netfilter: reject: skip csum verification for protocols that don't support it"),
+> 
+> This is because nf_ip_checksum still expects pseudo-header protocol type 0 for
+> packets that are of neither TCP or UDP, and thus ICMP packets are mistakenly
+> treated as TCP/UDP.
+> 
+> This patch corrects the conditions in nf_ip_checksum and all other places that
+> still call it with protocol 0.
 
-Thank you for tracing through this!
-
-> I believe the .blocked field remains set even though we are not any more in a
-> reader section because of deferred processing of the blocked lists that you
-> mentioned yesterday.
-
-That can indeed happen.  However, in current -rcu, that would mean
-that .deferred_qs is also set, which (if in_irq()) would prevent
-the raise_softirq_irqsoff() from being invoked.  Which was why I was
-asking the questions about whether in_irq() returns true within threaded
-interrupts yesterday.  If it does, I need to find if there is some way
-of determining whether rcu_read_unlock_special() is being called from
-a threaded interrupt in order to suppress the call to raise_softirq()
-in that case.
-
-But which version of the kernel are you using here?  Current -rcu?
-v5.2-rc1?  Something else?
-
-							Thanx, Paul
+Applied, thanks.
