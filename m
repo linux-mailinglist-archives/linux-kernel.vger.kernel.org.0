@@ -2,141 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6092F5A47C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 20:48:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FDA45A482
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 20:48:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726940AbfF1SsF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 14:48:05 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34128 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726702AbfF1SsF (ORCPT
+        id S1727033AbfF1Ssh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 14:48:37 -0400
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:37241 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726834AbfF1Ssh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 14:48:05 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5SIkkjc144298
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2019 14:48:02 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2tdn2x7uq1-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2019 14:48:01 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <parth@linux.ibm.com>;
-        Fri, 28 Jun 2019 19:47:59 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 28 Jun 2019 19:47:54 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5SIlrwt49676454
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 28 Jun 2019 18:47:53 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A0C64A4040;
-        Fri, 28 Jun 2019 18:47:53 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 546EBA4051;
-        Fri, 28 Jun 2019 18:47:50 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.199.62.39])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 28 Jun 2019 18:47:50 +0000 (GMT)
-Subject: Re: [PATCH v3 1/7] sched: limit cpu search in select_idle_cpu
-To:     subhra mazumdar <subhra.mazumdar@oracle.com>,
-        linux-kernel@vger.kernel.org
-Cc:     peterz@infradead.org, mingo@redhat.com, tglx@linutronix.de,
-        steven.sistare@oracle.com, dhaval.giani@oracle.com,
-        daniel.lezcano@linaro.org, vincent.guittot@linaro.org,
-        viresh.kumar@linaro.org, tim.c.chen@linux.intel.com,
-        mgorman@techsingularity.net
-References: <20190627012919.4341-1-subhra.mazumdar@oracle.com>
- <20190627012919.4341-2-subhra.mazumdar@oracle.com>
-From:   Parth Shah <parth@linux.ibm.com>
-Date:   Sat, 29 Jun 2019 00:17:49 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Fri, 28 Jun 2019 14:48:37 -0400
+Received: by mail-yb1-f195.google.com with SMTP id l22so3779737ybf.4
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2019 11:48:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=v0P1Y//StJz44s7/YZiM+cINw7p7Yh+9CFilXpnVTxQ=;
+        b=umHm/BsCRb8IzduSRjjF+2RoYF9GucD8xkNXBcbbtkmIFwersM/sM+9MWaQrSorKt2
+         TmbhY632T7iPUsDNZT85rUaoZ6+kVrTQXbhd+oD7ZIZcHIhniC501Yq4oDdSiU/04hYm
+         ZEdG7pq/ftop4ayY52UuIsE5WXcEOzWraSc7zeUUxR4ViI4SO8OtnYTEDOoMxWFVsvES
+         +C7BjToBRpkZp/ldCK2Dssv0ZtrGQM3MI0X79m+rk6W5n3dR+tXM5xjzEnLAFFpxaJEu
+         1DG/DiHQr6xOfzvEFw144KvpRuIr4XtKUCcem4dhqcxAf2jwxMmLsLVasHUuuaQyqD3T
+         PqUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=v0P1Y//StJz44s7/YZiM+cINw7p7Yh+9CFilXpnVTxQ=;
+        b=qm/HN2jKHC42tkJqrTk8h/Dmn98Xh9cK4Z5q0fFxK0UR5f0yMLzP8lZn2PW7uGSCPM
+         yYbzd0AxkaCz3SBnEslQZXE1BRcZyumLXTX8h6ZgsruzlRmnRz4KP4BPqNnGO4gzbI4R
+         HKxYuR55/uNiiDTN8aSwyG5q1/uTp3t8b91YnnZK05y0MfQL0XgRC1SdCld0dbu8BC1x
+         Ln6xZoXPFy9kdgez+xg6c5MZ637AQZsH2zBBcMhUp2C47d8TnAmssd239G4QeKy2vYlO
+         Z9CE0+vwg3WYUhLED/bvXB6vmdEBk1kUJVIDKblBDQ+F3MIm2WtBG0ZOL8BCm6wC2yoF
+         GMDQ==
+X-Gm-Message-State: APjAAAW0XAwzWvSZO/18JZckgcXo01MWPr38kO4eZjqcpVFpHTXp0kZr
+        TsBJZluM4P/2cQi+LT3Dhqm8k0xf
+X-Google-Smtp-Source: APXvYqwGKzqHuvhfSwF+7rEIHyOsQwU6IO8y5aWYSOZoxksbzFX7jgxX7Iw3VNMYqldeB1+QqM0SKQ==
+X-Received: by 2002:a25:b317:: with SMTP id l23mr7516231ybj.17.1561747715111;
+        Fri, 28 Jun 2019 11:48:35 -0700 (PDT)
+Received: from mail-yw1-f52.google.com (mail-yw1-f52.google.com. [209.85.161.52])
+        by smtp.gmail.com with ESMTPSA id 200sm725505ywq.102.2019.06.28.11.48.33
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Fri, 28 Jun 2019 11:48:34 -0700 (PDT)
+Received: by mail-yw1-f52.google.com with SMTP id d204so1165732ywb.2
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2019 11:48:33 -0700 (PDT)
+X-Received: by 2002:a81:4d86:: with SMTP id a128mr7047569ywb.291.1561747713444;
+ Fri, 28 Jun 2019 11:48:33 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190627012919.4341-2-subhra.mazumdar@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19062818-0020-0000-0000-0000034E74BA
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19062818-0021-0000-0000-000021A1F6EE
-Message-Id: <68baf89b-6d77-4eff-3aac-f96b72f98bae@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-28_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906280212
+References: <1561722618-12168-1-git-send-email-tanhuazhong@huawei.com> <1561722618-12168-3-git-send-email-tanhuazhong@huawei.com>
+In-Reply-To: <1561722618-12168-3-git-send-email-tanhuazhong@huawei.com>
+From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Date:   Fri, 28 Jun 2019 14:47:57 -0400
+X-Gmail-Original-Message-ID: <CA+FuTSdWa0dMz15m79SLsNAw9zkp3+3MSfKiRwKnjZ7QAyq1Uw@mail.gmail.com>
+Message-ID: <CA+FuTSdWa0dMz15m79SLsNAw9zkp3+3MSfKiRwKnjZ7QAyq1Uw@mail.gmail.com>
+Subject: Re: [PATCH net-next 02/12] net: hns3: enable DCB when TC num is one
+ and pfc_en is non-zero
+To:     Huazhong Tan <tanhuazhong@huawei.com>
+Cc:     David Miller <davem@davemloft.net>,
+        Network Development <netdev@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        salil.mehta@huawei.com, yisen.zhuang@huawei.com,
+        linuxarm@huawei.com, Yunsheng Lin <linyunsheng@huawei.com>,
+        Peng Li <lipeng321@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Jun 28, 2019 at 7:53 AM Huazhong Tan <tanhuazhong@huawei.com> wrote:
+>
+> From: Yunsheng Lin <linyunsheng@huawei.com>
+>
+> Currently when TC num is one, the DCB will be disabled no matter if
+> pfc_en is non-zero or not.
+>
+> This patch enables the DCB if pfc_en is non-zero, even when TC num
+> is one.
+>
+> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+> Signed-off-by: Peng Li <lipeng321@huawei.com>
+> Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
 
+> diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
+> index 9edae5f..cb2fb5a 100644
+> --- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
+> +++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
+> @@ -597,8 +597,10 @@ static void hclge_tm_tc_info_init(struct hclge_dev *hdev)
+>                 hdev->tm_info.prio_tc[i] =
+>                         (i >= hdev->tm_info.num_tc) ? 0 : i;
+>
+> -       /* DCB is enabled if we have more than 1 TC */
+> -       if (hdev->tm_info.num_tc > 1)
+> +       /* DCB is enabled if we have more than 1 TC or pfc_en is
+> +        * non-zero.
+> +        */
+> +       if (hdev->tm_info.num_tc > 1 || hdev->tm_info.pfc_en)
 
-On 6/27/19 6:59 AM, subhra mazumdar wrote:
-> Put upper and lower limit on cpu search of select_idle_cpu. The lower limit
-> is amount of cpus in a core while upper limit is twice that. This ensures
-> for any architecture we will usually search beyond a core. The upper limit
-> also helps in keeping the search cost low and constant.
-> 
-> Signed-off-by: subhra mazumdar <subhra.mazumdar@oracle.com>
-> ---
->  kernel/sched/fair.c | 15 +++++++++++----
->  1 file changed, 11 insertions(+), 4 deletions(-)
-> 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index f35930f..b58f08f 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -6188,7 +6188,7 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, int t
->  	u64 avg_cost, avg_idle;
->  	u64 time, cost;
->  	s64 delta;
-> -	int cpu, nr = INT_MAX;
-> +	int cpu, limit, floor, nr = INT_MAX;
-> 
->  	this_sd = rcu_dereference(*this_cpu_ptr(&sd_llc));
->  	if (!this_sd)
-> @@ -6206,10 +6206,17 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, int t
-> 
->  	if (sched_feat(SIS_PROP)) {
->  		u64 span_avg = sd->span_weight * avg_idle;
-> -		if (span_avg > 4*avg_cost)
-> +		floor = cpumask_weight(topology_sibling_cpumask(target));
-> +		if (floor < 2)
-> +			floor = 2;
-> +		limit = floor << 1;
+small nit: comments that just repeat the condition are not very informative.
 
-Is upper limit an experimental value only or it has any arch specific significance?
-Because, AFAIU, systems like POWER9 might have benefit for searching for 4-cores
-due to its different cache model. So it can be tuned for arch specific builds then.
+More helpful might be to explain why the DCB should be enabled in both
+these cases. Though such detailed comments, if useful, are better left
+to the commit message usually.
 
-Also variable names can be changed for better readability.
-floor -> weight_clamp_min
-limit -> weight_clamp_max
-or something similar
+>                 hdev->flag |= HCLGE_FLAG_DCB_ENABLE;
+>         else
+>                 hdev->flag &= ~HCLGE_FLAG_DCB_ENABLE;
+> @@ -1388,6 +1390,19 @@ void hclge_tm_schd_info_update(struct hclge_dev *hdev, u8 num_tc)
+>         hclge_tm_schd_info_init(hdev);
+>  }
+>
+> +void hclge_tm_pfc_info_update(struct hclge_dev *hdev)
+> +{
+> +       /* DCB is enabled if we have more than 1 TC or pfc_en is
+> +        * non-zero.
+> +        */
+> +       if (hdev->tm_info.num_tc > 1 || hdev->tm_info.pfc_en)
+> +               hdev->flag |= HCLGE_FLAG_DCB_ENABLE;
+> +       else
+> +               hdev->flag &= ~HCLGE_FLAG_DCB_ENABLE;
+> +
+> +       hclge_pfc_info_init(hdev);
+> +}
 
-
-> +		if (span_avg > floor*avg_cost) {
->  			nr = div_u64(span_avg, avg_cost);
-> -		else
-> -			nr = 4;
-> +			if (nr > limit)
-> +				nr = limit;
-> +		} else {
-> +			nr = floor;
-> +		}
->  	}
-> 
->  	time = local_clock();
-> 
-
-
-Best,
-Parth
-
+Avoid introducing this code duplication by defining a helper?
