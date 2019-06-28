@@ -2,156 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A07D5973F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 11:19:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B2B35978C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 11:34:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726891AbfF1JSS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 05:18:18 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:41314 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726697AbfF1JSS (ORCPT
+        id S1726539AbfF1JeB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 05:34:01 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:49308 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726385AbfF1JeB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 05:18:18 -0400
-Received: by mail-ot1-f65.google.com with SMTP id o101so4985291ota.8;
-        Fri, 28 Jun 2019 02:18:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Wwb05O6HKmp/1+G1ivJzQDQ2IsQa1XZFAR/Po+4k1QA=;
-        b=qIXffgO41fk3qz+GkeefZ8FzlqAD3+QBPcDfUGP/gv7zaLd4Bc6lYr+r8q2swc/p1O
-         tFUMeUXh9ptGtZedwQcTH5gbD4jDsH1Vrkqt3f1p6WF0hPzrIE5VUOB1jDTN7rRiOECP
-         phPkVkzrbtYL2ms0yv8mwz585niK0g2D3ik+RuOetz767alBYAbSJBB3JyBDk9aIiN15
-         3pVJmf62/dQ6i5hGglixp5mlQTNEoHdNy+F7aHAcFmAfxDxEs+HPbjn2WXh0Qp+GJHqS
-         oDTmHPamP4LtiT3RkX+QVbPJrs9Xc4alCiM9Cpx8BPyDpjJDQJGjsN4j+FATnM3PWv9p
-         cAPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Wwb05O6HKmp/1+G1ivJzQDQ2IsQa1XZFAR/Po+4k1QA=;
-        b=GxitmF+AaY1adib4jbPiqHW66HCpXZb3YnVLSwsTtQB+Zt1x27s8hXwRzTmj+eMizt
-         b3ezYmY/W5Wm2nCAaDW7+2Gr2vGPtyqxpn8QtsgnvzpLqv4TL7qAcK0SGvz4bHFegsJ+
-         /05yzVRRLH+FBMBbfzEpdRGHLXanr718ZHub+XS4SZRr4l699FY/81N3Ajedz4SsOBoj
-         flNGpTV90dGMTjrTpBdnycft03vVXN0iAGj1yRoSXlGZjYlhGtRGxZG4ow81GVaPeBOl
-         F2nI01fcj8bVpyoJbEqmDamJUxXln/gDhBrFwH6MIfA84AlheqjRmv3cG//dTm+FOAgd
-         u8sA==
-X-Gm-Message-State: APjAAAVRLaFoqLb7RkoVO1k1JRSmITDDHG4eIu/HOiyZpu1fOOly4/2D
-        RNG1Kq14KqhLjG8GUkb0G7L2fsykgDnJ6Jz//YQ=
-X-Google-Smtp-Source: APXvYqy0OGiXB+dLsI0Yi0340De/J8CNrgd9i+tIQHNw+GNxFznYrfPBXkEyoQroku6QxDaPa2OloPqCZ6rtHzcIWd0=
-X-Received: by 2002:a9d:4590:: with SMTP id x16mr6707074ote.254.1561713497622;
- Fri, 28 Jun 2019 02:18:17 -0700 (PDT)
+        Fri, 28 Jun 2019 05:34:01 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5S9Qq7e008084;
+        Fri, 28 Jun 2019 11:32:42 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=fEIaj8CCVaPM2O+m07pVRSYCCsjvlnlAZEbLDOf6cbQ=;
+ b=D3W+AoRG6eifo1fo/61wvqt+035OxomI2XiU03QYmUfGisk4iX+FknrZHCkYJzhA8EDI
+ iVEZ2ft07c/ZiCCBuUz/i/mNCIRe9kblNFEziPLaxxli9hqFN/2NODgsSpx3evTmZnZN
+ VR5FsEim27X2V8Up3/AQ4tYRnaUNPV9AFniwgR7zhMzuG2+4TqWbCSidsl88VLkOVk5Q
+ 4TeA54OccfQujqF/sauA9HkkhLxFcMtVRqjVWB+RZMJDOIXIQalRz+H/uhGARHBF/KrK
+ XZscpvyrXmvEq2rT2OdP2vLm+u7m1r6OumuWu6P6mJzxsT3dH9n5NTA1S56t/nTUxekN MA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2t9d2k5b0d-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Fri, 28 Jun 2019 11:32:40 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 1389864;
+        Fri, 28 Jun 2019 09:31:13 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag6node2.st.com [10.75.127.17])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C1B8F2527;
+        Fri, 28 Jun 2019 09:31:13 +0000 (GMT)
+Received: from localhost (10.75.127.48) by SFHDAG6NODE2.st.com (10.75.127.17)
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 28 Jun 2019 11:31:12
+ +0200
+From:   Christophe Kerello <christophe.kerello@st.com>
+To:     <miquel.raynal@bootlin.com>, <richard@nod.at>,
+        <dwmw2@infradead.org>, <computersforpeace@gmail.com>,
+        <marek.vasut@gmail.com>, <vigneshr@ti.com>
+CC:     <bbrezillon@kernel.org>, <linux-mtd@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        Amelie Delaunay <amelie.delaunay@st.com>,
+        Christophe Kerello <christophe.kerello@st.com>
+Subject: [PATCH v2] mtd: rawnand: stm32_fmc2: increase DMA completion timeouts
+Date:   Fri, 28 Jun 2019 11:18:06 +0200
+Message-ID: <1561713486-26597-1-git-send-email-christophe.kerello@st.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-References: <1559178307-6835-1-git-send-email-wanpengli@tencent.com>
- <20190610143420.GA6594@flask> <20190611011100.GB24835@linux.intel.com>
- <CANRm+Cwv5jqxBW=Ss5nkX7kZM3_Y-Ucs66yx5+wN09=W4pUdzA@mail.gmail.com>
- <F136E492-5350-49EE-A856-FBAEDB12FF99@gmail.com> <CANRm+CyZcvuT80ixp9f0FNmjN+rTUtw8MshtBG0Uk4L1B1UjDw@mail.gmail.com>
- <153047ED-75E2-4E70-BC33-C5FF27C08638@gmail.com> <CANRm+Cx6Z=jxLaXqwhBDpVTsKH8mgoo4iC=U8GbAAJz-5gk5ZA@mail.gmail.com>
- <28BF5471-57E8-41FE-B401-D49D57D01A63@gmail.com> <CANRm+CwnShNXmDi7yCZNc=oWrmFO7BTQ-MHxd1f5LRV8+YMJEg@mail.gmail.com>
-In-Reply-To: <CANRm+CwnShNXmDi7yCZNc=oWrmFO7BTQ-MHxd1f5LRV8+YMJEg@mail.gmail.com>
-From:   Wanpeng Li <kernellwp@gmail.com>
-Date:   Fri, 28 Jun 2019 17:18:06 +0800
-Message-ID: <CANRm+CyKx4uMkAe7maTg8nwBvkA7SCi2CnSwrghDs1nPuWNg5A@mail.gmail.com>
-Subject: Re: [PATCH v3 0/3] KVM: Yield to IPI target if necessary
-To:     Nadav Amit <nadav.amit@gmail.com>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.48]
+X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SFHDAG6NODE2.st.com
+ (10.75.127.17)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-28_03:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 28 Jun 2019 at 17:12, Wanpeng Li <kernellwp@gmail.com> wrote:
->
-> On Wed, 12 Jun 2019 at 09:37, Nadav Amit <nadav.amit@gmail.com> wrote:
-> >
-> > > On Jun 11, 2019, at 6:18 PM, Wanpeng Li <kernellwp@gmail.com> wrote:
-> > >
-> > > On Wed, 12 Jun 2019 at 00:57, Nadav Amit <nadav.amit@gmail.com> wrote=
-:
-> > >>> On Jun 11, 2019, at 3:02 AM, Wanpeng Li <kernellwp@gmail.com> wrote=
-:
-> > >>>
-> > >>> On Tue, 11 Jun 2019 at 09:48, Nadav Amit <nadav.amit@gmail.com> wro=
-te:
-> > >>>>> On Jun 10, 2019, at 6:45 PM, Wanpeng Li <kernellwp@gmail.com> wro=
-te:
-> > >>>>>
-> > >>>>> On Tue, 11 Jun 2019 at 09:11, Sean Christopherson
-> > >>>>> <sean.j.christopherson@intel.com> wrote:
-> > >>>>>> On Mon, Jun 10, 2019 at 04:34:20PM +0200, Radim Kr=C4=8Dm=C3=A1=
-=C5=99 wrote:
-> > >>>>>>> 2019-05-30 09:05+0800, Wanpeng Li:
-> > >>>>>>>> The idea is from Xen, when sending a call-function IPI-many to=
- vCPUs,
-> > >>>>>>>> yield if any of the IPI target vCPUs was preempted. 17% perfor=
-mance
-> > >>>>>>>> increasement of ebizzy benchmark can be observed in an over-su=
-bscribe
-> > >>>>>>>> environment. (w/ kvm-pv-tlb disabled, testing TLB flush call-f=
-unction
-> > >>>>>>>> IPI-many since call-function is not easy to be trigged by user=
-space
-> > >>>>>>>> workload).
-> > >>>>>>>
-> > >>>>>>> Have you checked if we could gain performance by having the yie=
-ld as an
-> > >>>>>>> extension to our PV IPI call?
-> > >>>>>>>
-> > >>>>>>> It would allow us to skip the VM entry/exit overhead on the cal=
-ler.
-> > >>>>>>> (The benefit of that might be negligible and it also poses a
-> > >>>>>>> complication when splitting the target mask into several PV IPI
-> > >>>>>>> hypercalls.)
-> > >>>>>>
-> > >>>>>> Tangetially related to splitting PV IPI hypercalls, are there an=
-y major
-> > >>>>>> hurdles to supporting shorthand?  Not having to generate the mas=
-k for
-> > >>>>>> ->send_IPI_allbutself and ->kvm_send_ipi_all seems like an easy =
-to way
-> > >>>>>> shave cycles for affected flows.
-> > >>>>>
-> > >>>>> Not sure why shorthand is not used for native x2apic mode.
-> > >>>>
-> > >>>> Why do you say so? native_send_call_func_ipi() checks if allbutsel=
-f
-> > >>>> shorthand should be used and does so (even though the check can be=
- more
-> > >>>> efficient - I=E2=80=99m looking at that code right now=E2=80=A6)
-> > >>>
-> > >>> Please continue to follow the apic/x2apic driver. Just apic_flat se=
-t
-> > >>> APIC_DEST_ALLBUT/APIC_DEST_ALLINC to ICR.
-> > >>
-> > >> Indeed - I was sure by the name that it does it correctly. That=E2=
-=80=99s stupid.
-> > >>
-> > >> I=E2=80=99ll add it to the patch-set I am working on (TLB shootdown =
-improvements),
-> > >> if you don=E2=80=99t mind.
-> > >
-> > > Original for hotplug cpu safe.
-> > > https://lwn.net/Articles/138365/
-> > > https://lwn.net/Articles/138368/
-> > > Not sure shortcut native support is acceptable, I will play my
-> > > kvm_send_ipi_allbutself and kvm_send_ipi_all. :)
-> >
-> > Yes, I saw these threads before. But I think the test in
-> > native_send_call_func_ipi() should take care of it.
->
-> Good news, https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/lo=
-g/?h=3DWIP.x86/ipi
-> Thomas who also is the hotplug state machine author introduces
-> shorthands support to native kernel now, I will add the support to
-> kvm_send_ipi_allbutself() and kvm_send_ipi_all() after his work
-> complete.
+From: Amelie Delaunay <amelie.delaunay@st.com>
 
-Hmm, should fallback to native shorthands when support.
+When the system is overloaded, DMA data transfer completion occurs after
+100ms. Increase the timeouts to let it the time to complete.
 
-Regards,
-Wanpeng Li
+Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
+Signed-off-by: Christophe Kerello <christophe.kerello@st.com>
+---
+Changes in v2:
+  - Replace the author of the patch.
+  - Define FMC2_TIMEOUT_MS to 1000.
+
+ drivers/mtd/nand/raw/stm32_fmc2_nand.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/mtd/nand/raw/stm32_fmc2_nand.c b/drivers/mtd/nand/raw/stm32_fmc2_nand.c
+index 4aabea2..e63acc0 100644
+--- a/drivers/mtd/nand/raw/stm32_fmc2_nand.c
++++ b/drivers/mtd/nand/raw/stm32_fmc2_nand.c
+@@ -37,6 +37,8 @@
+ /* Max ECC buffer length */
+ #define FMC2_MAX_ECC_BUF_LEN		(FMC2_BCHDSRS_LEN * FMC2_MAX_SG)
+ 
++#define FMC2_TIMEOUT_MS			1000
++
+ /* Timings */
+ #define FMC2_THIZ			1
+ #define FMC2_TIO			8000
+@@ -530,7 +532,8 @@ static int stm32_fmc2_ham_calculate(struct nand_chip *chip, const u8 *data,
+ 	int ret;
+ 
+ 	ret = readl_relaxed_poll_timeout(fmc2->io_base + FMC2_SR,
+-					 sr, sr & FMC2_SR_NWRF, 10, 1000);
++					 sr, sr & FMC2_SR_NWRF, 10,
++					 FMC2_TIMEOUT_MS);
+ 	if (ret) {
+ 		dev_err(fmc2->dev, "ham timeout\n");
+ 		return ret;
+@@ -611,7 +614,7 @@ static int stm32_fmc2_bch_calculate(struct nand_chip *chip, const u8 *data,
+ 
+ 	/* Wait until the BCH code is ready */
+ 	if (!wait_for_completion_timeout(&fmc2->complete,
+-					 msecs_to_jiffies(1000))) {
++					 msecs_to_jiffies(FMC2_TIMEOUT_MS))) {
+ 		dev_err(fmc2->dev, "bch timeout\n");
+ 		stm32_fmc2_disable_bch_irq(fmc2);
+ 		return -ETIMEDOUT;
+@@ -696,7 +699,7 @@ static int stm32_fmc2_bch_correct(struct nand_chip *chip, u8 *dat,
+ 
+ 	/* Wait until the decoding error is ready */
+ 	if (!wait_for_completion_timeout(&fmc2->complete,
+-					 msecs_to_jiffies(1000))) {
++					 msecs_to_jiffies(FMC2_TIMEOUT_MS))) {
+ 		dev_err(fmc2->dev, "bch timeout\n");
+ 		stm32_fmc2_disable_bch_irq(fmc2);
+ 		return -ETIMEDOUT;
+@@ -969,7 +972,7 @@ static int stm32_fmc2_xfer(struct nand_chip *chip, const u8 *buf,
+ 
+ 	/* Wait end of sequencer transfer */
+ 	if (!wait_for_completion_timeout(&fmc2->complete,
+-					 msecs_to_jiffies(1000))) {
++					 msecs_to_jiffies(FMC2_TIMEOUT_MS))) {
+ 		dev_err(fmc2->dev, "seq timeout\n");
+ 		stm32_fmc2_disable_seq_irq(fmc2);
+ 		dmaengine_terminate_all(dma_ch);
+@@ -981,7 +984,7 @@ static int stm32_fmc2_xfer(struct nand_chip *chip, const u8 *buf,
+ 
+ 	/* Wait DMA data transfer completion */
+ 	if (!wait_for_completion_timeout(&fmc2->dma_data_complete,
+-					 msecs_to_jiffies(100))) {
++					 msecs_to_jiffies(FMC2_TIMEOUT_MS))) {
+ 		dev_err(fmc2->dev, "data DMA timeout\n");
+ 		dmaengine_terminate_all(dma_ch);
+ 		ret = -ETIMEDOUT;
+@@ -990,7 +993,7 @@ static int stm32_fmc2_xfer(struct nand_chip *chip, const u8 *buf,
+ 	/* Wait DMA ECC transfer completion */
+ 	if (!write_data && !raw) {
+ 		if (!wait_for_completion_timeout(&fmc2->dma_ecc_complete,
+-						 msecs_to_jiffies(100))) {
++					msecs_to_jiffies(FMC2_TIMEOUT_MS))) {
+ 			dev_err(fmc2->dev, "ECC DMA timeout\n");
+ 			dmaengine_terminate_all(fmc2->dma_ecc_ch);
+ 			ret = -ETIMEDOUT;
+-- 
+1.9.1
+
