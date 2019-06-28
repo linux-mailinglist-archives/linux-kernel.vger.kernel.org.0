@@ -2,77 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A49CA58F85
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 03:10:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5411758F8C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 03:13:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726707AbfF1BKS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 21:10:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46514 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726595AbfF1BKS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 21:10:18 -0400
-Received: from localhost (lfbn-ncy-1-174-150.w83-194.abo.wanadoo.fr [83.194.254.150])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D5D90208CB;
-        Fri, 28 Jun 2019 01:10:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561684217;
-        bh=yzoO61EJmprVWNY3EpL3GXI+joDNjs4U10vKsbjnU54=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=J4DAc2GS3ltAyGnSJz8KKcoypxlm0zXtV8PZB8uJEmQnyghsKWeED0zUoAfSMzoDJ
-         DuYlTiFcwxXIiBb+vuD+HIEZiXLmpZi5D3ZmcMriTX/hUU7aa2nnD/hKhlbI+OCapN
-         2Lp28nmbcieceEy6Ow52Y+n5cu3oTFJwr6bK2gXY=
-Date:   Fri, 28 Jun 2019 03:10:13 +0200
-From:   Frederic Weisbecker <frederic@kernel.org>
-To:     Wanpeng Li <kernellwp@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v2] sched/nohz: Optimize get_nohz_timer_target()
-Message-ID: <20190628011012.GA19488@lerouge>
-References: <1561682593-12071-1-git-send-email-wanpengli@tencent.com>
+        id S1726726AbfF1BM7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 21:12:59 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:34400 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726671AbfF1BM6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 21:12:58 -0400
+Received: by mail-pl1-f196.google.com with SMTP id i2so2242781plt.1;
+        Thu, 27 Jun 2019 18:12:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=HTJPCjJAItenhyrt1rJvs3Mf5h+tB5nesrSZAXXGrQg=;
+        b=TNZl1l9Nt+3OH+yuAWLQQ3PsDWKZMoEn4c/jRy8vgeI283SPFbNs0b1NX/w4cdDn3x
+         jDwGk+ZWNZrP1YI5NPqyEkejOKqcipTi39/3lJOkxinpTPPhSRoweZ6QVPQWBlI9dbZZ
+         OfMFoZnnsE/7E5WPJbAuu9qJHLA4H7YUQXCl7rOwggceqkaO/HKqi2cT8nXdLGOLtjfX
+         fIA0l3uHihbQz3zrGYCRtpPE8Y1JksT1iGQFr2r8dkXd4qi6XO3+0h/z+XwUwF9bfbaX
+         5eRrtyo5Vj6khsw5J6aGBIfu+1hMvf9O7xCrQXVEzbkmEwK/6KBNswfv//NSi/goaGS6
+         wrOw==
+X-Gm-Message-State: APjAAAVi9srphceUpJYLo89NYstsTYeiI5hQXLOSShxsU2Mo6Z1oQV3L
+        MrKM5ASWcy0PNp7N7uB2YrGOsxdP1kc=
+X-Google-Smtp-Source: APXvYqzF/LekOqHPf/FQ8SrJHjWxLUa8soZjO3WTgObBFHexIsDWDzdVBHHT922JpGd4/odXVgeRJw==
+X-Received: by 2002:a17:902:ff11:: with SMTP id f17mr8318752plj.121.1561684377754;
+        Thu, 27 Jun 2019 18:12:57 -0700 (PDT)
+Received: from localhost (c-76-21-109-208.hsd1.ca.comcast.net. [76.21.109.208])
+        by smtp.gmail.com with ESMTPSA id c26sm290047pfr.172.2019.06.27.18.12.57
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 27 Jun 2019 18:12:57 -0700 (PDT)
+Date:   Thu, 27 Jun 2019 18:12:56 -0700
+From:   Moritz Fischer <mdf@kernel.org>
+To:     Wu Hao <hao.wu@intel.com>
+Cc:     mdf@kernel.org, linux-fpga@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        yilun.xu@intel.com, gregkh@linuxfoundation.org, atull@kernel.org
+Subject: Re: [PATCH v4 05/15] Documentation: fpga: dfl: add descriptions for
+ virtualization and new interfaces.
+Message-ID: <20190628011256.GB5671@archbook>
+References: <1561610695-5414-1-git-send-email-hao.wu@intel.com>
+ <1561610695-5414-6-git-send-email-hao.wu@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1561682593-12071-1-git-send-email-wanpengli@tencent.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1561610695-5414-6-git-send-email-hao.wu@intel.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 28, 2019 at 08:43:12AM +0800, Wanpeng Li wrote:
-> From: Wanpeng Li <wanpengli@tencent.com>
-> 
-> On a machine, cpu 0 is used for housekeeping, the other 39 cpus in the 
-> same socket are in nohz_full mode. We can observe huge time burn in the 
-> loop for seaching nearest busy housekeeper cpu by ftrace.
-> 
->   2)               |       get_nohz_timer_target() {
->   2)   0.240 us    |         housekeeping_test_cpu();
->   2)   0.458 us    |         housekeeping_test_cpu();
-> 
->   ...
-> 
->   2)   0.292 us    |         housekeeping_test_cpu();
->   2)   0.240 us    |         housekeeping_test_cpu();
->   2)   0.227 us    |         housekeeping_any_cpu();
->   2) + 43.460 us   |       }
->   
-> This patch optimizes the searching logic by finding a nearest housekeeper
-> cpu in the housekeeping cpumask, it can minimize the worst searching time 
-> from ~44us to < 10us in my testing. In addition, the last iterated busy 
-> housekeeper can become a random candidate while current CPU is a better 
-> fallback if it is a housekeeper.
-> 
-> Cc: Ingo Molnar <mingo@redhat.com> 
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Frederic Weisbecker <frederic@kernel.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+Hi Wu,
 
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+On Thu, Jun 27, 2019 at 12:44:45PM +0800, Wu Hao wrote:
+> This patch adds virtualization support description for DFL based
+> FPGA devices (based on PCIe SRIOV), and introductions to new
+> interfaces added by new dfl private feature drivers.
+> 
+> Signed-off-by: Xu Yilun <yilun.xu@intel.com>
+> Signed-off-by: Wu Hao <hao.wu@intel.com>
+> Acked-by: Alan Tull <atull@kernel.org>
+> ---
+>  Documentation/fpga/dfl.txt | 101 +++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 101 insertions(+)
+> 
+> diff --git a/Documentation/fpga/dfl.txt b/Documentation/fpga/dfl.txt
+> index 6df4621..a22631f 100644
+> --- a/Documentation/fpga/dfl.txt
+> +++ b/Documentation/fpga/dfl.txt
 
-Thanks!
+This got re{named,formatted} in linux-next. I've tried to fix it before sending it
+to Greg.
+
+Thanks,
+Moritz
