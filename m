@@ -2,104 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A646B58ED8
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 01:56:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D25058EDB
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 02:00:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726653AbfF0X41 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 19:56:27 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:43114 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726506AbfF0X41 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 19:56:27 -0400
-Received: by mail-pg1-f195.google.com with SMTP id f25so1720595pgv.10;
-        Thu, 27 Jun 2019 16:56:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=CLj4gZCTfK/NAoTIvU2cEk9DiiqDuv0OJwpnaduKmqA=;
-        b=TD/Y9ETxzwIz92B9+E24f8PXv4qRImq4vZCpEFH0DQAK0HYr9/LCzuC51LYrglkt9H
-         x107u1OY4skzs+uUyX/5RNDgKbdmpfJ8q6NcbT0lRYiwUwQqAQXplH4P8knqbVMuCLfr
-         r/QQe6OnL2EdKXhlSxyR6ooko9ZkW529nCwU12nL1zwuVwh8bQieBXaxA9q9y5G+xBqY
-         JuztrCRRnJKg3B6VfnSKAdOn3ZHw5uh4V1BpQH+y3R+eK1C30Ajm+GSGH2SLlqmnzRb5
-         Oq2itXwjtvyt4k1Z1Jlm5GX+GuhGPQJiPvrankJmbqYBzY2I7Rr8KdQBdGF8XuhmHrYj
-         vdvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=CLj4gZCTfK/NAoTIvU2cEk9DiiqDuv0OJwpnaduKmqA=;
-        b=JdblmkY8OVO4EA6r017peX+ZP0oxInKF8xEVAd8R9dRgcfqbK1VDSiun12D+rmCHiU
-         txn8Z+GD7o8ovcrypvrO1UKYyK6RBK/jRUWA9brEnAOXrDUtb5mtFikm9FSUlUo9Tw8v
-         i97VgHKmQNT/Txhb/y4y9Ko9Uj0SsVmsIg681Hx3VhNKfCGoLfkg/CFD/HVbjhpWq/IK
-         edb8C2RBSHdKOLM/FdTEavZMghIj9V6gi7/FrRxHJPMsqJMo+No6jpYqZlBn0yaDI1tD
-         wjLwXEO0FGuk5zcxzc4ymQwRgUSwijl2r2m/z+KXVC1J0QTHgLWaEyFp7DC7nexeCIon
-         QKtA==
-X-Gm-Message-State: APjAAAUBsCC0LwGK7gA/35/xdzyYma4ALA1nUM+3YH/reuLwoUCEBGDq
-        EAI7HDjG5q0erJozET/3TyE=
-X-Google-Smtp-Source: APXvYqwioUiNv41x01aQdRcQnt8g3CLHIHh9zwhAz5EQgEvfxKBbPX0L6hoApe0uDHiYVFbY+15cDA==
-X-Received: by 2002:a63:4c46:: with SMTP id m6mr6527455pgl.59.1561679786207;
-        Thu, 27 Jun 2019 16:56:26 -0700 (PDT)
-Received: from google.com ([2401:fa00:d:0:98f1:8b3d:1f37:3e8])
-        by smtp.gmail.com with ESMTPSA id a3sm319767pje.3.2019.06.27.16.56.21
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 27 Jun 2019 16:56:24 -0700 (PDT)
-Date:   Fri, 28 Jun 2019 08:56:18 +0900
-From:   Minchan Kim <minchan@kernel.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Dave Hansen <dave.hansen@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-api@vger.kernel.org,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tim Murray <timmurray@google.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Daniel Colascione <dancol@google.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Sonny Rao <sonnyrao@google.com>, oleksandr@redhat.com,
-        hdanton@sina.com, lizeb@google.com,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [PATCH v3 1/5] mm: introduce MADV_COLD
-Message-ID: <20190627235618.GC33052@google.com>
-References: <20190627115405.255259-1-minchan@kernel.org>
- <20190627115405.255259-2-minchan@kernel.org>
- <343599f9-3d99-b74f-1732-368e584fa5ef@intel.com>
- <20190627140203.GB5303@dhcp22.suse.cz>
- <d9341eb3-08eb-3c2b-9786-00b8a4f59953@intel.com>
- <20190627145302.GC5303@dhcp22.suse.cz>
+        id S1726646AbfF1AAh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 20:00:37 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:36000 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726506AbfF1AAg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 20:00:36 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9D94AC04BD4A;
+        Fri, 28 Jun 2019 00:00:36 +0000 (UTC)
+Received: from treble (ovpn-126-66.rdu2.redhat.com [10.10.126.66])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0BA9360BE0;
+        Fri, 28 Jun 2019 00:00:35 +0000 (UTC)
+Date:   Thu, 27 Jun 2019 19:00:34 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Olof Johansson <olof@lixom.net>
+Cc:     Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] objtool: Be lenient about -Wundef
+Message-ID: <20190628000033.ipcypg4kny2whfz7@treble>
+References: <20190619120337.78624-1-olof@lixom.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190627145302.GC5303@dhcp22.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190619120337.78624-1-olof@lixom.net>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Fri, 28 Jun 2019 00:00:36 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 27, 2019 at 04:53:02PM +0200, Michal Hocko wrote:
-> On Thu 27-06-19 07:36:50, Dave Hansen wrote:
-> [...]
-> > For MADV_COLD, if we defined it like this, I think we could use it for
-> > both purposes (demotion and LRU movement):
-> > 
-> > 	Pages in the specified regions will be treated as less-recently-
-> > 	accessed compared to pages in the system with similar access
-> > 	frequencies.  In contrast to MADV_DONTNEED, the contents of the
+On Wed, Jun 19, 2019 at 05:03:37AM -0700, Olof Johansson wrote:
+> Some libelf versions use undefined macros, which combined with newer GCC
+> makes for errors from system headers. This isn't overly useful to fail
+> compiling objtool for.
 > 
-> you meant s@MADV_DONTNEED@MADV_FREE@ I suppose
-
-Right, MADV_FREE is more proper because it's aging related.
-
+> Error as seen:
 > 
-> > 	region are preserved.
-> > 
-> > It would be nice not to talk about reclaim at all since we're not
-> > promising reclaim per se.
+> cc1: all warnings being treated as errors
+> In file included from arch/x86/../../elf.h:10,
+>                  from arch/x86/decode.c:14:
+> /usr/include/libelf/gelf.h:25:5: error: "__LIBELF_INTERNAL__" is not defined, evaluates to 0 [-Werror=undef]
+>  #if __LIBELF_INTERNAL__
+>      ^~~~~~~~~~~~~~~~~~~
+> 
+> For this reason, skip -Wundef on objtool.
+> 
+> Signed-off-by: Olof Johansson <olof@lixom.net>
 
-Your suggestion doesn't expose any implementation detail and could meet your
-needs later. I'm okay. I will change it if others are not against of it.
+Sorry for the delay, I was out last week and I'm still getting caught
+up.
 
-Thanks, Dave.
+Which libelf was this?  I'm guessing it's the old non-elfutils version
+which has been unmaintained for 10 years (and which doesn't work with
+objtool anyway).
+
+It would be nice if we could figure out a way to detect that libelf and
+report a more useful error for it.
+
+-- 
+Josh
