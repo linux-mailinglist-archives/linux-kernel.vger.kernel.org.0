@@ -2,81 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A63AA5A01D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 18:00:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 303345A024
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 18:02:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726867AbfF1P77 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 11:59:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39204 "EHLO mail.kernel.org"
+        id S1726846AbfF1QCS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 12:02:18 -0400
+Received: from foss.arm.com ([217.140.110.172]:50876 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726657AbfF1P76 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 11:59:58 -0400
-Received: from localhost (unknown [104.132.1.68])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D871D20828;
-        Fri, 28 Jun 2019 15:59:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561737596;
-        bh=SlP82znV2OC7MdqO29KK1B36hJIqNFdblP/sjEhF12w=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=dvEtN3iN2/OmgCD7y14qVBt9dGQwwnPg4NW0dqXv/w/HwM9UwkHzlpJUnDlRorJ7l
-         Ny/1sWFpfpUwFKU6A/bLJVqlMassrzrcyBXXhE8q8zpn1fi0OY4yPKCEqqg8W3A4TL
-         sqCnIrxI0arf5dsrM27rrSVoiAUiUYqgzol3e0sg=
-Date:   Fri, 28 Jun 2019 08:59:56 -0700
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Chao Yu <yuchao0@huawei.com>, Qiuyang Sun <sunqiuyang@huawei.com>,
-        Sahitya Tummala <stummala@codeaurora.org>,
-        Eric Biggers <ebiggers@google.com>,
-        Wang Shilong <wangshilong1991@gmail.com>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] f2fs: fix 32-bit linking
-Message-ID: <20190628155956.GB27114@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20190628104007.2721479-1-arnd@arndb.de>
+        id S1726657AbfF1QCS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Jun 2019 12:02:18 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4A3B328;
+        Fri, 28 Jun 2019 09:02:17 -0700 (PDT)
+Received: from e121166-lin.cambridge.arm.com (unknown [10.1.196.255])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4826E3F706;
+        Fri, 28 Jun 2019 09:02:15 -0700 (PDT)
+Date:   Fri, 28 Jun 2019 17:02:12 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     "Z.q. Hou" <zhiqiang.hou@nxp.com>
+Cc:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "l.subrahmanya@mobiveil.co.in" <l.subrahmanya@mobiveil.co.in>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Leo Li <leoyang.li@nxp.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        Mingkai Hu <mingkai.hu@nxp.com>,
+        "M.h. Lian" <minghuan.lian@nxp.com>,
+        Xiaowei Bao <xiaowei.bao@nxp.com>
+Subject: Re: [PATCHv5 08/20] PCI: mobiveil: Use the 1st inbound window for
+ MEM inbound transactions
+Message-ID: <20190628160212.GB21829@e121166-lin.cambridge.arm.com>
+References: <20190412083635.33626-1-Zhiqiang.Hou@nxp.com>
+ <20190412083635.33626-9-Zhiqiang.Hou@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190628104007.2721479-1-arnd@arndb.de>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+In-Reply-To: <20190412083635.33626-9-Zhiqiang.Hou@nxp.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd,
-
-If you don't mind, can I integrate this into the original patch in the queue?
-
-Thanks,
-
-On 06/28, Arnd Bergmann wrote:
-> Not all architectures support get_user() with a 64-bit argument:
+On Fri, Apr 12, 2019 at 08:36:00AM +0000, Z.q. Hou wrote:
+> From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
 > 
-> ERROR: "__get_user_bad" [fs/f2fs/f2fs.ko] undefined!
-> 
-> Use copy_from_user() here, this will always work.
-> 
-> Fixes: d2ae7494d043 ("f2fs: ioctl for removing a range from F2FS")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> The inbound windows have independent register set against outbound windows.
+> This patch change the MEM inbound window to the first one.
+
+You mean that windows 0 can be used as well as window 1 for inbound
+windows so it is better to opt for window 0 for consistency ?
+
+Lorenzo
+
+> Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+> Reviewed-by: Minghuan Lian <Minghuan.Lian@nxp.com>
+> Reviewed-by: Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>
 > ---
->  fs/f2fs/file.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> V5:
+>  - Corrected and retouched the subject and changelog.
 > 
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 998affe31419..465853029b8e 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -3066,7 +3066,8 @@ static int f2fs_ioc_resize_fs(struct file *filp, unsigned long arg)
->  	if (f2fs_readonly(sbi->sb))
->  		return -EROFS;
+>  drivers/pci/controller/pcie-mobiveil.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-mobiveil.c b/drivers/pci/controller/pcie-mobiveil.c
+> index df71c11b4810..e88afc792a5c 100644
+> --- a/drivers/pci/controller/pcie-mobiveil.c
+> +++ b/drivers/pci/controller/pcie-mobiveil.c
+> @@ -616,7 +616,7 @@ static int mobiveil_host_init(struct mobiveil_pcie *pcie)
+>  			   CFG_WINDOW_TYPE, resource_size(pcie->ob_io_res));
 >  
-> -	if (get_user(block_count, (__u64 __user *)arg))
-> +	if (copy_from_user(&block_count, (void __user *)arg,
-> +			   sizeof(block_count)))
->  		return -EFAULT;
+>  	/* memory inbound translation window */
+> -	program_ib_windows(pcie, WIN_NUM_1, 0, MEM_WINDOW_TYPE, IB_WIN_SIZE);
+> +	program_ib_windows(pcie, WIN_NUM_0, 0, MEM_WINDOW_TYPE, IB_WIN_SIZE);
 >  
->  	ret = f2fs_resize_fs(sbi, block_count);
+>  	/* Get the I/O and memory ranges from DT */
+>  	resource_list_for_each_entry(win, &pcie->resources) {
 > -- 
-> 2.20.0
+> 2.17.1
+> 
