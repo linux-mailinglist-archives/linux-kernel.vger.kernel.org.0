@@ -2,46 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8EDF59B7A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 14:33:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B00D359B02
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 14:30:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727156AbfF1MdP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 08:33:15 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:39142 "EHLO
+        id S1726946AbfF1Mau (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 08:30:50 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:39478 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726891AbfF1Maj (ORCPT
+        with ESMTP id S1727079AbfF1Mao (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 08:30:39 -0400
+        Fri, 28 Jun 2019 08:30:44 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=3ry7BGeUhbdGjpQJZXLesZqx/UmqvudYXOpe/+NOUR4=; b=NQYhsg72RkwnggkwR1TJkacwmw
-        xL+F2DTw1S1ZaEUesrflgBBusDSY2hNSMu2Bjwhqw4GOsJl7MHoAlVvHOQxN+VbtZWQjpeNYDiqyc
-        P3IC/j057OcK3cYdLODD3Qgmqx0gFr2UXBTuCWUiRgtx0NpAJFXeUVF0xWuRAoA9e7D5wzYp8JE69
-        C4vJM6AclxjshJQM19T80O4eTKO9jEAMQTsB4aamOwyKIjTg+tGEmu+gFEJ97hWepoYH14IsUKih1
-        LF5ds28zkemmgARkGfHpZ3y3XV9vhLj3tlRD30jnIeQp55lc0WJJQboo0Cu6+aLop7p5GdZGHJNc7
-        NgXEUVPg==;
+        bh=TbYIpPdC3Cq9y8ZKdQeKfK7OSnLIO+oPvquwZsSYer4=; b=aWlkQwwuUxqbBv+R/AHv4OZl92
+        crBo162yAm1UYRzTXWlClGRcYIuneBPhbrDQB7ETRBbT2iyY0fQClFMVlX/iLHqixRMbdES4hhz5V
+        WnsJzjd8v20lURl1zBtdaGLDX+e35EOS4NUQ0cLM46fVnU3v8q9px+00q0H1lOLb/uBH4WkJyK4CI
+        dltB0ChMFyhNs/EGDD1GnQClQkCz0RwxO8Vw0pY/CNjV5kmNEkcDpWLE0GzH8U0J5cM9gDJO52w7G
+        iVUR1cpEDedyfBx6N7iU2qGLH60UkONZTOrRKCfrXr7MGfOnPNC4/38u6mSbaEpIXkA9iWZwE+8Jc
+        CkVQoMRQ==;
 Received: from [186.213.242.156] (helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hgq1U-00055F-9X; Fri, 28 Jun 2019 12:30:36 +0000
+        id 1hgq1U-00055H-BH; Fri, 28 Jun 2019 12:30:36 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hgq1S-0005SC-Bj; Fri, 28 Jun 2019 09:30:34 -0300
+        id 1hgq1S-0005SH-CW; Fri, 28 Jun 2019 09:30:34 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: [PATCH 16/39] docs: admin-guide: move sysctl directory to it
-Date:   Fri, 28 Jun 2019 09:30:09 -0300
-Message-Id: <22023257e9679c18eb6a25052e4c233a12e687da.1561724493.git.mchehab+samsung@kernel.org>
+        Matan Ziv-Av <matan@svgalib.org>,
+        Mattia Dongili <malattia@linux.it>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        platform-driver-x86@vger.kernel.org
+Subject: [PATCH 17/39] docs: admin-guide: add laptops documentation
+Date:   Fri, 28 Jun 2019 09:30:10 -0300
+Message-Id: <f5c35189e421a5fa02075d611f58506bffe77028.1561724493.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <cover.1561724493.git.mchehab+samsung@kernel.org>
 References: <cover.1561724493.git.mchehab+samsung@kernel.org>
@@ -52,238 +55,223 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The stuff under sysctl describes /sys interface from userspace
-point of view. So, add it to the admin-guide and remove the
-:orphan: from its index file.
+The docs under Documentation/laptops contain users specific
+information.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- CREDITS                                           | 2 +-
- Documentation/admin-guide/index.rst               | 1 +
- Documentation/admin-guide/kernel-parameters.txt   | 2 +-
- Documentation/admin-guide/mm/index.rst            | 2 +-
- Documentation/admin-guide/mm/ksm.rst              | 2 +-
- Documentation/{ => admin-guide}/sysctl/abi.rst    | 0
- Documentation/{ => admin-guide}/sysctl/fs.rst     | 0
- Documentation/{ => admin-guide}/sysctl/index.rst  | 2 --
- Documentation/{ => admin-guide}/sysctl/kernel.rst | 0
- Documentation/{ => admin-guide}/sysctl/net.rst    | 0
- Documentation/{ => admin-guide}/sysctl/sunrpc.rst | 0
- Documentation/{ => admin-guide}/sysctl/user.rst   | 0
- Documentation/{ => admin-guide}/sysctl/vm.rst     | 0
- Documentation/core-api/printk-formats.rst         | 2 +-
- Documentation/filesystems/proc.txt                | 2 +-
- Documentation/networking/ip-sysctl.txt            | 2 +-
- Documentation/vm/unevictable-lru.rst              | 2 +-
- fs/proc/Kconfig                                   | 2 +-
- kernel/panic.c                                    | 2 +-
- mm/swap.c                                         | 2 +-
- 20 files changed, 12 insertions(+), 13 deletions(-)
- rename Documentation/{ => admin-guide}/sysctl/abi.rst (100%)
- rename Documentation/{ => admin-guide}/sysctl/fs.rst (100%)
- rename Documentation/{ => admin-guide}/sysctl/index.rst (99%)
- rename Documentation/{ => admin-guide}/sysctl/kernel.rst (100%)
- rename Documentation/{ => admin-guide}/sysctl/net.rst (100%)
- rename Documentation/{ => admin-guide}/sysctl/sunrpc.rst (100%)
- rename Documentation/{ => admin-guide}/sysctl/user.rst (100%)
- rename Documentation/{ => admin-guide}/sysctl/vm.rst (100%)
+ Documentation/ABI/testing/sysfs-block-device                  | 2 +-
+ Documentation/ABI/testing/sysfs-platform-asus-laptop          | 2 +-
+ Documentation/admin-guide/index.rst                           | 1 +
+ Documentation/admin-guide/kernel-parameters.txt               | 2 +-
+ Documentation/{ => admin-guide}/laptops/asus-laptop.rst       | 0
+ .../{ => admin-guide}/laptops/disk-shock-protection.rst       | 0
+ Documentation/{ => admin-guide}/laptops/index.rst             | 1 -
+ Documentation/{ => admin-guide}/laptops/laptop-mode.rst       | 0
+ Documentation/{ => admin-guide}/laptops/lg-laptop.rst         | 1 -
+ Documentation/{ => admin-guide}/laptops/sony-laptop.rst       | 0
+ Documentation/{ => admin-guide}/laptops/sonypi.rst            | 0
+ Documentation/{ => admin-guide}/laptops/thinkpad-acpi.rst     | 0
+ Documentation/{ => admin-guide}/laptops/toshiba_haps.rst      | 0
+ Documentation/admin-guide/sysctl/vm.rst                       | 4 ++--
+ MAINTAINERS                                                   | 4 ++--
+ drivers/char/Kconfig                                          | 2 +-
+ drivers/platform/x86/Kconfig                                  | 4 ++--
+ 17 files changed, 11 insertions(+), 12 deletions(-)
+ rename Documentation/{ => admin-guide}/laptops/asus-laptop.rst (100%)
+ rename Documentation/{ => admin-guide}/laptops/disk-shock-protection.rst (100%)
+ rename Documentation/{ => admin-guide}/laptops/index.rst (95%)
+ rename Documentation/{ => admin-guide}/laptops/laptop-mode.rst (100%)
+ rename Documentation/{ => admin-guide}/laptops/lg-laptop.rst (99%)
+ rename Documentation/{ => admin-guide}/laptops/sony-laptop.rst (100%)
+ rename Documentation/{ => admin-guide}/laptops/sonypi.rst (100%)
+ rename Documentation/{ => admin-guide}/laptops/thinkpad-acpi.rst (100%)
+ rename Documentation/{ => admin-guide}/laptops/toshiba_haps.rst (100%)
 
-diff --git a/CREDITS b/CREDITS
-index beac0c81d081..401c5092bbf9 100644
---- a/CREDITS
-+++ b/CREDITS
-@@ -3120,7 +3120,7 @@ S: France
- N: Rik van Riel
- E: riel@redhat.com
- W: http://www.surriel.com/
--D: Linux-MM site, Documentation/sysctl/*, swap/mm readaround
-+D: Linux-MM site, Documentation/admin-guide/sysctl/*, swap/mm readaround
- D: kswapd fixes, random kernel hacker, rmap VM,
- D: nl.linux.org administrator, minor scheduler additions
- S: Red Hat Boston
+diff --git a/Documentation/ABI/testing/sysfs-block-device b/Documentation/ABI/testing/sysfs-block-device
+index 0d57bbb4fddc..17f2bc7dd261 100644
+--- a/Documentation/ABI/testing/sysfs-block-device
++++ b/Documentation/ABI/testing/sysfs-block-device
+@@ -45,7 +45,7 @@ Description:
+ 		- Values below -2 are rejected with -EINVAL
+ 
+ 		For more information, see
+-		Documentation/laptops/disk-shock-protection.rst
++		Documentation/admin-guide/laptops/disk-shock-protection.rst
+ 
+ 
+ What:		/sys/block/*/device/ncq_prio_enable
+diff --git a/Documentation/ABI/testing/sysfs-platform-asus-laptop b/Documentation/ABI/testing/sysfs-platform-asus-laptop
+index d67fa4bafa70..8b0e8205a6a2 100644
+--- a/Documentation/ABI/testing/sysfs-platform-asus-laptop
++++ b/Documentation/ABI/testing/sysfs-platform-asus-laptop
+@@ -31,7 +31,7 @@ Description:
+ 		To control the LED display, use the following :
+ 		    echo 0x0T000DDD > /sys/devices/platform/asus_laptop/
+ 		where T control the 3 letters display, and DDD the 3 digits display.
+-		The DDD table can be found in Documentation/laptops/asus-laptop.rst
++		The DDD table can be found in Documentation/admin-guide/laptops/asus-laptop.rst
+ 
+ What:		/sys/devices/platform/asus_laptop/bluetooth
+ Date:		January 2007
 diff --git a/Documentation/admin-guide/index.rst b/Documentation/admin-guide/index.rst
-index e0763c51b024..acd0efa46e9d 100644
+index acd0efa46e9d..9899b78dbe50 100644
 --- a/Documentation/admin-guide/index.rst
 +++ b/Documentation/admin-guide/index.rst
-@@ -16,6 +16,7 @@ etc.
-    README
-    kernel-parameters
-    devices
-+   sysctl/index
+@@ -81,6 +81,7 @@ configure specific aspects of kernel behavior to your liking.
+    perf-security
+    acpi/index
+    device-mapper/index
++   laptops/index
  
- This section describes CPU vulnerabilities and their mitigations.
+ .. only::  subproject and html
  
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index b2007fb4daf0..a3d3da5baacb 100644
+index a3d3da5baacb..e38b96d061f4 100644
 --- a/Documentation/admin-guide/kernel-parameters.txt
 +++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -3170,7 +3170,7 @@
- 	numa_zonelist_order= [KNL, BOOT] Select zonelist order for NUMA.
- 			'node', 'default' can be specified
- 			This can be set from sysctl after boot.
--			See Documentation/sysctl/vm.rst for details.
-+			See Documentation/admin-guide/sysctl/vm.rst for details.
+@@ -4373,7 +4373,7 @@
+ 			Format: <integer>
  
- 	ohci1394_dma=early	[HW] enable debugging via the ohci1394 driver.
- 			See Documentation/debugging-via-ohci1394.txt for more
-diff --git a/Documentation/admin-guide/mm/index.rst b/Documentation/admin-guide/mm/index.rst
-index f5e92f33f96e..5f61a6c429e0 100644
---- a/Documentation/admin-guide/mm/index.rst
-+++ b/Documentation/admin-guide/mm/index.rst
-@@ -11,7 +11,7 @@ processes address space and many other cool things.
- Linux memory management is a complex system with many configurable
- settings. Most of these settings are available via ``/proc``
- filesystem and can be quired and adjusted using ``sysctl``. These APIs
--are described in Documentation/sysctl/vm.rst and in `man 5 proc`_.
-+are described in Documentation/admin-guide/sysctl/vm.rst and in `man 5 proc`_.
+ 	sonypi.*=	[HW] Sony Programmable I/O Control Device driver
+-			See Documentation/laptops/sonypi.rst
++			See Documentation/admin-guide/laptops/sonypi.rst
  
- .. _man 5 proc: http://man7.org/linux/man-pages/man5/proc.5.html
- 
-diff --git a/Documentation/admin-guide/mm/ksm.rst b/Documentation/admin-guide/mm/ksm.rst
-index 7b2b8767c0b4..874eb0c77d34 100644
---- a/Documentation/admin-guide/mm/ksm.rst
-+++ b/Documentation/admin-guide/mm/ksm.rst
-@@ -59,7 +59,7 @@ MADV_UNMERGEABLE is applied to a range which was never MADV_MERGEABLE.
- 
- If a region of memory must be split into at least one new MADV_MERGEABLE
- or MADV_UNMERGEABLE region, the madvise may return ENOMEM if the process
--will exceed ``vm.max_map_count`` (see Documentation/sysctl/vm.rst).
-+will exceed ``vm.max_map_count`` (see Documentation/admin-guide/sysctl/vm.rst).
- 
- Like other madvise calls, they are intended for use on mapped areas of
- the user address space: they will report ENOMEM if the specified range
-diff --git a/Documentation/sysctl/abi.rst b/Documentation/admin-guide/sysctl/abi.rst
+ 	spectre_v2=	[X86] Control mitigation of Spectre variant 2
+ 			(indirect branch speculation) vulnerability.
+diff --git a/Documentation/laptops/asus-laptop.rst b/Documentation/admin-guide/laptops/asus-laptop.rst
 similarity index 100%
-rename from Documentation/sysctl/abi.rst
-rename to Documentation/admin-guide/sysctl/abi.rst
-diff --git a/Documentation/sysctl/fs.rst b/Documentation/admin-guide/sysctl/fs.rst
+rename from Documentation/laptops/asus-laptop.rst
+rename to Documentation/admin-guide/laptops/asus-laptop.rst
+diff --git a/Documentation/laptops/disk-shock-protection.rst b/Documentation/admin-guide/laptops/disk-shock-protection.rst
 similarity index 100%
-rename from Documentation/sysctl/fs.rst
-rename to Documentation/admin-guide/sysctl/fs.rst
-diff --git a/Documentation/sysctl/index.rst b/Documentation/admin-guide/sysctl/index.rst
-similarity index 99%
-rename from Documentation/sysctl/index.rst
-rename to Documentation/admin-guide/sysctl/index.rst
-index efbcde8c1c9c..03346f98c7b9 100644
---- a/Documentation/sysctl/index.rst
-+++ b/Documentation/admin-guide/sysctl/index.rst
-@@ -1,5 +1,3 @@
+rename from Documentation/laptops/disk-shock-protection.rst
+rename to Documentation/admin-guide/laptops/disk-shock-protection.rst
+diff --git a/Documentation/laptops/index.rst b/Documentation/admin-guide/laptops/index.rst
+similarity index 95%
+rename from Documentation/laptops/index.rst
+rename to Documentation/admin-guide/laptops/index.rst
+index 001a30910d09..6b554e39863b 100644
+--- a/Documentation/laptops/index.rst
++++ b/Documentation/admin-guide/laptops/index.rst
+@@ -1,4 +1,3 @@
 -:orphan:
--
- ===========================
- Documentation for /proc/sys
- ===========================
-diff --git a/Documentation/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
+ 
+ ==============
+ Laptop Drivers
+diff --git a/Documentation/laptops/laptop-mode.rst b/Documentation/admin-guide/laptops/laptop-mode.rst
 similarity index 100%
-rename from Documentation/sysctl/kernel.rst
-rename to Documentation/admin-guide/sysctl/kernel.rst
-diff --git a/Documentation/sysctl/net.rst b/Documentation/admin-guide/sysctl/net.rst
+rename from Documentation/laptops/laptop-mode.rst
+rename to Documentation/admin-guide/laptops/laptop-mode.rst
+diff --git a/Documentation/laptops/lg-laptop.rst b/Documentation/admin-guide/laptops/lg-laptop.rst
+similarity index 99%
+rename from Documentation/laptops/lg-laptop.rst
+rename to Documentation/admin-guide/laptops/lg-laptop.rst
+index f2c2ffe31101..ce9b14671cb9 100644
+--- a/Documentation/laptops/lg-laptop.rst
++++ b/Documentation/admin-guide/laptops/lg-laptop.rst
+@@ -1,6 +1,5 @@
+ .. SPDX-License-Identifier: GPL-2.0+
+ 
+-:orphan:
+ 
+ LG Gram laptop extra features
+ =============================
+diff --git a/Documentation/laptops/sony-laptop.rst b/Documentation/admin-guide/laptops/sony-laptop.rst
 similarity index 100%
-rename from Documentation/sysctl/net.rst
-rename to Documentation/admin-guide/sysctl/net.rst
-diff --git a/Documentation/sysctl/sunrpc.rst b/Documentation/admin-guide/sysctl/sunrpc.rst
+rename from Documentation/laptops/sony-laptop.rst
+rename to Documentation/admin-guide/laptops/sony-laptop.rst
+diff --git a/Documentation/laptops/sonypi.rst b/Documentation/admin-guide/laptops/sonypi.rst
 similarity index 100%
-rename from Documentation/sysctl/sunrpc.rst
-rename to Documentation/admin-guide/sysctl/sunrpc.rst
-diff --git a/Documentation/sysctl/user.rst b/Documentation/admin-guide/sysctl/user.rst
+rename from Documentation/laptops/sonypi.rst
+rename to Documentation/admin-guide/laptops/sonypi.rst
+diff --git a/Documentation/laptops/thinkpad-acpi.rst b/Documentation/admin-guide/laptops/thinkpad-acpi.rst
 similarity index 100%
-rename from Documentation/sysctl/user.rst
-rename to Documentation/admin-guide/sysctl/user.rst
-diff --git a/Documentation/sysctl/vm.rst b/Documentation/admin-guide/sysctl/vm.rst
+rename from Documentation/laptops/thinkpad-acpi.rst
+rename to Documentation/admin-guide/laptops/thinkpad-acpi.rst
+diff --git a/Documentation/laptops/toshiba_haps.rst b/Documentation/admin-guide/laptops/toshiba_haps.rst
 similarity index 100%
-rename from Documentation/sysctl/vm.rst
-rename to Documentation/admin-guide/sysctl/vm.rst
-diff --git a/Documentation/core-api/printk-formats.rst b/Documentation/core-api/printk-formats.rst
-index 1d8e748f909f..c6224d039bcb 100644
---- a/Documentation/core-api/printk-formats.rst
-+++ b/Documentation/core-api/printk-formats.rst
-@@ -119,7 +119,7 @@ Kernel Pointers
+rename from Documentation/laptops/toshiba_haps.rst
+rename to Documentation/admin-guide/laptops/toshiba_haps.rst
+diff --git a/Documentation/admin-guide/sysctl/vm.rst b/Documentation/admin-guide/sysctl/vm.rst
+index 5aceb5cd5ce7..64aeee1009ca 100644
+--- a/Documentation/admin-guide/sysctl/vm.rst
++++ b/Documentation/admin-guide/sysctl/vm.rst
+@@ -108,7 +108,7 @@ block_dump
+ ==========
  
- For printing kernel pointers which should be hidden from unprivileged
- users. The behaviour of %pK depends on the kptr_restrict sysctl - see
--Documentation/sysctl/kernel.rst for more details.
-+Documentation/admin-guide/sysctl/kernel.rst for more details.
- 
- Unmodified Addresses
- --------------------
-diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
-index 52ec004a4a8b..be56af8dbb88 100644
---- a/Documentation/filesystems/proc.txt
-+++ b/Documentation/filesystems/proc.txt
-@@ -1479,7 +1479,7 @@ review the kernel documentation in the directory /usr/src/linux/Documentation.
- This chapter  is  heavily  based  on the documentation included in the pre 2.2
- kernels, and became part of it in version 2.2.1 of the Linux kernel.
- 
--Please see: Documentation/sysctl/ directory for descriptions of these
-+Please see: Documentation/admin-guide/sysctl/ directory for descriptions of these
- entries.
- 
- ------------------------------------------------------------------------------
-diff --git a/Documentation/networking/ip-sysctl.txt b/Documentation/networking/ip-sysctl.txt
-index 0f8e1c544e1e..864a5921e9d7 100644
---- a/Documentation/networking/ip-sysctl.txt
-+++ b/Documentation/networking/ip-sysctl.txt
-@@ -2284,7 +2284,7 @@ addr_scope_policy - INTEGER
+ block_dump enables block I/O debugging when set to a nonzero value. More
+-information on block I/O debugging is in Documentation/laptops/laptop-mode.rst.
++information on block I/O debugging is in Documentation/admin-guide/laptops/laptop-mode.rst.
  
  
- /proc/sys/net/core/*
--	Please see: Documentation/sysctl/net.rst for descriptions of these entries.
-+	Please see: Documentation/admin-guide/sysctl/net.rst for descriptions of these entries.
+ compact_memory
+@@ -298,7 +298,7 @@ laptop_mode
+ ===========
+ 
+ laptop_mode is a knob that controls "laptop mode". All the things that are
+-controlled by this knob are discussed in Documentation/laptops/laptop-mode.rst.
++controlled by this knob are discussed in Documentation/admin-guide/laptops/laptop-mode.rst.
  
  
- /proc/sys/net/unix/*
-diff --git a/Documentation/vm/unevictable-lru.rst b/Documentation/vm/unevictable-lru.rst
-index 8ba656f37cd8..109052215bce 100644
---- a/Documentation/vm/unevictable-lru.rst
-+++ b/Documentation/vm/unevictable-lru.rst
-@@ -439,7 +439,7 @@ Compacting MLOCKED Pages
+ legacy_va_layout
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 40d057631004..d35ff73f718a 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -8978,7 +8978,7 @@ M:	Matan Ziv-Av <matan@svgalib.org>
+ L:	platform-driver-x86@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/ABI/testing/sysfs-platform-lg-laptop
+-F:	Documentation/laptops/lg-laptop.rst
++F:	Documentation/admin-guide/laptops/lg-laptop.rst
+ F:	drivers/platform/x86/lg-laptop.c
  
- The unevictable LRU can be scanned for compactable regions and the default
- behavior is to do so.  /proc/sys/vm/compact_unevictable_allowed controls
--this behavior (see Documentation/sysctl/vm.rst).  Once scanning of the
-+this behavior (see Documentation/admin-guide/sysctl/vm.rst).  Once scanning of the
- unevictable LRU is enabled, the work of compaction is mostly handled by
- the page migration code and the same work flow as described in MIGRATING
- MLOCKED PAGES will apply.
-diff --git a/fs/proc/Kconfig b/fs/proc/Kconfig
-index cba429db95d9..cb5629bd5fff 100644
---- a/fs/proc/Kconfig
-+++ b/fs/proc/Kconfig
-@@ -73,7 +73,7 @@ config PROC_SYSCTL
- 	  interface is through /proc/sys.  If you say Y here a tree of
- 	  modifiable sysctl entries will be generated beneath the
-           /proc/sys directory. They are explained in the files
--	  in <file:Documentation/sysctl/>.  Note that enabling this
-+	  in <file:Documentation/admin-guide/sysctl/>.  Note that enabling this
- 	  option will enlarge the kernel by at least 8 KB.
+ LG2160 MEDIA DRIVER
+@@ -14830,7 +14830,7 @@ M:	Mattia Dongili <malattia@linux.it>
+ L:	platform-driver-x86@vger.kernel.org
+ W:	http://www.linux.it/~malattia/wiki/index.php/Sony_drivers
+ S:	Maintained
+-F:	Documentation/laptops/sony-laptop.rst
++F:	Documentation/admin-guide/laptops/sony-laptop.rst
+ F:	drivers/char/sonypi.c
+ F:	drivers/platform/x86/sony-laptop.c
+ F:	include/linux/sony-laptop.h
+diff --git a/drivers/char/Kconfig b/drivers/char/Kconfig
+index bb734066075f..442403abd73a 100644
+--- a/drivers/char/Kconfig
++++ b/drivers/char/Kconfig
+@@ -382,7 +382,7 @@ config SONYPI
+ 	  Device which can be found in many (all ?) Sony Vaio laptops.
  
- 	  As it is generally a good thing, you should say Y here unless
-diff --git a/kernel/panic.c b/kernel/panic.c
-index e0ea74bbb41d..057540b6eee9 100644
---- a/kernel/panic.c
-+++ b/kernel/panic.c
-@@ -372,7 +372,7 @@ const struct taint_flag taint_flags[TAINT_FLAGS_COUNT] = {
- /**
-  * print_tainted - return a string to represent the kernel taint state.
-  *
-- * For individual taint flag meanings, see Documentation/sysctl/kernel.rst
-+ * For individual taint flag meanings, see Documentation/admin-guide/sysctl/kernel.rst
-  *
-  * The string is overwritten by the next call to print_tainted(),
-  * but is always NULL terminated.
-diff --git a/mm/swap.c b/mm/swap.c
-index 83a2a15f4836..ae300397dfda 100644
---- a/mm/swap.c
-+++ b/mm/swap.c
-@@ -8,7 +8,7 @@
- /*
-  * This file contains the default values for the operation of the
-  * Linux VM subsystem. Fine-tuning documentation can be found in
-- * Documentation/sysctl/vm.rst.
-+ * Documentation/admin-guide/sysctl/vm.rst.
-  * Started 18.12.91
-  * Swap aging added 23.2.95, Stephen Tweedie.
-  * Buffermem limits added 12.3.98, Rik van Riel.
+ 	  If you have one of those laptops, read
+-	  <file:Documentation/laptops/sonypi.rst>, and say Y or M here.
++	  <file:Documentation/admin-guide/laptops/sonypi.rst>, and say Y or M here.
+ 
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called sonypi.
+diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+index 1f616844fb87..85101c678693 100644
+--- a/drivers/platform/x86/Kconfig
++++ b/drivers/platform/x86/Kconfig
+@@ -448,7 +448,7 @@ config SONY_LAPTOP
+ 	  screen brightness control, Fn keys and allows powering on/off some
+ 	  devices.
+ 
+-	  Read <file:Documentation/laptops/sony-laptop.rst> for more information.
++	  Read <file:Documentation/admin-guide/laptops/sony-laptop.rst> for more information.
+ 
+ config SONYPI_COMPAT
+ 	bool "Sonypi compatibility"
+@@ -500,7 +500,7 @@ config THINKPAD_ACPI
+ 	  support for Fn-Fx key combinations, Bluetooth control, video
+ 	  output switching, ThinkLight control, UltraBay eject and more.
+ 	  For more information about this driver see
+-	  <file:Documentation/laptops/thinkpad-acpi.rst> and
++	  <file:Documentation/admin-guide/laptops/thinkpad-acpi.rst> and
+ 	  <http://ibm-acpi.sf.net/> .
+ 
+ 	  This driver was formerly known as ibm-acpi.
 -- 
 2.21.0
 
