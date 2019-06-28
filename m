@@ -2,177 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DF625A38E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 20:29:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD3F15A440
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 20:38:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726723AbfF1S3s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 14:29:48 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:41700 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726514AbfF1S3s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 14:29:48 -0400
-Received: from guinness.priv.deltatee.com ([172.16.1.162])
-        by ale.deltatee.com with esmtp (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1hgvct-0002Ln-NS; Fri, 28 Jun 2019 12:29:36 -0600
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-pci@vger.kernel.org, linux-rdma@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Keith Busch <kbusch@kernel.org>,
-        Stephen Bates <sbates@raithlin.com>
-References: <20190626202107.GA5850@ziepe.ca>
- <8a0a08c3-a537-bff6-0852-a5f337a70688@deltatee.com>
- <20190626210018.GB6392@ziepe.ca>
- <c25d3333-dcd5-3313-089b-7fbbd6fbd876@deltatee.com>
- <20190627063223.GA7736@ziepe.ca>
- <6afe4027-26c8-df4e-65ce-49df07dec54d@deltatee.com>
- <20190627163504.GB9568@ziepe.ca>
- <4894142c-3233-a3bb-f9a3-4a4985136e9b@deltatee.com>
- <20190628045705.GD3705@ziepe.ca>
- <8022a2a4-4069-d256-11da-e6d9b2ffbf60@deltatee.com>
- <20190628172926.GA3877@ziepe.ca>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <25a87c72-630b-e1f1-c858-9c8b417506fc@deltatee.com>
-Date:   Fri, 28 Jun 2019 12:29:32 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1727169AbfF1Shn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 14:37:43 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:58232 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726631AbfF1Shm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Jun 2019 14:37:42 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5SITZBX105273;
+        Fri, 28 Jun 2019 18:33:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : from : to :
+ cc : date : message-id : mime-version : content-type :
+ content-transfer-encoding; s=corp-2018-07-02;
+ bh=cAdDQjLmw3paRsCYayAMtBFRH59fRNc4vYLBHuqjsSA=;
+ b=Ym1PbLrqLrgILPZ9ahcgds3J8K047msKevHhF5dmFaMWkS8t2xAnIGEx1+BHaqGr1pl/
+ HXeOXwzCBsFhn/7lzMtqoVTJFKOCV2j+xhup1v6t+ofAqQxKWMccQra0ZTkBXVEFeXrL
+ fJoE1rs6UZ5AukUUwRprgTv0qeOpIDO0zEjIhPJoTtplnvkA/e94BPVuaHySItKPWJp3
+ C9SB6s34GVtK1Sf0ZKOED6k7Kb1xQrz9vVZuQxtDO6fnlvNCu/i2nBpLriqSXKxQNFL1
+ ACTEb7HIMu7IT18EvDVUGtAmFO9UyvHau6Ox7lLRQYzKrh+zjJTn5vudod4B9q++Stkm XA== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 2t9brtq3ep-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 28 Jun 2019 18:33:59 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5SIX4Q2149109;
+        Fri, 28 Jun 2019 18:33:58 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by aserp3020.oracle.com with ESMTP id 2t9p6w22s4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 28 Jun 2019 18:33:58 +0000
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x5SIXvVD150493;
+        Fri, 28 Jun 2019 18:33:57 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 2t9p6w22rx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 28 Jun 2019 18:33:57 +0000
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5SIXppW025387;
+        Fri, 28 Jun 2019 18:33:51 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 28 Jun 2019 11:33:51 -0700
+Subject: [PATCH v4 0/5] vfs: clean up SETFLAGS and FSSETXATTR option
+ processing
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     matthew.garrett@nebula.com, yuchao0@huawei.com, tytso@mit.edu,
+        darrick.wong@oracle.com, shaggy@kernel.org,
+        ard.biesheuvel@linaro.org, josef@toxicpanda.com, hch@infradead.org,
+        clm@fb.com, adilger.kernel@dilger.ca, jk@ozlabs.org, jack@suse.com,
+        dsterba@suse.com, jaegeuk@kernel.org, viro@zeniv.linux.org.uk
+Cc:     cluster-devel@redhat.com, jfs-discussion@lists.sourceforge.net,
+        linux-efi@vger.kernel.org, reiserfs-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
+        linux-nilfs@vger.kernel.org, linux-mtd@lists.infradead.org,
+        ocfs2-devel@oss.oracle.com, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org
+Date:   Fri, 28 Jun 2019 11:33:49 -0700
+Message-ID: <156174682897.1557318.14418894077683701275.stgit@magnolia>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-In-Reply-To: <20190628172926.GA3877@ziepe.ca>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: sbates@raithlin.com, kbusch@kernel.org, sagi@grimberg.me, dan.j.williams@intel.com, bhelgaas@google.com, axboe@kernel.dk, linux-rdma@vger.kernel.org, linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, hch@lst.de, jgg@ziepe.ca
-X-SA-Exim-Mail-From: logang@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE autolearn=ham autolearn_force=no version=3.4.2
-Subject: Re: [RFC PATCH 00/28] Removing struct page from P2PDMA
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9302 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=864 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906280208
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi all,
 
+The FS_IOC_SETFLAGS and FS_IOC_FSSETXATTR ioctls were promoted from ext4
+and XFS, respectively, into the VFS.  However, we didn't promote any of
+the parameter checking code from those filesystems, which lead to a mess
+where each filesystem open-codes whatever parameter checks they want and
+the behavior across filesystems is no longer consistent.
 
-On 2019-06-28 11:29 a.m., Jason Gunthorpe wrote:
-> On Fri, Jun 28, 2019 at 10:22:06AM -0600, Logan Gunthorpe wrote:
-> 
->>> Why not?  If we have a 'bar info' structure that could have data
->>> transfer op callbacks, infact, I think we might already have similar
->>> callbacks for migrating to/from DEVICE_PRIVATE memory with DMA..
->>
->> Well it could, in theory be done, but It just seems wrong to setup and
->> wait for more DMA requests while we are in mid-progress setting up
->> another DMA request. Especially when the block layer has historically
->> had issues with stack sizes. It's also possible you might have multiple
->> bio_vec's that have to each do a migration and with a hook here they'd
->> have to be done serially.
-> 
-> *shrug* this is just standard bounce buffering stuff...
+Therefore, create some generic checking functions in the VFS and remove
+all the open-coded pieces in each filesystem.  This preserves the
+current behavior where a filesystem can choose to ignore fields it
+doesn't understand.
 
-I don't know of any "standard" bounce buffering stuff that uses random
-other device's DMA engines where appropriate.
+If you're going to start using this mess, you probably ought to just
+pull from my git trees, which are linked below.
 
->>> I think the best reason to prefer a uniform phys_addr_t is that it
->>> does give us the option to copy the data to/from CPU memory. That
->>> option goes away as soon as the bio sometimes provides a dma_addr_t.
->>
->> Not really. phys_addr_t alone doesn't give us a way to copy data. You
->> need a lookup table on that address and a couple of hooks.
-> 
-> Yes, I'm not sure how you envision using phys_addr_t without a
-> lookup.. At the end of the day we must get the src and target 'struct
-> device' in the dma_map area (at the minimum to compute the offset to
-> translate phys_addr_t to dma_addr_t) and the only way to do that from
-> phys_addr_t is via lookup??
+This has been lightly tested with fstests.  Enjoy!
+Comments and questions are, as always, welcome.
 
-I thought my other email to Christoph laid it out pretty cleanly...
+--D
 
->>> At least for RDMA, we do have some cases (like siw/rxe, hfi) where
->>> they sometimes need to do that copy. I suspect the block stack is
->>> similar, in the general case.
->>
->> But the whole point of the use cases I'm trying to serve is to avoid the
->> root complex. 
-> 
-> Well, I think this is sort of a seperate issue. Generically I think
-> the dma layer should continue to work largely transparently, and if I
-> feed in BAR memory that can't be P2P'd it should bounce, just like
-> all the other DMA limitations it already supports. That is pretty much
-> its whole purpose in life.
-
-I disagree. It's one thing for the DMA layer to work around architecture
-limitations like HighMem/LowMem and just do a memcpy when it can't
-handle it -- it's whole different thing for the DMA layer to know about
-the varieties of memory on different peripheral device's and the nuances
-of how and when to transfer between them. I think the submitting driver
-has the best information of when to do these transfers.
-
-IMO the bouncing in the DMA layer isn't a desirable thing, it was a
-necessary addition to work around various legacy platform issues and
-have existing code still work correctly. It's always better for a driver
-to allocate memory appropriate for the DMA than to just use random
-memory and rely on it being bounced by the lower layer. For P2P, we
-don't have existing code to worry about so I don't think a magic
-automatic bouncing design is appropriate.
-
-> The issue of having the caller optimize what it sends is kind of
-> separate - yes you definately still need the egress DMA device to
-> drive CMB buffer selection, and DEVICE_PRIVATE also needs it to decide
-> if it should migrate or not.
-
-Yes, but my contention is that I don't want to have to make these
-decisions twice: once before I submit it to the block layer, then again
-at mapping time.
-
-> What I see as the question is how to layout the BIO. 
-> 
-> If we agree the bio should only have phys_addr_t then we need some
-> 'bar info' (ie at least the offset) in the dma map and some 'bar info'
-> (ie the DMA device) during the bio construciton.
-
-Per my other email, it was phys_addr_t plus hints on how to map the
-memory (bus address, dma_map_resource, or regular). This requires
-exactly two flag bits in the bio_vec and no interval tree or hash table.
-I don't want to have to pass bar info, other hooks, or anything like
-that to the block layer.
-
-> What you are trying to do is optimize the passing of that 'bar info'
-> with a limited number of bits in the BIO.
-> 
-> A single flag means an interval tree, 4-8 bits could build a probably
-> O(1) hash lookup, 64 bits could store a pointer, etc.
-
-Well, an interval tree can get you the backing device for a given
-phys_addr_t; however, for P2PDMA, we need a second lookup based on the
-mapping device. This is because exactly how you map the data depends on
-both devices. Currently I'm working on this for the existing
-implementation and struct page gets me the backing device but I need
-another xarray cache based on the mapping device to figure out exactly
-how to map the memory. But none of this mess is required if we can just
-pass the mapping hints through the block layer as flags (per my other
-email) because the submitting driver should already know ahead of time
-what it's trying to do.
-
-> If we can spare 4-8 bits in the bio then I suggest a 'perfect hash
-> table'. Assign each registered P2P 'bar info' a small 4 bit id and
-> hash on that. It should be fast enough to not worry about the double
-> lookup.
-
-This feels like it's just setting us up to run into nasty limits based
-on the number of bits we actually have. The number of bits in a bio_vec
-will always be a precious resource. If I have a server chassis that
-exist today with 24 NVMe devices, and each device has a CMB, I'm already
-using up 6 of those bits. Then we might have DEVICE_PRIVATE and other
-uses on top of that.
-
-Logan
+kernel git tree:
+https://git.kernel.org/cgit/linux/kernel/git/djwong/xfs-linux.git/log/?h=file-ioctl-cleanups
