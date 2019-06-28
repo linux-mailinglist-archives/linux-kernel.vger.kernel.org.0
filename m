@@ -2,44 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EEA9F5A64D
+	by mail.lfdr.de (Postfix) with ESMTP id 1DA1E5A64B
 	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 23:23:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726702AbfF1VXX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 17:23:23 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:50760 "EHLO
+        id S1726894AbfF1VXp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 17:23:45 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:50776 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726537AbfF1VXW (ORCPT
+        with ESMTP id S1726708AbfF1VXY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 17:23:22 -0400
+        Fri, 28 Jun 2019 17:23:24 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=hWpmIxaGb4riYKyi+9gRcydxFcohGEpnXR71vncI7fY=; b=Xzfdzgi5yZH0WMyadyXwwsjOwd
-        KlRHwr02tn9f6RMP7+l/7yDfFvyXGDJSg3AKT7SF6y6LGhqbtctA30D/ylAMBclwiO5cJSz0sNxda
-        eNHsYu3TiXpC/dRq3ElwKQb7hSsUQKZM8YXW3w1S4HbHJxvC5nsfIAsJJr3guviQc8E6FvlYBI763
-        NB5o8TtavnxJ97juIWTMvCgVffXCsc1jEFUovXXg3MjnRWJd7F0fmFYvfD1bnrQy+BUUF2W8h+EWb
-        JuQojUzpHdAKf+LEaBO3DVV7cKf4hs4+fArTCqjqz5G+W5qt4rWJETvXrXJQ8WqRxRCThGbiKtdYP
-        WH5z68pQ==;
+        bh=zqctRROUdvt6T9Ch5lO+6tWv2IaafLTrqdrauzV10TM=; b=jpWNTu7+SZmxng8HGL4YL+KPmW
+        hotqIWlh2WS7L6A09QUduK8xSpKGDFoOV87Cq4k3zKMNjJJBTFfGzt1nVrzB5lKpY7r0llj9PLiLo
+        omcPH05yFPRDBelZgHDe26FzNVtLhtYR6rFYuWfnCh6UUGX9O6wpM/hMJvcmtvuRH2aVZHboB4AY+
+        HG34vfrsiHwDRWZ8cQdiKK3B18P3wrmZdP3/t9+mWD9FKuLZsZw/3798l2abyQiZaAkjn8tulkG5e
+        +5WTJbiYTLM3frTa58XijAb/qOprJb69wJpeNZZA3fNkai5kGpT9pRg2v5Mj7opLgUySrkK2YBWU8
+        K5C/pgsQ==;
 Received: from [187.113.3.250] (helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hgyL2-0001VG-KR; Fri, 28 Jun 2019 21:23:21 +0000
+        id 1hgyL2-0001VE-Kq; Fri, 28 Jun 2019 21:23:21 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hgyKz-0002dm-TC; Fri, 28 Jun 2019 18:23:17 -0300
+        id 1hgyKz-0002dq-UE; Fri, 28 Jun 2019 18:23:17 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
-Subject: [PATCH 1/5] docs: convert markdown documents to ReST
-Date:   Fri, 28 Jun 2019 18:23:12 -0300
-Message-Id: <7a5734d147788ffb817c8122dbb0ff619a718a71.1561756511.git.mchehab+samsung@kernel.org>
+        Jean Delvare <jdelvare@suse.com>,
+        Eric Piel <eric.piel@tremplin-utc.net>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        platform-driver-x86@vger.kernel.org
+Subject: [PATCH 2/5] docs: misc-devices: convert files without extension to ReST
+Date:   Fri, 28 Jun 2019 18:23:13 -0300
+Message-Id: <b7dc829809673bd8cffe0e7bbe9c9308681c6fe2.1561756511.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <cover.1561756511.git.mchehab+samsung@kernel.org>
 References: <cover.1561756511.git.mchehab+samsung@kernel.org>
@@ -50,524 +55,465 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The documentation standard is ReST and not markdown.
+Those files are also text files. Convert them to ReST and add
+to the misc-files index.rst.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- Documentation/devicetree/writing-schema.md    | 130 ---------------
- Documentation/devicetree/writing-schema.rst   | 153 ++++++++++++++++++
- ...entication.md => ubifs-authentication.rst} |  70 +++++---
- 3 files changed, 197 insertions(+), 156 deletions(-)
- delete mode 100644 Documentation/devicetree/writing-schema.md
- create mode 100644 Documentation/devicetree/writing-schema.rst
- rename Documentation/filesystems/{ubifs-authentication.md => ubifs-authentication.rst} (95%)
+ .../misc-devices/{eeprom => eeprom.rst}       | 43 +++++++++------
+ .../{ics932s401 => ics932s401.rst}            |  7 ++-
+ Documentation/misc-devices/index.rst          |  5 ++
+ .../misc-devices/{isl29003 => isl29003.rst}   | 15 +++++-
+ .../misc-devices/{lis3lv02d => lis3lv02d.rst} | 20 ++++---
+ .../misc-devices/{max6875 => max6875.rst}     | 52 ++++++++++++++-----
+ MAINTAINERS                                   |  4 +-
+ drivers/misc/isl29003.c                       |  2 +-
+ drivers/platform/x86/Kconfig                  |  2 +-
+ 9 files changed, 108 insertions(+), 42 deletions(-)
+ rename Documentation/misc-devices/{eeprom => eeprom.rst} (76%)
+ rename Documentation/misc-devices/{ics932s401 => ics932s401.rst} (94%)
+ rename Documentation/misc-devices/{isl29003 => isl29003.rst} (77%)
+ rename Documentation/misc-devices/{lis3lv02d => lis3lv02d.rst} (90%)
+ rename Documentation/misc-devices/{max6875 => max6875.rst} (83%)
 
-diff --git a/Documentation/devicetree/writing-schema.md b/Documentation/devicetree/writing-schema.md
-deleted file mode 100644
-index dc032db36262..000000000000
---- a/Documentation/devicetree/writing-schema.md
-+++ /dev/null
-@@ -1,130 +0,0 @@
--# Writing DeviceTree Bindings in json-schema
--
--Devicetree bindings are written using json-schema vocabulary. Schema files are
--written in a JSON compatible subset of YAML. YAML is used instead of JSON as it
--considered more human readable and has some advantages such as allowing
--comments (Prefixed with '#').
--
--## Schema Contents
--
--Each schema doc is a structured json-schema which is defined by a set of
--top-level properties. Generally, there is one binding defined per file. The
--top-level json-schema properties used are:
--
--- __$id__ - A json-schema unique identifier string. The string must be a valid
--URI typically containing the binding's filename and path. For DT schema, it must
--begin with "http://devicetree.org/schemas/". The URL is used in constructing
--references to other files specified in schema "$ref" properties. A $ref values
--with a leading '/' will have the hostname prepended. A $ref value a relative
--path or filename only will be prepended with the hostname and path components
--of the current schema file's '$id' value. A URL is used even for local files,
--but there may not actually be files present at those locations.
--
--- __$schema__ - Indicates the meta-schema the schema file adheres to.
--
--- __title__ - A one line description on the contents of the binding schema.
--
--- __maintainers__ - A DT specific property. Contains a list of email address(es)
--for maintainers of this binding.
--
--- __description__ - Optional. A multi-line text block containing any detailed
--information about this binding. It should contain things such as what the block
--or device does, standards the device conforms to, and links to datasheets for
--more information.
--
--- __select__ - Optional. A json-schema used to match nodes for applying the
--schema. By default without 'select', nodes are matched against their possible
--compatible string values or node name. Most bindings should not need select.
--
--- __allOf__ - Optional. A list of other schemas to include. This is used to
--include other schemas the binding conforms to. This may be schemas for a
--particular class of devices such as I2C or SPI controllers.
--
--- __properties__ - A set of sub-schema defining all the DT properties for the
--binding. The exact schema syntax depends on whether properties are known,
--common properties (e.g. 'interrupts') or are binding/vendor specific properties.
--
--  A property can also define a child DT node with child properties defined
--under it.
--
--  For more details on properties sections, see 'Property Schema' section.
--
--- __patternProperties__ - Optional. Similar to 'properties', but names are regex.
--
--- __required__ - A list of DT properties from the 'properties' section that
--must always be present.
--
--- __examples__ - Optional. A list of one or more DTS hunks implementing the
--binding. Note: YAML doesn't allow leading tabs, so spaces must be used instead.
--
--Unless noted otherwise, all properties are required.
--
--## Property Schema
--
--The 'properties' section of the schema contains all the DT properties for a
--binding. Each property contains a set of constraints using json-schema
--vocabulary for that property. The properties schemas are what is used for
--validation of DT files.
--
--For common properties, only additional constraints not covered by the common
--binding schema need to be defined such as how many values are valid or what
--possible values are valid.
--
--Vendor specific properties will typically need more detailed schema. With the
--exception of boolean properties, they should have a reference to a type in
--schemas/types.yaml. A "description" property is always required.
--
--The Devicetree schemas don't exactly match the YAML encoded DT data produced by
--dtc. They are simplified to make them more compact and avoid a bunch of
--boilerplate. The tools process the schema files to produce the final schema for
--validation. There are currently 2 transformations the tools perform.
--
--The default for arrays in json-schema is they are variable sized and allow more
--entries than explicitly defined. This can be restricted by defining 'minItems',
--'maxItems', and 'additionalItems'. However, for DeviceTree Schemas, a fixed
--size is desired in most cases, so these properties are added based on the
--number of entries in an 'items' list.
--
--The YAML Devicetree format also makes all string values an array and scalar
--values a matrix (in order to define groupings) even when only a single value
--is present. Single entries in schemas are fixed up to match this encoding.
--
--## Testing
--
--### Dependencies
--
--The DT schema project must be installed in order to validate the DT schema
--binding documents and validate DTS files using the DT schema. The DT schema
--project can be installed with pip:
--
--`pip3 install git+https://github.com/devicetree-org/dt-schema.git@master`
--
--dtc must also be built with YAML output support enabled. This requires that
--libyaml and its headers be installed on the host system.
--
--### Running checks
--
--The DT schema binding documents must be validated using the meta-schema (the
--schema for the schema) to ensure they are both valid json-schema and valid
--binding schema. All of the DT binding documents can be validated using the
--`dt_binding_check` target:
--
--`make dt_binding_check`
--
--In order to perform validation of DT source files, use the `dtbs_check` target:
--
--`make dtbs_check`
--
--This will first run the `dt_binding_check` which generates the processed schema.
--
--It is also possible to run checks with a single schema file by setting the
--'DT_SCHEMA_FILES' variable to a specific schema file.
--
--`make dtbs_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/trivial-devices.yaml`
--
--
--## json-schema Resources
--
--[JSON-Schema Specifications](http://json-schema.org/)
--
--[Using JSON Schema Book](http://usingjsonschema.com/)
-diff --git a/Documentation/devicetree/writing-schema.rst b/Documentation/devicetree/writing-schema.rst
-new file mode 100644
-index 000000000000..8f71d1e2ac52
---- /dev/null
-+++ b/Documentation/devicetree/writing-schema.rst
-@@ -0,0 +1,153 @@
-+:orphan:
-+
-+Writing DeviceTree Bindings in json-schema
-+==========================================
-+
-+Devicetree bindings are written using json-schema vocabulary. Schema files are
-+written in a JSON compatible subset of YAML. YAML is used instead of JSON as it
-+considered more human readable and has some advantages such as allowing
-+comments (Prefixed with '#').
-+
-+Schema Contents
-+---------------
-+
-+Each schema doc is a structured json-schema which is defined by a set of
-+top-level properties. Generally, there is one binding defined per file. The
-+top-level json-schema properties used are:
-+
-+$id
-+  A json-schema unique identifier string. The string must be a valid
-+  URI typically containing the binding's filename and path. For DT schema, it must
-+  begin with "http://devicetree.org/schemas/". The URL is used in constructing
-+  references to other files specified in schema "$ref" properties. A $ref values
-+  with a leading '/' will have the hostname prepended. A $ref value a relative
-+  path or filename only will be prepended with the hostname and path components
-+  of the current schema file's '$id' value. A URL is used even for local files,
-+  but there may not actually be files present at those locations.
-+
-+$schema
-+  Indicates the meta-schema the schema file adheres to.
-+
-+title
-+  A one line description on the contents of the binding schema.
-+
-+maintainers
-+  A DT specific property. Contains a list of email address(es)
-+  for maintainers of this binding.
-+
-+description
-+  Optional. A multi-line text block containing any detailed
-+  information about this binding. It should contain things such as what the block
-+  or device does, standards the device conforms to, and links to datasheets for
-+  more information.
-+
-+select
-+  Optional. A json-schema used to match nodes for applying the
-+  schema. By default without 'select', nodes are matched against their possible
-+  compatible string values or node name. Most bindings should not need select.
-+
-+ allOf
-+  Optional. A list of other schemas to include. This is used to
-+  include other schemas the binding conforms to. This may be schemas for a
-+  particular class of devices such as I2C or SPI controllers.
-+
-+ properties
-+  A set of sub-schema defining all the DT properties for the
-+  binding. The exact schema syntax depends on whether properties are known,
-+  common properties (e.g. 'interrupts') or are binding/vendor specific properties.
-+
-+A property can also define a child DT node with child properties defined
-+under it.
-+
-+For more details on properties sections, see 'Property Schema' section.
-+
-+patternProperties
-+  Optional. Similar to 'properties', but names are regex.
-+
-+required
-+  A list of DT properties from the 'properties' section that
-+  must always be present.
-+
-+examples
-+  Optional. A list of one or more DTS hunks implementing the
-+  binding. Note: YAML doesn't allow leading tabs, so spaces must be used instead.
-+
-+Unless noted otherwise, all properties are required.
-+
-+Property Schema
-+---------------
-+
-+The 'properties' section of the schema contains all the DT properties for a
-+binding. Each property contains a set of constraints using json-schema
-+vocabulary for that property. The properties schemas are what is used for
-+validation of DT files.
-+
-+For common properties, only additional constraints not covered by the common
-+binding schema need to be defined such as how many values are valid or what
-+possible values are valid.
-+
-+Vendor specific properties will typically need more detailed schema. With the
-+exception of boolean properties, they should have a reference to a type in
-+schemas/types.yaml. A "description" property is always required.
-+
-+The Devicetree schemas don't exactly match the YAML encoded DT data produced by
-+dtc. They are simplified to make them more compact and avoid a bunch of
-+boilerplate. The tools process the schema files to produce the final schema for
-+validation. There are currently 2 transformations the tools perform.
-+
-+The default for arrays in json-schema is they are variable sized and allow more
-+entries than explicitly defined. This can be restricted by defining 'minItems',
-+'maxItems', and 'additionalItems'. However, for DeviceTree Schemas, a fixed
-+size is desired in most cases, so these properties are added based on the
-+number of entries in an 'items' list.
-+
-+The YAML Devicetree format also makes all string values an array and scalar
-+values a matrix (in order to define groupings) even when only a single value
-+is present. Single entries in schemas are fixed up to match this encoding.
-+
-+Testing
-+-------
-+
-+Dependencies
-+~~~~~~~~~~~~
-+
-+The DT schema project must be installed in order to validate the DT schema
-+binding documents and validate DTS files using the DT schema. The DT schema
-+project can be installed with pip::
-+
-+    pip3 install git+https://github.com/devicetree-org/dt-schema.git@master
-+
-+dtc must also be built with YAML output support enabled. This requires that
-+libyaml and its headers be installed on the host system.
-+
-+Running checks
-+~~~~~~~~~~~~~~
-+
-+The DT schema binding documents must be validated using the meta-schema (the
-+schema for the schema) to ensure they are both valid json-schema and valid
-+binding schema. All of the DT binding documents can be validated using the
-+``dt_binding_check`` target::
-+
-+    make dt_binding_check
-+
-+In order to perform validation of DT source files, use the `dtbs_check` target::
-+
-+    make dtbs_check
-+
-+This will first run the `dt_binding_check` which generates the processed schema.
-+
-+It is also possible to run checks with a single schema file by setting the
-+``DT_SCHEMA_FILES`` variable to a specific schema file.
-+
-+::
-+
-+    make dtbs_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/trivial-devices.yaml
-+
-+
-+json-schema Resources
-+---------------------
-+
-+
-+`JSON-Schema Specifications <http://json-schema.org/>`_
-+
-+`Using JSON Schema Book <http://usingjsonschema.com/>`_
-diff --git a/Documentation/filesystems/ubifs-authentication.md b/Documentation/filesystems/ubifs-authentication.rst
-similarity index 95%
-rename from Documentation/filesystems/ubifs-authentication.md
-rename to Documentation/filesystems/ubifs-authentication.rst
-index 23e698167141..6a9584f6ff46 100644
---- a/Documentation/filesystems/ubifs-authentication.md
-+++ b/Documentation/filesystems/ubifs-authentication.rst
-@@ -1,8 +1,11 @@
--% UBIFS Authentication
--% sigma star gmbh
--% 2018
-+:orphan:
- 
--# Introduction
-+.. UBIFS Authentication
-+.. sigma star gmbh
-+.. 2018
-+
-+Introduction
-+============
- 
- UBIFS utilizes the fscrypt framework to provide confidentiality for file
- contents and file names. This prevents attacks where an attacker is able to
-@@ -33,7 +36,8 @@ existing features like key derivation can be utilized. It should however also
- be possible to use UBIFS authentication without using encryption.
- 
- 
--## MTD, UBI & UBIFS
-+MTD, UBI & UBIFS
-+----------------
- 
- On Linux, the MTD (Memory Technology Devices) subsystem provides a uniform
- interface to access raw flash devices. One of the more prominent subsystems that
-@@ -47,7 +51,7 @@ UBIFS is a filesystem for raw flash which operates on top of UBI. Thus, wear
- leveling and some flash specifics are left to UBI, while UBIFS focuses on
- scalability, performance and recoverability.
- 
--
-+::
- 
- 	+------------+ +*******+ +-----------+ +-----+
- 	|            | * UBIFS * | UBI-BLOCK | | ... |
-@@ -84,7 +88,8 @@ persisted onto the flash directly. More details on UBIFS can also be found in
- [UBIFS-WP].
- 
- 
--### UBIFS Index & Tree Node Cache
-+UBIFS Index & Tree Node Cache
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- 
- Basic on-flash UBIFS entities are called *nodes*. UBIFS knows different types
- of nodes. Eg. data nodes (`struct ubifs_data_node`) which store chunks of file
-@@ -118,17 +123,18 @@ on-flash filesystem structures like the index. On every commit, the TNC nodes
- marked as dirty are written to the flash to update the persisted index.
- 
- 
--### Journal
-+Journal
-+~~~~~~~
- 
- To avoid wearing out the flash, the index is only persisted (*commited*) when
--certain conditions are met (eg. `fsync(2)`). The journal is used to record
-+certain conditions are met (eg. ``fsync(2)``). The journal is used to record
- any changes (in form of inode nodes, data nodes etc.) between commits
- of the index. During mount, the journal is read from the flash and replayed
- onto the TNC (which will be created on-demand from the on-flash index).
- 
- UBIFS reserves a bunch of LEBs just for the journal called *log area*. The
- amount of log area LEBs is configured on filesystem creation (using
--`mkfs.ubifs`) and stored in the superblock node. The log area contains only
-+``mkfs.ubifs``) and stored in the superblock node. The log area contains only
- two types of nodes: *reference nodes* and *commit start nodes*. A commit start
- node is written whenever an index commit is performed. Reference nodes are
- written on every journal update. Each reference node points to the position of
-@@ -152,6 +158,7 @@ done for the last referenced LEB of the journal. Only this can become corrupt
- because of a power cut. If the recovery fails, UBIFS will not mount. An error
- for every other LEB will directly cause UBIFS to fail the mount operation.
- 
-+::
- 
-        | ----    LOG AREA     ---- | ----------    MAIN AREA    ------------ |
- 
-@@ -172,10 +179,11 @@ for every other LEB will directly cause UBIFS to fail the mount operation.
-                           containing their buds
- 
- 
--### LEB Property Tree/Table
-+LEB Property Tree/Table
-+~~~~~~~~~~~~~~~~~~~~~~~
- 
- The LEB property tree is used to store per-LEB information. This includes the
--LEB type and amount of free and *dirty* (old, obsolete content) space [1] on
-+LEB type and amount of free and *dirty* (old, obsolete content) space [1]_ on
- the LEB. The type is important, because UBIFS never mixes index nodes with data
- nodes on a single LEB and thus each LEB has a specific purpose. This again is
- useful for free space calculations. See [UBIFS-WP] for more details.
-@@ -185,19 +193,21 @@ index. Due to its smaller size it is always written as one chunk on every
- commit. Thus, saving the LPT is an atomic operation.
- 
- 
--[1] Since LEBs can only be appended and never overwritten, there is a
--difference between free space ie. the remaining space left on the LEB to be
--written to without erasing it and previously written content that is obsolete
--but can't be overwritten without erasing the full LEB.
-+.. [1] Since LEBs can only be appended and never overwritten, there is a
-+   difference between free space ie. the remaining space left on the LEB to be
-+   written to without erasing it and previously written content that is obsolete
-+   but can't be overwritten without erasing the full LEB.
- 
- 
--# UBIFS Authentication
-+UBIFS Authentication
+diff --git a/Documentation/misc-devices/eeprom b/Documentation/misc-devices/eeprom.rst
+similarity index 76%
+rename from Documentation/misc-devices/eeprom
+rename to Documentation/misc-devices/eeprom.rst
+index ba692011f221..008249675ccc 100644
+--- a/Documentation/misc-devices/eeprom
++++ b/Documentation/misc-devices/eeprom.rst
+@@ -1,11 +1,17 @@
 +====================
+ Kernel driver eeprom
+ ====================
  
- This chapter introduces UBIFS authentication which enables UBIFS to verify
- the authenticity and integrity of metadata and file contents stored on flash.
+ Supported chips:
++
+   * Any EEPROM chip in the designated address range
++
+     Prefix: 'eeprom'
++
+     Addresses scanned: I2C 0x50 - 0x57
++
+     Datasheets: Publicly available from:
++
+                 Atmel (www.atmel.com),
+                 Catalyst (www.catsemi.com),
+                 Fairchild (www.fairchildsemi.com),
+@@ -16,7 +22,9 @@ Supported chips:
+                 Xicor (www.xicor.com),
+                 and others.
  
+-        Chip     Size (bits)    Address
++        ========= ============= ============================================
++        Chip      Size (bits)   Address
++        ========= ============= ============================================
+         24C01     1K            0x50 (shadows at 0x51 - 0x57)
+         24C01A    1K            0x50 - 0x57 (Typical device on DIMMs)
+         24C02     2K            0x50 - 0x57
+@@ -24,7 +32,7 @@ Supported chips:
+                                 (additional data at 0x51, 0x53, 0x55, 0x57)
+         24C08     8K            0x50, 0x54 (additional data at 0x51, 0x52,
+                                 0x53, 0x55, 0x56, 0x57)
+-        24C16    16K            0x50 (additional data at 0x51 - 0x57)
++        24C16     16K           0x50 (additional data at 0x51 - 0x57)
+         Sony      2K            0x57
  
--## Threat Model
-+Threat Model
-+------------
- 
- UBIFS authentication enables detection of offline data modification. While it
- does not prevent it, it enables (trusted) code to check the integrity and
-@@ -224,7 +234,8 @@ Additional measures like secure boot and trusted boot have to be taken to
- ensure that only trusted code is executed on a device.
- 
- 
--## Authentication
-+Authentication
-+--------------
- 
- To be able to fully trust data read from flash, all UBIFS data structures
- stored on flash are authenticated. That is:
-@@ -236,7 +247,8 @@ stored on flash are authenticated. That is:
- - The LPT which stores UBI LEB metadata which UBIFS uses for free space accounting
- 
- 
--### Index Authentication
-+Index Authentication
-+~~~~~~~~~~~~~~~~~~~~
- 
- Through UBIFS' concept of a wandering tree, it already takes care of only
- updating and persisting changed parts from leaf node up to the root node
-@@ -260,6 +272,7 @@ include a hash. All other types of nodes will remain unchanged. This reduces
- the storage overhead which is precious for users of UBIFS (ie. embedded
- devices).
- 
-+::
- 
-                              +---------------+
-                              |  Master Node  |
-@@ -303,7 +316,8 @@ hashes to index nodes does not change this since each hash will be persisted
- atomically together with its respective node.
- 
- 
--### Journal Authentication
-+Journal Authentication
-+~~~~~~~~~~~~~~~~~~~~~~
- 
- The journal is authenticated too. Since the journal is continuously written
- it is necessary to also add authentication information frequently to the
-@@ -316,7 +330,7 @@ of the hash chain. That way a journal can be authenticated up to the last
- authentication node. The tail of the journal which may not have a authentication
- node cannot be authenticated and is skipped during journal replay.
- 
--We get this picture for journal authentication:
-+We get this picture for journal authentication::
- 
-     ,,,,,,,,
-     ,......,...........................................
-@@ -352,7 +366,8 @@ the superblock struct. The superblock node is stored in LEB 0 and is only
- modified on feature flag or similar changes, but never on file changes.
+         Atmel     34C02B  2K    0x50 - 0x57, SW write protect at 0x30-37
+@@ -33,14 +41,15 @@ Supported chips:
+         Fairchild 34W02   2K    0x50 - 0x57, SW write protect at 0x30-37
+         Microchip 24AA52  2K    0x50 - 0x57, SW write protect at 0x30-37
+         ST        M34C02  2K    0x50 - 0x57, SW write protect at 0x30-37
++        ========= ============= ============================================
  
  
--### LPT Authentication
-+LPT Authentication
-+~~~~~~~~~~~~~~~~~~
+ Authors:
+-        Frodo Looijaard <frodol@dds.nl>,
+-        Philip Edelbrock <phil@netroedge.com>,
+-        Jean Delvare <jdelvare@suse.de>,
+-        Greg Kroah-Hartman <greg@kroah.com>,
+-        IBM Corp.
++        - Frodo Looijaard <frodol@dds.nl>,
++        - Philip Edelbrock <phil@netroedge.com>,
++        - Jean Delvare <jdelvare@suse.de>,
++        - Greg Kroah-Hartman <greg@kroah.com>,
++        - IBM Corp.
  
- The location of the LPT root node on the flash is stored in the UBIFS master
- node. Since the LPT is written and read atomically on every commit, there is
-@@ -363,7 +378,8 @@ be verified by verifying the authenticity of the master node and comparing the
- LTP hash stored there with the hash computed from the read on-flash LPT.
+ Description
+ -----------
+@@ -74,23 +83,25 @@ this address will write protect the memory array permanently, and the
+ device will no longer respond at the 0x30-37 address. The eeprom driver
+ does not support this register.
+ 
+-Lacking functionality:
++Lacking functionality
++---------------------
+ 
+ * Full support for larger devices (24C04, 24C08, 24C16). These are not
+-typically found on a PC. These devices will appear as separate devices at
+-multiple addresses.
++  typically found on a PC. These devices will appear as separate devices at
++  multiple addresses.
+ 
+ * Support for really large devices (24C32, 24C64, 24C128, 24C256, 24C512).
+-These devices require two-byte address fields and are not supported.
++  These devices require two-byte address fields and are not supported.
+ 
+ * Enable Writing. Again, no technical reason why not, but making it easy
+-to change the contents of the EEPROMs (on DIMMs anyway) also makes it easy
+-to disable the DIMMs (potentially preventing the computer from booting)
+-until the values are restored somehow.
++  to change the contents of the EEPROMs (on DIMMs anyway) also makes it easy
++  to disable the DIMMs (potentially preventing the computer from booting)
++  until the values are restored somehow.
+ 
+-Use:
++Use
++---
+ 
+ After inserting the module (and any other required SMBus/i2c modules), you
+-should have some EEPROM directories in /sys/bus/i2c/devices/* of names such
++should have some EEPROM directories in ``/sys/bus/i2c/devices/*`` of names such
+ as "0-0050". Inside each of these is a series of files, the eeprom file
+ contains the binary data from EEPROM.
+diff --git a/Documentation/misc-devices/ics932s401 b/Documentation/misc-devices/ics932s401.rst
+similarity index 94%
+rename from Documentation/misc-devices/ics932s401
+rename to Documentation/misc-devices/ics932s401.rst
+index bdac67ff6e3f..613ee54a9c21 100644
+--- a/Documentation/misc-devices/ics932s401
++++ b/Documentation/misc-devices/ics932s401.rst
+@@ -1,10 +1,15 @@
++========================
+ Kernel driver ics932s401
+-======================
++========================
+ 
+ Supported chips:
++
+   * IDT ICS932S401
++
+     Prefix: 'ics932s401'
++
+     Addresses scanned: I2C 0x69
++
+     Datasheet: Publicly available at the IDT website
+ 
+ Author: Darrick J. Wong
+diff --git a/Documentation/misc-devices/index.rst b/Documentation/misc-devices/index.rst
+index dfd1f45a3127..a57f92dfe49a 100644
+--- a/Documentation/misc-devices/index.rst
++++ b/Documentation/misc-devices/index.rst
+@@ -14,4 +14,9 @@ fit into other categories.
+ .. toctree::
+    :maxdepth: 2
+ 
++   eeprom
+    ibmvmc
++   ics932s401
++   isl29003
++   lis3lv02d
++   max6875
+diff --git a/Documentation/misc-devices/isl29003 b/Documentation/misc-devices/isl29003.rst
+similarity index 77%
+rename from Documentation/misc-devices/isl29003
+rename to Documentation/misc-devices/isl29003.rst
+index 80b952fd32ff..0cc38aed6c00 100644
+--- a/Documentation/misc-devices/isl29003
++++ b/Documentation/misc-devices/isl29003.rst
+@@ -1,10 +1,15 @@
++======================
+ Kernel driver isl29003
+-=====================
++======================
+ 
+ Supported chips:
++
+ * Intersil ISL29003
++
+ Prefix: 'isl29003'
++
+ Addresses scanned: none
++
+ Datasheet:
+ http://www.intersil.com/data/fn/fn7464.pdf
+ 
+@@ -37,25 +42,33 @@ Sysfs entries
+ -------------
+ 
+ range:
++        == ===========================
+ 	0: 0 lux to 1000 lux (default)
+ 	1: 0 lux to 4000 lux
+ 	2: 0 lux to 16,000 lux
+ 	3: 0 lux to 64,000 lux
++        == ===========================
+ 
+ resolution:
++        == =====================
+ 	0: 2^16 cycles (default)
+ 	1: 2^12 cycles
+ 	2: 2^8 cycles
+ 	3: 2^4 cycles
++        == =====================
+ 
+ mode:
++        == =================================================
+ 	0: diode1's current (unsigned 16bit) (default)
+ 	1: diode1's current (unsigned 16bit)
+ 	2: difference between diodes (l1 - l2, signed 15bit)
++        == =================================================
+ 
+ power_state:
++        == =================================================
+ 	0: device is disabled (default)
+ 	1: device is enabled
++        == =================================================
+ 
+ lux (read only):
+ 	returns the value from the last sensor reading
+diff --git a/Documentation/misc-devices/lis3lv02d b/Documentation/misc-devices/lis3lv02d.rst
+similarity index 90%
+rename from Documentation/misc-devices/lis3lv02d
+rename to Documentation/misc-devices/lis3lv02d.rst
+index f89960a0ff95..959bd2b822cf 100644
+--- a/Documentation/misc-devices/lis3lv02d
++++ b/Documentation/misc-devices/lis3lv02d.rst
+@@ -1,3 +1,4 @@
++=======================
+ Kernel driver lis3lv02d
+ =======================
+ 
+@@ -8,8 +9,8 @@ Supported chips:
+     LIS331DLH (16 bits)
+ 
+ Authors:
+-        Yan Burman <burman.yan@gmail.com>
+-	Eric Piel <eric.piel@tremplin-utc.net>
++        - Yan Burman <burman.yan@gmail.com>
++	- Eric Piel <eric.piel@tremplin-utc.net>
  
  
--## Key Management
-+Key Management
-+--------------
+ Description
+@@ -25,11 +26,15 @@ neverball). The accelerometer data is readable via
+ to mg values (1/1000th of earth gravity).
  
- For simplicity, UBIFS authentication uses a single key to compute the HMACs
- of superblock, master, commit start and reference nodes. This key has to be
-@@ -399,7 +415,8 @@ approach is similar to the approach proposed for fscrypt encryption policy v2
- [FSCRYPT-POLICY2].
+ Sysfs attributes under /sys/devices/platform/lis3lv02d/:
+-position - 3D position that the accelerometer reports. Format: "(x,y,z)"
+-rate - read reports the sampling rate of the accelerometer device in HZ.
++
++position
++      - 3D position that the accelerometer reports. Format: "(x,y,z)"
++rate
++      - read reports the sampling rate of the accelerometer device in HZ.
+ 	write changes sampling rate of the accelerometer device.
+ 	Only values which are supported by HW are accepted.
+-selftest - performs selftest for the chip as specified by chip manufacturer.
++selftest
++      - performs selftest for the chip as specified by chip manufacturer.
+ 
+ This driver also provides an absolute input class device, allowing
+ the laptop to act as a pinball machine-esque joystick. Joystick device can be
+@@ -69,11 +74,12 @@ Axes orientation
+ For better compatibility between the various laptops. The values reported by
+ the accelerometer are converted into a "standard" organisation of the axes
+ (aka "can play neverball out of the box"):
++
+  * When the laptop is horizontal the position reported is about 0 for X and Y
+-	and a positive value for Z
++   and a positive value for Z
+  * If the left side is elevated, X increases (becomes positive)
+  * If the front side (where the touchpad is) is elevated, Y decreases
+-	(becomes negative)
++   (becomes negative)
+  * If the laptop is put upside-down, Z becomes negative
+ 
+ If your laptop model is not recognized (cf "dmesg"), you can send an
+diff --git a/Documentation/misc-devices/max6875 b/Documentation/misc-devices/max6875.rst
+similarity index 83%
+rename from Documentation/misc-devices/max6875
+rename to Documentation/misc-devices/max6875.rst
+index 2f2bd0b17b5d..ad419ac22a5b 100644
+--- a/Documentation/misc-devices/max6875
++++ b/Documentation/misc-devices/max6875.rst
+@@ -1,12 +1,16 @@
++=====================
+ Kernel driver max6875
+ =====================
+ 
+ Supported chips:
++
+   * Maxim MAX6874, MAX6875
++
+     Prefix: 'max6875'
++
+     Addresses scanned: None (see below)
+-    Datasheet:
+-        http://pdfserv.maxim-ic.com/en/ds/MAX6874-MAX6875.pdf
++
++    Datasheet: http://pdfserv.maxim-ic.com/en/ds/MAX6874-MAX6875.pdf
+ 
+ Author: Ben Gardner <bgardner@wabtec.com>
+ 
+@@ -24,9 +28,13 @@ registers.
+ 
+ The Maxim MAX6874 is a similar, mostly compatible device, with more inputs
+ and outputs:
+-             vin     gpi    vout
++
++===========  ===     ===    ====
++-            vin     gpi    vout
++===========  ===     ===    ====
+ MAX6874        6       4       8
+ MAX6875        4       3       5
++===========  ===     ===    ====
+ 
+ See the datasheet for more information.
+ 
+@@ -41,13 +49,16 @@ General Remarks
+ ---------------
+ 
+ Valid addresses for the MAX6875 are 0x50 and 0x52.
++
+ Valid addresses for the MAX6874 are 0x50, 0x52, 0x54 and 0x56.
++
+ The driver does not probe any address, so you explicitly instantiate the
+ devices.
+ 
+-Example:
+-$ modprobe max6875
+-$ echo max6875 0x50 > /sys/bus/i2c/devices/i2c-0/new_device
++Example::
++
++  $ modprobe max6875
++  $ echo max6875 0x50 > /sys/bus/i2c/devices/i2c-0/new_device
+ 
+ The MAX6874/MAX6875 ignores address bit 0, so this driver attaches to multiple
+ addresses.  For example, for address 0x50, it also reserves 0x51.
+@@ -58,52 +69,67 @@ Programming the chip using i2c-dev
+ ----------------------------------
+ 
+ Use the i2c-dev interface to access and program the chips.
++
+ Reads and writes are performed differently depending on the address range.
+ 
+ The configuration registers are at addresses 0x00 - 0x45.
++
+ Use i2c_smbus_write_byte_data() to write a register and
+ i2c_smbus_read_byte_data() to read a register.
++
+ The command is the register number.
+ 
+ Examples:
+-To write a 1 to register 0x45:
++
++To write a 1 to register 0x45::
++
+   i2c_smbus_write_byte_data(fd, 0x45, 1);
+ 
+-To read register 0x45:
++To read register 0x45::
++
+   value = i2c_smbus_read_byte_data(fd, 0x45);
  
  
--# Future Extensions
-+Future Extensions
-+=================
+ The configuration EEPROM is at addresses 0x8000 - 0x8045.
++
+ The user EEPROM is at addresses 0x8100 - 0x82ff.
  
- In certain cases where a vendor wants to provide an authenticated filesystem
- image to customers, it should be possible to do so without sharing the secret
-@@ -411,7 +428,8 @@ to the way the IMA/EVM subsystem deals with such situations. The HMAC key
- will then have to be provided beforehand in the normal way.
+ Use i2c_smbus_write_word_data() to write a byte to EEPROM.
+ 
+ The command is the upper byte of the address: 0x80, 0x81, or 0x82.
+-The data word is the lower part of the address or'd with data << 8.
++The data word is the lower part of the address or'd with data << 8::
++
+   cmd = address >> 8;
+   val = (address & 0xff) | (data << 8);
+ 
+ Example:
+-To write 0x5a to address 0x8003:
++
++To write 0x5a to address 0x8003::
++
+   i2c_smbus_write_word_data(fd, 0x80, 0x5a03);
  
  
--# References
-+References
-+==========
+ Reading data from the EEPROM is a little more complicated.
++
+ Use i2c_smbus_write_byte_data() to set the read address and then
+ i2c_smbus_read_byte() or i2c_smbus_read_i2c_block_data() to read the data.
  
- [CRYPTSETUP2]        http://www.saout.de/pipermail/dm-crypt/2017-November/005745.html
+ Example:
+-To read data starting at offset 0x8100, first set the address:
++
++To read data starting at offset 0x8100, first set the address::
++
+   i2c_smbus_write_byte_data(fd, 0x81, 0x00);
  
+-And then read the data
++And then read the data::
++
+   value = i2c_smbus_read_byte(fd);
+ 
+-  or
++or::
+ 
+   count = i2c_smbus_read_i2c_block_data(fd, 0x84, 16, buffer);
+ 
+ The block read should read 16 bytes.
++
+ 0x84 is the block read command.
+ 
+ See the datasheet for more details.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index a49698b3becd..5d4da1035a03 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -8956,7 +8956,7 @@ F:	include/linux/leds.h
+ LEGACY EEPROM DRIVER
+ M:	Jean Delvare <jdelvare@suse.com>
+ S:	Maintained
+-F:	Documentation/misc-devices/eeprom
++F:	Documentation/misc-devices/eeprom.rst
+ F:	drivers/misc/eeprom/eeprom.c
+ 
+ LEGO MINDSTORMS EV3
+@@ -9242,7 +9242,7 @@ F:	Documentation/memory-barriers.txt
+ LIS3LV02D ACCELEROMETER DRIVER
+ M:	Eric Piel <eric.piel@tremplin-utc.net>
+ S:	Maintained
+-F:	Documentation/misc-devices/lis3lv02d
++F:	Documentation/misc-devices/lis3lv02d.rst
+ F:	drivers/misc/lis3lv02d/
+ F:	drivers/platform/x86/hp_accel.c
+ 
+diff --git a/drivers/misc/isl29003.c b/drivers/misc/isl29003.c
+index 5d0d0c3bad85..c12406f610d5 100644
+--- a/drivers/misc/isl29003.c
++++ b/drivers/misc/isl29003.c
+@@ -3,7 +3,7 @@
+  *  isl29003.c - Linux kernel module for
+  * 	Intersil ISL29003 ambient light sensor
+  *
+- *  See file:Documentation/misc-devices/isl29003
++ *  See file:Documentation/misc-devices/isl29003.rst
+  *
+  *  Copyright (c) 2009 Daniel Mack <daniel@caiaq.de>
+  *
+diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+index e09aa0087024..7fdfe107fe33 100644
+--- a/drivers/platform/x86/Kconfig
++++ b/drivers/platform/x86/Kconfig
+@@ -341,7 +341,7 @@ config HP_ACCEL
+ 
+ 	  Support for a led indicating disk protection will be provided as
+ 	  hp::hddprotect. For more information on the feature, refer to
+-	  Documentation/misc-devices/lis3lv02d.
++	  Documentation/misc-devices/lis3lv02d.rst.
+ 
+ 	  To compile this driver as a module, choose M here: the module will
+ 	  be called hp_accel.
 -- 
 2.21.0
 
