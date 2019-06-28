@@ -2,166 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFD025A524
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 21:29:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABF395A52B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 21:34:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726889AbfF1T30 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 15:29:26 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:35249 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726643AbfF1T30 (ORCPT
+        id S1726871AbfF1Tev (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 15:34:51 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:36745 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726497AbfF1Tev (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 15:29:26 -0400
-Received: by mail-pl1-f194.google.com with SMTP id w24so3782471plp.2
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2019 12:29:25 -0700 (PDT)
+        Fri, 28 Jun 2019 15:34:51 -0400
+Received: by mail-pl1-f196.google.com with SMTP id k8so3793442plt.3
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2019 12:34:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=Hh7rxUwesW9kHyHoI29Fe2G8YeIM6SECUuA2SV2qpnc=;
-        b=LtVR7QBOHZpCFxBpAaGPfkCN0pix92vR4RqOK/JwMbQdRwdP+36fFpY0fsb/3/DosY
-         o8dqFBvHlkEviuoJLk/+txGWq4wUWJA/Ql5PVKMwNCvMBP0AOl4nbCqNuE1hZmsf+M/t
-         uVkmFixyF4x5TKAXMyfA+/OhKD5MSR9Qqz2aY=
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=EKxLa9hnb5xkY364WafvE1Ug+KyOxqGtL7a6TmMgs9A=;
+        b=a4Ocormi31rfgzjThkpX8okXS+lYlZmn0QcdifvMi+UbvpFL9Gie9lO5dB5KcFGeRY
+         p2IMoo9+u4aWWKIpN9pkEQblyzGV/btumv4tMf6KQcbcsiC/YnwZsfsJzONKt3iwn+ys
+         BO9lYzn7ZJpOjRj3dCtNv6rltCHNcJS5sLXIw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=Hh7rxUwesW9kHyHoI29Fe2G8YeIM6SECUuA2SV2qpnc=;
-        b=EXN+jCMkzazSQjmzMFxfxxp0k5E9oTBF7F4+trOVq0nbyYoAlCHNABUH+n9x5LE7sx
-         rI8/vBXmMip/eeQzDL4fGBQceIopRIXjGVCBWXnHRrTU/OWiVDzKdPtkLPOSjSvMp36V
-         QCRls3Nh0IOOJTr5tROUEPUsdpAIp5A1d5+zkyY+OD+5baERN7KBQNtOUfykwJZnZ+VK
-         qIz43XcY8onF9asuhGi1cMgS8xn98//oe/y+Y/JOHfcc3/ardwk87XHyH/ENCnEmqV05
-         /qegE3O1mHVFuPadRWspfR7rzPWzdbU2chemxUTLJqEL/991KvLl17b2TvavFSByM0x/
-         ewfg==
-X-Gm-Message-State: APjAAAU9gH7MFHi+bmj/iNnQzc0M/s2XwINCrG9DpxTXiivtZuJTbXLz
-        dR3lO10FAZC+eV33BelYZ7NW+A==
-X-Google-Smtp-Source: APXvYqw/RAipZ7HKNtBiz+dKctZgmT9smvE1KKhJtbwSIXYuO2sFs2HqlA6T6EnnPy549whi8Ij2hw==
-X-Received: by 2002:a17:902:f082:: with SMTP id go2mr14218583plb.25.1561750165328;
-        Fri, 28 Jun 2019 12:29:25 -0700 (PDT)
-Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id j13sm3006904pfh.13.2019.06.28.12.29.24
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=EKxLa9hnb5xkY364WafvE1Ug+KyOxqGtL7a6TmMgs9A=;
+        b=Wk02qOv+YE4q6mwlaGbv5puwl1gEi1FNpKDGgfBMOhBVHk8ZmwCUs0nMiJvxYyaR1K
+         PYtVx1rrUMCrRIlPJ0IhEhk0rJWPz+n6AuSX9hvGVypXjHkiwNHkxEu+r72FQeqRY6IL
+         TWN3qGcE+Q6pDm8LC1o2o4zGerAoirfpZpAcwfeLerzAZPs3mae3ra1bwbMeZ20ovfoc
+         nN5n2UrIA/hdI2fi1uqz4niH//cx35XstLCrAxqmM/b3OznUg9aQgvrlsVYFtE88e9Uh
+         tgh1ayc5A55lOVb3kwpjaIi3tYY1z3O3i9w2BlWX5wbvx9M4UyXoE2wuu2fSV8ti6Hua
+         iF6Q==
+X-Gm-Message-State: APjAAAUXlyxJBRwRcSmywodXk+Pt5RzSGIkIGV2RJJ0FazZ5pq3DpDjw
+        L490ho6HfsoDC2K/SJHYz+hgKRD9lZE8Bw==
+X-Google-Smtp-Source: APXvYqzG3hNnHjXkcQ3M+rogMmYvVt8Hga/QqKbzvLJhHfTm5UKcft5ek1E8wem2/fDUttYg17F1Zw==
+X-Received: by 2002:a17:902:848b:: with SMTP id c11mr13466303plo.217.1561750490161;
+        Fri, 28 Jun 2019 12:34:50 -0700 (PDT)
+Received: from joelaf.cam.corp.google.com ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id 27sm2581900pgt.6.2019.06.28.12.34.47
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 28 Jun 2019 12:29:24 -0700 (PDT)
-Date:   Fri, 28 Jun 2019 15:29:23 -0400
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
-Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        rcu <rcu@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>
-Subject: Re: [RFC] Deadlock via recursive wakeup via RCU with threadirqs
-Message-ID: <20190628192923.GB89956@google.com>
-References: <20190627155506.GU26519@linux.ibm.com>
- <CAEXW_YSEN_OL3ftTLN=M-W70WSuCgHJqU-R9VhS=A3uVj_AL+A@mail.gmail.com>
- <20190627173831.GW26519@linux.ibm.com>
- <20190627181638.GA209455@google.com>
- <20190627184107.GA26519@linux.ibm.com>
- <20190628164008.GB240964@google.com>
- <20190628164559.GC240964@google.com>
- <20190628173011.GX26519@linux.ibm.com>
- <20190628174545.pwgwi3wxl2eapkvm@linutronix.de>
- <20190628182216.GY26519@linux.ibm.com>
+        Fri, 28 Jun 2019 12:34:49 -0700 (PDT)
+From:   "Joel Fernandes (Google)" <joel@joelfernandes.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        mathieu.desnoyers@efficios.com, willy@infradead.org,
+        peterz@infradead.org, will.deacon@arm.com,
+        paulmck@linux.vnet.ibm.com, elena.reshetova@intel.com,
+        keescook@chromium.org, kernel-team@android.com,
+        kernel-hardening@lists.openwall.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: [PATCH v2] Convert struct pid count to refcount_t
+Date:   Fri, 28 Jun 2019 15:34:42 -0400
+Message-Id: <20190628193442.94745-1-joel@joelfernandes.org>
+X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190628182216.GY26519@linux.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 28, 2019 at 11:22:16AM -0700, Paul E. McKenney wrote:
-> On Fri, Jun 28, 2019 at 07:45:45PM +0200, Sebastian Andrzej Siewior wrote:
-> > On 2019-06-28 10:30:11 [-0700], Paul E. McKenney wrote:
-> > > > I believe the .blocked field remains set even though we are not any more in a
-> > > > reader section because of deferred processing of the blocked lists that you
-> > > > mentioned yesterday.
-> > > 
-> > > That can indeed happen.  However, in current -rcu, that would mean
-> > > that .deferred_qs is also set, which (if in_irq()) would prevent
-> > > the raise_softirq_irqsoff() from being invoked.  Which was why I was
-> > > asking the questions about whether in_irq() returns true within threaded
-> > > interrupts yesterday.  If it does, I need to find if there is some way
-> > > of determining whether rcu_read_unlock_special() is being called from
-> > > a threaded interrupt in order to suppress the call to raise_softirq()
-> > > in that case.
-> > 
-> > Please not that:
-> > | void irq_exit(void)
-> > | {
-> > |…
-> > in_irq() returns true
-> > |         preempt_count_sub(HARDIRQ_OFFSET);
-> > in_irq() returns false
-> > |         if (!in_interrupt() && local_softirq_pending())
-> > |                 invoke_softirq();
-> > 
-> > -> invoke_softirq() does
-> > |        if (!force_irqthreads) {
-> > |                 __do_softirq();
-> > |         } else {
-> > |                 wakeup_softirqd();
-> > |         }
-> > 
-> > so for `force_irqthreads' rcu_read_unlock_special() within
-> > wakeup_softirqd() will see false.
-> 
-> OK, fair point.  How about the following instead, again on -rcu?
-> 
-> Here is the rationale for the new version of the "if" statement:
-> 
-> 1.	irqs_were_disabled:  If interrupts are enabled, we should
-> 	instead let the upcoming irq_enable()/local_bh_enable()
-> 	do the rescheduling for us.
-> 2.	use_softirq: If we aren't using softirq, then
-> 	raise_softirq_irqoff() will be unhelpful.
-> 3a.	in_interrupt(): If this returns true, the subsequent
-> 	call to raise_softirq_irqoff() is guaranteed not to
-> 	do a wakeup, so that call will be both very cheap and
-> 	quite safe.
-> 3b.	Otherwise, if !in_interrupt(), if exp (an expedited RCU grace
-> 	period is being blocked), then incurring wakeup overhead
-> 	is worthwhile, and if also !.deferred_qs then scheduler locks
-> 	cannot be held so the wakeup will be safe.
-> 
-> Does that make more sense?
+struct pid's count is an atomic_t field used as a refcount. Use
+refcount_t for it which is basically atomic_t but does additional
+checking to prevent use-after-free bugs.
 
-This makes a lot of sense. It would be nice to stick these comments on top of
-rcu_read_unlock_special() for future reference.
+For memory ordering, the only change is with the following:
+ -	if ((atomic_read(&pid->count) == 1) ||
+ -	     atomic_dec_and_test(&pid->count)) {
+ +	if (refcount_dec_and_test(&pid->count)) {
+ 		kmem_cache_free(ns->pid_cachep, pid);
 
-thanks,
+Here the change is from:
+Fully ordered --> RELEASE + ACQUIRE (as per refcount-vs-atomic.rst)
+This ACQUIRE should take care of making sure the free happens after the
+refcount_dec_and_test().
 
- - Joel
+The above hunk also removes atomic_read() since it is not needed for the
+code to work and it is unclear how beneficial it is. The removal lets
+refcount_dec_and_test() check for cases where get_pid() happened before
+the object was freed.
 
+Cc: mathieu.desnoyers@efficios.com
+Cc: willy@infradead.org
+Cc: peterz@infradead.org
+Cc: will.deacon@arm.com
+Cc: paulmck@linux.vnet.ibm.com
+Cc: elena.reshetova@intel.com
+Cc: keescook@chromium.org
+Cc: kernel-team@android.com
+Cc: kernel-hardening@lists.openwall.com
+Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 
-> 
-> 							Thanx, Paul
-> 
-> ------------------------------------------------------------------------
-> 
-> diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-> index 82c925df1d92..83333cfe8707 100644
-> --- a/kernel/rcu/tree_plugin.h
-> +++ b/kernel/rcu/tree_plugin.h
-> @@ -624,8 +624,9 @@ static void rcu_read_unlock_special(struct task_struct *t)
->  		      (rdp->grpmask & rnp->expmask) ||
->  		      tick_nohz_full_cpu(rdp->cpu);
->  		// Need to defer quiescent state until everything is enabled.
-> -		if ((exp || in_irq()) && irqs_were_disabled && use_softirq &&
-> -		    (in_irq() || !t->rcu_read_unlock_special.b.deferred_qs)) {
-> +		if (irqs_were_disabled && use_softirq &&
-> +		    (in_interrupt() ||
-> +		     (exp && !t->rcu_read_unlock_special.b.deferred_qs))) {
->  			// Using softirq, safe to awaken, and we get
->  			// no help from enabling irqs, unlike bh/preempt.
->  			raise_softirq_irqoff(RCU_SOFTIRQ);
-> 
+---
+Only change from v1->v2 is to get rid of the atomic_read().
+
+ include/linux/pid.h | 5 +++--
+ kernel/pid.c        | 7 +++----
+ 2 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/include/linux/pid.h b/include/linux/pid.h
+index 14a9a39da9c7..8cb86d377ff5 100644
+--- a/include/linux/pid.h
++++ b/include/linux/pid.h
+@@ -3,6 +3,7 @@
+ #define _LINUX_PID_H
+ 
+ #include <linux/rculist.h>
++#include <linux/refcount.h>
+ 
+ enum pid_type
+ {
+@@ -56,7 +57,7 @@ struct upid {
+ 
+ struct pid
+ {
+-	atomic_t count;
++	refcount_t count;
+ 	unsigned int level;
+ 	/* lists of tasks that use this pid */
+ 	struct hlist_head tasks[PIDTYPE_MAX];
+@@ -69,7 +70,7 @@ extern struct pid init_struct_pid;
+ static inline struct pid *get_pid(struct pid *pid)
+ {
+ 	if (pid)
+-		atomic_inc(&pid->count);
++		refcount_inc(&pid->count);
+ 	return pid;
+ }
+ 
+diff --git a/kernel/pid.c b/kernel/pid.c
+index 20881598bdfa..89c4849fab5d 100644
+--- a/kernel/pid.c
++++ b/kernel/pid.c
+@@ -37,7 +37,7 @@
+ #include <linux/init_task.h>
+ #include <linux/syscalls.h>
+ #include <linux/proc_ns.h>
+-#include <linux/proc_fs.h>
++#include <linux/refcount.h>
+ #include <linux/sched/task.h>
+ #include <linux/idr.h>
+ 
+@@ -106,8 +106,7 @@ void put_pid(struct pid *pid)
+ 		return;
+ 
+ 	ns = pid->numbers[pid->level].ns;
+-	if ((atomic_read(&pid->count) == 1) ||
+-	     atomic_dec_and_test(&pid->count)) {
++	if (refcount_dec_and_test(&pid->count)) {
+ 		kmem_cache_free(ns->pid_cachep, pid);
+ 		put_pid_ns(ns);
+ 	}
+@@ -210,7 +209,7 @@ struct pid *alloc_pid(struct pid_namespace *ns)
+ 	}
+ 
+ 	get_pid_ns(ns);
+-	atomic_set(&pid->count, 1);
++	refcount_set(&pid->count, 1);
+ 	for (type = 0; type < PIDTYPE_MAX; ++type)
+ 		INIT_HLIST_HEAD(&pid->tasks[type]);
+ 
+-- 
+2.22.0.410.gd8fdbe21b5-goog
