@@ -2,143 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D44859D07
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 15:36:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 508C459858
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 12:26:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726913AbfF1Ngd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 09:36:33 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:43256 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726616AbfF1NgZ (ORCPT
+        id S1726729AbfF1K0w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 06:26:52 -0400
+Received: from sonic309-42.consmr.mail.bf2.yahoo.com ([74.6.129.216]:35704
+        "EHLO sonic309-42.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726502AbfF1K0v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 09:36:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
-        Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=vnE+x2ECRCteGktx7zBzJWESW14d+4IL+cy0q0uzTns=; b=cn9+BQDxkRTs0PCdZAnuNiaXKG
-        y1cqbEMAkbqkRszRWPcP6YuKfw8hR84HEi1VKNEquWIUQcwltqduhSyoFrNHgCRoPNTOsuKh4eluH
-        GQ3+Rw5rT6vwQ+t/SnyIyW9pqp03oxOBTMsW3LLPjmzGWollv/EPbLypAXmwWTWddwtuZIv7uHv9g
-        rcpNBoh48etcn8SKckpXSdroxMCpOdrOJgt120WuNzRwLYwZFzylthWhCzHFkeH9HErWc45oBBssK
-        Rmis6oBhfj+wzgBRvKdadRyVDjY2CEgb+jGJF4bFe0qOHL7tgvE0e1M2Jzi9cljYVWNWLGctxk0iM
-        ZE47IIcA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hgr2s-0000nG-Ht; Fri, 28 Jun 2019 13:36:07 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 9A77D20AB8995; Fri, 28 Jun 2019 15:36:03 +0200 (CEST)
-Message-Id: <20190628103224.888336008@infradead.org>
-User-Agent: quilt/0.65
-Date:   Fri, 28 Jun 2019 12:21:21 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     x86@kernel.org, peterz@infradead.org, linux-kernel@vger.kernel.org
-Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Jason Baron <jbaron@akamai.com>, Nadav Amit <namit@vmware.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Subject: [RFC][PATCH 8/8] jump_label, x86: Enable JMP8/NOP2 support
-References: <20190628102113.360432762@infradead.org>
+        Fri, 28 Jun 2019 06:26:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1561717610; bh=j5mdRk0FDy84HzZpdNEePcyF7efRPWFS/pXKk6qNhnM=; h=Date:From:Reply-To:Subject:From:Subject; b=scSeIzHu23iG1oS5sg9IBk6d5FlIZdDroi44dxQTxsEBv9Kw6uRb83G7nnRqfjbD9gw5qcA+5lNZvqE9zr+vZDHukLBzJPknwvXnwRMqbYaAqeumNZCN8xxRbPeybc0FNhPYF5ZMp9IFfrTzKO8yE8KqjC0hLsZ7+QWRwnJneSVBWp9NYYJNtLHZnvkUdqAa2EqVsfspNCItPMmVSx9463a5t1d6ybo8X9Kd71CXUw20srHd1Al6JhXHACxyHLt3k56m8k+qMK9gF+qLj7XJmmy/80byaaQCSryNuQObBHr0Q9SBHaheYuTDDTnGZuOM3wO8fhzGkNYxK5ChrLivJQ==
+X-YMail-OSG: HG2Ui.cVM1kYoPQAxYnJUUinwYSVEWSvRf4WaqVSHVJtSTEb7pyob8UclnRrv8j
+ coFH3LzZuXGMqR5Spstq.6eb4spcEfBoUgc7KyaTxSMWUpT2ZcHA9ORrsc6HwBzuNubVkgiauPSV
+ u_p_XT9_fA1e_7FLqyDsN4KQ9A53rNiTve88R4upTORzEIvJhIhmmINu5eRqH7A8VRGtFvOEFp1V
+ hJr9ncu9NFW1shwj9k44OwTVAtUwZ7RUVIZ6hC0nnuMwlXQJ05jmQdrmYEaQ2yC72tiZXm_XcLDY
+ hX5y1BpqJHVZq8SzIVi4H1DYJGETAKwVcY_YxZfUvr6_n0wRfOv0WlSEkEbgDcCdR9Wb2bLJP_8m
+ XV_pjTT4slWw4CI53z6E8IyvfqYUWtP.irLlqfCXlJeD.g.cO6ANR5y6LvmFFb9OnTCF8A58bubx
+ gdjPFWsClKMBIFcL_5nyZe5vZ49xZRE8B8ScyxLpskoxnAJxDsxisYUjJYp6ZaPKGlpIqMvKuZnJ
+ jLooxtw_5uAvFJvBrAjVoNhOZiK5cIPE.uW11961WwmnkL1Bo8B7u.dhxHenRycQzsZ2w3imLo1n
+ 1y93Y7255Q0_Rh_iwkX6HBSx3xZA2yMczLM.62in.d3tZ1m5Zkxp4spuey6PrtHEQ4SfY9PnJHxf
+ qMDNJravPyMzILHhbIqrl59GX.lV8AatTiK9BDgj6RVycBetjKxG0DUt8T9Mcrz0sjXIhClvi2oA
+ tY9z4JdzxI.KFQElIZyfpc9rOHtVzG8bJKn4Y8Rwk9GejAwwqWXYqfuEUWKL6bp6NC0ANi67AbFk
+ FkCh.gJyF0_znNBcp60WUk3exMfC5Vb.8dxZFcT0KtZIILMRq6kZjAjrO_vcXcZWd1wuHo9oegoX
+ 0t7MsTVsDqYglEQ23YJr3gHNc4f9qNYRA1dSdqUZ5u.m4nUgx.zbAKEmVC7Mn69pXNO0Vj15CHqg
+ XSlRhQcQr8dFkKzZWWftVymAbxC7AoytWrbGtCDPH6P5H0m4XnAWccj27rGYulLv09XxQ41nOB.c
+ 5ijUlkjZwdPmE0k.O6lQiK6TtKoKhWCbN9ZOe4fH2sKMBcwoq4UQY2cWGlxcpp5DHz6exq7iO9QS
+ t3qZ71lBpfIh02KK00EXMiYYRdZ7gwawPxT.dvs_U_lGmuNAIoS9Pt8vUIX0BPzPcduzI5uYAR.8
+ 0al9.wwGFNei5ExaCdnFZz3aWtHQSnW_YCpakcVhb9je1qYiH.fvru_WGymm8unVbYVVpQhCr3e.
+ 9a_X7ZFh3KDW2t7K00jlnSlVUmIcwo0qg8NzjZdy0LIk0gbo-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.bf2.yahoo.com with HTTP; Fri, 28 Jun 2019 10:26:50 +0000
+Date:   Fri, 28 Jun 2019 10:24:49 +0000 (UTC)
+From:   Mrs Alice Johnson <davidmark6682@gmail.com>
+Reply-To: mrsalicejohnson4@gmail.com
+Message-ID: <1145470982.120669.1561717489232@mail.yahoo.com>
+Subject: Dear Friend,
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable and emit short JMP/NOP jump_label entries.
-
-Much thanks to Josh for (re)discovering the .skip trick to
-conditionally emit variable length text.
-
-Due to how early we enable jump_labels on x86, if any of this comes
-apart, the machine is completely dead. Qemu+GDB saved the day this
-time.
-
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- arch/x86/include/asm/jump_label.h |   37 +++++++++++++++++++++++++++++++------
- arch/x86/kernel/jump_label.c      |    5 ++++-
- 2 files changed, 35 insertions(+), 7 deletions(-)
-
---- a/arch/x86/include/asm/jump_label.h
-+++ b/arch/x86/include/asm/jump_label.h
-@@ -31,7 +31,35 @@
- static __always_inline bool arch_static_branch(struct static_key *key, bool branch)
- {
- 	asm_volatile_goto("1:"
--		".byte " __stringify(STATIC_KEY_INIT_NOP) "\n\t"
-+
-+		".set disp, %l[l_yes] - (1b + 2) \n\t"
-+		".set sign, disp >> 31 \n\t"
-+		".set res, (disp >> 7) ^ sign \n\t"
-+		".set is_byte, -(res == 0) \n\t"
-+		".set is_long, -(res != 0) \n\t"
-+
-+#ifdef CONFIG_X86_64
-+		".skip is_byte, 0x66 \n\t"
-+		".skip is_byte, 0x90 \n\t"
-+#else
-+		".skip is_byte, 0x89 \n\t"
-+		".skip is_byte, 0xf6 \n\t"
-+#endif
-+
-+#ifdef CONFIG_X86_64
-+		".skip is_long, 0x0f \n\t"
-+		".skip is_long, 0x1f \n\t"
-+		".skip is_long, 0x44 \n\t"
-+		".skip is_long, 0x00 \n\t"
-+		".skip is_long, 0x00 \n\t"
-+#else
-+		".skip is_long, 0x3e \n\t"
-+		".skip is_long, 0x8d \n\t"
-+		".skip is_long, 0x74 \n\t"
-+		".skip is_long, 0x26 \n\t"
-+		".skip is_long, 0x00 \n\t"
-+#endif
-+
- 		JUMP_TABLE_ENTRY
- 		: :  "i" (key), "i" (branch) : : l_yes);
- 
-@@ -43,8 +71,7 @@ static __always_inline bool arch_static_
- static __always_inline bool arch_static_branch_jump(struct static_key *key, bool branch)
- {
- 	asm_volatile_goto("1:"
--		".byte 0xe9 \n\t"
--		".long %l[l_yes] - (. + 4) \n\t"
-+		"jmp %l[l_yes] \n\t"
- 		JUMP_TABLE_ENTRY
- 		: :  "i" (key), "i" (branch) : : l_yes);
- 
-@@ -59,9 +86,7 @@ extern int arch_jump_entry_size(struct j
- 
- .macro STATIC_BRANCH_FALSE_LIKELY target, key
- .Lstatic_jump_\@:
--	/* Equivalent to "jmp.d32 \target" */
--	.byte		0xe9
--	.long		\target - (. + 4)
-+	jmp \target
- 
- 	.pushsection __jump_table, "aw"
- 	_ASM_ALIGN
---- a/arch/x86/kernel/jump_label.c
-+++ b/arch/x86/kernel/jump_label.c
-@@ -29,7 +29,10 @@ union jump_code_union {
- 
- static inline bool __jump_disp_is_byte(s32 disp)
- {
--	return false;
-+	s32 sign;
-+	disp -= JMP8_INSN_SIZE;
-+	sign = disp >> 31;
-+	return ((disp >> 7) ^ sign) == 0;
- }
- 
- int arch_jump_entry_size(struct jump_entry *entry)
 
 
+Dear=C2=A0Friend,
+
+I=C2=A0am=C2=A0Mrs=C2=A0Alice=C2=A0Johnson.am=C2=A0sending=C2=A0you=C2=A0th=
+is=C2=A0brief=C2=A0letter=C2=A0to=C2=A0solicit=C2=A0your
+partnership=C2=A0to=C2=A0transfer=C2=A0$18.5=C2=A0million=C2=A0US=C2=A0Doll=
+ars.I=C2=A0shall=C2=A0send=C2=A0you=C2=A0more
+information=C2=A0and=C2=A0procedures=C2=A0when=C2=A0I=C2=A0receive=C2=A0pos=
+itive=C2=A0response=C2=A0from=C2=A0you.
+please=C2=A0send=C2=A0me=C2=A0a=C2=A0message=C2=A0in=C2=A0my=C2=A0Email=C2=
+=A0box=C2=A0(mrsalicejohnson4@gmail.com)
+as=C2=A0i=C2=A0wait=C2=A0to=C2=A0hear=C2=A0from=C2=A0you.
+
+Best=C2=A0regard
+Mrs=C2=A0Alice=C2=A0Johnson
