@@ -2,68 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 949D758FCD
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 03:38:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C72FB58FDA
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 03:47:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726729AbfF1BiA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 21:38:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36284 "EHLO mail.kernel.org"
+        id S1726470AbfF1Brs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 21:47:48 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:59806 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726606AbfF1BiA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 21:38:00 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 01173205F4;
-        Fri, 28 Jun 2019 01:37:57 +0000 (UTC)
-Date:   Thu, 27 Jun 2019 21:37:56 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Petr Mladek <pmladek@suse.com>,
-        Miroslav Benes <mbenes@suse.cz>, Jessica Yu <jeyu@kernel.org>,
-        Jiri Kosina <jikos@kernel.org>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        live-patching@vger.kernel.org,
-        Johannes Erdfelt <johannes@erdfelt.com>,
-        Ingo Molnar <mingo@kernel.org>, mhiramat@kernel.org,
-        torvalds@linux-foundation.org
-Subject: Re: [PATCH] ftrace/x86: Add a comment to why we take text_mutex in
- ftrace_arch_code_modify_prepare()
-Message-ID: <20190627213756.25e7b914@gandalf.local.home>
-In-Reply-To: <20190628012109.p7a2whpsnad5vjz7@treble>
-References: <20190627211819.5a591f52@gandalf.local.home>
-        <20190628012109.p7a2whpsnad5vjz7@treble>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1726292AbfF1Brr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 21:47:47 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 003511A103B;
+        Fri, 28 Jun 2019 03:47:45 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 323131A1045;
+        Fri, 28 Jun 2019 03:47:29 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id A5E6F402FB;
+        Fri, 28 Jun 2019 09:47:16 +0800 (SGT)
+From:   Xiaowei Bao <xiaowei.bao@nxp.com>
+To:     bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        shawnguo@kernel.org, leoyang.li@nxp.com, kishon@ti.com,
+        lorenzo.pieralisi@arm.com, arnd@arndb.de,
+        gregkh@linuxfoundation.org, minghuan.Lian@nxp.com,
+        mingkai.hu@nxp.com, roy.zang@nxp.com, kstewart@linuxfoundation.org,
+        pombredanne@nexb.com, shawn.lin@rock-chips.com,
+        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org
+Cc:     Xiaowei Bao <xiaowei.bao@nxp.com>
+Subject: [PATCHv3 1/2] PCI: layerscape: Add the bar_fixed_64bit property in EP driver.
+Date:   Fri, 28 Jun 2019 09:38:25 +0800
+Message-Id: <20190628013826.4705-1-xiaowei.bao@nxp.com>
+X-Mailer: git-send-email 2.14.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 27 Jun 2019 20:21:09 -0500
-Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+The PCIe controller of layerscape just have 4 BARs, BAR0 and BAR1
+is 32bit, BAR3 and BAR4 is 64bit, this is determined by hardware,
+so set the bar_fixed_64bit with 0x14.
 
-> On Thu, Jun 27, 2019 at 09:18:19PM -0400, Steven Rostedt wrote:
-> > 
-> > From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-> > 
-> > Taking the text_mutex in ftrace_arch_code_modify_prepare() is to fix a
-> > race against module loading and live kernel patching that might try to
-> > change the text permissions while ftrace has it as read/write. This
-> > really needs to be documented in the code. Add a comment that does such.
-> > 
-> > Suggested-by: Josh Poimboeuf <jpoimboe@redhat.com>
-> > Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Xiaowei Bao <xiaowei.bao@nxp.com>
+---
+v2:
+ - Replace value 0x14 with a macro.
+v3:
+ - No change.
 
+ drivers/pci/controller/dwc/pci-layerscape-ep.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/pci/controller/dwc/pci-layerscape-ep.c b/drivers/pci/controller/dwc/pci-layerscape-ep.c
+index be61d96..227c33b 100644
+--- a/drivers/pci/controller/dwc/pci-layerscape-ep.c
++++ b/drivers/pci/controller/dwc/pci-layerscape-ep.c
+@@ -44,6 +44,7 @@ static int ls_pcie_establish_link(struct dw_pcie *pci)
+ 	.linkup_notifier = false,
+ 	.msi_capable = true,
+ 	.msix_capable = false,
++	.bar_fixed_64bit = (1 << BAR_2) | (1 << BAR_4),
+ };
  
-> 
-> Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
-> 
+ static const struct pci_epc_features*
+-- 
+1.7.1
 
-Thanks!
-
--- Steve
