@@ -2,29 +2,32 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A16D596AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 11:01:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A417B596AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 11:01:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726648AbfF1JBX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 05:01:23 -0400
-Received: from mail.steuer-voss.de ([85.183.69.95]:40954 "EHLO
+        id S1726671AbfF1JBY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 05:01:24 -0400
+Received: from mail.steuer-voss.de ([85.183.69.95]:40966 "EHLO
         mail.steuer-voss.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726520AbfF1JBX (ORCPT
+        with ESMTP id S1726484AbfF1JBX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 28 Jun 2019 05:01:23 -0400
 X-Virus-Scanned: Debian amavisd-new at mail.steuer-voss.de
+X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "References"
 Received: from pc-niv.weinmann.com (localhost [127.0.0.1])
-        by mail.steuer-voss.de (Postfix) with ESMTP id B9C964B8A3;
-        Fri, 28 Jun 2019 11:01:20 +0200 (CEST)
+        by mail.steuer-voss.de (Postfix) with ESMTP id 8D42A4BAAC;
+        Fri, 28 Jun 2019 11:01:21 +0200 (CEST)
 From:   Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
 To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>,
         linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, nv@vosn.de
-Subject: [PATCH 1/2] drivers/usb/typec/tps6598x.c: fix portinfo width
-Date:   Fri, 28 Jun 2019 11:01:08 +0200
-Message-Id: <f8daf204d49fff00db33e2b417a20afcc58ad56e.1561712364.git.nikolaus.voss@loewensteinmedical.de>
+Subject: [PATCH 2/2] drivers/usb/typec/tps6598x.c: fix 4CC cmd write
+Date:   Fri, 28 Jun 2019 11:01:09 +0200
+Message-Id: <47a0d3b0b725c58bf7f422261a7c5d3accafea57.1561712364.git.nikolaus.voss@loewensteinmedical.de>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <f8daf204d49fff00db33e2b417a20afcc58ad56e.1561712364.git.nikolaus.voss@loewensteinmedical.de>
+References: <f8daf204d49fff00db33e2b417a20afcc58ad56e.1561712364.git.nikolaus.voss@loewensteinmedical.de>
 In-Reply-To: <20190628083417.GA21701@kuha.fi.intel.com>
 References: <20190628083417.GA21701@kuha.fi.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
@@ -32,28 +35,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Portinfo bit field is 3 bits wide, not 2 bits. This led to
-a wrong driver configuration for some tps6598x configurations.
+Writing 4CC commands with tps6598x_write_4cc() already has
+a pointer arg, don't reference it when using as arg to
+tps6598x_block_write(). Correcting this enforces the constness
+of the pointer to propagate to tps6598x_block_write(), so add
+the const qualifier there to avoid the warning.
 
 Fixes: 0a4c005bd171 ("usb: typec: driver for TI TPS6598x USB Power Delivery controllers")
 Signed-off-by: Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
 ---
- drivers/usb/typec/tps6598x.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/typec/tps6598x.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/usb/typec/tps6598x.c b/drivers/usb/typec/tps6598x.c
-index c674abe3cf99..a170c49c2542 100644
+index a170c49c2542..a38d1409f15b 100644
 --- a/drivers/usb/typec/tps6598x.c
 +++ b/drivers/usb/typec/tps6598x.c
-@@ -41,7 +41,7 @@
- #define TPS_STATUS_VCONN(s)		(!!((s) & BIT(7)))
+@@ -127,7 +127,7 @@ tps6598x_block_read(struct tps6598x *tps, u8 reg, void *val, size_t len)
+ }
  
- /* TPS_REG_SYSTEM_CONF bits */
--#define TPS_SYSCONF_PORTINFO(c)		((c) & 3)
-+#define TPS_SYSCONF_PORTINFO(c)		((c) & 7)
+ static int tps6598x_block_write(struct tps6598x *tps, u8 reg,
+-				void *val, size_t len)
++				const void *val, size_t len)
+ {
+ 	u8 data[TPS_MAX_LEN + 1];
  
- enum {
- 	TPS_PORTINFO_SINK,
+@@ -173,7 +173,7 @@ static inline int tps6598x_write64(struct tps6598x *tps, u8 reg, u64 val)
+ static inline int
+ tps6598x_write_4cc(struct tps6598x *tps, u8 reg, const char *val)
+ {
+-	return tps6598x_block_write(tps, reg, &val, sizeof(u32));
++	return tps6598x_block_write(tps, reg, val, 4);
+ }
+ 
+ static int tps6598x_read_partner_identity(struct tps6598x *tps)
 -- 
 2.17.1
 
