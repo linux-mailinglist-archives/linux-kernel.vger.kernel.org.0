@@ -2,102 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 826445A4CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 21:09:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A7A95A4D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 21:09:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726859AbfF1TJG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 15:09:06 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:44100 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726643AbfF1TJG (ORCPT
+        id S1726982AbfF1TJj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 15:09:39 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:35081 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726875AbfF1TJi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 15:09:06 -0400
-Received: by mail-io1-f67.google.com with SMTP id s7so14674251iob.11
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2019 12:09:05 -0700 (PDT)
+        Fri, 28 Jun 2019 15:09:38 -0400
+Received: by mail-pl1-f193.google.com with SMTP id w24so3753147plp.2
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2019 12:09:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=denpEz7Y25tPYld+8szHUZUn70KyumHMuU5ZgYCdiKI=;
-        b=HWMrmaJnz5V8Ac64W9ltGnhij2/onexK3xCea2eFyAXK6JVJnwj62PwageLoaznljr
-         lVtZWieElekXXI6Q4uto5rBOs5y5+Y+oEhsPTyrfK/jawOxPcID1zg2pkEYUErrhcwJB
-         aszK3rXIb3zpoK6myJKG5S0dwok2xahK5qCTGgIkyiJIZXoRbIwMC/T+A04ynBDaa7BH
-         hrEXqsOvUf285Gj4q/Vnqx2FcdDFpiK+Iaa3nU5B1d3yP/hh7wB2rHg3xnWWrSZTkWn+
-         Q8Ff3Ayu/GN5pDCx+2ZM3PNc7q0wBMyQInqc2hToFVqvI2Nn3mimmdf2GreNGgeTmOwr
-         KdwQ==
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=V6v+ChBPjDEkXeOyVL5WvJjC6m+aI/H7zTWv+Pb4ySg=;
+        b=ApiOTl2ueSukYFkNah+vjl4vAZhsxgdyJZ8GrApbUEHrL2ifv9zSROVGfq52Y1UHv3
+         jYH9POnFQ9yngjkv85OxF/I8nZeG5jD5N8uRS5l/zb+IqKwuhJg/5vMXa02pMvXuOsz3
+         HYQ+xUuy27yxIlFhLsVFlMKlZLJZc94cLwpg/yeqydRHEGGVDt64rtPn82MK03shusAr
+         m/TrdHQQ3aV6n6Vv+9bS2cn7+Uka0KOu++iK+9dh2XdTRy5tLMzGSOFDxjJp6yn2agbI
+         ln7WGR3VdDUrbjU8q8uQacYahDvy3e3E1eFzr8b1eY415IHxqTLqpwkOgcDugYjeH+i7
+         +sHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=denpEz7Y25tPYld+8szHUZUn70KyumHMuU5ZgYCdiKI=;
-        b=ETM89ubDjWVqTmFOrOPVfVeVtENJMKTjsiXUvAGianC3yZpr9qr3eJ9L7pVOjp8nPf
-         Qbbnmmf+YZzaTRcuk9Zv3UIcyQcsqryHx+uBHLY6gGjndDDrRJvSEfZn/Yh5RXvAmK/2
-         m7N2rhZBnTsLPet2XIguPqMLhOyOHziLeaizYw9RWNVJ54T5aKu06gYV7yUNIv+Ppw/3
-         VVEjBf1c+aXYUtDr6f7+Cf2dxhW/aeyEhquFKqtbqYHIboasSaeF4pQkWUi2eR74udsc
-         ndyWwxpAYoB2MnMdxSSxFRzvgYsEQtDNDLcI2cELEwtWgwijAHXGzAXYLo2IxWYkN+30
-         WiVA==
-X-Gm-Message-State: APjAAAW9L6Dq4U13m54h1dW2zJ22Gy7bBlk6rUT4+f2S3LyJPbShkfln
-        nc2f9srur0fBnPTI7V/Pg03//w==
-X-Google-Smtp-Source: APXvYqyCiWd28x6ejKIVj1HQUvQbmY2IcCFzFG/uYivQu5hxZZBjfMnIAX99mg22opfTcrJJ/QIWog==
-X-Received: by 2002:a05:6638:281:: with SMTP id c1mr13074518jaq.43.1561748945460;
-        Fri, 28 Jun 2019 12:09:05 -0700 (PDT)
-Received: from localhost (c-73-95-159-87.hsd1.co.comcast.net. [73.95.159.87])
-        by smtp.gmail.com with ESMTPSA id x13sm2623367ioj.18.2019.06.28.12.09.04
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 28 Jun 2019 12:09:05 -0700 (PDT)
-Date:   Fri, 28 Jun 2019 12:09:04 -0700 (PDT)
-From:   Paul Walmsley <paul.walmsley@sifive.com>
-X-X-Sender: paulw@viisi.sifive.com
-To:     Atish Patra <atish.patra@wdc.com>
-cc:     linux-kernel@vger.kernel.org, Karsten Merker <merker@debian.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Anup Patel <Anup.Patel@wdc.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        linux-riscv@lists.infradead.org,
-        Nick Kossifidis <mick@ics.forth.gr>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "trini@konsulko.com" <trini@konsulko.com>
-Subject: Re: [PATCH v4] RISC-V: Add an Image header that boot loader can
- parse.
-In-Reply-To: <20190606230800.19932-1-atish.patra@wdc.com>
-Message-ID: <alpine.DEB.2.21.9999.1906281207290.3867@viisi.sifive.com>
-References: <20190606230800.19932-1-atish.patra@wdc.com>
-User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=V6v+ChBPjDEkXeOyVL5WvJjC6m+aI/H7zTWv+Pb4ySg=;
+        b=QuqXGlDx1y8qcVsd4+A8OFSk3XOB5mmO3sFYIOAfdlZ408cFL0YAwC+MllcPY3Ms/s
+         bZ8g5BOluB9SBHKIui4s/jK1CQMXEIzJOXnoG9R+UusX1RrC4KtbwAcQJ81aSTw5Onh9
+         XGcW+NsSoCP05K3vZCx5L5pOgY+ACNqVmeQ6JRZQ6t4XzFCC3/dDA1YdYp/5fmUJ4yj8
+         ElPUQ8PUNurISfelh30PnyUzs/T17x1PgkVijGtfNZ2Aa6rexfKzQUsQS1aZu2fa6TI1
+         YUyuX31lhC04Xmob+R5v6T4T1eg+pUHN/17+SAZjQoEQ8cS2pIoZpxlwRskBBJWPhrSZ
+         WAKg==
+X-Gm-Message-State: APjAAAXqtaOgoH+srHv//ad5wxe6DZ8w2Yup0Dpqj0TWn0Hcn8ei59Dc
+        xpXq1AWaHlB+V2FCsm4vBqfHiQ==
+X-Google-Smtp-Source: APXvYqwFQy/tc32tInYqRQ3bQI7rptoLYbxDx6uCGkLXXCzcIjRb+a+mrA3L2cQ2IbpjP7BiMBXHuw==
+X-Received: by 2002:a17:902:f089:: with SMTP id go9mr13409423plb.81.1561748977536;
+        Fri, 28 Jun 2019 12:09:37 -0700 (PDT)
+Received: from ziepe.ca ([216.9.110.14])
+        by smtp.gmail.com with ESMTPSA id r88sm2982578pjb.8.2019.06.28.12.09.36
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 28 Jun 2019 12:09:36 -0700 (PDT)
+Received: from jgg by jggl.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1hgwFX-0004Gx-D3; Fri, 28 Jun 2019 16:09:31 -0300
+Date:   Fri, 28 Jun 2019 16:09:31 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Logan Gunthorpe <logang@deltatee.com>
+Cc:     Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-pci@vger.kernel.org, linux-rdma@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Keith Busch <kbusch@kernel.org>,
+        Stephen Bates <sbates@raithlin.com>
+Subject: Re: [RFC PATCH 00/28] Removing struct page from P2PDMA
+Message-ID: <20190628190931.GC3877@ziepe.ca>
+References: <20190626210018.GB6392@ziepe.ca>
+ <c25d3333-dcd5-3313-089b-7fbbd6fbd876@deltatee.com>
+ <20190627063223.GA7736@ziepe.ca>
+ <6afe4027-26c8-df4e-65ce-49df07dec54d@deltatee.com>
+ <20190627163504.GB9568@ziepe.ca>
+ <4894142c-3233-a3bb-f9a3-4a4985136e9b@deltatee.com>
+ <20190628045705.GD3705@ziepe.ca>
+ <8022a2a4-4069-d256-11da-e6d9b2ffbf60@deltatee.com>
+ <20190628172926.GA3877@ziepe.ca>
+ <25a87c72-630b-e1f1-c858-9c8b417506fc@deltatee.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <25a87c72-630b-e1f1-c858-9c8b417506fc@deltatee.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 6 Jun 2019, Atish Patra wrote:
-
-> Currently, the last stage boot loaders such as U-Boot can accept only
-> uImage which is an unnecessary additional step in automating boot
-> process.
+On Fri, Jun 28, 2019 at 12:29:32PM -0600, Logan Gunthorpe wrote:
 > 
-> Add an image header that boot loader understands and boot Linux from
-> flat Image directly.
+> 
+> On 2019-06-28 11:29 a.m., Jason Gunthorpe wrote:
+> > On Fri, Jun 28, 2019 at 10:22:06AM -0600, Logan Gunthorpe wrote:
+> > 
+> >>> Why not?  If we have a 'bar info' structure that could have data
+> >>> transfer op callbacks, infact, I think we might already have similar
+> >>> callbacks for migrating to/from DEVICE_PRIVATE memory with DMA..
+> >>
+> >> Well it could, in theory be done, but It just seems wrong to setup and
+> >> wait for more DMA requests while we are in mid-progress setting up
+> >> another DMA request. Especially when the block layer has historically
+> >> had issues with stack sizes. It's also possible you might have multiple
+> >> bio_vec's that have to each do a migration and with a hook here they'd
+> >> have to be done serially.
+> > 
+> > *shrug* this is just standard bounce buffering stuff...
+> 
+> I don't know of any "standard" bounce buffering stuff that uses random
+> other device's DMA engines where appropriate.
 
-...
+IMHO, it is conceptually the same as memcpy.. And probably we will not
+ever need such optimization in dma map. Other copy places might be
+different at least we have the option.
+ 
+> IMO the bouncing in the DMA layer isn't a desirable thing, it was a
+> necessary addition to work around various legacy platform issues and
+> have existing code still work correctly. 
 
+Of course it is not desireable! But there are many situations where we
+do not have the luxury to work around the HW limits in the caller, so
+those callers either have to not do DMA or they have to open code
+bounce buffering - both are wrong.
 
-> +#if __riscv_xlen == 64
-> +	/* Image load offset(2MB) from start of RAM */
-> +	.dword 0x200000
-> +#else
-> +	/* Image load offset(4MB) from start of RAM */
-> +	.dword 0x400000
-> +#endif
+> > What I see as the question is how to layout the BIO. 
+> > 
+> > If we agree the bio should only have phys_addr_t then we need some
+> > 'bar info' (ie at least the offset) in the dma map and some 'bar info'
+> > (ie the DMA device) during the bio construciton.
+> 
+> Per my other email, it was phys_addr_t plus hints on how to map the
+> memory (bus address, dma_map_resource, or regular). This requires
+> exactly two flag bits in the bio_vec and no interval tree or hash table.
+> I don't want to have to pass bar info, other hooks, or anything like
+> that to the block layer.
 
-Is there a rationale behind these load offset values?
+This scheme makes the assumption that the dma mapping struct device is
+all you need, and we never need to know the originating struct device
+during dma map. This is clearly safe if the two devices are on the
+same PCIe segment
 
+However, I'd feel more comfortable about that assumption if we had
+code to support the IOMMU case, and know for sure it doesn't require
+more info :(
 
-- Paul
+But I suppose it is also reasonable that only the IOMMU case would
+have the expensive 'bar info' lookup or something.
+
+Maybe you can hide these flags as some dma_map helper, then the
+layering might be nicer:
+
+  dma_map_set_bio_p2p_flags(bio, phys_addr, source dev, dest_dev) 
+
+?
+
+ie the choice of flag scheme to use is opaque to the DMA layer.
+
+> > If we can spare 4-8 bits in the bio then I suggest a 'perfect hash
+> > table'. Assign each registered P2P 'bar info' a small 4 bit id and
+> > hash on that. It should be fast enough to not worry about the double
+> > lookup.
+> 
+> This feels like it's just setting us up to run into nasty limits based
+> on the number of bits we actually have. The number of bits in a bio_vec
+> will always be a precious resource. If I have a server chassis that
+> exist today with 24 NVMe devices, and each device has a CMB, I'm already
+> using up 6 of those bits. Then we might have DEVICE_PRIVATE and other
+> uses on top of that.
+
+A hash is an alternative data structure to a interval tree that has
+better scaling for small numbers of BARs, which I think is our
+case.
+
+Jason
