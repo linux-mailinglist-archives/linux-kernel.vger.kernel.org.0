@@ -2,75 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6311D58EF7
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 02:28:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7BD658EFA
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 02:30:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726702AbfF1A2Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 20:28:25 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:40440 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726514AbfF1A2Z (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 20:28:25 -0400
-Received: by mail-pl1-f195.google.com with SMTP id a93so2184952pla.7
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 17:28:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:date:message-id:mime-version
-         :content-transfer-encoding:cc:from:to;
-        bh=BomPkIzRMHtNhgTt9YOOvsPTPOOao9rvEJbBjPIy2x0=;
-        b=BwJL/mH9rFXI0vvPqqO2dl/Wa955j/NWsx3M4DC/bWD8GRQivuWjI8IMxL+4mnk3Tk
-         XYprBpm3q+VW9x8uejk4z2ovKQQXKFTo8YigY7xM47wYCQ1N1qLO7tpFaYN3QttB6sFV
-         NMWXaLaes8OidrKksfq/RbDZRSaFTS/VrqkN+fTRKoKQGLVEmaTngMuhJsxpCgJwP0tf
-         vBin2QlsYjd071JRHKgcLQDftzL1pFnLEUDQan6uZyWmZjUVS1xS5zOSz/+8P/TXBxhb
-         ZuUIBeJ0ZW38FDZIV/OCxHs1/TRjDm6AeV6JIESP8/eWvDo+qB1NqfFjJdNcWTH88WJI
-         ofGQ==
-X-Gm-Message-State: APjAAAUAQ3mtbNdpahrzl2eX6169QwfGhmb82ukHjwZS97ypMxsNI5ZU
-        JbQNQ+WNb40gFW/qq1NScgsZi69QvhYJgw==
-X-Google-Smtp-Source: APXvYqy5kZQtvpH0HuDeBDxfScn8wHazkdQ2pzR/buG34ccvL+ag+VVh/am35IllTvVGB4L622d+Tw==
-X-Received: by 2002:a17:902:20ec:: with SMTP id v41mr7541626plg.142.1561681703695;
-        Thu, 27 Jun 2019 17:28:23 -0700 (PDT)
-Received: from localhost (220-132-236-182.HINET-IP.hinet.net. [220.132.236.182])
-        by smtp.gmail.com with ESMTPSA id i36sm238048pgl.70.2019.06.27.17.28.22
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 27 Jun 2019 17:28:23 -0700 (PDT)
-Subject: [PATCH] MAINTAINERS: Add Paul as a RISC-V maintainer
-Date:   Thu, 27 Jun 2019 17:27:53 -0700
-Message-Id: <20190628002753.5573-1-palmer@sifive.com>
-X-Mailer: git-send-email 2.21.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Cc:     linux-kernel@vger.kernel.org, Palmer Dabbelt <palmer@sifive.com>
-From:   Palmer Dabbelt <palmer@sifive.com>
-To:      linux-riscv@lists.infradead.org,
-         Paul Walmsley <paul.walmsley@sifive.com>
+        id S1726656AbfF1AaF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 20:30:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56082 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726514AbfF1AaF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 20:30:05 -0400
+Subject: Re: [GIT] Networking
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561681804;
+        bh=VVcIGry/JFAOME8xVYDO/JMOARqybIAT2+oQDPKn37M=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=NdMaOGIkBpGzhQAmpDZFJENkJO97O5cpasUXMO8ndZLKyWwAp94AYejXOlEOIb/lg
+         tZa7z1JDBIAvYzqQcgIHzGqaeePLTGsXFrBgWNdRYnVmWdBs+h0Y8sk2SACNCVYxTv
+         EbYpB1fXhcxyNFiNHcN6+g33cWbUg+M+0XhAJlSU=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20190626.195006.2073691861982062351.davem@davemloft.net>
+References: <20190626.195006.2073691861982062351.davem@davemloft.net>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20190626.195006.2073691861982062351.davem@davemloft.net>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/davem/net
+ refs/heads/master
+X-PR-Tracked-Commit-Id: 89ed5b519004a7706f50b70f611edbd3aaacff2c
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: c84afab02c311b08b5cb8ea758cc177f81c95d11
+Message-Id: <156168180428.19070.2360267794874347386.pr-tracker-bot@kernel.org>
+Date:   Fri, 28 Jun 2019 00:30:04 +0000
+To:     David Miller <davem@davemloft.net>
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The RISC-V port has grown significantly over the past year.  Paul's been
-helping out for a while ago.  We agreed in person that he'd take over
-collecting the patches and submitting the PRs, but it looks like I
-forgot to make it official.
+The pull request you sent on Wed, 26 Jun 2019 19:50:06 -0700 (PDT):
 
-Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+> git://git.kernel.org/pub/scm/linux/kernel/git/davem/net refs/heads/master
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index d0ed735994a5..b54b23261cf5 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -13472,6 +13472,7 @@ F:	drivers/mtd/nand/raw/r852.c
- F:	drivers/mtd/nand/raw/r852.h
- 
- RISC-V ARCHITECTURE
-+M:	Paul Walmsley <paul.walmsley@sifive.com>
- M:	Palmer Dabbelt <palmer@sifive.com>
- M:	Albert Ou <aou@eecs.berkeley.edu>
- L:	linux-riscv@lists.infradead.org
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/c84afab02c311b08b5cb8ea758cc177f81c95d11
+
+Thank you!
+
 -- 
-2.21.0
-
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
