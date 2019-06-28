@@ -2,121 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86585591EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 05:24:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57EEB591FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 05:34:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727058AbfF1DYR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 23:24:17 -0400
-Received: from mga11.intel.com ([192.55.52.93]:39351 "EHLO mga11.intel.com"
+        id S1727193AbfF1Der (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 23:34:47 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:55882 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726565AbfF1DYR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 23:24:17 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jun 2019 20:24:16 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,426,1557212400"; 
-   d="asc'?scan'208";a="185498337"
-Received: from zhen-hp.sh.intel.com (HELO zhen-hp) ([10.239.13.116])
-  by fmsmga004.fm.intel.com with ESMTP; 27 Jun 2019 20:24:14 -0700
-Date:   Fri, 28 Jun 2019 11:21:49 +0800
-From:   Zhenyu Wang <zhenyuw@linux.intel.com>
-To:     Gerd Hoffmann <kraxel@redhat.com>
-Cc:     "Zhang, Tina" <tina.zhang@intel.com>,
-        "intel-gvt-dev@lists.freedesktop.org" 
-        <intel-gvt-dev@lists.freedesktop.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "zhenyuw@linux.intel.com" <zhenyuw@linux.intel.com>,
-        "Lv, Zhiyuan" <zhiyuan.lv@intel.com>,
-        "Wang, Zhi A" <zhi.a.wang@intel.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        "Yuan, Hang" <hang.yuan@intel.com>,
-        "alex.williamson@redhat.com" <alex.williamson@redhat.com>
-Subject: Re: [RFC PATCH v3 0/4] Deliver vGPU display vblank event to userspace
-Message-ID: <20190628032149.GD9684@zhen-hp.sh.intel.com>
-Reply-To: Zhenyu Wang <zhenyuw@linux.intel.com>
-References: <20190627033802.1663-1-tina.zhang@intel.com>
- <20190627062231.57tywityo6uyhmyd@sirius.home.kraxel.org>
- <237F54289DF84E4997F34151298ABEBC876835E5@SHSMSX101.ccr.corp.intel.com>
- <20190627103133.6ekdwazggi5j5lcl@sirius.home.kraxel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="g++0NlQhRgFs6nMu"
-Content-Disposition: inline
-In-Reply-To: <20190627103133.6ekdwazggi5j5lcl@sirius.home.kraxel.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        id S1726686AbfF1Der (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 23:34:47 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 2A463200304;
+        Fri, 28 Jun 2019 05:34:45 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 567642002F0;
+        Fri, 28 Jun 2019 05:34:40 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 308CE402B3;
+        Fri, 28 Jun 2019 11:34:34 +0800 (SGT)
+From:   Anson.Huang@nxp.com
+To:     shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, aisheng.dong@nxp.com, abel.vesa@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH V2] soc: imx-scu: Add SoC UID(unique identifier) support
+Date:   Fri, 28 Jun 2019 11:25:44 +0800
+Message-Id: <20190628032544.8317-1-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.14.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Anson Huang <Anson.Huang@nxp.com>
 
---g++0NlQhRgFs6nMu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Add i.MX SCU SoC's UID(unique identifier) support, user
+can read it from sysfs:
 
-On 2019.06.27 12:31:33 +0200, Gerd Hoffmann wrote:
-> > >   Hi,
-> > >=20
-> > > > Instead of delivering page flip events, we choose to post display
-> > > > vblank event. Handling page flip events for both primary plane and
-> > > > cursor plane may make user space quite busy, although we have the
-> > > > mask/unmask mechansim for mitigation. Besides, there are some cases
-> > > > that guest app only uses one framebuffer for both drawing and displ=
-ay.
-> > > > In such case, guest OS won't do the plane page flip when the
-> > > > framebuffer is updated, thus the user land won't be notified about =
-the
-> > > updated framebuffer.
-> > >=20
-> > > What happens when the guest is idle and doesn't draw anything to the
-> > > framebuffer?
-> > The vblank event will be delivered to userspace as well, unless guest O=
-S disable the pipe.
-> > Does it make sense to vfio/display?
->=20
-> Getting notified only in case there are actual display updates would be
-> a nice optimization, assuming the hardware is able to do that.  If the
-> guest pageflips this is obviously trivial.  Not sure this is possible in
-> case the guest renders directly to the frontbuffer.
->=20
-> What exactly happens when the guest OS disables the pipe?  Is a vblank
-> event delivered at least once?  That would be very useful because it
-> will be possible for userspace to stop polling altogether without
-> missing the "guest disabled pipe" event.
->=20
+root@imx8qxpmek:~# cat /sys/devices/soc0/soc_uid
+7B64280B57AC1898
 
-It looks like purpose to use vblank here is to replace user space
-polling totally by kernel event? Which just act as display update
-event to replace user space timer to make it query and update
-planes? Although in theory vblank is not appropriate for this which
-doesn't align with plane update or possible front buffer rendering at
-all, but looks it's just a compromise e.g not sending event for every
-cursor position change, etc.
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+Changes since V1:
+	- Improve the comment of skipping SCFW API return value check for getting UID.
+---
+ drivers/soc/imx/soc-imx-scu.c | 39 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
 
-I think we need to define semantics for this event properly, e.g user
-space purely depends on this event for display update, the opportunity
-for issuing this event is controlled by driver when it's necessary for
-update, etc. Definitely not named as vblank event or only issue at vblank,
-that need to happen for other plane change too.
+diff --git a/drivers/soc/imx/soc-imx-scu.c b/drivers/soc/imx/soc-imx-scu.c
+index 676f612..3eacb54 100644
+--- a/drivers/soc/imx/soc-imx-scu.c
++++ b/drivers/soc/imx/soc-imx-scu.c
+@@ -27,6 +27,40 @@ struct imx_sc_msg_misc_get_soc_id {
+ 	} data;
+ } __packed;
+ 
++struct imx_sc_msg_misc_get_soc_uid {
++	struct imx_sc_rpc_msg hdr;
++	u32 uid_low;
++	u32 uid_high;
++} __packed;
++
++static ssize_t soc_uid_show(struct device *dev,
++			    struct device_attribute *attr, char *buf)
++{
++	struct imx_sc_msg_misc_get_soc_uid msg;
++	struct imx_sc_rpc_msg *hdr = &msg.hdr;
++	u64 soc_uid;
++
++	hdr->ver = IMX_SC_RPC_VERSION;
++	hdr->svc = IMX_SC_RPC_SVC_MISC;
++	hdr->func = IMX_SC_MISC_FUNC_UNIQUE_ID;
++	hdr->size = 1;
++
++	/*
++	 * SCU FW API always returns an error even the
++	 * function is successfully executed, so skip
++	 * returned value check.
++	 */
++	imx_scu_call_rpc(soc_ipc_handle, &msg, true);
++
++	soc_uid = msg.uid_high;
++	soc_uid <<= 32;
++	soc_uid |= msg.uid_low;
++
++	return sprintf(buf, "%016llX\n", soc_uid);
++}
++
++static DEVICE_ATTR_RO(soc_uid);
++
+ static int imx_scu_soc_id(void)
+ {
+ 	struct imx_sc_msg_misc_get_soc_id msg;
+@@ -102,6 +136,11 @@ static int imx_scu_soc_probe(struct platform_device *pdev)
+ 		goto free_revision;
+ 	}
+ 
++	ret = device_create_file(soc_device_to_device(soc_dev),
++				 &dev_attr_soc_uid);
++	if (ret)
++		goto free_revision;
++
+ 	return 0;
+ 
+ free_revision:
+-- 
+2.7.4
 
---=20
-Open Source Technology Center, Intel ltd.
-
-$gpg --keyserver wwwkeys.pgp.net --recv-keys 4D781827
-
---g++0NlQhRgFs6nMu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EARECAB0WIQTXuabgHDW6LPt9CICxBBozTXgYJwUCXRWHzQAKCRCxBBozTXgY
-J//gAKCL699dZmXJ8voP2zTIzkbKlkEaoACfREQYSfPIUcqIAJ8iRylTd7kOOY0=
-=hNje
------END PGP SIGNATURE-----
-
---g++0NlQhRgFs6nMu--
