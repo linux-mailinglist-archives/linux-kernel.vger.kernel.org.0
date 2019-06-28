@@ -2,89 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D8BF58F9A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 03:17:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B77F58F9E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 03:18:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726719AbfF1BRh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 21:17:37 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:37110 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726633AbfF1BRh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 21:17:37 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B6BF2307CDD5;
-        Fri, 28 Jun 2019 01:17:36 +0000 (UTC)
-Received: from treble (ovpn-126-66.rdu2.redhat.com [10.10.126.66])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id AE6215D9D2;
-        Fri, 28 Jun 2019 01:17:28 +0000 (UTC)
-Date:   Thu, 27 Jun 2019 20:17:25 -0500
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Petr Mladek <pmladek@suse.com>,
-        Miroslav Benes <mbenes@suse.cz>, Jessica Yu <jeyu@kernel.org>,
-        Jiri Kosina <jikos@kernel.org>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        linux-kernel@vger.kernel.org, live-patching@vger.kernel.org,
-        Johannes Erdfelt <johannes@erdfelt.com>,
-        Ingo Molnar <mingo@kernel.org>, mhiramat@kernel.org,
-        torvalds@linux-foundation.org
-Subject: Re: [PATCH] ftrace: Remove possible deadlock between
- register_kprobe() and ftrace_run_update_code()
-Message-ID: <20190628011725.rctv3chdlqwkfwcx@treble>
-References: <20190627081334.12793-1-pmladek@suse.com>
- <20190627224729.tshtq4bhzhneq24w@treble>
- <20190627190457.703a486e@gandalf.local.home>
- <alpine.DEB.2.21.1906280106360.32342@nanos.tec.linutronix.de>
- <20190627231952.nqkbtcculvo2ddif@treble>
- <20190627211304.7e21fd77@gandalf.local.home>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190627211304.7e21fd77@gandalf.local.home>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Fri, 28 Jun 2019 01:17:36 +0000 (UTC)
+        id S1726762AbfF1BS1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 21:18:27 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:34151 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726741AbfF1BS1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 21:18:27 -0400
+Received: by mail-lf1-f67.google.com with SMTP id y198so2843010lfa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 18:18:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=FdrladOMf5TABxNjyjNPdPtP4U4TccCWoqjaGYv1yIk=;
+        b=f04d+RwuwKIjOh+/Xm4sYT74Zia/OrkCIl3FKW0uZj5gCqKBelNXfEXlJ3opMLNpJF
+         4wB/BXBaD58Qrw4FJdBh03Ih+T8vptwKo6GfVdye7hamCxR69sO897FRoz6Ga9QUTU1f
+         a8QLhyi7V5TULbbkU0Czfx31iB4GXbktjzsPLkOPsxzIcscu0uFqsLRVC/LJ6Cvw+lvO
+         c06DMYF+bR0ncxA1b0dFxnK7yBwEi+g2Pw2DJ+nz/qW/myo1mi7klO4yP3Q6S/qaQ499
+         ObDnnJuAI7+2VkgoGV5sRY1o6UM408jZT7jmfSkOQ+8ZDNGrA1MzZT0R0ik61U3wZQa4
+         8R4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=FdrladOMf5TABxNjyjNPdPtP4U4TccCWoqjaGYv1yIk=;
+        b=i8wcl64ZwjM/74CC1ni5MrU5ypmHfHeLJcYOSUtvKwJra7QO+MYh4Ld2BX+bYTqsdT
+         bMp6w+LiVcH4AJ4spt1u85pgEbAwefSWedhyVBIyAIXCLjoTeOpJ1PBo7u1y+8VKaDTr
+         vlmXawE5/04vDBN1DX8TH69rne01HgHz+udp+4Qw5KrilLM1Ck/yjCydDzJF8uVSl2/Q
+         tgfybfRZEo3N0N2HJsxMR6jXTsmZQDd/B5m3ttRASNsjvhWG1xalc0C/4WOCeRInlTeo
+         XfAB0w3etFs/3BF7eTZllgN+Z9+6ANpOmwF5RIlMkrhb/b3x4TrLkvYER1WZ6yN10vYR
+         GnxQ==
+X-Gm-Message-State: APjAAAXGvrs47yFk6tt39DAQDGS3q3JHQmqq7PmOwq/hdU7o4yAf4Q4O
+        3MeL5+iYF8TTnf7JfWZipt8=
+X-Google-Smtp-Source: APXvYqwpC1fBG9+6KbAOWFl8V1PbiqZK9dFmzaJzp7twMSYWnWcxCpA+c6jisC7NlcimAfeOReN4Ag==
+X-Received: by 2002:a19:5046:: with SMTP id z6mr3618691lfj.185.1561684705233;
+        Thu, 27 Jun 2019 18:18:25 -0700 (PDT)
+Received: from octofox.hsd1.ca.comcast.net. (jcmvbkbc-1-pt.tunnel.tserv24.sto1.ipv6.he.net. [2001:470:27:1fa::2])
+        by smtp.gmail.com with ESMTPSA id e26sm210150ljl.33.2019.06.27.18.18.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 27 Jun 2019 18:18:24 -0700 (PDT)
+From:   Max Filippov <jcmvbkbc@gmail.com>
+To:     linux-xtensa@linux-xtensa.org
+Cc:     Chris Zankel <chris@zankel.net>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Max Filippov <jcmvbkbc@gmail.com>
+Subject: [PATCH] xtensa: remove arch/xtensa/include/asm/types.h
+Date:   Thu, 27 Jun 2019 18:18:14 -0700
+Message-Id: <20190628011814.5797-1-jcmvbkbc@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 27, 2019 at 09:13:04PM -0400, Steven Rostedt wrote:
-> On Thu, 27 Jun 2019 18:19:52 -0500
-> Josh Poimboeuf <jpoimboe@redhat.com> wrote:
-> 
-> 
-> > Maybe a comment or two would help though.
-> > 
-> 
-> I'm adding the following change.  Care to add a "reviewed-by" for this
-> one?
-> 
-> -- Steve
-> 
-> diff --git a/arch/x86/kernel/ftrace.c b/arch/x86/kernel/ftrace.c
-> index 33786044d5ac..d7e93b2783fd 100644
-> --- a/arch/x86/kernel/ftrace.c
-> +++ b/arch/x86/kernel/ftrace.c
-> @@ -36,6 +36,11 @@
->  
->  int ftrace_arch_code_modify_prepare(void)
->  {
-> +	/*
-> +	 * Need to grab text_mutex to prevent a race from module loading
-> +	 * and live kernel patching from changing the text permissions while
-> +	 * ftrace has it set to "read/write".
-> +	 */
->  	mutex_lock(&text_mutex);
->  	set_kernel_text_rw();
->  	set_all_modules_text_rw();
+Xtensa does not define CONFIG_64BIT. The generic definition of
+BITS_PER_LONG in include/asm-generic/bitsperlong.h should work.
+With that definition removed from arch/xtensa/include/asm/types.h
+it does nothing but including arch/xtensa/include/uapi/asm/types.h
+Remove the arch/xtensa/include/asm/types.h header.
 
-For the patch+comment:
+Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
+---
+ arch/xtensa/include/asm/types.h | 23 -----------------------
+ 1 file changed, 23 deletions(-)
+ delete mode 100644 arch/xtensa/include/asm/types.h
 
-Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
-
+diff --git a/arch/xtensa/include/asm/types.h b/arch/xtensa/include/asm/types.h
+deleted file mode 100644
+index 2b410b8c7f79..000000000000
+--- a/arch/xtensa/include/asm/types.h
++++ /dev/null
+@@ -1,23 +0,0 @@
+-/*
+- * include/asm-xtensa/types.h
+- *
+- * This file is subject to the terms and conditions of the GNU General Public
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+- *
+- * Copyright (C) 2001 - 2005 Tensilica Inc.
+- */
+-#ifndef _XTENSA_TYPES_H
+-#define _XTENSA_TYPES_H
+-
+-#include <uapi/asm/types.h>
+-
+-#ifndef __ASSEMBLY__
+-/*
+- * These aren't exported outside the kernel to avoid name space clashes
+- */
+-
+-#define BITS_PER_LONG 32
+-
+-#endif
+-#endif	/* _XTENSA_TYPES_H */
 -- 
-Josh
+2.11.0
+
