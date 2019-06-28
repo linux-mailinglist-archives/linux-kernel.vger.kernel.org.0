@@ -2,67 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75BD359AC9
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 14:23:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 534E459A6F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 14:20:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727367AbfF1MXP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 08:23:15 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:58788 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726805AbfF1MUq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 08:20:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=RpqcJp7jxT06N05sMhPXoS32VrL9wunVGQftBjY4F0M=; b=lrCdlOc8WfukKVP/4L2O7TIJGr
-        LPe+vZcn1y0tzgsBf4XEdyORzTEj/q2N3dyEDdtt1bv7JSJZwlBCYr4R8CQNn9EoxoKdsTkCt0UmK
-        4oeqY/OfWaKHdcoCE4/Cs2D4K5zYAxehcSIDQHocMO6rjoaRgxVf+pC6BaFM7MEWD150r1qixcbFs
-        uc8fCzG8OUT20Ptky0OklRMNgxPFpBJoPdRXz3cP6t0DmY5N9IUYoDPoXtjtqu7Axsm6nF7OEjsfq
-        lWLILtSIeQEVdigz3buGMnJaZM6+LZlgDGCQ2CWLZ9+9a+VL0apfQCm8WNqAj4nU5AUvAqHI3ZFJj
-        cavobI7g==;
-Received: from [186.213.242.156] (helo=bombadil.infradead.org)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hgprw-00009v-RV; Fri, 28 Jun 2019 12:20:45 +0000
-Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
-        (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hgpru-0005AG-8g; Fri, 28 Jun 2019 09:20:42 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH 43/43] docs: logo.txt: rename it to COPYING-logo
-Date:   Fri, 28 Jun 2019 09:20:39 -0300
-Message-Id: <bff3bc73e6e731019612eecf67a10693a44b6caa.1561723980.git.mchehab+samsung@kernel.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <cover.1561723979.git.mchehab+samsung@kernel.org>
-References: <cover.1561723979.git.mchehab+samsung@kernel.org>
+        id S1726667AbfF1MUG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 08:20:06 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58616 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726542AbfF1MUG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Jun 2019 08:20:06 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id EF75CAFFA;
+        Fri, 28 Jun 2019 12:20:04 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id 7F892DAC70; Fri, 28 Jun 2019 14:20:48 +0200 (CEST)
+Date:   Fri, 28 Jun 2019 14:20:47 +0200
+From:   David Sterba <dsterba@suse.cz>
+To:     David Sterba <DSterba@suse.com>
+Cc:     peterz@infradead.org, mingo@redhat.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] lockdep: introduce lockdep_assert_not_held()
+Message-ID: <20190628122047.GG20977@suse.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, David Sterba <DSterba@suse.com>,
+        peterz@infradead.org, mingo@redhat.com,
+        linux-kernel@vger.kernel.org
+References: <20190613133604.9889-1-dsterba@suse.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190613133604.9889-1-dsterba@suse.com>
+User-Agent: Mutt/1.5.23.1 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This file has nothing to do with the Kernel documentation. It
-contains the copyright permissions for Tux at Documentation/logo.gif.
+On Thu, Jun 13, 2019 at 03:36:04PM +0200, David Sterba wrote:
+> Add an assertion that a lock is not held, suitable for the following
+> (simplified) usecase in filesystems:
+> 
+> - filesystem write
+>   - lock(&big_filesystem_lock)
+>   - kmalloc(GFP_KERNEL)
+>     - trigger dirty data write to get more memory
+>       - find dirty pages
+>       - call filesystem write
+>         - lock(&big_filesystem_lock)
+> 	  deadlock
+> 
+> The cause here is the use of GFP_KERNEL that does not exclude poking
+> filesystems to allow freeing some memory. Such scenario is a bug, so the
+> use of GFP_NOFS is the right flag.
+> 
+> The annotation can help catch such bugs during development because
+> the actual deadlock could be hard to hit in practice.
+> 
+> Signed-off-by: David Sterba <dsterba@suse.com>
 
-So, rename it accordingly.
-
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
----
- Documentation/{logo.txt => COPYING-logo} | 0
- 1 file changed, 0 insertions(+), 0 deletions(-)
- rename Documentation/{logo.txt => COPYING-logo} (100%)
-
-diff --git a/Documentation/logo.txt b/Documentation/COPYING-logo
-similarity index 100%
-rename from Documentation/logo.txt
-rename to Documentation/COPYING-logo
--- 
-2.21.0
-
+Any comments on that? I just found another case with convoluted
+callstacks where the lockdep assertion would catch the potential lock up
+earlier than under the testing load.
