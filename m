@@ -2,276 +2,193 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7361591CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 05:02:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40A3F591C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 05:00:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726852AbfF1DCF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 23:02:05 -0400
-Received: from mxhk.zte.com.cn ([63.217.80.70]:8216 "EHLO mxhk.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726542AbfF1DCE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 23:02:04 -0400
-Received: from mse-fl2.zte.com.cn (unknown [10.30.14.239])
-        by Forcepoint Email with ESMTPS id DFF94594B33C4A312078;
-        Fri, 28 Jun 2019 11:02:01 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse-fl2.zte.com.cn with ESMTP id x5S30C0k068092;
-        Fri, 28 Jun 2019 11:00:12 +0800 (GMT-8)
-        (envelope-from wen.yang99@zte.com.cn)
-Received: from fox-host8.localdomain ([10.74.120.8])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2019062811004795-1800625 ;
-          Fri, 28 Jun 2019 11:00:47 +0800 
-From:   Wen Yang <wen.yang99@zte.com.cn>
-To:     linux-kernel@vger.kernel.org
-Cc:     wang.yi59@zte.com.cn, Wen Yang <wen.yang99@zte.com.cn>,
-        Julia Lawall <Julia.Lawall@lip6.fr>,
-        Gilles Muller <Gilles.Muller@lip6.fr>,
-        Nicolas Palix <nicolas.palix@imag.fr>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Markus Elfring <Markus.Elfring@web.de>, cocci@systeme.lip6.fr
-Subject: [PATCH v2] coccinelle: semantic code search for missing of_node_put
-Date:   Fri, 28 Jun 2019 10:58:52 +0800
-Message-Id: <1561690732-20694-1-git-send-email-wen.yang99@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2019-06-28 11:00:48,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2019-06-28 11:00:18,
-        Serialize complete at 2019-06-28 11:00:18
-X-MAIL: mse-fl2.zte.com.cn x5S30C0k068092
+        id S1726876AbfF1DAL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 23:00:11 -0400
+Received: from mail-eopbgr750101.outbound.protection.outlook.com ([40.107.75.101]:13440
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726542AbfF1DAL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 23:00:11 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=testarcselector01; d=microsoft.com; cv=none;
+ b=Uc2rgkiIm/rKgrKPoHWYfsia27P5ZSTQ7pgjl0gdKfYuouKyb1k0MEFmm15vFdRIyEpK0ERn4+HHdVrPPUWL0CYYVSraDmxrW6cNdFJEEFMC2I1OVOZX6GHrqU6zm4DSo3m9iQpQjHyJdQjnWBYMUeRt371GCFMV5PTKoAQEAU4=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=testarcselector01;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=n1l5Z0vYbqYP7KSTi3kmtsxMgBFD18PPqdWQg1taQ8k=;
+ b=SBef9vcl/ByCcIjvX9PZlpmA62c9RfA1xYYVq7g+S2aW4owMCMAOltyti84U5K/Ngg8dhoCxbYNi1eJ/Q4K10fKsqXHLkClSrWTwDSbBl1JDxLjWR1piOk2OM/0WkMpY0eh8PvGycZ8Yb80HmB7Ts1YMOMUfbvm3FfPvaFPtkTM=
+ARC-Authentication-Results: i=1; test.office365.com
+ 1;spf=none;dmarc=none;dkim=none;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=Analogixsemi.onmicrosoft.com; s=selector1-Analogixsemi-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=n1l5Z0vYbqYP7KSTi3kmtsxMgBFD18PPqdWQg1taQ8k=;
+ b=BQYZaSpddyHy5qH581WiXcXmUs833otM2wwWWv4znS/viNrS0+ACkjXNMrptTSS+vobJtUGgjPuRlZCxdXk3cCBcoLEHAdXeep0bjoI7QCNoRFQrZUIE4soHtBnND5tAyOMnQ0uddVNhwrXJ54CJhtofGRMv5RlWVNPYkHYZ9xk=
+Received: from MN2PR04MB5886.namprd04.prod.outlook.com (20.179.22.213) by
+ MN2PR04MB5726.namprd04.prod.outlook.com (20.179.21.32) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2008.18; Fri, 28 Jun 2019 03:00:05 +0000
+Received: from MN2PR04MB5886.namprd04.prod.outlook.com
+ ([fe80::397b:3922:4027:f635]) by MN2PR04MB5886.namprd04.prod.outlook.com
+ ([fe80::397b:3922:4027:f635%3]) with mapi id 15.20.2032.016; Fri, 28 Jun 2019
+ 03:00:05 +0000
+From:   Xin Ji <xji@analogixsemi.com>
+To:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Andrzej Hajda <a.hajda@samsung.com>
+CC:     "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "sjoerd.simons@collabora.co.uk" <sjoerd.simons@collabora.co.uk>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Sheng Pan <span@analogixsemi.com>
+Subject: [PATCH v2] Adjust analogix chip driver location
+Thread-Topic: [PATCH v2] Adjust analogix chip driver location
+Thread-Index: AQHVLV2WCWeZm1Hwg0iNc/LOCnv60g==
+Date:   Fri, 28 Jun 2019 03:00:05 +0000
+Message-ID: <20190628025957.GA16108@xin-VirtualBox>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: HK0PR04CA0017.apcprd04.prod.outlook.com
+ (2603:1096:203:36::29) To MN2PR04MB5886.namprd04.prod.outlook.com
+ (2603:10b6:208:a3::21)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=xji@analogixsemi.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [114.247.245.252]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: ad8ee2a3-7f84-4d6e-e486-08d6fb74b859
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MN2PR04MB5726;
+x-ms-traffictypediagnostic: MN2PR04MB5726:
+x-microsoft-antispam-prvs: <MN2PR04MB5726452372BCF3A88EA6FA7BC7FC0@MN2PR04MB5726.namprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:177;
+x-forefront-prvs: 00826B6158
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(7916004)(396003)(376002)(39850400004)(346002)(136003)(366004)(189003)(199004)(476003)(66476007)(66446008)(64756008)(81156014)(256004)(5660300002)(2501003)(33716001)(2906002)(86362001)(66556008)(66946007)(73956011)(71200400001)(71190400001)(1076003)(14454004)(8936002)(110136005)(486006)(6116002)(81166006)(8676002)(3846002)(26005)(316002)(54906003)(53936002)(25786009)(66066001)(186003)(99286004)(9686003)(7736002)(4326008)(6506007)(107886003)(52116002)(305945005)(6486002)(478600001)(102836004)(33656002)(68736007)(6512007)(386003)(6436002);DIR:OUT;SFP:1102;SCL:1;SRVR:MN2PR04MB5726;H:MN2PR04MB5886.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: analogixsemi.com does not
+ designate permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: oTfQZaLkek8/ipkHWISD84b2A19OyXztbcXnmwoTE2JDVNAjGfaTrW1w1RjPYTwnqfS8su/qXDd5CvWwG7hC1tykLWQaUsVWcbrJmIqvyUtjpNDbtTvuIboSYIT6TDAexRGE4B3+k2F4g69XJ+S4gKK7ktZX9PrUgDswUFJFnLiqJr0uIITNHM7dQ3m7yq4AnN+/w9n6wyHIBldNAXRhEm9JXoNQvCqva6g2iTQ0sA1rdB/xgCyOQv5sMx78NV8wn37+D3s7dELD7XaGu87kupbqV1sP2MnY79cfZW43tOneq018y72YiLqOVvpdyq705YzZLCd8nDu3HubZ0d2AJjAZxfbr7117Xkuin+ItNcFJx27v0hay8fGn96ojR5rZTI8ch1jA7HmuX39J2oYDhSavnahDAE1V0naFreWfeOM=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <7B9E23BCA8BDD34EA3486D765F48E57A@namprd04.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: analogixsemi.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ad8ee2a3-7f84-4d6e-e486-08d6fb74b859
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Jun 2019 03:00:05.0379
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b099b0b4-f26c-4cf5-9a0f-d5be9acab205
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: xji@analogixsemi.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR04MB5726
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are functions which increment a reference counter for a device node.
-These functions belong to a programming interface for the management
-of information from device trees.
-The counter must be decremented after the last usage of a device node.
-We find these functions by using the following SmPL:
+Move analogix chip ANX78XX bridge driver into "analogix" directory.
 
-<SmPL>
-@initialize:ocaml@
-@@
-
-let relevant_str = "use of_node_put() on it when done"
-
-let contains s1 s2 =
-    let re = Str.regexp_string s2
-    in
-        try ignore (Str.search_forward re s1 0); true
-        with Not_found -> false
-
-let relevant_functions = ref []
-
-let add_function f c =
-    if not (List.mem f !relevant_functions)
-    then
-      begin
-        let s = String.concat " "
-          (
-            (List.map String.lowercase_ascii
-              (List.filter
-                (function x ->
-                  Str.string_match
-                  (Str.regexp "[a-zA-Z_\\(\\)][-a-zA-Z0-9_\\(\\)]*$")
-                x 0) (Str.split (Str.regexp "[ .;\t\n]+") c)))) in
-             if contains s relevant_str
-             then
-               Printf.printf "Found relevant function: %s\n" f;
-               relevant_functions := f :: !relevant_functions;
-      end
-
-@r@
-identifier fn;
-comments c;
-type T = struct device_node *;
-@@
-
-T@c fn(...) {
-...
-}
-
-@script:ocaml@
-f << r.fn;
-c << r.c;
-@@
-
-let (cb,cm,ca) = List.hd c in
-let c = String.concat " " cb in
-add_function f c
-</SmPL>
-
-And this patch also looks for places where an of_node_put()
-call is on some paths but not on others.
-
-Suggested-by: Julia Lawall <Julia.Lawall@lip6.fr>
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Cc: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Gilles Muller <Gilles.Muller@lip6.fr>
-Cc: Nicolas Palix <nicolas.palix@imag.fr>
-Cc: Michal Marek <michal.lkml@markovi.net>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Markus Elfring <Markus.Elfring@web.de>
-Cc: cocci@systeme.lip6.fr
+Signed-off-by: Xin Ji <xji@analogixsemi.com>
 ---
-v2: improve the commit description and delete duplicate code.
+ drivers/gpu/drm/bridge/Kconfig                           | 10 ----------
+ drivers/gpu/drm/bridge/Makefile                          |  3 +--
+ drivers/gpu/drm/bridge/analogix/Kconfig                  | 10 ++++++++++
+ drivers/gpu/drm/bridge/analogix/Makefile                 |  2 ++
+ drivers/gpu/drm/bridge/{ =3D> analogix}/analogix-anx78xx.c |  0
+ drivers/gpu/drm/bridge/{ =3D> analogix}/analogix-anx78xx.h |  0
+ 6 files changed, 13 insertions(+), 12 deletions(-)
+ rename drivers/gpu/drm/bridge/{ =3D> analogix}/analogix-anx78xx.c (100%)
+ rename drivers/gpu/drm/bridge/{ =3D> analogix}/analogix-anx78xx.h (100%)
 
- scripts/coccinelle/free/of_node_put.cocci | 143 ++++++++++++++++++++++++++++++
- 1 file changed, 143 insertions(+)
- create mode 100644 scripts/coccinelle/free/of_node_put.cocci
-
-diff --git a/scripts/coccinelle/free/of_node_put.cocci b/scripts/coccinelle/free/of_node_put.cocci
-new file mode 100644
-index 0000000..81a9f54
---- /dev/null
-+++ b/scripts/coccinelle/free/of_node_put.cocci
-@@ -0,0 +1,143 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/// Find missing of_node_put
-+///
-+// Confidence: Moderate
-+// Copyright: (C) 2018-2019 Wen Yang, ZTE.
-+// Comments:
-+// Options: --no-includes --include-headers
+diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfi=
+g
+index ee77746..862789b 100644
+--- a/drivers/gpu/drm/bridge/Kconfig
++++ b/drivers/gpu/drm/bridge/Kconfig
+@@ -16,16 +16,6 @@ config DRM_PANEL_BRIDGE
+ menu "Display Interface Bridges"
+ 	depends on DRM && DRM_BRIDGE
+=20
+-config DRM_ANALOGIX_ANX78XX
+-	tristate "Analogix ANX78XX bridge"
+-	select DRM_KMS_HELPER
+-	select REGMAP_I2C
+-	---help---
+-	  ANX78XX is an ultra-low Full-HD SlimPort transmitter
+-	  designed for portable devices. The ANX78XX transforms
+-	  the HDMI output of an application processor to MyDP
+-	  or DisplayPort.
+-
+ config DRM_CDNS_DSI
+ 	tristate "Cadence DPI/DSI bridge"
+ 	select DRM_KMS_HELPER
+diff --git a/drivers/gpu/drm/bridge/Makefile b/drivers/gpu/drm/bridge/Makef=
+ile
+index 4934fcf..223ca5d 100644
+--- a/drivers/gpu/drm/bridge/Makefile
++++ b/drivers/gpu/drm/bridge/Makefile
+@@ -1,5 +1,4 @@
+ # SPDX-License-Identifier: GPL-2.0
+-obj-$(CONFIG_DRM_ANALOGIX_ANX78XX) +=3D analogix-anx78xx.o
+ obj-$(CONFIG_DRM_CDNS_DSI) +=3D cdns-dsi.o
+ obj-$(CONFIG_DRM_DUMB_VGA_DAC) +=3D dumb-vga-dac.o
+ obj-$(CONFIG_DRM_LVDS_ENCODER) +=3D lvds-encoder.o
+@@ -12,8 +11,8 @@ obj-$(CONFIG_DRM_SII9234) +=3D sii9234.o
+ obj-$(CONFIG_DRM_THINE_THC63LVD1024) +=3D thc63lvd1024.o
+ obj-$(CONFIG_DRM_TOSHIBA_TC358764) +=3D tc358764.o
+ obj-$(CONFIG_DRM_TOSHIBA_TC358767) +=3D tc358767.o
+-obj-$(CONFIG_DRM_ANALOGIX_DP) +=3D analogix/
+ obj-$(CONFIG_DRM_I2C_ADV7511) +=3D adv7511/
+ obj-$(CONFIG_DRM_TI_SN65DSI86) +=3D ti-sn65dsi86.o
+ obj-$(CONFIG_DRM_TI_TFP410) +=3D ti-tfp410.o
++obj-y +=3D analogix/
+ obj-y +=3D synopsys/
+diff --git a/drivers/gpu/drm/bridge/analogix/Kconfig b/drivers/gpu/drm/brid=
+ge/analogix/Kconfig
+index e930ff9..dfe84f5 100644
+--- a/drivers/gpu/drm/bridge/analogix/Kconfig
++++ b/drivers/gpu/drm/bridge/analogix/Kconfig
+@@ -1,4 +1,14 @@
+ # SPDX-License-Identifier: GPL-2.0-only
++config DRM_ANALOGIX_ANX78XX
++	tristate "Analogix ANX78XX bridge"
++	select DRM_KMS_HELPER
++	select REGMAP_I2C
++	---help---
++	  ANX78XX is an ultra-low Full-HD SlimPort transmitter
++	  designed for portable devices. The ANX78XX transforms
++	  the HDMI output of an application processor to MyDP
++	  or DisplayPort.
 +
-+virtual report
-+virtual org
+ config DRM_ANALOGIX_DP
+ 	tristate
+ 	depends on DRM
+diff --git a/drivers/gpu/drm/bridge/analogix/Makefile b/drivers/gpu/drm/bri=
+dge/analogix/Makefile
+index fdbf3fd..d4c54ac 100644
+--- a/drivers/gpu/drm/bridge/analogix/Makefile
++++ b/drivers/gpu/drm/bridge/analogix/Makefile
+@@ -1,3 +1,5 @@
+ # SPDX-License-Identifier: GPL-2.0-only
++obj-$(CONFIG_DRM_ANALOGIX_ANX78XX) +=3D analogix-anx78xx.o
 +
-+@initialize:python@
-+@@
-+
-+seen = set()
-+
-+def add_if_not_present (p1, p2):
-+    if (p1, p2) not in seen:
-+        seen.add((p1, p2))
-+        return True
-+    return False
-+
-+def display_report(p1, p2):
-+    if add_if_not_present(p1[0].line, p2[0].line):
-+       coccilib.report.print_report(p2[0],
-+                                    "ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line "
-+                                    + p1[0].line
-+                                    + ", but without a corresponding object release within this function.")
-+
-+def display_org(p1, p2):
-+    cocci.print_main("acquired a node pointer with refcount incremented", p1)
-+    cocci.print_secs("needed of_node_put", p2)
-+
-+@r1 exists@
-+local idexpression struct device_node *x;
-+expression e, e1;
-+position p1, p2;
-+statement S;
-+type T;
-+@@
-+
-+x = @p1\(of_find_all_nodes\|
-+         of_get_cpu_node\|
-+         of_get_parent\|
-+         of_get_next_parent\|
-+         of_get_next_child\|
-+         of_get_next_cpu_node\|
-+         of_get_compatible_child\|
-+         of_get_child_by_name\|
-+         of_find_node_opts_by_path\|
-+         of_find_node_by_name\|
-+         of_find_node_by_type\|
-+         of_find_compatible_node\|
-+         of_find_node_with_property\|
-+         of_find_matching_node_and_match\|
-+         of_find_node_by_phandle\|
-+         of_parse_phandle\|
-+         of_find_next_cache_node\|
-+         of_get_next_available_child\)(...);
-+...
-+if (x == NULL || ...) S
-+... when != e = (T)x
-+    when != true x == NULL
-+    when != of_node_put(x)
-+    when != of_get_next_parent(x)
-+    when != of_find_matching_node(x, ...)
-+    when != if (x) { ... return x; }
-+    when != v4l2_async_notifier_add_fwnode_subdev(<...x...>)
-+    when != e1 = of_fwnode_handle(x)
-+(
-+if (x) { ... when forall
-+         of_node_put(x) ... }
-+|
-+return x;
-+|
-+return of_fwnode_handle(x);
-+|
-+return@p2 ...;
-+)
-+
-+@script:python depends on report && r1@
-+p1 << r1.p1;
-+p2 << r1.p2;
-+@@
-+
-+display_report(p1, p2)
-+
-+@script:python depends on org && r1@
-+p1 << r1.p1;
-+p2 << r1.p2;
-+@@
-+
-+display_org(p1, p2)
-+
-+@r2 exists@
-+local idexpression struct device_node *x;
-+expression e, e1;
-+position p1, p2;
-+identifier f;
-+statement S;
-+type T;
-+@@
-+
-+(
-+x = f@p1(...);
-+... when != e = (T)x
-+    when != true x == NULL
-+    when != of_node_put(x)
-+    when != of_get_next_parent(x)
-+    when != of_find_matching_node(x, ...)
-+    when != if (x) { ... return x; }
-+    when != v4l2_async_notifier_add_fwnode_subdev(<...x...>)
-+    when != e1 = of_fwnode_handle(x)
-+(
-+if (x) { ... when forall
-+         of_node_put(x) ... }
-+|
-+return x;
-+|
-+return of_fwnode_handle(x);
-+|
-+return@p2 ...;
-+)
-+&
-+x = f(...)
-+...
-+if (<+...x...+>) S
-+...
-+of_node_put(x);
-+)
-+@script:python depends on report && r2@
-+p1 << r2.p1;
-+p2 << r2.p2;
-+@@
-+
-+display_report(p1, p2)
-+
-+@script:python depends on org && r2@
-+p1 << r2.p1;
-+p2 << r2.p2;
-+@@
-+
-+display_org(p1, p2)
--- 
-2.9.5
+ analogix_dp-objs :=3D analogix_dp_core.o analogix_dp_reg.o
+ obj-$(CONFIG_DRM_ANALOGIX_DP) +=3D analogix_dp.o
+diff --git a/drivers/gpu/drm/bridge/analogix-anx78xx.c b/drivers/gpu/drm/br=
+idge/analogix/analogix-anx78xx.c
+similarity index 100%
+rename from drivers/gpu/drm/bridge/analogix-anx78xx.c
+rename to drivers/gpu/drm/bridge/analogix/analogix-anx78xx.c
+diff --git a/drivers/gpu/drm/bridge/analogix-anx78xx.h b/drivers/gpu/drm/br=
+idge/analogix/analogix-anx78xx.h
+similarity index 100%
+rename from drivers/gpu/drm/bridge/analogix-anx78xx.h
+rename to drivers/gpu/drm/bridge/analogix/analogix-anx78xx.h
+--=20
+2.7.4
 
