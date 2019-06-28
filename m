@@ -2,57 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C4175A4BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 21:02:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 562C15A4D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 21:09:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727036AbfF1TCK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 15:02:10 -0400
-Received: from verein.lst.de ([213.95.11.211]:40914 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726565AbfF1TCK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 15:02:10 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id D53A7227A81; Fri, 28 Jun 2019 21:02:07 +0200 (CEST)
-Date:   Fri, 28 Jun 2019 21:02:07 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Jason Gunthorpe <jgg@mellanox.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH 16/25] device-dax: use the dev_pagemap internal refcount
-Message-ID: <20190628190207.GA9317@lst.de>
-References: <20190626122724.13313-17-hch@lst.de> <20190628153827.GA5373@mellanox.com> <CAPcyv4joSiFMeYq=D08C-QZSkHz0kRpvRfseNQWrN34Rrm+S7g@mail.gmail.com> <20190628170219.GA3608@mellanox.com> <CAPcyv4ja9DVL2zuxuSup8x3VOT_dKAOS8uBQweE9R81vnYRNWg@mail.gmail.com> <CAPcyv4iWTe=vOXUqkr_CguFrFRqgA7hJSt4J0B3RpuP-Okz0Vw@mail.gmail.com> <20190628182922.GA15242@mellanox.com> <CAPcyv4g+zk9pnLcj6Xvwh-svKM+w4hxfYGikcmuoBAFGCr-HAw@mail.gmail.com> <20190628185152.GA9117@lst.de> <CAPcyv4i+b6bKhSF2+z7Wcw4OUAvb1=m289u9QF8zPwLk402JVg@mail.gmail.com>
+        id S1726930AbfF1TJa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 15:09:30 -0400
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:35281 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726875AbfF1TJ3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Jun 2019 15:09:29 -0400
+Received: by mail-yw1-f67.google.com with SMTP id d204so1273410ywb.2
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2019 12:09:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=449XblN0l6jdSpOjx7Le/3IqqVPDOSTgCHH+i4/r88o=;
+        b=RwJkYmlVlijyN+MdHEcsc/YkWXFHbxv6OIZkk8PW1SaKrqUkU4fHbzvSS+akaO4nKJ
+         i6LbJHgvh5NNQ/1TcsiCaZ7tlgrDlRwyuv3+yQI86w2JvxYBUKVsWJgz2Cpe6qwwgXU7
+         0LZvYeauQQw+Bvb29wDhyZ3m31MkK4MDDKAi4HZ3XV4Bu70IrVR48eR2bwCB2hxR6mD2
+         +wHSl+xMwGtEhLZZP+QMQfPOX2YUYOGt/1Mak9xZQntcC8vEZ33oKXGWlfQNSDt/mNOH
+         tq7JM9XiZF40GmB1Co4DzcIsNaIMZTJLSeQU5aR7iY1aHdy2XVIDHO9wus01nNmzwCUx
+         xskQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=449XblN0l6jdSpOjx7Le/3IqqVPDOSTgCHH+i4/r88o=;
+        b=ojxt5V55BAidRWesGkQtYGUNljqqaU6PxdTQPBDBEA+yMqI7CA3Q5oTPsrNdcHt+tf
+         yZ3KQB8Zqd3uDcLVZGuhWiCnbzkSogr1tK5KGqw2WX0bi/50v5wohaWoRR29/Mi/uidG
+         ICYiuaAbXahTJLuszgbzs2fmKvtnftWF3mFumiV2y7BCYyU58xAOPZP2Vp3CWuLSERFm
+         4Dl98B9b4AYQrHukWO/g7Jfysn7QYxUCLarg7mXvix4PEOruzHDhisluOtX3w8xfW+M7
+         +xfYKck8X36WOMqPhBvHjoptn+OjXMTeRIKr+L/o3tOfnokRGsoCT7fTz+SNhlHZZlyU
+         CGkQ==
+X-Gm-Message-State: APjAAAWYr7d19bUiAhjkyxCIa+YlB0Jsz8m1M/rBHqxaqqqLfC4ATwZQ
+        p2aNoRnbM51kOqufR+UZ3R9zmenY
+X-Google-Smtp-Source: APXvYqwhqzl1ZPN0l2DqnhSLolIuZ4nldoNy1vRRFyOrCNRXxAySNYFiI7xva7ltOXpVCsdxiTH8ig==
+X-Received: by 2002:a81:2995:: with SMTP id p143mr7124568ywp.3.1561748968026;
+        Fri, 28 Jun 2019 12:09:28 -0700 (PDT)
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com. [209.85.219.174])
+        by smtp.gmail.com with ESMTPSA id w17sm710676yww.82.2019.06.28.12.09.26
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Fri, 28 Jun 2019 12:09:26 -0700 (PDT)
+Received: by mail-yb1-f174.google.com with SMTP id n3so4704240ybn.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2019 12:09:26 -0700 (PDT)
+X-Received: by 2002:a25:99c4:: with SMTP id q4mr7787823ybo.390.1561748966368;
+ Fri, 28 Jun 2019 12:09:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4i+b6bKhSF2+z7Wcw4OUAvb1=m289u9QF8zPwLk402JVg@mail.gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+References: <cover.1561706800.git.joabreu@synopsys.com> <e4e9ee4cb9c3e7957fe0a09f88b20bc011e2bd4c.1561706801.git.joabreu@synopsys.com>
+In-Reply-To: <e4e9ee4cb9c3e7957fe0a09f88b20bc011e2bd4c.1561706801.git.joabreu@synopsys.com>
+From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Date:   Fri, 28 Jun 2019 15:08:50 -0400
+X-Gmail-Original-Message-ID: <CA+FuTSc4MFfjBNpvN2hRh9_MRmxSYw2xY6wp32Hsbw0E=pqUdw@mail.gmail.com>
+Message-ID: <CA+FuTSc4MFfjBNpvN2hRh9_MRmxSYw2xY6wp32Hsbw0E=pqUdw@mail.gmail.com>
+Subject: Re: [PATCH net-next v2 06/10] net: stmmac: Do not disable interrupts
+ when cleaning TX
+To:     Jose Abreu <Jose.Abreu@synopsys.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 28, 2019 at 11:59:19AM -0700, Dan Williams wrote:
-> It's a bug that the call to put_devmap_managed_page() was gated by
-> MEMORY_DEVICE_PUBLIC in release_pages(). That path is also applicable
-> to MEMORY_DEVICE_FSDAX because it needs to trigger the ->page_free()
-> callback to wake up wait_on_var() via fsdax_pagefree().
-> 
-> So I guess you could argue that the MEMORY_DEVICE_PUBLIC removal patch
-> left the original bug in place. In that sense we're no worse off, but
-> since we know about the bug, the fix and the patches have not been
-> applied yet, why not fix it now?
+On Fri, Jun 28, 2019 at 3:30 AM Jose Abreu <Jose.Abreu@synopsys.com> wrote:
+>
+> This is a performance killer and anyways the interrupts are being
+> disabled by RX NAPI so no need to disable them again.
 
-The fix it now would simply be to apply Ira original patch now, but
-given that we are at -rc6 is this really a good time?  And if we don't
-apply it now based on the quilt based -mm worflow it just seems a lot
-easier to apply it after my series.  Unless we want to include it in
-the series, in which case I can do a quick rebase, we'd just need to
-make sure Andrew pulls it from -mm.
+By the
+
+        if ((status & handle_rx) && (chan < priv->plat->rx_queues_to_use)) {
+                stmmac_disable_dma_irq(priv, priv->ioaddr, chan);
+                napi_schedule_irqoff(&ch->rx_napi);
+        }
+
+branch directly above? If so, is it possible to have fewer rx than tx
+queues and miss this?
+
+this logic seems more complex than needed?
+
+        if (status)
+                status |= handle_rx | handle_tx;
+
+        if ((status & handle_rx) && (chan < priv->plat->rx_queues_to_use)) {
+
+        }
+
+        if ((status & handle_tx) && (chan < priv->plat->tx_queues_to_use)) {
+
+        }
+
+status & handle_rx implies status & handle_tx and vice versa.
+
+
+>
+> Signed-off-by: Jose Abreu <joabreu@synopsys.com>
+> Cc: Joao Pinto <jpinto@synopsys.com>
+> Cc: David S. Miller <davem@davemloft.net>
+> Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+> Cc: Alexandre Torgue <alexandre.torgue@st.com>
+> ---
+>  drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 8 +++-----
+>  1 file changed, 3 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> index 4a5941caaadc..e8f3e76889c8 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> @@ -2061,10 +2061,8 @@ static int stmmac_napi_check(struct stmmac_priv *priv, u32 chan)
+>                 napi_schedule_irqoff(&ch->rx_napi);
+>         }
+>
+> -       if ((status & handle_tx) && (chan < priv->plat->tx_queues_to_use)) {
+> -               stmmac_disable_dma_irq(priv, priv->ioaddr, chan);
+> +       if ((status & handle_tx) && (chan < priv->plat->tx_queues_to_use))
+>                 napi_schedule_irqoff(&ch->tx_napi);
+> -       }
+>
+>         return status;
+>  }
+> @@ -3570,8 +3568,8 @@ static int stmmac_napi_poll_tx(struct napi_struct *napi, int budget)
+>         work_done = stmmac_tx_clean(priv, DMA_TX_SIZE, chan);
+>         work_done = min(work_done, budget);
+>
+> -       if (work_done < budget && napi_complete_done(napi, work_done))
+> -               stmmac_enable_dma_irq(priv, priv->ioaddr, chan);
+> +       if (work_done < budget)
+> +               napi_complete_done(napi, work_done);
+
+It does seem odd that stmmac_napi_poll_rx and stmmac_napi_poll_tx both
+call stmmac_enable_dma_irq(..) independent of the other. Shouldn't the
+IRQ remain masked while either is active or scheduled? That is almost
+what this patch does, though not exactly.
