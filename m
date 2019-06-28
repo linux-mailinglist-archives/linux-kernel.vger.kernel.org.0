@@ -2,114 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45E2D59159
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 04:41:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8EEF59161
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 04:41:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727060AbfF1Cjv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 22:39:51 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:43297 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727041AbfF1Cju (ORCPT
+        id S1727093AbfF1Cka (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 22:40:30 -0400
+Received: from smtprelay0011.hostedemail.com ([216.40.44.11]:45887 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726476AbfF1Ck3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 22:39:50 -0400
-Received: by mail-ot1-f66.google.com with SMTP id i8so4447464oth.10
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 19:39:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=i+w5fn2Y32/L39vIbDWdR2CfVz49VqoI4F4CB/r+uKs=;
-        b=2BroReMxSyl7fumvZHFYCsXog9so/PwacI6uZo45fszzwoTUhDjTDVIC3dmDgkvhjI
-         1vPIrM+hSnKeAwrkzbGzAjTEPTTgmqOwCVSZQUdIDrvAxKA2cMV8Dr6GunOjfoKKRYiR
-         i8n913ea5p94gaxe2NpjIpJwUJ2qhzkQ+wHLtf//YGUdDQeqhjuL7sHzp6EjAr//ec01
-         XTKGHBCDcdPjUSb8oFPiQDfaUdsVI1ufjKYoVyP6pZsvPych6kooqkVWEaGAH73GpfeW
-         Q64A9UAnw0STfqhTNC283nlq9ZOnnmCyzDAjw3roZzNRDyNGYbLpCBliRHdGmg3LI7kY
-         Wv/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=i+w5fn2Y32/L39vIbDWdR2CfVz49VqoI4F4CB/r+uKs=;
-        b=PGL9K+CpLFQFnm552+XLE9vglxVQkP8jXJUugp0rDVpd6FwMYz/KL+C5fgJSKDYz+A
-         sH2m7Ybl/i/wyATtEEARrodXzbn+Xf57wtOgT4OuBOSEAapNzPzsTBI/WFRA1kLHZdVU
-         gx74oG7S6AGLdLWDnnE/T53on8Hjw87D90DmNVtOhSY5pUM+JPOgIwDNmUuKYLtMhaFd
-         gXlaU2HCpARIpaPKqkYrR9gApM+n2jSWhaowfDunDyVR0TsvHOelj8jFRn7z35yabkp0
-         LoMIlIixVYjblmPJ9+qJd2o9Vi+DMAQxzLYXVI6jGrt4MeS8ExSYLUyiXDtanzP2m/cB
-         bVyA==
-X-Gm-Message-State: APjAAAWSuSI9BuRhN0+AG+uA9a8AndyqD6hzpgAE+LmHmdYH9ks9ieKx
-        NmmcB1JRCbalgbxosuk6aozctLtGRUTw/g1Zb5su7BpdYkg=
-X-Google-Smtp-Source: APXvYqwSf5cu88/vylJhhX2x15ji/SfzGkHLqjJ94ZW0+LXDsKMlI1/GoQT5qpbwxtU93udva3CYg32AyPTcsoNMv3U=
-X-Received: by 2002:a9d:7b48:: with SMTP id f8mr5967248oto.207.1561689589382;
- Thu, 27 Jun 2019 19:39:49 -0700 (PDT)
+        Thu, 27 Jun 2019 22:40:29 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 24ED36D83;
+        Fri, 28 Jun 2019 02:40:28 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::,RULES_HIT:41:355:379:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1542:1593:1594:1605:1711:1730:1747:1777:1792:2194:2198:2199:2200:2393:2553:2559:2562:2693:2828:2895:3138:3139:3140:3141:3142:3355:3622:3865:3866:3867:3868:3870:3871:3872:3873:3874:4043:4321:4605:5007:6117:6119:7903:9010:9012:9108:10004:10400:10848:10967:11232:11658:11914:12050:12297:12663:12740:12760:12895:13161:13229:13439:13618:14096:14097:14181:14659:14721:14819:21063:21080:21451:21627:21740:30012:30054:30070:30090:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:27,LUA_SUMMARY:none
+X-HE-Tag: jump91_5b258eb197f18
+X-Filterd-Recvd-Size: 4127
+Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf11.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 28 Jun 2019 02:40:26 +0000 (UTC)
+Message-ID: <2f1c88882fde00beebb6066e9bd561287f5932c5.camel@perches.com>
+Subject: Re: [tip:timers/core] hrtimer: Use a bullet for the returns bullet
+ list
+From:   Joe Perches <joe@perches.com>
+To:     Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc:     corbet@lwn.net, linux-doc@vger.kernel.org, tglx@linutronix.de,
+        mingo@kernel.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
+        mchehab+samsung@kernel.org, linux-tip-commits@vger.kernel.org,
+        docutils-develop@lists.sourceforge.net
+Date:   Thu, 27 Jun 2019 19:40:24 -0700
+In-Reply-To: <20190627213930.0d28a072@coco.lan>
+References: <74ddad7dac331b4e5ce4a90e15c8a49e3a16d2ac.1561372382.git.mchehab+samsung@kernel.org>
+         <tip-516337048fa40496ae5ca9863c367ec991a44d9a@git.kernel.org>
+         <3740b16e5d0a3144e2d48af7cf56ae8020c3f9af.camel@perches.com>
+         <20190627213930.0d28a072@coco.lan>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
 MIME-Version: 1.0
-References: <156159454541.2964018.7466991316059381921.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20190627123415.GA4286@bombadil.infradead.org> <CAPcyv4jQP-SFJGor-Q3VCRQ0xwt3MuVpH2qHx2wzyRA88DGQww@mail.gmail.com>
- <CAPcyv4jjqooboxivY=AsfEPhCvxdwU66GpwE9vM+cqrZWvtX3g@mail.gmail.com>
- <CAPcyv4h6HgNE38RF5TxO3C268ZvrxgcPNrPWOt94MnO5gP_pjw@mail.gmail.com>
- <CAPcyv4gwd1_VHk_MfHeNSxyH+N1=aatj9WkKXqYNPkSXe4bFDg@mail.gmail.com> <20190627195948.GB4286@bombadil.infradead.org>
-In-Reply-To: <20190627195948.GB4286@bombadil.infradead.org>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Thu, 27 Jun 2019 19:39:37 -0700
-Message-ID: <CAPcyv4iB3f1hDdCsw=Cy234dP-RXpxGyXDoTwEU8nt5qUDEVQg@mail.gmail.com>
-Subject: Re: [PATCH] filesystem-dax: Disable PMD support
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-nvdimm <linux-nvdimm@lists.01.org>, Jan Kara <jack@suse.cz>,
-        stable <stable@vger.kernel.org>,
-        Robert Barror <robert.barror@intel.com>,
-        Seema Pandit <seema.pandit@intel.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 27, 2019 at 12:59 PM Matthew Wilcox <willy@infradead.org> wrote:
->
-> On Thu, Jun 27, 2019 at 12:09:29PM -0700, Dan Williams wrote:
-> > > This bug feels like we failed to unlock, or unlocked the wrong entry
-> > > and this hunk in the bisected commit looks suspect to me. Why do we
-> > > still need to drop the lock now that the radix_tree_preload() calls
-> > > are gone?
-> >
-> > Nevermind, unmapp_mapping_pages() takes a sleeping lock, but then I
-> > wonder why we don't restart the lookup like the old implementation.
->
-> We have the entry locked:
->
->                 /*
->                  * Make sure 'entry' remains valid while we drop
->                  * the i_pages lock.
->                  */
->                 dax_lock_entry(xas, entry);
->
->                 /*
->                  * Besides huge zero pages the only other thing that gets
->                  * downgraded are empty entries which don't need to be
->                  * unmapped.
->                  */
->                 if (dax_is_zero_entry(entry)) {
->                         xas_unlock_irq(xas);
->                         unmap_mapping_pages(mapping,
->                                         xas->xa_index & ~PG_PMD_COLOUR,
->                                         PG_PMD_NR, false);
->                         xas_reset(xas);
->                         xas_lock_irq(xas);
->                 }
->
-> If something can remove a locked entry, then that would seem like the
-> real bug.  Might be worth inserting a lookup there to make sure that it
-> hasn't happened, I suppose?
+On Thu, 2019-06-27 at 21:39 -0300, Mauro Carvalho Chehab wrote:
+> Em Thu, 27 Jun 2019 15:08:59 -0700
+> Joe Perches <joe@perches.com> escreveu:
+[]
+> > > hrtimer: Use a bullet for the returns bullet list
+> > > 
+> > > That gets rid of this warning:
+> > > 
+> > >    ./kernel/time/hrtimer.c:1119: WARNING: Block quote ends without a blank line; unexpected unindent.  
+> > 
+> > Doesn't this form occur multiple dozens of times in
+> > kernel sources?
+> > 
+> > For instance:
+> > 
+> > $ git grep -B3 -A5 -P "^ \* Returns:?$" | \
+> >   grep -P -A8 '\-\s+\*\s*@\w+:'
+> 
+> Yes, this is a common pattern, but not all patterns that match the above
+> regex are broken.
+> 
+> > I think the warning is odd at best and docutils might
+> > be updated or the warning ignored or suppressed.
+> > 
+> > > and displays nicely both at the source code and at the produced
+> > > documentation.  
+> 
+> The warnings are painful - and they're the main reason why I wrote this
+> change: - I wanted to avoid new warnings actually unrelated to my
+> changes that were sometimes appearing while doing incremental
+> "make htmldocs" on a big patchset that I've been rebasing almost every
+> week over the last two months.
+> 
+> -
+> 
+> Yet, did you try to look how this pattern will appear at the html and pdf
+> output?
 
-Nope, added a check, we do in fact get the same locked entry back
-after dropping the lock.
+No I did not.
 
-The deadlock revolves around the mmap_sem. One thread holds it for
-read and then gets stuck indefinitely in get_unlocked_entry(). Once
-that happens another rocksdb thread tries to mmap and gets stuck
-trying to take the mmap_sem for write. Then all new readers, including
-ps and top that try to access a remote vma, then get queued behind
-that write.
+I just would like to avoid changing perfectly intelligible
+kernel-doc content into something less directly readable for
+the sake of external output.
 
-It could also be the case that we're missing a wake up.
+I don't use the externally generated formatted output docs.
+I read and use the source when necessary.
+
+Automatic creation of bulleted blocks from relatively
+unformatted content is a hard problem.
+
+I appreciate the work Mauro, I just would like to minimize
+the necessary changes if possible.
+
+The grep I did was trivial, I'm sure there are better tools
+to isolate the kernel-doc bits where the Return: block
+is emitted.
+
+
+>  Something like this:
+> 
+> 	sound/soc/codecs/wm8960.c: * Returns:
+> 	sound/soc/codecs/wm8960.c- *  -1, in case no sysclk frequency available found
+> 	sound/soc/codecs/wm8960.c- * >=0, in case we could derive bclk and lrclk from sysclk using
+> 	sound/soc/codecs/wm8960.c- *      (@sysclk_idx, @dac_idx, @bclk_idx) dividers
+> 
+> 
+> Will be displayed as:
+> 
+> 	**Returns:**
+> 	  -1, in case no sysclk frequency available found **>=0, in case we could derive bclk and lrclk from sysclk using** (@sysclk_idx, @dac_idx, @bclk_idx) dividers
+> (where **foo**) means that "foo" will be printed in bold.> 
+
+That's a yuck from me.
+
+> While it would likely be possible to improve kernel-doc to present better
+> results, I'm afraid that it would be too complex for simple regex
+> expressions, and hard to tune, as it would be a hint-based approach,
+> and doing a natural language processing would be too much effort.
+
+Yeah, tough problem.  I don't envy it.
+
+cheers and g'luck...
+
