@@ -2,171 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E916B594B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 09:19:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65364594BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 09:23:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727349AbfF1HT3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 03:19:29 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:41324 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726648AbfF1HT3 (ORCPT
+        id S1727312AbfF1HXS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 03:23:18 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:34275 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727220AbfF1HXP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 03:19:29 -0400
-Received: by mail-oi1-f194.google.com with SMTP id g7so3551039oia.8
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2019 00:19:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IYgxIggiL3Vp6cFFumrIC01sT9mQSZw9XN9GhM4BPlg=;
-        b=YF5tVCEhSN/WHSd7ULCwYD/YsEEZ0Q0uUDsBVYfxRymbVvtT+P8W19sfS5LvTN2dwb
-         21YkZSshy6M97XDhdqUmk2oALasr73OPRARA9kNpXjyqwcRAMUtbKU/cK/eeJS6A2ufI
-         5B/wfqnKU7mRpSsjgs7e12zSmBXXTWT6pKCftl0tOvbAqHl85prfVrdX1eDFjjN9XsZe
-         oJrkOqWhBWHcRVuvpa4P1wQ1OtziUzrMIwZY5gzdPEKqNdu3TfVxTngxMDgsqwxSzNLd
-         Hk4Ja9Pcjmy4T9/iWdTDZc62BWB85lgUBaOmlYLK1y4bor7oql7fDT9t2momu4lSywhR
-         wBow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IYgxIggiL3Vp6cFFumrIC01sT9mQSZw9XN9GhM4BPlg=;
-        b=KucdkHHYRcgZldZk4CMkPbfhBKNJklyx3z/8YL4fW9mOO3xP1IO3yUVeqSUAkP5qgj
-         4rs0pebAFbRn3nvOvjztpD9OMLUV/6uEAFFPb37ZaEJCEI1ywJUX76yw2G4mjzPCLL1E
-         6DlowkY5soI3+OiuEYhRpVWatjgEcTa5AsRdvBdEyLXfbBXNT/ME0mvpGgj3kzY4mBXh
-         uJoe1JwfN5VejbSbLTTXrGCPJDVZP9GCVeQZGNXp5gfAnVplTSOqkXB5V+kBFoG3qqJ1
-         Uu+uQnGDXWNHqCN4l3BTvMaumDjnk56kAU3N//w5Eln3Th2Svt6PytxFI+ECpUmqxX9M
-         F35A==
-X-Gm-Message-State: APjAAAWvAbxFAQLf9OQBWhF2rcQZqigbDKiaR73BGgx4iFdmcoNB8Mwq
-        iT31U2Vg9RoJGTPX6+4vgPgpPHsEkV6KIcHNglM=
-X-Google-Smtp-Source: APXvYqyMFNH5Q9DiFatk977XULxwMFGEehFqctz9ddVqVeq9tP+T/B6jtsuiHqqu1lRbnbjSJKANpLRhwAZrOHm9NyA=
-X-Received: by 2002:aca:544b:: with SMTP id i72mr891266oib.174.1561706368854;
- Fri, 28 Jun 2019 00:19:28 -0700 (PDT)
+        Fri, 28 Jun 2019 03:23:15 -0400
+X-UUID: c38864b4810846c69f48c68396d2c7d4-20190628
+X-UUID: c38864b4810846c69f48c68396d2c7d4-20190628
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+        (envelope-from <weiyi.lu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 416449884; Fri, 28 Jun 2019 15:22:52 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 28 Jun 2019 15:22:50 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 28 Jun 2019 15:22:50 +0800
+From:   Weiyi Lu <weiyi.lu@mediatek.com>
+To:     Nicolas Boichat <drinkcat@chromium.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC:     James Liao <jamesjj.liao@mediatek.com>,
+        Fan Chen <fan.chen@mediatek.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>, <stable@vger.kernel.org>,
+        Weiyi Lu <weiyi.lu@mediatek.com>,
+        Dehui Sun <dehui.sun@mediatek.com>
+Subject: [PATCH v3] clk: mediatek: mt8183: Register 13MHz clock earlier for clocksource
+Date:   Fri, 28 Jun 2019 15:22:34 +0800
+Message-ID: <1561706554-27770-1-git-send-email-weiyi.lu@mediatek.com>
+X-Mailer: git-send-email 1.8.1.1.dirty
 MIME-Version: 1.0
-References: <1561682593-12071-1-git-send-email-wanpengli@tencent.com>
- <1561682593-12071-2-git-send-email-wanpengli@tencent.com> <20190628065802.GA27699@linux.vnet.ibm.com>
-In-Reply-To: <20190628065802.GA27699@linux.vnet.ibm.com>
-From:   Wanpeng Li <kernellwp@gmail.com>
-Date:   Fri, 28 Jun 2019 15:19:17 +0800
-Message-ID: <CANRm+Cz4R5OOga34DDepCP_yOtXXCqTxD8bs_rvgtQbjS8d1hw@mail.gmail.com>
-Subject: Re: [PATCH RESEND v3] sched/isolation: Prefer housekeeping cpu in
- local node
-To:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Srikar,
-On Fri, 28 Jun 2019 at 14:58, Srikar Dronamraju
-<srikar@linux.vnet.ibm.com> wrote:
->
-> * Wanpeng Li <kernellwp@gmail.com> [2019-06-28 08:43:13]:
->
->
-> >
-> > +/*
-> > + * sched_numa_find_closest() - given the NUMA topology, find the cpu
-> > + *                             closest to @cpu from @cpumask.
-> > + * cpumask: cpumask to find a cpu from
-> > + * cpu: cpu to be close to
-> > + *
-> > + * returns: cpu, or >= nr_cpu_ids when nothing found (or !NUMA).
->
-> One nit:
-> I dont see sched_numa_find_closest returning anything greater than
-> nr_cpu_ids. So 's/>= //' for the above comment.
->
-> > + */
-> > +int sched_numa_find_closest(const struct cpumask *cpus, int cpu)
-> > +{
-> > +#ifdef CONFIG_NUMA
-> > +     int i, j = cpu_to_node(cpu);
-> > +
-> > +     for (i = 0; i < sched_domains_numa_levels; i++) {
-> > +             cpu = cpumask_any_and(cpus, sched_domains_numa_masks[i][j]);
-> > +             if (cpu < nr_cpu_ids)
-> > +                     return cpu;
-> > +     }
-> > +#endif
-> > +     return nr_cpu_ids;
-> > +}
-> > +
->
-> Should we have a static function for sched_numa_find_closest instead of
-> having #ifdef in the function?
->
-> >  static int __sdt_alloc(const struct cpumask *cpu_map)
-> >  {
-> >       struct sched_domain_topology_level *tl;
+The 13MHz clock should be registered before clocksource driver is
+initialized. Use CLK_OF_DECLARE_DRIVER() to guarantee.
 
-So, how about add this?
+Fixes: acddfc2c261b ("clk: mediatek: Add MT8183 clock support")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+---
+ drivers/clk/mediatek/clk-mt8183.c | 46 +++++++++++++++++++++++++++++----------
+ 1 file changed, 34 insertions(+), 12 deletions(-)
 
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index a7e7d8c..5f2b262 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -1225,13 +1225,17 @@ enum numa_topology_type {
- extern void sched_init_numa(void);
- extern void sched_domains_numa_masks_set(unsigned int cpu);
- extern void sched_domains_numa_masks_clear(unsigned int cpu);
-+extern int sched_numa_find_closest(const struct cpumask *cpus, int cpu);
- #else
- static inline void sched_init_numa(void) { }
- static inline void sched_domains_numa_masks_set(unsigned int cpu) { }
- static inline void sched_domains_numa_masks_clear(unsigned int cpu) { }
-+static inline int sched_numa_find_closest(const struct cpumask *cpus, int cpu)
-+{
-+    return nr_cpu_ids;
-+}
- #endif
-
--extern int sched_numa_find_closest(const struct cpumask *cpus, int cpu);
-
- #ifdef CONFIG_NUMA_BALANCING
- /* The regions in numa_faults array from task_struct */
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 72731ed..9372c18 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -1734,19 +1734,16 @@ void sched_domains_numa_masks_clear(unsigned int cpu)
-     }
- }
-
--#endif /* CONFIG_NUMA */
--
- /*
-  * sched_numa_find_closest() - given the NUMA topology, find the cpu
-  *                             closest to @cpu from @cpumask.
-  * cpumask: cpumask to find a cpu from
-  * cpu: cpu to be close to
-  *
-- * returns: cpu, or >= nr_cpu_ids when nothing found (or !NUMA).
-+ * returns: cpu, or nr_cpu_ids when nothing found.
-  */
- int sched_numa_find_closest(const struct cpumask *cpus, int cpu)
- {
--#ifdef CONFIG_NUMA
-     int i, j = cpu_to_node(cpu);
-
-     for (i = 0; i < sched_domains_numa_levels; i++) {
-@@ -1754,10 +1751,11 @@ int sched_numa_find_closest(const struct
-cpumask *cpus, int cpu)
-         if (cpu < nr_cpu_ids)
-             return cpu;
-     }
--#endif
-     return nr_cpu_ids;
- }
-
-+#endif /* CONFIG_NUMA */
+diff --git a/drivers/clk/mediatek/clk-mt8183.c b/drivers/clk/mediatek/clk-mt8183.c
+index 9d86510..bc01611 100644
+--- a/drivers/clk/mediatek/clk-mt8183.c
++++ b/drivers/clk/mediatek/clk-mt8183.c
+@@ -25,9 +25,11 @@
+ 	FIXED_CLK(CLK_TOP_UNIVP_192M, "univpll_192m", "univpll", 192000000),
+ };
+ 
++static const struct mtk_fixed_factor top_early_divs[] = {
++	FACTOR(CLK_TOP_CLK13M, "clk13m", "clk26m", 1, 2),
++};
 +
- static int __sdt_alloc(const struct cpumask *cpu_map)
+ static const struct mtk_fixed_factor top_divs[] = {
+-	FACTOR(CLK_TOP_CLK13M, "clk13m", "clk26m", 1,
+-		2),
+ 	FACTOR(CLK_TOP_F26M_CK_D2, "csw_f26m_ck_d2", "clk26m", 1,
+ 		2),
+ 	FACTOR(CLK_TOP_SYSPLL_CK, "syspll_ck", "mainpll", 1,
+@@ -1167,37 +1169,57 @@ static int clk_mt8183_apmixed_probe(struct platform_device *pdev)
+ 	return of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+ }
+ 
++static struct clk_onecell_data *top_clk_data;
++
++static void clk_mt8183_top_init_early(struct device_node *node)
++{
++	int i;
++
++	top_clk_data = mtk_alloc_clk_data(CLK_TOP_NR_CLK);
++
++	for (i = 0; i < CLK_TOP_NR_CLK; i++)
++		top_clk_data->clks[i] = ERR_PTR(-EPROBE_DEFER);
++
++	mtk_clk_register_factors(top_early_divs, ARRAY_SIZE(top_early_divs),
++			top_clk_data);
++
++	of_clk_add_provider(node, of_clk_src_onecell_get, top_clk_data);
++}
++
++CLK_OF_DECLARE_DRIVER(mt8183_topckgen, "mediatek,mt8183-topckgen",
++			clk_mt8183_top_init_early);
++
+ static int clk_mt8183_top_probe(struct platform_device *pdev)
  {
-     struct sched_domain_topology_level *tl;
+ 	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	void __iomem *base;
+-	struct clk_onecell_data *clk_data;
+ 	struct device_node *node = pdev->dev.of_node;
+ 
+ 	base = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(base))
+ 		return PTR_ERR(base);
+ 
+-	clk_data = mtk_alloc_clk_data(CLK_TOP_NR_CLK);
+-
+ 	mtk_clk_register_fixed_clks(top_fixed_clks, ARRAY_SIZE(top_fixed_clks),
+-		clk_data);
++		top_clk_data);
++
++	mtk_clk_register_factors(top_early_divs, ARRAY_SIZE(top_early_divs),
++		top_clk_data);
+ 
+-	mtk_clk_register_factors(top_divs, ARRAY_SIZE(top_divs), clk_data);
++	mtk_clk_register_factors(top_divs, ARRAY_SIZE(top_divs), top_clk_data);
+ 
+ 	mtk_clk_register_muxes(top_muxes, ARRAY_SIZE(top_muxes),
+-		node, &mt8183_clk_lock, clk_data);
++		node, &mt8183_clk_lock, top_clk_data);
+ 
+ 	mtk_clk_register_composites(top_aud_muxes, ARRAY_SIZE(top_aud_muxes),
+-		base, &mt8183_clk_lock, clk_data);
++		base, &mt8183_clk_lock, top_clk_data);
+ 
+ 	mtk_clk_register_composites(top_aud_divs, ARRAY_SIZE(top_aud_divs),
+-		base, &mt8183_clk_lock, clk_data);
++		base, &mt8183_clk_lock, top_clk_data);
+ 
+ 	mtk_clk_register_gates(node, top_clks, ARRAY_SIZE(top_clks),
+-		clk_data);
++		top_clk_data);
+ 
+-	return of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
++	return of_clk_add_provider(node, of_clk_src_onecell_get, top_clk_data);
+ }
+ 
+ static int clk_mt8183_infra_probe(struct platform_device *pdev)
+-- 
+1.8.1.1.dirty
+
