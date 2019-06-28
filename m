@@ -2,195 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C3D2596EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 11:08:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46120596F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 11:10:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726565AbfF1JIw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 05:08:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56668 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726431AbfF1JIw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 05:08:52 -0400
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 59C08208CB;
-        Fri, 28 Jun 2019 09:08:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561712931;
-        bh=Qibb5cHDh93A09zMK1z8VLBtdEagC8Bss71IgS2q6T8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Anw5BxsSdhuy+YQas/z6oihpG1mRsxLO8wlKwR9qAcC9tfe+Z1QVCkcDn5PRSmWtQ
-         GMhoNAEAKyrBjfWX8XysBJhxVHoM77JmPY3o3hNeCNIA3XsukgNhYqfi1/iA3Wq4J9
-         pXWa/1DX3J0PyIjW6hAIWIfgYKlARmoeTjsnBkx4=
-Date:   Fri, 28 Jun 2019 10:08:46 +0100
-From:   Will Deacon <will@kernel.org>
-To:     Ganapatrao Kulkarni <gklkml16@gmail.com>
-Cc:     Ganapatrao Kulkarni <gkulkarni@marvell.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "Will.Deacon@arm.com" <Will.Deacon@arm.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "corbet@lwn.net" <corbet@lwn.net>, jnair@marvell.com,
-        rrichter@marvell.com, jglauber@marvell.com
-Subject: Re: [PATCH 2/2] drivers/perf: Add CCPI2 PMU support in ThunderX2
- UNCORE driver.
-Message-ID: <20190628090845.rv6urqwfcwz4xxce@willie-the-truck>
-References: <1560534144-13896-1-git-send-email-gkulkarni@marvell.com>
- <1560534144-13896-3-git-send-email-gkulkarni@marvell.com>
- <20190627095730.nf5kkataptfobzue@willie-the-truck>
- <CAKTKpr7PXFzQBHrJt+Ko=JaB+-5FdpNu+ByfkWmAm8OeiPem3w@mail.gmail.com>
+        id S1726656AbfF1JKb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 05:10:31 -0400
+Received: from twhmllg3.macronix.com ([211.75.127.131]:11578 "EHLO
+        TWHMLLG3.macronix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726431AbfF1JKa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Jun 2019 05:10:30 -0400
+Received: from twhfmlp1.macronix.com (twhfm1p1.macronix.com [172.17.20.91])
+        by TWHMLLG3.macronix.com with ESMTP id x5S99G0c007723;
+        Fri, 28 Jun 2019 17:09:16 +0800 (GMT-8)
+        (envelope-from masonccyang@mxic.com.tw)
+Received: from MXML06C.mxic.com.tw (mxml06c.macronix.com [172.17.14.55])
+        by Forcepoint Email with ESMTP id 5F2865BB3BC9A59DC514;
+        Fri, 28 Jun 2019 17:09:16 +0800 (CST)
+In-Reply-To: <20190628094250.1fd84505@xps13>
+References: <1561443056-13766-1-git-send-email-masonccyang@mxic.com.tw> <1561443056-13766-3-git-send-email-masonccyang@mxic.com.tw>
+        <20190627192609.0965f6d5@xps13> <OFFBD1710A.54AC467B-ON48258427.0023FCA3-48258427.00255B71@mxic.com.tw> <20190628094250.1fd84505@xps13>
+To:     "Miquel Raynal" <miquel.raynal@bootlin.com>
+Cc:     anders.roxell@linaro.org, bbrezillon@kernel.org,
+        broonie@kernel.org, christophe.kerello@st.com,
+        computersforpeace@gmail.com, devicetree@vger.kernel.org,
+        dwmw2@infradead.org, jianxin.pan@amlogic.com, juliensu@mxic.com.tw,
+        lee.jones@linaro.org, liang.yang@amlogic.com,
+        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+        marek.vasut@gmail.com, paul@crapouillou.net, paul.burton@mips.com,
+        richard@nod.at, robh+dt@kernel.org, stefan@agner.ch,
+        vigneshr@ti.com
+Subject: Re: [PATCH v4 2/2] dt-bindings: mtd: Document Macronix raw NAND controller
+ bindings
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKTKpr7PXFzQBHrJt+Ko=JaB+-5FdpNu+ByfkWmAm8OeiPem3w@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+X-KeepSent: F895B48A:00F391C1-48258427:002F8256;
+ type=4; name=$KeepSent
+X-Mailer: Lotus Notes Release 8.5.3FP4 SHF90 June 10, 2013
+Message-ID: <OFF895B48A.00F391C1-ON48258427.002F8256-48258427.003249E0@mxic.com.tw>
+From:   masonccyang@mxic.com.tw
+Date:   Fri, 28 Jun 2019 17:09:16 +0800
+X-MIMETrack: Serialize by Router on MXML06C/TAIWAN/MXIC(Release 9.0.1FP10 HF265|July 25, 2018) at
+ 2019/06/28 PM 05:09:16,
+        Serialize complete at 2019/06/28 PM 05:09:16
+Content-Type: text/plain; charset="US-ASCII"
+X-MAIL: TWHMLLG3.macronix.com x5S99G0c007723
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi again, Ganapat,
 
-Thanks for the quick reply.
+Hi Miquel,
 
-On Fri, Jun 28, 2019 at 11:09:33AM +0530, Ganapatrao Kulkarni wrote:
-> On Thu, Jun 27, 2019 at 3:27 PM Will Deacon <will@kernel.org> wrote:
-> > On Fri, Jun 14, 2019 at 05:42:46PM +0000, Ganapatrao Kulkarni wrote:
-> > > CCPI2 is a low-latency high-bandwidth serial interface for connecting
-> > > ThunderX2 processors. This patch adds support to capture CCPI2 perf events.
-> > >
-> > > Signed-off-by: Ganapatrao Kulkarni <gkulkarni@marvell.com>
-> > > ---
-> > >  drivers/perf/thunderx2_pmu.c | 179 ++++++++++++++++++++++++++++++-----
-> > >  1 file changed, 157 insertions(+), 22 deletions(-)
-> > >
-> > > diff --git a/drivers/perf/thunderx2_pmu.c b/drivers/perf/thunderx2_pmu.c
-> > > index 43d76c85da56..3791ac9b897d 100644
-> > > --- a/drivers/perf/thunderx2_pmu.c
-> > > +++ b/drivers/perf/thunderx2_pmu.c
-> > > @@ -16,7 +16,9 @@
-> > >   * they need to be sampled before overflow(i.e, at every 2 seconds).
-> > >   */
-> > >
-> > > -#define TX2_PMU_MAX_COUNTERS         4
-> > > +#define TX2_PMU_DMC_L3C_MAX_COUNTERS 4
-> >
-> > I find it odd that you rename this...
 > 
-> i am not sure, how to avoid this since dmc/l3c have 4 counters and ccpi2 has 8.
-> i will try to make this better in v2.
-> >
-> > > +#define TX2_PMU_CCPI2_MAX_COUNTERS   8
-> > > +
-> > >  #define TX2_PMU_DMC_CHANNELS         8
-> > >  #define TX2_PMU_L3_TILES             16
-> > >
-> > > @@ -28,11 +30,22 @@
-> > >    */
-> > >  #define DMC_EVENT_CFG(idx, val)              ((val) << (((idx) * 8) + 1))
-> > >
-> > > +#define GET_EVENTID_CCPI2(ev)                ((ev->hw.config) & 0x1ff)
-> > > +/* bits[3:0] to select counters, starts from 8, bit[3] set always. */
-> > > +#define GET_COUNTERID_CCPI2(ev)              ((ev->hw.idx) & 0x7)
-> > > +#define CCPI2_COUNTER_OFFSET         8
-> >
-> >
-> > ... but leave GET_EVENTID alone, even though it only applies to DMC/L3C
-> > events. Saying that, if you have the event you can figure out its type,
-> > so could you avoid the need for additional macros entirely and just use
-> > the correct masks based on the corresponding PMU type? That might also
-> > avoid some of the conditional control flow you're introducing elsewhere.
+> Please always Cc: Rob (robh+dt@kernel.org) when you send bindings
+> related patches.
+
+Understood. thanks for your remind.
+
+
+> > 
+> > > 
+> > > > +- reg: should contain 1 entrie for the registers 
+> > > 
+> > >                            entry
+> > > 
+> > > > +- reg-names: should contain "regs" 
+> > > 
+> > > Not sure you need that? 
+> > 
+> > for a base address of ctlr registers.
 > 
-> sure, i will add mask as argument to macro.
-> >
-> > >  #define L3C_COUNTER_CTL                      0xA8
-> > >  #define L3C_COUNTER_DATA             0xAC
-> > >  #define DMC_COUNTER_CTL                      0x234
-> > >  #define DMC_COUNTER_DATA             0x240
-> > >
-> > > +#define CCPI2_PERF_CTL                       0x108
-> > > +#define CCPI2_COUNTER_CTL            0x10C
-> > > +#define CCPI2_COUNTER_SEL            0x12c
-> > > +#define CCPI2_COUNTER_DATA_L         0x130
-> > > +#define CCPI2_COUNTER_DATA_H         0x134
-> > > +
-> > >  /* L3C event IDs */
-> > >  #define L3_EVENT_READ_REQ            0xD
-> > >  #define L3_EVENT_WRITEBACK_REQ               0xE
-> > > @@ -51,9 +64,16 @@
-> > >  #define DMC_EVENT_READ_TXNS          0xF
-> > >  #define DMC_EVENT_MAX                        0x10
-> > >
-> > > +#define CCPI2_EVENT_REQ_PKT_SENT     0x3D
-> > > +#define CCPI2_EVENT_SNOOP_PKT_SENT   0x65
-> > > +#define CCPI2_EVENT_DATA_PKT_SENT    0x105
-> > > +#define CCPI2_EVENT_GIC_PKT_SENT     0x12D
-> > > +#define CCPI2_EVENT_MAX                      0x200
-> > > +
-> > >  enum tx2_uncore_type {
-> > >       PMU_TYPE_L3C,
-> > >       PMU_TYPE_DMC,
-> > > +     PMU_TYPE_CCPI2,
-> > >       PMU_TYPE_INVALID,
-> > >  };
-> > >
-> > > @@ -73,8 +93,8 @@ struct tx2_uncore_pmu {
-> > >       u32 max_events;
-> > >       u64 hrtimer_interval;
-> > >       void __iomem *base;
-> > > -     DECLARE_BITMAP(active_counters, TX2_PMU_MAX_COUNTERS);
-> > > -     struct perf_event *events[TX2_PMU_MAX_COUNTERS];
-> > > +     DECLARE_BITMAP(active_counters, TX2_PMU_CCPI2_MAX_COUNTERS);
-> > > +     struct perf_event *events[TX2_PMU_DMC_L3C_MAX_COUNTERS];
-> >
-> > Hmm, that looks very odd. Why are they now different sizes?
+> Yes I know, I mean: you don't necessarily need the 'reg-names' property
+> as it is supposed that the only entry will be the IP registers (unless
+> there are more). I don't know what's Rob preference here but I would
+> either drop the reg-names property or enhance the name, "regs" is
+> terribly not descriptive.
+
+Got it, any comment is appreciated for either drop the reg-names property 
+or enhance the name.
+
 > 
-> events[ ] is used to hold reference to active events to use in timer
-> callback, which is not applicable to ccpi2, hence 4.
-> active_counters is set to max of both. i.e, 8. i will try to make it
-> better readable in v2.
-
-Thanks. I suspect renaming the field would help a lot, or perhaps reworking
-your data structures so that you have a union of ccpi2 and dmc/l2c
-structures where necessary.
-
-> > >       struct device *dev;
-> > >       struct hrtimer hrtimer;
-> > >       const struct attribute_group **attr_groups;
-> > > @@ -92,7 +112,21 @@ static inline struct tx2_uncore_pmu *pmu_to_tx2_pmu(struct pmu *pmu)
-> > >       return container_of(pmu, struct tx2_uncore_pmu, pmu);
-> > >  }
-> > >
-> > > -PMU_FORMAT_ATTR(event,       "config:0-4");
-> > > +#define TX2_PMU_FORMAT_ATTR(_var, _name, _format)                    \
-> > > +static ssize_t                                                               \
-> > > +__tx2_pmu_##_var##_show(struct device *dev,                          \
-> > > +                            struct device_attribute *attr,           \
-> > > +                            char *page)                              \
-> > > +{                                                                    \
-> > > +     BUILD_BUG_ON(sizeof(_format) >= PAGE_SIZE);                     \
-> > > +     return sprintf(page, _format "\n");                             \
-> > > +}                                                                    \
-> > > +                                                                     \
-> > > +static struct device_attribute format_attr_##_var =                  \
-> > > +     __ATTR(_name, 0444, __tx2_pmu_##_var##_show, NULL)
-> > > +
-> > > +TX2_PMU_FORMAT_ATTR(event, event, "config:0-4");
-> > > +TX2_PMU_FORMAT_ATTR(event_ccpi2, event, "config:0-9");
-> >
-> > This doesn't look right. Can perf deal with overlapping fields? It seems
-> > wrong that we'd allow the user to specify both, for example.
+> > > > +- interrupts: interrupt line connected to this NAND controller
+> > > > +- clock-names: should contain "ps_clk", "send_clk" and 
+"send_dly_clk"
+> > > > +- clocks: should contain 3 entries for the "ps_clk", "send_clk" 
+and
+> > > > +    "send_dly_clk" clocks 
+> > > 
+> > > s/entries/phandles/ ? 
+> > 
+> > ?
+> > as I know that kernel views the phandle values as device tree 
+structure
+> > information instead of device tree data and thus does not store them 
+as
+> > properties.
 > 
-> I am not sure what is the issue here? both are different PMUs
-> root@SBR-26> cat /sys/bus/event_source/devices/uncore_dmc_0/format/event
-> config:0-4
-> root@SBR-26> cat /sys/bus/event_source/devices/uncore_ccpi2_0/format/event
-> config:0-9
+> The bindings have nothing to do with the kernel views. They might
+> actually be merged in a different project, out of the kernel.
+> 
 
-Ah, sorry about that. I got _var and _name the wrong way around and thought
-you were introducing a file called event_ccpi2! What you have looks fine.
+if patch to phandle, should we also patch driver to of_xxx_phandle()?
 
-Will
+thanks & best regards,
+Mason
+
+CONFIDENTIALITY NOTE:
+
+This e-mail and any attachments may contain confidential information 
+and/or personal data, which is protected by applicable laws. Please be 
+reminded that duplication, disclosure, distribution, or use of this e-mail 
+(and/or its attachments) or any part thereof is prohibited. If you receive 
+this e-mail in error, please notify us immediately and delete this mail as 
+well as its attachment(s) from your system. In addition, please be 
+informed that collection, processing, and/or use of personal data is 
+prohibited unless expressly permitted by personal data protection laws. 
+Thank you for your attention and cooperation.
+
+Macronix International Co., Ltd.
+
+=====================================================================
+
+
+
+============================================================================
+
+CONFIDENTIALITY NOTE:
+
+This e-mail and any attachments may contain confidential information and/or personal data, which is protected by applicable laws. Please be reminded that duplication, disclosure, distribution, or use of this e-mail (and/or its attachments) or any part thereof is prohibited. If you receive this e-mail in error, please notify us immediately and delete this mail as well as its attachment(s) from your system. In addition, please be informed that collection, processing, and/or use of personal data is prohibited unless expressly permitted by personal data protection laws. Thank you for your attention and cooperation.
+
+Macronix International Co., Ltd.
+
+=====================================================================
+
