@@ -2,237 +2,486 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0D665A15B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 18:50:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5839E5A164
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 18:50:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726857AbfF1QuL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 12:50:11 -0400
-Received: from foss.arm.com ([217.140.110.172]:51766 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726605AbfF1QuK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 12:50:10 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A121D28;
-        Fri, 28 Jun 2019 09:50:09 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4BC133F706;
-        Fri, 28 Jun 2019 09:50:08 -0700 (PDT)
-Date:   Fri, 28 Jun 2019 17:50:03 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        jolsa@redhat.com, dvyukov@google.com, namhyung@kernel.org,
-        xiexiuqi@huawei.com,
-        syzbot+a24c397a29ad22d86c98@syzkaller.appspotmail.com
-Subject: Re: [PATCH] perf: Fix race between close() and fork()
-Message-ID: <20190628165003.GA5143@lakrids.cambridge.arm.com>
-References: <278ac311-d8f3-2832-5fa1-522471c8c31c@huawei.com>
- <20190228140109.64238-1-alexander.shishkin@linux.intel.com>
- <20190308155429.GB10860@lakrids.cambridge.arm.com>
- <20190624121902.GE3436@hirez.programming.kicks-ass.net>
- <20190625084904.GY3463@hirez.programming.kicks-ass.net>
- <20190625104320.GZ3463@hirez.programming.kicks-ass.net>
+        id S1726960AbfF1Qu3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 12:50:29 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:36460 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726866AbfF1Qu2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Jun 2019 12:50:28 -0400
+Received: by mail-pf1-f195.google.com with SMTP id r7so3276508pfl.3
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2019 09:50:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=android.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=PyMZA7LTU3YwuPZ9HL93kOMjaNYFWigetQuCQt+Cqeg=;
+        b=biCHnLOxxn11gtPzWstm+TOkw05E3FSxRdvr/cI3M2HZFqnnwzjolid7uXE1pHuG9U
+         +/83AjHB4qxTNerJWqJabo0EyPz1QABCBuYstHbwTRj5X5THHfLma2tVBBbdypURbQFI
+         i+Y4mYhG7RZ6hEAMCLB3+ERtDRxlav76ebRX0pdpDGRRnn62mtIOtQh6pxzk3zUJmTja
+         AmUdpfKnwFbns23NyUxebyU2n912IvTqwUID6bj0R32HULa6BOhyQugU1fYXcvpo1RkA
+         iiqKjyWugWlB0iYzzlJMm1v73Wx0CpC22v4b1Lngln0XjymODa3m1uJS7S4NX9X82F6N
+         BFZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=PyMZA7LTU3YwuPZ9HL93kOMjaNYFWigetQuCQt+Cqeg=;
+        b=EoYmUHnEullDkakyGh0PKPgUjAEIbjiX2z+H6FUHCPClbvBgiMebc3kIqM08b8yyip
+         c51hKfp7DcS8oUh6mv9uUuxPPZXyLTBOkOjWGpLYqKwG0T+SF4qNXgAXIV7Unjn4RB7s
+         NicyttTEgxVepVVWGM4A3xK1xz0VxBZrU7UfZnXLFEDJb1juiAo3mu1SuvOZM/O9b8Ig
+         /gq19Wx/PgWF1MFKsb86VXbVKfz6YGVXesUYVsxrmyMbepGhO2v/AaBLgSU2nsqZkLZf
+         v88kv6Ca5yonuwRr+6kN7KLVnHIA8snLqLckyvyPt8MvQjsW5fRvb/Pootamt9FoXMZT
+         Z98g==
+X-Gm-Message-State: APjAAAVtmcqum7oPGaVkFaiPLFodA5PKQzht04mEImeVU1X+evzxheV5
+        xHexYbAHVBjB+1mxwg3oK3UNXg==
+X-Google-Smtp-Source: APXvYqxr1ynSrDmpl/BIWH1F0WuwHJLd4jnNJLCS0Y/IZLxw6W8XC47jFs0KMYMHkPITs7DuSnO0HA==
+X-Received: by 2002:a63:6089:: with SMTP id u131mr10533192pgb.314.1561740627387;
+        Fri, 28 Jun 2019 09:50:27 -0700 (PDT)
+Received: from ava-linux2.mtv.corp.google.com ([2620:0:1000:1601:6cc0:d41d:b970:fd7])
+        by smtp.googlemail.com with ESMTPSA id h6sm9382535pjs.2.2019.06.28.09.50.26
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 28 Jun 2019 09:50:26 -0700 (PDT)
+From:   Todd Kjos <tkjos@android.com>
+X-Google-Original-From: Todd Kjos <tkjos@google.com>
+To:     tkjos@google.com, gregkh@linuxfoundation.org, arve@android.com,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        maco@google.com
+Cc:     joel@joelfernandes.org, kernel-team@android.com,
+        Martijn Coenen <maco@android.com>,
+        syzbot+3ae18325f96190606754@syzkaller.appspotmail.com,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [PATCH] binder: return errors from buffer copy functions
+Date:   Fri, 28 Jun 2019 09:50:12 -0700
+Message-Id: <20190628165012.4841-1-tkjos@google.com>
+X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190625104320.GZ3463@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 25, 2019 at 12:43:20PM +0200, Peter Zijlstra wrote:
-> 
-> Syzcaller reported the following Use-after-Free issue:
-> 
-> 	close()						clone()
-> 
-> 							  copy_process()
-> 							    perf_event_init_task()
-> 							      perf_event_init_context()
-> 							        mutex_lock(parent_ctx->mutex)
-> 								inherit_task_group()
-> 								  inherit_group()
-> 								    inherit_event()
-> 								      mutex_lock(event->child_mutex)
-> 								      // expose event on child list
-> 								      list_add_tail()
-> 								      mutex_unlock(event->child_mutex)
-> 							        mutex_unlock(parent_ctx->mutex)
-> 
-> 							    ...
-> 							    goto bad_fork_*
-> 
-> 							  bad_fork_cleanup_perf:
-> 							    perf_event_free_task()
-> 
-> 	  perf_release()
-> 	    perf_event_release_kernel()
-> 	      list_for_each_entry()
-> 		mutex_lock(ctx->mutex)
-> 		mutex_lock(event->child_mutex)
-> 		// event is from the failing inherit
-> 		// on the other CPU
-> 		perf_remove_from_context()
-> 		list_move()
-> 		mutex_unlock(event->child_mutex)
-> 		mutex_unlock(ctx->mutex)
-> 
-> 							      mutex_lock(ctx->mutex)
-> 							      list_for_each_entry_safe()
-> 							        // event already stolen
-> 							      mutex_unlock(ctx->mutex)
-> 
-> 							    delayed_free_task()
-> 							      free_task()
-> 
-> 	     list_for_each_entry_safe()
-> 	       list_del()
-> 	       free_event()
-> 	         _free_event()
-> 		   // and so event->hw.target
-> 		   // is the already freed failed clone()
-> 		   if (event->hw.target)
-> 		     put_task_struct(event->hw.target)
-> 		       // WHOOPSIE, already quite dead
-> 
-> 
-> Which puts the lie to the the comment on perf_event_free_task():
-> 'unexposed, unused context' not so much.
-> 
-> Which is a 'fun' confluence of fail; copy_process() doing an
-> unconditional free_task() and not respecting refcounts, and perf having
-> creative locking. In particular:
-> 
->   82d94856fa22 ("perf/core: Fix lock inversion between perf,trace,cpuhp")
-> 
-> seems to have overlooked this 'fun' parade.
-> 
-> Solve it by using the fact that detached events still have a reference
-> count on their (previous) context. With this perf_event_free_task()
-> can detect when events have escaped and wait for their destruction.
-> 
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Fixes: 82d94856fa22 ("perf/core: Fix lock inversion between perf,trace,cpuhp")
-> Reported-by: syzbot+a24c397a29ad22d86c98@syzkaller.appspotmail.com
-> Debugged-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> ---
->  kernel/events/core.c | 49 +++++++++++++++++++++++++++++++++++++++++--------
->  1 file changed, 41 insertions(+), 8 deletions(-)
-> 
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index 10c1dba9068c..5302c19e9892 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -4463,12 +4463,20 @@ static void _free_event(struct perf_event *event)
->  	if (event->destroy)
->  		event->destroy(event);
->  
-> -	if (event->ctx)
-> -		put_ctx(event->ctx);
-> -
-> +	/*
-> +	 * Must be after ->destroy(), due to uprobe_perf_close() using
-> +	 * hw.target.
-> +	 */
->  	if (event->hw.target)
->  		put_task_struct(event->hw.target);
->  
-> +	/*
-> +	 * perf_event_free_task() relies on put_ctx() being 'last', in particular
-> +	 * all task references must be cleaned up.
-> +	 */
-> +	if (event->ctx)
-> +		put_ctx(event->ctx);
-> +
->  	exclusive_event_destroy(event);
->  	module_put(event->pmu->module);
->  
-> @@ -4648,8 +4656,17 @@ int perf_event_release_kernel(struct perf_event *event)
->  	mutex_unlock(&event->child_mutex);
->  
->  	list_for_each_entry_safe(child, tmp, &free_list, child_list) {
-> +		void *var = &child->ctx->refcount;
-> +
->  		list_del(&child->child_list);
->  		free_event(child);
-> +
-> +		/*
-> +		 * Wake any perf_event_free_task() waiting for this event to be
-> +		 * freed.
-> +		 */
-> +		smp_mb(); /* pairs with wait_var_event() */
-> +		wake_up_var(var);
+The buffer copy functions assumed the caller would ensure
+correct alignment and that the memory to be copied was
+completely within the binder buffer. There have been
+a few cases discovered by syzkallar where a malformed
+transaction created by a user could violated the
+assumptions and resulted in a BUG_ON.
 
-Huh, so wake_up_var() doesn't imply a RELEASE?
+The fix is to remove the BUG_ON and always return the
+error to be handled appropriately by the caller.
 
-As an aside, doesn't that mean all callers of wake_up_var() have to do
-likewise to ensure it isn't re-ordered with whatever prior stuff they're
-trying to notify waiters about? Several do an smp_store_release() then a
-wake_up_var(), but IIUC the wake_up_var() could get pulled before that
-release...
+Acked-by: Martijn Coenen <maco@android.com>
+Reported-by: syzbot+3ae18325f96190606754@syzkaller.appspotmail.com
+Fixes: bde4a19fc04f ("binder: use userspace pointer as base of buffer space")
+Suggested-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Todd Kjos <tkjos@google.com>
+---
+ drivers/android/binder.c       | 153 ++++++++++++++++++++-------------
+ drivers/android/binder_alloc.c |  44 +++++-----
+ drivers/android/binder_alloc.h |  22 ++---
+ 3 files changed, 126 insertions(+), 93 deletions(-)
 
-I'm likely missing a subtlety there (I guess in practice the
-implementation of wake_up_var prevents that), or maybe I have more
-vocabulary than I have a clue. ;)
+diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+index bc26b5511f0a9..414492c136ddf 100644
+--- a/drivers/android/binder.c
++++ b/drivers/android/binder.c
+@@ -2059,10 +2059,9 @@ static size_t binder_get_object(struct binder_proc *proc,
+ 
+ 	read_size = min_t(size_t, sizeof(*object), buffer->data_size - offset);
+ 	if (offset > buffer->data_size || read_size < sizeof(*hdr) ||
+-	    !IS_ALIGNED(offset, sizeof(u32)))
++	    binder_alloc_copy_from_buffer(&proc->alloc, object, buffer,
++					  offset, read_size))
+ 		return 0;
+-	binder_alloc_copy_from_buffer(&proc->alloc, object, buffer,
+-				      offset, read_size);
+ 
+ 	/* Ok, now see if we read a complete object. */
+ 	hdr = &object->hdr;
+@@ -2131,8 +2130,10 @@ static struct binder_buffer_object *binder_validate_ptr(
+ 		return NULL;
+ 
+ 	buffer_offset = start_offset + sizeof(binder_size_t) * index;
+-	binder_alloc_copy_from_buffer(&proc->alloc, &object_offset,
+-				      b, buffer_offset, sizeof(object_offset));
++	if (binder_alloc_copy_from_buffer(&proc->alloc, &object_offset,
++					  b, buffer_offset,
++					  sizeof(object_offset)))
++		return NULL;
+ 	object_size = binder_get_object(proc, b, object_offset, object);
+ 	if (!object_size || object->hdr.type != BINDER_TYPE_PTR)
+ 		return NULL;
+@@ -2212,10 +2213,12 @@ static bool binder_validate_fixup(struct binder_proc *proc,
+ 			return false;
+ 		last_min_offset = last_bbo->parent_offset + sizeof(uintptr_t);
+ 		buffer_offset = objects_start_offset +
+-			sizeof(binder_size_t) * last_bbo->parent,
+-		binder_alloc_copy_from_buffer(&proc->alloc, &last_obj_offset,
+-					      b, buffer_offset,
+-					      sizeof(last_obj_offset));
++			sizeof(binder_size_t) * last_bbo->parent;
++		if (binder_alloc_copy_from_buffer(&proc->alloc,
++						  &last_obj_offset,
++						  b, buffer_offset,
++						  sizeof(last_obj_offset)))
++			return false;
+ 	}
+ 	return (fixup_offset >= last_min_offset);
+ }
+@@ -2301,15 +2304,15 @@ static void binder_transaction_buffer_release(struct binder_proc *proc,
+ 	for (buffer_offset = off_start_offset; buffer_offset < off_end_offset;
+ 	     buffer_offset += sizeof(binder_size_t)) {
+ 		struct binder_object_header *hdr;
+-		size_t object_size;
++		size_t object_size = 0;
+ 		struct binder_object object;
+ 		binder_size_t object_offset;
+ 
+-		binder_alloc_copy_from_buffer(&proc->alloc, &object_offset,
+-					      buffer, buffer_offset,
+-					      sizeof(object_offset));
+-		object_size = binder_get_object(proc, buffer,
+-						object_offset, &object);
++		if (!binder_alloc_copy_from_buffer(&proc->alloc, &object_offset,
++						   buffer, buffer_offset,
++						   sizeof(object_offset)))
++			object_size = binder_get_object(proc, buffer,
++							object_offset, &object);
+ 		if (object_size == 0) {
+ 			pr_err("transaction release %d bad object at offset %lld, size %zd\n",
+ 			       debug_id, (u64)object_offset, buffer->data_size);
+@@ -2432,15 +2435,16 @@ static void binder_transaction_buffer_release(struct binder_proc *proc,
+ 			for (fd_index = 0; fd_index < fda->num_fds;
+ 			     fd_index++) {
+ 				u32 fd;
++				int err;
+ 				binder_size_t offset = fda_offset +
+ 					fd_index * sizeof(fd);
+ 
+-				binder_alloc_copy_from_buffer(&proc->alloc,
+-							      &fd,
+-							      buffer,
+-							      offset,
+-							      sizeof(fd));
+-				binder_deferred_fd_close(fd);
++				err = binder_alloc_copy_from_buffer(
++						&proc->alloc, &fd, buffer,
++						offset, sizeof(fd));
++				WARN_ON(err);
++				if (!err)
++					binder_deferred_fd_close(fd);
+ 			}
+ 		} break;
+ 		default:
+@@ -2683,11 +2687,12 @@ static int binder_translate_fd_array(struct binder_fd_array_object *fda,
+ 		int ret;
+ 		binder_size_t offset = fda_offset + fdi * sizeof(fd);
+ 
+-		binder_alloc_copy_from_buffer(&target_proc->alloc,
+-					      &fd, t->buffer,
+-					      offset, sizeof(fd));
+-		ret = binder_translate_fd(fd, offset, t, thread,
+-					  in_reply_to);
++		ret = binder_alloc_copy_from_buffer(&target_proc->alloc,
++						    &fd, t->buffer,
++						    offset, sizeof(fd));
++		if (!ret)
++			ret = binder_translate_fd(fd, offset, t, thread,
++						  in_reply_to);
+ 		if (ret < 0)
+ 			return ret;
+ 	}
+@@ -2740,8 +2745,12 @@ static int binder_fixup_parent(struct binder_transaction *t,
+ 	}
+ 	buffer_offset = bp->parent_offset +
+ 			(uintptr_t)parent->buffer - (uintptr_t)b->user_data;
+-	binder_alloc_copy_to_buffer(&target_proc->alloc, b, buffer_offset,
+-				    &bp->buffer, sizeof(bp->buffer));
++	if (binder_alloc_copy_to_buffer(&target_proc->alloc, b, buffer_offset,
++					&bp->buffer, sizeof(bp->buffer))) {
++		binder_user_error("%d:%d got transaction with invalid parent offset\n",
++				  proc->pid, thread->pid);
++		return -EINVAL;
++	}
+ 
+ 	return 0;
+ }
+@@ -3160,15 +3169,20 @@ static void binder_transaction(struct binder_proc *proc,
+ 		goto err_binder_alloc_buf_failed;
+ 	}
+ 	if (secctx) {
++		int err;
+ 		size_t buf_offset = ALIGN(tr->data_size, sizeof(void *)) +
+ 				    ALIGN(tr->offsets_size, sizeof(void *)) +
+ 				    ALIGN(extra_buffers_size, sizeof(void *)) -
+ 				    ALIGN(secctx_sz, sizeof(u64));
+ 
+ 		t->security_ctx = (uintptr_t)t->buffer->user_data + buf_offset;
+-		binder_alloc_copy_to_buffer(&target_proc->alloc,
+-					    t->buffer, buf_offset,
+-					    secctx, secctx_sz);
++		err = binder_alloc_copy_to_buffer(&target_proc->alloc,
++						  t->buffer, buf_offset,
++						  secctx, secctx_sz);
++		if (err) {
++			t->security_ctx = 0;
++			WARN_ON(1);
++		}
+ 		security_release_secctx(secctx, secctx_sz);
+ 		secctx = NULL;
+ 	}
+@@ -3234,11 +3248,16 @@ static void binder_transaction(struct binder_proc *proc,
+ 		struct binder_object object;
+ 		binder_size_t object_offset;
+ 
+-		binder_alloc_copy_from_buffer(&target_proc->alloc,
+-					      &object_offset,
+-					      t->buffer,
+-					      buffer_offset,
+-					      sizeof(object_offset));
++		if (binder_alloc_copy_from_buffer(&target_proc->alloc,
++						  &object_offset,
++						  t->buffer,
++						  buffer_offset,
++						  sizeof(object_offset))) {
++			return_error = BR_FAILED_REPLY;
++			return_error_param = -EINVAL;
++			return_error_line = __LINE__;
++			goto err_bad_offset;
++		}
+ 		object_size = binder_get_object(target_proc, t->buffer,
+ 						object_offset, &object);
+ 		if (object_size == 0 || object_offset < off_min) {
+@@ -3262,15 +3281,17 @@ static void binder_transaction(struct binder_proc *proc,
+ 
+ 			fp = to_flat_binder_object(hdr);
+ 			ret = binder_translate_binder(fp, t, thread);
+-			if (ret < 0) {
++
++			if (ret < 0 ||
++			    binder_alloc_copy_to_buffer(&target_proc->alloc,
++							t->buffer,
++							object_offset,
++							fp, sizeof(*fp))) {
+ 				return_error = BR_FAILED_REPLY;
+ 				return_error_param = ret;
+ 				return_error_line = __LINE__;
+ 				goto err_translate_failed;
+ 			}
+-			binder_alloc_copy_to_buffer(&target_proc->alloc,
+-						    t->buffer, object_offset,
+-						    fp, sizeof(*fp));
+ 		} break;
+ 		case BINDER_TYPE_HANDLE:
+ 		case BINDER_TYPE_WEAK_HANDLE: {
+@@ -3278,15 +3299,16 @@ static void binder_transaction(struct binder_proc *proc,
+ 
+ 			fp = to_flat_binder_object(hdr);
+ 			ret = binder_translate_handle(fp, t, thread);
+-			if (ret < 0) {
++			if (ret < 0 ||
++			    binder_alloc_copy_to_buffer(&target_proc->alloc,
++							t->buffer,
++							object_offset,
++							fp, sizeof(*fp))) {
+ 				return_error = BR_FAILED_REPLY;
+ 				return_error_param = ret;
+ 				return_error_line = __LINE__;
+ 				goto err_translate_failed;
+ 			}
+-			binder_alloc_copy_to_buffer(&target_proc->alloc,
+-						    t->buffer, object_offset,
+-						    fp, sizeof(*fp));
+ 		} break;
+ 
+ 		case BINDER_TYPE_FD: {
+@@ -3296,16 +3318,17 @@ static void binder_transaction(struct binder_proc *proc,
+ 			int ret = binder_translate_fd(fp->fd, fd_offset, t,
+ 						      thread, in_reply_to);
+ 
+-			if (ret < 0) {
++			fp->pad_binder = 0;
++			if (ret < 0 ||
++			    binder_alloc_copy_to_buffer(&target_proc->alloc,
++							t->buffer,
++							object_offset,
++							fp, sizeof(*fp))) {
+ 				return_error = BR_FAILED_REPLY;
+ 				return_error_param = ret;
+ 				return_error_line = __LINE__;
+ 				goto err_translate_failed;
+ 			}
+-			fp->pad_binder = 0;
+-			binder_alloc_copy_to_buffer(&target_proc->alloc,
+-						    t->buffer, object_offset,
+-						    fp, sizeof(*fp));
+ 		} break;
+ 		case BINDER_TYPE_FDA: {
+ 			struct binder_object ptr_object;
+@@ -3393,15 +3416,16 @@ static void binder_transaction(struct binder_proc *proc,
+ 						  num_valid,
+ 						  last_fixup_obj_off,
+ 						  last_fixup_min_off);
+-			if (ret < 0) {
++			if (ret < 0 ||
++			    binder_alloc_copy_to_buffer(&target_proc->alloc,
++							t->buffer,
++							object_offset,
++							bp, sizeof(*bp))) {
+ 				return_error = BR_FAILED_REPLY;
+ 				return_error_param = ret;
+ 				return_error_line = __LINE__;
+ 				goto err_translate_failed;
+ 			}
+-			binder_alloc_copy_to_buffer(&target_proc->alloc,
+-						    t->buffer, object_offset,
+-						    bp, sizeof(*bp));
+ 			last_fixup_obj_off = object_offset;
+ 			last_fixup_min_off = 0;
+ 		} break;
+@@ -4140,20 +4164,27 @@ static int binder_apply_fd_fixups(struct binder_proc *proc,
+ 		trace_binder_transaction_fd_recv(t, fd, fixup->offset);
+ 		fd_install(fd, fixup->file);
+ 		fixup->file = NULL;
+-		binder_alloc_copy_to_buffer(&proc->alloc, t->buffer,
+-					    fixup->offset, &fd,
+-					    sizeof(u32));
++		if (binder_alloc_copy_to_buffer(&proc->alloc, t->buffer,
++						fixup->offset, &fd,
++						sizeof(u32))) {
++			ret = -EINVAL;
++			break;
++		}
+ 	}
+ 	list_for_each_entry_safe(fixup, tmp, &t->fd_fixups, fixup_entry) {
+ 		if (fixup->file) {
+ 			fput(fixup->file);
+ 		} else if (ret) {
+ 			u32 fd;
+-
+-			binder_alloc_copy_from_buffer(&proc->alloc, &fd,
+-						      t->buffer, fixup->offset,
+-						      sizeof(fd));
+-			binder_deferred_fd_close(fd);
++			int err;
++
++			err = binder_alloc_copy_from_buffer(&proc->alloc, &fd,
++							    t->buffer,
++							    fixup->offset,
++							    sizeof(fd));
++			WARN_ON(err);
++			if (!err)
++				binder_deferred_fd_close(fd);
+ 		}
+ 		list_del(&fixup->fixup_entry);
+ 		kfree(fixup);
+diff --git a/drivers/android/binder_alloc.c b/drivers/android/binder_alloc.c
+index ce5603c2291c6..6d79a1b0d4463 100644
+--- a/drivers/android/binder_alloc.c
++++ b/drivers/android/binder_alloc.c
+@@ -1119,15 +1119,16 @@ binder_alloc_copy_user_to_buffer(struct binder_alloc *alloc,
+ 	return 0;
+ }
+ 
+-static void binder_alloc_do_buffer_copy(struct binder_alloc *alloc,
+-					bool to_buffer,
+-					struct binder_buffer *buffer,
+-					binder_size_t buffer_offset,
+-					void *ptr,
+-					size_t bytes)
++static int binder_alloc_do_buffer_copy(struct binder_alloc *alloc,
++				       bool to_buffer,
++				       struct binder_buffer *buffer,
++				       binder_size_t buffer_offset,
++				       void *ptr,
++				       size_t bytes)
+ {
+ 	/* All copies must be 32-bit aligned and 32-bit size */
+-	BUG_ON(!check_buffer(alloc, buffer, buffer_offset, bytes));
++	if (!check_buffer(alloc, buffer, buffer_offset, bytes))
++		return -EINVAL;
+ 
+ 	while (bytes) {
+ 		unsigned long size;
+@@ -1155,25 +1156,26 @@ static void binder_alloc_do_buffer_copy(struct binder_alloc *alloc,
+ 		ptr = ptr + size;
+ 		buffer_offset += size;
+ 	}
++	return 0;
+ }
+ 
+-void binder_alloc_copy_to_buffer(struct binder_alloc *alloc,
+-				 struct binder_buffer *buffer,
+-				 binder_size_t buffer_offset,
+-				 void *src,
+-				 size_t bytes)
++int binder_alloc_copy_to_buffer(struct binder_alloc *alloc,
++				struct binder_buffer *buffer,
++				binder_size_t buffer_offset,
++				void *src,
++				size_t bytes)
+ {
+-	binder_alloc_do_buffer_copy(alloc, true, buffer, buffer_offset,
+-				    src, bytes);
++	return binder_alloc_do_buffer_copy(alloc, true, buffer, buffer_offset,
++					   src, bytes);
+ }
+ 
+-void binder_alloc_copy_from_buffer(struct binder_alloc *alloc,
+-				   void *dest,
+-				   struct binder_buffer *buffer,
+-				   binder_size_t buffer_offset,
+-				   size_t bytes)
++int binder_alloc_copy_from_buffer(struct binder_alloc *alloc,
++				  void *dest,
++				  struct binder_buffer *buffer,
++				  binder_size_t buffer_offset,
++				  size_t bytes)
+ {
+-	binder_alloc_do_buffer_copy(alloc, false, buffer, buffer_offset,
+-				    dest, bytes);
++	return binder_alloc_do_buffer_copy(alloc, false, buffer, buffer_offset,
++					   dest, bytes);
+ }
+ 
+diff --git a/drivers/android/binder_alloc.h b/drivers/android/binder_alloc.h
+index 71bfa95f8e09b..db9c1b984695d 100644
+--- a/drivers/android/binder_alloc.h
++++ b/drivers/android/binder_alloc.h
+@@ -159,17 +159,17 @@ binder_alloc_copy_user_to_buffer(struct binder_alloc *alloc,
+ 				 const void __user *from,
+ 				 size_t bytes);
+ 
+-void binder_alloc_copy_to_buffer(struct binder_alloc *alloc,
+-				 struct binder_buffer *buffer,
+-				 binder_size_t buffer_offset,
+-				 void *src,
+-				 size_t bytes);
+-
+-void binder_alloc_copy_from_buffer(struct binder_alloc *alloc,
+-				   void *dest,
+-				   struct binder_buffer *buffer,
+-				   binder_size_t buffer_offset,
+-				   size_t bytes);
++int binder_alloc_copy_to_buffer(struct binder_alloc *alloc,
++				struct binder_buffer *buffer,
++				binder_size_t buffer_offset,
++				void *src,
++				size_t bytes);
++
++int binder_alloc_copy_from_buffer(struct binder_alloc *alloc,
++				  void *dest,
++				  struct binder_buffer *buffer,
++				  binder_size_t buffer_offset,
++				  size_t bytes);
+ 
+ #endif /* _LINUX_BINDER_ALLOC_H */
+ 
+-- 
+2.22.0.410.gd8fdbe21b5-goog
 
-Other than that tangent, this looks sane to me, so FWIW:
-
-Acked-by: Mark Rutland <mark.rutland@arm.com>
-
-Ideally, we'd throw some CPU hours at testing this. I can drop this in
-my fuzzing queue next week, but I don't have a reproducer that I can
-soak-test this with. :(
-
-Thanks,
-Mark.
-
->  	}
->  
->  no_ctx:
-> @@ -11512,11 +11529,11 @@ static void perf_free_event(struct perf_event *event,
->  }
->  
->  /*
-> - * Free an unexposed, unused context as created by inheritance by
-> - * perf_event_init_task below, used by fork() in case of fail.
-> + * Free a context as created by inheritance by perf_event_init_task() below,
-> + * used by fork() in case of fail.
->   *
-> - * Not all locks are strictly required, but take them anyway to be nice and
-> - * help out with the lockdep assertions.
-> + * Even though the task has never lived, the context and events have been
-> + * exposed through the child_list, so we must take care tearing it all down.
->   */
->  void perf_event_free_task(struct task_struct *task)
->  {
-> @@ -11546,7 +11563,23 @@ void perf_event_free_task(struct task_struct *task)
->  			perf_free_event(event, ctx);
->  
->  		mutex_unlock(&ctx->mutex);
-> -		put_ctx(ctx);
-> +
-> +		/*
-> +		 * perf_event_release_kernel() could've stolen some of our
-> +		 * child events and still have them on its free_list. In that
-> +		 * case we must wait for these events to have been freed (in
-> +		 * particular all their references to this task must've been
-> +		 * dropped).
-> +		 *
-> +		 * Without this copy_process() will unconditionally free this
-> +		 * task (irrespective of its reference count) and
-> +		 * _free_event()'s put_task_struct(event->hw.target) will be a
-> +		 * use-after-free.
-> +		 *
-> +		 * Wait for all events to drop their context reference.
-> +		 */
-> +		wait_var_event(&ctx->refcount, refcount_read(&ctx->refcount) == 1);
-> +		put_ctx(ctx); /* must be last */
->  	}
->  }
->  
-> 
