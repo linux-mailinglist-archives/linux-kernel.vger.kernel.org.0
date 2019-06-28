@@ -2,44 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31AFF59B6A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 14:33:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B46459B74
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 14:33:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727520AbfF1Mch (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 08:32:37 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:39212 "EHLO
+        id S1727578AbfF1MdJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 08:33:09 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:39198 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726935AbfF1Mak (ORCPT
+        with ESMTP id S1726926AbfF1Maj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 08:30:40 -0400
+        Fri, 28 Jun 2019 08:30:39 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=U+qp50zrWERJm0m8k2at/IVwV9GB1pFaVI5ce0ubCIY=; b=eJJJfTne03dWsyHX8ilZMao9Ts
-        Swzk3DmUMDo/6FmCR0idGbzrNIWHkUmuWJJJx1rNas5pr6G62mAjunP/7/tn48K+toP3MnuXNDe0G
-        GxRwb/+KfFzyjE7vSfQnJuZo0Ma8L8sNXzEisoXXleKKDepf4zF/SXoF60GeXZaSfr/6yiH4B6wu0
-        rcNBxgE5NHRhG9QqwTSanohZ34yt86smaS1ple+9CGfuC228Y+xfloUMrWFT/9kb8717AwkUSX/kY
-        sHhxiF5wk+2eKBFCeEcCO08kgO0t28GkQdtqiQ3ULmm5BYbFoSOBkIlnF0rJPSBzLpbsgPuxrUR3L
-        QOpnpvCw==;
+        bh=JKCqIHV1YuF0BSogkUbroVBUzOT9ZPq/zkchQ58FrUY=; b=ZXy2eKnc4pRwloaqI3XC2oyCnO
+        mSruPT4ToVz+viuoujlGR2Nb1bfe941rUUWhmbOJOSL2I6yy9IcrT1ncrEeUx4KxMP6My68U2RV/Y
+        ulN/2Blm3ld+wtnPIi8+YdAaNZa0wIVp6OgB6R8DUlfcWmNTia2ZDUZG34pKk+bO+I30zP+XvXdTQ
+        NhKas929i2SepX4p+LXsfa5bT0miQgebVn9zOrhK5tNR/TxxO7qUS0jwm9oXBMtfpcwcA0mdsPS23
+        ZsBNOhQg2iNaIb3vgV1LPUtVBGc57PznVsqkBOUbSjq2k0QCv6euM1BGOzzF/2ohcn0UA6h/nNjt9
+        MIc8A0PQ==;
 Received: from [186.213.242.156] (helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hgq1T-00054q-Su; Fri, 28 Jun 2019 12:30:35 +0000
+        id 1hgq1T-00054t-US; Fri, 28 Jun 2019 12:30:36 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hgq1S-0005R4-0C; Fri, 28 Jun 2019 09:30:34 -0300
+        id 1hgq1S-0005R9-0z; Fri, 28 Jun 2019 09:30:34 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Matt Porter <mporter@kernel.crashing.org>,
-        Alexandre Bounine <alex.bou9@gmail.com>
-Subject: [PATCH 02/39] docs: rapidio: add it to the driver API
-Date:   Fri, 28 Jun 2019 09:29:55 -0300
-Message-Id: <2262235851f12c9ce1a61b06af48375950b31203.1561724493.git.mchehab+samsung@kernel.org>
+        Shaokun Zhang <zhangshaokun@hisilicon.com>,
+        Khuong Dinh <khuong@os.amperecomputing.com>,
+        Will Deacon <will@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Gross <agross@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org
+Subject: [PATCH 03/39] docs: perf: move to the admin-guide
+Date:   Fri, 28 Jun 2019 09:29:56 -0300
+Message-Id: <cf054e7044bbba8d73ad032a0a1c9790afbfd510.1561724493.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <cover.1561724493.git.mchehab+samsung@kernel.org>
 References: <cover.1561724493.git.mchehab+samsung@kernel.org>
@@ -50,108 +54,123 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is actually a subsystem description, with contains both
-kAPI and uAPI.
+The perf infrastructure is used for userspace to track issues.
+At least a good part of what's described here is related to
+it.
 
-While it should ideally be slplit, let's place it at driver-api,
-as most things are related to kAPI and driver-specific info.
+So, add it to the admin-guide.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- Documentation/admin-guide/index.rst                   | 1 +
- Documentation/{driver-api => admin-guide}/rapidio.rst | 0
- Documentation/driver-api/index.rst                    | 2 +-
- Documentation/{ => driver-api}/rapidio/index.rst      | 2 --
- Documentation/{ => driver-api}/rapidio/mport_cdev.rst | 0
- Documentation/{ => driver-api}/rapidio/rapidio.rst    | 0
- Documentation/{ => driver-api}/rapidio/rio_cm.rst     | 0
- Documentation/{ => driver-api}/rapidio/sysfs.rst      | 0
- Documentation/{ => driver-api}/rapidio/tsi721.rst     | 0
- drivers/rapidio/Kconfig                               | 2 +-
- 10 files changed, 3 insertions(+), 4 deletions(-)
- rename Documentation/{driver-api => admin-guide}/rapidio.rst (100%)
- rename Documentation/{ => driver-api}/rapidio/index.rst (94%)
- rename Documentation/{ => driver-api}/rapidio/mport_cdev.rst (100%)
- rename Documentation/{ => driver-api}/rapidio/rapidio.rst (100%)
- rename Documentation/{ => driver-api}/rapidio/rio_cm.rst (100%)
- rename Documentation/{ => driver-api}/rapidio/sysfs.rst (100%)
- rename Documentation/{ => driver-api}/rapidio/tsi721.rst (100%)
+ Documentation/admin-guide/index.rst                    | 1 +
+ Documentation/{ => admin-guide}/perf/arm-ccn.rst       | 0
+ Documentation/{ => admin-guide}/perf/arm_dsu_pmu.rst   | 0
+ Documentation/{ => admin-guide}/perf/hisi-pmu.rst      | 0
+ Documentation/{ => admin-guide}/perf/index.rst         | 2 --
+ Documentation/{ => admin-guide}/perf/qcom_l2_pmu.rst   | 0
+ Documentation/{ => admin-guide}/perf/qcom_l3_pmu.rst   | 0
+ Documentation/{ => admin-guide}/perf/thunderx2-pmu.rst | 0
+ Documentation/{ => admin-guide}/perf/xgene-pmu.rst     | 0
+ MAINTAINERS                                            | 4 ++--
+ drivers/perf/qcom_l3_pmu.c                             | 2 +-
+ 11 files changed, 4 insertions(+), 5 deletions(-)
+ rename Documentation/{ => admin-guide}/perf/arm-ccn.rst (100%)
+ rename Documentation/{ => admin-guide}/perf/arm_dsu_pmu.rst (100%)
+ rename Documentation/{ => admin-guide}/perf/hisi-pmu.rst (100%)
+ rename Documentation/{ => admin-guide}/perf/index.rst (95%)
+ rename Documentation/{ => admin-guide}/perf/qcom_l2_pmu.rst (100%)
+ rename Documentation/{ => admin-guide}/perf/qcom_l3_pmu.rst (100%)
+ rename Documentation/{ => admin-guide}/perf/thunderx2-pmu.rst (100%)
+ rename Documentation/{ => admin-guide}/perf/xgene-pmu.rst (100%)
 
 diff --git a/Documentation/admin-guide/index.rst b/Documentation/admin-guide/index.rst
-index 8001917ee012..0066b198cad4 100644
+index 0066b198cad4..b7e6d18f80ca 100644
 --- a/Documentation/admin-guide/index.rst
 +++ b/Documentation/admin-guide/index.rst
-@@ -61,6 +61,7 @@ configure specific aspects of kernel behavior to your liking.
-    parport
-    md
-    module-signing
-+   rapidio
-    sysrq
-    unicode
-    vga-softcursor
-diff --git a/Documentation/driver-api/rapidio.rst b/Documentation/admin-guide/rapidio.rst
+@@ -38,6 +38,7 @@ problems and bugs in particular.
+    ramoops
+    dynamic-debug-howto
+    init
++   perf/index
+ 
+ This is the beginning of a section with information of interest to
+ application developers.  Documents covering various aspects of the kernel
+diff --git a/Documentation/perf/arm-ccn.rst b/Documentation/admin-guide/perf/arm-ccn.rst
 similarity index 100%
-rename from Documentation/driver-api/rapidio.rst
-rename to Documentation/admin-guide/rapidio.rst
-diff --git a/Documentation/driver-api/index.rst b/Documentation/driver-api/index.rst
-index 4e503e360860..93c6c9a98c41 100644
---- a/Documentation/driver-api/index.rst
-+++ b/Documentation/driver-api/index.rst
-@@ -44,7 +44,7 @@ available subsections can be seen below.
-    miscellaneous
-    mei/index
-    w1
--   rapidio
-+   rapidio/index
-    s390-drivers
-    vme
-    80211/index
-diff --git a/Documentation/rapidio/index.rst b/Documentation/driver-api/rapidio/index.rst
-similarity index 94%
-rename from Documentation/rapidio/index.rst
-rename to Documentation/driver-api/rapidio/index.rst
-index ab7b5541b346..4c5e51a05134 100644
---- a/Documentation/rapidio/index.rst
-+++ b/Documentation/driver-api/rapidio/index.rst
+rename from Documentation/perf/arm-ccn.rst
+rename to Documentation/admin-guide/perf/arm-ccn.rst
+diff --git a/Documentation/perf/arm_dsu_pmu.rst b/Documentation/admin-guide/perf/arm_dsu_pmu.rst
+similarity index 100%
+rename from Documentation/perf/arm_dsu_pmu.rst
+rename to Documentation/admin-guide/perf/arm_dsu_pmu.rst
+diff --git a/Documentation/perf/hisi-pmu.rst b/Documentation/admin-guide/perf/hisi-pmu.rst
+similarity index 100%
+rename from Documentation/perf/hisi-pmu.rst
+rename to Documentation/admin-guide/perf/hisi-pmu.rst
+diff --git a/Documentation/perf/index.rst b/Documentation/admin-guide/perf/index.rst
+similarity index 95%
+rename from Documentation/perf/index.rst
+rename to Documentation/admin-guide/perf/index.rst
+index 4bf848e27f26..9d445451ea18 100644
+--- a/Documentation/perf/index.rst
++++ b/Documentation/admin-guide/perf/index.rst
 @@ -1,5 +1,3 @@
 -:orphan:
 -
  ===========================
- The Linux RapidIO Subsystem
+ Performance monitor support
  ===========================
-diff --git a/Documentation/rapidio/mport_cdev.rst b/Documentation/driver-api/rapidio/mport_cdev.rst
+diff --git a/Documentation/perf/qcom_l2_pmu.rst b/Documentation/admin-guide/perf/qcom_l2_pmu.rst
 similarity index 100%
-rename from Documentation/rapidio/mport_cdev.rst
-rename to Documentation/driver-api/rapidio/mport_cdev.rst
-diff --git a/Documentation/rapidio/rapidio.rst b/Documentation/driver-api/rapidio/rapidio.rst
+rename from Documentation/perf/qcom_l2_pmu.rst
+rename to Documentation/admin-guide/perf/qcom_l2_pmu.rst
+diff --git a/Documentation/perf/qcom_l3_pmu.rst b/Documentation/admin-guide/perf/qcom_l3_pmu.rst
 similarity index 100%
-rename from Documentation/rapidio/rapidio.rst
-rename to Documentation/driver-api/rapidio/rapidio.rst
-diff --git a/Documentation/rapidio/rio_cm.rst b/Documentation/driver-api/rapidio/rio_cm.rst
+rename from Documentation/perf/qcom_l3_pmu.rst
+rename to Documentation/admin-guide/perf/qcom_l3_pmu.rst
+diff --git a/Documentation/perf/thunderx2-pmu.rst b/Documentation/admin-guide/perf/thunderx2-pmu.rst
 similarity index 100%
-rename from Documentation/rapidio/rio_cm.rst
-rename to Documentation/driver-api/rapidio/rio_cm.rst
-diff --git a/Documentation/rapidio/sysfs.rst b/Documentation/driver-api/rapidio/sysfs.rst
+rename from Documentation/perf/thunderx2-pmu.rst
+rename to Documentation/admin-guide/perf/thunderx2-pmu.rst
+diff --git a/Documentation/perf/xgene-pmu.rst b/Documentation/admin-guide/perf/xgene-pmu.rst
 similarity index 100%
-rename from Documentation/rapidio/sysfs.rst
-rename to Documentation/driver-api/rapidio/sysfs.rst
-diff --git a/Documentation/rapidio/tsi721.rst b/Documentation/driver-api/rapidio/tsi721.rst
-similarity index 100%
-rename from Documentation/rapidio/tsi721.rst
-rename to Documentation/driver-api/rapidio/tsi721.rst
-diff --git a/drivers/rapidio/Kconfig b/drivers/rapidio/Kconfig
-index 467e8fa06904..677d1aff61b7 100644
---- a/drivers/rapidio/Kconfig
-+++ b/drivers/rapidio/Kconfig
-@@ -86,7 +86,7 @@ config RAPIDIO_CHMAN
- 	  This option includes RapidIO channelized messaging driver which
- 	  provides socket-like interface to allow sharing of single RapidIO
- 	  messaging mailbox between multiple user-space applications.
--	  See "Documentation/rapidio/rio_cm.rst" for driver description.
-+	  See "Documentation/driver-api/rapidio/rio_cm.rst" for driver description.
+rename from Documentation/perf/xgene-pmu.rst
+rename to Documentation/admin-guide/perf/xgene-pmu.rst
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 9d3a408f5ce1..55996c9f2e0a 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1139,7 +1139,7 @@ APPLIED MICRO (APM) X-GENE SOC PMU
+ M:	Khuong Dinh <khuong@os.amperecomputing.com>
+ S:	Supported
+ F:	drivers/perf/xgene_pmu.c
+-F:	Documentation/perf/xgene-pmu.rst
++F:	Documentation/admin-guide/perf/xgene-pmu.rst
+ F:	Documentation/devicetree/bindings/perf/apm-xgene-pmu.txt
  
- config RAPIDIO_MPORT_CDEV
- 	tristate "RapidIO /dev mport device driver"
+ APTINA CAMERA SENSOR PLL
+@@ -7207,7 +7207,7 @@ M:	Shaokun Zhang <zhangshaokun@hisilicon.com>
+ W:	http://www.hisilicon.com
+ S:	Supported
+ F:	drivers/perf/hisilicon
+-F:	Documentation/perf/hisi-pmu.rst
++F:	Documentation/admin-guide/perf/hisi-pmu.rst
+ 
+ HISILICON ROCE DRIVER
+ M:	Lijun Ou <oulijun@huawei.com>
+diff --git a/drivers/perf/qcom_l3_pmu.c b/drivers/perf/qcom_l3_pmu.c
+index 90f88ce5192b..656e830798d9 100644
+--- a/drivers/perf/qcom_l3_pmu.c
++++ b/drivers/perf/qcom_l3_pmu.c
+@@ -8,7 +8,7 @@
+  * the slices. User space needs to aggregate to individual counts to provide
+  * a global picture.
+  *
+- * See Documentation/perf/qcom_l3_pmu.rst for more details.
++ * See Documentation/admin-guide/perf/qcom_l3_pmu.rst for more details.
+  *
+  * Copyright (c) 2015-2017, The Linux Foundation. All rights reserved.
+  */
 -- 
 2.21.0
 
