@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B52975959C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 10:07:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AB4E5959D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 10:07:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726869AbfF1IGu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 04:06:50 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:41339 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726812AbfF1IGq (ORCPT
+        id S1726884AbfF1IG4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 04:06:56 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:50399 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726828AbfF1IGr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 04:06:46 -0400
-Received: by mail-wr1-f67.google.com with SMTP id c2so5233552wrm.8
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2019 01:06:44 -0700 (PDT)
+        Fri, 28 Jun 2019 04:06:47 -0400
+Received: by mail-wm1-f68.google.com with SMTP id c66so8126661wmf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2019 01:06:46 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=XK0rmw3TRvyFu6q2ZzeV9ctx1JYPjrgUFwlyn6Ylmt0=;
-        b=BjVj/AHcUuDKFQI7eUC+VlDFqGioaJEfBUKI+dvBeZ4WU3puCZQCQ1KHbngMSJ0WIQ
-         S00czvLWGGUlUEzY+tZo4b4lULJKKD0W1cm8bbDiZ0cw4vrVjEm6ggvonSx8NhwlMmKP
-         sL9/eRZFm+dofQP4Gmf/RUWbTT2z4oGVnhIuLeTHET9E410mK+hMRMSVpuhf4RvQYq2+
-         6nJIHAVfPcG89X6Zk0hmZdkO4gdeITWn735yw6t31G1JOyZ7TvUH8rHydoziY6+Lov62
-         31NeL8gCo7OyHqEeP1cQMb2zl4/Pm4Bdr0NUx3SXrhnGgNHTk3O6LDG67I8cDL4/pn1K
-         0PXg==
-X-Gm-Message-State: APjAAAVzL2EqnjTbvCVyZj09kOzpKhaZuPuSUCO6WKbXil2ANogJHwsi
-        pLwzEUBj8jXL4QWyJB6offmkqw==
-X-Google-Smtp-Source: APXvYqyUcVBU2757Aiq/oZgeZXK15E2by++ZZM7xg8VM22JD2aUmQlxlo9LzXJrJNt/nrKiti9ZdXw==
-X-Received: by 2002:a5d:45d0:: with SMTP id b16mr6676645wrs.209.1561709203910;
-        Fri, 28 Jun 2019 01:06:43 -0700 (PDT)
+        bh=CCKTOX94dJMJaIi336ahfQwlG37S0yGGcCoKC+X5aD4=;
+        b=D5fq92o5SRB81qL0haOeI9smb4BnjU2TdY2ryZb+IZv2zg1zoLHqDneXH+/WclNZpp
+         zbHyquPL6IU/VQQ8PEY0fCJRnz7hKwF0c2xc6qa/BcGtTzs0YddLSeCUd+25TxbDya9v
+         YoRNryGGgas2K3D9HAr3kydyO4vye250fwEzOvWWBBv+DAXe59YhrwDHttNNlah1SWtU
+         vJZvB6fw1VPniefh4ySCC4LpFtkNSRxKQ1KUdYRi/iPMAeoXgCNRm0HTgGSNEuMHRv84
+         VqXB+90NgNrPLdFQ9rqll2Up+2cMRQDIgQSKu34mTyCH7mfaLQjVJebt5YkZvt0fZBhm
+         wFBw==
+X-Gm-Message-State: APjAAAW5tmad+aqb6cPnC26cJSZ40F9dn1/+wlyEyXau/eEOehuJ/zAw
+        JhWXPiuEMsVGVdZboSF8n48ksQ==
+X-Google-Smtp-Source: APXvYqzAsUT+533HfWPDIvW6mCpCh1TTKCdObNW67mDZ8ojUOZbvV3FebhVmYfJcgNWue1+BgE/Zyg==
+X-Received: by 2002:a1c:ef10:: with SMTP id n16mr5706288wmh.134.1561709205292;
+        Fri, 28 Jun 2019 01:06:45 -0700 (PDT)
 Received: from localhost.localdomain.com ([151.29.165.245])
-        by smtp.gmail.com with ESMTPSA id z19sm1472774wmi.7.2019.06.28.01.06.42
+        by smtp.gmail.com with ESMTPSA id z19sm1472774wmi.7.2019.06.28.01.06.43
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 28 Jun 2019 01:06:43 -0700 (PDT)
+        Fri, 28 Jun 2019 01:06:44 -0700 (PDT)
 From:   Juri Lelli <juri.lelli@redhat.com>
 To:     peterz@infradead.org, mingo@redhat.com, rostedt@goodmis.org,
         tj@kernel.org
@@ -41,9 +41,9 @@ Cc:     linux-kernel@vger.kernel.org, luca.abeni@santannapisa.it,
         claudio@evidence.eu.com, tommaso.cucinotta@santannapisa.it,
         bristot@redhat.com, mathieu.poirier@linaro.org, lizefan@huawei.com,
         cgroups@vger.kernel.org, Juri Lelli <juri.lelli@redhat.com>
-Subject: [PATCH v8 7/8] sched/core: Prevent race condition between cpuset and __sched_setscheduler()
-Date:   Fri, 28 Jun 2019 10:06:17 +0200
-Message-Id: <20190628080618.522-8-juri.lelli@redhat.com>
+Subject: [PATCH v8 8/8] rcu/tree: Setschedule gp ktread to SCHED_FIFO outside of atomic region
+Date:   Fri, 28 Jun 2019 10:06:18 +0200
+Message-Id: <20190628080618.522-9-juri.lelli@redhat.com>
 X-Mailer: git-send-email 2.17.2
 In-Reply-To: <20190628080618.522-1-juri.lelli@redhat.com>
 References: <20190628080618.522-1-juri.lelli@redhat.com>
@@ -52,153 +52,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-No synchronisation mechanism exists between the cpuset subsystem and
-calls to function __sched_setscheduler(). As such, it is possible that
-new root domains are created on the cpuset side while a deadline
-acceptance test is carried out in __sched_setscheduler(), leading to a
-potential oversell of CPU bandwidth.
+sched_setscheduler() needs to acquire cpuset_rwsem, but it is currently
+called from an invalid (atomic) context by rcu_spawn_gp_kthread().
 
-Grab cpuset_rwsem read lock from core scheduler, so to prevent
-situations such as the one described above from happening.
+Fix that by simply moving sched_setscheduler_nocheck() call outside of
+the atomic region, as it doesn't actually require to be guarded by
+rcu_node lock.
 
+Suggested-by: Peter Zijlstra <peterz@infradead.org>
 Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
-
 ---
+ kernel/rcu/tree.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-v7->v8: use a percpu_rwsem read lock to avoid hotpath bottleneck issues
----
- include/linux/cpuset.h |  5 +++++
- kernel/cgroup/cpuset.c | 11 +++++++++++
- kernel/sched/core.c    | 33 ++++++++++++++++++++++++++-------
- 3 files changed, 42 insertions(+), 7 deletions(-)
-
-diff --git a/include/linux/cpuset.h b/include/linux/cpuset.h
-index 7f1478c26a33..04c20de66afc 100644
---- a/include/linux/cpuset.h
-+++ b/include/linux/cpuset.h
-@@ -55,6 +55,8 @@ extern void cpuset_init_smp(void);
- extern void cpuset_force_rebuild(void);
- extern void cpuset_update_active_cpus(void);
- extern void cpuset_wait_for_hotplug(void);
-+extern void cpuset_read_lock(void);
-+extern void cpuset_read_unlock(void);
- extern void cpuset_cpus_allowed(struct task_struct *p, struct cpumask *mask);
- extern void cpuset_cpus_allowed_fallback(struct task_struct *p);
- extern nodemask_t cpuset_mems_allowed(struct task_struct *p);
-@@ -176,6 +178,9 @@ static inline void cpuset_update_active_cpus(void)
- 
- static inline void cpuset_wait_for_hotplug(void) { }
- 
-+static inline void cpuset_read_lock(void) { }
-+static inline void cpuset_read_unlock(void) { }
-+
- static inline void cpuset_cpus_allowed(struct task_struct *p,
- 				       struct cpumask *mask)
- {
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index d92b351f89e3..f47b5c5c3c8b 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -334,6 +334,17 @@ static struct cpuset top_cpuset = {
-  */
- 
- DEFINE_STATIC_PERCPU_RWSEM(cpuset_rwsem);
-+
-+void cpuset_read_lock(void)
-+{
-+	percpu_down_read(&cpuset_rwsem);
-+}
-+
-+void cpuset_read_unlock(void)
-+{
-+	percpu_up_read(&cpuset_rwsem);
-+}
-+
- static DEFINE_SPINLOCK(callback_lock);
- 
- static struct workqueue_struct *cpuset_migrate_mm_wq;
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index acd6a9fe85bc..18e151c6b48d 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -4208,6 +4208,9 @@ static int __sched_setscheduler(struct task_struct *p,
- 			return retval;
- 	}
- 
-+	if (pi)
-+		cpuset_read_lock();
-+
- 	/*
- 	 * Make sure no PI-waiters arrive (or leave) while we are
- 	 * changing the priority of the task:
-@@ -4280,6 +4283,8 @@ static int __sched_setscheduler(struct task_struct *p,
- 	if (unlikely(oldpolicy != -1 && oldpolicy != p->policy)) {
- 		policy = oldpolicy = -1;
- 		task_rq_unlock(rq, p, &rf);
-+		if (pi)
-+			cpuset_read_unlock();
- 		goto recheck;
- 	}
- 
-@@ -4338,8 +4343,10 @@ static int __sched_setscheduler(struct task_struct *p,
- 	preempt_disable();
- 	task_rq_unlock(rq, p, &rf);
- 
--	if (pi)
-+	if (pi) {
-+		cpuset_read_unlock();
- 		rt_mutex_adjust_pi(p);
-+	}
- 
- 	/* Run balance callbacks after we've adjusted the PI chain: */
- 	balance_callback(rq);
-@@ -4349,6 +4356,8 @@ static int __sched_setscheduler(struct task_struct *p,
- 
- unlock:
- 	task_rq_unlock(rq, p, &rf);
-+	if (pi)
-+		cpuset_read_unlock();
- 	return retval;
- }
- 
-@@ -4433,10 +4442,15 @@ do_sched_setscheduler(pid_t pid, int policy, struct sched_param __user *param)
- 	rcu_read_lock();
- 	retval = -ESRCH;
- 	p = find_process_by_pid(pid);
--	if (p != NULL)
--		retval = sched_setscheduler(p, policy, &lparam);
-+	if (!p) {
-+		rcu_read_unlock();
-+		goto exit;
-+	}
-+	get_task_struct(p);
- 	rcu_read_unlock();
--
-+	retval = sched_setscheduler(p, policy, &lparam);
-+	put_task_struct(p);
-+exit:
- 	return retval;
- }
- 
-@@ -4564,10 +4578,15 @@ SYSCALL_DEFINE3(sched_setattr, pid_t, pid, struct sched_attr __user *, uattr,
- 	rcu_read_lock();
- 	retval = -ESRCH;
- 	p = find_process_by_pid(pid);
--	if (p != NULL)
--		retval = sched_setattr(p, &attr);
-+	if (!p) {
-+		rcu_read_unlock();
-+		goto exit;
-+	}
-+	get_task_struct(p);
- 	rcu_read_unlock();
--
-+	retval = sched_setattr(p, &attr);
-+	put_task_struct(p);
-+exit:
- 	return retval;
- }
- 
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index 980ca3ca643f..32ea75acba14 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -3123,13 +3123,13 @@ static int __init rcu_spawn_gp_kthread(void)
+ 	t = kthread_create(rcu_gp_kthread, NULL, "%s", rcu_state.name);
+ 	if (WARN_ONCE(IS_ERR(t), "%s: Could not start grace-period kthread, OOM is now expected behavior\n", __func__))
+ 		return 0;
++	if (kthread_prio)
++		sched_setscheduler_nocheck(t, SCHED_FIFO, &sp);
+ 	rnp = rcu_get_root();
+ 	raw_spin_lock_irqsave_rcu_node(rnp, flags);
+ 	rcu_state.gp_kthread = t;
+-	if (kthread_prio) {
++	if (kthread_prio)
+ 		sp.sched_priority = kthread_prio;
+-		sched_setscheduler_nocheck(t, SCHED_FIFO, &sp);
+-	}
+ 	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
+ 	wake_up_process(t);
+ 	rcu_spawn_nocb_kthreads();
 -- 
 2.17.2
 
