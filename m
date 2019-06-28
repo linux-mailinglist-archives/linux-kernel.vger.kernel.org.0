@@ -2,94 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 032D05A18B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 18:57:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F2A05A19B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 18:59:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727092AbfF1Q5D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 12:57:03 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:57278 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727078AbfF1Q5C (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 12:57:02 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id 24204260E01
-Subject: Re: linux-next: build failure after merge of the battery tree
-To:     Sebastian Reichel <sre@kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nick Crews <ncrews@chromium.org>
-References: <20190628140304.76caf572@canb.auug.org.au>
- <20190628153146.c2lh4y55qvcmqhry@earth.universe>
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Message-ID: <d3515009-c922-7aa6-2ded-4ca39ed324f2@collabora.com>
-Date:   Fri, 28 Jun 2019 18:56:56 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
+        id S1726835AbfF1Q7T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 12:59:19 -0400
+Received: from foss.arm.com ([217.140.110.172]:51974 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726673AbfF1Q7S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Jun 2019 12:59:18 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2390A28;
+        Fri, 28 Jun 2019 09:59:18 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A6DB73F706;
+        Fri, 28 Jun 2019 09:59:17 -0700 (PDT)
+Date:   Fri, 28 Jun 2019 17:59:15 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Mukesh Ojha <mojha@codeaurora.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>
+Subject: Re: Perf framework : Cluster based counter support
+Message-ID: <20190628165915.GB5143@lakrids.cambridge.arm.com>
+References: <7ce0c077-06ef-676f-1f7b-61f3ba8589d1@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20190628153146.c2lh4y55qvcmqhry@earth.universe>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7ce0c077-06ef-676f-1f7b-61f3ba8589d1@codeaurora.org>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Fri, Jun 28, 2019 at 10:23:10PM +0530, Mukesh Ojha wrote:
+> Hi All,
 
-On 28/6/19 17:31, Sebastian Reichel wrote:
-> Hi,
-> 
-> On Fri, Jun 28, 2019 at 02:03:04PM +1000, Stephen Rothwell wrote:
->> Hi all,
->>
->> After merging the battery tree, today's linux-next build (x86_64
->> allmodconfig) failed like this:
->>
->> drivers/power/supply/wilco-charger.c: In function 'wilco_charge_get_property':
->> drivers/power/supply/wilco-charger.c:104:8: error: implicit declaration of function 'wilco_ec_get_byte_property'; did you mean 'wilco_charge_get_property'? [-Werror=implicit-function-declaration]
->>   ret = wilco_ec_get_byte_property(ec, property_id, &raw);
->>         ^~~~~~~~~~~~~~~~~~~~~~~~~~
->>         wilco_charge_get_property
->> drivers/power/supply/wilco-charger.c: In function 'wilco_charge_set_property':
->> drivers/power/supply/wilco-charger.c:130:10: error: implicit declaration of function 'wilco_ec_set_byte_property'; did you mean 'wilco_charge_set_property'? [-Werror=implicit-function-declaration]
->>    return wilco_ec_set_byte_property(ec, PID_CHARGE_MODE, mode);
->>           ^~~~~~~~~~~~~~~~~~~~~~~~~~
->>           wilco_charge_set_property
->>
->> Caused by commit
->>
->>   0736343e4c56 ("power_supply: wilco_ec: Add charging config driver")
->>
+Hi Mukesh,
 
-Hmm, I just applied this patch on top of linux-next and it build with
-allmodconfig on x86_64
+> Is it looks considerable to add cluster based event support to add in
+> current perf event framework and later in userspace perf to support
+> such events ?
 
-I am wondering if the build was done without this commit, which is in
-chrome-platform for-next branch. Could be this the problem?
+Could you elaborate on what you mean by "cluster based event"?
 
-commit 0c0b7ea23aed0b55ef2f9803f13ddaae1943713d
-Author: Nick Crews <ncrews@chromium.org>
-Date:   Wed Apr 24 10:56:50 2019 -0600
+I assume you mean something like events for a cluster-affine shared
+resource like some level of cache?
 
-    platform/chrome: wilco_ec: Add property helper library
-
-
-Anyway, I think the proper way to do it is create an immutable branch for
-Sebastian as the patch he picked depends on the above commit. I'll create one,
-sorry about that missing dependency.
+If so, there's a standard pattern for supporting such system/uncore
+PMUs, see drivers/perf/qcom_l2_pmu.c and friends for examples.
 
 Thanks,
-~ Enric
-
-
->> I have reverted that commit for today.
-> 
-> Oops, thanks for the hint. I did not notice this with ARM
-> allmodconfig. I dropped the patch for this cycle.
-> 
-> -- Sebastian
-> 
+Mark.
