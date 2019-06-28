@@ -2,97 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 694425A491
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 20:53:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B5CB5A48B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 20:53:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726987AbfF1SxL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 14:53:11 -0400
-Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:57264 "EHLO
-        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726909AbfF1SxJ (ORCPT
+        id S1726887AbfF1SxB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 14:53:01 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:42516 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726563AbfF1SxA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 14:53:09 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R931e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07486;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0TVRxcr9_1561747966;
-Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TVRxcr9_1561747966)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Sat, 29 Jun 2019 02:52:57 +0800
-Subject: Re: [PATCH] mm, vmscan: prevent useless kswapd loops
-To:     Shakeel Butt <shakeelb@google.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Hillf Danton <hdanton@sina.com>, Roman Gushchin <guro@fb.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20190628015520.13357-1-shakeelb@google.com>
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <6e28c8ce-96e1-5a1e-bd06-d1df5856094e@linux.alibaba.com>
-Date:   Fri, 28 Jun 2019 11:52:46 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
+        Fri, 28 Jun 2019 14:53:00 -0400
+Received: by mail-io1-f68.google.com with SMTP id u19so6141735ior.9
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2019 11:53:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=0vnkzi3BuJTyXx7KRAPPLKqoLRHPgMrkqNHgPj4DsWE=;
+        b=T6kWLJqrYH5JG0ZpMsTWJYlyGp9L3SPHrYqLjVPcryv7lQnYlvRo3gyaCu9yw18RST
+         Z87ehkfmmJPrNWqwbVGwO9zaTzKN6gap4ePTLSce7dgy/LWbvt+j+oH15CCz/kDxDRXT
+         kU+5cB/xXZA8kY42vlqCnC82yo2PhgaWetCTG/BFjvvO3NEjkfHPPtVNtIdzkmKPSV9n
+         sn1Tqp6C8V/RzMRtEteqgpcaDUHN/M557MGODv7f7gUChAz0zOz3c5iizFfLdZikIwK0
+         pGDBZemdSCGyArGmU3wNXGeWyE+g30zZSvPbbAKcxM1YICX3RCRnUn/dMCGi84YW3huv
+         IBLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=0vnkzi3BuJTyXx7KRAPPLKqoLRHPgMrkqNHgPj4DsWE=;
+        b=C+MtD/JVPcpfpqcjV9f35PnAhdgphYXUrthCBrkCRfmWjyxaYBzXiooUlCC4Mnd2VT
+         jefmzQYVc3elVArtpIrTy4j2DhDQe6UnjyWDTkRElayEJ87pIjVqmT7sARC8+Pqgr685
+         9E6oBe+kIeqGEPAJgdZK3NCfa+AaZGCM9ulrE44/pp5IW+fy5DMt7fg7goxN6t503Qdx
+         lCSRo/BVozBx3Zj9uznr7NEBaZQ+vJpgeBy6Nz2hjgJ5+I/tbS0lpdiZ1g4mUUsFxmV0
+         h23ot3tv9C2oowqUSv2j55rq5ZJBCsZY8zVZt0wWVIvi+mcmrUwtIwuB/rrEx0XOKV7A
+         PNsw==
+X-Gm-Message-State: APjAAAV2xLOd32J7G8obfCmj9NCZE8Z/rKZWeA9A2YE4208Pqt/cvSnG
+        WQ1kc3VGTVTuVIOJk0T1TOQBqP8wKo8=
+X-Google-Smtp-Source: APXvYqxpEW1Y8xJHyOkBaajlUN4Y39E+v9ExrC3+JygOPXs47MYzUBN0cdnJSzJFUIgReI45GA6Nrg==
+X-Received: by 2002:a02:bb08:: with SMTP id y8mr13143899jan.51.1561747980021;
+        Fri, 28 Jun 2019 11:53:00 -0700 (PDT)
+Received: from localhost (c-73-95-159-87.hsd1.co.comcast.net. [73.95.159.87])
+        by smtp.gmail.com with ESMTPSA id w23sm2481400iod.12.2019.06.28.11.52.59
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 28 Jun 2019 11:52:59 -0700 (PDT)
+Date:   Fri, 28 Jun 2019 11:52:58 -0700 (PDT)
+From:   Paul Walmsley <paul.walmsley@sifive.com>
+X-X-Sender: paulw@viisi.sifive.com
+To:     damon <liush.damon@gmail.com>
+cc:     palmer@sifive.com, sorear2@gmail.com, aou@eecs.berkeley.edu,
+        anup.patel@wdc.com, linux-kernel@vger.kernel.org,
+        rppt@linux.ibm.com, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH] RISC-V: redefine
+ PTRS_PER_PGD/PTRS_PER_PMD/PTRS_PER_PTE
+In-Reply-To: <1556093512-5006-1-git-send-email-liush.damon@gmail.com>
+Message-ID: <alpine.DEB.2.21.9999.1906281147260.3867@viisi.sifive.com>
+References: <1556093512-5006-1-git-send-email-liush.damon@gmail.com>
+User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
 MIME-Version: 1.0
-In-Reply-To: <20190628015520.13357-1-shakeelb@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 24 Apr 2019, damon wrote:
+
+> Use the number of addresses to define the relevant macros.
+> 
+> Signed-off-by: damon <liush.damon@gmail.com>
+
+This patch looks reasonable to me.  But what's missing from the 
+description is the motivation.  Is this a prerequisite for another patch 
+that you're planning to post?  Or because you think this is clearer than 
+the original?  Or something else?  etc.
 
 
-On 6/27/19 6:55 PM, Shakeel Butt wrote:
-> On production we have noticed hard lockups on large machines running
-> large jobs due to kswaps hoarding lru lock within isolate_lru_pages when
-> sc->reclaim_idx is 0 which is a small zone. The lru was couple hundred
-> GiBs and the condition (page_zonenum(page) > sc->reclaim_idx) in
-> isolate_lru_pages was basically skipping GiBs of pages while holding the
-> LRU spinlock with interrupt disabled.
->
-> On further inspection, it seems like there are two issues:
->
-> 1) If the kswapd on the return from balance_pgdat() could not sleep
-> (maybe all zones are still unbalanced), the classzone_idx is set to 0,
-> unintentionally, and the whole reclaim cycle of kswapd will try to reclaim
-> only the lowest and smallest zone while traversing the whole memory.
->
-> 2) Fundamentally isolate_lru_pages() is really bad when the allocation
-> has woken kswapd for a smaller zone on a very large machine running very
-> large jobs. It can hoard the LRU spinlock while skipping over 100s of
-> GiBs of pages.
->
-> This patch only fixes the (1). The (2) needs a more fundamental solution.
->
-> Fixes: e716f2eb24de ("mm, vmscan: prevent kswapd sleeping prematurely
-> due to mismatched classzone_idx")
-> Signed-off-by: Shakeel Butt <shakeelb@google.com>
-> ---
->   mm/vmscan.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index 9e3292ee5c7c..786dacfdfe29 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -3908,7 +3908,7 @@ static int kswapd(void *p)
->   
->   		/* Read the new order and classzone_idx */
->   		alloc_order = reclaim_order = pgdat->kswapd_order;
-> -		classzone_idx = kswapd_classzone_idx(pgdat, 0);
-> +		classzone_idx = kswapd_classzone_idx(pgdat, classzone_idx);
-
-I'm a little bit confused by the fix. What happen if kswapd is waken for 
-a lower zone? It looks kswapd may just reclaim the higher zone instead 
-of the lower zone?
-
-For example, after bootup, classzone_idx should be (MAX_NR_ZONES - 1), 
-if GFP_DMA is used for allocation and kswapd is waken up for ZONE_DMA, 
-kswapd_classzone_idx would still return (MAX_NR_ZONES - 1) since 
-kswapd_classzone_idx(pgdat, classzone_idx) returns the max classzone_idx.
-
->   		pgdat->kswapd_order = 0;
->   		pgdat->kswapd_classzone_idx = MAX_NR_ZONES;
->   
-
+- Paul
