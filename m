@@ -2,85 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68D5D598FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 13:07:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DBC559922
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 13:22:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726747AbfF1LHy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 07:07:54 -0400
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:39257
-        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726514AbfF1LHx (ORCPT
+        id S1726667AbfF1LVs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 07:21:48 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:35285 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726524AbfF1LVr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 07:07:53 -0400
-X-IronPort-AV: E=Sophos;i="5.63,427,1557180000"; 
-   d="scan'208";a="311767956"
-Received: from wifi-eduroam-85-160.paris.inria.fr ([128.93.85.160])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jun 2019 13:07:51 +0200
-Date:   Fri, 28 Jun 2019 13:07:51 +0200 (CEST)
-From:   Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: jll@hadrien
-To:     Markus Elfring <Markus.Elfring@web.de>
-cc:     Wen Yang <wen.yang99@zte.com.cn>, linux-kernel@vger.kernel.org,
-        Yi Wang <wang.yi59@zte.com.cn>,
-        Gilles Muller <Gilles.Muller@lip6.fr>,
-        Nicolas Palix <nicolas.palix@imag.fr>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        cocci@systeme.lip6.fr
-Subject: Re: [PATCH v2] coccinelle: semantic code search for missing
- of_node_put
-In-Reply-To: <904b9362-cd01-ffc9-600b-0c48848617a0@web.de>
-Message-ID: <alpine.DEB.2.21.1906281304470.2538@hadrien>
-References: <1561690732-20694-1-git-send-email-wen.yang99@zte.com.cn> <904b9362-cd01-ffc9-600b-0c48848617a0@web.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-202224278-1561720071=:2538"
+        Fri, 28 Jun 2019 07:21:47 -0400
+Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtp (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hgowr-00021l-Ax; Fri, 28 Jun 2019 13:21:45 +0200
+Message-Id: <20190628111148.828731433@linutronix.de>
+User-Agent: quilt/0.65
+Date:   Fri, 28 Jun 2019 13:11:48 +0200
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     x86@kernel.org, Marc Zyngier <marc.zyngier@arm.com>
+Subject: [patch V2 0/6] x86/irq: Cure various interrupt issues
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+This series addresses a few long standing issues:
 
---8323329-202224278-1561720071=:2538
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+  1) The spurious interrupt warning which is emitted occasionally for
+     no obvious reason. Partially harmless but annoying
 
-> > +x = @p1\(of_find_all_nodes\|
->
-> I would find this SmPL disjunction easier to read without the usage
-> of extra backslashes.
->
-> +x =
-> +(of_…
-> +|of_…
-> +)@p1(...);
+  2) The spurious system vector detection which got wreckaged quite some
+     time ago and can completely wedge a machine. Posted yesterday already
+     in a preliminary version. Now actually verified that it does what it
+     claims to do.
 
-Did you actually test this?  I doubt that a position metavariable can be
-put on a ) of a disjunction.
+Details in the various patches.
 
-> > +|
-> > +return x;
-> > +|
-> > +return of_fwnode_handle(x);
->
-> Can a nested SmPL disjunction be helpful at such places?
->
-> +|return
-> +(x
-> +|of_fwnode_handle(x)
-> +);
+For your conveniance the series is available from git:
 
-The original code is much more readable.  The internal representation will
-be the same.
+    git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git WIP.irq
 
-> > +    when != v4l2_async_notifier_add_fwnode_subdev(<...x...>)
->
-> Would the specification variant “<+... x ...+>” be relevant
-> for the parameter selection?
+Changes vs. V1: Use the existing irq_get_irqchip_state() callback
+	    	Fixup misleading comments
+		Use the sync scheme in synchronize_irq() as well.
 
-I'm indeed quite surprised that <...x...> would be accepted by the parser.
+Thanks,
 
-julia
---8323329-202224278-1561720071=:2538--
+        tglx
+
+8<--------------
+ arch/x86/entry/entry_32.S      |   24 ++++++++++
+ arch/x86/entry/entry_64.S      |   30 +++++++++++--
+ arch/x86/include/asm/hw_irq.h  |    5 +-
+ arch/x86/kernel/apic/apic.c    |   33 ++++++++++-----
+ arch/x86/kernel/apic/io_apic.c |   46 ++++++++++++++++++++
+ arch/x86/kernel/apic/vector.c  |    4 -
+ arch/x86/kernel/idt.c          |    3 -
+ arch/x86/kernel/irq.c          |    2 
+ kernel/irq/autoprobe.c         |    6 +-
+ kernel/irq/chip.c              |    6 ++
+ kernel/irq/cpuhotplug.c        |    2 
+ kernel/irq/internals.h         |    5 ++
+ kernel/irq/manage.c            |   90 +++++++++++++++++++++++++++++++----------
+ 13 files changed, 211 insertions(+), 45 deletions(-)
+
+
+
+
+    
+
