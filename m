@@ -2,44 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F6A459A91
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 14:21:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 75BD359AC9
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 14:23:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727054AbfF1MU7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 08:20:59 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:58830 "EHLO
+        id S1727367AbfF1MXP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 08:23:15 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:58788 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726828AbfF1MUr (ORCPT
+        with ESMTP id S1726805AbfF1MUq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 08:20:47 -0400
+        Fri, 28 Jun 2019 08:20:46 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=iH19Eomt9tt7WC2PMNB05lbgQlaUjJpUyUxesC2gN4k=; b=qw6kQuOjP6oW2cYh6RZFkAHTRN
-        7fNdQNSf2fVJPdWuY7C6RT/OVM6foUNFva9pvD+H5tECDHCjHnqY+Wm0ilYLEVul0XSs+Ecxaxsue
-        YOlSO+sg+Lt5CP0Gdrv2I8Vo1XjEau+rTyz0YygNOJvUmf/9WuNNA8iBBcqAE8W/uh8CTmYk6ETWH
-        dW5UFPlmJ2UhuOsVXz+LAV17vtRkuvtnqyQ87VcHl9qDsPpRp3ulm6lA5gf6dPfEKHGoBB2TJ9JAm
-        p1YMB/BpVFEgx8mcS6tXOvlJDdlpqiIpBpdKJQr/D++YjIanodKkEwzh+zFRzpbEVgjeJY+udQ769
-        RFMukT8A==;
+        bh=RpqcJp7jxT06N05sMhPXoS32VrL9wunVGQftBjY4F0M=; b=lrCdlOc8WfukKVP/4L2O7TIJGr
+        LPe+vZcn1y0tzgsBf4XEdyORzTEj/q2N3dyEDdtt1bv7JSJZwlBCYr4R8CQNn9EoxoKdsTkCt0UmK
+        4oeqY/OfWaKHdcoCE4/Cs2D4K5zYAxehcSIDQHocMO6rjoaRgxVf+pC6BaFM7MEWD150r1qixcbFs
+        uc8fCzG8OUT20Ptky0OklRMNgxPFpBJoPdRXz3cP6t0DmY5N9IUYoDPoXtjtqu7Axsm6nF7OEjsfq
+        lWLILtSIeQEVdigz3buGMnJaZM6+LZlgDGCQ2CWLZ9+9a+VL0apfQCm8WNqAj4nU5AUvAqHI3ZFJj
+        cavobI7g==;
 Received: from [186.213.242.156] (helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hgprw-00009u-Vc; Fri, 28 Jun 2019 12:20:45 +0000
+        id 1hgprw-00009v-RV; Fri, 28 Jun 2019 12:20:45 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hgpru-0005AB-7o; Fri, 28 Jun 2019 09:20:42 -0300
+        id 1hgpru-0005AG-8g; Fri, 28 Jun 2019 09:20:42 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Emese Revfy <re.emese@gmail.com>
-Subject: [PATCH 42/43] docs: move gcc_plugins.txt to core-api and rename to .rst
-Date:   Fri, 28 Jun 2019 09:20:38 -0300
-Message-Id: <bfcbd5a6cbbbdb10122b30176c3bb907bf1731fc.1561723980.git.mchehab+samsung@kernel.org>
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
+Subject: [PATCH 43/43] docs: logo.txt: rename it to COPYING-logo
+Date:   Fri, 28 Jun 2019 09:20:39 -0300
+Message-Id: <bff3bc73e6e731019612eecf67a10693a44b6caa.1561723980.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <cover.1561723979.git.mchehab+samsung@kernel.org>
 References: <cover.1561723979.git.mchehab+samsung@kernel.org>
@@ -50,61 +48,21 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The gcc_plugins.txt file is already a ReST file. Move it
-to the core-api book while renaming it.
+This file has nothing to do with the Kernel documentation. It
+contains the copyright permissions for Tux at Documentation/logo.gif.
+
+So, rename it accordingly.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- Documentation/{gcc-plugins.txt => core-api/gcc-plugins.rst} | 0
- Documentation/core-api/index.rst                            | 2 +-
- MAINTAINERS                                                 | 2 +-
- scripts/gcc-plugins/Kconfig                                 | 2 +-
- 4 files changed, 3 insertions(+), 3 deletions(-)
- rename Documentation/{gcc-plugins.txt => core-api/gcc-plugins.rst} (100%)
+ Documentation/{logo.txt => COPYING-logo} | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ rename Documentation/{logo.txt => COPYING-logo} (100%)
 
-diff --git a/Documentation/gcc-plugins.txt b/Documentation/core-api/gcc-plugins.rst
+diff --git a/Documentation/logo.txt b/Documentation/COPYING-logo
 similarity index 100%
-rename from Documentation/gcc-plugins.txt
-rename to Documentation/core-api/gcc-plugins.rst
-diff --git a/Documentation/core-api/index.rst b/Documentation/core-api/index.rst
-index 2466a4c51031..d1e5b95bf86d 100644
---- a/Documentation/core-api/index.rst
-+++ b/Documentation/core-api/index.rst
-@@ -35,7 +35,7 @@ Core utilities
-    boot-time-mm
-    memory-hotplug
-    protection-keys
--
-+   gcc-plugins
- 
- Interfaces for kernel debugging
- ===============================
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 2cf8abf6d48e..7ba6d174f49f 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6609,7 +6609,7 @@ S:	Maintained
- F:	scripts/gcc-plugins/
- F:	scripts/gcc-plugin.sh
- F:	scripts/Makefile.gcc-plugins
--F:	Documentation/gcc-plugins.txt
-+F:	Documentation/core-api/gcc-plugins.rst
- 
- GASKET DRIVER FRAMEWORK
- M:	Rob Springer <rspringer@google.com>
-diff --git a/scripts/gcc-plugins/Kconfig b/scripts/gcc-plugins/Kconfig
-index e9c677a53c74..d33de0b9f4f5 100644
---- a/scripts/gcc-plugins/Kconfig
-+++ b/scripts/gcc-plugins/Kconfig
-@@ -23,7 +23,7 @@ config GCC_PLUGINS
- 	  GCC plugins are loadable modules that provide extra features to the
- 	  compiler. They are useful for runtime instrumentation and static analysis.
- 
--	  See Documentation/gcc-plugins.txt for details.
-+	  See Documentation/core-api/gcc-plugins.rst for details.
- 
- menu "GCC plugins"
- 	depends on GCC_PLUGINS
+rename from Documentation/logo.txt
+rename to Documentation/COPYING-logo
 -- 
 2.21.0
 
