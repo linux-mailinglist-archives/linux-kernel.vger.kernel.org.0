@@ -2,61 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4817F5A185
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 18:56:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 032D05A18B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 18:57:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727059AbfF1Q4w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 12:56:52 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53798 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726832AbfF1Q4t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 12:56:49 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B15A8AB92;
-        Fri, 28 Jun 2019 16:56:48 +0000 (UTC)
-Date:   Fri, 28 Jun 2019 09:56:42 -0700
-From:   Davidlohr Bueso <dave@stgolabs.net>
-To:     Michel Lespinasse <walken@google.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        David Howells <dhowells@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rbtree: avoid generating code twice for the cached
- versions
-Message-ID: <20190628165642.r754xozttawmg5yh@linux-r8p5>
-References: <20190628045008.39926-1-walken@google.com>
+        id S1727092AbfF1Q5D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 12:57:03 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:57278 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727078AbfF1Q5C (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Jun 2019 12:57:02 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id 24204260E01
+Subject: Re: linux-next: build failure after merge of the battery tree
+To:     Sebastian Reichel <sre@kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nick Crews <ncrews@chromium.org>
+References: <20190628140304.76caf572@canb.auug.org.au>
+ <20190628153146.c2lh4y55qvcmqhry@earth.universe>
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Message-ID: <d3515009-c922-7aa6-2ded-4ca39ed324f2@collabora.com>
+Date:   Fri, 28 Jun 2019 18:56:56 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20190628045008.39926-1-walken@google.com>
-User-Agent: NeoMutt/20180323
+In-Reply-To: <20190628153146.c2lh4y55qvcmqhry@earth.universe>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 27 Jun 2019, Michel Lespinasse wrote:
+Hi,
 
->As was already noted in rbtree.h, the logic to cache rb_first (or rb_last)
->can easily be implemented externally to the core rbtree api.
->
->Change the implementation to do just that. Previously the update of
->rb_leftmost was wired deeper into the implemntation, but there were
->some disadvantages to that - mostly, lib/rbtree.c had separate
->instantiations for rb_insert_color() vs rb_insert_color_cached(), as well
->as rb_erase() vs rb_erase_cached(), which were doing exactly the same
->thing save for the rb_leftmost update at the start of either function.
+On 28/6/19 17:31, Sebastian Reichel wrote:
+> Hi,
+> 
+> On Fri, Jun 28, 2019 at 02:03:04PM +1000, Stephen Rothwell wrote:
+>> Hi all,
+>>
+>> After merging the battery tree, today's linux-next build (x86_64
+>> allmodconfig) failed like this:
+>>
+>> drivers/power/supply/wilco-charger.c: In function 'wilco_charge_get_property':
+>> drivers/power/supply/wilco-charger.c:104:8: error: implicit declaration of function 'wilco_ec_get_byte_property'; did you mean 'wilco_charge_get_property'? [-Werror=implicit-function-declaration]
+>>   ret = wilco_ec_get_byte_property(ec, property_id, &raw);
+>>         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+>>         wilco_charge_get_property
+>> drivers/power/supply/wilco-charger.c: In function 'wilco_charge_set_property':
+>> drivers/power/supply/wilco-charger.c:130:10: error: implicit declaration of function 'wilco_ec_set_byte_property'; did you mean 'wilco_charge_set_property'? [-Werror=implicit-function-declaration]
+>>    return wilco_ec_set_byte_property(ec, PID_CHARGE_MODE, mode);
+>>           ^~~~~~~~~~~~~~~~~~~~~~~~~~
+>>           wilco_charge_set_property
+>>
+>> Caused by commit
+>>
+>>   0736343e4c56 ("power_supply: wilco_ec: Add charging config driver")
+>>
 
-I think this makes sense, and is more along the lines of the augmented
-cached doing the static inline instead of separate instantiations of the
-calls.
+Hmm, I just applied this patch on top of linux-next and it build with
+allmodconfig on x86_64
 
->Change-Id: I0cb62be774fc0138b81188e6ae81d5f1da64578d
-what is this?
+I am wondering if the build was done without this commit, which is in
+chrome-platform for-next branch. Could be this the problem?
 
->Signed-off-by: Michel Lespinasse <walken@google.com>
+commit 0c0b7ea23aed0b55ef2f9803f13ddaae1943713d
+Author: Nick Crews <ncrews@chromium.org>
+Date:   Wed Apr 24 10:56:50 2019 -0600
 
-Acked-by: Davidlohr Bueso <dbueso@suse.de>
+    platform/chrome: wilco_ec: Add property helper library
 
-Thanks!
+
+Anyway, I think the proper way to do it is create an immutable branch for
+Sebastian as the patch he picked depends on the above commit. I'll create one,
+sorry about that missing dependency.
+
+Thanks,
+~ Enric
+
+
+>> I have reverted that commit for today.
+> 
+> Oops, thanks for the hint. I did not notice this with ARM
+> allmodconfig. I dropped the patch for this cycle.
+> 
+> -- Sebastian
+> 
