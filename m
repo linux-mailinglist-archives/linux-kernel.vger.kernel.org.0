@@ -2,98 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38D5659E9C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 17:17:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7DA259EA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 17:17:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726909AbfF1PRU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 11:17:20 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:35568 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726730AbfF1PRU (ORCPT
+        id S1726970AbfF1PRj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 11:17:39 -0400
+Received: from mail-wm1-f50.google.com ([209.85.128.50]:33440 "EHLO
+        mail-wm1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726795AbfF1PRi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 11:17:20 -0400
-Received: by mail-pl1-f194.google.com with SMTP id w24so3419511plp.2;
-        Fri, 28 Jun 2019 08:17:19 -0700 (PDT)
+        Fri, 28 Jun 2019 11:17:38 -0400
+Received: by mail-wm1-f50.google.com with SMTP id h19so9588711wme.0;
+        Fri, 28 Jun 2019 08:17:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ivlQbRnvgnETW0AlAfwHI5U9Vayzy2zmg/NO/SE82Yw=;
+        b=jzV3mO/PbwVbL7CaCXw42EA2Ny94MCdapnlbIK/YB0pbnBCjJVnvSDGQrZxupGAW6K
+         GwYCJpzcK1mWWUpq1Nfy9kbaeP6h3jA4UDG6EbfVvOChw7aW7Snd3td/0Kdd28ASP7gz
+         dMwtaUoHiLHJHupZ1XLrgi/aDPQPbzkRMuqtNWyVQsgWgBCGfjGTsnPavPNmUksDspds
+         ed4O/PRzAY2Cl5jZTBa/vtG/wW0JeDPmk6GntjKMo2tbGBO15wH4XRsS/t9fFLwKwKXN
+         eiY6WBdPU2AT15ifyCKCE1o8YRzZCQRtxF+DUzG8MUCddL+8zXwaP8vNWJ6kDKyBJ5RZ
+         swig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=08U5q1pt2W+YM1rIatW1uXCddvaCPZQ1ACknIlDj2y4=;
-        b=kLEsghuThznChptBzFvzk6m1ix8/alSy5C9QQbAzVmrg2t68sVhUMRUaDPW+Kvpu2h
-         YRkcwimqeFaSXKvWK7Zl8R2nOCIPxSEKe7/1llcm1Z83NoTUmP0mdYlf65rYbjCBP2UJ
-         qrlR7H9o9rg2bOIXMZD2kvvWrUQSP445pmGgSyYAwz4EpAxvLYDsQFUO1MVZFiDFHrJA
-         obaUnIMoiI0IDdFVNbuB8ZKOTZwfIcF2Hr6/RimrcuhDDvugHCOhm8aRZnNBfqo4ii3y
-         ro3mDAaXOx/Lwu9NWI80Jp+A9aGAuRrgLQY45W+12utqHVh7aI8azgm0SKWjjySRFrjX
-         wbPw==
-X-Gm-Message-State: APjAAAXa+EUlIeOAexujdLiNM/KtybIWT6c4jwaKU4jTp2vUrQ6YS9Hx
-        nhzUIW1WsHgVEZXP4dOl7o0=
-X-Google-Smtp-Source: APXvYqy6BruVFpT+atnt6vuKZwUyXTZc4F4Iz59vx0pXbfCiYbMdSN3HzP8L529KkVDl7Km+IkcRCg==
-X-Received: by 2002:a17:902:8205:: with SMTP id x5mr12403394pln.279.1561735039122;
-        Fri, 28 Jun 2019 08:17:19 -0700 (PDT)
-Received: from desktop-bart.svl.corp.google.com ([2620:15c:2cd:202:4308:52a3:24b6:2c60])
-        by smtp.gmail.com with ESMTPSA id e20sm4758253pfh.50.2019.06.28.08.17.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 28 Jun 2019 08:17:17 -0700 (PDT)
-Subject: Re: WARNING in is_bpf_text_address
-To:     syzbot <syzbot+bd3bba6ff3fcea7a6ec6@syzkaller.appspotmail.com>,
-        akpm@linux-foundation.org, ast@kernel.org, bpf@vger.kernel.org,
-        daniel@iogearbox.net, davem@davemloft.net, hawk@kernel.org,
-        jakub.kicinski@netronome.com, johannes.berg@intel.com,
-        johannes@sipsolutions.net, john.fastabend@gmail.com, kafai@fb.com,
-        linux-kernel@vger.kernel.org, longman@redhat.com, mingo@kernel.org,
-        netdev@vger.kernel.org, paulmck@linux.vnet.ibm.com,
-        peterz@infradead.org, songliubraving@fb.com,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de, tj@kernel.org,
-        torvalds@linux-foundation.org, will.deacon@arm.com,
-        xdp-newbies@vger.kernel.org, yhs@fb.com,
-        Dmitry Vyukov <dvyukov@google.com>
-References: <000000000000104b00058c61eda4@google.com>
-From:   Bart Van Assche <bvanassche@acm.org>
-Message-ID: <c0e440a1-30aa-a636-fe5c-44f71705857b@acm.org>
-Date:   Fri, 28 Jun 2019 08:17:16 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
+        bh=ivlQbRnvgnETW0AlAfwHI5U9Vayzy2zmg/NO/SE82Yw=;
+        b=ROxoWp865bOB06YzRfSp7PXmEY2Mik4J05T4+vEDjPWDGilAzOuqbuMNUlFbw9l1Py
+         MNtSgPEaGeeAw5fu/eIBC/YNJ7D3X4yaU3ICGDhP2fb6AbLtu0vv3mPVqANgkW9tnPuU
+         vFkPiLsVU04O67Nr+lo0qCHQ2jNS7qaMdOx2+G1sE5rKV8MiJVftVvc2PIYVpjvj1bhu
+         thwOozK5j6FT4qOJSXEy7ZhUpnhroYL2x6qiuqIoKar0Ut+MiYZ8v6zXJfRzcG0G1THg
+         h7VlZV963YvJZSiXvWk9ulFVVZPOkpogLreOiL/NAC25+t3kdvB1GL+ckEuKBL9wFXrR
+         bKiA==
+X-Gm-Message-State: APjAAAUTEKXS/1sxuaZqq0IiPCPfLKcbI93SHxXQNIq9uqSZnv3utn5A
+        aMPBkEIx//8KKRBBayZUX966xZNZxLA=
+X-Google-Smtp-Source: APXvYqx5V02oZVueSkzL9YfJ+uB/zyFc6mS8/IatlaZFvthnuRxc++USwHkdgXLBxEuVjOGQPm9uNQ==
+X-Received: by 2002:a1c:e341:: with SMTP id a62mr7948352wmh.165.1561735056166;
+        Fri, 28 Jun 2019 08:17:36 -0700 (PDT)
+Received: from kwango.local (ip-89-102-68-197.net.upcbroadband.cz. [89.102.68.197])
+        by smtp.gmail.com with ESMTPSA id y6sm2658497wmd.16.2019.06.28.08.17.33
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 28 Jun 2019 08:17:34 -0700 (PDT)
+From:   Ilya Dryomov <idryomov@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Ceph fix for 5.2-rc7
+Date:   Fri, 28 Jun 2019 17:17:24 +0200
+Message-Id: <20190628151724.5642-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-In-Reply-To: <000000000000104b00058c61eda4@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/28/19 6:05 AM, syzbot wrote:
-> syzbot has bisected this bug to:
-> 
-> commit a0b0fd53e1e67639b303b15939b9c653dbe7a8c4
-> Author: Bart Van Assche <bvanassche@acm.org>
-> Date:   Thu Feb 14 23:00:46 2019 +0000
-> 
->      locking/lockdep: Free lock classes that are no longer in use
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=152f6a9da00000
-> start commit:   abf02e29 Merge tag 'pm-5.2-rc6' of 
-> git://git.kernel.org/pu..
-> git tree:       upstream
-> final crash:    https://syzkaller.appspot.com/x/report.txt?x=172f6a9da00000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=132f6a9da00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=28ec3437a5394ee0
-> dashboard link: 
-> https://syzkaller.appspot.com/bug?extid=bd3bba6ff3fcea7a6ec6
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14ae828aa00000
-> 
-> Reported-by: syzbot+bd3bba6ff3fcea7a6ec6@syzkaller.appspotmail.com
-> Fixes: a0b0fd53e1e6 ("locking/lockdep: Free lock classes that are no 
-> longer in use")
-> 
-> For information about bisection process see: 
-> https://goo.gl/tpsmEJ#bisection
+Hi Linus,
 
-Dmitry, this bisection result does not make any sense to me. Can I mark 
-this bisection result myself as invalid?
+The following changes since commit 4b972a01a7da614b4796475f933094751a295a2f:
 
-Thanks,
+  Linux 5.2-rc6 (2019-06-22 16:01:36 -0700)
 
-Bart.
+are available in the Git repository at:
+
+  https://github.com/ceph/ceph-client.git tags/ceph-for-5.2-rc7
+
+for you to fetch changes up to d6b8bd679c9c8856fa04b80490765c43a4cb613b:
+
+  ceph: fix ceph_mdsc_build_path to not stop on first component (2019-06-27 18:27:36 +0200)
+
+----------------------------------------------------------------
+A small fix for a potential -rc1 regression from Jeff.
+
+----------------------------------------------------------------
+Jeff Layton (1):
+      ceph: fix ceph_mdsc_build_path to not stop on first component
+
+ fs/ceph/mds_client.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
