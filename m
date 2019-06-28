@@ -2,25 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9230959944
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 13:29:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F01D259945
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 13:29:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726695AbfF1L3Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 07:29:25 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:53768 "EHLO mx1.redhat.com"
+        id S1726762AbfF1L34 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 07:29:56 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:47746 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726578AbfF1L3Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 07:29:24 -0400
+        id S1726562AbfF1L3z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Jun 2019 07:29:55 -0400
 Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 75D27307D90F;
-        Fri, 28 Jun 2019 11:29:23 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 19ED1308427C;
+        Fri, 28 Jun 2019 11:29:55 +0000 (UTC)
 Received: from [10.36.116.156] (ovpn-116-156.ams2.redhat.com [10.36.116.156])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7FAA319C70;
-        Fri, 28 Jun 2019 11:29:20 +0000 (UTC)
-Subject: Re: [PATCH v2 2/3] mm: don't hide potentially null memmap pointer in
- sparse_remove_one_section
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 398F11A92D;
+        Fri, 28 Jun 2019 11:29:51 +0000 (UTC)
+Subject: Re: [PATCH v2 3/3] mm: Don't manually decrement num_poisoned_pages
 To:     Alastair D'Silva <alastair@au1.ibm.com>, alastair@d-silva.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "Rafael J. Wysocki" <rafael@kernel.org>,
@@ -29,11 +28,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Oscar Salvador <osalvador@suse.de>,
         Michal Hocko <mhocko@suse.com>,
         Mike Rapoport <rppt@linux.ibm.com>,
-        Baoquan He <bhe@redhat.com>, Qian Cai <cai@lca.pw>,
+        Baoquan He <bhe@redhat.com>,
+        Wei Yang <richard.weiyang@gmail.com>,
         Logan Gunthorpe <logang@deltatee.com>,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org
 References: <20190626061124.16013-1-alastair@au1.ibm.com>
- <20190626061124.16013-3-alastair@au1.ibm.com>
+ <20190626061124.16013-4-alastair@au1.ibm.com>
 From:   David Hildenbrand <david@redhat.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
@@ -80,17 +80,17 @@ Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
  +8Umfre0Xt4713VxMygW0PnQt5aSQdMD58jHFxTk092mU+yIHj5LeYgvwSgZN4airXk5yRXl
  SE+xAvmumFBY
 Organization: Red Hat GmbH
-Message-ID: <f21cff93-bc5c-f86f-b782-5ce0900f7d78@redhat.com>
-Date:   Fri, 28 Jun 2019 13:29:19 +0200
+Message-ID: <7b087c07-9bf3-6668-b55c-06b11a08f0c6@redhat.com>
+Date:   Fri, 28 Jun 2019 13:29:50 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.7.0
 MIME-Version: 1.0
-In-Reply-To: <20190626061124.16013-3-alastair@au1.ibm.com>
+In-Reply-To: <20190626061124.16013-4-alastair@au1.ibm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Fri, 28 Jun 2019 11:29:23 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Fri, 28 Jun 2019 11:29:55 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -99,69 +99,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On 26.06.19 08:11, Alastair D'Silva wrote:
 > From: Alastair D'Silva <alastair@d-silva.org>
 > 
-> By adding offset to memmap before passing it in to clear_hwpoisoned_pages,
-> we hide a potentially null memmap from the null check inside
-> clear_hwpoisoned_pages.
-> 
-> This patch passes the offset to clear_hwpoisoned_pages instead, allowing
-> memmap to successfully peform it's null check.
+> Use the function written to do it instead.
 > 
 > Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
 > ---
->  mm/sparse.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
+>  mm/sparse.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 > 
 > diff --git a/mm/sparse.c b/mm/sparse.c
-> index 57a1a3d9c1cf..1ec32aef5590 100644
+> index 1ec32aef5590..d9b3625bfdf0 100644
 > --- a/mm/sparse.c
 > +++ b/mm/sparse.c
-> @@ -753,7 +753,8 @@ int __meminit sparse_add_one_section(int nid, unsigned long start_pfn,
+> @@ -11,6 +11,8 @@
+>  #include <linux/export.h>
+>  #include <linux/spinlock.h>
+>  #include <linux/vmalloc.h>
+> +#include <linux/swap.h>
+> +#include <linux/swapops.h>
 >  
->  #ifdef CONFIG_MEMORY_HOTREMOVE
->  #ifdef CONFIG_MEMORY_FAILURE
-> -static void clear_hwpoisoned_pages(struct page *memmap, int nr_pages)
-> +static void clear_hwpoisoned_pages(struct page *memmap,
-> +		unsigned long start, unsigned long count)
->  {
->  	int i;
+>  #include "internal.h"
+>  #include <asm/dma.h>
+> @@ -772,7 +774,7 @@ static void clear_hwpoisoned_pages(struct page *memmap,
 >  
-> @@ -769,7 +770,7 @@ static void clear_hwpoisoned_pages(struct page *memmap, int nr_pages)
->  	if (atomic_long_read(&num_poisoned_pages) == 0)
->  		return;
->  
-> -	for (i = 0; i < nr_pages; i++) {
-> +	for (i = start; i < start + count; i++) {
-
-start and count are unsigned long's, i is an int.
-
-Besides that
-
-Acked-by: David Hildenbrand <david@redhat.com>
-
+>  	for (i = start; i < start + count; i++) {
 >  		if (PageHWPoison(&memmap[i])) {
->  			atomic_long_sub(1, &num_poisoned_pages);
+> -			atomic_long_sub(1, &num_poisoned_pages);
+> +			num_poisoned_pages_dec();
 >  			ClearPageHWPoison(&memmap[i]);
-> @@ -777,7 +778,8 @@ static void clear_hwpoisoned_pages(struct page *memmap, int nr_pages)
+>  		}
 >  	}
->  }
->  #else
-> -static inline void clear_hwpoisoned_pages(struct page *memmap, int nr_pages)
-> +static inline void clear_hwpoisoned_pages(struct page *memmap,
-> +		unsigned long start, unsigned long count)
->  {
->  }
->  #endif
-> @@ -824,7 +826,7 @@ void sparse_remove_one_section(struct zone *zone, struct mem_section *ms,
->  		ms->pageblock_flags = NULL;
->  	}
->  
-> -	clear_hwpoisoned_pages(memmap + map_offset,
-> +	clear_hwpoisoned_pages(memmap, map_offset,
->  			PAGES_PER_SECTION - map_offset);
->  	free_section_usemap(memmap, usemap, altmap);
->  }
 > 
 
+Reviewed-by: David Hildenbrand <david@redhat.com>
 
 -- 
 
