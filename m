@@ -2,249 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8B8D5960B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 10:26:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66F1259614
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 10:29:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726660AbfF1I0d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 04:26:33 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:41617 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726056AbfF1I0d (ORCPT
+        id S1726596AbfF1I3W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 04:29:22 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:41215 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726431AbfF1I3V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 04:26:33 -0400
-Received: by mail-ot1-f67.google.com with SMTP id o101so4858887ota.8;
-        Fri, 28 Jun 2019 01:26:32 -0700 (PDT)
+        Fri, 28 Jun 2019 04:29:21 -0400
+Received: by mail-io1-f67.google.com with SMTP id w25so10758028ioc.8;
+        Fri, 28 Jun 2019 01:29:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=yv6CgnWPC6xWm8QD/szBDMm8993i38/ihT9u27h0IHg=;
-        b=H/GoLEaonyeEZGb/WdSNNwT0RKBkwJ+epaDaWfsOguW1ydhvWbSbwKtl33NMN9i2m8
-         4YgucQRpRpAj11NGAPXL1N6Upj0r4fa4YR6t0s5wOFoljLN+EmakXd1tfahz1hCskGtv
-         d7xiJM8RVgBagmJlykCsk+u67mBH37AiwXILVK83OKJGYlFGuyQ+1DkSGU/2cGs9S5FK
-         KxxmtUL5bRKoGEoaz8tSikz12ZSqU84znM7sD62zx2lL3V+VqRCP232O1crpiURARA9r
-         l1BuLi3QAgDiuXPbyUpZcCqFVO/FhwNpXYyD1DSxHzknKJSGlebq6X4RuPzP0nzmNkDZ
-         04Xg==
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=29qZLe/ycWIjMlCCTOUGo9VV3OPNk26MXL4ayhclDzE=;
+        b=fppg3bEMvomKBqCuu5MbgltOVZzicIWbxIszalTiKpOukfh7yDamu9UIkwW90t5yrr
+         KS+nKl6mCjVB07ZezU5u2R1gYh1NYMouU26Gh67JgkcxT2PowQSnTGJEztYu4pq9BGlA
+         smau2cMrN1CwZoZ/Peqc5lToGcK03YawLY9dFD4q+eK5Ut9N4f32shmgft706Raaoonq
+         l787F12baTCgYT/V5AhQGFUPjFgqWeLxWLO/MOPR3Ps9UE3NKfW0/aq76sJ4Iw9eH1FY
+         o72fOltKv0iIw9tYxri03T6NVwfU2eQEqAK2o4GydeFNBzbx6xYwpuDpMXaNv7F9nQGx
+         c+Xw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=yv6CgnWPC6xWm8QD/szBDMm8993i38/ihT9u27h0IHg=;
-        b=TWj+2af4txb6fz1QktR4XaQE11ffW9bVY0n5kdV12hXjyaBwSZATPGeChqHeajAvea
-         Pe/O9hpbe0di7WWLwqS1UHcEIeFt/kPrcW89xkekAWm7mSWgZ32Ze53cKnAxHedmzFqQ
-         VjlEl+QsaSgyulErDqKmQLomCvVHF78wSVYNwkmgOXiwUDAkkTqFYF8ud5nXjNrXm5V3
-         wP5BmNVKL3AW+EcTcj++rD+2roKghjEOFONvT9mDJnnIlm4S4cHP7fTRttyd9+r7exmM
-         2fri1uDrpo4qJdWRJG7K9LzL3vnlusjLkoX3R0Q8eCHvKSBObrxQD+YLcSi6GmekouyD
-         xPag==
-X-Gm-Message-State: APjAAAUO9RXaXr+wjUkMFeGSGcihYBeqUbFsaKKiDYnXo4PRcUQ5dc0g
-        M05deLYsskoTq2f3V0vovxFS9S81OMplydWeiHisKsU7q2I=
-X-Google-Smtp-Source: APXvYqz/O75u9syzUZvnyk6BcL7Q+bOdMy3y6p5OqPd/UERUb8K0K03+LcpR7BORZfLKctoLiq90hrg13YbDW4N5BoM=
-X-Received: by 2002:a9d:62c4:: with SMTP id z4mr6806096otk.56.1561710392254;
- Fri, 28 Jun 2019 01:26:32 -0700 (PDT)
-MIME-Version: 1.0
-References: <1560770687-23227-1-git-send-email-wanpengli@tencent.com>
- <1560770687-23227-3-git-send-email-wanpengli@tencent.com> <20190618133541.GA3932@amt.cnet>
- <CANRm+Cz0v1VfDaCCWX+5RzCusTV7g9Hwr+OLGDRijeyqFx=Kzw@mail.gmail.com>
- <20190619210346.GA13033@amt.cnet> <CANRm+Cwxz7rR3o2m1HKg0-0z30B8-O-i4RrVC6EMG1jgBRxWPg@mail.gmail.com>
- <20190621214205.GA4751@amt.cnet> <CANRm+CxUgkF7zRmHC_MD2s00waj6qztWdPAm_u9Rhk34_bevfQ@mail.gmail.com>
- <20190625190010.GA3377@amt.cnet> <CANRm+CzmraRUNQfTWNZ3Bu5dJhjvL1eE9+=c2i_vwtYYT9ao2w@mail.gmail.com>
- <20190626164401.GA2211@amt.cnet>
-In-Reply-To: <20190626164401.GA2211@amt.cnet>
-From:   Wanpeng Li <kernellwp@gmail.com>
-Date:   Fri, 28 Jun 2019 16:26:20 +0800
-Message-ID: <CANRm+Cy0FFqoUuFsLGxGFN04wYaX_1y2t--EXacdwj7Q3wbOLQ@mail.gmail.com>
-Subject: Re: [PATCH v4 2/5] KVM: LAPIC: inject lapic timer interrupt by posted interrupt
-To:     Marcelo Tosatti <mtosatti@redhat.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=29qZLe/ycWIjMlCCTOUGo9VV3OPNk26MXL4ayhclDzE=;
+        b=VTFD265SzXkg7Y+Pnyui/Vh1nsX3onTILYkDRPQ33qd4CYI/MjawJG9Fm1dsErgHQr
+         YOeeHQfZl6NQHyqLrhH/N/gqG6Qqf5MAudeS2ZRU6+brLYV83X4Qe0eL0W6mGiQE4WQ8
+         1Yn26Q5vQtH4/hOwLcV1lWhTJJ2wRLTxLy+SD24qapfJslpAwYp4I4SDG2kYpFt9TC4y
+         EckOHokjS+415Vng9KRM6DmcPRCjTij82nQgg+/a+crMblZ/cOJsHRxaTjDkj1a18Fkk
+         TKW6cjUVYMwmA+k9vmWPnHHFh5egi61BB6AfYeaj3eATA5JkZUVeGLKW7HlNuQQ1+lRV
+         8eYw==
+X-Gm-Message-State: APjAAAVrykBMme0q9/r/BZCUVLr/W5dwK52iU033jv5FHOG/fn2pbPFY
+        nd4mKOrwVgOhQzKeRxnR6Pj+GRKzSwutgw==
+X-Google-Smtp-Source: APXvYqx397DfWi2rMOTvGEWYF2Dd1fSUebqX4QPfLoCsJxTRziJQHrYp+57KFN6LOx2O0EVy4qFzuQ==
+X-Received: by 2002:a5d:8f9a:: with SMTP id l26mr9577840iol.22.1561710561112;
+        Fri, 28 Jun 2019 01:29:21 -0700 (PDT)
+Received: from [192.168.1.8] (c-73-243-191-173.hsd1.co.comcast.net. [73.243.191.173])
+        by smtp.gmail.com with ESMTPSA id b3sm1313370iot.23.2019.06.28.01.29.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 28 Jun 2019 01:29:20 -0700 (PDT)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
+Subject: Re: [PATCH 4.4 0/1] 4.4.184-stable review
+From:   Kelsey <skunberg.kelsey@gmail.com>
+In-Reply-To: <20190626083604.894288021@linuxfoundation.org>
+Date:   Fri, 28 Jun 2019 02:26:40 -0600
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <28E380A7-7D7D-49DC-B100-459F43C0FC01@gmail.com>
+References: <20190626083604.894288021@linuxfoundation.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+X-Mailer: Apple Mail (2.3445.104.11)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 27 Jun 2019 at 00:44, Marcelo Tosatti <mtosatti@redhat.com> wrote:
->
-> On Wed, Jun 26, 2019 at 07:02:13PM +0800, Wanpeng Li wrote:
-> > On Wed, 26 Jun 2019 at 03:03, Marcelo Tosatti <mtosatti@redhat.com> wro=
-te:
-> > >
-> > > On Mon, Jun 24, 2019 at 04:53:53PM +0800, Wanpeng Li wrote:
-> > > > On Sat, 22 Jun 2019 at 06:11, Marcelo Tosatti <mtosatti@redhat.com>=
- wrote:
-> > > > >
-> > > > > On Fri, Jun 21, 2019 at 09:42:39AM +0800, Wanpeng Li wrote:
-> > > > > > On Thu, 20 Jun 2019 at 05:04, Marcelo Tosatti <mtosatti@redhat.=
-com> wrote:
-> > > > > > >
-> > > > > > > Hi Li,
-> > > > > > >
-> > > > > > > On Wed, Jun 19, 2019 at 08:36:06AM +0800, Wanpeng Li wrote:
-> > > > > > > > On Tue, 18 Jun 2019 at 21:36, Marcelo Tosatti <mtosatti@red=
-hat.com> wrote:
-> > > > > > > > >
-> > > > > > > > > On Mon, Jun 17, 2019 at 07:24:44PM +0800, Wanpeng Li wrot=
-e:
-> > > > > > > > > > From: Wanpeng Li <wanpengli@tencent.com>
-> > > > > > > > > >
-> > > > > > > > > > Dedicated instances are currently disturbed by unnecess=
-ary jitter due
-> > > > > > > > > > to the emulated lapic timers fire on the same pCPUs whi=
-ch vCPUs resident.
-> > > > > > > > > > There is no hardware virtual timer on Intel for guest l=
-ike ARM. Both
-> > > > > > > > > > programming timer in guest and the emulated timer fires=
- incur vmexits.
-> > > > > > > > > > This patch tries to avoid vmexit which is incurred by t=
-he emulated
-> > > > > > > > > > timer fires in dedicated instance scenario.
-> > > > > > > > > >
-> > > > > > > > > > When nohz_full is enabled in dedicated instances scenar=
-io, the emulated
-> > > > > > > > > > timers can be offload to the nearest busy housekeeping =
-cpus since APICv
-> > > > > > > > > > is really common in recent years. The guest timer inter=
-rupt is injected
-> > > > > > > > > > by posted-interrupt which is delivered by housekeeping =
-cpu once the emulated
-> > > > > > > > > > timer fires.
-> > > > > > > > > >
-> > > > > > > > > > The host admin should fine tuned, e.g. dedicated instan=
-ces scenario w/
-> > > > > > > > > > nohz_full cover the pCPUs which vCPUs resident, several=
- pCPUs surplus
-> > > > > > > > > > for busy housekeeping, disable mwait/hlt/pause vmexits =
-to keep in non-root
-> > > > > > > > > > mode, ~3% redis performance benefit can be observed on =
-Skylake server.
-> > > > > > > > > >
-> > > > > > > > > > w/o patch:
-> > > > > > > > > >
-> > > > > > > > > >             VM-EXIT  Samples  Samples%  Time%   Min Tim=
-e  Max Time   Avg time
-> > > > > > > > > >
-> > > > > > > > > > EXTERNAL_INTERRUPT    42916    49.43%   39.30%   0.47us=
-   106.09us   0.71us ( +-   1.09% )
-> > > > > > > > > >
-> > > > > > > > > > w/ patch:
-> > > > > > > > > >
-> > > > > > > > > >             VM-EXIT  Samples  Samples%  Time%   Min Tim=
-e  Max Time         Avg time
-> > > > > > > > > >
-> > > > > > > > > > EXTERNAL_INTERRUPT    6871     9.29%     2.96%   0.44us=
-    57.88us   0.72us ( +-   4.02% )
-> > > > > > > > > >
-> > > > > > > > > > Cc: Paolo Bonzini <pbonzini@redhat.com>
-> > > > > > > > > > Cc: Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar@redhat.com>
-> > > > > > > > > > Cc: Marcelo Tosatti <mtosatti@redhat.com>
-> > > > > > > > > > Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
-> > > > > > > > > > ---
-> > > > > > > > > >  arch/x86/kvm/lapic.c            | 33 +++++++++++++++++=
-+++++++++-------
-> > > > > > > > > >  arch/x86/kvm/lapic.h            |  1 +
-> > > > > > > > > >  arch/x86/kvm/vmx/vmx.c          |  3 ++-
-> > > > > > > > > >  arch/x86/kvm/x86.c              |  5 +++++
-> > > > > > > > > >  arch/x86/kvm/x86.h              |  2 ++
-> > > > > > > > > >  include/linux/sched/isolation.h |  2 ++
-> > > > > > > > > >  kernel/sched/isolation.c        |  6 ++++++
-> > > > > > > > > >  7 files changed, 44 insertions(+), 8 deletions(-)
-> > > > > > > > > >
-> > > > > > > > > > diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.=
-c
-> > > > > > > > > > index 87ecb56..9ceeee5 100644
-> > > > > > > > > > --- a/arch/x86/kvm/lapic.c
-> > > > > > > > > > +++ b/arch/x86/kvm/lapic.c
-> > > > > > > > > > @@ -122,6 +122,13 @@ static inline u32 kvm_x2apic_id(st=
-ruct kvm_lapic *apic)
-> > > > > > > > > >       return apic->vcpu->vcpu_id;
-> > > > > > > > > >  }
-> > > > > > > > > >
-> > > > > > > > > > +bool posted_interrupt_inject_timer(struct kvm_vcpu *vc=
-pu)
-> > > > > > > > > > +{
-> > > > > > > > > > +     return pi_inject_timer && kvm_vcpu_apicv_active(v=
-cpu) &&
-> > > > > > > > > > +             kvm_hlt_in_guest(vcpu->kvm);
-> > > > > > > > > > +}
-> > > > > > > > > > +EXPORT_SYMBOL_GPL(posted_interrupt_inject_timer);
-> > > > > > > > >
-> > > > > > > > > Paolo, can you explain the reasoning behind this?
-> > > > > > > > >
-> > > > > > > > > Should not be necessary...
-> > > > > >
-> > > > > > https://lkml.org/lkml/2019/6/5/436  "Here you need to check
-> > > > > > kvm_halt_in_guest, not kvm_mwait_in_guest, because you need to =
-go
-> > > > > > through kvm_apic_expired if the guest needs to be woken up from
-> > > > > > kvm_vcpu_block."
-> > > > >
-> > > > > Ah, i think he means that a sleeping vcpu (in kvm_vcpu_block) mus=
-t
-> > > > > be woken up, if it receives a timer interrupt.
-> > > > >
-> > > > > But your patch will go through:
-> > > > >
-> > > > > kvm_apic_inject_pending_timer_irqs
-> > > > > __apic_accept_irq ->
-> > > > > vmx_deliver_posted_interrupt ->
-> > > > > kvm_vcpu_trigger_posted_interrupt returns false
-> > > > > (because vcpu->mode !=3D IN_GUEST_MODE) ->
-> > > > > kvm_vcpu_kick
-> > > > >
-> > > > > Which will wakeup the vcpu.
-> > > >
-> > > > Hi Marcelo,
-> > > >
-> > > > >
-> > > > > Apart from this oops, which triggers when running:
-> > > > > taskset -c 1 ./cyclictest -D 3600 -p 99 -t 1 -h 30 -m -n  -i 5000=
-0 -b 40
-> > > >
-> > > > I try both host and guest use latest kvm/queue  w/ CONFIG_PREEMPT
-> > > > enabled, and expose mwait as your config, however, there is no oops=
-.
-> > > > Can you reproduce steadily or encounter casually? Can you reproduce
-> > > > w/o the patchset?
-> > >
-> > > Hi Li,
-> >
-> > Hi Marcelo,
-> >
-> > >
-> > > Steadily.
-> > >
-> > > Do you have this as well:
-> >
-> > w/ or w/o below diff, testing on both SKX and HSW servers on hand, I
-> > didn't see any oops. Could you observe the oops disappear when w/o
-> > below diff? If the answer is yes, then the oops will not block to
-> > merge the patchset since Paolo prefers to add the kvm_hlt_in_guest()
-> > condition to guarantee be woken up from kvm_vcpu_block().
->
-> He agreed that its not necessary. Removing the HLT in guest widens
-> the scope of the patch greatly.
->
-> > For the
-> > exitless injection if the guest is running(DPDK style workloads that
-> > busy-spin on network card) scenarios, we can find a solution later.
->
-> What is the use-case for HLT in guest again?
+Compiled, booted, and no dmesg regressions on my system.=20
 
-Together w/ mwait/hlt/pause no vmexits for dedicated instances. In
-addition, hlt in guest will disable pv qspinlock which is not optimal
-for dedicated instance. Refer to commit
-b2798ba0b876 (KVM: X86: Choose qspinlock when dedicated physical CPUs
-are available) and commit caa057a2cad64 (KVM: X86: Provide a
-capability to disable HLT intercepts).
+Cheers,=20
+Kelsey
 
->
-> I'll find the source for the oops (or confirm can't reproduce with
-> kvm/queue RSN).
+> On Jun 26, 2019, at 2:45 AM, Greg Kroah-Hartman =
+<gregkh@linuxfoundation.org> wrote:
+>=20
+> This is the start of the stable review cycle for the 4.4.184 release.
+> There are 1 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, =
+please
+> let me know.
+>=20
+> Responses should be made by Fri 28 Jun 2019 08:35:42 AM UTC.
+> Anything received after that time might be too late.
+>=20
+> The whole patch series can be found in one patch at:
+> 	=
+https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.184-r=
+c1.gz
+> or in the git tree and branch at:
+> 	=
+git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git =
+linux-4.4.y
+> and the diffstat can be found below.
+>=20
+> thanks,
+>=20
+> greg k-h
+>=20
+> -------------
+> Pseudo-Shortlog of commits:
+>=20
+> Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>    Linux 4.4.184-rc1
+>=20
+> Eric Dumazet <edumazet@google.com>
+>    tcp: refine memory limit test in tcp_fragment()
+>=20
+>=20
+> -------------
+>=20
+> Diffstat:
+>=20
+> Makefile              | 4 ++--
+> net/ipv4/tcp_output.c | 2 +-
+> 2 files changed, 3 insertions(+), 3 deletions(-)
+>=20
+>=20
 
-Looking forward to it, thanks Marcelo, hope we can catch the upcoming
-merge window. :)
-
-Regards,
-Wanpeng Li
