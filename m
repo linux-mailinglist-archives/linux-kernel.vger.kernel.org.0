@@ -2,70 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0ABFC5A1C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 19:04:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CCD2E5A1C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 19:06:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726785AbfF1REk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 13:04:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57192 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726056AbfF1REk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 13:04:40 -0400
-Received: from gmail.com (unknown [104.132.1.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9B80D20645;
-        Fri, 28 Jun 2019 17:04:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561741479;
-        bh=BsPYtytOvJul2BuzSQXvFrwBLMCrjy5hrv3TUGtD/JM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=nJG9FLuWQYEtgQYBQ9beqbOVZZghPxJUMVMF9sBn71EPG1vk4TcOffu7V3TiE7q0B
-         Vfg5X2+BRaOkWZQChB8DYV6DKQnH937yJQKpC+WhSBe6xrEYcFfhsVf2qmv6YaqKr9
-         1Di2m7II27dkMYENvTnoopQUwc5TCoKu+NKtzGRo=
-Date:   Fri, 28 Jun 2019 10:04:38 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] [v2] crypto: serpent - mark __serpent_setkey_sbox
- noinline
-Message-ID: <20190628170437.GA103946@gmail.com>
-References: <20190618111953.3183723-1-arnd@arndb.de>
- <20190628041912.qprczc23gzeelag7@gondor.apana.org.au>
+        id S1726791AbfF1RGK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 13:06:10 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7678 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726653AbfF1RGJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Jun 2019 13:06:09 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 6AA019916D69D2CF479A;
+        Sat, 29 Jun 2019 01:06:03 +0800 (CST)
+Received: from [127.0.0.1] (10.202.227.238) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Sat, 29 Jun 2019
+ 01:05:52 +0800
+Subject: Re: [PATCH v3 1/4] perf pmu: Support more complex PMU event aliasing
+To:     Andi Kleen <ak@linux.intel.com>
+References: <1561732552-143038-1-git-send-email-john.garry@huawei.com>
+ <1561732552-143038-2-git-send-email-john.garry@huawei.com>
+ <20190628153344.GZ31027@tassilo.jf.intel.com>
+CC:     <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
+        <alexander.shishkin@linux.intel.com>, <jolsa@redhat.com>,
+        <namhyung@kernel.org>, <tmricht@linux.ibm.com>,
+        <brueckner@linux.ibm.com>, <kan.liang@linux.intel.com>,
+        <ben@decadent.org.uk>, <mathieu.poirier@linaro.org>,
+        <mark.rutland@arm.com>, <will.deacon@arm.com>,
+        <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <zhangshaokun@hisilicon.com>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <5add76dc-ea92-9778-a65b-792f3ff17040@huawei.com>
+Date:   Fri, 28 Jun 2019 18:05:43 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190628041912.qprczc23gzeelag7@gondor.apana.org.au>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190628153344.GZ31027@tassilo.jf.intel.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.227.238]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 28, 2019 at 12:19:12PM +0800, Herbert Xu wrote:
-> On Tue, Jun 18, 2019 at 01:19:42PM +0200, Arnd Bergmann wrote:
-> > The same bug that gcc hit in the past is apparently now showing
-> > up with clang, which decides to inline __serpent_setkey_sbox:
-> > 
-> > crypto/serpent_generic.c:268:5: error: stack frame size of 2112 bytes in function '__serpent_setkey' [-Werror,-Wframe-larger-than=]
-> > 
-> > Marking it 'noinline' reduces the stack usage from 2112 bytes to
-> > 192 and 96 bytes, respectively, and seems to generate more
-> > useful object code.
-> > 
-> > Fixes: c871c10e4ea7 ("crypto: serpent - improve __serpent_setkey with UBSAN")
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> > ---
-> > v2: style improvements suggested by Eric Biggers
-> > ---
-> >  crypto/serpent_generic.c | 8 +++++++-
-> >  1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> Patch applied.  Thanks.
-> -- 
+On 28/06/2019 16:33, Andi Kleen wrote:
+>> +	/*
+>> +	 * Match more complex aliases where the alias name is a comma-delimited
+>> +	 * list of tokens, orderly contained in the matching PMU name.
+>> +	 *
+>> +	 * Example: For alias "socket,pmuname" and PMU "socketX_pmunameY", we
+>> +	 *	    match "socket" in "socketX_pmunameY" and then "pmuname" in
+>> +	 *	    "pmunameY".
+>
+> This needs to be documented in some manpage.
 
-Hi Herbert, seems you forgot to push?  I don't see this in cryptodev.
+Hi Andi,
 
-- Eric
+As I see, today the man page does not mention the matching from the 
+alias events declared in the jsons.
+
+The perf list command shows these aliases, so I am not sure how useful 
+that info is adding to the man page.
+
+What the man page does mention is the glob matching on the PMU device 
+name - like how "imc" can match PMU device "uncore_imc_0", but I'm not 
+changing around this.
+
+Thanks,
+John
+
+>
+> -Andi
+>
+>
+> .
+>
+
+
