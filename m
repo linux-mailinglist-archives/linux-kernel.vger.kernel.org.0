@@ -2,497 +2,683 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F7BD5A3AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 20:34:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1339B5A3D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 20:35:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726785AbfF1SeF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 14:34:05 -0400
-Received: from mail-eopbgr770127.outbound.protection.outlook.com ([40.107.77.127]:29635
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726652AbfF1SeF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 14:34:05 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=SGCAMF8zISBHLaU5CaZb4qFzzbZbUZNAPoYt4mK6asiP3+XUXJArq8g6q4IgCTi6COGWx6RNA4Ce9Hp6obkc76ldHmpLRN/kwD7TbmDH4PHqBuK/dKq+ncvd/qw8XRMZdBc/7tKxVldYk8tXDlCHhS/FetKvVZI+xDi2m2MyiJa9uho9wkPuEZ2fpEoLken11dzehAZTh5RMuBOTFrVPA9poUIT+5DQKLNotu2DLxYog2oXGNF5kz0SIzt4RzR49DPguzrnBFtNeQTfZ2hVqT/wrGxA3xLlNhjVj4UInYsw42Jha6Rqu8tio74QgaHKPUY6flK+VWkNwLGJkj0Loww==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UAc+LbRde22alyzV6iuvLw3u9fwe2eMXQ8pSZ6eQHdI=;
- b=M/7EkuuyWwzuJV/lZHYAlwrn7sHnflk42xlHgq+8hJLWxQa8kqfN0ehjymle/J1bDBsBfq4Qq8sYRM3vzUC8w52rpFjiDFVuWfUlJvQQvwoiSM0GFjdLqlTjEfYRVG17QOYwPuSghCeB3boVAuBPbflpdHv0dgnUkb4UxQavQ2WlncKlOQ6NEQv2Pqcv2sMgPpbHuDFP6AgMcKKFIzQynehPAMx9PSDCaHH54/pNN8019e/Q8DqOH1nOP816cSwDIxnWh/GmkwX10jtuM9T2EnpMgOWlDgU30mIWTu4FIirAeekIxy9HPbziLnH+zHbSdTh6jrkKm6CNecPHOlXXUg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=microsoft.com;dmarc=pass action=none
- header.from=microsoft.com;dkim=pass header.d=microsoft.com;arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UAc+LbRde22alyzV6iuvLw3u9fwe2eMXQ8pSZ6eQHdI=;
- b=fdu54BecKUS1QfKT5VSmIo3wjpNLsX6LC6p3Wm0YKpWaVyfTktyi7Yvo3PjkJ9JiC4vjiCB4NNpAEYcuUmwBvdIjla3bTFptFV2erHhSMqWu0af+kajCsxD/xaTbppVhIHOBk9OPdPRlXjQnvqc8uMFO8eXiUOjr0yMk9ngI7g8=
-Received: from DM6PR21MB1340.namprd21.prod.outlook.com (20.179.53.83) by
- DM6PR21MB1145.namprd21.prod.outlook.com (20.179.50.138) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2052.4; Fri, 28 Jun 2019 18:33:56 +0000
-Received: from DM6PR21MB1340.namprd21.prod.outlook.com
- ([fe80::c817:8ed1:5d04:5a95]) by DM6PR21MB1340.namprd21.prod.outlook.com
- ([fe80::c817:8ed1:5d04:5a95%6]) with mapi id 15.20.2052.005; Fri, 28 Jun 2019
- 18:33:56 +0000
-From:   Michael Kelley <mikelley@microsoft.com>
-To:     "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "bp@alien8.de" <bp@alien8.de>, "x86@kernel.org" <x86@kernel.org>
-CC:     Michael Kelley <mikelley@microsoft.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        "olaf@aepfle.de" <olaf@aepfle.de>,
-        "apw@canonical.com" <apw@canonical.com>,
-        vkuznets <vkuznets@redhat.com>,
-        "jasowang@redhat.com" <jasowang@redhat.com>,
-        "marcelo.cerri@canonical.com" <marcelo.cerri@canonical.com>,
-        Sunil Muthuswamy <sunilmut@microsoft.com>,
-        KY Srinivasan <kys@microsoft.com>,
-        "sashal@kernel.org" <sashal@kernel.org>,
-        "vincenzo.frascino@arm.com" <vincenzo.frascino@arm.com>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "ralf@linux-mips.org" <ralf@linux-mips.org>,
-        "paul.burton@mips.com" <paul.burton@mips.com>,
-        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
-        "salyzyn@android.com" <salyzyn@android.com>,
-        "pcc@google.com" <pcc@google.com>,
-        "shuah@kernel.org" <shuah@kernel.org>,
-        "0x7f454c46@gmail.com" <0x7f454c46@gmail.com>,
-        "linux@rasmusvillemoes.dk" <linux@rasmusvillemoes.dk>,
-        "huw@codeweavers.com" <huw@codeweavers.com>,
-        "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
-Subject: [PATCH v4 1/2] Drivers: hv: Create Hyper-V clocksource driver from
- existing clockevents code
-Thread-Topic: [PATCH v4 1/2] Drivers: hv: Create Hyper-V clocksource driver
- from existing clockevents code
-Thread-Index: AQHVLeALUPgTamSgkEu8syQSr2RTjA==
-Date:   Fri, 28 Jun 2019 18:33:55 +0000
-Message-ID: <1561746758-23216-2-git-send-email-mikelley@microsoft.com>
-References: <1561746758-23216-1-git-send-email-mikelley@microsoft.com>
-In-Reply-To: <1561746758-23216-1-git-send-email-mikelley@microsoft.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: CY4PR06CA0043.namprd06.prod.outlook.com
- (2603:10b6:903:77::29) To DM6PR21MB1340.namprd21.prod.outlook.com
- (2603:10b6:5:175::19)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=mikelley@microsoft.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 1.8.3.1
-x-originating-ip: [131.107.174.8]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 930eba6d-15ed-4852-a9af-08d6fbf72d86
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DM6PR21MB1145;
-x-ms-traffictypediagnostic: DM6PR21MB1145:
-x-ld-processed: 72f988bf-86f1-41af-91ab-2d7cd011db47,ExtAddr
-x-microsoft-antispam-prvs: <DM6PR21MB1145F0E7B80CBE07B2DA460FD7FC0@DM6PR21MB1145.namprd21.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 00826B6158
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(136003)(396003)(376002)(366004)(39860400002)(346002)(199004)(189003)(386003)(86362001)(2616005)(54906003)(446003)(256004)(76176011)(11346002)(110136005)(478600001)(316002)(7416002)(7406005)(6486002)(486006)(14454004)(50226002)(2201001)(52116002)(476003)(6512007)(99286004)(4720700003)(6436002)(10290500003)(53936002)(4326008)(22452003)(53946003)(25786009)(305945005)(6116002)(102836004)(5660300002)(71200400001)(71190400001)(14444005)(26005)(73956011)(66556008)(64756008)(66446008)(66476007)(186003)(36756003)(3846002)(66946007)(6506007)(7736002)(30864003)(8676002)(81156014)(81166006)(66066001)(2906002)(68736007)(2501003)(10090500001)(8936002)(579004);DIR:OUT;SFP:1102;SCL:1;SRVR:DM6PR21MB1145;H:DM6PR21MB1340.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: JqJnuK8YH5UVHsy1FHRBvTGkETgid+awYspzIzZhI0gt4LpDDPyA/m0fo5LZ3nNfhEjuRZ4E+pUcsG1cvKyeGranaooNmI35GMHthuLPR2w69jiK6uvy7eXfYV/CPKHutRjXpE7Nwg20CdBuWOXgxmmHPvlgndN3orNk6/ABHTGjlZG1MsysOHZqkw69haGwsdbcouFFhyDrmTWJOOoBflit7ZLW9/w6QF/mz6mQTlI7XlYx8SkRD2puyEhqtIlg2LDc1WUtkhrYRjUdM0mlUBBm0YXqM3QioKl+MDMmJROfzbphFFjfA2H5xHB3wa0Mdl63diauoj2k9m5QSUa6sPj+CO3mlOZfHDVxL9vrIUL3HizzAIjc5ZCtxQ5YpuKUWwzxeEWa77nMJ5BGUxokeh8We9sqfvY4o9uRU5d/gFs=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1726911AbfF1SfZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 14:35:25 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:53816 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726549AbfF1SfW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Jun 2019 14:35:22 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5SITRqA024214;
+        Fri, 28 Jun 2019 18:34:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : from : to :
+ cc : date : message-id : in-reply-to : references : mime-version :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=I1ifmQLT4iC9JNL0DnM6UpLyxSKLhUMbvX0yft5w3UU=;
+ b=LD3QgmV2BXkIVyFAijVSafzkTdwuhB+HC87DUThoESAjT2cTVOUtwoygjx+HkbKdjp7O
+ adB9EuEWfCROymjBkD1K4+7xaZjMd2UpzAoQeqhFsW+7BBS23VQ8jPMv09J9h6193tCH
+ cGtrYY8BTMKElX79Pww1u9R0jIRS+xpH3HTEQ9vR5uebdSgqo6cJ+yZXe1JIwYqOa3rv
+ iR/JQGPMZiFypXK9cNCW6ycHv09ocApwzP1Ma4Vbl5Mo6hsbJDchFj+YveBt7dzy87kK
+ AV/fwokxeO8MyR9xw1GdNys+yNgU5gVqqkFBbQ3P9XSwv6Q/CRg4P3SZC+DpkvgPsSiZ jQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 2t9c9q72n9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 28 Jun 2019 18:34:08 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5SIX3ZS148970;
+        Fri, 28 Jun 2019 18:34:07 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by aserp3020.oracle.com with ESMTP id 2t9p6w22uw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 28 Jun 2019 18:34:07 +0000
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x5SIY7o2150834;
+        Fri, 28 Jun 2019 18:34:07 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3020.oracle.com with ESMTP id 2t9p6w22ug-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 28 Jun 2019 18:34:07 +0000
+Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5SIY2xj028654;
+        Fri, 28 Jun 2019 18:34:02 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 28 Jun 2019 11:34:02 -0700
+Subject: [PATCH 1/5] vfs: create a generic checking and prep function for
+ FS_IOC_SETFLAGS
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     matthew.garrett@nebula.com, yuchao0@huawei.com, tytso@mit.edu,
+        darrick.wong@oracle.com, shaggy@kernel.org,
+        ard.biesheuvel@linaro.org, josef@toxicpanda.com, hch@infradead.org,
+        clm@fb.com, adilger.kernel@dilger.ca, jk@ozlabs.org, jack@suse.com,
+        dsterba@suse.com, jaegeuk@kernel.org, viro@zeniv.linux.org.uk
+Cc:     cluster-devel@redhat.com, jfs-discussion@lists.sourceforge.net,
+        linux-efi@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-nilfs@vger.kernel.org,
+        linux-mtd@lists.infradead.org, ocfs2-devel@oss.oracle.com,
+        Bob Peterson <rpeterso@redhat.com>, linux-ext4@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>, linux-btrfs@vger.kernel.org
+Date:   Fri, 28 Jun 2019 11:33:56 -0700
+Message-ID: <156174683686.1557318.12146881228316188887.stgit@magnolia>
+In-Reply-To: <156174682897.1557318.14418894077683701275.stgit@magnolia>
+References: <156174682897.1557318.14418894077683701275.stgit@magnolia>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 930eba6d-15ed-4852-a9af-08d6fbf72d86
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Jun 2019 18:33:55.9693
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: lkmlmhk@microsoft.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR21MB1145
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9302 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906280208
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SHlwZXItViBjbG9jay90aW1lciBjb2RlIGFuZCBkYXRhIHN0cnVjdHVyZXMgYXJlIGN1cnJlbnRs
-eSBtaXhlZA0KaW4gd2l0aCBvdGhlciBjb2RlIGluIHRoZSBJU0EgaW5kZXBlbmRlbnQgZHJpdmVy
-cy9odiBkaXJlY3RvcnkgYXMNCndlbGwgYXMgdGhlIElTQSBkZXBlbmRlbnQgSHlwZXItViBjb2Rl
-IHVuZGVyIGFyY2gveDg2LiAgQ29uc29saWRhdGUNCnRoaXMgY29kZSBhbmQgZGF0YSBzdHJ1Y3R1
-cmVzIGludG8gYSBIeXBlci1WIGNsb2Nrc291cmNlIGRyaXZlciB0bw0KYmV0dGVyIGZvbGxvdyB0
-aGUgTGludXggbW9kZWwuIEluIGRvaW5nIHNvLCBzZXBhcmF0ZSBvdXQgdGhlIElTQQ0KZGVwZW5k
-ZW50IHBvcnRpb25zIHNvIHRoZSBuZXcgY2xvY2tzb3VyY2UgZHJpdmVyIHdvcmtzIGZvciB4ODYg
-YW5kDQpmb3IgdGhlIGluLXByb2Nlc3MgSHlwZXItViBvbiBBUk02NCBjb2RlLg0KDQpUbyBzdGFy
-dCwgbW92ZSB0aGUgZXhpc3RpbmcgY2xvY2tldmVudHMgY29kZSB0byBjcmVhdGUgdGhlDQpuZXcg
-Y2xvY2tzb3VyY2UgZHJpdmVyLiBVcGRhdGUgdGhlIFZNYnVzIGRyaXZlciB0byBjYWxsDQppbml0
-aWFsaXphdGlvbiBhbmQgY2xlYW51cCByb3V0aW5lcyBzaW5jZSB0aGUgSHlwZXItVg0Kc3ludGhl
-dGljIHRpbWVycyBhcmUgbm90IGluZGVwZW5kZW50bHkgZW51bWVyYXRlZCBpbiBBQ1BJLg0KDQpO
-byBiZWhhdmlvciBpcyBjaGFuZ2VkIGFuZCBubyBuZXcgZnVuY3Rpb25hbGl0eSBpcyBhZGRlZC4N
-Cg0KU3VnZ2VzdGVkLWJ5OiBNYXJjIFp5bmdpZXIgPG1hcmMuenluZ2llckBhcm0uY29tPg0KUmV2
-aWV3ZWQtYnk6IFZpdGFseSBLdXpuZXRzb3YgPHZrdXpuZXRzQHJlZGhhdC5jb20+DQpTaWduZWQt
-b2ZmLWJ5OiBNaWNoYWVsIEtlbGxleSA8bWlrZWxsZXlAbWljcm9zb2Z0LmNvbT4NCi0tLQ0KIE1B
-SU5UQUlORVJTICAgICAgICAgICAgICAgICAgICAgICAgfCAgIDIgKw0KIGFyY2gveDg2L2luY2x1
-ZGUvYXNtL2h5cGVydi10bGZzLmggfCAgIDYgKysNCiBhcmNoL3g4Ni9rZXJuZWwvY3B1L21zaHlw
-ZXJ2LmMgICAgIHwgICAyICsNCiBkcml2ZXJzL2Nsb2Nrc291cmNlL01ha2VmaWxlICAgICAgIHwg
-ICAxICsNCiBkcml2ZXJzL2Nsb2Nrc291cmNlL2h5cGVydl90aW1lci5jIHwgMTkxICsrKysrKysr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKysNCiBkcml2ZXJzL2h2L0tjb25maWcgICAgICAg
-ICAgICAgICAgIHwgICAzICsNCiBkcml2ZXJzL2h2L2h2LmMgICAgICAgICAgICAgICAgICAgIHwg
-MTU2ICstLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KIGRyaXZlcnMvaHYvaHlwZXJ2X3Zt
-YnVzLmggICAgICAgICAgfCAgIDMgLQ0KIGRyaXZlcnMvaHYvdm1idXNfZHJ2LmMgICAgICAgICAg
-ICAgfCAgNDIgKysrKy0tLS0NCiBpbmNsdWRlL2Nsb2Nrc291cmNlL2h5cGVydl90aW1lci5oIHwg
-IDI3ICsrKysrKw0KIDEwIGZpbGVzIGNoYW5nZWQsIDI1OCBpbnNlcnRpb25zKCspLCAxNzUgZGVs
-ZXRpb25zKC0pDQogY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvY2xvY2tzb3VyY2UvaHlwZXJ2
-X3RpbWVyLmMNCiBjcmVhdGUgbW9kZSAxMDA2NDQgaW5jbHVkZS9jbG9ja3NvdXJjZS9oeXBlcnZf
-dGltZXIuaA0KDQpkaWZmIC0tZ2l0IGEvTUFJTlRBSU5FUlMgYi9NQUlOVEFJTkVSUw0KaW5kZXgg
-YTI4MTI5Ny4uYmZkZTQyYSAxMDA2NDQNCi0tLSBhL01BSU5UQUlORVJTDQorKysgYi9NQUlOVEFJ
-TkVSUw0KQEAgLTczMTMsNiArNzMxMyw3IEBAIEY6CWFyY2gveDg2L2luY2x1ZGUvYXNtL3RyYWNl
-L2h5cGVydi5oDQogRjoJYXJjaC94ODYvaW5jbHVkZS9hc20vaHlwZXJ2LXRsZnMuaA0KIEY6CWFy
-Y2gveDg2L2tlcm5lbC9jcHUvbXNoeXBlcnYuYw0KIEY6CWFyY2gveDg2L2h5cGVydg0KK0Y6CWRy
-aXZlcnMvY2xvY2tzb3VyY2UvaHlwZXJ2X3RpbWVyLmMNCiBGOglkcml2ZXJzL2hpZC9oaWQtaHlw
-ZXJ2LmMNCiBGOglkcml2ZXJzL2h2Lw0KIEY6CWRyaXZlcnMvaW5wdXQvc2VyaW8vaHlwZXJ2LWtl
-eWJvYXJkLmMNCkBAIC03MzIzLDYgKzczMjQsNyBAQCBGOglkcml2ZXJzL3Vpby91aW9faHZfZ2Vu
-ZXJpYy5jDQogRjoJZHJpdmVycy92aWRlby9mYmRldi9oeXBlcnZfZmIuYw0KIEY6CWRyaXZlcnMv
-aW9tbXUvaHlwZXJ2X2lvbW11LmMNCiBGOgluZXQvdm13X3Zzb2NrL2h5cGVydl90cmFuc3BvcnQu
-Yw0KK0Y6CWluY2x1ZGUvY2xvY2tzb3VyY2UvaHlwZXJ2X3RpbWVyLmgNCiBGOglpbmNsdWRlL2xp
-bnV4L2h5cGVydi5oDQogRjoJaW5jbHVkZS91YXBpL2xpbnV4L2h5cGVydi5oDQogRjoJdG9vbHMv
-aHYvDQpkaWZmIC0tZ2l0IGEvYXJjaC94ODYvaW5jbHVkZS9hc20vaHlwZXJ2LXRsZnMuaCBiL2Fy
-Y2gveDg2L2luY2x1ZGUvYXNtL2h5cGVydi10bGZzLmgNCmluZGV4IGNkZjQ0YWEuLmFmNzhjZDcg
-MTAwNjQ0DQotLS0gYS9hcmNoL3g4Ni9pbmNsdWRlL2FzbS9oeXBlcnYtdGxmcy5oDQorKysgYi9h
-cmNoL3g4Ni9pbmNsdWRlL2FzbS9oeXBlcnYtdGxmcy5oDQpAQCAtNDAxLDYgKzQwMSwxMiBAQCBl
-bnVtIEhWX0dFTkVSSUNfU0VUX0ZPUk1BVCB7DQogI2RlZmluZSBIVl9TVEFUVVNfSU5WQUxJRF9D
-T05ORUNUSU9OX0lECQkxOA0KICNkZWZpbmUgSFZfU1RBVFVTX0lOU1VGRklDSUVOVF9CVUZGRVJT
-CQkxOQ0KIA0KKy8qDQorICogVGhlIEh5cGVyLVYgVGltZVJlZkNvdW50IHJlZ2lzdGVyIGFuZCB0
-aGUgVFNDDQorICogcGFnZSBwcm92aWRlIGEgZ3Vlc3QgVk0gY2xvY2sgd2l0aCAxMDBucyB0aWNr
-IHJhdGUNCisgKi8NCisjZGVmaW5lIEhWX0NMT0NLX0haIChOU0VDX1BFUl9TRUMvMTAwKQ0KKw0K
-IHR5cGVkZWYgc3RydWN0IF9IVl9SRUZFUkVOQ0VfVFNDX1BBR0Ugew0KIAlfX3UzMiB0c2Nfc2Vx
-dWVuY2U7DQogCV9fdTMyIHJlczE7DQpkaWZmIC0tZ2l0IGEvYXJjaC94ODYva2VybmVsL2NwdS9t
-c2h5cGVydi5jIGIvYXJjaC94ODYva2VybmVsL2NwdS9tc2h5cGVydi5jDQppbmRleCA3ZGYyOWYw
-Li5iODIyZmE2IDEwMDY0NA0KLS0tIGEvYXJjaC94ODYva2VybmVsL2NwdS9tc2h5cGVydi5jDQor
-KysgYi9hcmNoL3g4Ni9rZXJuZWwvY3B1L21zaHlwZXJ2LmMNCkBAIC0xNyw2ICsxNyw3IEBADQog
-I2luY2x1ZGUgPGxpbnV4L2lycS5oPg0KICNpbmNsdWRlIDxsaW51eC9rZXhlYy5oPg0KICNpbmNs
-dWRlIDxsaW51eC9pODI1My5oPg0KKyNpbmNsdWRlIDxsaW51eC9yYW5kb20uaD4NCiAjaW5jbHVk
-ZSA8YXNtL3Byb2Nlc3Nvci5oPg0KICNpbmNsdWRlIDxhc20vaHlwZXJ2aXNvci5oPg0KICNpbmNs
-dWRlIDxhc20vaHlwZXJ2LXRsZnMuaD4NCkBAIC04MCw2ICs4MSw3IEBAIF9fdmlzaWJsZSB2b2lk
-IF9faXJxX2VudHJ5IGh2X3N0aW1lcjBfdmVjdG9yX2hhbmRsZXIoc3RydWN0IHB0X3JlZ3MgKnJl
-Z3MpDQogCWluY19pcnFfc3RhdChoeXBlcnZfc3RpbWVyMF9jb3VudCk7DQogCWlmIChodl9zdGlt
-ZXIwX2hhbmRsZXIpDQogCQlodl9zdGltZXIwX2hhbmRsZXIoKTsNCisJYWRkX2ludGVycnVwdF9y
-YW5kb21uZXNzKEhZUEVSVl9TVElNRVIwX1ZFQ1RPUiwgMCk7DQogCWFja19BUElDX2lycSgpOw0K
-IA0KIAlleGl0aW5nX2lycSgpOw0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xvY2tzb3VyY2UvTWFr
-ZWZpbGUgYi9kcml2ZXJzL2Nsb2Nrc291cmNlL01ha2VmaWxlDQppbmRleCAyMzY4NThmLi4yYjY1
-YzVmIDEwMDY0NA0KLS0tIGEvZHJpdmVycy9jbG9ja3NvdXJjZS9NYWtlZmlsZQ0KKysrIGIvZHJp
-dmVycy9jbG9ja3NvdXJjZS9NYWtlZmlsZQ0KQEAgLTg0LDMgKzg0LDQgQEAgb2JqLSQoQ09ORklH
-X0FUQ1BJVDEwMF9USU1FUikJCSs9IHRpbWVyLWF0Y3BpdDEwMC5vDQogb2JqLSQoQ09ORklHX1JJ
-U0NWX1RJTUVSKQkJKz0gdGltZXItcmlzY3Yubw0KIG9iai0kKENPTkZJR19DU0tZX01QX1RJTUVS
-KQkJKz0gdGltZXItbXAtY3NreS5vDQogb2JqLSQoQ09ORklHX0dYNjYwNVNfVElNRVIpCQkrPSB0
-aW1lci1neDY2MDVzLm8NCitvYmotJChDT05GSUdfSFlQRVJWX1RJTUVSKQkJKz0gaHlwZXJ2X3Rp
-bWVyLm8NCmRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsb2Nrc291cmNlL2h5cGVydl90aW1lci5jIGIv
-ZHJpdmVycy9jbG9ja3NvdXJjZS9oeXBlcnZfdGltZXIuYw0KbmV3IGZpbGUgbW9kZSAxMDA2NDQN
-CmluZGV4IDAwMDAwMDAuLjMwNjE1ZjMNCi0tLSAvZGV2L251bGwNCisrKyBiL2RyaXZlcnMvY2xv
-Y2tzb3VyY2UvaHlwZXJ2X3RpbWVyLmMNCkBAIC0wLDAgKzEsMTkxIEBADQorLy8gU1BEWC1MaWNl
-bnNlLUlkZW50aWZpZXI6IEdQTC0yLjANCisNCisvKg0KKyAqIENsb2Nrc291cmNlIGRyaXZlciBm
-b3IgdGhlIHN5bnRoZXRpYyBjb3VudGVyIGFuZCB0aW1lcnMNCisgKiBwcm92aWRlZCBieSB0aGUg
-SHlwZXItViBoeXBlcnZpc29yIHRvIGd1ZXN0IFZNcywgYXMgZGVzY3JpYmVkDQorICogaW4gdGhl
-IEh5cGVyLVYgVG9wIExldmVsIEZ1bmN0aW9uYWwgU3BlYyAoVExGUykuIFRoaXMgZHJpdmVyDQor
-ICogaXMgaW5zdHJ1Y3Rpb24gc2V0IGFyY2hpdGVjdHVyZSBpbmRlcGVuZGVudC4NCisgKg0KKyAq
-IENvcHlyaWdodCAoQykgMjAxOSwgTWljcm9zb2Z0LCBJbmMuDQorICoNCisgKiBBdXRob3I6ICBN
-aWNoYWVsIEtlbGxleSA8bWlrZWxsZXlAbWljcm9zb2Z0LmNvbT4NCisgKi8NCisNCisjaW5jbHVk
-ZSA8bGludXgvcGVyY3B1Lmg+DQorI2luY2x1ZGUgPGxpbnV4L2NwdW1hc2suaD4NCisjaW5jbHVk
-ZSA8bGludXgvY2xvY2tjaGlwcy5oPg0KKyNpbmNsdWRlIDxsaW51eC9tbS5oPg0KKyNpbmNsdWRl
-IDxjbG9ja3NvdXJjZS9oeXBlcnZfdGltZXIuaD4NCisjaW5jbHVkZSA8YXNtL2h5cGVydi10bGZz
-Lmg+DQorI2luY2x1ZGUgPGFzbS9tc2h5cGVydi5oPg0KKw0KK3N0YXRpYyBzdHJ1Y3QgY2xvY2tf
-ZXZlbnRfZGV2aWNlIF9fcGVyY3B1ICpodl9jbG9ja19ldmVudDsNCisNCisvKg0KKyAqIElmIGZh
-bHNlLCB3ZSdyZSB1c2luZyB0aGUgb2xkIG1lY2hhbmlzbSBmb3Igc3RpbWVyMCBpbnRlcnJ1cHRz
-DQorICogd2hlcmUgaXQgc2VuZHMgYSBWTWJ1cyBtZXNzYWdlIHdoZW4gaXQgZXhwaXJlcy4gVGhl
-IG9sZA0KKyAqIG1lY2hhbmlzbSBpcyB1c2VkIHdoZW4gcnVubmluZyBvbiBvbGRlciB2ZXJzaW9u
-cyBvZiBIeXBlci1WDQorICogdGhhdCBkb24ndCBzdXBwb3J0IERpcmVjdCBNb2RlLiBXaGlsZSBI
-eXBlci1WIHByb3ZpZGVzDQorICogZm91ciBzdGltZXIncyBwZXIgQ1BVLCBMaW51eCB1c2VzIG9u
-bHkgc3RpbWVyMC4NCisgKi8NCitzdGF0aWMgYm9vbCBkaXJlY3RfbW9kZV9lbmFibGVkOw0KKw0K
-K3N0YXRpYyBpbnQgc3RpbWVyMF9pcnE7DQorc3RhdGljIGludCBzdGltZXIwX3ZlY3RvcjsNCitz
-dGF0aWMgaW50IHN0aW1lcjBfbWVzc2FnZV9zaW50Ow0KKw0KKy8qDQorICogSVNSIGZvciB3aGVu
-IHN0aW1lcjAgaXMgb3BlcmF0aW5nIGluIERpcmVjdCBNb2RlLiAgRGlyZWN0IE1vZGUNCisgKiBk
-b2VzIG5vdCB1c2UgVk1idXMgb3IgYW55IFZNYnVzIG1lc3NhZ2VzLCBzbyBwcm9jZXNzIGhlcmUg
-YW5kIG5vdA0KKyAqIGluIHRoZSBWTWJ1cyBkcml2ZXIgY29kZS4NCisgKi8NCit2b2lkIGh2X3N0
-aW1lcjBfaXNyKHZvaWQpDQorew0KKwlzdHJ1Y3QgY2xvY2tfZXZlbnRfZGV2aWNlICpjZTsNCisN
-CisJY2UgPSB0aGlzX2NwdV9wdHIoaHZfY2xvY2tfZXZlbnQpOw0KKwljZS0+ZXZlbnRfaGFuZGxl
-cihjZSk7DQorfQ0KK0VYUE9SVF9TWU1CT0xfR1BMKGh2X3N0aW1lcjBfaXNyKTsNCisNCitzdGF0
-aWMgaW50IGh2X2NlX3NldF9uZXh0X2V2ZW50KHVuc2lnbmVkIGxvbmcgZGVsdGEsDQorCQkJCXN0
-cnVjdCBjbG9ja19ldmVudF9kZXZpY2UgKmV2dCkNCit7DQorCXU2NCBjdXJyZW50X3RpY2s7DQor
-DQorCVdBUk5fT04oIWNsb2NrZXZlbnRfc3RhdGVfb25lc2hvdChldnQpKTsNCisNCisJY3VycmVu
-dF90aWNrID0gaHlwZXJ2X2NzLT5yZWFkKE5VTEwpOw0KKwljdXJyZW50X3RpY2sgKz0gZGVsdGE7
-DQorCWh2X2luaXRfdGltZXIoMCwgY3VycmVudF90aWNrKTsNCisJcmV0dXJuIDA7DQorfQ0KKw0K
-K3N0YXRpYyBpbnQgaHZfY2Vfc2h1dGRvd24oc3RydWN0IGNsb2NrX2V2ZW50X2RldmljZSAqZXZ0
-KQ0KK3sNCisJaHZfaW5pdF90aW1lcigwLCAwKTsNCisJaHZfaW5pdF90aW1lcl9jb25maWcoMCwg
-MCk7DQorCWlmIChkaXJlY3RfbW9kZV9lbmFibGVkKQ0KKwkJaHZfZGlzYWJsZV9zdGltZXIwX3Bl
-cmNwdV9pcnEoc3RpbWVyMF9pcnEpOw0KKw0KKwlyZXR1cm4gMDsNCit9DQorDQorc3RhdGljIGlu
-dCBodl9jZV9zZXRfb25lc2hvdChzdHJ1Y3QgY2xvY2tfZXZlbnRfZGV2aWNlICpldnQpDQorew0K
-Kwl1bmlvbiBodl9zdGltZXJfY29uZmlnIHRpbWVyX2NmZzsNCisNCisJdGltZXJfY2ZnLmFzX3Vp
-bnQ2NCA9IDA7DQorCXRpbWVyX2NmZy5lbmFibGUgPSAxOw0KKwl0aW1lcl9jZmcuYXV0b19lbmFi
-bGUgPSAxOw0KKwlpZiAoZGlyZWN0X21vZGVfZW5hYmxlZCkgew0KKwkJLyoNCisJCSAqIFdoZW4g
-aXQgZXhwaXJlcywgdGhlIHRpbWVyIHdpbGwgZGlyZWN0bHkgaW50ZXJydXB0DQorCQkgKiBvbiB0
-aGUgc3BlY2lmaWVkIGhhcmR3YXJlIHZlY3Rvci9JUlEuDQorCQkgKi8NCisJCXRpbWVyX2NmZy5k
-aXJlY3RfbW9kZSA9IDE7DQorCQl0aW1lcl9jZmcuYXBpY192ZWN0b3IgPSBzdGltZXIwX3ZlY3Rv
-cjsNCisJCWh2X2VuYWJsZV9zdGltZXIwX3BlcmNwdV9pcnEoc3RpbWVyMF9pcnEpOw0KKwl9IGVs
-c2Ugew0KKwkJLyoNCisJCSAqIFdoZW4gaXQgZXhwaXJlcywgdGhlIHRpbWVyIHdpbGwgZ2VuZXJh
-dGUgYSBWTWJ1cyBtZXNzYWdlLA0KKwkJICogdG8gYmUgaGFuZGxlZCBieSB0aGUgbm9ybWFsIFZN
-YnVzIGludGVycnVwdCBoYW5kbGVyLg0KKwkJICovDQorCQl0aW1lcl9jZmcuZGlyZWN0X21vZGUg
-PSAwOw0KKwkJdGltZXJfY2ZnLnNpbnR4ID0gc3RpbWVyMF9tZXNzYWdlX3NpbnQ7DQorCX0NCisJ
-aHZfaW5pdF90aW1lcl9jb25maWcoMCwgdGltZXJfY2ZnLmFzX3VpbnQ2NCk7DQorCXJldHVybiAw
-Ow0KK30NCisNCisvKg0KKyAqIGh2X3N0aW1lcl9pbml0IC0gUGVyLWNwdSBpbml0aWFsaXphdGlv
-biBvZiB0aGUgY2xvY2tldmVudA0KKyAqLw0KK2ludCBodl9zdGltZXJfaW5pdCh1bnNpZ25lZCBp
-bnQgY3B1KQ0KK3sNCisJc3RydWN0IGNsb2NrX2V2ZW50X2RldmljZSAqY2U7DQorDQorCWlmICht
-c19oeXBlcnYuZmVhdHVyZXMgJiBIVl9NU1JfU1lOVElNRVJfQVZBSUxBQkxFKSB7DQorCQljZSA9
-IHBlcl9jcHVfcHRyKGh2X2Nsb2NrX2V2ZW50LCBjcHUpOw0KKwkJY2UtPm5hbWUgPSAiSHlwZXIt
-ViBjbG9ja2V2ZW50IjsNCisJCWNlLT5mZWF0dXJlcyA9IENMT0NLX0VWVF9GRUFUX09ORVNIT1Q7
-DQorCQljZS0+Y3B1bWFzayA9IGNwdW1hc2tfb2YoY3B1KTsNCisJCWNlLT5yYXRpbmcgPSAxMDAw
-Ow0KKwkJY2UtPnNldF9zdGF0ZV9zaHV0ZG93biA9IGh2X2NlX3NodXRkb3duOw0KKwkJY2UtPnNl
-dF9zdGF0ZV9vbmVzaG90ID0gaHZfY2Vfc2V0X29uZXNob3Q7DQorCQljZS0+c2V0X25leHRfZXZl
-bnQgPSBodl9jZV9zZXRfbmV4dF9ldmVudDsNCisNCisJCWNsb2NrZXZlbnRzX2NvbmZpZ19hbmRf
-cmVnaXN0ZXIoY2UsDQorCQkJCQkJSFZfQ0xPQ0tfSFosDQorCQkJCQkJSFZfTUlOX0RFTFRBX1RJ
-Q0tTLA0KKwkJCQkJCUhWX01BWF9NQVhfREVMVEFfVElDS1MpOw0KKwl9DQorCXJldHVybiAwOw0K
-K30NCitFWFBPUlRfU1lNQk9MX0dQTChodl9zdGltZXJfaW5pdCk7DQorDQorLyoNCisgKiBodl9z
-dGltZXJfY2xlYW51cCAtIFBlci1jcHUgY2xlYW51cCBvZiB0aGUgY2xvY2tldmVudA0KKyAqLw0K
-K2ludCBodl9zdGltZXJfY2xlYW51cCh1bnNpZ25lZCBpbnQgY3B1KQ0KK3sNCisJc3RydWN0IGNs
-b2NrX2V2ZW50X2RldmljZSAqY2U7DQorDQorCS8qIFR1cm4gb2ZmIGNsb2NrZXZlbnQgZGV2aWNl
-ICovDQorCWlmIChtc19oeXBlcnYuZmVhdHVyZXMgJiBIVl9NU1JfU1lOVElNRVJfQVZBSUxBQkxF
-KSB7DQorCQljZSA9IHBlcl9jcHVfcHRyKGh2X2Nsb2NrX2V2ZW50LCBjcHUpOw0KKwkJY2xvY2tl
-dmVudHNfdW5iaW5kX2RldmljZShjZSwgY3B1KTsNCisJCWh2X2NlX3NodXRkb3duKGNlKTsNCisJ
-fQ0KKw0KKwlyZXR1cm4gMDsNCit9DQorRVhQT1JUX1NZTUJPTF9HUEwoaHZfc3RpbWVyX2NsZWFu
-dXApOw0KKw0KKy8qIGh2X3N0aW1lcl9hbGxvYyAtIEdsb2JhbCBpbml0aWFsaXphdGlvbiBvZiB0
-aGUgY2xvY2tldmVudCBhbmQgc3RpbWVyMCAqLw0KK2ludCBodl9zdGltZXJfYWxsb2MoaW50IHNp
-bnQpDQorew0KKwlodl9jbG9ja19ldmVudCA9IGFsbG9jX3BlcmNwdShzdHJ1Y3QgY2xvY2tfZXZl
-bnRfZGV2aWNlKTsNCisJaWYgKCFodl9jbG9ja19ldmVudCkNCisJCXJldHVybiAtRU5PTUVNOw0K
-Kw0KKwlkaXJlY3RfbW9kZV9lbmFibGVkID0gbXNfaHlwZXJ2Lm1pc2NfZmVhdHVyZXMgJg0KKwkJ
-CUhWX1NUSU1FUl9ESVJFQ1RfTU9ERV9BVkFJTEFCTEU7DQorCWlmIChkaXJlY3RfbW9kZV9lbmFi
-bGVkICYmDQorCSAgICBodl9zZXR1cF9zdGltZXIwX2lycSgmc3RpbWVyMF9pcnEsICZzdGltZXIw
-X3ZlY3RvciwNCisJCQkJaHZfc3RpbWVyMF9pc3IpKSB7DQorCQlmcmVlX3BlcmNwdShodl9jbG9j
-a19ldmVudCk7DQorCQlyZXR1cm4gLUVJTlZBTDsNCisJfQ0KKw0KKwlzdGltZXIwX21lc3NhZ2Vf
-c2ludCA9IHNpbnQ7DQorCXJldHVybiAwOw0KK30NCitFWFBPUlRfU1lNQk9MX0dQTChodl9zdGlt
-ZXJfYWxsb2MpOw0KKw0KKy8qIGh2X3N0aW1lcl9mcmVlIC0gRnJlZSBnbG9iYWwgcmVzb3VyY2Vz
-IGFsbG9jYXRlZCBieSBodl9zdGltZXJfYWxsb2MoKSAqLw0KK3ZvaWQgaHZfc3RpbWVyX2ZyZWUo
-dm9pZCkNCit7DQorCWlmIChkaXJlY3RfbW9kZV9lbmFibGVkKQ0KKwkJaHZfcmVtb3ZlX3N0aW1l
-cjBfaXJxKHN0aW1lcjBfaXJxKTsNCisJZnJlZV9wZXJjcHUoaHZfY2xvY2tfZXZlbnQpOw0KK30N
-CitFWFBPUlRfU1lNQk9MX0dQTChodl9zdGltZXJfZnJlZSk7DQorDQorLyoNCisgKiBEbyBhIGds
-b2JhbCBjbGVhbnVwIG9mIGNsb2NrZXZlbnRzIGZvciB0aGUgY2FzZXMgb2Yga2V4ZWMgYW5kDQor
-ICogdm1idXMgZXhpdA0KKyAqLw0KK3ZvaWQgaHZfc3RpbWVyX2dsb2JhbF9jbGVhbnVwKHZvaWQp
-DQorew0KKwlpbnQJY3B1Ow0KKwlzdHJ1Y3QgY2xvY2tfZXZlbnRfZGV2aWNlICpjZTsNCisNCisJ
-aWYgKG1zX2h5cGVydi5mZWF0dXJlcyAmIEhWX01TUl9TWU5USU1FUl9BVkFJTEFCTEUpDQorCQlm
-b3JfZWFjaF9wcmVzZW50X2NwdShjcHUpIHsNCisJCQljZSA9IHBlcl9jcHVfcHRyKGh2X2Nsb2Nr
-X2V2ZW50LCBjcHUpOw0KKwkJCWNsb2NrZXZlbnRzX3VuYmluZF9kZXZpY2UoY2UsIGNwdSk7DQor
-CQl9DQorCWh2X3N0aW1lcl9mcmVlKCk7DQorfQ0KK0VYUE9SVF9TWU1CT0xfR1BMKGh2X3N0aW1l
-cl9nbG9iYWxfY2xlYW51cCk7DQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9odi9LY29uZmlnIGIvZHJp
-dmVycy9odi9LY29uZmlnDQppbmRleCAxYzFhMjUxLi5jNDIzZTU3IDEwMDY0NA0KLS0tIGEvZHJp
-dmVycy9odi9LY29uZmlnDQorKysgYi9kcml2ZXJzL2h2L0tjb25maWcNCkBAIC0xMCw2ICsxMCw5
-IEBAIGNvbmZpZyBIWVBFUlYNCiAJICBTZWxlY3QgdGhpcyBvcHRpb24gdG8gcnVuIExpbnV4IGFz
-IGEgSHlwZXItViBjbGllbnQgb3BlcmF0aW5nDQogCSAgc3lzdGVtLg0KIA0KK2NvbmZpZyBIWVBF
-UlZfVElNRVINCisJZGVmX2Jvb2wgSFlQRVJWDQorDQogY29uZmlnIEhZUEVSVl9UU0NQQUdFDQog
-ICAgICAgIGRlZl9ib29sIEhZUEVSViAmJiBYODZfNjQNCiANCmRpZmYgLS1naXQgYS9kcml2ZXJz
-L2h2L2h2LmMgYi9kcml2ZXJzL2h2L2h2LmMNCmluZGV4IGExZWE0ODIuLjYxODhmYjcgMTAwNjQ0
-DQotLS0gYS9kcml2ZXJzL2h2L2h2LmMNCisrKyBiL2RyaXZlcnMvaHYvaHYuYw0KQEAgLTE2LDYg
-KzE2LDcgQEANCiAjaW5jbHVkZSA8bGludXgvdmVyc2lvbi5oPg0KICNpbmNsdWRlIDxsaW51eC9y
-YW5kb20uaD4NCiAjaW5jbHVkZSA8bGludXgvY2xvY2tjaGlwcy5oPg0KKyNpbmNsdWRlIDxjbG9j
-a3NvdXJjZS9oeXBlcnZfdGltZXIuaD4NCiAjaW5jbHVkZSA8YXNtL21zaHlwZXJ2Lmg+DQogI2lu
-Y2x1ZGUgImh5cGVydl92bWJ1cy5oIg0KIA0KQEAgLTIzLDIxICsyNCw2IEBADQogc3RydWN0IGh2
-X2NvbnRleHQgaHZfY29udGV4dDsNCiANCiAvKg0KLSAqIElmIGZhbHNlLCB3ZSdyZSB1c2luZyB0
-aGUgb2xkIG1lY2hhbmlzbSBmb3Igc3RpbWVyMCBpbnRlcnJ1cHRzDQotICogd2hlcmUgaXQgc2Vu
-ZHMgYSBWTWJ1cyBtZXNzYWdlIHdoZW4gaXQgZXhwaXJlcy4gVGhlIG9sZA0KLSAqIG1lY2hhbmlz
-bSBpcyB1c2VkIHdoZW4gcnVubmluZyBvbiBvbGRlciB2ZXJzaW9ucyBvZiBIeXBlci1WDQotICog
-dGhhdCBkb24ndCBzdXBwb3J0IERpcmVjdCBNb2RlLiBXaGlsZSBIeXBlci1WIHByb3ZpZGVzDQot
-ICogZm91ciBzdGltZXIncyBwZXIgQ1BVLCBMaW51eCB1c2VzIG9ubHkgc3RpbWVyMC4NCi0gKi8N
-Ci1zdGF0aWMgYm9vbCBkaXJlY3RfbW9kZV9lbmFibGVkOw0KLXN0YXRpYyBpbnQgc3RpbWVyMF9p
-cnE7DQotc3RhdGljIGludCBzdGltZXIwX3ZlY3RvcjsNCi0NCi0jZGVmaW5lIEhWX1RJTUVSX0ZS
-RVFVRU5DWSAoMTAgKiAxMDAwICogMTAwMCkgLyogMTAwbnMgcGVyaW9kICovDQotI2RlZmluZSBI
-Vl9NQVhfTUFYX0RFTFRBX1RJQ0tTIDB4ZmZmZmZmZmYNCi0jZGVmaW5lIEhWX01JTl9ERUxUQV9U
-SUNLUyAxDQotDQotLyoNCiAgKiBodl9pbml0IC0gTWFpbiBpbml0aWFsaXphdGlvbiByb3V0aW5l
-Lg0KICAqDQogICogVGhpcyByb3V0aW5lIG11c3QgYmUgY2FsbGVkIGJlZm9yZSBhbnkgb3RoZXIg
-cm91dGluZXMgaW4gaGVyZSBhcmUgY2FsbGVkDQpAQCAtNDcsOSArMzMsNiBAQCBpbnQgaHZfaW5p
-dCh2b2lkKQ0KIAlodl9jb250ZXh0LmNwdV9jb250ZXh0ID0gYWxsb2NfcGVyY3B1KHN0cnVjdCBo
-dl9wZXJfY3B1X2NvbnRleHQpOw0KIAlpZiAoIWh2X2NvbnRleHQuY3B1X2NvbnRleHQpDQogCQly
-ZXR1cm4gLUVOT01FTTsNCi0NCi0JZGlyZWN0X21vZGVfZW5hYmxlZCA9IG1zX2h5cGVydi5taXNj
-X2ZlYXR1cmVzICYNCi0JCQlIVl9TVElNRVJfRElSRUNUX01PREVfQVZBSUxBQkxFOw0KIAlyZXR1
-cm4gMDsNCiB9DQogDQpAQCAtODgsODkgKzcxLDYgQEAgaW50IGh2X3Bvc3RfbWVzc2FnZSh1bmlv
-biBodl9jb25uZWN0aW9uX2lkIGNvbm5lY3Rpb25faWQsDQogCXJldHVybiBzdGF0dXMgJiAweEZG
-RkY7DQogfQ0KIA0KLS8qDQotICogSVNSIGZvciB3aGVuIHN0aW1lcjAgaXMgb3BlcmF0aW5nIGlu
-IERpcmVjdCBNb2RlLiAgRGlyZWN0IE1vZGUNCi0gKiBkb2VzIG5vdCB1c2UgVk1idXMgb3IgYW55
-IFZNYnVzIG1lc3NhZ2VzLCBzbyBwcm9jZXNzIGhlcmUgYW5kIG5vdA0KLSAqIGluIHRoZSBWTWJ1
-cyBkcml2ZXIgY29kZS4NCi0gKi8NCi0NCi1zdGF0aWMgdm9pZCBodl9zdGltZXIwX2lzcih2b2lk
-KQ0KLXsNCi0Jc3RydWN0IGh2X3Blcl9jcHVfY29udGV4dCAqaHZfY3B1Ow0KLQ0KLQlodl9jcHUg
-PSB0aGlzX2NwdV9wdHIoaHZfY29udGV4dC5jcHVfY29udGV4dCk7DQotCWh2X2NwdS0+Y2xrX2V2
-dC0+ZXZlbnRfaGFuZGxlcihodl9jcHUtPmNsa19ldnQpOw0KLQlhZGRfaW50ZXJydXB0X3JhbmRv
-bW5lc3Moc3RpbWVyMF92ZWN0b3IsIDApOw0KLX0NCi0NCi1zdGF0aWMgaW50IGh2X2NlX3NldF9u
-ZXh0X2V2ZW50KHVuc2lnbmVkIGxvbmcgZGVsdGEsDQotCQkJCXN0cnVjdCBjbG9ja19ldmVudF9k
-ZXZpY2UgKmV2dCkNCi17DQotCXU2NCBjdXJyZW50X3RpY2s7DQotDQotCVdBUk5fT04oIWNsb2Nr
-ZXZlbnRfc3RhdGVfb25lc2hvdChldnQpKTsNCi0NCi0JY3VycmVudF90aWNrID0gaHlwZXJ2X2Nz
-LT5yZWFkKE5VTEwpOw0KLQljdXJyZW50X3RpY2sgKz0gZGVsdGE7DQotCWh2X2luaXRfdGltZXIo
-MCwgY3VycmVudF90aWNrKTsNCi0JcmV0dXJuIDA7DQotfQ0KLQ0KLXN0YXRpYyBpbnQgaHZfY2Vf
-c2h1dGRvd24oc3RydWN0IGNsb2NrX2V2ZW50X2RldmljZSAqZXZ0KQ0KLXsNCi0JaHZfaW5pdF90
-aW1lcigwLCAwKTsNCi0JaHZfaW5pdF90aW1lcl9jb25maWcoMCwgMCk7DQotCWlmIChkaXJlY3Rf
-bW9kZV9lbmFibGVkKQ0KLQkJaHZfZGlzYWJsZV9zdGltZXIwX3BlcmNwdV9pcnEoc3RpbWVyMF9p
-cnEpOw0KLQ0KLQlyZXR1cm4gMDsNCi19DQotDQotc3RhdGljIGludCBodl9jZV9zZXRfb25lc2hv
-dChzdHJ1Y3QgY2xvY2tfZXZlbnRfZGV2aWNlICpldnQpDQotew0KLQl1bmlvbiBodl9zdGltZXJf
-Y29uZmlnIHRpbWVyX2NmZzsNCi0NCi0JdGltZXJfY2ZnLmFzX3VpbnQ2NCA9IDA7DQotCXRpbWVy
-X2NmZy5lbmFibGUgPSAxOw0KLQl0aW1lcl9jZmcuYXV0b19lbmFibGUgPSAxOw0KLQlpZiAoZGly
-ZWN0X21vZGVfZW5hYmxlZCkgew0KLQkJLyoNCi0JCSAqIFdoZW4gaXQgZXhwaXJlcywgdGhlIHRp
-bWVyIHdpbGwgZGlyZWN0bHkgaW50ZXJydXB0DQotCQkgKiBvbiB0aGUgc3BlY2lmaWVkIGhhcmR3
-YXJlIHZlY3Rvci9JUlEuDQotCQkgKi8NCi0JCXRpbWVyX2NmZy5kaXJlY3RfbW9kZSA9IDE7DQot
-CQl0aW1lcl9jZmcuYXBpY192ZWN0b3IgPSBzdGltZXIwX3ZlY3RvcjsNCi0JCWh2X2VuYWJsZV9z
-dGltZXIwX3BlcmNwdV9pcnEoc3RpbWVyMF9pcnEpOw0KLQl9IGVsc2Ugew0KLQkJLyoNCi0JCSAq
-IFdoZW4gaXQgZXhwaXJlcywgdGhlIHRpbWVyIHdpbGwgZ2VuZXJhdGUgYSBWTWJ1cyBtZXNzYWdl
-LA0KLQkJICogdG8gYmUgaGFuZGxlZCBieSB0aGUgbm9ybWFsIFZNYnVzIGludGVycnVwdCBoYW5k
-bGVyLg0KLQkJICovDQotCQl0aW1lcl9jZmcuZGlyZWN0X21vZGUgPSAwOw0KLQkJdGltZXJfY2Zn
-LnNpbnR4ID0gVk1CVVNfTUVTU0FHRV9TSU5UOw0KLQl9DQotCWh2X2luaXRfdGltZXJfY29uZmln
-KDAsIHRpbWVyX2NmZy5hc191aW50NjQpOw0KLQlyZXR1cm4gMDsNCi19DQotDQotc3RhdGljIHZv
-aWQgaHZfaW5pdF9jbG9ja2V2ZW50X2RldmljZShzdHJ1Y3QgY2xvY2tfZXZlbnRfZGV2aWNlICpk
-ZXYsIGludCBjcHUpDQotew0KLQlkZXYtPm5hbWUgPSAiSHlwZXItViBjbG9ja2V2ZW50IjsNCi0J
-ZGV2LT5mZWF0dXJlcyA9IENMT0NLX0VWVF9GRUFUX09ORVNIT1Q7DQotCWRldi0+Y3B1bWFzayA9
-IGNwdW1hc2tfb2YoY3B1KTsNCi0JZGV2LT5yYXRpbmcgPSAxMDAwOw0KLQkvKg0KLQkgKiBBdm9p
-ZCBzZXR0aW50IGRldi0+b3duZXIgPSBUSElTX01PRFVMRSBkZWxpYmVyYXRlbHkgYXMgZG9pbmcg
-c28gd2lsbA0KLQkgKiByZXN1bHQgaW4gY2xvY2tldmVudHNfY29uZmlnX2FuZF9yZWdpc3Rlcigp
-IHRha2luZyBhZGRpdGlvbmFsDQotCSAqIHJlZmVyZW5jZXMgdG8gdGhlIGh2X3ZtYnVzIG1vZHVs
-ZSBtYWtpbmcgaXQgaW1wb3NzaWJsZSB0byB1bmxvYWQuDQotCSAqLw0KLQ0KLQlkZXYtPnNldF9z
-dGF0ZV9zaHV0ZG93biA9IGh2X2NlX3NodXRkb3duOw0KLQlkZXYtPnNldF9zdGF0ZV9vbmVzaG90
-ID0gaHZfY2Vfc2V0X29uZXNob3Q7DQotCWRldi0+c2V0X25leHRfZXZlbnQgPSBodl9jZV9zZXRf
-bmV4dF9ldmVudDsNCi19DQotDQotDQogaW50IGh2X3N5bmljX2FsbG9jKHZvaWQpDQogew0KIAlp
-bnQgY3B1Ow0KQEAgLTE5OSwxNCArOTksNiBAQCBpbnQgaHZfc3luaWNfYWxsb2Modm9pZCkNCiAJ
-CXRhc2tsZXRfaW5pdCgmaHZfY3B1LT5tc2dfZHBjLA0KIAkJCSAgICAgdm1idXNfb25fbXNnX2Rw
-YywgKHVuc2lnbmVkIGxvbmcpIGh2X2NwdSk7DQogDQotCQlodl9jcHUtPmNsa19ldnQgPSBremFs
-bG9jKHNpemVvZihzdHJ1Y3QgY2xvY2tfZXZlbnRfZGV2aWNlKSwNCi0JCQkJCSAgR0ZQX0tFUk5F
-TCk7DQotCQlpZiAoaHZfY3B1LT5jbGtfZXZ0ID09IE5VTEwpIHsNCi0JCQlwcl9lcnIoIlVuYWJs
-ZSB0byBhbGxvY2F0ZSBjbG9jayBldmVudCBkZXZpY2VcbiIpOw0KLQkJCWdvdG8gZXJyOw0KLQkJ
-fQ0KLQkJaHZfaW5pdF9jbG9ja2V2ZW50X2RldmljZShodl9jcHUtPmNsa19ldnQsIGNwdSk7DQot
-DQogCQlodl9jcHUtPnN5bmljX21lc3NhZ2VfcGFnZSA9DQogCQkJKHZvaWQgKilnZXRfemVyb2Vk
-X3BhZ2UoR0ZQX0FUT01JQyk7DQogCQlpZiAoaHZfY3B1LT5zeW5pY19tZXNzYWdlX3BhZ2UgPT0g
-TlVMTCkgew0KQEAgLTIyOSwxMSArMTIxLDYgQEAgaW50IGh2X3N5bmljX2FsbG9jKHZvaWQpDQog
-CQlJTklUX0xJU1RfSEVBRCgmaHZfY3B1LT5jaGFuX2xpc3QpOw0KIAl9DQogDQotCWlmIChkaXJl
-Y3RfbW9kZV9lbmFibGVkICYmDQotCSAgICBodl9zZXR1cF9zdGltZXIwX2lycSgmc3RpbWVyMF9p
-cnEsICZzdGltZXIwX3ZlY3RvciwNCi0JCQkJaHZfc3RpbWVyMF9pc3IpKQ0KLQkJZ290byBlcnI7
-DQotDQogCXJldHVybiAwOw0KIGVycjoNCiAJLyoNCkBAIC0yNTIsNyArMTM5LDYgQEAgdm9pZCBo
-dl9zeW5pY19mcmVlKHZvaWQpDQogCQlzdHJ1Y3QgaHZfcGVyX2NwdV9jb250ZXh0ICpodl9jcHUN
-CiAJCQk9IHBlcl9jcHVfcHRyKGh2X2NvbnRleHQuY3B1X2NvbnRleHQsIGNwdSk7DQogDQotCQlr
-ZnJlZShodl9jcHUtPmNsa19ldnQpOw0KIAkJZnJlZV9wYWdlKCh1bnNpZ25lZCBsb25nKWh2X2Nw
-dS0+c3luaWNfZXZlbnRfcGFnZSk7DQogCQlmcmVlX3BhZ2UoKHVuc2lnbmVkIGxvbmcpaHZfY3B1
-LT5zeW5pY19tZXNzYWdlX3BhZ2UpOw0KIAkJZnJlZV9wYWdlKCh1bnNpZ25lZCBsb25nKWh2X2Nw
-dS0+cG9zdF9tc2dfcGFnZSk7DQpAQCAtMzExLDM2ICsxOTcsOSBAQCBpbnQgaHZfc3luaWNfaW5p
-dCh1bnNpZ25lZCBpbnQgY3B1KQ0KIA0KIAlodl9zZXRfc3luaWNfc3RhdGUoc2N0cmwuYXNfdWlu
-dDY0KTsNCiANCi0JLyoNCi0JICogUmVnaXN0ZXIgdGhlIHBlci1jcHUgY2xvY2tldmVudCBzb3Vy
-Y2UuDQotCSAqLw0KLQlpZiAobXNfaHlwZXJ2LmZlYXR1cmVzICYgSFZfTVNSX1NZTlRJTUVSX0FW
-QUlMQUJMRSkNCi0JCWNsb2NrZXZlbnRzX2NvbmZpZ19hbmRfcmVnaXN0ZXIoaHZfY3B1LT5jbGtf
-ZXZ0LA0KLQkJCQkJCUhWX1RJTUVSX0ZSRVFVRU5DWSwNCi0JCQkJCQlIVl9NSU5fREVMVEFfVElD
-S1MsDQotCQkJCQkJSFZfTUFYX01BWF9ERUxUQV9USUNLUyk7DQotCXJldHVybiAwOw0KLX0NCi0N
-Ci0vKg0KLSAqIGh2X3N5bmljX2Nsb2NrZXZlbnRzX2NsZWFudXAgLSBDbGVhbnVwIGNsb2NrZXZl
-bnQgZGV2aWNlcw0KLSAqLw0KLXZvaWQgaHZfc3luaWNfY2xvY2tldmVudHNfY2xlYW51cCh2b2lk
-KQ0KLXsNCi0JaW50IGNwdTsNCisJaHZfc3RpbWVyX2luaXQoY3B1KTsNCiANCi0JaWYgKCEobXNf
-aHlwZXJ2LmZlYXR1cmVzICYgSFZfTVNSX1NZTlRJTUVSX0FWQUlMQUJMRSkpDQotCQlyZXR1cm47
-DQotDQotCWlmIChkaXJlY3RfbW9kZV9lbmFibGVkKQ0KLQkJaHZfcmVtb3ZlX3N0aW1lcjBfaXJx
-KHN0aW1lcjBfaXJxKTsNCi0NCi0JZm9yX2VhY2hfcHJlc2VudF9jcHUoY3B1KSB7DQotCQlzdHJ1
-Y3QgaHZfcGVyX2NwdV9jb250ZXh0ICpodl9jcHUNCi0JCQk9IHBlcl9jcHVfcHRyKGh2X2NvbnRl
-eHQuY3B1X2NvbnRleHQsIGNwdSk7DQotDQotCQljbG9ja2V2ZW50c191bmJpbmRfZGV2aWNlKGh2
-X2NwdS0+Y2xrX2V2dCwgY3B1KTsNCi0JfQ0KKwlyZXR1cm4gMDsNCiB9DQogDQogLyoNCkBAIC0z
-ODgsMTQgKzI0Nyw3IEBAIGludCBodl9zeW5pY19jbGVhbnVwKHVuc2lnbmVkIGludCBjcHUpDQog
-CWlmIChjaGFubmVsX2ZvdW5kICYmIHZtYnVzX2Nvbm5lY3Rpb24uY29ubl9zdGF0ZSA9PSBDT05O
-RUNURUQpDQogCQlyZXR1cm4gLUVCVVNZOw0KIA0KLQkvKiBUdXJuIG9mZiBjbG9ja2V2ZW50IGRl
-dmljZSAqLw0KLQlpZiAobXNfaHlwZXJ2LmZlYXR1cmVzICYgSFZfTVNSX1NZTlRJTUVSX0FWQUlM
-QUJMRSkgew0KLQkJc3RydWN0IGh2X3Blcl9jcHVfY29udGV4dCAqaHZfY3B1DQotCQkJPSB0aGlz
-X2NwdV9wdHIoaHZfY29udGV4dC5jcHVfY29udGV4dCk7DQotDQotCQljbG9ja2V2ZW50c191bmJp
-bmRfZGV2aWNlKGh2X2NwdS0+Y2xrX2V2dCwgY3B1KTsNCi0JCWh2X2NlX3NodXRkb3duKGh2X2Nw
-dS0+Y2xrX2V2dCk7DQotCX0NCisJaHZfc3RpbWVyX2NsZWFudXAoY3B1KTsNCiANCiAJaHZfZ2V0
-X3N5bmludF9zdGF0ZShWTUJVU19NRVNTQUdFX1NJTlQsIHNoYXJlZF9zaW50LmFzX3VpbnQ2NCk7
-DQogDQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9odi9oeXBlcnZfdm1idXMuaCBiL2RyaXZlcnMvaHYv
-aHlwZXJ2X3ZtYnVzLmgNCmluZGV4IGI4ZTFmZjAuLjM2MmU3MGUgMTAwNjQ0DQotLS0gYS9kcml2
-ZXJzL2h2L2h5cGVydl92bWJ1cy5oDQorKysgYi9kcml2ZXJzL2h2L2h5cGVydl92bWJ1cy5oDQpA
-QCAtMTM4LDcgKzEzOCw2IEBAIHN0cnVjdCBodl9wZXJfY3B1X2NvbnRleHQgew0KIAkgKiBwZXIt
-Y3B1IGxpc3Qgb2YgdGhlIGNoYW5uZWxzIGJhc2VkIG9uIHRoZWlyIENQVSBhZmZpbml0eS4NCiAJ
-ICovDQogCXN0cnVjdCBsaXN0X2hlYWQgY2hhbl9saXN0Ow0KLQlzdHJ1Y3QgY2xvY2tfZXZlbnRf
-ZGV2aWNlICpjbGtfZXZ0Ow0KIH07DQogDQogc3RydWN0IGh2X2NvbnRleHQgew0KQEAgLTE3Niw4
-ICsxNzUsNiBAQCBleHRlcm4gaW50IGh2X3Bvc3RfbWVzc2FnZSh1bmlvbiBodl9jb25uZWN0aW9u
-X2lkIGNvbm5lY3Rpb25faWQsDQogDQogZXh0ZXJuIGludCBodl9zeW5pY19jbGVhbnVwKHVuc2ln
-bmVkIGludCBjcHUpOw0KIA0KLWV4dGVybiB2b2lkIGh2X3N5bmljX2Nsb2NrZXZlbnRzX2NsZWFu
-dXAodm9pZCk7DQotDQogLyogSW50ZXJmYWNlICovDQogDQogdm9pZCBodl9yaW5nYnVmZmVyX3By
-ZV9pbml0KHN0cnVjdCB2bWJ1c19jaGFubmVsICpjaGFubmVsKTsNCmRpZmYgLS1naXQgYS9kcml2
-ZXJzL2h2L3ZtYnVzX2Rydi5jIGIvZHJpdmVycy9odi92bWJ1c19kcnYuYw0KaW5kZXggOTJiMTg3
-NC4uNzJkNWE3YyAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvaHYvdm1idXNfZHJ2LmMNCisrKyBiL2Ry
-aXZlcnMvaHYvdm1idXNfZHJ2LmMNCkBAIC0zMCw2ICszMCw3IEBADQogI2luY2x1ZGUgPGxpbnV4
-L2tkZWJ1Zy5oPg0KICNpbmNsdWRlIDxsaW51eC9lZmkuaD4NCiAjaW5jbHVkZSA8bGludXgvcmFu
-ZG9tLmg+DQorI2luY2x1ZGUgPGNsb2Nrc291cmNlL2h5cGVydl90aW1lci5oPg0KICNpbmNsdWRl
-ICJoeXBlcnZfdm1idXMuaCINCiANCiBzdHJ1Y3Qgdm1idXNfZHluaWQgew0KQEAgLTk1NSwxNyAr
-OTU2LDYgQEAgc3RhdGljIHZvaWQgdm1idXNfb25tZXNzYWdlX3dvcmsoc3RydWN0IHdvcmtfc3Ry
-dWN0ICp3b3JrKQ0KIAlrZnJlZShjdHgpOw0KIH0NCiANCi1zdGF0aWMgdm9pZCBodl9wcm9jZXNz
-X3RpbWVyX2V4cGlyYXRpb24oc3RydWN0IGh2X21lc3NhZ2UgKm1zZywNCi0JCQkJCXN0cnVjdCBo
-dl9wZXJfY3B1X2NvbnRleHQgKmh2X2NwdSkNCi17DQotCXN0cnVjdCBjbG9ja19ldmVudF9kZXZp
-Y2UgKmRldiA9IGh2X2NwdS0+Y2xrX2V2dDsNCi0NCi0JaWYgKGRldi0+ZXZlbnRfaGFuZGxlcikN
-Ci0JCWRldi0+ZXZlbnRfaGFuZGxlcihkZXYpOw0KLQ0KLQl2bWJ1c19zaWduYWxfZW9tKG1zZywg
-SFZNU0dfVElNRVJfRVhQSVJFRCk7DQotfQ0KLQ0KIHZvaWQgdm1idXNfb25fbXNnX2RwYyh1bnNp
-Z25lZCBsb25nIGRhdGEpDQogew0KIAlzdHJ1Y3QgaHZfcGVyX2NwdV9jb250ZXh0ICpodl9jcHUg
-PSAodm9pZCAqKWRhdGE7DQpAQCAtMTE1OSw5ICsxMTQ5LDEwIEBAIHN0YXRpYyB2b2lkIHZtYnVz
-X2lzcih2b2lkKQ0KIA0KIAkvKiBDaGVjayBpZiB0aGVyZSBhcmUgYWN0dWFsIG1zZ3MgdG8gYmUg
-cHJvY2Vzc2VkICovDQogCWlmIChtc2ctPmhlYWRlci5tZXNzYWdlX3R5cGUgIT0gSFZNU0dfTk9O
-RSkgew0KLQkJaWYgKG1zZy0+aGVhZGVyLm1lc3NhZ2VfdHlwZSA9PSBIVk1TR19USU1FUl9FWFBJ
-UkVEKQ0KLQkJCWh2X3Byb2Nlc3NfdGltZXJfZXhwaXJhdGlvbihtc2csIGh2X2NwdSk7DQotCQll
-bHNlDQorCQlpZiAobXNnLT5oZWFkZXIubWVzc2FnZV90eXBlID09IEhWTVNHX1RJTUVSX0VYUElS
-RUQpIHsNCisJCQlodl9zdGltZXIwX2lzcigpOw0KKwkJCXZtYnVzX3NpZ25hbF9lb20obXNnLCBI
-Vk1TR19USU1FUl9FWFBJUkVEKTsNCisJCX0gZWxzZQ0KIAkJCXRhc2tsZXRfc2NoZWR1bGUoJmh2
-X2NwdS0+bXNnX2RwYyk7DQogCX0NCiANCkBAIC0xMjYzLDE0ICsxMjU0LDE5IEBAIHN0YXRpYyBp
-bnQgdm1idXNfYnVzX2luaXQodm9pZCkNCiAJcmV0ID0gaHZfc3luaWNfYWxsb2MoKTsNCiAJaWYg
-KHJldCkNCiAJCWdvdG8gZXJyX2FsbG9jOw0KKw0KKwlyZXQgPSBodl9zdGltZXJfYWxsb2MoVk1C
-VVNfTUVTU0FHRV9TSU5UKTsNCisJaWYgKHJldCA8IDApDQorCQlnb3RvIGVycl9hbGxvYzsNCisN
-CiAJLyoNCi0JICogSW5pdGlhbGl6ZSB0aGUgcGVyLWNwdSBpbnRlcnJ1cHQgc3RhdGUgYW5kDQot
-CSAqIGNvbm5lY3QgdG8gdGhlIGhvc3QuDQorCSAqIEluaXRpYWxpemUgdGhlIHBlci1jcHUgaW50
-ZXJydXB0IHN0YXRlIGFuZCBzdGltZXIgc3RhdGUuDQorCSAqIFRoZW4gY29ubmVjdCB0byB0aGUg
-aG9zdC4NCiAJICovDQogCXJldCA9IGNwdWhwX3NldHVwX3N0YXRlKENQVUhQX0FQX09OTElORV9E
-WU4sICJoeXBlcnYvdm1idXM6b25saW5lIiwNCiAJCQkJaHZfc3luaWNfaW5pdCwgaHZfc3luaWNf
-Y2xlYW51cCk7DQogCWlmIChyZXQgPCAwKQ0KLQkJZ290byBlcnJfYWxsb2M7DQorCQlnb3RvIGVy
-cl9jcHVocDsNCiAJaHlwZXJ2X2NwdWhwX29ubGluZSA9IHJldDsNCiANCiAJcmV0ID0gdm1idXNf
-Y29ubmVjdCgpOw0KQEAgLTEzMTgsNiArMTMxNCw4IEBAIHN0YXRpYyBpbnQgdm1idXNfYnVzX2lu
-aXQodm9pZCkNCiANCiBlcnJfY29ubmVjdDoNCiAJY3B1aHBfcmVtb3ZlX3N0YXRlKGh5cGVydl9j
-cHVocF9vbmxpbmUpOw0KK2Vycl9jcHVocDoNCisJaHZfc3RpbWVyX2ZyZWUoKTsNCiBlcnJfYWxs
-b2M6DQogCWh2X3N5bmljX2ZyZWUoKTsNCiAJaHZfcmVtb3ZlX3ZtYnVzX2lycSgpOw0KQEAgLTIw
-NjQsNyArMjA2Miw3IEBAIHN0YXRpYyBpbnQgdm1idXNfYWNwaV9hZGQoc3RydWN0IGFjcGlfZGV2
-aWNlICpkZXZpY2UpDQogDQogc3RhdGljIHZvaWQgaHZfa2V4ZWNfaGFuZGxlcih2b2lkKQ0KIHsN
-Ci0JaHZfc3luaWNfY2xvY2tldmVudHNfY2xlYW51cCgpOw0KKwlodl9zdGltZXJfZ2xvYmFsX2Ns
-ZWFudXAoKTsNCiAJdm1idXNfaW5pdGlhdGVfdW5sb2FkKGZhbHNlKTsNCiAJdm1idXNfY29ubmVj
-dGlvbi5jb25uX3N0YXRlID0gRElTQ09OTkVDVEVEOw0KIAkvKiBNYWtlIHN1cmUgY29ubl9zdGF0
-ZSBpcyBzZXQgYXMgaHZfc3luaWNfY2xlYW51cCBjaGVja3MgZm9yIGl0ICovDQpAQCAtMjA3NSw2
-ICsyMDczLDggQEAgc3RhdGljIHZvaWQgaHZfa2V4ZWNfaGFuZGxlcih2b2lkKQ0KIA0KIHN0YXRp
-YyB2b2lkIGh2X2NyYXNoX2hhbmRsZXIoc3RydWN0IHB0X3JlZ3MgKnJlZ3MpDQogew0KKwlpbnQg
-Y3B1Ow0KKw0KIAl2bWJ1c19pbml0aWF0ZV91bmxvYWQodHJ1ZSk7DQogCS8qDQogCSAqIEluIGNy
-YXNoIGhhbmRsZXIgd2UgY2FuJ3Qgc2NoZWR1bGUgc3luaWMgY2xlYW51cCBmb3IgYWxsIENQVXMs
-DQpAQCAtMjA4Miw3ICsyMDgyLDkgQEAgc3RhdGljIHZvaWQgaHZfY3Jhc2hfaGFuZGxlcihzdHJ1
-Y3QgcHRfcmVncyAqcmVncykNCiAJICogZm9yIGtkdW1wLg0KIAkgKi8NCiAJdm1idXNfY29ubmVj
-dGlvbi5jb25uX3N0YXRlID0gRElTQ09OTkVDVEVEOw0KLQlodl9zeW5pY19jbGVhbnVwKHNtcF9w
-cm9jZXNzb3JfaWQoKSk7DQorCWNwdSA9IHNtcF9wcm9jZXNzb3JfaWQoKTsNCisJaHZfc3RpbWVy
-X2NsZWFudXAoY3B1KTsNCisJaHZfc3luaWNfY2xlYW51cChjcHUpOw0KIAloeXBlcnZfY2xlYW51
-cCgpOw0KIH07DQogDQpAQCAtMjEzMSw3ICsyMTMzLDcgQEAgc3RhdGljIHZvaWQgX19leGl0IHZt
-YnVzX2V4aXQodm9pZCkNCiAJaHZfcmVtb3ZlX2tleGVjX2hhbmRsZXIoKTsNCiAJaHZfcmVtb3Zl
-X2NyYXNoX2hhbmRsZXIoKTsNCiAJdm1idXNfY29ubmVjdGlvbi5jb25uX3N0YXRlID0gRElTQ09O
-TkVDVEVEOw0KLQlodl9zeW5pY19jbG9ja2V2ZW50c19jbGVhbnVwKCk7DQorCWh2X3N0aW1lcl9n
-bG9iYWxfY2xlYW51cCgpOw0KIAl2bWJ1c19kaXNjb25uZWN0KCk7DQogCWh2X3JlbW92ZV92bWJ1
-c19pcnEoKTsNCiAJZm9yX2VhY2hfb25saW5lX2NwdShjcHUpIHsNCmRpZmYgLS1naXQgYS9pbmNs
-dWRlL2Nsb2Nrc291cmNlL2h5cGVydl90aW1lci5oIGIvaW5jbHVkZS9jbG9ja3NvdXJjZS9oeXBl
-cnZfdGltZXIuaA0KbmV3IGZpbGUgbW9kZSAxMDA2NDQNCmluZGV4IDAwMDAwMDAuLmJhNWRjMTcN
-Ci0tLSAvZGV2L251bGwNCisrKyBiL2luY2x1ZGUvY2xvY2tzb3VyY2UvaHlwZXJ2X3RpbWVyLmgN
-CkBAIC0wLDAgKzEsMjcgQEANCisvKiBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjogR1BMLTIuMCAq
-Lw0KKw0KKy8qDQorICogRGVmaW5pdGlvbnMgZm9yIHRoZSBjbG9ja3NvdXJjZSBwcm92aWRlZCBi
-eSB0aGUgSHlwZXItVg0KKyAqIGh5cGVydmlzb3IgdG8gZ3Vlc3QgVk1zLCBhcyBkZXNjcmliZWQg
-aW4gdGhlIEh5cGVyLVYgVG9wDQorICogTGV2ZWwgRnVuY3Rpb25hbCBTcGVjIChUTEZTKS4NCisg
-Kg0KKyAqIENvcHlyaWdodCAoQykgMjAxOSwgTWljcm9zb2Z0LCBJbmMuDQorICoNCisgKiBBdXRo
-b3I6ICBNaWNoYWVsIEtlbGxleSA8bWlrZWxsZXlAbWljcm9zb2Z0LmNvbT4NCisgKi8NCisNCisj
-aWZuZGVmIF9fQ0xLU09VUkNFX0hZUEVSVl9USU1FUl9IDQorI2RlZmluZSBfX0NMS1NPVVJDRV9I
-WVBFUlZfVElNRVJfSA0KKw0KKyNkZWZpbmUgSFZfTUFYX01BWF9ERUxUQV9USUNLUyAweGZmZmZm
-ZmZmDQorI2RlZmluZSBIVl9NSU5fREVMVEFfVElDS1MgMQ0KKw0KKy8qIFJvdXRpbmVzIGNhbGxl
-ZCBieSB0aGUgVk1idXMgZHJpdmVyICovDQorZXh0ZXJuIGludCBodl9zdGltZXJfYWxsb2MoaW50
-IHNpbnQpOw0KK2V4dGVybiB2b2lkIGh2X3N0aW1lcl9mcmVlKHZvaWQpOw0KK2V4dGVybiBpbnQg
-aHZfc3RpbWVyX2luaXQodW5zaWduZWQgaW50IGNwdSk7DQorZXh0ZXJuIGludCBodl9zdGltZXJf
-Y2xlYW51cCh1bnNpZ25lZCBpbnQgY3B1KTsNCitleHRlcm4gdm9pZCBodl9zdGltZXJfZ2xvYmFs
-X2NsZWFudXAodm9pZCk7DQorZXh0ZXJuIHZvaWQgaHZfc3RpbWVyMF9pc3Iodm9pZCk7DQorDQor
-I2VuZGlmDQotLSANCjEuOC4zLjENCg0K
+From: Darrick J. Wong <darrick.wong@oracle.com>
+
+Create a generic function to check incoming FS_IOC_SETFLAGS flag values
+and later prepare the inode for updates so that we can standardize the
+implementations that follow ext4's flag values.
+
+Note that the efivarfs implementation no longer fails a no-op SETFLAGS
+without CAP_LINUX_IMMUTABLE since that's the behavior in ext*.
+
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Acked-by: David Sterba <dsterba@suse.com>
+Reviewed-by: Bob Peterson <rpeterso@redhat.com>
+---
+ fs/btrfs/ioctl.c    |   13 +++++--------
+ fs/efivarfs/file.c  |   26 +++++++++++++++++---------
+ fs/ext2/ioctl.c     |   16 ++++------------
+ fs/ext4/ioctl.c     |   13 +++----------
+ fs/f2fs/file.c      |    7 ++++---
+ fs/gfs2/file.c      |   42 +++++++++++++++++++++++++++++-------------
+ fs/hfsplus/ioctl.c  |   21 ++++++++++++---------
+ fs/inode.c          |   24 ++++++++++++++++++++++++
+ fs/jfs/ioctl.c      |   22 +++++++---------------
+ fs/nilfs2/ioctl.c   |    9 ++-------
+ fs/ocfs2/ioctl.c    |   13 +++----------
+ fs/orangefs/file.c  |   35 ++++++++++++++++++++++++++---------
+ fs/reiserfs/ioctl.c |   10 ++++------
+ fs/ubifs/ioctl.c    |   13 +++----------
+ include/linux/fs.h  |    3 +++
+ 15 files changed, 146 insertions(+), 121 deletions(-)
+
+
+diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
+index 6dafa857bbb9..d3d9b4abb09b 100644
+--- a/fs/btrfs/ioctl.c
++++ b/fs/btrfs/ioctl.c
+@@ -187,7 +187,7 @@ static int btrfs_ioctl_setflags(struct file *file, void __user *arg)
+ 	struct btrfs_inode *binode = BTRFS_I(inode);
+ 	struct btrfs_root *root = binode->root;
+ 	struct btrfs_trans_handle *trans;
+-	unsigned int fsflags;
++	unsigned int fsflags, old_fsflags;
+ 	int ret;
+ 	const char *comp = NULL;
+ 	u32 binode_flags = binode->flags;
+@@ -212,13 +212,10 @@ static int btrfs_ioctl_setflags(struct file *file, void __user *arg)
+ 	inode_lock(inode);
+ 
+ 	fsflags = btrfs_mask_fsflags_for_type(inode, fsflags);
+-	if ((fsflags ^ btrfs_inode_flags_to_fsflags(binode->flags)) &
+-	    (FS_APPEND_FL | FS_IMMUTABLE_FL)) {
+-		if (!capable(CAP_LINUX_IMMUTABLE)) {
+-			ret = -EPERM;
+-			goto out_unlock;
+-		}
+-	}
++	old_fsflags = btrfs_inode_flags_to_fsflags(binode->flags);
++	ret = vfs_ioc_setflags_prepare(inode, old_fsflags, fsflags);
++	if (ret)
++		goto out_unlock;
+ 
+ 	if (fsflags & FS_SYNC_FL)
+ 		binode_flags |= BTRFS_INODE_SYNC;
+diff --git a/fs/efivarfs/file.c b/fs/efivarfs/file.c
+index 8e568428c88b..a3cc10b1bfe1 100644
+--- a/fs/efivarfs/file.c
++++ b/fs/efivarfs/file.c
+@@ -110,16 +110,22 @@ static ssize_t efivarfs_file_read(struct file *file, char __user *userbuf,
+ 	return size;
+ }
+ 
+-static int
+-efivarfs_ioc_getxflags(struct file *file, void __user *arg)
++static inline unsigned int efivarfs_getflags(struct inode *inode)
+ {
+-	struct inode *inode = file->f_mapping->host;
+ 	unsigned int i_flags;
+ 	unsigned int flags = 0;
+ 
+ 	i_flags = inode->i_flags;
+ 	if (i_flags & S_IMMUTABLE)
+ 		flags |= FS_IMMUTABLE_FL;
++	return flags;
++}
++
++static int
++efivarfs_ioc_getxflags(struct file *file, void __user *arg)
++{
++	struct inode *inode = file->f_mapping->host;
++	unsigned int flags = efivarfs_getflags(inode);
+ 
+ 	if (copy_to_user(arg, &flags, sizeof(flags)))
+ 		return -EFAULT;
+@@ -132,6 +138,7 @@ efivarfs_ioc_setxflags(struct file *file, void __user *arg)
+ 	struct inode *inode = file->f_mapping->host;
+ 	unsigned int flags;
+ 	unsigned int i_flags = 0;
++	unsigned int oldflags = efivarfs_getflags(inode);
+ 	int error;
+ 
+ 	if (!inode_owner_or_capable(inode))
+@@ -143,9 +150,6 @@ efivarfs_ioc_setxflags(struct file *file, void __user *arg)
+ 	if (flags & ~FS_IMMUTABLE_FL)
+ 		return -EOPNOTSUPP;
+ 
+-	if (!capable(CAP_LINUX_IMMUTABLE))
+-		return -EPERM;
+-
+ 	if (flags & FS_IMMUTABLE_FL)
+ 		i_flags |= S_IMMUTABLE;
+ 
+@@ -155,12 +159,16 @@ efivarfs_ioc_setxflags(struct file *file, void __user *arg)
+ 		return error;
+ 
+ 	inode_lock(inode);
++
++	error = vfs_ioc_setflags_prepare(inode, oldflags, flags);
++	if (error)
++		goto out;
++
+ 	inode_set_flags(inode, i_flags, S_IMMUTABLE);
++out:
+ 	inode_unlock(inode);
+-
+ 	mnt_drop_write_file(file);
+-
+-	return 0;
++	return error;
+ }
+ 
+ static long
+diff --git a/fs/ext2/ioctl.c b/fs/ext2/ioctl.c
+index 0367c0039e68..1b853fb0b163 100644
+--- a/fs/ext2/ioctl.c
++++ b/fs/ext2/ioctl.c
+@@ -60,18 +60,10 @@ long ext2_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 		}
+ 		oldflags = ei->i_flags;
+ 
+-		/*
+-		 * The IMMUTABLE and APPEND_ONLY flags can only be changed by
+-		 * the relevant capability.
+-		 *
+-		 * This test looks nicer. Thanks to Pauline Middelink
+-		 */
+-		if ((flags ^ oldflags) & (EXT2_APPEND_FL | EXT2_IMMUTABLE_FL)) {
+-			if (!capable(CAP_LINUX_IMMUTABLE)) {
+-				inode_unlock(inode);
+-				ret = -EPERM;
+-				goto setflags_out;
+-			}
++		ret = vfs_ioc_setflags_prepare(inode, oldflags, flags);
++		if (ret) {
++			inode_unlock(inode);
++			goto setflags_out;
+ 		}
+ 
+ 		flags = flags & EXT2_FL_USER_MODIFIABLE;
+diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
+index e486e49b31ed..272b6e44191b 100644
+--- a/fs/ext4/ioctl.c
++++ b/fs/ext4/ioctl.c
+@@ -289,16 +289,9 @@ static int ext4_ioctl_setflags(struct inode *inode,
+ 	/* The JOURNAL_DATA flag is modifiable only by root */
+ 	jflag = flags & EXT4_JOURNAL_DATA_FL;
+ 
+-	/*
+-	 * The IMMUTABLE and APPEND_ONLY flags can only be changed by
+-	 * the relevant capability.
+-	 *
+-	 * This test looks nicer. Thanks to Pauline Middelink
+-	 */
+-	if ((flags ^ oldflags) & (EXT4_APPEND_FL | EXT4_IMMUTABLE_FL)) {
+-		if (!capable(CAP_LINUX_IMMUTABLE))
+-			goto flags_out;
+-	}
++	err = vfs_ioc_setflags_prepare(inode, oldflags, flags);
++	if (err)
++		goto flags_out;
+ 
+ 	/*
+ 	 * The JOURNAL_DATA flag can only be changed by
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 45b45f37d347..845ae6f43ebc 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1670,6 +1670,7 @@ static int __f2fs_ioc_setflags(struct inode *inode, unsigned int flags)
+ {
+ 	struct f2fs_inode_info *fi = F2FS_I(inode);
+ 	unsigned int oldflags;
++	int err;
+ 
+ 	/* Is it quota file? Do not allow user to mess with it */
+ 	if (IS_NOQUOTA(inode))
+@@ -1679,9 +1680,9 @@ static int __f2fs_ioc_setflags(struct inode *inode, unsigned int flags)
+ 
+ 	oldflags = fi->i_flags;
+ 
+-	if ((flags ^ oldflags) & (F2FS_APPEND_FL | F2FS_IMMUTABLE_FL))
+-		if (!capable(CAP_LINUX_IMMUTABLE))
+-			return -EPERM;
++	err = vfs_ioc_setflags_prepare(inode, oldflags, flags);
++	if (err)
++		return err;
+ 
+ 	flags = flags & F2FS_FL_USER_MODIFIABLE;
+ 	flags |= oldflags & ~F2FS_FL_USER_MODIFIABLE;
+diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
+index d174b1f8fd08..1cb0c3afd3dc 100644
+--- a/fs/gfs2/file.c
++++ b/fs/gfs2/file.c
+@@ -136,27 +136,36 @@ static struct {
+ 	{FS_JOURNAL_DATA_FL, GFS2_DIF_JDATA | GFS2_DIF_INHERIT_JDATA},
+ };
+ 
++static inline u32 gfs2_gfsflags_to_fsflags(struct inode *inode, u32 gfsflags)
++{
++	int i;
++	u32 fsflags = 0;
++
++	if (S_ISDIR(inode->i_mode))
++		gfsflags &= ~GFS2_DIF_JDATA;
++	else
++		gfsflags &= ~GFS2_DIF_INHERIT_JDATA;
++
++	for (i = 0; i < ARRAY_SIZE(fsflag_gfs2flag); i++)
++		if (gfsflags & fsflag_gfs2flag[i].gfsflag)
++			fsflags |= fsflag_gfs2flag[i].fsflag;
++	return fsflags;
++}
++
+ static int gfs2_get_flags(struct file *filp, u32 __user *ptr)
+ {
+ 	struct inode *inode = file_inode(filp);
+ 	struct gfs2_inode *ip = GFS2_I(inode);
+ 	struct gfs2_holder gh;
+-	int i, error;
+-	u32 gfsflags, fsflags = 0;
++	int error;
++	u32 fsflags;
+ 
+ 	gfs2_holder_init(ip->i_gl, LM_ST_SHARED, 0, &gh);
+ 	error = gfs2_glock_nq(&gh);
+ 	if (error)
+ 		goto out_uninit;
+ 
+-	gfsflags = ip->i_diskflags;
+-	if (S_ISDIR(inode->i_mode))
+-		gfsflags &= ~GFS2_DIF_JDATA;
+-	else
+-		gfsflags &= ~GFS2_DIF_INHERIT_JDATA;
+-	for (i = 0; i < ARRAY_SIZE(fsflag_gfs2flag); i++)
+-		if (gfsflags & fsflag_gfs2flag[i].gfsflag)
+-			fsflags |= fsflag_gfs2flag[i].fsflag;
++	fsflags = gfs2_gfsflags_to_fsflags(inode, ip->i_diskflags);
+ 
+ 	if (put_user(fsflags, ptr))
+ 		error = -EFAULT;
+@@ -200,9 +209,11 @@ void gfs2_set_inode_flags(struct inode *inode)
+  * @filp: file pointer
+  * @reqflags: The flags to set
+  * @mask: Indicates which flags are valid
++ * @fsflags: The FS_* inode flags passed in
+  *
+  */
+-static int do_gfs2_set_flags(struct file *filp, u32 reqflags, u32 mask)
++static int do_gfs2_set_flags(struct file *filp, u32 reqflags, u32 mask,
++			     const u32 fsflags)
+ {
+ 	struct inode *inode = file_inode(filp);
+ 	struct gfs2_inode *ip = GFS2_I(inode);
+@@ -210,7 +221,7 @@ static int do_gfs2_set_flags(struct file *filp, u32 reqflags, u32 mask)
+ 	struct buffer_head *bh;
+ 	struct gfs2_holder gh;
+ 	int error;
+-	u32 new_flags, flags;
++	u32 new_flags, flags, oldflags;
+ 
+ 	error = mnt_want_write_file(filp);
+ 	if (error)
+@@ -220,6 +231,11 @@ static int do_gfs2_set_flags(struct file *filp, u32 reqflags, u32 mask)
+ 	if (error)
+ 		goto out_drop_write;
+ 
++	oldflags = gfs2_gfsflags_to_fsflags(inode, ip->i_diskflags);
++	error = vfs_ioc_setflags_prepare(inode, oldflags, fsflags);
++	if (error)
++		goto out;
++
+ 	error = -EACCES;
+ 	if (!inode_owner_or_capable(inode))
+ 		goto out;
+@@ -308,7 +324,7 @@ static int gfs2_set_flags(struct file *filp, u32 __user *ptr)
+ 		mask &= ~(GFS2_DIF_TOPDIR | GFS2_DIF_INHERIT_JDATA);
+ 	}
+ 
+-	return do_gfs2_set_flags(filp, gfsflags, mask);
++	return do_gfs2_set_flags(filp, gfsflags, mask, fsflags);
+ }
+ 
+ static int gfs2_getlabel(struct file *filp, char __user *label)
+diff --git a/fs/hfsplus/ioctl.c b/fs/hfsplus/ioctl.c
+index 5e6502ef7415..ce15b9496b77 100644
+--- a/fs/hfsplus/ioctl.c
++++ b/fs/hfsplus/ioctl.c
+@@ -57,9 +57,8 @@ static int hfsplus_ioctl_bless(struct file *file, int __user *user_flags)
+ 	return 0;
+ }
+ 
+-static int hfsplus_ioctl_getflags(struct file *file, int __user *user_flags)
++static inline unsigned int hfsplus_getflags(struct inode *inode)
+ {
+-	struct inode *inode = file_inode(file);
+ 	struct hfsplus_inode_info *hip = HFSPLUS_I(inode);
+ 	unsigned int flags = 0;
+ 
+@@ -69,6 +68,13 @@ static int hfsplus_ioctl_getflags(struct file *file, int __user *user_flags)
+ 		flags |= FS_APPEND_FL;
+ 	if (hip->userflags & HFSPLUS_FLG_NODUMP)
+ 		flags |= FS_NODUMP_FL;
++	return flags;
++}
++
++static int hfsplus_ioctl_getflags(struct file *file, int __user *user_flags)
++{
++	struct inode *inode = file_inode(file);
++	unsigned int flags = hfsplus_getflags(inode);
+ 
+ 	return put_user(flags, user_flags);
+ }
+@@ -78,6 +84,7 @@ static int hfsplus_ioctl_setflags(struct file *file, int __user *user_flags)
+ 	struct inode *inode = file_inode(file);
+ 	struct hfsplus_inode_info *hip = HFSPLUS_I(inode);
+ 	unsigned int flags, new_fl = 0;
++	unsigned int oldflags = hfsplus_getflags(inode);
+ 	int err = 0;
+ 
+ 	err = mnt_want_write_file(file);
+@@ -96,13 +103,9 @@ static int hfsplus_ioctl_setflags(struct file *file, int __user *user_flags)
+ 
+ 	inode_lock(inode);
+ 
+-	if ((flags & (FS_IMMUTABLE_FL|FS_APPEND_FL)) ||
+-	    inode->i_flags & (S_IMMUTABLE|S_APPEND)) {
+-		if (!capable(CAP_LINUX_IMMUTABLE)) {
+-			err = -EPERM;
+-			goto out_unlock_inode;
+-		}
+-	}
++	err = vfs_ioc_setflags_prepare(inode, oldflags, flags);
++	if (err)
++		goto out_unlock_inode;
+ 
+ 	/* don't silently ignore unsupported ext2 flags */
+ 	if (flags & ~(FS_IMMUTABLE_FL|FS_APPEND_FL|FS_NODUMP_FL)) {
+diff --git a/fs/inode.c b/fs/inode.c
+index 4348cfb14562..9cd1b6501e97 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -2190,3 +2190,27 @@ struct timespec64 current_time(struct inode *inode)
+ 	return timespec64_trunc(now, inode->i_sb->s_time_gran);
+ }
+ EXPORT_SYMBOL(current_time);
++
++/*
++ * Generic function to check FS_IOC_SETFLAGS values and reject any invalid
++ * configurations.
++ *
++ * Note: the caller should be holding i_mutex, or else be sure that they have
++ * exclusive access to the inode structure.
++ */
++int vfs_ioc_setflags_prepare(struct inode *inode, unsigned int oldflags,
++			     unsigned int flags)
++{
++	/*
++	 * The IMMUTABLE and APPEND_ONLY flags can only be changed by
++	 * the relevant capability.
++	 *
++	 * This test looks nicer. Thanks to Pauline Middelink
++	 */
++	if ((flags ^ oldflags) & (FS_APPEND_FL | FS_IMMUTABLE_FL) &&
++	    !capable(CAP_LINUX_IMMUTABLE))
++		return -EPERM;
++
++	return 0;
++}
++EXPORT_SYMBOL(vfs_ioc_setflags_prepare);
+diff --git a/fs/jfs/ioctl.c b/fs/jfs/ioctl.c
+index ba34dae8bd9f..10ee0ecca1a8 100644
+--- a/fs/jfs/ioctl.c
++++ b/fs/jfs/ioctl.c
+@@ -98,24 +98,16 @@ long jfs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 		/* Lock against other parallel changes of flags */
+ 		inode_lock(inode);
+ 
+-		oldflags = jfs_inode->mode2;
+-
+-		/*
+-		 * The IMMUTABLE and APPEND_ONLY flags can only be changed by
+-		 * the relevant capability.
+-		 */
+-		if ((oldflags & JFS_IMMUTABLE_FL) ||
+-			((flags ^ oldflags) &
+-			(JFS_APPEND_FL | JFS_IMMUTABLE_FL))) {
+-			if (!capable(CAP_LINUX_IMMUTABLE)) {
+-				inode_unlock(inode);
+-				err = -EPERM;
+-				goto setflags_out;
+-			}
++		oldflags = jfs_map_ext2(jfs_inode->mode2 & JFS_FL_USER_VISIBLE,
++					0);
++		err = vfs_ioc_setflags_prepare(inode, oldflags, flags);
++		if (err) {
++			inode_unlock(inode);
++			goto setflags_out;
+ 		}
+ 
+ 		flags = flags & JFS_FL_USER_MODIFIABLE;
+-		flags |= oldflags & ~JFS_FL_USER_MODIFIABLE;
++		flags |= jfs_inode->mode2 & ~JFS_FL_USER_MODIFIABLE;
+ 		jfs_inode->mode2 = flags;
+ 
+ 		jfs_set_inode_flags(inode);
+diff --git a/fs/nilfs2/ioctl.c b/fs/nilfs2/ioctl.c
+index 9b96d79eea6c..91b9dac6b2cc 100644
+--- a/fs/nilfs2/ioctl.c
++++ b/fs/nilfs2/ioctl.c
+@@ -148,13 +148,8 @@ static int nilfs_ioctl_setflags(struct inode *inode, struct file *filp,
+ 
+ 	oldflags = NILFS_I(inode)->i_flags;
+ 
+-	/*
+-	 * The IMMUTABLE and APPEND_ONLY flags can only be changed by the
+-	 * relevant capability.
+-	 */
+-	ret = -EPERM;
+-	if (((flags ^ oldflags) & (FS_APPEND_FL | FS_IMMUTABLE_FL)) &&
+-	    !capable(CAP_LINUX_IMMUTABLE))
++	ret = vfs_ioc_setflags_prepare(inode, oldflags, flags);
++	if (ret)
+ 		goto out;
+ 
+ 	ret = nilfs_transaction_begin(inode->i_sb, &ti, 0);
+diff --git a/fs/ocfs2/ioctl.c b/fs/ocfs2/ioctl.c
+index 994726ada857..d6f7b299eb23 100644
+--- a/fs/ocfs2/ioctl.c
++++ b/fs/ocfs2/ioctl.c
+@@ -106,16 +106,9 @@ static int ocfs2_set_inode_attr(struct inode *inode, unsigned flags,
+ 	flags = flags & mask;
+ 	flags |= oldflags & ~mask;
+ 
+-	/*
+-	 * The IMMUTABLE and APPEND_ONLY flags can only be changed by
+-	 * the relevant capability.
+-	 */
+-	status = -EPERM;
+-	if ((oldflags & OCFS2_IMMUTABLE_FL) || ((flags ^ oldflags) &
+-		(OCFS2_APPEND_FL | OCFS2_IMMUTABLE_FL))) {
+-		if (!capable(CAP_LINUX_IMMUTABLE))
+-			goto bail_unlock;
+-	}
++	status = vfs_ioc_setflags_prepare(inode, oldflags, flags);
++	if (status)
++		goto bail_unlock;
+ 
+ 	handle = ocfs2_start_trans(osb, OCFS2_INODE_UPDATE_CREDITS);
+ 	if (IS_ERR(handle)) {
+diff --git a/fs/orangefs/file.c b/fs/orangefs/file.c
+index a35c17017210..5b1dd00e8eca 100644
+--- a/fs/orangefs/file.c
++++ b/fs/orangefs/file.c
+@@ -357,11 +357,28 @@ static ssize_t orangefs_file_write_iter(struct kiocb *iocb,
+ 	return ret;
+ }
+ 
++static int orangefs_getflags(struct inode *inode, unsigned long *uval)
++{
++	__u64 val = 0;
++	int ret;
++
++	ret = orangefs_inode_getxattr(inode,
++				      "user.pvfs2.meta_hint",
++				      &val, sizeof(val));
++	if (ret < 0 && ret != -ENODATA)
++		return ret;
++	else if (ret == -ENODATA)
++		val = 0;
++	uval = val;
++	return 0;
++}
++
+ /*
+  * Perform a miscellaneous operation on a file.
+  */
+ static long orangefs_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ {
++	struct inode *inode = file_ioctl(file);
+ 	int ret = -ENOTTY;
+ 	__u64 val = 0;
+ 	unsigned long uval;
+@@ -375,15 +392,9 @@ static long orangefs_ioctl(struct file *file, unsigned int cmd, unsigned long ar
+ 	 * and append flags
+ 	 */
+ 	if (cmd == FS_IOC_GETFLAGS) {
+-		val = 0;
+-		ret = orangefs_inode_getxattr(file_inode(file),
+-					      "user.pvfs2.meta_hint",
+-					      &val, sizeof(val));
+-		if (ret < 0 && ret != -ENODATA)
++		ret = orangefs_getflags(inode, &uval);
++		if (ret)
+ 			return ret;
+-		else if (ret == -ENODATA)
+-			val = 0;
+-		uval = val;
+ 		gossip_debug(GOSSIP_FILE_DEBUG,
+ 			     "orangefs_ioctl: FS_IOC_GETFLAGS: %llu\n",
+ 			     (unsigned long long)uval);
+@@ -404,11 +415,17 @@ static long orangefs_ioctl(struct file *file, unsigned int cmd, unsigned long ar
+ 			gossip_err("orangefs_ioctl: the FS_IOC_SETFLAGS only supports setting one of FS_IMMUTABLE_FL|FS_APPEND_FL|FS_NOATIME_FL\n");
+ 			return -EINVAL;
+ 		}
++		ret = orangefs_getflags(inode, &old_uval);
++		if (ret)
++			return ret;
++		ret = vfs_ioc_setflags_prepare(inode, old_uval, uval);
++		if (ret)
++			return ret;
+ 		val = uval;
+ 		gossip_debug(GOSSIP_FILE_DEBUG,
+ 			     "orangefs_ioctl: FS_IOC_SETFLAGS: %llu\n",
+ 			     (unsigned long long)val);
+-		ret = orangefs_inode_setxattr(file_inode(file),
++		ret = orangefs_inode_setxattr(inode,
+ 					      "user.pvfs2.meta_hint",
+ 					      &val, sizeof(val), 0);
+ 	}
+diff --git a/fs/reiserfs/ioctl.c b/fs/reiserfs/ioctl.c
+index acbbaf7a0bb2..45e1a5d11af3 100644
+--- a/fs/reiserfs/ioctl.c
++++ b/fs/reiserfs/ioctl.c
+@@ -74,13 +74,11 @@ long reiserfs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 				err = -EPERM;
+ 				goto setflags_out;
+ 			}
+-			if (((flags ^ REISERFS_I(inode)->
+-			      i_attrs) & (REISERFS_IMMUTABLE_FL |
+-					  REISERFS_APPEND_FL))
+-			    && !capable(CAP_LINUX_IMMUTABLE)) {
+-				err = -EPERM;
++			err = vfs_ioc_setflags_prepare(inode,
++						     REISERFS_I(inode)->i_attrs,
++						     flags);
++			if (err)
+ 				goto setflags_out;
+-			}
+ 			if ((flags & REISERFS_NOTAIL_FL) &&
+ 			    S_ISREG(inode->i_mode)) {
+ 				int result;
+diff --git a/fs/ubifs/ioctl.c b/fs/ubifs/ioctl.c
+index 4f1a397fda69..034ad14710d1 100644
+--- a/fs/ubifs/ioctl.c
++++ b/fs/ubifs/ioctl.c
+@@ -107,18 +107,11 @@ static int setflags(struct inode *inode, int flags)
+ 	if (err)
+ 		return err;
+ 
+-	/*
+-	 * The IMMUTABLE and APPEND_ONLY flags can only be changed by
+-	 * the relevant capability.
+-	 */
+ 	mutex_lock(&ui->ui_mutex);
+ 	oldflags = ubifs2ioctl(ui->flags);
+-	if ((flags ^ oldflags) & (FS_APPEND_FL | FS_IMMUTABLE_FL)) {
+-		if (!capable(CAP_LINUX_IMMUTABLE)) {
+-			err = -EPERM;
+-			goto out_unlock;
+-		}
+-	}
++	err = vfs_ioc_setflags_prepare(inode, oldflags, flags);
++	if (err)
++		goto out_unlock;
+ 
+ 	ui->flags = ioctl2ubifs(flags);
+ 	ubifs_set_inode_flags(inode);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 79ffa2958bd8..3f74066d3f44 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3555,4 +3555,7 @@ static inline struct sock *io_uring_get_socket(struct file *file)
+ }
+ #endif
+ 
++int vfs_ioc_setflags_prepare(struct inode *inode, unsigned int oldflags,
++			     unsigned int flags);
++
+ #endif /* _LINUX_FS_H */
+
