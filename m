@@ -2,114 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CC67592D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 06:28:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 56C32592F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 06:44:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727002AbfF1E2J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 00:28:09 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:58080 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726961AbfF1E2C (ORCPT
+        id S1726571AbfF1Eou (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 00:44:50 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:33946 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726420AbfF1Eou (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 00:28:02 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5S4Rsjg003036;
-        Thu, 27 Jun 2019 23:27:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1561696074;
-        bh=y47Dmxqdu2axu8XFuL5chdma5kAOZBKLQnnNccav38w=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=wTgnMSG1EnCSpzKdj0L05ZF21h4ZXDMeep3xa+FESUPz/zN2EaeijIQFEI3gcJ2FV
-         I74buze/0BngPIlAXc7CKxkXZ2GpHDFBPdmPi+C2ckC/W5T1dN2w1a2T/oynpEn9do
-         6ngzyrV/5xkWdy+E8giwq8qVNyiEtwjD0Lu9AQ4c=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5S4RsqR032679
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 27 Jun 2019 23:27:54 -0500
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 27
- Jun 2019 23:27:54 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Thu, 27 Jun 2019 23:27:54 -0500
-Received: from a0393675ula.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5S4RKPU062595;
-        Thu, 27 Jun 2019 23:27:51 -0500
-From:   Keerthy <j-keerthy@ti.com>
-To:     <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
-        <robh+dt@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <t-kristo@ti.com>,
-        <j-keerthy@ti.com>, <linux-crypto@vger.kernel.org>, <nm@ti.com>
-Subject: [RESEND PATCH 10/10] arm64: dts: k3-am6: Add crypto accelarator node
-Date:   Fri, 28 Jun 2019 09:57:45 +0530
-Message-ID: <20190628042745.28455-11-j-keerthy@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190628042745.28455-1-j-keerthy@ti.com>
-References: <20190628042745.28455-1-j-keerthy@ti.com>
+        Fri, 28 Jun 2019 00:44:50 -0400
+Received: by mail-pl1-f194.google.com with SMTP id i2so2517143plt.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 21:44:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Hl6Pnq3xmamo6vmydBFzkBduZblIOAKNn76di+zQvGg=;
+        b=ArWvWp5pND/lULGeiiBYq6FEwP8p5dbr+MdcNPFR2BzY0chrPL6fMADb9DDlqSXbPp
+         nGMaut7nZwa7plZh313G3DdV9Rhdbu8/dnIvEysC8NUXtwTofGM6qYax8bpercPIPKBO
+         Z8sgFuTkhQXgmGDAxn536HqD06p0cEXUtYYnk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Hl6Pnq3xmamo6vmydBFzkBduZblIOAKNn76di+zQvGg=;
+        b=VMefK/qLQMtCYT0csi8r4jsyeop/PyFy9z+8CHHxseUyjB7BCZnRzhkL8DVVnguyjg
+         uFa2BY9k2/ERHpIcae+B3eECy3g4pStdjIYnVrztyaLsp4h9wq5s8K6OP3A1U4LLrBQu
+         +8mOVcOvnKAh838GL4z5g0g24U2sBPONX0GyzkcFUahT+clT6l1C6PDv9FxEzMtgwWng
+         mlqu0caeA312e0O9L3o19MF045aKOmeIZuhya8zxK25rgxGohPt3f24saVwMOaf8TNpU
+         5ih+rruXEkO8lTHWZrYu3WRjWFMA96pzUoXjPhTqRwP8tYv2BvfdW7YJ618ype7XfVL3
+         fzBg==
+X-Gm-Message-State: APjAAAWCGq263mK0wf08CZPo32kiIBCBKwc5YKEcgg5sQtY/URc4OynM
+        p5py+JKqZnv048cZ4C8UjwExvw==
+X-Google-Smtp-Source: APXvYqxyD53Q4D6YjfYZpwSQr5iBPVpFjp/1qcQRyBbAVksVmFchZUGIkAn9E7IYzwslmLgUq6AIFw==
+X-Received: by 2002:a17:902:301:: with SMTP id 1mr936859pld.323.1561697089853;
+        Thu, 27 Jun 2019 21:44:49 -0700 (PDT)
+Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
+        by smtp.gmail.com with ESMTPSA id q13sm675562pgq.90.2019.06.27.21.44.48
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 27 Jun 2019 21:44:49 -0700 (PDT)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     Paolo Valente <paolo.valente@linaro.org>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     groeck@chromium.org, drinkcat@chromium.org,
+        Douglas Anderson <dianders@chromium.org>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] block, bfq: NULL out the bic when it's no longer valid
+Date:   Thu, 27 Jun 2019 21:44:09 -0700
+Message-Id: <20190628044409.128823-1-dianders@chromium.org>
+X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add crypto accelarator node. Define the psil specific config
-node as well. This can be used in Packet Mode alone.
+In reboot tests on several devices we were seeing a "use after free"
+when slub_debug or KASAN was enabled.  The kernel complained about:
 
-Signed-off-by: Keerthy <j-keerthy@ti.com>
+  Unable to handle kernel paging request at virtual address 6b6b6c2b
+
+...which is a classic sign of use after free under slub_debug.  The
+stack crawl in kgdb looked like:
+
+ 0  test_bit (addr=<optimized out>, nr=<optimized out>)
+ 1  bfq_bfqq_busy (bfqq=<optimized out>)
+ 2  bfq_select_queue (bfqd=<optimized out>)
+ 3  __bfq_dispatch_request (hctx=<optimized out>)
+ 4  bfq_dispatch_request (hctx=<optimized out>)
+ 5  0xc056ef00 in blk_mq_do_dispatch_sched (hctx=0xed249440)
+ 6  0xc056f728 in blk_mq_sched_dispatch_requests (hctx=0xed249440)
+ 7  0xc0568d24 in __blk_mq_run_hw_queue (hctx=0xed249440)
+ 8  0xc0568d94 in blk_mq_run_work_fn (work=<optimized out>)
+ 9  0xc024c5c4 in process_one_work (worker=0xec6d4640, work=0xed249480)
+ 10 0xc024cff4 in worker_thread (__worker=0xec6d4640)
+
+Digging in kgdb, it could be found that, though bfqq looked fine,
+bfqq->bic had been freed.
+
+Through further digging, I postulated that perhaps it is illegal to
+access a "bic" (AKA an "icq") after bfq_exit_icq() had been called
+because the "bic" can be freed at some point in time after this call
+is made.  I confirmed that there certainly were cases where the exact
+crashing code path would access the "bic" after bfq_exit_icq() had
+been called.  Sspecifically I set the "bfqq->bic" to (void *)0x7 and
+saw that the bic was 0x7 at the time of the crash.
+
+To understand a bit more about why this crash was fairly uncommon (I
+saw it only once in a few hundred reboots), you can see that much of
+the time bfq_exit_icq_fbqq() fully frees the bfqq and thus it can't
+access the ->bic anymore.  The only case it doesn't is if
+bfq_put_queue() sees a reference still held.
+
+However, even in the case when bfqq isn't freed, the crash is still
+rare.  Why?  I tracked what happened to the "bic" after the exit
+routine.  It doesn't get freed right away.  Rather,
+put_io_context_active() eventually called put_io_context() which
+queued up freeing on a workqueue.  The freeing then actually happened
+later than that through call_rcu().  Despite all these delays, some
+extra debugging showed that all the hoops could be jumped through in
+time and the memory could be freed causing the original crash.  Phew!
+
+To make a long story short, assuming it truly is illegal to access an
+icq after the "exit_icq" callback is finished, this patch is needed.
+
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
 ---
- arch/arm64/boot/dts/ti/k3-am65-main.dtsi | 33 ++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+Most of the testing of this was done on the Chrome OS 4.19 kernel with
+BFQ backported (thanks to Paolo's help).  I did manage to reproduce a
+crash on mainline Linux (v5.2-rc6) though.
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
-index 91ca5bfeefc2..5e4f9ec39f01 100644
---- a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
-@@ -91,6 +91,39 @@
- 		power-domains = <&k3_pds 148>;
- 	};
+To see some of the techniques used to debug this, see
+<https://crrev.com/c/1679134> and <https://crrev.com/c/1681258/1>.
+
+I'll also note that on linuxnext (next-20190627) I saw some other
+use-after-frees that seemed related to BFQ but haven't had time to
+debug.  They seemed unrelated.
+
+ block/bfq-iosched.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
+index f8d430f88d25..6c0cff03f8f6 100644
+--- a/block/bfq-iosched.c
++++ b/block/bfq-iosched.c
+@@ -4584,6 +4584,7 @@ static void bfq_exit_icq_bfqq(struct bfq_io_cq *bic, bool is_sync)
+ 		unsigned long flags;
  
-+	crypto: crypto@4E00000 {
-+		compatible = "ti,sa2ul-crypto";
-+		label = "crypto-aes-gbe";
-+		reg = <0x0 0x4E00000 0x0 0x1200>;
-+
-+		status = "okay";
-+		ti,psil-base = <0x4000>;
-+
-+		/* tx: crypto_pnp-1, rx: crypto_pnp-1 */
-+		dmas = <&main_udmap &crypto 0 UDMA_DIR_TX>,
-+				<&main_udmap &crypto 0 UDMA_DIR_RX>,
-+				<&main_udmap &crypto 1 UDMA_DIR_RX>;
-+		dma-names = "tx", "rx1", "rx2";
-+
-+		ti,psil-config0 {
-+			linux,udma-mode = <UDMA_PKT_MODE>;
-+			ti,needs-epib;
-+			ti,psd-size = <64>;
-+		};
-+
-+		ti,psil-config1 {
-+			linux,udma-mode = <UDMA_PKT_MODE>;
-+			ti,needs-epib;
-+			ti,psd-size = <64>;
-+		};
-+
-+		ti,psil-config2 {
-+			linux,udma-mode = <UDMA_PKT_MODE>;
-+			ti,needs-epib;
-+			ti,psd-size = <64>;
-+		};
-+	};
-+
- 	main_pmx0: pinmux@11c000 {
- 		compatible = "pinctrl-single";
- 		reg = <0x0 0x11c000 0x0 0x2e4>;
+ 		spin_lock_irqsave(&bfqd->lock, flags);
++		bfqq->bic = NULL;
+ 		bfq_exit_bfqq(bfqd, bfqq);
+ 		bic_set_bfqq(bic, NULL, is_sync);
+ 		spin_unlock_irqrestore(&bfqd->lock, flags);
 -- 
-2.17.1
+2.22.0.410.gd8fdbe21b5-goog
 
