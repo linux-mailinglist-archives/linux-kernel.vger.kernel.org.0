@@ -2,134 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9A2259186
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 04:47:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A9B345918B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 04:48:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727107AbfF1CrH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 22:47:07 -0400
-Received: from mail-io1-f70.google.com ([209.85.166.70]:45042 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727089AbfF1CrH (ORCPT
+        id S1727135AbfF1CrS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 22:47:18 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:39824 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727089AbfF1CrS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 22:47:07 -0400
-Received: by mail-io1-f70.google.com with SMTP id i133so4905411ioa.11
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 19:47:07 -0700 (PDT)
+        Thu, 27 Jun 2019 22:47:18 -0400
+Received: by mail-pf1-f194.google.com with SMTP id j2so2187808pfe.6;
+        Thu, 27 Jun 2019 19:47:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=FTN0zKhDxIv8S5csTSaarzg3XpPyp/sNBzVy1DH0RIg=;
+        b=BsodeRIZe1Y83qn1ItIjPVyyDU9dbvTBDhITtZe1n6JGzbBJuiVWIoaZ9FJdwuYi07
+         4YKwfofAmlRaUCNdmovZDU3S+RB/W9UTL8MeHaq1uryAbmCrDF+f7d7fJy5TCvBesng6
+         JZfNesDqxSIstuxUfXbsxURosurwHlUsXND3R0rgvusgvrVcpUOOzbJRKjQviN+hYOMT
+         xdJsBs7OM48WwYUbnOi3BeWWOpWzRnY/sdi05lKVsnMkkfFdeeN8imXUKu6SVVBvRlqT
+         5VBh9MJP5yRJBy4yfHcyPZifl/oCjOMvgVLsVY02WkCaa2FryoXDOzU1ro2nmnnBxa2o
+         RsDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=S+RgQyNmWrZLMaDBL8aUOTR3qZTZHYaiPNOfI1qTD3M=;
-        b=YSR/v6ecFOeP2ztizR4+QYipw4dMbxk4akTWLzTmEBIR9Tq8Iq+5CD1oYq+16FUwme
-         1xuxR3/ISNG64ELZWrwT9KDgUEBAMiG3pQaY/UVjnkhcrFHEeXC4FRDh7HsBR0by4DQ2
-         S5F0qUTwyCFLqEoSasveB/wBJxqQaqK4SMmO3hkh0JMwyiXSRFOvO2HJq1PjRUDUZ30t
-         xOI5CVoPeImWU0Ll1sDFx8CKjuySVFCjnZoKM89ItWv3GRraZkwOGuYw1xgu/ZFwB0nn
-         6YucsRzardkHAlMYIiF//BVApqBTpWMQzJja30WFZtzfqhydwIDdXDv8fK9YgFpx05hE
-         3vNw==
-X-Gm-Message-State: APjAAAUCCRZ6R8W3lQIHw3ymzM5DOlA+nDa8o6mkXhW37ohb1WjoFRFs
-        06Kur5N669FelYsYsXx9qjnV1YXK1RHC5spJj1HGiLW5W4Lt
-X-Google-Smtp-Source: APXvYqyIbGRz8tsJuRDqF26dvZc3RnJeg3tG3iMrWpR/fS5xYq/3rI1hP29uV9YVs6LKutQ0BiynVljMsp44MXnPPT07lLlfHHR0
-MIME-Version: 1.0
-X-Received: by 2002:a5d:8497:: with SMTP id t23mr8025000iom.298.1561690026810;
- Thu, 27 Jun 2019 19:47:06 -0700 (PDT)
-Date:   Thu, 27 Jun 2019 19:47:06 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000004c2416058c594b30@google.com>
-Subject: kernel BUG at net/rxrpc/local_object.c:LINE!
-From:   syzbot <syzbot+1e0edc4b8b7494c28450@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, dhowells@redhat.com,
-        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=FTN0zKhDxIv8S5csTSaarzg3XpPyp/sNBzVy1DH0RIg=;
+        b=d8+IMeAnHkSyt1k2YVE9b0RZ+Db8kB+JGRZaPLfzLuIJUH7oLUoa1CwJ1Pdhfr1cUI
+         cljgthUYCgfiwnSJDMx9RIEEiRs79uf/mwx0s3d2f1cwX6T5DeB+bFcb9CBlDewBsUQO
+         uOXj35MfYh2o+K7+6KYkO93Jl3oYh9RPilHJLlHr2PByGMYLX8tQJs96gSM7KZpCk0lR
+         IAPN/GDpCo9C9oAcEwYDVLEAqP1emDJH0QLjLNehAadxNSqWEfChZdkSvfdZyZh80Imm
+         h4rnwF3vOmtFQuDjW5JVWwe25H8Qao7YZ0beqEQI+xi/kpIYgD7e9gw1JcBBMjbFHLE4
+         z4bQ==
+X-Gm-Message-State: APjAAAW9KwyPPn2V6hLquGrV9CgdCKtX+E1Dujn6Xdz7tqZdmYuEl0WP
+        /QSxsPeunF/pEiFRKAPgCf4=
+X-Google-Smtp-Source: APXvYqyzDlz4aJe0A2U5O8Oy1Sg9aQHycbE1T8Vl3tT86xnGqpPGDT2QfeVyiA/YL19H+0WkeYde2w==
+X-Received: by 2002:a63:7f07:: with SMTP id a7mr6832325pgd.26.1561690037406;
+        Thu, 27 Jun 2019 19:47:17 -0700 (PDT)
+Received: from hfq-skylake.ipads-lab.se.sjtu.edu.cn ([202.120.40.82])
+        by smtp.googlemail.com with ESMTPSA id c18sm449055pfc.180.2019.06.27.19.47.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 27 Jun 2019 19:47:17 -0700 (PDT)
+From:   Fuqian Huang <huangfq.daxian@gmail.com>
+Cc:     Fuqian Huang <huangfq.daxian@gmail.com>,
+        Seth Heasley <seth.heasley@intel.com>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 08/27] i2c: busses: remove memset after dmam_alloc_coherent
+Date:   Fri, 28 Jun 2019 10:47:10 +0800
+Message-Id: <20190628024711.15203-1-huangfq.daxian@gmail.com>
+X-Mailer: git-send-email 2.11.0
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+In commit af7ddd8a627c
+("Merge tag 'dma-mapping-4.21' of git://git.infradead.org/users/hch/dma-mapping"),
+dmam_alloc_coherent has already zeroed the memory.
+So memset is not needed.
 
-syzbot found the following crash on:
-
-HEAD commit:    249155c2 Merge branch 'parisc-5.2-4' of git://git.kernel.o..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14fabe45a00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e7c31a94f66cc0aa
-dashboard link: https://syzkaller.appspot.com/bug?extid=1e0edc4b8b7494c28450
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13e2738da00000
-
-The bug was bisected to:
-
-commit 46894a13599a977ac35411b536fb3e0b2feefa95
-Author: David Howells <dhowells@redhat.com>
-Date:   Thu Oct 4 08:32:28 2018 +0000
-
-     rxrpc: Use IPv4 addresses throught the IPv6
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=152fabe3a00000
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=172fabe3a00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=132fabe3a00000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+1e0edc4b8b7494c28450@syzkaller.appspotmail.com
-Fixes: 46894a13599a ("rxrpc: Use IPv4 addresses throught the IPv6")
-
-rxrpc: Assertion failed
-------------[ cut here ]------------
-kernel BUG at net/rxrpc/local_object.c:468!
-invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 16 Comm: ksoftirqd/1 Not tainted 5.2.0-rc6+ #60
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:rxrpc_local_rcu net/rxrpc/local_object.c:468 [inline]
-RIP: 0010:rxrpc_local_rcu.cold+0x11/0x13 net/rxrpc/local_object.c:462
-Code: 83 eb 20 e9 74 ff ff ff e8 58 aa 2d fb eb cc 4c 89 ef e8 6e aa 2d fb  
-eb e2 e8 d7 fd f4 fa 48 c7 c7 20 8c 15 88 e8 6f 03 df fa <0f> 0b e8 c4 fd  
-f4 fa 48 c7 c7 20 8c 15 88 e8 5c 03 df fa 0f 0b e8
-RSP: 0018:ffff8880a9917c98 EFLAGS: 00010286
-RAX: 0000000000000017 RBX: 0000000000000001 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff815ad926 RDI: ffffed1015322f85
-RBP: ffff8880a9917ca8 R08: 0000000000000017 R09: ffffed1015d260a1
-R10: ffffed1015d260a0 R11: ffff8880ae930507 R12: ffff888099033b40
-R13: ffff888099033b40 R14: ffffffff867b8f10 R15: ffff8880a9917d28
-FS:  0000000000000000(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f380ebda000 CR3: 000000007ad50000 CR4: 00000000001406e0
-Call Trace:
-  __rcu_reclaim kernel/rcu/rcu.h:222 [inline]
-  rcu_do_batch kernel/rcu/tree.c:2092 [inline]
-  invoke_rcu_callbacks kernel/rcu/tree.c:2310 [inline]
-  rcu_core+0xba5/0x1500 kernel/rcu/tree.c:2291
-  __do_softirq+0x25c/0x94c kernel/softirq.c:292
-  run_ksoftirqd kernel/softirq.c:603 [inline]
-  run_ksoftirqd+0x8e/0x110 kernel/softirq.c:595
-  smpboot_thread_fn+0x6a3/0xa30 kernel/smpboot.c:165
-  kthread+0x354/0x420 kernel/kthread.c:255
-  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-Modules linked in:
----[ end trace 0e784d6285151217 ]---
-RIP: 0010:rxrpc_local_rcu net/rxrpc/local_object.c:468 [inline]
-RIP: 0010:rxrpc_local_rcu.cold+0x11/0x13 net/rxrpc/local_object.c:462
-Code: 83 eb 20 e9 74 ff ff ff e8 58 aa 2d fb eb cc 4c 89 ef e8 6e aa 2d fb  
-eb e2 e8 d7 fd f4 fa 48 c7 c7 20 8c 15 88 e8 6f 03 df fa <0f> 0b e8 c4 fd  
-f4 fa 48 c7 c7 20 8c 15 88 e8 5c 03 df fa 0f 0b e8
-RSP: 0018:ffff8880a9917c98 EFLAGS: 00010286
-RAX: 0000000000000017 RBX: 0000000000000001 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff815ad926 RDI: ffffed1015322f85
-RBP: ffff8880a9917ca8 R08: 0000000000000017 R09: ffffed1015d260a1
-R10: ffffed1015d260a0 R11: ffff8880ae930507 R12: ffff888099033b40
-R13: ffff888099033b40 R14: ffffffff867b8f10 R15: ffff8880a9917d28
-FS:  0000000000000000(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f380ebda000 CR3: 000000007ad50000 CR4: 00000000001406e0
-
-
+Signed-off-by: Fuqian Huang <huangfq.daxian@gmail.com>
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ drivers/i2c/busses/i2c-ismt.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+diff --git a/drivers/i2c/busses/i2c-ismt.c b/drivers/i2c/busses/i2c-ismt.c
+index 02d23edb2fb1..2f95e25a10f7 100644
+--- a/drivers/i2c/busses/i2c-ismt.c
++++ b/drivers/i2c/busses/i2c-ismt.c
+@@ -781,8 +781,6 @@ static int ismt_dev_init(struct ismt_priv *priv)
+ 	if (!priv->hw)
+ 		return -ENOMEM;
+ 
+-	memset(priv->hw, 0, (ISMT_DESC_ENTRIES * sizeof(struct ismt_desc)));
+-
+ 	priv->head = 0;
+ 	init_completion(&priv->cmp);
+ 
+-- 
+2.11.0
+
