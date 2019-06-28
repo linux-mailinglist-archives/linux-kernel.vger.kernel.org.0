@@ -2,134 +2,271 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8934859465
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 08:49:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 67AC259467
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 08:51:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727269AbfF1GtS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 02:49:18 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:46634 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726827AbfF1GtR (ORCPT
+        id S1727148AbfF1Gvp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 02:51:45 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:43390 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726827AbfF1Gvp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 02:49:17 -0400
-Received: by mail-pl1-f194.google.com with SMTP id e5so2670301pls.13
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 23:49:17 -0700 (PDT)
+        Fri, 28 Jun 2019 02:51:45 -0400
+Received: by mail-pl1-f196.google.com with SMTP id cl9so2679620plb.10
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 23:51:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=vPhgOlnnCB9ywYOBqb6XWPEQoBI2y0wpZimTNVlxq94=;
-        b=xlQEkY8FiSYP5T8Sr+fiSBjHesc/PjqUa14hg77RnJh0y29/YUP67po1FtaWYwrHM6
-         A62F01aq9JawXlETdcaGGw0NdKmU19nBDaw3yEa68LMQMRv+B+4yAq1I90Nio+xQ6sEt
-         o/0d8Rlt+SS0ROHur5wxPvffwvasNpbObHNsnG4dFNCoLygibKECrxmkqhvImDEUDQnp
-         Wc/V4es3nOA9lNVxFB5HEQKA5Y5O0B+LEDIfk2XXHuJG7Pr1KcY7dli+FjHxkNgyHNpE
-         nwLrkUmsr2SKdemi+zTyitOdMnjSCIYLog3E6PFg4vDnDoZTT0btNePuX+fMVzDFvBix
-         P0Kw==
+        bh=mCstpKpvgbBC+V+ZGiWFlCxOPjghNzZbXr1kJOJkGEc=;
+        b=Cv6URamx2iez5Bj7TuIlhxGqHMOHEygYhuPAvLwOBofBDUglWIMw6QdOGPE73NQ6+i
+         jav6fRvR0NxwWAYc3M4mcV4KkwniIE0+DN9BgNIy7ng1I8LL3V9c861VT0Mkbmx7mC9N
+         XGLVsuuq500ozM+G8Ui+mQjISaOIxPaU3cOkGDCtd9Vyy9OgRtlfuNKeA+I7aE3nz2Hr
+         taBSqBi3qcGKuPWxaNJoWNCupfRrMuMfUeLAzTyq3HwfoaGB9JSEheS21EIa6ByWe/jg
+         oQ3malVO0XGQYEpnPI6g+Au35JqstM4w6ueSgeJmsm2dmTDleG4RBR1U+TdoyM29PAjK
+         AFXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vPhgOlnnCB9ywYOBqb6XWPEQoBI2y0wpZimTNVlxq94=;
-        b=MioQ3lJeZQ1kIsJ4Mz25Urxo+szK69MwlNRZDxVmNRJMRox7TYCenbYNpKDMc/soNr
-         FLOqiz8yq7SOd6zSJmvbpcsNmNcVNwVAJhZDki6+suSYqWxaEWcqte0mFS8NkvhTOj4j
-         rrEP8fVJs1rJkliJTD67sO/SnBw3mCXg7wbzktenamKAlhdewjKJINLCLylZkJkL4Qa+
-         mkvddJBSt/3edQhxP+APL6lZUlHW430d26L88P6nLRZ3ktZn81AhyRW/wDubLyt8Xdfo
-         J3vgBOt54HjTbpaNuI8/BuYVctQ+5l3okdMao6/eBje1Zgkh3zYg94EmzSzSHe4nv2+N
-         pcbw==
-X-Gm-Message-State: APjAAAWdysr4dfJOSUMMdGdICAy+C97hjY1NOH3lE8A42P6Wcul1t69K
-        VleOXsj4RBNxo8fnU2pMpXrJmw==
-X-Google-Smtp-Source: APXvYqyNvvDrhAXq/jq9bYxrggpCt4lHHPhkqneujqN2UIMLKeg9OegNN6US7peiZQLxZLxm2WqDnw==
-X-Received: by 2002:a17:902:6a88:: with SMTP id n8mr9651454plk.70.1561704557101;
-        Thu, 27 Jun 2019 23:49:17 -0700 (PDT)
-Received: from localhost ([122.172.211.128])
-        by smtp.gmail.com with ESMTPSA id j5sm1223710pfi.104.2019.06.27.23.49.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Jun 2019 23:49:16 -0700 (PDT)
-Date:   Fri, 28 Jun 2019 12:19:14 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Saravana Kannan <saravanak@google.com>
-Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Android Kernel Team <kernel-team@android.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 0/3] Add required-opps support to devfreq passive gov
-Message-ID: <20190628064914.4nu6ql7f7h7o4iul@vireshk-i7>
-References: <20190622003449.33707-1-saravanak@google.com>
- <20190624094349.rtjb7nuv6g7zmsf2@vireshk-i7>
- <CAGETcx_ggG8oDnAVaSfuHfip1ozjQpFiGs15cz8nLQnzjTiSTg@mail.gmail.com>
- <20190625041054.2ceuvnuuebc6hsr5@vireshk-i7>
- <CAGETcx8MuXkQyD5qZBC948-hOu=kWd4hPk2Qiu-zWOcHBCc=FA@mail.gmail.com>
- <20190625052227.3v74l6xtrkydzx6w@vireshk-i7>
- <CAGETcx_v05PfscMi2qiYwHRMLryyA_494+h+kmJ3mD+GOjjeLA@mail.gmail.com>
- <20190626063240.kgdiy7xsz4mahrdr@vireshk-i7>
- <CAGETcx_KH6pqgqZFKddWmgiUX3n+XBU6BoFXkVvPdA4vMDHWsw@mail.gmail.com>
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=mCstpKpvgbBC+V+ZGiWFlCxOPjghNzZbXr1kJOJkGEc=;
+        b=r8fbvhPJgCv8uF0qDm+BstF3cy7wHU+l5L4rDpv+1Ru5qEEMW2R8UVOl003aTl5Qfo
+         eee3utr/X2MceOGjpC+AzSlQuiNzztdASxZBbjPHwVeLiWsRgEbMVUxW0LJywxG0BLFj
+         masm+gZoHp/63C71R/oSeIFerennC8cekAf5vJojmHZCFogBZD4zrRAv1ukqy7B++lRD
+         Zx0lc/CyixRlwN6/2g0temG3Gc6cJAr5CGLnWRa3CHdvvjEEHTwz6sMHBE0FcfL+IQli
+         pMdQK0BGfUCWldjpx3H3cej6jHHKjZIG1MKuBYMNaNMZa2sm4cxIipocyUuAvV9c5oPg
+         BPaw==
+X-Gm-Message-State: APjAAAV8uTbcFqRm6DL9XOK2u+aLa6G6FMboD5XkyQ9STLT2/9YOPcaC
+        f+wCWfrWdw3cyWN1se2J3j7asMfe
+X-Google-Smtp-Source: APXvYqx0UNr92nbIQgrbFzeisVKRoLX5W8EvyZ4FlCsQmFV+ndqxBqkjfrAhnW2TJAC39KbTxs9vPA==
+X-Received: by 2002:a17:902:542:: with SMTP id 60mr9722394plf.68.1561704703972;
+        Thu, 27 Jun 2019 23:51:43 -0700 (PDT)
+Received: from google.com ([2401:fa00:d:0:98f1:8b3d:1f37:3e8])
+        by smtp.gmail.com with ESMTPSA id a21sm1303140pfi.27.2019.06.27.23.51.40
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 27 Jun 2019 23:51:42 -0700 (PDT)
+Date:   Fri, 28 Jun 2019 15:51:38 +0900
+From:   Minchan Kim <minchan@kernel.org>
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Kuo-Hsin Yang <vovoy@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Sonny Rao <sonnyrao@chromium.org>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH] mm: vmscan: fix not scanning anonymous pages when
+ detecting file refaults
+Message-ID: <20190628065138.GA251482@google.com>
+References: <20190619080835.GA68312@google.com>
+ <20190627184123.GA11181@cmpxchg.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAGETcx_KH6pqgqZFKddWmgiUX3n+XBU6BoFXkVvPdA4vMDHWsw@mail.gmail.com>
-User-Agent: NeoMutt/20180716-391-311a52
+In-Reply-To: <20190627184123.GA11181@cmpxchg.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26-06-19, 11:10, Saravana Kannan wrote:
-> On Tue, Jun 25, 2019 at 11:32 PM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+Hi Johannes,
 
-> > So, when a CPU changes frequency, we must change the performance state
-> > of PM domain and change frequency/bw of the cache synchronously.
+On Thu, Jun 27, 2019 at 02:41:23PM -0400, Johannes Weiner wrote:
+> On Wed, Jun 19, 2019 at 04:08:35PM +0800, Kuo-Hsin Yang wrote:
+> > When file refaults are detected and there are many inactive file pages,
+> > the system never reclaim anonymous pages, the file pages are dropped
+> > aggressively when there are still a lot of cold anonymous pages and
+> > system thrashes. This issue impacts the performance of applications with
+> > large executable, e.g. chrome.
+> > 
+> > When file refaults are detected. inactive_list_is_low() may return
+> > different values depends on the actual_reclaim parameter, the following
+> > 2 conditions could be satisfied at the same time.
+> > 
+> > 1) inactive_list_is_low() returns false in get_scan_count() to trigger
+> >    scanning file lists only.
+> > 2) inactive_list_is_low() returns true in shrink_list() to allow
+> >    scanning active file list.
+> > 
+> > In that case vmscan would only scan file lists, and as active file list
+> > is also scanned, inactive_list_is_low() may keep returning false in
+> > get_scan_count() until file cache is very low.
+> > 
+> > Before commit 2a2e48854d70 ("mm: vmscan: fix IO/refault regression in
+> > cache workingset transition"), inactive_list_is_low() never returns
+> > different value in get_scan_count() and shrink_list() in one
+> > shrink_node_memcg() run. The original design should be that when
+> > inactive_list_is_low() returns false for file lists, vmscan only scan
+> > inactive file list. As only inactive file list is scanned,
+> > inactive_list_is_low() would soon return true.
+> > 
+> > This patch makes the return value of inactive_list_is_low() independent
+> > of actual_reclaim.
+> > 
+> > The problem can be reproduced by the following test program.
+> > 
+> > ---8<---
+> > void fallocate_file(const char *filename, off_t size)
+> > {
+> > 	struct stat st;
+> > 	int fd;
+> > 
+> > 	if (!stat(filename, &st) && st.st_size >= size)
+> > 		return;
+> > 
+> > 	fd = open(filename, O_WRONLY | O_CREAT, 0600);
+> > 	if (fd < 0) {
+> > 		perror("create file");
+> > 		exit(1);
+> > 	}
+> > 	if (posix_fallocate(fd, 0, size)) {
+> > 		perror("fallocate");
+> > 		exit(1);
+> > 	}
+> > 	close(fd);
+> > }
+> > 
+> > long *alloc_anon(long size)
+> > {
+> > 	long *start = malloc(size);
+> > 	memset(start, 1, size);
+> > 	return start;
+> > }
+> > 
+> > long access_file(const char *filename, long size, long rounds)
+> > {
+> > 	int fd, i;
+> > 	volatile char *start1, *end1, *start2;
+> > 	const int page_size = getpagesize();
+> > 	long sum = 0;
+> > 
+> > 	fd = open(filename, O_RDONLY);
+> > 	if (fd == -1) {
+> > 		perror("open");
+> > 		exit(1);
+> > 	}
+> > 
+> > 	/*
+> > 	 * Some applications, e.g. chrome, use a lot of executable file
+> > 	 * pages, map some of the pages with PROT_EXEC flag to simulate
+> > 	 * the behavior.
+> > 	 */
+> > 	start1 = mmap(NULL, size / 2, PROT_READ | PROT_EXEC, MAP_SHARED,
+> > 		      fd, 0);
+> > 	if (start1 == MAP_FAILED) {
+> > 		perror("mmap");
+> > 		exit(1);
+> > 	}
+> > 	end1 = start1 + size / 2;
+> > 
+> > 	start2 = mmap(NULL, size / 2, PROT_READ, MAP_SHARED, fd, size / 2);
+> > 	if (start2 == MAP_FAILED) {
+> > 		perror("mmap");
+> > 		exit(1);
+> > 	}
+> > 
+> > 	for (i = 0; i < rounds; ++i) {
+> > 		struct timeval before, after;
+> > 		volatile char *ptr1 = start1, *ptr2 = start2;
+> > 		gettimeofday(&before, NULL);
+> > 		for (; ptr1 < end1; ptr1 += page_size, ptr2 += page_size)
+> > 			sum += *ptr1 + *ptr2;
+> > 		gettimeofday(&after, NULL);
+> > 		printf("File access time, round %d: %f (sec)\n", i,
+> > 		       (after.tv_sec - before.tv_sec) +
+> > 		       (after.tv_usec - before.tv_usec) / 1000000.0);
+> > 	}
+> > 	return sum;
+> > }
+> > 
+> > int main(int argc, char *argv[])
+> > {
+> > 	const long MB = 1024 * 1024;
+> > 	long anon_mb, file_mb, file_rounds;
+> > 	const char filename[] = "large";
+> > 	long *ret1;
+> > 	long ret2;
+> > 
+> > 	if (argc != 4) {
+> > 		printf("usage: thrash ANON_MB FILE_MB FILE_ROUNDS\n");
+> > 		exit(0);
+> > 	}
+> > 	anon_mb = atoi(argv[1]);
+> > 	file_mb = atoi(argv[2]);
+> > 	file_rounds = atoi(argv[3]);
+> > 
+> > 	fallocate_file(filename, file_mb * MB);
+> > 	printf("Allocate %ld MB anonymous pages\n", anon_mb);
+> > 	ret1 = alloc_anon(anon_mb * MB);
+> > 	printf("Access %ld MB file pages\n", file_mb);
+> > 	ret2 = access_file(filename, file_mb * MB, file_rounds);
+> > 	printf("Print result to prevent optimization: %ld\n",
+> > 	       *ret1 + ret2);
+> > 	return 0;
+> > }
+> > ---8<---
+> > 
+> > Running the test program on 2GB RAM VM with kernel 5.2.0-rc5, the
+> > program fills ram with 2048 MB memory, access a 200 MB file for 10
+> > times. Without this patch, the file cache is dropped aggresively and
+> > every access to the file is from disk.
+> > 
+> >   $ ./thrash 2048 200 10
+> >   Allocate 2048 MB anonymous pages
+> >   Access 200 MB file pages
+> >   File access time, round 0: 2.489316 (sec)
+> >   File access time, round 1: 2.581277 (sec)
+> >   File access time, round 2: 2.487624 (sec)
+> >   File access time, round 3: 2.449100 (sec)
+> >   File access time, round 4: 2.420423 (sec)
+> >   File access time, round 5: 2.343411 (sec)
+> >   File access time, round 6: 2.454833 (sec)
+> >   File access time, round 7: 2.483398 (sec)
+> >   File access time, round 8: 2.572701 (sec)
+> >   File access time, round 9: 2.493014 (sec)
+> > 
+> > With this patch, these file pages can be cached.
+> > 
+> >   $ ./thrash 2048 200 10
+> >   Allocate 2048 MB anonymous pages
+> >   Access 200 MB file pages
+> >   File access time, round 0: 2.475189 (sec)
+> >   File access time, round 1: 2.440777 (sec)
+> >   File access time, round 2: 2.411671 (sec)
+> >   File access time, round 3: 1.955267 (sec)
+> >   File access time, round 4: 0.029924 (sec)
+> >   File access time, round 5: 0.000808 (sec)
+> >   File access time, round 6: 0.000771 (sec)
+> >   File access time, round 7: 0.000746 (sec)
+> >   File access time, round 8: 0.000738 (sec)
+> >   File access time, round 9: 0.000747 (sec)
+> > 
+> > Fixes: 2a2e48854d70 ("mm: vmscan: fix IO/refault regression in cache workingset transition")
+> > Signed-off-by: Kuo-Hsin Yang <vovoy@chromium.org>
 > 
-> I mean, it's going to be changed when we get the CPUfreq transition
-> notifiers. From a correctness point of view, setting it inside the OPP
-> framework is not any better than doing it when we get the notifiers.
-
-That's what the problem is. All maintainers now a days ask people to
-stay away from notifiers and we are making that base of another new
-thing we are starting.
-
-Over that, with many cpufreq drivers we have fast switching enabled
-and notifiers disabled. How will they make these things work ? We
-still want to scale L3 in those cases as well.
-
-> I see this as "required for good performance". So I don't see it as
-> redefining required-opps. If someone wants good performance/power
-> balance they follow the "required-opps". Technically even the PM
-> pstates are required for good power. Otherwise, the system could leave
-> the voltage at max and stuff would still work.
+> Acked-by: Johannes Weiner <hannes@cmpxchg.org>
 > 
-> Also, the slave device might need to get input from multiple master
-> devices and aggregate the request before setting the slave device
-> frequency. So I don't think OPP  framework would be the right place to
-> deal with those things. For example, L3 might (will) have different
-> mappings for big vs little cores. So that needs to be aggregated and
-> set properly by the slave device driver. Also, GPU might have a
-> mapping for L3 too. In which case the L3 slave driver needs to take
-> input from even more masters before it decides its frequency. But most
-> importantly, we still need the ability to change governors for L3.
-> Again these are just examples with L3 and it can get more complicated
-> based on the situation.
+> Your change makes sense - we should indeed not force cache trimming
+> only while the page cache is experiencing refaults.
 > 
-> Most importantly, instead of always going by mapping, one might decide
-> to scale the L3 based on some other governor (that looks at some HW
-> counter). Or just set it to performance governor for a use case for
-> which performance is more important. All of this comes for free with
-> devfreq and if we always set it from OPP framework we don't give this
-> required control to userspace.
+> I can't say I fully understand the changelog, though. The problem of
+
+I guess the point of the patch is "actual_reclaim" paramter made divergency
+to balance file vs. anon LRU in get_scan_count. Thus, it ends up scanning
+file LRU active/inactive list at file thrashing state.
+
+So, Fixes: 2a2e48854d70 ("mm: vmscan: fix IO/refault regression in cache workingset transition")
+would make sense to me since it introduces the parameter.
+
+> forcing cache trimming while there is enough page cache is older than
+> the commit you refer to. It could be argued that this commit is
+> incomplete - it could have added refault detection not just to
+> inactive:active file balancing, but also the file:anon balancing; but
+> it didn't *cause* this problem.
 > 
-> I think going through devfreq is the right approach for this. And we
-> can always rewrite the software if we find problems in the future. But
-> as it stands today, this will help cases like exynos without the need
-> for a lot of changes. Hope I've convinced you.
+> Shouldn't this be
+> 
+> Fixes: e9868505987a ("mm,vmscan: only evict file pages when we have plenty")
+> Fixes: 7c5bd705d8f9 ("mm: memcg: only evict file pages when we have plenty")
 
-I understand the aggregation thing and fully support that the
-aggregation can't happen in OPP core and must be done somewhere else.
-But the input can go from OPP core while the frequency is changing,
-isn't it ?
-
--- 
-viresh
+That would affect, too but it would be trouble to have stable backport
+since we don't have refault machinery in there.
