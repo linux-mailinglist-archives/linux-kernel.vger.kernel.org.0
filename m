@@ -2,42 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDEC659AD6
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 14:24:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94B8559AE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 14:24:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727410AbfF1MXn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 08:23:43 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:58744 "EHLO
+        id S1726578AbfF1MYZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 08:24:25 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:58694 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726770AbfF1MUp (ORCPT
+        with ESMTP id S1726695AbfF1MUn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 08:20:45 -0400
+        Fri, 28 Jun 2019 08:20:43 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=FPmhq6OXB0RygPdeF4/P0ZK5H7ymzhVGQYICPZhGGng=; b=ZUOlAaQH2RUYbDkP6DUlUtBuJ0
-        7eyUVd8W4y9Bx9TaKXegLUDnr/aBosq+m7JVYKi49lgMsU8yT91rOpRqRyEY7C5FJl9nW2H7kp97d
-        +Z1/2VqUktWrbGH250JMiB4bEdzoPTEZYBjqFf1/244rw8ySr4Batuv/IYtp5aM5Hurq/OZoQsLZQ
-        8bvFmzCxZtt5GYNyE861SHQyJsk9S/yO+OAzPpNU19fBYDmBtYyI6BVM6+A+Bwh6thtjDPGaRveql
-        GG0q1Tivw+kT4iRoIUJN+f8UbPhHXlAyHtzI3EQ+yEpqUp/pdo0bA0vMrva9ZUrDBF3AEYXVJxy4c
-        SGfBaV4w==;
+        bh=4cWjMp5PaXweLfT1aRxtKRWZepkzB8FeW0x9RJN+xzA=; b=aEjnO659FFI6XQP0TkAY0HWE5x
+        wTgw4FLrcyZWEuDdS415q6pSleIRidnvguWRrRCfDQbqfblxPUAs7ep4Z7U/4FdBDdunv9xjzka9z
+        0pAiBzASw3HVlSWCRg27zuTsu/TMuOse+676BwDkYrLBDmHAhG4mUvCeuBmo41KsxIj2dg/bKzIhN
+        KsoH3h48lHCtxbfIirg1N2uzWdWf/3luXXgEGVx/ILEO2T6tHi+iJUPRl2uMWPVUfvkoF4YCXy9M8
+        bBUrhPV3JREMazdMLQ0bYULX01nrdd63/51BHOoXWTg13qNrMwuFomiAOxMpWjLEw8ySNfcMAS+vU
+        Qpt9BEfA==;
 Received: from [186.213.242.156] (helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hgprv-0000A0-8r; Fri, 28 Jun 2019 12:20:43 +0000
+        id 1hgprv-0000A1-BS; Fri, 28 Jun 2019 12:20:43 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hgprt-00057p-CB; Fri, 28 Jun 2019 09:20:41 -0300
+        id 1hgprt-00057z-ES; Fri, 28 Jun 2019 09:20:41 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH 13/43] docs: early-userspace: convert docs to ReST and rename to *.rst
-Date:   Fri, 28 Jun 2019 09:20:09 -0300
-Message-Id: <3e9c9dae2512e9808ac2053a2dd55c6077a4ba8a.1561723980.git.mchehab+samsung@kernel.org>
+Subject: [PATCH 15/43] docs: memory-devices: convert ti-emif.txt to ReST
+Date:   Fri, 28 Jun 2019 09:20:11 -0300
+Message-Id: <481fb7e84e78cfd12f960dbab9f562200191fff3.1561723980.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <cover.1561723979.git.mchehab+samsung@kernel.org>
 References: <cover.1561723979.git.mchehab+samsung@kernel.org>
@@ -48,190 +48,92 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The two files there describes a Kernel API feature, used to
-support early userspace stuff. Prepare for moving them to
-the kernel API book by converting to ReST format.
+Prepare this file to be moved to a kernel book by converting
+it to ReST format and renaming it to ti-emif.rst.
 
-The conversion itself was quite trivial: just add/mark a few
-titles as such, add a literal block markup, add a table markup
-and a few blank lines, in order to make Sphinx to properly parse it.
-
-At its new index.rst, let's add a :orphan: while this is not linked to
-the main index.rst file, in order to avoid build warnings.
+While this is not part of any book, mark it as :orphan:, in order
+to avoid build warnings.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- .../{buffer-format.txt => buffer-format.rst}  | 19 +++++++++++++------
- .../{README => early_userspace_support.rst}   |  3 +++
- Documentation/early-userspace/index.rst       | 18 ++++++++++++++++++
- Documentation/filesystems/nfs/nfsroot.txt     |  2 +-
- .../filesystems/ramfs-rootfs-initramfs.txt    |  4 ++--
- usr/Kconfig                                   |  2 +-
- 6 files changed, 38 insertions(+), 10 deletions(-)
- rename Documentation/early-userspace/{buffer-format.txt => buffer-format.rst} (91%)
- rename Documentation/early-userspace/{README => early_userspace_support.rst} (99%)
- create mode 100644 Documentation/early-userspace/index.rst
+ .../{ti-emif.txt => ti-emif.rst}              | 27 ++++++++++++-------
+ 1 file changed, 17 insertions(+), 10 deletions(-)
+ rename Documentation/memory-devices/{ti-emif.txt => ti-emif.rst} (81%)
 
-diff --git a/Documentation/early-userspace/buffer-format.txt b/Documentation/early-userspace/buffer-format.rst
-similarity index 91%
-rename from Documentation/early-userspace/buffer-format.txt
-rename to Documentation/early-userspace/buffer-format.rst
-index e1fd7f9dad16..7f74e301fdf3 100644
---- a/Documentation/early-userspace/buffer-format.txt
-+++ b/Documentation/early-userspace/buffer-format.rst
-@@ -1,8 +1,10 @@
--		       initramfs buffer format
--		       -----------------------
-+=======================
-+initramfs buffer format
-+=======================
- 
--		       Al Viro, H. Peter Anvin
--		      Last revision: 2002-01-13
-+Al Viro, H. Peter Anvin
-+
-+Last revision: 2002-01-13
- 
- Starting with kernel 2.5.x, the old "initial ramdisk" protocol is
- getting {replaced/complemented} with the new "initial ramfs"
-@@ -18,7 +20,8 @@ archive can be compressed using gzip(1).  One valid version of an
- initramfs buffer is thus a single .cpio.gz file.
- 
- The full format of the initramfs buffer is defined by the following
--grammar, where:
-+grammar, where::
-+
- 	*	is used to indicate "0 or more occurrences of"
- 	(|)	indicates alternatives
- 	+	indicates concatenation
-@@ -49,7 +52,9 @@ hexadecimal ASCII numbers fully padded with '0' on the left to the
- full width of the field, for example, the integer 4780 is represented
- by the ASCII string "000012ac"):
- 
-+============= ================== ==============================================
- Field name    Field size	 Meaning
-+============= ================== ==============================================
- c_magic	      6 bytes		 The string "070701" or "070702"
- c_ino	      8 bytes		 File inode number
- c_mode	      8 bytes		 File mode and permissions
-@@ -65,6 +70,7 @@ c_rmin	      8 bytes		 Minor part of device node reference
- c_namesize    8 bytes		 Length of filename, including final \0
- c_chksum      8 bytes		 Checksum of data field if c_magic is 070702;
- 				 otherwise zero
-+============= ================== ==============================================
- 
- The c_mode field matches the contents of st_mode returned by stat(2)
- on Linux, and encodes the file type and file permissions.
-@@ -82,7 +88,8 @@ If the filename is "TRAILER!!!" this is actually an end-of-archive
- marker; the c_filesize for an end-of-archive marker must be zero.
- 
- 
--*** Handling of hard links
-+Handling of hard links
-+======================
- 
- When a nondirectory with c_nlink > 1 is seen, the (c_maj,c_min,c_ino)
- tuple is looked up in a tuple buffer.  If not found, it is entered in
-diff --git a/Documentation/early-userspace/README b/Documentation/early-userspace/early_userspace_support.rst
-similarity index 99%
-rename from Documentation/early-userspace/README
-rename to Documentation/early-userspace/early_userspace_support.rst
-index 955d667dc87e..3deefb34046b 100644
---- a/Documentation/early-userspace/README
-+++ b/Documentation/early-userspace/early_userspace_support.rst
-@@ -1,3 +1,4 @@
-+=======================
- Early userspace support
- =======================
- 
-@@ -26,6 +27,7 @@ archive to be used as the image or have the kernel build process build
- the image from specifications.
- 
- CPIO ARCHIVE method
-+-------------------
- 
- You can create a cpio archive that contains the early userspace image.
- Your cpio archive should be specified in CONFIG_INITRAMFS_SOURCE and it
-@@ -34,6 +36,7 @@ CONFIG_INITRAMFS_SOURCE and directory and file names are not allowed in
- combination with a cpio archive.
- 
- IMAGE BUILDING method
-+---------------------
- 
- The kernel build process can also build an early userspace image from
- source parts rather than supplying a cpio archive.  This method provides
-diff --git a/Documentation/early-userspace/index.rst b/Documentation/early-userspace/index.rst
-new file mode 100644
-index 000000000000..2b8eb6132058
---- /dev/null
-+++ b/Documentation/early-userspace/index.rst
-@@ -0,0 +1,18 @@
+diff --git a/Documentation/memory-devices/ti-emif.txt b/Documentation/memory-devices/ti-emif.rst
+similarity index 81%
+rename from Documentation/memory-devices/ti-emif.txt
+rename to Documentation/memory-devices/ti-emif.rst
+index f4ad9a7d0f4b..c9242294e63c 100644
+--- a/Documentation/memory-devices/ti-emif.txt
++++ b/Documentation/memory-devices/ti-emif.rst
+@@ -1,20 +1,24 @@
+-TI EMIF SDRAM Controller Driver:
 +:orphan:
 +
++===============================
++TI EMIF SDRAM Controller Driver
++===============================
+ 
+ Author
+-========
++======
+ Aneesh V <aneesh@ti.com>
+ 
+ Location
+-============
++========
+ driver/memory/emif.c
+ 
+ Supported SoCs:
+-===================
 +===============
-+Early Userspace
-+===============
+ TI OMAP44xx
+ TI OMAP54xx
+ 
+ Menuconfig option:
+-==========================
++==================
+ Device Drivers
+ 	Memory devices
+ 		Texas Instruments EMIF driver
+@@ -29,10 +33,11 @@ functions of the driver includes re-configuring AC timing
+ parameters and other settings during frequency, voltage and
+ temperature changes
+ 
+-Platform Data (see include/linux/platform_data/emif_plat.h):
+-=====================================================================
++Platform Data (see include/linux/platform_data/emif_plat.h)
++===========================================================
+ DDR device details and other board dependent and SoC dependent
+ information can be passed through platform data (struct emif_platform_data)
 +
-+.. toctree::
-+    :maxdepth: 1
+ - DDR device details: 'struct ddr_device_info'
+ - Device AC timings: 'struct lpddr2_timings' and 'struct lpddr2_min_tck'
+ - Custom configurations: customizable policy options through
+@@ -40,17 +45,19 @@ information can be passed through platform data (struct emif_platform_data)
+ - IP revision
+ - PHY type
+ 
+-Interface to the external world:
+-================================
++Interface to the external world
++===============================
+ EMIF driver registers notifiers for voltage and frequency changes
+ affecting EMIF and takes appropriate actions when these are invoked.
 +
-+    early_userspace_support
-+    buffer-format
+ - freq_pre_notify_handling()
+ - freq_post_notify_handling()
+ - volt_notify_handling()
+ 
+ Debugfs
+-========
++=======
+ The driver creates two debugfs entries per device.
 +
-+.. only::  subproject and html
-+
-+   Indices
-+   =======
-+
-+   * :ref:`genindex`
-diff --git a/Documentation/filesystems/nfs/nfsroot.txt b/Documentation/filesystems/nfs/nfsroot.txt
-index d2963123eb1c..4862d3d77e27 100644
---- a/Documentation/filesystems/nfs/nfsroot.txt
-+++ b/Documentation/filesystems/nfs/nfsroot.txt
-@@ -239,7 +239,7 @@ rdinit=<executable file>
-   A description of the process of mounting the root file system can be
-   found in:
- 
--    Documentation/early-userspace/README
-+    Documentation/early-userspace/early_userspace_support.rst
- 
- 
- 
-diff --git a/Documentation/filesystems/ramfs-rootfs-initramfs.txt b/Documentation/filesystems/ramfs-rootfs-initramfs.txt
-index 79637d227e85..fa985909dbca 100644
---- a/Documentation/filesystems/ramfs-rootfs-initramfs.txt
-+++ b/Documentation/filesystems/ramfs-rootfs-initramfs.txt
-@@ -105,7 +105,7 @@ All this differs from the old initrd in several ways:
-   - The old initrd file was a gzipped filesystem image (in some file format,
-     such as ext2, that needed a driver built into the kernel), while the new
-     initramfs archive is a gzipped cpio archive (like tar only simpler,
--    see cpio(1) and Documentation/early-userspace/buffer-format.txt).  The
-+    see cpio(1) and Documentation/early-userspace/buffer-format.rst).  The
-     kernel's cpio extraction code is not only extremely small, it's also
-     __init text and data that can be discarded during the boot process.
- 
-@@ -159,7 +159,7 @@ One advantage of the configuration file is that root access is not required to
- set permissions or create device nodes in the new archive.  (Note that those
- two example "file" entries expect to find files named "init.sh" and "busybox" in
- a directory called "initramfs", under the linux-2.6.* directory.  See
--Documentation/early-userspace/README for more details.)
-+Documentation/early-userspace/early_userspace_support.rst for more details.)
- 
- The kernel does not depend on external cpio tools.  If you specify a
- directory instead of a configuration file, the kernel's build infrastructure
-diff --git a/usr/Kconfig b/usr/Kconfig
-index 43658b8a975e..86e37e297278 100644
---- a/usr/Kconfig
-+++ b/usr/Kconfig
-@@ -18,7 +18,7 @@ config INITRAMFS_SOURCE
- 	  When multiple directories and files are specified then the
- 	  initramfs image will be the aggregate of all of them.
- 
--	  See <file:Documentation/early-userspace/README> for more details.
-+	  See <file:Documentation/early-userspace/early_userspace_support.rst> for more details.
- 
- 	  If you are not sure, leave it blank.
- 
+ - regcache_dump : dump of register values calculated and saved for all
+   frequencies used so far.
+ - mr4 : last polled value of MR4 register in the LPDDR2 device. MR4
 -- 
 2.21.0
 
