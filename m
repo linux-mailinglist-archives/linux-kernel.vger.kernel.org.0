@@ -2,92 +2,229 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C9775A74C
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2019 01:01:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3939D5A67A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 23:40:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726967AbfF1XBO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 19:01:14 -0400
-Received: from mslow2.mail.gandi.net ([217.70.178.242]:41084 "EHLO
-        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726708AbfF1XBM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 19:01:12 -0400
-Received: from relay5-d.mail.gandi.net (unknown [217.70.183.197])
-        by mslow2.mail.gandi.net (Postfix) with ESMTP id 42AA43A556C;
-        Fri, 28 Jun 2019 21:42:02 +0000 (UTC)
-X-Originating-IP: 90.65.161.137
-Received: from localhost (lfbn-1-1545-137.w90-65.abo.wanadoo.fr [90.65.161.137])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 850E81C0007;
-        Fri, 28 Jun 2019 21:41:38 +0000 (UTC)
-Date:   Fri, 28 Jun 2019 23:41:38 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Peter Rosin <peda@axentia.se>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Andreas Werner <andreas.werner@men.de>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Rudolf Marek <r.marek@assembler.cz>,
-        Seth Heasley <seth.heasley@intel.com>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        Vadim Pasternak <vadimp@mellanox.com>,
-        Michael Shych <michaelsh@mellanox.com>,
-        Ajay Gupta <ajayg@nvidia.com>,
-        Peter Korsgaard <peter@korsgaard.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Jim Cromie <jim.cromie@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-hwmon@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-rtc@vger.kernel.org
-Subject: Re: [PATCH 3/5] docs: i2c: convert to ReST and add to driver-api
- bookset
-Message-ID: <20190628214138.GU3692@piout.net>
-References: <cover.1561756511.git.mchehab+samsung@kernel.org>
- <3997b54a2e73887b96ec665573f08ded78b71421.1561756511.git.mchehab+samsung@kernel.org>
+        id S1726729AbfF1VkH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 17:40:07 -0400
+Received: from mga09.intel.com ([134.134.136.24]:59480 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726941AbfF1VkE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Jun 2019 17:40:04 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jun 2019 14:40:03 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,429,1557212400"; 
+   d="scan'208";a="153489529"
+Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.164]) ([10.237.72.164])
+  by orsmga007.jf.intel.com with ESMTP; 28 Jun 2019 14:40:00 -0700
+Subject: Re: [PATCH v4 2/4] usb: xhci: Use register defined and field names
+To:     Vinod Koul <vkoul@kernel.org>,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Christian Lamparter <chunkeey@googlemail.com>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Christian Lamparter <chunkeey@gmail.com>
+References: <20190626075509.20445-1-vkoul@kernel.org>
+ <20190626075509.20445-3-vkoul@kernel.org>
+From:   Mathias Nyman <mathias.nyman@linux.intel.com>
+Message-ID: <39d63d20-0fa9-9e66-a7b6-37a0f16f5925@linux.intel.com>
+Date:   Sat, 29 Jun 2019 00:42:55 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3997b54a2e73887b96ec665573f08ded78b71421.1561756511.git.mchehab+samsung@kernel.org>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+In-Reply-To: <20190626075509.20445-3-vkoul@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28/06/2019 18:23:14-0300, Mauro Carvalho Chehab wrote:
-> diff --git a/drivers/rtc/rtc-ds1374.c b/drivers/rtc/rtc-ds1374.c
-> index 225a8df1d4e9..1803f3cab39f 100644
-> --- a/drivers/rtc/rtc-ds1374.c
-> +++ b/drivers/rtc/rtc-ds1374.c
-> @@ -14,7 +14,7 @@
->   */
->  /*
->   * It would be more efficient to use i2c msgs/i2c_transfer directly but, as
-> - * recommened in .../Documentation/i2c/writing-clients section
-> + * recommened in .../Documentation/i2c/writing-clients.rst section
->   * "Sending and receiving", using SMBus level communication is preferred.
->   */
->  
+On 26.6.2019 10.55, Vinod Koul wrote:
+> Instead of using register values and fields lets define them and
+> use in the driver.
+> 
+> Signed-off-by: Vinod Koul <vkoul@kernel.org>
+> Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Cc: Christian Lamparter <chunkeey@googlemail.com>
+> Tested-by: Christian Lamparter <chunkeey@gmail.com>
+> ---
+>   drivers/usb/host/xhci-pci.c | 60 ++++++++++++++++++++++++++-----------
+>   1 file changed, 43 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
+> index 237df5c47fca..0f2574b42cb1 100644
+> --- a/drivers/usb/host/xhci-pci.c
+> +++ b/drivers/usb/host/xhci-pci.c
+> @@ -57,6 +57,27 @@
+>   #define PCI_DEVICE_ID_AMD_PROMONTORYA_1			0x43bc
+>   #define PCI_DEVICE_ID_ASMEDIA_1042A_XHCI		0x1142
+>   
+> +#define RENESAS_FW_VERSION				0x6C
+> +#define RENESAS_ROM_CONFIG				0xF0
+> +#define RENESAS_FW_STATUS				0xF4
+> +#define RENESAS_FW_STATUS_MSB				0xF5
+> +#define RENESAS_ROM_STATUS				0xF6
+> +#define RENESAS_ROM_STATUS_MSB				0xF7
+> +#define RENESAS_DATA0					0xF8
+> +#define RENESAS_DATA1					0xFC
+> +
+> +#define RENESAS_FW_VERSION_FIELD			GENMASK(23, 7)
+> +#define RENESAS_FW_VERSION_OFFSET			8
+> +
+> +#define RENESAS_FW_STATUS_DOWNLOAD_ENABLE		BIT(0)
+> +#define RENESAS_FW_STATUS_LOCK				BIT(1)
+> +#define RENESAS_FW_STATUS_RESULT			GENMASK(6, 4)
+> +  #define RENESAS_FW_STATUS_INVALID			0
+> +  #define RENESAS_FW_STATUS_SUCCESS			BIT(4)
+> +  #define RENESAS_FW_STATUS_ERROR			BIT(5)
+> +#define RENESAS_FW_STATUS_SET_DATA0			BIT(8)
+> +#define RENESAS_FW_STATUS_SET_DATA1			BIT(9)
+> +
+>   #define RENESAS_RETRY	10000
+>   #define RENESAS_DELAY	10
+>   
+> @@ -347,7 +368,8 @@ static int renesas_fw_download_image(struct pci_dev *dev,
+>   
+>   	/* step+1. Read "Set DATAX" and confirm it is cleared. */
+>   	for (i = 0; i < RENESAS_RETRY; i++) {
+> -		err = pci_read_config_byte(dev, 0xF5, &fw_status);
+> +		err = pci_read_config_byte(dev, RENESAS_FW_STATUS_MSB,
+> +					   &fw_status);
+>   		if (err)
+>   			return pcibios_err_to_errno(err);
+>   		if (!(fw_status & BIT(data0_or_data1)))
+> @@ -362,7 +384,8 @@ static int renesas_fw_download_image(struct pci_dev *dev,
+>   	 * step+2. Write FW data to "DATAX".
+>   	 * "LSB is left" => force little endian
+>   	 */
+> -	err = pci_write_config_dword(dev, data0_or_data1 ? 0xFC : 0xF8,
+> +	err = pci_write_config_dword(dev, data0_or_data1 ?
+> +				     RENESAS_DATA1 : RENESAS_DATA0,
+>   				     (__force u32)cpu_to_le32(fw[step]));
+>   	if (err)
+>   		return pcibios_err_to_errno(err);
+> @@ -370,7 +393,8 @@ static int renesas_fw_download_image(struct pci_dev *dev,
+>   	udelay(100);
+>   
+>   	/* step+3. Set "Set DATAX". */
+> -	err = pci_write_config_byte(dev, 0xF5, BIT(data0_or_data1));
+> +	err = pci_write_config_byte(dev, RENESAS_FW_STATUS_MSB,
+> +				    BIT(data0_or_data1));
+>   	if (err)
+>   		return pcibios_err_to_errno(err);
+>   
+> @@ -440,7 +464,7 @@ static int renesas_fw_check_running(struct pci_dev *pdev)
+>   	 * BIOSes will initialize the device for us. If the device is
+>   	 * initialized.
+>   	 */
+> -	err = pci_read_config_byte(pdev, 0xF4, &fw_state);
+> +	err = pci_read_config_byte(pdev, RENESAS_FW_STATUS, &fw_state);
+>   	if (err)
+>   		return pcibios_err_to_errno(err);
+>   
+> @@ -449,10 +473,10 @@ static int renesas_fw_check_running(struct pci_dev *pdev)
+>   	 * ready we can simply continue. If the FW is not ready, we have
+>   	 * to give up.
+>   	 */
+> -	if (fw_state & BIT(1)) {
+> +	if (fw_state & RENESAS_FW_STATUS_LOCK) {
+>   		dev_dbg(&pdev->dev, "FW Download Lock is engaged.");
+>   
+> -		if (fw_state & BIT(4))
+> +		if (fw_state & RENESAS_FW_STATUS_SUCCESS)
+>   			return 0;
+>   
+>   		dev_err(&pdev->dev,
+> @@ -465,33 +489,33 @@ static int renesas_fw_check_running(struct pci_dev *pdev)
+>   	 * with it and it can't be resetted, we have to give up too... and
+>   	 * ask for a forgiveness and a reboot.
+>   	 */
+> -	if (fw_state & BIT(0)) {
+> +	if (fw_state & RENESAS_FW_STATUS_DOWNLOAD_ENABLE) {
+>   		dev_err(&pdev->dev,
+>   			"FW Download Enable is stale. Giving Up (poweroff/reboot needed).");
+>   		return -EIO;
+>   	}
+>   
+>   	/* Otherwise, Check the "Result Code" Bits (6:4) and act accordingly */
+> -	switch ((fw_state & 0x70)) {
+> +	switch (fw_state & RENESAS_FW_STATUS_RESULT) {
+>   	case 0: /* No result yet */
+>   		dev_dbg(&pdev->dev, "FW is not ready/loaded yet.");
+>   
+>   		/* tell the caller, that this device needs the firmware. */
+>   		return 1;
+>   
+> -	case BIT(4): /* Success, device should be working. */
+> +	case RENESAS_FW_STATUS_SUCCESS: /* Success, device should be working. */
+>   		dev_dbg(&pdev->dev, "FW is ready.");
+>   		return 0;
+>   
+> -	case BIT(5): /* Error State */
+> +	case RENESAS_FW_STATUS_ERROR: /* Error State */
+>   		dev_err(&pdev->dev,
+>   			"hardware is in an error state. Giving up (poweroff/reboot needed).");
+>   		return -ENODEV;
+>   
+>   	default: /* All other states are marked as "Reserved states" */
+>   		dev_err(&pdev->dev,
+> -			"hardware is in an invalid state %x. Giving up (poweroff/reboot needed).",
+> -			(fw_state & 0x70) >> 4);
+> +			"hardware is in an invalid state %lx. Giving up (poweroff/reboot needed).",
+> +			(fw_state & RENESAS_FW_STATUS_RESULT) >> 4);
+>   		return -EINVAL;
+>   	}
+>   }
+> @@ -514,7 +538,8 @@ static int renesas_fw_download(struct pci_dev *pdev,
+>   	 * 0. Set "FW Download Enable" bit in the
+>   	 * "FW Download Control & Status Register" at 0xF4
+>   	 */
+> -	err = pci_write_config_byte(pdev, 0xF4, BIT(0));
+> +	err = pci_write_config_byte(pdev, RENESAS_FW_STATUS,
+> +				    RENESAS_FW_STATUS_DOWNLOAD_ENABLE);
+>   	if (err)
+>   		return pcibios_err_to_errno(err);
+>   
+> @@ -535,7 +560,8 @@ static int renesas_fw_download(struct pci_dev *pdev,
+>   	 * is cleared by the hardware beforehand.
+>   	 */
+>   	for (i = 0; i < RENESAS_RETRY; i++) {
+> -		err = pci_read_config_byte(pdev, 0xF5, &fw_status);
+> +		err = pci_read_config_byte(pdev, RENESAS_FW_STATUS_MSB,
+> +					   &fw_status);
+>   		if (err)
+>   			return pcibios_err_to_errno(err);
+>   		if (!(fw_status & (BIT(0) | BIT(1))))
+> @@ -550,16 +576,16 @@ static int renesas_fw_download(struct pci_dev *pdev,
+>   	 * 11. After finishing writing the last data of FW, the
+>   	 * System Software must clear "FW Download Enable"
+>   	 */
+> -	err = pci_write_config_byte(pdev, 0xF4, 0);
+> +	err = pci_write_config_byte(pdev, RENESAS_FW_STATUS, 0);
+>   	if (err)
+>   		return pcibios_err_to_errno(err);
+>   
+>   	/* 12. Read "Result Code" and confirm it is good. */
+>   	for (i = 0; i < RENESAS_RETRY; i++) {
+> -		err = pci_read_config_byte(pdev, 0xF4, &fw_status);
+> +		err = pci_read_config_byte(pdev, RENESAS_FW_STATUS, &fw_status);
+>   		if (err)
+>   			return pcibios_err_to_errno(err);
+> -		if (fw_status & BIT(4))
+> +		if (fw_status & RENESAS_FW_STATUS_SUCCESS)
+>   			break;
+>   
+>   		udelay(RENESAS_DELAY);
+> 
 
-Honestly, the whole comment could be removed. The current trend is to
-move everything to regmap anyway.
+Most of this patch should probably be squashed together with the previous patch
 
-However, I'm fine with that change if you want to keep it that way (and
-probably scripted).
-
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+-Mathias
