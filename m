@@ -2,164 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1ADEA5A6A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 23:59:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 985515A6B1
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2019 00:07:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726819AbfF1V7m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 17:59:42 -0400
-Received: from mail-eopbgr800084.outbound.protection.outlook.com ([40.107.80.84]:63126
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726754AbfF1V7l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 17:59:41 -0400
+        id S1726687AbfF1WHU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 18:07:20 -0400
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:35729 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725783AbfF1WHU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Jun 2019 18:07:20 -0400
+Received: by mail-vs1-f68.google.com with SMTP id u124so5063002vsu.2
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2019 15:07:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=n5CICPJw0eTXocZnziVNnjhO/UoKQcF/BqBpuzzdoeo=;
- b=t9aF1X87iBmBq6lczlpKWMLyU6M/rS0oDhhxMETjgQpbujbOFd06yS0gqxC8XLrmrc3eGayolqgs+4RYwx4QlL+BeeE8sHD2RYP/xHBAuNfE7rch+FynVjujkPXbt/fB4wiBTcvorOv4D3qSg3ubmrwEV7VOmmln9Br/hjChXPM=
-Received: from CY4PR12MB1798.namprd12.prod.outlook.com (10.175.59.9) by
- CY4PR12MB1285.namprd12.prod.outlook.com (10.168.167.150) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2032.17; Fri, 28 Jun 2019 21:59:33 +0000
-Received: from CY4PR12MB1798.namprd12.prod.outlook.com
- ([fe80::38d5:5f22:2510:9e44]) by CY4PR12MB1798.namprd12.prod.outlook.com
- ([fe80::38d5:5f22:2510:9e44%9]) with mapi id 15.20.2008.019; Fri, 28 Jun 2019
- 21:59:33 +0000
-From:   "Phillips, Kim" <kim.phillips@amd.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Phillips, Kim" <kim.phillips@amd.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Martin Liska <mliska@suse.cz>,
-        "Suthikulpanit, Suravee" <Suravee.Suthikulpanit@amd.com>,
-        "Natarajan, Janakarajan" <Janakarajan.Natarajan@amd.com>,
-        "Hook, Gary" <Gary.Hook@amd.com>, Pu Wen <puwen@hygon.cn>,
-        Stephane Eranian <eranian@google.com>,
-        Vince Weaver <vincent.weaver@maine.edu>,
-        "x86@kernel.org" <x86@kernel.org>
-Subject: [PATCH 2/2 RESEND3] perf/x86/amd/uncore: set the thread mask for F17h
- L3 PMCs
-Thread-Topic: [PATCH 2/2 RESEND3] perf/x86/amd/uncore: set the thread mask for
- F17h L3 PMCs
-Thread-Index: AQHVLfzE4xmWuP/6j0S77TtF+wX25g==
-Date:   Fri, 28 Jun 2019 21:59:33 +0000
-Message-ID: <20190628215906.4276-2-kim.phillips@amd.com>
-References: <20190628215906.4276-1-kim.phillips@amd.com>
-In-Reply-To: <20190628215906.4276-1-kim.phillips@amd.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: SN6PR06CA0016.namprd06.prod.outlook.com
- (2603:10b6:805:8e::29) To CY4PR12MB1798.namprd12.prod.outlook.com
- (2603:10b6:903:11a::9)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=kim.phillips@amd.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 2.22.0
-x-originating-ip: [165.204.77.1]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: beb4333a-0c18-4c64-a321-08d6fc13e6e5
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:CY4PR12MB1285;
-x-ms-traffictypediagnostic: CY4PR12MB1285:
-x-microsoft-antispam-prvs: <CY4PR12MB1285E7974A0779D6C91AFA1A87FC0@CY4PR12MB1285.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6790;
-x-forefront-prvs: 00826B6158
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(396003)(366004)(376002)(39860400002)(346002)(199004)(189003)(2906002)(110136005)(486006)(71190400001)(8936002)(186003)(71200400001)(25786009)(68736007)(7736002)(3846002)(45080400002)(81166006)(81156014)(6116002)(305945005)(5660300002)(7416002)(66476007)(64756008)(66556008)(99286004)(86362001)(8676002)(50226002)(1076003)(26005)(14454004)(316002)(36756003)(478600001)(66446008)(66946007)(6512007)(256004)(73956011)(102836004)(4326008)(476003)(66066001)(386003)(6436002)(6506007)(76176011)(52116002)(6486002)(11346002)(2616005)(446003)(53936002)(54906003);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR12MB1285;H:CY4PR12MB1798.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 380dK433YTfC6xh/u/acsLbCq84tIsjnHqOCG+DV2kzk27hTLAT8SPXnGprhftjOig3ilEVc6eI6RKIX28syxlizXDTM2O2zZewJ572kQDTL/ZrmlLxYkByWSTaJQJLGohs6uv5wvDA7DoWoOJ/S4iym0wlgT+Uz2TiMdb1uAdkJPC5pqtybCI9afPz/CkgBmUcYGJ7djX3hhVgoUkWjXQX3zayttSIl0pzvDOjHxj0EkwzHacFgSw2yY0EF05sCwtx5QFaWW4RvgOJ5232i21SGPu4w6W7VIV6MzpBs2055os6ln1a5JRWIJFHUx2B2zi65KROfQyavhUvE7U/qruMk6iRWHoKKAhWEHvuLczJzKRTKq2sHWcjoaDkinGMzMIeXtrfAZrSoMqhXa1MgFlEiEJwvcR0oC5kOTa4M9vg=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <848AB005D24AB4488FFC6F7659890929@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=74OPjw61WfkdZEzSLsys8fgk6PifSSbknmVm2NEw5mE=;
+        b=tBV36za12EawEv+1kbBGR9K45WvHbqKoMnvnBxWlnxnKqTayTKKBcageg21+paIXxV
+         No38B6UUFmHsPBIHSfqd7vqJbd4VTh2HkjSNwJRIWqU3Zti8tNUIy7eaYfkiY8IQp+/t
+         tAsWyQAbKtw9eu/3jOA4d6asamy7qXNdkO6MR2cz+VauhTtNO2WIWCh2aH/bdxTXxQse
+         aJVPi1C12NEKeaggLsETQ/4BEZ/jGjE+aDz4s8IiyD4u2qhEPDjnGho74HjhYhXvF/nW
+         wVipQaRl8ifcIxPTB17H9x2nqOhqEHQkhWpiQcewmEbSRnKPork3BN0A5uCOBdovIChP
+         Eyww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=74OPjw61WfkdZEzSLsys8fgk6PifSSbknmVm2NEw5mE=;
+        b=oBqhN0mbu+HvNKVjcVuqBjCopMiqA3QGVjR8lE2F0Kx9jc89PJHc7Y3VjHTMqfhweI
+         9TV+CtUgR8uq1wRHiOqe5985WsfSc+WbaCcCsqT42nY6o3jAkBoNbrQ/A3Rt0dVc+Nba
+         TIedQ4stw1LS0GnPOYsvcRyPGb241WA4fWzGpLOf1jxwmwcxuVDuBqalKiwDC+SjvwxB
+         a90xaOD0mjA4ujN1iXLcUnM99Hum83mcWKzAijN+MDmm8t/N6kR08Iou6hEx6m0oGX/4
+         K2bXS2jf54J6rFb9WJHip/BesNY9Rj7Iwgnv07uhrp2nLFZjbXbLNcntogatu3Zp4Sgn
+         5Qrw==
+X-Gm-Message-State: APjAAAWTaW6vsgnibWapTSIHjLPzz2nO4UZ7AK/RXCOpCtVg3qRBZInV
+        +hhI37CbHgrNgwuvM13F8PbkLpnM9JsqyefsSUbExA==
+X-Google-Smtp-Source: APXvYqwi+0sgRo6Yub93+YheljK4dvBVbSMCg9kwJeqfDTIYGWL86EBMwZgwzty3wSzHhEgmMJtgVl3Np9sV6nUOv7A=
+X-Received: by 2002:a67:e98f:: with SMTP id b15mr7973070vso.209.1561759638724;
+ Fri, 28 Jun 2019 15:07:18 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: beb4333a-0c18-4c64-a321-08d6fc13e6e5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Jun 2019 21:59:33.1994
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: kphillips@amd.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR12MB1285
+References: <20190628045008.39926-1-walken@google.com> <20190628165642.r754xozttawmg5yh@linux-r8p5>
+In-Reply-To: <20190628165642.r754xozttawmg5yh@linux-r8p5>
+From:   Michel Lespinasse <walken@google.com>
+Date:   Fri, 28 Jun 2019 15:07:06 -0700
+Message-ID: <CANN689HZDmN3aNf7--MOy1=Erctuqo=3inHHwYqDH+v98B8YTA@mail.gmail.com>
+Subject: Re: [PATCH] rbtree: avoid generating code twice for the cached versions
+To:     Davidlohr Bueso <dave@stgolabs.net>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        David Howells <dhowells@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kim Phillips <kim.phillips@amd.com>
+Hi Davidlohr,
 
-Fill in the L3 performance event select register ThreadMask
-bitfield, to enable per hardware thread accounting.
+On Fri, Jun 28, 2019 at 9:56 AM Davidlohr Bueso <dave@stgolabs.net> wrote:
+> I think this makes sense, and is more along the lines of the augmented
+> cached doing the static inline instead of separate instantiations of the
+> calls.
 
-Signed-off-by: Kim Phillips <kim.phillips@amd.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Martin Liska <mliska@suse.cz>
-Cc: Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>
-Cc: Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>
-Cc: Gary Hook <Gary.Hook@amd.com>
-Cc: Pu Wen <puwen@hygon.cn>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Cc: x86@kernel.org
----
-RESEND3: file sent with header:
+Thanks for the review.
 
-	Content-Type: text/plain; charset=3D"us-ascii"
+> >Change-Id: I0cb62be774fc0138b81188e6ae81d5f1da64578d
+> what is this?
 
-to work around a bug in the Microsoft Outlook SMTP servers.
+Gerrit code review insists on having this footer on every commit. I
+forgot to remove it before submitting. Please ignore it :)
 
- arch/x86/events/amd/uncore.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
-
-diff --git a/arch/x86/events/amd/uncore.c b/arch/x86/events/amd/uncore.c
-index c2c4ae5fbbfc..a6ea07f2aa84 100644
---- a/arch/x86/events/amd/uncore.c
-+++ b/arch/x86/events/amd/uncore.c
-@@ -202,15 +202,22 @@ static int amd_uncore_event_init(struct perf_event *e=
-vent)
- 	hwc->config =3D event->attr.config & AMD64_RAW_EVENT_MASK_NB;
- 	hwc->idx =3D -1;
-=20
-+	if (event->cpu < 0)
-+		return -EINVAL;
-+
- 	/*
- 	 * SliceMask and ThreadMask need to be set for certain L3 events in
- 	 * Family 17h. For other events, the two fields do not affect the count.
- 	 */
--	if (l3_mask && is_llc_event(event))
--		hwc->config |=3D (AMD64_L3_SLICE_MASK | AMD64_L3_THREAD_MASK);
-+	if (l3_mask && is_llc_event(event)) {
-+		int thread =3D 2 * (cpu_data(event->cpu).cpu_core_id % 4);
-=20
--	if (event->cpu < 0)
--		return -EINVAL;
-+		if (smp_num_siblings > 1)
-+			thread +=3D cpu_data(event->cpu).apicid & 1;
-+
-+		hwc->config |=3D (1ULL << (AMD64_L3_THREAD_SHIFT + thread) &
-+				AMD64_L3_THREAD_MASK) | AMD64_L3_SLICE_MASK;
-+	}
-=20
- 	uncore =3D event_to_amd_uncore(event);
- 	if (!uncore)
---=20
-2.22.0
-
+-- 
+Michel "Walken" Lespinasse
+A program is never fully debugged until the last user dies.
