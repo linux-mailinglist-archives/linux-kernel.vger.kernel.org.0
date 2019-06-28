@@ -2,14 +2,14 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28C625A18E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 18:57:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8857B5A18A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 18:57:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726916AbfF1Q4h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 12:56:37 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42502 "EHLO
+        id S1726944AbfF1Q4i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 12:56:38 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42504 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726605AbfF1Q4h (ORCPT
+        with ESMTP id S1726880AbfF1Q4h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 28 Jun 2019 12:56:37 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -18,29 +18,29 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=aC9fWPYqc3WgfJHm0DcB4vDnamPIlvUEdZf1IR7iVGA=; b=C2SlVTwCB5LA
-        48CwtqPxDjOYZHk4Vq8CvPo/1o4VALbxwkiqKEKYnGTeJKcvVl6ynlushqpdiO8HqBChpDVM6DW4c
-        SEtAeGdoT/f+MjYcE2bH1HYGZhCRB8WT21CAh/nUBSdVvEqnv7xv47QLNpJo2ZaqWZirU+/OJfiY1
-        ZpNvs=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=finisterre.sirena.org.uk)
+        List-Archive; bh=9kUAjdy2iW6Uc+2HQD3Freg59GbE2w/VGxT6YCQv6To=; b=ick8YSwuhryY
+        5UBEv9SG1hZuPf6yMSWnq94/a1Wi1LmaElRJNXqPrvTro+V9oaaky59JgmSTAk6XjFjsYK4DEKvDM
+        mI+cAGLv8FVuhHmh/KdEa2lk8upP6cxQ4G0wsP2wgqB/P5Yikb7RUJ7/fQ5SavHin8uS+Dl29aVzb
+        cyoK8=;
+Received: from [2001:470:1f1d:6b5:7e7a:91ff:fede:4a45] (helo=finisterre.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hguAm-0007BU-Hg; Fri, 28 Jun 2019 16:56:28 +0000
+        id 1hguAm-0007BX-NQ; Fri, 28 Jun 2019 16:56:28 +0000
 Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-        id 0CCBA44004B; Fri, 28 Jun 2019 17:56:28 +0100 (BST)
+        id 26843440046; Fri, 28 Jun 2019 17:56:28 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     alsa-devel@alsa-project.org,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        devicetree@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>,
+Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        Kevin Hilman <khilman@baylibre.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         Liam Girdwood <lgirdwood@gmail.com>,
         linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
         Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: meson: axg-card: remove useless check on codec" to the asoc tree
-In-Reply-To: <20190628081708.22039-1-jbrunet@baylibre.com>
+Subject: Applied "ASoC: soc-core: support dai_link with platforms_num != 1" to the asoc tree
+In-Reply-To: <20190627121350.21027-3-jbrunet@baylibre.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190628165628.0CCBA44004B@finisterre.sirena.org.uk>
+Message-Id: <20190628165628.26843440046@finisterre.sirena.org.uk>
 Date:   Fri, 28 Jun 2019 17:56:28 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -49,7 +49,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: meson: axg-card: remove useless check on codec
+   ASoC: soc-core: support dai_link with platforms_num != 1
 
 has been applied to the asoc tree at
 
@@ -74,33 +74,161 @@ to this mail.
 Thanks,
 Mark
 
-From 8fc22fa4b2cd983e4c542d1841b3d2212ad18ed4 Mon Sep 17 00:00:00 2001
+From 34614739988ad60c3493da66dd856002ee93edf9 Mon Sep 17 00:00:00 2001
 From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Fri, 28 Jun 2019 10:17:08 +0200
-Subject: [PATCH] ASoC: meson: axg-card: remove useless check on codec
+Date: Thu, 27 Jun 2019 14:13:50 +0200
+Subject: [PATCH] ASoC: soc-core: support dai_link with platforms_num != 1
 
-While checking cpus before dereferencing the pointer is required, it is
-not necessary for codecs. 'codec' can't possibly be NULL in the loop
+Add support platforms_num != 1 in dai_link. Initially, the main purpose of
+this change was to make the platform optional in the dai_link, instead of
+inserting the dummy platform driver.
 
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+This particular case had just been solved by Kuninori Morimoto with
+commit 1d7689892878 ("ASoC: soc-core: allow no Platform on dai_link").
+
+However, this change may still be useful for those who need multiple
+platform components on a single dai_link (it solves one of the FIXME
+note in soc-core)
+
+Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/meson/axg-card.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ include/sound/soc.h  |  6 +++++
+ sound/soc/soc-core.c | 59 ++++++++++++++++++--------------------------
+ 2 files changed, 30 insertions(+), 35 deletions(-)
 
-diff --git a/sound/soc/meson/axg-card.c b/sound/soc/meson/axg-card.c
-index 70bb0cbad233..14a8321744da 100644
---- a/sound/soc/meson/axg-card.c
-+++ b/sound/soc/meson/axg-card.c
-@@ -118,8 +118,7 @@ static void axg_card_clean_references(struct axg_card *priv)
- 			if (link->cpus)
- 				of_node_put(link->cpus->of_node);
- 			for_each_link_codecs(link, j, codec)
--				if (codec)
--					of_node_put(codec->of_node);
-+				of_node_put(codec->of_node);
+diff --git a/include/sound/soc.h b/include/sound/soc.h
+index 64405cdab8bb..4e8071269639 100644
+--- a/include/sound/soc.h
++++ b/include/sound/soc.h
+@@ -997,6 +997,12 @@ struct snd_soc_dai_link {
+ 	     ((i) < link->num_codecs) && ((codec) = &link->codecs[i]);	\
+ 	     (i)++)
+ 
++#define for_each_link_platforms(link, i, platform)			\
++	for ((i) = 0;							\
++	     ((i) < link->num_platforms) &&				\
++	     ((platform) = &link->platforms[i]);			\
++	     (i)++)
++
+ /*
+  * Sample 1 : Single CPU/Codec/Platform
+  *
+diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
+index b5f3c09311c3..b9061cd8d787 100644
+--- a/sound/soc/soc-core.c
++++ b/sound/soc/soc-core.c
+@@ -896,7 +896,7 @@ static int soc_bind_dai_link(struct snd_soc_card *card,
+ 	struct snd_soc_dai_link *dai_link)
+ {
+ 	struct snd_soc_pcm_runtime *rtd;
+-	struct snd_soc_dai_link_component *codecs;
++	struct snd_soc_dai_link_component *codec, *platform;
+ 	struct snd_soc_component *component;
+ 	int i;
+ 
+@@ -926,13 +926,14 @@ static int soc_bind_dai_link(struct snd_soc_card *card,
+ 
+ 	/* Find CODEC from registered CODECs */
+ 	rtd->num_codecs = dai_link->num_codecs;
+-	for_each_link_codecs(dai_link, i, codecs) {
+-		rtd->codec_dais[i] = snd_soc_find_dai(codecs);
++	for_each_link_codecs(dai_link, i, codec) {
++		rtd->codec_dais[i] = snd_soc_find_dai(codec);
+ 		if (!rtd->codec_dais[i]) {
+ 			dev_info(card->dev, "ASoC: CODEC DAI %s not registered\n",
+-				 codecs->dai_name);
++				 codec->dai_name);
+ 			goto _err_defer;
  		}
++
+ 		snd_soc_rtdcom_add(rtd, rtd->codec_dais[i]->component);
+ 	}
+ 
+@@ -940,12 +941,13 @@ static int soc_bind_dai_link(struct snd_soc_card *card,
+ 	rtd->codec_dai = rtd->codec_dais[0];
+ 
+ 	/* Find PLATFORM from registered PLATFORMs */
+-	for_each_component(component) {
+-		if (!snd_soc_is_matching_component(dai_link->platforms,
+-						   component))
+-			continue;
++	for_each_link_platforms(dai_link, i, platform) {
++		for_each_component(component) {
++			if (!snd_soc_is_matching_component(platform, component))
++				continue;
+ 
+-		snd_soc_rtdcom_add(rtd, component);
++			snd_soc_rtdcom_add(rtd, component);
++		}
+ 	}
+ 
+ 	soc_add_pcm_runtime(card, rtd);
+@@ -1058,15 +1060,14 @@ static int soc_init_dai_link(struct snd_soc_card *card,
+ 			     struct snd_soc_dai_link *link)
+ {
+ 	int i;
+-	struct snd_soc_dai_link_component *codec;
++	struct snd_soc_dai_link_component *codec, *platform;
+ 
+ 	for_each_link_codecs(link, i, codec) {
+ 		/*
+ 		 * Codec must be specified by 1 of name or OF node,
+ 		 * not both or neither.
+ 		 */
+-		if (!!codec->name ==
+-		    !!codec->of_node) {
++		if (!!codec->name == !!codec->of_node) {
+ 			dev_err(card->dev, "ASoC: Neither/both codec name/of_node are set for %s\n",
+ 				link->name);
+ 			return -EINVAL;
+@@ -1087,36 +1088,24 @@ static int soc_init_dai_link(struct snd_soc_card *card,
+ 			return -EPROBE_DEFER;
+ 	}
+ 
+-	/*
+-	 * Platform may be specified by either name or OF node,
+-	 * or no Platform.
+-	 *
+-	 * FIXME
+-	 *
+-	 * We need multi-platform support
+-	 */
+-	if (link->num_platforms > 0) {
+-
+-		if (link->num_platforms > 1) {
+-			dev_err(card->dev,
+-				"ASoC: multi platform is not yet supported %s\n",
+-				link->name);
+-			return -EINVAL;
+-		}
+-
+-		if (link->platforms->name && link->platforms->of_node) {
++	for_each_link_platforms(link, i, platform) {
++		/*
++		 * Platform may be specified by either name or OF node, but it
++		 * can be left unspecified, then no components will be inserted
++		 * in the rtdcom list
++		 */
++		if (!!platform->name == !!platform->of_node) {
+ 			dev_err(card->dev,
+-				"ASoC: Both platform name/of_node are set for %s\n",
++				"ASoC: Neither/both platform name/of_node are set for %s\n",
+ 				link->name);
+ 			return -EINVAL;
+ 		}
+ 
+ 		/*
+-		 * Defer card registartion if platform dai component is not
+-		 * added to component list.
++		 * Defer card registration if platform component is not added to
++		 * component list.
+ 		 */
+-		if ((link->platforms->of_node || link->platforms->name) &&
+-		    !soc_find_component(link->platforms))
++		if (!soc_find_component(platform))
+ 			return -EPROBE_DEFER;
  	}
  
 -- 
