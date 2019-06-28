@@ -2,82 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CCD2E5A1C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 19:06:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A1C05A1C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 19:06:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726791AbfF1RGK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 13:06:10 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:7678 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726653AbfF1RGJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 13:06:09 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 6AA019916D69D2CF479A;
-        Sat, 29 Jun 2019 01:06:03 +0800 (CST)
-Received: from [127.0.0.1] (10.202.227.238) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Sat, 29 Jun 2019
- 01:05:52 +0800
-Subject: Re: [PATCH v3 1/4] perf pmu: Support more complex PMU event aliasing
-To:     Andi Kleen <ak@linux.intel.com>
-References: <1561732552-143038-1-git-send-email-john.garry@huawei.com>
- <1561732552-143038-2-git-send-email-john.garry@huawei.com>
- <20190628153344.GZ31027@tassilo.jf.intel.com>
-CC:     <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
-        <alexander.shishkin@linux.intel.com>, <jolsa@redhat.com>,
-        <namhyung@kernel.org>, <tmricht@linux.ibm.com>,
-        <brueckner@linux.ibm.com>, <kan.liang@linux.intel.com>,
-        <ben@decadent.org.uk>, <mathieu.poirier@linaro.org>,
-        <mark.rutland@arm.com>, <will.deacon@arm.com>,
-        <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
+        id S1726707AbfF1RF5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 13:05:57 -0400
+Received: from foss.arm.com ([217.140.110.172]:52080 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726056AbfF1RF5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Jun 2019 13:05:57 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BF6F928;
+        Fri, 28 Jun 2019 10:05:56 -0700 (PDT)
+Received: from e121166-lin.cambridge.arm.com (unknown [10.1.196.255])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BC1AB3F706;
+        Fri, 28 Jun 2019 10:05:54 -0700 (PDT)
+Date:   Fri, 28 Jun 2019 18:05:52 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     "Z.q. Hou" <zhiqiang.hou@nxp.com>
+Cc:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
-        <zhangshaokun@hisilicon.com>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <5add76dc-ea92-9778-a65b-792f3ff17040@huawei.com>
-Date:   Fri, 28 Jun 2019 18:05:43 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "l.subrahmanya@mobiveil.co.in" <l.subrahmanya@mobiveil.co.in>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Leo Li <leoyang.li@nxp.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        Mingkai Hu <mingkai.hu@nxp.com>,
+        "M.h. Lian" <minghuan.lian@nxp.com>,
+        Xiaowei Bao <xiaowei.bao@nxp.com>
+Subject: Re: [PATCHv5 10/20] PCI: mobiveil: Fix the INTx process errors
+Message-ID: <20190628170552.GD21829@e121166-lin.cambridge.arm.com>
+References: <20190412083635.33626-1-Zhiqiang.Hou@nxp.com>
+ <20190412083635.33626-11-Zhiqiang.Hou@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <20190628153344.GZ31027@tassilo.jf.intel.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.227.238]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190412083635.33626-11-Zhiqiang.Hou@nxp.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28/06/2019 16:33, Andi Kleen wrote:
->> +	/*
->> +	 * Match more complex aliases where the alias name is a comma-delimited
->> +	 * list of tokens, orderly contained in the matching PMU name.
->> +	 *
->> +	 * Example: For alias "socket,pmuname" and PMU "socketX_pmunameY", we
->> +	 *	    match "socket" in "socketX_pmunameY" and then "pmuname" in
->> +	 *	    "pmunameY".
->
-> This needs to be documented in some manpage.
+On Fri, Apr 12, 2019 at 08:36:12AM +0000, Z.q. Hou wrote:
+> From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+> 
+> In the loop block, there is not code to update the loop key,
+> this patch updates the loop key by re-read the INTx status
+> register.
+> 
+> This patch also add the clearing of the handled INTx status.
 
-Hi Andi,
+This is two bugs and that requires two patches, each of them fixing a
+specific issue.
 
-As I see, today the man page does not mention the matching from the 
-alias events declared in the jsons.
+So split the patch into two and repost it.
 
-The perf list command shows these aliases, so I am not sure how useful 
-that info is adding to the man page.
+Lorenzo
 
-What the man page does mention is the glob matching on the PMU device 
-name - like how "imc" can match PMU device "uncore_imc_0", but I'm not 
-changing around this.
-
-Thanks,
-John
-
->
-> -Andi
->
->
-> .
->
-
-
+> Note: Need MV to test this fix.
+> 
+> Fixes: 9af6bcb11e12 ("PCI: mobiveil: Add Mobiveil PCIe Host Bridge IP driver")
+> Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+> Reviewed-by: Minghuan Lian <Minghuan.Lian@nxp.com>
+> Reviewed-by: Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>
+> ---
+> V5:
+>  - Corrected and retouched the subject and changelog.
+> 
+>  drivers/pci/controller/pcie-mobiveil.c | 13 +++++++++----
+>  1 file changed, 9 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-mobiveil.c b/drivers/pci/controller/pcie-mobiveil.c
+> index 4ba458474e42..78e575e71f4d 100644
+> --- a/drivers/pci/controller/pcie-mobiveil.c
+> +++ b/drivers/pci/controller/pcie-mobiveil.c
+> @@ -361,6 +361,7 @@ static void mobiveil_pcie_isr(struct irq_desc *desc)
+>  	/* Handle INTx */
+>  	if (intr_status & PAB_INTP_INTX_MASK) {
+>  		shifted_status = csr_readl(pcie, PAB_INTP_AMBA_MISC_STAT);
+> +		shifted_status &= PAB_INTP_INTX_MASK;
+>  		shifted_status >>= PAB_INTX_START;
+>  		do {
+>  			for_each_set_bit(bit, &shifted_status, PCI_NUM_INTX) {
+> @@ -372,12 +373,16 @@ static void mobiveil_pcie_isr(struct irq_desc *desc)
+>  					dev_err_ratelimited(dev, "unexpected IRQ, INT%d\n",
+>  							    bit);
+>  
+> -				/* clear interrupt */
+> -				csr_writel(pcie,
+> -					   shifted_status << PAB_INTX_START,
+> +				/* clear interrupt handled */
+> +				csr_writel(pcie, 1 << (PAB_INTX_START + bit),
+>  					   PAB_INTP_AMBA_MISC_STAT);
+>  			}
+> -		} while ((shifted_status >> PAB_INTX_START) != 0);
+> +
+> +			shifted_status = csr_readl(pcie,
+> +						   PAB_INTP_AMBA_MISC_STAT);
+> +			shifted_status &= PAB_INTP_INTX_MASK;
+> +			shifted_status >>= PAB_INTX_START;
+> +		} while (shifted_status != 0);
+>  	}
+>  
+>  	/* read extra MSI status register */
+> -- 
+> 2.17.1
+> 
