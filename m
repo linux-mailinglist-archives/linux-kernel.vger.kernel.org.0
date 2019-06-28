@@ -2,49 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C67C59B6C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 14:33:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF5B359B86
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 14:33:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727385AbfF1Mc7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 08:32:59 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:39246 "EHLO
+        id S1727617AbfF1Mdh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 08:33:37 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:39074 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726686AbfF1Mak (ORCPT
+        with ESMTP id S1726760AbfF1Mah (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 08:30:40 -0400
+        Fri, 28 Jun 2019 08:30:37 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=pnoOoNqvP9lmhsaftnP+6RshP9sKpNpxCGCfC6q8bcM=; b=TnE3sHN0v11shtZZiH/buLE4MU
-        Uu/JRUcxc6txUIltVAeBEY67hQS1OJ7yZwN1Ase47osfgI1U7vPKX0lyJKnTrhcspZOXFapmwwo/O
-        hN5TezEeoKfegTe1O4NzPoiVM0It2wEsM/k39lOhPm8c8NCTRmtoeqkMqf94TK6ig0pdKiwObPUFV
-        ds2BGtpFoFSxonIMIMuyQ2mR2dUAcfcV19hIyvFxIEhLnKiN6Y/MqbFiYCKIPWk7hzvCPK1Twd0KA
-        anM8T9Fq3X/9DKnoPPB2dGlvIfISHDBQVKcGUr606mVxxkbbvl8UkVHT/tbkyBqZQecnW/B/nu3wH
-        tOHngZeQ==;
+        bh=0aEolBB9p0NRfu6v8+LX19O7Lh4+iqEIQaIwN5pAjCQ=; b=o+Rc+T5A749UHNUXIx8Ef1huFf
+        CNZwmFoTIPR7aVP6ISJfnQ9S+0c8cVmA0XV9deU0aCEKwi7UUvrg7bckLpcVJ4+a9IV5prsBpV6Y5
+        62PODtxVcBM4S/uQNoYTiTTgKJemkHeGuxgmdnw8fnhKMOXaoKyUxpwT1vi+4YbRh1/AGL29wNdco
+        9me4Tntve7pkVYLO0a4TgSkN5fufuyo7e8tknMubgeSBxMtDnoQVZ9XPZanPKxRuLsOu5vKZSOSNF
+        xswG0844p0JWj9sWm+tIlCQiFdDcg1YDCd77CCRFti/qgxLlAp2Fn57J81TP4hYMy5+qNZnOrZSH1
+        6NVXhuhg==;
 Received: from [186.213.242.156] (helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hgq1U-00054y-3a; Fri, 28 Jun 2019 12:30:36 +0000
+        id 1hgq1U-000550-3S; Fri, 28 Jun 2019 12:30:36 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hgq1S-0005RO-3O; Fri, 28 Jun 2019 09:30:34 -0300
+        id 1hgq1S-0005RT-49; Fri, 28 Jun 2019 09:30:34 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        linux-mtd@lists.infradead.org
-Subject: [PATCH 06/39] docs: mtd: move it to the driver-api book
-Date:   Fri, 28 Jun 2019 09:29:59 -0300
-Message-Id: <5153e27b3729e097e3069f206fb6143ca6457c62.1561724493.git.mchehab+samsung@kernel.org>
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
+Subject: [PATCH 07/39] docs: nfc: add it to the driver-api book
+Date:   Fri, 28 Jun 2019 09:30:00 -0300
+Message-Id: <8a86a20fe20b08bff95861e22b6d26673f5e4952.1561724493.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <cover.1561724493.git.mchehab+samsung@kernel.org>
 References: <cover.1561724493.git.mchehab+samsung@kernel.org>
@@ -55,76 +48,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While I was tempted to move it to admin-guide, as some docs
-there are more userspace-faced, there are some very technical
-discussions about memory error correction code from the Kernel
-implementer's PoV. So, let's place it inside the driver-api
-book.
+Most of the descriptions here are oriented to a Kernel developer.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
  Documentation/driver-api/index.rst               | 1 +
- Documentation/{ => driver-api}/mtd/index.rst     | 2 --
- Documentation/{ => driver-api}/mtd/intel-spi.rst | 0
- Documentation/{ => driver-api}/mtd/nand_ecc.rst  | 0
- Documentation/{ => driver-api}/mtd/spi-nor.rst   | 0
- drivers/mtd/nand/raw/nand_ecc.c                  | 2 +-
- 6 files changed, 2 insertions(+), 3 deletions(-)
- rename Documentation/{ => driver-api}/mtd/index.rst (94%)
- rename Documentation/{ => driver-api}/mtd/intel-spi.rst (100%)
- rename Documentation/{ => driver-api}/mtd/nand_ecc.rst (100%)
- rename Documentation/{ => driver-api}/mtd/spi-nor.rst (100%)
+ Documentation/{ => driver-api}/nfc/index.rst     | 2 --
+ Documentation/{ => driver-api}/nfc/nfc-hci.rst   | 0
+ Documentation/{ => driver-api}/nfc/nfc-pn544.rst | 0
+ 4 files changed, 1 insertion(+), 2 deletions(-)
+ rename Documentation/{ => driver-api}/nfc/index.rst (92%)
+ rename Documentation/{ => driver-api}/nfc/nfc-hci.rst (100%)
+ rename Documentation/{ => driver-api}/nfc/nfc-pn544.rst (100%)
 
 diff --git a/Documentation/driver-api/index.rst b/Documentation/driver-api/index.rst
-index 41f5ce7dc34c..488c0347fa98 100644
+index 488c0347fa98..a8b3634287de 100644
 --- a/Documentation/driver-api/index.rst
 +++ b/Documentation/driver-api/index.rst
-@@ -43,6 +43,7 @@ available subsections can be seen below.
-    mtdnand
-    miscellaneous
-    mei/index
-+   mtd/index
-    nvdimm/index
-    w1
-    rapidio/index
-diff --git a/Documentation/mtd/index.rst b/Documentation/driver-api/mtd/index.rst
-similarity index 94%
-rename from Documentation/mtd/index.rst
-rename to Documentation/driver-api/mtd/index.rst
-index 4fdae418ac97..2e0e7cc4055e 100644
---- a/Documentation/mtd/index.rst
-+++ b/Documentation/driver-api/mtd/index.rst
+@@ -55,6 +55,7 @@ available subsections can be seen below.
+    pinctl
+    gpio/index
+    misc_devices
++   nfc/index
+    dmaengine/index
+    slimbus
+    soundwire/index
+diff --git a/Documentation/nfc/index.rst b/Documentation/driver-api/nfc/index.rst
+similarity index 92%
+rename from Documentation/nfc/index.rst
+rename to Documentation/driver-api/nfc/index.rst
+index 4f4947fce80d..3afb2c0c2e3c 100644
+--- a/Documentation/nfc/index.rst
++++ b/Documentation/driver-api/nfc/index.rst
 @@ -1,5 +1,3 @@
 -:orphan:
 -
- ==============================
- Memory Technology Device (MTD)
- ==============================
-diff --git a/Documentation/mtd/intel-spi.rst b/Documentation/driver-api/mtd/intel-spi.rst
+ ========================
+ Near Field Communication
+ ========================
+diff --git a/Documentation/nfc/nfc-hci.rst b/Documentation/driver-api/nfc/nfc-hci.rst
 similarity index 100%
-rename from Documentation/mtd/intel-spi.rst
-rename to Documentation/driver-api/mtd/intel-spi.rst
-diff --git a/Documentation/mtd/nand_ecc.rst b/Documentation/driver-api/mtd/nand_ecc.rst
+rename from Documentation/nfc/nfc-hci.rst
+rename to Documentation/driver-api/nfc/nfc-hci.rst
+diff --git a/Documentation/nfc/nfc-pn544.rst b/Documentation/driver-api/nfc/nfc-pn544.rst
 similarity index 100%
-rename from Documentation/mtd/nand_ecc.rst
-rename to Documentation/driver-api/mtd/nand_ecc.rst
-diff --git a/Documentation/mtd/spi-nor.rst b/Documentation/driver-api/mtd/spi-nor.rst
-similarity index 100%
-rename from Documentation/mtd/spi-nor.rst
-rename to Documentation/driver-api/mtd/spi-nor.rst
-diff --git a/drivers/mtd/nand/raw/nand_ecc.c b/drivers/mtd/nand/raw/nand_ecc.c
-index f6a7808db818..09fdced659f5 100644
---- a/drivers/mtd/nand/raw/nand_ecc.c
-+++ b/drivers/mtd/nand/raw/nand_ecc.c
-@@ -11,7 +11,7 @@
-  *   Thomas Gleixner (tglx@linutronix.de)
-  *
-  * Information on how this algorithm works and how it was developed
-- * can be found in Documentation/mtd/nand_ecc.rst
-+ * can be found in Documentation/driver-api/mtd/nand_ecc.rst
-  */
- 
- #include <linux/types.h>
+rename from Documentation/nfc/nfc-pn544.rst
+rename to Documentation/driver-api/nfc/nfc-pn544.rst
 -- 
 2.21.0
 
