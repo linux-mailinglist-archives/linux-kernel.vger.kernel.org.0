@@ -2,201 +2,219 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4A155962A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 10:32:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B544659625
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 10:31:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726691AbfF1Ici (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 04:32:38 -0400
-Received: from twhmllg4.macronix.com ([211.75.127.132]:51313 "EHLO
-        TWHMLLG4.macronix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726465AbfF1Ici (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 04:32:38 -0400
-Received: from twhfmnt1.mxic.com.tw (twhfm1p2.macronix.com [172.17.20.92])
-        by TWHMLLG4.macronix.com with ESMTP id x5S8VFLX077566;
-        Fri, 28 Jun 2019 16:31:15 +0800 (GMT-8)
-        (envelope-from masonccyang@mxic.com.tw)
-Received: from MXML06C.mxic.com.tw (mxml06c.macronix.com [172.17.14.55])
-        by Forcepoint Email with ESMTP id AE28135DC1DE6750D845;
-        Fri, 28 Jun 2019 16:31:15 +0800 (CST)
-In-Reply-To: <20190628091836.3148d450@xps13>
-References: <1561443056-13766-1-git-send-email-masonccyang@mxic.com.tw> <1561443056-13766-2-git-send-email-masonccyang@mxic.com.tw>
-        <20190627193635.29abff43@xps13> <OFDDC43C05.7B4092B5-ON48258427.001EE57E-48258427.002122D1@mxic.com.tw> <20190628091836.3148d450@xps13>
-To:     "Miquel Raynal" <miquel.raynal@bootlin.com>
-Cc:     anders.roxell@linaro.org, bbrezillon@kernel.org,
-        broonie@kernel.org, christophe.kerello@st.com,
-        computersforpeace@gmail.com, devicetree@vger.kernel.org,
-        dwmw2@infradead.org, jianxin.pan@amlogic.com, juliensu@mxic.com.tw,
-        lee.jones@linaro.org, liang.yang@amlogic.com,
-        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
-        marek.vasut@gmail.com, paul@crapouillou.net, paul.burton@mips.com,
-        richard@nod.at, stefan@agner.ch, vigneshr@ti.com
-Subject: Re: [PATCH v4 1/2] mtd: rawnand: Add Macronix Raw NAND controller
+        id S1726605AbfF1Iba (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 04:31:30 -0400
+Received: from mga06.intel.com ([134.134.136.31]:34029 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726487AbfF1Ib3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Jun 2019 04:31:29 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jun 2019 01:31:28 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,427,1557212400"; 
+   d="scan'208";a="156507439"
+Received: from shao2-debian.sh.intel.com (HELO [10.239.13.6]) ([10.239.13.6])
+  by orsmga008.jf.intel.com with ESMTP; 28 Jun 2019 01:31:27 -0700
+Subject: Re: [LKP] fcc784be83 [ 150.952780] WARNING: held lock freed!
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        kernel test robot <lkp@intel.com>
+Cc:     LKP <lkp@01.org>, Ingo Molnar <mingo@kernel.org>,
+        linux-kernel@vger.kernel.org
+References: <20190619024114.GI7221@shao2-debian>
+ <20190627103202.2680e4e0@gandalf.local.home>
+From:   Rong Chen <rong.a.chen@intel.com>
+Message-ID: <515d36cc-343d-e686-9e96-a29166039f7f@intel.com>
+Date:   Fri, 28 Jun 2019 16:31:35 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-X-KeepSent: 2EDB7089:FAD92F61-48258427:002D122A;
- type=4; name=$KeepSent
-X-Mailer: Lotus Notes Release 8.5.3FP4 SHF90 June 10, 2013
-Message-ID: <OF2EDB7089.FAD92F61-ON48258427.002D122A-48258427.002ECEF3@mxic.com.tw>
-From:   masonccyang@mxic.com.tw
-Date:   Fri, 28 Jun 2019 16:31:16 +0800
-X-MIMETrack: Serialize by Router on MXML06C/TAIWAN/MXIC(Release 9.0.1FP10 HF265|July 25, 2018) at
- 2019/06/28 PM 04:31:15,
-        Serialize complete at 2019/06/28 PM 04:31:15
-Content-Type: text/plain; charset="US-ASCII"
-X-MAIL: TWHMLLG4.macronix.com x5S8VFLX077566
+In-Reply-To: <20190627103202.2680e4e0@gandalf.local.home>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 6/27/19 10:32 PM, Steven Rostedt wrote:
+> On Wed, 19 Jun 2019 10:41:14 +0800
+> kernel test robot <lkp@intel.com> wrote:
+>
+>> Greetings,
+>>
+>> 0day kernel testing robot got the below dmesg and the first bad commit is
+>>
+>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+>>
+>> commit fcc784be837714a9173b372ff9fb9b514590dad9
+>> Author:     Steven Rostedt (VMware) <rostedt@goodmis.org>
+>> AuthorDate: Wed Apr 4 14:06:30 2018 -0400
+>> Commit:     Ingo Molnar <mingo@kernel.org>
+>> CommitDate: Thu Jun 21 18:19:01 2018 +0200
+>>
+>>      locking/lockdep: Do not record IRQ state within lockdep code
+>>      
+>>      While debugging where things were going wrong with mapping
+>>      enabling/disabling interrupts with the lockdep state and actual real
+>>      enabling and disabling interrupts, I had to silent the IRQ
+>>      disabling/enabling in debug_check_no_locks_freed() because it was
+>>      always showing up as it was called before the splat was.
+>>      
+>>      Use raw_local_irq_save/restore() for not only debug_check_no_locks_freed()
+>>      but for all internal lockdep functions, as they hide useful information
+>>      about where interrupts were used incorrectly last.
+>>      
+>>      Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+>>      Cc: Andrew Morton <akpm@linux-foundation.org>
+>>      Cc: Linus Torvalds <torvalds@linux-foundation.org>
+>>      Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+>>      Cc: Peter Zijlstra <peterz@infradead.org>
+>>      Cc: Thomas Gleixner <tglx@linutronix.de>
+>>      Cc: Will Deacon <will.deacon@arm.com>
+>>      Link: https://lkml.kernel.org/lkml/20180404140630.3f4f4c7a@gandalf.local.home
+>>      Signed-off-by: Ingo Molnar <mingo@kernel.org>
+>>
+> I can crash with this config with and without this commit.
+>
+> Are you sure the bug is with this commit? Can you consistently
+> reproduce the problem with the commit applied, and consistently not see
+> the problem with the commit removed? If not, then you should definitely
+> add that procedure before sending these reports, otherwise they will
+> start to be ignored.
 
-Hi Miquel,
+Hi Steve,
 
-> > 
-> > > > Add a driver for Macronix raw NAND controller. 
-> > > 
-> > > Could you pass userspace major MTD tests and can you 
-attach/mount/edit
-> > > a UBI/UBIFS storage? 
-> > 
-> > mtd_debug passed and using dd utility to read and write 
-> > with md5sum checking passed.
-> 
-> Please don't use dd, use nanddump/nandwrite/flasherase/nandbiterrs and
-> run the other tests from the mtd-utils test suite (available in
-> Buildroot for instance).
-> 
+Sorry for the inconvenience, the robot noticed that the error "WARNING: 
+held lock freed!" first appears with commit fcc784be83
+and didn't find the error in parent commit. then it sent it out 
+automatically. We'll improve the robot to sent reports more carefully.
 
-Got it.
-
-But may I know why 'dd' utility is not preferences ?
-I generate a random data file and write to Flash by
-using dd with bs=page size and read data back from Flash.
-Checking data by md5sum.
-The write and read testing data size is easily adjustable.
-
-
-> > 
-> > > > +static int mxic_nfc_clk_enable(struct mxic_nand_ctlr *nfc)
-> > > > +{
-> > > > +   int ret;
-> > > > +
-> > > > +   ret = clk_prepare_enable(nfc->send_clk);
-> > > > +   if (ret)
-> > > > +      return ret;
-> > > > +
-> > > > +   ret = clk_prepare_enable(nfc->send_dly_clk);
-> > > > +   if (ret)
-> > > > +      goto err_send_dly_clk; 
-> > > 
-> > > I'm not sure why you only enable 2 out of 3 clocks and also why ou
-> > > handle two of them here (which is great, I prefer having a separate
-> > > helper for that) and the other one elsewhere?
-> > > 
-> > 
-> > send_clk and send_dly_clk are device domain clocks.
-> > 
-> > send_clk is clock without phase delay to ps_clk, used for sending 
-device
-> > signals except for SIO[7:0].
-> > send_dly_clk is clock with phase delay to ps_clk, used for sending 
-> > SIO[7:0]
-> > 
-> > ps_clk is system domain clock and it's a source clock of send_clk and 
-> > send_dly_clk.
-> 
-> And why is that explaining the fact that you configure them in
-> different places? You can explain this with a nice comment at the top
-> of the function, but I would rather prefer that you handle all three
-> clocks in one go if possible.
-> 
-
-okay, will patch it.
-
-> > > > +static int mxic_nfc_data_xfer(struct mxic_nand_ctlr *nfc, const 
-void 
-> > *txbuf,
-> > > > +               void *rxbuf, unsigned int len)
-> > > > +{
-> > > > +   unsigned int pos = 0;
-> > > > +
-> > > > +   while (pos < len) {
-> > > > +      unsigned int nbytes = len - pos;
-> > > > +      u32 data = 0xffffffff;
-> > > > +      u32 sts;
-> > > > +      int ret;
-> > > > +
-> > > > +      if (nbytes > 4)
-> > > > +         nbytes = 4;
-> > > > +
-> > > > +      if (txbuf)
-> > > > +         memcpy(&data, txbuf + pos, nbytes);
-> > > > +
-> > > > +      ret = readl_poll_timeout(nfc->regs + INT_STS, sts,
-> > > > +                sts & INT_TX_EMPTY, 0, USEC_PER_SEC);
-> > > > +      if (ret)
-> > > > +         return ret;
-> > > > +
-> > > > +      writel(data, nfc->regs + TXD(nbytes % 4));
-> > > > +
-> > > > +      if (rxbuf) {
-> > > > +         ret = readl_poll_timeout(nfc->regs + INT_STS, sts,
-> > > > +                   sts & INT_TX_EMPTY, 0,
-> > > > +                   USEC_PER_SEC);
-> > > > +         if (ret)
-> > > > +            return ret;
-> > > > +
-> > > > +         ret = readl_poll_timeout(nfc->regs + INT_STS, sts,
-> > > > +                   sts & INT_RX_NOT_EMPTY, 0,
-> > > > +                   USEC_PER_SEC);
-> > > > +         if (ret)
-> > > > +            return ret;
-> > > > +
-> > > > +         data = readl(nfc->regs + RXD);
-> > > > +         data >>= (8 * (4 - nbytes));
-> > > > +         memcpy(rxbuf + pos, &data, nbytes);
-> > > > +         WARN_ON(readl(nfc->regs + INT_STS) & INT_RX_NOT_EMPTY);
-> > > > +      } else {
-> > > > +         readl(nfc->regs + RXD);
-> > > > +      }
-> > > > +      WARN_ON(readl(nfc->regs + INT_STS) & INT_RX_NOT_EMPTY); 
-> > > 
-> > > WARN_ON() is maybe a bit overkill here? 
-> > 
-> > should I remove it ?
-> 
-> I would stick to regular dev_warn.
-
-Got it, will patch it.
-
-thanks & best regards,
-Mason
-
-CONFIDENTIALITY NOTE:
-
-This e-mail and any attachments may contain confidential information 
-and/or personal data, which is protected by applicable laws. Please be 
-reminded that duplication, disclosure, distribution, or use of this e-mail 
-(and/or its attachments) or any part thereof is prohibited. If you receive 
-this e-mail in error, please notify us immediately and delete this mail as 
-well as its attachment(s) from your system. In addition, please be 
-informed that collection, processing, and/or use of personal data is 
-prohibited unless expressly permitted by personal data protection laws. 
-Thank you for your attention and cooperation.
-
-Macronix International Co., Ltd.
-
-=====================================================================
+Best Regards,
+Rong Chen
 
 
-
-============================================================================
-
-CONFIDENTIALITY NOTE:
-
-This e-mail and any attachments may contain confidential information and/or personal data, which is protected by applicable laws. Please be reminded that duplication, disclosure, distribution, or use of this e-mail (and/or its attachments) or any part thereof is prohibited. If you receive this e-mail in error, please notify us immediately and delete this mail as well as its attachment(s) from your system. In addition, please be informed that collection, processing, and/or use of personal data is prohibited unless expressly permitted by personal data protection laws. Thank you for your attention and cooperation.
-
-Macronix International Co., Ltd.
-
-=====================================================================
-
+>
+> -- Steve
+>
+>
+>> 03eeafdd9a  locking/rwsem: Fix up_read_non_owner() warning with DEBUG_RWSEMS
+>> fcc784be83  locking/lockdep: Do not record IRQ state within lockdep code
+>> bed3c0d84e  Merge tag 'for-5.2-rc5-tag' of git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux
+>> 1c6b40509d  Add linux-next specific files for 20190618
+>> +----------------------------------------------------------------------------------+------------+------------+------------+---------------+
+>> |                                                                                  | 03eeafdd9a | fcc784be83 | bed3c0d84e | next-20190618 |
+>> +----------------------------------------------------------------------------------+------------+------------+------------+---------------+
+>> | boot_successes                                                                   | 874        | 277        | 276        | 21            |
+>> | boot_failures                                                                    | 14         | 19         | 64         | 7             |
+>> | BUG:soft_lockup-CPU##stuck_for#s                                                 | 11         | 2          | 4          |               |
+>> | EIP:smp_call_function_single                                                     | 1          | 1          |            |               |
+>> | Kernel_panic-not_syncing:softlockup:hung_tasks                                   | 11         | 2          | 4          |               |
+>> | EIP:_raw_spin_unlock_irqrestore                                                  | 3          | 0          | 1          |               |
+>> | EIP:__copy_user_ll                                                               | 2          | 0          | 1          |               |
+>> | invoked_oom-killer:gfp_mask=0x                                                   | 1          | 2          | 1          |               |
+>> | Mem-Info                                                                         | 1          | 2          | 2          |               |
+>> | EIP:wp_page_copy                                                                 | 3          |            |            |               |
+>> | BUG:kernel_hang_in_early-boot_stage                                              | 1          |            |            |               |
+>> | EIP:shmem_getpage_gfp                                                            | 2          | 0          | 1          |               |
+>> | BUG:workqueue_lockup-pool                                                        | 1          | 0          | 1          |               |
+>> | BUG:kernel_hang_in_boot-around-mounting-root_stage                               | 0          | 1          |            |               |
+>> | Out_of_memory:Kill_process                                                       | 0          | 1          |            |               |
+>> | WARNING:held_lock_freed                                                          | 0          | 13         | 58         | 7             |
+>> | is_freeing_memory#-#,with_a_lock_still_held_there                                | 0          | 13         | 58         | 7             |
+>> | BUG:kernel_hang_in_early-boot_stage,last_printk:early_console_in_setup_code      | 0          | 1          |            |               |
+>> | EIP:rcu_is_watching                                                              | 0          | 1          |            |               |
+>> | EIP:ring_buffer_consume                                                          | 0          | 0          | 1          |               |
+>> | page_allocation_failure:order:#,mode:#(GFP_KERNEL|__GFP_NORETRY),nodemask=(null) | 0          | 0          | 1          |               |
+>> | BUG:unable_to_handle_page_fault_for_address                                      | 0          | 0          | 1          |               |
+>> | Oops:#[##]                                                                       | 0          | 0          | 1          |               |
+>> | EIP:debug_check_no_locks_freed                                                   | 0          | 0          | 1          |               |
+>> | Kernel_panic-not_syncing:Fatal_exception                                         | 0          | 0          | 1          |               |
+>> +----------------------------------------------------------------------------------+------------+------------+------------+---------------+
+>>
+>> If you fix the issue, kindly add following tag
+>> Reported-by: kernel test robot <lkp@intel.com>
+>>
+>> [  147.470176] init: tty3 main process (364) terminated with status 1
+>> [  147.497211] init: tty3 main process ended, respawning
+>> [  147.612415] init: tty6 main process (365) terminated with status 1
+>> [  147.687364] init: tty6 main process ended, respawning
+>> [  150.937355]
+>> [  150.941927] =========================
+>> [  150.952780] WARNING: held lock freed!
+>> [  150.963993] 4.17.0-09747-gfcc784b #1 Tainted: G                T
+>> [  150.989489] -------------------------
+>> [  151.005112] trinity-main/356 is freeing memory ce93de20-ce93de47, with a lock still held there!
+>> [  151.040984] (ptrval) (&wq#3){....}, at: __wake_up_common_lock+0x5a/0x140
+>> [  151.069147] 1 lock held by trinity-main/356:
+>> [  151.087139]  #0: (ptrval) (&sb->s_type->i_mutex_key){....}, at: iterate_dir+0x42/0x2a0
+>> [  151.117861]
+>> [  151.117861] stack backtrace:
+>> [  151.132116] CPU: 1 PID: 356 Comm: trinity-main Tainted: G                T 4.17.0-09747-gfcc784b #1
+>> [  151.162025] Call Trace:
+>> [  151.170423]  dump_stack+0x2bc/0x41a
+>> [  151.182441]  debug_check_no_locks_freed+0x354/0x370
+>> [  151.199065]  __raw_spin_lock_init+0x29/0x80
+>> [  151.214099]  __init_waitqueue_head+0x2e/0x70
+>> [  151.228615]  ? proc_tgid_base_lookup+0x40/0x40
+>> [  151.243819]  proc_fill_cache+0x118/0x360
+>> [  151.256974]  ? format_decode+0x1a6/0x890
+>> [  151.270037]  ? format_decode+0x308/0x890
+>> [  151.283679]  ? vsnprintf+0x622/0x860
+>> [  151.293724]  proc_map_files_readdir+0x648/0x6a0
+>> [  151.306619]  ? proc_tgid_base_lookup+0x40/0x40
+>> [  151.320722]  iterate_dir+0x225/0x2a0
+>> [  151.331637]  ? __fget_light+0x7f/0x100
+>> [  151.342010]  ksys_getdents64+0x1ac/0x2f0
+>> [  151.353610]  ? sys_old_readdir+0x160/0x160
+>> [  151.366017]  sys_getdents64+0x24/0x40
+>> [  151.377653]  do_fast_syscall_32+0x14b/0x780
+>> [  151.392209]  entry_SYSENTER_32+0x53/0x86
+>> [  151.404786] EIP: 0xa7fc4cd9
+>> [  151.423581] Code: 08 8b 80 5c cd ff ff 85 d2 74 02 89 02 5d c3 8b 04 24 c3 8b 0c 24 c3 8b 1c 24 c3 8b 3c 24 c3 90 90 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d 76 00 58 b8 77 00 00 00 cd 80 90 8d 76
+>> [  151.547420] EAX: ffffffda EBX: 0000002b ECX: 08aefedc EDX: 00008000
+>> [  151.586666] ESI: 08aefedc EDI: ffffffd0 EBP: 00000026 ESP: af88aac4
+>> [  151.605753] DS: 007b ES: 007b FS: 0000 GS: 0033 SS: 007b EFLAGS: 00000246
+>> [main] Added 10680 filenames from /proc
+>> [main] Added 13148 filenames from /proc
+>> [main] Added 13151 filenames from /proc
+>> [  156.784347] init: tty4 main process (366) terminated with status 1
+>> [  156.849880] init: tty4 main process ended, respawning
+>>
+>>                                                            # HH:MM RESULT GOOD BAD GOOD_BUT_DIRTY DIRTY_NOT_BAD
+>> git bisect start v4.18 v4.17 --
+>> git bisect  bad c81b995f00c7a1c2ca9ad67f5bb4a50d02f98f84  # 23:06  B      6     1    0   0  Merge branch 'perf-urgent-for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
+>> git bisect good 2a70ea5cda00214a1d573acf19fa0cd06d947e38  # 23:43  G    205     0    9   9  Merge tag 'hsi-for-4.18' of git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-hsi
+>> git bisect good e7655d2b25466c534ed1f539367dae595bb0bd20  # 00:13  G    209     0   15  15  Merge tag 'for-4.18-part2-tag' of git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux
+>> git bisect good 6d90eb7ba341b3eb035121eff0b69d370cbc251e  # 00:44  G    206     0   18  18  Merge tag 'dma-rename-4.18' of git://git.infradead.org/users/hch/dma-mapping
+>> git bisect good 5e2204832b20ef9db859dd6a2e955ac3e33eef27  # 01:07  G    212     0    9   9  Merge tag 'powerpc-4.18-2' of git://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux
+>> git bisect good 6242258b6b472f8fdd8ed9b735cc1190c185d16d  # 01:37  G    206     0   24  24  Merge branch 'timers-urgent-for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
+>> git bisect  bad d4e860eaf0584dfcc1375e06eeb34f85f43c8d34  # 02:10  B     36     1    4   4  Merge branch 'x86-urgent-for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
+>> git bisect  bad 2da2ca24a38f0200111e3b8823c08d02cb59d362  # 03:07  B     90     1    7   7  Merge branch 'locking-urgent-for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
+>> git bisect good a43de489934cadcbc4cc08a6590fdcc833768461  # 04:05  G    302     0   21  21  Merge branch 'ras-urgent-for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
+>> git bisect good 7ea959c45769612aa92557fb6464679f5fec7d9e  # 04:37  G    306     0   18  18  locking/refcounts: Implement refcount_dec_and_lock_irqsave()
+>> git bisect  bad fcc784be837714a9173b372ff9fb9b514590dad9  # 06:19  B     19     1    3   3  locking/lockdep: Do not record IRQ state within lockdep code
+>> git bisect good 03eeafdd9ab06a770d42c2b264d50dff7e2f4eee  # 06:47  G    305     0   18  18  locking/rwsem: Fix up_read_non_owner() warning with DEBUG_RWSEMS
+>> # first bad commit: [fcc784be837714a9173b372ff9fb9b514590dad9] locking/lockdep: Do not record IRQ state within lockdep code
+>> git bisect good 03eeafdd9ab06a770d42c2b264d50dff7e2f4eee  # 07:23  G    904     0   40  58  locking/rwsem: Fix up_read_non_owner() warning with DEBUG_RWSEMS
+>> # extra tests on HEAD of internal-eywa/master
+>> git bisect  bad b4c6b079156ebc029114a45812d5e5298f51fa01  # 07:23  B      8     3    0   2  Intel Next: Add release files for v5.2-rc5 2019-06-17
+>> # extra tests on tree/branch linus/master
+>> git bisect  bad bed3c0d84e7e25c8e0964d297794f4c215b01f33  # 08:52  B      5     2    0   0  Merge tag 'for-5.2-rc5-tag' of git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux
+>> # extra tests with first bad commit reverted
+>> git bisect  bad b0f031ad2fd0758b5bb7c58afe7f8bbaab65c265  # 09:42  B    126     2   10  10  Revert "locking/lockdep: Do not record IRQ state within lockdep code"
+>> # extra tests on tree/branch linux-next/master
+>> git bisect  bad 1c6b40509daf5190b1fd2c758649f7df1da4827b  # 10:20  B      9     2    0   0  Add linux-next specific files for 20190618
+>>
+>> ---
+>> 0-DAY kernel test infrastructure                Open Source Technology Center
+>> https://lists.01.org/pipermail/lkp                          Intel Corporation
+> _______________________________________________
+> LKP mailing list
+> LKP@lists.01.org
+> https://lists.01.org/mailman/listinfo/lkp
