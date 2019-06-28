@@ -2,86 +2,202 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EE515A0CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 18:28:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2741759DCD
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 16:32:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726926AbfF1Q2R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 12:28:17 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50944 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726772AbfF1Q2Q (ORCPT
+        id S1726921AbfF1Ocq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 10:32:46 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:46374 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726657AbfF1Ocq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 12:28:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=aiJProecfCoOFOmMzWWwfmO5TFzjKsVdJFvDr/zMYYo=; b=HBGZ+5qpNe4XDtk4pe9C5Q4z1
-        5uaCDcqpoKb76uGbK0SMlo3mlLJGiIdvt73p4wedBNFu0A4+LMJdGnDslEkQBY3+FchygQrM9X5r3
-        l7fn98KeEEsrcTVcf4Ue4NC+97J4U5bYAg7Svk9esf8foCGUGYAjsZHC8Pl6tFfkLBuMM=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=finisterre.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hgtjO-00075K-Pu; Fri, 28 Jun 2019 16:28:10 +0000
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-        id 660E0440050; Fri, 28 Jun 2019 15:32:29 +0100 (BST)
-Date:   Fri, 28 Jun 2019 15:32:29 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Fabrice Gasnier <fabrice.gasnier@st.com>
-Cc:     lgirdwood@gmail.com, robh+dt@kernel.org, alexandre.torgue@st.com,
-        mcoquelin.stm32@gmail.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH 2/4] regulator: add support for the stm32-booster
-Message-ID: <20190628143229.GI5379@sirena.org.uk>
-References: <1561709289-11174-1-git-send-email-fabrice.gasnier@st.com>
- <1561709289-11174-3-git-send-email-fabrice.gasnier@st.com>
+        Fri, 28 Jun 2019 10:32:46 -0400
+Received: by mail-qk1-f195.google.com with SMTP id x18so4937548qkn.13
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2019 07:32:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ndufresne-ca.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version;
+        bh=b/VyFcq1YJ2hxUvdovxOiEKbEzmaJpPeA9q+/rB+TOE=;
+        b=QKAhIMJCyfvq8ipubLyWBuEf4QI45ml2pt0+ScXCbno9BKFzi8+bMdUScNxXob6Q0R
+         xJOgr0BZpg5HCTtndDGu0gJEonHvIjxhAh7QLnNvawoZtQksFRgX2xF7Vkt8Rk1/m5To
+         bOKsbbyp5EJ1LUCagrxqOViBsspQ/E9EBwvAHF7sGd+OEOHJmuT12oetFJUzSI/qjnFz
+         4sfvJtVT3yUMoUSW93ZZT7k5VbJbaVlWnjwT/7tJS7yy1ndoSzt5mhdtpBIFndPwQRuQ
+         uPh8rpKAGaLNwMJLefhE9Li4Hb8l1EuYyaTLt2/u1E7rA3QDCxbub/ShEZvF/dD87AHh
+         UvdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version;
+        bh=b/VyFcq1YJ2hxUvdovxOiEKbEzmaJpPeA9q+/rB+TOE=;
+        b=pNK9RPo92Rq5zF+sQI3B0z8maaSMObOyfH1208y9nEt+m2qVlPV+29+jHQIsHYCSfN
+         Gm6zxqsdV9dZ5lrRDw20cxb9AQvVOr5svP9UtNQQ94j0lL5z8RaM3glILZEqIzvhG/hH
+         mUi2QOnf+wT8J41yZr6G/7w6YjXgCCazlmnNCEKLlhzdqITFOuqYMpzTxB6a99WaOPOS
+         XC79fUvpSiKv6YtVWXSy4toRCW2BoyTqnbUMNbwW1ER7BRGiyHi7VPYAe4fLjJy0U1bh
+         rWlQI8cv1YWuY5lxDLfPJEUZNIPOhiaYw/jBRKAVoYkU4ENi/aGNRqP5qkaDEzG1TM1Z
+         DOEQ==
+X-Gm-Message-State: APjAAAXGxL9gEWJcyJIixJ3kFpIuHDdxEdiIlNIYob1l8j9X4RQGHDxP
+        1FsMR01lHg+r0nKc4DDpu4L8Cw==
+X-Google-Smtp-Source: APXvYqyz0lJldcKE3SPWJvYpAF0+y6yMm/RZDxgTWd7BVRw4w2oGx1z00CGt/CM6vViYlFUFtLTGzA==
+X-Received: by 2002:a37:ac0a:: with SMTP id e10mr9158150qkm.168.1561732365207;
+        Fri, 28 Jun 2019 07:32:45 -0700 (PDT)
+Received: from tpx230-nicolas.collaboramtl (modemcable154.55-37-24.static.videotron.ca. [24.37.55.154])
+        by smtp.gmail.com with ESMTPSA id k58sm1204995qtc.38.2019.06.28.07.32.43
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 28 Jun 2019 07:32:44 -0700 (PDT)
+Message-ID: <b80bb605a3415f25b7e7ce9d059eaeb7ac75c392.camel@ndufresne.ca>
+Subject: Re: [PATCH v2 00/11] Venus stateful Codec API
+From:   Nicolas Dufresne <nicolas@ndufresne.ca>
+To:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        linux-media@vger.kernel.org
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Vikash Garodia <vgarodia@codeaurora.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>
+Date:   Fri, 28 Jun 2019 10:32:42 -0400
+In-Reply-To: <18f834cb4885357ce6274115096911d90b9c17ea.camel@ndufresne.ca>
+References: <20190628130002.24293-1-stanimir.varbanov@linaro.org>
+         <9c3399a8-4fc6-3117-10ee-3395cee034da@xs4all.nl>
+         <997204c7-c702-868c-9a49-52fefc9ab3d2@linaro.org>
+         <eba506ce-4d63-649a-80e6-efad20125263@xs4all.nl>
+         <18f834cb4885357ce6274115096911d90b9c17ea.camel@ndufresne.ca>
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
+        boundary="=-pSr0hzxtAFSGmHdsy/A9"
+User-Agent: Evolution 3.32.2 (3.32.2-1.fc30) 
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="+ZmrHH5cGjskQnY1"
-Content-Disposition: inline
-In-Reply-To: <1561709289-11174-3-git-send-email-fabrice.gasnier@st.com>
-X-Cookie: You need not be present to win.
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---+ZmrHH5cGjskQnY1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--=-pSr0hzxtAFSGmHdsy/A9
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 28, 2019 at 10:08:07AM +0200, Fabrice Gasnier wrote:
-> Add support for the 3.3V booster regulator embedded in stm32h7 and stm32m=
-p1
-> devices, that can be used to supply ADC analog input switches.
+Le vendredi 28 juin 2019 =C3=A0 10:31 -0400, Nicolas Dufresne a =C3=A9crit =
+:
+> Le vendredi 28 juin 2019 =C3=A0 16:25 +0200, Hans Verkuil a =C3=A9crit :
+> > On 6/28/19 4:23 PM, Stanimir Varbanov wrote:
+> > > Hi Hans,
+> > >=20
+> > > On 6/28/19 4:37 PM, Hans Verkuil wrote:
+> > > > On 6/28/19 2:59 PM, Stanimir Varbanov wrote:
+> > > > > Hello,
+> > > > >=20
+> > > > > Here is v2 of the Venus transition to stateful codec API
+> > > > > compliance. The v2 can be found at [1].
+> > > > >=20
+> > > > > Changes since v1:
+> > > > >  * codec_state is now enum
+> > > > >  * dropped IS_OUT and IS_CAP macros and use vb2_start_streaming_c=
+alled()
+> > > > >  * corrected g_fmt and reconfig logic
+> > > > >  * s/vdec_dst_buffers_done/vdec_cancel_dst_buffers
+> > > > >  * use v4l2_m2m_ioctl_try_decoder_cmd M2M helper
+> > > > >  * various fixes to make v4l2-compliance pass the streaming test
+> > > > >=20
+> > > > > To test the streaming with --stream-from-hdr v4l2-compliance opti=
+on I have
+> > > > > to make the following hack (it is needed because the size of deco=
+der input
+> > > > > buffers (OUTPUT queue) is not enough for the h264 bitstream, i.e =
+the driver
+> > > > > default resolution is 64x64 but the h264 stream is 320x240):
+> > > > >=20
+> > > > > diff --git a/utils/v4l2-compliance/v4l2-test-buffers.cpp b/utils/=
+v4l2-compliance/v4l2-test-buffers.cpp
+> > > > > index c71dcf65b721..dc0fcf20d3e4 100644
+> > > > > --- a/utils/v4l2-compliance/v4l2-test-buffers.cpp
+> > > > > +++ b/utils/v4l2-compliance/v4l2-test-buffers.cpp
+> > > > > @@ -1294,6 +1294,11 @@ int testMmap(struct node *node, unsigned f=
+rame_count, enum poll_mode pollmode)
+> > > > >                                         fmt.s_sizeimage(fmt.g_siz=
+eimage(p) * 2, p);
+> > > > >                         }
+> > > > >                         fail_on_test(q.create_bufs(node, 1, &fmt)=
+);
+> > > > > +
+> > > > > +                       for (unsigned p =3D 0; p < fmt.g_num_plan=
+es(); p++)
+> > > > > +                               fmt.s_sizeimage(fmt.g_sizeimage(p=
+) * 2, p);
+> > > > > +                       node->s_fmt(fmt);
+> > > > > +
+> > > > >                         fail_on_test(q.reqbufs(node, 2));
+> > > > >                 }
+> > > > >                 if (v4l_type_is_output(type))
+> > > >=20
+> > > > Does the venus driver set sizeimage based on the given output resol=
+ution?
+> > >=20
+> > > Yes.
+> > >=20
+> > > > E.g. if v4l2-compliance would first set the output resolution to 32=
+0x240,
+> > > > is the returned sizeimage value OK in that case?
+> > >=20
+> > > Yes.
+> > >=20
+> > > Here are few options to me:
+> > >  - set the correct resolution
+> > >  - set 0x0 and sizeimage at some arbitrary value (1 or 2MB). Despite =
+if
+> > > the bitstream is 4K it will not be enough if the bitrate is huge.
+> > >  - invent some mechanism to trigger reconfiguration on the OUTPUT que=
+ue
+> > > as well (similar to the CAPTURE queue)
+> > >=20
+> > > > And this also means that the venus driver requires each buffer to h=
+ave
+> > > > a single compressed frame, right? I.e. it can't be spread over mult=
+iple
+> > > > OUTPUT buffers.
+> > >=20
+> > > I cannot say for sure but that is how all downstream cases uses it i.=
+e.
+> > > one compressed frame per input buffer. I wonder if you fill input
+> > > decoder buffer with many compressed frames in one input decoder buffe=
+r
+> > > how you pass the timestamp for every packet?
+> > >=20
+> > > > We really need to let userspace know about such restrictions.
+> > > >=20
+> > > > Stanimir, can you list the restrictions of the decoder for the vari=
+ous
+> > > > codecs?
+> > >=20
+> > > What you mean? Restrictions like "one compressed frame per input buff=
+er"?
+> > >=20
+> >=20
+> > Yes :-)
 >=20
-> This regulator is supplied by vdda. It's controlled by using SYSCFG:
-> - STM32H7 has a unique register to set/clear the booster enable bit
-> - STM32MP1 has separate set and clear registers to configure it.
+> I think I just had the same discussions through some RPi patches
+> reviews. All the stateless codec drivers we have so far assumes full
+> frames and some wording iirc specified this in the spec at some point.
+> That removes ambiguity for timestamps application. Even though,
+> timestamps in V4L2 are useless for B-Frame enabled streams (ffmpeg and
+> GStreamer will ignore them).
 
-This doesn't apply against current code, please check and resend.
+Sorry, I mean they are not used as timestamp, only for frame matching.
 
---+ZmrHH5cGjskQnY1
+>=20
+> Nicolas
+
+--=-pSr0hzxtAFSGmHdsy/A9
 Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl0WJPwACgkQJNaLcl1U
-h9CEYwf/S479W8LgrEaeHTTFG3CzS+H7XcqwsFf6ZMmLHg4A/fZD3UOrWsupb7XW
-5Pn1ugPul+BpUs3M6dew3VdsiqOt/JWl3QC0KPKetya58X+NKnGTtnv+F17u5WyL
-pv5f6/FzM3/rN6AhpDN3pbRxUbMj87J3dxVDS/rNh6IYiTjrkIvkXIWO1oiN84aD
-KjarUQFfuqKmKDGsCvkzysX+e7npMdAyqntAdYJqtBVsUHPWDPygEfgedZlFjFUa
-ktNcysf3sDZpFdDiqzCgLYA52R2rWjJGQbZN9TlMx5iK45iLVjGjTbf11arVCcUw
-HT/WrvMzxZT3GvZsaV/sSCOpY7di8A==
-=l6Rr
+iF0EABECAB0WIQSScpfJiL+hb5vvd45xUwItrAaoHAUCXRYlCwAKCRBxUwItrAao
+HMUmAKDBMvX7IXX19rNtnkwTxPDJWIMBtQCcDfhAV45LnvNuGP4wx/mxk1cqAJg=
+=xKKh
 -----END PGP SIGNATURE-----
 
---+ZmrHH5cGjskQnY1--
+--=-pSr0hzxtAFSGmHdsy/A9--
+
