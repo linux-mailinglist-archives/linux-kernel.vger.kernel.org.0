@@ -2,105 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9497D5A6E4
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2019 00:28:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB67C5A702
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2019 00:36:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726934AbfF1W17 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 18:27:59 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:41704 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726586AbfF1W17 (ORCPT
+        id S1727028AbfF1Wg1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 18:36:27 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:37136 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726983AbfF1WgZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 18:27:59 -0400
-Received: by mail-pf1-f196.google.com with SMTP id m30so3658264pff.8;
-        Fri, 28 Jun 2019 15:27:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Zew3pu5ACLyjWDkbz64MHkLv1qO1WTV0/WPKnVwSaEE=;
-        b=MEDIv/IM3ucHq7Mf6O2O24yNKeI7mYbZpcU2C5isBuCHxMsXx8TqthAuSOvnCAMP3N
-         9ikHyW7cssBldoSoNquhgJa8Zb5Zp26aKHvR19HMixf/e6GI8IICxS6V5RDv7kaU+3lG
-         sJnKbF/+3VMfJuimrCrbQ2gLUZom81mbvF2HG79HV+I0xZ/aBA3sMOO9kVYqQkDu4iYS
-         4yxcDDCJ/8+wM3ek7nVsHuCJM2DAmboMiqB+judd0mMNzelSIRPIwovr1IqrVDPs7Lq9
-         hkZ4t3VI6yXPHNAienH8gbwB6cUdJpZNydInYU6Fa7k/PFf3B8edEi8sSZ3aEdR3P02H
-         B1bA==
-X-Gm-Message-State: APjAAAX/GL6+Hy1KuQ7BBIuUgFOpJlLhp7nfhzWPWIy8oRlHpnMV3TN6
-        fNoi00KW8alj1GCmn4uLRWM=
-X-Google-Smtp-Source: APXvYqz3CEbNA+vipHzXogk+ZmrQLp7DBLwyjnSHHTcmvI3EULTJb01v11fgCw7nOHNERq3Uo1lU+Q==
-X-Received: by 2002:a17:90a:8a0b:: with SMTP id w11mr15817399pjn.125.1561760878604;
-        Fri, 28 Jun 2019 15:27:58 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id j15sm3392948pfr.146.2019.06.28.15.27.56
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 28 Jun 2019 15:27:56 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 2B044402AC; Fri, 28 Jun 2019 22:27:56 +0000 (UTC)
-Date:   Fri, 28 Jun 2019 22:27:56 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Dave Chinner <david@fromorbit.com>,
-        Brendan Higgins <brendanhiggins@google.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 11/12] iomap: move the xfs writeback code to iomap.c
-Message-ID: <20190628222756.GM19023@42.do-not-panic.com>
-References: <20190624055253.31183-1-hch@lst.de>
- <20190624055253.31183-12-hch@lst.de>
- <20190624234304.GD7777@dread.disaster.area>
- <20190625101020.GI1462@lst.de>
- <20190628004542.GJ7777@dread.disaster.area>
+        Fri, 28 Jun 2019 18:36:25 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5SMYaNi081645;
+        Fri, 28 Jun 2019 22:34:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=5BXhuEPFDddiNAekJ5I66ugIZ3EfVPNNcHP0UgKmH0Q=;
+ b=5VXljABHIjidxf57ErkYPFevR2jYLr2wVGjAft6Mg6kxKJlEcuPUPxmVLLaSUNDB8snT
+ MgP4XvSli4cRvyVCs9jRVuqvDJWTqFAo6g1+zej/pz18mozLa782ppJEPGz9G4y9AE6o
+ rHS+NOIQYUgWWgwKGU1+MEt7B64GTiVOpP0Zpqks64FTacCvwIUrMrCkm/Wx4+VDWTct
+ AcQ32t6H7CeIz5yGlhqDZceWBo1nWdkuPLRMaNKDx8BVQCYNRN3s6+JSUc8hYXz5YnwY
+ F94fRkEapNe1cAdOrupa6iWPY8RcQmV7gkCp1rQeQ/JHauQv+ZSKg/slYWp+spezFIp1 Pg== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 2t9cyqyn13-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 28 Jun 2019 22:34:55 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5SMXaR9104757;
+        Fri, 28 Jun 2019 22:34:55 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3020.oracle.com with ESMTP id 2tat7e675n-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 28 Jun 2019 22:34:55 +0000
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5SMYrei010475;
+        Fri, 28 Jun 2019 22:34:54 GMT
+Received: from [10.132.91.175] (/10.132.91.175)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 28 Jun 2019 15:34:53 -0700
+Subject: Re: [PATCH v3 5/7] sched: SIS_CORE to disable idle core search
+To:     Parth Shah <parth@linux.ibm.com>, linux-kernel@vger.kernel.org
+Cc:     peterz@infradead.org, mingo@redhat.com, tglx@linutronix.de,
+        steven.sistare@oracle.com, dhaval.giani@oracle.com,
+        daniel.lezcano@linaro.org, vincent.guittot@linaro.org,
+        viresh.kumar@linaro.org, tim.c.chen@linux.intel.com,
+        mgorman@techsingularity.net
+References: <20190627012919.4341-1-subhra.mazumdar@oracle.com>
+ <20190627012919.4341-6-subhra.mazumdar@oracle.com>
+ <0e0f3347-c262-2917-76d7-88dddf4e9122@linux.ibm.com>
+From:   Subhra Mazumdar <subhra.mazumdar@oracle.com>
+Message-ID: <59ab08d5-8b7c-00b9-230b-7c0b307a675f@oracle.com>
+Date:   Fri, 28 Jun 2019 15:29:46 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190628004542.GJ7777@dread.disaster.area>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <0e0f3347-c262-2917-76d7-88dddf4e9122@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9302 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1906280258
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9302 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906280259
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 28, 2019 at 10:45:42AM +1000, Dave Chinner wrote:
-> On Tue, Jun 25, 2019 at 12:10:20PM +0200, Christoph Hellwig wrote:
-> > On Tue, Jun 25, 2019 at 09:43:04AM +1000, Dave Chinner wrote:
-> > > I'm a little concerned this is going to limit what we can do
-> > > with the XFS IO path because now we can't change this code without
-> > > considering the direct impact on other filesystems. The QA burden of
-> > > changing the XFS writeback code goes through the roof with this
-> > > change (i.e. we can break multiple filesystems, not just XFS).
-> > 
-> > Going through the roof is a little exaggerated.
-> 
-> You've already mentioned two new users you want to add. I don't even
-> have zone capable hardware here to test one of the users you are
-> indicating will use this code, and I suspect that very few people
-> do.  That's a non-trivial increase in testing requirements for
-> filesystem developers and distro QA departments who will want to
-> change and/or validate this code path.
 
-A side topic here:
+On 6/28/19 12:01 PM, Parth Shah wrote:
+>
+> On 6/27/19 6:59 AM, subhra mazumdar wrote:
+>> Use SIS_CORE to disable idle core search. For some workloads
+>> select_idle_core becomes a scalability bottleneck, removing it improves
+>> throughput. Also there are workloads where disabling it can hurt latency,
+>> so need to have an option.
+>>
+>> Signed-off-by: subhra mazumdar <subhra.mazumdar@oracle.com>
+>> ---
+>>   kernel/sched/fair.c | 8 +++++---
+>>   1 file changed, 5 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+>> index c1ca88e..6a74808 100644
+>> --- a/kernel/sched/fair.c
+>> +++ b/kernel/sched/fair.c
+>> @@ -6280,9 +6280,11 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
+>>   	if (!sd)
+>>   		return target;
+>>
+>> -	i = select_idle_core(p, sd, target);
+>> -	if ((unsigned)i < nr_cpumask_bits)
+>> -		return i;
+>> +	if (sched_feat(SIS_CORE)) {
+>> +		i = select_idle_core(p, sd, target);
+>> +		if ((unsigned)i < nr_cpumask_bits)
+>> +			return i;
+>> +	}
+> This can have significant performance loss if disabled. The select_idle_core spreads
+> workloads quickly across the cores, hence disabling this leaves much of the work to
+> be offloaded to load balancer to move task across the cores. Latency sensitive
+> and long running multi-threaded workload should see the regression under this conditions.
+Yes in case of SPARC SMT8 I did notice that (see cover letter). That's why
+it is a feature that is ON by default, but can be turned OFF for specific
+workloads on x86 SMT2 that can benefit from it.
+> Also, systems like POWER9 has sd_llc as a pair of core only. So it
+> won't benefit from the limits and hence also hiding your code in select_idle_cpu
+> behind static keys will be much preferred.
+If it doesn't hurt then I don't see the point.
 
-Looking towards the future of prosects here with regards to helping QA
-and developers with more confidence in API changes (kunit is one
-prospect we're evaluating)...
+Thanks,
+Subhra
 
-If... we could somehow... codify what XFS *requires* from the API
-precisely...  would that help alleviate concerns or bring confidence in
-the prospect of sharing code?
-
-Or is it simply an *impossibility* to address these concerns in question by
-codifying tests for the promised API?
-
-Ie, are the concerns something which could be addressed with strict
-testing on adherence to an API, or are the concerns *unknown* side
-dependencies which could not possibly be codified?
-
-As an example of the extent possible to codify API promise (although
-I beleive it was unintentional at first), see:
-
-http://lkml.kernel.org/r/20190626021744.GU19023@42.do-not-panic.com
-
-  Luis
