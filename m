@@ -2,132 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F47C59DCF
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 16:33:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EE515A0CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 18:28:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726935AbfF1OdC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 10:33:02 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:40686 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726711AbfF1OdC (ORCPT
+        id S1726926AbfF1Q2R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 12:28:17 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50944 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726772AbfF1Q2Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 10:33:02 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5SEWOEs119507;
-        Fri, 28 Jun 2019 09:32:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1561732344;
-        bh=gbEQ2MAf5BreXjP6+h+dDk7mJOuxFlU+NRxCOXS9m7w=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=AkLnTHTtRg4KS+kVRvkLRmV+VhAQcDI3zp86HBbQpW8UjJ590rtHGC7jKKzjTaal7
-         DRF9ndtHsDrV5uUNvWTUBE62BsKGq2H8oRPgO718IlsMcxkFKF/ZVU1CPkLIJEb5Mu
-         Su9sVgyCRYrHgWUHWiKtx28wJIgDlBx9wojdY310=
-Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5SEWOKn109975
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 28 Jun 2019 09:32:24 -0500
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 28
- Jun 2019 09:32:23 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Fri, 28 Jun 2019 09:32:23 -0500
-Received: from [10.250.132.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5SEWK5h014844;
-        Fri, 28 Jun 2019 09:32:21 -0500
-Subject: Re: [PATCH] mtd: cfi_cmdset_0002: dynamically determine the max
- sectors
-To:     Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        <dwmw2@infradead.org>, <computersforpeace@gmail.com>,
-        <marek.vasut@gmail.com>, <miquel.raynal@bootlin.com>,
-        <richard@nod.at>
-CC:     <sr@denx.de>, <linux-mtd@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20190522000628.13073-1-chris.packham@alliedtelesis.co.nz>
-From:   Vignesh Raghavendra <vigneshr@ti.com>
-Message-ID: <b4a2970f-40ff-3c6c-d408-4c19d5d502ad@ti.com>
-Date:   Fri, 28 Jun 2019 20:02:19 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Fri, 28 Jun 2019 12:28:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=aiJProecfCoOFOmMzWWwfmO5TFzjKsVdJFvDr/zMYYo=; b=HBGZ+5qpNe4XDtk4pe9C5Q4z1
+        5uaCDcqpoKb76uGbK0SMlo3mlLJGiIdvt73p4wedBNFu0A4+LMJdGnDslEkQBY3+FchygQrM9X5r3
+        l7fn98KeEEsrcTVcf4Ue4NC+97J4U5bYAg7Svk9esf8foCGUGYAjsZHC8Pl6tFfkLBuMM=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=finisterre.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hgtjO-00075K-Pu; Fri, 28 Jun 2019 16:28:10 +0000
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+        id 660E0440050; Fri, 28 Jun 2019 15:32:29 +0100 (BST)
+Date:   Fri, 28 Jun 2019 15:32:29 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Fabrice Gasnier <fabrice.gasnier@st.com>
+Cc:     lgirdwood@gmail.com, robh+dt@kernel.org, alexandre.torgue@st.com,
+        mcoquelin.stm32@gmail.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/4] regulator: add support for the stm32-booster
+Message-ID: <20190628143229.GI5379@sirena.org.uk>
+References: <1561709289-11174-1-git-send-email-fabrice.gasnier@st.com>
+ <1561709289-11174-3-git-send-email-fabrice.gasnier@st.com>
 MIME-Version: 1.0
-In-Reply-To: <20190522000628.13073-1-chris.packham@alliedtelesis.co.nz>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="+ZmrHH5cGjskQnY1"
+Content-Disposition: inline
+In-Reply-To: <1561709289-11174-3-git-send-email-fabrice.gasnier@st.com>
+X-Cookie: You need not be present to win.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On 22-May-19 5:36 AM, Chris Packham wrote:
-> Because PPB unlocking unlocks the whole chip cfi_ppb_unlock() needs to
-> remember the locked status for each sector so it can re-lock the
-> unaddressed sectors. Dynamically calculate the maximum number of sectors
-> rather than using a hardcoded value that is too small for larger chips.
-> 
-> Tested with Spansion S29GL01GS11TFI flash device.
-> 
-> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-> ---
+--+ZmrHH5cGjskQnY1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git
-branch mtd/next.
+On Fri, Jun 28, 2019 at 10:08:07AM +0200, Fabrice Gasnier wrote:
+> Add support for the 3.3V booster regulator embedded in stm32h7 and stm32m=
+p1
+> devices, that can be used to supply ADC analog input switches.
+>=20
+> This regulator is supplied by vdda. It's controlled by using SYSCFG:
+> - STM32H7 has a unique register to set/clear the booster enable bit
+> - STM32MP1 has separate set and clear registers to configure it.
 
-Regards
-Vignesh
+This doesn't apply against current code, please check and resend.
 
->  drivers/mtd/chips/cfi_cmdset_0002.c | 13 ++++++++-----
->  1 file changed, 8 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/mtd/chips/cfi_cmdset_0002.c b/drivers/mtd/chips/cfi_cmdset_0002.c
-> index c8fa5906bdf9..a1a7d334aa82 100644
-> --- a/drivers/mtd/chips/cfi_cmdset_0002.c
-> +++ b/drivers/mtd/chips/cfi_cmdset_0002.c
-> @@ -2533,8 +2533,6 @@ struct ppb_lock {
->  	int locked;
->  };
->  
-> -#define MAX_SECTORS			512
-> -
->  #define DO_XXLOCK_ONEBLOCK_LOCK		((void *)1)
->  #define DO_XXLOCK_ONEBLOCK_UNLOCK	((void *)2)
->  #define DO_XXLOCK_ONEBLOCK_GETLOCK	((void *)3)
-> @@ -2633,6 +2631,7 @@ static int __maybe_unused cfi_ppb_unlock(struct mtd_info *mtd, loff_t ofs,
->  	int i;
->  	int sectors;
->  	int ret;
-> +	int max_sectors;
->  
->  	/*
->  	 * PPB unlocking always unlocks all sectors of the flash chip.
-> @@ -2640,7 +2639,11 @@ static int __maybe_unused cfi_ppb_unlock(struct mtd_info *mtd, loff_t ofs,
->  	 * first check the locking status of all sectors and save
->  	 * it for future use.
->  	 */
-> -	sect = kcalloc(MAX_SECTORS, sizeof(struct ppb_lock), GFP_KERNEL);
-> +	max_sectors = 0;
-> +	for (i = 0; i < mtd->numeraseregions; i++)
-> +		max_sectors += regions[i].numblocks;
-> +
-> +	sect = kcalloc(max_sectors, sizeof(struct ppb_lock), GFP_KERNEL);
->  	if (!sect)
->  		return -ENOMEM;
->  
-> @@ -2689,9 +2692,9 @@ static int __maybe_unused cfi_ppb_unlock(struct mtd_info *mtd, loff_t ofs,
->  		}
->  
->  		sectors++;
-> -		if (sectors >= MAX_SECTORS) {
-> +		if (sectors >= max_sectors) {
->  			printk(KERN_ERR "Only %d sectors for PPB locking supported!\n",
-> -			       MAX_SECTORS);
-> +			       max_sectors);
->  			kfree(sect);
->  			return -EINVAL;
->  		}
-> 
+--+ZmrHH5cGjskQnY1
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl0WJPwACgkQJNaLcl1U
+h9CEYwf/S479W8LgrEaeHTTFG3CzS+H7XcqwsFf6ZMmLHg4A/fZD3UOrWsupb7XW
+5Pn1ugPul+BpUs3M6dew3VdsiqOt/JWl3QC0KPKetya58X+NKnGTtnv+F17u5WyL
+pv5f6/FzM3/rN6AhpDN3pbRxUbMj87J3dxVDS/rNh6IYiTjrkIvkXIWO1oiN84aD
+KjarUQFfuqKmKDGsCvkzysX+e7npMdAyqntAdYJqtBVsUHPWDPygEfgedZlFjFUa
+ktNcysf3sDZpFdDiqzCgLYA52R2rWjJGQbZN9TlMx5iK45iLVjGjTbf11arVCcUw
+HT/WrvMzxZT3GvZsaV/sSCOpY7di8A==
+=l6Rr
+-----END PGP SIGNATURE-----
+
+--+ZmrHH5cGjskQnY1--
