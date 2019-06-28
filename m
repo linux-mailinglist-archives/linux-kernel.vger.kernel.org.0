@@ -2,90 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCD6F5923E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 06:00:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C557598ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 13:01:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727138AbfF1EAo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 00:00:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51114 "EHLO mail.kernel.org"
+        id S1726696AbfF1LBA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 07:01:00 -0400
+Received: from mga09.intel.com ([134.134.136.24]:11057 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725873AbfF1EAo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 00:00:44 -0400
-Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 59CEC2070D;
-        Fri, 28 Jun 2019 04:00:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561694443;
-        bh=+VpOXo75LTdDhLhuuoxTBJKiQQ5nD94oHuo6kW9PLx8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Wk+ccnTKmjcm9oInzJMB+0dNNB75ucxIeut8XOCR/Y7xP6hTrcDtH7lCEaIgtzY4v
-         cAcXSjofCHamgYUPbORfT/k9l+Y8il+53yCqIHfw+u84tfLmFEdAugDjO/mZXUw17Z
-         rsF9Jcub8341gulC7JgVNTnhPPrCi9vEWIdrK070=
-Date:   Thu, 27 Jun 2019 21:00:41 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Jaskaran Khurana <jaskarankhurana@linux.microsoft.com>
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, agk@redhat.com, snitzer@redhat.com,
-        dm-devel@redhat.com, jmorris@namei.org, scottsh@microsoft.com,
-        mpatocka@redhat.com, gmazyland@gmail.com
-Subject: Re: [RFC PATCH v5 0/1] Add dm verity root hash pkcs7 sig validation.
-Message-ID: <20190628040041.GB673@sol.localdomain>
-References: <20190619191048.20365-1-jaskarankhurana@linux.microsoft.com>
+        id S1726476AbfF1LA7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Jun 2019 07:00:59 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jun 2019 04:00:59 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,427,1557212400"; 
+   d="scan'208";a="361035901"
+Received: from ramaling-i9x.iind.intel.com (HELO intel.com) ([10.99.66.154])
+  by fmsmga005.fm.intel.com with ESMTP; 28 Jun 2019 04:00:55 -0700
+Date:   Fri, 28 Jun 2019 09:32:15 +0530
+From:   Ramalingam C <ramalingam.c@intel.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Noralf =?utf-8?Q?Tr=C3=B8nnes?= <noralf@tronnes.org>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
+        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
+        Lyude Paul <lyude@redhat.com>,
+        Uma Shankar <uma.shankar@intel.com>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Radhakrishna Sripada <radhakrishna.sripada@intel.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm: connector: remove bogus NULL check
+Message-ID: <20190628040215.GA24852@intel.com>
+References: <20190628103925.2686249-1-arnd@arndb.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190619191048.20365-1-jaskarankhurana@linux.microsoft.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190628103925.2686249-1-arnd@arndb.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 19, 2019 at 12:10:47PM -0700, Jaskaran Khurana wrote:
-> This patch set adds in-kernel pkcs7 signature checking for the roothash of
-> the dm-verity hash tree.
-> The verification is to support cases where the roothash is not secured by
-> Trusted Boot, UEFI Secureboot or similar technologies.
-> One of the use cases for this is for dm-verity volumes mounted after boot,
-> the root hash provided during the creation of the dm-verity volume has to
-> be secure and thus in-kernel validation implemented here will be used
-> before we trust the root hash and allow the block device to be created.
+On 2019-06-28 at 12:39:05 +0200, Arnd Bergmann wrote:
+> mode->name is a character array in a structure, checking it's
+> address is pointless and causes a warning with some compilers:
 > 
-> Why we are doing validation in the Kernel?
+> drivers/gpu/drm/drm_connector.c:144:15: error: address of array 'mode->name' will always evaluate to 'true'
+>       [-Werror,-Wpointer-bool-conversion]
+>                       mode->name ? mode->name : "",
+>                       ~~~~~~^~~~ ~
+> include/drm/drm_print.h:366:29: note: expanded from macro 'DRM_DEBUG_KMS'
+>         drm_dbg(DRM_UT_KMS, fmt, ##__VA_ARGS__)
+>                                    ^~~~~~~~~~~
 > 
-> The reason is to still be secure in cases where the attacker is able to
-> compromise the user mode application in which case the user mode validation
-> could not have been trusted.
-> The root hash signature validation in the kernel along with existing
-> dm-verity implementation gives a higher level of confidence in the
-> executable code or the protected data. Before allowing the creation of
-> the device mapper block device the kernel code will check that the detached
-> pkcs7 signature passed to it validates the roothash and the signature is
-> trusted by builtin keys set at kernel creation. The kernel should be
-> secured using Verified boot, UEFI Secure Boot or similar technologies so we
-> can trust it.
+> Remove the check here.
 > 
-> What about attacker mounting non dm-verity volumes to run executable
-> code?
+> Fixes: 3aeeb13d8996 ("drm/modes: Support modes names on the command line")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/gpu/drm/drm_connector.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> This verification can be used to have a security architecture where a LSM
-> can enforce this verification for all the volumes and by doing this it can
-> ensure that all executable code runs from signed and trusted dm-verity
-> volumes.
-> 
-> Further patches will be posted that build on this and enforce this
-> verification based on policy for all the volumes on the system.
-> 
+> diff --git a/drivers/gpu/drm/drm_connector.c b/drivers/gpu/drm/drm_connector.c
+> index 3afed5677946..b3f2cf7eae9c 100644
+> --- a/drivers/gpu/drm/drm_connector.c
+> +++ b/drivers/gpu/drm/drm_connector.c
+> @@ -141,7 +141,7 @@ static void drm_connector_get_cmdline_mode(struct drm_connector *connector)
+>  
+>  	DRM_DEBUG_KMS("cmdline mode for connector %s %s %dx%d@%dHz%s%s%s\n",
+>  		      connector->name,
+> -		      mode->name ? mode->name : "",
+> +		      mode->name,
+Looks good to me.
 
-I don't understand your justification for this feature.
-
-If userspace has already been pwned severely enough for the attacker to be
-executing arbitrary code with CAP_SYS_ADMIN (which is what the device mapper
-ioctls need), what good are restrictions on loading more binaries from disk?
-
-Please explain your security model.
-
-- Eric
+Reviewed-by: Ramalingam C <ramlaingam.c@intel.com>
+>  		      mode->xres, mode->yres,
+>  		      mode->refresh_specified ? mode->refresh : 60,
+>  		      mode->rb ? " reduced blanking" : "",
+> -- 
+> 2.20.0
+> 
