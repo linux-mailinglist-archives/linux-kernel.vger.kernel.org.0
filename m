@@ -2,45 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58B8759B53
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 14:32:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B292859B3C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 14:32:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727503AbfF1McP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 08:32:15 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:39328 "EHLO
+        id S1727101AbfF1Map (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 08:30:45 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:39130 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726884AbfF1Man (ORCPT
+        with ESMTP id S1726887AbfF1Mai (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 08:30:43 -0400
+        Fri, 28 Jun 2019 08:30:38 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=uuAO7Ip7/oFj8Y2WIj1GzBB+07T8ur4xQHwAjjIg0CY=; b=jwbD5P//JCjlS3C8Nc9p3eAw1i
-        HvPNsBW++l53kPPeJPYoGyqXmfOc4kId6HxdotW69VHWR3FPnKcLUyQIF3GNXy49UtYZGUo6WKE00
-        4q3SLsGmXWpiIgi/gMMcV4XzYojSE2AlqqEicqFBkIMz00bhC3hQJU4c+JHK7Kzbuou2j3QxYwBKo
-        nta7n6yr8YtJ0dEkqLGxUBzivUK/KLNGvBNUrAfdlVg5owkWby52WVJOdKvU7UanYNuDl7/34RRPN
-        ih4pc9UpGZguGG8jzx/ANZ59bkJC4oJ9Pn5P06A5sBz2JVshX+dbk0eOG64dJsfR5DQoC+gztb6Dw
-        gC53uiVA==;
+        bh=U92CTD6tuDy7j9b5xakGk2DqteV5CM69tWu7ZN/5THI=; b=X+SWOhGHuzja47Cp1iC4SSXUZz
+        rClep8gUlq8pmON+93xpROdl8GUw0/uwgmRKnViYIZniZEU1/iYF5WsLy7WkUydtDqiTee31r8ZUw
+        jXHEYjPfYDHD4cMIfvthheKeA4LoYUQNrt6lffvx7n4bkFTuvgtaXT8BfF/NQT7VCmcyd9TQyqQii
+        n4Rjwg6bxcwRkezXN7PLCLD9AqWAU4g7Cixh41AUOhoXmVL1Dq4ZHoeZS/RyEUAS7QUYZkvQ3+vKA
+        2bMRswQs0pdNztFiA8NgYl5Bh40zXXwuA7Q32m4mjvcz9tmZNnK0wfnzmVvFD+NJ2xB2Nt/mQAXcx
+        XLYsqQcg==;
 Received: from [186.213.242.156] (helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hgq1U-00055B-7t; Fri, 28 Jun 2019 12:30:36 +0000
+        id 1hgq1U-00055D-AE; Fri, 28 Jun 2019 12:30:36 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hgq1S-0005S2-9t; Fri, 28 Jun 2019 09:30:34 -0300
+        id 1hgq1S-0005S6-Ag; Fri, 28 Jun 2019 09:30:34 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
-        Shaohua Li <shli@kernel.org>, linux-raid@vger.kernel.org
-Subject: [PATCH 14/39] docs: device-mapper: move it to the admin-guide
-Date:   Fri, 28 Jun 2019 09:30:07 -0300
-Message-Id: <69039a9ae8c5327e14e9fc3dbc9e810f92091b52.1561724493.git.mchehab+samsung@kernel.org>
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
+Subject: [PATCH 15/39] docs: early-userspace: move to driver-api guide
+Date:   Fri, 28 Jun 2019 09:30:08 -0300
+Message-Id: <e5889b2b00604491c6dc32c2f2a1d5afb9200ed8.1561724493.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <cover.1561724493.git.mchehab+samsung@kernel.org>
 References: <cover.1561724493.git.mchehab+samsung@kernel.org>
@@ -51,271 +48,104 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The DM support describes lots of aspects related to mapped
-disk partitions from the userspace PoV.
+Those documents describe a kAPI. So, add to the driver-api
+book.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- .../{ => admin-guide}/device-mapper/cache-policies.rst          | 0
- Documentation/{ => admin-guide}/device-mapper/cache.rst         | 0
- Documentation/{ => admin-guide}/device-mapper/delay.rst         | 0
- Documentation/{ => admin-guide}/device-mapper/dm-crypt.rst      | 0
- Documentation/{ => admin-guide}/device-mapper/dm-dust.txt       | 0
- Documentation/{ => admin-guide}/device-mapper/dm-flakey.rst     | 0
- Documentation/{ => admin-guide}/device-mapper/dm-init.rst       | 0
- Documentation/{ => admin-guide}/device-mapper/dm-integrity.rst  | 0
- Documentation/{ => admin-guide}/device-mapper/dm-io.rst         | 0
- Documentation/{ => admin-guide}/device-mapper/dm-log.rst        | 0
- .../{ => admin-guide}/device-mapper/dm-queue-length.rst         | 0
- Documentation/{ => admin-guide}/device-mapper/dm-raid.rst       | 0
- .../{ => admin-guide}/device-mapper/dm-service-time.rst         | 0
- Documentation/{ => admin-guide}/device-mapper/dm-uevent.rst     | 0
- Documentation/{ => admin-guide}/device-mapper/dm-zoned.rst      | 0
- Documentation/{ => admin-guide}/device-mapper/era.rst           | 0
- Documentation/{ => admin-guide}/device-mapper/index.rst         | 2 --
- Documentation/{ => admin-guide}/device-mapper/kcopyd.rst        | 0
- Documentation/{ => admin-guide}/device-mapper/linear.rst        | 0
- Documentation/{ => admin-guide}/device-mapper/log-writes.rst    | 0
- .../{ => admin-guide}/device-mapper/persistent-data.rst         | 0
- Documentation/{ => admin-guide}/device-mapper/snapshot.rst      | 0
- Documentation/{ => admin-guide}/device-mapper/statistics.rst    | 0
- Documentation/{ => admin-guide}/device-mapper/striped.rst       | 0
- Documentation/{ => admin-guide}/device-mapper/switch.rst        | 0
- .../{ => admin-guide}/device-mapper/thin-provisioning.rst       | 0
- Documentation/{ => admin-guide}/device-mapper/unstriped.rst     | 0
- Documentation/{ => admin-guide}/device-mapper/verity.rst        | 0
- Documentation/{ => admin-guide}/device-mapper/writecache.rst    | 0
- Documentation/{ => admin-guide}/device-mapper/zero.rst          | 0
- Documentation/admin-guide/index.rst                             | 1 +
- MAINTAINERS                                                     | 2 +-
- drivers/md/Kconfig                                              | 2 +-
- drivers/md/dm-init.c                                            | 2 +-
- drivers/md/dm-raid.c                                            | 2 +-
- 35 files changed, 5 insertions(+), 6 deletions(-)
- rename Documentation/{ => admin-guide}/device-mapper/cache-policies.rst (100%)
- rename Documentation/{ => admin-guide}/device-mapper/cache.rst (100%)
- rename Documentation/{ => admin-guide}/device-mapper/delay.rst (100%)
- rename Documentation/{ => admin-guide}/device-mapper/dm-crypt.rst (100%)
- rename Documentation/{ => admin-guide}/device-mapper/dm-dust.txt (100%)
- rename Documentation/{ => admin-guide}/device-mapper/dm-flakey.rst (100%)
- rename Documentation/{ => admin-guide}/device-mapper/dm-init.rst (100%)
- rename Documentation/{ => admin-guide}/device-mapper/dm-integrity.rst (100%)
- rename Documentation/{ => admin-guide}/device-mapper/dm-io.rst (100%)
- rename Documentation/{ => admin-guide}/device-mapper/dm-log.rst (100%)
- rename Documentation/{ => admin-guide}/device-mapper/dm-queue-length.rst (100%)
- rename Documentation/{ => admin-guide}/device-mapper/dm-raid.rst (100%)
- rename Documentation/{ => admin-guide}/device-mapper/dm-service-time.rst (100%)
- rename Documentation/{ => admin-guide}/device-mapper/dm-uevent.rst (100%)
- rename Documentation/{ => admin-guide}/device-mapper/dm-zoned.rst (100%)
- rename Documentation/{ => admin-guide}/device-mapper/era.rst (100%)
- rename Documentation/{ => admin-guide}/device-mapper/index.rst (98%)
- rename Documentation/{ => admin-guide}/device-mapper/kcopyd.rst (100%)
- rename Documentation/{ => admin-guide}/device-mapper/linear.rst (100%)
- rename Documentation/{ => admin-guide}/device-mapper/log-writes.rst (100%)
- rename Documentation/{ => admin-guide}/device-mapper/persistent-data.rst (100%)
- rename Documentation/{ => admin-guide}/device-mapper/snapshot.rst (100%)
- rename Documentation/{ => admin-guide}/device-mapper/statistics.rst (100%)
- rename Documentation/{ => admin-guide}/device-mapper/striped.rst (100%)
- rename Documentation/{ => admin-guide}/device-mapper/switch.rst (100%)
- rename Documentation/{ => admin-guide}/device-mapper/thin-provisioning.rst (100%)
- rename Documentation/{ => admin-guide}/device-mapper/unstriped.rst (100%)
- rename Documentation/{ => admin-guide}/device-mapper/verity.rst (100%)
- rename Documentation/{ => admin-guide}/device-mapper/writecache.rst (100%)
- rename Documentation/{ => admin-guide}/device-mapper/zero.rst (100%)
+ .../{ => driver-api}/early-userspace/buffer-format.rst        | 0
+ .../early-userspace/early_userspace_support.rst               | 0
+ Documentation/{ => driver-api}/early-userspace/index.rst      | 2 --
+ Documentation/driver-api/index.rst                            | 1 +
+ Documentation/filesystems/nfs/nfsroot.txt                     | 2 +-
+ Documentation/filesystems/ramfs-rootfs-initramfs.txt          | 4 ++--
+ usr/Kconfig                                                   | 2 +-
+ 7 files changed, 5 insertions(+), 6 deletions(-)
+ rename Documentation/{ => driver-api}/early-userspace/buffer-format.rst (100%)
+ rename Documentation/{ => driver-api}/early-userspace/early_userspace_support.rst (100%)
+ rename Documentation/{ => driver-api}/early-userspace/index.rst (95%)
 
-diff --git a/Documentation/device-mapper/cache-policies.rst b/Documentation/admin-guide/device-mapper/cache-policies.rst
+diff --git a/Documentation/early-userspace/buffer-format.rst b/Documentation/driver-api/early-userspace/buffer-format.rst
 similarity index 100%
-rename from Documentation/device-mapper/cache-policies.rst
-rename to Documentation/admin-guide/device-mapper/cache-policies.rst
-diff --git a/Documentation/device-mapper/cache.rst b/Documentation/admin-guide/device-mapper/cache.rst
+rename from Documentation/early-userspace/buffer-format.rst
+rename to Documentation/driver-api/early-userspace/buffer-format.rst
+diff --git a/Documentation/early-userspace/early_userspace_support.rst b/Documentation/driver-api/early-userspace/early_userspace_support.rst
 similarity index 100%
-rename from Documentation/device-mapper/cache.rst
-rename to Documentation/admin-guide/device-mapper/cache.rst
-diff --git a/Documentation/device-mapper/delay.rst b/Documentation/admin-guide/device-mapper/delay.rst
-similarity index 100%
-rename from Documentation/device-mapper/delay.rst
-rename to Documentation/admin-guide/device-mapper/delay.rst
-diff --git a/Documentation/device-mapper/dm-crypt.rst b/Documentation/admin-guide/device-mapper/dm-crypt.rst
-similarity index 100%
-rename from Documentation/device-mapper/dm-crypt.rst
-rename to Documentation/admin-guide/device-mapper/dm-crypt.rst
-diff --git a/Documentation/device-mapper/dm-dust.txt b/Documentation/admin-guide/device-mapper/dm-dust.txt
-similarity index 100%
-rename from Documentation/device-mapper/dm-dust.txt
-rename to Documentation/admin-guide/device-mapper/dm-dust.txt
-diff --git a/Documentation/device-mapper/dm-flakey.rst b/Documentation/admin-guide/device-mapper/dm-flakey.rst
-similarity index 100%
-rename from Documentation/device-mapper/dm-flakey.rst
-rename to Documentation/admin-guide/device-mapper/dm-flakey.rst
-diff --git a/Documentation/device-mapper/dm-init.rst b/Documentation/admin-guide/device-mapper/dm-init.rst
-similarity index 100%
-rename from Documentation/device-mapper/dm-init.rst
-rename to Documentation/admin-guide/device-mapper/dm-init.rst
-diff --git a/Documentation/device-mapper/dm-integrity.rst b/Documentation/admin-guide/device-mapper/dm-integrity.rst
-similarity index 100%
-rename from Documentation/device-mapper/dm-integrity.rst
-rename to Documentation/admin-guide/device-mapper/dm-integrity.rst
-diff --git a/Documentation/device-mapper/dm-io.rst b/Documentation/admin-guide/device-mapper/dm-io.rst
-similarity index 100%
-rename from Documentation/device-mapper/dm-io.rst
-rename to Documentation/admin-guide/device-mapper/dm-io.rst
-diff --git a/Documentation/device-mapper/dm-log.rst b/Documentation/admin-guide/device-mapper/dm-log.rst
-similarity index 100%
-rename from Documentation/device-mapper/dm-log.rst
-rename to Documentation/admin-guide/device-mapper/dm-log.rst
-diff --git a/Documentation/device-mapper/dm-queue-length.rst b/Documentation/admin-guide/device-mapper/dm-queue-length.rst
-similarity index 100%
-rename from Documentation/device-mapper/dm-queue-length.rst
-rename to Documentation/admin-guide/device-mapper/dm-queue-length.rst
-diff --git a/Documentation/device-mapper/dm-raid.rst b/Documentation/admin-guide/device-mapper/dm-raid.rst
-similarity index 100%
-rename from Documentation/device-mapper/dm-raid.rst
-rename to Documentation/admin-guide/device-mapper/dm-raid.rst
-diff --git a/Documentation/device-mapper/dm-service-time.rst b/Documentation/admin-guide/device-mapper/dm-service-time.rst
-similarity index 100%
-rename from Documentation/device-mapper/dm-service-time.rst
-rename to Documentation/admin-guide/device-mapper/dm-service-time.rst
-diff --git a/Documentation/device-mapper/dm-uevent.rst b/Documentation/admin-guide/device-mapper/dm-uevent.rst
-similarity index 100%
-rename from Documentation/device-mapper/dm-uevent.rst
-rename to Documentation/admin-guide/device-mapper/dm-uevent.rst
-diff --git a/Documentation/device-mapper/dm-zoned.rst b/Documentation/admin-guide/device-mapper/dm-zoned.rst
-similarity index 100%
-rename from Documentation/device-mapper/dm-zoned.rst
-rename to Documentation/admin-guide/device-mapper/dm-zoned.rst
-diff --git a/Documentation/device-mapper/era.rst b/Documentation/admin-guide/device-mapper/era.rst
-similarity index 100%
-rename from Documentation/device-mapper/era.rst
-rename to Documentation/admin-guide/device-mapper/era.rst
-diff --git a/Documentation/device-mapper/index.rst b/Documentation/admin-guide/device-mapper/index.rst
-similarity index 98%
-rename from Documentation/device-mapper/index.rst
-rename to Documentation/admin-guide/device-mapper/index.rst
-index 105e253bc231..c77c58b8f67b 100644
---- a/Documentation/device-mapper/index.rst
-+++ b/Documentation/admin-guide/device-mapper/index.rst
+rename from Documentation/early-userspace/early_userspace_support.rst
+rename to Documentation/driver-api/early-userspace/early_userspace_support.rst
+diff --git a/Documentation/early-userspace/index.rst b/Documentation/driver-api/early-userspace/index.rst
+similarity index 95%
+rename from Documentation/early-userspace/index.rst
+rename to Documentation/driver-api/early-userspace/index.rst
+index 2b8eb6132058..6f20c3c560d8 100644
+--- a/Documentation/early-userspace/index.rst
++++ b/Documentation/driver-api/early-userspace/index.rst
 @@ -1,5 +1,3 @@
 -:orphan:
 -
- =============
- Device Mapper
- =============
-diff --git a/Documentation/device-mapper/kcopyd.rst b/Documentation/admin-guide/device-mapper/kcopyd.rst
-similarity index 100%
-rename from Documentation/device-mapper/kcopyd.rst
-rename to Documentation/admin-guide/device-mapper/kcopyd.rst
-diff --git a/Documentation/device-mapper/linear.rst b/Documentation/admin-guide/device-mapper/linear.rst
-similarity index 100%
-rename from Documentation/device-mapper/linear.rst
-rename to Documentation/admin-guide/device-mapper/linear.rst
-diff --git a/Documentation/device-mapper/log-writes.rst b/Documentation/admin-guide/device-mapper/log-writes.rst
-similarity index 100%
-rename from Documentation/device-mapper/log-writes.rst
-rename to Documentation/admin-guide/device-mapper/log-writes.rst
-diff --git a/Documentation/device-mapper/persistent-data.rst b/Documentation/admin-guide/device-mapper/persistent-data.rst
-similarity index 100%
-rename from Documentation/device-mapper/persistent-data.rst
-rename to Documentation/admin-guide/device-mapper/persistent-data.rst
-diff --git a/Documentation/device-mapper/snapshot.rst b/Documentation/admin-guide/device-mapper/snapshot.rst
-similarity index 100%
-rename from Documentation/device-mapper/snapshot.rst
-rename to Documentation/admin-guide/device-mapper/snapshot.rst
-diff --git a/Documentation/device-mapper/statistics.rst b/Documentation/admin-guide/device-mapper/statistics.rst
-similarity index 100%
-rename from Documentation/device-mapper/statistics.rst
-rename to Documentation/admin-guide/device-mapper/statistics.rst
-diff --git a/Documentation/device-mapper/striped.rst b/Documentation/admin-guide/device-mapper/striped.rst
-similarity index 100%
-rename from Documentation/device-mapper/striped.rst
-rename to Documentation/admin-guide/device-mapper/striped.rst
-diff --git a/Documentation/device-mapper/switch.rst b/Documentation/admin-guide/device-mapper/switch.rst
-similarity index 100%
-rename from Documentation/device-mapper/switch.rst
-rename to Documentation/admin-guide/device-mapper/switch.rst
-diff --git a/Documentation/device-mapper/thin-provisioning.rst b/Documentation/admin-guide/device-mapper/thin-provisioning.rst
-similarity index 100%
-rename from Documentation/device-mapper/thin-provisioning.rst
-rename to Documentation/admin-guide/device-mapper/thin-provisioning.rst
-diff --git a/Documentation/device-mapper/unstriped.rst b/Documentation/admin-guide/device-mapper/unstriped.rst
-similarity index 100%
-rename from Documentation/device-mapper/unstriped.rst
-rename to Documentation/admin-guide/device-mapper/unstriped.rst
-diff --git a/Documentation/device-mapper/verity.rst b/Documentation/admin-guide/device-mapper/verity.rst
-similarity index 100%
-rename from Documentation/device-mapper/verity.rst
-rename to Documentation/admin-guide/device-mapper/verity.rst
-diff --git a/Documentation/device-mapper/writecache.rst b/Documentation/admin-guide/device-mapper/writecache.rst
-similarity index 100%
-rename from Documentation/device-mapper/writecache.rst
-rename to Documentation/admin-guide/device-mapper/writecache.rst
-diff --git a/Documentation/device-mapper/zero.rst b/Documentation/admin-guide/device-mapper/zero.rst
-similarity index 100%
-rename from Documentation/device-mapper/zero.rst
-rename to Documentation/admin-guide/device-mapper/zero.rst
-diff --git a/Documentation/admin-guide/index.rst b/Documentation/admin-guide/index.rst
-index 42819addebc6..e0763c51b024 100644
---- a/Documentation/admin-guide/index.rst
-+++ b/Documentation/admin-guide/index.rst
-@@ -79,6 +79,7 @@ configure specific aspects of kernel behavior to your liking.
-    namespaces/index
-    perf-security
-    acpi/index
-+   device-mapper/index
+ ===============
+ Early Userspace
+ ===============
+diff --git a/Documentation/driver-api/index.rst b/Documentation/driver-api/index.rst
+index 97bab578ea72..d41d1c561f01 100644
+--- a/Documentation/driver-api/index.rst
++++ b/Documentation/driver-api/index.rst
+@@ -16,6 +16,7 @@ available subsections can be seen below.
  
- .. only::  subproject and html
+    basics
+    infrastructure
++   early-userspace/index
+    pm/index
+    clk
+    device-io
+diff --git a/Documentation/filesystems/nfs/nfsroot.txt b/Documentation/filesystems/nfs/nfsroot.txt
+index 4862d3d77e27..ae4332464560 100644
+--- a/Documentation/filesystems/nfs/nfsroot.txt
++++ b/Documentation/filesystems/nfs/nfsroot.txt
+@@ -239,7 +239,7 @@ rdinit=<executable file>
+   A description of the process of mounting the root file system can be
+   found in:
  
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 524e2c4300dc..40d057631004 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -4703,7 +4703,7 @@ Q:	http://patchwork.kernel.org/project/dm-devel/list/
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/device-mapper/linux-dm.git
- T:	quilt http://people.redhat.com/agk/patches/linux/editing/
- S:	Maintained
--F:	Documentation/device-mapper/
-+F:	Documentation/admin-guide/device-mapper/
- F:	drivers/md/Makefile
- F:	drivers/md/Kconfig
- F:	drivers/md/dm*
-diff --git a/drivers/md/Kconfig b/drivers/md/Kconfig
-index 5ccac0b77f17..3834332f4963 100644
---- a/drivers/md/Kconfig
-+++ b/drivers/md/Kconfig
-@@ -453,7 +453,7 @@ config DM_INIT
- 	Enable "dm-mod.create=" parameter to create mapped devices at init time.
- 	This option is useful to allow mounting rootfs without requiring an
- 	initramfs.
--	See Documentation/device-mapper/dm-init.rst for dm-mod.create="..."
-+	See Documentation/admin-guide/device-mapper/dm-init.rst for dm-mod.create="..."
- 	format.
+-    Documentation/early-userspace/early_userspace_support.rst
++    Documentation/driver-api/early-userspace/early_userspace_support.rst
  
- 	If unsure, say N.
-diff --git a/drivers/md/dm-init.c b/drivers/md/dm-init.c
-index b65faef2c4b5..b869316d3722 100644
---- a/drivers/md/dm-init.c
-+++ b/drivers/md/dm-init.c
-@@ -25,7 +25,7 @@ static char *create;
-  * Format: dm-mod.create=<name>,<uuid>,<minor>,<flags>,<table>[,<table>+][;<name>,<uuid>,<minor>,<flags>,<table>[,<table>+]+]
-  * Table format: <start_sector> <num_sectors> <target_type> <target_args>
-  *
-- * See Documentation/device-mapper/dm-init.rst for dm-mod.create="..." format
-+ * See Documentation/admin-guide/device-mapper/dm-init.rst for dm-mod.create="..." format
-  * details.
-  */
  
-diff --git a/drivers/md/dm-raid.c b/drivers/md/dm-raid.c
-index 7a87a640f8ba..8a60a4a070ac 100644
---- a/drivers/md/dm-raid.c
-+++ b/drivers/md/dm-raid.c
-@@ -3558,7 +3558,7 @@ static void raid_status(struct dm_target *ti, status_type_t type,
- 		 * v1.5.0+:
- 		 *
- 		 * Sync action:
--		 *   See Documentation/device-mapper/dm-raid.rst for
-+		 *   See Documentation/admin-guide/device-mapper/dm-raid.rst for
- 		 *   information on each of these states.
- 		 */
- 		DMEMIT(" %s", sync_action);
+ 
+diff --git a/Documentation/filesystems/ramfs-rootfs-initramfs.txt b/Documentation/filesystems/ramfs-rootfs-initramfs.txt
+index fa985909dbca..97d42ccaa92d 100644
+--- a/Documentation/filesystems/ramfs-rootfs-initramfs.txt
++++ b/Documentation/filesystems/ramfs-rootfs-initramfs.txt
+@@ -105,7 +105,7 @@ All this differs from the old initrd in several ways:
+   - The old initrd file was a gzipped filesystem image (in some file format,
+     such as ext2, that needed a driver built into the kernel), while the new
+     initramfs archive is a gzipped cpio archive (like tar only simpler,
+-    see cpio(1) and Documentation/early-userspace/buffer-format.rst).  The
++    see cpio(1) and Documentation/driver-api/early-userspace/buffer-format.rst).  The
+     kernel's cpio extraction code is not only extremely small, it's also
+     __init text and data that can be discarded during the boot process.
+ 
+@@ -159,7 +159,7 @@ One advantage of the configuration file is that root access is not required to
+ set permissions or create device nodes in the new archive.  (Note that those
+ two example "file" entries expect to find files named "init.sh" and "busybox" in
+ a directory called "initramfs", under the linux-2.6.* directory.  See
+-Documentation/early-userspace/early_userspace_support.rst for more details.)
++Documentation/driver-api/early-userspace/early_userspace_support.rst for more details.)
+ 
+ The kernel does not depend on external cpio tools.  If you specify a
+ directory instead of a configuration file, the kernel's build infrastructure
+diff --git a/usr/Kconfig b/usr/Kconfig
+index 86e37e297278..a6b68503d177 100644
+--- a/usr/Kconfig
++++ b/usr/Kconfig
+@@ -18,7 +18,7 @@ config INITRAMFS_SOURCE
+ 	  When multiple directories and files are specified then the
+ 	  initramfs image will be the aggregate of all of them.
+ 
+-	  See <file:Documentation/early-userspace/early_userspace_support.rst> for more details.
++	  See <file:Documentation/driver-api/early-userspace/early_userspace_support.rst> for more details.
+ 
+ 	  If you are not sure, leave it blank.
+ 
 -- 
 2.21.0
 
