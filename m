@@ -2,96 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9546F593FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 08:03:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3542059404
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 08:07:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727114AbfF1GDj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 02:03:39 -0400
-Received: from mail1.windriver.com ([147.11.146.13]:53484 "EHLO
-        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726572AbfF1GDj (ORCPT
+        id S1727015AbfF1GHE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 02:07:04 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:46571 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726553AbfF1GHE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 02:03:39 -0400
-Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
-        by mail1.windriver.com (8.15.2/8.15.1) with ESMTPS id x5S63GbX015888
-        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Thu, 27 Jun 2019 23:03:16 -0700 (PDT)
-Received: from [128.224.162.221] (128.224.162.221) by ALA-HCA.corp.ad.wrs.com
- (147.11.189.50) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 27 Jun
- 2019 23:03:16 -0700
-Subject: Re: [PATCH] netfilter: Fix remainder of pseudo-header protocol 0
-To:     Pablo Neira Ayuso <pablo@netfilter.org>
-CC:     <kadlec@blackhole.kfki.hu>, <fw@strlen.de>, <davem@davemloft.net>,
-        <netfilter-devel@vger.kernel.org>, <coreteam@netfilter.org>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <1561346258-272481-1-git-send-email-zhe.he@windriver.com>
- <20190627184903.atdcwk4wnfaayyer@salvia>
-From:   He Zhe <zhe.he@windriver.com>
-Message-ID: <aafd41fb-b58e-a402-c8fe-5eeffc7a7755@windriver.com>
-Date:   Fri, 28 Jun 2019 14:03:12 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Fri, 28 Jun 2019 02:07:04 -0400
+Received: by mail-wr1-f68.google.com with SMTP id n4so4882726wrw.13;
+        Thu, 27 Jun 2019 23:07:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AuUMir4cdKZVUvRsNPY5rqLX7yjSzNVBKmDh7MZE8Aw=;
+        b=keggkYAhhPb2VqnK46kdGtYH1YIPGbhBI+giOQ9eyyYin3as2alRkXETot2V6U4m0z
+         /WMg9KBXwxISBlLr9X/4Avs8FgMVS0yD6JuAcGV5yRfpgXeaIAw61hpFjAJvcX6gVgWE
+         xr6oesc1E0AYyq6dU1mliftNFnC/g+YDoIgZePY/AsyqvFsnfRA0Yzjt4c7iUaGsMeoU
+         vT2zvRguZ7PdJ6cd1gEgihGmYFyK1lLM2s26/ATAOJOcoyWd4VIwngv5tvgQfM/NqEAI
+         jRisET2BYf9Lzz5Hu913tdEONve5lnTCqBlGDvD/cOA2wdzJxcPIK87ZyblQ2yFSP/rs
+         CPNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AuUMir4cdKZVUvRsNPY5rqLX7yjSzNVBKmDh7MZE8Aw=;
+        b=ikQBDzb1zCev4hpkufmFUiHabHsQ185FhsemhkZVJjoF16m4HxrCLpctOI4dm/KdhQ
+         VsXoNWhyfTn1eoOQDrgtqIRI3nZtm8q2hhJ/tYtC/pwgqXhyINQ3KxzvfaDX6YuowOwV
+         2INNuurPHbALCp6QGV3Fh1IVZhXBQKhXIU0uvHKPMmpJ/ljYEhv1yj5HY8TUvKUfj5Yy
+         wiVxCDI4p8Fn7RctzAU2SKVIEQRLRBFczk/CbCU5BEzYsxmwPedRthPygKlYcgBy3Kqs
+         TKLn5ecur2Mjfq9ZCfeDzzahjykFCsZxhj55/HfjmcmX22tG/bM6sgWOeIiijv6+BEQm
+         cAtA==
+X-Gm-Message-State: APjAAAVSTKfcui0KQeCv+G2xUjPeHXgnXveIhnvvSX4hJHvsUTTAAMuV
+        dUYpT0ZAmcHVso/8vK4+27Q=
+X-Google-Smtp-Source: APXvYqwBXpMyMdyhifUzDpY5+dF5LudZPYAoIX+6joiQefSZvLGZjHiX+/1iVan1TJh3esuDztfy7A==
+X-Received: by 2002:a5d:6b90:: with SMTP id n16mr6509916wrx.206.1561702022249;
+        Thu, 27 Jun 2019 23:07:02 -0700 (PDT)
+Received: from localhost.localdomain ([41.220.75.172])
+        by smtp.gmail.com with ESMTPSA id 5sm2144551wrc.76.2019.06.27.23.07.00
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 27 Jun 2019 23:07:01 -0700 (PDT)
+From:   Sheriff Esseson <sheriffesseson@gmail.com>
+To:     skhan@linuxfoundation.org
+Cc:     linux-kernel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        linux-doc@vger.kernel.org,
+        Sheriff Esseson <sheriffesseson@gmail.com>
+Subject: [linux-kernel-mentees] [PATCH] Doc : doc-guide : Fix a typo
+Date:   Fri, 28 Jun 2019 07:06:48 +0100
+Message-Id: <20190628060648.25151-1-sheriffesseson@gmail.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-In-Reply-To: <20190627184903.atdcwk4wnfaayyer@salvia>
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Originating-IP: [128.224.162.221]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+fix the disjunction by replacing "of" with "or".
 
+Signed-off-by: Sheriff Esseson <sheriffesseson@gmail.com>
+---
+ Documentation/doc-guide/kernel-doc.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 6/28/19 2:49 AM, Pablo Neira Ayuso wrote:
-> On Mon, Jun 24, 2019 at 11:17:38AM +0800, zhe.he@windriver.com wrote:
->> From: He Zhe <zhe.he@windriver.com>
->>
->> Since v5.1-rc1, some types of packets do not get unreachable reply with the
->> following iptables setting. Fox example,
->>
->> $ iptables -A INPUT -p icmp --icmp-type 8 -j REJECT
->> $ ping 127.0.0.1 -c 1
->> PING 127.0.0.1 (127.0.0.1) 56(84) bytes of data.
->> — 127.0.0.1 ping statistics —
->> 1 packets transmitted, 0 received, 100% packet loss, time 0ms
->>
->> We should have got the following reply from command line, but we did not.
->> From 127.0.0.1 icmp_seq=1 Destination Port Unreachable
->>
->> Yi Zhao reported it and narrowed it down to:
->> 7fc38225363d ("netfilter: reject: skip csum verification for protocols that don't support it"),
->>
->> This is because nf_ip_checksum still expects pseudo-header protocol type 0 for
->> packets that are of neither TCP or UDP, and thus ICMP packets are mistakenly
->> treated as TCP/UDP.
->>
->> This patch corrects the conditions in nf_ip_checksum and all other places that
->> still call it with protocol 0.
-> Looking at 7fc38225363dd8f19e667ad7c77b63bc4a5c065d, I wonder this can
-> be fixed while simplifying it...
->
-> I think nf_reject_verify_csum() is useless?
->
-> In your patch, now you explicitly check for IPPROTO_TCP and
-> IPPROTO_UDP to validate the checksum.
-
-Thanks for your review.
-
-I suppose the two main points of 7fc38225363d are valid and I was trying to
-align with them and fix them:
-1) Skip csum verification for protocols that don't support it.
-2) Remove the protocol 0 used to indicate non-TCP/UDP packets, and use actual
-   types instead to be clear.
-
-1) uses nf_reject_verify_csum to skip those that should be skipped and leaves
-the protocols that support csum to the rest of the logic including
-nf_ip_checksum. But 2) removes the "0" transition from the rest of the
-logic and thus causes this issue. So I add the explicit check against TCP/UDP to
-nf_ip_checksum. And nf_reject_verify_csum is still useful.
-
-Zhe
-
->
+diff --git a/Documentation/doc-guide/kernel-doc.rst b/Documentation/doc-guide/kernel-doc.rst
+index f96059767..192c36af3 100644
+--- a/Documentation/doc-guide/kernel-doc.rst
++++ b/Documentation/doc-guide/kernel-doc.rst
+@@ -359,7 +359,7 @@ Domain`_ references.
+   ``monospaced font``.
+ 
+   Useful if you need to use special characters that would otherwise have some
+-  meaning either by kernel-doc script of by reStructuredText.
++  meaning either by kernel-doc script or by reStructuredText.
+ 
+   This is particularly useful if you need to use things like ``%ph`` inside
+   a function description.
+-- 
+2.22.0
 
