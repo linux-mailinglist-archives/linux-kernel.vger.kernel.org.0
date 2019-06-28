@@ -2,82 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E40AF59048
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 04:10:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F166459094
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 04:14:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726462AbfF1CJz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 22:09:55 -0400
-Received: from mail-oln040092003077.outbound.protection.outlook.com ([40.92.3.77]:58697
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725770AbfF1CJz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 22:09:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mBSRqqR9+xYcdhKqjfZEDzZYFAbQ751VxdMxRtH9eZk=;
- b=N+xv87vsdxqMWlTq40Ct4AH+BDdJpuSv94kXO+abRIsCoqXR6xYFUe3bm+TMTCkGfyA1apmj88g98+8KjaJEENqoPGT5tmpGhkRsw0nGh1J/sP6mf1M6luxcunupH2PXaPvBEGH5l18QiIVxaHje3bM8IsFw/O6uAs34OutEvyyDQqg7FdVJ1GowFpwYJLS3tT1LBkLUm8efr/bFXZvJ1zdl00GLnsyKSWIBxNsRFUKpUw2mYGbNwMSQZ9I6GSFHui0x9ObbSRIK/cTuBdeGf/i7wMMdvXmoD3VPfPMCgk0g6VF6mnj7o7p9uqoh4T9jP1jY85ERdw3qoXEaLyxL+A==
-Received: from BL2NAM02FT033.eop-nam02.prod.protection.outlook.com
- (10.152.76.51) by BL2NAM02HT069.eop-nam02.prod.protection.outlook.com
- (10.152.77.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.2032.15; Fri, 28 Jun
- 2019 02:09:53 +0000
-Received: from BYAPR02MB5704.namprd02.prod.outlook.com (10.152.76.56) by
- BL2NAM02FT033.mail.protection.outlook.com (10.152.77.163) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.2032.15 via Frontend Transport; Fri, 28 Jun 2019 02:09:53 +0000
-Received: from BYAPR02MB5704.namprd02.prod.outlook.com
- ([fe80::18b:f08e:21ff:fa35]) by BYAPR02MB5704.namprd02.prod.outlook.com
- ([fe80::18b:f08e:21ff:fa35%5]) with mapi id 15.20.2008.018; Fri, 28 Jun 2019
- 02:09:53 +0000
-From:   abhja kaanlani <unidef_rogue@live.com>
-To:     "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Effect of multidimensional arrays on the Linux kernel?
-Thread-Topic: Effect of multidimensional arrays on the Linux kernel?
-Thread-Index: AQHVLVaS54ldAhnrUki2ZSjI26pKcw==
-Date:   Fri, 28 Jun 2019 02:09:53 +0000
-Message-ID: <BYAPR02MB570463AFB1E4D5DDCB6FEA3983FC0@BYAPR02MB5704.namprd02.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-incomingtopheadermarker: OriginalChecksum:73F462A6098777A76947967EE9FB2E945778A47BEA3AD5592B45FA1E0684B49D;UpperCasedChecksum:83460CAA3B7ABE2E85208B30251F91BE2284C914CAB6F6E62F5887918C2232E1;SizeAsReceived:6793;Count:41
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn:  [OFfuDFYdGsuUSgM9wn3v5GBqwiTJvRxSBnS5IIWGzNBYRAh717PUMkYhSltWOVyt]
-x-ms-publictraffictype: Email
-x-incomingheadercount: 41
-x-eopattributedmessage: 0
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(5050001)(7020095)(20181119110)(201702061078)(5061506573)(5061507331)(1603103135)(2017031320274)(2017031322404)(2017031323274)(2017031324274)(1601125500)(1603101475)(1701031045);SRVR:BL2NAM02HT069;
-x-ms-traffictypediagnostic: BL2NAM02HT069:
-x-microsoft-antispam-message-info: k2Q0IhGN9y2EQsUalw9MbxQNCDfChhhtU1R28Wq9Cqa836Nl/x/lGGuGV0uqzJAtIwY3LubvIA2qwo3WfUMQTOHZR3ZBs3Yv++fm4IShLi5JZZFiNXkOA891SX1qTTiJ8ujjRjXc76FAyVj+TxLK8o5bQtc6XVNYiqUpcsGSTtqWCVH2etSJDoPlXVxEDAEv
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <5E5457B36459BB4E9007AD72486E7237@sct-15-20-1580-16-msonline-outlook-d54f3.templateTenant>
-Content-Transfer-Encoding: base64
+        id S1726652AbfF1CNg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 22:13:36 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:5470 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725770AbfF1CNg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 22:13:36 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d1577d00000>; Thu, 27 Jun 2019 19:13:36 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 27 Jun 2019 19:13:33 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 27 Jun 2019 19:13:33 -0700
+Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 28 Jun
+ 2019 02:13:32 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Fri, 28 Jun 2019 02:13:33 +0000
+Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.102.155]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5d1577cd0000>; Thu, 27 Jun 2019 19:13:33 -0700
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <tglx@linutronix.de>, <jason@lakedaemon.net>,
+        <marc.zyngier@arm.com>, <linus.walleij@linaro.org>,
+        <stefan@agner.ch>, <mark.rutland@arm.com>
+CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
+        <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <jckuo@nvidia.com>,
+        <josephl@nvidia.com>, <talho@nvidia.com>, <skomatineni@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
+        <digetx@gmail.com>, <devicetree@vger.kernel.org>
+Subject: [PATCH V5 00/18] SC7 entry and exit support for Tegra210
+Date:   Thu, 27 Jun 2019 19:12:34 -0700
+Message-ID: <1561687972-19319-1-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
-X-OriginatorOrg: live.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: f9cee9a1-2b52-4ee2-27e8-08d6fb6db55e
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Jun 2019 02:09:53.1777
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Internet
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL2NAM02HT069
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1561688016; bh=ZOCE9zjoMHUFAnpZCSr2RE82QUgVkauUv+okuy0Asas=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         X-NVConfidentiality:MIME-Version:Content-Type;
+        b=BWazzRGIkGQ1ebBLvfe4M/Tei5UPV8iq2oYuyAKDuF98G9dfvbrslhzBqfxH3cYq6
+         njz+RCv/o6QJnOyQ/PRVhLz5dnR2SFzMp/16nEDNGYFSQ4JAsiXafBvUfwpsrlh5XK
+         9Skrfk9zUm9qAi1jmKFnFq56/YVcG/rxD6JqQfF14+wPhhtJ3vA844p9CmtMfHxxch
+         ryH8finaYUrOOTtTV86T8C0sapaXtgF5bi5KyQ52YHSxil4VcRVB3vb0BWA+jSJ003
+         9b6TJBMtgTSXkL52FaxSBwvNskDHG0jG9RsLHeVkKdt8QsnXJIbOCcZL9IWCYHXorv
+         dQWWHgbEJZD/g==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SW5zdGVhZCBvZiByZWFkaW5nIGJvb2tzIEkgZGVjaWRlZCB0byBzY3JldyBhcm91bmQgb24gdGhl
-IGludGVybmV0IChzYWQgZmFjZSkgLCBJIGRvbuKAmXQga25vdyBtdWNoIGFib3V0IGtlcm5lbCBk
-ZXZlbG9wbWVudCBidXQgSSBoYXZlIGJlZW4gd3JpdGluZyBpbiBDIGZvciBhYm91dCAxNSB5ZWFy
-cw0KDQpCdXQgbGV04oCZcyBzYXkgeW91IGhhdmUgYSBkYXRhIHN0cnVjdHVyZSB0aGF0IGhvbGRz
-IGluZm9ybWF0aW9uIGFib3V0IGEgaW8gc3RydWN0dXJlLCBhbmQgd2UgdGFrZSBpdCB0byAyIGFy
-cmF5cyB0byAyIGRpbWVuc2lvbiwgbWFraW5nIGEgbWF0cmljZSBvciBzb21lIHNvcnQgb2YgZ3Jh
-cGgNCg0KQSBmdW5jdGlvbiBvcmdhbml6ZXMgaXQgYnkgY2hhciAqZGVzY3JpcHRpb24sIGFuZCBh
-biBJRCBzeXN0ZW0sIGxpa2UgUElEUywgSSBrbm93IGl04oCZbGwgY29uc3VtZSBhIGxvdCBvZiBy
-YW0gYnV0IGl0IHByb3ZpZGVzIGEgbGF5ZXIgb2YgcGFyYWxsaXphdGlvbiwgYW5kIGNhbiBiZSB1
-c2VkIGFzIGEgY2FjaGUNCg0KRG9lcyB0aGlzIHNvdW5kIHBsYXVzaWJsZT8NCg0KSSBoYXZlIHRv
-IGdvIHJlYWQgdGhhdCBMaW51eCBrZXJuZWwgYm9vaywgbXkgaW50ZW50IHdhcyB0byByZXdyaXRl
-IHRoZSBzY2hlZHVsZXIgc28gaGVyZSBJIGdvDQoNClRoYW5rIHlvdSBmb3IgcmVhZGluZw0KDQpV
-bmlkZWYNCg0KU2VudCBmcm9tIG15IGlQaG9uZQ==
+This patch series includes Tegra210 deepsleep support with RTC alarm
+wake event.
+
+This series also includes save and restore of PLLs, clocks, OSC contexts
+for deepsleep exit to normal operation.
+
+This patch series doesn't support 100% suspend/resume to allow fully
+functional state upon resume and we are working on some more drivers suspend
+and resume implementations.
+
+[V5]: Changes between V4 & V5 are
+	- V4 feedback fixes
+
+[V4]: Changes between V3 & V4 are
+	- V3 feedback fixes
+	- Removed park bits clear for EMMC pads in pinctrl-tegra driver
+	  function tegra_pinctrl_clear_parked_bits as based on V3 feedback
+	  parked_bit is updated to parked_bitmask to use with DRV_PINGROUP
+	  as well and thierry posted patch series for this.
+	- Implemented all peripheral clocks save and restore through their
+	  corresponding clk_ops save_context and restore_context and removed
+	  all direct registers store and restore in clk-tegra210 driver.
+	- Created separate patch for fence_delay update during PLLU init based
+	  on V3 feedback.
+	- Added more comments in tegra210_clk_resume regarding dfll restore
+	  sequence and its dependency on peripheral clocks restore.
+
+[V3]: Changes between V2 & V3 are
+	- V2 feedback fixes
+	- GPIO restore should happen prior to Pinctrl restore to prevent
+	  glitch on GPIO lines. So using resume_noirq for gpio tegra to allow
+	  gpio resume prior to pinctrl resume.
+	- Implemented save_context and restore_context callbacks for clock
+	  plls, pll outs and dividers in corresponding drivers.
+	  Note: Peripheral clocks and clock enable and reset need to be in
+	  Tegra210 clock suspend/resume as they need to be in proper sequence
+	  w.r.t DFLL resume for restoring CPU clock.
+	- Removed gpio-tegra changes for hierarchical support to have PMC as
+	  parent to GPIOs for GPIO wake event support. Thierry is working on
+	  gpiolib for some cleanup before adding hierarchical support. So
+	  holding on to GPIO wake support for now.
+
+[V2] : V1 feedback fixes
+	Patch 0002: This version still using syscore. Thierry suggest not to
+	use syscore and waiting on suggestion from Linux Walleij for any better
+	way of storing current state of pins before suspend entry and restoring
+	them on resume at very early stage. So left this the same way as V1 and
+	will address once I get more feedback on this.
+	Also need to findout and implement proper way of forcing resume order
+	between pinctrl and gpio driver.
+
+[V1]:	Tegra210 SC7 entry and exit thru RTC wake and Power button GPIO wake
+	using hierarchical IRQ with PMC as parent to GPIO.
+
+
+
+
+Sowjanya Komatineni (18):
+  irqchip: tegra: do not disable COP IRQ during suspend
+  pinctrl: tegra: add suspend and resume support
+  clk: tegra: save and restore divider rate
+  clk: tegra: pllout: save and restore pllout context
+  clk: tegra: pll: save and restore pll context
+  clk: tegra: save and restore CPU and System clocks context
+  clk: tegra: support for saving and restoring OSC context
+  clk: tegra: add suspend resume support for DFLL
+  clk: tegra: add save and restore context support for peripheral clocks
+  clk: tegra210: use fence_udelay during PLLU init
+  clk: tegra210: support for Tegra210 clocks suspend and resume
+  soc/tegra: pmc: allow support for more tegra wake
+  soc/tegra: pmc: add pmc wake support for tegra210
+  arm64: tegra: enable wake from deep sleep on RTC alarm.
+  soc/tegra: pmc: configure core power request polarity
+  soc/tegra: pmc: configure deep sleep control settings
+  arm64: dts: tegra210-p2180: Jetson TX1 SC7 timings
+  arm64: dts: tegra210-p2180: Jetson nano SC7 timings
+
+ arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi     |   7 +
+ arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts |   7 +
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi           |   5 +-
+ drivers/clk/tegra/clk-dfll.c                       |  78 ++++++++++++
+ drivers/clk/tegra/clk-dfll.h                       |   2 +
+ drivers/clk/tegra/clk-divider.c                    |  23 ++++
+ drivers/clk/tegra/clk-periph-fixed.c               |  31 +++++
+ drivers/clk/tegra/clk-periph-gate.c                |  34 +++++
+ drivers/clk/tegra/clk-periph.c                     |  43 +++++++
+ drivers/clk/tegra/clk-pll-out.c                    |  28 ++++
+ drivers/clk/tegra/clk-pll.c                        | 121 +++++++++++++-----
+ drivers/clk/tegra/clk-sdmmc-mux.c                  |  30 +++++
+ drivers/clk/tegra/clk-tegra-fixed.c                |  14 ++
+ drivers/clk/tegra/clk-tegra-super-gen4.c           |   4 -
+ drivers/clk/tegra/clk-tegra210.c                   | 128 +++++++++++++++++--
+ drivers/clk/tegra/clk.c                            |  94 ++++++++++++++
+ drivers/clk/tegra/clk.h                            |  45 ++++++-
+ drivers/irqchip/irq-tegra.c                        |  20 ++-
+ drivers/pinctrl/tegra/pinctrl-tegra.c              |  52 ++++++++
+ drivers/pinctrl/tegra/pinctrl-tegra.h              |   3 +
+ drivers/pinctrl/tegra/pinctrl-tegra210.c           |   1 +
+ drivers/soc/tegra/pmc.c                            | 141 ++++++++++++++++++++-
+ 22 files changed, 858 insertions(+), 53 deletions(-)
+
+-- 
+2.7.4
+
