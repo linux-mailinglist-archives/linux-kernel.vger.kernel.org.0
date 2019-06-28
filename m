@@ -2,55 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85E8E5918F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 04:48:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70D1759191
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 04:48:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727156AbfF1Crn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 22:47:43 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:43365 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726857AbfF1Crm (ORCPT
+        id S1727174AbfF1Cr4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 22:47:56 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:34319 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726852AbfF1Crz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 22:47:42 -0400
-Received: by mail-pg1-f196.google.com with SMTP id f25so1890075pgv.10
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 19:47:42 -0700 (PDT)
+        Thu, 27 Jun 2019 22:47:55 -0400
+Received: by mail-pf1-f194.google.com with SMTP id c85so2202746pfc.1;
+        Thu, 27 Jun 2019 19:47:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=e0i3Rlp+FEbUJhkhWAZBPL2tU941VCIWNuEjNlTE+Qg=;
-        b=gCjdgOOBpTvhJUHulQ9Wu8i/A+YsYsUq5BjUvz9WlOao8jX8QDKoHCEnlWGsldi7Nl
-         mNudiXz3WUZ803+YmW2EgYWHL6MiSGcx0atP2uzxiCDYECT6p8eKu1o4vuac+8z9nVp3
-         4GrLF3sAAR/5yvAlMs82jTxBi2zMgAseXfVrA96E57nAJprPWkvUnbqfErhpAyH9AG6b
-         t3Hm2UvgowsMbsBeBrb07/aEY6k/bfkruH7l6htHfy22JcKgmjdE5AMBgdSS40g+Lp5M
-         zL0H2z0q8RQCEFLMvfzaipH9OzmBwJPqosqZ9PnR1Arh2FgNh8uQZsgsup4CqsX7AOtu
-         Beng==
+        bh=6aVVFTG6J+mdEsYXUboxldScMRbRZCxioRYOiLEnKqo=;
+        b=jkXS095oU0EJo69ErmIu2wtcYOP1wRsvlgLdQCfZ5Pv2Zh/7gShFRVIXqJcELmd9Qr
+         1BTNahLebCv7Yp99CNXI3P0SNaADHCbW7EZBdeOYXI4hwsdlzEpp+QeEq9CEQ+0buno7
+         Ewr3L3245KLVjBcBvkYSf9mxVdzetjaByD9iCF0rYL0qAwwNQFy3lASxtoMeC2QyrSUA
+         zgDP4trJVupB4rSAy1wimgi6dvK0RW3lk8FmZeGCjhkPpEV6uVv6amT6NQkMX9Sv4z5f
+         oCX0WCKLCsXkCR10WY55sfGOxFeUIUjx3e9IkITJ3vHuIlvwsFCiR9m3AUfzf0hSf+cT
+         9lTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=e0i3Rlp+FEbUJhkhWAZBPL2tU941VCIWNuEjNlTE+Qg=;
-        b=LdX3tKU9kD3F26sxzq3sz0VblFD4LTRE55mYAAGEyDLoYSilu0ISUXk5uanWivwzPK
-         v7R3bZf0uqhQ0LG7GaXYKl1/Rh4NTVspNaRZWjvfgVcWKwC32MCnOPe7Zxk+PVdp4WHP
-         KBIU0TubVCaAxFa02mfL7mvrrxErbS18H4RIxjWF9tYzT14kKEGSjEznmr3wjnpU6H1j
-         ZdChp4tr2vmJ8Prk2jVdZDNPG4F06J0XCKIcEDKwyWoB8niyKvpW4MSRlHmbTHPKfPNm
-         cQa9V+B4FQ1TmSN/cpFjQYG4N/mmFx+OFI1BWPewOCcvCGUXuUwJrbcBXI3j3+BPcCNB
-         gT/A==
-X-Gm-Message-State: APjAAAXVCtRCuupdB2CcSY4dmelUgR/Kck/9mEn6wddrGHWOK+Ei5fMi
-        2+C8TYbteU8J3CTgt8mVUZ8=
-X-Google-Smtp-Source: APXvYqzbPyWwYsHhNeg3FlZ1r9AxTg2ADMfw3rml0sxo0zpoP7ldk/yfSBD8FZkApai8FatRbxT6zQ==
-X-Received: by 2002:a17:90a:1aa4:: with SMTP id p33mr10252076pjp.27.1561690062014;
-        Thu, 27 Jun 2019 19:47:42 -0700 (PDT)
+        bh=6aVVFTG6J+mdEsYXUboxldScMRbRZCxioRYOiLEnKqo=;
+        b=NAsNGvkLf2GDdOYqR0dVVfikXxkquKQ6IPgqKso68qdbCbtuTXHXSxjc1pr8KVfxQX
+         nh8+l6Z6VXm+T1IL4vGTZCI5hoAn3/CpcoSMpDgXzK+x6wbOtdGARzp8BeBjiDtWJEAr
+         s24xG6+rvIC3ZHB8P2vBWIAU5V5CsgsNKU1nh/UV52N6AxyswvH2U5MYKk6YPDwPItoW
+         JVBiatNcKcYLVa2Pth+LxrBTe7kdWQZtisr8Z/8eux7/VbU+SFVjX7L/Ba2oEZcY9cA6
+         3eHWZXy+FbkPkCbE6Eqw9QsUe7+vkSjKA4BTZ6KMk/9h/Zf9Nk48hNImaAsR21TUXi+u
+         iSKw==
+X-Gm-Message-State: APjAAAUYanl2JvFUIUgjtqnrqUmb0ZSyDetsZyBMCCHkMWEAm6o0o1fw
+        QqS2D/Z2eIYodzIqbMf0lqE=
+X-Google-Smtp-Source: APXvYqztbcHxq0I2L5B3UFUCS5LeG8dAI4heG4E4Zv6OJyvw7TJjS519CqekfItIYensQjICjYysWA==
+X-Received: by 2002:a63:a48:: with SMTP id z8mr6935646pgk.91.1561690075033;
+        Thu, 27 Jun 2019 19:47:55 -0700 (PDT)
 Received: from hfq-skylake.ipads-lab.se.sjtu.edu.cn ([202.120.40.82])
-        by smtp.googlemail.com with ESMTPSA id u65sm10888346pjb.1.2019.06.27.19.47.39
+        by smtp.googlemail.com with ESMTPSA id c130sm450104pfc.184.2019.06.27.19.47.50
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Jun 2019 19:47:41 -0700 (PDT)
+        Thu, 27 Jun 2019 19:47:54 -0700 (PDT)
 From:   Fuqian Huang <huangfq.daxian@gmail.com>
 Cc:     Fuqian Huang <huangfq.daxian@gmail.com>,
-        Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 10/27] md: use kzalloc instead of kmalloc and memset
-Date:   Fri, 28 Jun 2019 10:47:34 +0800
-Message-Id: <20190628024734.15315-1-huangfq.daxian@gmail.com>
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Allison Randal <allison@lohutok.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v2 11/27] media: remove memset after dma_alloc_coherent/pci_alloc_consistent
+Date:   Fri, 28 Jun 2019 10:47:43 +0800
+Message-Id: <20190628024744.15367-1-huangfq.daxian@gmail.com>
 X-Mailer: git-send-email 2.11.0
 To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -58,34 +66,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace kmalloc followed by a memset with kzalloc
+pci_alloc_consistent calls dma_alloc_coherent directly.
+In commit af7ddd8a627c
+("Merge tag 'dma-mapping-4.21' of git://git.infradead.org/users/hch/dma-mapping"),
+dma_alloc_coherent has already zeroed the memory.
+So memset after these 2 functions is not needed.
 
 Signed-off-by: Fuqian Huang <huangfq.daxian@gmail.com>
 ---
- drivers/md/dm-integrity.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/media/pci/ngene/ngene-core.c        | 4 ----
+ drivers/media/platform/exynos4-is/fimc-is.c | 1 -
+ 2 files changed, 5 deletions(-)
 
-diff --git a/drivers/md/dm-integrity.c b/drivers/md/dm-integrity.c
-index 44e76cda087a..f5db89b28757 100644
---- a/drivers/md/dm-integrity.c
-+++ b/drivers/md/dm-integrity.c
-@@ -3358,7 +3358,7 @@ static int create_journal(struct dm_integrity_c *ic, char **error)
- 				goto bad;
- 			}
+diff --git a/drivers/media/pci/ngene/ngene-core.c b/drivers/media/pci/ngene/ngene-core.c
+index b75ab7d29226..af15ca1c501b 100644
+--- a/drivers/media/pci/ngene/ngene-core.c
++++ b/drivers/media/pci/ngene/ngene-core.c
+@@ -854,8 +854,6 @@ static int create_ring_buffer(struct pci_dev *pci_dev,
+ 	if (!Head)
+ 		return -ENOMEM;
  
--			crypt_iv = kmalloc(ivsize, GFP_KERNEL);
-+			crypt_iv = kzalloc(ivsize, GFP_KERNEL);
- 			if (!crypt_iv) {
- 				*error = "Could not allocate iv";
- 				r = -ENOMEM;
-@@ -3387,7 +3387,6 @@ static int create_journal(struct dm_integrity_c *ic, char **error)
- 				sg_set_buf(&sg[i], va, PAGE_SIZE);
- 			}
- 			sg_set_buf(&sg[i], &ic->commit_ids, sizeof ic->commit_ids);
--			memset(crypt_iv, 0x00, ivsize);
+-	memset(Head, 0, MemSize);
+-
+ 	PARingBufferCur = PARingBufferHead;
+ 	Cur = Head;
  
- 			skcipher_request_set_crypt(req, sg, sg,
- 						   PAGE_SIZE * ic->journal_pages + sizeof ic->commit_ids, crypt_iv);
+@@ -907,8 +905,6 @@ static int AllocateRingBuffers(struct pci_dev *pci_dev,
+ 	if (SCListMem == NULL)
+ 		return -ENOMEM;
+ 
+-	memset(SCListMem, 0, SCListMemSize);
+-
+ 	pRingBuffer->SCListMem = SCListMem;
+ 	pRingBuffer->PASCListMem = PASCListMem;
+ 	pRingBuffer->SCListMemSize = SCListMemSize;
+diff --git a/drivers/media/platform/exynos4-is/fimc-is.c b/drivers/media/platform/exynos4-is/fimc-is.c
+index e043d55133a3..77633e356305 100644
+--- a/drivers/media/platform/exynos4-is/fimc-is.c
++++ b/drivers/media/platform/exynos4-is/fimc-is.c
+@@ -341,7 +341,6 @@ static int fimc_is_alloc_cpu_memory(struct fimc_is *is)
+ 		return -ENOMEM;
+ 
+ 	is->memory.size = FIMC_IS_CPU_MEM_SIZE;
+-	memset(is->memory.vaddr, 0, is->memory.size);
+ 
+ 	dev_info(dev, "FIMC-IS CPU memory base: %#x\n", (u32)is->memory.paddr);
+ 
 -- 
 2.11.0
 
