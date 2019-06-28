@@ -2,116 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC9885920A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 05:38:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D12D59223
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 05:45:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727170AbfF1DiL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 23:38:11 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:52860 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726565AbfF1DiL (ORCPT
+        id S1727258AbfF1DpI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 23:45:08 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:34283 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726686AbfF1DpI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 23:38:11 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5S3c3sP008526;
-        Thu, 27 Jun 2019 22:38:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1561693083;
-        bh=dzmOZZff9xHTE8ZakTRvyW2vPBFPMXEZjI/07/tzJdY=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=PmTFMMrFC0XpLwzqjUEL99pdWFb5xuITGQNnRtjaNWfs6PkLQk5p4AInIwbgfDvQO
-         qEK44L9+NeiThBMQ/KTdxbg3pMdQGxzLkCOz2w1K4RYZL78Jn0JuUH4TU/PGNhMXtj
-         wYQl7Y+mlO72LTLWVNITvQtr+MGIG6VdR1bNrjR8=
-Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5S3c3bh058049
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 27 Jun 2019 22:38:03 -0500
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 27
- Jun 2019 22:38:03 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Thu, 27 Jun 2019 22:38:03 -0500
-Received: from [172.24.191.45] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5S3c0s2064279;
-        Thu, 27 Jun 2019 22:38:01 -0500
-Subject: Re: [PATCH v2] arm64: Kconfig.platforms: Enable GPIO_DAVINCI for
- ARCH_K3
-To:     Nishanth Menon <nm@ti.com>
-CC:     <t-kristo@ti.com>, <will.deacon@arm.com>,
-        <catalin.marinas@arm.com>, <shawnguo@kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <lokeshvutla@ti.com>
-References: <20190627110920.15099-1-j-keerthy@ti.com>
- <20190627143208.eeca4xyygml7s4n3@kahuna>
-From:   Keerthy <j-keerthy@ti.com>
-Message-ID: <39f5e726-8542-b650-3bdb-7542e8fab8ac@ti.com>
-Date:   Fri, 28 Jun 2019 09:08:37 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
-MIME-Version: 1.0
-In-Reply-To: <20190627143208.eeca4xyygml7s4n3@kahuna>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Thu, 27 Jun 2019 23:45:08 -0400
+Received: by mail-pl1-f196.google.com with SMTP id i2so2438411plt.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 20:45:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=KXeTyYem+OqmfXAB9jLbUiQJPmVsVcB9d5ZOaBgKddE=;
+        b=texMjThj9ELOsjSLEq9Y653PtH5SuvN1GG5Y4WjBzQ78DmK8vothKCoDarMC/zabdf
+         dOx030cYIzc2IAzYObguAgEwet0sMRx14n3TP0n0+MNWPt5RHK6rrxHbh6XcVYO1rEVP
+         DEUVrqxC1J13RZ3/9TWHkAHH+H4YTqjlMVaweakNMu2a9f5z/XGDci/PJiQkZBgrKGyh
+         6NDYgauYnoWeIRAl79kkIBELWXk2PqWWLlBtvxyeJkj/4GI9anNqNBhwRP2gLP9G+xuE
+         ZnkeLoPywR6luGzYn0SGkGMvfKGXJk7XdVD2taqRfYJM/ermdOONmkpTjndt+g10z4Wf
+         i4sQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=KXeTyYem+OqmfXAB9jLbUiQJPmVsVcB9d5ZOaBgKddE=;
+        b=QWuZjp73F+RmJ1m510LSN1vexSIf1i0Qtw6R9DEv4aJJ8/Y+ZZPtpUe32iTSA2WgLG
+         iANap8Wj6RJUnUxvRie4eM5n7IOqvJpzFm29mG1z5noxBGrAuc1QHiLjeeGP/S7rukvV
+         mwau8VApSKO+kM/CvxhB7jyrexd/Yvcr9QIsidJOMT1ttGhuw9rcJ9XXlF0kG22qmWY1
+         TzfofCAyJttqhqB1eM4pjBZmW910PgzOxhZyZTeIpIFEnP+A9EUocPl02EKiUwFt+yQz
+         IZK2fVdYxC0Yf5gK/1SRh0a/fNU4+P6jzybPLntziS1zPqsv0XBvLahz2e6YWKkbYv0c
+         Vq3A==
+X-Gm-Message-State: APjAAAUzfvMlNey8E6IKkg6F8dDHB6vOakh+Q84vYUGI23yiPWFJufFk
+        hScQiinKNoB7J7IrdQ5PgNI3p2wp
+X-Google-Smtp-Source: APXvYqziLzLlQJalN1m0zwRWAZgf0EFjLz1Ds/0ZjyAtyiCKJGWj0KUtdxBH5Eh1IDYaR6xlQFjF5w==
+X-Received: by 2002:a17:902:aa83:: with SMTP id d3mr8633526plr.74.1561693507494;
+        Thu, 27 Jun 2019 20:45:07 -0700 (PDT)
+Received: from huyue2.ccdomain.com ([218.189.10.173])
+        by smtp.gmail.com with ESMTPSA id c69sm629715pje.6.2019.06.27.20.45.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 27 Jun 2019 20:45:06 -0700 (PDT)
+From:   Yue Hu <zbestahu@gmail.com>
+To:     gaoxiang25@huawei.com, yuchao0@huawei.com,
+        gregkh@linuxfoundation.org
+Cc:     linux-erofs@lists.ozlabs.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, huyue2@yulong.com
+Subject: [PATCH] staging: erofs: don't check special inode layout
+Date:   Fri, 28 Jun 2019 11:42:34 +0800
+Message-Id: <20190628034234.8832-1-zbestahu@gmail.com>
+X-Mailer: git-send-email 2.17.1.windows.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Yue Hu <huyue2@yulong.com>
 
+Currently, we will check if inode layout is compression or inline if
+the inode is special in fill_inode(). Also set ->i_mapping->a_ops for
+it. That is pointless since the both modes won't be set for special
+inode when creating EROFS filesystem image. So, let's avoid it.
 
-On 27/06/19 8:02 PM, Nishanth Menon wrote:
-> On 16:39-20190627, Keerthy wrote:
->> Enable GPIO_DAVINCI and related configs for TI K3 AM6 platforms.
->>
->> Signed-off-by: Keerthy <j-keerthy@ti.com>
->> ---
->>
->> Changes in v2:
->>
->>    * Enabling configs in Kconfig.platforms file instead of defconfig.
->>    * Removed GPIO_DEBUG config.
->>
->>   arch/arm64/Kconfig.platforms | 2 ++
->>   1 file changed, 2 insertions(+)
->>
->> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
->> index 4778c775de1b..6e43a0995ed4 100644
->> --- a/arch/arm64/Kconfig.platforms
->> +++ b/arch/arm64/Kconfig.platforms
->> @@ -97,6 +97,8 @@ config ARCH_K3
->>   	select TI_SCI_PROTOCOL
->>   	select TI_SCI_INTR_IRQCHIP
->>   	select TI_SCI_INTA_IRQCHIP
->> +	select GPIO_SYSFS
->> +	select GPIO_DAVINCI
-> 
-> 
-> Could you help explain the logic of doing this? commit message is
-> basically the diff in English. To me, this does NOT make sense.
-> 
-> I understand GPIO_DAVINCI is the driver compatible, but we cant do this for
-> every single SoC driver that is NOT absolutely mandatory for basic
-> functionality.
+Signed-off-by: Yue Hu <huyue2@yulong.com>
+---
+ drivers/staging/erofs/inode.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-In case of ARM64 could you help me find the right place to enable
-such SoC specific configs?
+diff --git a/drivers/staging/erofs/inode.c b/drivers/staging/erofs/inode.c
+index 1433f25..2fe0f6d 100644
+--- a/drivers/staging/erofs/inode.c
++++ b/drivers/staging/erofs/inode.c
+@@ -205,6 +205,7 @@ static int fill_inode(struct inode *inode, int isdir)
+ 			S_ISFIFO(inode->i_mode) || S_ISSOCK(inode->i_mode)) {
+ 			inode->i_op = &erofs_generic_iops;
+ 			init_special_inode(inode, inode->i_mode, inode->i_rdev);
++			goto out_unlock;
+ 		} else {
+ 			err = -EIO;
+ 			goto out_unlock;
+-- 
+1.9.1
 
-> 
-> Also keep in mind the impact to arm64/configs/defconfig -> every single
-> SoC in the arm64 world will be now rebuild with GPIO_SYSFS.. why force
-> that?
-
-This was the practice in arm32 soc specific configs like 
-omap2plus_defconfig. GPIO_SYSFS was he only way to validate. Now i 
-totally understand your concern about every single SoC rebuilding but 
-now where do we need to enable the bare minimal GPIO_DAVINCI config?
-
-v1 i received feedback from Tero to enable in Kconfig.platforms. Hence i 
-shifted to this approach.
-
-> 
