@@ -2,361 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B28059118
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 04:22:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10EF059124
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 04:27:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726851AbfF1CWT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 22:22:19 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:43367 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726738AbfF1CWR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 22:22:17 -0400
-Received: by mail-qk1-f193.google.com with SMTP id m14so3543719qka.10;
-        Thu, 27 Jun 2019 19:22:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=vjNWGiccp2JQ2DtMTO4a0fFhfzg0q9Bf38aKAWXJbiw=;
-        b=K4PVPG1VFRXu47fpUE79VtOOTyoPypgrnf/6/MbDMjqA2moLRbgVJfPyvc0nZocmx+
-         04xPR5Suy6hkf8fgN3sF9aKjzR/Xr8t0ZQYzse0yFz2+pcjj/Wo6een36zQdsdgvOWOC
-         Q9u5J3WDgEEg4HmrjGwrZiTwKQIKR6DB5ZDWFByiH0FUvaUnsr6zpduffmDalNLfPP6S
-         6WBGY141WdzhKPW8T/bRqpE6FZfhVaIX9rFhvE+ORGAtuUyQNjSyXsrZWlhbT0SsLeVT
-         pRQ/Q2PfG2repiCamFi5O1xK3M0KwWNjIf34c3ixLGWb/oW3ZL8Cv9hvrPQAWddi+/91
-         Ml2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=vjNWGiccp2JQ2DtMTO4a0fFhfzg0q9Bf38aKAWXJbiw=;
-        b=Nr9zAYx/RStfpBU2op8D+lJ4KJM/140+gprqGaS/aRoqr0OOnOdPGia/ie4Lrqgjq+
-         89G7kZOVqdXVEAAorSYEEcFMLJGokQ+1XQsUuis438AY5U4IiJuNQkXYpCat8lPfbigu
-         Uu2NXcyDg/lRL9uEXgjdBYOZ/U+PAj/eoFg5xF4HMnyJh45hT/3dj+BoXOVu7kbB3L9N
-         l6rs4yfREzc9TkYVtK2IpG71MqcHfAJ4SBhKoYg+ylxjKG/P6XEGp8WH70RhFVfUhyJx
-         mVmQpAwsAAyTtLqUOnCoiHi4X2MRCrIZoYuf9AhhRxR37i2/4c7ttOCQ0wOIK9HUJ5vC
-         Xbaw==
-X-Gm-Message-State: APjAAAX/ATUbyAi9N4JcQZfVHy89xsPXtEVydHZ+iVUHKhxESn1aKnlm
-        npeGxEDxo6eqEqzHfxFHwE6RpLjBfWoxaeO7eCjcbIq/a22p/Q==
-X-Google-Smtp-Source: APXvYqxmv+/yQNpyvbazEjP/MXPf949MYaS9chXluWkU8/Zw4em0CHNuUriQj2781bEw8TUV6ctzrn/K4qtbTQ5/BE0=
-X-Received: by 2002:ae9:d803:: with SMTP id u3mr6639812qkf.437.1561688535946;
- Thu, 27 Jun 2019 19:22:15 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190627090446.GG7221@shao2-debian> <20190627155029.GC4866@mini-arch>
- <20190627172932.GD4866@mini-arch>
-In-Reply-To: <20190627172932.GD4866@mini-arch>
-From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date:   Thu, 27 Jun 2019 19:22:04 -0700
-Message-ID: <CAEf4Bzbf8OE9TUV2Pq7HZp3PYhoUgMzH-Gs+GMafTPwPc_jYxA@mail.gmail.com>
-Subject: Re: [bpf/tools] cd17d77705: kernel_selftests.bpf.test_sock_addr.sh.fail
-To:     Stanislav Fomichev <sdf@fomichev.me>
-Cc:     kernel test robot <rong.a.chen@intel.com>,
-        Stanislav Fomichev <sdf@google.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin Lau <kafai@fb.com>, LKML <linux-kernel@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        bpf <bpf@vger.kernel.org>, lkp@01.org
-Content-Type: text/plain; charset="UTF-8"
+        id S1726671AbfF1C0x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 22:26:53 -0400
+Received: from mail-eopbgr70087.outbound.protection.outlook.com ([40.107.7.87]:3087
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726476AbfF1C0x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 22:26:53 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=testarcselector01; d=microsoft.com; cv=none;
+ b=XDJAR6K4cRJQQxnK3+tVBD3yXiPT+luj5+UIq+WtM6Ua2ZZCwB/nCB2dcCZ5Fnh0Ewy1dovP/O/mouD3lMFVyZTguRDdoTp5CBviCFF3lWprq1NrS7DPcUy2E6HI3Qzt2OeJv8PmanoLXmnpi0g7XZ6rXoHRa7GYwJNnys9zxkE=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=testarcselector01;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gNe8FQY0oO0mUyMyJHV0bS74mcC1fkFw8/32dVb065k=;
+ b=DHfbxZ2gFKMSAjX6r8Wnh7QxaUWsOqHvbfFx5Flr136zqJTw03IijxKQrBQVAFKn7yQkRokWblCEkUUP7opRnIVx617gu1tnCv2GtCGnf49KLSpBZ5nrdkxNzXsqzUJ/3OPMMgKDtquBPw5jnorfM8V8mr/wKLzVTB3FAujC9+U=
+ARC-Authentication-Results: i=1; test.office365.com
+ 1;spf=none;dmarc=none;dkim=none;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gNe8FQY0oO0mUyMyJHV0bS74mcC1fkFw8/32dVb065k=;
+ b=aeU3RBjfPQqkTp9njQsbtv9ye1OpsVKR+Y6FuI4egCEVySu6c75j95FU340fo4dotqA5aBhDQKXvEqc5pe9qyUqIPGLMicaJBt7ffexxUEMuNZF4Q0XybLsnB2WIZ9vsFiWV3paQq1nS7FeFUJVP6V7THLJchQycjfVkRJFSsJk=
+Received: from VI1PR0402MB3600.eurprd04.prod.outlook.com (52.134.5.23) by
+ VI1PR0402MB2863.eurprd04.prod.outlook.com (10.175.20.18) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2008.16; Fri, 28 Jun 2019 02:26:49 +0000
+Received: from VI1PR0402MB3600.eurprd04.prod.outlook.com
+ ([fe80::c8a7:d048:2a1a:8b67]) by VI1PR0402MB3600.eurprd04.prod.outlook.com
+ ([fe80::c8a7:d048:2a1a:8b67%7]) with mapi id 15.20.2008.014; Fri, 28 Jun 2019
+ 02:26:49 +0000
+From:   Andy Duan <fugang.duan@nxp.com>
+To:     Fuqian Huang <huangfq.daxian@gmail.com>
+CC:     "David S. Miller" <davem@davemloft.net>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [EXT] [PATCH 73/87] ethernet: freescale: Remove memset after
+ dma_alloc_coherent
+Thread-Topic: [EXT] [PATCH 73/87] ethernet: freescale: Remove memset after
+ dma_alloc_coherent
+Thread-Index: AQHVLRBMPnd9CZnblUeiibuiURDi+qawV5JQ
+Date:   Fri, 28 Jun 2019 02:26:48 +0000
+Message-ID: <VI1PR0402MB360017A5AA5A0E8470F44DE9FFFC0@VI1PR0402MB3600.eurprd04.prod.outlook.com>
+References: <20190627174641.6474-1-huangfq.daxian@gmail.com>
+In-Reply-To: <20190627174641.6474-1-huangfq.daxian@gmail.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=fugang.duan@nxp.com; 
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: edc8f6ec-bf25-41f9-7102-08d6fb7012ea
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR0402MB2863;
+x-ms-traffictypediagnostic: VI1PR0402MB2863:
+x-microsoft-antispam-prvs: <VI1PR0402MB2863100506235ABB81FF8FF3FFFC0@VI1PR0402MB2863.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:37;
+x-forefront-prvs: 00826B6158
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(39860400002)(346002)(366004)(376002)(136003)(199004)(189003)(86362001)(2906002)(256004)(478600001)(446003)(76116006)(73956011)(33656002)(52536014)(99286004)(5660300002)(3846002)(6116002)(54906003)(4744005)(66446008)(74316002)(7736002)(66946007)(316002)(4326008)(66556008)(66476007)(66066001)(71190400001)(71200400001)(6916009)(64756008)(55016002)(6436002)(8936002)(6246003)(76176011)(229853002)(186003)(68736007)(102836004)(8676002)(25786009)(11346002)(486006)(7696005)(81156014)(53936002)(26005)(81166006)(9686003)(6506007)(14454004)(476003)(305945005);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB2863;H:VI1PR0402MB3600.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: u2tDQtCAIUxvZvrQ0uJq95qaXU9UY13Dp3aMtrjsTWtppmhzHijwOCN/KXJdL4Gowjcmut9aVucI/aCV+CMWoPEPL5szm1DgYL10YEc4+b1qSNKUWYIH9w9wk5N5XG+GZh8T6IzmbZkkO1z2t7BvwCV36B3tUitikqrNZdQVc3Pq8TIhfHV0soKXUhyUpFcB7SQKqz7+2RUIOHNmF4zkWBfFPsybLa3GCn9QxPfSWRWuLA+TmR+7mMQIIe5qzS+xB3rqmli8Z6jUhcf+oZuq4GuHQCZFZhs1xcqnQ9UNPjWkFvhEhtoJUZtNUEfKQfhTT0aLXZ51pYS3221VIjNe3K9B2ckReQl2Lj1ZreDpjD7++6yyrjfUWH6X67Te3vF8busiBsxSleyJSfNgoFVF+9DwDlbiVQ3CYekYGDNYzZU=
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: edc8f6ec-bf25-41f9-7102-08d6fb7012ea
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Jun 2019 02:26:48.9068
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: fugang.duan@nxp.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB2863
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 27, 2019 at 10:29 AM Stanislav Fomichev <sdf@fomichev.me> wrote=
-:
->
-> On 06/27, Stanislav Fomichev wrote:
-> > On 06/27, kernel test robot wrote:
-> > > FYI, we noticed the following commit (built with gcc-7):
-> > >
-> > > commit: cd17d77705780e2270937fb3cbd2b985adab3edc ("bpf/tools: sync bp=
-f.h")
-> > > https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git mast=
-er
-> > >
-> > > in testcase: kernel_selftests
-> > > with following parameters:
-> > >
-> > >     group: kselftests-00
-> > >
-> > > test-description: The kernel contains a set of "self tests" under the=
- tools/testing/selftests/ directory. These are intended to be small unit te=
-sts to exercise individual code paths in the kernel.
-> > > test-url: https://www.kernel.org/doc/Documentation/kselftest.txt
-> > >
-> > >
-> > > on test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp=
- 2 -m 8G
-> > >
-> > > caused below changes (please refer to attached dmesg/kmsg for entire =
-log/backtrace):
-> > >
-> > > # ; int connect_v6_prog(struct bpf_sock_addr *ctx)
-> > > # 0: (bf) r6 =3D r1
-> > > # 1: (18) r1 =3D 0x100000000000000
-> > > # ; tuple.ipv6.daddr[0] =3D bpf_htonl(DST_REWRITE_IP6_0);
-> > > # 3: (7b) *(u64 *)(r10 -16) =3D r1
-> > > # 4: (b7) r1 =3D 169476096
-> > > # ; memset(&tuple.ipv6.sport, 0, sizeof(tuple.ipv6.sport));
-> > > # 5: (63) *(u32 *)(r10 -8) =3D r1
-> > > # 6: (b7) r7 =3D 0
-> > > # ; tuple.ipv6.daddr[0] =3D bpf_htonl(DST_REWRITE_IP6_0);
-> > > # 7: (7b) *(u64 *)(r10 -24) =3D r7
-> > > # 8: (7b) *(u64 *)(r10 -32) =3D r7
-> > > # 9: (7b) *(u64 *)(r10 -40) =3D r7
-> > > # ; if (ctx->type !=3D SOCK_STREAM && ctx->type !=3D SOCK_DGRAM)
-> > > # 10: (61) r1 =3D *(u32 *)(r6 +32)
-> > > # ; if (ctx->type !=3D SOCK_STREAM && ctx->type !=3D SOCK_DGRAM)
-> > > # 11: (bf) r2 =3D r1
-> > > # 12: (07) r2 +=3D -1
-> > > # 13: (67) r2 <<=3D 32
-> > > # 14: (77) r2 >>=3D 32
-> > > # 15: (25) if r2 > 0x1 goto pc+33
-> > > #  R1=3Dinv(id=3D0,umax_value=3D4294967295,var_off=3D(0x0; 0xffffffff=
-)) R2=3Dinv(id=3D0,umax_value=3D1,var_off=3D(0x0; 0x1)) R6=3Dctx(id=3D0,off=
-=3D0,imm=3D0) R7=3Dinv0 R10=3Dfp0,call_-1 fp-8=3D????mmmm fp-16=3Dmmmmmmmm =
-fp-24=3D00000000 fp-32=3D00000000 fp-40=3D00000000
-> > > # ; else if (ctx->type =3D=3D SOCK_STREAM)
-> > > # 16: (55) if r1 !=3D 0x1 goto pc+8
-> > > #  R1=3Dinv1 R2=3Dinv(id=3D0,umax_value=3D1,var_off=3D(0x0; 0x1)) R6=
-=3Dctx(id=3D0,off=3D0,imm=3D0) R7=3Dinv0 R10=3Dfp0,call_-1 fp-8=3D????mmmm =
-fp-16=3Dmmmmmmmm fp-24=3D00000000 fp-32=3D00000000 fp-40=3D00000000
-> > > # 17: (bf) r2 =3D r10
-> > > # ; sk =3D bpf_sk_lookup_tcp(ctx, &tuple, sizeof(tuple.ipv6),
-> > > # 18: (07) r2 +=3D -40
-> > > # 19: (bf) r1 =3D r6
-> > > # 20: (b7) r3 =3D 36
-> > > # 21: (b7) r4 =3D -1
-> > > # 22: (b7) r5 =3D 0
-> > > # 23: (85) call bpf_sk_lookup_tcp#84
-> > > # 24: (05) goto pc+7
-> > > # ; if (!sk)
-> > > # 32: (15) if r0 =3D=3D 0x0 goto pc+16
-> > > #  R0=3Dsock(id=3D0,ref_obj_id=3D2,off=3D0,imm=3D0) R6=3Dctx(id=3D0,o=
-ff=3D0,imm=3D0) R7=3Dinv0 R10=3Dfp0,call_-1 fp-8=3D????mmmm fp-16=3Dmmmmmmm=
-m fp-24=3Dmmmmmmmm fp-32=3Dmmmmmmmm fp-40=3Dmmmmmmmm refs=3D2
-> > > # ; if (sk->src_ip6[0] !=3D tuple.ipv6.daddr[0] ||
-> > > # 33: (61) r1 =3D *(u32 *)(r0 +28)
-> > > # ; if (sk->src_ip6[0] !=3D tuple.ipv6.daddr[0] ||
-> > > # 34: (61) r2 =3D *(u32 *)(r10 -24)
-> > > # ; if (sk->src_ip6[0] !=3D tuple.ipv6.daddr[0] ||
-> > > # 35: (5d) if r1 !=3D r2 goto pc+11
-> > > #  R0=3Dsock(id=3D0,ref_obj_id=3D2,off=3D0,imm=3D0) R1=3Dinv(id=3D0,u=
-max_value=3D4294967295,var_off=3D(0x0; 0xffffffff)) R2=3Dinv(id=3D0,umax_va=
-lue=3D4294967295,var_off=3D(0x0; 0xffffffff)) R6=3Dctx(id=3D0,off=3D0,imm=
-=3D0) R7=3Dinv0 R10=3Dfp0,call_-1 fp-8=3D????mmmm fp-16=3Dmmmmmmmm fp-24=3D=
-mmmmmmmm fp-32=3Dmmmmmmmm fp-40=3Dmmmmmmmm refs=3D2
-> > > # ; sk->src_ip6[1] !=3D tuple.ipv6.daddr[1] ||
-> > > # 36: (61) r1 =3D *(u32 *)(r0 +32)
-> > > # ; sk->src_ip6[1] !=3D tuple.ipv6.daddr[1] ||
-> > > # 37: (61) r2 =3D *(u32 *)(r10 -20)
-> > > # ; sk->src_ip6[1] !=3D tuple.ipv6.daddr[1] ||
-> > > # 38: (5d) if r1 !=3D r2 goto pc+8
-> > > #  R0=3Dsock(id=3D0,ref_obj_id=3D2,off=3D0,imm=3D0) R1=3Dinv(id=3D0,u=
-max_value=3D4294967295,var_off=3D(0x0; 0xffffffff)) R2=3Dinv(id=3D0,umax_va=
-lue=3D4294967295,var_off=3D(0x0; 0xffffffff)) R6=3Dctx(id=3D0,off=3D0,imm=
-=3D0) R7=3Dinv0 R10=3Dfp0,call_-1 fp-8=3D????mmmm fp-16=3Dmmmmmmmm fp-24=3D=
-mmmmmmmm fp-32=3Dmmmmmmmm fp-40=3Dmmmmmmmm refs=3D2
-> > > # ; sk->src_ip6[2] !=3D tuple.ipv6.daddr[2] ||
-> > > # 39: (61) r1 =3D *(u32 *)(r0 +36)
-> > > # ; sk->src_ip6[2] !=3D tuple.ipv6.daddr[2] ||
-> > > # 40: (61) r2 =3D *(u32 *)(r10 -16)
-> > > # ; sk->src_ip6[2] !=3D tuple.ipv6.daddr[2] ||
-> > > # 41: (5d) if r1 !=3D r2 goto pc+5
-> > > #  R0=3Dsock(id=3D0,ref_obj_id=3D2,off=3D0,imm=3D0) R1=3Dinv(id=3D0,u=
-max_value=3D4294967295,var_off=3D(0x0; 0xffffffff)) R2=3Dinv(id=3D0,umax_va=
-lue=3D4294967295,var_off=3D(0x0; 0xffffffff)) R6=3Dctx(id=3D0,off=3D0,imm=
-=3D0) R7=3Dinv0 R10=3Dfp0,call_-1 fp-8=3D????mmmm fp-16=3Dmmmmmmmm fp-24=3D=
-mmmmmmmm fp-32=3Dmmmmmmmm fp-40=3Dmmmmmmmm refs=3D2
-> > > # ; sk->src_ip6[3] !=3D tuple.ipv6.daddr[3] ||
-> > > # 42: (61) r1 =3D *(u32 *)(r0 +40)
-> > > # ; sk->src_ip6[3] !=3D tuple.ipv6.daddr[3] ||
-> > > # 43: (61) r2 =3D *(u32 *)(r10 -12)
-> > > # ; sk->src_ip6[3] !=3D tuple.ipv6.daddr[3] ||
-> > > # 44: (5d) if r1 !=3D r2 goto pc+2
-> > > #  R0=3Dsock(id=3D0,ref_obj_id=3D2,off=3D0,imm=3D0) R1=3Dinv(id=3D0,u=
-max_value=3D4294967295,var_off=3D(0x0; 0xffffffff)) R2=3Dinv(id=3D0,umax_va=
-lue=3D4294967295,var_off=3D(0x0; 0xffffffff)) R6=3Dctx(id=3D0,off=3D0,imm=
-=3D0) R7=3Dinv0 R10=3Dfp0,call_-1 fp-8=3D????mmmm fp-16=3Dmmmmmmmm fp-24=3D=
-mmmmmmmm fp-32=3Dmmmmmmmm fp-40=3Dmmmmmmmm refs=3D2
-> > > # ; sk->src_port !=3D DST_REWRITE_PORT6) {
-> > > # 45: (61) r1 =3D *(u32 *)(r0 +44)
-> > > # ; if (sk->src_ip6[0] !=3D tuple.ipv6.daddr[0] ||
-> > > # 46: (15) if r1 =3D=3D 0x1a0a goto pc+4
-> > > #  R0=3Dsock(id=3D0,ref_obj_id=3D2,off=3D0,imm=3D0) R1=3Dinv(id=3D0,u=
-max_value=3D4294967295,var_off=3D(0x0; 0xffffffff)) R2=3Dinv(id=3D0,umax_va=
-lue=3D4294967295,var_off=3D(0x0; 0xffffffff)) R6=3Dctx(id=3D0,off=3D0,imm=
-=3D0) R7=3Dinv0 R10=3Dfp0,call_-1 fp-8=3D????mmmm fp-16=3Dmmmmmmmm fp-24=3D=
-mmmmmmmm fp-32=3Dmmmmmmmm fp-40=3Dmmmmmmmm refs=3D2
-> > > # ; bpf_sk_release(sk);
-> > > # 47: (bf) r1 =3D r0
-> > > # 48: (85) call bpf_sk_release#86
-> > > # ; }
-> > > # 49: (bf) r0 =3D r7
-> > > # 50: (95) exit
-> > > #
-> > > # from 46 to 51: R0=3Dsock(id=3D0,ref_obj_id=3D2,off=3D0,imm=3D0) R1=
-=3Dinv6666 R2=3Dinv(id=3D0,umax_value=3D4294967295,var_off=3D(0x0; 0xffffff=
-ff)) R6=3Dctx(id=3D0,off=3D0,imm=3D0) R7=3Dinv0 R10=3Dfp0,call_-1 fp-8=3D??=
-??mmmm fp-16=3Dmmmmmmmm fp-24=3Dmmmmmmmm fp-32=3Dmmmmmmmm fp-40=3Dmmmmmmmm =
-refs=3D2
-> > > # ; bpf_sk_release(sk);
-> > > # 51: (bf) r1 =3D r0
-> > > # 52: (85) call bpf_sk_release#86
-> > > # 53: (b7) r1 =3D 2586
-> > > # ; ctx->user_port =3D bpf_htons(DST_REWRITE_PORT6);
-> > > # 54: (63) *(u32 *)(r6 +24) =3D r1
-> > > # 55: (18) r1 =3D 0x100000000000000
-> > > # ; ctx->user_ip6[2] =3D bpf_htonl(DST_REWRITE_IP6_2);
-> > > # 57: (7b) *(u64 *)(r6 +16) =3D r1
-> > > # invalid bpf_context access off=3D16 size=3D8
-> > This looks like clang doing single u64 write for user_ip6[2] and
-> > user_ip6[3] instead of two u32. I don't think we allow that.
-> >
-> > I've seen this a couple of times myself while playing with some
-> > progs, but not sure what's the right way to 'fix' it.
-> >
-> Any thoughts about the patch below? Another way to "fix" it
+From: Fuqian Huang <huangfq.daxian@gmail.com> Sent: Friday, June 28, 2019 1=
+:47 AM
+> In commit af7ddd8a627c
+> ("Merge tag 'dma-mapping-4.21' of
+> git://git.infradead.org/users/hch/dma-mapping"),
+> dma_alloc_coherent has already zeroed the memory.
+> So memset is not needed.
+>=20
+> Signed-off-by: Fuqian Huang <huangfq.daxian@gmail.com>
 
-I'll give it a more thorough look a bit later, but see my comments below.
+Acked-by: Fugang Duan <fugang.duan@nxp.com>
+> ---
+>  drivers/net/ethernet/freescale/fec_main.c | 2 --
+>  1 file changed, 2 deletions(-)
+>=20
+> diff --git a/drivers/net/ethernet/freescale/fec_main.c
+> b/drivers/net/ethernet/freescale/fec_main.c
+> index 38f10f7dcbc3..ec87b8b78d21 100644
+> --- a/drivers/net/ethernet/freescale/fec_main.c
+> +++ b/drivers/net/ethernet/freescale/fec_main.c
+> @@ -3143,8 +3143,6 @@ static int fec_enet_init(struct net_device *ndev)
+>                 return -ENOMEM;
+>         }
+>=20
+> -       memset(cbd_base, 0, bd_size);
+> -
+>         /* Get the Ethernet address */
+>         fec_get_mac(ndev);
+>         /* make sure MAC we just acquired is programmed into the hw */
+> --
+> 2.11.0
 
-> would be to mark context accesses 'volatile' in bpf progs, but that sound=
-s
-> a bit gross.
->
-> diff --git a/include/linux/filter.h b/include/linux/filter.h
-> index 43b45d6db36d..34a14c950e60 100644
-> --- a/include/linux/filter.h
-> +++ b/include/linux/filter.h
-> @@ -746,6 +746,20 @@ bpf_ctx_narrow_access_ok(u32 off, u32 size, u32 size=
-_default)
->         return size <=3D size_default && (size & (size - 1)) =3D=3D 0;
->  }
->
-> +static inline bool __bpf_ctx_wide_store_ok(u32 off, u32 size)
-
-It seems like bpf_ctx_wide_store_ok and __bpf_ctx_wide_store_ok are
-used only inside net/core/filter.c, why declaring them in header file?
-
-> +{
-> +       /* u64 access is aligned and fits into the field size */
-> +       return off % sizeof(__u64) =3D=3D 0 && off + sizeof(__u64) <=3D s=
-ize;
-> +}
-> +
-> +#define bpf_ctx_wide_store_ok(off, size, type, field) \
-> +       (size =3D=3D sizeof(__u64) && \
-> +        off >=3D offsetof(type, field) && \
-> +        off < offsetofend(type, field) ? \
-> +       __bpf_ctx_wide_store_ok(off - offsetof(type, field), \
-> +                                FIELD_SIZEOF(type, field)) : 0)
-
-Why do you need ternary operator instead of just a chain of &&s?
-
-It also seems like you can avoid macro and use plain function if
-instead of providing (type, field) you provide values of offsetof and
-offsetofend (offsetofend - offsetof should equal FIELD_SIZEOF(type,
-field), shouldn't it?).
-
-> +
-> +
-
-
->  #define bpf_classic_proglen(fprog) (fprog->len * sizeof(fprog->filter[0]=
-))
->
->  static inline void bpf_prog_lock_ro(struct bpf_prog *fp)
-> diff --git a/net/core/filter.c b/net/core/filter.c
-> index 2014d76e0d2a..2d3787a439ae 100644
-> --- a/net/core/filter.c
-> +++ b/net/core/filter.c
-> @@ -6849,6 +6849,16 @@ static bool sock_addr_is_valid_access(int off, int=
- size,
->                         if (!bpf_ctx_narrow_access_ok(off, size, size_def=
-ault))
->                                 return false;
->                 } else {
-> +                       if (bpf_ctx_wide_store_ok(off, size,
-> +                                                 struct bpf_sock_addr,
-> +                                                 user_ip6))
-> +                               return true;
-> +
-> +                       if (bpf_ctx_wide_store_ok(off, size,
-> +                                                 struct bpf_sock_addr,
-> +                                                 msg_src_ip6))
-> +                               return true;
-> +
->                         if (size !=3D size_default)
->                                 return false;
->                 }
-> @@ -7689,9 +7699,6 @@ static u32 xdp_convert_ctx_access(enum bpf_access_t=
-ype type,
->  /* SOCK_ADDR_STORE_NESTED_FIELD_OFF() has semantic similar to
->   * SOCK_ADDR_LOAD_NESTED_FIELD_SIZE_OFF() but for store operation.
->   *
-> - * It doesn't support SIZE argument though since narrow stores are not
-> - * supported for now.
-> - *
->   * In addition it uses Temporary Field TF (member of struct S) as the 3r=
-d
->   * "register" since two registers available in convert_ctx_access are no=
-t
->   * enough: we can't override neither SRC, since it contains value to sto=
-re, nor
-> @@ -7699,7 +7706,7 @@ static u32 xdp_convert_ctx_access(enum bpf_access_t=
-ype type,
->   * instructions. But we need a temporary place to save pointer to nested
->   * structure whose field we want to store to.
->   */
-> -#define SOCK_ADDR_STORE_NESTED_FIELD_OFF(S, NS, F, NF, OFF, TF)         =
-              \
-> +#define SOCK_ADDR_STORE_NESTED_FIELD_OFF(S, NS, F, NF, SIZE, OFF, TF)   =
-      \
->         do {                                                             =
-      \
->                 int tmp_reg =3D BPF_REG_9;                               =
-        \
->                 if (si->src_reg =3D=3D tmp_reg || si->dst_reg =3D=3D tmp_=
-reg)          \
-> @@ -7710,8 +7717,7 @@ static u32 xdp_convert_ctx_access(enum bpf_access_t=
-ype type,
->                                       offsetof(S, TF));                  =
-      \
->                 *insn++ =3D BPF_LDX_MEM(BPF_FIELD_SIZEOF(S, F), tmp_reg, =
-        \
->                                       si->dst_reg, offsetof(S, F));      =
-      \
-> -               *insn++ =3D BPF_STX_MEM(                                 =
-        \
-> -                       BPF_FIELD_SIZEOF(NS, NF), tmp_reg, si->src_reg,  =
-      \
-> +               *insn++ =3D BPF_STX_MEM(SIZE, tmp_reg, si->src_reg,      =
-        \
->                         bpf_target_off(NS, NF, FIELD_SIZEOF(NS, NF),     =
-      \
->                                        target_size)                      =
-      \
->                                 + OFF);                                  =
-      \
-> @@ -7723,8 +7729,8 @@ static u32 xdp_convert_ctx_access(enum bpf_access_t=
-ype type,
->                                                       TF)                =
-      \
->         do {                                                             =
-      \
->                 if (type =3D=3D BPF_WRITE) {                             =
-          \
-> -                       SOCK_ADDR_STORE_NESTED_FIELD_OFF(S, NS, F, NF, OF=
-F,    \
-> -                                                        TF);            =
-      \
-> +                       SOCK_ADDR_STORE_NESTED_FIELD_OFF(S, NS, F, NF, SI=
-ZE,   \
-> +                                                        OFF, TF);       =
-      \
->                 } else {                                                 =
-      \
->                         SOCK_ADDR_LOAD_NESTED_FIELD_SIZE_OFF(            =
-      \
->                                 S, NS, F, NF, SIZE, OFF);  \
