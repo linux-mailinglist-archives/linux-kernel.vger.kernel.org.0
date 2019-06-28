@@ -2,95 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B2E85A175
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 18:56:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E36A5A188
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 18:57:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726849AbfF1Qz5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 12:55:57 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:33051 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726605AbfF1Qz5 (ORCPT
+        id S1726968AbfF1Q4j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 12:56:39 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42514 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726883AbfF1Q4i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 12:55:57 -0400
-Received: by mail-lj1-f193.google.com with SMTP id h10so6686370ljg.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2019 09:55:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=E1s9SHdejCcLhI9v5CB85EdGtkVPS8wN9741lqH2J5U=;
-        b=WiYmuPB4PHzJzEMi+NJ0Wmoh8XdcD/3l5z9Les3Q2QX9RSp7PR2A80PLUcprJVIf1D
-         NNhv+ISL/4Sv4sJBG9lx9fIyzNABC//kk3odCEG59D/9NWoXeQcTi/Mwl3rRi1X3H+0s
-         yiN2GuHOaVs1ftEWtBeFJlSCdEt+2fQSWO3I4h7kVF1qUt/WX7yyOPBvE6KQFATwRz50
-         79ng+DKldaBoKKxTEeai9arj/hGvu+ucq/d35SL8Rdd9MIBfSD7icWi2RCQpeyk/zpT5
-         1lDS6uVcsPkkR7uqUwPLkBTWuIm48tX5cjFBRjfyzKePgIK3nR55pnk2Ru+q2Qcp3PpZ
-         m61g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=E1s9SHdejCcLhI9v5CB85EdGtkVPS8wN9741lqH2J5U=;
-        b=KPlkk0bPHgBiYFXLkJgVVv5CrJ+F15QfOtStMU7ZgdHQdQuQeV+GdpFGNVYkVqtKfB
-         G3eZd26LfkvJYC5fKLwPNOR2LKF+F/3SudJKxuYY2d8B6q94s4dAomN9lUiY7nsXQuas
-         hn1WpnxF16Jp2SqK4YUQX+il4to+grmlf+Ks7qaYDVMBeBB7ceIgQd0/xGSJG8ii+ozz
-         04DDT/stqm80TRO6+eQyPvwQwpVizbcsQLG3Yi4d5WazNM+675kT42EbKGkQIW6wUyla
-         +dXB/LyrZQTPAgRwpTrr+DPGA+HtwLmifRH3fRcIFj2Su3bNdvOOLOld+ygIOjZ9tWR8
-         IiHQ==
-X-Gm-Message-State: APjAAAXfxW4jW3FNwfjhpVLqRPVVth0RZIyELfArIqkp9PM+TA2TG2Lf
-        SNTodbiFXweVSjPDuBNxhRS+bUEjgETj0B3879z1YA==
-X-Google-Smtp-Source: APXvYqz2M85/GYPs1z6CkDilf7Lb1A6Oty+PzwB3F4eQBe9UBJa9DbMbwOrjU7l4kfroJCG64CsVRE+AX1kR3xl5Ltk=
-X-Received: by 2002:a2e:970d:: with SMTP id r13mr6755114lji.126.1561740954178;
- Fri, 28 Jun 2019 09:55:54 -0700 (PDT)
-MIME-Version: 1.0
-References: <000000000000b6b25b058b96d5c3@google.com> <20190618121756.GL28859@kadam>
- <CAHRSSExL1fUNpV4jBON5qh47M8A+na0twVNEqpvkBoYVnbJSHA@mail.gmail.com>
-In-Reply-To: <CAHRSSExL1fUNpV4jBON5qh47M8A+na0twVNEqpvkBoYVnbJSHA@mail.gmail.com>
-From:   Todd Kjos <tkjos@google.com>
-Date:   Fri, 28 Jun 2019 09:55:42 -0700
-Message-ID: <CAHRSSEzAv_jVBsP9U6Nb3uDnXEwH1Q6ef0fTrxLNTjAV0HeHng@mail.gmail.com>
-Subject: Re: kernel BUG at drivers/android/binder_alloc.c:LINE! (4)
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     syzbot <syzbot+3ae18325f96190606754@syzkaller.appspotmail.com>,
-        =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
-        Christian Brauner <christian@brauner.io>,
-        "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Martijn Coenen <maco@android.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Todd Kjos <tkjos@android.com>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 28 Jun 2019 12:56:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=GjcHksA4qGiaUnr9QTbALLeGH/gj9DkhMrZ1SbHiikw=; b=oCkunyEKReYW
+        4gnQc44v2vTEo2iacdCajWGkArNGwSog1x2I5M2pXvT5EYfFVoX1gmqFPsw+NauMsl67SlUgOtHWB
+        vp/U+MmYkgpuTKiFFwqORf8UsFlaW0iOuc2aszy1orc/dpEUqAiAPBzEKXhapa4kLhEb4R33z7xA4
+        lJZvw=;
+Received: from [2001:470:1f1d:6b5:7e7a:91ff:fede:4a45] (helo=finisterre.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hguAm-0007BF-D7; Fri, 28 Jun 2019 16:56:28 +0000
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+        id CAB93440049; Fri, 28 Jun 2019 17:56:27 +0100 (BST)
+From:   Mark Brown <broonie@kernel.org>
+To:     Colin Ian King <colin.king@canonical.com>
+Cc:     alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>,
+        kernel-janitors@vger.kernel.org,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        Takashi Iwai <tiwai@suse.com>,
+        =?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= 
+        <amadeuszx.slawinski@linux.intel.com>
+Subject: Applied "ASoC: topology: fix memory leaks on sm, se and sbe" to the asoc tree
+In-Reply-To: <20190627133208.9550-1-colin.king@canonical.com>
+X-Patchwork-Hint: ignore
+Message-Id: <20190628165627.CAB93440049@finisterre.sirena.org.uk>
+Date:   Fri, 28 Jun 2019 17:56:27 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 18, 2019 at 10:37 AM Todd Kjos <tkjos@google.com> wrote:
->
-> On Tue, Jun 18, 2019 at 5:18 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> >
-> > It's weird that that binder_alloc_copy_from_buffer() is a void function.
-> > It would be easier to do the error handling at that point, instead of in
-> > the callers.  It feels like we keep hitting similar bugs to this.
+The patch
 
-I took your advice. Fix posted: https://lkml.org/lkml/2019/6/28/857
+   ASoC: topology: fix memory leaks on sm, se and sbe
 
--Todd
+has been applied to the asoc tree at
 
->
-> The idea is that if it is an error that the user can cause, it is
-> checked by the caller of binder_alloc_copy_from_buffer(). Most uses
-> are kernel cases where the expected alignments should be fine and it's
-> a BUG if they are not.
->
-> Admittedly, a few cases (like this one) have slipped through since
-> they cannot happen in Android (syzkaller has been very useful to find
-> our bad assumptions).
->
-> -Todd
->
-> >
-> > regards,
-> > dan carpenter
-> >
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.3
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 1ad741d0e8e8ecccc16aa9ccb8362575197d91bf Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Thu, 27 Jun 2019 14:32:08 +0100
+Subject: [PATCH] ASoC: topology: fix memory leaks on sm, se and sbe
+
+Currently when a kstrdup fails the error exit paths don't free
+the allocations for sm, se and sbe.  This can be fixed by assigning
+kc[i].private_value to these before doing the ksrtdup so that the error
+exit path will be able to free these objects.
+
+Addresses-Coverity: ("Resource leak")
+Fixes: 9f90af3a9952 ("ASoC: topology: Consolidate and fix asoc_tplg_dapm_widget_*_create flow")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/soc-topology.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/sound/soc/soc-topology.c b/sound/soc/soc-topology.c
+index fc1f1d6f9e92..dc463f1a9e24 100644
+--- a/sound/soc/soc-topology.c
++++ b/sound/soc/soc-topology.c
+@@ -1326,10 +1326,10 @@ static struct snd_kcontrol_new *soc_tplg_dapm_widget_dmixer_create(
+ 		dev_dbg(tplg->dev, " adding DAPM widget mixer control %s at %d\n",
+ 			mc->hdr.name, i);
+ 
++		kc[i].private_value = (long)sm;
+ 		kc[i].name = kstrdup(mc->hdr.name, GFP_KERNEL);
+ 		if (kc[i].name == NULL)
+ 			goto err_sm;
+-		kc[i].private_value = (long)sm;
+ 		kc[i].iface = SNDRV_CTL_ELEM_IFACE_MIXER;
+ 		kc[i].access = mc->hdr.access;
+ 
+@@ -1412,10 +1412,10 @@ static struct snd_kcontrol_new *soc_tplg_dapm_widget_denum_create(
+ 		dev_dbg(tplg->dev, " adding DAPM widget enum control %s\n",
+ 			ec->hdr.name);
+ 
++		kc[i].private_value = (long)se;
+ 		kc[i].name = kstrdup(ec->hdr.name, GFP_KERNEL);
+ 		if (kc[i].name == NULL)
+ 			goto err_se;
+-		kc[i].private_value = (long)se;
+ 		kc[i].iface = SNDRV_CTL_ELEM_IFACE_MIXER;
+ 		kc[i].access = ec->hdr.access;
+ 
+@@ -1524,10 +1524,10 @@ static struct snd_kcontrol_new *soc_tplg_dapm_widget_dbytes_create(
+ 			"ASoC: adding bytes kcontrol %s with access 0x%x\n",
+ 			be->hdr.name, be->hdr.access);
+ 
++		kc[i].private_value = (long)sbe;
+ 		kc[i].name = kstrdup(be->hdr.name, GFP_KERNEL);
+ 		if (kc[i].name == NULL)
+ 			goto err_sbe;
+-		kc[i].private_value = (long)sbe;
+ 		kc[i].iface = SNDRV_CTL_ELEM_IFACE_MIXER;
+ 		kc[i].access = be->hdr.access;
+ 
+-- 
+2.20.1
+
