@@ -2,123 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED83D59433
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 08:30:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B807159440
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 08:35:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727078AbfF1GaB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 02:30:01 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:19090 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726749AbfF1GaB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 02:30:01 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 7FCF8961B4C08289F9D8;
-        Fri, 28 Jun 2019 14:29:58 +0800 (CST)
-Received: from huawei.com (10.90.53.225) by DGGEMS414-HUB.china.huawei.com
- (10.3.19.214) with Microsoft SMTP Server id 14.3.439.0; Fri, 28 Jun 2019
- 14:29:50 +0800
-From:   Zhihao Cheng <chengzhihao1@huawei.com>
-To:     <david.oberhollenzer@sigma-star.at>, <richard@nod.at>,
-        <david@sigma-star.at>, <boris.brezillon@free-electrons.com>,
-        <yi.zhang@huawei.com>
-CC:     <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <chengzhihao1@huawei.com>
-Subject: [PATCH RFC] mtd: ubi: Add fastmap sysfs attribute
-Date:   Fri, 28 Jun 2019 14:35:28 +0800
-Message-ID: <1561703728-91792-1-git-send-email-chengzhihao1@huawei.com>
-X-Mailer: git-send-email 2.7.4
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.90.53.225]
-X-CFilter-Loop: Reflected
+        id S1727221AbfF1Gf5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 02:35:57 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:48343 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726645AbfF1Gf4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Jun 2019 02:35:56 -0400
+Received: from mail-pl1-f200.google.com ([209.85.214.200])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1hgkUF-0006YV-Ek
+        for linux-kernel@vger.kernel.org; Fri, 28 Jun 2019 06:35:55 +0000
+Received: by mail-pl1-f200.google.com with SMTP id a5so2942660pla.3
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 23:35:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=rg763IUCOLn//QYbXaACukPUtIg7NLpq/IpQFYmUqJE=;
+        b=do+Pk5H006brFCfu8N0hQwoMLG9Mw2qEyEVtYmC/ag3P26+0w3vyUqh/1BYICILHhQ
+         dLY/wTpJUpD+8RKYtKBsN+OKn2KsXYj13qySBUNlt9WgqEp/NnuOu1a54ZJ8rZkcniEN
+         WtcTnB/tY1xymIOTgzV8xgur7+YUiDWDnE8zFXWhyugvn9UON/pNsCBkeVs/hSnVdLMo
+         OK5BSTR7Nnxo+TKOZzvyI99qLs6vDc0azM47rC+SeM2VfR4NHhzmJmr4jYuoBXdl0kcj
+         fbz7V35FjoffrxiZSIvjB++CzjuwrPEPDfJ2VA2451UaKjztbnOgGlWW51SiwRhx/Vs5
+         fphA==
+X-Gm-Message-State: APjAAAUxsG6ySDby+jUyKXXjCTQLgdLv96mom5Fh4Y+uVDPjgWyCrhBw
+        sdnWUkK+0DCpV6TxK9lHulXehbzpOXd67q0KUIZwl4x0W8Z4u+DaXpWEUJv4lLR4YfXcgOZdlU7
+        ub4A6OJbbNQT5wSKPq/06sC31TGtwQ/e3q/hkDpXYLQ==
+X-Received: by 2002:a17:902:b187:: with SMTP id s7mr9423313plr.309.1561703754229;
+        Thu, 27 Jun 2019 23:35:54 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqz/yhCRthlAYn0qft94ePOe14fr0LxwjUI5ovriF1juSlUqvtRTiY4W+tbeXRLlc/X6/7OijQ==
+X-Received: by 2002:a17:902:b187:: with SMTP id s7mr9423296plr.309.1561703753996;
+        Thu, 27 Jun 2019 23:35:53 -0700 (PDT)
+Received: from 2001-b011-380f-3511-c09f-cbfd-7c09-2630.dynamic-ip6.hinet.net (2001-b011-380f-3511-c09f-cbfd-7c09-2630.dynamic-ip6.hinet.net. [2001:b011:380f:3511:c09f:cbfd:7c09:2630])
+        by smtp.gmail.com with ESMTPSA id s43sm1175750pjb.10.2019.06.27.23.35.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 27 Jun 2019 23:35:53 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8;
+        delsp=yes;
+        format=flowed
+Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
+Subject: ca0132 audio in Ubuntu 19.04 only after Windows 10 started, missing
+ ctefx-r3di.bin
+From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
+In-Reply-To: <156113479576.29306.8491703251507627705.malone@gac.canonical.com>
+Date:   Fri, 28 Jun 2019 14:35:51 +0800
+Cc:     alsa-devel@alsa-project.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: 8bit
+Message-Id: <B0FDD5B2-EA6F-4ABC-8BF5-6231AA31EB70@canonical.com>
+References: <156097935391.32250.14918304155094222078.malonedeb@chaenomeles.canonical.com>
+ <156113479576.29306.8491703251507627705.malone@gac.canonical.com>
+To:     conmanx360@gmail.com
+X-Mailer: Apple Mail (2.3445.104.11)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The UBI device can be attached to a MTD device via fastmap by set
-CONFIG_MTD_UBI_FASTMAP to 'y' (If there already exists a fastmap on the
-UBI device). To support some debugging scenarios, attaching process by
-fastmap can be confirmed in dmesg. If the UBI device is attached by
-fastmap, logs like following will appear in dmesg:
+Hi Connor,
 
-  ubi0: attached by fastmap
+The bug was filed at Launchpad [1], I think the most notable error is
+[    3.768667] snd_hda_intel 0000:00:1f.3: Direct firmware load for  
+ctefx-r3di.bin failed with error -2
 
-If multiple UBI devices are attached to multiple MTD devices at the same
-time, how to distinguish which UBI devices are successfully attached by
-fastmap? Extracting attaching information for each UBI device one by one
-from dmesg is a way. A better method is to record fastmap existence in
-sysfs, so it can be obtained by userspace tools.
+The firmware is indeed listed in patch_ca0132.c, but looks like there’s no  
+corresponding file in linux-firmware.
 
-This patch exposes fastmap on sysfs. Suppose you attach an UBI device to a
-MTD device by fastmap: if fastmap equals to '1', that is, the fastmap
-generated before last detaching operation is confirmed valid. Else, there
-may be some problems with old fastmap. Besides, userspace tool can also
-check whether the fastmap updating triggered by other operations (such as
-resize volume) is successful by reading this sysfs attribute.
+Can you please take a look at the bug?
 
-Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
----
- Documentation/ABI/stable/sysfs-class-ubi | 15 +++++++++++++++
- drivers/mtd/ubi/build.c                  |  5 +++++
- 2 files changed, 20 insertions(+)
+[1] https://bugs.launchpad.net/bugs/1833470
 
-diff --git a/Documentation/ABI/stable/sysfs-class-ubi b/Documentation/ABI/stable/sysfs-class-ubi
-index a6b3240..1d96cf0 100644
---- a/Documentation/ABI/stable/sysfs-class-ubi
-+++ b/Documentation/ABI/stable/sysfs-class-ubi
-@@ -116,6 +116,21 @@ Description:
- 		device, and "0\n" if it is cleared. UBI devices mark themselves
- 		as read-only when they detect an unrecoverable error.
- 
-+What:		/sys/class/ubi/ubiX/fastmap
-+Date:		June 2019
-+KernelVersion:	5.2
-+Contact:	linux-mtd@lists.infradead.org
-+Description:
-+		Contains ASCII "1\n" if there exists a fastmap on UBI device,
-+		and "0\n" if there not exists a fastmap on UBI device. After
-+		attaching the UBI device to a MTD device via fastmap, userspace
-+		tool can sense that there is a fastmap on UBI device  by
-+		checking sysfs attribute 'fastmap', that is, the fastmap
-+		generated before last detaching operation is valid. In addition,
-+		userspace tool can also check whether the fastmap updating
-+		triggered by volume operation is successful by reading this
-+		sysfs attribute.
-+
- What:		/sys/class/ubi/ubiX/total_eraseblocks
- Date:		July 2006
- KernelVersion:	2.6.22
-diff --git a/drivers/mtd/ubi/build.c b/drivers/mtd/ubi/build.c
-index d636bbe..7cce44f 100644
---- a/drivers/mtd/ubi/build.c
-+++ b/drivers/mtd/ubi/build.c
-@@ -140,6 +140,8 @@ static struct device_attribute dev_mtd_num =
- 	__ATTR(mtd_num, S_IRUGO, dev_attribute_show, NULL);
- static struct device_attribute dev_ro_mode =
- 	__ATTR(ro_mode, S_IRUGO, dev_attribute_show, NULL);
-+static struct device_attribute dev_fastmap =
-+	__ATTR(fastmap, S_IRUGO, dev_attribute_show, NULL);
- 
- /**
-  * ubi_volume_notify - send a volume change notification.
-@@ -378,6 +380,8 @@ static ssize_t dev_attribute_show(struct device *dev,
- 		ret = sprintf(buf, "%d\n", ubi->mtd->index);
- 	else if (attr == &dev_ro_mode)
- 		ret = sprintf(buf, "%d\n", ubi->ro_mode);
-+	else if (attr == &dev_fastmap)
-+		ret = sprintf(buf, "%d\n", ubi->fm ? 1 : 0);
- 	else
- 		ret = -EINVAL;
- 
-@@ -398,6 +402,7 @@ static struct attribute *ubi_dev_attrs[] = {
- 	&dev_bgt_enabled.attr,
- 	&dev_mtd_num.attr,
- 	&dev_ro_mode.attr,
-+	&dev_fastmap.attr,
- 	NULL
- };
- ATTRIBUTE_GROUPS(ubi_dev);
--- 
-2.7.4
+Kai-Heng
 
