@@ -2,85 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10F87596CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 11:03:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5306E59484
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 08:59:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726843AbfF1JDo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 05:03:44 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:49590 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726690AbfF1JDP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 05:03:15 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4C1BE87632;
-        Fri, 28 Jun 2019 09:03:15 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-96.ams2.redhat.com [10.36.116.96])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 05BC85D704;
-        Fri, 28 Jun 2019 09:03:15 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id ACDE49D7D; Fri, 28 Jun 2019 11:03:09 +0200 (CEST)
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     ckoenig.leichtzumerken@gmail.com, thomas@shipmail.org,
-        tzimmermann@suse.de, daniel@ffwll.ch, bskeggs@redhat.com,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Huang Rui <ray.huang@amd.com>, David Airlie <airlied@linux.ie>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3 18/18] drm/ttm: drop ttm_buffer_object->resv
-Date:   Fri, 28 Jun 2019 11:03:03 +0200
-Message-Id: <20190628090303.29467-19-kraxel@redhat.com>
-In-Reply-To: <20190628090303.29467-1-kraxel@redhat.com>
-References: <20190628090303.29467-1-kraxel@redhat.com>
+        id S1727316AbfF1G7w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 02:59:52 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:51076 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726574AbfF1G7v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Jun 2019 02:59:51 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 54038D01547FC815F27D;
+        Fri, 28 Jun 2019 14:59:48 +0800 (CST)
+Received: from huawei.com (10.175.100.202) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.439.0; Fri, 28 Jun 2019
+ 14:59:41 +0800
+From:   Miaohe Lin <linmiaohe@huawei.com>
+To:     <pablo@netfilter.org>, <kadlec@blackhole.kfki.hu>, <fw@strlen.de>,
+        <davem@davemloft.net>, <kuznet@ms2.inr.ac.ru>,
+        <yoshfuji@linux-ipv6.org>, <netfilter-devel@vger.kernel.org>,
+        <coreteam@netfilter.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <linmiaohe@huawei.com>, <mingfangsen@huawei.com>
+Subject: [PATCH v4] net: netfilter: Fix rpfilter dropping vrf packets by mistake
+Date:   Fri, 28 Jun 2019 09:06:43 +0000
+Message-ID: <1561712803-195184-1-git-send-email-linmiaohe@huawei.com>
+X-Mailer: git-send-email 1.8.3.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Fri, 28 Jun 2019 09:03:15 +0000 (UTC)
+Content-Type: text/plain
+X-Originating-IP: [10.175.100.202]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All users moved to ttm_buffer_object->base.resv
+When firewalld is enabled with ipv4/ipv6 rpfilter, vrf
+ipv4/ipv6 packets will be dropped. Vrf device will pass
+through netfilter hook twice. One with enslaved device
+and another one with l3 master device. So in device may
+dismatch witch out device because out device is always
+enslaved device.So failed with the check of the rpfilter
+and drop the packets by mistake.
 
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-Reviewed-by: Christian König <christian.koenig@amd.com>
+Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
 ---
- include/drm/ttm/ttm_bo_api.h | 1 -
- drivers/gpu/drm/ttm/ttm_bo.c | 2 --
- 2 files changed, 3 deletions(-)
+ net/ipv4/netfilter/ipt_rpfilter.c  | 1 +
+ net/ipv6/netfilter/ip6t_rpfilter.c | 8 +++++++-
+ 2 files changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/include/drm/ttm/ttm_bo_api.h b/include/drm/ttm/ttm_bo_api.h
-index 7ffc50a3303d..65ef5376de59 100644
---- a/include/drm/ttm/ttm_bo_api.h
-+++ b/include/drm/ttm/ttm_bo_api.h
-@@ -230,7 +230,6 @@ struct ttm_buffer_object {
+diff --git a/net/ipv4/netfilter/ipt_rpfilter.c b/net/ipv4/netfilter/ipt_rpfilter.c
+index 59031670b16a..cc23f1ce239c 100644
+--- a/net/ipv4/netfilter/ipt_rpfilter.c
++++ b/net/ipv4/netfilter/ipt_rpfilter.c
+@@ -78,6 +78,7 @@ static bool rpfilter_mt(const struct sk_buff *skb, struct xt_action_param *par)
+ 	flow.flowi4_mark = info->flags & XT_RPFILTER_VALID_MARK ? skb->mark : 0;
+ 	flow.flowi4_tos = RT_TOS(iph->tos);
+ 	flow.flowi4_scope = RT_SCOPE_UNIVERSE;
++	flow.flowi4_oif = l3mdev_master_ifindex_rcu(xt_in(par));
  
- 	struct sg_table *sg;
+ 	return rpfilter_lookup_reverse(xt_net(par), &flow, xt_in(par), info->flags) ^ invert;
+ }
+diff --git a/net/ipv6/netfilter/ip6t_rpfilter.c b/net/ipv6/netfilter/ip6t_rpfilter.c
+index 6bcaf7357183..3c4a1772c15f 100644
+--- a/net/ipv6/netfilter/ip6t_rpfilter.c
++++ b/net/ipv6/netfilter/ip6t_rpfilter.c
+@@ -55,6 +55,10 @@ static bool rpfilter_lookup_reverse6(struct net *net, const struct sk_buff *skb,
+ 	if (rpfilter_addr_linklocal(&iph->saddr)) {
+ 		lookup_flags |= RT6_LOOKUP_F_IFACE;
+ 		fl6.flowi6_oif = dev->ifindex;
++	/* Set flowi6_oif for vrf devices to lookup route in l3mdev domain. */
++	} else if (netif_is_l3_master(dev) || netif_is_l3_slave(dev)) {
++		lookup_flags |= FLOWI_FLAG_SKIP_NH_OIF;
++		fl6.flowi6_oif = dev->ifindex;
+ 	} else if ((flags & XT_RPFILTER_LOOSE) == 0)
+ 		fl6.flowi6_oif = dev->ifindex;
  
--	struct reservation_object *resv;
- 	struct mutex wu_mutex;
- };
- 
-diff --git a/drivers/gpu/drm/ttm/ttm_bo.c b/drivers/gpu/drm/ttm/ttm_bo.c
-index e0792fd38b54..7465bf62e54c 100644
---- a/drivers/gpu/drm/ttm/ttm_bo.c
-+++ b/drivers/gpu/drm/ttm/ttm_bo.c
-@@ -1330,11 +1330,9 @@ int ttm_bo_init_reserved(struct ttm_bo_device *bdev,
- 	bo->acc_size = acc_size;
- 	bo->sg = sg;
- 	if (resv) {
--		bo->resv = resv;
- 		bo->base.resv = resv;
- 		reservation_object_assert_held(bo->base.resv);
- 	} else {
--		bo->resv = &bo->base._resv;
- 		bo->base.resv = &bo->base._resv;
+@@ -70,7 +74,9 @@ static bool rpfilter_lookup_reverse6(struct net *net, const struct sk_buff *skb,
+ 		goto out;
  	}
- 	if (!ttm_bo_uses_embedded_gem_object(bo)) {
+ 
+-	if (rt->rt6i_idev->dev == dev || (flags & XT_RPFILTER_LOOSE))
++	if (rt->rt6i_idev->dev == dev ||
++	    l3mdev_master_ifindex_rcu(rt->rt6i_idev->dev) == dev->ifindex ||
++	    (flags & XT_RPFILTER_LOOSE))
+ 		ret = true;
+  out:
+ 	ip6_rt_put(rt);
 -- 
-2.18.1
+2.21.GIT
 
