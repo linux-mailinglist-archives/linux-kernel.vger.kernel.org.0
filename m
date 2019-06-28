@@ -2,57 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32B4659DCA
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 16:32:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F47C59DCF
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 16:33:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726912AbfF1OcS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 28 Jun 2019 10:32:18 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:44652 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726657AbfF1OcS (ORCPT
+        id S1726935AbfF1OdC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 28 Jun 2019 10:33:02 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:40686 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726711AbfF1OdC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Jun 2019 10:32:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=z59db2q7R3Qs4jp6ksud3JOvoxe9K7xlif6grC7p/kQ=; b=lTxr/EJA0YdHAqSEH5qzLBFLP
-        42jOlBpT1JbuRG1wvwBpQ1qa/LBkUgDyp0fRyqB8o7sd7EqPfyrEM0WLXHygnty5VH2cmYV4+Z92O
-        OYS5NAee8o2LgdZkFFeLtBEtyCczqi8Fj3ouPyTEnoTX2bkEL6xOByS5DFV8wulLt5WOrzz80KPoY
-        1Fr240ld04fT4A1O5Cn6HNomln9tUVmVtT72MgirYml/jWFeYldqHdU4lDRP08MP1MTpPnhJRZYwI
-        6N/HeiuZdzewgesoTQVrYFRrSG8hpRrPB0WsPnGngrIvd9FKAaAYRV8SJCfUIywKaotBoJbImlXaQ
-        IKQmfjCwg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hgrvE-0001us-LS; Fri, 28 Jun 2019 14:32:16 +0000
-Date:   Fri, 28 Jun 2019 07:32:16 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fat: Add nobarrier to workaround the strange behavior of
- device
-Message-ID: <20190628143216.GA538@infradead.org>
-References: <871rzdrdxw.fsf@mail.parknet.co.jp>
+        Fri, 28 Jun 2019 10:33:02 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5SEWOEs119507;
+        Fri, 28 Jun 2019 09:32:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1561732344;
+        bh=gbEQ2MAf5BreXjP6+h+dDk7mJOuxFlU+NRxCOXS9m7w=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=AkLnTHTtRg4KS+kVRvkLRmV+VhAQcDI3zp86HBbQpW8UjJ590rtHGC7jKKzjTaal7
+         DRF9ndtHsDrV5uUNvWTUBE62BsKGq2H8oRPgO718IlsMcxkFKF/ZVU1CPkLIJEb5Mu
+         Su9sVgyCRYrHgWUHWiKtx28wJIgDlBx9wojdY310=
+Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5SEWOKn109975
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 28 Jun 2019 09:32:24 -0500
+Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 28
+ Jun 2019 09:32:23 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Fri, 28 Jun 2019 09:32:23 -0500
+Received: from [10.250.132.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5SEWK5h014844;
+        Fri, 28 Jun 2019 09:32:21 -0500
+Subject: Re: [PATCH] mtd: cfi_cmdset_0002: dynamically determine the max
+ sectors
+To:     Chris Packham <chris.packham@alliedtelesis.co.nz>,
+        <dwmw2@infradead.org>, <computersforpeace@gmail.com>,
+        <marek.vasut@gmail.com>, <miquel.raynal@bootlin.com>,
+        <richard@nod.at>
+CC:     <sr@denx.de>, <linux-mtd@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20190522000628.13073-1-chris.packham@alliedtelesis.co.nz>
+From:   Vignesh Raghavendra <vigneshr@ti.com>
+Message-ID: <b4a2970f-40ff-3c6c-d408-4c19d5d502ad@ti.com>
+Date:   Fri, 28 Jun 2019 20:02:19 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <871rzdrdxw.fsf@mail.parknet.co.jp>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20190522000628.13073-1-chris.packham@alliedtelesis.co.nz>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 28, 2019 at 11:18:19PM +0900, OGAWA Hirofumi wrote:
-> To workaround those devices and provide flexibility, this adds
-> "barrier"/"nobarrier" mount options to fat driver.
+Hi,
 
-We have deprecated these rather misnamed options, and now instead allow
-tweaking the 'cache_type' attribute on the SCSI device.
+On 22-May-19 5:36 AM, Chris Packham wrote:
+> Because PPB unlocking unlocks the whole chip cfi_ppb_unlock() needs to
+> remember the locked status for each sector so it can re-lock the
+> unaddressed sectors. Dynamically calculate the maximum number of sectors
+> rather than using a hardcoded value that is too small for larger chips.
+> 
+> Tested with Spansion S29GL01GS11TFI flash device.
+> 
+> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> ---
 
-That being said if the device behave this buggy you should also report
-it to to the usb-storage and scsi maintainers so that we can add a
-quirk for it.
+Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git
+branch mtd/next.
+
+Regards
+Vignesh
+
+>  drivers/mtd/chips/cfi_cmdset_0002.c | 13 ++++++++-----
+>  1 file changed, 8 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/mtd/chips/cfi_cmdset_0002.c b/drivers/mtd/chips/cfi_cmdset_0002.c
+> index c8fa5906bdf9..a1a7d334aa82 100644
+> --- a/drivers/mtd/chips/cfi_cmdset_0002.c
+> +++ b/drivers/mtd/chips/cfi_cmdset_0002.c
+> @@ -2533,8 +2533,6 @@ struct ppb_lock {
+>  	int locked;
+>  };
+>  
+> -#define MAX_SECTORS			512
+> -
+>  #define DO_XXLOCK_ONEBLOCK_LOCK		((void *)1)
+>  #define DO_XXLOCK_ONEBLOCK_UNLOCK	((void *)2)
+>  #define DO_XXLOCK_ONEBLOCK_GETLOCK	((void *)3)
+> @@ -2633,6 +2631,7 @@ static int __maybe_unused cfi_ppb_unlock(struct mtd_info *mtd, loff_t ofs,
+>  	int i;
+>  	int sectors;
+>  	int ret;
+> +	int max_sectors;
+>  
+>  	/*
+>  	 * PPB unlocking always unlocks all sectors of the flash chip.
+> @@ -2640,7 +2639,11 @@ static int __maybe_unused cfi_ppb_unlock(struct mtd_info *mtd, loff_t ofs,
+>  	 * first check the locking status of all sectors and save
+>  	 * it for future use.
+>  	 */
+> -	sect = kcalloc(MAX_SECTORS, sizeof(struct ppb_lock), GFP_KERNEL);
+> +	max_sectors = 0;
+> +	for (i = 0; i < mtd->numeraseregions; i++)
+> +		max_sectors += regions[i].numblocks;
+> +
+> +	sect = kcalloc(max_sectors, sizeof(struct ppb_lock), GFP_KERNEL);
+>  	if (!sect)
+>  		return -ENOMEM;
+>  
+> @@ -2689,9 +2692,9 @@ static int __maybe_unused cfi_ppb_unlock(struct mtd_info *mtd, loff_t ofs,
+>  		}
+>  
+>  		sectors++;
+> -		if (sectors >= MAX_SECTORS) {
+> +		if (sectors >= max_sectors) {
+>  			printk(KERN_ERR "Only %d sectors for PPB locking supported!\n",
+> -			       MAX_SECTORS);
+> +			       max_sectors);
+>  			kfree(sect);
+>  			return -EINVAL;
+>  		}
+> 
