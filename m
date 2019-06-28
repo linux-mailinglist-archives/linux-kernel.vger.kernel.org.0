@@ -2,94 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 380E95921E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 05:44:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98FE959220
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2019 05:44:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727095AbfF1DoX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 27 Jun 2019 23:44:23 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:46708 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726686AbfF1DoX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Jun 2019 23:44:23 -0400
-Received: by mail-io1-f67.google.com with SMTP id i10so9468949iol.13
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2019 20:44:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=H94wx8BA9J9GrxF8s1ReCKmwP5vlxA1zO/6P1Z9SjDk=;
-        b=jdecO9TBf25X5vOPSzeZ6Q4Ub0nwztKuiukrJk0YmMpJGrQ+ZiSaFzZuw0B5MNNJKz
-         kcDBVaWNphJ1LgXyee3sUAIP2DCieVutHU8EhQnsUDHISPESChbnx3yePpe5tyvhS0k6
-         1ffm+c1WspOZlgOIE9I+ki+KVft/O87Wizxw/Hz5MhjtK1URq0zDwUK8uWHBGzkk0o33
-         ca/ZDi2qfNvAwBJ7up4l/em+s1655WtwzAdCVowMPrkkah/D4dB5L5TNFuxU7X7UwbzS
-         TyOapXZLKsEKvXeiesdHoc+yq87LUrG4ax6oxGM1kaBXTYqYKeFltfNmDSHmJJWtotWp
-         ziIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=H94wx8BA9J9GrxF8s1ReCKmwP5vlxA1zO/6P1Z9SjDk=;
-        b=Oxw/cUrsXrAKchgSTguRSOAE9qWpIciRZkprZtrLrHGi11uCq4HDEOr3XVKDI4XKlK
-         AVMxECflRJXMeox4Jb6nomvdx6WWGGuZCXN688It+zx60lEM+oy7Wai5LVaUTngkl/fZ
-         X5vBIe7fR5DnI2b1nUKfIsts/RoYxfs39uukt0HeKc1uW3FuI1h7MQg0mbqjf+E+UjJB
-         z5Uh7wvRzcB9tm+a/ecpPEaIkfGZ8C3kh3gDixqjThxGEKZ+dbMguRwKi9cGP1us7v9I
-         GHmZhLFDdsUwkm7d9d5G6oVCOUfcvJD2kwKoA1S8YZyrSKiTNPEphwYpvUxXgLiShFg8
-         SZTg==
-X-Gm-Message-State: APjAAAXr0XEH5cQLnZ5AqAwBRQ25IjIQWfcwoxW4Zs3UINXtaD4m2dRs
-        zIB0yItOE8LrtU8FTxYLNnly5hR5kHK9CklVwX6gQw==
-X-Google-Smtp-Source: APXvYqyw4c0/vIh1E6dBJwb49Zf7BaKQa7FwdAtik0IPSMljBy6iQV1QjStKVAh/l+dSKdDkRtw6KqRyH4Gy8jCzw4k=
-X-Received: by 2002:a6b:ee15:: with SMTP id i21mr7951115ioh.281.1561693462611;
- Thu, 27 Jun 2019 20:44:22 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190619120337.78624-1-olof@lixom.net> <20190628000033.ipcypg4kny2whfz7@treble>
-In-Reply-To: <20190628000033.ipcypg4kny2whfz7@treble>
-From:   Olof Johansson <olof@lixom.net>
-Date:   Fri, 28 Jun 2019 11:44:10 +0800
-Message-ID: <CAOesGMjqhEi8rEnYy8JxvRV8HE_eRxfiXtmZNErWYwAX6ni12Q@mail.gmail.com>
-Subject: Re: [PATCH] objtool: Be lenient about -Wundef
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1727231AbfF1Dor (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 27 Jun 2019 23:44:47 -0400
+Received: from cnc.isely.net ([75.149.91.89]:58911 "EHLO cnc.isely.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726686AbfF1Dor (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Jun 2019 23:44:47 -0400
+Received: from lochley (lochley-lan.isely.net [::ffff:192.168.23.74])
+  (AUTH: PLAIN isely, TLS: TLSv1/SSLv3,256bits,DHE-RSA-AES256-GCM-SHA384)
+  by cnc.isely.net with ESMTPSA; Thu, 27 Jun 2019 22:44:45 -0500
+  id 000000000014259A.000000005D158D2D.00007183
+Date:   Thu, 27 Jun 2019 22:44:45 -0500 (CDT)
+From:   isely@isely.net
+To:     Fuqian Huang <huangfq.daxian@gmail.com>
+cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mike Isely at pobox <isely@pobox.com>
+Subject: Re: [PATCH 32/87] usb: pvrusb2: replace kmalloc and memset with
+ kzalloc in pvrusb2-eeprom.c
+In-Reply-To: <20190627173840.3519-1-huangfq.daxian@gmail.com>
+Message-ID: <alpine.DEB.2.20.1906272244210.22929@lochley.isely.net>
+References: <20190627173840.3519-1-huangfq.daxian@gmail.com>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 28, 2019 at 8:00 AM Josh Poimboeuf <jpoimboe@redhat.com> wrote:
->
-> On Wed, Jun 19, 2019 at 05:03:37AM -0700, Olof Johansson wrote:
-> > Some libelf versions use undefined macros, which combined with newer GCC
-> > makes for errors from system headers. This isn't overly useful to fail
-> > compiling objtool for.
-> >
-> > Error as seen:
-> >
-> > cc1: all warnings being treated as errors
-> > In file included from arch/x86/../../elf.h:10,
-> >                  from arch/x86/decode.c:14:
-> > /usr/include/libelf/gelf.h:25:5: error: "__LIBELF_INTERNAL__" is not defined, evaluates to 0 [-Werror=undef]
-> >  #if __LIBELF_INTERNAL__
-> >      ^~~~~~~~~~~~~~~~~~~
-> >
-> > For this reason, skip -Wundef on objtool.
-> >
-> > Signed-off-by: Olof Johansson <olof@lixom.net>
->
-> Sorry for the delay, I was out last week and I'm still getting caught
-> up.
->
-> Which libelf was this?  I'm guessing it's the old non-elfutils version
-> which has been unmaintained for 10 years (and which doesn't work with
-> objtool anyway).
->
-> It would be nice if we could figure out a way to detect that libelf and
-> report a more useful error for it.
 
-Yeah, looks like my docker image pulled in the very old libelf 0.8.13,
-but has elfutils available. I'll switch it over locally to resolve
-this.
+Acked-by: Mike Isely <isely@pobox.com>
 
+  -Mike
 
--Olof
+On Fri, 28 Jun 2019, Fuqian Huang wrote:
+
+> kmalloc + memset(0) -> kzalloc
+> 
+> Signed-off-by: Fuqian Huang <huangfq.daxian@gmail.com>
+> ---
+>  drivers/media/usb/pvrusb2/pvrusb2-eeprom.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/usb/pvrusb2/pvrusb2-eeprom.c b/drivers/media/usb/pvrusb2/pvrusb2-eeprom.c
+> index 79f0e0c6df37..fac90af8b537 100644
+> --- a/drivers/media/usb/pvrusb2/pvrusb2-eeprom.c
+> +++ b/drivers/media/usb/pvrusb2/pvrusb2-eeprom.c
+> @@ -39,7 +39,7 @@ static u8 *pvr2_eeprom_fetch(struct pvr2_hdw *hdw)
+>  	int ret;
+>  	int mode16 = 0;
+>  	unsigned pcnt,tcnt;
+> -	eeprom = kmalloc(EEPROM_SIZE,GFP_KERNEL);
+> +	eeprom = kzalloc(EEPROM_SIZE,GFP_KERNEL);
+>  	if (!eeprom) {
+>  		pvr2_trace(PVR2_TRACE_ERROR_LEGS,
+>  			   "Failed to allocate memory required to read eeprom");
+> @@ -74,7 +74,6 @@ static u8 *pvr2_eeprom_fetch(struct pvr2_hdw *hdw)
+>  	   (1) we're only fetching part of the eeprom, and (2) if we were
+>  	   getting the whole thing our I2C driver can't grab it in one
+>  	   pass - which is what tveeprom is otherwise going to attempt */
+> -	memset(eeprom,0,EEPROM_SIZE);
+>  	for (tcnt = 0; tcnt < EEPROM_SIZE; tcnt += pcnt) {
+>  		pcnt = 16;
+>  		if (pcnt + tcnt > EEPROM_SIZE) pcnt = EEPROM_SIZE-tcnt;
+> 
+
+-- 
+
+Mike Isely
+isely @ isely (dot) net
+PGP: 03 54 43 4D 75 E5 CC 92 71 16 01 E2 B5 F5 C1 E8
