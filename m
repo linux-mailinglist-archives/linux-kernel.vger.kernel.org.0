@@ -2,96 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A02C5AA2A
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2019 12:31:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D78A5AA18
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2019 12:22:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726977AbfF2KbQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 29 Jun 2019 06:31:16 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:34926 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726941AbfF2KbN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Jun 2019 06:31:13 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 76E101A05B9;
-        Sat, 29 Jun 2019 12:31:11 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A438D1A028A;
-        Sat, 29 Jun 2019 12:31:01 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id A94E94030F;
-        Sat, 29 Jun 2019 18:30:49 +0800 (SGT)
-From:   Anson.Huang@nxp.com
-To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        leonard.crestez@nxp.com, viresh.kumar@linaro.org, ping.bai@nxp.com,
-        daniel.baluta@nxp.com, l.stach@pengutronix.de, abel.vesa@nxp.com,
-        andrew.smirnov@gmail.com, ccaione@baylibre.com, angus@akkea.ca,
-        agx@sigxcpu.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH V2 2/2] arm64: dts: imx8mq: Correct OPP table according to latest datasheet
-Date:   Sat, 29 Jun 2019 18:21:57 +0800
-Message-Id: <20190629102157.8026-2-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20190629102157.8026-1-Anson.Huang@nxp.com>
-References: <20190629102157.8026-1-Anson.Huang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1727010AbfF2KWw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 29 Jun 2019 06:22:52 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:45823 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726839AbfF2KWv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Jun 2019 06:22:51 -0400
+Received: by mail-pg1-f193.google.com with SMTP id z19so3709237pgl.12
+        for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2019 03:22:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=mk94RXz9RbYmNlsAwePZkKE+FVfS/zkDopugHxCtBXc=;
+        b=JNJMQ8eCufU2eLT/mkS3juwj8990gOhfuYb7cNLs8ZykSRwiYQPiY0LHx7vJoK4Tba
+         GMxIEMDN1f5SIWqGhy35JSQHVy0DISAeFsTWII54AvRZOpttM0wJudF51tvozSImnmSO
+         GdWX33zavKjkB7IgT4QKYONDFfeXOvau4AhPEDgODF+II+pq4xpc5YLXjC9tFOYTCkYp
+         SobHX1eLaA/rs6rdYHDi8zik5Da66faE2ssmAkI1WTedL/DHIIAKoEi+Bp223hzXDdQd
+         LqGJ98RPBrIglKLq7uYwE18+VhXtM12d8Khd1TAS1qiU1fCNbRGVBwmIXytnKo52Q1j5
+         LrTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=mk94RXz9RbYmNlsAwePZkKE+FVfS/zkDopugHxCtBXc=;
+        b=iigZSf0/zUDhG/zc7fz5Azgu8BJ1A5T87KXkYkd9miKgS6N/+P/5yEpk2PTHVcCqKs
+         Zih44Xa2qzelmC1wubXLL0JrEP+cessUpmTAAVo9obVHM6cYOyXovSRzqsWFsR7zrOs3
+         yJmrz+QS2rpL/NExe+48EIGEMvojCXZ8LB3H+nS2Jk+HMgI0LT81ufH/oNXX6QAS3EBp
+         ijqKoX8+AoM3p/Slc8h+9cP9KzkkKT+suVFWciC2q+DHn2cp/A3dQQ+J0Q4lmydhrPxf
+         GnrqF9ZmEGD8Tp8rUEplHokgDLezf9WFloh9XqYg+TVY9v00m+5T67s2WWF94w+Gq/69
+         W8Wg==
+X-Gm-Message-State: APjAAAXva9j+NHqtEPkLluhd+4oOWxRmRzGmMPx3gcEmfmKVvVoK5xJr
+        8z2w4OoUV2cX+jMa2BqPyAI=
+X-Google-Smtp-Source: APXvYqx3xbe5HQEZFR4EEL8IU0+as94egYt5mWZnuF90qF7kkJ5onMxWwsWRgE6a866YgzE+tlcBdA==
+X-Received: by 2002:a63:7f07:: with SMTP id a7mr13589957pgd.26.1561803771236;
+        Sat, 29 Jun 2019 03:22:51 -0700 (PDT)
+Received: from hari-Inspiron-1545 ([183.83.92.187])
+        by smtp.gmail.com with ESMTPSA id f7sm4778667pfd.43.2019.06.29.03.22.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 29 Jun 2019 03:22:50 -0700 (PDT)
+Date:   Sat, 29 Jun 2019 15:52:46 +0530
+From:   Hariprasad Kelam <hariprasad.kelam@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Colin Ian King <colin.king@canonical.com>,
+        Beatriz Martins de Carvalho 
+        <martinsdecarvalhobeatriz@gmail.com>,
+        Gabriela Bittencourt <gabrielabittencourt00@gmail.com>,
+        Himadri Pandya <himadri18.07@gmail.com>,
+        Hariprasad Kelam <hariprasad.kelam@gmail.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 04/10] staging/rtl8723bs/hal: fix comparison to true/false is
+ error prone
+Message-ID: <20190629102246.GA15070@hari-Inspiron-1545>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anson Huang <Anson.Huang@nxp.com>
+fix below issues reported by checkpatch
 
-According to latest datasheet (Rev.1, 10/2018) from below links,
-in the consumer datasheet, 1.5GHz is mentioned as highest opp but
-depends on speed grading fuse, and in the industrial datasheet,
-1.3GHz is mentioned as highest opp but depends on speed grading
-fuse. 1.5GHz and 1.3GHz opp use same voltage, so no need for
-consumer part to support 1.3GHz opp, with same voltage, CPU should
-run at highest frequency in order to go into idle as quick as
-possible, this can save power.
+CHECK: Using comparison to false is error prone
+CHECK: Using comparison to true is error prone
 
-That means for consumer part, 1GHz/1.5GHz are supported, for
-industrial part, 800MHz/1.3GHz are supported, and then check the
-speed grading fuse to limit the highest CPU frequency further.
-Correct the market segment bits in opp table to make them work
-according to datasheets.
-
-https://www.nxp.com/docs/en/data-sheet/IMX8MDQLQIEC.pdf
-https://www.nxp.com/docs/en/data-sheet/IMX8MDQLQCEC.pdf
-
-Fixes: 12629c5c3749 ("arm64: dts: imx8mq: Add cpu speed grading and all OPPs")
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
 ---
-Changes since V1:
-	- remove the comment to avoid any confusion.
----
- arch/arm64/boot/dts/freescale/imx8mq.dtsi | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/staging/rtl8723bs/hal/hal_com_phycfg.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mq.dtsi b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-index 9d99191..477c523 100644
---- a/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-@@ -169,15 +169,14 @@
- 		opp-1300000000 {
- 			opp-hz = /bits/ 64 <1300000000>;
- 			opp-microvolt = <1000000>;
--			opp-supported-hw = <0xc>, <0x7>;
-+			opp-supported-hw = <0xc>, <0x4>;
- 			clock-latency-ns = <150000>;
- 		};
+diff --git a/drivers/staging/rtl8723bs/hal/hal_com_phycfg.c b/drivers/staging/rtl8723bs/hal/hal_com_phycfg.c
+index 3367644..aabcb32 100644
+--- a/drivers/staging/rtl8723bs/hal/hal_com_phycfg.c
++++ b/drivers/staging/rtl8723bs/hal/hal_com_phycfg.c
+@@ -1191,7 +1191,7 @@ s8 PHY_GetTxPowerTrackingOffset(struct adapter *padapter, u8 RFPath, u8 Rate)
+ 	PDM_ODM_T pDM_Odm = &pHalData->odmpriv;
+ 	s8 offset = 0;
  
- 		opp-1500000000 {
- 			opp-hz = /bits/ 64 <1500000000>;
- 			opp-microvolt = <1000000>;
--			/* Consumer only but rely on speed grading */
--			opp-supported-hw = <0x8>, <0x7>;
-+			opp-supported-hw = <0x8>, <0x3>;
- 			clock-latency-ns = <150000>;
- 		};
- 	};
+-	if (pDM_Odm->RFCalibrateInfo.TxPowerTrackControl  == false)
++	if (!pDM_Odm->RFCalibrateInfo.TxPowerTrackControl)
+ 		return offset;
+ 
+ 	if ((Rate == MGN_1M) || (Rate == MGN_2M) || (Rate == MGN_5_5M) || (Rate == MGN_11M)) {
 -- 
 2.7.4
 
