@@ -2,171 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D2AC5AB01
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2019 14:44:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45B4F5AB21
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2019 14:58:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726980AbfF2Mof (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 29 Jun 2019 08:44:35 -0400
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:10179 "EHLO
-        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726906AbfF2Mof (ORCPT
+        id S1726942AbfF2M6Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 29 Jun 2019 08:58:24 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:45826 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726716AbfF2M6Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Jun 2019 08:44:35 -0400
-X-IronPort-AV: E=Sophos;i="5.63,431,1557180000"; 
-   d="scan'208";a="389687118"
-Received: from abo-12-105-68.mrs.modulonet.fr (HELO hadrien) ([85.68.105.12])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jun 2019 14:44:31 +0200
-Date:   Sat, 29 Jun 2019 14:44:31 +0200 (CEST)
-From:   Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: jll@hadrien
-To:     zyan@redhat.com, idryomov@gmail.com, linux-kernel@vger.kernel.org,
-        kbuild-all@01.org
-Subject: fs/ceph/export.c:459:3-12: code aligned with following code on line
- 461 (fwd)
-Message-ID: <alpine.DEB.2.21.1906291443070.2577@hadrien>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Sat, 29 Jun 2019 08:58:24 -0400
+Received: by mail-io1-f68.google.com with SMTP id e3so18407577ioc.12
+        for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2019 05:58:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:from:date:message-id:subject:to;
+        bh=pa8dKP+1eFqf5jpTScOSQf19AqnN78bbWXAaHdaHc5I=;
+        b=QVn0QeLv1Y1HXE6tHfu1wYYprKcUqjx8szw7416SMsWoLJR079H0QsPGoSVxmi/3IF
+         l5x4YW4/vmM8YPQ4QDWNcQqFV8miLiDM2wBW7DEjHGgFDMx5e4+whxZxGp+wVpMNJY8S
+         hlRhdgGxbl52lbGcFSqDHZzzxQQoznrgxtWgEN2HgGHcF+U3Cpen4E4IsLgAdrJaZhQN
+         Etf0XtEMyzlosnzZpdZPudvljufmesCEna0yx+FJrhx87IGTkKZ2ui1o0twoUAyPJ4Dy
+         F9gxOPvdUuYf8ZmqPlg9scSzER+KZ6hjz3+UzQANDG2Ijq1tSADWV2h+wUARk0SfBAVz
+         aHfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
+         :to;
+        bh=pa8dKP+1eFqf5jpTScOSQf19AqnN78bbWXAaHdaHc5I=;
+        b=Se4gth21sbEmM4hQNq1QL4TRrkc9vHxuPzGQqwQ4p8PaezY3bv2m3qeJvFIJa8fyit
+         aU46PXWMnfY+A8aID1oP6M1q5f35stH3S1tnvbU2OOETyRKYg0UeRvWvOr1tws8X4uFF
+         bVf962K3M54DCDZdRgyIh9Qh7f32iit+Ij2/D1TO3g06mc1MPGq/5iOqDtabqOnr6IHA
+         C4UwlTF3RIUvHstVBVMZaJblDH2RPhXlTMAayznz3a2wGrQ7LsrlLIMxkWPt3RlLbjF0
+         OZz4KlidOklMjmD0TRt58xo/Qe51qt4zmAVMjeZW5CftTOym2IOp728dUs3SQcKqJNIq
+         FuFA==
+X-Gm-Message-State: APjAAAWYUY/tmQzFcN+Is2rxmhUHg8FTuAAZekH5PQTvRpTGCnVKss44
+        eC8zQdIMrzywgoHSIS9sv5ouODgiqGIw53gtDsI=
+X-Google-Smtp-Source: APXvYqy6IeXdyE53KMzEZdbfYPh2Xmuz/VYjqKrx8OphHYT98+3JPI3dKq3L0EoMobqnwyw0KyJ+JUjKpcfqMx6qmGM=
+X-Received: by 2002:a02:457:: with SMTP id 84mr17246235jab.99.1561813103479;
+ Sat, 29 Jun 2019 05:58:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Received: by 2002:a6b:c416:0:0:0:0:0 with HTTP; Sat, 29 Jun 2019 05:58:23
+ -0700 (PDT)
+From:   Ayesha Al-Gaddafi <aishagaddafimd@gmail.com>
+Date:   Sat, 29 Jun 2019 12:58:23 +0000
+X-Google-Sender-Auth: fjUUk-z-HVhu2eegAKIpnxqBnZ4
+Message-ID: <CAFyj9jw0GOdBBvDtcqGdmCOwMofTbLRsL3xShJbpCyUjU_T8zw@mail.gmail.com>
+Subject: Investment offer to you,
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is no bug here, but some code starting on line 461 seems to be
-incorrectly indented.
+Dear friend,
 
-julia
+ I am sorry to encroach into your privacy in this manner, I'm
+contacting you through this media because i need your urgent
+investment assistance in your country. First my names are Mrs. Ayesha
+Al-Qaddafi a single Mother and a Widow with three Children and the
+only biological Daughter of late Libyan President (Late Colonel
+Muammar Al-Qaddafi).
 
----------- Forwarded message ----------
-Date: Sat, 29 Jun 2019 19:51:04 +0800
-From: kbuild test robot <lkp@intel.com>
-To: kbuild@01.org
-Cc: Julia Lawall <julia.lawall@lip6.fr>
-Subject: fs/ceph/export.c:459:3-12: code aligned with following code on line 461
+I have an investment funds worth Twenty Eight Million Four Hundred
+Thousand United State Dollars ($28.400.000.00) and i need your
+assistant as my investment Manager/Partner. I can not carry of the
+fund claim because of my asylum status. Therefore i will authorize you
+the ownership of the deposited funds to be release by the bank and
+transfer into your bank account. However I am contacting you for this
+investment project assistance in your country, may be from there, we
+can build a business relationship in the nearest future.
 
-CC: kbuild-all@01.org
-CC: linux-kernel@vger.kernel.org
-TO: "Yan, Zheng" <zyan@redhat.com>
-CC: Ilya Dryomov <idryomov@gmail.com>
+I am willing to negotiate investment/business profit sharing ratio
+with you base on the future investment earning profits. If you are
+willing and capable to handle this project kindly reply signifying
+your interest, if only you are interested in this investment to enable
+me provide you with more information about the investment. Your urgent
+reply will be appreciated.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   249155c20f9b0754bc1b932a33344cfb4e0c2101
-commit: 570df4e9c23f861aa3f8f2954468c534a033bf1a ceph: snapshot nfs re-export
-date:   8 weeks ago
-:::::: branch date: 5 days ago
-:::::: commit date: 8 weeks ago
-
-If you fix the issue, kindly add following tag
-Reported-by: kbuild test robot <lkp@intel.com>
-Reported-by: Julia Lawall <julia.lawall@lip6.fr>
-
->> fs/ceph/export.c:459:3-12: code aligned with following code on line 461
-
-# https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=570df4e9c23f861aa3f8f2954468c534a033bf1a
-git remote add linus https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-git remote update linus
-git checkout 570df4e9c23f861aa3f8f2954468c534a033bf1a
-vim +459 fs/ceph/export.c
-
-a8e63b7d Sage Weil  2009-10-06  401
-570df4e9 Yan, Zheng 2017-11-15  402  static int __get_snap_name(struct dentry *parent, char *name,
-570df4e9 Yan, Zheng 2017-11-15  403  			   struct dentry *child)
-570df4e9 Yan, Zheng 2017-11-15  404  {
-570df4e9 Yan, Zheng 2017-11-15  405  	struct inode *inode = d_inode(child);
-570df4e9 Yan, Zheng 2017-11-15  406  	struct inode *dir = d_inode(parent);
-570df4e9 Yan, Zheng 2017-11-15  407  	struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
-570df4e9 Yan, Zheng 2017-11-15  408  	struct ceph_mds_request *req = NULL;
-570df4e9 Yan, Zheng 2017-11-15  409  	char *last_name = NULL;
-570df4e9 Yan, Zheng 2017-11-15  410  	unsigned next_offset = 2;
-570df4e9 Yan, Zheng 2017-11-15  411  	int err = -EINVAL;
-570df4e9 Yan, Zheng 2017-11-15  412
-570df4e9 Yan, Zheng 2017-11-15  413  	if (ceph_ino(inode) != ceph_ino(dir))
-570df4e9 Yan, Zheng 2017-11-15  414  		goto out;
-570df4e9 Yan, Zheng 2017-11-15  415  	if (ceph_snap(inode) == CEPH_SNAPDIR) {
-570df4e9 Yan, Zheng 2017-11-15  416  		if (ceph_snap(dir) == CEPH_NOSNAP) {
-570df4e9 Yan, Zheng 2017-11-15  417  			strcpy(name, fsc->mount_options->snapdir_name);
-570df4e9 Yan, Zheng 2017-11-15  418  			err = 0;
-570df4e9 Yan, Zheng 2017-11-15  419  		}
-570df4e9 Yan, Zheng 2017-11-15  420  		goto out;
-570df4e9 Yan, Zheng 2017-11-15  421  	}
-570df4e9 Yan, Zheng 2017-11-15  422  	if (ceph_snap(dir) != CEPH_SNAPDIR)
-570df4e9 Yan, Zheng 2017-11-15  423  		goto out;
-570df4e9 Yan, Zheng 2017-11-15  424
-570df4e9 Yan, Zheng 2017-11-15  425  	while (1) {
-570df4e9 Yan, Zheng 2017-11-15  426  		struct ceph_mds_reply_info_parsed *rinfo;
-570df4e9 Yan, Zheng 2017-11-15  427  		struct ceph_mds_reply_dir_entry *rde;
-570df4e9 Yan, Zheng 2017-11-15  428  		int i;
-570df4e9 Yan, Zheng 2017-11-15  429
-570df4e9 Yan, Zheng 2017-11-15  430  		req = ceph_mdsc_create_request(fsc->mdsc, CEPH_MDS_OP_LSSNAP,
-570df4e9 Yan, Zheng 2017-11-15  431  					       USE_AUTH_MDS);
-570df4e9 Yan, Zheng 2017-11-15  432  		if (IS_ERR(req)) {
-570df4e9 Yan, Zheng 2017-11-15  433  			err = PTR_ERR(req);
-570df4e9 Yan, Zheng 2017-11-15  434  			req = NULL;
-570df4e9 Yan, Zheng 2017-11-15  435  			goto out;
-570df4e9 Yan, Zheng 2017-11-15  436  		}
-570df4e9 Yan, Zheng 2017-11-15  437  		err = ceph_alloc_readdir_reply_buffer(req, inode);
-570df4e9 Yan, Zheng 2017-11-15  438  		if (err)
-570df4e9 Yan, Zheng 2017-11-15  439  			goto out;
-570df4e9 Yan, Zheng 2017-11-15  440
-570df4e9 Yan, Zheng 2017-11-15  441  		req->r_direct_mode = USE_AUTH_MDS;
-570df4e9 Yan, Zheng 2017-11-15  442  		req->r_readdir_offset = next_offset;
-570df4e9 Yan, Zheng 2017-11-15  443  		req->r_args.readdir.flags =
-570df4e9 Yan, Zheng 2017-11-15  444  				cpu_to_le16(CEPH_READDIR_REPLY_BITFLAGS);
-570df4e9 Yan, Zheng 2017-11-15  445  		if (last_name) {
-570df4e9 Yan, Zheng 2017-11-15  446  			req->r_path2 = last_name;
-570df4e9 Yan, Zheng 2017-11-15  447  			last_name = NULL;
-570df4e9 Yan, Zheng 2017-11-15  448  		}
-570df4e9 Yan, Zheng 2017-11-15  449
-570df4e9 Yan, Zheng 2017-11-15  450  		req->r_inode = dir;
-570df4e9 Yan, Zheng 2017-11-15  451  		ihold(dir);
-570df4e9 Yan, Zheng 2017-11-15  452  		req->r_dentry = dget(parent);
-570df4e9 Yan, Zheng 2017-11-15  453
-570df4e9 Yan, Zheng 2017-11-15  454  		inode_lock(dir);
-570df4e9 Yan, Zheng 2017-11-15  455  		err = ceph_mdsc_do_request(fsc->mdsc, NULL, req);
-570df4e9 Yan, Zheng 2017-11-15  456  		inode_unlock(dir);
-570df4e9 Yan, Zheng 2017-11-15  457
-570df4e9 Yan, Zheng 2017-11-15  458  		if (err < 0)
-570df4e9 Yan, Zheng 2017-11-15 @459  			goto out;
-570df4e9 Yan, Zheng 2017-11-15  460
-570df4e9 Yan, Zheng 2017-11-15 @461  		 rinfo = &req->r_reply_info;
-570df4e9 Yan, Zheng 2017-11-15  462  		 for (i = 0; i < rinfo->dir_nr; i++) {
-570df4e9 Yan, Zheng 2017-11-15  463  			 rde = rinfo->dir_entries + i;
-570df4e9 Yan, Zheng 2017-11-15  464  			 BUG_ON(!rde->inode.in);
-570df4e9 Yan, Zheng 2017-11-15  465  			 if (ceph_snap(inode) ==
-570df4e9 Yan, Zheng 2017-11-15  466  			     le64_to_cpu(rde->inode.in->snapid)) {
-570df4e9 Yan, Zheng 2017-11-15  467  				 memcpy(name, rde->name, rde->name_len);
-570df4e9 Yan, Zheng 2017-11-15  468  				 name[rde->name_len] = '\0';
-570df4e9 Yan, Zheng 2017-11-15  469  				 err = 0;
-570df4e9 Yan, Zheng 2017-11-15  470  				 goto out;
-570df4e9 Yan, Zheng 2017-11-15  471  			 }
-570df4e9 Yan, Zheng 2017-11-15  472  		 }
-570df4e9 Yan, Zheng 2017-11-15  473
-570df4e9 Yan, Zheng 2017-11-15  474  		 if (rinfo->dir_end)
-570df4e9 Yan, Zheng 2017-11-15  475  			 break;
-570df4e9 Yan, Zheng 2017-11-15  476
-570df4e9 Yan, Zheng 2017-11-15  477  		 BUG_ON(rinfo->dir_nr <= 0);
-570df4e9 Yan, Zheng 2017-11-15  478  		 rde = rinfo->dir_entries + (rinfo->dir_nr - 1);
-570df4e9 Yan, Zheng 2017-11-15  479  		 next_offset += rinfo->dir_nr;
-570df4e9 Yan, Zheng 2017-11-15  480  		 last_name = kstrndup(rde->name, rde->name_len, GFP_KERNEL);
-570df4e9 Yan, Zheng 2017-11-15  481  		 if (!last_name) {
-570df4e9 Yan, Zheng 2017-11-15  482  			 err = -ENOMEM;
-570df4e9 Yan, Zheng 2017-11-15  483  			 goto out;
-570df4e9 Yan, Zheng 2017-11-15  484  		 }
-570df4e9 Yan, Zheng 2017-11-15  485
-570df4e9 Yan, Zheng 2017-11-15  486  		 ceph_mdsc_put_request(req);
-570df4e9 Yan, Zheng 2017-11-15  487  		 req = NULL;
-570df4e9 Yan, Zheng 2017-11-15  488  	}
-570df4e9 Yan, Zheng 2017-11-15  489  	err = -ENOENT;
-570df4e9 Yan, Zheng 2017-11-15  490  out:
-570df4e9 Yan, Zheng 2017-11-15  491  	if (req)
-570df4e9 Yan, Zheng 2017-11-15  492  		ceph_mdsc_put_request(req);
-570df4e9 Yan, Zheng 2017-11-15  493  	kfree(last_name);
-570df4e9 Yan, Zheng 2017-11-15  494  	dout("get_snap_name %p ino %llx.%llx err=%d\n",
-570df4e9 Yan, Zheng 2017-11-15  495  	     child, ceph_vinop(inode), err);
-570df4e9 Yan, Zheng 2017-11-15  496  	return err;
-570df4e9 Yan, Zheng 2017-11-15  497  }
-570df4e9 Yan, Zheng 2017-11-15  498
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+Yours Sincerely,
+Mrs Ayesha Al-Qaddafi.
