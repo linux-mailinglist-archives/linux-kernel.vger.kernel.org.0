@@ -2,70 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 308AF5AD73
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2019 23:11:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3477B5AD7C
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2019 23:19:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726957AbfF2VLB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 29 Jun 2019 17:11:01 -0400
-Received: from mail-io1-f71.google.com ([209.85.166.71]:43012 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726913AbfF2VLB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Jun 2019 17:11:01 -0400
-Received: by mail-io1-f71.google.com with SMTP id y5so10810634ioj.10
-        for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2019 14:11:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=iI+vf7XGdxN/YYPP07HgU1JapV/In43CoBtMmVlU0zc=;
-        b=Mv5szL/2E+/uanHVomOyWF4Go+A4XaCOfj10rfsK9/6RjWzFy8vqYZMwOBzFisTyL2
-         +9D10+WaOc1HuW9Jr5tQI6NHflvD2P2PUnp7YNpjdN93oZjEvRWVsHrg1/pKuwaayxlA
-         DBwE/zP6nwaaxSr4QLXPQW6c9HmrctHwG8/nnfB/BGaMxqumF8RlgQyQiYGKkzRaNRc2
-         NJ/mJwmTivODen4aGkrgL5XQjY8jUk/eFKHGIIr2jBOWU8bdsKPJ1CgUoy6PLQDzjOLR
-         JRUtRAAu3x/AXm+G3zPw3zH36SINM0qTL415UvTwaNmgMF1+ekX25xRWZQk6ixODxJMW
-         v+Kg==
-X-Gm-Message-State: APjAAAWz0Zz3Izhsh1tUkZ3aKHy9JN6nrHem02KEhAHbR6jJ3VtpZXmf
-        UHdCFojHUdW3BAWxB0jHDFGWAJZLftalDLznFlXVcPTcXNCG
-X-Google-Smtp-Source: APXvYqxUrjoo3PnWRqtB9E0kVCAY8bEvzzwxgHzzPwfKIzGqVN9E4ibJvNZEVz7+4oUptRKrbedzide4XQN2Mi9uNOkrx1Kx7s+W
+        id S1726958AbfF2VTf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 29 Jun 2019 17:19:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57910 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726909AbfF2VTf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Jun 2019 17:19:35 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3A19D216FD;
+        Sat, 29 Jun 2019 21:19:33 +0000 (UTC)
+Date:   Sat, 29 Jun 2019 17:19:31 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Jiri Kosina <jikos@kernel.org>
+Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Petr Mladek <pmladek@suse.com>,
+        Miroslav Benes <mbenes@suse.cz>, Jessica Yu <jeyu@kernel.org>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        linux-kernel@vger.kernel.org, live-patching@vger.kernel.org,
+        Johannes Erdfelt <johannes@erdfelt.com>,
+        Ingo Molnar <mingo@kernel.org>, mhiramat@kernel.org,
+        torvalds@linux-foundation.org
+Subject: Re: [PATCH] ftrace: Remove possible deadlock between
+ register_kprobe() and ftrace_run_update_code()
+Message-ID: <20190629171931.770f05a5@gandalf.local.home>
+In-Reply-To: <nycvar.YFH.7.76.1906292256100.27227@cbobk.fhfr.pm>
+References: <20190627081334.12793-1-pmladek@suse.com>
+        <20190627224729.tshtq4bhzhneq24w@treble>
+        <20190627190457.703a486e@gandalf.local.home>
+        <alpine.DEB.2.21.1906280106360.32342@nanos.tec.linutronix.de>
+        <20190627231952.nqkbtcculvo2ddif@treble>
+        <nycvar.YFH.7.76.1906281932360.27227@cbobk.fhfr.pm>
+        <20190628133702.16a54ccf@gandalf.local.home>
+        <nycvar.YFH.7.76.1906292256100.27227@cbobk.fhfr.pm>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-X-Received: by 2002:a5d:9ec4:: with SMTP id a4mr14785908ioe.125.1561842660304;
- Sat, 29 Jun 2019 14:11:00 -0700 (PDT)
-Date:   Sat, 29 Jun 2019 14:11:00 -0700
-In-Reply-To: <000000000000d028b30588fed102@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f66c6e058c7cd4e0@google.com>
-Subject: Re: KASAN: use-after-free Write in xfrm_hash_rebuild
-From:   syzbot <syzbot+0165480d4ef07360eeda@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, fw@strlen.de, herbert@gondor.apana.org.au,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        steffen.klassert@secunet.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has bisected this bug to:
+On Sat, 29 Jun 2019 22:56:47 +0200 (CEST)
+Jiri Kosina <jikos@kernel.org> wrote:
 
-commit 1548bc4e0512700cf757192c106b3a20ab639223
-Author: Florian Westphal <fw@strlen.de>
-Date:   Fri Jan 4 13:17:02 2019 +0000
+> > Care to send a patch? :-)  
+> 
+> From: Jiri Kosina <jkosina@suse.cz>
+> Subject: [PATCH] ftrace/x86: anotate text_mutex split between ftrace_arch_code_modify_post_process() and ftrace_arch_code_modify_prepare()
 
-     xfrm: policy: delete inexact policies from inexact list on hash rebuild
+Care to send a proper patch ;-)
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1734cba9a00000
-start commit:   249155c2 Merge branch 'parisc-5.2-4' of git://git.kernel.o..
-git tree:       upstream
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=14b4cba9a00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=10b4cba9a00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9a31528e58cc12e2
-dashboard link: https://syzkaller.appspot.com/bug?extid=0165480d4ef07360eeda
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16cf37c3a00000
+As in, a separate email. Makes it much easier to apply directly with
+my scripts.
 
-Reported-by: syzbot+0165480d4ef07360eeda@syzkaller.appspotmail.com
-Fixes: 1548bc4e0512 ("xfrm: policy: delete inexact policies from inexact  
-list on hash rebuild")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+-- Steve
