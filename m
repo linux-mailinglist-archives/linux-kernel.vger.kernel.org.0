@@ -2,65 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1959D5A8D3
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2019 06:01:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D97485A9BF
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2019 10:59:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726731AbfF2EBh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 29 Jun 2019 00:01:37 -0400
-Received: from namei.org ([65.99.196.166]:49794 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725710AbfF2EBh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Jun 2019 00:01:37 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id x5T41PhZ017591;
-        Sat, 29 Jun 2019 04:01:25 GMT
-Date:   Fri, 28 Jun 2019 21:01:25 -0700 (PDT)
-From:   James Morris <jmorris@namei.org>
-To:     Eric Biggers <ebiggers@kernel.org>
-cc:     Jaskaran Khurana <jaskarankhurana@linux.microsoft.com>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, agk@redhat.com, snitzer@redhat.com,
-        dm-devel@redhat.com, scottsh@microsoft.com, mpatocka@redhat.com,
-        gmazyland@gmail.com
-Subject: Re: [RFC PATCH v5 0/1] Add dm verity root hash pkcs7 sig
- validation.
-In-Reply-To: <20190628040041.GB673@sol.localdomain>
-Message-ID: <alpine.LRH.2.21.1906282040490.15624@namei.org>
-References: <20190619191048.20365-1-jaskarankhurana@linux.microsoft.com> <20190628040041.GB673@sol.localdomain>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        id S1726897AbfF2I7G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 29 Jun 2019 04:59:06 -0400
+Received: from [60.13.42.154] ([60.13.42.154]:48498 "EHLO
+        localhost.localdomain" rhost-flags-FAIL-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726812AbfF2I7G (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Jun 2019 04:59:06 -0400
+X-Greylist: delayed 16676 seconds by postgrey-1.27 at vger.kernel.org; Sat, 29 Jun 2019 04:59:06 EDT
+Received: from localhost (localhost [IPv6:::1])
+        by localhost.localdomain (Postfix) with SMTP id 55002120B08E
+        for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2019 12:07:43 +0800 (CST)
+From:   linux-kernel@vger.kernel.org
+To:     afjWuQ8linux-kernel@vger.kernel.org
+Reply-To: demexinruslan+Ophk@gmail.com
+Subject: =?utf-8?B?0JrQu9C40LXQvdGC0YHQutC40LUg0LHQsNC30YshIEVt?=
+        =?utf-8?B?YWlsOiBwcm9kYXdlekBhcm15c3B5LmNvbSDQo9C30L3Q?=
+        =?utf-8?B?sNC50YLQtSDQv9C+0LTRgNC+0LHQvdC10LUh?=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8";
+Content-Transfer-Encoding: base64
+Message-Id: <20190629040743.55002120B08E@localhost.localdomain>
+Date:   Sat, 29 Jun 2019 12:07:43 +0800 (CST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 27 Jun 2019, Eric Biggers wrote:
-
-> I don't understand your justification for this feature.
-> 
-> If userspace has already been pwned severely enough for the attacker to be
-> executing arbitrary code with CAP_SYS_ADMIN (which is what the device mapper
-> ioctls need), what good are restrictions on loading more binaries from disk?
-> 
-> Please explain your security model.
-
-Let's say the system has a policy where all code must be signed with a 
-valid key, and that one mechanism for enforcing this is via signed 
-dm-verity volumes. Validating the signature within the kernel provides 
-stronger assurance than userspace validation. The kernel validates and 
-executes the code, using kernel-resident keys, and does not need to rely 
-on validation which has occurred across a trust boundary.
-
-You don't need arbitrary CAP_SYS_ADMIN code execution, you just need a 
-flaw in the app (or its dependent libraries, or configuration) which 
-allows signature validation to be bypassed.
-
-The attacker now needs a kernel rather than a userspace vulnerability to 
-bypass the signed code policy.
-
--- 
-James Morris
-<jmorris@namei.org>
-
+0JrQu9C40LXQvdGC0YHQutC40LUg0LHQsNC30YshIEVtYWlsOiBwcm9kYXdlekBhcm15c3B5LmNv
+bSDQo9C30L3QsNC50YLQtSDQv9C+0LTRgNC+0LHQvdC10LUhDQo=
