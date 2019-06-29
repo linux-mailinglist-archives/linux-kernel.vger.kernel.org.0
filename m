@@ -2,56 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B08595A9D0
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2019 11:30:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 029FC5A9EB
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2019 11:53:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727063AbfF2JaL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 29 Jun 2019 05:30:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45494 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726888AbfF2JaG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Jun 2019 05:30:06 -0400
-Subject: Re: [GIT PULL] ARC fixes for 5.2-rc7
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561800606;
-        bh=r24RVyVNU63oHseAg7oNfQeo4PfQI//arxmz7S3gLaw=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=Rg5PTXMWSVGlrywbFCLaPEogPnOxARjfVvctWWJdnT9gM+BbstEjPW7Q0wLr1aNJz
-         /zpMc3lVpMaXW/OC9qbQREJ9qx8ohkKItdzOzcTG9VS6WNcDsSrn1Yfe0n0mtnnl7D
-         cVL6EsplOj4DYwMrfOT31d0QWDjTJMuquCaHhiE0=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <b799ad4e-cafb-bf1f-3d92-34a5035ea7b5@synopsys.com>
-References: <b799ad4e-cafb-bf1f-3d92-34a5035ea7b5@synopsys.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <b799ad4e-cafb-bf1f-3d92-34a5035ea7b5@synopsys.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/vgupta/arc.git/
- tags/arc-5.2-rc7
-X-PR-Tracked-Commit-Id: ec9b4feb1e41587c15d43d237844193318389dc3
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: f8b5c72227618780f49e53fb77b0e7ddb2996552
-Message-Id: <156180060623.8003.8022382941002971289.pr-tracker-bot@kernel.org>
-Date:   Sat, 29 Jun 2019 09:30:06 +0000
-To:     Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        arcml <linux-snps-arc@lists.infradead.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+        id S1727055AbfF2JxM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 29 Jun 2019 05:53:12 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:52207 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726965AbfF2JxL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Jun 2019 05:53:11 -0400
+Received: from 79.184.254.216.ipv4.supernova.orange.pl (79.184.254.216) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.267)
+ id cb0f85cb5e292c0e; Sat, 29 Jun 2019 11:53:08 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Linux PM <linux-pm@vger.kernel.org>
+Cc:     Linux PCI <linux-pci@vger.kernel.org>,
+        Linux ACPI <linux-acpi@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Hans De Goede <hdegoede@redhat.com>,
+        "Robert R. Howell" <RHowell@uwyo.edu>
+Subject: [PATCH 0/6] PM: PCI/ACPI: Hibernation handling fixes
+Date:   Sat, 29 Jun 2019 11:33:30 +0200
+Message-ID: <2318839.0szTqvJMZa@kreacher>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sat, 29 Jun 2019 00:12:09 +0000:
+Hi All,
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/vgupta/arc.git/ tags/arc-5.2-rc7
+This series of patches addresses a few issues related to the handling of
+hibernation in the PCI bus type and the ACPI PM domain and ACPI LPSS driver.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/f8b5c72227618780f49e53fb77b0e7ddb2996552
+First of all, all of the runtime-suspended PCI devices and devices in the ACPI PM and LPSS
+PM domains will be resumed during hibernation (first patch).  This appears to be the
+only way to avoid weird corner cases and the benefit from avoiding to resume those
+devices during hibernation is questionable.
 
-Thank you!
+That change allows the the hibernation callbacks in all of the involved subsystems to be
+simplified (patches 2 and 3).
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+While at it, there is a subtle issue in the LPSS suspend callbacks which is addressed
+by patch 4.
+
+Moreover, reusing bus-level suspend callbacks for the "poweroff" transition during
+hibernation (which is the case for the ACPI PM domain and LPSS) is incorrect, so patch 5
+fixes that.
+
+Finally, there are some leftover items in linux/acpi.h that can be dropped (patch 6).
+
+Thanks,
+Rafael
+
+
+
