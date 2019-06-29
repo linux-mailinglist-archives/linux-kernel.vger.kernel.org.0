@@ -2,56 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 542DB5AA94
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2019 13:45:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D78D5AA9A
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2019 13:47:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727168AbfF2LpU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 29 Jun 2019 07:45:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50418 "EHLO mail.kernel.org"
+        id S1727007AbfF2Lrs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 29 Jun 2019 07:47:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52208 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727080AbfF2LpI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Jun 2019 07:45:08 -0400
-Subject: Re: [GIT PULL] x86 fixes
+        id S1726905AbfF2Lrr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Jun 2019 07:47:47 -0400
+Received: from localhost.localdomain (unknown [194.230.155.151])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AA47E214AF;
+        Sat, 29 Jun 2019 11:47:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561808707;
-        bh=T17d8BzSJlirUWyUDKwoG1YMHgJYZ8Wp+xCSXMl2jFA=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=ncbkCu7gWTMOtQnkFbt67Gzsi0UNq1Sznrf7gAHtxx4Aj/s1TwtBhTcmlsmDJCZgh
-         7PdOr9gvOCM+x4k4s+LJzQu1g5ADEcphpzoTnBT1uDXBEPw8jij/a9zHYCLBrVVOr2
-         06mNXpG2IHhHTT9Nvaxx9dbt+gEFBhErIfmnmPpA=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190629091407.GA104355@gmail.com>
-References: <20190629091407.GA104355@gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190629091407.GA104355@gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
- x86-urgent-for-linus
-X-PR-Tracked-Commit-Id: ae6a45a0868986f69039a2150d3b2b9ca294c378
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 728254541ebcc7fee869c3c4c3f36f96be791edb
-Message-Id: <156180870778.30344.17530150555963607105.pr-tracker-bot@kernel.org>
-Date:   Sat, 29 Jun 2019 11:45:07 +0000
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andrew Morton <akpm@linux-foundation.org>
+        s=default; t=1561808866;
+        bh=jzISek9/BxlkfR4QsZijiOWmURElEaC0O0/FFoqJpTQ=;
+        h=From:To:Subject:Date:From;
+        b=UvAdY2AjJpr49kfKWnEt8gAtDmfvd6Fj+NLpXCAujRNCkhmVcgeWcI1vNR71At5/C
+         OaoO6jGbA+Xm+29mz2BBgkvtTGCd8nMtrJYVcS5fwWv0505hWWB/U0039EpnpJnXYR
+         0+9lEyTxm+fc4MJBIHzL2OHIyRN33wfP8klK2Euw=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Anand Moon <linux.amoon@gmail.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] ARM: dts: exynos: Adjust buck[78] regulators to supported values on Odroid XU3 family
+Date:   Sat, 29 Jun 2019 13:47:38 +0200
+Message-Id: <20190629114739.11702-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sat, 29 Jun 2019 11:14:07 +0200:
+The datasheet of S2MPS11 PMIC is slightly non-consistent in buck[78]
+voltage regulators values.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-urgent-for-linus
+1. The voltage tables for configuring their registers mention range of
+   voltages: 0.750 V to 3.55 V,
+2. The constrains in electrical specifications say output voltage range
+   to be different (buck7: 1.2 V to 1.5 V, buck8: 1.8 V to 2.1 V).
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/728254541ebcc7fee869c3c4c3f36f96be791edb
+Adjust the ranges to match the electrical specifications to stay on the
+safe side.  Also change the name of regulators to match reality.  Anyway
+these regulators stay at default value so this should not have effect.
 
-Thank you!
+Reported-by: Anand Moon <linux.amoon@gmail.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ arch/arm/boot/dts/exynos5422-odroid-core.dtsi | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
+diff --git a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
+index 9843d21d6924..829147e320e0 100644
+--- a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
++++ b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
+@@ -551,17 +551,17 @@
+ 			};
+ 
+ 			buck7_reg: BUCK7 {
+-				regulator-name = "vdd_1.0v_ldo";
+-				regulator-min-microvolt = <800000>;
++				regulator-name = "vdd_1.35v_ldo";
++				regulator-min-microvolt = <1200000>;
+ 				regulator-max-microvolt = <1500000>;
+ 				regulator-always-on;
+ 				regulator-boot-on;
+ 			};
+ 
+ 			buck8_reg: BUCK8 {
+-				regulator-name = "vdd_1.8v_ldo";
+-				regulator-min-microvolt = <800000>;
+-				regulator-max-microvolt = <2000000>;
++				regulator-name = "vdd_2.0v_ldo";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <2100000>;
+ 				regulator-always-on;
+ 				regulator-boot-on;
+ 			};
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+2.17.1
+
