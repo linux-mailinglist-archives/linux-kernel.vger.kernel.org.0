@@ -2,54 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF2735AA93
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2019 13:45:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 499055AA95
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2019 13:45:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727107AbfF2LpK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 29 Jun 2019 07:45:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50372 "EHLO mail.kernel.org"
+        id S1727127AbfF2LpT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 29 Jun 2019 07:45:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50400 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726874AbfF2LpH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Jun 2019 07:45:07 -0400
-Subject: Re: [GIT PULL] perf fixes
+        id S1727078AbfF2LpI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Jun 2019 07:45:08 -0400
+Subject: Re: [GIT PULL] Power management fix for v5.2-rc7
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1561808707;
-        bh=iVvq+ayGoGDBwgPA5ekr/tK52S6iiwUrinGz7/NS0X4=;
+        bh=iooDHOTYr6UuOqlt3CnZFe6PbfP9hsquI/2qlmHD4hw=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=Z9wrkbTAeCrLD+bfF9rxItp+4wgaWQAw2Ao7BPN9B3CfDdnFuwCcP7dNG98Iuvgjt
-         +30Sp6H6i/YCJigI3QU24eOpqpt2r8kupIjMQyHk+kcrVG/wGBccbezUSus2Rm6x25
-         C2azLjQgHMPq2pev120LTEII+LGrJ6kddz8/ckKs=
+        b=yjAxJSOAWsx/6jFrJ4fvYRvqKZ1i81KZPkjLwAi3Tl5Xem40vZOvzpfhV/LtIldT1
+         cOv8GkeK3aQg5J9y51cIdzaUpL9N0OOPTqWMWEgmsSgpYwDRzw/on+Kiw/KAEaPMIa
+         RSQgToBCRRymm7IUt7+vIxrLTms8Hxm+pIS46fJo=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190629085439.GA123694@gmail.com>
-References: <20190629085439.GA123694@gmail.com>
+In-Reply-To: <CAJZ5v0ieD3bohHtsk4dZtZL-oJF8NUz5MJ3p+zHvQ2McgaSqaw@mail.gmail.com>
+References: <CAJZ5v0ieD3bohHtsk4dZtZL-oJF8NUz5MJ3p+zHvQ2McgaSqaw@mail.gmail.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190629085439.GA123694@gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
- perf-urgent-for-linus
-X-PR-Tracked-Commit-Id: 8b12b812f5367c2469fb937da7e28dd321ad8d7b
+X-PR-Tracked-Message-Id: <CAJZ5v0ieD3bohHtsk4dZtZL-oJF8NUz5MJ3p+zHvQ2McgaSqaw@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git pm-5.2-rc7
+X-PR-Tracked-Commit-Id: 471a739a47aa7d582f0cdf9d392957d04632bae2
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 57103eb7c6cad04c0611b7a5767a381b34b8b0ab
-Message-Id: <156180870696.30344.1314770153262884680.pr-tracker-bot@kernel.org>
-Date:   Sat, 29 Jun 2019 11:45:06 +0000
-To:     Ingo Molnar <mingo@kernel.org>
+X-PR-Merge-Commit-Id: 2407e486066b8ce00dabd7e2b3a2cbcc59ea6186
+Message-Id: <156180870727.30344.904013935037519216.pr-tracker-bot@kernel.org>
+Date:   Sat, 29 Jun 2019 11:45:07 +0000
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Arnaldo Carvalho de Melo <acme@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux PCI <linux-pci@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sat, 29 Jun 2019 10:54:39 +0200:
+The pull request you sent on Sat, 29 Jun 2019 11:07:09 +0200:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf-urgent-for-linus
+> git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git pm-5.2-rc7
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/57103eb7c6cad04c0611b7a5767a381b34b8b0ab
+https://git.kernel.org/torvalds/c/2407e486066b8ce00dabd7e2b3a2cbcc59ea6186
 
 Thank you!
 
