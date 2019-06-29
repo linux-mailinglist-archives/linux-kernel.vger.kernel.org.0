@@ -2,109 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C95735AC95
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2019 18:37:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED4B75ACAF
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2019 19:23:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726930AbfF2Qho (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 29 Jun 2019 12:37:44 -0400
-Received: from bout01.mta.xmission.com ([166.70.11.15]:49749 "EHLO
-        bout01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726837AbfF2Qho (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Jun 2019 12:37:44 -0400
-Received: from mx02.mta.xmission.com ([166.70.13.212])
-        by bout01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <sbauer@plzdonthack.me>)
-        id 1hhGM8-0008Vd-Kr; Sat, 29 Jun 2019 10:37:40 -0600
-Received: from plesk14-shared.xmission.com ([166.70.198.161] helo=plesk14.xmission.com)
-        by mx02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <sbauer@plzdonthack.me>)
-        id 1hhGM7-0000gT-Tq; Sat, 29 Jun 2019 10:37:40 -0600
-Received: from hacktheplanet (c-68-50-34-150.hsd1.in.comcast.net [68.50.34.150])
-        by plesk14.xmission.com (Postfix) with ESMTPSA id 2E121193879;
-        Sat, 29 Jun 2019 16:37:39 +0000 (UTC)
-Date:   Sat, 29 Jun 2019 12:37:37 -0400
-From:   Scott Bauer <sbauer@plzdonthack.me>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     jonathan.derrick@intel.com,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "zub@linux.fjfi.cvut.cz" <zub@linux.fjfi.cvut.cz>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "jonas.rabenstein@studium.uni-erlangen.de" 
-        <jonas.rabenstein@studium.uni-erlangen.de>
-Message-ID: <20190629163737.GB21042@hacktheplanet>
-References: <1558471606-25139-1-git-send-email-zub@linux.fjfi.cvut.cz>
- <7ee5d705c12d770bf7566bce7d664bf733b25206.camel@intel.com>
- <20190629161947.GA20127@hacktheplanet>
- <d3074ee1-0506-511d-c29c-44effb4eda97@kernel.dk>
- <20190629162835.GA21042@hacktheplanet>
- <cb37028f-bff9-92a6-4ecd-efe938274d24@kernel.dk>
+        id S1726907AbfF2RXY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 29 Jun 2019 13:23:24 -0400
+Received: from lkcl.net ([217.147.94.29]:42415 "EHLO lkcl.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726837AbfF2RXY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Jun 2019 13:23:24 -0400
+X-Greylist: delayed 2287 seconds by postgrey-1.27 at vger.kernel.org; Sat, 29 Jun 2019 13:23:23 EDT
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lkcl.net; s=201607131;
+        h=Content-Type:Cc:To:Subject:Message-ID:Date:From:MIME-Version; bh=s/sTi+hASQyPaQRLVOOh9ET0ya6bVtdjcUHl64yNEJw=;
+        b=RKPqwaFSFIFMxHCBw4GHqMY/1g7FEz7d0qo3eSy8ZtoC7DxmMt9BSLvCKb5oZ9PmwTer3bGW1sgc1Yo+fJXcBI3Q4RSrGfZqhPAF4G0BKV3t6bwaoktseUAjQmbGjVlLm2BGnRSsPcHX9jwNWu4IPsi9pxRRoghqesCT8zjPfkI=;
+Received: from mail-lj1-f176.google.com ([209.85.208.176])
+        by lkcl.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.84_2)
+        (envelope-from <lkcl@lkcl.net>)
+        id 1hhGTS-0008P0-Rf; Sat, 29 Jun 2019 16:45:14 +0000
+Received: by mail-lj1-f176.google.com with SMTP id t28so8909104lje.9;
+        Sat, 29 Jun 2019 09:44:59 -0700 (PDT)
+X-Gm-Message-State: APjAAAXeYxu9TidZ+kwM0+MFIZCL45e0dxzD9Jul0xAThrxOt+UTUiD6
+        D82ieLKUDH2aL1MtJeSx2+FeZEFPsrSK6HnZLHs=
+X-Google-Smtp-Source: APXvYqyT3rBGT+21WQD3pj3PIsLlCJsWc/KxmRIzx71GAXDRlfDfgfqr73eWhFqOZ/B2TWPMlCqEQW13yM2ujHPob5E=
+X-Received: by 2002:a2e:94cb:: with SMTP id r11mr8821456ljh.212.1561826376022;
+ Sat, 29 Jun 2019 09:39:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cb37028f-bff9-92a6-4ecd-efe938274d24@kernel.dk>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-XM-SPF: eid=1hhGM7-0000gT-Tq;;;mid=<20190629163737.GB21042@hacktheplanet>;;;hst=mx02.mta.xmission.com;;;ip=166.70.198.161;;;frm=sbauer@plzdonthack.me;;;spf=none
-X-SA-Exim-Connect-IP: 166.70.198.161
-X-SA-Exim-Mail-From: sbauer@plzdonthack.me
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
-X-Spam-Level: 
-X-Spam-Status: No, score=0.2 required=8.0 tests=ALL_TRUSTED,BAYES_40,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,XMSubLong,
-        XM_UncommonTLD01 autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        * -0.0 BAYES_40 BODY: Bayes spam probability is 20 to 40%
-        *      [score: 0.2905]
-        *  0.7 XMSubLong Long Subject
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-        *  0.5 XM_UncommonTLD01 Less-common TLD
-X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Jens Axboe <axboe@kernel.dk>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 251 ms - load_scoreonly_sql: 0.05 (0.0%),
-        signal_user_changed: 2.5 (1.0%), b_tie_ro: 1.72 (0.7%), parse: 0.93
-        (0.4%), extract_message_metadata: 3.4 (1.4%), get_uri_detail_list:
-        0.67 (0.3%), tests_pri_-1000: 3.1 (1.2%), tests_pri_-950: 1.40 (0.6%),
-        tests_pri_-900: 1.18 (0.5%), tests_pri_-90: 19 (7.4%), check_bayes: 17
-        (6.8%), b_tokenize: 5 (2.1%), b_tok_get_all: 5 (2.1%), b_comp_prob:
-        1.78 (0.7%), b_tok_touch_all: 2.6 (1.0%), b_finish: 0.61 (0.2%),
-        tests_pri_0: 209 (83.4%), check_dkim_signature: 0.58 (0.2%),
-        check_dkim_adsp: 7 (2.8%), poll_dns_idle: 0.51 (0.2%), tests_pri_10:
-        2.3 (0.9%), tests_pri_500: 6 (2.4%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH v2 0/3] block: sed-opal: add support for shadow MBR done
- flag and write
-X-SA-Exim-Version: 4.2.1 (built Mon, 03 Jun 2019 09:49:16 -0600)
-X-SA-Exim-Scanned: Yes (on mx02.mta.xmission.com)
+From:   Luke Kenneth Casson Leighton <lkcl@lkcl.net>
+Date:   Sat, 29 Jun 2019 17:39:24 +0100
+X-Gmail-Original-Message-ID: <CAPweEDxufL1SHCh2ao7600fF9+aciMhr2V_5vxQN6S8r=u2W4g@mail.gmail.com>
+Message-ID: <CAPweEDxufL1SHCh2ao7600fF9+aciMhr2V_5vxQN6S8r=u2W4g@mail.gmail.com>
+Subject: Re: bcachefs status update (it's done cooking; let's get this sucker merged)
+To:     torvalds@linux-foundation.org
+Cc:     akpm@linux-foundation.org, axboe@kernel.dk,
+        darrick.wong@oracle.com, david@fromorbit.com, dchinner@redhat.com,
+        josef@toxicpanda.com, kent.overstreet@gmail.com,
+        linux-bcache@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, peterz@infradead.org, tj@kernel.org,
+        viro@zeniv.linux.org.uk, zach.brown@ni.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-e1;5202;0csOn Sat, Jun 29, 2019 at 10:35:30AM -0600, Jens Axboe wrote:
-> On 6/29/19 10:28 AM, Scott Bauer wrote:
-> > On Sat, Jun 29, 2019 at 10:26:52AM -0600, Jens Axboe wrote:
-> >> On 6/29/19 10:19 AM, Scott Bauer wrote:
-> >>>
-> >>> Hey Jens,
-> >>>
-> >>> Can you please stage these for 5.3 aswell?
-> >>
-> >> Yes, looks fine to me. But it conflicts with the psid revert in terms
-> >> of ioctl numbering. You fine with me renumbering IOC_OPAL_MBR_DONE to:
-> >>
-> >> #define IOC_OPAL_MBR_DONE           _IOW('p', 233, struct opal_mbr_done)
-> > 
-> > Sorry for the conflict. That's fine. I'll fix up userland tooling.
-> 
-> Renamed 232 -> 233, and 233 -> 234, for the two conflicts. So now we have:
-> 
-> #define IOC_OPAL_PSID_REVERT_TPR    _IOW('p', 232, struct opal_key)
-> #define IOC_OPAL_MBR_DONE           _IOW('p', 233, struct opal_mbr_done)
-> #define IOC_OPAL_WRITE_SHADOW_MBR   _IOW('p', 234, struct opal_shadow_mbr)
+hey linus, you made news again, all blown up and pointless again.
+you're doing great: you're being honest. remember the offer i made to
+put you in touch with my friend.
 
-Looks good, thank you for handling this.
+anecdotal story: andrew tridgell worked on the fujitsu sparc
+supercomputer a couple decades ago: it had a really weird DMA ring
+bus.
+
+* memory-to-memory copy (in the same core) was 10mbytes/sec
+* DMA memory-to-memory copy (in the same core) was 20mbytes/sec
+* memory-memory copy (across the ring bus i.e. to another machine) was
+100mbytes/sec
+* DMA memory-memory copy (across the ring bus) was *200* mbytes/sec.
+
+when andrew tried asking people, "hey everyone, we need a filesystem
+that can work really well on this fast parallel system", he had to
+continuously fend off "i got a great idea for in-core memory-to-memory
+cacheing!!!!" suggestions, because they *just would never work*.
+
+the point being: caches aren't always "fast".
+
+/salutes.
+
+l.
