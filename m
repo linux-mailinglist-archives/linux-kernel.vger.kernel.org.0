@@ -2,71 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED4B75ACAF
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2019 19:23:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65BEB5AC98
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2019 18:45:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726907AbfF2RXY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 29 Jun 2019 13:23:24 -0400
-Received: from lkcl.net ([217.147.94.29]:42415 "EHLO lkcl.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726837AbfF2RXY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Jun 2019 13:23:24 -0400
-X-Greylist: delayed 2287 seconds by postgrey-1.27 at vger.kernel.org; Sat, 29 Jun 2019 13:23:23 EDT
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lkcl.net; s=201607131;
-        h=Content-Type:Cc:To:Subject:Message-ID:Date:From:MIME-Version; bh=s/sTi+hASQyPaQRLVOOh9ET0ya6bVtdjcUHl64yNEJw=;
-        b=RKPqwaFSFIFMxHCBw4GHqMY/1g7FEz7d0qo3eSy8ZtoC7DxmMt9BSLvCKb5oZ9PmwTer3bGW1sgc1Yo+fJXcBI3Q4RSrGfZqhPAF4G0BKV3t6bwaoktseUAjQmbGjVlLm2BGnRSsPcHX9jwNWu4IPsi9pxRRoghqesCT8zjPfkI=;
-Received: from mail-lj1-f176.google.com ([209.85.208.176])
-        by lkcl.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.84_2)
-        (envelope-from <lkcl@lkcl.net>)
-        id 1hhGTS-0008P0-Rf; Sat, 29 Jun 2019 16:45:14 +0000
-Received: by mail-lj1-f176.google.com with SMTP id t28so8909104lje.9;
-        Sat, 29 Jun 2019 09:44:59 -0700 (PDT)
-X-Gm-Message-State: APjAAAXeYxu9TidZ+kwM0+MFIZCL45e0dxzD9Jul0xAThrxOt+UTUiD6
-        D82ieLKUDH2aL1MtJeSx2+FeZEFPsrSK6HnZLHs=
-X-Google-Smtp-Source: APXvYqyT3rBGT+21WQD3pj3PIsLlCJsWc/KxmRIzx71GAXDRlfDfgfqr73eWhFqOZ/B2TWPMlCqEQW13yM2ujHPob5E=
-X-Received: by 2002:a2e:94cb:: with SMTP id r11mr8821456ljh.212.1561826376022;
- Sat, 29 Jun 2019 09:39:36 -0700 (PDT)
+        id S1726943AbfF2Qpf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 29 Jun 2019 12:45:35 -0400
+Received: from smtprelay0042.hostedemail.com ([216.40.44.42]:48378 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726837AbfF2Qpe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Jun 2019 12:45:34 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 72872182CF666;
+        Sat, 29 Jun 2019 16:45:32 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::::::::::::::::::,RULES_HIT:41:355:379:599:800:960:968:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1431:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3868:3870:3871:3872:3874:4037:4321:5007:6742:10004:10400:10848:10967:11232:11658:11914:12043:12297:12663:12740:12760:12895:13069:13138:13231:13311:13357:13439:14096:14097:14181:14659:14721:21080:21433:21627:30034:30054:30070:30090:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.14.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:24,LUA_SUMMARY:none
+X-HE-Tag: wood26_67b7f2b025644
+X-Filterd-Recvd-Size: 3038
+Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf01.hostedemail.com (Postfix) with ESMTPA;
+        Sat, 29 Jun 2019 16:45:12 +0000 (UTC)
+Message-ID: <c3b83ba7f9b003dd4fb9cad885461ce93165dc04.camel@perches.com>
+Subject: Re: [PATCH V2] include: linux: Regularise the use of FIELD_SIZEOF
+ macro
+From:   Joe Perches <joe@perches.com>
+To:     Alexey Dobriyan <adobriyan@gmail.com>,
+        Andreas Dilger <adilger@dilger.ca>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Shyam Saini <shyam.saini@amarulasolutions.com>,
+        kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org,
+        keescook@chromium.org, linux-arm-kernel@lists.infradead.org,
+        linux-mips@vger.kernel.org, intel-gvt-dev@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        netdev@vger.kernel.org, linux-ext4 <linux-ext4@vger.kernel.org>,
+        devel@lists.orangefs.org, linux-mm@kvack.org,
+        linux-sctp@vger.kernel.org, bpf@vger.kernel.org,
+        kvm@vger.kernel.org, mayhs11saini@gmail.com
+Date:   Sat, 29 Jun 2019 09:45:10 -0700
+In-Reply-To: <20190629142510.GA10629@avx2>
+References: <20190611193836.2772-1-shyam.saini@amarulasolutions.com>
+         <20190611134831.a60c11f4b691d14d04a87e29@linux-foundation.org>
+         <6DCAE4F8-3BEC-45F2-A733-F4D15850B7F3@dilger.ca>
+         <20190629142510.GA10629@avx2>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
 MIME-Version: 1.0
-From:   Luke Kenneth Casson Leighton <lkcl@lkcl.net>
-Date:   Sat, 29 Jun 2019 17:39:24 +0100
-X-Gmail-Original-Message-ID: <CAPweEDxufL1SHCh2ao7600fF9+aciMhr2V_5vxQN6S8r=u2W4g@mail.gmail.com>
-Message-ID: <CAPweEDxufL1SHCh2ao7600fF9+aciMhr2V_5vxQN6S8r=u2W4g@mail.gmail.com>
-Subject: Re: bcachefs status update (it's done cooking; let's get this sucker merged)
-To:     torvalds@linux-foundation.org
-Cc:     akpm@linux-foundation.org, axboe@kernel.dk,
-        darrick.wong@oracle.com, david@fromorbit.com, dchinner@redhat.com,
-        josef@toxicpanda.com, kent.overstreet@gmail.com,
-        linux-bcache@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, peterz@infradead.org, tj@kernel.org,
-        viro@zeniv.linux.org.uk, zach.brown@ni.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-hey linus, you made news again, all blown up and pointless again.
-you're doing great: you're being honest. remember the offer i made to
-put you in touch with my friend.
+On Sat, 2019-06-29 at 17:25 +0300, Alexey Dobriyan wrote:
+> On Tue, Jun 11, 2019 at 03:00:10PM -0600, Andreas Dilger wrote:
+> > On Jun 11, 2019, at 2:48 PM, Andrew Morton <akpm@linux-foundation.org> wrote:
+> > > On Wed, 12 Jun 2019 01:08:36 +0530 Shyam Saini <shyam.saini@amarulasolutions.com> wrote:
+> > I did a check, and FIELD_SIZEOF() is used about 350x, while sizeof_field()
+> > is about 30x, and SIZEOF_FIELD() is only about 5x.
+> > 
+> > That said, I'm much more in favour of "sizeof_field()" or "sizeof_member()"
+> > than FIELD_SIZEOF().  Not only does that better match "offsetof()", with
+> > which it is closely related, but is also closer to the original "sizeof()".
+> > 
+> > Since this is a rather trivial change, it can be split into a number of
+> > patches to get approval/landing via subsystem maintainers, and there is no
+> > huge urgency to remove the original macros until the users are gone.  It
+> > would make sense to remove SIZEOF_FIELD() and sizeof_field() quickly so
+> > they don't gain more users, and the remaining FIELD_SIZEOF() users can be
+> > whittled away as the patches come through the maintainer trees.
+> 
+> The signature should be
+> 
+> 	sizeof_member(T, m)
+> 
+> it is proper English,
+> it is lowercase, so is easier to type,
+> it uses standard term (member, not field),
+> it blends in with standard "sizeof" operator,
 
-anecdotal story: andrew tridgell worked on the fujitsu sparc
-supercomputer a couple decades ago: it had a really weird DMA ring
-bus.
+yes please.
 
-* memory-to-memory copy (in the same core) was 10mbytes/sec
-* DMA memory-to-memory copy (in the same core) was 20mbytes/sec
-* memory-memory copy (across the ring bus i.e. to another machine) was
-100mbytes/sec
-* DMA memory-memory copy (across the ring bus) was *200* mbytes/sec.
+Also, a simple script conversion applied
+immediately after an rc1 might be easiest
+rather than individual patches.
 
-when andrew tried asking people, "hey everyone, we need a filesystem
-that can work really well on this fast parallel system", he had to
-continuously fend off "i got a great idea for in-core memory-to-memory
-cacheing!!!!" suggestions, because they *just would never work*.
 
-the point being: caches aren't always "fast".
-
-/salutes.
-
-l.
