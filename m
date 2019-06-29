@@ -2,73 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2958F5A9E7
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2019 11:53:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BF3D5AA10
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2019 12:19:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726935AbfF2JxI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 29 Jun 2019 05:53:08 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:61257 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726818AbfF2JxH (ORCPT
+        id S1726964AbfF2KTP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 29 Jun 2019 06:19:15 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:39364 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726839AbfF2KTO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Jun 2019 05:53:07 -0400
-Received: from 79.184.254.216.ipv4.supernova.orange.pl (79.184.254.216) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.267)
- id 2bca45c763b3ae74; Sat, 29 Jun 2019 11:53:04 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Linux PM <linux-pm@vger.kernel.org>
-Cc:     Linux PCI <linux-pci@vger.kernel.org>,
-        Linux ACPI <linux-acpi@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Hans De Goede <hdegoede@redhat.com>,
-        "Robert R. Howell" <RHowell@uwyo.edu>
-Subject: [PATCH 6/6] ACPI: PM: Drop unused function and function header
-Date:   Sat, 29 Jun 2019 11:52:26 +0200
-Message-ID: <2601948.CB932FxA9G@kreacher>
-In-Reply-To: <2318839.0szTqvJMZa@kreacher>
-References: <2318839.0szTqvJMZa@kreacher>
+        Sat, 29 Jun 2019 06:19:14 -0400
+Received: by mail-pl1-f194.google.com with SMTP id b7so4646565pls.6
+        for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2019 03:19:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=66nQjAJxmJvEqdK76xbS0v4Awl8Ld4jHNoG2MYlrSPc=;
+        b=hSiTJ0VH2LR8cD4eJvD9GFiE8771rr/Wd0rwQVye9hTyXBYynhUsJK21v3cZ5R4HbD
+         cQAgS3qiSbsEu5XjEtG47z6H0i2gfSO914VH4Us4NOFg8x9yQudP+BHtgVnNt7rBJXFU
+         ZUZB+0hWO3/OwM6iOax3YNg6AZBp1su1VZ7AJsI8EMSUK61be8ney6l2xXtpKg86PnCR
+         m+U0Xzexx3snRiAwQRrQX/JUqBQ8Eg8FBrj2IhZQu0gRO94f2yIkbehUlA0DShHmLWxz
+         +pcUsvJw0GZIu+63MRRMc1twS/hJ6sOBL7ap2QLqQP2uxQ3egf0YfvmzdQBiVRjs8PDC
+         sKvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=66nQjAJxmJvEqdK76xbS0v4Awl8Ld4jHNoG2MYlrSPc=;
+        b=CKkM+P3ZFM6xf2HvHD9a+8E6JZr1hMbxAsXoRBPZ6uJWD4IsyTxqGBwbbN5+OrOYoR
+         U1HPVjIWOk/8mQo5/92SiGWghP58hRjGUxFzetdhsolruutPFnZtDNpnCc/vAaaTLwFg
+         j1+dPsegeCV+WmSkQYfSELvtFYGL8I7sD9x36obLwmNrzoyxDt5fd+WNEszcjPDifSS/
+         sx32FovQOdnKkELUBG4SoXRXGF5x2MDfePJDiECk8V029mdclNtoI3s1Is+xm9eu8KXX
+         SN1HuW9iqjg8drmQH5U5SspiS/NN0UegX22bvNzVCYYSxEpVLCUVDrxzUmd01cfGXSBe
+         /6vA==
+X-Gm-Message-State: APjAAAXJ0XNyYv042FU+9jf5uOWEcX+r9vu6GzqiX4ZWfSx1bdTQFpDJ
+        8ngAdAadKhicBgQ/SgTf06Q=
+X-Google-Smtp-Source: APXvYqwfqiCBofp4EV/LyHS60DAP50fcMYoXiAq34ZMr1M4xaFUUCRyg0J/wRkSIB7P3M0mv4xA4uw==
+X-Received: by 2002:a17:902:290b:: with SMTP id g11mr16690707plb.26.1561803554032;
+        Sat, 29 Jun 2019 03:19:14 -0700 (PDT)
+Received: from hari-Inspiron-1545 ([183.83.92.187])
+        by smtp.gmail.com with ESMTPSA id x26sm5907869pfq.69.2019.06.29.03.19.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 29 Jun 2019 03:19:13 -0700 (PDT)
+Date:   Sat, 29 Jun 2019 15:49:09 +0530
+From:   Hariprasad Kelam <hariprasad.kelam@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hariprasad Kelam <hariprasad.kelam@gmail.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 01/10] staging/rtl8723bs/hal: fix comparison to true/false is
+ error prone
+Message-ID: <20190629101909.GA14880@hari-Inspiron-1545>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+fix below issues reported by checkpatch
 
-Remove a leftover function header and a static inline stub with no
-users from the ACPI header file.
+CHECK: Using comparison to false is error prone
+CHECK: Using comparison to true is error prone
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
 ---
- include/linux/acpi.h |    2 --
- 1 file changed, 2 deletions(-)
+ drivers/staging/rtl8723bs/hal/hal_intf.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Index: linux-pm/include/linux/acpi.h
-===================================================================
---- linux-pm.orig/include/linux/acpi.h
-+++ linux-pm/include/linux/acpi.h
-@@ -913,7 +913,6 @@ static inline int acpi_dev_pm_attach(str
- #endif
+diff --git a/drivers/staging/rtl8723bs/hal/hal_intf.c b/drivers/staging/rtl8723bs/hal/hal_intf.c
+index 4a4d17b..b9d13e3 100644
+--- a/drivers/staging/rtl8723bs/hal/hal_intf.c
++++ b/drivers/staging/rtl8723bs/hal/hal_intf.c
+@@ -230,7 +230,7 @@ s32	rtw_hal_mgnt_xmit(struct adapter *padapter, struct xmit_frame *pmgntframe)
+ 	/* pwlanhdr = (struct rtw_ieee80211_hdr *)pframe; */
+ 	/* memcpy(pmgntframe->attrib.ra, pwlanhdr->addr1, ETH_ALEN); */
  
- #if defined(CONFIG_ACPI) && defined(CONFIG_PM_SLEEP)
--int acpi_dev_suspend_late(struct device *dev);
- int acpi_subsys_prepare(struct device *dev);
- void acpi_subsys_complete(struct device *dev);
- int acpi_subsys_suspend_noirq(struct device *dev);
-@@ -921,7 +920,6 @@ int acpi_subsys_suspend(struct device *d
- int acpi_subsys_freeze(struct device *dev);
- int acpi_subsys_poweroff(struct device *dev);
- #else
--static inline int acpi_dev_resume_early(struct device *dev) { return 0; }
- static inline int acpi_subsys_prepare(struct device *dev) { return 0; }
- static inline void acpi_subsys_complete(struct device *dev) {}
- static inline int acpi_subsys_suspend_noirq(struct device *dev) { return 0; }
-
-
-
+-	if (padapter->securitypriv.binstallBIPkey == true) {
++	if (padapter->securitypriv.binstallBIPkey) {
+ 		if (IS_MCAST(pmgntframe->attrib.ra)) {
+ 			pmgntframe->attrib.encrypt = _BIP_;
+ 			/* pmgntframe->attrib.bswenc = true; */
+@@ -430,7 +430,7 @@ s32 rtw_hal_macid_sleep(struct adapter *padapter, u32 macid)
+ 
+ 	support = false;
+ 	rtw_hal_get_def_var(padapter, HAL_DEF_MACID_SLEEP, &support);
+-	if (false == support)
++	if (!support)
+ 		return _FAIL;
+ 
+ 	rtw_hal_set_hwreg(padapter, HW_VAR_MACID_SLEEP, (u8 *)&macid);
+@@ -445,7 +445,7 @@ s32 rtw_hal_macid_wakeup(struct adapter *padapter, u32 macid)
+ 
+ 	support = false;
+ 	rtw_hal_get_def_var(padapter, HAL_DEF_MACID_SLEEP, &support);
+-	if (false == support)
++	if (!support)
+ 		return _FAIL;
+ 
+ 	rtw_hal_set_hwreg(padapter, HW_VAR_MACID_WAKEUP, (u8 *)&macid);
+-- 
+2.7.4
 
