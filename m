@@ -2,53 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DE0A5AA91
+	by mail.lfdr.de (Postfix) with ESMTP id 765325AA92
 	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2019 13:45:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727068AbfF2LpG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 29 Jun 2019 07:45:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50302 "EHLO mail.kernel.org"
+        id S1727089AbfF2LpJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 29 Jun 2019 07:45:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50352 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726874AbfF2LpF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Jun 2019 07:45:05 -0400
-Subject: Re: [GIT PULL] EFI fixes
+        id S1727071AbfF2LpG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Jun 2019 07:45:06 -0400
+Subject: Re: [GIT PULL] IRQ fixes
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561808705;
-        bh=WhH3syw+6GV0de9bgChvhW9Fh1oXAWMn37HedkAWaQY=;
+        s=default; t=1561808706;
+        bh=Qhcg/4AlYM723OdKCNdeEnw+dIqIKosGt1+he9nJkwE=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=QyG54Kd0Pa16mpxjvYF6OKhlO4Sdzw5qUjTLA7iHDkCVuuVKSVLFlzCo0VEMHqrcO
-         b736MQilXG1GguIYBneMQUgakIG8SRrcc7cvVNjRAG/XDaIyd4X+pYc6yzlvprM+JO
-         2quU57P0dJU/hV22sThOoiN84QNu//0Z/tFJ5Ysc=
+        b=mnprNu5eTg7sEbv3YunXslzTjkm9lanYMh1psnKVg8sqELPGiiJLkoNLC/xqUeyII
+         jqqjoy/iQfD0ujRKBtSUSb68bWf+DsPcPlIECUlC0n97BnQaqX8lcvMa1Tq6F/pFx3
+         0RPwSDfiSZ4CeZTp5KmcRId05mIZiNi55phK3YBs=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190629082354.GA128031@gmail.com>
-References: <20190629082354.GA128031@gmail.com>
+In-Reply-To: <20190629085033.GA37583@gmail.com>
+References: <20190629085033.GA37583@gmail.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190629082354.GA128031@gmail.com>
+X-PR-Tracked-Message-Id: <20190629085033.GA37583@gmail.com>
 X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
- efi-urgent-for-linus
-X-PR-Tracked-Commit-Id: 48c7d73b2362ce61503551ad70052617b3e8857d
+ irq-urgent-for-linus
+X-PR-Tracked-Commit-Id: a52548dd0491a544558e971cd5963501e1a2024d
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: a7211bc9f3d50d77efe77c332b269458a94fcfd2
-Message-Id: <156180870500.30344.16122232121586033322.pr-tracker-bot@kernel.org>
-Date:   Sat, 29 Jun 2019 11:45:05 +0000
+X-PR-Merge-Commit-Id: eed7d30e126dc5b883b77f3e26bbca6c5b0f4222
+Message-Id: <156180870652.30344.11659483181245077038.pr-tracker-bot@kernel.org>
+Date:   Sat, 29 Jun 2019 11:45:06 +0000
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-efi@vger.kernel.org
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Andrew Morton <akpm@linux-foundation.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sat, 29 Jun 2019 10:23:54 +0200:
+The pull request you sent on Sat, 29 Jun 2019 10:50:33 +0200:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git efi-urgent-for-linus
+> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq-urgent-for-linus
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/a7211bc9f3d50d77efe77c332b269458a94fcfd2
+https://git.kernel.org/torvalds/c/eed7d30e126dc5b883b77f3e26bbca6c5b0f4222
 
 Thank you!
 
