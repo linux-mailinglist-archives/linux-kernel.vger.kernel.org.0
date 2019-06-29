@@ -2,90 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 317405AA15
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2019 12:22:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 742D55AA28
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2019 12:31:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726983AbfF2KV5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 29 Jun 2019 06:21:57 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:45681 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726839AbfF2KV4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Jun 2019 06:21:56 -0400
-Received: by mail-pf1-f194.google.com with SMTP id r1so4195106pfq.12
-        for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2019 03:21:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=6jXcyQz5oa080ljH3lxwjJW0irqf5iKTZLTX/DBR0+E=;
-        b=gYW33GDAqkR+vAX51JYX0WJRg2g90O0GCNR796AKAyuwZwyqEknNkrHofqojPQgC3v
-         9+HBX+fe0rsmEl9m2ZcoONZrtp9V9wIbIpKBXnVT8M/kB/etHergY6GCdZDYQnPnO/Kq
-         xDOzr/GngzypwOCdonpklP5TwfsEYM5PC88aLcBlwa7IY8Xl7txf1UX155zSXMx17ClY
-         TVA5+WSbxbhwn0FsZoS4PuV2SgnYVfMtIszC3xUFLgyytU4U6a56IRA/uzJUjpYilXpn
-         hdZ5iwnXPUrQorOtcFXKcPNZleCoaEMXcgRxIGbDbDvjGbOWWv5tuA4ANllXE+7PwfD3
-         hWVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=6jXcyQz5oa080ljH3lxwjJW0irqf5iKTZLTX/DBR0+E=;
-        b=SOJjGLO0oYOEJOGStKHCfqbDLFdD8sLqr99x6Wo/Nkuqnjp00jnDTLC2HKC2a2LCTK
-         VS021YnyMChde5DrexTYNO5He2wE8v19VhER7MW1Z1/WuW4OuBsNKMKSkK7SSsKQ2mX7
-         BKolMHYa62/BPyIoDZEHKUs3vGtqVD5SqbL46UeB2Xas/rNg/uH2vZux1+mNtzhMhF1C
-         0SGJacRT5VX31CqyD4T8g6Z5czix0B11OAPFpkTbrIcma6IWTR0F6ZmsGSfkkRiQhINk
-         CztX5N4j6nOV6M/nw8iGoaXxn1xFczBpIGegXfYzr2N26XkwoGaBq/Dn0N2S9ElYv+EX
-         8gCA==
-X-Gm-Message-State: APjAAAXpUVi6ZIEjGB2VCERCB8WPLKWNeCvuU5e3SZyRvzRUEXYq1HY9
-        aYridq8YhkWuD5/niK8Oc9Q=
-X-Google-Smtp-Source: APXvYqynepLHYgkegudtj1Py1uSpr5ZQod36GZy1XyJZZ2I9kjwtvbDn937KkZq+Iv1unQYqnMnR5g==
-X-Received: by 2002:a17:90a:26a1:: with SMTP id m30mr18988874pje.59.1561803716298;
-        Sat, 29 Jun 2019 03:21:56 -0700 (PDT)
-Received: from hari-Inspiron-1545 ([183.83.92.187])
-        by smtp.gmail.com with ESMTPSA id n98sm5103405pjc.26.2019.06.29.03.21.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 29 Jun 2019 03:21:55 -0700 (PDT)
-Date:   Sat, 29 Jun 2019 15:51:52 +0530
-From:   Hariprasad Kelam <hariprasad.kelam@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hariprasad Kelam <hariprasad.kelam@gmail.com>,
-        Nishka Dasgupta <nishkadg.linux@gmail.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 03/10] staging/rtl8723bs/hal: fix comparison to true/false is
- error prone
-Message-ID: <20190629102152.GA15011@hari-Inspiron-1545>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S1726944AbfF2KbM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 29 Jun 2019 06:31:12 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:33704 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726839AbfF2KbL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Jun 2019 06:31:11 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id A8C9E2005C3;
+        Sat, 29 Jun 2019 12:31:09 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id D54F52005BD;
+        Sat, 29 Jun 2019 12:30:59 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id D551D402F6;
+        Sat, 29 Jun 2019 18:30:47 +0800 (SGT)
+From:   Anson.Huang@nxp.com
+To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        leonard.crestez@nxp.com, viresh.kumar@linaro.org, ping.bai@nxp.com,
+        daniel.baluta@nxp.com, l.stach@pengutronix.de, abel.vesa@nxp.com,
+        andrew.smirnov@gmail.com, ccaione@baylibre.com, angus@akkea.ca,
+        agx@sigxcpu.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH V2 1/2] arm64: dts: imx8mm: Correct OPP table according to latest datasheet
+Date:   Sat, 29 Jun 2019 18:21:56 +0800
+Message-Id: <20190629102157.8026-1-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.14.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-fix below issues reported by checkpatch
+From: Anson Huang <Anson.Huang@nxp.com>
 
-CHECK: Using comparison to false is error prone
-CHECK: Using comparison to true is error prone
+According to latest datasheet (Rev.0.2, 04/2019) from below links,
+1.8GHz is ONLY available for consumer part, so the market segment
+bits for 1.8GHz opp should ONLY available for consumer part accordingly.
 
-Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
+https://www.nxp.com/docs/en/data-sheet/IMX8MMIEC.pdf
+https://www.nxp.com/docs/en/data-sheet/IMX8MMCEC.pdf
+
+Fixes: f403a26c865b (arm64: dts: imx8mm: Add cpu speed grading and all OPPs)
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
- drivers/staging/rtl8723bs/hal/sdio_halinit.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes since V1:
+	- remove the comment to avoid any confusion.
+---
+ arch/arm64/boot/dts/freescale/imx8mm.dtsi | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/staging/rtl8723bs/hal/sdio_halinit.c b/drivers/staging/rtl8723bs/hal/sdio_halinit.c
-index 4d06ab7..39d7ba4 100644
---- a/drivers/staging/rtl8723bs/hal/sdio_halinit.c
-+++ b/drivers/staging/rtl8723bs/hal/sdio_halinit.c
-@@ -724,7 +724,7 @@ static u32 rtl8723bs_hal_init(struct adapter *padapter)
- 	pregistrypriv = &padapter->registrypriv;
- 
- 	if (
--		adapter_to_pwrctl(padapter)->bips_processing == true &&
-+		adapter_to_pwrctl(padapter)->bips_processing &&
- 		adapter_to_pwrctl(padapter)->pre_ips_type == 0
- 	) {
- 		unsigned long start_time;
+diff --git a/arch/arm64/boot/dts/freescale/imx8mm.dtsi b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
+index 70de15c..f0ac027 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mm.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
+@@ -134,8 +134,7 @@
+ 		opp-1800000000 {
+ 			opp-hz = /bits/ 64 <1800000000>;
+ 			opp-microvolt = <1000000>;
+-			/* Consumer only but rely on speed grading */
+-			opp-supported-hw = <0x8>, <0x7>;
++			opp-supported-hw = <0x8>, <0x3>;
+ 			clock-latency-ns = <150000>;
+ 		};
+ 	};
 -- 
 2.7.4
 
