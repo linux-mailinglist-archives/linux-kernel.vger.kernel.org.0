@@ -2,94 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A63B5AA57
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2019 13:12:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE76A5AA5A
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2019 13:13:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726947AbfF2LME (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 29 Jun 2019 07:12:04 -0400
-Received: from sauhun.de ([88.99.104.3]:60856 "EHLO pokefinder.org"
+        id S1727031AbfF2LNj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 29 Jun 2019 07:13:39 -0400
+Received: from smtp3.ono.com ([62.42.230.163]:27583 "EHLO smtp3.ono.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726874AbfF2LMD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Jun 2019 07:12:03 -0400
-Received: from localhost (p5486CA23.dip0.t-ipconnect.de [84.134.202.35])
-        by pokefinder.org (Postfix) with ESMTPSA id D04C52C047A;
-        Sat, 29 Jun 2019 13:12:01 +0200 (CEST)
-Date:   Sat, 29 Jun 2019 13:12:01 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Cc:     Fuqian Huang <huangfq.daxian@gmail.com>,
-        Seth Heasley <seth.heasley@intel.com>,
-        Neil Horman <nhorman@tuxdriver.com>, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 08/27] i2c: busses: remove memset after
- dmam_alloc_coherent
-Message-ID: <20190629111201.GD1685@kunai>
-References: <20190628024711.15203-1-huangfq.daxian@gmail.com>
- <f97d130f-0906-05cb-6f08-bb84bf32ff02@linux.intel.com>
+        id S1726905AbfF2LNi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Jun 2019 07:13:38 -0400
+X-Junkmail-Premium-Raw: score=17/50,refid=2.7.2:2019.6.29.104217:17:17.150,ip=62.42.230.144,rules=__HAS_MSGID,
+ __SANE_MSGID, MSGID_JMAIL_DEFAULT, INVALID_MSGID_NO_FQDN, __HAS_FROM,
+ FROM_NAME_ONE_WORD, __HAS_REPLYTO, __FRAUD_WEBMAIL_REPLYTO,
+ __SUBJ_ALPHA_START, __PHISH_SPEAR_SUBJ_ALERT, __SUBJ_ALPHA_END,
+ __MIME_VERSION, __CT, __CT_TEXT_PLAIN, __CTE, MISSING_HEADERS,
+ __CP_NAME_BODY, __FRAUD_INYOURCOUNTRY, __STOCK_PHRASE_7, __STOCK_PHRASE_8,
+ __FRAUD_MONEY_GENERIC, __FRAUD_MONEY_BIG_COIN_DIG, __OEM_PRICE,
+ __FRAUD_MONEY_CURRENCY_DOLLAR, __NO_HTML_TAG_RAW, BODY_SIZE_700_799,
+ BODYTEXTP_SIZE_3000_LESS, __MIME_TEXT_P1, __MIME_TEXT_ONLY, HTML_00_01,
+ HTML_00_10, __FRAUD_MONEY_CURRENCY, __FRAUD_MONEY_BIG_COIN,
+ __FRAUD_MONEY_VALUE, __FRAUD_MONEY, FRAUD_X3, BODY_SIZE_5000_LESS,
+ __FRAUD_WEBMAIL, WEBMAIL_REPLYTO_NOT_FROM, FRAUD_WEBMAIL_R_NOT_F,
+ __FRAUD_COMMON, __MIME_TEXT_P, NO_URI_FOUND, NO_CTA_URI_FOUND,
+ __PHISH_SPEAR_STRUCTURE_1, BODY_SIZE_1000_LESS, BODY_SIZE_2000_LESS,
+ __PHISH_SPEAR_STRUCTURE_2, REPLYTO_FROM_DIFF_ADDY, NO_URI_HTTPS,
+ BODY_SIZE_7000_LESS, TO_MALFORMED
+Received: from resprs05 (62.42.230.144) by smtp3.ono.com (9.0.019.09-1)
+        id 5CC0A28F033D3A1E; Sat, 29 Jun 2019 13:13:30 +0200
+Received: from (149.126.76.25) by webmailcpr05n.ono.com;  Sat, 29 Jun 2019 13:13:26 +0200
+Message-ID: <28823999.1285781561806806944.JavaMail.defaultUser@defaultHost>
+Date:   Sat, 29 Jun 2019 13:13:26 +0200 (CEST)
+From:   Aisha <dacaceresgo@ono.com>
+Reply-To: mrsgaddafi06@gmail.com
+Subject: hello dear
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="9UV9rz0O2dU/yYYn"
-Content-Disposition: inline
-In-Reply-To: <f97d130f-0906-05cb-6f08-bb84bf32ff02@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain;charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Assalamu Alaikum Wa Rahmatullahi Wa Barakatuh,
 
---9UV9rz0O2dU/yYYn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+hello dear
 
-On Fri, Jun 28, 2019 at 09:22:31AM +0300, Jarkko Nikula wrote:
-> Hi
->=20
-> On 6/28/19 5:47 AM, Fuqian Huang wrote:
-> > In commit af7ddd8a627c
-> > ("Merge tag 'dma-mapping-4.21' of git://git.infradead.org/users/hch/dma=
--mapping"),
-> > dmam_alloc_coherent has already zeroed the memory.
-> > So memset is not needed.
-> >=20
-> > Signed-off-by: Fuqian Huang <huangfq.daxian@gmail.com>
-> > ---
-> >   drivers/i2c/busses/i2c-ismt.c | 2 --
-> >   1 file changed, 2 deletions(-)
-> >=20
-> It would be better to refer actual commit or commits that implement that
-> zeroing rather than merge point in commit log if possible.
->=20
-> At quick look commit 518a2f1925c3 ("dma-mapping: zero memory returned from
-> dma_alloc_*") is the one but I'm not really an expert here to say is that
-> alone enough.
+I came across your contact during my private search. Mrs Aisha Al-
+Qaddafi is my name, the only daughter of late Libyan president, am a 
+single Mother and a Widow with three Children.I have funds the sum of 
+$27.5 million USD for, investment, I am interested in you for 
+investment project assistance in your country,because of my current 
+refugee status, i shall compensate you 30% of the total sum after the 
+funds are transfer into your account,I am willing to, negotiate 
+investment/business profit sharing ratio with you base on the future 
+investment earning profits.
 
-Fuqian, can you clarify if the commit pointed by Jarkko is enough as a
-reference or if it really needs the merge tag?
+Reply me urgent for more details
 
-Also, please include the tags you collected in v1 when sending v2 (and
-there was no significant code change).
+Mrs Aisha Al-Qaddafi
 
 
---9UV9rz0O2dU/yYYn
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl0XR4EACgkQFA3kzBSg
-KbbyKxAAo8H1xdyo+DJXLvoGJaIJwtZtFYMYbqV/4kbepBwkTC2JdQo7WJtHzHFJ
-hE6Yolc+goA0hmOfgEYVICD3LZ80qDMDbrCl6MVckY66Y6DfPSp2UFngP/EthnE8
-rbvlaNaNilx/vf3uUVWV0dNnX7XLJb05p+lRl4a4lHqTHI3oyo+9ZWDzZeMTZ4I4
-Aal6G2XT4HM0B43eEvhSPEB41dmFzY0NsbADS8tS7sDWMfQKDWfY1lagrj6oO9P7
-3UzXR0aSzXq7BpSiltHRUhxtBq+xyGU6zPudCS3RGUOi89ynEn2hwkwXegFoBvmt
-UBlROiXFuCObQzZZlqrrDgsC4dNvYKYTzZobH79c6NQ0nvsM5j5526A4sRM9c6QM
-88x09WQBLvohloLPlMfMa3ikXf9F03tD0Qr1pzgwh4BrdVhkAWslZyZDNyYK1j4d
-xcXOVjY/zj452mH7snhwbydcAdAMd4JWKiOUsOh44UHEJASekz0HcDIrhvJF9wKP
-kOXzRbbPrg2x3f26NZ88Eo3aSWkvKJ74Ly0YTk9aHvBucbHTyg3cR/r0dN2HWRXH
-Nwmz+IMSWbLyLckhE4LsVTunuCAGawf07u5uaAMFUA9WnrOOUlW1onksS/aatL93
-xqXY7MOqYzNsgf0FFi6EBul6aqq7U9FMWKKRazAC1op2aFRRVSE=
-=18LR
------END PGP SIGNATURE-----
 
---9UV9rz0O2dU/yYYn--
+
+
+
