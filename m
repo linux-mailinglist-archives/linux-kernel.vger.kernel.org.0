@@ -2,124 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E7E35B0C4
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2019 18:56:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 143775B108
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2019 19:42:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726659AbfF3Q4N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 30 Jun 2019 12:56:13 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:36595 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726520AbfF3Q4N (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Jun 2019 12:56:13 -0400
-Received: by mail-qt1-f196.google.com with SMTP id p15so12112567qtl.3
-        for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2019 09:56:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=ZJDgP97eShcdmvJ/LnUBsrdxn29SNS9vsStoVXzeXJo=;
-        b=us+8FD6ty3wOB+rDydNxaCdnuDWtaUUghJhSAUhP2jw7zmLMY6PvX1sL9zdDZFuAg3
-         jyUarc1r1rYVBA/Qh2aqK3VaUdSmfjcYTJ2g6deXfsNe9zBopKLl8x8cc3jISrHC+drw
-         U1Cd5YGSoDrTeC9X5BCtvvmfOIwUu1nXQSuuNTu3MVUW8p1jrbYKyCwXTzEu7ZBeZi8/
-         yFB/RCmOhMaWFs0Y7ln0Cgtzm0sjp8qllyvAe4KgtbrMaq+dOqzPHgn0bu7GTZyWpXoa
-         z5/J2A2BcP2JeA1lTSYq5BL2puag5NdELb9iO43hlGKPFL5LoXvPMNAuV23ivzlbv+5p
-         A1Lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ZJDgP97eShcdmvJ/LnUBsrdxn29SNS9vsStoVXzeXJo=;
-        b=G5qrL+4W/BDZu/HwKyLN8AVmkF38ED5Ha7/neEViZjxGeGG/r/LanN2RttUa5GMznX
-         48PtTUcga6XhelEqm2wrXbrPvJiploN5Cr32+LRBiR3aWZHT9MocbQxzq4JRTzNlaMUu
-         YYxLN8rjqvlggzr2iEkZjtyOV+J2tBJdBvdDecHcp5tQRfpggMeKP8wDl80UfJPhyawR
-         oGac2/k83IEnDwTkh3pocCgQ/NmVIx8qKrGRQxjYgImLy+5BPFdD/1J8hwW/aEhl/nCy
-         IGHElqTgOqHqMlHyAhe7Bc+rSDW38nglEfSZCMjEbEpW8LojJtuWe9gPqH0pmQ3uc1Sw
-         V3sg==
-X-Gm-Message-State: APjAAAU0JmNYDDYg8UcHBQFaSk3e5b4TGcT1ceLxFCrke8P7NK8mhhkr
-        lkMsLQEICea0GiMNZPoCUkodBQFnqAU=
-X-Google-Smtp-Source: APXvYqwg/oXBjsbchSxxuvIyzrcSxgfEoJn2s0sK/tXzD4IGLOqCq5RHfs5pF3HXviUmmewCwoZQ6w==
-X-Received: by 2002:ac8:1a8d:: with SMTP id x13mr17184376qtj.114.1561913772285;
-        Sun, 30 Jun 2019 09:56:12 -0700 (PDT)
-Received: from localhost.localdomain ([45.58.106.199])
-        by smtp.gmail.com with ESMTPSA id g3sm3557810qkk.125.2019.06.30.09.56.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 30 Jun 2019 09:56:11 -0700 (PDT)
-From:   Gabriel Beauchamp <beauchampgabriel@gmail.com>
-To:     gregkh@linuxfoundation.org, christian.gromm@microchip.com,
-        colin.king@canonical.com, gustavo@embeddedor.com, joe@perches.com
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Gabriel Beauchamp <beauchampgabriel@gmail.com>
-Subject: [PATCH v3] Staging: most: fix coding style issues
-Date:   Sun, 30 Jun 2019 09:56:04 -0700
-Message-Id: <20190630165604.2452-1-beauchampgabriel@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190630152726.21092-1-beauchampgabriel@gmail.com>
-References: <20190630152726.21092-1-beauchampgabriel@gmail.com>
+        id S1726702AbfF3RmR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 30 Jun 2019 13:42:17 -0400
+Received: from mail-qb1can01hn2083.outbound.protection.outlook.com ([52.100.145.83]:14799
+        "EHLO CAN01-QB1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726668AbfF3RmQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 30 Jun 2019 13:42:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uwoca.onmicrosoft.com;
+ s=selector1-uwoca-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0JyuDFUmOpzgKH6dgh5LdWzoUOc/E37EGuvvgxjAQ2g=;
+ b=tZJgcTMl73LGcsTwTFInBb1P1mwaoMyEscHVFvdSz/0nnfBzPzBxTOND3Sn0jkGM08Se3RudxjH7rOE1blf7ZtHhTdTcZX20fnIgy6QZuUHFO4rc6ZbBZTklyjKbjbCcB2BRrrYSPcjUK/HST8MNLAFMHi9ocOLj75uzgbpmTxs=
+Received: from YQBPR0101MB1378.CANPRD01.PROD.OUTLOOK.COM (52.132.69.19) by
+ YQBPR0101MB1203.CANPRD01.PROD.OUTLOOK.COM (52.132.70.158) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2032.18; Sun, 30 Jun 2019 17:42:14 +0000
+Received: from YQBPR0101MB1378.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::810f:1394:be78:11a4]) by YQBPR0101MB1378.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::810f:1394:be78:11a4%7]) with mapi id 15.20.2032.019; Sun, 30 Jun 2019
+ 17:42:14 +0000
+From:   Sandra Anne Hamilton <shamil32@uwo.ca>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: Project Analysis
+Thread-Topic: Project Analysis
+Thread-Index: AQHVL2XZjM6opn8qfEWSO3n7jUq49Q==
+Importance: high
+X-Priority: 1
+Sensitivity: company-confidential
+Date:   Sun, 30 Jun 2019 17:04:17 +0000
+Message-ID: <YQBPR0101MB1378C78C62F5EA842A0235F6A8FE0@YQBPR0101MB1378.CANPRD01.PROD.OUTLOOK.COM>
+Reply-To: "mrfuhuangfu101@mufgbank-jp.com" <mrfuhuangfu101@mufgbank-jp.com>
+Accept-Language: en-CA, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: MN2PR16CA0010.namprd16.prod.outlook.com
+ (2603:10b6:208:134::23) To YQBPR0101MB1378.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:c00:a::19)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=shamil32@uwo.ca; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [102.165.49.36]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 8a5cb08c-7023-4aa2-5e34-08d6fd7cfc56
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:YQBPR0101MB1203;
+x-ms-traffictypediagnostic: YQBPR0101MB1203:
+x-microsoft-antispam-prvs: <YQBPR0101MB1203352B57EA7FB7E91BE707A8FE0@YQBPR0101MB1203.CANPRD01.PROD.OUTLOOK.COM>
+x-ms-oob-tlc-oobclassifiers: OLM:3826;
+x-forefront-prvs: 008421A8FF
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(396003)(136003)(346002)(376002)(39860400002)(199004)(189003)(102836004)(558084003)(3480700005)(14454004)(71190400001)(71200400001)(52116002)(7696005)(43066004)(81686011)(6436002)(386003)(53936002)(2501003)(6506007)(55016002)(9686003)(2351001)(99286004)(186003)(229853002)(26005)(5003540100004)(5640700003)(305945005)(66806009)(5660300002)(221733001)(8796002)(81156014)(478600001)(6246003)(86362001)(7736002)(6916009)(316002)(786003)(66066001)(2906002)(486006)(3846002)(6116002)(476003)(8936002)(66556008)(74482002)(25786009)(8676002)(256004)(66446008)(64756008)(66476007)(33656002)(68736007)(66946007)(74316002)(52536014)(73956011)(7116003)(81166006)(130330200001);DIR:OUT;SFP:1501;SCL:1;SRVR:YQBPR0101MB1203;H:YQBPR0101MB1378.CANPRD01.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: uwo.ca does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: JouyTm+jYaAY6Mny/uQAwlVgxDC3dy/s8sjB43HqHhbKihTsPHfYaMxqDyYJpWtwALyac6j7FvXngC9UBQO9QSFOgZKB2RJ5cqPN3xha1HxWcpPc5RETRRXe1W1uQrzkadMTUYZ6Xh2ZFaw9Wo9DbKFoW9evRJKu4F0rDQ6tviruGypD0jqln7mLD4kbuJDxeC5moVPIYxfPddlkN73XElaeQhIVrxUNtEscoGGeYOJ3xw3+hyDil8P+GNzEyYFViV46nVrnrzLZ971T5Iv3EtxQ2NeLdWT1uQN20ds5ssE1Biphzr1jO/76KsC1s/c0qz9HPOibjBKf0a211rlF6HPwOgjcWzLFsmRMLNOLPUensfPSrGz/hTwgUmKdqWZ7GLA0969e8YHl2E3/YeOWheBmL9pFMc5WtfXvBYI4ems=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-ID: <C6634AA55AD17D419F8D155D7A2C457E@CANPRD01.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: uwo.ca
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8a5cb08c-7023-4aa2-5e34-08d6fd7cfc56
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jun 2019 17:04:17.2573
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: ad93a64d-ad0d-4ecd-b2fd-e53ce15965be
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: shamil32@uwo.ca
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YQBPR0101MB1203
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a patch for the core.[ch] files that fixes up warnings
-found with the checkpatch.pl tool.
-
-Signed-off-by: Gabriel Beauchamp <beauchampgabriel@gmail.com>
----
-Changes in v3:
-- add a break statement to preserve the control flow
-Changes in v2:
-- use a single snprintf
----
- drivers/staging/most/core.c | 11 ++++++++---
- drivers/staging/most/core.h |  2 +-
- 2 files changed, 9 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/staging/most/core.c b/drivers/staging/most/core.c
-index 86a8545c8d97..eb18d4df8ad1 100644
---- a/drivers/staging/most/core.c
-+++ b/drivers/staging/most/core.c
-@@ -299,13 +299,17 @@ static ssize_t set_datatype_show(struct device *dev,
- 				 char *buf)
- {
- 	int i;
-+	char *type = "unconfigured\n";
-+
- 	struct most_channel *c = to_channel(dev);
- 
- 	for (i = 0; i < ARRAY_SIZE(ch_data_type); i++) {
--		if (c->cfg.data_type & ch_data_type[i].most_ch_data_type)
--			return snprintf(buf, PAGE_SIZE, "%s", ch_data_type[i].name);
-+		if (c->cfg.data_type & ch_data_type[i].most_ch_data_type) {
-+			type = ch_data_type[i].name;
-+			break;
-+		}
- 	}
--	return snprintf(buf, PAGE_SIZE, "unconfigured\n");
-+	return snprintf(buf, PAGE_SIZE, "%s", type);
- }
- 
- static ssize_t set_subbuffer_size_show(struct device *dev,
-@@ -728,6 +732,7 @@ int most_add_link(char *mdev, char *mdev_ch, char *comp_name, char *link_name,
- 
- 	return link_channel_to_component(c, comp, link_name, comp_param);
- }
-+
- /**
-  * remove_link_store - store function for remove_link attribute
-  * @drv: device driver
-diff --git a/drivers/staging/most/core.h b/drivers/staging/most/core.h
-index 652aaa771029..6ba7c2b34c1c 100644
---- a/drivers/staging/most/core.h
-+++ b/drivers/staging/most/core.h
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * most.h - API for component and adapter drivers
-  *
--- 
-2.21.0
-
+Did you receive my earlier email as  regards the project with Mr Fu huang C=
+EO. PLEASE REPLY immediately. Regards.
