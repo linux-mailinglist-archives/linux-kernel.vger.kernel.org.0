@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C8A15B1BC
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2019 23:04:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07FE15B1F9
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2019 23:05:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727053AbfF3VEm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 30 Jun 2019 17:04:42 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:33018 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726843AbfF3VEl (ORCPT
+        id S1727319AbfF3VFq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 30 Jun 2019 17:05:46 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:44098 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726769AbfF3VEl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 30 Jun 2019 17:04:41 -0400
-Received: by mail-lj1-f196.google.com with SMTP id h10so10949681ljg.0;
-        Sun, 30 Jun 2019 14:04:39 -0700 (PDT)
+Received: by mail-lf1-f65.google.com with SMTP id r15so7309705lfm.11;
+        Sun, 30 Jun 2019 14:04:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ZZ3S4ko4rhzz11J2Xx7a4YmK+NWutFk+HFnNQWUEdvw=;
-        b=fZ5xXi6pIDeQYuy8yDulmK54cfPCFIF1ewQ6NDx3nchJ44U77f1VZUgaTSdHGhDhnO
-         /uqjTILeEkb7Uz69hcu28YpXvI7V86vtTJVRC7MmHNvn+hzugV23qzg6xvoKdmSglmQN
-         ACzLnYX4HwGwccuYpKjiW8tKh+sxKblFzOTqsoqCykG19gxokHjN33lCl3SnjsWioUxi
-         lwIzR7nttSxRAEKwCuAHteCOrFdEFsnk1fTWMnUrDrUHAKrC6J758DQYefdEHBNWSphb
-         eiGW1P+6/BAgLETWYaqinWxKAz8BjJL7eU/JgGjEn2i7usbK4t8EUZuFVGJ3fkdtUfkY
-         4WQg==
+        bh=PCQNSQK+2muyk726fUJhk7VrSnWFFmbUV5XprGSciK8=;
+        b=Hh0MQr5s7hHy3Di97lN0kYit6pc5G6qiAf6v2BONeBsJtcl2/23d8bsVvNXVqAGgXe
+         6YIzlL4ExhjdS0YBHGFtLGiWiQCheCRwUB8a/6xaIgduJxD0IOf99bcPRO8+0Wp4pMbC
+         F3Q+yCtNTEwf4Jffdq/4D6BFrcpkFYMbjaJyhi8uZywplhM+8BaNEPYcaQEJyA+fcSoR
+         ExNm2nDA9KUUb+fcx+d43EkI/O998bcI5afiIfh2yBuN5QktfVmbNvxpCGuJWyqI72O5
+         iJR1uoMmRbGMZlu3giND2SOC4nq8RE5lFHmk7oYCKi2uA0ltj9F67v3bHucfW9NaDo/M
+         GM1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ZZ3S4ko4rhzz11J2Xx7a4YmK+NWutFk+HFnNQWUEdvw=;
-        b=kgCJug4Pdw+NxxIMYfu3N0E3Prse651PbY+2xXsLzZ41DiM9xT4PXESV9jUzJrD7CF
-         6M5s2q/C4MFNHQilGZRrmedXd7W2QhhvrYgxi+aYDTQshMNNQUpyzeVYDiTdK51ZRx9d
-         LnH0XgzUpNGsTbp44Acyq00LePld05GsUFmUgOSf6uv2MpSoyJBQYvOehkiTqymGib0g
-         6BXfl4Kr7msxh34Xjwgy53EOqS6GK+HKa97rjxXv80h//CCa22Q5NjvRD11ipUUJoLoi
-         u/4JvzmlEDMt5z5xbwtLJQNlu5eCYRXW/PPTt1NZJ926o1GpEW7FXbM0qFWjPo9PtTJb
-         bGgQ==
-X-Gm-Message-State: APjAAAU6ibZjml3qVPuGKdaAk/1gP1RYNSX0GKzjQd+dyyG7tvg+v313
-        dR6IPmNNVREcSA7mXDzUMEo=
-X-Google-Smtp-Source: APXvYqyiGPSM48eMXe8AJTfW0WXOs8l2rNU8lmeo/t2SmvpJ8X4xqCdfa1AWu2Eu7dwuyqeOO6alCg==
-X-Received: by 2002:a2e:3a05:: with SMTP id h5mr12185608lja.114.1561928678572;
-        Sun, 30 Jun 2019 14:04:38 -0700 (PDT)
+        bh=PCQNSQK+2muyk726fUJhk7VrSnWFFmbUV5XprGSciK8=;
+        b=NhrdrtGbaH/pqXNtwFciuZcul5RQYA3599Q+sLe1LO/hnhlsZzRfo0ceNRRtwTzB37
+         FODWR1esbOtAsw9BvY1MQx6oWeBxTHYxhtUGYXHGNNBPO9J7tFzjMDL88xhvXGgWnhrd
+         JXauFu32xHsKiFDH35gsrXprrEvwXBjG9Jswnb7Uxh9f0+3uoekOesCVh3+PmLwDOLiT
+         vhJPsan1GxnsjzZAv5SYvzGiykdx4QbBadLFy4BgYyhGwoOb6AsLaoL7NyrnhzdjKjpV
+         hobcr4ujbIbc6sj0G5ZpJh35j5v6pNqgJr+M8suCU+Dry846iGxnq2RHXEcibNVaKil/
+         qm3Q==
+X-Gm-Message-State: APjAAAUxCKtbhEtX55AzY2jtH6ERvZKEFu1c4/nK5Lkgn69getRNt430
+        /L9nIgyvVHIcMrDlZo58nZ8=
+X-Google-Smtp-Source: APXvYqy0bXvI669r91+B/4o2/tfr2HOm8OJGg+PTSs6nK7OJfIs2eHN9gnzvxJhfWVrME6DPONjNIg==
+X-Received: by 2002:ac2:4303:: with SMTP id l3mr4501832lfh.107.1561928679651;
+        Sun, 30 Jun 2019 14:04:39 -0700 (PDT)
 Received: from localhost.localdomain (ppp79-139-233-208.pppoe.spdop.ru. [79.139.233.208])
-        by smtp.gmail.com with ESMTPSA id u9sm2221408lfb.38.2019.06.30.14.04.37
+        by smtp.gmail.com with ESMTPSA id u9sm2221408lfb.38.2019.06.30.14.04.38
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 30 Jun 2019 14:04:38 -0700 (PDT)
+        Sun, 30 Jun 2019 14:04:39 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -56,9 +56,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>
 Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v6 02/15] memory: tegra20-emc: Drop setting EMC rate to max on probe
-Date:   Mon,  1 Jul 2019 00:00:06 +0300
-Message-Id: <20190630210019.26914-3-digetx@gmail.com>
+Subject: [PATCH v6 03/15] memory: tegra20-emc: Adapt for clock driver changes
+Date:   Mon,  1 Jul 2019 00:00:07 +0300
+Message-Id: <20190630210019.26914-4-digetx@gmail.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190630210019.26914-1-digetx@gmail.com>
 References: <20190630210019.26914-1-digetx@gmail.com>
@@ -69,126 +69,100 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The memory frequency scaling will be managed by tegra20-devfreq driver
-and PM QoS once all the prerequisite patches will get upstreamed.
-The parent clock is now managed by the clock driver and we also should
-assume that PLLM rate can't be changed on some devices (Galaxy Tab 10.1
-for example). Altogether there is no point in touching of clock's rate
-from the EMC driver.
+Now Terga20 and Tegra30 EMC drivers should provide clock-rounding
+functionality using the new Tegra-CLK driver API.
 
 Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/memory/tegra/tegra20-emc.c | 78 +-----------------------------
- 1 file changed, 1 insertion(+), 77 deletions(-)
+ drivers/memory/tegra/tegra20-emc.c | 50 ++++++++++++++++++++++++++++--
+ 1 file changed, 48 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/memory/tegra/tegra20-emc.c b/drivers/memory/tegra/tegra20-emc.c
-index 9ee5bef49e47..da8fa592b071 100644
+index da8fa592b071..b519f02b0ee9 100644
 --- a/drivers/memory/tegra/tegra20-emc.c
 +++ b/drivers/memory/tegra/tegra20-emc.c
-@@ -137,9 +137,6 @@ struct tegra_emc {
- 	struct device *dev;
- 	struct completion clk_handshake_complete;
- 	struct notifier_block clk_nb;
--	struct clk *backup_clk;
--	struct clk *emc_mux;
--	struct clk *pll_m;
- 	struct clk *clk;
- 	void __iomem *regs;
+@@ -6,6 +6,7 @@
+  */
  
-@@ -424,41 +421,6 @@ static int emc_setup_hw(struct tegra_emc *emc)
+ #include <linux/clk.h>
++#include <linux/clk/tegra.h>
+ #include <linux/completion.h>
+ #include <linux/err.h>
+ #include <linux/interrupt.h>
+@@ -421,6 +422,44 @@ static int emc_setup_hw(struct tegra_emc *emc)
  	return 0;
  }
  
--static int emc_init(struct tegra_emc *emc, unsigned long rate)
--{
--	int err;
--
--	err = clk_set_parent(emc->emc_mux, emc->backup_clk);
--	if (err) {
--		dev_err(emc->dev,
--			"failed to reparent to backup source: %d\n", err);
--		return err;
--	}
--
--	err = clk_set_rate(emc->pll_m, rate);
--	if (err) {
--		dev_err(emc->dev,
--			"failed to change pll_m rate: %d\n", err);
--		return err;
--	}
--
--	err = clk_set_parent(emc->emc_mux, emc->pll_m);
--	if (err) {
--		dev_err(emc->dev,
--			"failed to reparent to pll_m: %d\n", err);
--		return err;
--	}
--
--	err = clk_set_rate(emc->clk, rate);
--	if (err) {
--		dev_err(emc->dev,
--			"failed to change emc rate: %d\n", err);
--		return err;
--	}
--
--	return 0;
--}
--
++static long emc_round_rate(unsigned long rate,
++			   unsigned long min_rate,
++			   unsigned long max_rate,
++			   void *arg)
++{
++	struct emc_timing *timing = NULL;
++	struct tegra_emc *emc = arg;
++	unsigned int i;
++
++	min_rate = min(min_rate, emc->timings[emc->num_timings - 1].rate);
++
++	for (i = 0; i < emc->num_timings; i++) {
++		if (emc->timings[i].rate < rate && i != emc->num_timings - 1)
++			continue;
++
++		if (emc->timings[i].rate > max_rate) {
++			i = max(i, 1u) - 1;
++
++			if (emc->timings[i].rate < min_rate)
++				break;
++		}
++
++		if (emc->timings[i].rate < min_rate)
++			continue;
++
++		timing = &emc->timings[i];
++		break;
++	}
++
++	if (!timing) {
++		dev_err(emc->dev, "no timing for rate %lu min %lu max %lu\n",
++			rate, min_rate, max_rate);
++		return -EINVAL;
++	}
++
++	return timing->rate;
++}
++
  static int tegra_emc_probe(struct platform_device *pdev)
  {
  	struct device_node *np;
-@@ -522,52 +484,14 @@ static int tegra_emc_probe(struct platform_device *pdev)
+@@ -477,21 +516,28 @@ static int tegra_emc_probe(struct platform_device *pdev)
  		return err;
  	}
  
--	emc->pll_m = clk_get_sys(NULL, "pll_m");
--	if (IS_ERR(emc->pll_m)) {
--		err = PTR_ERR(emc->pll_m);
--		dev_err(&pdev->dev, "failed to get pll_m clock: %d\n", err);
++	tegra20_clk_set_emc_round_callback(emc_round_rate, emc);
++
+ 	emc->clk = devm_clk_get(&pdev->dev, "emc");
+ 	if (IS_ERR(emc->clk)) {
+ 		err = PTR_ERR(emc->clk);
+ 		dev_err(&pdev->dev, "failed to get emc clock: %d\n", err);
 -		return err;
--	}
--
--	emc->backup_clk = clk_get_sys(NULL, "pll_p");
--	if (IS_ERR(emc->backup_clk)) {
--		err = PTR_ERR(emc->backup_clk);
--		dev_err(&pdev->dev, "failed to get pll_p clock: %d\n", err);
--		goto put_pll_m;
--	}
--
--	emc->emc_mux = clk_get_parent(emc->clk);
--	if (IS_ERR(emc->emc_mux)) {
--		err = PTR_ERR(emc->emc_mux);
--		dev_err(&pdev->dev, "failed to get emc_mux clock: %d\n", err);
--		goto put_backup;
--	}
--
++		goto unset_cb;
+ 	}
+ 
  	err = clk_notifier_register(emc->clk, &emc->clk_nb);
  	if (err) {
  		dev_err(&pdev->dev, "failed to register clk notifier: %d\n",
  			err);
--		goto put_backup;
--	}
--
--	/* set DRAM clock rate to maximum */
--	err = emc_init(emc, emc->timings[emc->num_timings - 1].rate);
--	if (err) {
--		dev_err(&pdev->dev, "failed to initialize EMC clock rate: %d\n",
--			err);
--		goto unreg_notifier;
-+		return err;
+-		return err;
++		goto unset_cb;
  	}
  
  	return 0;
--
--unreg_notifier:
--	clk_notifier_unregister(emc->clk, &emc->clk_nb);
--put_backup:
--	clk_put(emc->backup_clk);
--put_pll_m:
--	clk_put(emc->pll_m);
--
--	return err;
++
++unset_cb:
++	tegra20_clk_set_emc_round_callback(NULL, NULL);
++
++	return err;
  }
  
  static const struct of_device_id tegra_emc_of_match[] = {
