@@ -2,97 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C7955AFB2
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2019 13:09:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F17CE5AFBA
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2019 13:37:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726618AbfF3LJS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 30 Jun 2019 07:09:18 -0400
-Received: from outils.crapouillou.net ([89.234.176.41]:46684 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726482AbfF3LJS (ORCPT
+        id S1726563AbfF3Lfv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 30 Jun 2019 07:35:51 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:39049 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726498AbfF3Lfu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Jun 2019 07:09:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1561892954; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=1VKx1wk+WzUoklxrAuKWgU2OQk4oJuRQqz3GgyjEXAY=;
-        b=CrXPn/sYqzf1H1ODHym18aKQJeF/xMPQZ28pa7eIooieBYCSB2sBik0mJSykhwEDFTzdhj
-        PxBiKXVGVIigKUq9U1EYzNU1bChseQe9AinV+wvnsgxd2sxIUTZnyjHKDBCJyPRhOR0P2T
-        8Ixi7Ch5feBvSoUR/QTLgF8PJ210aq8=
-Date:   Sun, 30 Jun 2019 13:09:09 +0200
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH 1/3] DRM: ingenic: Use devm_platform_ioremap_resource
-To:     Sam Ravnborg <sam@ravnborg.org>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        od@zcrc.me, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Message-Id: <1561892949.1773.0@crapouillou.net>
-In-Reply-To: <20190630081833.GC5081@ravnborg.org>
-References: <20190627182114.27299-1-paul@crapouillou.net>
-        <20190630081833.GC5081@ravnborg.org>
+        Sun, 30 Jun 2019 07:35:50 -0400
+Received: from pd9ef1cb8.dip0.t-ipconnect.de ([217.239.28.184] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hhY7Q-0005rx-RG; Sun, 30 Jun 2019 13:35:41 +0200
+Date:   Sun, 30 Jun 2019 13:35:39 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Feng Tang <feng.tang@intel.com>
+cc:     "Chen, Rong A" <rong.a.chen@intel.com>,
+        "tipbuild@zytor.com" <tipbuild@zytor.com>,
+        Ingo Molnar <mingo@kernel.org>, "lkp@01.org" <lkp@01.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Subject: Re: [LKP] [x86/hotplug] e1056a25da:
+ WARNING:at_arch/x86/kernel/apic/apic.c:#setup_local_APIC
+In-Reply-To: <alpine.DEB.2.21.1906290912390.1802@nanos.tec.linutronix.de>
+Message-ID: <alpine.DEB.2.21.1906301334290.1802@nanos.tec.linutronix.de>
+References: <20190620021856.GP7221@shao2-debian> <alpine.DEB.2.21.1906212108150.5503@nanos.tec.linutronix.de> <58ea508f-dc2e-8537-fe96-49cca0a7c799@intel.com> <alpine.DEB.2.21.1906250821220.32342@nanos.tec.linutronix.de> <f5c36f89-61bf-a82e-3d3b-79720b2da2ef@intel.com>
+ <alpine.DEB.2.21.1906251330330.32342@nanos.tec.linutronix.de> <20190628063231.GA7766@shbuild999.sh.intel.com> <alpine.DEB.2.21.1906280929010.32342@nanos.tec.linutronix.de> <alpine.DEB.2.21.1906290912390.1802@nanos.tec.linutronix.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, 29 Jun 2019, Thomas Gleixner wrote:
+> On Fri, 28 Jun 2019, Thomas Gleixner wrote:
+> > On Fri, 28 Jun 2019, Feng Tang wrote:
+> > That function just 'works' by chance not by design. I'll stare into it and
+> > fix it up for real.
+> > 
+> > Thank you very much for that information. Your debug was spot on!
+> 
+> I rewrote that function so it actually handles that case correctly along
+> with some other things which were broken and force pushed the WIP.x86/ipi
+> branch.
+> 
+> Can you please run exactly that test again against that new version and
+> verify that this is fixed now?
 
+Just found another issue with that thing. Don't waste your time on it. I'll
+come back to you when I'm done.
 
-Le dim. 30 juin 2019 =E0 10:18, Sam Ravnborg <sam@ravnborg.org> a =E9crit=20
-:
-> Hi Paul.
->=20
-> On Thu, Jun 27, 2019 at 08:21:12PM +0200, Paul Cercueil wrote:
->>  Simplify a bit the probe function by using the newly introduced
->>  devm_platform_ioremap_resource(), instead of having to call
->>  platform_get_resource() followed by devm_ioremap_resource().
->>=20
->>  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
->>  ---
->>   drivers/gpu/drm/ingenic/ingenic-drm.c | 4 +---
->>   1 file changed, 1 insertion(+), 3 deletions(-)
->>=20
->>  diff --git a/drivers/gpu/drm/ingenic/ingenic-drm.c=20
->> b/drivers/gpu/drm/ingenic/ingenic-drm.c
->>  index a069579ca749..02c4788ef1c7 100644
->>  --- a/drivers/gpu/drm/ingenic/ingenic-drm.c
->>  +++ b/drivers/gpu/drm/ingenic/ingenic-drm.c
->>  @@ -580,7 +580,6 @@ static int ingenic_drm_probe(struct=20
->> platform_device *pdev)
->>   	struct drm_bridge *bridge;
->>   	struct drm_panel *panel;
->>   	struct drm_device *drm;
->>  -	struct resource *mem;
->>   	void __iomem *base;
->>   	long parent_rate;
->>   	int ret, irq;
->>  @@ -614,8 +613,7 @@ static int ingenic_drm_probe(struct=20
->> platform_device *pdev)
->>   	drm->mode_config.max_height =3D 600;
->>   	drm->mode_config.funcs =3D &ingenic_drm_mode_config_funcs;
->>=20
->>  -	mem =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
->>  -	base =3D devm_ioremap_resource(dev, mem);
->>  +	base =3D devm_platform_ioremap_resource(pdev, 0);
->>   	if (IS_ERR(base)) {
->>   		dev_err(dev, "Failed to get memory resource");
-> Consider to include the error code in the error message here.
+Thanks,
 
-I don't think it's needed; a non-zero error code in the probe function=20
-will
-have the drivers core automatically print a message with the name of the
-failing driver and the return code.
-
-
->>   		return PTR_ERR(base);
->=20
-> With the above fixed/considered:
-> Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
-
-=
-
+	tglx
