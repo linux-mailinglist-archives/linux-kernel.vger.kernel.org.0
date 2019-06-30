@@ -2,58 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 592E35AEAC
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2019 07:41:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A2545AEAF
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2019 07:41:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726586AbfF3FlZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 30 Jun 2019 01:41:25 -0400
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:38042 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725959AbfF3FlZ (ORCPT
+        id S1726651AbfF3Fla (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 30 Jun 2019 01:41:30 -0400
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:41827 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725959AbfF3Fl3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Jun 2019 01:41:25 -0400
-Received: by mail-vs1-f68.google.com with SMTP id k9so6754344vso.5;
-        Sat, 29 Jun 2019 22:41:24 -0700 (PDT)
+        Sun, 30 Jun 2019 01:41:29 -0400
+Received: by mail-vs1-f66.google.com with SMTP id 2so6745293vso.8;
+        Sat, 29 Jun 2019 22:41:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=clQOczYwEsKKHOAzZidWMeMT4c+c0AdrHLZADibcT5I=;
-        b=W/mPOGsWnmXShX2vqkfncaWdrS7qRg6/Q1NYGxtqgZ+SH3up6HKAvKzs4/qYdRi0V/
-         RtZ4Z0HjgZOXP/27vA3bqMvIWO3SdEKlE1e91Nu4ZsBBKdQgGNCP+Farh/ROc609Hgwd
-         7qz2w6v31iNrCop4m4nqiFmmWxY/X5H0XGr/aWlBlxIb7wHIvqd4PY+8TanEkcZli+bV
-         mCHk4OPRyEqLUICPQWH3DpkTLeWsLu9e9uY/JKdqudig/8mFzRox7F0Iq7DEfru/QgKu
-         /4ipuPi4+b7lnC72+O7hEVeEQL91yFZuXR+b4cuCTIgJDHxmOlYa/7JRW4gvcJPU9K+w
-         xcIg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=df8HZ1GC9xOAmz5J1hSYCy+taJAv5J2Wpa+VxaLhh1Y=;
+        b=tOAXaniq5JK92eAo4mvDn9Vl4LFpLvqTWv4qJ8jZ+7jsx3KhCTePu06gbaKs7V6MgI
+         A5Z4Yo3leKLoqZTgYpXWhQETy9DxJpQjVgaF0Y7E1M8gpQ28HgMtj1TQR2E3rkmDJGtj
+         +jxqzixcs/mFqH8mDLL4J+PlrHRUVF9x5b5OzE8FAFQjriTpgVNJ7SbGltyyazkyCNyv
+         O72+KQiB4SDFEr/38EzWDNlB9A+LDxQ8p26I00a8RwKgWSolYqQRwd2hqPXN5nK1emRz
+         dizNLE2RSMn7ZgD6pKCHY/Nxmcoqj3al40AMEYe45cBfQV6YwWL6LW5f+bLy51j/DDHq
+         8slA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=clQOczYwEsKKHOAzZidWMeMT4c+c0AdrHLZADibcT5I=;
-        b=DYrNZmLOtA7fs5RJMfJLPwC08rR3W/AR59UWv1ZCBVbIswY07cUQDzsRY/mvqZmDob
-         dP+cj+g7xZVMRlHZ4hs0IxMyqV2ITX30QBkqDZjE301gXPdCiPfbU8TycM9hwXLokQ8P
-         JtxuS1CQj7QdyvVIiTgnpNgXm6NWbir0m8UjwTU4IU5uxBHkPnOTwj9/C7YoQY5/rXlW
-         qJ5KBVW1TgWw1mYa8Z7Jy5Hpo7qXEWM9mdF+OdSvxKDkmITqPkF2KhPm/rjhGVJvTwNc
-         oquhM2JDTTU2nhl+/FpVkqW1Yv1EjGjJS0nqye1ue447eIkFVX2apHWLsgQebbYXR/kz
-         Xy4A==
-X-Gm-Message-State: APjAAAXr7NBoNgWZiyK1olkJjIukZaVZh+Ekzt2ezGFHnJCka7glYpA5
-        Ra6NTeh8Jj3oPOWF/IZZ1w==
-X-Google-Smtp-Source: APXvYqw9LJGr9ejHAdvNsQ9iGU8WklErdwKaLxgXTbnEBJ8pZKaD42ZyLSYN5Fo7+9QPSAezcArV+Q==
-X-Received: by 2002:a67:ff0b:: with SMTP id v11mr10657498vsp.14.1561873283358;
-        Sat, 29 Jun 2019 22:41:23 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=df8HZ1GC9xOAmz5J1hSYCy+taJAv5J2Wpa+VxaLhh1Y=;
+        b=B6nZqC+r+hM7GZyigqVlQCXPza/g8FyrbstHqEwggh+JqGe444cGWjfTKmvph0EZFn
+         v2m4oEUIbv1LkZFfOatK12FpH9BBofOcDJeTrwC7/B2i/hJsZmV8RvtbM/M46+KZ9JrL
+         CT9rripqI/FuTn3edDuqOneuYEra5xr58vJL9rjkrOLGYRNfvj+kPIL0gl56lVxlh16u
+         6CxnE/Q8GWV7T8WoiFYoX7AC95upFFxe9svbFtVexSF8H7ioAorNc6uHnACUgRiGt6tK
+         SdoUu/mEZN37pzhRjzVqVYkMo8uCEIlkm5R/rGFY3HTCxEsw3QTZ/Zo3q1Re3MxAG5yV
+         M7zA==
+X-Gm-Message-State: APjAAAXRG4cby8/FvBNJXjHPWMyQ+0AnUl/xeeNk/rvOnlajZa/Te7Xk
+        LVJ1Sr6G/EitNjqzbeNB9A==
+X-Google-Smtp-Source: APXvYqwJsrLcbzha/wqICM9mdlRLeUxbBmb9KHkFsRv6GEMQFbkF6080wk05pCUqHumpRowuy9ITNw==
+X-Received: by 2002:a67:fb02:: with SMTP id d2mr10868712vsr.207.1561873288288;
+        Sat, 29 Jun 2019 22:41:28 -0700 (PDT)
 Received: from localhost.localdomain ([2601:902:c200:6512:37bd:d695:3a39:ceb9])
-        by smtp.gmail.com with ESMTPSA id r136sm1926676vke.46.2019.06.29.22.41.22
+        by smtp.gmail.com with ESMTPSA id r136sm1926676vke.46.2019.06.29.22.41.27
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sat, 29 Jun 2019 22:41:22 -0700 (PDT)
+        Sat, 29 Jun 2019 22:41:27 -0700 (PDT)
 From:   Ayman Bagabas <ayman.bagabas@gmail.com>
 To:     Darren Hart <dvhart@infradead.org>,
         Andy Shevchenko <andy@infradead.org>,
         platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     ayman.bagabas@gmail.com
-Subject: [RFC 0/9] platform/x86: Huawei WMI laptop extras driver
-Date:   Sun, 30 Jun 2019 01:40:59 -0400
-Message-Id: <20190630054108.19205-1-ayman.bagabas@gmail.com>
+Subject: [RFC 1/9] platform/x86: huawei-wmi: Rename guid and driver name
+Date:   Sun, 30 Jun 2019 01:41:00 -0400
+Message-Id: <20190630054108.19205-2-ayman.bagabas@gmail.com>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190630054108.19205-1-ayman.bagabas@gmail.com>
+References: <20190630054108.19205-1-ayman.bagabas@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -61,113 +63,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch series introduce changes to huawei-wmi driver that includes:
-* Move to platform driver
-* Implement WMI management interface
-* Add micmute LED support through WMI
-* Add battery charging protection support through WMI
-* Add fn-lock support through WMI
-* Implement driver quirks and parameters
-* Add a debugfs interface to WMI
+Use WMI device UID, AMW0 has a UID of HWMI. WMI0 is the device name
+and doesn't have a UID so keep it as it is.
 
-# Move to platform driver
+Change module description to reflect the upcoming changes.
 
-The current driver offers hotkeys and micmute led support only. With
-these changes, a platform driver makes more sense since it handles these
-changes pretty nicely.
+Signed-off-by: Ayman Bagabas <ayman.bagabas@gmail.com>
+---
+ drivers/platform/x86/huawei-wmi.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-# Implement WMI management interface
-
-Huawei Matebook laptops come with two WMI interfaces. The first being
-WMI0 which is considered "legacy" and AFAIK only found on the Matebook X
-released in 2017. The second has a UID of "HWMI" and is found in pretty
-much all models with a slight difference in implementation except for
-the Matebook X (2017). Since this model has two interfaces, some aspects
-are controlled through the legacy interface and some through the other
-interface. Currently, the legacy interface is not fully implemented and
-is only used for hotkeys and further debugging has to be done.
-
-The WMI interface takes a 64 bit integer, although uses 32 bits most of
-the time, and returns a 256-260 bytes buffer consists of either one ACPI
-buffer of 260 bytes, in the case of Matebook X (2017), or one ACPI
-package of two buffers, one with 4 bytes, and the other with 256 bytes.
-We only care about the latter 256 buffer in both cases since the 4 bytes
-always return zeros. The first byte of this 256 buffer always has the
-return status where 1 indicated error. Some models require calling the
-WMI interface twice to execute a command.
-
-# Add micmute LED support through WMI
-
-After implementing the WMI interface, micmute LED can be controlled
-easily. Models with the legacy interface fall back to ACPI EC method
-control since the legacy interface is not implemented.
-
-# Add battery charging protection support through WMI
-
-Most models, that has the WMI interface, are capable of battery
-protection where it can control battery charging thresholds and limits
-charging the battery to certain values.
-
-# Add fn-lock support through WMI
-
-The behavior of hotkeys is not the same among all models. Some models
-require fn-lock to do things like `Ctrl-Ins` or `Alt-PrtSc`. By default,
-hotkeys behave as special keys (media keys, Ins, etc), but if a modifier
-is used (ctrl, alt, shift) these keys behave as F1-F12 keys. If the Fn
-key is toggled on, the hotkeys with or without a modifier, behave as
-F1-F12 keys. This makes it impossible to use a modifier and `PrtSc` or
-`Ins`.
-
-Now, some models fix this by excluding `PrtSc` and `Ins` keys from being
-treated as F11 and F12 keys with the use of a modifier. However, some
-models do not, and fixes this by the so called fn-lock.
-
-Fn-lock inverts the behavior of the top row from special keys to F1-F12
-keys. So a modifier and a special key would be possible which make
-things like `Alt-Ins` possible. Now, with fn-lock we would have 4 modes:
-
-* Fn-key off & fn-lock off - hotkeys treated as special keys using a
-  modifier gives F1-F12 keys.
-* Fn-key on & fn-lock off - hotkeys treated as F1-F12 keys and using a
-  modifier gives F1-F12.
-* Fn-key off & fn-lock on - hotkeys are treated as F1-F12 keys and using
-  a modifier gives special keys.
-* Fn-key on & fn-lock on - hotkeys are treated as special keys and using
-  a modifier gives special keys.
-
-# Implement driver quirks and parameters
-
-The driver introduces 3 quirks and 2 parameters that can change the
-driver's behavior. These quirks being as:
-1. Fixes reporting brightness keys twice since it's already handled by
-   acpi-video.
-2. Some models need a short delay when setting battery thresholds to
-   prevent a race condition when two processes read/write.
-3. Matebook X (2017) handles micmute led through the "legacy" interface
-   which is not currently implemented. Use ACPI EC method to control
-   this led.
-
-and the 2 parameters can enforce the behavior of quirk 1 & 2.
-
-# Add a debugfs interface to WMI
-
-An interface to the WMI management interface that allows easier
-debugging.
-
-Ayman Bagabas (9):
-  platform/x86: huawei-wmi: rename guid and driver name
-  platform/x86: huawei-wmi: move to platform driver
-  platform/x86: huawei-wmi: implement huawei wmi management interface
-  platform/x86: huawei-wmi: add quirks and module parameters
-  platform/x86: huawei-wmi: control micmute led through wmi interface
-  platform/x86: huawei-wmi: add battery charging thresholds
-  platform/x86: huawei-wmi: add fn-lock support
-  platform/x86: huawei-wmi: add sysfs interface support
-  platform/x86: huawei-wmi: add debugfs support
-
- drivers/platform/x86/huawei-wmi.c | 710 ++++++++++++++++++++++++++----
- 1 file changed, 629 insertions(+), 81 deletions(-)
-
+diff --git a/drivers/platform/x86/huawei-wmi.c b/drivers/platform/x86/huawei-wmi.c
+index 52fcac5b393a..a1159850a16c 100644
+--- a/drivers/platform/x86/huawei-wmi.c
++++ b/drivers/platform/x86/huawei-wmi.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- *  Huawei WMI hotkeys
++ *  Huawei WMI laptop extras driver
+  *
+  *  Copyright (C) 2018	      Ayman Bagabas <ayman.bagabas@gmail.com>
+  */
+@@ -15,10 +15,12 @@
+ /*
+  * Huawei WMI GUIDs
+  */
+-#define WMI0_EVENT_GUID "59142400-C6A3-40fa-BADB-8A2652834100"
+-#define AMW0_EVENT_GUID "ABBC0F5C-8EA1-11D1-A000-C90629100000"
++#define HWMI_EVENT_GUID "ABBC0F5C-8EA1-11D1-A000-C90629100000"
+ 
++/* Legacy GUIDs */
+ #define WMI0_EXPENSIVE_GUID "39142400-C6A3-40fa-BADB-8A2652834100"
++#define WMI0_EVENT_GUID "59142400-C6A3-40fa-BADB-8A2652834100"
++
+ 
+ struct huawei_wmi_priv {
+ 	struct input_dev *idev;
+@@ -37,7 +39,7 @@ static const struct key_entry huawei_wmi_keymap[] = {
+ 	{ KE_KEY,    0x289, { KEY_WLAN } },
+ 	// Huawei |M| key
+ 	{ KE_KEY,    0x28a, { KEY_CONFIG } },
+-	// Keyboard backlight
++	// Keyboard backlit
+ 	{ KE_IGNORE, 0x293, { KEY_KBDILLUMTOGGLE } },
+ 	{ KE_IGNORE, 0x294, { KEY_KBDILLUMUP } },
+ 	{ KE_IGNORE, 0x295, { KEY_KBDILLUMUP } },
+@@ -186,7 +188,7 @@ static int huawei_wmi_probe(struct wmi_device *wdev)
+ 
+ static const struct wmi_device_id huawei_wmi_id_table[] = {
+ 	{ .guid_string = WMI0_EVENT_GUID },
+-	{ .guid_string = AMW0_EVENT_GUID },
++	{ .guid_string = HWMI_EVENT_GUID },
+ 	{  }
+ };
+ 
+@@ -203,5 +205,5 @@ module_wmi_driver(huawei_wmi_driver);
+ 
+ MODULE_DEVICE_TABLE(wmi, huawei_wmi_id_table);
+ MODULE_AUTHOR("Ayman Bagabas <ayman.bagabas@gmail.com>");
+-MODULE_DESCRIPTION("Huawei WMI hotkeys");
++MODULE_DESCRIPTION("Huawei WMI laptop extras driver");
+ MODULE_LICENSE("GPL v2");
 -- 
 2.20.1
 
