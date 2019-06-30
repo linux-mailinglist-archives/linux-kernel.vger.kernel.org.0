@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42A3E5B0F3
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2019 19:25:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 831895B0EC
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2019 19:25:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727047AbfF3RYs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 30 Jun 2019 13:24:48 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:40891 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726830AbfF3RYZ (ORCPT
+        id S1726996AbfF3RY1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 30 Jun 2019 13:24:27 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:35960 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726879AbfF3RYZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 30 Jun 2019 13:24:25 -0400
-Received: by mail-lj1-f196.google.com with SMTP id a21so10637799ljh.7
-        for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2019 10:24:23 -0700 (PDT)
+Received: by mail-lj1-f194.google.com with SMTP id i21so10656790ljj.3
+        for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2019 10:24:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=uUkBROZO3WakB4095Sqlp9gekMGTEEFtZPkRqC6risY=;
-        b=uM/mKdfkiRjikWMeGLjOxOlcNobeB2PCrFWOmSy/QtV7Zsq52w/Gy5oRsJqd9UggZx
-         Lyqbs6ExkSsMzUjJETRoZDJXY9pMe1ZkHXh/R1sIIz8bLDB25qSz6F4DaVH7AV5+sHfv
-         1f0baQOqGfw+PBMOv5dADsX+o3W+3Q9pVXtJZxc0JuS1lbsjXcAFAZwrnrTpSlBFh9XV
-         J2uFs9tD8k66Q4XIjckj4WN9swTcCRH6y+n3LDHz0PrNP039e8YF3jWW6Js07RE7n/UE
-         FuQufsOTvvgpChK2FKg0yDTuMqfV83AS8PjQfDie2BCSoqab9kPy56ScG9/FrQEDHLmq
-         SDug==
+        bh=GFCzf2qYFkFg+4VKLMFV4Jixzxe0BQO8ulzJAgHRDlU=;
+        b=lMX0Cm6LTzBuz+GHYDw0DNMsSrZKxRSBoVT4X7KPkCYaRNDNuqp58zcRnME8wwOcjL
+         RTt9eCCiXyF3G1LNlJaXYWNpZrTmMep2KnZ+C6G/9mUT71kvIaW9TmW1evExUi3ndh0u
+         ymN77nvvdUXy8MprSwEjZAwSsPAZpbuXv/Gzu7pZsFWin0Fd21ujRNcha+iY7eZeRn9e
+         9I3fRo5LQk9SI4Ob3706WeVB/gFYYUM8h3086qitcZrpEvB+DNhzEdYBnQh9fH+CDCi5
+         SgjSWD2j4sX0knHWGtdB5YSXRsyiDo9XAy/8Srqb2XlwX4MWfTkqzDCbRXcI/ACyZifP
+         Cutg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=uUkBROZO3WakB4095Sqlp9gekMGTEEFtZPkRqC6risY=;
-        b=qD/BacL/iZyF84nXZ8YS1UXw9WayOw0MYUMr4QQ0rrWNlJddDXalKnrOlDvKFgInf8
-         H3FwZr/05oH/qdRAS+xRkdHxRCXLdFkr1ZbuuNDLPJa0vRKcYdiR62jLDIttO5W3MbQd
-         WXDsDhggYSzicvMnkDGSdkH6olAwb3FdjEw5mvnX7TPjaXTn7Kbrll8Tpaq+JDqd9a8Y
-         ftAwK07lO1aYLlAMCmpMBQpNftip1fTIDhiQ6POcfmLwKh2U3KAQoEB982EbtpzreGwK
-         Zf5MVb2koly1Jv9ealQsfnQ8laVgc8Sz6RuoHuSsMjTuQ5NCKvdE5sST1D3FS3r9VwuR
-         FrTw==
-X-Gm-Message-State: APjAAAVOnuZ+jBGAjx798a10OlK3cw3M3/nILu7fRBw9+knp8MEmf+yr
-        zqnLJfGelK8DPdUPMjIkbw0pqA==
-X-Google-Smtp-Source: APXvYqwsL8R2TVbeV5aEhdmMQehA9L7CU1wJdpURGN5CoaeB4uTTKPZJDGH0IasikzP5ayeCPqfpow==
-X-Received: by 2002:a2e:740a:: with SMTP id p10mr7897078ljc.19.1561915462387;
-        Sun, 30 Jun 2019 10:24:22 -0700 (PDT)
+        bh=GFCzf2qYFkFg+4VKLMFV4Jixzxe0BQO8ulzJAgHRDlU=;
+        b=M1h+TGXFw5cxTqzi2HGxOZebeIqjR523lO/A+2ydTzf5VoLWptpeEQc5fL/taD1VYm
+         8btkQNeokeBNdKgXMBs6cLXWAs7rlQRz71K1h554ttzfQ4sSW4CCXPgJU7jcdfTKS1UE
+         EGcLyMPn8lPPVxAnht1wUEX0eqVUHfOStUagcPGNZN4WpdOz8daLV1nlkEW7nue105HE
+         lYHBwllN4H/vQq2p5Sf5Z+nVocjD8DmXbwZU9e68hnr96eMXJ4kzrbZcps1oU9c9D/P9
+         sjKUPyr1eU1VR9ZHEcC7aT12mNuLzyNOaX+NPd7pGNGtaogqUOaDwGkc/bT77lVOd9v0
+         vj4A==
+X-Gm-Message-State: APjAAAVSdQ47xeEt1C48pSGOUzMXvkSWKvyNUcSnvAwBKbz39HhlLdEk
+        0t9Yw3MSoap/HCZqYBz+emH8iA==
+X-Google-Smtp-Source: APXvYqwAXi5uK3x1DFuhXQqmX1L9KHW5byM66gGMbQ8wr8qpQgljkcF3+f5HnY6iVrxdeUMLUEmmMw==
+X-Received: by 2002:a2e:8849:: with SMTP id z9mr11396486ljj.203.1561915463532;
+        Sun, 30 Jun 2019 10:24:23 -0700 (PDT)
 Received: from localhost.localdomain (59-201-94-178.pool.ukrtel.net. [178.94.201.59])
-        by smtp.gmail.com with ESMTPSA id c1sm2273795lfh.13.2019.06.30.10.24.21
+        by smtp.gmail.com with ESMTPSA id c1sm2273795lfh.13.2019.06.30.10.24.22
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sun, 30 Jun 2019 10:24:21 -0700 (PDT)
+        Sun, 30 Jun 2019 10:24:23 -0700 (PDT)
 From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
 To:     grygorii.strashko@ti.com, hawk@kernel.org, davem@davemloft.net
 Cc:     ast@kernel.org, linux-kernel@vger.kernel.org,
@@ -52,9 +52,9 @@ Cc:     ast@kernel.org, linux-kernel@vger.kernel.org,
         daniel@iogearbox.net, jakub.kicinski@netronome.com,
         john.fastabend@gmail.com,
         Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-Subject: [PATCH v5 net-next 4/6] net: ethernet: ti: davinci_cpdma: allow desc split while down
-Date:   Sun, 30 Jun 2019 20:23:46 +0300
-Message-Id: <20190630172348.5692-5-ivan.khoronzhuk@linaro.org>
+Subject: [PATCH v5 net-next 5/6] net: ethernet: ti: cpsw_ethtool: allow res split while down
+Date:   Sun, 30 Jun 2019 20:23:47 +0300
+Message-Id: <20190630172348.5692-6-ivan.khoronzhuk@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190630172348.5692-1-ivan.khoronzhuk@linaro.org>
 References: <20190630172348.5692-1-ivan.khoronzhuk@linaro.org>
@@ -63,81 +63,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-That's possible to set ring params while interfaces are down. When
-interface gets up it uses number of descs to fill rx queue and on
-later on changes to create rx pools. Usually, this resplit can happen
-after phy is up, but it can be needed before this, so allow it to
-happen while setting number of rx descs, when interfaces are down.
-Also, if no dependency on intf state, move it to cpdma layer, where
-it should be.
+That's possible to set channel num while interfaces are down. When
+interface gets up it should resplit budget. This resplit can happen
+after phy is up but only if speed is changed, so should be set before
+this, for this allow it to happen while changing number of channels,
+when interfaces are down.
 
 Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
 ---
- drivers/net/ethernet/ti/cpsw_ethtool.c  |  9 ++++-----
- drivers/net/ethernet/ti/davinci_cpdma.c | 10 +++++++++-
- drivers/net/ethernet/ti/davinci_cpdma.h |  3 +--
- 3 files changed, 14 insertions(+), 8 deletions(-)
+ drivers/net/ethernet/ti/cpsw_ethtool.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/drivers/net/ethernet/ti/cpsw_ethtool.c b/drivers/net/ethernet/ti/cpsw_ethtool.c
-index 7c19eebbabcc..6ab0cec8560a 100644
+index 6ab0cec8560a..99935c1d265d 100644
 --- a/drivers/net/ethernet/ti/cpsw_ethtool.c
 +++ b/drivers/net/ethernet/ti/cpsw_ethtool.c
-@@ -664,15 +664,14 @@ int cpsw_set_ringparam(struct net_device *ndev,
+@@ -620,8 +620,7 @@ int cpsw_set_channels_common(struct net_device *ndev,
+ 		}
+ 	}
  
- 	cpsw_suspend_data_pass(ndev);
- 
--	cpdma_set_num_rx_descs(cpsw->dma, ering->rx_pending);
--
 -	if (cpsw->usage_count)
--		cpdma_chan_split_pool(cpsw->dma);
-+	ret = cpdma_set_num_rx_descs(cpsw->dma, ering->rx_pending);
-+	if (ret)
-+		goto err;
+-		cpsw_split_res(cpsw);
++	cpsw_split_res(cpsw);
  
  	ret = cpsw_resume_data_pass(ndev);
  	if (!ret)
- 		return 0;
--
-+err:
- 	dev_err(cpsw->dev, "cannot set ring params, closing device\n");
- 	dev_close(ndev);
- 	return ret;
-diff --git a/drivers/net/ethernet/ti/davinci_cpdma.c b/drivers/net/ethernet/ti/davinci_cpdma.c
-index ea25b23c8058..7dc2c1ee6238 100644
---- a/drivers/net/ethernet/ti/davinci_cpdma.c
-+++ b/drivers/net/ethernet/ti/davinci_cpdma.c
-@@ -1427,8 +1427,16 @@ int cpdma_get_num_tx_descs(struct cpdma_ctlr *ctlr)
- 	return ctlr->num_tx_desc;
- }
- 
--void cpdma_set_num_rx_descs(struct cpdma_ctlr *ctlr, int num_rx_desc)
-+int cpdma_set_num_rx_descs(struct cpdma_ctlr *ctlr, int num_rx_desc)
- {
-+	unsigned long flags;
-+	int ret;
-+
-+	spin_lock_irqsave(&ctlr->lock, flags);
- 	ctlr->num_rx_desc = num_rx_desc;
- 	ctlr->num_tx_desc = ctlr->pool->num_desc - ctlr->num_rx_desc;
-+	ret = cpdma_chan_split_pool(ctlr);
-+	spin_unlock_irqrestore(&ctlr->lock, flags);
-+
-+	return ret;
- }
-diff --git a/drivers/net/ethernet/ti/davinci_cpdma.h b/drivers/net/ethernet/ti/davinci_cpdma.h
-index aafa8889c789..df66b8c797ee 100644
---- a/drivers/net/ethernet/ti/davinci_cpdma.h
-+++ b/drivers/net/ethernet/ti/davinci_cpdma.h
-@@ -116,8 +116,7 @@ enum cpdma_control {
- int cpdma_control_get(struct cpdma_ctlr *ctlr, int control);
- int cpdma_control_set(struct cpdma_ctlr *ctlr, int control, int value);
- int cpdma_get_num_rx_descs(struct cpdma_ctlr *ctlr);
--void cpdma_set_num_rx_descs(struct cpdma_ctlr *ctlr, int num_rx_desc);
-+int cpdma_set_num_rx_descs(struct cpdma_ctlr *ctlr, int num_rx_desc);
- int cpdma_get_num_tx_descs(struct cpdma_ctlr *ctlr);
--int cpdma_chan_split_pool(struct cpdma_ctlr *ctlr);
- 
- #endif
 -- 
 2.17.1
 
