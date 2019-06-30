@@ -2,89 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BAE615AF6A
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2019 10:21:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C4D8F5AF6C
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2019 10:37:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726673AbfF3IVz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 30 Jun 2019 04:21:55 -0400
-Received: from asavdk3.altibox.net ([109.247.116.14]:38764 "EHLO
-        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726482AbfF3IVy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Jun 2019 04:21:54 -0400
-Received: from ravnborg.org (unknown [158.248.194.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by asavdk3.altibox.net (Postfix) with ESMTPS id 19C0220063;
-        Sun, 30 Jun 2019 10:21:52 +0200 (CEST)
-Date:   Sun, 30 Jun 2019 10:21:50 +0200
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        od@zcrc.me, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH 3/3] DRM: ingenic: Add support for panels with 8-bit
- serial bus
-Message-ID: <20190630082150.GE5081@ravnborg.org>
-References: <20190627182114.27299-1-paul@crapouillou.net>
- <20190627182114.27299-3-paul@crapouillou.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190627182114.27299-3-paul@crapouillou.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=dqr19Wo4 c=1 sm=1 tr=0
-        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=ER_8r6IbAAAA:8
-        a=7gkXJVJtAAAA:8 a=e5mUnYsNAAAA:8 a=co-eyZKPhihzPdF-lREA:9
-        a=CjuIK1q_8ugA:10 a=9LHmKk7ezEChjTCyhBa9:22 a=E9Po1WZjFZOl8hwRPBS3:22
-        a=Vxmtnl_E_bksehYqCbjh:22
+        id S1726578AbfF3IhW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 30 Jun 2019 04:37:22 -0400
+Received: from ozlabs.org ([203.11.71.1]:39209 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726482AbfF3IhW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 30 Jun 2019 04:37:22 -0400
+Received: by ozlabs.org (Postfix, from userid 1034)
+        id 45c3lg68Lrz9sBr; Sun, 30 Jun 2019 18:37:19 +1000 (AEST)
+X-powerpc-patch-notification: thanks
+X-powerpc-patch-commit: 9c4e4c90ec24652921e31e9551fcaedc26eec86d
+X-Patchwork-Hint: ignore
+In-Reply-To: <7b15f4a18ab2d9fb54559acbadf2cd83a7d147f7.1557469839.git.christophe.leroy@c-s.fr>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Russell Currey <ruscur@russell.cc>
+From:   Michael Ellerman <patch-notifications@ellerman.id.au>
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] powerpc/64: mark start_here_multiplatform as __ref
+Message-Id: <45c3lg68Lrz9sBr@ozlabs.org>
+Date:   Sun, 30 Jun 2019 18:37:19 +1000 (AEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 27, 2019 at 08:21:14PM +0200, Paul Cercueil wrote:
-> Add support for the LCD panels with a serial 8-bit bus, where the color
-> components of each 24-bit pixel are sent sequentially.
-
-There are strange bus formats...
-
+On Fri, 2019-05-10 at 06:31:28 UTC, Christophe Leroy wrote:
+> Otherwise, the following warning is encountered:
 > 
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
+> WARNING: vmlinux.o(.text+0x3dc6): Section mismatch in reference from the variable start_here_multiplatform to the function .init.text:.early_setup()
+> The function start_here_multiplatform() references
+> the function __init .early_setup().
+> This is often because start_here_multiplatform lacks a __init
+> annotation or the annotation of .early_setup is wrong.
+> 
+> Fixes: 56c46bba9bbf ("powerpc/64: Fix booting large kernels with STRICT_KERNEL_RWX")
+> Cc: Russell Currey <ruscur@russell.cc>
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 
-> ---
->  drivers/gpu/drm/ingenic/ingenic-drm.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/ingenic/ingenic-drm.c b/drivers/gpu/drm/ingenic/ingenic-drm.c
-> index da966f3dc1f7..ce1fae3a78a9 100644
-> --- a/drivers/gpu/drm/ingenic/ingenic-drm.c
-> +++ b/drivers/gpu/drm/ingenic/ingenic-drm.c
-> @@ -426,6 +426,9 @@ static void ingenic_drm_encoder_atomic_mode_set(struct drm_encoder *encoder,
->  			case MEDIA_BUS_FMT_RGB888_1X24:
->  				cfg |= JZ_LCD_CFG_MODE_GENERIC_24BIT;
->  				break;
-> +			case MEDIA_BUS_FMT_RGB888_3X8:
-> +				cfg |= JZ_LCD_CFG_MODE_8BIT_SERIAL;
-> +				break;
->  			default:
->  				break;
->  			}
-> @@ -451,6 +454,7 @@ static int ingenic_drm_encoder_atomic_check(struct drm_encoder *encoder,
->  	case MEDIA_BUS_FMT_RGB565_1X16:
->  	case MEDIA_BUS_FMT_RGB666_1X18:
->  	case MEDIA_BUS_FMT_RGB888_1X24:
-> +	case MEDIA_BUS_FMT_RGB888_3X8:
->  		return 0;
->  	default:
->  		return -EINVAL;
-> -- 
-> 2.21.0.593.g511ec345e18
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+Applied to powerpc next, thanks.
+
+https://git.kernel.org/powerpc/c/9c4e4c90ec24652921e31e9551fcaedc26eec86d
+
+cheers
