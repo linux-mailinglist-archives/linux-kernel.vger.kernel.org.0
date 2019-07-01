@@ -2,80 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98C115BF9F
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 17:19:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C3D665BF99
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 17:19:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728575AbfGAPTC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 11:19:02 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:59166 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728474AbfGAPS7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 11:18:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=3Ba+Jb98yVS5mZ3n94oGXQBYD6fv7eSFwFd2YiewCW0=; b=B8zOfMOLAu59NaUvSy8QYch5Jh
-        NskcwR4SmdPEjEvWY+1ydPBApZywsDWMb5u4PEb5VzW92AySwlrysI5iqPnkp3omLj25ThQsOC8OQ
-        VhpVvsHnGevdZJh5uci2lEnl3+OnEZs+hB8YdhBvjqdmhe8uaZ3GTURjRS9se6y1zC6uTlifH6Duz
-        jQGnrj1ElyoefePcSMTTs0ZEzU/YG5oQFbDmjs4gOMgXnfoIaInv2X4QwXyvuepYtI15agNcO8hpv
-        vQQCvAGi87ceTgfl8rtDBr32iVm1vSdz7dsEndDPWwZ3k9U1ghjO+iHrZ4ion4SiXsUNgC4FwnmyB
-        jV4wmmCw==;
-Received: from [38.98.37.141] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hhy4q-0003zx-QI; Mon, 01 Jul 2019 15:18:46 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>
-Cc:     linux-mips@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] MIPS: don't select ARCH_HAS_PTE_SPECIAL
-Date:   Mon,  1 Jul 2019 17:18:18 +0200
-Message-Id: <20190701151818.32227-3-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190701151818.32227-1-hch@lst.de>
-References: <20190701151818.32227-1-hch@lst.de>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        id S1728189AbfGAPSy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 11:18:54 -0400
+Received: from mga14.intel.com ([192.55.52.115]:6226 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727423AbfGAPSx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Jul 2019 11:18:53 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Jul 2019 08:18:53 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,439,1557212400"; 
+   d="scan'208";a="174254068"
+Received: from spandruv-desk.jf.intel.com ([10.54.75.31])
+  by orsmga002.jf.intel.com with ESMTP; 01 Jul 2019 08:18:52 -0700
+Message-ID: <b2cbda587c72bba045ef47412e348ed4e7fb07f2.camel@linux.intel.com>
+Subject: Re: [UPDATE][PATCH 10/10] tools/power/x86: A tool to validate Intel
+ Speed Select commands
+From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Andriy Shevchenko <andriy.shevchenko@intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Alan Cox <alan@linux.intel.com>, Len Brown <lenb@kernel.org>,
+        prarit@redhat.com, darcari@redhat.com,
+        Linux Documentation List <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>
+Date:   Mon, 01 Jul 2019 08:18:52 -0700
+In-Reply-To: <CAHp75Vf-p3O10_Ns_NY4JoWBS1S34z-NW0jVJdCdqszdGVmoQw@mail.gmail.com>
+References: <20190630171408.8673-1-srinivas.pandruvada@linux.intel.com>
+         <CAHp75Vf-p3O10_Ns_NY4JoWBS1S34z-NW0jVJdCdqszdGVmoQw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-3.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-MIPS doesn't really have a proper pte_special implementation, just
-stubs.  It turns out they were not enough to make get_user_pages_fast
-work, so drop the select.  This means get_user_pages_fast won't
-actually use the fast path for non-hugepage mappings, so someone who
-actually knows about mips page table management should look into
-adding real pte_special support.
+On Mon, 2019-07-01 at 14:32 +0300, Andy Shevchenko wrote:
+> On Sun, Jun 30, 2019 at 8:14 PM Srinivas Pandruvada
+> <srinivas.pandruvada@linux.intel.com> wrote:
+> > 
+> > The Intel(R) Speed select technologies contains four features.
+> > 
+> > Performance profile:An non architectural mechanism that allows
+> > multiple
+> > optimized performance profiles per system via static and/or dynamic
+> > adjustment of core count, workload, Tjmax, and TDP, etc. aka ISS
+> > in the documentation.
+> > 
+> > Base Frequency: Enables users to increase guaranteed base frequency
+> > on
+> > certain cores (high priority cores) in exchange for lower base
+> > frequency
+> > on remaining cores (low priority cores). aka PBF in the
+> > documenation.
+> > 
+> > Turbo frequency: Enables the ability to set different turbo ratio
+> > limits
+> > to cores based on priority. aka FACT in the documentation.
+> > 
+> > Core power: An Interface that allows user to define per core/tile
+> > priority.
+> > 
+> > There is a multi level help for commands and options. This can be
+> > used
+> > to check required arguments for each feature and commands for the
+> > feature.
+> > 
+> > To start navigating the features start with
+> > 
+> > $sudo intel-speed-select --help
+> > 
+> > For help on a specific feature for example
+> > $sudo intel-speed-select perf-profile --help
+> > 
+> > To get help for a command for a feature for example
+> > $sudo intel-speed-select perf-profile get-lock-status --help
+> > 
+> > Signed-off-by: Srinivas Pandruvada <
+> > srinivas.pandruvada@linux.intel.com>
+> > ---
+> > Updates:
+> > - Copied Makefile from tools/gpio and moified the Makefile here
+> > - Added entry to tools/build/Makefile
+> > - Rename directory to match the executable name
+> > - Fix one error message
+> 
+> Thanks!
+> I pushed to my review and testing queue, while still waiting for some
+> ACKs.
+> 
+> It seems I can promote the driver itself now,w/o tools, if you want
+> me to do so.
+I am fine with driver only push if we don't get ACK by your deadline
+for the next kernel.
 
-Fixes: eb9488e58bbc ("MIPS: use the generic get_user_pages_fast code")
-Reported-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- arch/mips/Kconfig | 1 -
- 1 file changed, 1 deletion(-)
+Thanks,
+Srinivas
 
-diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-index b1e42f0e4ed0..7957d3457156 100644
---- a/arch/mips/Kconfig
-+++ b/arch/mips/Kconfig
-@@ -6,7 +6,6 @@ config MIPS
- 	select ARCH_BINFMT_ELF_STATE if MIPS_FP_SUPPORT
- 	select ARCH_CLOCKSOURCE_DATA
- 	select ARCH_HAS_ELF_RANDOMIZE
--	select ARCH_HAS_PTE_SPECIAL
- 	select ARCH_HAS_TICK_BROADCAST if GENERIC_CLOCKEVENTS_BROADCAST
- 	select ARCH_HAS_UBSAN_SANITIZE_ALL
- 	select ARCH_SUPPORTS_UPROBES
--- 
-2.20.1
 
