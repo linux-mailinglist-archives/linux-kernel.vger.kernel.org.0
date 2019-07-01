@@ -2,136 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1090F5C4DA
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 23:13:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C579A5C4E3
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 23:15:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726803AbfGAVNh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 17:13:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45596 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726586AbfGAVNg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 17:13:36 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E58C521479;
-        Mon,  1 Jul 2019 21:13:34 +0000 (UTC)
-Date:   Mon, 1 Jul 2019 17:13:33 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Corey Minyard <cminyard@mvista.com>
-Cc:     Corey Minyard <minyard@acm.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, tglx@linutronix.de
-Subject: Re: [PATCH RT v2] Fix a lockup in wait_for_completion() and friends
-Message-ID: <20190701171333.37cc0567@gandalf.local.home>
-In-Reply-To: <20190701170602.2fdb35c2@gandalf.local.home>
-References: <20190509193320.21105-1-minyard@acm.org>
-        <20190510103318.6cieoifz27eph4n5@linutronix.de>
-        <20190628214903.6f92a9ea@oasis.local.home>
-        <20190701190949.GB4336@minyard.net>
-        <20190701161840.1a53c9e4@gandalf.local.home>
-        <20190701204325.GD5041@minyard.net>
-        <20190701170602.2fdb35c2@gandalf.local.home>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726871AbfGAVPx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 17:15:53 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:45622 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726509AbfGAVPx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Jul 2019 17:15:53 -0400
+Received: by mail-io1-f65.google.com with SMTP id e3so32066505ioc.12
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2019 14:15:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=a5ZhSFhZxBdLju3tQkiTCWkSZRpiCbvjfP/tPOAL/Uk=;
+        b=fnCLpA3PG2kMCVNRsV6ZrFzmWBf/K1XrjTfF4DFj/YjSu0P7yFq7p5Bsw02q15l3b2
+         R3yN4d+nVuuGDO890+ttIDI17Z7soQWZZZNzZys9acpTJwCPADRZzRKNEPsFHDX2yGzp
+         7DNtbWErvgh1YS+jP4YFCik0PcunOIXXPzQ/QGTeg0Ac58Z/UpfX8wkdJJ4d3oLjY8c4
+         DSFVr6g1uzfCYnyL/0qqIwalVnIaOyLRRXrhQwl/z/O0WDFUFmrq25B8r9W1x1O3iNzN
+         CBCJuVCh4pvN5Jtmkk25cmLISrDGEfR/1rJ++eq8jqmSIDBg0H8VUF7vsG9HjBNTh3wv
+         PpQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=a5ZhSFhZxBdLju3tQkiTCWkSZRpiCbvjfP/tPOAL/Uk=;
+        b=lnHJOfQN5ul+u6HIsKVikC2OGEdwOqI0G/stPfiFw+6gLB2ZfysObVp4a/R+oXpXVv
+         52ZWgIDvnDvs4Osba4Z1rVFZQepdTNxdxAW40EwnP4XItm90FWsP6SLgx6IUpxVRb17P
+         P5mxtJ9XMjyREwdrpcqZF6lEf69YBx35+QkpikefKABnvW1oksc13c0F0crvedA6+xiE
+         wenyfdIaWAftsdFLJ8X3elgfydzsuqReBlgT/4l7ieJwKTwQIsk231wMLuCpGNz05i0/
+         w1aJ0/kM8UNLyq8KBjm5PP84ibD9/a0uAZzKJJDuqCbuOPvV87y9nfte7OvZlve09L0+
+         xnxw==
+X-Gm-Message-State: APjAAAWqryFC19usnUyZSdpNUhyVs2yKN5otWrHtwGdroVSQhXOAobkU
+        X38ruxGbqsE7XpVwMhlSPycP7w==
+X-Google-Smtp-Source: APXvYqz8x5IrAI3IeFq7foAQQ9qaB+xTt2PrEVlsjnRtBcKxbInsLarWM+ycJMklAn5HJMHqFxXU2w==
+X-Received: by 2002:a02:554a:: with SMTP id e71mr30796296jab.144.1562015751321;
+        Mon, 01 Jul 2019 14:15:51 -0700 (PDT)
+Received: from localhost (c-73-95-159-87.hsd1.co.comcast.net. [73.95.159.87])
+        by smtp.gmail.com with ESMTPSA id m25sm14605769ion.35.2019.07.01.14.15.50
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 01 Jul 2019 14:15:50 -0700 (PDT)
+Date:   Mon, 1 Jul 2019 14:15:50 -0700 (PDT)
+From:   Paul Walmsley <paul.walmsley@sifive.com>
+X-X-Sender: paulw@viisi.sifive.com
+To:     Yash Shah <yash.shah@sifive.com>
+cc:     linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+        palmer@sifive.com, aou@eecs.berkeley.edu, sachin.ghadi@sifive.com
+Subject: Re: [PATCH v2] riscv: ccache: Remove unused variable
+In-Reply-To: <1561977630-32309-1-git-send-email-yash.shah@sifive.com>
+Message-ID: <alpine.DEB.2.21.9999.1907011415280.3867@viisi.sifive.com>
+References: <1561977630-32309-1-git-send-email-yash.shah@sifive.com>
+User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 1 Jul 2019 17:06:02 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+On Mon, 1 Jul 2019, Yash Shah wrote:
 
-> On Mon, 1 Jul 2019 15:43:25 -0500
-> Corey Minyard <cminyard@mvista.com> wrote:
+> Reading the count register clears the interrupt signal. Currently, the
+> count registers are read into 'regval' variable but the variable is
+> never used. Therefore remove it. V2 of this patch add comments to
+> justify the readl calls without checking the return value.
 > 
-> 
-> > I show that patch is already applied at
-> > 
-> >     1921ea799b7dc561c97185538100271d88ee47db
-> >     sched/completion: Fix a lockup in wait_for_completion()
-> > 
-> > git describe --contains 1921ea799b7dc561c97185538100271d88ee47db
-> > v4.19.37-rt20~1
-> > 
-> > So I'm not sure what is going on.  
-> 
-> Bah, I'm replying to the wrong commit that I'm having issues with.
-> 
-> I searched your name to find the patch that is of trouble, and picked
-> this one.
-> 
-> I'll go find the problem patch, sorry for the noise on this one.
-> 
+> Signed-off-by: Yash Shah <yash.shah@sifive.com>
 
-No, I did reply to the right email, but it wasn't the top patch I was
-having issues with. It was the patch I replied to:
-
-This change below that Sebastian marked as stable-rt is what is causing
-me an issue. Not the patch that started the thread.
-
--- Steve
+Thanks, will try to queue this for v5.2-rc - otherwise, v5.3.
 
 
-> Now.. that will fix it, but I think it is also wrong.
-> 
-> The problem being that it violates FIFO, something that might be more
-> important on -RT than elsewhere.
-> 
-> The regular wait API seems confused/inconsistent when it uses
-> autoremove_wake_function and default_wake_function, which doesn't help,
-> but we can easily support this with swait -- the problematic thing is
-> the custom wake functions, we musn't do that.
-> 
-> (also, mingo went and renamed a whole bunch of wait_* crap and didn't do
-> the same to swait_ so now its named all different :/)
-> 
-> Something like the below perhaps.
-> 
-> ---
-> diff --git a/include/linux/swait.h b/include/linux/swait.h
-> index 73e06e9986d4..f194437ae7d2 100644
-> --- a/include/linux/swait.h
-> +++ b/include/linux/swait.h
-> @@ -61,11 +61,13 @@ struct swait_queue_head {
->  struct swait_queue {
->  	struct task_struct	*task;
->  	struct list_head	task_list;
-> +	unsigned int		remove;
->  };
->  
->  #define __SWAITQUEUE_INITIALIZER(name) {				\
->  	.task		= current,					\
->  	.task_list	= LIST_HEAD_INIT((name).task_list),		\
-> +	.remove		= 1,						\
->  }
->  
->  #define DECLARE_SWAITQUEUE(name)					\
-> diff --git a/kernel/sched/swait.c b/kernel/sched/swait.c
-> index e83a3f8449f6..86974ecbabfc 100644
-> --- a/kernel/sched/swait.c
-> +++ b/kernel/sched/swait.c
-> @@ -28,7 +28,8 @@ void swake_up_locked(struct swait_queue_head *q)
->  
->  	curr = list_first_entry(&q->task_list, typeof(*curr), task_list);
->  	wake_up_process(curr->task);
-> -	list_del_init(&curr->task_list);
-> +	if (curr->remove)
-> +		list_del_init(&curr->task_list);
->  }
->  EXPORT_SYMBOL(swake_up_locked);
->  
-> @@ -57,7 +58,8 @@ void swake_up_all(struct swait_queue_head *q)
->  		curr = list_first_entry(&tmp, typeof(*curr), task_list);
->  
->  		wake_up_state(curr->task, TASK_NORMAL);
-> -		list_del_init(&curr->task_list);
-> +		if (curr->remove)
-> +			list_del_init(&curr->task_list);
->  
->  		if (list_empty(&tmp))
->  			break;
-
+- Paul
