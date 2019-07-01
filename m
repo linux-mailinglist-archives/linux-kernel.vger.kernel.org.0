@@ -2,253 +2,204 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B28345C059
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 17:35:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D60F5C05F
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 17:36:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729259AbfGAPf3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 11:35:29 -0400
-Received: from mail.steuer-voss.de ([85.183.69.95]:54190 "EHLO
-        mail.steuer-voss.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727208AbfGAPf3 (ORCPT
+        id S1729642AbfGAPgS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 11:36:18 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:60716 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728275AbfGAPgR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 11:35:29 -0400
-X-Virus-Scanned: Debian amavisd-new at mail.steuer-voss.de
-Received: by mail.steuer-voss.de (Postfix, from userid 1000)
-        id 07BE64D360; Mon,  1 Jul 2019 17:35:27 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.steuer-voss.de (Postfix) with ESMTP id 04B454D35D;
-        Mon,  1 Jul 2019 17:35:27 +0200 (CEST)
-Date:   Mon, 1 Jul 2019 17:35:27 +0200 (CEST)
-From:   Nikolaus Voss <nv@vosn.de>
-X-X-Sender: nv@fox.voss.local
-To:     "Andrew F. Davis" <afd@ti.com>
-cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Andreas Dannenberg <dannenberg@ti.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        linux-acpi@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] ASoC: tas5720.c: cleanup variant management
-In-Reply-To: <80af3fca-f71b-c118-e5d8-fde8b7d21705@ti.com>
-Message-ID: <alpine.DEB.2.20.1907011633310.4353@fox.voss.local>
-References: <20190628143037.GH5379@sirena.org.uk> <cover.1561988282.git.nikolaus.voss@loewensteinmedical.de> <c79df50175d59265a37c5e7c8a0cfbf8119bcf78.1561988282.git.nikolaus.voss@loewensteinmedical.de> <80af3fca-f71b-c118-e5d8-fde8b7d21705@ti.com>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        Mon, 1 Jul 2019 11:36:17 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x61FaDZQ007852;
+        Mon, 1 Jul 2019 10:36:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1561995373;
+        bh=vs3iZxQ8MVz9e3PbipQxl3m5VLZcncoKwTbtxpM2mus=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=UHfoL1qeGtZflLmHWBqoEGA0SWJyPrXnAqXCv0pWBaGENBHeYcJ0QuzxjIUEYREvW
+         sSWHnhtpY1xgEqfRN+NffCsCzVCFQYxqXL9vKubzuYAd4F7FTz1aKUKdkABJ6+wvQR
+         D1sqT+whRptErJ8cU41J6kghg9pAXJDFymA1mSqk=
+Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x61FaDix028019
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 1 Jul 2019 10:36:13 -0500
+Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 1 Jul
+ 2019 10:36:12 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Mon, 1 Jul 2019 10:36:12 -0500
+Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x61FaCLs101807;
+        Mon, 1 Jul 2019 10:36:12 -0500
+Subject: Re: [PATCH 1/2] leds: tlc591xx: simplify driver by using the managed
+ led API
+To:     Jean-Jacques Hiblot <jjhiblot@ti.com>,
+        <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
+CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <tomi.valkeinen@ti.com>
+References: <20190701152602.31716-1-jjhiblot@ti.com>
+ <20190701152602.31716-2-jjhiblot@ti.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <da1acdad-4c7b-f297-7bcb-104e0c0cd4b7@ti.com>
+Date:   Mon, 1 Jul 2019 10:35:44 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+In-Reply-To: <20190701152602.31716-2-jjhiblot@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 1 Jul 2019, Andrew F. Davis wrote:
-> On 7/1/19 9:42 AM, Nikolaus Voss wrote:
->> Replace enum tas572x_type with struct tas5720_variant which aggregates
->> variant specific stuff and can be directly referenced from an id table.
->>
->> Signed-off-by: Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
->> ---
->>  sound/soc/codecs/tas5720.c | 98 +++++++++++++-------------------------
->>  1 file changed, 33 insertions(+), 65 deletions(-)
->>
->> diff --git a/sound/soc/codecs/tas5720.c b/sound/soc/codecs/tas5720.c
->> index 37fab8f22800..b2e897f094b4 100644
->> --- a/sound/soc/codecs/tas5720.c
->> +++ b/sound/soc/codecs/tas5720.c
->> @@ -28,9 +28,10 @@
->>  /* Define how often to check (and clear) the fault status register (in ms) */
->>  #define TAS5720_FAULT_CHECK_INTERVAL		200
->>
->> -enum tas572x_type {
->> -	TAS5720,
->> -	TAS5722,
->> +struct tas5720_variant {
->> +	const int device_id;
->> +	const struct regmap_config *reg_config;
->> +	const struct snd_soc_component_driver *comp_drv;
->>  };
->>
->>  static const char * const tas5720_supply_names[] = {
->> @@ -44,7 +45,7 @@ struct tas5720_data {
->>  	struct snd_soc_component *component;
->>  	struct regmap *regmap;
->>  	struct i2c_client *tas5720_client;
->> -	enum tas572x_type devtype;
->> +	const struct tas5720_variant *variant;
->
-> Why add a new struct? Actually I don't see the need for this patch at
-> all, the commit message only explains the 'what' not the 'why'. We can
-> and do already build this info from the tas572x_type.
 
-As the commit message says, the purpose is to aggregate the variant 
-specifics and make it accessible via one pointer. This is a standard 
-approach for of/acpi_device_id tables and thus makes the code simpler and 
-improves readability. This is a maintenance patch to prepare using the 
-device match API in a proper way.
-
+On 7/1/19 10:26 AM, Jean-Jacques Hiblot wrote:
+> Use the managed API of the LED class (devm_led_classdev_register()
+> instead of led_classdev_register()).
+> This allows us to remove the code used to track-and-destroy the LED devices
 >
-> Also below are several functional changes, the cover letter says this is
-> not a functional change, yet the driver behaves differently now.
-
-Can you be a little bit more specific? The code should behave exactly as 
-before.
-
-Niko
-
+> Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
+> ---
+>   drivers/leds/leds-tlc591xx.c | 81 ++++++++++--------------------------
+>   1 file changed, 21 insertions(+), 60 deletions(-)
 >
-> Andrew
->
->>  	struct regulator_bulk_data supplies[TAS5720_NUM_SUPPLIES];
->>  	struct delayed_work fault_check_work;
->>  	unsigned int last_fault;
->> @@ -179,17 +180,13 @@ static int tas5720_set_dai_tdm_slot(struct snd_soc_dai *dai,
->>  		goto error_snd_soc_component_update_bits;
->>
->>  	/* Configure TDM slot width. This is only applicable to TAS5722. */
->> -	switch (tas5720->devtype) {
->> -	case TAS5722:
->> +	if (tas5720->variant->device_id == TAS5722_DEVICE_ID) {
->>  		ret = snd_soc_component_update_bits(component, TAS5722_DIGITAL_CTRL2_REG,
->>  						    TAS5722_TDM_SLOT_16B,
->>  						    slot_width == 16 ?
->>  						    TAS5722_TDM_SLOT_16B : 0);
->>  		if (ret < 0)
->>  			goto error_snd_soc_component_update_bits;
->> -		break;
->> -	default:
->> -		break;
->>  	}
->>
->>  	return 0;
->> @@ -277,7 +274,7 @@ static void tas5720_fault_check_work(struct work_struct *work)
->>  static int tas5720_codec_probe(struct snd_soc_component *component)
->>  {
->>  	struct tas5720_data *tas5720 = snd_soc_component_get_drvdata(component);
->> -	unsigned int device_id, expected_device_id;
->> +	unsigned int device_id;
->>  	int ret;
->>
->>  	tas5720->component = component;
->> @@ -301,21 +298,9 @@ static int tas5720_codec_probe(struct snd_soc_component *component)
->>  		goto probe_fail;
->>  	}
->>
->> -	switch (tas5720->devtype) {
->> -	case TAS5720:
->> -		expected_device_id = TAS5720_DEVICE_ID;
->> -		break;
->> -	case TAS5722:
->> -		expected_device_id = TAS5722_DEVICE_ID;
->> -		break;
->> -	default:
->> -		dev_err(component->dev, "unexpected private driver data\n");
->> -		return -EINVAL;
->> -	}
->> -
->> -	if (device_id != expected_device_id)
->> +	if (device_id != tas5720->variant->device_id)
->>  		dev_warn(component->dev, "wrong device ID. expected: %u read: %u\n",
->> -			 expected_device_id, device_id);
->> +			 tas5720->variant->device_id, device_id);
->>
->>  	/* Set device to mute */
->>  	ret = snd_soc_component_update_bits(component, TAS5720_DIGITAL_CTRL2_REG,
->> @@ -637,7 +622,6 @@ static int tas5720_probe(struct i2c_client *client,
->>  {
->>  	struct device *dev = &client->dev;
->>  	struct tas5720_data *data;
->> -	const struct regmap_config *regmap_config;
->>  	int ret;
->>  	int i;
->>
->> @@ -646,20 +630,10 @@ static int tas5720_probe(struct i2c_client *client,
->>  		return -ENOMEM;
->>
->>  	data->tas5720_client = client;
->> -	data->devtype = id->driver_data;
->>
->> -	switch (id->driver_data) {
->> -	case TAS5720:
->> -		regmap_config = &tas5720_regmap_config;
->> -		break;
->> -	case TAS5722:
->> -		regmap_config = &tas5722_regmap_config;
->> -		break;
->> -	default:
->> -		dev_err(dev, "unexpected private driver data\n");
->> -		return -EINVAL;
->> -	}
->> -	data->regmap = devm_regmap_init_i2c(client, regmap_config);
->> +	data->variant = (const struct tas5720_variant *)id->driver_data;
->> +
->> +	data->regmap = devm_regmap_init_i2c(client, data->variant->reg_config);
->>  	if (IS_ERR(data->regmap)) {
->>  		ret = PTR_ERR(data->regmap);
->>  		dev_err(dev, "failed to allocate register map: %d\n", ret);
->> @@ -678,42 +652,36 @@ static int tas5720_probe(struct i2c_client *client,
->>
->>  	dev_set_drvdata(dev, data);
->>
->> -	switch (id->driver_data) {
->> -	case TAS5720:
->> -		ret = devm_snd_soc_register_component(&client->dev,
->> -					&soc_component_dev_tas5720,
->> -					tas5720_dai,
->> -					ARRAY_SIZE(tas5720_dai));
->> -		break;
->> -	case TAS5722:
->> -		ret = devm_snd_soc_register_component(&client->dev,
->> -					&soc_component_dev_tas5722,
->> -					tas5720_dai,
->> -					ARRAY_SIZE(tas5720_dai));
->> -		break;
->> -	default:
->> -		dev_err(dev, "unexpected private driver data\n");
->> -		return -EINVAL;
->> -	}
->> -	if (ret < 0) {
->> -		dev_err(dev, "failed to register component: %d\n", ret);
->> -		return ret;
->> -	}
->> -
->> -	return 0;
->> +	ret = devm_snd_soc_register_component(&client->dev,
->> +					      data->variant->comp_drv,
->> +					      tas5720_dai,
->> +					      ARRAY_SIZE(tas5720_dai));
->> +	return ret;
->>  }
->>
->> +static const struct tas5720_variant tas5720 = {
->> +	.device_id = TAS5720_DEVICE_ID,
->> +	.reg_config = &tas5720_regmap_config,
->> +	.comp_drv = &soc_component_dev_tas5720,
->> +};
->> +
->> +static const struct tas5720_variant tas5722 = {
->> +	.device_id = TAS5722_DEVICE_ID,
->> +	.reg_config = &tas5722_regmap_config,
->> +	.comp_drv = &soc_component_dev_tas5722,
->> +};
->> +
->>  static const struct i2c_device_id tas5720_id[] = {
->> -	{ "tas5720", TAS5720 },
->> -	{ "tas5722", TAS5722 },
->> +	{ "tas5720", (kernel_ulong_t)&tas5720 },
->> +	{ "tas5722", (kernel_ulong_t)&tas5722 },
->>  	{ }
->>  };
->>  MODULE_DEVICE_TABLE(i2c, tas5720_id);
->>
->>  #if IS_ENABLED(CONFIG_OF)
->>  static const struct of_device_id tas5720_of_match[] = {
->> -	{ .compatible = "ti,tas5720", },
->> -	{ .compatible = "ti,tas5722", },
->> +	{ .compatible = "ti,tas5720", .data = &tas5720, },
->> +	{ .compatible = "ti,tas5722", .data = &tas5722, },
->>  	{ },
->>  };
->>  MODULE_DEVICE_TABLE(of, tas5720_of_match);
->>
->
+> diff --git a/drivers/leds/leds-tlc591xx.c b/drivers/leds/leds-tlc591xx.c
+> index 59ff088c7d75..14e47ff44df5 100644
+> --- a/drivers/leds/leds-tlc591xx.c
+> +++ b/drivers/leds/leds-tlc591xx.c
+> @@ -128,51 +128,6 @@ tlc591xx_brightness_set(struct led_classdev *led_cdev,
+>   	return err;
+>   }
+>   
+> -static void
+> -tlc591xx_destroy_devices(struct tlc591xx_priv *priv, unsigned int j)
+> -{
+> -	int i = j;
+> -
+> -	while (--i >= 0) {
+> -		if (priv->leds[i].active)
+> -			led_classdev_unregister(&priv->leds[i].ldev);
+> -	}
+> -}
+> -
+> -static int
+> -tlc591xx_configure(struct device *dev,
+> -		   struct tlc591xx_priv *priv,
+> -		   const struct tlc591xx *tlc591xx)
+> -{
+> -	unsigned int i;
+> -	int err = 0;
+> -
+> -	tlc591xx_set_mode(priv->regmap, MODE2_DIM);
+> -	for (i = 0; i < TLC591XX_MAX_LEDS; i++) {
+> -		struct tlc591xx_led *led = &priv->leds[i];
+> -
+> -		if (!led->active)
+> -			continue;
+> -
+> -		led->priv = priv;
+> -		led->led_no = i;
+> -		led->ldev.brightness_set_blocking = tlc591xx_brightness_set;
+> -		led->ldev.max_brightness = LED_FULL;
+> -		err = led_classdev_register(dev, &led->ldev);
+> -		if (err < 0) {
+> -			dev_err(dev, "couldn't register LED %s\n",
+> -				led->ldev.name);
+> -			goto exit;
+> -		}
+> -	}
+> -
+> -	return 0;
+> -
+> -exit:
+> -	tlc591xx_destroy_devices(priv, i);
+> -	return err;
+> -}
+> -
+>   static const struct regmap_config tlc591xx_regmap = {
+>   	.reg_bits = 8,
+>   	.val_bits = 8,
+> @@ -197,7 +152,7 @@ tlc591xx_probe(struct i2c_client *client,
+>   	const struct of_device_id *match;
+>   	const struct tlc591xx *tlc591xx;
+>   	struct tlc591xx_priv *priv;
+> -	int err, count, reg;
+> +	int err, count, reg, idx = 0;
+>   
+>   	match = of_match_device(of_tlc591xx_leds_match, dev);
+>   	if (!match)
+> @@ -225,7 +180,11 @@ tlc591xx_probe(struct i2c_client *client,
+>   
+>   	i2c_set_clientdata(client, priv);
+>   
+> +	tlc591xx_set_mode(priv->regmap, MODE2_DIM);
+> +
+>   	for_each_child_of_node(np, child) {
+> +		struct tlc591xx_led *led;
+> +
+>   		err = of_property_read_u32(child, "reg", &reg);
+
+You should check to make sure "reg" is not out of bounds for the device.
+
+This was handled in the for..loop in the configure routine
+
+Dan
+
+>   		if (err) {
+>   			of_node_put(child);
+> @@ -236,22 +195,25 @@ tlc591xx_probe(struct i2c_client *client,
+>   			of_node_put(child);
+>   			return -EINVAL;
+>   		}
+> -		priv->leds[reg].active = true;
+> -		priv->leds[reg].ldev.name =
+> +		led = &priv->leds[reg];
+> +
+> +		led->active = true;
+> +		led->ldev.name =
+>   			of_get_property(child, "label", NULL) ? : child->name;
+> -		priv->leds[reg].ldev.default_trigger =
+> +		led->ldev.default_trigger =
+>   			of_get_property(child, "linux,default-trigger", NULL);
+> -	}
+> -	return tlc591xx_configure(dev, priv, tlc591xx);
+> -}
+> -
+> -static int
+> -tlc591xx_remove(struct i2c_client *client)
+> -{
+> -	struct tlc591xx_priv *priv = i2c_get_clientdata(client);
+> -
+> -	tlc591xx_destroy_devices(priv, TLC591XX_MAX_LEDS);
+>   
+> +		led->priv = priv;
+> +		led->led_no = idx++;
+> +		led->ldev.brightness_set_blocking = tlc591xx_brightness_set;
+> +		led->ldev.max_brightness = LED_FULL;
+> +		err = devm_led_classdev_register(dev, &led->ldev);
+> +		if (err < 0) {
+> +			dev_err(dev, "couldn't register LED %s\n",
+> +				led->ldev.name);
+> +			return err;
+> +		}
+> +	}
+>   	return 0;
+>   }
+>   
+> @@ -268,7 +230,6 @@ static struct i2c_driver tlc591xx_driver = {
+>   		.of_match_table = of_match_ptr(of_tlc591xx_leds_match),
+>   	},
+>   	.probe = tlc591xx_probe,
+> -	.remove = tlc591xx_remove,
+>   	.id_table = tlc591xx_id,
+>   };
+>   
