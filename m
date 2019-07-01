@@ -2,106 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EB145B471
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 08:02:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E9005B483
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 08:15:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727439AbfGAGBn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 02:01:43 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:52477 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726869AbfGAGBm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 02:01:42 -0400
-Received: by mail-wm1-f68.google.com with SMTP id s3so14440355wms.2
-        for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2019 23:01:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=sIqxMEM0NBpHYUjlaUTenRo0pWUxlEIHY1k8C0artXY=;
-        b=IkPKbNUJhDJ7otxRN+J/52FN4L95evNkjAQuxkTBfNZF5Tpz7l4qvdJIsBHPWLQ+gA
-         Tj9cdLBkp59lmL2DMy4tjOpIUsVn9iYlSzwcDCmLUs6RzLpZzuoGjC3CPqCUzVCSLNO4
-         1ddZsbHGoPyJpd5rIYsNNrq4OTZdHpSuawGoQfQH0K6l/2kVuKn8d3GIZxoifjiMKXPs
-         A7ESIC4rA22/r9N450ArhuLnIBzCD6+R1Hxm+Um9ctrYgcm7HQUoOvzktxQ6OMuX+nff
-         fVgku5iGWqGlYPnYvl9k8sOhYD9gA3seP+G/EcEDud/9eT2CobUmgEUDtdnsrJdI3seP
-         7b8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=sIqxMEM0NBpHYUjlaUTenRo0pWUxlEIHY1k8C0artXY=;
-        b=AUpyRNhj+RK403tY9AF9UjF6A62G59WqyI6WOT6Aw3xmxRM3ek+cseGHZSvF9vIn2l
-         mUKHTGRlaZGM3tRSPR99CBh24LtOQkCnasw24XupbxBp15cOdn09LPavB8wEQSNbRAwX
-         cqEJMiAxql9g7nB9KRSZWQbeRz7qlDHJihjB6hCv0LNNRidr3N3vO58hZjkHG1yVgA3a
-         9KSg3ClqJSGqD9TvQdEU1t5GZsiTDOLr03E3rP90bqIYatuNu1dG8MmXieGzBd9RnMrJ
-         vb89UJOLLBBOtSHdeH/7hhgUakYCwUEHJ3KxJlIxihedsQ76w1OmuSdNhJuNkhnzoavi
-         hsNA==
-X-Gm-Message-State: APjAAAVvt/7dUETjRTXrhRwGf1+zP1L+m8JewXc3CUCFooUJ/4Dv+rpA
-        3EHUfaBpUhLAhnLpNsyqj4F0+A==
-X-Google-Smtp-Source: APXvYqy2r1rLtjKiBIq2kC1C522JZ69v1WYz5GPfWKQ+ZuQD9SM5ypy+rMbr6Zrqt23phiXUxACSpw==
-X-Received: by 2002:a1c:e3c1:: with SMTP id a184mr14313864wmh.24.1561960900531;
-        Sun, 30 Jun 2019 23:01:40 -0700 (PDT)
-Received: from dell ([2.27.35.164])
-        by smtp.gmail.com with ESMTPSA id q10sm9185975wrf.32.2019.06.30.23.01.38
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 30 Jun 2019 23:01:39 -0700 (PDT)
-Date:   Mon, 1 Jul 2019 07:01:37 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Enric Balletbo Serra <eballetbo@gmail.com>
-Cc:     Evan Green <evgreen@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Ravi Chandra Sadineni <ravisadineni@chromium.org>,
-        Rajat Jain <rajatja@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Benson Leung <bleung@chromium.org>,
-        Tim Wawrzynczak <twawrzynczak@chromium.org>
-Subject: Re: [PATCH v3] platform/chrome: Expose resume result via debugfs
-Message-ID: <20190701060137.GB4652@dell>
-References: <20190627204446.52499-1-evgreen@chromium.org>
- <CAFqH_53cmq+1Y_uL3D4-84v_vDJsoB0Qxr_zTVnOzX1XD7VEgQ@mail.gmail.com>
+        id S1727444AbfGAGPG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 02:15:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51844 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727242AbfGAGPF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Jul 2019 02:15:05 -0400
+Received: from localhost (unknown [122.167.76.109])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B9C3E208C4;
+        Mon,  1 Jul 2019 06:15:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561961704;
+        bh=ilZV0SIdnC6KQqrECJ2dASQKpsEhCCtdERzUguOYjcA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=GAf+PQ1aK5gG8O9JVySIOpgQEJ8f9g9ZfUmlv6r8WjKTMOjeULrpPNIVfq15xlQ1V
+         NOR2z3AxNvyc5pI0OaLi2fNPY6mV2Nq4axdv83Vuh6qDDv2WIC99gjUr++chXDzvwV
+         4ne8obQJ3drV7hN9RcgP4oJHZlHUwzrVrkTbSoig=
+Date:   Mon, 1 Jul 2019 11:41:55 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     broonie@kernel.org, robh+dt@kernel.org, devicetree@vger.kernel.org,
+        mark.rutland@arm.com, pierre-louis.bossart@linux.intel.com,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        bgoswami@quicinc.com
+Subject: Re: [RFC PATCH 1/5] dt-bindings: soundwire: add slave bindings
+Message-ID: <20190701061155.GJ2911@vkoul-mobl>
+References: <20190611104043.22181-1-srinivas.kandagatla@linaro.org>
+ <20190611104043.22181-2-srinivas.kandagatla@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAFqH_53cmq+1Y_uL3D4-84v_vDJsoB0Qxr_zTVnOzX1XD7VEgQ@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190611104043.22181-2-srinivas.kandagatla@linaro.org>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 27 Jun 2019, Enric Balletbo Serra wrote:
-
-> Hi Evan, Lee,
+On 11-06-19, 11:40, Srinivas Kandagatla wrote:
+> This patch adds bindings for Soundwire Slave devices which includes how
+> SoundWire enumeration address is represented in SoundWire slave device
+> tree nodes.
 > 
-> Missatge de Evan Green <evgreen@chromium.org> del dia dj., 27 de juny
-> 2019 a les 22:46:
-> >
-> > For ECs that support it, the EC returns the number of slp_s0
-> > transitions and whether or not there was a timeout in the resume
-> > response. Expose the last resume result to usermode via debugfs so
-> > that usermode can detect and report S0ix timeouts.
-> >
-> > Signed-off-by: Evan Green <evgreen@chromium.org>
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> ---
+>  .../devicetree/bindings/soundwire/bus.txt     | 48 +++++++++++++++++++
+>  1 file changed, 48 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/soundwire/bus.txt
 > 
-> Acked-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> 
-> Lee, actually this patch depends on some patches from chrome-platform
-> to apply cleanly. Once is fine with you and if you're happy to have
-> this merged for 5.3, I can just carry the patch with me, shouldn't be
-> any conflicts with your current changes or if you prefer I can create
-> an immutable branch for you.
+> diff --git a/Documentation/devicetree/bindings/soundwire/bus.txt b/Documentation/devicetree/bindings/soundwire/bus.txt
+> new file mode 100644
+> index 000000000000..19a672b0d528
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/soundwire/bus.txt
 
-I won't be taking any more patches this cycle, so if you're sure that
-it does not conflict, there is no need for an immutable branch.
+The bindings are for slave right and the file is bus.txt?
 
-Acked-by: Lee Jones <lee.jones@linaro.org>
+> @@ -0,0 +1,48 @@
+> +SoundWire bus bindings.
+> +
+> +SoundWire is a 2-pin multi-drop interface with data and clock line.
+> +It facilitates development of low cost, efficient, high performance systems.
+> +
+> +SoundWire controller bindings are very much specific to vendor.
+> +
+> +Child nodes(SLAVE devices):
+> +Every SoundWire controller node can contain zero or more child nodes
+> +representing slave devices on the bus. Every SoundWire slave device is
+> +uniquely determined by the enumeration address containing 5 fields:
+> +SoundWire Version, Instance ID, Manufacturer ID, Part ID and Class ID
+> +for a device. Addition to below required properties, child nodes can
+> +have device specific bindings.
+> +
+> +Required property for SoundWire child node if it is present:
+> +- compatible:	 "sdwVER,MFD,PID,CID". The textual representation of
+> +		  SoundWire Enumeration address comprising SoundWire
+> +		  Version, Manufacturer ID, Part ID and Class ID,
+> +		  shall be in lower-case hexadecimal with leading
+> +		  zeroes suppressed.
+> +		  Version number '0x10' represents SoundWire 1.0
+> +		  Version number '0x11' represents SoundWire 1.1
+> +		  ex: "sdw10,0217,2010,0"
+
+any reason why we want to code version number and not say sdw,1.0,...
+and so on?
+
+> +
+> +- sdw-instance-id: Should be ('Instance ID') from SoundWire
+> +		  Enumeration Address. Instance ID is for the cases
+> +		  where multiple Devices of the same type or Class
+> +		  are attached to the bus.
+
+instance id is part of the 48bit device id, so wont it make sense to add
+that to compatible as well?
+
+> +
+> +SoundWire example for Qualcomm's SoundWire controller:
+> +
+> +soundwire@c2d0000 {
+> +	compatible = "qcom,soundwire-v1.5.0"
+> +	reg = <0x0c2d0000 0x2000>;
+> +
+> +	spkr_left:wsa8810-left{
+> +		compatible = "sdw10,0217,2010,0";
+> +		sdw-instance-id = <1>;
+> +		...
+> +	};
+> +
+> +	spkr_right:wsa8810-right{
+> +		compatible = "sdw10,0217,2010,0";
+> +		sdw-instance-id = <2>;
+> +		...
+> +	};
+> +};
+> -- 
+> 2.21.0
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+~Vinod
