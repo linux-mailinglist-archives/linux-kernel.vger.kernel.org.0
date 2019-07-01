@@ -2,179 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 013EB5BD7E
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 16:00:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C4DEE5BD7C
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 16:00:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729294AbfGAOAS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 10:00:18 -0400
-Received: from mail-eopbgr10093.outbound.protection.outlook.com ([40.107.1.93]:56654
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727031AbfGAOAR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 10:00:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=habanalabs.onmicrosoft.com; s=selector1-habanalabs-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8fa2s8YAFQOdT4rQMDCFbBrfg7QkLY1PR+iR7QTZV28=;
- b=OeiL520Jy8/3q8qC55I9exMduLUST7Kq0tRjPb9fgX8pL5qoNiOSOe+IB9CagEavZ2HvTZEtKnmuZXiMJLT67dZp6ulm9Eu1xzxQkQLNrmb/3QPmbvZHGEfniTO+wg+EZ+goRIFCxfTzw49BirqVjOEs8ijLrhtjvOGARATjO0Y=
-Received: from VI1PR02MB3054.eurprd02.prod.outlook.com (10.170.235.155) by
- VI1PR02MB4701.eurprd02.prod.outlook.com (20.177.63.203) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2032.20; Mon, 1 Jul 2019 13:59:45 +0000
-Received: from VI1PR02MB3054.eurprd02.prod.outlook.com
- ([fe80::f92b:de76:1404:8783]) by VI1PR02MB3054.eurprd02.prod.outlook.com
- ([fe80::f92b:de76:1404:8783%7]) with mapi id 15.20.2032.019; Mon, 1 Jul 2019
- 13:59:45 +0000
-From:   Tomer Tayar <ttayar@habana.ai>
-To:     "oded.gabbay@gmail.com" <oded.gabbay@gmail.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 3/3] habanalabs: Add busy engines bitmask to HW idle IOCTL
-Thread-Topic: [PATCH v2 3/3] habanalabs: Add busy engines bitmask to HW idle
- IOCTL
-Thread-Index: AQHVMBU9TEzWPc83eEqNn58wFhUFiw==
-Date:   Mon, 1 Jul 2019 13:59:45 +0000
-Message-ID: <20190701135933.30544-3-ttayar@habana.ai>
-References: <20190701135933.30544-1-ttayar@habana.ai>
-In-Reply-To: <20190701135933.30544-1-ttayar@habana.ai>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: PR0P264CA0121.FRAP264.PROD.OUTLOOK.COM
- (2603:10a6:100:1a::13) To VI1PR02MB3054.eurprd02.prod.outlook.com
- (2603:10a6:802:17::27)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=ttayar@habana.ai; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 2.17.1
-x-originating-ip: [31.154.190.6]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: c2f61aaa-aaca-4840-fe4f-08d6fe2c5f8f
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:VI1PR02MB4701;
-x-ms-traffictypediagnostic: VI1PR02MB4701:
-x-microsoft-antispam-prvs: <VI1PR02MB4701CB7A3A8883EA4AAF5263D2F90@VI1PR02MB4701.eurprd02.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2089;
-x-forefront-prvs: 00851CA28B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(136003)(376002)(396003)(366004)(39840400004)(199004)(189003)(66946007)(476003)(4326008)(66556008)(64756008)(3846002)(66476007)(6116002)(66446008)(73956011)(74482002)(71190400001)(446003)(11346002)(2616005)(71200400001)(6512007)(2906002)(25786009)(486006)(1361003)(478600001)(316002)(50226002)(5660300002)(1076003)(86362001)(14444005)(256004)(2351001)(14454004)(6486002)(26005)(8936002)(81166006)(81156014)(6916009)(36756003)(68736007)(66066001)(8676002)(53936002)(99286004)(7736002)(186003)(5640700003)(52116002)(305945005)(2501003)(102836004)(76176011)(6436002)(6506007)(386003);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR02MB4701;H:VI1PR02MB3054.eurprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: habana.ai does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: t8sxDuuWbGzsW/LC8YADpj/w61NljTE/U0RQjSnGIGV+R/Fsrq2Do0AXpovy8hpc/h5Rd/Zx6wckRvYiUHBJvq4EjovEnfE0UVGvNjlfmWH/uhyI5zW6ixRBjYQX7k75PPfihsAb2RfKNkproeTfXCEkWl9bbXqfgGZVsyzK14viBQe0yJ5OjuoyvfMPENsDb0NsPMF1T1czuLIzGC2UIxea4/pnxp1y5tccyOsSynfkh08Uev8/BB5uqD565ByWLVDxvMWi8XwkiueWuK8RtZRAGIUjECMWZ5nu0KBiSIyNtfa2T32/6tmLhcPM7mSCviCHcv2x/QJfRxkCqsDmAsCHMvFpAJAUb3DBOQeofH5XFwlAp0G9e5kTlLo5dVzrg7CfHBXgZwpQzecLawBtquiJdUOQLSRdMKICtjKP968=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: habana.ai
-X-MS-Exchange-CrossTenant-Network-Message-Id: c2f61aaa-aaca-4840-fe4f-08d6fe2c5f8f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Jul 2019 13:59:45.8000
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 0d4d4539-213c-4ed8-a251-dc9766ba127a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ttayar@habana.ai
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR02MB4701
+        id S1729271AbfGAOAM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 10:00:12 -0400
+Received: from albert.telenet-ops.be ([195.130.137.90]:50852 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727031AbfGAOAM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Jul 2019 10:00:12 -0400
+Received: from ramsan ([84.194.98.4])
+        by albert.telenet-ops.be with bizsmtp
+        id XS0A2001305gfCL06S0Aef; Mon, 01 Jul 2019 16:00:11 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hhwqo-0007yC-OK; Mon, 01 Jul 2019 16:00:10 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hhwqo-0006Ai-Mz; Mon, 01 Jul 2019 16:00:10 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] lib/vsprintf: Reinstate printing of legacy clock IDs
+Date:   Mon,  1 Jul 2019 16:00:09 +0200
+Message-Id: <20190701140009.23683-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-VGhlIGluZm9ybWF0aW9uIHdoaWNoIGlzIGN1cnJlbnRseSBwcm92aWRlZCBhcyBhIHJlc3BvbnNl
-IHRvIHRoZQ0KIkhMX0lORk9fSFdfSURMRSIgSU9DVEwgaXMgbWVyZWx5IGEgZ2VuZXJhbCBib29s
-ZWFuIHZhbHVlLg0KVGhpcyBwYXRjaCBleHRlbmRzIGl0IGFuZCBwcm92aWRlcyBhbHNvIGEgYml0
-bWFzayB0aGF0IGluZGljYXRlcyB3aGljaA0Kb2YgdGhlIGRldmljZSBlbmdpbmVzIGFyZSBidXN5
-Lg0KDQpTaWduZWQtb2ZmLWJ5OiBUb21lciBUYXlhciA8dHRheWFyQGhhYmFuYS5haT4NCi0tLQ0K
-IGRyaXZlcnMvbWlzYy9oYWJhbmFsYWJzL2RlYnVnZnMuYyAgICAgICAgICB8ICAyICstDQogZHJp
-dmVycy9taXNjL2hhYmFuYWxhYnMvZ295YS9nb3lhLmMgICAgICAgIHwgMTEgKysrKysrLS0NCiBk
-cml2ZXJzL21pc2MvaGFiYW5hbGFicy9oYWJhbmFsYWJzLmggICAgICAgfCAgMyArKy0NCiBkcml2
-ZXJzL21pc2MvaGFiYW5hbGFicy9oYWJhbmFsYWJzX2lvY3RsLmMgfCAgMyArKy0NCiBpbmNsdWRl
-L3VhcGkvbWlzYy9oYWJhbmFsYWJzLmggICAgICAgICAgICAgfCAzMCArKysrKysrKysrKysrKysr
-KysrKystDQogNSBmaWxlcyBjaGFuZ2VkLCA0MyBpbnNlcnRpb25zKCspLCA2IGRlbGV0aW9ucygt
-KQ0KDQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9taXNjL2hhYmFuYWxhYnMvZGVidWdmcy5jIGIvZHJp
-dmVycy9taXNjL2hhYmFuYWxhYnMvZGVidWdmcy5jDQppbmRleCA2YTVkZmIxNGVjYTEuLjE4ZTQ5
-OWM5MDBjNyAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvbWlzYy9oYWJhbmFsYWJzL2RlYnVnZnMuYw0K
-KysrIGIvZHJpdmVycy9taXNjL2hhYmFuYWxhYnMvZGVidWdmcy5jDQpAQCAtNTA2LDcgKzUwNiw3
-IEBAIHN0YXRpYyBpbnQgZW5naW5lc19zaG93KHN0cnVjdCBzZXFfZmlsZSAqcywgdm9pZCAqZGF0
-YSkNCiAJc3RydWN0IGhsX2RiZ19kZXZpY2VfZW50cnkgKmRldl9lbnRyeSA9IGVudHJ5LT5kZXZf
-ZW50cnk7DQogCXN0cnVjdCBobF9kZXZpY2UgKmhkZXYgPSBkZXZfZW50cnktPmhkZXY7DQogDQot
-CWhkZXYtPmFzaWNfZnVuY3MtPmlzX2RldmljZV9pZGxlKGhkZXYsIHMpOw0KKwloZGV2LT5hc2lj
-X2Z1bmNzLT5pc19kZXZpY2VfaWRsZShoZGV2LCBOVUxMLCBzKTsNCiANCiAJcmV0dXJuIDA7DQog
-fQ0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvbWlzYy9oYWJhbmFsYWJzL2dveWEvZ295YS5jIGIvZHJp
-dmVycy9taXNjL2hhYmFuYWxhYnMvZ295YS9nb3lhLmMNCmluZGV4IDQxZTk3NTMxZjMwMC4uNzUy
-OTRlYzY1MjU3IDEwMDY0NA0KLS0tIGEvZHJpdmVycy9taXNjL2hhYmFuYWxhYnMvZ295YS9nb3lh
-LmMNCisrKyBiL2RyaXZlcnMvbWlzYy9oYWJhbmFsYWJzL2dveWEvZ295YS5jDQpAQCAtMjgyOCw3
-ICsyODI4LDcgQEAgc3RhdGljIGludCBnb3lhX3NlbmRfam9iX29uX3FtYW4wKHN0cnVjdCBobF9k
-ZXZpY2UgKmhkZXYsIHN0cnVjdCBobF9jc19qb2IgKmpvYikNCiAJZWxzZQ0KIAkJdGltZW91dCA9
-IEhMX0RFVklDRV9USU1FT1VUX1VTRUM7DQogDQotCWlmICghaGRldi0+YXNpY19mdW5jcy0+aXNf
-ZGV2aWNlX2lkbGUoaGRldiwgTlVMTCkpIHsNCisJaWYgKCFoZGV2LT5hc2ljX2Z1bmNzLT5pc19k
-ZXZpY2VfaWRsZShoZGV2LCBOVUxMLCBOVUxMKSkgew0KIAkJZGV2X2Vycl9yYXRlbGltaXRlZCho
-ZGV2LT5kZXYsDQogCQkJIkNhbid0IHNlbmQgS01EIGpvYiBvbiBRTUFOMCBiZWNhdXNlIHRoZSBk
-ZXZpY2UgaXMgbm90IGlkbGVcbiIpOw0KIAkJcmV0dXJuIC1FQlVTWTsNCkBAIC00OTE0LDcgKzQ5
-MTQsOCBAQCBpbnQgZ295YV9hcm1jcF9pbmZvX2dldChzdHJ1Y3QgaGxfZGV2aWNlICpoZGV2KQ0K
-IAlyZXR1cm4gMDsNCiB9DQogDQotc3RhdGljIGJvb2wgZ295YV9pc19kZXZpY2VfaWRsZShzdHJ1
-Y3QgaGxfZGV2aWNlICpoZGV2LCBzdHJ1Y3Qgc2VxX2ZpbGUgKnMpDQorc3RhdGljIGJvb2wgZ295
-YV9pc19kZXZpY2VfaWRsZShzdHJ1Y3QgaGxfZGV2aWNlICpoZGV2LCB1MzIgKm1hc2ssDQorCQkJ
-CXN0cnVjdCBzZXFfZmlsZSAqcykNCiB7DQogCWNvbnN0IGNoYXIgKmZtdCA9ICIlLTVkJS05cyUj
-LTE0eCUjLTE2eCUjeFxuIjsNCiAJY29uc3QgY2hhciAqZG1hX2ZtdCA9ICIlLTVkJS05cyUjLTE0
-eCUjeFxuIjsNCkBAIC00OTM3LDYgKzQ5MzgsOCBAQCBzdGF0aWMgYm9vbCBnb3lhX2lzX2Rldmlj
-ZV9pZGxlKHN0cnVjdCBobF9kZXZpY2UgKmhkZXYsIHN0cnVjdCBzZXFfZmlsZSAqcykNCiAJCQkJ
-SVNfRE1BX0lETEUoZG1hX2NvcmVfc3RzMCk7DQogCQlpc19pZGxlICY9IGlzX2VuZ19pZGxlOw0K
-IA0KKwkJaWYgKG1hc2spDQorCQkJKm1hc2sgfD0gIWlzX2VuZ19pZGxlIDw8IChHT1lBX0VOR0lO
-RV9JRF9ETUFfMCArIGkpOw0KIAkJaWYgKHMpDQogCQkJc2VxX3ByaW50ZihzLCBkbWFfZm10LCBp
-LCBpc19lbmdfaWRsZSA/ICJZIiA6ICJOIiwNCiAJCQkJCXFtX2dsYmxfc3RzMCwgZG1hX2NvcmVf
-c3RzMCk7DQpAQCAtNDk1OCw2ICs0OTYxLDggQEAgc3RhdGljIGJvb2wgZ295YV9pc19kZXZpY2Vf
-aWRsZShzdHJ1Y3QgaGxfZGV2aWNlICpoZGV2LCBzdHJ1Y3Qgc2VxX2ZpbGUgKnMpDQogCQkJCUlT
-X1RQQ19JRExFKHRwY19jZmdfc3RzKTsNCiAJCWlzX2lkbGUgJj0gaXNfZW5nX2lkbGU7DQogDQor
-CQlpZiAobWFzaykNCisJCQkqbWFzayB8PSAhaXNfZW5nX2lkbGUgPDwgKEdPWUFfRU5HSU5FX0lE
-X1RQQ18wICsgaSk7DQogCQlpZiAocykNCiAJCQlzZXFfcHJpbnRmKHMsIGZtdCwgaSwgaXNfZW5n
-X2lkbGUgPyAiWSIgOiAiTiIsDQogCQkJCXFtX2dsYmxfc3RzMCwgY21kcV9nbGJsX3N0czAsIHRw
-Y19jZmdfc3RzKTsNCkBAIC00OTc2LDYgKzQ5ODEsOCBAQCBzdGF0aWMgYm9vbCBnb3lhX2lzX2Rl
-dmljZV9pZGxlKHN0cnVjdCBobF9kZXZpY2UgKmhkZXYsIHN0cnVjdCBzZXFfZmlsZSAqcykNCiAJ
-CQlJU19NTUVfSURMRShtbWVfYXJjaF9zdHMpOw0KIAlpc19pZGxlICY9IGlzX2VuZ19pZGxlOw0K
-IA0KKwlpZiAobWFzaykNCisJCSptYXNrIHw9ICFpc19lbmdfaWRsZSA8PCBHT1lBX0VOR0lORV9J
-RF9NTUVfMDsNCiAJaWYgKHMpIHsNCiAJCXNlcV9wcmludGYocywgZm10LCAwLCBpc19lbmdfaWRs
-ZSA/ICJZIiA6ICJOIiwgcW1fZ2xibF9zdHMwLA0KIAkJCQljbWRxX2dsYmxfc3RzMCwgbW1lX2Fy
-Y2hfc3RzKTsNCmRpZmYgLS1naXQgYS9kcml2ZXJzL21pc2MvaGFiYW5hbGFicy9oYWJhbmFsYWJz
-LmggYi9kcml2ZXJzL21pc2MvaGFiYW5hbGFicy9oYWJhbmFsYWJzLmgNCmluZGV4IDJjOWVhNjEw
-OTliNC4uMTBkYTk5NDBlZTBkIDEwMDY0NA0KLS0tIGEvZHJpdmVycy9taXNjL2hhYmFuYWxhYnMv
-aGFiYW5hbGFicy5oDQorKysgYi9kcml2ZXJzL21pc2MvaGFiYW5hbGFicy9oYWJhbmFsYWJzLmgN
-CkBAIC01NTcsNyArNTU3LDggQEAgc3RydWN0IGhsX2FzaWNfZnVuY3Mgew0KIAkJCXUzMiBhc2lk
-LCB1NjQgdmEsIHU2NCBzaXplKTsNCiAJaW50ICgqc2VuZF9oZWFydGJlYXQpKHN0cnVjdCBobF9k
-ZXZpY2UgKmhkZXYpOw0KIAlpbnQgKCpkZWJ1Z19jb3Jlc2lnaHQpKHN0cnVjdCBobF9kZXZpY2Ug
-KmhkZXYsIHZvaWQgKmRhdGEpOw0KLQlib29sICgqaXNfZGV2aWNlX2lkbGUpKHN0cnVjdCBobF9k
-ZXZpY2UgKmhkZXYsIHN0cnVjdCBzZXFfZmlsZSAqcyk7DQorCWJvb2wgKCppc19kZXZpY2VfaWRs
-ZSkoc3RydWN0IGhsX2RldmljZSAqaGRldiwgdTMyICptYXNrLA0KKwkJCQlzdHJ1Y3Qgc2VxX2Zp
-bGUgKnMpOw0KIAlpbnQgKCpzb2Z0X3Jlc2V0X2xhdGVfaW5pdCkoc3RydWN0IGhsX2RldmljZSAq
-aGRldik7DQogCXZvaWQgKCpod19xdWV1ZXNfbG9jaykoc3RydWN0IGhsX2RldmljZSAqaGRldik7
-DQogCXZvaWQgKCpod19xdWV1ZXNfdW5sb2NrKShzdHJ1Y3QgaGxfZGV2aWNlICpoZGV2KTsNCmRp
-ZmYgLS1naXQgYS9kcml2ZXJzL21pc2MvaGFiYW5hbGFicy9oYWJhbmFsYWJzX2lvY3RsLmMgYi9k
-cml2ZXJzL21pc2MvaGFiYW5hbGFicy9oYWJhbmFsYWJzX2lvY3RsLmMNCmluZGV4IGIwNDU4NWFm
-MjdhZC4uMDcxMjc1NzZiM2U4IDEwMDY0NA0KLS0tIGEvZHJpdmVycy9taXNjL2hhYmFuYWxhYnMv
-aGFiYW5hbGFic19pb2N0bC5jDQorKysgYi9kcml2ZXJzL21pc2MvaGFiYW5hbGFicy9oYWJhbmFs
-YWJzX2lvY3RsLmMNCkBAIC0xMTksNyArMTE5LDggQEAgc3RhdGljIGludCBod19pZGxlKHN0cnVj
-dCBobF9kZXZpY2UgKmhkZXYsIHN0cnVjdCBobF9pbmZvX2FyZ3MgKmFyZ3MpDQogCWlmICgoIW1h
-eF9zaXplKSB8fCAoIW91dCkpDQogCQlyZXR1cm4gLUVJTlZBTDsNCiANCi0JaHdfaWRsZS5pc19p
-ZGxlID0gaGRldi0+YXNpY19mdW5jcy0+aXNfZGV2aWNlX2lkbGUoaGRldiwgTlVMTCk7DQorCWh3
-X2lkbGUuaXNfaWRsZSA9IGhkZXYtPmFzaWNfZnVuY3MtPmlzX2RldmljZV9pZGxlKGhkZXYsDQor
-CQkJCQkmaHdfaWRsZS5idXN5X2VuZ2luZXNfbWFzaywgTlVMTCk7DQogDQogCXJldHVybiBjb3B5
-X3RvX3VzZXIob3V0LCAmaHdfaWRsZSwNCiAJCW1pbigoc2l6ZV90KSBtYXhfc2l6ZSwgc2l6ZW9m
-KGh3X2lkbGUpKSkgPyAtRUZBVUxUIDogMDsNCmRpZmYgLS1naXQgYS9pbmNsdWRlL3VhcGkvbWlz
-Yy9oYWJhbmFsYWJzLmggYi9pbmNsdWRlL3VhcGkvbWlzYy9oYWJhbmFsYWJzLmgNCmluZGV4IDIw
-NGFiOWI0YWU2Ny4uMzk1NmMyMjZjYTM1IDEwMDY0NA0KLS0tIGEvaW5jbHVkZS91YXBpL21pc2Mv
-aGFiYW5hbGFicy5oDQorKysgYi9pbmNsdWRlL3VhcGkvbWlzYy9oYWJhbmFsYWJzLmgNCkBAIC00
-NSw2ICs0NSwzMCBAQCBlbnVtIGdveWFfcXVldWVfaWQgew0KIAlHT1lBX1FVRVVFX0lEX1NJWkUN
-CiB9Ow0KIA0KKy8qDQorICogRW5naW5lIE51bWJlcmluZw0KKyAqDQorICogVXNlZCBpbiB0aGUg
-ImJ1c3lfZW5naW5lc19tYXNrIiBmaWVsZCBpbiBgc3RydWN0IGhsX2luZm9faHdfaWRsZScNCisg
-Ki8NCisNCitlbnVtIGdveWFfZW5naW5lX2lkIHsNCisJR09ZQV9FTkdJTkVfSURfRE1BXzAgPSAw
-LA0KKwlHT1lBX0VOR0lORV9JRF9ETUFfMSwNCisJR09ZQV9FTkdJTkVfSURfRE1BXzIsDQorCUdP
-WUFfRU5HSU5FX0lEX0RNQV8zLA0KKwlHT1lBX0VOR0lORV9JRF9ETUFfNCwNCisJR09ZQV9FTkdJ
-TkVfSURfTU1FXzAsDQorCUdPWUFfRU5HSU5FX0lEX1RQQ18wLA0KKwlHT1lBX0VOR0lORV9JRF9U
-UENfMSwNCisJR09ZQV9FTkdJTkVfSURfVFBDXzIsDQorCUdPWUFfRU5HSU5FX0lEX1RQQ18zLA0K
-KwlHT1lBX0VOR0lORV9JRF9UUENfNCwNCisJR09ZQV9FTkdJTkVfSURfVFBDXzUsDQorCUdPWUFf
-RU5HSU5FX0lEX1RQQ182LA0KKwlHT1lBX0VOR0lORV9JRF9UUENfNywNCisJR09ZQV9FTkdJTkVf
-SURfU0laRQ0KK307DQorDQogZW51bSBobF9kZXZpY2Vfc3RhdHVzIHsNCiAJSExfREVWSUNFX1NU
-QVRVU19PUEVSQVRJT05BTCwNCiAJSExfREVWSUNFX1NUQVRVU19JTl9SRVNFVCwNCkBAIC04Niw3
-ICsxMTAsMTEgQEAgc3RydWN0IGhsX2luZm9fZHJhbV91c2FnZSB7DQogDQogc3RydWN0IGhsX2lu
-Zm9faHdfaWRsZSB7DQogCV9fdTMyIGlzX2lkbGU7DQotCV9fdTMyIHBhZDsNCisJLyoNCisJICog
-Qml0bWFzayBvZiBidXN5IGVuZ2luZXMuDQorCSAqIEJpdHMgZGVmaW5pdGlvbiBpcyBhY2NvcmRp
-bmcgdG8gYGVudW0gPGNoaXA+X2VuZ2luZ19pZCcuDQorCSAqLw0KKwlfX3UzMiBidXN5X2VuZ2lu
-ZXNfbWFzazsNCiB9Ow0KIA0KIHN0cnVjdCBobF9pbmZvX2RldmljZV9zdGF0dXMgew0KLS0gDQoy
-LjE3LjENCg0K
+When using the legacy clock framework, clock pointers are no longer
+printed as IDs, as the !CONFIG_COMMON_CLK case was accidentally
+considered an error case.
+
+Fix this by reverting to the old behavior, which allows to distinguish
+clocks by ID, as the legacy clock framework does not store names with
+clocks.
+
+Fixes: 0b74d4d763fd4ee9 ("vsprintf: Consolidate handling of unknown pointer specifiers")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+The line reverted was modified later by commit c8c3b584343cb752
+("vsprintf: Limit the length of inlined error messages").
+Both commits entered upstream in v5.2-rc1, though.
+---
+ lib/vsprintf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+index 63937044c57d5585..bc96b1cdb36727ff 100644
+--- a/lib/vsprintf.c
++++ b/lib/vsprintf.c
+@@ -1799,7 +1799,7 @@ char *clock(char *buf, char *end, struct clk *clk, struct printf_spec spec,
+ #ifdef CONFIG_COMMON_CLK
+ 		return string(buf, end, __clk_get_name(clk), spec);
+ #else
+-		return error_string(buf, end, "(%pC?)", spec);
++		return ptr_to_id(buf, end, clk, spec);
+ #endif
+ 	}
+ }
+-- 
+2.17.1
+
