@@ -2,127 +2,191 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9037A5B4FE
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 08:24:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C70015B53F
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 08:44:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727432AbfGAGYA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 02:24:00 -0400
-Received: from mxhk.zte.com.cn ([63.217.80.70]:41454 "EHLO mxhk.zte.com.cn"
+        id S1727497AbfGAGoL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 02:44:11 -0400
+Received: from mga07.intel.com ([134.134.136.100]:58897 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725616AbfGAGX6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 02:23:58 -0400
-Received: from mse-fl1.zte.com.cn (unknown [10.30.14.238])
-        by Forcepoint Email with ESMTPS id D26B3C151C38B5507445;
-        Mon,  1 Jul 2019 14:23:55 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse-fl1.zte.com.cn with ESMTP id x616Mhka033824;
-        Mon, 1 Jul 2019 14:22:43 +0800 (GMT-8)
-        (envelope-from wang.yi59@zte.com.cn)
-Received: from fox-host8.localdomain ([10.74.120.8])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2019070114224699-1995718 ;
-          Mon, 1 Jul 2019 14:22:46 +0800 
-From:   Yi Wang <wang.yi59@zte.com.cn>
-To:     pbonzini@redhat.com
-Cc:     rkrcmar@redhat.com, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, hpa@zytor.com, x86@kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, xue.zhihong@zte.com.cn,
-        wang.yi59@zte.com.cn, up2wing@gmail.com, wang.liang82@zte.com.cn
-Subject: [PATCH 4/4] kvm: x86: convert TSC pr_debugs to be gated by CONFIG_KVM_DEBUG
-Date:   Mon, 1 Jul 2019 14:21:11 +0800
-Message-Id: <1561962071-25974-5-git-send-email-wang.yi59@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1561962071-25974-1-git-send-email-wang.yi59@zte.com.cn>
-References: <1561962071-25974-1-git-send-email-wang.yi59@zte.com.cn>
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2019-07-01 14:22:47,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2019-07-01 14:22:44,
-        Serialize complete at 2019-07-01 14:22:44
-X-MAIL: mse-fl1.zte.com.cn x616Mhka033824
+        id S1727093AbfGAGoL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Jul 2019 02:44:11 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jun 2019 23:39:02 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,437,1557212400"; 
+   d="scan'208";a="361731239"
+Received: from hao-dev.bj.intel.com ([10.238.157.65])
+  by fmsmga005.fm.intel.com with ESMTP; 30 Jun 2019 23:39:00 -0700
+From:   Wu Hao <hao.wu@intel.com>
+To:     mdf@kernel.org, linux-fpga@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     linux-api@vger.kernel.org, gregkh@linuxfoundation.org,
+        atull@kernel.org, Wu Hao <hao.wu@intel.com>,
+        Xu Yilun <yilun.xu@intel.com>
+Subject: [PATCH v2 05/15] Documentation: fpga: dfl: add descriptions for virtualization and new interfaces.
+Date:   Mon,  1 Jul 2019 14:22:12 +0800
+Message-Id: <1561962132-3782-1-git-send-email-hao.wu@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are some pr_debug in TSC code, which may affect
-performance, so it may make sense to wrap them using a new
-macro tsc_debug which takes effect only when CONFIG_KVM_DEBUG
-is defined.
+This patch adds virtualization support description for DFL based
+FPGA devices (based on PCIe SRIOV), and introductions to new
+interfaces added by new dfl private feature drivers.
 
-Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
+[mdf@kernel.org: Fixed up to make it work with new reStructuredText docs]
+Signed-off-by: Xu Yilun <yilun.xu@intel.com>
+Signed-off-by: Wu Hao <hao.wu@intel.com>
+Acked-by: Alan Tull <atull@kernel.org>
+Signed-off-by: Moritz Fischer <mdf@kernel.org>
 ---
- arch/x86/kvm/x86.c | 18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
+v2: fix issues during rebasing (doc format change txt -> rst).
+---
+ Documentation/fpga/dfl.rst | 105 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 105 insertions(+)
 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 83aefd7..1505e53 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -74,6 +74,12 @@
- #define CREATE_TRACE_POINTS
- #include "trace.h"
+diff --git a/Documentation/fpga/dfl.rst b/Documentation/fpga/dfl.rst
+index 2f125ab..6fa483f 100644
+--- a/Documentation/fpga/dfl.rst
++++ b/Documentation/fpga/dfl.rst
+@@ -87,6 +87,8 @@ The following functions are exposed through ioctls:
+ - Get driver API version (DFL_FPGA_GET_API_VERSION)
+ - Check for extensions (DFL_FPGA_CHECK_EXTENSION)
+ - Program bitstream (DFL_FPGA_FME_PORT_PR)
++- Assign port to PF (DFL_FPGA_FME_PORT_ASSIGN)
++- Release port from PF (DFL_FPGA_FME_PORT_RELEASE)
  
-+#ifdef CONFIG_KVM_DEBUG
-+#define tsc_debug(x...) pr_debug(x)
-+#else
-+#define tsc_debug(x...)
-+#endif
+ More functions are exposed through sysfs
+ (/sys/class/fpga_region/regionX/dfl-fme.n/):
+@@ -102,6 +104,10 @@ More functions are exposed through sysfs
+      one FPGA device may have more than one port, this sysfs interface indicates
+      how many ports the FPGA device has.
+ 
++ Global error reporting management (errors/)
++     error reporting sysfs interfaces allow user to read errors detected by the
++     hardware, and clear the logged errors.
 +
- #define MAX_IO_MSRS 256
- #define KVM_MAX_MCE_BANKS 32
- u64 __read_mostly kvm_mce_cap_supported = MCG_CTL_P | MCG_SER_P;
-@@ -1522,7 +1528,7 @@ static void kvm_get_time_scale(uint64_t scaled_hz, uint64_t base_hz,
- 	*pshift = shift;
- 	*pmultiplier = div_frac(scaled64, tps32);
  
--	pr_debug("%s: base_hz %llu => %llu, shift %d, mul %u\n",
-+	tsc_debug("%s: base_hz %llu => %llu, shift %d, mul %u\n",
- 		 __func__, base_hz, scaled_hz, shift, *pmultiplier);
- }
+ FIU - PORT
+ ==========
+@@ -143,6 +149,10 @@ More functions are exposed through sysfs:
+  Read Accelerator GUID (afu_id)
+      afu_id indicates which PR bitstream is programmed to this AFU.
  
-@@ -1603,7 +1609,7 @@ static int kvm_set_tsc_khz(struct kvm_vcpu *vcpu, u32 user_tsc_khz)
- 	thresh_lo = adjust_tsc_khz(tsc_khz, -tsc_tolerance_ppm);
- 	thresh_hi = adjust_tsc_khz(tsc_khz, tsc_tolerance_ppm);
- 	if (user_tsc_khz < thresh_lo || user_tsc_khz > thresh_hi) {
--		pr_debug("kvm: requested TSC rate %u falls outside tolerance [%u,%u]\n", user_tsc_khz, thresh_lo, thresh_hi);
-+		tsc_debug("kvm: requested TSC rate %u falls outside tolerance [%u,%u]\n", user_tsc_khz, thresh_lo, thresh_hi);
- 		use_scaling = 1;
- 	}
- 	return set_tsc_khz(vcpu, user_tsc_khz, use_scaling);
-@@ -1766,12 +1772,12 @@ void kvm_write_tsc(struct kvm_vcpu *vcpu, struct msr_data *msr)
- 	    vcpu->arch.virtual_tsc_khz == kvm->arch.last_tsc_khz) {
- 		if (!kvm_check_tsc_unstable()) {
- 			offset = kvm->arch.cur_tsc_offset;
--			pr_debug("kvm: matched tsc offset for %llu\n", data);
-+			tsc_debug("kvm: matched tsc offset for %llu\n", data);
- 		} else {
- 			u64 delta = nsec_to_cycles(vcpu, elapsed);
- 			data += delta;
- 			offset = kvm_compute_tsc_offset(vcpu, data);
--			pr_debug("kvm: adjusted tsc offset by %llu\n", delta);
-+			tsc_debug("kvm: adjusted tsc offset by %llu\n", delta);
- 		}
- 		matched = true;
- 		already_matched = (vcpu->arch.this_tsc_generation == kvm->arch.cur_tsc_generation);
-@@ -1790,7 +1796,7 @@ void kvm_write_tsc(struct kvm_vcpu *vcpu, struct msr_data *msr)
- 		kvm->arch.cur_tsc_write = data;
- 		kvm->arch.cur_tsc_offset = offset;
- 		matched = false;
--		pr_debug("kvm: new tsc generation %llu, clock %llu\n",
-+		tsc_debug("kvm: new tsc generation %llu, clock %llu\n",
- 			 kvm->arch.cur_tsc_generation, data);
- 	}
++ Error reporting (errors/)
++     error reporting sysfs interfaces allow user to read port/afu errors
++     detected by the hardware, and clear the logged errors.
++
  
-@@ -6860,7 +6866,7 @@ static void kvm_timer_init(void)
- 		cpufreq_register_notifier(&kvmclock_cpufreq_notifier_block,
- 					  CPUFREQ_TRANSITION_NOTIFIER);
- 	}
--	pr_debug("kvm: max_tsc_khz = %ld\n", max_tsc_khz);
-+	tsc_debug("kvm: max_tsc_khz = %ld\n", max_tsc_khz);
+ DFL Framework Overview
+ ======================
+@@ -218,6 +228,101 @@ the compat_id exposed by the target FPGA region. This check is usually done by
+ userspace before calling the reconfiguration IOCTL.
  
- 	cpuhp_setup_state(CPUHP_AP_X86_KVM_CLK_ONLINE, "x86/kvm/clk:online",
- 			  kvmclock_cpu_online, kvmclock_cpu_down_prep);
+ 
++FPGA virtualization - PCIe SRIOV
++================================
++This section describes the virtualization support on DFL based FPGA device to
++enable accessing an accelerator from applications running in a virtual machine
++(VM). This section only describes the PCIe based FPGA device with SRIOV support.
++
++Features supported by the particular FPGA device are exposed through Device
++Feature Lists, as illustrated below:
++
++::
++
++    +-------------------------------+  +-------------+
++    |              PF               |  |     VF      |
++    +-------------------------------+  +-------------+
++        ^            ^         ^              ^
++        |            |         |              |
++  +-----|------------|---------|--------------|-------+
++  |     |            |         |              |       |
++  |  +-----+     +-------+ +-------+      +-------+   |
++  |  | FME |     | Port0 | | Port1 |      | Port2 |   |
++  |  +-----+     +-------+ +-------+      +-------+   |
++  |                  ^         ^              ^       |
++  |                  |         |              |       |
++  |              +-------+ +------+       +-------+   |
++  |              |  AFU  | |  AFU |       |  AFU  |   |
++  |              +-------+ +------+       +-------+   |
++  |                                                   |
++  |            DFL based FPGA PCIe Device             |
++  +---------------------------------------------------+
++
++FME is always accessed through the physical function (PF).
++
++Ports (and related AFUs) are accessed via PF by default, but could be exposed
++through virtual function (VF) devices via PCIe SRIOV. Each VF only contains
++1 Port and 1 AFU for isolation. Users could assign individual VFs (accelerators)
++created via PCIe SRIOV interface, to virtual machines.
++
++The driver organization in virtualization case is illustrated below:
++::
++
++    +-------++------++------+             |
++    | FME   || FME  || FME  |             |
++    | FPGA  || FPGA || FPGA |             |
++    |Manager||Bridge||Region|             |
++    +-------++------++------+             |
++    +-----------------------+  +--------+ |             +--------+
++    |          FME          |  |  AFU   | |             |  AFU   |
++    |         Module        |  | Module | |             | Module |
++    +-----------------------+  +--------+ |             +--------+
++          +-----------------------+       |       +-----------------------+
++          | FPGA Container Device |       |       | FPGA Container Device |
++          |  (FPGA Base Region)   |       |       |  (FPGA Base Region)   |
++          +-----------------------+       |       +-----------------------+
++            +------------------+          |         +------------------+
++            | FPGA PCIE Module |          | Virtual | FPGA PCIE Module |
++            +------------------+   Host   | Machine +------------------+
++   -------------------------------------- | ------------------------------
++             +---------------+            |          +---------------+
++             | PCI PF Device |            |          | PCI VF Device |
++             +---------------+            |          +---------------+
++
++FPGA PCIe device driver is always loaded first once a FPGA PCIe PF or VF device
++is detected. It:
++
++* Finishes enumeration on both FPGA PCIe PF and VF device using common
++  interfaces from DFL framework.
++* Supports SRIOV.
++
++The FME device driver plays a management role in this driver architecture, it
++provides ioctls to release Port from PF and assign Port to PF. After release
++a port from PF, then it's safe to expose this port through a VF via PCIe SRIOV
++sysfs interface.
++
++To enable accessing an accelerator from applications running in a VM, the
++respective AFU's port needs to be assigned to a VF using the following steps:
++
++#. The PF owns all AFU ports by default. Any port that needs to be
++   reassigned to a VF must first be released through the
++   DFL_FPGA_FME_PORT_RELEASE ioctl on the FME device.
++
++#. Once N ports are released from PF, then user can use command below
++   to enable SRIOV and VFs. Each VF owns only one Port with AFU.
++
++   ::
++
++      echo N > $PCI_DEVICE_PATH/sriov_numvfs
++
++#. Pass through the VFs to VMs
++
++#. The AFU under VF is accessible from applications in VM (using the
++   same driver inside the VF).
++
++Note that an FME can't be assigned to a VF, thus PR and other management
++functions are only available via the PF.
++
+ Device enumeration
+ ==================
+ This section introduces how applications enumerate the fpga device from
 -- 
-1.8.3.1
+2.7.4
 
