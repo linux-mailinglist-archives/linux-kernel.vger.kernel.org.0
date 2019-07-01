@@ -2,52 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7382F5BB6D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 14:24:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13BEA5BB70
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 14:25:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728682AbfGAMYG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 08:24:06 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:40312 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727814AbfGAMYF (ORCPT
+        id S1728802AbfGAMYq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 08:24:46 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:45326 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727814AbfGAMYp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 08:24:05 -0400
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1hhvLi-00052n-Lp; Mon, 01 Jul 2019 14:23:58 +0200
-Date:   Mon, 1 Jul 2019 14:23:58 +0200
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     "Joel Fernandes (Google)" <joel@joelfernandes.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Josh Triplett <josh@joshtriplett.org>, kernel-team@android.com,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        linux-kselftest@vger.kernel.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>, rcu@vger.kernel.org,
-        Shuah Khan <shuah@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [RFC 3/3] Revert "rcutorture: Tweak kvm options"
-Message-ID: <20190701122358.nzebpuunp6o5jxhx@linutronix.de>
-References: <20190701040415.219001-1-joel@joelfernandes.org>
- <20190701040415.219001-3-joel@joelfernandes.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190701040415.219001-3-joel@joelfernandes.org>
-User-Agent: NeoMutt/20180716
+        Mon, 1 Jul 2019 08:24:45 -0400
+Received: by mail-pl1-f196.google.com with SMTP id bi6so7281152plb.12
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2019 05:24:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=ubi5D4xV2S3/wNwBXGfEmWFyoOOdOltJmtxY+PQKiz8=;
+        b=m3bx48N+5S8Y2Wl3rEztnhJBYYZVh68sdbfG8URfxRxlgCOI5eT8jz+E9gFWONTC8l
+         YGLNjpgVK320S4qkyeI0HMQVKh5MJEY7kFxXCvioIHuzeFW2+k7fOcuBCjetm1S/jIgz
+         csK8lDMKYyqxcBdaBMzkdbLvuMPamAMQEOMWwUqQ13/Gwh90EYAPrTsR2WYtYoh7b9VO
+         USbriolp3xtH1cYalukPw0GI9NsJ1cFaeDPdjjK0tVbOKfsPv6dQwbCXYCwmUy7610Ke
+         bEAgQ8m+9xOBrqjV29DPPbNP4jQhztYinyB+zlxmhgELDFvU98zmwshbiqltosLGdPHK
+         fCfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ubi5D4xV2S3/wNwBXGfEmWFyoOOdOltJmtxY+PQKiz8=;
+        b=l8sxSdESMWyNvm7i6P7Oa5IA/7hUylf2LR7r22PeuzswYC3yPvnTFvnjTqKFkG8X2u
+         4OXEBnZnWEcdiY2As4psKf2KD3vwMdy/YVfFTT/mEn8d3RFIQmMi9zMc8d6YrRzThmF9
+         it6cvodZMHdihlhvnLBg+rGZQWQl4Bj42T+DRIlsfqncSs2dFdvVK3dQVGbOp0RmkIQd
+         OTLevEl6sGJrcpUSriuvIZwXkJfp5mjwdCTOJAY1C/sGWWkNp44qN9fngr0a9OgBfs4D
+         j9hds7p+HEnZSDSPIbGlE++v3j9Q/9W8nKmkV39iapL5hZVjzryMtuFpg+zyb58Omvyf
+         2+Ag==
+X-Gm-Message-State: APjAAAVp41jZjnLAA2kQ5XC4WYLYsCVXgi+lxopjXqqEtFzNHrZg3ebb
+        HpK3ofipLQ6k+yNgvDPVb+Sogtxm
+X-Google-Smtp-Source: APXvYqyixNNCiUMC77paFbOwFhwOSYsJbuYGp3cL2Pr1Oktawkz1QrXTSR/9GuLTNQF6+zST5BKdFQ==
+X-Received: by 2002:a17:902:b70f:: with SMTP id d15mr27568695pls.318.1561983884759;
+        Mon, 01 Jul 2019 05:24:44 -0700 (PDT)
+Received: from localhost.localdomain ([203.205.141.123])
+        by smtp.googlemail.com with ESMTPSA id u21sm12415036pfm.70.2019.07.01.05.24.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 01 Jul 2019 05:24:44 -0700 (PDT)
+From:   Wanpeng Li <kernellwp@gmail.com>
+X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH] sched/core: Cache timer busy housekeeping target
+Date:   Mon,  1 Jul 2019 20:24:37 +0800
+Message-Id: <1561983877-4727-1-git-send-email-wanpengli@tencent.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-07-01 00:04:15 [-0400], Joel Fernandes (Google) wrote:
-> This reverts commit a6fda6dab93c2c06ef4b8cb4b9258df6674d2438 which
-> causes kvm.sh to not run on my machines. The qemu-system-x86_64 command
-> runs but does nothing.
+From: Wanpeng Li <wanpengli@tencent.com>
 
-Nope. I would like to know *why* you need 'noapic' to work. Is it a
-brand new or old qemu-system-x86_64?
+Cache the busy housekeeping target for timer instead of researching each time.
+This patch reduces the total time of get_nohz_timer_target() for busy housekeeping 
+CPU from 2u~3us to less than 1us which can be observed by ftrace.
 
-> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+Cc: Ingo Molnar <mingo@redhat.com> 
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Frederic Weisbecker <frederic@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+---
+ include/linux/hrtimer.h    | 1 +
+ include/linux/sched/nohz.h | 2 +-
+ kernel/sched/core.c        | 6 +++++-
+ kernel/time/hrtimer.c      | 6 ++++--
+ kernel/time/timer.c        | 7 +++++--
+ 5 files changed, 16 insertions(+), 6 deletions(-)
 
-Sebastian
+diff --git a/include/linux/hrtimer.h b/include/linux/hrtimer.h
+index 2e8957e..0d8b271 100644
+--- a/include/linux/hrtimer.h
++++ b/include/linux/hrtimer.h
+@@ -198,6 +198,7 @@ enum  hrtimer_base_type {
+ struct hrtimer_cpu_base {
+ 	raw_spinlock_t			lock;
+ 	unsigned int			cpu;
++	unsigned int			last_target_cpu;
+ 	unsigned int			active_bases;
+ 	unsigned int			clock_was_set_seq;
+ 	unsigned int			hres_active		: 1,
+diff --git a/include/linux/sched/nohz.h b/include/linux/sched/nohz.h
+index 1abe91f..0afb094 100644
+--- a/include/linux/sched/nohz.h
++++ b/include/linux/sched/nohz.h
+@@ -8,7 +8,7 @@
+ 
+ #if defined(CONFIG_SMP) && defined(CONFIG_NO_HZ_COMMON)
+ extern void nohz_balance_enter_idle(int cpu);
+-extern int get_nohz_timer_target(void);
++extern int get_nohz_timer_target(unsigned int cpu);
+ #else
+ static inline void nohz_balance_enter_idle(int cpu) { }
+ #endif
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 7968e0f..f4ba63e 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -549,11 +549,15 @@ void resched_cpu(int cpu)
+  * selecting an idle CPU will add more delays to the timers than intended
+  * (as that CPU's timer base may not be uptodate wrt jiffies etc).
+  */
+-int get_nohz_timer_target(void)
++int get_nohz_timer_target(unsigned int last_target_cpu)
+ {
+ 	int i, cpu = smp_processor_id(), default_cpu = -1;
+ 	struct sched_domain *sd;
+ 
++	if (!idle_cpu(last_target_cpu) &&
++		housekeeping_cpu(last_target_cpu, HK_FLAG_TIMER))
++		return last_target_cpu;
++
+ 	if (housekeeping_cpu(cpu, HK_FLAG_TIMER)) {
+ 		if (!idle_cpu(cpu))
+ 			return cpu;
+diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
+index 41dfff2..0d49bef 100644
+--- a/kernel/time/hrtimer.c
++++ b/kernel/time/hrtimer.c
+@@ -195,8 +195,10 @@ struct hrtimer_cpu_base *get_target_base(struct hrtimer_cpu_base *base,
+ 					 int pinned)
+ {
+ #if defined(CONFIG_SMP) && defined(CONFIG_NO_HZ_COMMON)
+-	if (static_branch_likely(&timers_migration_enabled) && !pinned)
+-		return &per_cpu(hrtimer_bases, get_nohz_timer_target());
++	if (static_branch_likely(&timers_migration_enabled) && !pinned) {
++		base->last_target_cpu = get_nohz_timer_target(base->last_target_cpu);
++		return &per_cpu(hrtimer_bases, base->last_target_cpu);
++	}
+ #endif
+ 	return base;
+ }
+diff --git a/kernel/time/timer.c b/kernel/time/timer.c
+index 343c7ba..6ae045a 100644
+--- a/kernel/time/timer.c
++++ b/kernel/time/timer.c
+@@ -199,6 +199,7 @@ struct timer_base {
+ 	unsigned long		clk;
+ 	unsigned long		next_expiry;
+ 	unsigned int		cpu;
++	unsigned int		last_target_cpu;
+ 	bool			is_idle;
+ 	bool			must_forward_clk;
+ 	DECLARE_BITMAP(pending_map, WHEEL_SIZE);
+@@ -865,8 +866,10 @@ get_target_base(struct timer_base *base, unsigned tflags)
+ {
+ #if defined(CONFIG_SMP) && defined(CONFIG_NO_HZ_COMMON)
+ 	if (static_branch_likely(&timers_migration_enabled) &&
+-	    !(tflags & TIMER_PINNED))
+-		return get_timer_cpu_base(tflags, get_nohz_timer_target());
++	    !(tflags & TIMER_PINNED)) {
++		base->last_target_cpu = get_nohz_timer_target(base->last_target_cpu);
++		return get_timer_cpu_base(tflags, base->last_target_cpu);
++	}
+ #endif
+ 	return get_timer_this_cpu_base(tflags);
+ }
+-- 
+2.7.4
+
