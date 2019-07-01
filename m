@@ -2,88 +2,187 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3C8A5BFBB
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 17:26:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C29FE5BFC4
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 17:28:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728999AbfGAP0T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 11:26:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38346 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728801AbfGAP0S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 11:26:18 -0400
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F0C4A20659;
-        Mon,  1 Jul 2019 15:26:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561994778;
-        bh=Ih4bcw/JsMbYGyd0FqAHH4IJcHQtUXAcuIwTbsHMBi8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Rap9HDjTN3kiMZW3uWkg9RRp1r1eusDUvq7f7Zh/AXDRWpF+q454b5kYP87HWiVc8
-         RPGzjidqVFOCb+ddi0SFqphR8bDA714hPs+ldZQ3uO3qX1P0cVHc9fc1yKD+aeTmmx
-         JfHSSRVNQXil2SE0+FbX8NflimVhmoBF8H1OP6zk=
-Received: by mail-wr1-f54.google.com with SMTP id n4so14294882wrw.13;
-        Mon, 01 Jul 2019 08:26:17 -0700 (PDT)
-X-Gm-Message-State: APjAAAXPc2YfecpitiO58+peG3U/6wT0CHeO4eTLjlSg2tA1x6mKFVQJ
-        n1V7ek+UlHPJApRv/rnOsoz1HTJ1Fw0UJGBQdVo=
-X-Google-Smtp-Source: APXvYqxRGwhspokcFFFd0KmyPEF9ycQbXeC/CojSvkLBlXQBabadTY0izBxWydQ61ZC4++TSBGTX/OIMRWTQ46rWuKw=
-X-Received: by 2002:adf:9425:: with SMTP id 34mr12426100wrq.38.1561994776618;
- Mon, 01 Jul 2019 08:26:16 -0700 (PDT)
+        id S1729056AbfGAP2s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 11:28:48 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:35682 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726329AbfGAP2s (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Jul 2019 11:28:48 -0400
+Received: by mail-lf1-f66.google.com with SMTP id a25so9117905lfg.2;
+        Mon, 01 Jul 2019 08:28:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=kUd6oC4CwkGinXIZBT21shD4mEDfRTY5MFw4kwCcA7A=;
+        b=sxo+grIwj+RDKTj5IQga0vgl0SUNb60398r0MGLEWRrLcnQMSZbyd9lpMBYIyndTDn
+         lfC4N4B3RL3JwrKcqIxzemHHg4ZmG8qpA5kyZ4DXwxU2H7AHlcUz/8Aih5B1gL3wxiYM
+         FDLHVOfDGK6LehxteO/R/TsPkmzOoTHl9lJEul2zjFE6hMJsMWccO+ssQcbUIJmyZMiv
+         SHUVxhHA9vVrJJSY+nI0+e5Ckv2f6UuaqauAlWDCV6v/DFA9NlCljrzfVuMMLx6AV9GV
+         R0wjb+P2ZORQsRqWhQztJXuuWq8ER6wophYRZ4wZTOT3b3bV6DZYvEG+z3eOIizTzJjh
+         wLwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=kUd6oC4CwkGinXIZBT21shD4mEDfRTY5MFw4kwCcA7A=;
+        b=sQ2HkKY5ltVQ2MqazxvExEbIJV7YPpK+cHxgmTVTKKbISEejBVq+WKACsXgkN5TAiE
+         /loHrhCxF2K1MxiyRhtbAVEW/45erzSMLWrRfoN6gH2GsxZ40os3Ls/mKE1WPMQnBELv
+         KCCHYT54ZezxrRpI60hBz2A2aWjzMD2fWAlUkI3pv0ibAhU+UbV3wCMBPMXgERb/9jAS
+         ZTA7oHA5ELh5DQCp6PvrZk2Ac5j9iD+4KiQztiaeMULT/wEe6qM2fNDehhHEaKVdctBF
+         Ttr+oPWhHr+3Xj0RNhfqy86IDb3xlM84JZ9rK0niazlLYxQh7qKjMbZDKNmscXlM2ctc
+         HGJg==
+X-Gm-Message-State: APjAAAWXLI2/N8rlirQejT4gTp5TZOIEVe04L/FTG8ajWItSFrR0DpVL
+        Z0ZcXVEkiKo1pqnJ03Gj5pc=
+X-Google-Smtp-Source: APXvYqxDTii3yJ4bBdiHt9sIlPIY5iGYZ62DDU86Mw1IpkpA9xguaiRzVZOW1HsLB8ExJlCiH/8pUQ==
+X-Received: by 2002:a19:230f:: with SMTP id j15mr11609319lfj.122.1561994925933;
+        Mon, 01 Jul 2019 08:28:45 -0700 (PDT)
+Received: from localhost.localdomain ([91.238.216.6])
+        by smtp.gmail.com with ESMTPSA id e12sm2561626lfb.66.2019.07.01.08.28.44
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 01 Jul 2019 08:28:45 -0700 (PDT)
+From:   Pawel Dembicki <paweldembicki@gmail.com>
+Cc:     linus.walleij@linaro.org, paweldembicki@gmail.com,
+        Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/4] net: dsa: Change DT bindings for Vitesse VSC73xx switches
+Date:   Mon,  1 Jul 2019 17:27:20 +0200
+Message-Id: <20190701152723.624-1-paweldembicki@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <1561786601-19512-1-git-send-email-guoren@kernel.org> <CAK8P3a0F5-wtJHbLvEwUXE8EnALMpQb5KeX4FK3S90Ce81oN-Q@mail.gmail.com>
-In-Reply-To: <CAK8P3a0F5-wtJHbLvEwUXE8EnALMpQb5KeX4FK3S90Ce81oN-Q@mail.gmail.com>
-From:   Guo Ren <guoren@kernel.org>
-Date:   Mon, 1 Jul 2019 23:26:05 +0800
-X-Gmail-Original-Message-ID: <CAJF2gTR7ooY=gxKW2zWK9MnuJ9YDm_1r6QTdJ=A=WqRDTuecRQ@mail.gmail.com>
-Message-ID: <CAJF2gTR7ooY=gxKW2zWK9MnuJ9YDm_1r6QTdJ=A=WqRDTuecRQ@mail.gmail.com>
-Subject: Re: [PATCH] csky: Improve abiv1 mem ops performance with glibc codes
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        linux-csky@vger.kernel.org, Guo Ren <ren_guo@c-sky.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd,
+This commit document changes after split vsc73xx driver into core and
+spi part. The change of DT bindings is required for support the same
+vsc73xx chip, which need PI bus to communicate with CPU. It also
+introduce how to use vsc73xx platform driver.
 
-On Mon, Jul 1, 2019 at 10:52 PM Arnd Bergmann <arnd@arndb.de> wrote:
->
-> On Sat, Jun 29, 2019 at 7:36 AM <guoren@kernel.org> wrote:
-> >
-> > From: Guo Ren <ren_guo@c-sky.com>
-> >
-> > These codes are copied from glibc/string directory, they are the generic
-> > implementation for string operations. We may further optimize them with
-> > assembly code in the future.
-> >
-> > In fact these code isn't tested enough for kernel, but we've tested them
-> > on glibc and it seems good. We just trust them :)
->
-> Are these files from the architecture independent portion of glibc or
-> are they csky specific? If they are architecture independent, we might
-> want to see if they make sense for other architectures as well, and
-> add them to lib/ rather than arch/csky/lib/
-They are just copied from glibc-2.28/string/*.c and they are generic.
-OK, I'll try to add them to lib/.
+Signed-off-by: Pawel Dembicki <paweldembicki@gmail.com>
+---
+ .../bindings/net/dsa/vitesse,vsc73xx.txt      | 74 ++++++++++++++++---
+ 1 file changed, 64 insertions(+), 10 deletions(-)
 
->
-> Should the SPDX identifier list the original LGPL-2.1 license instead
-> of GPL-2.0?
-Yes, I removed full Licenses' description:
-   The GNU C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public
-   License as published by the Free Software Foundation; either
-   version 2.1 of the License, or (at your option) any later version
-
-I'll change it to:
-// SPDX-License-Identifier: LGPL-2.1
-
+diff --git a/Documentation/devicetree/bindings/net/dsa/vitesse,vsc73xx.txt b/Documentation/devicetree/bindings/net/dsa/vitesse,vsc73xx.txt
+index ed4710c40641..c6a4cd85891c 100644
+--- a/Documentation/devicetree/bindings/net/dsa/vitesse,vsc73xx.txt
++++ b/Documentation/devicetree/bindings/net/dsa/vitesse,vsc73xx.txt
+@@ -2,8 +2,8 @@ Vitesse VSC73xx Switches
+ ========================
+ 
+ This defines device tree bindings for the Vitesse VSC73xx switch chips.
+-The Vitesse company has been acquired by Microsemi and Microsemi in turn
+-acquired by Microchip but retains this vendor branding.
++The Vitesse company has been acquired by Microsemi and Microsemi has
++been acquired Microchip but retains this vendor branding.
+ 
+ The currently supported switch chips are:
+ Vitesse VSC7385 SparX-G5 5+1-port Integrated Gigabit Ethernet Switch
+@@ -11,16 +11,26 @@ Vitesse VSC7388 SparX-G8 8-port Integrated Gigabit Ethernet Switch
+ Vitesse VSC7395 SparX-G5e 5+1-port Integrated Gigabit Ethernet Switch
+ Vitesse VSC7398 SparX-G8e 8-port Integrated Gigabit Ethernet Switch
+ 
+-The device tree node is an SPI device so it must reside inside a SPI bus
+-device tree node, see spi/spi-bus.txt
++This switch could have two different management interface.
++
++If SPI interface is used, the device tree node is an SPI device so it must
++reside inside a SPI bus device tree node, see spi/spi-bus.txt
++
++If Platform driver is used, the device tree node is an platform device so it
++must reside inside a platform bus device tree node.
+ 
+ Required properties:
+ 
+-- compatible: must be exactly one of:
+-	"vitesse,vsc7385"
+-	"vitesse,vsc7388"
+-	"vitesse,vsc7395"
+-	"vitesse,vsc7398"
++- compatible (SPI): must be exactly one of:
++	"vitesse,vsc7385-spi"
++	"vitesse,vsc7388-spi"
++	"vitesse,vsc7395-spi"
++	"vitesse,vsc7398-spi"
++- compatible (Platform): must be exactly one of:
++	"vitesse,vsc7385-platform"
++	"vitesse,vsc7388-platform"
++	"vitesse,vsc7395-platform"
++	"vitesse,vsc7398-platform"
+ - gpio-controller: indicates that this switch is also a GPIO controller,
+   see gpio/gpio.txt
+ - #gpio-cells: this must be set to <2> and indicates that we are a twocell
+@@ -38,8 +48,9 @@ and subnodes of DSA switches.
+ 
+ Examples:
+ 
++SPI:
+ switch@0 {
+-	compatible = "vitesse,vsc7395";
++	compatible = "vitesse,vsc7395-spi";
+ 	reg = <0>;
+ 	/* Specified for 2.5 MHz or below */
+ 	spi-max-frequency = <2500000>;
+@@ -79,3 +90,46 @@ switch@0 {
+ 		};
+ 	};
+ };
++
++Platform:
++switch@2,0 {
++	#address-cells = <1>;
++	#size-cells = <1>;
++	compatible = "vitesse,vsc7385-platform";
++	reg = <0x2 0x0 0x20000>;
++	reset-gpios = <&gpio0 12 GPIO_ACTIVE_LOW>;
++
++	ports {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		port@0 {
++			reg = <0>;
++			label = "lan1";
++		};
++		port@1 {
++			reg = <1>;
++			label = "lan2";
++		};
++		port@2 {
++			reg = <2>;
++			label = "lan3";
++		};
++		port@3 {
++			reg = <3>;
++			label = "lan4";
++		};
++		vsc: port@6 {
++			reg = <6>;
++			label = "cpu";
++			ethernet = <&enet0>;
++			phy-mode = "rgmii";
++			fixed-link {
++				speed = <1000>;
++				full-duplex;
++				pause;
++			};
++		};
++	};
++
++};
 -- 
-Best Regards
- Guo Ren
+2.20.1
 
-ML: https://lore.kernel.org/linux-csky/
