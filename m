@@ -2,245 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 937985C088
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 17:45:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DCA1C5C098
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 17:46:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729824AbfGAPpY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 11:45:24 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:41222 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727373AbfGAPpX (ORCPT
+        id S1729910AbfGAPq1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 11:46:27 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:46688 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727373AbfGAPq1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 11:45:23 -0400
-Received: by mail-lf1-f67.google.com with SMTP id 136so9117106lfa.8
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2019 08:45:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ImGPcfrTaxEgEgkx65mt0ofrgVu0PRsPNy18Ds0mkaY=;
-        b=DJ3zwEyEiuc0ibdOqvlPD77n0POZywfOmkhuiKrjmpUkv/CUdB7OAvyi8F3WIrr9c7
-         1XJXiToXr0WVG76FIprtNBZJQ7Oosvjrx2NseXQUdzeXBJZB27n9fHUyYdCjMQeZEwhI
-         3pNdNprHm0a4E/6PNk0Jq2BUeph/Qyy4zcT4sF15duqYle1Vm8DzD6FtfD+P4cMRVRG8
-         VhTyZCy5xt1rJu5kcV/bE0bZrDYsRMnCEZpNp2sl5GhB3MkqcCQvZ8jL2wL/xKsp/bFx
-         volPESdFR5/agT5n5MRrBlXQxL1FFXCaqiVUhUgeBokXm2SqtZwROS/LfBtUavelQ+SO
-         c+FQ==
+        Mon, 1 Jul 2019 11:46:27 -0400
+Received: by mail-qt1-f196.google.com with SMTP id h21so15098885qtn.13;
+        Mon, 01 Jul 2019 08:46:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ImGPcfrTaxEgEgkx65mt0ofrgVu0PRsPNy18Ds0mkaY=;
-        b=CTKIFWVXZoxWd7JnKHrIka/EZCchkuimne9d1kcjsYLrkFqn1P3kbyj/+E18z/kvZJ
-         /DpMnIuUs8lmsw/qw5PyKZd+ynmm4s3PsiIL+Lym8QNXdj39JId9gDHxeGVVw58gGH5c
-         rZglGgQc9+KPIya4apgmMMFlbQRl0GYJhw7GU21gH71fQtGzJatWt75WW9mYTZB+IMu8
-         hKCwlw7bwpQLjy9g9aUwhp1B9uUljpGrij3nzPu0L9gyBBFJsPbKbdC8VnFc5afLRhyZ
-         wDd16l3nAKzPjcTtOT46VfNPgROMOjZIEbjzuWrw8lkPdzypIvt0Vlk5ZufXwZpceUCC
-         L2yw==
-X-Gm-Message-State: APjAAAVe9MMkXgqgdqM3v7XQAU7JRDoMuKbkKrxshcoCcuovOcEiGbrS
-        q51SV200ypZ6I/SCn7q4L/r+lA==
-X-Google-Smtp-Source: APXvYqzk0XOCZg21kyRORRVSjb0/8YorIcCUA+32A0b0dNQUMjDUYn6pNRk78iQwOuVc652c8JW+rg==
-X-Received: by 2002:ac2:4a6e:: with SMTP id q14mr12179312lfp.154.1561995921133;
-        Mon, 01 Jul 2019 08:45:21 -0700 (PDT)
-Received: from [192.168.27.209] ([37.157.136.206])
-        by smtp.googlemail.com with ESMTPSA id d4sm2609795lfi.91.2019.07.01.08.45.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 01 Jul 2019 08:45:20 -0700 (PDT)
-Subject: Re: [PATCH] media: venus: Update to bitrate based clock scaling
-To:     Aniket Masule <amasule@codeaurora.org>, linux-media@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        vgarodia@codeaurora.org
-References: <1561537416-2067-1-git-send-email-amasule@codeaurora.org>
- <1561537416-2067-2-git-send-email-amasule@codeaurora.org>
-From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <00818fe7-95e6-b43f-fca8-c4669ffad947@linaro.org>
-Date:   Mon, 1 Jul 2019 18:45:19 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=IE22YG1kj16IknP7QlS/hcyZEqytvttQhTXFYfXjkWQ=;
+        b=JZv1F4YqJtPhAD7h1ykGuxlrCeOge9AiDu+iifDTSfkTBPL9kwDIlLEOaExrExZwrE
+         JSJs7s8+5EgzIoiK7UyTazIW9rW6WTBdlDRZnm3PE1p9km7iuK73hiR15701RUATuIEB
+         KLtiG7rtw/x5UzvWSDKdtIb0ewbmE9kLZnB5sECj6FK6WEwEvzChCIryBB4isI7npzOB
+         Zs/wNt83u6acDh3kESPeEsrcTRpaopbJmYIL/9QI9HwzPfGjNXrFLgp4F3fwiuiwRwJr
+         xqP+AcLYwRI+Gy7GYgUmqoBiiCtTmQQnBaTCoSATMY6XiXco0EzACgfIfgQb3aNIXOlE
+         MtYQ==
+X-Gm-Message-State: APjAAAXjPrtR7lylTVSlV0b2BJU3ezushxf5jFtDMigAO05eaWo9zkxp
+        3jBo074Q6J/gkR+gyU7RM6+ZFBatK1hbvRSufY8=
+X-Google-Smtp-Source: APXvYqzhz6wel8eAmEo0Rl5DHwP4U2CGItmP91pzq58M0NTwxUCzkZGOsPaq9nefB0EZ4xIpLiX+rlXeAW8kLRBehXg=
+X-Received: by 2002:ac8:5311:: with SMTP id t17mr20545556qtn.304.1561995986128;
+ Mon, 01 Jul 2019 08:46:26 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1561537416-2067-2-git-send-email-amasule@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1561786601-19512-1-git-send-email-guoren@kernel.org>
+ <CAK8P3a0F5-wtJHbLvEwUXE8EnALMpQb5KeX4FK3S90Ce81oN-Q@mail.gmail.com> <CAJF2gTR7ooY=gxKW2zWK9MnuJ9YDm_1r6QTdJ=A=WqRDTuecRQ@mail.gmail.com>
+In-Reply-To: <CAJF2gTR7ooY=gxKW2zWK9MnuJ9YDm_1r6QTdJ=A=WqRDTuecRQ@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 1 Jul 2019 17:46:09 +0200
+Message-ID: <CAK8P3a1j+4u_xdP45rEX7H+m+ttd9AEjeL0ittRZjtKN5fApDw@mail.gmail.com>
+Subject: Re: [PATCH] csky: Improve abiv1 mem ops performance with glibc codes
+To:     Guo Ren <guoren@kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        linux-csky@vger.kernel.org, Guo Ren <ren_guo@c-sky.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Aniket,
+On Mon, Jul 1, 2019 at 5:26 PM Guo Ren <guoren@kernel.org> wrote:
+> On Mon, Jul 1, 2019 at 10:52 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> >
+> > On Sat, Jun 29, 2019 at 7:36 AM <guoren@kernel.org> wrote:
+> > >
+> > > From: Guo Ren <ren_guo@c-sky.com>
+> > >
+> > > These codes are copied from glibc/string directory, they are the generic
+> > > implementation for string operations. We may further optimize them with
+> > > assembly code in the future.
+> > >
+> > > In fact these code isn't tested enough for kernel, but we've tested them
+> > > on glibc and it seems good. We just trust them :)
+> >
+> > Are these files from the architecture independent portion of glibc or
+> > are they csky specific? If they are architecture independent, we might
+> > want to see if they make sense for other architectures as well, and
+> > add them to lib/ rather than arch/csky/lib/
+> They are just copied from glibc-2.28/string/*.c and they are generic.
+> OK, I'll try to add them to lib/.
 
-On 6/26/19 11:23 AM, Aniket Masule wrote:
-> Introduced clock scaling using bitrate, current
-> calculations consider only the cycles per mb.
-> Also, clock scaling is now triggered before every
-> buffer being queued to the device. This helps in
-> deciding precise clock cycles required.
-> 
-> Signed-off-by: Aniket Masule <amasule@codeaurora.org>
-> ---
->  drivers/media/platform/qcom/venus/core.c    | 16 +++++------
->  drivers/media/platform/qcom/venus/core.h    |  1 +
->  drivers/media/platform/qcom/venus/helpers.c | 43 +++++++++++++++++++++++++----
->  3 files changed, 47 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/media/platform/qcom/venus/core.c b/drivers/media/platform/qcom/venus/core.c
-> index f1597d6..ad6bb74 100644
-> --- a/drivers/media/platform/qcom/venus/core.c
-> +++ b/drivers/media/platform/qcom/venus/core.c
-> @@ -474,14 +474,14 @@ static __maybe_unused int venus_runtime_resume(struct device *dev)
->  };
->  
->  static struct codec_freq_data sdm845_codec_freq_data[] =  {
-> -	{ V4L2_PIX_FMT_H264, VIDC_SESSION_TYPE_ENC, 675 },
-> -	{ V4L2_PIX_FMT_HEVC, VIDC_SESSION_TYPE_ENC, 675 },
-> -	{ V4L2_PIX_FMT_VP8, VIDC_SESSION_TYPE_ENC, 675 },
-> -	{ V4L2_PIX_FMT_MPEG2, VIDC_SESSION_TYPE_DEC, 200 },
-> -	{ V4L2_PIX_FMT_H264, VIDC_SESSION_TYPE_DEC, 200 },
-> -	{ V4L2_PIX_FMT_HEVC, VIDC_SESSION_TYPE_DEC, 200 },
-> -	{ V4L2_PIX_FMT_VP8, VIDC_SESSION_TYPE_DEC, 200 },
-> -	{ V4L2_PIX_FMT_VP9, VIDC_SESSION_TYPE_DEC, 200 },
-> +	{ V4L2_PIX_FMT_H264, VIDC_SESSION_TYPE_ENC, 675, 10 },
-> +	{ V4L2_PIX_FMT_HEVC, VIDC_SESSION_TYPE_ENC, 675, 10 },
-> +	{ V4L2_PIX_FMT_VP8, VIDC_SESSION_TYPE_ENC, 675, 10 },
-> +	{ V4L2_PIX_FMT_MPEG2, VIDC_SESSION_TYPE_DEC, 200, 10 },
-> +	{ V4L2_PIX_FMT_H264, VIDC_SESSION_TYPE_DEC, 200, 10 },
-> +	{ V4L2_PIX_FMT_HEVC, VIDC_SESSION_TYPE_DEC, 200, 10 },
-> +	{ V4L2_PIX_FMT_VP8, VIDC_SESSION_TYPE_DEC, 200, 10 },
-> +	{ V4L2_PIX_FMT_VP9, VIDC_SESSION_TYPE_DEC, 200, 10 },
->  };
->  
->  static const struct venus_resources sdm845_res = {
-> diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
-> index 2ed6496..b964b7c 100644
-> --- a/drivers/media/platform/qcom/venus/core.h
-> +++ b/drivers/media/platform/qcom/venus/core.h
-> @@ -39,6 +39,7 @@ struct codec_freq_data {
->  	u32 pixfmt;
->  	u32 session_type;
->  	unsigned int vpp_freq;
-> +	unsigned int vsp_freq;
+Ok. Note that lib/string.c contains very basic versions of these already,
+so please see which of the functions you have actually make a
+difference in practice over those (if you haven't done that already).
 
-unsigned long?
+Otherwise you can probably follow the example of the libgcc functions
+in lib/ashldi3.c etc: add a Kconfig symbol like CONFIG_GENERIC_LIB_ASHLDI3
+for each function you had, put the glibc version into a new file, and allow
+architectures to select them individually, which in turn should
+replace the version from lib/string.c.
 
->  };
->  
->  struct venus_resources {
-> diff --git a/drivers/media/platform/qcom/venus/helpers.c b/drivers/media/platform/qcom/venus/helpers.c
-> index ef35fd8..634778a 100644
-> --- a/drivers/media/platform/qcom/venus/helpers.c
-> +++ b/drivers/media/platform/qcom/venus/helpers.c
-> @@ -379,6 +379,9 @@ static int scale_clocks(struct venus_inst *inst)
->  	unsigned int i;
->  	int ret;
->  
-> +	if (inst->state == INST_START)
-> +		return 0;
-
-This condition is related (probably) to the change in
-venus_helper_vb2_buf_queue() but shouldn't it be copied in
-scale_clocks_v4 too?
-
-> +
->  	mbs_per_sec = load_per_type(core, VIDC_SESSION_TYPE_ENC) +
->  		      load_per_type(core, VIDC_SESSION_TYPE_DEC);
->  
-> @@ -418,17 +421,26 @@ static int scale_clocks(struct venus_inst *inst)
->  	return ret;
->  }
->  
-> -static unsigned long calculate_vpp_freq(struct venus_inst *inst)
-> +static unsigned long calculate_inst_freq(struct venus_inst *inst,
-> +					 unsigned long filled_len)
->  {
-> -	unsigned long vpp_freq = 0;
-> +	unsigned long vpp_freq = 0, vsp_freq = 0;
-> +	u64 fps = inst->fps;
->  	u32 mbs_per_sec;
->  
->  	mbs_per_sec = load_per_instance(inst);
->  	vpp_freq = mbs_per_sec * inst->clk_data.codec_freq_data->vpp_freq;
->  	/* 21 / 20 is overhead factor */
->  	vpp_freq += vpp_freq / 20;
-> +	vsp_freq = mbs_per_sec * inst->clk_data.codec_freq_data->vsp_freq;
-
-this calculation is not used below. Is that intentional?
-
-> +
-> +	/* 10 / 7 is overhead factor */
-> +	if (inst->session_type == VIDC_SESSION_TYPE_ENC)
-> +		vsp_freq = (inst->controls.enc.bitrate * 10) / 7;
-> +	else
-> +		vsp_freq = ((fps * filled_len * 8) * 10) / 7;
->  
-> -	return vpp_freq;
-> +	return max(vpp_freq, vsp_freq);
->  }
->  
->  static int scale_clocks_v4(struct venus_inst *inst)
-> @@ -436,14 +448,30 @@ static int scale_clocks_v4(struct venus_inst *inst)
->  	struct venus_core *core = inst->core;
->  	const struct freq_tbl *table = core->res->freq_tbl;
->  	unsigned int num_rows = core->res->freq_tbl_size;
-> -
-> +	struct v4l2_m2m_ctx *m2m_ctx = inst->m2m_ctx;
->  	struct clk *clk = core->clks[0];
->  	struct device *dev = core->dev;
-> +
-
-drop this addition of blank line.
-
->  	unsigned int i;
->  	unsigned long freq = 0, freq_core0 = 0, freq_core1 = 0;
-> +	unsigned long filled_len = 0;
-> +	struct venus_buffer *buf, *n;
-> +	struct vb2_buffer *vb;
->  	int ret;
->  
-> -	freq = calculate_vpp_freq(inst);
-> +	mutex_lock(&inst->lock);
-> +	v4l2_m2m_for_each_src_buf_safe(m2m_ctx, buf, n) {
-> +		vb = &buf->vb.vb2_buf;
-> +		filled_len = max(filled_len, vb2_get_plane_payload(vb, 0));
-> +	}
-> +	mutex_unlock(&inst->lock);
-> +
-> +	if (inst->session_type == VIDC_SESSION_TYPE_DEC && !filled_len) {
-> +		dev_dbg(dev, "%s: No input to the session\n", __func__);
-
-please drop this debug message, if the user pushes empty buffers
-something will blow up earlier.
-
-> +		return 0;
-> +	}
-> +
-> +	freq = calculate_inst_freq(inst, filled_len);
->  
->  	if (freq > table[0].freq)
->  		goto err;
-> @@ -471,6 +499,9 @@ static int scale_clocks_v4(struct venus_inst *inst)
->  
->  	freq = max(freq_core0, freq_core1);
->  
-> +	if (clk_get_rate(clk) == freq)
-> +		return 0;
-> +
-
-above check is included in clk_set_rate(), you don't need it.
-
->  	ret = clk_set_rate(clk, freq);
->  	if (ret)
->  		goto err;
-> @@ -1150,6 +1181,8 @@ void venus_helper_vb2_buf_queue(struct vb2_buffer *vb)
->  	if (ret)
->  		goto unlock;
->  
-> +	load_scale_clocks(inst);
-> +
->  	ret = session_process_buf(inst, vbuf);
->  	if (ret)
->  		return_buf_error(inst, vbuf);
-> 
-
--- 
-regards,
-Stan
+       Arnd
