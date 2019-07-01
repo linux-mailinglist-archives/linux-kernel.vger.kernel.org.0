@@ -2,86 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BEFE5B75D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 10:59:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39C4B5B767
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 11:03:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728241AbfGAI7X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 04:59:23 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43756 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728236AbfGAI7X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 04:59:23 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 297ADAD2A;
-        Mon,  1 Jul 2019 08:59:22 +0000 (UTC)
-Date:   Mon, 1 Jul 2019 09:59:20 +0100
-From:   Mel Gorman <mgorman@suse.de>
-To:     Mike Kravetz <mike.kravetz@oracle.com>
-Cc:     Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [Question] Should direct reclaim time be bounded?
-Message-ID: <20190701085920.GB2812@suse.de>
-References: <d38a095e-dc39-7e82-bb76-2c9247929f07@oracle.com>
- <20190423071953.GC25106@dhcp22.suse.cz>
- <eac582cf-2f76-4da1-1127-6bb5c8c959e4@oracle.com>
- <04329fea-cd34-4107-d1d4-b2098ebab0ec@suse.cz>
- <dede2f84-90bf-347a-2a17-fb6b521bf573@oracle.com>
+        id S1728274AbfGAJDL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 05:03:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44138 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728262AbfGAJDL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Jul 2019 05:03:11 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D35E5208E4;
+        Mon,  1 Jul 2019 09:03:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561971790;
+        bh=4hVp4xkK7D3D4jFp35USuOqD5Kwe0mKGVAbEGPSmMHQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=EAeCMilwrbgWlQ9VdGd/VFq5E6A2azOPs0YEfMxliSdxVSEsc1a4pnQ01gquawRad
+         86uNeM943piRDRAyCIUirJbbzBv8QYGmdVtVsBLgNw0cbmR10MfZc0lu9dKIdHc7xm
+         9TKGhPlY87WRIRTcbF1Ku17WH3QC1ClRIbIHSTDk=
+Date:   Mon, 1 Jul 2019 11:00:18 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Chanwoo Choi <cw00.choi@samsung.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Chanwoo Choi (chanwoo@kernel.org)" <chanwoo@kernel.org>,
+        =?utf-8?B?7ZWo66qF7KO8?= <myungjoo.ham@samsung.com>
+Subject: Re: [GIT PULL] extcon next for v5.3
+Message-ID: <20190701090018.GB11465@kroah.com>
+References: <CGME20190628013007epcas1p405af6ef75a8164072459694c2b17385a@epcas1p4.samsung.com>
+ <d312e5b6-3faf-ad5e-fc2e-c6f8b09ea9ec@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <dede2f84-90bf-347a-2a17-fb6b521bf573@oracle.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <d312e5b6-3faf-ad5e-fc2e-c6f8b09ea9ec@samsung.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 28, 2019 at 11:20:42AM -0700, Mike Kravetz wrote:
-> On 4/24/19 7:35 AM, Vlastimil Babka wrote:
-> > On 4/23/19 6:39 PM, Mike Kravetz wrote:
-> >>> That being said, I do not think __GFP_RETRY_MAYFAIL is wrong here. It
-> >>> looks like there is something wrong in the reclaim going on.
-> >>
-> >> Ok, I will start digging into that.  Just wanted to make sure before I got
-> >> into it too deep.
-> >>
-> >> BTW - This is very easy to reproduce.  Just try to allocate more huge pages
-> >> than will fit into memory.  I see this 'reclaim taking forever' behavior on
-> >> v5.1-rc5-mmotm-2019-04-19-14-53.  Looks like it was there in v5.0 as well.
-> > 
-> > I'd suspect this in should_continue_reclaim():
-> > 
-> >         /* Consider stopping depending on scan and reclaim activity */
-> >         if (sc->gfp_mask & __GFP_RETRY_MAYFAIL) {
-> >                 /*
-> >                  * For __GFP_RETRY_MAYFAIL allocations, stop reclaiming if the
-> >                  * full LRU list has been scanned and we are still failing
-> >                  * to reclaim pages. This full LRU scan is potentially
-> >                  * expensive but a __GFP_RETRY_MAYFAIL caller really wants to succeed
-> >                  */
-> >                 if (!nr_reclaimed && !nr_scanned)
-> >                         return false;
-> > 
-> > And that for some reason, nr_scanned never becomes zero. But it's hard
-> > to figure out through all the layers of functions :/
+On Fri, Jun 28, 2019 at 10:32:45AM +0900, Chanwoo Choi wrote:
+> Dear Greg,
 > 
-> I got back to looking into the direct reclaim/compaction stalls when
-> trying to allocate huge pages.  As previously mentioned, the code is
-> looping for a long time in shrink_node().  The routine
-> should_continue_reclaim() returns true perhaps more often than it should.
+> This is extcon-next pull request for v5.3. I add detailed description of
+> this pull request on below. Please pull extcon with following updates.
 > 
-> As Vlastmil guessed, my debug code output below shows nr_scanned is remaining
-> non-zero for quite a while.  This was on v5.2-rc6.
+> [Detailed description for this pull request]
+> 1. Add new extcon-fsa9480 extcon provider driver
+> - It is extcon provider driver for Fairchild Semiconductor
+> FSA9480 microUSB switch and accessory detector chip which
+> detects the kind of external connector like usb, charger,
+> audio, video and so on.
 > 
+> 2.
+> - Add the exception handling code for extcon-arizona.c
+> when using the regmap interface.
 
-I think it would be reasonable to have should_continue_reclaim allow an
-exit if scanning at higher priority than DEF_PRIORITY - 2, nr_scanned is
-less than SWAP_CLUSTER_MAX and no pages are being reclaimed.
+Pulled and pushed out, thanks.
 
--- 
-Mel Gorman
-SUSE Labs
+greg k-h
