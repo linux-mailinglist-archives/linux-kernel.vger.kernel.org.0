@@ -2,63 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 745905B558
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 08:53:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C14495B56B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 08:56:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727661AbfGAGxp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 02:53:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44352 "EHLO mail.kernel.org"
+        id S1727481AbfGAG44 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 02:56:56 -0400
+Received: from verein.lst.de ([213.95.11.211]:58764 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726402AbfGAGxo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 02:53:44 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B506620663;
-        Mon,  1 Jul 2019 06:53:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561964024;
-        bh=odWFKN/v6uhJ1wZgS3JZoIz8uAE4V7d8K7ikdqDiizc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=bDDq4nK31Qe0QMmIlQI0ShcHdCjqdzm2mx4JIVE/ppBqGuyh9NzvE56GHJhk7KJqp
-         t//eppnFnh4OXVqSzagqK33KHVX4SthEFLRyAjwQIYLIfUmzhFZN9Rta3qB+SV+Zoh
-         RPcO8tIzb7NafFAFQr53YaL1bcJ/14X/QnLmBLGY=
-Date:   Mon, 1 Jul 2019 08:53:41 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Hariprasad Kelam <hariprasad.kelam@gmail.com>
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/10] staging/rtl8723bs/hal: fix comparison to
- true/false is error prone
-Message-ID: <20190701065341.GA2481@kroah.com>
-References: <20190629101909.GA14880@hari-Inspiron-1545>
+        id S1725798AbfGAG4z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Jul 2019 02:56:55 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 7147E68B20; Mon,  1 Jul 2019 08:56:54 +0200 (CEST)
+Date:   Mon, 1 Jul 2019 08:56:54 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Palmer Dabbelt <palmer@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>
+Cc:     linux-mm@kvack.org, Damien Le Moal <damien.lemoal@wdc.com>,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: RISC-V nommu support v2
+Message-ID: <20190701065654.GA21117@lst.de>
+References: <20190624054311.30256-1-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190629101909.GA14880@hari-Inspiron-1545>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190624054311.30256-1-hch@lst.de>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 29, 2019 at 03:49:09PM +0530, Hariprasad Kelam wrote:
-> fix below issues reported by checkpatch
+Palmer, Paul,
+
+any comments?  Let me know if you think it is too late for 5.3
+for the full series, then I can at least feed the mm bits to
+Andrew.
+
+On Mon, Jun 24, 2019 at 07:42:54AM +0200, Christoph Hellwig wrote:
+> Hi all,
 > 
-> CHECK: Using comparison to false is error prone
-> CHECK: Using comparison to true is error prone
+> below is a series to support nommu mode on RISC-V.  For now this series
+> just works under qemu with the qemu-virt platform, but Damien has also
+> been able to get kernel based on this tree with additional driver hacks
+> to work on the Kendryte KD210, but that will take a while to cleanup
+> an upstream.
 > 
-> Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
-> ---
->  drivers/staging/rtl8723bs/hal/hal_intf.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-
-As Dan said, you sent 10 patches with the same subject, so I can't take
-these.
-
-Also, please properly "thread" the patches so they show up linked to
-each other.  git send-email will do this automatically for you if you
-use it (and you should) for multiple emails.
-
-thanks,
-
-greg k-h
+> To be useful this series also require the RISC-V binfmt_flat support,
+> which I've sent out separately.
+> 
+> A branch that includes this series and the binfmt_flat support is
+> available here:
+> 
+>     git://git.infradead.org/users/hch/riscv.git riscv-nommu.2
+> 
+> Gitweb:
+> 
+>     http://git.infradead.org/users/hch/riscv.git/shortlog/refs/heads/riscv-nommu.2
+> 
+> I've also pushed out a builtroot branch that can build a RISC-V nommu
+> root filesystem here:
+> 
+>    git://git.infradead.org/users/hch/buildroot.git riscv-nommu.2
+> 
+> Gitweb:
+> 
+>    http://git.infradead.org/users/hch/buildroot.git/shortlog/refs/heads/riscv-nommu.2
+> 
+> Changes since v1:
+>  - fixes so that a kernel with this series still work on builds with an
+>    IOMMU
+>  - small clint cleanups
+>  - the binfmt_flat base and buildroot now don't put arguments on the stack
+> 
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
+---end quoted text---
