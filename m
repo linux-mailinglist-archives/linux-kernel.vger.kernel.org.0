@@ -2,96 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C4175C224
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 19:41:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DC9E5C22F
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 19:43:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728955AbfGARlZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 13:41:25 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:46441 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727130AbfGARlY (ORCPT
+        id S1729541AbfGARnk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 13:43:40 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:44887 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727130AbfGARnk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 13:41:24 -0400
-Received: by mail-pl1-f195.google.com with SMTP id e5so7681574pls.13;
-        Mon, 01 Jul 2019 10:41:24 -0700 (PDT)
+        Mon, 1 Jul 2019 13:43:40 -0400
+Received: by mail-pf1-f196.google.com with SMTP id t16so6906580pfe.11;
+        Mon, 01 Jul 2019 10:43:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=qfHKa8BqHMDnuFbtDUNFkRDEdtrHApiPbbm6bpwlG/o=;
-        b=RSKsvOp5BZsE7wrDhSLHlO1ODKoS6O6Lzkil/k/T3EZ/DWonCVjfd1ALSgqEOk4kYV
-         K4rl5RR2zsO0GC95uXYX4vXzZ7w2+Dl9MIcPP4BOXTpWXoZY0gcxsoG9zjlriucRe7Wf
-         /BnPIarTgdRQLcnaJ7RakOLhBcV36Q/6INxvmvUUIKVNsuKWfE1fCjGsEOwf+jpcNJET
-         rxNUaMShvRv2XJyyd/ibb6N9U+sLPI9oAg9TZClEvnqi/NyPbE08JgSEN8HoJh6OtEvW
-         ajeZ+5Tyk6AQrmw7YcFqprNbCGBwzUNW/lUtvwaOpqK/7BGjZjz2tlMHgry9qMWVtAwW
-         bU9A==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=HhNv+wbN0VpJBBUB5um1iIUQWl9GFxBZ8169m9nMh1Q=;
+        b=QnUrJklGkONB4oUCSDM4a5/B9AjR3Ueaf5s+tdYxalrXDIZ0GhwPNWh42efZy+I5Xn
+         92xwnF53ODnXP+9sgmpHBhOOjpqV26b7+42ZRPRk6xmPRdVvaelDyd3gdjMqsdRq/vVa
+         8YXYcTOWru/z0aXw/rgdkrtxHNhCM+U+r4yigeD0tzmNZQ3ULfNBd8aAMi0i3695b5nT
+         F1HwO7xsHq4XhurMKHyvX1NEG99wq6nwqu60ustJ17VW/xG90UOMVfp7Ho4LClGJSQ0Z
+         QXENjnc9l7y8HixsJptV+PVZ60bswk6qfv+VYe/owAsnVnEH+PPu3khpsm9JBrEGafVn
+         zoAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=qfHKa8BqHMDnuFbtDUNFkRDEdtrHApiPbbm6bpwlG/o=;
-        b=TJEZ/WZrj3VNQhHh5uzJh9trrJX/xr7FmhbEA71LrIxGJ6euALE4MhAWn3vKuhX03x
-         Hb8/k/UjWwR5a19gBJKWph7anpH+ks1CXAqGhmMMKOQLXgqkSMpBjrIPvv08cISrbzdk
-         CamlegasqFarrKLPNdKIwBTu6eNVdLdj6jpUlUDdvzvw2FMzvL1KsLA8KrV9JAvlB+rg
-         B9Hs0cQ9bU49laeOrl55T3q+j9g/WdRh/ZcGW2RaBYNDBs9NeEYxvyfPaI//h9Ak/0gJ
-         vlNsrgoMq7UjKlD3TCGh+5H+TSNgeAvArNb45sdZhmsipP0q7SUuLsYiRrW1ce78/f+J
-         q1aw==
-X-Gm-Message-State: APjAAAUvDFyG+eD6JeVPCYXhCxOei4Hb35P1SHbC5l3z8ryoyAbneVQg
-        HzEz815P6Sb+/RMUiMDJlXI=
-X-Google-Smtp-Source: APXvYqz8f+1e+Yn1edBsyRWCJm32Uaij3RqX4JbIUWQYMT+4dYhjokw9dsiuZuKXqpw2baJNUbv65A==
-X-Received: by 2002:a17:902:6ac6:: with SMTP id i6mr30312230plt.233.1562002884230;
-        Mon, 01 Jul 2019 10:41:24 -0700 (PDT)
-Received: from aw-bldr-10.qualcomm.com (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id s17sm166650pjp.7.2019.07.01.10.41.23
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=HhNv+wbN0VpJBBUB5um1iIUQWl9GFxBZ8169m9nMh1Q=;
+        b=Pdwqst5IZUyB/qj30WXsKnaUB/5QzOyk8QJHuNpdKn4YQ8UpDpNnNvLC8zHV7tGqOY
+         M1HDgbxTyHMYbyNyqCIHSyawl0DAKcxgX2EjCqe6/2g4VMrTTZT4ZN2CH6cWXvv6P91/
+         sybdsdIgFvHfrsLN01iyq5Jl5O2hSIz2eW6pgKlmfzkeuqXgx+jYlpuOMR15TaxiowFQ
+         SrT/KA0UvRTjH+iTlVb8wAiVrIgsUsFfUnOKwvRLG3Vso6xH03bc4EXbzej3AoK7895r
+         jPOcdEU8TUaTb82xKtFF430re9gUbFAKQ9AAw9sbya3fv/5kvPw9NaBBNoDM9zVAD4db
+         g2gQ==
+X-Gm-Message-State: APjAAAX3a5DjOCuZtpe2B3dUpnfS0c0ZXmAA362UQs/J19OYJ3ryxCx2
+        AMfl+N1YGdP9ma/sspyni6Y=
+X-Google-Smtp-Source: APXvYqyplVhpDW5rDBLRdETRKZqEF+2npSCxstRykGDoDFKPjD1Lu6ZctfD97RsU9C2mhJ/QiLiPig==
+X-Received: by 2002:a17:90a:2008:: with SMTP id n8mr536465pjc.4.1562003019392;
+        Mon, 01 Jul 2019 10:43:39 -0700 (PDT)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id x1sm182418pjo.4.2019.07.01.10.43.37
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 01 Jul 2019 10:41:23 -0700 (PDT)
-From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-To:     robdclark@gmail.com, sean@poorly.run, airlied@linux.ie,
-        daniel@ffwll.ch
-Cc:     bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Subject: [PATCH] drm/msm/mdp5: Use eariler mixers when possible
-Date:   Mon,  1 Jul 2019 10:41:20 -0700
-Message-Id: <20190701174120.15551-1-jeffrey.l.hugo@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 01 Jul 2019 10:43:38 -0700 (PDT)
+Date:   Mon, 1 Jul 2019 10:43:37 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>, linux-mips@vger.kernel.org,
+        linux-sh@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] sh: stub out pud_page
+Message-ID: <20190701174336.GA24848@roeck-us.net>
+References: <20190701151818.32227-1-hch@lst.de>
+ <20190701151818.32227-2-hch@lst.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190701151818.32227-2-hch@lst.de>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When assigning a mixer, we will iterate through the entire list looking for
-a suitable match.  This results in selecting the last match.  We should
-stop at the first match, since lower numbered mixers will typically have
-more capabilities, and are likely to be what the bootloader used, if we
-are looking to reuse the bootloader config in future.
+On Mon, Jul 01, 2019 at 05:18:17PM +0200, Christoph Hellwig wrote:
+> There wasn't any actual need to add a real pud_page, as pud_huge
+> always returns false on sh.  Just stub it out to fix the sh3
+> compile failure.
+> 
+> Fixes: 937b4e1d6471 ("sh: add the missing pud_page definition")
+> Reported-by: Guenter Roeck <linux@roeck-us.net>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
----
- drivers/gpu/drm/msm/disp/mdp5/mdp5_mixer.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+Tested-by: Guenter Roeck <linux@roeck-us.net>
 
-diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_mixer.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_mixer.c
-index 954db683ae44..1638042ad974 100644
---- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_mixer.c
-+++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_mixer.c
-@@ -96,6 +96,17 @@ int mdp5_mixer_assign(struct drm_atomic_state *s, struct drm_crtc *crtc,
- 		 */
- 		if (!(*mixer) || cur->caps & MDP_LM_CAP_PAIR)
- 			*mixer = cur;
-+
-+		/*
-+		 * We have everything we could want, exit early.
-+		 * We have a valid mixer, that mixer pairs with another if we
-+		 * need that ability in future, and we have a right mixer if
-+		 * needed.
-+		 * Later LMs could be less optimal
-+		 */
-+		if (*mixer && (*mixer)->caps & MDP_LM_CAP_PAIR &&
-+		    ((r_mixer && *r_mixer) || !r_mixer))
-+			break;
- 	}
- 
- 	if (!(*mixer))
--- 
-2.17.1
-
+> ---
+>  arch/sh/include/asm/pgtable-3level.h | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/sh/include/asm/pgtable-3level.h b/arch/sh/include/asm/pgtable-3level.h
+> index 3c7ff20f3f94..779260b721ca 100644
+> --- a/arch/sh/include/asm/pgtable-3level.h
+> +++ b/arch/sh/include/asm/pgtable-3level.h
+> @@ -37,7 +37,9 @@ static inline unsigned long pud_page_vaddr(pud_t pud)
+>  {
+>  	return pud_val(pud);
+>  }
+> -#define pud_page(pud)		pfn_to_page(pud_pfn(pud))
+> +
+> +/* only used by the stubbed out hugetlb gup code, should never be called */
+> +#define pud_page(pud)		NULL
+>  
+>  #define pmd_index(address)	(((address) >> PMD_SHIFT) & (PTRS_PER_PMD-1))
+>  static inline pmd_t *pmd_offset(pud_t *pud, unsigned long address)
+> -- 
+> 2.20.1
+> 
