@@ -2,69 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBC1F5BD95
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 16:05:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 099885BD9B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 16:06:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729346AbfGAOFN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 10:05:13 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:35486 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729294AbfGAOFN (ORCPT
+        id S1729359AbfGAOGI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 10:06:08 -0400
+Received: from mail-vk1-f196.google.com ([209.85.221.196]:37349 "EHLO
+        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729271AbfGAOGI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 10:05:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=SotD5xDKU4tAQXDc312orTzyiKC6J1IO6NGGg0le4bM=; b=WtVTo9Em9Pu8gmifFDUAIT37b
-        vcWRO1Kssa1aPIOcf/s/1IwKqmzznPjIajojzRLdV7Usylbqe6kxR3S6FZG4KxQdWxSxs7n+AK4lK
-        1E1+KTlvd35g37f9qOh37+gtYxwOu79XifNjm7TRzoe9KptSYlo2A0X0vurGj5D85zn75ffm+lLlt
-        enza0nWDc4d6eU61HQDPd5FrcVZdCAl53MUU6OV0libZZA51syAu8S21ixjyYSZcDjYMoug3qnKvE
-        ICrIJSnP7quBALtKcZlt8zDeR/L2Hl+Bh4yMT37J7mMhqDaXa6QTzXFRrlQlJqW6uxzA5pJ8KZl7J
-        Etk0Tv9xQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hhwv7-0008G4-L9; Mon, 01 Jul 2019 14:04:37 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 84A2A209C957E; Mon,  1 Jul 2019 16:04:34 +0200 (CEST)
-Date:   Mon, 1 Jul 2019 16:04:34 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Patrick Bellasi <patrick.bellasi@arm.com>
-Cc:     subhra mazumdar <subhra.mazumdar@oracle.com>,
-        linux-kernel@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
-        steven.sistare@oracle.com, dhaval.giani@oracle.com,
-        daniel.lezcano@linaro.org, vincent.guittot@linaro.org,
-        viresh.kumar@linaro.org, tim.c.chen@linux.intel.com,
-        mgorman@techsingularity.net, Paul Turner <pjt@google.com>,
-        riel@surriel.com, morten.rasmussen@arm.com
-Subject: Re: [RESEND PATCH v3 0/7] Improve scheduler scalability for fast path
-Message-ID: <20190701140434.GW3402@hirez.programming.kicks-ass.net>
-References: <20190627012919.4341-1-subhra.mazumdar@oracle.com>
- <20190701090204.GQ3402@hirez.programming.kicks-ass.net>
- <20190701135552.kb4os6bxxhh2lyw6@e110439-lin>
+        Mon, 1 Jul 2019 10:06:08 -0400
+Received: by mail-vk1-f196.google.com with SMTP id 9so2717924vkw.4
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2019 07:06:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=FmGHNpejQ29nIiQ+vBc6/ce+Q7SqcsDKzIUla6egsaM=;
+        b=jQcIAX7ovXCm2PAROddSKMKAfUcZRUl+wkj3yOBz8qY9MA5S/MdJL1xqmUqiVBbm3P
+         eYrlAuuSxt7X4RWrcbwvPt7girrjapOxm5VWXPIe1ccNpWFH5XZXal+c7oZsJBPNTqvw
+         ZR9+YgkyDjmC+3G+vNbplp5G8cxdvpEZJzWf+nI+FcK2Bd3OGkRlrl1gBkPwZNAl+npt
+         zJAe/TEWXi3IEtqSo6viN0mb0lTdcEFNU7MW0Xdw3+cm6dktFBzGQoK09wFYohLl/AGp
+         ArIa8FUjTKPmo27ZK+JAq3DdnZ1qW9Ec636VczdrDpesN9rBK9e6qnqTm75xk1A022VV
+         leow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=FmGHNpejQ29nIiQ+vBc6/ce+Q7SqcsDKzIUla6egsaM=;
+        b=jrOtyQHNt0jPvNFjVs/PXRvHr5VWJPzvNZYcXCwCmrcyN6xG8LmvO22G9Fk4YwieJP
+         Ty3CmHUdUCk5/5kFbBdGhgFlYrko92ANkcWBJI6swEGHu7EiUWe4JT24zPnCk6AtxJb6
+         jODycvZUFMFSX7Hb4fRM6T19rsnMoENn9usv1j8hpRs+QLKT+5QIddC8zFByNPlQlb+K
+         9WwUrDFJcDpSkBAADsso4evCdI1Hmi1XWhCt26OQ8at/m60o1vcJOPMFAtYVQm9xDIdo
+         4B+uPuzoOmg0Amgl+8lD7riD5b/gpPecp9ph3GVCPM3zTjWQGGwL2pwfRPAMeGEsYH4v
+         5LNQ==
+X-Gm-Message-State: APjAAAV9rNuHlBRpDKfQ8FC61JxVzJhsSJHgx60MvdSWbdJB3YnEtbqZ
+        TD91JVTNuuVXdFHqEgvLhSi8qKOM/qECIFycM14=
+X-Google-Smtp-Source: APXvYqxjWfJZwz+bCdTsv9lyKPDeoHyJsQBHsiJd5hA87f0SaUvcAPteIXGI39oZIpuUR8Nd+Ta4oVBLYMPhn/LGF1g=
+X-Received: by 2002:a1f:ab04:: with SMTP id u4mr2637744vke.40.1561989967006;
+ Mon, 01 Jul 2019 07:06:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190701135552.kb4os6bxxhh2lyw6@e110439-lin>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a67:2d56:0:0:0:0:0 with HTTP; Mon, 1 Jul 2019 07:06:06 -0700 (PDT)
+From:   serge amidal <amidalserge1@gmail.com>
+Date:   Mon, 1 Jul 2019 15:06:06 +0100
+Message-ID: <CA+1711h4dv+8p0RjMiZNJbESEzta2t5aUSqsvwTTMr9m6pGMng@mail.gmail.com>
+Subject: confiance
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 01, 2019 at 02:55:52PM +0100, Patrick Bellasi wrote:
-> On 01-Jul 11:02, Peter Zijlstra wrote:
-
-> > Some of the things we could tie to this would be:
-> > 
-> >   - select_idle_siblings; -nice would scan more than +nice,
-> 
-> Just to be sure, you are not proposing to use the nice value we
-> already have, i.e.
->   p->{static,normal}_prio
-> but instead a new similar concept, right?
-
-Correct; a new sched_attr::sched_latency_nice value, which is like
-sched_nice, but controls a different dimmension of behaviour.
+Hello
+ I need your urgent assistance in the transfer of an abandoned funds
+on your account within 10-14 days if you are interested, respond to me
+with your information for more details. your name and surname:-. your
+country:-. your phone number. :- .
+ Please respond to this email address (sergeamidal@gmail.com)
+ Best regards Amidal
