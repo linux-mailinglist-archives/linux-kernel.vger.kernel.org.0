@@ -2,75 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 951865C2C4
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 20:20:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3112D5C2CF
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 20:20:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727199AbfGASUM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 14:20:12 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:37431 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725853AbfGASUL (ORCPT
+        id S1727280AbfGASUi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 14:20:38 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:42723 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727255AbfGASUi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 14:20:11 -0400
-Received: by mail-io1-f68.google.com with SMTP id e5so30987042iok.4;
-        Mon, 01 Jul 2019 11:20:11 -0700 (PDT)
+        Mon, 1 Jul 2019 14:20:38 -0400
+Received: by mail-pl1-f195.google.com with SMTP id ay6so7716151plb.9;
+        Mon, 01 Jul 2019 11:20:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=hsjfJFtXIc876oA6kbyjhF6TaAGhe5n/zUVcDCGFCBA=;
-        b=MbbSSbaZuJ4ZksgU1YmbHop1HrlARCU+BRELQFsae+Da/z+8Cyk8LOHDXiBrbcc0I2
-         xdJphRwekKsFouuPzwmXTQrtGeDleRLUDeoDuGhuOJ3uFZg1W+nW4WKrXXnMOjGY8NVU
-         59u07k+5rq9mLpNc9P5JkESuM/px1EImjv/EiGLh5qZcMtsEZXfrKZzq3t2cZU0aooEx
-         bflZlMadd45a1vyhdL6hFe8RHwpfBSga1FwCevz7bXCgTPMLKA3qEE31+85rZdzLOal0
-         w1lcZyxKGEFzCo5KoIq0F4eL4tX4v1nmEiQTGEBsPFg2k/VQrM7Va67Y/vTubuzV6RuC
-         0qug==
+        h=date:from:to:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=xv1X++7+CI+KR+tJVwJzAPl/RmtdeOQuhyVLw8iciNU=;
+        b=DH6GkKqOT5YLbrfoJIxW4QbU0VIhZpjq3lUNJkf3qYJHheK+Qw3FFiHXqqj/QObvjI
+         ymZ8SAbIPtGCmSfLr92WLx+ve5/g1+HQmanI0flHh5YVfZWkdw77ZdB1lnVkodbJZIyo
+         Q65JksjK0jc21mhT4hheYRLD0y9LU+cSxSnXTFQKx9uteHPsGPZ6iT+Ncdc5QKRw23mN
+         O+BDoQV9YhR81uKWlVuVWrpkmW+myvwc87eRSDC5yRfk5a7yrgc4d8Y6W6T0eCPWJGL/
+         pLuwYMkeS+74LrUzoI65KO0UwyN6sjQtTYWKkL8QxDojJfjaHOcslgma1dqG4qykDHJ9
+         g7eg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=hsjfJFtXIc876oA6kbyjhF6TaAGhe5n/zUVcDCGFCBA=;
-        b=cL6OEQVRBKpTxfCBIiZCxgQf4boHJiOInTmW+6jn8OpED5WWQcFx3I+JE9wcBpy1UL
-         VFZDbugM/9g9yjEeKf/iiDTY78b3WT66RIcXFdKH0xWAmhFHGG1Dk0htc61tRvd/JQZT
-         /j5Z0+6XeI6sD0o3i8Y92/GlQuCxzzYOtcvj0BEWwXvhw2x3wijsM6uEeP7Q+nA1iWqt
-         2DK+fv1F//r4M69Fs4yacVlcEYkMkXZJUofeRcWdBz31SSm/kErYH2TS3kWQ1vHIO20n
-         mDv4YtxIW3d7c3b7R4DseAuxvA3D3+k8+OYB+ui0ByzcAfX+llebohNn4xYpEr0Tl85u
-         ybUg==
-X-Gm-Message-State: APjAAAX0w/OQbCs0IXiTGia4QYHsTfwdEeGZNbxgOMifAoJz7qrfRGt8
-        sz5lNnqNGQVUxsJuZ51v4xk=
-X-Google-Smtp-Source: APXvYqw3Din4wvxfk4QaVEIEM27/5WZC4/u2nLVeZAhuBD6dLmBFItt4JO4en3d51uvHf+IEXQDZBw==
-X-Received: by 2002:a5e:c241:: with SMTP id w1mr6151368iop.58.1562005210771;
-        Mon, 01 Jul 2019 11:20:10 -0700 (PDT)
-Received: from ?IPv6:2601:282:800:fd80:f191:fe61:9293:d1ca? ([2601:282:800:fd80:f191:fe61:9293:d1ca])
-        by smtp.googlemail.com with ESMTPSA id j23sm12048683ioo.6.2019.07.01.11.20.09
+        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=xv1X++7+CI+KR+tJVwJzAPl/RmtdeOQuhyVLw8iciNU=;
+        b=PD+W61gbhA99X2kDeDJ3DWO4qc5+VhKpDC7S7OkaIs0Stx3+PeRBoD9On9sSdQ7zHU
+         T0KBQD3BXcavrA5RFzeoDOJdMLRAH9XPwtM2dOSl3MM9sQB1a0QXUVjFDYwi5Gcgb+Dt
+         6IiViRaH0JISYxo5OuFeEDwoDxPs3Ju/7g1FMirAhCb2+kO43+Q90SavJ6nFcvjlSRGM
+         3iCQIZh/ZLO9dLMprzEX2FRkScuFW+G987rL5m9uilzraJOO6GHOfsXkc3qhlzUk40Si
+         Iban1zlVYYfVEVw4+nDbL5P1BOY+EiBQFxiZzWlo2HLhN5Am0jBGyhHMOoSEp1pad/z/
+         Hi1g==
+X-Gm-Message-State: APjAAAWr8vyCdKBlSSHf4Ef+Nfh3jK3dtRhglfYQ2Eke293FNwI/aBLk
+        XrW77nG/L4WYcKGVNaGq/eU=
+X-Google-Smtp-Source: APXvYqxcU5U+26T5lSP0rjHxG79pMm5IesRkIebm+bNQ7eNH6Kq5UKowQ1/FObBgGSwo8HC+h/fTXQ==
+X-Received: by 2002:a17:902:b612:: with SMTP id b18mr14279395pls.8.1562005237182;
+        Mon, 01 Jul 2019 11:20:37 -0700 (PDT)
+Received: from hari-Inspiron-1545 ([183.83.92.187])
+        by smtp.gmail.com with ESMTPSA id v131sm10791495pgb.87.2019.07.01.11.20.34
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 01 Jul 2019 11:20:10 -0700 (PDT)
-Subject: Re: [PATCH net v2] ipv4: don't set IPv6 only flags to IPv4 addresses
-To:     Matteo Croce <mcroce@redhat.com>, netdev@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
-References: <20190701170155.1967-1-mcroce@redhat.com>
- <c8fac6db-6455-b138-aca9-2f54d782a0b6@gmail.com>
-From:   David Ahern <dsahern@gmail.com>
-Message-ID: <6bd2b840-41eb-c3c5-2405-adc104066617@gmail.com>
-Date:   Mon, 1 Jul 2019 12:20:05 -0600
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        Mon, 01 Jul 2019 11:20:36 -0700 (PDT)
+Date:   Mon, 1 Jul 2019 23:50:31 +0530
+From:   Hariprasad Kelam <hariprasad.kelam@gmail.com>
+To:     Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hariprasad Kelam <hariprasad.kelam@gmail.com>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] USB: gadget: function: fix issue Unneeded variable: "value"
+Message-ID: <20190701182031.GA10455@hari-Inspiron-1545>
 MIME-Version: 1.0
-In-Reply-To: <c8fac6db-6455-b138-aca9-2f54d782a0b6@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/1/19 11:19 AM, David Ahern wrote:
-> I guess at this point we can fail the address add, so this is the best
-> option. 
+fix below issue reported by coccicheck
+drivers/usb/gadget/function/f_eem.c:169:7-12: Unneeded variable:
+"value". Return "- EOPNOTSUPP" on line 179
 
-bleh, that should be 'can not'
+We can not change return type of eem_setup as its registed with callback
+function
+
+Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
+---
+ drivers/usb/gadget/function/f_eem.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/usb/gadget/function/f_eem.c b/drivers/usb/gadget/function/f_eem.c
+index c13befa..b81a91d 100644
+--- a/drivers/usb/gadget/function/f_eem.c
++++ b/drivers/usb/gadget/function/f_eem.c
+@@ -166,7 +166,6 @@ static struct usb_gadget_strings *eem_strings[] = {
+ static int eem_setup(struct usb_function *f, const struct usb_ctrlrequest *ctrl)
+ {
+ 	struct usb_composite_dev *cdev = f->config->cdev;
+-	int			value = -EOPNOTSUPP;
+ 	u16			w_index = le16_to_cpu(ctrl->wIndex);
+ 	u16			w_value = le16_to_cpu(ctrl->wValue);
+ 	u16			w_length = le16_to_cpu(ctrl->wLength);
+@@ -176,7 +175,7 @@ static int eem_setup(struct usb_function *f, const struct usb_ctrlrequest *ctrl)
+ 		w_value, w_index, w_length);
+ 
+ 	/* device either stalls (value < 0) or reports success */
+-	return value;
++	return -EOPNOTSUPP;
+ }
+ 
+ 
+-- 
+2.7.4
+
