@@ -2,254 +2,219 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D92E65B662
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 10:10:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70A025B673
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 10:11:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727805AbfGAIKn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 04:10:43 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:39088 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727773AbfGAIKn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 04:10:43 -0400
-Received: by mail-pf1-f194.google.com with SMTP id j2so6170317pfe.6
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2019 01:10:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=E/CZW9HTMtXTzsWNO626jk1uoh4yKNXGp5gpm1i8SNo=;
-        b=Y1Jl7Q3riwientCHluxuBavS3le3r8ZkQ6ZthBM24QSSsseeTqeNZmXcJEXfC9QeP8
-         l6bbotOduPtoFStTdwPBkP9o7qaDEjwmJ6Le1PbbVtSbBiZqF22uqzR5WevH/mqIxbXS
-         auNIogcG5elmi+eckCW5UoPAoVU7+6A7QfwDA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=E/CZW9HTMtXTzsWNO626jk1uoh4yKNXGp5gpm1i8SNo=;
-        b=o+SozDkM/kBAWAtvoZAmi1MocRCY3gyCQGELCwrUVlk6IfDn7xmkoZWNoJ6gVvcBJD
-         /7V8s4x23jiMfcjUZUyd/oDy6uUjQB/eqZpTtqikR6+7Io3DjvPxJ8y2+M9EUyC3zEsT
-         iQAIseBuFyfUJPXA0SlPBJffaMmiTamzHDOuO1hd/cIYRw6aPxT8EHoaOa7Ba8GJiEFW
-         Yf5AnDNm1fb9kmpT7vRyEDF/Axv92cXE/nxOst7+xZ3XRnL4WCkiUCw0T89TEJlxKsVb
-         7zggAzxQEhd6Dd2bQg0OGRWpEletR3u0pGsy5+0MRuwqCcWfZl8m//RsH90+Sx4t18tW
-         R8tA==
-X-Gm-Message-State: APjAAAUYvD5Wuf1R6mDcHRI2oUqfjUeW26LG5/7vT83JWaHQc6nf1DJG
-        DEW5ygXRnzZ4ERbz7AXzKfX4
-X-Google-Smtp-Source: APXvYqw/mugHN9o8pQ1MjJFOIOtoYW8do+1rzm25p+7GQndefP86Q2v1wR+6xWqkKyU8+6gIl6y1tA==
-X-Received: by 2002:a63:dd53:: with SMTP id g19mr22552755pgj.3.1561968642410;
-        Mon, 01 Jul 2019 01:10:42 -0700 (PDT)
-Received: from google.com ([2401:fa00:1:b:d89e:cfa6:3c8:e61b])
-        by smtp.gmail.com with ESMTPSA id a16sm14383490pfd.68.2019.07.01.01.10.40
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 01 Jul 2019 01:10:41 -0700 (PDT)
-Date:   Mon, 1 Jul 2019 16:10:38 +0800
-From:   Kuo-Hsin Yang <vovoy@chromium.org>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Minchan Kim <minchan@kernel.org>, Michal Hocko <mhocko@suse.com>,
-        Sonny Rao <sonnyrao@chromium.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        stable@vger.kernel.org
-Subject: [PATCH] mm: vmscan: scan anonymous pages on file refaults
-Message-ID: <20190701081038.GA83398@google.com>
+        id S1727847AbfGAILw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 04:11:52 -0400
+Received: from mout.web.de ([217.72.192.78]:54339 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726967AbfGAILw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Jul 2019 04:11:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1561968678;
+        bh=wgDX1wYEOylYk18m/X9V91bM17D7/7B0grmKP0RH4RI=;
+        h=X-UI-Sender-Class:Subject:From:To:Cc:References:Date:In-Reply-To;
+        b=ovRJxmU+zGLSVqRgCM3+qCQy5/0fC90h4XIA711H2x6bLkaAVqXfiphbQnGotqq/t
+         S4fX4MtkxCp19497Uy1LXQV1tzPtlxgvt9AVUmV1BcZq72qsVwifMzcTMX9EqHMrv3
+         Sa9Rpy0KBepky9TOcHJcZC6fqlNhln+4bjILn7vo=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([93.131.131.202]) by smtp.web.de (mrweb102
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0LwYs7-1ic5t30wL1-018OKI; Mon, 01
+ Jul 2019 10:11:18 +0200
+Subject: [PATCH v2] Coccinelle: Add a SmPL script for the reconsideration of
+ redundant dev_err() calls
+From:   Markus Elfring <Markus.Elfring@web.de>
+To:     kernel-janitors@vger.kernel.org,
+        Gilles Muller <Gilles.Muller@lip6.fr>,
+        Julia Lawall <Julia.Lawall@lip6.fr>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Nicolas Palix <nicolas.palix@imag.fr>
+Cc:     Coccinelle <cocci@systeme.lip6.fr>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ding Xiang <dingxiang@cmss.chinamobile.com>
+References: <05d85182-7ec3-8fc1-4bcd-fd2528de3a40@web.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Message-ID: <2744a3fc-9e67-8113-1dd9-43669e06386a@web.de>
+Date:   Mon, 1 Jul 2019 10:10:52 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190628111627.GA107040@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <05d85182-7ec3-8fc1-4bcd-fd2528de3a40@web.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:wfhsPM9QVsFV9655wDRYnl6JcqLrm+bTduMbCFrWPgjeIszwlj5
+ 6cQ7tYKnCVBe5d/7X3gqWwSoJjR+N8TgyuU6JDkqDw7RRulp2MO4QV2VCersbve6Q9yknG4
+ zNv/llKZ70DNezmuS+YiDcb6ldkyl4lVej0AFpMDAwKPAtT7SDpFY88aVNXmOfEG88plWRb
+ d64rxkDp/zarEqF1kib6w==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:VJ9EqWNcCfE=:xcrWN+c5Q1lkXIi+blKidM
+ 7emyeKe8pUAJAg9juycx57x1X7C55esQopZ/Mw5uH+MEFQOzH4mfjpTwIwSl/QtWmdH5hx22J
+ lX85S40KZu6CfOU6GJ8mV4QyL2MuQY8y7aOArOxuYVwMebk7n6CWCu04/jwK5VTD+x83upLG4
+ D+avZBX8FfjjKZ4bqQ/Vpk1IO2uPVgcMJ9YA1jA9VBkgVxO9jIQ0XbX8sWSpnkIUsFaTSBbsP
+ Q55T8ZbCmBi5jmJ15QeSCZdHSKK3O68TuHue4okh6VO39LbloNn09wQcsw09BvsM9OiYL/8CH
+ hERPuQadlkr6pnN8jRDraK1a5y3cWuea4FEc1hhoTXP9MxmFQR2cOCbFjqp17uUIuVSuq7gA3
+ bAnOc6lKTN0o5tvpxTRjIi+1354Y8bGSqiz8bLtZoCLFeBjAkIGH5YZliSnkUKM/xl1GQoLax
+ vzqtl9K3eUI65cM9P8B2VLj6+quJdiWYorTrqd8616+fZVlHe2m27jJz1U1ufkO9sKdxNAVso
+ ApvNW7NJqJpbcqCzuSjs0oob9wYl1fVtNf99bIPKR3Iom1oBFGdXMdDOG200Tc2SwHwRSwWAr
+ 2DTja7Si+kmOPoQ7EMMd5KBeIrLXfsgNVa6YbdOt1KaLL3tHGj0IvxnkqjjHOOAU7i0qK6Io6
+ a43D+UHDgYUk0WiuILzVOyTkPIIqeLugqHxMk+50sxHlqIUO+2myDsQUQBd1qpdFRmO9DWL+F
+ zHfkyJLrU7R+rLNj7kDIPYjkCjdGhIuuFsxQ+T1dOEbOZDMsVeEriKTC9YNr9G9T5XPZASYTP
+ l0VxHDKS8emXk3+EQzreCOITyIXsBGnIxmAvfsj+yfyojaRgiM40ZN0lOPOqbX8SnS2GjhWU5
+ cRG5M9Sx0OLvhm/XkCQvWVCMMEeCla7FipRAR30yW6c+l4q7mb0djp9XWxPSy2G17X30Pdteb
+ 7O4+chsq6fuorkqNnrCQEjJHS+Zjnnp7M0oy2k9KH0FDV2w2QusovSTB535c/mFsZaRo36HvX
+ 0rHQAWHbXmjK6XN0nJGIkVS5ZJ0EnD8bN6id10jka6jmysh3HIIgQe6aAptFFGV2ixQ5UPMEL
+ zFQdvrLTMXsyDMSPAm7eQWcsRoan4ItHQTI
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When file refaults are detected and there are many inactive file pages,
-the system never reclaim anonymous pages, the file pages are dropped
-aggressively when there are still a lot of cold anonymous pages and
-system thrashes.  This issue impacts the performance of applications
-with large executable, e.g. chrome.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 1 Jul 2019 10:00:39 +0200
 
-With this patch, when file refault is detected, inactive_list_is_low()
-always returns true for file pages in get_scan_count() to enable
-scanning anonymous pages.
+The function =E2=80=9Cdevm_ioremap_resource=E2=80=9D contains appropriate =
+error reporting.
+Thus it can be questionable to present another error message
+at other places.
 
-The problem can be reproduced by the following test program.
+Provide design options for the adjustment of affected source code
+by the means of the semantic patch language (Coccinelle software).
 
----8<---
-void fallocate_file(const char *filename, off_t size)
-{
-	struct stat st;
-	int fd;
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
 
-	if (!stat(filename, &st) && st.st_size >= size)
-		return;
+v2:
+Suggestions from Julia Lawall were integrated.
 
-	fd = open(filename, O_WRONLY | O_CREAT, 0600);
-	if (fd < 0) {
-		perror("create file");
-		exit(1);
-	}
-	if (posix_fallocate(fd, 0, size)) {
-		perror("fallocate");
-		exit(1);
-	}
-	close(fd);
-}
+* Application of the SmPL construct =E2=80=9C<+... =E2=80=A6 ...+>=E2=80=
+=9D
+* Replacement of a return specification by a statement metavariable.
+* Different coding style for a branch of a SmPL disjunction.
+* Usage of a specific function name in two messages.
 
-long *alloc_anon(long size)
-{
-	long *start = malloc(size);
-	memset(start, 1, size);
-	return start;
-}
+ .../coccinelle/misc/redundant_dev_err.cocci   | 62 +++++++++++++++++++
+ 1 file changed, 62 insertions(+)
+ create mode 100644 scripts/coccinelle/misc/redundant_dev_err.cocci
 
-long access_file(const char *filename, long size, long rounds)
-{
-	int fd, i;
-	volatile char *start1, *end1, *start2;
-	const int page_size = getpagesize();
-	long sum = 0;
-
-	fd = open(filename, O_RDONLY);
-	if (fd == -1) {
-		perror("open");
-		exit(1);
-	}
-
-	/*
-	 * Some applications, e.g. chrome, use a lot of executable file
-	 * pages, map some of the pages with PROT_EXEC flag to simulate
-	 * the behavior.
-	 */
-	start1 = mmap(NULL, size / 2, PROT_READ | PROT_EXEC, MAP_SHARED,
-		      fd, 0);
-	if (start1 == MAP_FAILED) {
-		perror("mmap");
-		exit(1);
-	}
-	end1 = start1 + size / 2;
-
-	start2 = mmap(NULL, size / 2, PROT_READ, MAP_SHARED, fd, size / 2);
-	if (start2 == MAP_FAILED) {
-		perror("mmap");
-		exit(1);
-	}
-
-	for (i = 0; i < rounds; ++i) {
-		struct timeval before, after;
-		volatile char *ptr1 = start1, *ptr2 = start2;
-		gettimeofday(&before, NULL);
-		for (; ptr1 < end1; ptr1 += page_size, ptr2 += page_size)
-			sum += *ptr1 + *ptr2;
-		gettimeofday(&after, NULL);
-		printf("File access time, round %d: %f (sec)\n", i,
-		       (after.tv_sec - before.tv_sec) +
-		       (after.tv_usec - before.tv_usec) / 1000000.0);
-	}
-	return sum;
-}
-
-int main(int argc, char *argv[])
-{
-	const long MB = 1024 * 1024;
-	long anon_mb, file_mb, file_rounds;
-	const char filename[] = "large";
-	long *ret1;
-	long ret2;
-
-	if (argc != 4) {
-		printf("usage: thrash ANON_MB FILE_MB FILE_ROUNDS\n");
-		exit(0);
-	}
-	anon_mb = atoi(argv[1]);
-	file_mb = atoi(argv[2]);
-	file_rounds = atoi(argv[3]);
-
-	fallocate_file(filename, file_mb * MB);
-	printf("Allocate %ld MB anonymous pages\n", anon_mb);
-	ret1 = alloc_anon(anon_mb * MB);
-	printf("Access %ld MB file pages\n", file_mb);
-	ret2 = access_file(filename, file_mb * MB, file_rounds);
-	printf("Print result to prevent optimization: %ld\n",
-	       *ret1 + ret2);
-	return 0;
-}
----8<---
-
-Running the test program on 2GB RAM VM with kernel 5.2.0-rc5, the
-program fills ram with 2048 MB memory, access a 200 MB file for 10
-times.  Without this patch, the file cache is dropped aggresively and
-every access to the file is from disk.
-
-  $ ./thrash 2048 200 10
-  Allocate 2048 MB anonymous pages
-  Access 200 MB file pages
-  File access time, round 0: 2.489316 (sec)
-  File access time, round 1: 2.581277 (sec)
-  File access time, round 2: 2.487624 (sec)
-  File access time, round 3: 2.449100 (sec)
-  File access time, round 4: 2.420423 (sec)
-  File access time, round 5: 2.343411 (sec)
-  File access time, round 6: 2.454833 (sec)
-  File access time, round 7: 2.483398 (sec)
-  File access time, round 8: 2.572701 (sec)
-  File access time, round 9: 2.493014 (sec)
-
-With this patch, these file pages can be cached.
-
-  $ ./thrash 2048 200 10
-  Allocate 2048 MB anonymous pages
-  Access 200 MB file pages
-  File access time, round 0: 2.475189 (sec)
-  File access time, round 1: 2.440777 (sec)
-  File access time, round 2: 2.411671 (sec)
-  File access time, round 3: 1.955267 (sec)
-  File access time, round 4: 0.029924 (sec)
-  File access time, round 5: 0.000808 (sec)
-  File access time, round 6: 0.000771 (sec)
-  File access time, round 7: 0.000746 (sec)
-  File access time, round 8: 0.000738 (sec)
-  File access time, round 9: 0.000747 (sec)
-
-Fixes: e9868505987a ("mm,vmscan: only evict file pages when we have plenty")
-Fixes: 7c5bd705d8f9 ("mm: memcg: only evict file pages when we have plenty")
-Signed-off-by: Kuo-Hsin Yang <vovoy@chromium.org>
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
-Cc: <stable@vger.kernel.org> # 4.12+
----
- mm/vmscan.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 7889f583ced9f..da0b97204372e 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -2125,7 +2125,7 @@ static void shrink_active_list(unsigned long nr_to_scan,
-  *   10TB     320        32GB
-  */
- static bool inactive_list_is_low(struct lruvec *lruvec, bool file,
--				 struct scan_control *sc, bool actual_reclaim)
-+				 struct scan_control *sc, bool trace)
- {
- 	enum lru_list active_lru = file * LRU_FILE + LRU_ACTIVE;
- 	struct pglist_data *pgdat = lruvec_pgdat(lruvec);
-@@ -2151,7 +2151,7 @@ static bool inactive_list_is_low(struct lruvec *lruvec, bool file,
- 	 * rid of the stale workingset quickly.
- 	 */
- 	refaults = lruvec_page_state_local(lruvec, WORKINGSET_ACTIVATE);
--	if (file && actual_reclaim && lruvec->refaults != refaults) {
-+	if (file && lruvec->refaults != refaults) {
- 		inactive_ratio = 0;
- 	} else {
- 		gb = (inactive + active) >> (30 - PAGE_SHIFT);
-@@ -2161,7 +2161,7 @@ static bool inactive_list_is_low(struct lruvec *lruvec, bool file,
- 			inactive_ratio = 1;
- 	}
- 
--	if (actual_reclaim)
-+	if (trace)
- 		trace_mm_vmscan_inactive_list_is_low(pgdat->node_id, sc->reclaim_idx,
- 			lruvec_lru_size(lruvec, inactive_lru, MAX_NR_ZONES), inactive,
- 			lruvec_lru_size(lruvec, active_lru, MAX_NR_ZONES), active,
--- 
-2.22.0.410.gd8fdbe21b5-goog
+diff --git a/scripts/coccinelle/misc/redundant_dev_err.cocci b/scripts/coc=
+cinelle/misc/redundant_dev_err.cocci
+new file mode 100644
+index 000000000000..7998defb04f3
+=2D-- /dev/null
++++ b/scripts/coccinelle/misc/redundant_dev_err.cocci
+@@ -0,0 +1,62 @@
++// SPDX-License-Identifier: GPL-2.0
++/// Reconsider a function call for redundant error reporting.
++//
++// Keywords: dev_err redundant device error messages
++// Confidence: Medium
++
++virtual patch
++virtual context
++virtual org
++virtual report
++
++@display depends on context@
++expression e;
++@@
++ e =3D devm_ioremap_resource(...);
++ if (IS_ERR(e))
++ {
++ <+...
++*   dev_err(...);
++ ...+>
++ }
++
++@deletion depends on patch@
++expression e;
++statement s;
++@@
++ e =3D devm_ioremap_resource(...);
++ if (IS_ERR(e))
++(
++-{
++-   dev_err(...);
++    s
++-}
++|
++ {
++ <+...
++-   dev_err(...);
++ ...+>
++ }
++)
++
++@or depends on org || report@
++expression e;
++position p;
++@@
++ e =3D devm_ioremap_resource(...);
++ if (IS_ERR(e))
++ {
++ <+... dev_err@p(...); ...+>
++ }
++
++@script:python to_do depends on org@
++p << or.p;
++@@
++coccilib.org.print_todo(p[0],
++                        "WARNING: An error message is probably not needed=
+ here because the devm_ioremap_resource() function contains appropriate er=
+ror reporting.")
++
++@script:python reporting depends on report@
++p << or.p;
++@@
++coccilib.report.print_report(p[0],
++                             "WARNING: An error message is probably not n=
+eeded here because the devm_ioremap_resource() function contains appropria=
+te error reporting.")
+=2D-
+2.22.0
 
