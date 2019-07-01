@@ -2,262 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9A565BE33
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 16:26:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FAE15BE2C
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 16:25:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729648AbfGAOZ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 10:25:58 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:52532 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729532AbfGAOZ4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 10:25:56 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x61EP5sx120080;
-        Mon, 1 Jul 2019 09:25:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1561991105;
-        bh=suqhGlKu09i4bHSG5nwK6itb8XxQsF0NeEzzxpNaGkA=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=eVpIGSj98fC4TDHIu49z+fkYkfsd0RcXPbecRkhAswRSnDlkkfUwkaaQ4MjMqF5zw
-         1OFfE3FtS16XYpv2/bXmnlqACRozPWWLsVxIPjyjv/cakmsIyLnXa2OU29iYrRR7x8
-         KQvFkOBKtEDRC2HsU4rmoqJ8youpxAE3OUtqVcqs=
-Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x61EP53W046247
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 1 Jul 2019 09:25:05 -0500
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 1 Jul
- 2019 09:25:05 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Mon, 1 Jul 2019 09:25:05 -0500
-Received: from [10.250.68.219] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x61EP4Qh124077;
-        Mon, 1 Jul 2019 09:25:04 -0500
-Subject: Re: [PATCH v2 1/2] ASoC: tas5720.c: cleanup variant management
-To:     Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Andreas Dannenberg <dannenberg@ti.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>
-CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
-        <linux-acpi@vger.kernel.org>, <nv@vosn.de>
-References: <20190628143037.GH5379@sirena.org.uk>
- <cover.1561988282.git.nikolaus.voss@loewensteinmedical.de>
- <c79df50175d59265a37c5e7c8a0cfbf8119bcf78.1561988282.git.nikolaus.voss@loewensteinmedical.de>
-From:   "Andrew F. Davis" <afd@ti.com>
-Message-ID: <80af3fca-f71b-c118-e5d8-fde8b7d21705@ti.com>
-Date:   Mon, 1 Jul 2019 10:25:04 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
-MIME-Version: 1.0
-In-Reply-To: <c79df50175d59265a37c5e7c8a0cfbf8119bcf78.1561988282.git.nikolaus.voss@loewensteinmedical.de>
-Content-Type: text/plain; charset="utf-8"
+        id S1729608AbfGAOZ3 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 1 Jul 2019 10:25:29 -0400
+Received: from mail-oln040092254061.outbound.protection.outlook.com ([40.92.254.61]:22656
+        "EHLO APC01-PU1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727687AbfGAOZ2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Jul 2019 10:25:28 -0400
+Received: from PU1APC01FT027.eop-APC01.prod.protection.outlook.com
+ (10.152.252.60) by PU1APC01HT051.eop-APC01.prod.protection.outlook.com
+ (10.152.253.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.2032.15; Mon, 1 Jul
+ 2019 14:25:24 +0000
+Received: from SL2P216MB0187.KORP216.PROD.OUTLOOK.COM (10.152.252.60) by
+ PU1APC01FT027.mail.protection.outlook.com (10.152.252.232) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.2032.15 via Frontend Transport; Mon, 1 Jul 2019 14:25:24 +0000
+Received: from SL2P216MB0187.KORP216.PROD.OUTLOOK.COM
+ ([fe80::9d2d:391f:5f49:c806]) by SL2P216MB0187.KORP216.PROD.OUTLOOK.COM
+ ([fe80::9d2d:391f:5f49:c806%6]) with mapi id 15.20.2032.019; Mon, 1 Jul 2019
+ 14:25:24 +0000
+From:   Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
+        "logang@deltatee.com" <logang@deltatee.com>
+Subject: [PATCH v7 6/8] PCI: Allow extend_bridge_window() to shrink resource
+ if necessary
+Thread-Topic: [PATCH v7 6/8] PCI: Allow extend_bridge_window() to shrink
+ resource if necessary
+Thread-Index: AQHVMBjSFu30TOdswEyjNEb8yk6Glw==
+Date:   Mon, 1 Jul 2019 14:25:24 +0000
+Message-ID: <SL2P216MB01871D142278DE5C7FA610B480F90@SL2P216MB0187.KORP216.PROD.OUTLOOK.COM>
+Accept-Language: en-AU, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: SY3PR01CA0097.ausprd01.prod.outlook.com
+ (2603:10c6:0:19::30) To SL2P216MB0187.KORP216.PROD.OUTLOOK.COM
+ (2603:1096:100:22::19)
+x-incomingtopheadermarker: OriginalChecksum:78B69A352EE2D48EE966902C7BE31E9D2695E685278EE4228767415B952D10DA;UpperCasedChecksum:3709DA5CBC05F479832E249D673D1A94F83452C4D7CEB6C0132E9E56FCDF4C3E;SizeAsReceived:7703;Count:47
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn:  [Jy811Bkp+qp8vQM4tGhjmijTLwXczcgQn0IWdPFEsgjVuqDkfxyuAuYakF6urMCJ1fHws5/17hs=]
+x-microsoft-original-message-id: <20190701142508.GA5301@nicholas-usb>
+x-ms-publictraffictype: Email
+x-incomingheadercount: 47
+x-eopattributedmessage: 0
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(5050001)(7020095)(20181119110)(201702061078)(5061506573)(5061507331)(1603103135)(2017031320274)(2017031323274)(2017031324274)(2017031322404)(1601125500)(1603101475)(1701031045);SRVR:PU1APC01HT051;
+x-ms-traffictypediagnostic: PU1APC01HT051:
+x-microsoft-antispam-message-info: VOTRK/O2oW/4VL9oE/Y7hOE0wOJMIn2ZCZMNMLDndu8SjKE/0amgHTJscJ2FVb+K3N87cdCf6/Iyh9uH6lssC3uEgophYqN+PJqvaPs2F8yS+OftuZsfMy5lf7AUN1K8IYVV92mXnPD/7Cwz+jwpanm3k8l7Q1B9GCtQ2bpzu2Un/eLL0PIL7vepc39mCFQi
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <B6F253F81B5C904CBC5A649532F2BA3E@KORP216.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: eed832f3-fab8-4ef1-4d1c-08d6fe2ff46e
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Jul 2019 14:25:24.0313
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Internet
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PU1APC01HT051
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/1/19 9:42 AM, Nikolaus Voss wrote:
-> Replace enum tas572x_type with struct tas5720_variant which aggregates
-> variant specific stuff and can be directly referenced from an id table.
-> 
-> Signed-off-by: Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
-> ---
->  sound/soc/codecs/tas5720.c | 98 +++++++++++++-------------------------
->  1 file changed, 33 insertions(+), 65 deletions(-)
-> 
-> diff --git a/sound/soc/codecs/tas5720.c b/sound/soc/codecs/tas5720.c
-> index 37fab8f22800..b2e897f094b4 100644
-> --- a/sound/soc/codecs/tas5720.c
-> +++ b/sound/soc/codecs/tas5720.c
-> @@ -28,9 +28,10 @@
->  /* Define how often to check (and clear) the fault status register (in ms) */
->  #define TAS5720_FAULT_CHECK_INTERVAL		200
->  
-> -enum tas572x_type {
-> -	TAS5720,
-> -	TAS5722,
-> +struct tas5720_variant {
-> +	const int device_id;
-> +	const struct regmap_config *reg_config;
-> +	const struct snd_soc_component_driver *comp_drv;
->  };
->  
->  static const char * const tas5720_supply_names[] = {
-> @@ -44,7 +45,7 @@ struct tas5720_data {
->  	struct snd_soc_component *component;
->  	struct regmap *regmap;
->  	struct i2c_client *tas5720_client;
-> -	enum tas572x_type devtype;
-> +	const struct tas5720_variant *variant;
+Remove checks for resource size in extend_bridge_window(). This is
+necessary to allow the pci_bus_distribute_available_resources() to
+function when the kernel parameter pci=hpmemsize=nn[KMG] is used to
+allocate resources. Because the kernel parameter sets the size of all
+hotplug bridges to be the same, there are problems when nested hotplug
+bridges are encountered. Fitting a downstream hotplug bridge with size X
+and normal bridges with size Y into parent hotplug bridge with size X is
+impossible, and hence the downstream hotplug bridge needs to shrink to
+fit into its parent.
 
-Why add a new struct? Actually I don't see the need for this patch at
-all, the commit message only explains the 'what' not the 'why'. We can
-and do already build this info from the tas572x_type.
+Add check for if bridge is extended or shrunken and adjust pci_dbg to
+reflect this.
 
-Also below are several functional changes, the cover letter says this is
-not a functional change, yet the driver behaves differently now.
+Reset the resource if its new size is zero (if we have run out of a
+bridge window resource). If it is set to zero size and left, it can
+cause significant problems when it comes to enabling devices.
 
-Andrew
+Signed-off-by: Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
+---
+ drivers/pci/setup-bus.c | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
 
->  	struct regulator_bulk_data supplies[TAS5720_NUM_SUPPLIES];
->  	struct delayed_work fault_check_work;
->  	unsigned int last_fault;
-> @@ -179,17 +180,13 @@ static int tas5720_set_dai_tdm_slot(struct snd_soc_dai *dai,
->  		goto error_snd_soc_component_update_bits;
->  
->  	/* Configure TDM slot width. This is only applicable to TAS5722. */
-> -	switch (tas5720->devtype) {
-> -	case TAS5722:
-> +	if (tas5720->variant->device_id == TAS5722_DEVICE_ID) {
->  		ret = snd_soc_component_update_bits(component, TAS5722_DIGITAL_CTRL2_REG,
->  						    TAS5722_TDM_SLOT_16B,
->  						    slot_width == 16 ?
->  						    TAS5722_TDM_SLOT_16B : 0);
->  		if (ret < 0)
->  			goto error_snd_soc_component_update_bits;
-> -		break;
-> -	default:
-> -		break;
->  	}
->  
->  	return 0;
-> @@ -277,7 +274,7 @@ static void tas5720_fault_check_work(struct work_struct *work)
->  static int tas5720_codec_probe(struct snd_soc_component *component)
->  {
->  	struct tas5720_data *tas5720 = snd_soc_component_get_drvdata(component);
-> -	unsigned int device_id, expected_device_id;
-> +	unsigned int device_id;
->  	int ret;
->  
->  	tas5720->component = component;
-> @@ -301,21 +298,9 @@ static int tas5720_codec_probe(struct snd_soc_component *component)
->  		goto probe_fail;
->  	}
->  
-> -	switch (tas5720->devtype) {
-> -	case TAS5720:
-> -		expected_device_id = TAS5720_DEVICE_ID;
-> -		break;
-> -	case TAS5722:
-> -		expected_device_id = TAS5722_DEVICE_ID;
-> -		break;
-> -	default:
-> -		dev_err(component->dev, "unexpected private driver data\n");
-> -		return -EINVAL;
-> -	}
-> -
-> -	if (device_id != expected_device_id)
-> +	if (device_id != tas5720->variant->device_id)
->  		dev_warn(component->dev, "wrong device ID. expected: %u read: %u\n",
-> -			 expected_device_id, device_id);
-> +			 tas5720->variant->device_id, device_id);
->  
->  	/* Set device to mute */
->  	ret = snd_soc_component_update_bits(component, TAS5720_DIGITAL_CTRL2_REG,
-> @@ -637,7 +622,6 @@ static int tas5720_probe(struct i2c_client *client,
->  {
->  	struct device *dev = &client->dev;
->  	struct tas5720_data *data;
-> -	const struct regmap_config *regmap_config;
->  	int ret;
->  	int i;
->  
-> @@ -646,20 +630,10 @@ static int tas5720_probe(struct i2c_client *client,
->  		return -ENOMEM;
->  
->  	data->tas5720_client = client;
-> -	data->devtype = id->driver_data;
->  
-> -	switch (id->driver_data) {
-> -	case TAS5720:
-> -		regmap_config = &tas5720_regmap_config;
-> -		break;
-> -	case TAS5722:
-> -		regmap_config = &tas5722_regmap_config;
-> -		break;
-> -	default:
-> -		dev_err(dev, "unexpected private driver data\n");
-> -		return -EINVAL;
-> -	}
-> -	data->regmap = devm_regmap_init_i2c(client, regmap_config);
-> +	data->variant = (const struct tas5720_variant *)id->driver_data;
-> +
-> +	data->regmap = devm_regmap_init_i2c(client, data->variant->reg_config);
->  	if (IS_ERR(data->regmap)) {
->  		ret = PTR_ERR(data->regmap);
->  		dev_err(dev, "failed to allocate register map: %d\n", ret);
-> @@ -678,42 +652,36 @@ static int tas5720_probe(struct i2c_client *client,
->  
->  	dev_set_drvdata(dev, data);
->  
-> -	switch (id->driver_data) {
-> -	case TAS5720:
-> -		ret = devm_snd_soc_register_component(&client->dev,
-> -					&soc_component_dev_tas5720,
-> -					tas5720_dai,
-> -					ARRAY_SIZE(tas5720_dai));
-> -		break;
-> -	case TAS5722:
-> -		ret = devm_snd_soc_register_component(&client->dev,
-> -					&soc_component_dev_tas5722,
-> -					tas5720_dai,
-> -					ARRAY_SIZE(tas5720_dai));
-> -		break;
-> -	default:
-> -		dev_err(dev, "unexpected private driver data\n");
-> -		return -EINVAL;
-> -	}
-> -	if (ret < 0) {
-> -		dev_err(dev, "failed to register component: %d\n", ret);
-> -		return ret;
-> -	}
-> -
-> -	return 0;
-> +	ret = devm_snd_soc_register_component(&client->dev,
-> +					      data->variant->comp_drv,
-> +					      tas5720_dai,
-> +					      ARRAY_SIZE(tas5720_dai));
-> +	return ret;
->  }
->  
-> +static const struct tas5720_variant tas5720 = {
-> +	.device_id = TAS5720_DEVICE_ID,
-> +	.reg_config = &tas5720_regmap_config,
-> +	.comp_drv = &soc_component_dev_tas5720,
-> +};
-> +
-> +static const struct tas5720_variant tas5722 = {
-> +	.device_id = TAS5722_DEVICE_ID,
-> +	.reg_config = &tas5722_regmap_config,
-> +	.comp_drv = &soc_component_dev_tas5722,
-> +};
-> +
->  static const struct i2c_device_id tas5720_id[] = {
-> -	{ "tas5720", TAS5720 },
-> -	{ "tas5722", TAS5722 },
-> +	{ "tas5720", (kernel_ulong_t)&tas5720 },
-> +	{ "tas5722", (kernel_ulong_t)&tas5722 },
->  	{ }
->  };
->  MODULE_DEVICE_TABLE(i2c, tas5720_id);
->  
->  #if IS_ENABLED(CONFIG_OF)
->  static const struct of_device_id tas5720_of_match[] = {
-> -	{ .compatible = "ti,tas5720", },
-> -	{ .compatible = "ti,tas5722", },
-> +	{ .compatible = "ti,tas5720", .data = &tas5720, },
-> +	{ .compatible = "ti,tas5722", .data = &tas5722, },
->  	{ },
->  };
->  MODULE_DEVICE_TABLE(of, tas5720_of_match);
-> 
+diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
+index d65982438..9064fd964 100644
+--- a/drivers/pci/setup-bus.c
++++ b/drivers/pci/setup-bus.c
+@@ -1818,13 +1818,19 @@ static void extend_bridge_window(struct pci_dev *bridge, struct resource *res,
+ 	if (res->parent)
+ 		return;
+ 
+-	if (resource_size(res) >= new_size)
+-		return;
+-
+-	add_size = new_size - resource_size(res);
+-	pci_dbg(bridge, "bridge window %pR extended by %pa\n", res, &add_size);
++	if (new_size > resource_size(res)) {
++		add_size = new_size - resource_size(res);
++		pci_dbg(bridge, "bridge window %pR extended by %pa\n", res,
++			&add_size);
++	} else if (new_size < resource_size(res)) {
++		add_size = resource_size(res) - new_size;
++		pci_dbg(bridge, "bridge window %pR shrunken by %pa\n", res,
++			&add_size);
++	}
+ 	res->end = res->start + new_size - 1;
+ 	remove_from_list(add_list, res);
++	if (!new_size)
++		reset_resource(res);
+ }
+ 
+ static void pci_bus_distribute_available_resources(struct pci_bus *bus,
+-- 
+2.20.1
+
