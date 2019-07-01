@@ -2,195 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 340715B3E8
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 07:28:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE0415B3F7
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 07:30:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727510AbfGAF2m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 01:28:42 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:43647 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727298AbfGAF2l (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 01:28:41 -0400
-Received: by mail-io1-f67.google.com with SMTP id k20so25846112ios.10;
-        Sun, 30 Jun 2019 22:28:40 -0700 (PDT)
+        id S1727628AbfGAFa0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 01:30:26 -0400
+Received: from mail-eopbgr680073.outbound.protection.outlook.com ([40.107.68.73]:59206
+        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727530AbfGAFaK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Jul 2019 01:30:10 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:message-id:in-reply-to:references:subject:mime-version
-         :content-transfer-encoding;
-        bh=eM5ultCmo3QJu6zYaPCbkgYVYQQjp1S3p9nqPDbmWUE=;
-        b=B/3hkEICijgMZG3Ya9njDHW6vTpZF0HkAnPmmAuJ7oBoYpkwnkqliLjgf9QS05eLfI
-         C//EnroSYq1QxAV1t9W9FuM4J+gUL+/ixiSIyyl8HQh2sS7FLYW7ONzLxToC6Lk9qoFc
-         Zy1jcAWcOx15z5LjU6jL2r48jJFLZWNC5xrknpa56CKmHIGiZyOa9eWSG+PfYgPbQag0
-         0ab87/1dVVc5vmeMhi27qlQp0FbmwFRioHIUBROGQ+ZxdwHlyW4Cw6F8Wxn1+UFa+pRl
-         C0Bf9AV9I41qToNJ/qvcA+6XLlXkGK+wrLg74A/IBXPQfSjD1jaLHxVjLaPAM4UOcGOo
-         2KYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:message-id:in-reply-to:references
-         :subject:mime-version:content-transfer-encoding;
-        bh=eM5ultCmo3QJu6zYaPCbkgYVYQQjp1S3p9nqPDbmWUE=;
-        b=mtkxOjKvtPmtXqbinKdf8bvy5YDv3u7kCRUZ92rPYaRugy9tAkkx8PT4fNhEyPG7Ye
-         rgFdkEoMigwQnMH+NkyYh8qQZV5NIWp/qEsqRVkibzv8fY0sbMdm22tZCmsHbFd8F2+D
-         IUS7hdEXmVywb/fSE3HQODBnVSYI+pbEazu4fuEN/JdgkAeRvTIaSSQY2FFaJClgw1Pu
-         TK/Dakeed7P6JKhP/Rc/kCu0fuKjF64YpLWvZhpDnRYAzkm00hY3ucedAjfkKbyhri+5
-         r2rp4Yx+InxQcAxNH8SvapJRGooAqf/nsn/uBaPh/7BJSNOpn1lh4uFbMvtiWeFvnVcx
-         iztA==
-X-Gm-Message-State: APjAAAXB6NKdBGCNEwqrJZAOKf2rZR/ugav8p4T4VG/XUBQOz7NE6r4q
-        sosuQrYVcgcTSE/V0LHk1wvBwxozVKk=
-X-Google-Smtp-Source: APXvYqzJkgsT50whDeF4owfvcuuHaCR+yuNF6ooAulDPFlegpwpTcv8kt2CnrvgCjx4zxckrUbXh7A==
-X-Received: by 2002:a05:6602:104:: with SMTP id s4mr16870342iot.200.1561958920100;
-        Sun, 30 Jun 2019 22:28:40 -0700 (PDT)
-Received: from localhost ([184.63.162.180])
-        by smtp.gmail.com with ESMTPSA id a7sm14891886iok.19.2019.06.30.22.28.36
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sun, 30 Jun 2019 22:28:39 -0700 (PDT)
-Date:   Sun, 30 Jun 2019 22:28:31 -0700
-From:   John Fastabend <john.fastabend@gmail.com>
-To:     syzbot <syzbot+06537213db7ba2745c4a@syzkaller.appspotmail.com>,
-        aviadye@mellanox.com, borisp@mellanox.com, daniel@iogearbox.net,
-        davejwatson@fb.com, davem@davemloft.net, john.fastabend@gmail.com,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Message-ID: <5d1999ff323f_18a42abda71925b4cf@john-XPS-13-9370.notmuch>
-In-Reply-To: <000000000000a420af058ad4bca2@google.com>
-References: <000000000000a420af058ad4bca2@google.com>
-Subject: RE: memory leak in create_ctx
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZecrJFOP04cY7K7tn1G2DeQyLfHViOOPNHlXhTd2CTU=;
+ b=Zg4pwFKS6hI5IBvy4x8dGDCgsGXVRB4mmT1enHSZ//C464QppAZKMF9ej73XddbB+GfOEGffsl5C8QXVLbPpxjZeACPzCB1Aa2Im0tsDnom5O9JxZzwTCmQ2GR5hngCi5c22tfenqssbu3MMg2++dym5SYPJK5rr2ZLGMwsQixE=
+Received: from BL0PR02CA0039.namprd02.prod.outlook.com (2603:10b6:207:3d::16)
+ by BYAPR02MB5238.namprd02.prod.outlook.com (2603:10b6:a03:68::27) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2032.20; Mon, 1 Jul
+ 2019 05:30:07 +0000
+Received: from BL2NAM02FT012.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e46::204) by BL0PR02CA0039.outlook.office365.com
+ (2603:10b6:207:3d::16) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.2032.20 via Frontend
+ Transport; Mon, 1 Jul 2019 05:30:07 +0000
+Authentication-Results: spf=pass (sender IP is 149.199.60.83)
+ smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ BL2NAM02FT012.mail.protection.outlook.com (10.152.77.27) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2032.15
+ via Frontend Transport; Mon, 1 Jul 2019 05:30:06 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
+        (envelope-from <manish.narani@xilinx.com>)
+        id 1hhotC-0002rk-6l; Sun, 30 Jun 2019 22:30:06 -0700
+Received: from [127.0.0.1] (helo=localhost)
+        by xsj-pvapsmtp01 with smtp (Exim 4.63)
+        (envelope-from <manish.narani@xilinx.com>)
+        id 1hhot7-0003EO-2d; Sun, 30 Jun 2019 22:30:01 -0700
+Received: from xsj-pvapsmtp01 (smtp.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id x615TtBC008170;
+        Sun, 30 Jun 2019 22:29:55 -0700
+Received: from [172.23.64.106] (helo=xhdvnc125.xilinx.com)
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <mnarani@xilinx.com>)
+        id 1hhot0-0003CM-VM; Sun, 30 Jun 2019 22:29:55 -0700
+Received: by xhdvnc125.xilinx.com (Postfix, from userid 16987)
+        id 21E6D121714; Mon,  1 Jul 2019 10:59:54 +0530 (IST)
+From:   Manish Narani <manish.narani@xilinx.com>
+To:     ulf.hansson@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        heiko@sntech.de, michal.simek@xilinx.com, adrian.hunter@intel.com,
+        christoph.muellner@theobroma-systems.com,
+        philipp.tomsich@theobroma-systems.com, viresh.kumar@linaro.org,
+        scott.branden@broadcom.com, ayaka@soulik.info, kernel@esmil.dk,
+        tony.xie@rock-chips.com, rajan.vaja@xilinx.com,
+        jolly.shah@xilinx.com, nava.manne@xilinx.com, mdf@kernel.org,
+        manish.narani@xilinx.com, olof@lixom.net
+Cc:     linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org
+Subject: [PATCH v2 00/11] Arasan SDHCI enhancements and ZynqMP Tap Delays Handling
+Date:   Mon,  1 Jul 2019 10:59:40 +0530
+Message-Id: <1561958991-21935-1-git-send-email-manish.narani@xilinx.com>
+X-Mailer: git-send-email 2.1.1
+X-RCIS-Action: ALLOW
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
+X-TM-AS-User-Approved-Sender: Yes;Yes
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(1496009)(4636009)(376002)(346002)(39860400002)(136003)(396003)(2980300002)(189003)(199004)(8676002)(186003)(2906002)(14444005)(336012)(70586007)(356004)(52956003)(70206006)(44832011)(50466002)(36386004)(486006)(48376002)(81156014)(47776003)(305945005)(4326008)(16586007)(81166006)(103686004)(6266002)(26005)(6666004)(2616005)(36756003)(7416002)(63266004)(426003)(476003)(5660300002)(126002)(478600001)(8936002)(72206003)(42186006)(316002)(50226002)(106002)(51416003)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR02MB5238;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;MX:1;A:1;
+MIME-Version: 1.0
+Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 0ea1ea3a-88c2-4268-516a-08d6fde52d6f
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(4709080)(1401327)(2017052603328);SRVR:BYAPR02MB5238;
+X-MS-TrafficTypeDiagnostic: BYAPR02MB5238:
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-Microsoft-Antispam-PRVS: <BYAPR02MB5238E142B8F71E6B20C48239C1F90@BYAPR02MB5238.namprd02.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:7691;
+X-Forefront-PRVS: 00851CA28B
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Message-Info: dsmdoRBvLPdsk7FUQ5gswwBq1xYkyxa4NI/j17J2qi8Vcj15G5p7HfypVcYzR5jNe8XhKf95gv3bdfktIASMgSggpQXCs1npAZzYVVM/U9g1HSXqgMrGMhuYBzVjVk9LzWt+1/GYygLq+3mHqBGeYs4VeuCkS1eHjs4bb+CJ4eI4sOCZ4wWeVwAumFzF3g6zxafmyOeZCtQ+YzuthAfm1pRob4FPofUqH9ab2U/BTtc6Z+jhKwsZ+ge9oT2hov4OfunEr35xfdBPECMb3GcpUeZ8ubXO58L3k1Fhdp7+LE8CfK4tRnZ8iu7VQVGfPDtoY7Jt0WN+wHRZRN8iS6+qXzCTfFnnh5KpEi7GTHGCN4f4OieF/OQh6hGwe48NW3G7xe5KkiHuz0DxIx8035yYsO5VcoAAAefsJTwDioEve5s=
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jul 2019 05:30:06.9400
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0ea1ea3a-88c2-4268-516a-08d6fde52d6f
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR02MB5238
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot wrote:
-> Hello,
-> 
-> syzbot found the following crash on:
-> 
-> HEAD commit:    79c3ba32 Merge tag 'drm-fixes-2019-06-07-1' of git://anong..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=170e0bfea00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=d5c73825cbdc7326
-> dashboard link: https://syzkaller.appspot.com/bug?extid=06537213db7ba2745c4a
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10aa806aa00000
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+06537213db7ba2745c4a@syzkaller.appspotmail.com
-> 
-> IPv6: ADDRCONF(NETDEV_CHANGE): team0: link becomes ready
-> 2019/06/08 14:55:51 executed programs: 15
-> 2019/06/08 14:55:56 executed programs: 31
-> 2019/06/08 14:56:02 executed programs: 51
-> BUG: memory leak
-> unreferenced object 0xffff888117ceae00 (size 512):
->    comm "syz-executor.3", pid 7233, jiffies 4294949016 (age 13.640s)
->    hex dump (first 32 bytes):
->      00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->      00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->    backtrace:
->      [<00000000e6550967>] kmemleak_alloc_recursive  
-> include/linux/kmemleak.h:55 [inline]
->      [<00000000e6550967>] slab_post_alloc_hook mm/slab.h:439 [inline]
->      [<00000000e6550967>] slab_alloc mm/slab.c:3326 [inline]
->      [<00000000e6550967>] kmem_cache_alloc_trace+0x13d/0x280 mm/slab.c:3553
->      [<0000000014132182>] kmalloc include/linux/slab.h:547 [inline]
->      [<0000000014132182>] kzalloc include/linux/slab.h:742 [inline]
->      [<0000000014132182>] create_ctx+0x25/0x70 net/tls/tls_main.c:601
->      [<00000000e08e1a44>] tls_init net/tls/tls_main.c:787 [inline]
->      [<00000000e08e1a44>] tls_init+0x97/0x1e0 net/tls/tls_main.c:769
->      [<0000000037b0c43c>] __tcp_set_ulp net/ipv4/tcp_ulp.c:126 [inline]
->      [<0000000037b0c43c>] tcp_set_ulp+0xe2/0x190 net/ipv4/tcp_ulp.c:147
->      [<000000007a284277>] do_tcp_setsockopt.isra.0+0x19a/0xd60  
-> net/ipv4/tcp.c:2784
->      [<00000000f35f3415>] tcp_setsockopt+0x71/0x80 net/ipv4/tcp.c:3098
->      [<00000000c840962c>] sock_common_setsockopt+0x38/0x50  
-> net/core/sock.c:3124
->      [<0000000006b0801f>] __sys_setsockopt+0x98/0x120 net/socket.c:2072
->      [<00000000a6309f52>] __do_sys_setsockopt net/socket.c:2083 [inline]
->      [<00000000a6309f52>] __se_sys_setsockopt net/socket.c:2080 [inline]
->      [<00000000a6309f52>] __x64_sys_setsockopt+0x26/0x30 net/socket.c:2080
->      [<00000000fa555bbc>] do_syscall_64+0x76/0x1a0  
-> arch/x86/entry/common.c:301
->      [<00000000a06d7d1a>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> 
-> BUG: memory leak
-> unreferenced object 0xffff88810965dc00 (size 512):
->    comm "syz-executor.2", pid 7235, jiffies 4294949016 (age 13.640s)
->    hex dump (first 32 bytes):
->      00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->      00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->    backtrace:
->      [<00000000e6550967>] kmemleak_alloc_recursive  
-> include/linux/kmemleak.h:55 [inline]
->      [<00000000e6550967>] slab_post_alloc_hook mm/slab.h:439 [inline]
->      [<00000000e6550967>] slab_alloc mm/slab.c:3326 [inline]
->      [<00000000e6550967>] kmem_cache_alloc_trace+0x13d/0x280 mm/slab.c:3553
->      [<0000000014132182>] kmalloc include/linux/slab.h:547 [inline]
->      [<0000000014132182>] kzalloc include/linux/slab.h:742 [inline]
->      [<0000000014132182>] create_ctx+0x25/0x70 net/tls/tls_main.c:601
->      [<00000000e08e1a44>] tls_init net/tls/tls_main.c:787 [inline]
->      [<00000000e08e1a44>] tls_init+0x97/0x1e0 net/tls/tls_main.c:769
->      [<0000000037b0c43c>] __tcp_set_ulp net/ipv4/tcp_ulp.c:126 [inline]
->      [<0000000037b0c43c>] tcp_set_ulp+0xe2/0x190 net/ipv4/tcp_ulp.c:147
->      [<000000007a284277>] do_tcp_setsockopt.isra.0+0x19a/0xd60  
-> net/ipv4/tcp.c:2784
->      [<00000000f35f3415>] tcp_setsockopt+0x71/0x80 net/ipv4/tcp.c:3098
->      [<00000000c840962c>] sock_common_setsockopt+0x38/0x50  
-> net/core/sock.c:3124
->      [<0000000006b0801f>] __sys_setsockopt+0x98/0x120 net/socket.c:2072
->      [<00000000a6309f52>] __do_sys_setsockopt net/socket.c:2083 [inline]
->      [<00000000a6309f52>] __se_sys_setsockopt net/socket.c:2080 [inline]
->      [<00000000a6309f52>] __x64_sys_setsockopt+0x26/0x30 net/socket.c:2080
->      [<00000000fa555bbc>] do_syscall_64+0x76/0x1a0  
-> arch/x86/entry/common.c:301
->      [<00000000a06d7d1a>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> 
-> BUG: memory leak
-> unreferenced object 0xffff8881207d7600 (size 512):
->    comm "syz-executor.5", pid 7244, jiffies 4294949019 (age 13.610s)
->    hex dump (first 32 bytes):
->      00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->      00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->    backtrace:
->      [<00000000e6550967>] kmemleak_alloc_recursive  
-> include/linux/kmemleak.h:55 [inline]
->      [<00000000e6550967>] slab_post_alloc_hook mm/slab.h:439 [inline]
->      [<00000000e6550967>] slab_alloc mm/slab.c:3326 [inline]
->      [<00000000e6550967>] kmem_cache_alloc_trace+0x13d/0x280 mm/slab.c:3553
->      [<0000000014132182>] kmalloc include/linux/slab.h:547 [inline]
->      [<0000000014132182>] kzalloc include/linux/slab.h:742 [inline]
->      [<0000000014132182>] create_ctx+0x25/0x70 net/tls/tls_main.c:601
->      [<00000000e08e1a44>] tls_init net/tls/tls_main.c:787 [inline]
->      [<00000000e08e1a44>] tls_init+0x97/0x1e0 net/tls/tls_main.c:769
->      [<0000000037b0c43c>] __tcp_set_ulp net/ipv4/tcp_ulp.c:126 [inline]
->      [<0000000037b0c43c>] tcp_set_ulp+0xe2/0x190 net/ipv4/tcp_ulp.c:147
->      [<000000007a284277>] do_tcp_setsockopt.isra.0+0x19a/0xd60  
-> net/ipv4/tcp.c:2784
->      [<00000000f35f3415>] tcp_setsockopt+0x71/0x80 net/ipv4/tcp.c:3098
->      [<00000000c840962c>] sock_common_setsockopt+0x38/0x50  
-> net/core/sock.c:3124
->      [<0000000006b0801f>] __sys_setsockopt+0x98/0x120 net/socket.c:2072
->      [<00000000a6309f52>] __do_sys_setsockopt net/socket.c:2083 [inline]
->      [<00000000a6309f52>] __se_sys_setsockopt net/socket.c:2080 [inline]
->      [<00000000a6309f52>] __x64_sys_setsockopt+0x26/0x30 net/socket.c:2080
->      [<00000000fa555bbc>] do_syscall_64+0x76/0x1a0  
-> arch/x86/entry/common.c:301
->      [<00000000a06d7d1a>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> 
-> 
-> 
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> syzbot can test patches for this bug, for details see:
-> https://goo.gl/tpsmEJ#testing-patches
+This patch series does the following:
+ - Reorganize the Clock Handling in Arasan SD driver
+ - Adds new sampling clock in Arasan SD driver
+ - Adds support to set Clock Delays in SD Arasan Driver
+ - Add SDIO Tap Delay handling in ZynqMP firmware driver
+ - Add support for ZynqMP Tap Delays setting in Arasan SD driver
 
-#syz test: git://github.com/cilium/linux ktls-unhash
+Changes in v2:
+	- Replaced the deprecated calls to clock framework APIs
+	- Added support for dev_clk_get() call to work for SD card clock
+	- Separated the clock data struct
+	- Fragmented the patch series in smaller patches to make it more
+	  readable
+
+This patch series contains a DT patch, which I think should be there to
+maintain the order of commits.
+
+Manish Narani (11):
+  dt-bindings: mmc: arasan: Update documentation for SD Card Clock
+  arm64: dts: rockchip: Add optional clock property indicating sdcard
+    clock
+  mmc: sdhci-of-arasan: Replace deprecated clk API calls
+  mmc: sdhci-of-arasan: Separate out clk related data to another
+    structure
+  dt-bindings: mmc: arasan: Update Documentation for the input clock
+  mmc: sdhci-of-arasan: Add sampling clock for a phy to use
+  dt-bindings: mmc: arasan: Add optional properties for Arasan SDHCI
+  mmc: sdhci-of-arasan: Add support to set clock phase delays for SD
+  firmware: xilinx: Add SDIO Tap Delay APIs
+  dt-bindings: mmc: arasan: Document 'xlnx,zynqmp-8.9a' controller
+  mmc: sdhci-of-arasan: Add support for ZynqMP Platform Tap Delays Setup
+
+ .../devicetree/bindings/mmc/arasan,sdhci.txt       |  49 ++-
+ arch/arm64/boot/dts/rockchip/rk3399.dtsi           |   4 +-
+ drivers/firmware/xilinx/zynqmp.c                   |  48 +++
+ drivers/mmc/host/sdhci-of-arasan.c                 | 453 ++++++++++++++++++++-
+ include/linux/firmware/xlnx-zynqmp.h               |  15 +-
+ 5 files changed, 540 insertions(+), 29 deletions(-)
+
+-- 
+2.1.1
+
