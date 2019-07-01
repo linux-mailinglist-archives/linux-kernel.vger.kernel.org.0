@@ -2,518 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB3DA5B93F
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 12:47:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 20A775B955
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 12:48:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727646AbfGAKrk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 06:47:40 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:34856 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727526AbfGAKri (ORCPT
+        id S1727877AbfGAKsu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 06:48:50 -0400
+Received: from mout.kundenserver.de ([212.227.17.13]:52017 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727185AbfGAKsu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 06:47:38 -0400
-Received: by mail-wr1-f68.google.com with SMTP id c27so5570300wrb.2
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2019 03:47:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=WDPCJvwUe51ZxPVqvNHMhE4FvOBcr5BsgHMdA/eVL0o=;
-        b=Axs323oZR4F41xjxWBmLlvXZq9Lu8xSDpEU50zGcDn62HArvR/dShRb3roloT4n7ww
-         kk5U99fgNBS9ia69hRoiaY6DRf5qiovvmZ0auxMMmPiUqzBskFSEeG+8l2AYSv9eT97A
-         JviQ0bW+WNLUgkxfwWPgzW7o+ShTNHQ5OQiVa3d6k+g/uOFek8+5g3KEmI8NhySrSGCq
-         KqNzGc/PZqCSs7r2D/2Ezlv4fKb39ORVVmGYsTgUULuFq6dHdB38SVMyFHSIv3fFjXIf
-         m4R1MJk29FBWRcUaywdc/AvzaRDS4pMSqkgF7qGnAcbb814Vtxa+sJR2GGup01/ZbVqt
-         wUZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=WDPCJvwUe51ZxPVqvNHMhE4FvOBcr5BsgHMdA/eVL0o=;
-        b=sNPyeV3vX5fhJUU7H5DP3DNT1EqAubxKi6VpQZfSQq3vv/T+IWxSkv5kOhtJAcP7s6
-         /8Q9xuf0LsOuJz/aCwOsnc5ihW38BAniGXEWTQx7HO7aZwe1Q26q2HoLPywhcZ8tRHTJ
-         +8JKMtv60gwI++rP3q2Zx3N+kksBkJqgw24DV8indVBtcyMySsMo9paF9mz/fnAcw/mA
-         VTYqCDdBQgMrNczMcgOwyMvNZ21wp8X1QSowOMFXtslPXrT2qQFCVmMzybbjjxBldVdp
-         m5YCkHkWuHJ6vx/AG7pf9GrWop/YloyytT2AHnzYinPzbGBHNFS+giJPFriOyyv8b2Ts
-         zclA==
-X-Gm-Message-State: APjAAAWw7TXM8/e6ng2M6queUbEtiabQxmP+mSSY0cADB81xfefrAlUJ
-        bsbWLlfNeJhuAsuvQ1Wy9OyDLA==
-X-Google-Smtp-Source: APXvYqwDqJwPxA1AtbJ9VnvHJnPnjlY6M6GvuqWVE2KpmWmSEOGtiGpqlhYgL/tv1SCYva7SsqMahg==
-X-Received: by 2002:a5d:4d81:: with SMTP id b1mr20086913wru.27.1561978056234;
-        Mon, 01 Jul 2019 03:47:36 -0700 (PDT)
-Received: from localhost.localdomain (176-150-251-154.abo.bbox.fr. [176.150.251.154])
-        by smtp.gmail.com with ESMTPSA id d24sm11658802wra.43.2019.07.01.03.47.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 01 Jul 2019 03:47:35 -0700 (PDT)
-From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     jbrunet@baylibre.com, khilman@baylibre.com
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Neil Armstrong <narmstrong@baylibre.com>
-Subject: [RFC 11/11] arm64: dts: add support for SM1 based SEI Robotics SEI610
-Date:   Mon,  1 Jul 2019 12:47:05 +0200
-Message-Id: <20190701104705.18271-12-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190701104705.18271-1-narmstrong@baylibre.com>
-References: <20190701104705.18271-1-narmstrong@baylibre.com>
+        Mon, 1 Jul 2019 06:48:50 -0400
+Received: from [192.168.1.110] ([95.114.20.47]) by mrelayeu.kundenserver.de
+ (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MxUfn-1iRdpQ2PQv-00xtVK; Mon, 01 Jul 2019 12:48:33 +0200
+Subject: Re: [PATCH v2] Coccinelle: Add a SmPL script for the reconsideration
+ of redundant dev_err() calls
+To:     Markus Elfring <Markus.Elfring@web.de>,
+        kernel-janitors@vger.kernel.org,
+        Gilles Muller <Gilles.Muller@lip6.fr>,
+        Julia Lawall <Julia.Lawall@lip6.fr>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Nicolas Palix <nicolas.palix@imag.fr>
+Cc:     Coccinelle <cocci@systeme.lip6.fr>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ding Xiang <dingxiang@cmss.chinamobile.com>
+References: <05d85182-7ec3-8fc1-4bcd-fd2528de3a40@web.de>
+ <2744a3fc-9e67-8113-1dd9-43669e06386a@web.de>
+From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Organization: metux IT consult
+Message-ID: <0b48a5c5-0814-6414-39ba-beb1b8b5253a@metux.net>
+Date:   Mon, 1 Jul 2019 12:48:30 +0200
+User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <2744a3fc-9e67-8113-1dd9-43669e06386a@web.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:Njcq1x3R4ZJkZ7KiN9HYHt+SP0u7e0aLw+qLGdcuybI5MhOotbE
+ xj5KUayYBnDJQQM5w2Tmu/igOpNpoXaeujzHP6XWifVuFEaN4/DR6KioB9s5PEMNfHjRLMi
+ /e5O0m0AWSrJQ0eNTOLW+fj8+uvFW6i54UdJdHqMHZK+OKIvjmjoMU1w0bMlBAIkOONSabT
+ VfyI2YWfj+LRfAgP/Zd2Q==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:1rJFC1+hU2s=:BvEI2Da19ZyQR6c3PLw2Hn
+ 7V1fQho8Lh/gFk48KsiU98+nmqm0UblRwEiKtX/oz0gWF3EjeLauvDhW5vTKozo37F1zmNYrL
+ ABO/bd8dtJyOM4q/lIhaOdEixq1tFOWiXA25gzxWKXVlK3Az/6Cb5hHIvubwhEi8oU9bj70Zt
+ HvA2nxSDxueWdOVxoxSlKy0t7w2oOQkGaAp7OLvpo1ZcPRwgYntCV5QYbWCH6w5TSda9fDPl4
+ 2q+eJkdVxfwHpkexd6JG1GSNJoeHThyzndYsjR/OIcEnvALfimPHTLVMqGrRTWbcPfaaQ7gqK
+ 9PkdEMUj1frbncvdMTQEYL3EpJfDE+eAvscDUrBgWwYNP1qJwnpkUFRMvhW91Pp3TPcaSjZNi
+ jeAyN1QDYzczOGHmkUUr3blspXS8TZBOwBQVPJcKlfvA2MrHWb7NT/8XY7K9aAxj6JXoG4LcF
+ yoJ2hRKFmTKHL4YTM6pte6WbUY+LD3uB9LCZcwNy7Ri9ebLxVg6DyQHONYy2Sa+jKxRWPlxnn
+ npFw8TTY0KkqCxY3VLbakHgt1mDLbpTSwDyaMgO/AyaGa8uwWy3SuuVIKIMPFx/q2mmZhungk
+ Kb7qWGkUkWckcuDEJvonDjm3jA2qvf8WaQcMmPEfzGhEipx5IGYtfq89gqZ7KMqnlWAvx8Kbg
+ p+HZTyXftm2ZRQ3IUKxil28DCskzok/NnCTUN06RjRsOrHq+c+gBxyYg8DDK6cUk3B+7fkARS
+ F9XY7dCT1iipjOJ97dijSHg3wnXuTfevHRQl5AX19MkC7jnJWEa4DOvYFxw=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for the Amlogic SM1 Based SEI610 board.
+On 01.07.19 10:10, Markus Elfring wrote:
 
-The SM1 SoC is a derivative of the G12A SoC Family with :
-- Cortex-A55 core instead of A53
-- more power domains, including USB & PCIe
-- a neural network co-processor (NNA)
-- a CSI input and image processor
-- some changes in the audio complex, thus not yet enabled
+Hi folks,
 
-The SEI610 board is a derivative of the SEI510 board with :
-- removed ADC based touch button, replaced with 3x GPIO buttons
-- physical switch disabling on-board MICs
-- USB-C port for USB 2.0 OTG
-- On-board FTDI USB2SERIAL port for Linux console
+> +@script:python to_do depends on org@
+> +p << or.p;
+> +@@
+> +coccilib.org.print_todo(p[0],
+> +                        "WARNING: An error message is probably not needed here because the devm_ioremap_resource() function contains appropriate error reporting.")
+> +
+> +@script:python reporting depends on report@
+> +p << or.p;
+> +@@
+> +coccilib.report.print_report(p[0],
+> +                             "WARNING: An error message is probably not needed here because the devm_ioremap_resource() function contains appropriate error reporting.")
+> --
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- arch/arm64/boot/dts/amlogic/Makefile          |   1 +
- .../boot/dts/amlogic/meson-sm1-sei610.dts     | 329 ++++++++++++++++++
- arch/arm64/boot/dts/amlogic/meson-sm1.dtsi    |  77 ++++
- 3 files changed, 407 insertions(+)
- create mode 100644 arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts
- create mode 100644 arch/arm64/boot/dts/amlogic/meson-sm1.dtsi
+By the way: do we have any mechanism for explicitly suppressing
+individual warnings (some kind of annotation), when the maintainer is
+sure that some particular case is a false-positive ?
+(I'm thinking of something similar to certain #praga directives for
+explicitly ignoring invididual warnings in specific lines of code)
 
-diff --git a/arch/arm64/boot/dts/amlogic/Makefile b/arch/arm64/boot/dts/amlogic/Makefile
-index 07b861fe5fa5..9a852802a4cc 100644
---- a/arch/arm64/boot/dts/amlogic/Makefile
-+++ b/arch/arm64/boot/dts/amlogic/Makefile
-@@ -32,3 +32,4 @@ dtb-$(CONFIG_ARCH_MESON) += meson-gxm-q200.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxm-q201.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxm-rbox-pro.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxm-vega-s96.dtb
-+dtb-$(CONFIG_ARCH_MESON) += meson-sm1-sei610.dtb
-diff --git a/arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts b/arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts
-new file mode 100644
-index 000000000000..31559075fade
---- /dev/null
-+++ b/arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts
-@@ -0,0 +1,329 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (c) 2019 BayLibre SAS. All rights reserved.
-+ */
-+
-+/dts-v1/;
-+
-+#include "meson-sm1.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/gpio/meson-g12a-gpio.h>
-+#include <dt-bindings/sound/meson-g12a-tohdmitx.h>
-+
-+/ {
-+	compatible = "seirobotics,sei610", "amlogic,sm1";
-+	model = "SEI Robotics SEI610";
-+
-+	aliases {
-+		serial0 = &uart_AO;
-+		ethernet0 = &ethmac;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	emmc_pwrseq: emmc-pwrseq {
-+		compatible = "mmc-pwrseq-emmc";
-+		reset-gpios = <&gpio BOOT_12 GPIO_ACTIVE_LOW>;
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys-polled";
-+		poll-interval = <100>;
-+
-+		key1 {
-+			label = "A";
-+			linux,code = <BTN_0>;
-+			gpios = <&gpio GPIOH_6 GPIO_ACTIVE_LOW>;
-+		};
-+
-+		key2 {
-+			label = "B";
-+			linux,code = <BTN_1>;
-+			gpios = <&gpio GPIOH_7 GPIO_ACTIVE_LOW>;
-+		};
-+
-+		key3 {
-+			label = "C";
-+			linux,code = <BTN_2>;
-+			gpios = <&gpio_ao GPIOAO_2 GPIO_ACTIVE_LOW>;
-+		};
-+	};
-+
-+	hdmi-connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_connector_in: endpoint {
-+				remote-endpoint = <&hdmi_tx_tmds_out>;
-+			};
-+		};
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+
-+		bluetooth {
-+			label = "sei610:blue:bt";
-+			gpios = <&gpio GPIOC_7 (GPIO_ACTIVE_LOW | GPIO_OPEN_DRAIN)>;
-+			default-state = "off";
-+		};
-+	};
-+
-+	pwmleds {
-+		compatible = "pwm-leds";
-+
-+		power {
-+			label = "sei610:red:power";
-+			pwms = <&pwm_AO_ab 0 30518 0>;
-+			max-brightness = <255>;
-+			linux,default-trigger = "default-on";
-+			active-low;
-+		};
-+	};
-+
-+	memory@0 {
-+		device_type = "memory";
-+		reg = <0x0 0x0 0x0 0x40000000>;
-+	};
-+
-+	ao_5v: regulator-ao_5v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "AO_5V";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		vin-supply = <&dc_in>;
-+		regulator-always-on;
-+	};
-+
-+	dc_in: regulator-dc_in {
-+		compatible = "regulator-fixed";
-+		regulator-name = "DC_IN";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		regulator-always-on;
-+	};
-+
-+	emmc_1v8: regulator-emmc_1v8 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "EMMC_1V8";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		vin-supply = <&vddao_3v3>;
-+		regulator-always-on;
-+	};
-+
-+	vddao_3v3: regulator-vddao_3v3 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VDDAO_3V3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		vin-supply = <&dc_in>;
-+		regulator-always-on;
-+	};
-+
-+	/* Used by Tuner, RGB Led & IR Emitter LED array */
-+	vddao_3v3_t: regultor-vddao_3v3_t {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VDDAO_3V3_T";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		vin-supply = <&vddao_3v3>;
-+		gpio = <&gpio GPIOH_8 GPIO_OPEN_DRAIN>;
-+		enable-active-low;
-+		regulator-always-on;
-+	};
-+
-+	vddio_ao1v8: regulator-vddio_ao1v8 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VDDIO_AO1V8";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		vin-supply = <&vddao_3v3>;
-+		regulator-always-on;
-+	};
-+
-+	reserved-memory {
-+		/* TEE Reserved Memory */
-+		bl32_reserved: bl32@5000000 {
-+			reg = <0x0 0x05300000 0x0 0x2000000>;
-+			no-map;
-+		};
-+	};
-+
-+	sdio_pwrseq: sdio-pwrseq {
-+		compatible = "mmc-pwrseq-simple";
-+		reset-gpios = <&gpio GPIOX_6 GPIO_ACTIVE_LOW>;
-+		clocks = <&wifi32k>;
-+		clock-names = "ext_clock";
-+	};
-+
-+	wifi32k: wifi32k {
-+		compatible = "pwm-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <32768>;
-+		pwms = <&pwm_ef 0 30518 0>; /* PWM_E at 32.768KHz */
-+	};
-+};
-+
-+&cec_AO {
-+	pinctrl-0 = <&cec_ao_a_h_pins>;
-+	pinctrl-names = "default";
-+	status = "disabled";
-+	hdmi-phandle = <&hdmi_tx>;
-+};
-+
-+&cecb_AO {
-+	pinctrl-0 = <&cec_ao_b_h_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+	hdmi-phandle = <&hdmi_tx>;
-+};
-+
-+&ethmac {
-+	status = "okay";
-+	phy-handle = <&internal_ephy>;
-+	phy-mode = "rmii";
-+};
-+
-+&hdmi_tx {
-+	status = "okay";
-+	pinctrl-0 = <&hdmitx_hpd_pins>, <&hdmitx_ddc_pins>;
-+	pinctrl-names = "default";
-+};
-+
-+&hdmi_tx_tmds_port {
-+	hdmi_tx_tmds_out: endpoint {
-+		remote-endpoint = <&hdmi_connector_in>;
-+	};
-+};
-+
-+&i2c3 {
-+	status = "okay";
-+	pinctrl-0 = <&i2c3_sda_a_pins>, <&i2c3_sck_a_pins>;
-+	pinctrl-names = "default";
-+};
-+
-+&ir {
-+	status = "okay";
-+	pinctrl-0 = <&remote_input_ao_pins>;
-+	pinctrl-names = "default";
-+};
-+
-+&pwm_AO_ab {
-+	status = "okay";
-+	pinctrl-0 = <&pwm_ao_a_pins>;
-+	pinctrl-names = "default";
-+	clocks = <&xtal>;
-+	clock-names = "clkin0";
-+};
-+
-+&pwm_ef {
-+	status = "okay";
-+	pinctrl-0 = <&pwm_e_pins>;
-+	pinctrl-names = "default";
-+	clocks = <&xtal>;
-+	clock-names = "clkin0";
-+};
-+
-+&saradc {
-+	status = "okay";
-+	vref-supply = <&vddio_ao1v8>;
-+};
-+
-+/* SDIO */
-+&sd_emmc_a {
-+	status = "okay";
-+	pinctrl-0 = <&sdio_pins>;
-+	pinctrl-1 = <&sdio_clk_gate_pins>;
-+	pinctrl-names = "default", "clk-gate";
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	bus-width = <4>;
-+	cap-sd-highspeed;
-+	sd-uhs-sdr50;
-+	max-frequency = <100000000>;
-+
-+	non-removable;
-+	disable-wp;
-+
-+	mmc-pwrseq = <&sdio_pwrseq>;
-+
-+	vmmc-supply = <&vddao_3v3>;
-+	vqmmc-supply = <&vddio_ao1v8>;
-+
-+	brcmf: wifi@1 {
-+		reg = <1>;
-+		compatible = "brcm,bcm4329-fmac";
-+	};
-+};
-+
-+/* SD card */
-+&sd_emmc_b {
-+	status = "okay";
-+	pinctrl-0 = <&sdcard_c_pins>;
-+	pinctrl-1 = <&sdcard_clk_gate_c_pins>;
-+	pinctrl-names = "default", "clk-gate";
-+
-+	bus-width = <4>;
-+	cap-sd-highspeed;
-+	max-frequency = <50000000>;
-+	disable-wp;
-+
-+	cd-gpios = <&gpio GPIOC_6 GPIO_ACTIVE_LOW>;
-+	vmmc-supply = <&vddao_3v3>;
-+	vqmmc-supply = <&vddao_3v3>;
-+};
-+
-+/* eMMC */
-+&sd_emmc_c {
-+	status = "okay";
-+	pinctrl-0 = <&emmc_pins>, <&emmc_ds_pins>;
-+	pinctrl-1 = <&emmc_clk_gate_pins>;
-+	pinctrl-names = "default", "clk-gate";
-+
-+	bus-width = <8>;
-+	cap-mmc-highspeed;
-+	mmc-ddr-1_8v;
-+	mmc-hs200-1_8v;
-+	max-frequency = <200000000>;
-+	non-removable;
-+	disable-wp;
-+
-+	mmc-pwrseq = <&emmc_pwrseq>;
-+	vmmc-supply = <&vddao_3v3>;
-+	vqmmc-supply = <&emmc_1v8>;
-+};
-+
-+&uart_A {
-+	status = "okay";
-+	pinctrl-0 = <&uart_a_pins>, <&uart_a_cts_rts_pins>;
-+	pinctrl-names = "default";
-+	uart-has-rtscts;
-+
-+	bluetooth {
-+		compatible = "brcm,bcm43438-bt";
-+		shutdown-gpios = <&gpio GPIOX_17 GPIO_ACTIVE_HIGH>;
-+		max-speed = <2000000>;
-+		clocks = <&wifi32k>;
-+		clock-names = "lpo";
-+		vbat-supply = <&vddao_3v3>;
-+		vddio-supply = <&vddio_ao1v8>;
-+	};
-+};
-+
-+/* Exposed via the on-board USB to Serial FT232RL IC */
-+&uart_AO {
-+	status = "okay";
-+	pinctrl-0 = <&uart_ao_a_pins>;
-+	pinctrl-names = "default";
-+};
-+
-+&usb {
-+	status = "okay";
-+	dr_mode = "otg";
-+};
-diff --git a/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi b/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi
-new file mode 100644
-index 000000000000..7b4f6fdd28c7
---- /dev/null
-+++ b/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi
-@@ -0,0 +1,77 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (c) 2019 BayLibre, SAS
-+ * Author: Neil Armstrong <narmstrong@baylibre.com>
-+ */
-+
-+#include "meson-g12-common.dtsi"
-+#include <dt-bindings/power/meson-sm1-power.h>
-+
-+/ {
-+	compatible = "amlogic,sm1";
-+
-+	cpus {
-+		#address-cells = <0x2>;
-+		#size-cells = <0x0>;
-+
-+		cpu0: cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a55";
-+			reg = <0x0 0x0>;
-+			enable-method = "psci";
-+			next-level-cache = <&l2>;
-+		};
-+
-+		cpu1: cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a55";
-+			reg = <0x0 0x1>;
-+			enable-method = "psci";
-+			next-level-cache = <&l2>;
-+		};
-+
-+		cpu2: cpu@2 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a55";
-+			reg = <0x0 0x2>;
-+			enable-method = "psci";
-+			next-level-cache = <&l2>;
-+		};
-+
-+		cpu3: cpu@3 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a55";
-+			reg = <0x0 0x3>;
-+			enable-method = "psci";
-+			next-level-cache = <&l2>;
-+		};
-+
-+		l2: l2-cache0 {
-+			compatible = "cache";
-+		};
-+	};
-+};
-+
-+&cecb_AO {
-+	compatible = "amlogic,meson-sm1-ao-cec";
-+};
-+
-+&clk_msr {
-+	compatible = "amlogic,meson-sm1-clk-measure";
-+};
-+
-+&pwrc_vpu {
-+	compatible = "amlogic,meson-sm1-pwrc-vpu";
-+};
-+
-+&rti {
-+	pwrc: power-controller {
-+		compatible = "amlogic,meson-sm1-pwrc";
-+		#power-domain-cells = <1>;
-+		amlogic,hhi-sysctrl = <&hhi>;
-+	};
-+};
-+
-+&usb {
-+	power-domains = <&pwrc PWRC_SM1_USB_ID>;
-+};
+I believe such a feature, so we don't get spammed with the same false
+positives again and again.
+
+
+--mtx
+
 -- 
-2.21.0
-
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
