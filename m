@@ -2,102 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7721A5C308
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 20:32:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 99B9A5C30F
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 20:32:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726620AbfGAScq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 14:32:46 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:40325 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725853AbfGAScq (ORCPT
+        id S1726830AbfGASc6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 14:32:58 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:38058 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725853AbfGASc5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 14:32:46 -0400
-Received: by mail-pg1-f195.google.com with SMTP id w10so6425114pgj.7;
-        Mon, 01 Jul 2019 11:32:46 -0700 (PDT)
+        Mon, 1 Jul 2019 14:32:57 -0400
+Received: by mail-io1-f67.google.com with SMTP id j6so31070570ioa.5;
+        Mon, 01 Jul 2019 11:32:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=vo1i346r1xOesxPoRQa7nWWhSyL2ujUWb8aG0q2okzs=;
-        b=ThTM9wBxTrDRpjGI9ydlr5fF7lUNHmjx8j1Xwr+w3ReamdJ2UtrGNav7aDVtqMYFF9
-         wcXs6Ax/7BE0Zmpvlx2VZhsRzpjbOJ/DOSTJcmveZu8+UK1c7ZP9e4akKEW1zmPSYyjZ
-         s+QcAExW2q1wYQ1rg/zJPx/s8w4bS3Xq2EPpISBPOaPb2JbfiZsjTaeKUwUE/3WzyYmf
-         MkdPlJt9jJUGpWx4DXfiEwsD/FcT4SmiZa4WtraOYw67iwyLHJCdoNZguo1reL759ro6
-         vuxFdJwZAQtJEG3ATFpqV/fClwA9er9CsP8CO5hNwjDd1xscRkqS0ay0g8iMzxSvuM4N
-         izFg==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5XH2Sgqd3f1qItnFcP6aNN21WN2gIql8Aj/n31a7/ks=;
+        b=qSJb48epcJ44fqai80lK1au6m1JjSIdQZrDhYdZlBLTLfvHPyVP6yCEJzlYUU8rsl8
+         DetRS296GhrTsYU1MdFOJ9PkVvw1oLqwmw5bOm5ArkivRkbE0kwsCW3UtF4LCkI5BNYr
+         n7UQIk++RH6FRVFQlcIVkhtnrg2bYzpdPz8s61m5626G1S4JcyFm4aauzopw6/rM8kcG
+         ThDIFcnEHeQhOPlN5bRtwmkgZgkeLkhamFfl9nkspVNRdTeDvAqMTsscfKrkWjbf+vWQ
+         A8wtFx7ny8j6KeimI7tdOHKFhhZSqmhyPpdLhpWDXGXO4Ab4iAlQHbS5RoyCEhv152Uu
+         dpaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=vo1i346r1xOesxPoRQa7nWWhSyL2ujUWb8aG0q2okzs=;
-        b=UjUU7dau5KE99bCC6llVzHXVrD5js+UershKD4+8oZH0jFOE0RHcum6AaPqKUdxmdS
-         2OCnyVshBX+nPpBGRVzBqa9YRdCNMRoCB9v/xPP4M9lcdUo+HNazVJoxTuLZDpUHAaXI
-         G7Y87jJbj5p5gMfnzOMCa6Lg5CfdnM9zV1g9b6FUZv242dTrqNDQecC5W0TBmSnjyzk5
-         mVCOLl7CsKaJHzIEWkTYmLStQq+SXs7hXFKUraqyvkr8hr9M2XmjHVInpzF/UbPQKtjw
-         gzgYEeksGfO9eltd6Z15GO6JXzw3hmHxA1RY4uBKRi2V31tVz5Sw5fDoDMy07JpVkXJs
-         g+TA==
-X-Gm-Message-State: APjAAAWYBGKZhYYKPQj8FvP42K+MmzCs1Xr9xNb/B0CTn4+P5jXJfErg
-        9yFP+yLR2qYrBEfkDlAkmOQ=
-X-Google-Smtp-Source: APXvYqyNdvEi1XzOHbT0sCdF/WrgGzVtPHJ4XyV3sShwO2UtR1JkYsFW7El49dK+pDP+uJBUzvhdTA==
-X-Received: by 2002:a63:755e:: with SMTP id f30mr17934651pgn.246.1562005965725;
-        Mon, 01 Jul 2019 11:32:45 -0700 (PDT)
-Received: from hari-Inspiron-1545 ([183.83.92.187])
-        by smtp.gmail.com with ESMTPSA id br18sm216858pjb.20.2019.07.01.11.32.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 01 Jul 2019 11:32:44 -0700 (PDT)
-Date:   Tue, 2 Jul 2019 00:02:41 +0530
-From:   Hariprasad Kelam <hariprasad.kelam@gmail.com>
-To:     Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hariprasad Kelam <hariprasad.kelam@gmail.com>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [Patch v2] USB: gadget: function: fix issue Unneeded variable:
- "value"
-Message-ID: <20190701183241.GA13275@hari-Inspiron-1545>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5XH2Sgqd3f1qItnFcP6aNN21WN2gIql8Aj/n31a7/ks=;
+        b=MnOCldSXSN8LTBV9F2GEVVBd49L7AJOZR+Di4GNSaWJvLkG0bIsgbUqZSV4KfXBBZs
+         du53P8Crq8E2YECwSNKCvykES/EAtB4cPCSjhXXlTNA7GcCilWVhdSrslIMq91FAngYN
+         ex0ypNhM2QExcRWUF0jim0WgBauR9gC82gxEKe54Y2v28s6/RhNl1kM5Halb73XnV+nE
+         nHrY2rVgSMPqYGh78IyiOjZ89+yhxNIE2/+gSi0N9wkwPCLKmbDF7BV7d4wH7WBF7Sh9
+         hXsGOmSH+zQMMCLvhzkjGk3UGgJxuBYdmSmJpijxHuCGgl+rJETfKu2QYgNtpWlhE4VI
+         cqaA==
+X-Gm-Message-State: APjAAAWBgfMmX3VF/4TWZzQFmTDDaxfKf5RLZqN2gZrmlVY22Bipv8iM
+        meypgYJkFDMs1kbE28R2+CdeOHqNOwksah/uh40=
+X-Google-Smtp-Source: APXvYqyNjLQuWt7u4TbYn6Fr5VCbbvpJLZC25VDlMbo81qPC93k/t2OonplTOmmtRgVMNBB6dy+vXcl1rFN2GtPGtaY=
+X-Received: by 2002:a6b:b987:: with SMTP id j129mr25537368iof.166.1562005976714;
+ Mon, 01 Jul 2019 11:32:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20190630150230.7878-1-robdclark@gmail.com> <20190630150230.7878-4-robdclark@gmail.com>
+In-Reply-To: <20190630150230.7878-4-robdclark@gmail.com>
+From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Date:   Mon, 1 Jul 2019 12:32:46 -0600
+Message-ID: <CAOCk7NqS+0Z8JOaeCX+f+t8aKno14bi++N8EX4-1XA0AKd2rZg@mail.gmail.com>
+Subject: Re: [Freedreno] [PATCH 3/5] drm/msm/dsi: split clk rate setting and enable
+To:     Rob Clark <robdclark@gmail.com>
+Cc:     "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        Rob Clark <robdclark@chromium.org>,
+        aarch64-laptops@lists.linaro.org,
+        Archit Taneja <architt@codeaurora.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        linux-pm@vger.kernel.org, David Airlie <airlied@linux.ie>,
+        Sean Paul <sean@poorly.run>,
+        Allison Randal <allison@lohutok.net>,
+        Jordan Crouse <jcrouse@codeaurora.org>,
+        Abhinav Kumar <abhinavk@codeaurora.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        linux-clk@vger.kernel.org,
+        Chandan Uddaraju <chandanu@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-fix below issue reported by coccicheck
-drivers/usb/gadget/function/f_eem.c:169:7-12: Unneeded variable:
-"value". Return "- EOPNOTSUPP" on line 179
+On Sun, Jun 30, 2019 at 9:03 AM Rob Clark <robdclark@gmail.com> wrote:
+>
+> From: Rob Clark <robdclark@chromium.org>
+>
+> Prep work for the following patch.
+>
+> Signed-off-by: Rob Clark <robdclark@chromium.org>
 
-We can not change return type of eem_setup as its registered with callback
-function
-
-Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
----
-v2    fix typo in commit message
-
- drivers/usb/gadget/function/f_eem.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/usb/gadget/function/f_eem.c b/drivers/usb/gadget/function/f_eem.c
-index c13befa..b81a91d 100644
---- a/drivers/usb/gadget/function/f_eem.c
-+++ b/drivers/usb/gadget/function/f_eem.c
-@@ -166,7 +166,6 @@ static struct usb_gadget_strings *eem_strings[] = {
- static int eem_setup(struct usb_function *f, const struct usb_ctrlrequest *ctrl)
- {
- 	struct usb_composite_dev *cdev = f->config->cdev;
--	int			value = -EOPNOTSUPP;
- 	u16			w_index = le16_to_cpu(ctrl->wIndex);
- 	u16			w_value = le16_to_cpu(ctrl->wValue);
- 	u16			w_length = le16_to_cpu(ctrl->wLength);
-@@ -176,7 +175,7 @@ static int eem_setup(struct usb_function *f, const struct usb_ctrlrequest *ctrl)
- 		w_value, w_index, w_length);
- 
- 	/* device either stalls (value < 0) or reports success */
--	return value;
-+	return -EOPNOTSUPP;
- }
- 
- 
--- 
-2.7.4
-
+Reviewed-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
