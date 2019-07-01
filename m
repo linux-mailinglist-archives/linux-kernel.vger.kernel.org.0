@@ -2,102 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32F4E5C0FC
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 18:18:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 656935C0F7
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 18:16:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730280AbfGAQSN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 12:18:13 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:52291 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726863AbfGAQSN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 12:18:13 -0400
-Received: by mail-wm1-f67.google.com with SMTP id s3so120024wms.2
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2019 09:18:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=d0HyjLFqpz9AWkWYsHlacSFouR7h8Dt4U9XzrYCAXZE=;
-        b=Qh2SanT69fpWH1FNwV6NxjULLL62fZus+usRyKBaUUJzNzFKpmMEXwMt5zzc9RSJKD
-         3n2bXJXXyrhjMZIXfoPY89kgo+PoHfvu/hvO9nVWO37nyy9fkxzmkjqBHTEURuIpYYDh
-         kR4iYMY8z8iGI53pELnISjRyZb/sm1y+vscKtR8nQi071MfHTA5hi54raAbQmL0kMnlP
-         OB2hfHjFCk9cfqKp1ebNAlqdE0w+hcZN3NEvmVrda7HKcOorECeHpn1TUI+BDCe0pN4C
-         mHqK3M2W/x4s5DQ1YiyZsYQ3w3sPg0tixaxGw73NjwjYyf+GqzGyEpbMo8Fr94dKfDgr
-         upKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=d0HyjLFqpz9AWkWYsHlacSFouR7h8Dt4U9XzrYCAXZE=;
-        b=XImT/QVL4c/cU4DPcBZ7LRctuGEw0UyN1mt0tWeOsukdVGPyTSNnohFQ4feSMJHEyg
-         qSxcH60tSxPs7B8S2Is4VIeq3TRY1tM9pU6u1wNR4R4vtE5jC4BpVaTBhIodwqx4jj5C
-         QP7TAcvM58xGP4QnU7zwUx9xJ75htMrwLpmaMik3OOQt9Mp1M64LzRF456GZw9BsHu3s
-         GUyiYzQnOX6Zy9CpV4O7lK8LhkZq13bcqaF2nLAOMX2EYBonYNtuSbax0+6ITcjs4dc5
-         XM1pFFZg35sVg7xhXMDriPozAYitje/462GCcx+KjchzauanGx2ndnmFeGlPXLzDwePF
-         FHVA==
-X-Gm-Message-State: APjAAAUNpO4/z64KTquqDBtwUuYk0/UFQJ1dGyl/mV1Qs/G1Bx2V2URm
-        Vtd0GfhZYfFGP+96B/7Lm2fRsz6K4aVLwg==
-X-Google-Smtp-Source: APXvYqwjZbygo/2eQXfFWZsv3F+zfUyNoYq5phRnXb/qN3ixWwBICZ+TP81jcRVApe/jSIiw1QxsnQ==
-X-Received: by 2002:a1c:e109:: with SMTP id y9mr61578wmg.35.1561997889946;
-        Mon, 01 Jul 2019 09:18:09 -0700 (PDT)
-Received: from localhost.localdomain (p4FC0A2B8.dip0.t-ipconnect.de. [79.192.162.184])
-        by smtp.gmail.com with ESMTPSA id f7sm13654776wrv.38.2019.07.01.09.18.08
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 01 Jul 2019 09:18:09 -0700 (PDT)
-From:   Christian Brauner <christian@brauner.io>
-To:     torvalds@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        jannh@google.com
-Subject: [GIT PULL] fixes for v5.2-rc8
-Date:   Mon,  1 Jul 2019 18:15:03 +0200
-Message-Id: <20190701161503.15254-1-christian@brauner.io>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <000000000000e0dc0d058c9e7142@google.com>
-References: 
+        id S1730220AbfGAQP4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 12:15:56 -0400
+Received: from mga06.intel.com ([134.134.136.31]:41527 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726863AbfGAQP4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Jul 2019 12:15:56 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Jul 2019 09:15:55 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,440,1557212400"; 
+   d="scan'208";a="184279656"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
+  by fmsmga001.fm.intel.com with SMTP; 01 Jul 2019 09:15:50 -0700
+Received: by lahna (sSMTP sendmail emulation); Mon, 01 Jul 2019 19:15:50 +0300
+Date:   Mon, 1 Jul 2019 19:15:50 +0300
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Linux PM <linux-pm@vger.kernel.org>,
+        Linux PCI <linux-pci@vger.kernel.org>,
+        Linux ACPI <linux-acpi@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Hans De Goede <hdegoede@redhat.com>,
+        "Robert R. Howell" <RHowell@uwyo.edu>
+Subject: Re: [PATCH v2 1/5] PM: ACPI/PCI: Resume all devices during
+ hibernation
+Message-ID: <20190701161550.GA2640@lahna.fi.intel.com>
+References: <4976412.ihyb9sT5jY@kreacher>
+ <6191578.xJk2HsE5MX@kreacher>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6191578.xJk2HsE5MX@kreacher>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Mon, Jul 01, 2019 at 12:44:25PM +0200, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> Both the PCI bus type and the ACPI PM domain avoid resuming
+> runtime-suspended devices with DPM_FLAG_SMART_SUSPEND set during
+> hibernation (before creating the snapshot image of system memory),
+> but that turns out to be a mistake.  It leads to functional issues
+> and adds complexity that's hard to justify.
+> 
+> For this reason, resume all runtime-suspended PCI devices and all
+> devices in the ACPI PM domains before creating a snapshot image of
+> system memory during hibernation.
+> 
+> Fixes: 05087360fd7a (ACPI / PM: Take SMART_SUSPEND driver flag into account)
+> Fixes: c4b65157aeef (PCI / PM: Take SMART_SUSPEND driver flag into account)
+> Link: https://lore.kernel.org/linux-acpi/917d4399-2e22-67b1-9d54-808561f9083f@uwyo.edu/T/#maf065fe6e4974f2a9d79f332ab99dfaba635f64c
+> Reported-by: Robert R. Howell <RHowell@uwyo.edu>
+> Tested-by: Robert R. Howell <RHowell@uwyo.edu>
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+> 
+> -> v2: No changes.
+> 
+> ---
+>  drivers/acpi/device_pm.c |   13 +++++++------
+>  drivers/pci/pci-driver.c |   16 ++++++++--------
+>  2 files changed, 15 insertions(+), 14 deletions(-)
+> 
+> Index: linux-pm/drivers/acpi/device_pm.c
+> ===================================================================
+> --- linux-pm.orig/drivers/acpi/device_pm.c
+> +++ linux-pm/drivers/acpi/device_pm.c
+> @@ -1155,13 +1155,14 @@ EXPORT_SYMBOL_GPL(acpi_subsys_resume_ear
+>  int acpi_subsys_freeze(struct device *dev)
+>  {
+>  	/*
+> -	 * This used to be done in acpi_subsys_prepare() for all devices and
+> -	 * some drivers may depend on it, so do it here.  Ideally, however,
+> -	 * runtime-suspended devices should not be touched during freeze/thaw
+> -	 * transitions.
+> +	 * Resume all runtime-suspended devices before creating a snapshot
+> +	 * image of system memory, because the restore kernel generally cannot
+> +	 * be expected to always handle them consistently and they need to be
+> +	 * put into the runtime-active metastate during system resume anyway,
+> +	 * so it is better to ensure that the state saved in the image will be
+> +	 * alwyas consistent with that.
 
-This contains a single urgent fix for copy_process() in kernel/fork.c:
+alwyas -> always
 
-The following changes since commit 6fbc7275c7a9ba97877050335f290341a1fd8dbf:
+>  	 */
+> -	if (!dev_pm_test_driver_flags(dev, DPM_FLAG_SMART_SUSPEND))
+> -		pm_runtime_resume(dev);
+> +	pm_runtime_resume(dev);
+>  
+>  	return pm_generic_freeze(dev);
+>  }
+> Index: linux-pm/drivers/pci/pci-driver.c
+> ===================================================================
+> --- linux-pm.orig/drivers/pci/pci-driver.c
+> +++ linux-pm/drivers/pci/pci-driver.c
+> @@ -1012,15 +1012,15 @@ static int pci_pm_freeze(struct device *
+>  	}
+>  
+>  	/*
+> -	 * This used to be done in pci_pm_prepare() for all devices and some
+> -	 * drivers may depend on it, so do it here.  Ideally, runtime-suspended
+> -	 * devices should not be touched during freeze/thaw transitions,
+> -	 * however.
+> +	 * Resume all runtime-suspended devices before creating a snapshot
+> +	 * image of system memory, because the restore kernel generally cannot
+> +	 * be expected to always handle them consistently and they need to be
+> +	 * put into the runtime-active metastate during system resume anyway,
+> +	 * so it is better to ensure that the state saved in the image will be
+> +	 * alwyas consistent with that.
 
-  Linux 5.2-rc7 (2019-06-30 11:25:36 +0800)
+ditto
 
-are available in the Git repository at:
-
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/brauner/linux tags/for-linus-20190701
-
-for you to fetch changes up to 28dd29c06d0dede4b32b2c559cff21955a830928:
-
-  fork: return proper negative error code (2019-07-01 16:43:30 +0200)
-
-With Al's removal of ksys_close() from cleanup paths in copy_process() a
-bug was introduced. When anon_inode_getfile() failed the cleanup was
-correctly performed but the error code was not propagated to callers of
-copy_process() causing them to operate on a nonsensical pointer. The fix is
-a simple on-liner which makes sure that a proper negative error code is
-returned from copy_process().
-syzkaller has also verified that the bug is not reproducible with the patch
-in this branch.
-
-Please consider pulling these changes from the signed for-linus-20190701 tag.
-
-Thanks!
-Christian
-
-----------------------------------------------------------------
-for-linus-20190701
-
-----------------------------------------------------------------
-Christian Brauner (1):
-      fork: return proper negative error code
-
- kernel/fork.c | 1 +
- 1 file changed, 1 insertion(+)
+>  	 */
+> -	if (!dev_pm_smart_suspend_and_suspended(dev)) {
+> -		pm_runtime_resume(dev);
+> -		pci_dev->state_saved = false;
+> -	}
+> +	pm_runtime_resume(dev);
+> +	pci_dev->state_saved = false;
+>  
+>  	if (pm->freeze) {
+>  		int error;
+> 
+> 
+> 
