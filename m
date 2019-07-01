@@ -2,80 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 742E65B6B8
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 10:23:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDC3E5B6C1
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 10:25:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728037AbfGAIXo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 04:23:44 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:39464 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726076AbfGAIXo (ORCPT
+        id S1728040AbfGAIZk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 04:25:40 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:43603 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727124AbfGAIZi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 04:23:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=hBCJxL8ZUJseIyS7B5DLbWsf3GKr85SKQzEdMWI6/qU=; b=QnNqCN5dHXnibX5TmwhtiXxwc
-        rWWP5I/omYU7kI3jbeHOM5a36TDmi1wAj3Y4sfxGfIzMZMZGjTrcM4TaqHheq2ugICwmjHC2elStP
-        7Ty1IGiq4Xo0wRqfxRRJ535oiovdDg/9aMdc/MibGr+1V/G5ALcy+9S5azV/sNidv8HBpCLZyXSIO
-        UjrVzBU8u4a6VsxT3Q/r5PhqF3zoLkX0sjsDwYO6XSzi6E/Cq0qydu9m+/HP9/Wd2T9KClK2dTNLy
-        cjtD/1xs+Tbn+vIWqKHzWeqxFGw+MF3HgTk+NOoiApbwyVf50e8Kx7J/QE+Bko6PgCqmCwYNXiY++
-        SoyRlwhvw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hhrb6-00078L-EC; Mon, 01 Jul 2019 08:23:36 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 37D1E20963E24; Mon,  1 Jul 2019 10:23:34 +0200 (CEST)
-Date:   Mon, 1 Jul 2019 10:23:34 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Will Deacon <will@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Ingo Molnar <mingo@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Waiman Long <longman@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Yuyang Du <duyuyang@gmail.com>, Ingo Molnar <mingo@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] locking/lockdep: clean up #ifdef checks
-Message-ID: <20190701082334.GO3402@hirez.programming.kicks-ass.net>
-References: <20190628102919.2345242-1-arnd@arndb.de>
- <20190628110353.ijd42pbhqfsdsi2n@willie-the-truck>
+        Mon, 1 Jul 2019 04:25:38 -0400
+Received: by mail-oi1-f194.google.com with SMTP id w79so9275865oif.10;
+        Mon, 01 Jul 2019 01:25:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Ym5J0gHrzU1eWCK3FfxSZBqLOjejvpidzKKQjL50u94=;
+        b=lrFMLxnOPq9Gb4mDjYntgsL52S+LiOMwxA+1CiKwpqm4bkAWQubeuEmTZpgocpqb1O
+         RAcp9m/7a0j4QRvd0YAw38RKxvt/1oTVBpg1e4CJhVXm8HQaub6o2PBzn/ulBOMj22Rx
+         CkzVm+UvtSCDVNLF7ZzqHa9sNj0fafonaOsqFucDJPC6m3a42lqKMfIC1vWzEFOE59VS
+         CeyNiVYUsDAlSknBKDNFEfihY3tvpvide7MUlvcLOdZXw7uygqo0Taos7eVX0O2+ZmpK
+         Q50V+aszXieivGJH8paa5nh8T95E+br14g5T+ucz4JGmUF23vUMJXugn/SVcmxeiqDfw
+         afDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Ym5J0gHrzU1eWCK3FfxSZBqLOjejvpidzKKQjL50u94=;
+        b=bP0VWhGFUMDGMk3ss/EiWbwJq80PASMSdhLrPmg/1SDVgNKuELqT5m0d6JATUDMXbW
+         6nyxRJ9w5aDKN2SztCS8SQGZ/ssIhwj52lGwvDQyz7zR+389rpb7UbRh17odo9s7RZkx
+         RixJ1t3bLyL03Z8WCYG3nHAYN+MVGcTzgB2hRE/+ttgztILEjFHMcSejS6goSlj5Ws7a
+         0ttuFi/3hePaWLNr6MI+XXmnyL8XfQaJKBG16ipLVcDZ0jhU6D+onL4RCxbPmczZcx0/
+         6bYrXHEMfzebePJn0Gb0c28r6mXYflnft48J4mL+famiF4c6RfjLl7EHaP9tOx5SQNop
+         Fl1g==
+X-Gm-Message-State: APjAAAUhTYGKznqaXYfXBpCPB6T5zb5+CHbcBj7AVaj11zTKiVvwN/fZ
+        sx7WmiyHezXjVTRt3YxS245bc1B6+y9omjrpzE0=
+X-Google-Smtp-Source: APXvYqxeodXSxesbEQ96QbUQET7l2bQnzyKbxYSjLJV6c1xtLUMOy0COHZ8cHF5Dpw+SxIReWGDUZpFyqCz5TXzs5Ss=
+X-Received: by 2002:aca:f08a:: with SMTP id o132mr5877714oih.101.1561969537943;
+ Mon, 01 Jul 2019 01:25:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190628110353.ijd42pbhqfsdsi2n@willie-the-truck>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190628105131.3130257-1-arnd@arndb.de>
+In-Reply-To: <20190628105131.3130257-1-arnd@arndb.de>
+From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date:   Mon, 1 Jul 2019 09:25:11 +0100
+Message-ID: <CA+V-a8s5FtLik_BKhWPuG=JywN64kN7cM1vbyx+-EbrrVdjmsA@mail.gmail.com>
+Subject: Re: [PATCH] media: davinci-vpbe: remove obsolete includes
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        LAK <linux-arm-kernel@lists.infradead.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        linux-media <linux-media@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 28, 2019 at 12:03:54PM +0100, Will Deacon wrote:
-> Hi Arnd,
-> 
-> On Fri, Jun 28, 2019 at 12:29:03PM +0200, Arnd Bergmann wrote:
-> > As Will Deacon points out, CONFIG_PROVE_LOCKING implies TRACE_IRQFLAGS,
-> > so the conditions I added in the previous patch, and some others in the
-> > same file can be simplified by only checking for the former.
-> > 
-> > No functional change.
-> > 
-> > Fixes: 886532aee3cd ("locking/lockdep: Move mark_lock() inside CONFIG_TRACE_IRQFLAGS && CONFIG_PROVE_LOCKING")
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> > ---
-> >  kernel/locking/lockdep.c | 13 ++++++-------
-> >  1 file changed, 6 insertions(+), 7 deletions(-)
-> 
-> Thanks for following up on this. I think it makes the code easier to read,
-> so:
-> 
-> Acked-by: Will Deacon <will@kernel.org>
+Hi Arnd,
 
-Thanks guys!
+Thank you for the patch.
+
+On Fri, Jun 28, 2019 at 11:51 AM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> The driver builds fine without these, and they cause build
+> problems once davinci multiplatform support is enabled.
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/media/platform/davinci/vpbe_display.c | 4 ----
+>  drivers/media/platform/davinci/vpbe_osd.c     | 5 -----
+>  drivers/media/platform/davinci/vpbe_venc.c    | 5 -----
+>  3 files changed, 14 deletions(-)
+>
+
+Acked-by: Lad, Prabhakar <prabhakar.csengg@gmail.com>
+
+Cheers,
+--Prabhakar Lad
+
+> diff --git a/drivers/media/platform/davinci/vpbe_display.c b/drivers/media/platform/davinci/vpbe_display.c
+> index 000b191c42d8..18f9408013d1 100644
+> --- a/drivers/media/platform/davinci/vpbe_display.c
+> +++ b/drivers/media/platform/davinci/vpbe_display.c
+> @@ -19,10 +19,6 @@
+>
+>  #include <asm/pgtable.h>
+>
+> -#ifdef CONFIG_ARCH_DAVINCI
+> -#include <mach/cputype.h>
+> -#endif
+> -
+>  #include <media/v4l2-dev.h>
+>  #include <media/v4l2-common.h>
+>  #include <media/v4l2-ioctl.h>
+> diff --git a/drivers/media/platform/davinci/vpbe_osd.c b/drivers/media/platform/davinci/vpbe_osd.c
+> index 491842ef33c5..91b571a0ac2c 100644
+> --- a/drivers/media/platform/davinci/vpbe_osd.c
+> +++ b/drivers/media/platform/davinci/vpbe_osd.c
+> @@ -16,11 +16,6 @@
+>  #include <linux/clk.h>
+>  #include <linux/slab.h>
+>
+> -#ifdef CONFIG_ARCH_DAVINCI
+> -#include <mach/cputype.h>
+> -#include <mach/hardware.h>
+> -#endif
+> -
+>  #include <media/davinci/vpss.h>
+>  #include <media/v4l2-device.h>
+>  #include <media/davinci/vpbe_types.h>
+> diff --git a/drivers/media/platform/davinci/vpbe_venc.c b/drivers/media/platform/davinci/vpbe_venc.c
+> index 425f91f07165..8caa084e5704 100644
+> --- a/drivers/media/platform/davinci/vpbe_venc.c
+> +++ b/drivers/media/platform/davinci/vpbe_venc.c
+> @@ -14,11 +14,6 @@
+>  #include <linux/videodev2.h>
+>  #include <linux/slab.h>
+>
+> -#ifdef CONFIG_ARCH_DAVINCI
+> -#include <mach/hardware.h>
+> -#include <mach/mux.h>
+> -#endif
+> -
+>  #include <linux/platform_data/i2c-davinci.h>
+>
+>  #include <linux/io.h>
+> --
+> 2.20.0
+>
