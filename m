@@ -2,78 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A8515BB04
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 13:55:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 74F685BB08
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 13:56:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728762AbfGALzJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 07:55:09 -0400
-Received: from bmailout1.hostsharing.net ([83.223.95.100]:43321 "EHLO
-        bmailout1.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728388AbfGALzI (ORCPT
+        id S1728772AbfGALz5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 07:55:57 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:44630 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727511AbfGALz5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 07:55:08 -0400
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
-        by bmailout1.hostsharing.net (Postfix) with ESMTPS id 7BB763001531F;
-        Mon,  1 Jul 2019 13:55:06 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-        id 3BE7E23EF52; Mon,  1 Jul 2019 13:55:06 +0200 (CEST)
-Date:   Mon, 1 Jul 2019 13:55:06 +0200
-From:   Lukas Wunner <lukas@wunner.de>
-To:     "Sa, Nuno" <Nuno.Sa@analog.com>
-Cc:     "wahrenst@gmx.net" <wahrenst@gmx.net>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "bcm-kernel-feedback-list@broadcom.com" 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "kernel@martin.sperl.org" <kernel@martin.sperl.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "sbranden@broadcom.com" <sbranden@broadcom.com>,
-        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
-        "rjui@broadcom.com" <rjui@broadcom.com>,
-        "linux-rpi-kernel@lists.infradead.org" 
-        <linux-rpi-kernel@lists.infradead.org>,
-        "eric@anholt.net" <eric@anholt.net>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] spi: spi-bcm2835.c: Fix 3-wire mode
-Message-ID: <20190701115506.42rr4o4hbuvwytjc@wunner.de>
-References: <20190628123023.4696-1-nuno.sa@analog.com>
- <1b932c61-982b-aae0-1fef-3c574e7d17eb@gmx.net>
- <20190628190022.vya4h2lihm6x2xpb@wunner.de>
- <54323339606a36febc6a8633a8d3a7db84b975c4.camel@analog.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <54323339606a36febc6a8633a8d3a7db84b975c4.camel@analog.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Mon, 1 Jul 2019 07:55:57 -0400
+Received: by mail-pl1-f196.google.com with SMTP id t7so7239463plr.11;
+        Mon, 01 Jul 2019 04:55:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=UaeHZEzlrR9kAMRXI78vFSQh8YT14mqYT2wzHuKrFzw=;
+        b=Od037p+ADw3o0cfxwcMuZ9ltWKx3H17JLKGYj5S+Ax7EM1BASJ/Rjg1Xe8164BExKQ
+         BR9xpOllLNQs1XlJewAZRcoIt/4PlUkUqO0TyUumSKk8VRPQaCIw5ubUE6igRuwHIQk9
+         Whz5xaxTTC6ebW1pm5xIhjFcFMFTO/kF9thdfZhMCo7BudsNrKNIcOlO8SUVdWthlVFL
+         ATTNebVrJcG53Vnji8pq+0AKzmYTMqSh5y2tNMhiXmmwKx6C4ovfFwInmsLgZ+vI47uc
+         NtCCNmkhiLUlpibLKuB+HAfcDXzSi09f+ssb2OP+68CE94RBpiyKrs2Cqwk6SDSqZY7E
+         mxCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=UaeHZEzlrR9kAMRXI78vFSQh8YT14mqYT2wzHuKrFzw=;
+        b=PdqK38VvHP4PfoINnpJJBPh1xPDNkOJpPn/RmHZokD+6HPJIaYtf1LRgL27SMp88U9
+         gIZfi3raf5vfb8pi8n/YSIWD/Cz62NzBPfKwcOkwwNUHa08KdTIuqyjD+V/rqxEYf+3B
+         E/vJmX9GxE4CV3cygTOHYETe9XLxH2GQUUCRHpENY2dohGHzfRK/2SYdylPFfk8mCsLV
+         JrBWldlzOGYfR33AwfA4VJFtr4OoHncP4HYu6IyzjHOcqPJMDfrKgYKVJbDiiB1PZOJ+
+         tAbxBh3VY0zU6Tt4fh7CQ2YGBmW2A2xqbvYO0ZzEdhJPOtw2bf79xCchJTT7i7TDzHqh
+         1EAg==
+X-Gm-Message-State: APjAAAWEEr6emx4V78NF3rKGlzvU7iwxd4fTpeFihdjCIlErO99korG4
+        VoMnfWf07Wwzn6wrmgdwkJi7Dl+TjhtgWw==
+X-Google-Smtp-Source: APXvYqx0RyyVK/QP2SE2IyWjE6GYVCmtJmWvH97NmM5MoRqqACenrNvpBcuGFQYf5n7tmfQPhrKaPg==
+X-Received: by 2002:a17:902:8b82:: with SMTP id ay2mr26774235plb.164.1561982156439;
+        Mon, 01 Jul 2019 04:55:56 -0700 (PDT)
+Received: from bnva-HP-Pavilion-g6-Notebook-PC.domain.name ([117.248.64.59])
+        by smtp.gmail.com with ESMTPSA id a64sm8601886pgc.53.2019.07.01.04.55.53
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 01 Jul 2019 04:55:55 -0700 (PDT)
+From:   Vandana BN <bnvandana@gmail.com>
+To:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     skhan@linuxfoundation.org, gregkh@linuxfoundation.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        Vandana BN <bnvandana@gmail.com>
+Subject: [PATCH] net: dst.h: Fix shifting signed 32-bit value by 31 bits problem
+Date:   Mon,  1 Jul 2019 17:25:39 +0530
+Message-Id: <20190701115539.6738-1-bnvandana@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 01, 2019 at 07:24:23AM +0000, Sa, Nuno wrote:
-> The problem is in spi_map_msg() which
-> allocates dummy buffers (because of the ctrl flags). As a result, in
-> bcm2835_spi_transfer_one() we set "cs |= BCM2835_SPI_CS_REN;" when we
-> want to do tx only. I believe this was the actual problem...
+Fix DST_FEATURE_ECN_CA to use "U" cast to avoid shifting signed
+32-bit value by 31 bits problem.
 
-I see.  In that case, try:
+Signed-off-by: Vandana BN <bnvandana@gmail.com>
+---
+ include/net/dst.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- 	/* handle all the 3-wire mode */
--	if ((spi->mode & SPI_3WIRE) && (tfr->rx_buf))
-+	if ((spi->mode & SPI_3WIRE) && (tfr->rx_buf != ctlr->dummy_rx))
- 		cs |= BCM2835_SPI_CS_REN;
- 	else
- 		cs &= ~BCM2835_SPI_CS_REN;
+diff --git a/include/net/dst.h b/include/net/dst.h
+index 12b31c602cb0..095c5daf9403 100644
+--- a/include/net/dst.h
++++ b/include/net/dst.h
+@@ -183,7 +183,7 @@ static inline void dst_metric_set(struct dst_entry *dst, int metric, u32 val)
+ }
 
-Use master->dummy_rx instead of ctlr->dummy_rx prior to commit
-5f336ea53b6b ("spi: bcm2835: Replace spi_master by spi_controller").
+ /* Kernel-internal feature bits that are unallocated in user space. */
+-#define DST_FEATURE_ECN_CA	(1 << 31)
++#define DST_FEATURE_ECN_CA	(1U << 31)
 
-This could be something that users of your cape might use on older
-kernels in lieu of my upcoming patch set to drop MUST_RX / MUST_TX.
+ #define DST_FEATURE_MASK	(DST_FEATURE_ECN_CA)
+ #define DST_FEATURE_ECN_MASK	(DST_FEATURE_ECN_CA | RTAX_FEATURE_ECN)
+--
+2.17.1
 
-Thanks,
-
-Lukas
