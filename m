@@ -2,181 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD8D15C48A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 22:49:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D81C65C463
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 22:43:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727054AbfGAUt5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 16:49:57 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:51661 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726686AbfGAUty (ORCPT
+        id S1726787AbfGAUnb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 16:43:31 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:45111 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726586AbfGAUnb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 16:49:54 -0400
-Received: by mail-wm1-f68.google.com with SMTP id 207so831189wma.1;
-        Mon, 01 Jul 2019 13:49:53 -0700 (PDT)
+        Mon, 1 Jul 2019 16:43:31 -0400
+Received: by mail-io1-f67.google.com with SMTP id e3so31863804ioc.12
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2019 13:43:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=G2ozsz8yyViKWYfdB4NDhthbwOXBk4pYx/VsCelpvWE=;
-        b=jmIxnHM7ZHUfWXWInLHYOklrS+UIIPAq9//w6qAnnaR8iKO5uboXIaKh25dHn4QCdz
-         5BoU6hy3B6Uxwyqx7EMftclo9JSE5rw9XuruyPIj58LfzYWMFHAnUkZ8ZIpH8dEkPZIa
-         twRcbxJrIMnB15zJHspp/VaGHfO1zrb11h98LTrwECU1GD8t26uqQmH5t6VhQxc2f8fj
-         I8ssWT2Hdw752Dicz6PT5mBBBQdzcbVRYq1uPU0BJeAXuryYjfe5UsM6CuvlRByb1/Ma
-         Ki7N6EzLo4nve+bx32RmcK05Uwk0o5LMf/MyGE/9Z5XE99X+FX3jXRyQkdbBwAiWuJLJ
-         gD1w==
+        d=mvista-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=aAHYEpAwmFfykw4UsHqlxHV8LEbj/P9Jk/ruDIlZAEI=;
+        b=S8hTTQ4Yv+QWKNdV9zonpCua6hSUSWbkSIpRpYvKM7PA6gqfiIB2pFk0FVLrIMDVeT
+         UpyQboZIXvc6NWF6NY4CiF/ZperHfBl1mpziMP1FGD4KLrtHZXc0x+OZfYY/3SiudjUf
+         8QoxzdhwCe8j3+eJ84bCHV5oiUHsatYhfm0rv9o1wYggzySHoJsLHrr5A3RF0PGScoC5
+         gRfc9VI5YCXaLwwgaFLR45pfp+P4rOF6YraAXLcSnXy3avDHDsepwJfwWGJiofFg9O+k
+         b0gvJvgQhjvF3nZU3TLNdofmpLbeMI9SaRrXuD6QxF4fxTjtMsCFcViXg3Q85SwYZjuk
+         N5fw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=G2ozsz8yyViKWYfdB4NDhthbwOXBk4pYx/VsCelpvWE=;
-        b=NR2nj7bVO2R0Gvk9kB90AZ3OMWb39SeCuGi/ao71zQPr9Ntgo+hsw+ZsjDXiz41q9k
-         sPpJGY0tAsm0XatpKOfeozqNzQKkjEJEa/FVaOunVUim+nBUbzD0y0lSRtQmjG7geMZ4
-         Az2qqAtbef9GuE/R0MK8dwTjFSNFpb9S3pet8SEce5vOISRbGpOdyKQ+3rbOmA6jR6sD
-         LO0mdT6AMn9dbYZvA6gPY0m1odkcbZfl8n2HrgC7VBbLma/2MK/OiJvAPAiWo+slq3WD
-         03khAvab5coAESNvB/bN+YQojuTGSw1U+TcpiniyuBwCtEPBhzrhxOJL5SwmVO2K3ys0
-         t0CA==
-X-Gm-Message-State: APjAAAW9kTR4Lh2JuB0pfHKZq90nA9lzBBAOzjaKDwBYXWNy6pnbjxnk
-        fK1qlIktmyOuF1Ter5+ex6U=
-X-Google-Smtp-Source: APXvYqzGd7kRO9VlCev3rUxiJU/HAnhEAi7O+d8K82CjMrYQWzw14tcz6EgQPXVvawTqw0MgE+2b5Q==
-X-Received: by 2002:a1c:448b:: with SMTP id r133mr681423wma.114.1562014192656;
-        Mon, 01 Jul 2019 13:49:52 -0700 (PDT)
-Received: from ?IPv6:2003:ea:8bd6:c00:8dac:9ad2:a34c:33bc? (p200300EA8BD60C008DAC9AD2A34C33BC.dip0.t-ipconnect.de. [2003:ea:8bd6:c00:8dac:9ad2:a34c:33bc])
-        by smtp.googlemail.com with ESMTPSA id w20sm25408931wra.96.2019.07.01.13.49.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 01 Jul 2019 13:49:52 -0700 (PDT)
-Subject: Re: [PATCH 2/3] net: phy: realtek: Enable accessing RTL8211E
- extension pages
-To:     Matthias Kaehlcke <mka@chromium.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>
-Cc:     netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>
-References: <20190701195225.120808-1-mka@chromium.org>
- <20190701195225.120808-2-mka@chromium.org>
-From:   Heiner Kallweit <hkallweit1@gmail.com>
-Message-ID: <d2386f7d-b4bc-d983-1b83-cc2aa4aec38b@gmail.com>
-Date:   Mon, 1 Jul 2019 22:43:12 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=aAHYEpAwmFfykw4UsHqlxHV8LEbj/P9Jk/ruDIlZAEI=;
+        b=pHX0sUByxUXEuVig+nt8rsdi1bMVZ+uJnMfTzjfM8Upop699htY6dRqSzz1LXm7Vra
+         SVbiv0lZwlh7l+J2YaHTESgo6Pa5edNz2zgUwLtJBmLf1HXJudSVBh+ir+0mwdNXlaap
+         DU3idnFBMZ8X00/SACLdRomJHRxVu63Sa/X0NikHLpyETvUKtQUUFAo3w1m1W399WnWD
+         GtS00oOTw3kSDgKeWZtm3l+7L88YJn3mCw0Ew9s8sYeiyCylT7g+q5r/ECG5wXpCeRTn
+         YjEpUPf8WkOj6YZssmcOyqtmcNTyVuNR18gCKLy7v/xREkSxIuMvPoOmzLVCHmTmsG9n
+         QnVA==
+X-Gm-Message-State: APjAAAUlFchkowCTmleeObrfegq6cdeUjIP6MhSbzWhDH/fs+LfUB8p/
+        EUM9VKrgdLheGNepqEM74fRV4A==
+X-Google-Smtp-Source: APXvYqzF5o60A5qeHHxcOxgsNO5bJ8Npeh4wXwP+G+CaK8cmAiMBoKhra/XQ1iqIYhF77nJyzJTikw==
+X-Received: by 2002:a6b:14c2:: with SMTP id 185mr29942445iou.69.1562013807868;
+        Mon, 01 Jul 2019 13:43:27 -0700 (PDT)
+Received: from minyard.net ([2001:470:b8f6:1b:9575:16b6:1dd6:2173])
+        by smtp.gmail.com with ESMTPSA id s2sm9598124ioj.8.2019.07.01.13.43.26
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 01 Jul 2019 13:43:27 -0700 (PDT)
+Date:   Mon, 1 Jul 2019 15:43:25 -0500
+From:   Corey Minyard <cminyard@mvista.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Corey Minyard <minyard@acm.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, tglx@linutronix.de
+Subject: Re: [PATCH RT v2] Fix a lockup in wait_for_completion() and friends
+Message-ID: <20190701204325.GD5041@minyard.net>
+Reply-To: cminyard@mvista.com
+References: <20190509193320.21105-1-minyard@acm.org>
+ <20190510103318.6cieoifz27eph4n5@linutronix.de>
+ <20190628214903.6f92a9ea@oasis.local.home>
+ <20190701190949.GB4336@minyard.net>
+ <20190701161840.1a53c9e4@gandalf.local.home>
 MIME-Version: 1.0
-In-Reply-To: <20190701195225.120808-2-mka@chromium.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190701161840.1a53c9e4@gandalf.local.home>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01.07.2019 21:52, Matthias Kaehlcke wrote:
-> The RTL8211E has extension pages, which can be accessed after
-> selecting a page through a custom method. Add a function to
-> modify bits in a register of an extension page and a few
-> helpers for dealing with ext pages.
+On Mon, Jul 01, 2019 at 04:18:40PM -0400, Steven Rostedt wrote:
+> On Mon, 1 Jul 2019 14:09:49 -0500
+> Corey Minyard <minyard@acm.org> wrote:
 > 
-> rtl8211e_modify_ext_paged() and rtl821e_restore_page() are
-> inspired by their counterparts phy_modify_paged() and
-> phy_restore_page().
+> > On Fri, Jun 28, 2019 at 09:49:03PM -0400, Steven Rostedt wrote:
+> > > On Fri, 10 May 2019 12:33:18 +0200
+> > > Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
 > 
-> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> ---
-> This code might be applicable to other Realtek PHYs, but I don't
-> have access to the datasheets to confirm it, so for now it's just
-> for the RTL8211E.
+> > > 
+> > > When I applied this patch to 4.19-rt, I get the following lock up:  
+> > 
+> > I was unable to reproduce, and I looked at the code and I can't really
+> > see a connection between this change and this crash.
+> > 
+> > Can you reproduce at will?  If so, can you send a testcase?
+> > 
 > 
-This extended page mechanism exists on a number of older Realtek
-PHY's. For most extended pages however Realtek releases no public
-documentation.
-Considering that we use these helpers in one place only,  I don't
-really see a need for them.
+> Yes, it wont boot. There is no testcase as I don't even make it to a
+> boot prompt. I applied the patch and it crashes, I remove the patch and
+> it boots without issue.
+> 
+> Attached is the full dmesg and the config used. I applied it to
+> 
+>   ae97a0ba0197fb424008a317b79bebacd6a50213
+>   Linux 4.19.56-rt23
+> 
+> It works fine for 5.0.14-rt9 where it was added.
+> 
+> -- Steve
 
->  drivers/net/phy/realtek.c | 61 +++++++++++++++++++++++++++++++++++++++
->  1 file changed, 61 insertions(+)
-> 
-> diff --git a/drivers/net/phy/realtek.c b/drivers/net/phy/realtek.c
-> index a669945eb829..dfc2e20ef335 100644
-> --- a/drivers/net/phy/realtek.c
-> +++ b/drivers/net/phy/realtek.c
-> @@ -26,6 +26,9 @@
->  #define RTL821x_EXT_PAGE_SELECT			0x1e
->  #define RTL821x_PAGE_SELECT			0x1f
->  
-> +#define RTL8211E_EXT_PAGE			7
-> +#define RTL8211E_EPAGSR				0x1e
-> +
->  #define RTL8211F_INSR				0x1d
->  
->  #define RTL8211F_TX_DELAY			BIT(8)
-> @@ -53,6 +56,64 @@ static int rtl821x_write_page(struct phy_device *phydev, int page)
->  	return __phy_write(phydev, RTL821x_PAGE_SELECT, page);
->  }
->  
-> +static int rtl821e_select_ext_page(struct phy_device *phydev, int page)
-> +{
-> +	int rc;
-> +
-> +	rc = phy_write(phydev, RTL821x_PAGE_SELECT, RTL8211E_EXT_PAGE);
-> +	if (rc)
-> +		return rc;
-> +
-> +	return phy_write(phydev, RTL8211E_EPAGSR, page);
-> +}
-> +
-> +static int rtl821e_restore_page(struct phy_device *phydev, int oldpage, int ret)
-> +{
-> +	int r;
-> +
-> +	if (oldpage >= 0) {
-> +		r = phy_write(phydev, RTL821x_PAGE_SELECT, oldpage);
-> +
-> +		/* Propagate the operation return code if the page write
-> +		 * was successful.
-> +		 */
-> +		if (ret >= 0 && r < 0)
-> +			ret = r;
-> +	} else {
-> +		/* Propagate the page selection error code */
-> +		ret = oldpage;
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static int __maybe_unused rtl8211e_modify_ext_paged(struct phy_device *phydev,
-> +				    int page, u32 regnum, u16 mask, u16 set)
-> +{
-> +	int ret = 0;
-> +	int oldpage;
-> +	int new;
-> +
-> +	oldpage = phy_read(phydev, RTL821x_PAGE_SELECT);
-> +	if (oldpage < 0)
-> +		goto out;
-> +
-> +	ret = rtl821e_select_ext_page(phydev, page);
-> +	if (ret)
-> +		goto out;
-> +
-> +	ret = phy_read(phydev, regnum);
-> +	if (ret < 0)
-> +		goto out;
-> +
-> +	new = (ret & ~mask) | set;
-> +	if (new != ret)
-> +		ret = phy_write(phydev, regnum, new);
-> +
-> +out:
-> +	return rtl821e_restore_page(phydev, oldpage, ret);
-> +}
-> +
->  static int rtl8201_ack_interrupt(struct phy_device *phydev)
->  {
->  	int err;
-> 
+I show that patch is already applied at
 
+    1921ea799b7dc561c97185538100271d88ee47db
+    sched/completion: Fix a lockup in wait_for_completion()
+
+git describe --contains 1921ea799b7dc561c97185538100271d88ee47db
+v4.19.37-rt20~1
+
+So I'm not sure what is going on.
+
+-corey
