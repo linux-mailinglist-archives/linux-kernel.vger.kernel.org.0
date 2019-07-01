@@ -2,120 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DCF15BF6C
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 17:16:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C6AF5BF74
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 17:16:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730281AbfGAPPD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 11:15:03 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:36212 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730212AbfGAPOn (ORCPT
+        id S1730302AbfGAPPL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 11:15:11 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:32821 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728764AbfGAPPI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 11:14:43 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x61FEWVw124747;
-        Mon, 1 Jul 2019 10:14:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1561994072;
-        bh=JcG9gVVC9mwkIN0YqGoNDTpuvdgqaymnMY5JFYhSq/s=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=O4tR6/E3/HWD8H/zU7izLsJxcg7wBVDnGv5aKXwvZEgEKxcY0earzKKrNLQ0j8qaG
-         EnaNXgC1P88RzAwuCuo90x+1ROuI1p0Wsm5Egb9tdUgnhJXDh8WCvPGpl2BH4RPxxj
-         Rhh1Qr/uCaVK5sTWUnej4DWzQLhmNLpGFATPHpO8=
-Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x61FEW75055584
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 1 Jul 2019 10:14:32 -0500
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 1 Jul
- 2019 10:14:31 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Mon, 1 Jul 2019 10:14:31 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x61FEV8U063793;
-        Mon, 1 Jul 2019 10:14:31 -0500
-From:   Jean-Jacques Hiblot <jjhiblot@ti.com>
-To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <lee.jones@linaro.org>,
-        <daniel.thompson@linaro.org>, <jingoohan1@gmail.com>
-CC:     <dmurphy@ti.com>, <linux-leds@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <tomi.valkeinen@ti.com>, Jean-Jacques Hiblot <jjhiblot@ti.com>,
-        <devicetree@vger.kernel.org>
-Subject: [PATCH 4/4] devicetree: Add led-backlight binding
-Date:   Mon, 1 Jul 2019 17:14:23 +0200
-Message-ID: <20190701151423.30768-5-jjhiblot@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190701151423.30768-1-jjhiblot@ti.com>
-References: <20190701151423.30768-1-jjhiblot@ti.com>
+        Mon, 1 Jul 2019 11:15:08 -0400
+Received: by mail-qt1-f193.google.com with SMTP id h24so11993362qto.0;
+        Mon, 01 Jul 2019 08:15:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SWzGaJ3K1m5MITaG47DyN8fuDrDuFeO4EBg8cfltv6A=;
+        b=hQ5leNLM8zxOlu0xsEq+CpBBF+yONRHMazzmXgQLZJgzPUrIhv3SqKdZHn0TthjDRf
+         2+EZ1PV5SayL37HNJkFiSF3YChEPRaieqPDrGtd2+1zr9pI4nnrE/MbO5pNjg3zWcvSH
+         jS3d4lRakpMjcM0E3GH3ok6qBYtARCJ4NdSDzkZ5N9l+oPaSAr+1tlrg8YMKA95YGYPy
+         zTyInKt2ata0phwGhrq4uNQUTSYImaZNouGYToCVA/YoDXppDdz7sz7zfnwODOUB7Wtq
+         HgsJn4yXw8q+mLwRnI8umKsBZFBVhkdnuuTPIS0IMbHX/osrvVAKzbUq0y1cCew6Hq4I
+         QkGA==
+X-Gm-Message-State: APjAAAVUP0vb2G8h1jSw9Rk6s1rRnBeWm5ruBHyutSGuIWrx+Vcd8+YT
+        KgPHFLDm+L09OMH/Wi6uiAL4hfiLaVLbA9igh02wV5bE
+X-Google-Smtp-Source: APXvYqx2fcdlEPw8crNsDt0x8PrIMzIH0ySrWp/sigjo3EdA1jcH64351orRTGa3HS4+P7B9/E6V6IaUYuj0wxQf3YU=
+X-Received: by 2002:aed:33a4:: with SMTP id v33mr20640020qtd.18.1561994107714;
+ Mon, 01 Jul 2019 08:15:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20190604160944.4058-1-christian@brauner.io> <20190604160944.4058-2-christian@brauner.io>
+ <20190620184451.GA28543@roeck-us.net> <20190620221003.ciuov5fzqxrcaykp@brauner.io>
+ <CAK8P3a2iV7=HkHBVL_puvCQN0DmdKEnVs2aG9MQV_8Q58JSfTA@mail.gmail.com>
+ <20190621111839.v5yqlws6iw7mx4aa@brauner.io> <CAK8P3a0T1=eg5ONbMFhHi=vmk1K5uogZ+5=wpsXvjVDzn6vS=Q@mail.gmail.com>
+ <20190621153012.fxwhx25mzmzueqh7@brauner.io>
+In-Reply-To: <20190621153012.fxwhx25mzmzueqh7@brauner.io>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 1 Jul 2019 17:14:51 +0200
+Message-ID: <CAK8P3a0f_=q88JB=t7fbmweAbZ2E2_uCMt+2JoBYx3od_M6fHQ@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] arch: wire-up clone3() syscall
+To:     Christian Brauner <christian@brauner.io>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        David Howells <dhowells@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Adrian Reber <adrian@lisas.de>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Ley Foon Tan <lftan@altera.com>,
+        "moderated list:NIOS2 ARCHITECTURE" 
+        <nios2-dev@lists.rocketboards.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+On Fri, Jun 21, 2019 at 5:30 PM Christian Brauner <christian@brauner.io> wrote:
+> On Fri, Jun 21, 2019 at 04:20:15PM +0200, Arnd Bergmann wrote:
+> > On Fri, Jun 21, 2019 at 1:18 PM Christian Brauner <christian@brauner.io> wrote:
+> Hm, if you believe that this is fine and want to "vouch" for it by
+> whipping up a patch that replaces the wiring up done in [1] I'm happy to
+> take it. :) Otherwise I'd feel more comfortable not adding all arches at
+> once.
+>
+> [1]: https://git.kernel.org/pub/scm/linux/kernel/git/brauner/linux.git/log/?h=clone
 
-Add DT binding for led-backlight.
+Sorry for my late reply. I had actually looked at the implementations
+in a little
+more detail and I think you are right that adding these are better
+left to the arch
+maintainers in case of clone3.
 
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
-Cc: devicetree@vger.kernel.org
----
- .../video/backlight/led-backlight.txt         | 39 +++++++++++++++++++
- 1 file changed, 39 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/video/backlight/led-backlight.txt
-
-diff --git a/Documentation/devicetree/bindings/video/backlight/led-backlight.txt b/Documentation/devicetree/bindings/video/backlight/led-backlight.txt
-new file mode 100644
-index 000000000000..216cd52d624a
---- /dev/null
-+++ b/Documentation/devicetree/bindings/video/backlight/led-backlight.txt
-@@ -0,0 +1,39 @@
-+led-backlight bindings
-+
-+The node of the backlight driver IS the node of the LED.
-+
-+Required properties:
-+  - compatible: "led-backlight"
-+  - brightness-levels: Array of distinct LED brightness levels. These
-+      are in the range from 0 to 255, passed to the LED class driver.
-+  - default-brightness-level: the default brightness level (index into the
-+      array defined by the "brightness-levels" property)
-+
-+Optional properties:
-+  - power-supply: regulator for supply voltage
-+  - enable-gpios: contains a single GPIO specifier for the GPIO which enables
-+                  and disables the backlight (see GPIO binding[0])
-+
-+[0]: Documentation/devicetree/bindings/gpio/gpio.txt
-+
-+Example:
-+
-+led_ctrl {
-+	red_led@1 {
-+	        label = "red";
-+		reg = <1>;
-+	}
-+
-+	backlight_led@2 {
-+		function = LED_FUNCTION_BACKLIGHT;
-+		reg = <2>;
-+
-+		compatible = "led-backlight";
-+
-+		brightness-levels = <0 4 8 16 32 64 128 255>;
-+		default-brightness-level = <6>;
-+
-+		power-supply = <&vdd_bl_reg>;
-+		enable-gpios = <&gpio 58 0>;
-+	};
-+};
--- 
-2.17.1
-
+      Arnd
