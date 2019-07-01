@@ -2,203 +2,741 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BBBF45C1B8
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 19:05:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31D5A5C190
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 19:00:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728752AbfGARFz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 13:05:55 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:44881 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727154AbfGARFz (ORCPT
+        id S1729265AbfGARAx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 13:00:53 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:45805 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728453AbfGARAx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 13:05:55 -0400
-Received: by mail-io1-f67.google.com with SMTP id s7so30379684iob.11
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2019 10:05:54 -0700 (PDT)
+        Mon, 1 Jul 2019 13:00:53 -0400
+Received: by mail-pl1-f195.google.com with SMTP id bi6so7649809plb.12;
+        Mon, 01 Jul 2019 10:00:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=JolxjoC61TKJKf0jb4dN4P28SKpb+zH+zGH1st4ym90=;
-        b=Qd4WduNYQlNNrJRAp36QmrwJY099eDBeJ105dOffHIB5X7OI66k1xlFc+yOJ0OeT8W
-         JAeFJ2lUgNto0dagfE4x46ArMzjM/yE45uJXQQ80irLhpGEMjpsZkWyFodEwxLWk510o
-         vqEu++m0gselpSMr634ICkAselddnefqJ4+VU=
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=/VgrYR3AmpnfrxYCXVoBWhJ6vqgiknjtCud2y9qLeNU=;
+        b=jn5qi2P2zXZdbvBibHhaMJAwwezX542xkdcnSz80J076QYCQYfjJu483pCtJ2cRfJZ
+         tgrsqZeOmWFoKk9r85dCxttjT6iCfx2CY9JaLh/da86ZJIgNTddf9OCn+2aoU9J0U+Hg
+         Ga/DGmj53WutjwwD5VU2/Qf4joRekG/e/+6MFgkUZcpHVQdWTwqyS+wbhxYirc3XEaUk
+         gKu6wxL97q2JyHAmnkqN9U+R4MmKTO1WSulGcHvO0tA1Uah27/4VPf2WRHW6QvU5e6np
+         uuJClQ5utwdLqE0UlxEi/EFzLkl8e1+C2hrSanJbDgZT8ZBNgLpnBFOUx2KiHNHIpVbQ
+         p76w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=JolxjoC61TKJKf0jb4dN4P28SKpb+zH+zGH1st4ym90=;
-        b=UyEOSifVrOQXP5Sz06dApjkJ0jjBIj4+zWXzz5z/n7cP2hWY2s0uyxVsKTuojZGVdt
-         6pMKmvhkcg1/ZVxkQOzdvJjN5zhYOcx5m3p1wgwTykGdBOp2yZvnk7UDxkN4aPdNYQWC
-         WrVPXKBaGcpNLi/vThVSvBah6hBbQK/KVsWWI/onYzvLG40Q7Hj/yOxjy++XDZ4wPdPX
-         1kbUbJkjmMz55+2oXMP6z9RHXzSXBiDAkvlUlnHkXws90alyKFEo93W+jJvpdhTbDkyI
-         kCZtq2uBaTzyPO5i5IpOqfMvVsPbbAuoZ8aqvBgKJJpmYEIfwfiu+QHQddFXaimG9YVR
-         8l8w==
-X-Gm-Message-State: APjAAAWa6Bmq2OtI/LF/KQogp+RgQsCCoimMczGmBE6euDsK+2YQKphe
-        Svq5BNvjxZXsqBHF0aNQ9nZypJ4IKLE=
-X-Google-Smtp-Source: APXvYqw122v32WEOYU6eGFuWhtFlNhFqOre8/0sM6lcMnveGgeaz8h47rK88AsO4GZ13JBQozsDAzg==
-X-Received: by 2002:a02:5a02:: with SMTP id v2mr29210978jaa.124.1562000754269;
-        Mon, 01 Jul 2019 10:05:54 -0700 (PDT)
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com. [209.85.166.44])
-        by smtp.gmail.com with ESMTPSA id p3sm12759482iog.70.2019.07.01.10.05.54
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Mon, 01 Jul 2019 10:05:54 -0700 (PDT)
-Received: by mail-io1-f44.google.com with SMTP id r185so30445027iod.6
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2019 10:05:54 -0700 (PDT)
-X-Received: by 2002:a02:6597:: with SMTP id u145mr30963069jab.26.1562000398582;
- Mon, 01 Jul 2019 09:59:58 -0700 (PDT)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mime-version:content-disposition:user-agent;
+        bh=/VgrYR3AmpnfrxYCXVoBWhJ6vqgiknjtCud2y9qLeNU=;
+        b=exLiQiNvolk9j02BhRLXxsc4iNFOlV6k08JHHUN+d2M9XNw3W8uwdVrTImgS7/c3+Z
+         FUXAFk4ySNcvrrbhcLYc6cd88hwIwTtOVLWgSzIyvhVqaszOJBJ8DPEBg1xuGeUc5x4l
+         W1U+m5ake+5auDquIy0tdaHZYlAjurUhczGL5c9V7b4o3ZmU92ZukMkN+EMuZHkrWEGP
+         ndf/eekCRWpJuEMeVSpQ7ztNxSwWN6Ti3mLn7GwXwK3jgsdoaYyRchkDkgK22MOq8sBf
+         sFAdodg4IB3UnQrUbv1fOA01JHxzJrokBMojq/pu+Ip+60a/+r75cOiHVvqc5DkHzfOy
+         PTKA==
+X-Gm-Message-State: APjAAAUQjdzaWMZQLhmnpYAWPNsPu6cpHQcF0IliOJjEcPW5nK+fNbiP
+        vyvCEYyUK3ZHdOQvNGjQ0KhRjOoH
+X-Google-Smtp-Source: APXvYqwd7TmrY4WczfQOxit/bFbiwZ4weleNbrVtnflLiCvrhIm9DG9S0TeW/WUn5o8UCbozH6qpUA==
+X-Received: by 2002:a17:902:169:: with SMTP id 96mr14751755plb.306.1562000451885;
+        Mon, 01 Jul 2019 10:00:51 -0700 (PDT)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id s17sm106742pjp.7.2019.07.01.10.00.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 01 Jul 2019 10:00:50 -0700 (PDT)
+Date:   Mon, 1 Jul 2019 10:00:48 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Amy.Shih@advantech.com.tw
+Cc:     she90122@gmail.com, oakley.ding@advantech.com.tw,
+        jia.sui@advantech.com.cn, Jean Delvare <jdelvare@suse.com>,
+        linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [v2 3/3] hwmon: (nct7904) Add extra sysfs support for fan,
+ voltage and temperature.
+Message-ID: <20190701170048.GA5328@roeck-us.net>
 MIME-Version: 1.0
-References: <20190401171724.215780-1-dianders@chromium.org>
- <20190401171724.215780-2-dianders@chromium.org> <20190630200259.GA15102@ravnborg.org>
-In-Reply-To: <20190630200259.GA15102@ravnborg.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Mon, 1 Jul 2019 09:59:46 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=V3eiBXP4Z5KMxD=-csV5EAD9cY4MzuAOtMyphpDmW+_A@mail.gmail.com>
-Message-ID: <CAD=FV=V3eiBXP4Z5KMxD=-csV5EAD9cY4MzuAOtMyphpDmW+_A@mail.gmail.com>
-Subject: Re: [PATCH v5 1/7] dt-bindings: Add panel-timing subnode to simple-panel
-To:     Sam Ravnborg <sam@ravnborg.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Sean Paul <seanpaul@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Jeffy Chen <jeffy.chen@rock-chips.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        =?UTF-8?Q?Enric_Balletb=C3=B2?= <enric.balletbo@collabora.com>,
-        =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@chromium.org>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Matthias Kaehlcke <mka@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Mon, Jul 01, 2019 at 05:32:29AM +0000, Amy.Shih@advantech.com.tw wrote:
+> From: "amy.shih" <amy.shih@advantech.com.tw>
+> 
+> NCT-7904D also supports reading of channel limitation registers
+> and SMI status registers for fan, voltage and temperature monitoring,
+> and also supports reading of temperature sensor type which is thermal diode,
+> thermistor, AMD SB-TSI or Intel PECI, thus add below sysfs nodes:
+> 
+> -fan[1-*]_min
+> -fan[1-*]_alarm
+> -in[1-*]_min
+> -in[1-*]_max
+> -in[1-*]_alarm
+> -temp[1-*]_max
+> -temp[1-*]_max_hyst
+> -temp[1-*]_crit
+> -temp[1-*]_crit_hyst
+> -temp[1-*]_alarm
+> -temp[1-*]_type
+> 
+> Signed-off-by: amy.shih <amy.shih@advantech.com.tw>
+> ---
+> Changes in v2:
+> - Fix bad fallthrough in various switch statements.
+> - Fix the wrong declared of tmp as u8 in nct7904_write_in, declared tmp to int.
+> - Fix incorrect register setting of voltage.
+> - Fix incorrect register bit mapping of temperature alarm.
+> - Fix wrong return code 0x1fff in function nct7904_write_fan.
+> - Delete wrong comment in function nct7904_write_in.
+> - Fix wrong attribute names for temperature.
+> - Fix wrong registers setting for temperature.
+> ---
+>  drivers/hwmon/nct7904.c | 469 ++++++++++++++++++++++++++++++++++++----
+>  1 file changed, 424 insertions(+), 45 deletions(-)
+> 
+> diff --git a/drivers/hwmon/nct7904.c b/drivers/hwmon/nct7904.c
+> index 710c30562fc1..d842c10ba11f 100644
+> --- a/drivers/hwmon/nct7904.c
+> +++ b/drivers/hwmon/nct7904.c
+> @@ -46,10 +46,33 @@
+>  #define DTS_T_CTRL1_REG		0x27
+>  #define VT_ADC_MD_REG		0x2E
+>  
+> +#define VSEN1_HV_LL_REG		0x02	/* Bank 1; 2 regs (HV/LV) per sensor */
+> +#define VSEN1_LV_LL_REG		0x03	/* Bank 1; 2 regs (HV/LV) per sensor */
+> +#define VSEN1_HV_HL_REG		0x00	/* Bank 1; 2 regs (HV/LV) per sensor */
+> +#define VSEN1_LV_HL_REG		0x01	/* Bank 1; 2 regs (HV/LV) per sensor */
+> +#define SMI_STS1_REG		0xC1	/* Bank 0; SMI Status Register */
+> +#define SMI_STS5_REG		0xC5	/* Bank 0; SMI Status Register */
+> +#define SMI_STS7_REG		0xC7	/* Bank 0; SMI Status Register */
+> +#define SMI_STS8_REG		0xC8	/* Bank 0; SMI Status Register */
+> +
+>  #define VSEN1_HV_REG		0x40	/* Bank 0; 2 regs (HV/LV) per sensor */
+>  #define TEMP_CH1_HV_REG		0x42	/* Bank 0; same as VSEN2_HV */
+>  #define LTD_HV_REG		0x62	/* Bank 0; 2 regs in VSEN range */
+> +#define LTD_HV_HL_REG		0x44	/* Bank 1; 1 reg for LTD */
+> +#define LTD_LV_HL_REG		0x45	/* Bank 1; 1 reg for LTD */
+> +#define LTD_HV_LL_REG		0x46	/* Bank 1; 1 reg for LTD */
+> +#define LTD_LV_LL_REG		0x47	/* Bank 1; 1 reg for LTD */
+> +#define TEMP_CH1_CH_REG		0x05	/* Bank 1; 1 reg for LTD */
+> +#define TEMP_CH1_W_REG		0x06	/* Bank 1; 1 reg for LTD */
+> +#define TEMP_CH1_WH_REG		0x07	/* Bank 1; 1 reg for LTD */
+> +#define TEMP_CH1_C_REG		0x04	/* Bank 1; 1 reg per sensor */
+> +#define DTS_T_CPU1_C_REG	0x90	/* Bank 1; 1 reg per sensor */
+> +#define DTS_T_CPU1_CH_REG	0x91	/* Bank 1; 1 reg per sensor */
+> +#define DTS_T_CPU1_W_REG	0x92	/* Bank 1; 1 reg per sensor */
+> +#define DTS_T_CPU1_WH_REG	0x93	/* Bank 1; 1 reg per sensor */
+>  #define FANIN1_HV_REG		0x80	/* Bank 0; 2 regs (HV/LV) per sensor */
+> +#define FANIN1_HV_HL_REG	0x60	/* Bank 1; 2 regs (HV/LV) per sensor */
+> +#define FANIN1_LV_HL_REG	0x61	/* Bank 1; 2 regs (HV/LV) per sensor */
+>  #define T_CPU1_HV_REG		0xA0	/* Bank 0; 2 regs (HV/LV) per sensor */
+>  
+>  #define PRTS_REG		0x03	/* Bank 2 */
+> @@ -58,6 +81,8 @@
+>  #define FANCTL1_FMR_REG		0x00	/* Bank 3; 1 reg per channel */
+>  #define FANCTL1_OUT_REG		0x10	/* Bank 3; 1 reg per channel */
+>  
+> +#define ENABLE_TSI	BIT(1)
+> +
+>  static const unsigned short normal_i2c[] = {
+>  	0x2d, 0x2e, I2C_CLIENT_END
+>  };
+> @@ -72,6 +97,7 @@ struct nct7904_data {
+>  	u8 fan_mode[FANCTL_MAX];
+>  	u8 enable_dts;
+>  	u8 has_dts;
+> +	u8 temp_mode; /* 0: TR mode, 1: TD mode */
+>  };
+>  
+>  /* Access functions */
+> @@ -170,6 +196,25 @@ static int nct7904_read_fan(struct device *dev, u32 attr, int channel,
+>  			rpm = 1350000 / cnt;
+>  		*val = rpm;
+>  		return 0;
+> +	case hwmon_fan_min:
+> +		ret = nct7904_read_reg16(data, BANK_1,
+> +					 FANIN1_HV_HL_REG + channel * 2);
+> +		if (ret < 0)
+> +			return ret;
+> +		cnt = ((ret & 0xff00) >> 3) | (ret & 0x1f);
+> +		if (cnt == 0x1fff)
+> +			rpm = 0;
+> +		else
+> +			rpm = 1350000 / cnt;
 
-On Sun, Jun 30, 2019 at 1:03 PM Sam Ravnborg <sam@ravnborg.org> wrote:
->
-> Hi Douglas.
->
-> Some long overdue review feedback.
->
-> On Mon, Apr 01, 2019 at 10:17:18AM -0700, Douglas Anderson wrote:
-> > From: Sean Paul <seanpaul@chromium.org>
-> >
-> > This patch adds a new subnode to simple-panel allowing us to override
-> > the typical timing expressed in the panel's display_timing.
-> >
-> > Changes in v2:
-> >  - Split out the binding into a new patch (Rob)
-> >  - display-timings is a new section (Rob)
-> >  - Use the full display-timings subnode instead of picking the timing
-> >    out (Rob/Thierry)
-> > Changes in v3:
-> >  - Go back to using the timing subnode directly, but rename to
-> >    panel-timing (Rob)
-> > Changes in v4:
-> >  - Simplify desc. for when override should be used (Thierry/Laurent)
-> >  - Removed Rob H review since it's been a year and wording changed
-> > Changes in v5:
-> >  - Removed bit about OS may ignore (Rob/Ezequiel)
-> >
-> > Cc: Doug Anderson <dianders@chromium.org>
-> > Cc: Eric Anholt <eric@anholt.net>
-> > Cc: Heiko Stuebner <heiko@sntech.de>
-> > Cc: Jeffy Chen <jeffy.chen@rock-chips.com>
-> > Cc: Rob Herring <robh+dt@kernel.org>
-> > Cc: St=C3=A9phane Marchesin <marcheu@chromium.org>
-> > Cc: Thierry Reding <thierry.reding@gmail.com>
-> > Cc: devicetree@vger.kernel.org
-> > Cc: dri-devel@lists.freedesktop.org
-> > Cc: linux-rockchip@lists.infradead.org
-> > Signed-off-by: Sean Paul <seanpaul@chromium.org>
-> > Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> > ---
-> >
-> >  .../bindings/display/panel/simple-panel.txt   | 22 +++++++++++++++++++
-> >  1 file changed, 22 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/display/panel/simple-pan=
-el.txt b/Documentation/devicetree/bindings/display/panel/simple-panel.txt
-> > index b2b872c710f2..93882268c0b9 100644
-> > --- a/Documentation/devicetree/bindings/display/panel/simple-panel.txt
-> > +++ b/Documentation/devicetree/bindings/display/panel/simple-panel.txt
-> > @@ -15,6 +15,16 @@ Optional properties:
-> >    (hot plug detect) signal, but the signal isn't hooked up so we shoul=
-d
-> >    hardcode the max delay from the panel spec when powering up the pane=
-l.
-> >
-> > +panel-timing subnode
-> > +--------------------
-> > +
-> > +This optional subnode is for devices which require a mode differing
-> > +from the panel's "typical" display timing.
-> Meybe add here that it is expected that the panel has included timing
-> in the driver itself, and not as part of DT.
-> So what is specified here is a more precise variant, within the limits
-> of what is specified for the panel.
+This is problematic if cnt == 0 (I understand that existing code further above
+has the same problem, so it would be ok to fix both with a separate patch).
 
-See discussions previous versions of this patch.  Specifically you can
-see v4 at <https://patchwork.kernel.org/patch/10875505/> and v3
-(posted by Sean) at <https://patchwork.kernel.org/patch/10207591/>.
+> +		*val = rpm;
+> +		return 0;
+> +	case hwmon_fan_alarm:
+> +		ret = nct7904_read_reg(data, BANK_0,
+> +				       SMI_STS7_REG + (channel >> 3));
+> +		if (ret < 0)
+> +			return ret;
+> +		*val = (ret >> (channel & 0x07)) & 1;
+> +		return 0;
+>  	default:
+>  		return -EOPNOTSUPP;
+>  	}
+> @@ -179,8 +224,20 @@ static umode_t nct7904_fan_is_visible(const void *_data, u32 attr, int channel)
+>  {
+>  	const struct nct7904_data *data = _data;
+>  
+> -	if (attr == hwmon_fan_input && data->fanin_mask & (1 << channel))
+> -		return 0444;
+> +	switch (attr) {
+> +	case hwmon_fan_input:
+> +	case hwmon_fan_alarm:
+> +		if (data->fanin_mask & (1 << channel))
+> +			return 0444;
+> +		break;
+> +	case hwmon_fan_min:
+> +		if (data->fanin_mask & (1 << channel))
+> +			return 0644;
+> +		break;
+> +	default:
+> +		break;
+> +	}
+> +
+>  	return 0;
+>  }
+>  
+> @@ -211,6 +268,37 @@ static int nct7904_read_in(struct device *dev, u32 attr, int channel,
+>  			volt *= 6; /* 0.006V scale */
+>  		*val = volt;
+>  		return 0;
+> +	case hwmon_in_min:
+> +		ret = nct7904_read_reg16(data, BANK_1,
+> +					 VSEN1_HV_LL_REG + index * 4);
+> +		if (ret < 0)
+> +			return ret;
+> +		volt = ((ret & 0xff00) >> 5) | (ret & 0x7);
+> +		if (index < 14)
+> +			volt *= 2; /* 0.002V scale */
+> +		else
+> +			volt *= 6; /* 0.006V scale */
+> +		*val = volt;
+> +		return 0;
+> +	case hwmon_in_max:
+> +		ret = nct7904_read_reg16(data, BANK_1,
+> +					 VSEN1_HV_HL_REG + index * 4);
+> +		if (ret < 0)
+> +			return ret;
+> +		volt = ((ret & 0xff00) >> 5) | (ret & 0x7);
+> +		if (index < 14)
+> +			volt *= 2; /* 0.002V scale */
+> +		else
+> +			volt *= 6; /* 0.006V scale */
+> +		*val = volt;
+> +		return 0;
+> +	case hwmon_in_alarm:
+> +		ret = nct7904_read_reg(data, BANK_0,
+> +				       SMI_STS1_REG + (index >> 3));
+> +		if (ret < 0)
+> +			return ret;
+> +		*val = (ret >> (index & 0x07)) & 1;
+> +		return 0;
+>  	default:
+>  		return -EOPNOTSUPP;
+>  	}
+> @@ -221,9 +309,20 @@ static umode_t nct7904_in_is_visible(const void *_data, u32 attr, int channel)
+>  	const struct nct7904_data *data = _data;
+>  	int index = nct7904_chan_to_index[channel];
+>  
+> -	if (channel > 0 && attr == hwmon_in_input &&
+> -	    (data->vsen_mask & BIT(index)))
+> -		return 0444;
+> +	switch (attr) {
+> +	case hwmon_in_input:
+> +	case hwmon_in_alarm:
+> +		if (channel > 0 && (data->vsen_mask & BIT(index)))
+> +			return 0444;
+> +		break;
+> +	case hwmon_in_min:
+> +	case hwmon_in_max:
+> +		if (channel > 0 && (data->vsen_mask & BIT(index)))
+> +			return 0644;
+> +		break;
+> +	default:
+> +		break;
+> +	}
+>  
+>  	return 0;
+>  }
+> @@ -233,6 +332,7 @@ static int nct7904_read_temp(struct device *dev, u32 attr, int channel,
+>  {
+>  	struct nct7904_data *data = dev_get_drvdata(dev);
+>  	int ret, temp;
+> +	unsigned int reg1, reg2, reg3;
+>  
+>  	switch (attr) {
+>  	case hwmon_temp_input:
+> @@ -250,16 +350,100 @@ static int nct7904_read_temp(struct device *dev, u32 attr, int channel,
+>  		temp = ((ret & 0xff00) >> 5) | (ret & 0x7);
+>  		*val = sign_extend32(temp, 10) * 125;
+>  		return 0;
+> +	case hwmon_temp_alarm:
+> +		if (channel < 5) {
+> +			ret = nct7904_read_reg(data, BANK_0,
+> +					       SMI_STS1_REG);
+> +			if (ret < 0)
+> +				return ret;
+> +			*val = (ret >> (((channel * 2) + 1) & 0x07)) & 1;
+> +		} else {
+> +			if ((channel - 5) < 4) {
+> +				ret = nct7904_read_reg(data, BANK_0,
+> +						       SMI_STS7_REG +
+> +						       ((channel - 5) >> 3));
+> +				if (ret < 0)
+> +					return ret;
+> +				*val = (ret >> ((channel - 5) & 0x07)) & 1;
+> +			} else {
+> +				ret = nct7904_read_reg(data, BANK_0,
+> +						       SMI_STS8_REG +
+> +						       ((channel - 5) >> 3));
+> +				if (ret < 0)
+> +					return ret;
+> +				*val = (ret >> (((channel - 5) & 0x07) - 4))
+> +							& 1;
+> +			}
+> +		}
+> +		return 0;
+> +	case hwmon_temp_type:
+> +		if (channel < 5) {
+> +			if ((data->tcpu_mask >> channel) & 0x01) {
+> +				if ((data->temp_mode >> channel) & 0x01)
+> +					*val = 3; /* TD */
+> +				else
+> +					*val = 4; /* TR */
+> +			} else {
+> +				*val = 0;
+> +			}
+> +		} else {
+> +			if ((data->has_dts >> (channel - 5)) & 0x01) {
+> +				if (data->enable_dts & ENABLE_TSI)
+> +					*val = 5; /* TSI */
+> +				else
+> +					*val = 6; /* PECI */
+> +			} else {
+> +				*val = 0;
+> +			}
+> +		}
+> +		return 0;
+> +	case hwmon_temp_max:
+> +		reg1 = LTD_HV_HL_REG;
+> +		reg2 = TEMP_CH1_W_REG;
+> +		reg3 = DTS_T_CPU1_W_REG;
+> +		break;
+> +	case hwmon_temp_max_hyst:
+> +		reg1 = LTD_LV_HL_REG;
+> +		reg2 = TEMP_CH1_WH_REG;
+> +		reg3 = DTS_T_CPU1_WH_REG;
+> +		break;
+> +	case hwmon_temp_crit:
+> +		reg1 = LTD_HV_LL_REG;
+> +		reg2 = TEMP_CH1_C_REG;
+> +		reg3 = DTS_T_CPU1_C_REG;
+> +		break;
+> +	case hwmon_temp_crit_hyst:
+> +		reg1 = LTD_LV_LL_REG;
+> +		reg2 = TEMP_CH1_CH_REG;
+> +		reg3 = DTS_T_CPU1_CH_REG;
+> +		break;
+>  	default:
+>  		return -EOPNOTSUPP;
+>  	}
+> +
+> +	if (channel == 4)
+> +		ret = nct7904_read_reg(data, BANK_1, reg1);
+> +	else if (channel < 5)
+> +		ret = nct7904_read_reg(data, BANK_1,
+> +				       reg2 + channel * 8);
+> +	else
+> +		ret = nct7904_read_reg(data, BANK_1,
+> +				       reg3 + (channel - 5) * 4);
+> +
+I must admit that I am not too happy about this code, since it moves code
+which should be in the case statement with code running afterwards.
+A helper function to do the actual read would be a bit nicer
 
-Specifically: According to Rob H it is generally not required to
-validate what's in device tree--it can be just blindly applied.  Thus
-the bindings shouldn't really say anything about trying to reconcile
-with the driver (especially since that's heavily relying on the
-current driver implementation).
+	case hwmon_temp_max:
+		ret = nct7904_read_limit(data, channel, LTD_HV_HL_REG,
+					 TEMP_CH1_W_REG, DTS_T_CPU1_W_REG);
+		if (ret < 0)
+			return ret;
+		*val = ret * 1000;
+		return 0;
+	...
 
-At the moment the driver still does validate things and we could
-discuss removing that in a future patchset if it was deemed important
-/ desirable.
+I undersatand that is a bit of additional code, but it would be much
+cleaner. I'll accept the current code, though, if you disagree.
 
+> +	if (ret < 0)
+> +		return ret;
+> +	*val = ret * 1000;
+> +	return 0;
+>  }
+>  
+>  static umode_t nct7904_temp_is_visible(const void *_data, u32 attr, int channel)
+>  {
+>  	const struct nct7904_data *data = _data;
+>  
+> -	if (attr == hwmon_temp_input) {
+> +	switch (attr) {
+> +	case hwmon_temp_input:
+> +	case hwmon_temp_alarm:
+> +	case hwmon_temp_type:
+>  		if (channel < 5) {
+>  			if (data->tcpu_mask & BIT(channel))
+>  				return 0444;
+> @@ -267,6 +451,21 @@ static umode_t nct7904_temp_is_visible(const void *_data, u32 attr, int channel)
+>  			if (data->has_dts & BIT(channel - 5))
+>  				return 0444;
+>  		}
+> +		break;
+> +	case hwmon_temp_max:
+> +	case hwmon_temp_max_hyst:
+> +	case hwmon_temp_crit:
+> +	case hwmon_temp_crit_hyst:
+> +		if (channel < 5) {
+> +			if (data->tcpu_mask & BIT(channel))
+> +				return 0644;
+> +		} else {
+> +			if (data->has_dts & BIT(channel - 5))
+> +				return 0644;
+> +		}
+> +		break;
+> +	default:
+> +		break;
+>  	}
+>  
+>  	return 0;
+> @@ -297,6 +496,137 @@ static int nct7904_read_pwm(struct device *dev, u32 attr, int channel,
+>  	}
+>  }
+>  
+> +static int nct7904_write_temp(struct device *dev, u32 attr, int channel,
+> +			      long val)
+> +{
+> +	struct nct7904_data *data = dev_get_drvdata(dev);
+> +	int ret;
+> +	unsigned int reg1, reg2, reg3;
+> +
+> +	val = clamp_val(val / 1000, -128, 127);
+> +
+> +	switch (attr) {
+> +	case hwmon_temp_max:
+> +		reg1 = LTD_HV_HL_REG;
+> +		reg2 = TEMP_CH1_W_REG;
+> +		reg3 = DTS_T_CPU1_W_REG;
+> +		break;
+> +	case hwmon_temp_max_hyst:
+> +		reg1 = LTD_LV_HL_REG;
+> +		reg2 = TEMP_CH1_WH_REG;
+> +		reg3 = DTS_T_CPU1_WH_REG;
+> +		break;
+> +	case hwmon_temp_crit:
+> +		reg1 = LTD_HV_LL_REG;
+> +		reg2 = TEMP_CH1_C_REG;
+> +		reg3 = DTS_T_CPU1_C_REG;
+> +		break;
+> +	case hwmon_temp_crit_hyst:
+> +		reg1 = LTD_LV_LL_REG;
+> +		reg2 = TEMP_CH1_CH_REG;
+> +		reg3 = DTS_T_CPU1_CH_REG;
+> +		break;
+> +	default:
+> +		return -EOPNOTSUPP;
+> +	}
+> +	if (channel == 4)
+> +		ret = nct7904_write_reg(data, BANK_1, reg1, val);
+> +	else if (channel < 5)
+> +		ret = nct7904_write_reg(data, BANK_1,
+> +					reg2 + channel * 8, val);
+> +	else
+> +		ret = nct7904_write_reg(data, BANK_1,
+> +					reg3 + (channel - 5) * 4, val);
+> +
+Same as above.
 
-> > +Format information on the panel-timing subnode can be found in
-> > +display-timing.txt.
-> display-timing defines otional properties:
-> hsync-active, pixelclk-active, doublescan etc.
-> It is not from the above obvious which properties from display-timings
-> that can be specified for a panel-timing sub-node.
-> Maybe because they can all be specified?
->
-> Display-timing allows timings to be specified as a range.
-> If it is also OK to specify a range for panle-timing then everythign is
-> fine. But if the panel-timign subnode do not allow ranges this needs to
-> be specified.
+> +	return ret;
+> +}
+> +
+> +static int nct7904_write_fan(struct device *dev, u32 attr, int channel,
+> +			     long val)
+> +{
+> +	struct nct7904_data *data = dev_get_drvdata(dev);
+> +	int ret;
+> +	u8 tmp;
+> +
+> +	switch (attr) {
+> +	case hwmon_fan_min:
+> +		if (val <= 0)
+> +			return 0;
 
-One thing to think about here is that the bindings are a bit divorced
-from the real world.  Specifically the bindings should describe
-hardware / what's possible and it's OK for bindings to describe things
-that aren't yet supported in code.  You've gotta be really careful
-here, of course, because it's easy to write ridiculous bindings if
-there is no implementation backing them up, but in general that's
-supposed to be the idea.
+This is odd: It silently accepts values <= 0, but doesn't do anything.
+Is that really what you want ? Why not something like:
 
-Here it seems like it should be possible to specify timings as a range
-and that would be a sensible thing to do.  ...and we're already using
-existing code to parse this node, specifically
-of_get_display_timing().  If simple-panel can't (yet) handle
-reconciling ranges specified in DT then presumably we shouldn't rely
-on that yet.  ...but if it becomes useful then we can add it later.
-...but it's OK to already have it in the bindings.
+		if (val <= 0)
+			val = 1;
 
-Did that make sense?  If I'm misunderstanding something about the
-situation then please yell!  :-)
+> +
+> +		val = clamp_val((1350000 + (val >> 1)) / val, 1, 0x1fff);
 
-I will also note that perhaps we shouldn't nit-pick too much as per
-Rob's comment in the cover letter [1] of v5 of the series.
-Specifically he said this binding is going away anyway.
+It took me a while to understand the calculation above. Something like
+		val = clamp_val(DIV_ROUND_CLOSEST(1350000, val), 1, 0x1fff);
+might be a bit easier to understand.
 
-Summary: I think I have no actions here and this could go to drm-misc
-with Theirry's Ack plus other tags.
-
-
-[1] https://lore.kernel.org/patchwork/cover/1057038/
+> +		tmp = (val >> 5) & 0xff;
+> +		ret = nct7904_write_reg(data, BANK_1,
+> +					FANIN1_HV_HL_REG + channel * 2, tmp);
+> +		if (ret < 0)
+> +			return ret;
+> +		tmp = val & 0x1f;
+> +		ret = nct7904_write_reg(data, BANK_1,
+> +					FANIN1_LV_HL_REG + channel * 2, tmp);
+> +		return ret;
+> +	default:
+> +		return -EOPNOTSUPP;
+> +	}
+> +}
+> +
+> +static int nct7904_write_in(struct device *dev, u32 attr, int channel,
+> +			    long val)
+> +{
+> +	struct nct7904_data *data = dev_get_drvdata(dev);
+> +	int ret, index, tmp;
+> +
+> +	index = nct7904_chan_to_index[channel];
+> +
+> +	if (index < 14)
+> +		val = val / 2; /* 0.002V scale */
+> +	else
+> +		val = val / 6; /* 0.006V scale */
+> +
+> +	val = clamp_val(val, 0, 0x7ff);
+> +
+> +	switch (attr) {
+> +	case hwmon_in_min:
+> +		tmp = nct7904_read_reg(data, BANK_1,
+> +				       VSEN1_LV_LL_REG + index * 4);
+> +		if (tmp < 0)
+> +			return tmp;
+> +		tmp &= ~0x7;
+> +		tmp |= val & 0x7;
+> +		ret = nct7904_write_reg(data, BANK_1,
+> +					VSEN1_LV_LL_REG + index * 4, tmp);
+> +		if (ret < 0)
+> +			return ret;
+> +		tmp = nct7904_read_reg(data, BANK_1,
+> +				       VSEN1_HV_LL_REG + index * 4);
+> +		if (tmp < 0)
+> +			return tmp;
+> +		tmp = (val >> 3) & 0xff;
+> +		ret = nct7904_write_reg(data, BANK_1,
+> +					VSEN1_HV_LL_REG + index * 4, tmp);
+> +		return ret;
+> +	case hwmon_in_max:
+> +		tmp = nct7904_read_reg(data, BANK_1,
+> +				       VSEN1_LV_HL_REG + index * 4);
+> +		if (tmp < 0)
+> +			return tmp;
+> +		tmp &= ~0x7;
+> +		tmp |= val & 0x7;
+> +		ret = nct7904_write_reg(data, BANK_1,
+> +					VSEN1_LV_HL_REG + index * 4, tmp);
+> +		if (ret < 0)
+> +			return ret;
+> +		tmp = nct7904_read_reg(data, BANK_1,
+> +				       VSEN1_HV_HL_REG + index * 4);
+> +		if (tmp < 0)
+> +			return tmp;
+> +		tmp = (val >> 3) & 0xff;
+> +		ret = nct7904_write_reg(data, BANK_1,
+> +					VSEN1_HV_HL_REG + index * 4, tmp);
+> +		return ret;
+> +	default:
+> +		return -EOPNOTSUPP;
+> +	}
+> +}
+> +
+>  static int nct7904_write_pwm(struct device *dev, u32 attr, int channel,
+>  			     long val)
+>  {
+> @@ -354,8 +684,14 @@ static int nct7904_write(struct device *dev, enum hwmon_sensor_types type,
+>  			 u32 attr, int channel, long val)
+>  {
+>  	switch (type) {
+> +	case hwmon_in:
+> +		return nct7904_write_in(dev, attr, channel, val);
+> +	case hwmon_fan:
+> +		return nct7904_write_fan(dev, attr, channel, val);
+>  	case hwmon_pwm:
+>  		return nct7904_write_pwm(dev, attr, channel, val);
+> +	case hwmon_temp:
+> +		return nct7904_write_temp(dev, attr, channel, val);
+>  	default:
+>  		return -EOPNOTSUPP;
+>  	}
+> @@ -404,51 +740,91 @@ static int nct7904_detect(struct i2c_client *client,
+>  
+>  static const struct hwmon_channel_info *nct7904_info[] = {
+>  	HWMON_CHANNEL_INFO(in,
+> -			   HWMON_I_INPUT, /* dummy, skipped in is_visible */
+> -			   HWMON_I_INPUT,
+> -			   HWMON_I_INPUT,
+> -			   HWMON_I_INPUT,
+> -			   HWMON_I_INPUT,
+> -			   HWMON_I_INPUT,
+> -			   HWMON_I_INPUT,
+> -			   HWMON_I_INPUT,
+> -			   HWMON_I_INPUT,
+> -			   HWMON_I_INPUT,
+> -			   HWMON_I_INPUT,
+> -			   HWMON_I_INPUT,
+> -			   HWMON_I_INPUT,
+> -			   HWMON_I_INPUT,
+> -			   HWMON_I_INPUT,
+> -			   HWMON_I_INPUT,
+> -			   HWMON_I_INPUT,
+> -			   HWMON_I_INPUT,
+> -			   HWMON_I_INPUT,
+> -			   HWMON_I_INPUT,
+> -			   HWMON_I_INPUT),
+> +			   /* dummy, skipped in is_visible */
+> +			   HWMON_I_INPUT | HWMON_I_MIN | HWMON_I_MAX |
+> +			   HWMON_I_ALARM,
+> +			   HWMON_I_INPUT | HWMON_I_MIN | HWMON_I_MAX |
+> +			   HWMON_I_ALARM,
+> +			   HWMON_I_INPUT | HWMON_I_MIN | HWMON_I_MAX |
+> +			   HWMON_I_ALARM,
+> +			   HWMON_I_INPUT | HWMON_I_MIN | HWMON_I_MAX |
+> +			   HWMON_I_ALARM,
+> +			   HWMON_I_INPUT | HWMON_I_MIN | HWMON_I_MAX |
+> +			   HWMON_I_ALARM,
+> +			   HWMON_I_INPUT | HWMON_I_MIN | HWMON_I_MAX |
+> +			   HWMON_I_ALARM,
+> +			   HWMON_I_INPUT | HWMON_I_MIN | HWMON_I_MAX |
+> +			   HWMON_I_ALARM,
+> +			   HWMON_I_INPUT | HWMON_I_MIN | HWMON_I_MAX |
+> +			   HWMON_I_ALARM,
+> +			   HWMON_I_INPUT | HWMON_I_MIN | HWMON_I_MAX |
+> +			   HWMON_I_ALARM,
+> +			   HWMON_I_INPUT | HWMON_I_MIN | HWMON_I_MAX |
+> +			   HWMON_I_ALARM,
+> +			   HWMON_I_INPUT | HWMON_I_MIN | HWMON_I_MAX |
+> +			   HWMON_I_ALARM,
+> +			   HWMON_I_INPUT | HWMON_I_MIN | HWMON_I_MAX |
+> +			   HWMON_I_ALARM,
+> +			   HWMON_I_INPUT | HWMON_I_MIN | HWMON_I_MAX |
+> +			   HWMON_I_ALARM,
+> +			   HWMON_I_INPUT | HWMON_I_MIN | HWMON_I_MAX |
+> +			   HWMON_I_ALARM,
+> +			   HWMON_I_INPUT | HWMON_I_MIN | HWMON_I_MAX |
+> +			   HWMON_I_ALARM,
+> +			   HWMON_I_INPUT | HWMON_I_MIN | HWMON_I_MAX |
+> +			   HWMON_I_ALARM,
+> +			   HWMON_I_INPUT | HWMON_I_MIN | HWMON_I_MAX |
+> +			   HWMON_I_ALARM,
+> +			   HWMON_I_INPUT | HWMON_I_MIN | HWMON_I_MAX |
+> +			   HWMON_I_ALARM,
+> +			   HWMON_I_INPUT | HWMON_I_MIN | HWMON_I_MAX |
+> +			   HWMON_I_ALARM,
+> +			   HWMON_I_INPUT | HWMON_I_MIN | HWMON_I_MAX |
+> +			   HWMON_I_ALARM,
+> +			   HWMON_I_INPUT | HWMON_I_MIN | HWMON_I_MAX |
+> +			   HWMON_I_ALARM),
+>  	HWMON_CHANNEL_INFO(fan,
+> -			   HWMON_F_INPUT,
+> -			   HWMON_F_INPUT,
+> -			   HWMON_F_INPUT,
+> -			   HWMON_F_INPUT,
+> -			   HWMON_F_INPUT,
+> -			   HWMON_F_INPUT,
+> -			   HWMON_F_INPUT,
+> -			   HWMON_F_INPUT),
+> +			   HWMON_F_INPUT | HWMON_F_MIN | HWMON_F_ALARM,
+> +			   HWMON_F_INPUT | HWMON_F_MIN | HWMON_F_ALARM,
+> +			   HWMON_F_INPUT | HWMON_F_MIN | HWMON_F_ALARM,
+> +			   HWMON_F_INPUT | HWMON_F_MIN | HWMON_F_ALARM,
+> +			   HWMON_F_INPUT | HWMON_F_MIN | HWMON_F_ALARM,
+> +			   HWMON_F_INPUT | HWMON_F_MIN | HWMON_F_ALARM,
+> +			   HWMON_F_INPUT | HWMON_F_MIN | HWMON_F_ALARM,
+> +			   HWMON_F_INPUT | HWMON_F_MIN | HWMON_F_ALARM),
+>  	HWMON_CHANNEL_INFO(pwm,
+>  			   HWMON_PWM_INPUT | HWMON_PWM_ENABLE,
+>  			   HWMON_PWM_INPUT | HWMON_PWM_ENABLE,
+>  			   HWMON_PWM_INPUT | HWMON_PWM_ENABLE,
+>  			   HWMON_PWM_INPUT | HWMON_PWM_ENABLE),
+>  	HWMON_CHANNEL_INFO(temp,
+> -			   HWMON_T_INPUT,
+> -			   HWMON_T_INPUT,
+> -			   HWMON_T_INPUT,
+> -			   HWMON_T_INPUT,
+> -			   HWMON_T_INPUT,
+> -			   HWMON_T_INPUT,
+> -			   HWMON_T_INPUT,
+> -			   HWMON_T_INPUT,
+> -			   HWMON_T_INPUT),
+> +			   HWMON_T_INPUT | HWMON_T_ALARM | HWMON_T_MAX |
+> +			   HWMON_T_MAX_HYST | HWMON_T_TYPE | HWMON_T_CRIT |
+> +			   HWMON_T_CRIT_HYST,
+> +			   HWMON_T_INPUT | HWMON_T_ALARM | HWMON_T_MAX |
+> +			   HWMON_T_MAX_HYST | HWMON_T_TYPE | HWMON_T_CRIT |
+> +			   HWMON_T_CRIT_HYST,
+> +			   HWMON_T_INPUT | HWMON_T_ALARM | HWMON_T_MAX |
+> +			   HWMON_T_MAX_HYST | HWMON_T_TYPE | HWMON_T_CRIT |
+> +			   HWMON_T_CRIT_HYST,
+> +			   HWMON_T_INPUT | HWMON_T_ALARM | HWMON_T_MAX |
+> +			   HWMON_T_MAX_HYST | HWMON_T_TYPE | HWMON_T_CRIT |
+> +			   HWMON_T_CRIT_HYST,
+> +			   HWMON_T_INPUT | HWMON_T_ALARM | HWMON_T_MAX |
+> +			   HWMON_T_MAX_HYST | HWMON_T_TYPE | HWMON_T_CRIT |
+> +			   HWMON_T_CRIT_HYST,
+> +			   HWMON_T_INPUT | HWMON_T_ALARM | HWMON_T_MAX |
+> +			   HWMON_T_MAX_HYST | HWMON_T_TYPE | HWMON_T_CRIT |
+> +			   HWMON_T_CRIT_HYST,
+> +			   HWMON_T_INPUT | HWMON_T_ALARM | HWMON_T_MAX |
+> +			   HWMON_T_MAX_HYST | HWMON_T_TYPE | HWMON_T_CRIT |
+> +			   HWMON_T_CRIT_HYST,
+> +			   HWMON_T_INPUT | HWMON_T_ALARM | HWMON_T_MAX |
+> +			   HWMON_T_MAX_HYST | HWMON_T_TYPE | HWMON_T_CRIT |
+> +			   HWMON_T_CRIT_HYST,
+> +			   HWMON_T_INPUT | HWMON_T_ALARM | HWMON_T_MAX |
+> +			   HWMON_T_MAX_HYST | HWMON_T_TYPE | HWMON_T_CRIT |
+> +			   HWMON_T_CRIT_HYST),
+>  	NULL
+>  };
+>  
+> @@ -530,11 +906,14 @@ static int nct7904_probe(struct i2c_client *client,
+>  	if (ret < 0)
+>  		return ret;
+>  
+> +	data->temp_mode = 0;
+>  	for (i = 0; i < 4; i++) {
+>  		val = (ret & (0x03 << i)) >> (i * 2);
+>  		bit = (1 << i);
+>  		if (val == 0)
+>  			data->tcpu_mask &= ~bit;
+> +		else if (val == 0x1 || val == 0x2)
+> +			data->temp_mode |= bit;
+>  	}
+>  
+>  	/* PECI */
+> @@ -557,7 +936,7 @@ static int nct7904_probe(struct i2c_client *client,
+>  		if (ret < 0)
+>  			return ret;
+>  		data->has_dts = ret & 0xF;
+> -		if (data->enable_dts & 0x2) {
+> +		if (data->enable_dts & ENABLE_TSI) {
+>  			ret = nct7904_read_reg(data, BANK_0, DTS_T_CTRL1_REG);
+>  			if (ret < 0)
+>  				return ret;
+> -- 
+> 2.17.1
+> 
