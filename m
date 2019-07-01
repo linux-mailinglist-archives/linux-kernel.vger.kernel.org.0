@@ -2,90 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99B2E5BECB
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 16:54:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7281A5BED1
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 16:56:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729949AbfGAOyt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 10:54:49 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:27119 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728453AbfGAOyt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 10:54:49 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2062A3082A27;
-        Mon,  1 Jul 2019 14:54:49 +0000 (UTC)
-Received: from gimli.home (ovpn-116-83.phx2.redhat.com [10.3.116.83])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 735897E8F7;
-        Mon,  1 Jul 2019 14:54:44 +0000 (UTC)
-Subject: [PATCH v2] mdev: Send uevents around parent device registration
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     kwankhede@nvidia.com, alex.williamson@redhat.com, cohuck@redhat.com
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 01 Jul 2019 08:54:44 -0600
-Message-ID: <156199271955.1646.13321360197612813634.stgit@gimli.home>
-User-Agent: StGit/0.19-dirty
+        id S1729969AbfGAO4f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 10:56:35 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:35992 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726967AbfGAO4e (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Jul 2019 10:56:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=hH6jNFENnD1LOcCIYolxBITdKkbyMQAr2N8/Y9mEPXs=; b=wpyU7ZyFih+mQv/d+Qx2SpXjY
+        dNVs++V4S62hX2lmLCbekaCwfbjACDQp3THiVEkH5/R0PCtaNU0mAuLKQ7/M9ir0XfLqz/OsKedft
+        8SlNJY/K1YPzDJXYnA7fJWDjJCs+0pszYeMW3mRa8rrzSTaloiQqFda7ivtla9PFov3LkB3dENRP4
+        OWrPNRlbxB9GbafIwVqJ1kP0i5mrU//La0Ll98cVE87b9i+KynIouUYf96eRRiSHnDcT5gOmxp70e
+        nwrVIyfMyjocB/ylnIg1kC2ZJTcyF33yOmiXlIgigIoWrGHNU8CeKim/sklHpeX0RnJ5E4qw0I7BG
+        olU09cWpA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hhxjJ-0000ET-Tu; Mon, 01 Jul 2019 14:56:30 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 984F0209C957E; Mon,  1 Jul 2019 16:56:28 +0200 (CEST)
+Date:   Mon, 1 Jul 2019 16:56:28 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Robert Hodaszi <Robert.Hodaszi@digi.com>
+Subject: Re: [patch V2 3/6] genirq: Add optional hardware synchronization for
+ shutdown
+Message-ID: <20190701145628.GC3402@hirez.programming.kicks-ass.net>
+References: <20190628111148.828731433@linutronix.de>
+ <20190628111440.279463375@linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Mon, 01 Jul 2019 14:54:49 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190628111440.279463375@linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This allows udev to trigger rules when a parent device is registered
-or unregistered from mdev.
+On Fri, Jun 28, 2019 at 01:11:51PM +0200, Thomas Gleixner wrote:
+> But that does not catch the case where the interrupt is on flight at the
+> hardware level but not yet serviced by the target CPU. That creates an
+> interesing race condition:
 
-Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
----
+> + *	It does not check whether there is an interrupt on flight at the
+> + *	hardware level, but not serviced yet, as this might deadlock when
+> + *	called with interrupts disabled and the target CPU of the interrupt
+> + *	is the current CPU.
 
-v2: Don't remove the dev_info(), Kirti requested they stay and
-    removing them is only tangential to the goal of this change.
+> +	/*
+> +	 * Make sure it's not being used on another CPU and if the chip
+> +	 * supports it also make sure that there is no (not yet serviced)
+> +	 * interrupt on flight at the hardware level.
+> +	 */
+> +	__synchronize_hardirq(desc, true);
 
- drivers/vfio/mdev/mdev_core.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/drivers/vfio/mdev/mdev_core.c b/drivers/vfio/mdev/mdev_core.c
-index ae23151442cb..7fb268136c62 100644
---- a/drivers/vfio/mdev/mdev_core.c
-+++ b/drivers/vfio/mdev/mdev_core.c
-@@ -146,6 +146,8 @@ int mdev_register_device(struct device *dev, const struct mdev_parent_ops *ops)
- {
- 	int ret;
- 	struct mdev_parent *parent;
-+	char *env_string = "MDEV_STATE=registered";
-+	char *envp[] = { env_string, NULL };
- 
- 	/* check for mandatory ops */
- 	if (!ops || !ops->create || !ops->remove || !ops->supported_type_groups)
-@@ -197,6 +199,8 @@ int mdev_register_device(struct device *dev, const struct mdev_parent_ops *ops)
- 	mutex_unlock(&parent_list_lock);
- 
- 	dev_info(dev, "MDEV: Registered\n");
-+	kobject_uevent_env(&dev->kobj, KOBJ_CHANGE, envp);
-+
- 	return 0;
- 
- add_dev_err:
-@@ -220,6 +224,8 @@ EXPORT_SYMBOL(mdev_register_device);
- void mdev_unregister_device(struct device *dev)
- {
- 	struct mdev_parent *parent;
-+	char *env_string = "MDEV_STATE=unregistered";
-+	char *envp[] = { env_string, NULL };
- 
- 	mutex_lock(&parent_list_lock);
- 	parent = __find_parent_device(dev);
-@@ -243,6 +249,8 @@ void mdev_unregister_device(struct device *dev)
- 	up_write(&parent->unreg_sem);
- 
- 	mdev_put_parent(parent);
-+
-+	kobject_uevent_env(&dev->kobj, KOBJ_CHANGE, envp);
- }
- EXPORT_SYMBOL(mdev_unregister_device);
- 
-
+s/on flight/in flight/ ?
