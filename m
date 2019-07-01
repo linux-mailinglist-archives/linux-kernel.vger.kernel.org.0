@@ -2,53 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A15B85BA76
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 13:20:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60D7D5BA86
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 13:24:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728342AbfGALT4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 07:19:56 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:58952 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728056AbfGALT4 (ORCPT
+        id S1728385AbfGALYc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 07:24:32 -0400
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:60107 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727239AbfGALYc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 07:19:56 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hhuLf-00038r-6I; Mon, 01 Jul 2019 11:19:51 +0000
-Date:   Mon, 1 Jul 2019 12:19:51 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Eric Biggers <ebiggers@kernel.org>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] vfs: move_mount: reject moving kernel internal mounts
-Message-ID: <20190701111950.GY17978@ZenIV.linux.org.uk>
-References: <20190701010847.GA23778@ZenIV.linux.org.uk>
- <CACT4Y+ZN8CZq7L1GQANr25extEqPASRERGVh+sD4-55cvWPOSg@mail.gmail.com>
- <20190629202744.12396-1-ebiggers@kernel.org>
- <20190629203916.GV17978@ZenIV.linux.org.uk>
- <2578.1561966690@warthog.procyon.org.uk>
+        Mon, 1 Jul 2019 07:24:32 -0400
+X-Originating-IP: 86.250.200.211
+Received: from bootlin.com (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
+        (Authenticated sender: maxime.chevallier@bootlin.com)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 434A124000D;
+        Mon,  1 Jul 2019 11:24:28 +0000 (UTC)
+Date:   Mon, 1 Jul 2019 13:24:39 +0200
+From:   Maxime Chevallier <maxime.chevallier@bootlin.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        David Miller <davem@davemloft.net>, brian.brooks@linaro.org,
+        linux-kernel@vger.kernel.org,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
+        nadavh@marvell.com, stefanc@marvell.com,
+        Russell King <rmk+kernel@armlinux.org.uk>
+Subject: Re: [PATCH] driver core: platform: Allow using a dedicated dma_mask
+ for platform_device
+Message-ID: <20190701132340.21123dee@bootlin.com>
+In-Reply-To: <20190628155946.GA16956@infradead.org>
+References: <20190628141550.22938-1-maxime.chevallier@bootlin.com>
+ <20190628155946.GA16956@infradead.org>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2578.1561966690@warthog.procyon.org.uk>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 01, 2019 at 08:38:10AM +0100, David Howells wrote:
-> Al Viro <viro@zeniv.linux.org.uk> wrote:
-> 
-> > 	/* The thing moved must be mounted... */
-> > 	if (!is_mounted(old_path->mnt))
-> > 		goto out;
-> 
-> Um...  Doesn't that stuff up fsmount()?
+Hi Christoph,
 
-Nope - check is_mounted() definition.  Stuff in anon namespace
-*is* mounted there, so that's not a problem.
+On Fri, 28 Jun 2019 08:59:46 -0700
+Christoph Hellwig <hch@infradead.org> wrote:
 
-FWIW, is_mounted() would've been better off spelled as
-ns != NULL && ns != MNT_NS_INTERNAL; the use of IS_ERR_OR_NULL
-in there works, but is unidiomatic and I don't think it yields
-better code...
+>I'd much rather bite the bullet and make dev->dma_mask a scalar
+>instead of a pointer.  The pointer causes way to much boiler plate code,
+>and the semantics are way to subtile.
+
+I agree that this the real solution, it just seemed a bit overwhelming
+to me. I'll be happy to help with this though, now that you took a big
+first step.
+
+> Below is a POV patch that
+>compiles and boots with my usual x86 test config, and at least compiles
+>with the arm and pmac32 defconfigs.  It probably breaks just about
+>everything else, but should give us an idea what is involve in the
+>switch:
+
+I'll test that on my boards too.
+
+Thanks,
+
+Maxime
