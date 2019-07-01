@@ -2,117 +2,222 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39C365BE0D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 16:21:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B91A05BE18
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 16:23:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729526AbfGAOVz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 10:21:55 -0400
-Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:6478 "EHLO
-        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727465AbfGAOVy (ORCPT
+        id S1729556AbfGAOXA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 10:23:00 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:46635 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727064AbfGAOXA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 10:21:54 -0400
-Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
-        by mx0a-00128a01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x61EHrmT013428;
-        Mon, 1 Jul 2019 10:21:24 -0400
-Received: from nam04-co1-obe.outbound.protection.outlook.com (mail-co1nam04lp2055.outbound.protection.outlook.com [104.47.45.55])
-        by mx0a-00128a01.pphosted.com with ESMTP id 2tf787hpw5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Mon, 01 Jul 2019 10:21:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=analog.onmicrosoft.com; s=selector1-analog-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PL2UCeaP0xmAf+vDDIAWoxQ7Zln1Kf2hM+JltlrPB78=;
- b=wjJ/ltQLwG2bbelYqFGMUA7Q/u0FogCOWvTxXLs9BN9zwXvZzi3wMcFwhi2IeMcGbfRkTiyQlN0MpY29WXXvnPuOeGPuymv/za6qUnmLMNfnNcpn/Nfo5Hrll91Wcs+NH0ZoawSjntk/gVXzfRdxKdHhmmnfzxIPnRlQfDjH/c4=
-Received: from BL2PR03MB577.namprd03.prod.outlook.com (10.141.92.20) by
- BL2PR03MB545.namprd03.prod.outlook.com (10.141.90.14) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2032.20; Mon, 1 Jul 2019 14:21:21 +0000
-Received: from BL2PR03MB577.namprd03.prod.outlook.com
- ([fe80::d70:e601:2346:3616]) by BL2PR03MB577.namprd03.prod.outlook.com
- ([fe80::d70:e601:2346:3616%5]) with mapi id 15.20.2032.019; Mon, 1 Jul 2019
- 14:21:21 +0000
-From:   "Sa, Nuno" <Nuno.Sa@analog.com>
-To:     "lukas@wunner.de" <lukas@wunner.de>
-CC:     "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "bcm-kernel-feedback-list@broadcom.com" 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "kernel@martin.sperl.org" <kernel@martin.sperl.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "sbranden@broadcom.com" <sbranden@broadcom.com>,
-        "wahrenst@gmx.net" <wahrenst@gmx.net>,
-        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
-        "linux-rpi-kernel@lists.infradead.org" 
-        <linux-rpi-kernel@lists.infradead.org>,
-        "eric@anholt.net" <eric@anholt.net>,
-        "rjui@broadcom.com" <rjui@broadcom.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] spi: spi-bcm2835.c: Fix 3-wire mode
-Thread-Topic: [PATCH] spi: spi-bcm2835.c: Fix 3-wire mode
-Thread-Index: AQHVLcWKil6b5DVA2k6/uFd6YOkY56axa+0AgAP0lwCAAEuWAIAAKOmA
-Date:   Mon, 1 Jul 2019 14:21:21 +0000
-Message-ID: <42a533cbf1e47ab8c8a44c5e865ec15193a2e956.camel@analog.com>
-References: <20190628123023.4696-1-nuno.sa@analog.com>
-         <1b932c61-982b-aae0-1fef-3c574e7d17eb@gmx.net>
-         <20190628190022.vya4h2lihm6x2xpb@wunner.de>
-         <54323339606a36febc6a8633a8d3a7db84b975c4.camel@analog.com>
-         <20190701115506.42rr4o4hbuvwytjc@wunner.de>
-In-Reply-To: <20190701115506.42rr4o4hbuvwytjc@wunner.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [137.71.226.54]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: f9f2f8b0-6a09-4e20-c97a-08d6fe2f643c
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:BL2PR03MB545;
-x-ms-traffictypediagnostic: BL2PR03MB545:
-x-microsoft-antispam-prvs: <BL2PR03MB5453F0813F53F2EE7A01FAF99F90@BL2PR03MB545.namprd03.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 00851CA28B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(136003)(39860400002)(396003)(346002)(376002)(189003)(199004)(40764003)(54906003)(6246003)(102836004)(316002)(26005)(2906002)(81156014)(68736007)(2501003)(81166006)(1730700003)(14444005)(14454004)(11346002)(6512007)(8936002)(71190400001)(71200400001)(5640700003)(6486002)(118296001)(4744005)(66066001)(8676002)(229853002)(99286004)(256004)(486006)(6506007)(305945005)(446003)(53936002)(476003)(7736002)(5660300002)(6436002)(2616005)(2351001)(66946007)(66556008)(76176011)(25786009)(36756003)(64756008)(66446008)(7416002)(66476007)(86362001)(3846002)(91956017)(478600001)(72206003)(73956011)(76116006)(6116002)(4326008)(6916009)(186003);DIR:OUT;SFP:1101;SCL:1;SRVR:BL2PR03MB545;H:BL2PR03MB577.namprd03.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: analog.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: LoxZMXUMARUMAQWGAT7OvwbLZlxaKKE81ypygX7ndY/4wAc7guJ5BOg+89OvF6qGxQMNI9Hd8iOd+ILSN4pBaKMcIew0eVduX1gB6EnpoHvaBHFVDK7KnHu0e5WLbzoxHttveIR9waxHRkBrww+33EDcAuGo506tPyK+Gh8iaPF81VyelyPbAPgD5cxIWYnB4TenUuo1MDUqYzLmqDo+GntMY2u3rMT7YtQbhuiW6Z8qlNEfIcVoWCRoT8PBvv6xQ02RPnRt8SxzlP0BU6gtDMmUHR0gr6HMU4oYe23ZCB03CV6pZqwvpnyayfyfPptHG0PK08a94RYaejuH/yaU+lcm8dxzr5xDFnATXuYOwh0Rmt2rHUv7vEb4mzBAYUxsLEM9Q/w0UkGyZ5rlke0ggtvvtNeX+MkLScqtolFpOmI=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <8396F84502FD1D4AABB8932E32F898B0@namprd03.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Mon, 1 Jul 2019 10:23:00 -0400
+Received: by mail-qt1-f193.google.com with SMTP id h21so14776070qtn.13
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2019 07:22:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=OmUFyqrNN9sq0ZRrSpIxJ5BWTUOqPUb104pbuNvBMyo=;
+        b=IOrsqTSTqLGE5h0+JOxY6CMZp567P5xMSwYBCGx8cHcpz3S6LOdza184Sgzn9W3Ia9
+         6vZaM9TS62Nxcf1NCsP/+su/bW/3Euyw6qApjDnKThvy6bnQ/CEcQNFU+3sApK6BWE0X
+         KUaet6QQMUvZgWMh9NIw3vSIGWweoii+pOHrKicKGJ+rd6vhnM7C6pAze3M007GFPLxK
+         AXHFlIzN55BaV2LjKBjMTXTX0inTveDecxxHz1rZftrlXFKplG5laJ2oQjQV1wS8ewvD
+         MMVB7Mrc6ZEQbMPtPdW1uK1PKNDtqZqv2LqYSxCf4ambZClaQ47W01x6rUxTniptwfD2
+         rVnQ==
+X-Gm-Message-State: APjAAAX++p2gSo5bn7DPPz73YMk9GUnuYH3FiSNxEdKsJH3Bvoj0vfe5
+        WAeqs7oH9ocn9+Ua+TlMvj8dZg==
+X-Google-Smtp-Source: APXvYqztU+rrvBg2COujrfs5dvhOsWNrkGwA5oSm17/fSAfVJk0yP87nIwCfT9SyHEU4ES7CV30Tdw==
+X-Received: by 2002:a0c:acfb:: with SMTP id n56mr21744226qvc.87.1561990645035;
+        Mon, 01 Jul 2019 07:17:25 -0700 (PDT)
+Received: from redhat.com ([185.120.125.12])
+        by smtp.gmail.com with ESMTPSA id 18sm4904132qke.131.2019.07.01.07.17.19
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 01 Jul 2019 07:17:23 -0700 (PDT)
+Date:   Mon, 1 Jul 2019 10:17:11 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Thiago Jung Bauermann <bauerman@linux.ibm.com>
+Cc:     virtualization@lists.linux-foundation.org,
+        linuxppc-dev@lists.ozlabs.org, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, Jason Wang <jasowang@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        David Gibson <david@gibson.dropbear.id.au>,
+        Alexey Kardashevskiy <aik@linux.ibm.com>,
+        Paul Mackerras <paulus@ozlabs.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Ram Pai <linuxram@us.ibm.com>,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        Michael Roth <mdroth@linux.vnet.ibm.com>,
+        Mike Anderson <andmike@linux.ibm.com>
+Subject: Re: [RFC PATCH] virtio_ring: Use DMA API if guest memory is encrypted
+Message-ID: <20190701092212-mutt-send-email-mst@kernel.org>
+References: <20190204144048-mutt-send-email-mst@kernel.org>
+ <87ef71seve.fsf@morokweng.localdomain>
+ <20190320171027-mutt-send-email-mst@kernel.org>
+ <87tvfvbwpb.fsf@morokweng.localdomain>
+ <20190323165456-mutt-send-email-mst@kernel.org>
+ <87a7go71hz.fsf@morokweng.localdomain>
+ <20190520090939-mutt-send-email-mst@kernel.org>
+ <877ea26tk8.fsf@morokweng.localdomain>
+ <20190603211528-mutt-send-email-mst@kernel.org>
+ <877e96qxm7.fsf@morokweng.localdomain>
 MIME-Version: 1.0
-X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f9f2f8b0-6a09-4e20-c97a-08d6fe2f643c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Jul 2019 14:21:21.6485
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Nuno.Sa@analog.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL2PR03MB545
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-01_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=900 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1907010177
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <877e96qxm7.fsf@morokweng.localdomain>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gTW9uLCAyMDE5LTA3LTAxIGF0IDEzOjU1ICswMjAwLCBMdWthcyBXdW5uZXIgd3JvdGU6DQo+
-IEkgc2VlLiAgSW4gdGhhdCBjYXNlLCB0cnk6DQo+IA0KPiAgCS8qIGhhbmRsZSBhbGwgdGhlIDMt
-d2lyZSBtb2RlICovDQo+IC0JaWYgKChzcGktPm1vZGUgJiBTUElfM1dJUkUpICYmICh0ZnItPnJ4
-X2J1ZikpDQo+ICsJaWYgKChzcGktPm1vZGUgJiBTUElfM1dJUkUpICYmICh0ZnItPnJ4X2J1ZiAh
-PSBjdGxyLT5kdW1teV9yeCkpDQo+ICAJCWNzIHw9IEJDTTI4MzVfU1BJX0NTX1JFTjsNCj4gIAll
-bHNlDQo+ICAJCWNzICY9IH5CQ00yODM1X1NQSV9DU19SRU47DQo+IA0KDQpUaGlzIHdvcmtlZCBm
-aW5lLiBBbHNvLCBJIGRpZCBhIHF1aWNrIGJhY2twb3J0IG9mIHRoZSBzdGF0ZSBvZiB5b3VyDQpk
-cml2ZXIncyAoYm90aCBzcGktYmNtMjgzNSBhbmQgYmNtMjgzNS1kbWEpIGluIHJldnBpX3N0YWdp
-bmcgYW5kIGl0DQphbHNvIHdvcmtlZCBmaW5lIHdpdGggbXkgZGV2aWNlLg0KU28sIGFzIGZhciBh
-cyBJIHVuZGVyc3RhbmQsIHRoZSBhYm92ZSBzdWdnZXN0aW9uIChvciBteSBwYXRjaCkgaXMgbm90
-DQppbnRlbmRlZCB0byBiZSB1cHN0cmVhbWVkLCByaWdodD8gSXQgaXMganVzdCBhIHRlbXBvcmFy
-eSBmaXggdGhhdCBJIGNhbg0KdXNlIHdoaWxlIHlvdXIgcGF0Y2hzZXQgZ2V0cyB1cHN0cmVhbS4N
-Cg0KVGhhbmtzIGZvciB5b3VyIGhlbHAhDQpOdW5vIFPDoQ0KDQo=
+On Thu, Jun 27, 2019 at 10:58:40PM -0300, Thiago Jung Bauermann wrote:
+> 
+> Michael S. Tsirkin <mst@redhat.com> writes:
+> 
+> > On Mon, Jun 03, 2019 at 10:13:59PM -0300, Thiago Jung Bauermann wrote:
+> >>
+> >>
+> >> Michael S. Tsirkin <mst@redhat.com> writes:
+> >>
+> >> > On Wed, Apr 17, 2019 at 06:42:00PM -0300, Thiago Jung Bauermann wrote:
+> >> >> I rephrased it in terms of address translation. What do you think of
+> >> >> this version? The flag name is slightly different too:
+> >> >>
+> >> >>
+> >> >> VIRTIO_F_ACCESS_PLATFORM_NO_TRANSLATION This feature has the same
+> >> >>     meaning as VIRTIO_F_ACCESS_PLATFORM both when set and when not set,
+> >> >>     with the exception that address translation is guaranteed to be
+> >> >>     unnecessary when accessing memory addresses supplied to the device
+> >> >>     by the driver. Which is to say, the device will always use physical
+> >> >>     addresses matching addresses used by the driver (typically meaning
+> >> >>     physical addresses used by the CPU) and not translated further. This
+> >> >>     flag should be set by the guest if offered, but to allow for
+> >> >>     backward-compatibility device implementations allow for it to be
+> >> >>     left unset by the guest. It is an error to set both this flag and
+> >> >>     VIRTIO_F_ACCESS_PLATFORM.
+> >> >
+> >> >
+> >> >
+> >> >
+> >> > OK so VIRTIO_F_ACCESS_PLATFORM is designed to allow unpriveledged
+> >> > drivers. This is why devices fail when it's not negotiated.
+> >>
+> >> Just to clarify, what do you mean by unprivileged drivers? Is it drivers
+> >> implemented in guest userspace such as with VFIO? Or unprivileged in
+> >> some other sense such as needing to use bounce buffers for some reason?
+> >
+> > I had drivers in guest userspace in mind.
+> 
+> Great. Thanks for clarifying.
+> 
+> I don't think this flag would work for guest userspace drivers. Should I
+> add a note about that in the flag definition?
+
+I think you need to clarify access protection rules. Is it only
+translation that is bypassed or is any platform-specific
+protection mechanism bypassed too?
+
+> >> > This confuses me.
+> >> > If driver is unpriveledged then what happens with this flag?
+> >> > It can supply any address it wants. Will that corrupt kernel
+> >> > memory?
+> >>
+> >> Not needing address translation doesn't necessarily mean that there's no
+> >> IOMMU. On powerpc we don't use VIRTIO_F_ACCESS_PLATFORM but there's
+> >> always an IOMMU present. And we also support VFIO drivers. The VFIO API
+> >> for pseries (sPAPR section in Documentation/vfio.txt) has extra ioctls
+> >> to program the IOMMU.
+> >>
+> >> For our use case, we don't need address translation because we set up an
+> >> identity mapping in the IOMMU so that the device can use guest physical
+> >> addresses.
+
+OK so I think I am beginning to see it in a different light.  Right now the specific
+platform creates an identity mapping. That in turn means DMA API can be
+fast - it does not need to do anything.  What you are looking for is a
+way to tell host it's an identity mapping - just as an optimization.
+
+Is that right?  So this is what I would call this option:
+
+VIRTIO_F_ACCESS_PLATFORM_IDENTITY_ADDRESS
+
+and the explanation should state that all device
+addresses are translated by the platform to identical
+addresses.
+
+In fact this option then becomes more, not less restrictive
+than VIRTIO_F_ACCESS_PLATFORM - it's a promise
+by guest to only create identity mappings,
+and only before driver_ok is set.
+This option then would always be negotiated together with
+VIRTIO_F_ACCESS_PLATFORM.
+
+Host then must verify that
+1. full 1:1 mappings are created before driver_ok
+    or can we make sure this happens before features_ok?
+    that would be ideal as we could require that features_ok fails
+2. mappings are not modified between driver_ok and reset
+    i guess attempts to change them will fail -
+    possibly by causing a guest crash
+    or some other kind of platform-specific error
+
+So far so good, but now a question:
+
+how are we handling guest address width limitations?
+Is VIRTIO_F_ACCESS_PLATFORM_IDENTITY_ADDRESS subject to
+guest address width limitations?
+I am guessing we can make them so ...
+This needs to be documented.
+
+
+
+
+> >
+> > And can it access any guest physical address?
+> 
+> Sorry, I was mistaken. We do support VFIO in guests but not for virtio
+> devices, only for regular PCI devices. In which case they will use
+> address translation.
+
+Not sure how this answers the question.
+
+
+> >> If the guest kernel is concerned that an unprivileged driver could
+> >> jeopardize its integrity it should not negotiate this feature flag.
+> >
+> > Unfortunately flag negotiation is done through config space
+> > and so can be overwritten by the driver.
+> 
+> Ok, so the guest kernel has to forbid VFIO access on devices where this
+> flag is advertised.
+
+That's possible in theory but in practice we did not yet teach VFIO not
+to attach to legacy devices without VIRTIO_F_ACCESS_PLATFORM.  So all
+security relies on host denying driver_ok without
+VIRTIO_F_ACCESS_PLATFORM.  New options that bypass guest security are
+thus tricky as they can create security holes for existing guests.
+I'm open to ideas about how to do this in a safe way,
+
+
+> >> Perhaps there should be a note about this in the flag definition? This
+> >> concern is platform-dependant though. I don't believe it's an issue in
+> >> pseries.
+> >
+> > Again ACCESS_PLATFORM has a pretty open definition. It does actually
+> > say it's all up to the platform.
+> >
+> > Specifically how will VIRTIO_F_ACCESS_PLATFORM_NO_TRANSLATION be
+> > implemented portably? virtio has no portable way to know
+> > whether DMA API bypasses translation.
+> 
+> The fact that VIRTIO_F_ACCESS_PLATFORM_NO_TRANSLATION is set
+> communicates that knowledge to virtio. There is a shared understanding
+> between the guest and the host about what this flag being set means.
+
+Right but I wonder how are you going to *actually* implement it on Linux?
+Are you adding a new set of DMA APIs that do everything except
+translation?
+
+> --
+> Thiago Jung Bauermann
+> IBM Linux Technology Center
