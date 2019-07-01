@@ -2,54 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31FE95B318
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 05:24:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C483E5B31A
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 05:24:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727308AbfGADYW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 30 Jun 2019 23:24:22 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:45976 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726483AbfGADYW (ORCPT
+        id S1727330AbfGADYh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 30 Jun 2019 23:24:37 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:44541 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726483AbfGADYh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Jun 2019 23:24:22 -0400
-Received: by mail-pl1-f193.google.com with SMTP id bi6so6537617plb.12
-        for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2019 20:24:22 -0700 (PDT)
+        Sun, 30 Jun 2019 23:24:37 -0400
+Received: by mail-pg1-f193.google.com with SMTP id i18so621014pgl.11;
+        Sun, 30 Jun 2019 20:24:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=eYA3vKTta6LKS1D/XK4ZvRYQaXSF2BIW0Hf1nNsZli4=;
-        b=D8MepicQN9u84HY/PmIe5HLoyHz6T4kQZZz8+uVOmBlwJh1NlN+OqWy5FNLX71wRLh
-         ZO2g1VAETronF87ceXs5GHvyAb9tQzayvWI6Wl0TjmTQgL5gtaNl4e4Pw9IgiB/+Domz
-         uV0ZrhdAucZeM0qVGqG5Ll6Gpqe78C8Zoz09i14knUkIkg3hbHZ9q4AQtOBO/ophn4lm
-         W/Jq+CEM2HCum7xXsaKyumlz7YamGcAiX8i9n7JkiY7pRZvFJnPSPhhe00cSNGDrz0Nz
-         NS0pZTycYNta0xcGoTWmdOR/SOa754zl+m2qqb5efqIYIsJqLpxuO/YmxWrx65+Dkd0H
-         gkAw==
+        bh=VhkgpflQSTglp1xxSrutR/deUdtT15AWmO5q6HS2EJw=;
+        b=QwX/eN1NP+s31qkaBXHsA/4uNdz33T8GNlJUJHI4GrgssHadPqV388mV20DOlquTdy
+         zj2kwtYw4vvArOv83bPWOe9P3KAZKVHPAKYUhzy8MZBBZTWJg1DoHy/IsN0u+8VEXBkf
+         rB5HZf/8f0BtUeJoPLliBvjZMCmJOBEn0C1mH6gL0Whp365455b0gEXuFPSMBkwdeYyU
+         lDxgFjM2GExlBcZqjqBnKn6IjggO8Fr/4tc1Vnqk4Z88sHwfkcjhiOnTCrFMGWTzDOa6
+         CMuKN9QNWpZ5rjpcAakotv1oLnvuJ+BVmyOhd+sf/TghXe8wzsPWKE37m31VPuUx89Zr
+         NxIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=eYA3vKTta6LKS1D/XK4ZvRYQaXSF2BIW0Hf1nNsZli4=;
-        b=p4U+ep6e5HYVw0qBJ+JnO4vcqeXlLOmw/0pSoDwBb5Al4HFsGn3w/H7BJIP4kZAzhg
-         ae4atBWljW/Vg/d5bPaygUCZkG1koZ6nuR/keQgG+yHEhjoX21K5q3fWQckBD42g3ZVT
-         vot9edHbtZLlcS0lMMLZWsV9x8t5ZzvcpKS7bVO0sJLRwP+k3Leah0mDHs9z+0D9nwlk
-         9Gq7m2PLzl8QWfoQ8cefCYTnOaKEpolrkuTBUYP/9Elv/xclkfuko9zWAK2dT2ieSW9S
-         DhkKSNkDqAF5OZQbgPyVoC5jJ40/eqenn9XOaR+ElV8UTF+op/+EXzuxQkGHF3A5W4h7
-         fuPQ==
-X-Gm-Message-State: APjAAAWRt64oRsZkVXSGGXEDxuvg+7n4tPstikyokgY1Td5SumE75tEH
-        gjRYGL78GXMvHBtKZbw+8fI9c5JkoTA=
-X-Google-Smtp-Source: APXvYqySLGQhmtjaHuYtuPGDI1mFSZeQ7R5YkDextsKVLlbJcd1QzM84G8X4iolRiaEyBJqVrxD6jA==
-X-Received: by 2002:a17:902:e40f:: with SMTP id ci15mr26319595plb.103.1561951461685;
-        Sun, 30 Jun 2019 20:24:21 -0700 (PDT)
+        bh=VhkgpflQSTglp1xxSrutR/deUdtT15AWmO5q6HS2EJw=;
+        b=PP6dyZpeSauy0eS5NzaoleQGpaft/nvjOXzhryEMwiOOy1wyIGGQ53UMFu9fW+lEH3
+         tG3Q3nE+0BmdKpeEIyeahJALaM1y8xPskdO070wd+H8p7dBalrxTh1pKmB1dD7eqVyDm
+         5CNmhncc2iDlVGa79T8lJct/jfxw49aJqX1uHEE01k6d7w6knrg5s8rF2hN3Mk2OfjVd
+         FMP7PCwky6lPqknpw1FaX4JvLr/96BlmWJcrXm9HIpoZU8D7bnT0goPUw2u95kNKLsCo
+         H8Tw26KNcfk7jYq1F4ATGPHk1SsUEugEB/QvOSIN2IsBKuWW45zAVxWNkcR8YGxLXAwA
+         Jd9A==
+X-Gm-Message-State: APjAAAUM2QPkDdnMS9La9LNYXKtbj9kr5ljShWvQmkXFWOh7bzZpXE0R
+        jcDKcY1vaEZyLaDOAz4ulv0w07TRQDE=
+X-Google-Smtp-Source: APXvYqypRRvqTRN4Zfwk4sGc5n91o0nELNv9VP+tB4FycyMgVLHbSCyjaJHLmURAxGTCk1dV372k/A==
+X-Received: by 2002:a17:90a:d14a:: with SMTP id t10mr28422499pjw.85.1561951476408;
+        Sun, 30 Jun 2019 20:24:36 -0700 (PDT)
 Received: from hfq-skylake.ipads-lab.se.sjtu.edu.cn ([202.120.40.82])
-        by smtp.googlemail.com with ESMTPSA id u134sm9373816pfc.19.2019.06.30.20.24.20
+        by smtp.googlemail.com with ESMTPSA id 137sm9185889pfz.112.2019.06.30.20.24.33
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 30 Jun 2019 20:24:21 -0700 (PDT)
+        Sun, 30 Jun 2019 20:24:36 -0700 (PDT)
 From:   Fuqian Huang <huangfq.daxian@gmail.com>
 Cc:     Fuqian Huang <huangfq.daxian@gmail.com>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 3/4] mailbox: Use dev_get_drvdata()
-Date:   Mon,  1 Jul 2019 11:24:13 +0800
-Message-Id: <20190701032413.26073-1-huangfq.daxian@gmail.com>
+        Corentin Chary <corentin.chary@gmail.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        acpi4asus-user@lists.sourceforge.net,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 4/4] platform: x86: Use dev_get_drvdata()
+Date:   Mon,  1 Jul 2019 11:24:26 +0800
+Message-Id: <20190701032426.26127-1-huangfq.daxian@gmail.com>
 X-Mailer: git-send-email 2.11.0
 To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -61,33 +64,23 @@ Using dev_get_drvdata directly.
 
 Signed-off-by: Fuqian Huang <huangfq.daxian@gmail.com>
 ---
- drivers/mailbox/bcm-flexrm-mailbox.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/platform/x86/asus-wmi.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/mailbox/bcm-flexrm-mailbox.c b/drivers/mailbox/bcm-flexrm-mailbox.c
-index a64116586b4c..0cfdd53d04a1 100644
---- a/drivers/mailbox/bcm-flexrm-mailbox.c
-+++ b/drivers/mailbox/bcm-flexrm-mailbox.c
-@@ -1165,8 +1165,7 @@ static int flexrm_process_completions(struct flexrm_ring *ring)
- 
- static int flexrm_debugfs_conf_show(struct seq_file *file, void *offset)
+diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+index 9b18a184e0aa..49049b02a015 100644
+--- a/drivers/platform/x86/asus-wmi.c
++++ b/drivers/platform/x86/asus-wmi.c
+@@ -1353,8 +1353,7 @@ static umode_t asus_hwmon_sysfs_is_visible(struct kobject *kobj,
+ 					  struct attribute *attr, int idx)
  {
--	struct platform_device *pdev = to_platform_device(file->private);
--	struct flexrm_mbox *mbox = platform_get_drvdata(pdev);
-+	struct flexrm_mbox *mbox = dev_get_drvdata(file->private);
- 
- 	/* Write config in file */
- 	flexrm_write_config_in_seqfile(mbox, file);
-@@ -1176,8 +1175,7 @@ static int flexrm_debugfs_conf_show(struct seq_file *file, void *offset)
- 
- static int flexrm_debugfs_stats_show(struct seq_file *file, void *offset)
- {
--	struct platform_device *pdev = to_platform_device(file->private);
--	struct flexrm_mbox *mbox = platform_get_drvdata(pdev);
-+	struct flexrm_mbox *mbox = dev_get_drvdata(file->private);
- 
- 	/* Write stats in file */
- 	flexrm_write_stats_in_seqfile(mbox, file);
+ 	struct device *dev = container_of(kobj, struct device, kobj);
+-	struct platform_device *pdev = to_platform_device(dev->parent);
+-	struct asus_wmi *asus = platform_get_drvdata(pdev);
++	struct asus_wmi *asus = dev_get_drvdata(dev->parent);
+ 	int dev_id = -1;
+ 	int fan_attr = -1;
+ 	u32 value = ASUS_WMI_UNSUPPORTED_METHOD;
 -- 
 2.11.0
 
