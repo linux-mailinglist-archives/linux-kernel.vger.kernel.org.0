@@ -2,93 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF5BB5BC5A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 15:06:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98DE05BC60
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 15:08:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728413AbfGANGb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 09:06:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55924 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726329AbfGANG3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 09:06:29 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 387542146E;
-        Mon,  1 Jul 2019 13:06:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561986388;
-        bh=MX534DB5F1oWDPJd99YbzQMmvY84Xf+8KunFqPNXLCs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=p5ssHk0UwE9WD4gvmfy8huApyqTdaCKkxz5YwFE3wSILs3i8GdfdUyF2GrvX6hmG/
-         86+rnUb04UCqTETUItQUVWEKmLZvW7hZNOOdcNGUWErUiSxEtqP79QWqZplUnwmBFc
-         luwgqm/VpagzwVeagHa4QN7CC6qi60OVG/TkPNuc=
-Date:   Mon, 1 Jul 2019 15:06:07 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL v2] PHY: for 5.2-rc
-Message-ID: <20190701130607.GB14021@kroah.com>
-References: <20190612102803.25398-1-kishon@ti.com>
- <3c16d177-adb3-5c42-7e90-49ddae9723cb@ti.com>
- <20190621064019.GA12643@kroah.com>
- <105a126a-5897-5607-e371-1af958523631@ti.com>
- <194c1b99-aff4-6118-b853-6745b306567f@ti.com>
- <20190701101415.GC23548@kroah.com>
- <b32ec30d-d31a-e2d3-7817-ab7615aa8039@ti.com>
+        id S1727887AbfGANIU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 09:08:20 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:46844 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726329AbfGANIU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Jul 2019 09:08:20 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1hhw2Y-0002cB-On; Mon, 01 Jul 2019 13:08:14 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Gilad Ben-Yossef <gilad@benyossef.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] crypto: ccree - fix spelling mistake "configration" -> "configuration"
+Date:   Mon,  1 Jul 2019 14:08:14 +0100
+Message-Id: <20190701130814.14251-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b32ec30d-d31a-e2d3-7817-ab7615aa8039@ti.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 01, 2019 at 04:01:55PM +0530, Kishon Vijay Abraham I wrote:
-> Hi Greg,
-> 
-> On 01/07/19 3:44 PM, Greg Kroah-Hartman wrote:
-> > On Thu, Jun 27, 2019 at 06:46:50PM +0530, Kishon Vijay Abraham I wrote:
-> >> Hi Greg,
-> >>
-> >> On 21/06/19 12:50 PM, Kishon Vijay Abraham I wrote:
-> >>>
-> >>>
-> >>> On 21/06/19 12:10 PM, Greg Kroah-Hartman wrote:
-> >>>> On Fri, Jun 21, 2019 at 11:41:26AM +0530, Kishon Vijay Abraham I wrote:
-> >>>>> Hi Greg,
-> >>>>>
-> >>>>> On 12/06/19 3:57 PM, Kishon Vijay Abraham I wrote:
-> >>>>>> Hi Greg,
-> >>>>>>
-> >>>>>> Please find the updated pull request for 5.2 -rc cycle. Here I dropped
-> >>>>>> the patch that added "static" for a function to fix sparse warning.
-> >>>>>>
-> >>>>>> I'm also sending the patches along with this pull request in case you'd
-> >>>>>> like to look them.
-> >>>>>>
-> >>>>>> Consider merging it in this -rc cycle and let me know if you want me
-> >>>>>> to make any further changes.
-> >>>>>
-> >>>>> Are you planning to merge this?
-> >>>>
-> >>>> Ugh, fell through the cracks of my huge TODO mbox at the moment, sorry.
-> >>>> It's still there, should get to it next week...
-> >>>
-> >>> All right, thanks!
-> >>
-> >> I think it's not merged yet. If you think it's too late, I can send it along
-> >> with the merge window pull request.
-> > 
-> > Sorry for the delay, I've merged this into my branch for 5.3-rc1.  If
-> > anything needed to go into 5.2, can you send the git commit ids to
-> > stable@vger.kernel.org when they hit Linus's tree?
-> 
-> Sure, I'll do that. Meanwhile I've sent pull request for 5.3 merge window. It
-> would be great if you can pick that one too.
+From: Colin Ian King <colin.king@canonical.com>
 
-Now picked up, thanks.
+There is a spelling mistake in a dev_err message. Fix it.
 
-greg k-h
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/crypto/ccree/cc_driver.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/crypto/ccree/cc_driver.c b/drivers/crypto/ccree/cc_driver.c
+index 980aa04b655b..eeb803f40623 100644
+--- a/drivers/crypto/ccree/cc_driver.c
++++ b/drivers/crypto/ccree/cc_driver.c
+@@ -421,7 +421,7 @@ static int init_cc_resources(struct platform_device *plat_dev)
+ 			}
+ 			break;
+ 		default:
+-			dev_err(dev, "Unsupported engines configration.\n");
++			dev_err(dev, "Unsupported engines configuration.\n");
+ 			rc = -EINVAL;
+ 			goto post_clk_err;
+ 		}
+-- 
+2.20.1
+
