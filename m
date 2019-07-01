@@ -2,67 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B9DA5B860
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 11:49:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B7DC5B831
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 11:41:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728620AbfGAJs4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 05:48:56 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:33748 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727298AbfGAJsy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 05:48:54 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 89C3020090B;
-        Mon,  1 Jul 2019 11:48:52 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 067442008FE;
-        Mon,  1 Jul 2019 11:48:45 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 9CD11402B1;
-        Mon,  1 Jul 2019 17:48:35 +0800 (SGT)
-From:   Anson.Huang@nxp.com
-To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        p.zabel@pengutronix.de, leonard.crestez@nxp.com,
-        viresh.kumar@linaro.org, daniel.baluta@nxp.com, ping.bai@nxp.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH 2/2] arm64: dts: imx8mm: Add "fsl,imx8mq-src" as src's fallback compatible
-Date:   Mon,  1 Jul 2019 17:39:44 +0800
-Message-Id: <20190701093944.5540-2-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20190701093944.5540-1-Anson.Huang@nxp.com>
-References: <20190701093944.5540-1-Anson.Huang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1728442AbfGAJlm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 05:41:42 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:54375 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728334AbfGAJll (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Jul 2019 05:41:41 -0400
+Received: by mail-wm1-f67.google.com with SMTP id g135so15104200wme.4;
+        Mon, 01 Jul 2019 02:41:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=6mj1GNCBlm5Kzl/Gv47qDDxI924Jr5t8ezQS95HGAxE=;
+        b=RMrB1vsX/2hK+on0/p7Z7GxznCyEy8+F457kddIrwKQwlCyrQQxmFpdyIB7KPTFSrI
+         1UEEwV35Lu1CwDmb2s+W4OV+NkzstIuw8Cc63+MTmhAkrLOTiGJ1qG16J4JvqTAEsrSs
+         uZnWKKrQgeqZdO/mh9YOy2EoWVT//ZMAZ8eHGu9m2sZo312GQ3vgDEcVGV8kekxPtJMN
+         rv0CFJjViOmLgWPsk0vUPM+G4Qtu0X7i8ze6FzUMeBgTwPapqt1nU/op3JD7L/rym6eB
+         LO9RSQlwXNBw4IS2pP/gIgz2ZEOQZYuk+kM5QZ6v7wLL6Ud/9JPtH+DTjO8Md5KsnlAx
+         l+pQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=6mj1GNCBlm5Kzl/Gv47qDDxI924Jr5t8ezQS95HGAxE=;
+        b=CNtxuFG0C+fodwzzq5WlRxI4eXG8u4oWNxdMbtgVH9eqvjg3qGe5BECdPnlRUwQHOl
+         5zPPffl0ZubCXhpFD+PP+biNgkSIrDyMEbgruvTLVtTQKAWiZplQgdS2dLMGR0KyHioL
+         0TesIpiz0CRrh47EEDomi3WbSdX2FX5ruq2nNlJHdl08YwgoWwCQP/Xjl6R9L0h3aIDX
+         rzzuHEZgXsEBXJCU2jnPN/HaiJK09JtABWgzPqi3JB/v4dD7z41EiAVtiNLRdbjr3c33
+         YR3fM0RwSsJaBAo0gmjf0z9OjJ0ohc2OjqwkF8BCyZN91V2yIUKbsjb91pvV2Noo1KrB
+         sCRA==
+X-Gm-Message-State: APjAAAUPpI1RUfTiCL2xC0BUakC47MacJo+h/dgw7tjbfOFjPCYRshky
+        BvC0niR5Pjy6mo1wcrJ6Wa0=
+X-Google-Smtp-Source: APXvYqw1GiG2c1p4SOty1AL+8QolpaF03Qeti32qNeBWi0z+owqwU83+3Kt9KKC6JMz4wuXTHDVY/A==
+X-Received: by 2002:a1c:3:: with SMTP id 3mr16735741wma.6.1561974098900;
+        Mon, 01 Jul 2019 02:41:38 -0700 (PDT)
+Received: from [172.22.36.64] (redhat-nat.vtp.fi.muni.cz. [78.128.215.6])
+        by smtp.gmail.com with ESMTPSA id 5sm5860353wmi.22.2019.07.01.02.41.37
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Mon, 01 Jul 2019 02:41:38 -0700 (PDT)
+Subject: Re: [RFC PATCH v5 0/1] Add dm verity root hash pkcs7 sig validation.
+To:     James Morris <jmorris@namei.org>,
+        Eric Biggers <ebiggers@kernel.org>
+Cc:     Jaskaran Khurana <jaskarankhurana@linux.microsoft.com>,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, agk@redhat.com, snitzer@redhat.com,
+        dm-devel@redhat.com, scottsh@microsoft.com, mpatocka@redhat.com
+References: <20190619191048.20365-1-jaskarankhurana@linux.microsoft.com>
+ <20190628040041.GB673@sol.localdomain>
+ <alpine.LRH.2.21.1906282040490.15624@namei.org>
+From:   Milan Broz <gmazyland@gmail.com>
+Openpgp: preference=signencrypt
+Message-ID: <749ddf56-3cb6-42c8-9ccc-71e09558400f@gmail.com>
+Date:   Mon, 1 Jul 2019 11:41:37 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
+MIME-Version: 1.0
+In-Reply-To: <alpine.LRH.2.21.1906282040490.15624@namei.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anson Huang <Anson.Huang@nxp.com>
+On 29/06/2019 06:01, James Morris wrote:
+> On Thu, 27 Jun 2019, Eric Biggers wrote:
+> 
+>> I don't understand your justification for this feature.
+>>
+>> If userspace has already been pwned severely enough for the attacker to be
+>> executing arbitrary code with CAP_SYS_ADMIN (which is what the device mapper
+>> ioctls need), what good are restrictions on loading more binaries from disk?
+>>
+>> Please explain your security model.
+> 
+> Let's say the system has a policy where all code must be signed with a 
+> valid key, and that one mechanism for enforcing this is via signed 
+> dm-verity volumes. Validating the signature within the kernel provides 
+> stronger assurance than userspace validation. The kernel validates and 
+> executes the code, using kernel-resident keys, and does not need to rely 
+> on validation which has occurred across a trust boundary.
 
-i.MX8MM can reuse i.MX8MQ's src driver, add "fsl,imx8mq-src" as
-src's fallback compatible to enable it.
+Yes, but as it is implemented in this patch, a certificate is provided as
+a binary blob by the (super)user that activates the dm-verity device.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- arch/arm64/boot/dts/freescale/imx8mm.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Actually, I can put there anything that looks like a correct signature (self-signed
+or so), and dm-verity code is happy because the root hash is now signed.
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mm.dtsi b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-index f0ac027..ea15457 100644
---- a/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-@@ -471,7 +471,7 @@
- 			};
- 
- 			src: reset-controller@30390000 {
--				compatible = "fsl,imx8mm-src", "syscon";
-+				compatible = "fsl,imx8mm-src", "fsl,imx8mq-src", "syscon";
- 				reg = <0x30390000 0x10000>;
- 				interrupts = <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>;
- 				#reset-cells = <1>;
--- 
-2.7.4
+Maybe could this concept be extended to support in-kernel compiled certificates?
 
+I like the idea of signed root hash, but the truth is that if you have access
+to device activation, it brings nothing, you can just put any cert in the keyring
+and use it.
+
+Milan
+
+> 
+> You don't need arbitrary CAP_SYS_ADMIN code execution, you just need a 
+> flaw in the app (or its dependent libraries, or configuration) which 
+> allows signature validation to be bypassed.
+> 
+> The attacker now needs a kernel rather than a userspace vulnerability to 
+> bypass the signed code policy.
+> 
