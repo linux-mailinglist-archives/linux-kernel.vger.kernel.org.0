@@ -2,112 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA63B5C52B
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 23:49:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5D5B5C531
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 23:53:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726930AbfGAVtz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 17:49:55 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:46995 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726586AbfGAVtz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 17:49:55 -0400
-Received: by mail-pf1-f195.google.com with SMTP id 81so7180417pfy.13
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2019 14:49:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=qrAn2xUKRq25y9kmzyaSOl6EHUIG32pV7WxMNDG8GTU=;
-        b=r+J3BWcpMj4stnUQYC0UzYxus0LNbXZ5INvJM2e5T4JIlGrVQqhWSbGBRKIyPr535q
-         8T93C+kbCyES+mBJZR9vt94+hsAfRX4P5uErBtHBheWxL238GDa9in27SoyF8aMms66F
-         IHIpfeMYQEQS8gasoKDX/WcpFaaAK/v/gFJ0VEHsCTN4MtrbkqP+ia5TDYgUpZKobLmP
-         wblE/51iRadAFKuCgP6eWWFUWjzAhQr5oDFH8HsC3KkFmT3AvD9cz3OpPpna9NegTqKu
-         wyuxVglV4HU+6Agumkq3w1jx5uipzIUPZfJYhIQYn21ZRvT6cIRDz/M+2RrOFoiFYeH9
-         dN0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=qrAn2xUKRq25y9kmzyaSOl6EHUIG32pV7WxMNDG8GTU=;
-        b=L1R93hUO1l5ik2l0BhpTtQA4LeeUyfxm6APO5eDYkQtpYkcG25dSUywHwb4AWSnvCs
-         vpa0avETJMjK8WA86uDWG/O5n8i0VODNBtA5Ad+6tuXWsC7rBVBJjCh1KnXQ0+6dTRYK
-         O2oFeDVDkfWmuJtQktVKSiVsd5K22KRuye0x7dv+H0HRnRpjF4tbiWWcMYbIj+h+FKH4
-         ft6/Vx/o1G6x/qI01HC6TQQ6GTogTqoDH4OpAT7Ca3Ui01jBDMIrzO8PCn3/Y0WFovJU
-         etLvCxnqNTz61O6S8y58EXF2i0KSDCNUbwgvovvDQCNameF8trvoVyTFRo0tGNad66mm
-         vdRw==
-X-Gm-Message-State: APjAAAX9ZPDLyViSnFz4hXKK0KLoZP7SGM8WJBwbendB960A+Nm4+IXg
-        qBT/bCP6oU4AYMwFYupYEsnHfZtnk6k=
-X-Google-Smtp-Source: APXvYqybnVoHn0Mqql3MjYii8qxRZOBUD7/F4uVFfVlZKVv479rac3TNe4yf3ed1olx5G9I8U1x/2g==
-X-Received: by 2002:a17:90a:26a1:: with SMTP id m30mr1595227pje.59.1562017794264;
-        Mon, 01 Jul 2019 14:49:54 -0700 (PDT)
-Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id a3sm463514pje.3.2019.07.01.14.49.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 01 Jul 2019 14:49:53 -0700 (PDT)
-Date:   Mon, 1 Jul 2019 14:50:17 -0700
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iommu/dma: Fix calculation overflow in __finalise_sg()
-Message-ID: <20190701215016.GA16247@Asurada-Nvidia.nvidia.com>
-References: <20190622043814.5003-1-nicoleotsuka@gmail.com>
- <20190701122158.GE8166@8bytes.org>
- <91a389be-fd76-c87f-7613-8cc972b69685@arm.com>
+        id S1726896AbfGAVxm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 17:53:42 -0400
+Received: from ozlabs.org ([203.11.71.1]:40139 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726664AbfGAVxm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Jul 2019 17:53:42 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45d1N16VTKz9sCJ;
+        Tue,  2 Jul 2019 07:53:37 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1562018019;
+        bh=zb3FI6B9lUVRC7qGc4Qeb71LaxjV6fLHHoxCV4G5SvY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=MmeeUBjeAW0+3r4JxF3mtJhh5HE5gtV2bIM0B8mPNL7jg1eRrbcLaxN2n/KuCp3Bm
+         ogScBWaGrUw03lBbdz4zt5biVKE7oUI+xJjnFqBDCcZxJ/oBsRABX2W/9OdrV1q2qy
+         fQwQiotrgUJr7NH3wES3xzTZSCfm7zwyM/07EmbwdXNlJFuLKpQfpiQP7TkbpEeNOL
+         XSQE6yHXCWTirdR+hkOl3VNowaz6LaTX42JgQvCTh3NPkAQlHKFLlrvW49rqrYr23D
+         f1GtsrOb/NuQEmb2tEBfSn2760PZZed+IMiZhRom7Se+/TV7oECCwg3J0BNiniOcYR
+         Gc3LoHsX302gw==
+Date:   Tue, 2 Jul 2019 07:53:36 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Subject: Re: linux-next: manual merge of the char-misc tree with the
+ driver-core tree
+Message-ID: <20190702075336.65c38f86@canb.auug.org.au>
+In-Reply-To: <20190701183940.GA67767@archlinux-epyc>
+References: <20190701190940.7f23ac15@canb.auug.org.au>
+        <20190701183940.GA67767@archlinux-epyc>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <91a389be-fd76-c87f-7613-8cc972b69685@arm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/45gcK0K5nz/Y.CMkG2vV7fs"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Robin,
+--Sig_/45gcK0K5nz/Y.CMkG2vV7fs
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 01, 2019 at 01:39:55PM +0100, Robin Murphy wrote:
-> > > The max_len is a u32 type variable so the calculation on the
-> > > left hand of the last if-condition will potentially overflow
-> > > when a cur_len gets closer to UINT_MAX -- note that there're
-> > > drivers setting max_seg_size to UINT_MAX:
-> > >    drivers/dma/dw-edma/dw-edma-core.c:745:
-> > >      dma_set_max_seg_size(dma->dev, U32_MAX);
-> > >    drivers/dma/dma-axi-dmac.c:871:
-> > >      dma_set_max_seg_size(&pdev->dev, UINT_MAX);
-> > >    drivers/mmc/host/renesas_sdhi_internal_dmac.c:338:
-> > >      dma_set_max_seg_size(dev, 0xffffffff);
-> > >    drivers/nvme/host/pci.c:2520:
-> > >      dma_set_max_seg_size(dev->dev, 0xffffffff);
-> > > 
-> > > So this patch just casts the cur_len in the calculation to a
-> > > size_t type to fix the overflow issue, as it's not necessary
-> > > to change the type of cur_len after all.
-> > > 
-> > > Fixes: 809eac54cdd6 ("iommu/dma: Implement scatterlist segment merging")
-> > > Cc: stable@vger.kernel.org
-> > > Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
-> > 
-> > Looks good to me, but I let Robin take a look too before I apply it,
-> > Robin?
-> I'll need to take a closer look at how exactly an overflow would happen here
+Hi Nathan,
 
-It was triggered by a test case that was trying to map a 4GB
-dma_buf (1000+ nents in the scatterlist). This function then
-seemed to reduce the nents by merging most of them, probably
-because they were contiguous.
+On Mon, 1 Jul 2019 11:39:40 -0700 Nathan Chancellor <natechancellor@gmail.c=
+om> wrote:
+>=20
+> The attached patch is needed in addition to this to avoid a build error
+> about incompatible pointer types (in the commit message).
 
-> (just got back off some holiday), but my immediate thought is that if this
-> is a real problem, then what about 32-bit builds where size_t would still
-> overflow?
+Thanks, I will add it to my merge resolution today.
 
-I think most of callers are also using size_t type for their
-size parameters like dma_buf, so the cur_len + s_length will
-unlikely go higher than UINT_MAX. But just in case that some
-driver allocates a large sg with a size parameter defined in
-64-bit and uses this map() function, so it might be safer to
-change to "size_t" here to "u64"?
+--=20
+Cheers,
+Stephen Rothwell
 
-Thank you
-Nicolin
+--Sig_/45gcK0K5nz/Y.CMkG2vV7fs
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0agOAACgkQAVBC80lX
+0Gww3Af9FA+nds9Tai6eb3VQux1btT8YOEG7eadoT0PnYJVIddGcnpHiULZOpn8o
+7BN+oGyIVcIWAY9pKJLqGnrZxYSKC87zXcgnaEGM5AVFNioldedhKS0L8LnR5G+L
+2HXbHfXRTrKgcm9CtC8wIPtogZvC2AGiM42ennCbgjkHx+/bE8bwtwu2eSnI8KKo
+ZvUxU3pK5s2Gk0tc5JfoIIaB7Ge+WX/KT16vLhW0670qvIap41w8hf6/IPE2sGjq
+KIMAL/7saV+LBOitwrRM2PO2YwswZv+xGoUFIGj4v04fBP3j6Vz4Suc7QadPVLtP
+kyEu3lNaM2kJMaGrJhheRU4L8eMkTQ==
+=7pbL
+-----END PGP SIGNATURE-----
+
+--Sig_/45gcK0K5nz/Y.CMkG2vV7fs--
