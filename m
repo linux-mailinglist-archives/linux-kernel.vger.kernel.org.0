@@ -2,54 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E8D15C862
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 06:35:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 191D65DAB1
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 03:23:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725835AbfGBEfh convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 2 Jul 2019 00:35:37 -0400
-Received: from mail.imp.gob.pe ([190.187.94.148]:53143 "EHLO mail.imp.gob.pe"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725648AbfGBEfh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 00:35:37 -0400
-X-Greylist: delayed 11084 seconds by postgrey-1.27 at vger.kernel.org; Tue, 02 Jul 2019 00:35:37 EDT
-Received: from localhost (localhost [127.0.0.1])
-        by mail.imp.gob.pe (Postfix) with ESMTP id 8EBD8E2903;
-        Mon,  1 Jul 2019 15:56:36 -0500 (PET)
-Received: from mail.imp.gob.pe ([127.0.0.1])
-        by localhost (mail.imp.gob.pe [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id mIM-xzo_KSX4; Mon,  1 Jul 2019 15:56:36 -0500 (PET)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.imp.gob.pe (Postfix) with ESMTP id ABC8AE3A60;
-        Mon,  1 Jul 2019 15:19:19 -0500 (PET)
-X-Virus-Scanned: amavisd-new at imp.gob.pe
-Received: from mail.imp.gob.pe ([127.0.0.1])
-        by localhost (mail.imp.gob.pe [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id YqMLnBOZUM99; Mon,  1 Jul 2019 15:19:19 -0500 (PET)
-Received: from [23.95.26.111] (unknown [23.95.26.111])
-        by mail.imp.gob.pe (Postfix) with ESMTPSA id 7E210283870;
-        Mon,  1 Jul 2019 14:24:03 -0500 (PET)
-Content-Type: text/plain; charset="iso-8859-1"
+        id S1727432AbfGCBXz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 21:23:55 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:33084 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727309AbfGCBXz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 21:23:55 -0400
+Received: by mail-oi1-f195.google.com with SMTP id u15so671431oiv.0
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 18:23:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Tjr+kTCBfEIGCCG/hrV8Jjghn6dXfiu1H36R2Sz+qKs=;
+        b=CI3Iq2aAqa6cTLPMphI0VdIANcgViK5iD5Lpd8O4rNHBubwk9KdlDQ9POIrvOviZza
+         WE8pTGwDVFnrE9xAq9cBqRjuxTN8JpzczIec7ftooghgMuZjpGD5rqjeroZHxFl0NfKH
+         unyq+yZB36NObk7atWWgkeW849JAneSR2EQr8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Tjr+kTCBfEIGCCG/hrV8Jjghn6dXfiu1H36R2Sz+qKs=;
+        b=ei3lOcwCOUSq0E1WzaAJiKH7DupZHMUJ3EbQ+Iy1gzlmmpWLKQsy0YO3COXMVPwYRk
+         aDuq5yZKMx1hqxi1NCxLOe2HJuU+zwsT97wjwHFgFVFNNftUeYlVh4ZuCpu1+O5UCtFR
+         t7k+S9Mnfmf1PfZQJUo04deH7Xh6w8JQ3CeEC49TIoSlEgcA1H+SaB0PwTKiUTOXUjLc
+         ChLb26OuQvR6L/GdxDK1Qc/3LHxh829IJHvPB8oKCAHK+uJDGjfrQsYCiAHNLnKzDd+6
+         +61j8YvKbxMnmcU5kdN9vm0favSJaZStUHEdRSWdceen449WvBsYrX01Jgt4DgTpPLly
+         Zm4g==
+X-Gm-Message-State: APjAAAVpcGQy2ncbHQgKhZWtTZawBZlCk+evdv0b9pqfZCwnrBixyIb0
+        yJUFaJiycFbaGNXsDK6EZYbTKX3PJnw=
+X-Google-Smtp-Source: APXvYqwQMqX0GsfERFAKDe0Bwa3AI5eWVof8HlFAef/H5lfWEufbCDM+mSAkN/wC5xVQgT5/PUChtw==
+X-Received: by 2002:a63:755e:: with SMTP id f30mr24465931pgn.246.1562101453492;
+        Tue, 02 Jul 2019 14:04:13 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id e20sm1431pfh.50.2019.07.02.14.04.05
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 02 Jul 2019 14:04:08 -0700 (PDT)
+Date:   Mon, 1 Jul 2019 14:51:30 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>
+Cc:     linux-kernel@vger.kernel.org, Ross Zwisler <zwisler@google.com>,
+        Ross Zwisler <zwisler@chromium.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Johannes Hirte <johannes.hirte@datenkhaos.de>,
+        Klaus Kusche <klaus.kusche@computerix.info>,
+        samitolvanen@google.com, Guenter Roeck <groeck@google.com>
+Subject: Re: [PATCH] Revert "x86/build: Move _etext to actual end of .text"
+Message-ID: <201907011450.100092F32@keescook>
+References: <20190701155208.211815-1-zwisler@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: Re
-To:     Recipients <msaenz@imp.gob.pe>
-From:   "Smadar Barber-Tsadik" <msaenz@imp.gob.pe>
-Date:   Mon, 01 Jul 2019 12:24:08 -0700
-Reply-To: 1933154744@qq.com
-Message-Id: <20190701192404.7E210283870@mail.imp.gob.pe>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190701155208.211815-1-zwisler@google.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sorry to break into your privacy in this manner, 
-I'm Smadar Barber-Tsadik, Deputy Chief Executive Officer 
-of First International Bank of Israel Ltd (FIBI). 
-I am getting in touch with you regarding an extremely 
-important and urgent matter. If you would oblige me the 
-opportunity, I shall provide you with details upon your 
-response.
+On Mon, Jul 01, 2019 at 09:52:08AM -0600, Ross Zwisler wrote:
+> This reverts commit 392bef709659abea614abfe53cf228e7a59876a4.
+> 
+> Per the discussion here:
+> 
+> https://lkml.org/lkml/2019/6/20/830
+> 
+> the above referenced commit breaks kernel compilation with old GCC
+> toolchains as well as current versions of the Gold linker.  Revert it so
+> we don't regress and lose the ability to compile the kernel with these
+> tools.
+> 
+> Signed-off-by: Ross Zwisler <zwisler@google.com>
 
-Faithfully,
-Smadar Barber-Tsadik
+Acked-by: Kees Cook <keescook@chromium.org>
+
+-Kees
+
+> ---
+>  arch/x86/kernel/vmlinux.lds.S | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
+> index 0850b5149345..4d1517022a14 100644
+> --- a/arch/x86/kernel/vmlinux.lds.S
+> +++ b/arch/x86/kernel/vmlinux.lds.S
+> @@ -141,10 +141,10 @@ SECTIONS
+>  		*(.text.__x86.indirect_thunk)
+>  		__indirect_thunk_end = .;
+>  #endif
+> -	} :text = 0x9090
+>  
+> -	/* End of text section */
+> -	_etext = .;
+> +		/* End of text section */
+> +		_etext = .;
+> +	} :text = 0x9090
+>  
+>  	NOTES :text :note
+>  
+> -- 
+> 2.20.1
+
+-- 
+Kees Cook
