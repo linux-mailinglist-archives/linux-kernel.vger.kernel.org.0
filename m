@@ -2,128 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EA945B93A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 12:47:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BAED45BA33
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 12:58:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727189AbfGAKrN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 06:47:13 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:49072 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726912AbfGAKrM (ORCPT
+        id S1728190AbfGAK6c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 06:58:32 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:58928 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727777AbfGAK6U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 06:47:12 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x61AktDf015680;
-        Mon, 1 Jul 2019 05:46:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1561978015;
-        bh=xkl2YSQgyzqKuqbU89N6vJgSH9uVy5rur2a274LLpx8=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=NwYmYqiH3UgHKJrXq/7XQnNew6YC+zoaqBdgWzE1BIesddbvTKMp7Gc9uxzEOtfx3
-         cTDmboPaQf6L6xXhEVEIDuNr3X2GB3oy0Cn6okCurZj5oRn9CJtXIZ7W8fUmbQ9Olc
-         O7jdhIMbKfFxkUg2zuDQ4dWstSyQjW0whzxaqTKs=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x61AktWn101270
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 1 Jul 2019 05:46:55 -0500
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 1 Jul
- 2019 05:46:54 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Mon, 1 Jul 2019 05:46:54 -0500
-Received: from [172.24.190.117] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x61Akp51022662;
-        Mon, 1 Jul 2019 05:46:52 -0500
-Subject: Re: [PATCH] soc: ti: fix irq-ti-sci link error
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Santosh Shilimkar <ssantosh@kernel.org>
-CC:     Marc Zyngier <marc.zyngier@arm.com>,
-        Olof Johansson <olof@lixom.net>,
-        Tony Lindgren <tony@atomide.com>, Nishanth Menon <nm@ti.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20190617130149.1782930-1-arnd@arndb.de>
-From:   Lokesh Vutla <lokeshvutla@ti.com>
-Message-ID: <2974ac02-287a-ab46-6716-2b768cca47c3@ti.com>
-Date:   Mon, 1 Jul 2019 16:16:11 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Mon, 1 Jul 2019 06:58:20 -0400
+Received: from 79.184.254.216.ipv4.supernova.orange.pl (79.184.254.216) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.267)
+ id 8ee318da5a3211b0; Mon, 1 Jul 2019 12:58:18 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Linux PM <linux-pm@vger.kernel.org>
+Cc:     Linux PCI <linux-pci@vger.kernel.org>,
+        Linux ACPI <linux-acpi@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Hans De Goede <hdegoede@redhat.com>,
+        "Robert R. Howell" <RHowell@uwyo.edu>
+Subject: [PATCH v2 2/5] PCI: PM: Simplify bus-level hibernation callbacks
+Date:   Mon, 01 Jul 2019 12:46:45 +0200
+Message-ID: <1631366.A1uHhESlUo@kreacher>
+In-Reply-To: <4976412.ihyb9sT5jY@kreacher>
+References: <4976412.ihyb9sT5jY@kreacher>
 MIME-Version: 1.0
-In-Reply-To: <20190617130149.1782930-1-arnd@arndb.de>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+
+After a previous change causing all runtime-suspended PCI devices
+to be resumed before creating a snapshot image of memory during
+hibernation, it is not necessary to worry about the case in which
+them might be left in runtime-suspend any more, so get rid of the
+code related to that from bus-level PCI hibernation callbacks.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+
+-> v2: No changes.
+
+---
+ drivers/pci/pci-driver.c |   27 ---------------------------
+ 1 file changed, 27 deletions(-)
+
+Index: linux-pm/drivers/pci/pci-driver.c
+===================================================================
+--- linux-pm.orig/drivers/pci/pci-driver.c
++++ linux-pm/drivers/pci/pci-driver.c
+@@ -1034,22 +1034,11 @@ static int pci_pm_freeze(struct device *
+ 	return 0;
+ }
+ 
+-static int pci_pm_freeze_late(struct device *dev)
+-{
+-	if (dev_pm_smart_suspend_and_suspended(dev))
+-		return 0;
+-
+-	return pm_generic_freeze_late(dev);
+-}
+-
+ static int pci_pm_freeze_noirq(struct device *dev)
+ {
+ 	struct pci_dev *pci_dev = to_pci_dev(dev);
+ 	struct device_driver *drv = dev->driver;
+ 
+-	if (dev_pm_smart_suspend_and_suspended(dev))
+-		return 0;
+-
+ 	if (pci_has_legacy_pm_support(pci_dev))
+ 		return pci_legacy_suspend_late(dev, PMSG_FREEZE);
+ 
+@@ -1079,16 +1068,6 @@ static int pci_pm_thaw_noirq(struct devi
+ 	struct device_driver *drv = dev->driver;
+ 	int error = 0;
+ 
+-	/*
+-	 * If the device is in runtime suspend, the code below may not work
+-	 * correctly with it, so skip that code and make the PM core skip all of
+-	 * the subsequent "thaw" callbacks for the device.
+-	 */
+-	if (dev_pm_smart_suspend_and_suspended(dev)) {
+-		dev_pm_skip_next_resume_phases(dev);
+-		return 0;
+-	}
+-
+ 	if (pcibios_pm_ops.thaw_noirq) {
+ 		error = pcibios_pm_ops.thaw_noirq(dev);
+ 		if (error)
+@@ -1226,10 +1205,6 @@ static int pci_pm_restore_noirq(struct d
+ 	struct device_driver *drv = dev->driver;
+ 	int error = 0;
+ 
+-	/* This is analogous to the pci_pm_resume_noirq() case. */
+-	if (dev_pm_smart_suspend_and_suspended(dev))
+-		pm_runtime_set_active(dev);
+-
+ 	if (pcibios_pm_ops.restore_noirq) {
+ 		error = pcibios_pm_ops.restore_noirq(dev);
+ 		if (error)
+@@ -1279,7 +1254,6 @@ static int pci_pm_restore(struct device
+ #else /* !CONFIG_HIBERNATE_CALLBACKS */
+ 
+ #define pci_pm_freeze		NULL
+-#define pci_pm_freeze_late	NULL
+ #define pci_pm_freeze_noirq	NULL
+ #define pci_pm_thaw		NULL
+ #define pci_pm_thaw_noirq	NULL
+@@ -1405,7 +1379,6 @@ static const struct dev_pm_ops pci_dev_p
+ 	.suspend_late = pci_pm_suspend_late,
+ 	.resume = pci_pm_resume,
+ 	.freeze = pci_pm_freeze,
+-	.freeze_late = pci_pm_freeze_late,
+ 	.thaw = pci_pm_thaw,
+ 	.poweroff = pci_pm_poweroff,
+ 	.poweroff_late = pci_pm_poweroff_late,
 
 
-On 17/06/19 6:31 PM, Arnd Bergmann wrote:
-> The irqchip driver depends on the SoC specific driver, but we want
-> to be able to compile-test it elsewhere:
-> 
-> WARNING: unmet direct dependencies detected for TI_SCI_INTA_MSI_DOMAIN
->   Depends on [n]: SOC_TI [=n]
->   Selected by [y]:
->   - TI_SCI_INTA_IRQCHIP [=y] && TI_SCI_PROTOCOL [=y]
-> 
-> drivers/irqchip/irq-ti-sci-inta.o: In function `ti_sci_inta_irq_domain_probe':
-> irq-ti-sci-inta.c:(.text+0x204): undefined reference to `ti_sci_inta_msi_create_irq_domain'
-> 
-> Rearrange the Kconfig and Makefile so we build the soc driver whenever
-> its users are there, regardless of the SOC_TI option.
-> 
-> Fixes: 49b323157bf1 ("soc: ti: Add MSI domain bus support for Interrupt Aggregator")
-> Fixes: f011df6179bd ("irqchip/ti-sci-inta: Add msi domain support")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Looks like this is a side effect of the patch  a6b112b04355b ("arm64: arch_k3:
-Fix kconfig dependency warning"). $Patch looks good to me.
-
-Reviewed-by: Lokesh Vutla <lokeshvutla@ti.com>
-
-Thanks and regards,
-Lokesh
-
-> ---
->  drivers/soc/Makefile   | 2 +-
->  drivers/soc/ti/Kconfig | 4 ++--
->  2 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/soc/Makefile b/drivers/soc/Makefile
-> index 524ecdc2a9bb..2ec355003524 100644
-> --- a/drivers/soc/Makefile
-> +++ b/drivers/soc/Makefile
-> @@ -22,7 +22,7 @@ obj-$(CONFIG_ARCH_ROCKCHIP)	+= rockchip/
->  obj-$(CONFIG_SOC_SAMSUNG)	+= samsung/
->  obj-y				+= sunxi/
->  obj-$(CONFIG_ARCH_TEGRA)	+= tegra/
-> -obj-$(CONFIG_SOC_TI)		+= ti/
-> +obj-y				+= ti/
->  obj-$(CONFIG_ARCH_U8500)	+= ux500/
->  obj-$(CONFIG_PLAT_VERSATILE)	+= versatile/
->  obj-y				+= xilinx/
-> diff --git a/drivers/soc/ti/Kconfig b/drivers/soc/ti/Kconfig
-> index ea0859f7b185..d7d50d48d05d 100644
-> --- a/drivers/soc/ti/Kconfig
-> +++ b/drivers/soc/ti/Kconfig
-> @@ -75,10 +75,10 @@ config TI_SCI_PM_DOMAINS
->  	  called ti_sci_pm_domains. Note this is needed early in boot before
->  	  rootfs may be available.
->  
-> +endif # SOC_TI
-> +
->  config TI_SCI_INTA_MSI_DOMAIN
->  	bool
->  	select GENERIC_MSI_IRQ_DOMAIN
->  	help
->  	  Driver to enable Interrupt Aggregator specific MSI Domain.
-> -
-> -endif # SOC_TI
-> 
