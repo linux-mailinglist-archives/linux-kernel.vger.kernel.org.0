@@ -2,72 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7D795BE7B
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 16:40:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF8C35BE86
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 16:41:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729777AbfGAOkg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 10:40:36 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:35790 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727064AbfGAOkg (ORCPT
+        id S1729753AbfGAOlp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 10:41:45 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:49690 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728216AbfGAOlp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 10:40:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Gy9trNaeRO8Sfc06lKqxrcigtnZWNPvY30p1SECBOi4=; b=gFk3SbTw4Qj/LLUCbtp4D7iHZ
-        p3+JMSb8Q7g/zMP2sfCS1xCjgopYpWimLLt2tgWcwQFlkEBIHreJgoyXWqB+JPloQlOBCqLLRydo6
-        oHib19a4FcNkOw9P0b0ZP27oenx7DB1FCtk6hFpR6gWDYFx3VG62mOUjo4wqlef8qiaZ6/v/e48fB
-        HlpN8H0yGuIk/mLKE6r4t9YxPHWCyoUhqOMllQJsr1uORReJBuJsG4zCtE5E9GbwWMd59caZueMm1
-        tGafd3rZfc6hLj/JWbEh+Ny58tho2YXkYKSuXnfy7NFFLO5/w6efpgnlOjmu9lDpaKJH5L32TJPAr
-        QKnqCPCNA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hhxTo-00006F-IP; Mon, 01 Jul 2019 14:40:28 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id F23CE20A18938; Mon,  1 Jul 2019 16:40:26 +0200 (CEST)
-Date:   Mon, 1 Jul 2019 16:40:26 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Michel Lespinasse <walken@google.com>
-Cc:     Davidlohr Bueso <dave@stgolabs.net>,
-        David Howells <dhowells@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] augmented rbtree: rework the RB_DECLARE_CALLBACKS
- macro definition
-Message-ID: <20190701144026.GF3463@hirez.programming.kicks-ass.net>
-References: <20190629004952.6611-1-walken@google.com>
- <20190629004952.6611-3-walken@google.com>
- <20190701074630.GM3402@hirez.programming.kicks-ass.net>
+        Mon, 1 Jul 2019 10:41:45 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x61Eel75075389;
+        Mon, 1 Jul 2019 09:40:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1561992047;
+        bh=v09DKmxdyp0eEsvf+kyn4y4hnlTkeSpL6c6F1V4f4FA=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=oLkEnK10lOzZSr8kWXvyIEzwRTGPy9yC0AqouKKQ5P0FswISZynDNwYfWMhmiESnO
+         And5l8d/dgLdTP0j/yDzwkkEYIZZXxsL2/pm9cog/7jNYxFgiEpeHFw0/VSWgS6ceC
+         gC3uk1kSLls9pkjZPE1FSx5VuIP5L7DrnYuD+2Ps=
+Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x61EelNv091078
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 1 Jul 2019 09:40:47 -0500
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 1 Jul
+ 2019 09:40:47 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Mon, 1 Jul 2019 09:40:47 -0500
+Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x61Eegav086236;
+        Mon, 1 Jul 2019 09:40:44 -0500
+Subject: Re: [PATCH 00/12] ARM: davinci: da850-evm: remove more legacy GPIO
+ calls
+To:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Kevin Hilman <khilman@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        David Lechner <david@lechnology.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <linux-fbdev@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20190625163434.13620-1-brgl@bgdev.pl>
+From:   Sekhar Nori <nsekhar@ti.com>
+Message-ID: <fe42c0e1-2bfb-2b1c-2c38-0e176e88ec6e@ti.com>
+Date:   Mon, 1 Jul 2019 20:10:41 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190701074630.GM3402@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190625163434.13620-1-brgl@bgdev.pl>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 01, 2019 at 09:46:30AM +0200, Peter Zijlstra wrote:
-> On Fri, Jun 28, 2019 at 05:49:52PM -0700, Michel Lespinasse wrote:
+Hi Lee, Daniel, Jingoo,
 
-> > The motivation for this change is that I want to introduce augmented rbtree
-> > uses where the augmented data for the subtree is a struct instead of a scalar.
+On 25/06/19 10:04 PM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> This is another small step on the path to liberating davinci from legacy
+> GPIO API calls and shrinking the davinci GPIO driver by not having to
+> support the base GPIO number anymore.
+> 
+> This time we're removing the legacy calls used indirectly by the LCDC
+> fbdev driver.
+> 
+> The first three patches modify the GPIO backlight driver. The first
+> of them adds the necessary functionality, the other two are just
+> tweaks and cleanups.
 
-> Can't we have a helper macro that converts an old (scalar) style compute
-> into a new style compute and avoid this unfortunate and error prone
-> copy/pasta ?
+Can you take the first three patches for v5.3 - if its not too late? I
+think that will make it easy for rest of patches to make into subsequent
+kernel releases.
 
-Or add a RBEQUAL argument that does:
+> 
+> Next two patches enable the GPIO backlight driver in
+> davinci_all_defconfig.
+> 
+> Patch 6/12 models the backlight GPIO as an actual GPIO backlight device.
+> 
+> Patches 7-9 extend the fbdev driver with regulator support and convert
+> the da850-evm board file to using it.
+> 
+> Last three patches are improvements to the da8xx fbdev driver since
+> we're already touching it in this series.
 
--		if (node->RBAUGMENTED == augmented)
-+		if (RBEQUAL(&node->RBAUGMENTED, &augmented))
+Thanks,
+Sekhar
 
-With a bit of foo you can even provide a default implementation that
-does: *a == *b.
-
-See GEN_UNARY_RMWcc() for how to do that.
