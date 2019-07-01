@@ -2,76 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 414B45C0F2
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 18:14:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 32F4E5C0FC
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 18:18:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730147AbfGAQOL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 12:14:11 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:33610 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728238AbfGAQOK (ORCPT
+        id S1730280AbfGAQSN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 12:18:13 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:52291 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726863AbfGAQSN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 12:14:10 -0400
-Received: by mail-lf1-f68.google.com with SMTP id y17so9225091lfe.0
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2019 09:14:09 -0700 (PDT)
+        Mon, 1 Jul 2019 12:18:13 -0400
+Received: by mail-wm1-f67.google.com with SMTP id s3so120024wms.2
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2019 09:18:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=d0HyjLFqpz9AWkWYsHlacSFouR7h8Dt4U9XzrYCAXZE=;
+        b=Qh2SanT69fpWH1FNwV6NxjULLL62fZus+usRyKBaUUJzNzFKpmMEXwMt5zzc9RSJKD
+         3n2bXJXXyrhjMZIXfoPY89kgo+PoHfvu/hvO9nVWO37nyy9fkxzmkjqBHTEURuIpYYDh
+         kR4iYMY8z8iGI53pELnISjRyZb/sm1y+vscKtR8nQi071MfHTA5hi54raAbQmL0kMnlP
+         OB2hfHjFCk9cfqKp1ebNAlqdE0w+hcZN3NEvmVrda7HKcOorECeHpn1TUI+BDCe0pN4C
+         mHqK3M2W/x4s5DQ1YiyZsYQ3w3sPg0tixaxGw73NjwjYyf+GqzGyEpbMo8Fr94dKfDgr
+         upKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0U0YPTwJgVIJVRdYc6tYY8FIRvP636LwdBcXQglF9w0=;
-        b=IQUTI4XZ3Q82yeW5G2g6aJi/+RXNjWJxHYSjkEsncEsS8yuPpQJl3Sa8ATmFqdLMga
-         o6bZ1sr8wRmR0ZOJEXF6lQzUgVRxTCFGR28o3RD61ZdNBkbaJpq4e8DNgcDqRbv1qLdw
-         J+jVrq3b59dP1Q8deX0BGOM6rlxCcJllBFeLXS4A2P0TORWRfsLEhE2MizuLOv75Xc9n
-         E/3cvhBI12PBGjVGVhSAgP/2dETxV+4u8kJ5zcsFTJWvs8tHYlNMAGOnsKsjlV2g22Nm
-         kJUIPWLMgytGXorUmMLN8noQHdtNmS9CoWqzcbFdWS482dpBBaBnnG0ksrLlniRTEY0J
-         zRfw==
-X-Gm-Message-State: APjAAAUfMBXG2q3iQBue+3qAAZmb1aXwHenMeOVfd5eJbYBJoEKCnSdt
-        bsbdsyfqoMS7dv41tgMlrLUC23OKAOKZi9YWw+eDMaY161E=
-X-Google-Smtp-Source: APXvYqzriltBqe9R7oQnUm+t1kiD/JXfO+P5w1S5DjKPm1jZ3LxfH1T50G3V+2i3+aAxPMfHqfVYaccEHxDlHv7SpJE=
-X-Received: by 2002:ac2:4466:: with SMTP id y6mr6082599lfl.0.1561997648899;
- Mon, 01 Jul 2019 09:14:08 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=d0HyjLFqpz9AWkWYsHlacSFouR7h8Dt4U9XzrYCAXZE=;
+        b=XImT/QVL4c/cU4DPcBZ7LRctuGEw0UyN1mt0tWeOsukdVGPyTSNnohFQ4feSMJHEyg
+         qSxcH60tSxPs7B8S2Is4VIeq3TRY1tM9pU6u1wNR4R4vtE5jC4BpVaTBhIodwqx4jj5C
+         QP7TAcvM58xGP4QnU7zwUx9xJ75htMrwLpmaMik3OOQt9Mp1M64LzRF456GZw9BsHu3s
+         GUyiYzQnOX6Zy9CpV4O7lK8LhkZq13bcqaF2nLAOMX2EYBonYNtuSbax0+6ITcjs4dc5
+         XM1pFFZg35sVg7xhXMDriPozAYitje/462GCcx+KjchzauanGx2ndnmFeGlPXLzDwePF
+         FHVA==
+X-Gm-Message-State: APjAAAUNpO4/z64KTquqDBtwUuYk0/UFQJ1dGyl/mV1Qs/G1Bx2V2URm
+        Vtd0GfhZYfFGP+96B/7Lm2fRsz6K4aVLwg==
+X-Google-Smtp-Source: APXvYqwjZbygo/2eQXfFWZsv3F+zfUyNoYq5phRnXb/qN3ixWwBICZ+TP81jcRVApe/jSIiw1QxsnQ==
+X-Received: by 2002:a1c:e109:: with SMTP id y9mr61578wmg.35.1561997889946;
+        Mon, 01 Jul 2019 09:18:09 -0700 (PDT)
+Received: from localhost.localdomain (p4FC0A2B8.dip0.t-ipconnect.de. [79.192.162.184])
+        by smtp.gmail.com with ESMTPSA id f7sm13654776wrv.38.2019.07.01.09.18.08
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 01 Jul 2019 09:18:09 -0700 (PDT)
+From:   Christian Brauner <christian@brauner.io>
+To:     torvalds@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        jannh@google.com
+Subject: [GIT PULL] fixes for v5.2-rc8
+Date:   Mon,  1 Jul 2019 18:15:03 +0200
+Message-Id: <20190701161503.15254-1-christian@brauner.io>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <000000000000e0dc0d058c9e7142@google.com>
+References: 
 MIME-Version: 1.0
-References: <20190701160805.32404-1-mcroce@redhat.com> <42624f83da71354a5daef959a4749cb75516d37f.camel@perches.com>
-In-Reply-To: <42624f83da71354a5daef959a4749cb75516d37f.camel@perches.com>
-From:   Matteo Croce <mcroce@redhat.com>
-Date:   Mon, 1 Jul 2019 18:13:32 +0200
-Message-ID: <CAGnkfhx9F1G8K6PjBdUnkCO07GR=ktWAnqOLTcOvg7VGwWb69Q@mail.gmail.com>
-Subject: Re: [PATCH net] ipv4: don't set IPv6 only flags to IPv4 addresses
-To:     Joe Perches <joe@perches.com>
-Cc:     netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 1, 2019 at 6:10 PM Joe Perches <joe@perches.com> wrote:
->
-> On Mon, 2019-07-01 at 18:08 +0200, Matteo Croce wrote:
-> > Avoid the situation where an IPV6 only flag is applied to an IPv4 address:
-> []
-> > diff --git a/net/ipv4/devinet.c b/net/ipv4/devinet.c
-> []
-> > @@ -468,6 +473,9 @@ static int __inet_insert_ifa(struct in_ifaddr *ifa, struct nlmsghdr *nlh,
-> >       ifa->ifa_flags &= ~IFA_F_SECONDARY;
-> >       last_primary = &in_dev->ifa_list;
-> >
-> > +     /* Don't set IPv6 only flags to IPv6 addresses */
->
-> umm, IPv4 addresses?
->
->
+Hi Linus,
 
-Ouch, right.
+This contains a single urgent fix for copy_process() in kernel/fork.c:
 
-/* Don't set IPv6 only flags to IPv4 addresses */
+The following changes since commit 6fbc7275c7a9ba97877050335f290341a1fd8dbf:
 
-Can this be edidet on patchwork instead of spamming with a v2?
+  Linux 5.2-rc7 (2019-06-30 11:25:36 +0800)
 
--- 
-Matteo Croce
-per aspera ad upstream
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/brauner/linux tags/for-linus-20190701
+
+for you to fetch changes up to 28dd29c06d0dede4b32b2c559cff21955a830928:
+
+  fork: return proper negative error code (2019-07-01 16:43:30 +0200)
+
+With Al's removal of ksys_close() from cleanup paths in copy_process() a
+bug was introduced. When anon_inode_getfile() failed the cleanup was
+correctly performed but the error code was not propagated to callers of
+copy_process() causing them to operate on a nonsensical pointer. The fix is
+a simple on-liner which makes sure that a proper negative error code is
+returned from copy_process().
+syzkaller has also verified that the bug is not reproducible with the patch
+in this branch.
+
+Please consider pulling these changes from the signed for-linus-20190701 tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+for-linus-20190701
+
+----------------------------------------------------------------
+Christian Brauner (1):
+      fork: return proper negative error code
+
+ kernel/fork.c | 1 +
+ 1 file changed, 1 insertion(+)
