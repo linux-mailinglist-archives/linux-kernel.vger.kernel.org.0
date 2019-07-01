@@ -2,320 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77C1B5C0E5
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 18:10:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C860F5C0E6
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 18:10:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727198AbfGAQKP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 12:10:15 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:36208 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726646AbfGAQKO (ORCPT
+        id S1728726AbfGAQKg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 12:10:36 -0400
+Received: from smtprelay0187.hostedemail.com ([216.40.44.187]:51287 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726646AbfGAQKg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 12:10:14 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x61G9SnO015847;
-        Mon, 1 Jul 2019 11:09:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1561997368;
-        bh=ixfn7gQUtri7Y9CCAmDSFpwM7z7aSLkphJr5dTPDQxc=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=tGUDkh36ZBl89CZvXFFudsm4Grp7FslFPggpycdwvSZoNToDvSTA7X4w4vAAThrAG
-         kPCWoVKuYxRuTxai3KxdSPK20J7yS4lnAeUFiEGcdTmJ5mcls+4SH9EzF74z/mEDen
-         VhkGNqb6JrZ4qg+GDyrudeRCZNmchinnBtAs3npc=
-Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x61G9SuO045363
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 1 Jul 2019 11:09:28 -0500
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 1 Jul
- 2019 11:09:27 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Mon, 1 Jul 2019 11:09:27 -0500
-Received: from [10.250.68.219] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x61G9RrT021815;
-        Mon, 1 Jul 2019 11:09:27 -0500
-Subject: Re: [PATCH v2 1/2] ASoC: tas5720.c: cleanup variant management
-To:     Nikolaus Voss <nv@vosn.de>
-CC:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Andreas Dannenberg <dannenberg@ti.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
-        <linux-acpi@vger.kernel.org>
-References: <20190628143037.GH5379@sirena.org.uk>
- <cover.1561988282.git.nikolaus.voss@loewensteinmedical.de>
- <c79df50175d59265a37c5e7c8a0cfbf8119bcf78.1561988282.git.nikolaus.voss@loewensteinmedical.de>
- <80af3fca-f71b-c118-e5d8-fde8b7d21705@ti.com>
- <alpine.DEB.2.20.1907011633310.4353@fox.voss.local>
-From:   "Andrew F. Davis" <afd@ti.com>
-Message-ID: <074d4df3-51d8-6e20-869d-5f88b46cc172@ti.com>
-Date:   Mon, 1 Jul 2019 12:09:26 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
+        Mon, 1 Jul 2019 12:10:36 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 47501629;
+        Mon,  1 Jul 2019 16:10:35 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::,RULES_HIT:41:355:379:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1538:1567:1593:1594:1711:1714:1730:1747:1777:1792:2198:2199:2393:2559:2562:2828:3138:3139:3140:3141:3142:3622:3865:3867:3871:4321:5007:9165:10004:10400:10848:11026:11232:11658:11914:12296:12297:12740:12760:12895:13069:13311:13357:13439:14659:14721:21080:21627:30003:30054:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.14.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:27,LUA_SUMMARY:none
+X-HE-Tag: act42_3f2b48fec7d3c
+X-Filterd-Recvd-Size: 1392
+Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf17.hostedemail.com (Postfix) with ESMTPA;
+        Mon,  1 Jul 2019 16:10:33 +0000 (UTC)
+Message-ID: <42624f83da71354a5daef959a4749cb75516d37f.camel@perches.com>
+Subject: Re: [PATCH net] ipv4: don't set IPv6 only flags to IPv4 addresses
+From:   Joe Perches <joe@perches.com>
+To:     Matteo Croce <mcroce@redhat.com>, netdev@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
+Date:   Mon, 01 Jul 2019 09:10:32 -0700
+In-Reply-To: <20190701160805.32404-1-mcroce@redhat.com>
+References: <20190701160805.32404-1-mcroce@redhat.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.20.1907011633310.4353@fox.voss.local>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/1/19 11:35 AM, Nikolaus Voss wrote:
-> On Mon, 1 Jul 2019, Andrew F. Davis wrote:
->> On 7/1/19 9:42 AM, Nikolaus Voss wrote:
->>> Replace enum tas572x_type with struct tas5720_variant which aggregates
->>> variant specific stuff and can be directly referenced from an id table.
->>>
->>> Signed-off-by: Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
->>> ---
->>>  sound/soc/codecs/tas5720.c | 98 +++++++++++++-------------------------
->>>  1 file changed, 33 insertions(+), 65 deletions(-)
->>>
->>> diff --git a/sound/soc/codecs/tas5720.c b/sound/soc/codecs/tas5720.c
->>> index 37fab8f22800..b2e897f094b4 100644
->>> --- a/sound/soc/codecs/tas5720.c
->>> +++ b/sound/soc/codecs/tas5720.c
->>> @@ -28,9 +28,10 @@
->>>  /* Define how often to check (and clear) the fault status register
->>> (in ms) */
->>>  #define TAS5720_FAULT_CHECK_INTERVAL        200
->>>
->>> -enum tas572x_type {
->>> -    TAS5720,
->>> -    TAS5722,
->>> +struct tas5720_variant {
->>> +    const int device_id;
->>> +    const struct regmap_config *reg_config;
->>> +    const struct snd_soc_component_driver *comp_drv;
->>>  };
->>>
->>>  static const char * const tas5720_supply_names[] = {
->>> @@ -44,7 +45,7 @@ struct tas5720_data {
->>>      struct snd_soc_component *component;
->>>      struct regmap *regmap;
->>>      struct i2c_client *tas5720_client;
->>> -    enum tas572x_type devtype;
->>> +    const struct tas5720_variant *variant;
->>
->> Why add a new struct? Actually I don't see the need for this patch at
->> all, the commit message only explains the 'what' not the 'why'. We can
->> and do already build this info from the tas572x_type.
-> 
-> As the commit message says, the purpose is to aggregate the variant
-> specifics and make it accessible via one pointer. This is a standard
-> approach for of/acpi_device_id tables and thus makes the code simpler
-> and improves readability. This is a maintenance patch to prepare using
-> the device match API in a proper way.
-> 
+On Mon, 2019-07-01 at 18:08 +0200, Matteo Croce wrote:
+> Avoid the situation where an IPV6 only flag is applied to an IPv4 address:
+[]
+> diff --git a/net/ipv4/devinet.c b/net/ipv4/devinet.c
+[]
+> @@ -468,6 +473,9 @@ static int __inet_insert_ifa(struct in_ifaddr *ifa, struct nlmsghdr *nlh,
+>  	ifa->ifa_flags &= ~IFA_F_SECONDARY;
+>  	last_primary = &in_dev->ifa_list;
+>  
+> +	/* Don't set IPv6 only flags to IPv6 addresses */
+
+umm, IPv4 addresses?
 
 
-"make it accessible via one pointer" is again a "what", the "why" is:
-
-"This is a standard approach"
-"makes the code simpler and improves readability"
-
-Those are valid reasons and should be what you put in the commit message.
-
-
->>
->> Also below are several functional changes, the cover letter says this is
->> not a functional change, yet the driver behaves differently now.
-> 
-> Can you be a little bit more specific? The code should behave exactly as
-> before.
-> 
-
-
-Sure, for instance the line "unexpected private driver data" is removed,
-this can now never happen, that is a functional change. The phrase "no
-functional change", should be reserved for only changes to spelling,
-formatting, code organizing, etc..
-
-
-> Niko
-> 
->>
->> Andrew
->>
->>>      struct regulator_bulk_data supplies[TAS5720_NUM_SUPPLIES];
->>>      struct delayed_work fault_check_work;
->>>      unsigned int last_fault;
->>> @@ -179,17 +180,13 @@ static int tas5720_set_dai_tdm_slot(struct
->>> snd_soc_dai *dai,
->>>          goto error_snd_soc_component_update_bits;
->>>
->>>      /* Configure TDM slot width. This is only applicable to TAS5722. */
->>> -    switch (tas5720->devtype) {
->>> -    case TAS5722:
->>> +    if (tas5720->variant->device_id == TAS5722_DEVICE_ID) {
-
-
-I also don't like this, TAS5722_DEVICE_ID is the expected contents of a
-register, you are using it like the enum tas572x_type that you removed.
-I'd leave that enum, the device ID register itself is not guaranteed to
-be correct or unique, which is why we warn about mismatches below but
-then continue to use the user provided device type anyway.
-
-Andrew
-
-
->>>          ret = snd_soc_component_update_bits(component,
->>> TAS5722_DIGITAL_CTRL2_REG,
->>>                              TAS5722_TDM_SLOT_16B,
->>>                              slot_width == 16 ?
->>>                              TAS5722_TDM_SLOT_16B : 0);
->>>          if (ret < 0)
->>>              goto error_snd_soc_component_update_bits;
->>> -        break;
->>> -    default:
->>> -        break;
->>>      }
->>>
->>>      return 0;
->>> @@ -277,7 +274,7 @@ static void tas5720_fault_check_work(struct
->>> work_struct *work)
->>>  static int tas5720_codec_probe(struct snd_soc_component *component)
->>>  {
->>>      struct tas5720_data *tas5720 =
->>> snd_soc_component_get_drvdata(component);
->>> -    unsigned int device_id, expected_device_id;
->>> +    unsigned int device_id;
->>>      int ret;
->>>
->>>      tas5720->component = component;
->>> @@ -301,21 +298,9 @@ static int tas5720_codec_probe(struct
->>> snd_soc_component *component)
->>>          goto probe_fail;
->>>      }
->>>
->>> -    switch (tas5720->devtype) {
->>> -    case TAS5720:
->>> -        expected_device_id = TAS5720_DEVICE_ID;
->>> -        break;
->>> -    case TAS5722:
->>> -        expected_device_id = TAS5722_DEVICE_ID;
->>> -        break;
->>> -    default:
->>> -        dev_err(component->dev, "unexpected private driver data\n");
->>> -        return -EINVAL;
->>> -    }
->>> -
->>> -    if (device_id != expected_device_id)
->>> +    if (device_id != tas5720->variant->device_id)
->>>          dev_warn(component->dev, "wrong device ID. expected: %u
->>> read: %u\n",
->>> -             expected_device_id, device_id);
->>> +             tas5720->variant->device_id, device_id);
->>>
->>>      /* Set device to mute */
->>>      ret = snd_soc_component_update_bits(component,
->>> TAS5720_DIGITAL_CTRL2_REG,
->>> @@ -637,7 +622,6 @@ static int tas5720_probe(struct i2c_client *client,
->>>  {
->>>      struct device *dev = &client->dev;
->>>      struct tas5720_data *data;
->>> -    const struct regmap_config *regmap_config;
->>>      int ret;
->>>      int i;
->>>
->>> @@ -646,20 +630,10 @@ static int tas5720_probe(struct i2c_client
->>> *client,
->>>          return -ENOMEM;
->>>
->>>      data->tas5720_client = client;
->>> -    data->devtype = id->driver_data;
->>>
->>> -    switch (id->driver_data) {
->>> -    case TAS5720:
->>> -        regmap_config = &tas5720_regmap_config;
->>> -        break;
->>> -    case TAS5722:
->>> -        regmap_config = &tas5722_regmap_config;
->>> -        break;
->>> -    default:
->>> -        dev_err(dev, "unexpected private driver data\n");
->>> -        return -EINVAL;
->>> -    }
->>> -    data->regmap = devm_regmap_init_i2c(client, regmap_config);
->>> +    data->variant = (const struct tas5720_variant *)id->driver_data;
->>> +
->>> +    data->regmap = devm_regmap_init_i2c(client,
->>> data->variant->reg_config);
->>>      if (IS_ERR(data->regmap)) {
->>>          ret = PTR_ERR(data->regmap);
->>>          dev_err(dev, "failed to allocate register map: %d\n", ret);
->>> @@ -678,42 +652,36 @@ static int tas5720_probe(struct i2c_client
->>> *client,
->>>
->>>      dev_set_drvdata(dev, data);
->>>
->>> -    switch (id->driver_data) {
->>> -    case TAS5720:
->>> -        ret = devm_snd_soc_register_component(&client->dev,
->>> -                    &soc_component_dev_tas5720,
->>> -                    tas5720_dai,
->>> -                    ARRAY_SIZE(tas5720_dai));
->>> -        break;
->>> -    case TAS5722:
->>> -        ret = devm_snd_soc_register_component(&client->dev,
->>> -                    &soc_component_dev_tas5722,
->>> -                    tas5720_dai,
->>> -                    ARRAY_SIZE(tas5720_dai));
->>> -        break;
->>> -    default:
->>> -        dev_err(dev, "unexpected private driver data\n");
->>> -        return -EINVAL;
->>> -    }
->>> -    if (ret < 0) {
->>> -        dev_err(dev, "failed to register component: %d\n", ret);
->>> -        return ret;
->>> -    }
->>> -
->>> -    return 0;
->>> +    ret = devm_snd_soc_register_component(&client->dev,
->>> +                          data->variant->comp_drv,
->>> +                          tas5720_dai,
->>> +                          ARRAY_SIZE(tas5720_dai));
->>> +    return ret;
->>>  }
->>>
->>> +static const struct tas5720_variant tas5720 = {
->>> +    .device_id = TAS5720_DEVICE_ID,
->>> +    .reg_config = &tas5720_regmap_config,
->>> +    .comp_drv = &soc_component_dev_tas5720,
->>> +};
->>> +
->>> +static const struct tas5720_variant tas5722 = {
->>> +    .device_id = TAS5722_DEVICE_ID,
->>> +    .reg_config = &tas5722_regmap_config,
->>> +    .comp_drv = &soc_component_dev_tas5722,
->>> +};
->>> +
->>>  static const struct i2c_device_id tas5720_id[] = {
->>> -    { "tas5720", TAS5720 },
->>> -    { "tas5722", TAS5722 },
->>> +    { "tas5720", (kernel_ulong_t)&tas5720 },
->>> +    { "tas5722", (kernel_ulong_t)&tas5722 },
->>>      { }
->>>  };
->>>  MODULE_DEVICE_TABLE(i2c, tas5720_id);
->>>
->>>  #if IS_ENABLED(CONFIG_OF)
->>>  static const struct of_device_id tas5720_of_match[] = {
->>> -    { .compatible = "ti,tas5720", },
->>> -    { .compatible = "ti,tas5722", },
->>> +    { .compatible = "ti,tas5720", .data = &tas5720, },
->>> +    { .compatible = "ti,tas5722", .data = &tas5722, },
->>>      { },
->>>  };
->>>  MODULE_DEVICE_TABLE(of, tas5720_of_match);
->>>
->>
