@@ -2,86 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A69B25B554
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 08:52:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 745905B558
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 08:53:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727612AbfGAGwj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 02:52:39 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:32972 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727279AbfGAGwi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 02:52:38 -0400
-Received: by mail-wm1-f68.google.com with SMTP id h19so13817370wme.0
-        for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2019 23:52:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ZanPqiEPVMdySHonMbQBl/5/VvjKUDnA16ZAnUCifwo=;
-        b=qdSWVW2TSjRVT4hqR5Q1Un6Uov090iDyqZzRmHFRNfGjwcwJIEwnkhublC7h7Qr+vY
-         M34ry4zO0B73wKNSZ2E6L0uY9/H72ZHMSf1nhnKWC5iadxSwEFNU0uL3Wdhn/iDazWt6
-         hDkStCYDG0JJtnLcrAK8DBtIVrJmBAmp0b3e/upEQ2k2fzbNNX2lKebYneuN3l30cZM5
-         uudrfc28TYm7vqCg+8jxW6p3u4TVapSkAsaApUp7BH2CZkKlLrf85Smt8/UIWcmbz6Ic
-         rN4YOO9Jm6N2eN3Vy9YP+qzi4uQ0NI7ixZNUT7sBXDkVv7cKS3HvABv/2kgPCNFHCfbn
-         6k2w==
-X-Gm-Message-State: APjAAAWlyw+6vn3glGHGARCAFpssO02ns5xmG3nlcPhTwGh+0h0fGevH
-        DVJ+WHNPE6DjeAb2NCutPnOmmA==
-X-Google-Smtp-Source: APXvYqyAJZ4botdtSJ3zU9ORTAwwQRPjpGAfhDs9AIdatmN70PBO8LqjP2idy/zV96eTgzly1dbG3w==
-X-Received: by 2002:a1c:dc07:: with SMTP id t7mr16638183wmg.164.1561963956698;
-        Sun, 30 Jun 2019 23:52:36 -0700 (PDT)
-Received: from localhost.localdomain ([151.15.224.253])
-        by smtp.gmail.com with ESMTPSA id h21sm10492932wmb.47.2019.06.30.23.52.35
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 30 Jun 2019 23:52:35 -0700 (PDT)
-Date:   Mon, 1 Jul 2019 08:52:33 +0200
-From:   Juri Lelli <juri.lelli@redhat.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     mingo@redhat.com, rostedt@goodmis.org, tj@kernel.org,
-        linux-kernel@vger.kernel.org, luca.abeni@santannapisa.it,
-        claudio@evidence.eu.com, tommaso.cucinotta@santannapisa.it,
-        bristot@redhat.com, mathieu.poirier@linaro.org, lizefan@huawei.com,
-        cgroups@vger.kernel.org, Prateek Sood <prsood@codeaurora.org>
-Subject: Re: [PATCH v8 6/8] cgroup/cpuset: Change cpuset_rwsem and hotplug
- lock order
-Message-ID: <20190701065233.GA26005@localhost.localdomain>
-References: <20190628080618.522-1-juri.lelli@redhat.com>
- <20190628080618.522-7-juri.lelli@redhat.com>
- <20190628130308.GU3419@hirez.programming.kicks-ass.net>
+        id S1727661AbfGAGxp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 02:53:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44352 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726402AbfGAGxo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Jul 2019 02:53:44 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B506620663;
+        Mon,  1 Jul 2019 06:53:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561964024;
+        bh=odWFKN/v6uhJ1wZgS3JZoIz8uAE4V7d8K7ikdqDiizc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=bDDq4nK31Qe0QMmIlQI0ShcHdCjqdzm2mx4JIVE/ppBqGuyh9NzvE56GHJhk7KJqp
+         t//eppnFnh4OXVqSzagqK33KHVX4SthEFLRyAjwQIYLIfUmzhFZN9Rta3qB+SV+Zoh
+         RPcO8tIzb7NafFAFQr53YaL1bcJ/14X/QnLmBLGY=
+Date:   Mon, 1 Jul 2019 08:53:41 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Hariprasad Kelam <hariprasad.kelam@gmail.com>
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/10] staging/rtl8723bs/hal: fix comparison to
+ true/false is error prone
+Message-ID: <20190701065341.GA2481@kroah.com>
+References: <20190629101909.GA14880@hari-Inspiron-1545>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190628130308.GU3419@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <20190629101909.GA14880@hari-Inspiron-1545>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 28/06/19 15:03, Peter Zijlstra wrote:
-> On Fri, Jun 28, 2019 at 10:06:16AM +0200, Juri Lelli wrote:
-> > cpuset_rwsem is going to be acquired from sched_setscheduler() with a
-> > following patch. There are however paths (e.g., spawn_ksoftirqd) in
-> > which sched_scheduler() is eventually called while holding hotplug lock;
-> > this creates a dependecy between hotplug lock (to be always acquired
-> > first) and cpuset_rwsem (to be always acquired after hotplug lock).
-> > 
-> > Fix paths which currently take the two locks in the wrong order (after
-> > a following patch is applied).
-> > Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
+On Sat, Jun 29, 2019 at 03:49:09PM +0530, Hariprasad Kelam wrote:
+> fix below issues reported by checkpatch
 > 
-> This all reminds me of this:
+> CHECK: Using comparison to false is error prone
+> CHECK: Using comparison to true is error prone
 > 
->   https://lkml.kernel.org/r/1510755615-25906-1-git-send-email-prsood@codeaurora.org
-> 
-> Which sadly got reverted again. If we do this now (I've always been a
-> proponent), then we can make that rebuild synchronous again, which
-> should also help here IIRC.
+> Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
+> ---
+>  drivers/staging/rtl8723bs/hal/hal_intf.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 
-Why was that reverted? Perf regression of some type?
+As Dan said, you sent 10 patches with the same subject, so I can't take
+these.
 
-Thanks,
+Also, please properly "thread" the patches so they show up linked to
+each other.  git send-email will do this automatically for you if you
+use it (and you should) for multiple emails.
 
-Juri
+thanks,
+
+greg k-h
