@@ -2,135 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4C625C466
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 22:44:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 74D275C489
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 22:49:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726865AbfGAUoa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 16:44:30 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:55822 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726586AbfGAUoa (ORCPT
+        id S1726958AbfGAUty (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 16:49:54 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:43377 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726668AbfGAUtx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 16:44:30 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x61KdMCi173574;
-        Mon, 1 Jul 2019 20:42:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=+aeZDe3jwT4xvYHZCTEN4awdr90rYxW4YlVpN9V8bnY=;
- b=SsxZW8vkxaV0FOgr/oB+4IDVriQsdttQulNAKfHz/eIdV3+xXXbuQvbXv+3xUpbRbfZF
- lCnuKifwFQrgRihYoa98czn/XI+0nG7cDvWDaFdMNz+6eHAlw6tq9ecovjA3CHu7CVyJ
- 9zw6q7qXKoEG4SPtCY0hzcEVAiO4ERyk+8uScZbJFZn9kGYQvDHqdg9qB1hR9DQluT4N
- J3VlQnTavPWuqBT4msf5qWEEhGNmxmc/aavjCecmKTFmVUOEoSqRs0Q2lXxC6ahREbze
- Baek17LPUNnfj8KKZT3iwwFTwvFubbnYJPT5J8dYLgXHR+hJV2nSXirx2yq1uF0xT1d6 YQ== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2130.oracle.com with ESMTP id 2te61dyufg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 01 Jul 2019 20:42:37 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x61Kbsuj160590;
-        Mon, 1 Jul 2019 20:42:36 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3020.oracle.com with ESMTP id 2tebbjd124-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 01 Jul 2019 20:42:36 +0000
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x61KgSHW009452;
-        Mon, 1 Jul 2019 20:42:28 GMT
-Received: from [10.132.91.175] (/10.132.91.175)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 01 Jul 2019 13:42:27 -0700
-Subject: Re: [PATCH v3 5/7] sched: SIS_CORE to disable idle core search
-To:     Parth Shah <parth@linux.ibm.com>, linux-kernel@vger.kernel.org
-Cc:     peterz@infradead.org, mingo@redhat.com, tglx@linutronix.de,
-        steven.sistare@oracle.com, dhaval.giani@oracle.com,
-        daniel.lezcano@linaro.org, vincent.guittot@linaro.org,
-        viresh.kumar@linaro.org, tim.c.chen@linux.intel.com,
-        mgorman@techsingularity.net
-References: <20190627012919.4341-1-subhra.mazumdar@oracle.com>
- <20190627012919.4341-6-subhra.mazumdar@oracle.com>
- <0e0f3347-c262-2917-76d7-88dddf4e9122@linux.ibm.com>
- <59ab08d5-8b7c-00b9-230b-7c0b307a675f@oracle.com>
- <be91602a-0243-e094-8c8f-ceed314d10ce@linux.ibm.com>
-From:   Subhra Mazumdar <subhra.mazumdar@oracle.com>
-Message-ID: <12402fea-7b87-8c4d-9485-53f973c38654@oracle.com>
-Date:   Mon, 1 Jul 2019 13:37:13 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+        Mon, 1 Jul 2019 16:49:53 -0400
+Received: by mail-wr1-f65.google.com with SMTP id p13so15246366wru.10;
+        Mon, 01 Jul 2019 13:49:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=+AnXMpMwZrlIfBk35YQ437S8CsAJvA+QoTTx/MRNDtM=;
+        b=Is1ZIfKilGB2By/NPup+F9j+eLAuyKWUMij+iy917jrYePmCQ7fpsYTtVLCikCPX2U
+         2oa1wmr6f/gvRWxrnS04AVdSGvw2vGqxHOBckHy73M9U/dBVeZ/m/4sbCQZxVY6/HKwB
+         ANwc+eLG8mfnzO2XWdANz5dM6GjI9W9XNGh9ffGzSaLJ/aG2vTNoRX7ZagpL3OXjVsL9
+         TP2RFiNFgQI3kCEc9SWlPEXh4jyxI+l8pbbjrFVg5lTGlaSUf5ORsYlLFzSDKLINS2Tc
+         eQpN65ZeJG3l5/yQtd+/pDOsCasamR4XAXDbNrTsuz0GxysozXOV4npaJaZ47uR/lhdc
+         0GgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=+AnXMpMwZrlIfBk35YQ437S8CsAJvA+QoTTx/MRNDtM=;
+        b=bMNqhQGhxplilRTMk4p/HA5TXLOdS3wLRzQn4vftezzvtz19eGwCpiq8VM9To1iZ+p
+         +mwBQWzRTiPDhER4sXt7RdK1a8/PdI0xAtJW7EzEgaEbWKNiS4J/jUYJfaS3EZ6breqc
+         kms48uuGIxfmbgevgPFm974kcSu/uzUhVFW4jwfaxkJ/gdcJunkUXvB3CHtMCRf1LWVi
+         +iEl1LONPRLGzhySStuJNpaV+E9n9YJ9xRrladB2zLcmHnHaevCCEh/hXTZppzc4wL/L
+         1LgNstqoMBpFA75zL7u3qUZIP5mNilLpeAJRk3TWjyyEOWScXO/tM+4FTxFy0m1WK1Uy
+         kh/Q==
+X-Gm-Message-State: APjAAAX14IqotMmWefJUaJJA5khr/09UMbs4aAVe5Zx7iY+TDMoMQ2L2
+        lQrOcpbdIl+BeZ7wIDgarGY=
+X-Google-Smtp-Source: APXvYqxNJZy32u78Fr7DibKhiseycbqp7EYr/ktmRewXHAdVAmTvab5a85swg/uV+DoKcrfo6VaHfQ==
+X-Received: by 2002:adf:dd91:: with SMTP id x17mr14486018wrl.291.1562014191268;
+        Mon, 01 Jul 2019 13:49:51 -0700 (PDT)
+Received: from ?IPv6:2003:ea:8bd6:c00:8dac:9ad2:a34c:33bc? (p200300EA8BD60C008DAC9AD2A34C33BC.dip0.t-ipconnect.de. [2003:ea:8bd6:c00:8dac:9ad2:a34c:33bc])
+        by smtp.googlemail.com with ESMTPSA id 32sm24509910wra.35.2019.07.01.13.49.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 01 Jul 2019 13:49:50 -0700 (PDT)
+Subject: Re: [PATCH 2/3] net: phy: realtek: Enable accessing RTL8211E
+ extension pages
+To:     Andrew Lunn <andrew@lunn.ch>, Matthias Kaehlcke <mka@chromium.org>
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Douglas Anderson <dianders@chromium.org>
+References: <20190701195225.120808-1-mka@chromium.org>
+ <20190701195225.120808-2-mka@chromium.org> <20190701200248.GJ30468@lunn.ch>
+From:   Heiner Kallweit <hkallweit1@gmail.com>
+Message-ID: <35db1bff-f48e-5372-06b7-3140cb7cbb71@gmail.com>
+Date:   Mon, 1 Jul 2019 22:37:16 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-In-Reply-To: <be91602a-0243-e094-8c8f-ceed314d10ce@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20190701200248.GJ30468@lunn.ch>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9305 signatures=668688
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1907010239
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9305 signatures=668688
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1907010240
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
->>> Also, systems like POWER9 has sd_llc as a pair of core only. So it
->>> won't benefit from the limits and hence also hiding your code in select_idle_cpu
->>> behind static keys will be much preferred.
->> If it doesn't hurt then I don't see the point.
+On 01.07.2019 22:02, Andrew Lunn wrote:
+> On Mon, Jul 01, 2019 at 12:52:24PM -0700, Matthias Kaehlcke wrote:
+>> The RTL8211E has extension pages, which can be accessed after
+>> selecting a page through a custom method. Add a function to
+>> modify bits in a register of an extension page and a few
+>> helpers for dealing with ext pages.
 >>
-> So these is the result from POWER9 system with your patches:
-> System configuration: 2 Socket, 44 cores, 176 CPUs
->
-> Experiment setup:
-> ===========
-> => Setup 1:
-> - 44 tasks doing just while(1), this is to make select_idle_core return -1 most times
-> - perf bench sched messaging -g 1 -l 1000000
-> +-----------+--------+--------------+--------+
-> | Baseline  | stddev |    Patch     | stddev |
-> +-----------+--------+--------------+--------+
-> |       135 |   3.21 | 158(-17.03%) |   4.69 |
-> +-----------+--------+--------------+--------+
->
-> => Setup 2:
-> - schbench -m44 -t 1
-> +=======+==========+=========+=========+==========+
-> | %ile  | Baseline | stddev  |  patch  |  stddev  |
-> +=======+==========+=========+=========+==========+
-> |    50 |       10 |    3.49 |      10 |     2.29 |
-> +-------+----------+---------+---------+----------+
-> |    95 |      467 |    4.47 |     469 |     0.81 |
-> +-------+----------+---------+---------+----------+
-> |    99 |      571 |   21.32 |     584 |    18.69 |
-> +-------+----------+---------+---------+----------+
-> |  99.5 |      629 |   30.05 |     641 |    20.95 |
-> +-------+----------+---------+---------+----------+
-> |  99.9 |      780 |   40.38 |     773 |     44.2 |
-> +-------+----------+---------+---------+----------+
->
-> I guess it doesn't make much difference in schbench results but hackbench (perf bench)
-> seems to have an observable regression.
->
->
-> Best,
-> Parth
->
-If POWER9 sd_llc has only 2 cores, the behavior shouldn't change much with
-the select_idle_cpu changes as the limits are 1 and 2 core. Previously the
-lower bound was 4 cpus and upper bound calculated by the prop. Now it is
-1 core (4 cpus on SMT4) and upper bound 2 cores. Could it be the extra
-computation of cpumask_weight causing the regression rather than the
-sliding window itself (one way to check this would be hardcode 4 in place
-of topology_sibling_weight)? Or is it the L1 cache coherency? I am a bit
-suprised because SPARC SMT8 which has more cores in sd_llc and L1 cache per
-core showed improvement with Hackbench.
+>> rtl8211e_modify_ext_paged() and rtl821e_restore_page() are
+>> inspired by their counterparts phy_modify_paged() and
+>> phy_restore_page().
+> 
+> Hi Matthias
+> 
+> While an extended page is selected, what happens to the normal
+> registers in the range 0-0x1c? Are they still accessible?
+> 
+AFAIK: no
 
-Thanks,
-Subhra
+> 	  Andrew
+> 
+Heiner
