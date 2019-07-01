@@ -2,117 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BE885C5D9
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 01:09:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C6E25C5E1
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 01:10:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726896AbfGAXJc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 19:09:32 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:48867 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726362AbfGAXJb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 19:09:31 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45d33W5HBVz9s00;
-        Tue,  2 Jul 2019 09:09:27 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1562022568;
-        bh=US0LjfjVcnRZoZU6p2IS6+DprGUL5L327gB/z/lazTw=;
-        h=Date:From:To:Cc:Subject:From;
-        b=Uons06qYdTZkktHRBeo5dSwIl8dTfs8JZbKKKt7RA3ZLHmN0IAryVW0PeO4OnulOY
-         hziZFB1e29FiHHc8x4Ze7zyB2ogrXZdesSrnYFuCBFFBIw+HHWwvp3tB+/fIG6j4Ak
-         4UTMQ+nze/nUKsLsvHNEhJw3W9lC4rvW3r+XMNcqPDNX+6VhApMMk5X3oPWgNwoJo4
-         fPGdOH3NevGknIIEUH1t2stzOYt4q6ztwtxqU+7/hjPgZOlBF24zo8lnTyiKGGqmnp
-         ZSdFKXSaS7tzxUrG6nRSyqkxoO7lH3etod9PyIyOSp3viSafc26gJSH3xFZgHo19LC
-         +smU3nJ+gW2Xw==
-Date:   Tue, 2 Jul 2019 09:09:12 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Greg Ungerer <gerg@snapgear.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>
-Subject: linux-next: manual merge of the m68knommu tree with the m68k tree
-Message-ID: <20190702090912.6a9db396@canb.auug.org.au>
+        id S1727034AbfGAXKs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 19:10:48 -0400
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:54707 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726486AbfGAXKp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Jul 2019 19:10:45 -0400
+Received: from dread.disaster.area (pa49-195-139-63.pa.nsw.optusnet.com.au [49.195.139.63])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 811A01ACDC1;
+        Tue,  2 Jul 2019 09:10:40 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92)
+        (envelope-from <david@fromorbit.com>)
+        id 1hi5QS-00040R-OE; Tue, 02 Jul 2019 09:09:32 +1000
+Date:   Tue, 2 Jul 2019 09:09:32 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 11/12] iomap: move the xfs writeback code to iomap.c
+Message-ID: <20190701230932.GN7777@dread.disaster.area>
+References: <20190624055253.31183-1-hch@lst.de>
+ <20190624055253.31183-12-hch@lst.de>
+ <20190624234304.GD7777@dread.disaster.area>
+ <20190625101020.GI1462@lst.de>
+ <20190628004542.GJ7777@dread.disaster.area>
+ <20190628053320.GA26902@lst.de>
+ <20190701000859.GL7777@dread.disaster.area>
+ <20190701064333.GA20778@lst.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/oI4OoWPyq8Ce_6oUSklHnyv"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190701064333.GA20778@lst.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=D+Q3ErZj c=1 sm=1 tr=0 cx=a_idp_d
+        a=fNT+DnnR6FjB+3sUuX8HHA==:117 a=fNT+DnnR6FjB+3sUuX8HHA==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=0o9FgrsRnhwA:10
+        a=EmmQ-hcxAAAA:8 a=7-415B0cAAAA:8 a=Qa3Qb0k2LGP6046GbCIA:9
+        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/oI4OoWPyq8Ce_6oUSklHnyv
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Jul 01, 2019 at 08:43:33AM +0200, Christoph Hellwig wrote:
+> On Mon, Jul 01, 2019 at 10:08:59AM +1000, Dave Chinner wrote:
+> > > Why do you assume you have to test it?  Back when we shared
+> > > generic_file_read with everyone you also didn't test odd change to
+> > > it with every possible fs.
+> > 
+> > I'm not sure what function you are referring to here. Can you
+> > clarify?
+> 
+> Right now it is generic_file_read_iter(), but before iter it was
+> generic_file_readv, generic_file_read, etc.
 
-Hi all,
+This generic code never came from XFS, so I'm still not sure what
+you are refering to here? Some pointers to commits would help me
+remember. :/
 
-Today's linux-next merge of the m68knommu tree got a conflict in:
+> > > If you change iomap.c, you'll test it
+> > > with XFS, and Cc other maintainers so that they get a chance to
+> > > also test it and comment on it, just like we do with other shared
+> > > code in the kernel.
+> > 
+> > Which is why we've had problems with the generic code paths in the
+> > past and other filesystems just copy and paste then before making
+> > signficant modifications. e.g. both ext4 and btrfs re-implement
+> > write_cache_pages() rather than use the generic writeback code
+> > because they have slightly different requirements and those
+> > developers don't want to have to worry about other filesystems every
+> > time there is an internal filesystem change that affects their
+> > writeback constraints...
+> > 
+> > That's kinda what I'm getting at here: writeback isn't being shared
+> > by any of the major filesystems for good reasons...
+> 
+> I very fundamentally disagree.  It is not shared for a bad reasons,
+> and that is people not understanding the mess that the buffer head
+> based code is, and not wanting to understand it. 
 
-  arch/m68k/Kconfig
+The problem with heavily shared code is that it requires far more
+expertise, knowledge, capability and time to modify it. The code
+essentially ossifies, because changing something fundamental risks
+breaking other stuff that nobody actually understands anymore and is
+unwilling to risk changing.
 
-between commits:
+That's not a problem with bufferheads - that's a problem of widely
+shared code that has been slowly hacked to pieces to "fix' random
+problems that show up from different users of the shared code.
 
-  34dc63a5fb9b ("m68k: Use the generic dma coherent remap allocator")
-  69878ef47562 ("m68k: Implement arch_dma_prep_coherent()")
+When the shared code ossifies like this, the only way to make
+progress is to either copy it and do whatever you need privately,
+or re-implement it completely. ext4 and btrfs have taken the route
+of "copy and modify privately", whereas XFS has taken the
+"re-implement it completely" path.
 
-from the m68k tree and commit:
+We're now starting down the "share the XFS re-implementation" and
+we're slowly adding more complexity to the iomap code to handle the
+different things each filesystem that is converted needs. With each
+new fs adding their own little quirks, it gets harder to make
+significant modifications without unknowingly breaking something in
+some other filesystem.
 
-  bdd15a288492 ("binfmt_flat: replace flat_argvp_envp_on_stack with a Kconf=
-ig variable")
-  aef0f78e7460 ("binfmt_flat: add a ARCH_HAS_BINFMT_FLAT option")
+It takes highly capable developers to make serious modifications
+across highly shared code and the reality is that there are very few
+of them around. most developers simply aren't capable of taking on
+such a task, especially given that they see capable, experienced
+developers who won't even try because of past experiences akin to
+a game of Running Man(*)....
 
-from the m68knommu tree.
+Shared code is good, up to the point where the sharing gets so
+complex that even people with the capability are not willing to
+touch/fix the code. That's what happened to bufferheads and it's a
+pattern repeated across lots of kernel infrastructure code. Just
+because you can handle these modifications doesn't mean everyone
+else can or even wants to.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+> And I'd much rather fix this than going down the copy an paste and
+> slightly tweak it while fucking up something else route.
 
---=20
+The copy-n-paste is a result of developers who have little knowledge
+of things outside their domain of interest/expertise making the sane
+decision to minimise risk of breaking something they know nothing
+about. From an individual subsystem perspective, that's a -good
+decision- to make, and that's the point I was trying to make.
+
+You see that as a bad decision, because you equating "shared code"
+with "high quality" code. The reality is that shared code is often
+poor quality because people get too scared to touch it. That's
+exactly the situation I don't want us to get stuck with, and why I
+want to see how multiple implementations of this abstracted writeback
+path change what we have now before we start moving code about...
+
+i.e. I'm not saying "we shouldn't do this", I'm just saying that "we
+should do this because shared code is good" fundamentally conflicts
+with the fact we've just re-implemented a bunch of stuff because
+the *shared code was really bad*. And taking the same path that lead
+to really bad shared code (i.e. organic growth without planning or
+design) is likely to end up in the same place....
+
 Cheers,
-Stephen Rothwell
 
-diff --cc arch/m68k/Kconfig
-index 00f5c98a5e05,c0c43c624afa..000000000000
---- a/arch/m68k/Kconfig
-+++ b/arch/m68k/Kconfig
-@@@ -3,13 -3,12 +3,15 @@@ config M68
-  	bool
-  	default y
-  	select ARCH_32BIT_OFF_T
-+ 	select ARCH_HAS_BINFMT_FLAT
- +	select ARCH_HAS_DMA_MMAP_PGPROT if MMU && !COLDFIRE
- +	select ARCH_HAS_DMA_PREP_COHERENT
-  	select ARCH_HAS_SYNC_DMA_FOR_DEVICE if HAS_DMA
-  	select ARCH_MIGHT_HAVE_PC_PARPORT if ISA
-  	select ARCH_NO_COHERENT_DMA_MMAP if !MMU
-  	select ARCH_NO_PREEMPT if !COLDFIRE
-+ 	select BINFMT_FLAT_ARGVP_ENVP_ON_STACK
- +	select DMA_DIRECT_REMAP if HAS_DMA && MMU && !COLDFIRE
-  	select HAVE_IDE
-  	select HAVE_AOUT if MMU
-  	select HAVE_DEBUG_BUGVERBOSE
+Dave.
 
---Sig_/oI4OoWPyq8Ce_6oUSklHnyv
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+(*) https://www.imdb.com/title/tt0093894/
 
------BEGIN PGP SIGNATURE-----
+"A wrongly convicted man must try to survive a public execution
+gauntlet staged as a game show."
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0akpgACgkQAVBC80lX
-0GzFfQf+PKe+PEA58frDxjnGZtJwDGHK4NtvxPs/wMwvc2rPtfA4a97eEg6GzCpZ
-BpTyx9XEylvAnAEt2U8xLzy6/a79lQ4kXP2L62rA9GzchVeHRK1pcrHnl0xQG4np
-6jp4YnXHp7L+5AFdhb4NIKbQuCVBNsIIq3W0O1jEEtrW+jSUbEpB6Ioh9ESpPuP5
-DcBfKr0pLMaGK8Sf7Yz1lwbnP60EJi933vh/qxiYtBeTh5M7wfNsI4WpnwDze/6S
-MVqvtprWyN2fwQtTDjBsDH5KYzVlsREl+5Zswuh2b3PBYyCiCr5FI2I0o9sVgk7t
-6mOdTgR7FkEndCVWvmMg5KxRw+mVtg==
-=iuL3
------END PGP SIGNATURE-----
-
---Sig_/oI4OoWPyq8Ce_6oUSklHnyv--
+-- 
+Dave Chinner
+david@fromorbit.com
