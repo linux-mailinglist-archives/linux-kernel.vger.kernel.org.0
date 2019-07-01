@@ -2,85 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D54425C05A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 17:36:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B88E5C064
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 17:37:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728248AbfGAPgL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 11:36:11 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:49760 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726840AbfGAPgK (ORCPT
+        id S1729657AbfGAPhF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 11:37:05 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:39014 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728170AbfGAPhF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 11:36:10 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x61FXkbN026995;
-        Mon, 1 Jul 2019 15:36:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=l/FaIxYkXoLqGjThq0mMhkAgGrKUtGga8kNE6smlY94=;
- b=g87chmR+XCJB1wcBrTux2h4joTWamxngZmbJr8WiUZGIMSomAix3xysqYyb09eldUlLZ
- PyKLvIJzQPURMoG1zOL6KCSO1YGHjMe/D6z0FXNLooeR6UAsjgaH4vDAvFmp5SoY6vYI
- e16q+P9LD1TjUoMEMObWlR+6rDiuU3kkA5utL/kEPhxEnwzdxs7s7CFoNQWbyTotkERo
- DlA0FbJwOt8WtroQVQBxrPaKymtCkxHs5Kd2WcadGuIVGNhKsMreZU45FfUPFvofrQ1h
- 8twOTfPyNP8AvMRqIGlZuJgWjoz7w+t+udq+PclGJcZ66ZsXdz8sVZ9smSiWb7s3VVRm Rg== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2120.oracle.com with ESMTP id 2te5tbeeey-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 01 Jul 2019 15:36:01 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x61FWV1m088326;
-        Mon, 1 Jul 2019 15:36:00 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3030.oracle.com with ESMTP id 2tebak8a09-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 01 Jul 2019 15:36:00 +0000
-Received: from abhmp0022.oracle.com (abhmp0022.oracle.com [141.146.116.28])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x61FZse4012458;
-        Mon, 1 Jul 2019 15:35:54 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 01 Jul 2019 08:35:54 -0700
-Date:   Mon, 1 Jul 2019 08:35:52 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     linux-xfs@vger.kernel.org,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Adding some trees to linux-next?
-Message-ID: <20190701153552.GJ1404256@magnolia>
-References: <20190701110603.5abcbb2c@canb.auug.org.au>
+        Mon, 1 Jul 2019 11:37:05 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x61Fb2tR130506;
+        Mon, 1 Jul 2019 10:37:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1561995422;
+        bh=qiiHsLzsZ4QEZAB3usis+CPLGFeEmBSVwIuh3luO7b8=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=LfUNUA34e/+R8i6WXxZjmp07oDZEyjs0ZMIV68wE3GAaNLfP5UNJ5i8KjKZxj7vFU
+         xJerW/HeieVmVQGGWWKBwJXeleIG2J6rZMQmTeEUWCWurTMNzQf2VR7d5nGjR26JLr
+         5xdIahBZhPMtCh7hUunWY696y9X2KNCSoEGPBamU=
+Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x61Fb2Tc083526
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 1 Jul 2019 10:37:02 -0500
+Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 1 Jul
+ 2019 10:37:01 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Mon, 1 Jul 2019 10:37:01 -0500
+Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x61Fb1SN040518;
+        Mon, 1 Jul 2019 10:37:01 -0500
+Subject: Re: [PATCH 2/2] leds: tlc591xx: Use the OF version of the LED
+ registration function
+To:     Jean-Jacques Hiblot <jjhiblot@ti.com>,
+        <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
+CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <tomi.valkeinen@ti.com>
+References: <20190701152602.31716-1-jjhiblot@ti.com>
+ <20190701152602.31716-3-jjhiblot@ti.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <102194fe-e4d1-fa36-16f7-2a933e646bb5@ti.com>
+Date:   Mon, 1 Jul 2019 10:36:34 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190701110603.5abcbb2c@canb.auug.org.au>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9305 signatures=668688
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1907010187
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9305 signatures=668688
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1907010187
+In-Reply-To: <20190701152602.31716-3-jjhiblot@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen,
+JJ
 
-Could you add my iomap-for-next and vfs-for-next branches to linux-next,
-please?  They can be found here:
+On 7/1/19 10:26 AM, Jean-Jacques Hiblot wrote:
+> The driver parses the device-tree to identify which LED should be handled.
+> Since the information about the device node is known at this time, we can
+> provide the LED core with it. It may be useful later.
+>
+> Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
+> ---
+>   drivers/leds/leds-tlc591xx.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/leds/leds-tlc591xx.c b/drivers/leds/leds-tlc591xx.c
+> index 14e47ff44df5..6a2936c94b73 100644
+> --- a/drivers/leds/leds-tlc591xx.c
+> +++ b/drivers/leds/leds-tlc591xx.c
+> @@ -207,7 +207,7 @@ tlc591xx_probe(struct i2c_client *client,
+>   		led->led_no = idx++;
+>   		led->ldev.brightness_set_blocking = tlc591xx_brightness_set;
+>   		led->ldev.max_brightness = LED_FULL;
+> -		err = devm_led_classdev_register(dev, &led->ldev);
+> +		err = devm_of_led_classdev_register(dev, child, &led->ldev);
+>   		if (err < 0) {
+>   			dev_err(dev, "couldn't register LED %s\n",
+>   				led->ldev.name);
 
-git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git#iomap-for-next
-git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git#vfs-for-next
 
-I've decided that trying to munge all that through the xfs for-next
-branch is too much insanity and splitting them up will help me prevent
-my head from falling off.
+Reviewed-by: Dan Murphy <dmurphy@ti.com>
 
---Darrick
