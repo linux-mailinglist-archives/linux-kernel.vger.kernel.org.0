@@ -2,94 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82A375C0FB
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 18:18:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC35F5C0FF
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 18:19:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730247AbfGAQSH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 12:18:07 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35758 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726863AbfGAQSH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 12:18:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=6L/tQQxfuMuPU6Ah9rMNBCpNvZISFMW8+8uGSmy7GjM=; b=p6FZEAfHJaN7A76fQOI5LTBiV
-        eIZtl8IFtuH2l8DTDHoGT6lt35leXxiKKuWD2fS0S0FfzFtyQD2Py9EyEN9VTfoVn0bX0fLUwV1Ss
-        MoiHOr09WM94NdI2xS04vWvuGfWhJjBi/QwyNLWCqdm6/85sbASswp/w3K/lJKs5D3QnI=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=finisterre.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hhz0E-0001iA-O7; Mon, 01 Jul 2019 16:18:02 +0000
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-        id DBB63440046; Mon,  1 Jul 2019 17:18:01 +0100 (BST)
-Date:   Mon, 1 Jul 2019 17:18:01 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Vinod Koul <vkoul@kernel.org>
-Subject: Re: [PATCH AUTOSEL 5.1 07/51] ASoC: soc-dpm: fixup DAI active
- unbalance
-Message-ID: <20190701161801.GD2793@sirena.org.uk>
-References: <20190626034117.23247-1-sashal@kernel.org>
- <20190626034117.23247-7-sashal@kernel.org>
- <20190626100315.GS5316@sirena.org.uk>
- <20190627002059.GN7898@sasha-vm>
+        id S1730302AbfGAQTV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 12:19:21 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:38878 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726863AbfGAQTV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Jul 2019 12:19:21 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8A2F885546;
+        Mon,  1 Jul 2019 16:19:10 +0000 (UTC)
+Received: from carbon (ovpn-200-45.brq.redhat.com [10.40.200.45])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9855C2D34F;
+        Mon,  1 Jul 2019 16:19:03 +0000 (UTC)
+Date:   Mon, 1 Jul 2019 18:19:01 +0200
+From:   Jesper Dangaard Brouer <brouer@redhat.com>
+To:     Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+Cc:     grygorii.strashko@ti.com, davem@davemloft.net, ast@kernel.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        ilias.apalodimas@linaro.org, netdev@vger.kernel.org,
+        daniel@iogearbox.net, jakub.kicinski@netronome.com,
+        john.fastabend@gmail.com, brouer@redhat.com
+Subject: Re: [PATCH v5 net-next 6/6] net: ethernet: ti: cpsw: add XDP
+ support
+Message-ID: <20190701181901.150c0b71@carbon>
+In-Reply-To: <20190630172348.5692-7-ivan.khoronzhuk@linaro.org>
+References: <20190630172348.5692-1-ivan.khoronzhuk@linaro.org>
+        <20190630172348.5692-7-ivan.khoronzhuk@linaro.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="cQXOx3fnlpmgJsTP"
-Content-Disposition: inline
-In-Reply-To: <20190627002059.GN7898@sasha-vm>
-X-Cookie: This sentence no verb.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Mon, 01 Jul 2019 16:19:21 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, 30 Jun 2019 20:23:48 +0300
+Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org> wrote:
 
---cQXOx3fnlpmgJsTP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> +static int cpsw_ndev_create_xdp_rxq(struct cpsw_priv *priv, int ch)
+> +{
+> +	struct cpsw_common *cpsw = priv->cpsw;
+> +	int ret, new_pool = false;
+> +	struct xdp_rxq_info *rxq;
+> +
+> +	rxq = &priv->xdp_rxq[ch];
+> +
+> +	ret = xdp_rxq_info_reg(rxq, priv->ndev, ch);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (!cpsw->page_pool[ch]) {
+> +		ret =  cpsw_create_rx_pool(cpsw, ch);
+> +		if (ret)
+> +			goto err_rxq;
+> +
+> +		new_pool = true;
+> +	}
+> +
+> +	ret = xdp_rxq_info_reg_mem_model(rxq, MEM_TYPE_PAGE_POOL,
+> +					 cpsw->page_pool[ch]);
+> +	if (!ret)
+> +		return 0;
+> +
+> +	if (new_pool) {
+> +		page_pool_free(cpsw->page_pool[ch]);
+> +		cpsw->page_pool[ch] = NULL;
+> +	}
+> +
+> +err_rxq:
+> +	xdp_rxq_info_unreg(rxq);
+> +	return ret;
+> +}
 
-On Wed, Jun 26, 2019 at 08:20:59PM -0400, Sasha Levin wrote:
-> On Wed, Jun 26, 2019 at 11:03:15AM +0100, Mark Brown wrote:
-> > On Tue, Jun 25, 2019 at 11:40:23PM -0400, Sasha Levin wrote:
+Looking at this, and Ilias'es XDP-netsec error handling path, it might
+be a mistake that I removed page_pool_destroy() and instead put the
+responsibility on xdp_rxq_info_unreg().
 
-> > > [ Upstream commit f7c4842abfa1a219554a3ffd8c317e8fdd979bec ]
+As here, we have to detect if page_pool_create() was a success, and then
+if xdp_rxq_info_reg_mem_model() was a failure, explicitly call
+page_pool_free() because the xdp_rxq_info_unreg() call cannot "free"
+the page_pool object given it was not registered.  
 
-> > > snd_soc_dai_link_event() is updating snd_soc_dai :: active,
-> > > but it is unbalance.
-> > > It counts up if it has startup callback.
+Ivan's patch in[1], might be a better approach, which forced all
+drivers to explicitly call page_pool_free(), even-though it just
+dec-refcnt and the real call to page_pool_free() happened via
+xdp_rxq_info_unreg().
 
-> > Are you *sure* this doesn't have dependencies?
+To better handle error path, I would re-introduce page_pool_destroy(),
+as a driver API, that would gracefully handle NULL-pointer case, and
+then call page_pool_free() with the atomic_dec_and_test().  (It should
+hopefully simplify the error handling code a bit)
 
-> The actual code seems to correspond with the issue described in the
-> commit message, so I'd think not.
+[1] https://lore.kernel.org/netdev/20190625175948.24771-2-ivan.khoronzhuk@linaro.org/
 
-> I can remove this patch if you're not confident about it.
 
-I'm not entirely, no.
+> +void cpsw_ndev_destroy_xdp_rxqs(struct cpsw_priv *priv)
+> +{
+> +	struct cpsw_common *cpsw = priv->cpsw;
+> +	struct xdp_rxq_info *rxq;
+> +	int i;
+> +
+> +	for (i = 0; i < cpsw->rx_ch_num; i++) {
+> +		rxq = &priv->xdp_rxq[i];
+> +		if (xdp_rxq_info_is_reg(rxq))
+> +			xdp_rxq_info_unreg(rxq);
+> +	}
+> +}
 
---cQXOx3fnlpmgJsTP
-Content-Type: application/pgp-signature; name="signature.asc"
+Are you sure you need to test xdp_rxq_info_is_reg() here?
 
------BEGIN PGP SIGNATURE-----
+You should just call xdp_rxq_info_unreg(rxq), if you know that this rxq
+should be registered.  If your assumption failed, you will get a
+WARNing, and discover your driver level bug.  This is one of the ways
+the API is designed to "detect" misuse of the API.  (I found this
+rather useful, when I converted the approx 12 drivers using this
+xdp_rxq_info API).
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl0aMjkACgkQJNaLcl1U
-h9BuvAf/ZDm6L36jMsP1TA7VcGMotEV+DWVKIaD4g3xr08GBpdX4re+bvy57pciJ
-eH/zLnx2Ho9A8Dxx0uWbaKFtXrgnl5AB03DckfNhjPkTpfxnjhy8kBJNEyolkuQ0
-8TEpnSCnx99PNeqIkE9ihJFb8nFa3xY1xOfIX1Hj6tPdJX++lBp4oamtlBbkg0jY
-YQlgqvtyif3CqDZBi/FlDU9jOzPR29r/B3MbBuOxAZuCFFcdKVsofZKSlGEXtBbd
-UqoLUNC9EvLZGbyEwC0S6O+5u0trDoATIgtYwApjUtN9fgdQSliBBblA1ESoZDjk
-9HBf1LZw8Ej/e69eXBLsTDNmR2TfDA==
-=I5pz
------END PGP SIGNATURE-----
-
---cQXOx3fnlpmgJsTP--
+-- 
+Best regards,
+  Jesper Dangaard Brouer
+  MSc.CS, Principal Kernel Engineer at Red Hat
+  LinkedIn: http://www.linkedin.com/in/brouer
