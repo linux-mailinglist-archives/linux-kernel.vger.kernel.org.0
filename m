@@ -2,65 +2,196 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 476365BE7C
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 16:40:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A9565BE8A
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 16:42:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729786AbfGAOkp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 10:40:45 -0400
-Received: from foss.arm.com ([217.140.110.172]:36234 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727064AbfGAOkp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 10:40:45 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8E041344;
-        Mon,  1 Jul 2019 07:40:44 -0700 (PDT)
-Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.78])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8AA693F246;
-        Mon,  1 Jul 2019 07:40:43 -0700 (PDT)
-Date:   Mon, 1 Jul 2019 15:40:41 +0100
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Raphael Gault <raphael.gault@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        jpoimboe@redhat.com, peterz@infradead.org, will.deacon@arm.com,
-        julien.thierry@arm.com
-Subject: Re: [RFC V3 12/18] arm64: assembler: Add macro to annotate asm
- function having non standard stack-frame.
-Message-ID: <20190701144039.GD21774@arrakis.emea.arm.com>
-References: <20190624095548.8578-1-raphael.gault@arm.com>
- <20190624095548.8578-13-raphael.gault@arm.com>
+        id S1729801AbfGAOmL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 10:42:11 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:40238 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728216AbfGAOmL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Jul 2019 10:42:11 -0400
+Received: by mail-ed1-f68.google.com with SMTP id k8so23897127eds.7;
+        Mon, 01 Jul 2019 07:42:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aMEPF4h40fCBQU5X2bSodrB4Sj85REfZ6a1YZTaUFX8=;
+        b=WLL4A79vwzrdDCLGlTi/VuN6sj453o1tvcQrKIWK9q+JvlFDho5qrrnYYTShgDr0Si
+         Q4R6V6qkkUdMgGY9SvdT5Dsnz/fR8x+7TVssOas5nPDGaMXv2jt76NM9BVUt+YGOXERX
+         4avkZd4pScP3NIXbzWRb5o3MPInbbYf869dZGRQXljfb1Lp5Hwuw5ncKL6FHveD2hXRB
+         rz8UUSlZHliPxujHa+Iu/VKwXwx8lKDV5/e+YMta6KXIy5n3Z71XJENsoEV4V3VnQlVL
+         tKM+HRBTJuGjTofnC95X5lqh/30/Jz+e2au+WS1cXlUz6XDSKiZHqLqXO6LgX9vYvCsu
+         T4YA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aMEPF4h40fCBQU5X2bSodrB4Sj85REfZ6a1YZTaUFX8=;
+        b=CzkKLeJXooXqswOIgU7JV3Cq4HJc0m2PJ+S1+p9z6EMpaInXpWIIFKZ+aZN/6ivnZ3
+         bWL23PtxErimMt+jjotkYYr+CYmXLgFburFPgeCdx0drjRZACJg6LtHB95ifcFuitia4
+         e1STkb9DAQ9DwUJZviu1x/QZpZXCUMJkDmZweinpyTDctPRFr2oyJ9GY73lsQ7IGxCd0
+         L3SQt7MAlePlRhxK5VBQasuVYjQspDrKuK1q4tHpSdw5jxSLpVuX32NCsaaL+UKL6GUg
+         zZv5+plAmf9YkfwOW9QqTzs7NoNA5KAsDsMgkypoZ/fVvqVAx1/6hYe2/TPDf+Z4Nasa
+         Q+fQ==
+X-Gm-Message-State: APjAAAW77a4S1EJxkLtrbKVcVBmwIlsK0T+Wj4pllSjpdaYWJ6I27uw5
+        m6A19pXQnxTiN4R5gRiR0EqSsbf0h4MMKG8ZaVI=
+X-Google-Smtp-Source: APXvYqwTSrjwEtJFQ6ycVzgqQyLHlfVSNui04RVBvc84N7j2jrb7J5jnFRbdBQnaiAmon34qOBwM9VBHofWtLVN9Gcc=
+X-Received: by 2002:a50:993c:: with SMTP id k57mr29630101edb.294.1561992128852;
+ Mon, 01 Jul 2019 07:42:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190624095548.8578-13-raphael.gault@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190630203614.5290-1-robdclark@gmail.com> <20190630203614.5290-2-robdclark@gmail.com>
+ <CAL_JsqKMULJJ9CERRBpqd7Y2dtovEJ6jcDKy6J4yR6rAdjibUg@mail.gmail.com>
+In-Reply-To: <CAL_JsqKMULJJ9CERRBpqd7Y2dtovEJ6jcDKy6J4yR6rAdjibUg@mail.gmail.com>
+From:   Rob Clark <robdclark@gmail.com>
+Date:   Mon, 1 Jul 2019 07:41:52 -0700
+Message-ID: <CAF6AEGvRXZAannGisHjsaW4Pg3v2ma5WHK2phqg8TaF53pR8XQ@mail.gmail.com>
+Subject: Re: [PATCH 1/4] dt-bindings: chosen: document panel-id binding
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        aarch64-laptops@lists.linaro.org,
+        Rob Clark <robdclark@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 10:55:42AM +0100, Raphael Gault wrote:
-> --- a/arch/arm64/include/asm/assembler.h
-> +++ b/arch/arm64/include/asm/assembler.h
-> @@ -752,4 +752,17 @@ USER(\label, ic	ivau, \tmp2)			// invalidate I line PoU
->  .Lyield_out_\@ :
->  	.endm
->  
-> +	/*
-> +	 * This macro is the arm64 assembler equivalent of the
-> +	 * macro STACK_FRAME_NON_STANDARD define at
-> +	 * ~/include/linux/frame.h
-> +	 */
-> +	.macro	asm_stack_frame_non_standard	func
-> +#ifdef	CONFIG_STACK_VALIDATION
-> +	.pushsection ".discard.func_stack_frame_non_standard"
-> +	.8byte	\func
+On Mon, Jul 1, 2019 at 7:03 AM Rob Herring <robh+dt@kernel.org> wrote:
+>
+> On Sun, Jun 30, 2019 at 2:36 PM Rob Clark <robdclark@gmail.com> wrote:
+> >
+> > From: Rob Clark <robdclark@chromium.org>
+> >
+> > The panel-id property in chosen can be used to communicate which panel,
+> > of multiple possibilities, is installed.
+> >
+> > Signed-off-by: Rob Clark <robdclark@chromium.org>
+> > ---
+> >  Documentation/devicetree/bindings/chosen.txt | 69 ++++++++++++++++++++
+> >  1 file changed, 69 insertions(+)
+>
+> I need to update this file to say it's moved to the schema repository...
+>
+> But I don't think that will matter...
+>
+> > diff --git a/Documentation/devicetree/bindings/chosen.txt b/Documentation/devicetree/bindings/chosen.txt
+> > index 45e79172a646..d502e6489b8b 100644
+> > --- a/Documentation/devicetree/bindings/chosen.txt
+> > +++ b/Documentation/devicetree/bindings/chosen.txt
+> > @@ -68,6 +68,75 @@ on PowerPC "stdout" if "stdout-path" is not found.  However, the
+> >  "linux,stdout-path" and "stdout" properties are deprecated. New platforms
+> >  should only use the "stdout-path" property.
+> >
+> > +panel-id
+> > +--------
+> > +
+> > +For devices that have multiple possible display panels (multi-sourcing the
+> > +display panels is common on laptops, phones, tablets), this allows the
+> > +bootloader to communicate which panel is installed, e.g.
+>
+> How does the bootloader figure out which panel? Why can't the kernel
+> do the same thing?
 
-Nitpicks:
+see jhugo's response, he has I guess more access to the bootloader than I
 
-Does .quad vs .8byte make any difference?
+> > +
+> > +/ {
+> > +       chosen {
+> > +               panel-id = <0xc4>;
+> > +       };
+> > +
+> > +       ivo_panel {
+> > +               compatible = "ivo,m133nwf4-r0";
+> > +               power-supply = <&vlcm_3v3>;
+> > +               no-hpd;
+> > +
+> > +               ports {
+> > +                       port {
+> > +                               ivo_panel_in_edp: endpoint {
+> > +                                       remote-endpoint = <&sn65dsi86_out_ivo>;
+> > +                               };
+> > +                       };
+> > +               };
+> > +       };
+> > +
+> > +       boe_panel {
+> > +               compatible = "boe,nv133fhm-n61";
+>
+> Both panels are going to probe. So the bootloader needs to disable the
+> not populated panel setting 'status' (or delete the node). If you do
+> that, do you even need 'panel-id'?
 
-Could we place this in include/linux/frame.h directly with a generic
-name (and some __ASSEMBLY__ guards)? It doesn't look to be arm specific.
+I don't think we can rely on bootloader knowing a thing about DT on
+these devices..
 
--- 
-Catalin
+OTOH I don't really think it is a big problem for both panels to
+probe.  But I suppose it might be possible to have something somewhere
+in the kernel that realizes and disables the unused panels.
+
+> > +               power-supply = <&vlcm_3v3>;
+> > +               no-hpd;
+> > +
+> > +               ports {
+> > +                       port {
+> > +                               boe_panel_in_edp: endpoint {
+> > +                                       remote-endpoint = <&sn65dsi86_out_boe>;
+> > +                               };
+> > +                       };
+> > +               };
+> > +       };
+> > +
+> > +       display_or_bridge_device {
+> > +
+> > +               ports {
+> > +                       #address-cells = <1>;
+> > +                       #size-cells = <0>;
+> > +
+> > +                       ...
+> > +
+> > +                       port@0 {
+> > +                               #address-cells = <1>;
+> > +                               #size-cells = <0>;
+> > +                               reg = <0>;
+> > +
+> > +                               endpoint@c4 {
+> > +                                       reg = <0xc4>;
+>
+> What does this number represent? It is supposed to be defined by the
+> display_or_bridge_device, not a specific panel.
+
+it matches /chosen/panel-id.. in this case I'm not sure how the
+panel-id's are assigned, but for our purposes all that matters is that
+they are assigned.
+
+> We also need to consider how the DSI case with panels as children of
+> the DSI controller would work and how this would work with multiple
+> displays each having multiple panel options.
+
+In the non-bridge case (panel hooked directly to dsi controller), the
+dsi controller could use the same ports {} mechanism.
+
+For multiple displays, we could extend, I suppose, /chosen/panel-id to
+be an array of id's indexed by display.  I think this is the type of
+extension we could do later when the use-case comes up.  Just having
+this solved upstream for single display would already be a huge
+advancement.  (You don't want to look at how this is solved downstream
+for android phones.)
+
+Btw, if you are curious how this works on windows/ACPI, the ACPI
+tables have entries for each of the panels.  The kernel is expected to
+take the panel-id from that EFI variable that jhugo mentioned, and
+pass it to a _ROM method which returns the appropriate panel table.
+(Not entirely sure how the orchestrate reading the EFI variable early,
+since it does not appear to be available after ExitBootServices)
+
+BR,
+-R
