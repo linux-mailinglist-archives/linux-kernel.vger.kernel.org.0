@@ -2,106 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 920415C492
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 22:51:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F6B55C499
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 22:54:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726966AbfGAUvP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 16:51:15 -0400
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:36256 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726664AbfGAUvP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 16:51:15 -0400
-Received: by mail-ua1-f67.google.com with SMTP id v20so5626783uao.3
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2019 13:51:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wESivRaOzdReZ9r3dQBJ6+auCoe5qPpy86Hfp/fZ9E8=;
-        b=E8qUnaRi86DOYe4ykNLKZsrbv0jdLVwI+pq8I2EsHYEs0CcBbovV1y0Hei5KDm2Fmz
-         KmHtA8xJqJ/vwuMgStkXzR5exybnjqwJ0U017XcMZljSVrkorpLmhd/gwEnrWbBG1kq4
-         xaEWCeJQzSEXgr+vsfpwNtX9K4qT5eqLhACkUv7Sc4DxuoxAkeBHYXrhk/N4VR1SwZIg
-         q3CfzDwMJTX+1EHGRMttwp/D6fSbZzJZChfSzouvgWW9ZiiGOLMyLm+9yiAmM/PDCN3c
-         bW5auRal34ZjScoNNCcI0uPMPdlyhbHtV908sNtc+D0PYT0Y5SWeECSxjIt5+JSmAv10
-         m1RQ==
-X-Gm-Message-State: APjAAAV3g8WFMHb4Ti6Lm5P/3NEbJdysVDukxnx7kFOUbkzmUj8NLSwd
-        Q5UHNCk09l+2Tm7/M9dkY1SxpxjeIYcO4Yv4euMqLQ==
-X-Google-Smtp-Source: APXvYqwMzDPq7JpJflDPfeE/dnLsjBjSEFhiY3GM+/DWjW/AMVD2Nqv2V3R3T/2gUIf0fb+Zl6ZNq2nnxyTmlzmYxFg=
-X-Received: by 2002:ab0:168a:: with SMTP id e10mr15443818uaf.87.1562014274511;
- Mon, 01 Jul 2019 13:51:14 -0700 (PDT)
+        id S1726970AbfGAUyT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 16:54:19 -0400
+Received: from mga02.intel.com ([134.134.136.20]:6803 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726927AbfGAUyR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Jul 2019 16:54:17 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Jul 2019 13:54:16 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,440,1557212400"; 
+   d="scan'208";a="163797661"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by fmsmga008.fm.intel.com with ESMTP; 01 Jul 2019 13:54:13 -0700
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1hi3JU-000A3C-ID; Tue, 02 Jul 2019 04:54:12 +0800
+Date:   Tue, 2 Jul 2019 04:53:18 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Fabien Lahoudere <fabien.lahoudere@collabora.com>
+Cc:     kbuild-all@01.org, gwendal@chromium.org, egranata@chromium.org,
+        kernel@collabora.com,
+        Fabien Lahoudere <fabien.lahoudere@collabora.com>,
+        Nick Vaccaro <nvaccaro@chromium.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Benson Leung <bleung@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Guenter Roeck <groeck@chromium.org>,
+        Alexios Zavras <alexios.zavras@intel.com>,
+        Allison Randal <allison@lohutok.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] iio: common: cros_ec_sensors: fix semicolon.cocci warnings
+Message-ID: <20190701205318.GA28229@lkp-kbuild05>
+References: <f5e824de2c423b310c4981b723bba4945a6512d4.1561731659.git.fabien.lahoudere@collabora.com>
 MIME-Version: 1.0
-References: <20190626081522.GX24419@MiWiFi-R3L-srv> <20190626082907.GY24419@MiWiFi-R3L-srv>
-In-Reply-To: <20190626082907.GY24419@MiWiFi-R3L-srv>
-From:   David Airlie <airlied@redhat.com>
-Date:   Tue, 2 Jul 2019 06:51:03 +1000
-Message-ID: <CAMwc25oeskFG4bbrb3rwotqi1a5z4wYsGW=Qs_XJmhX_vAdNfQ@mail.gmail.com>
-Subject: Re: mgag200 fails kdump kernel booting
-To:     Baoquan He <bhe@redhat.com>
-Cc:     kexec@lists.infradead.org, x86@kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>, dyoung@redhat.com,
-        Lyude Paul <lyude@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f5e824de2c423b310c4981b723bba4945a6512d4.1561731659.git.fabien.lahoudere@collabora.com>
+X-Patchwork-Hint: ignore
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 26, 2019 at 6:29 PM Baoquan He <bhe@redhat.com> wrote:
->
-> On 06/26/19 at 04:15pm, Baoquan He wrote:
-> > Hi Dave,
-> >
-> > We met an kdump kernel boot failure on a lenovo system. Kdump kernel
-> > failed to boot, but just reset to firmware to reboot system. And nothing
-> > is printed out.
-> >
-> > The machine is a big server, with 6T memory and many cpu, its graphic
-> > driver module is mgag200.
-> >
-> > When added 'earlyprintk=ttyS0' into kernel command line, it printed
-> > out only one line to console during kdump kernel booting:
-> >      KASLR disabled: 'nokaslr' on cmdline.
-> >
-> > Then reset to firmware to reboot system.
-> >
-> > By further code debugging, the failure happened in
-> > arch/x86/boot/compressed/misc.c, during kernel decompressing stage. It's
-> > triggered by the vga printing. As you can see, in __putstr() of
-> > arch/x86/boot/compressed/misc.c, the code checks if earlyprintk= is
-> > specified, and print out to the target. And no matter if earlyprintk= is
-> > added or not, it will print to VGA. And printing to VGA caused it to
-> > reset to firmware. That's why we see nothing when didn't specify
-> > earlyprintk=, but see only one line of printing about the 'KASLR
-> > disabled'.
->
-> Here I mean:
-> That's why we see nothing when didn't specify earlyprintk=, but see only
-> one line of printing about the 'KASLR disabled' message when
-> earlyprintk=ttyS0 added.
+From: kbuild test robot <lkp@intel.com>
 
-Just to clarify, the original kernel is booted with mgag200 turned
-off, then kexec works, but if the original kernel loads mgag200, the
-kexec kernels resets hard when the VGA is used to write stuff out.
+drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c:89:41-42: Unneeded semicolon
 
-This *might* be fixable in the controlled kexec case, but having an
-mgag200 shutdown path that tries to put the gpu back into a state
-where VGA doesn't die, but for the uncontrolled kexec it'll still be a
-problem, since once the gpu is up and running and VGA is disabled, it
-doesn't expect to see anymore VGA transactions.
 
-Dave.
->
-> >
-> > To confirm it's caused by VGA printing, I blacklist the mgag200 by
-> > writting it into /etc/modprobe.d/blacklist.conf. The kdump kernel can
-> > boot up successfully. And add 'nomodeset' can also make it work. So it's
-> > for sure mgag driver or related code have something wrong when booting
-> > code tries to re-init it.
-> >
-> > This is the only case we ever see, tend to pursuit fix in mgag200 driver
-> > side. Any idea or suggestion? We have two machines to be able to
-> > reproduce it stablly.
-> >
-> > Thanks
-> > Baoquan
+ Remove unneeded semicolon.
+
+Generated by: scripts/coccinelle/misc/semicolon.cocci
+
+Fixes: a7862d65b738 ("iio: common: cros_ec_sensors: determine protocol version")
+CC: Fabien Lahoudere <fabien.lahoudere@collabora.com>
+Signed-off-by: kbuild test robot <lkp@intel.com>
+---
+
+url:    https://github.com/0day-ci/linux/commits/Fabien-Lahoudere/iio-common-cros_ec_sensors-determine-protocol-version/20190701-223411
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
+
+ cros_ec_sensors_core.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
++++ b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
+@@ -86,7 +86,7 @@ int cros_ec_sensors_core_init(struct pla
+ 		return -ENODEV;
+ 
+ 	/* Set up the host command structure. */
+-	state->msg->version = fls(ver_mask) - 1;;
++	state->msg->version = fls(ver_mask) - 1;
+ 	state->msg->command = EC_CMD_MOTION_SENSE_CMD + ec->cmd_offset;
+ 	state->msg->outsize = sizeof(struct ec_params_motion_sense);
+ 
