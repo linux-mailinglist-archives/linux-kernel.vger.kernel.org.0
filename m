@@ -2,124 +2,177 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CD945B481
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 08:14:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D27625B4BF
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 08:21:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727365AbfGAGN6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 02:13:58 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:33034 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727191AbfGAGN5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 02:13:57 -0400
-Received: by mail-pg1-f193.google.com with SMTP id m4so5494170pgk.0
-        for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2019 23:13:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=D1O1X/cTjxSpLefdIwUl4AWn9m/5Z78Sy8Rbpsos6/M=;
-        b=iIFbBqyg8V2wneFFrpr2exGWqjbsn3ThWYCBhBhZRZ6ymKyyUZit3oLo0dOOvDCCil
-         RjmYVY7tNPApoNx4F61sVAQDeTq6q16CCYyL02sNMSaQweS38H4AqdWd7m3zkbz5lpA6
-         KkpiCTYtJKuLOWXsrMDh+B9tdkjIcISwbYhH1Ld+ZH22YTWzHxq+DOfHui/0lJhKU2aL
-         ypRIXEE3YVygNHOwWh+mlB/KaiLwE8HTZOLhFbJmNJ1u2uf3QKDzzAeTTpGleyxA662d
-         ifjW5GDFUl/BaZNwI88ziq0uUJVcFu4IC/0ZuIl6X0od1ncov7xvnNyUhBrPi2rCu9gN
-         FcBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=D1O1X/cTjxSpLefdIwUl4AWn9m/5Z78Sy8Rbpsos6/M=;
-        b=kA24oiCrmXLljMkak8kGPaQQBg0RfTXD3OKkClPOm+IIDv5+hyCoBxqo5ySQJe1A43
-         2pF9noJtc/lduFCepjTEP/vQ0A7YhD9NEbq2njon9n3PM7STT4osn6MHUUdcb9UF/532
-         swXR6idSTCUM2aop4bY3Jtmalk2cRrBagpFC8WWBgY200bET5Q9J6FDL+VpdVYETcPkK
-         lo4iWBdfaS3+2/qYZscZ6Yjc83CG5uyzRc2ikTsOp0eUrqvzyfKc8QEALeL6lW2u6i9V
-         K0cmm3G4FkuFQ0ZD6rRxvDkMDI1k4tVWyjlh/IBmFPhY4+yuxcwsuqlcHFue9oAN41tS
-         uDLA==
-X-Gm-Message-State: APjAAAUUd4p2lEpc7F3Qs9Z+ZpQPZJ9EHFPhAEkCw9f+r+0LNJsiSYoZ
-        66UngLH/b0mLHqj90Am2DId1jw==
-X-Google-Smtp-Source: APXvYqw7HLuQ5++wNVoa6Twp44LTfQ9finOPfEkCayL9iiS7L7GZKdW++Q+goB1qmibmWMRR81zVVw==
-X-Received: by 2002:a63:e40a:: with SMTP id a10mr22792178pgi.277.1561961636948;
-        Sun, 30 Jun 2019 23:13:56 -0700 (PDT)
-Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id c10sm8513453pjq.14.2019.06.30.23.13.55
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 30 Jun 2019 23:13:55 -0700 (PDT)
-Date:   Sun, 30 Jun 2019 23:13:53 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Cc:     Xiang Xiao <xiaoxiang781216@gmail.com>, ohad@wizery.com,
-        wendy.liang@xilinx.com, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Xiang Xiao <xiaoxiang@xiaomi.com>
-Subject: Re: [PATCH 0/3] Enhance virtio rpmsg bus driver buffer allocation
-Message-ID: <20190701061353.GE1263@builder>
-References: <1548949280-31794-1-git-send-email-xiaoxiang@xiaomi.com>
- <20190605043452.GI22737@tuxbook-pro>
- <2d60dd1e-f7a0-ea63-9fda-0ea97aab0406@st.com>
+        id S1727690AbfGAGU7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 02:20:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56178 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727659AbfGAGU4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Jul 2019 02:20:56 -0400
+Received: from localhost (unknown [122.167.76.109])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 05D3C20B7C;
+        Mon,  1 Jul 2019 06:20:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561962055;
+        bh=StqomvvpXflnRhDKL1dnp4Cn8wLcNE+ioYBf5EJMvSU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Qhdnkx3NMl/OHo0W8jfSJlvavK54m9wt+kzowzosr+VKbbTez0psR/3NasyeR6f0v
+         MlPxTCL58hYRS1tO+jFj0z7MK3WIXILIEkzL8Id+8R112wvw26PTCMX0ZQix5pGYay
+         PiCd+55IRc/33wtU7duuPBEEiHt+/+7EtYec9C74=
+Date:   Mon, 1 Jul 2019 11:47:45 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     broonie@kernel.org, robh+dt@kernel.org, devicetree@vger.kernel.org,
+        mark.rutland@arm.com, pierre-louis.bossart@linux.intel.com,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        bgoswami@quicinc.com
+Subject: Re: [RFC PATCH 2/5] soundwire: core: add device tree support for
+ slave devices
+Message-ID: <20190701061745.GK2911@vkoul-mobl>
+References: <20190611104043.22181-1-srinivas.kandagatla@linaro.org>
+ <20190611104043.22181-3-srinivas.kandagatla@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2d60dd1e-f7a0-ea63-9fda-0ea97aab0406@st.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20190611104043.22181-3-srinivas.kandagatla@linaro.org>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 05 Jun 00:33 PDT 2019, Arnaud Pouliquen wrote:
-
-> Hi Bjorn,
+On 11-06-19, 11:40, Srinivas Kandagatla wrote:
+> This patch adds support to parsing device tree based
+> SoundWire slave devices.
 > 
-> On 6/5/19 6:34 AM, Bjorn Andersson wrote:
-> > On Thu 31 Jan 07:41 PST 2019, Xiang Xiao wrote:
-> > 
-> >> Hi,
-> >> This series enhance the buffer allocation by:
-> >> 1.Support the different buffer number in rx/tx direction
-> >> 2.Get the individual rx/tx buffer size from config space
-> >>
-> >> Here is the related OpenAMP change:
-> >> https://github.com/OpenAMP/open-amp/pull/155
-> >>
-> > 
-> > This looks pretty reasonable, but can you confirm that it's possible to
-> > use new firmware with an old Linux kernel when introducing this?
-> > 
-> > 
-> > But ever since we discussed Loic's similar proposal earlier I've been
-> > questioning if the fixed buffer size isn't just an artifact of how we
-> > preallocate our buffers. The virtqueue seems to support arbitrary sizes
-> > of buffers and I see that the receive function in OpenAMP has been fixed
-> > to put back the buffer of the size that was received, rather than 512
-> > bytes. So it seems like Linux would be able to send whatever size
-> > messages to OpenAMP it would handle it.
-> > 
-> > The question is if we could do the same in the other direction, perhaps
-> > by letting the OpenAMP side do it's message allocation when it's
-> > sending, rather than Linux pushing inbufs to be filled by the remote.
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> ---
+>  drivers/soundwire/bus.c   |  2 +-
+>  drivers/soundwire/bus.h   |  1 +
+>  drivers/soundwire/slave.c | 54 ++++++++++++++++++++++++++++++++++++++-
+>  3 files changed, 55 insertions(+), 2 deletions(-)
 > 
-> IMHO, both could be useful and could be not correlated.
-> On-the fly buffer allocation seems more efficient but needs an
-> allocator.This can be a generic allocator (with a va to da) for system
-> where large amount of memories are accessible from both side.
-> 
-> Now what about system with small shared memory? In this case you have to
-> deal with a limited/optimized memory chunk. To avoid memory
-> fragmentation the allocator should have a pre-reserved buffers pool(so
-> similar to existing implementation). This serie seems useful to optimize
-> the size of the pre-reserved pool.
-> 
+> diff --git a/drivers/soundwire/bus.c b/drivers/soundwire/bus.c
+> index fe745830a261..20f26cf4ba74 100644
+> --- a/drivers/soundwire/bus.c
+> +++ b/drivers/soundwire/bus.c
+> @@ -78,7 +78,7 @@ int sdw_add_bus_master(struct sdw_bus *bus)
+>  	if (IS_ENABLED(CONFIG_ACPI) && ACPI_HANDLE(bus->dev))
+>  		ret = sdw_acpi_find_slaves(bus);
+>  	else
+> -		ret = -ENOTSUPP; /* No ACPI/DT so error out */
+> +		ret = sdw_of_find_slaves(bus);
+>  
+>  	if (ret) {
+>  		dev_err(bus->dev, "Finding slaves failed:%d\n", ret);
+> diff --git a/drivers/soundwire/bus.h b/drivers/soundwire/bus.h
+> index 3048ca153f22..ee46befedbd1 100644
+> --- a/drivers/soundwire/bus.h
+> +++ b/drivers/soundwire/bus.h
+> @@ -15,6 +15,7 @@ static inline int sdw_acpi_find_slaves(struct sdw_bus *bus)
+>  }
+>  #endif
+>  
+> +int sdw_of_find_slaves(struct sdw_bus *bus);
+>  void sdw_extract_slave_id(struct sdw_bus *bus,
+>  			  u64 addr, struct sdw_slave_id *id);
+>  
+> diff --git a/drivers/soundwire/slave.c b/drivers/soundwire/slave.c
+> index f39a5815e25d..6e7f5cfeb854 100644
+> --- a/drivers/soundwire/slave.c
+> +++ b/drivers/soundwire/slave.c
+> @@ -2,6 +2,7 @@
+>  // Copyright(c) 2015-17 Intel Corporation.
+>  
+>  #include <linux/acpi.h>
+> +#include <linux/of.h>
+>  #include <linux/soundwire/sdw.h>
+>  #include <linux/soundwire/sdw_type.h>
+>  #include "bus.h"
+> @@ -28,13 +29,14 @@ static int sdw_slave_add(struct sdw_bus *bus,
+>  	slave->dev.parent = bus->dev;
+>  	slave->dev.fwnode = fwnode;
+>  
+> -	/* name shall be sdw:link:mfg:part:class:unique */
+> +	/* name shall be sdw:link:mfg:part:class */
 
-Having an implementation that uses small fixed size buffers seems very
-reasonable and I'm in favour of making the message size configurable.
+nope we are not changing dev_set_name below so this comment should not
+be modified
 
-I would however prefer to have this implemented in a way where the
-remote side should not be receiving messages in a way that's based on
-the remote side's allocation parameters.
+>  	dev_set_name(&slave->dev, "sdw:%x:%x:%x:%x:%x",
+>  		     bus->link_id, id->mfg_id, id->part_id,
+>  		     id->class_id, id->unique_id);
+>  
+>  	slave->dev.release = sdw_slave_release;
+>  	slave->dev.bus = &sdw_bus_type;
+> +	slave->dev.of_node = of_node_get(to_of_node(fwnode));
+>  	slave->bus = bus;
+>  	slave->status = SDW_SLAVE_UNATTACHED;
+>  	slave->dev_num = 0;
+> @@ -112,3 +114,53 @@ int sdw_acpi_find_slaves(struct sdw_bus *bus)
+>  }
+>  
+>  #endif
+> +
+> +#if IS_ENABLED(CONFIG_OF)
+> +/*
+> + * sdw_of_find_slaves() - Find Slave devices in master device tree node
+> + * @bus: SDW bus instance
+> + *
+> + * Scans Master DT node for SDW child Slave devices and registers it.
+> + */
+> +int sdw_of_find_slaves(struct sdw_bus *bus)
+> +{
+> +	struct device *dev = bus->dev;
+> +	struct device_node *node;
+> +
+> +	if (!bus->dev->of_node)
+> +		return 0;
 
+this should be error, otherwise next condition of checking slaves wont
+be triggered..
 
-I don't think this series prevents the introduction of such isolation,
-but it would render this code unnecessary.
+> +
+> +	for_each_child_of_node(bus->dev->of_node, node) {
+> +		struct sdw_slave_id id;
+> +		const char *compat = NULL;
+> +		int unique_id, ret;
+> +		int ver, mfg_id, part_id, class_id;
+> +		compat = of_get_property(node, "compatible", NULL);
+> +		if (!compat)
+> +			continue;
+> +
+> +		ret = sscanf(compat, "sdw%x,%x,%x,%x",
+> +			     &ver, &mfg_id, &part_id, &class_id);
+> +		if (ret != 4) {
+> +			dev_err(dev, "Manf ID & Product code not found %s\n",
+> +				compat);
+> +			continue;
+> +		}
+> +
+> +		ret = of_property_read_u32(node, "sdw-instance-id", &unique_id);
+> +		if (ret) {
+> +			dev_err(dev, "Instance id not found:%d\n", ret);
+> +			continue;
+> +		}
+> +
+> +		id.sdw_version = ver - 0xF;
+> +		id.unique_id = unique_id;
+> +		id.mfg_id = mfg_id;
+> +		id.part_id = part_id;
+> +		id.class_id = class_id;
+> +		sdw_slave_add(bus, &id, of_fwnode_handle(node));
+> +	}
+> +	return 0;
+> +}
+> +
+> +#endif
+> -- 
+> 2.21.0
 
-Regards,
-Bjorn
+-- 
+~Vinod
