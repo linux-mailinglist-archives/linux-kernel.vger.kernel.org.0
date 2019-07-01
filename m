@@ -2,118 +2,300 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B338C5B97C
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 12:53:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 605A45BA31
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 12:58:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727945AbfGAKxX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 06:53:23 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:39363 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727748AbfGAKxW (ORCPT
+        id S1728168AbfGAK62 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 06:58:28 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:62187 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727740AbfGAK6W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 06:53:22 -0400
-Received: by mail-wm1-f67.google.com with SMTP id z23so15398157wma.4
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2019 03:53:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=XQRgtdqFvFQnOaqF03WKbmLwzJnjU6e4GX4WQg9aUEE=;
-        b=XJ+3tS+jL/QjdpOVjmp9BRCWLIHz7jZljZJh7Fk4FhpGWcTVlTSkYNHz2DdPmF614d
-         j3tuBbpzQ/YBEE5k2uAQtGq1s3l2zabF05npx29UbYwSEf9fzQYjgbBmIAcMdumAUmf0
-         +1J93W9T/JNQK4pBCyL8QfR52JZYX9HYPGwzSYc4Xii3t71r/gcO5TtoJBnXZTSXXJXj
-         1HJUVCFvmOTivPBU5JVmOr83+0ilNL7A63SWRRU9zM94C36jvCfiMxcwjLXa7WEvq7gc
-         twjPXeIVOYOtqmGpLRBvni6eMsQR6Gz5rufMhPbhMpYqQ/1bnYtK4f0k6BhTikF4x21+
-         AeZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=XQRgtdqFvFQnOaqF03WKbmLwzJnjU6e4GX4WQg9aUEE=;
-        b=RfjkXRtEBH0mJj97+4uEcJ0oYo85GG9xLG7tRWshUQbvcvnySaBpf7YsYBwrBsfxOP
-         3y8jmGyAi2EZQVb1BMci0YdJB+5RDQCwsEhHHvddOU5w8dRZfdmq/cCCcTliYVo1yji5
-         D8wvarJ3tVoktbKKC9nEdfrzKUsRalxO0VthwQEwHyZBSWYIHynveZNHnzDPwqwEuQDl
-         dsV5nOmcGMJeZxOWxzv+Kd04OigAeFNPDvWuQMFa1RIRzZGwbrDtyhrXhVzQTDx7AUYJ
-         uvYL2VVujPtHSC5RR57x71owIq3gs2fE4h0zxWehB0L9UnBSkA9f7+3cjdGRwUXurhMo
-         t/oQ==
-X-Gm-Message-State: APjAAAWebq83U6FsT4Wtm+E2RETiuUEeGIMFie0Z2QscR+LH15KpxY5z
-        cHdMfuVshLfmlnUNe834letXHA==
-X-Google-Smtp-Source: APXvYqzJjbWlOiQousy1pzRxgrhvnrnX7mi2poCoEZm9lqei0E+ibL7N9E8kRbCeMA5zupykF95tsg==
-X-Received: by 2002:a1c:a019:: with SMTP id j25mr17433129wme.95.1561978400374;
-        Mon, 01 Jul 2019 03:53:20 -0700 (PDT)
-Received: from localhost.localdomain (30.red-83-34-200.dynamicip.rima-tde.net. [83.34.200.30])
-        by smtp.gmail.com with ESMTPSA id x11sm9353525wmi.26.2019.07.01.03.53.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 01 Jul 2019 03:53:19 -0700 (PDT)
-From:   Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-To:     jorge.ramirez-ortiz@linaro.org, adrian.hunter@intel.com,
-        agross@kernel.org, ulf.hansson@linaro.org
-Cc:     linux-mmc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, khasim.mohammed@linaro.org,
-        vinod.koul@linaro.org
-Subject: [PATCH] mmc: sdhci-msm: fix mutex while in spinlock
-Date:   Mon,  1 Jul 2019 12:53:16 +0200
-Message-Id: <20190701105316.19419-1-jorge.ramirez-ortiz@linaro.org>
-X-Mailer: git-send-email 2.21.0
+        Mon, 1 Jul 2019 06:58:22 -0400
+Received: from 79.184.254.216.ipv4.supernova.orange.pl (79.184.254.216) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.267)
+ id 12f6c2b577100129; Mon, 1 Jul 2019 12:58:18 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Linux PM <linux-pm@vger.kernel.org>
+Cc:     Linux PCI <linux-pci@vger.kernel.org>,
+        Linux ACPI <linux-acpi@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Hans De Goede <hdegoede@redhat.com>,
+        "Robert R. Howell" <RHowell@uwyo.edu>
+Subject: [PATCH v2 3/5] ACPI: PM: Simplify and fix PM domain hibernation callbacks
+Date:   Mon, 01 Jul 2019 12:54:10 +0200
+Message-ID: <2802028.YOpNIL8Yh8@kreacher>
+In-Reply-To: <4976412.ihyb9sT5jY@kreacher>
+References: <4976412.ihyb9sT5jY@kreacher>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-mutexes can sleep and therefore should not be taken while holding a
-spinlock. move clk_get_rate (can sleep) outside the spinlock protected
-region.
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-This regression was introduced with commit
-     Date:   Mon Nov 21 12:07:16 2016 +0530
-     mmc: sdhci-msm: Update DLL reset sequence
+First, after a previous change causing all runtime-suspended devices
+in the ACPI PM domain (and ACPI LPSS devices) to be resumed before
+creating a snapshot image of memory during hibernation, it is not
+necessary to worry about the case in which them might be left in
+runtime-suspend any more, so get rid of the code related to that from
+ACPI PM domain and ACPI LPSS hibernation callbacks.
 
-     SDCC core with minor version >= 0x42 introduced new 14lpp
-     DLL. This has additional requirements in the reset sequence
-     for DLL tuning. Make necessary changes as needed.
+Second, it is not correct to use pm_generic_resume_early() and
+acpi_subsys_resume_noirq() in hibernation "restore" callbacks (which
+currently happens in the ACPI PM domain and ACPI LPSS), so introduce
+proper _restore_late and _restore_noirq callbacks for the ACPI PM
+domain and ACPI LPSS.
 
-Fixes: 83736352e0ca ("mmc: sdhci-msm: Update DLL reset sequence")
-Cc: stable@vger.kernel.org
-Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+Fixes: 05087360fd7a (ACPI / PM: Take SMART_SUSPEND driver flag into account)
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
- drivers/mmc/host/sdhci-msm.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-index 5fc76a1993d0..9cf14b359c14 100644
---- a/drivers/mmc/host/sdhci-msm.c
-+++ b/drivers/mmc/host/sdhci-msm.c
-@@ -575,11 +575,14 @@ static int msm_init_cm_dll(struct sdhci_host *host)
- 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
- 	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
- 	int wait_cnt = 50;
--	unsigned long flags;
-+	unsigned long flags, xo_clk = 0;
- 	u32 config;
- 	const struct sdhci_msm_offset *msm_offset =
- 					msm_host->offset;
+-> v2:
+ * Add a comment explaining the acpi_lpss_resume_noirq() behavior.
+ * Make the new LPSS "restore" callbacks follow that behavior.
+
+---
+ drivers/acpi/acpi_lpss.c |   61 ++++++++++++++++++++++++++++++++++++++++-------
+ drivers/acpi/device_pm.c |   61 ++++++-----------------------------------------
+ include/linux/acpi.h     |   10 -------
+ 3 files changed, 61 insertions(+), 71 deletions(-)
+
+Index: linux-pm/drivers/acpi/device_pm.c
+===================================================================
+--- linux-pm.orig/drivers/acpi/device_pm.c
++++ linux-pm/drivers/acpi/device_pm.c
+@@ -1116,7 +1116,7 @@ EXPORT_SYMBOL_GPL(acpi_subsys_suspend_no
+  * acpi_subsys_resume_noirq - Run the device driver's "noirq" resume callback.
+  * @dev: Device to handle.
+  */
+-int acpi_subsys_resume_noirq(struct device *dev)
++static int acpi_subsys_resume_noirq(struct device *dev)
+ {
+ 	if (dev_pm_may_skip_resume(dev))
+ 		return 0;
+@@ -1131,7 +1131,6 @@ int acpi_subsys_resume_noirq(struct devi
  
-+	if (msm_host->use_14lpp_dll_reset && !IS_ERR_OR_NULL(msm_host->xo_clk))
-+		xo_clk = clk_get_rate(msm_host->xo_clk);
+ 	return pm_generic_resume_noirq(dev);
+ }
+-EXPORT_SYMBOL_GPL(acpi_subsys_resume_noirq);
+ 
+ /**
+  * acpi_subsys_resume_early - Resume device using ACPI.
+@@ -1141,12 +1140,11 @@ EXPORT_SYMBOL_GPL(acpi_subsys_resume_noi
+  * generic early resume procedure for it during system transition into the
+  * working state.
+  */
+-int acpi_subsys_resume_early(struct device *dev)
++static int acpi_subsys_resume_early(struct device *dev)
+ {
+ 	int ret = acpi_dev_resume(dev);
+ 	return ret ? ret : pm_generic_resume_early(dev);
+ }
+-EXPORT_SYMBOL_GPL(acpi_subsys_resume_early);
+ 
+ /**
+  * acpi_subsys_freeze - Run the device driver's freeze callback.
+@@ -1169,52 +1167,15 @@ int acpi_subsys_freeze(struct device *de
+ EXPORT_SYMBOL_GPL(acpi_subsys_freeze);
+ 
+ /**
+- * acpi_subsys_freeze_late - Run the device driver's "late" freeze callback.
+- * @dev: Device to handle.
+- */
+-int acpi_subsys_freeze_late(struct device *dev)
+-{
+-
+-	if (dev_pm_smart_suspend_and_suspended(dev))
+-		return 0;
+-
+-	return pm_generic_freeze_late(dev);
+-}
+-EXPORT_SYMBOL_GPL(acpi_subsys_freeze_late);
+-
+-/**
+- * acpi_subsys_freeze_noirq - Run the device driver's "noirq" freeze callback.
+- * @dev: Device to handle.
+- */
+-int acpi_subsys_freeze_noirq(struct device *dev)
+-{
+-
+-	if (dev_pm_smart_suspend_and_suspended(dev))
+-		return 0;
+-
+-	return pm_generic_freeze_noirq(dev);
+-}
+-EXPORT_SYMBOL_GPL(acpi_subsys_freeze_noirq);
+-
+-/**
+- * acpi_subsys_thaw_noirq - Run the device driver's "noirq" thaw callback.
+- * @dev: Device to handle.
++ * acpi_subsys_restore_early - Restore device using ACPI.
++ * @dev: Device to restore.
+  */
+-int acpi_subsys_thaw_noirq(struct device *dev)
++int acpi_subsys_restore_early(struct device *dev)
+ {
+-	/*
+-	 * If the device is in runtime suspend, the "thaw" code may not work
+-	 * correctly with it, so skip the driver callback and make the PM core
+-	 * skip all of the subsequent "thaw" callbacks for the device.
+-	 */
+-	if (dev_pm_smart_suspend_and_suspended(dev)) {
+-		dev_pm_skip_next_resume_phases(dev);
+-		return 0;
+-	}
+-
+-	return pm_generic_thaw_noirq(dev);
++	int ret = acpi_dev_resume(dev);
++	return ret ? ret : pm_generic_restore_early(dev);
+ }
+-EXPORT_SYMBOL_GPL(acpi_subsys_thaw_noirq);
++EXPORT_SYMBOL_GPL(acpi_subsys_restore_early);
+ #endif /* CONFIG_PM_SLEEP */
+ 
+ static struct dev_pm_domain acpi_general_pm_domain = {
+@@ -1230,14 +1191,10 @@ static struct dev_pm_domain acpi_general
+ 		.resume_noirq = acpi_subsys_resume_noirq,
+ 		.resume_early = acpi_subsys_resume_early,
+ 		.freeze = acpi_subsys_freeze,
+-		.freeze_late = acpi_subsys_freeze_late,
+-		.freeze_noirq = acpi_subsys_freeze_noirq,
+-		.thaw_noirq = acpi_subsys_thaw_noirq,
+ 		.poweroff = acpi_subsys_suspend,
+ 		.poweroff_late = acpi_subsys_suspend_late,
+ 		.poweroff_noirq = acpi_subsys_suspend_noirq,
+-		.restore_noirq = acpi_subsys_resume_noirq,
+-		.restore_early = acpi_subsys_resume_early,
++		.restore_early = acpi_subsys_restore_early,
+ #endif
+ 	},
+ };
+Index: linux-pm/include/linux/acpi.h
+===================================================================
+--- linux-pm.orig/include/linux/acpi.h
++++ linux-pm/include/linux/acpi.h
+@@ -918,26 +918,16 @@ int acpi_subsys_prepare(struct device *d
+ void acpi_subsys_complete(struct device *dev);
+ int acpi_subsys_suspend_late(struct device *dev);
+ int acpi_subsys_suspend_noirq(struct device *dev);
+-int acpi_subsys_resume_noirq(struct device *dev);
+-int acpi_subsys_resume_early(struct device *dev);
+ int acpi_subsys_suspend(struct device *dev);
+ int acpi_subsys_freeze(struct device *dev);
+-int acpi_subsys_freeze_late(struct device *dev);
+-int acpi_subsys_freeze_noirq(struct device *dev);
+-int acpi_subsys_thaw_noirq(struct device *dev);
+ #else
+ static inline int acpi_dev_resume_early(struct device *dev) { return 0; }
+ static inline int acpi_subsys_prepare(struct device *dev) { return 0; }
+ static inline void acpi_subsys_complete(struct device *dev) {}
+ static inline int acpi_subsys_suspend_late(struct device *dev) { return 0; }
+ static inline int acpi_subsys_suspend_noirq(struct device *dev) { return 0; }
+-static inline int acpi_subsys_resume_noirq(struct device *dev) { return 0; }
+-static inline int acpi_subsys_resume_early(struct device *dev) { return 0; }
+ static inline int acpi_subsys_suspend(struct device *dev) { return 0; }
+ static inline int acpi_subsys_freeze(struct device *dev) { return 0; }
+-static inline int acpi_subsys_freeze_late(struct device *dev) { return 0; }
+-static inline int acpi_subsys_freeze_noirq(struct device *dev) { return 0; }
+-static inline int acpi_subsys_thaw_noirq(struct device *dev) { return 0; }
+ #endif
+ 
+ #ifdef CONFIG_ACPI
+Index: linux-pm/drivers/acpi/acpi_lpss.c
+===================================================================
+--- linux-pm.orig/drivers/acpi/acpi_lpss.c
++++ linux-pm/drivers/acpi/acpi_lpss.c
+@@ -1091,16 +1091,62 @@ static int acpi_lpss_resume_noirq(struct
+ 	struct lpss_private_data *pdata = acpi_driver_data(ACPI_COMPANION(dev));
+ 	int ret;
+ 
+-	ret = acpi_subsys_resume_noirq(dev);
++	/* Follow acpi_subsys_resume_noirq(). */
++	if (dev_pm_may_skip_resume(dev))
++		return 0;
 +
- 	spin_lock_irqsave(&host->lock, flags);
++	if (dev_pm_smart_suspend_and_suspended(dev))
++		pm_runtime_set_active(dev);
++
++	ret = pm_generic_resume_noirq(dev);
+ 	if (ret)
+ 		return ret;
  
- 	/*
-@@ -627,10 +630,10 @@ static int msm_init_cm_dll(struct sdhci_host *host)
- 		config &= CORE_FLL_CYCLE_CNT;
- 		if (config)
- 			mclk_freq = DIV_ROUND_CLOSEST_ULL((host->clock * 8),
--					clk_get_rate(msm_host->xo_clk));
-+					xo_clk);
- 		else
- 			mclk_freq = DIV_ROUND_CLOSEST_ULL((host->clock * 4),
--					clk_get_rate(msm_host->xo_clk));
-+					xo_clk);
+-	if (!dev_pm_may_skip_resume(dev) && pdata->dev_desc->resume_from_noirq)
+-		ret = acpi_lpss_do_resume_early(dev);
++	if (!pdata->dev_desc->resume_from_noirq)
++		return 0;
++
++	/*
++	 * The driver's ->resume_early callback will be invoked by
++	 * acpi_lpss_do_resume_early(), with the assumption that the driver
++	 * really wanted to run that code in ->resume_noirq, but it could not
++	 * run before acpi_dev_resume() and the driver expected the latter to be
++	 * called in the "early" phase.
++	 */
++	return acpi_lpss_do_resume_early(dev);
++}
++
++static int acpi_lpss_do_restore_early(struct device *dev)
++{
++	int ret = acpi_lpss_resume(dev);
++
++	return ret ? ret : pm_generic_restore_early(dev);
++}
++
++static int acpi_lpss_restore_early(struct device *dev)
++{
++	struct lpss_private_data *pdata = acpi_driver_data(ACPI_COMPANION(dev));
++
++	if (pdata->dev_desc->resume_from_noirq)
++		return 0;
  
- 		config = readl_relaxed(host->ioaddr +
- 				msm_offset->core_dll_config_2);
--- 
-2.21.0
+-	return ret;
++	return acpi_lpss_do_restore_early(dev);
+ }
+ 
++static int acpi_lpss_restore_noirq(struct device *dev)
++{
++	struct lpss_private_data *pdata = acpi_driver_data(ACPI_COMPANION(dev));
++	int ret;
++
++	ret = pm_generic_restore_noirq(dev);
++	if (ret)
++		return ret;
++
++	if (!pdata->dev_desc->resume_from_noirq)
++		return 0;
++
++	/* This is analogous to what happens in acpi_lpss_resume_noirq(). */
++	return acpi_lpss_do_restore_early(dev);
++}
+ #endif /* CONFIG_PM_SLEEP */
+ 
+ static int acpi_lpss_runtime_suspend(struct device *dev)
+@@ -1134,14 +1180,11 @@ static struct dev_pm_domain acpi_lpss_pm
+ 		.resume_noirq = acpi_lpss_resume_noirq,
+ 		.resume_early = acpi_lpss_resume_early,
+ 		.freeze = acpi_subsys_freeze,
+-		.freeze_late = acpi_subsys_freeze_late,
+-		.freeze_noirq = acpi_subsys_freeze_noirq,
+-		.thaw_noirq = acpi_subsys_thaw_noirq,
+ 		.poweroff = acpi_subsys_suspend,
+ 		.poweroff_late = acpi_lpss_suspend_late,
+ 		.poweroff_noirq = acpi_lpss_suspend_noirq,
+-		.restore_noirq = acpi_lpss_resume_noirq,
+-		.restore_early = acpi_lpss_resume_early,
++		.restore_noirq = acpi_lpss_restore_noirq,
++		.restore_early = acpi_lpss_restore_early,
+ #endif
+ 		.runtime_suspend = acpi_lpss_runtime_suspend,
+ 		.runtime_resume = acpi_lpss_runtime_resume,
+
+
 
