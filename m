@@ -2,222 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B91A05BE18
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 16:23:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 383D75BE13
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 16:22:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729556AbfGAOXA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 10:23:00 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:46635 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727064AbfGAOXA (ORCPT
+        id S1729532AbfGAOWg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 10:22:36 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:41208 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727064AbfGAOWg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 10:23:00 -0400
-Received: by mail-qt1-f193.google.com with SMTP id h21so14776070qtn.13
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2019 07:22:59 -0700 (PDT)
+        Mon, 1 Jul 2019 10:22:36 -0400
+Received: by mail-io1-f65.google.com with SMTP id w25so29175807ioc.8
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2019 07:22:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=btB19IKd1k8U8AFXegKGIuJCLiqvpxzyOkY8GOJfQnQ=;
+        b=hanCNMW6XBQ9ko0So04XIcjf8oRLewRZVmW9+7bcPtobH+yCIR2NkbuTQwq3XoVPUe
+         L/bcXt7K5MxSM0o+nEwVyEspze7MxmsxVl3F54sn5FH4QYXfL4W2duJ6JixaMCo5j963
+         sqfhZwq2EWLsJSwho7hJPy5VUvnyPRpDnLCvGxpI0Hpocf7NdOjZFcNuOJiiTkVPRAsL
+         iTfzBsqM3PRdettAwvdJwz9tYgQd8V214v6BS5UFlSd9pzGDFjBQ+kONre+m94D5wbdR
+         nvFOF5FdBUGblmAA6UFbWB335aso2amFqL+WWr2z3FMMuhG3YBgv0qerKRmLT82zT+KZ
+         HJ4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=OmUFyqrNN9sq0ZRrSpIxJ5BWTUOqPUb104pbuNvBMyo=;
-        b=IOrsqTSTqLGE5h0+JOxY6CMZp567P5xMSwYBCGx8cHcpz3S6LOdza184Sgzn9W3Ia9
-         6vZaM9TS62Nxcf1NCsP/+su/bW/3Euyw6qApjDnKThvy6bnQ/CEcQNFU+3sApK6BWE0X
-         KUaet6QQMUvZgWMh9NIw3vSIGWweoii+pOHrKicKGJ+rd6vhnM7C6pAze3M007GFPLxK
-         AXHFlIzN55BaV2LjKBjMTXTX0inTveDecxxHz1rZftrlXFKplG5laJ2oQjQV1wS8ewvD
-         MMVB7Mrc6ZEQbMPtPdW1uK1PKNDtqZqv2LqYSxCf4ambZClaQ47W01x6rUxTniptwfD2
-         rVnQ==
-X-Gm-Message-State: APjAAAX++p2gSo5bn7DPPz73YMk9GUnuYH3FiSNxEdKsJH3Bvoj0vfe5
-        WAeqs7oH9ocn9+Ua+TlMvj8dZg==
-X-Google-Smtp-Source: APXvYqztU+rrvBg2COujrfs5dvhOsWNrkGwA5oSm17/fSAfVJk0yP87nIwCfT9SyHEU4ES7CV30Tdw==
-X-Received: by 2002:a0c:acfb:: with SMTP id n56mr21744226qvc.87.1561990645035;
-        Mon, 01 Jul 2019 07:17:25 -0700 (PDT)
-Received: from redhat.com ([185.120.125.12])
-        by smtp.gmail.com with ESMTPSA id 18sm4904132qke.131.2019.07.01.07.17.19
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 01 Jul 2019 07:17:23 -0700 (PDT)
-Date:   Mon, 1 Jul 2019 10:17:11 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Cc:     virtualization@lists.linux-foundation.org,
-        linuxppc-dev@lists.ozlabs.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, Jason Wang <jasowang@redhat.com>,
-        Christoph Hellwig <hch@lst.de>,
-        David Gibson <david@gibson.dropbear.id.au>,
-        Alexey Kardashevskiy <aik@linux.ibm.com>,
-        Paul Mackerras <paulus@ozlabs.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Ram Pai <linuxram@us.ibm.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        Michael Roth <mdroth@linux.vnet.ibm.com>,
-        Mike Anderson <andmike@linux.ibm.com>
-Subject: Re: [RFC PATCH] virtio_ring: Use DMA API if guest memory is encrypted
-Message-ID: <20190701092212-mutt-send-email-mst@kernel.org>
-References: <20190204144048-mutt-send-email-mst@kernel.org>
- <87ef71seve.fsf@morokweng.localdomain>
- <20190320171027-mutt-send-email-mst@kernel.org>
- <87tvfvbwpb.fsf@morokweng.localdomain>
- <20190323165456-mutt-send-email-mst@kernel.org>
- <87a7go71hz.fsf@morokweng.localdomain>
- <20190520090939-mutt-send-email-mst@kernel.org>
- <877ea26tk8.fsf@morokweng.localdomain>
- <20190603211528-mutt-send-email-mst@kernel.org>
- <877e96qxm7.fsf@morokweng.localdomain>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=btB19IKd1k8U8AFXegKGIuJCLiqvpxzyOkY8GOJfQnQ=;
+        b=WHledQs6B9yAAFihPc/bX0VIEv4k8uhsW964FIJIaPM/6OlSJrFj0cGR8e2jVDo1L9
+         WvPlCj4+dGcDHTegl7sc/nWjhX6JCNryqQBpGKYEIeL0R9UXow08/KjJnWxt0e2dMK2g
+         AXVgRev/c4Sviwlp7sXepfqS2ouo88gUICai1xoBbtHHKoAmuJ1UdfvyK6l3KG5maQG4
+         7QuWq9hhtFPiFcF51P/Uk1P7ou5lxkf2OVYt1MnADJs9UX/P6CIaXFaNQaQNhIu0/mFp
+         vplFRC9FFdtq8MevMzD26sOzyQNHUsqkMBfdGYCEP3WEnJmzLdy4acxA+RIQChn2hraT
+         UT5A==
+X-Gm-Message-State: APjAAAWL30MHBY3nsSwkdACq8U5atHfdufy5OtKQcAq/GeFrALb/jEGF
+        xbd1Af0V6rGOOzpPJqGxKyapIigUFiErQEOl
+X-Google-Smtp-Source: APXvYqzWSCyKremeC+uWScZlpj90RzZsz6orOU/jtDmTV5iUCLcQrENtk3Y2DtKHKviMqHbGkTVi0Q==
+X-Received: by 2002:a6b:ce19:: with SMTP id p25mr27241142iob.201.1561990954936;
+        Mon, 01 Jul 2019 07:22:34 -0700 (PDT)
+Received: from [192.168.1.158] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id q15sm10426451ioi.15.2019.07.01.07.22.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 01 Jul 2019 07:22:33 -0700 (PDT)
+Subject: Re: [PATCH] block: fix a crash in do_task_dead()
+To:     Hugh Dickins <hughd@google.com>, Oleg Nesterov <oleg@redhat.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>, Qian Cai <cai@lca.pw>,
+        akpm@linux-foundation.org, hch@lst.de, gkohli@codeaurora.org,
+        mingo@redhat.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <1559161526-618-1-git-send-email-cai@lca.pw>
+ <20190530080358.GG2623@hirez.programming.kicks-ass.net>
+ <82e88482-1b53-9423-baad-484312957e48@kernel.dk>
+ <20190603123705.GB3419@hirez.programming.kicks-ass.net>
+ <ddf9ee34-cd97-a62b-6e91-6b4511586339@kernel.dk>
+ <alpine.LSU.2.11.1906301542410.1105@eggly.anvils>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <97d2f5cc-fe98-f28e-86ce-6fbdeb8b67bd@kernel.dk>
+Date:   Mon, 1 Jul 2019 08:22:32 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <877e96qxm7.fsf@morokweng.localdomain>
+In-Reply-To: <alpine.LSU.2.11.1906301542410.1105@eggly.anvils>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 27, 2019 at 10:58:40PM -0300, Thiago Jung Bauermann wrote:
+On 6/30/19 5:06 PM, Hugh Dickins wrote:
+> On Wed, 5 Jun 2019, Jens Axboe wrote:
+>>
+>> How about the following plan - if folks are happy with this sched patch,
+>> we can queue it up for 5.3. Once that is in, I'll kill the block change
+>> that special cases the polled task wakeup. For 5.2, we go with Oleg's
+>> patch for the swap case.
 > 
-> Michael S. Tsirkin <mst@redhat.com> writes:
+> I just hit the do_task_dead() kernel BUG at kernel/sched/core.c:3463!
+> while heavy swapping on 5.2-rc7: it looks like Oleg's patch intended
+> for 5.2 was not signed off, and got forgotten.
 > 
-> > On Mon, Jun 03, 2019 at 10:13:59PM -0300, Thiago Jung Bauermann wrote:
-> >>
-> >>
-> >> Michael S. Tsirkin <mst@redhat.com> writes:
-> >>
-> >> > On Wed, Apr 17, 2019 at 06:42:00PM -0300, Thiago Jung Bauermann wrote:
-> >> >> I rephrased it in terms of address translation. What do you think of
-> >> >> this version? The flag name is slightly different too:
-> >> >>
-> >> >>
-> >> >> VIRTIO_F_ACCESS_PLATFORM_NO_TRANSLATION This feature has the same
-> >> >>     meaning as VIRTIO_F_ACCESS_PLATFORM both when set and when not set,
-> >> >>     with the exception that address translation is guaranteed to be
-> >> >>     unnecessary when accessing memory addresses supplied to the device
-> >> >>     by the driver. Which is to say, the device will always use physical
-> >> >>     addresses matching addresses used by the driver (typically meaning
-> >> >>     physical addresses used by the CPU) and not translated further. This
-> >> >>     flag should be set by the guest if offered, but to allow for
-> >> >>     backward-compatibility device implementations allow for it to be
-> >> >>     left unset by the guest. It is an error to set both this flag and
-> >> >>     VIRTIO_F_ACCESS_PLATFORM.
-> >> >
-> >> >
-> >> >
-> >> >
-> >> > OK so VIRTIO_F_ACCESS_PLATFORM is designed to allow unpriveledged
-> >> > drivers. This is why devices fail when it's not negotiated.
-> >>
-> >> Just to clarify, what do you mean by unprivileged drivers? Is it drivers
-> >> implemented in guest userspace such as with VFIO? Or unprivileged in
-> >> some other sense such as needing to use bounce buffers for some reason?
-> >
-> > I had drivers in guest userspace in mind.
+> I did hit the do_task_dead() BUG (but not at all easily) on early -rcs
+> before seeing Oleg's patch, then folded it in and and didn't hit the BUG
+> again; then just tried again without it, and luckily hit in a few hours.
 > 
-> Great. Thanks for clarifying.
+> So I can give it an enthusiastic
+> Acked-by: Hugh Dickins <hughd@google.com>
+> because it makes good sense to avoid the get/blk_wake/put overhead on
+> the asynch path anyway, even if it didn't work around a bug; but only
+> Half-Tested-by: Hugh Dickins <hughd@google.com>
+> since I have not been exercising the synchronous path at all.
+
+I'll take the blame for that, went away on vacation for 3 weeks...
+But yes, for 5.2, the patch from Oleg looks fine. Once Peter's other
+change is in mainline, I'll go through and remove these special cases.
+
+Andrew, can you queue Oleg's patch for 5.2? You can also add my:
+
+Reviewed-by: Jens Axboe <axboe@kernel.dk>
+
+to it.
+
 > 
-> I don't think this flag would work for guest userspace drivers. Should I
-> add a note about that in the flag definition?
-
-I think you need to clarify access protection rules. Is it only
-translation that is bypassed or is any platform-specific
-protection mechanism bypassed too?
-
-> >> > This confuses me.
-> >> > If driver is unpriveledged then what happens with this flag?
-> >> > It can supply any address it wants. Will that corrupt kernel
-> >> > memory?
-> >>
-> >> Not needing address translation doesn't necessarily mean that there's no
-> >> IOMMU. On powerpc we don't use VIRTIO_F_ACCESS_PLATFORM but there's
-> >> always an IOMMU present. And we also support VFIO drivers. The VFIO API
-> >> for pseries (sPAPR section in Documentation/vfio.txt) has extra ioctls
-> >> to program the IOMMU.
-> >>
-> >> For our use case, we don't need address translation because we set up an
-> >> identity mapping in the IOMMU so that the device can use guest physical
-> >> addresses.
-
-OK so I think I am beginning to see it in a different light.  Right now the specific
-platform creates an identity mapping. That in turn means DMA API can be
-fast - it does not need to do anything.  What you are looking for is a
-way to tell host it's an identity mapping - just as an optimization.
-
-Is that right?  So this is what I would call this option:
-
-VIRTIO_F_ACCESS_PLATFORM_IDENTITY_ADDRESS
-
-and the explanation should state that all device
-addresses are translated by the platform to identical
-addresses.
-
-In fact this option then becomes more, not less restrictive
-than VIRTIO_F_ACCESS_PLATFORM - it's a promise
-by guest to only create identity mappings,
-and only before driver_ok is set.
-This option then would always be negotiated together with
-VIRTIO_F_ACCESS_PLATFORM.
-
-Host then must verify that
-1. full 1:1 mappings are created before driver_ok
-    or can we make sure this happens before features_ok?
-    that would be ideal as we could require that features_ok fails
-2. mappings are not modified between driver_ok and reset
-    i guess attempts to change them will fail -
-    possibly by causing a guest crash
-    or some other kind of platform-specific error
-
-So far so good, but now a question:
-
-how are we handling guest address width limitations?
-Is VIRTIO_F_ACCESS_PLATFORM_IDENTITY_ADDRESS subject to
-guest address width limitations?
-I am guessing we can make them so ...
-This needs to be documented.
-
-
-
-
-> >
-> > And can it access any guest physical address?
+> Hugh, requoting Oleg:
 > 
-> Sorry, I was mistaken. We do support VFIO in guests but not for virtio
-> devices, only for regular PCI devices. In which case they will use
-> address translation.
+>>
+>> I don't understand this code at all but I am just curious, can we do
+>> something like incomplete patch below ?
+>>
+>> Oleg.
+>>
+>> --- x/mm/page_io.c
+>> +++ x/mm/page_io.c
+>> @@ -140,8 +140,10 @@ int swap_readpage(struct page *page, bool synchronous)
+>>   	unlock_page(page);
+>>   	WRITE_ONCE(bio->bi_private, NULL);
+>>   	bio_put(bio);
+>> -	blk_wake_io_task(waiter);
+>> -	put_task_struct(waiter);
+>> +	if (waiter) {
+>> +		blk_wake_io_task(waiter);
+>> +		put_task_struct(waiter);
+>> +	}
+>>   }
+>>   
+>>   int generic_swapfile_activate(struct swap_info_struct *sis,
+>> @@ -398,11 +400,12 @@ int swap_readpage(struct page *page, boo
+>>   	 * Keep this task valid during swap readpage because the oom killer may
+>>   	 * attempt to access it in the page fault retry time check.
+>>   	 */
+>> -	get_task_struct(current);
+>> -	bio->bi_private = current;
+>>   	bio_set_op_attrs(bio, REQ_OP_READ, 0);
+>> -	if (synchronous)
+>> +	if (synchronous) {
+>>   		bio->bi_opf |= REQ_HIPRI;
+>> +		get_task_struct(current);
+>> +		bio->bi_private = current;
+>> +	}
+>>   	count_vm_event(PSWPIN);
+>>   	bio_get(bio);
+>>   	qc = submit_bio(bio);
 
-Not sure how this answers the question.
 
+-- 
+Jens Axboe
 
-> >> If the guest kernel is concerned that an unprivileged driver could
-> >> jeopardize its integrity it should not negotiate this feature flag.
-> >
-> > Unfortunately flag negotiation is done through config space
-> > and so can be overwritten by the driver.
-> 
-> Ok, so the guest kernel has to forbid VFIO access on devices where this
-> flag is advertised.
-
-That's possible in theory but in practice we did not yet teach VFIO not
-to attach to legacy devices without VIRTIO_F_ACCESS_PLATFORM.  So all
-security relies on host denying driver_ok without
-VIRTIO_F_ACCESS_PLATFORM.  New options that bypass guest security are
-thus tricky as they can create security holes for existing guests.
-I'm open to ideas about how to do this in a safe way,
-
-
-> >> Perhaps there should be a note about this in the flag definition? This
-> >> concern is platform-dependant though. I don't believe it's an issue in
-> >> pseries.
-> >
-> > Again ACCESS_PLATFORM has a pretty open definition. It does actually
-> > say it's all up to the platform.
-> >
-> > Specifically how will VIRTIO_F_ACCESS_PLATFORM_NO_TRANSLATION be
-> > implemented portably? virtio has no portable way to know
-> > whether DMA API bypasses translation.
-> 
-> The fact that VIRTIO_F_ACCESS_PLATFORM_NO_TRANSLATION is set
-> communicates that knowledge to virtio. There is a shared understanding
-> between the guest and the host about what this flag being set means.
-
-Right but I wonder how are you going to *actually* implement it on Linux?
-Are you adding a new set of DMA APIs that do everything except
-translation?
-
-> --
-> Thiago Jung Bauermann
-> IBM Linux Technology Center
