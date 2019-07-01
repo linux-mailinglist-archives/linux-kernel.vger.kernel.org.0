@@ -2,184 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 325A25C524
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 23:45:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50C7D5C52D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 23:50:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726960AbfGAVpX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 17:45:23 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:37755 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726586AbfGAVpW (ORCPT
+        id S1727069AbfGAVuQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 17:50:16 -0400
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:50380 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727028AbfGAVuQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 17:45:22 -0400
-Received: by mail-qk1-f193.google.com with SMTP id d15so12315903qkl.4
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2019 14:45:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=1qBRMJRV8Yo1wnFWyu6TaXxSgsCcog45RWGTZOE20y8=;
-        b=gZYBmH4fBds6gfRjY+VDo860xDB3uuGJyCjkVtjbY+Vk8ATr9J/X+95c1zryvFTCX3
-         M0f8+EyZFpuX2mxv3ATefWzvHn6a+E3imwfUWrIJTIR6gXi54yio7xFv4bnmJD1luRpb
-         Kk5lWXvjEwpXswsuUvtejOkrCLccdLa7UzKxF2R61azzYPtwbKiPFgLqSDLCAooK3Jnn
-         tbYP5Ug4DhU/7N6jdlYLFq1bVGW/0Glx4ttTnyQiOxoTHF4u5v4m+ziRcagib6ZlGA36
-         4000QmlXBRoMZ5x4dNL5i6cEV8mt+wMJsUwp3Xz6LBfFJqc2WNXRsT4Qc/e3jjoCDWxN
-         dHIw==
-X-Gm-Message-State: APjAAAX1T4sqacW8+Tfp/PucjB0DD8GjpAGeOinLW43m44Te+zRBghCu
-        dHkVkgAfkkdSxGApQMi8KQMOJw==
-X-Google-Smtp-Source: APXvYqxWeb2Amjv7FTKwjLmAisC7y6M5bySfO+cQ1FLIBpDRelRoUJZyO72G1BDW03KKh+aegnVJTw==
-X-Received: by 2002:a37:505:: with SMTP id 5mr22571376qkf.277.1562017521083;
-        Mon, 01 Jul 2019 14:45:21 -0700 (PDT)
-Received: from [192.168.1.157] (pool-96-235-39-235.pitbpa.fios.verizon.net. [96.235.39.235])
-        by smtp.gmail.com with ESMTPSA id l6sm5055233qkc.89.2019.07.01.14.45.19
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Mon, 01 Jul 2019 14:45:20 -0700 (PDT)
-Subject: Re: [PATCH v6 0/5] DMA-BUF Heaps (destaging ION)
-To:     John Stultz <john.stultz@linaro.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Cc:     Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Liam Mark <lmark@codeaurora.org>,
-        Pratik Patel <pratikp@codeaurora.org>,
-        Brian Starkey <Brian.Starkey@arm.com>,
-        Vincent Donnefort <Vincent.Donnefort@arm.com>,
-        Sudipto Paul <Sudipto.Paul@arm.com>,
-        "Andrew F . Davis" <afd@ti.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Chenbo Feng <fengc@google.com>,
-        Alistair Strachan <astrachan@google.com>,
-        dri-devel@lists.freedesktop.org
-References: <20190624194908.121273-1-john.stultz@linaro.org>
-From:   Laura Abbott <labbott@redhat.com>
-Message-ID: <8e19047d-b0b0-506f-7c3d-cd09075b9da7@redhat.com>
-Date:   Mon, 1 Jul 2019 17:45:19 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Mon, 1 Jul 2019 17:50:16 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R501e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04391;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0TVobKD8_1562017791;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TVobKD8_1562017791)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 02 Jul 2019 05:50:07 +0800
+Subject: Re: [PATCH v2] mm, vmscan: prevent useless kswapd loops
+To:     Shakeel Butt <shakeelb@google.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Hillf Danton <hdanton@sina.com>, Roman Gushchin <guro@fb.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20190701201847.251028-1-shakeelb@google.com>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <350a5c6f-4cf2-953e-7b6c-89460b11d297@linux.alibaba.com>
+Date:   Mon, 1 Jul 2019 14:49:50 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20190624194908.121273-1-john.stultz@linaro.org>
+In-Reply-To: <20190701201847.251028-1-shakeelb@google.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/24/19 3:49 PM, John Stultz wrote:
-> Here is another pass at the dma-buf heaps patchset Andrew and I
-> have been working on which tries to destage a fair chunk of ION
-> functionality.
-> 
 
-I've gotten bogged down with both work and personal tasks
-so I haven't had a chance to look too closely but, once again,
-I'm happy to see this continue to move forward.
 
-> The patchset implements per-heap devices which can be opened
-> directly and then an ioctl is used to allocate a dmabuf from the
-> heap.
-> 
-> The interface is similar, but much simpler then IONs, only
-> providing an ALLOC ioctl.
-> 
-> Also, I've provided relatively simple system and cma heaps.
-> 
-> I've booted and tested these patches with AOSP on the HiKey960
-> using the kernel tree here:
->    https://git.linaro.org/people/john.stultz/android-dev.git/log/?h=dev/dma-buf-heap
-> 
-> And the userspace changes here:
->    https://android-review.googlesource.com/c/device/linaro/hikey/+/909436
-> 
-> Compared to ION, this patchset is missing the system-contig,
-> carveout and chunk heaps, as I don't have a device that uses
-> those, so I'm unable to do much useful validation there.
-> Additionally we have no upstream users of chunk or carveout,
-> and the system-contig has been deprecated in the common/andoid-*
-> kernels, so this should be ok.
-> 
-> I've also removed the stats accounting for now, since any such
-> accounting should be implemented by dma-buf core or the heaps
-> themselves.
-> 
-> 
-> New in v6:
-> * Number of cleanups and error path fixes suggested by Brian Starkey,
->    many thanks for his close review and suggestions!
-> 
-> 
-> Outstanding concerns:
-> * Need to better understand various secure heap implementations.
->    Some concern that heap private flags will be needed, but its
->    also possible that dma-buf heaps can't solve everyone's needs,
->    in which case, a vendor's secure buffer driver can implement
->    their own dma-buf exporter. So I'm not too worried here.
-> 
+On 7/1/19 1:18 PM, Shakeel Butt wrote:
+> On production we have noticed hard lockups on large machines running
+> large jobs due to kswaps hoarding lru lock within isolate_lru_pages when
+> sc->reclaim_idx is 0 which is a small zone. The lru was couple hundred
+> GiBs and the condition (page_zonenum(page) > sc->reclaim_idx) in
+> isolate_lru_pages was basically skipping GiBs of pages while holding the
+> LRU spinlock with interrupt disabled.
+>
+> On further inspection, it seems like there are two issues:
+>
+> 1) If the kswapd on the return from balance_pgdat() could not sleep
+> (i.e. node is still unbalanced), the classzone_idx is unintentionally
+> set to 0  and the whole reclaim cycle of kswapd will try to reclaim
+> only the lowest and smallest zone while traversing the whole memory.
+>
+> 2) Fundamentally isolate_lru_pages() is really bad when the allocation
+> has woken kswapd for a smaller zone on a very large machine running very
+> large jobs. It can hoard the LRU spinlock while skipping over 100s of
+> GiBs of pages.
+>
+> This patch only fixes the (1). The (2) needs a more fundamental solution.
+> To fix (1), in the kswapd context, if pgdat->kswapd_classzone_idx is
+> invalid use the classzone_idx of the previous kswapd loop otherwise use
+> the one the waker has requested.
+>
+> Fixes: e716f2eb24de ("mm, vmscan: prevent kswapd sleeping prematurely
+> due to mismatched classzone_idx")
+>
+> Signed-off-by: Shakeel Butt <shakeelb@google.com>
+> ---
+> Changelog since v1:
+> - fixed the patch based on Yang Shi's comment.
+>
+>   mm/vmscan.c | 27 +++++++++++++++------------
+>   1 file changed, 15 insertions(+), 12 deletions(-)
+>
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> index 9e3292ee5c7c..eacf87f07afe 100644
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -3760,19 +3760,18 @@ static int balance_pgdat(pg_data_t *pgdat, int order, int classzone_idx)
+>   }
+>   
+>   /*
+> - * pgdat->kswapd_classzone_idx is the highest zone index that a recent
+> - * allocation request woke kswapd for. When kswapd has not woken recently,
+> - * the value is MAX_NR_ZONES which is not a valid index. This compares a
+> - * given classzone and returns it or the highest classzone index kswapd
+> - * was recently woke for.
+> + * The pgdat->kswapd_classzone_idx is used to pass the highest zone index to be
+> + * reclaimed by kswapd from the waker. If the value is MAX_NR_ZONES which is not
+> + * a valid index then either kswapd runs for first time or kswapd couldn't sleep
+> + * after previous reclaim attempt (node is still unbalanced). In that case
+> + * return the zone index of the previous kswapd reclaim cycle.
+>    */
+>   static enum zone_type kswapd_classzone_idx(pg_data_t *pgdat,
+> -					   enum zone_type classzone_idx)
+> +					   enum zone_type prev_classzone_idx)
+>   {
+>   	if (pgdat->kswapd_classzone_idx == MAX_NR_ZONES)
+> -		return classzone_idx;
+> -
+> -	return max(pgdat->kswapd_classzone_idx, classzone_idx);
+> +		return prev_classzone_idx;
+> +	return pgdat->kswapd_classzone_idx;
+>   }
+>   
+>   static void kswapd_try_to_sleep(pg_data_t *pgdat, int alloc_order, int reclaim_order,
+> @@ -3908,7 +3907,7 @@ static int kswapd(void *p)
+>   
+>   		/* Read the new order and classzone_idx */
+>   		alloc_order = reclaim_order = pgdat->kswapd_order;
+> -		classzone_idx = kswapd_classzone_idx(pgdat, 0);
+> +		classzone_idx = kswapd_classzone_idx(pgdat, classzone_idx);
+>   		pgdat->kswapd_order = 0;
+>   		pgdat->kswapd_classzone_idx = MAX_NR_ZONES;
+>   
+> @@ -3961,8 +3960,12 @@ void wakeup_kswapd(struct zone *zone, gfp_t gfp_flags, int order,
+>   	if (!cpuset_zone_allowed(zone, gfp_flags))
+>   		return;
+>   	pgdat = zone->zone_pgdat;
+> -	pgdat->kswapd_classzone_idx = kswapd_classzone_idx(pgdat,
+> -							   classzone_idx);
+> +
+> +	if (pgdat->kswapd_classzone_idx == MAX_NR_ZONES)
+> +		pgdat->kswapd_classzone_idx = classzone_idx;
+> +	else
+> +		pgdat->kswapd_classzone_idx = max(pgdat->kswapd_classzone_idx,
+> +						  classzone_idx);
+>   	pgdat->kswapd_order = max(pgdat->kswapd_order, order);
+>   	if (!waitqueue_active(&pgdat->kswapd_wait))
+>   		return;
 
-syzbot found a DoS with Ion which I ACKed a fix for.
-https://lore.kernel.org/lkml/03763360-a7de-de87-eb90-ba7838143930@I-love.SAKURA.ne.jp/
-This series doesn't have the page pooling so that particular bug may
-not be applicable but given this is not the first time I've
-seen Ion used as a DoS mechanism, it would be good to think about
-putting in some basic checks.
+I agree the manipulation to classzone_idx looks convoluted. This version 
+looks correct to me. You could add: Reviewed-by: Yang Shi 
+<yang.shi@linux.alibaba.com>
 
-Thanks,
-Laura
-
-> Thoughts and feedback would be greatly appreciated!
-> 
-> thanks
-> -john
-> 
-> Cc: Laura Abbott <labbott@redhat.com>
-> Cc: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-> Cc: Sumit Semwal <sumit.semwal@linaro.org>
-> Cc: Liam Mark <lmark@codeaurora.org>
-> Cc: Pratik Patel <pratikp@codeaurora.org>
-> Cc: Brian Starkey <Brian.Starkey@arm.com>
-> Cc: Vincent Donnefort <Vincent.Donnefort@arm.com>
-> Cc: Sudipto Paul <Sudipto.Paul@arm.com>
-> Cc: Andrew F. Davis <afd@ti.com>
-> Cc: Christoph Hellwig <hch@infradead.org>
-> Cc: Chenbo Feng <fengc@google.com>
-> Cc: Alistair Strachan <astrachan@google.com>
-> Cc: dri-devel@lists.freedesktop.org
-> 
-> Andrew F. Davis (1):
->    dma-buf: Add dma-buf heaps framework
-> 
-> John Stultz (4):
->    dma-buf: heaps: Add heap helpers
->    dma-buf: heaps: Add system heap to dmabuf heaps
->    dma-buf: heaps: Add CMA heap to dmabuf heaps
->    kselftests: Add dma-heap test
-> 
->   MAINTAINERS                                   |  18 ++
->   drivers/dma-buf/Kconfig                       |  10 +
->   drivers/dma-buf/Makefile                      |   2 +
->   drivers/dma-buf/dma-heap.c                    | 249 +++++++++++++++++
->   drivers/dma-buf/heaps/Kconfig                 |  14 +
->   drivers/dma-buf/heaps/Makefile                |   4 +
->   drivers/dma-buf/heaps/cma_heap.c              | 169 +++++++++++
->   drivers/dma-buf/heaps/heap-helpers.c          | 262 ++++++++++++++++++
->   drivers/dma-buf/heaps/heap-helpers.h          |  54 ++++
->   drivers/dma-buf/heaps/system_heap.c           | 121 ++++++++
->   include/linux/dma-heap.h                      |  59 ++++
->   include/uapi/linux/dma-heap.h                 |  55 ++++
->   tools/testing/selftests/dmabuf-heaps/Makefile |   9 +
->   .../selftests/dmabuf-heaps/dmabuf-heap.c      | 234 ++++++++++++++++
->   14 files changed, 1260 insertions(+)
->   create mode 100644 drivers/dma-buf/dma-heap.c
->   create mode 100644 drivers/dma-buf/heaps/Kconfig
->   create mode 100644 drivers/dma-buf/heaps/Makefile
->   create mode 100644 drivers/dma-buf/heaps/cma_heap.c
->   create mode 100644 drivers/dma-buf/heaps/heap-helpers.c
->   create mode 100644 drivers/dma-buf/heaps/heap-helpers.h
->   create mode 100644 drivers/dma-buf/heaps/system_heap.c
->   create mode 100644 include/linux/dma-heap.h
->   create mode 100644 include/uapi/linux/dma-heap.h
->   create mode 100644 tools/testing/selftests/dmabuf-heaps/Makefile
->   create mode 100644 tools/testing/selftests/dmabuf-heaps/dmabuf-heap.c
-> 
 
