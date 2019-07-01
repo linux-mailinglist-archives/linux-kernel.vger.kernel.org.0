@@ -2,90 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00AB85C56E
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 23:58:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA4C95C58C
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 00:14:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726979AbfGAV6v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 17:58:51 -0400
-Received: from ozlabs.org ([203.11.71.1]:40639 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726688AbfGAV6v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 17:58:51 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45d1V01j0pz9sCJ;
-        Tue,  2 Jul 2019 07:58:48 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1562018328;
-        bh=9J0wwKydLgdI3bsqjijZAdXUoxwhwPYQ2053nI3tnlE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=L3hN91XZRsdQqfWVL7zYEK3pnSJM8qpspiiepWvLgqdVCzA1jU4Yog/AliLeI6i+Y
-         /5Bp2leJ+XfNGxRMMy/KBZAlBWrfqAZAzztgw5H3diDvZ0IFA+ZuB2lVQhFBUPa024
-         6HXzrbPVhuIbIVwHGXLFti3FdqJEAq5DP2uTVAV2X2rzeu/bEmCh5evOofQjP4L4DS
-         rr3oajdyjPWufgIUv6nIDCIkL/Um6CmqbdfCwBytyetQEYthULIlgbqTaHp25FuSvD
-         Q0Xbmtz6j4LRaUPMTqrkjwwoO2k6BB6a6ml3hHOTw5HNkoPmyLcv15oSIzDsH0AFDN
-         hLc++z5Mqd1pw==
-Date:   Tue, 2 Jul 2019 07:58:46 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Subject: Re: linux-next: manual merge of the char-misc tree with the
- driver-core tree
-Message-ID: <20190702075846.6f373a58@canb.auug.org.au>
-In-Reply-To: <20190701200418.GA72724@archlinux-epyc>
-References: <20190701190940.7f23ac15@canb.auug.org.au>
-        <20190701200418.GA72724@archlinux-epyc>
+        id S1726781AbfGAWOr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 18:14:47 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:58708 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726320AbfGAWOr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Jul 2019 18:14:47 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x61M90wO042017;
+        Mon, 1 Jul 2019 22:14:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=en4SXX022hwvX0x9G0+SnC+PnaP8ULXzHBhOeJ5wAfo=;
+ b=riEb/0iHU4DXypD8J+7SMIGCa9AdG//i4jdeiMmo8To4sgCcO28Ik0Lz0JZrZ4KqsGCM
+ QGIy/DNuQqpDiFO0txlZkRqg06IZxFWAd0zbK+Wg30lyVmcU8uPUpcExXuReeoDh5R5g
+ AXVDJPLa9eZ+kDJCFsheVK19WeAAkKQyPRg4m8GX1M8yN1twpXWwW0u4zL9N9XOPEAFW
+ 13CXQrCbkKzGVxzguEpOUNqcOgDvv+5leNHbImAF4ImYvqohkaRFim43Hl0eVytTEzJ6
+ 8x4nk/qgYU7aLhM1NByhw9tgKHCfRBrWq4ep2GBEDkJHRmx2oIxiasPB7aUxsqsvbkIj 3A== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 2te61e050p-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 01 Jul 2019 22:14:00 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x61MCxh2098486;
+        Mon, 1 Jul 2019 22:13:59 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3030.oracle.com with ESMTP id 2tebqg5w2n-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 01 Jul 2019 22:13:59 +0000
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x61MDwgS024959;
+        Mon, 1 Jul 2019 22:13:58 GMT
+Received: from [10.132.91.175] (/10.132.91.175)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 01 Jul 2019 15:13:58 -0700
+Subject: Re: [PATCH V3 2/2] sched/fair: Fallback to sched-idle CPU if idle CPU
+ isn't found
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>, tkjos@google.com,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        quentin.perret@linaro.org, chris.redpath@arm.com,
+        steven.sistare@oracle.com, songliubraving@fb.com
+References: <cover.1561523542.git.viresh.kumar@linaro.org>
+ <eeafa25fdeb6f6edd5b2da716bc8f0ba7708cbcf.1561523542.git.viresh.kumar@linaro.org>
+ <32bd769c-b692-8896-5cc9-d19ab0a23abb@oracle.com>
+ <20190701080349.homlsgia4fuaitek@vireshk-i7>
+From:   Subhra Mazumdar <subhra.mazumdar@oracle.com>
+Message-ID: <aeaa0dd5-8512-1b60-eb10-6a4aecfaaca3@oracle.com>
+Date:   Mon, 1 Jul 2019 15:08:41 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/3IQtb/CvFm.9JjvfO5fLJ=s"; protocol="application/pgp-signature"
+In-Reply-To: <20190701080349.homlsgia4fuaitek@vireshk-i7>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9305 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1907010258
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9305 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1907010257
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/3IQtb/CvFm.9JjvfO5fLJ=s
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi Nathan,
-
-On Mon, 1 Jul 2019 13:04:18 -0700 Nathan Chancellor <natechancellor@gmail.c=
-om> wrote:
+On 7/1/19 1:03 AM, Viresh Kumar wrote:
+> On 28-06-19, 18:16, Subhra Mazumdar wrote:
+>> On 6/25/19 10:06 PM, Viresh Kumar wrote:
+>>> We try to find an idle CPU to run the next task, but in case we don't
+>>> find an idle CPU it is better to pick a CPU which will run the task the
+>>> soonest, for performance reason.
+>>>
+>>> A CPU which isn't idle but has only SCHED_IDLE activity queued on it
+>>> should be a good target based on this criteria as any normal fair task
+>>> will most likely preempt the currently running SCHED_IDLE task
+>>> immediately. In fact, choosing a SCHED_IDLE CPU over a fully idle one
+>>> shall give better results as it should be able to run the task sooner
+>>> than an idle CPU (which requires to be woken up from an idle state).
+>>>
+>>> This patch updates both fast and slow paths with this optimization.
+>>>
+>>> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+>>> ---
+>>>    kernel/sched/fair.c | 43 +++++++++++++++++++++++++++++++++----------
+>>>    1 file changed, 33 insertions(+), 10 deletions(-)
+>>>
+>>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+>>> index 1277adc3e7ed..2e0527fd468c 100644
+>>> --- a/kernel/sched/fair.c
+>>> +++ b/kernel/sched/fair.c
+>>> @@ -5376,6 +5376,15 @@ static struct {
+>>>    #endif /* CONFIG_NO_HZ_COMMON */
+>>> +/* CPU only has SCHED_IDLE tasks enqueued */
+>>> +static int sched_idle_cpu(int cpu)
+>>> +{
+>>> +	struct rq *rq = cpu_rq(cpu);
+>>> +
+>>> +	return unlikely(rq->nr_running == rq->cfs.idle_h_nr_running &&
+>>> +			rq->nr_running);
+>>> +}
+>>> +
+>> Shouldn't this check if rq->curr is also sched idle?
+> Why wouldn't the current set of checks be enough to guarantee that ?
+I thought nr_running does not include the on-cpu thread.
 >
-> It looks like a similar fix is needed for the vhost tree because of
-> commit edcd69ab9a32 ("iommu: Add virtio-iommu driver") interacting with
-> commit 92ce7e83b4e5 ("driver_find_device: Unify the match function with
-> class_find_device()") in the driver-core tree (my patch is attached).
-
-Thanks for noticing that, I will add that to the merge of the vhost
-tree from today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/3IQtb/CvFm.9JjvfO5fLJ=s
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0aghYACgkQAVBC80lX
-0GwPnwf9EmXJg8/6H7wzvSSvMfy0MgctHyI6oXQHJfUwuL0oar5P3pWr4yamQlY6
-l52vQ4E5A3FAeI73GVP6Na8NRYQU0ZseB2ghuUXz+vpgdLkvw9dSSSjUBQNTUGOe
-fD4EN+mYXgnK4ptuA3H1e7Yhf6fYHmbo3nkx/vsG2eu6y3FFVroQqLRlClb5ODHx
-474YMfpV15jeT0sCkURNuNb31f0kB18Yj06kF2FevOxT87Z3oozSfYWXjdqP39Va
-GUyMRUKMwGsadVN1jIhPUgq0YvSIKnZSKD0RHMzS71kkR5OYHyobWR5BDlZUNHhz
-kT5AYqsAhZXA4ZlPAe99DRk1IHoaYA==
-=/zz9
------END PGP SIGNATURE-----
-
---Sig_/3IQtb/CvFm.9JjvfO5fLJ=s--
+>> And why not drop the rq->nr_running non zero check?
+> Because CPU isn't sched-idle if nr_running and idle_h_nr_running are both 0,
+> i.e. it is an IDLE cpu in that case. And so I thought it is important to have
+> this check as well.
+>
+idle_cpu() not only checks nr_running is 0 but also rq->curr == rq->idle
