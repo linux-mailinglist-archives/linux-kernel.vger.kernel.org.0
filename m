@@ -2,228 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12D8D5C46F
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 22:47:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C0F25C48E
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 22:50:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726908AbfGAUrO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 16:47:14 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:59914 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726509AbfGAUrJ (ORCPT
+        id S1726936AbfGAUuA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 16:50:00 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:41504 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726668AbfGAUt4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 16:47:09 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x61Kl5RR029592;
-        Mon, 1 Jul 2019 15:47:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1562014025;
-        bh=OJ7OEYPSj/BhZ+hG55lmCg91Yfw8PJn9vGw/+khfqjE=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=CTf95TpFkP5RGqV7E4HIojoGBcCxxAhEJQATNFNEPoZhOFcWxeKQLUsb4Ou0R0I6m
-         TlnyTHisRUS2Fo/eozVrRNqJp8w1BPDSil30FXxoPMFst53KeMxE6TaKJ23EZcVV9o
-         rZuLsCMhPH2W2j7lOFDL5giTKkghp43xpBHXyPrY=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x61Kl5YH110362
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 1 Jul 2019 15:47:05 -0500
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 1 Jul
- 2019 15:47:04 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Mon, 1 Jul 2019 15:47:04 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x61Kl4EJ098878;
-        Mon, 1 Jul 2019 15:47:04 -0500
-From:   Dan Murphy <dmurphy@ti.com>
-To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
-CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH v5 2/2] documention: leds: Add multicolor class documentation
-Date:   Mon, 1 Jul 2019 15:46:34 -0500
-Message-ID: <20190701204634.10517-3-dmurphy@ti.com>
-X-Mailer: git-send-email 2.22.0.214.g8dca754b1e
-In-Reply-To: <20190701204634.10517-1-dmurphy@ti.com>
-References: <20190701204634.10517-1-dmurphy@ti.com>
+        Mon, 1 Jul 2019 16:49:56 -0400
+Received: by mail-wr1-f66.google.com with SMTP id c2so15277776wrm.8;
+        Mon, 01 Jul 2019 13:49:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=VCmoEt1Ue1y9VkurCH5AlBvlPQd2obDODoXHcT2LGG0=;
+        b=CHsJ7O6YLTSUGTp2J3n+RvMgjHGbg5/obunCB+5VwvEmMTNfEoU6Q2wlo5JiuHaYs7
+         TbIHOxmdSqjYRn55hMHjghl99GOhyvHAENwkmfKPV3LtWNTYMLr7fhC1Ts/T3R1dHnnc
+         c7XttDkysklUMw0ZJxGhfSavkE7ewMFaJ2sTE9rvb6RD+FyABkH8T0DBFxWkum+yY6JZ
+         UOm+K7PKxRzNMLj70njilPA4O1FnPcNnL1p9DpuEkSZRl/aygYfhaPxyR/iHnAxEyu00
+         YUsHqPYX2CM2PtK1KuTwb8GmLT6/f8ZBgIRMHc5LQAF9LryuQ5mpdAg5Xsjh+YlH2CVi
+         zW7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=VCmoEt1Ue1y9VkurCH5AlBvlPQd2obDODoXHcT2LGG0=;
+        b=o9VNRckj058ir4gEsxmpkVvyWt9PfdZ4QSlFOy3ia30E1nnByNSFdja3NKi6cg9DYt
+         7g3qzylYj/Vq91EjAAsDMFn27rAypDkEkONm/XyYbPOJw1J5OEH9WNutLsKSOakp0XbG
+         UvV/oWH+4+BS2y8LBF9MQwD+o2V+5/bE2CnZyjkCe7AhLlNJ9p39ZQuwgeUWFt8u3gW+
+         UbhL+Fi0MhsdJ67GghYYOPdIKLow3sxecVBCRA8FPxnRJmRy1RAu0nUUTPgQECke7FQn
+         DXgpBJbDbPtYjMS/frx3te8sX5RSA7/1ERaXqUWHO0k/esgXX7BQ0ofj3xnXiuybXV7a
+         WnUA==
+X-Gm-Message-State: APjAAAUCOMyG2NI8xuzYqM+UlwdYpszmymQF0ToO8LG6gt/rz9+g69rV
+        q8aMSPSu8SfxteMqQgBFtMI=
+X-Google-Smtp-Source: APXvYqxkqei9VSIPX35xxH8p1rMZtfavI1wFWFMsnUfB/NPJ9thE/Pbhcwi2N+SAWWi4UxxMf+ZUxw==
+X-Received: by 2002:a5d:5752:: with SMTP id q18mr14958894wrw.337.1562014194231;
+        Mon, 01 Jul 2019 13:49:54 -0700 (PDT)
+Received: from ?IPv6:2003:ea:8bd6:c00:8dac:9ad2:a34c:33bc? (p200300EA8BD60C008DAC9AD2A34C33BC.dip0.t-ipconnect.de. [2003:ea:8bd6:c00:8dac:9ad2:a34c:33bc])
+        by smtp.googlemail.com with ESMTPSA id i188sm892976wma.27.2019.07.01.13.49.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 01 Jul 2019 13:49:53 -0700 (PDT)
+Subject: Re: [PATCH 3/3] net: phy: realtek: Support SSC for the RTL8211E
+To:     Matthias Kaehlcke <mka@chromium.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>
+Cc:     netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Douglas Anderson <dianders@chromium.org>
+References: <20190701195225.120808-1-mka@chromium.org>
+ <20190701195225.120808-3-mka@chromium.org>
+From:   Heiner Kallweit <hkallweit1@gmail.com>
+Message-ID: <8adbb2b8-6747-b876-f85d-75e54f1978cb@gmail.com>
+Date:   Mon, 1 Jul 2019 22:49:45 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20190701195225.120808-3-mka@chromium.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the support documentation on the multicolor LED framework.
-This document defines the directores and file generated by the
-multicolor framework.  It also documents usage.
+On 01.07.2019 21:52, Matthias Kaehlcke wrote:
+> By default Spread-Spectrum Clocking (SSC) is disabled on the RTL8211E.
+> Enable it if the device tree property 'realtek,enable-ssc' exists.
+> 
+> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> ---
+>  drivers/net/phy/realtek.c | 27 ++++++++++++++++++++++++---
+>  1 file changed, 24 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/net/phy/realtek.c b/drivers/net/phy/realtek.c
+> index dfc2e20ef335..b617169ccc8c 100644
+> --- a/drivers/net/phy/realtek.c
+> +++ b/drivers/net/phy/realtek.c
+> @@ -9,8 +9,10 @@
+>   * Copyright (c) 2004 Freescale Semiconductor, Inc.
+>   */
+>  #include <linux/bitops.h>
+> -#include <linux/phy.h>
+> +#include <linux/device.h>
+> +#include <linux/of.h>
+>  #include <linux/module.h>
+> +#include <linux/phy.h>
+>  
+>  #define RTL821x_PHYSR				0x11
+>  #define RTL821x_PHYSR_DUPLEX			BIT(13)
+> @@ -28,6 +30,8 @@
+>  
+>  #define RTL8211E_EXT_PAGE			7
+>  #define RTL8211E_EPAGSR				0x1e
+> +#define RTL8211E_SCR				0x1a
+> +#define RTL8211E_SCR_DISABLE_RXC_SSC		BIT(2)
+>  
+>  #define RTL8211F_INSR				0x1d
+>  
+> @@ -87,8 +91,8 @@ static int rtl821e_restore_page(struct phy_device *phydev, int oldpage, int ret)
+>  	return ret;
+>  }
+>  
+> -static int __maybe_unused rtl8211e_modify_ext_paged(struct phy_device *phydev,
+> -				    int page, u32 regnum, u16 mask, u16 set)
+> +static int rtl8211e_modify_ext_paged(struct phy_device *phydev, int page,
+> +				     u32 regnum, u16 mask, u16 set)
+>  {
+>  	int ret = 0;
+>  	int oldpage;
+> @@ -114,6 +118,22 @@ static int __maybe_unused rtl8211e_modify_ext_paged(struct phy_device *phydev,
+>  	return rtl821e_restore_page(phydev, oldpage, ret);
+>  }
+>  
+> +static int rtl8211e_probe(struct phy_device *phydev)
+> +{
+> +	struct device *dev = &phydev->mdio.dev;
+> +	int err;
+> +
+> +	if (of_property_read_bool(dev->of_node, "realtek,enable-ssc")) {
+> +		err = rtl8211e_modify_ext_paged(phydev, 0xa0, RTL8211E_SCR,
+> +						RTL8211E_SCR_DISABLE_RXC_SSC,
+> +						0);
+> +		if (err)
+> +			dev_err(dev, "failed to enable SSC on RXC: %d\n", err);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static int rtl8201_ack_interrupt(struct phy_device *phydev)
+>  {
+>  	int err;
+> @@ -372,6 +392,7 @@ static struct phy_driver realtek_drvs[] = {
+>  		.config_init	= &rtl8211e_config_init,
+>  		.ack_interrupt	= &rtl821x_ack_interrupt,
+>  		.config_intr	= &rtl8211e_config_intr,
+> +		.probe          = rtl8211e_probe,
 
-Signed-off-by: Dan Murphy <dmurphy@ti.com>
----
- Documentation/leds/leds-class-multicolor.txt | 152 +++++++++++++++++++
- 1 file changed, 152 insertions(+)
- create mode 100644 Documentation/leds/leds-class-multicolor.txt
+I'm not sure whether this setting survives soft reset and power-down.
+Maybe it should be better applied in the config_init callback.
 
-diff --git a/Documentation/leds/leds-class-multicolor.txt b/Documentation/leds/leds-class-multicolor.txt
-new file mode 100644
-index 000000000000..01175288502e
---- /dev/null
-+++ b/Documentation/leds/leds-class-multicolor.txt
-@@ -0,0 +1,152 @@
-+
-+Multi Color LED handling under Linux
-+=================================================
-+
-+Author: Dan Murphy <dmurphy@ti.com>
-+
-+Description
-+-----------
-+There are varying monochrome LED colors available for application.  These
-+LEDs can be used as a single use case LED or can be mixed with other color
-+LEDs to produce the full spectrum of color.  Color LEDs that are grouped
-+can be presented under a single LED node with individual color control.
-+The multicolor class groups these LEDs and allows dynamically setting the value
-+of a single LED or setting the intensity values of the LEDs in the group and
-+updating the LEDs virtually simultaneously.
-+
-+Multicolor Class Control
-+-------------------------
-+The multicolor class presents the LED groups under a directory called "colors".
-+This directory is a child under the LED parent node created by the led_class
-+framework.  The led_class framework is documented in led-class.txt within this
-+documentation directory.
-+
-+Each colored LED is given its own directory.  These directories can be, but not
-+limited to red, green, blue, white, amber, yellow and violet.  Under these
-+directories the intensity and max_intensity files are presented for each LED.
-+
-+
-+Directory Layout Example
-+------------------------
-+root:/sys/class/leds/rgb:grouped_leds# ls -lR colors/
-+colors/:
-+drwxr-xr-x    2 root     root             0 Jun 28 20:21 blue
-+drwxr-xr-x    2 root     root             0 Jun 28 20:21 green
-+drwxr-xr-x    2 root     root             0 Jun 28 20:21 red
-+-rw-------    1 root     root          4096 Jun 28 20:21 color_mix
-+
-+colors/blue:
-+-rw-------    1 root     root          4096 Jun 28 20:21 intensity
-+-r--------    1 root     root          4096 Jun 28 20:27 max_intensity
-+-r--------    1 root     root          4096 Jun 28 20:21 color_id
-+
-+colors/green:
-+-rw-------    1 root     root          4096 Jun 28 20:22 intensity
-+-r--------    1 root     root          4096 Jun 28 20:27 max_intensity
-+-r--------    1 root     root          4096 Jun 28 20:21 color_id
-+
-+colors/red:
-+-rw-------    1 root     root          4096 Jun 28 20:21 intensity
-+-r--------    1 root     root          4096 Jun 28 20:27 max_intensity
-+-r--------    1 root     root          4096 Jun 28 20:21 color_id
-+
-+Multicolor Color Mixing
-+-----------------------
-+Multicolor monochrome LEDs intensity can be modified and mixed to produce a
-+varying array of colors.  The color_mix file gives the user the ability to write
-+all the monochrome LEDs registered in the directory with a single call.
-+To create a specific color from monochrome LEDs the color_mix file needs to be
-+written with each color's intensity.  The order in which the monochrome LEDs
-+should be written is based on the colors color_id.
-+
-+For example:
-+cat /sys/class/leds/rgb:grouped_leds/red/color_id
-+0
-+cat /sys/class/leds/rgb:grouped_leds/green/color_id
-+1
-+cat /sys/class/leds/rgb:grouped_leds/blue/color_id
-+2
-+
-+red - color_id = 0
-+green - color_id = 1
-+blue - color_id = 2
-+
-+These id's are the order in which to write the color_mix file.
-+
-+echo "<red> <green> <blue>" > color_mix
-+
-+echo "0x80 0x00 0x80" > color_mix
-+
-+The order of the monochrome LEDs are determined during multicolor class
-+registration and will not change unless unregistered and re-registered.
-+
-+Other example with amber monochrome LED:
-+blue - color_id = 0
-+amber - color_id = 1
-+
-+In this exampe blue is at ID 0 and amber ID is 1 so the user would write
-+echo "<blue> <amber>" > color_mix
-+
-+echo "0x38 0x80" > color_mix
-+
-+If a single monochrome LED needs to be modified then the user would write the
-+colors/<color>/intensity file.
-+
-+
-+Multicolor Class Brightness Control
-+-----------------------------------
-+The multiclor class framework will calculate each monochrome LEDs intensity.
-+
-+The brightness level for each LED is calculated based on the color LED
-+intensity setting divided by the color LED max intensity setting multiplied by
-+the requested value.
-+
-+led_brightness = requested_value*(led_color_intensity/led_color_max_intensity)
-+
-+Example:
-+Three LEDs are present in the group as defined in "Directory Layout Example"
-+within this document.
-+
-+A user first writes the color LED brightness file with the brightness level that
-+is neccesary to achieve a blueish violet output from the RGB LED group.
-+
-+echo 138 > /sys/class/leds/rgb:grouped_leds/red/intensity
-+echo 43 > /sys/class/leds/rgb:grouped_leds/green/intensity
-+echo 226 > /sys/class/leds/rgb:grouped_leds/blue/intensity
-+
-+red -
-+	intensity = 138
-+	max_intensity = 255
-+green -
-+	intensity = 43
-+	max_intensity = 255
-+blue -
-+	intensity = 226
-+	max_intensity = 255
-+
-+The user can control the brightness of that RGB group by writing the parent
-+'brightness' control.  Assuming a parent max_brightness of 255 the user may want
-+to dim the LED color group to half.  The user would write a value of 128 to the
-+parent brightness file then the values written to each LED will be adjusted
-+base on this value
-+
-+cat /sys/class/leds/rgb:grouped_leds/max_brightness
-+255
-+echo 128 > /sys/class/leds/rgb:grouped_leds/brightness
-+
-+adjusted_red_value = 128 * (138/255) = 69
-+adjusted_green_value = 128 * (43/255) = 21
-+adjusted_blue_value = 128 * (226/255) = 113
-+
-+Reading the parent brightness file will return the current brightness value of
-+the color LED group.
-+
-+cat /sys/class/leds/rgb:grouped_leds/max_brightness
-+255
-+
-+echo 128 > /sys/class/leds/rgb:grouped_leds/brightness
-+
-+cat /sys/class/leds/rgb:grouped_leds/max_brightness
-+128
-+
-+
--- 
-2.22.0.214.g8dca754b1e
-
+>  		.suspend	= genphy_suspend,
+>  		.resume		= genphy_resume,
+>  		.read_page	= rtl821x_read_page,
+> 
