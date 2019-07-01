@@ -2,57 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 101625BB65
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 14:22:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3445A5BB6A
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 14:23:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728166AbfGAMWC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 08:22:02 -0400
-Received: from 8bytes.org ([81.169.241.247]:33650 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727243AbfGAMWC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 08:22:02 -0400
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 82844229; Mon,  1 Jul 2019 14:22:00 +0200 (CEST)
-Date:   Mon, 1 Jul 2019 14:21:59 +0200
-From:   Joerg Roedel <joro@8bytes.org>
-To:     Nicolin Chen <nicoleotsuka@gmail.com>
-Cc:     robin.murphy@arm.com, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iommu/dma: Fix calculation overflow in __finalise_sg()
-Message-ID: <20190701122158.GE8166@8bytes.org>
-References: <20190622043814.5003-1-nicoleotsuka@gmail.com>
+        id S1728572AbfGAMXm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 08:23:42 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:38700 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727938AbfGAMXm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Jul 2019 08:23:42 -0400
+Received: by mail-ed1-f65.google.com with SMTP id r12so23209397edo.5;
+        Mon, 01 Jul 2019 05:23:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=TqJ5FwFb7YyscLWlQXilVsOJTgQDq/FFV13jnAzIBSA=;
+        b=SL8qpN87+0x+YgiO7CxEarJHROlGcqh2Hz8kq2O/Xcy6RIT4sMzzDVbyxuLHskKkDY
+         KTR6ri9py2vcxPGxcQ9KPtHJiIY17F0lAo8lR/9D61FOc1d7Q1obGl7/Zj4MIgfHbtRn
+         Q2Zmfpi3HMGX6MhOYPUiKGs43PAQHMY2/dAoJTW8ZFWvXNCyYfk7Cj9an6Jm7d6MrPpr
+         rLtyKyfErpdU6wyepGoCK2aYLJiJ4lRy+rjFfjhUF5HBIq6NQGdrjbybSdJhCl8bkz1E
+         o5xnFH/dBkK7IVDvqJvAuldVd2ZlLpawCbJa9vsX2yby7HzP+F3SITT+gc2HobR54ZlQ
+         6A0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TqJ5FwFb7YyscLWlQXilVsOJTgQDq/FFV13jnAzIBSA=;
+        b=dUIWWD9DRQuyp3V7G8ATh6HdkFdPDOq+DXNDA8w2tLMfCRGWeIWdp3ly7BKXC/8GIp
+         VeEHskBSdoDUfHfExvALoUe1ThEEtnlbQH/3Gfb16UQ0sBE926RbaMqKflJjpEbh/iG3
+         1Ysco/0gQ9di784HDlC7f4RBb5Wu9QdbExpV3tb3C+CzKleAbAdbHaRlLMbtKXrDXY0g
+         RIHBNPjSrruJ03qmnBC2uXs2JXxAbNjAu31z4lbBwEp140ZLo3ihg3+LEvlgBmj2fqf6
+         0/fEikvKz3Zvvxjgds3cRN6+d2boJhgKjTm+8nC2+rxW8Zz9tr6vxgRisxad71ZpRuW/
+         4LwA==
+X-Gm-Message-State: APjAAAUMuqX0UF0W1gAV8IW5hGoWRlF95oqcqddaWHzALzhzc/Z2unkH
+        zK6ISLBq3BlCMtmLME7VYgwF/Y5sYGG2jEMTdm8=
+X-Google-Smtp-Source: APXvYqx0HFUnYm5/0uR+9Qh51tm1qPSRjeb5pdf0KaghBF5O1NR0L3wpZtjTEGFSRaNosFZa0Miceq4KmgZoL2uihCk=
+X-Received: by 2002:a50:bdc2:: with SMTP id z2mr28517471edh.245.1561983820432;
+ Mon, 01 Jul 2019 05:23:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190622043814.5003-1-nicoleotsuka@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <cover.1561706800.git.joabreu@synopsys.com> <e4e9ee4cb9c3e7957fe0a09f88b20bc011e2bd4c.1561706801.git.joabreu@synopsys.com>
+ <CA+FuTSc4MFfjBNpvN2hRh9_MRmxSYw2xY6wp32Hsbw0E=pqUdw@mail.gmail.com> <BN8PR12MB326638B0BA74DA762C89DF54D3F90@BN8PR12MB3266.namprd12.prod.outlook.com>
+In-Reply-To: <BN8PR12MB326638B0BA74DA762C89DF54D3F90@BN8PR12MB3266.namprd12.prod.outlook.com>
+From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Date:   Mon, 1 Jul 2019 08:23:03 -0400
+Message-ID: <CAF=yD-+55uqYawF9oUFVT5T_cyxso4s5r+vxFrcxBTXuieNVRA@mail.gmail.com>
+Subject: Re: [PATCH net-next v2 06/10] net: stmmac: Do not disable interrupts
+ when cleaning TX
+To:     Jose Abreu <Jose.Abreu@synopsys.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 21, 2019 at 09:38:14PM -0700, Nicolin Chen wrote:
-> The max_len is a u32 type variable so the calculation on the
-> left hand of the last if-condition will potentially overflow
-> when a cur_len gets closer to UINT_MAX -- note that there're
-> drivers setting max_seg_size to UINT_MAX:
->   drivers/dma/dw-edma/dw-edma-core.c:745:
->     dma_set_max_seg_size(dma->dev, U32_MAX);
->   drivers/dma/dma-axi-dmac.c:871:
->     dma_set_max_seg_size(&pdev->dev, UINT_MAX);
->   drivers/mmc/host/renesas_sdhi_internal_dmac.c:338:
->     dma_set_max_seg_size(dev, 0xffffffff);
->   drivers/nvme/host/pci.c:2520:
->     dma_set_max_seg_size(dev->dev, 0xffffffff);
-> 
-> So this patch just casts the cur_len in the calculation to a
-> size_t type to fix the overflow issue, as it's not necessary
-> to change the type of cur_len after all.
-> 
-> Fixes: 809eac54cdd6 ("iommu/dma: Implement scatterlist segment merging")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+On Mon, Jul 1, 2019 at 6:15 AM Jose Abreu <Jose.Abreu@synopsys.com> wrote:
+>
+> From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+>
+> > By the
+> >
+> >         if ((status & handle_rx) && (chan < priv->plat->rx_queues_to_use)) {
+> >                 stmmac_disable_dma_irq(priv, priv->ioaddr, chan);
+> >                 napi_schedule_irqoff(&ch->rx_napi);
+> >         }
+> >
+> > branch directly above? If so, is it possible to have fewer rx than tx
+> > queues and miss this?
+>
+> Yes, it is possible.
 
-Looks good to me, but I let Robin take a look too before I apply it,
-Robin?
+And that is not a problem?
 
+>
+> > this logic seems more complex than needed?
+> >
+> >         if (status)
+> >                 status |= handle_rx | handle_tx;
+> >
+> >         if ((status & handle_rx) && (chan < priv->plat->rx_queues_to_use)) {
+> >
+> >         }
+> >
+> >         if ((status & handle_tx) && (chan < priv->plat->tx_queues_to_use)) {
+> >
+> >         }
+> >
+> > status & handle_rx implies status & handle_tx and vice versa.
+>
+> This is removed in patch 09/10.
+>
+> > > -       if (work_done < budget && napi_complete_done(napi, work_done))
+> > > -               stmmac_enable_dma_irq(priv, priv->ioaddr, chan);
+> > > +       if (work_done < budget)
+> > > +               napi_complete_done(napi, work_done);
+> >
+> > It does seem odd that stmmac_napi_poll_rx and stmmac_napi_poll_tx both
+> > call stmmac_enable_dma_irq(..) independent of the other. Shouldn't the
+> > IRQ remain masked while either is active or scheduled? That is almost
+> > what this patch does, though not exactly.
+>
+> After patch 09/10 the interrupts will only be disabled by RX NAPI and
+> re-enabled by it again. I can do some tests on whether disabling
+> interrupts independently gives more performance but I wouldn't expect so
+> because the real bottleneck when I do iperf3 tests is the RX path ...
+
+Sharing the IRQ sounds fine. My only concern was TX-only IRQs in case
+more TX than RX queues are configured. If that is possible with this
+driver.
