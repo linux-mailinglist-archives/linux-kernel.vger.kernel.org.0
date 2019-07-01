@@ -2,123 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D96F5B4DB
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 08:21:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BCE975B4FA
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 08:24:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727794AbfGAGVS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 02:21:18 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:48682 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727778AbfGAGVP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 02:21:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=8byVWDDjomwL6qH7S0OtanLtekPodjhPaEDKqBoEUGs=; b=gymyO8jYdkpQB45FPyoqo5QVRO
-        pxdxLE/pukS1Gk+9MEFhUMYN00wWfJtK9mHMqd13ChvWkK6i3fJFh5i3DGPvBqQ37V8+yF0igt9nN
-        Y9V4N/egahV3v/1fcDcj6gtqMt3/1tKmCmBZNUOPuZDmSMXGT7uyE2F/3McRlbRBhxwK2jh6sWGos
-        ctgD/8HuEKjDbXkk6fDiLK/fGApomgUO2pe9gIo2ZW5OLFiUrBVFWmZ11yFMq+imU7W5vNvpz+ObV
-        JvmhVL1Q0WzgqBRzkrgih94Su6CSqN/FTPUhjuxgRAK49QrB82cKbelNL+xMhaE0alH06JPe6B65V
-        JIyEF0zw==;
-Received: from [46.140.178.35] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hhpgd-0003Y2-QA; Mon, 01 Jul 2019 06:21:12 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Ben Skeggs <bskeggs@redhat.com>
-Cc:     Ira Weiny <ira.weiny@intel.com>, linux-mm@kvack.org,
-        nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-nvdimm@lists.01.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 22/22] mm: remove the legacy hmm_pfn_* APIs
-Date:   Mon,  1 Jul 2019 08:20:20 +0200
-Message-Id: <20190701062020.19239-23-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190701062020.19239-1-hch@lst.de>
-References: <20190701062020.19239-1-hch@lst.de>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        id S1727242AbfGAGXu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 02:23:50 -0400
+Received: from mxhk.zte.com.cn ([63.217.80.70]:16898 "EHLO mxhk.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725616AbfGAGXu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Jul 2019 02:23:50 -0400
+Received: from mse-fl2.zte.com.cn (unknown [10.30.14.239])
+        by Forcepoint Email with ESMTPS id 3D5E5422633A9622B803;
+        Mon,  1 Jul 2019 14:23:48 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse-fl2.zte.com.cn with ESMTP id x616Merk061391;
+        Mon, 1 Jul 2019 14:22:40 +0800 (GMT-8)
+        (envelope-from wang.yi59@zte.com.cn)
+Received: from fox-host8.localdomain ([10.74.120.8])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2019070114224387-1995712 ;
+          Mon, 1 Jul 2019 14:22:43 +0800 
+From:   Yi Wang <wang.yi59@zte.com.cn>
+To:     pbonzini@redhat.com
+Cc:     rkrcmar@redhat.com, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, hpa@zytor.com, x86@kernel.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, xue.zhihong@zte.com.cn,
+        wang.yi59@zte.com.cn, up2wing@gmail.com, wang.liang82@zte.com.cn
+Subject: [PATCH 0/4] kvm: x86: introduce CONFIG_KVM_DEBUG
+Date:   Mon, 1 Jul 2019 14:21:07 +0800
+Message-Id: <1561962071-25974-1-git-send-email-wang.yi59@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2019-07-01 14:22:44,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2019-07-01 14:22:41,
+        Serialize complete at 2019-07-01 14:22:41
+X-MAIL: mse-fl2.zte.com.cn x616Merk061391
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Switch the one remaining user in nouveau over to its replacement,
-and remove all the wrappers.
+This series introduce CONFIG_KVM_DEBUG, using which we can make
+the invoking *_debug in KVM simly and uniform.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- drivers/gpu/drm/nouveau/nouveau_dmem.c |  2 +-
- include/linux/hmm.h                    | 36 --------------------------
- 2 files changed, 1 insertion(+), 37 deletions(-)
+FYI: the former discussion can been found in:
+https://www.spinics.net/lists/kvm/msg187026.html
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_dmem.c b/drivers/gpu/drm/nouveau/nouveau_dmem.c
-index 40c47d6a7d78..534069ffe20a 100644
---- a/drivers/gpu/drm/nouveau/nouveau_dmem.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_dmem.c
-@@ -853,7 +853,7 @@ nouveau_dmem_convert_pfn(struct nouveau_drm *drm,
- 		struct page *page;
- 		uint64_t addr;
- 
--		page = hmm_pfn_to_page(range, range->pfns[i]);
-+		page = hmm_device_entry_to_page(range, range->pfns[i]);
- 		if (page == NULL)
- 			continue;
- 
-diff --git a/include/linux/hmm.h b/include/linux/hmm.h
-index 3457cf9182e5..9799fde71f2e 100644
---- a/include/linux/hmm.h
-+++ b/include/linux/hmm.h
-@@ -290,42 +290,6 @@ static inline uint64_t hmm_device_entry_from_pfn(const struct hmm_range *range,
- 		range->flags[HMM_PFN_VALID];
- }
- 
--/*
-- * Old API:
-- * hmm_pfn_to_page()
-- * hmm_pfn_to_pfn()
-- * hmm_pfn_from_page()
-- * hmm_pfn_from_pfn()
-- *
-- * This are the OLD API please use new API, it is here to avoid cross-tree
-- * merge painfullness ie we convert things to new API in stages.
-- */
--static inline struct page *hmm_pfn_to_page(const struct hmm_range *range,
--					   uint64_t pfn)
--{
--	return hmm_device_entry_to_page(range, pfn);
--}
--
--static inline unsigned long hmm_pfn_to_pfn(const struct hmm_range *range,
--					   uint64_t pfn)
--{
--	return hmm_device_entry_to_pfn(range, pfn);
--}
--
--static inline uint64_t hmm_pfn_from_page(const struct hmm_range *range,
--					 struct page *page)
--{
--	return hmm_device_entry_from_page(range, page);
--}
--
--static inline uint64_t hmm_pfn_from_pfn(const struct hmm_range *range,
--					unsigned long pfn)
--{
--	return hmm_device_entry_from_pfn(range, pfn);
--}
--
--
--
- #if IS_ENABLED(CONFIG_HMM_MIRROR)
- /*
-  * Mirroring: how to synchronize device page table with CPU page table.
+Yi Wang (4):
+  kvm: x86: Add CONFIG_KVM_DEBUG
+  kvm: x86: allow set apic and ioapic debug dynamically
+  kvm: x86: replace MMU_DEBUG with CONFIG_KVM_DEBUG
+  kvm: x86: convert TSC pr_debugs to be gated by CONFIG_KVM_DEBUG
+
+ arch/x86/kvm/Kconfig  |  8 ++++++++
+ arch/x86/kvm/ioapic.c |  2 +-
+ arch/x86/kvm/lapic.c  |  5 ++++-
+ arch/x86/kvm/mmu.c    |  5 ++---
+ arch/x86/kvm/x86.c    | 18 ++++++++++++------
+ 5 files changed, 27 insertions(+), 11 deletions(-)
+
 -- 
-2.20.1
+1.8.3.1
 
