@@ -2,136 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B7EF5C439
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 22:18:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8733A5C43D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 22:19:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726803AbfGAUSs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 16:18:48 -0400
-Received: from esa2.hgst.iphmx.com ([68.232.143.124]:62971 "EHLO
-        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726652AbfGAUSr (ORCPT
+        id S1726957AbfGAUTH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 16:19:07 -0400
+Received: from mail-qk1-f201.google.com ([209.85.222.201]:39560 "EHLO
+        mail-qk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726652AbfGAUTG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 16:18:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1562012336; x=1593548336;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=N8FdXl9fQhVeMl/osm7KAlS6gPFgaAA9xTyaCj4BAvw=;
-  b=Al/aLvhu2cAJL5K8inDZD4SalS6MM7y6fankehpwkJF8Y2NBkUEGoKT/
-   TAOLCCOjrl+OrV1xlC+3LJVcyBp5cMNq0kL6evl9Ay17NliTumrq18YG1
-   vtg9kyiVkP6q39/klVWfxj/mMtEjms6G+8x6C5iMCbf7gF9IpV0djYU3n
-   EaOI0i/crSdvg9nChRkpO+uuA7jldUjj4e9oa/reV3hY5pmxG+3lcKKlz
-   /577DYXizRWEghZ2tHf967DTV+nQ8/7xS3ef7n7tbxFnwdLsLgqulJDrC
-   NBIkE4W8Y729mCkcLVOYzsGMekhUc+UMjq6jpf1NGL2BF/zYJgqTKbISM
-   A==;
-X-IronPort-AV: E=Sophos;i="5.63,440,1557158400"; 
-   d="scan'208";a="211832433"
-Received: from mail-by2nam03lp2056.outbound.protection.outlook.com (HELO NAM03-BY2-obe.outbound.protection.outlook.com) ([104.47.42.56])
-  by ob1.hgst.iphmx.com with ESMTP; 02 Jul 2019 04:18:55 +0800
+        Mon, 1 Jul 2019 16:19:06 -0400
+Received: by mail-qk1-f201.google.com with SMTP id j17so6999852qki.6
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2019 13:19:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=N8FdXl9fQhVeMl/osm7KAlS6gPFgaAA9xTyaCj4BAvw=;
- b=fUaChbDyboOJkSkpFbOeD6ynlDJk3hv5TXEFgpEXSHjJ4Szj4f1xiw4DH6HGUMATnS585m3k1VXdlqfQOziVg30gOiGGwf88/18iAwoXBWFxg6OVVuCnNyNRPzqmwtampVfXnGNRiynkbfq3e9UjSlYinVOhTjnadOw8rJ2wq84=
-Received: from BYAPR04MB3782.namprd04.prod.outlook.com (52.135.214.142) by
- BYAPR04MB5509.namprd04.prod.outlook.com (20.178.232.27) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2032.20; Mon, 1 Jul 2019 20:18:45 +0000
-Received: from BYAPR04MB3782.namprd04.prod.outlook.com
- ([fe80::65e3:6069:d7d5:90a2]) by BYAPR04MB3782.namprd04.prod.outlook.com
- ([fe80::65e3:6069:d7d5:90a2%5]) with mapi id 15.20.2032.019; Mon, 1 Jul 2019
- 20:18:45 +0000
-From:   Atish Patra <Atish.Patra@wdc.com>
-To:     "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>
-CC:     "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "palmer@sifive.com" <palmer@sifive.com>,
-        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
-        "mingo@kernel.org" <mingo@kernel.org>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "morten.rasmussen@arm.com" <morten.rasmussen@arm.com>,
-        "ottosabart@seberm.com" <ottosabart@seberm.com>,
-        "will@kernel.org" <will@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "jeremy.linton@arm.com" <jeremy.linton@arm.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "johan@kernel.org" <johan@kernel.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "anup@brainfault.org" <anup@brainfault.org>,
-        "rafael@kernel.org" <rafael@kernel.org>,
-        "sudeep.holla@arm.com" <sudeep.holla@arm.com>
-Subject: Re: [PATCH v8 0/7] Unify CPU topology across ARM & RISC-V
-Thread-Topic: [PATCH v8 0/7] Unify CPU topology across ARM & RISC-V
-Thread-Index: AQHVLSJGz+hI7exIqkGm7p6W+lzWB6a2H8CAgAACBYCAAAEiAIAAFy+A
-Date:   Mon, 1 Jul 2019 20:18:44 +0000
-Message-ID: <daaf6f4e6512402bd8b6fcefc3dba9c045921b38.camel@wdc.com>
-References: <20190627195302.28300-1-atish.patra@wdc.com>
-         <alpine.DEB.2.21.9999.1907011143520.3867@viisi.sifive.com>
-         <5f31cb3c576bdbd89665614582af66d04ece8f29.camel@wdc.com>
-         <alpine.DEB.2.21.9999.1907011154310.3867@viisi.sifive.com>
-In-Reply-To: <alpine.DEB.2.21.9999.1907011154310.3867@viisi.sifive.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Atish.Patra@wdc.com; 
-x-originating-ip: [199.255.45.61]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 392baa72-e3fe-4abc-8622-08d6fe615186
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:BYAPR04MB5509;
-x-ms-traffictypediagnostic: BYAPR04MB5509:
-x-ms-exchange-purlcount: 1
-x-microsoft-antispam-prvs: <BYAPR04MB5509E1C8D65A9917F7C2D528FAF90@BYAPR04MB5509.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:6790;
-x-forefront-prvs: 00851CA28B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(346002)(39860400002)(396003)(366004)(376002)(136003)(51914003)(199004)(189003)(478600001)(76176011)(118296001)(25786009)(102836004)(99286004)(54906003)(26005)(5660300002)(6306002)(6512007)(6246003)(66476007)(5640700003)(316002)(72206003)(6506007)(68736007)(66446008)(6486002)(66556008)(64756008)(6916009)(73956011)(229853002)(7416002)(66946007)(76116006)(6436002)(86362001)(486006)(446003)(11346002)(2616005)(476003)(81156014)(81166006)(2906002)(36756003)(66066001)(966005)(3846002)(6116002)(14454004)(2501003)(8936002)(71190400001)(186003)(2351001)(53936002)(71200400001)(4326008)(4744005)(7736002)(305945005)(8676002)(256004);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR04MB5509;H:BYAPR04MB3782.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: DmK/3pHc9Bd04sX1oPOoOSDuOu9s7ntx/WZT3Mizz7c47m29yOQe6UjfIzZz2IMXnEILYkg5h+GGCzZmnm6CMXHQtDsB212OpPb0pl2GM7WwVi/Liwei84bfApPMHiilt4lkniFuOgrLzE9lxyux7ClpwqKeUqoZV9ksizKHgctG7hhWKV8nhKpdnjn4IKmgdcSu0c3z+DlNwiaLdxP/lbpCKpNnE6EofBTzfNUQVC8ZcpSi+ilpT39pXFiv74DoMIVxNDJIuoPgDvpZTcJHAKXzuxGzYpp7MBfKN9mhVm9DS4sArjNgjK6pAcQhBr805YeZVifxKJ3hK8D+pPaYAMoEgncSMgXl4AByAt12tnlDPMDjkx/J5b67+8vdP7uGqqs185LyhGUesXJkrIngUdRzMqH9K/YBwVUt14cxZtc=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <19593EB42262524DBDC8DEE9233E70C3@namprd04.prod.outlook.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 392baa72-e3fe-4abc-8622-08d6fe615186
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Jul 2019 20:18:44.9279
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Atish.Patra@wdc.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB5509
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=84Sypx6YzXutjLG+Fp6OjQQKLXcewv+p2Q4pHRZlwKQ=;
+        b=Yzh8zXOgoTh4Y2y35gsVwjBlsL0iq7DO4vxOPQH8K09FIwWF1jnMchYv0r6j0H16s4
+         9wtvapiUeosaEMHNaL1sM7Ov6Lug0M0DjBlcmMF/mn0LaA1Nu7fzpWkocnqhJBkt5wKt
+         Fdwxgvm85Q+v9kZVG3P3Ou1Px01nTkz1bZiM4abTqk2sOB8ME6qGyDaJv3qGBKS7SWjQ
+         L0GX29PtLl0HdCaJcZFWFpQe5HkVYOtt5x3/rLhidAqnuCCfMUvY8r7vbyw7+4qpHHLs
+         4GfgA2yeS3jNMRVTDBMrtLj65GE+eQB7PgKncqI9WzyCiWJlTCl3spVU8NU7GQqWqQI6
+         lLpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=84Sypx6YzXutjLG+Fp6OjQQKLXcewv+p2Q4pHRZlwKQ=;
+        b=iSclEreiePmL4G6UT52WNTj7bMWfJGMgV+3P5RShp+yu2MO85FMIi+nE4CwsKxGKm8
+         8xSXLhNb420+JCN2OuUVMGN2Y+Z67+gzKBxEd1y2mDBE2LQmI6ZzfsHCsy9N9xB8cTQL
+         ruqEAw5Qol38fEXkrJ1uPn1caL2QYZHMM+WRYDcV3Y3l7IVUT83G6C0HAVIz90B1IPgV
+         UiS6i2AH0QUXxCKVs+qjiZVFaUBlJBDIweV+7wOi4Ws/bs4bDoy0MJXgbsRQSsQPTltj
+         /pxbzHWJYY8hc34HyJdMGEhFuJfoHaKelEF3UcNBNW+DghcGqr3PsRONhcz+9n1kQ6YI
+         KHPA==
+X-Gm-Message-State: APjAAAUSdle44iRxglWf6U0gQelBgCPgSrOtnKy2P11aRy28oGZIHaNl
+        LVEsDoxE+HG8bpbYDODqnf3i20dxEf62/A==
+X-Google-Smtp-Source: APXvYqxgkZaZJswmwq58VQ35alxZ0OR3QeVTdZvsFMBJgWz22qUGoVuP+TUM22fz60QpBxL4jOzsYZ+Z4XRRHw==
+X-Received: by 2002:a0c:9895:: with SMTP id f21mr22633081qvd.123.1562012345435;
+ Mon, 01 Jul 2019 13:19:05 -0700 (PDT)
+Date:   Mon,  1 Jul 2019 13:18:47 -0700
+Message-Id: <20190701201847.251028-1-shakeelb@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
+Subject: [PATCH v2] mm, vmscan: prevent useless kswapd loops
+From:   Shakeel Butt <shakeelb@google.com>
+To:     Johannes Weiner <hannes@cmpxchg.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Hillf Danton <hdanton@sina.com>, Roman Gushchin <guro@fb.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Shakeel Butt <shakeelb@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gTW9uLCAyMDE5LTA3LTAxIGF0IDExOjU1IC0wNzAwLCBQYXVsIFdhbG1zbGV5IHdyb3RlOg0K
-PiBPbiBNb24sIDEgSnVsIDIwMTksIEF0aXNoIFBhdHJhIHdyb3RlOg0KPiANCj4gPiBPbiBNb24s
-IDIwMTktMDctMDEgYXQgMTE6NDQgLTA3MDAsIFBhdWwgV2FsbXNsZXkgd3JvdGU6DQo+ID4gPiBM
-b29rcyBsaWtlIHBhdGNoZXMgMSwgNiwgYW5kIDcgYXJlIG1pc3NpbmcgeW91ciBTaWduZWQtb2Zm
-LQ0KPiA+ID4gYnk6LiAgQ2FuIEkgDQo+ID4gPiBhZGQgdGhvc2U/DQo+ID4gPiANCj4gPiBTdXJl
-LiANCj4gPiANCj4gPiBJcyBpdCBhIGNvbW1vbiBwcmFjdGljZSB0byBhZGQgIlNpZ25lZC1vZmYt
-Ynk6IiB0aGUgc2VuZGVyIGV2ZW4gaWYNCj4gPiB0aGUNCj4gPiBzZW5kZXIgaGFzIG5vdCB0b3Vj
-aGVkIHRoZSBwYXRjaCBhdCBhbGw/DQo+IA0KPiBZZXMsIHNlZSBzZWN0aW9uIDExKGMpIGhlcmU6
-DQo+IA0KPiBodHRwczovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC90
-b3J2YWxkcy9saW51eC5naXQvdHJlZS9Eb2N1bWVudGF0aW9uL3Byb2Nlc3Mvc3VibWl0dGluZy1w
-YXRjaGVzLnJzdCNuNDE4DQo+IA0KPiBUaGUgbWFpbiBmYWN0b3IgaGVyZSBpcyB0aGF0IHlvdSBj
-b2xsZWN0ZWQgYW5kIHJlc2VudCB0aGUgcGF0Y2hlcyAtDQo+IHRodXMgDQo+IHlvdSdyZSBpbiB0
-aGUgcGF0Y2ggc3VibWlzc2lvbiBjaGFpbi4NCj4gDQoNCkFoaCBva2F5LiBUaGFua3MgZm9yIHRo
-ZSBsaW5rLiBJIHdpbGwga2VlcCB0aGlzIGluIG1pbmQgaW4gZnV0dXJlLg0KDQpSZWdhcmRzLA0K
-QXRpc2gNCj4gDQo+IC0gUGF1bA0KDQo=
+On production we have noticed hard lockups on large machines running
+large jobs due to kswaps hoarding lru lock within isolate_lru_pages when
+sc->reclaim_idx is 0 which is a small zone. The lru was couple hundred
+GiBs and the condition (page_zonenum(page) > sc->reclaim_idx) in
+isolate_lru_pages was basically skipping GiBs of pages while holding the
+LRU spinlock with interrupt disabled.
+
+On further inspection, it seems like there are two issues:
+
+1) If the kswapd on the return from balance_pgdat() could not sleep
+(i.e. node is still unbalanced), the classzone_idx is unintentionally
+set to 0  and the whole reclaim cycle of kswapd will try to reclaim
+only the lowest and smallest zone while traversing the whole memory.
+
+2) Fundamentally isolate_lru_pages() is really bad when the allocation
+has woken kswapd for a smaller zone on a very large machine running very
+large jobs. It can hoard the LRU spinlock while skipping over 100s of
+GiBs of pages.
+
+This patch only fixes the (1). The (2) needs a more fundamental solution.
+To fix (1), in the kswapd context, if pgdat->kswapd_classzone_idx is
+invalid use the classzone_idx of the previous kswapd loop otherwise use
+the one the waker has requested.
+
+Fixes: e716f2eb24de ("mm, vmscan: prevent kswapd sleeping prematurely
+due to mismatched classzone_idx")
+
+Signed-off-by: Shakeel Butt <shakeelb@google.com>
+---
+Changelog since v1:
+- fixed the patch based on Yang Shi's comment.
+
+ mm/vmscan.c | 27 +++++++++++++++------------
+ 1 file changed, 15 insertions(+), 12 deletions(-)
+
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 9e3292ee5c7c..eacf87f07afe 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -3760,19 +3760,18 @@ static int balance_pgdat(pg_data_t *pgdat, int order, int classzone_idx)
+ }
+ 
+ /*
+- * pgdat->kswapd_classzone_idx is the highest zone index that a recent
+- * allocation request woke kswapd for. When kswapd has not woken recently,
+- * the value is MAX_NR_ZONES which is not a valid index. This compares a
+- * given classzone and returns it or the highest classzone index kswapd
+- * was recently woke for.
++ * The pgdat->kswapd_classzone_idx is used to pass the highest zone index to be
++ * reclaimed by kswapd from the waker. If the value is MAX_NR_ZONES which is not
++ * a valid index then either kswapd runs for first time or kswapd couldn't sleep
++ * after previous reclaim attempt (node is still unbalanced). In that case
++ * return the zone index of the previous kswapd reclaim cycle.
+  */
+ static enum zone_type kswapd_classzone_idx(pg_data_t *pgdat,
+-					   enum zone_type classzone_idx)
++					   enum zone_type prev_classzone_idx)
+ {
+ 	if (pgdat->kswapd_classzone_idx == MAX_NR_ZONES)
+-		return classzone_idx;
+-
+-	return max(pgdat->kswapd_classzone_idx, classzone_idx);
++		return prev_classzone_idx;
++	return pgdat->kswapd_classzone_idx;
+ }
+ 
+ static void kswapd_try_to_sleep(pg_data_t *pgdat, int alloc_order, int reclaim_order,
+@@ -3908,7 +3907,7 @@ static int kswapd(void *p)
+ 
+ 		/* Read the new order and classzone_idx */
+ 		alloc_order = reclaim_order = pgdat->kswapd_order;
+-		classzone_idx = kswapd_classzone_idx(pgdat, 0);
++		classzone_idx = kswapd_classzone_idx(pgdat, classzone_idx);
+ 		pgdat->kswapd_order = 0;
+ 		pgdat->kswapd_classzone_idx = MAX_NR_ZONES;
+ 
+@@ -3961,8 +3960,12 @@ void wakeup_kswapd(struct zone *zone, gfp_t gfp_flags, int order,
+ 	if (!cpuset_zone_allowed(zone, gfp_flags))
+ 		return;
+ 	pgdat = zone->zone_pgdat;
+-	pgdat->kswapd_classzone_idx = kswapd_classzone_idx(pgdat,
+-							   classzone_idx);
++
++	if (pgdat->kswapd_classzone_idx == MAX_NR_ZONES)
++		pgdat->kswapd_classzone_idx = classzone_idx;
++	else
++		pgdat->kswapd_classzone_idx = max(pgdat->kswapd_classzone_idx,
++						  classzone_idx);
+ 	pgdat->kswapd_order = max(pgdat->kswapd_order, order);
+ 	if (!waitqueue_active(&pgdat->kswapd_wait))
+ 		return;
+-- 
+2.22.0.410.gd8fdbe21b5-goog
+
