@@ -2,67 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A216D5B820
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 11:36:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61DD05B84F
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 11:47:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728448AbfGAJgu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 05:36:50 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52840 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728035AbfGAJgu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 05:36:50 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 6E628AB87;
-        Mon,  1 Jul 2019 09:36:48 +0000 (UTC)
-Date:   Mon, 1 Jul 2019 11:36:44 +0200
-From:   Oscar Salvador <osalvador@suse.de>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        akpm@linux-foundation.org, Dan Williams <dan.j.williams@intel.com>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        Igor Mammedov <imammedo@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Mark Brown <broonie@kernel.org>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: Re: [PATCH v3 10/11] mm/memory_hotplug: Make
- unregister_memory_block_under_nodes() never fail
-Message-ID: <20190701093640.GA17349@linux>
-References: <20190527111152.16324-1-david@redhat.com>
- <20190527111152.16324-11-david@redhat.com>
- <20190701085144.GJ6376@dhcp22.suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190701085144.GJ6376@dhcp22.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1728553AbfGAJrn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 05:47:43 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:59520 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726652AbfGAJrm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Jul 2019 05:47:42 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id D60CE200910;
+        Mon,  1 Jul 2019 11:47:39 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id DAD13200015;
+        Mon,  1 Jul 2019 11:47:28 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id D34AF40297;
+        Mon,  1 Jul 2019 17:47:15 +0800 (SGT)
+From:   Anson.Huang@nxp.com
+To:     daniel.lezcano@linaro.org, tglx@linutronix.de, robh+dt@kernel.org,
+        mark.rutland@arm.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, leonard.crestez@nxp.com,
+        viresh.kumar@linaro.org, daniel.baluta@nxp.com, ping.bai@nxp.com,
+        l.stach@pengutronix.de, abel.vesa@nxp.com,
+        andrew.smirnov@gmail.com, ccaione@baylibre.com, angus@akkea.ca,
+        agx@sigxcpu.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH V4 1/5] clocksource: timer-of: Support getting clock frequency from DT
+Date:   Mon,  1 Jul 2019 17:38:22 +0800
+Message-Id: <20190701093826.5472-1-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.14.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 01, 2019 at 10:51:44AM +0200, Michal Hocko wrote:
-> Yeah, we do not allow to offline multi zone (node) ranges so the current
-> code seems to be over engineered.
-> 
-> Anyway, I am wondering why do we have to strictly check for already
-> removed nodes links. Is the sysfs code going to complain we we try to
-> remove again?
+From: Anson Huang <Anson.Huang@nxp.com>
 
-No, sysfs will silently "fail" if the symlink has already been removed.
-At least that is what I saw last time I played with it.
+More and more platforms use platform driver model for clock driver,
+so the clock driver is NOT ready during timer initialization phase,
+it will cause timer initialization failed.
 
-I guess the question is what if sysfs handling changes in the future
-and starts dropping warnings when trying to remove a symlink is not there.
-Maybe that is unlikely to happen?
+To support those platforms with upper scenario, introducing a new
+flag TIMER_OF_CLOCK_FREQUENCY which is mutually exclusive with
+TIMER_OF_CLOCK flag to support getting timer clock frequency from
+DT's timer node, the property name should be "clock-frequency",
+then of_clk operations can be skipped.
 
+User needs to select either TIMER_OF_CLOCK_FREQUENCY or TIMER_OF_CLOCK
+flag if want to use timer-of driver to initialize the clock rate.
+
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+Changes since V3:
+	- use hardcoded "clock-frequency" instead of adding new variable prop_name;
+	- add pre-condition check for TIMER_OF_CLOCK and TIMER_OF_CLOCK_FREQUENCY, they MUST be exclusive.
+---
+ drivers/clocksource/timer-of.c | 29 +++++++++++++++++++++++++++++
+ drivers/clocksource/timer-of.h |  7 ++++---
+ 2 files changed, 33 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clocksource/timer-of.c b/drivers/clocksource/timer-of.c
+index 8054228..ab155cc 100644
+--- a/drivers/clocksource/timer-of.c
++++ b/drivers/clocksource/timer-of.c
+@@ -161,11 +161,30 @@ static __init int timer_of_base_init(struct device_node *np,
+ 	return 0;
+ }
+ 
++static __init int timer_of_clk_frequency_init(struct device_node *np,
++					      struct of_timer_clk *of_clk)
++{
++	int ret;
++	u32 rate;
++
++	ret = of_property_read_u32(np, "clock-frequency", &rate);
++	if (!ret) {
++		of_clk->rate = rate;
++		of_clk->period = DIV_ROUND_UP(rate, HZ);
++	}
++
++	return ret;
++}
++
+ int __init timer_of_init(struct device_node *np, struct timer_of *to)
+ {
++	unsigned long clock_flags = TIMER_OF_CLOCK | TIMER_OF_CLOCK_FREQUENCY;
+ 	int ret = -EINVAL;
+ 	int flags = 0;
+ 
++	if (to->flags & clock_flags == clock_flags)
++		return ret;
++
+ 	if (to->flags & TIMER_OF_BASE) {
+ 		ret = timer_of_base_init(np, &to->of_base);
+ 		if (ret)
+@@ -180,6 +199,13 @@ int __init timer_of_init(struct device_node *np, struct timer_of *to)
+ 		flags |= TIMER_OF_CLOCK;
+ 	}
+ 
++	if (to->flags & TIMER_OF_CLOCK_FREQUENCY) {
++		ret = timer_of_clk_frequency_init(np, &to->of_clk);
++		if (ret)
++			goto out_fail;
++		flags |= TIMER_OF_CLOCK_FREQUENCY;
++	}
++
+ 	if (to->flags & TIMER_OF_IRQ) {
+ 		ret = timer_of_irq_init(np, &to->of_irq);
+ 		if (ret)
+@@ -201,6 +227,9 @@ int __init timer_of_init(struct device_node *np, struct timer_of *to)
+ 	if (flags & TIMER_OF_CLOCK)
+ 		timer_of_clk_exit(&to->of_clk);
+ 
++	if (flags & TIMER_OF_CLOCK_FREQUENCY)
++		to->of_clk.rate = 0;
++
+ 	if (flags & TIMER_OF_BASE)
+ 		timer_of_base_exit(&to->of_base);
+ 	return ret;
+diff --git a/drivers/clocksource/timer-of.h b/drivers/clocksource/timer-of.h
+index a5478f3..a08e108 100644
+--- a/drivers/clocksource/timer-of.h
++++ b/drivers/clocksource/timer-of.h
+@@ -4,9 +4,10 @@
+ 
+ #include <linux/clockchips.h>
+ 
+-#define TIMER_OF_BASE	0x1
+-#define TIMER_OF_CLOCK	0x2
+-#define TIMER_OF_IRQ	0x4
++#define TIMER_OF_BASE			0x1
++#define TIMER_OF_CLOCK			0x2
++#define TIMER_OF_IRQ			0x4
++#define TIMER_OF_CLOCK_FREQUENCY	0x8
+ 
+ struct of_timer_irq {
+ 	int irq;
 -- 
-Oscar Salvador
-SUSE L3
+2.7.4
+
