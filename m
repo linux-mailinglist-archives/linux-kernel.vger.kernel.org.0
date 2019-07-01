@@ -2,179 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD8C55BFDA
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 17:30:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DECA5BFE9
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 17:34:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729291AbfGAPad (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 11:30:33 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:34226 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726076AbfGAPad (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 11:30:33 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A516F13A98;
-        Mon,  1 Jul 2019 15:30:06 +0000 (UTC)
-Received: from ovpn-112-63.rdu2.redhat.com (ovpn-112-63.rdu2.redhat.com [10.10.112.63])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 81FB35D70D;
-        Mon,  1 Jul 2019 15:29:51 +0000 (UTC)
-Message-ID: <279519d5386680b3353b994a02475df08df13e29.camel@redhat.com>
-Subject: Re: [PATCH] net: usb: asix: init MAC address buffers
-From:   Dan Williams <dcbw@redhat.com>
-To:     Phong Tran <tranmanphong@gmail.com>,
-        syzbot+8a3fc6674bbc3978ed4e@syzkaller.appspotmail.com
-Cc:     davem@davemloft.net, glider@google.com,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        lynxis@fe80.eu, marcel.ziswiler@toradex.com,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        yang.wei9@zte.com.cn, zhang.run@zte.com.cn,
-        skhan@linuxfoundation.org,
-        linux-kernel-mentees@lists.linuxfoundation.org
-Date:   Mon, 01 Jul 2019 10:29:50 -0500
-In-Reply-To: <20190630234533.15089-1-tranmanphong@gmail.com>
-References: <00000000000008f06d058a6e9783@google.com>
-         <20190630234533.15089-1-tranmanphong@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+        id S1729362AbfGAPd5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 11:33:57 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41340 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728065AbfGAPd4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Jul 2019 11:33:56 -0400
+Received: by mail-wr1-f67.google.com with SMTP id c2so14362364wrm.8;
+        Mon, 01 Jul 2019 08:33:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:subject:to:message-id:date:user-agent:mime-version
+         :content-transfer-encoding:content-language;
+        bh=wpaGBMR0ZnPZyn/D/Sm+4RGXSfbYpu+boXZvyCO/ODI=;
+        b=A72xlDkgu71h7IfQmWnshd+7BB2J0hu16RQ587WNfdDxAg/KZJsP+9WO6hoRAWLfal
+         xv4KcYpzmwCkzAqAAGXd0ZRSBMEYkJb50Y+zbjlXDrHjuyr/zDY65UHADADQG3HSzLtD
+         qiNJlX9302oGNp3j1OihV+UPWXC1jTirZDG0zbTf6lrfRofA/z9rNZ6lM4o5J+gAuB9W
+         Aj3V+7vHD9wdCFyNHgIrWdf6u0CrH7rEQ64b0q16QoihxNoY2dtgNrLc/a0ih8CraDPM
+         k0Sx+d2dAPPcV2jjxRgVtiwzyT1srA4gRYHAsgpzfErdmtR0xzkl+VDLCowS1vya/ohS
+         F2kg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:subject:to:message-id:date:user-agent
+         :mime-version:content-transfer-encoding:content-language;
+        bh=wpaGBMR0ZnPZyn/D/Sm+4RGXSfbYpu+boXZvyCO/ODI=;
+        b=qmYSFMaMwpw6Pa2JYUJ4nHfZYGuDtk5Wy+Iz6e5tYz426DqMCbSo+JoKjGK9Len+IJ
+         UzlpdZGIKQEUaTzn1X1QhHi7ePGY56p1pG0CfY1d/pV/gjdMpM4VellBizRcXQGyrSbO
+         K35bl4v1WGlgqOSLlcozi72Ix0n6/xCA5/On7Fd5a+/aCUvr1qLXu1M5tGdjBNZFZtSo
+         rN1wbWj1fJtCNKRylJr0meqbawXQGzHu2+MffCOxZpW8gIumloDCzeF5rNPRo/TE/0UB
+         2DHlIegUe2ZCQf0Z1xpvG4StKekfisxy5fGzc86qWdSG/pt5ChFanAopdi2sdDTBPYNI
+         cKxA==
+X-Gm-Message-State: APjAAAXITVgrLFsDIJCPvdoXIlqsDwnC0QBljHLwBo1bUkgbjVyccqKf
+        0mASQsCv9FI+5bxAFcaRmEjJyEtV
+X-Google-Smtp-Source: APXvYqyuVuGCiK73ZnHWiEMsO7p5DGBpwkr+3ofW91YbXyDRrqVTPsSOz+oahhoYIvkBgMIrZvEaXA==
+X-Received: by 2002:adf:da47:: with SMTP id r7mr3707425wrl.56.1561995233880;
+        Mon, 01 Jul 2019 08:33:53 -0700 (PDT)
+Received: from [172.16.1.192] (host-89-243-246-11.as13285.net. [89.243.246.11])
+        by smtp.gmail.com with ESMTPSA id t14sm9268449wrr.33.2019.07.01.08.33.52
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Mon, 01 Jul 2019 08:33:52 -0700 (PDT)
+From:   Alan Jenkins <alan.christopher.jenkins@gmail.com>
+Subject: NO_HZ_IDLE causes consistently low cpu "iowait" time (and higher cpu
+ "idle" time)
+To:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-ID: <2ff025f1-9a3e-3eae-452b-ef84824009b4@gmail.com>
+Date:   Mon, 1 Jul 2019 16:33:51 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Mon, 01 Jul 2019 15:30:33 +0000 (UTC)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-07-01 at 06:45 +0700, Phong Tran wrote:
-> This is for fixing bug KMSAN: uninit-value in ax88772_bind
-> 
-> Tested by
-> https://groups.google.com/d/msg/syzkaller-bugs/aFQurGotng4/cFe9nxMCCwAJ
-> 
-> Reported-by: syzbot+8a3fc6674bbc3978ed4e@syzkaller.appspotmail.com
-> 
-> syzbot found the following crash on:
-> 
-> HEAD commit:    f75e4cfe kmsan: use kmsan_handle_urb() in urb.c
-> git tree:       kmsan
-> console output: 
-> https://syzkaller.appspot.com/x/log.txt?x=136d720ea00000
-> kernel config:
-> https://syzkaller.appspot.com/x/.config?x=602468164ccdc30a
-> dashboard link:
-> https://syzkaller.appspot.com/bug?extid=8a3fc6674bbc3978ed4e
-> compiler:       clang version 9.0.0 (/home/glider/llvm/clang
-> 06d00afa61eef8f7f501ebdb4e8612ea43ec2d78)
-> syz repro:
-> https://syzkaller.appspot.com/x/repro.syz?x=12788316a00000
-> C reproducer:   
-> https://syzkaller.appspot.com/x/repro.c?x=120359aaa00000
-> 
-> ==================================================================
-> BUG: KMSAN: uninit-value in is_valid_ether_addr
-> include/linux/etherdevice.h:200 [inline]
-> BUG: KMSAN: uninit-value in asix_set_netdev_dev_addr
-> drivers/net/usb/asix_devices.c:73 [inline]
-> BUG: KMSAN: uninit-value in ax88772_bind+0x93d/0x11e0
-> drivers/net/usb/asix_devices.c:724
-> CPU: 0 PID: 3348 Comm: kworker/0:2 Not tainted 5.1.0+ #1
-> Hardware name: Google Google Compute Engine/Google Compute Engine,
-> BIOS
-> Google 01/01/2011
-> Workqueue: usb_hub_wq hub_event
-> Call Trace:
->   __dump_stack lib/dump_stack.c:77 [inline]
->   dump_stack+0x191/0x1f0 lib/dump_stack.c:113
->   kmsan_report+0x130/0x2a0 mm/kmsan/kmsan.c:622
->   __msan_warning+0x75/0xe0 mm/kmsan/kmsan_instr.c:310
->   is_valid_ether_addr include/linux/etherdevice.h:200 [inline]
->   asix_set_netdev_dev_addr drivers/net/usb/asix_devices.c:73 [inline]
->   ax88772_bind+0x93d/0x11e0 drivers/net/usb/asix_devices.c:724
->   usbnet_probe+0x10f5/0x3940 drivers/net/usb/usbnet.c:1728
->   usb_probe_interface+0xd66/0x1320 drivers/usb/core/driver.c:361
->   really_probe+0xdae/0x1d80 drivers/base/dd.c:513
->   driver_probe_device+0x1b3/0x4f0 drivers/base/dd.c:671
->   __device_attach_driver+0x5b8/0x790 drivers/base/dd.c:778
->   bus_for_each_drv+0x28e/0x3b0 drivers/base/bus.c:454
->   __device_attach+0x454/0x730 drivers/base/dd.c:844
->   device_initial_probe+0x4a/0x60 drivers/base/dd.c:891
->   bus_probe_device+0x137/0x390 drivers/base/bus.c:514
->   device_add+0x288d/0x30e0 drivers/base/core.c:2106
->   usb_set_configuration+0x30dc/0x3750 drivers/usb/core/message.c:2027
->   generic_probe+0xe7/0x280 drivers/usb/core/generic.c:210
->   usb_probe_device+0x14c/0x200 drivers/usb/core/driver.c:266
->   really_probe+0xdae/0x1d80 drivers/base/dd.c:513
->   driver_probe_device+0x1b3/0x4f0 drivers/base/dd.c:671
->   __device_attach_driver+0x5b8/0x790 drivers/base/dd.c:778
->   bus_for_each_drv+0x28e/0x3b0 drivers/base/bus.c:454
->   __device_attach+0x454/0x730 drivers/base/dd.c:844
->   device_initial_probe+0x4a/0x60 drivers/base/dd.c:891
->   bus_probe_device+0x137/0x390 drivers/base/bus.c:514
->   device_add+0x288d/0x30e0 drivers/base/core.c:2106
->   usb_new_device+0x23e5/0x2ff0 drivers/usb/core/hub.c:2534
->   hub_port_connect drivers/usb/core/hub.c:5089 [inline]
->   hub_port_connect_change drivers/usb/core/hub.c:5204 [inline]
->   port_event drivers/usb/core/hub.c:5350 [inline]
->   hub_event+0x48d1/0x7290 drivers/usb/core/hub.c:5432
->   process_one_work+0x1572/0x1f00 kernel/workqueue.c:2269
->   process_scheduled_works kernel/workqueue.c:2331 [inline]
->   worker_thread+0x189c/0x2460 kernel/workqueue.c:2417
->   kthread+0x4b5/0x4f0 kernel/kthread.c:254
->   ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:355
-> 
-> Signed-off-by: Phong Tran <tranmanphong@gmail.com>
-> ---
->  drivers/net/usb/asix_devices.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/net/usb/asix_devices.c
-> b/drivers/net/usb/asix_devices.c
-> index c9bc96310ed4..f514d19316b1 100644
-> --- a/drivers/net/usb/asix_devices.c
-> +++ b/drivers/net/usb/asix_devices.c
-> @@ -230,6 +230,7 @@ static int ax88172_bind(struct usbnet *dev,
-> struct usb_interface *intf)
->  	int i;
->  	unsigned long gpio_bits = dev->driver_info->data;
->  
-> +	memset(buf, 0, sizeof(buf));
+Hi
 
-For array variables defined in the function itself, isn't this usually
-done with:
+I tried running a simple test:
 
-         int ret = 0;
--        u8 buf[ETH_ALEN];
-+        u8 buf[ETH_ALEN] = {0};
-         int i;
-         unsigned long gpio_bits = dev->driver_info->data;
+     dd if=testfile iflag=direct bs=1M of=/dev/null
 
-eg make the compiler do it (though maybe it's smart enough to elide the
-memset, I don't know). See drivers/net/ethernet/intel/igb/e1000_mac.c
-for an example.
+With my default settings, `vmstat 10` shows something like 85% idle time 
+to 15% iowait time. I have 4 CPUs, so this is much less than one CPU 
+worth of iowait time.
 
-Dan
+If I boot with "nohz=off", I see idle time fall to 75% or below, and 
+iowait rise to about 25%, equivalent to one CPU.  That is what I had 
+originally expected.
 
->  	usbnet_get_endpoints(dev,intf);
->  
->  	/* Toggle the GPIOs in a manufacturer/model specific way */
-> @@ -681,6 +682,7 @@ static int ax88772_bind(struct usbnet *dev,
-> struct usb_interface *intf)
->  	u32 phyid;
->  	struct asix_common_private *priv;
->  
-> +	memset(buf, 0, sizeof(buf));
->  	usbnet_get_endpoints(dev, intf);
->  
->  	/* Maybe the boot loader passed the MAC address via device tree
-> */
-> @@ -1063,6 +1065,7 @@ static int ax88178_bind(struct usbnet *dev,
-> struct usb_interface *intf)
->  	int ret;
->  	u8 buf[ETH_ALEN];
->  
-> +	memset(buf, 0, sizeof(buf));
->  	usbnet_get_endpoints(dev,intf);
->  
->  	/* Get the MAC address */
+(I can also see my expected numbers, if I disable *all* C-states and 
+force polling using `pm_qos_resume_latency_us` in sysfs).
 
+The numbers above are from a kernel somewhere around v5.2-rc5.  I saw 
+the "wrong" results on some previous kernels as well.  I just now 
+realized the link to NO_HZ_IDLE.[1]
+
+[1] 
+https://unix.stackexchange.com/questions/517757/my-basic-assumption-about-system-iowait-does-not-hold/527836#527836
+
+I did not find any information about this high level of inaccuracy. Can 
+anyone explain, is this behaviour expected?
+
+I found several patches that mentioned "iowait" and NO_HZ_IDLE. But if 
+they described this problem, it was not clear to me.
+
+I thought this might also be affecting the "IO pressure" values from the 
+new "pressure stall information"... but I am too confused already, so I 
+am only asking about iowait at the moment :-).[2]
+
+[2] 
+https://unix.stackexchange.com/questions/527342/why-does-the-new-linux-pressure-stall-information-for-io-not-show-as-100/527347#527347
+
+I have seen the disclaimers for iowait in 
+Documentation/filesystems/proc.txt, and the derived man page. 
+Technically, the third disclaimer might cover anything.  But I was 
+optimistic; I hoped it was talking about relatively small glitches :-).  
+I didn't think it would mean a large systematic undercounting, which 
+applied to the vast majority of current systems (which are not tuned for 
+realtime use).
+
+|
+
+> - iowait: In a word, iowait stands for waiting for I/O to complete. But there
+>  are several problems:
+>  1. Cpu will not wait for I/O to complete, iowait is the time that a task is
+>     waiting for I/O to complete. When cpu goes into idle state for
+>     outstanding task io, another task will be scheduled on this CPU.
+>  2. In a multi-core CPU, the task waiting for I/O to complete is not running
+>     on any CPU, so the iowait of each CPU is difficult to calculate.
+>  3. The value of iowait field in /proc/stat will decrease in certain
+>     conditions|
+
+
+Thanks for all the power-saving code
+Alan
