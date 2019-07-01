@@ -2,51 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FD615B902
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 12:31:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E74125B919
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 12:33:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728707AbfGAKbi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 06:31:38 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:46194 "EHLO
+        id S1728962AbfGAKdc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 06:33:32 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:46424 "EHLO
         fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726076AbfGAKbi (ORCPT
+        with ESMTP id S1726076AbfGAKdb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 06:31:38 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x61AVatT010276;
-        Mon, 1 Jul 2019 05:31:36 -0500
+        Mon, 1 Jul 2019 06:33:31 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x61AXUmH010809;
+        Mon, 1 Jul 2019 05:33:30 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1561977096;
-        bh=G2nHpZyhEwm1VCa+dz2AUyBM/c58MIYFMCKn6X98TBA=;
-        h=From:To:CC:Subject:Date;
-        b=Muu/cRolpZgDIlnKMWJZKWvRaQMbgW6srljdcpwpv4zlAnKxUS+ETu2Edn0uHm6wE
-         P/C0JLNnw5OT/zmtcG7Lq2NNa3ViEKOtWk+w0ZFT/m01Hv/BQgbz8LqoKh6RRTz+Ai
-         qImvvDRA+rxzzS3UxVPRBAYDOAoM5UfWTyWpeuPI=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x61AVaG1001383
+        s=ti-com-17Q1; t=1561977210;
+        bh=dSkYkRG1lighboAGBLcJ4wQ6KtvkselZluhkHuDj5wA=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=AJIbE8+lx7C6qnz3bPvqLTED/xyrv51G1neHLAKlTLABKIIBzEMTnhA/wZouAwtm2
+         +3BHdYoZtDVsr6nf2Gdy2tupfb2PuiosGqKYs3h5hah540ddgTj+H0urdzcfQofF+R
+         7sXIhcj25Z/JkgSgu3iSA1NQjw1OpCf/eATV3848=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x61AXUmY046275
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 1 Jul 2019 05:31:36 -0500
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+        Mon, 1 Jul 2019 05:33:30 -0500
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 1 Jul
- 2019 05:31:36 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ 2019 05:33:30 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Mon, 1 Jul 2019 05:31:36 -0500
-Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x61AVYxw002583;
-        Mon, 1 Jul 2019 05:31:35 -0500
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>, <kishon@ti.com>
+ Frontend Transport; Mon, 1 Jul 2019 05:33:30 -0500
+Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x61AXSVU125362;
+        Mon, 1 Jul 2019 05:33:29 -0500
+Subject: Re: [GIT PULL v2] PHY: for 5.2-rc
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 CC:     <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] PHY: For 5.3
-Date:   Mon, 1 Jul 2019 16:00:01 +0530
-Message-ID: <20190701103001.21235-1-kishon@ti.com>
-X-Mailer: git-send-email 2.17.1
+References: <20190612102803.25398-1-kishon@ti.com>
+ <3c16d177-adb3-5c42-7e90-49ddae9723cb@ti.com>
+ <20190621064019.GA12643@kroah.com>
+ <105a126a-5897-5607-e371-1af958523631@ti.com>
+ <194c1b99-aff4-6118-b853-6745b306567f@ti.com>
+ <20190701101415.GC23548@kroah.com>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <b32ec30d-d31a-e2d3-7817-ab7615aa8039@ti.com>
+Date:   Mon, 1 Jul 2019 16:01:55 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190701101415.GC23548@kroah.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -55,94 +64,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi Greg,
 
-Please find the pull request for 5.3 merge window below. It adds couple
-of new PHY drivers and other misc driver fixes. Please see the tag message
-for complete list of changes.
+On 01/07/19 3:44 PM, Greg Kroah-Hartman wrote:
+> On Thu, Jun 27, 2019 at 06:46:50PM +0530, Kishon Vijay Abraham I wrote:
+>> Hi Greg,
+>>
+>> On 21/06/19 12:50 PM, Kishon Vijay Abraham I wrote:
+>>>
+>>>
+>>> On 21/06/19 12:10 PM, Greg Kroah-Hartman wrote:
+>>>> On Fri, Jun 21, 2019 at 11:41:26AM +0530, Kishon Vijay Abraham I wrote:
+>>>>> Hi Greg,
+>>>>>
+>>>>> On 12/06/19 3:57 PM, Kishon Vijay Abraham I wrote:
+>>>>>> Hi Greg,
+>>>>>>
+>>>>>> Please find the updated pull request for 5.2 -rc cycle. Here I dropped
+>>>>>> the patch that added "static" for a function to fix sparse warning.
+>>>>>>
+>>>>>> I'm also sending the patches along with this pull request in case you'd
+>>>>>> like to look them.
+>>>>>>
+>>>>>> Consider merging it in this -rc cycle and let me know if you want me
+>>>>>> to make any further changes.
+>>>>>
+>>>>> Are you planning to merge this?
+>>>>
+>>>> Ugh, fell through the cracks of my huge TODO mbox at the moment, sorry.
+>>>> It's still there, should get to it next week...
+>>>
+>>> All right, thanks!
+>>
+>> I think it's not merged yet. If you think it's too late, I can send it along
+>> with the merge window pull request.
+> 
+> Sorry for the delay, I've merged this into my branch for 5.3-rc1.  If
+> anything needed to go into 5.2, can you send the git commit ids to
+> stable@vger.kernel.org when they hit Linus's tree?
 
-Let me know if I have to change something.
+Sure, I'll do that. Meanwhile I've sent pull request for 5.3 merge window. It
+would be great if you can pick that one too.
 
 Thanks
 Kishon
-
-The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
-
-  Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git tags/phy-for-5.3
-
-for you to fetch changes up to 5206026404190125436f81088eb3667076e56083:
-
-  phy: qcom-qmp: Raise qcom_qmp_phy_enable() polling delay (2019-06-25 19:17:38 +0530)
-
-----------------------------------------------------------------
-phy: for 5.3
-
-  *) Add a new PHY driver for Qualcomm PCIe2 PHY
-  *) Add a new PHY driver for Mixel DPHY present in i.MX8
-  *) Fix Qualcomm QMP UFS PHY driver from incorrectly reporting that
-     PHY enable failed
-  *) Fix _BUG_ on Amlogic G12A USB3 + PCIE Combo PHY Driver due to
-     calling a sleeping function from invalid context
-  *) Fix WARN_ON dump on rcar-gen3-usb2 PHY driver caused due to
-     imbalance powered flag
-  *) Fix .cocci and sparse warnings
-
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-
-----------------------------------------------------------------
-Bjorn Andersson (3):
-      dt-bindings: phy: Add binding for Qualcomm PCIe2 PHY
-      phy: qcom: Add Qualcomm PCIe2 PHY driver
-      phy: qcom-qmp: Correct READY_STATUS poll break condition
-
-Guido Günther (2):
-      dt-bindings: phy: Add documentation for mixel dphy
-      phy: Add driver for mixel mipi dphy found on NXP's i.MX8 SoCs
-
-Gustavo A. R. Silva (1):
-      phy: samsung: Use struct_size() in devm_kzalloc()
-
-Lubomir Rintel (1):
-      dt-bindings: phy-pxa-usb: add bindings
-
-Marc Gonzalez (2):
-      phy: qcom-qmp: Drop useless msm8998_pciephy_cfg setting
-      phy: qcom-qmp: Raise qcom_qmp_phy_enable() polling delay
-
-Neil Armstrong (1):
-      phy: meson-g12a-usb3-pcie: disable locking for cr_regmap
-
-Yoshihiro Shimoda (1):
-      phy: renesas: rcar-gen3-usb2: fix imbalance powered flag
-
-YueHaibing (2):
-      phy: usb: phy-brcm-usb: Fix platform_no_drv_owner.cocci warnings
-      phy: ti: am654-serdes: Make serdes_am654_xlate() static
-
- Documentation/devicetree/bindings/phy/mixel,mipi-dsi-phy.txt |  29 ++++++++
- Documentation/devicetree/bindings/phy/phy-pxa-usb.txt        |  18 +++++
- Documentation/devicetree/bindings/phy/qcom-pcie2-phy.txt     |  42 ++++++++++++
- drivers/phy/amlogic/phy-meson-g12a-usb3-pcie.c               |   2 +-
- drivers/phy/broadcom/phy-brcm-usb.c                          |   1 -
- drivers/phy/freescale/Kconfig                                |  10 +++
- drivers/phy/freescale/Makefile                               |   1 +
- drivers/phy/freescale/phy-fsl-imx8-mipi-dphy.c               | 497 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- drivers/phy/qualcomm/Kconfig                                 |   8 +++
- drivers/phy/qualcomm/Makefile                                |   1 +
- drivers/phy/qualcomm/phy-qcom-pcie2.c                        | 331 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- drivers/phy/qualcomm/phy-qcom-qmp.c                          |   5 +-
- drivers/phy/renesas/phy-rcar-gen3-usb2.c                     |  19 ++++--
- drivers/phy/samsung/phy-samsung-usb2.c                       |   5 +-
- drivers/phy/ti/phy-am654-serdes.c                            |   4 +-
- 15 files changed, 960 insertions(+), 13 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/phy/mixel,mipi-dsi-phy.txt
- create mode 100644 Documentation/devicetree/bindings/phy/phy-pxa-usb.txt
- create mode 100644 Documentation/devicetree/bindings/phy/qcom-pcie2-phy.txt
- create mode 100644 drivers/phy/freescale/phy-fsl-imx8-mipi-dphy.c
- create mode 100644 drivers/phy/qualcomm/phy-qcom-pcie2.c
-
--- 
-2.17.1
-
