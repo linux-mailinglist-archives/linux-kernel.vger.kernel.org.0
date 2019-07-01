@@ -2,122 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 781DE5C8B3
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 07:19:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18AC55E155
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 11:48:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726957AbfGBFTX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 01:19:23 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:40484 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725802AbfGBFTX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 01:19:23 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x625IrkD133671;
-        Tue, 2 Jul 2019 05:18:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
- bh=vqXCEfmZ5gQlOnpRYRTKWKl8oRG3faoP4WDFQ3/Z1bA=;
- b=y00R8cDBVawlt1rd9K/zEIkNa9LT9SrPzZqYsjBuqUker5GpmuTglloBjzkz9GBx2GU4
- 8SYGMvKdvLy7XMgqOoHvtMPqRsF/YUN8jIrSIZ7OVI/pFxIGJSwpAIPaOUMfNiNrI8J5
- pzbs/XIBvGidT0LwvQHBLw402cPfCMe+MYI/dDPeMb3LRUKvUbteq9+AWk2egXnGpc2z
- hhH6EPZkSzEw3C/VVLzfe7aZiDj6LCb8mtlz1085R8Crq4ao1SNwJU708yDHrIdeFbSx
- Wcu5hh9b2xNseAoz3rEK4zGH7gD0N/J0C4zVEcUGnFqvCY31YxtpCVi+rAxUBzibYybV DQ== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2120.oracle.com with ESMTP id 2te61ps3vw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 02 Jul 2019 05:18:53 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x625Ccs1019349;
-        Tue, 2 Jul 2019 05:16:52 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 2tebku1uf9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 02 Jul 2019 05:16:52 +0000
-Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x625Gp9D010788;
-        Tue, 2 Jul 2019 05:16:51 GMT
-Received: from z2.cn.oracle.com (/10.182.69.87)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 01 Jul 2019 22:16:51 -0700
-From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     xen-devel@lists.xenproject.org, boris.ostrovsky@oracle.com,
-        jgross@suse.com, sstabellini@kernel.org, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de,
-        Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Subject: [PATCH v4 5/5] xen: Add 'xen_nopv' parameter back for backward compatibility
-Date:   Mon,  1 Jul 2019 13:19:59 +0800
-Message-Id: <1561958399-28906-6-git-send-email-zhenzhong.duan@oracle.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1561958399-28906-1-git-send-email-zhenzhong.duan@oracle.com>
-References: <1561958399-28906-1-git-send-email-zhenzhong.duan@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9305 signatures=668688
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1907020057
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9305 signatures=668688
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1907020059
+        id S1727107AbfGCJrz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 05:47:55 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47630 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727056AbfGCJrx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 3 Jul 2019 05:47:53 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7ADFDB15C;
+        Wed,  3 Jul 2019 09:47:51 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 285CE1E433D; Mon,  1 Jul 2019 14:11:19 +0200 (CEST)
+Date:   Mon, 1 Jul 2019 14:11:19 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Seema Pandit <seema.pandit@intel.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>,
+        Robert Barror <robert.barror@intel.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH] filesystem-dax: Disable PMD support
+Message-ID: <20190701121119.GE31621@quack2.suse.cz>
+References: <CAPcyv4jQP-SFJGor-Q3VCRQ0xwt3MuVpH2qHx2wzyRA88DGQww@mail.gmail.com>
+ <CAPcyv4jjqooboxivY=AsfEPhCvxdwU66GpwE9vM+cqrZWvtX3g@mail.gmail.com>
+ <CAPcyv4h6HgNE38RF5TxO3C268ZvrxgcPNrPWOt94MnO5gP_pjw@mail.gmail.com>
+ <CAPcyv4gwd1_VHk_MfHeNSxyH+N1=aatj9WkKXqYNPkSXe4bFDg@mail.gmail.com>
+ <20190627195948.GB4286@bombadil.infradead.org>
+ <CAPcyv4iB3f1hDdCsw=Cy234dP-RXpxGyXDoTwEU8nt5qUDEVQg@mail.gmail.com>
+ <20190629160336.GB1180@bombadil.infradead.org>
+ <CAPcyv4ge3Ht1k_v=tSoVA6hCzKg1N3imhs_rTL3oTB+5_KC8_Q@mail.gmail.com>
+ <CAA9_cmcb-Prn6CnOx-mJfb9CRdf0uG9u4M1Vq1B1rKVemCD-Vw@mail.gmail.com>
+ <20190630152324.GA15900@bombadil.infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190630152324.GA15900@bombadil.infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Map 'xen_nopv' to 'nopv' and mark 'xen_nopv' obsolete in
-kernel-parameters.txt
+On Sun 30-06-19 08:23:24, Matthew Wilcox wrote:
+> On Sun, Jun 30, 2019 at 01:01:04AM -0700, Dan Williams wrote:
+> > @@ -215,7 +216,7 @@ static wait_queue_head_t
+> > *dax_entry_waitqueue(struct xa_state *xas,
+> >          * queue to the start of that PMD.  This ensures that all offsets in
+> >          * the range covered by the PMD map to the same bit lock.
+> >          */
+> > -       if (dax_is_pmd_entry(entry))
+> > +       //if (dax_is_pmd_entry(entry))
+> >                 index &= ~PG_PMD_COLOUR;
+> >         key->xa = xas->xa;
+> >         key->entry_start = index;
+> 
+> Hah, that's a great naive fix!  Thanks for trying that out.
+> 
+> I think my theory was slightly mistaken, but your fix has the effect of
+> fixing the actual problem too.
+> 
+> The xas->xa_index for a PMD is going to be PMD-aligned (ie a multiple of
+> 512), but xas_find_conflict() does _not_ adjust xa_index (... which I
+> really should have mentioned in the documentation).  So we go to sleep
+> on the PMD-aligned index instead of the index of the PTE.  Your patch
+> fixes this by using the PMD-aligned index for PTEs too.
+> 
+> I'm trying to come up with a clean fix for this.  Clearly we
+> shouldn't wait for a PTE entry if we're looking for a PMD entry.
+> But what should get_unlocked_entry() return if it detects that case?
+> We could have it return an error code encoded as an internal entry,
+> like grab_mapping_entry() does.  Or we could have it return the _locked_
+> PTE entry, and have callers interpret that.
+> 
+> At least get_unlocked_entry() is static, but it's got quite a few callers.
+> Trying to discern which ones might ask for a PMD entry is a bit tricky.
+> So this seems like a large patch which might have bugs.
 
-Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: Stefano Stabellini <sstabellini@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
----
- Documentation/admin-guide/kernel-parameters.txt | 6 ++++++
- arch/x86/xen/enlighten_hvm.c                    | 7 +++++++
- 2 files changed, 13 insertions(+)
+Yeah. So get_unlocked_entry() is used in several cases:
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index d5c3dcc..34eb323 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -5264,6 +5264,12 @@
- 			improve timer resolution at the expense of processing
- 			more timer interrupts.
- 
-+	xen_nopv	[X86]
-+			Disables the PV optimizations forcing the HVM guest to
-+			run as generic HVM guest with no PV drivers.
-+			This option is obsoleted by the "nopv" option, which
-+			has equivalent effect for XEN platform.
-+
- 	nopv=		[X86,XEN,KVM,HYPER_V,VMWARE]
- 			Disables the PV optimizations forcing the guest to run
- 			as generic guest with no PV drivers. Currently support
-diff --git a/arch/x86/xen/enlighten_hvm.c b/arch/x86/xen/enlighten_hvm.c
-index 340dff8..5cdd608 100644
---- a/arch/x86/xen/enlighten_hvm.c
-+++ b/arch/x86/xen/enlighten_hvm.c
-@@ -211,6 +211,13 @@ static void __init xen_hvm_guest_init(void)
- #endif
- }
- 
-+static __init int xen_parse_nopv(char *arg)
-+{
-+	nopv = true;
-+	return 0;
-+}
-+early_param("xen_nopv", xen_parse_nopv);
-+
- bool __init xen_hvm_need_lapic(void)
- {
- 	if (xen_pv_domain())
+1) Case where we already have entry at given index but it is locked and we
+need it unlocked so that we can do our thing `(dax_writeback_one(),
+dax_layout_busy_page()).
+
+2) Case where we want any entry covering given index (in
+__dax_invalidate_entry()). This is essentially the same as case 1) since we
+have already looked up the entry (just didn't propagate that information
+from mm/truncate.c) - we want any unlocked entry covering given index.
+
+3) Cases where we really want entry at given index and we have some entry
+order constraints (dax_insert_pfn_mkwrite(), grab_mapping_entry()).
+
+Honestly I'd make the rule that get_unlocked_entry() returns entry of any
+order that is covering given index. I agree it may be unnecessarily waiting
+for PTE entry lock for the case where in case 3) we are really looking only
+for PMD entry but that seems like a relatively small cost for the
+simplicity of the interface.
+
+BTW, looking into the xarray code, I think I found another difference
+between the old radix tree code and the new xarray code that could cause
+issues. In the old radix tree code if we tried to insert PMD entry but
+there was some PTE entry in the covered range, we'd get EEXIST error back
+and the DAX fault code relies on this. I don't see how similar behavior is
+achieved by xas_store()...
+
+								Honza
 -- 
-1.8.3.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
