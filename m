@@ -2,60 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 427795B708
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 10:42:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C1DF05B70D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 10:43:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727959AbfGAImn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 04:42:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57672 "EHLO mail.kernel.org"
+        id S1727989AbfGAIn1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 04:43:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57842 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726442AbfGAImn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 04:42:43 -0400
+        id S1726442AbfGAIn1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Jul 2019 04:43:27 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DD16620881;
-        Mon,  1 Jul 2019 08:42:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EE7DF208E4;
+        Mon,  1 Jul 2019 08:43:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561970562;
-        bh=bxRp0wzioxPO5LSZMl5y6eVW5avDuj3NK25QSOZQ8Uk=;
+        s=default; t=1561970606;
+        bh=0NA1/7KLb+cyKHN4XxT0JUUlB2v/LMeQRKGWYY+tSL8=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lq+qL62AE7ambKrarLmAT5KQ+YPxVtSGXMrqUAfisU18Vt5iwjNsHthJFBIiT5k7e
-         8GuCnThOV/MzC0mNYw5XqaMN+GyPLB+gTwXMDSDj6uVm6O8Lck6taA8G0V4b8G4H5M
-         rZKmNW1rXKzNuE8cvzUIJ0BuwXjWohfGIlHiPdjc=
-Date:   Mon, 1 Jul 2019 10:42:39 +0200
+        b=s/qgc/htOo3Uv83ZbeoSEyiDWw0kpslcG6HW8GNh3kma9esMgLz5Qg9a7e/l/Jkvq
+         +W+7VwpCQbvjIw33Fnjh3RuMA9HW24/6CuW4cj1vxubvrRubsxlphXX/ffxsmPLLS6
+         vYWHlsxUiWXgyYYNbKVpsGb3EQWuHTu4JGzyT3kI=
+Date:   Mon, 1 Jul 2019 10:43:23 +0200
 From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Simon =?iso-8859-1?Q?Sandstr=F6m?= <simon@nikanor.nu>
-Cc:     devel@driverdev.osuosl.org, gneukum1@gmail.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: kpc2000: fix brace issues in kpc2000_spi.c
-Message-ID: <20190701084239.GA20886@kroah.com>
-References: <20190627195323.28913-1-simon@nikanor.nu>
+To:     Harsh Jain <harshjain32@gmail.com>
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        harshjain.prof@gmail.com
+Subject: Re: [PATCH 1/2] staging:kpc2000:Fix symbol not declared warning
+Message-ID: <20190701084323.GA21007@kroah.com>
+References: <20190628172724.2689-1-harshjain32@gmail.com>
+ <20190628172724.2689-2-harshjain32@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190627195323.28913-1-simon@nikanor.nu>
+In-Reply-To: <20190628172724.2689-2-harshjain32@gmail.com>
 User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 27, 2019 at 09:53:23PM +0200, Simon Sandström wrote:
-> Fixes issues found by checkpatch:
+On Fri, Jun 28, 2019 at 10:57:23PM +0530, Harsh Jain wrote:
+> It fixes "symbol was not declared. Should it be static?"
+> sparse warning.
 > 
-> - "WARNING: braces {} are not necessary for single statement blocks"
-> - "WARNING: braces {} are not necessary for any arm of this statement"
-> 
-> Signed-off-by: Simon Sandström <simon@nikanor.nu>
+> Signed-off-by: Harsh Jain <harshjain32@gmail.com>
 > ---
->  drivers/staging/kpc2000/kpc2000_spi.c | 39 ++++++++++-----------------
->  1 file changed, 14 insertions(+), 25 deletions(-)
+>  drivers/staging/kpc2000/kpc_i2c/i2c_driver.c | 4 ++--
 
-Patch does not apply to my tree :(
+This file isn't even in the linux-next tree at all, it has moved weeks
+ago.
 
-Please rebase it and resend.
+Always be sure to work against linux-next so that you do not create
+things that are not able to be accepted.
 
 thanks,
 
