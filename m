@@ -2,53 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 707875BFB8
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 17:26:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED4DB5BFB0
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 17:24:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728827AbfGAP0K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 11:26:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38172 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727810AbfGAP0K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 11:26:10 -0400
-Received: from localhost (unknown [122.167.76.109])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 87AEA208E4;
-        Mon,  1 Jul 2019 15:26:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561994769;
-        bh=f6Vhp2JOFVYPly+oy0IG8d1NArRJ8kNupx/z8r2urwo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=eiiDwTWvFvNOl3K8T00Vo2UnctJIxYxlt6zhzuO7ORU54jGeuPKdtwfTUf5502fzU
-         0wu7iTvRGN0MoLWVhliMIZI5Osqz8gGpVyrbVSI5pLOCVSjzOUQT5o7qHplOxU2XtV
-         pSXSQoMsD4jqvZzQDUJcb4yQzOVu4b5WFN72xhFo=
-Date:   Mon, 1 Jul 2019 20:52:57 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-Cc:     agross@kernel.org, adrian.hunter@intel.com, ulf.hansson@linaro.org,
-        bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        khasim.mohammed@linaro.org
-Subject: Re: [PATCH v2] mmc: sdhci-msm: fix mutex while in spinlock
-Message-ID: <20190701152257.GM2911@vkoul-mobl>
-References: <20190701150125.2602-1-jorge.ramirez-ortiz@linaro.org>
+        id S1728667AbfGAPYU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 11:24:20 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:42573 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728575AbfGAPYT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Jul 2019 11:24:19 -0400
+Received: by mail-wr1-f65.google.com with SMTP id x17so14304725wrl.9
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2019 08:24:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=og76osagZkW1HyYwuJ93MYzDpl1HEiuEE5P8qHSHdLE=;
+        b=H+xqiH5PfginiAgTwhUbH9wCmLV1UFNM1AruiHCLnLNEOxsj90mjn1WOyemsl0OcGQ
+         H5pCZ+IBPULsoB6YbcAutjgEngJbEJRyAHJ3ChMgibw9l9hMjgVDm4vb08T05suVNfX6
+         GRiOSf0+pKhaXJc0FN2vBz6acALVhU9sscRqttb+EOIPooENpSOsqMQXAq3tpb6KmJSK
+         bPlxFsGLndTC7vMqZJ9eshhHQbcywOp/wbW9hgZREhhTwxzsP14QCcc2t+HhPgQbN247
+         CLH9ZhqDLDWXDDQVV3t3F57Hy4Rllw/T56Vp9nekZ6EYNS9U/rBlQUElLD3uwhaGBYiQ
+         sevw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=og76osagZkW1HyYwuJ93MYzDpl1HEiuEE5P8qHSHdLE=;
+        b=HYkPkZkZdDT9EH3+OZLFFPP0K7VHq6xJ0YFEOfSKlZTKE3Yco43MFZHQjQZmNPqHwN
+         qgFh8/qGzbqtr0imv0HJDevSf5DU3lVfaEP6W97ew3uQNLBJkE4qtKrj7QqiOb5LmZm3
+         m3pWtcbJvaURl54JUQD5lt5N8PmzPDq2GxGhdueJDW/fZYknHQMFWG/gS+bUCiwwvEH2
+         3KTccEX5UmELAIpRj4qF+SjAqQ+lNV8qrdcuhSys9MTDEn8f27616h8bQK733sPVwzAK
+         G7XsA1V4cuzkuut6a5uAcRvOmNCsANMRf7Cv2KG5atWr0rSE5ijiH9VZKXzxOXWTE6VN
+         kW6A==
+X-Gm-Message-State: APjAAAUNrgZ9Nn6PZ3OMhR9oQVOLlmWqUK0yMhpafzXwrVjXmwtk4xeD
+        +SblLnBPKTsrZK6z2ndpzHA49g==
+X-Google-Smtp-Source: APXvYqy861d3WDBNflH8j6EQtsx9tZtxwBE6L3gfYqvrwNliI8KUrcX+yDQcDkn3n3Zvqx07g+7tEg==
+X-Received: by 2002:a5d:6b90:: with SMTP id n16mr8744868wrx.206.1561994657545;
+        Mon, 01 Jul 2019 08:24:17 -0700 (PDT)
+Received: from brauner.io (p4FC0A2B8.dip0.t-ipconnect.de. [79.192.162.184])
+        by smtp.gmail.com with ESMTPSA id f1sm9038727wml.28.2019.07.01.08.24.15
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 01 Jul 2019 08:24:16 -0700 (PDT)
+Date:   Mon, 1 Jul 2019 17:24:14 +0200
+From:   Christian Brauner <christian@brauner.io>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        David Howells <dhowells@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Adrian Reber <adrian@lisas.de>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Ley Foon Tan <lftan@altera.com>,
+        "moderated list:NIOS2 ARCHITECTURE" 
+        <nios2-dev@lists.rocketboards.org>
+Subject: Re: [PATCH v3 2/2] arch: wire-up clone3() syscall
+Message-ID: <20190701152413.zfwsxwtgeqtveie6@brauner.io>
+References: <20190604160944.4058-1-christian@brauner.io>
+ <20190604160944.4058-2-christian@brauner.io>
+ <20190620184451.GA28543@roeck-us.net>
+ <20190620221003.ciuov5fzqxrcaykp@brauner.io>
+ <CAK8P3a2iV7=HkHBVL_puvCQN0DmdKEnVs2aG9MQV_8Q58JSfTA@mail.gmail.com>
+ <20190621111839.v5yqlws6iw7mx4aa@brauner.io>
+ <CAK8P3a0T1=eg5ONbMFhHi=vmk1K5uogZ+5=wpsXvjVDzn6vS=Q@mail.gmail.com>
+ <20190621153012.fxwhx25mzmzueqh7@brauner.io>
+ <CAK8P3a0f_=q88JB=t7fbmweAbZ2E2_uCMt+2JoBYx3od_M6fHQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190701150125.2602-1-jorge.ramirez-ortiz@linaro.org>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <CAK8P3a0f_=q88JB=t7fbmweAbZ2E2_uCMt+2JoBYx3od_M6fHQ@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01-07-19, 17:01, Jorge Ramirez-Ortiz wrote:
-> mutexes can sleep and therefore should not be taken while holding a
-> spinlock. move clk_get_rate (can sleep) outside the spinlock protected
-> region.
+On Mon, Jul 01, 2019 at 05:14:51PM +0200, Arnd Bergmann wrote:
+> On Fri, Jun 21, 2019 at 5:30 PM Christian Brauner <christian@brauner.io> wrote:
+> > On Fri, Jun 21, 2019 at 04:20:15PM +0200, Arnd Bergmann wrote:
+> > > On Fri, Jun 21, 2019 at 1:18 PM Christian Brauner <christian@brauner.io> wrote:
+> > Hm, if you believe that this is fine and want to "vouch" for it by
+> > whipping up a patch that replaces the wiring up done in [1] I'm happy to
+> > take it. :) Otherwise I'd feel more comfortable not adding all arches at
+> > once.
+> >
+> > [1]: https://git.kernel.org/pub/scm/linux/kernel/git/brauner/linux.git/log/?h=clone
+> 
+> Sorry for my late reply. I had actually looked at the implementations
+> in a little
+> more detail and I think you are right that adding these are better
+> left to the arch
+> maintainers in case of clone3.
 
-Reviewed-by: Vinod Koul <vkoul@kernel.org>
+Perfect, thanks!
 
--- 
-~Vinod
+Christian
