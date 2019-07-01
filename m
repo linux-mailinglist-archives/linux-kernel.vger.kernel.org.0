@@ -2,110 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0029E5BABD
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 13:33:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C8C9B5BAD0
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 13:36:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727625AbfGALdN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 07:33:13 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:44939 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726967AbfGALdL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 07:33:11 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45clc33R99z9sPM;
-        Mon,  1 Jul 2019 21:33:07 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1561980789;
-        bh=C8KL78jLCoDFJ1Bb+OIqrAImaLk0QK9iv7sc8TkvVx0=;
-        h=Date:From:To:Cc:Subject:From;
-        b=gTyP6v2/8pcb2Dz3UJFcp7ZuSvKfY+fzxNdReNZr6bfbHRMlvSjTRIkwx1XFIRVpk
-         kdonvaUwJZaimvau5BLDhDCMFRYQhqQyMMfZGc9hT2fHIBhJTwQaeF0dG0zMPkxlb/
-         8/99N7Ex8jVNArXN+/ZVweaYPJoC5yAAqzQmxFfX7Yccta/5ZpyJlRwlW5SXa78Vvz
-         uFXzwmqJcJ0MMFeogb4gPhFarPCLQSNY37MLnLZzdj592v9DBedYIYhUqSkLDtQJfG
-         QY6i218xlHBAgaH1z675EG8Hih4GTLBj+zIEzfjUNthZPK+woBDQ4pEspbE96SK7SD
-         2Np5CgOksel/g==
-Date:   Mon, 1 Jul 2019 21:33:04 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Jason Gunthorpe <jgg@mellanox.com>, Dave Airlie <airlied@linux.ie>,
-        DRI <dri-devel@lists.freedesktop.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Philip Yang <Philip.Yang@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>
-Subject: linux-next: build failure after merge of the hmm tree
-Message-ID: <20190701213304.34eeaef8@canb.auug.org.au>
+        id S1727887AbfGALgS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 07:36:18 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:50972 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727320AbfGALgR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Jul 2019 07:36:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1561980974; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:references; bh=6st6YfL1K5fciSijgkV7Q9swYmHShkUiWCGFkUwqYwY=;
+        b=TNdIc2/mm8r7MrUYXYX+Ks6pEHsk7ukjdSfYpfnZP8miFQ8d8QPEaSAsfmn4TzOkZE4BGM
+        Hsfb0k6ZSwTxDQa2Jv6RbWhvJwMAdq7jTWDQzPFPmv7NNsz01AZI6zdY4SN7QpuZT6HhGD
+        vW19LhV1X7+LamoGTKO0or7R/97Z4Cw=
+From:   Paul Cercueil <paul@crapouillou.net>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH] clk: ingenic/jz4740: Fix "pll half" divider not read/written properly
+Date:   Mon,  1 Jul 2019 13:36:06 +0200
+Message-Id: <20190701113606.4130-1-paul@crapouillou.net>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/.ggz7+WEN9pPwWsG36IPyVN"; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/.ggz7+WEN9pPwWsG36IPyVN
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+The code was setting the bit 21 of the CPCCR register to use a divider
+of 2 for the "pll half" clock, and clearing the bit to use a divider
+of 1.
 
-Hi all,
+This is the opposite of how this register field works: a cleared bit
+means that the /2 divider is used, and a set bit means that the divider
+is 1.
 
-After merging the hmm tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+Restore the correct behaviour using the newly introduced .div_table
+field.
 
-mm/hmm.c: In function 'hmm_get_or_create':
-mm/hmm.c:50:2: error: implicit declaration of function 'lockdep_assert_held=
-_exclusive'; did you mean 'lockdep_assert_held_once'? [-Werror=3Dimplicit-f=
-unction-declaration]
-  lockdep_assert_held_exclusive(&mm->mmap_sem);
-  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  lockdep_assert_held_once
-drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c: In function 'amdgpu_ttm_tt_get_use=
-r_pages':
-drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c:778:28: error: passing argument 2 o=
-f 'hmm_range_register' from incompatible pointer type [-Werror=3Dincompatib=
-le-pointer-types]
-  hmm_range_register(range, mm, start,
-                            ^~
-In file included from drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c:35:
-include/linux/hmm.h:464:29: note: expected 'struct hmm_mirror *' but argume=
-nt is of type 'struct mm_struct *'
-          struct hmm_mirror *mirror,
-          ~~~~~~~~~~~~~~~~~~~^~~~~~
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ drivers/clk/ingenic/jz4740-cgu.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-Caused by commit
+diff --git a/drivers/clk/ingenic/jz4740-cgu.c b/drivers/clk/ingenic/jz4740-cgu.c
+index a7f8ce60c957..0957ba4a40a5 100644
+--- a/drivers/clk/ingenic/jz4740-cgu.c
++++ b/drivers/clk/ingenic/jz4740-cgu.c
+@@ -53,6 +53,10 @@ static const u8 jz4740_cgu_cpccr_div_table[] = {
+ 	1, 2, 3, 4, 6, 8, 12, 16, 24, 32,
+ };
+ 
++static const u8 jz4740_cgu_pll_half_div_table[] = {
++	2, 1,
++};
++
+ static const struct ingenic_cgu_clk_info jz4740_cgu_clocks[] = {
+ 
+ 	/* External clocks */
+@@ -86,7 +90,10 @@ static const struct ingenic_cgu_clk_info jz4740_cgu_clocks[] = {
+ 	[JZ4740_CLK_PLL_HALF] = {
+ 		"pll half", CGU_CLK_DIV,
+ 		.parents = { JZ4740_CLK_PLL, -1, -1, -1 },
+-		.div = { CGU_REG_CPCCR, 21, 1, 1, -1, -1, -1 },
++		.div = {
++			CGU_REG_CPCCR, 21, 1, 1, -1, -1, -1,
++			jz4740_cgu_pll_half_div_table,
++		},
+ 	},
+ 
+ 	[JZ4740_CLK_CCLK] = {
+-- 
+2.21.0.593.g511ec345e18
 
-  e36acfe6c86d ("mm/hmm: Use hmm_mirror not mm as an argument for hmm_range=
-_register")
-
-interacting with commit
-
-  66c45500bfdc ("drm/amdgpu: use new HMM APIs and helpers")
-
-from the drm tree.
-
-All I could do for now was to mark the AMDGPU driver broken.  Please
-submit a merge for for me (and later Linus) to use.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/.ggz7+WEN9pPwWsG36IPyVN
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0Z73AACgkQAVBC80lX
-0GxpLQf+LMHL2mWfHS5YvdE3KHF60hv56K27v0dIs3yDycw9f5yhztFHHogleIUr
-xpVg9DRfLoUlPtCRzP05CWFSGp24bbDsTl+EQrk+sfNbmRmDkWo7zeFd4DUdhe2e
-MgT9FqipJnbFqXSwpyZzstUa8CdnxlRUOZdlJIwqgdRX4u4g+hlE+45YjmE009pV
-lRES1OjZED4t4QcfxQjCNFuLlUoZm+CgppPcp4x+KovYEYSl1iHThGlVYMkbqb1C
-o6LY8LdBK+D1PHpVr23ODTpFL4n25jI8YgQwk/1a8B063GhNz362+oyG3oWY9y7G
-LZC8K+Xam6sbTcaDrUrNrh7ydo5Zww==
-=hKxP
------END PGP SIGNATURE-----
-
---Sig_/.ggz7+WEN9pPwWsG36IPyVN--
