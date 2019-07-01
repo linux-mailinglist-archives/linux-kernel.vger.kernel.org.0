@@ -2,98 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 956F45BAB2
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 13:30:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 753835BAC0
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 13:33:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727555AbfGALa3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 07:30:29 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:44506 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727279AbfGALa3 (ORCPT
+        id S1727815AbfGALdQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 07:33:16 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:40562 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727469AbfGALdM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 07:30:29 -0400
-Received: by mail-ed1-f66.google.com with SMTP id k8so22879630edr.11
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2019 04:30:28 -0700 (PDT)
+        Mon, 1 Jul 2019 07:33:12 -0400
+Received: by mail-pl1-f194.google.com with SMTP id a93so7229073pla.7;
+        Mon, 01 Jul 2019 04:33:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=oN7DVtuYqL0FXJ3oIM6FfobBi2SgwN99M5srNRJ7EfE=;
+        b=hAAuoTuDi51XGTQ+LAJB40q7NYUR+gX4DJgBVaWDVUDv503g/ZpNgKHG9lD33tl+kx
+         gvyEPwxFwd8u+0SOJ4Sa5Ec+Pl32KTr6zR9Vr3OnLoOZQzao/+XJdDJXhlOQQDQFHH3A
+         4R7D5J5E6Og7AImsmjjEVC3Ne0PC7Eru336gr1lZyjD/xcO69UfJSI+kqutpafq+qoQK
+         c+gkxOkTUzKpaVPe1egtUFjTwI6WvsczqBX19tjyLjbm9rKdBe36u2vJdk63qrsunSPh
+         2viJhP0hPE7WggtKnIrpBIrpu97Ok5UpzThMsuoi/r5eAmwAZiI0rLgYSBtY00BnMaq2
+         535g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=4FZVerzE1oFDIf/AEgJefyhsJDoB9qh6VUR1z8DL6tw=;
-        b=SrB61me/+0JfOJyEayjPqtq0mAkqcfLd3WCwghSWA19QQVTdkfuH+6opTAqSd7TMdm
-         WQxAN1+/cYb5dgo+S5mq6/drev76NpRFS6qGU3p7zsW4xV3n7CkIa1F8W5/L3AlaAvQf
-         TEIvMa4LYEyDhnRTEwzaDrNCP4iv4mIbk8h/HxzdAX4EfB4WASEibxcYJ2ibM4TSMxnF
-         WZpqzgHY3N2BG9nBKcH19bDxbHRqKAGr0GB9vIyKlh9QvKa+pv9nnvyqDubJRd3Diyz/
-         q1gK1ewqGJhwfdFEuOiJ1/jZn/N2qy7tfkm+rfTf1N96m3mHvfBY2P/5Vkqm7tFVY21E
-         tkGw==
-X-Gm-Message-State: APjAAAUgCb0ZHUirH5w91I8qpfke20Hsk22N4ypcFvSLEyrhTpHvkuTZ
-        uKQGXyJmiBLZ6GtcsUv76iW6iA==
-X-Google-Smtp-Source: APXvYqz/0QfqYPFurt8vHq2JQ9efiubTG15CmggEQS1oSAuTuLo82LfJbwtMPGobRwI6nNQaLSJ6rw==
-X-Received: by 2002:a50:e718:: with SMTP id a24mr28061508edn.91.1561980627445;
-        Mon, 01 Jul 2019 04:30:27 -0700 (PDT)
-Received: from shalem.localdomain (84-106-84-65.cable.dynamic.v4.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id v32sm3589172edm.92.2019.07.01.04.30.26
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Mon, 01 Jul 2019 04:30:26 -0700 (PDT)
-Subject: Re: [PATCH v2 0/5] PM: PCI/ACPI: Hibernation handling fixes
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux PM <linux-pm@vger.kernel.org>
-Cc:     Linux PCI <linux-pci@vger.kernel.org>,
-        Linux ACPI <linux-acpi@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        "Robert R. Howell" <RHowell@uwyo.edu>
-References: <4976412.ihyb9sT5jY@kreacher>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <fc53d965-c5b6-45b9-8e0d-1de2fbed09a8@redhat.com>
-Date:   Mon, 1 Jul 2019 13:30:25 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=oN7DVtuYqL0FXJ3oIM6FfobBi2SgwN99M5srNRJ7EfE=;
+        b=Ul9ahYqQtLmWRnt6qx0k/61/hbEMvThJ4o/rE+leU4xZWjBLNnqb62u4N1t9JOdm+0
+         SSHRqMv9dx2RXX31RMjnQXjvZ/oKWMW0Te+RSss8Os8dRi+9144EJNKYcOZUVd4ykvT3
+         BEw7+UIUJ8EaFT0Aggp8BYJkupWSYhy+7UzvED1ItvKpN097SPduUelhpNrsGuzJDqQx
+         0/DP+betYDM1Oeourj5MOUGaAJeDlNaJgRnRibhd+H9uu75GWafw9E95+n5lg4YXD9jw
+         EuldAT+Q9Jgd5B4i2w8m5vjs51CqyC2dSpNxDk7eOfW5hT/v/phqVSbQrVffSQwP27dX
+         2Y4Q==
+X-Gm-Message-State: APjAAAV7G1Cuacy5Zmhd12fsXtDPZnWbSjZfUcRL7Rr4NkAOHU3zU5pb
+        h5UmE6MAD1pZ7cx7hlJ0lDE0C/jvEBcfnUdrfh4=
+X-Google-Smtp-Source: APXvYqzx6J3QenK6zg5ze+te61eBe4jG1PuVIuGx4L0AuHtuVR7ojU2OYfznxEnfZVz+9hiJglDjfg51FDnrGcrmC8U=
+X-Received: by 2002:a17:902:934a:: with SMTP id g10mr29121105plp.18.1561980791748;
+ Mon, 01 Jul 2019 04:33:11 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <4976412.ihyb9sT5jY@kreacher>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190630171408.8673-1-srinivas.pandruvada@linux.intel.com>
+In-Reply-To: <20190630171408.8673-1-srinivas.pandruvada@linux.intel.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 1 Jul 2019 14:32:59 +0300
+Message-ID: <CAHp75Vf-p3O10_Ns_NY4JoWBS1S34z-NW0jVJdCdqszdGVmoQw@mail.gmail.com>
+Subject: Re: [UPDATE][PATCH 10/10] tools/power/x86: A tool to validate Intel
+ Speed Select commands
+To:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc:     Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Andriy Shevchenko <andriy.shevchenko@intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Alan Cox <alan@linux.intel.com>, Len Brown <lenb@kernel.org>,
+        prarit@redhat.com, darcari@redhat.com,
+        Linux Documentation List <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rafael,
+On Sun, Jun 30, 2019 at 8:14 PM Srinivas Pandruvada
+<srinivas.pandruvada@linux.intel.com> wrote:
+>
+> The Intel(R) Speed select technologies contains four features.
+>
+> Performance profile:An non architectural mechanism that allows multiple
+> optimized performance profiles per system via static and/or dynamic
+> adjustment of core count, workload, Tjmax, and TDP, etc. aka ISS
+> in the documentation.
+>
+> Base Frequency: Enables users to increase guaranteed base frequency on
+> certain cores (high priority cores) in exchange for lower base frequency
+> on remaining cores (low priority cores). aka PBF in the documenation.
+>
+> Turbo frequency: Enables the ability to set different turbo ratio limits
+> to cores based on priority. aka FACT in the documentation.
+>
+> Core power: An Interface that allows user to define per core/tile
+> priority.
+>
+> There is a multi level help for commands and options. This can be used
+> to check required arguments for each feature and commands for the
+> feature.
+>
+> To start navigating the features start with
+>
+> $sudo intel-speed-select --help
+>
+> For help on a specific feature for example
+> $sudo intel-speed-select perf-profile --help
+>
+> To get help for a command for a feature for example
+> $sudo intel-speed-select perf-profile get-lock-status --help
+>
+> Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+> ---
+> Updates:
+> - Copied Makefile from tools/gpio and moified the Makefile here
+> - Added entry to tools/build/Makefile
+> - Rename directory to match the executable name
+> - Fix one error message
 
-On 01-07-19 12:42, Rafael J. Wysocki wrote:
-> Hi All,
-> 
-> This series of patches addresses a few issues related to the handling of
-> hibernation in the PCI bus type and the ACPI PM domain and ACPI LPSS driver.
-> 
-> The v2 addresses Hans' concerns regarding the LPSS changes.
-> 
-> First of all, all of the runtime-suspended PCI devices and devices in the ACPI PM and LPSS
-> PM domains will be resumed during hibernation (first patch).  This appears to be the
-> only way to avoid weird corner cases and the benefit from avoiding to resume those
-> devices during hibernation is questionable.
-> 
-> That change allows the the hibernation callbacks in all of the involved subsystems to be
-> simplified (patches 2 and 3).
-> 
-> Moreover, reusing bus-level suspend callbacks for the "poweroff" transition during
-> hibernation (which is the case for the ACPI PM domain and LPSS) is incorrect, so patch 4
-> fixes that.
-> 
-> Finally, there are some leftover items in linux/acpi.h that can be dropped (patch 5).
+Thanks!
+I pushed to my review and testing queue, while still waiting for some ACKs.
 
-Thank you for the new version, the entire series looks good to me now:
+It seems I can promote the driver itself now,w/o tools, if you want me to do so.
 
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-
-Regards,
-
-Hans
-
-p.s.
-
-FWIW I agree that the calling of the suspend_late method of the i2c-designware driver
-at suspend_noirq time is ugly, thank you for adding the comment documenting this.
+-- 
+With Best Regards,
+Andy Shevchenko
