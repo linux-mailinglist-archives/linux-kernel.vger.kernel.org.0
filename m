@@ -2,71 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65B895C076
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 17:41:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F8CC5C08F
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 17:46:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729599AbfGAPlP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 11:41:15 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:39331 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727279AbfGAPlO (ORCPT
+        id S1729875AbfGAPpz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 11:45:55 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:38790 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727373AbfGAPpy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 11:41:14 -0400
-Received: by mail-qt1-f193.google.com with SMTP id i34so15100671qta.6;
-        Mon, 01 Jul 2019 08:41:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=QX/9XC0DeimGVTmEjV3E87RMFjV7Hn7tB/e6eJ8Xuyo=;
-        b=ejjtpGiH8/is5Db3IZRvRC/GCThiuYRbhxrnux/OsudS/Lq5eoufZRL8Ui/0xCR5ip
-         GI0yYXoyxEBipEFfgnO+IQAAnFedM1spbpCyUh5GTJCJ5kQOlvzbYZJJQafRqWNSxTU4
-         mh4yaVuQsrFexf5waUC2LzkZOkKrupYOliNq+4IPuNiS3bA28FDnoPTFe3vzvmQwq5dJ
-         3bF/51inZa/2rvNkw6svo7XyhrvqMXZ2FwGo2RjI7XVnrFNBy81p1zT2U5Q2lXDW4LNL
-         2IZYRqP7V+6wNMQsLm8dAyJOeQNWnR1b3s/PkMPWMQL1RNAwv5t3jPAxMQypXAQ6cS4Z
-         c3Hg==
-X-Gm-Message-State: APjAAAWFLipdafpmkC6gkAOXxaq5uyG28oGBqRXpJ1h+dPdafsE+ZCpQ
-        3zf/DxICUAqkz2U0sJ17B6Bk/ytYBawomgUBDcA=
-X-Google-Smtp-Source: APXvYqxGHBFa8P5vpjbVLPEama12INy2Pt2H83NHNiep+1vxl9TlwguBVZ4KnSLAGXloUkCXunz2yug6gKdinLc2iX0=
-X-Received: by 2002:ac8:3485:: with SMTP id w5mr20305367qtb.142.1561995673724;
- Mon, 01 Jul 2019 08:41:13 -0700 (PDT)
+        Mon, 1 Jul 2019 11:45:54 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x61Fd1eX135390;
+        Mon, 1 Jul 2019 15:44:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=pYgOiYG9niz5w5j2Xs2uAj2RGhsP9dEqiFiqy+v2SHk=;
+ b=x/SdHBcYO8s8zWcphUBtW0vaxMhmfi55Tc3O1uqVw5wFQoSV0TdcaQrd5DCa4/j3leVl
+ afbReE/QG5U9d5RMDtBeMdXqUXH0ZjmvMBZR4Bqmxg/kAljEVFLfyeY/NtPkYHmHYr9X
+ LYGxft84ZgeBGOpFpDLQVRFORBGkrIKz998fNMkSDSFhU9OkEimNW4ZMMNbmgLHWe6Wa
+ H32awHJIcTvxMIApJV/pr3XFucA4iWiPO5eUtLjVkO8Vi1P6W9rEo/9vB6C/HmqfVy1z
+ wSoSDGjT9hh0PbsVNlgPWgfY33Zl0N02nGKztDfgCPOv1W9YyXHHcQeRRazJE5zmpoPz vg== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 2te61ppf40-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 01 Jul 2019 15:44:09 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x61FcFES032310;
+        Mon, 1 Jul 2019 15:42:09 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by userp3020.oracle.com with ESMTP id 2tebbj8db7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 01 Jul 2019 15:42:09 +0000
+Received: from userp3020.oracle.com (userp3020.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x61Fg9hp040678;
+        Mon, 1 Jul 2019 15:42:09 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3020.oracle.com with ESMTP id 2tebbj8dap-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 01 Jul 2019 15:42:09 +0000
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x61Fg3SU026276;
+        Mon, 1 Jul 2019 15:42:04 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 01 Jul 2019 08:42:02 -0700
+Date:   Mon, 1 Jul 2019 08:42:00 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     matthew.garrett@nebula.com, yuchao0@huawei.com, tytso@mit.edu,
+        ard.biesheuvel@linaro.org, josef@toxicpanda.com, hch@infradead.org,
+        clm@fb.com, adilger.kernel@dilger.ca, viro@zeniv.linux.org.uk,
+        jack@suse.com, dsterba@suse.com, jaegeuk@kernel.org, jk@ozlabs.org
+Cc:     reiserfs-devel@vger.kernel.org, linux-efi@vger.kernel.org,
+        devel@lists.orangefs.org, linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
+        linux-mm@kvack.org, linux-nilfs@vger.kernel.org,
+        linux-mtd@lists.infradead.org, ocfs2-devel@oss.oracle.com,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-btrfs@vger.kernel.org
+Subject: [PATCH v2 4/4] vfs: don't allow most setxattr to immutable files
+Message-ID: <20190701154200.GK1404256@magnolia>
+References: <156174687561.1557469.7505651950825460767.stgit@magnolia>
+ <156174690758.1557469.9258105121276292687.stgit@magnolia>
 MIME-Version: 1.0
-References: <20190624054728.30966-1-hch@lst.de> <alpine.DEB.2.21.1906240922420.32342@nanos.tec.linutronix.de>
-In-Reply-To: <alpine.DEB.2.21.1906240922420.32342@nanos.tec.linutronix.de>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 1 Jul 2019 17:40:57 +0200
-Message-ID: <CAK8P3a3YHstHAs9OsWNHTtXjHnWtQfqr=WUZTpK+bONLTWLj+w@mail.gmail.com>
-Subject: Re: remove asm-generic/ptrace.h v3
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Christoph Hellwig <hch@lst.de>, Oleg Nesterov <oleg@redhat.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-mips@vger.kernel.org,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <156174690758.1557469.9258105121276292687.stgit@magnolia>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9305 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=991 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1907010188
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 9:23 AM Thomas Gleixner <tglx@linutronix.de> wrote:
->
-> On Mon, 24 Jun 2019, Christoph Hellwig wrote:
-> >
-> > asm-generic/ptrace.h is a little weird in that it doesn't actually
-> > implement any functionality, but it provided multiple layers of macros
-> > that just implement trivial inline functions.  We implement those
-> > directly in the few architectures and be off with a much simpler
-> > design.
-> >
-> > I'm not sure which tree is the right place, but may this can go through
-> > the asm-generic tree since it removes an asm-generic header?
->
-> Makes sense.
+From: Darrick J. Wong <darrick.wong@oracle.com>
 
-Applied and pushed to asm-generic.git/master now, sorry for the delay.
+The chattr manpage has this to say about immutable files:
 
-     Arnd
+"A file with the 'i' attribute cannot be modified: it cannot be deleted
+or renamed, no link can be created to this file, most of the file's
+metadata can not be modified, and the file can not be opened in write
+mode."
+
+However, we don't actually check the immutable flag in the setattr code,
+which means that we can update inode flags and project ids and extent
+size hints on supposedly immutable files.  Therefore, reject setflags
+and fssetxattr calls on an immutable file if the file is immutable and
+will remain that way.
+
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+---
+v2: use memcmp instead of open coding a bunch of checks
+---
+ fs/inode.c |   17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+
+diff --git a/fs/inode.c b/fs/inode.c
+index cf07378e5731..31f694e405fe 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -2214,6 +2214,14 @@ int vfs_ioc_setflags_prepare(struct inode *inode, unsigned int oldflags,
+ 	    !capable(CAP_LINUX_IMMUTABLE))
+ 		return -EPERM;
+ 
++	/*
++	 * We aren't allowed to change any other flags if the immutable flag is
++	 * already set and is not being unset.
++	 */
++	if ((oldflags & FS_IMMUTABLE_FL) && (flags & FS_IMMUTABLE_FL) &&
++	    oldflags != flags)
++		return -EPERM;
++
+ 	/*
+ 	 * Now that we're done checking the new flags, flush all pending IO and
+ 	 * dirty mappings before setting S_IMMUTABLE on an inode via
+@@ -2284,6 +2292,15 @@ int vfs_ioc_fssetxattr_check(struct inode *inode, const struct fsxattr *old_fa,
+ 	    !(S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode)))
+ 		return -EINVAL;
+ 
++	/*
++	 * We aren't allowed to change any fields if the immutable flag is
++	 * already set and is not being unset.
++	 */
++	if ((old_fa->fsx_xflags & FS_XFLAG_IMMUTABLE) &&
++	    (fa->fsx_xflags & FS_XFLAG_IMMUTABLE) &&
++	    memcmp(fa, old_fa, offsetof(struct fsxattr, fsx_pad)))
++		return -EPERM;
++
+ 	/* Extent size hints of zero turn off the flags. */
+ 	if (fa->fsx_extsize == 0)
+ 		fa->fsx_xflags &= ~(FS_XFLAG_EXTSIZE | FS_XFLAG_EXTSZINHERIT);
