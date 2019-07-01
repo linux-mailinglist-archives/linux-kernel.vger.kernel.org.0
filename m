@@ -2,326 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E96755BAF0
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 13:43:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AA825BAEA
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 13:43:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728643AbfGALnp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 07:43:45 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:52192 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727128AbfGALnm (ORCPT
+        id S1728605AbfGALng (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 07:43:36 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:36103 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727296AbfGALnf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 07:43:42 -0400
-Received: by mail-wm1-f65.google.com with SMTP id 207so15491308wma.1;
-        Mon, 01 Jul 2019 04:43:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=JYJgRH2Ze3yPGTUxWuKTviYfPr0ALPnjZTt1sDtuFy4=;
-        b=JItaK0E6rA9Aws8ukFmmmWXC0Mu/kH8+FEoa/9+2Onn6mLdNDLPaqTQMz+c6oIuLtY
-         ATrVfupa8nzwfaAPyL1HrbNea4cb6JoYTctexEofyr/9iFpwGNU4/RFYcV72TA6XfbAC
-         A9EclClpdBKKaNTfFkB73zAgkg06YUr0t7V8EigvnFa9huLlwiSmQyzl62RIYVNGezYI
-         ve+LoUYa6zqD/jwV+u3yAlvk+CvBjCCXp/+T+gN8zCs+Y0tbw7KkQ8Bd8ETdfN1Vtpro
-         UgVjTD6XNmwJ3nUvKn0EFr43hRDRAuaxdpajnRRpZSRJEgaUnYX3yv4la4k/WfKybrx+
-         PPMQ==
+        Mon, 1 Jul 2019 07:43:35 -0400
+Received: by mail-qk1-f193.google.com with SMTP id g18so10686130qkl.3
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2019 04:43:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=JYJgRH2Ze3yPGTUxWuKTviYfPr0ALPnjZTt1sDtuFy4=;
-        b=Km1xHrTZiT/6wt3WsWdZzZGUsdnbLIRJfa/198xtIrKen9/HHoNXlEoahXs68WxEnm
-         zw4Dr4sLOoj1+VQZI//yrJy3JEACuu6+u3MK9VOiSRxR9GFrHZqazekwYGoRuDgMAeXC
-         TwWd6WrX1wjkTuo2kCcjwsmtlSeKZeMGLOB6AaC4OEokJTmFsf6qI6qRT5DFGqdZwMFR
-         +mEnUh1N7yRuN9XmVlqpmvk/76ij2gw1Uecqr8SmtG97L+IKS9jQrA0iAFK4un3e5DBf
-         +DfNxJB7TKN6wXqO4q5rOKZdwhZZ6o/PQj5rBJIkrjxAiE1Gbp57iPKkIxBuH/FWjvlP
-         G+vg==
-X-Gm-Message-State: APjAAAXV8HRRjcHSBQxkX9EsuK1Uv6VpMz7QvqceNrY6nDcKlAoBPfph
-        +7E24IXp4rVSHtAk8BGERNs=
-X-Google-Smtp-Source: APXvYqx253YFB556MIWU5JxxVYLmmy4RDyDUqXIbzIzQ7Wilnvan3p0A7bhNoHAVzb+4iPpdaPom3A==
-X-Received: by 2002:a1c:a848:: with SMTP id r69mr16499081wme.12.1561981419987;
-        Mon, 01 Jul 2019 04:43:39 -0700 (PDT)
-Received: from localhost ([193.47.161.132])
-        by smtp.gmail.com with ESMTPSA id r12sm10881261wrt.95.2019.07.01.04.43.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 01 Jul 2019 04:43:39 -0700 (PDT)
-From:   Oliver Graute <oliver.graute@gmail.com>
-X-Google-Original-From: Oliver Graute <oliver.graute@kococonnector.com>
-To:     aisheng.dong@nxp.com
-Cc:     sboyd@kernel.org, mturquette@baylibre.com,
-        Oliver Graute <oliver.graute@kococonnector.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Li Yang <leoyang.li@nxp.com>,
-        Sriram Dash <sriram.dash@nxp.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Vabhav Sharma <vabhav.sharma@nxp.com>,
-        Pankaj Bansal <pankaj.bansal@nxp.com>,
-        Bhaskar Upadhaya <bhaskar.upadhaya@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=LsbOcoFcfbHWJ2BbGzwqaI1iT+APhtMaltQvkyyA6ls=;
+        b=BnFroOMvcOqC68irXyBkMsbZ4cqmwWWoNjs3EzZYYJxmXaSbyAqSFfPtHQ7ZPWFzRg
+         sYk6yMNeKgAZmBEnjbnsqGQkNrDcmbvey+SKTBuNskkTY0jV4R4yfDYI8tZLBdkP3Zr8
+         PvCMNJ1ndxxsvtKv9Jlk++QzWfcZMaex4UhIs5oQ3Mqa0Wxxvuenoy/KV3FkaL3QD2w5
+         +Tzo1vgPu7skjoof0XjuyB36srmOJfKCQv5jI28kLka9cEHu+pM4PPB0tg1yg+DQJOF2
+         iRmXtGPBe0ybZTY8bScwZVmRIFNMU6ExUH4fXMQPvMDF4M+TveRLxDziSpNWjRffTXqK
+         oorg==
+X-Gm-Message-State: APjAAAVZR60sNple8MA904VlprpWgFHEdvDdOIg+bQX1pm7/eDwHIFeE
+        mFM+2Ca7Snev3f9HDYiRq7B43JBglt0=
+X-Google-Smtp-Source: APXvYqxhjxvfFMx5H8R1QudznXOIqDnGjcbkjCcXmSU+amSFprfZ8GJ4vg/6CaJfYx/lPRHuS4NhiQ==
+X-Received: by 2002:a37:634f:: with SMTP id x76mr20791937qkb.205.1561981414830;
+        Mon, 01 Jul 2019 04:43:34 -0700 (PDT)
+Received: from [192.168.1.157] (pool-96-235-39-235.pitbpa.fios.verizon.net. [96.235.39.235])
+        by smtp.gmail.com with ESMTPSA id 2sm5197840qtz.73.2019.07.01.04.43.33
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Mon, 01 Jul 2019 04:43:34 -0700 (PDT)
+Subject: Re: [PATCH] ARM: mm: only adjust sections of valid mm structures
+To:     Doug Berger <opendmb@gmail.com>,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCHv2 2/2] arm64: dts: add basic DTS for imx8qm-rom7720-a1 board
-Date:   Mon,  1 Jul 2019 13:42:46 +0200
-Message-Id: <20190701114253.1538-3-oliver.graute@kococonnector.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190701114253.1538-1-oliver.graute@kococonnector.com>
-References: <20190701114253.1538-1-oliver.graute@kococonnector.com>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Rob Herring <robh@kernel.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Peng Fan <peng.fan@nxp.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-kernel@vger.kernel.org
+References: <1561671168-29896-1-git-send-email-opendmb@gmail.com>
+From:   Laura Abbott <labbott@redhat.com>
+Message-ID: <c11ebd80-0692-b001-42e4-59a8130af056@redhat.com>
+Date:   Mon, 1 Jul 2019 07:43:33 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
+MIME-Version: 1.0
+In-Reply-To: <1561671168-29896-1-git-send-email-opendmb@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add basic dts support for a Advantech iMX8QM Qseven Board
+On 6/27/19 5:32 PM, Doug Berger wrote:
+> A timing hazard exists when an early fork/exec thread begins
+> exiting and sets its mm pointer to NULL while a separate core
+> tries to update the section information.
+> 
+> This commit ensures that the mm pointer is not NULL before
+> setting its section parameters. The arguments provided by
+> commit 11ce4b33aedc ("ARM: 8672/1: mm: remove tasklist locking
+> from update_sections_early()") are equally valid for not
+> requiring grabbing the task_lock around this check.
+> 
+> Fixes: 08925c2f124f ("ARM: 8464/1: Update all mm structures with section adjustments")
+> Signed-off-by: Doug Berger <opendmb@gmail.com>
+> ---
+>   arch/arm/mm/init.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/mm/init.c b/arch/arm/mm/init.c
+> index be0b42937888..bdc70dff477b 100644
+> --- a/arch/arm/mm/init.c
+> +++ b/arch/arm/mm/init.c
+> @@ -616,7 +616,8 @@ static void update_sections_early(struct section_perm perms[], int n)
+>   		if (t->flags & PF_KTHREAD)
+>   			continue;
+>   		for_each_thread(t, s)
+> -			set_section_perms(perms, n, true, s->mm);
+> +			if (s->mm)
+> +				set_section_perms(perms, n, true, s->mm);
+>   	}
+>   	set_section_perms(perms, n, true, current->active_mm);
+>   	set_section_perms(perms, n, true, &init_mm);
+> 
 
-Signed-off-by: Oliver Graute <oliver.graute@kococonnector.com>
----
- arch/arm64/boot/dts/freescale/Makefile        |   1 +
- .../boot/dts/freescale/imx8qm-rom7720-a1.dts  | 221 ++++++++++++++++++
- 2 files changed, 222 insertions(+)
- create mode 100644 arch/arm64/boot/dts/freescale/imx8qm-rom7720-a1.dts
-
-diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-index b8e5e3bd72c5..b013715c5be1 100644
---- a/arch/arm64/boot/dts/freescale/Makefile
-+++ b/arch/arm64/boot/dts/freescale/Makefile
-@@ -23,3 +23,4 @@ dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-lx2160a-rdb.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mq-evk.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8qm-mek.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8qxp-mek.dtb
-+dtb-$(CONFIG_ARCH_MXC) += imx8qm-rom7720-a1.dtb
-diff --git a/arch/arm64/boot/dts/freescale/imx8qm-rom7720-a1.dts b/arch/arm64/boot/dts/freescale/imx8qm-rom7720-a1.dts
-new file mode 100644
-index 000000000000..229853f4097b
---- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/imx8qm-rom7720-a1.dts
-@@ -0,0 +1,221 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/dts-v1/;
-+
-+#include "imx8qm.dtsi"
-+
-+/ {
-+	model = "Advantech iMX8QM Qseven series";
-+	compatible = "fsl,imx8qm";
-+
-+	board {
-+		compatible = "proc-board";
-+		board-type = "ROM-7720_A1";
-+		board-cpu  = "iMX8QM";
-+	};
-+
-+	chosen {
-+		bootargs = "console=ttyLP0,115200 earlycon=lpuart32,0x5a060000,115200";
-+		stdout-path = &dma_lpuart0;
-+	};
-+
-+	cpus {
-+		/delete-node/ cpu-map;
-+		/delete-node/ cpu@100;
-+		/delete-node/ cpu@101;
-+	};
-+
-+	memory@80000000 {
-+		device_type = "memory";
-+		reg = <0x00000000 0x80000000 0 0x40000000>;
-+	};
-+
-+	reg_usdhc2_vmmc: usdhc2_vmmc {
-+		compatible = "regulator-fixed";
-+		regulator-name = "sw-3p3-sd1";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		gpio = <&gpio4 7 GPIO_ACTIVE_HIGH>;
-+		off-on-delay = <3000>;
-+		enable-active-high;
-+	};
-+};
-+
-+&dma_lpuart0 { /* console */
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_lpuart0>;
-+	status = "okay";
-+};
-+
-+&fec1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_fec1>;
-+	phy-mode = "rgmii-txid";
-+	phy-handle = <&ethphy0>;
-+	fsl,magic-packet;
-+	fsl,rgmii_rxc_dly;
-+	status = "okay";
-+
-+	mdio {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		ethphy0: ethernet-phy@0 {
-+			compatible = "ethernet-phy-ieee802.3-c22";
-+			reg = <4>;
-+			at803x,eee-disabled;
-+			at803x,vddio-1p8v;
-+		};
-+	};
-+};
-+
-+&usdhc1 {
-+	pinctrl-names = "default", "state_100mhz", "state_200mhz";
-+	pinctrl-0 = <&pinctrl_usdhc1>;
-+	pinctrl-1 = <&pinctrl_usdhc1_100mhz>;
-+	pinctrl-2 = <&pinctrl_usdhc1_200mhz>;
-+	bus-width = <8>;
-+	non-removable;
-+	status = "okay";
-+};
-+
-+&usdhc2 {
-+	pinctrl-names = "default", "state_100mhz", "state_200mhz";
-+	pinctrl-0 = <&pinctrl_usdhc2>, <&pinctrl_usdhc2_gpio>;
-+	pinctrl-1 = <&pinctrl_usdhc2_100mhz>, <&pinctrl_usdhc2_gpio>;
-+	pinctrl-2 = <&pinctrl_usdhc2_200mhz>, <&pinctrl_usdhc2_gpio>;
-+	bus-width = <4>;
-+	cd-gpios = <&gpio5 22 GPIO_ACTIVE_LOW>;
-+	wp-gpios = <&gpio5 21 GPIO_ACTIVE_HIGH>;
-+	vmmc-supply = <&reg_usdhc2_vmmc>;
-+	status = "okay";
-+};
-+
-+&iomuxc {
-+	pinctrl_hog_1: hoggrp-1 {
-+		fsl,pins = <
-+			IMX8QM_USB_SS3_TC0_LSIO_GPIO4_IO03	  0x06000048
-+		>;
-+	};
-+
-+	pinctrl_fec1: fec1grp {
-+		fsl,pins = <
-+			IMX8QM_COMP_CTL_GPIO_1V8_3V3_ENET_ENETB_PAD	0x000014a0
-+			IMX8QM_ENET0_MDC_CONN_ENET0_MDC			0x06000020
-+			IMX8QM_ENET0_MDIO_CONN_ENET0_MDIO		0x06000020
-+			IMX8QM_ENET0_RGMII_TX_CTL_CONN_ENET0_RGMII_TX_CTL	0x00000060
-+			IMX8QM_ENET0_RGMII_TXC_CONN_ENET0_RGMII_TXC	0x00000060
-+			IMX8QM_ENET0_RGMII_TXD0_CONN_ENET0_RGMII_TXD0	0x00000060
-+			IMX8QM_ENET0_RGMII_TXD1_CONN_ENET0_RGMII_TXD1	0x00000060
-+			IMX8QM_ENET0_RGMII_TXD2_CONN_ENET0_RGMII_TXD2	0x00000060
-+			IMX8QM_ENET0_RGMII_TXD3_CONN_ENET0_RGMII_TXD3	0x00000060
-+			IMX8QM_ENET0_RGMII_RXC_CONN_ENET0_RGMII_RXC	0x00000060
-+			IMX8QM_ENET0_RGMII_RX_CTL_CONN_ENET0_RGMII_RX_CTL	0x00000060
-+			IMX8QM_ENET0_RGMII_RXD0_CONN_ENET0_RGMII_RXD0	0x00000060
-+			IMX8QM_ENET0_RGMII_RXD1_CONN_ENET0_RGMII_RXD1	0x00000060
-+			IMX8QM_ENET0_RGMII_RXD2_CONN_ENET0_RGMII_RXD2	0x00000060
-+			IMX8QM_ENET0_RGMII_RXD3_CONN_ENET0_RGMII_RXD3	0x00000060
-+		>;
-+	};
-+
-+	pinctrl_lpuart0: lpuart0grp {
-+		fsl,pins = <
-+			IMX8QM_UART0_RX_DMA_UART0_RX		0x06000020
-+			IMX8QM_UART0_TX_DMA_UART0_TX		0x06000020
-+		>;
-+	};
-+
-+	pinctrl_usdhc1: usdhc1grp {
-+		fsl,pins = <
-+			IMX8QM_EMMC0_CLK_CONN_EMMC0_CLK		0x06000041
-+			IMX8QM_EMMC0_CMD_CONN_EMMC0_CMD		0x00000021
-+			IMX8QM_EMMC0_DATA0_CONN_EMMC0_DATA0	0x00000021
-+			IMX8QM_EMMC0_DATA1_CONN_EMMC0_DATA1	0x00000021
-+			IMX8QM_EMMC0_DATA2_CONN_EMMC0_DATA2	0x00000021
-+			IMX8QM_EMMC0_DATA3_CONN_EMMC0_DATA3	0x00000021
-+			IMX8QM_EMMC0_DATA4_CONN_EMMC0_DATA4	0x00000021
-+			IMX8QM_EMMC0_DATA5_CONN_EMMC0_DATA5	0x00000021
-+			IMX8QM_EMMC0_DATA6_CONN_EMMC0_DATA6	0x00000021
-+			IMX8QM_EMMC0_DATA7_CONN_EMMC0_DATA7	0x00000021
-+			IMX8QM_EMMC0_STROBE_CONN_EMMC0_STROBE	0x00000041
-+			IMX8QM_EMMC0_RESET_B_CONN_EMMC0_RESET_B	0x00000021
-+		>;
-+	};
-+
-+	pinctrl_usdhc1_100mhz: usdhc1grp100mhz {
-+		fsl,pins = <
-+			IMX8QM_EMMC0_CLK_CONN_EMMC0_CLK		0x06000040
-+			IMX8QM_EMMC0_CMD_CONN_EMMC0_CMD		0x00000020
-+			IMX8QM_EMMC0_DATA0_CONN_EMMC0_DATA0	0x00000020
-+			IMX8QM_EMMC0_DATA1_CONN_EMMC0_DATA1	0x00000020
-+			IMX8QM_EMMC0_DATA2_CONN_EMMC0_DATA2	0x00000020
-+			IMX8QM_EMMC0_DATA3_CONN_EMMC0_DATA3	0x00000020
-+			IMX8QM_EMMC0_DATA4_CONN_EMMC0_DATA4	0x00000020
-+			IMX8QM_EMMC0_DATA5_CONN_EMMC0_DATA5	0x00000020
-+			IMX8QM_EMMC0_DATA6_CONN_EMMC0_DATA6	0x00000020
-+			IMX8QM_EMMC0_DATA7_CONN_EMMC0_DATA7	0x00000020
-+			IMX8QM_EMMC0_STROBE_CONN_EMMC0_STROBE	0x00000040
-+			IMX8QM_EMMC0_RESET_B_CONN_EMMC0_RESET_B	0x00000020
-+		>;
-+	};
-+
-+	pinctrl_usdhc1_200mhz: usdhc1grp200mhz {
-+		fsl,pins = <
-+			IMX8QM_EMMC0_CLK_CONN_EMMC0_CLK		0x06000040
-+				IMX8QM_EMMC0_CMD_CONN_EMMC0_CMD		0x00000020
-+			IMX8QM_EMMC0_DATA0_CONN_EMMC0_DATA0	0x00000020
-+			IMX8QM_EMMC0_DATA1_CONN_EMMC0_DATA1	0x00000020
-+			IMX8QM_EMMC0_DATA2_CONN_EMMC0_DATA2	0x00000020
-+			IMX8QM_EMMC0_DATA3_CONN_EMMC0_DATA3	0x00000020
-+			IMX8QM_EMMC0_DATA4_CONN_EMMC0_DATA4	0x00000020
-+			IMX8QM_EMMC0_DATA5_CONN_EMMC0_DATA5	0x00000020
-+			IMX8QM_EMMC0_DATA6_CONN_EMMC0_DATA6	0x00000020
-+			IMX8QM_EMMC0_DATA7_CONN_EMMC0_DATA7	0x00000020
-+			IMX8QM_EMMC0_STROBE_CONN_EMMC0_STROBE	0x00000040
-+			IMX8QM_EMMC0_RESET_B_CONN_EMMC0_RESET_B	0x00000020
-+		>;
-+	};
-+
-+	pinctrl_usdhc2_gpio: usdhc2grpgpio {
-+		fsl,pins = <
-+			IMX8QM_USDHC1_DATA6_LSIO_GPIO5_IO21	0x00000021
-+			IMX8QM_USDHC1_DATA7_LSIO_GPIO5_IO22	0x00000021
-+			IMX8QM_USDHC1_RESET_B_LSIO_GPIO4_IO07	0x00000021
-+		>;
-+	};
-+
-+	pinctrl_usdhc2: usdhc2grp {
-+		fsl,pins = <
-+			IMX8QM_USDHC1_CLK_CONN_USDHC1_CLK	0x06000041
-+			IMX8QM_USDHC1_CMD_CONN_USDHC1_CMD	0x00000021
-+			IMX8QM_USDHC1_DATA0_CONN_USDHC1_DATA0	0x00000021
-+			IMX8QM_USDHC1_DATA1_CONN_USDHC1_DATA1	0x00000021
-+			IMX8QM_USDHC1_DATA2_CONN_USDHC1_DATA2	0x00000021
-+			IMX8QM_USDHC1_DATA3_CONN_USDHC1_DATA3	0x00000021
-+			IMX8QM_USDHC1_VSELECT_CONN_USDHC1_VSELECT	0x00000021
-+		>;
-+	};
-+
-+	pinctrl_usdhc2_100mhz: usdhc2grp100mhz {
-+		fsl,pins = <
-+			IMX8QM_USDHC1_CLK_CONN_USDHC1_CLK	0x06000040
-+			IMX8QM_USDHC1_CMD_CONN_USDHC1_CMD	0x00000020
-+			IMX8QM_USDHC1_DATA0_CONN_USDHC1_DATA0	0x00000020
-+			IMX8QM_USDHC1_DATA1_CONN_USDHC1_DATA1	0x00000020
-+			IMX8QM_USDHC1_DATA2_CONN_USDHC1_DATA2	0x00000020
-+			IMX8QM_USDHC1_DATA3_CONN_USDHC1_DATA3	0x00000020
-+			IMX8QM_USDHC1_VSELECT_CONN_USDHC1_VSELECT	0x00000020
-+		>;
-+	};
-+
-+	pinctrl_usdhc2_200mhz: usdhc2grp200mhz {
-+		fsl,pins = <
-+			IMX8QM_USDHC1_CLK_CONN_USDHC1_CLK	0x06000040
-+			IMX8QM_USDHC1_CMD_CONN_USDHC1_CMD	0x00000020
-+			IMX8QM_USDHC1_DATA0_CONN_USDHC1_DATA0	0x00000020
-+			IMX8QM_USDHC1_DATA1_CONN_USDHC1_DATA1	0x00000020
-+			IMX8QM_USDHC1_DATA2_CONN_USDHC1_DATA2	0x00000020
-+			IMX8QM_USDHC1_DATA3_CONN_USDHC1_DATA3	0x00000020
-+			IMX8QM_USDHC1_VSELECT_CONN_USDHC1_VSELECT	0x00000020
-+		>;
-+	};
-+};
--- 
-2.17.1
-
+Acked-by: Laura Abbott <labbott@redhat.com>
