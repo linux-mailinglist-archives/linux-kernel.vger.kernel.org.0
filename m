@@ -2,129 +2,245 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA4C95C58C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 00:14:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D3CC5C581
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 00:09:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726781AbfGAWOr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 18:14:47 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:58708 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726320AbfGAWOr (ORCPT
+        id S1726936AbfGAWJs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 18:09:48 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:42430 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726434AbfGAWJr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 18:14:47 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x61M90wO042017;
-        Mon, 1 Jul 2019 22:14:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=en4SXX022hwvX0x9G0+SnC+PnaP8ULXzHBhOeJ5wAfo=;
- b=riEb/0iHU4DXypD8J+7SMIGCa9AdG//i4jdeiMmo8To4sgCcO28Ik0Lz0JZrZ4KqsGCM
- QGIy/DNuQqpDiFO0txlZkRqg06IZxFWAd0zbK+Wg30lyVmcU8uPUpcExXuReeoDh5R5g
- AXVDJPLa9eZ+kDJCFsheVK19WeAAkKQyPRg4m8GX1M8yN1twpXWwW0u4zL9N9XOPEAFW
- 13CXQrCbkKzGVxzguEpOUNqcOgDvv+5leNHbImAF4ImYvqohkaRFim43Hl0eVytTEzJ6
- 8x4nk/qgYU7aLhM1NByhw9tgKHCfRBrWq4ep2GBEDkJHRmx2oIxiasPB7aUxsqsvbkIj 3A== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 2te61e050p-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 01 Jul 2019 22:14:00 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x61MCxh2098486;
-        Mon, 1 Jul 2019 22:13:59 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3030.oracle.com with ESMTP id 2tebqg5w2n-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 01 Jul 2019 22:13:59 +0000
-Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x61MDwgS024959;
-        Mon, 1 Jul 2019 22:13:58 GMT
-Received: from [10.132.91.175] (/10.132.91.175)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 01 Jul 2019 15:13:58 -0700
-Subject: Re: [PATCH V3 2/2] sched/fair: Fallback to sched-idle CPU if idle CPU
- isn't found
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>, tkjos@google.com,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        quentin.perret@linaro.org, chris.redpath@arm.com,
-        steven.sistare@oracle.com, songliubraving@fb.com
-References: <cover.1561523542.git.viresh.kumar@linaro.org>
- <eeafa25fdeb6f6edd5b2da716bc8f0ba7708cbcf.1561523542.git.viresh.kumar@linaro.org>
- <32bd769c-b692-8896-5cc9-d19ab0a23abb@oracle.com>
- <20190701080349.homlsgia4fuaitek@vireshk-i7>
-From:   Subhra Mazumdar <subhra.mazumdar@oracle.com>
-Message-ID: <aeaa0dd5-8512-1b60-eb10-6a4aecfaaca3@oracle.com>
-Date:   Mon, 1 Jul 2019 15:08:41 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+        Mon, 1 Jul 2019 18:09:47 -0400
+Received: by mail-oi1-f194.google.com with SMTP id s184so11295862oie.9
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2019 15:09:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mbR5Q7Rsjr5miu2k4pfRshqc5qKQ4Xv/jCcOFpyIWLY=;
+        b=gXaJfoYA37nRGHtzF2TG5HBQXfWSPJL8KdLZ1AooZC+HQ7bcYvyxk1gA/4XYKB36Zu
+         iXgs+Rs1GyPbvePlt3hWagC1uvot1XzlxKvVmWY4njbm+E5+rIQX0vqVYjxqmy+DERXe
+         MfDRn5BBA7dH5sBOU4agHOYIdFxokS+/yvckxmA3Chh7YO0XkiMyluCg2TMcM8LtoDtG
+         b0HkrdCGqngkzh0EBR10fScd2mHCZHdL5irkv5d5KegTjUVxjty38k9OOvOlkpwzkZBg
+         B405TzbTWmN9fZ0hIrEaE76rYAZI+CLpY8mobk1KWnXH5KgHP9nF3jTyMSLc0lFmktr+
+         liXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mbR5Q7Rsjr5miu2k4pfRshqc5qKQ4Xv/jCcOFpyIWLY=;
+        b=Mm0ZSbcjA+dKili13b7J+VF8Os+1eTLIob6JUIgy6TxosmeTW5MKn6nzfDW+97a+nl
+         31qS0OCx5IEvc6B8MNlQKlUFdgsOd1k+5k2wGNJDClER+n63kJUi2IT9gjn/0PMXdV/V
+         9AXN9Qxxlx8KJDUWJMlJtQSKEDzmH90TwygdjWXQze6rt5B9hNN6XzS1rrG3V3QyFv/U
+         uESsYEeTAdLyudNZjvUbDNvO6sQotkpem7n/Vsk7Tl4gFA8FD6SsECDvGjGjm/w3Qwxk
+         3qCCwIlTmimLSNj3xSbZLyvQk48hskUsX/i4LRxHT8WlzKzc54QSKFWY3KEpTX7r3fYb
+         l8MA==
+X-Gm-Message-State: APjAAAWyiPwpk/Vh8Jt6/INnfcc6O448Akgj9gk0en+akFG+W3XngXDc
+        sd423v6cyOhG/yHwjiMNdmATmhgy8gzqH03+N46Kag==
+X-Google-Smtp-Source: APXvYqzAS9pXuqX9dUKUDnX2FvoV0aG9rENyxS21YcP2HLjSnGQ4sTLsyoXYXN3Siybnfemi7DF2IttmXl4i+vyBLR0=
+X-Received: by 2002:aca:51d3:: with SMTP id f202mr1048845oib.69.1562018986423;
+ Mon, 01 Jul 2019 15:09:46 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190701080349.homlsgia4fuaitek@vireshk-i7>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9305 signatures=668688
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1907010258
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9305 signatures=668688
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1907010257
+References: <20190628022202.118166-1-saravanak@google.com> <20190628022202.118166-3-saravanak@google.com>
+ <d97de5ef-68a3-795f-2532-24da8cd2d130@codeaurora.org>
+In-Reply-To: <d97de5ef-68a3-795f-2532-24da8cd2d130@codeaurora.org>
+From:   Saravana Kannan <saravanak@google.com>
+Date:   Mon, 1 Jul 2019 15:09:10 -0700
+Message-ID: <CAGETcx9+tSq-24bok16Ry_YPRXC0AQDpnxZ5w8HLCaUyBsSOfw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] of/platform: Add functional dependency link from
+ DT bindings
+To:     David Collins <collinsd@codeaurora.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Android Kernel Team <kernel-team@android.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Jun 28, 2019 at 5:55 PM David Collins <collinsd@codeaurora.org> wrote:
+>
+> Hello Saravana,
+>
+> On 6/27/19 7:22 PM, Saravana Kannan wrote:
+> > diff --git a/drivers/of/platform.c b/drivers/of/platform.c
+> > index 04ad312fd85b..8d690fa0f47c 100644
+> > --- a/drivers/of/platform.c
+> > +++ b/drivers/of/platform.c
+> > @@ -61,6 +61,72 @@ struct platform_device *of_find_device_by_node(struct device_node *np)
+> >  EXPORT_SYMBOL(of_find_device_by_node);
+> >
+> >  #ifdef CONFIG_OF_ADDRESS
+> > +static int of_link_binding(struct device *dev, char *binding, char *cell)
+> > +{
+> > +     struct of_phandle_args sup_args;
+> > +     struct platform_device *sup_dev;
+> > +     unsigned int i = 0, links = 0;
+> > +     u32 dl_flags = DL_FLAG_AUTOPROBE_CONSUMER;
+> > +
+> > +     while (!of_parse_phandle_with_args(dev->of_node, binding, cell, i,
+> > +                                        &sup_args)) {
+> > +             i++;
+> > +             sup_dev = of_find_device_by_node(sup_args.np);
+> > +             if (!sup_dev)
+> > +                     continue;
+>
+> This check means that a required dependency link between a consumer and
+> supplier will not be added in the case that the consumer device is created
+> before the supply device.  If the supplier device is created and
+> immediately bound to its driver after late_initcall_sync(), then it is
+> possible for the sync_state() callback of the supplier to be called before
+> the consumer gets a chance to probe since its link was never captured.
 
-On 7/1/19 1:03 AM, Viresh Kumar wrote:
-> On 28-06-19, 18:16, Subhra Mazumdar wrote:
->> On 6/25/19 10:06 PM, Viresh Kumar wrote:
->>> We try to find an idle CPU to run the next task, but in case we don't
->>> find an idle CPU it is better to pick a CPU which will run the task the
->>> soonest, for performance reason.
->>>
->>> A CPU which isn't idle but has only SCHED_IDLE activity queued on it
->>> should be a good target based on this criteria as any normal fair task
->>> will most likely preempt the currently running SCHED_IDLE task
->>> immediately. In fact, choosing a SCHED_IDLE CPU over a fully idle one
->>> shall give better results as it should be able to run the task sooner
->>> than an idle CPU (which requires to be woken up from an idle state).
->>>
->>> This patch updates both fast and slow paths with this optimization.
->>>
->>> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
->>> ---
->>>    kernel/sched/fair.c | 43 +++++++++++++++++++++++++++++++++----------
->>>    1 file changed, 33 insertions(+), 10 deletions(-)
->>>
->>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
->>> index 1277adc3e7ed..2e0527fd468c 100644
->>> --- a/kernel/sched/fair.c
->>> +++ b/kernel/sched/fair.c
->>> @@ -5376,6 +5376,15 @@ static struct {
->>>    #endif /* CONFIG_NO_HZ_COMMON */
->>> +/* CPU only has SCHED_IDLE tasks enqueued */
->>> +static int sched_idle_cpu(int cpu)
->>> +{
->>> +	struct rq *rq = cpu_rq(cpu);
->>> +
->>> +	return unlikely(rq->nr_running == rq->cfs.idle_h_nr_running &&
->>> +			rq->nr_running);
->>> +}
->>> +
->> Shouldn't this check if rq->curr is also sched idle?
-> Why wouldn't the current set of checks be enough to guarantee that ?
-I thought nr_running does not include the on-cpu thread.
+Yeah, I was aware of this but wasn't sure how likely this case was. I
+didn't want to go down the rabbit hole of handling every corner case
+perfectly before seeing how the general idea was received by the
+maintainers. Also, was waiting to see if someone complained about it
+before trying to fix it.
+
+> of_platform_default_populate() below will only create devices for the
+> first level DT nodes directly under "/".  Suppliers DT nodes can exist as
+> second level nodes under a first level bus node (e.g. I2C, SPMI, RPMh,
+> etc).  Thus, it is quite likely that not all supplier devices will have
+> been created when device_link_check_waiting_consumers() is called.
+
+Yeah, those are all good example of when this could be an issue.
+
+> As far as I can tell, this effectively breaks the sync_state()
+> functionality (and thus proxy un-voting built on top of it) when using
+> kernel modules for both the supplier and consumer drivers which are probed
+> after late_initcall_sync().  I'm not sure how this can be avoided given
+> that the linking is done between devices in the process of sequentially
+> adding devices.  Perhaps linking between device nodes instead of devices
+> might be able to overcome this issue.
+
+I'm not sure linking struct device_node would be useful here. There
+are different and simpler ways of fixing it. Working on them right now
+(v3 patch series). Thanks for bringing up the good examples.
+
 >
->> And why not drop the rq->nr_running non zero check?
-> Because CPU isn't sched-idle if nr_running and idle_h_nr_running are both 0,
-> i.e. it is an IDLE cpu in that case. And so I thought it is important to have
-> this check as well.
 >
-idle_cpu() not only checks nr_running is 0 but also rq->curr == rq->idle
+> > +             if (device_link_add(dev, &sup_dev->dev, dl_flags))
+> > +                     links++;
+> > +             put_device(&sup_dev->dev);
+> > +     }
+> > +     if (links < i)
+> > +             return -ENODEV;
+> > +     return 0;
+> > +}
+> > +
+> > +/*
+> > + * List of bindings and their cell names (use NULL if no cell names) from which
+> > + * device links need to be created.
+> > + */
+> > +static char *link_bindings[] = {
+> > +#ifdef CONFIG_OF_DEVLINKS
+> > +     "clocks", "#clock-cells",
+> > +     "interconnects", "#interconnect-cells",
+> > +#endif
+> > +};
+>
+> This list and helper function above are missing support for regulator
+> <arbitrary-consumer-name>-supply properties.  We require this support on
+> QTI boards in order to handle regulator proxy un-voting when booting with
+> kernel modules.  Are you planning to add this support in a follow-on
+> version of this patch or in an additional patch?
+
+Yes, I intentionally left out regulators here because it's a huge can
+of worms. But keep in mind, that even without adding regulator DT
+binding handling here, you could still switch to sync_state callback
+and be no worse than you are today. Once regulator supplier-consumer
+linking is added/improved, the QTI boards would start working with
+modules.
+
+As for how regulators supplier-consumer linking is handled, I think
+that's the one we need to discuss and figure out. But I don't think
+the regulator binding necessarily has to be handled in this patch
+series. I'm sure in general the number of bindings we support could be
+improved over time.
+
+>
+> Note that handling regulator supply properties will be very challenging
+> for at least these reasons:
+>
+> 1. There is not a consistent DT property name used for regulator supplies.
+
+Yup. Maybe we can add a new regulator binding format with a more
+consistent name (like clocks and interconnects) and deprecate the
+older ones? Seems like a need binding clean up in general.
+
+> 2. The device node referenced in a regulator supply phandle is usually not
+> the device node which correspond to the device pointer for the supplier.
+> This is because a single regulator supplier device node (which will have
+> an associated device pointer) typically has a subnode for each of the
+> regulators it supports.  Consumers then use phandles for the subnodes.
+
+If I'm not mistaken, looks like this can be multiple sub-nodes deep
+too. One option is to walk up the phandle till we find a compatible
+string and then find the device for that node?
+
+> 3. The specification of parent supplies for regulators frequently results
+> in *-supply properties in a node pointing to child subnodes of that node.
+>  See [1] for an example.  Special care would need to be taken to avoid
+> trying to mark a regulator supplier as a supplier to itself as well as to
+> avoid blocking its own probing due to an unlinked supply dependency.
+
+Sigh... as if it's not already complicated enough. Anyway,
+device_link_add() already has a bunch of check to avoid creating
+cyclic dependencies, etc. So, I'd expect this to be handled already.
+At worst case, we might need to add a few more checks there. But that
+hopefully shouldn't be an issue.
+
+> 4. Not all DT properties of the form "*-supply" are regulator supplies.
+> (Note, this case has been discussed, but I was not able to locate an
+> example of it.)
+
+Yup and I hate this part. Not sure what to say.
+
+> Clocks also have a problem.  A recent patch [2] allows clock provider
+> parent clocks to be specified via DT.  This could lead to cases of
+> circular "clocks" property dependencies where there are two clock supplier
+> devices A and B with A having some clocks with B clock parents along with
+> B having some clocks with A clock parents.  If "clocks" properties are
+> followed, then neither device would ever be able to probe.
+
+Interconnects have a similar problem too because every interconnect
+lists all the other interconnects it's connected to. Even if that's
+magically addressed correctly, interconnect consumers still have a
+problem because "interconnect" DT binding only lists phandles of the
+source and destination interconnect and not all the interconnect along
+the way. So they will be missing dependencies.
+
+In general I agree with your points about clocks. I've brought this up
+multiple times, but the maintainers insists I first implement parsing
+existing DT bindings. So, I've done that. Lets see what they have to
+say now.
+
+But I have a few more ideas for handling circular dependencies without
+adding new DT bindings that might work (will send out as part of v3
+patch series) but interconnects are still an issue.
+
+> This does not present a problem without this patch series because the
+> clock framework supports late binding of parents specifically to avoid
+> issues with clocks not registering in perfectly topological order of
+> parent dependencies.
+
+That's why I added the OF_DEVLINKS config. As of v2, you simply can't
+use it for SoC/boards with cyclic clock dependencies. But again,
+sync_state is no worse that what's there today. And it'll only improve
+over time.
+
+-Saravana
+
+> [2]:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=fc0c209c147f35ed2648adda09db39fcad89e334
+>
+> --
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
