@@ -2,123 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C0CD5BA36
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 12:58:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EA945B93A
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 12:47:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728145AbfGAK6Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 06:58:25 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:55366 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727662AbfGAK6W (ORCPT
+        id S1727189AbfGAKrN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 06:47:13 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:49072 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726912AbfGAKrM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 06:58:22 -0400
-Received: from 79.184.254.216.ipv4.supernova.orange.pl (79.184.254.216) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.267)
- id a425eeee5911cf67; Mon, 1 Jul 2019 12:58:19 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Linux PM <linux-pm@vger.kernel.org>
-Cc:     Linux PCI <linux-pci@vger.kernel.org>,
-        Linux ACPI <linux-acpi@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Hans De Goede <hdegoede@redhat.com>,
-        "Robert R. Howell" <RHowell@uwyo.edu>
-Subject: [PATCH v2 1/5] PM: ACPI/PCI: Resume all devices during hibernation
-Date:   Mon, 01 Jul 2019 12:44:25 +0200
-Message-ID: <6191578.xJk2HsE5MX@kreacher>
-In-Reply-To: <4976412.ihyb9sT5jY@kreacher>
-References: <4976412.ihyb9sT5jY@kreacher>
+        Mon, 1 Jul 2019 06:47:12 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x61AktDf015680;
+        Mon, 1 Jul 2019 05:46:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1561978015;
+        bh=xkl2YSQgyzqKuqbU89N6vJgSH9uVy5rur2a274LLpx8=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=NwYmYqiH3UgHKJrXq/7XQnNew6YC+zoaqBdgWzE1BIesddbvTKMp7Gc9uxzEOtfx3
+         cTDmboPaQf6L6xXhEVEIDuNr3X2GB3oy0Cn6okCurZj5oRn9CJtXIZ7W8fUmbQ9Olc
+         O7jdhIMbKfFxkUg2zuDQ4dWstSyQjW0whzxaqTKs=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x61AktWn101270
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 1 Jul 2019 05:46:55 -0500
+Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 1 Jul
+ 2019 05:46:54 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Mon, 1 Jul 2019 05:46:54 -0500
+Received: from [172.24.190.117] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x61Akp51022662;
+        Mon, 1 Jul 2019 05:46:52 -0500
+Subject: Re: [PATCH] soc: ti: fix irq-ti-sci link error
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Santosh Shilimkar <ssantosh@kernel.org>
+CC:     Marc Zyngier <marc.zyngier@arm.com>,
+        Olof Johansson <olof@lixom.net>,
+        Tony Lindgren <tony@atomide.com>, Nishanth Menon <nm@ti.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20190617130149.1782930-1-arnd@arndb.de>
+From:   Lokesh Vutla <lokeshvutla@ti.com>
+Message-ID: <2974ac02-287a-ab46-6716-2b768cca47c3@ti.com>
+Date:   Mon, 1 Jul 2019 16:16:11 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20190617130149.1782930-1-arnd@arndb.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-
-Both the PCI bus type and the ACPI PM domain avoid resuming
-runtime-suspended devices with DPM_FLAG_SMART_SUSPEND set during
-hibernation (before creating the snapshot image of system memory),
-but that turns out to be a mistake.  It leads to functional issues
-and adds complexity that's hard to justify.
-
-For this reason, resume all runtime-suspended PCI devices and all
-devices in the ACPI PM domains before creating a snapshot image of
-system memory during hibernation.
-
-Fixes: 05087360fd7a (ACPI / PM: Take SMART_SUSPEND driver flag into account)
-Fixes: c4b65157aeef (PCI / PM: Take SMART_SUSPEND driver flag into account)
-Link: https://lore.kernel.org/linux-acpi/917d4399-2e22-67b1-9d54-808561f9083f@uwyo.edu/T/#maf065fe6e4974f2a9d79f332ab99dfaba635f64c
-Reported-by: Robert R. Howell <RHowell@uwyo.edu>
-Tested-by: Robert R. Howell <RHowell@uwyo.edu>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
-
--> v2: No changes.
-
----
- drivers/acpi/device_pm.c |   13 +++++++------
- drivers/pci/pci-driver.c |   16 ++++++++--------
- 2 files changed, 15 insertions(+), 14 deletions(-)
-
-Index: linux-pm/drivers/acpi/device_pm.c
-===================================================================
---- linux-pm.orig/drivers/acpi/device_pm.c
-+++ linux-pm/drivers/acpi/device_pm.c
-@@ -1155,13 +1155,14 @@ EXPORT_SYMBOL_GPL(acpi_subsys_resume_ear
- int acpi_subsys_freeze(struct device *dev)
- {
- 	/*
--	 * This used to be done in acpi_subsys_prepare() for all devices and
--	 * some drivers may depend on it, so do it here.  Ideally, however,
--	 * runtime-suspended devices should not be touched during freeze/thaw
--	 * transitions.
-+	 * Resume all runtime-suspended devices before creating a snapshot
-+	 * image of system memory, because the restore kernel generally cannot
-+	 * be expected to always handle them consistently and they need to be
-+	 * put into the runtime-active metastate during system resume anyway,
-+	 * so it is better to ensure that the state saved in the image will be
-+	 * alwyas consistent with that.
- 	 */
--	if (!dev_pm_test_driver_flags(dev, DPM_FLAG_SMART_SUSPEND))
--		pm_runtime_resume(dev);
-+	pm_runtime_resume(dev);
- 
- 	return pm_generic_freeze(dev);
- }
-Index: linux-pm/drivers/pci/pci-driver.c
-===================================================================
---- linux-pm.orig/drivers/pci/pci-driver.c
-+++ linux-pm/drivers/pci/pci-driver.c
-@@ -1012,15 +1012,15 @@ static int pci_pm_freeze(struct device *
- 	}
- 
- 	/*
--	 * This used to be done in pci_pm_prepare() for all devices and some
--	 * drivers may depend on it, so do it here.  Ideally, runtime-suspended
--	 * devices should not be touched during freeze/thaw transitions,
--	 * however.
-+	 * Resume all runtime-suspended devices before creating a snapshot
-+	 * image of system memory, because the restore kernel generally cannot
-+	 * be expected to always handle them consistently and they need to be
-+	 * put into the runtime-active metastate during system resume anyway,
-+	 * so it is better to ensure that the state saved in the image will be
-+	 * alwyas consistent with that.
- 	 */
--	if (!dev_pm_smart_suspend_and_suspended(dev)) {
--		pm_runtime_resume(dev);
--		pci_dev->state_saved = false;
--	}
-+	pm_runtime_resume(dev);
-+	pci_dev->state_saved = false;
- 
- 	if (pm->freeze) {
- 		int error;
 
 
+On 17/06/19 6:31 PM, Arnd Bergmann wrote:
+> The irqchip driver depends on the SoC specific driver, but we want
+> to be able to compile-test it elsewhere:
+> 
+> WARNING: unmet direct dependencies detected for TI_SCI_INTA_MSI_DOMAIN
+>   Depends on [n]: SOC_TI [=n]
+>   Selected by [y]:
+>   - TI_SCI_INTA_IRQCHIP [=y] && TI_SCI_PROTOCOL [=y]
+> 
+> drivers/irqchip/irq-ti-sci-inta.o: In function `ti_sci_inta_irq_domain_probe':
+> irq-ti-sci-inta.c:(.text+0x204): undefined reference to `ti_sci_inta_msi_create_irq_domain'
+> 
+> Rearrange the Kconfig and Makefile so we build the soc driver whenever
+> its users are there, regardless of the SOC_TI option.
+> 
+> Fixes: 49b323157bf1 ("soc: ti: Add MSI domain bus support for Interrupt Aggregator")
+> Fixes: f011df6179bd ("irqchip/ti-sci-inta: Add msi domain support")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
+Looks like this is a side effect of the patch  a6b112b04355b ("arm64: arch_k3:
+Fix kconfig dependency warning"). $Patch looks good to me.
 
+Reviewed-by: Lokesh Vutla <lokeshvutla@ti.com>
+
+Thanks and regards,
+Lokesh
+
+> ---
+>  drivers/soc/Makefile   | 2 +-
+>  drivers/soc/ti/Kconfig | 4 ++--
+>  2 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/soc/Makefile b/drivers/soc/Makefile
+> index 524ecdc2a9bb..2ec355003524 100644
+> --- a/drivers/soc/Makefile
+> +++ b/drivers/soc/Makefile
+> @@ -22,7 +22,7 @@ obj-$(CONFIG_ARCH_ROCKCHIP)	+= rockchip/
+>  obj-$(CONFIG_SOC_SAMSUNG)	+= samsung/
+>  obj-y				+= sunxi/
+>  obj-$(CONFIG_ARCH_TEGRA)	+= tegra/
+> -obj-$(CONFIG_SOC_TI)		+= ti/
+> +obj-y				+= ti/
+>  obj-$(CONFIG_ARCH_U8500)	+= ux500/
+>  obj-$(CONFIG_PLAT_VERSATILE)	+= versatile/
+>  obj-y				+= xilinx/
+> diff --git a/drivers/soc/ti/Kconfig b/drivers/soc/ti/Kconfig
+> index ea0859f7b185..d7d50d48d05d 100644
+> --- a/drivers/soc/ti/Kconfig
+> +++ b/drivers/soc/ti/Kconfig
+> @@ -75,10 +75,10 @@ config TI_SCI_PM_DOMAINS
+>  	  called ti_sci_pm_domains. Note this is needed early in boot before
+>  	  rootfs may be available.
+>  
+> +endif # SOC_TI
+> +
+>  config TI_SCI_INTA_MSI_DOMAIN
+>  	bool
+>  	select GENERIC_MSI_IRQ_DOMAIN
+>  	help
+>  	  Driver to enable Interrupt Aggregator specific MSI Domain.
+> -
+> -endif # SOC_TI
+> 
