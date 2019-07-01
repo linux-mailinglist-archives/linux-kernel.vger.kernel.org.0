@@ -2,64 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39C4B5B767
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 11:03:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C4BE5B762
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 11:01:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728274AbfGAJDL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 05:03:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44138 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728262AbfGAJDL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 05:03:11 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D35E5208E4;
-        Mon,  1 Jul 2019 09:03:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561971790;
-        bh=4hVp4xkK7D3D4jFp35USuOqD5Kwe0mKGVAbEGPSmMHQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=EAeCMilwrbgWlQ9VdGd/VFq5E6A2azOPs0YEfMxliSdxVSEsc1a4pnQ01gquawRad
-         86uNeM943piRDRAyCIUirJbbzBv8QYGmdVtVsBLgNw0cbmR10MfZc0lu9dKIdHc7xm
-         9TKGhPlY87WRIRTcbF1Ku17WH3QC1ClRIbIHSTDk=
-Date:   Mon, 1 Jul 2019 11:00:18 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Chanwoo Choi <cw00.choi@samsung.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Chanwoo Choi (chanwoo@kernel.org)" <chanwoo@kernel.org>,
-        =?utf-8?B?7ZWo66qF7KO8?= <myungjoo.ham@samsung.com>
-Subject: Re: [GIT PULL] extcon next for v5.3
-Message-ID: <20190701090018.GB11465@kroah.com>
-References: <CGME20190628013007epcas1p405af6ef75a8164072459694c2b17385a@epcas1p4.samsung.com>
- <d312e5b6-3faf-ad5e-fc2e-c6f8b09ea9ec@samsung.com>
+        id S1728250AbfGAJBA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 05:01:00 -0400
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:35693 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728196AbfGAJBA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Jul 2019 05:01:00 -0400
+Received: by mail-vs1-f66.google.com with SMTP id u124so8415192vsu.2
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2019 02:00:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4Jz5LEA2XCY8WxB7ahvqb8ZAK22nsgzGKs1ifY5Dk/U=;
+        b=uJbtVUbZumTe4WM+B5cBl49oqWTtQjEH1u5VqEXDSDXX5Gae0YkHMB3/FHyIhOfkMK
+         E6fG2kzSVK9HvQbalX/EN5hrDp1UMlKPv2MDUx+TQgiOzC1Af0Vad4VceJ0E0FEgrzFq
+         bLCCiWjgdu/5m+2knBRyCgP88VTZ3Dy5pkruJGDPwcAYJrtlxM42m70Jz8UhznvVEUQ+
+         bAUdFmTxWFajg2OYnjPYWdKancO2oe6zm7fNmRV6axzmHWmMpE9/kHpS/yKpk0FnJ11K
+         t0tSuHU0qGXrsdAM5QKYN+cV0Xl7dhOM0pu4UvghNeybg1LWu/OiVUB6HIGsKspHeUi0
+         AY2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4Jz5LEA2XCY8WxB7ahvqb8ZAK22nsgzGKs1ifY5Dk/U=;
+        b=sLjmqSvOwKFrWy/5CT/o03hfAX4POPB7OKpXHjxcJzH4u0i8KyqHB2wQXAIzkIj9pT
+         PiYKgc8Ssyp18OWse6k/284+sgmajLnhwvB5yCM9Z0Io55WzTyEVoES67PF9/yWW67rj
+         Lyi9eSvvbmGtdjGQkwbsEbXPkJBXVqwqhK8qdlF+4rrjQrkAycMQ5WkmALcwZARALQRT
+         TaOYyBlb4RNjWhkJCkl/kexuH0v9sWusCIK+tkG4yInfpEX4cc2AFLivittkjCvSVFc9
+         c/lvvCLmJcYFLLjSMQA4FXN+SoEy7SXxyNZ6cRrY2Jf5W/i/XCYGCu/ZjaLKxcW0/5Ja
+         W2ng==
+X-Gm-Message-State: APjAAAUYONknrC/+DX+eHwKZrRpOwAYQk2fXnYLDG4yFSaZXyMBLH13R
+        aR4Zzelk/JsUGh0xcxPo76aZkunONI8sCOm174vn5oUo
+X-Google-Smtp-Source: APXvYqxsynQrL3vfc5mOg4U8prttDVExu+ydIjOZmPNanoztxU6OWq4kI+zwsq97Ws7pHugalZDkCDe1rXiXjn989FQ=
+X-Received: by 2002:a67:d410:: with SMTP id c16mr14718423vsj.61.1561971659065;
+ Mon, 01 Jul 2019 02:00:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d312e5b6-3faf-ad5e-fc2e-c6f8b09ea9ec@samsung.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <20190701083604.24528-1-ttayar@habana.ai>
+In-Reply-To: <20190701083604.24528-1-ttayar@habana.ai>
+From:   Oded Gabbay <oded.gabbay@gmail.com>
+Date:   Mon, 1 Jul 2019 12:00:32 +0300
+Message-ID: <CAFCwf12F+LWE4brhJ9rj35yJfdnv=EqRtXfo4MVUpKYGCc6JKA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] habanalabs: Add debugfs node for engines status
+To:     Tomer Tayar <ttayar@habana.ai>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 28, 2019 at 10:32:45AM +0900, Chanwoo Choi wrote:
-> Dear Greg,
-> 
-> This is extcon-next pull request for v5.3. I add detailed description of
-> this pull request on below. Please pull extcon with following updates.
-> 
-> [Detailed description for this pull request]
-> 1. Add new extcon-fsa9480 extcon provider driver
-> - It is extcon provider driver for Fairchild Semiconductor
-> FSA9480 microUSB switch and accessory detector chip which
-> detects the kind of external connector like usb, charger,
-> audio, video and so on.
-> 
-> 2.
-> - Add the exception handling code for extcon-arizona.c
-> when using the regmap interface.
+On Mon, Jul 1, 2019 at 11:36 AM Tomer Tayar <ttayar@habana.ai> wrote:
+>
+> Command submissions sent to the device are composed of command buffers
+> which are targeted to different device engines, like DMA and compute
+> entities. When a command submission gets stuck, knowing in which engine
+> the stuck is, is crucial for debugging.
+> This patch adds a debugfs node that exports this information, by
+> displaying the engines' various registers that assemble their idle/busy
+> status.
+If this is a new node, then you are missing the update to
+Documentation/debugfs-driver-habanalabs
 
-Pulled and pushed out, thanks.
+>
+> The information retrieval is based on the is_device_idle ASIC function.
+> The printout in this function, of the first detected busy engine, is
+> removed because it becomes redundant in the presence of the more
+> elaborated info of the new debugfs node.
+>
+> The patch also updates the device idle check:
+> - Add reading the DMA core status register, because it is possible that
+>   QMAN has finished its work but the DMA itself is still running.
+> - Remove the MME shadow status check, as the MME ARCH status register
+>   includes the status of all MME shadows.
+This seems better to separate into a different patch.
+So I suggest first a patch that fixes the device idle check and then
+this patch (that adds the debugfs node and uses the idle check
+function).
 
-greg k-h
+Thanks,
+Oded
