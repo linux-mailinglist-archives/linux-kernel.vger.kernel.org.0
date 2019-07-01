@@ -2,120 +2,205 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2619E5B53B
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 08:43:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E67535B544
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 08:45:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727460AbfGAGng (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 02:43:36 -0400
-Received: from verein.lst.de ([213.95.11.211]:58657 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727318AbfGAGng (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 02:43:36 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 831C568B20; Mon,  1 Jul 2019 08:43:33 +0200 (CEST)
-Date:   Mon, 1 Jul 2019 08:43:33 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 11/12] iomap: move the xfs writeback code to iomap.c
-Message-ID: <20190701064333.GA20778@lst.de>
-References: <20190624055253.31183-1-hch@lst.de> <20190624055253.31183-12-hch@lst.de> <20190624234304.GD7777@dread.disaster.area> <20190625101020.GI1462@lst.de> <20190628004542.GJ7777@dread.disaster.area> <20190628053320.GA26902@lst.de> <20190701000859.GL7777@dread.disaster.area>
+        id S1727518AbfGAGpT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 02:45:19 -0400
+Received: from mail-eopbgr80049.outbound.protection.outlook.com ([40.107.8.49]:35653
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727093AbfGAGpS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Jul 2019 02:45:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector2-armh-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ff1DEoveWsrkW2zwHfrkt5HKs8CDNaRYm1QJ/KSKFik=;
+ b=G9Ybu7jn/rtTK1FVbLKsMUo5QaMq2C238U5mbW+c2szvlsi9PGJgjNsBvxPY0oUmPZD4Rj0USjkwH/OsSS0hvzxyc4T2pAbVUiVxAUwIelKNWLm0sMCFT2jRjwoabxzbETM66SAhdVlwdrGzpydbMtGvz80m7DvIOeaC5sXO8Qc=
+Received: from VI1PR08MB5488.eurprd08.prod.outlook.com (52.133.246.150) by
+ VI1PR08MB3023.eurprd08.prod.outlook.com (52.133.14.140) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2032.20; Mon, 1 Jul 2019 06:45:10 +0000
+Received: from VI1PR08MB5488.eurprd08.prod.outlook.com
+ ([fe80::390b:b8a9:542b:9ef9]) by VI1PR08MB5488.eurprd08.prod.outlook.com
+ ([fe80::390b:b8a9:542b:9ef9%3]) with mapi id 15.20.2032.019; Mon, 1 Jul 2019
+ 06:45:09 +0000
+From:   "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>
+To:     Liviu Dudau <Liviu.Dudau@arm.com>,
+        "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>,
+        "maarten.lankhorst@linux.intel.com" 
+        <maarten.lankhorst@linux.intel.com>,
+        "seanpaul@chromium.org" <seanpaul@chromium.org>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        Brian Starkey <Brian.Starkey@arm.com>
+CC:     "Julien Yin (Arm Technology China)" <Julien.Yin@arm.com>,
+        "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
+        Ayan Halder <Ayan.Halder@arm.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        nd <nd@arm.com>
+Subject: [PATCH] drm/komeda: Adds power management support
+Thread-Topic: [PATCH] drm/komeda: Adds power management support
+Thread-Index: AQHVL9iGaXKk/2R3BkO83ATLMrxlow==
+Date:   Mon, 1 Jul 2019 06:45:09 +0000
+Message-ID: <1561963458-12941-1-git-send-email-lowry.li@arm.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [113.29.88.7]
+x-clientproxiedby: HK0PR01CA0015.apcprd01.prod.exchangelabs.com
+ (2603:1096:203:92::27) To VI1PR08MB5488.eurprd08.prod.outlook.com
+ (2603:10a6:803:137::22)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Lowry.Li@arm.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 1.9.1
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 07f8bcce-8ffb-4805-f71b-08d6fdefa902
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR08MB3023;
+x-ms-traffictypediagnostic: VI1PR08MB3023:
+x-ms-exchange-purlcount: 2
+nodisclaimer: True
+x-microsoft-antispam-prvs: <VI1PR08MB302374D9F0F8109833F343129FF90@VI1PR08MB3023.eurprd08.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:5797;
+x-forefront-prvs: 00851CA28B
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(366004)(396003)(39850400004)(346002)(136003)(199004)(189003)(478600001)(54906003)(6486002)(110136005)(25786009)(26005)(5660300002)(2501003)(7736002)(2616005)(36756003)(14454004)(55236004)(476003)(186003)(6512007)(6636002)(6306002)(73956011)(86362001)(4326008)(66556008)(64756008)(66446008)(66476007)(2201001)(66946007)(316002)(14444005)(305945005)(50226002)(99286004)(71200400001)(53936002)(6116002)(8936002)(966005)(256004)(81166006)(72206003)(486006)(8676002)(3846002)(2906002)(68736007)(81156014)(6436002)(52116002)(71190400001)(66066001)(6506007)(102836004)(386003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR08MB3023;H:VI1PR08MB5488.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: arm.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: v3rwcDjEZDMPPkoP4pQUuj0HILc67493UUqq6b4ys/G8I4vMt1hqLJv6vianNe7xT4LMPjD+R87AfCIsyqsMrG5EG3WabZVT8phnVu9fzz+QUOXUYMl/OU0/rl1Omye1Za6tMslIbF4KGZNiwga9SaYqiIGMNzANzjTVvmo4bpTObXyjGTESCxDjfQMOi3vcdpzYYeX+Er5cQRYyZMgFRm/PFZCG17djQCsX4+fr8owIXdFJStP/wfrOWc2UrdNhI14P+5RADln6UuOWzxpLjBQ4vgcN0W4ckPQhyGIz+1ejpXUCRdX+l/wk0cuQLbNSMEFmoeP9QHEh8vo2+x48vOvItEdEv52XoyqwU3R9AsXg3uji4gWdUFwUPexpX3BsNYesCmDYAy/N69ZOAAbnMNDYB8gR2ZMhBQ1ABsvc51k=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190701000859.GL7777@dread.disaster.area>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 07f8bcce-8ffb-4805-f71b-08d6fdefa902
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Jul 2019 06:45:09.7351
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Lowry.Li@arm.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR08MB3023
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 01, 2019 at 10:08:59AM +1000, Dave Chinner wrote:
-> > Why do you assume you have to test it?  Back when we shared
-> > generic_file_read with everyone you also didn't test odd change to
-> > it with every possible fs.
-> 
-> I'm not sure what function you are referring to here. Can you
-> clarify?
-
-Right now it is generic_file_read_iter(), but before iter it was
-generic_file_readv, generic_file_read, etc.
-
-> > If you change iomap.c, you'll test it
-> > with XFS, and Cc other maintainers so that they get a chance to
-> > also test it and comment on it, just like we do with other shared
-> > code in the kernel.
-> 
-> Which is why we've had problems with the generic code paths in the
-> past and other filesystems just copy and paste then before making
-> signficant modifications. e.g. both ext4 and btrfs re-implement
-> write_cache_pages() rather than use the generic writeback code
-> because they have slightly different requirements and those
-> developers don't want to have to worry about other filesystems every
-> time there is an internal filesystem change that affects their
-> writeback constraints...
-> 
-> That's kinda what I'm getting at here: writeback isn't being shared
-> by any of the major filesystems for good reasons...
-
-I very fundamentally disagree.  It is not shared for a bad reasons,
-and that is people not understanding the mess that the buffer head
-based code is, and not wanting to understand it.  So they come up
-with their own piecemeal "improvements" for it making the situation
-worse.  Writeback is fundamentally not fs specific in any way.  Different
-file system might use different optional features like unwrittent
-extents, delalloc, data checksums, but once they implement them the
-behavior should be uniform.
-
-And I'd much rather fix this than going down the copy an paste and
-slightly tweak it while fucking up something else route.
-
-> > stone age.  Very little is about XFS itself, most of it has been
-> > about not being stupid in a fairly generic way.  And every since
-> > I got rid of buffer heads xfs_aops.c has been intimately tied
->   ^^^^^^^^^^^^^^^^^^^^^^^^^
-> 
-> *cough*
-> 
-> Getting rid of bufferheads in writeback was largely a result of work
-> I did over a period of several years, thank you very much. Yes, work
-> you did over the same time period also got us there, but it's not
-> all your work.
-
-Sorry Dave - this isn't avoud taking credit of past work.  But ever
-since I finally got rid of bufferhads and introduced struct iomap_page
-we have this intimate tie up, which is the point here.
-
-> e.g. XFS requires COW fork manipulation on ioend submission
-> (xfs_submit_ioend() calls xfs_reflink_convert_cow()) and this has
-> some nasty memory allocation requirements (potential deadlock
-> situation). So the generic code has a hook for this XFS specific
-> functionality, even though no other filesystem if likely to ever
-> need this. And this is something we've been discussion getting rid
-> of from the XFS writeback path. i.e. reworking how we do all
-> the COW fork interactions in writeback. So some of these hooks are
-> suspect even now, and we're already trying to work out how to
-> re-work the XFS writeback path to sort out problems we have with it.
-
-Every file system that writes out of place will need some sort of
-hook here with the same issue, no matter if they call it COW fork
-or manipulate some all integrated data structure like btrfs.  Moreover
-btrfs will also have to deal with their data checksum in exactly this
-place.
-
-> That's the point I'm trying to make - the whole "generic" iomap
-> writeback API proposal is based around exactly the functionality XFS
-> - and only XFS - requires at this point in time. There are no other
-> users of this API and until there are, we've got no idea how
-> generic this functionality really is and just how much overhead
-> making fundamental changes to the XFS writeback code are going to
-> entail in future.
-
-No, it is based around generalizing what we have in xfs so that we
-can use it elsewhere.  With zonefs and gfs2 as the prime users
-initially, and other like btrfs hopefully to not far away.
+RnJvbTogIkxvd3J5IExpIChBcm0gVGVjaG5vbG9neSBDaGluYSkiIDxMb3dyeS5MaUBhcm0uY29t
+Pg0KDQpBZGRzIHN5c3RlbSBwb3dlciBtYW5hZ2VtZW50IHN1cHBvcnQgaW4gS01TIGtlcm5lbCBk
+cml2ZXIuDQoNCkRlcGVuZHMgb246DQotIGh0dHBzOi8vcGF0Y2h3b3JrLmZyZWVkZXNrdG9wLm9y
+Zy9zZXJpZXMvNjE2NTAvDQotIGh0dHBzOi8vcGF0Y2h3b3JrLmZyZWVkZXNrdG9wLm9yZy9zZXJp
+ZXMvNjAwODMvDQoNCkNoYW5nZXMgc2luY2UgdjE6DQpTaW5jZSB3ZSBoYXZlIHVuaWZpZWQgbWNs
+ay9wY2xrL3BpcGVsaW5lLT5hY2xrIHRvIG9uZSBtY2xrLCB3aGljaCB3aWxsDQpiZSB0dXJuZWQg
+b24vb2ZmIHdoZW4gY3J0YyBhdG9taWMgZW5hYmxlL2Rpc2FibGUsIHJlbW92ZWQgcnVudGltZSBw
+b3dlcg0KbWFuYWdlbWVudC4NClJlbW92ZXMgcnVuIHRpbWUgZ2V0L3B1dCByZWxhdGVkIGZsb3cu
+DQpBZGRzIHRvIGRpc2FibGUgdGhlIGFjbGsgd2hlbiByZWdpc3RlciBhY2Nlc3MgZmluaXNoZWQu
+DQoNClNpZ25lZC1vZmYtYnk6IExvd3J5IExpIChBcm0gVGVjaG5vbG9neSBDaGluYSkgPGxvd3J5
+LmxpQGFybS5jb20+DQotLS0NCiBkcml2ZXJzL2dwdS9kcm0vYXJtL2Rpc3BsYXkva29tZWRhL2tv
+bWVkYV9jcnRjLmMgfCAgMSAtDQogZHJpdmVycy9ncHUvZHJtL2FybS9kaXNwbGF5L2tvbWVkYS9r
+b21lZGFfZGV2LmMgIHwgNjUgKysrKysrKysrKysrKysrKysrKysrLS0tDQogZHJpdmVycy9ncHUv
+ZHJtL2FybS9kaXNwbGF5L2tvbWVkYS9rb21lZGFfZGV2LmggIHwgIDIgKw0KIGRyaXZlcnMvZ3B1
+L2RybS9hcm0vZGlzcGxheS9rb21lZGEva29tZWRhX2Rydi5jICB8IDMwICsrKysrKysrKystDQog
+NCBmaWxlcyBjaGFuZ2VkLCA5MCBpbnNlcnRpb25zKCspLCA4IGRlbGV0aW9ucygtKQ0KDQpkaWZm
+IC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2FybS9kaXNwbGF5L2tvbWVkYS9rb21lZGFfY3J0Yy5j
+IGIvZHJpdmVycy9ncHUvZHJtL2FybS9kaXNwbGF5L2tvbWVkYS9rb21lZGFfY3J0Yy5jDQppbmRl
+eCBjYWZiNDQ1Li5kMTRlN2YzIDEwMDY0NA0KLS0tIGEvZHJpdmVycy9ncHUvZHJtL2FybS9kaXNw
+bGF5L2tvbWVkYS9rb21lZGFfY3J0Yy5jDQorKysgYi9kcml2ZXJzL2dwdS9kcm0vYXJtL2Rpc3Bs
+YXkva29tZWRhL2tvbWVkYV9jcnRjLmMNCkBAIC01LDcgKzUsNiBAQA0KICAqDQogICovDQogI2lu
+Y2x1ZGUgPGxpbnV4L2Nsay5oPg0KLSNpbmNsdWRlIDxsaW51eC9wbV9ydW50aW1lLmg+DQogI2lu
+Y2x1ZGUgPGxpbnV4L3NwaW5sb2NrLmg+DQogDQogI2luY2x1ZGUgPGRybS9kcm1fYXRvbWljLmg+
+DQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2FybS9kaXNwbGF5L2tvbWVkYS9rb21lZGFf
+ZGV2LmMgYi9kcml2ZXJzL2dwdS9kcm0vYXJtL2Rpc3BsYXkva29tZWRhL2tvbWVkYV9kZXYuYw0K
+aW5kZXggZTFhYTU4ZS4uYTgyZjY3YiAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvZ3B1L2RybS9hcm0v
+ZGlzcGxheS9rb21lZGEva29tZWRhX2Rldi5jDQorKysgYi9kcml2ZXJzL2dwdS9kcm0vYXJtL2Rp
+c3BsYXkva29tZWRhL2tvbWVkYV9kZXYuYw0KQEAgLTIwOSw3ICsyMDksNyBAQCBzdHJ1Y3Qga29t
+ZWRhX2RldiAqa29tZWRhX2Rldl9jcmVhdGUoc3RydWN0IGRldmljZSAqZGV2KQ0KIAkJCSAgcHJv
+ZHVjdC0+cHJvZHVjdF9pZCwNCiAJCQkgIE1BTElEUF9DT1JFX0lEX1BST0RVQ1RfSUQobWRldi0+
+Y2hpcC5jb3JlX2lkKSk7DQogCQllcnIgPSAtRU5PREVWOw0KLQkJZ290byBlcnJfY2xlYW51cDsN
+CisJCWdvdG8gZGlzYWJsZV9jbGs7DQogCX0NCiANCiAJRFJNX0lORk8oIkZvdW5kIEFSTSBNYWxp
+LUQleCB2ZXJzaW9uIHIlZHAlZFxuIiwNCkBAIC0yMjIsMTkgKzIyMiwxOSBAQCBzdHJ1Y3Qga29t
+ZWRhX2RldiAqa29tZWRhX2Rldl9jcmVhdGUoc3RydWN0IGRldmljZSAqZGV2KQ0KIAllcnIgPSBt
+ZGV2LT5mdW5jcy0+ZW51bV9yZXNvdXJjZXMobWRldik7DQogCWlmIChlcnIpIHsNCiAJCURSTV9F
+UlJPUigiZW51bWVyYXRlIGRpc3BsYXkgcmVzb3VyY2UgZmFpbGVkLlxuIik7DQotCQlnb3RvIGVy
+cl9jbGVhbnVwOw0KKwkJZ290byBkaXNhYmxlX2NsazsNCiAJfQ0KIA0KIAllcnIgPSBrb21lZGFf
+cGFyc2VfZHQoZGV2LCBtZGV2KTsNCiAJaWYgKGVycikgew0KIAkJRFJNX0VSUk9SKCJwYXJzZSBk
+ZXZpY2UgdHJlZSBmYWlsZWQuXG4iKTsNCi0JCWdvdG8gZXJyX2NsZWFudXA7DQorCQlnb3RvIGRp
+c2FibGVfY2xrOw0KIAl9DQogDQogCWVyciA9IGtvbWVkYV9hc3NlbWJsZV9waXBlbGluZXMobWRl
+dik7DQogCWlmIChlcnIpIHsNCiAJCURSTV9FUlJPUigiYXNzZW1ibGUgZGlzcGxheSBwaXBlbGlu
+ZXMgZmFpbGVkLlxuIik7DQotCQlnb3RvIGVycl9jbGVhbnVwOw0KKwkJZ290byBkaXNhYmxlX2Ns
+azsNCiAJfQ0KIA0KIAlkZXYtPmRtYV9wYXJtcyA9ICZtZGV2LT5kbWFfcGFybXM7DQpAQCAtMjQ3
+LDExICsyNDcsMTQgQEAgc3RydWN0IGtvbWVkYV9kZXYgKmtvbWVkYV9kZXZfY3JlYXRlKHN0cnVj
+dCBkZXZpY2UgKmRldikNCiAJaWYgKG1kZXYtPmlvbW11ICYmIG1kZXYtPmZ1bmNzLT5jb25uZWN0
+X2lvbW11KSB7DQogCQllcnIgPSBtZGV2LT5mdW5jcy0+Y29ubmVjdF9pb21tdShtZGV2KTsNCiAJ
+CWlmIChlcnIpIHsNCisJCQlEUk1fRVJST1IoImNvbm5lY3QgaW9tbXUgZmFpbGVkLlxuIik7DQog
+CQkJbWRldi0+aW9tbXUgPSBOVUxMOw0KLQkJCWdvdG8gZXJyX2NsZWFudXA7DQorCQkJZ290byBk
+aXNhYmxlX2NsazsNCiAJCX0NCiAJfQ0KIA0KKwljbGtfZGlzYWJsZV91bnByZXBhcmUobWRldi0+
+YWNsayk7DQorDQogCWVyciA9IHN5c2ZzX2NyZWF0ZV9ncm91cCgmZGV2LT5rb2JqLCAma29tZWRh
+X3N5c2ZzX2F0dHJfZ3JvdXApOw0KIAlpZiAoZXJyKSB7DQogCQlEUk1fRVJST1IoImNyZWF0ZSBz
+eXNmcyBncm91cCBmYWlsZWQuXG4iKTsNCkBAIC0yNjQsNiArMjY3LDggQEAgc3RydWN0IGtvbWVk
+YV9kZXYgKmtvbWVkYV9kZXZfY3JlYXRlKHN0cnVjdCBkZXZpY2UgKmRldikNCiANCiAJcmV0dXJu
+IG1kZXY7DQogDQorZGlzYWJsZV9jbGs6DQorCWNsa19kaXNhYmxlX3VucHJlcGFyZShtZGV2LT5h
+Y2xrKTsNCiBlcnJfY2xlYW51cDoNCiAJa29tZWRhX2Rldl9kZXN0cm95KG1kZXYpOw0KIAlyZXR1
+cm4gRVJSX1BUUihlcnIpOw0KQEAgLTI4MSw4ICsyODYsMTIgQEAgdm9pZCBrb21lZGFfZGV2X2Rl
+c3Ryb3koc3RydWN0IGtvbWVkYV9kZXYgKm1kZXYpDQogCWRlYnVnZnNfcmVtb3ZlX3JlY3Vyc2l2
+ZShtZGV2LT5kZWJ1Z2ZzX3Jvb3QpOw0KICNlbmRpZg0KIA0KKwlpZiAobWRldi0+YWNsaykNCisJ
+CWNsa19wcmVwYXJlX2VuYWJsZShtZGV2LT5hY2xrKTsNCisNCiAJaWYgKG1kZXYtPmlvbW11ICYm
+IG1kZXYtPmZ1bmNzLT5kaXNjb25uZWN0X2lvbW11KQ0KLQkJbWRldi0+ZnVuY3MtPmRpc2Nvbm5l
+Y3RfaW9tbXUobWRldik7DQorCQlpZiAobWRldi0+ZnVuY3MtPmRpc2Nvbm5lY3RfaW9tbXUobWRl
+dikpDQorCQkJRFJNX0VSUk9SKCJkaXNjb25uZWN0IGlvbW11IGZhaWxlZC5cbiIpOw0KIAltZGV2
+LT5pb21tdSA9IE5VTEw7DQogDQogCWZvciAoaSA9IDA7IGkgPCBtZGV2LT5uX3BpcGVsaW5lczsg
+aSsrKSB7DQpAQCAtMzA4LDMgKzMxNyw0NyBAQCB2b2lkIGtvbWVkYV9kZXZfZGVzdHJveShzdHJ1
+Y3Qga29tZWRhX2RldiAqbWRldikNCiANCiAJZGV2bV9rZnJlZShkZXYsIG1kZXYpOw0KIH0NCisN
+CitpbnQga29tZWRhX2Rldl9yZXN1bWUoc3RydWN0IGtvbWVkYV9kZXYgKm1kZXYpDQorew0KKwlp
+bnQgcmV0ID0gMDsNCisNCisJY2xrX3ByZXBhcmVfZW5hYmxlKG1kZXYtPmFjbGspOw0KKw0KKwlp
+ZiAobWRldi0+aW9tbXUgJiYgbWRldi0+ZnVuY3MtPmNvbm5lY3RfaW9tbXUpIHsNCisJCXJldCA9
+IG1kZXYtPmZ1bmNzLT5jb25uZWN0X2lvbW11KG1kZXYpOw0KKwkJaWYgKHJldCA8IDApIHsNCisJ
+CQlEUk1fRVJST1IoImNvbm5lY3QgaW9tbXUgZmFpbGVkLlxuIik7DQorCQkJZ290byBkaXNhYmxl
+X2NsazsNCisJCX0NCisJfQ0KKw0KKwlyZXQgPSBtZGV2LT5mdW5jcy0+ZW5hYmxlX2lycShtZGV2
+KTsNCisNCitkaXNhYmxlX2NsazoNCisJY2xrX2Rpc2FibGVfdW5wcmVwYXJlKG1kZXYtPmFjbGsp
+Ow0KKw0KKwlyZXR1cm4gcmV0Ow0KK30NCisNCitpbnQga29tZWRhX2Rldl9zdXNwZW5kKHN0cnVj
+dCBrb21lZGFfZGV2ICptZGV2KQ0KK3sNCisJaW50IHJldCA9IDA7DQorDQorCWNsa19wcmVwYXJl
+X2VuYWJsZShtZGV2LT5hY2xrKTsNCisNCisJaWYgKG1kZXYtPmlvbW11ICYmIG1kZXYtPmZ1bmNz
+LT5kaXNjb25uZWN0X2lvbW11KSB7DQorCQlyZXQgPSBtZGV2LT5mdW5jcy0+ZGlzY29ubmVjdF9p
+b21tdShtZGV2KTsNCisJCWlmIChyZXQgPCAwKSB7DQorCQkJRFJNX0VSUk9SKCJkaXNjb25uZWN0
+IGlvbW11IGZhaWxlZC5cbiIpOw0KKwkJCWdvdG8gZGlzYWJsZV9jbGs7DQorCQl9DQorCX0NCisN
+CisJcmV0ID0gbWRldi0+ZnVuY3MtPmRpc2FibGVfaXJxKG1kZXYpOw0KKw0KK2Rpc2FibGVfY2xr
+Og0KKwljbGtfZGlzYWJsZV91bnByZXBhcmUobWRldi0+YWNsayk7DQorDQorCXJldHVybiByZXQ7
+DQorfQ0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9hcm0vZGlzcGxheS9rb21lZGEva29t
+ZWRhX2Rldi5oIGIvZHJpdmVycy9ncHUvZHJtL2FybS9kaXNwbGF5L2tvbWVkYS9rb21lZGFfZGV2
+LmgNCmluZGV4IGQxYzg2YjYuLjA5NmY5ZjcgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL2dwdS9kcm0v
+YXJtL2Rpc3BsYXkva29tZWRhL2tvbWVkYV9kZXYuaA0KKysrIGIvZHJpdmVycy9ncHUvZHJtL2Fy
+bS9kaXNwbGF5L2tvbWVkYS9rb21lZGFfZGV2LmgNCkBAIC0yMDcsNCArMjA3LDYgQEAgc3RydWN0
+IGtvbWVkYV9kZXYgew0KIA0KIHN0cnVjdCBrb21lZGFfZGV2ICpkZXZfdG9fbWRldihzdHJ1Y3Qg
+ZGV2aWNlICpkZXYpOw0KIA0KK2ludCBrb21lZGFfZGV2X3Jlc3VtZShzdHJ1Y3Qga29tZWRhX2Rl
+diAqbWRldik7DQoraW50IGtvbWVkYV9kZXZfc3VzcGVuZChzdHJ1Y3Qga29tZWRhX2RldiAqbWRl
+dik7DQogI2VuZGlmIC8qX0tPTUVEQV9ERVZfSF8qLw0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1
+L2RybS9hcm0vZGlzcGxheS9rb21lZGEva29tZWRhX2Rydi5jIGIvZHJpdmVycy9ncHUvZHJtL2Fy
+bS9kaXNwbGF5L2tvbWVkYS9rb21lZGFfZHJ2LmMNCmluZGV4IGNmYTUwNjguLjM5NTA1MmIgMTAw
+NjQ0DQotLS0gYS9kcml2ZXJzL2dwdS9kcm0vYXJtL2Rpc3BsYXkva29tZWRhL2tvbWVkYV9kcnYu
+Yw0KKysrIGIvZHJpdmVycy9ncHUvZHJtL2FybS9kaXNwbGF5L2tvbWVkYS9rb21lZGFfZHJ2LmMN
+CkBAIC04LDYgKzgsNyBAQA0KICNpbmNsdWRlIDxsaW51eC9rZXJuZWwuaD4NCiAjaW5jbHVkZSA8
+bGludXgvcGxhdGZvcm1fZGV2aWNlLmg+DQogI2luY2x1ZGUgPGxpbnV4L2NvbXBvbmVudC5oPg0K
+KyNpbmNsdWRlIDxsaW51eC9wbV9ydW50aW1lLmg+DQogI2luY2x1ZGUgPGRybS9kcm1fb2YuaD4N
+CiAjaW5jbHVkZSAia29tZWRhX2Rldi5oIg0KICNpbmNsdWRlICJrb21lZGFfa21zLmgiDQpAQCAt
+MTM0LDEzICsxMzUsNDAgQEAgc3RhdGljIGludCBrb21lZGFfcGxhdGZvcm1fcmVtb3ZlKHN0cnVj
+dCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQogDQogTU9EVUxFX0RFVklDRV9UQUJMRShvZiwga29t
+ZWRhX29mX21hdGNoKTsNCiANCitzdGF0aWMgaW50IF9fbWF5YmVfdW51c2VkIGtvbWVkYV9wbV9z
+dXNwZW5kKHN0cnVjdCBkZXZpY2UgKmRldikNCit7DQorCXN0cnVjdCBrb21lZGFfZHJ2ICptZHJ2
+ID0gZGV2X2dldF9kcnZkYXRhKGRldik7DQorCXN0cnVjdCBkcm1fZGV2aWNlICpkcm0gPSAmbWRy
+di0+a21zLT5iYXNlOw0KKwlpbnQgcmVzOw0KKw0KKwlyZXMgPSBkcm1fbW9kZV9jb25maWdfaGVs
+cGVyX3N1c3BlbmQoZHJtKTsNCisNCisJa29tZWRhX2Rldl9zdXNwZW5kKG1kcnYtPm1kZXYpOw0K
+Kw0KKwlyZXR1cm4gcmVzOw0KK30NCisNCitzdGF0aWMgaW50IF9fbWF5YmVfdW51c2VkIGtvbWVk
+YV9wbV9yZXN1bWUoc3RydWN0IGRldmljZSAqZGV2KQ0KK3sNCisJc3RydWN0IGtvbWVkYV9kcnYg
+Km1kcnYgPSBkZXZfZ2V0X2RydmRhdGEoZGV2KTsNCisJc3RydWN0IGRybV9kZXZpY2UgKmRybSA9
+ICZtZHJ2LT5rbXMtPmJhc2U7DQorDQorCWtvbWVkYV9kZXZfcmVzdW1lKG1kcnYtPm1kZXYpOw0K
+Kw0KKwlyZXR1cm4gZHJtX21vZGVfY29uZmlnX2hlbHBlcl9yZXN1bWUoZHJtKTsNCit9DQorDQor
+c3RhdGljIGNvbnN0IHN0cnVjdCBkZXZfcG1fb3BzIGtvbWVkYV9wbV9vcHMgPSB7DQorCVNFVF9T
+WVNURU1fU0xFRVBfUE1fT1BTKGtvbWVkYV9wbV9zdXNwZW5kLCBrb21lZGFfcG1fcmVzdW1lKQ0K
+K307DQorDQogc3RhdGljIHN0cnVjdCBwbGF0Zm9ybV9kcml2ZXIga29tZWRhX3BsYXRmb3JtX2Ry
+aXZlciA9IHsNCiAJLnByb2JlCT0ga29tZWRhX3BsYXRmb3JtX3Byb2JlLA0KIAkucmVtb3ZlCT0g
+a29tZWRhX3BsYXRmb3JtX3JlbW92ZSwNCiAJLmRyaXZlcgk9IHsNCiAJCS5uYW1lID0gImtvbWVk
+YSIsDQogCQkub2ZfbWF0Y2hfdGFibGUJPSBrb21lZGFfb2ZfbWF0Y2gsDQotCQkucG0gPSBOVUxM
+LA0KKwkJLnBtID0gJmtvbWVkYV9wbV9vcHMsDQogCX0sDQogfTsNCiANCi0tIA0KMS45LjENCg0K
