@@ -2,155 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C2A55B5E4
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 09:46:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE3575B601
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 09:49:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727981AbfGAHqi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 03:46:38 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:32906 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727168AbfGAHqi (ORCPT
+        id S1727721AbfGAHts (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 03:49:48 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:10171 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727996AbfGAHsz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 03:46:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Sv+lOM3G9W8ujHeG85LNqWSEtkUcSIXP5XrnCYLCpII=; b=IrPAf6Us5K8xBmNUxANmYmyFm
-        VAhMuKaLOaEstSWrx2p/G90fJL3zBQIK3EMX0pzUTq0lir0x92jt3FKUhvJtPtUntxYw9texBoYPD
-        SvDINHFZRVNQvI4/SVuHR5r4gycA49SpnX2UTmS2nyRIzzjpwnJQrxfEn8CakQRi3+OZhp6fr4+FP
-        GK1YK1CyT/A7NuGLJePWL6GSsLQJJfeO55/th6FoP1iUmr+XlW+qYX/rx2CgiJQGIrz5JEgQhebQ5
-        z3uAyftsH8ZSwZ4fbmMB+VcEloY4dHlpoxKvezxLLoqIDPASLrZ6hioJlil10fw8X3cGwI3nWHgv7
-        oQM2BYL1w==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hhr1D-0004P8-W7; Mon, 01 Jul 2019 07:46:32 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id A2AEC20A87D66; Mon,  1 Jul 2019 09:46:30 +0200 (CEST)
-Date:   Mon, 1 Jul 2019 09:46:30 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Michel Lespinasse <walken@google.com>
-Cc:     Davidlohr Bueso <dave@stgolabs.net>,
-        David Howells <dhowells@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] augmented rbtree: rework the RB_DECLARE_CALLBACKS
- macro definition
-Message-ID: <20190701074630.GM3402@hirez.programming.kicks-ass.net>
-References: <20190629004952.6611-1-walken@google.com>
- <20190629004952.6611-3-walken@google.com>
+        Mon, 1 Jul 2019 03:48:55 -0400
+X-UUID: 29e458313bd94780bffa386dc71126cc-20190701
+X-UUID: 29e458313bd94780bffa386dc71126cc-20190701
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
+        (envelope-from <bibby.hsieh@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 551608128; Mon, 01 Jul 2019 15:48:45 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Mon, 1 Jul 2019 15:48:43 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 1 Jul 2019 15:48:43 +0800
+From:   Bibby Hsieh <bibby.hsieh@mediatek.com>
+To:     Jassi Brar <jassisinghbrar@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, CK HU <ck.hu@mediatek.com>
+CC:     Daniel Kurtz <djkurtz@chromium.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        YT Shen <yt.shen@mediatek.com>,
+        Daoyuan Huang <daoyuan.huang@mediatek.com>,
+        Jiaguang Zhang <jiaguang.zhang@mediatek.com>,
+        Dennis-YC Hsieh <dennis-yc.hsieh@mediatek.com>,
+        Houlong Wei <houlong.wei@mediatek.com>,
+        <ginny.chen@mediatek.com>, Bibby Hsieh <bibby.hsieh@mediatek.com>
+Subject: [PATCH v10 00/12] support gce on mt8183 platform
+Date:   Mon, 1 Jul 2019 15:48:30 +0800
+Message-ID: <20190701074842.15401-1-bibby.hsieh@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190629004952.6611-3-walken@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 28, 2019 at 05:49:52PM -0700, Michel Lespinasse wrote:
-> - Change the definition of the RBCOMPUTE function. The propagate
->   callback repeatedly calls RBCOMPUTE as it moves from leaf to root.
->   it wants to stop recomputing once the augmented subtree information
->   doesn't change. This was previously checked using the == operator,
->   but that only works when the augmented subtree information is a
->   scalar field. This commit modifies the RBCOMPUTE function so that
->   it now sets the augmented subtree information instead of returning it,
->   and returns a boolean value indicating if the propagate callback
->   should stop.
-> 
-> - Reorder the RB_DECLARE_CALLBACKS macro arguments, following the
->   style of the INTERVAL_TREE_DEFINE macro, so that RBSTATIC and RBNAME
->   are passed last.
-> 
-> The generated code should not change when the RBCOMPUTE function is inlined,
-> which is the typical / intended case.
+Changes since v8 and v9:
+ - change the error return code in cmdq_dev_get_client_reg()
 
-This seems something that shoud (:-) be easy to verify; no reason to be
-uncertain about this. Either it does or does not change generated code.
+Changes since v7:
+ - remove the memory allocation out of cmdq_dev_get_client_reg()
+ - rebase onto 5.2-rc1
 
-> The motivation for this change is that I want to introduce augmented rbtree
-> uses where the augmented data for the subtree is a struct instead of a scalar.
-> 
-> Signed-off-by: Michel Lespinasse <walken@google.com>
+Changes since v6:
+ - remove cmdq_dev_get_event function and gce event property
+ - separate some changes to indepentent patch
+ - change the binding document related to gce-client-reg property
 
-> @@ -66,11 +66,14 @@ static u64 compute_subtree_max_end(struct memtype *data)
->  	if (child_max_end > max_end)
->  		max_end = child_max_end;
->  
-> -	return max_end;
-> +	if (exit && data->subtree_max_end == max_end)
-> +		return true;
-> +	data->subtree_max_end = max_end;
-> +	return false;
->  }
+Changes since v5:
+ - fix typo
+ - remove gce-event-name form the dt-binding
+ - add reasons in commit message
 
-> @@ -35,11 +35,14 @@ compute_subtree_last(struct drbd_interval *node)
->  		if (right > max)
->  			max = right;
->  	}
-> -	return max;
-> +	if (exit && node->end == max)
-> +		return true;
-> +	node->end = max;
-> +	return false;
->  }
+Changes since v4:
+ - refine the architecture of the packet encoder function
+ - refine the gce enevt property
+ - change the patch's title
 
-> @@ -57,11 +58,15 @@ static inline ITTYPE ITPREFIX ## _compute_subtree_last(ITSTRUCT *node)	      \
->  		if (max < subtree_last)					      \
->  			max = subtree_last;				      \
->  	}								      \
-> -	return max;							      \
-> +	if (exit && node->ITSUBTREE == max)				      \
-> +		return true;						      \
-> +	node->ITSUBTREE = max;						      \
-> +	return false;							      \
->  }									      \
+Changes since v3:
+ - fix a typo in dt-binding and dtsi
+ - cast the return value to right format
 
-> @@ -91,11 +91,14 @@ static inline u32 augment_recompute(struct test_node *node)
->  		if (max < child_augmented)
->  			max = child_augmented;
->  	}
-> -	return max;
-> +	if (exit && node->augmented == max)
-> +		return true;
-> +	node->augmented = max;
-> +	return false;
->  }
+Changes since v2:
+ - according to CK's review comment, change the property name and
+   refine the parameter
+ - change the patch's title
+ - remove unused property from dt-binding and dts
 
-> @@ -318,7 +318,10 @@ static long vma_compute_subtree_gap(struct vm_area_struct *vma)
->  		if (subtree_gap > max)
->  			max = subtree_gap;
->  	}
-> -	return max;
-> +	if (exit && vma->rb_subtree_gap == max)
-> +		return true;
-> +	vma->rb_subtree_gap = max;
-> +	return false;
->  }
+Changes since v1:
+ - add prefix "cmdq" in the commit subject
+ - add dt-binding document for get event and subsys function
+ - add fix up tag in fixup patch
+ - fix up some coding style (alignment)
 
-And that is _really_ unfortunate, as in 5 copies of exactly the same
-logic sucks.
+MTK will support gce function on mt8183 platform.
+  dt-binding: gce: add gce header file for mt8183
+  mailbox: mediatek: cmdq: support mt8183 gce function
+  arm64: dts: add gce node for mt8183
 
-Can't we have a helper macro that converts an old (scalar) style compute
-into a new style compute and avoid this unfortunate and error prone
-copy/pasta ?
+Besides above patches, we refine gce driver on those patches.
+  soc: mediatek: cmdq: reorder the parameter
+  soc: mediatek: cmdq: change the type of input parameter
+  mailbox: mediatek: cmdq: move the CMDQ_IRQ_MASK into cmdq driver data
+  soc: mediatek: cmdq: clear the event in cmdq initial flow
 
-Something like:
+In order to enhance the convenience of gce usage, we add new helper functions and refine the method of instruction combining.
+  dt-binding: gce: remove thread-num property
+  dt-binding: gce: add binding for gce client reg property
+  soc: mediatek: cmdq: define the instruction struct
+  soc: mediatek: cmdq: add polling function
+  soc: mediatek: cmdq: add cmdq_dev_get_client_reg function
 
-#define RBCOMPUTE_SCALAR(_comp, _rb _exit)
-({
-	RBSTRUCT *node = rb_entry((_rb), RBSTRUCT, RBFIELD);
-	RBTYPE augmented = _comp(node);
-	bool ret = true;
-	if (!((_exit) && node->RBAUGMENTED == augmented)) {
-		node->RBAUGMENTED = augmented;
-		ret = false;
-	}
-	ret;
-})
+Bibby Hsieh (12):
+  dt-binding: gce: remove thread-num property
+  dt-binding: gce: add gce header file for mt8183
+  dt-binding: gce: add binding for gce client reg property
+  mailbox: mediatek: cmdq: move the CMDQ_IRQ_MASK into cmdq driver data
+  mailbox: mediatek: cmdq: support mt8183 gce function
+  soc: mediatek: cmdq: clear the event in cmdq initial flow
+  soc: mediatek: cmdq: reorder the parameter
+  soc: mediatek: cmdq: change the type of input parameter
+  soc: mediatek: cmdq: define the instruction struct
+  soc: mediatek: cmdq: add polling function
+  soc: mediatek: cmdq: add cmdq_dev_get_client_reg function
+  arm64: dts: add gce node for mt8183
 
+ .../devicetree/bindings/mailbox/mtk-gce.txt   |  25 ++-
+ arch/arm64/boot/dts/mediatek/mt8183.dtsi      |  11 ++
+ drivers/mailbox/mtk-cmdq-mailbox.c            |  18 +-
+ drivers/soc/mediatek/mtk-cmdq-helper.c        | 169 +++++++++++++----
+ include/dt-bindings/gce/mt8183-gce.h          | 177 ++++++++++++++++++
+ include/linux/mailbox/mtk-cmdq-mailbox.h      |   5 +
+ include/linux/soc/mediatek/mtk-cmdq.h         |  53 +++++-
+ 7 files changed, 397 insertions(+), 61 deletions(-)
+ create mode 100644 include/dt-bindings/gce/mt8183-gce.h
+
+-- 
+2.18.0
 
