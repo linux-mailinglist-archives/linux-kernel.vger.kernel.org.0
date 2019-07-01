@@ -2,111 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 191D65DAB1
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 03:23:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BD805C9F4
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 09:30:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727432AbfGCBXz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 21:23:55 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:33084 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727309AbfGCBXz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 21:23:55 -0400
-Received: by mail-oi1-f195.google.com with SMTP id u15so671431oiv.0
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 18:23:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Tjr+kTCBfEIGCCG/hrV8Jjghn6dXfiu1H36R2Sz+qKs=;
-        b=CI3Iq2aAqa6cTLPMphI0VdIANcgViK5iD5Lpd8O4rNHBubwk9KdlDQ9POIrvOviZza
-         WE8pTGwDVFnrE9xAq9cBqRjuxTN8JpzczIec7ftooghgMuZjpGD5rqjeroZHxFl0NfKH
-         unyq+yZB36NObk7atWWgkeW849JAneSR2EQr8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Tjr+kTCBfEIGCCG/hrV8Jjghn6dXfiu1H36R2Sz+qKs=;
-        b=ei3lOcwCOUSq0E1WzaAJiKH7DupZHMUJ3EbQ+Iy1gzlmmpWLKQsy0YO3COXMVPwYRk
-         aDuq5yZKMx1hqxi1NCxLOe2HJuU+zwsT97wjwHFgFVFNNftUeYlVh4ZuCpu1+O5UCtFR
-         t7k+S9Mnfmf1PfZQJUo04deH7Xh6w8JQ3CeEC49TIoSlEgcA1H+SaB0PwTKiUTOXUjLc
-         ChLb26OuQvR6L/GdxDK1Qc/3LHxh829IJHvPB8oKCAHK+uJDGjfrQsYCiAHNLnKzDd+6
-         +61j8YvKbxMnmcU5kdN9vm0favSJaZStUHEdRSWdceen449WvBsYrX01Jgt4DgTpPLly
-         Zm4g==
-X-Gm-Message-State: APjAAAVpcGQy2ncbHQgKhZWtTZawBZlCk+evdv0b9pqfZCwnrBixyIb0
-        yJUFaJiycFbaGNXsDK6EZYbTKX3PJnw=
-X-Google-Smtp-Source: APXvYqwQMqX0GsfERFAKDe0Bwa3AI5eWVof8HlFAef/H5lfWEufbCDM+mSAkN/wC5xVQgT5/PUChtw==
-X-Received: by 2002:a63:755e:: with SMTP id f30mr24465931pgn.246.1562101453492;
-        Tue, 02 Jul 2019 14:04:13 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id e20sm1431pfh.50.2019.07.02.14.04.05
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 02 Jul 2019 14:04:08 -0700 (PDT)
-Date:   Mon, 1 Jul 2019 14:51:30 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>
-Cc:     linux-kernel@vger.kernel.org, Ross Zwisler <zwisler@google.com>,
-        Ross Zwisler <zwisler@chromium.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Johannes Hirte <johannes.hirte@datenkhaos.de>,
-        Klaus Kusche <klaus.kusche@computerix.info>,
-        samitolvanen@google.com, Guenter Roeck <groeck@google.com>
-Subject: Re: [PATCH] Revert "x86/build: Move _etext to actual end of .text"
-Message-ID: <201907011450.100092F32@keescook>
-References: <20190701155208.211815-1-zwisler@google.com>
+        id S1726765AbfGBHaM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 03:30:12 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:35052 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725845AbfGBHaM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 03:30:12 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id D5C8F26AC966FD5D207D;
+        Tue,  2 Jul 2019 15:30:08 +0800 (CST)
+Received: from localhost.localdomain (10.175.34.53) by
+ DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
+ 14.3.439.0; Tue, 2 Jul 2019 15:29:57 +0800
+From:   Xue Chaojing <xuechaojing@huawei.com>
+To:     <davem@davemloft.net>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <luoshaokai@huawei.com>, <cloud.wangxiaoyun@huawei.com>,
+        <xuechaojing@huawei.com>, <chiqijun@huawei.com>,
+        <wulike1@huawei.com>
+Subject: [PATCH net-next] hinic: remove standard netdev stats
+Date:   Mon, 1 Jul 2019 23:40:00 +0000
+Message-ID: <20190701234000.31738-1-xuechaojing@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190701155208.211815-1-zwisler@google.com>
+Content-Type: text/plain
+X-Originating-IP: [10.175.34.53]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 01, 2019 at 09:52:08AM -0600, Ross Zwisler wrote:
-> This reverts commit 392bef709659abea614abfe53cf228e7a59876a4.
-> 
-> Per the discussion here:
-> 
-> https://lkml.org/lkml/2019/6/20/830
-> 
-> the above referenced commit breaks kernel compilation with old GCC
-> toolchains as well as current versions of the Gold linker.  Revert it so
-> we don't regress and lose the ability to compile the kernel with these
-> tools.
-> 
-> Signed-off-by: Ross Zwisler <zwisler@google.com>
+This patch removes standard netdev stats in ethtool -S.
 
-Acked-by: Kees Cook <keescook@chromium.org>
+Suggested-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Signed-off-by: Xue Chaojing <xuechaojing@huawei.com>
+---
+ .../net/ethernet/huawei/hinic/hinic_ethtool.c | 47 +------------------
+ 1 file changed, 1 insertion(+), 46 deletions(-)
 
--Kees
-
-> ---
->  arch/x86/kernel/vmlinux.lds.S | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
-> index 0850b5149345..4d1517022a14 100644
-> --- a/arch/x86/kernel/vmlinux.lds.S
-> +++ b/arch/x86/kernel/vmlinux.lds.S
-> @@ -141,10 +141,10 @@ SECTIONS
->  		*(.text.__x86.indirect_thunk)
->  		__indirect_thunk_end = .;
->  #endif
-> -	} :text = 0x9090
->  
-> -	/* End of text section */
-> -	_etext = .;
-> +		/* End of text section */
-> +		_etext = .;
-> +	} :text = 0x9090
->  
->  	NOTES :text :note
->  
-> -- 
-> 2.20.1
-
+diff --git a/drivers/net/ethernet/huawei/hinic/hinic_ethtool.c b/drivers/net/ethernet/huawei/hinic/hinic_ethtool.c
+index 8d98f37c88a8..73a20f01ad4c 100644
+--- a/drivers/net/ethernet/huawei/hinic/hinic_ethtool.c
++++ b/drivers/net/ethernet/huawei/hinic/hinic_ethtool.c
+@@ -440,35 +440,6 @@ static u32 hinic_get_rxfh_indir_size(struct net_device *netdev)
+ 
+ #define ARRAY_LEN(arr) ((int)((int)sizeof(arr) / (int)sizeof(arr[0])))
+ 
+-#define HINIC_NETDEV_STAT(_stat_item) { \
+-	.name = #_stat_item, \
+-	.size = FIELD_SIZEOF(struct rtnl_link_stats64, _stat_item), \
+-	.offset = offsetof(struct rtnl_link_stats64, _stat_item) \
+-}
+-
+-static struct hinic_stats hinic_netdev_stats[] = {
+-	HINIC_NETDEV_STAT(rx_packets),
+-	HINIC_NETDEV_STAT(tx_packets),
+-	HINIC_NETDEV_STAT(rx_bytes),
+-	HINIC_NETDEV_STAT(tx_bytes),
+-	HINIC_NETDEV_STAT(rx_errors),
+-	HINIC_NETDEV_STAT(tx_errors),
+-	HINIC_NETDEV_STAT(rx_dropped),
+-	HINIC_NETDEV_STAT(tx_dropped),
+-	HINIC_NETDEV_STAT(multicast),
+-	HINIC_NETDEV_STAT(collisions),
+-	HINIC_NETDEV_STAT(rx_length_errors),
+-	HINIC_NETDEV_STAT(rx_over_errors),
+-	HINIC_NETDEV_STAT(rx_crc_errors),
+-	HINIC_NETDEV_STAT(rx_frame_errors),
+-	HINIC_NETDEV_STAT(rx_fifo_errors),
+-	HINIC_NETDEV_STAT(rx_missed_errors),
+-	HINIC_NETDEV_STAT(tx_aborted_errors),
+-	HINIC_NETDEV_STAT(tx_carrier_errors),
+-	HINIC_NETDEV_STAT(tx_fifo_errors),
+-	HINIC_NETDEV_STAT(tx_heartbeat_errors),
+-};
+-
+ #define HINIC_FUNC_STAT(_stat_item) {	\
+ 	.name = #_stat_item, \
+ 	.size = FIELD_SIZEOF(struct hinic_vport_stats, _stat_item), \
+@@ -658,20 +629,11 @@ static void hinic_get_ethtool_stats(struct net_device *netdev,
+ {
+ 	struct hinic_dev *nic_dev = netdev_priv(netdev);
+ 	struct hinic_vport_stats vport_stats = {0};
+-	const struct rtnl_link_stats64 *net_stats;
+ 	struct hinic_phy_port_stats *port_stats;
+-	struct rtnl_link_stats64 temp;
+ 	u16 i = 0, j = 0;
+ 	char *p;
+ 	int err;
+ 
+-	net_stats = dev_get_stats(netdev, &temp);
+-	for (j = 0; j < ARRAY_LEN(hinic_netdev_stats); j++, i++) {
+-		p = (char *)net_stats + hinic_netdev_stats[j].offset;
+-		data[i] = (hinic_netdev_stats[j].size ==
+-				sizeof(u64)) ? *(u64 *)p : *(u32 *)p;
+-	}
+-
+ 	err = hinic_get_vport_stats(nic_dev, &vport_stats);
+ 	if (err)
+ 		netif_err(nic_dev, drv, netdev,
+@@ -716,8 +678,7 @@ static int hinic_get_sset_count(struct net_device *netdev, int sset)
+ 	switch (sset) {
+ 	case ETH_SS_STATS:
+ 		q_num = nic_dev->num_qps;
+-		count = ARRAY_LEN(hinic_netdev_stats) +
+-			ARRAY_LEN(hinic_function_stats) +
++		count = ARRAY_LEN(hinic_function_stats) +
+ 			(ARRAY_LEN(hinic_tx_queue_stats) +
+ 			ARRAY_LEN(hinic_rx_queue_stats)) * q_num;
+ 
+@@ -738,12 +699,6 @@ static void hinic_get_strings(struct net_device *netdev,
+ 
+ 	switch (stringset) {
+ 	case ETH_SS_STATS:
+-		for (i = 0; i < ARRAY_LEN(hinic_netdev_stats); i++) {
+-			memcpy(p, hinic_netdev_stats[i].name,
+-			       ETH_GSTRING_LEN);
+-			p += ETH_GSTRING_LEN;
+-		}
+-
+ 		for (i = 0; i < ARRAY_LEN(hinic_function_stats); i++) {
+ 			memcpy(p, hinic_function_stats[i].name,
+ 			       ETH_GSTRING_LEN);
 -- 
-Kees Cook
+2.17.1
+
