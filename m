@@ -2,202 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 172965C459
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 22:34:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C4C625C466
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 22:44:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726731AbfGAUeL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 16:34:11 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:42687 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726509AbfGAUeK (ORCPT
+        id S1726865AbfGAUoa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 16:44:30 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:55822 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726586AbfGAUoa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 16:34:10 -0400
-Received: by mail-qt1-f196.google.com with SMTP id s15so16087954qtk.9
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2019 13:34:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=lxwf8EigDTjUMcQ2S9HrDomi73FeV7tK0TNhlwkjJJ4=;
-        b=fBN2ccnTdlwh6wD4GrsEU2cappYiKGRWPcEDpigiXL8yZmJx5YyU/sxns42aXlHxTc
-         xFP8d857+ij+9vYxJm8406EYo+FXrDbgdMRuhhNTOk0RgkFHMDjBFlEBVZ1RshXHOFJB
-         cg6+obLCAe7mKO1ifpyqwYL59wt8ljYSLnYqWuW2Fwvywjnb80je7ElncazzfIQEPdxr
-         +mMvfwNwAPkXr9N+g8Ie4dVpGQIbRFdiZRa/+YDWsguaE5iKKluj/w9bIH61NIqXlY8F
-         h26Pe149nPr0/8KoQzTxk9BJ6dcaeKISnXayGt2Y4aEfDB5+Vd6GbjIVNX/llEWikELN
-         welQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=lxwf8EigDTjUMcQ2S9HrDomi73FeV7tK0TNhlwkjJJ4=;
-        b=ny55T0nhjkShGR4Vyb6z4zMm+yEgYxjs2Nh+HL/tZLejKQ1SOtmkdABp5E8w6JeS3x
-         /LEIV408cMFt3Bqb8EN6rJczU5CcynodsPg5ZpOholCDRhH6wHz8S9fEX7735rghnBpp
-         AlxJ8KpyBbWRlOLSATWF4Fus0Eh+pVZBEtzf2TWpOB0nWBJd5iZlqOZ32MY/H8BPBOz5
-         GUSNYOwPne3yuoHDH+aGtKofhkPL+fLgUe2SMjyTAmoGgba7CjBk1boIsm/w97LHg6AE
-         wDPaQ4eTFNazthgpW8O7dr+66IHoDBOOkdj6ZnooqrmkJPrE80EuYLgrmtk0nkvd0+1z
-         6vFw==
-X-Gm-Message-State: APjAAAXZlYKYRbLFU81TY6sadx7yQPoBI22yY7KeNfFW0SIa2xHyJ7GA
-        EhxdtyAU9AIqeD4BPW0LnnPRqA==
-X-Google-Smtp-Source: APXvYqwP0SrWHfHb4rOy0ljG1H7elw5F1/C/iiFjjQBp+29naGQOgHzJboOfBgeQWQX7F8fIJqHXeg==
-X-Received: by 2002:ac8:7349:: with SMTP id q9mr22326933qtp.151.1562013249704;
-        Mon, 01 Jul 2019 13:34:09 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:480::2ce6])
-        by smtp.gmail.com with ESMTPSA id a21sm5511998qkg.47.2019.07.01.13.34.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 01 Jul 2019 13:34:09 -0700 (PDT)
-Date:   Mon, 1 Jul 2019 16:34:08 -0400
-From:   Josef Bacik <josef@toxicpanda.com>
-To:     Rik van Riel <riel@surriel.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
-        dietmar.eggemann@arm.com, peterz@infradead.org, mingo@redhat.com,
-        morten.rasmussen@arm.com, tglx@linutronix.de,
-        mgorman@techsingularity.net, vincent.guittot@linaro.org
-Subject: Re: [PATCH 10/10] sched,fair: flatten hierarchical runqueues
-Message-ID: <20190701203407.4fmsavivebyrocmw@macbook-pro-91.dhcp.thefacebook.com>
-References: <20190628204913.10287-1-riel@surriel.com>
- <20190628204913.10287-11-riel@surriel.com>
+        Mon, 1 Jul 2019 16:44:30 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x61KdMCi173574;
+        Mon, 1 Jul 2019 20:42:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=+aeZDe3jwT4xvYHZCTEN4awdr90rYxW4YlVpN9V8bnY=;
+ b=SsxZW8vkxaV0FOgr/oB+4IDVriQsdttQulNAKfHz/eIdV3+xXXbuQvbXv+3xUpbRbfZF
+ lCnuKifwFQrgRihYoa98czn/XI+0nG7cDvWDaFdMNz+6eHAlw6tq9ecovjA3CHu7CVyJ
+ 9zw6q7qXKoEG4SPtCY0hzcEVAiO4ERyk+8uScZbJFZn9kGYQvDHqdg9qB1hR9DQluT4N
+ J3VlQnTavPWuqBT4msf5qWEEhGNmxmc/aavjCecmKTFmVUOEoSqRs0Q2lXxC6ahREbze
+ Baek17LPUNnfj8KKZT3iwwFTwvFubbnYJPT5J8dYLgXHR+hJV2nSXirx2yq1uF0xT1d6 YQ== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 2te61dyufg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 01 Jul 2019 20:42:37 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x61Kbsuj160590;
+        Mon, 1 Jul 2019 20:42:36 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3020.oracle.com with ESMTP id 2tebbjd124-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 01 Jul 2019 20:42:36 +0000
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x61KgSHW009452;
+        Mon, 1 Jul 2019 20:42:28 GMT
+Received: from [10.132.91.175] (/10.132.91.175)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 01 Jul 2019 13:42:27 -0700
+Subject: Re: [PATCH v3 5/7] sched: SIS_CORE to disable idle core search
+To:     Parth Shah <parth@linux.ibm.com>, linux-kernel@vger.kernel.org
+Cc:     peterz@infradead.org, mingo@redhat.com, tglx@linutronix.de,
+        steven.sistare@oracle.com, dhaval.giani@oracle.com,
+        daniel.lezcano@linaro.org, vincent.guittot@linaro.org,
+        viresh.kumar@linaro.org, tim.c.chen@linux.intel.com,
+        mgorman@techsingularity.net
+References: <20190627012919.4341-1-subhra.mazumdar@oracle.com>
+ <20190627012919.4341-6-subhra.mazumdar@oracle.com>
+ <0e0f3347-c262-2917-76d7-88dddf4e9122@linux.ibm.com>
+ <59ab08d5-8b7c-00b9-230b-7c0b307a675f@oracle.com>
+ <be91602a-0243-e094-8c8f-ceed314d10ce@linux.ibm.com>
+From:   Subhra Mazumdar <subhra.mazumdar@oracle.com>
+Message-ID: <12402fea-7b87-8c4d-9485-53f973c38654@oracle.com>
+Date:   Mon, 1 Jul 2019 13:37:13 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190628204913.10287-11-riel@surriel.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <be91602a-0243-e094-8c8f-ceed314d10ce@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9305 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1907010239
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9305 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1907010240
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 28, 2019 at 04:49:13PM -0400, Rik van Riel wrote:
-> Flatten the hierarchical runqueues into just the per CPU rq.cfs runqueue.
-> 
-> Iteration of the sched_entity hierarchy is rate limited to once per jiffy
-> per sched_entity, which is a smaller change than it seems, because load
-> average adjustments were already rate limited to once per jiffy before this
-> patch series.
-> 
-> This patch breaks CONFIG_CFS_BANDWIDTH. The plan for that is to park tasks
-> from throttled cgroups onto their cgroup runqueues, and slowly (using the
-> GENTLE_FAIR_SLEEPERS) wake them back up, in vruntime order, once the cgroup
-> gets unthrottled, to prevent thundering herd issues.
-> 
-> Signed-off-by: Rik van Riel <riel@surriel.com>
-> ---
->  include/linux/sched.h |   2 +
->  kernel/sched/fair.c   | 452 +++++++++++++++---------------------------
->  kernel/sched/pelt.c   |   6 +-
->  kernel/sched/pelt.h   |   2 +-
->  kernel/sched/sched.h  |   2 +-
->  5 files changed, 171 insertions(+), 293 deletions(-)
-> 
-> diff --git a/include/linux/sched.h b/include/linux/sched.h
-> index 84a6cc6f5c47..901c710363e7 100644
-> --- a/include/linux/sched.h
-> +++ b/include/linux/sched.h
-> @@ -453,6 +453,8 @@ struct sched_entity {
->  #ifdef CONFIG_FAIR_GROUP_SCHED
->  	int				depth;
->  	unsigned long			enqueued_h_load;
-> +	unsigned long			enqueued_h_weight;
-> +	struct load_weight		h_load;
->  	struct sched_entity		*parent;
->  	/* rq on which this entity is (to be) queued: */
->  	struct cfs_rq			*cfs_rq;
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 6fea8849cc12..c31d3da081fb 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -450,6 +450,19 @@ find_matching_se(struct sched_entity **se, struct sched_entity **pse)
->  	}
->  }
->  
-> +/* Add the cgroup cfs_rqs to the list, for update_blocked_averages */
-> +static void enqueue_entity_cfs_rqs(struct sched_entity *se)
-> +{
-> +	SCHED_WARN_ON(!entity_is_task(se));
-> +
-> +	for_each_sched_entity(se) {
-> +		struct cfs_rq *cfs_rq = group_cfs_rq_of_parent(se);
-> +
-> +		if (list_add_leaf_cfs_rq(cfs_rq))
-> +			break;
-> +	}
-> +}
-> +
->  #else	/* !CONFIG_FAIR_GROUP_SCHED */
->  
->  static inline struct task_struct *task_of(struct sched_entity *se)
-> @@ -672,8 +685,14 @@ int sched_proc_update_handler(struct ctl_table *table, int write,
->   */
->  static inline u64 calc_delta_fair(u64 delta, struct sched_entity *se)
->  {
-> -	if (unlikely(se->load.weight != NICE_0_LOAD))
-> +	if (task_se_in_cgroup(se)) {
-> +		unsigned long h_weight = task_se_h_weight(se);
-> +		if (h_weight != se->h_load.weight)
-> +			update_load_set(&se->h_load, h_weight);
-> +		delta = __calc_delta(delta, NICE_0_LOAD, &se->h_load);
-> +	} else if (unlikely(se->load.weight != NICE_0_LOAD)) {
->  		delta = __calc_delta(delta, NICE_0_LOAD, &se->load);
-> +	}
->  
->  	return delta;
->  }
-> @@ -687,22 +706,16 @@ static inline u64 calc_delta_fair(u64 delta, struct sched_entity *se)
->  static u64 sched_slice(struct cfs_rq *cfs_rq, struct sched_entity *se)
->  {
->  	u64 slice = sysctl_sched_latency;
-> +	struct load_weight *load = &cfs_rq->load;
-> +	struct load_weight lw;
->  
-> -	for_each_sched_entity(se) {
-> -		struct load_weight *load;
-> -		struct load_weight lw;
-> -
-> -		cfs_rq = cfs_rq_of(se);
-> -		load = &cfs_rq->load;
-> +	if (unlikely(!se->on_rq)) {
-> +		lw = cfs_rq->load;
->  
-> -		if (unlikely(!se->on_rq)) {
-> -			lw = cfs_rq->load;
-> -
-> -			update_load_add(&lw, se->load.weight);
-> -			load = &lw;
-> -		}
-> -		slice = __calc_delta(slice, se->load.weight, load);
-> +		update_load_add(&lw, task_se_h_weight(se));
-> +		load = &lw;
->  	}
-> +	slice = __calc_delta(slice, task_se_h_weight(se), load);
->  
->  	/*
->  	 * To avoid cache thrashing, run at least sysctl_sched_min_granularity.
-> @@ -2703,16 +2716,28 @@ static inline void update_scan_period(struct task_struct *p, int new_cpu)
->  static void
->  account_entity_enqueue(struct cfs_rq *cfs_rq, struct sched_entity *se)
->  {
-> -	update_load_add(&cfs_rq->load, se->load.weight);
-> -	if (!parent_entity(se))
-> +	struct rq *rq;
-> +
-> +	if (task_se_in_cgroup(se)) {
-> +		struct cfs_rq *cgroup_rq = group_cfs_rq_of_parent(se);
-> +		unsigned long h_weight;
-> +
-> +		update_load_add(&cgroup_rq->load, se->load.weight);
-> +		cgroup_rq->nr_running++;
-> +
-> +		/* Add the hierarchical weight to the CPU rq */
-> +		h_weight = task_se_h_weight(se);
-> +		se->enqueued_h_weight = h_weight;
-> +		update_load_add(&rq_of(cfs_rq)->load, h_weight);
 
-Ok I think this is where we need to handle the newly enqueued se's potential
-weight.  Right now task_se_h_weight() is based on it's weight _and_ its load.
-So it's really it's task_se_h_weighted_load_avg, and not really
-task_se_h_weight, right?  Instead we should separate these two things out, one
-gives us our heirarchal load, and one that gives us our heirarchal weight based
-purely on the ratio of (our weight) / (total se weight on parent).  Then we can
-take this number and max it with the heirarchal load avg and use that with the
-update_load_add.  Does that make sense?  Thanks,
+>>> Also, systems like POWER9 has sd_llc as a pair of core only. So it
+>>> won't benefit from the limits and hence also hiding your code in select_idle_cpu
+>>> behind static keys will be much preferred.
+>> If it doesn't hurt then I don't see the point.
+>>
+> So these is the result from POWER9 system with your patches:
+> System configuration: 2 Socket, 44 cores, 176 CPUs
+>
+> Experiment setup:
+> ===========
+> => Setup 1:
+> - 44 tasks doing just while(1), this is to make select_idle_core return -1 most times
+> - perf bench sched messaging -g 1 -l 1000000
+> +-----------+--------+--------------+--------+
+> | Baseline  | stddev |    Patch     | stddev |
+> +-----------+--------+--------------+--------+
+> |       135 |   3.21 | 158(-17.03%) |   4.69 |
+> +-----------+--------+--------------+--------+
+>
+> => Setup 2:
+> - schbench -m44 -t 1
+> +=======+==========+=========+=========+==========+
+> | %ile  | Baseline | stddev  |  patch  |  stddev  |
+> +=======+==========+=========+=========+==========+
+> |    50 |       10 |    3.49 |      10 |     2.29 |
+> +-------+----------+---------+---------+----------+
+> |    95 |      467 |    4.47 |     469 |     0.81 |
+> +-------+----------+---------+---------+----------+
+> |    99 |      571 |   21.32 |     584 |    18.69 |
+> +-------+----------+---------+---------+----------+
+> |  99.5 |      629 |   30.05 |     641 |    20.95 |
+> +-------+----------+---------+---------+----------+
+> |  99.9 |      780 |   40.38 |     773 |     44.2 |
+> +-------+----------+---------+---------+----------+
+>
+> I guess it doesn't make much difference in schbench results but hackbench (perf bench)
+> seems to have an observable regression.
+>
+>
+> Best,
+> Parth
+>
+If POWER9 sd_llc has only 2 cores, the behavior shouldn't change much with
+the select_idle_cpu changes as the limits are 1 and 2 core. Previously the
+lower bound was 4 cpus and upper bound calculated by the prop. Now it is
+1 core (4 cpus on SMT4) and upper bound 2 cores. Could it be the extra
+computation of cpumask_weight causing the regression rather than the
+sliding window itself (one way to check this would be hardcode 4 in place
+of topology_sibling_weight)? Or is it the L1 cache coherency? I am a bit
+suprised because SPARC SMT8 which has more cores in sd_llc and L1 cache per
+core showed improvement with Hackbench.
 
-Josef
+Thanks,
+Subhra
