@@ -2,76 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 950975B652
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 10:06:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 646865B656
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 10:06:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727695AbfGAIGi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 04:06:38 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:38436 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727080AbfGAIGi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 04:06:38 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 11C73308FB82;
-        Mon,  1 Jul 2019 08:06:38 +0000 (UTC)
-Received: from gondolin (ovpn-117-220.ams2.redhat.com [10.36.117.220])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id EAC43BA4D;
-        Mon,  1 Jul 2019 08:06:34 +0000 (UTC)
-Date:   Mon, 1 Jul 2019 10:06:32 +0200
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Alex Williamson <alex.williamson@redhat.com>
-Cc:     kwankhede@nvidia.com, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mdev: Send uevents around parent device registration
-Message-ID: <20190701100632.31fe96db.cohuck@redhat.com>
-In-Reply-To: <20190628095608.7762d6d0@x1.home>
-References: <156155924767.11505.11457229921502145577.stgit@gimli.home>
-        <20190627101914.32829440.cohuck@redhat.com>
-        <20190628095608.7762d6d0@x1.home>
-Organization: Red Hat GmbH
+        id S1727773AbfGAIGr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 04:06:47 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:34691 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727080AbfGAIGp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Jul 2019 04:06:45 -0400
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <sha@pengutronix.de>)
+        id 1hhrKm-0007en-1Q; Mon, 01 Jul 2019 10:06:44 +0200
+Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <sha@pengutronix.de>)
+        id 1hhrKk-0003dc-Sk; Mon, 01 Jul 2019 10:06:42 +0200
+Date:   Mon, 1 Jul 2019 10:06:42 +0200
+From:   Sascha Hauer <s.hauer@pengutronix.de>
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel@pengutronix.de
+Subject: Re: nvmem creates multiple devices with the same name
+Message-ID: <20190701080642.4oxmw7c3rmwrt5ee@pengutronix.de>
+References: <20190521085641.i6g5aijwa5zbolah@pengutronix.de>
+ <a9ccac90-7b2f-41da-2ca9-ca3bba52781b@linaro.org>
+ <20190521092107.zpdkkhaanzruhqui@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Mon, 01 Jul 2019 08:06:38 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190521092107.zpdkkhaanzruhqui@pengutronix.de>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 10:05:36 up 44 days, 14:23, 90 users,  load average: 0.31, 0.22,
+ 0.16
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 28 Jun 2019 09:56:08 -0600
-Alex Williamson <alex.williamson@redhat.com> wrote:
+Hi Srinivas,
 
-> On Thu, 27 Jun 2019 10:19:14 +0200
-> Cornelia Huck <cohuck@redhat.com> wrote:
-> 
-> > On Wed, 26 Jun 2019 08:27:58 -0600
-> > Alex Williamson <alex.williamson@redhat.com> wrote:
-
-> > > @@ -243,6 +247,8 @@ void mdev_unregister_device(struct device *dev)
-> > >  	up_write(&parent->unreg_sem);
-> > >  
-> > >  	mdev_put_parent(parent);
-> > > +
-> > > +	kobject_uevent_env(&dev->kobj, KOBJ_CHANGE, envp);    
+On Tue, May 21, 2019 at 11:21:07AM +0200, Sascha Hauer wrote:
+> On Tue, May 21, 2019 at 10:02:32AM +0100, Srinivas Kandagatla wrote:
 > > 
-> > I'm wondering whether we should indicate this uevent earlier: Once we
-> > have detached from the parent list, we're basically done for all
-> > practical purposes. So maybe move this right before we grab the
-> > unreg_sem?  
+> > 
+> > On 21/05/2019 09:56, Sascha Hauer wrote:
+> > > . Are there any suggestions how to register the nvmem devices
+> > > with a different name?
+> > 
+> > struct nvmem_config provides id field for this purpose, this will be used by
+> > nvmem to set the device name space along with name field.
 > 
-> That would make it a "this thing is about to go away" (ie.
-> "unregistering") rather than "this thing is gone" ("unregistered").  I
-> was aiming for the latter as the former just seems like it might make
-> userspace race to remove devices.  Note that I don't actually make use
-> of this event in mdevctl currently, so we could maybe save it for
-> later, but the symmetry seemed preferable.  Thanks,
-> 
-> Alex
+> There's no way for a caller to know a unique name/id combination.
+> The mtd layer could initialize the id field with the mtd number, but
+> that would still not guarantee that another caller, like an EEPROM
+> driver or such, doesn't use the same name/id combination.
 
-Fair enough. I was thinking about signaling that it does not make much
-sense to register new devices after that point, but if that might
-trigger userspace to actually try and remove devices, not much is
-gained.
+This is still an unresolved issue. Do you have any input how we could
+proceed here?
+
+Thanks
+ Sascha
+
+-- 
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
