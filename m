@@ -2,130 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BAED45BA33
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 12:58:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F01F5B94F
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 12:48:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728190AbfGAK6c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 06:58:32 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:58928 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727777AbfGAK6U (ORCPT
+        id S1727317AbfGAKr1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 06:47:27 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:34705 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726912AbfGAKr0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 06:58:20 -0400
-Received: from 79.184.254.216.ipv4.supernova.orange.pl (79.184.254.216) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.267)
- id 8ee318da5a3211b0; Mon, 1 Jul 2019 12:58:18 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Linux PM <linux-pm@vger.kernel.org>
-Cc:     Linux PCI <linux-pci@vger.kernel.org>,
-        Linux ACPI <linux-acpi@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Hans De Goede <hdegoede@redhat.com>,
-        "Robert R. Howell" <RHowell@uwyo.edu>
-Subject: [PATCH v2 2/5] PCI: PM: Simplify bus-level hibernation callbacks
-Date:   Mon, 01 Jul 2019 12:46:45 +0200
-Message-ID: <1631366.A1uHhESlUo@kreacher>
-In-Reply-To: <4976412.ihyb9sT5jY@kreacher>
-References: <4976412.ihyb9sT5jY@kreacher>
+        Mon, 1 Jul 2019 06:47:26 -0400
+Received: by mail-wm1-f65.google.com with SMTP id w9so14270466wmd.1
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2019 03:47:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=A7rpMOf4wxLFtawlTyWVY4xaI18jSPPLrKFDVZa4/PQ=;
+        b=1znE4gl4nBKL3TrkCEXR49QIExUOwN5zY5wtDDRfCBLxB5wwxsi9jHSFgQsvLSJatz
+         XCft5Q4hnZfg5oF1D0c0ccWaK+DhNGkBR6dC9TgY7wqmz6v6wOZDQuDhiQ3ey6XvQXOK
+         IiaUv+e/1nwJjlMZVoe+rtJeBh0PC7oBf0vokvUbJ/zZoFKfPyl0oaaBRGn7GFQNZLFM
+         WzNgO50BkV+7m5Jskz8qCN9lXwbccrGRVZG+yJXR3ZD6E7A+fqGZuWFltXK+sbHvBu9V
+         ky7MnEXAkj95GpQw6WUdxkSVekZfjx2kvhX0sqVKNcaT36fIcL8Nnn/lD7S+8fZeNMgr
+         ikxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=A7rpMOf4wxLFtawlTyWVY4xaI18jSPPLrKFDVZa4/PQ=;
+        b=YkYKUpP9ugWhoOicmX0ANeA+AFKlGDrcpq6jj3k7gKLBACPjdDSCYbxbfvI5XmyiqI
+         2BqB6NqlRg0ZNPLhptSPVbUq+xhtzgmwibODRMrMcePhRMTRgkyN+5S/Xk5oZYrm7Suv
+         gEQTfNvsoFB1qK9doqYBECQisxzrmGplLY+l0V+jCbMNBki95vuFiZwBpqXHPaHfRkuh
+         FDWWgBxUaEVUU7M6pr+KkAl1y5fHNKSYhNm60XjHMOsRB16LC0YwlZSo1keRjL+P41AL
+         WnEoeUTHZQbDgsysaqAXikxjxD1Bk6qNUT1yQ1Ww5sidhgSWi/yfGZ/wNaMSnyOWRhrV
+         LT1g==
+X-Gm-Message-State: APjAAAXMntoIutkT5kjqKzdYIVI4ghT9vce1UF2u4FgaLWmvBVdx/u0j
+        KqB6xqh9dBiLKZ+rlPBeUl112g==
+X-Google-Smtp-Source: APXvYqztw6hZgyYXumNmOMmn1IVeX/nJA3RXzBHSo1EL+/+nMOoG6rGaaCmTgnIE4oKyzcxkjdwJBw==
+X-Received: by 2002:a1c:b707:: with SMTP id h7mr16511863wmf.45.1561978044141;
+        Mon, 01 Jul 2019 03:47:24 -0700 (PDT)
+Received: from localhost.localdomain (176-150-251-154.abo.bbox.fr. [176.150.251.154])
+        by smtp.gmail.com with ESMTPSA id d24sm11658802wra.43.2019.07.01.03.47.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 01 Jul 2019 03:47:23 -0700 (PDT)
+From:   Neil Armstrong <narmstrong@baylibre.com>
+To:     jbrunet@baylibre.com, khilman@baylibre.com
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Neil Armstrong <narmstrong@baylibre.com>
+Subject: [RFC 00/11] arm64: Add support for Amlogic SM1 SoC Family
+Date:   Mon,  1 Jul 2019 12:46:54 +0200
+Message-Id: <20190701104705.18271-1-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+The new Amlogic SM1 SoC Family is a derivative of the Amlogic G12A
+SoC Family, with the following changes :
+- Cortex-A55 cores instead of A53
+- more power domains, including USB & PCIe
+- a neural network co-processor (NNA)
+- a CSI input and image processor
+- some changes in the audio complex, thus not yet enabled
+- new clocks, for NNA, CSI and a clock tree for each CPU Core
 
-After a previous change causing all runtime-suspended PCI devices
-to be resumed before creating a snapshot image of memory during
-hibernation, it is not necessary to worry about the case in which
-them might be left in runtime-suspend any more, so get rid of the
-code related to that from bus-level PCI hibernation callbacks.
+This serie does not add support for NNA, CSI or DVFS, it only
+aligns with the current G12A Support.
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
+With thie serie, the SEI610 Board has supported :
+- Default-boot CPU frequency
+- 4k60 HDMI without audio
+- USB3 & USB-C OTG
+- Ethernet
+- LEDs
+- IR
+- GPIO Buttons
+- eMMC
+- SDCard
+- SDIO WiFi
+- UART Bluetooth
 
--> v2: No changes.
+Audio (HDMI, Embedded HP, MIcs), IR Output, & RGB Led would be
+supported in following patchsets.
 
----
- drivers/pci/pci-driver.c |   27 ---------------------------
- 1 file changed, 27 deletions(-)
+Dependencies:
+- g12-common.dtsi from the DVFS patchset at [1]
 
-Index: linux-pm/drivers/pci/pci-driver.c
-===================================================================
---- linux-pm.orig/drivers/pci/pci-driver.c
-+++ linux-pm/drivers/pci/pci-driver.c
-@@ -1034,22 +1034,11 @@ static int pci_pm_freeze(struct device *
- 	return 0;
- }
- 
--static int pci_pm_freeze_late(struct device *dev)
--{
--	if (dev_pm_smart_suspend_and_suspended(dev))
--		return 0;
--
--	return pm_generic_freeze_late(dev);
--}
--
- static int pci_pm_freeze_noirq(struct device *dev)
- {
- 	struct pci_dev *pci_dev = to_pci_dev(dev);
- 	struct device_driver *drv = dev->driver;
- 
--	if (dev_pm_smart_suspend_and_suspended(dev))
--		return 0;
--
- 	if (pci_has_legacy_pm_support(pci_dev))
- 		return pci_legacy_suspend_late(dev, PMSG_FREEZE);
- 
-@@ -1079,16 +1068,6 @@ static int pci_pm_thaw_noirq(struct devi
- 	struct device_driver *drv = dev->driver;
- 	int error = 0;
- 
--	/*
--	 * If the device is in runtime suspend, the code below may not work
--	 * correctly with it, so skip that code and make the PM core skip all of
--	 * the subsequent "thaw" callbacks for the device.
--	 */
--	if (dev_pm_smart_suspend_and_suspended(dev)) {
--		dev_pm_skip_next_resume_phases(dev);
--		return 0;
--	}
--
- 	if (pcibios_pm_ops.thaw_noirq) {
- 		error = pcibios_pm_ops.thaw_noirq(dev);
- 		if (error)
-@@ -1226,10 +1205,6 @@ static int pci_pm_restore_noirq(struct d
- 	struct device_driver *drv = dev->driver;
- 	int error = 0;
- 
--	/* This is analogous to the pci_pm_resume_noirq() case. */
--	if (dev_pm_smart_suspend_and_suspended(dev))
--		pm_runtime_set_active(dev);
--
- 	if (pcibios_pm_ops.restore_noirq) {
- 		error = pcibios_pm_ops.restore_noirq(dev);
- 		if (error)
-@@ -1279,7 +1254,6 @@ static int pci_pm_restore(struct device
- #else /* !CONFIG_HIBERNATE_CALLBACKS */
- 
- #define pci_pm_freeze		NULL
--#define pci_pm_freeze_late	NULL
- #define pci_pm_freeze_noirq	NULL
- #define pci_pm_thaw		NULL
- #define pci_pm_thaw_noirq	NULL
-@@ -1405,7 +1379,6 @@ static const struct dev_pm_ops pci_dev_p
- 	.suspend_late = pci_pm_suspend_late,
- 	.resume = pci_pm_resume,
- 	.freeze = pci_pm_freeze,
--	.freeze_late = pci_pm_freeze_late,
- 	.thaw = pci_pm_thaw,
- 	.poweroff = pci_pm_poweroff,
- 	.poweroff_late = pci_pm_poweroff_late,
+[1] https://patchwork.kernel.org/cover/11025309/
 
+Neil Armstrong (11):
+  soc: amlogic: meson-gx-socinfo: Add SM1 and S905X3 IDs
+  dt-bindings: power: amlogic, meson-gx-pwrc: Add SM1 bindings
+  soc: amlogic: gx-pwrc-vpu: add SM1 support
+  soc: amlogic: Add support for SM1 power controller
+  dt-bindings: soc: amlogic: clk-measure: Add SM1 compatible
+  soc: amlogic: clk-measure: Add support for SM1
+  dt-bindings: media: meson-ao-cec: add SM1 compatible
+  media: platform: meson-ao-cec-g12a: add support for SM1
+  dt-bindings: arm: amlogic: add SM1 bindings
+  dt-bindings: arm: amlogic: add SEI Robotics SEI610 bindings
+  arm64: dts: add support for SM1 based SEI Robotics SEI610
 
+ .../devicetree/bindings/arm/amlogic.yaml      |   5 +
+ .../bindings/media/meson-ao-cec.txt           |   8 +-
+ .../bindings/power/amlogic,meson-gx-pwrc.txt  |  35 ++
+ .../bindings/soc/amlogic/clk-measure.txt      |   1 +
+ arch/arm64/boot/dts/amlogic/Makefile          |   1 +
+ .../boot/dts/amlogic/meson-sm1-sei610.dts     | 329 ++++++++++++++++++
+ arch/arm64/boot/dts/amlogic/meson-sm1.dtsi    |  77 ++++
+ drivers/media/platform/meson/ao-cec-g12a.c    |  37 +-
+ drivers/soc/amlogic/Kconfig                   |  11 +
+ drivers/soc/amlogic/Makefile                  |   1 +
+ drivers/soc/amlogic/meson-clk-measure.c       | 134 +++++++
+ drivers/soc/amlogic/meson-gx-pwrc-vpu.c       | 120 +++++++
+ drivers/soc/amlogic/meson-gx-socinfo.c        |   2 +
+ drivers/soc/amlogic/meson-sm1-pwrc.c          | 245 +++++++++++++
+ include/dt-bindings/power/meson-sm1-power.h   |  15 +
+ 15 files changed, 1017 insertions(+), 4 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts
+ create mode 100644 arch/arm64/boot/dts/amlogic/meson-sm1.dtsi
+ create mode 100644 drivers/soc/amlogic/meson-sm1-pwrc.c
+ create mode 100644 include/dt-bindings/power/meson-sm1-power.h
+
+-- 
+2.21.0
 
