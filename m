@@ -2,87 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9321B5C21F
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 19:39:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E15025C225
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 19:41:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728895AbfGARjK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 13:39:10 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:44144 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728550AbfGARjK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 13:39:10 -0400
-Received: by mail-pl1-f194.google.com with SMTP id t7so7700001plr.11;
-        Mon, 01 Jul 2019 10:39:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=DQhkAGsy/6JPfkNxr2zd1jyzBxMaKFsuRKGwZutl7JA=;
-        b=vMWOV/3HGgdAF44jQmXJfaAWcFy7psRn6BhV081TbnqYfVHuWi7qeLTNGWMWGbBnNj
-         ihG+iWJVihKUZUp/Njk1DMAR/86Gbx6123S+32Qmd/xMqBNn4TDFHwHHiz/VzVJhfP0m
-         jze3vu1Jr9qht/LfQKtEz7pny3bb0ieCY7cmfTFxMQpxgJe0iC1BaGv6OE9a02LDABlS
-         zQWGTJJNIx0qXNLVOM5AwKg/hRwbD8FDxCoqb76qeha/aK/e9L5HNkqHPsiNjfvNNSiS
-         Y4DWjvViqOvQyJvQo/Wp2uMmH/FcgEurUloeS2OHUDKPItEDb1kt2VPdnoB8i7WXCdwl
-         eqIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=DQhkAGsy/6JPfkNxr2zd1jyzBxMaKFsuRKGwZutl7JA=;
-        b=GPaNa/VxUBEQa9qILcxNwdS3c60E6tzSsL93vwxVpLl3k0jqp9G2glcXROwo3X8HH0
-         yILmRt/OZpDZzb7Pi/n+g5yACQ52piKmlZC23MOS+mIZ4H5xid/QPbxkl9xOx7Y6/WIT
-         cGrSRIXKHdzAcsG7h1f2qC1BPvFDqRkv1b+DCO6Z6Emi6ZdAtQ8Dlr1Dfws4zAyOdPzU
-         FR0SKrzqtHICs1A2XVshROjG1sjTBpUMumRxiqxIvQ74sOM3ugeGbJClSz1bgh6XKd2o
-         E7xMChqjCLGIvPPtTMZrAfrrMNcuXSBLwWIXGWgLU1pUy9OBm9tTwIjuzGvCJgz04GtU
-         NsEw==
-X-Gm-Message-State: APjAAAVnxyz0Pl25KQImwDs/4Ur82Y7KwcsNkTBD61Xdpg5FP3lOfGxu
-        ttniiRq3XHQnhDlHORwxORo=
-X-Google-Smtp-Source: APXvYqwRhIXWsH30plxtznqtrwdmPDUuYj3MEWHr4h3Gg5fNdDluDo1HsfjxDICGKCzzl3XaEDGNjQ==
-X-Received: by 2002:a17:902:6b0c:: with SMTP id o12mr29372672plk.113.1562002750002;
-        Mon, 01 Jul 2019 10:39:10 -0700 (PDT)
-Received: from aw-bldr-10.qualcomm.com (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id j21sm11847091pfh.86.2019.07.01.10.39.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 01 Jul 2019 10:39:09 -0700 (PDT)
-From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-To:     robdclark@gmail.com, sean@poorly.run, airlied@linux.ie,
-        daniel@ffwll.ch
-Cc:     bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Subject: [PATCH] drm/msm/mdp5: Use drm_device for creating gem address space
-Date:   Mon,  1 Jul 2019 10:39:07 -0700
-Message-Id: <20190701173907.15494-1-jeffrey.l.hugo@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        id S1729420AbfGARlk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 13:41:40 -0400
+Received: from mga17.intel.com ([192.55.52.151]:11112 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727130AbfGARlj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Jul 2019 13:41:39 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Jul 2019 10:41:39 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,440,1557212400"; 
+   d="scan'208";a="246988339"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by orsmga001.jf.intel.com with ESMTP; 01 Jul 2019 10:41:37 -0700
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1hi0J6-0009f4-Fc; Tue, 02 Jul 2019 01:41:36 +0800
+Date:   Tue, 2 Jul 2019 01:40:50 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Gabriel Beauchamp <beauchampgabriel@gmail.com>
+Cc:     kbuild-all@01.org, gregkh@linuxfoundation.org,
+        christian.gromm@microchip.com, colin.king@canonical.com,
+        gustavo@embeddedor.com, joe@perches.com,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Gabriel Beauchamp <beauchampgabriel@gmail.com>
+Subject: Re: [PATCH v3] Staging: most: fix coding style issues
+Message-ID: <201907020151.4hvM1eTo%lkp@intel.com>
+References: <20190630165604.2452-1-beauchampgabriel@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190630165604.2452-1-beauchampgabriel@gmail.com>
+X-Patchwork-Hint: ignore
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Creating the msm gem address space requires a reference to the dev where
-the iommu is located.  The driver currently assumes this is the same as
-the platform device, which breaks when the iommu is outside of the
-platform device.  Use the drm_device instead, which happens to always have
-a reference to the proper device.
+Hi Gabriel,
 
-Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Thank you for the patch! Perhaps something to improve:
+
+[auto build test WARNING on staging/staging-testing]
+[also build test WARNING on v5.2-rc6 next-20190625]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+
+url:    https://github.com/0day-ci/linux/commits/Gabriel-Beauchamp/Staging-most-fix-coding-style-issues/20190701-203804
+reproduce:
+        # apt-get install sparse
+        # sparse version: v0.6.1-rc1-7-g2b96cd8-dirty
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
+
+If you fix the issue, kindly add following tag
+Reported-by: kbuild test robot <lkp@intel.com>
+
+
+sparse warnings: (new ones prefixed by >>)
+
+
+vim +308 drivers/staging/most/core.c
+
+   296	
+   297	static ssize_t set_datatype_show(struct device *dev,
+   298					 struct device_attribute *attr,
+   299					 char *buf)
+   300	{
+   301		int i;
+   302		char *type = "unconfigured\n";
+   303	
+   304		struct most_channel *c = to_channel(dev);
+   305	
+   306		for (i = 0; i < ARRAY_SIZE(ch_data_type); i++) {
+   307			if (c->cfg.data_type & ch_data_type[i].most_ch_data_type) {
+ > 308				type = ch_data_type[i].name;
+   309				break;
+   310			}
+   311		}
+   312		return snprintf(buf, PAGE_SIZE, "%s", type);
+   313	}
+   314	
+
 ---
- drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
-index 4a60f5fca6b0..1347a5223918 100644
---- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
-+++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
-@@ -702,7 +702,7 @@ struct msm_kms *mdp5_kms_init(struct drm_device *dev)
- 	mdelay(16);
- 
- 	if (config->platform.iommu) {
--		aspace = msm_gem_address_space_create(&pdev->dev,
-+		aspace = msm_gem_address_space_create(dev->dev,
- 				config->platform.iommu, "mdp5");
- 		if (IS_ERR(aspace)) {
- 			ret = PTR_ERR(aspace);
--- 
-2.17.1
-
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
