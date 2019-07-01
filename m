@@ -2,134 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AEF85B27B
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 02:42:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B5125B27E
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2019 02:48:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727076AbfGAAl0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 30 Jun 2019 20:41:26 -0400
-Received: from lgeamrelo11.lge.com ([156.147.23.51]:39602 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726472AbfGAAl0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Jun 2019 20:41:26 -0400
-Received: from unknown (HELO lgeamrelo01.lge.com) (156.147.1.125)
-        by 156.147.23.51 with ESMTP; 1 Jul 2019 09:41:24 +0900
-X-Original-SENDERIP: 156.147.1.125
-X-Original-MAILFROM: byungchul.park@lge.com
-Received: from unknown (HELO localhost.localdomain) (10.177.222.33)
-        by 156.147.1.125 with ESMTP; 1 Jul 2019 09:41:24 +0900
-X-Original-SENDERIP: 10.177.222.33
-X-Original-MAILFROM: byungchul.park@lge.com
-From:   Byungchul Park <byungchul.park@lge.com>
-To:     paulmck@linux.ibm.com, josh@joshtriplett.org, rostedt@goodmis.org,
-        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
-        joel@joelfernandes.org, rcu@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, kernel-team@lge.com
-Subject: [PATCH v3] rcu: Change return type of rcu_spawn_one_boost_kthread()
-Date:   Mon,  1 Jul 2019 09:40:39 +0900
-Message-Id: <1561941639-14318-1-git-send-email-byungchul.park@lge.com>
-X-Mailer: git-send-email 1.9.1
+        id S1727149AbfGAAnp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 30 Jun 2019 20:43:45 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53060 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726472AbfGAAno (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 30 Jun 2019 20:43:44 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id C71F0AE21;
+        Mon,  1 Jul 2019 00:43:42 +0000 (UTC)
+From:   NeilBrown <neil@brown.name>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date:   Mon, 01 Jul 2019 10:43:07 +1000
+Subject: [PATCH 2/2] staging: mt7621-dts: add support for second network
+ interface
+Cc:     devel@driverdev.osuosl.org, lkml <linux-kernel@vger.kernel.org>
+Message-ID: <156194178766.1430.12784163026696670896.stgit@noble.brown>
+In-Reply-To: <156194175140.1430.2478988354194078582.stgit@noble.brown>
+References: <156194175140.1430.2478988354194078582.stgit@noble.brown>
+User-Agent: StGit/0.17.1-dirty
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+The mt7621 has two network interfaces, one that connects to an
+internal switch, and one that can connect to either that switch
+or an external phy, or possibly an internal phy.
 
-I tested again if the WARN_ON_ONCE() is fired with my box.
+The Gnubee-PC2 has an external phy for use with the second interface.
 
-And it was OK.
+This patch add some support for the second interface to mt7621.dtsi
+and add a gbpc2.dts which makes use of this.  This allows the second
+interface to be used.
 
-Thanks,
-Byungchul
+I don't fully understand how to configure this interface - the
+documentation is thin - so there could well be room for improvement
+here.
 
-Changes from v2
--. Port the patch to a1af11a24cb0 (Paul's request)
--. Add a few new lines for a better look
-
-Changes from v1
--. WARN_ON_ONCE() on failing to create rcu_boost_kthread.
--. Changed title and commit message a bit.
-
----8<---
-From 20c934c5657a7a0f13ebb050ffd350d4174965d0 Mon Sep 17 00:00:00 2001
-From: Byungchul Park <byungchul.park@lge.com>
-Date: Mon, 1 Jul 2019 09:27:15 +0900
-Subject: [PATCH v3] rcu: Change return type of rcu_spawn_one_boost_kthread()
-
-The return value of rcu_spawn_one_boost_kthread() is not used any
-longer. Change return type of that function from int to void.
-
-Signed-off-by: Byungchul Park <byungchul.park@lge.com>
+Signed-off-by: NeilBrown <neil@brown.name>
 ---
- kernel/rcu/tree_plugin.h | 20 +++++++++++---------
- 1 file changed, 11 insertions(+), 9 deletions(-)
+ drivers/staging/mt7621-dts/Kconfig     |    7 ++++++-
+ drivers/staging/mt7621-dts/Makefile    |    1 +
+ drivers/staging/mt7621-dts/gbpc1.dts   |    2 +-
+ drivers/staging/mt7621-dts/gbpc2.dts   |   21 +++++++++++++++++++++
+ drivers/staging/mt7621-dts/mt7621.dtsi |   12 ++++++++----
+ 5 files changed, 37 insertions(+), 6 deletions(-)
+ create mode 100644 drivers/staging/mt7621-dts/gbpc2.dts
 
-diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-index c588ef9..b8eea22 100644
---- a/kernel/rcu/tree_plugin.h
-+++ b/kernel/rcu/tree_plugin.h
-@@ -1119,7 +1119,7 @@ static void rcu_preempt_boost_start_gp(struct rcu_node *rnp)
-  * already exist.  We only create this kthread for preemptible RCU.
-  * Returns zero if all is well, a negated errno otherwise.
-  */
--static int rcu_spawn_one_boost_kthread(struct rcu_node *rnp)
-+static void rcu_spawn_one_boost_kthread(struct rcu_node *rnp)
- {
- 	int rnp_index = rnp - rcu_get_root();
- 	unsigned long flags;
-@@ -1127,25 +1127,27 @@ static int rcu_spawn_one_boost_kthread(struct rcu_node *rnp)
- 	struct task_struct *t;
- 
- 	if (!IS_ENABLED(CONFIG_PREEMPT_RCU))
--		return 0;
-+		return;
- 
- 	if (!rcu_scheduler_fully_active || rcu_rnp_online_cpus(rnp) == 0)
--		return 0;
-+		return;
- 
- 	rcu_state.boost = 1;
+diff --git a/drivers/staging/mt7621-dts/Kconfig b/drivers/staging/mt7621-dts/Kconfig
+index 3ea08ab9d0d3..6932ab7acadf 100644
+--- a/drivers/staging/mt7621-dts/Kconfig
++++ b/drivers/staging/mt7621-dts/Kconfig
+@@ -1,6 +1,11 @@
+ # SPDX-License-Identifier: GPL-2.0
+ config DTB_GNUBEE1
+-	bool "GnuBee1 NAS"
++	bool "GnuBee1 2.5inch NAS"
++	depends on SOC_MT7621 && DTB_RT_NONE
++	select BUILTIN_DTB
 +
- 	if (rnp->boost_kthread_task != NULL)
--		return 0;
-+		return;
++config DTB_GNUBEE2
++	bool "GnuBee2 3.5inch NAS"
+ 	depends on SOC_MT7621 && DTB_RT_NONE
+ 	select BUILTIN_DTB
+ 
+diff --git a/drivers/staging/mt7621-dts/Makefile b/drivers/staging/mt7621-dts/Makefile
+index aeec48a4edc7..b4ab99fed932 100644
+--- a/drivers/staging/mt7621-dts/Makefile
++++ b/drivers/staging/mt7621-dts/Makefile
+@@ -1,4 +1,5 @@
+ # SPDX-License-Identifier: GPL-2.0
+ dtb-$(CONFIG_DTB_GNUBEE1)      += gbpc1.dtb
++dtb-$(CONFIG_DTB_GNUBEE2)      += gbpc2.dtb
+ 
+ obj-y				+= $(patsubst %.dtb, %.dtb.o, $(dtb-y))
+diff --git a/drivers/staging/mt7621-dts/gbpc1.dts b/drivers/staging/mt7621-dts/gbpc1.dts
+index 250c15ace2a7..1fb560ff059c 100644
+--- a/drivers/staging/mt7621-dts/gbpc1.dts
++++ b/drivers/staging/mt7621-dts/gbpc1.dts
+@@ -119,7 +119,7 @@
+ 
+ &pinctrl {
+ 	state_default: pinctrl0 {
+-		gpio {
++		default_gpio: gpio {
+ 			groups = "wdt", "rgmii2", "uart3";
+ 			function = "gpio";
+ 		};
+diff --git a/drivers/staging/mt7621-dts/gbpc2.dts b/drivers/staging/mt7621-dts/gbpc2.dts
+new file mode 100644
+index 000000000000..52760e7351f6
+--- /dev/null
++++ b/drivers/staging/mt7621-dts/gbpc2.dts
+@@ -0,0 +1,21 @@
++/dts-v1/;
 +
- 	t = kthread_create(rcu_boost_kthread, (void *)rnp,
- 			   "rcub/%d", rnp_index);
--	if (IS_ERR(t))
--		return PTR_ERR(t);
-+	if (WARN_ON_ONCE(IS_ERR(t)))
-+		return;
++#include "gbpc1.dts"
 +
- 	raw_spin_lock_irqsave_rcu_node(rnp, flags);
- 	rnp->boost_kthread_task = t;
- 	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
- 	sp.sched_priority = kthread_prio;
- 	sched_setscheduler_nocheck(t, SCHED_FIFO, &sp);
- 	wake_up_process(t); /* get to TASK_INTERRUPTIBLE quickly. */
--	return 0;
- }
++/ {
++	compatible = "gnubee,gb-pc2", "mediatek,mt7621-soc";
++	model = "GB-PC2";
++};
++
++&default_gpio {
++	groups = "wdt", "uart3";
++	function = "gpio";
++};
++
++&gmac1 {
++	status = "ok";
++};
++
++&phy_external {
++	status = "ok";
++};
+diff --git a/drivers/staging/mt7621-dts/mt7621.dtsi b/drivers/staging/mt7621-dts/mt7621.dtsi
+index 549ff5a0699e..a4c08110094b 100644
+--- a/drivers/staging/mt7621-dts/mt7621.dtsi
++++ b/drivers/staging/mt7621-dts/mt7621.dtsi
+@@ -427,16 +427,20 @@
+ 			compatible = "mediatek,eth-mac";
+ 			reg = <1>;
+ 			status = "off";
+-			phy-mode = "rgmii";
+-			phy-handle = <&phy5>;
++			phy-mode = "rgmii-rxid";
++			phy-handle = <&phy_external>;
+ 		};
+ 		mdio-bus {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
  
- /*
-@@ -1186,7 +1188,7 @@ static void __init rcu_spawn_boost_kthreads(void)
- 	struct rcu_node *rnp;
+-			phy5: ethernet-phy@5 {
++			phy_external: ethernet-phy@5 {
++				status = "off";
+ 				reg = <5>;
+-				phy-mode = "rgmii";
++				phy-mode = "rgmii-rxid";
++
++				pinctrl-names = "default";
++				pinctrl-0 = <&rgmii2_pins>;
+ 			};
  
- 	rcu_for_each_leaf_node(rnp)
--		(void)rcu_spawn_one_boost_kthread(rnp);
-+		rcu_spawn_one_boost_kthread(rnp);
- }
- 
- static void rcu_prepare_kthreads(int cpu)
-@@ -1196,7 +1198,7 @@ static void rcu_prepare_kthreads(int cpu)
- 
- 	/* Fire up the incoming CPU's kthread and leaf rcu_node kthread. */
- 	if (rcu_scheduler_fully_active)
--		(void)rcu_spawn_one_boost_kthread(rnp);
-+		rcu_spawn_one_boost_kthread(rnp);
- }
- 
- #else /* #ifdef CONFIG_RCU_BOOST */
--- 
-1.9.1
+ 			switch0: switch0@0 {
+
 
