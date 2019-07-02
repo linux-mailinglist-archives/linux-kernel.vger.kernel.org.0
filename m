@@ -2,165 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBB025D6B1
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 21:15:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 84E635D6BE
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 21:17:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727103AbfGBTP4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 15:15:56 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:59030 "EHLO mx1.redhat.com"
+        id S1727051AbfGBTR1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 15:17:27 -0400
+Received: from mail.z3ntu.xyz ([128.199.32.197]:38834 "EHLO mail.z3ntu.xyz"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726329AbfGBTPz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 15:15:55 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 25FA9C057F2E;
-        Tue,  2 Jul 2019 19:15:50 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-160.bos.redhat.com [10.18.17.160])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id AA0471347B;
-        Tue,  2 Jul 2019 19:15:42 +0000 (UTC)
-Subject: Re: [PATCH] mm, slab: Extend slab/shrink to shrink all the memcg
- caches
-To:     David Rientjes <rientjes@google.com>
-Cc:     Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>, linux-mm@kvack.org,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>
-References: <20190702183730.14461-1-longman@redhat.com>
- <alpine.DEB.2.21.1907021206000.67286@chino.kir.corp.google.com>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <34af4938-f472-9d9b-e615-397217023004@redhat.com>
-Date:   Tue, 2 Jul 2019 15:15:42 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1726329AbfGBTR1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 15:17:27 -0400
+Received: from localhost.localdomain (80-110-121-20.cgn.dynamic.surfer.at [80.110.121.20])
+        by mail.z3ntu.xyz (Postfix) with ESMTPSA id 8C205C17FF;
+        Tue,  2 Jul 2019 19:17:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=z3ntu.xyz; s=z3ntu;
+        t=1562095044; bh=LdmS3OrP/bxdcMJGIVgeCmZ4Bf2uPWVpuLOJwOPC3Dw=;
+        h=From:To:Cc:Subject:Date;
+        b=BRAP3WusRqPGjDGJhJFN5WgvTVSnPJVrugFixO2C+d30SdpQDZh6FOVS3TJHJMQ8K
+         jGaZ8Vr1Xg5KDyjp6zrvCEC9FxXUyX7rfM/khSqZNbZKBd4ReWLj/keej5XoamEbN8
+         kH5L3VY/TeopDnPgHiRctetd4hagP0nR68glOi1g=
+From:   Luca Weiss <luca@z3ntu.xyz>
+To:     alsa-devel@alsa-project.org
+Cc:     ~martijnbraam/pmos-upstream@lists.sr.ht,
+        Luca Weiss <luca@z3ntu.xyz>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ASoC: sunxi: sun50i-codec-analog: Add earpiece
+Date:   Tue,  2 Jul 2019 21:16:09 +0200
+Message-Id: <20190702191613.11084-1-luca@z3ntu.xyz>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1907021206000.67286@chino.kir.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Tue, 02 Jul 2019 19:15:55 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/2/19 3:09 PM, David Rientjes wrote:
-> On Tue, 2 Jul 2019, Waiman Long wrote:
->
->> diff --git a/Documentation/ABI/testing/sysfs-kernel-slab b/Documentation/ABI/testing/sysfs-kernel-slab
->> index 29601d93a1c2..2a3d0fc4b4ac 100644
->> --- a/Documentation/ABI/testing/sysfs-kernel-slab
->> +++ b/Documentation/ABI/testing/sysfs-kernel-slab
->> @@ -429,10 +429,12 @@ KernelVersion:	2.6.22
->>  Contact:	Pekka Enberg <penberg@cs.helsinki.fi>,
->>  		Christoph Lameter <cl@linux-foundation.org>
->>  Description:
->> -		The shrink file is written when memory should be reclaimed from
->> -		a cache.  Empty partial slabs are freed and the partial list is
->> -		sorted so the slabs with the fewest available objects are used
->> -		first.
->> +		A value of '1' is written to the shrink file when memory should
->> +		be reclaimed from a cache.  Empty partial slabs are freed and
->> +		the partial list is sorted so the slabs with the fewest
->> +		available objects are used first.  When a value of '2' is
->> +		written, all the corresponding child memory cgroup caches
->> +		should be shrunk as well.  All other values are invalid.
->>  
-> This should likely call out that '2' also does '1', that might not be 
-> clear enough.
+This adds the necessary registers and audio routes to play audio using
+the Earpiece, that's supported on the A64.
 
-You are right. I will reword the text to make it clearer.
+Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
+---
+So, first of all: This is my first audio patch and I hope I didn't make
+too many mistakes :) , especially with the routes at the bottom of
+the patch.
 
+What I'm really unsure about, is how the enable & mute registers should
+be handled. Should I put both registers into a SOC_DOUBLE("Earpiece
+Playback Switch",...)?
 
->>  What:		/sys/kernel/slab/cache/slab_size
->>  Date:		May 2007
->> diff --git a/mm/slab.h b/mm/slab.h
->> index 3b22931bb557..a16b2c7ff4dd 100644
->> --- a/mm/slab.h
->> +++ b/mm/slab.h
->> @@ -174,6 +174,7 @@ int __kmem_cache_shrink(struct kmem_cache *);
->>  void __kmemcg_cache_deactivate(struct kmem_cache *s);
->>  void __kmemcg_cache_deactivate_after_rcu(struct kmem_cache *s);
->>  void slab_kmem_cache_release(struct kmem_cache *);
->> +int kmem_cache_shrink_all(struct kmem_cache *s);
->>  
->>  struct seq_file;
->>  struct file;
->> diff --git a/mm/slab_common.c b/mm/slab_common.c
->> index 464faaa9fd81..493697ba1da5 100644
->> --- a/mm/slab_common.c
->> +++ b/mm/slab_common.c
->> @@ -981,6 +981,49 @@ int kmem_cache_shrink(struct kmem_cache *cachep)
->>  }
->>  EXPORT_SYMBOL(kmem_cache_shrink);
->>  
->> +/**
->> + * kmem_cache_shrink_all - shrink a cache and all its memcg children
->> + * @s: The root cache to shrink.
->> + *
->> + * Return: 0 if successful, -EINVAL if not a root cache
->> + */
->> +int kmem_cache_shrink_all(struct kmem_cache *s)
->> +{
->> +	struct kmem_cache *c;
->> +
->> +	if (!IS_ENABLED(CONFIG_MEMCG_KMEM)) {
->> +		kmem_cache_shrink(s);
->> +		return 0;
->> +	}
->> +	if (!is_root_cache(s))
->> +		return -EINVAL;
->> +
->> +	/*
->> +	 * The caller should have a reference to the root cache and so
->> +	 * we don't need to take the slab_mutex. We have to take the
->> +	 * slab_mutex, however, to iterate the memcg caches.
->> +	 */
->> +	get_online_cpus();
->> +	get_online_mems();
->> +	kasan_cache_shrink(s);
->> +	__kmem_cache_shrink(s);
->> +
->> +	mutex_lock(&slab_mutex);
->> +	for_each_memcg_cache(c, s) {
->> +		/*
->> +		 * Don't need to shrink deactivated memcg caches.
->> +		 */
->> +		if (s->flags & SLAB_DEACTIVATED)
->> +			continue;
->> +		kasan_cache_shrink(c);
->> +		__kmem_cache_shrink(c);
->> +	}
->> +	mutex_unlock(&slab_mutex);
->> +	put_online_mems();
->> +	put_online_cpus();
->> +	return 0;
->> +}
->> +
->>  bool slab_is_available(void)
->>  {
->>  	return slab_state >= UP;
-> I'm wondering how long this could take, i.e. how long we hold slab_mutex 
-> while we traverse each cache and shrink it.
+ sound/soc/sunxi/sun50i-codec-analog.c | 51 +++++++++++++++++++++++++++
+ 1 file changed, 51 insertions(+)
 
-It will depends on how many memcg caches are there. Actually, I have
-been thinking about using the show method to show the time spent in the
-last shrink operation. I am just not sure if it is worth doing. What do
-you think?
-
--Longman
+diff --git a/sound/soc/sunxi/sun50i-codec-analog.c b/sound/soc/sunxi/sun50i-codec-analog.c
+index d105c90c3706..6c19fea992c5 100644
+--- a/sound/soc/sunxi/sun50i-codec-analog.c
++++ b/sound/soc/sunxi/sun50i-codec-analog.c
+@@ -49,6 +49,15 @@
+ #define SUN50I_ADDA_OR_MIX_CTRL_DACR		1
+ #define SUN50I_ADDA_OR_MIX_CTRL_DACL		0
+ 
++#define SUN50I_ADDA_EARPIECE_CTRL0	0x03
++#define SUN50I_ADDA_EARPIECE_CTRL0_EAR_RAMP_TIME	4
++#define SUN50I_ADDA_EARPIECE_CTRL0_ESPSR		0
++
++#define SUN50I_ADDA_EARPIECE_CTRL1	0x04
++#define SUN50I_ADDA_EARPIECE_CTRL1_ESPPA_EN	7
++#define SUN50I_ADDA_EARPIECE_CTRL1_ESPPA_MUTE	6
++#define SUN50I_ADDA_EARPIECE_CTRL1_ESP_VOL	0
++
+ #define SUN50I_ADDA_LINEOUT_CTRL0	0x05
+ #define SUN50I_ADDA_LINEOUT_CTRL0_LEN		7
+ #define SUN50I_ADDA_LINEOUT_CTRL0_REN		6
+@@ -172,6 +181,10 @@ static const DECLARE_TLV_DB_RANGE(sun50i_codec_lineout_vol_scale,
+ 	2, 31, TLV_DB_SCALE_ITEM(-4350, 150, 0),
+ );
+ 
++static const DECLARE_TLV_DB_RANGE(sun50i_codec_earpiece_vol_scale,
++	0, 1, TLV_DB_SCALE_ITEM(TLV_DB_GAIN_MUTE, 0, 1),
++	2, 31, TLV_DB_SCALE_ITEM(-4350, 150, 0),
++);
+ 
+ /* volume / mute controls */
+ static const struct snd_kcontrol_new sun50i_a64_codec_controls[] = {
+@@ -225,6 +238,19 @@ static const struct snd_kcontrol_new sun50i_a64_codec_controls[] = {
+ 		   SUN50I_ADDA_LINEOUT_CTRL0_LEN,
+ 		   SUN50I_ADDA_LINEOUT_CTRL0_REN, 1, 0),
+ 
++	SOC_SINGLE_TLV("Earpiece Playback Volume",
++		       SUN50I_ADDA_EARPIECE_CTRL1,
++		       SUN50I_ADDA_EARPIECE_CTRL1_ESP_VOL, 0x1f, 0,
++		       sun50i_codec_earpiece_vol_scale),
++
++	SOC_SINGLE("Earpiece Playback Switch (enable)",
++		   SUN50I_ADDA_EARPIECE_CTRL1,
++		   SUN50I_ADDA_EARPIECE_CTRL1_ESPPA_EN, 1, 0),
++
++	SOC_SINGLE("Earpiece Playback Switch",
++		   SUN50I_ADDA_EARPIECE_CTRL1,
++		   SUN50I_ADDA_EARPIECE_CTRL1_ESPPA_MUTE, 1, 0),
++
+ };
+ 
+ static const char * const sun50i_codec_hp_src_enum_text[] = {
+@@ -257,6 +283,20 @@ static const struct snd_kcontrol_new sun50i_codec_lineout_src[] = {
+ 		      sun50i_codec_lineout_src_enum),
+ };
+ 
++static const char * const sun50i_codec_earpiece_src_enum_text[] = {
++	"DACR", "DACL", "Right Analog Mixer", "Left Analog Mixer",
++};
++
++static SOC_ENUM_SINGLE_DECL(sun50i_codec_earpiece_src_enum,
++			    SUN50I_ADDA_EARPIECE_CTRL0,
++			    SUN50I_ADDA_EARPIECE_CTRL0_ESPSR,
++			    sun50i_codec_earpiece_src_enum_text);
++
++static const struct snd_kcontrol_new sun50i_codec_earpiece_src[] = {
++	SOC_DAPM_ENUM("Earpiece Source Playback Route",
++		      sun50i_codec_earpiece_src_enum),
++};
++
+ static const struct snd_soc_dapm_widget sun50i_a64_codec_widgets[] = {
+ 	/* DAC */
+ 	SND_SOC_DAPM_DAC("Left DAC", NULL, SUN50I_ADDA_MIX_DAC_CTRL,
+@@ -285,6 +325,10 @@ static const struct snd_soc_dapm_widget sun50i_a64_codec_widgets[] = {
+ 			 SND_SOC_NOPM, 0, 0, sun50i_codec_lineout_src),
+ 	SND_SOC_DAPM_OUTPUT("LINEOUT"),
+ 
++	SND_SOC_DAPM_MUX("Earpiece Source Playback Route",
++			 SND_SOC_NOPM, 0, 0, sun50i_codec_earpiece_src),
++	SND_SOC_DAPM_OUTPUT("EARPIECE"),
++
+ 	/* Microphone inputs */
+ 	SND_SOC_DAPM_INPUT("MIC1"),
+ 
+@@ -388,6 +432,13 @@ static const struct snd_soc_dapm_route sun50i_a64_codec_routes[] = {
+ 	{ "Line Out Source Playback Route", "Mono Differential",
+ 		"Right Mixer" },
+ 	{ "LINEOUT", NULL, "Line Out Source Playback Route" },
++
++	/* Earpiece Routes */
++	{ "Earpiece Source Playback Route", "DACL", "Left DAC" },
++	{ "Earpiece Source Playback Route", "DACR", "Right DAC" },
++	{ "Earpiece Source Playback Route", "Left Analog Mixer", "Left Mixer" },
++	{ "Earpiece Source Playback Route", "Right Analog Mixer", "Right Mixer" },
++	{ "EARPIECE", NULL, "Earpiece Source Playback Route" },
+ };
+ 
+ static const struct snd_soc_component_driver sun50i_codec_analog_cmpnt_drv = {
+-- 
+2.22.0
 
