@@ -2,93 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF9E55D939
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:38:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65F3D5D98A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:47:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727223AbfGCAiV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 20:38:21 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:37834 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727033AbfGCAiV (ORCPT
+        id S1727261AbfGCAq5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 20:46:57 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:33302 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727127AbfGCAqv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 20:38:21 -0400
-Received: by mail-oi1-f193.google.com with SMTP id t76so576969oih.4;
-        Tue, 02 Jul 2019 17:38:21 -0700 (PDT)
+        Tue, 2 Jul 2019 20:46:51 -0400
+Received: by mail-oi1-f196.google.com with SMTP id u15so612584oiv.0
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 17:46:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=aBBXhrXh9/4XOgm4YO50PZ7nN7ZBQawsgLFlMkXEs1w=;
-        b=V8vpjBx1kzZa2mv6jb/tVkHvFf0jcI4WTGGOotiqRdxM+1C9MhPEoVjM//rJbTykNo
-         ldSHgjY7uLogQ7N/1qWi31GeqMrPakJSE4e8mxx2PbQDlFu5D0M6I4WGF9MqRzajhdNz
-         +KXHG7yOnR8KHMDh1bRb7sAsONTXUjJn5E1iqJ3iAcXDgD5YjndFxyIznXMYfpJVweNs
-         l2jtSDIAkS/QZN5SPFRbaGQ3ZSokN7GLUrSlLYFjvCNbBt6iPaxD6ifqNqjvu4JDZ0a8
-         S4lkXFKFRQPgnzslQNCbtAx9fC4spPYhRk8nz3b1smN8oOf9QKengOCpV/VQJYI8MgF3
-         h7ig==
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Q/LR59K4n2NpGvRZpSrMlExpZ6t8aHVL7QCUI5shco4=;
+        b=m1ZfnGZP2wao1pfpBciR9QVwvmICdJ4yeAKJXaIVlcbimy7/OKpd3vAuPRVC6fvrAG
+         Paaxs7nDaOQNrJgGk7bBlPbHF+/HooMpT2EWnQNFYZB94nf22g9mzCW3WBfffmhVou31
+         C5ykE+MxpfB1QOBe1uGXl/YOyvVK745m30pJjkvik5NuAPVWzyOhLo8gnGGmZDOGW457
+         Qby0QbhvCNuhSBup7IbkPzlH0CjTLxDJpqyVgkHVAZFxTRoULwm9DgYqR7HeN947HMWy
+         qzlPlUb35ILttMlYn2dxCyVk3Cn++LxqAFBTfpYIBsBlU3bYd7fGzie/v87dWe474olr
+         j3bg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=aBBXhrXh9/4XOgm4YO50PZ7nN7ZBQawsgLFlMkXEs1w=;
-        b=szJ+5hF/VfKsNPJAj1FLvqiTo65IE1ulqSdRvG7Qv5WuVFqgCP8ecc9sjeQbKoK7np
-         aLbaQguE138IYJNWuZ0btmRYwnNrJWByjplvckiNbgmYJQV3GpRV97V/ubFu0H/H6x5h
-         +zCKEx/uNwNwdtNcKhmAmUWfvQe2MgCJVdMg1LowheJlnF+w3aLci88ykNsTYhFBn0nN
-         8hdllgVByowa5yK8hvRHNwZLCqmvn42ylDL7LHiGVk62PNPLHrUEi/4TT7Yx31FoM5YH
-         pv95nG+alEmu95y8xv5bL1Sh5eJhW+541p9Wm6e6RFGfMs3JLtYjEKnTuKg6vg9ald8a
-         4G4g==
-X-Gm-Message-State: APjAAAXi+syjNNXyjDb5IyBsiHgLmlr8qJdvgYsXKyIVRom0Wv/XBbOH
-        xioi0H7dDOSZUaoEbsqV3k7udCp31CY=
-X-Google-Smtp-Source: APXvYqwnTjoGdkjeDwZ2laVOlEN4b75Fj9Qb/yLUyGM1yb/F0z2LXav1KxBP0foWkEJJqVcDI1V4lw==
-X-Received: by 2002:a63:f14:: with SMTP id e20mr33320739pgl.227.1562108916478;
-        Tue, 02 Jul 2019 16:08:36 -0700 (PDT)
-Received: from continental ([189.58.144.164])
-        by smtp.gmail.com with ESMTPSA id 2sm129227pff.174.2019.07.02.16.08.33
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 02 Jul 2019 16:08:35 -0700 (PDT)
-Date:   Tue, 2 Jul 2019 20:09:19 -0300
-From:   Marcos Paulo de Souza <marcos.souza.org@gmail.com>
-To:     "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>
-Subject: Re: [PATCH 1/2] scsi: devinfo: BLIST_TRY_VPD_PAGES for SanDisk
- Cruzer Blade
-Message-ID: <20190702230919.GB19791@continental>
-References: <20190618013146.21961-1-marcos.souza.org@gmail.com>
- <20190618013146.21961-2-marcos.souza.org@gmail.com>
- <yq1r27quuod.fsf@oracle.com>
- <20190619094540.GA26980@continental>
- <20190619120346.GC26980@continental>
- <yq14l4kro9l.fsf@oracle.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Q/LR59K4n2NpGvRZpSrMlExpZ6t8aHVL7QCUI5shco4=;
+        b=aZsr0hyn3ON5/jKfc4aDuA0pm2h6ZbiEzbmIcujieThPko35eS5zzBV93d3EiUtrPI
+         /OVdWhVH+KLsdXEd/gheR++n+cdTYZcpUbJ3Q2r9rOQMLekXycZwdp9F39t9l7zlYG7x
+         ju70R/iyRntmU0WJEBDI3jHCFeC3UQG226o8sThwuENWnCLKMr1DVWnpouH3/vsXMhsc
+         9URmZ2HbtFCo4/lFNlK68Biwnc3kp6QCPYZONRR18hYRFGgbsjCG/SN2py7f9vGZKozy
+         fl1L989wq82EMZCnr+Cd6iilSqG9tX9jfmL/Cvq3V3pB/USg+jHbjwPsGw65s63SfMvb
+         7n0g==
+X-Gm-Message-State: APjAAAXXWPItaCQ8B3bLR6y7l8PurQ6CNA/OK6+3PdP/phRVI55hoa6F
+        3SXT+MEXFIHlrKDqbgxNT2J6hwAYqbUlSLVHIWaQj+mj
+X-Google-Smtp-Source: APXvYqztWhmeaDg8T3K0pmGU/qZhQ+fCAj/s1HnyoXH6d4sZovOx7CJ19m/uyyQ3H8w+wL38c17urJw0X9Mw0cHLFag=
+X-Received: by 2002:aca:4ad2:: with SMTP id x201mr4620515oia.129.1562109086426;
+ Tue, 02 Jul 2019 16:11:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <yq14l4kro9l.fsf@oracle.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+References: <20190701104705.18271-1-narmstrong@baylibre.com> <20190701104705.18271-2-narmstrong@baylibre.com>
+In-Reply-To: <20190701104705.18271-2-narmstrong@baylibre.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Wed, 3 Jul 2019 01:11:15 +0200
+Message-ID: <CAFBinCA5iZDanZ5f=y_J3PH-2bXOfKfjQDP9hiz1RSmKszMRPQ@mail.gmail.com>
+Subject: Re: [RFC 01/11] soc: amlogic: meson-gx-socinfo: Add SM1 and S905X3 IDs
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     jbrunet@baylibre.com, khilman@baylibre.com,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 20, 2019 at 04:32:38PM -0400, Martin K. Petersen wrote:
-> 
-> Marcos,
-> 
-> > My first idea was to add a vendor:product mapping at SCSI layer, but
-> > so far I haven't found one, so I added the model/vendor found by
-> > INQUIRY. Would it be better to check for prod:vendor (as values,
-> > instead of the description)?
-> 
-> Your patch is functionally fine. I'm just trying to establish how risky
-> it is for me to pick it up.
-
-I've tried to find any official document about Cruzer Blade devices, stating
-that all of them have at least SPC-3 to support VPD, but no luck so far :(
-
-So feel free to ignore the patch if you think it's too risky.
-
-Thanks,
-Marcos
-
-> 
-> -- 
-> Martin K. Petersen	Oracle Linux Engineering
+On Mon, Jul 1, 2019 at 12:48 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
+>
+> Add the SoC IDs for the S905X3 Amlogic SM1 SoC.
+>
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
