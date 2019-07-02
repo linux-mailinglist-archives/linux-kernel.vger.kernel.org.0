@@ -2,109 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E40115D95F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:42:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E9D35DA11
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 03:00:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727207AbfGCAmD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 20:42:03 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:44026 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726430AbfGCAmC (ORCPT
+        id S1727446AbfGCBAg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 21:00:36 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:49758 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726635AbfGCBAd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 20:42:02 -0400
-Received: by mail-lj1-f194.google.com with SMTP id 16so441897ljv.10
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 17:42:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=uy9P4Bv7MoU15f1hxa9HUk41ddeWB4vxhHhX7nu5AF8=;
-        b=chfL2Y+vcu0HLio56W5yCpYcO12fzccTTuvBbkGhkNe/aF5ZgcfKOE24xS40HsFMlc
-         Ut8Bz0uCuff4zpfBt474goph+OPSk+NhNQVgLSimuL3/Ah0v11JGh/8rGaKti0yddSiM
-         q/0fOfoab+9/DUCSuDVGXRkPBEodmSnVOEGRZxSGePAp5QYIi/4446bzXKyWwa+Z9QVU
-         JorSbzfYLEjhFTeRYS7/jv30gSLerU7/hW/VDodF7UL5D3eT6ZP0fWQXg/OaUFUv2/fn
-         GcIo0P7LqaWgUcqGlOiipgnrK233+5QeGPJ94GG6q7nHRhDMqNxm2bzPhj2Qys7AxdxL
-         UO4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=uy9P4Bv7MoU15f1hxa9HUk41ddeWB4vxhHhX7nu5AF8=;
-        b=ndhbB+FpJZRAmEZQZu1U6nL8iy6bGys7/0YvZWk8oQ7Qtib4fqzpaGLJ/gmCwVhvWI
-         N14gJCQcHGZzX6f8ciUMmFuhsTcZyP2z9s7aCcMOeZgzEYxmcqbafTWnUurGXffrAHYg
-         c+Sd3qplK1swv8vIoa9d1LR/DCCQ6BVx48qvs2WEAYYMDBk2Penlgcrz3LCQFkX4fNsg
-         AbsDehSRYJRB21eOL9Ainc+/JD4g2aZTrDh6k6r0+C+KJzBBqgQZ+g1GjOY4bzGf2e6w
-         jrqPCnAF6dp5+yeORPlbG/apX6+6fUswsayLJ9RTaW0IM68vX5cV3OO6aJr1w+QC79Nf
-         620g==
-X-Gm-Message-State: APjAAAWgDx8ZdhXDyXaO0uj8VgILd9q7IpZha9UE0kViRGez7v+2J8Ia
-        GUGIqL7tnalM1jbXyJ35AwxaG1VzMmPEQF+NrN4BVabN
-X-Google-Smtp-Source: APXvYqybYGFXeKm3HudJJDld+RvqFOCnrMTby4Ii2vx9EH9qEyc7WekPspTFOFMLIfLcDmLdtXWyHbCAfNQSt4Z3QxE=
-X-Received: by 2002:a2e:8195:: with SMTP id e21mr167967ljg.62.1562104610089;
- Tue, 02 Jul 2019 14:56:50 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190617221134.9930-1-f.fainelli@gmail.com> <20190617221134.9930-3-f.fainelli@gmail.com>
-In-Reply-To: <20190617221134.9930-3-f.fainelli@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 2 Jul 2019 23:56:38 +0200
-Message-ID: <CACRpkdb3P6oQTK9FGUkMj4kax8us3rKH6c36pX=HD1_wMqcoJQ@mail.gmail.com>
-Subject: Re: [PATCH v6 2/6] ARM: Disable instrumentation for some code
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Abbott Liu <liuwenliang@huawei.com>,
+        Tue, 2 Jul 2019 21:00:33 -0400
+Received: from pd9ef1cb8.dip0.t-ipconnect.de ([217.239.28.184] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hiQnE-0008F2-DZ; Tue, 02 Jul 2019 23:58:28 +0200
+Date:   Tue, 2 Jul 2019 23:58:27 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Nick Desaulniers <ndesaulniers@google.com>
+cc:     Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Kees Cook <keescook@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Craig Topper <craig.topper@intel.com>,
         Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Russell King <linux@armlinux.org.uk>, christoffer.dall@arm.com,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Nicolas Pitre <nico@fluxnic.net>,
-        Vladimir Murzin <vladimir.murzin@arm.com>,
-        Kees Cook <keescook@chromium.org>, jinb.park7@gmail.com,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Rob Landley <rob@landley.net>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Thomas Gleixner <tglx@linutronix.de>, thgarnie@google.com,
-        David Howells <dhowells@redhat.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Andre Przywara <andre.przywara@arm.com>,
-        julien.thierry@arm.com, drjones@redhat.com, philip@cog.systems,
-        mhocko@suse.com, kirill.shutemov@linux.intel.com,
-        kasan-dev@googlegroups.com,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        kvmarm@lists.cs.columbia.edu,
-        Andrey Ryabinin <ryabinin.a.a@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Bill Wendling <morbo@google.com>,
+        Stephen Hines <srhines@google.com>
+Subject: Re: objtool warnings in prerelease clang-9
+In-Reply-To: <CAKwvOdnGL_9cJ+ETNce89+z7CTDctjACS8DFsLu=ev4+vkVkUw@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1907022332000.1802@nanos.tec.linutronix.de>
+References: <CAKwvOdnGL_9cJ+ETNce89+z7CTDctjACS8DFsLu=ev4+vkVkUw@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 18, 2019 at 12:11 AM Florian Fainelli <f.fainelli@gmail.com> wrote:
+Nick,
 
-> @@ -236,7 +236,8 @@ static int unwind_pop_register(struct unwind_ctrl_block *ctrl,
->                 if (*vsp >= (unsigned long *)ctrl->sp_high)
->                         return -URC_FAILURE;
->
-> -       ctrl->vrs[reg] = *(*vsp)++;
-> +       ctrl->vrs[reg] = READ_ONCE_NOCHECK(*(*vsp));
-> +       (*vsp)++;
+On Tue, 2 Jul 2019, Nick Desaulniers wrote:
 
-I would probably even put in a comment here so it is clear why we
-do this. Passers-by may not know that READ_ONCE_NOCHECK() is
-even related to KASan.
+> TL;DR
+> LLVM currently has a bug when unrolling loops containing asm goto and
+> we have a fix in hand.
 
-Other than that,
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+<snip>
 
-Yours,
-Linus Walleij
+> 
+> Conservatively, we can block loop unrolling when we see asm goto in a loop:
+
+Makes sense in order to make progress.
+
+> This causes objtool to not find any issues in
+> arch/x86/kernel/cpu/mtrr/generic.o.  I don't observe any duplication
+> in the __jump_table section of the resulting .o file.  It also cuts
+> down the objtool warnings I observe in a defconfig (listed at the
+> beginning of the email) from 4 to 2. (platform-quirks.o predates asm
+> goto,
+
+It does not have asm goto inside :)
+
+> i915_gem_execbuffer.o is likely a separate bug).
+
+platform-quirks.o:
+
+        if (x86_platform.set_legacy_features)
+  74:   4c 8b 1d 00 00 00 00    mov    0x0(%rip),%r11        # 7b <x86_early_init_platform_quirks+0x7b>
+  7b:   4d 85 db                test   %r11,%r11
+  7e:   0f 85 00 00 00 00       jne    84 <x86_early_init_platform_quirks+0x84>
+                x86_platform.set_legacy_features();
+}
+  84:   c3                      retq   
+
+That jne jumps to __x86_indirect_thunk_r11, aka. ratpoutine.
+
+No idea why objtool thinks that the instruction at 0x84 is not
+reachable. Josh?
+
+Thanks,
+
+	tglx
+
+
+
