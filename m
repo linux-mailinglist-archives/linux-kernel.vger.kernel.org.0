@@ -2,32 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B5695CEA6
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 13:43:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F3485CE20
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 13:08:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726544AbfGBLnt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 07:43:49 -0400
-Received: from mga07.intel.com ([134.134.136.100]:57956 "EHLO mga07.intel.com"
+        id S1726765AbfGBLH7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 07:07:59 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:34606 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725867AbfGBLnt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 07:43:49 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Jul 2019 04:08:55 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,443,1557212400"; 
-   d="scan'208";a="166156966"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.122]) ([10.237.72.122])
-  by orsmga003.jf.intel.com with ESMTP; 02 Jul 2019 04:08:48 -0700
-Subject: Re: [PATCH v1 10/11] perf intel-pt: Smatch: Fix potential NULL
- pointer dereference
-To:     Leo Yan <leo.yan@linaro.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        id S1725774AbfGBLH6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 07:07:58 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4D63E88313;
+        Tue,  2 Jul 2019 11:07:53 +0000 (UTC)
+Received: from krava (unknown [10.43.17.81])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 345422D351;
+        Tue,  2 Jul 2019 11:07:44 +0000 (UTC)
+Date:   Tue, 2 Jul 2019 13:07:43 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Leo Yan <leo.yan@linaro.org>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Ingo Molnar <mingo@redhat.com>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
         Namhyung Kim <namhyung@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
         Suzuki K Poulose <suzuki.poulose@arm.com>,
@@ -37,6 +35,7 @@ To:     Leo Yan <leo.yan@linaro.org>,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>,
         Jin Yao <yao.jin@linux.intel.com>,
         Song Liu <songliubraving@fb.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
         Alexios Zavras <alexios.zavras@intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Changbin Du <changbin.du@intel.com>,
@@ -45,93 +44,72 @@ To:     Leo Yan <leo.yan@linaro.org>,
         Thomas Richter <tmricht@linux.ibm.com>,
         Alexey Budankov <alexey.budankov@linux.intel.com>,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v1 00/11] perf: Fix errors detected by Smatch
+Message-ID: <20190702110743.GA12694@krava>
 References: <20190702103420.27540-1-leo.yan@linaro.org>
- <20190702103420.27540-11-leo.yan@linaro.org>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <cfef1777-141e-4223-e0c1-1a3f3aee1d3c@intel.com>
-Date:   Tue, 2 Jul 2019 14:07:40 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
 MIME-Version: 1.0
-In-Reply-To: <20190702103420.27540-11-leo.yan@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190702103420.27540-1-leo.yan@linaro.org>
+User-Agent: Mutt/1.12.0 (2019-05-25)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Tue, 02 Jul 2019 11:07:58 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/07/19 1:34 PM, Leo Yan wrote:
-> Based on the following report from Smatch, fix the potential
-> NULL pointer dereference check.
+On Tue, Jul 02, 2019 at 06:34:09PM +0800, Leo Yan wrote:
+> When I used static checker Smatch for perf building, the main target is
+> to check if there have any potential issues in Arm cs-etm code.  So
+> finally I get many reporting for errors/warnings.
+> 
+> I used below command for using static checker with perf building:
+> 
+>   # make VF=1 CORESIGHT=1 -C tools/perf/ \
+>     CHECK="/root/Work/smatch/smatch --full-path" \
+>     CC=/root/Work/smatch/cgcc | tee smatch_reports.txt
+> 
+> I reviewed the errors one by one, if I understood some of these errors
+> so changed the code as I can, this patch set is the working result; but
+> still leave some errors due to I don't know what's the best way to fix
+> it.  There also have many inconsistent indenting warnings.  So I firstly
+> send out this patch set and let's see what's the feedback from public
+> reviewing.
+> 
+> Leo Yan (11):
+>   perf report: Smatch: Fix potential NULL pointer dereference
+>   perf stat: Smatch: Fix use-after-freed pointer
+>   perf top: Smatch: Fix potential NULL pointer dereference
+>   perf annotate: Smatch: Fix dereferencing freed memory
+>   perf trace: Smatch: Fix potential NULL pointer dereference
+>   perf hists: Smatch: Fix potential NULL pointer dereference
+>   perf map: Smatch: Fix potential NULL pointer dereference
+>   perf session: Smatch: Fix potential NULL pointer dereference
+>   perf intel-bts: Smatch: Fix potential NULL pointer dereference
+>   perf intel-pt: Smatch: Fix potential NULL pointer dereference
+>   perf cs-etm: Smatch: Fix potential NULL pointer dereference
 
-It never is NULL.  Remove the NULL test if you want:
+from quick look it all looks good to me, nice tool ;-)
 
--	if (session->itrace_synth_opts && session->itrace_synth_opts->set) {
-+	if (session->itrace_synth_opts->set) {
+Acked-by: Jiri Olsa <jolsa@kernel.org>
 
-But blindly making changes like below is questionable.
+jirka
 
 > 
->   tools/perf/util/intel-pt.c:3200
->   intel_pt_process_auxtrace_info() error: we previously assumed
->   'session->itrace_synth_opts' could be null (see line 3196)
+>  tools/perf/builtin-report.c    |  4 ++--
+>  tools/perf/builtin-stat.c      |  2 +-
+>  tools/perf/builtin-top.c       |  8 ++++++--
+>  tools/perf/builtin-trace.c     |  5 +++--
+>  tools/perf/ui/browsers/hists.c | 13 +++++++++----
+>  tools/perf/util/annotate.c     |  6 ++----
+>  tools/perf/util/cs-etm.c       |  2 +-
+>  tools/perf/util/intel-bts.c    |  5 ++---
+>  tools/perf/util/intel-pt.c     |  5 ++---
+>  tools/perf/util/map.c          |  7 +++++--
+>  tools/perf/util/session.c      |  3 +++
+>  11 files changed, 36 insertions(+), 24 deletions(-)
 > 
->   tools/perf/util/intel-pt.c:3206
->   intel_pt_process_auxtrace_info() warn: variable dereferenced before
->   check 'session->itrace_synth_opts' (see line 3200)
+> -- 
+> 2.17.1
 > 
-> tools/perf/util/intel-pt.c
-> 3196         if (session->itrace_synth_opts && session->itrace_synth_opts->set) {
-> 3197                 pt->synth_opts = *session->itrace_synth_opts;
-> 3198         } else {
-> 3199                 itrace_synth_opts__set_default(&pt->synth_opts,
-> 3200                                 session->itrace_synth_opts->default_no_sample);
->                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^
-> 3201                 if (!session->itrace_synth_opts->default_no_sample &&
-> 3202                     !session->itrace_synth_opts->inject) {
-> 3203                         pt->synth_opts.branches = false;
-> 3204                         pt->synth_opts.callchain = true;
-> 3205                 }
-> 3206                 if (session->itrace_synth_opts)
->                          ^^^^^^^^^^^^^^^^^^^^^^^^^^
-> 3207                         pt->synth_opts.thread_stack =
-> 3208                                 session->itrace_synth_opts->thread_stack;
-> 3209         }
-> 
-> To dismiss the potential NULL pointer dereference, this patch validates
-> the pointer 'session->itrace_synth_opts' before access its elements.
-> 
-> Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> ---
->  tools/perf/util/intel-pt.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
-> index 550db6e77968..88b567bdf1f9 100644
-> --- a/tools/perf/util/intel-pt.c
-> +++ b/tools/perf/util/intel-pt.c
-> @@ -3195,7 +3195,7 @@ int intel_pt_process_auxtrace_info(union perf_event *event,
->  
->  	if (session->itrace_synth_opts && session->itrace_synth_opts->set) {
->  		pt->synth_opts = *session->itrace_synth_opts;
-> -	} else {
-> +	} else if (session->itrace_synth_opts) {
->  		itrace_synth_opts__set_default(&pt->synth_opts,
->  				session->itrace_synth_opts->default_no_sample);
->  		if (!session->itrace_synth_opts->default_no_sample &&
-> @@ -3203,8 +3203,7 @@ int intel_pt_process_auxtrace_info(union perf_event *event,
->  			pt->synth_opts.branches = false;
->  			pt->synth_opts.callchain = true;
->  		}
-> -		if (session->itrace_synth_opts)
-> -			pt->synth_opts.thread_stack =
-> +		pt->synth_opts.thread_stack =
->  				session->itrace_synth_opts->thread_stack;
->  	}
->  
-> 
-
