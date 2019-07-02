@@ -2,115 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CCD95CE23
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 13:10:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DCD8A5CE28
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 13:12:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726455AbfGBLKE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 07:10:04 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:39762 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725868AbfGBLKE (ORCPT
+        id S1726664AbfGBLMR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 07:12:17 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:55336 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725774AbfGBLMQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 07:10:04 -0400
-Received: by mail-wm1-f67.google.com with SMTP id z23so523927wma.4
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 04:10:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=M9H324FRjdDrfn1BGXOWUaO+bADzpYuWXteAhSQNEJU=;
-        b=hSI/B3SJ9f3PcffRsqmfICqElS4D/1J7CzSsBmvkuaJw2PRnotdeyasfArFdsOXIq6
-         cJgIEeuAgo5NVPOOaaR3NKjmC40YZCiSgoS+wPZlOCu23koM5nk7E1uWY+K+kUojcbwj
-         mH9ozbFgwtETXk8PNOAtj2xNF/yOway+NnzdnLafo/o3VC2es8/XgGjhMvGXtH60CuUJ
-         UPkyHlzqseIsj3r+WbfchZtKazOKHlc3W6CEa/e5UHy45sBu9wIUyP8gExK+GDM5ehRg
-         1Yyo4EH6WUrySydDbhIbH6ajgTDlDHkalA3dKFUXBJEHS3YnkGaWsdvo62BnEq8CIwhG
-         /S2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=M9H324FRjdDrfn1BGXOWUaO+bADzpYuWXteAhSQNEJU=;
-        b=oATqqFxTym51z8APYprJt8d6Ern2wMfAq2zUOWQj9uhIvTa3ss+roFsKVF7BK6YZhh
-         BAvwroEFkEDgmgQynee6gVcYOCpuWTlncTHc/2Bhi/P1Uy/W113AYnNySmoXaHW5Z1lR
-         HOOxFAp9GYcbN3lBPvT+KVB35i30z408cLAxrMp4JqOAqzacfHzEGAG7PGMRSaStv0Q2
-         rz0pd+8YO0+eC3BmBgEoQyMFYMB6MHLOuNDeADjjfyj9FEffgMTmTv12MFhwc2xrldK7
-         vYSeNFxSb+qlvY5uj7orv74B80TuOzqavQc0QuHEuxsfXfXtz6nxTlpAF5DnyYrHA9Be
-         pEYQ==
-X-Gm-Message-State: APjAAAVJZPY/UA9FZcRvuXV3VP08ny3qx07SD5n5QKbh+AyY/krnTFPp
-        Ctp7ETp5iA4E/JUv1nso8Uv/qg==
-X-Google-Smtp-Source: APXvYqx/h/NKywgbs2fPNux/OZHTt4/o6YuD6C3CEv0y+eQOHU7oMXOUIA8dDSI8+luOIUS+dn2Nfw==
-X-Received: by 2002:a1c:e28b:: with SMTP id z133mr2918147wmg.136.1562065801695;
-        Tue, 02 Jul 2019 04:10:01 -0700 (PDT)
-Received: from dell ([2.27.35.164])
-        by smtp.gmail.com with ESMTPSA id b9sm7342304wrx.57.2019.07.02.04.10.00
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 02 Jul 2019 04:10:00 -0700 (PDT)
-Date:   Tue, 2 Jul 2019 12:09:59 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Keerthy <j-keerthy@ti.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        gustavo@embeddedor.com, keescook@chromium.org
-Subject: Re: linux-next: build warning after merge of the mfd tree
-Message-ID: <20190702110959.GF4652@dell>
-References: <20190627151140.232a87e2@canb.auug.org.au>
- <1b5aa183-6e33-ee15-4c65-5b4cdf7655af@ti.com>
- <20190702184916.5f0f9e99@canb.auug.org.au>
+        Tue, 2 Jul 2019 07:12:16 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x62BC2JS031649;
+        Tue, 2 Jul 2019 06:12:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1562065922;
+        bh=+qyv7XjsTOTtMSTv+FRGxorhXPdAQbJcT2AcWylw+us=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=KruCJmk6gwyvYxozPk/DrvwPNdrPFVBJUrxJvlr5ydC5nzONpEzDIh1dFUS0Zhvg6
+         RaGzAypyplCy7u3VbGSE0ErOegEMJeg87pH1H0BryahZxqxZbaUA0PEM1feNfRTfiJ
+         GfVck1+oeXvIFlA/V7m2jnH1QYBf7dXvBp5TsFZk=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x62BC2Y0014936
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 2 Jul 2019 06:12:02 -0500
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 2 Jul
+ 2019 06:12:01 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Tue, 2 Jul 2019 06:12:01 -0500
+Received: from [10.250.97.31] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x62BBxcv094660;
+        Tue, 2 Jul 2019 06:11:59 -0500
+Subject: Re: [PATCH 4/4] devicetree: Add led-backlight binding
+To:     Daniel Thompson <daniel.thompson@linaro.org>
+CC:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <lee.jones@linaro.org>,
+        <jingoohan1@gmail.com>, <dmurphy@ti.com>,
+        <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <tomi.valkeinen@ti.com>,
+        <devicetree@vger.kernel.org>
+References: <20190701151423.30768-1-jjhiblot@ti.com>
+ <20190701151423.30768-5-jjhiblot@ti.com>
+ <20190702095849.fxlmiqcioihsi3zk@holly.lan>
+From:   Jean-Jacques Hiblot <jjhiblot@ti.com>
+Message-ID: <0a2c7f84-ea1f-cab2-c812-b5cefed1f517@ti.com>
+Date:   Tue, 2 Jul 2019 13:11:58 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190702184916.5f0f9e99@canb.auug.org.au>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190702095849.fxlmiqcioihsi3zk@holly.lan>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 02 Jul 2019, Stephen Rothwell wrote:
+Daniel,
 
-> Hi all,
-> 
-> On Thu, 27 Jun 2019 11:29:18 +0530 Keerthy <j-keerthy@ti.com> wrote:
-> >
-> > On 27/06/19 10:41 AM, Stephen Rothwell wrote:
-> > > Hi Lee,
-> > > 
-> > > After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
-> > > produced this warning:
-> > > 
-> > > drivers/regulator/lp87565-regulator.c: In function 'lp87565_regulator_probe':
-> > > drivers/regulator/lp87565-regulator.c:182:11: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> > >     max_idx = LP87565_BUCK_3210;  
-> > 
-> > Missed adding a break here. Can i send a patch on top of linux-next?
-> > 
-> > >     ~~~~~~~~^~~~~~~~~~~~~~~~~~~
-> > > drivers/regulator/lp87565-regulator.c:183:2: note: here
-> > >    default:
-> > >    ^~~~~~~
-> > > 
-> > > Introduced by commit
-> > > 
-> > >    7ee63bd74750 ("regulator: lp87565: Add 4-phase lp87561 regulator support")
-> > > 
-> > > I get these warnings because I am building with -Wimplicit-fallthrough
-> > > in attempt to catch new additions early.  The gcc warning can be turned
-> > > off by adding a /* fall through */ comment at the point the fall through
-> > > happens (assuming that the fall through is intentional).
-> > >   
-> 
-> I am still seeing this warning ...
+On 02/07/2019 11:58, Daniel Thompson wrote:
+> On Mon, Jul 01, 2019 at 05:14:23PM +0200, Jean-Jacques Hiblot wrote:
+>> From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+>>
+>> Add DT binding for led-backlight.
+> I think the patchset is in the wrong order; the DT bindings
+> documentation should appear *before* the binding is
+> implemented (amoung other things this prevent transient checkpatch
+> warnings as the patchset is applied).
+>
+ok
+>> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+>> Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
+>> Cc: devicetree@vger.kernel.org
+>> ---
+>>   .../video/backlight/led-backlight.txt         | 39 +++++++++++++++++++
+>>   1 file changed, 39 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/video/backlight/led-backlight.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/video/backlight/led-backlight.txt b/Documentation/devicetree/bindings/video/backlight/led-backlight.txt
+>> new file mode 100644
+>> index 000000000000..216cd52d624a
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/video/backlight/led-backlight.txt
+>> @@ -0,0 +1,39 @@
+>> +led-backlight bindings
+>> +
+>> +The node of the backlight driver IS the node of the LED.
+>> +
+>> +Required properties:
+>> +  - compatible: "led-backlight"
+>> +  - brightness-levels: Array of distinct LED brightness levels. These
+>> +      are in the range from 0 to 255, passed to the LED class driver.
+>> +  - default-brightness-level: the default brightness level (index into the
+>> +      array defined by the "brightness-levels" property)
+> I think brightness-levels and default-brightness-level could be
+> optional properties since a default 1:1 mapping seems reasonable given
+> how constrained the LED brightness values are.
 
-Just pushed the fix for this.
+That is probably a good idea. Expect it in v2
 
-Thank you Stephen.
+Thanks,
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+JJ
+
+>
+>
+> Daniel.
+>
+>
+>> +
+>> +Optional properties:
+>> +  - power-supply: regulator for supply voltage
+>> +  - enable-gpios: contains a single GPIO specifier for the GPIO which enables
+>> +                  and disables the backlight (see GPIO binding[0])
+>> +
+>> +[0]: Documentation/devicetree/bindings/gpio/gpio.txt
+>> +
+>> +Example:
+>> +
+>> +led_ctrl {
+>> +	red_led@1 {
+>> +	        label = "red";
+>> +		reg = <1>;
+>> +	}
+>> +
+>> +	backlight_led@2 {
+>> +		function = LED_FUNCTION_BACKLIGHT;
+>> +		reg = <2>;
+>> +
+>> +		compatible = "led-backlight";
+>> +
+>> +		brightness-levels = <0 4 8 16 32 64 128 255>;
+>> +		default-brightness-level = <6>;
+>> +
+>> +		power-supply = <&vdd_bl_reg>;
+>> +		enable-gpios = <&gpio 58 0>;
+>> +	};
+>> +};
+>> -- 
+>> 2.17.1
+>>
