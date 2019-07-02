@@ -2,127 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73BF65D2A1
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 17:20:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8773E5D2A9
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 17:21:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727024AbfGBPUd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 11:20:33 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:56150 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725780AbfGBPUd (ORCPT
+        id S1727074AbfGBPVU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 11:21:20 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:54186 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725972AbfGBPVT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 11:20:33 -0400
-Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 83D8C255;
-        Tue,  2 Jul 2019 17:20:30 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1562080830;
-        bh=MQPbS86dIXLIzRT7cKc2d+ifqWU4LvOkgbT4PqUtUs8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=AjyAX71LRoe8eRV+OuUkmQlR9YQO/vf1ZVwhHDHWiea63RF+ToCjI1skAe8BqYFZ/
-         PmWK4A7hGuqGDfDm0bX9JeknSYfL9JDtJjYykDHFVlViecPn3Xsmu1jZJpC4V4Uonz
-         xTA1y9MKIbsTw5Dc5U5MuggGLuy54MMFTBhSYe+g=
-Date:   Tue, 2 Jul 2019 18:20:11 +0300
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Rob Clark <robdclark@gmail.com>
-Cc:     dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, aarch64-laptops@lists.linaro.org,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        Rob Clark <robdclark@chromium.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/5] drm/bridge: ti-sn65dsi86: support booloader enabled
- display
-Message-ID: <20190702152011.GE5033@pendragon.ideasonboard.com>
-References: <20190630150230.7878-1-robdclark@gmail.com>
- <20190630150230.7878-6-robdclark@gmail.com>
+        Tue, 2 Jul 2019 11:21:19 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x62F82Ro028002;
+        Tue, 2 Jul 2019 17:21:01 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=STMicroelectronics;
+ bh=SzjDcNB2QeMrFWCWKsns2sD9pi5HfWIIUWIJ0NlH42M=;
+ b=cI9ZfrboxcM0+cXQJkuFam761VrzZpIob6TvGDdYkNRaMLDK25m21kXCDDKDwkTrvzXJ
+ FFn1IFYPeosPHTYIWw0sy1r+05ncgsx6y9L2L+s4OizRYjfpG4MyELmS2KThXh0qcwNi
+ judIE+udSHlTtiefTfr1UDd7f4fLM6sfmgGsjuRJ8WdMQmagM9Y21lkprCagyb75EcnR
+ zsJrjpLwPYmPtbEQXPkHfTMqe4CQYv2z7KHiv0uRrIA2Tp5MFfRUYB3EHKK4nQE6tgDi
+ TY6SPi9It/IXQYsJC4Qo7FK6XzUAaQvHALZZ0RgqzdfvE1iMJyJqyAXR4EPHipJYaac5 +A== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2tdxvhvvsc-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Tue, 02 Jul 2019 17:21:01 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C10383D;
+        Tue,  2 Jul 2019 15:21:00 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8BFD42D05;
+        Tue,  2 Jul 2019 15:21:00 +0000 (GMT)
+Received: from SFHDAG5NODE1.st.com (10.75.127.13) by SFHDAG5NODE3.st.com
+ (10.75.127.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 2 Jul
+ 2019 17:21:00 +0200
+Received: from SFHDAG5NODE1.st.com ([fe80::cc53:528c:36c8:95f6]) by
+ SFHDAG5NODE1.st.com ([fe80::cc53:528c:36c8:95f6%20]) with mapi id
+ 15.00.1347.000; Tue, 2 Jul 2019 17:21:00 +0200
+From:   Hugues FRUCHET <hugues.fruchet@st.com>
+To:     Sakari Ailus <sakari.ailus@linux.intel.com>
+CC:     Alexandre TORGUE <alexandre.torgue@st.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Yannick FERTRE <yannick.fertre@st.com>,
+        Philippe CORNU <philippe.cornu@st.com>,
+        Mickael GUENE <mickael.guene@st.com>
+Subject: Re: [PATCH v2 1/3] media: stm32-dcmi: improve sensor subdev naming
+Thread-Topic: [PATCH v2 1/3] media: stm32-dcmi: improve sensor subdev naming
+Thread-Index: AQHVJ3yZHgnJxvOZ40OVy3POWcVYXaa3YwCA
+Date:   Tue, 2 Jul 2019 15:21:00 +0000
+Message-ID: <c3dfcddd-199d-f322-a957-8c0ff1d2f5b2@st.com>
+References: <1560242912-17138-1-git-send-email-hugues.fruchet@st.com>
+ <1560242912-17138-2-git-send-email-hugues.fruchet@st.com>
+ <20190620152640.chd4u4u5hd56ausk@kekkonen.localdomain>
+In-Reply-To: <20190620152640.chd4u4u5hd56ausk@kekkonen.localdomain>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.48]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <DDD382B92050594481214CD96E888BBA@st.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190630150230.7878-6-robdclark@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-02_08:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
-
-Thank you for the patch.
-
-On Sun, Jun 30, 2019 at 08:01:43AM -0700, Rob Clark wrote:
-> From: Rob Clark <robdclark@chromium.org>
-> 
-> Request the enable gpio ASIS to avoid disabling bridge during probe, if
-> already enabled.  And if already enabled, defer enabling runpm until
-> attach to avoid cutting off the power to the bridge.
-> 
-> Once we get to attach, we know panel and drm driver are probed
-> successfully, so at this point it i s safe to enable runpm and reset the
-> bridge.  If we do it earlier, we kill efifb (in the case that panel or
-> drm driver do not probe successfully, giving the user no way to see what
-> is going on.
-> 
-> Signed-off-by: Rob Clark <robdclark@chromium.org>
-> ---
->  drivers/gpu/drm/bridge/ti-sn65dsi86.c | 12 ++++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi86.c b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-> index 7a046bcdd81b..8bdc33576992 100644
-> --- a/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-> +++ b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-> @@ -257,6 +257,12 @@ static int ti_sn_bridge_attach(struct drm_bridge *bridge)
->  						   .node = NULL,
->  						 };
->  
-> +	if (gpiod_get_value(pdata->enable_gpio)) {
-> +		pm_runtime_enable(pdata->dev);
-
-Does this need to be balanced with a pm_runtime_disable() call ? Bridges
-can be attached and detached at runtime when reloading the display
-controller drivers, so you need to ensure that detach/re-attach cycles
-work.
-
-> +		ti_sn_bridge_resume(pdata->dev);
-> +		ti_sn_bridge_suspend(pdata->dev);
-> +	}
-> +
->  	ret = drm_connector_init(bridge->dev, &pdata->connector,
->  				 &ti_sn_bridge_connector_funcs,
->  				 DRM_MODE_CONNECTOR_eDP);
-> @@ -813,7 +819,7 @@ static int ti_sn_bridge_probe(struct i2c_client *client,
->  	dev_set_drvdata(&client->dev, pdata);
->  
->  	pdata->enable_gpio = devm_gpiod_get(pdata->dev, "enable",
-> -					    GPIOD_OUT_LOW);
-> +					    GPIOD_ASIS);
->  	if (IS_ERR(pdata->enable_gpio)) {
->  		DRM_ERROR("failed to get enable gpio from DT\n");
->  		ret = PTR_ERR(pdata->enable_gpio);
-> @@ -843,7 +849,9 @@ static int ti_sn_bridge_probe(struct i2c_client *client,
->  	if (ret)
->  		return ret;
->  
-> -	pm_runtime_enable(pdata->dev);
-> +	if (!gpiod_get_value(pdata->enable_gpio)) {
-> +		pm_runtime_enable(pdata->dev);
-> +	}
-
-If I understand the issue correctly, this is part of an effort to avoid
-disabling a potentially display output until we get as close as possible
-to display handover, right ? Is there a drawback in always enabling
-runtime PM when the bridge is attached instead of at probe time ? I
-think we need to come up with a set of rules for bridge driver authors,
-otherwise we'll end up with incompatible expectations of bridge drivers
-and display controller drivers.
-
->  
->  	i2c_set_clientdata(client, pdata);
->  
-
--- 
-Regards,
-
-Laurent Pinchart
+SGkgU2FrYXJpLA0KDQpPbiA2LzIwLzE5IDU6MjYgUE0sIFNha2FyaSBBaWx1cyB3cm90ZToNCj4g
+SGkgSHVndWVzLA0KPiANCj4gT24gVHVlLCBKdW4gMTEsIDIwMTkgYXQgMTA6NDg6MzBBTSArMDIw
+MCwgSHVndWVzIEZydWNoZXQgd3JvdGU6DQo+PiBBZGQgYSBuZXcgInNlbnNvciIgZmllbGQgdG8g
+ZGNtaSBzdHJ1Y3QgaW5zdGVhZCBvZg0KPj4gcmV1c2luZyBlbnRpdHktPnN1YmRldiB0byBhZGRy
+ZXNzIHNlbnNvciBzdWJkZXYuDQpBcyBkaXNjdXNzZWQgb24gSVJDLCBmaXhlZCBpbiB2MywNCj4g
+DQo+IFRoZSBwdXJwb3NlIG9mIHRoZSBzdHJ1Y3QgYmluZGluZyBpbWFnZSBzb3VyY2UncyBhc3lu
+YyBzdWJkZXYgYXMgd2VsbCBhcw0KPiByZWxhdGVkIGluZm9ybWF0aW9uIGlzIHRvIGFsbG93IGFz
+c29jaWF0aW5nIHRoZSB0d28uIFRoaXMgcGF0Y2ggYnJlYWtzDQo+IHRoYXQuIElmIHlvdXIgZGV2
+aWNlIGNhbiBzdXBwb3J0IGEgc2luZ2xlIHNlbnNvciwgaXQgbWlnaHQgbm90IGJlIGEgYmlnDQo+
+IGRlYWwuIFRoZSBlbmQgcmVzdWx0IHJlbWFpbnMgc29tZXdoYXQgaW5jb25zaXN0ZW50IGFzIHN1
+YmRldiBzcGVjaWZpYw0KPiBpbmZvcm1hdGlvbiBpcyBzcHJlYWQgYWNyb3NzIHN0cnVjdCBzdG0z
+Ml9kY21pIGFuZCBzdHJ1Y3QNCj4gZGNtaV9ncmFwaF9lbnRpdHkuDQpBcyBkaXNjdXNzZWQgb24g
+SVJDLCBmaXhlZCBpbiB2MywNCg0KPiANCj4gSW4gZ2VuZXJhbCB5b3UgZG9uJ3QgbmVlZCB0byBr
+bm93IHRoZSBzZW5zb3IgYXMgeW91IGNhbiBhbHdheXMgZmluZCBpdA0KPiB1c2luZyBtZWRpYV9l
+bnRpdHlfcmVtb3RlX3BhZCgpLiBUaGlzIGRyaXZlciBpcyBhIGxpdHRsZSBkaWZmZXJlbnQgdGhv
+dWdoDQo+IGFzIGl0IGNvdWxkIHByZXN1bWFibHkgY29udGludWUgdG8gd29yayB3aXRob3V0IE1D
+LiBXYXMgdGhhdCB0aGUgaW50ZW50Pw0KPiANCj4gT24gYSBzaWRlIG5vdGU6IHN0cnVjdCBkY21p
+X2dyYXBoX2VudGl0eSBkb2VzIE5PVCBoYXZlIHN0cnVjdA0KPiB2NGwyX2FzeW5jX3N1YmRldiBh
+cyBpdHMgZmlyc3QgbWVtYmVyLiBQbGVhc2UgZml4IHRoYXQgYW5kIHByZXBlbmQgdGhlIGZpeA0K
+PiB0byB0aGlzIHNldC4NCj4gDQpBcyBkaXNjdXNzZWQgb24gSVJDLCBmaXhlZCBpbiB2MywNCg0K
+QlIsDQpIdWd1ZXMu
