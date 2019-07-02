@@ -2,100 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C107A5C770
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 04:47:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 666665C779
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 04:51:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727039AbfGBCrH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 22:47:07 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:53998 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726434AbfGBCrH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 22:47:07 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4ECDE2F8BEB;
-        Tue,  2 Jul 2019 02:47:07 +0000 (UTC)
-Received: from localhost (ovpn-12-52.pek2.redhat.com [10.72.12.52])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B6A0A60C44;
-        Tue,  2 Jul 2019 02:47:04 +0000 (UTC)
-Date:   Tue, 2 Jul 2019 10:47:02 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Dave Young <dyoung@redhat.com>
-Cc:     airlied@redhat.com, kexec@lists.infradead.org, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: mgag200 fails kdump kernel booting
-Message-ID: <20190702024702.GD3178@localhost.localdomain>
-References: <20190626081522.GX24419@MiWiFi-R3L-srv>
- <20190702022140.GA3327@dhcp-128-65.nay.redhat.com>
+        id S1727031AbfGBCvP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 22:51:15 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:41186 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726362AbfGBCvO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Jul 2019 22:51:14 -0400
+Received: by mail-io1-f67.google.com with SMTP id w25so33569039ioc.8;
+        Mon, 01 Jul 2019 19:51:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=057Pa4boLoPPDteo8R0KTEwSZg3CyppxjLulMTMnDsw=;
+        b=p/j9hre/GI3XCiRSCpdiyabMg8GFc6R9jAHFE9ssWcyiBjZHFVssnSPik9p4qndE7F
+         5DA1nQNjVke5uTJBAKJ7a7i5Ky7Qz1vXZBrlLWr7Vhc2a71i554xVR/eLuRnNwSYvGmt
+         qIgoIMjhGTVgz13FqbzT1G4jzb1h4StY14Ux2P6h5z8n2pzTNeFfIcUSKQiYwsi3CWSm
+         fpHW5PklxCH7Tk8pJMcZF29e1t/7IC0Oy6tudMNKkUGiLy5HdU0Us54RSZHvZkLuBrNC
+         jZPiG6HOwiBf2jEerOYfN4oQ5HAzqdjnsYu1mWSzxC9Ah553ECTCl4rEaLZKEiTSRLoj
+         fk6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=057Pa4boLoPPDteo8R0KTEwSZg3CyppxjLulMTMnDsw=;
+        b=b6Z3PYGuAjblTP0pQuIPI2++rrLHcwHviAYyTwO4qVFDNE8SMSmxCm9UCj9KCNkplr
+         SmPRmoigbT8GQ1Aql5pKXLNGNRxvERF5Wjpk31bqoZz3YuLF2nfvk9IMtbPdnKGpt3Jg
+         WATppSalMjZbHHqTkW0CtFQICzn05SAL00l5LGfojI0f9jVtkVxKs0ADYmpCzlz1+kro
+         E9pJD3TYZTjLdLAM4baK0UlHigqnZWWQQIBlNZBTrir4ggybdDLftmYet8e6yUc75aas
+         6behQqmK9KZwSTJNlr4q0f7bvHub9EM+SCsFEJVXXNa8yxHREYQSbQFTB4+QgVFc5F/4
+         UkYQ==
+X-Gm-Message-State: APjAAAVVMbbIiLMsaubxQPkaS9kBuJAN0IJWLUhsh4bZFDwMEEfJTKOD
+        1/rrrwOH7fPSgxI4VSzeRMU=
+X-Google-Smtp-Source: APXvYqwasQ2Qsk8eJeFsrpZ19yqKDk9kJpsNQX6oTygilT30vuDGJHldZ/AF/aqWKX/aL8zq3XGldA==
+X-Received: by 2002:a02:3904:: with SMTP id l4mr1311099jaa.81.1562035873543;
+        Mon, 01 Jul 2019 19:51:13 -0700 (PDT)
+Received: from [10.230.24.186] ([192.19.224.250])
+        by smtp.gmail.com with ESMTPSA id c81sm24959528iof.28.2019.07.01.19.51.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 01 Jul 2019 19:51:12 -0700 (PDT)
+Subject: Re: [PATCH 3.16 08/10] tcp: tcp_fragment() should apply sane memory
+ limits
+To:     Ben Hutchings <ben@decadent.org.uk>, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Cc:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Jonathan Looney <jtl@netflix.com>,
+        Yuchung Cheng <ycheng@google.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        Neal Cardwell <ncardwell@google.com>,
+        Bruce Curtis <brucec@netflix.com>
+References: <lsq.1560868082.489417250@decadent.org.uk>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Openpgp: preference=signencrypt
+Message-ID: <37926faa-0f7f-621c-8ee6-ba46d34c8cfc@gmail.com>
+Date:   Mon, 1 Jul 2019 19:51:10 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190702022140.GA3327@dhcp-128-65.nay.redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Tue, 02 Jul 2019 02:47:07 +0000 (UTC)
+In-Reply-To: <lsq.1560868082.489417250@decadent.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/02/19 at 10:21am, Dave Young wrote:
-> On 06/26/19 at 04:15pm, Baoquan He wrote:
-> > Hi Dave,
-> > 
-> > We met an kdump kernel boot failure on a lenovo system. Kdump kernel
-> > failed to boot, but just reset to firmware to reboot system. And nothing
-> > is printed out.
-> > 
-> > The machine is a big server, with 6T memory and many cpu, its graphic
-> > driver module is mgag200.
-> > 
-> > When added 'earlyprintk=ttyS0' into kernel command line, it printed
-> > out only one line to console during kdump kernel booting:
-> >      KASLR disabled: 'nokaslr' on cmdline.
-> > 
-> > Then reset to firmware to reboot system.
-> > 
-> > By further code debugging, the failure happened in
-> > arch/x86/boot/compressed/misc.c, during kernel decompressing stage. It's
-> > triggered by the vga printing. As you can see, in __putstr() of
-> > arch/x86/boot/compressed/misc.c, the code checks if earlyprintk= is
-> > specified, and print out to the target. And no matter if earlyprintk= is
-> > added or not, it will print to VGA. And printing to VGA caused it to
-> > reset to firmware. That's why we see nothing when didn't specify
-> > earlyprintk=, but see only one line of printing about the 'KASLR
-> > disabled'.
-> > 
-> > To confirm it's caused by VGA printing, I blacklist the mgag200 by
-> > writting it into /etc/modprobe.d/blacklist.conf. The kdump kernel can
-> > boot up successfully. And add 'nomodeset' can also make it work. So it's
-> > for sure mgag driver or related code have something wrong when booting
-> > code tries to re-init it.
-> > 
-> > This is the only case we ever see, tend to pursuit fix in mgag200 driver
-> > side. Any idea or suggestion? We have two machines to be able to
-> > reproduce it stablly.
-> 
-> Personally I think early code should not blindly do vga writing, there
-> are cases that does not work:
-> 1. efi booted machine,  just no output
-> 2. kdump kernel booted,  writing to vga caused undefined state, for
-> example in your case it caused a system reset.
-> 
-> So I suggest only write to vga when we see earlyprintk=vga in kernel
-> cmdline.
+Hi Ben,
 
-I remember one customer ever attached a picture of kernel booting hang
-from monitor. I planned to disable vga when it's not specified, but
-changed my mind because not all machines are servers w/o monitor. Still
-there are many people using laptop, PC, they have vga printing, possibly
-have no console. When crash happened, maybe randomly, the vga printing
-could be the only witness. In above listed cases, case 1 doesn't output,
-seems efi need be fixed, but I can't see why it matters here. About case
-2, do you have a specific example, except of this one? Printing to vga
-has been done so long time, if it does cause troubles, we need to mute
-it now.
+On 6/18/2019 7:28 AM, Ben Hutchings wrote:
+> 3.16.69-rc1 review patch.  If anyone has any objections, please let me know.
+> 
+> ------------------
+> 
+> From: Eric Dumazet <edumazet@google.com>
+> 
+> commit f070ef2ac66716357066b683fb0baf55f8191a2e upstream.
+> 
+> Jonathan Looney reported that a malicious peer can force a sender
+> to fragment its retransmit queue into tiny skbs, inflating memory
+> usage and/or overflow 32bit counters.
+> 
+> TCP allows an application to queue up to sk_sndbuf bytes,
+> so we need to give some allowance for non malicious splitting
+> of retransmit queue.
+> 
+> A new SNMP counter is added to monitor how many times TCP
+> did not allow to split an skb if the allowance was exceeded.
+> 
+> Note that this counter might increase in the case applications
+> use SO_SNDBUF socket option to lower sk_sndbuf.
+> 
+> CVE-2019-11478 : tcp_fragment, prevent fragmenting a packet when the
+> 	socket is already using more than half the allowed space
+> 
+> Signed-off-by: Eric Dumazet <edumazet@google.com>
+> Reported-by: Jonathan Looney <jtl@netflix.com>
+> Acked-by: Neal Cardwell <ncardwell@google.com>
+> Acked-by: Yuchung Cheng <ycheng@google.com>
+> Reviewed-by: Tyler Hicks <tyhicks@canonical.com>
+> Cc: Bruce Curtis <brucec@netflix.com>
+> Cc: Jonathan Lemon <jonathan.lemon@gmail.com>
+> Signed-off-by: David S. Miller <davem@davemloft.net>
+> [Salvatore Bonaccorso: Adjust context for backport to 4.9.168]
+> [bwh: Backported to 3.16: adjust context]
+> Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 
-Thanks
-Baoquan
+Don't we also need this patch to be backported:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?id=b6653b3629e5b88202be3c9abc44713973f5c4b4
+
+Thanks!
+-- 
+Florian
