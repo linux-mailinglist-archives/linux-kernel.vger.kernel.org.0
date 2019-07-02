@@ -2,86 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F4415D211
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 16:49:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C16E45D21F
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 16:52:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727087AbfGBOtM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 10:49:12 -0400
-Received: from pb-smtp2.pobox.com ([64.147.108.71]:63365 "EHLO
-        pb-smtp2.pobox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725940AbfGBOtL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 10:49:11 -0400
-Received: from pb-smtp2.pobox.com (unknown [127.0.0.1])
-        by pb-smtp2.pobox.com (Postfix) with ESMTP id 8C46416D894;
-        Tue,  2 Jul 2019 10:49:09 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=pobox.com; h=from:to:cc
-        :subject:date:message-id:in-reply-to:references; s=sasl; bh=iuSC
-        QH936PalZ9sl8D0wOAB5/XY=; b=m5DbVkGciCn5BhProSSHQyKURPn08TD/oOV9
-        n9ypbv/aQyHbhCqQh1ZbtcZp3Lv/EVhrjEB4hDWXHp6jhFjFbStuTYYnGYeU4XsG
-        a4dzj7x6zc/t+Ti22COnS7cwxVFujK89dJKV4qXjkKmMHCe28qnSN164joG47hce
-        u9pyYWI=
-Received: from pb-smtp2.nyi.icgroup.com (unknown [127.0.0.1])
-        by pb-smtp2.pobox.com (Postfix) with ESMTP id 842C916D893;
-        Tue,  2 Jul 2019 10:49:09 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=foobox.net;
- h=from:to:cc:subject:date:message-id:in-reply-to:references; s=mesmtp;
- bh=ruAx3BEDVnp34U2vU44ihcx7aAUaxt7IiCC+TdX+HDg=;
- b=FNrVrwbKKseslOXVKSfBcO245Z0WYyp8uhNrfJ068us5oGFMH/LTptbl6nO94kFbBr0OMDmFanTtypwWuXBUAgm2WDKvmcwbvN8vjwUBOT3d9FWSzI07+D21m0QWKli0YuwnVKfkzh7vRVTBkCVgLnteTOeTP8B19mhq+fTqpaE=
-Received: from imatushchak-HP-ZBook-14u-G4.synapse.com (unknown [195.238.93.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1727070AbfGBOwj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 10:52:39 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:34186 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726283AbfGBOwj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 10:52:39 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by pb-smtp2.pobox.com (Postfix) with ESMTPSA id 1B4D516D890;
-        Tue,  2 Jul 2019 10:49:07 -0400 (EDT)
-From:   Ihor Matushchak <ihor.matushchak@foobox.net>
-To:     mst@redhat.com
-Cc:     jasowang@redhat.com, virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, ihor.matushchak@foobox.net,
-        iivanov.xz@gmail.com
-Subject: [PATCH v2] virtio-mmio: add error check for platform_get_irq
-Date:   Tue,  2 Jul 2019 17:48:18 +0300
-Message-Id: <20190702144818.32648-1-ihor.matushchak@foobox.net>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <156207429000.5051.5975712347598980745@silver>
-References: <156207429000.5051.5975712347598980745@silver>
-X-Pobox-Relay-ID: 8C16B0BA-9CD8-11E9-800F-72EEE64BB12D-19565117!pb-smtp2.pobox.com
+        by mx1.redhat.com (Postfix) with ESMTPS id DDECE3092667;
+        Tue,  2 Jul 2019 14:52:38 +0000 (UTC)
+Received: from carbon (ovpn-200-45.brq.redhat.com [10.40.200.45])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6F2255D6A9;
+        Tue,  2 Jul 2019 14:52:32 +0000 (UTC)
+Date:   Tue, 2 Jul 2019 16:52:30 +0200
+From:   Jesper Dangaard Brouer <brouer@redhat.com>
+To:     Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+Cc:     netdev@vger.kernel.org,
+        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+        grygorii.strashko@ti.com, jakub.kicinski@netronome.com,
+        daniel@iogearbox.net, john.fastabend@gmail.com, ast@kernel.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        brouer@redhat.com
+Subject: Re: [PATCH] net: core: page_pool: add user refcnt and reintroduce
+ page_pool_destroy
+Message-ID: <20190702165230.6caa36e3@carbon>
+In-Reply-To: <20190702144426.GD4510@khorivan>
+References: <20190702153902.0e42b0b2@carbon>
+        <156207778364.29180.5111562317930943530.stgit@firesoul>
+        <20190702144426.GD4510@khorivan>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Tue, 02 Jul 2019 14:52:39 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-in vm_find_vqs() irq has a wrong type
-so, in case of no IRQ resource defined,
-wrong parameter will be passed to request_irq()
+On Tue, 2 Jul 2019 17:44:27 +0300
+Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org> wrote:
 
-Signed-off-by: Ihor Matushchak <ihor.matushchak@foobox.net>
----
-Changes in v2:
-Don't overwrite error code value.
-
- drivers/virtio/virtio_mmio.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/virtio/virtio_mmio.c b/drivers/virtio/virtio_mmio.c
-index f363fbeb5ab0..e09edb5c5e06 100644
---- a/drivers/virtio/virtio_mmio.c
-+++ b/drivers/virtio/virtio_mmio.c
-@@ -463,9 +463,14 @@ static int vm_find_vqs(struct virtio_device *vdev, unsigned nvqs,
- 		       struct irq_affinity *desc)
- {
- 	struct virtio_mmio_device *vm_dev = to_virtio_mmio_device(vdev);
--	unsigned int irq = platform_get_irq(vm_dev->pdev, 0);
-+	int irq = platform_get_irq(vm_dev->pdev, 0);
- 	int i, err, queue_idx = 0;
+> On Tue, Jul 02, 2019 at 04:31:39PM +0200, Jesper Dangaard Brouer wrote:
+> >From: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+> >
+> >Jesper recently removed page_pool_destroy() (from driver invocation) and
+> >moved shutdown and free of page_pool into xdp_rxq_info_unreg(), in-order to
+> >handle in-flight packets/pages. This created an asymmetry in drivers
+> >create/destroy pairs.
+> >
+> >This patch add page_pool user refcnt and reintroduce page_pool_destroy.
+> >This serves two purposes, (1) simplify drivers error handling as driver now
+> >drivers always calls page_pool_destroy() and don't need to track if
+> >xdp_rxq_info_reg_mem_model() was unsuccessful. (2) allow special cases
+> >where a single RX-queue (with a single page_pool) provides packets for two
+> >net_device'es, and thus needs to register the same page_pool twice with two
+> >xdp_rxq_info structures.  
+> 
+> As I tend to use xdp level patch there is no more reason to mention (2) case
+> here. XDP patch serves it better and can prevent not only obj deletion but also
+> pool flush, so, this one patch I could better leave only for (1) case.
  
-+	if (irq < 0) {
-+		dev_err(&vdev->dev, "Cannot get IRQ resource\n");
-+		return irq;
-+	}
-+
- 	err = request_irq(irq, vm_interrupt, IRQF_SHARED,
- 			dev_name(&vdev->dev), vm_dev);
- 	if (err)
--- 
-2.17.1
+I don't understand what you are saying.
 
+Do you approve this patch, or do you reject this patch?
+
+-- 
+Best regards,
+  Jesper Dangaard Brouer
+  MSc.CS, Principal Kernel Engineer at Red Hat
+  LinkedIn: http://www.linkedin.com/in/brouer
