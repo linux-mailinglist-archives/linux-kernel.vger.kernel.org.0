@@ -2,70 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AF055D91F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:35:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DC725D987
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:46:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727241AbfGCAfE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 20:35:04 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:46941 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726430AbfGCAfE (ORCPT
+        id S1727241AbfGCAqv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 20:46:51 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:42680 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727049AbfGCAqu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 20:35:04 -0400
-Received: by mail-ot1-f68.google.com with SMTP id z23so431793ote.13;
-        Tue, 02 Jul 2019 17:35:03 -0700 (PDT)
+        Tue, 2 Jul 2019 20:46:50 -0400
+Received: by mail-pl1-f195.google.com with SMTP id ay6so199802plb.9;
+        Tue, 02 Jul 2019 17:46:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6HvJuM18alyeMHoRBjFAJz8IVxm/LOrt6nImzFK3lsE=;
-        b=ZL/zgmk5C6P8mXBb7AQ7vp5C1Xz9VF3Onrg6rH+mPkYfq1bkn35Xn/20CUxdaHn/Ba
-         As8W8rj8MO2TPxJbLYAsV8Zr1JcXNxcB7S3nTswhG/q8JMEduSCQJcmZLLQ9zOQSQfyk
-         kx6R2lLIgaUoq7ViMRDuO36Wn2pKUGkrTuOcSp1cqtLZyOJUPgX447cc56NnfWuKJcvy
-         dk+DNAVbg9S/dYMV8QLSIJUIMiqtDPDb9aFykMXk/YpOwSbjg03XRU3rPcXWYsTdoOjF
-         TQXzWG83z4s362gpdu9ENdszdpz5ERCO3qPD4xQdAvzEluLxpKpd1AhOMkZ7qym/hOma
-         +DYg==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=EEyrpPr6crLLek2K+2wB7hfBX7/xhxYts0mMWfA15n0=;
+        b=BpurX42xyJabo6XzPspPcGbdnLp922qk/W7TJX65N+dSzI5mEFHNSiMrswD1+WZp8X
+         qmv3hljs6PQg+GSAVPj657Xbo+wkPQcn3FAl5ALiYz254AGZTK8U8HTerDcv+0LL9oup
+         seDSEJiX0hufrv5lN71zFgHk+OzOClqtbYxgunQTggn+Wbfrvf6E0TwSDg6juxYqB2tn
+         DCptCNPyy6rnmaHD29kTULSJGZ0F75Q6AjC0Ucu4HsWgfFcmVAxxo5sBO6knS9rfSSeX
+         JLI/0otsKYLrFAhKW0hjMaJ5I5/1xV8avpphCfFvyYHmJOcx7wu7+Vy+5uMdCEzNNgN8
+         T3Eg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6HvJuM18alyeMHoRBjFAJz8IVxm/LOrt6nImzFK3lsE=;
-        b=szqJMGikUpqhNZjWfnCCEG1CoZQnO2s9EhLAEYk9FYBMQQV80GY1Ucj7NvjP7lG9He
-         oCesTSL4qn0a5gDvzs2yGN2KRYUr5uAz6ONbjBO9CCVdFEDyvYK8sxwl6KLw9mP+1Rbk
-         3Kl1GK0nGeF8cpjN9SJYylPcVDxZhDj6Af+fFWpieWBuGSYaMGh4tIrhz/CCQfPk5Klo
-         kY+OEHwy4fxsAu34AcX9F0eX1ovnGALa/8I6iPlLWk5CbV1PKKA828fgELaWnI6AJ4p7
-         xkPUKUOVp9A9AUtIV4MIbDGUgbNuyV8HXwvj4485nF49mTSctM153f05tG84GogWyQTl
-         3xJw==
-X-Gm-Message-State: APjAAAVvuH0gniloCtMUxKFWHd4DBS+JGwp+3aSy9IBz4epPd+gRz8L0
-        iDltOaHOyUL+lOO36yqaL1Vz13O9hj6f+eeNykwgsG1F
-X-Google-Smtp-Source: APXvYqyZYeVdqlXDt36fdhfbAYHQ2O+BsFsPr+MyhLgpJe6VJlBkHeJ6Eta6tLBIetsFlmHLbT/xvN+x6/atColGNo0=
-X-Received: by 2002:a9d:23ca:: with SMTP id t68mr26108783otb.98.1562108343442;
- Tue, 02 Jul 2019 15:59:03 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=EEyrpPr6crLLek2K+2wB7hfBX7/xhxYts0mMWfA15n0=;
+        b=Gj6b3m1mViioUAPh6vb44lkWE1EscMQzcsx80M7TFRiSULuA2ZUHZDuGsRZyS+D6r/
+         743zP9lWEUH13WpczdRxNmGOCMxdw92GdJVtddR4T2rtdmC1yIzM6m8+uT7enTOqhFEA
+         P/L2PHcEfFNFR+fKKWdvCWrXxYSXYoWMtI1OWnypgpo64/SQepwNk0yHGpB9zNmbpGPf
+         wRLFI3FhuGcE+3Tsr1hk3Ldy9AKVQ7//muUsIw1hkVinurO5Ygntm8CCoMfD6L2SF+z1
+         ktKk6V3B9w7Xrylo6NIpYh2HsbWoiobsB2A1cqZ8HNtQ06kDXXFmvSFr/6EEVm0/+YAc
+         2plw==
+X-Gm-Message-State: APjAAAVDGvNxSPL7lUYpL/VmPO5HX8FhsDUJG2YBxYSS5WD5wohKuzMw
+        TYhgMHw4/g0nfdCcyImTZo8gguzvwcg=
+X-Google-Smtp-Source: APXvYqwqXfwyfSKIUPGKCUBQYxQepOou1V+ytYU4yMV+xxkv1WLpxMrC8xgeoS1VfQyVa0jvP9K1Bg==
+X-Received: by 2002:a17:902:b713:: with SMTP id d19mr18675828pls.267.1562108294798;
+        Tue, 02 Jul 2019 15:58:14 -0700 (PDT)
+Received: from continental ([189.58.144.164])
+        by smtp.gmail.com with ESMTPSA id b24sm125821pfd.98.2019.07.02.15.58.10
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 02 Jul 2019 15:58:13 -0700 (PDT)
+Date:   Tue, 2 Jul 2019 19:58:57 -0300
+From:   Marcos Paulo de Souza <marcos.souza.org@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Alan Stern <stern@rowland.harvard.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "open list:USB MASS STORAGE DRIVER" <linux-usb@vger.kernel.org>,
+        "open list:USB MASS STORAGE DRIVER" 
+        <usb-storage@lists.one-eyed-alien.net>
+Subject: Re: [PATCH v2] usb: storage: scsiglue: Do not skip VPD if
+ try_vpd_pages is set
+Message-ID: <20190702225857.GA19791@continental>
+References: <20190618224454.16595-1-marcos.souza.org@gmail.com>
 MIME-Version: 1.0
-References: <20190701091258.3870-1-narmstrong@baylibre.com> <20190701091258.3870-7-narmstrong@baylibre.com>
-In-Reply-To: <20190701091258.3870-7-narmstrong@baylibre.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Wed, 3 Jul 2019 00:58:52 +0200
-Message-ID: <CAFBinCBdB96e4PzxNMbOhuiRrxGz-4vRXu3dOs7n86qoA8MDeQ@mail.gmail.com>
-Subject: Re: [RFC/RFT v3 06/14] soc: amlogic: meson-clk-measure: add G12B
- second cluster cpu clk
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     jbrunet@baylibre.com, khilman@baylibre.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190618224454.16595-1-marcos.souza.org@gmail.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 1, 2019 at 11:13 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
->
-> Add the G12B second CPU cluster CPU and SYS_PLL measure IDs.
->
-> These IDs returns 0Hz on G12A.
->
-> Reviewed-by: Kevin Hilman <khilman@baylibre.com>
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+ping?
+
+On Tue, Jun 18, 2019 at 07:44:54PM -0300, Marcos Paulo de Souza wrote:
+> If BLIST_TRY_VPD_PAGES is set for a device, even for an USB, it should
+> be honored, so only set skip_vpd_pages is try_vpd_pages is not set.
+> 
+> Signed-off-by: Marcos Paulo de Souza <marcos.souza.org@gmail.com>
+> Acked-by: Alan Stern <stern@rowland.harvard.edu>
+> ---
+> 
+>  Changes from v1:
+>  changed the check of try_vpd_pages from:
+>  	sdev->try_vpd_pages == 0;
+>  to:
+>  	!sdev->try_vpd_pages;
+>  (as suggested by Alan Stern)
+> 
+>  drivers/usb/storage/scsiglue.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/usb/storage/scsiglue.c b/drivers/usb/storage/scsiglue.c
+> index 59190d88fa9f..30790240aec6 100644
+> --- a/drivers/usb/storage/scsiglue.c
+> +++ b/drivers/usb/storage/scsiglue.c
+> @@ -195,8 +195,11 @@ static int slave_configure(struct scsi_device *sdev)
+>  		 */
+>  		sdev->skip_ms_page_8 = 1;
+>  
+> -		/* Some devices don't handle VPD pages correctly */
+> -		sdev->skip_vpd_pages = 1;
+> +		/*
+> +		 * Some devices don't handle VPD pages correctly, so skip vpd
+> +		 * pages if not forced by SCSI layer.
+> +		 */
+> +		sdev->skip_vpd_pages = !sdev->try_vpd_pages;
+>  
+>  		/* Do not attempt to use REPORT SUPPORTED OPERATION CODES */
+>  		sdev->no_report_opcodes = 1;
+> -- 
+> 2.21.0
+> 
