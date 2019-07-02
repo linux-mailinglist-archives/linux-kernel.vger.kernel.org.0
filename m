@@ -2,109 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 888735CC11
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 10:35:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D34E5CC26
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 10:43:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726283AbfGBIfR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 04:35:17 -0400
-Received: from mga01.intel.com ([192.55.52.88]:56562 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725867AbfGBIfR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 04:35:17 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Jul 2019 01:35:16 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,442,1557212400"; 
-   d="scan'208";a="163948244"
-Received: from xpf-desktop.sh.intel.com (HELO xpf-desktop) ([10.239.13.102])
-  by fmsmga008.fm.intel.com with ESMTP; 02 Jul 2019 01:35:14 -0700
-Date:   Tue, 2 Jul 2019 16:40:18 +0800
-From:   Pengfei Xu <pengfei.xu@intel.com>
-To:     Li Wang <liwang@redhat.com>
-Cc:     Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>, tglx@linutronix.de,
-        kernellwp@gmail.com, ricardo.neri@intel.com,
-        LTP List <ltp@lists.linux.it>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Ping Fang <pifang@redhat.com>
-Subject: Re: [Kernel BUG?] SMSW operation get success on UMIP KVM guest
-Message-ID: <20190702084018.tnwefzqzar3xiaww@xpf-desktop>
-References: <CAEemH2cg01cdz=amrCWU00Xof9+cxmfR_DqCBaQe36QoGsakmA@mail.gmail.com>
- <5622c0ac-236f-4e3e-a132-c8d3bd8fadc4@redhat.com>
- <CAEemH2fqMpoiBo+asyawHsOWgdXy-ggV0mwQs9A9EJ1kh=uhAA@mail.gmail.com>
- <20190701160352.GA19921@ranerica-svr.sc.intel.com>
- <CAEemH2fR98TBHaOM37aGmzbgdZ_XPokJeUNN6dU1r=1WhOSmEw@mail.gmail.com>
+        id S1726598AbfGBInL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 04:43:11 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:35555 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726150AbfGBInL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 04:43:11 -0400
+Received: by mail-qt1-f196.google.com with SMTP id d23so17585404qto.2
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 01:43:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=rvwVw1GchGvKY5k3IPkhZkdKC9ooSy/GYCkiRUApIRs=;
+        b=cRDlbxotcYQu1A24dFUiiEKohr7mjbbKvrbjjnmEZ0HpXVnWPEHdBqV1p/AzX/d9x3
+         MzWg132Ku7K9uPcQY/qYu223UWcQRgXhml1ESWXm2aw/drPqM2q3goLuDA8qR3moyNoR
+         VRi9Z7bsEgK4lVwMKUOcZ+SmJFAuR0nojWug+g2e08rsRJNUfYis1S59DTJV+oCBiRhf
+         64Owm95t/0LEtX0wOvPOm8xm85/BFEAyVcOSDbV7mpfJZsRhAdICQoBgSJXNpeaSO7CP
+         8rXxMmMBpvJO8h1s4ha6/96U/vYLiTuYZaGuNfdV4bSngoZ5YQcVB3UJF2FEs9N0AOo+
+         D/EA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=rvwVw1GchGvKY5k3IPkhZkdKC9ooSy/GYCkiRUApIRs=;
+        b=iHE3XVT7Zcec67pBR3/HzoRC39wvAYvyduZX32fnuWbRTtsIl4M71DXT6nhUw5uver
+         kg2BaqlPbyy60U9o/2BC6M6jwwDM4tBRR6ivHIYS/Pcg+cS7OcxwH3GOpY5rERasrTON
+         HAXfB1ZKPekYiDs0iDYzRj2KN5bUGfgswNqjsvFnbomyFwXdPScjibKhImAcL9haLO9j
+         1lHjVqJXk97AOo4ljYSMXGt/R4c4NHXvIL23fSgbWjP6TOx1ayXUzqIYJX7jd1thVE81
+         pHAEGCQdUDg+ixmdPBTB7owEuNNqsSD/HG1a3OUmJ5+OzdCBb0XZ0JtqKvEQDNUWa9Dh
+         R4KQ==
+X-Gm-Message-State: APjAAAUK7+E9uJTYEteCvA9HyPCCGoBq5gc13Yw6s+ZR5585uAwLxI7k
+        WIUb8C4miYU7Osih4nz9wqPo9PzCYxwSMiI3AG4=
+X-Google-Smtp-Source: APXvYqz8+ElymQOspiPM2V/589GqxcC8bSu1Na4LLf/OVMDHSEA2tDUw2OxVVAhTcRHxYClay7MQFx3vvygOZ4KMZuA=
+X-Received: by 2002:ac8:7219:: with SMTP id a25mr24139650qtp.234.1562056990091;
+ Tue, 02 Jul 2019 01:43:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAEemH2fR98TBHaOM37aGmzbgdZ_XPokJeUNN6dU1r=1WhOSmEw@mail.gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Received: by 2002:ac8:e48:0:0:0:0:0 with HTTP; Tue, 2 Jul 2019 01:43:09 -0700 (PDT)
+Reply-To: mohamedallyson2019@gmail.com
+From:   Mohamed Allyson <johnson.adams184@gmail.com>
+Date:   Tue, 2 Jul 2019 01:43:09 -0700
+Message-ID: <CA+YfamiQJn+=WJDs2kUMPLOd7xm9=iUdr-O1=8AyYyu5NrXhKg@mail.gmail.com>
+Subject: I NEED YOUR URGENT RESPOND PLEASE
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Seems no issue now.
+Hello Dear Friend,
 
-Thanks all.
+My name is Mr. Mohamed Allyson. I have decided to seek a confidential
+co-operation  with you in the execution of the deal described
+here-under for our both  mutual benefit and I hope you will keep it a
+top secret because of the nature  of the transaction, During the
+course of our bank year auditing, I discovered  an unclaimed/abandoned
+fund, sum total of {US$19.3 Million United State  Dollars} in the bank
+account that belongs to a Saudi Arabia businessman Who unfortunately
+lost his life and entire family in a Motor Accident.
 
-On 2019-07-02 at 09:52:39 +0800, Li Wang wrote:
-> On Tue, Jul 2, 2019 at 12:04 AM Ricardo Neri <
-> ricardo.neri-calderon@linux.intel.com> wrote:
-> 
-> > On Mon, Jul 01, 2019 at 08:57:28PM +0800, Li Wang wrote:
-> > > On Mon, Jul 1, 2019 at 8:02 PM Paolo Bonzini <pbonzini@redhat.com>
-> > wrote:
-> > >
-> > > > On 01/07/19 09:50, Li Wang wrote:
-> > > > > Hello there,
-> > > > >
-> > > > > LTP/umip_basic_test get failed on KVM UMIP
-> > > > > system(kernel-v5.2-rc4.x86_64). The test is only trying to do
-> > > > >      asm volatile("smsw %0\n" : "=m" (val));
-> > > > > and expect to get SIGSEGV in this SMSW operation, but it exits with 0
-> > > > > unexpectedly.
-> > > >
-> > > > In addition to what Thomas said, perhaps you are using a host that does
-> > > > *not* have UMIP, and configuring KVM to emulate it(*).  In that case,
-> > it
-> > > > is not possible to intercept SMSW, and therefore it will incorrectly
-> > > > succeed.
-> > > >
-> > >
-> > > Right, I checked the host system, and confirmed that CPU doesn't support
-> > > UMIP.
-> > >
-> > > >
-> > > > Paolo
-> > > >
-> > > > (*) before the x86 people jump at me, this won't happen unless you
-> > > > explicitly pass an option to QEMU, such as "-cpu host,+umip". :)  The
-> > > > incorrect emulation of SMSW when CR4.UMIP=1 is why.
-> > > >
-> > > Good to know this, is there any document for that declaration? It seems
-> > > neither LTP issue nor kernel bug here. But anyway we'd better do
-> > something
-> > > to avoid the error in the test.
-> >
-> > The test case already checks for umip in /proc/cpuinfo, right? And in
-> > long mode it always expects a SIGSEGV signal. If you did not add -cpu
-> > host,+umip,
-> > how come umip was present in /proc/cpuinfo?
-> >
-> 
-> Yes, right.
-> 
-> But the KVM guest is not customized in manual, I reserved that system for
-> automation test and did not aware of the '-cpu host,+umip,' parameter until
-> Paolo points it out. In the last email, I was hoping to find a way to
-> recognize this situation for the LTP test intelligently.
-> 
-> Thank you all for a reply to this.
-> 
-> -- 
-> Regards,
-> Li Wang
+Now our bank has been waiting for any of the relatives to come-up for
+the claim but nobody has done that. I personally has been unsuccessful
+in locating any of the relatives, now, I sincerely seek your consent
+to present you as the next of kin / Will Beneficiary to the deceased
+so that the proceeds of this account valued at {US$19.3 Million United
+State Dollars} can be paid to you, which we will share in these
+percentages ratio, 60% to me and 40% to you. All I request is your
+utmost sincere co-operation; trust and maximum confidentiality to
+achieve this project successfully. I have carefully mapped out the
+moralities for execution of this transaction under a legitimate
+arrangement to protect you from any breach of the law both in your
+country and here in Burkina Faso when the fund is being transferred to
+your bank account.
+
+I will have to provide all the relevant document that will be
+requested to indicate that you are the rightful beneficiary of this
+legacy and our bank will release the fund to you without any further
+delay, upon your consideration and acceptance of this offer, please
+send me the following information as stated below so we can proceed
+and get this fund transferred to your designated bank account
+immediately.
+
+-Your Full Name:
+-Your Contact Address:
+-Your direct Mobile telephone Number:
+-Your Date of Birth:
+-Your occupation:
+
+I await your swift response and re-assurance through my Private email
+address: mohamedallyson2019@gmail.com
+
+Best regards,
+Mr. Mohamed Allyson
