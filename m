@@ -2,113 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B5C65DA8B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 03:17:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0634F5DB1D
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 03:47:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727367AbfGCBRF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 21:17:05 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:47337 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726150AbfGCBRF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 21:17:05 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45dd3V6xTLz9s3Z;
-        Wed,  3 Jul 2019 07:41:26 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1562103688;
-        bh=MorrFaVnjRPpb/j0w/ycYarnWEzNC23UdOM4rLCRAw4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=WMj7A9iQnoAZ9HJYlZX8ZoOWX7U2c1Oqr19Jqz0WawEE/jMP+c5PP0lPDhDcazPgR
-         8NfPtWJJuPpybsTfuK7I6EsXbN9JwQSH4ah5VfrfYCtbAzhlMmwgFKkwBpzgx/l8/l
-         XulffRZCh++zks4Q839C5hpLZ1+e4kPr4FDo8UAbCeNvg7sZRJzcKNet9rku5I7NfI
-         B8NLjJd89BoSH28h5G/mie+6wPxEaHW0TiPYF0Y89pQXhrIZ4wTF3/t9n+n0+Bc0UF
-         xqh56sll8PunE1f6L988lwDdgrvwlXLT+rjFnGypioHp4DSCs4VcYzTFu7jp6984+b
-         s3PHqH3CFklAw==
-Date:   Wed, 3 Jul 2019 07:41:09 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        Jean-Philippe Brucker <Jean-Philippe.Brucker@arm.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Suzuki Poulose <Suzuki.Poulose@arm.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: Re: linux-next: manual merge of the char-misc tree with the
- driver-core tree
-Message-ID: <20190703074109.4b2ca5bc@canb.auug.org.au>
-In-Reply-To: <20190702130511-mutt-send-email-mst@kernel.org>
-References: <20190701190940.7f23ac15@canb.auug.org.au>
-        <20190701200418.GA72724@archlinux-epyc>
-        <20190702141803.GA13685@ostrya.localdomain>
-        <20190702151817.GD3310@8bytes.org>
-        <20190702112125-mutt-send-email-mst@kernel.org>
-        <20190702155851.GF3310@8bytes.org>
-        <20190702130511-mutt-send-email-mst@kernel.org>
+        id S1727116AbfGCBrl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 21:47:41 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:40852 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726329AbfGCBrl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 21:47:41 -0400
+Received: by mail-lj1-f195.google.com with SMTP id a21so568883ljh.7
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 18:47:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=EFkIeXpXPtkmklqfCJHZIPWaUa8k7rvjDvZooschSt0=;
+        b=rHd762UbGnahCLryJGa1V5ZeMAyD36SkyUs4X1frl2y0FBAOLBIKwlDdCGSIX+hgSg
+         7z8NSWAyAhzTaBnGoD867ymuPf7oKh1xsQ3AO/qVbuZ7CZVSe6/bXtG02w+gL3hZiVdW
+         wHvLUC7q04HYqiktxHNa/1RcLQlxu9ARjJL81i5JQ9fyu6LlDsMD5PscYhUzNUw/0o+1
+         8dvpVT68hyVAf+bHgmM8erO+vZEYj1j4JcRjpSl8XTFwHKw1wZX2zGB4Herk/S4pQ9QB
+         c7UwBmgkfh+TznGgYrX7ROflI9fKIZIVhDky8Gd3QvzLI9Ur+jRgi8QM+sw15pXkASv9
+         Uz7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=EFkIeXpXPtkmklqfCJHZIPWaUa8k7rvjDvZooschSt0=;
+        b=U39Z2wENO3kzC6seax1a+mb1uqm2ISokaAgK9R8rKmqp16GfrSpdftOlMubZOB2wg1
+         ETmqmpq3cUvHY0xfmN6g2+vaeENLXEu2IYwvc3bAgWGu6B/NClGHvyWm9hjxgeRhzOyM
+         rpCq5noG/IZgW0MOWzixGODx0qbZ/x7LvGkJ33dU0KHHUpr3BOjvICcyTACZmqqmNuss
+         DrTyeh4yA9ZH5JtsxNeGlEUK6TNxuv9K4EhYfFm1F+eePi+5tJgmiJdAsMiFTYV2GAO3
+         8+5SdyGVEErvr5x2w9wV7BQnWxOIBUe3zXzCNHwHZmZfEORHNG4CbJKS4RTZ/H6FmA2V
+         rpIg==
+X-Gm-Message-State: APjAAAWCxlWSKx3EAbdI9k/vfY4xdz6lgiC9qp8EtN/unWtZ+3YJM6ak
+        P5Nbhv3JTEcLBUXeA/n05qvfgg==
+X-Google-Smtp-Source: APXvYqyK8XCk0LNPfZc7yl0eXnoTmmXKNuF5DgLOtCrcIhwHjVb42s/ttUXt6h2tWcidM5ZqBmX1tg==
+X-Received: by 2002:a2e:80c8:: with SMTP id r8mr4089003ljg.168.1562103706177;
+        Tue, 02 Jul 2019 14:41:46 -0700 (PDT)
+Received: from khorivan (59-201-94-178.pool.ukrtel.net. [178.94.201.59])
+        by smtp.gmail.com with ESMTPSA id h23sm40479ljg.17.2019.07.02.14.41.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 02 Jul 2019 14:41:45 -0700 (PDT)
+Date:   Wed, 3 Jul 2019 00:41:43 +0300
+From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+To:     Ilias Apalodimas <ilias.apalodimas@linaro.org>
+Cc:     Jesper Dangaard Brouer <brouer@redhat.com>, netdev@vger.kernel.org,
+        grygorii.strashko@ti.com, jakub.kicinski@netronome.com,
+        daniel@iogearbox.net, john.fastabend@gmail.com, ast@kernel.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
+Subject: Re: [PATCH] net: core: page_pool: add user refcnt and reintroduce
+ page_pool_destroy
+Message-ID: <20190702214142.GJ4510@khorivan>
+Mail-Followup-To: Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+        Jesper Dangaard Brouer <brouer@redhat.com>, netdev@vger.kernel.org,
+        grygorii.strashko@ti.com, jakub.kicinski@netronome.com,
+        daniel@iogearbox.net, john.fastabend@gmail.com, ast@kernel.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
+References: <156207778364.29180.5111562317930943530.stgit@firesoul>
+ <20190702144426.GD4510@khorivan>
+ <20190702165230.6caa36e3@carbon>
+ <20190702145612.GF4510@khorivan>
+ <20190702171029.76c60538@carbon>
+ <20190702152112.GG4510@khorivan>
+ <20190702202907.15fb30ce@carbon>
+ <20190702185839.GH4510@khorivan>
+ <20190702230241.3be6d787@carbon>
+ <20190702211536.GA22618@apalos>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/10I6MeCphAWQjths92+eNZc"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20190702211536.GA22618@apalos>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/10I6MeCphAWQjths92+eNZc
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi all,
-
-On Tue, 2 Jul 2019 13:05:59 -0400 "Michael S. Tsirkin" <mst@redhat.com> wro=
-te:
+On Wed, Jul 03, 2019 at 12:15:36AM +0300, Ilias Apalodimas wrote:
+>Hi Jesper,
+>Getting late here, i'll respond in detail tomorrow. One point though
 >
-> On Tue, Jul 02, 2019 at 05:58:51PM +0200, Joerg Roedel wrote:
-> > On Tue, Jul 02, 2019 at 11:23:34AM -0400, Michael S. Tsirkin wrote: =20
-> > > I can drop virtio iommu from my tree. Where's yours? I'd like to take=
- a
-> > > last look and send an ack. =20
-> >=20
-> > It is not in my tree yet, because I was waiting for your ack on the
-> > patches wrt. the spec.
-> >=20
-> > Given that the merge window is pretty close I can't promise to take it
-> > into my tree for v5.3 when you ack it, so if it should go upstream this
-> > time its better to keep it in your tree.
->=20
-> Hmm. But then the merge build fails. I guess I will have to include the
-> patch in the pull request then?
->=20
+>[...]
+>>
+>> This special use-case, seems confined to your driver. And Ilias told me
+>> that XDP is not really a performance benefit for this driver as the HW
+>> PPS-limit is hit before the XDP and netstack limit.  I ask, does it
+>> make sense to add XDP to this driver, if it complicates the code for
+>> everybody else?
+>I think yes. This is a widely used driver on TI embedded devices so having XDP
+>to play along is a nice feature. It's also the first and only armv7 we have
+>supporting this. Ivan already found a couple of issues due to the 32-bit
+>architecture he is trying to fix, i think there's real benefit in having that,
+>performance aside.
+>I fully agree we should not impact the performance of the API to support a
+>special hardware though. I'll have a look on the 2 solutions tomorrow, but the
+>general approach on this one should be 'the simpler the better'
+>
+>Cheers
+>/Ilias
 
-All you (and the driver-core maintainer) need to do is make sure you
-tell Linus that the merge requires the fix ... he can then apply it to
-the merge commit just as I have.  Linus has asked that maintainers do
-not (in general) cross merge to avoid these (semantic) conflicts.
-Sometimes, in more complex cases, it may be necessary for maintainers
-to share a (non changing) subset of their trees, but this case is
-pretty trivial.
+BTW even w/o optimization it has close to 300kpps (but with increased number of
+descs) on drop which is very close to netsec measurements Ilias sent. But from
+what I know there is no h/w limit on cpsw at all that this CPU can serve, so
+my assumption it's rather s/w limit. But that's not main here and XDP usage
+has not been estimated enough yet in embedded, where hi speed not only benefit
+that can be taken from XDP.
 
---=20
-Cheers,
-Stephen Rothwell
+I need more clear circumstances to send v6 ...
 
---Sig_/10I6MeCphAWQjths92+eNZc
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0bz3UACgkQAVBC80lX
-0GzicQf/dn2NLumpiNgDiKhDjQHDmIflcbEz96E8ZDMp2tfw7qndD4faMaO/28aA
-MAp5jUA3oberdrKjDR8PYeNv/x3u0D4zqI/Tgqdof64aeWPeMgdE6T8khMhb4FZI
-onEPyVzZpA926K8unDteO7mfFLEqiyVJi7Iw1Wij2zm2NHTIFjMp5HYmyhaSsLxs
-/hVEm4zaNcHrw+QdE+Rm9tpT5w0NSKzBP+eXISyRsoqm7JVBVzRixApQa14wfnh4
-QknkwsrPSk+Vo4yrFhHciVs4VfweT044j8P5K30CLeNk9SQ8AQOmzcRlZUNw6I/X
-PYQLovVVb4jLn0xV4EfIULcT7gvmqg==
-=JGpW
------END PGP SIGNATURE-----
-
---Sig_/10I6MeCphAWQjths92+eNZc--
+-- 
+Regards,
+Ivan Khoronzhuk
