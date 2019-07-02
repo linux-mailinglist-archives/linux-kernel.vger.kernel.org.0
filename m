@@ -2,180 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1CA25CF48
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 14:18:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 498405CF6B
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 14:28:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726830AbfGBMSQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 08:18:16 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:41197 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725922AbfGBMSP (ORCPT
+        id S1726963AbfGBM2h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 08:28:37 -0400
+Received: from bmailout3.hostsharing.net ([176.9.242.62]:47591 "EHLO
+        bmailout3.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725922AbfGBM2g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 08:18:15 -0400
-Received: by mail-oi1-f194.google.com with SMTP id g7so12840265oia.8
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 05:18:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=EQFPfKnigVqvBSqD9eQKtRGLDR0XGFyOvketyNfarh4=;
-        b=ls2sEpPFocepLR1LGzbnqUzUwF+ciDgl01tJ7V/hLHyZtwBlogxVkrUQFcWfjlxIvu
-         q+nn6CIlHJBl7dcMXZJ90rSMk+VevPYy6tQjj/sW0ugvjNiEBpZuTQCGH2zF8lU52T26
-         iVKmoD3dbzIMHqCHvQ5odNKYUmzon2UFN0V5pr108k4+aDXs+lmAcaP9f1IvRZC0A+UY
-         NE3kzN9l1fPaqSTDpH1wrPsOTRuPHgIoILtDfPn/yh2jkBIw1hiyPTg3F0LMRHf3miCh
-         FELJ2Y/H8vxeYrHTPwMhYh+shlDV/cQna94UoGmpMUChneBkvz2R8ZIXP4k/4ndhUxQK
-         l3NA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=EQFPfKnigVqvBSqD9eQKtRGLDR0XGFyOvketyNfarh4=;
-        b=c1cwMgACY/iospBGv0oX45/TiCxgljeWidcrm9+2CYp/oH6saFu1uGlBuYxqDqj4aj
-         k/lRdpz52WohcUXyYwsbHzBxd+S6Ncdg7e/da7MMFycwsePEqLJe4hMn1v40ZqcwwCld
-         +6RSzKrjGSmzaOgBgna+RiYWaBQo5TvBzYziyhBM8OU4nTDHW/XAZY8THiLAOwgWu64R
-         ChF/UzHYZ+RTIPHf7ISdk0RM1AuGTR04y7ScIQVBYewZos92ENnB99xZ/h/PFSZu33Yk
-         0XGNBqjoOzrzVpyI+qJWXER38c1HHn9Ee4XdQMCVlAmYWoF2yGSE/kTtS+oATNAKciPX
-         wiBg==
-X-Gm-Message-State: APjAAAUIc/b30aAxXZWvjD1SeaLRkhEJNSV/GzlCpPPh5DRoSzz2wjHX
-        FNbXm4dl6MNZ8M9Ui312WOuS3JIz1dK9kgEemoU=
-X-Google-Smtp-Source: APXvYqyt7Ig9UUzbNaFPCtBVZS+wdjqfYzgY/wZ2HVVvdVJosrc4gzvrc4xAGX15Elp6hune+llTQZ21TxydrUFTt6U=
-X-Received: by 2002:a05:6808:1d9:: with SMTP id x25mr2660841oic.21.1562069894627;
- Tue, 02 Jul 2019 05:18:14 -0700 (PDT)
+        Tue, 2 Jul 2019 08:28:36 -0400
+X-Greylist: delayed 436 seconds by postgrey-1.27 at vger.kernel.org; Tue, 02 Jul 2019 08:28:35 EDT
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
+        by bmailout3.hostsharing.net (Postfix) with ESMTPS id 787F8100D9405;
+        Tue,  2 Jul 2019 14:21:18 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+        id E20E6132E3E; Tue,  2 Jul 2019 14:21:17 +0200 (CEST)
+Date:   Tue, 2 Jul 2019 14:21:17 +0200
+From:   Lukas Wunner <lukas@wunner.de>
+To:     linmiaohe <linmiaohe@huawei.com>
+Cc:     "bhelgaas@google.com" <bhelgaas@google.com>,
+        "andy.shevchenko@gmail.com" <andy.shevchenko@gmail.com>,
+        "rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Mingfangsen <mingfangsen@huawei.com>
+Subject: Re: A question about shpcp.
+Message-ID: <20190702122117.vl2opo55zpsykjf6@wunner.de>
+References: <d87dfa281d0d4e7da3f6bf714a7c2e5a@huawei.com>
 MIME-Version: 1.0
-References: <20190630075650.8516-1-lpf.vector@gmail.com> <20190701092037.GL6376@dhcp22.suse.cz>
- <20190701101121.kyg65fbcd7reszk7@pc636>
-In-Reply-To: <20190701101121.kyg65fbcd7reszk7@pc636>
-From:   oddtux <lpf.vector@gmail.com>
-Date:   Tue, 2 Jul 2019 20:18:03 +0800
-Message-ID: <CAD7_sbEwxk-avBMONmihHOeKAnWoeANLQ7cR6LBO2YfzJ5Q8kw@mail.gmail.com>
-Subject: Re: [PATCH 0/5] mm/vmalloc.c: improve readability and rewrite vmap_area
-To:     Uladzislau Rezki <urezki@gmail.com>
-Cc:     Michal Hocko <mhocko@kernel.org>, akpm@linux-foundation.org,
-        peterz@infradead.org, rpenyaev@suse.de, guro@fb.com,
-        aryabinin@virtuozzo.com, rppt@linux.ibm.com, mingo@kernel.org,
-        rick.p.edgecombe@intel.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d87dfa281d0d4e7da3f6bf714a7c2e5a@huawei.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Uladzislau Rezki <urezki@gmail.com> =E4=BA=8E2019=E5=B9=B47=E6=9C=881=E6=97=
-=A5=E5=91=A8=E4=B8=80 =E4=B8=8B=E5=8D=886:11=E5=86=99=E9=81=93=EF=BC=9A
->
-> On Mon, Jul 01, 2019 at 11:20:37AM +0200, Michal Hocko wrote:
-> > On Sun 30-06-19 15:56:45, Pengfei Li wrote:
-> > > Hi,
-> > >
-> > > This series of patches is to reduce the size of struct vmap_area.
-> > >
-> > > Since the members of struct vmap_area are not being used at the same =
-time,
-> > > it is possible to reduce its size by placing several members that are=
- not
-> > > used at the same time in a union.
-> > >
-> > > The first 4 patches did some preparatory work for this and improved
-> > > readability.
-> > >
-> > > The fifth patch is the main patch, it did the work of rewriting vmap_=
-area.
-> > >
-> > > More details can be obtained from the commit message.
-> >
-> > None of the commit messages talk about the motivation. Why do we want t=
-o
-> > add quite some code to achieve this? How much do we save? This all
-> > should be a part of the cover letter.
-> >
-> > > Thanks,
-> > >
-> > > Pengfei
-> > >
-> > > Pengfei Li (5):
-> > >   mm/vmalloc.c: Introduce a wrapper function of insert_vmap_area()
-> > >   mm/vmalloc.c: Introduce a wrapper function of
-> > >     insert_vmap_area_augment()
-> > >   mm/vmalloc.c: Rename function __find_vmap_area() for readability
-> > >   mm/vmalloc.c: Modify function merge_or_add_vmap_area() for readabil=
-ity
-> > >   mm/vmalloc.c: Rewrite struct vmap_area to reduce its size
-> > >
-> > >  include/linux/vmalloc.h |  28 +++++---
-> > >  mm/vmalloc.c            | 144 +++++++++++++++++++++++++++-----------=
---
-> > >  2 files changed, 117 insertions(+), 55 deletions(-)
-> > >
-> > > --
-> > > 2.21.0
->
-> > > Pengfei Li (5):
-> > >   mm/vmalloc.c: Introduce a wrapper function of insert_vmap_area()
-> > >   mm/vmalloc.c: Introduce a wrapper function of
-> > >     insert_vmap_area_augment()
-> > >   mm/vmalloc.c: Rename function __find_vmap_area() for readability
-> > >   mm/vmalloc.c: Modify function merge_or_add_vmap_area() for readabil=
-ity
-> > >   mm/vmalloc.c: Rewrite struct vmap_area to reduce its size
-> Fitting vmap_area to 1 cacheline boundary makes sense to me. I was thinki=
-ng about
-> that and i have patches in my pipeline to send out but implementation is =
-different.
->
-> I had a look at all 5 patches. What you are doing is reasonable to me, i =
-mean when
-> it comes to the idea of reducing the size to L1 cache line.
->
+On Thu, Jun 27, 2019 at 12:16:18PM +0000, linmiaohe wrote:
+> In qemu+shpcp+pcie scene, hotplug a network card(virtio) would take more
+> than 5 seconds. It's because 5 seconds delayed_work in func
+> handle_button_press_event with case STATIC_STATE. And this will break some
+> protocols with timeout within 5 seconds.
+> It's very nice of you if you could tell me why is 5*HZ there and if this
+> delay can be reduced?
 
-Thank you for your review.
+According to Table 2-4 of the PCI Standard Hot-Plug Controller and
+Subsystem Specification, "System software is waiting 5 seconds to
+provide the user with an opportunity to cancel the hot-plug operation."
+(http://drydkim.com/MyDocuments/PCI%20Spec/specifications/shpc1_0.pdf)
 
-> I have a concern about implementation and all logic around when we can us=
-e va_start
-> and when it is something else. It is not optimal at least to me, from per=
-formance point
-> of view and complexity. All hot paths and tree traversal are affected by =
-that.
->
-> For example running the vmalloc test driver against this series shows the=
- following
-> delta:
->
-> <5.2.0-rc6+>
-> Summary: fix_size_alloc_test passed: loops: 1000000 avg: 969370 usec
-> Summary: full_fit_alloc_test passed: loops: 1000000 avg: 989619 usec
-> Summary: long_busy_list_alloc_test loops: 1000000 avg: 12895813 usec
-> <5.2.0-rc6+>
->
-> <this series>
-> Summary: fix_size_alloc_test passed: loops: 1000000 avg: 1098372 usec
-> Summary: full_fit_alloc_test passed: loops: 1000000 avg: 1167260 usec
-> Summary: long_busy_list_alloc_test passed: loops: 1000000 avg: 12934286 u=
-sec
-> <this series>
->
-> For example, the degrade in second test is ~15%.
->
-> --
-> Vlad Rezki
+So the reason the delay can't be reduced or removed is because the spec
+mandates it.
 
-Hi, Vlad
+Thanks,
 
-I think the reason for the performance degradation is that the value
-of va_start is obtained by va->vm->addr.
-
-And since the vmap area in the BUSY tree is always page-aligned,
-there is no reason for _va_vmlid to override va_start, just let
-the va->flags use the bits that lower than PAGE_OFFSET.
-
-I will use this implementation in the next version and show almost
-no performance penalty in my local tests.
-
-I will send the next version soon.
-
-Thank you for taking your time for the review.
-
-Best regards,
-
-Pengfei
+Lukas
