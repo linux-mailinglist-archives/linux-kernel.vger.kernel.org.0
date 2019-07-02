@@ -2,46 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 244A15D00E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 15:05:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B5865D005
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 15:05:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727177AbfGBNFG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 09:05:06 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40602 "EHLO
+        id S1727127AbfGBNE7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 09:04:59 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40372 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727121AbfGBNFC (ORCPT
+        with ESMTP id S1727089AbfGBNE5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 09:05:02 -0400
+        Tue, 2 Jul 2019 09:04:57 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=lCU9+nRey/mEaOgxKDfHQEITQKqaCs5a/M4AOPAoImM=; b=XEMxU/VvqMkf
-        9KUmnM5sDBnFcSUSdafJTdMLTpwsvu9JxIjxKWR7aCR5BQ53jPtsxTU5TMaEILE/R5iaQMP32nDqF
-        JQZHPcLjRpWITIm3GaB7K5TrbDsyM8f52amo+PUo/oeAmmMyHM/Wo68uapNE3tlObUL0xuBx3LUGR
-        cnyMU=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=finisterre.sirena.org.uk)
+        List-Archive; bh=+m5IGuZkVFXcM+PPemNdUpIzCK7jbrEJHcwpeMMMscE=; b=GdqpzKnQcQx2
+        dLR8abH0dl6zLWi6qjCpkMatPW3/TfyGAbhlXUwGAzVp4px/2M19toEkgAuqwXMcu9gRIoaQ/nDqK
+        UNR3SlM83MplYFzewUq7dWcWSNG4de2Aetu6HWxvoDFWIWYZV3gq/+lCzRvCNRFS2P1Lex+BG0JH0
+        wbSjk=;
+Received: from [2001:470:1f1d:6b5:7e7a:91ff:fede:4a45] (helo=finisterre.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hiISh-0002Na-3d; Tue, 02 Jul 2019 13:04:43 +0000
+        id 1hiISh-0002Nb-AM; Tue, 02 Jul 2019 13:04:43 +0000
 Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-        id 8C66144004A; Tue,  2 Jul 2019 14:04:42 +0100 (BST)
+        id AA6C844004B; Tue,  2 Jul 2019 14:04:42 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     alsa-devel@alsa-project.org, Bard Liao <bardliao@realtek.com>,
+Cc:     alsa-devel@alsa-project.org,
+        Brian Austin <brian.austin@cirrus.com>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
         Jaroslav Kysela <perex@perex.cz>,
         kernel-janitors@vger.kernel.org,
         Liam Girdwood <lgirdwood@gmail.com>,
         linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Oder Chiou <oder_chiou@realtek.com>,
+        patches@opensource.cirrus.com,
+        Paul Handrigan <Paul.Handrigan@cirrus.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
         Takashi Iwai <tiwai@suse.com>
-Subject: Applied "ASoC: rt1308: Fix platform_no_drv_owner.cocci warnings" to the asoc tree
-In-Reply-To: <20190702061738.45878-1-yuehaibing@huawei.com>
+Subject: Applied "ASoC: madera: Remove duplicated include from cs47l35.c" to the asoc tree
+In-Reply-To: <20190629024333.177027-1-yuehaibing@huawei.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190702130442.8C66144004A@finisterre.sirena.org.uk>
+Message-Id: <20190702130442.AA6C844004B@finisterre.sirena.org.uk>
 Date:   Tue,  2 Jul 2019 14:04:42 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -50,7 +54,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: rt1308: Fix platform_no_drv_owner.cocci warnings
+   ASoC: madera: Remove duplicated include from cs47l35.c
 
 has been applied to the asoc tree at
 
@@ -75,32 +79,31 @@ to this mail.
 Thanks,
 Mark
 
-From 2d2e331697bfba9dcc59217b1fcbfa2c144f0659 Mon Sep 17 00:00:00 2001
+From 559e92f78778a171adfb152f49a78e202f5b39df Mon Sep 17 00:00:00 2001
 From: YueHaibing <yuehaibing@huawei.com>
-Date: Tue, 2 Jul 2019 06:17:38 +0000
-Subject: [PATCH] ASoC: rt1308: Fix platform_no_drv_owner.cocci warnings
+Date: Sat, 29 Jun 2019 02:43:33 +0000
+Subject: [PATCH] ASoC: madera: Remove duplicated include from cs47l35.c
 
-Remove .owner field if calls are used which set it automatically
-Generated by: scripts/coccinelle/api/platform_no_drv_owner.cocci
+Remove duplicated include.
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/rt1308.c | 1 -
+ sound/soc/codecs/cs47l35.c | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/sound/soc/codecs/rt1308.c b/sound/soc/codecs/rt1308.c
-index 619a630e982e..d673506c7c39 100755
---- a/sound/soc/codecs/rt1308.c
-+++ b/sound/soc/codecs/rt1308.c
-@@ -884,7 +884,6 @@ static void rt1308_i2c_shutdown(struct i2c_client *client)
- static struct i2c_driver rt1308_i2c_driver = {
- 	.driver = {
- 		.name = "rt1308",
--		.owner = THIS_MODULE,
- 		.of_match_table = of_match_ptr(rt1308_of_match),
- 		.acpi_match_table = ACPI_PTR(rt1308_acpi_match),
- 	},
+diff --git a/sound/soc/codecs/cs47l35.c b/sound/soc/codecs/cs47l35.c
+index 511d0d6fa962..e3585c1dab3d 100644
+--- a/sound/soc/codecs/cs47l35.c
++++ b/sound/soc/codecs/cs47l35.c
+@@ -19,7 +19,6 @@
+ #include <sound/pcm_params.h>
+ #include <sound/soc.h>
+ #include <sound/tlv.h>
+-#include <sound/tlv.h>
+ 
+ #include <linux/irqchip/irq-madera.h>
+ #include <linux/mfd/madera/core.h>
 -- 
 2.20.1
 
