@@ -2,85 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D71755D012
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 15:05:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8360B5CFF0
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 15:02:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727107AbfGBNE4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 09:04:56 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:8682 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726623AbfGBNEz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 09:04:55 -0400
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 4C35869C953EE121C7D9;
-        Tue,  2 Jul 2019 21:01:45 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS409-HUB.china.huawei.com
- (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Tue, 2 Jul 2019
- 21:01:38 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <kashyap.desai@broadcom.com>, <sumit.saxena@broadcom.com>,
-        <shivasharan.srikanteshwara@broadcom.com>, <jejb@linux.ibm.com>,
-        <martin.petersen@oracle.com>
-CC:     <linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
-        <megaraidlinux.pdl@broadcom.com>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] scsi: megaraid_sas: Make some symbols static
-Date:   Tue, 2 Jul 2019 21:01:14 +0800
-Message-ID: <20190702130114.29356-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+        id S1726917AbfGBNCH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 09:02:07 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:46476 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725922AbfGBNCH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 09:02:07 -0400
+Received: by mail-pl1-f195.google.com with SMTP id e5so334868pls.13
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 06:02:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=khyDU3y3brXaa9hnvY2oQK5kO8QsNPfjkHRRye2R9w0=;
+        b=pw4CVxvBDMiI9DQXD67VcLNExsOKGO6Zdy5ZP+qlcS8miUB1MOr0/i+v96aAF6xyFM
+         CmT33pBdJkWArwAqk/lsrdmlxAgq9gjOm3ExOQRf3ezYc4KwEC75XoeC3uZL9uMEzzFK
+         sw4fO/94cXLyEkjHpEBHeDH9tuW4eSzm567+gvBGpnzwTUlEXuAjjnh48qq/00SgIozW
+         9P8TLdZgqvNMB9VodK6G0wU0A0n15/BCL3jEqCgyOD/QmI5xUfPdwA4G4evZQC+pfFxH
+         kBX1ye9eVireEvfCwY7gTyNgH94dU2KrCFoXlxQJeePUOaUkFp5fWhyXz6mIUxtB+bkn
+         rUVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=khyDU3y3brXaa9hnvY2oQK5kO8QsNPfjkHRRye2R9w0=;
+        b=Gq7E3JlgcS06mfKXpmDBNtaXZek6tu8OIiNp5rb72NzfbIFvKRqf1fZ4ANXgytRbfL
+         S809ftiVSDQB7qQmK7q8zMf+FjDHFUXLdNI1iPYpEBXuIsknMefUzZnAnRZoFOL+6oSN
+         gJWnhOu0dmCS0Wmn9fzk29972P2jkeOnyJ26qO/j8lTusqCrpimB0r5c8nDJmah0Swp2
+         Itg9SgZ4m1/RunnfL3x0I0Ey/dlf6dq84gx5WS9AoLfuBR7mB+YdyEQoTYIF/2tVcxYl
+         DXIV09WmdT1e6OzZQyED29X7U2gMiAgeXdXz3GYZmsCNjPigpQ3Hn2D3V5cK/VbY1aE2
+         j5/Q==
+X-Gm-Message-State: APjAAAX5d9IPcWetvTW0DMLyE43caVMA4+y5mi/YWVOoxIXzmzKzKfkm
+        S69DjgZDS7gEKVJFJhZHKrZ+gfeH
+X-Google-Smtp-Source: APXvYqzB1pF/qUqyAlCHdAxDN/p/CNLQWGgTzgY98AvJhwovS+uWV6NhSEOB0TQnHROUBBMuc/ZzeA==
+X-Received: by 2002:a17:902:2868:: with SMTP id e95mr32933747plb.319.1562072526735;
+        Tue, 02 Jul 2019 06:02:06 -0700 (PDT)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id z22sm10855267pgu.28.2019.07.02.06.02.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 02 Jul 2019 06:02:05 -0700 (PDT)
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-mm@kvack.org, Stephen Rothwell <sfr@canb.auug.org.au>,
+        Robin Murphy <robin.murphy@arm.com>,
+        linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH -next] mm: Mark undo_dev_pagemap as __maybe_unused
+Date:   Tue,  2 Jul 2019 06:02:03 -0700
+Message-Id: <1562072523-22311-1-git-send-email-linux@roeck-us.net>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix sparse warnings:
+Several mips builds generate the following build warning.
 
-drivers/scsi/megaraid/megaraid_sas_base.c:271:1: warning: symbol 'megasas_issue_dcmd' was not declared. Should it be static?
-drivers/scsi/megaraid/megaraid_sas_base.c:2227:6: warning: symbol 'megasas_do_ocr' was not declared. Should it be static?
-drivers/scsi/megaraid/megaraid_sas_base.c:3194:25: warning: symbol 'megaraid_host_attrs' was not declared. Should it be static?
+mm/gup.c:1788:13: warning: 'undo_dev_pagemap' defined but not used
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+The function is declared unconditionally but only called from behind
+various ifdefs. Mark it __maybe_unused.
+
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 ---
- drivers/scsi/megaraid/megaraid_sas_base.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ mm/gup.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/megaraid/megaraid_sas_base.c b/drivers/scsi/megaraid/megaraid_sas_base.c
-index 80ab970..49e0f3d 100644
---- a/drivers/scsi/megaraid/megaraid_sas_base.c
-+++ b/drivers/scsi/megaraid/megaraid_sas_base.c
-@@ -280,7 +280,7 @@ void megasas_set_dma_settings(struct megasas_instance *instance,
- 	}
+diff --git a/mm/gup.c b/mm/gup.c
+index 7dde2e3a1963..95a373bd8f21 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -1785,7 +1785,8 @@ static inline pte_t gup_get_pte(pte_t *ptep)
  }
+ #endif /* CONFIG_GUP_GET_PTE_LOW_HIGH */
  
--void
-+static void
- megasas_issue_dcmd(struct megasas_instance *instance, struct megasas_cmd *cmd)
+-static void undo_dev_pagemap(int *nr, int nr_start, struct page **pages)
++static void __maybe_unused undo_dev_pagemap(int *nr, int nr_start,
++					    struct page **pages)
  {
- 	instance->instancet->fire_cmd(instance,
-@@ -2237,7 +2237,7 @@ megasas_internal_reset_defer_cmds(struct megasas_instance *instance);
- static void
- process_fw_state_change_wq(struct work_struct *work);
- 
--void megasas_do_ocr(struct megasas_instance *instance)
-+static void megasas_do_ocr(struct megasas_instance *instance)
- {
- 	if ((instance->pdev->device == PCI_DEVICE_ID_LSI_SAS1064R) ||
- 	(instance->pdev->device == PCI_DEVICE_ID_DELL_PERC5) ||
-@@ -3303,7 +3303,7 @@ static DEVICE_ATTR_RO(fw_cmds_outstanding);
- static DEVICE_ATTR_RO(dump_system_regs);
- static DEVICE_ATTR_RO(raid_map_id);
- 
--struct device_attribute *megaraid_host_attrs[] = {
-+static struct device_attribute *megaraid_host_attrs[] = {
- 	&dev_attr_fw_crash_buffer_size,
- 	&dev_attr_fw_crash_buffer,
- 	&dev_attr_fw_crash_state,
+ 	while ((*nr) - nr_start) {
+ 		struct page *page = pages[--(*nr)];
 -- 
 2.7.4
-
 
