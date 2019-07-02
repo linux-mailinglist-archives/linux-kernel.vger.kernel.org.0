@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 827BD5CD9C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 12:35:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E26DA5CD9E
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 12:35:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727066AbfGBKfD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 06:35:03 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:46048 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725801AbfGBKfC (ORCPT
+        id S1727111AbfGBKfL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 06:35:11 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:35778 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725801AbfGBKfK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 06:35:02 -0400
-Received: by mail-ot1-f67.google.com with SMTP id x21so16635304otq.12
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 03:35:02 -0700 (PDT)
+        Tue, 2 Jul 2019 06:35:10 -0400
+Received: by mail-oi1-f194.google.com with SMTP id a127so12617977oii.2
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 03:35:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=KMNCKIxUd7C3QCEkBdcu4g6ofRmUIVRG/BHPe4FFBiI=;
-        b=b3Ynb3mmyQPqXrGhUFTeBcfcKHtyocPl8Z41p2F8I32GBNu0jF2BwO2+v3JgI33/vX
-         jdTP5yPdtLr0AmtRijQulnFrapU3F7Wo1t9ouWCA8DB3JJmF+5U2+qFa/t67GXudzCMz
-         ly/Us9RlBLH/YWRpgziYH+onbCeHqjhF+Jsx8f+BdbQnJpk0sZsc1lMdFG2vqOxBUmi3
-         zREazE8Zg6hRzYOeK/wcN6BSghqPHghcuZXM/aLU82P664LzADeiNUaoRo96TUXapNFl
-         VMQxHdl/BOL+DLppX1ABrQiPd4KpJ6Qar4Ka5KVHxxtBxrd0PruJ1D9m2pAFFESgzNds
-         V19Q==
+        bh=utMbP5r99vkrLRwFC9XJUF/q6Xmj0kpzfxPbj/zmwoc=;
+        b=g07M7EfAimyBJUBTxRPreg/5uLOzsLgF+3r66hneNUCiDvvGk5WbVUCT/5bnUBY+wb
+         FYofzKOxyhyHecehXrTFZp66JEf6ROxWUQ5wu2s+QCMytOkRacbVx59muNBI6eDLNZpa
+         lnexdzYvCRMZQQHS0nzPHi9N/5iQCdz5m5FyE9VEXnXVl11RMplHf2yRET+rU7XTH5As
+         Wy97HMCtEc0ir9AQEiywnG/ejR25uR4vQuPE+R2b2XrppBnvm3nq3qKb6Np/8Av7daH/
+         NJZ9kpbNTrdJVQsVpvesG5D+brZpx2D9s7NMI4g0A3BDoy+T5Rk0y41vDwNsooeaUCFW
+         ZwWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=KMNCKIxUd7C3QCEkBdcu4g6ofRmUIVRG/BHPe4FFBiI=;
-        b=T3LRONcddq5FYPLtvwQLApURaiguPuBowGSFl2dgVmnxcCwvT44VxM+oHZb9pUYVKt
-         wd+mvxW8A9e91ecPpFyBygXZxbVx8w9dfTAmGknctLxsQ9H5wT8yJNEyzZiZvSUJmJz4
-         prTFlOl/kSNFGczsEsNWgVfv9z2n/91It1OJrWVLmfIuvNH36gF78/wB5012sgAHdqOa
-         MyD6S/84q9kb4dkM7lv2TSNWqAbYEnCSZt2/h1pot1Ur6rwSCUqlZB2xIt/FNhToVAv/
-         TZNikutlWu/sNAnLYpMxOrUGZ0JXmm/4Rt3qj8vsV153WyeRBIQS8l1Iql2GYE8EDTGt
-         xElA==
-X-Gm-Message-State: APjAAAVBzDy6XLDPKFEU5Q544cFy2KKhu6n/J/tRzHwVV0Q++MzSEt6A
-        LbH18aI/VtH0AFrYgUzZbM+aUA==
-X-Google-Smtp-Source: APXvYqwRW1eo9HwE7l93QclNUXgFCxIkpcB0HGbeFgij2hTMSad7SU3toR850JGxhkFCj/Cfl4JFQA==
-X-Received: by 2002:a9d:6ac9:: with SMTP id m9mr19994522otq.242.1562063701875;
-        Tue, 02 Jul 2019 03:35:01 -0700 (PDT)
+        bh=utMbP5r99vkrLRwFC9XJUF/q6Xmj0kpzfxPbj/zmwoc=;
+        b=IwNfer62tqDFk1Hvlr/OrFxXEKNnNniFp1KEijs7OEN0727JcPkgZIAZDfiDMpDlfT
+         VyEZJbaJbBAqlcrFE0moxnhTtTna6am9QhUAnTRftzo8dj2U+70IcVTynW0/3FR5XROj
+         6juP21uoeXpFBBrtPYhbo45PQkYljO0yqUPCsUHwiJ1m6Va433EmStU1vwP+MPyupOyp
+         zz5TA3Ybv24kAuVXw4DbL04jmbEAwBf2h1pA88PIzP2MaEdypf1Sm/oMiy+5iLdsN7QA
+         Y3y1OpQDpVXf4CbJAi+/9PDW6pRUV56W+RZCVpA/eXi7M0ADkS7ggcY2n5F4p68fXGVx
+         XdEA==
+X-Gm-Message-State: APjAAAVSzzZYf0rjXghSKzLNik1AtCkRtrR76atbPv3wOU3CP36wlb1o
+        /i1RbBGBMkMqPFF869uTcK01JQ==
+X-Google-Smtp-Source: APXvYqz27DHhsloV2s8JFprH1yJgfKfeYbRlyI8A/LXKmBzUKXKTnkrUL+uycpLRiZ2UmcR06WtYkA==
+X-Received: by 2002:aca:338b:: with SMTP id z133mr2465469oiz.97.1562063709968;
+        Tue, 02 Jul 2019 03:35:09 -0700 (PDT)
 Received: from localhost.localdomain (li964-79.members.linode.com. [45.33.10.79])
-        by smtp.gmail.com with ESMTPSA id 61sm5139805otx.8.2019.07.02.03.34.54
+        by smtp.gmail.com with ESMTPSA id 61sm5139805otx.8.2019.07.02.03.35.02
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 02 Jul 2019 03:35:01 -0700 (PDT)
+        Tue, 02 Jul 2019 03:35:09 -0700 (PDT)
 From:   Leo Yan <leo.yan@linaro.org>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
@@ -69,9 +69,9 @@ To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
         Alexey Budankov <alexey.budankov@linux.intel.com>,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc:     Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH v1 02/11] perf stat: Smatch: Fix use-after-freed pointer
-Date:   Tue,  2 Jul 2019 18:34:11 +0800
-Message-Id: <20190702103420.27540-3-leo.yan@linaro.org>
+Subject: [PATCH v1 03/11] perf top: Smatch: Fix potential NULL pointer dereference
+Date:   Tue,  2 Jul 2019 18:34:12 +0800
+Message-Id: <20190702103420.27540-4-leo.yan@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190702103420.27540-1-leo.yan@linaro.org>
 References: <20190702103420.27540-1-leo.yan@linaro.org>
@@ -80,35 +80,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Based on the following report from Smatch, fix the use-after-freed
-pointer.
+Based on the following report from Smatch, fix the potential
+NULL pointer dereference check.
 
-  tools/perf/builtin-stat.c:1353
-  add_default_attributes() warn: passing freed memory 'str'.
+  tools/perf/builtin-top.c:109
+  perf_top__parse_source() warn: variable dereferenced before check 'he'
+  (see line 103)
 
-The pointer 'str' has been freed but later it is still passed into the
-function parse_events_print_error().  This patch fixes this
-use-after-freed issue.
+  tools/perf/builtin-top.c:233
+  perf_top__show_details() warn: variable dereferenced before check 'he'
+  (see line 228)
+
+tools/perf/builtin-top.c
+101 static int perf_top__parse_source(struct perf_top *top, struct hist_entry *he)
+102 {
+103         struct perf_evsel *evsel = hists_to_evsel(he->hists);
+                                                      ^^^^
+104         struct symbol *sym;
+105         struct annotation *notes;
+106         struct map *map;
+107         int err = -1;
+108
+109         if (!he || !he->ms.sym)
+110                 return -1;
+
+This patch moves the values assignment after validating pointer 'he'.
 
 Signed-off-by: Leo Yan <leo.yan@linaro.org>
 ---
- tools/perf/builtin-stat.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/builtin-top.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index 8a35fc5a7281..de0f6d0e96a2 100644
---- a/tools/perf/builtin-stat.c
-+++ b/tools/perf/builtin-stat.c
-@@ -1349,8 +1349,8 @@ static int add_default_attributes(void)
- 				fprintf(stderr,
- 					"Cannot set up top down events %s: %d\n",
- 					str, err);
--				free(str);
- 				parse_events_print_error(&errinfo, str);
-+				free(str);
- 				return -1;
- 			}
- 		} else {
+diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
+index 12b6b15a9675..13234c322981 100644
+--- a/tools/perf/builtin-top.c
++++ b/tools/perf/builtin-top.c
+@@ -100,7 +100,7 @@ static void perf_top__resize(struct perf_top *top)
+ 
+ static int perf_top__parse_source(struct perf_top *top, struct hist_entry *he)
+ {
+-	struct perf_evsel *evsel = hists_to_evsel(he->hists);
++	struct perf_evsel *evsel;
+ 	struct symbol *sym;
+ 	struct annotation *notes;
+ 	struct map *map;
+@@ -109,6 +109,8 @@ static int perf_top__parse_source(struct perf_top *top, struct hist_entry *he)
+ 	if (!he || !he->ms.sym)
+ 		return -1;
+ 
++	evsel = hists_to_evsel(he->hists);
++
+ 	sym = he->ms.sym;
+ 	map = he->ms.map;
+ 
+@@ -225,7 +227,7 @@ static void perf_top__record_precise_ip(struct perf_top *top,
+ static void perf_top__show_details(struct perf_top *top)
+ {
+ 	struct hist_entry *he = top->sym_filter_entry;
+-	struct perf_evsel *evsel = hists_to_evsel(he->hists);
++	struct perf_evsel *evsel;
+ 	struct annotation *notes;
+ 	struct symbol *symbol;
+ 	int more;
+@@ -233,6 +235,8 @@ static void perf_top__show_details(struct perf_top *top)
+ 	if (!he)
+ 		return;
+ 
++	evsel = hists_to_evsel(he->hists);
++
+ 	symbol = he->ms.sym;
+ 	notes = symbol__annotation(symbol);
+ 
 -- 
 2.17.1
 
