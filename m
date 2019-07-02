@@ -2,131 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C2FA5C7EC
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 05:43:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BA3D5C7F0
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 05:45:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727072AbfGBDn2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 23:43:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53630 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726984AbfGBDn0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 23:43:26 -0400
-Received: from localhost (c-67-180-165-146.hsd1.ca.comcast.net [67.180.165.146])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A2F33216C8;
-        Tue,  2 Jul 2019 03:43:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562039005;
-        bh=hpglW7ERyrm55bmpcpbEKVW5vzQbNVkMbUEkEXIkIDc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c3bE/O2FQS4gNNdsQDD/wyvDvFOGCPEOw2m9mBOHg0FVNXf5Mq4ak253orIHUIAI+
-         posHjFxJwvMRLCuxGKhjPQVZjqTUFrD+CwZtzSI14viOk1+Ez3Exs8ZHcHPIEN/YDn
-         JiHwsZ1WNtIQCyuVUlQE12qeQYedYyf05VeoD4zU=
-From:   Andy Lutomirski <luto@kernel.org>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     x86@kernel.org, "Bae, Chang Seok" <chang.seok.bae@intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Vegard Nossum <vegard.nossum@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, Andi Kleen <ak@linux.intel.com>,
-        Ravi Shankar <ravi.v.shankar@intel.com>
-Subject: [PATCH 3/3] x86/entry/64: Fix and clean up paranoid_exit
-Date:   Mon,  1 Jul 2019 20:43:21 -0700
-Message-Id: <59725ceb08977359489fbed979716949ad45f616.1562035429.git.luto@kernel.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <cover.1562035429.git.luto@kernel.org>
-References: <cover.1562035429.git.luto@kernel.org>
+        id S1726990AbfGBDpJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 23:45:09 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:40035 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726803AbfGBDpI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Jul 2019 23:45:08 -0400
+Received: by mail-qk1-f194.google.com with SMTP id c70so12857995qkg.7;
+        Mon, 01 Jul 2019 20:45:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=jms.id.au; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Y786NAXu4PJ1/yOc0m6s682Iasf3FFvLwD+AU2zpzZA=;
+        b=ZIxqhT7j4xKrbb3zciPjTwX8LXukbJXaGLHmMTW5D3IH3l1uurvxd+IRHm2E05cqQb
+         jCdF2Mro7GRvUnsR+N+/dyWTNxjPhnalwbf2pVKUfsetqi3dAwPbfzJFnQISKhEbznRU
+         JSz69cdkkvQOb9mTRsVMEeSTWuKhh33/UxMyE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Y786NAXu4PJ1/yOc0m6s682Iasf3FFvLwD+AU2zpzZA=;
+        b=YWGx//Kc5NAg7lLO9vkQ5yQ3PwCunVtbIAijW9XOsDbZLgWm3bRNJqh2vAeeXrg+Mt
+         aerUjCquav7rHRRREbyNSSzZcA7h0thmRR5M8/Kgr1C0zf6wChHVfY+GxC+mZatqGaku
+         URSlCNHtQKqo369wkpx341bwWFpowm4a9atris/KCoYtzxjA3TT+gQRXNeyggeIb7Fp7
+         5nc7m9Q1iEofdBl6R8gak8ZxZMJDycWV0TmnLgPGf//yLKzDAG/M/1MTC8lfHIX9Hew1
+         RtLRpBpdgRNU8bHbQublGn0RnfWoUcv3VyOlCzlzlOCgy+asojiZgS3+PaeqCtr6kbAr
+         RxbQ==
+X-Gm-Message-State: APjAAAXzf1F3uP9sLwmPNiDG2zsLU1YP6+/qTaJQUNwVPx/sthi8TTGq
+        AiVL7nMghdh9rWLJ9T5pq6gvSbJOKeulQBGp3Lg=
+X-Google-Smtp-Source: APXvYqx5IUtQ53M7iPJ4jpmAI5O8gIP8mKdvEhWkhsLgtoHu8TAM3VUWAHT2PDNR4TMI36k4H+c2ZjSMfI7PgxNRq5E=
+X-Received: by 2002:a05:620a:16d6:: with SMTP id a22mr23910647qkn.414.1562039107762;
+ Mon, 01 Jul 2019 20:45:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1561576395-6429-1-git-send-email-eajames@linux.ibm.com> <20190626194048.GA7374@roeck-us.net>
+In-Reply-To: <20190626194048.GA7374@roeck-us.net>
+From:   Joel Stanley <joel@jms.id.au>
+Date:   Tue, 2 Jul 2019 03:44:54 +0000
+Message-ID: <CACPK8Xf9MC=3oDS4=+Zr3YFW2kKL9X7P8=bDoG_jLTr9=eawkA@mail.gmail.com>
+Subject: Re: [PATCH] OCC: FSI and hwmon: Add sequence numbering
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Eddie James <eajames@linux.ibm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-hwmon@vger.kernel.org, Jean Delvare <jdelvare@suse.com>,
+        Lei YU <mine260309@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-paranoid_exit needs to restore CR3 before GSBASE.  Doing it in the
-opposite order crashes if the exception came from a context with
-user GSBASE and user CR3 -- RESTORE_CR3 cannot resture user CR3 if
-run with user GSBASE.  This results in infinitely recursing
-exceptions if user code does SYSENTER with TF set if both FSGSBASE
-and PTI are enabled.
+On Wed, 26 Jun 2019 at 19:41, Guenter Roeck <linux@roeck-us.net> wrote:
+>
+> On Wed, Jun 26, 2019 at 02:13:15PM -0500, Eddie James wrote:
+> > Sequence numbering of the commands submitted to the OCC is required by
+> > the OCC interface specification. Add sequence numbering and check for
+> > the correct sequence number on the response.
+> >
+> > Signed-off-by: Eddie James <eajames@linux.ibm.com>
+>
+> For hwmon:
+>
+> Acked-by: Guenter Roeck <linux@roeck-us.net>
+>
+> I assume this will be pushed through drivers/fsi.
 
-The old code worked if user code just set TF without SYSENTER
-because #DB from user mode is special cased in idtentry and
-paranoid_exit doesn't run.
+Yes. Eddie, can you please collect the acks and send to Greg?
 
-Fix it by cleaning up the spaghetti code.  All that paranoid_exit
-needs to do is to disable IRQs, handle IRQ tracing, then restore
-CR3, and restore GSBASE.  Simply do those actions in that order.
+Cheers,
 
-Fixes: 708078f65721 ("x86/entry/64: Handle FSGSBASE enabled paranoid entry/exit")
-Reported-by: Vegard Nossum <vegard.nossum@oracle.com>
-Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Ravi Shankar <ravi.v.shankar@intel.com>
-Cc: "Bae, Chang Seok" <chang.seok.bae@intel.com>
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
----
- arch/x86/entry/entry_64.S | 33 +++++++++++++++++----------------
- 1 file changed, 17 insertions(+), 16 deletions(-)
+Joel
 
-diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
-index 54b1b0468b2b..670306f588bf 100644
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -1256,31 +1256,32 @@ END(paranoid_entry)
- ENTRY(paranoid_exit)
- 	UNWIND_HINT_REGS
- 	DISABLE_INTERRUPTS(CLBR_ANY)
--	TRACE_IRQS_OFF_DEBUG
- 
--	/* Handle GS depending on FSGSBASE availability */
--	ALTERNATIVE "jmp .Lparanoid_exit_checkgs", "nop",X86_FEATURE_FSGSBASE
-+	/*
-+	 * The order of operations is important.  IRQ tracing requires
-+	 * kernel GSBASE and CR3.  RESTORE_CR3 requires kernel GS base.
-+	 *
-+	 * NB to anyone to tries to optimize this code: this code does
-+	 * not execute at all for exceptions coming from user mode.  Those
-+	 * exceptions go through error_exit instead.
-+	 */
-+	TRACE_IRQS_IRETQ_DEBUG
-+	RESTORE_CR3	scratch_reg=%rax save_reg=%r14
-+
-+	/* Handle the three GSBASE cases. */
-+	ALTERNATIVE "jmp .Lparanoid_exit_checkgs", "", X86_FEATURE_FSGSBASE
- 
- 	/* With FSGSBASE enabled, unconditionally restore GSBASE */
- 	wrgsbase	%rbx
--	jmp	.Lparanoid_exit_no_swapgs;
-+	jmp	restore_regs_and_return_to_kernel
- 
- .Lparanoid_exit_checkgs:
- 	/* On non-FSGSBASE systems, conditionally do SWAPGS */
- 	testl	%ebx, %ebx
--	jnz	.Lparanoid_exit_no_swapgs
--	TRACE_IRQS_IRETQ
--	/* Always restore stashed CR3 value (see paranoid_entry) */
--	RESTORE_CR3	scratch_reg=%rbx save_reg=%r14
--	SWAPGS_UNSAFE_STACK
--	jmp	.Lparanoid_exit_restore
--
--.Lparanoid_exit_no_swapgs:
--	TRACE_IRQS_IRETQ_DEBUG
--	/* Always restore stashed CR3 value (see paranoid_entry) */
--	RESTORE_CR3	scratch_reg=%rbx save_reg=%r14
-+	jnz	restore_regs_and_return_to_kernel
- 
--.Lparanoid_exit_restore:
-+	/* We are returning to a context with user GSBASE. */
-+	SWAPGS_UNSAFE_STACK
- 	jmp	restore_regs_and_return_to_kernel
- END(paranoid_exit)
- 
--- 
-2.21.0
-
+>
+> Guenter
+>
+> > ---
+> >  drivers/fsi/fsi-occ.c      | 15 ++++++++++++---
+> >  drivers/hwmon/occ/common.c |  4 ++--
+> >  drivers/hwmon/occ/common.h |  1 +
+> >  3 files changed, 15 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/drivers/fsi/fsi-occ.c b/drivers/fsi/fsi-occ.c
+> > index a2301ce..7da9c81 100644
+> > --- a/drivers/fsi/fsi-occ.c
+> > +++ b/drivers/fsi/fsi-occ.c
+> > @@ -412,6 +412,7 @@ int fsi_occ_submit(struct device *dev, const void *request, size_t req_len,
+> >               msecs_to_jiffies(OCC_CMD_IN_PRG_WAIT_MS);
+> >       struct occ *occ = dev_get_drvdata(dev);
+> >       struct occ_response *resp = response;
+> > +     u8 seq_no;
+> >       u16 resp_data_length;
+> >       unsigned long start;
+> >       int rc;
+> > @@ -426,6 +427,8 @@ int fsi_occ_submit(struct device *dev, const void *request, size_t req_len,
+> >
+> >       mutex_lock(&occ->occ_lock);
+> >
+> > +     /* Extract the seq_no from the command (first byte) */
+> > +     seq_no = *(const u8 *)request;
+> >       rc = occ_putsram(occ, OCC_SRAM_CMD_ADDR, request, req_len);
+> >       if (rc)
+> >               goto done;
+> > @@ -441,11 +444,17 @@ int fsi_occ_submit(struct device *dev, const void *request, size_t req_len,
+> >               if (rc)
+> >                       goto done;
+> >
+> > -             if (resp->return_status == OCC_RESP_CMD_IN_PRG) {
+> > +             if (resp->return_status == OCC_RESP_CMD_IN_PRG ||
+> > +                 resp->seq_no != seq_no) {
+> >                       rc = -ETIMEDOUT;
+> >
+> > -                     if (time_after(jiffies, start + timeout))
+> > -                             break;
+> > +                     if (time_after(jiffies, start + timeout)) {
+> > +                             dev_err(occ->dev, "resp timeout status=%02x "
+> > +                                     "resp seq_no=%d our seq_no=%d\n",
+> > +                                     resp->return_status, resp->seq_no,
+> > +                                     seq_no);
+> > +                             goto done;
+> > +                     }
+> >
+> >                       set_current_state(TASK_UNINTERRUPTIBLE);
+> >                       schedule_timeout(wait_time);
+> > diff --git a/drivers/hwmon/occ/common.c b/drivers/hwmon/occ/common.c
+> > index d593517..a7d2b16 100644
+> > --- a/drivers/hwmon/occ/common.c
+> > +++ b/drivers/hwmon/occ/common.c
+> > @@ -124,12 +124,12 @@ struct extended_sensor {
+> >  static int occ_poll(struct occ *occ)
+> >  {
+> >       int rc;
+> > -     u16 checksum = occ->poll_cmd_data + 1;
+> > +     u16 checksum = occ->poll_cmd_data + occ->seq_no + 1;
+> >       u8 cmd[8];
+> >       struct occ_poll_response_header *header;
+> >
+> >       /* big endian */
+> > -     cmd[0] = 0;                     /* sequence number */
+> > +     cmd[0] = occ->seq_no++;         /* sequence number */
+> >       cmd[1] = 0;                     /* cmd type */
+> >       cmd[2] = 0;                     /* data length msb */
+> >       cmd[3] = 1;                     /* data length lsb */
+> > diff --git a/drivers/hwmon/occ/common.h b/drivers/hwmon/occ/common.h
+> > index fc13f3c..67e6968 100644
+> > --- a/drivers/hwmon/occ/common.h
+> > +++ b/drivers/hwmon/occ/common.h
+> > @@ -95,6 +95,7 @@ struct occ {
+> >       struct occ_sensors sensors;
+> >
+> >       int powr_sample_time_us;        /* average power sample time */
+> > +     u8 seq_no;
+> >       u8 poll_cmd_data;               /* to perform OCC poll command */
+> >       int (*send_cmd)(struct occ *occ, u8 *cmd);
+> >
+> > --
+> > 1.8.3.1
+> >
