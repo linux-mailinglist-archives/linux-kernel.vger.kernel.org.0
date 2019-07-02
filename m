@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FE855CAFF
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 10:10:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AF745CB6E
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 10:13:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728361AbfGBIKR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 04:10:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58556 "EHLO mail.kernel.org"
+        id S1728306AbfGBINO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 04:13:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55388 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727844AbfGBIKQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 04:10:16 -0400
+        id S1727503AbfGBIH5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 04:07:57 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C45952064A;
-        Tue,  2 Jul 2019 08:10:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 77F922183F;
+        Tue,  2 Jul 2019 08:07:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562055015;
-        bh=JZqU6SbEu1G9od63bFj+X/LVOZySTd08frXzcfvf4FI=;
+        s=default; t=1562054877;
+        bh=CfzKGISLy0baesUffpS+ZxMiRrjmZdabf2zmwiwTGiQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lg/UaI7oXrqm7D7XuaVfnF2lGYzWmqPV3eIs3q0nq4EFgJPzqKtcNk+bDjBM5ebKr
-         w5yMzA6gCObSv3rHwlGfHumf5RaeHStiuJi97kYHuvl9wUA9J8VJGtiPqNwyy21+5Z
-         KpMIaAV0wb9lYrKmk+gZJz18B7+dE/jlEzVNZwzQ=
+        b=GMnREkKWG2rCRf63EiFUjDoRRnSpsZVooy7P09Jp4PCeNr1unPQNDLDBddUFWnVVn
+         niMc6vNh/m6eg8rsSB3iEO3BwHetZfaJdM/PUJwA4nPgbJQ+9r+nAywueepX9FffNr
+         D+ZQCUr6I0QhCYXoN05pWKRJvx4EdpWEOTC/rGf4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        "Ewan D. Milne" <emilne@redhat.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.14 21/43] scsi: vmw_pscsi: Fix use-after-free in pvscsi_queue_lck()
-Date:   Tue,  2 Jul 2019 10:02:01 +0200
-Message-Id: <20190702080124.907127322@linuxfoundation.org>
+        stable@vger.kernel.org, Fei Li <lifei.shirley@bytedance.com>,
+        Jason Wang <jasowang@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 61/72] tun: wake up waitqueues after IFF_UP is set
+Date:   Tue,  2 Jul 2019 10:02:02 +0200
+Message-Id: <20190702080127.788211875@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190702080123.904399496@linuxfoundation.org>
-References: <20190702080123.904399496@linuxfoundation.org>
+In-Reply-To: <20190702080124.564652899@linuxfoundation.org>
+References: <20190702080124.564652899@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,52 +44,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan Kara <jack@suse.cz>
+From: Fei Li <lifei.shirley@bytedance.com>
 
-commit 240b4cc8fd5db138b675297d4226ec46594d9b3b upstream.
+[ Upstream commit 72b319dc08b4924a29f5e2560ef6d966fa54c429 ]
 
-Once we unlock adapter->hw_lock in pvscsi_queue_lck() nothing prevents just
-queued scsi_cmnd from completing and freeing the request. Thus cmd->cmnd[0]
-dereference can dereference already freed request leading to kernel crashes
-or other issues (which one of our customers observed). Store cmd->cmnd[0]
-in a local variable before unlocking adapter->hw_lock to fix the issue.
+Currently after setting tap0 link up, the tun code wakes tx/rx waited
+queues up in tun_net_open() when .ndo_open() is called, however the
+IFF_UP flag has not been set yet. If there's already a wait queue, it
+would fail to transmit when checking the IFF_UP flag in tun_sendmsg().
+Then the saving vhost_poll_start() will add the wq into wqh until it
+is waken up again. Although this works when IFF_UP flag has been set
+when tun_chr_poll detects; this is not true if IFF_UP flag has not
+been set at that time. Sadly the latter case is a fatal error, as
+the wq will never be waken up in future unless later manually
+setting link up on purpose.
 
-CC: <stable@vger.kernel.org>
-Signed-off-by: Jan Kara <jack@suse.cz>
-Reviewed-by: Ewan D. Milne <emilne@redhat.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fix this by moving the wakeup process into the NETDEV_UP event
+notifying process, this makes sure IFF_UP has been set before all
+waited queues been waken up.
+
+Signed-off-by: Fei Li <lifei.shirley@bytedance.com>
+Acked-by: Jason Wang <jasowang@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/scsi/vmw_pvscsi.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/net/tun.c |   19 +++++++++----------
+ 1 file changed, 9 insertions(+), 10 deletions(-)
 
---- a/drivers/scsi/vmw_pvscsi.c
-+++ b/drivers/scsi/vmw_pvscsi.c
-@@ -763,6 +763,7 @@ static int pvscsi_queue_lck(struct scsi_
- 	struct pvscsi_adapter *adapter = shost_priv(host);
- 	struct pvscsi_ctx *ctx;
- 	unsigned long flags;
-+	unsigned char op;
+--- a/drivers/net/tun.c
++++ b/drivers/net/tun.c
+@@ -1024,18 +1024,8 @@ static void tun_net_uninit(struct net_de
+ /* Net device open. */
+ static int tun_net_open(struct net_device *dev)
+ {
+-	struct tun_struct *tun = netdev_priv(dev);
+-	int i;
+-
+ 	netif_tx_start_all_queues(dev);
  
- 	spin_lock_irqsave(&adapter->hw_lock, flags);
- 
-@@ -775,13 +776,14 @@ static int pvscsi_queue_lck(struct scsi_
- 	}
- 
- 	cmd->scsi_done = done;
-+	op = cmd->cmnd[0];
- 
- 	dev_dbg(&cmd->device->sdev_gendev,
--		"queued cmd %p, ctx %p, op=%x\n", cmd, ctx, cmd->cmnd[0]);
-+		"queued cmd %p, ctx %p, op=%x\n", cmd, ctx, op);
- 
- 	spin_unlock_irqrestore(&adapter->hw_lock, flags);
- 
--	pvscsi_kick_io(adapter, cmd->cmnd[0]);
-+	pvscsi_kick_io(adapter, op);
- 
+-	for (i = 0; i < tun->numqueues; i++) {
+-		struct tun_file *tfile;
+-
+-		tfile = rtnl_dereference(tun->tfiles[i]);
+-		tfile->socket.sk->sk_write_space(tfile->socket.sk);
+-	}
+-
  	return 0;
  }
+ 
+@@ -3443,6 +3433,7 @@ static int tun_device_event(struct notif
+ {
+ 	struct net_device *dev = netdev_notifier_info_to_dev(ptr);
+ 	struct tun_struct *tun = netdev_priv(dev);
++	int i;
+ 
+ 	if (dev->rtnl_link_ops != &tun_link_ops)
+ 		return NOTIFY_DONE;
+@@ -3452,6 +3443,14 @@ static int tun_device_event(struct notif
+ 		if (tun_queue_resize(tun))
+ 			return NOTIFY_BAD;
+ 		break;
++	case NETDEV_UP:
++		for (i = 0; i < tun->numqueues; i++) {
++			struct tun_file *tfile;
++
++			tfile = rtnl_dereference(tun->tfiles[i]);
++			tfile->socket.sk->sk_write_space(tfile->socket.sk);
++		}
++		break;
+ 	default:
+ 		break;
+ 	}
 
 
