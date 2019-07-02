@@ -2,132 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7C6A5D380
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 17:51:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D85D35D385
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 17:51:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726702AbfGBPvV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 11:51:21 -0400
-Received: from mail-eopbgr10083.outbound.protection.outlook.com ([40.107.1.83]:41729
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725922AbfGBPvU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 11:51:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=brO73ixZOe8DGZmg5e2jQmlH+kevr1g/wfAWOvS3o+o=;
- b=QlSOKQrB5aTAUXnr3tUCMYfLRkhiFq67wi5CVJNPI1zGuhOYB4e+B/AB6K3iRx9Ze58D8kLdnaH/39fEIj2bLtvGft1JwYxU2AABGbHGIG7cC9AIjEsO8K/nzv3kgQhVN45I9CTjyP8ZF79T7L6Rsg60pKaWYtrz/yP+5hhHuwc=
-Received: from AM6PR05MB6037.eurprd05.prod.outlook.com (20.179.2.84) by
- AM6PR05MB4197.eurprd05.prod.outlook.com (52.135.161.30) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2032.18; Tue, 2 Jul 2019 15:51:17 +0000
-Received: from AM6PR05MB6037.eurprd05.prod.outlook.com
- ([fe80::c5b1:6971:9d4b:d5cd]) by AM6PR05MB6037.eurprd05.prod.outlook.com
- ([fe80::c5b1:6971:9d4b:d5cd%7]) with mapi id 15.20.2032.019; Tue, 2 Jul 2019
- 15:51:17 +0000
-From:   Petr Machata <petrm@mellanox.com>
-To:     Colin Ian King <colin.king@canonical.com>
-CC:     Jiri Pirko <jiri@mellanox.com>, Ido Schimmel <idosch@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: mlxsw: spectrum: PTP: Support timestamping on Spectrum-1 -
- potential null ptr dereference
-Thread-Topic: mlxsw: spectrum: PTP: Support timestamping on Spectrum-1 -
- potential null ptr dereference
-Thread-Index: AQHVMOcY3L7Wjb9apkGPAWlUHGBxiaa3eieA
-Date:   Tue, 2 Jul 2019 15:51:17 +0000
-Message-ID: <87r278sado.fsf@mellanox.com>
-References: <4fb676a6-1de8-8bcf-5f2e-3157827546c8@canonical.com>
-In-Reply-To: <4fb676a6-1de8-8bcf-5f2e-3157827546c8@canonical.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM6PR10CA0070.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:209:80::47) To AM6PR05MB6037.eurprd05.prod.outlook.com
- (2603:10a6:20b:aa::20)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=petrm@mellanox.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [78.45.160.211]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 408e183b-4fb7-454b-cea3-08d6ff051e2a
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:AM6PR05MB4197;
-x-ms-traffictypediagnostic: AM6PR05MB4197:
-x-microsoft-antispam-prvs: <AM6PR05MB4197308712FF4EF53E3BFF2CDBF80@AM6PR05MB4197.eurprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:4125;
-x-forefront-prvs: 008663486A
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(396003)(346002)(136003)(39860400002)(376002)(51914003)(199004)(189003)(2906002)(8936002)(52116002)(478600001)(186003)(68736007)(305945005)(2616005)(11346002)(446003)(6246003)(81166006)(6486002)(3846002)(86362001)(6116002)(5660300002)(6436002)(25786009)(8676002)(76176011)(102836004)(256004)(316002)(64756008)(71190400001)(71200400001)(6916009)(229853002)(66066001)(476003)(73956011)(99286004)(386003)(486006)(53936002)(14454004)(66476007)(66446008)(7736002)(54906003)(81156014)(66946007)(66556008)(6512007)(4326008)(36756003)(26005)(6506007);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR05MB4197;H:AM6PR05MB6037.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: /xmhY/JQ2JFy1WGjf40O3s61MD44c8F5/5vOPlURdhY/2FWzz0lkaJ2beTokbTh2/VNo9E4lSebxRYokIJFQzkbg8Y1nBEBmKJLK9fl08Qh2jfOEoKMFrjxHXPedF0NzXaM0m2tC2T8nzbyxUEGlVvvV7LjBKhkghZrxGHvNxLSDIHvQRXP1JwLO+tAYY0bxDNQgO5BwrpVuQxVVh+SXweQxsru0iJ9OKSMjZSBbCVuWd+4RJtOzP80vsOIT1B5i1LPPSvkq+RsQTw7O3HzWC9TKKObVRQ0Pgb3BuOxZZTQ6SsX0qYVVX+j7QJdlUV0AEvpdKBxHTChZsa786t9BzCS0FQYaHp2Gj355UZiY1uyW8Y//JDzqRC4agNsvbhijJfYbh3OzV8vKgeYlxBytom6mzIM1iK8vF1XLK/jy5EA=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1727040AbfGBPvq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 11:51:46 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:39097 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726861AbfGBPvp (ORCPT
+        <rfc822;Linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 11:51:45 -0400
+Received: by mail-qk1-f196.google.com with SMTP id i125so14495032qkd.6
+        for <Linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 08:51:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=mIWxYRc22+ugt+mOFaGt8B3CI/ZTBy55XFxSUnaUbpU=;
+        b=SrW1tDHkt1EmmC9FfGAf47t51HUD1VVyjv7HBLv1c7zUOIYjubM3QYyqpWV+SkbZ39
+         j7Ug9Rd5u6/FyzY3AOmMDb96rUxwOV7f/biUn+PUYZqVfSx2njY1W5/mcVge4GqefvwC
+         C1FvnBvaB98dIQFwuveo/ODlJ91YF6zIu3y7g+UaOxwdYmhRuFqSogF6Msb0nv8TfVRt
+         eNAFa9I6CK0QpkVe17VGKcajWFagv8g/pkx4Ph9dyjWGefaJUuMNrTFmOCEY8MXuXyii
+         Z1UO18knRVpq2AVdi9AM+eLsylqHgN39s8dMiHtKqBqVux1nTfTaZosECmizLV7LD6sF
+         yTCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=mIWxYRc22+ugt+mOFaGt8B3CI/ZTBy55XFxSUnaUbpU=;
+        b=mJ7Yf0k7wxMO0jZyYinz7Ni83xuRf3OBDuN6/3/2Hc0p5Eer4sR+kYc3OfdeHlsRjV
+         yZCCBUzEfwKMo0YNGeuZY02u1sZvj2zDfJFubX1gZJM35hakvVFSqkj5poAjgKzHq/Z3
+         mg0duHQ2C7qZk2AYOTMnopVwX5g4ax3vTp1UeFClYPoEqiKxfwk3bIwCVwhUX2/CJD4n
+         zlLkx+PUviLfPyWto7edbb4CU6ILJOOHRp/Qxl41IViyXQ9H7QZx7xhefm0XlN3oevYM
+         Vbfaw2ZJoVdjc8sJfnPYGrqe43INVZpgJnnZxEv6MEAb6W8kzVBBUsntc/NAXIy76GZ+
+         NCLQ==
+X-Gm-Message-State: APjAAAURyY493G3p32MiOXOMzcUZg0AUrq/ny4Zfg3DcQYNHqdgPMli9
+        algqGBqLxvoQIBqnNxE6Juw=
+X-Google-Smtp-Source: APXvYqwhkQLuFLGmhGuf9I43Lq7LpibYaGe0QFBn0FZo9zBkZy5J6FNAtylba/DPo/zrKoc2VPQcyQ==
+X-Received: by 2002:a37:9a96:: with SMTP id c144mr24614572qke.468.1562082704405;
+        Tue, 02 Jul 2019 08:51:44 -0700 (PDT)
+Received: from quaco.ghostprotocols.net ([179.97.35.11])
+        by smtp.gmail.com with ESMTPSA id s44sm8346934qtc.8.2019.07.02.08.51.43
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 02 Jul 2019 08:51:44 -0700 (PDT)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id BBEA241153; Tue,  2 Jul 2019 12:51:38 -0300 (-03)
+Date:   Tue, 2 Jul 2019 12:51:38 -0300
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Jin Yao <yao.jin@linux.intel.com>, jolsa@kernel.org,
+        peterz@infradead.org, mingo@redhat.com,
+        alexander.shishkin@linux.intel.com, Linux-kernel@vger.kernel.org,
+        ak@linux.intel.com, kan.liang@intel.com, yao.jin@intel.com
+Subject: Re: [PATCH v6 0/7] perf diff: diff cycles at basic block level
+Message-ID: <20190702155138.GD15462@kernel.org>
+References: <1561713784-30533-1-git-send-email-yao.jin@linux.intel.com>
+ <20190628080255.GA3427@krava>
 MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 408e183b-4fb7-454b-cea3-08d6ff051e2a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Jul 2019 15:51:17.1501
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: petrm@mellanox.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR05MB4197
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190628080255.GA3427@krava>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Em Fri, Jun 28, 2019 at 10:02:55AM +0200, Jiri Olsa escreveu:
+> On Fri, Jun 28, 2019 at 05:22:57PM +0800, Jin Yao wrote:
+> > In some cases small changes in hot loops can show big differences.
+> > But it's difficult to identify these differences.
+> > 
+> > perf diff currently can only diff symbols (functions). We can also expand
+> > it to diff cycles of individual programs blocks as reported by timed LBR.
+> > This would allow to identify changes in specific code accurately.
+> > 
+> > With this patch set, for example,
+> > 
+> >  $ perf record -b ./div
+> >  $ perf record -b ./div
+> >  $ perf diff -c cycles
+> > 
+> >  # Event 'cycles'
+> >  #
+> >  # Baseline                                       [Program Block Range] Cycles Diff  Shared Object     Symbol
+> >  # ........  ......................................................................  ................  ..................................
+> >  #
+> >      48.75%                                             [div.c:42 -> div.c:45]  147  div               [.] main
+> >      48.75%                                             [div.c:31 -> div.c:40]    4  div               [.] main
+> >      48.75%                                             [div.c:40 -> div.c:40]    0  div               [.] main
+> >      48.75%                                             [div.c:42 -> div.c:42]    0  div               [.] main
+> >      48.75%                                             [div.c:42 -> div.c:44]    0  div               [.] main
+> >      19.02%                                 [random_r.c:357 -> random_r.c:360]    0  libc-2.23.so      [.] __random_r
+ 
+> Reviewed-by: Jiri Olsa <jolsa@kernel.org>
 
-Colin Ian King <colin.king@canonical.com> writes:
+Looks really nice, thanks, applied.
 
-> Hi,
->
-> Static analysis with Coverity on today's linux-next has found a
-> potential null pointer dereference bug with the following commit:
->
-> commit d92e4e6e33c8b19635be70fb8935b627d2e4f8fe
-> Author: Petr Machata <petrm@mellanox.com>
-> Date:   Sun Jun 30 09:04:56 2019 +0300
->
->     mlxsw: spectrum: PTP: Support timestamping on Spectrum-1
->
->
-> In function: mlxsw_sp1_ptp_packet_finish the offending code is as follows=
-:
->
->        /* Between capturing the packet and finishing it, there is a
-> window of
->         * opportunity for the originating port to go away (e.g. due to a
->         * split). Also make sure the SKB device reference is still valid.
->         */
->        mlxsw_sp_port =3D mlxsw_sp->ports[local_port];
->        if (!mlxsw_sp_port && (!skb->dev || skb->dev =3D=3D mlxsw_sp_port-=
->dev)) {
->                dev_kfree_skb_any(skb);
->                return;
->        }
->
-> If mlxsw_sp_port is null and skb->dev is not-null then the comparison
-> "skb->dev =3D=3D mlxsw_sp_port->dev" ends up with a null pointer derefere=
-nce.
->
-> I think the if statement should be:
->
-> if (mlxsw_sp_port && (!skb->dev || skb->dev =3D=3D mlxsw_sp_port->dev))
->
-> ..but I'm not 100% sure as I may be missing something a bit more subtle
-> here.
-
-Yes, that line is wrong. It's missing a pair of parens, it should be:
-
-        if (!(mlxsw_sp_port && (!skb->dev || skb->dev =3D=3D mlxsw_sp_port-=
->dev))) {
-
-I.e. I need a port && I need the skb->dev to still refer to that port
-(or else be NULL). If that doesn't hold, bail out.
-
-Thanks for the report, I'll spin a fix!
+- Arnaldo
