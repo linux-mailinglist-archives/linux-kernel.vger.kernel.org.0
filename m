@@ -2,105 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B51205DA1D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 03:01:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F92F5D9F4
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:58:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727335AbfGCBBh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 21:01:37 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:33549 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727065AbfGCBBh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 21:01:37 -0400
-Received: by mail-wr1-f68.google.com with SMTP id n9so748108wru.0
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 18:01:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=fhGTRRlj+oNnom0r7WG68ILJggF1tRmBA7+h0sn4aHU=;
-        b=IB/bmny+VPQQLZytPAp+5HlEgrZmDlRBzsrQkNZkmYwxP+Id/yUjtNR6gi41a1xZN8
-         KQ08p4BL1YUwktRg7FhzaPScp37YxM3uwccWRpIXREFG+ug4W9OOhcbIPXcqmnonvfxW
-         zRnUgGLigs3lZNwvU5Ac75pLOaB2g/3mSEtTtUw2A4fGVcYEoS3ASY02IzU0lkkKaX9s
-         i3uhBDPmdf0KEyOVHifWK6SplVNbcsWBxlsQBccac//U5XOrJuDq7J+6gdgm0eFMRRAT
-         KQN+902e1pxKhH7dYkgpd+gcXtC8mknGpPrfLXUEUCk9FcDLKPo8s7AbPntAjOOgWlDN
-         77Mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=fhGTRRlj+oNnom0r7WG68ILJggF1tRmBA7+h0sn4aHU=;
-        b=pDVDcltYr15OCKlvaMnZdlBGYddnRagJCeM+Vyb9hKh5sXghvqDGKL5CdtMH76+mdb
-         ObZylCM7LLHNO9Tw1UwpJzvMw0+8dESCSiop/OFPRTmfugpJmVPNSP3RFdhO1IawyWxZ
-         3bjNZJQl7xnh/z7wu5eBugr932dlBN8bE3K0hOGsFZArVFR7dqqQdc5NzVnVuAp1eJzw
-         G0+SbYLEmJwDLWsVANJQyMYkIHT3BaboLjW8/yimI0EE/lVCA00sasHMpRKE6dCbq7pa
-         En01OGQECrKQBIojvaNfjCxlLuysR37g+yBuzPHz5oi9yA9uTPGJ7seOcvtpQOtbe+k+
-         QT8w==
-X-Gm-Message-State: APjAAAUVJo/ye+gchO9XheKuLgbPGiyLVK16udq1rnJhSKT1TYZoloig
-        uqcbFt2Nqnx5k35QmTQ7zJ1+W4bFe18=
-X-Google-Smtp-Source: APXvYqyL0wJTez6TZyjeT/xmWOXzYmO/gmM5DGARc+Xg7zSTPeTSnEtY9Gfebk2z9iqEruXO8sLbdg==
-X-Received: by 2002:adf:fb8a:: with SMTP id a10mr2037078wrr.235.1562102140256;
-        Tue, 02 Jul 2019 14:15:40 -0700 (PDT)
-Received: from apalos (athedsl-428434.home.otenet.gr. [79.131.225.144])
-        by smtp.gmail.com with ESMTPSA id g14sm113417wro.11.2019.07.02.14.15.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 02 Jul 2019 14:15:39 -0700 (PDT)
-Date:   Wed, 3 Jul 2019 00:15:36 +0300
-From:   Ilias Apalodimas <ilias.apalodimas@linaro.org>
-To:     Jesper Dangaard Brouer <brouer@redhat.com>
-Cc:     Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        netdev@vger.kernel.org, grygorii.strashko@ti.com,
-        jakub.kicinski@netronome.com, daniel@iogearbox.net,
-        john.fastabend@gmail.com, ast@kernel.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
-Subject: Re: [PATCH] net: core: page_pool: add user refcnt and reintroduce
- page_pool_destroy
-Message-ID: <20190702211536.GA22618@apalos>
-References: <20190702153902.0e42b0b2@carbon>
- <156207778364.29180.5111562317930943530.stgit@firesoul>
- <20190702144426.GD4510@khorivan>
- <20190702165230.6caa36e3@carbon>
- <20190702145612.GF4510@khorivan>
- <20190702171029.76c60538@carbon>
- <20190702152112.GG4510@khorivan>
- <20190702202907.15fb30ce@carbon>
- <20190702185839.GH4510@khorivan>
- <20190702230241.3be6d787@carbon>
+        id S1727447AbfGCA6J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 20:58:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49336 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727089AbfGCA6F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 20:58:05 -0400
+Received: from ebiggers-linuxstation.mtv.corp.google.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BC2DD20449;
+        Tue,  2 Jul 2019 21:18:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562102286;
+        bh=ZncPmqJjQ5p8Nzi6KA3tSryklHFPA1+D6VokdeGHa28=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=SB5zOgdMv5+0+Y00OB/l2Jsui1egnX0iDRToH0chu73SQDnspeXPnukhhoEmUrnLn
+         1J+BRo9A3r/sqHCxARyy5JjA32jtlBzB0ijOU2DU7SGrhcMqqdeMDKnGYa4XxgYNle
+         NM7aJFyBE6dbHGDyiqMab5d1sEPNEWHorvFmP4uM=
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     linux-crypto@vger.kernel.org,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     chetjain@in.ibm.com, "David S . Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org, Michal Suchanek <msuchanek@suse.de>,
+        stable@vger.kernel.org,
+        Steffen Klassert <steffen.klassert@secunet.com>
+Subject: [PATCH] crypto: user - prevent operating on larval algorithms
+Date:   Tue,  2 Jul 2019 14:17:00 -0700
+Message-Id: <20190702211700.16526-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
+In-Reply-To: <20190701153154.1569c2dc@kitsune.suse.cz>
+References: <20190701153154.1569c2dc@kitsune.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190702230241.3be6d787@carbon>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jesper,
-Getting late here, i'll respond in detail tomorrow. One point though
+From: Eric Biggers <ebiggers@google.com>
 
-[...]
-> 
-> This special use-case, seems confined to your driver. And Ilias told me
-> that XDP is not really a performance benefit for this driver as the HW
-> PPS-limit is hit before the XDP and netstack limit.  I ask, does it
-> make sense to add XDP to this driver, if it complicates the code for
-> everybody else?
-I think yes. This is a widely used driver on TI embedded devices so having XDP 
-to play along is a nice feature. It's also the first and only armv7 we have
-supporting this. Ivan already found a couple of issues due to the 32-bit
-architecture he is trying to fix, i think there's real benefit in having that,
-performance aside.
-I fully agree we should not impact the performance of the API to support a
-special hardware though. I'll have a look on the 2 solutions tomorrow, but the
-general approach on this one should be 'the simpler the better'
+Michal Suchanek reported [1] that running the pcrypt_aead01 test from
+LTP [2] in a loop and holding Ctrl-C causes a NULL dereference of
+alg->cra_users.next in crypto_remove_spawns(), via crypto_del_alg().
+The test repeatedly uses CRYPTO_MSG_NEWALG and CRYPTO_MSG_DELALG.
 
-Cheers
-/Ilias
+The crash occurs when the instance that CRYPTO_MSG_DELALG is trying to
+unregister isn't a real registered algorithm, but rather is a "test
+larval", which is a special "algorithm" added to the algorithms list
+while the real algorithm is still being tested.  Larvals don't have
+initialized cra_users, so that causes the crash.  Normally pcrypt_aead01
+doesn't trigger this because CRYPTO_MSG_NEWALG waits for the algorithm
+to be tested; however, CRYPTO_MSG_NEWALG returns early when interrupted.
 
-> 
-> -- 
-> Best regards,
->   Jesper Dangaard Brouer
->   MSc.CS, Principal Kernel Engineer at Red Hat
->   LinkedIn: http://www.linkedin.com/in/brouer
+Everything else in the "crypto user configuration" API has this same bug
+too, i.e. it inappropriately allows operating on larval algorithms
+(though it doesn't look like the other cases can cause a crash).
+
+Fix this by making crypto_alg_match() exclude larval algorithms.
+
+[1] https://lkml.kernel.org/r/20190625071624.27039-1-msuchanek@suse.de
+[2] https://github.com/linux-test-project/ltp/blob/20190517/testcases/kernel/crypto/pcrypt_aead01.c
+
+Reported-by: Michal Suchanek <msuchanek@suse.de>
+Fixes: a38f7907b926 ("crypto: Add userspace configuration API")
+Cc: <stable@vger.kernel.org> # v3.2+
+Cc: Steffen Klassert <steffen.klassert@secunet.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ crypto/crypto_user_base.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/crypto/crypto_user_base.c b/crypto/crypto_user_base.c
+index e48da3b75c71d4..a89fcc530092a8 100644
+--- a/crypto/crypto_user_base.c
++++ b/crypto/crypto_user_base.c
+@@ -56,6 +56,9 @@ struct crypto_alg *crypto_alg_match(struct crypto_user_alg *p, int exact)
+ 	list_for_each_entry(q, &crypto_alg_list, cra_list) {
+ 		int match = 0;
+ 
++		if (crypto_is_larval(q))
++			continue;
++
+ 		if ((q->cra_flags ^ p->cru_type) & p->cru_mask)
+ 			continue;
+ 
+-- 
+2.22.0.410.gd8fdbe21b5-goog
+
