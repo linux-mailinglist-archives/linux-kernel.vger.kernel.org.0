@@ -2,65 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 541E25CE64
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 13:28:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EFF235D0BE
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 15:36:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726636AbfGBL2Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 07:28:16 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:57426 "EHLO huawei.com"
+        id S1726831AbfGBNgw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 09:36:52 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:8124 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725867AbfGBL2Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 07:28:16 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 544329EB6D970CEBF76A;
-        Tue,  2 Jul 2019 19:28:09 +0800 (CST)
-Received: from huawei.com (10.175.100.202) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.439.0; Tue, 2 Jul 2019
- 19:28:00 +0800
-From:   Miaohe Lin <linmiaohe@huawei.com>
-To:     <bhelgaas@google.com>, <andy.shevchenko@gmail.com>,
-        <sebott@linux.ibm.com>, <lukas@wunner.de>,
-        <gustavo@embeddedor.com>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <linmiaohe@huawei.com>, <mingfangsen@huawei.com>
-Subject: [PATCH] net: pci: Fix hotplug event timeout with shpchp
-Date:   Tue, 2 Jul 2019 13:35:19 +0000
-Message-ID: <1562074519-205047-1-git-send-email-linmiaohe@huawei.com>
-X-Mailer: git-send-email 1.8.3.4
+        id S1725922AbfGBNgw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 09:36:52 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 9DB60EDE77D56B9011FC;
+        Tue,  2 Jul 2019 21:36:48 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Tue, 2 Jul 2019
+ 21:36:40 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <ulf.hansson@linaro.org>, <adrian.hunter@intel.com>,
+        <faiz_abbas@ti.com>
+CC:     <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH] mmc: sdhci_am654: Add dependency on MMC_SDHCI_AM654
+Date:   Tue, 2 Jul 2019 21:36:31 +0800
+Message-ID: <20190702133631.47760-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.175.100.202]
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hotplug a network card would take more than 5 seconds
-in qemu + shpchp scene. It’s because 5 seconds
-delayed_work in func handle_button_press_event with
-case STATIC_STATE. And this will break some
-protocols with timeout within 5 seconds.
+Fix build error:
 
-Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
+drivers/mmc/host/sdhci_am654.o: In function `sdhci_am654_probe':
+drivers/mmc/host/sdhci_am654.c:464: undefined reference to `__devm_regmap_init_mmio_clk'
+drivers/mmc/host/sdhci_am654.o:(.debug_addr+0x3f8): undefined reference to `__devm_regmap_init_mmio_clk'
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: aff88ff23512 ("mmc: sdhci_am654: Add Initial Support for AM654 SDHCI driver")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/pci/hotplug/shpchp_ctrl.c | 2 +-
+ drivers/mmc/host/Kconfig | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pci/hotplug/shpchp_ctrl.c b/drivers/pci/hotplug/shpchp_ctrl.c
-index 078003dcde5b..cbb00acaba0d 100644
---- a/drivers/pci/hotplug/shpchp_ctrl.c
-+++ b/drivers/pci/hotplug/shpchp_ctrl.c
-@@ -478,7 +478,7 @@ static void handle_button_press_event(struct slot *p_slot)
- 		p_slot->hpc_ops->green_led_blink(p_slot);
- 		p_slot->hpc_ops->set_attention_status(p_slot, 0);
+diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+index 931770f..14d89a1 100644
+--- a/drivers/mmc/host/Kconfig
++++ b/drivers/mmc/host/Kconfig
+@@ -996,7 +996,7 @@ config MMC_SDHCI_OMAP
  
--		queue_delayed_work(p_slot->wq, &p_slot->work, 5*HZ);
-+		queue_delayed_work(p_slot->wq, &p_slot->work, 0);
- 		break;
- 	case BLINKINGOFF_STATE:
- 	case BLINKINGON_STATE:
+ config MMC_SDHCI_AM654
+ 	tristate "Support for the SDHCI Controller in TI's AM654 SOCs"
+-	depends on MMC_SDHCI_PLTFM && OF
++	depends on MMC_SDHCI_PLTFM && OF && REGMAP_MMIO
+ 	select MMC_SDHCI_IO_ACCESSORS
+ 	help
+ 	  This selects the Secure Digital Host Controller Interface (SDHCI)
 -- 
-2.21.GIT
+2.7.4
+
 
