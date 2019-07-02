@@ -2,102 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62F6B5CD1B
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 12:00:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DFC45CDEA
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 12:53:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727152AbfGBKAS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 06:00:18 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:46898 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726213AbfGBKAR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 06:00:17 -0400
-Received: by mail-lf1-f68.google.com with SMTP id z15so10908130lfh.13
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 03:00:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0O2BVHsC6tn3BWMM9tvDjclVi0pfMs+XMpk03vAtRUs=;
-        b=djXttW3QsZCQThfo7EDXycRWAFHyJQWfUcHO03mRTi6kje0WmEuHV3wwBOOfEnckRL
-         NjQHvBwh6JgDXk8hNGlThESzIlicMO+9PVq3rgvyk3ZYPmeiDAwIn6ov8hPwvt/icPOV
-         Jv5cglAhxV7EELHVk8ajfH2S8qCZ2bon61UUj5qHa1Oz9F5rJw9FNIG8nm8J1z3OGB1H
-         qkl7WAEHzqqA5F1dkx4IENY3ROET/fJDIPlxPAaqmwizjsMFFWXQg1HKV73k/tJX0KU2
-         esTWkqP5XGb/SzyaCBP3CyN5WbK91HgONmx4M5o5QxU43Q3qbDZ1ep7igKMi2QePBY3s
-         nuZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0O2BVHsC6tn3BWMM9tvDjclVi0pfMs+XMpk03vAtRUs=;
-        b=XGcnY0LH3dkmNgNhKX+mXi3BjYOGdQrtLCUHxS3lT1txxWnvMiVPwGhOaTcDabIWIl
-         PoVCeFlrLIVsFR3an7OMO4OWXABFJRr0zrmHdyQbGcxxAtX5Fe1JdQ68aDw1XSH7Oit1
-         G5YZ7C8AF9bTejObHIfIF0NzuTka+l2NeQmjZU1/X8e83beQLTaspodak2zLc24R/RGJ
-         YzxU4b6+2MylqdUlvBvxiUvFtT+GFeHzqgxaD/krzbeJylcixdsPq/AasZWF7MoCLB/Q
-         z8C0EuxfZc+RcgeiPpLfHAaGPbxLF/et98+o8JPVxTLSJZobCwJodaVl1dRfPygq5PsP
-         dMGA==
-X-Gm-Message-State: APjAAAWlgSxaVuyYxE6Xds3LS5+ah/8kYpsVVNNTB3IESOHIKa8/mY8e
-        IanoHk7/XYmMztS1Yhjr0GQwjgounPnzIQqR7CGZTPcs
-X-Google-Smtp-Source: APXvYqx683ucGtF7PnNTH6RhXPkD+qozULKGYRzSTJRixORBYdPb5/FigraQCtcj6iD6TGV0KToFdnCtny1YRhqiz30=
-X-Received: by 2002:a19:c7ca:: with SMTP id x193mr208648lff.151.1562061615619;
- Tue, 02 Jul 2019 03:00:15 -0700 (PDT)
+        id S1726636AbfGBKxT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 06:53:19 -0400
+Received: from mga02.intel.com ([134.134.136.20]:60493 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725767AbfGBKxS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 06:53:18 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Jul 2019 03:00:00 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,442,1557212400"; 
+   d="scan'208";a="157585477"
+Received: from shao2-debian.sh.intel.com (HELO [10.239.13.6]) ([10.239.13.6])
+  by orsmga008.jf.intel.com with ESMTP; 02 Jul 2019 02:59:59 -0700
+Subject: Re: buildbot status?
+To:     Philip Li <philip.li@intel.com>, Kalle Valo <kvalo@codeaurora.org>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Zhengjun Xing <zhengjun.xing@linux.intel.com>,
+        Liu Yiding <yidingx.liu@intel.com>,
+        linux-kernel@vger.kernel.org
+References: <20190628142859.GA4844@lst.de> <87h887qu2t.fsf@codeaurora.org>
+ <20190630134944.GA22324@intel.com>
+From:   Rong Chen <rong.a.chen@intel.com>
+Message-ID: <f5f5409b-eaca-d38c-bd31-c54ef69b3833@intel.com>
+Date:   Tue, 2 Jul 2019 18:00:06 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <1561996022-28829-1-git-send-email-vincent.guittot@linaro.org> <7111f9d1-62f2-504c-a7ba-958b1c659cc8@arm.com>
-In-Reply-To: <7111f9d1-62f2-504c-a7ba-958b1c659cc8@arm.com>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Tue, 2 Jul 2019 12:00:04 +0200
-Message-ID: <CAKfTPtBGDZ5P91hwGdHADYpcbOPeniDLE7x3-U9dXDvFVMAi1w@mail.gmail.com>
-Subject: Re: [PATCH v2] sched/fair: fix imbalance due to CPU affinity
-To:     Valentin Schneider <valentin.schneider@arm.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190630134944.GA22324@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2 Jul 2019 at 11:34, Valentin Schneider
-<valentin.schneider@arm.com> wrote:
->
-> On 01/07/2019 16:47, Vincent Guittot wrote:
-> > The load_balance() has a dedicated mecanism to detect when an imbalance
-> > is due to CPU affinity and must be handled at parent level. In this case,
-> > the imbalance field of the parent's sched_group is set.
-> >
-> > The description of sg_imbalanced() gives a typical example of two groups
-> > of 4 CPUs each and 4 tasks each with a cpumask covering 1 CPU of the first
-> > group and 3 CPUs of the second group. Something like:
-> >
-> >       { 0 1 2 3 } { 4 5 6 7 }
-> >               *     * * *
-> >
-> > But the load_balance fails to fix this UC on my octo cores system
-> > made of 2 clusters of quad cores.
-> >
-> > Whereas the load_balance is able to detect that the imbalanced is due to
-> > CPU affinity, it fails to fix it because the imbalance field is cleared
-> > before letting parent level a chance to run. In fact, when the imbalance is
-> > detected, the load_balance reruns without the CPU with pinned tasks. But
-> > there is no other running tasks in the situation described above and
-> > everything looks balanced this time so the imbalance field is immediately
-> > cleared.
-> >
-> > The imbalance field should not be cleared if there is no other task to move
-> > when the imbalance is detected.
-> >
-> > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
->
-> Does that want a
->
-> Cc: stable@vger.kernel.org
-> Fixes: afdeee0510db ("sched: Fix imbalance flag reset")
+On 6/30/19 9:49 PM, Philip Li wrote:
+> On Sun, Jun 30, 2019 at 12:51:54PM +0300, Kalle Valo wrote:
+>> Christoph Hellwig <hch@lst.de> writes:
+>>
+>>> Hi buildbot maintainers,
+>>>
+>>> lately I usually get no, in some case a few very delayed build bot
+>>> results for my repos.  Is this as known issue?
+>> I have the same problem, I did receive few reports on Wednesday but
+>> nothing after that. I rely a lot for buildbot doing build checks on
+>> wireless-drivers patches so I hope it comes back soon.
+> hi Kalle and Christoph, sorry for inconvenience. We will check this as
+> early as possible which may be due to certain issue in our side. +Rong
+> to help check the exact problem.
 
-I was not sure that this has been introduced by this patch or
-following changes. I haven't been able to test it on such old kernel
-with my platform
+Hi all,
+
+There's a problem with the network in our side, we're trying to solve it.
+Sorry for the inconvenience that may have caused to you.
+
+Best Regards,
+Rong Chen
+
 
 >
-> ?
->
+>> -- 
+>> Kalle Valo
