@@ -2,82 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5034B5DA7C
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 03:13:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E5E55D9A8
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:50:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727326AbfGCBNF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 21:13:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57308 "EHLO mail.kernel.org"
+        id S1727261AbfGCAuN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 20:50:13 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:59562 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726329AbfGCBNF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 21:13:05 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726430AbfGCAuN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 20:50:13 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ED1AE218CA;
-        Tue,  2 Jul 2019 21:33:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562103221;
-        bh=7BKwrn5ZR0EvyKBoBdw71Sjqy+1SUbMyW6AzU7/ufH4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=RBa6CBZoD/h1b3spSkXt/s5mk4/LF71sNM0q6jPS2dnne68logM7RJmnQeYqnoPlk
-         We4S37hoCXN1vJ/SylpXLdidWn8wQovBsN3zWD/thJwRlA5V0kPWzkSRUxdgTRtCMR
-         lCSW1e94ZmkPHXhQYrDUGU4rHNsLYjp0UCC4jn8o=
-Date:   Tue, 2 Jul 2019 14:33:40 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>, linux-mm@kvack.org,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>
-Subject: Re: [PATCH] mm, slab: Extend slab/shrink to shrink all the memcg
- caches
-Message-Id: <20190702143340.715f771192721f60de1699d7@linux-foundation.org>
-In-Reply-To: <78879b79-1b8f-cdfd-d4fa-610afe5e5d48@redhat.com>
-References: <20190702183730.14461-1-longman@redhat.com>
-        <20190702130318.39d187dc27dbdd9267788165@linux-foundation.org>
-        <78879b79-1b8f-cdfd-d4fa-610afe5e5d48@redhat.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+        by mx1.redhat.com (Postfix) with ESMTPS id A37833082E8F;
+        Tue,  2 Jul 2019 22:23:49 +0000 (UTC)
+Received: from amt.cnet (ovpn-112-4.gru2.redhat.com [10.97.112.4])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5EF5B1001B01;
+        Tue,  2 Jul 2019 22:23:49 +0000 (UTC)
+Received: from amt.cnet (localhost [127.0.0.1])
+        by amt.cnet (Postfix) with ESMTP id 69655105161;
+        Tue,  2 Jul 2019 18:36:46 -0300 (BRT)
+Received: (from marcelo@localhost)
+        by amt.cnet (8.14.7/8.14.7/Submit) id x62LagnA026629;
+        Tue, 2 Jul 2019 18:36:42 -0300
+Date:   Tue, 2 Jul 2019 18:36:42 -0300
+From:   Marcelo Tosatti <mtosatti@redhat.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Subject: Re: [PATCH] Documentation: kvm: document CPUID bit for
+ MSR_KVM_POLL_CONTROL
+Message-ID: <20190702213638.GA26621@amt.cnet>
+References: <1562086673-30242-1-git-send-email-pbonzini@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1562086673-30242-1-git-send-email-pbonzini@redhat.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Tue, 02 Jul 2019 22:23:49 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2 Jul 2019 16:44:24 -0400 Waiman Long <longman@redhat.com> wrote:
+On Tue, Jul 02, 2019 at 06:57:53PM +0200, Paolo Bonzini wrote:
+> Cc: Marcelo Tosatti <mtosatti@redhat.com>
+> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+> ---
+>  Documentation/virtual/kvm/cpuid.txt | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/Documentation/virtual/kvm/cpuid.txt b/Documentation/virtual/kvm/cpuid.txt
+> index 979a77ba5377..2bdac528e4a2 100644
+> --- a/Documentation/virtual/kvm/cpuid.txt
+> +++ b/Documentation/virtual/kvm/cpuid.txt
+> @@ -66,6 +66,10 @@ KVM_FEATURE_PV_SEND_IPI            ||    11 || guest checks this feature bit
+>                                     ||       || before using paravirtualized
+>                                     ||       || send IPIs.
+>  ------------------------------------------------------------------------------
+> +KVM_FEATURE_PV_POLL_CONTROL        ||    12 || host-side polling on HLT can
+> +                                   ||       || be disabled by writing
+> +                                   ||       || to msr 0x4b564d05.
+> +------------------------------------------------------------------------------
+>  KVM_FEATURE_PV_SCHED_YIELD         ||    13 || guest checks this feature bit
+>                                     ||       || before using paravirtualized
+>                                     ||       || sched yield.
+> -- 
+> 1.8.3.1
 
-> On 7/2/19 4:03 PM, Andrew Morton wrote:
-> > On Tue,  2 Jul 2019 14:37:30 -0400 Waiman Long <longman@redhat.com> wro=
-te:
-> >
-> >> Currently, a value of '1" is written to /sys/kernel/slab/<slab>/shrink
-> >> file to shrink the slab by flushing all the per-cpu slabs and free
-> >> slabs in partial lists. This applies only to the root caches, though.
-> >>
-> >> Extends this capability by shrinking all the child memcg caches and
-> >> the root cache when a value of '2' is written to the shrink sysfs file.
-> > Why?
-> >
-> > Please fully describe the value of the proposed feature to or users.=20
-> > Always.
->=20
-> Sure. Essentially, the sysfs shrink interface is not complete. It allows
-> the root cache to be shrunk, but not any of the memcg caches.=A0
-
-But that doesn't describe anything of value.  Who wants to use this,
-and why?  How will it be used?  What are the use-cases?
-
+ACK
