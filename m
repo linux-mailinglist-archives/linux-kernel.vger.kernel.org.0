@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D1095CA8C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 10:05:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A8F75CBD1
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 10:16:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727940AbfGBIFZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 04:05:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51404 "EHLO mail.kernel.org"
+        id S1727581AbfGBIEA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 04:04:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49184 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727443AbfGBIFX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 04:05:23 -0400
+        id S1727558AbfGBIDz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 04:03:55 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 238AE2186A;
-        Tue,  2 Jul 2019 08:05:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2DB9221479;
+        Tue,  2 Jul 2019 08:03:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562054722;
-        bh=ijfRFNudNt6gcC/ZB42/IFRdWJsCcN6ooB7nGYSw32k=;
+        s=default; t=1562054634;
+        bh=AUw/e8DAeEZVsRY/zAXPjh9h8Bv7yd0wNjaqHTRNU9c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xyrBrbk70HURHqMpk4LcwtOIjyZ/9YeP1sodXYMbVx7vJyKYjHzEMrAclIOkY+kXz
-         w5ozZYjksIDMgqNPwyZaSptWgQWN45tdic6ADzeiWiECbYmiebYIj0uenoB2ku0zYj
-         mW+/PWCLFnqsQ5TxGmJ0s9edRdEcWAUsK5elfmdw=
+        b=I9FzxrRSfVURLnfEInxMG2XsLoPkj5qenmWM1eB7yuSxO43frJwcto+1AmjTXGBj+
+         apooVwG71RR41mtEtAeWKZJUTOjk2EPNULH0EdHmsi2CKGeRup8T4NQ1fYyrIHKRL4
+         UN0fdqD6uYj9yU6Saw+9ZQxN7ifHFIFM2UbwmBg4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Dominique Martinet <dominique.martinet@cea.fr>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 13/72] 9p/rdma: do not disconnect on down_interruptible EAGAIN
-Date:   Tue,  2 Jul 2019 10:01:14 +0200
-Message-Id: <20190702080125.280686495@linuxfoundation.org>
+        stable@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Subject: [PATCH 5.1 07/55] clk: tegra210: Fix default rates for HDA clocks
+Date:   Tue,  2 Jul 2019 10:01:15 +0200
+Message-Id: <20190702080124.431646492@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190702080124.564652899@linuxfoundation.org>
-References: <20190702080124.564652899@linuxfoundation.org>
+In-Reply-To: <20190702080124.103022729@linuxfoundation.org>
+References: <20190702080124.103022729@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,45 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 8b894adb2b7e1d1e64b8954569c761eaf3d51ab5 ]
+From: Jon Hunter <jonathanh@nvidia.com>
 
-9p/rdma would sometimes drop the connection and display errors in
-recv_done when the user does ^C.
-The errors were caused by recv buffers that were posted at the time
-of disconnect, and we just do not want to disconnect when
-down_interruptible is... interrupted.
+commit 9caec6620f25b6d15646bbdb93062c872ba3b56f upstream.
 
-Link: http://lkml.kernel.org/r/1535625307-18019-1-git-send-email-asmadeus@codewreck.org
-Signed-off-by: Dominique Martinet <dominique.martinet@cea.fr>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Currently the default clock rates for the HDA and HDA2CODEC_2X clocks
+are both 19.2MHz. However, the default rates for these clocks should
+actually be 51MHz and 48MHz, respectively. The current clock settings
+results in a distorted output during audio playback. Correct the default
+clock rates for these clocks by specifying them in the clock init table
+for Tegra210.
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- net/9p/trans_rdma.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/tegra/clk-tegra210.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/net/9p/trans_rdma.c b/net/9p/trans_rdma.c
-index 9cc9b3a19ee7..9719bc4d9424 100644
---- a/net/9p/trans_rdma.c
-+++ b/net/9p/trans_rdma.c
-@@ -477,7 +477,7 @@ static int rdma_request(struct p9_client *client, struct p9_req_t *req)
- 
- 	err = post_recv(client, rpl_context);
- 	if (err) {
--		p9_debug(P9_DEBUG_FCALL, "POST RECV failed\n");
-+		p9_debug(P9_DEBUG_ERROR, "POST RECV failed: %d\n", err);
- 		goto recv_error;
- 	}
- 	/* remove posted receive buffer from request structure */
-@@ -546,7 +546,7 @@ static int rdma_request(struct p9_client *client, struct p9_req_t *req)
-  recv_error:
- 	kfree(rpl_context);
- 	spin_lock_irqsave(&rdma->req_lock, flags);
--	if (rdma->state < P9_RDMA_CLOSING) {
-+	if (err != -EINTR && rdma->state < P9_RDMA_CLOSING) {
- 		rdma->state = P9_RDMA_CLOSING;
- 		spin_unlock_irqrestore(&rdma->req_lock, flags);
- 		rdma_disconnect(rdma->cm_id);
--- 
-2.20.1
-
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -3377,6 +3377,8 @@ static struct tegra_clk_init_table init_
+ 	{ TEGRA210_CLK_I2S3_SYNC, TEGRA210_CLK_CLK_MAX, 24576000, 0 },
+ 	{ TEGRA210_CLK_I2S4_SYNC, TEGRA210_CLK_CLK_MAX, 24576000, 0 },
+ 	{ TEGRA210_CLK_VIMCLK_SYNC, TEGRA210_CLK_CLK_MAX, 24576000, 0 },
++	{ TEGRA210_CLK_HDA, TEGRA210_CLK_PLL_P, 51000000, 0 },
++	{ TEGRA210_CLK_HDA2CODEC_2X, TEGRA210_CLK_PLL_P, 48000000, 0 },
+ 	/* This MUST be the last entry. */
+ 	{ TEGRA210_CLK_CLK_MAX, TEGRA210_CLK_CLK_MAX, 0, 0 },
+ };
 
 
