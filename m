@@ -2,158 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C6155D34C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 17:48:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BCD295D365
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 17:49:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726544AbfGBPr6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 11:47:58 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55806 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725972AbfGBPr5 (ORCPT
+        id S1727113AbfGBPs7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 11:48:59 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:58360 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725996AbfGBPs7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 11:47:57 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x62FkvgH003563
-        for <linux-kernel@vger.kernel.org>; Tue, 2 Jul 2019 11:47:56 -0400
-Received: from e34.co.us.ibm.com (e34.co.us.ibm.com [32.97.110.152])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2tg8qscq4k-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 11:47:56 -0400
-Received: from localhost
-        by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <eajames@linux.ibm.com>;
-        Tue, 2 Jul 2019 16:47:55 +0100
-Received: from b03cxnp08027.gho.boulder.ibm.com (9.17.130.19)
-        by e34.co.us.ibm.com (192.168.1.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 2 Jul 2019 16:47:52 +0100
-Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
-        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x62FlpXC58982844
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 2 Jul 2019 15:47:51 GMT
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A108413604F;
-        Tue,  2 Jul 2019 15:47:51 +0000 (GMT)
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 49126136051;
-        Tue,  2 Jul 2019 15:47:51 +0000 (GMT)
-Received: from talon7.ibm.com (unknown [9.41.179.222])
-        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Tue,  2 Jul 2019 15:47:51 +0000 (GMT)
-From:   Eddie James <eajames@linux.ibm.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     gregkh@linuxfoundation.org, joel@jms.id.au, linux@roeck-us.net,
-        mine260309@gmail.com, Eddie James <eajames@linux.ibm.com>
-Subject: [PATCH] OCC: FSI and hwmon: Add sequence numbering
-Date:   Tue,  2 Jul 2019 10:47:42 -0500
-X-Mailer: git-send-email 1.8.3.1
-X-TM-AS-GCONF: 00
-x-cbid: 19070215-0016-0000-0000-000009C9B5A0
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00011366; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000286; SDB=6.01226427; UDB=6.00645661; IPR=6.01007648;
- MB=3.00027555; MTD=3.00000008; XFM=3.00000015; UTC=2019-07-02 15:47:54
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19070215-0017-0000-0000-000043DE4FED
-Message-Id: <1562082462-23794-1-git-send-email-eajames@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-02_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1907020172
+        Tue, 2 Jul 2019 11:48:59 -0400
+Received: from turingmachine.home (unknown [IPv6:2804:431:c7f4:61e7:d711:794d:1c68:5ed3])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tonyk)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 5D5F228A215;
+        Tue,  2 Jul 2019 16:48:54 +0100 (BST)
+From:   =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@collabora.com>
+To:     linux-media@vger.kernel.org
+Cc:     mchehab@kernel.org, hverkuil@xs4all.nl, helen.koike@collabora.com,
+        kernel@collabora.com, linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@collabora.com>
+Subject: [PATCH 0/7] media: vimc: Add a V4L2 output device
+Date:   Tue,  2 Jul 2019 12:47:45 -0300
+Message-Id: <20190702154752.14939-1-andrealmeid@collabora.com>
+X-Mailer: git-send-email 2.22.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sequence numbering of the commands submitted to the OCC is required by
-the OCC interface specification. Add sequence numbering and check for
-the correct sequence number on the response.
+Hello,
 
-Signed-off-by: Eddie James <eajames@linux.ibm.com>
-Acked-by: Guenter Roeck <linux@roeck-us.net>
-Reviewed-by: Lei YU <mine260309@gmail.com>
----
- drivers/fsi/fsi-occ.c      | 15 ++++++++++++---
- drivers/hwmon/occ/common.c |  4 ++--
- drivers/hwmon/occ/common.h |  1 +
- 3 files changed, 15 insertions(+), 5 deletions(-)
+This patch adds a V4L2 output device on vimc, that comply with V4L2 API
+for video output. If there is an output device and a capture device at the
+same pipeline, one can get a video loopback pipeline feeding frames at
+the output and then seeing them at the capture. It's possible to insert
+vimc submodules at the pipeline to modify the image (e.g. a scaler).
 
-diff --git a/drivers/fsi/fsi-occ.c b/drivers/fsi/fsi-occ.c
-index a2301ce..7da9c81 100644
---- a/drivers/fsi/fsi-occ.c
-+++ b/drivers/fsi/fsi-occ.c
-@@ -412,6 +412,7 @@ int fsi_occ_submit(struct device *dev, const void *request, size_t req_len,
- 		msecs_to_jiffies(OCC_CMD_IN_PRG_WAIT_MS);
- 	struct occ *occ = dev_get_drvdata(dev);
- 	struct occ_response *resp = response;
-+	u8 seq_no;
- 	u16 resp_data_length;
- 	unsigned long start;
- 	int rc;
-@@ -426,6 +427,8 @@ int fsi_occ_submit(struct device *dev, const void *request, size_t req_len,
- 
- 	mutex_lock(&occ->occ_lock);
- 
-+	/* Extract the seq_no from the command (first byte) */
-+	seq_no = *(const u8 *)request;
- 	rc = occ_putsram(occ, OCC_SRAM_CMD_ADDR, request, req_len);
- 	if (rc)
- 		goto done;
-@@ -441,11 +444,17 @@ int fsi_occ_submit(struct device *dev, const void *request, size_t req_len,
- 		if (rc)
- 			goto done;
- 
--		if (resp->return_status == OCC_RESP_CMD_IN_PRG) {
-+		if (resp->return_status == OCC_RESP_CMD_IN_PRG ||
-+		    resp->seq_no != seq_no) {
- 			rc = -ETIMEDOUT;
- 
--			if (time_after(jiffies, start + timeout))
--				break;
-+			if (time_after(jiffies, start + timeout)) {
-+				dev_err(occ->dev, "resp timeout status=%02x "
-+					"resp seq_no=%d our seq_no=%d\n",
-+					resp->return_status, resp->seq_no,
-+					seq_no);
-+				goto done;
-+			}
- 
- 			set_current_state(TASK_UNINTERRUPTIBLE);
- 			schedule_timeout(wait_time);
-diff --git a/drivers/hwmon/occ/common.c b/drivers/hwmon/occ/common.c
-index d593517..a7d2b16 100644
---- a/drivers/hwmon/occ/common.c
-+++ b/drivers/hwmon/occ/common.c
-@@ -124,12 +124,12 @@ struct extended_sensor {
- static int occ_poll(struct occ *occ)
- {
- 	int rc;
--	u16 checksum = occ->poll_cmd_data + 1;
-+	u16 checksum = occ->poll_cmd_data + occ->seq_no + 1;
- 	u8 cmd[8];
- 	struct occ_poll_response_header *header;
- 
- 	/* big endian */
--	cmd[0] = 0;			/* sequence number */
-+	cmd[0] = occ->seq_no++;		/* sequence number */
- 	cmd[1] = 0;			/* cmd type */
- 	cmd[2] = 0;			/* data length msb */
- 	cmd[3] = 1;			/* data length lsb */
-diff --git a/drivers/hwmon/occ/common.h b/drivers/hwmon/occ/common.h
-index fc13f3c..67e6968 100644
---- a/drivers/hwmon/occ/common.h
-+++ b/drivers/hwmon/occ/common.h
-@@ -95,6 +95,7 @@ struct occ {
- 	struct occ_sensors sensors;
- 
- 	int powr_sample_time_us;	/* average power sample time */
-+	u8 seq_no;
- 	u8 poll_cmd_data;		/* to perform OCC poll command */
- 	int (*send_cmd)(struct occ *occ, u8 *cmd);
- 
+If one starts a streaming at the capture, with the output off, the
+capture will display a noisy frame. If one starts a streaming at the
+output with the capture off, the output will just consume the buffers,
+without sending them to the pipeline. If both output and capture are
+streaming, the loopback will happen.
+
+The patches 1 and 2 provide some ground to create the output
+device. The patch 3 creates the device and modify how the vimc-streamer
+was dealing with the s_stream callback on other vimc modules, to make
+simpler implementing this callback at vimc-output. Patch 4 change the
+behavior of the pipeline in order to be closer to a real life hardware.
+Patches 5-7 updates the default pipeline and the documentation to
+include the new output device.
+
+This is the result of v4l2-compliance after this patch series:
+$ v4l2-compliance -m0 -s50
+Grand Total for vimc device /dev/media0: 476, Succeeded: 476, Failed: 0,
+Warnings: 0
+
+A git tree up to date with media-master and with this changes can be found
+at: https://gitlab.collabora.com/tonyk/linux/tree/vimc/output
+
+In order to test it, one can follow these instructions:
+
+1 - Configure the pipeline (requires v4l-utils):
+
+$ media-ctl -d platform:vimc -V '"Sensor A":0[fmt:SBGGR8_1X8/640x480]'
+$ media-ctl -d platform:vimc -V '"Debayer A":0[fmt:SBGGR8_1X8/640x480]'
+$ media-ctl -d platform:vimc -V '"Sensor B":0[fmt:SBGGR8_1X8/640x480]'
+$ media-ctl -d platform:vimc -V '"Debayer B":0[fmt:SBGGR8_1X8/640x480]'
+$ v4l2-ctl -z platform:vimc -d "RGB/YUV Capture" -v width=1920,height=1440
+$ v4l2-ctl -z platform:vimc -d "Raw Capture 0" -v pixelformat=BA81
+$ v4l2-ctl -z platform:vimc -d "Raw Capture 1" -v pixelformat=BA81
+$ v4l2-ctl -z platform:vimc -e "RGB/YUV Input" -v width=640,height=480
+
+2 - Use a userspace application:
+2.a gst-launch (requires gstreamer and gst-plugins-good):
+
+Feed frames into the output and grab from the capture (rescaled for
+convenience):
+
+$ gst-launch-1.0 videotestsrc pattern=ball ! \
+	video/x-raw,width=640,height=480,format=RGB \
+	! v4l2sink device=/dev/video2 v4l2src device=/dev/video3 ! \
+	video/x-raw,width=1920,height=1440,format=RGB ! videoscale ! \
+	video/x-raw,width=640,height=480 ! videoconvert ! ximagesink
+
+2.b qv4l2 (requires v4l-utils):
+
+Open the output device:
+
+$ qv4l2 -d2
+
+Open the capture device:
+
+$ qv4l2 -d3
+
+Start the streaming at both, at any order. You can change the frame
+content at "Test Pattern Generator" -> "Test Pattern" on the output.
+
+Thanks,
+	André
+
+André Almeida (7):
+  media: vimc: Create video module
+  media: vimc: video: Add write file operation
+  media: vimc: Create a V4L2 output device
+  media: vimc: Send null buffer through the pipeline
+  media: vimc: core: Add output device on the pipeline
+  media: vimc.dot: Update default topology diagram
+  media: vimc.rst: Add output device
+
+ Documentation/media/v4l-drivers/vimc.dot    |   4 +-
+ Documentation/media/v4l-drivers/vimc.rst    |  12 +-
+ drivers/media/platform/vimc/Makefile        |   4 +-
+ drivers/media/platform/vimc/vimc-capture.c  | 356 +++----------------
+ drivers/media/platform/vimc/vimc-common.h   |   5 +-
+ drivers/media/platform/vimc/vimc-core.c     |   7 +-
+ drivers/media/platform/vimc/vimc-debayer.c  |  14 +-
+ drivers/media/platform/vimc/vimc-output.c   | 362 ++++++++++++++++++++
+ drivers/media/platform/vimc/vimc-scaler.c   |  13 +-
+ drivers/media/platform/vimc/vimc-sensor.c   |  10 +-
+ drivers/media/platform/vimc/vimc-streamer.c |  24 +-
+ drivers/media/platform/vimc/vimc-video.c    | 273 +++++++++++++++
+ drivers/media/platform/vimc/vimc-video.h    | 130 +++++++
+ 13 files changed, 849 insertions(+), 365 deletions(-)
+ create mode 100644 drivers/media/platform/vimc/vimc-output.c
+ create mode 100644 drivers/media/platform/vimc/vimc-video.c
+ create mode 100644 drivers/media/platform/vimc/vimc-video.h
+
 -- 
-1.8.3.1
+2.22.0
 
