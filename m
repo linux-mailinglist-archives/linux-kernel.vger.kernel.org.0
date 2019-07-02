@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1703B5D9B7
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:51:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 344725D9B4
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:51:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727374AbfGCAvp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 20:51:45 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:43163 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726430AbfGCAvp (ORCPT
+        id S1727360AbfGCAvS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 20:51:18 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:34416 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727089AbfGCAvR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 20:51:45 -0400
-Received: by mail-pf1-f194.google.com with SMTP id i189so288765pfg.10
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 17:51:44 -0700 (PDT)
+        Tue, 2 Jul 2019 20:51:17 -0400
+Received: by mail-pg1-f196.google.com with SMTP id p10so260672pgn.1
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 17:51:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=BbKEAFwQNgdJMuzfiYPMlyXAsoNdsnEp4Uok88ypekU=;
-        b=dzRWt1d0cH9OT8aIY2cfNcZP1PY8roOuwd7uTGeLkG0cZl8zRBQFiUDispqLSA/UuQ
-         7qtogcL/XgZ4GiHoPPdi2jdl9O8tG/VgyjT9Dvw6mhdOaxNhTFFazxDQ55AxHlhv/wMv
-         Zs28goiGB3utYWKBKTNH2WzG18bLyrlTHqcBQ=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=aN1fc/2k+rfSW/EC4oQs93BniUXT0kzrcpLPTc60YrA=;
+        b=e9dnHhedfc+lNBCeuQXfqoxiBpz0VmlnQH3dYfHeptLuCxi0FSdQwptmK/hVygjteY
+         67O617zIP6ppcNt6CT00h0I3dMCDvoFYdMLtG6ehC8KqJqijJU800ko63y3+dH3MlKdQ
+         7IbBaEAUNGtXwQWMBgoAlAOSE/HJHBGWeepqU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=BbKEAFwQNgdJMuzfiYPMlyXAsoNdsnEp4Uok88ypekU=;
-        b=PFeIkvy9uKLgE9w7SUN0roTqL2GAkCwc/AfEW8j3qq7nSZK5QoMGfBSFAHumvUTk//
-         unAbgAJgXv9jot8M7hcgclYibdbo0pFghsC8uSg7XH/BLiDnlLo/ep/H6BaZlZUvQV/N
-         gipb2WI++Gf+JrydTzfdoyYKIgkRUnqjgsynYafApmeZjHPWiTi7Ui8p3IZ5ESa7U9OZ
-         Otav/ncLfNZZIZ/KkfKTxDPUQDKKVr/LUU23k9h+2Z59AZwmIcBekYGebrnd50/Bw2a9
-         IWEHitxsHDkBqUtO4L2GkwM84bzsB/rsfTVKWezcVkpSTtUWxMEaHlwr58kaksSFdyYw
-         lD7A==
-X-Gm-Message-State: APjAAAWTg7dePgOyVktM8ROyVO0mCeEQSmWoqXp+XZKqRoYIdD9MaD34
-        CbZRAKkhibhbyDZaM1cUXULIO5X4EOE=
-X-Google-Smtp-Source: APXvYqzlQqAaaA9TlBYcDIIcItk2Sbug9JeUuEIc7DDU9bCUWN1kFgrxSAljeRrXbuNEk+5pPKxVXA==
-X-Received: by 2002:a17:90a:32c7:: with SMTP id l65mr8573547pjb.1.1562110982720;
-        Tue, 02 Jul 2019 16:43:02 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=aN1fc/2k+rfSW/EC4oQs93BniUXT0kzrcpLPTc60YrA=;
+        b=GXwgMGMIZoQvofw7CVpz4LByojEM8KuM63xcVJyYEfxy8ZvDDEcPIYHBgHkXQfazWz
+         roG0kcdZGDHEw1CAiF0EYF3cbWdkcKmHIKHSeg7v+0B+HPjzC0iKM9Isp3x4TwcEVgzZ
+         OKUQnSklmV43lX+SKSdtddjYQWkgI7q0jHPYX0q58FRbWSOixKYQqu49fHVpIvwciXn9
+         Z4mXTm8tkA7GJ7JVheqIi9xXrF45rDaH4j6c+vAVfysmWMpoPB6OBcFD2bnIQgf7JMM3
+         bcRWSE8DNAi1J8y0jd7FRJeGq0oeZ2/LQQgcnGq63+ItB7zQYC6q5bZcSD45/Q+lp9fQ
+         r7ew==
+X-Gm-Message-State: APjAAAUZx/twBR0yELv+lMagK7WFBg0+NJ8Eb2/0SOtguPoLw/0TuZIM
+        sHfMRNPwCFrMiyj7LmD4bJjJ1cgvnx4=
+X-Google-Smtp-Source: APXvYqxntetr46hd4VdYt//b/thMhWSNbwb9vCbsmQW+Uc08wwpf2Ox1a6CJOdMbbCECegJUMT/tqA==
+X-Received: by 2002:a17:90a:2305:: with SMTP id f5mr8983837pje.128.1562110984080;
+        Tue, 02 Jul 2019 16:43:04 -0700 (PDT)
 Received: from exogeni.mtv.corp.google.com ([2620:15c:202:1:5be8:f2a6:fd7b:7459])
-        by smtp.gmail.com with ESMTPSA id c26sm167611pfr.172.2019.07.02.16.43.00
+        by smtp.gmail.com with ESMTPSA id c26sm167611pfr.172.2019.07.02.16.43.02
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 02 Jul 2019 16:43:01 -0700 (PDT)
+        Tue, 02 Jul 2019 16:43:03 -0700 (PDT)
 From:   Derek Basehore <dbasehore@chromium.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
@@ -60,10 +60,12 @@ Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org,
         Derek Basehore <dbasehore@chromium.org>
-Subject: [PATCH v4 0/4] Panel rotation patches
-Date:   Tue,  2 Jul 2019 16:42:54 -0700
-Message-Id: <20190702234258.136349-1-dbasehore@chromium.org>
+Subject: [PATCH v4 1/4] drm/panel: Add helper for reading DT rotation
+Date:   Tue,  2 Jul 2019 16:42:55 -0700
+Message-Id: <20190702234258.136349-2-dbasehore@chromium.org>
 X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
+In-Reply-To: <20190702234258.136349-1-dbasehore@chromium.org>
+References: <20190702234258.136349-1-dbasehore@chromium.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -71,38 +73,92 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds the plumbing for reading panel rotation from the devicetree
-and sets up adding a panel property for the panel orientation on
-Mediatek SoCs when a rotation is present.
+This adds a helper function for reading the rotation (panel
+orientation) from the device tree.
 
-v4 changes:
--fixed some changes made to the i915 driver
--clarified comments on of orientation helper
+Signed-off-by: Derek Basehore <dbasehore@chromium.org>
+---
+ drivers/gpu/drm/drm_panel.c | 43 +++++++++++++++++++++++++++++++++++++
+ include/drm/drm_panel.h     |  7 ++++++
+ 2 files changed, 50 insertions(+)
 
-v3 changes:
--changed from attach/detach callbacks to directly setting fixed panel
- values in drm_panel_attach
--removed update to Documentation
--added separate function for quirked panel orientation property init
-
-v2 changes:
-fixed build errors in i915
-
-Derek Basehore (4):
-  drm/panel: Add helper for reading DT rotation
-  drm/panel: set display info in panel attach
-  drm/connector: Split out orientation quirk detection
-  drm/mtk: add panel orientation property
-
- drivers/gpu/drm/drm_connector.c    | 45 ++++++++++++++-----
- drivers/gpu/drm/drm_panel.c        | 70 ++++++++++++++++++++++++++++++
- drivers/gpu/drm/i915/intel_dp.c    |  4 +-
- drivers/gpu/drm/i915/vlv_dsi.c     |  5 +--
- drivers/gpu/drm/mediatek/mtk_dsi.c |  8 ++++
- include/drm/drm_connector.h        |  2 +
- include/drm/drm_panel.h            | 21 +++++++++
- 7 files changed, 138 insertions(+), 17 deletions(-)
-
+diff --git a/drivers/gpu/drm/drm_panel.c b/drivers/gpu/drm/drm_panel.c
+index dbd5b873e8f2..169bab54d52d 100644
+--- a/drivers/gpu/drm/drm_panel.c
++++ b/drivers/gpu/drm/drm_panel.c
+@@ -172,6 +172,49 @@ struct drm_panel *of_drm_find_panel(const struct device_node *np)
+ 	return ERR_PTR(-EPROBE_DEFER);
+ }
+ EXPORT_SYMBOL(of_drm_find_panel);
++
++/**
++ * of_drm_get_panel_orientation - look up the orientation of the panel through
++ * the "rotation" binding from a device tree node
++ * @np: device tree node of the panel
++ * @orientation: orientation enum to be filled in
++ *
++ * Looks up the rotation of a panel in the device tree. The orientation of the
++ * panel is expressed as a property name "rotation" in the device tree. The
++ * rotation in the device tree is counter clockwise.
++ *
++ * Return: 0 when a valid rotation value (0, 90, 180, or 270) is read or the
++ * rotation property doesn't exist. -EERROR otherwise.
++ */
++int of_drm_get_panel_orientation(const struct device_node *np,
++				 enum drm_panel_orientation *orientation)
++{
++	int rotation, ret;
++
++	ret = of_property_read_u32(np, "rotation", &rotation);
++	if (ret == -EINVAL) {
++		/* Don't return an error if there's no rotation property. */
++		*orientation = DRM_MODE_PANEL_ORIENTATION_UNKNOWN;
++		return 0;
++	}
++
++	if (ret < 0)
++		return ret;
++
++	if (rotation == 0)
++		*orientation = DRM_MODE_PANEL_ORIENTATION_NORMAL;
++	else if (rotation == 90)
++		*orientation = DRM_MODE_PANEL_ORIENTATION_RIGHT_UP;
++	else if (rotation == 180)
++		*orientation = DRM_MODE_PANEL_ORIENTATION_BOTTOM_UP;
++	else if (rotation == 270)
++		*orientation = DRM_MODE_PANEL_ORIENTATION_LEFT_UP;
++	else
++		return -EINVAL;
++
++	return 0;
++}
++EXPORT_SYMBOL(of_drm_get_panel_orientation);
+ #endif
+ 
+ MODULE_AUTHOR("Thierry Reding <treding@nvidia.com>");
+diff --git a/include/drm/drm_panel.h b/include/drm/drm_panel.h
+index 8c738c0e6e9f..3564952f1a4f 100644
+--- a/include/drm/drm_panel.h
++++ b/include/drm/drm_panel.h
+@@ -197,11 +197,18 @@ int drm_panel_detach(struct drm_panel *panel);
+ 
+ #if defined(CONFIG_OF) && defined(CONFIG_DRM_PANEL)
+ struct drm_panel *of_drm_find_panel(const struct device_node *np);
++int of_drm_get_panel_orientation(const struct device_node *np,
++				 enum drm_panel_orientation *orientation);
+ #else
+ static inline struct drm_panel *of_drm_find_panel(const struct device_node *np)
+ {
+ 	return ERR_PTR(-ENODEV);
+ }
++int of_drm_get_panel_orientation(const struct device_node *np,
++				 enum drm_panel_orientation *orientation)
++{
++	return -ENODEV;
++}
+ #endif
+ 
+ #endif
 -- 
 2.22.0.410.gd8fdbe21b5-goog
 
