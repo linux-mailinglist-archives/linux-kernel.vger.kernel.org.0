@@ -2,109 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DC725D987
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:46:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 641605D923
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:35:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727241AbfGCAqv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 20:46:51 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:42680 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727049AbfGCAqu (ORCPT
+        id S1726430AbfGCAfJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 20:35:09 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:46944 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727229AbfGCAfI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 20:46:50 -0400
-Received: by mail-pl1-f195.google.com with SMTP id ay6so199802plb.9;
-        Tue, 02 Jul 2019 17:46:50 -0700 (PDT)
+        Tue, 2 Jul 2019 20:35:08 -0400
+Received: by mail-ot1-f66.google.com with SMTP id z23so431952ote.13;
+        Tue, 02 Jul 2019 17:35:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=EEyrpPr6crLLek2K+2wB7hfBX7/xhxYts0mMWfA15n0=;
-        b=BpurX42xyJabo6XzPspPcGbdnLp922qk/W7TJX65N+dSzI5mEFHNSiMrswD1+WZp8X
-         qmv3hljs6PQg+GSAVPj657Xbo+wkPQcn3FAl5ALiYz254AGZTK8U8HTerDcv+0LL9oup
-         seDSEJiX0hufrv5lN71zFgHk+OzOClqtbYxgunQTggn+Wbfrvf6E0TwSDg6juxYqB2tn
-         DCptCNPyy6rnmaHD29kTULSJGZ0F75Q6AjC0Ucu4HsWgfFcmVAxxo5sBO6knS9rfSSeX
-         JLI/0otsKYLrFAhKW0hjMaJ5I5/1xV8avpphCfFvyYHmJOcx7wu7+Vy+5uMdCEzNNgN8
-         T3Eg==
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Qbrn6+3X47dwhyUkAWXte8J+fjd+tHfpJpFHgAD+S58=;
+        b=TtsFiJatyqjLoJBxRVt34oXzoLGjO+FToXJtmv6CMHqLJ1J83PkR6QLrCwLHwZJnDn
+         rctTXjH0uAqvaRXNTUMUyew3QYxk8VGHKOJx53ikFwb5551GicsjHXcHFydA3g2ygLLm
+         qUGMeUdNAuAwkIfZf0Xdyzf7BNKslpY47cG4HmIReOIUhHcoNfXFQGvf7od4YcjkIT0x
+         xfigNk7ibXc0Nk50OjWAz5Hnkma8gjHVw6gkyxtRaWT80undWb/Xshw9gtH2ElUj2U6b
+         xNHQG6Gf3IEUxRhcTkGmBLtMbJiauTEClCyOKiARxVaySyOrgn6brYMqadKyW+9xVZ78
+         6kng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=EEyrpPr6crLLek2K+2wB7hfBX7/xhxYts0mMWfA15n0=;
-        b=Gj6b3m1mViioUAPh6vb44lkWE1EscMQzcsx80M7TFRiSULuA2ZUHZDuGsRZyS+D6r/
-         743zP9lWEUH13WpczdRxNmGOCMxdw92GdJVtddR4T2rtdmC1yIzM6m8+uT7enTOqhFEA
-         P/L2PHcEfFNFR+fKKWdvCWrXxYSXYoWMtI1OWnypgpo64/SQepwNk0yHGpB9zNmbpGPf
-         wRLFI3FhuGcE+3Tsr1hk3Ldy9AKVQ7//muUsIw1hkVinurO5Ygntm8CCoMfD6L2SF+z1
-         ktKk6V3B9w7Xrylo6NIpYh2HsbWoiobsB2A1cqZ8HNtQ06kDXXFmvSFr/6EEVm0/+YAc
-         2plw==
-X-Gm-Message-State: APjAAAVDGvNxSPL7lUYpL/VmPO5HX8FhsDUJG2YBxYSS5WD5wohKuzMw
-        TYhgMHw4/g0nfdCcyImTZo8gguzvwcg=
-X-Google-Smtp-Source: APXvYqwqXfwyfSKIUPGKCUBQYxQepOou1V+ytYU4yMV+xxkv1WLpxMrC8xgeoS1VfQyVa0jvP9K1Bg==
-X-Received: by 2002:a17:902:b713:: with SMTP id d19mr18675828pls.267.1562108294798;
-        Tue, 02 Jul 2019 15:58:14 -0700 (PDT)
-Received: from continental ([189.58.144.164])
-        by smtp.gmail.com with ESMTPSA id b24sm125821pfd.98.2019.07.02.15.58.10
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 02 Jul 2019 15:58:13 -0700 (PDT)
-Date:   Tue, 2 Jul 2019 19:58:57 -0300
-From:   Marcos Paulo de Souza <marcos.souza.org@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "open list:USB MASS STORAGE DRIVER" <linux-usb@vger.kernel.org>,
-        "open list:USB MASS STORAGE DRIVER" 
-        <usb-storage@lists.one-eyed-alien.net>
-Subject: Re: [PATCH v2] usb: storage: scsiglue: Do not skip VPD if
- try_vpd_pages is set
-Message-ID: <20190702225857.GA19791@continental>
-References: <20190618224454.16595-1-marcos.souza.org@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Qbrn6+3X47dwhyUkAWXte8J+fjd+tHfpJpFHgAD+S58=;
+        b=f4gxwhGxUjo3niQhJVlsG0kZkWIFZR/51ztYJA2hFyhbtLeb0BXv7kMIuGAkjo7tWl
+         VHvt5lOjpfBxZ9Ps/LH7o1wJyWhstKF+CvtZKKxeHHHmOeyp5lDvsfMcfzY62looSKJr
+         B5eWUJFIlCWJIj98g80TFQbC1qygNCnnARIr+bmy6eWdjLxCR3YNHtJ3sGC/kTuoPfv1
+         B/AH0OCNMuUZnvTp/ef3cVlddTjvDnGXtvZHDLFlZ0KSE2MUxwWipMPkQM2Az+cXC1VO
+         gaZwddATfFOc38kpKvu7mDlIN9L+OUja2CM04m++ukD1QagFEVXIUz9TVtZ7W0WJVpEF
+         ReyQ==
+X-Gm-Message-State: APjAAAWMeYzMoD4mZc0P3anNqE2vh3Tj3jjHvGm/TBeetPK5S6YxQbtd
+        rnzk4SoTieMRqmKAhKafMRBcTqwUf+3S1ePQycq1ER7Q
+X-Google-Smtp-Source: APXvYqwyhHHZpYKTd+W1EP2ObsG3A5HTjaf6wiigNc78pHsXxw86smXpidtCkCRHFB9PyazmH3UOEt3pYpO/+Mr8cF0=
+X-Received: by 2002:a9d:23ca:: with SMTP id t68mr26119392otb.98.1562108518402;
+ Tue, 02 Jul 2019 16:01:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190618224454.16595-1-marcos.souza.org@gmail.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+References: <20190701091258.3870-1-narmstrong@baylibre.com> <20190701091258.3870-6-narmstrong@baylibre.com>
+In-Reply-To: <20190701091258.3870-6-narmstrong@baylibre.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Wed, 3 Jul 2019 01:01:47 +0200
+Message-ID: <CAFBinCD8WfhgcjKfstvVoDaLWm9yoZUg4SJpj-i1R+KgZ17aKg@mail.gmail.com>
+Subject: Re: [RFC/RFT v3 05/14] soc: amlogic: meson-clk-measure: protect
+ measure with a mutex
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     jbrunet@baylibre.com, khilman@baylibre.com,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ping?
+Hi Neil,
 
-On Tue, Jun 18, 2019 at 07:44:54PM -0300, Marcos Paulo de Souza wrote:
-> If BLIST_TRY_VPD_PAGES is set for a device, even for an USB, it should
-> be honored, so only set skip_vpd_pages is try_vpd_pages is not set.
-> 
-> Signed-off-by: Marcos Paulo de Souza <marcos.souza.org@gmail.com>
-> Acked-by: Alan Stern <stern@rowland.harvard.edu>
+On Mon, Jul 1, 2019 at 11:13 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
+>
+> In order to protect clock measuring when multiple process asks for
+> a measure, protect the main measure function with mutexes.
+>
+> Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 > ---
-> 
->  Changes from v1:
->  changed the check of try_vpd_pages from:
->  	sdev->try_vpd_pages == 0;
->  to:
->  	!sdev->try_vpd_pages;
->  (as suggested by Alan Stern)
-> 
->  drivers/usb/storage/scsiglue.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/usb/storage/scsiglue.c b/drivers/usb/storage/scsiglue.c
-> index 59190d88fa9f..30790240aec6 100644
-> --- a/drivers/usb/storage/scsiglue.c
-> +++ b/drivers/usb/storage/scsiglue.c
-> @@ -195,8 +195,11 @@ static int slave_configure(struct scsi_device *sdev)
->  		 */
->  		sdev->skip_ms_page_8 = 1;
->  
-> -		/* Some devices don't handle VPD pages correctly */
-> -		sdev->skip_vpd_pages = 1;
-> +		/*
-> +		 * Some devices don't handle VPD pages correctly, so skip vpd
-> +		 * pages if not forced by SCSI layer.
-> +		 */
-> +		sdev->skip_vpd_pages = !sdev->try_vpd_pages;
->  
->  		/* Do not attempt to use REPORT SUPPORTED OPERATION CODES */
->  		sdev->no_report_opcodes = 1;
-> -- 
-> 2.21.0
-> 
+>  drivers/soc/amlogic/meson-clk-measure.c | 12 +++++++++++-
+>  1 file changed, 11 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/soc/amlogic/meson-clk-measure.c b/drivers/soc/amlogic/meson-clk-measure.c
+> index 19d4cbc93a17..c470e24f1dfa 100644
+> --- a/drivers/soc/amlogic/meson-clk-measure.c
+> +++ b/drivers/soc/amlogic/meson-clk-measure.c
+> @@ -11,6 +11,8 @@
+>  #include <linux/debugfs.h>
+>  #include <linux/regmap.h>
+>
+> +static DEFINE_MUTEX(measure_lock);
+I wonder if that should be part of struct meson_msr for consistency reasons
+
+apart from that:
+Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
