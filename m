@@ -2,95 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78F465D345
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 17:44:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA8355D339
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 17:44:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727106AbfGBPop (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 11:44:45 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:37352 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726213AbfGBPol (ORCPT
+        id S1726967AbfGBPob (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 11:44:31 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:42490 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726213AbfGBPob (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 11:44:41 -0400
-Received: by mail-qt1-f196.google.com with SMTP id y57so18967319qtk.4;
-        Tue, 02 Jul 2019 08:44:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=JEGJ7Jmmm4upED98C8kMEX5v02Mgo/GN/6JJfLKfS2Y=;
-        b=beufamAHtcBoZt+Gwf86QpSPtt4WbjVUwHCf2J3m0/Ebb+ttFl5pzogaS/c+qjPv3v
-         pBxg445g7S25YCjqZCD21hiVGf4r3GV2DfoZV0HCPb5Y0k+nsn/vP2ZX7RPUCroJ7E/2
-         MP8z4inC06IWSaP1Yg9tkV6xe1nbciIh33iZrAJxgE1dzhZ1I+GMa0tjOZm2q6vx8GRB
-         G3ipziXB7UDxBtjdYrV/w600Ndcm3OkRopY+Gn5fcrC3IXJjLvLKDbxSHzNtMyj9ZLa4
-         qgscQ1owPKfAyORLW/xqf+nuvPkkEOjPpQfWTnjWaXbmR85AFbLr2JAn5uzAT7wpcOED
-         kRDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=JEGJ7Jmmm4upED98C8kMEX5v02Mgo/GN/6JJfLKfS2Y=;
-        b=PnZ3GtGqPG/oKf156RR2dpduNMw64svEbWaiXfVfz9jQJKDSb1F3wsT4k1viDovP0E
-         VIcsCZDaGTwXOXeGbWj34lrXeunO9uIlDvLImyZyMZWvI2JW+nyduZ79Ad94bYHlcftR
-         y786yVfzBZM9YZ5lnBzYPWWfj0VWPawaRm05prmjotm+HUn6pOCuq2jUkEqu3SRXn6ZQ
-         JyOPftxw+58Ov6qO0NXxgNshdNLX+y9t3KS7vVP7hqob2rEQVrQ4vClMVnJY8r941/kd
-         B5d/nMkKvajcUWXRyNuCP8qbrFUE1Qflb06ETqO/MNbs3bqrIyLFi5R7jP5UP6IFFzbw
-         8+wg==
-X-Gm-Message-State: APjAAAVkwRNS1wsIhKCh9JaTETHROgnEA1Vt43AL/sz768fZukl2OETa
-        eTH/efXYI5qC1CbRn2rhCRs=
-X-Google-Smtp-Source: APXvYqwrwmnTDvlh5LTDRzlineemj5kLLsGRS9iB6zoJcKryU4/iFBumhY4Vv/4jDgkmSlqD0v5qsw==
-X-Received: by 2002:ac8:368a:: with SMTP id a10mr26019845qtc.143.1562082279992;
-        Tue, 02 Jul 2019 08:44:39 -0700 (PDT)
-Received: from localhost ([2601:184:4780:7861:5010:5849:d76d:b714])
-        by smtp.gmail.com with ESMTPSA id d123sm6828508qkb.94.2019.07.02.08.44.39
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 02 Jul 2019 08:44:39 -0700 (PDT)
-From:   Rob Clark <robdclark@gmail.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     linux-arm-msm@vger.kernel.org, Sean Paul <seanpaul@chromium.org>,
-        Rob Clark <robdclark@chromium.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] drm/bridge: ti-sn65dsi86: correct dsi mode_flags
-Date:   Tue,  2 Jul 2019 08:44:18 -0700
-Message-Id: <20190702154419.20812-4-robdclark@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190702154419.20812-1-robdclark@gmail.com>
-References: <20190702154419.20812-1-robdclark@gmail.com>
+        Tue, 2 Jul 2019 11:44:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=yNPjqLdRTJCzgCZVeC3z+YefMIDSKzflp7zcy3fLwqs=; b=T127DeqEzG8CkEzFsFjGbAebE
+        motUh25iUQewOFQHvknqYG2eDCh0zjdY7q0TCfFwAExGnZPD2C9Qquo0AZgieACMJQRZMVp6246L5
+        sA23h3NrnMxHZTijEXwt/v9JYgGVCR4B40Xflz5mJeU7nQhuaEja8z63y9Gb9PS3GAHAZccaY+cht
+        OYqBCWn40sLRWSVCweGwfZOQdFebYwoUSzKai0IjbTNb54SFw3gjA4Z+GKCOfYXf3Kmrx1xAHl7tV
+        tu4p+fVRKxwAdSY4bWQi6zNb+bowRFQbmDv9VdGxpOekg29NE7yf07YVDhzyswriLKM8dUIuvmf+y
+        Bg4kihsaQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hiKxE-0007gr-E5; Tue, 02 Jul 2019 15:44:24 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 23DB92013A3B6; Tue,  2 Jul 2019 17:44:22 +0200 (CEST)
+Date:   Tue, 2 Jul 2019 17:44:22 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Douglas RAILLARD <douglas.raillard@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        mingo@redhat.com, rjw@rjwysocki.net, viresh.kumar@linaro.org,
+        quentin.perret@arm.com, patrick.bellasi@arm.com,
+        dietmar.eggemann@arm.com
+Subject: Re: [RFC PATCH v2 0/5] sched/cpufreq: Make schedutil energy aware
+Message-ID: <20190702154422.GV3436@hirez.programming.kicks-ass.net>
+References: <20190627171603.14767-1-douglas.raillard@arm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190627171603.14767-1-douglas.raillard@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rob Clark <robdclark@chromium.org>
+On Thu, Jun 27, 2019 at 06:15:58PM +0100, Douglas RAILLARD wrote:
+> Make schedutil cpufreq governor energy-aware.
+> 
+> - patch 1 introduces a function to retrieve a frequency given a base
+>   frequency and an energy cost margin.
+> - patch 2 links Energy Model perf_domain to sugov_policy.
+> - patch 3 updates get_next_freq() to make use of the Energy Model.
 
-Noticed while comparing register dump of how bootloader configures DSI
-vs how kernel configures.  It seems the bridge still works either way,
-but fixing this clears the 'CHA_DATATYPE_ERR' error status bit.
+> 
+> 1) Selecting the highest possible frequency for a given cost. Some
+>    platforms can have lower frequencies that are less efficient than
+>    higher ones, in which case they should be skipped for most purposes.
+>    They can still be useful to give more freedom to thermal throttling
+>    mechanisms, but not under normal circumstances.
+>    note: the EM framework will warn about such OPPs "hertz/watts ratio
+>    non-monotonically decreasing"
 
-Signed-off-by: Rob Clark <robdclark@chromium.org>
----
- drivers/gpu/drm/bridge/ti-sn65dsi86.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Humm, for some reason I was thinking we explicitly skipped those OPPs
+and they already weren't used.
 
-diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi86.c b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-index a6f27648c015..c8fb45e7b06d 100644
---- a/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-+++ b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-@@ -342,8 +342,7 @@ static int ti_sn_bridge_attach(struct drm_bridge *bridge)
- 	/* TODO: setting to 4 lanes always for now */
- 	dsi->lanes = 4;
- 	dsi->format = MIPI_DSI_FMT_RGB888;
--	dsi->mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_SYNC_PULSE |
--			  MIPI_DSI_MODE_EOT_PACKET | MIPI_DSI_MODE_VIDEO_HSE;
-+	dsi->mode_flags = MIPI_DSI_MODE_VIDEO;
- 
- 	/* check if continuous dsi clock is required or not */
- 	pm_runtime_get_sync(pdata->dev);
--- 
-2.20.1
-
+This isn't in fact so, and these first few patches make it so?
