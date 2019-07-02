@@ -2,145 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2EFD5D8EF
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:31:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C05405DA9A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 03:18:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727378AbfGCAay (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 20:30:54 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:42467 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726963AbfGCAaw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 20:30:52 -0400
-Received: by mail-ed1-f65.google.com with SMTP id z25so289911edq.9;
-        Tue, 02 Jul 2019 17:30:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=SUMBHjqHxfFISJ4tsGh6gHnVJafzY5uBObk9/M1SI6Y=;
-        b=p4QfsUpxZBUPSNbm9a2ya6+yOVBLb06CncvEKO0qxtLknZ9dc5s45n/yCCCk8pVAGr
-         kTtuJCFsVLSmNXI13tt/3c+qkzMeuAESDbdCbiFxU8ZGu73hjgvAB7S/EKz0qJg50PM0
-         mggd9oJOp7fMPe31Y0DXLnsbQg44FXj8SGYjCyvHT1W/uN6YXAprbpsjvRGAUJjnYqRY
-         UbDxAZ046ar2qRfBKMqC0yk+pCMu82zzkmqLwb0ooQKB2mTZVaIkovBFit3MwyXI7wOa
-         w8KYcr5NOXHJ2fqa9bjhrPr+UG3CdQ92BH7V+3eVd900MzHNSuuuaZW55wl9e7h6e4PB
-         vpLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SUMBHjqHxfFISJ4tsGh6gHnVJafzY5uBObk9/M1SI6Y=;
-        b=aVNjQ3aZKn5OZO6na5MU7plZ2bIrRI4uKGXUdogHKc83QwSguIIWojeTQ6a98RJsoY
-         seUCji2cu6dDrRoai6omiLtnJNGl9aCP8lokwtBo0iHvcEfeNNaiMRwxbf55M1jjmjZ/
-         wKrZ6vd7qOi5YS9fXauI1ZGNUoypzd5cKYVawj1/qa79TGAndm5st5RctIA83j4tKex6
-         +MCqM1iFMMjZAkvGK1dUYUsmZMJVbMMK4xsR5ToS6E9fcO5s1uYN7YjgOj+SkJwI1gi8
-         mRqrLXCigMVnFiSPCjeyNPoc4qB7TUtCz/AuF7TFimruNZhHteLUdS7r1yW5KT6uKT7G
-         sR0Q==
-X-Gm-Message-State: APjAAAUEb3xclV+iEMHuPIodvsXJzHwrFrAskdb9Mv29M+8tmv8+1g1g
-        TVlQIbeBrkovOrG7/E0htTtfVmNDeORQGsqLuL+4aToXaVs=
-X-Google-Smtp-Source: APXvYqx4j4OCiYpTjzpwx7oNckBn+SqKRP14iTHp1P6MaiYoDQDLUnA3ecoEITujxJ6YGjIOt/liDhVugoLpxJ8Knu0=
-X-Received: by 2002:a50:9468:: with SMTP id q37mr38323779eda.163.1562107743736;
- Tue, 02 Jul 2019 15:49:03 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190630203614.5290-1-robdclark@gmail.com> <20190630203614.5290-3-robdclark@gmail.com>
- <CAKv+Gu_8BOt+f8RTspHo+se-=igZba1zL0+jWLV2HuuUXCKYpA@mail.gmail.com>
- <CAKv+Gu-KhPJxxJA3+J813OPcnoAD4nHq6MhiRTJSd_5y1dPNnw@mail.gmail.com>
- <CAF6AEGv+uAXVV6Q78n=jP0YRDjYn9OS=Xec9MU0+_7EBirxF5w@mail.gmail.com> <20190702215953.wdqges66hx3ge4jr@bivouac.eciton.net>
-In-Reply-To: <20190702215953.wdqges66hx3ge4jr@bivouac.eciton.net>
-From:   Rob Clark <robdclark@gmail.com>
-Date:   Tue, 2 Jul 2019 15:48:48 -0700
-Message-ID: <CAF6AEGvm62rcm4Lp4a+QmqFweVQ0QWXLDoN2CP8=40BdwiiVbQ@mail.gmail.com>
-Subject: Re: [PATCH 2/4] efi/libstub: detect panel-id
-To:     Leif Lindholm <leif.lindholm@linaro.org>
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        aarch64-laptops@lists.linaro.org,
-        Rob Clark <robdclark@chromium.org>,
-        Ingo Molnar <mingo@kernel.org>, Will Deacon <will@kernel.org>,
-        Alexander Graf <agraf@suse.de>,
-        Steve Capper <steve.capper@arm.com>,
-        Lukas Wunner <lukas@wunner.de>,
-        Julien Thierry <julien.thierry@arm.com>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1727494AbfGCBSV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 21:18:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59104 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726635AbfGCBSF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 21:18:05 -0400
+Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BE40F21913;
+        Tue,  2 Jul 2019 22:49:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562107775;
+        bh=0Mw+7Os5OKZyelS8FwvvKV3593VIkrJ7dJcpLx70TbI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=yeymeREMbbnHkItA2QFK0OsQwOJ4S2KY6zwb3yiexMQPK3mYRJ3g1rL4PR773LzRh
+         IoGc92x3+hV6v24eAdWhbNI/hjjLDzKgQ9/f702ro94m4Kiu1LHS57xX0bliPFr6w9
+         c3NhEaSIHmjhkHfQR6smVApNp9irmjk3EPhcjc6k=
+Date:   Tue, 2 Jul 2019 15:49:35 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v2] fat: Add nobarrier to workaround the strange
+ behavior of device
+Message-Id: <20190702154935.56f611ce988bf595412faa00@linux-foundation.org>
+In-Reply-To: <87woh5pyqh.fsf@mail.parknet.co.jp>
+References: <87woh5pyqh.fsf@mail.parknet.co.jp>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 2, 2019 at 2:59 PM Leif Lindholm <leif.lindholm@linaro.org> wrote:
->
-> On Tue, Jul 02, 2019 at 02:01:49PM -0700, Rob Clark wrote:
-> > > > So we are dealing with a platform that violates the UEFI spec, since
-> > > > it does not bother to implement variable services at runtime (because
-> > > > MS let the vendor get away with this).
-> > >
-> > > To clarify, the above remark applies to populating the DT from the OS
-> > > rather than from the firmware.
-> >
-> > yeah, it isn't pretty, but there *are* some other similar cases where
-> > efi-stub is populating DT.. (like update_fdt_memmap() and
-> > kaslr-seed)..
->
-> The problem isn't with the stub updating the DT, the problem is what
-> it updates it with.
->
-> update_fdt_memmap() is the stub filling in the information it
-> communicates to the main kernel.
->
-> kaslr-seed sets a standard property using a standard interface if that
-> interface is available to it at the point of execution.
->
-> Since what we're doing here is dressing up an ACPI platform to make it
-> look like it was a DT platform, and since we have the ability to tweak
-> the DT before ever passing it to the kernel, let's just do that.
->
-> Yes, I know I said I'd rather not, but it's way nicer than sticking
-> platform-specific hacks into the EFI stub.
->
-> (If adding it as a DT property is indeed the thing to do.)
->
-> > > ... but saving variables at boot time for consumption at runtime is
-> > > something that we will likely see more of in the future.
-> >
-> > I think this will be nice, but it also doesn't address the need for a
-> > quirk to get this into /chosen..  I guess we *could* use a shim or
-> > something that runs before the kernel to do this.  But that just seems
-> > like a logistical/support nightmare.
-> >
-> > There is one kernel, and there
-> > are N distro's, so debugging a users "I don't get a screen at boot"
-> > problem because their distro missed some shim patch really just
-> > doesn't seem like a headache I want to have.
->
-> The distros should not need to be aware *at all* of the hacks required
-> to disguise these platforms as DT platforms.
->
-> If they do, they're already device-specific installers and have
-> already accepted the logistical/support nightmare.
->
+On Fri, 28 Jun 2019 23:32:06 +0900 OGAWA Hirofumi <hirofumi@mail.parknet.co.jp> wrote:
 
-I guess I'm not *against* a DT loader shim populating the panel-id
-over into /chosen.. I had it in mind as a backup plan.  Ofc still need
-to get dt folks to buy into /chosen/panel-id but for DT boot I think
-that is the best option.  (At least the /chosen/panel-id approach
-doesn't require the shim to be aware of how the panel is wired up to
-dsi controller and whether their is a bridge in between, and that
-short of thing, so the panel-id approach seems more maintainable that
-other options.)
+> 
+> v2:
+> Just cleanup, changed the place of options under comment of fat.
+> 
+> ---
 
-I am a bit fearful of problems arising from different distros and
-users using different versions of shim, and how to manage that.  I
-guess if somehow "shim thing" was part of the kernel, there would by
-one less moving part... I'd know if user had kernel vX.Y.Z they'd be
-good to go vs not.  But *also* depending on a new-enough version of a
-shim, where the version # is probably not easily apparent to the end
-user, sounds a bit scary from the "all the things that can go wrong"
-point of view.  Maybe I'm paranoid, but I'm a bit worried about how to
-manage that.
+Please be careful with the "^---$" - it denotes "end of changelog", so
+I ended up without a changelog!
 
-BR,
--R
+
+> There was the report of strange behavior of device with recent
+> blkdev_issue_flush() position change.
+
+A Reported-by: would be nice, but not necessary.
+
+> The following is simplified usbmon trace.
+> 
+>  4203   9.160230         host -> 1.25.1       USBMS 95 SCSI: Synchronize Cache(10) LUN: 0x00 (LBA: 0x00000000, Len: 0)
+>  4206   9.164911       1.25.1 -> host         USBMS 77 SCSI: Response LUN: 0x00 (Synchronize Cache(10)) (Good)
+>  4207   9.323927         host -> 1.25.1       USBMS 95 SCSI: Read(10) LUN: 0x00 (LBA: 0x00279950, Len: 240)
+>  4212   9.327138       1.25.1 -> host         USBMS 77 SCSI: Response LUN: 0x00 (Read(10)) (Good)
+> 
+> [...]
+> 
+>  7323  10.202167         host -> 1.25.1       USBMS 95 SCSI: Synchronize Cache(10) LUN: 0x00 (LBA: 0x00000000, Len: 0)
+>  7326  10.432266       1.25.1 -> host         USBMS 77 SCSI: Response LUN: 0x00 (Synchronize Cache(10)) (Good)
+>  7327  10.769092         host -> 1.25.1       USBMS 95 SCSI: Test Unit Ready LUN: 0x00 
+>  7330  10.769192       1.25.1 -> host         USBMS 77 SCSI: Response LUN: 0x00 (Test Unit Ready) (Good)
+>  7335  12.849093         host -> 1.25.1       USBMS 95 SCSI: Test Unit Ready LUN: 0x00 
+>  7338  12.849206       1.25.1 -> host         USBMS 77 SCSI: Response LUN: 0x00 (Test Unit Ready) (Check Condition)
+>  7339  12.849209         host -> 1.25.1       USBMS 95 SCSI: Request Sense LUN: 0x00
+>  
+> If "Synchronize Cache" command issued then there is idle time, the
+> device stop to process further commands, and behave as like no media.
+> (it returns NOT_READY [MEDIUM NOT PRESENT] for SENSE command, and this
+> happened on Kindle) [just a guess, the device is trying to detect the
+> "safe-unplug" operation of Windows or such?]
+> 
+> To workaround those devices and provide flexibility, this adds
+> "barrier"/"nobarrier" mount options to fat driver.
+
+I think it would be helpful if the changelog were to at least describe
+the longer-term plan which hch described.
+
+> --- linux/fs/fat/fat.h~fat-nobarrier	2019-06-28 21:22:18.146191739 +0900
+> +++ linux-hirofumi/fs/fat/fat.h	2019-06-28 23:26:04.881215721 +0900
+> @@ -51,6 +51,7 @@ struct fat_mount_options {
+>  		 tz_set:1,	   /* Filesystem timestamps' offset set */
+>  		 rodir:1,	   /* allow ATTR_RO for directory */
+>  		 discard:1,	   /* Issue discard requests on deletions */
+> +		 barrier:1,	   /* Issue FLUSH command */
+>  		 dos1xfloppy:1;	   /* Assume default BPB for DOS 1.x floppies */
+
+Documentation/filesystems/vfat.txt should be updated to describe this
+new option please.  And perhaps to mention that a device-level quirk should be
+used in preference, if it is available.
+
+
