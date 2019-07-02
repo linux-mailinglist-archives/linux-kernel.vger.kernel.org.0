@@ -2,89 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2B765CA2D
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 09:59:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C19D5CBC2
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 10:16:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727261AbfGBH7G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 03:59:06 -0400
-Received: from bastet.se.axis.com ([195.60.68.11]:38275 "EHLO
-        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725852AbfGBH7F (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 03:59:05 -0400
-X-Greylist: delayed 328 seconds by postgrey-1.27 at vger.kernel.org; Tue, 02 Jul 2019 03:59:04 EDT
-Received: from localhost (localhost [127.0.0.1])
-        by bastet.se.axis.com (Postfix) with ESMTP id 83CAB182EC;
-        Tue,  2 Jul 2019 09:53:35 +0200 (CEST)
-X-Axis-User: NO
-X-Axis-NonUser: YES
-X-Virus-Scanned: Debian amavisd-new at bastet.se.axis.com
-Received: from bastet.se.axis.com ([IPv6:::ffff:127.0.0.1])
-        by localhost (bastet.se.axis.com [::ffff:127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id LkaPNXZJqsvy; Tue,  2 Jul 2019 09:53:34 +0200 (CEST)
-Received: from boulder03.se.axis.com (boulder03.se.axis.com [10.0.8.17])
-        by bastet.se.axis.com (Postfix) with ESMTPS id 261EC18095;
-        Tue,  2 Jul 2019 09:53:33 +0200 (CEST)
-Received: from boulder03.se.axis.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C66BB1E07D;
-        Tue,  2 Jul 2019 09:53:33 +0200 (CEST)
-Received: from boulder03.se.axis.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BA6001E078;
-        Tue,  2 Jul 2019 09:53:33 +0200 (CEST)
-Received: from thoth.se.axis.com (unknown [10.0.2.173])
-        by boulder03.se.axis.com (Postfix) with ESMTP;
-        Tue,  2 Jul 2019 09:53:33 +0200 (CEST)
-Received: from lnxartpec.se.axis.com (lnxartpec.se.axis.com [10.88.4.9])
-        by thoth.se.axis.com (Postfix) with ESMTP id AE67027BE;
-        Tue,  2 Jul 2019 09:53:33 +0200 (CEST)
-Received: by lnxartpec.se.axis.com (Postfix, from userid 10564)
-        id 96D0A801D8; Tue,  2 Jul 2019 09:53:33 +0200 (CEST)
-From:   Vincent Whitchurch <vincent.whitchurch@axis.com>
-To:     herbert@gondor.apana.org.au, davem@davemloft.net
-Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Vincent Whitchurch <rabinv@axis.com>
-Subject: [PATCH] crypto: cryptd - Fix skcipher instance memory leak
-Date:   Tue,  2 Jul 2019 09:53:25 +0200
-Message-Id: <20190702075325.27940-1-vincent.whitchurch@axis.com>
-X-Mailer: git-send-email 2.20.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
+        id S1728112AbfGBIQD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 04:16:03 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:49204 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727742AbfGBIEd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 04:04:33 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A09EE1A0BBD;
+        Tue,  2 Jul 2019 10:04:30 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 9D25D1A0BBA;
+        Tue,  2 Jul 2019 10:04:19 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 7E87E402EB;
+        Tue,  2 Jul 2019 16:04:04 +0800 (SGT)
+From:   Anson.Huang@nxp.com
+To:     daniel.lezcano@linaro.org, tglx@linutronix.de, robh+dt@kernel.org,
+        mark.rutland@arm.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, leonard.crestez@nxp.com,
+        viresh.kumar@linaro.org, daniel.baluta@nxp.com, ping.bai@nxp.com,
+        l.stach@pengutronix.de, abel.vesa@nxp.com,
+        andrew.smirnov@gmail.com, ccaione@baylibre.com, angus@akkea.ca,
+        agx@sigxcpu.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH RESEND V4 1/5] clocksource: timer-of: Support getting clock frequency from DT
+Date:   Tue,  2 Jul 2019 15:55:09 +0800
+Message-Id: <20190702075513.17451-1-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.14.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-cryptd_skcipher_free() fails to free the struct skcipher_instance
-allocated in cryptd_create_skcipher(), leading to a memory leak.  This
-is detected by kmemleak on bootup on ARM64 platforms:
+From: Anson Huang <Anson.Huang@nxp.com>
 
- unreferenced object 0xffff80003377b180 (size 1024):
-   comm "cryptomgr_probe", pid 822, jiffies 4294894830 (age 52.760s)
-   backtrace:
-     kmem_cache_alloc_trace+0x270/0x2d0
-     cryptd_create+0x990/0x124c
-     cryptomgr_probe+0x5c/0x1e8
-     kthread+0x258/0x318
-     ret_from_fork+0x10/0x1c
+More and more platforms use platform driver model for clock driver,
+so the clock driver is NOT ready during timer initialization phase,
+it will cause timer initialization failed.
 
-Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
+To support those platforms with upper scenario, introducing a new
+flag TIMER_OF_CLOCK_FREQUENCY which is mutually exclusive with
+TIMER_OF_CLOCK flag to support getting timer clock frequency from
+DT's timer node, the property name should be "clock-frequency",
+then of_clk operations can be skipped.
+
+User needs to select either TIMER_OF_CLOCK_FREQUENCY or TIMER_OF_CLOCK
+flag if want to use timer-of driver to initialize the clock rate.
+
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
- crypto/cryptd.c | 1 +
- 1 file changed, 1 insertion(+)
+Changes since V3:
+	- use hardcoded "clock-frequency" instead of adding new variable prop_name;
+	- add pre-condition check for TIMER_OF_CLOCK and TIMER_OF_CLOCK_FREQUENCY, they MUST be exclusive.
+---
+ drivers/clocksource/timer-of.c | 29 +++++++++++++++++++++++++++++
+ drivers/clocksource/timer-of.h |  7 ++++---
+ 2 files changed, 33 insertions(+), 3 deletions(-)
 
-diff --git a/crypto/cryptd.c b/crypto/cryptd.c
-index 1ce1bf6d3bab..5f76c6e222c6 100644
---- a/crypto/cryptd.c
-+++ b/crypto/cryptd.c
-@@ -388,6 +388,7 @@ static void cryptd_skcipher_free(struct skcipher_instance *inst)
- 	struct skcipherd_instance_ctx *ctx = skcipher_instance_ctx(inst);
- 
- 	crypto_drop_skcipher(&ctx->spawn);
-+	kfree(inst);
+diff --git a/drivers/clocksource/timer-of.c b/drivers/clocksource/timer-of.c
+index 8054228..858f684 100644
+--- a/drivers/clocksource/timer-of.c
++++ b/drivers/clocksource/timer-of.c
+@@ -161,11 +161,30 @@ static __init int timer_of_base_init(struct device_node *np,
+ 	return 0;
  }
  
- static int cryptd_create_skcipher(struct crypto_template *tmpl,
++static __init int timer_of_clk_frequency_init(struct device_node *np,
++					      struct of_timer_clk *of_clk)
++{
++	int ret;
++	u32 rate;
++
++	ret = of_property_read_u32(np, "clock-frequency", &rate);
++	if (!ret) {
++		of_clk->rate = rate;
++		of_clk->period = DIV_ROUND_UP(rate, HZ);
++	}
++
++	return ret;
++}
++
+ int __init timer_of_init(struct device_node *np, struct timer_of *to)
+ {
++	unsigned long clock_flags = TIMER_OF_CLOCK | TIMER_OF_CLOCK_FREQUENCY;
+ 	int ret = -EINVAL;
+ 	int flags = 0;
+ 
++	if ((to->flags & clock_flags) == clock_flags)
++		return ret;
++
+ 	if (to->flags & TIMER_OF_BASE) {
+ 		ret = timer_of_base_init(np, &to->of_base);
+ 		if (ret)
+@@ -180,6 +199,13 @@ int __init timer_of_init(struct device_node *np, struct timer_of *to)
+ 		flags |= TIMER_OF_CLOCK;
+ 	}
+ 
++	if (to->flags & TIMER_OF_CLOCK_FREQUENCY) {
++		ret = timer_of_clk_frequency_init(np, &to->of_clk);
++		if (ret)
++			goto out_fail;
++		flags |= TIMER_OF_CLOCK_FREQUENCY;
++	}
++
+ 	if (to->flags & TIMER_OF_IRQ) {
+ 		ret = timer_of_irq_init(np, &to->of_irq);
+ 		if (ret)
+@@ -201,6 +227,9 @@ int __init timer_of_init(struct device_node *np, struct timer_of *to)
+ 	if (flags & TIMER_OF_CLOCK)
+ 		timer_of_clk_exit(&to->of_clk);
+ 
++	if (flags & TIMER_OF_CLOCK_FREQUENCY)
++		to->of_clk.rate = 0;
++
+ 	if (flags & TIMER_OF_BASE)
+ 		timer_of_base_exit(&to->of_base);
+ 	return ret;
+diff --git a/drivers/clocksource/timer-of.h b/drivers/clocksource/timer-of.h
+index a5478f3..a08e108 100644
+--- a/drivers/clocksource/timer-of.h
++++ b/drivers/clocksource/timer-of.h
+@@ -4,9 +4,10 @@
+ 
+ #include <linux/clockchips.h>
+ 
+-#define TIMER_OF_BASE	0x1
+-#define TIMER_OF_CLOCK	0x2
+-#define TIMER_OF_IRQ	0x4
++#define TIMER_OF_BASE			0x1
++#define TIMER_OF_CLOCK			0x2
++#define TIMER_OF_IRQ			0x4
++#define TIMER_OF_CLOCK_FREQUENCY	0x8
+ 
+ struct of_timer_irq {
+ 	int irq;
 -- 
-2.20.0
+2.7.4
 
