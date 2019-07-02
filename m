@@ -2,63 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2675E5D13C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 16:12:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BCD055D140
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 16:12:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727039AbfGBOMR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 10:12:17 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:53199 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726341AbfGBOMQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 10:12:16 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1hiJUL-00016H-48; Tue, 02 Jul 2019 14:10:29 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] btrfs: fix memory leak of path on error return path
-Date:   Tue,  2 Jul 2019 15:10:28 +0100
-Message-Id: <20190702141028.11566-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.20.1
+        id S1727103AbfGBOMZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 10:12:25 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:8684 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726341AbfGBOMY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 10:12:24 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 36EB5CE004227F3B0405;
+        Tue,  2 Jul 2019 22:12:19 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Tue, 2 Jul 2019
+ 22:12:12 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <chunkeey@googlemail.com>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-wireless@vger.kernel.org>, <kvalo@codeaurora.org>,
+        <davem@davemloft.net>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] carl9170: remove set but not used variable 'udev'
+Date:   Tue, 2 Jul 2019 22:12:07 +0800
+Message-ID: <20190702141207.47552-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Currently if the allocation of roots or tmp_ulist fails the error handling
-does not free up the allocation of path causing a memory leak. Fix this by
-freeing path with a call to btrfs_free_path before taking the error return
-path.
+drivers/net/wireless/ath/carl9170/usb.c: In function carl9170_usb_disconnect:
+drivers/net/wireless/ath/carl9170/usb.c:1110:21:
+ warning: variable udev set but not used [-Wunused-but-set-variable]
 
-Addresses-Coverity: ("Resource leak")
-Fixes: 5911c8fe05c5 ("btrfs: fiemap: preallocate ulists for btrfs_check_shared")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+It is not use since commit feb09b293327 ("carl9170:
+fix misuse of device driver API")
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- fs/btrfs/extent_io.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/wireless/ath/carl9170/usb.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-index 1eb671c16ff1..d7f37a33d597 100644
---- a/fs/btrfs/extent_io.c
-+++ b/fs/btrfs/extent_io.c
-@@ -4600,6 +4600,7 @@ int extent_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
- 	tmp_ulist = ulist_alloc(GFP_KERNEL);
- 	if (!roots || !tmp_ulist) {
- 		ret = -ENOMEM;
-+		btrfs_free_path(path);
- 		goto out_free_ulist;
- 	}
+diff --git a/drivers/net/wireless/ath/carl9170/usb.c b/drivers/net/wireless/ath/carl9170/usb.c
+index 99f1897..486957a 100644
+--- a/drivers/net/wireless/ath/carl9170/usb.c
++++ b/drivers/net/wireless/ath/carl9170/usb.c
+@@ -1107,12 +1107,10 @@ static int carl9170_usb_probe(struct usb_interface *intf,
+ static void carl9170_usb_disconnect(struct usb_interface *intf)
+ {
+ 	struct ar9170 *ar = usb_get_intfdata(intf);
+-	struct usb_device *udev;
  
+ 	if (WARN_ON(!ar))
+ 		return;
+ 
+-	udev = ar->udev;
+ 	wait_for_completion(&ar->fw_load_wait);
+ 
+ 	if (IS_INITIALIZED(ar)) {
 -- 
-2.20.1
+2.7.4
+
 
