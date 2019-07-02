@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF35B5DE9B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 09:14:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6876D5DE9C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 09:14:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727230AbfGCHOH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 03:14:07 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:42245 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727205AbfGCHOG (ORCPT
+        id S1727378AbfGCHOj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 03:14:39 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:43985 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727210AbfGCHOH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 03:14:06 -0400
-Received: by mail-pg1-f193.google.com with SMTP id t132so717036pgb.9
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 00:14:06 -0700 (PDT)
+        Wed, 3 Jul 2019 03:14:07 -0400
+Received: by mail-pg1-f194.google.com with SMTP id f25so715357pgv.10
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 00:14:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=2mFcMeeg2rlqe6ogUMwdbY/ZnqwhxbuwUlkai/MVFEE=;
-        b=dMiL352Hfs+GGD89/KamAPwbt5Me9eY0Gzx8JOa3JCTAyZD6jNSvMzsJkE6vsJSIsn
-         SYDtIf4W1gfOINpyMZiclnhWLdrKWSPyCKNbgIFWpTr2wnlu/P5piPWZnmp5ArIuOJmL
-         4XnBYAiSq86ayAPk3qWtFOUUmFGkvAvdGjceLaFKy3LQafoI6ilKiIaDhl8xA8rtae/+
-         dvMVNRzen16TCszPCDrlAN4m5ep7jQfaJi7lF7ZBLnkOs+Sjnty3sHQ40v+0ExuLtunt
-         tNmWPhjWy/aZfGVNF3eOUrT3PjCScJ62+0i1fGp1STWNWfVNcDx41/nZ5XxmB7A1nGBI
-         2NSA==
-X-Gm-Message-State: APjAAAX3Cgv6Vzr4axlH6U2v6hAv6n/2ZmFJ7pbqqb74IjfbBWaBR8gd
-        Mb74IUs24AP3dASm5GFo64Q=
-X-Google-Smtp-Source: APXvYqw5vV3O21zW/rXAzHJ9pIMSV9OmHLcHJAc1EuNS2SZp3kQEJYPIo8EDpxrSbqY4jGnr565dzA==
-X-Received: by 2002:a17:90a:ca0f:: with SMTP id x15mr10588302pjt.82.1562138045528;
-        Wed, 03 Jul 2019 00:14:05 -0700 (PDT)
+        bh=Vf519Hq+S5g1ICNSISpoe7Si+uS0J77hxLTRKQGpRN8=;
+        b=DaVmdDx1uY9cHma0p8iUqM7ULeiM7l7lI6zeWgieq677S0+QXfOAdgh1FU76cE92r6
+         XN8qWDNeqZ2+kc5IBVQouTA6PY86je+dLB4pMcQQUfYuC0rDhHRJAbVf2Sjj5VRNDZ9/
+         fLXtVadv98Hd79gS49plxDoDvRCnwV791q6nU3Qc4pO4xpzkeqaXcNlt1/IGWBaL56yW
+         GBBM+ZNzVHJCNVucLRbxP88cYyYdFe1KF/g763hVsSRVz60c2wd5JOsSci2QQh4gRoTa
+         p+UPkS3wVtBCZT+NlN5BcLRejfC4FRzhpQobcIBZIeEIOaHiI8gR52ffbqFxYvaraajT
+         ySLw==
+X-Gm-Message-State: APjAAAXVDKqbeNQaycC9HUmNSScnqPlkyl31fFC4+k6ynWfYOmXsk5Hl
+        e36lLmdBc9GOkYaYkhtI5wI=
+X-Google-Smtp-Source: APXvYqx3wyNKNmZSzdnALqI39UBL7eDSvdfcLO+HWWTuutbJbvwlHL7yV4dRDKEH08oSxF/vCXBmvQ==
+X-Received: by 2002:a17:90a:2488:: with SMTP id i8mr10625520pje.123.1562138046862;
+        Wed, 03 Jul 2019 00:14:06 -0700 (PDT)
 Received: from sc2-haas01-esx0118.eng.vmware.com ([66.170.99.1])
-        by smtp.gmail.com with ESMTPSA id j21sm1256593pfh.86.2019.07.03.00.14.04
+        by smtp.gmail.com with ESMTPSA id j21sm1256593pfh.86.2019.07.03.00.14.05
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 03 Jul 2019 00:14:04 -0700 (PDT)
+        Wed, 03 Jul 2019 00:14:06 -0700 (PDT)
 From:   Nadav Amit <namit@vmware.com>
 To:     Andy Lutomirski <luto@kernel.org>,
         Dave Hansen <dave.hansen@linux.intel.com>
@@ -43,9 +43,9 @@ Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
         Ingo Molnar <mingo@redhat.com>, Nadav Amit <namit@vmware.com>,
         Rik van Riel <riel@surriel.com>,
         Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: [PATCH v2 2/9] x86/mm/tlb: Remove reason as argument for flush_tlb_func_local()
-Date:   Tue,  2 Jul 2019 16:51:44 -0700
-Message-Id: <20190702235151.4377-3-namit@vmware.com>
+Subject: [PATCH v2 3/9] x86/mm/tlb: Open-code on_each_cpu_cond_mask() for tlb_is_not_lazy()
+Date:   Tue,  2 Jul 2019 16:51:45 -0700
+Message-Id: <20190702235151.4377-4-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190702235151.4377-1-namit@vmware.com>
 References: <20190702235151.4377-1-namit@vmware.com>
@@ -54,10 +54,20 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To use flush_tlb_func_local() as an argument to
-__smp_call_function_many() we need it to have a single (void *)
-parameter. Eliminate the second parameter and deduce the reason for the
-flush.
+Open-code on_each_cpu_cond_mask() in native_flush_tlb_others() to
+optimize the code. Open-coding eliminates the need for the indirect branch
+that is used to call is_lazy(), and in CPUs that are vulnerable to
+Spectre v2, it eliminates the retpoline. In addition, it allows to use a
+preallocated cpumask to compute the CPUs that should be.
+
+This would later allow us not to adapt on_each_cpu_cond_mask() to
+support local and remote functions.
+
+Note that calling tlb_is_not_lazy() for every CPU that needs to be
+flushed, as done in native_flush_tlb_multi() might look ugly, but it is
+equivalent to what is currently done in on_each_cpu_cond_mask().
+Actually, native_flush_tlb_multi() does it more efficiently since it
+avoids using an indirect branch for the matter.
 
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Dave Hansen <dave.hansen@linux.intel.com>
@@ -67,42 +77,77 @@ Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- arch/x86/mm/tlb.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ arch/x86/mm/tlb.c | 40 ++++++++++++++++++++++++++++++++++------
+ 1 file changed, 34 insertions(+), 6 deletions(-)
 
 diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 91f6db92554c..8a957b58525f 100644
+index 8a957b58525f..5c9b1607191d 100644
 --- a/arch/x86/mm/tlb.c
 +++ b/arch/x86/mm/tlb.c
-@@ -635,9 +635,12 @@ static void flush_tlb_func_common(const struct flush_tlb_info *f,
- 	this_cpu_write(cpu_tlbstate.ctxs[loaded_mm_asid].tlb_gen, mm_tlb_gen);
+@@ -658,11 +658,13 @@ static void flush_tlb_func_remote(void *info)
+ 	flush_tlb_func_common(f, false, TLB_REMOTE_SHOOTDOWN);
  }
  
--static void flush_tlb_func_local(const void *info, enum tlb_flush_reason reason)
-+static void flush_tlb_func_local(void *info)
+-static bool tlb_is_not_lazy(int cpu, void *data)
++static bool tlb_is_not_lazy(int cpu)
  {
- 	const struct flush_tlb_info *f = info;
-+	enum tlb_flush_reason reason;
-+
-+	reason = (f->mm == NULL) ? TLB_LOCAL_SHOOTDOWN : TLB_LOCAL_MM_SHOOTDOWN;
- 
- 	flush_tlb_func_common(f, true, reason);
+ 	return !per_cpu(cpu_tlbstate.is_lazy, cpu);
  }
-@@ -790,7 +793,7 @@ void flush_tlb_mm_range(struct mm_struct *mm, unsigned long start,
- 	if (mm == this_cpu_read(cpu_tlbstate.loaded_mm)) {
- 		lockdep_assert_irqs_enabled();
- 		local_irq_disable();
--		flush_tlb_func_local(info, TLB_LOCAL_MM_SHOOTDOWN);
-+		flush_tlb_func_local(info);
- 		local_irq_enable();
- 	}
  
-@@ -862,7 +865,7 @@ void arch_tlbbatch_flush(struct arch_tlbflush_unmap_batch *batch)
++static DEFINE_PER_CPU(cpumask_t, flush_tlb_mask);
++
+ void native_flush_tlb_others(const struct cpumask *cpumask,
+ 			     const struct flush_tlb_info *info)
+ {
+@@ -706,12 +708,38 @@ void native_flush_tlb_others(const struct cpumask *cpumask,
+ 	 * up on the new contents of what used to be page tables, while
+ 	 * doing a speculative memory access.
+ 	 */
+-	if (info->freed_tables)
++	if (info->freed_tables) {
+ 		smp_call_function_many(cpumask, flush_tlb_func_remote,
+ 			       (void *)info, 1);
+-	else
+-		on_each_cpu_cond_mask(tlb_is_not_lazy, flush_tlb_func_remote,
+-				(void *)info, 1, GFP_ATOMIC, cpumask);
++	} else {
++		/*
++		 * Although we could have used on_each_cpu_cond_mask(),
++		 * open-coding it has performance advantages, as it eliminates
++		 * the need for indirect calls or retpolines. In addition, it
++		 * allows to use a designated cpumask for evaluating the
++		 * condition, instead of allocating one.
++		 *
++		 * This code works under the assumption that there are no nested
++		 * TLB flushes, an assumption that is already made in
++		 * flush_tlb_mm_range().
++		 *
++		 * cond_cpumask is logically a stack-local variable, but it is
++		 * more efficient to have it off the stack and not to allocate
++		 * it on demand. Preemption is disabled and this code is
++		 * non-reentrant.
++		 */
++		struct cpumask *cond_cpumask = this_cpu_ptr(&flush_tlb_mask);
++		int cpu;
++
++		cpumask_clear(cond_cpumask);
++
++		for_each_cpu(cpu, cpumask) {
++			if (tlb_is_not_lazy(cpu))
++				__cpumask_set_cpu(cpu, cond_cpumask);
++		}
++		smp_call_function_many(cond_cpumask, flush_tlb_func_remote,
++					 (void *)info, 1);
++	}
+ }
+ 
+ /*
+@@ -865,7 +893,7 @@ void arch_tlbbatch_flush(struct arch_tlbflush_unmap_batch *batch)
  	if (cpumask_test_cpu(cpu, &batch->cpumask)) {
  		lockdep_assert_irqs_enabled();
  		local_irq_disable();
--		flush_tlb_func_local(&full_flush_tlb_info, TLB_LOCAL_SHOOTDOWN);
-+		flush_tlb_func_local(&full_flush_tlb_info);
+-		flush_tlb_func_local(&full_flush_tlb_info);
++		flush_tlb_func_local((void *)&full_flush_tlb_info);
  		local_irq_enable();
  	}
  
