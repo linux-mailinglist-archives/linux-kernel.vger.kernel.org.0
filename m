@@ -2,110 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 327C85CCDA
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 11:47:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 949BF5CCDE
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 11:48:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726824AbfGBJrh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 05:47:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59518 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725851AbfGBJrh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 05:47:37 -0400
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 96E85206A2;
-        Tue,  2 Jul 2019 09:47:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562060855;
-        bh=XXGYqdnt+JvoUqIOPLoPD7ttjH4BJlU3ObVXMgm6v1U=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=GGcqLRZLgFspvPOTr+y81lZOjSwzvvwnwZzGLc4sKQWgx/I5675TzMvLmh1pzl/BP
-         3iVoRDPCRX3zDKsqwI+Ytlkt66IzrI1GKuzhcci5f0NdHR4QAQaQ7fNHckYcYYImHc
-         fwsH5Wq38nV8djxEeGfAqBv4N8I8OAjfIpz1QA9g=
-Date:   Tue, 2 Jul 2019 18:47:30 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org
-Subject: Re: [RFC PATCH 00/11] tracing: of: Boot time tracing using
- devicetree
-Message-Id: <20190702184730.b0247eb780ffa48d40a61a81@kernel.org>
-In-Reply-To: <20190627195817.211ab4bea422f37e539e47e8@kernel.org>
-References: <156113387975.28344.16009584175308192243.stgit@devnote2>
-        <CAL_JsqJOc+tkFEGcc+KN0RE8Xjg_i9icPWZ37Ynk_9sR2X1Uwg@mail.gmail.com>
-        <20190627195817.211ab4bea422f37e539e47e8@kernel.org>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1727114AbfGBJsu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 05:48:50 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:37537 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725851AbfGBJsu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 05:48:50 -0400
+Received: by mail-wr1-f65.google.com with SMTP id v14so17011967wrr.4
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 02:48:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=UdYCIZGQ7tAt7A88vWqWA422Qpx5IuQReKn9P3m3xX8=;
+        b=PZuM9EJbQb3YhMp+qaw+VF6BwkhSSyYMquhljCcVZSO+tjIcy06ofVIGPbwYNmREXi
+         pRcuGFWqgU+nSlEobDVIi97m26fD20LGHZVCL/m/+eGewb0yAO7NlvlF/9gBYN5Rgy0B
+         UVcUnIeulg2Ui8pzjNF76wVB55J/p/3pN/YrI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=UdYCIZGQ7tAt7A88vWqWA422Qpx5IuQReKn9P3m3xX8=;
+        b=R8kbjUbTUH0k/sQ12w0muayCkYEOTTCjrP6ZElSUCLsJpxZ2z5ZM7Fpha/Tk21GVyx
+         hX0j2gEyGMQJsV5Ej0GMbaqJ3DKZoSjA/ogwkEVYAxowV/z3ac6vqpxvkhO5x2Hr3os7
+         tX9tP02WHLAKNrcjOsuzHRN4lbcPiWCrJpqcTHEAdfHt6PeJfO9GokIQy7SPJJX5/rxM
+         rL0ERqz59FMrDMGlA4C+JnQ85kKdcDjfr0LB4WJlL+jjXn0B4kp1se4UNq8ujg5CuVQT
+         cC8Jfmfs3fPKEPaWInfsBLqug9YB6qRNyS5O2d9PI59Np7HBszjJ+UQ/0o9Eg1rbs1NM
+         /2dg==
+X-Gm-Message-State: APjAAAWHsA7fPg4vOdrVv0cMcZuo/pPlmKw9cSLYnoqQ7ZrxMCBtiys+
+        7yxivxICk2zug9H2gwLPOXL8wA==
+X-Google-Smtp-Source: APXvYqw+cs3wphtlInYiqa/iYYLL5YBkbuaWsrCFwdpkqDK8kfUrPvl8YI8TNOvUo+26MvPNs1E1Ng==
+X-Received: by 2002:adf:9487:: with SMTP id 7mr9588274wrr.114.1562060928176;
+        Tue, 02 Jul 2019 02:48:48 -0700 (PDT)
+Received: from [10.176.68.244] ([192.19.248.250])
+        by smtp.gmail.com with ESMTPSA id l124sm2421987wmf.36.2019.07.02.02.48.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 02 Jul 2019 02:48:47 -0700 (PDT)
+Subject: Re: use exact allocation for dma coherent memory
+To:     Christoph Hellwig <hch@lst.de>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Ian Abbott <abbotti@mev.co.uk>,
+        H Hartley Sweeten <hsweeten@visionengravers.com>
+Cc:     devel@driverdev.osuosl.org, linux-s390@vger.kernel.org,
+        Intel Linux Wireless <linuxwifi@intel.com>,
+        linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, linux-wireless@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
+        "moderated list:ARM PORT" <linux-arm-kernel@lists.infradead.org>,
+        linux-media@vger.kernel.org
+References: <20190614134726.3827-1-hch@lst.de> <20190701084833.GA22927@lst.de>
+From:   Arend Van Spriel <arend.vanspriel@broadcom.com>
+Message-ID: <74eb9d99-6aa6-d1ad-e66d-6cc9c496b2f3@broadcom.com>
+Date:   Tue, 2 Jul 2019 11:48:44 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
+MIME-Version: 1.0
+In-Reply-To: <20190701084833.GA22927@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
 
-On Thu, 27 Jun 2019 19:58:17 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
 
-> Hi Rob,
+On 7/1/2019 10:48 AM, Christoph Hellwig wrote:
+> On Fri, Jun 14, 2019 at 03:47:10PM +0200, Christoph Hellwig wrote:
+>> Switching to a slightly cleaned up alloc_pages_exact is pretty easy,
+>> but it turns out that because we didn't filter valid gfp_t flags
+>> on the DMA allocator, a bunch of drivers were passing __GFP_COMP
+>> to it, which is rather bogus in too many ways to explain.  Arm has
+>> been filtering it for a while, but this series instead tries to fix
+>> the drivers and warn when __GFP_COMP is passed, which makes it much
+>> larger than just adding the functionality.
 > 
-> On Wed, 26 Jun 2019 15:58:50 -0600
-> Rob Herring <robh+dt@kernel.org> wrote:
+> Dear driver maintainers,
 > 
-> > On Fri, Jun 21, 2019 at 10:18 AM Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> > >
-> > > Hi,
-> > >
-> > > Here is an RFC series of patches to add boot-time tracing using
-> > > devicetree.
-> > >
-> > > Currently, kernel support boot-time tracing using kernel command-line
-> > > parameters. But that is very limited because of limited expressions
-> > > and limited length of command line. Recently, useful features like
-> > > histogram, synthetic events, etc. are being added to ftrace, but it is
-> > > clear that we can not expand command-line options to support these
-> > > features.
-> > >
-> > > Hoever, I've found that there is a devicetree which can pass more
-> > > structured commands to kernel at boot time :) The devicetree is usually
-> > > used for dscribing hardware configuration, but I think we can expand it
-> > > for software configuration too (e.g. AOSP and OPTEE already introduced
-> > > firmware node.) Also, grub and qemu already supports loading devicetree,
-> > > so we can use it not only on embedded devices but also on x86 PC too.
-> > 
-> > Do the x86 versions of grub, qemu, EFI, any other bootloader actually
-> > enable DT support? I didn't think so. Certainly, an x86 kernel doesn't
-> > normally (other than OLPC and ce4100) have a defined way to even pass
-> > a dtb from the bootloader to the kernel and the kernel doesn't
-> > unflatten the dtb.
-> 
-> Sorry, the grub part, I just found this entry. I need to check this
-> can work on x86 too.
+> can you look over the patches touching your drivers, please?  I'd
+> like to get as much as possible of the driver patches into this
+> merge window, so that it can you through your maintainer trees.
 
-I've confirmed that grub-x86 doesn't support devicetree option. I tried
-to add it, and tested it.
+You made me look ;-) Actually not touching my drivers so I'm off the 
+hook. However, I was wondering if drivers could know so I decided to 
+look into the DMA-API.txt documentation which currently states:
 
-https://github.com/mhiramat/grub/commit/644c35bfd2d18c772cc353b74215344f8264923a
+"""
+The flag parameter (dma_alloc_coherent() only) allows the caller to
+specify the ``GFP_`` flags (see kmalloc()) for the allocation (the
+implementation may choose to ignore flags that affect the location of
+the returned memory, like GFP_DMA).
+"""
 
-This works if there is ACPI, if it includes /chosen/linux,ftrace node only.
-(Anyway, we don't need other nodes on x86)
+I do expect you are going to change that description as well now that 
+you are going to issue a warning on __GFP_COMP. Maybe include that in 
+patch 15/16 where you introduce that warning.
 
-At this moment, grub doesn't support DT overlay, so on arm/arm64 user must
-decompile DTB, add linux,ftrace node for tracing and compile it again.
-But if it supports overlay, I think we can give an overlay for tracer setting
-on boot up, that will be handy on arm/arm64 too. :)
-
-Thank you,
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Regards,
+Arend
