@@ -2,59 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A65FB5D903
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:33:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB9955DB14
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 03:43:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727257AbfGCAdG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 20:33:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39506 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727217AbfGCAdE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 20:33:04 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 38662218EA;
-        Tue,  2 Jul 2019 22:06:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562105176;
-        bh=hVh0DP1hDzK9QjloJIO8tuHaop71NPGQzlf192YHV08=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=2Yz+9eRy1/q9tDqMxLekJDOLDaMWutxNFfTn2WV7xifEmMRAIIRiecyoCkbX/Nva/
-         Q38IpeHfCxE1sIhNQWjbuPDfPM4mQH9Ku6M/Ou2v255ShPbmo6EN5UUKyVjY8WzN9G
-         zMqBtv0/5P14Fdaxs0zMCFWI9YM1aSM/LHCl9GRQ=
-Date:   Tue, 2 Jul 2019 15:06:15 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Hugh Dickins <hughd@google.com>, Oleg Nesterov <oleg@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>, Qian Cai <cai@lca.pw>,
-        hch@lst.de, gkohli@codeaurora.org, mingo@redhat.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] block: fix a crash in do_task_dead()
-Message-Id: <20190702150615.1dfbbc2345c1c8f4d2a235c0@linux-foundation.org>
-In-Reply-To: <97d2f5cc-fe98-f28e-86ce-6fbdeb8b67bd@kernel.dk>
-References: <1559161526-618-1-git-send-email-cai@lca.pw>
-        <20190530080358.GG2623@hirez.programming.kicks-ass.net>
-        <82e88482-1b53-9423-baad-484312957e48@kernel.dk>
-        <20190603123705.GB3419@hirez.programming.kicks-ass.net>
-        <ddf9ee34-cd97-a62b-6e91-6b4511586339@kernel.dk>
-        <alpine.LSU.2.11.1906301542410.1105@eggly.anvils>
-        <97d2f5cc-fe98-f28e-86ce-6fbdeb8b67bd@kernel.dk>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1727398AbfGCBna (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 21:43:30 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:55816 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727101AbfGCBn0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 21:43:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Z5Qvl6kc9XmbA0m9wYlQFZjM3E5d4Ibz2pyToD4F6NM=; b=rkpBBg3EbEIpQbQqpkuRmtGXH
+        z/Qqd2b1kGLkR2f/RqzKIXRNlbO7l8a7RKV5JaafjSodgNR9NZRJftkg0xj3D8lGTnD5MNru8DE3b
+        E4mdJBqucQRo9lFn3kzfQxDyszLIiiWxgK7/MiAsU13+X6LkhSHQERWBiJPGJLaTW0trAGOuV6rmw
+        yUCSTg6WqPKoLJWiFKhQ8Shr2EyrjPhssjsSQmcjbK28YC5ceapPS0FJD4AwIcQ6qoLLR5EjGeXTp
+        bJxhKAWLghgjoFww33BxMrS9BSdD7GW6rOZ04cbQisyD7vNcaIs/1PwxXngQ2toRdD6LNu1kMzxtp
+        VjuOOWm/g==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hiQwB-0001DF-6n; Tue, 02 Jul 2019 22:07:43 +0000
+Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
+        id E21DF9802C5; Wed,  3 Jul 2019 00:07:39 +0200 (CEST)
+Date:   Wed, 3 Jul 2019 00:07:39 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Kees Cook <keescook@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Craig Topper <craig.topper@intel.com>,
+        Alexander Potapenko <glider@google.com>,
+        Bill Wendling <morbo@google.com>,
+        Stephen Hines <srhines@google.com>
+Subject: Re: objtool warnings in prerelease clang-9
+Message-ID: <20190702220739.GJ32547@worktop.programming.kicks-ass.net>
+References: <CAKwvOdnGL_9cJ+ETNce89+z7CTDctjACS8DFsLu=ev4+vkVkUw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKwvOdnGL_9cJ+ETNce89+z7CTDctjACS8DFsLu=ev4+vkVkUw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 1 Jul 2019 08:22:32 -0600 Jens Axboe <axboe@kernel.dk> wrote:
 
-> Andrew, can you queue Oleg's patch for 5.2? You can also add my:
-> 
-> Reviewed-by: Jens Axboe <axboe@kernel.dk>
+Hi Nick,
 
-Sure.  Although things are a bit of a mess.  Oleg, can we please have a
-clean resend with signoffs and acks, etc?
+That is good news; and I'll strive to read the email in more detail
+in the morning when there is a better chance of me actually
+understanding some of it :-)
+
+But his here is something I felt needed clarification:
+
+On Tue, Jul 02, 2019 at 01:53:51PM -0700, Nick Desaulniers wrote:
+> Of interest are the disassembled __jump_table entries; in groups of
+> three, there is a group for which the second element is duplicated
+> with a previous group.  This is bad because (as explained by Peter in
+> https://lkml.org/lkml/2019/6/27/118) the triples are in the form (code
+> location, jump target, pointer to key).  Duplicate or repeated jump
+> targets are unexpected, and will lead to incorrect control flow after
+> patching such code locations.
+
+> Also, the jump target should be 0x7 bytes ahead of the location, IIUC.
+
+Even if you mean 'at least' I'm fairly sure this is not correct. The
+instruction at the 'code location' is either a jmp.d32 or a nop5 (both 5
+bytes). The target must (obviously) be at an instruction boundary, but
+really can be anywhere (it is compiler generated after all).
 
