@@ -2,76 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DD005DA25
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 03:03:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B27125D978
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:44:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727459AbfGCBDG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 21:03:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51744 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726329AbfGCBDF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 21:03:05 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1DE7121BF1;
-        Tue,  2 Jul 2019 23:46:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562111178;
-        bh=HHd7/JqeDyA8cgnz+y55uY+RyTkhNRZ7JSHv+IT51Gc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CrIu84spArwVRPyBzpYPsRgnNuSm+lDSIBhd3KtX3SHm9xW7OQsYblD6gEf1Pscxf
-         y/k2K0wUqzF65nDFT1nh89HdvzjtV7CzNkbzValklRdVH30+iyOALXAeO19kd8xhCq
-         bCyfUwDDdyUUc6TCvECcWPKG41dYIxhnZ2wWQBeQ=
-Date:   Tue, 2 Jul 2019 18:46:16 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] pci/proc: Use seq_puts() in show_device()
-Message-ID: <20190702234616.GH128603@google.com>
-References: <a6b110cb-0d0e-5dc3-9ca1-9041609cf74c@web.de>
+        id S1727276AbfGCAnx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 20:43:53 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:39117 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726736AbfGCAnx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 20:43:53 -0400
+Received: by mail-ot1-f65.google.com with SMTP id r21so31981otq.6;
+        Tue, 02 Jul 2019 17:43:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3GdscGqh/egdkRhC/e2+dFv4bjbb+RawTDhOEItQGZY=;
+        b=hQ/EHaWPZ7DY6zXD5ep3cjow9hECIwRyxvYLhtRiOBnmmGgc07CsbysXJM7KQ5D0kq
+         v7RpavAzYWdsV4rP9goQoZVFa28nRw40Jrew9a5It5qe8BzaiDMBDkEvcRMbP/rnM/yt
+         NZg2liIbBRDRGNSdUzeTiAmOfB2N4a2x1UM/lMkbWbIeDy0smc0cZyYT7PdOhFXCONj3
+         QxE8EmaexpOpMJalIOkz8PdnU6PT3tYXOMbkI3wmqDBaV+YFYgMWfMUCQzUaku9zuh/J
+         QQAJYqYW7hQ67WWIWtA3APhoa8Az1S4OShZIEyNLDXDFS9VXYk1w+EmP0cQyyLCIpKn4
+         N73w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3GdscGqh/egdkRhC/e2+dFv4bjbb+RawTDhOEItQGZY=;
+        b=ash5rukF5M2sOvPiP0tnjYSulfJLHvA4rB/g9Un4kkK7evT6/ilyjQuSbFdLaTAnuT
+         YUSt3PqKhVWTQyN6hvwlaeLZve6HQmvp11JCNm0qyEiTyg15YRJ3/2nTR5d14PBpZvQN
+         y+kFhp00fGC185QKVdi3WKQSGkWQbXI2fJYhArxhqhHjpLU/JtB3favnntRDIachh7YW
+         601SybL6FkmIHT9JmeWfYzVgm4S2wrtlmIRcxs36Rx1sv5EvVIIr9abOOJGyTVprS7Tu
+         jKCa7Z6bOZ2dzeRJ1EP+zpy7TTUQvJjGowJGo+u0bwRJ+uzevTu+1pDsfLNqrfoydVv+
+         sEBA==
+X-Gm-Message-State: APjAAAW8A5bTYYcbaoarGTv+P/Nqkv/lX3awZsA3LQuG62gzwd5Beuad
+        hKWk2oQahxES0i4bA4zgfU0T1/PRmrizJXXJrUBy3w==
+X-Google-Smtp-Source: APXvYqxsQ6td77BH829BNXfHoHJ00hWmFYkW/r/LgoW6R6eBpVJaBoDXXEdJFK4UmadzhQd7n8KvCbYnxfBy39BYuX8=
+X-Received: by 2002:a9d:226c:: with SMTP id o99mr25378901ota.42.1562111275781;
+ Tue, 02 Jul 2019 16:47:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a6b110cb-0d0e-5dc3-9ca1-9041609cf74c@web.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190701091258.3870-1-narmstrong@baylibre.com> <20190701091258.3870-12-narmstrong@baylibre.com>
+In-Reply-To: <20190701091258.3870-12-narmstrong@baylibre.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Wed, 3 Jul 2019 01:47:44 +0200
+Message-ID: <CAFBinCBg57gh1x3CKs-YrCvTD0WR2s5zVGWtycb=RGqMiQ-VgA@mail.gmail.com>
+Subject: Re: [RFC/RFT v3 11/14] arm64: dts: meson-g12a: add cpus OPP table
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     jbrunet@baylibre.com, khilman@baylibre.com,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 02, 2019 at 01:26:27PM +0200, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 2 Jul 2019 13:21:33 +0200
-> 
-> A string which did not contain a data format specification should be put
-> into a sequence. Thus use the corresponding function “seq_puts”.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Hi Neil,
 
-Applied to pci/misc for v5.3, thanks!
-
-> ---
->  drivers/pci/proc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/proc.c b/drivers/pci/proc.c
-> index 445b51db75b0..fe7fe678965b 100644
-> --- a/drivers/pci/proc.c
-> +++ b/drivers/pci/proc.c
-> @@ -377,7 +377,7 @@ static int show_device(struct seq_file *m, void *v)
->  	}
->  	seq_putc(m, '\t');
->  	if (drv)
-> -		seq_printf(m, "%s", drv->name);
-> +		seq_puts(m, drv->name);
->  	seq_putc(m, '\n');
->  	return 0;
->  }
-> --
-> 2.22.0
-> 
+On Mon, Jul 1, 2019 at 11:13 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
+>
+> Add the OPP table taken from the vendor u200 and u211 DTS.
+>
+> The Amlogic G12A SoC seems to available in 3 types :
+> - low-speed: up to 1,8GHz
+> - mid-speed: up to 1,908GHz
+> - high-speed: up to 2.1GHz
+>
+> And the S905X2 opp voltages are slightly higher than the S905D2
+> OPP voltages for the low-speed table.
+>
+> This adds the conservative OPP table with the S905X2 higher voltages
+> and the maximum low-speed OPP frequency.
+have you considered all three as separate voltage tables?
+you're other patches are assigning the OPP table to the CPU in the
+board.dts anyways, so it's easy to use different OPP tables for
+different boards
