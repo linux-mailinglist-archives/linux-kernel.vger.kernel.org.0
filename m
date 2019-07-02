@@ -2,60 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54BC65C6F6
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 04:12:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 113B85C6FD
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 04:14:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726990AbfGBCM2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 22:12:28 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:53946 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726362AbfGBCM2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 22:12:28 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id E1B8E14DE8844;
-        Mon,  1 Jul 2019 19:12:27 -0700 (PDT)
-Date:   Mon, 01 Jul 2019 19:12:27 -0700 (PDT)
-Message-Id: <20190701.191227.1363312826504012690.davem@davemloft.net>
-To:     johannes@sipsolutions.net
-Cc:     Jason@zx2c4.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] netlink: use 48 byte ctx instead of 6 signed longs for
- callback
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <0092b0b405e02ac7401ceaad2ea650abc44559ea.camel@sipsolutions.net>
-References: <20190628144022.31376-1-Jason@zx2c4.com>
-        <0092b0b405e02ac7401ceaad2ea650abc44559ea.camel@sipsolutions.net>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 01 Jul 2019 19:12:28 -0700 (PDT)
+        id S1727054AbfGBCOC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 22:14:02 -0400
+Received: from ozlabs.org ([203.11.71.1]:57601 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726362AbfGBCOC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Jul 2019 22:14:02 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45d78Q1cP6z9s3Z;
+        Tue,  2 Jul 2019 12:13:58 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1562033639;
+        bh=WohRocbKc1/BYUZ1CZ0fjG50w3K0ohtYN8fEqw9/btQ=;
+        h=Date:From:To:Cc:Subject:From;
+        b=YXzIkke6BuLN9R+kWiShZtgGXRM61FsQeOLYUs9NuomaDKB/BFKEVnC+HdrJVAtJD
+         TmLC+BeQy/ZCdLXFi4xgC5Y8Wb/347rsmCD5jdq3c6oHyPnC3kWiYnfWK3pUw0cKak
+         Smd/js4IVvIlSnwbU/cGL2vlE0hbPXXyvIARndJTMIoU7wF/+XXk9YNOAPpsFrBLWp
+         DUDq5j7FlN+jIfqiWvZ775QfpvQgERBgGj0ZBEksTkcSmdXI6NSSGxSa0S1IuBiNyU
+         xTtvlZTsnaK1IVB1pRox+6GsapdpGRMQOejSGh5mjCUai5uxMkYSmaC32jCwYEEYKl
+         ydLkAc0ad3ykw==
+Date:   Tue, 2 Jul 2019 12:13:57 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Matteo Croce <mcroce@redhat.com>,
+        Florian Westphal <fw@strlen.de>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Message-ID: <20190702121357.65f9b0b4@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/cJcBb_F.weJj.YnDE.cMylQ"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johannes Berg <johannes@sipsolutions.net>
-Date: Fri, 28 Jun 2019 16:42:26 +0200
+--Sig_/cJcBb_F.weJj.YnDE.cMylQ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> On Fri, 2019-06-28 at 16:40 +0200, Jason A. Donenfeld wrote:
->> People are inclined to stuff random things into cb->args[n] because it
->> looks like an array of integers. Sometimes people even put u64s in there
->> with comments noting that a certain member takes up two slots. The
->> horror! Really this should mirror the usage of skb->cb, which are just
->> 48 opaque bytes suitable for casting a struct. Then people can create
->> their usual casting macros for accessing strongly typed members of a
->> struct.
->> 
->> As a plus, this also gives us the same amount of space on 32bit and 64bit.
->> 
->> Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
->> Cc: Johannes Berg <johannes@sipsolutions.net>
-> 
-> Reviewed-by: Johannes Berg <johannes@sipsolutions.net>
+Hi all,
 
-Applied to net-next.
+Today's linux-next merge of the net-next tree got a conflict in:
+
+  net/ipv4/devinet.c
+
+between commit:
+
+  2e6054636816 ("ipv4: don't set IPv6 only flags to IPv4 addresses")
+
+from the net tree and commit:
+
+  2638eb8b50cf ("net: ipv4: provide __rcu annotation for ifa_list")
+
+from the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc net/ipv4/devinet.c
+index c5ebfa199794,137d1892395d..000000000000
+--- a/net/ipv4/devinet.c
++++ b/net/ipv4/devinet.c
+@@@ -473,11 -482,10 +487,13 @@@ static int __inet_insert_ifa(struct in_
+  	ifa->ifa_flags &=3D ~IFA_F_SECONDARY;
+  	last_primary =3D &in_dev->ifa_list;
+ =20
+ +	/* Don't set IPv6 only flags to IPv4 addresses */
+ +	ifa->ifa_flags &=3D ~IPV6ONLY_FLAGS;
+ +
+- 	for (ifap =3D &in_dev->ifa_list; (ifa1 =3D *ifap) !=3D NULL;
+- 	     ifap =3D &ifa1->ifa_next) {
++ 	ifap =3D &in_dev->ifa_list;
++ 	ifa1 =3D rtnl_dereference(*ifap);
++=20
++ 	while (ifa1) {
+  		if (!(ifa1->ifa_flags & IFA_F_SECONDARY) &&
+  		    ifa->ifa_scope <=3D ifa1->ifa_scope)
+  			last_primary =3D &ifa1->ifa_next;
+
+--Sig_/cJcBb_F.weJj.YnDE.cMylQ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0aveUACgkQAVBC80lX
+0GxJoQf/WarVGNz/Zgngol0mMUT9nAZnvqMDw6GEEmUY+axJQ3mRjrp3C4gtYu8S
+o/z9qGntzvQx6oo1xw5KcxFpFwjgZ3DlNIlBxOKFcF6JeMTRc752I+IyWyznE4J1
+K5b11CYiMMiTJ3gr2G7Yw0kxGr6W0U5JVZ0bIovIKw7AVMZdPbBXFahDX0BQHaFz
+RDy5KdkyKqmu+9HEd8/nB3oGZGmroJPlQu5L5oq8fZXmar9xhgpyrtitbYr5i1Uk
+1Vchsul63zfrPizy6HQEY2WcZPMtD19Z7mtsnax4Ud6n4iWbjdBO9UBsMkYGFRQa
+Zh5yRoHYjCUMSeTfaDuzdeTPtuZ8pg==
+=/Xl9
+-----END PGP SIGNATURE-----
+
+--Sig_/cJcBb_F.weJj.YnDE.cMylQ--
