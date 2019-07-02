@@ -2,69 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F2895D04D
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 15:14:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 53D2F5D050
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 15:15:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726993AbfGBNOH convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 2 Jul 2019 09:14:07 -0400
-Received: from szxga01-in.huawei.com ([45.249.212.187]:2962 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726375AbfGBNOH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 09:14:07 -0400
-Received: from DGGEMM402-HUB.china.huawei.com (unknown [172.30.72.53])
-        by Forcepoint Email with ESMTP id 691112B14BA1ABE84440;
-        Tue,  2 Jul 2019 21:14:04 +0800 (CST)
-Received: from dggeme765-chm.china.huawei.com (10.3.19.111) by
- DGGEMM402-HUB.china.huawei.com (10.3.20.210) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Tue, 2 Jul 2019 21:14:03 +0800
-Received: from dggeme763-chm.china.huawei.com (10.3.19.109) by
- dggeme765-chm.china.huawei.com (10.3.19.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1591.10; Tue, 2 Jul 2019 21:14:03 +0800
-Received: from dggeme763-chm.china.huawei.com ([10.6.66.36]) by
- dggeme763-chm.china.huawei.com ([10.6.66.36]) with mapi id 15.01.1591.008;
- Tue, 2 Jul 2019 21:14:03 +0800
-From:   linmiaohe <linmiaohe@huawei.com>
-To:     Lukas Wunner <lukas@wunner.de>
-CC:     "bhelgaas@google.com" <bhelgaas@google.com>,
-        "andy.shevchenko@gmail.com" <andy.shevchenko@gmail.com>,
-        "rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mingfangsen <mingfangsen@huawei.com>
-Subject: Re: A question about shpcp.
-Thread-Topic: A question about shpcp.
-Thread-Index: AdUw1y6s60N5MVYrQQefLwWPyJccGQ==
-Date:   Tue, 2 Jul 2019 13:14:03 +0000
-Message-ID: <e5bdb5e7d3ad427a913a7e66e750a464@huawei.com>
-Accept-Language: en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.184.189.20]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1727069AbfGBNPA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 09:15:00 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:33566 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726375AbfGBNO7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 09:14:59 -0400
+Received: by mail-io1-f68.google.com with SMTP id u13so36905777iop.0
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 06:14:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=0ztf1PZrt5oedAcicUONlFjNaMMVTARFA+N8wrNUA0Q=;
+        b=iNncWwvr3JS+GVKMI8sE6eC6JPeOW0+/n7i58LiHB012ztLksHRJlxh3Dx/feaC/c8
+         WLDKUGg8QbTbvSU/T7QUCZ8szt5D05PzsX95kpiHiZVQUMqclatZAuKUzRcp0eaPFyII
+         GUEEFK5XISpOKmQLQ1HShxxuEOWypcMZgih5/2c/WKpCMa6YuJ/8dyTC3Q2JEGhPFGdh
+         fa2PtercOCt01XjTcsrJ+dte3/XLQvFruM3ctguP8K5igwqz458wdgeWwn+YbNLoLRig
+         2/zL9MfdnX87SJ5xAJjT6E/Njspq4/rtAFOnwC+4l9xtdn90Jpexxthdt60OOGN/Rz2c
+         8bUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=0ztf1PZrt5oedAcicUONlFjNaMMVTARFA+N8wrNUA0Q=;
+        b=L6/5LrQikU7qy6f7eqfJFdnjvu+vgExA0gz+Qly/KQRWvcFDRiKC3gVk7Z6ap4VqFV
+         8lGXPJOroXohNYJmTxxsWzos5Qp3HhsLTsEvHBfzKYgEaVa5Ni5olZfEBsS2CDq7xRUi
+         dRTq3+GnP/gPDrvwSG+aBXavBataL4fxywIEFeQ9DfCoqjE0ZuIZ9hXyWgVLLtY5fPv0
+         3AaM8L4DYEqtWIw9Aiqt9pAuyGACwayQVV4y4MgKS4CaqVkRc+m/RNMo33kxa4WZfika
+         V0tY+UahGZCgUp9M3x1hmcnz3ShuaeAuawZyosv8mBBjwNSSKBK7pRkt2vXteofvkd0x
+         ewbQ==
+X-Gm-Message-State: APjAAAVyTvpm4XolUkR54YUdOfJ7HnZYMXc2lxXqc+vFC7w495S9cx8l
+        Lw3rqet8jDzDdpohEuXrLg4i5oeFF/lRPc1Xmw==
+X-Google-Smtp-Source: APXvYqxx7+xmweS9/gtiu7nUJE63to7JLzDZUwYe4YWkIkWVeq2Xdqecgw6rkU3/6F3u8u3XKiPu4y4tT5b/AxDTXrA=
+X-Received: by 2002:a02:b914:: with SMTP id v20mr35251356jan.83.1562073299013;
+ Tue, 02 Jul 2019 06:14:59 -0700 (PDT)
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+From:   Avi Fishman <avifishman70@gmail.com>
+Date:   Tue, 2 Jul 2019 16:14:16 +0300
+Message-ID: <CAKKbWA4jw9xiHkfF3bk4KTZPazPM5hb9ZANT6hjZyLuv8DM+mA@mail.gmail.com>
+Subject: [PATCH] mtd: spi-nor: Add Winbond w25q256jvm
+To:     Tudor Ambarus <tudor.ambarus@microchip.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Tomer Maimon <tmaimon77@gmail.com>
+Cc:     linux-mtd@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        Avi Fishman <avifishman70@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, July 2, 2019 at 20:21:18PM +0000,  Lukas wrote:
-> On Thu, Jun 27, 2019 at 12:16:18PM +0000, linmiaohe wrote:
-> > It's very nice of you if you could tell me why is 5*HZ there and if 
-> > this delay can be reduced?
->
-> According to Table 2-4 of the PCI Standard Hot-Plug Controller and Subsystem Specification, "System software is waiting 5 seconds to provide the user with an opportunity to cancel the hot-plug operation."
-> (http://drydkim.com/MyDocuments/PCI%20Spec/specifications/shpc1_0.pdf)
->
-> So the reason the delay can't be reduced or removed is because the spec mandates it.
->
-> Thanks,
->
-> Lukas
+Similar to w25q256 (besides not supporting QPI mode) but with different ID.
+The "JVM" suffix is in the datasheet.
+The datasheet indicates DUAL and QUAD are supported.
+https://www.winbond.com/resource-files/w25q256jv%20spi%20revi%2010232018%20plus.pdf
 
-Many thanks for explaining this. Thanks a lot.
-Have a nice day.
-Best wishes.
+Signed-off-by: Avi Fishman <avifishman70@gmail.com>
+---
+ drivers/mtd/spi-nor/spi-nor.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/mtd/spi-nor/spi-nor.c
+b/drivers/mtd/spi-nor/spi-nor.c index 0c2ec1c21434..ccb217a24404
+100644
+--- a/drivers/mtd/spi-nor/spi-nor.c
++++ b/drivers/mtd/spi-nor/spi-nor.c
+@@ -2120,6 +2120,8 @@ static const struct flash_info spi_nor_ids[] = {
+  { "w25q80bl", INFO(0xef4014, 0, 64 * 1024,  16, SECT_4K) },
+  { "w25q128", INFO(0xef4018, 0, 64 * 1024, 256, SECT_4K) },
+  { "w25q256", INFO(0xef4019, 0, 64 * 1024, 512, SECT_4K |
+SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
++ { "w25q256jvm", INFO(0xef7019, 0, 64 * 1024, 512,
++ SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
+  { "w25m512jv", INFO(0xef7119, 0, 64 * 1024, 1024,
+  SECT_4K | SPI_NOR_QUAD_READ | SPI_NOR_DUAL_READ) },
+
+--
+2.18.0
+
+
+-- 
+Regards,
+Avi
