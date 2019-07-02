@@ -2,82 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D8395D724
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 21:42:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1235E5D673
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 20:58:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727111AbfGBTmq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 15:42:46 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:45261 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727069AbfGBTmp (ORCPT
+        id S1726930AbfGBS6q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 14:58:46 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:43467 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726635AbfGBS6q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 15:42:45 -0400
-Received: by mail-pl1-f196.google.com with SMTP id bi6so906478plb.12
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 12:42:44 -0700 (PDT)
+        Tue, 2 Jul 2019 14:58:46 -0400
+Received: by mail-lj1-f195.google.com with SMTP id 16so17996666ljv.10
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 11:58:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dynamicaims-com.20150623.gappssmtp.com; s=20150623;
-        h=to:subject:from:message-id:disposition-notification-to:date
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=2B7NK/ZEqFIYT6SQs8fSOhl27jBu1V5KUpehg7vVsAU=;
-        b=MX/bHmM3CoOjxodOKY+uWhEjr9eYEpAeDbzn7rasK8uCAqXfBsGRav6GabsMD2W4ZI
-         oNHmgwLHGeFx+8Y9ZBravshTUjpF1N2rXLCOm8gBpyRjZszmlkyFsSBSDaa/5VILYxKg
-         +YyOh8vjuvWcElBcf3rdqqn7b6ayhUkAzrggAZYF9rKtreNEeVRcVBcD/XQR3amurav/
-         IqLz9UbD1INPHIA8JNS+vvPTW0fJG+oOWlAxGsPcxfdfd30+ChQeL/xpbMJOtwgDaxJe
-         RagO0owQHv8NkdxRiO0Qsaay76j38+nRev74UUsSuQo62eUzgWusgtGdN83wqcWb6Qey
-         Wz7g==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=HJRRZ7xwVWKgrrchV3QbMX/wgWRGVLbHC2E+m6l+0/o=;
+        b=RxycRGr5u5OwWuZ2gNevQdwgxs7WNYCcmy6MN0Xz79Q2tNLNs9oq+9T+GtYIaKou4x
+         ApR0Uy9q0zxgvGzaYSBJKVvkIoXFr2fitP7amOqfsC1+gzDKM5svTDQXAnLJRSi6kRsI
+         lK/ehsnPvFZW9qpq7sF5A7L+b0lAYwspjsHRHpiLcqhVBTr7D63JpIV+329tMpzh8b8p
+         TxWQUv26+Xm5H7imex4kC2lwaVpHvj+tPooHa7MKHwF4ZTeQt1PL7nBQF8/WZ2STEOsc
+         kjDlnPXKKR6HCmEvt2fYSEmuRWh39ix8wP0ttAcjK6Dw6L0e5zkxQOh8ocywsKapU8H5
+         +/Wg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:subject:from:message-id
-         :disposition-notification-to:date:user-agent:mime-version
-         :content-transfer-encoding;
-        bh=2B7NK/ZEqFIYT6SQs8fSOhl27jBu1V5KUpehg7vVsAU=;
-        b=NPoEBgtxFgLyKVCdY6o8/Ss4D+/XRBncFg2M74EM7x0wzef91xzLCBqwF5YG0FtxDe
-         CQ4LpaL10YBkWz7w26/Ngv3Y5u+LqMz/jOtA/ywMOuWzn/QomF8/nOVhojVBkVN8luY9
-         fhZPSMJghx6tpXVnBeWlIjNTtVG8ENluoW6ZQcNZQ/9moK5KCzykN+v1jH97MmcTSTyt
-         A2K0YXouCwEPjuuT2wkdRJg9JC7kPRrRMjfrBmVdRY/5iQqtt0kBNgcLdhphohmW9E1v
-         AsJB9MncSGsLJoWC60Yg6nCTlQDckXzoO5zC1998cW5eqNVxTwvhUGN1+aj9jmmDUqut
-         776g==
-X-Gm-Message-State: APjAAAW+Str9aCeJM5sJ/AbH2MlexO9Bcl2UX9AYvjHtM+JXGKk4DvfM
-        4CwO/7JWmsGcpao1sJqI29atZ3s2tq0=
-X-Google-Smtp-Source: APXvYqyOXx74acJvtbxoMTWzL6w1lSd1Ew9MU5ITUj4OONU2japQWZOr3qcploMfNPmjx/GduBE8Hg==
-X-Received: by 2002:a17:902:6a87:: with SMTP id n7mr21121333plk.336.1562096564487;
-        Tue, 02 Jul 2019 12:42:44 -0700 (PDT)
-Received: from [192.168.0.17] ([103.253.170.189])
-        by smtp.gmail.com with ESMTPSA id r88sm2858515pjb.8.2019.07.02.12.42.43
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 02 Jul 2019 12:42:44 -0700 (PDT)
-To:     linux-kernel@vger.kernel.org
-Subject: Wine Enthusiasts
-From:   Amanda Bagnola <abagnola@dynamicaims.com>
-Message-ID: <5D1BA6EC.5000602@dynamicaims.com>
-Date:   Tue, 2 Jul 2019 14:48:12 -0400
-User-Agent: Mozilla/5.0 (Windows NT 6.3; rv:38.0) Gecko/20100101
- Thunderbird/38.1.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=HJRRZ7xwVWKgrrchV3QbMX/wgWRGVLbHC2E+m6l+0/o=;
+        b=Dy6mhTVMQ79WhRvtWbfd8GPSi0/7FRhpGeHVv/5pdqaeyq5IOpe7cLYAr2rClI7ceg
+         eKaiIhw6DFLaDGnpMqCsG3TLGn8CsGw1iVPQCIcTGxrNDkLEF8IhFCAGPeW+NCu0MAN0
+         nEbre6c3YVpTlSY36qua7wcHuo+yJWp0zGqJsjeJg6dFV4KFt8vXLJAxxW6WIjOkfo42
+         BTCABZOWn2WZ1Ak+0lmKGhjjh+rR8DJcvLQjF11lvnenNU4/ngFV3FVwF8vXTUbHHqd+
+         ikdUDYTdPCYfy8jP5lHRMTvVVyVBr2Tn1i1vAerz6qPxAlCbUN2U1modnDM+9fI+CUaL
+         0TEw==
+X-Gm-Message-State: APjAAAU32DL8CDuPo96LZq3SdvgVTEnKjFx97oezKN4f+KOxwtiratPI
+        K+iFVz2NdJ0pu1vhhKr0Ptp1Jg==
+X-Google-Smtp-Source: APXvYqwOnRz12ZXWfwVkH3WodU4LhkeAYjXfGRaMtJWg1mdkdc5MbazZkwv/mQfmjb288oDC/euaTw==
+X-Received: by 2002:a2e:730d:: with SMTP id o13mr517630ljc.81.1562093923391;
+        Tue, 02 Jul 2019 11:58:43 -0700 (PDT)
+Received: from khorivan (59-201-94-178.pool.ukrtel.net. [178.94.201.59])
+        by smtp.gmail.com with ESMTPSA id o8sm842315ljh.100.2019.07.02.11.58.42
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 02 Jul 2019 11:58:42 -0700 (PDT)
+Date:   Tue, 2 Jul 2019 21:58:40 +0300
+From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+To:     Jesper Dangaard Brouer <brouer@redhat.com>
+Cc:     netdev@vger.kernel.org,
+        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+        grygorii.strashko@ti.com, jakub.kicinski@netronome.com,
+        daniel@iogearbox.net, john.fastabend@gmail.com, ast@kernel.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
+Subject: Re: [PATCH] net: core: page_pool: add user refcnt and reintroduce
+ page_pool_destroy
+Message-ID: <20190702185839.GH4510@khorivan>
+Mail-Followup-To: Jesper Dangaard Brouer <brouer@redhat.com>,
+        netdev@vger.kernel.org,
+        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+        grygorii.strashko@ti.com, jakub.kicinski@netronome.com,
+        daniel@iogearbox.net, john.fastabend@gmail.com, ast@kernel.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
+References: <20190702153902.0e42b0b2@carbon>
+ <156207778364.29180.5111562317930943530.stgit@firesoul>
+ <20190702144426.GD4510@khorivan>
+ <20190702165230.6caa36e3@carbon>
+ <20190702145612.GF4510@khorivan>
+ <20190702171029.76c60538@carbon>
+ <20190702152112.GG4510@khorivan>
+ <20190702202907.15fb30ce@carbon>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20190702202907.15fb30ce@carbon>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Jul 02, 2019 at 08:29:07PM +0200, Jesper Dangaard Brouer wrote:
+>On Tue, 2 Jul 2019 18:21:13 +0300
+>Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org> wrote:
+>
+>> On Tue, Jul 02, 2019 at 05:10:29PM +0200, Jesper Dangaard Brouer wrote:
+>> >On Tue, 2 Jul 2019 17:56:13 +0300
+>> >Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org> wrote:
+>> >
+>> >> On Tue, Jul 02, 2019 at 04:52:30PM +0200, Jesper Dangaard Brouer wrote:
+>> >> >On Tue, 2 Jul 2019 17:44:27 +0300
+>> >> >Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org> wrote:
+>> >> >
+>> >> >> On Tue, Jul 02, 2019 at 04:31:39PM +0200, Jesper Dangaard Brouer wrote:
+>> >> >> >From: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+>> >> >> >
+>> >> >> >Jesper recently removed page_pool_destroy() (from driver invocation) and
+>> >> >> >moved shutdown and free of page_pool into xdp_rxq_info_unreg(), in-order to
+>> >> >> >handle in-flight packets/pages. This created an asymmetry in drivers
+>> >> >> >create/destroy pairs.
+>> >> >> >
+>> >> >> >This patch add page_pool user refcnt and reintroduce page_pool_destroy.
+>> >> >> >This serves two purposes, (1) simplify drivers error handling as driver now
+>> >> >> >drivers always calls page_pool_destroy() and don't need to track if
+>> >> >> >xdp_rxq_info_reg_mem_model() was unsuccessful. (2) allow special cases
+>> >> >> >where a single RX-queue (with a single page_pool) provides packets for two
+>> >> >> >net_device'es, and thus needs to register the same page_pool twice with two
+>> >> >> >xdp_rxq_info structures.
+>> >> >>
+>> >> >> As I tend to use xdp level patch there is no more reason to mention (2) case
+>> >> >> here. XDP patch serves it better and can prevent not only obj deletion but also
+>> >> >> pool flush, so, this one patch I could better leave only for (1) case.
+>> >> >
+>> >> >I don't understand what you are saying.
+>> >> >
+>> >> >Do you approve this patch, or do you reject this patch?
+>> >> >
+>> >> It's not reject, it's proposition to use both, XDP and page pool patches,
+>> >> each having its goal.
+>> >
+>> >Just to be clear, if you want this patch to get accepted you have to
+>> >reply with your Signed-off-by (as I wrote).
+>> >
+>> >Maybe we should discuss it in another thread, about why you want two
+>> >solutions to the same problem.
+>>
+>> If it solves same problem I propose to reject this one and use this:
+>> https://lkml.org/lkml/2019/7/2/651
+>
+>No, I propose using this one, and rejecting the other one.
 
-Hi,
+There is at least several arguments against this one (related (2) purpose)
 
-Would you be interested in acquiring an email list of "Wine Enthusiasts" from USA?
+It allows:
+- avoid changes to page_pool/mlx5/netsec
+- save not only allocator obj but allocator "page/buffer flush"
+- buffer flush can be present not only in page_pool but for other allocators
+  that can behave differently and not so simple solution.
+- to not limit cpsw/(potentially others) to use "page_pool" allocator only
+....
 
-We also have data for Golfers, Alcohol Enthusiasts, Beer Enthusiasts, Chocolate Enthusiasts, Foodies, Travelers, Gift Buyers, Spa and Resort Visitors, Sports Enthusiasts, Android Users and many more..
+This patch better leave also, as it simplifies error path for page_pool and
+have more error prone usage comparing with existent one.
 
-Each record in the list contains Contact Name (First, Middle and Last Name), Mailing Address, List type and Opt-in email address.
+Please, don't limit cpsw and potentially other drivers to use only
+page_pool it can be zca or etc... I don't won't to modify each allocator.
+I propose to add both as by fact they solve different problems with common
+solution.
 
-All the contacts are opt-in verified, 100% permission based and can be used for unlimited multi-channel marketing.
-
-Please let me know your thoughts towards procuring the Beer Enthusiasts List.
-
-Best Regards,
-Amanda Bagnola
-Research Analyst
-
-We respect your privacy, if you do not wish to receive any further emails from our end, please reply with a subject “Leave Out”.
-
+-- 
+Regards,
+Ivan Khoronzhuk
