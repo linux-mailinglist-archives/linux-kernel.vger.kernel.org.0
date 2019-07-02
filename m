@@ -2,43 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B954B5CAAF
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 10:06:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 907DE5CA70
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 10:04:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728152AbfGBIGs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 04:06:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53660 "EHLO mail.kernel.org"
+        id S1727618AbfGBIEK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 04:04:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49468 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728135AbfGBIGr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 04:06:47 -0400
+        id S1727584AbfGBIEH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 04:04:07 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A18DC21851;
-        Tue,  2 Jul 2019 08:06:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 160CE21841;
+        Tue,  2 Jul 2019 08:04:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562054806;
-        bh=JzhaEiPOMzUPEDdCttlNaZQHACR4FpyS+c4Ey6GXKhw=;
+        s=default; t=1562054646;
+        bh=+5wh1TPC8500DTvsHtSfTy6J2D318x38RgUyQSLTuhw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SqyRqtOx3do88SYZcz1QFU78yy7LtsAgEUo0nROWbRvMTd8FIXF5UgDKp3JflsGBi
-         XYqg4Zm0nFab9o0mg8UF0xatl0bht5vMzmS0l2umo2xyuKo0fMQmcQV412HumzipKl
-         1PK8udkDULzhXpNXiP/1kykXpPizfJSCX058cOVM=
+        b=CXBdD0BNhCf7/GwvrYGJe9qwhgq8pIZnTMGUILy4cFcd+saBdA2fAQwrbg9vrwz5d
+         0Ll6v4wAlRklY1GZHVSUJX942BLSnVURNj737bCDlWvlD+LwjczDYToFk4ZPKakPWi
+         PJ4G4dfRnaK289+MM9Ym37Wzj5JphtAmAQcHqmK0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alejandro Jimenez <alejandro.j.jimenez@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Liam Merwick <liam.merwick@oracle.com>,
-        Mark Kanda <mark.kanda@oracle.com>,
-        Paolo Bonzini <pbonzini@redhat.com>, bp@alien8.de,
-        rkrcmar@redhat.com, kvm@vger.kernel.org
-Subject: [PATCH 4.19 41/72] x86/speculation: Allow guests to use SSBD even if host does not
+        stable@vger.kernel.org, JingYi Hou <houjingyi647@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.1 34/55] net: remove duplicate fetch in sock_getsockopt
 Date:   Tue,  2 Jul 2019 10:01:42 +0200
-Message-Id: <20190702080126.783958835@linuxfoundation.org>
+Message-Id: <20190702080125.896132945@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190702080124.564652899@linuxfoundation.org>
-References: <20190702080124.564652899@linuxfoundation.org>
+In-Reply-To: <20190702080124.103022729@linuxfoundation.org>
+References: <20190702080124.103022729@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,70 +43,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alejandro Jimenez <alejandro.j.jimenez@oracle.com>
+From: JingYi Hou <houjingyi647@gmail.com>
 
-commit c1f7fec1eb6a2c86d01bc22afce772c743451d88 upstream.
+[ Upstream commit d0bae4a0e3d8c5690a885204d7eb2341a5b4884d ]
 
-The bits set in x86_spec_ctrl_mask are used to calculate the guest's value
-of SPEC_CTRL that is written to the MSR before VMENTRY, and control which
-mitigations the guest can enable.  In the case of SSBD, unless the host has
-enabled SSBD always on mode (by passing "spec_store_bypass_disable=on" in
-the kernel parameters), the SSBD bit is not set in the mask and the guest
-can not properly enable the SSBD always on mitigation mode.
+In sock_getsockopt(), 'optlen' is fetched the first time from userspace.
+'len < 0' is then checked. Then in condition 'SO_MEMINFO', 'optlen' is
+fetched the second time from userspace.
 
-This has been confirmed by running the SSBD PoC on a guest using the SSBD
-always on mitigation mode (booted with kernel parameter
-"spec_store_bypass_disable=on"), and verifying that the guest is vulnerable
-unless the host is also using SSBD always on mode. In addition, the guest
-OS incorrectly reports the SSB vulnerability as mitigated.
+If change it between two fetches may cause security problems or unexpected
+behaivor, and there is no reason to fetch it a second time.
 
-Always set the SSBD bit in x86_spec_ctrl_mask when the host CPU supports
-it, allowing the guest to use SSBD whether or not the host has chosen to
-enable the mitigation in any of its modes.
+To fix this, we need to remove the second fetch.
 
-Fixes: be6fcb5478e9 ("x86/bugs: Rework spec_ctrl base and mask logic")
-Signed-off-by: Alejandro Jimenez <alejandro.j.jimenez@oracle.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Liam Merwick <liam.merwick@oracle.com>
-Reviewed-by: Mark Kanda <mark.kanda@oracle.com>
-Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
-Cc: bp@alien8.de
-Cc: rkrcmar@redhat.com
-Cc: kvm@vger.kernel.org
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/1560187210-11054-1-git-send-email-alejandro.j.jimenez@oracle.com
+Signed-off-by: JingYi Hou <houjingyi647@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/x86/kernel/cpu/bugs.c |   11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ net/core/sock.c |    3 ---
+ 1 file changed, 3 deletions(-)
 
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -821,6 +821,16 @@ static enum ssb_mitigation __init __ssb_
- 	}
+--- a/net/core/sock.c
++++ b/net/core/sock.c
+@@ -1482,9 +1482,6 @@ int sock_getsockopt(struct socket *sock,
+ 	{
+ 		u32 meminfo[SK_MEMINFO_VARS];
  
- 	/*
-+	 * If SSBD is controlled by the SPEC_CTRL MSR, then set the proper
-+	 * bit in the mask to allow guests to use the mitigation even in the
-+	 * case where the host does not enable it.
-+	 */
-+	if (static_cpu_has(X86_FEATURE_SPEC_CTRL_SSBD) ||
-+	    static_cpu_has(X86_FEATURE_AMD_SSBD)) {
-+		x86_spec_ctrl_mask |= SPEC_CTRL_SSBD;
-+	}
-+
-+	/*
- 	 * We have three CPU feature flags that are in play here:
- 	 *  - X86_BUG_SPEC_STORE_BYPASS - CPU is susceptible.
- 	 *  - X86_FEATURE_SSBD - CPU is able to turn off speculative store bypass
-@@ -837,7 +847,6 @@ static enum ssb_mitigation __init __ssb_
- 			x86_amd_ssb_disable();
- 		} else {
- 			x86_spec_ctrl_base |= SPEC_CTRL_SSBD;
--			x86_spec_ctrl_mask |= SPEC_CTRL_SSBD;
- 			wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
- 		}
- 	}
+-		if (get_user(len, optlen))
+-			return -EFAULT;
+-
+ 		sk_get_meminfo(sk, meminfo);
+ 
+ 		len = min_t(unsigned int, len, sizeof(meminfo));
 
 
