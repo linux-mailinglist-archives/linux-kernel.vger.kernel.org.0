@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1318F5CA7F
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 10:04:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E63495CAEC
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 10:09:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727834AbfGBIEx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 04:04:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50516 "EHLO mail.kernel.org"
+        id S1728639AbfGBIJa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 04:09:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57322 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727824AbfGBIEt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 04:04:49 -0400
+        id S1728684AbfGBIJ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 04:09:27 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 33F5E21841;
-        Tue,  2 Jul 2019 08:04:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 36DE221479;
+        Tue,  2 Jul 2019 08:09:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562054688;
-        bh=/6iK0ibC2dR/wYyMuzHvQTtaid6rICQwLjlPUPldDhs=;
+        s=default; t=1562054966;
+        bh=jxKyYLS206eyCqpUlU6qSBoV+PF/H1dACTeLISo2As8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CDylezg2brxrY6nrr8RPf022NWA7cfwlMw1xHrc8QqgKD4vsq7jJR/0YAz41hF0u+
-         CzzKS8PMbrh6WCC5J4T6XO6t/uzjcwY6/6rss9pD45KqoVQdrWHU2V51+RLROb/LZL
-         /ABbA2hyj3WznO9yMRTeWEwK+GrobmDCwn/6v4lg=
+        b=IUKcAe+U4KQZ0o4k2n9mioikyvdW+d3XD4RgvNJC6zFAS4VGjbi6vyAgMrh/EwGcB
+         0+gCgtzQwgWwrKQBRH/9iO/bOf8k2B/lOL9/mBgAG1zosb73hFwEldVbT88e8lAe/2
+         YNF2KDWGrgVOukhKZP3N27Pm/skNsXDmcqJzpFxI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Roland Hii <roland.king.guan.hii@intel.com>,
-        Ong Boon Leong <boon.leong.ong@intel.com>,
-        Voon Weifeng <weifeng.voon@intel.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.1 36/55] net: stmmac: set IC bit when transmitting frames with HW timestamp
-Date:   Tue,  2 Jul 2019 10:01:44 +0200
-Message-Id: <20190702080125.999617761@linuxfoundation.org>
+        stable@vger.kernel.org, Gary Leshner <Gary.S.Leshner@intel.com>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 05/43] IB/hfi1: Close PSM sdma_progress sleep window
+Date:   Tue,  2 Jul 2019 10:01:45 +0200
+Message-Id: <20190702080124.144847078@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190702080124.103022729@linuxfoundation.org>
-References: <20190702080124.103022729@linuxfoundation.org>
+In-Reply-To: <20190702080123.904399496@linuxfoundation.org>
+References: <20190702080123.904399496@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,71 +46,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Roland Hii <roland.king.guan.hii@intel.com>
+commit da9de5f8527f4b9efc82f967d29a583318c034c7 upstream.
 
-[ Upstream commit d0bb82fd60183868f46c8ccc595a3d61c3334a18 ]
+The call to sdma_progress() is called outside the wait lock.
 
-When transmitting certain PTP frames, e.g. SYNC and DELAY_REQ, the
-PTP daemon, e.g. ptp4l, is polling the driver for the frame transmit
-hardware timestamp. The polling will most likely timeout if the tx
-coalesce is enabled due to the Interrupt-on-Completion (IC) bit is
-not set in tx descriptor for those frames.
+In this case, there is a race condition where sdma_progress() can return
+false and the sdma_engine can idle.  If that happens, there will be no
+more sdma interrupts to cause the wakeup and the user_sdma xmit will hang.
 
-This patch will ignore the tx coalesce parameter and set the IC bit
-when transmitting PTP frames which need to report out the frame
-transmit hardware timestamp to user space.
+Fix by moving the lock to enclose the sdma_progress() call.
 
-Fixes: f748be531d70 ("net: stmmac: Rework coalesce timer and fix multi-queue races")
-Signed-off-by: Roland Hii <roland.king.guan.hii@intel.com>
-Signed-off-by: Ong Boon Leong <boon.leong.ong@intel.com>
-Signed-off-by: Voon Weifeng <weifeng.voon@intel.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Also, delete busycount. The need for this was removed by:
+commit bcad29137a97 ("IB/hfi1: Serve the most starved iowait entry first")
+
+Ported to linux-4.14.y.
+
+Cc: <stable@vger.kernel.org>
+Fixes: 7724105686e7 ("IB/hfi1: add driver files")
+Reviewed-by: Gary Leshner <Gary.S.Leshner@intel.com>
+Signed-off-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c |   22 ++++++++++++++--------
- 1 file changed, 14 insertions(+), 8 deletions(-)
+ drivers/infiniband/hw/hfi1/user_sdma.c | 12 ++++--------
+ drivers/infiniband/hw/hfi1/user_sdma.h |  1 -
+ 2 files changed, 4 insertions(+), 9 deletions(-)
 
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -2957,12 +2957,15 @@ static netdev_tx_t stmmac_tso_xmit(struc
+diff --git a/drivers/infiniband/hw/hfi1/user_sdma.c b/drivers/infiniband/hw/hfi1/user_sdma.c
+index cbe5ab26d95b..75275f9e363d 100644
+--- a/drivers/infiniband/hw/hfi1/user_sdma.c
++++ b/drivers/infiniband/hw/hfi1/user_sdma.c
+@@ -132,25 +132,22 @@ static int defer_packet_queue(
+ 	struct hfi1_user_sdma_pkt_q *pq =
+ 		container_of(wait, struct hfi1_user_sdma_pkt_q, busy);
+ 	struct hfi1_ibdev *dev = &pq->dd->verbs_dev;
+-	struct user_sdma_txreq *tx =
+-		container_of(txreq, struct user_sdma_txreq, txreq);
  
- 	/* Manage tx mitigation */
- 	tx_q->tx_count_frames += nfrags + 1;
--	if (priv->tx_coal_frames <= tx_q->tx_count_frames) {
-+	if (likely(priv->tx_coal_frames > tx_q->tx_count_frames) &&
-+	    !(priv->synopsys_id >= DWMAC_CORE_4_00 &&
-+	    (skb_shinfo(skb)->tx_flags & SKBTX_HW_TSTAMP) &&
-+	    priv->hwts_tx_en)) {
-+		stmmac_tx_timer_arm(priv, queue);
-+	} else {
-+		tx_q->tx_count_frames = 0;
- 		stmmac_set_tx_ic(priv, desc);
- 		priv->xstats.tx_set_ic_bit++;
--		tx_q->tx_count_frames = 0;
--	} else {
--		stmmac_tx_timer_arm(priv, queue);
- 	}
- 
- 	skb_tx_timestamp(skb);
-@@ -3176,12 +3179,15 @@ static netdev_tx_t stmmac_xmit(struct sk
- 	 * element in case of no SG.
+-	if (sdma_progress(sde, seq, txreq)) {
+-		if (tx->busycount++ < MAX_DEFER_RETRY_COUNT)
+-			goto eagain;
+-	}
++	write_seqlock(&dev->iowait_lock);
++	if (sdma_progress(sde, seq, txreq))
++		goto eagain;
+ 	/*
+ 	 * We are assuming that if the list is enqueued somewhere, it
+ 	 * is to the dmawait list since that is the only place where
+ 	 * it is supposed to be enqueued.
  	 */
- 	tx_q->tx_count_frames += nfrags + 1;
--	if (priv->tx_coal_frames <= tx_q->tx_count_frames) {
-+	if (likely(priv->tx_coal_frames > tx_q->tx_count_frames) &&
-+	    !(priv->synopsys_id >= DWMAC_CORE_4_00 &&
-+	    (skb_shinfo(skb)->tx_flags & SKBTX_HW_TSTAMP) &&
-+	    priv->hwts_tx_en)) {
-+		stmmac_tx_timer_arm(priv, queue);
-+	} else {
-+		tx_q->tx_count_frames = 0;
- 		stmmac_set_tx_ic(priv, desc);
- 		priv->xstats.tx_set_ic_bit++;
--		tx_q->tx_count_frames = 0;
--	} else {
--		stmmac_tx_timer_arm(priv, queue);
- 	}
+ 	xchg(&pq->state, SDMA_PKT_Q_DEFERRED);
+-	write_seqlock(&dev->iowait_lock);
+ 	if (list_empty(&pq->busy.list))
+ 		iowait_queue(pkts_sent, &pq->busy, &sde->dmawait);
+ 	write_sequnlock(&dev->iowait_lock);
+ 	return -EBUSY;
+ eagain:
++	write_sequnlock(&dev->iowait_lock);
+ 	return -EAGAIN;
+ }
  
- 	skb_tx_timestamp(skb);
+@@ -803,7 +800,6 @@ static int user_sdma_send_pkts(struct user_sdma_request *req, unsigned maxpkts)
+ 
+ 		tx->flags = 0;
+ 		tx->req = req;
+-		tx->busycount = 0;
+ 		INIT_LIST_HEAD(&tx->list);
+ 
+ 		/*
+diff --git a/drivers/infiniband/hw/hfi1/user_sdma.h b/drivers/infiniband/hw/hfi1/user_sdma.h
+index 2b5326d6db53..87b0c567f442 100644
+--- a/drivers/infiniband/hw/hfi1/user_sdma.h
++++ b/drivers/infiniband/hw/hfi1/user_sdma.h
+@@ -236,7 +236,6 @@ struct user_sdma_txreq {
+ 	struct list_head list;
+ 	struct user_sdma_request *req;
+ 	u16 flags;
+-	unsigned int busycount;
+ 	u64 seqnum;
+ };
+ 
+-- 
+2.20.1
+
 
 
