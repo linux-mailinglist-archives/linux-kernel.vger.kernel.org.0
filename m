@@ -2,116 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D2055CA14
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 09:54:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F4D75CA0D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 09:46:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726011AbfGBHyu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 03:54:50 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:34662 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725851AbfGBHyu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 03:54:50 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 43E0B1A0BA2;
-        Tue,  2 Jul 2019 09:54:48 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id F285E1A01F0;
-        Tue,  2 Jul 2019 09:54:42 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 42722402B6;
-        Tue,  2 Jul 2019 15:54:36 +0800 (SGT)
-From:   Anson.Huang@nxp.com
-To:     shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, aisheng.dong@nxp.com, abel.vesa@nxp.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        m.felsch@pengutronix.de
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH V3] soc: imx-scu: Add SoC UID(unique identifier) support
-Date:   Tue,  2 Jul 2019 15:45:45 +0800
-Message-Id: <20190702074545.48267-1-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.14.1
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726167AbfGBHqA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 03:46:00 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:41893 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725851AbfGBHp7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 03:45:59 -0400
+Received: by mail-lj1-f194.google.com with SMTP id 205so15863202ljj.8
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 00:45:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5IrBPD0J3ThoKKFU4/FQRnog7nkm0QgrOR9tIqfG3FY=;
+        b=d1R5QsTYa5MTtTEHHeCBzlMg9hZoSTCrw52r1zZF5ZH3HtRyfd1fMwfCVSWnHKA2kG
+         4yOBQgQwFxAfrJAoRCkpslMVYXq4M4qzZEhhN5eAueF6CDd47bf1YGy7CVMb4QD9NZ6N
+         9FFBS5L6sLobrCnhGda6f/KzikGGytL1t7rQamquIJyhjAVuuWEx7we3wKkf24HvN7Nl
+         6GDP08kRaJ2X8lBBU/kp/7dw40Kwc2TysdxBYOdxkhkWZwSAlHYNiQ6QQDdXumAjceiA
+         re/bUmjD12UwXfzamlmxA5GbyLp1Ijx3uuJh4MGTHoBwxSrc7K+2vWPk15rDH77JGhPb
+         yT2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5IrBPD0J3ThoKKFU4/FQRnog7nkm0QgrOR9tIqfG3FY=;
+        b=XUnwkB5n6mdCye1ieIbxgxqwlGFMf0KeklLQ3z5A8NgNDgKHiH+LH0YjgVJC4Q+ALW
+         ifvcphP/6H6MFGwCl/FD/d8h0zCXR8jCkx5Ta+qUGNWM85rvwplRIakCpom4xoZgQLlt
+         HdbtDlVb7+iHyv8F/lg6RO73cBucMrc4xsVNLhQADaIeBvViflq90ROjhry2fYihw2z9
+         bQQkkR/vYEDnwacH3gxQuxRkENGWVk9MHKaPg2GkZrTq28dFOyPe+WyhuPqVSEj755G4
+         fdS/iMfi/CrrEMVczqzlbyTGbCqyiODNoHUF/gttSnwcaytt4QG/6WMO83o4Pe+d0iMY
+         Ly/A==
+X-Gm-Message-State: APjAAAUE+NCxO+EHFFaoGx5NhkOj8LLafJqUSRhXsmkh7hjYvvVflS77
+        TY9bgkCr02i/Q3l67oSKzHEPtM7IdLt/IHBuRD4=
+X-Google-Smtp-Source: APXvYqxJ4w6Wee+ZufWo6q87k8jBVJa0des3If6bhXo6eBuX5YbcNlItTrHcH+egqRL+ObwM7oDMNYBaEiKXghKcdow=
+X-Received: by 2002:a2e:86cc:: with SMTP id n12mr16247419ljj.146.1562053557722;
+ Tue, 02 Jul 2019 00:45:57 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190701173042.221453-1-henryburns@google.com>
+In-Reply-To: <20190701173042.221453-1-henryburns@google.com>
+From:   Vitaly Wool <vitalywool@gmail.com>
+Date:   Tue, 2 Jul 2019 10:45:46 +0300
+Message-ID: <CAMJBoFPbRcdZ+NnX17OQ-sOcCwe+ZAsxcDJoR0KDkgBY9WXvpg@mail.gmail.com>
+Subject: Re: [PATCH] mm/z3fold: Fix z3fold_buddy_slots use after free
+To:     Henry Burns <henryburns@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Vitaly Vul <vitaly.vul@sony.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Xidong Wang <wangxidong_97@163.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jonathan Adams <jwadams@google.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anson Huang <Anson.Huang@nxp.com>
+Hi Henry,
 
-Add i.MX SCU SoC's UID(unique identifier) support, user
-can read it from sysfs:
+On Mon, Jul 1, 2019 at 8:31 PM Henry Burns <henryburns@google.com> wrote:
+>
+> Running z3fold stress testing with address sanitization
+> showed zhdr->slots was being used after it was freed.
+>
+> z3fold_free(z3fold_pool, handle)
+>   free_handle(handle)
+>     kmem_cache_free(pool->c_handle, zhdr->slots)
+>   release_z3fold_page_locked_list(kref)
+>     __release_z3fold_page(zhdr, true)
+>       zhdr_to_pool(zhdr)
+>         slots_to_pool(zhdr->slots)  *BOOM*
 
-root@imx8qxpmek:~# cat /sys/devices/soc0/soc_uid
-7B64280B57AC1898
+Thanks for looking into this. I'm not entirely sure I'm all for
+splitting free_handle() but let me think about it.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
----
-Change since V2:
-	- The SCU FW API for getting UID does NOT have response, so we should set
-	  imx_scu_call_rpc()'s 3rd parameter as false and still can check the returned
-	  value, and comment is no needed any more.
----
- drivers/soc/imx/soc-imx-scu.c | 39 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
+> Instead we split free_handle into two functions, release_handle()
+> and free_slots(). We use release_handle() in place of free_handle(),
+> and use free_slots() to call kmem_cache_free() after
+> __release_z3fold_page() is done.
 
-diff --git a/drivers/soc/imx/soc-imx-scu.c b/drivers/soc/imx/soc-imx-scu.c
-index 676f612..50831eb 100644
---- a/drivers/soc/imx/soc-imx-scu.c
-+++ b/drivers/soc/imx/soc-imx-scu.c
-@@ -27,6 +27,40 @@ struct imx_sc_msg_misc_get_soc_id {
- 	} data;
- } __packed;
- 
-+struct imx_sc_msg_misc_get_soc_uid {
-+	struct imx_sc_rpc_msg hdr;
-+	u32 uid_low;
-+	u32 uid_high;
-+} __packed;
-+
-+static ssize_t soc_uid_show(struct device *dev,
-+			    struct device_attribute *attr, char *buf)
-+{
-+	struct imx_sc_msg_misc_get_soc_uid msg;
-+	struct imx_sc_rpc_msg *hdr = &msg.hdr;
-+	u64 soc_uid;
-+	int ret;
-+
-+	hdr->ver = IMX_SC_RPC_VERSION;
-+	hdr->svc = IMX_SC_RPC_SVC_MISC;
-+	hdr->func = IMX_SC_MISC_FUNC_UNIQUE_ID;
-+	hdr->size = 1;
-+
-+	ret = imx_scu_call_rpc(soc_ipc_handle, &msg, false);
-+	if (ret) {
-+		pr_err("%s: get soc uid failed, ret %d\n", __func__, ret);
-+		return ret;
-+	}
-+
-+	soc_uid = msg.uid_high;
-+	soc_uid <<= 32;
-+	soc_uid |= msg.uid_low;
-+
-+	return sprintf(buf, "%016llX\n", soc_uid);
-+}
-+
-+static DEVICE_ATTR_RO(soc_uid);
-+
- static int imx_scu_soc_id(void)
- {
- 	struct imx_sc_msg_misc_get_soc_id msg;
-@@ -102,6 +136,11 @@ static int imx_scu_soc_probe(struct platform_device *pdev)
- 		goto free_revision;
- 	}
- 
-+	ret = device_create_file(soc_device_to_device(soc_dev),
-+				 &dev_attr_soc_uid);
-+	if (ret)
-+		goto free_revision;
-+
- 	return 0;
- 
- free_revision:
--- 
-2.7.4
+A little less intrusive solution would be to move backlink to pool
+from slots back to z3fold_header. Looks like it was a bad idea from
+the start.
 
+Best regards,
+   Vitaly
