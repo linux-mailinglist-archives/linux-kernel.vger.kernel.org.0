@@ -2,130 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E92A65D8C4
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:28:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 474855DAE0
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 03:32:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727252AbfGCA2i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 20:28:38 -0400
-Received: from mail-eopbgr800084.outbound.protection.outlook.com ([40.107.80.84]:26748
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727164AbfGCA2h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 20:28:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bXV5m5/kWL0UTx0rffDnbnfr99W18VuHp36gZ6xXldk=;
- b=I2VmR7GaVUgrTx3BAhLw9gTSGN99h0fegBzuNaGRakfcNLzWWMVvDPwiH25Ed6kRRZWK7jwJ+Wkc4HAEgy8qCeSHo1hnjGfVCHF47S6AH5knIs8Ze4jaK4tAhax64gSold0HYRVowbsRYACwaMYkwtOCo1sS+MjODN0yChOyxGE=
-Received: from DM6PR12MB3947.namprd12.prod.outlook.com (10.255.174.156) by
- DM6PR12MB3227.namprd12.prod.outlook.com (20.179.105.95) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2032.20; Tue, 2 Jul 2019 21:43:58 +0000
-Received: from DM6PR12MB3947.namprd12.prod.outlook.com
- ([fe80::91a2:f9e7:8c86:f927]) by DM6PR12MB3947.namprd12.prod.outlook.com
- ([fe80::91a2:f9e7:8c86:f927%7]) with mapi id 15.20.2032.019; Tue, 2 Jul 2019
- 21:43:58 +0000
-From:   "Kuehling, Felix" <Felix.Kuehling@amd.com>
-To:     Christoph Hellwig <hch@lst.de>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?utf-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        "Yang, Philip" <Philip.Yang@amd.com>
-CC:     Ira Weiny <ira.weiny@intel.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 19/22] mm: always return EBUSY for invalid ranges in
- hmm_range_{fault,snapshot}
-Thread-Topic: [PATCH 19/22] mm: always return EBUSY for invalid ranges in
- hmm_range_{fault,snapshot}
-Thread-Index: AQHVL9U3BN0CaVdL806tAThCwvVuZKa33tOA
-Date:   Tue, 2 Jul 2019 21:43:58 +0000
-Message-ID: <fedf75d4-4ce2-e0cc-3c77-73ba31bed653@amd.com>
-References: <20190701062020.19239-1-hch@lst.de>
- <20190701062020.19239-20-hch@lst.de>
-In-Reply-To: <20190701062020.19239-20-hch@lst.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [165.204.55.251]
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
-x-clientproxiedby: YTOPR0101CA0031.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b00:15::44) To DM6PR12MB3947.namprd12.prod.outlook.com
- (2603:10b6:5:1cb::28)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Felix.Kuehling@amd.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 13f473c3-5730-48c1-f95f-08d6ff366354
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DM6PR12MB3227;
-x-ms-traffictypediagnostic: DM6PR12MB3227:
-x-microsoft-antispam-prvs: <DM6PR12MB32277E4745008E9B86DBD5E692F80@DM6PR12MB3227.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 008663486A
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(39860400002)(346002)(396003)(136003)(376002)(189003)(199004)(6116002)(3846002)(68736007)(476003)(2616005)(486006)(6486002)(36756003)(72206003)(478600001)(66066001)(64126003)(64756008)(66446008)(66946007)(66476007)(73956011)(14444005)(256004)(66556008)(8676002)(65956001)(65806001)(102836004)(86362001)(71200400001)(53936002)(229853002)(8936002)(110136005)(316002)(6436002)(6506007)(81166006)(5660300002)(53546011)(31696002)(65826007)(58126008)(305945005)(186003)(71190400001)(54906003)(7416002)(386003)(14454004)(6512007)(99286004)(7736002)(11346002)(4326008)(25786009)(6636002)(2906002)(76176011)(31686004)(52116002)(446003)(26005)(81156014)(6246003)(142933001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR12MB3227;H:DM6PR12MB3947.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: sMk9L56Wb8xff3fa0UYNwsl9h+hrIYZNmWjZ2sZDOyWhgc5H+orKgzntdXV+43yWl4Lr3U4nKoyq+847Jyb1LO7jtF/utnCV/yhFNbUpoClgimWeyEW1AfwIxb1AbfTDFJ81dfCLN7d1C6JKhszrqEz69czVaywl62W2iiv2ZsBx1M78T3Kk8/Q3H8WtxPPbof/9Ll5wm58jel7AN2JeO8FBGM7JoD3HVlg6nqebp3T6ukDzHKWAKGVT7ItJfD/8XTkhqmPwRzGOd7AxvfYipQ9hPwAzZfdrFp7OCGSLNKDF/CC9Kp+yDd6w1rGGvYppl2NucncmXRzCmiFh9ivHN47pfj9UgYWZNbJcnc6XVH1bOnlXWAqOSDvoSm9qrF0zVD8TRE8BtixlMseu5AYRmAhTf7vXX2h43mFy4AgGm1c=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <30B65ABE32E43E43B44DF7426B589C07@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1727414AbfGCBcD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 21:32:03 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:45385 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727080AbfGCBcD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 21:32:03 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45ddJ64Dbsz9s8m;
+        Wed,  3 Jul 2019 07:52:22 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1562104343;
+        bh=iz+DEBqG0Ak15mqNtsewgqIEpCR+HvTunT9ODpMud1k=;
+        h=Date:From:To:Cc:Subject:From;
+        b=ReFG2P10ddn+fbE6jJLHbLqUausdY/1C6s/B7b9Yc/Oxvy6oW7G4ft8piAlWitOLG
+         zVnTrOeT4aOYRgWsJSOlcDwMhwJdwwWyD/734+B3TkXtufQOLYsvCpB4gWlDarCRp7
+         rs9pW2nYjCODZj5IyG83TGHJ7qW/KC6VdPhmpflM7oqNo9Q2bxaM7tRPo86FD+QxCg
+         f4DbD0ZjsaT2ZZt6ftGPh+nJer3Dl7xqt/TawanWDO4QYbRgtc04Pu/BjTckBYkwmV
+         DjeWclDlmVfKHXTKHutwWGKj1gSvn+bWxSMvBYKXUpS7Hm/s3now5rfh21xy+Dg+At
+         sN3EpVkkvM6Rg==
+Date:   Wed, 3 Jul 2019 07:52:21 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Greg KH <greg@kroah.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Fabrice Gasnier <fabrice.gasnier@st.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: linux-next: Fixes tag needs some work in the staging tree
+Message-ID: <20190703075221.4ef65011@canb.auug.org.au>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 13f473c3-5730-48c1-f95f-08d6ff366354
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Jul 2019 21:43:58.3251
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: fkuehlin@amd.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB3227
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/q+8+93=g14gcNif2rvFbo1O"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMjAxOS0wNy0wMSAyOjIwIGEubS4sIENocmlzdG9waCBIZWxsd2lnIHdyb3RlOg0KPiBXZSBz
-aG91bGQgbm90IGhhdmUgdHdvIGRpZmZlcmVudCBlcnJvciBjb2RlcyBmb3IgdGhlIHNhbWUgY29u
-ZGl0aW9uLiAgSW4NCj4gYWRkaXRpb24gdGhpcyByZWFsbHkgY29tcGxpY2F0ZXMgdGhlIGNvZGUg
-ZHVlIHRvIHRoZSBzcGVjaWFsIGhhbmRsaW5nIG9mDQo+IEVBR0FJTiB0aGF0IGRyb3BzIHRoZSBt
-bWFwX3NlbSBkdWUgdG8gdGhlIEZBVUxUX0ZMQUdfQUxMT1dfUkVUUlkgbG9naWMNCj4gaW4gdGhl
-IGNvcmUgdm0uDQoNCkkgdGhpbmsgdGhlIGNvbW1lbnQgYWJvdmUgaG1tX3JhbmdlX3NuYXBzaG90
-IG5lZWRzIGFuIHVwZGF0ZS4gQWxzbyANCkRvY3VtZW50YXRpb24vdm0vaG1tLnJzdCBzaG93cyBz
-b21lIGV4YW1wbGUgY29kZSB1c2luZyANCmhtbV9yYW5nZV9zbmFwc2hvdCB0aGF0IHJldHJpZXMg
-b24gLUVBR0FJTi4gVGhhdCB3b3VsZCBuZWVkIHRvIGJlIA0KdXBkYXRlZCB0byB1c2UgLUVCVVNZ
-IG9yIHJlbW92ZSB0aGUgcmV0cnkgbG9naWMgYWx0b2dldGhlci4NCg0KT3RoZXIgdGhhbiB0aGF0
-LCB0aGlzIHBhdGNoIGlzIFJldmlld2VkLWJ5OiBGZWxpeCBLdWVobGluZyANCjxGZWxpeC5LdWVo
-bGluZ0BhbWQuY29tPg0KDQpQaGlsaXAsIHRoaXMgbWVhbnMgd2Ugc2hvdWxkIHJlbW92ZSBvdXIg
-cmV0cnkgbG9naWMgYWdhaW4gaW4gDQphbWRncHVfdHRtX3R0X2dldF91c2VyX3BhZ2VzLiBBY2Nv
-cmRpbmcgdG8gdGhlIGNvbW1lbnQgYWJvdmUgDQpobW1fcmFuZ2VfZmF1bHQsIGl0IGNhbiBvbmx5
-IHJldHVybiAtRUFHQUlOIGlmIHRoZSBibG9jayBwYXJhbWV0ZXIgaXMgDQpmYWxzZS4gSSB0aGlu
-ayB0aGlzIHN0YXRlbWVudCBpcyBub3cgYWN0dWFsbHkgdHJ1ZS4gV2Ugc2V0IGJsb2NrPXRydWUs
-IA0Kc28gd2UgY2FuJ3QgZ2V0IC1FQUdBSU4uIE9uIC1FQlVTWSB3ZSBjYW4gbGV0IA0KYW1kZ3B1
-X2FtZGtmZF9yZXN0b3JlX3VzZXJwdHJfd29ya2VyIHNjaGVkdWxlIHRoZSByZXRyeSAod2hpY2gg
-aXQgZG9lcyANCmFscmVhZHkgYW55d2F5KS4NCg0KUmVnYXJkcywNCiDCoCBGZWxpeA0KDQoNCj4N
-Cj4gU2lnbmVkLW9mZi1ieTogQ2hyaXN0b3BoIEhlbGx3aWcgPGhjaEBsc3QuZGU+DQo+IC0tLQ0K
-PiAgIG1tL2htbS5jIHwgOCArKystLS0tLQ0KPiAgIDEgZmlsZSBjaGFuZ2VkLCAzIGluc2VydGlv
-bnMoKyksIDUgZGVsZXRpb25zKC0pDQo+DQo+IGRpZmYgLS1naXQgYS9tbS9obW0uYyBiL21tL2ht
-bS5jDQo+IGluZGV4IGM4NWVkN2Q0ZTJjZS4uZDEyNWRmNjk4ZTJiIDEwMDY0NA0KPiAtLS0gYS9t
-bS9obW0uYw0KPiArKysgYi9tbS9obW0uYw0KPiBAQCAtOTc0LDcgKzk3NCw3IEBAIGxvbmcgaG1t
-X3JhbmdlX3NuYXBzaG90KHN0cnVjdCBobW1fcmFuZ2UgKnJhbmdlKQ0KPiAgIAlkbyB7DQo+ICAg
-CQkvKiBJZiByYW5nZSBpcyBubyBsb25nZXIgdmFsaWQgZm9yY2UgcmV0cnkuICovDQo+ICAgCQlp
-ZiAoIXJhbmdlLT52YWxpZCkNCj4gLQkJCXJldHVybiAtRUFHQUlOOw0KPiArCQkJcmV0dXJuIC1F
-QlVTWTsNCj4gICANCj4gICAJCXZtYSA9IGZpbmRfdm1hKGhtbS0+bW0sIHN0YXJ0KTsNCj4gICAJ
-CWlmICh2bWEgPT0gTlVMTCB8fCAodm1hLT52bV9mbGFncyAmIGRldmljZV92bWEpKQ0KPiBAQCAt
-MTA2OSwxMCArMTA2OSw4IEBAIGxvbmcgaG1tX3JhbmdlX2ZhdWx0KHN0cnVjdCBobW1fcmFuZ2Ug
-KnJhbmdlLCBib29sIGJsb2NrKQ0KPiAgIA0KPiAgIAlkbyB7DQo+ICAgCQkvKiBJZiByYW5nZSBp
-cyBubyBsb25nZXIgdmFsaWQgZm9yY2UgcmV0cnkuICovDQo+IC0JCWlmICghcmFuZ2UtPnZhbGlk
-KSB7DQo+IC0JCQl1cF9yZWFkKCZobW0tPm1tLT5tbWFwX3NlbSk7DQo+IC0JCQlyZXR1cm4gLUVB
-R0FJTjsNCj4gLQkJfQ0KPiArCQlpZiAoIXJhbmdlLT52YWxpZCkNCj4gKwkJCXJldHVybiAtRUJV
-U1k7DQo+ICAgDQo+ICAgCQl2bWEgPSBmaW5kX3ZtYShobW0tPm1tLCBzdGFydCk7DQo+ICAgCQlp
-ZiAodm1hID09IE5VTEwgfHwgKHZtYS0+dm1fZmxhZ3MgJiBkZXZpY2Vfdm1hKSkNCg==
+--Sig_/q+8+93=g14gcNif2rvFbo1O
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi all,
+
+In commit
+
+  597382cbd3c1 ("dt-bindings: iio: adc: stm32: add missing vdda supply")
+
+Fixes tag
+
+  Fixes: 841fcea454fe ("Documentation: dt-bindings: Document STM32 ADC DT
+
+has these problem(s):
+
+  - Subject has leading but no trailing parentheses
+  - Subject has leading but no trailing quotes
+
+Please do not split Fixes tags over more than one line.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/q+8+93=g14gcNif2rvFbo1O
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0b0hUACgkQAVBC80lX
+0GyJcAf/d3ztOYrrlT0UJ66tYvsINtFJfc99Na8nOZ8yoO70od42asfd57GNJp+7
+iaI714m2AxreySKSdvLvLo8mUjBwfNFv8G1z2AKNF9bgOaymTOUtiQ1NGwEOhsnK
+hmldWrAVvjzKx0sOOc2GJYBWnfbnT3o1g6WwWfCD4ptd5jJX5HiqffGC+qQpVUyz
+DYpyk1SUopret/r6zD0eB5GaAiMtsf19oC4R0pZE9PnYQGzwke12soqiZb3g06qA
+pXAvV305or5Z0pjDnsDVa7TygiIisPPoRb4thyXFOdVI5xkVs0L+qT6vxuQinXgV
+CQvRFipuus5dTpjirD+sGrMHMeP9Sg==
+=Zpf+
+-----END PGP SIGNATURE-----
+
+--Sig_/q+8+93=g14gcNif2rvFbo1O--
