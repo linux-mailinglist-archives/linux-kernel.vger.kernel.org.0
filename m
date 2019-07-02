@@ -2,81 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1E875DADA
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 03:30:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 147B85D956
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:41:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727350AbfGCBac (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 21:30:32 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:37370 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727101AbfGCBab (ORCPT
+        id S1727165AbfGCAlN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 20:41:13 -0400
+Received: from mout.kundenserver.de ([217.72.192.74]:40523 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726963AbfGCAlM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 21:30:31 -0400
-Received: by mail-pf1-f193.google.com with SMTP id 19so346609pfa.4;
-        Tue, 02 Jul 2019 18:30:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=L4pET9YsQCDoE6awsVZbNmmWVq+gXFm7LkEAIu1gcBs=;
-        b=EdonMdmdmkotg2/LT1Jpk4FL1maXE5svD0pQof+aR+UNif6NuzSKmQKlhWCSuVFz/o
-         YDGpZOnOtRlQs9XuALnqDt66Jo+K2vOLWYvyFO05BJ8qVPWrkx3c1KjAN44shkAmj3ln
-         2q5n12oi8oUC25hDtUg4u7QSXtwUaNNg8VkOVnRUb/sem22609SJWE+21KCMO6KFgqhR
-         hw1EVRnu+VLCDvrhIGYuY6X+rQyaHWnOW2ctjW2NNYeMw1U4k4z+C8VopwZPdIRYaNZo
-         w61Q8YsIr5KPhMJCWd62lMbQPNQotFj3iGFBT7OVhy1E0G5Ff2cSKM5gPfaIzWVzjIIx
-         NNRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=L4pET9YsQCDoE6awsVZbNmmWVq+gXFm7LkEAIu1gcBs=;
-        b=JJrGyiY0e19l3jQp3J4v1zXqCuVndsmMedLgEIH8k6VumF0pH34MOT3SzrFXZvjcBu
-         3D1RuJQQTPqvfezOVtaaHXpq+KSgxbz0YCOE7kYYotdMXeepRpdhngulX8LZzD0VKHZ1
-         RQvpq5+Fep2xFDN2WPNBvZ5RiWxqC8w4V9uQKfOBg4A9N5i8tyuNqPXOOzjQ+jrL/HgW
-         n+/9XnhpUNjkgZRVbjZF1vDOmPtqQFn7UhZWxX0Conk3moGj+cO5v7AwrExk4UqdcELo
-         DI20ZAWcytBB2Y065k8wDFgNzyw4yz5pcb7AN0shb/fVeBEdnLLGa70fT3QKil+8XfG5
-         pjNg==
-X-Gm-Message-State: APjAAAUOpMvQJt2yidpLVJibZJiPmc7VKr8D98EnkGIgJRKBan70tXbN
-        v6uTzpGuTyrkVLM4ZepKy0mUa13C
-X-Google-Smtp-Source: APXvYqyXvgDCpfZwAW9HAbb/O8p8jWpGBgsXjRUHz3i/iVyqJtvIBTvUS1mUlaDrzx+mSpHGypX75Q==
-X-Received: by 2002:a17:90a:a008:: with SMTP id q8mr7786552pjp.114.1562098981736;
-        Tue, 02 Jul 2019 13:23:01 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id r15sm14610899pfh.121.2019.07.02.13.23.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 02 Jul 2019 13:23:01 -0700 (PDT)
-Date:   Tue, 2 Jul 2019 13:23:00 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.19 00/72] 4.19.57-stable review
-Message-ID: <20190702202300.GB29128@roeck-us.net>
-References: <20190702080124.564652899@linuxfoundation.org>
+        Tue, 2 Jul 2019 20:41:12 -0400
+Received: from [192.168.1.110] ([95.117.57.107]) by mrelayeu.kundenserver.de
+ (mreue106 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1M6m1g-1hcKYA3FGQ-008H7u; Tue, 02 Jul 2019 22:26:16 +0200
+Subject: Re: [PATCH] devres: allow const resource arguments
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     Enrico Weigelt <info@metux.net>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+References: <20190628150049.1108048-1-arnd@arndb.de>
+From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Organization: metux IT consult
+Message-ID: <665cd853-ba34-8913-3b63-a88130eda3f8@metux.net>
+Date:   Tue, 2 Jul 2019 22:26:14 +0200
+User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190702080124.564652899@linuxfoundation.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190628150049.1108048-1-arnd@arndb.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:2EiotxMAAmjsTYjjhHFlQbtCH5AwERUvgcCE1kHa5uHuZFTKNvV
+ UGRFM0uhJrjXHwsIbIEcNhcXAMM5vWS1GTm2Umhi1OSz48FFtH46MGI4VZYLopurniDJ+ys
+ V5D08p2yqnG8BiqUaAlH3TLx/IyXqlXlzmNYxA9DKsGhUVF8ZsytjCB41D2IgUVoj5H4u0E
+ 82k93hZn3uDbROmZYe/4w==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:Rpp3EBnTlec=:HB9r0UmrVG8WVpvM3k4C20
+ QGvr1nwEL7xBlydC4AuiBDChCpB6vw0kyzGQLA2B4Qywq8VDHIw5wEAqWrJG73vbxV1dbMHEU
+ OUsLrGuuSYyoWXm4W5TvDRlQLwk/yKjD3SD+ysSjcCuyS9kNd1QnAN0/opSSCENNOfZmtAfEN
+ IgeMWs78eIGKV+c6ftXRsJStYo6urMr4BYxJqIhT0gWg6hkhe2B/Cr1N0Not1+Pg5zILMb3Fr
+ gBOm3ENpVUVr3ttJEzr27XOp/GVMEXJI7pBuBYlAaVLXRwJVqbd14mCbJLBKZnEeEez/fZOPr
+ oPManpmN+yYbZyGO1E0YtPtm271K0RhK9mmoWCOKJAIbTS2fSpYaAGeyAPeNJjRwtrixnHf+C
+ 0bNv6jtw9bkMl9OeSGhcRuBjdzlpFDrA6Gx7UhDjqwIr+ki792JPMfz3kmrq9rw4Ko+mJPcn2
+ PqbQVIrtORcIPVTmmyDdZHzFZ0xtRGBTNofg/rZihQbGHkFgHtk9y2AswdppJn/4sm/N2xUDc
+ Iv7OU6KEadrtd29+tPfQ+0btH8XRBOQfbPBRasW8dekDYSIEnMIM60XcS1drkITW0QWUbIqYz
+ FURk3NzGRNk4pssIGeWpykiXXFJ3fcBUic8WnvMkinEc2h3bW7fkgyuI98S5bqV5kKV2kEz9z
+ htgfcUEPyobB3qc0e3/qD55fjxMx+WMzBpiiw/ZZLNxzrCHJ/yPii5AdTuREUUewianbiBk9q
+ W0XO4BK5bE08iIwO8x6GSz9OMptv6AG8ZWibVOkv/dp12weGPNoX1qVsUpg=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 02, 2019 at 10:01:01AM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.19.57 release.
-> There are 72 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 28.06.19 16:59, Arnd Bergmann wrote:
+> devm_ioremap_resource() does not currently take 'const' arguments,
+> which results in a warning from the first driver trying to do it
+> anyway:
 > 
-> Responses should be made by Thu 04 Jul 2019 07:59:45 AM UTC.
-> Anything received after that time might be too late.
-> 
-Build results:
-	total: 156 pass: 156 fail: 0
-Qemu test results:
-	total: 364 pass: 364 fail: 0
+> drivers/gpio/gpio-amd-fch.c: In function 'amd_fch_gpio_probe':
+> drivers/gpio/gpio-amd-fch.c:171:49: error: passing argument 2 of 'devm_ioremap_resource' discards 'const' qualifier from pointer target type [-Werror=discarded-qualifiers]
+>   priv->base = devm_ioremap_resource(&pdev->dev, &amd_fch_gpio_iores);
+>                                                  ^~~~~~~~~~~~~~~~~~~
 
-Guenter
+<snip>
+
+I've posted quite the same some time ago - no idea why it got no
+response.
+
+
+Reviwed-By: Enrico Weigelt <info@metux.net>
+
+
+--mtx
+
+-- 
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
