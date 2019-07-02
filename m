@@ -2,109 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7595C5D98B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:47:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A0E7D5D9A4
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:49:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727147AbfGCAre (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 20:47:34 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:39808 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727069AbfGCAre (ORCPT
+        id S1727375AbfGCAtK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 20:49:10 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:40410 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727090AbfGCAtJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 20:47:34 -0400
-Received: by mail-pl1-f195.google.com with SMTP id b7so210471pls.6
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 17:47:33 -0700 (PDT)
+        Tue, 2 Jul 2019 20:49:09 -0400
+Received: by mail-oi1-f196.google.com with SMTP id w196so578786oie.7;
+        Tue, 02 Jul 2019 17:49:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=4i2YSPugXI0nrqp33kMy8Y944Y94lb5ecy4lCGMxEsQ=;
-        b=Io3EmwopeQFUFFj8MfEzOz6LKA/W7AncRHgVvChAu8QUpuD2E3VyZqA3FencbnOFjh
-         2QFw9FLfiNtoaQSXDSpIrLmj9mPRkqNM1rG/RbcVTya+m+LG3+XUPQhtEIJJBTQunsuR
-         e06bOaadoY8m6HPWLWiI4UJBNkFke7GWAqs9Y=
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PmEB/x0Lo8kjE6XO29I6yQcxMJdkJpBobZcgW1H9skM=;
+        b=dQE6ToJhgtp1wCfPTOfOeyy3Wlzl33q0h9WcnIJA48XtbfKqzHONGYC3W61NGQfNim
+         wJaXkOCEQLLrI2TSIZQwvLCc1Rqhy7tkKbFJItgpBZmmCqqY0TzvUJ2rx0vWwv7zrFmZ
+         kZ5OII7eqEx3/ovCXbefJGBE8F7LYBJp3Eh1m81WkMA/alEl+TNmkxdUWAI5Udj6A0C+
+         vsbKbIDFDrMiyP7vv46AElwnFPDzMcamevSZp3I5khh3FwrFUuoHiTauuxpXCu4bPH8a
+         8Vi37k2YDn8vy9Meo0Fcg75al7N0hdAtajz3wPYu473GTV9bU6aDJ8XppI7nkwKlrfGl
+         vp9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=4i2YSPugXI0nrqp33kMy8Y944Y94lb5ecy4lCGMxEsQ=;
-        b=UWVs2kNzZEWgmtDytUY2CHDdtqR6I4iubwFQS1Gn99weQtyNYFZC2T2A7T9cGgh5jp
-         cf/gKwlObvsebTz0zlRENBlElVg9uFiNIw5GnOH9Cv0zSDdNgTM0gw4VDBBjf1TW8JyJ
-         SUG56qX5f3t69pQe8PkZDkUZbGuz2EArhD/c9N43KbCJOmOIbv/X3Y0h6QknlboN/yDz
-         34tbcbDdoKf7XLAOmXhcavwVKJijwpQW+jti2ygwvRqusrAzZZP5wSzjRvKt3g/zlZIJ
-         nRUEQ8/WhzOH/LID/CI3l3p6NBN7JivEhjgDogBVZRkWGp32WwUfecIrhZVCSQFr6zQ6
-         JwaQ==
-X-Gm-Message-State: APjAAAWVn3dkOndzoaR0RLLBP47aYzIeaARCPHsXU3VWfKpvf9sYsmZM
-        Vorg5aNFnOZe37pr6TF+Zp+ZDd5m4Zw=
-X-Google-Smtp-Source: APXvYqy+RvIO2JXddSoisK2cCLcCMjrjCtG7tr4jDoamQP7WMz2EiFnqn53/HRa3MYDHB3+s9NQu5Q==
-X-Received: by 2002:a17:902:2bc5:: with SMTP id l63mr39458967plb.30.1562110987634;
-        Tue, 02 Jul 2019 16:43:07 -0700 (PDT)
-Received: from exogeni.mtv.corp.google.com ([2620:15c:202:1:5be8:f2a6:fd7b:7459])
-        by smtp.gmail.com with ESMTPSA id c26sm167611pfr.172.2019.07.02.16.43.06
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 02 Jul 2019 16:43:07 -0700 (PDT)
-From:   Derek Basehore <dbasehore@chromium.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        CK Hu <ck.hu@mediatek.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        Derek Basehore <dbasehore@chromium.org>
-Subject: [PATCH v4 4/4] drm/mtk: add panel orientation property
-Date:   Tue,  2 Jul 2019 16:42:58 -0700
-Message-Id: <20190702234258.136349-5-dbasehore@chromium.org>
-X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
-In-Reply-To: <20190702234258.136349-1-dbasehore@chromium.org>
-References: <20190702234258.136349-1-dbasehore@chromium.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PmEB/x0Lo8kjE6XO29I6yQcxMJdkJpBobZcgW1H9skM=;
+        b=Nkge5JFPMbBhxkKLnomdjb0OuYJasblpM6mVT3pkNPasJZwukEVqumayLJE+9MKRlm
+         IWLgGQloBjmF5O55JR8BH+mxSXvNiV+rz3tKOI3eQ2SyJ31Z2O9trS4YwB9IUiD/DAVM
+         m8uPLVBb7du/jTeBy3mfc8Ifq5Pg1Q+Fcz3O7VTYoE8GRTufM00muyYnkGrhPChek8RH
+         yL5bVy/wpaq/yMwAQn/3ohwh55iikhcM7l6MUI7JF0FMujwkkrhI3oUXVVaj2DUst5lp
+         rdi5Vq2RUdMJ4R70UVQCp6LfdgRsK3YrPG+jKDiSBzWtNPIg3KSg3PfmHRYDLs4iC67t
+         Eo0A==
+X-Gm-Message-State: APjAAAW9bSRK9yobiTm9ANnrAmvLtSpLv7K4bEpIJ4eMaU4kY2TtH0CO
+        yLsPsALcKtgTJXy7Pg7IyxP3wesklckhrsu626LwR8jD
+X-Google-Smtp-Source: APXvYqwGO400fcqFqegu43ZWYESJ1x0EcFHLkunurhz/yLrGFeET/1sUvrRHA32DeHN9rz4+lxZGWrgg9XsKuY7U36c=
+X-Received: by 2002:aca:5c55:: with SMTP id q82mr1514748oib.15.1562111016670;
+ Tue, 02 Jul 2019 16:43:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190701091258.3870-1-narmstrong@baylibre.com> <20190701091258.3870-13-narmstrong@baylibre.com>
+In-Reply-To: <20190701091258.3870-13-narmstrong@baylibre.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Wed, 3 Jul 2019 01:43:25 +0200
+Message-ID: <CAFBinCByCn1NMz4ATnR66114jYj8=KG-tY5S4iRfoPEw3uLF8g@mail.gmail.com>
+Subject: Re: [RFC/RFT v3 12/14] arm64: dts: meson-g12a: enable DVFS on G12A boards
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     jbrunet@baylibre.com, khilman@baylibre.com,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This inits the panel orientation property for the mediatek dsi driver
-if the panel orientation (connector.display_info.panel_orientation) is
-not DRM_MODE_PANEL_ORIENTATION_UNKNOWN.
-
-Signed-off-by: Derek Basehore <dbasehore@chromium.org>
----
- drivers/gpu/drm/mediatek/mtk_dsi.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c b/drivers/gpu/drm/mediatek/mtk_dsi.c
-index 4a0b9150a7bb..08ffdc7526dd 100644
---- a/drivers/gpu/drm/mediatek/mtk_dsi.c
-+++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
-@@ -782,10 +782,18 @@ static int mtk_dsi_create_connector(struct drm_device *drm, struct mtk_dsi *dsi)
- 			DRM_ERROR("Failed to attach panel to drm\n");
- 			goto err_connector_cleanup;
- 		}
-+
-+		ret = drm_connector_init_panel_orientation_property(&dsi->conn);
-+		if (ret) {
-+			DRM_ERROR("Failed to init panel orientation\n");
-+			goto err_panel_detach;
-+		}
- 	}
- 
- 	return 0;
- 
-+err_panel_detach:
-+	drm_panel_detach(dsi->panel);
- err_connector_cleanup:
- 	drm_connector_cleanup(&dsi->conn);
- 	return ret;
--- 
-2.22.0.410.gd8fdbe21b5-goog
-
+On Mon, Jul 1, 2019 at 11:13 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
+>
+> Enable DVFS for the U200, SEI520 and X96-Max Amlogic G12A based board
+> by setting the clock, OPP and supply for each CPU cores.
+>
+> The CPU cluster power supply can achieve 0.73V to 1.01V using a PWM
+> output clocked at 800KHz with an inverse duty-cycle.
+>
+> DVFS has been tested by running the arm64 cpuburn at [1] and cycling
+> between all the possible cpufreq translations and checking the final
+> frequency using the clock-measurer, script at [2].
+>
+> [1] https://github.com/ssvb/cpuburn-arm/blob/master/cpuburn-a53.S
+> [2] https://gist.github.com/superna9999/d4de964dbc0f84b7d527e1df2ddea25f
+>
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
