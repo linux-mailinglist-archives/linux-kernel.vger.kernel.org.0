@@ -2,96 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D36E65D9E2
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:55:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 583225DA0D
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:59:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727464AbfGCAzm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 20:55:42 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:37961 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726930AbfGCAzl (ORCPT
+        id S1727485AbfGCA7y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 20:59:54 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:38088 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726635AbfGCA7x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 20:55:41 -0400
-Received: by mail-pg1-f193.google.com with SMTP id z75so255833pgz.5;
-        Tue, 02 Jul 2019 17:55:40 -0700 (PDT)
+        Tue, 2 Jul 2019 20:59:53 -0400
+Received: by mail-oi1-f193.google.com with SMTP id v186so605784oie.5;
+        Tue, 02 Jul 2019 17:59:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=hOIwG5g5qmRLAvMNTG4avtQVbsGFIvybNsnInhl+M4o=;
-        b=cb/Pk1At+z3oGkj9asXbRIPTNhtNNDhEo9ERURh8nDXjg9YfPprqQ0qQYHqhy6rSaF
-         JJspKzFbPkoHBG1kaQbIKL4Etz6H7aOfya+lfGpEAx6RnbpVdTd7Rxs7T0tbO5UisAdO
-         ZPS+HcJG5yjLZ5ZwaiZd06fGxx/3MPhHrBdRynVocTY4ZZQqWSgJAGtpgAcK2EM1t/IC
-         ql85Jt+6SJaTpykfV7iCWdY664TUtO6aseDda3Coj6ovwBG5auhQYjx2CnWoovXC0vYV
-         TGVurkVhHPuRr2MoDJiWpkQUxDkKogeLnLOiv6z74HHdSogerj7IJhsi3buT9J7QMe6q
-         XOyg==
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=B0lnG7dVUXOZiqirpp6Pr4IxSipe4AyPJyRnbU/UDbM=;
+        b=gEuizN8LAKvRau0Nsuxug6F+9pl8chEcIGAI5O4AI/JNeuPd6hjSef8K61p7hSZVvH
+         mMxwO+OzaYdILethk7IDWi09fPmKhSZuXzolOc97Z/n6asWOy4dyN6eYqM3VN0NkrX1i
+         xcLZRYaqGuZCMvCwklujmvFtShLseiFoXVo3URCIyq6KDilYyFOpIWKCvpJFxM5wcN/n
+         d9ykGI+60ctT2KPg7Grdo5ugdrj+MeanqpwmMNSLgSXPghFpS/Vv1dCd4+QrVNnOgypD
+         tRmGj/QLtZJXt3jT+OKJUCo784fIwbWBMvkMSWLYUlp/6exliELY1zzEebgUS8/gSu83
+         Ib1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=hOIwG5g5qmRLAvMNTG4avtQVbsGFIvybNsnInhl+M4o=;
-        b=t56r4wwcSIATbWPyUQVUHoUfq2qmO8W68jYB7o0rPFN0yRjQUvu/CAE0hvxAs3H9JL
-         p+uBoMc83Emy4mID6wbtSUlNEYRyAdNf1LhDDC7uoC2JgBMsPHj99Cbqg1Hzh7WFj26c
-         2pq3WMXRYqodO6wrXOdwA3/A+mZFfDg067OHAuPxu/XSMrPve91yiiL/qIgDXK5oPaVj
-         pTxlWSoouZ53BrGnfdfp1QvDsX0IqIH9XIHTgtyRFPl4kBu6CVxC51OyFZ8/vRiDovn4
-         vgsbsEMZx0hDW26C2HLWdQH1KjF0DXWvWq31y8phHSIyUfr+TK9127RE4abGwm1W5b07
-         xN/g==
-X-Gm-Message-State: APjAAAVtMqMX5jNO4sq4RwWIpEo4jcGCBvnVWCqit4ChjxcJPKLi3VZC
-        zeoAOT+uEDx/wGUsAV5iyNSH8iUxLEo=
-X-Google-Smtp-Source: APXvYqz77rLbSyHhgcZyWseydKse1/eh4HWO31E2oh1XmlIvsC+gQNegzx8lDeCvxQG38H30v200vA==
-X-Received: by 2002:a17:90a:2768:: with SMTP id o95mr8287011pje.37.1562108080227;
-        Tue, 02 Jul 2019 15:54:40 -0700 (PDT)
-Received: from continental ([189.58.144.164])
-        by smtp.gmail.com with ESMTPSA id k14sm135388pfg.6.2019.07.02.15.54.36
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 02 Jul 2019 15:54:39 -0700 (PDT)
-Date:   Tue, 2 Jul 2019 19:55:21 -0300
-From:   Marcos Paulo de Souza <marcos.souza.org@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Marcos Paulo de Souza <mpdesouza@suse.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        "open list:NETWORK BLOCK DEVICE (NBD)" <linux-block@vger.kernel.org>,
-        "open list:NETWORK BLOCK DEVICE (NBD)" <nbd@other.debian.org>,
-        marcos.souza.org@gmail.com
-Subject: Re: [PATCH] driver: block: nbd: Replace magic number 9 with
- SECTOR_SHIFT
-Message-ID: <20190702225521.GA16741@continental>
-References: <20190624160933.23148-1-marcos.souza.org@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=B0lnG7dVUXOZiqirpp6Pr4IxSipe4AyPJyRnbU/UDbM=;
+        b=Ugohw6xl2twNtGitTDc78giNQZ2vHoPKN8GFDEBaD+3Lpy26b9XuNV7D5hNXTzlQmB
+         wPV/xFuq1tctjDIg1QUjqyXVn3utMhPyzPYdI6BXhsKafUi28InPpLDSWHQEuOQuuExV
+         JodjFPz2IJDWuaFSNVh4RLD64BdPtp8V5sOFhHd6Gb3pD3sTdRNdU/gzBxBTPVFDBi99
+         1sTMlxsEdMVA1hGvwJem/i8RKVlvmq1QfyrRwl9vFYGqaHTA32A9AEGC8h+X8FFZrfVT
+         229FJESPleh4PeHi49g+x4hBRzCCOJu/2pQ+i+za5xb0am/jqFkE4WlJ5lNKJoJinvtw
+         Dpag==
+X-Gm-Message-State: APjAAAWaYihaGEhcDtrDM2FxLTPrWVOtr+7A/NKBvZdY/ws+rXS4n8Ng
+        Yo8LOoAINz+6v0re0PfFq21pe3ZP4fasMkkSEu6w47DX
+X-Google-Smtp-Source: APXvYqw7GqOpvPorcRhCyGKe303y7lcoPXIyo8PqNByOmScgMMCuyG4n9Vbue28pMqX8fvDoy9he8KbkXktBPfB7h38=
+X-Received: by 2002:a05:6808:8f0:: with SMTP id d16mr1422412oic.47.1562108171246;
+ Tue, 02 Jul 2019 15:56:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190624160933.23148-1-marcos.souza.org@gmail.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+References: <20190701091258.3870-1-narmstrong@baylibre.com> <20190701091258.3870-2-narmstrong@baylibre.com>
+In-Reply-To: <20190701091258.3870-2-narmstrong@baylibre.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Wed, 3 Jul 2019 00:56:00 +0200
+Message-ID: <CAFBinCDNABG5BpAu=aXjTuFAd4YEgX2OvtAfFEGBm8NfVHu_qQ@mail.gmail.com>
+Subject: Re: [RFC/RFT v3 01/14] pinctrl: meson-g12a: add pwm_a on GPIOE_2 pinmux
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     jbrunet@baylibre.com, khilman@baylibre.com,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ping?
-
-On Mon, Jun 24, 2019 at 01:09:33PM -0300, Marcos Paulo de Souza wrote:
-> set_capacity expects the disk size in sectors of 512 bytes, and changing
-> the magic number 9 to SECTOR_SHIFT clarifies this intent.
-> 
-> Signed-off-by: Marcos Paulo de Souza <mpdesouza@suse.com>
-> ---
->  drivers/block/nbd.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
-> index 3a9bca3aa093..fd3bc061c600 100644
-> --- a/drivers/block/nbd.c
-> +++ b/drivers/block/nbd.c
-> @@ -288,7 +288,7 @@ static void nbd_size_update(struct nbd_device *nbd)
->  	}
->  	blk_queue_logical_block_size(nbd->disk->queue, config->blksize);
->  	blk_queue_physical_block_size(nbd->disk->queue, config->blksize);
-> -	set_capacity(nbd->disk, config->bytesize >> 9);
-> +	set_capacity(nbd->disk, config->bytesize >> SECTOR_SHIFT);
->  	if (bdev) {
->  		if (bdev->bd_disk) {
->  			bd_set_size(bdev, config->bytesize);
-> -- 
-> 2.21.0
-> 
+On Mon, Jul 1, 2019 at 11:13 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
+>
+> Add the missing pinmux for the pwm_a function on the GPIOE_2 pin.
+>
+> Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+it's not documented anywhere but Amlogic's buildroot kernel (from
+buildroot-openlinux-A113-201901) uses the same bit so it seems
+correct.
+Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
