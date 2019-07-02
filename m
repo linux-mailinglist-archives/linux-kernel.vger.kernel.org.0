@@ -2,98 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B5B15D3A1
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 17:53:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE0B85D3B1
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 17:57:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727259AbfGBPxs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 11:53:48 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:45897 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727227AbfGBPxo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 11:53:44 -0400
-Received: by mail-qk1-f194.google.com with SMTP id s22so14499510qkj.12
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 08:53:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=BxB9Tl2bXtJ3atZnYg8/Qz4JqG30kxmg1I7DaT0xgrs=;
-        b=sBut9G4DQmYqBK8Lwl+wBqQHZ8JeuTwdzjcNohb+f16pi0PjIFqpOgIjPkRI8rP7Dc
-         cygwa4+ewYavgxgJ5rFjMFmFlrdIf8fcMDAfiU/lXVizLjAejFlsqponEABJmE3vQIUw
-         3zV9cP6mtuybyBO3UhBt+Kkf4yCQe8F6gmiI6MAigy64gVtbyxuOoi8yPU3eWHPijXS8
-         njsE4NINjRx2ItShIAcOsa17HAi9D862aPX2O+nMlXjyd3QlmwFYZdW3v3hICPwTiru+
-         e/jB9bx4Rn6SVFMx0oOf3Caolf4ADxfh2+jjBwfKPAp0zIZXOS+lCA89/8X9wx7yZO0U
-         jNPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=BxB9Tl2bXtJ3atZnYg8/Qz4JqG30kxmg1I7DaT0xgrs=;
-        b=jOHOa0i2rybvmSFE/iqfeHs617MWOHzkfMWsG/MwmrK30Wvlu0WelH37xPdqvPhw96
-         kzHBz5rBF+PtGktQoOX8nkYHlzU/P/uREgDUPw6P+NCVMTjJ5YZYuNw31J4wHs1tJ3Eo
-         emd8hS9QjbAj7AUAaWNeEg26QsYUyNTv+qgIcjux9K3pYFy68iwJ9gO27WvuwgGCxOAg
-         QA1bG8sIpQntc4M8TSlS8a8pFc/wRpPuoQVsU19Gpdm/vPqSYZeTzqlTssjN3MHwf0KC
-         WH6FhIoHvzx1UFfiztfE5jlC8X4QbI2iyf6gJx9N03SG1w1mHZ/F2eqlqzLZAUZ3CsFs
-         GpGQ==
-X-Gm-Message-State: APjAAAWYbWm//w/r9PC3fn7ENmCeIyZOIqhsowWKj+Ldwf4evyP8G+M1
-        UEx3ifTlw88lAKVIdF7ggFg=
-X-Google-Smtp-Source: APXvYqzGuDinmE4cVK+0aPZLo2+/8f40722qYF66Je1Q5D0ovm5p0O47bSOE7a0RL58cyE1qJlnOAA==
-X-Received: by 2002:ae9:c108:: with SMTP id z8mr24722879qki.57.1562082823281;
-        Tue, 02 Jul 2019 08:53:43 -0700 (PDT)
-Received: from quaco.ghostprotocols.net ([179.97.35.11])
-        by smtp.gmail.com with ESMTPSA id m4sm5986120qka.70.2019.07.02.08.53.42
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 02 Jul 2019 08:53:42 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 8279841153; Tue,  2 Jul 2019 12:53:40 -0300 (-03)
-Date:   Tue, 2 Jul 2019 12:53:40 -0300
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     John Garry <john.garry@huawei.com>, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com,
-        namhyung@kernel.org, tmricht@linux.ibm.com,
-        brueckner@linux.ibm.com, kan.liang@linux.intel.com,
-        ben@decadent.org.uk, mathieu.poirier@linaro.org,
-        mark.rutland@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, linuxarm@huawei.com,
-        linux-arm-kernel@lists.infradead.org, zhangshaokun@hisilicon.com,
-        ak@linux.intel.com
-Subject: Re: [PATCH v3 0/4] Perf uncore PMU event alias support for Hisi
- hip08 ARM64 platform
-Message-ID: <20190702155340.GE15462@kernel.org>
-References: <1561732552-143038-1-git-send-email-john.garry@huawei.com>
- <20190628145406.GA22863@krava>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190628145406.GA22863@krava>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.11.3 (2019-02-01)
+        id S1726765AbfGBP5M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 11:57:12 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37212 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725922AbfGBP5L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 11:57:11 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 0AE7FB169;
+        Tue,  2 Jul 2019 15:57:07 +0000 (UTC)
+Date:   Tue, 02 Jul 2019 17:57:06 +0200
+Message-ID: <s5ha7dw4egd.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     "Wasko, Michal" <michal.wasko@linux.intel.com>
+Cc:     Nicola Lunghi <nick83ola@gmail.com>, alsa-devel@alsa-project.org,
+        info@jensverwiebe.de,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, Jussi Laako <jussi@sonarnerd.net>,
+        Richard Fontana <rfontana@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Allison Randal <allison@lohutok.net>
+Subject: Re: [alsa-devel] [PATCH] ALSA: usb-audio: fix Line6 Helix audio format rates
+In-Reply-To: <4181a467-5332-c256-5124-513a0343ec70@linux.intel.com>
+References: <20190702004439.30131-1-nick83ola@gmail.com>
+        <s5hlfxg4i4r.wl-tiwai@suse.de>
+        <4181a467-5332-c256-5124-513a0343ec70@linux.intel.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, Jun 28, 2019 at 04:54:06PM +0200, Jiri Olsa escreveu:
-> On Fri, Jun 28, 2019 at 10:35:48PM +0800, John Garry wrote:
-> > This patchset adds support for uncore PMU event aliasing for HiSilicon
-> > hip08 ARM64 platform.
-> > 
-> > We can now get proper event description for uncore events for the
-> > perf tool.
-> > 
-> > For HHA, DDRC, and L3C JSONs, we don't have all the event info yet, so
-> > I will seek it out to update the JSONs later.
-> > 
-> > Changes to v3:
-> > - Omit "perf pmu: Fix uncore PMU alias list for ARM64", as it has already
-> >   been picked up
-> > - Add comment for pmu_uncore_alias_match()
+On Tue, 02 Jul 2019 17:52:01 +0200,
+Wasko, Michal wrote:
 > 
-> Acked-by: Jiri Olsa <jolsa@kernel.org>
+> On 7/2/2019 4:37 PM, Takashi Iwai wrote:
+> > On Tue, 02 Jul 2019 02:43:14 +0200,
+> > Nicola Lunghi wrote:
+> >> Line6 Helix and HX stomp don't support retrieving
+> >> the number of clock sample rate.
+> >>
+> >> Add a quirk to return the default value of 48Khz.
+> >>
+> >> Signed-off-by: Nicola Lunghi <nick83ola@gmail.com>
+> > It's not particularly good place to put a quirk, but there seems no
+> > other better place, unfortunately.  Is this specific to certain unit
+> > or all I/Os on the device suffer from this problem?
+> >
+> > In anyway, if the behavior is expected, we don't need to use
+> > dev_warn() to annoy users unnecessarily.  Replace it with dev_info().
+> >
+> > Also, the code that creates a single 48k entry would be better to be
+> > put into a function for readability.
+> >
+> > Could you resubmit with that change?
+> >
+> >
+> > Thanks!
+> >
+> > Takashi
+> 
+> If the listed USB devices do not support sample rate format retrieval
+> then maybe it would be a better idea to perform below check before
+> sending message?
 
-Thanks, applied.
+Yes, if we know that it always fails, we don't need to query.
 
-- Arnaldo
+> Have you also considered new function or macro that check device
+> support? This would separate formatfunctionality code from routine
+> that identifies applicable devices- in case if in future more devices
+> will require quirk.
+
+The split can be done later.  It's always hard to know what kind of
+quirk would be needed in future.  If any more devices show the same
+problem, we can reorganize the quirk in a saner way.
+
+
+thanks,
+
+Takashi
+
+> 
+> Michal W.
+> 
+> >> ---
+> >>   sound/usb/format.c | 28 +++++++++++++++++++++++++---
+> >>   1 file changed, 25 insertions(+), 3 deletions(-)
+> >>
+> >> diff --git a/sound/usb/format.c b/sound/usb/format.c
+> >> index c02b51a82775..05442f6ada62 100644
+> >> --- a/sound/usb/format.c
+> >> +++ b/sound/usb/format.c
+> >> @@ -313,10 +313,32 @@ static int parse_audio_format_rates_v2v3(struct snd_usb_audio *chip,
+> >>   			      tmp, sizeof(tmp));
+> >>     	if (ret < 0) {
+> >> -		dev_err(&dev->dev,
+> >> -			"%s(): unable to retrieve number of sample rates (clock %d)\n",
+> >> +		switch (chip->usb_id) {
+> >> +		/* LINE 6 HX pedals don't support getting the clock sample rate.
+> >> +		 * Set the framerate to 48khz by default
+> >> +		 */
+> >> +		case USB_ID(0x0E41, 0x4244): /* HELIX */
+> >> +		case USB_ID(0x0E41, 0x4246): /* HX STOMP */
+> >> +			dev_warn(&dev->dev,
+> >> +				"%s(): line6 helix: unable to retrieve number of sample rates. Set it to default value (clock %d).\n",
+> >>   				__func__, clock);
+> >> -		goto err;
+> >> +			fp->nr_rates = 1;
+> >> +			fp->rate_min = 48000;
+> >> +			fp->rate_max = 48000;
+> >> +			fp->rates = SNDRV_PCM_RATE_48000;
+> >> +			fp->rate_table = kmalloc(sizeof(int), GFP_KERNEL);
+> >> +			if (!fp->rate_table) {
+> >> +				ret = -ENOMEM;
+> >> +				goto err_free;
+> >> +			}
+> >> +			fp->rate_table[0] = 48000;
+> >> +			return 0;
+> >> +		default:
+> >> +			dev_err(&dev->dev,
+> >> +				"%s(): unable to retrieve number of sample rates (clock %d)\n",
+> >> +					__func__, clock);
+> >> +			goto err;
+> >> +		}
+> >>   	}
+> >>     	nr_triplets = (tmp[1] << 8) | tmp[0];
+> >> -- 
+> >> 2.19.1
+> >>
+> >>
+> > _______________________________________________
+> > Alsa-devel mailing list
+> > Alsa-devel@alsa-project.org
+> > https://mailman.alsa-project.org/mailman/listinfo/alsa-devel
+> >
+> 
