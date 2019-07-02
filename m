@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AAFAC5C726
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 04:26:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61A625C727
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 04:27:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727111AbfGBC0g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 22:26:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39308 "EHLO mail.kernel.org"
+        id S1727133AbfGBC0j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 22:26:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39340 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726781AbfGBC0e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 22:26:34 -0400
+        id S1726781AbfGBC0i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Jul 2019 22:26:38 -0400
 Received: from quaco.ghostprotocols.net (unknown [179.97.35.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EE82D21841;
-        Tue,  2 Jul 2019 02:26:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 619412184B;
+        Tue,  2 Jul 2019 02:26:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562034393;
-        bh=VjWEkBhhN2oXEChv3gpfUzUSeqfy9+UHCTmi9kAyLik=;
+        s=default; t=1562034397;
+        bh=y9xtf1V4OqzsNFh+MT4usyIT2IfnGRZ/rZTDWddfdw4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U6l0Kk8By6asCNK7e1nJdtuMaZzWZ6jwso+XHf4S9uTXB/6FeXC+2Z8yyutke47O4
-         cmloRYECMSaL7b78DW/j7ap60/8FUi4ALVx/uz5UeMZr5/YotQcFfkouoJMJUP1ubQ
-         6rJ+mRh9JCjGM8orRErPkZbNqP8/wps864md7o1w=
+        b=Bi6zIokypI6fsJQay23AC9A9WcbiQsk26QwVxl2lMIOFbY+AEkW7JUzpO4W4zIxsV
+         TkZclz8tvimVoubA+qvy4teSRQySRBJCFYzVXWNsI42c2p/T/Rg8cfevOquDO2vD55
+         /ikYxs2adTNUIznYBNUsPK/aGn/Hu4t33R5+FU9U=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
 Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Clark Williams <williams@redhat.com>,
         linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Adrian Hunter <adrian.hunter@intel.com>,
+        Kyle Meyer <kyle.meyer@hpe.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Jiri Olsa <jolsa@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 03/43] perf thread-stack: Eliminate code duplicating thread_stack__pop_ks()
-Date:   Mon,  1 Jul 2019 23:25:36 -0300
-Message-Id: <20190702022616.1259-4-acme@kernel.org>
+Subject: [PATCH 04/43] perf tools: Increase MAX_NR_CPUS and MAX_CACHES
+Date:   Mon,  1 Jul 2019 23:25:37 -0300
+Message-Id: <20190702022616.1259-5-acme@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190702022616.1259-1-acme@kernel.org>
 References: <20190702022616.1259-1-acme@kernel.org>
@@ -45,54 +47,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Adrian Hunter <adrian.hunter@intel.com>
+From: Kyle Meyer <kyle.meyer@hpe.com>
 
-Use new function thread_stack__pop_ks() in place of equivalent code.
+Attempting to profile 1024 or more CPUs with perf causes two errors:
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+  perf record -a
+  [ perf record: Woken up X times to write data ]
+  way too many cpu caches..
+  [ perf record: Captured and wrote X MB perf.data (X samples) ]
+
+  perf report -C 1024
+  Error: failed to set  cpu bitmap
+  Requested CPU 1024 too large. Consider raising MAX_NR_CPUS
+
+  Increasing MAX_NR_CPUS from 1024 to 2048 and redefining MAX_CACHES as
+  MAX_NR_CPUS * 4 returns normal functionality to perf:
+
+  perf record -a
+  [ perf record: Woken up X times to write data ]
+  [ perf record: Captured and wrote X MB perf.data (X samples) ]
+
+  perf report -C 1024
+  ...
+
+Signed-off-by: Kyle Meyer <kyle.meyer@hpe.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
-Link: http://lkml.kernel.org/r/20190619064429.14940-3-adrian.hunter@intel.com
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20190620193630.154025-1-meyerk@stormcage.eag.rdlabs.hpecorp.net
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/thread-stack.c | 18 ++++++------------
- 1 file changed, 6 insertions(+), 12 deletions(-)
+ tools/perf/perf.h        | 2 +-
+ tools/perf/util/header.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/util/thread-stack.c b/tools/perf/util/thread-stack.c
-index 4c826a2e08d8..6ff1ff4d4ce7 100644
---- a/tools/perf/util/thread-stack.c
-+++ b/tools/perf/util/thread-stack.c
-@@ -664,12 +664,9 @@ static int thread_stack__no_call_return(struct thread *thread,
+diff --git a/tools/perf/perf.h b/tools/perf/perf.h
+index 711e009381ec..74d0124d38f3 100644
+--- a/tools/perf/perf.h
++++ b/tools/perf/perf.h
+@@ -26,7 +26,7 @@ static inline unsigned long long rdclock(void)
+ }
  
- 	if (ip >= ks && addr < ks) {
- 		/* Return to userspace, so pop all kernel addresses */
--		while (thread_stack__in_kernel(ts)) {
--			err = thread_stack__call_return(thread, ts, --ts->cnt,
--							tm, ref, true);
--			if (err)
--				return err;
--		}
-+		err = thread_stack__pop_ks(thread, ts, sample, ref);
-+		if (err)
-+			return err;
+ #ifndef MAX_NR_CPUS
+-#define MAX_NR_CPUS			1024
++#define MAX_NR_CPUS			2048
+ #endif
  
- 		/* If the stack is empty, push the userspace address */
- 		if (!ts->cnt) {
-@@ -679,12 +676,9 @@ static int thread_stack__no_call_return(struct thread *thread,
- 		}
- 	} else if (thread_stack__in_kernel(ts) && ip < ks) {
- 		/* Return to userspace, so pop all kernel addresses */
--		while (thread_stack__in_kernel(ts)) {
--			err = thread_stack__call_return(thread, ts, --ts->cnt,
--							tm, ref, true);
--			if (err)
--				return err;
--		}
-+		err = thread_stack__pop_ks(thread, ts, sample, ref);
-+		if (err)
-+			return err;
- 	}
+ extern const char *input_name;
+diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+index 06ddb6618ef3..abc9c2145efe 100644
+--- a/tools/perf/util/header.c
++++ b/tools/perf/util/header.c
+@@ -1121,7 +1121,7 @@ static int build_caches(struct cpu_cache_level caches[], u32 size, u32 *cntp)
+ 	return 0;
+ }
  
- 	if (ts->cnt)
+-#define MAX_CACHES 2000
++#define MAX_CACHES (MAX_NR_CPUS * 4)
+ 
+ static int write_cache(struct feat_fd *ff,
+ 		       struct perf_evlist *evlist __maybe_unused)
 -- 
 2.20.1
 
