@@ -2,172 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CE615D9C5
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:53:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B65255D930
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:37:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727336AbfGCAxO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 20:53:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47374 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727025AbfGCAxF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 20:53:05 -0400
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CCD5D21BF2;
-        Tue,  2 Jul 2019 23:34:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562110455;
-        bh=kyo0eoaQ9Ha/fgbOaPGSkh+lU4/GNQGtCW3mk29fTtM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=zMKkZ2iUwvFBFFgKCayDWNYa87sLl+Q8jJ0kQOrFNc7kW8nMZkXdEpUslpqFE27Vu
-         QuPL5GiJwl9Q5DeAl4/I3YyP6oFv0QIMbDb+v5SalR2BFdZqt23TBcsx8pwxkayO03
-         CcA9U3c6C3qoUMw1R7X0HkQqv3wh56/KrByGFtS0=
-Received: by mail-qt1-f174.google.com with SMTP id a15so544678qtn.7;
-        Tue, 02 Jul 2019 16:34:15 -0700 (PDT)
-X-Gm-Message-State: APjAAAV5cmEyKD9pJQi0ZGAXYmTddQYD9SRYXLbnNYhV2O/XknWKi4Ov
-        VchDaSGGDSsZBXMP83ZUnYr83UFSN72yU0ERPg==
-X-Google-Smtp-Source: APXvYqwMCTfWzt/cQHKnUuZttwa2DgK2f5+/+x0lGfaPAIO+YrwZjCWAUf7qdAt2QRHL6vYe/2+RJeRw3PUodEdU/vM=
-X-Received: by 2002:ac8:368a:: with SMTP id a10mr27918576qtc.143.1562110455015;
- Tue, 02 Jul 2019 16:34:15 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190702203523.2412-1-martin.blumenstingl@googlemail.com> <20190702203523.2412-2-martin.blumenstingl@googlemail.com>
-In-Reply-To: <20190702203523.2412-2-martin.blumenstingl@googlemail.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 2 Jul 2019 17:34:03 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+3H-cbrUna27RJ1o0w5MxaubkA9hcZjpWsaEYnx6bWQg@mail.gmail.com>
-Message-ID: <CAL_Jsq+3H-cbrUna27RJ1o0w5MxaubkA9hcZjpWsaEYnx6bWQg@mail.gmail.com>
-Subject: Re: [PATCH 1/4] dt-bindings: phy: add binding for the Lantiq VRX200
- and ARX300 PCIe PHYs
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
-        John Crispin <john@phrozen.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Hauke Mehrtens <hauke@hauke-m.de>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Martin Schiller <ms@dev.tdt.de>
+        id S1727108AbfGCAhV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 20:37:21 -0400
+Received: from mail-oi1-f202.google.com ([209.85.167.202]:34973 "EHLO
+        mail-oi1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727025AbfGCAhV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 20:37:21 -0400
+Received: by mail-oi1-f202.google.com with SMTP id i132so327885oif.2
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 17:37:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=MklO/nCO3vTONhpU2/Xc+PDQxZ8geoXuw22CpQ4sZO8=;
+        b=qKiWSMCySfNKdrYjXhmrf6cfPbbz+oWEXvqnz1cpm0Z7vknJMNKnxJ+lQlVEm0E3hG
+         RB9MJVn2xxeW/3haHy4B43l9sOPJSz9tekq/KPZSWh1be1FAzolI0qebmS2oJK4IXslI
+         E1L/+HV1EWoRH9KnyHD4xeVzCWprAVojb7MrOxidOZ8BROzux7QmYFoYmx/+uLK1SX2D
+         58G/T2wFKuZgk4DoXdfPCyK4TGp42G+xC48rMy1I7hzqFMoEyzh+cb+CIkDARyYfI1h1
+         T5urZELFI4Fv+PnARlvjBvJrNSrFCRqIrsztsO3BARX88+dqkQv2cu5IH+wuoQj1vloo
+         wACA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=MklO/nCO3vTONhpU2/Xc+PDQxZ8geoXuw22CpQ4sZO8=;
+        b=gR57aEpcHA4yPef3ZsbLIBgXeGb+Jl65Peur8ClH+IK0AMZVGC6Rz3yp092Uhm9mXr
+         33IdlWu5Kdsz/jvbOOvMB/l19nDFv5+6H6TRHOtPf8YbVkWpVite2d5WbC5lK0yqnUqM
+         brITJGZfCwNR1hhwaxEySuDechTOvIMh8yfwAmyGuleOVgKS36Hux9f/a9Q96sWoe0rf
+         W4CEsshHre9S5HslQV45RJaUkz2bBoYMrg1JUBtgQgOcMxvnYiu3gq8wQJVbpN6zDK7M
+         BXQZtBeqLHNppBx0m69PVTYtF1+VIG1RYFtAsUDaHm4UytOPZIWqfSrlnbi01i52gWrr
+         XEJQ==
+X-Gm-Message-State: APjAAAWSc3vZdqB20OCZQ/qKz09yNTm2KIt4f+1YE0hhJ2rkER7aAnBP
+        dPawm9UMGXc3YCqiMLM7rmcQ4JE96tLhSzbm
+X-Google-Smtp-Source: APXvYqwxWC5LdWcl2/XKPgh1zut3SpHgJ3FIJ714nB1MgOY6lhh76l/rN5P/M8Kednj/Tx9T/ZAwDQyC84jyWjts
+X-Received: by 2002:a65:6106:: with SMTP id z6mr20033643pgu.250.1562110550143;
+ Tue, 02 Jul 2019 16:35:50 -0700 (PDT)
+Date:   Tue,  2 Jul 2019 16:35:38 -0700
+Message-Id: <20190702233538.52793-1-henryburns@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
+Subject: [PATCH v3] mm/z3fold.c: Lock z3fold page before  __SetPageMovable()
+From:   Henry Burns <henryburns@google.com>
+To:     Vitaly Wool <vitalywool@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Vitaly Vul <vitaly.vul@sony.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Xidong Wang <wangxidong_97@163.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jonathan Adams <jwadams@google.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Henry Burns <henryburns@google.com>,
+        David Rientjes <rientjes@google.com>, stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 2, 2019 at 2:35 PM Martin Blumenstingl
-<martin.blumenstingl@googlemail.com> wrote:
->
-> Add the bindings for the PCIe PHY on Lantiq VRX200 and ARX300 SoCs.
-> The IP block contains settings for the PHY and a PLL.
-> The PLL mode is configurable through a dedicated #phy-cell in .dts.
->
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> ---
->  .../bindings/phy/lantiq,vrx200-pcie-phy.yaml  | 87 +++++++++++++++++++
->  .../dt-bindings/phy/phy-lantiq-vrx200-pcie.h  | 11 +++
->  2 files changed, 98 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/phy/lantiq,vrx200-pcie-phy.yaml
->  create mode 100644 include/dt-bindings/phy/phy-lantiq-vrx200-pcie.h
->
-> diff --git a/Documentation/devicetree/bindings/phy/lantiq,vrx200-pcie-phy.yaml b/Documentation/devicetree/bindings/phy/lantiq,vrx200-pcie-phy.yaml
-> new file mode 100644
-> index 000000000000..b7b222e772d0
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/phy/lantiq,vrx200-pcie-phy.yaml
-> @@ -0,0 +1,87 @@
-> +# SPDX-License-Identifier: GPL-2.0
+Following zsmalloc.c's example we call trylock_page() and unlock_page(). 
+Also make z3fold_page_migrate() assert that newpage is passed in locked,
+as per the documentation.
 
-The preference is (GPL-2.0 OR BSD-2-Clause) for new bindings.
+Link: http://lkml.kernel.org/r/20190702005122.41036-1-henryburns@google.com
+Signed-off-by: Henry Burns <henryburns@google.com>
+Suggested-by: Vitaly Wool <vitalywool@gmail.com>
+Acked-by: Vitaly Wool <vitalywool@gmail.com>
+Acked-by: David Rientjes <rientjes@google.com>
+Cc: Shakeel Butt <shakeelb@google.com>
+Cc: Vitaly Vul <vitaly.vul@sony.com>
+Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc: Xidong Wang <wangxidong_97@163.com>
+Cc: Jonathan Adams <jwadams@google.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+---
+ Changelog since v2:
+ - Removed the WARN_ON entirely, as it is an expected code path.
 
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/phy/lantiq,vrx200-pcie-phy.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Lantiq VRX200 and ARX300 PCIe PHY Device Tree Bindings
-> +
-> +maintainers:
-> +  - Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> +
-> +properties:
-> +  "#phy-cells":
-> +    const: 1
-> +    description: selects the PHY mode as defined in <dt-bindings/phy/phy-lantiq-vrx200-pcie.h>
-> +
-> +  compatible:
-> +    enum:
-> +      - lantiq,vrx200-pcie-phy
-> +      - lantiq,arx300-pcie-phy
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: PHY module clock
-> +      - description: PDI register clock
-> +
-> +  clock-names:
-> +    items:
-> +      - const: phy
-> +      - const: pdi
-> +
-> +  resets:
-> +    items:
-> +      - description: exclusive PHY reset line
-> +      - description: shared reset line between the PCIe PHY and PCIe controller
-> +
-> +  resets-names:
-> +    items:
-> +      - const: phy
-> +      - const: pcie
-> +
-> +  lantiq,rcu:
-> +    maxItems: 1
-> +    description: phandle to the RCU syscon
+ Changelog since v1:
+ - Added an if statement around WARN_ON(trylock_page(page)) to avoid
+   unlocking a page locked by a someone else.
 
-You need to define the type (and drop maxItems):
+ mm/z3fold.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-$ref: /schemas/types.yaml#/definitions/phandle
+diff --git a/mm/z3fold.c b/mm/z3fold.c
+index e174d1549734..eeb3fe7f5ca3 100644
+--- a/mm/z3fold.c
++++ b/mm/z3fold.c
+@@ -918,7 +918,16 @@ static int z3fold_alloc(struct z3fold_pool *pool, size_t size, gfp_t gfp,
+ 		set_bit(PAGE_HEADLESS, &page->private);
+ 		goto headless;
+ 	}
+-	__SetPageMovable(page, pool->inode->i_mapping);
++	if (can_sleep) {
++		lock_page(page);
++		__SetPageMovable(page, pool->inode->i_mapping);
++		unlock_page(page);
++	} else {
++		if (!trylock_page(page)) {
++			__SetPageMovable(page, pool->inode->i_mapping);
++			unlock_page(page);
++		}
++	}
+ 	z3fold_page_lock(zhdr);
+ 
+ found:
+@@ -1325,6 +1334,7 @@ static int z3fold_page_migrate(struct address_space *mapping, struct page *newpa
+ 
+ 	VM_BUG_ON_PAGE(!PageMovable(page), page);
+ 	VM_BUG_ON_PAGE(!PageIsolated(page), page);
++	VM_BUG_ON_PAGE(!PageLocked(newpage), newpage);
+ 
+ 	zhdr = page_address(page);
+ 	pool = zhdr_to_pool(zhdr);
+-- 
+2.22.0.410.gd8fdbe21b5-goog
 
-> +
-> +  lantiq,rcu-endian-offset:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description: the offset of the endian registers for this PHY instance in the RCU syscon
-> +
-> +  lantiq,rcu-big-endian-mask:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description: the mask to set the PDI (PHY) registers for this PHY instance to big endian
-> +
-> +required:
-> +  - "#phy-cells"
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +  - resets
-> +  - reset-names
-> +  - lantiq,rcu
-> +  - lantiq,rcu-endian-offset
-> +  - lantiq,rcu-big-endian-mask
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    pcie0_phy: phy@106800 {
-> +        compatible = "lantiq,vrx200-pcie-phy";
-> +        reg = <0x106800 0x100>;
-> +        lantiq,rcu = <&rcu0>;
-> +        lantiq,rcu-endian-offset = <0x4c>;
-> +        lantiq,rcu-big-endian-mask = <0x80>; /* bit 7 */
-> +        big-endian;
-
-The example will fail to validate because big-endian is not listed as
-a property and you have 'additionalProperties: false'. So you have to
-either list big-endian or drop additionalProperties.
-
-Note that the examples are validated against the schema in linux-next now.
-
-Rob
