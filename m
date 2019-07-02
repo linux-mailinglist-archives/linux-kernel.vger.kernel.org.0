@@ -2,82 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D9225CA87
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 10:05:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C6DB5CAAD
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 10:06:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727896AbfGBIFN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 04:05:13 -0400
-Received: from mail-qk1-f202.google.com ([209.85.222.202]:34391 "EHLO
-        mail-qk1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727885AbfGBIFL (ORCPT
+        id S1727059AbfGBIGm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 04:06:42 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:45571 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727561AbfGBIGh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 04:05:11 -0400
-Received: by mail-qk1-f202.google.com with SMTP id h198so16026993qke.1
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 01:05:11 -0700 (PDT)
+        Tue, 2 Jul 2019 04:06:37 -0400
+Received: by mail-ed1-f68.google.com with SMTP id a14so26366404edv.12
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 01:06:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=NEsgFhBOsHO1SUu/GnNK2DPDOJTChWsbzIPYkeXfosU=;
-        b=SUuiCpEyaak5XfddxqDhgd8CZLbHmyS+aWA9tOcpJKwvJ+lmczEa4pAv2doIL/MNAx
-         oxbvwgOT7JP95TVpHvEKVEhqSCkHTaAIJ2qYLYjYX/sM5EVQ/ehuStA1RZaAx9WKHIu2
-         HOMEvp+RFG18HWtxgTcDEihisRNtMoN4fr51BGqd0Y1aNZ9EUIBxSnArjNTNPZj0qKeC
-         7lDfBfPvpuhQ5dGD+qwIbY14OOVkD/4L9H5Ax829EjB1ByMvbQVVg8/LyR1nThS/JZpC
-         sGyguTYXTlq79AT/k0ECihTxoUZa47U8PBCFXFAtW0FYIKiTXq8syA+AF8rl0mZfO7q0
-         9njw==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=v+gVEdHeB1hIvDD6bk9LhL2aP9OzxGeZK+EU7eJOmKo=;
+        b=ZGeac4dfLGFaSPbVkqUj7qpg5c9UtxWKJUYqasnnRpUrX+7x+WLbzKZ6d25IvbuF4n
+         r4fsbVVgEfcZUFKEZbv/QUtpqFGsmZossPQYMkO2pPSbhjC05OIk8CGFLNSN/0tvVUCN
+         /rRulAIK5UQ9dOnOQUMtP6WRA8k14RustF8TzodmMLE2AMCLe0YkbW8zo38jo/wHCDkr
+         OU80XI1DVy8D+BtMwSG/2T9bvcl4XnjI7SVu16feowa4PGzvvtJ+H6D5WOmV3mandOkD
+         Jl1TK7GKVp4KbFWUpqgOWfB0W8HlEg4ycJzBr8sf6Mzol4YXUZPeZNvOBq7ZEpD3iOhS
+         AtbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=NEsgFhBOsHO1SUu/GnNK2DPDOJTChWsbzIPYkeXfosU=;
-        b=XhX4ABfb61piUAR4e+a7WGvlLs6X63A7rFYWnaL5IU46EFudS/v5k9jkisI7rSuTPx
-         6yWDG554XpEhBt3EO1sZcQBBmXWaFRQm2PmEGqnTl6JkQDQYlKqyJiQmnKo6E0+dyCpH
-         +CKBOPPgjdjirMw7In/vuciMJ6LQ9hlbCHCOBKpUbYZdcBiW1Fh0Q15eDIWJOXdulALd
-         IXq1/lPfWAg3w9rk8/sVNuGX0IDwKYInPyeiApGQquCJfc+HIZv3fzQmr1HO7NmiSsXQ
-         6zghCUEOu4/cdCMcoGwCLVNSCSVbLhHnhR59J/GafsyIL5k71t3g5ASvsGGO0bNwy3nf
-         Ur5A==
-X-Gm-Message-State: APjAAAWh10ocJ2o1IMvKqL3C2abUXhJPjwBH1RMmS0pjU/fBF3Z1kD8U
-        CiNh7HEOXH5eiRPvsO5RGwy0XGqPW4EqE+I=
-X-Google-Smtp-Source: APXvYqwrXvbk11TVxxDHQCIkdbAtLKP9A2wasQz4c5X/idjoID/jWMQN/mQNqcB/Hw6wGFCTefiRv8WenyeupcE=
-X-Received: by 2002:a37:ac0a:: with SMTP id e10mr24972711qkm.168.1562054710600;
- Tue, 02 Jul 2019 01:05:10 -0700 (PDT)
-Date:   Tue,  2 Jul 2019 16:05:03 +0800
-Message-Id: <20190702080503.175149-1-oceanchen@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
-Subject: [PATCH v2] f2fs: avoid out-of-range memory access
-From:   Ocean Chen <oceanchen@google.com>
-To:     jaegeuk@kernel.org, yuchao0@huawei.com,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-Cc:     oceanchen@google.com
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=v+gVEdHeB1hIvDD6bk9LhL2aP9OzxGeZK+EU7eJOmKo=;
+        b=Ny25TYMaeYgx8mmaQEvkDg1Q/OUylJgfy8C1EdxuEJS5CTaRt3tyaQ/gud+SgdvSk5
+         Vsg+uJuFDMnRCq0vihhg+zE5C9vaHxQFJRRUKrV8DRID3tFc+tx4dH92gYyrOu8KwkeS
+         agrant8TkYzpiE4EHq5dJdcnSVpfc65wwVGmqH1iv3plQDB92ZKAaPA8/hqGtZy2WCjv
+         BTIpeBhuOdeaaGILRxmvmSbMNnqwOSQAHwNzI6+7Z0FJKcDVq4oJaNnWm434JoanJ3Zd
+         WNYma/N+05b56yyrkcz4kjzNCMLuz64X5R9cN79syFsa1EiP+yGO6JFA0mLQJrTGL4/5
+         Fsfg==
+X-Gm-Message-State: APjAAAWdwq5VkFGJQFd/uE1TFQsWZ8zrAypRMjkCD1NQTDu4TdgzhhqB
+        zZb5VoUo6c4S2tyzX/5/B70=
+X-Google-Smtp-Source: APXvYqyLyz4+m/jyDx9YPAgYfTRLOmth2w+dVO3Zgrz2HFR3uLrDnFJxKzRTjP2pGmF6eJQRU/U7tA==
+X-Received: by 2002:a17:906:19c3:: with SMTP id h3mr26984148ejd.49.1562054795887;
+        Tue, 02 Jul 2019 01:06:35 -0700 (PDT)
+Received: from puskevit.guest.wlan ([195.142.153.182])
+        by smtp.gmail.com with ESMTPSA id m3sm4199465edi.33.2019.07.02.01.06.34
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 02 Jul 2019 01:06:35 -0700 (PDT)
+From:   fatihaltinpinar@gmail.com
+To:     matthias.bgg@gmail.com
+Cc:     gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Fatih ALTINPINAR <fatihaltinpinar@gmail.com>
+Subject: [PATCH] Staging: mt7621-dma: mtk-hsdma: fix a coding style issue
+Date:   Tue,  2 Jul 2019 11:06:32 +0300
+Message-Id: <20190702080632.27470-1-fatihaltinpinar@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-blk_off might over 512 due to fs corrupt.
-Use ENTRIES_IN_SUM to protect invalid memory access.
+From: Fatih ALTINPINAR <fatihaltinpinar@gmail.com>
 
-v2:
-- fix typo
-Signed-off-by: Ocean Chen <oceanchen@google.com>
+Fixed a coding style issue. Removed curly brackets of an one
+line if statement.
+
+Signed-off-by: Fatih ALTINPINAR <fatihaltinpinar@gmail.com>
 ---
- fs/f2fs/segment.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/staging/mt7621-dma/mtk-hsdma.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 8dee063c833f..a5e8af0bd62e 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -3403,6 +3403,8 @@ static int read_compacted_summaries(struct f2fs_sb_info *sbi)
+diff --git a/drivers/staging/mt7621-dma/mtk-hsdma.c b/drivers/staging/mt7621-dma/mtk-hsdma.c
+index 0fbb9932d6bb..a58725dd2611 100644
+--- a/drivers/staging/mt7621-dma/mtk-hsdma.c
++++ b/drivers/staging/mt7621-dma/mtk-hsdma.c
+@@ -664,9 +664,8 @@ static int mtk_hsdma_probe(struct platform_device *pdev)
+ 		return -EINVAL;
  
- 		for (j = 0; j < blk_off; j++) {
- 			struct f2fs_summary *s;
-+			if (j >= ENTRIES_IN_SUM)
-+				return -EFAULT;
- 			s = (struct f2fs_summary *)(kaddr + offset);
- 			seg_i->sum_blk->entries[j] = *s;
- 			offset += SUMMARY_SIZE;
+ 	hsdma = devm_kzalloc(&pdev->dev, sizeof(*hsdma), GFP_KERNEL);
+-	if (!hsdma) {
++	if (!hsdma)
+ 		return -EINVAL;
+-	}
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	base = devm_ioremap_resource(&pdev->dev, res);
 -- 
-2.22.0.410.gd8fdbe21b5-goog
+2.17.1
 
