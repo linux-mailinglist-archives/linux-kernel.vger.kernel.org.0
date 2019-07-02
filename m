@@ -2,71 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA8355D339
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 17:44:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 565025D357
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 17:48:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726967AbfGBPob (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 11:44:31 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:42490 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726213AbfGBPob (ORCPT
+        id S1727089AbfGBPsO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 11:48:14 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:3830 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726678AbfGBPsL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 11:44:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=yNPjqLdRTJCzgCZVeC3z+YefMIDSKzflp7zcy3fLwqs=; b=T127DeqEzG8CkEzFsFjGbAebE
-        motUh25iUQewOFQHvknqYG2eDCh0zjdY7q0TCfFwAExGnZPD2C9Qquo0AZgieACMJQRZMVp6246L5
-        sA23h3NrnMxHZTijEXwt/v9JYgGVCR4B40Xflz5mJeU7nQhuaEja8z63y9Gb9PS3GAHAZccaY+cht
-        OYqBCWn40sLRWSVCweGwfZOQdFebYwoUSzKai0IjbTNb54SFw3gjA4Z+GKCOfYXf3Kmrx1xAHl7tV
-        tu4p+fVRKxwAdSY4bWQi6zNb+bowRFQbmDv9VdGxpOekg29NE7yf07YVDhzyswriLKM8dUIuvmf+y
-        Bg4kihsaQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hiKxE-0007gr-E5; Tue, 02 Jul 2019 15:44:24 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 23DB92013A3B6; Tue,  2 Jul 2019 17:44:22 +0200 (CEST)
-Date:   Tue, 2 Jul 2019 17:44:22 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Douglas RAILLARD <douglas.raillard@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        mingo@redhat.com, rjw@rjwysocki.net, viresh.kumar@linaro.org,
-        quentin.perret@arm.com, patrick.bellasi@arm.com,
-        dietmar.eggemann@arm.com
-Subject: Re: [RFC PATCH v2 0/5] sched/cpufreq: Make schedutil energy aware
-Message-ID: <20190702154422.GV3436@hirez.programming.kicks-ass.net>
-References: <20190627171603.14767-1-douglas.raillard@arm.com>
+        Tue, 2 Jul 2019 11:48:11 -0400
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x62FkSbB002392;
+        Tue, 2 Jul 2019 17:47:40 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : subject :
+ date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=eo0SzcMpscMimbmWzsOIbcgLXEFvCBh20u1KgFabFbU=;
+ b=bNblDuWO7jsVSN+PfB2xxe0ZDiUyeLXWo9o19zQpFArkhjHGUlIZjoe3y6ozfdtvABAP
+ pML3jxpdhSHUr0F+rW9u+8eDOVVxoLwjl72bwQm4mvdgihEK0F6GQu344lB/NNK55Zx2
+ 6ps1iKV9RlCN9mT9wRTpM7LmiaKcXU7hBQmU2Xn9Nk/i0yan20CCTNOfZ19w9gBWSCKY
+ fd8d5mfLUoPJTKUMTwDYgSuD12wohApr0fn+P9FnDW6pvalvQt98b1PmWIgZa7OEdtjG
+ kirHv3JZVJvm3fSoJILvjvIbBcBFoIOP3PT9oveWGCciIeCjII4W1Mzei/wRDh0XMmns KQ== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2tdwf0w4ux-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Tue, 02 Jul 2019 17:47:40 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 839AC31;
+        Tue,  2 Jul 2019 15:47:37 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas23.st.com [10.75.90.46])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 49270487E;
+        Tue,  2 Jul 2019 15:47:37 +0000 (GMT)
+Received: from SAFEX1HUBCAS21.st.com (10.75.90.45) by SAFEX1HUBCAS23.st.com
+ (10.75.90.46) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 2 Jul 2019
+ 17:47:37 +0200
+Received: from localhost (10.201.23.16) by Webmail-ga.st.com (10.75.90.48)
+ with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 2 Jul 2019 17:47:36
+ +0200
+From:   Olivier Moysan <olivier.moysan@st.com>
+To:     <a.hajda@samsung.com>, <narmstrong@baylibre.com>,
+        <Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
+        <jernej.skrabec@siol.net>, <airlied@linux.ie>, <daniel@ffwll.ch>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <benjamin.gaignard@st.com>, <alexandre.torgue@st.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <olivier.moysan@st.com>, <jsarha@ti.com>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <devicetree@vger.kernel.org>
+Subject: [PATCH 0/3] drm/bridge: sii902x: fix audio mclk management
+Date:   Tue, 2 Jul 2019 17:47:03 +0200
+Message-ID: <1562082426-14876-1-git-send-email-olivier.moysan@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190627171603.14767-1-douglas.raillard@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.201.23.16]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-02_08:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 27, 2019 at 06:15:58PM +0100, Douglas RAILLARD wrote:
-> Make schedutil cpufreq governor energy-aware.
-> 
-> - patch 1 introduces a function to retrieve a frequency given a base
->   frequency and an energy cost margin.
-> - patch 2 links Energy Model perf_domain to sugov_policy.
-> - patch 3 updates get_next_freq() to make use of the Energy Model.
+Fix audio master clock use for Silab sii902x HDMI transceiver.
+Make audio master clock optional, as this clock is not mandatory.
 
-> 
-> 1) Selecting the highest possible frequency for a given cost. Some
->    platforms can have lower frequencies that are less efficient than
->    higher ones, in which case they should be skipped for most purposes.
->    They can still be useful to give more freedom to thermal throttling
->    mechanisms, but not under normal circumstances.
->    note: the EM framework will warn about such OPPs "hertz/watts ratio
->    non-monotonically decreasing"
+Olivier Moysan (3):
+  drm/bridge: sii902x: fix missing reference to mclk clock
+  dt-bindings: display: sii902x: Change audio mclk binding
+  drm/bridge: sii902x: make audio mclk optional
 
-Humm, for some reason I was thinking we explicitly skipped those OPPs
-and they already weren't used.
+ .../devicetree/bindings/display/bridge/sii902x.txt |  5 ++-
+ drivers/gpu/drm/bridge/sii902x.c                   | 40 +++++++++++++---------
+ 2 files changed, 26 insertions(+), 19 deletions(-)
 
-This isn't in fact so, and these first few patches make it so?
+-- 
+2.7.4
+
