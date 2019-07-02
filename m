@@ -2,128 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11A485D1A2
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 16:23:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C4865D1B2
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 16:24:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727210AbfGBOX0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 10:23:26 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:35210 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727083AbfGBOX0 (ORCPT
+        id S1727121AbfGBOYx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 10:24:53 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:41735 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726936AbfGBOYv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 10:23:26 -0400
-Received: by mail-wr1-f68.google.com with SMTP id c27so10371244wrb.2
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 07:23:24 -0700 (PDT)
+        Tue, 2 Jul 2019 10:24:51 -0400
+Received: by mail-lj1-f196.google.com with SMTP id 205so17100352ljj.8
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 07:24:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=fYd2nLSJd2JtuXW4PvhhIc8hhI47lGgNieCsOyTTMr0=;
-        b=hJUf2C50kZgFGsrA5T0byl86DfevCCPZn4MqhTrIVgX4gvlXGnmRKs3FMRNHqyFSp+
-         6IVWVp6dgqLwZA3AvbRCC7/YxNhuYyWMeLXftCsawO8Siq2PzyZPNbIzyMnfUZAbhEcd
-         fv5C2x53P72r17ITIeLXXNxlJye7wUFmiLrGNdCtfAiM8EId0E35kVIXCgEBf6I8nuzQ
-         QJP2TWdcXNytr0zwQYmWklWkr+EbsMYlfQOLUzSIbjbooMiUphiMViB1X46QuWD4n28i
-         oAOJGR8grQLUjxu3lQ9QSxIyBUyV3kUcJpNnMyO2PoAvCf00+z+1zKOGqsB8TdbJJRfN
-         4CEw==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=bSHjqClvRfHK2U9qiOj5LIMtdVJcukiMxcH2n03yaCU=;
+        b=HFTZp006q8TZVX5sIuJIMOkk1C9wJQO4rJGRAiNBk/2WlyfUJ1rdVQY+PYz0ZhQz3Q
+         wT17e2X0kch1+uP8KvE/V1ET2jlNw8aK4cHsN9Zf832n78lQJQUY75gbrep4TC2UbVpA
+         axaAvW+VgyPKfoktsN3yY2BkGI/5aoxuUHGyQG0WSr2OOvsF8q/VePxkmkaj/PJRO9vE
+         rGWXVn0dbCitwyb/iSKcxQgRgC7wf16i4cJRuO/qWn8T4MKiDjladJV35U+7gNDPkgpt
+         /fHPgF/QGWi5AyHp75MflzSGf05Yw5Z8bbdVS03YBHG/wVa/f2iIl+T0k5Bb5yqMYZdq
+         I35A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=fYd2nLSJd2JtuXW4PvhhIc8hhI47lGgNieCsOyTTMr0=;
-        b=m/BP2xSgyVK5WGElVusgwRErnj2DB8zC8EklXObMI5q6zkC6QNHRjRyrbMVwri/IdD
-         tHfa+XkjqYMEStatNTSRNvKONUzwVUqtHDsMMuZ4vNTPqiDXH+fsu/KkzxBgx/z8Cv2Q
-         PGcEy2GXMs2cRrfz3va5OqsRN9bkBckNQRZmd8FeWcVQfbjT88MHt2XVdL0OvOEMmxoK
-         2rt8aHnts0NBxtOKUP9918GaO/ukggOdqL80VYwyFKVbl+/EsKCF3pJhhXQtYK1Jlpkn
-         mDKTWS5bNXVPREwUJG7ozBl4C6QPWl0S0ZT/T1hdryat9sUluk8d7ossRf5dm2n363l1
-         sA6Q==
-X-Gm-Message-State: APjAAAWba4dRQfWWGx7v9C+bXsRHvlqvGaVb/VMMGTVJOWjrsRBSMqy/
-        +JQSj6jpYul57dJuxbTxt+2QlEdiswOcwMud2KUnEk7DB2E=
-X-Google-Smtp-Source: APXvYqwLMvAHfv1sTx1VayA6+S8cQcR7JuRg+X1Ptd3HNI8mYyOl8QVHTULib9r0UUHpDw87A4OVj6OpjaUTXjpkh2A=
-X-Received: by 2002:a5d:518f:: with SMTP id k15mr23509522wrv.321.1562077403779;
- Tue, 02 Jul 2019 07:23:23 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=bSHjqClvRfHK2U9qiOj5LIMtdVJcukiMxcH2n03yaCU=;
+        b=IzzFaG6en1Lj0pOe/4h92RXvLo5gwlZ2bg5kBfPFDESyueBFgdXTs2zp+S5FVyWwHD
+         do8kTH4EywE7DTdMOZeRh4uUCaBPscouYU6X15B0V09Gt1XW8LbY+Gk3SqZTw8BGPl3i
+         OWKZWWT1P5wgu6lnc0Hhv1GD8RsJRpc/zkkfLepXM12ulKbhDuQlIxIWOpnVykin4XZD
+         aDYBKHYnxM5sEDI+4Q5gpwFU2hsnivo8IQ9f4owgvsh53X+NVMsoW9Caq6qmy7hNKvvM
+         BlpHxthAOw2gut5DrLTr0A7kr9OhIlE+6X5rjd3n/c3VTpm/ymcv0KPbKLnbNh8Bnpq7
+         oGLQ==
+X-Gm-Message-State: APjAAAX2q1j0CPISP0ODlr8DjlffbY9hHNFILSNkQCnFotQgng9UB9fK
+        xgzhUlSBQi9EkbmZFBIyyUYQyQ==
+X-Google-Smtp-Source: APXvYqznUXLZarmJq51xBmcNdfHn/7nzoCiQ/8SROQ+yDmBZCj4RCuLLzIa94kh5HISHvcZ/J8lmOA==
+X-Received: by 2002:a2e:9a96:: with SMTP id p22mr17345327lji.57.1562077488680;
+        Tue, 02 Jul 2019 07:24:48 -0700 (PDT)
+Received: from khorivan (59-201-94-178.pool.ukrtel.net. [178.94.201.59])
+        by smtp.gmail.com with ESMTPSA id w28sm3817013ljd.12.2019.07.02.07.24.47
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 02 Jul 2019 07:24:48 -0700 (PDT)
+Date:   Tue, 2 Jul 2019 17:24:46 +0300
+From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+To:     Jesper Dangaard Brouer <brouer@redhat.com>
+Cc:     grygorii.strashko@ti.com, davem@davemloft.net, ast@kernel.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        ilias.apalodimas@linaro.org, netdev@vger.kernel.org,
+        daniel@iogearbox.net, jakub.kicinski@netronome.com,
+        john.fastabend@gmail.com
+Subject: Re: [PATCH v5 net-next 6/6] net: ethernet: ti: cpsw: add XDP support
+Message-ID: <20190702142444.GC4510@khorivan>
+Mail-Followup-To: Jesper Dangaard Brouer <brouer@redhat.com>,
+        grygorii.strashko@ti.com, davem@davemloft.net, ast@kernel.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        ilias.apalodimas@linaro.org, netdev@vger.kernel.org,
+        daniel@iogearbox.net, jakub.kicinski@netronome.com,
+        john.fastabend@gmail.com
+References: <20190630172348.5692-1-ivan.khoronzhuk@linaro.org>
+ <20190630172348.5692-7-ivan.khoronzhuk@linaro.org>
+ <20190701181901.150c0b71@carbon>
+ <20190702113738.GB4510@khorivan>
+ <20190702153902.0e42b0b2@carbon>
 MIME-Version: 1.0
-References: <000000000000089d7f058683115e@google.com> <20190702140211.28399-1-tranmanphong@gmail.com>
-In-Reply-To: <20190702140211.28399-1-tranmanphong@gmail.com>
-From:   Alexander Potapenko <glider@google.com>
-Date:   Tue, 2 Jul 2019 16:23:11 +0200
-Message-ID: <CAG_fn=VHpZW69TfK35aqL7o6CvgsPazL5raeW1QmWpu9ReYkhw@mail.gmail.com>
-Subject: Re: [PATCH] media: usb: technisat-usb2: fix buffer overflow
-To:     Phong Tran <tranmanphong@gmail.com>
-Cc:     syzbot+eaaaf38a95427be88f4b@syzkaller.appspotmail.com,
-        Andrey Konovalov <andreyknvl@google.com>,
-        hans.verkuil@cisco.com, mchehab@kernel.org,
-        skhan@linuxfoundation.org, gregkh@linuxfoundation.org,
-        Kees Cook <keescook@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org,
-        linux-usb@vger.kernel.org,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        linux-kernel-mentees@lists.linuxfoundation.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20190702153902.0e42b0b2@carbon>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 2, 2019 at 4:02 PM Phong Tran <tranmanphong@gmail.com> wrote:
+On Tue, Jul 02, 2019 at 03:39:02PM +0200, Jesper Dangaard Brouer wrote:
+>On Tue, 2 Jul 2019 14:37:39 +0300
+>Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org> wrote:
 >
-> The buffer will be overflow in case of the while loop can not break.
-> Add the checking buffer condition in while loop for avoiding
-> overlooping index.
+>> On Mon, Jul 01, 2019 at 06:19:01PM +0200, Jesper Dangaard Brouer wrote:
+>> >On Sun, 30 Jun 2019 20:23:48 +0300
+>> >Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org> wrote:
+>> >
+>> >> +static int cpsw_ndev_create_xdp_rxq(struct cpsw_priv *priv, int ch)
+>> >> +{
+>> >> +	struct cpsw_common *cpsw = priv->cpsw;
+>> >> +	int ret, new_pool = false;
+>> >> +	struct xdp_rxq_info *rxq;
+>> >> +
+>> >> +	rxq = &priv->xdp_rxq[ch];
+>> >> +
+>> >> +	ret = xdp_rxq_info_reg(rxq, priv->ndev, ch);
+>> >> +	if (ret)
+>> >> +		return ret;
+>> >> +
+>> >> +	if (!cpsw->page_pool[ch]) {
+>> >> +		ret =  cpsw_create_rx_pool(cpsw, ch);
+>> >> +		if (ret)
+>> >> +			goto err_rxq;
+>> >> +
+>> >> +		new_pool = true;
+>> >> +	}
+>> >> +
+>> >> +	ret = xdp_rxq_info_reg_mem_model(rxq, MEM_TYPE_PAGE_POOL,
+>> >> +					 cpsw->page_pool[ch]);
+>> >> +	if (!ret)
+>> >> +		return 0;
+>> >> +
+>> >> +	if (new_pool) {
+>> >> +		page_pool_free(cpsw->page_pool[ch]);
+>> >> +		cpsw->page_pool[ch] = NULL;
+>> >> +	}
+>> >> +
+>> >> +err_rxq:
+>> >> +	xdp_rxq_info_unreg(rxq);
+>> >> +	return ret;
+>> >> +}
+>> >
+>> >Looking at this, and Ilias'es XDP-netsec error handling path, it might
+>> >be a mistake that I removed page_pool_destroy() and instead put the
+>> >responsibility on xdp_rxq_info_unreg().
+>>
+>> As for me this is started not from page_pool_free, but rather from calling
+>> unreg_mem_model from rxq_info_unreg. Then, if page_pool_free is hidden
+>> it looks more a while normal to move all chain to be self destroyed.
+>>
+>> >
+>> >As here, we have to detect if page_pool_create() was a success, and then
+>> >if xdp_rxq_info_reg_mem_model() was a failure, explicitly call
+>> >page_pool_free() because the xdp_rxq_info_unreg() call cannot "free"
+>> >the page_pool object given it was not registered.
+>>
+>> Yes, it looked a little bit ugly from the beginning, but, frankly,
+>> I have got used to this already.
+>>
+>> >
+>> >Ivan's patch in[1], might be a better approach, which forced all
+>> >drivers to explicitly call page_pool_free(), even-though it just
+>> >dec-refcnt and the real call to page_pool_free() happened via
+>> >xdp_rxq_info_unreg().
+>> >
+>> >To better handle error path, I would re-introduce page_pool_destroy(),
+>>
+>> So, you might to do it later as I understand, and not for my special
+>> case but becouse it makes error path to look a little bit more pretty.
+>> I'm perfectly fine with this, and better you add this, for now my
+>> implementation requires only "xdp: allow same allocator usage" patch,
+>> but if you insist I can resend also patch in question afterwards my
+>> series is applied (with modification to cpsw & netsec & mlx5 & page_pool).
+>>
+>> What's your choice? I can add to your series patch needed for cpsw to
+>> avoid some misuse.
 >
-> This issue was reported by syzbot
->
-> Reported-by: syzbot+eaaaf38a95427be88f4b@syzkaller.appspotmail.com
->
-> Tested by:
-> https://groups.google.com/d/msg/syzkaller-bugs/CySBCKuUOOs/0hKq1CdjCwAJ
->
-> Signed-off-by: Phong Tran <tranmanphong@gmail.com>
-> ---
->  drivers/media/usb/dvb-usb/technisat-usb2.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/media/usb/dvb-usb/technisat-usb2.c b/drivers/media/u=
-sb/dvb-usb/technisat-usb2.c
-> index c659e18b358b..4e0b6185666a 100644
-> --- a/drivers/media/usb/dvb-usb/technisat-usb2.c
-> +++ b/drivers/media/usb/dvb-usb/technisat-usb2.c
-> @@ -655,7 +655,7 @@ static int technisat_usb2_get_ir(struct dvb_usb_devic=
-e *d)
->  #endif
->
->         ev.pulse =3D 0;
-> -       while (1) {
-> +       while (b !=3D (buf + 63)) {
-I think it won't hurt to either use ARRAY_SIZE here, or define some
-magic constant for the buffer size in struct technisat_usb2_state.
+>I will try to create a cleaned-up version of your patch[1] and
+>re-introduce page_pool_destroy() for drivers to use, then we can build
+>your driver on top of that.
 
->                 ev.pulse =3D !ev.pulse;
->                 ev.duration =3D (*b * FIRMWARE_CLOCK_DIVISOR * FIRMWARE_C=
-LOCK_TICK) / 1000;
->                 ir_raw_event_store(d->rc_dev, &ev);
-> --
-> 2.11.0
->
-> --
-> You received this message because you are subscribed to the Google Groups=
- "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an=
- email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgi=
-d/syzkaller-bugs/20190702140211.28399-1-tranmanphong%40gmail.com.
-> For more options, visit https://groups.google.com/d/optout.
+I've corrected patch to xdp core and tested. The "page pool API" change
+seems is orthogonal now. So no limits to send v6 that is actually done
+and no more strict dependency on page pool API changes whenever that
+can happen.
 
-
-
---=20
-Alexander Potapenko
-Software Engineer
-
-Google Germany GmbH
-Erika-Mann-Stra=C3=9Fe, 33
-80636 M=C3=BCnchen
-
-Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Halimah DeLaine Prado
-Registergericht und -nummer: Hamburg, HRB 86891
-Sitz der Gesellschaft: Hamburg
+-- 
+Regards,
+Ivan Khoronzhuk
