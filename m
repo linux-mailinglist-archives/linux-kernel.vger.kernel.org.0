@@ -2,120 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17B8C5D0B8
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 15:33:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93F165D192
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 16:22:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726966AbfGBNdU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 09:33:20 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:40894 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726375AbfGBNdT (ORCPT
+        id S1727111AbfGBOWK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 10:22:10 -0400
+Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:37289 "EHLO
+        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726803AbfGBOWK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 09:33:19 -0400
-Received: by mail-wr1-f66.google.com with SMTP id p11so17866152wre.7;
-        Tue, 02 Jul 2019 06:33:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=w0OYaXyIMcAAJ4gBJEOEXLofDRzjGVAncXahqHJtr3g=;
-        b=jZmsk2apK9wWaC1Jwi8eJ+VpNeeqK9vyCI2z4YLKZy0UMQiklfvEJVTrYVsIE1tAoL
-         Y0mxMn9PXmVbH/NBkukGPC7y0H/BBRFTvNqfGcb6L2DEcT68IJb+Tno6Sy2dbcfXF35q
-         EYTpbUzAwTBib2rn38pMmYI7wgZXsOBsHf7d12NDK5rlNm1mLqrrvfLa0bpKw++S3JJW
-         nmGOJnDN4flQWKyQ2INLpigpyMPRSa9KHhhIMB3wFazz2VGW/XO6KJlsgowT23b+pR+w
-         +XCGBbRduRTbvzTTfwVMn2bBa69lj94fYKOEH8G7r345mzWJr0kHUuhILLc9d0GFZdHN
-         ZeFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=w0OYaXyIMcAAJ4gBJEOEXLofDRzjGVAncXahqHJtr3g=;
-        b=l8esMl3Vl5/RvA0eFg4q2t5xYbfFBtcGPce3pWDJRrKLfaZN2Aqgo4Qn/Aitk169Ep
-         UWP7WzX94QdZ/3sP4hGx7VdmNzMZyxze8RP+gWVGfPygV1mmlqFhOI5E6p0cumqWhEM+
-         8+tRIDPMcKlvw9TMkL1rKWsSgOeChvuoGdWKTLHVA/4JYToKEdJ/2C+j7EUCWtGqlX92
-         nd4pmyT2HYLdTx0ng5B5PdcQc51C+nn05+pVX5h3wEny7KKBq+3Q7IrqFDpatnd8Yoyn
-         sK5DbWOuj9FYTzcA5nou9SPmTe2Cn7nx1rmt1GCXA7MH4ZcsBXRLY8T02e2zGQgSl5O4
-         MTIA==
-X-Gm-Message-State: APjAAAW8kGU4rknYTk8BAKGMsQtQ350RD4aq+9YccifXwMotnU+5WxxX
-        cVamGFzRXPqEeG+B87edpRoMjx65tgQMD8fl1os=
-X-Google-Smtp-Source: APXvYqwoFV/2mmIUnIen+iGNTWGL2iKe81qUb57QjAm12sViws9Te4KN/ERYebT9jYy+13diP//7AXRCkx/uQgDHlLE=
-X-Received: by 2002:adf:db12:: with SMTP id s18mr23027525wri.335.1562074397596;
- Tue, 02 Jul 2019 06:33:17 -0700 (PDT)
-MIME-Version: 1.0
-References: <1561469191-26840-1-git-send-email-abel.vesa@nxp.com>
- <CAEnQRZCVQ0+pRh6akiZJXU-fRugEXmnthZp8Q2=aXFXCO3vcUg@mail.gmail.com> <20190702132647.3kyfl5gx6ghdiizl@fsr-ub1664-175>
-In-Reply-To: <20190702132647.3kyfl5gx6ghdiizl@fsr-ub1664-175>
-From:   Daniel Baluta <daniel.baluta@gmail.com>
-Date:   Tue, 2 Jul 2019 16:33:06 +0300
-Message-ID: <CAEnQRZDn83HDR+k101UA9MVnCmQevAQcFTCRoS__Xf0PwCCSFQ@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: imx8mm: Init rates and parents configs for clocks
-To:     Abel Vesa <abel.vesa@nxp.com>
-Cc:     Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Devicetree List <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Daniel Baluta <daniel.baluta@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 2 Jul 2019 10:22:10 -0400
+X-Greylist: delayed 2725 seconds by postgrey-1.27 at vger.kernel.org; Tue, 02 Jul 2019 10:22:09 EDT
+Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
+        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id x62DZ7Dh025485;
+        Tue, 2 Jul 2019 16:35:07 +0300
+Received: by taln60.nuvoton.co.il (Postfix, from userid 8441)
+        id 75DD761FCC; Tue,  2 Jul 2019 16:35:07 +0300 (IDT)
+From:   Avi Fishman <avifishman70@gmail.com>
+To:     tudor.ambarus@microchip.com, dwmw2@infradead.org,
+        computersforpeace@gmail.com, miquel.raynal@bootlin.com,
+        richard@nod.at, vigneshr@ti.com, linux-mtd@lists.infradead.org
+Cc:     avifishman70@gmail.com, linux-kernel@vger.kernel.org,
+        tmaimon77@gmail.com, openbmc@lists.ozlabs.org
+Subject: [PATCH] mtd: spi-nor: Add Winbond w25q256jvm
+Date:   Tue,  2 Jul 2019 16:34:44 +0300
+Message-Id: <20190702133444.444440-1-avifishman70@gmail.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 2, 2019 at 4:26 PM Abel Vesa <abel.vesa@nxp.com> wrote:
->
-> On 19-06-26 15:45:15, Daniel Baluta wrote:
-> > On Tue, Jun 25, 2019 at 4:42 PM Abel Vesa <abel.vesa@nxp.com> wrote:
-> > >
-> > > Add the initial configuration for clocks that need default parent and rate
-> > > setting. This is based on the vendor tree clock provider parents and rates
-> > > configuration except this is doing the setup in dts rather than using clock
-> > > consumer API in a clock provider driver.
-> > >
-> > > Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> > > ---
-> > >  arch/arm64/boot/dts/freescale/imx8mm.dtsi | 36 +++++++++++++++++++++++++++++++
-> > >  1 file changed, 36 insertions(+)
-> > >
-> > > diff --git a/arch/arm64/boot/dts/freescale/imx8mm.dtsi b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-> > > index 232a741..ab92108 100644
-> > > --- a/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-> > > +++ b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-> > > @@ -451,6 +451,42 @@
-> > >                                          <&clk_ext3>, <&clk_ext4>;
-> > >                                 clock-names = "osc_32k", "osc_24m", "clk_ext1", "clk_ext2",
-> > >                                               "clk_ext3", "clk_ext4";
-> > > +                               assigned-clocks = <&clk IMX8MM_CLK_AUDIO_AHB>,
-> > > +                                               <&clk IMX8MM_CLK_IPG_AUDIO_ROOT>,
-> > > +                                               <&clk IMX8MM_SYS_PLL3>,
-> > > +                                               <&clk IMX8MM_VIDEO_PLL1>,
-> > > +                                               <&clk IMX8MM_CLK_NOC>,
-> > > +                                               <&clk IMX8MM_CLK_PCIE1_CTRL>,
-> > > +                                               <&clk IMX8MM_CLK_PCIE1_PHY>,
-> > > +                                               <&clk IMX8MM_CLK_CSI1_CORE>,
-> > > +                                               <&clk IMX8MM_CLK_CSI1_PHY_REF>,
-> > > +                                               <&clk IMX8MM_CLK_CSI1_ESC>,
-> > > +                                               <&clk IMX8MM_CLK_DISP_AXI>,
-> > > +                                               <&clk IMX8MM_CLK_DISP_APB>;
-> > > +                               assigned-clock-parents = <&clk IMX8MM_SYS_PLL1_800M>,
-> > > +                                               <0>,
-> > Isn't there a macro for 0? (dummy clock?)
->
-> I don't know about any such macro. If you're referring to IMX8MM_CLK_DUMMY,
-> that can't be used here since all I want here is to skip setting a parent to
-> the  IMX8MM_CLK_IPG_AUDIO_ROOT. If I use IMX8MM_CLK_DUMMY (along with &clk)
-> it will set the parent to IMX8MM_CLK_DUMMY and that's not what's needed here.
->
-> This is in accordance to the documentation:
->
-> Documentation/devicetree/bindings/clock/clock-bindings.txt:
->
-> "To skip setting parent or rate of a clock its corresponding entry should be
-> set to 0, or can be omitted if it is not followed by any non-zero entry."
+Similar to w25q256 (besides not supporting QPI mode) but with different ID.
+The "JVM" suffix is in the datasheet.
+The datasheet indicates DUAL and QUAD are supported.
+https://www.winbond.com/resource-files/w25q256jv%20spi%20revi%2010232018%20plus.pdf
 
-You are right. Thanks for the explanation!
+Signed-off-by: Avi Fishman <avifishman70@gmail.com>
+---
+ drivers/mtd/spi-nor/spi-nor.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
+index 0c2ec1c21434..ccb217a24404 100644
+--- a/drivers/mtd/spi-nor/spi-nor.c
++++ b/drivers/mtd/spi-nor/spi-nor.c
+@@ -2120,6 +2120,8 @@ static const struct flash_info spi_nor_ids[] = {
+ 	{ "w25q80bl", INFO(0xef4014, 0, 64 * 1024,  16, SECT_4K) },
+ 	{ "w25q128", INFO(0xef4018, 0, 64 * 1024, 256, SECT_4K) },
+ 	{ "w25q256", INFO(0xef4019, 0, 64 * 1024, 512, SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
++	{ "w25q256jvm", INFO(0xef7019, 0, 64 * 1024, 512,
++			SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
+ 	{ "w25m512jv", INFO(0xef7119, 0, 64 * 1024, 1024,
+ 			SECT_4K | SPI_NOR_QUAD_READ | SPI_NOR_DUAL_READ) },
+ 
+-- 
+2.18.0
+
