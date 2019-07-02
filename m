@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88CA05CA57
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 10:03:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0977F5CB95
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 10:14:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727376AbfGBIDP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 04:03:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48084 "EHLO mail.kernel.org"
+        id S1728425AbfGBIOc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 04:14:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52680 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727364AbfGBIDN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 04:03:13 -0400
+        id S1728060AbfGBIGN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 04:06:13 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1289821850;
-        Tue,  2 Jul 2019 08:03:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2E83620659;
+        Tue,  2 Jul 2019 08:06:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562054592;
-        bh=fgRUB79YT+5xC1ry2TnbPMtOJwT5psZtKGL8gy5wwgs=;
+        s=default; t=1562054772;
+        bh=f31brRCLJwDLQmLPVh+HVaNtwvSkOXwIuRLFN02XLk0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=T7x2w7vPziQOlmCb3f2pzSiKy9bFFuzC1p2U0qsN8AYgVnP8084hN2pXiErukA22w
-         XcQwCIXwHL8TpiheDlFkktHNMNMAZBkRDWKQYyL9NsuAC3+8bLRZ/g2+cXVpJ0zhgU
-         iexQjcwQcpsoI9zHj2BbTOhWWUubLR/wThUL2E14=
+        b=kiAK2WldXgM9gPEnZb+KGesKg7uk8vV5SMPFVyvdSMfKIYtsB4vaGAgUYU2073uOv
+         ZJznXlXfcg6FSeixClqi/2yjCXImZvyGd+D6nXewlnqfkR1R/XEf+jSrB7N69+s7DY
+         nYAwneJpfJdIyGYprMTP0XZdkK2uS8uo4uClTOzA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Ingo Molnar <mingo@redhat.com>, x86-ml <x86@kernel.org>
-Subject: [PATCH 5.1 22/55] x86/microcode: Fix the microcode load on CPU hotplug for real
-Date:   Tue,  2 Jul 2019 10:01:30 +0200
-Message-Id: <20190702080125.200649399@linuxfoundation.org>
+        stable@vger.kernel.org, Fei Yang <fei.yang@intel.com>,
+        Sam Protsenko <semen.protsenko@linaro.org>,
+        Felipe Balbi <balbi@kernel.org>, linux-usb@vger.kernel.org,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 30/72] usb: dwc3: gadget: remove wait_end_transfer
+Date:   Tue,  2 Jul 2019 10:01:31 +0200
+Message-Id: <20190702080126.229595910@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190702080124.103022729@linuxfoundation.org>
-References: <20190702080124.103022729@linuxfoundation.org>
+In-Reply-To: <20190702080124.564652899@linuxfoundation.org>
+References: <20190702080124.564652899@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,66 +47,132 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Gleixner <tglx@linutronix.de>
+commit fec9095bdef4e7c988adb603d0d4f92ee735d4a1 upstream
 
-commit 5423f5ce5ca410b3646f355279e4e937d452e622 upstream.
+Now that we have a list of cancelled requests, we can skip over TRBs
+when END_TRANSFER command completes.
 
-A recent change moved the microcode loader hotplug callback into the early
-startup phase which is running with interrupts disabled. It missed that
-the callbacks invoke sysfs functions which might sleep causing nice 'might
-sleep' splats with proper debugging enabled.
-
-Split the callbacks and only load the microcode in the early startup phase
-and move the sysfs handling back into the later threaded and preemptible
-bringup phase where it was before.
-
-Fixes: 78f4e932f776 ("x86/microcode, cpuhotplug: Add a microcode loader CPU hotplug callback")
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: stable@vger.kernel.org
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1906182228350.1766@nanos.tec.linutronix.de
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Cc: Fei Yang <fei.yang@intel.com>
+Cc: Sam Protsenko <semen.protsenko@linaro.org>
+Cc: Felipe Balbi <balbi@kernel.org>
+Cc: linux-usb@vger.kernel.org
+Cc: stable@vger.kernel.org # 4.19.y
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+(cherry picked from commit fec9095bdef4e7c988adb603d0d4f92ee735d4a1)
+Signed-off-by: John Stultz <john.stultz@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/cpu/microcode/core.c |   15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ drivers/usb/dwc3/core.h   |  3 ---
+ drivers/usb/dwc3/gadget.c | 40 +--------------------------------------
+ 2 files changed, 1 insertion(+), 42 deletions(-)
 
---- a/arch/x86/kernel/cpu/microcode/core.c
-+++ b/arch/x86/kernel/cpu/microcode/core.c
-@@ -793,13 +793,16 @@ static struct syscore_ops mc_syscore_ops
- 	.resume			= mc_bp_resume,
- };
+diff --git a/drivers/usb/dwc3/core.h b/drivers/usb/dwc3/core.h
+index 24f0b108b7f6..131028501752 100644
+--- a/drivers/usb/dwc3/core.h
++++ b/drivers/usb/dwc3/core.h
+@@ -639,7 +639,6 @@ struct dwc3_event_buffer {
+  * @cancelled_list: list of cancelled requests for this endpoint
+  * @pending_list: list of pending requests for this endpoint
+  * @started_list: list of started requests on this endpoint
+- * @wait_end_transfer: wait_queue_head_t for waiting on End Transfer complete
+  * @lock: spinlock for endpoint request queue traversal
+  * @regs: pointer to first endpoint register
+  * @trb_pool: array of transaction buffers
+@@ -664,8 +663,6 @@ struct dwc3_ep {
+ 	struct list_head	pending_list;
+ 	struct list_head	started_list;
  
--static int mc_cpu_online(unsigned int cpu)
-+static int mc_cpu_starting(unsigned int cpu)
- {
--	struct device *dev;
+-	wait_queue_head_t	wait_end_transfer;
 -
--	dev = get_cpu_device(cpu);
- 	microcode_update_cpu(cpu);
- 	pr_debug("CPU%d added\n", cpu);
-+	return 0;
-+}
-+
-+static int mc_cpu_online(unsigned int cpu)
-+{
-+	struct device *dev = get_cpu_device(cpu);
+ 	spinlock_t		lock;
+ 	void __iomem		*regs;
  
- 	if (sysfs_create_group(&dev->kobj, &mc_attr_group))
- 		pr_err("Failed to create group for CPU%d\n", cpu);
-@@ -876,7 +879,9 @@ int __init microcode_init(void)
- 		goto out_ucode_group;
+diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
+index 8291fa1624e1..843586f20572 100644
+--- a/drivers/usb/dwc3/gadget.c
++++ b/drivers/usb/dwc3/gadget.c
+@@ -638,8 +638,6 @@ static int __dwc3_gadget_ep_enable(struct dwc3_ep *dep, unsigned int action)
+ 		reg |= DWC3_DALEPENA_EP(dep->number);
+ 		dwc3_writel(dwc->regs, DWC3_DALEPENA, reg);
  
- 	register_syscore_ops(&mc_syscore_ops);
--	cpuhp_setup_state_nocalls(CPUHP_AP_MICROCODE_LOADER, "x86/microcode:online",
-+	cpuhp_setup_state_nocalls(CPUHP_AP_MICROCODE_LOADER, "x86/microcode:starting",
-+				  mc_cpu_starting, NULL);
-+	cpuhp_setup_state_nocalls(CPUHP_AP_ONLINE_DYN, "x86/microcode:online",
- 				  mc_cpu_online, mc_cpu_down_prep);
+-		init_waitqueue_head(&dep->wait_end_transfer);
+-
+ 		if (usb_endpoint_xfer_control(desc))
+ 			goto out;
  
- 	pr_info("Microcode Update Driver: v%s.", DRIVER_VERSION);
+@@ -1404,15 +1402,11 @@ static int dwc3_gadget_ep_dequeue(struct usb_ep *ep,
+ 		if (r == req) {
+ 			/* wait until it is processed */
+ 			dwc3_stop_active_transfer(dep, true);
+-			wait_event_lock_irq(dep->wait_end_transfer,
+-					!(dep->flags & DWC3_EP_END_TRANSFER_PENDING),
+-					dwc->lock);
+ 
+ 			if (!r->trb)
+ 				goto out0;
+ 
+ 			dwc3_gadget_move_cancelled_request(req);
+-			dwc3_gadget_ep_cleanup_cancelled_requests(dep);
+ 			goto out0;
+ 		}
+ 		dev_err(dwc->dev, "request %pK was not queued to %s\n",
+@@ -1913,8 +1907,6 @@ static int dwc3_gadget_stop(struct usb_gadget *g)
+ {
+ 	struct dwc3		*dwc = gadget_to_dwc(g);
+ 	unsigned long		flags;
+-	int			epnum;
+-	u32			tmo_eps = 0;
+ 
+ 	spin_lock_irqsave(&dwc->lock, flags);
+ 
+@@ -1923,36 +1915,6 @@ static int dwc3_gadget_stop(struct usb_gadget *g)
+ 
+ 	__dwc3_gadget_stop(dwc);
+ 
+-	for (epnum = 2; epnum < DWC3_ENDPOINTS_NUM; epnum++) {
+-		struct dwc3_ep  *dep = dwc->eps[epnum];
+-		int ret;
+-
+-		if (!dep)
+-			continue;
+-
+-		if (!(dep->flags & DWC3_EP_END_TRANSFER_PENDING))
+-			continue;
+-
+-		ret = wait_event_interruptible_lock_irq_timeout(dep->wait_end_transfer,
+-			    !(dep->flags & DWC3_EP_END_TRANSFER_PENDING),
+-			    dwc->lock, msecs_to_jiffies(5));
+-
+-		if (ret <= 0) {
+-			/* Timed out or interrupted! There's nothing much
+-			 * we can do so we just log here and print which
+-			 * endpoints timed out at the end.
+-			 */
+-			tmo_eps |= 1 << epnum;
+-			dep->flags &= DWC3_EP_END_TRANSFER_PENDING;
+-		}
+-	}
+-
+-	if (tmo_eps) {
+-		dev_err(dwc->dev,
+-			"end transfer timed out on endpoints 0x%x [bitmap]\n",
+-			tmo_eps);
+-	}
+-
+ out:
+ 	dwc->gadget_driver	= NULL;
+ 	spin_unlock_irqrestore(&dwc->lock, flags);
+@@ -2449,7 +2411,7 @@ static void dwc3_endpoint_interrupt(struct dwc3 *dwc,
+ 
+ 		if (cmd == DWC3_DEPCMD_ENDTRANSFER) {
+ 			dep->flags &= ~DWC3_EP_END_TRANSFER_PENDING;
+-			wake_up(&dep->wait_end_transfer);
++			dwc3_gadget_ep_cleanup_cancelled_requests(dep);
+ 		}
+ 		break;
+ 	case DWC3_DEPEVT_STREAMEVT:
+-- 
+2.20.1
+
 
 
