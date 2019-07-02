@@ -2,97 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7641D5DE94
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 09:14:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F34B25D99C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:49:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727317AbfGCHOS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 3 Jul 2019 03:14:18 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:38776 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727261AbfGCHOP (ORCPT
+        id S1727321AbfGCAsq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 20:48:46 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:44052 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727132AbfGCAsn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 3 Jul 2019 03:14:15 -0400
-Received: by mail-pf1-f194.google.com with SMTP id y15so769892pfn.5
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Jul 2019 00:14:15 -0700 (PDT)
+        Tue, 2 Jul 2019 20:48:43 -0400
+Received: by mail-oi1-f193.google.com with SMTP id e189so557776oib.11;
+        Tue, 02 Jul 2019 17:48:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=shrSfUwHshC6sDZVTcq5ngfnPqY1USStRpRTR6d5/f4=;
+        b=lmvTjVwxjRh4Poos3bVw/z29gyQ1LGWYW0KqBZyVQvzT1PBsRnK0gmc9Zw/FBp3J/z
+         gG598+ah1lKIeOfGbKJRPIBTXmnJQ3wIxESOvWVHkDzesEaRCYDWTbQ6lzUbTE9j1IJk
+         gqn4Y0DmySt7CS16WjFn4VmuamxVoDZhZ1PacqijL6nhTRujhRYeVWgyKNkrGobDiW6N
+         +cCTPD4P34GuKqScCOsy6Ogm9IwWX+KgPxPuKfLXjZUmfJ36lDupDavpFSHgz+LAAYre
+         zgN8hVD9NU38Q071uVi4UmGwyz2urWqeFiunyhsfh9OiicQBezQxKjuioROMMbXuydE8
+         BSgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=oNzMSmaWLx00il8JQPTjgh6sfAflPGpRegLNDDXyJJ0=;
-        b=ZiNslELQW1Xi/9nWDIIa/YrLX0YbpO1YLxeDZEAJs82gmIEzCESa+nOejJ5cO9h36g
-         1ARSQM1LjMZ4fpHSwh5nbIjdpz3Q8Ai+aTFNCLWjncvSZJE1KB1ReFesz+odO9csJrpZ
-         XgbSfx/MrnHT4pJm10j2WogsBEbeg7mUNiohCoEgEIsOgnBrNJncH4fZKW7AZoeSy6T3
-         zkK07kX4T+e3U/Y5wv3anBhM81sJ/KV2XR6nvmN+fwzBIcPgaJfeJAVSX5WiPK3LWnwU
-         PLBGPUd23NDjc8Ke/Bc6oQaVYXdGh0Bqj9aDrgyHcLkNGXW6Pn+78yjH8lB29wxnyP4N
-         pqOw==
-X-Gm-Message-State: APjAAAV39pLgL1nhhZK/Pke0Cnve6H2ezfqmrKPMSbJ80USVZ1vgPLCn
-        hM9NCqOIuIgvnAxH/2R513QtELM0454ibg==
-X-Google-Smtp-Source: APXvYqwnXy/YAQLW1AU5yI6w9vIkMqRRYpziNNF5aBDNrzdEo8lUlhjjiRwz4nDX+JD0+tpQiSIBJw==
-X-Received: by 2002:a65:498c:: with SMTP id r12mr34526449pgs.27.1562138054782;
-        Wed, 03 Jul 2019 00:14:14 -0700 (PDT)
-Received: from sc2-haas01-esx0118.eng.vmware.com ([66.170.99.1])
-        by smtp.gmail.com with ESMTPSA id j21sm1256593pfh.86.2019.07.03.00.14.13
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 03 Jul 2019 00:14:14 -0700 (PDT)
-From:   Nadav Amit <namit@vmware.com>
-To:     Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Nadav Amit <namit@vmware.com>
-Subject: [PATCH v2 9/9] x86/mm/tlb: Remove unnecessary uses of the inline keyword
-Date:   Tue,  2 Jul 2019 16:51:51 -0700
-Message-Id: <20190702235151.4377-10-namit@vmware.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190702235151.4377-1-namit@vmware.com>
-References: <20190702235151.4377-1-namit@vmware.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=shrSfUwHshC6sDZVTcq5ngfnPqY1USStRpRTR6d5/f4=;
+        b=R2IUyNjTeGfwAUjV1hSdoO45muEtCkYW5PAT7lSdBedsWbRlkzRXA6GS2w4HjuV5cn
+         tXoB9Zul/C711SqnTmaqQlsLKoxjAgMQ790RmY7WRyq1aZzuyQL5VflTBlaCcX1RuWlT
+         lA+uGSuvC5cradPNOadIpoGZU+78tvP32XrFftds+lR7KMrER/DCBlZHqfupAaHi1SOB
+         V1nkGiF+jml/t0ICTjxI2pXMvj/DNKvTFUXUd/rUU+qwFm+rEWQIN3H+htanC/4+aQj6
+         +D90x4LeY2geKrYIf9LGSOLOhcvmMU/jlrhNOu70PkL8qglAhc9SZSkPTku4zGoYkNVz
+         JBTA==
+X-Gm-Message-State: APjAAAUHgnn4u+AuPGZ3wceTwfENm/b5pEuCBIzFclx1s3PGcNDz0hpn
+        iIhPQgcMLZsGOVu5nlUUZ2PpHTaGXLZTGRDO84+Atg==
+X-Google-Smtp-Source: APXvYqxgfcCHQv29gahaHjuPAS935zYySIUIEmD84h/Qr8o2D6W2Oc0WdHuOFDE2zlTwLAMbXKovNv8vmOyrgdfawlI=
+X-Received: by 2002:a05:6808:3d6:: with SMTP id o22mr4652939oie.140.1562111682243;
+ Tue, 02 Jul 2019 16:54:42 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190701091258.3870-1-narmstrong@baylibre.com> <20190701091258.3870-10-narmstrong@baylibre.com>
+In-Reply-To: <20190701091258.3870-10-narmstrong@baylibre.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Wed, 3 Jul 2019 01:54:31 +0200
+Message-ID: <CAFBinCA537EV9kzz+5syaF1Q-stTJ4no+NBdcYD3QL-FJSoWfQ@mail.gmail.com>
+Subject: Re: [RFC/RFT v3 09/14] arm64: dts: move common G12A & G12B modes to meson-g12-common.dtsi
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     jbrunet@baylibre.com, khilman@baylibre.com,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The compiler is smart enough without these hints.
+Hi Neil,
 
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
-Signed-off-by: Nadav Amit <namit@vmware.com>
----
- arch/x86/mm/tlb.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+On Mon, Jul 1, 2019 at 11:13 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
+>
+> To simplify the representation of differences betweem the G12A and G12B
+> SoCs, move the common nodes into a meson-g12-common.dtsi file and
+> express the CPU nodes and differences in meson-g12a.dtsi and meson-g12b.dtsi.
+>
+> This separation will help for DVFS and future Amlogic SM1 Family support.
+>
+> The sd_emmc_a quirk is added in the g12a/g12b since since it's already
+> known the sd_emmc_a controller is fixed in the next SM1 SoC family.
+too bad they named the upcoming SoC family SM1
 
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 64afe1215495..48a3d4453e50 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -189,7 +189,7 @@ static void sync_current_stack_to_mm(struct mm_struct *mm)
- 	}
- }
- 
--static inline unsigned long mm_mangle_tif_spec_ib(struct task_struct *next)
-+static unsigned long mm_mangle_tif_spec_ib(struct task_struct *next)
- {
- 	unsigned long next_tif = task_thread_info(next)->flags;
- 	unsigned long ibpb = (next_tif >> TIF_SPEC_IB) & LAST_USER_MM_IBPB;
-@@ -753,7 +753,7 @@ static DEFINE_PER_CPU_SHARED_ALIGNED(struct flush_tlb_info, flush_tlb_info);
- static DEFINE_PER_CPU(unsigned int, flush_tlb_info_idx);
- #endif
- 
--static inline struct flush_tlb_info *get_flush_tlb_info(struct mm_struct *mm,
-+static struct flush_tlb_info *get_flush_tlb_info(struct mm_struct *mm,
- 			unsigned long start, unsigned long end,
- 			unsigned int stride_shift, bool freed_tables,
- 			u64 new_tlb_gen)
-@@ -779,7 +779,7 @@ static inline struct flush_tlb_info *get_flush_tlb_info(struct mm_struct *mm,
- 	return info;
- }
- 
--static inline void put_flush_tlb_info(void)
-+static void put_flush_tlb_info(void)
- {
- #ifdef CONFIG_DEBUG_VM
- 	/* Complete reentrency prevention checks */
--- 
-2.17.1
+does it make sense to name this file "meson-g12a-g12b-sm1-common.dtsi" instead?
+do you know whether there will be a successor to G12B and what it's
+code-name will be?
 
+
+Martin
