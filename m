@@ -2,87 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 474855DAE0
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 03:32:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E23B5D9B2
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:50:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727414AbfGCBcD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 21:32:03 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:45385 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727080AbfGCBcD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 21:32:03 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45ddJ64Dbsz9s8m;
-        Wed,  3 Jul 2019 07:52:22 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1562104343;
-        bh=iz+DEBqG0Ak15mqNtsewgqIEpCR+HvTunT9ODpMud1k=;
-        h=Date:From:To:Cc:Subject:From;
-        b=ReFG2P10ddn+fbE6jJLHbLqUausdY/1C6s/B7b9Yc/Oxvy6oW7G4ft8piAlWitOLG
-         zVnTrOeT4aOYRgWsJSOlcDwMhwJdwwWyD/734+B3TkXtufQOLYsvCpB4gWlDarCRp7
-         rs9pW2nYjCODZj5IyG83TGHJ7qW/KC6VdPhmpflM7oqNo9Q2bxaM7tRPo86FD+QxCg
-         f4DbD0ZjsaT2ZZt6ftGPh+nJer3Dl7xqt/TawanWDO4QYbRgtc04Pu/BjTckBYkwmV
-         DjeWclDlmVfKHXTKHutwWGKj1gSvn+bWxSMvBYKXUpS7Hm/s3now5rfh21xy+Dg+At
-         sN3EpVkkvM6Rg==
-Date:   Wed, 3 Jul 2019 07:52:21 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Greg KH <greg@kroah.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Fabrice Gasnier <fabrice.gasnier@st.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: linux-next: Fixes tag needs some work in the staging tree
-Message-ID: <20190703075221.4ef65011@canb.auug.org.au>
+        id S1727377AbfGCAut (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 20:50:49 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:39367 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727189AbfGCAut (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 20:50:49 -0400
+Received: by mail-wr1-f68.google.com with SMTP id x4so697334wrt.6
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 17:50:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=F9/H9RAoH6E0au9JZUxTVdK2VUAjq3U7v2tg4NjLm2E=;
+        b=SK3VY71b9UfihRePdJGtKBSdbFrEGcoMgA1+oLMpx0UPe6Zi3uDRyGD2EMNmRcqIq+
+         l0yxeXPdzy0dawH3rtJ13sku4q+pHqx7YfCt0T/4f0C1De+u9h4Kz7vk989kCRBNZ824
+         mTFjAk2XxdC4yvnm3rbUtw188u5UCkTkf8iB9ychSLYnKHzkYHKzxWzg/0qF5Kfv/9Ig
+         /GrTrehl6RSlBv6Ck2krL2WRej8+bAHwkMfScnrp4Eezc+lmMKJpg/mT/Sg9laJXC7bT
+         NPJ2fF2dt1HcWXS/Ex0YgUuMz0yKlYeezBAJ9Kv3upJ4MbSyUkw1RN7KepizvqV+xWfx
+         5AhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=F9/H9RAoH6E0au9JZUxTVdK2VUAjq3U7v2tg4NjLm2E=;
+        b=e+BVH2x841znx2fs2m3uDuqqEkVJS3MqyGzM2lvDjaToTM4U4aSSzOXJNBlwdkaFrd
+         IsW+8rYPuj5RbwkrABh0PC2f9AkMVd1IuMFxeqK4sBPCj6QnEPR1fCjsO75boR12JrHA
+         2dvMj3Rx+ndmgGlAovwOEU2MmKO8nrle9rntals6DlO6NufIEnSFaWex0wae6T/7GD9c
+         R/Kmaplw7WSxiVZP5DLQxGDui+pro2DySLn5YKsgwWCd3i4pH292rSc/NksuX1B1LA+u
+         diGhaxiWFGEjRbOIOwEWYMky5DEFYHC0VAkLdX+oqYeEq6w5vL0NZ7c6Kp7poASD71tw
+         rMag==
+X-Gm-Message-State: APjAAAVCODYCFLItDDcxaHC9UxT0VuEZiZCQUfMSIeelbWAm/aSv+Z6o
+        bw8lreMUm2fi2Uq3KRVG46/pCPA64n+q0SVnVxsBEg==
+X-Google-Smtp-Source: APXvYqwncd3iUgHVxdaYlFV1ID7X2V0/XLGwEniTYBbvfKVWOvdTx6vknWmPXyn5a8WQ1T7hGJ+i80nMqSq/lFM6R0k=
+X-Received: by 2002:a5d:6743:: with SMTP id l3mr14273796wrw.241.1562104410996;
+ Tue, 02 Jul 2019 14:53:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/q+8+93=g14gcNif2rvFbo1O"; protocol="application/pgp-signature"
+References: <20190630203614.5290-1-robdclark@gmail.com> <20190630203614.5290-3-robdclark@gmail.com>
+ <CAKv+Gu_8BOt+f8RTspHo+se-=igZba1zL0+jWLV2HuuUXCKYpA@mail.gmail.com>
+ <CAKv+Gu-KhPJxxJA3+J813OPcnoAD4nHq6MhiRTJSd_5y1dPNnw@mail.gmail.com> <CAF6AEGv+uAXVV6Q78n=jP0YRDjYn9OS=Xec9MU0+_7EBirxF5w@mail.gmail.com>
+In-Reply-To: <CAF6AEGv+uAXVV6Q78n=jP0YRDjYn9OS=Xec9MU0+_7EBirxF5w@mail.gmail.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Tue, 2 Jul 2019 23:53:16 +0200
+Message-ID: <CAKv+Gu9pH9=AnNee7B-z0sP3rGJ-0Qnpziyx445M30KWC=Vq+w@mail.gmail.com>
+Subject: Re: [PATCH 2/4] efi/libstub: detect panel-id
+To:     Rob Clark <robdclark@gmail.com>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        aarch64-laptops@lists.linaro.org,
+        Rob Clark <robdclark@chromium.org>,
+        Ingo Molnar <mingo@kernel.org>, Will Deacon <will@kernel.org>,
+        Leif Lindholm <leif.lindholm@linaro.org>,
+        Steve Capper <steve.capper@arm.com>,
+        Lukas Wunner <lukas@wunner.de>,
+        Julien Thierry <julien.thierry@arm.com>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/q+8+93=g14gcNif2rvFbo1O
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, 2 Jul 2019 at 23:02, Rob Clark <robdclark@gmail.com> wrote:
+>
+> On Tue, Jul 2, 2019 at 1:35 PM Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+> >
+> > On Tue, 2 Jul 2019 at 22:26, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+> > >
+> > > On Sun, 30 Jun 2019 at 22:36, Rob Clark <robdclark@gmail.com> wrote:
+> > > >
+> > > > From: Rob Clark <robdclark@chromium.org>
+> > > >
+> > > > On snapdragon aarch64 laptops, a 'UEFIDisplayInfo' variable is provided
+> > > > to communicate some information about the display.  Crutially it has the
+> > > > panel-id, so the appropriate panel driver can be selected.  Read this
+> > > > out and stash in /chosen/panel-id so that display driver can use it to
+> > > > pick the appropriate panel.
+> > > >
+> > > > Signed-off-by: Rob Clark <robdclark@chromium.org>
+> > >
+> > > Hi Rob,
+> > >
+> > > I understand why you are doing this, but this *really* belongs elsewhere.
+> > >
+> > > So we are dealing with a platform that violates the UEFI spec, since
+> > > it does not bother to implement variable services at runtime (because
+> > > MS let the vendor get away with this).
+> > >
+> >
+> > To clarify, the above remark applies to populating the DT from the OS
+> > rather than from the firmware.
+>
+> yeah, it isn't pretty, but there *are* some other similar cases where
+> efi-stub is populating DT.. (like update_fdt_memmap() and
+> kaslr-seed)..
+>
 
-Hi all,
+True, but those don't describe the hardware.
 
-In commit
+> it would be kinda nice to have an early-quirks mechanism where this
+> could fit, but I thought that might be equally unpopular ;-)
+>
 
-  597382cbd3c1 ("dt-bindings: iio: adc: stm32: add missing vdda supply")
+Very :-)
 
-Fixes tag
+> >
+> > > First of all, to pass data between the EFI stub and the OS proper, we
+> > > should use a configuration table rather than a DT property, since the
+> > > former is ACPI/DT agnostic. Also, I'd like the consumer of the data to
+> > > actually interpret it, i.e., just dump the whole opaque thing into a
+> > > config table in the stub, and do the parsing in the OS proper.
+> > >
+> > > However, I am not thrilled at adding code to the stub that
+> > > unconditionally looks for some variable with some magic name on all
+> > > ARM/arm64 EFI systems, so this will need to live under a Kconfig
+> > > option that depends on ARM64 (and does not default to y)
+>
+> I defn can add this under kconfig.. is it ok if that option is
+> select'd by ARCH_QCOM?
+>
 
-  Fixes: 841fcea454fe ("Documentation: dt-bindings: Document STM32 ADC DT
+I guess some mobile SOC/snapdragon symbol would be more appropriate,
+but given that qcom left the server business, I guess it hardly
+matters, so default y if ARM64 && ARCH_QCOM is fine with me
 
-has these problem(s):
+> (Just trying to minimize the things that can go wrong and the "I get a
+> blank screen at boot" bug reports I get ;-))
+>
 
-  - Subject has leading but no trailing parentheses
-  - Subject has leading but no trailing quotes
+Sure
 
-Please do not split Fixes tags over more than one line.
+> > ... but saving variables at boot time for consumption at runtime is
+> > something that we will likely see more of in the future.
+>
+> I think this will be nice, but it also doesn't address the need for a
+> quirk to get this into /chosen..  I guess we *could* use a shim or
+> something that runs before the kernel to do this.  But that just seems
+> like a logistical/support nightmare.  There is one kernel, and there
+> are N distro's, so debugging a users "I don't get a screen at boot"
+> problem because their distro missed some shim patch really just
+> doesn't seem like a headache I want to have.
+>
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/q+8+93=g14gcNif2rvFbo1O
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0b0hUACgkQAVBC80lX
-0GyJcAf/d3ztOYrrlT0UJ66tYvsINtFJfc99Na8nOZ8yoO70od42asfd57GNJp+7
-iaI714m2AxreySKSdvLvLo8mUjBwfNFv8G1z2AKNF9bgOaymTOUtiQ1NGwEOhsnK
-hmldWrAVvjzKx0sOOc2GJYBWnfbnT3o1g6WwWfCD4ptd5jJX5HiqffGC+qQpVUyz
-DYpyk1SUopret/r6zD0eB5GaAiMtsf19oC4R0pZE9PnYQGzwke12soqiZb3g06qA
-pXAvV305or5Z0pjDnsDVa7TygiIisPPoRb4thyXFOdVI5xkVs0L+qT6vxuQinXgV
-CQvRFipuus5dTpjirD+sGrMHMeP9Sg==
-=Zpf+
------END PGP SIGNATURE-----
-
---Sig_/q+8+93=g14gcNif2rvFbo1O--
+I'd argue that this does not belong in /chosen in the first place,
+i.e., it doesn't belong in the DT at all if the OS can access the
+config table (and therefore the variable) directly.
