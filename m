@@ -2,125 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D831A5C635
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 02:08:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E62625C629
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 02:02:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727066AbfGBAIJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 20:08:09 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:34520 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727010AbfGBAIJ (ORCPT
+        id S1727068AbfGBAC1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 20:02:27 -0400
+Received: from mail-qk1-f202.google.com ([209.85.222.202]:39160 "EHLO
+        mail-qk1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726966AbfGBAC1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 20:08:09 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6204287022201;
-        Tue, 2 Jul 2019 00:06:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=W5Q+NkHpzRK/P7xEh54iSkYNc3/t6agDnWcFSfwc5W4=;
- b=lUfzdCzurW0l+g+6kS6bCNBdI0RrWuhRpJFso1wTg8RYtLSoTbfF00NPWM9akaXhrY7C
- J9J7YUwApCsC3rz6+CpfD+TBdEtup1nPc72DjIpjWBs0xq4S8+PpqPeY6t67OdulQzNA
- aI8/B6ZLPwF1ziyvqHAYkXIG5Xr3nYP0MkSIVu/WzdVfAIUhA3zdt50bqo92OiMOLwH0
- ibjcy7EHlhBKr7PHGp6JeyI9oZ97l/FoCkMjpAjTmO/eccd/zpbc5s2WhWmDOn7IhB0y
- OM5fn4FdJgzVgtLBXaFeg+wszT2B13niyJLE4Q2fKZVTxFmQDoMApsuTBOYRBFVg0z5b cg== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2120.oracle.com with ESMTP id 2te5tbgdsw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 02 Jul 2019 00:06:27 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6202hMB077713;
-        Tue, 2 Jul 2019 00:06:26 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3030.oracle.com with ESMTP id 2tebqg6vjp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 02 Jul 2019 00:06:26 +0000
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x6206HWB029180;
-        Tue, 2 Jul 2019 00:06:22 GMT
-Received: from [10.132.91.175] (/10.132.91.175)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 01 Jul 2019 17:06:17 -0700
-Subject: Re: [RESEND PATCH v3 0/7] Improve scheduler scalability for fast path
-To:     Patrick Bellasi <patrick.bellasi@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
-        steven.sistare@oracle.com, dhaval.giani@oracle.com,
-        daniel.lezcano@linaro.org, vincent.guittot@linaro.org,
-        viresh.kumar@linaro.org, tim.c.chen@linux.intel.com,
-        mgorman@techsingularity.net, Paul Turner <pjt@google.com>,
-        riel@surriel.com, morten.rasmussen@arm.com
-References: <20190627012919.4341-1-subhra.mazumdar@oracle.com>
- <20190701090204.GQ3402@hirez.programming.kicks-ass.net>
- <20190701135552.kb4os6bxxhh2lyw6@e110439-lin>
-From:   Subhra Mazumdar <subhra.mazumdar@oracle.com>
-Message-ID: <81b2288a-579d-8dd1-f179-d672cf1edd68@oracle.com>
-Date:   Mon, 1 Jul 2019 17:01:07 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
-MIME-Version: 1.0
-In-Reply-To: <20190701135552.kb4os6bxxhh2lyw6@e110439-lin>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9305 signatures=668688
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1907010280
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9305 signatures=668688
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1907010281
+        Mon, 1 Jul 2019 20:02:27 -0400
+Received: by mail-qk1-f202.google.com with SMTP id j17so7488779qki.6
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2019 17:02:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=14MOM6ICngoLLgb1hrf/bM8O+6Uy5LcBnEPwLhZGisA=;
+        b=ab0ZyOF0ZZkkQMOBm16TGGEeQFK/jjtvGf3wEx27RMnXQxrDBNdaJYXoBBeGr5LnO2
+         yCn6V8eE+fGZvJcjh8XYGMVFt8fgkv2h31llQxIwD0pszH2nCXpm4pmE/yAxWGiqducr
+         Um/F4GZ5f+4xXzJnSDUyhYRr75CeDapfZf+W+E6QIIIEcvN/2bmVLsbnDVtTg92I11bF
+         Xvi2CyLVmX4o/fXUISIVyJFG0yhus80Kd98bDgXNFc08pLguDIzHn40en5csghrqJdP/
+         CoVBUT6A1KZCzgFSRU9yuIebcKq6qj/wydhx0jBqZEIurcaCWB5wcib9YZTFizzNAgmw
+         Kt3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=14MOM6ICngoLLgb1hrf/bM8O+6Uy5LcBnEPwLhZGisA=;
+        b=i30ENDSF7Tj7eMIS1cJHvmfywor7tR7BqwWr7WgwMNczYNh0KkW/O0KwypkBiJApxi
+         Kl/8lpI3il0yLbTrFUsvgjHyy+U81kzWhv/JkK3H3FIPJbGG0uOTBEi5RGVtUlVEhIoi
+         4nl7oRT8W4TrkscoqxSNClIStSKn/JAVe6Lnry49Uip+6FCmsVaoGdmiajOF5b/ab4FS
+         0XDCMYA0DNMcaYSreHWcUJdHA7+hQES74ypnsgGRtkkULdoPoMSJSAgkCJV+bjeCjsUS
+         JHr1DsuefWii3oHq5Y0+n6e4gDDzQTbBi/eztAW/7yFJk3ZgtDgMkCExchDOraqkDz2g
+         o0Cg==
+X-Gm-Message-State: APjAAAUG6GsN3eCPndBjAdt2NtlfvojWoS7W3fhl2IDIBlKOj/WZht3B
+        +6Th4jPqvPlzhCTQdFguDNuaX0pk
+X-Google-Smtp-Source: APXvYqxrjtJzzGyzen9dN3F04N0Z8Svgc4wGjY+W5ZyOubaozgAQD8lN8zC3uAhG2jkMQE/hKlKPNVyS
+X-Received: by 2002:aed:38c2:: with SMTP id k60mr21843273qte.83.1562025746390;
+ Mon, 01 Jul 2019 17:02:26 -0700 (PDT)
+Date:   Mon,  1 Jul 2019 17:01:32 -0700
+Message-Id: <20190702000132.88836-1-cfir@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
+Subject: [PATCH] crypto: ccp/gcm - use const time tag comparison.
+From:   Cfir Cohen <cfir@google.com>
+To:     Tom Lendacky <thomas.lendacky@amd.com>,
+        Gary Hook <gary.hook@amd.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        David Rientjes <rientjes@google.com>
+Cc:     linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+        Cfir Cohen <cfir@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Avoid leaking GCM tag through timing side channel.
 
-On 7/1/19 6:55 AM, Patrick Bellasi wrote:
-> On 01-Jul 11:02, Peter Zijlstra wrote:
->> On Wed, Jun 26, 2019 at 06:29:12PM -0700, subhra mazumdar wrote:
->>> Hi,
->>>
->>> Resending this patchset, will be good to get some feedback. Any suggestions
->>> that will make it more acceptable are welcome. We have been shipping this
->>> with Unbreakable Enterprise Kernel in Oracle Linux.
->>>
->>> Current select_idle_sibling first tries to find a fully idle core using
->>> select_idle_core which can potentially search all cores and if it fails it
->>> finds any idle cpu using select_idle_cpu. select_idle_cpu can potentially
->>> search all cpus in the llc domain. This doesn't scale for large llc domains
->>> and will only get worse with more cores in future.
->>>
->>> This patch solves the scalability problem by:
->>>   - Setting an upper and lower limit of idle cpu search in select_idle_cpu
->>>     to keep search time low and constant
->>>   - Adding a new sched feature SIS_CORE to disable select_idle_core
->>>
->>> Additionally it also introduces a new per-cpu variable next_cpu to track
->>> the limit of search so that every time search starts from where it ended.
->>> This rotating search window over cpus in LLC domain ensures that idle
->>> cpus are eventually found in case of high load.
->> Right, so we had a wee conversation about this patch series at OSPM, and
->> I don't see any of that reflected here :-(
->>
->> Specifically, given that some people _really_ want the whole L3 mask
->> scanned to reduce tail latency over raw throughput, while you guys
->> prefer the other way around, it was proposed to extend the task model.
->>
->> Specifically something like a latency-nice was mentioned (IIRC) where a
-> Right, AFAIR PaulT suggested to add support for the concept of a task
-> being "latency tolerant": meaning we can spend more time to search for
-> a CPU and/or avoid preempting the current task.
->
-Wondering if searching and preempting needs will ever be conflicting?
-Otherwise sounds like a good direction to me. For the searching aspect, can
-we map latency nice values to the % of cores we search in select_idle_cpu?
-Thus the search cost can be controlled by latency nice value. But the issue
-is if more latency tolerant workloads set to less search, we still need
-some mechanism to achieve good spread of threads. Can we keep the sliding
-window mechanism in that case? Also will latency nice do anything for
-select_idle_core and select_idle_smt?
+Signed-off-by: Cfir Cohen <cfir@google.com>
+---
+ drivers/crypto/ccp/ccp-ops.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/crypto/ccp/ccp-ops.c b/drivers/crypto/ccp/ccp-ops.c
+index db8de89d990f..633670220f6c 100644
+--- a/drivers/crypto/ccp/ccp-ops.c
++++ b/drivers/crypto/ccp/ccp-ops.c
+@@ -840,7 +840,8 @@ static int ccp_run_aes_gcm_cmd(struct ccp_cmd_queue *cmd_q,
+ 		if (ret)
+ 			goto e_tag;
+ 
+-		ret = memcmp(tag.address, final_wa.address, AES_BLOCK_SIZE);
++		ret = crypto_memneq(tag.address, final_wa.address,
++				    AES_BLOCK_SIZE) ? -EBADMSG : 0;
+ 		ccp_dm_free(&tag);
+ 	}
+ 
+-- 
+2.22.0.410.gd8fdbe21b5-goog
+
