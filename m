@@ -2,141 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 546415D4DC
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 18:55:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D37C5D4E3
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 18:57:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726908AbfGBQy7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 12:54:59 -0400
-Received: from mail-wm1-f41.google.com ([209.85.128.41]:50454 "EHLO
-        mail-wm1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726255AbfGBQy7 (ORCPT
+        id S1726483AbfGBQ5L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 12:57:11 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:39983 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726150AbfGBQ5L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 12:54:59 -0400
-Received: by mail-wm1-f41.google.com with SMTP id n9so1569374wmi.0
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 09:54:57 -0700 (PDT)
+        Tue, 2 Jul 2019 12:57:11 -0400
+Received: by mail-io1-f68.google.com with SMTP id n5so38621713ioc.7
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 09:57:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=CimDCDGoDfxfHpl+rKhISumqp5NNRWpGlcfKsYJsg90=;
-        b=eoMSY2395eqnBmzs60/mrSzr+W9p/RaS1h6zhNKCXI9HsqXF5vyNS923QFIAS0RjxX
-         kpe4CRg43qJufKYPk6K1oNG4MLeKupRXl6/vzeGYK/0DekR0fAeaSgOY0MIatqEw2Ezi
-         glHEcP/F2J4vJOFcMSZp2RW76PAiaJZ3WtSDPeO6FH3sYpxNsuwGsZ+s4KKTwcR0dlPa
-         6lYzpot2hHny8J286wqn5XbmsSsWYiVhI6CFWI2KRYKSq+5JFwjMOtixnMCMtjYvUACv
-         Hm/Gadim5oSfo8WMwGMeSJgnyCNOrTM+Ylv6P2hyPYUZ9ziT2RqMSh5dUb6GvJ9OMV/V
-         Gaqw==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=d3ruOHdYru6Rpy+BKpMXi/6c+V83W2zZQqeLjuI07mA=;
+        b=ErLvOg6Ev6zdphtHAlsPI/i4E1PAFFXuaLmpX6JcmhUUgS/xmdRuySXKCpIRtG+kX1
+         FsBNUdt7zVXIciKH78drKjYo4PYJhD0tQnv5rYwR3/PbGcFitIGiyFOgRNQv0cqHlGeu
+         9y928edF1AI0QN3d9ySA6ju08SKBpvuUyqAVUUTBKxMF/hoGVeig2TwgtMcmDhk5bwON
+         ytRV6TMwbAXFECT+G69te6UyI4Y/HZtbTAL2PPKYiox8zBVdb6HWzEWgwyGh9YaT0+o5
+         RvasPdi/clcVZRh3FzLopILMMo7MJkLlQhmUJLYkDyArxNRZCsan6cYz+PMwXxGZXyRc
+         2XAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=CimDCDGoDfxfHpl+rKhISumqp5NNRWpGlcfKsYJsg90=;
-        b=DRYrNr2u+51db87ENaNsvcKWriqir7AGTXpGcHe1IhTk+f/2ZRCRa75+oDbsfH0hnY
-         L/L7G1C65XYGeUhjKAtKsRhL4FP/YJ51cCdViF5WJ99At6+me28xlX96NHuIAsy5rRBz
-         ShckdFiAVDFWsCbqmON+x2RMeIqkdtYmIAWmaMYuGH4uwR1ygOFAt+osxdkH1XJUOEGD
-         8DXLy47IhlgI7veskdrAHvdjEVP60r2LugijlSxVMQHDehngb3hFcYeHv7qAcz/gk/iX
-         OXatL+SZ5X9b8F6llc0trQRWaS5lpjMwS7Vy8YGvJ0KobZcbAU5BxtHMCw9Dz9ALYthT
-         zhgQ==
-X-Gm-Message-State: APjAAAXN8E1ZOtzZOqQnfvQcQrjbBPkpI18AHhY36rfo4unwie/xK6rC
-        ZNNXbbWrV+gf6g0bV16Ee2Uamw==
-X-Google-Smtp-Source: APXvYqzorO0l43WUW0HU+l8DROk7HfESLlwuN0S38IG5WqRioa3y9qGboUPucd/0wLqFrSB2htFA0A==
-X-Received: by 2002:a7b:c313:: with SMTP id k19mr3931340wmj.2.1562086496818;
-        Tue, 02 Jul 2019 09:54:56 -0700 (PDT)
-Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.googlemail.com with ESMTPSA id h84sm3426757wmf.43.2019.07.02.09.54.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 02 Jul 2019 09:54:55 -0700 (PDT)
-Subject: Re: nvmem creates multiple devices with the same name
-To:     Sascha Hauer <s.hauer@pengutronix.de>
-Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel@pengutronix.de
-References: <20190521085641.i6g5aijwa5zbolah@pengutronix.de>
- <a9ccac90-7b2f-41da-2ca9-ca3bba52781b@linaro.org>
- <20190521092107.zpdkkhaanzruhqui@pengutronix.de>
- <20190701080642.4oxmw7c3rmwrt5ee@pengutronix.de>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <45d0cfaf-2511-4b1e-f4da-b67fa9f9e867@linaro.org>
-Date:   Tue, 2 Jul 2019 17:54:54 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=d3ruOHdYru6Rpy+BKpMXi/6c+V83W2zZQqeLjuI07mA=;
+        b=dfESU2jNGoMqFVRlIXDb+955pCOiQhAUjamaIRAazGKEDlyUNoyjxA2lKU5UVHB/yk
+         IxWFjMY/i1unDTAJYOWlA5Ur+F/DOz3fwUXqg6PCzX/Av5fmpmwJc39rey+yf6mPDCVU
+         RHFw060sFn/YywnU7mGYqCeakkyVJRH5ejRBlSrIgzCrn/Kfljr1srxFxjWSCbmtnPY8
+         lHlu8APy3dX5MGe5UxBVr3/te5OfuocFUaj0td2oepRtIgv55xN9jnRwopN1htuVyvI/
+         qBfZtnsYugpOAzj/VOrb2+F+4X8rZ3EHxMHuDrhVeGB/5OtP/2qQhVSXdsE2EuZ+pdcy
+         d+qQ==
+X-Gm-Message-State: APjAAAUurb68heGTDCLdVSVpmlrxA0kSG89XdGPBGfAfJWpk5afvWmja
+        sB0Shl9W1Q/b7qL05I/whaW6XO3bnaqS76QjqdnyRA==
+X-Google-Smtp-Source: APXvYqy+XdTH/NEg0tFMMzUuM/+XmEQEFt0V0klg3HtEJYTy61ahf+1pdl0T/rIL9bJh57cA1/DbyP6ClHqPxMl8h3w=
+X-Received: by 2002:a5d:9e48:: with SMTP id i8mr22818920ioi.51.1562086630549;
+ Tue, 02 Jul 2019 09:57:10 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190701080642.4oxmw7c3rmwrt5ee@pengutronix.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190701173042.221453-1-henryburns@google.com> <CAMJBoFPbRcdZ+NnX17OQ-sOcCwe+ZAsxcDJoR0KDkgBY9WXvpg@mail.gmail.com>
+In-Reply-To: <CAMJBoFPbRcdZ+NnX17OQ-sOcCwe+ZAsxcDJoR0KDkgBY9WXvpg@mail.gmail.com>
+From:   Henry Burns <henryburns@google.com>
+Date:   Tue, 2 Jul 2019 09:56:34 -0700
+Message-ID: <CAGQXPTjX=7aD9MQAs2kJthFvPdd3x8Nh53oc=wZCXH_dvDJ=Vg@mail.gmail.com>
+Subject: Re: [PATCH] mm/z3fold: Fix z3fold_buddy_slots use after free
+To:     Vitaly Wool <vitalywool@gmail.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Vitaly Vul <vitaly.vul@sony.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Xidong Wang <wangxidong_97@163.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jonathan Adams <jwadams@google.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sascha,
+On Tue, Jul 2, 2019 at 12:45 AM Vitaly Wool <vitalywool@gmail.com> wrote:
+>
+> Hi Henry,
+>
+> On Mon, Jul 1, 2019 at 8:31 PM Henry Burns <henryburns@google.com> wrote:
+> >
+> > Running z3fold stress testing with address sanitization
+> > showed zhdr->slots was being used after it was freed.
+> >
+> > z3fold_free(z3fold_pool, handle)
+> >   free_handle(handle)
+> >     kmem_cache_free(pool->c_handle, zhdr->slots)
+> >   release_z3fold_page_locked_list(kref)
+> >     __release_z3fold_page(zhdr, true)
+> >       zhdr_to_pool(zhdr)
+> >         slots_to_pool(zhdr->slots)  *BOOM*
+>
+> Thanks for looking into this. I'm not entirely sure I'm all for
+> splitting free_handle() but let me think about it.
+>
+> > Instead we split free_handle into two functions, release_handle()
+> > and free_slots(). We use release_handle() in place of free_handle(),
+> > and use free_slots() to call kmem_cache_free() after
+> > __release_z3fold_page() is done.
+>
+> A little less intrusive solution would be to move backlink to pool
+> from slots back to z3fold_header. Looks like it was a bad idea from
+> the start.
+>
+> Best regards,
+>    Vitaly
 
-On 01/07/2019 09:06, Sascha Hauer wrote:
-> Hi Srinivas,
-> 
-> On Tue, May 21, 2019 at 11:21:07AM +0200, Sascha Hauer wrote:
->> On Tue, May 21, 2019 at 10:02:32AM +0100, Srinivas Kandagatla wrote:
->>>
->>>
->>> On 21/05/2019 09:56, Sascha Hauer wrote:
->>>> . Are there any suggestions how to register the nvmem devices
->>>> with a different name?
->>>
->>> struct nvmem_config provides id field for this purpose, this will be used by
->>> nvmem to set the device name space along with name field.
->>
->> There's no way for a caller to know a unique name/id combination.
->> The mtd layer could initialize the id field with the mtd number, but
->> that would still not guarantee that another caller, like an EEPROM
->> driver or such, doesn't use the same name/id combination.
-> 
-> This is still an unresolved issue. Do you have any input how we could
-> proceed here?
-
-Sorry for the delay!
-I think simplest solution would be to check if there is already an nvmem 
-provider with the same name before assigning name to the device and then 
-append the id in case it exists.
-
-Let me know if below patch helps the situation so that I can take this 
-in next cycle!
-
------------------------------------>cut<----------------------------
-     nvmem: core: Check nvmem device name before adding the same one
-
-     In some usecases where nvmem names are directly derived from
-     partition names, its likely that different devices might have
-     same partition name.
-     This will be an issue as we will be creating two different
-     nvmem devices with same name and sysfs will not be very happy with 
-that.
-
-     Simple solution is to check the existance of the nvmem provider with
-     same name and append an id if it exists before creating the device 
-name.
-
-     Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-
-diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index f24008b66826..cf70a405023c 100644
---- a/drivers/nvmem/core.c
-+++ b/drivers/nvmem/core.c
-@@ -641,7 +641,11 @@ struct nvmem_device *nvmem_register(const struct 
-nvmem_config *config)
-                 nvmem->dev.of_node = config->dev->of_node;
-
-         if (config->id == -1 && config->name) {
--               dev_set_name(&nvmem->dev, "%s", config->name);
-+               if (nvmem_find(config->name))
-+                       dev_set_name(&nvmem->dev, "%s%d", config->name,
-+                                    nvmem->id);
-+               else
-+                       dev_set_name(&nvmem->dev, "%s", config->name);
-         } else {
-                 dev_set_name(&nvmem->dev, "%s%d",
-                              config->name ? : "nvmem",
------------------------------------>cut<----------------------------
-> 
-> Thanks
->   Sascha
-> 
+We still want z3fold pages to be movable though. Wouldn't moving
+the backink to the pool from slots to z3fold_header prevent us from
+enabling migration?
