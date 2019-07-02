@@ -2,210 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D19E85DB15
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 03:43:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CBAC5DB09
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 03:41:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727411AbfGCBnj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 21:43:39 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:40155 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727101AbfGCBni (ORCPT
+        id S1727107AbfGCBlW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 21:41:22 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:45813 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726329AbfGCBlW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 21:43:38 -0400
-Received: by mail-wr1-f67.google.com with SMTP id p11so773121wre.7
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 18:43:36 -0700 (PDT)
+        Tue, 2 Jul 2019 21:41:22 -0400
+Received: by mail-lf1-f67.google.com with SMTP id u10so474556lfm.12
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 18:41:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4YffUmnYIYJSGCAfaNSWP1ayns5cp2QU4CpDgCgvPRE=;
-        b=efh0X4llLVWHu5Dg5iUHBFsqpiD3EAhHy0GSa4Rw1Z7MEpgWK+3Wx+qU22FGbxHH7z
-         Adqbj+oS3WaHZfvWf6Z7S+kxCLU3wfHEVZrZXPQPnhxe3AiJcZlGG/GqThd7oay8i3Lu
-         NEYlEK6E22/86kHuucUfo79XlxYDZKnuvzCEjbzM4HoeZPb33jKOfVMj79vrfpfqnJOk
-         fZI6hEX5hOZEWVoKzAxYMsbE4rVMB/nB3/IY0ffXy+zFTvD1MZeGhq7oJIEsguBrXKfD
-         uX817r4HZk99anNjIxdo0b4kaqF2C3Os/U+eWl9WkoCMVZI5nNNSfkrMJiOopDM6DQeC
-         ns6A==
+        h=date:from:to:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=OtNNYBNm1JpUmlbSXfOacWdVL+xLaEisgn4cxAyFWvc=;
+        b=XkXLcra1GETf+BjtJgZFGGJHgfnyaEAhtVwPsFzqTDtvSzk7K4cYGXdzyMAn0iXhD2
+         jsNS6ZX2Aig66f9lDi2DLk1VyTpg3+i6+S6+juCkqyrX+EgUjwPPgnJtLo2kld0p2Dc8
+         mCYGIjeTEDVqSC1PpMFh9xH34snfD/cCl6XZf5oCIQVG8O8rVciIhMX9NnqexpCU9HN7
+         YUm7aWXL2c54UWB+iwQ6zBqf1j7H3sZwddoqOAoAy7101fVpNGN+EO/kVTsjZ8Tkk6K+
+         +1/1g0WsmEjJnan0VHjp5QH1Y5+G32htVXnLNhAFEtB297GY/1rPX5IZSa01NuqSmvDs
+         RDGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4YffUmnYIYJSGCAfaNSWP1ayns5cp2QU4CpDgCgvPRE=;
-        b=gHmMfhf8Sx5SX1xvMc7jNNV24O2jfo8H0IDXkTvPIQwO4VGh2zwBNVVXGwD0DRAB9o
-         EKVWF8NKa6PkmP8rwn6bRR0GNokJ7vn09fDKx3bS5kpBJ6mNdkVy+JnUc4yNZ9v3RMEG
-         Xut3e+iEdsAjkeeuYw+nA8rjJw6GLModHVTBOdVU3ia2X2TL9iy85YBDWOozCK4DHlr+
-         3/TklL56zuqgwWZgw4vOhEDpzVn+9K1jKu9tow6GSMY3HnipNJFRXW2AibNBinBW5oUz
-         KO6d0AtH7/ERnPY8+7hU/9p9PZFzMlPVNsmi1RmrgTwNQmPh+0oZECnMExpcb1sktTts
-         SO6g==
-X-Gm-Message-State: APjAAAVDktVP9ck1IMcJgguJL5qCBmASIfxU9etUeZnka3XLxIimC8Pa
-        r3DDx5I7X2xUIdSxRPYM5mt6mHqwWl95zJx87kptBA==
-X-Google-Smtp-Source: APXvYqzqh9h/4RdbB/jYJGIotsVwMAaDcHyyKvBN+Zzh6AUchrrkcMUDuARE9cbiaNpeM76kcPfTnmDJ1m48uONJYvY=
-X-Received: by 2002:a5d:5589:: with SMTP id i9mr15370525wrv.198.1562099197663;
- Tue, 02 Jul 2019 13:26:37 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=OtNNYBNm1JpUmlbSXfOacWdVL+xLaEisgn4cxAyFWvc=;
+        b=gsEy+WkKkVLalu67QpfO5sbFXBZQOfZdBfGC7rl3vAyeDj222RYJDiGXF7QPyDF5eS
+         8OM0mtvJiJHBaEV5hW/foiHyDaWDgybMFDHmaHwpPFtScryQNrm00MGGKSqX7tGzz/0B
+         mUcmkFEueQm+42W8Yrt4aGHDrisU6fO20c8QN7Cwyw0+QJs37AKGN0q7I9g6Ol5zdUd3
+         IobbGX+nGvKUMaerq2fxsq9VgHhUxHkAuAQyN05UgbbG5Xl1L73i6WcaV3vzRuLauvqG
+         mXn4zEibPeXDJW99J62uYYRxvLVUJOysEGZlZUAk0R9lhZw0VkhtlXBLyynpx3M7c/ph
+         oVnA==
+X-Gm-Message-State: APjAAAUsA6GKAwdSAQHTO3UamXJ6baKynDDSsFLHIdkgfEAcY3JIuyyj
+        Rk9TfCBPjw/36ulmPYUyV0o8dyVGi44=
+X-Google-Smtp-Source: APXvYqzEF5k5CVr4U5Ts3OSMxtAglpPUPMGzRm0CSe0eCHDtkMHcNuXCddOhxidOixjNKCUNogmnDg==
+X-Received: by 2002:a19:7912:: with SMTP id u18mr15034634lfc.81.1562099313342;
+        Tue, 02 Jul 2019 13:28:33 -0700 (PDT)
+Received: from khorivan (59-201-94-178.pool.ukrtel.net. [178.94.201.59])
+        by smtp.gmail.com with ESMTPSA id o187sm7642lfa.88.2019.07.02.13.28.32
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 02 Jul 2019 13:28:32 -0700 (PDT)
+Date:   Tue, 2 Jul 2019 23:28:30 +0300
+From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+To:     Jesper Dangaard Brouer <brouer@redhat.com>, netdev@vger.kernel.org,
+        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+        grygorii.strashko@ti.com, jakub.kicinski@netronome.com,
+        daniel@iogearbox.net, john.fastabend@gmail.com, ast@kernel.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
+Subject: Re: [PATCH] net: core: page_pool: add user refcnt and reintroduce
+ page_pool_destroy
+Message-ID: <20190702202829.GI4510@khorivan>
+Mail-Followup-To: Jesper Dangaard Brouer <brouer@redhat.com>,
+        netdev@vger.kernel.org,
+        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+        grygorii.strashko@ti.com, jakub.kicinski@netronome.com,
+        daniel@iogearbox.net, john.fastabend@gmail.com, ast@kernel.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
+References: <20190702153902.0e42b0b2@carbon>
+ <156207778364.29180.5111562317930943530.stgit@firesoul>
+ <20190702144426.GD4510@khorivan>
+ <20190702165230.6caa36e3@carbon>
+ <20190702145612.GF4510@khorivan>
+ <20190702171029.76c60538@carbon>
+ <20190702152112.GG4510@khorivan>
+ <20190702202907.15fb30ce@carbon>
+ <20190702185839.GH4510@khorivan>
 MIME-Version: 1.0
-References: <20190630203614.5290-1-robdclark@gmail.com> <20190630203614.5290-3-robdclark@gmail.com>
-In-Reply-To: <20190630203614.5290-3-robdclark@gmail.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Tue, 2 Jul 2019 22:26:22 +0200
-Message-ID: <CAKv+Gu_8BOt+f8RTspHo+se-=igZba1zL0+jWLV2HuuUXCKYpA@mail.gmail.com>
-Subject: Re: [PATCH 2/4] efi/libstub: detect panel-id
-To:     Rob Clark <robdclark@gmail.com>
-Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        freedreno@lists.freedesktop.org, aarch64-laptops@lists.linaro.org,
-        Rob Clark <robdclark@chromium.org>,
-        Ingo Molnar <mingo@kernel.org>, Will Deacon <will@kernel.org>,
-        Leif Lindholm <leif.lindholm@linaro.org>,
-        Alexander Graf <agraf@suse.de>,
-        Steve Capper <steve.capper@arm.com>,
-        Lukas Wunner <lukas@wunner.de>,
-        Julien Thierry <julien.thierry@arm.com>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20190702185839.GH4510@khorivan>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 30 Jun 2019 at 22:36, Rob Clark <robdclark@gmail.com> wrote:
+On Tue, Jul 02, 2019 at 09:58:40PM +0300, Ivan Khoronzhuk wrote:
+>On Tue, Jul 02, 2019 at 08:29:07PM +0200, Jesper Dangaard Brouer wrote:
+>>On Tue, 2 Jul 2019 18:21:13 +0300
+>>Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org> wrote:
+>>
+>>>On Tue, Jul 02, 2019 at 05:10:29PM +0200, Jesper Dangaard Brouer wrote:
+>>>>On Tue, 2 Jul 2019 17:56:13 +0300
+>>>>Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org> wrote:
+>>>>
+>>>>> On Tue, Jul 02, 2019 at 04:52:30PM +0200, Jesper Dangaard Brouer wrote:
+>>>>> >On Tue, 2 Jul 2019 17:44:27 +0300
+>>>>> >Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org> wrote:
+>>>>> >
+>>>>> >> On Tue, Jul 02, 2019 at 04:31:39PM +0200, Jesper Dangaard Brouer wrote:
+>>>>> >> >From: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+>>>>> >> >
+>>>>> >> >Jesper recently removed page_pool_destroy() (from driver invocation) and
+>>>>> >> >moved shutdown and free of page_pool into xdp_rxq_info_unreg(), in-order to
+>>>>> >> >handle in-flight packets/pages. This created an asymmetry in drivers
+>>>>> >> >create/destroy pairs.
+>>>>> >> >
+>>>>> >> >This patch add page_pool user refcnt and reintroduce page_pool_destroy.
+>>>>> >> >This serves two purposes, (1) simplify drivers error handling as driver now
+>>>>> >> >drivers always calls page_pool_destroy() and don't need to track if
+>>>>> >> >xdp_rxq_info_reg_mem_model() was unsuccessful. (2) allow special cases
+>>>>> >> >where a single RX-queue (with a single page_pool) provides packets for two
+>>>>> >> >net_device'es, and thus needs to register the same page_pool twice with two
+>>>>> >> >xdp_rxq_info structures.
+>>>>> >>
+>>>>> >> As I tend to use xdp level patch there is no more reason to mention (2) case
+>>>>> >> here. XDP patch serves it better and can prevent not only obj deletion but also
+>>>>> >> pool flush, so, this one patch I could better leave only for (1) case.
+>>>>> >
+>>>>> >I don't understand what you are saying.
+>>>>> >
+>>>>> >Do you approve this patch, or do you reject this patch?
+>>>>> >
+>>>>> It's not reject, it's proposition to use both, XDP and page pool patches,
+>>>>> each having its goal.
+>>>>
+>>>>Just to be clear, if you want this patch to get accepted you have to
+>>>>reply with your Signed-off-by (as I wrote).
+>>>>
+>>>>Maybe we should discuss it in another thread, about why you want two
+>>>>solutions to the same problem.
+>>>
+>>>If it solves same problem I propose to reject this one and use this:
+>>>https://lkml.org/lkml/2019/7/2/651
+>>
+>>No, I propose using this one, and rejecting the other one.
 >
-> From: Rob Clark <robdclark@chromium.org>
+>There is at least several arguments against this one (related (2) purpose)
 >
-> On snapdragon aarch64 laptops, a 'UEFIDisplayInfo' variable is provided
-> to communicate some information about the display.  Crutially it has the
-> panel-id, so the appropriate panel driver can be selected.  Read this
-> out and stash in /chosen/panel-id so that display driver can use it to
-> pick the appropriate panel.
+>It allows:
+>- avoid changes to page_pool/mlx5/netsec
+>- save not only allocator obj but allocator "page/buffer flush"
+>- buffer flush can be present not only in page_pool but for other allocators
+> that can behave differently and not so simple solution.
+>- to not limit cpsw/(potentially others) to use "page_pool" allocator only
+>....
 >
-> Signed-off-by: Rob Clark <robdclark@chromium.org>
+>This patch better leave also, as it simplifies error path for page_pool and
+>have more error prone usage comparing with existent one.
+>
+>Please, don't limit cpsw and potentially other drivers to use only
+>page_pool it can be zca or etc... I don't won't to modify each allocator.
+>I propose to add both as by fact they solve different problems with common
+>solution.
 
-Hi Rob,
+I can pick up this one but remove description related to (2) and add
+appropriate modifications to cpsw.
 
-I understand why you are doing this, but this *really* belongs elsewhere.
-
-So we are dealing with a platform that violates the UEFI spec, since
-it does not bother to implement variable services at runtime (because
-MS let the vendor get away with this).
-
-First of all, to pass data between the EFI stub and the OS proper, we
-should use a configuration table rather than a DT property, since the
-former is ACPI/DT agnostic. Also, I'd like the consumer of the data to
-actually interpret it, i.e., just dump the whole opaque thing into a
-config table in the stub, and do the parsing in the OS proper.
-
-However, I am not thrilled at adding code to the stub that
-unconditionally looks for some variable with some magic name on all
-ARM/arm64 EFI systems, so this will need to live under a Kconfig
-option that depends on ARM64 (and does not default to y)
-
-
-
-> ---
->  drivers/firmware/efi/libstub/arm-stub.c | 49 +++++++++++++++++++++++++
->  drivers/firmware/efi/libstub/efistub.h  |  2 +
->  drivers/firmware/efi/libstub/fdt.c      |  9 +++++
->  3 files changed, 60 insertions(+)
->
-> diff --git a/drivers/firmware/efi/libstub/arm-stub.c b/drivers/firmware/efi/libstub/arm-stub.c
-> index 04e6ecd72cd9..999813252e0d 100644
-> --- a/drivers/firmware/efi/libstub/arm-stub.c
-> +++ b/drivers/firmware/efi/libstub/arm-stub.c
-> @@ -69,6 +69,53 @@ static struct screen_info *setup_graphics(efi_system_table_t *sys_table_arg)
->         return si;
->  }
->
-> +/*
-> + * We (at least currently) don't care about most of the fields, just
-> + * panel_id:
-> + */
-> +struct mdp_disp_info {
-> +       u32 version_info;
-> +       u32 pad0[9];
-> +       u32 panel_id;
-> +       u32 pad1[17];
-> +};
-> +
-> +#define MDP_DISP_INFO_VERSION_MAGIC 0xaa
-> +
-> +static void get_panel_id(efi_system_table_t *sys_table_arg,
-> +                        unsigned long fdt_addr)
-> +{
-> +       efi_guid_t gop_proto = EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID;
-> +       efi_status_t status;
-> +       struct mdp_disp_info *disp_info;
-> +       unsigned long size = 0;
-> +
-> +       status = efi_call_runtime(get_variable, L"UEFIDisplayInfo",
-> +                                 &gop_proto, NULL, &size, NULL);
-> +       if (status == EFI_NOT_FOUND)
-> +               return;
-> +
-> +       status = efi_call_early(allocate_pool, EFI_LOADER_DATA, size,
-> +                               (void **)&disp_info);
-> +       if (status != EFI_SUCCESS)
-> +               return;
-> +
-> +       status = efi_call_runtime(get_variable, L"UEFIDisplayInfo",
-> +                                 &gop_proto, NULL, &size, disp_info);
-> +       if (status != EFI_SUCCESS)
-> +               goto cleanup;
-> +
-> +       if ((disp_info->version_info >> 16) != MDP_DISP_INFO_VERSION_MAGIC)
-> +               goto cleanup;
-> +
-> +       efi_printk(sys_table_arg, "found a panel-id!\n");
-> +
-> +       set_chosen_panel_id(fdt_addr, disp_info->panel_id);
-> +
-> +cleanup:
-> +       efi_call_early(free_pool, disp_info);
-> +}
-> +
->  void install_memreserve_table(efi_system_table_t *sys_table_arg)
->  {
->         struct linux_efi_memreserve *rsv;
-> @@ -229,6 +276,8 @@ unsigned long efi_entry(void *handle, efi_system_table_t *sys_table,
->         if (!fdt_addr)
->                 pr_efi(sys_table, "Generating empty DTB\n");
->
-> +       get_panel_id(sys_table, fdt_addr);
-> +
->         status = handle_cmdline_files(sys_table, image, cmdline_ptr, "initrd=",
->                                       efi_get_max_initrd_addr(dram_base,
->                                                               *image_addr),
-> diff --git a/drivers/firmware/efi/libstub/efistub.h b/drivers/firmware/efi/libstub/efistub.h
-> index 1b1dfcaa6fb9..8832cb9a7a40 100644
-> --- a/drivers/firmware/efi/libstub/efistub.h
-> +++ b/drivers/firmware/efi/libstub/efistub.h
-> @@ -39,6 +39,8 @@ void efi_char16_printk(efi_system_table_t *, efi_char16_t *);
->
->  unsigned long get_dram_base(efi_system_table_t *sys_table_arg);
->
-> +void set_chosen_panel_id(unsigned long fdt_addr, unsigned panel_id);
-> +
->  efi_status_t allocate_new_fdt_and_exit_boot(efi_system_table_t *sys_table,
->                                             void *handle,
->                                             unsigned long *new_fdt_addr,
-> diff --git a/drivers/firmware/efi/libstub/fdt.c b/drivers/firmware/efi/libstub/fdt.c
-> index 5440ba17a1c5..cb6ea160a40a 100644
-> --- a/drivers/firmware/efi/libstub/fdt.c
-> +++ b/drivers/firmware/efi/libstub/fdt.c
-> @@ -200,6 +200,15 @@ static efi_status_t update_fdt_memmap(void *fdt, struct efi_boot_memmap *map)
->         return EFI_SUCCESS;
->  }
->
-> +void set_chosen_panel_id(unsigned long fdt_addr, unsigned panel_id)
-> +{
-> +       void *fdt = (void *)fdt_addr;
-> +       int node = fdt_subnode_offset(fdt, 0, "chosen");
-> +       u32 fdt_val32 = cpu_to_fdt32(panel_id);
-> +
-> +       fdt_setprop_var(fdt, node, "panel-id", fdt_val32);
-> +}
-> +
->  #ifndef EFI_FDT_ALIGN
->  # define EFI_FDT_ALIGN EFI_PAGE_SIZE
->  #endif
-> --
-> 2.20.1
->
+-- 
+Regards,
+Ivan Khoronzhuk
