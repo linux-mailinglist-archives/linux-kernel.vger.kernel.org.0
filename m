@@ -2,72 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCD055D140
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 16:12:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AD4B5D173
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 16:19:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727103AbfGBOMZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 10:12:25 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:8684 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726341AbfGBOMY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 10:12:24 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 36EB5CE004227F3B0405;
-        Tue,  2 Jul 2019 22:12:19 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Tue, 2 Jul 2019
- 22:12:12 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <chunkeey@googlemail.com>
-CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-wireless@vger.kernel.org>, <kvalo@codeaurora.org>,
-        <davem@davemloft.net>, YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] carl9170: remove set but not used variable 'udev'
-Date:   Tue, 2 Jul 2019 22:12:07 +0800
-Message-ID: <20190702141207.47552-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1727241AbfGBOTS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 10:19:18 -0400
+Received: from mx1.emlix.com ([188.40.240.192]:57588 "EHLO mx1.emlix.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727109AbfGBOTM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 10:19:12 -0400
+X-Greylist: delayed 320 seconds by postgrey-1.27 at vger.kernel.org; Tue, 02 Jul 2019 10:19:12 EDT
+Received: from mailer.emlix.com (unknown [81.20.119.6])
+        (using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mx1.emlix.com (Postfix) with ESMTPS id EC37F60AF8;
+        Tue,  2 Jul 2019 16:13:50 +0200 (CEST)
+From:   Philipp Puschmann <philipp.puschmann@emlix.com>
+To:     marcel@holtmann.org
+Cc:     johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Philipp Puschmann <philipp.puschmann@emlix.com>
+Subject: [PATCH] Bluetooth: serdev: hci_ll: set operational frequency earlier
+Date:   Tue,  2 Jul 2019 16:13:37 +0200
+Message-Id: <20190702141337.10528-1-philipp.puschmann@emlix.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+Uploading the firmware needs quite a few seconds if done at 115200 kbps. So set
+the operational frequency, usually 3 MHz, before uploading the firmware.
 
-drivers/net/wireless/ath/carl9170/usb.c: In function carl9170_usb_disconnect:
-drivers/net/wireless/ath/carl9170/usb.c:1110:21:
- warning: variable udev set but not used [-Wunused-but-set-variable]
+I have successfully tested this with a wl1837mod.
 
-It is not use since commit feb09b293327 ("carl9170:
-fix misuse of device driver API")
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Philipp Puschmann <philipp.puschmann@emlix.com>
 ---
- drivers/net/wireless/ath/carl9170/usb.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/bluetooth/hci_ll.c | 39 ++++++++++++++++++++------------------
+ 1 file changed, 21 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/carl9170/usb.c b/drivers/net/wireless/ath/carl9170/usb.c
-index 99f1897..486957a 100644
---- a/drivers/net/wireless/ath/carl9170/usb.c
-+++ b/drivers/net/wireless/ath/carl9170/usb.c
-@@ -1107,12 +1107,10 @@ static int carl9170_usb_probe(struct usb_interface *intf,
- static void carl9170_usb_disconnect(struct usb_interface *intf)
- {
- 	struct ar9170 *ar = usb_get_intfdata(intf);
--	struct usb_device *udev;
+diff --git a/drivers/bluetooth/hci_ll.c b/drivers/bluetooth/hci_ll.c
+index c04f5f9e1ed0..cbd7bc539d5e 100644
+--- a/drivers/bluetooth/hci_ll.c
++++ b/drivers/bluetooth/hci_ll.c
+@@ -601,6 +601,13 @@ static int ll_setup(struct hci_uart *hu)
  
- 	if (WARN_ON(!ar))
- 		return;
+ 	serdev_device_set_flow_control(serdev, true);
  
--	udev = ar->udev;
- 	wait_for_completion(&ar->fw_load_wait);
++	if (hu->oper_speed)
++		speed = hu->oper_speed;
++	else if (hu->proto->oper_speed)
++		speed = hu->proto->oper_speed;
++	else
++		speed = 0;
++
+ 	do {
+ 		/* Reset the Bluetooth device */
+ 		gpiod_set_value_cansleep(lldev->enable_gpio, 0);
+@@ -612,6 +619,20 @@ static int ll_setup(struct hci_uart *hu)
+ 			return err;
+ 		}
  
- 	if (IS_INITIALIZED(ar)) {
++		if (speed) {
++			__le32 speed_le = cpu_to_le32(speed);
++			struct sk_buff *skb;
++
++			skb = __hci_cmd_sync(hu->hdev,
++					     HCI_VS_UPDATE_UART_HCI_BAUDRATE,
++					     sizeof(speed_le), &speed_le,
++					     HCI_INIT_TIMEOUT);
++			if (!IS_ERR(skb)) {
++				kfree_skb(skb);
++				serdev_device_set_baudrate(serdev, speed);
++			}
++		}
++
+ 		err = download_firmware(lldev);
+ 		if (!err)
+ 			break;
+@@ -636,25 +657,7 @@ static int ll_setup(struct hci_uart *hu)
+ 	}
+ 
+ 	/* Operational speed if any */
+-	if (hu->oper_speed)
+-		speed = hu->oper_speed;
+-	else if (hu->proto->oper_speed)
+-		speed = hu->proto->oper_speed;
+-	else
+-		speed = 0;
+-
+-	if (speed) {
+-		__le32 speed_le = cpu_to_le32(speed);
+-		struct sk_buff *skb;
+ 
+-		skb = __hci_cmd_sync(hu->hdev, HCI_VS_UPDATE_UART_HCI_BAUDRATE,
+-				     sizeof(speed_le), &speed_le,
+-				     HCI_INIT_TIMEOUT);
+-		if (!IS_ERR(skb)) {
+-			kfree_skb(skb);
+-			serdev_device_set_baudrate(serdev, speed);
+-		}
+-	}
+ 
+ 	return 0;
+ }
 -- 
-2.7.4
-
+2.20.1
 
