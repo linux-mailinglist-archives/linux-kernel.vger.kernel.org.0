@@ -2,55 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88C475CF53
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 14:23:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E9485CF5A
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 14:25:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726825AbfGBMXb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 08:23:31 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:52704 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726341AbfGBMXb (ORCPT
+        id S1726993AbfGBMY7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 08:24:59 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:38140 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726418AbfGBMY7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 08:23:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=qKrxyQJ9SgUXm99WAZTTjGGR42eLnd0bh+xx2k6emyg=; b=PI/krrONm2KN5eB0OOM3DxRy7
-        VHoHinvVWugAGktCautlN02o/iJrv07CmHH6iiZih8czIKOr14F7lsDpPeB9w9gs7bI47+ad0LLlx
-        3XnSTfZ33d49SWRbklND4Xg9O8uVy9IuOisojt/5DZ/VyzKXtZcPqHhpadtBCoB2dmI/PpQJo2LGp
-        lK+v7InYtRaACYTvrXQOxFwwN2uL1OfhD70KvgaTM9fFJhd0vjtgHh+oBArZt5c3oiRuyGxKDe1sv
-        8kbE/axYsg+jcG9ERYzEyAApM5UeDHbPFpxKI1Xp9NtghLmDkUnLHnhUuX3wOiODrlhmxxUCk2SCL
-        pOxr7lrPw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hiHof-0000yN-MT; Tue, 02 Jul 2019 12:23:21 +0000
-Date:   Tue, 2 Jul 2019 05:23:21 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Pengfei Li <lpf.vector@gmail.com>
-Cc:     akpm@linux-foundation.org, peterz@infradead.org, urezki@gmail.com,
-        rpenyaev@suse.de, mhocko@suse.com, guro@fb.com,
-        aryabinin@virtuozzo.com, rppt@linux.ibm.com, mingo@kernel.org,
-        rick.p.edgecombe@intel.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/5] mm/vmalloc.c: Rename function __find_vmap_area() for
- readability
-Message-ID: <20190702122321.GC1729@bombadil.infradead.org>
-References: <20190630075650.8516-1-lpf.vector@gmail.com>
- <20190630075650.8516-4-lpf.vector@gmail.com>
+        Tue, 2 Jul 2019 08:24:59 -0400
+Received: by mail-qt1-f196.google.com with SMTP id n11so18172469qtl.5
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 05:24:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=3PjR78O3S5Kl2rlS/MhH2xJhjK2bFUrqsiWj/+MZnIY=;
+        b=G9MvS5X4de0urYlEvuNHmuLOzcgNtdIdigNunAkxFVE4sRD0ArD6w8PWpG0jdQuELE
+         QyCqCSSja8Hk3Yphpa0W7Wejb3s9Q+XS70ncCJsdPdU81sLnP8p3V9BhpXKb5ylY+8np
+         tVhHZEDZGEE2tbwn0zkZ35p42deb9oTc1EXW9dS89Gwpivhlaqa/5AlUlpnP5F42jqC3
+         8UsKlHIYH7wuF/JH2UVMoNbGHnGAgk+xUbzyY8kLXUzduMdu5mxtFTvoJ8TqYMCwi/lJ
+         /Ub2j4QYJB5RWhQDGVlfEsYbXgrkSyeE4BvLMikJ6J93fg5AJSieEbz0b8iHD7b0YGaw
+         QCVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=3PjR78O3S5Kl2rlS/MhH2xJhjK2bFUrqsiWj/+MZnIY=;
+        b=UbnIsRBCx0tu6D+qMgXWK2OriSt//at/F5tQNsQLfsyE8ElDDUrZ71opIsDjs0k4X8
+         9CgNN9Lvz5PfwlJsVDzT1smd8pEhf39ffHlzj08m/mmzLMSsJFpF6+7068itStTM2JYm
+         yVABgCOpieRqXTMz5vnzhVdwAtTxfZG5aAV09CxRDwiXCspsgBm99oxMJlYUlItdTwaX
+         Q8ff6310REQR/9uunadl72O3mV0tScIjgrk+QGaZRhIRvjscGd/w6DZszTrObcPe287O
+         6+GRW34L58wIL9CFW1N4HuBjtzOW1Pf+Oe/OYtVZ/h9alRelgBDRTjjT91DrWTTC1hLV
+         vSww==
+X-Gm-Message-State: APjAAAVLNkiCk8qop6HRSj2LkZ9cFqwHX7cNJn7Jw60mU7BFTQaz64Ua
+        QjgGTJAU9cAhEBxmcVd5PG4=
+X-Google-Smtp-Source: APXvYqyeUNYmFsM0YetlBDnh7JFe6FO6bQbsswa3WGFtws0LUGrEifK8MLPAw/JBR/fMyJg4gaHEng==
+X-Received: by 2002:a0c:8a43:: with SMTP id 3mr26861400qvu.138.1562070298308;
+        Tue, 02 Jul 2019 05:24:58 -0700 (PDT)
+Received: from localhost.localdomain ([45.58.106.199])
+        by smtp.gmail.com with ESMTPSA id j66sm6394999qkf.86.2019.07.02.05.24.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 02 Jul 2019 05:24:57 -0700 (PDT)
+From:   Gabriel Beauchamp <beauchampgabriel@gmail.com>
+To:     gregkh@linuxfoundation.org, christian.gromm@microchip.com,
+        colin.king@canonical.com, gustavo@embeddedor.com, joe@perches.com
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Gabriel Beauchamp <beauchampgabriel@gmail.com>
+Subject: [PATCH v4] Staging: most: fix coding style issues
+Date:   Tue,  2 Jul 2019 05:24:03 -0700
+Message-Id: <20190702122403.4557-1-beauchampgabriel@gmail.com>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190630165604.2452-1-beauchampgabriel@gmail.com>
+References: <20190630165604.2452-1-beauchampgabriel@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190630075650.8516-4-lpf.vector@gmail.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jun 30, 2019 at 03:56:48PM +0800, Pengfei Li wrote:
-> Rename function __find_vmap_area to __search_va_from_busy_tree to
-> indicate that it is searching in the *BUSY* tree.
+This is a patch for the core.[ch] files that fixes up warnings
+found with the checkpatch.pl tool.
 
-Wrong preposition; you search _in_ a tree, not _from_ a tree.
+Signed-off-by: Gabriel Beauchamp <beauchampgabriel@gmail.com>
+---
+Changes in v4:
+- fix a warning by making '*type' const
+Changes in v3:
+- add a break statement to preserve the control flow
+Changes in v2:
+- use a single snprintf
+---
+ drivers/staging/most/core.c | 11 ++++++++---
+ drivers/staging/most/core.h |  2 +-
+ 2 files changed, 9 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/staging/most/core.c b/drivers/staging/most/core.c
+index 86a8545c8d97..6a50e3090178 100644
+--- a/drivers/staging/most/core.c
++++ b/drivers/staging/most/core.c
+@@ -299,13 +299,17 @@ static ssize_t set_datatype_show(struct device *dev,
+ 				 char *buf)
+ {
+ 	int i;
++	const char *type = "unconfigured\n";
++
+ 	struct most_channel *c = to_channel(dev);
+ 
+ 	for (i = 0; i < ARRAY_SIZE(ch_data_type); i++) {
+-		if (c->cfg.data_type & ch_data_type[i].most_ch_data_type)
+-			return snprintf(buf, PAGE_SIZE, "%s", ch_data_type[i].name);
++		if (c->cfg.data_type & ch_data_type[i].most_ch_data_type) {
++			type = ch_data_type[i].name;
++			break;
++		}
+ 	}
+-	return snprintf(buf, PAGE_SIZE, "unconfigured\n");
++	return snprintf(buf, PAGE_SIZE, "%s", type);
+ }
+ 
+ static ssize_t set_subbuffer_size_show(struct device *dev,
+@@ -728,6 +732,7 @@ int most_add_link(char *mdev, char *mdev_ch, char *comp_name, char *link_name,
+ 
+ 	return link_channel_to_component(c, comp, link_name, comp_param);
+ }
++
+ /**
+  * remove_link_store - store function for remove_link attribute
+  * @drv: device driver
+diff --git a/drivers/staging/most/core.h b/drivers/staging/most/core.h
+index 652aaa771029..6ba7c2b34c1c 100644
+--- a/drivers/staging/most/core.h
++++ b/drivers/staging/most/core.h
+@@ -1,4 +1,4 @@
+-// SPDX-License-Identifier: GPL-2.0
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * most.h - API for component and adapter drivers
+  *
+-- 
+2.21.0
+
