@@ -2,134 +2,184 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6323F5C7D4
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 05:34:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 785795C7DE
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 05:37:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726993AbfGBDeN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 23:34:13 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:34322 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726803AbfGBDeM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 23:34:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Rvg0fFhiVW2SSgiiyKRZ1dYBb2123d87t9/7oxE/t3s=; b=hPiTv9NcFQT+UCy+e+gooSaND
-        sN1+wbD/4vxONjqjO+zJCyR6e8DZkzG/PQft9f18todOUGe/vHEb+N0BKS6/qFoXtRJxu3A42+9MC
-        /AHlvyjEhP2Lde+VRKdHc0Vg3dVVJ76SftLB05vR0RWNiZYt8+lw/UGWf8lFOAoRkQkcopd3sYPVD
-        hJ62GN7gHpSF0ADfjsqqdKK8DjBOkSGEt+OZrZwWW3ZS7L508/tM/0kkY8ozLmnm2M1xOoKe5K9y1
-        cSBO3tQJcMnZOm2ARmAFW/nStl5qD455jTxWoWOuGkhCbO8GWejGio1Kbev1mZRYWrJgwPBTjnvPx
-        NBXZxZd2g==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hi9YY-0000SB-QV; Tue, 02 Jul 2019 03:34:10 +0000
-Date:   Mon, 1 Jul 2019 20:34:10 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Seema Pandit <seema.pandit@intel.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>,
-        Robert Barror <robert.barror@intel.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH] filesystem-dax: Disable PMD support
-Message-ID: <20190702033410.GB1729@bombadil.infradead.org>
-References: <CAPcyv4jjqooboxivY=AsfEPhCvxdwU66GpwE9vM+cqrZWvtX3g@mail.gmail.com>
- <CAPcyv4h6HgNE38RF5TxO3C268ZvrxgcPNrPWOt94MnO5gP_pjw@mail.gmail.com>
- <CAPcyv4gwd1_VHk_MfHeNSxyH+N1=aatj9WkKXqYNPkSXe4bFDg@mail.gmail.com>
- <20190627195948.GB4286@bombadil.infradead.org>
- <CAPcyv4iB3f1hDdCsw=Cy234dP-RXpxGyXDoTwEU8nt5qUDEVQg@mail.gmail.com>
- <20190629160336.GB1180@bombadil.infradead.org>
- <CAPcyv4ge3Ht1k_v=tSoVA6hCzKg1N3imhs_rTL3oTB+5_KC8_Q@mail.gmail.com>
- <CAA9_cmcb-Prn6CnOx-mJfb9CRdf0uG9u4M1Vq1B1rKVemCD-Vw@mail.gmail.com>
- <20190630152324.GA15900@bombadil.infradead.org>
- <CAPcyv4j2NBPBEUU3UW1Q5OyOEuo9R5e90HpkowpeEkMsAKiUyQ@mail.gmail.com>
+        id S1726970AbfGBDhG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 23:37:06 -0400
+Received: from foss.arm.com ([217.140.110.172]:43662 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726434AbfGBDhF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Jul 2019 23:37:05 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B7BBD28;
+        Mon,  1 Jul 2019 20:37:04 -0700 (PDT)
+Received: from [10.163.1.231] (unknown [10.163.1.231])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9F2973F703;
+        Mon,  1 Jul 2019 20:37:01 -0700 (PDT)
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Subject: Re: [RFC 1/2] arm64/mm: Change THP helpers to comply with generic MM
+ semantics
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     linux-mm@kvack.org, Will Deacon <will@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Suzuki Poulose <suzuki.poulose@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Andrea Arcangeli <aarcange@redhat.com>
+References: <1561639696-16361-1-git-send-email-anshuman.khandual@arm.com>
+ <1561639696-16361-2-git-send-email-anshuman.khandual@arm.com>
+ <20190628102003.GA56463@arrakis.emea.arm.com>
+Message-ID: <82237e21-1f14-ab6e-0f80-9706141e2172@arm.com>
+Date:   Tue, 2 Jul 2019 09:07:28 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4j2NBPBEUU3UW1Q5OyOEuo9R5e90HpkowpeEkMsAKiUyQ@mail.gmail.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <20190628102003.GA56463@arrakis.emea.arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jun 30, 2019 at 02:37:32PM -0700, Dan Williams wrote:
-> On Sun, Jun 30, 2019 at 8:23 AM Matthew Wilcox <willy@infradead.org> wrote:
-> > I think my theory was slightly mistaken, but your fix has the effect of
-> > fixing the actual problem too.
-> >
-> > The xas->xa_index for a PMD is going to be PMD-aligned (ie a multiple of
-> > 512), but xas_find_conflict() does _not_ adjust xa_index (... which I
-> > really should have mentioned in the documentation).  So we go to sleep
-> > on the PMD-aligned index instead of the index of the PTE.  Your patch
-> > fixes this by using the PMD-aligned index for PTEs too.
-> >
-> > I'm trying to come up with a clean fix for this.  Clearly we
-> > shouldn't wait for a PTE entry if we're looking for a PMD entry.
-> > But what should get_unlocked_entry() return if it detects that case?
-> > We could have it return an error code encoded as an internal entry,
-> > like grab_mapping_entry() does.  Or we could have it return the _locked_
-> > PTE entry, and have callers interpret that.
-> >
-> > At least get_unlocked_entry() is static, but it's got quite a few callers.
-> > Trying to discern which ones might ask for a PMD entry is a bit tricky.
-> > So this seems like a large patch which might have bugs.
-> >
-> > Thoughts?
+
+On 06/28/2019 03:50 PM, Catalin Marinas wrote:
+> Hi Anshuman,
+
+Hello Catalin,
+
 > 
-> ...but if it was a problem of just mismatched waitqueue's I would have
-> expected it to trigger prior to commit b15cd800682f "dax: Convert page
-> fault handlers to XArray".
-
-That commit converts grab_mapping_entry() (called by dax_iomap_pmd_fault())
-from calling get_unlocked_mapping_entry() to calling get_unlocked_entry().
-get_unlocked_mapping_entry() (eventually) called __radix_tree_lookup()
-instead of dax_find_conflict().
-
-> This hunk, if I'm reading it correctly,
-> looks suspicious: @index in this case is coming directly from
-> vm->pgoff without pmd alignment adjustment whereas after the
-> conversion it's always pmd aligned from the xas->xa_index. So perhaps
-> the issue is that the lock happens at pte granularity. I expect it
-> would cause the old put_locked_mapping_entry() to WARN, but maybe that
-> avoids the lockup and was missed in the bisect.
-
-I don't think that hunk is the problem.  The __radix_tree_lookup()
-is going to return a 'slot' which points to the canonical slot, no
-matter which of the 512 indices corresponding to that slot is chosen.
-So I think it's going to do essentially the same thing.
-
-> @@ -884,21 +711,18 @@ static void *dax_insert_entry(struct
-> address_space *mapping,
->                  * existing entry is a PMD, we will just leave the PMD in the
->                  * tree and dirty it if necessary.
->                  */
-> -               struct radix_tree_node *node;
-> -               void **slot;
-> -               void *ret;
-> -
-> -               ret = __radix_tree_lookup(pages, index, &node, &slot);
-> -               WARN_ON_ONCE(ret != entry);
-> -               __radix_tree_replace(pages, node, slot,
-> -                                    new_entry, NULL);
-> +               void *old = dax_lock_entry(xas, new_entry);
-> +               WARN_ON_ONCE(old != xa_mk_value(xa_to_value(entry) |
-> +                                       DAX_LOCKED));
->                 entry = new_entry;
-> +       } else {
-> +               xas_load(xas);  /* Walk the xa_state */
->         }
+> On Thu, Jun 27, 2019 at 06:18:15PM +0530, Anshuman Khandual wrote:
+>> pmd_present() and pmd_trans_huge() are expected to behave in the following
+>> manner during various phases of a given PMD. It is derived from a previous
+>> detailed discussion on this topic [1] and present THP documentation [2].
+>>
+>> pmd_present(pmd):
+>>
+>> - Returns true if pmd refers to system RAM with a valid pmd_page(pmd)
+>> - Returns false if pmd does not refer to system RAM - Invalid pmd_page(pmd)
+>>
+>> pmd_trans_huge(pmd):
+>>
+>> - Returns true if pmd refers to system RAM and is a trans huge mapping
+>>
+>> -------------------------------------------------------------------------
+>> |	PMD states	|	pmd_present	|	pmd_trans_huge	|
+>> -------------------------------------------------------------------------
+>> |	Mapped		|	Yes		|	Yes		|
+>> -------------------------------------------------------------------------
+>> |	Splitting	|	Yes		|	Yes		|
+>> -------------------------------------------------------------------------
+>> |	Migration/Swap	|	No		|	No		|
+>> -------------------------------------------------------------------------
 > 
->         if (dirty)
-> -               radix_tree_tag_set(pages, index, PAGECACHE_TAG_DIRTY);
-> +               xas_set_mark(xas, PAGECACHE_TAG_DIRTY);
+> Before we actually start fixing this, I would strongly suggest that you
+> add a boot selftest (see lib/Kconfig.debug for other similar cases)
+> which checks the consistency of the page table macros w.r.t. the
+> expected mm semantics. Once the mm maintainers agreed with the
+> semantics, it will really help architecture maintainers in implementing
+> them correctly.
+
+Sure and it will help all architectures to be in sync wrt semantics.
+
 > 
-> -       xa_unlock_irq(pages);
-> +       xas_unlock_irq(xas);
->         return entry;
->  }
+> You wouldn't need actual page tables, just things like assertions on
+> pmd_trans_huge(pmd_mkhuge(pmd)) == true. You could go further and have
+> checks on pmdp_invalidate(&dummy_vma, dummy_addr, &dummy_pmd) with the
+> dummy_* variables on the stack.
+
+Hmm. I guess macros which operate directly on a page table entry will be
+okay but the ones which check on specific states for VMA or MM might be
+bit tricky. Try to emulate VMA/MM states while on stack ?. But sure, will
+explore adding such a test.
+
+> 
+>> The problem:
+>>
+>> PMD is first invalidated with pmdp_invalidate() before it's splitting. This
+>> invalidation clears PMD_SECT_VALID as below.
+>>
+>> PMD Split -> pmdp_invalidate() -> pmd_mknotpresent -> Clears PMD_SECT_VALID
+>>
+>> Once PMD_SECT_VALID gets cleared, it results in pmd_present() return false
+>> on the PMD entry.
+> 
+> I think that's an inconsistency in the expected semantics here. Do you
+> mean that pmd_present(pmd_mknotpresent(pmd)) should be true? If not, do
+
+Actually that is true (more so if we are using generic pmdp_invalidate). Else
+in general pmd_present(pmdp_invalidate(pmd)) needs to be true to successfully
+represent a splitting THP. That is what Andrea explained back on this thread
+(https://lkml.org/lkml/2018/10/17/231).
+
+Extracting relevant sections from that thread -
+
+"pmd_present never meant the real present bit in the pte was set, it just means
+the pmd points to RAM. It means it doesn't point to swap or migration entry and
+you can do pmd_to_page and it works fine."
+
+"The clear of the real present bit during pmd (virtual) splitting is done with
+pmdp_invalidate, that is created specifically to keeps pmd_trans_huge=true,
+pmd_present=true despite the present bit is not set. So you could imagine
+_PAGE_PSE as the real present bit."
+
+pmd_present() and pmd_mknotpresent() are not exact inverse.
+
+Problem is all platforms using generic pmdp_invalidate() calls pmd_mknotpresent()
+which invariably across platforms remove the valid or present bit from the entry.
+The point to note here is that pmd_mknotpresent() invalidates the entry from MMU
+point of view but pmd_present() does not check for a MMU valid PMD entry. Hence
+pmd_present(pmd_mknotpresent(pmd)) can still be true.
+
+In absence of a positive section mapping bit on arm64, PTE_SPECIAL is being set
+temporarily to remember that it was a mapped PMD which got invalidated recently
+but which still points to memory. Hence pmd_present() must evaluate true.
+
+pmd_mknotpresent() does not make !pmd_present() it just invalidates the entry.
+
+> we need to implement our own pmdp_invalidate() or change the generic one
+> to set a "special" bit instead of just a pmd_mknotpresent?
+
+Though arm64 can subscribe __HAVE_ARCH_PMDP_INVALIDATE and implement it's own
+pmdp_invalidate() in order to not call pmd_mknotpresent() and instead operate
+on the invalid and special bits directly. But its not going to alter relevant
+semantics here. AFAICS it might be bit better as it saves pmd_mknotpresent()
+from putting in that special bit in there which it is not supposed do.
+
+IFAICS there is no compelling reason for generic pmdp_invalidate() to change
+either. It calls pmd_mknotpresent() which invalidates the entry through valid
+or present bit and platforms which have dedicated huge page bit can still test
+positive for pmd_present() after it's invalidation. It works for such platforms.
+Platform specific override is required when invalidation via pmd_mknotpresent()
+is not enough.
+
+> 
+>> +static inline int pmd_present(pmd_t pmd)
+>> +{
+>> +	if (pte_present(pmd_pte(pmd)))
+>> +		return 1;
+>> +
+>> +	return pte_special(pmd_pte(pmd));
+>> +}
+> [...]
+>> +static inline pmd_t pmd_mknotpresent(pmd_t pmd)
+>> +{
+>> +	pmd = pte_pmd(pte_mkspecial(pmd_pte(pmd)));
+>> +	return __pmd(pmd_val(pmd) & ~PMD_SECT_VALID);
+>> +}
+> 
+> I'm not sure I agree with the semantics here where pmd_mknotpresent()
+> does not actually make pmd_present() == false.
+
+As Andrea explained, pmd_present() does not check validity of the PMD entry
+from MMU perspective but the presence of a valid pmd_page() which still refers
+to a valid struct page in the memory. It is irrespective of whether the entry
+in itself is valid for MMU walk or not.
+
++ Cc: Andrea Arcangeli <aarcange@redhat.com>
+
+I have added Andrea on this thread if he would like to add something.
+
+- Anshuman
