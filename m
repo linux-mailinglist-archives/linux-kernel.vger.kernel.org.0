@@ -2,95 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E78B5DB1B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 03:45:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 47ED55DAAB
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 03:23:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727127AbfGCBpJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 21:45:09 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:45317 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726329AbfGCBpI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 21:45:08 -0400
-Received: by mail-io1-f67.google.com with SMTP id e3so578184ioc.12;
-        Tue, 02 Jul 2019 18:45:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=e2dHY1JEDP4p/Iin7PE911+goagiVJlOgF+4JmS/qJI=;
-        b=fyZTRJk1EU58W3X9rMzFfX/rWwLk6qDxZqQwcdvO1B+WhX5Ay/UJIb48NnkcP5NLcS
-         ceblxUmOFxSPlx1GBeqmcDjUbH6sB6hrn9ORIMObg1R8IvxgkKwhM0eHPX8TqeaCFty8
-         N1KWPAjaJlmDjw1YCme0ht1QbwjJUJm/C7jaXTjMhpiThgVwTaGdpllJwhVOfBbta9Qe
-         iEOIk5xCVFOv1RNqmaZTN85pB/FACzYDacf0MfBCtismFZAJ99Yag41k6NHrbx4zHk4l
-         ARNK8o0PJYPNErN/pE8MUBWWxADpIOzOOzbW9BqxwCooNLIvnGGGb//TGKGEF4OATYas
-         R7kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=e2dHY1JEDP4p/Iin7PE911+goagiVJlOgF+4JmS/qJI=;
-        b=oOOz2HUqFrPw/wteX/d3dkFmUpo31fqug9S9NZ0/kpIn2yfpB8KPAOaMSEmwVDUiZb
-         ULrjoq28SJ7RVO7tdfbpe8jqFmCyAaVre0/RLIqOdoDNnIrzkNoKIy8g3dyJNZSY1lCZ
-         X42QmC/bqv3gxpH1fJ1RkUEvHO9kXtm+jSMkRnr4x0U4kgg8nzEy7ZPSZ+sWmTnkAzWU
-         5lOWkDOrvpIgQCubD1QUjAEPYrDq0xrGBxX9tLu1gu+I9/I0pLqzLEg64fR1IDrlSQlk
-         8y73Vh2YKYKC8xUgpDivQKl3HbmSYjiqjm605kdJ3MWuIqSbZOth+wU+jbYPSaVMzajh
-         qaiQ==
-X-Gm-Message-State: APjAAAX5cDPVTAkVXWbKHowTP9x2wMJdmi5H18I8Gtga0fgblGR+0WM2
-        9FyMt75IxS3FxZnvi0HpMIe4NTENa9Sb3KXK4K4hOXyl
-X-Google-Smtp-Source: APXvYqwXnBozA4Eg8repxRDmwc7v+ie6ZVutTX66BvuZfbKmO1Vnft8PUGkmnX5djxbfa6rxW7cPYo1M3PTW7hEaw/k=
-X-Received: by 2002:a6b:f607:: with SMTP id n7mr7314656ioh.263.1562099449824;
- Tue, 02 Jul 2019 13:30:49 -0700 (PDT)
+        id S1727171AbfGCBXF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 21:23:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33126 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726430AbfGCBXF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 21:23:05 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 12B5B21897;
+        Tue,  2 Jul 2019 20:33:57 +0000 (UTC)
+Date:   Tue, 2 Jul 2019 16:33:56 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Eiichi Tsukata <devel@etsukata.com>, edwintorok@gmail.com,
+        mingo@redhat.com, bp@alien8.de, hpa@zytor.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
+        Joel Fernandes <joel@joelfernandes.org>
+Subject: Re: [PATCH] x86/stacktrace: Do not access user space memory
+ unnecessarily
+Message-ID: <20190702163356.205bbe14@gandalf.local.home>
+In-Reply-To: <20190702201827.GF3402@hirez.programming.kicks-ass.net>
+References: <20190702053151.26922-1-devel@etsukata.com>
+        <20190702072821.GX3419@hirez.programming.kicks-ass.net>
+        <alpine.DEB.2.21.1907021400350.1802@nanos.tec.linutronix.de>
+        <20190702113355.5be9ebfe@gandalf.local.home>
+        <20190702133905.1482b87e@gandalf.local.home>
+        <20190702201827.GF3402@hirez.programming.kicks-ass.net>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20190630131445.25712-1-robdclark@gmail.com> <20190630131445.25712-4-robdclark@gmail.com>
-In-Reply-To: <20190630131445.25712-4-robdclark@gmail.com>
-From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Date:   Tue, 2 Jul 2019 14:30:39 -0600
-Message-ID: <CAOCk7NpyYSiDHP84E4bQiTA1Wk9Sd4w-F8-Zqu9tKtDoUTsFDw@mail.gmail.com>
-Subject: Re: [Freedreno] [PATCH 3/3] drm/msm/dsi: make sure we have panel or
- bridge earlier
-To:     Rob Clark <robdclark@gmail.com>
-Cc:     "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        Rob Clark <robdclark@chromium.org>,
-        David Airlie <airlied@linux.ie>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        Jordan Crouse <jcrouse@codeaurora.org>,
-        Abhinav Kumar <abhinavk@codeaurora.org>,
-        lkml <linux-kernel@vger.kernel.org>, Sean Paul <sean@poorly.run>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        Chandan Uddaraju <chandanu@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jun 30, 2019 at 7:16 AM Rob Clark <robdclark@gmail.com> wrote:
-> --- a/drivers/gpu/drm/msm/dsi/dsi_host.c
-> +++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
-> @@ -1824,6 +1824,20 @@ int msm_dsi_host_init(struct msm_dsi *msm_dsi)
->                 goto fail;
->         }
->
-> +       /*
-> +        * Make sure we have panel or bridge early, before we start
-> +        * touching the hw.  If bootloader enabled the display, we
-> +        * want to be sure to keep it running until the bridge/panel
-> +        * is probed and we are all ready to go.  Otherwise we'll
-> +        * kill the display and then -EPROBE_DEFER
-> +        */
-> +       if (IS_ERR(of_drm_find_panel(msm_host->device_node)) &&
-> +                       !of_drm_find_bridge(msm_host->device_node)) {
-> +               pr_err("%s: no panel or bridge yet\n", __func__);
+On Tue, 2 Jul 2019 22:18:27 +0200
+Peter Zijlstra <peterz@infradead.org> wrote:
 
-pr_err() doesn't seem right for a probe defer condition.  pr_dbg?
+> On Tue, Jul 02, 2019 at 01:39:05PM -0400, Steven Rostedt wrote:
+> > On Tue, 2 Jul 2019 11:33:55 -0400
+> > Steven Rostedt <rostedt@goodmis.org> wrote:
+> >   
+> > > On Tue, 2 Jul 2019 16:14:05 +0200 (CEST)
+> > > Thomas Gleixner <tglx@linutronix.de> wrote:
+> > >   
+> > > > On Tue, 2 Jul 2019, Peter Zijlstra wrote:
+> > > >     
+> > > > > On Tue, Jul 02, 2019 at 02:31:51PM +0900, Eiichi Tsukata wrote:      
+> > > > > > Put the boundary check before it accesses user space to prevent unnecessary
+> > > > > > access which might crash the machine.
+> > > > > > 
+> > > > > > Especially, ftrace preemptirq/irq_disable event with user stack trace
+> > > > > > option can trigger SEGV in pid 1 which leads to panic.      
+> > > 
+> > > Note, I'm only able to trigger this crash with the irq_disable event.
+> > > The irq_enable and preempt_disable/enable events work just fine. This
+> > > leads me to believe that the TRACE_IRQS_OFF macro (which uses a thunk
+> > > trampoline) may have some issues and is probably the place to look at.  
+> > 
+> > I figured it out.
+> > 
+> > It's another "corruption of the cr2" register issue. The following  
+> 
+> Arrggghhh..
+> 
+> > patch makes the issue go away. I'm not suggesting that we use this
+> > patch, but it shows where the bug lies.
+> > 
+> > IIRC, there was patches posted before that fixed this issue. I'll go
+> > look to see if I can dig them up. Was it Joel that sent them?  
+> 
+> https://lkml.kernel.org/r/20190320221534.165ab87b@oasis.local.home
 
-> +               return -EPROBE_DEFER;
-> +       }
-> +
-> +
+Oh, I wrote the patches. No wonder I couldn't find them in my local
+"patchwork". It doesn't include patches I write. But still, I
+completely forgot. Better send me to the nursing home :-p
 
-Tested-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Reviewed-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+> 
+> I think; lemme re-read that thread.
+
+I'll need to do that too.
+
+-- Steve
