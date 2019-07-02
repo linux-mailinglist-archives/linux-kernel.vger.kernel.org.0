@@ -2,57 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B27125D978
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:44:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 644345D988
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:47:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727276AbfGCAnx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 20:43:53 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:39117 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726736AbfGCAnx (ORCPT
+        id S1727207AbfGCAqv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 20:46:51 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:33748 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727040AbfGCAqu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 20:43:53 -0400
-Received: by mail-ot1-f65.google.com with SMTP id r21so31981otq.6;
-        Tue, 02 Jul 2019 17:43:52 -0700 (PDT)
+        Tue, 2 Jul 2019 20:46:50 -0400
+Received: by mail-ot1-f68.google.com with SMTP id q20so532449otl.0
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 17:46:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=googlemail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=3GdscGqh/egdkRhC/e2+dFv4bjbb+RawTDhOEItQGZY=;
-        b=hQ/EHaWPZ7DY6zXD5ep3cjow9hECIwRyxvYLhtRiOBnmmGgc07CsbysXJM7KQ5D0kq
-         v7RpavAzYWdsV4rP9goQoZVFa28nRw40Jrew9a5It5qe8BzaiDMBDkEvcRMbP/rnM/yt
-         NZg2liIbBRDRGNSdUzeTiAmOfB2N4a2x1UM/lMkbWbIeDy0smc0cZyYT7PdOhFXCONj3
-         QxE8EmaexpOpMJalIOkz8PdnU6PT3tYXOMbkI3wmqDBaV+YFYgMWfMUCQzUaku9zuh/J
-         QQAJYqYW7hQ67WWIWtA3APhoa8Az1S4OShZIEyNLDXDFS9VXYk1w+EmP0cQyyLCIpKn4
-         N73w==
+        bh=Y8CM/kRSfMkCLm6zorYMm+jmWg0Fr4K0UKURUwHLiI0=;
+        b=PfODrLPtL/UekUDd5MyivTx7mO9uIfNsXn1/AL0i36O2i27oA1cIPzJin/uG0IzLpt
+         S5Xx4hNZq+KvGLbjNVEp6xTRbGAEhi4yUzsW8Ess3o3NKkAOE95F2vOSdyhlEcznDyvv
+         xWIqWX+5HZ4QLRhxnRt7fzGhBZa4c+Ajk0dju9VV38wAzvIA9M8anMy41hE5CJCzvwBg
+         c5+JnLVr/aQTZoX0A+1JjZ4QhYcpUFm1qVW/f/D+wGe/TmQIsuVjaKeb/c3hSHeL4/rQ
+         ufoupQW/yrA97DAebmIYhmreBqQP+BMggZbsvGxPifIVEyoan8dMPhjTceDK9vkatgAb
+         W4og==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=3GdscGqh/egdkRhC/e2+dFv4bjbb+RawTDhOEItQGZY=;
-        b=ash5rukF5M2sOvPiP0tnjYSulfJLHvA4rB/g9Un4kkK7evT6/ilyjQuSbFdLaTAnuT
-         YUSt3PqKhVWTQyN6hvwlaeLZve6HQmvp11JCNm0qyEiTyg15YRJ3/2nTR5d14PBpZvQN
-         y+kFhp00fGC185QKVdi3WKQSGkWQbXI2fJYhArxhqhHjpLU/JtB3favnntRDIachh7YW
-         601SybL6FkmIHT9JmeWfYzVgm4S2wrtlmIRcxs36Rx1sv5EvVIIr9abOOJGyTVprS7Tu
-         jKCa7Z6bOZ2dzeRJ1EP+zpy7TTUQvJjGowJGo+u0bwRJ+uzevTu+1pDsfLNqrfoydVv+
-         sEBA==
-X-Gm-Message-State: APjAAAW8A5bTYYcbaoarGTv+P/Nqkv/lX3awZsA3LQuG62gzwd5Beuad
-        hKWk2oQahxES0i4bA4zgfU0T1/PRmrizJXXJrUBy3w==
-X-Google-Smtp-Source: APXvYqxsQ6td77BH829BNXfHoHJ00hWmFYkW/r/LgoW6R6eBpVJaBoDXXEdJFK4UmadzhQd7n8KvCbYnxfBy39BYuX8=
-X-Received: by 2002:a9d:226c:: with SMTP id o99mr25378901ota.42.1562111275781;
- Tue, 02 Jul 2019 16:47:55 -0700 (PDT)
+        bh=Y8CM/kRSfMkCLm6zorYMm+jmWg0Fr4K0UKURUwHLiI0=;
+        b=h/p4P/nL4atA09pGDbnVvmL3njNVvf7880wfxR+Wp5/SFoUswiDwypGKD98luCisEJ
+         fwiMRGmPOZ6f3/olfJorcsE+TCs4IHXKgyQmaxr30/UniXVfGYA1Zeq4RZ1S1Qb/AJLQ
+         cEph1mO/CVnmykCUArVVm2tLz5yLRXoj8+0Zu4ezrjdComgZDWC7WFQh2IQZWK8w5Xwf
+         gP5UsFYuvX/MFF94qVEfK6mcYwerMQ40GKj3WOeMMonouy0Y6X+niYqnHB1CMuYHhbJE
+         ZhyMve26IgIEo/zly9wWljV2/c5aLYllX2LQKNOY3/C9CWqSIrhO/UpYX+oCcpKf44KN
+         XQEg==
+X-Gm-Message-State: APjAAAUCo+A/z9h2xDe55LeV2WyAyt4TbabGIVUy76gXBBJU3X6qz1n/
+        Io02aXwA3pXbwEff8HzVzpYq25B0zLALDrYqlepcvg==
+X-Google-Smtp-Source: APXvYqxPGdi5M83frYcEZkzIV4wjd1HSnqegfLcqSwdA8d9Vo+sKThli7P7OnkwgIwXWNWYlTAlgfzSDd8+mXHOWQbM=
+X-Received: by 2002:a9d:39a6:: with SMTP id y35mr27461252otb.81.1562111509160;
+ Tue, 02 Jul 2019 16:51:49 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190701091258.3870-1-narmstrong@baylibre.com> <20190701091258.3870-12-narmstrong@baylibre.com>
-In-Reply-To: <20190701091258.3870-12-narmstrong@baylibre.com>
+References: <20190701104705.18271-1-narmstrong@baylibre.com> <20190701104705.18271-7-narmstrong@baylibre.com>
+In-Reply-To: <20190701104705.18271-7-narmstrong@baylibre.com>
 From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Wed, 3 Jul 2019 01:47:44 +0200
-Message-ID: <CAFBinCBg57gh1x3CKs-YrCvTD0WR2s5zVGWtycb=RGqMiQ-VgA@mail.gmail.com>
-Subject: Re: [RFC/RFT v3 11/14] arm64: dts: meson-g12a: add cpus OPP table
+Date:   Wed, 3 Jul 2019 01:51:38 +0200
+Message-ID: <CAFBinCD8aBVo-WTaKTe7JyxqFyd=cVXDzHpwED4dx=rUtE3Uig@mail.gmail.com>
+Subject: Re: [RFC 06/11] soc: amlogic: clk-measure: Add support for SM1
 To:     Neil Armstrong <narmstrong@baylibre.com>
 Cc:     jbrunet@baylibre.com, khilman@baylibre.com,
-        linux-arm-kernel@lists.infradead.org,
         linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+        linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -61,21 +60,100 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi Neil,
 
-On Mon, Jul 1, 2019 at 11:13 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
+On Mon, Jul 1, 2019 at 12:49 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
 >
-> Add the OPP table taken from the vendor u200 and u211 DTS.
+> Add the clk-measurer clocks IDs for the Amlogic SM1 SoC family.
 >
-> The Amlogic G12A SoC seems to available in 3 types :
-> - low-speed: up to 1,8GHz
-> - mid-speed: up to 1,908GHz
-> - high-speed: up to 2.1GHz
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> ---
+>  drivers/soc/amlogic/meson-clk-measure.c | 134 ++++++++++++++++++++++++
+>  1 file changed, 134 insertions(+)
 >
-> And the S905X2 opp voltages are slightly higher than the S905D2
-> OPP voltages for the low-speed table.
+> diff --git a/drivers/soc/amlogic/meson-clk-measure.c b/drivers/soc/amlogic/meson-clk-measure.c
+> index f09b404b39d3..e32e97613000 100644
+> --- a/drivers/soc/amlogic/meson-clk-measure.c
+> +++ b/drivers/soc/amlogic/meson-clk-measure.c
+> @@ -357,6 +357,136 @@ static struct meson_msr_id clk_msr_g12a[CLK_MSR_MAX] = {
+>         CLK_MSR_ID(122, "audio_pdm_dclk"),
+>  };
 >
-> This adds the conservative OPP table with the S905X2 higher voltages
-> and the maximum low-speed OPP frequency.
-have you considered all three as separate voltage tables?
-you're other patches are assigning the OPP table to the CPU in the
-board.dts anyways, so it's easy to use different OPP tables for
-different boards
+> +static struct meson_msr_id clk_msr_sm1[CLK_MSR_MAX] = {
+> +       CLK_MSR_ID(0, "ring_osc_out_ee_0"),
+> +       CLK_MSR_ID(1, "ring_osc_out_ee_1"),
+> +       CLK_MSR_ID(2, "ring_osc_out_ee_2"),
+> +       CLK_MSR_ID(3, "ring_osc_out_ee_3"),
+> +       CLK_MSR_ID(4, "gp0_pll"),
+> +       CLK_MSR_ID(5, "gp1_pll"),
+> +       CLK_MSR_ID(6, "enci"),
+> +       CLK_MSR_ID(7, "clk81"),
+> +       CLK_MSR_ID(8, "encp"),
+> +       CLK_MSR_ID(9, "encl"),
+> +       CLK_MSR_ID(10, "vdac"),
+> +       CLK_MSR_ID(11, "eth_tx"),
+> +       CLK_MSR_ID(12, "hifi_pll"),
+> +       CLK_MSR_ID(13, "mod_tcon"),
+> +       CLK_MSR_ID(14, "fec_0"),
+> +       CLK_MSR_ID(15, "fec_1"),
+> +       CLK_MSR_ID(16, "fec_2"),
+> +       CLK_MSR_ID(17, "sys_pll_div16"),
+> +       CLK_MSR_ID(18, "sys_cpu_div16"),
+> +       CLK_MSR_ID(19, "lcd_an_ph2"),
+> +       CLK_MSR_ID(20, "rtc_osc_out"),
+> +       CLK_MSR_ID(21, "lcd_an_ph3"),
+> +       CLK_MSR_ID(22, "eth_phy_ref"),
+> +       CLK_MSR_ID(23, "mpll_50m"),
+> +       CLK_MSR_ID(24, "eth_125m"),
+> +       CLK_MSR_ID(25, "eth_rmii"),
+> +       CLK_MSR_ID(26, "sc_int"),
+> +       CLK_MSR_ID(27, "in_mac"),
+> +       CLK_MSR_ID(28, "sar_adc"),
+> +       CLK_MSR_ID(29, "pcie_inp"),
+> +       CLK_MSR_ID(30, "pcie_inn"),
+> +       CLK_MSR_ID(31, "mpll_test_out"),
+> +       CLK_MSR_ID(32, "vdec"),
+> +       CLK_MSR_ID(34, "eth_mpll_50m"),
+> +       CLK_MSR_ID(35, "mali"),
+> +       CLK_MSR_ID(36, "hdmi_tx_pixel"),
+> +       CLK_MSR_ID(37, "cdac"),
+> +       CLK_MSR_ID(38, "vdin_meas"),
+> +       CLK_MSR_ID(39, "bt656"),
+> +       CLK_MSR_ID(40, "arm_ring_osc_out_4"),
+> +       CLK_MSR_ID(41, "eth_rx_or_rmii"),
+> +       CLK_MSR_ID(42, "mp0_out"),
+> +       CLK_MSR_ID(43, "fclk_div5"),
+> +       CLK_MSR_ID(44, "pwm_b"),
+> +       CLK_MSR_ID(45, "pwm_a"),
+> +       CLK_MSR_ID(46, "vpu"),
+> +       CLK_MSR_ID(47, "ddr_dpll_pt"),
+> +       CLK_MSR_ID(48, "mp1_out"),
+> +       CLK_MSR_ID(49, "mp2_out"),
+> +       CLK_MSR_ID(50, "mp3_out"),
+> +       CLK_MSR_ID(51, "sd_emmc_c"),
+> +       CLK_MSR_ID(52, "sd_emmc_b"),
+> +       CLK_MSR_ID(53, "sd_emmc_a"),
+> +       CLK_MSR_ID(54, "vpu_clkc"),
+> +       CLK_MSR_ID(55, "vid_pll_div_out"),
+> +       CLK_MSR_ID(56, "wave420l_a"),
+> +       CLK_MSR_ID(57, "wave420l_c"),
+> +       CLK_MSR_ID(58, "wave420l_b"),
+> +       CLK_MSR_ID(59, "hcodec"),
+> +       CLK_MSR_ID(40, "arm_ring_osc_out_5"),
+is this index 40 or 60?
+
+> +       CLK_MSR_ID(61, "gpio_msr"),
+> +       CLK_MSR_ID(62, "hevcb"),
+> +       CLK_MSR_ID(63, "dsi_meas"),
+> +       CLK_MSR_ID(64, "spicc_1"),
+> +       CLK_MSR_ID(65, "spicc_0"),
+> +       CLK_MSR_ID(66, "vid_lock"),
+> +       CLK_MSR_ID(67, "dsi_phy"),
+> +       CLK_MSR_ID(68, "hdcp22_esm"),
+> +       CLK_MSR_ID(69, "hdcp22_skp"),
+> +       CLK_MSR_ID(70, "pwm_f"),
+> +       CLK_MSR_ID(71, "pwm_e"),
+> +       CLK_MSR_ID(72, "pwm_d"),
+> +       CLK_MSR_ID(73, "pwm_c"),
+> +       CLK_MSR_ID(74, "arm_ring_osc_out_6"),
+> +       CLK_MSR_ID(75, "hevcf"),
+> +       CLK_MSR_ID(74, "arm_ring_osc_out_7"),
+is this index 74 or 76?
