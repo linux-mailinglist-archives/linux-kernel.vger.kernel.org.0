@@ -2,107 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CBF25D91B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:35:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5034B5DA7C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 03:13:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727275AbfGCAeg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 20:34:36 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:40599 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726736AbfGCAeg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 20:34:36 -0400
-Received: by mail-io1-f67.google.com with SMTP id n5so676221ioc.7;
-        Tue, 02 Jul 2019 17:34:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=I1EqOkAJ16JrzJYbRJsKM2M5z/cziA7sysWiFBw1wCQ=;
-        b=cHbuCUvN+s8Lxw2Gyg3gi4DFYo+F4B8Y2Kkpc1I2sZAekDpolXvsjxL2vCLw+zBEqh
-         XqJBFdv4ZmCJk7ExnlSoa231CpUFJrcpmHzSb6QDviDzMXT80sTIefoueo7dajOTdTbi
-         aSPGfyYr4g1yfJTGDte3QRKpLEKt1aqtYlMj+ltHYK9bVYthpd6JxS8HV8gAdXOBjeLa
-         uTskqhloZdHDc8VdGHBGGTqQcEBxsoj4u5Nv/wU43dV0lo6VBVMpKiI5X6sDz/w7Ybgg
-         oCN/1Oo3aDlnsbAFjFi5ldNCfMPtrnA2qTcQ7ew+gfk4C/znPwGU2nex1jNx62tD5fmB
-         J9iw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=I1EqOkAJ16JrzJYbRJsKM2M5z/cziA7sysWiFBw1wCQ=;
-        b=SU6OceEQM4IhouTK4HKhjslxEWRHAF1qrvr9w3/5SGMIxSnF2UgxRlu3d8lj6qq8dB
-         OgyiuRS+k11Poq7aDnyVCoQm9OkdvVfVWfgJOGXlbXjUiChdxbrBgikkIMOU/Qu029aJ
-         a9ACX3jr46sS/sGYlZWE+YNNzJ5e7+yqQGbgc34Urk7tftd8GziorjFH3ESdyeuX14M4
-         +d8D2C5hPW5kc+0/ZT6/aNp+4O+pDcv8ifxFcmke/Td6GFS87518EUHBidWHHoA+JHDN
-         Z3LDnEhMsy+wpl9/bldazeM9790vfNcfsRDGqo5vmnQYZ6xcokboCoYzn6tileD7QyNc
-         RGPA==
-X-Gm-Message-State: APjAAAVn2NugxIQlKqr6V4ApAi4P5+DMqebtDhd+HEDV2pQcbOzOlHtG
-        CCL2D9D0iHNMMnYOQZOLM2p/al1yJimGaC4vnNEPyA==
-X-Google-Smtp-Source: APXvYqz2ea1Co87gENT0Z1FYNhMJZ2SZm3RqcDFrMzN+sTpYjy5Oh6gRJ+UNd2Qx/1ivh+Y0WvJG4xn2CxoR0RmeRwA=
-X-Received: by 2002:a02:ac09:: with SMTP id a9mr39228087jao.48.1562102997246;
- Tue, 02 Jul 2019 14:29:57 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190630131445.25712-1-robdclark@gmail.com> <20190630131445.25712-4-robdclark@gmail.com>
- <CAOCk7NpyYSiDHP84E4bQiTA1Wk9Sd4w-F8-Zqu9tKtDoUTsFDw@mail.gmail.com>
-In-Reply-To: <CAOCk7NpyYSiDHP84E4bQiTA1Wk9Sd4w-F8-Zqu9tKtDoUTsFDw@mail.gmail.com>
-From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Date:   Tue, 2 Jul 2019 15:29:47 -0600
-Message-ID: <CAOCk7NrxsbAd9sp6m9RSfkRjwW5GZH7qJv2fd78bogas-4YMWA@mail.gmail.com>
-Subject: Re: [Freedreno] [PATCH 3/3] drm/msm/dsi: make sure we have panel or
- bridge earlier
-To:     Rob Clark <robdclark@gmail.com>
-Cc:     "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        Rob Clark <robdclark@chromium.org>,
-        David Airlie <airlied@linux.ie>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        Jordan Crouse <jcrouse@codeaurora.org>,
-        Abhinav Kumar <abhinavk@codeaurora.org>,
-        lkml <linux-kernel@vger.kernel.org>, Sean Paul <sean@poorly.run>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        Chandan Uddaraju <chandanu@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1727326AbfGCBNF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 21:13:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57308 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726329AbfGCBNF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 21:13:05 -0400
+Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id ED1AE218CA;
+        Tue,  2 Jul 2019 21:33:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562103221;
+        bh=7BKwrn5ZR0EvyKBoBdw71Sjqy+1SUbMyW6AzU7/ufH4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=RBa6CBZoD/h1b3spSkXt/s5mk4/LF71sNM0q6jPS2dnne68logM7RJmnQeYqnoPlk
+         We4S37hoCXN1vJ/SylpXLdidWn8wQovBsN3zWD/thJwRlA5V0kPWzkSRUxdgTRtCMR
+         lCSW1e94ZmkPHXhQYrDUGU4rHNsLYjp0UCC4jn8o=
+Date:   Tue, 2 Jul 2019 14:33:40 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>, linux-mm@kvack.org,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Roman Gushchin <guro@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>
+Subject: Re: [PATCH] mm, slab: Extend slab/shrink to shrink all the memcg
+ caches
+Message-Id: <20190702143340.715f771192721f60de1699d7@linux-foundation.org>
+In-Reply-To: <78879b79-1b8f-cdfd-d4fa-610afe5e5d48@redhat.com>
+References: <20190702183730.14461-1-longman@redhat.com>
+        <20190702130318.39d187dc27dbdd9267788165@linux-foundation.org>
+        <78879b79-1b8f-cdfd-d4fa-610afe5e5d48@redhat.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 2, 2019 at 2:30 PM Jeffrey Hugo <jeffrey.l.hugo@gmail.com> wrote:
->
-> On Sun, Jun 30, 2019 at 7:16 AM Rob Clark <robdclark@gmail.com> wrote:
-> > --- a/drivers/gpu/drm/msm/dsi/dsi_host.c
-> > +++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
-> > @@ -1824,6 +1824,20 @@ int msm_dsi_host_init(struct msm_dsi *msm_dsi)
-> >                 goto fail;
-> >         }
+On Tue, 2 Jul 2019 16:44:24 -0400 Waiman Long <longman@redhat.com> wrote:
+
+> On 7/2/19 4:03 PM, Andrew Morton wrote:
+> > On Tue,  2 Jul 2019 14:37:30 -0400 Waiman Long <longman@redhat.com> wro=
+te:
 > >
-> > +       /*
-> > +        * Make sure we have panel or bridge early, before we start
-> > +        * touching the hw.  If bootloader enabled the display, we
-> > +        * want to be sure to keep it running until the bridge/panel
-> > +        * is probed and we are all ready to go.  Otherwise we'll
-> > +        * kill the display and then -EPROBE_DEFER
-> > +        */
-> > +       if (IS_ERR(of_drm_find_panel(msm_host->device_node)) &&
-> > +                       !of_drm_find_bridge(msm_host->device_node)) {
-> > +               pr_err("%s: no panel or bridge yet\n", __func__);
->
-> pr_err() doesn't seem right for a probe defer condition.  pr_dbg?
->
-> > +               return -EPROBE_DEFER;
-> > +       }
-> > +
-> > +
->
-> Tested-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-> Reviewed-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+> >> Currently, a value of '1" is written to /sys/kernel/slab/<slab>/shrink
+> >> file to shrink the slab by flushing all the per-cpu slabs and free
+> >> slabs in partial lists. This applies only to the root caches, though.
+> >>
+> >> Extends this capability by shrinking all the child memcg caches and
+> >> the root cache when a value of '2' is written to the shrink sysfs file.
+> > Why?
+> >
+> > Please fully describe the value of the proposed feature to or users.=20
+> > Always.
+>=20
+> Sure. Essentially, the sysfs shrink interface is not complete. It allows
+> the root cache to be shrunk, but not any of the memcg caches.=A0
 
-Actually, I'm sorry, I'm now NACKing this.
+But that doesn't describe anything of value.  Who wants to use this,
+and why?  How will it be used?  What are the use-cases?
 
-Turns out this prevents the panel/bridge from ever probing if its a
-child node of the dsi device, since mipi_dsi_host_register() is never
-called.
-
-This probably works for you on the c630 because the bridge hangs off
-the i2c bus.
