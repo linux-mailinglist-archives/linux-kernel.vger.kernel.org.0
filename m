@@ -2,125 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F5465CDC3
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 12:45:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D94E5CDC1
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 12:44:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726652AbfGBKo7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 06:44:59 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:58652 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725835AbfGBKo7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 06:44:59 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 35ED8636E3FD535B37C2;
-        Tue,  2 Jul 2019 18:40:47 +0800 (CST)
-Received: from [127.0.0.1] (10.74.221.148) by DGGEMS405-HUB.china.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Tue, 2 Jul 2019
- 18:40:45 +0800
-Subject: Re: linux-next: Tree for Jul 2
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20190702195158.79aa5517@canb.auug.org.au>
-CC:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Will Deacon <will@kernel.org>
-From:   Zhangshaokun <zhangshaokun@hisilicon.com>
-Message-ID: <000f56ac-2abc-bc6a-e2db-5ae38779d276@hisilicon.com>
-Date:   Tue, 2 Jul 2019 18:40:45 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.1.1
+        id S1726369AbfGBKoZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 06:44:25 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:45464 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725835AbfGBKoZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 06:44:25 -0400
+Received: by mail-wr1-f66.google.com with SMTP id f9so17169674wre.12
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 03:44:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=OPgaITAUGmErWNi8n3QqCt1GuBrNOUAjOylci0JPSQs=;
+        b=dob6fWQ/N9yWnVlG41Qy9P37vq2bO3QtyJngZQXeEvL7CpECSt2eNta3XmJ7HJ/spQ
+         u4l86afaq0zANf9OQ+STBHkkuLrkj485z/rYr6Q7KJgZH6hPDU13KEscOGUo+06N5YO4
+         7WLN/armIbWj7I9W3TEb1ylHdMNWa52/KbPRkRdHlUQ7/TWg5C7/XGjU2SailB1yqd03
+         +/om/e8Sgc0qKnrMTGcKKwkVxs6tGOiiB7bZ6DvCzqfJfNp+J9RyaZs5oIgoLUo+FcSB
+         b4a1rOR5bcck1lTFcdtCv6TNE93rHtEh2X4bN6wSZ3iJDWkLnF3iT5ZugV8cNiSApMLr
+         +dAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=OPgaITAUGmErWNi8n3QqCt1GuBrNOUAjOylci0JPSQs=;
+        b=GlK4qrtA0RGVLxxMDgwwNdHm2eD9mZ6at42vlBxQkX3jqIN+pOysrimwlGYx4/csdJ
+         e0wZZp7y5glnnVWbaZrdJzlOTa4r4+xblJVAkDyIKTj63lC8J2PzkUlTBShHUsyIRzt5
+         6hP2cKIaZM8lRHBlzskyj1ioN3QmXDn8IIGlvCQ1wDApib1dcUeVOPOHAkMK4JOvlg8/
+         QSpv8R1jC5RQKiaoaDz0mCJBT8An+uGMnk9yHlav2+z5Lm/dG+6/E/D5/+xvBzxx6wyq
+         fNZoHet1VCmGlIQekoEOGiiIT/7hZKdCSpxMOe40wlv5pjOinkFnZtnxxoBecu7tHspm
+         VHvA==
+X-Gm-Message-State: APjAAAW8PUTdAeeC1o9ITUvktCwnR9G8AHYmkC8WcvubWQ+cE4awdZFD
+        nSQBLvlerC6Krk8+Nw0Msn1lRw==
+X-Google-Smtp-Source: APXvYqyLEju3wVNoXod9g6O9aDX3heGkufTtjp9FbBwFLavrJGAmqNpFBzsew0P4hqtBl4TkDNOOqw==
+X-Received: by 2002:adf:f38b:: with SMTP id m11mr392068wro.79.1562064263005;
+        Tue, 02 Jul 2019 03:44:23 -0700 (PDT)
+Received: from dell ([2.27.35.164])
+        by smtp.gmail.com with ESMTPSA id u6sm2639685wml.9.2019.07.02.03.44.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 02 Jul 2019 03:44:22 -0700 (PDT)
+Date:   Tue, 2 Jul 2019 11:44:20 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Colin Ian King <colin.king@canonical.com>
+Cc:     Mark Brown <broonie@kernel.org>, Keerthy <j-keerthy@ti.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] regulator: lp87565: fix missing break in switch
+ statement
+Message-ID: <20190702104420.GD4652@dell>
+References: <20190627131639.6394-1-colin.king@canonical.com>
+ <20190628143628.GJ5379@sirena.org.uk>
+ <4cb0e4ab-66c7-2b3d-27d3-fd5cfde8988f@canonical.com>
 MIME-Version: 1.0
-In-Reply-To: <20190702195158.79aa5517@canb.auug.org.au>
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.74.221.148]
-X-CFilter-Loop: Reflected
+In-Reply-To: <4cb0e4ab-66c7-2b3d-27d3-fd5cfde8988f@canonical.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+Cc: Will Deacon
+On Fri, 28 Jun 2019, Colin Ian King wrote:
 
-There is a compiler failure on arm64 platform, as follow:
-In file included from ./include/linux/list.h:9:0,
-                 from ./include/linux/kobject.h:19,
-                 from ./include/linux/of.h:17,
-                 from ./include/linux/irqdomain.h:35,
-                 from ./include/linux/acpi.h:13,
-                 from drivers/iommu/arm-smmu-v3.c:12:
-drivers/iommu/arm-smmu-v3.c: In function ëarm_smmu_device_hw_probeí:
-drivers/iommu/arm-smmu-v3.c:194:40: error: ëCONFIG_CMA_ALIGNMENTí undeclared (first use in this function)
- #define Q_MAX_SZ_SHIFT   (PAGE_SHIFT + CONFIG_CMA_ALIGNMENT)
-                                        ^
-It's the commit <d25f6ead162e> ("iommu/arm-smmu-v3: Increase maximum size of queues")
+> On 28/06/2019 15:36, Mark Brown wrote:
+> > On Thu, Jun 27, 2019 at 02:16:39PM +0100, Colin King wrote:
+> >> From: Colin Ian King <colin.king@canonical.com>
+> >>
+> >> Currently the LP87565_DEVICE_TYPE_LP87561_Q1 case does not have a
+> >> break statement, causing it to fall through to a dev_err message.
+> >> Fix this by adding in the missing break statement.
+> > 
+> > This doesn't apply against current code, please check and resend.
+> > 
+> So it applies cleanly against linux-next, I think the original code
+> landed in mfd/for-mfd-next - c.f. https://lkml.org/lkml/2019/5/28/550
 
-Thanks,
-Shaokun
+Applied, thanks Colin.
 
-On 2019/7/2 17:51, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since 20190701:
-> 
-> New trees: iomap, djw-vfs
-> 
-> The m68knommu tree gained conflicts against the m68k tree.
-> 
-> The xfs tree lost its build failure.
-> 
-> The pm tree lost its build failure.
-> 
-> The rdma tree still had its build failures so I used the version from
-> next-20190628.
-> 
-> The net-next tree gained a conflict against the net tree.
-> 
-> The mlx5-next tree gained conflicts against Linus' tree.
-> 
-> The tip tree gained a conflict against the btrfs-kdave tree which
-> required a merge fix patch.
-> 
-> The hmm tree gained build failures due to interactions with the tip and
-> drm trees for which I added a merge fix patch and disabled a driver.
-> 
-> Non-merge commits (relative to Linus' tree): 10449
->  10116 files changed, 811540 insertions(+), 297040 deletions(-)
-> 
-> ----------------------------------------------------------------------------
-> 
-> I have created today's linux-next tree at
-> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-> (patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
-> are tracking the linux-next tree using git, you should not use "git pull"
-> to do so as that will try to merge the new linux-next release with the
-> old one.  You should use "git fetch" and checkout or reset to the new
-> master.
-> 
-> You can see which trees have been included by looking in the Next/Trees
-> file in the source.  There are also quilt-import.log and merge.log
-> files in the Next directory.  Between each merge, the tree was built
-> with a ppc64_defconfig for powerpc, an allmodconfig for x86_64, a
-> multi_v7_defconfig for arm and a native build of tools/perf. After
-> the final fixups (if any), I do an x86_64 modules_install followed by
-> builds for x86_64 allnoconfig, powerpc allnoconfig (32 and 64 bit),
-> ppc44x_defconfig, allyesconfig and pseries_le_defconfig and i386, sparc
-> and sparc64 defconfig. And finally, a simple boot test of the powerpc
-> pseries_le_defconfig kernel in qemu (with and without kvm enabled).
-> 
-> Below is a summary of the state of the merge.
-> 
-> I am currently merging 299 trees (counting Linus' and 72 trees of bug
-> fix patches pending for the current merge release).
-> 
-> Stats about the size of the tree over time can be seen at
-> http://neuling.org/linux-next-size.html .
-> 
-> Status of my local build tests will be at
-> http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-> advice about cross compilers/configs that work, we are always open to add
-> more builds.
-> 
-> Thanks to Randy Dunlap for doing many randconfig builds.  And to Paul
-> Gortmaker for triage and bug fixes.
-> 
-
+-- 
+Lee Jones [ÊùéÁêºÊñØ]
+Linaro Services Technical Lead
+Linaro.org ‚îÇ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
