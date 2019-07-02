@@ -2,133 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5F3D5C9F2
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 09:28:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D5555C9FE
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 09:35:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726150AbfGBH2m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 03:28:42 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:50544 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725845AbfGBH2m (ORCPT
+        id S1726144AbfGBHf0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 03:35:26 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:50095 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725802AbfGBHf0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 03:28:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=K8QOsQqzfq5CPRmQump69XRimOndfchhan89rRQjWSk=; b=gll/V/7KHwt/whSmEKez1Ymgm
-        t4o2zf9HhgQX4x+P7F++xQWfer/TAPPWm/QfuSmpkFrh7GifmvXs+HmmugEERdaeaJaVQGmmkr92D
-        dUtyhxEqVpId+CwKcfFq2+BUHi/NDwfQGsCnlVCimhzaEZxrbAqmUehzpCXgCYUjBht32XY9kL5U/
-        B0fDa8Y0gjaQ5Ye5X1+txfLCLx2It1C24/C791EpCRyedlwnoPU3kT2jwz4uoVMDTuWl2Xx1OCKKm
-        Y+n0IH6WHHLC+Gu4oY0s9pi+BZn003BCpwnV0XtyoROcB7zScgvXKh0x/VxdPiNJpebDMfyRDmyjh
-        iFD7kyrxg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hiDDE-0002Be-D1; Tue, 02 Jul 2019 07:28:24 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 0A60720245BD9; Tue,  2 Jul 2019 09:28:22 +0200 (CEST)
-Date:   Tue, 2 Jul 2019 09:28:22 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Eiichi Tsukata <devel@etsukata.com>
-Cc:     rostedt@goodmis.org, edwintorok@gmail.com, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, hpa@zytor.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: Re: [PATCH] x86/stacktrace: Do not access user space memory
- unnecessarily
-Message-ID: <20190702072821.GX3419@hirez.programming.kicks-ass.net>
-References: <20190702053151.26922-1-devel@etsukata.com>
+        Tue, 2 Jul 2019 03:35:26 -0400
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1hiDJz-0001Yv-CL; Tue, 02 Jul 2019 09:35:23 +0200
+Received: from mfe by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1hiDJy-00009W-PR; Tue, 02 Jul 2019 09:35:22 +0200
+Date:   Tue, 2 Jul 2019 09:35:22 +0200
+From:   Marco Felsch <m.felsch@pengutronix.de>
+To:     Anson.Huang@nxp.com
+Cc:     shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, aisheng.dong@nxp.com, abel.vesa@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Linux-imx@nxp.com
+Subject: Re: [PATCH V2] soc: imx-scu: Add SoC UID(unique identifier) support
+Message-ID: <20190702073522.blujpmxddw7brr7c@pengutronix.de>
+References: <20190628032544.8317-1-Anson.Huang@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190702053151.26922-1-devel@etsukata.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190628032544.8317-1-Anson.Huang@nxp.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 09:31:59 up 45 days, 13:50, 49 users,  load average: 0.13, 0.05,
+ 0.01
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 02, 2019 at 02:31:51PM +0900, Eiichi Tsukata wrote:
-> Put the boundary check before it accesses user space to prevent unnecessary
-> access which might crash the machine.
-> 
-> Especially, ftrace preemptirq/irq_disable event with user stack trace
-> option can trigger SEGV in pid 1 which leads to panic.
-> 
-> Reproducer:
-> 
->   CONFIG_PREEMPTIRQ_TRACEPOINTS=y
->   # echo 1 > events/preemptirq/enable
->   # echo userstacktrace > trace_options
-> 
-> Output:
-> 
->   Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
->   CPU: 1 PID: 1 Comm: systemd Not tainted 5.2.0-rc7+ #10
+Hi Anson,
 
-Killing systemd is a feature :-)
-
->   Hardware name: QEMU Standard PC (i440FX + PIIX, 1996)
->   Call Trace:
->    dump_stack+0x67/0x90
->    panic+0x100/0x2c6
->    do_exit.cold+0x4e/0x101
->    do_group_exit+0x3a/0xa0
->    get_signal+0x14a/0x8e0
->    do_signal+0x36/0x650
->    exit_to_usermode_loop+0x92/0xb0
->    prepare_exit_to_usermode+0x6f/0xb0
->    retint_user+0x8/0x18
->   RIP: 0033:0x55be7ad1c89f
->   Code: Bad RIP value.
-
-^^^ that's weird, no amount of unwinding should affect regs->ip.
-
->   RSP: 002b:00007ffe329a4b00 EFLAGS: 00010202
->   RAX: 0000000000000768 RBX: 00007ffe329a4ba0 RCX: 00007ff0063aa469
->   RDX: 00007ff0066761de RSI: 00007ffe329a4b20 RDI: 0000000000000768
->   RBP: 000000000000000b R08: 0000000000000000 R09: 00007ffe329a4e2f
->   R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000768
->   R13: 0000000000000000 R14: 0000000000000004 R15: 000055be7b3d3560
->   Kernel Offset: 0x2a000000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+On 19-06-28 11:25, Anson.Huang@nxp.com wrote:
+> From: Anson Huang <Anson.Huang@nxp.com>
 > 
-> Fixes: 02b67518e2b1 ("tracing: add support for userspace stacktraces in tracing/iter_ctrl")
-> Signed-off-by: Eiichi Tsukata <devel@etsukata.com>
+> Add i.MX SCU SoC's UID(unique identifier) support, user
+> can read it from sysfs:
+> 
+> root@imx8qxpmek:~# cat /sys/devices/soc0/soc_uid
+> 7B64280B57AC1898
+> 
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 > ---
->  arch/x86/kernel/stacktrace.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> Changes since V1:
+> 	- Improve the comment of skipping SCFW API return value check for getting UID.
+> ---
+>  drivers/soc/imx/soc-imx-scu.c | 39 +++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 39 insertions(+)
 > 
-> diff --git a/arch/x86/kernel/stacktrace.c b/arch/x86/kernel/stacktrace.c
-> index 2abf27d7df6b..6d0c608ffe34 100644
-> --- a/arch/x86/kernel/stacktrace.c
-> +++ b/arch/x86/kernel/stacktrace.c
-> @@ -123,12 +123,12 @@ void arch_stack_walk_user(stack_trace_consume_fn consume_entry, void *cookie,
->  	while (1) {
->  		struct stack_frame_user frame;
+> diff --git a/drivers/soc/imx/soc-imx-scu.c b/drivers/soc/imx/soc-imx-scu.c
+> index 676f612..3eacb54 100644
+> --- a/drivers/soc/imx/soc-imx-scu.c
+> +++ b/drivers/soc/imx/soc-imx-scu.c
+> @@ -27,6 +27,40 @@ struct imx_sc_msg_misc_get_soc_id {
+>  	} data;
+>  } __packed;
 >  
-> +		if ((unsigned long)fp < regs->sp)
-> +			break;
->  		frame.next_fp = NULL;
->  		frame.ret_addr = 0;
->  		if (!copy_stack_frame(fp, &frame))
->  			break;
-> -		if ((unsigned long)fp < regs->sp)
-> -			break;
+> +struct imx_sc_msg_misc_get_soc_uid {
+> +	struct imx_sc_rpc_msg hdr;
+> +	u32 uid_low;
+> +	u32 uid_high;
+> +} __packed;
+> +
+> +static ssize_t soc_uid_show(struct device *dev,
+> +			    struct device_attribute *attr, char *buf)
+> +{
+> +	struct imx_sc_msg_misc_get_soc_uid msg;
+> +	struct imx_sc_rpc_msg *hdr = &msg.hdr;
+> +	u64 soc_uid;
+> +
+> +	hdr->ver = IMX_SC_RPC_VERSION;
+> +	hdr->svc = IMX_SC_RPC_SVC_MISC;
+> +	hdr->func = IMX_SC_MISC_FUNC_UNIQUE_ID;
+> +	hdr->size = 1;
+> +
+> +	/*
+> +	 * SCU FW API always returns an error even the
+> +	 * function is successfully executed, so skip
+> +	 * returned value check.
+> +	 */
+> +	imx_scu_call_rpc(soc_ipc_handle, &msg, true);
 
-Aside of which, that doesn't make sense, even if copy_stack_frame() was
-fed utter garbage it should never result in the user process being
-affected.
+Please can you add a TODO: or FIXME: tag and also provide the firmware
+version containing the bug? I know that developers are very busy and
+follow-up fixes never reach mainline ;)
 
-It does: "pagefault_disable(); __copy_from_user_inatomic()", which
-should take the fault and catch it in an extable and have it return
--EFAULT.
+Regards,
+  Marco
 
-Something is really fishy here, maybe Josh has an idea?
-
->  		if (frame.ret_addr) {
->  			if (!consume_entry(cookie, frame.ret_addr, false))
->  				return;
+> +
+> +	soc_uid = msg.uid_high;
+> +	soc_uid <<= 32;
+> +	soc_uid |= msg.uid_low;
+> +
+> +	return sprintf(buf, "%016llX\n", soc_uid);
+> +}
+> +
+> +static DEVICE_ATTR_RO(soc_uid);
+> +
+>  static int imx_scu_soc_id(void)
+>  {
+>  	struct imx_sc_msg_misc_get_soc_id msg;
+> @@ -102,6 +136,11 @@ static int imx_scu_soc_probe(struct platform_device *pdev)
+>  		goto free_revision;
+>  	}
+>  
+> +	ret = device_create_file(soc_device_to_device(soc_dev),
+> +				 &dev_attr_soc_uid);
+> +	if (ret)
+> +		goto free_revision;
+> +
+>  	return 0;
+>  
+>  free_revision:
 > -- 
-> 2.21.0
+> 2.7.4
 > 
+> 
+> 
+
+-- 
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
