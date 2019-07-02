@@ -2,63 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACD845D667
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 20:47:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D8395D724
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 21:42:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726825AbfGBSrL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 14:47:11 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:51730 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726329AbfGBSrK (ORCPT
+        id S1727111AbfGBTmq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 15:42:46 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:45261 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727069AbfGBTmp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 14:47:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=0p3rmkS+SSt76FLvKOCOdaTmlsp46pDKxMukz+MmNhw=; b=WWtvAKVNTSLO/KksdtC7MQH4Nc
-        z09rCs/ZYlDFDJO3fjHjYgEqWQ6XNtb97OiY9xPjz6gG7U1bbof7r6SMTFlaconOVKjNU2cyAApeJ
-        jiZBoBgWiOEEtgWbmISprR+vY3ASwCrEznvSyP7xpwo+K0BdXhnNQ1CAMwHRcRqECzJDXZOxJ9ePk
-        eoc6glXyZWs4ArQUWJFCuZKNRSIJwQd2MpYeOWcKsuLj4gTerEVl7GSJKYG49FeteYy90omDN19Wz
-        1BeHC2hhvNyCnie17Q72DLKpY0xRGJaSOyA8fBKhtNYwIOOzU9Nib2RvQzN8UkbNrwY9fOJApdssK
-        Ktievoeg==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hiNo2-0000TC-CJ; Tue, 02 Jul 2019 18:47:06 +0000
-Subject: Re: linux-next: Tree for Jul 2 (objtool)
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>
-References: <20190702195158.79aa5517@canb.auug.org.au>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <b0238309-72b4-1a5c-77ff-89c7e432e2ba@infradead.org>
-Date:   Tue, 2 Jul 2019 11:47:02 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Tue, 2 Jul 2019 15:42:45 -0400
+Received: by mail-pl1-f196.google.com with SMTP id bi6so906478plb.12
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 12:42:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dynamicaims-com.20150623.gappssmtp.com; s=20150623;
+        h=to:subject:from:message-id:disposition-notification-to:date
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=2B7NK/ZEqFIYT6SQs8fSOhl27jBu1V5KUpehg7vVsAU=;
+        b=MX/bHmM3CoOjxodOKY+uWhEjr9eYEpAeDbzn7rasK8uCAqXfBsGRav6GabsMD2W4ZI
+         oNHmgwLHGeFx+8Y9ZBravshTUjpF1N2rXLCOm8gBpyRjZszmlkyFsSBSDaa/5VILYxKg
+         +YyOh8vjuvWcElBcf3rdqqn7b6ayhUkAzrggAZYF9rKtreNEeVRcVBcD/XQR3amurav/
+         IqLz9UbD1INPHIA8JNS+vvPTW0fJG+oOWlAxGsPcxfdfd30+ChQeL/xpbMJOtwgDaxJe
+         RagO0owQHv8NkdxRiO0Qsaay76j38+nRev74UUsSuQo62eUzgWusgtGdN83wqcWb6Qey
+         Wz7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:subject:from:message-id
+         :disposition-notification-to:date:user-agent:mime-version
+         :content-transfer-encoding;
+        bh=2B7NK/ZEqFIYT6SQs8fSOhl27jBu1V5KUpehg7vVsAU=;
+        b=NPoEBgtxFgLyKVCdY6o8/Ss4D+/XRBncFg2M74EM7x0wzef91xzLCBqwF5YG0FtxDe
+         CQ4LpaL10YBkWz7w26/Ngv3Y5u+LqMz/jOtA/ywMOuWzn/QomF8/nOVhojVBkVN8luY9
+         fhZPSMJghx6tpXVnBeWlIjNTtVG8ENluoW6ZQcNZQ/9moK5KCzykN+v1jH97MmcTSTyt
+         A2K0YXouCwEPjuuT2wkdRJg9JC7kPRrRMjfrBmVdRY/5iQqtt0kBNgcLdhphohmW9E1v
+         AsJB9MncSGsLJoWC60Yg6nCTlQDckXzoO5zC1998cW5eqNVxTwvhUGN1+aj9jmmDUqut
+         776g==
+X-Gm-Message-State: APjAAAW+Str9aCeJM5sJ/AbH2MlexO9Bcl2UX9AYvjHtM+JXGKk4DvfM
+        4CwO/7JWmsGcpao1sJqI29atZ3s2tq0=
+X-Google-Smtp-Source: APXvYqyOXx74acJvtbxoMTWzL6w1lSd1Ew9MU5ITUj4OONU2japQWZOr3qcploMfNPmjx/GduBE8Hg==
+X-Received: by 2002:a17:902:6a87:: with SMTP id n7mr21121333plk.336.1562096564487;
+        Tue, 02 Jul 2019 12:42:44 -0700 (PDT)
+Received: from [192.168.0.17] ([103.253.170.189])
+        by smtp.gmail.com with ESMTPSA id r88sm2858515pjb.8.2019.07.02.12.42.43
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 02 Jul 2019 12:42:44 -0700 (PDT)
+To:     linux-kernel@vger.kernel.org
+Subject: Wine Enthusiasts
+From:   Amanda Bagnola <abagnola@dynamicaims.com>
+Message-ID: <5D1BA6EC.5000602@dynamicaims.com>
+Date:   Tue, 2 Jul 2019 14:48:12 -0400
+User-Agent: Mozilla/5.0 (Windows NT 6.3; rv:38.0) Gecko/20100101
+ Thunderbird/38.1.0
 MIME-Version: 1.0
-In-Reply-To: <20190702195158.79aa5517@canb.auug.org.au>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/2/19 2:51 AM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since 20190701:
-> 
 
-on x86_64:
+Hi,
 
-kernel/bpf/core.o: warning: objtool: ___bpf_prog_run()+0x22: can't find switch jump table
+Would you be interested in acquiring an email list of "Wine Enthusiasts" from USA?
 
+We also have data for Golfers, Alcohol Enthusiasts, Beer Enthusiasts, Chocolate Enthusiasts, Foodies, Travelers, Gift Buyers, Spa and Resort Visitors, Sports Enthusiasts, Android Users and many more..
 
--- 
-~Randy
+Each record in the list contains Contact Name (First, Middle and Last Name), Mailing Address, List type and Opt-in email address.
+
+All the contacts are opt-in verified, 100% permission based and can be used for unlimited multi-channel marketing.
+
+Please let me know your thoughts towards procuring the Beer Enthusiasts List.
+
+Best Regards,
+Amanda Bagnola
+Research Analyst
+
+We respect your privacy, if you do not wish to receive any further emails from our end, please reply with a subject “Leave Out”.
+
