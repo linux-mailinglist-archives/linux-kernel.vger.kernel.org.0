@@ -2,88 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 784625D9C8
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:53:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B2725D9D0
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:54:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727355AbfGCAxT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 20:53:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47376 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727092AbfGCAxF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 20:53:05 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C1D9420B1F;
-        Tue,  2 Jul 2019 23:37:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562110648;
-        bh=jOXGGlTtxKxUoZb4qZ8/SnpaBt3eFan28kHr8Q3ujSc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=q2qrTeTkiRv5BRUDGvR3KhEh7eRJEcJV/t9TQjTGVbuVFXawgLXl4iKY3PIevY1a5
-         gzCV0UqSy1wvthVyN7TclqnAc0jI/1yVcQ6qv1iUVY+xZEv9PREZDKygNkw6UMvMRn
-         r95Dz0RFbhYpgjUd1w35MEmic7ObUfs9KbbT5ab8=
-Date:   Tue, 2 Jul 2019 18:37:26 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Logan Gunthorpe <logang@deltatee.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH] PCI/P2PDMA: Fix missing check for dma_virt_ops
-Message-ID: <20190702233726.GG128603@google.com>
-References: <20190702173544.21950-1-logang@deltatee.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190702173544.21950-1-logang@deltatee.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1727350AbfGCAyg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 20:54:36 -0400
+Received: from mail-ot1-f73.google.com ([209.85.210.73]:44178 "EHLO
+        mail-ot1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727049AbfGCAyf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 20:54:35 -0400
+Received: by mail-ot1-f73.google.com with SMTP id q16so416254otn.11
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 17:54:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=R48TQi9q1FK2+H6bY660z2znRHgaYhNpT8f8fUMByQw=;
+        b=mBLQgYkxMEYzGqUznWDGxambBtuhZyiOOJORpyP891jPKRAhRjUBbORNd+4DveyMeD
+         rGZ3DeH9paDarY7J+YcNLIlYdogJBVNEJKYgDw+S6n1p9yHE06ZYNNVgi++pBAmRFG/v
+         rjO2ylNX11c0/iLdV/4/sLLWlx34EOzgETHmr/fYlkrJmVTXymJmHBBZhFl2QT6PpdCU
+         IFOReC8/kxoOUztR6XJtbeONmYjlCu8W0aKlHJKEpIfHJv0Tux8zLMjt2JtmJAp35Mlb
+         d1cbsotsN2YitgBnWkr+C909Etlm7N0KjWV5gNA1tpvHAhnYmcinusuyfNvhKkIgrINt
+         FOkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=R48TQi9q1FK2+H6bY660z2znRHgaYhNpT8f8fUMByQw=;
+        b=JOCHvNk+gnuLe1n7FzgfTuVc3h/YqCxkN0ilw1CUWwyKYz9dwOXQYTzBnZECWGU07W
+         iRMTbRa/36xmRGzsiG1BpU08Cb3FFmbzzCmDP98t/wqWtvcOEPuOLp90TUP+G8oyfsOn
+         zvIs3u+/jfByRkLOXhOdVjE3Gz21E9CRWIYdWERB2UmPa/5cZXJDsJGchg3EUglCAc6Y
+         p4Fvy53f40uNHbxSalZ/YSy8crei9gdXAPQ+UWT75wuX7YLItpUEXd8Fcy9z2NED8FhT
+         9j5OGNJO3pNYPezzO7i6/jNNCq21uUR9bd26gAIknc71+yx9XHQ2cgkJfPlXgxcuh0/0
+         jnYQ==
+X-Gm-Message-State: APjAAAUsmaRuHBWDv+ynINvrBPi418RX4fYJaefUDsqAJR/UAgwFxVr/
+        ZqxqwH6J8/hMvq/7LfpjvKp00VaS1w==
+X-Google-Smtp-Source: APXvYqxlTTxA9kVd7nmSx/MlM/hqPfeDUWd1gdGvu4tmxQfmIm2aDz4ezGffhECd1ECKMzycYcMzcnsBww==
+X-Received: by 2002:a63:6c04:: with SMTP id h4mr2529866pgc.94.1562111113724;
+ Tue, 02 Jul 2019 16:45:13 -0700 (PDT)
+Date:   Tue,  2 Jul 2019 16:41:35 -0700
+In-Reply-To: <CAJkfWY4yvVVmJoQ0WwyoFBkWYsUJnnQPNU+-g23-m-L3ETe_hQ@mail.gmail.com>
+Message-Id: <20190702234135.78780-1-nhuck@google.com>
+Mime-Version: 1.0
+References: <CAJkfWY4yvVVmJoQ0WwyoFBkWYsUJnnQPNU+-g23-m-L3ETe_hQ@mail.gmail.com>
+X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
+Subject: [PATCH v2] arm64: mm: Fix dead assignment of old_pte
+From:   Nathan Huckleberry <nhuck@google.com>
+To:     catalin.marinas@arm.com, will@kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        clang-built-linux@googlegroups.com,
+        Nathan Huckleberry <nhuck@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 02, 2019 at 11:35:44AM -0600, Logan Gunthorpe wrote:
-> Drivers that use dma_virt_ops were meant to be rejected when testing
-> compatibility for P2PDMA.
-> 
-> This check got inadvertantly dropped in one of the later versions of the
-> original patchset, so add it back.
-> 
-> Fixes: 52916982af48 ("PCI/P2PDMA: Support peer-to-peer memory")
-> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+When analyzed with the clang static analyzer the
+following warning occurs
 
-Applied to pci/peer-to-peer for v5.3, thanks!
+line 251, column 2
+Value stored to 'old_pte' is never read
 
-> ---
->  drivers/pci/p2pdma.c | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/p2pdma.c b/drivers/pci/p2pdma.c
-> index a4994aa3acc0..ab48babdf214 100644
-> --- a/drivers/pci/p2pdma.c
-> +++ b/drivers/pci/p2pdma.c
-> @@ -487,6 +487,14 @@ int pci_p2pdma_distance_many(struct pci_dev *provider, struct device **clients,
->  		return -1;
->  
->  	for (i = 0; i < num_clients; i++) {
-> +		if (IS_ENABLED(CONFIG_DMA_VIRT_OPS) &&
-> +		    clients[i]->dma_ops == &dma_virt_ops) {
-> +			if (verbose)
-> +				dev_warn(clients[i],
-> +					 "cannot be used for peer-to-peer DMA because the driver makes use of dma_virt_ops\n");
-> +			return -1;
-> +		}
-> +
->  		pci_client = find_parent_pci_dev(clients[i]);
->  		if (!pci_client) {
->  			if (verbose)
-> @@ -765,7 +773,7 @@ int pci_p2pdma_map_sg(struct device *dev, struct scatterlist *sg, int nents,
->  	 * p2pdma mappings are not compatible with devices that use
->  	 * dma_virt_ops. If the upper layers do the right thing
->  	 * this should never happen because it will be prevented
-> -	 * by the check in pci_p2pdma_add_client()
-> +	 * by the check in pci_p2pdma_distance_many()
->  	 */
->  	if (WARN_ON_ONCE(IS_ENABLED(CONFIG_DMA_VIRT_OPS) &&
->  			 dev->dma_ops == &dma_virt_ops))
-> -- 
-> 2.20.1
-> 
+This warning is repeated every time pgtable.h is
+included by another file and produces ~3500
+extra warnings.
+
+Moving old_pte into preprocessor guard.
+
+Cc: clang-built-linux@googlegroups.com
+Signed-off-by: Nathan Huckleberry <nhuck@google.com>
+---
+Changes from v1 -> v2
+* Added scope to avoid [-Wdeclaration-after-statement]
+ arch/arm64/include/asm/pgtable.h | 27 ++++++++++++++++-----------
+ 1 file changed, 16 insertions(+), 11 deletions(-)
+
+diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+index fca26759081a..12b7f08db40d 100644
+--- a/arch/arm64/include/asm/pgtable.h
++++ b/arch/arm64/include/asm/pgtable.h
+@@ -238,8 +238,6 @@ extern void __sync_icache_dcache(pte_t pteval);
+ static inline void set_pte_at(struct mm_struct *mm, unsigned long addr,
+ 			      pte_t *ptep, pte_t pte)
+ {
+-	pte_t old_pte;
+-
+ 	if (pte_present(pte) && pte_user_exec(pte) && !pte_special(pte))
+ 		__sync_icache_dcache(pte);
+ 
+@@ -248,16 +246,23 @@ static inline void set_pte_at(struct mm_struct *mm, unsigned long addr,
+ 	 * hardware updates of the pte (ptep_set_access_flags safely changes
+ 	 * valid ptes without going through an invalid entry).
+ 	 */
+-	old_pte = READ_ONCE(*ptep);
+-	if (IS_ENABLED(CONFIG_DEBUG_VM) && pte_valid(old_pte) && pte_valid(pte) &&
+-	   (mm == current->active_mm || atomic_read(&mm->mm_users) > 1)) {
+-		VM_WARN_ONCE(!pte_young(pte),
+-			     "%s: racy access flag clearing: 0x%016llx -> 0x%016llx",
+-			     __func__, pte_val(old_pte), pte_val(pte));
+-		VM_WARN_ONCE(pte_write(old_pte) && !pte_dirty(pte),
+-			     "%s: racy dirty state clearing: 0x%016llx -> 0x%016llx",
+-			     __func__, pte_val(old_pte), pte_val(pte));
++	#if IS_ENABLED(CONFIG_DEBUG_VM)
++	{
++		pte_t old_pte;
++
++		old_pte = READ_ONCE(*ptep);
++		if (pte_valid(old_pte) && pte_valid(pte) &&
++		  (mm == current->active_mm ||
++		   atomic_read(&mm->mm_users) > 1)) {
++			VM_WARN_ONCE(!pte_young(pte),
++				     "%s: racy access flag clearing: 0x%016llx -> 0x%016llx",
++				     __func__, pte_val(old_pte), pte_val(pte));
++			VM_WARN_ONCE(pte_write(old_pte) && !pte_dirty(pte),
++				     "%s: racy dirty state clearing: 0x%016llx -> 0x%016llx",
++				     __func__, pte_val(old_pte), pte_val(pte));
++		}
+ 	}
++	#endif
+ 
+ 	set_pte(ptep, pte);
+ }
+-- 
+2.22.0.410.gd8fdbe21b5-goog
+
