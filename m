@@ -2,146 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E3375C627
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 02:01:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D831A5C635
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 02:08:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727049AbfGBABI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 20:01:08 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:54485 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726866AbfGBABI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 20:01:08 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45d4C43XDPz9s3Z;
-        Tue,  2 Jul 2019 10:01:03 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1562025664;
-        bh=YcxBeD6Q4wC1DnqF2UHDQOk3MwaNCpte8xIEjUbQ1dE=;
-        h=Date:From:To:Cc:Subject:From;
-        b=qPqItKzkQ/pEKh4b82mnrZfkCF7YfOGYQmKnnatD8cvPsrK2lL/AstdIFAEc9XwrH
-         D8CYchYaeW6XpHRF/y9C7CrJb5hKy686TSqcyQKXpzSlMrYZF9gzqKHU7mQTKX2DaM
-         bp+iVirvn2YhHU0Vy7xL4JSkCa3Fng36YH5kmLWQ46zybTiUiwZ0H7iOfPuNjRwX1t
-         GKIaJXBVlXGTVxQpOqnd4jXfFJWZ33+fVVvJJr8YHWFQzRVnMOrghXqPLyk4GMTPf2
-         d1JEb+xsmMdp7YLO1CGE0vSAxaPpd2hSuWkvvRGHr3hznrpKoHreqoXcbY2dSGrFYp
-         zEeiLQ9MeU7Lg==
-Date:   Tue, 2 Jul 2019 10:01:03 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: build failure after merge of the clk tree
-Message-ID: <20190702100103.12c132da@canb.auug.org.au>
+        id S1727066AbfGBAIJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 20:08:09 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:34520 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727010AbfGBAIJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Jul 2019 20:08:09 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6204287022201;
+        Tue, 2 Jul 2019 00:06:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=W5Q+NkHpzRK/P7xEh54iSkYNc3/t6agDnWcFSfwc5W4=;
+ b=lUfzdCzurW0l+g+6kS6bCNBdI0RrWuhRpJFso1wTg8RYtLSoTbfF00NPWM9akaXhrY7C
+ J9J7YUwApCsC3rz6+CpfD+TBdEtup1nPc72DjIpjWBs0xq4S8+PpqPeY6t67OdulQzNA
+ aI8/B6ZLPwF1ziyvqHAYkXIG5Xr3nYP0MkSIVu/WzdVfAIUhA3zdt50bqo92OiMOLwH0
+ ibjcy7EHlhBKr7PHGp6JeyI9oZ97l/FoCkMjpAjTmO/eccd/zpbc5s2WhWmDOn7IhB0y
+ OM5fn4FdJgzVgtLBXaFeg+wszT2B13niyJLE4Q2fKZVTxFmQDoMApsuTBOYRBFVg0z5b cg== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 2te5tbgdsw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 02 Jul 2019 00:06:27 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6202hMB077713;
+        Tue, 2 Jul 2019 00:06:26 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3030.oracle.com with ESMTP id 2tebqg6vjp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 02 Jul 2019 00:06:26 +0000
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x6206HWB029180;
+        Tue, 2 Jul 2019 00:06:22 GMT
+Received: from [10.132.91.175] (/10.132.91.175)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 01 Jul 2019 17:06:17 -0700
+Subject: Re: [RESEND PATCH v3 0/7] Improve scheduler scalability for fast path
+To:     Patrick Bellasi <patrick.bellasi@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
+        steven.sistare@oracle.com, dhaval.giani@oracle.com,
+        daniel.lezcano@linaro.org, vincent.guittot@linaro.org,
+        viresh.kumar@linaro.org, tim.c.chen@linux.intel.com,
+        mgorman@techsingularity.net, Paul Turner <pjt@google.com>,
+        riel@surriel.com, morten.rasmussen@arm.com
+References: <20190627012919.4341-1-subhra.mazumdar@oracle.com>
+ <20190701090204.GQ3402@hirez.programming.kicks-ass.net>
+ <20190701135552.kb4os6bxxhh2lyw6@e110439-lin>
+From:   Subhra Mazumdar <subhra.mazumdar@oracle.com>
+Message-ID: <81b2288a-579d-8dd1-f179-d672cf1edd68@oracle.com>
+Date:   Mon, 1 Jul 2019 17:01:07 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/4fPfY4dz.zTw+BW=GF3We/A"; protocol="application/pgp-signature"
+In-Reply-To: <20190701135552.kb4os6bxxhh2lyw6@e110439-lin>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9305 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1907010280
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9305 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1907010281
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/4fPfY4dz.zTw+BW=GF3We/A
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
-
-After merging the clk tree, today's linux-next build (arm omap1_defconfig
-and many others) failed like this:
-
-In file included from drivers/clk/clkdev.c:22:0:
-drivers/clk/clk.h:36:23: error: static declaration of '__clk_get_hw' follow=
-s non-static declaration
-include/linux/clk-provider.h:808:16: note: previous declaration of '__clk_g=
-et_hw' was here
-
-Caused by commit
-
-  59fcdce425b7 ("clk: Remove ifdef for COMMON_CLK in clk-provider.h")
-
-This commit exposed the CONFIG_COMMON_CLK version of the __clk_get_hw()
-declaration to non CONFIG_COMMON_CLK code (where there is a static
-declaration of  __clk_get_hw() (which is BTW missing an "inline")
-in drivers/clk/clk.h.
-
-We need something like this (untested):
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 2 Jul 2019 09:58:18 +1000
-Subject: [PATCH] clk: for up for "clk: Remove ifdef for COMMON_CLK in
- clk-provider.h"
-
-We were getting errors like:
-
-In file included from drivers/clk/clkdev.c:22:0:
-drivers/clk/clk.h:36:23: error: static declaration of '__clk_get_hw' follow=
-s non
--static declaration
-include/linux/clk-provider.h:808:16: note: previous declaration of '__clk_g=
-et_hw
-' was here
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/clk/clk.h            | 2 +-
- include/linux/clk-provider.h | 3 +++
- 2 files changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/clk.h b/drivers/clk/clk.h
-index d8400d623b34..143acac2ec81 100644
---- a/drivers/clk/clk.h
-+++ b/drivers/clk/clk.h
-@@ -33,7 +33,7 @@ clk_hw_create_clk(struct device *dev, struct clk_hw *hw, =
-const char *dev_id,
- {
- 	return (struct clk *)hw;
- }
--static struct clk_hw *__clk_get_hw(struct clk *clk)
-+static inline struct clk_hw *__clk_get_hw(struct clk *clk)
- {
- 	return (struct clk_hw *)clk;
- }
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 0fbf3ccad849..35c8b1c315b4 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -805,7 +805,10 @@ void devm_clk_hw_unregister(struct device *dev, struct=
- clk_hw *hw);
- /* helper functions */
- const char *__clk_get_name(const struct clk *clk);
- const char *clk_hw_get_name(const struct clk_hw *hw);
-+#ifdef CONFIG_COMON_CLK
-+/* There is a !CONFIG_COMMON_CLK static inline for this in drivers/clk/clk=
-.h */
- struct clk_hw *__clk_get_hw(struct clk *clk);
-+#endif
- unsigned int clk_hw_get_num_parents(const struct clk_hw *hw);
- struct clk_hw *clk_hw_get_parent(const struct clk_hw *hw);
- struct clk_hw *clk_hw_get_parent_by_index(const struct clk_hw *hw,
---=20
-2.20.1
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/4fPfY4dz.zTw+BW=GF3We/A
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0anr8ACgkQAVBC80lX
-0GwnlAgAkaEHrBS5hradZaLJY1asTyVxJNrgn14tKqlPFCVnK14lKAHo7lRD8Czg
-aVkJM4IEGawpZE8RuiuztUZ2Oa8DF3m+2qJu4Sila+GA1RdcKo4EfdM/rvDI5ctz
-RsdRSrHP7WMW/LG8UrE0wzeJfuRKfjujCIJIPlg4hw2eqj1YPeWAGVtlx92tVHLw
-pEICjzIHd+NguM5UHEGNVMTn0o8/q0joCSWuG9Hq42acY5eimYUlXou2bhmnmVPG
-Ikck6juC4r//MKJ4W++Gv4RZBosM7bNUcQspzNEj4QNeIGL53YAN57VWR2HCclEe
-ONLcGpsTv8CnsoVAFSDAW0cig2NqEg==
-=peYP
------END PGP SIGNATURE-----
-
---Sig_/4fPfY4dz.zTw+BW=GF3We/A--
+On 7/1/19 6:55 AM, Patrick Bellasi wrote:
+> On 01-Jul 11:02, Peter Zijlstra wrote:
+>> On Wed, Jun 26, 2019 at 06:29:12PM -0700, subhra mazumdar wrote:
+>>> Hi,
+>>>
+>>> Resending this patchset, will be good to get some feedback. Any suggestions
+>>> that will make it more acceptable are welcome. We have been shipping this
+>>> with Unbreakable Enterprise Kernel in Oracle Linux.
+>>>
+>>> Current select_idle_sibling first tries to find a fully idle core using
+>>> select_idle_core which can potentially search all cores and if it fails it
+>>> finds any idle cpu using select_idle_cpu. select_idle_cpu can potentially
+>>> search all cpus in the llc domain. This doesn't scale for large llc domains
+>>> and will only get worse with more cores in future.
+>>>
+>>> This patch solves the scalability problem by:
+>>>   - Setting an upper and lower limit of idle cpu search in select_idle_cpu
+>>>     to keep search time low and constant
+>>>   - Adding a new sched feature SIS_CORE to disable select_idle_core
+>>>
+>>> Additionally it also introduces a new per-cpu variable next_cpu to track
+>>> the limit of search so that every time search starts from where it ended.
+>>> This rotating search window over cpus in LLC domain ensures that idle
+>>> cpus are eventually found in case of high load.
+>> Right, so we had a wee conversation about this patch series at OSPM, and
+>> I don't see any of that reflected here :-(
+>>
+>> Specifically, given that some people _really_ want the whole L3 mask
+>> scanned to reduce tail latency over raw throughput, while you guys
+>> prefer the other way around, it was proposed to extend the task model.
+>>
+>> Specifically something like a latency-nice was mentioned (IIRC) where a
+> Right, AFAIR PaulT suggested to add support for the concept of a task
+> being "latency tolerant": meaning we can spend more time to search for
+> a CPU and/or avoid preempting the current task.
+>
+Wondering if searching and preempting needs will ever be conflicting?
+Otherwise sounds like a good direction to me. For the searching aspect, can
+we map latency nice values to the % of cores we search in select_idle_cpu?
+Thus the search cost can be controlled by latency nice value. But the issue
+is if more latency tolerant workloads set to less search, we still need
+some mechanism to achieve good spread of threads. Can we keep the sliding
+window mechanism in that case? Also will latency nice do anything for
+select_idle_core and select_idle_smt?
