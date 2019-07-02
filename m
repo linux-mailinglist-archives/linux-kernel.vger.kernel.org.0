@@ -2,169 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8F015D8ED
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:31:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CE615D9C5
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:53:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727262AbfGCAax (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 20:30:53 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:35051 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726457AbfGCAaw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 20:30:52 -0400
-Received: by mail-ot1-f65.google.com with SMTP id j19so489506otq.2;
-        Tue, 02 Jul 2019 17:30:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Q0DTSEoJfAoRh/DNOfvOIAUC0JkelgBbLHyDpxdWx4k=;
-        b=aW71dvXzx3/OZ2dyur8K2R3t59hdwnCvtsuhJGdee/nm9r6PCmqTtx+JWgAIJLo2/d
-         Y21AhbIEphVmstcZOwfTGkQASbWx10y4fsfburjD7qorfBw7J73NAYnWdXDN5k5epES2
-         9xsxotFn9XmfaHw9GsQaebN96U6pHmRUkIvbu0rqpCA3ltYn9AaqBA81bvwfZWb2bRXK
-         PGExbAEeQJBbEYszopwMOpV+S9XN0z12R0Vy2r2L+ErpKfnQnxV/0MIwpTrNI/wPBJUQ
-         Q4OJpy3R867Yl9+XNBz9RWRkL9MFWnLifF6/SdKW9uCH6tpmnrx4YKPqcv3J2LmnI790
-         wFfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Q0DTSEoJfAoRh/DNOfvOIAUC0JkelgBbLHyDpxdWx4k=;
-        b=JyqDon+pTlje8hOecDtTi3T1tCiHKDoBqevjUXlT0QD1tKYWqRkUhzQiOIu46AsPOC
-         7aEf+Xw9mBFZUaueoCQX03NjIg/mlgCQN66hA9SCfLWjrYM8QSL6IdNH75pkWwUq7ngY
-         d1S0PqqAoGWjWunvwVCQUeWOgO8l14EX9uVWxX8UK2Y+AysM+Gcvx5al4rBFhQSoYV0/
-         YMYyOcenwhKEv3jIepvyC7HlqUf5aNOSLmr6SJvJq3q9aGZs6m5Anom1Xh3RPtXWj34s
-         uo8X2+8vK5qH8FaxvIBvC3x3euBkezXX7O073ONwiEhwFWO026xvKCOecHHhB55A+8Wj
-         Yc1A==
-X-Gm-Message-State: APjAAAXy6O1lSAnOZ4zZQfXUjHvcjK0SaQK1tqhBtMl1fn73k6DskWNj
-        OlsdcuHptjogpcmfkBxc3T4yQWJMEOqtsOostw1gH1bH
-X-Google-Smtp-Source: APXvYqy/QQUN0J6b4O2bTl3SYceaajLNKXdMQ4/wzOnMkRg4M4DkLByhdEGK3wJrQJDIJWZll9ZaCAX1i1L6mFoN5Ec=
-X-Received: by 2002:a9d:39a6:: with SMTP id y35mr27395004otb.81.1562110146329;
- Tue, 02 Jul 2019 16:29:06 -0700 (PDT)
+        id S1727336AbfGCAxO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 20:53:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47374 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727025AbfGCAxF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 20:53:05 -0400
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CCD5D21BF2;
+        Tue,  2 Jul 2019 23:34:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562110455;
+        bh=kyo0eoaQ9Ha/fgbOaPGSkh+lU4/GNQGtCW3mk29fTtM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=zMKkZ2iUwvFBFFgKCayDWNYa87sLl+Q8jJ0kQOrFNc7kW8nMZkXdEpUslpqFE27Vu
+         QuPL5GiJwl9Q5DeAl4/I3YyP6oFv0QIMbDb+v5SalR2BFdZqt23TBcsx8pwxkayO03
+         CcA9U3c6C3qoUMw1R7X0HkQqv3wh56/KrByGFtS0=
+Received: by mail-qt1-f174.google.com with SMTP id a15so544678qtn.7;
+        Tue, 02 Jul 2019 16:34:15 -0700 (PDT)
+X-Gm-Message-State: APjAAAV5cmEyKD9pJQi0ZGAXYmTddQYD9SRYXLbnNYhV2O/XknWKi4Ov
+        VchDaSGGDSsZBXMP83ZUnYr83UFSN72yU0ERPg==
+X-Google-Smtp-Source: APXvYqwMCTfWzt/cQHKnUuZttwa2DgK2f5+/+x0lGfaPAIO+YrwZjCWAUf7qdAt2QRHL6vYe/2+RJeRw3PUodEdU/vM=
+X-Received: by 2002:ac8:368a:: with SMTP id a10mr27918576qtc.143.1562110455015;
+ Tue, 02 Jul 2019 16:34:15 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190701091258.3870-1-narmstrong@baylibre.com> <20190701091258.3870-8-narmstrong@baylibre.com>
-In-Reply-To: <20190701091258.3870-8-narmstrong@baylibre.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Wed, 3 Jul 2019 01:28:55 +0200
-Message-ID: <CAFBinCAnKeGYkyCmEMugWuQaSxgBp4DqtHN3b0rLJY6jwOF0QA@mail.gmail.com>
-Subject: Re: [RFC/RFT v3 07/14] clk: meson: g12a: add notifiers to handle cpu
- clock change
-To:     sboyd@codeaurora.org, Neil Armstrong <narmstrong@baylibre.com>
-Cc:     jbrunet@baylibre.com, khilman@baylibre.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+References: <20190702203523.2412-1-martin.blumenstingl@googlemail.com> <20190702203523.2412-2-martin.blumenstingl@googlemail.com>
+In-Reply-To: <20190702203523.2412-2-martin.blumenstingl@googlemail.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Tue, 2 Jul 2019 17:34:03 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+3H-cbrUna27RJ1o0w5MxaubkA9hcZjpWsaEYnx6bWQg@mail.gmail.com>
+Message-ID: <CAL_Jsq+3H-cbrUna27RJ1o0w5MxaubkA9hcZjpWsaEYnx6bWQg@mail.gmail.com>
+Subject: Re: [PATCH 1/4] dt-bindings: phy: add binding for the Lantiq VRX200
+ and ARX300 PCIe PHYs
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc:     linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
+        John Crispin <john@phrozen.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Hauke Mehrtens <hauke@hauke-m.de>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Martin Schiller <ms@dev.tdt.de>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen, Hi Neil,
+On Tue, Jul 2, 2019 at 2:35 PM Martin Blumenstingl
+<martin.blumenstingl@googlemail.com> wrote:
+>
+> Add the bindings for the PCIe PHY on Lantiq VRX200 and ARX300 SoCs.
+> The IP block contains settings for the PHY and a PLL.
+> The PLL mode is configurable through a dedicated #phy-cell in .dts.
+>
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> ---
+>  .../bindings/phy/lantiq,vrx200-pcie-phy.yaml  | 87 +++++++++++++++++++
+>  .../dt-bindings/phy/phy-lantiq-vrx200-pcie.h  | 11 +++
+>  2 files changed, 98 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/phy/lantiq,vrx200-pcie-phy.yaml
+>  create mode 100644 include/dt-bindings/phy/phy-lantiq-vrx200-pcie.h
+>
+> diff --git a/Documentation/devicetree/bindings/phy/lantiq,vrx200-pcie-phy.yaml b/Documentation/devicetree/bindings/phy/lantiq,vrx200-pcie-phy.yaml
+> new file mode 100644
+> index 000000000000..b7b222e772d0
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/phy/lantiq,vrx200-pcie-phy.yaml
+> @@ -0,0 +1,87 @@
+> +# SPDX-License-Identifier: GPL-2.0
 
-On Mon, Jul 1, 2019 at 11:13 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
->
-> In order to implement clock switching for the CLKID_CPU_CLK and
-> CLKID_CPUB_CLK, notifiers are added on specific points of the
-> clock tree :
->
-> cpu_clk / cpub_clk
-> |   \- cpu_clk_dyn
-> |      |  \- cpu_clk_premux0
-> |      |        |- cpu_clk_postmux0
-> |      |        |    |- cpu_clk_dyn0_div
-> |      |        |    \- xtal/fclk_div2/fclk_div3
-> |      |        \- xtal/fclk_div2/fclk_div3
-> |      \- cpu_clk_premux1
-> |            |- cpu_clk_postmux1
-> |            |    |- cpu_clk_dyn1_div
-> |            |    \- xtal/fclk_div2/fclk_div3
-> |            \- xtal/fclk_div2/fclk_div3
-> \ sys_pll / sys1_pll
->
-> This for each cluster, a single one for G12A, two for G12B.
->
-> Each cpu_clk_premux1 tree is marked as read-only and CLK_SET_RATE_NO_REPARENT,
-> to be used as "parking" clock in a safe clock frequency.
-it seems that this is one case where the "coordinated clocks" feature
-would come handy: [0]
-Stephen, do you know if those patches stopped in March or if there's
-still some ongoing effort to get them ready?
+The preference is (GPL-2.0 OR BSD-2-Clause) for new bindings.
 
-[...]
-> -/*
-> - * Internal sys pll emulation configuration parameters
-> - */
-> -static const struct reg_sequence g12a_sys_init_regs[] = {
-> -       { .reg = HHI_SYS_PLL_CNTL1,     .def = 0x00000000 },
-> -       { .reg = HHI_SYS_PLL_CNTL2,     .def = 0x00000000 },
-> -       { .reg = HHI_SYS_PLL_CNTL3,     .def = 0x48681c00 },
-> -       { .reg = HHI_SYS_PLL_CNTL4,     .def = 0x88770290 },
-> -       { .reg = HHI_SYS_PLL_CNTL5,     .def = 0x39272000 },
-> -       { .reg = HHI_SYS_PLL_CNTL6,     .def = 0x56540000 },
-> +static const struct pll_mult_range g12a_sys_pll_mult_range = {
-> +       .min = 128,
-> +       .max = 250,
->  };
->
->  static struct clk_regmap g12a_sys_pll_dco = {
-> @@ -124,14 +118,15 @@ static struct clk_regmap g12a_sys_pll_dco = {
->                         .shift   = 29,
->                         .width   = 1,
->                 },
-> -               .init_regs = g12a_sys_init_regs,
-> -               .init_count = ARRAY_SIZE(g12a_sys_init_regs),
-> +               .range = &g12a_sys_pll_mult_range,
-Neil, I believe that this should be a separate patch with a
-description which explains why we don't need the "init regs" anymore
-
->         },
->         .hw.init = &(struct clk_init_data){
->                 .name = "sys_pll_dco",
-> -               .ops = &meson_clk_pll_ro_ops,
-> +               .ops = &meson_clk_pll_ops,
->                 .parent_names = (const char *[]){ IN_PREFIX "xtal" },
->                 .num_parents = 1,
-> +               /* This clock feeds the CPU, avoid disabling it */
-> +               .flags = CLK_IS_CRITICAL,
-maybe we should have a separate patch for making the CPU clock tree
-mutable as well
-
-[...]
-> +/* This divider uses bit 26 to take change in account */
-> +static int g12b_cpub_clk_mux0_div_set_rate(struct clk_hw *hw,
-> +                                          unsigned long rate,
-> +                                          unsigned long parent_rate)
-> +{
-> +       struct clk_regmap *clk = to_clk_regmap(hw);
-> +       struct clk_regmap_div_data *div = clk_get_regmap_div_data(clk);
-> +       unsigned int val;
-> +       int ret;
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/phy/lantiq,vrx200-pcie-phy.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +       ret = divider_get_val(rate, parent_rate, div->table, div->width,
-> +                             div->flags);
-> +       if (ret < 0)
-> +               return ret;
+> +title: Lantiq VRX200 and ARX300 PCIe PHY Device Tree Bindings
 > +
-> +       val = (unsigned int)ret << div->shift;
+> +maintainers:
+> +  - Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 > +
-> +       regmap_update_bits(clk->map, HHI_SYS_CPUB_CLK_CNTL,
-> +                          SYS_CPU_DYN_ENABLE, SYS_CPU_DYN_ENABLE);
+> +properties:
+> +  "#phy-cells":
+> +    const: 1
+> +    description: selects the PHY mode as defined in <dt-bindings/phy/phy-lantiq-vrx200-pcie.h>
 > +
-> +       return regmap_update_bits(clk->map, div->offset,
-> +                                 clk_div_mask(div->width) << div->shift |
-> +                                 SYS_CPU_DYN_ENABLE, val);
-> +};
-the public S922X datasheet doesn't mention bit 26
-do I understand the semantics correctly?:
-- set SYS_CPU_DYN_ENABLE
-- update the divider
-- unset SYS_CPU_DYN_ENABLE
+> +  compatible:
+> +    enum:
+> +      - lantiq,vrx200-pcie-phy
+> +      - lantiq,arx300-pcie-phy
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    items:
+> +      - description: PHY module clock
+> +      - description: PDI register clock
+> +
+> +  clock-names:
+> +    items:
+> +      - const: phy
+> +      - const: pdi
+> +
+> +  resets:
+> +    items:
+> +      - description: exclusive PHY reset line
+> +      - description: shared reset line between the PCIe PHY and PCIe controller
+> +
+> +  resets-names:
+> +    items:
+> +      - const: phy
+> +      - const: pcie
+> +
+> +  lantiq,rcu:
+> +    maxItems: 1
+> +    description: phandle to the RCU syscon
 
-too bad it's not a gate which we could model with
-CLK_SET_RATE_GATE/CLK_SET_RATE_UNGATE
+You need to define the type (and drop maxItems):
 
+$ref: /schemas/types.yaml#/definitions/phandle
 
-Martin
+> +
+> +  lantiq,rcu-endian-offset:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: the offset of the endian registers for this PHY instance in the RCU syscon
+> +
+> +  lantiq,rcu-big-endian-mask:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: the mask to set the PDI (PHY) registers for this PHY instance to big endian
+> +
+> +required:
+> +  - "#phy-cells"
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +  - resets
+> +  - reset-names
+> +  - lantiq,rcu
+> +  - lantiq,rcu-endian-offset
+> +  - lantiq,rcu-big-endian-mask
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    pcie0_phy: phy@106800 {
+> +        compatible = "lantiq,vrx200-pcie-phy";
+> +        reg = <0x106800 0x100>;
+> +        lantiq,rcu = <&rcu0>;
+> +        lantiq,rcu-endian-offset = <0x4c>;
+> +        lantiq,rcu-big-endian-mask = <0x80>; /* bit 7 */
+> +        big-endian;
 
-[0] https://patchwork.kernel.org/patch/10838949/
+The example will fail to validate because big-endian is not listed as
+a property and you have 'additionalProperties: false'. So you have to
+either list big-endian or drop additionalProperties.
+
+Note that the examples are validated against the schema in linux-next now.
+
+Rob
