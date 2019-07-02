@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A3635CACC
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 10:08:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46AD45CA50
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 10:03:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728355AbfGBIIC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 04:08:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55452 "EHLO mail.kernel.org"
+        id S1727257AbfGBIC7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 04:02:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47660 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727269AbfGBIIA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 04:08:00 -0400
+        id S1727222AbfGBIC4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 04:02:56 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C631821851;
-        Tue,  2 Jul 2019 08:07:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1DC5D216C8;
+        Tue,  2 Jul 2019 08:02:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562054880;
-        bh=31uGmOET+J+RLoI4uarHGQiKqoONVy4X9J/20Qq7JZk=;
+        s=default; t=1562054575;
+        bh=GNizRBeqQ6ROLVksye5/GoG1+koTGI2044OlJYwFIRo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WPfxFNqB7WL8I5TznqGxEWHU+AJFRisrlfo1+toeaPjZzz0ub2aSWqZDwPnZRIkpw
-         hgRdy4mzGbri5R3bE4faBs/G50hfnTuelzhS6dpJ/IiYEgY+RpBYo+IAXSlU51hZsk
-         RLq2NwhukpARyZDl9mTBZtflvHKbbOng18lBIjjU=
+        b=ETX9aOg1yoJOXVcvzhT2PhY56zcZOshcIY76RP4eilX7L06JQ6O9/VF+LXtFGsEla
+         YuBIzkTIVVaEhH8WhgB17cjAOkveE/enFiewv+Jo6tgCCoW2yyfxbOnnN7j+iYaQC9
+         a0Eu4rVtOHlf2N9AGTTtzpgUL6w6EaGRkkR6LF8A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Fei Yang <fei.yang@intel.com>,
-        Sam Protsenko <semen.protsenko@linaro.org>,
-        Felipe Balbi <balbi@kernel.org>, linux-usb@vger.kernel.org,
-        John Stultz <john.stultz@linaro.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 23/72] Revert "usb: dwc3: gadget: Clear req->needs_extra_trb flag on cleanup"
-Date:   Tue,  2 Jul 2019 10:01:24 +0200
-Message-Id: <20190702080125.875012893@linuxfoundation.org>
+        stable@vger.kernel.org, Gen Zhang <blackgod016574@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 5.1 17/55] dm init: fix incorrect uses of kstrndup()
+Date:   Tue,  2 Jul 2019 10:01:25 +0200
+Message-Id: <20190702080124.938027622@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190702080124.564652899@linuxfoundation.org>
-References: <20190702080124.564652899@linuxfoundation.org>
+In-Reply-To: <20190702080124.103022729@linuxfoundation.org>
+References: <20190702080124.103022729@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,37 +43,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit 25ad17d692ad54c3c33b2a31e5ce2a82e38de14e,
-as we will be cherry-picking a number of changes from upstream
-that allows us to later cherry-pick the same fix from upstream
-rather than using this modified backported version.
+From: Gen Zhang <blackgod016574@gmail.com>
 
-Cc: Fei Yang <fei.yang@intel.com>
-Cc: Sam Protsenko <semen.protsenko@linaro.org>
-Cc: Felipe Balbi <balbi@kernel.org>
-Cc: linux-usb@vger.kernel.org
-Cc: stable@vger.kernel.org # 4.19.y
-Signed-off-by: John Stultz <john.stultz@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+commit dec7e6494e1aea6bf676223da3429cd17ce0af79 upstream.
+
+Fix 2 kstrndup() calls with incorrect argument order.
+
+Fixes: 6bbc923dfcf5 ("dm: add support to directly boot to a mapped device")
+Cc: stable@vger.kernel.org # v5.1
+Signed-off-by: Gen Zhang <blackgod016574@gmail.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/usb/dwc3/gadget.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/md/dm-init.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
-index 65ba1038b111..eaa78e6c972c 100644
---- a/drivers/usb/dwc3/gadget.c
-+++ b/drivers/usb/dwc3/gadget.c
-@@ -177,8 +177,6 @@ static void dwc3_gadget_del_and_unmap_request(struct dwc3_ep *dep,
- 	req->started = false;
- 	list_del(&req->list);
- 	req->remaining = 0;
--	req->unaligned = false;
--	req->zero = false;
+--- a/drivers/md/dm-init.c
++++ b/drivers/md/dm-init.c
+@@ -140,8 +140,8 @@ static char __init *dm_parse_table_entry
+ 		return ERR_PTR(-EINVAL);
+ 	}
+ 	/* target_args */
+-	dev->target_args_array[n] = kstrndup(field[3], GFP_KERNEL,
+-					     DM_MAX_STR_SIZE);
++	dev->target_args_array[n] = kstrndup(field[3], DM_MAX_STR_SIZE,
++					     GFP_KERNEL);
+ 	if (!dev->target_args_array[n])
+ 		return ERR_PTR(-ENOMEM);
  
- 	if (req->request.status == -EINPROGRESS)
- 		req->request.status = status;
--- 
-2.20.1
-
+@@ -275,7 +275,7 @@ static int __init dm_init_init(void)
+ 		DMERR("Argument is too big. Limit is %d\n", DM_MAX_STR_SIZE);
+ 		return -EINVAL;
+ 	}
+-	str = kstrndup(create, GFP_KERNEL, DM_MAX_STR_SIZE);
++	str = kstrndup(create, DM_MAX_STR_SIZE, GFP_KERNEL);
+ 	if (!str)
+ 		return -ENOMEM;
+ 
 
 
