@@ -2,371 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14FF05D398
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 17:53:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D10445D393
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 17:53:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727202AbfGBPx3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 11:53:29 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:25540 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726308AbfGBPxW (ORCPT
+        id S1727034AbfGBPxS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 11:53:18 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:45578 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726308AbfGBPxS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 11:53:22 -0400
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x62FotjK006865;
-        Tue, 2 Jul 2019 17:53:11 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=STMicroelectronics;
- bh=9pZ9+lN83272LNcYF2gVJa9JSX/Zw4AAwmBGzwFkaA8=;
- b=gi4d86vI4gFJ1fnAyJfSJVdglTwhbpoQBHvvbiTemgRDqkoNsnab/XmtF8BiOt0stB3u
- I7/kpuHpxtxBYtZVlCd2RbFRCIsSWzDBr9g2/rLfhbL115JQQR9xa/cdsmkZ7EECM166
- EGnJ8mt5IPlbnGl+K/Ng8OrXnzvB62C0V6RG2rb33M/GiutQrUjEjHmUGHcSIjkHDbOg
- HKaGdLiCTN2YcpJk3S05lujVeaIB73p7NTmyJmE6kDMBAjJE09j8L+F0olrfYd02Ij37
- dUabbjiWeiTWZ9wAmRpkkJMDWXzGvbGD4xVcWjPSwrpm26BwFO37lHzliixRmyK2kBbi JA== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2tdw49wgyc-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Tue, 02 Jul 2019 17:53:10 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 4F65631;
-        Tue,  2 Jul 2019 15:53:10 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas23.st.com [10.75.90.46])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 29ECD4ADC;
-        Tue,  2 Jul 2019 15:53:10 +0000 (GMT)
-Received: from SAFEX1HUBCAS24.st.com (10.75.90.95) by SAFEX1HUBCAS23.st.com
- (10.75.90.46) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 2 Jul 2019
- 17:53:10 +0200
-Received: from localhost (10.201.23.19) by webmail-ga.st.com (10.75.90.48)
- with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 2 Jul 2019 17:53:09
- +0200
-From:   Hugues Fruchet <hugues.fruchet@st.com>
-To:     Alexandre Torgue <alexandre.torgue@st.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-CC:     <linux-media@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Yannick Fertre <yannick.fertre@st.com>,
-        Philippe CORNU <philippe.cornu@st.com>,
-        "Hugues Fruchet" <hugues.fruchet@st.com>,
-        Mickael GUENE <mickael.guene@st.com>
-Subject: [PATCH v3 3/3] media: stm32-dcmi: add support of several sub-devices
-Date:   Tue, 2 Jul 2019 17:52:59 +0200
-Message-ID: <1562082779-31165-4-git-send-email-hugues.fruchet@st.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1562082779-31165-1-git-send-email-hugues.fruchet@st.com>
-References: <1562082779-31165-1-git-send-email-hugues.fruchet@st.com>
+        Tue, 2 Jul 2019 11:53:18 -0400
+Received: by mail-pg1-f195.google.com with SMTP id o13so3385298pgp.12
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 08:53:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fomichev-me.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=cl0v8wIi5ckV/JFTMr62z9IJnCBwgq6PTLXNZySJFKE=;
+        b=BshvCv0z48GDRlOe7wUUakEQ7WtAa6qqMxNiKS5VyGMORJhmGXBbwBb3fYxkLSIwfX
+         t3IY+Mm2FOv7fSzVA361hclrSmxT8ykILSHq5gdRKnLKWyOJwW5DRfLgN+tmGPAIgLuG
+         wmCaW/nIZWD2mwm+1eysoj200TWQVJlqjSVQyUWDGcu7jJ28U0LWQPX8MCz98yPjtdki
+         cHC8f2S4FcWmxWZLQ64JzUEfcyy2zjRNbdtlFomOuWkANc47lZIA5LstyjRrI1imqOlJ
+         j2DSqs9//sFGOHphCtCfUYZ7XwQxNIHYojoMsnGXdXNwAltpmEdUXzp9fd65+7EkV5ry
+         ApdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=cl0v8wIi5ckV/JFTMr62z9IJnCBwgq6PTLXNZySJFKE=;
+        b=BMWycIfb10UkYS3SjzHWQiQ+oEpE5zqR3NRIwjByyMPBERXYn/FzlSZf+/w7nO0sJv
+         isaLhAWW+Qz7mu5PgSJIbO3P08hq+ljLLkPp8y6WxdHhst29kwsKb2jtu/YJ9izUGmZP
+         tlij/O3zW+J/UH77NA+E5WIDLUo9CJ3Z6c+DTOVrdtFYueswOY5E68jwGxIyURqPzGzZ
+         /Dv5d8Z/yqAkuimObfUxuCkMLPso2AxMxe61yGi5oTfEf+o92YzR8H1I7f9J3jnJrk5/
+         rUeimAYdfQC4XTt2OnsbtpuH4Q7CwqOF4x38sKULUpWpbZIQaowrVb947v82ss7xPsX4
+         NfCQ==
+X-Gm-Message-State: APjAAAVuas1t5zIS8XrN2wRGQj3ekXIw2jzjroL8tjA/4P2cd4OFjtlI
+        Atz6RN+x598nFTctkSQwyZkPqxeJVG0=
+X-Google-Smtp-Source: APXvYqycrzymxcdSRUPnb+KLUWdFvBSdBC/+ZeideYCH3ZcxbIG30pYV4vOVAAIvgC9L4pK46S5UKA==
+X-Received: by 2002:a63:d301:: with SMTP id b1mr207334pgg.379.1562082797621;
+        Tue, 02 Jul 2019 08:53:17 -0700 (PDT)
+Received: from localhost ([2601:646:8f00:18d9:d0fa:7a4b:764f:de48])
+        by smtp.gmail.com with ESMTPSA id m13sm11837936pgv.89.2019.07.02.08.53.16
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 02 Jul 2019 08:53:17 -0700 (PDT)
+Date:   Tue, 2 Jul 2019 08:53:16 -0700
+From:   Stanislav Fomichev <sdf@fomichev.me>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     ast@kernel.org, daniel@iogearbox.net, kafai@fb.com,
+        songliubraving@fb.com, yhs@fb.com, sdf@google.com,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org
+Subject: Re: [PATCH bpf-next] bpf: cgroup: Fix build error without CONFIG_NET
+Message-ID: <20190702155316.GJ6757@mini-arch>
+References: <20190702132913.26060-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.23.19]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-02_08:,,
- signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190702132913.26060-1-yuehaibing@huawei.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support of several sub-devices within pipeline instead
-of a single one.
-This allows to support a CSI-2 camera sensor connected
-through a CSI-2 to parallel bridge.
+On 07/02, YueHaibing wrote:
+> If CONFIG_NET is not set, gcc building fails:
+> 
+> kernel/bpf/cgroup.o: In function `cg_sockopt_func_proto':
+> cgroup.c:(.text+0x237e): undefined reference to `bpf_sk_storage_get_proto'
+> cgroup.c:(.text+0x2394): undefined reference to `bpf_sk_storage_delete_proto'
+> kernel/bpf/cgroup.o: In function `__cgroup_bpf_run_filter_getsockopt':
+> (.text+0x2a1f): undefined reference to `lock_sock_nested'
+> (.text+0x2ca2): undefined reference to `release_sock'
+> kernel/bpf/cgroup.o: In function `__cgroup_bpf_run_filter_setsockopt':
+> (.text+0x3006): undefined reference to `lock_sock_nested'
+> (.text+0x32bb): undefined reference to `release_sock'
+> 
+> Add CONFIG_NET dependency to fix this.
+Can you share the config? Do I understand correctly that you have
+CONFIG_NET=n and CONFIG_BPF=y? What parts of BPF do you expect to
+work in this case?
 
-Signed-off-by: Hugues Fruchet <hugues.fruchet@st.com>
----
- drivers/media/platform/stm32/stm32-dcmi.c | 204 +++++++++++++++++++++++++++---
- 1 file changed, 186 insertions(+), 18 deletions(-)
+Less invasive fix would be something along the lines:
 
-diff --git a/drivers/media/platform/stm32/stm32-dcmi.c b/drivers/media/platform/stm32/stm32-dcmi.c
-index 6f37617..6921e6b 100644
---- a/drivers/media/platform/stm32/stm32-dcmi.c
-+++ b/drivers/media/platform/stm32/stm32-dcmi.c
-@@ -172,6 +172,7 @@ struct stm32_dcmi {
- 
- 	struct media_device		mdev;
- 	struct media_pad		vid_cap_pad;
-+	struct media_pipeline		pipeline;
- };
- 
- static inline struct stm32_dcmi *notifier_to_dcmi(struct v4l2_async_notifier *n)
-@@ -583,6 +584,131 @@ static void dcmi_buf_queue(struct vb2_buffer *vb)
- 	spin_unlock_irq(&dcmi->irqlock);
+diff --git a/kernel/bpf/cgroup.c b/kernel/bpf/cgroup.c
+index 76fa0076f20d..0a00eaca6fae 100644
+--- a/kernel/bpf/cgroup.c
++++ b/kernel/bpf/cgroup.c
+@@ -939,6 +939,7 @@ int __cgroup_bpf_run_filter_sysctl(struct ctl_table_header *head,
  }
+ EXPORT_SYMBOL(__cgroup_bpf_run_filter_sysctl);
  
-+static struct media_entity *dcmi_find_source(struct stm32_dcmi *dcmi)
-+{
-+	struct media_entity *entity = &dcmi->vdev->entity;
-+	struct media_pad *pad;
-+
-+	/* Walk searching for entity having no sink */
-+	while (1) {
-+		pad = &entity->pads[0];
-+		if (!(pad->flags & MEDIA_PAD_FL_SINK))
-+			break;
-+
-+		pad = media_entity_remote_pad(pad);
-+		if (!pad || !is_media_entity_v4l2_subdev(pad->entity))
-+			break;
-+
-+		entity = pad->entity;
-+	}
-+
-+	return entity;
-+}
-+
-+static int dcmi_pipeline_s_fmt(struct stm32_dcmi *dcmi,
-+			       struct v4l2_subdev_pad_config *pad_cfg,
-+			       struct v4l2_subdev_format *format)
-+{
-+	struct media_entity *entity = &dcmi->entity.source->entity;
-+	struct v4l2_subdev *subdev;
-+	struct media_pad *sink_pad = NULL;
-+	struct media_pad *src_pad = NULL;
-+	struct media_pad *pad = NULL;
-+	struct v4l2_subdev_format fmt = *format;
-+	bool found = false;
-+	int ret;
-+
-+	/*
-+	 * Starting from sensor subdevice, walk within
-+	 * pipeline and set format on each subdevice
-+	 */
-+	while (1) {
-+		unsigned int i;
-+
-+		/* Search if current entity has a source pad */
-+		for (i = 0; i < entity->num_pads; i++) {
-+			pad = &entity->pads[i];
-+			if (pad->flags & MEDIA_PAD_FL_SOURCE) {
-+				src_pad = pad;
-+				found = true;
-+				break;
-+			}
-+		}
-+		if (!found)
-+			break;
-+
-+		subdev = media_entity_to_v4l2_subdev(entity);
-+
-+		/* Propagate format on sink pad if any, otherwise source pad */
-+		if (sink_pad)
-+			pad = sink_pad;
-+
-+		dev_dbg(dcmi->dev, "%s[%d] pad format set to 0x%x %ux%u\n",
-+			subdev->name, pad->index, format->format.code,
-+			format->format.width, format->format.height);
-+
-+		fmt.pad = pad->index;
-+		ret = v4l2_subdev_call(subdev, pad, set_fmt, pad_cfg, &fmt);
-+		if (ret < 0)
-+			return ret;
-+
-+		/* Walk to next entity */
-+		sink_pad = media_entity_remote_pad(src_pad);
-+		if (!sink_pad || !is_media_entity_v4l2_subdev(sink_pad->entity))
-+			break;
-+
-+		entity = sink_pad->entity;
-+	}
-+	*format = fmt;
-+
-+	return 0;
-+}
-+
-+static int dcmi_pipeline_s_stream(struct stm32_dcmi *dcmi, int state)
-+{
-+	struct media_entity *entity = &dcmi->vdev->entity;
-+	struct v4l2_subdev *subdev;
-+	struct media_pad *pad;
-+	int ret;
-+
-+	/* Start/stop all entities within pipeline */
-+	while (1) {
-+		pad = &entity->pads[0];
-+		if (!(pad->flags & MEDIA_PAD_FL_SINK))
-+			break;
-+
-+		pad = media_entity_remote_pad(pad);
-+		if (!pad || !is_media_entity_v4l2_subdev(pad->entity))
-+			break;
-+
-+		entity = pad->entity;
-+		subdev = media_entity_to_v4l2_subdev(entity);
-+
-+		ret = v4l2_subdev_call(subdev, video, s_stream, state);
-+		if (ret < 0 && ret != -ENOIOCTLCMD) {
-+			dev_err(dcmi->dev, "%s: %s failed to %s streaming (%d)\n",
-+				__func__, subdev->name,
-+				state ? "start" : "stop", ret);
-+			return ret;
-+		}
-+
-+		dev_dbg(dcmi->dev, "%s is %s\n",
-+			subdev->name, state ? "started" : "stopped");
-+	}
-+
-+	return 0;
-+}
-+
-+static int dcmi_pipeline_start(struct stm32_dcmi *dcmi)
-+{
-+	return dcmi_pipeline_s_stream(dcmi, 1);
-+}
-+
-+static void dcmi_pipeline_stop(struct stm32_dcmi *dcmi)
-+{
-+	dcmi_pipeline_s_stream(dcmi, 0);
-+}
-+
- static int dcmi_start_streaming(struct vb2_queue *vq, unsigned int count)
++#ifdef CONFIG_NET
+ static bool __cgroup_bpf_prog_array_is_empty(struct cgroup *cgrp,
+ 					     enum bpf_attach_type attach_type)
  {
- 	struct stm32_dcmi *dcmi = vb2_get_drv_priv(vq);
-@@ -597,14 +723,17 @@ static int dcmi_start_streaming(struct vb2_queue *vq, unsigned int count)
- 		goto err_release_buffers;
- 	}
- 
--	/* Enable stream on the sub device */
--	ret = v4l2_subdev_call(dcmi->entity.source, video, s_stream, 1);
--	if (ret && ret != -ENOIOCTLCMD) {
--		dev_err(dcmi->dev, "%s: Failed to start streaming, subdev streamon error",
--			__func__);
-+	ret = media_pipeline_start(&dcmi->vdev->entity, &dcmi->pipeline);
-+	if (ret < 0) {
-+		dev_err(dcmi->dev, "%s: Failed to start streaming, media pipeline start error (%d)\n",
-+			__func__, ret);
- 		goto err_pm_put;
- 	}
- 
-+	ret = dcmi_pipeline_start(dcmi);
-+	if (ret)
-+		goto err_media_pipeline_stop;
-+
- 	spin_lock_irq(&dcmi->irqlock);
- 
- 	/* Set bus width */
-@@ -676,7 +805,7 @@ static int dcmi_start_streaming(struct vb2_queue *vq, unsigned int count)
- 	if (ret) {
- 		dev_err(dcmi->dev, "%s: Start streaming failed, cannot start capture\n",
- 			__func__);
--		goto err_subdev_streamoff;
-+		goto err_pipeline_stop;
- 	}
- 
- 	/* Enable interruptions */
-@@ -687,8 +816,11 @@ static int dcmi_start_streaming(struct vb2_queue *vq, unsigned int count)
- 
- 	return 0;
- 
--err_subdev_streamoff:
--	v4l2_subdev_call(dcmi->entity.source, video, s_stream, 0);
-+err_pipeline_stop:
-+	dcmi_pipeline_stop(dcmi);
-+
-+err_media_pipeline_stop:
-+	media_pipeline_stop(&dcmi->vdev->entity);
- 
- err_pm_put:
- 	pm_runtime_put(dcmi->dev);
-@@ -713,13 +845,10 @@ static void dcmi_stop_streaming(struct vb2_queue *vq)
- {
- 	struct stm32_dcmi *dcmi = vb2_get_drv_priv(vq);
- 	struct dcmi_buf *buf, *node;
--	int ret;
- 
--	/* Disable stream on the sub device */
--	ret = v4l2_subdev_call(dcmi->entity.source, video, s_stream, 0);
--	if (ret && ret != -ENOIOCTLCMD)
--		dev_err(dcmi->dev, "%s: Failed to stop streaming, subdev streamoff error (%d)\n",
--			__func__, ret);
-+	dcmi_pipeline_stop(dcmi);
-+
-+	media_pipeline_stop(&dcmi->vdev->entity);
- 
- 	spin_lock_irq(&dcmi->irqlock);
- 
-@@ -937,8 +1066,7 @@ static int dcmi_set_fmt(struct stm32_dcmi *dcmi, struct v4l2_format *f)
- 	mf->width = sd_framesize.width;
- 	mf->height = sd_framesize.height;
- 
--	ret = v4l2_subdev_call(dcmi->entity.source, pad,
--			       set_fmt, NULL, &format);
-+	ret = dcmi_pipeline_s_fmt(dcmi, NULL, &format);
- 	if (ret < 0)
- 		return ret;
- 
-@@ -1529,7 +1657,20 @@ static int dcmi_graph_notify_complete(struct v4l2_async_notifier *notifier)
- 	struct stm32_dcmi *dcmi = notifier_to_dcmi(notifier);
- 	int ret;
- 
-+	/*
-+	 * Now that the graph is complete,
-+	 * we search for the source subdevice
-+	 * in order to expose it through V4L2 interface
-+	 */
-+	dcmi->entity.source =
-+		media_entity_to_v4l2_subdev(dcmi_find_source(dcmi));
-+	if (!dcmi->entity.source) {
-+		dev_err(dcmi->dev, "Source subdevice not found\n");
-+		return -ENODEV;
-+	}
-+
- 	dcmi->vdev->ctrl_handler = dcmi->entity.source->ctrl_handler;
-+
- 	ret = dcmi_formats_init(dcmi);
- 	if (ret) {
- 		dev_err(dcmi->dev, "No supported mediabus format found\n");
-@@ -1574,12 +1715,30 @@ static int dcmi_graph_notify_bound(struct v4l2_async_notifier *notifier,
- 				   struct v4l2_async_subdev *asd)
- {
- 	struct stm32_dcmi *dcmi = notifier_to_dcmi(notifier);
-+	unsigned int ret;
-+	int src_pad;
- 
- 	dev_dbg(dcmi->dev, "Subdev %s bound\n", subdev->name);
- 
--	dcmi->entity.source = subdev;
-+	/*
-+	 * Link this sub-device to DCMI, it could be
-+	 * a parallel camera sensor or a bridge
-+	 */
-+	src_pad = media_entity_get_fwnode_pad(&subdev->entity,
-+					      subdev->fwnode,
-+					      MEDIA_PAD_FL_SOURCE);
-+
-+	ret = media_create_pad_link(&subdev->entity, src_pad,
-+				    &dcmi->vdev->entity, 0,
-+				    MEDIA_LNK_FL_IMMUTABLE |
-+				    MEDIA_LNK_FL_ENABLED);
-+	if (ret)
-+		dev_err(dcmi->dev, "Failed to create media pad link with subdev %s\n",
-+			subdev->name);
-+	else
-+		dev_dbg(dcmi->dev, "DCMI is now linked to %s\n", subdev->name);
- 
--	return 0;
-+	return ret;
+@@ -1120,6 +1121,7 @@ int __cgroup_bpf_run_filter_getsockopt(struct sock *sk, int level,
+ 	return ret;
  }
+ EXPORT_SYMBOL(__cgroup_bpf_run_filter_getsockopt);
++#endif
  
- static const struct v4l2_async_notifier_operations dcmi_graph_notify_ops = {
-@@ -1639,6 +1798,15 @@ static int dcmi_graph_init(struct stm32_dcmi *dcmi)
- 		return ret;
- 	}
- 
-+	/* Register all the subdev nodes */
-+	ret = v4l2_device_register_subdev_nodes(&dcmi->v4l2_dev);
-+	if (ret) {
-+		dev_err(dcmi->dev, "Failed to register subdev nodes\n");
-+		v4l2_async_notifier_unregister(&dcmi->notifier);
-+		of_node_put(dcmi->entity.remote_node);
-+		return ret;
-+	}
-+
- 	return 0;
- }
- 
--- 
-2.7.4
+ static ssize_t sysctl_cpy_dir(const struct ctl_dir *dir, char **bufp,
+ 			      size_t *lenp)
+@@ -1386,10 +1388,12 @@ static const struct bpf_func_proto *
+ cg_sockopt_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
+ {
+ 	switch (func_id) {
++#ifdef CONFIG_NET
+ 	case BPF_FUNC_sk_storage_get:
+ 		return &bpf_sk_storage_get_proto;
+ 	case BPF_FUNC_sk_storage_delete:
+ 		return &bpf_sk_storage_delete_proto;
++#endif
+ #ifdef CONFIG_INET
+ 	case BPF_FUNC_tcp_sock:
+ 		return &bpf_tcp_sock_proto;
 
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Fixes: 0d01da6afc54 ("bpf: implement getsockopt and setsockopt hooks")
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+>  init/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/init/Kconfig b/init/Kconfig
+> index e2e51b5..341cf2a 100644
+> --- a/init/Kconfig
+> +++ b/init/Kconfig
+> @@ -998,6 +998,7 @@ config CGROUP_PERF
+>  config CGROUP_BPF
+>  	bool "Support for eBPF programs attached to cgroups"
+>  	depends on BPF_SYSCALL
+> +	depends on NET
+>  	select SOCK_CGROUP_DATA
+>  	help
+>  	  Allow attaching eBPF programs to a cgroup using the bpf(2)
+> -- 
+> 2.7.4
+> 
+> 
