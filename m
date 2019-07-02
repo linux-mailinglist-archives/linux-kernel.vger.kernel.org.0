@@ -2,141 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 506B35C938
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 08:21:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C75235C945
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 08:24:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726598AbfGBGV3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 02:21:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49974 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725775AbfGBGV3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 02:21:29 -0400
-Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 99A762146F;
-        Tue,  2 Jul 2019 06:21:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562048487;
-        bh=rkaeMO7B0wY1OLfb6TGU1K2ucCtlHNBMOex23ANgLRc=;
-        h=Date:From:To:Cc:Subject:From;
-        b=YSrBnh1riIW5hPtDGUL+7HUMqebVjK4tFkAT+sgFcyLlRKHsQZKH0R8x6fBnstCNN
-         t25fZBHxJWiyUgnmLoS0j5gvQjOOCKH0e4c27c8HjoVW4Xshzzbbb2nCCzaTrM19uy
-         kCL9tC1kZ+ZYaFX+sN9UbeXMmTuUlvKzTdhNfAKg=
-Date:   Mon, 1 Jul 2019 23:21:26 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     linux-afs@lists.infradead.org, netdev@vger.kernel.org,
-        David Howells <dhowells@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Reminder: 3 open syzbot bugs in "net/rxrpc" subsystem
-Message-ID: <20190702062126.GA3054@sol.localdomain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        id S1726344AbfGBGYM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 02:24:12 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:43362 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725775AbfGBGYL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 02:24:11 -0400
+Received: from mail-pg1-f197.google.com ([209.85.215.197])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <po-hsu.lin@canonical.com>)
+        id 1hiCD2-0001z5-GD
+        for linux-kernel@vger.kernel.org; Tue, 02 Jul 2019 06:24:08 +0000
+Received: by mail-pg1-f197.google.com with SMTP id m4so3519936pgs.17
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2019 23:24:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=yDzSSlzz68xbYUEa8P0cxC2ju66W5gHLv670zzKjJew=;
+        b=nqnu0oT62excbLHVocWhHtjzi5un5sVxPCkzuesFBpnIBG54/B1N37uBnc6BuRV3Mv
+         rsXwzLr91cOr/fue86Crn+dirm5jM4eQXBYzxbaYjcvwT3z9ZJM+1WVMwhQhKa33POWU
+         9kERpLwS3Z/CFHUGvTr+Jii3YyS330p6yYXv/xHmqBHivjulK3KdVRxI/k9rxksqFfA2
+         aIjr6Gyke7/1FkUCmsKCpBrTjhnMTXlkTsZ/+sHMUS5Ma/KLGxddnXZeJeuaT7pNF9Sn
+         wAtyax1RkXBUtcgsZdxJRW7vRd8PF4JDy8uaxNePdIn+CqIDLbHYyqTDURafN0+YKkAh
+         6OxA==
+X-Gm-Message-State: APjAAAWQH/+kN8sqOInQCSeZ15BR8u0Fm6dJ1+dyG/CI6SeDbWcAe/sI
+        XrQeSb+NdKZ6PRWpzAwTTxCxsCacdr8G2f5qNi27f8n9mwPBTBQuc9JxilaL/oSOZ7xfdy4LeEt
+        CV0PEnGz/CoL2BOG71dzhN8DKdpkEGq5ETGsxOm3Q
+X-Received: by 2002:a63:6fc9:: with SMTP id k192mr15683736pgc.20.1562048647067;
+        Mon, 01 Jul 2019 23:24:07 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqwUpzq2O1mJvjQuO/WoeUFhiR35393YmkG+4pab7PCu9wdkXJehbwSHHo5dvrDOFonRuGu1Ew==
+X-Received: by 2002:a63:6fc9:: with SMTP id k192mr15683711pgc.20.1562048646698;
+        Mon, 01 Jul 2019 23:24:06 -0700 (PDT)
+Received: from Leggiero.taipei.internal (61-220-137-37.HINET-IP.hinet.net. [61.220.137.37])
+        by smtp.gmail.com with ESMTPSA id l68sm2569488pjb.8.2019.07.01.23.24.05
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 01 Jul 2019 23:24:06 -0700 (PDT)
+From:   Po-Hsu Lin <po-hsu.lin@canonical.com>
+To:     rostedt@goodmis.org, mingo@redhat.com, shuah@kernel.org,
+        linux-kselftest@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH] selftests/ftrace: skip ftrace test if FTRACE was not enabled
+Date:   Tue,  2 Jul 2019 14:23:58 +0800
+Message-Id: <20190702062358.7330-1-po-hsu.lin@canonical.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[This email was generated by a script.  Let me know if you have any suggestions
-to make it better, or if you want it re-generated with the latest status.]
+The ftrace test will need to have CONFIG_FTRACE enabled to make the
+ftrace directory available.
 
-Of the currently open syzbot reports against the upstream kernel, I've manually
-marked 3 of them as possibly being bugs in the "net/rxrpc" subsystem.  I've
-listed these reports below, sorted by an algorithm that tries to list first the
-reports most likely to be still valid, important, and actionable.
+Add an additional check to skip this test if the CONFIG_FTRACE was not
+enabled.
 
-Of these 3 bugs, 1 was seen in mainline in the last week.
+This will be helpful to avoid a false-positive test result when testing
+it directly with the following commad against a kernel that does not
+have CONFIG_FTRACE enabled:
+    make -C tools/testing/selftests TARGETS=ftrace run_tests
 
-Of these 3 bugs, 2 were bisected to commits from the following person:
+The test result on an Ubuntu KVM kernel will be changed from:
+    selftests: ftrace: ftracetest
+    ========================================
+    Error: No ftrace directory found
+    not ok 1..1 selftests: ftrace: ftracetest [FAIL]
+To:
+    selftests: ftrace: ftracetest
+    ========================================
+    CONFIG_FTRACE was not enabled, test skipped.
+    not ok 1..1 selftests: ftrace: ftracetest [SKIP]
 
-	David Howells <dhowells@redhat.com>
+Signed-off-by: Po-Hsu Lin <po-hsu.lin@canonical.com>
+---
+ tools/testing/selftests/ftrace/ftracetest | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-If you believe a bug is no longer valid, please close the syzbot report by
-sending a '#syz fix', '#syz dup', or '#syz invalid' command in reply to the
-original thread, as explained at https://goo.gl/tpsmEJ#status
-
-If you believe I misattributed a bug to the "net/rxrpc" subsystem, please let me
-know, and if possible forward the report to the correct people or mailing list.
-
-Here are the bugs:
-
---------------------------------------------------------------------------------
-Title:              general protection fault in rxrpc_connect_call
-Last occurred:      14 days ago
-Reported:           159 days ago
-Branches:           Mainline and others
-Dashboard link:     https://syzkaller.appspot.com/bug?id=41872265f1e3e0489eb0cc8762f8d48b3667afdb
-Original thread:    https://lkml.kernel.org/lkml/00000000000033d5e205801b05d3@google.com/T/#u
-
-This bug has a C reproducer.
-
-This bug was bisected to:
-
-	commit 46894a13599a977ac35411b536fb3e0b2feefa95
-	Author: David Howells <dhowells@redhat.com>
-	Date:   Thu Oct 4 08:32:28 2018 +0000
-
-	  rxrpc: Use IPv4 addresses throught the IPv6
-
-No one replied to the original thread for this bug.
-
-If you fix this bug, please add the following tag to the commit:
-    Reported-by: syzbot+7966f2a0b2c7da8939b4@syzkaller.appspotmail.com
-
-If you send any email or patch for this bug, please consider replying to the
-original thread.  For the git send-email command to use, or tips on how to reply
-if the thread isn't in your mailbox, see the "Reply instructions" at
-https://lkml.kernel.org/r/00000000000033d5e205801b05d3@google.com
-
---------------------------------------------------------------------------------
-Title:              kernel BUG at net/rxrpc/local_object.c:LINE!
-Last occurred:      4 days ago
-Reported:           4 days ago
-Branches:           Mainline and others
-Dashboard link:     https://syzkaller.appspot.com/bug?id=53b6555b27af2cae74e2fbdac6cadc73f9cb18aa
-Original thread:    https://lkml.kernel.org/lkml/0000000000004c2416058c594b30@google.com/T/#u
-
-This bug has a syzkaller reproducer only.
-
-This bug was bisected to:
-
-	commit 46894a13599a977ac35411b536fb3e0b2feefa95
-	Author: David Howells <dhowells@redhat.com>
-	Date:   Thu Oct 4 08:32:28 2018 +0000
-
-	  rxrpc: Use IPv4 addresses throught the IPv6
-
-No one has replied to the original thread for this bug yet.
-
-If you fix this bug, please add the following tag to the commit:
-    Reported-by: syzbot+1e0edc4b8b7494c28450@syzkaller.appspotmail.com
-
-If you send any email or patch for this bug, please reply to the original
-thread.  For the git send-email command to use, or tips on how to reply if the
-thread isn't in your mailbox, see the "Reply instructions" at
-https://lkml.kernel.org/r/0000000000004c2416058c594b30@google.com
-
---------------------------------------------------------------------------------
-Title:              WARNING: locking bug in flush_workqueue_prep_pwqs
-Last occurred:      9 days ago
-Reported:           136 days ago
-Branches:           Mainline and others
-Dashboard link:     https://syzkaller.appspot.com/bug?id=4ae48f9c43f87ccf9f2f270b14d5b9284dadd05c
-Original thread:    https://lkml.kernel.org/lkml/0000000000005c7e6f0581f1b86a@google.com/T/#u
-
-Unfortunately, this bug does not have a reproducer.
-
-No one replied to the original thread for this bug.
-
-If you fix this bug, please add the following tag to the commit:
-    Reported-by: syzbot+0c4264acb66ea0484d11@syzkaller.appspotmail.com
-
-If you send any email or patch for this bug, please consider replying to the
-original thread.  For the git send-email command to use, or tips on how to reply
-if the thread isn't in your mailbox, see the "Reply instructions" at
-https://lkml.kernel.org/r/0000000000005c7e6f0581f1b86a@google.com
+diff --git a/tools/testing/selftests/ftrace/ftracetest b/tools/testing/selftests/ftrace/ftracetest
+index 6d5e9e8..6c8322e 100755
+--- a/tools/testing/selftests/ftrace/ftracetest
++++ b/tools/testing/selftests/ftrace/ftracetest
+@@ -7,6 +7,9 @@
+ #  Written by Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
+ #
+ 
++# Kselftest framework requirement - SKIP code is 4.
++ksft_skip=4
++
+ usage() { # errno [message]
+ [ ! -z "$2" ] && echo $2
+ echo "Usage: ftracetest [options] [testcase(s)] [testcase-directory(s)]"
+@@ -139,7 +142,13 @@ parse_opts $*
+ 
+ # Verify parameters
+ if [ -z "$TRACING_DIR" -o ! -d "$TRACING_DIR" ]; then
+-  errexit "No ftrace directory found"
++  ftrace_enabled=`grep "^CONFIG_FTRACE=y" /lib/modules/$(uname -r)/build/.config`
++  if [ -z "$ftrace_enabled" ]; then
++    echo "CONFIG_FTRACE was not enabled, test skipped."
++    exit $ksft_skip
++  else
++    errexit "No ftrace directory found"
++  fi
+ fi
+ 
+ # Preparing logs
+-- 
+2.7.4
 
