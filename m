@@ -2,112 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80F945D93E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:39:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C8F015D8ED
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:31:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727232AbfGCAi5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 20:38:57 -0400
-Received: from mail-pl1-f180.google.com ([209.85.214.180]:39471 "EHLO
-        mail-pl1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727087AbfGCAi4 (ORCPT
+        id S1727262AbfGCAax (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 20:30:53 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:35051 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726457AbfGCAaw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 20:38:56 -0400
-Received: by mail-pl1-f180.google.com with SMTP id b7so200983pls.6
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 17:38:56 -0700 (PDT)
+        Tue, 2 Jul 2019 20:30:52 -0400
+Received: by mail-ot1-f65.google.com with SMTP id j19so489506otq.2;
+        Tue, 02 Jul 2019 17:30:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=sIW4c2nsoK1zg9iPJ9PWWFYICxxuZVhWWS0PGONCcT8=;
-        b=tKlI879d6GOCn5/viRbA8CB+2LHjMm+LHx8vu35g2JtHmWRh1MS1K2Oq0gOO4uanyd
-         c15xofeqIVhd7SStkRQtGGQG8ogXRpToC2cmZoqBYxGBLvl9kjjYZ0xuo8mFYG1VEsLy
-         ikmPD7gHqGybsUQltdIn7Jjmkd2wmRlohhi8jmnbU3YIPRnW77+JMRLFQ8emQ6GOC9vD
-         mkgfNh+CChWY9/02UtCZY5Z4d/iptGSMjM4I4uAS4y3vUxK4UYVODhXk0yUlEZGc668+
-         VgBtNszBl2lr0RVPKRfw91a/mbIqdV4lCzbBpKDNJSCzW2vG9+iNlMhl4b9cvPnPb3/T
-         F3hg==
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Q0DTSEoJfAoRh/DNOfvOIAUC0JkelgBbLHyDpxdWx4k=;
+        b=aW71dvXzx3/OZ2dyur8K2R3t59hdwnCvtsuhJGdee/nm9r6PCmqTtx+JWgAIJLo2/d
+         Y21AhbIEphVmstcZOwfTGkQASbWx10y4fsfburjD7qorfBw7J73NAYnWdXDN5k5epES2
+         9xsxotFn9XmfaHw9GsQaebN96U6pHmRUkIvbu0rqpCA3ltYn9AaqBA81bvwfZWb2bRXK
+         PGExbAEeQJBbEYszopwMOpV+S9XN0z12R0Vy2r2L+ErpKfnQnxV/0MIwpTrNI/wPBJUQ
+         Q4OJpy3R867Yl9+XNBz9RWRkL9MFWnLifF6/SdKW9uCH6tpmnrx4YKPqcv3J2LmnI790
+         wFfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=sIW4c2nsoK1zg9iPJ9PWWFYICxxuZVhWWS0PGONCcT8=;
-        b=TmxF/S2NnJ19cSQL0rzBgOtKFuDw6d6RaHOoqOl5ZX46a4NkN9X5SkHiVOzOtFptrJ
-         q4GigkWs5p5yLkarFFQ3wAoj8GmF+SNednsY7MGfzehWlxmCpYWYgxEgScH5Q0rc6zRz
-         SP212GtjxPtJrx2AfeVX7XVY7++Qn6jxY2GIFAG2vdvW3uvxhb7kKDnjaDX5vcBp4zm8
-         WDT8zheh5CtqrpctJlqNRSnzNXPQFBMVPN6A92iIyZ0PrF/dbyR74qc8SV5JCK4KA+wr
-         tBVpz7mjsERzyuCkLhJ3nY4GRF5uGcYQU5NJdU/GcW1t+Fe6RAWtmx6HXo5Nhi2jHEVF
-         z7oQ==
-X-Gm-Message-State: APjAAAWxytzfkzqhAJl4+Hf5YMNgirrM8QgM745Y0XqxOROAaPgR4dXe
-        k6TvMMBihtCFNkbRkHFGuweLhs9r
-X-Google-Smtp-Source: APXvYqyoBXu4AyqKJhdPuz9LblEnnUpotkfLl9gMkZHnkxwo6EMqYJPvNrNLG2nCtlyB3nXPt7OwmA==
-X-Received: by 2002:a17:902:467:: with SMTP id 94mr37806898ple.131.1562110033549;
-        Tue, 02 Jul 2019 16:27:13 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id v22sm186381pgk.69.2019.07.02.16.27.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 02 Jul 2019 16:27:12 -0700 (PDT)
-Subject: Re: [PATCH -next] mm: Mark undo_dev_pagemap as __maybe_unused
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-mm@kvack.org, Stephen Rothwell <sfr@canb.auug.org.au>,
-        Robin Murphy <robin.murphy@arm.com>,
-        linux-kernel@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-References: <1562072523-22311-1-git-send-email-linux@roeck-us.net>
- <20190702135418.ce51c988e88ca0d9546a2a11@linux-foundation.org>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <fa5137e4-478a-94b6-f0ae-28d48f53825e@roeck-us.net>
-Date:   Tue, 2 Jul 2019 16:27:10 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Q0DTSEoJfAoRh/DNOfvOIAUC0JkelgBbLHyDpxdWx4k=;
+        b=JyqDon+pTlje8hOecDtTi3T1tCiHKDoBqevjUXlT0QD1tKYWqRkUhzQiOIu46AsPOC
+         7aEf+Xw9mBFZUaueoCQX03NjIg/mlgCQN66hA9SCfLWjrYM8QSL6IdNH75pkWwUq7ngY
+         d1S0PqqAoGWjWunvwVCQUeWOgO8l14EX9uVWxX8UK2Y+AysM+Gcvx5al4rBFhQSoYV0/
+         YMYyOcenwhKEv3jIepvyC7HlqUf5aNOSLmr6SJvJq3q9aGZs6m5Anom1Xh3RPtXWj34s
+         uo8X2+8vK5qH8FaxvIBvC3x3euBkezXX7O073ONwiEhwFWO026xvKCOecHHhB55A+8Wj
+         Yc1A==
+X-Gm-Message-State: APjAAAXy6O1lSAnOZ4zZQfXUjHvcjK0SaQK1tqhBtMl1fn73k6DskWNj
+        OlsdcuHptjogpcmfkBxc3T4yQWJMEOqtsOostw1gH1bH
+X-Google-Smtp-Source: APXvYqy/QQUN0J6b4O2bTl3SYceaajLNKXdMQ4/wzOnMkRg4M4DkLByhdEGK3wJrQJDIJWZll9ZaCAX1i1L6mFoN5Ec=
+X-Received: by 2002:a9d:39a6:: with SMTP id y35mr27395004otb.81.1562110146329;
+ Tue, 02 Jul 2019 16:29:06 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190702135418.ce51c988e88ca0d9546a2a11@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190701091258.3870-1-narmstrong@baylibre.com> <20190701091258.3870-8-narmstrong@baylibre.com>
+In-Reply-To: <20190701091258.3870-8-narmstrong@baylibre.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Wed, 3 Jul 2019 01:28:55 +0200
+Message-ID: <CAFBinCAnKeGYkyCmEMugWuQaSxgBp4DqtHN3b0rLJY6jwOF0QA@mail.gmail.com>
+Subject: Re: [RFC/RFT v3 07/14] clk: meson: g12a: add notifiers to handle cpu
+ clock change
+To:     sboyd@codeaurora.org, Neil Armstrong <narmstrong@baylibre.com>
+Cc:     jbrunet@baylibre.com, khilman@baylibre.com,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/2/19 1:54 PM, Andrew Morton wrote:
-> On Tue,  2 Jul 2019 06:02:03 -0700 Guenter Roeck <linux@roeck-us.net> wrote:
-> 
->> Several mips builds generate the following build warning.
->>
->> mm/gup.c:1788:13: warning: 'undo_dev_pagemap' defined but not used
->>
->> The function is declared unconditionally but only called from behind
->> various ifdefs. Mark it __maybe_unused.
->>
->> ...
->>
->> --- a/mm/gup.c
->> +++ b/mm/gup.c
->> @@ -1785,7 +1785,8 @@ static inline pte_t gup_get_pte(pte_t *ptep)
->>   }
->>   #endif /* CONFIG_GUP_GET_PTE_LOW_HIGH */
->>   
->> -static void undo_dev_pagemap(int *nr, int nr_start, struct page **pages)
->> +static void __maybe_unused undo_dev_pagemap(int *nr, int nr_start,
->> +					    struct page **pages)
->>   {
->>   	while ((*nr) - nr_start) {
->>   		struct page *page = pages[--(*nr)];
-> 
-> It's not our preferred way of doing it but yes, it would be a bit of a
-> mess and a bit of a maintenance burden to get the ifdefs correct.
-> 
-That is why I did it here. I understand that some maintainers don't like it,
-and I noticed that it wasn't used elsewhere in the file, but it seemed to be
-to most straightforward solution.
+Hi Stephen, Hi Neil,
 
-> And really, __maybe_unused isn't a bad way at all - it ensures that the
-> function always gets build-tested and the compiler will remove it so we
-> don't have to play the chase-the-ifdefs game.
-> 
-Yes, it does have its advantages. I like it myself, but usually I would not
-impose my opinion on others. In this case, anything else would have been
-quite awkward and be prone to never-ending adjustments.
+On Mon, Jul 1, 2019 at 11:13 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
+>
+> In order to implement clock switching for the CLKID_CPU_CLK and
+> CLKID_CPUB_CLK, notifiers are added on specific points of the
+> clock tree :
+>
+> cpu_clk / cpub_clk
+> |   \- cpu_clk_dyn
+> |      |  \- cpu_clk_premux0
+> |      |        |- cpu_clk_postmux0
+> |      |        |    |- cpu_clk_dyn0_div
+> |      |        |    \- xtal/fclk_div2/fclk_div3
+> |      |        \- xtal/fclk_div2/fclk_div3
+> |      \- cpu_clk_premux1
+> |            |- cpu_clk_postmux1
+> |            |    |- cpu_clk_dyn1_div
+> |            |    \- xtal/fclk_div2/fclk_div3
+> |            \- xtal/fclk_div2/fclk_div3
+> \ sys_pll / sys1_pll
+>
+> This for each cluster, a single one for G12A, two for G12B.
+>
+> Each cpu_clk_premux1 tree is marked as read-only and CLK_SET_RATE_NO_REPARENT,
+> to be used as "parking" clock in a safe clock frequency.
+it seems that this is one case where the "coordinated clocks" feature
+would come handy: [0]
+Stephen, do you know if those patches stopped in March or if there's
+still some ongoing effort to get them ready?
 
-Thanks,
-Guenter
+[...]
+> -/*
+> - * Internal sys pll emulation configuration parameters
+> - */
+> -static const struct reg_sequence g12a_sys_init_regs[] = {
+> -       { .reg = HHI_SYS_PLL_CNTL1,     .def = 0x00000000 },
+> -       { .reg = HHI_SYS_PLL_CNTL2,     .def = 0x00000000 },
+> -       { .reg = HHI_SYS_PLL_CNTL3,     .def = 0x48681c00 },
+> -       { .reg = HHI_SYS_PLL_CNTL4,     .def = 0x88770290 },
+> -       { .reg = HHI_SYS_PLL_CNTL5,     .def = 0x39272000 },
+> -       { .reg = HHI_SYS_PLL_CNTL6,     .def = 0x56540000 },
+> +static const struct pll_mult_range g12a_sys_pll_mult_range = {
+> +       .min = 128,
+> +       .max = 250,
+>  };
+>
+>  static struct clk_regmap g12a_sys_pll_dco = {
+> @@ -124,14 +118,15 @@ static struct clk_regmap g12a_sys_pll_dco = {
+>                         .shift   = 29,
+>                         .width   = 1,
+>                 },
+> -               .init_regs = g12a_sys_init_regs,
+> -               .init_count = ARRAY_SIZE(g12a_sys_init_regs),
+> +               .range = &g12a_sys_pll_mult_range,
+Neil, I believe that this should be a separate patch with a
+description which explains why we don't need the "init regs" anymore
+
+>         },
+>         .hw.init = &(struct clk_init_data){
+>                 .name = "sys_pll_dco",
+> -               .ops = &meson_clk_pll_ro_ops,
+> +               .ops = &meson_clk_pll_ops,
+>                 .parent_names = (const char *[]){ IN_PREFIX "xtal" },
+>                 .num_parents = 1,
+> +               /* This clock feeds the CPU, avoid disabling it */
+> +               .flags = CLK_IS_CRITICAL,
+maybe we should have a separate patch for making the CPU clock tree
+mutable as well
+
+[...]
+> +/* This divider uses bit 26 to take change in account */
+> +static int g12b_cpub_clk_mux0_div_set_rate(struct clk_hw *hw,
+> +                                          unsigned long rate,
+> +                                          unsigned long parent_rate)
+> +{
+> +       struct clk_regmap *clk = to_clk_regmap(hw);
+> +       struct clk_regmap_div_data *div = clk_get_regmap_div_data(clk);
+> +       unsigned int val;
+> +       int ret;
+> +
+> +       ret = divider_get_val(rate, parent_rate, div->table, div->width,
+> +                             div->flags);
+> +       if (ret < 0)
+> +               return ret;
+> +
+> +       val = (unsigned int)ret << div->shift;
+> +
+> +       regmap_update_bits(clk->map, HHI_SYS_CPUB_CLK_CNTL,
+> +                          SYS_CPU_DYN_ENABLE, SYS_CPU_DYN_ENABLE);
+> +
+> +       return regmap_update_bits(clk->map, div->offset,
+> +                                 clk_div_mask(div->width) << div->shift |
+> +                                 SYS_CPU_DYN_ENABLE, val);
+> +};
+the public S922X datasheet doesn't mention bit 26
+do I understand the semantics correctly?:
+- set SYS_CPU_DYN_ENABLE
+- update the divider
+- unset SYS_CPU_DYN_ENABLE
+
+too bad it's not a gate which we could model with
+CLK_SET_RATE_GATE/CLK_SET_RATE_UNGATE
+
+
+Martin
+
+[0] https://patchwork.kernel.org/patch/10838949/
