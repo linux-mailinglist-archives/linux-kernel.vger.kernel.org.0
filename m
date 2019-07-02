@@ -2,65 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65F3D5D98A
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:47:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36AB75DA32
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 03:03:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727261AbfGCAq5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 20:46:57 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:33302 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727127AbfGCAqv (ORCPT
+        id S1727467AbfGCBDt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 21:03:49 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:42913 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727082AbfGCBDs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 20:46:51 -0400
-Received: by mail-oi1-f196.google.com with SMTP id u15so612584oiv.0
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 17:46:50 -0700 (PDT)
+        Tue, 2 Jul 2019 21:03:48 -0400
+Received: by mail-oi1-f195.google.com with SMTP id s184so592941oie.9;
+        Tue, 02 Jul 2019 18:03:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=googlemail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Q/LR59K4n2NpGvRZpSrMlExpZ6t8aHVL7QCUI5shco4=;
-        b=m1ZfnGZP2wao1pfpBciR9QVwvmICdJ4yeAKJXaIVlcbimy7/OKpd3vAuPRVC6fvrAG
-         Paaxs7nDaOQNrJgGk7bBlPbHF+/HooMpT2EWnQNFYZB94nf22g9mzCW3WBfffmhVou31
-         C5ykE+MxpfB1QOBe1uGXl/YOyvVK745m30pJjkvik5NuAPVWzyOhLo8gnGGmZDOGW457
-         Qby0QbhvCNuhSBup7IbkPzlH0CjTLxDJpqyVgkHVAZFxTRoULwm9DgYqR7HeN947HMWy
-         qzlPlUb35ILttMlYn2dxCyVk3Cn++LxqAFBTfpYIBsBlU3bYd7fGzie/v87dWe474olr
-         j3bg==
+        bh=svNvFatzWg+J+IzhDu/8UapYNg/XQoHt/D9xO5S8sAU=;
+        b=F9MUeCgD5cE83rQOPzxx5wJd9MM4XsOaW7CIpa4R+sQxmLnclcmJO63t/siBAt1bnG
+         dIq1jh2p3nvQRTk0klvt+b+dpokQiEvBU/mW8Tz0/iJhNbNb5VS4lIjToMtRZI/IEpCl
+         witmuIYcjSU0uTUAs/gfjuL22B7GZKSiIWHLpET9fUaEvmReFRIc7y+jZUIUkl+KGFez
+         VFO1+gJp2ROeOhbIcjhj8mdVRjMS938Wbz4n+9d06KWPmZEzJO02wIgDirjXj7o/yGus
+         lD5EYU0K+0/34oYdedokRlbfGcTNxqXAcEJ1UY5wCLwjl9Fy4FWiYGq3r2u+DSd1+3Bw
+         D33g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Q/LR59K4n2NpGvRZpSrMlExpZ6t8aHVL7QCUI5shco4=;
-        b=aZsr0hyn3ON5/jKfc4aDuA0pm2h6ZbiEzbmIcujieThPko35eS5zzBV93d3EiUtrPI
-         /OVdWhVH+KLsdXEd/gheR++n+cdTYZcpUbJ3Q2r9rOQMLekXycZwdp9F39t9l7zlYG7x
-         ju70R/iyRntmU0WJEBDI3jHCFeC3UQG226o8sThwuENWnCLKMr1DVWnpouH3/vsXMhsc
-         9URmZ2HbtFCo4/lFNlK68Biwnc3kp6QCPYZONRR18hYRFGgbsjCG/SN2py7f9vGZKozy
-         fl1L989wq82EMZCnr+Cd6iilSqG9tX9jfmL/Cvq3V3pB/USg+jHbjwPsGw65s63SfMvb
-         7n0g==
-X-Gm-Message-State: APjAAAXXWPItaCQ8B3bLR6y7l8PurQ6CNA/OK6+3PdP/phRVI55hoa6F
-        3SXT+MEXFIHlrKDqbgxNT2J6hwAYqbUlSLVHIWaQj+mj
-X-Google-Smtp-Source: APXvYqztWhmeaDg8T3K0pmGU/qZhQ+fCAj/s1HnyoXH6d4sZovOx7CJ19m/uyyQ3H8w+wL38c17urJw0X9Mw0cHLFag=
-X-Received: by 2002:aca:4ad2:: with SMTP id x201mr4620515oia.129.1562109086426;
- Tue, 02 Jul 2019 16:11:26 -0700 (PDT)
+        bh=svNvFatzWg+J+IzhDu/8UapYNg/XQoHt/D9xO5S8sAU=;
+        b=nJGEbbgRTOYW5hLTq2DfCBAHg5LPN+oVHYpevRs+QQbWIS9YI6BV7Oh0FFLG+O82Ct
+         S1ny20h/FwevO944VTf+mK2v2BLmfcys+CXHV5DByGoOS+RTELjSp3F3oZ+UwdosOaOD
+         4eM6s/KvnbGU0WvbMtVJsIGxaNTtx6FmZSwAx+H0ZWLx5y9sB2smT0fPlMwNDR/lP7Ki
+         nuTub8auatGMYzhU8JeAbdUymGCS11ARdmf3lPbSa+RBSmosN0eyEZl59EZGBT7XiqEK
+         emwEFj5kUCVLY6QB10bRz0wNdLB0hHClYU8oZuoTqb3i4iflMZ2PbQ+R81P7B1PAuOYp
+         2p6A==
+X-Gm-Message-State: APjAAAVJiB3CELxs5rPB9F/l9UVKhLTnpkK+kKB4mCb3+/R95+BKmUBL
+        mR0/gVNMP5HBOQLMiyshV/sFS8SfnkWjI8kTv+lB2SSp
+X-Google-Smtp-Source: APXvYqynGDp6RgAE+20EuhfnSaAl8FY4WjfZlQXJcX2FtOElvoAuFudGEiRTQUO42XE3uT6QyB6b3k1bfYY3Tam0nmc=
+X-Received: by 2002:a05:6808:8f0:: with SMTP id d16mr1458640oic.47.1562109110323;
+ Tue, 02 Jul 2019 16:11:50 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190701104705.18271-1-narmstrong@baylibre.com> <20190701104705.18271-2-narmstrong@baylibre.com>
-In-Reply-To: <20190701104705.18271-2-narmstrong@baylibre.com>
+References: <20190701091258.3870-1-narmstrong@baylibre.com> <20190701091258.3870-11-narmstrong@baylibre.com>
+In-Reply-To: <20190701091258.3870-11-narmstrong@baylibre.com>
 From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Wed, 3 Jul 2019 01:11:15 +0200
-Message-ID: <CAFBinCA5iZDanZ5f=y_J3PH-2bXOfKfjQDP9hiz1RSmKszMRPQ@mail.gmail.com>
-Subject: Re: [RFC 01/11] soc: amlogic: meson-gx-socinfo: Add SM1 and S905X3 IDs
+Date:   Wed, 3 Jul 2019 01:11:39 +0200
+Message-ID: <CAFBinCAJPQ-gu20UoJEGx+fx6TZ1Eezh4sA+24mppffH5Ft25A@mail.gmail.com>
+Subject: Re: [RFC/RFT v3 10/14] arm64: dts: meson-g12-common: add pwm_a on
+ GPIOE_2 pinmux
 To:     Neil Armstrong <narmstrong@baylibre.com>
 Cc:     jbrunet@baylibre.com, khilman@baylibre.com,
+        linux-arm-kernel@lists.infradead.org,
         linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 1, 2019 at 12:48 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
+On Mon, Jul 1, 2019 at 11:13 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
 >
-> Add the SoC IDs for the S905X3 Amlogic SM1 SoC.
+> Add the ao_pinctrl subnode for the pwm_a function on GPIOE_2.
 >
 > Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
