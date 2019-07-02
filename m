@@ -2,115 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 113B85C6FD
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 04:14:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B8E2D5C718
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 04:21:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727054AbfGBCOC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 22:14:02 -0400
-Received: from ozlabs.org ([203.11.71.1]:57601 "EHLO ozlabs.org"
+        id S1727073AbfGBCVs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 22:21:48 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:21451 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726362AbfGBCOC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 22:14:02 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        id S1726638AbfGBCVs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Jul 2019 22:21:48 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45d78Q1cP6z9s3Z;
-        Tue,  2 Jul 2019 12:13:58 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1562033639;
-        bh=WohRocbKc1/BYUZ1CZ0fjG50w3K0ohtYN8fEqw9/btQ=;
-        h=Date:From:To:Cc:Subject:From;
-        b=YXzIkke6BuLN9R+kWiShZtgGXRM61FsQeOLYUs9NuomaDKB/BFKEVnC+HdrJVAtJD
-         TmLC+BeQy/ZCdLXFi4xgC5Y8Wb/347rsmCD5jdq3c6oHyPnC3kWiYnfWK3pUw0cKak
-         Smd/js4IVvIlSnwbU/cGL2vlE0hbPXXyvIARndJTMIoU7wF/+XXk9YNOAPpsFrBLWp
-         DUDq5j7FlN+jIfqiWvZ775QfpvQgERBgGj0ZBEksTkcSmdXI6NSSGxSa0S1IuBiNyU
-         xTtvlZTsnaK1IVB1pRox+6GsapdpGRMQOejSGh5mjCUai5uxMkYSmaC32jCwYEEYKl
-         ydLkAc0ad3ykw==
-Date:   Tue, 2 Jul 2019 12:13:57 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Matteo Croce <mcroce@redhat.com>,
-        Florian Westphal <fw@strlen.de>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Message-ID: <20190702121357.65f9b0b4@canb.auug.org.au>
+        by mx1.redhat.com (Postfix) with ESMTPS id 27D253087930;
+        Tue,  2 Jul 2019 02:21:48 +0000 (UTC)
+Received: from dhcp-128-65.nay.redhat.com (ovpn-12-129.pek2.redhat.com [10.72.12.129])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C3CF01001B38;
+        Tue,  2 Jul 2019 02:21:45 +0000 (UTC)
+Date:   Tue, 2 Jul 2019 10:21:40 +0800
+From:   Dave Young <dyoung@redhat.com>
+To:     Baoquan He <bhe@redhat.com>
+Cc:     airlied@redhat.com, kexec@lists.infradead.org, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: mgag200 fails kdump kernel booting
+Message-ID: <20190702022140.GA3327@dhcp-128-65.nay.redhat.com>
+References: <20190626081522.GX24419@MiWiFi-R3L-srv>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/cJcBb_F.weJj.YnDE.cMylQ"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190626081522.GX24419@MiWiFi-R3L-srv>
+User-Agent: Mutt/1.11.3 (2019-02-01)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Tue, 02 Jul 2019 02:21:48 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/cJcBb_F.weJj.YnDE.cMylQ
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 06/26/19 at 04:15pm, Baoquan He wrote:
+> Hi Dave,
+> 
+> We met an kdump kernel boot failure on a lenovo system. Kdump kernel
+> failed to boot, but just reset to firmware to reboot system. And nothing
+> is printed out.
+> 
+> The machine is a big server, with 6T memory and many cpu, its graphic
+> driver module is mgag200.
+> 
+> When added 'earlyprintk=ttyS0' into kernel command line, it printed
+> out only one line to console during kdump kernel booting:
+>      KASLR disabled: 'nokaslr' on cmdline.
+> 
+> Then reset to firmware to reboot system.
+> 
+> By further code debugging, the failure happened in
+> arch/x86/boot/compressed/misc.c, during kernel decompressing stage. It's
+> triggered by the vga printing. As you can see, in __putstr() of
+> arch/x86/boot/compressed/misc.c, the code checks if earlyprintk= is
+> specified, and print out to the target. And no matter if earlyprintk= is
+> added or not, it will print to VGA. And printing to VGA caused it to
+> reset to firmware. That's why we see nothing when didn't specify
+> earlyprintk=, but see only one line of printing about the 'KASLR
+> disabled'.
+> 
+> To confirm it's caused by VGA printing, I blacklist the mgag200 by
+> writting it into /etc/modprobe.d/blacklist.conf. The kdump kernel can
+> boot up successfully. And add 'nomodeset' can also make it work. So it's
+> for sure mgag driver or related code have something wrong when booting
+> code tries to re-init it.
+> 
+> This is the only case we ever see, tend to pursuit fix in mgag200 driver
+> side. Any idea or suggestion? We have two machines to be able to
+> reproduce it stablly.
 
-Hi all,
+Personally I think early code should not blindly do vga writing, there
+are cases that does not work:
+1. efi booted machine,  just no output
+2. kdump kernel booted,  writing to vga caused undefined state, for
+example in your case it caused a system reset.
 
-Today's linux-next merge of the net-next tree got a conflict in:
+So I suggest only write to vga when we see earlyprintk=vga in kernel
+cmdline.
 
-  net/ipv4/devinet.c
-
-between commit:
-
-  2e6054636816 ("ipv4: don't set IPv6 only flags to IPv4 addresses")
-
-from the net tree and commit:
-
-  2638eb8b50cf ("net: ipv4: provide __rcu annotation for ifa_list")
-
-from the net-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc net/ipv4/devinet.c
-index c5ebfa199794,137d1892395d..000000000000
---- a/net/ipv4/devinet.c
-+++ b/net/ipv4/devinet.c
-@@@ -473,11 -482,10 +487,13 @@@ static int __inet_insert_ifa(struct in_
-  	ifa->ifa_flags &=3D ~IFA_F_SECONDARY;
-  	last_primary =3D &in_dev->ifa_list;
- =20
- +	/* Don't set IPv6 only flags to IPv4 addresses */
- +	ifa->ifa_flags &=3D ~IPV6ONLY_FLAGS;
- +
-- 	for (ifap =3D &in_dev->ifa_list; (ifa1 =3D *ifap) !=3D NULL;
-- 	     ifap =3D &ifa1->ifa_next) {
-+ 	ifap =3D &in_dev->ifa_list;
-+ 	ifa1 =3D rtnl_dereference(*ifap);
-+=20
-+ 	while (ifa1) {
-  		if (!(ifa1->ifa_flags & IFA_F_SECONDARY) &&
-  		    ifa->ifa_scope <=3D ifa1->ifa_scope)
-  			last_primary =3D &ifa1->ifa_next;
-
---Sig_/cJcBb_F.weJj.YnDE.cMylQ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0aveUACgkQAVBC80lX
-0GxJoQf/WarVGNz/Zgngol0mMUT9nAZnvqMDw6GEEmUY+axJQ3mRjrp3C4gtYu8S
-o/z9qGntzvQx6oo1xw5KcxFpFwjgZ3DlNIlBxOKFcF6JeMTRc752I+IyWyznE4J1
-K5b11CYiMMiTJ3gr2G7Yw0kxGr6W0U5JVZ0bIovIKw7AVMZdPbBXFahDX0BQHaFz
-RDy5KdkyKqmu+9HEd8/nB3oGZGmroJPlQu5L5oq8fZXmar9xhgpyrtitbYr5i1Uk
-1Vchsul63zfrPizy6HQEY2WcZPMtD19Z7mtsnax4Ud6n4iWbjdBO9UBsMkYGFRQa
-Zh5yRoHYjCUMSeTfaDuzdeTPtuZ8pg==
-=/Xl9
------END PGP SIGNATURE-----
-
---Sig_/cJcBb_F.weJj.YnDE.cMylQ--
+Thanks
+Dave
