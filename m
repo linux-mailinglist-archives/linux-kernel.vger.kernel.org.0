@@ -2,139 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 371B85D9F3
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:58:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C1BB5D8E9
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:31:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727256AbfGCA6H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 20:58:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49334 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727090AbfGCA6F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 20:58:05 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5E86B218BA;
-        Tue,  2 Jul 2019 21:19:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562102371;
-        bh=Tlj2RrGNaOqOZ+7sngsROh+dPsr/HURv8KYaqPdX2Tc=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=mTmZs1yoM8R9sJY0ieO8eIQJr3f8HYOWvQ3AMF5RJaDSv2pSaZaihzF+/IR3zRzS1
-         c1Lo86AgdvNT8xO+Z6NMAKkcwx8Bv9Q2MIOWKOkhIYBQdrBruYLu3rZABrPfWQySrt
-         4Gaz5KQ1vRA5wuFWuTaH2vEnRIcEeE+JF2BKSBmI=
-Date:   Tue, 2 Jul 2019 14:19:30 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Henry Burns <henryburns@google.com>
-Cc:     Shakeel Butt <shakeelb@google.com>,
-        Vitaly Wool <vitalywool@gmail.com>,
-        Vitaly Vul <vitaly.vul@sony.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Xidong Wang <wangxidong_97@163.com>,
-        Jonathan Adams <jwadams@google.com>,
-        Linux MM <linux-mm@kvack.org>,
+        id S1727286AbfGCAaq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 20:30:46 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:40287 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726963AbfGCAap (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 20:30:45 -0400
+Received: by mail-pf1-f195.google.com with SMTP id p184so273178pfp.7;
+        Tue, 02 Jul 2019 17:30:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=t3kvAYxZ9YfB3CErs/a0pOWO4ZDaH45y/5BXSbrPysE=;
+        b=nAAAHHf5Jhq0CPzmiVQ+diqs3YNFkJMpwWivvfs3Z3TeIdRyFEWlDUKogew+cbhhB4
+         MuNhbAT5rEZQKQXWE4Z8DXIVx3jqoIVYiJqftA/B2m1oe+Nmfww6QVm8ARClFuZwalX3
+         xGhV9BEeNzq7e7+0Jt0LfSvDBFEIw/aO7RvXX16XMJFXncbMFpmRGTKiEfXWnXmmBOwz
+         v9tCNDgE7AyS25BrN3cxAJcIZHrg0eMfK/Yra3lEWDjnCbAXuI3NOSdTbAj8AnVgqPaH
+         +vMwJUSzkOzdWQl2DyWy77wiuWDbr87YobkqS9PYQnNL8ON2MyQY0aAxIMtG7bkc1zHY
+         C2HQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=t3kvAYxZ9YfB3CErs/a0pOWO4ZDaH45y/5BXSbrPysE=;
+        b=Evjtu0ktXuHi14sXZ7POp4VnPgqGhOAuHEinAFAyTj/nJtN2iqEKuWT+sMEiFqWW4e
+         KLUMteKUAvaREBX5Unnc9bfPYc93Tfl4rkpfCFWh5KIxVy8a7ZR7aWIIGNtIp3LIf5VP
+         28nqy8T7HVjDzbwf8BVfg5lRKxcWzRf2j9eO5MNSx/nOWkPN7y+2KndxdS6v61KeKz/R
+         7o4t5ZDP5YN2OzPbJtdIbdJpDDw6LimlxYYoDx1fQmR6EB8w5W3YK5s4MzCnJ8PUv0YA
+         gK6f6p/Hddy1gCNpgYR7Cm+qoQkos0Z/Fq+JV0vOAMKygW9rbv+W7wb5d/28ce1GqEzL
+         GS6Q==
+X-Gm-Message-State: APjAAAUlj7c0PHUZCGYx3YoPmJF+7WcZYhbN7zp7R0r29HSUXoWiIqFM
+        7C8hUQdYW7npKXZyemGwQmZ+Z95mwcn1SIuKHFuKj5Hd
+X-Google-Smtp-Source: APXvYqzbHumWotK093sUi124dPGbA3soHvzWAIdlOwFN2MycCmHQQWsEBzSp3Ct0ygT1bevzBTdPflT84VNatn18ojU=
+X-Received: by 2002:a17:90a:fa07:: with SMTP id cm7mr7742124pjb.138.1562102962310;
+ Tue, 02 Jul 2019 14:29:22 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190702182001.GA11497@hari-Inspiron-1545>
+In-Reply-To: <20190702182001.GA11497@hari-Inspiron-1545>
+From:   Steve French <smfrench@gmail.com>
+Date:   Tue, 2 Jul 2019 16:29:10 -0500
+Message-ID: <CAH2r5mtrVbTP-iO6XebrXXL83aS80RDiYS7G4-FZC43-ieUk8w@mail.gmail.com>
+Subject: Re: [PATCH] fs: cifs: cifsssmb: Change return type of convert_ace_to_cifs_ace
+To:     Hariprasad Kelam <hariprasad.kelam@gmail.com>
+Cc:     Steve French <sfrench@samba.org>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        samba-technical <samba-technical@lists.samba.org>,
         LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] mm/z3fold.c: Lock z3fold page before
- __SetPageMovable()
-Message-Id: <20190702141930.e31bf1c07a77514d976ef6e2@linux-foundation.org>
-In-Reply-To: <CAGQXPTjU0xAWCLTWej8DdZ5TbH91m8GzeiCh5pMJLQajtUGu_g@mail.gmail.com>
-References: <20190702005122.41036-1-henryburns@google.com>
-        <CALvZod5Fb+2mR_KjKq06AHeRYyykZatA4woNt_K5QZNETvw4nw@mail.gmail.com>
-        <CAGQXPTjU0xAWCLTWej8DdZ5TbH91m8GzeiCh5pMJLQajtUGu_g@mail.gmail.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 1 Jul 2019 18:16:30 -0700 Henry Burns <henryburns@google.com> wrote:
+merged into cifs-2.6.git for-next
 
-> Cc: Vitaly Wool <vitalywool@gmail.com>, Vitaly Vul <vitaly.vul@sony.com>
+On Tue, Jul 2, 2019 at 1:20 PM Hariprasad Kelam
+<hariprasad.kelam@gmail.com> wrote:
+>
+> Change return from int to void of  convert_ace_to_cifs_ace as it never
+> fails.
+>
+> fixes below issue reported by coccicheck
+> fs/cifs/cifssmb.c:3606:7-9: Unneeded variable: "rc". Return "0" on line
+> 3620
+>
+> Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
+> ---
+>  fs/cifs/cifssmb.c | 14 +++-----------
+>  1 file changed, 3 insertions(+), 11 deletions(-)
+>
+> diff --git a/fs/cifs/cifssmb.c b/fs/cifs/cifssmb.c
+> index 2ea2855..6228719 100644
+> --- a/fs/cifs/cifssmb.c
+> +++ b/fs/cifs/cifssmb.c
+> @@ -3600,11 +3600,9 @@ static int cifs_copy_posix_acl(char *trgt, char *src, const int buflen,
+>         return size;
+>  }
+>
+> -static __u16 convert_ace_to_cifs_ace(struct cifs_posix_ace *cifs_ace,
+> +static void convert_ace_to_cifs_ace(struct cifs_posix_ace *cifs_ace,
+>                                      const struct posix_acl_xattr_entry *local_ace)
+>  {
+> -       __u16 rc = 0; /* 0 = ACL converted ok */
+> -
+>         cifs_ace->cifs_e_perm = le16_to_cpu(local_ace->e_perm);
+>         cifs_ace->cifs_e_tag =  le16_to_cpu(local_ace->e_tag);
+>         /* BB is there a better way to handle the large uid? */
+> @@ -3617,7 +3615,6 @@ static __u16 convert_ace_to_cifs_ace(struct cifs_posix_ace *cifs_ace,
+>         cifs_dbg(FYI, "perm %d tag %d id %d\n",
+>                  ace->e_perm, ace->e_tag, ace->e_id);
+>  */
+> -       return rc;
+>  }
+>
+>  /* Convert ACL from local Linux POSIX xattr to CIFS POSIX ACL wire format */
+> @@ -3653,13 +3650,8 @@ static __u16 ACL_to_cifs_posix(char *parm_data, const char *pACL,
+>                 cifs_dbg(FYI, "unknown ACL type %d\n", acl_type);
+>                 return 0;
+>         }
+> -       for (i = 0; i < count; i++) {
+> -               rc = convert_ace_to_cifs_ace(&cifs_acl->ace_array[i], &ace[i]);
+> -               if (rc != 0) {
+> -                       /* ACE not converted */
+> -                       break;
+> -               }
+> -       }
+> +       for (i = 0; i < count; i++)
+> +               convert_ace_to_cifs_ace(&cifs_acl->ace_array[i], &ace[i]);
+>         if (rc == 0) {
+>                 rc = (__u16)(count * sizeof(struct cifs_posix_ace));
+>                 rc += sizeof(struct cifs_posix_acl);
+> --
+> 2.7.4
+>
 
-Are these the same person?
 
-> Subject: Re: [PATCH v2] mm/z3fold.c: Lock z3fold page before __SetPageMovable()
-> Date: Mon, 1 Jul 2019 18:16:30 -0700
-> 
-> On Mon, Jul 1, 2019 at 6:00 PM Shakeel Butt <shakeelb@google.com> wrote:
-> >
-> > On Mon, Jul 1, 2019 at 5:51 PM Henry Burns <henryburns@google.com> wrote:
-> > >
-> > > __SetPageMovable() expects it's page to be locked, but z3fold.c doesn't
-> > > lock the page. Following zsmalloc.c's example we call trylock_page() and
-> > > unlock_page(). Also makes z3fold_page_migrate() assert that newpage is
-> > > passed in locked, as documentation.
+-- 
+Thanks,
 
-The changelog still doesn't mention that this bug triggers a
-VM_BUG_ON_PAGE().  It should do so.  I did this:
-
-: __SetPageMovable() expects its page to be locked, but z3fold.c doesn't
-: lock the page.  This triggers the VM_BUG_ON_PAGE(!PageLocked(page), page)
-: in __SetPageMovable().
-:
-: Following zsmalloc.c's example we call trylock_page() and unlock_page(). 
-: Also make z3fold_page_migrate() assert that newpage is passed in locked,
-: as per the documentation.
-
-I'll add a cc:stable to this fix.
-
-> > > Signed-off-by: Henry Burns <henryburns@google.com>
-> > > Suggested-by: Vitaly Wool <vitalywool@gmail.com>
-> > > ---
-> > >  Changelog since v1:
-> > >  - Added an if statement around WARN_ON(trylock_page(page)) to avoid
-> > >    unlocking a page locked by a someone else.
-> > >
-> > >  mm/z3fold.c | 6 +++++-
-> > >  1 file changed, 5 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/mm/z3fold.c b/mm/z3fold.c
-> > > index e174d1549734..6341435b9610 100644
-> > > --- a/mm/z3fold.c
-> > > +++ b/mm/z3fold.c
-> > > @@ -918,7 +918,10 @@ static int z3fold_alloc(struct z3fold_pool *pool, size_t size, gfp_t gfp,
-> > >                 set_bit(PAGE_HEADLESS, &page->private);
-> > >                 goto headless;
-> > >         }
-> > > -       __SetPageMovable(page, pool->inode->i_mapping);
-> > > +       if (!WARN_ON(!trylock_page(page))) {
-> > > +               __SetPageMovable(page, pool->inode->i_mapping);
-> > > +               unlock_page(page);
-> > > +       }
-> >
-> > Can you please comment why lock_page() is not used here?
-
-Shakeel asked "please comment" (ie, please add a code comment), not
-"please comment on".  Subtle ;)
-
-> Since z3fold_alloc can be called in atomic or non atomic context,
-> calling lock_page() could trigger a number of
-> warnings about might_sleep() being called in atomic context. WARN_ON
-> should avoid the problem described
-> above as well, and in any weird condition where someone else has the
-> page lock, we can avoid calling
-> __SetPageMovable().
-
-I think this will suffice:
-
---- a/mm/z3fold.c~mm-z3foldc-lock-z3fold-page-before-__setpagemovable-fix
-+++ a/mm/z3fold.c
-@@ -919,6 +919,9 @@ retry:
- 		set_bit(PAGE_HEADLESS, &page->private);
- 		goto headless;
- 	}
-+	/*
-+	 * z3fold_alloc() can be called from atomic contexts, hence the trylock
-+	 */
- 	if (!WARN_ON(!trylock_page(page))) {
- 		__SetPageMovable(page, pool->inode->i_mapping);
- 		unlock_page(page);
-
-However this code would be more effective if z3fold_alloc() were to be
-told when it is running in non-atomic context so it can perform a
-sleeping lock_page() in that case.  That's an improvement to consider
-for later, please.
-
+Steve
