@@ -2,72 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8848B5D96F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:43:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF9E55D939
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:38:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727247AbfGCAnU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 20:43:20 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:38562 "EHLO
+        id S1727223AbfGCAiV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 20:38:21 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:37834 "EHLO
         mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726736AbfGCAnT (ORCPT
+        with ESMTP id S1727033AbfGCAiV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 20:43:19 -0400
-Received: by mail-oi1-f193.google.com with SMTP id v186so580144oie.5;
-        Tue, 02 Jul 2019 17:43:19 -0700 (PDT)
+        Tue, 2 Jul 2019 20:38:21 -0400
+Received: by mail-oi1-f193.google.com with SMTP id t76so576969oih.4;
+        Tue, 02 Jul 2019 17:38:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WW5toOARIQ7duYOFcBhdjxTG2zu+PE3OJ8IsJFKcDaY=;
-        b=YWDFyFReOw5A20APKlPQm/STRGBj1lG8LHOh65917g5mJ3CVlnwLCbF3t8dJye81lq
-         oBJDlbCvbynivEGV4PL+f6H1f+PwDRR2RC/aizii/HSO9X3qXEQC6DPoDrUfkBwl7Fop
-         KmwDaeMAHWqt98M95ZV8rrFrjSD+TKIEmZefdO31XSn3yR15GT7keP1JvWMCx22492B6
-         FYUCfHIAxRzKnEFDA3X37E4vpLk2rp4sNL3+/JIE41uTisDieiRtHKV3CGYtQrRlDNEc
-         Y3WJl3IN0GHOQ2mesZlcHEbpaiy3jLjvP+baLuRY0ouxYEb0aUDLd/4e/1DBL/UVmzci
-         swfQ==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=aBBXhrXh9/4XOgm4YO50PZ7nN7ZBQawsgLFlMkXEs1w=;
+        b=V8vpjBx1kzZa2mv6jb/tVkHvFf0jcI4WTGGOotiqRdxM+1C9MhPEoVjM//rJbTykNo
+         ldSHgjY7uLogQ7N/1qWi31GeqMrPakJSE4e8mxx2PbQDlFu5D0M6I4WGF9MqRzajhdNz
+         +KXHG7yOnR8KHMDh1bRb7sAsONTXUjJn5E1iqJ3iAcXDgD5YjndFxyIznXMYfpJVweNs
+         l2jtSDIAkS/QZN5SPFRbaGQ3ZSokN7GLUrSlLYFjvCNbBt6iPaxD6ifqNqjvu4JDZ0a8
+         S4lkXFKFRQPgnzslQNCbtAx9fC4spPYhRk8nz3b1smN8oOf9QKengOCpV/VQJYI8MgF3
+         h7ig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WW5toOARIQ7duYOFcBhdjxTG2zu+PE3OJ8IsJFKcDaY=;
-        b=X9DpjZboItSmzeTr7VjHIftPeXGGK+kXJ2IgHrduyYqEwcheh74CJbZ466bhjyXS2M
-         qSrPx61CXRPzG21MUSwmrolxFil2ZwTjgCk1APfnUcqJWk6IFwIL4uJl95k6HB8QDbzy
-         C84v2QVPhYMT0K9mwV84YJQWenTuSb89Wu1GzAlfJlbIFMkiuDdXlc9+RLtk2PgI/U5U
-         Da5PsOJ5M2xfv5uDB2eMUiVV8hVAEPTRbOlwDRT1vUdaD76ZFFlu0cnnHOIhgRnf8JbA
-         u9RauEWUzZERAbmDjQ+lKTEW70k/aYaYK9mRz5gW0s9qHeZtg7um9w5ablW1gS6WjrWY
-         DhBA==
-X-Gm-Message-State: APjAAAXnoy+Es9sNwMWwysUmR142Fhdzlj44gTX6qubAYSgnjPpQB2lJ
-        jTPG4F5iYyIn79OovR7ZdH0B/9lsDBdCNkV/PYdBp56V
-X-Google-Smtp-Source: APXvYqxlJf85RIzJ3+TzKp9rzx1O65T6vzrzCJARARCucN2vc1cY/g5Vzo1gF94okc60g5IoCN8PVau32fspA3+GGy0=
-X-Received: by 2002:aca:5c55:: with SMTP id q82mr1435225oib.15.1562108742686;
- Tue, 02 Jul 2019 16:05:42 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=aBBXhrXh9/4XOgm4YO50PZ7nN7ZBQawsgLFlMkXEs1w=;
+        b=szJ+5hF/VfKsNPJAj1FLvqiTo65IE1ulqSdRvG7Qv5WuVFqgCP8ecc9sjeQbKoK7np
+         aLbaQguE138IYJNWuZ0btmRYwnNrJWByjplvckiNbgmYJQV3GpRV97V/ubFu0H/H6x5h
+         +zCKEx/uNwNwdtNcKhmAmUWfvQe2MgCJVdMg1LowheJlnF+w3aLci88ykNsTYhFBn0nN
+         8hdllgVByowa5yK8hvRHNwZLCqmvn42ylDL7LHiGVk62PNPLHrUEi/4TT7Yx31FoM5YH
+         pv95nG+alEmu95y8xv5bL1Sh5eJhW+541p9Wm6e6RFGfMs3JLtYjEKnTuKg6vg9ald8a
+         4G4g==
+X-Gm-Message-State: APjAAAXi+syjNNXyjDb5IyBsiHgLmlr8qJdvgYsXKyIVRom0Wv/XBbOH
+        xioi0H7dDOSZUaoEbsqV3k7udCp31CY=
+X-Google-Smtp-Source: APXvYqwnTjoGdkjeDwZ2laVOlEN4b75Fj9Qb/yLUyGM1yb/F0z2LXav1KxBP0foWkEJJqVcDI1V4lw==
+X-Received: by 2002:a63:f14:: with SMTP id e20mr33320739pgl.227.1562108916478;
+        Tue, 02 Jul 2019 16:08:36 -0700 (PDT)
+Received: from continental ([189.58.144.164])
+        by smtp.gmail.com with ESMTPSA id 2sm129227pff.174.2019.07.02.16.08.33
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 02 Jul 2019 16:08:35 -0700 (PDT)
+Date:   Tue, 2 Jul 2019 20:09:19 -0300
+From:   Marcos Paulo de Souza <marcos.souza.org@gmail.com>
+To:     "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>
+Subject: Re: [PATCH 1/2] scsi: devinfo: BLIST_TRY_VPD_PAGES for SanDisk
+ Cruzer Blade
+Message-ID: <20190702230919.GB19791@continental>
+References: <20190618013146.21961-1-marcos.souza.org@gmail.com>
+ <20190618013146.21961-2-marcos.souza.org@gmail.com>
+ <yq1r27quuod.fsf@oracle.com>
+ <20190619094540.GA26980@continental>
+ <20190619120346.GC26980@continental>
+ <yq14l4kro9l.fsf@oracle.com>
 MIME-Version: 1.0
-References: <20190701091258.3870-1-narmstrong@baylibre.com> <20190701091258.3870-3-narmstrong@baylibre.com>
-In-Reply-To: <20190701091258.3870-3-narmstrong@baylibre.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Wed, 3 Jul 2019 01:05:31 +0200
-Message-ID: <CAFBinCCVCd1OT1AUCRtm2FB=ZzjuD3Gfs0vcQYLWd=gFqTHugQ@mail.gmail.com>
-Subject: Re: [RFC/RFT v3 02/14] clk: core: introduce clk_hw_set_parent()
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     jbrunet@baylibre.com, khilman@baylibre.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <yq14l4kro9l.fsf@oracle.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 1, 2019 at 11:13 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
->
-> Introduce the clk_hw_set_parent() provider call to change parent of
-> a clock by using the clk_hw pointers.
->
-> This eases the clock reparenting from clock rate notifiers and
-> implementing DVFS with simpler code avoiding the boilerplates
-> functions as __clk_lookup(clk_hw_get_name()) then clk_set_parent().
->
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-for the same reason this is handy for the meson8b clock driver as well, so:
-Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+On Thu, Jun 20, 2019 at 04:32:38PM -0400, Martin K. Petersen wrote:
+> 
+> Marcos,
+> 
+> > My first idea was to add a vendor:product mapping at SCSI layer, but
+> > so far I haven't found one, so I added the model/vendor found by
+> > INQUIRY. Would it be better to check for prod:vendor (as values,
+> > instead of the description)?
+> 
+> Your patch is functionally fine. I'm just trying to establish how risky
+> it is for me to pick it up.
+
+I've tried to find any official document about Cruzer Blade devices, stating
+that all of them have at least SPC-3 to support VPD, but no luck so far :(
+
+So feel free to ignore the patch if you think it's too risky.
+
+Thanks,
+Marcos
+
+> 
+> -- 
+> Martin K. Petersen	Oracle Linux Engineering
