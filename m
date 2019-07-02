@@ -2,242 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFA715C9AD
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 09:00:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AB7B5C9AF
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 09:01:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727068AbfGBHAl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 03:00:41 -0400
-Received: from mail-qt1-f201.google.com ([209.85.160.201]:36614 "EHLO
-        mail-qt1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727043AbfGBHAi (ORCPT
+        id S1727074AbfGBHBQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 03:01:16 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:37585 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725845AbfGBHBQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 03:00:38 -0400
-Received: by mail-qt1-f201.google.com with SMTP id q26so15578320qtr.3
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 00:00:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=pZKXEfyC3/D5M+q6RSbb10h/7szhfL3ngvsyGClR+a0=;
-        b=eiKoV90UVKXY/bB03YHu5pLYn8of54tTfpaI6K6eYWYRU55qzU81wAewmnE1iBjOZj
-         534uka2ZJBqhCjDIXX0/j3k1JSHIR3dqExHZGQ1Xvevj9qDYvt49KOjLAJ/XsP3TJwH9
-         PiJLeH6F1zvS6W49986wxJm+/WPERuz7GPfo3moSaBlE9jDVvHBhh+p/80Shcpnc8EJm
-         NC3svB/jDyvbSP6qjxOSrf8aSXcOQoF86WIAXgA8Q7kB7ce29Ue5sZY6FVu+KiFlIJRU
-         dbF3mNxSsfrwbsf5Oxj47qc+IR1yJ+TVXmQVWHNbghcRa6yWEIFfA2AyBFigtPGLmxbH
-         ezag==
+        Tue, 2 Jul 2019 03:01:16 -0400
+Received: by mail-wr1-f67.google.com with SMTP id v14so16405634wrr.4
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 00:01:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=pZKXEfyC3/D5M+q6RSbb10h/7szhfL3ngvsyGClR+a0=;
-        b=RpGaZBslNERL+nr0mRvS0r0vWdKwIGkmVyTtPPSnQRB+cxh+lrAAHkObuxEFhUi7Sc
-         4jCzTECDQkVZiUlkyvaqY6MWIPWg6GaI2naL9h5EBMjoQGAV5nIjLtGKR5tWImc9xdZd
-         FKcd39KxspRlsQFbiSG/7QWxE8oF9DD7T+4m0lKDylS/+PPzWM6Vw/grfz3QaQ11x4Wx
-         TiP79LABI/aiwBwBYVr7s/4d1iYMKnsDpwDc0AmmLSK8Pqgd1uyKBhZq5mEtctaxK8iX
-         gp5r8DjC2G2BJrks9NpIe2y6MI5HK3A+Ac+hrAEe74d7rga+rcj4vz5EdGeKtWPcGI74
-         +XKg==
-X-Gm-Message-State: APjAAAVyhlhPtCYNujtL6ns8dcgQWTjgtasaK/rZ69Atf3xoxFJrHe7u
-        z2l7wz7inEuM+2scxcvmlK7OMpMOMdSA
-X-Google-Smtp-Source: APXvYqy+LRDVkqm7GI8EDjg67BTzxi/07jx0DMHwvUODaIDNjufhsfK7fRdzyiYV5/7uQcqI36b6Sbr1Scv1
-X-Received: by 2002:ac8:3636:: with SMTP id m51mr23808085qtb.102.1562050837579;
- Tue, 02 Jul 2019 00:00:37 -0700 (PDT)
-Date:   Mon,  1 Jul 2019 23:59:55 -0700
-In-Reply-To: <20190702065955.165738-1-irogers@google.com>
-Message-Id: <20190702065955.165738-8-irogers@google.com>
-Mime-Version: 1.0
-References: <20190702065955.165738-1-irogers@google.com>
-X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
-Subject: [PATCH 7/7] perf: rename visit_groups_merge to ctx_groups_sched_in
-From:   Ian Rogers <irogers@google.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-kernel@vger.kernel.org
-Cc:     Kan Liang <kan.liang@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Ian Rogers <irogers@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=j8lK5kIXp0UqDp4JIzbWUup5nSgUhdrymM+k2oGTEDc=;
+        b=fbRnBucU6ENh5ePnY/Xja6zenz23moszKZ4AW/14c1aYhjfkZuQ0311SX3Fmh1icC6
+         47kuyUOXNHziCYl3dn/FYQB09dmOYUCVhvgQCcUSmzglddyAF/v/GUX+i2tBUslQvIR3
+         JqEeN2i5PAFKq1WoeHQ9L6B//vbrdrXK7f1OzuC0W0M9FCLdUYXW7g78Vpf0sDpESOOq
+         V5KMBiSO7fsbMTXcxB3rHpHMDIouDfNuZXzqdxo0X3/01zhX3XPtPsYvAx0WeuLDe5QB
+         N29jkrMrlWwvFyP3pJb5u0VaDdAX/yr4IXUcisQTb0KWoc32Kr603pxW6EqQ54JGHGq2
+         PQFA==
+X-Gm-Message-State: APjAAAUWr7HGDsbYX92tyzB+Z/mmgiA2tvUUf0+w7Nn0CDdhKYhpI78U
+        Cn21C5C804FmWlycAg82KfsbtA==
+X-Google-Smtp-Source: APXvYqxOHUPpYjdAAg6clNrlcbEiwLlc67t9bfS8ALzT5Vbf5YgNxPVDD80/N0s1sHlnf0pD9kkMvQ==
+X-Received: by 2002:adf:dd8c:: with SMTP id x12mr22298053wrl.212.1562050874833;
+        Tue, 02 Jul 2019 00:01:14 -0700 (PDT)
+Received: from localhost.localdomain ([151.15.224.253])
+        by smtp.gmail.com with ESMTPSA id r16sm24718434wrr.42.2019.07.02.00.01.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 02 Jul 2019 00:01:13 -0700 (PDT)
+Date:   Tue, 2 Jul 2019 09:01:12 +0200
+From:   Juri Lelli <juri.lelli@redhat.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     mingo@redhat.com, rostedt@goodmis.org, tj@kernel.org,
+        linux-kernel@vger.kernel.org, luca.abeni@santannapisa.it,
+        claudio@evidence.eu.com, tommaso.cucinotta@santannapisa.it,
+        bristot@redhat.com, mathieu.poirier@linaro.org, lizefan@huawei.com,
+        cgroups@vger.kernel.org
+Subject: Re: [PATCH v8 7/8] sched/core: Prevent race condition between cpuset
+ and __sched_setscheduler()
+Message-ID: <20190702070111.GF26005@localhost.localdomain>
+References: <20190628080618.522-1-juri.lelli@redhat.com>
+ <20190628080618.522-8-juri.lelli@redhat.com>
+ <20190701191141.GD3402@hirez.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190701191141.GD3402@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The visit_groups_merge function no longer takes a function pointer,
-change the name to be similar to other sched_in functions.
-Follow Kan Liang's <kan.liang@linux.intel.com> and remove the single
-caller flexible_sched_in and pinned_sched_in, moving functionality to
-caller.
+On 01/07/19 21:11, Peter Zijlstra wrote:
+> On Fri, Jun 28, 2019 at 10:06:17AM +0200, Juri Lelli wrote:
+> > No synchronisation mechanism exists between the cpuset subsystem and
+> > calls to function __sched_setscheduler(). As such, it is possible that
+> > new root domains are created on the cpuset side while a deadline
+> > acceptance test is carried out in __sched_setscheduler(), leading to a
+> > potential oversell of CPU bandwidth.
+> > 
+> > Grab cpuset_rwsem read lock from core scheduler, so to prevent
+> > situations such as the one described above from happening.
+> > 
+> 
+> ISTR there being a funny vs normalize_rt_tasks(); maybe mention that?
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- include/linux/perf_event.h |  4 +-
- kernel/events/core.c       | 77 ++++++++++++++++----------------------
- 2 files changed, 35 insertions(+), 46 deletions(-)
-
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index 86fb379296cb..1dd0250d72bf 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -802,8 +802,8 @@ struct perf_cpu_context {
- #ifdef CONFIG_CGROUP_PERF
- 	struct perf_cgroup		*cgrp;
- 	struct list_head		cgrp_cpuctx_entry;
--	struct perf_event		**visit_groups_merge_iterator_storage;
--	int			       visit_groups_merge_iterator_storage_size;
-+	struct perf_event		**ctx_groups_sched_in_iterator_storage;
-+	int			      ctx_groups_sched_in_iterator_storage_size;
- #endif
- 
- 	struct list_head		sched_cb_entry;
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index a66477ee196a..e714c2f9ea0d 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -2642,22 +2642,22 @@ static int  __perf_install_in_context(void *info)
- 					event->cgrp->css.cgroup);
- 
- 		/*
--		 * Ensure space for visit_groups_merge iterator storage. With
-+		 * Ensure space for ctx_groups_sched_in iterator storage. With
- 		 * cgroup profiling we may have an event at each depth plus
- 		 * system wide events.
- 		 */
- 		max_iterators = perf_event_cgroup_depth(event) + 1;
- 		if (max_iterators >
--		    cpuctx->visit_groups_merge_iterator_storage_size) {
-+		    cpuctx->ctx_groups_sched_in_iterator_storage_size) {
- 			struct perf_event **storage =
--			   krealloc(cpuctx->visit_groups_merge_iterator_storage,
-+			  krealloc(cpuctx->ctx_groups_sched_in_iterator_storage,
- 				    sizeof(struct perf_event *) * max_iterators,
- 				    GFP_KERNEL);
- 			if (storage) {
--				cpuctx->visit_groups_merge_iterator_storage
--						= storage;
--				cpuctx->visit_groups_merge_iterator_storage_size
--						= max_iterators;
-+				cpuctx->ctx_groups_sched_in_iterator_storage
-+				    = storage;
-+			       cpuctx->ctx_groups_sched_in_iterator_storage_size
-+				    = max_iterators;
- 			} else {
- 				WARN_ONCE(1, "Unable to increase iterator "
- 					"storage for perf events with cgroups");
-@@ -3466,32 +3466,33 @@ static int flexible_sched_in(struct perf_event_context *ctx,
-  * Without cgroups, with a task context, there may be per-CPU and any
-  * CPU events.
-  */
--#define MIN_VISIT_GROUP_MERGE_ITERATORS 2
-+#define MIN_CTX_GROUPS_SCHED_IN_ITERATORS 2
- 
--static int visit_groups_merge(struct perf_event_context *ctx,
--			      struct perf_cpu_context *cpuctx,
--			      bool is_pinned,
--			      int *data)
-+static int ctx_groups_sched_in(struct perf_event_context *ctx,
-+			       struct perf_cpu_context *cpuctx,
-+			       bool is_pinned,
-+			       int *data)
- {
- 	/*
- 	 * A set of iterators, the iterator for the visit is chosen by the
- 	 * group_index.
- 	 */
- #ifndef CONFIG_CGROUP_PERF
--	struct perf_event *itrs[MIN_VISIT_GROUP_MERGE_ITERATORS];
-+	struct perf_event *itrs[MIN_CTX_GROUPS_SCHED_IN_ITERATORS];
- 	struct perf_event_heap heap = {
- 		.storage = itrs,
- 		.num_elements = 0,
--		.max_elements = MIN_VISIT_GROUP_MERGE_ITERATORS
-+		.max_elements = MIN_CTX_GROUPS_SCHED_IN_ITERATORS
- 	};
- #else
- 	/*
- 	 * With cgroups usage space in the CPU context reserved for iterators.
- 	 */
- 	struct perf_event_heap heap = {
--		.storage = cpuctx->visit_groups_merge_iterator_storage,
-+		.storage = cpuctx->ctx_groups_sched_in_iterator_storage,
- 		.num_elements = 0,
--		.max_elements = cpuctx->visit_groups_merge_iterator_storage_size
-+		.max_elements =
-+			cpuctx->ctx_groups_sched_in_iterator_storage_size
- 	};
- #endif
- 	int ret, cpu = smp_processor_id();
-@@ -3623,27 +3624,6 @@ static int flexible_sched_in(struct perf_event_context *ctx,
- 	return 0;
- }
- 
--static void
--ctx_pinned_sched_in(struct perf_event_context *ctx,
--		    struct perf_cpu_context *cpuctx)
--{
--	visit_groups_merge(ctx,
--			   cpuctx,
--			   /*is_pinned=*/true,
--			   NULL);
--}
--
--static void
--ctx_flexible_sched_in(struct perf_event_context *ctx,
--		      struct perf_cpu_context *cpuctx)
--{
--	int can_add_hw = 1;
--
--	visit_groups_merge(ctx,
--			   cpuctx,
--			   /*is_pinned=*/false,
--			   &can_add_hw);
--}
- 
- static void
- ctx_sched_in(struct perf_event_context *ctx,
-@@ -3681,11 +3661,20 @@ ctx_sched_in(struct perf_event_context *ctx,
- 	 * in order to give them the best chance of going on.
- 	 */
- 	if (is_active & EVENT_PINNED)
--		ctx_pinned_sched_in(ctx, cpuctx);
-+		ctx_groups_sched_in(ctx,
-+				    cpuctx,
-+				    /*is_pinned=*/true,
-+				    NULL);
- 
- 	/* Then walk through the lower prio flexible groups */
--	if (is_active & EVENT_FLEXIBLE)
--		ctx_flexible_sched_in(ctx, cpuctx);
-+	if (is_active & EVENT_FLEXIBLE) {
-+		int can_add_hw = 1;
-+
-+		ctx_groups_sched_in(ctx,
-+				    cpuctx,
-+				    /*is_pinned=*/false,
-+				    &can_add_hw);
-+	}
- }
- 
- static void cpu_ctx_sched_in(struct perf_cpu_context *cpuctx,
-@@ -10243,12 +10232,12 @@ int perf_pmu_register(struct pmu *pmu, const char *name, int type)
- 		cpuctx->ctx.pmu = pmu;
- 		cpuctx->online = cpumask_test_cpu(cpu, perf_online_mask);
- #ifdef CONFIG_CGROUP_PERF
--		cpuctx->visit_groups_merge_iterator_storage =
--				kmalloc_array(MIN_VISIT_GROUP_MERGE_ITERATORS,
-+		cpuctx->ctx_groups_sched_in_iterator_storage =
-+				kmalloc_array(MIN_CTX_GROUPS_SCHED_IN_ITERATORS,
- 					      sizeof(struct perf_event *),
- 					      GFP_KERNEL);
--		cpuctx->visit_groups_merge_iterator_storage_size =
--				MIN_VISIT_GROUP_MERGE_ITERATORS;
-+		cpuctx->ctx_groups_sched_in_iterator_storage_size =
-+				MIN_CTX_GROUPS_SCHED_IN_ITERATORS;
- #endif
- 		__perf_mux_hrtimer_init(cpuctx, cpu);
- 	}
--- 
-2.22.0.410.gd8fdbe21b5-goog
-
+Yep. I'll add a comment about it.
