@@ -2,138 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 855385CB06
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 10:10:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D9225CA87
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 10:05:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728842AbfGBIKf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 04:10:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58952 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728073AbfGBIKb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 04:10:31 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 269F321852;
-        Tue,  2 Jul 2019 08:10:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562055030;
-        bh=nifUm/JXR3cyL28TKqQxvKrN3mKnp2p+nSmRs25XYtQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZVbZdF9GvfGkSqOfOcO5t7lI5dlRk8JZ1ztj6qQODi9ZBLSIFG/VGieM+TEmwg7SS
-         YYa27MEXD9FP5tKY6Zi0J6aQh8eHUH/Jlde3wBHE7iTb4vxepQ2DciwhmlG1pthxjB
-         XyEL8gd8AqLTBHWdsJqmyHwGEJl83wfL3uemHAXY=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+9d4c12bfd45a58738d0a@syzkaller.appspotmail.com,
-        syzbot+a9e23ea2aa21044c2798@syzkaller.appspotmail.com,
-        syzbot+c4c4b2bb358bb936ad7e@syzkaller.appspotmail.com,
-        syzbot+0290d2290a607e035ba1@syzkaller.appspotmail.com,
-        syzbot+a43d8d4e7e8a7a9e149e@syzkaller.appspotmail.com,
-        syzbot+a47c5f4c6c00fc1ed16e@syzkaller.appspotmail.com,
-        Xin Long <lucien.xin@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 43/43] tipc: pass tunnel dev as NULL to udp_tunnel(6)_xmit_skb
-Date:   Tue,  2 Jul 2019 10:02:23 +0200
-Message-Id: <20190702080126.138655706@linuxfoundation.org>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190702080123.904399496@linuxfoundation.org>
-References: <20190702080123.904399496@linuxfoundation.org>
-User-Agent: quilt/0.66
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        id S1727896AbfGBIFN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 04:05:13 -0400
+Received: from mail-qk1-f202.google.com ([209.85.222.202]:34391 "EHLO
+        mail-qk1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727885AbfGBIFL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 04:05:11 -0400
+Received: by mail-qk1-f202.google.com with SMTP id h198so16026993qke.1
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 01:05:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=NEsgFhBOsHO1SUu/GnNK2DPDOJTChWsbzIPYkeXfosU=;
+        b=SUuiCpEyaak5XfddxqDhgd8CZLbHmyS+aWA9tOcpJKwvJ+lmczEa4pAv2doIL/MNAx
+         oxbvwgOT7JP95TVpHvEKVEhqSCkHTaAIJ2qYLYjYX/sM5EVQ/ehuStA1RZaAx9WKHIu2
+         HOMEvp+RFG18HWtxgTcDEihisRNtMoN4fr51BGqd0Y1aNZ9EUIBxSnArjNTNPZj0qKeC
+         7lDfBfPvpuhQ5dGD+qwIbY14OOVkD/4L9H5Ax829EjB1ByMvbQVVg8/LyR1nThS/JZpC
+         sGyguTYXTlq79AT/k0ECihTxoUZa47U8PBCFXFAtW0FYIKiTXq8syA+AF8rl0mZfO7q0
+         9njw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=NEsgFhBOsHO1SUu/GnNK2DPDOJTChWsbzIPYkeXfosU=;
+        b=XhX4ABfb61piUAR4e+a7WGvlLs6X63A7rFYWnaL5IU46EFudS/v5k9jkisI7rSuTPx
+         6yWDG554XpEhBt3EO1sZcQBBmXWaFRQm2PmEGqnTl6JkQDQYlKqyJiQmnKo6E0+dyCpH
+         +CKBOPPgjdjirMw7In/vuciMJ6LQ9hlbCHCOBKpUbYZdcBiW1Fh0Q15eDIWJOXdulALd
+         IXq1/lPfWAg3w9rk8/sVNuGX0IDwKYInPyeiApGQquCJfc+HIZv3fzQmr1HO7NmiSsXQ
+         6zghCUEOu4/cdCMcoGwCLVNSCSVbLhHnhR59J/GafsyIL5k71t3g5ASvsGGO0bNwy3nf
+         Ur5A==
+X-Gm-Message-State: APjAAAWh10ocJ2o1IMvKqL3C2abUXhJPjwBH1RMmS0pjU/fBF3Z1kD8U
+        CiNh7HEOXH5eiRPvsO5RGwy0XGqPW4EqE+I=
+X-Google-Smtp-Source: APXvYqwrXvbk11TVxxDHQCIkdbAtLKP9A2wasQz4c5X/idjoID/jWMQN/mQNqcB/Hw6wGFCTefiRv8WenyeupcE=
+X-Received: by 2002:a37:ac0a:: with SMTP id e10mr24972711qkm.168.1562054710600;
+ Tue, 02 Jul 2019 01:05:10 -0700 (PDT)
+Date:   Tue,  2 Jul 2019 16:05:03 +0800
+Message-Id: <20190702080503.175149-1-oceanchen@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
+Subject: [PATCH v2] f2fs: avoid out-of-range memory access
+From:   Ocean Chen <oceanchen@google.com>
+To:     jaegeuk@kernel.org, yuchao0@huawei.com,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+Cc:     oceanchen@google.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xin Long <lucien.xin@gmail.com>
+blk_off might over 512 due to fs corrupt.
+Use ENTRIES_IN_SUM to protect invalid memory access.
 
-commit c3bcde026684c62d7a2b6f626dc7cf763833875c upstream.
-
-udp_tunnel(6)_xmit_skb() called by tipc_udp_xmit() expects a tunnel device
-to count packets on dev->tstats, a perpcu variable. However, TIPC is using
-udp tunnel with no tunnel device, and pass the lower dev, like veth device
-that only initializes dev->lstats(a perpcu variable) when creating it.
-
-Later iptunnel_xmit_stats() called by ip(6)tunnel_xmit() thinks the dev as
-a tunnel device, and uses dev->tstats instead of dev->lstats. tstats' each
-pointer points to a bigger struct than lstats, so when tstats->tx_bytes is
-increased, other percpu variable's members could be overwritten.
-
-syzbot has reported quite a few crashes due to fib_nh_common percpu member
-'nhc_pcpu_rth_output' overwritten, call traces are like:
-
-  BUG: KASAN: slab-out-of-bounds in rt_cache_valid+0x158/0x190
-  net/ipv4/route.c:1556
-    rt_cache_valid+0x158/0x190 net/ipv4/route.c:1556
-    __mkroute_output net/ipv4/route.c:2332 [inline]
-    ip_route_output_key_hash_rcu+0x819/0x2d50 net/ipv4/route.c:2564
-    ip_route_output_key_hash+0x1ef/0x360 net/ipv4/route.c:2393
-    __ip_route_output_key include/net/route.h:125 [inline]
-    ip_route_output_flow+0x28/0xc0 net/ipv4/route.c:2651
-    ip_route_output_key include/net/route.h:135 [inline]
-  ...
-
-or:
-
-  kasan: GPF could be caused by NULL-ptr deref or user memory access
-  RIP: 0010:dst_dev_put+0x24/0x290 net/core/dst.c:168
-    <IRQ>
-    rt_fibinfo_free_cpus net/ipv4/fib_semantics.c:200 [inline]
-    free_fib_info_rcu+0x2e1/0x490 net/ipv4/fib_semantics.c:217
-    __rcu_reclaim kernel/rcu/rcu.h:240 [inline]
-    rcu_do_batch kernel/rcu/tree.c:2437 [inline]
-    invoke_rcu_callbacks kernel/rcu/tree.c:2716 [inline]
-    rcu_process_callbacks+0x100a/0x1ac0 kernel/rcu/tree.c:2697
-  ...
-
-The issue exists since tunnel stats update is moved to iptunnel_xmit by
-Commit 039f50629b7f ("ip_tunnel: Move stats update to iptunnel_xmit()"),
-and here to fix it by passing a NULL tunnel dev to udp_tunnel(6)_xmit_skb
-so that the packets counting won't happen on dev->tstats.
-
-Reported-by: syzbot+9d4c12bfd45a58738d0a@syzkaller.appspotmail.com
-Reported-by: syzbot+a9e23ea2aa21044c2798@syzkaller.appspotmail.com
-Reported-by: syzbot+c4c4b2bb358bb936ad7e@syzkaller.appspotmail.com
-Reported-by: syzbot+0290d2290a607e035ba1@syzkaller.appspotmail.com
-Reported-by: syzbot+a43d8d4e7e8a7a9e149e@syzkaller.appspotmail.com
-Reported-by: syzbot+a47c5f4c6c00fc1ed16e@syzkaller.appspotmail.com
-Fixes: 039f50629b7f ("ip_tunnel: Move stats update to iptunnel_xmit()")
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+v2:
+- fix typo
+Signed-off-by: Ocean Chen <oceanchen@google.com>
 ---
- net/tipc/udp_media.c |    8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ fs/f2fs/segment.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/net/tipc/udp_media.c
-+++ b/net/tipc/udp_media.c
-@@ -174,7 +174,6 @@ static int tipc_udp_xmit(struct net *net
- 			goto tx_error;
- 		}
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 8dee063c833f..a5e8af0bd62e 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -3403,6 +3403,8 @@ static int read_compacted_summaries(struct f2fs_sb_info *sbi)
  
--		skb->dev = rt->dst.dev;
- 		ttl = ip4_dst_hoplimit(&rt->dst);
- 		udp_tunnel_xmit_skb(rt, ub->ubsock->sk, skb, src->ipv4.s_addr,
- 				    dst->ipv4.s_addr, 0, ttl, 0, src->port,
-@@ -193,10 +192,9 @@ static int tipc_udp_xmit(struct net *net
- 		if (err)
- 			goto tx_error;
- 		ttl = ip6_dst_hoplimit(ndst);
--		err = udp_tunnel6_xmit_skb(ndst, ub->ubsock->sk, skb,
--					   ndst->dev, &src->ipv6,
--					   &dst->ipv6, 0, ttl, 0, src->port,
--					   dst->port, false);
-+		err = udp_tunnel6_xmit_skb(ndst, ub->ubsock->sk, skb, NULL,
-+					   &src->ipv6, &dst->ipv6, 0, ttl, 0,
-+					   src->port, dst->port, false);
- #endif
- 	}
- 	return err;
-
+ 		for (j = 0; j < blk_off; j++) {
+ 			struct f2fs_summary *s;
++			if (j >= ENTRIES_IN_SUM)
++				return -EFAULT;
+ 			s = (struct f2fs_summary *)(kaddr + offset);
+ 			seg_i->sum_blk->entries[j] = *s;
+ 			offset += SUMMARY_SIZE;
+-- 
+2.22.0.410.gd8fdbe21b5-goog
 
