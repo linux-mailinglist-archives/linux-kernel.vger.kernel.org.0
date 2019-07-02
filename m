@@ -2,89 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9D6D5DAA0
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 03:19:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 604B95D8AF
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:27:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727309AbfGCBTF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 21:19:05 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:40580 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726635AbfGCBTF (ORCPT
+        id S1727158AbfGCA1L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 20:27:11 -0400
+Received: from mail-pl1-f180.google.com ([209.85.214.180]:46492 "EHLO
+        mail-pl1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726150AbfGCA1K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 21:19:05 -0400
-Received: by mail-wr1-f68.google.com with SMTP id p11so736231wre.7;
-        Tue, 02 Jul 2019 18:19:04 -0700 (PDT)
+        Tue, 2 Jul 2019 20:27:10 -0400
+Received: by mail-pl1-f180.google.com with SMTP id e5so169989pls.13
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 17:27:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=rWLzfbu8j4EYgy/8k30wN0dMRH7MHW+jd6HZ5Ksrd3U=;
-        b=hEaxITbD6g01GU/E4tW0b9uFqAt6dT6NrdnsjGynaCiSDczc3wBtQ6h3N5KDIjVZTs
-         bq+litxweOV0YzLcD+htddP+0KeUARG1QFlrZPaZdPOatV60kjAJGRzibtzNi4tCJ6LB
-         BCx2+cvlgKxvgtol8Y1IZtr2JRmkDwnZqCDzK6DS1vsIUyorzJuuJrPhYZlbwugny5iY
-         iHJYtLyqvTZSz1n2plu+X1bFXa7JU1nQbLEavg2aUj+SUizBeOLnB2hZ3y/LTPqDH9jG
-         44vqaZTTMpgbCGizFvZHtpQ/h3jknSoV3ETZo7RMtxtbEcxrYA2HO32qpbuGGnHhQdbU
-         WFsw==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GVeYE2lI3WjawRv5ylltj1PK2bEL0Yzgl985bGk3R7M=;
+        b=KvO/SsjqdxRY1GxdPcOT/aUG+OCDqrC5o062EDydJkQwDn15z49XNA58ZDfb6j1t5H
+         kvutHrNu83NbGoz3jDaV9tcr+6KOKbq16/a08aFJ3qBT+oStKFYlyTzDSIgyiMoTkJs0
+         oDkPHlotReORAfGrHzpyWVk1onuPIT6px7Cb2awzWJZAcNDPZfBACr4w/0U69zZ5qKKc
+         wCU86cFAHk5rUUrN2urt3y2FWUt4qK+uiFYhE4jc5q+Vwrtk90O5GgI3KymDbQj6btQR
+         JQPc1tZdI9uTStT+zlmGJt/FgtV+Y98ddtiyN76rSEbSlP74wHDEC1iKmV1NGs1cPphq
+         dGTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=rWLzfbu8j4EYgy/8k30wN0dMRH7MHW+jd6HZ5Ksrd3U=;
-        b=g+ZxcVmHJHNHNcsO9GJNMGjyauQ6AOIPzI4VeHw9ikGSKvZGLntv9xG6G9Gv01b08s
-         rlWzoqm5CRVq4a7YiTnJSnyzSGSpDLQlDGgb+77aCLULUy5Jw3IfFhYUsarDZH785nO2
-         muSHqkum5uZ6G8Kpak7XrzrvxN9l7spdxJWaUP7lv3CBkH9abEIQMrOzSCLQ533YGYje
-         NkAkyg+YdpmjtJ3VEPLr0QODq8V3SJlU9UyEvCRAYwKhT3xpR4B6rDhQf0wMlbN8/76H
-         vcOaQ15pQg++l5m5nqoky0VcOC7I5JQCyp/DE147oYVCq9tedjXZvm2wspt9Frj48jDj
-         1Sag==
-X-Gm-Message-State: APjAAAUUtPri8q2NXI3JyTXk0jNSKa3Bora0EOA6KTXm0arccsOX1w5O
-        WeCUR9Pg5O1e4xmDZx9WgrWmtS0G
-X-Google-Smtp-Source: APXvYqy1mj2CZXwhgjct0fF4qSkZ62Tn5IxLxpLT3bp0eyZredMoec+t+UbjgZuFjSB63XicwdQ2Cg==
-X-Received: by 2002:adf:e311:: with SMTP id b17mr6840692wrj.11.1562106792800;
-        Tue, 02 Jul 2019 15:33:12 -0700 (PDT)
-Received: from blackbox.darklights.net (p200300F133D62000A09003363445C98E.dip0.t-ipconnect.de. [2003:f1:33d6:2000:a090:336:3445:c98e])
-        by smtp.googlemail.com with ESMTPSA id 18sm253513wmg.43.2019.07.02.15.33.11
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 02 Jul 2019 15:33:12 -0700 (PDT)
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To:     blogic@openwrt.org, linus.walleij@linaro.org,
-        bgolaszewski@baylibre.com, linux-gpio@vger.kernel.org
-Cc:     dev@kresin.me, linux-kernel@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH 4/4] gpio: stp-xway: allow compile-testing
-Date:   Wed,  3 Jul 2019 00:32:48 +0200
-Message-Id: <20190702223248.31934-5-martin.blumenstingl@googlemail.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190702223248.31934-1-martin.blumenstingl@googlemail.com>
-References: <20190702223248.31934-1-martin.blumenstingl@googlemail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GVeYE2lI3WjawRv5ylltj1PK2bEL0Yzgl985bGk3R7M=;
+        b=FAEGMMCnTRWPThIwTHQIK2t/Ea51+gXWDjLJi70j2Hr708vtpDXdoaqFeYKK7clBjT
+         X31hVvaQMlDvaHVOt6yij9Fov2xQerwzNskLIa69zUanjZqS/bTgXAnVPt3udjeLVbJk
+         LrnhmH1LHAcl6hg6BISgebNAt4PJQx3AAwJ8+IdALr0mv+f/nD/PV1V1GGGooCX1xED3
+         1u6TATZ0JdFw27ZfgKpjkhu5uDDkxcdx+JA1hlxmUzfqg86/qvtk1b++Xw5zhj0LLbOL
+         RqzerRzYloAu/Ag9UH61e/SFVN483rCFHBp89+qvk48n6mH+J0gAat7JLVc4tu5mFPtG
+         ISPg==
+X-Gm-Message-State: APjAAAXHm3E9fOm23DkBLgs5u1KSfZS2k+T3GltZ3HgXQQnnYCeSqOlo
+        hXagk4WkZzeH6EdGt1DCBMQsBfW8GlF8WH9s49E8lFEEW+s=
+X-Google-Smtp-Source: APXvYqzNWCKTQ7od3rLKjPwNO09v1yntf67yfperr1BKlEPuIBGnS7KugcRWUK2CbdZZ5sRr5Vlp700rWDEiIIKiiLY=
+X-Received: by 2002:a17:902:4aa3:: with SMTP id x32mr36225620pld.119.1562106849868;
+ Tue, 02 Jul 2019 15:34:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CAKwvOdnGL_9cJ+ETNce89+z7CTDctjACS8DFsLu=ev4+vkVkUw@mail.gmail.com>
+ <alpine.DEB.2.21.1907022332000.1802@nanos.tec.linutronix.de>
+ <CAKwvOdn-=u1v8B1ni8QqiOXaimhc_tG6O=8kMb4c2vv62=D42g@mail.gmail.com> <alpine.DEB.2.21.1907030018170.1802@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1907030018170.1802@nanos.tec.linutronix.de>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Tue, 2 Jul 2019 15:33:58 -0700
+Message-ID: <CAKwvOdkN8FyvpjiuW+cA0+qGQSNvzSbA0Hop69QxQAbTMqNTMw@mail.gmail.com>
+Subject: Re: objtool warnings in prerelease clang-9
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Kees Cook <keescook@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Craig Topper <craig.topper@intel.com>,
+        Alexander Potapenko <glider@google.com>,
+        Bill Wendling <morbo@google.com>,
+        Stephen Hines <srhines@google.com>,
+        Chandler Carruth <chandlerc@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable compile-testing of the stp-xway GPIO driver now that it does not
-depend on any architecture specific includes anymore.
+On Tue, Jul 2, 2019 at 3:20 PM Thomas Gleixner <tglx@linutronix.de> wrote:
+>
+> Nick,
+>
+> On Tue, 2 Jul 2019, Nick Desaulniers wrote:
+> > On Tue, Jul 2, 2019 at 2:58 PM Thomas Gleixner <tglx@linutronix.de> wrote:
+> > > On Tue, 2 Jul 2019, Nick Desaulniers wrote:
+> >
+> > > > This causes objtool to not find any issues in
+> > > > arch/x86/kernel/cpu/mtrr/generic.o.  I don't observe any duplication
+> > > > in the __jump_table section of the resulting .o file.  It also cuts
+> > > > down the objtool warnings I observe in a defconfig (listed at the
+> > > > beginning of the email) from 4 to 2. (platform-quirks.o predates asm
+> > > > goto,
+> > >
+> > > It does not have asm goto inside :)
+> >
+> > I think you're conflating arch/x86/kernel/cpu/mtrr/generic.o with
+> > arch/x86/kernel/platform-quirks.o.
+>
+> Nope. I deliberately split the quote after the platform-quirks part so the
+> reply goes near to it. Seems it wasn't as obvious as I thought :)
 
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
----
- drivers/gpio/Kconfig | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index f1f02dac324e..43d7d6a9d9ab 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -489,7 +489,8 @@ config GPIO_STA2X11
- 
- config GPIO_STP_XWAY
- 	bool "XWAY STP GPIOs"
--	depends on SOC_XWAY
-+	depends on SOC_XWAY || COMPILE_TEST
-+	depends on OF_GPIO
- 	help
- 	  This enables support for the Serial To Parallel (STP) unit found on
- 	  XWAY SoC. The STP allows the SoC to drive a shift registers cascade,
+Oh yes, sorry, I see now what you meant.
 -- 
-2.22.0
-
+Thanks,
+~Nick Desaulniers
