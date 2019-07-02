@@ -2,85 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04A7E5CEE7
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 13:53:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 74F165CF3E
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 14:16:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726627AbfGBLxc convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 2 Jul 2019 07:53:32 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:45586 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725867AbfGBLxb (ORCPT
+        id S1727047AbfGBMQJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 08:16:09 -0400
+Received: from paleale.coelho.fi ([176.9.41.70]:54838 "EHLO
+        farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726658AbfGBMQJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 07:53:31 -0400
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1hiHLd-0008Gs-DE; Tue, 02 Jul 2019 13:53:21 +0200
-Date:   Tue, 2 Jul 2019 13:53:21 +0200
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Corey Minyard <cminyard@mvista.com>
-Cc:     Kurt Kanzenbach <kurt.kanzenbach@linutronix.de>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Corey Minyard <minyard@acm.org>,
-        linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, tglx@linutronix.de
-Subject: Re: [PATCH RT v2] Fix a lockup in wait_for_completion() and friends
-Message-ID: <20190702115321.a7wtdovhz6hn7px2@linutronix.de>
-References: <20190628214903.6f92a9ea@oasis.local.home>
- <20190701190949.GB4336@minyard.net>
- <20190701161840.1a53c9e4@gandalf.local.home>
- <20190701204325.GD5041@minyard.net>
- <20190701170602.2fdb35c2@gandalf.local.home>
- <20190701171333.37cc0567@gandalf.local.home>
- <20190701172825.7d861e85@gandalf.local.home>
- <20190702070418.h6ynkkgk6v6s3aii@linutronix.de>
- <20190702083536.vt346ysqmq6q23iz@linutronix.de>
- <20190702114028.GE5041@minyard.net>
+        Tue, 2 Jul 2019 08:16:09 -0400
+X-Greylist: delayed 1301 seconds by postgrey-1.27 at vger.kernel.org; Tue, 02 Jul 2019 08:16:08 EDT
+Received: from 91-156-6-193.elisa-laajakaista.fi ([91.156.6.193] helo=redipa)
+        by farmhouse.coelho.fi with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <luca@coelho.fi>)
+        id 1hiHMY-0004Nr-Tm; Tue, 02 Jul 2019 14:54:19 +0300
+Message-ID: <859d0a7dfa39b34919ffd83b4b9b923504a3d737.camel@coelho.fi>
+Subject: Re: [PATCH][next] iwlwifi: mvm: fix comparison of u32 variable with
+ less than zero
+From:   Luca Coelho <luca@coelho.fi>
+To:     Colin King <colin.king@canonical.com>,
+        Haim Dreyfuss <haim.dreyfuss@intel.com>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        Intel Linux Wireless <linuxwifi@intel.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.or, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Tue, 02 Jul 2019 14:54:16 +0300
+In-Reply-To: <20190701162657.15174-1-colin.king@canonical.com>
+References: <20190701162657.15174-1-colin.king@canonical.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-1.1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20190702114028.GE5041@minyard.net>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-07-02 06:40:28 [-0500], Corey Minyard wrote:
-> On Tue, Jul 02, 2019 at 10:35:36AM +0200, Sebastian Andrzej Siewior wrote:
-> > On 2019-07-02 09:04:18 [+0200], Kurt Kanzenbach wrote:
-> > > > In fact, my system doesn't boot with this commit in 5.0-rt.
-> > > >
-> > > > If I revert 90e1b18eba2ae4a729 ("swait: Delete the task from after a
-> > > > wakeup occured") the machine boots again.
-> > > >
-> > > > Sebastian, I think that's a bad commit, please revert it.
-> > > 
-> > > I'm having the same problem on a Cyclone V based ARM board. Reverting
-> > > this commit solves the boot issue for me as well.
-> > 
-> > Okay. So the original Corey fix as in v5.0.14-rt9 works for everyone.
-> > Peter's version as I picked it up for v5.0.21-rt14 is causing problems
-> > for two persons now.
-> > 
-> > I'm leaning towards reverting it back to old version for now…
+On Mon, 2019-07-01 at 17:26 +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Just to avoid confusion... it wasn't my patch 1921ea799b7dc56
-> (sched/completion: Fix a lockup in wait_for_completion()) that caused
-> the issue, nor was it Peter's version of it.  Instead, it was the patch
-> mentioned above, 90e1b18eba2ae4a729 ("swait: Delete the task from after a
-> wakeup occured"), which came from someone else.  I can verify by visual
-> inspection that that patch is broken and it should definitely be removed.
-> Just don't want someone to be confused and remove the wrong patch.
+> The comparison of the u32 variable wgds_tbl_idx with less than zero is
+> always going to be false because it is unsigned.  Fix this by making
+> wgds_tbl_idx a plain signed int.
+> 
+> Addresses-Coverity: ("Unsigned compared against 0")
+> Fixes: 4fd445a2c855 ("iwlwifi: mvm: Add log information about SAR status")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/net/wireless/intel/iwlwifi/mvm/nvm.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/nvm.c b/drivers/net/wireless/intel/iwlwifi/mvm/nvm.c
+> index 719f793b3487..a9bb43a2f27b 100644
+> --- a/drivers/net/wireless/intel/iwlwifi/mvm/nvm.c
+> +++ b/drivers/net/wireless/intel/iwlwifi/mvm/nvm.c
+> @@ -620,7 +620,7 @@ void iwl_mvm_rx_chub_update_mcc(struct iwl_mvm *mvm,
+>  	enum iwl_mcc_source src;
+>  	char mcc[3];
+>  	struct ieee80211_regdomain *regd;
+> -	u32 wgds_tbl_idx;
+> +	int wgds_tbl_idx;
+>  
+>  	lockdep_assert_held(&mvm->mutex);
 
-The commit 90e1b18eba2ae4a729 is delta of reverting your patch and
-adding Peter's patch instead. If you look into the queue
-  https://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git/diff/patches/swait-Delete-the-task-from-after-a-wakeup-occured.patch?h=linux-5.0.y-rt-patches&id=8ef6644ae2ac8fc18f157c3deb70fa9acb95a486
+Thanks, Colin!
 
-is what Peter suggested in the thread and this
-  https://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git/diff/patches/sched-completion-Fix-a-lockup-in-wait_for_completion.patch?h=linux-5.0.y-rt-patches&id=8ef6644ae2ac8fc18f157c3deb70fa9acb95a486
+I applied this to our internal tree and it will reach the mainline
+following our normal upstreaming process.
 
-is the removal.
+--
+Cheers,
+Luca.
 
-> -corey
-Sebastian
