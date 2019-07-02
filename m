@@ -2,119 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB8CA5D512
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 19:13:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C4FE95D522
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 19:22:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726908AbfGBRNk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 13:13:40 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:41870 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726303AbfGBRNk (ORCPT
+        id S1726486AbfGBRWM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 13:22:12 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:36577 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726150AbfGBRWM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 13:13:40 -0400
-Received: by mail-pl1-f196.google.com with SMTP id m7so702164pls.8;
-        Tue, 02 Jul 2019 10:13:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=CMmY/EmBDHRwzGOg6QKWgI4bnbMuLFbtkiBtFkYdt0g=;
-        b=BptMFKNJAX+benhstGMez9zdl8mS2nykF4E5vC1Ha2dII7WT/F+yQAzjn3PJ3FZ52T
-         9RiwURv25KYuUh0Z59AX6JHoyIgTKYNberdr/l+vOQZDIXQNNlOQNCleW90fJ4H5KxDj
-         aeZa/OZ/qnog9Oz1/n/gtoItr5Qm/GfI2nhCqy/8Lmq+lcRZWIICHjFg7DiKsVmpxzGm
-         Rb2vsPwSFQybIjGgPyc8JfaOvx3F52kw0q+XD+y4fnA7cbpJN+GZbWIH47pBz/FdkasO
-         CFea1MJCNem6xn3CcbSG+xnT98207tebxox+M8nTI+4QEyqfR8Ojj8BonKFPk5HykYWe
-         v6FQ==
+        Tue, 2 Jul 2019 13:22:12 -0400
+Received: by mail-lf1-f68.google.com with SMTP id q26so11996500lfc.3
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 10:22:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=CMmY/EmBDHRwzGOg6QKWgI4bnbMuLFbtkiBtFkYdt0g=;
-        b=Jt/FJz7PotUQoQ5GvlmE6VN1aWMYeY+wa1Q0aeXL4RIsYeXj5lRBmx+Qj00BHJlGdd
-         Hk73q3DkJ0S0MB8IUgFxv/Uoqo9q1UxLeJTt4WG3LF2Jg/ckhEV1kMfu9+j9A7Xriyvd
-         0zInAvScBYv5el17kIM/eLASNDCGTrHBck+KtKK0lq+aXLJqhsJKpCYrKlm2f0gvDuAI
-         6qgeHncbi7r2uYBjIRIU9V5TQd37ob+PBFDUjMG8JlFIgEBUytTV1bb1nBGH0Hbirf9y
-         UcIuSzq2NGimYH8/7hAsvDl8k1e3OwJ58UWDdPVT0kGUc28QuB4T3AoHz4hRDzEGfDN8
-         iAIg==
-X-Gm-Message-State: APjAAAU2N0mWhxRQS+Hg1ayGb7ljs0snTh0/VdtL62KZDQvti/2ADxiK
-        KQl7hEBhg7dfVHEpBOt7xgvd1PpjOOWhv+b4XlM=
-X-Google-Smtp-Source: APXvYqwbztzyWoGiTMQMDfeT5/bfyf/ibZNPyr02y4RMWlBoY/ksPjxdsC3NfKSJXiOUiizWWVW6kqYH97ArSMcRR2M=
-X-Received: by 2002:a17:902:934a:: with SMTP id g10mr37207521plp.18.1562087619463;
- Tue, 02 Jul 2019 10:13:39 -0700 (PDT)
+        bh=gvnDOFwx6G7d+yAjk4B98e8llL7nNglDsAedEdiJxn8=;
+        b=s3pCEKVbe33vUaxqf1Z4S0zG+PHeCnDsJLTuriwoIGW9YQm951Z68+IqvGZHOl/LWo
+         6ZUsc/7gj5H7nyyy7kt5mkEEN+jmwAvbP8zYV8BMpgpT7WTfppn1Cfbn5dGckLOcG8fE
+         vS5Q2Fr89x9N6qiSk+rY+xaRmrdfmx/DsglBv4nkw3MLXGtdLsQIAElWJ2zFNhran3rx
+         wR4ezgrS6t//Os2bSY34No1k07XiG7FNtj8wfWqEk7MW5TCuqn2LCPDIqk1CGbacZCi3
+         wzUcViGJ56VuBIIAXMWagVaN76Z1mLhQt3ZVym48D/b7GfcTgLhzzL6g4FLDVmorZIqP
+         J6Fw==
+X-Gm-Message-State: APjAAAWsB5qR0SiXYUPYo+RKq+VCIfCjp6md/vwQVcA9O+j4lbkXDJ0l
+        p55zAQ8u4UOntvSEV0hvr9jjObp623P5VhLlOX5Yxw==
+X-Google-Smtp-Source: APXvYqwe8rPzx6WbcilbAAMBCLX758kdHtQ+zBozdZr9n3CYJ4FZMdsNLFeRkdcfFHDhvi/4sOdbVFpkPAB6cmKCs3A=
+X-Received: by 2002:a19:48c5:: with SMTP id v188mr803228lfa.69.1562088130005;
+ Tue, 02 Jul 2019 10:22:10 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190702003740.75970-1-luzmaximilian@gmail.com>
-In-Reply-To: <20190702003740.75970-1-luzmaximilian@gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 2 Jul 2019 20:13:27 +0300
-Message-ID: <CAHp75Ve-f-piRxwG2u2djWGt2fUKkvZSDJ+XkjGKLmMZeLEYsw@mail.gmail.com>
-Subject: Re: [PATCH 0/2] Support for buttons on newer MS Surface devices
-To:     Maximilian Luz <luzmaximilian@gmail.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-input <linux-input@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Chen Yu <yu.c.chen@intel.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>
+References: <20190702170228.GA4404@avx2>
+In-Reply-To: <20190702170228.GA4404@avx2>
+From:   Matteo Croce <mcroce@redhat.com>
+Date:   Tue, 2 Jul 2019 19:21:33 +0200
+Message-ID: <CAGnkfhxPhHxmNFCMHj8QTYKtLi08O8C5-6Qua8zRz4FX=8g+pw@mail.gmail.com>
+Subject: Re: [PATCH] proc/sysctl: add shared variables for range check
+To:     Alexey Dobriyan <adobriyan@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Aaron Tomlin <atomlin@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 2, 2019 at 3:38 AM Maximilian Luz <luzmaximilian@gmail.com> wrote:
+On Tue, Jul 2, 2019 at 7:13 PM Alexey Dobriyan <adobriyan@gmail.com> wrote:
 >
-> This series adds suport for power and volume buttons on 5th and 6th
-> generation Microsoft Surface devices. Specifically, it adds support for
-> the power-button on the Surface Laptop 1 and Laptop 2, as well as
-> support for power- and (on-device) volume-buttons on the Surface Pro 5
-> (2017), Pro 6, and Book 2.
+> > -static long zero;
+> >  static long long_max = LONG_MAX;
+> >
+> >  struct ctl_table epoll_table[] = {
+> > @@ -301,7 +300,7 @@ struct ctl_table epoll_table[] = {
+> >                 .maxlen         = sizeof(max_user_watches),
+> >                 .mode           = 0644,
+> >                 .proc_handler   = proc_doulongvec_minmax,
+> > -               .extra1         = &zero,
+> > +               .extra1         = SYSCTL_ZERO,
+> >                 .extra2         = &long_max,
 >
-> These devices use the same MSHW0040 device as on the Surface Pro 4,
-> however, whereas the Pro 4 uses an ACPI notify handler, the newer
-> devices use GPIO interrupts to signal these events.
+> This looks wrong: proc_doulongvec_minmax() expects "long"s.
+> The whole patch needs rechecking.
 >
-> The first patch of this series ensures that the surfacepro3_button
-> driver, used for MSHW0040 on the Pro 4, does not probe for the newer
-> devices. The second patch adapts soc_button_array to implement the
-> actual button support.
->
-> I think the changes to soc_button_array in the second patch warrant a
-> thorough review. I've tried to make things a bit more generic to be able
-> to integrate arbitrary ACPI GPIO power-/volume-button devices more
-> easily, I'm not sure if there may be reasons against this.
->
-> These patches have also been tested on various Surface devices via the
-> github.com/jakeday/linux-surface patchset.
->
+> > +/* shared constants to be used in various sysctls */
+> > +const =======>int<========== sysctl_vals[] = { 0, 1, INT_MAX };
+> > +EXPORT_SYMBOL(sysctl_vals);
 
-> Changes since v1:
->   - [PATCH 1/2] platform: Fix device check for surfacepro3_button
->     No changes.
->
->   - [PATCH 2/2] input: soc_button_array for newer surface devices
->     Ensure the patch compiles without CONFIG_ACPI.
+Yes, you're right, that chunk must be dropped.
+Anyway I've checked the patch, this was the only long field touched.
 
-I re-pushed to my queue, though if you are going to send a new
-version, check my repository for the titles of the patches (you need
-to use correct templates for the subsystems).
-
->
-> Maximilian Luz (2):
->   platform: Fix device check for surfacepro3_button
->   input: soc_button_array for newer surface devices
->
->  drivers/input/misc/soc_button_array.c     | 145 ++++++++++++++++++++--
->  drivers/platform/x86/surfacepro3_button.c |  38 ++++++
->  2 files changed, 171 insertions(+), 12 deletions(-)
->
-> --
-> 2.22.0
->
-
-
+Regards,
 -- 
-With Best Regards,
-Andy Shevchenko
+Matteo Croce
+per aspera ad upstream
