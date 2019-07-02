@@ -2,70 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 583225DA0D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:59:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D305A5DAAD
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 03:23:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727485AbfGCA7y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 20:59:54 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:38088 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726635AbfGCA7x (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 20:59:53 -0400
-Received: by mail-oi1-f193.google.com with SMTP id v186so605784oie.5;
-        Tue, 02 Jul 2019 17:59:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=B0lnG7dVUXOZiqirpp6Pr4IxSipe4AyPJyRnbU/UDbM=;
-        b=gEuizN8LAKvRau0Nsuxug6F+9pl8chEcIGAI5O4AI/JNeuPd6hjSef8K61p7hSZVvH
-         mMxwO+OzaYdILethk7IDWi09fPmKhSZuXzolOc97Z/n6asWOy4dyN6eYqM3VN0NkrX1i
-         xcLZRYaqGuZCMvCwklujmvFtShLseiFoXVo3URCIyq6KDilYyFOpIWKCvpJFxM5wcN/n
-         d9ykGI+60ctT2KPg7Grdo5ugdrj+MeanqpwmMNSLgSXPghFpS/Vv1dCd4+QrVNnOgypD
-         tRmGj/QLtZJXt3jT+OKJUCo784fIwbWBMvkMSWLYUlp/6exliELY1zzEebgUS8/gSu83
-         Ib1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=B0lnG7dVUXOZiqirpp6Pr4IxSipe4AyPJyRnbU/UDbM=;
-        b=Ugohw6xl2twNtGitTDc78giNQZ2vHoPKN8GFDEBaD+3Lpy26b9XuNV7D5hNXTzlQmB
-         wPV/xFuq1tctjDIg1QUjqyXVn3utMhPyzPYdI6BXhsKafUi28InPpLDSWHQEuOQuuExV
-         JodjFPz2IJDWuaFSNVh4RLD64BdPtp8V5sOFhHd6Gb3pD3sTdRNdU/gzBxBTPVFDBi99
-         1sTMlxsEdMVA1hGvwJem/i8RKVlvmq1QfyrRwl9vFYGqaHTA32A9AEGC8h+X8FFZrfVT
-         229FJESPleh4PeHi49g+x4hBRzCCOJu/2pQ+i+za5xb0am/jqFkE4WlJ5lNKJoJinvtw
-         Dpag==
-X-Gm-Message-State: APjAAAWaYihaGEhcDtrDM2FxLTPrWVOtr+7A/NKBvZdY/ws+rXS4n8Ng
-        Yo8LOoAINz+6v0re0PfFq21pe3ZP4fasMkkSEu6w47DX
-X-Google-Smtp-Source: APXvYqw7GqOpvPorcRhCyGKe303y7lcoPXIyo8PqNByOmScgMMCuyG4n9Vbue28pMqX8fvDoy9he8KbkXktBPfB7h38=
-X-Received: by 2002:a05:6808:8f0:: with SMTP id d16mr1422412oic.47.1562108171246;
- Tue, 02 Jul 2019 15:56:11 -0700 (PDT)
+        id S1727394AbfGCBXI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 21:23:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33124 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726329AbfGCBXF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 21:23:05 -0400
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9FE5621953;
+        Tue,  2 Jul 2019 22:56:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562108186;
+        bh=7bGDyb/ptYQsM9cGc4YQsEz80eg7nJSHMN6pG4rNSxY=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=veN6Fk7cQToKPh8Cwuq1T/G6DHwWCHohehifq47xfuYZrBufR/nyDLlrT7lU7r2cV
+         Xg0KXraDxBfn0pdgvz4airTebnJRUgPxLdOGu9ugOPdrgjo3XVo8BwPSogElVlioaZ
+         +hW7wXSSpKOBBqLp0hK/DFK2Vi6ifQZueR547Izk=
+Subject: Re: [PATCH 5.1 00/55] 5.1.16-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org, shuah <shuah@kernel.org>
+References: <20190702080124.103022729@linuxfoundation.org>
+From:   shuah <shuah@kernel.org>
+Message-ID: <82a59082-af68-51e7-49c7-62d1b45df18a@kernel.org>
+Date:   Tue, 2 Jul 2019 16:56:24 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
-References: <20190701091258.3870-1-narmstrong@baylibre.com> <20190701091258.3870-2-narmstrong@baylibre.com>
-In-Reply-To: <20190701091258.3870-2-narmstrong@baylibre.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Wed, 3 Jul 2019 00:56:00 +0200
-Message-ID: <CAFBinCDNABG5BpAu=aXjTuFAd4YEgX2OvtAfFEGBm8NfVHu_qQ@mail.gmail.com>
-Subject: Re: [RFC/RFT v3 01/14] pinctrl: meson-g12a: add pwm_a on GPIOE_2 pinmux
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     jbrunet@baylibre.com, khilman@baylibre.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190702080124.103022729@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 1, 2019 at 11:13 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
->
-> Add the missing pinmux for the pwm_a function on the GPIOE_2 pin.
->
-> Reviewed-by: Kevin Hilman <khilman@baylibre.com>
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-it's not documented anywhere but Amlogic's buildroot kernel (from
-buildroot-openlinux-A113-201901) uses the same bit so it seems
-correct.
-Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+On 7/2/19 2:01 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.1.16 release.
+> There are 55 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu 04 Jul 2019 07:59:45 AM UTC.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.1.16-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.1.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
+
+Compiled and booted on my test system. No dmesg regressions.
+
+thanks,
+-- Shuah
+
