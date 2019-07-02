@@ -2,135 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37F715D3C1
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 17:59:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63AE25D3C9
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 18:00:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727051AbfGBP7l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 11:59:41 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:34775 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726103AbfGBP7l (ORCPT
+        id S1726652AbfGBQAr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 12:00:47 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:37056 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725922AbfGBQAq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 11:59:41 -0400
-Received: by mail-ot1-f65.google.com with SMTP id n5so17705094otk.1;
-        Tue, 02 Jul 2019 08:59:40 -0700 (PDT)
+        Tue, 2 Jul 2019 12:00:46 -0400
+Received: by mail-qk1-f196.google.com with SMTP id d15so14533317qkl.4;
+        Tue, 02 Jul 2019 09:00:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=2hgUHvwb0DoWEwpCAaejVqJUmuPpVeW1cY9iTNfBeJw=;
+        b=p1TA4wFigfJ+pPZe7M2eTsp79OgzdHP5n/YeExi1G5CdW1MTYiKYdG+vs7c6x3rVya
+         riGn/5SihZ5/ln2BXCfn0sUx9nwS2eTW/+MZ+EVFY13eKpNZHYgyiGn1cLz16pqdgzR8
+         6vh00DFIYiK9eHUszzVSSbZfpZ6KyjziELCPR7mIqJENs+O8+YowUvi6GjWtIrq1tPQE
+         WPbhynRUV7X4/JzAxImlSR7PN1gebxS91HzQylmrtFypTPhYWjXjOG9vHE00a2Let9Pq
+         HOtk6YO6POv/Q1rb6t5oSyeZ+Sq4OqrkGoYZdu4otg4DqSDUPXMgronPR3acl7fJPixp
+         D4bA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=UX+GvBFC0v6ijIy6UhW+3XcFJ/I0DX5uZsKBeKdYKQc=;
-        b=OLmqipUAeVHIpuQFTB8VgsRX5Ha6Oy+oXGWCJrVilHz7RDL4O4zPBINBHEGrd/xrWE
-         FDaUue7qCRJtcrGzPT4hWPXIgXhZWXsQu7TGOQpu5CZMxQqlCSD9BwMk0j9PVCyhYoSB
-         nSqjPNKGQdPSiRDVrV+HPz8Lps7gbWiU/WthNSCdA2+U0utUIK/2U8DvxS1mlYsN22Nt
-         Olbldxq0HbV786/7DtaKkea5V3RiZy2AtC3SKnfjLA98M4w0teu0UpRX6W/KOSK646sX
-         6s4FYrR1EnuVGMcTs5M6WRiQuFqDe8yUVzSQP5CcagFhVZ0yiwTGRfqE3klB/d2o8KuY
-         YYAg==
-X-Gm-Message-State: APjAAAWnTsqvzc5lSUou49T+AOx17T8E8qrspfFTQivuUCECGFewJnTF
-        M8Q2FbGu59h7Daj6P+Uzz4sp/Lt3691vE8ITdlo=
-X-Google-Smtp-Source: APXvYqw4NQyJ1uqX49Lix6ogL4V0KiZ/E2CFkNB0/ag0NAxhGfpEwvIazSLKKxNwP6jmm7UeeALEJLepAhvErmYL6yE=
-X-Received: by 2002:a05:6830:1516:: with SMTP id k22mr4803148otp.189.1562083180116;
- Tue, 02 Jul 2019 08:59:40 -0700 (PDT)
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=2hgUHvwb0DoWEwpCAaejVqJUmuPpVeW1cY9iTNfBeJw=;
+        b=B4S+P4yhlRWUW8bNKBLTqeCeeJ9hmQSLz3piPAzP0aSs+TDvEx33onErr4zpmzjadD
+         OD/tckQluAnWQoSCoppUAvpz41iVCxRMsAp8dx8p1QDz1VMBfcUE5Kzo/MWXGnZXK/o3
+         V4/IA/DfXEP03IOV0DdXq9Gp/3S2XEb8yd7i0WrobhL8PCqCOSQQwhg/5dCEwDs3pdig
+         CRVmD+O//jgP4nj3a63IAh5H4PEVEtPD2WKvDbL4R8fvOzxwmKhIjQWCf2RWhEu+2zX1
+         TtoGnmHSkhqE4WAlNwiIrt1vA57YEUGq/ZB68nicWdFIWqYwRbkO0xwWZBuXJq/leeS0
+         E4+A==
+X-Gm-Message-State: APjAAAXn9vmpwN/HbfleQZvxf3OX+RpaqSgOnrQxTO2zU97iZiydLs0+
+        HwlZJMNjpriBO2nD5+kuZDY=
+X-Google-Smtp-Source: APXvYqyv5uE4SAHTG1h5BZG+SqmqR0Os+GBVVWKhrL9z5HBoZl4T8AzuhPh1iYFNhH63UURx+Ry+Fw==
+X-Received: by 2002:a37:a98c:: with SMTP id s134mr25887179qke.176.1562083245386;
+        Tue, 02 Jul 2019 09:00:45 -0700 (PDT)
+Received: from quaco.ghostprotocols.net ([179.97.35.11])
+        by smtp.gmail.com with ESMTPSA id k33sm6569045qte.69.2019.07.02.09.00.42
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 02 Jul 2019 09:00:45 -0700 (PDT)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id BC38441153; Tue,  2 Jul 2019 13:00:32 -0300 (-03)
+Date:   Tue, 2 Jul 2019 13:00:32 -0300
+To:     =?iso-8859-1?Q?Andr=E9?= Goddard Rosa <andre.goddard@gmail.com>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Clark Williams <williams@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH 32/43] tools lib: Adopt strim() from the kernel
+Message-ID: <20190702160032.GH15462@kernel.org>
+References: <20190702022616.1259-1-acme@kernel.org>
+ <20190702022616.1259-33-acme@kernel.org>
+ <CAGje9yTfFrUxj-vSX=Au856Fe_307aQqD=YrbGeWfHESQ6Rw8w@mail.gmail.com>
 MIME-Version: 1.0
-References: <4976412.ihyb9sT5jY@kreacher> <6191578.xJk2HsE5MX@kreacher> <20190701161550.GA2640@lahna.fi.intel.com>
-In-Reply-To: <20190701161550.GA2640@lahna.fi.intel.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Tue, 2 Jul 2019 17:59:28 +0200
-Message-ID: <CAJZ5v0iJ4bELn+LSLgnOaUz6d31FeCV84t=VxKYHA1hLUnQ-ZQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/5] PM: ACPI/PCI: Resume all devices during hibernation
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        Linux ACPI <linux-acpi@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Hans De Goede <hdegoede@redhat.com>,
-        "Robert R. Howell" <RHowell@uwyo.edu>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGje9yTfFrUxj-vSX=Au856Fe_307aQqD=YrbGeWfHESQ6Rw8w@mail.gmail.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 1, 2019 at 6:15 PM Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
->
-> On Mon, Jul 01, 2019 at 12:44:25PM +0200, Rafael J. Wysocki wrote:
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Em Mon, Jul 01, 2019 at 11:33:20PM -0400, André Goddard Rosa escreveu:
+> On Mon, Jul 1, 2019 at 22:28 Arnaldo Carvalho de Melo <acme@kernel.org>
+> wrote:
+> 
+> > From: Arnaldo Carvalho de Melo <acme@redhat.com>
 > >
-> > Both the PCI bus type and the ACPI PM domain avoid resuming
-> > runtime-suspended devices with DPM_FLAG_SMART_SUSPEND set during
-> > hibernation (before creating the snapshot image of system memory),
-> > but that turns out to be a mistake.  It leads to functional issues
-> > and adds complexity that's hard to justify.
-> >
-> > For this reason, resume all runtime-suspended PCI devices and all
-> > devices in the ACPI PM domains before creating a snapshot image of
-> > system memory during hibernation.
-> >
-> > Fixes: 05087360fd7a (ACPI / PM: Take SMART_SUSPEND driver flag into account)
-> > Fixes: c4b65157aeef (PCI / PM: Take SMART_SUSPEND driver flag into account)
-> > Link: https://lore.kernel.org/linux-acpi/917d4399-2e22-67b1-9d54-808561f9083f@uwyo.edu/T/#maf065fe6e4974f2a9d79f332ab99dfaba635f64c
-> > Reported-by: Robert R. Howell <RHowell@uwyo.edu>
-> > Tested-by: Robert R. Howell <RHowell@uwyo.edu>
-> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > ---
-> >
-> > -> v2: No changes.
-> >
-> > ---
-> >  drivers/acpi/device_pm.c |   13 +++++++------
-> >  drivers/pci/pci-driver.c |   16 ++++++++--------
-> >  2 files changed, 15 insertions(+), 14 deletions(-)
-> >
-> > Index: linux-pm/drivers/acpi/device_pm.c
-> > ===================================================================
-> > --- linux-pm.orig/drivers/acpi/device_pm.c
-> > +++ linux-pm/drivers/acpi/device_pm.c
-> > @@ -1155,13 +1155,14 @@ EXPORT_SYMBOL_GPL(acpi_subsys_resume_ear
-> >  int acpi_subsys_freeze(struct device *dev)
-> >  {
-> >       /*
-> > -      * This used to be done in acpi_subsys_prepare() for all devices and
-> > -      * some drivers may depend on it, so do it here.  Ideally, however,
-> > -      * runtime-suspended devices should not be touched during freeze/thaw
-> > -      * transitions.
-> > +      * Resume all runtime-suspended devices before creating a snapshot
-> > +      * image of system memory, because the restore kernel generally cannot
-> > +      * be expected to always handle them consistently and they need to be
-> > +      * put into the runtime-active metastate during system resume anyway,
-> > +      * so it is better to ensure that the state saved in the image will be
-> > +      * alwyas consistent with that.
->
-> alwyas -> always
->
-> >        */
-> > -     if (!dev_pm_test_driver_flags(dev, DPM_FLAG_SMART_SUSPEND))
-> > -             pm_runtime_resume(dev);
-> > +     pm_runtime_resume(dev);
-> >
-> >       return pm_generic_freeze(dev);
-> >  }
-> > Index: linux-pm/drivers/pci/pci-driver.c
-> > ===================================================================
-> > --- linux-pm.orig/drivers/pci/pci-driver.c
-> > +++ linux-pm/drivers/pci/pci-driver.c
-> > @@ -1012,15 +1012,15 @@ static int pci_pm_freeze(struct device *
-> >       }
-> >
-> >       /*
-> > -      * This used to be done in pci_pm_prepare() for all devices and some
-> > -      * drivers may depend on it, so do it here.  Ideally, runtime-suspended
-> > -      * devices should not be touched during freeze/thaw transitions,
-> > -      * however.
-> > +      * Resume all runtime-suspended devices before creating a snapshot
-> > +      * image of system memory, because the restore kernel generally cannot
-> > +      * be expected to always handle them consistently and they need to be
-> > +      * put into the runtime-active metastate during system resume anyway,
-> > +      * so it is better to ensure that the state saved in the image will be
-> > +      * alwyas consistent with that.
->
-> ditto
+> > Since we're working on moving stuff out of tools/perf/util/ to
+> > tools/lib/, take the opportunity to adopt routines from the kernel that
+> > are equivalent, so that tools/ code look more like the kernel.
 
-Thanks, I'll fix these up when applying the patch.
+<SNIP>
+
+> > +char *strim(char *s)
+> > +{
+> > +       size_t size;
+> > +       char *end;
+> > +
+> > +       size = strlen(s);
+> > +       if (!size)
+> > +               return s;
+> > +
+> > +       end = s + size - 1;
+> > +       while (end >= s && isspace(*end))
+> > +               end--;
+> > +       *(end + 1) = '\0';
+> > +
+> > +       return skip_spaces(s);
+> > +}
+> > --
+> > 2.20.1
+> 
+> 
+> Small nit: could call skip_spaces() firstly and save its pointer to return
+> later and then remove the trailing spaces. That’ll make strlen() iterate
+> over a smaller string.
+
+Hey, this is just  a copy of what is in the kernel sources, so as soon
+as this gets improved there we'll grab a copy again can you do that for
+the kernel first? :-)
+
+- Arnaldo
