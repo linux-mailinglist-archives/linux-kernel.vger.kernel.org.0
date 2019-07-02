@@ -2,43 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1ABA65CA56
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 10:03:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05AEE5CAA6
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 10:06:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727363AbfGBIDM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 04:03:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48004 "EHLO mail.kernel.org"
+        id S1727739AbfGBIGR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 04:06:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52584 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727346AbfGBIDK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 04:03:10 -0400
+        id S1727638AbfGBIGK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 04:06:10 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DB13021855;
-        Tue,  2 Jul 2019 08:03:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EF8152183F;
+        Tue,  2 Jul 2019 08:06:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562054589;
-        bh=ncsY3koxNbozow26+6W2J19rN2kZ2ukHfPyYZVg5NmI=;
+        s=default; t=1562054769;
+        bh=laaMfB6GJi+RjTfheKYuRjfFtHFXzzuj98IyPvCP3RI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1yQRhmJcVTFfxYKhQBsefpwJcRdwcG9MzNs1hsYww4WJ9qDwJ2YL2SeUZar8h6M+z
-         xWdiJvd3cEHQFprKXQX7mcA0+4NjRmfF5occjecEcQXVSqBXbfqoEUBZfPmk+KTBMi
-         YomTZVaVln67D909iQuMyuZjmVnzTWhxdEep8SQA=
+        b=REAFnLjTXEnP0xIrT4FV6hxw8YJVDIOhZb4hAdlNzOvZq4Q4HXUIAI1UrQuMRyE3/
+         LA2maqD3NHG/ixYERhDExq5100FETvzO0ND9wpEIp1kQNsTxRXI+4t0loMC3ocwHAH
+         eB/9zbrURt1A8X9vTlQG47jga34YwUoJy0iPgu60=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alejandro Jimenez <alejandro.j.jimenez@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Liam Merwick <liam.merwick@oracle.com>,
-        Mark Kanda <mark.kanda@oracle.com>,
-        Paolo Bonzini <pbonzini@redhat.com>, bp@alien8.de,
-        rkrcmar@redhat.com, kvm@vger.kernel.org
-Subject: [PATCH 5.1 21/55] x86/speculation: Allow guests to use SSBD even if host does not
-Date:   Tue,  2 Jul 2019 10:01:29 +0200
-Message-Id: <20190702080125.142975123@linuxfoundation.org>
+        stable@vger.kernel.org, Fei Yang <fei.yang@intel.com>,
+        Sam Protsenko <semen.protsenko@linaro.org>,
+        Felipe Balbi <balbi@kernel.org>, linux-usb@vger.kernel.org,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 29/72] usb: dwc3: gadget: move requests to cancelled_list
+Date:   Tue,  2 Jul 2019 10:01:30 +0200
+Message-Id: <20190702080126.178119054@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190702080124.103022729@linuxfoundation.org>
-References: <20190702080124.103022729@linuxfoundation.org>
+In-Reply-To: <20190702080124.564652899@linuxfoundation.org>
+References: <20190702080124.564652899@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,70 +47,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alejandro Jimenez <alejandro.j.jimenez@oracle.com>
+commit d4f1afe5e896c18ae01099a85dab5e1a198bd2a8 upstream
 
-commit c1f7fec1eb6a2c86d01bc22afce772c743451d88 upstream.
+Whenever we have a request in flight, we can move it to the cancelled
+list and later simply iterate over that list and skip over any TRBs we
+find.
 
-The bits set in x86_spec_ctrl_mask are used to calculate the guest's value
-of SPEC_CTRL that is written to the MSR before VMENTRY, and control which
-mitigations the guest can enable.  In the case of SSBD, unless the host has
-enabled SSBD always on mode (by passing "spec_store_bypass_disable=on" in
-the kernel parameters), the SSBD bit is not set in the mask and the guest
-can not properly enable the SSBD always on mitigation mode.
-
-This has been confirmed by running the SSBD PoC on a guest using the SSBD
-always on mitigation mode (booted with kernel parameter
-"spec_store_bypass_disable=on"), and verifying that the guest is vulnerable
-unless the host is also using SSBD always on mode. In addition, the guest
-OS incorrectly reports the SSB vulnerability as mitigated.
-
-Always set the SSBD bit in x86_spec_ctrl_mask when the host CPU supports
-it, allowing the guest to use SSBD whether or not the host has chosen to
-enable the mitigation in any of its modes.
-
-Fixes: be6fcb5478e9 ("x86/bugs: Rework spec_ctrl base and mask logic")
-Signed-off-by: Alejandro Jimenez <alejandro.j.jimenez@oracle.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Liam Merwick <liam.merwick@oracle.com>
-Reviewed-by: Mark Kanda <mark.kanda@oracle.com>
-Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
-Cc: bp@alien8.de
-Cc: rkrcmar@redhat.com
-Cc: kvm@vger.kernel.org
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/1560187210-11054-1-git-send-email-alejandro.j.jimenez@oracle.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Cc: Fei Yang <fei.yang@intel.com>
+Cc: Sam Protsenko <semen.protsenko@linaro.org>
+Cc: Felipe Balbi <balbi@kernel.org>
+Cc: linux-usb@vger.kernel.org
+Cc: stable@vger.kernel.org # 4.19.y
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+(cherry picked from commit d4f1afe5e896c18ae01099a85dab5e1a198bd2a8)
+Signed-off-by: John Stultz <john.stultz@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/cpu/bugs.c |   11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ drivers/usb/dwc3/gadget.c | 17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
 
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -836,6 +836,16 @@ static enum ssb_mitigation __init __ssb_
+diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
+index c2169bc626c8..8291fa1624e1 100644
+--- a/drivers/usb/dwc3/gadget.c
++++ b/drivers/usb/dwc3/gadget.c
+@@ -1364,6 +1364,17 @@ static void dwc3_gadget_ep_skip_trbs(struct dwc3_ep *dep, struct dwc3_request *r
+ 	}
+ }
+ 
++static void dwc3_gadget_ep_cleanup_cancelled_requests(struct dwc3_ep *dep)
++{
++	struct dwc3_request		*req;
++	struct dwc3_request		*tmp;
++
++	list_for_each_entry_safe(req, tmp, &dep->cancelled_list, list) {
++		dwc3_gadget_ep_skip_trbs(dep, req);
++		dwc3_gadget_giveback(dep, req, -ECONNRESET);
++	}
++}
++
+ static int dwc3_gadget_ep_dequeue(struct usb_ep *ep,
+ 		struct usb_request *request)
+ {
+@@ -1400,8 +1411,9 @@ static int dwc3_gadget_ep_dequeue(struct usb_ep *ep,
+ 			if (!r->trb)
+ 				goto out0;
+ 
+-			dwc3_gadget_ep_skip_trbs(dep, r);
+-			goto out1;
++			dwc3_gadget_move_cancelled_request(req);
++			dwc3_gadget_ep_cleanup_cancelled_requests(dep);
++			goto out0;
+ 		}
+ 		dev_err(dwc->dev, "request %pK was not queued to %s\n",
+ 				request, ep->name);
+@@ -1409,7 +1421,6 @@ static int dwc3_gadget_ep_dequeue(struct usb_ep *ep,
+ 		goto out0;
  	}
  
- 	/*
-+	 * If SSBD is controlled by the SPEC_CTRL MSR, then set the proper
-+	 * bit in the mask to allow guests to use the mitigation even in the
-+	 * case where the host does not enable it.
-+	 */
-+	if (static_cpu_has(X86_FEATURE_SPEC_CTRL_SSBD) ||
-+	    static_cpu_has(X86_FEATURE_AMD_SSBD)) {
-+		x86_spec_ctrl_mask |= SPEC_CTRL_SSBD;
-+	}
-+
-+	/*
- 	 * We have three CPU feature flags that are in play here:
- 	 *  - X86_BUG_SPEC_STORE_BYPASS - CPU is susceptible.
- 	 *  - X86_FEATURE_SSBD - CPU is able to turn off speculative store bypass
-@@ -852,7 +862,6 @@ static enum ssb_mitigation __init __ssb_
- 			x86_amd_ssb_disable();
- 		} else {
- 			x86_spec_ctrl_base |= SPEC_CTRL_SSBD;
--			x86_spec_ctrl_mask |= SPEC_CTRL_SSBD;
- 			wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
- 		}
- 	}
+-out1:
+ 	dwc3_gadget_giveback(dep, req, -ECONNRESET);
+ 
+ out0:
+-- 
+2.20.1
+
 
 
