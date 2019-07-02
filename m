@@ -2,58 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D412A5D14C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 16:16:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A7055D150
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 16:16:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727087AbfGBOQL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 10:16:11 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:37601 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726341AbfGBOQK (ORCPT
+        id S1727151AbfGBOQV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 10:16:21 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:45744 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726962AbfGBOQU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 10:16:10 -0400
-Received: by mail-pf1-f193.google.com with SMTP id 19so8329747pfa.4
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 07:16:10 -0700 (PDT)
+        Tue, 2 Jul 2019 10:16:20 -0400
+Received: by mail-pl1-f193.google.com with SMTP id bi6so438479plb.12
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 07:16:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=pe03FkrBdknzSMi1BJ7D2IonOmPOSw8u72ZV3zS67vk=;
-        b=eNuV5VsKp26iw7pwVfUIm1yfBRF9GHZ5iFOPBMFaDQ4eYUSRy++UTay4any9hC7vdh
-         SSVIqNhNHw4B03hBw4j0JQaWM1FgGlmuRAz+znOP0rd84XUIQ6tRtygbxpb+JJBD4/FH
-         l0rZrhFQSbJ6PGupyvKMf23IQbAfdAPNtPT86S4ml62Yrgd5mJ9bpXL6t7YjBkGyBDvF
-         ZMxiMqYpXwh2Ix//4h1Vkr+IhFtLPV6mkB2TJBV5pvHXceZ9tI/90Au9vearEDLJpZVe
-         BxoAYQEs0EWsZhQO6tfSSoVnddp6//tb/3NWQqbXnNQM20d0JI7yXkZ3M2rEKI4psBdc
-         UTHg==
+        bh=WBzXR4TZZHkqkMNv1E0xRf3mfUwoTzVNVZHPzzbj8rI=;
+        b=KmDmyc9UgitUSKmQSbKjb9DdUtjBdj+AJcQslWKkw6oK98VNaeJDCKYNJj8Xam/2nb
+         q9U5fjB5iElBuHff6OX+alidJnQw5RbNmku59aKFEPCB+P/0rZolEcyYCH+1Ert5OfM2
+         Xarbe5OEYveIN0ypbc+SAgTrgp9/wO6FCTkr5xOcYmm/gje8u/ya7qWqqX2vkkP1LZPV
+         prGXdZQ0qj250aBKWIAPwh8LOBHtsv5H+KaxEO/9MciMvlqE9ZJXBz+4Kd+xVGj0PDm3
+         kKVW1Wi0E9CO2PYp7DnGZ9EY2A0l4TeMBvxsHmgBqzWm3wz0Qv/U6RPyHUSVPjADVlY/
+         y5/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=pe03FkrBdknzSMi1BJ7D2IonOmPOSw8u72ZV3zS67vk=;
-        b=hAp76efQQwt7j4DXCWj4xteQel/TRGynFeUb2f2UW8etJpbud77gJO+46GOUhwuCQl
-         SyvSBRR1tEuVYLl+j+hRIn/rPL+D733JSr7oxWWQTDELkHwpLl7d0Va1oq3O1LeCYfDg
-         SGzSjlHBvJ03NSvSinKP/S68Y4rv6z9d5UhLP450AHAutyyQeVYFXrHkb86BlmKBL8Ja
-         1c5uDWeWslAk4InHDpMScjebfE+Tc62qw4uJAkkZrsc65pPSW8EjsGSuR6+FWBRn7gnD
-         zT79eYcAIH/l0gFJtPZxgM4A4EHkFRuWcRyQ7Y/gouJzd2i7z2BWWi8Yp38AltkSyEEY
-         uvBw==
-X-Gm-Message-State: APjAAAX+jEMYMwzzBDcX8JG677qxrh1rh3vhwbvoSuIJpUAkYu5fqSsN
-        EChNu4zmlDpxCHm4fR2RBi8=
-X-Google-Smtp-Source: APXvYqylYHf/76rs6f7Ml1h5aXwpQU2cxl0zb9G0+PnLAQbVqadmSiRJ+Ne2h/tr9v/4I48k2MLv5g==
-X-Received: by 2002:a17:90a:23a4:: with SMTP id g33mr6033264pje.115.1562076970268;
-        Tue, 02 Jul 2019 07:16:10 -0700 (PDT)
+        bh=WBzXR4TZZHkqkMNv1E0xRf3mfUwoTzVNVZHPzzbj8rI=;
+        b=cDI2DNIh7E1u8gnC0N2gq9TjsRN7WbC0pCL4nT0IvhCwMXRLk+++xjIwCn2TQ7IXsS
+         S/PPe75bPTBD5bYyunpIDUiYAL4FRxM4kt6VOCTM5Pt6SHXa514S7BLQ7YBKI1Yn8HfY
+         t5XKaP24xjEUFxglJ2yCut2B8mO57wggciu1fPj+SOyx7hgpTx7Vx3ib/M0vjSNzrhdF
+         d78kUTRfCQwmkfxTgxfRkpIZzL6jA1wPUX+qgVx+dn4WEYe2jStd7B3CoCtQ0tJogUHB
+         kYfoBkGoM6ZpQk50hL3fPkfTis3jj5hox+7CfX0W6tY7MAB57Dms+OoB3G5aY3F/6h/4
+         hnpQ==
+X-Gm-Message-State: APjAAAWEjLS11Rg9HokcvA2XCsrBmU+XeMfES+4iF85z5FnyFoIzimCQ
+        XeAKfYTOd81h5MrEI87M+l4=
+X-Google-Smtp-Source: APXvYqwWEAKTT6dyFXv7dzOsiRMsExc4YRB82MDVaOFpGFRbH99CZs+/cOLzM+zyEfvt2oTwz2Gisg==
+X-Received: by 2002:a17:902:f204:: with SMTP id gn4mr35901637plb.3.1562076979826;
+        Tue, 02 Jul 2019 07:16:19 -0700 (PDT)
 Received: from localhost.localdomain.localdomain ([2408:823c:c11:648:b8c3:8577:bf2f:2])
-        by smtp.gmail.com with ESMTPSA id a5sm744617pjv.21.2019.07.02.07.16.01
+        by smtp.gmail.com with ESMTPSA id a5sm744617pjv.21.2019.07.02.07.16.10
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 02 Jul 2019 07:16:09 -0700 (PDT)
+        Tue, 02 Jul 2019 07:16:19 -0700 (PDT)
 From:   Pengfei Li <lpf.vector@gmail.com>
 To:     akpm@linux-foundation.org, peterz@infradead.org, urezki@gmail.com
 Cc:     rpenyaev@suse.de, mhocko@suse.com, guro@fb.com,
         aryabinin@virtuozzo.com, rppt@linux.ibm.com, mingo@kernel.org,
         rick.p.edgecombe@intel.com, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org, Pengfei Li <lpf.vector@gmail.com>
-Subject: [PATCH v2 1/5] mm/vmalloc.c: Introduce a wrapper function of insert_vmap_area()
-Date:   Tue,  2 Jul 2019 22:15:37 +0800
-Message-Id: <20190702141541.12635-2-lpf.vector@gmail.com>
+Subject: [PATCH v2 2/5] mm/vmalloc.c: Introduce a wrapper function of insert_vmap_area_augment()
+Date:   Tue,  2 Jul 2019 22:15:38 +0800
+Message-Id: <20190702141541.12635-3-lpf.vector@gmail.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190702141541.12635-1-lpf.vector@gmail.com>
 References: <20190702141541.12635-1-lpf.vector@gmail.com>
@@ -64,72 +64,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The red-black tree whose root is vmap_area_root is called the
-*BUSY* tree. Since function insert_vmap_area() is only used to
-add vmap area to the *BUSY* tree, so add wrapper functions
-insert_va_to_busy_tree for readability.
-
-Besides, rename insert_vmap_area to __insert_vmap_area to indicate
-that it should not be called directly.
+The red-black tree whose root is free_vmap_area_root is called the
+*FREE* tree. Like the previous commit, add wrapper functions
+insert_va_to_free_tree and rename insert_vmap_area_augment to
+__insert_vmap_area_augment.
 
 Signed-off-by: Pengfei Li <lpf.vector@gmail.com>
 ---
- mm/vmalloc.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+ mm/vmalloc.c | 20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
 
 diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index 0f76cca32a1c..0a46be76c63b 100644
+index 0a46be76c63b..a5065fcb74d3 100644
 --- a/mm/vmalloc.c
 +++ b/mm/vmalloc.c
-@@ -641,7 +641,7 @@ augment_tree_propagate_from(struct vmap_area *va)
+@@ -658,7 +658,7 @@ insert_va_to_busy_tree(struct vmap_area *va)
  }
  
  static void
--insert_vmap_area(struct vmap_area *va,
-+__insert_vmap_area(struct vmap_area *va,
- 	struct rb_root *root, struct list_head *head)
+-insert_vmap_area_augment(struct vmap_area *va,
++__insert_vmap_area_augment(struct vmap_area *va,
+ 	struct rb_node *from, struct rb_root *root,
+ 	struct list_head *head)
  {
- 	struct rb_node **link;
-@@ -651,6 +651,12 @@ insert_vmap_area(struct vmap_area *va,
- 	link_va(va, root, parent, link, head);
+@@ -674,6 +674,13 @@ insert_vmap_area_augment(struct vmap_area *va,
+ 	augment_tree_propagate_from(va);
  }
  
 +static __always_inline void
-+insert_va_to_busy_tree(struct vmap_area *va)
++insert_va_to_free_tree(struct vmap_area *va, struct rb_node *from)
 +{
-+	__insert_vmap_area(va, &vmap_area_root, &vmap_area_list);
++	__insert_vmap_area_augment(va, from, &free_vmap_area_root,
++				&free_vmap_area_list);
 +}
 +
- static void
- insert_vmap_area_augment(struct vmap_area *va,
- 	struct rb_node *from, struct rb_root *root,
-@@ -1070,7 +1076,7 @@ static struct vmap_area *alloc_vmap_area(unsigned long size,
- 	va->va_start = addr;
- 	va->va_end = addr + size;
- 	va->flags = 0;
--	insert_vmap_area(va, &vmap_area_root, &vmap_area_list);
-+	insert_va_to_busy_tree(va);
+ /*
+  * Merge de-allocated chunk of VA memory with previous
+  * and next free blocks. If coalesce is not done a new
+@@ -979,8 +986,7 @@ adjust_va_to_fit_type(struct vmap_area *va,
+ 		augment_tree_propagate_from(va);
  
- 	spin_unlock(&vmap_area_lock);
- 
-@@ -1871,7 +1877,7 @@ void __init vmalloc_init(void)
- 		va->va_start = (unsigned long)tmp->addr;
- 		va->va_end = va->va_start + tmp->size;
- 		va->vm = tmp;
--		insert_vmap_area(va, &vmap_area_root, &vmap_area_list);
-+		insert_va_to_busy_tree(va);
+ 		if (lva)	/* type == NE_FIT_TYPE */
+-			insert_vmap_area_augment(lva, &va->rb_node,
+-				&free_vmap_area_root, &free_vmap_area_list);
++			insert_va_to_free_tree(lva, &va->rb_node);
  	}
  
- 	/*
-@@ -3281,7 +3287,7 @@ struct vm_struct **pcpu_get_vm_areas(const unsigned long *offsets,
- 		va->va_start = start;
- 		va->va_end = start + size;
+ 	return 0;
+@@ -1822,9 +1828,7 @@ static void vmap_init_free_space(void)
+ 				free->va_start = vmap_start;
+ 				free->va_end = busy->va_start;
  
--		insert_vmap_area(va, &vmap_area_root, &vmap_area_list);
-+		insert_va_to_busy_tree(va);
+-				insert_vmap_area_augment(free, NULL,
+-					&free_vmap_area_root,
+-						&free_vmap_area_list);
++				insert_va_to_free_tree(free, NULL);
+ 			}
+ 		}
+ 
+@@ -1837,9 +1841,7 @@ static void vmap_init_free_space(void)
+ 			free->va_start = vmap_start;
+ 			free->va_end = vmap_end;
+ 
+-			insert_vmap_area_augment(free, NULL,
+-				&free_vmap_area_root,
+-					&free_vmap_area_list);
++			insert_va_to_free_tree(free, NULL);
+ 		}
  	}
- 
- 	spin_unlock(&vmap_area_lock);
+ }
 -- 
 2.21.0
 
