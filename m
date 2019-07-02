@@ -2,106 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E75D5D05E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 15:17:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C3425D069
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 15:22:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726966AbfGBNRx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 09:17:53 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:37576 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726457AbfGBNRx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 09:17:53 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 9459D9F5B332EABA387F;
-        Tue,  2 Jul 2019 21:17:51 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS410-HUB.china.huawei.com
- (10.3.19.210) with Microsoft SMTP Server id 14.3.439.0; Tue, 2 Jul 2019
- 21:17:42 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <benh@kernel.crashing.org>, <paulus@samba.org>,
-        <mpe@ellerman.id.au>, <robh@kernel.org>,
-        <gregkh@linuxfoundation.org>, <tglx@linutronix.de>,
-        <allison@lohutok.net>, <groug@kaod.org>,
-        <shilpa.bhat@linux.vnet.ibm.com>
-CC:     <linux-kernel@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] powerpc/powernv: Make some sysbols static
-Date:   Tue, 2 Jul 2019 21:17:33 +0800
-Message-ID: <20190702131733.44100-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1726970AbfGBNV7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 09:21:59 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:49026 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726375AbfGBNV7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 09:21:59 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hiIjD-00044l-Ed; Tue, 02 Jul 2019 13:21:47 +0000
+Date:   Tue, 2 Jul 2019 14:21:47 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Hillf Danton <hdanton@sina.com>
+Cc:     syzbot <syzbot+d88a977731a9888db7ba@syzkaller.appspotmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: kernel panic: corrupted stack end in dput
+Message-ID: <20190702132147.GG17978@ZenIV.linux.org.uk>
+References: <000000000000a5d3cb058c9a64f0@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <000000000000a5d3cb058c9a64f0@google.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix sparse warnings:
+On Tue, Jul 02, 2019 at 05:21:26PM +0800, Hillf Danton wrote:
 
-arch/powerpc/platforms/powernv/opal-psr.c:20:1:
- warning: symbol 'psr_mutex' was not declared. Should it be static?
-arch/powerpc/platforms/powernv/opal-psr.c:27:3:
- warning: symbol 'psr_attrs' was not declared. Should it be static?
-arch/powerpc/platforms/powernv/opal-powercap.c:20:1:
- warning: symbol 'powercap_mutex' was not declared. Should it be static?
-arch/powerpc/platforms/powernv/opal-sensor-groups.c:20:1:
- warning: symbol 'sg_mutex' was not declared. Should it be static?
+> Hello,
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- arch/powerpc/platforms/powernv/opal-powercap.c      | 2 +-
- arch/powerpc/platforms/powernv/opal-psr.c           | 4 ++--
- arch/powerpc/platforms/powernv/opal-sensor-groups.c | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
+> --- a/fs/dcache.c
+> +++ b/fs/dcache.c
+> @@ -673,14 +673,11 @@ static struct dentry *dentry_kill(struct dentry *dentry)
+> 	if (!IS_ROOT(dentry)) {
+> 		parent = dentry->d_parent;
+> 		if (unlikely(!spin_trylock(&parent->d_lock))) {
+> -			parent = __lock_parent(dentry);
+> -			if (likely(inode || !dentry->d_inode))
+> -				goto got_locks;
+> -			/* negative that became positive */
+> -			if (parent)
+> -				spin_unlock(&parent->d_lock);
+> -			inode = dentry->d_inode;
+> -			goto slow_positive;
+> +			/*
+> +			 * fine if peer is busy either populating or
+> +			 * cleaning up parent
+> +			 */
+> +			parent = NULL;
+> 		}
+> 	}
+> 	__dentry_kill(dentry);
 
-diff --git a/arch/powerpc/platforms/powernv/opal-powercap.c b/arch/powerpc/platforms/powernv/opal-powercap.c
-index dc599e7..c16d44f 100644
---- a/arch/powerpc/platforms/powernv/opal-powercap.c
-+++ b/arch/powerpc/platforms/powernv/opal-powercap.c
-@@ -13,7 +13,7 @@
- 
- #include <asm/opal.h>
- 
--DEFINE_MUTEX(powercap_mutex);
-+static DEFINE_MUTEX(powercap_mutex);
- 
- static struct kobject *powercap_kobj;
- 
-diff --git a/arch/powerpc/platforms/powernv/opal-psr.c b/arch/powerpc/platforms/powernv/opal-psr.c
-index b6ccb30..69d7e75 100644
---- a/arch/powerpc/platforms/powernv/opal-psr.c
-+++ b/arch/powerpc/platforms/powernv/opal-psr.c
-@@ -13,11 +13,11 @@
- 
- #include <asm/opal.h>
- 
--DEFINE_MUTEX(psr_mutex);
-+static DEFINE_MUTEX(psr_mutex);
- 
- static struct kobject *psr_kobj;
- 
--struct psr_attr {
-+static struct psr_attr {
- 	u32 handle;
- 	struct kobj_attribute attr;
- } *psr_attrs;
-diff --git a/arch/powerpc/platforms/powernv/opal-sensor-groups.c b/arch/powerpc/platforms/powernv/opal-sensor-groups.c
-index 31f13c1..f8ae1fb 100644
---- a/arch/powerpc/platforms/powernv/opal-sensor-groups.c
-+++ b/arch/powerpc/platforms/powernv/opal-sensor-groups.c
-@@ -13,7 +13,7 @@
- 
- #include <asm/opal.h>
- 
--DEFINE_MUTEX(sg_mutex);
-+static DEFINE_MUTEX(sg_mutex);
- 
- static struct kobject *sg_kobj;
- 
--- 
-2.7.4
+This is very much *NOT* fine.
+	1) trylock can fail from any number of reasons, starting
+with "somebody is going through the hash chain doing a lookup on
+something completely unrelated"
+	2) whoever had been holding the lock and whatever they'd
+been doing might be over right after we get the return value from
+spin_trylock().
+	3) even had that been really somebody adding children in
+the same parent *AND* even if they really kept doing that, rather
+than unlocking and buggering off, would you care to explain why
+dentry_unlist() called by __dentry_kill() and removing the victim
+from the list of children would be safe to do in parallel with that?
 
-
+NAK, in case it's not obvious from the above.
