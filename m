@@ -2,48 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 388CC5CBD3
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 10:16:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2BD05CA9B
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 10:06:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727933AbfGBIQZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 04:16:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49390 "EHLO mail.kernel.org"
+        id S1728030AbfGBIF6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 04:05:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52158 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727048AbfGBIEE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 04:04:04 -0400
+        id S1728017AbfGBIFz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 04:05:55 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB46F21479;
-        Tue,  2 Jul 2019 08:04:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2401621841;
+        Tue,  2 Jul 2019 08:05:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562054643;
-        bh=+KOctI49aA/Jfk0yYhu/MdiIcGQL4shlTnsHiVVK3x0=;
-        h=From:To:Cc:Subject:Date:From;
-        b=EBCYpT+0xrwDrH3mtikZ96xqxWRGaW91nGF/DuQGX2CBu5e/WM7r1P6IuBP+ujI5k
-         GjWs51LoPL9zchEwsZoGrKNEiIfdjE0DtsxTu9uGrhg3ByaSIlUkDxruUaD3uqkRN7
-         KmWXWp6Rkhyezh/H50+bxqe+5GFBeaHeZQWsPUGg=
+        s=default; t=1562054754;
+        bh=j4POpiZAJr5NhmNfJJ5Gk7CD9ssh8Y+BLHCfgWQAvBQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=dUEGp2ICuXoz1GOhu0+2u7Tw0ldBwjIYAfII+l761yy1PVtslKWVB33IvcI+qlpjd
+         ByRE0G3dI29fIDQ25BH/VhLBq6DyfXOWIGuxRGG//Tajy5YHr47E9q1/r9wfw+XwUR
+         oxLS7TDLRPeNAgBKarc9n2yiqGF1r4TGOVg4SfCU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: [PATCH 5.1 00/55] 5.1.16-stable review
-Date:   Tue,  2 Jul 2019 10:01:08 +0200
-Message-Id: <20190702080124.103022729@linuxfoundation.org>
+        stable@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Ron Minnich <rminnich@sandia.gov>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Dominique Martinet <dominique.martinet@cea.fr>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 08/72] 9p: Use a slab for allocating requests
+Date:   Tue,  2 Jul 2019 10:01:09 +0200
+Message-Id: <20190702080125.001804507@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-MIME-Version: 1.0
+In-Reply-To: <20190702080124.564652899@linuxfoundation.org>
+References: <20190702080124.564652899@linuxfoundation.org>
 User-Agent: quilt/0.66
-X-stable: review
-X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-5.1.16-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-5.1.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 5.1.16-rc1
-X-KernelTest-Deadline: 2019-07-04T08:01+00:00
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -51,276 +47,521 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the start of the stable review cycle for the 5.1.16 release.
-There are 55 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
+[ Upstream commit 996d5b4db4b191f2676cf8775565cab8a5e2753b ]
+
+Replace the custom batch allocation with a slab.  Use an IDR to store
+pointers to the active requests instead of an array.  We don't try to
+handle P9_NOTAG specially; the IDR will happily shrink all the way back
+once the TVERSION call has completed.
+
+Link: http://lkml.kernel.org/r/20180711210225.19730-6-willy@infradead.org
+Signed-off-by: Matthew Wilcox <willy@infradead.org>
+Cc: Eric Van Hensbergen <ericvh@gmail.com>
+Cc: Ron Minnich <rminnich@sandia.gov>
+Cc: Latchesar Ionkov <lucho@ionkov.net>
+Signed-off-by: Dominique Martinet <dominique.martinet@cea.fr>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ include/net/9p/client.h |  51 ++-------
+ net/9p/client.c         | 238 ++++++++++++++--------------------------
+ net/9p/mod.c            |   9 +-
+ 3 files changed, 102 insertions(+), 196 deletions(-)
+
+diff --git a/include/net/9p/client.h b/include/net/9p/client.h
+index 0fa0fbab33b0..a4dc42c53d18 100644
+--- a/include/net/9p/client.h
++++ b/include/net/9p/client.h
+@@ -64,22 +64,15 @@ enum p9_trans_status {
+ 
+ /**
+  * enum p9_req_status_t - status of a request
+- * @REQ_STATUS_IDLE: request slot unused
+  * @REQ_STATUS_ALLOC: request has been allocated but not sent
+  * @REQ_STATUS_UNSENT: request waiting to be sent
+  * @REQ_STATUS_SENT: request sent to server
+  * @REQ_STATUS_RCVD: response received from server
+  * @REQ_STATUS_FLSHD: request has been flushed
+  * @REQ_STATUS_ERROR: request encountered an error on the client side
+- *
+- * The @REQ_STATUS_IDLE state is used to mark a request slot as unused
+- * but use is actually tracked by the idpool structure which handles tag
+- * id allocation.
+- *
+  */
+ 
+ enum p9_req_status_t {
+-	REQ_STATUS_IDLE,
+ 	REQ_STATUS_ALLOC,
+ 	REQ_STATUS_UNSENT,
+ 	REQ_STATUS_SENT,
+@@ -92,24 +85,12 @@ enum p9_req_status_t {
+  * struct p9_req_t - request slots
+  * @status: status of this request slot
+  * @t_err: transport error
+- * @flush_tag: tag of request being flushed (for flush requests)
+  * @wq: wait_queue for the client to block on for this request
+  * @tc: the request fcall structure
+  * @rc: the response fcall structure
+  * @aux: transport specific data (provided for trans_fd migration)
+  * @req_list: link for higher level objects to chain requests
+- *
+- * Transport use an array to track outstanding requests
+- * instead of a list.  While this may incurr overhead during initial
+- * allocation or expansion, it makes request lookup much easier as the
+- * tag id is a index into an array.  (We use tag+1 so that we can accommodate
+- * the -1 tag for the T_VERSION request).
+- * This also has the nice effect of only having to allocate wait_queues
+- * once, instead of constantly allocating and freeing them.  Its possible
+- * other resources could benefit from this scheme as well.
+- *
+  */
+-
+ struct p9_req_t {
+ 	int status;
+ 	int t_err;
+@@ -117,40 +98,26 @@ struct p9_req_t {
+ 	struct p9_fcall *tc;
+ 	struct p9_fcall *rc;
+ 	void *aux;
+-
+ 	struct list_head req_list;
+ };
+ 
+ /**
+  * struct p9_client - per client instance state
+- * @lock: protect @fidlist
++ * @lock: protect @fids and @reqs
+  * @msize: maximum data size negotiated by protocol
+- * @dotu: extension flags negotiated by protocol
+  * @proto_version: 9P protocol version to use
+  * @trans_mod: module API instantiated with this client
++ * @status: connection state
+  * @trans: tranport instance state and API
+  * @fids: All active FID handles
+- * @tagpool - transaction id accounting for session
+- * @reqs - 2D array of requests
+- * @max_tag - current maximum tag id allocated
+- * @name - node name used as client id
++ * @reqs: All active requests.
++ * @name: node name used as client id
+  *
+  * The client structure is used to keep track of various per-client
+  * state that has been instantiated.
+- * In order to minimize per-transaction overhead we use a
+- * simple array to lookup requests instead of a hash table
+- * or linked list.  In order to support larger number of
+- * transactions, we make this a 2D array, allocating new rows
+- * when we need to grow the total number of the transactions.
+- *
+- * Each row is 256 requests and we'll support up to 256 rows for
+- * a total of 64k concurrent requests per session.
+- *
+- * Bugs: duplicated data and potentially unnecessary elements.
+  */
+-
+ struct p9_client {
+-	spinlock_t lock; /* protect client structure */
++	spinlock_t lock;
+ 	unsigned int msize;
+ 	unsigned char proto_version;
+ 	struct p9_trans_module *trans_mod;
+@@ -170,10 +137,7 @@ struct p9_client {
+ 	} trans_opts;
+ 
+ 	struct idr fids;
+-
+-	struct p9_idpool *tagpool;
+-	struct p9_req_t *reqs[P9_ROW_MAXTAG];
+-	int max_tag;
++	struct idr reqs;
+ 
+ 	char name[__NEW_UTS_LEN + 1];
+ };
+@@ -279,4 +243,7 @@ struct p9_fid *p9_client_xattrwalk(struct p9_fid *, const char *, u64 *);
+ int p9_client_xattrcreate(struct p9_fid *, const char *, u64, int);
+ int p9_client_readlink(struct p9_fid *fid, char **target);
+ 
++int p9_client_init(void);
++void p9_client_exit(void);
++
+ #endif /* NET_9P_CLIENT_H */
+diff --git a/net/9p/client.c b/net/9p/client.c
+index 23ec6187dc07..d8949c59d46e 100644
+--- a/net/9p/client.c
++++ b/net/9p/client.c
+@@ -248,132 +248,102 @@ static struct p9_fcall *p9_fcall_alloc(int alloc_msize)
+ 	return fc;
+ }
+ 
++static struct kmem_cache *p9_req_cache;
++
+ /**
+- * p9_tag_alloc - lookup/allocate a request by tag
+- * @c: client session to lookup tag within
+- * @tag: numeric id for transaction
+- *
+- * this is a simple array lookup, but will grow the
+- * request_slots as necessary to accommodate transaction
+- * ids which did not previously have a slot.
+- *
+- * this code relies on the client spinlock to manage locks, its
+- * possible we should switch to something else, but I'd rather
+- * stick with something low-overhead for the common case.
++ * p9_req_alloc - Allocate a new request.
++ * @c: Client session.
++ * @type: Transaction type.
++ * @max_size: Maximum packet size for this request.
+  *
++ * Context: Process context.
++ * Return: Pointer to new request.
+  */
+-
+ static struct p9_req_t *
+-p9_tag_alloc(struct p9_client *c, u16 tag, unsigned int max_size)
++p9_tag_alloc(struct p9_client *c, int8_t type, unsigned int max_size)
+ {
+-	unsigned long flags;
+-	int row, col;
+-	struct p9_req_t *req;
++	struct p9_req_t *req = kmem_cache_alloc(p9_req_cache, GFP_NOFS);
+ 	int alloc_msize = min(c->msize, max_size);
++	int tag;
+ 
+-	/* This looks up the original request by tag so we know which
+-	 * buffer to read the data into */
+-	tag++;
+-
+-	if (tag >= c->max_tag) {
+-		spin_lock_irqsave(&c->lock, flags);
+-		/* check again since original check was outside of lock */
+-		while (tag >= c->max_tag) {
+-			row = (tag / P9_ROW_MAXTAG);
+-			c->reqs[row] = kcalloc(P9_ROW_MAXTAG,
+-					sizeof(struct p9_req_t), GFP_ATOMIC);
+-
+-			if (!c->reqs[row]) {
+-				pr_err("Couldn't grow tag array\n");
+-				spin_unlock_irqrestore(&c->lock, flags);
+-				return ERR_PTR(-ENOMEM);
+-			}
+-			for (col = 0; col < P9_ROW_MAXTAG; col++) {
+-				req = &c->reqs[row][col];
+-				req->status = REQ_STATUS_IDLE;
+-				init_waitqueue_head(&req->wq);
+-			}
+-			c->max_tag += P9_ROW_MAXTAG;
+-		}
+-		spin_unlock_irqrestore(&c->lock, flags);
+-	}
+-	row = tag / P9_ROW_MAXTAG;
+-	col = tag % P9_ROW_MAXTAG;
++	if (!req)
++		return NULL;
+ 
+-	req = &c->reqs[row][col];
+-	if (!req->tc)
+-		req->tc = p9_fcall_alloc(alloc_msize);
+-	if (!req->rc)
+-		req->rc = p9_fcall_alloc(alloc_msize);
++	req->tc = p9_fcall_alloc(alloc_msize);
++	req->rc = p9_fcall_alloc(alloc_msize);
+ 	if (!req->tc || !req->rc)
+-		goto grow_failed;
++		goto free;
+ 
+ 	p9pdu_reset(req->tc);
+ 	p9pdu_reset(req->rc);
+-
+-	req->tc->tag = tag-1;
+ 	req->status = REQ_STATUS_ALLOC;
++	init_waitqueue_head(&req->wq);
++	INIT_LIST_HEAD(&req->req_list);
++
++	idr_preload(GFP_NOFS);
++	spin_lock_irq(&c->lock);
++	if (type == P9_TVERSION)
++		tag = idr_alloc(&c->reqs, req, P9_NOTAG, P9_NOTAG + 1,
++				GFP_NOWAIT);
++	else
++		tag = idr_alloc(&c->reqs, req, 0, P9_NOTAG, GFP_NOWAIT);
++	req->tc->tag = tag;
++	spin_unlock_irq(&c->lock);
++	idr_preload_end();
++	if (tag < 0)
++		goto free;
+ 
+ 	return req;
+ 
+-grow_failed:
+-	pr_err("Couldn't grow tag array\n");
++free:
+ 	kfree(req->tc);
+ 	kfree(req->rc);
+-	req->tc = req->rc = NULL;
++	kmem_cache_free(p9_req_cache, req);
+ 	return ERR_PTR(-ENOMEM);
+ }
+ 
+ /**
+- * p9_tag_lookup - lookup a request by tag
+- * @c: client session to lookup tag within
+- * @tag: numeric id for transaction
++ * p9_tag_lookup - Look up a request by tag.
++ * @c: Client session.
++ * @tag: Transaction ID.
+  *
++ * Context: Any context.
++ * Return: A request, or %NULL if there is no request with that tag.
+  */
+-
+ struct p9_req_t *p9_tag_lookup(struct p9_client *c, u16 tag)
+ {
+-	int row, col;
+-
+-	/* This looks up the original request by tag so we know which
+-	 * buffer to read the data into */
+-	tag++;
+-
+-	if (tag >= c->max_tag)
+-		return NULL;
++	struct p9_req_t *req;
+ 
+-	row = tag / P9_ROW_MAXTAG;
+-	col = tag % P9_ROW_MAXTAG;
++	rcu_read_lock();
++	req = idr_find(&c->reqs, tag);
++	/* There's no refcount on the req; a malicious server could cause
++	 * us to dereference a NULL pointer
++	 */
++	rcu_read_unlock();
+ 
+-	return &c->reqs[row][col];
++	return req;
+ }
+ EXPORT_SYMBOL(p9_tag_lookup);
+ 
+ /**
+- * p9_tag_init - setup tags structure and contents
+- * @c:  v9fs client struct
+- *
+- * This initializes the tags structure for each client instance.
++ * p9_free_req - Free a request.
++ * @c: Client session.
++ * @r: Request to free.
+  *
++ * Context: Any context.
+  */
+-
+-static int p9_tag_init(struct p9_client *c)
++static void p9_free_req(struct p9_client *c, struct p9_req_t *r)
+ {
+-	int err = 0;
++	unsigned long flags;
++	u16 tag = r->tc->tag;
+ 
+-	c->tagpool = p9_idpool_create();
+-	if (IS_ERR(c->tagpool)) {
+-		err = PTR_ERR(c->tagpool);
+-		goto error;
+-	}
+-	err = p9_idpool_get(c->tagpool); /* reserve tag 0 */
+-	if (err < 0) {
+-		p9_idpool_destroy(c->tagpool);
+-		goto error;
+-	}
+-	c->max_tag = 0;
+-error:
+-	return err;
++	p9_debug(P9_DEBUG_MUX, "clnt %p req %p tag: %d\n", c, r, tag);
++	spin_lock_irqsave(&c->lock, flags);
++	idr_remove(&c->reqs, tag);
++	spin_unlock_irqrestore(&c->lock, flags);
++	kfree(r->tc);
++	kfree(r->rc);
++	kmem_cache_free(p9_req_cache, r);
+ }
+ 
+ /**
+@@ -385,52 +355,15 @@ static int p9_tag_init(struct p9_client *c)
+  */
+ static void p9_tag_cleanup(struct p9_client *c)
+ {
+-	int row, col;
+-
+-	/* check to insure all requests are idle */
+-	for (row = 0; row < (c->max_tag/P9_ROW_MAXTAG); row++) {
+-		for (col = 0; col < P9_ROW_MAXTAG; col++) {
+-			if (c->reqs[row][col].status != REQ_STATUS_IDLE) {
+-				p9_debug(P9_DEBUG_MUX,
+-					 "Attempting to cleanup non-free tag %d,%d\n",
+-					 row, col);
+-				/* TODO: delay execution of cleanup */
+-				return;
+-			}
+-		}
+-	}
+-
+-	if (c->tagpool) {
+-		p9_idpool_put(0, c->tagpool); /* free reserved tag 0 */
+-		p9_idpool_destroy(c->tagpool);
+-	}
++	struct p9_req_t *req;
++	int id;
+ 
+-	/* free requests associated with tags */
+-	for (row = 0; row < (c->max_tag/P9_ROW_MAXTAG); row++) {
+-		for (col = 0; col < P9_ROW_MAXTAG; col++) {
+-			kfree(c->reqs[row][col].tc);
+-			kfree(c->reqs[row][col].rc);
+-		}
+-		kfree(c->reqs[row]);
++	rcu_read_lock();
++	idr_for_each_entry(&c->reqs, req, id) {
++		pr_info("Tag %d still in use\n", id);
++		p9_free_req(c, req);
+ 	}
+-	c->max_tag = 0;
+-}
+-
+-/**
+- * p9_free_req - free a request and clean-up as necessary
+- * c: client state
+- * r: request to release
+- *
+- */
+-
+-static void p9_free_req(struct p9_client *c, struct p9_req_t *r)
+-{
+-	int tag = r->tc->tag;
+-	p9_debug(P9_DEBUG_MUX, "clnt %p req %p tag: %d\n", c, r, tag);
+-
+-	r->status = REQ_STATUS_IDLE;
+-	if (tag != P9_NOTAG && p9_idpool_check(tag, c->tagpool))
+-		p9_idpool_put(tag, c->tagpool);
++	rcu_read_unlock();
+ }
+ 
+ /**
+@@ -704,7 +637,7 @@ static struct p9_req_t *p9_client_prepare_req(struct p9_client *c,
+ 					      int8_t type, int req_size,
+ 					      const char *fmt, va_list ap)
+ {
+-	int tag, err;
++	int err;
+ 	struct p9_req_t *req;
+ 
+ 	p9_debug(P9_DEBUG_MUX, "client %p op %d\n", c, type);
+@@ -717,24 +650,17 @@ static struct p9_req_t *p9_client_prepare_req(struct p9_client *c,
+ 	if ((c->status == BeginDisconnect) && (type != P9_TCLUNK))
+ 		return ERR_PTR(-EIO);
+ 
+-	tag = P9_NOTAG;
+-	if (type != P9_TVERSION) {
+-		tag = p9_idpool_get(c->tagpool);
+-		if (tag < 0)
+-			return ERR_PTR(-ENOMEM);
+-	}
+-
+-	req = p9_tag_alloc(c, tag, req_size);
++	req = p9_tag_alloc(c, type, req_size);
+ 	if (IS_ERR(req))
+ 		return req;
+ 
+ 	/* marshall the data */
+-	p9pdu_prepare(req->tc, tag, type);
++	p9pdu_prepare(req->tc, req->tc->tag, type);
+ 	err = p9pdu_vwritef(req->tc, c->proto_version, fmt, ap);
+ 	if (err)
+ 		goto reterr;
+ 	p9pdu_finalize(c, req->tc);
+-	trace_9p_client_req(c, type, tag);
++	trace_9p_client_req(c, type, req->tc->tag);
+ 	return req;
+ reterr:
+ 	p9_free_req(c, req);
+@@ -1040,14 +966,11 @@ struct p9_client *p9_client_create(const char *dev_name, char *options)
+ 
+ 	spin_lock_init(&clnt->lock);
+ 	idr_init(&clnt->fids);
+-
+-	err = p9_tag_init(clnt);
+-	if (err < 0)
+-		goto free_client;
++	idr_init(&clnt->reqs);
+ 
+ 	err = parse_opts(options, clnt);
+ 	if (err < 0)
+-		goto destroy_tagpool;
++		goto free_client;
+ 
+ 	if (!clnt->trans_mod)
+ 		clnt->trans_mod = v9fs_get_default_trans();
+@@ -1056,7 +979,7 @@ struct p9_client *p9_client_create(const char *dev_name, char *options)
+ 		err = -EPROTONOSUPPORT;
+ 		p9_debug(P9_DEBUG_ERROR,
+ 			 "No transport defined or default transport\n");
+-		goto destroy_tagpool;
++		goto free_client;
+ 	}
+ 
+ 	p9_debug(P9_DEBUG_MUX, "clnt %p trans %p msize %d protocol %d\n",
+@@ -1086,8 +1009,6 @@ struct p9_client *p9_client_create(const char *dev_name, char *options)
+ 	clnt->trans_mod->close(clnt);
+ put_trans:
+ 	v9fs_put_trans(clnt->trans_mod);
+-destroy_tagpool:
+-	p9_idpool_destroy(clnt->tagpool);
+ free_client:
+ 	kfree(clnt);
+ 	return ERR_PTR(err);
+@@ -2303,3 +2224,14 @@ int p9_client_readlink(struct p9_fid *fid, char **target)
+ 	return err;
+ }
+ EXPORT_SYMBOL(p9_client_readlink);
++
++int __init p9_client_init(void)
++{
++	p9_req_cache = KMEM_CACHE(p9_req_t, 0);
++	return p9_req_cache ? 0 : -ENOMEM;
++}
++
++void __exit p9_client_exit(void)
++{
++	kmem_cache_destroy(p9_req_cache);
++}
+diff --git a/net/9p/mod.c b/net/9p/mod.c
+index 253ba824a325..0da56d6af73b 100644
+--- a/net/9p/mod.c
++++ b/net/9p/mod.c
+@@ -171,11 +171,17 @@ void v9fs_put_trans(struct p9_trans_module *m)
+  */
+ static int __init init_p9(void)
+ {
++	int ret;
++
++	ret = p9_client_init();
++	if (ret)
++		return ret;
++
+ 	p9_error_init();
+ 	pr_info("Installing 9P2000 support\n");
+ 	p9_trans_fd_init();
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ /**
+@@ -188,6 +194,7 @@ static void __exit exit_p9(void)
+ 	pr_info("Unloading 9P2000 support\n");
+ 
+ 	p9_trans_fd_exit();
++	p9_client_exit();
+ }
+ 
+ module_init(init_p9)
+-- 
+2.20.1
 
-Responses should be made by Thu 04 Jul 2019 07:59:45 AM UTC.
-Anything received after that time might be too late.
-
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.1.16-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.1.y
-and the diffstat can be found below.
-
-thanks,
-
-greg k-h
-
--------------
-Pseudo-Shortlog of commits:
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 5.1.16-rc1
-
-Xin Long <lucien.xin@gmail.com>
-    tipc: pass tunnel dev as NULL to udp_tunnel(6)_xmit_skb
-
-Amir Goldstein <amir73il@gmail.com>
-    fanotify: update connector fsid cache on add mark
-
-Jason Gunthorpe <jgg@ziepe.ca>
-    RDMA: Directly cast the sockaddr union to sockaddr
-
-Will Deacon <will.deacon@arm.com>
-    futex: Update comments and docs about return values of arch futex code
-
-Daniel Borkmann <daniel@iogearbox.net>
-    bpf, arm64: use more scalable stadd over ldxr / stxr loop in xadd
-
-Will Deacon <will.deacon@arm.com>
-    arm64: futex: Avoid copying out uninitialised stack in failed cmpxchg()
-
-Martin KaFai Lau <kafai@fb.com>
-    bpf: udp: ipv6: Avoid running reuseport's bpf_prog from __udp6_lib_err
-
-Martin KaFai Lau <kafai@fb.com>
-    bpf: udp: Avoid calling reuseport's bpf_prog from udp_gro
-
-Daniel Borkmann <daniel@iogearbox.net>
-    bpf: fix unconnected udp hooks
-
-Matt Mullins <mmullins@fb.com>
-    bpf: fix nested bpf tracepoints with per-cpu data
-
-Jonathan Lemon <jonathan.lemon@gmail.com>
-    bpf: lpm_trie: check left child of last leftmost node for NULL
-
-Martynas Pumputis <m@lambda.lt>
-    bpf: simplify definition of BPF_FIB_LOOKUP related flags
-
-Dmitry Bogdanov <dmitry.bogdanov@aquantia.com>
-    net: aquantia: fix vlans not working over bridged network
-
-Fei Li <lifei.shirley@bytedance.com>
-    tun: wake up waitqueues after IFF_UP is set
-
-Xin Long <lucien.xin@gmail.com>
-    tipc: check msg->req data len in tipc_nl_compat_bearer_disable
-
-Xin Long <lucien.xin@gmail.com>
-    tipc: change to use register_pernet_device
-
-YueHaibing <yuehaibing@huawei.com>
-    team: Always enable vlan tx offload
-
-Xin Long <lucien.xin@gmail.com>
-    sctp: change to hold sk after auth shkey is created successfully
-
-Dirk van der Merwe <dirk.vandermerwe@netronome.com>
-    net/tls: fix page double free on TX cleanup
-
-Roland Hii <roland.king.guan.hii@intel.com>
-    net: stmmac: set IC bit when transmitting frames with HW timestamp
-
-Roland Hii <roland.king.guan.hii@intel.com>
-    net: stmmac: fixed new system time seconds value calculation
-
-JingYi Hou <houjingyi647@gmail.com>
-    net: remove duplicate fetch in sock_getsockopt
-
-Eric Dumazet <edumazet@google.com>
-    net/packet: fix memory leak in packet_set_ring()
-
-Stephen Suryaputra <ssuryaextr@gmail.com>
-    ipv4: Use return value of inet_iif() for __raw_v4_lookup in the while loop
-
-YueHaibing <yuehaibing@huawei.com>
-    bonding: Always enable vlan tx offload
-
-Neil Horman <nhorman@tuxdriver.com>
-    af_packet: Block execution of tasks waiting for transmit to complete in AF_PACKET
-
-Paul Burton <paul.burton@mips.com>
-    irqchip/mips-gic: Use the correct local interrupt map registers
-
-Trond Myklebust <trondmy@gmail.com>
-    SUNRPC: Fix up calculation of client message length
-
-Geert Uytterhoeven <geert@linux-m68k.org>
-    cpu/speculation: Warn on unsupported mitigations= parameter
-
-Trond Myklebust <trondmy@gmail.com>
-    NFS/flexfiles: Use the correct TCP timeout for flexfiles I/O
-
-Ard Biesheuvel <ard.biesheuvel@linaro.org>
-    efi/memreserve: deal with memreserve entries in unmapped memory
-
-Johannes Weiner <hannes@cmpxchg.org>
-    mm: fix page cache convergence regression
-
-Reinette Chatre <reinette.chatre@intel.com>
-    x86/resctrl: Prevent possible overrun during bitmap operations
-
-Thomas Gleixner <tglx@linutronix.de>
-    x86/microcode: Fix the microcode load on CPU hotplug for real
-
-Alejandro Jimenez <alejandro.j.jimenez@oracle.com>
-    x86/speculation: Allow guests to use SSBD even if host does not
-
-Jan Kara <jack@suse.cz>
-    scsi: vmw_pscsi: Fix use-after-free in pvscsi_queue_lck()
-
-Jens Axboe <axboe@kernel.dk>
-    io_uring: ensure req->file is cleared on allocation
-
-zhangyi (F) <yi.zhang@huawei.com>
-    dm log writes: make sure super sector log updates are written in order
-
-Gen Zhang <blackgod016574@gmail.com>
-    dm init: fix incorrect uses of kstrndup()
-
-Huang Ying <ying.huang@intel.com>
-    mm, swap: fix THP swap out
-
-Colin Ian King <colin.king@canonical.com>
-    mm/page_idle.c: fix oops because end_pfn is larger than max_pfn
-
-Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-    mm: hugetlb: soft-offline: dissolve_free_huge_page() return zero on !PageHuge
-
-Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-    mm: soft-offline: return -EBUSY if set_hwpoison_free_buddy_page() fails
-
-Ville Syrjälä <ville.syrjala@linux.intel.com>
-    drm/i915: Skip modeset for cdclk changes if possible
-
-Imre Deak <imre.deak@intel.com>
-    drm/i915: Remove redundant store of logical CDCLK state
-
-Imre Deak <imre.deak@intel.com>
-    drm/i915: Save the old CDCLK atomic state
-
-Ville Syrjälä <ville.syrjala@linux.intel.com>
-    drm/i915: Force 2*96 MHz cdclk on glk/cnl when audio power is enabled
-
-Dinh Nguyen <dinguyen@kernel.org>
-    clk: socfpga: stratix10: fix divider entry for the emac clocks
-
-Jon Hunter <jonathanh@nvidia.com>
-    clk: tegra210: Fix default rates for HDA clocks
-
-Jann Horn <jannh@google.com>
-    fs/binfmt_flat.c: make load_flat_shared_library() work
-
-zhong jiang <zhongjiang@huawei.com>
-    mm/mempolicy.c: fix an incorrect rebind node in mpol_rebind_nodemask
-
-John Ogness <john.ogness@linutronix.de>
-    fs/proc/array.c: allow reporting eip/esp for all coredumping threads
-
-Bjørn Mork <bjorn@mork.no>
-    qmi_wwan: Fix out-of-bounds read
-
-Sasha Levin <sashal@kernel.org>
-    Revert "x86/uaccess, ftrace: Fix ftrace_likely_update() vs. SMAP"
-
-Nathan Chancellor <natechancellor@gmail.com>
-    arm64: Don't unconditionally add -Wno-psabi to KBUILD_CFLAGS
-
-
--------------
-
-Diffstat:
-
- Documentation/robust-futexes.txt                   |   3 +-
- Makefile                                           |   4 +-
- arch/arm64/Makefile                                |   2 +-
- arch/arm64/include/asm/futex.h                     |   4 +-
- arch/arm64/include/asm/insn.h                      |   8 +
- arch/arm64/kernel/insn.c                           |  40 +++++
- arch/arm64/net/bpf_jit.h                           |   4 +
- arch/arm64/net/bpf_jit_comp.c                      |  28 +++-
- arch/mips/include/asm/mips-gic.h                   |  30 ++++
- arch/x86/kernel/cpu/bugs.c                         |  11 +-
- arch/x86/kernel/cpu/microcode/core.c               |  15 +-
- arch/x86/kernel/cpu/resctrl/rdtgroup.c             |  35 ++--
- drivers/clk/socfpga/clk-s10.c                      |   4 +-
- drivers/clk/tegra/clk-tegra210.c                   |   2 +
- drivers/firmware/efi/efi.c                         |  12 +-
- drivers/gpu/drm/i915/i915_drv.h                    |   6 +-
- drivers/gpu/drm/i915/intel_audio.c                 |  62 ++++++-
- drivers/gpu/drm/i915/intel_cdclk.c                 | 185 +++++++++++++++------
- drivers/gpu/drm/i915/intel_display.c               |  57 ++++++-
- drivers/gpu/drm/i915/intel_drv.h                   |  21 ++-
- drivers/infiniband/core/addr.c                     |  16 +-
- drivers/infiniband/hw/ocrdma/ocrdma_ah.c           |   5 +-
- drivers/infiniband/hw/ocrdma/ocrdma_hw.c           |   5 +-
- drivers/irqchip/irq-mips-gic.c                     |   4 +-
- drivers/md/dm-init.c                               |   6 +-
- drivers/md/dm-log-writes.c                         |  23 ++-
- drivers/net/bonding/bond_main.c                    |   2 +-
- .../net/ethernet/aquantia/atlantic/aq_filters.c    |  10 +-
- drivers/net/ethernet/aquantia/atlantic/aq_nic.c    |   1 +
- drivers/net/ethernet/aquantia/atlantic/aq_nic.h    |   1 +
- .../ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c  |  19 ++-
- .../net/ethernet/stmicro/stmmac/stmmac_hwtstamp.c  |   2 +-
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  |  22 ++-
- drivers/net/team/team.c                            |   2 +-
- drivers/net/tun.c                                  |  19 +--
- drivers/net/usb/qmi_wwan.c                         |   2 +-
- drivers/scsi/vmw_pvscsi.c                          |   6 +-
- fs/binfmt_flat.c                                   |  23 +--
- fs/inode.c                                         |   2 +-
- fs/io_uring.c                                      |   5 +-
- fs/nfs/flexfilelayout/flexfilelayoutdev.c          |   2 +-
- fs/notify/fanotify/fanotify.c                      |   4 +
- fs/notify/mark.c                                   |  14 +-
- fs/proc/array.c                                    |   2 +-
- include/asm-generic/futex.h                        |   8 +-
- include/linux/bpf-cgroup.h                         |   8 +
- include/linux/fsnotify_backend.h                   |   4 +-
- include/linux/xarray.h                             |   1 +
- include/net/tls.h                                  |  15 --
- include/uapi/linux/bpf.h                           |   6 +-
- kernel/bpf/lpm_trie.c                              |   9 +-
- kernel/bpf/syscall.c                               |   8 +
- kernel/bpf/verifier.c                              |  12 +-
- kernel/cpu.c                                       |   3 +
- kernel/trace/bpf_trace.c                           | 100 +++++++++--
- kernel/trace/trace_branch.c                        |   4 -
- lib/xarray.c                                       |  12 +-
- mm/hugetlb.c                                       |  29 +++-
- mm/memory-failure.c                                |   7 +-
- mm/mempolicy.c                                     |   2 +-
- mm/page_idle.c                                     |   4 +-
- mm/page_io.c                                       |   7 +-
- net/core/filter.c                                  |   2 +
- net/core/sock.c                                    |   3 -
- net/ipv4/raw.c                                     |   2 +-
- net/ipv4/udp.c                                     |  10 +-
- net/ipv6/udp.c                                     |   8 +-
- net/packet/af_packet.c                             |  23 ++-
- net/packet/internal.h                              |   1 +
- net/sctp/endpointola.c                             |   8 +-
- net/sunrpc/xprtsock.c                              |  16 +-
- net/tipc/core.c                                    |  12 +-
- net/tipc/netlink_compat.c                          |  18 +-
- net/tipc/udp_media.c                               |   8 +-
- net/tls/tls_main.c                                 |   3 +-
- tools/testing/selftests/bpf/test_lpm_map.c         |  41 ++++-
- 76 files changed, 830 insertions(+), 294 deletions(-)
 
 
