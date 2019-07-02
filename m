@@ -2,101 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00D265D58F
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 19:47:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1240A5D59A
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 19:47:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727002AbfGBRq7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 13:46:59 -0400
-Received: from mail-eopbgr680041.outbound.protection.outlook.com ([40.107.68.41]:31008
-        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726193AbfGBRq6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 13:46:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JKrxzGEfgC/NFJCq6+fmtSWANUJEAldqOq1UQ2lA/xQ=;
- b=ZiOw17Oa9ynZHDMUx6RiEulW7DxPd2FEVvAUePXGQ9G1l879OZHCimmq7Rygrp/20AI3tKZwuu5Z0Liy0KM8VFHfnR8CVoy+7B9bTfEAgt+LymTlfqGD8vBTm5mtkFQjMByX+z1kCw1Ou94WyrM2Lvo9a74Q7GmxUqRhy+xrUTE=
-Received: from DM5PR12MB1449.namprd12.prod.outlook.com (10.172.40.14) by
- DM5PR12MB1420.namprd12.prod.outlook.com (10.168.239.12) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2032.20; Tue, 2 Jul 2019 17:46:54 +0000
-Received: from DM5PR12MB1449.namprd12.prod.outlook.com
- ([fe80::180c:ff0c:37e6:a482]) by DM5PR12MB1449.namprd12.prod.outlook.com
- ([fe80::180c:ff0c:37e6:a482%10]) with mapi id 15.20.2032.019; Tue, 2 Jul 2019
- 17:46:54 +0000
-From:   Gary R Hook <ghook@amd.com>
-To:     Cfir Cohen <cfir@google.com>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        "Hook, Gary" <Gary.Hook@amd.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        David Rientjes <rientjes@google.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH v2] crypto: ccp/gcm - use const time tag comparison.
-Thread-Topic: [PATCH v2] crypto: ccp/gcm - use const time tag comparison.
-Thread-Index: AQHVMPw13VShZb2ZG0mtCEYORUtnoKa3mkoA
-Date:   Tue, 2 Jul 2019 17:46:53 +0000
-Message-ID: <aa19bd59-7b76-b8ad-3f25-42efbfb7fd29@amd.com>
-References: <20190702173256.50485-1-cfir@google.com>
-In-Reply-To: <20190702173256.50485-1-cfir@google.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: SN6PR04CA0020.namprd04.prod.outlook.com
- (2603:10b6:805:3e::33) To DM5PR12MB1449.namprd12.prod.outlook.com
- (2603:10b6:4:10::14)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Gary.Hook@amd.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [165.204.78.1]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: e50e804a-1b8e-49de-b36e-08d6ff1544ea
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DM5PR12MB1420;
-x-ms-traffictypediagnostic: DM5PR12MB1420:
-x-microsoft-antispam-prvs: <DM5PR12MB142050A723D046C9C3672BB4FDF80@DM5PR12MB1420.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:1728;
-x-forefront-prvs: 008663486A
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(136003)(39860400002)(396003)(346002)(376002)(199004)(189003)(66556008)(66946007)(66476007)(73956011)(68736007)(3846002)(99286004)(66446008)(64756008)(6116002)(4744005)(7736002)(478600001)(66066001)(72206003)(36756003)(305945005)(8936002)(31686004)(81156014)(5660300002)(81166006)(4326008)(25786009)(54906003)(76176011)(2906002)(11346002)(6512007)(186003)(6436002)(446003)(14444005)(486006)(53936002)(256004)(102836004)(6506007)(386003)(53546011)(2616005)(476003)(26005)(8676002)(6486002)(71190400001)(52116002)(229853002)(14454004)(31696002)(6246003)(71200400001)(316002)(110136005);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1420;H:DM5PR12MB1449.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: Z+Yntg6EzFCNnvQX+L8Jtnw8J1z4q/dpq8kBLudSBCPOwjvQr6heESzRjLzvKoOcLrEoCLVyj4OVnLkYLSCBoW+J52CIQJNHdODYVN6QVtyvBkf7GvVMSrmJiwSldZW3zCFTmJTBFyuYuI+EnnU4gI6i14PFz2E5YWq29+nbKfs98o7jmtlD6lw7pUt1FJIdJ91b55p/Q1By8fz0CJno90DVt8rJLpHF8iGb6pE00oPzk6mQY9IVufdchgq41K/km0jx+RocpB53cDVFIfVhGwSBxYK+uuNF0ZIaA8nOqtH+sfqB7Ttn9dOOouIeGXJfJH7isMfbDxgYO3wQZ8IOFHDgo8uYRIDJSC2oCPTDTa0Iz/1w2vznDC0kxk8MWxqvXY8Vtf/o/Nf1OyQDXli4hkfWnBZd84xuQkmlC0ZXgHw=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <3383CC4B34FCFC47B2A45BEA5C4D5FD2@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1727073AbfGBRrt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 13:47:49 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:40518 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726193AbfGBRrs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 13:47:48 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x62HhUbV086726;
+        Tue, 2 Jul 2019 17:46:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=sdxS7LaByVAl+46kpQmm1/QM0mY8OXrUyrZQCdcDG6Q=;
+ b=vqu1lugrSbY8s5G6YYJdX/JBDJImnSFiMrGO7byfWHtXO1clkv0+3gsxLzzRh+fgbKpa
+ yk6uTy4dc3NByKZPLgHAy2A6OPcetVu/vluViXEGfdiwr8W2Uo9SebgDBex8u3R7XjZw
+ nkFNucAyZHACbHu+rPQ5i9U2h0v2V5sT7X5XgE6cQjTFOVmMHnZRX/wrK/RwqIyilXqa
+ GXLKXgAK6rDOUeeM/KD+vKaxCEbM2VWSiOABGjoZcoh7BbD7s4akl0UiCgdEtNHCb0UB
+ U0s1RBmctg74PJQfdiOobvnIM4BdWo/PquMC4NBDB3l5rHU3yRxvKkGn+pTWlhkQw7Zt 2g== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 2te5tbn5uk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 02 Jul 2019 17:46:49 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x62HgvrO040155;
+        Tue, 2 Jul 2019 17:46:49 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3020.oracle.com with ESMTP id 2tebkuddj4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 02 Jul 2019 17:46:49 +0000
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x62HkklO009482;
+        Tue, 2 Jul 2019 17:46:46 GMT
+Received: from bostrovs-us.us.oracle.com (/10.152.32.65)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 02 Jul 2019 10:46:46 -0700
+Subject: Re: [PATCH v4 2/5] x86: Add nopv parameter to disable PV extensions
+To:     Zhenzhong Duan <zhenzhong.duan@oracle.com>,
+        linux-kernel@vger.kernel.org
+Cc:     xen-devel@lists.xenproject.org, jgross@suse.com,
+        sstabellini@kernel.org, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, Jan Kiszka <jan.kiszka@siemens.com>
+References: <1561958399-28906-1-git-send-email-zhenzhong.duan@oracle.com>
+ <1561958399-28906-3-git-send-email-zhenzhong.duan@oracle.com>
+From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
+ 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
+ Jg6OxFYd01z+a+oL
+Message-ID: <95b0b6fa-23e2-eb9a-c74d-bfd87c8f4164@oracle.com>
+Date:   Tue, 2 Jul 2019 13:47:13 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e50e804a-1b8e-49de-b36e-08d6ff1544ea
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Jul 2019 17:46:53.8955
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ghook@amd.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1420
+In-Reply-To: <1561958399-28906-3-git-send-email-zhenzhong.duan@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9306 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=784
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1907020195
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9306 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=837 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1907020195
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gNy8yLzE5IDEyOjMyIFBNLCBDZmlyIENvaGVuIHdyb3RlOg0KPiBBdm9pZCBsZWFraW5nIEdD
-TSB0YWcgdGhyb3VnaCB0aW1pbmcgc2lkZSBjaGFubmVsLg0KPiANCj4gRml4ZXM6IDM2Y2Y1MTVi
-OWJiZSAoImNyeXB0bzogY2NwIC0gRW5hYmxlIHN1cHBvcnQgZm9yIEFFUyBHQ00gb24gdjUgQ0NQ
-cyIpDQo+IENjOiA8c3RhYmxlQHZnZXIua2VybmVsLm9yZz4gIyB2NC4xMisNCj4gU2lnbmVkLW9m
-Zi1ieTogQ2ZpciBDb2hlbiA8Y2ZpckBnb29nbGUuY29tPg0KDQpBY2tlZC1ieTogR2FyeSBSIEhv
-b2sgPGdob29rQGFtZC5jb20+DQoNCj4gLS0tDQo+ICAgZHJpdmVycy9jcnlwdG8vY2NwL2NjcC1v
-cHMuYyB8IDMgKystDQo+ICAgMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKSwgMSBkZWxl
-dGlvbigtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY3J5cHRvL2NjcC9jY3Atb3BzLmMg
-Yi9kcml2ZXJzL2NyeXB0by9jY3AvY2NwLW9wcy5jDQo+IGluZGV4IGRiOGRlODlkOTkwZi4uNjMz
-NjcwMjIwZjZjIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2NyeXB0by9jY3AvY2NwLW9wcy5jDQo+
-ICsrKyBiL2RyaXZlcnMvY3J5cHRvL2NjcC9jY3Atb3BzLmMNCj4gQEAgLTg0MCw3ICs4NDAsOCBA
-QCBzdGF0aWMgaW50IGNjcF9ydW5fYWVzX2djbV9jbWQoc3RydWN0IGNjcF9jbWRfcXVldWUgKmNt
-ZF9xLA0KPiAgIAkJaWYgKHJldCkNCj4gICAJCQlnb3RvIGVfdGFnOw0KPiAgIA0KPiAtCQlyZXQg
-PSBtZW1jbXAodGFnLmFkZHJlc3MsIGZpbmFsX3dhLmFkZHJlc3MsIEFFU19CTE9DS19TSVpFKTsN
-Cj4gKwkJcmV0ID0gY3J5cHRvX21lbW5lcSh0YWcuYWRkcmVzcywgZmluYWxfd2EuYWRkcmVzcywN
-Cj4gKwkJCQkgICAgQUVTX0JMT0NLX1NJWkUpID8gLUVCQURNU0cgOiAwOw0KPiAgIAkJY2NwX2Rt
-X2ZyZWUoJnRhZyk7DQo+ICAgCX0NCj4gICANCj4gDQoNCg==
+On 7/1/19 1:19 AM, Zhenzhong Duan wrote:
+>
+> There is already 'xen_nopv' parameter for XEN platform but not for
+> others. 'xen_nopv' can then be removed with this change.
+
+This is no longer true.
+
+-boris
+
+
