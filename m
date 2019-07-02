@@ -2,164 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 400EB5D335
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 17:44:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB96A5D33B
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 17:44:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726779AbfGBPoL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 11:44:11 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:44161 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726252AbfGBPoK (ORCPT
+        id S1727066AbfGBPog (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 11:44:36 -0400
+Received: from mail-qk1-f175.google.com ([209.85.222.175]:35926 "EHLO
+        mail-qk1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726213AbfGBPof (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 11:44:10 -0400
-Received: by mail-lj1-f194.google.com with SMTP id k18so17359212ljc.11
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 08:44:09 -0700 (PDT)
+        Tue, 2 Jul 2019 11:44:35 -0400
+Received: by mail-qk1-f175.google.com with SMTP id g18so14488659qkl.3;
+        Tue, 02 Jul 2019 08:44:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=J/Zq9g98WhFnjJ6y9wBnnlW6K7Ygb2l9Rki+bO5sY+I=;
-        b=Q8PZzJ3eZS8L9ysfK8C6aSAQh4HfqdNWbqXXILy/RbRM+y7YWs2Iw7KBgd9rkNKoC+
-         HxLR7rGe4Iz3iDBYPicAmzpVXipEj74zq0pCzjftJKPn9b1SsdjNDpNKpy7hansSQry0
-         FDt+5PL1G2DBHIhXyApvTjr+vaTqBBa/SqYKSAu9+N82t1otddwa9HjHPkhZMgRqHnkY
-         9HRJCTh/hZpSjlyoz04GUG06eIbKI1zzPnTgEGZvCmmBZQ/bl7OZcOV7mhHhOSPRYWwl
-         m4iOwXGXLClMW3mQ51tl7oDcDm11HjQn82vM/1qG612oQ5G7kW1BCKeXUafGDGguEFQu
-         zufg==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=0SNIqZ1eXNTXTiBWnYdzokV/6s0LphXPV28wgFgO7+Y=;
+        b=A/SfDAFXG8B33NLAuR2aHJKfJq4Yy7L2nviUpcX6L2uRGij6Mq2/MxO7ekS9lkxJ1X
+         e1S7zhlW85oULhG1Dfxve8SFAOlLmOGKCkEfOJ9efMIUlS7JC5S1XOhhToUtbZugfnfP
+         q+vSwNgnRZTFRjkg+B3LXhmTWckczqo0qf7A1iiV33mCAnUWdonnm/dQc4trsf9lzEyS
+         M4KmtaNo6J9m3X2NP++/fVQX4pIwZ/9msZdflOc9RmJoHoksAXDDxYx8B+cBYMXwMkXf
+         Pi1RF8ffg6LSphQ6nPrFZoFMGq4a9bPJ+5h+iYhVMCA5cQwi2A67s8YGsQwRH1PuDmmr
+         LXtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=J/Zq9g98WhFnjJ6y9wBnnlW6K7Ygb2l9Rki+bO5sY+I=;
-        b=OMD2M6UeNVUSNQtuFLNcKL+yVxP8ddHULixwS0wuHlvWOI52d/t1c4KmusSIblsH5C
-         icUL/y25dPGTwI9/AsxkkSJhOsczQnvbu+b3IDFUMu9cCI9AvFDiqYaJfhEZT00QaSON
-         0kK89lM/44rykBL3Jql0jZ+mZWeO85lHdLUcEbYpM7f8xDGf+JsSODEBrOePqBjM9vBt
-         Cbb9d7+DV+al30ve7QBOfvs5/f+8T88SHEL0IfgT2WkfG1lX9VOBGzYS1EzYFgUb61mi
-         N5mLwvjKP+fBgCEcdugVrFaJOY9lxGL/SdkFAoWBj8GNQYVYb0aWOa17ycp+QmKaXf8F
-         22zQ==
-X-Gm-Message-State: APjAAAWMtXDKSH9zUtE+TyezPHAOVWH8MQy7Qic1Q9wuKtploUVxlMiH
-        92LmCFf5gEvcXP6j6wlH9GFxs34rNnT1GYJYIyPGfVMItrA=
-X-Google-Smtp-Source: APXvYqxEhb3B1z/H72FVDsDuHgIXwdXzYIWyPbk5VQgwkxwUTrr29cmyE4xym6p4R5jLar9LhfjCRBn3aaLaLsABrpc=
-X-Received: by 2002:a2e:b0f0:: with SMTP id h16mr17941985ljl.21.1562082248436;
- Tue, 02 Jul 2019 08:44:08 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=0SNIqZ1eXNTXTiBWnYdzokV/6s0LphXPV28wgFgO7+Y=;
+        b=rp3lu7yGJcVPku590YZvUiCW/nHnR/UBcVbilQ7MGFAq8fSnbCsGNo/jXIrZiiRGfu
+         Q55nNDJyhXIQ3izLsM9oNviIfwlcRc5G77ZqS6Ajwa6n/dL6smbQpKDg1hGe+uucG50L
+         PdiaASIq88DQjSo6iMNhiE78KSNOXd8n6KokgwV0tbi8NmDMsFMD5ZvISSmeWFnge7tZ
+         hXhO/qqpAAG0LU6JO6QAEWNkSQsPgFuQZHj+ais46EfY+CGOiFZmfRp7hIbRFPohJheq
+         jr2eAsSenbPSFuRIuy0KJ6wGPYmbH3q2QeW7JIS3EmYsHLd4h2vlXoE/wYv1DMxcDRv5
+         YEug==
+X-Gm-Message-State: APjAAAXlOHF+bSUV2k13Z6svLTjQLd2axclLntp+eHtBfGrc7M9idsFM
+        NQvjw6YBSVXXIwSrJHaRl74Nhun67z8=
+X-Google-Smtp-Source: APXvYqy/DQiaFs1LsX0WgEbqxRdbnX6EGJXOOnXyMa0gYPhm28oRBjSKtRB4pJgIl/8V5uuGMGyMYg==
+X-Received: by 2002:a37:8741:: with SMTP id j62mr23578387qkd.78.1562082274356;
+        Tue, 02 Jul 2019 08:44:34 -0700 (PDT)
+Received: from localhost ([2601:184:4780:7861:5010:5849:d76d:b714])
+        by smtp.gmail.com with ESMTPSA id c192sm6389184qkg.33.2019.07.02.08.44.33
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 02 Jul 2019 08:44:33 -0700 (PDT)
+From:   Rob Clark <robdclark@gmail.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     linux-arm-msm@vger.kernel.org, Sean Paul <seanpaul@chromium.org>,
+        Rob Clark <robdclark@chromium.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] drm/bridge: ti-sn65dsi86: add link to datasheet
+Date:   Tue,  2 Jul 2019 08:44:16 -0700
+Message-Id: <20190702154419.20812-2-robdclark@gmail.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190702154419.20812-1-robdclark@gmail.com>
+References: <20190702154419.20812-1-robdclark@gmail.com>
 MIME-Version: 1.0
-References: <20190702080123.904399496@linuxfoundation.org>
-In-Reply-To: <20190702080123.904399496@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Tue, 2 Jul 2019 21:13:56 +0530
-Message-ID: <CA+G9fYuKoCVAK7C4Urr_LpAb5KNFGusVELUYjVt3PMVU3+=K0w@mail.gmail.com>
-Subject: Re: [PATCH 4.14 00/43] 4.14.132-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2 Jul 2019 at 13:39, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 4.14.132 release.
-> There are 43 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu 04 Jul 2019 07:59:45 AM UTC.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.14.132-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.14.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+From: Rob Clark <robdclark@chromium.org>
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+The bridge has pretty good docs, lets add a link to make them easier to
+find.
 
-Summary
-------------------------------------------------------------------------
+Signed-off-by: Rob Clark <robdclark@chromium.org>
+---
+ drivers/gpu/drm/bridge/ti-sn65dsi86.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-kernel: 4.14.132-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.14.y
-git commit: 3734933c2330c5fe94ed2724033965b2eb545028
-git describe: v4.14.131-44-g3734933c2330
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.14-oe/bu=
-ild/v4.14.131-44-g3734933c2330
+diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi86.c b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
+index bcca9173c72a..f1a2493b86d9 100644
+--- a/drivers/gpu/drm/bridge/ti-sn65dsi86.c
++++ b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
+@@ -1,6 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+  * Copyright (c) 2018, The Linux Foundation. All rights reserved.
++ * datasheet: http://www.ti.com/lit/ds/symlink/sn65dsi86.pdf
+  */
+ 
+ #include <linux/clk.h>
+-- 
+2.20.1
 
-
-No regressions (compared to build v4.14.131)
-
-No fixes (compared to build v4.14.131)
-
-
-Ran 22541 total tests in the following environments and test suites.
-
-Environments
---------------
-- dragonboard-410c - arm64
-- hi6220-hikey - arm64
-- i386
-- juno-r2 - arm64
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-- x86_64
-
-Test Suites
------------
-* build
-* install-android-platform-tools-r2600
-* kselftest
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cpuhotplug-tests
-* ltp-dio-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-mm-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-securebits-tests
-* ltp-timers-tests
-* perf
-* v4l2-compliance
-* libhugetlbfs
-* ltp-commands-tests
-* ltp-cve-tests
-* ltp-math-tests
-* ltp-sched-tests
-* ltp-syscalls-tests
-* network-basic-tests
-* spectre-meltdown-checker-test
-* ltp-open-posix-tests
-* kvm-unit-tests
-* kselftest-vsyscall-mode-none
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
