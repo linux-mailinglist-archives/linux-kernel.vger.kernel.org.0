@@ -2,56 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C1965D19E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 16:23:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11A485D1A2
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 16:23:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727109AbfGBOXN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 10:23:13 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60392 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726628AbfGBOXM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 10:23:12 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 167D7BA38;
-        Tue,  2 Jul 2019 14:23:11 +0000 (UTC)
-Date:   Tue, 2 Jul 2019 16:23:08 +0200
-From:   Oscar Salvador <osalvador@suse.de>
-To:     Pingfan Liu <kernelfans@gmail.com>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>, Qian Cai <cai@lca.pw>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/page_isolate: change the prototype of
- undo_isolate_page_range()
-Message-ID: <20190702142303.GA30871@linux>
-References: <1562075604-8979-1-git-send-email-kernelfans@gmail.com>
+        id S1727210AbfGBOX0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 10:23:26 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:35210 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727083AbfGBOX0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 10:23:26 -0400
+Received: by mail-wr1-f68.google.com with SMTP id c27so10371244wrb.2
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 07:23:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=fYd2nLSJd2JtuXW4PvhhIc8hhI47lGgNieCsOyTTMr0=;
+        b=hJUf2C50kZgFGsrA5T0byl86DfevCCPZn4MqhTrIVgX4gvlXGnmRKs3FMRNHqyFSp+
+         6IVWVp6dgqLwZA3AvbRCC7/YxNhuYyWMeLXftCsawO8Siq2PzyZPNbIzyMnfUZAbhEcd
+         fv5C2x53P72r17ITIeLXXNxlJye7wUFmiLrGNdCtfAiM8EId0E35kVIXCgEBf6I8nuzQ
+         QJP2TWdcXNytr0zwQYmWklWkr+EbsMYlfQOLUzSIbjbooMiUphiMViB1X46QuWD4n28i
+         oAOJGR8grQLUjxu3lQ9QSxIyBUyV3kUcJpNnMyO2PoAvCf00+z+1zKOGqsB8TdbJJRfN
+         4CEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=fYd2nLSJd2JtuXW4PvhhIc8hhI47lGgNieCsOyTTMr0=;
+        b=m/BP2xSgyVK5WGElVusgwRErnj2DB8zC8EklXObMI5q6zkC6QNHRjRyrbMVwri/IdD
+         tHfa+XkjqYMEStatNTSRNvKONUzwVUqtHDsMMuZ4vNTPqiDXH+fsu/KkzxBgx/z8Cv2Q
+         PGcEy2GXMs2cRrfz3va5OqsRN9bkBckNQRZmd8FeWcVQfbjT88MHt2XVdL0OvOEMmxoK
+         2rt8aHnts0NBxtOKUP9918GaO/ukggOdqL80VYwyFKVbl+/EsKCF3pJhhXQtYK1Jlpkn
+         mDKTWS5bNXVPREwUJG7ozBl4C6QPWl0S0ZT/T1hdryat9sUluk8d7ossRf5dm2n363l1
+         sA6Q==
+X-Gm-Message-State: APjAAAWba4dRQfWWGx7v9C+bXsRHvlqvGaVb/VMMGTVJOWjrsRBSMqy/
+        +JQSj6jpYul57dJuxbTxt+2QlEdiswOcwMud2KUnEk7DB2E=
+X-Google-Smtp-Source: APXvYqwLMvAHfv1sTx1VayA6+S8cQcR7JuRg+X1Ptd3HNI8mYyOl8QVHTULib9r0UUHpDw87A4OVj6OpjaUTXjpkh2A=
+X-Received: by 2002:a5d:518f:: with SMTP id k15mr23509522wrv.321.1562077403779;
+ Tue, 02 Jul 2019 07:23:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1562075604-8979-1-git-send-email-kernelfans@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <000000000000089d7f058683115e@google.com> <20190702140211.28399-1-tranmanphong@gmail.com>
+In-Reply-To: <20190702140211.28399-1-tranmanphong@gmail.com>
+From:   Alexander Potapenko <glider@google.com>
+Date:   Tue, 2 Jul 2019 16:23:11 +0200
+Message-ID: <CAG_fn=VHpZW69TfK35aqL7o6CvgsPazL5raeW1QmWpu9ReYkhw@mail.gmail.com>
+Subject: Re: [PATCH] media: usb: technisat-usb2: fix buffer overflow
+To:     Phong Tran <tranmanphong@gmail.com>
+Cc:     syzbot+eaaaf38a95427be88f4b@syzkaller.appspotmail.com,
+        Andrey Konovalov <andreyknvl@google.com>,
+        hans.verkuil@cisco.com, mchehab@kernel.org,
+        skhan@linuxfoundation.org, gregkh@linuxfoundation.org,
+        Kees Cook <keescook@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org,
+        linux-usb@vger.kernel.org,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        linux-kernel-mentees@lists.linuxfoundation.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 02, 2019 at 09:53:24PM +0800, Pingfan Liu wrote:
-> undo_isolate_page_range() never fails, so no need to return value.
+On Tue, Jul 2, 2019 at 4:02 PM Phong Tran <tranmanphong@gmail.com> wrote:
+>
+> The buffer will be overflow in case of the while loop can not break.
+> Add the checking buffer condition in while loop for avoiding
+> overlooping index.
+>
+> This issue was reported by syzbot
+>
+> Reported-by: syzbot+eaaaf38a95427be88f4b@syzkaller.appspotmail.com
+>
+> Tested by:
+> https://groups.google.com/d/msg/syzkaller-bugs/CySBCKuUOOs/0hKq1CdjCwAJ
+>
+> Signed-off-by: Phong Tran <tranmanphong@gmail.com>
+> ---
+>  drivers/media/usb/dvb-usb/technisat-usb2.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/media/usb/dvb-usb/technisat-usb2.c b/drivers/media/u=
+sb/dvb-usb/technisat-usb2.c
+> index c659e18b358b..4e0b6185666a 100644
+> --- a/drivers/media/usb/dvb-usb/technisat-usb2.c
+> +++ b/drivers/media/usb/dvb-usb/technisat-usb2.c
+> @@ -655,7 +655,7 @@ static int technisat_usb2_get_ir(struct dvb_usb_devic=
+e *d)
+>  #endif
+>
+>         ev.pulse =3D 0;
+> -       while (1) {
+> +       while (b !=3D (buf + 63)) {
+I think it won't hurt to either use ARRAY_SIZE here, or define some
+magic constant for the buffer size in struct technisat_usb2_state.
 
-Heh, this goes back to 2007.
+>                 ev.pulse =3D !ev.pulse;
+>                 ev.duration =3D (*b * FIRMWARE_CLOCK_DIVISOR * FIRMWARE_C=
+LOCK_TICK) / 1000;
+>                 ir_raw_event_store(d->rc_dev, &ev);
+> --
+> 2.11.0
+>
+> --
+> You received this message because you are subscribed to the Google Groups=
+ "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an=
+ email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgi=
+d/syzkaller-bugs/20190702140211.28399-1-tranmanphong%40gmail.com.
+> For more options, visit https://groups.google.com/d/optout.
 
-> 
-> Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Oscar Salvador <osalvador@suse.de>
-> Cc: Qian Cai <cai@lca.pw>
-> Cc: Anshuman Khandual <anshuman.khandual@arm.com>
-> Cc: linux-kernel@vger.kernel.org
 
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
 
--- 
-Oscar Salvador
-SUSE L3
+--=20
+Alexander Potapenko
+Software Engineer
+
+Google Germany GmbH
+Erika-Mann-Stra=C3=9Fe, 33
+80636 M=C3=BCnchen
+
+Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Halimah DeLaine Prado
+Registergericht und -nummer: Hamburg, HRB 86891
+Sitz der Gesellschaft: Hamburg
