@@ -2,44 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F284E5CA49
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 10:02:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55AF55CA54
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 10:03:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726861AbfGBICf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 04:02:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47142 "EHLO mail.kernel.org"
+        id S1727298AbfGBIDG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 04:03:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47852 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725868AbfGBICe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 04:02:34 -0400
+        id S1727035AbfGBIDE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 04:03:04 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5329B20659;
-        Tue,  2 Jul 2019 08:02:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3086821850;
+        Tue,  2 Jul 2019 08:03:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562054553;
-        bh=UHj+reTeQRaOFAHNyvjjTOieOnvPAd53doWoMIt3ixE=;
+        s=default; t=1562054583;
+        bh=pilKMYlTiwamuYx57A5kVWVrG8sar5JjJhKOHSt7ncM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bZxbbpmi+Fg7yUfcXXgy7fdpkTimEIMiLCP3rsL6q2v0GOHn/X7/qkbkc6El13qID
-         EAGFd3eurYAMPFTpYMnc+VBya9pJs9PaeByw7o1ZPerBdcGHFtR/Ktjtz/i25JkZ8E
-         s4OkHQTtSLwMSexjJZeOGmhIiHJucEyaPyMEw0fQ=
+        b=VGd+A8pOT4FEjFW1ruBjW/mau5C/e5rkVfnJfrJ1cQmXdAvXQpexaxj/NcZHrHos9
+         lzE6L41M/n+sy51H8v1DhfsUgW74B8hTyiAyk0sIQgptPWcXiFrYmmy0l3w8n+5nti
+         x6wO5oub6qL7qQUGcTMrYwgQJQbImpAQ+sQy4eFQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qian Cai <cai@lca.pw>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 5.1 01/55] arm64: Dont unconditionally add -Wno-psabi to KBUILD_CFLAGS
-Date:   Tue,  2 Jul 2019 10:01:09 +0200
-Message-Id: <20190702080124.164193086@linuxfoundation.org>
+        stable@vger.kernel.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 02/55] Revert "x86/uaccess, ftrace: Fix ftrace_likely_update() vs. SMAP"
+Date:   Tue,  2 Jul 2019 10:01:10 +0200
+Message-Id: <20190702080124.204331150@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190702080124.103022729@linuxfoundation.org>
 References: <20190702080124.103022729@linuxfoundation.org>
 User-Agent: quilt/0.66
-X-stable: review
-X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -48,101 +42,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+This reverts commit b65b70ba068b7cdbfeb65eee87cce84a74618603, which was
+upstream commit 4a6c91fbdef846ec7250b82f2eeeb87ac5f18cf9.
 
-commit fa63da2ab046b885a7f70291aafc4e8ce015429b upstream.
+On Tue, Jun 25, 2019 at 09:39:45AM +0200, Sebastian Andrzej Siewior wrote:
+>Please backport commit e74deb11931ff682b59d5b9d387f7115f689698e to
+>stable _or_ revert the backport of commit 4a6c91fbdef84 ("x86/uaccess,
+>ftrace: Fix ftrace_likely_update() vs. SMAP"). It uses
+>user_access_{save|restore}() which has been introduced in the following
+>commit.
 
-This is a GCC only option, which warns about ABI changes within GCC, so
-unconditionally adding it breaks Clang with tons of:
-
-warning: unknown warning option '-Wno-psabi' [-Wunknown-warning-option]
-
-and link time failures:
-
-ld.lld: error: undefined symbol: __efistub___stack_chk_guard
->>> referenced by arm-stub.c:73
-(/home/nathan/cbl/linux/drivers/firmware/efi/libstub/arm-stub.c:73)
->>>               arm-stub.stub.o:(__efistub_install_memreserve_table)
-in archive ./drivers/firmware/efi/libstub/lib.a
-
-These failures come from the lack of -fno-stack-protector, which is
-added via cc-option in drivers/firmware/efi/libstub/Makefile. When an
-unknown flag is added to KBUILD_CFLAGS, clang will noisily warn that it
-is ignoring the option like above, unlike gcc, who will just error.
-
-$ echo "int main() { return 0; }" > tmp.c
-
-$ clang -Wno-psabi tmp.c; echo $?
-warning: unknown warning option '-Wno-psabi' [-Wunknown-warning-option]
-1 warning generated.
-0
-
-$ gcc -Wsometimes-uninitialized tmp.c; echo $?
-gcc: error: unrecognized command line option
-‘-Wsometimes-uninitialized’; did you mean ‘-Wmaybe-uninitialized’?
-1
-
-For cc-option to work properly with clang and behave like gcc, -Werror
-is needed, which was done in commit c3f0d0bc5b01 ("kbuild, LLVMLinux:
-Add -Werror to cc-option to support clang").
-
-$ clang -Werror -Wno-psabi tmp.c; echo $?
-error: unknown warning option '-Wno-psabi'
-[-Werror,-Wunknown-warning-option]
-1
-
-As a consequence of this, when an unknown flag is unconditionally added
-to KBUILD_CFLAGS, it will cause cc-option to always fail and those flags
-will never get added:
-
-$ clang -Werror -Wno-psabi -fno-stack-protector tmp.c; echo $?
-error: unknown warning option '-Wno-psabi'
-[-Werror,-Wunknown-warning-option]
-1
-
-This can be seen when compiling the whole kernel as some warnings that
-are normally disabled (see below) show up. The full list of flags
-missing from drivers/firmware/efi/libstub are the following (gathered
-from diffing .arm64-stub.o.cmd):
-
--fno-delete-null-pointer-checks
--Wno-address-of-packed-member
--Wframe-larger-than=2048
--Wno-unused-const-variable
--fno-strict-overflow
--fno-merge-all-constants
--fno-stack-check
--Werror=date-time
--Werror=incompatible-pointer-types
--ffreestanding
--fno-stack-protector
-
-Use cc-disable-warning so that it gets disabled for GCC and does nothing
-for Clang.
-
-Fixes: ebcc5928c5d9 ("arm64: Silence gcc warnings about arch ABI drift")
-Link: https://github.com/ClangBuiltLinux/linux/issues/511
-Reported-by: Qian Cai <cai@lca.pw>
-Acked-by: Dave Martin <Dave.Martin@arm.com>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/Makefile |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/trace/trace_branch.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
---- a/arch/arm64/Makefile
-+++ b/arch/arm64/Makefile
-@@ -51,7 +51,7 @@ endif
+diff --git a/kernel/trace/trace_branch.c b/kernel/trace/trace_branch.c
+index 3ea65cdff30d..4ad967453b6f 100644
+--- a/kernel/trace/trace_branch.c
++++ b/kernel/trace/trace_branch.c
+@@ -205,8 +205,6 @@ void trace_likely_condition(struct ftrace_likely_data *f, int val, int expect)
+ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
+ 			  int expect, int is_constant)
+ {
+-	unsigned long flags = user_access_save();
+-
+ 	/* A constant is always correct */
+ 	if (is_constant) {
+ 		f->constant++;
+@@ -225,8 +223,6 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
+ 		f->data.correct++;
+ 	else
+ 		f->data.incorrect++;
+-
+-	user_access_restore(flags);
+ }
+ EXPORT_SYMBOL(ftrace_likely_update);
  
- KBUILD_CFLAGS	+= -mgeneral-regs-only $(lseinstr) $(brokengasinst)
- KBUILD_CFLAGS	+= -fno-asynchronous-unwind-tables
--KBUILD_CFLAGS	+= -Wno-psabi
-+KBUILD_CFLAGS	+= $(call cc-disable-warning, psabi)
- KBUILD_AFLAGS	+= $(lseinstr) $(brokengasinst)
- 
- KBUILD_CFLAGS	+= $(call cc-option,-mabi=lp64)
+-- 
+2.20.1
+
 
 
