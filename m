@@ -2,112 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AD4B5D173
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 16:19:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8ACDC5D145
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 16:14:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727241AbfGBOTS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 10:19:18 -0400
-Received: from mx1.emlix.com ([188.40.240.192]:57588 "EHLO mx1.emlix.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727109AbfGBOTM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 10:19:12 -0400
-X-Greylist: delayed 320 seconds by postgrey-1.27 at vger.kernel.org; Tue, 02 Jul 2019 10:19:12 EDT
-Received: from mailer.emlix.com (unknown [81.20.119.6])
-        (using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mx1.emlix.com (Postfix) with ESMTPS id EC37F60AF8;
-        Tue,  2 Jul 2019 16:13:50 +0200 (CEST)
-From:   Philipp Puschmann <philipp.puschmann@emlix.com>
-To:     marcel@holtmann.org
-Cc:     johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Philipp Puschmann <philipp.puschmann@emlix.com>
-Subject: [PATCH] Bluetooth: serdev: hci_ll: set operational frequency earlier
-Date:   Tue,  2 Jul 2019 16:13:37 +0200
-Message-Id: <20190702141337.10528-1-philipp.puschmann@emlix.com>
-X-Mailer: git-send-email 2.20.1
+        id S1727034AbfGBOOB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 10:14:01 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:45968 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726341AbfGBOOB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 10:14:01 -0400
+Received: from localhost ([127.0.0.1] helo=vostro.local)
+        by Galois.linutronix.de with esmtp (Exim 4.80)
+        (envelope-from <john.ogness@linutronix.de>)
+        id 1hiJXa-0002RH-7F; Tue, 02 Jul 2019 16:13:50 +0200
+From:   John Ogness <john.ogness@linutronix.de>
+To:     Andrea Parri <andrea.parri@amarulasolutions.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org, Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [RFC PATCH v2 1/2] printk-rb: add a new printk ringbuffer implementation
+References: <20190607162349.18199-1-john.ogness@linutronix.de>
+        <20190607162349.18199-2-john.ogness@linutronix.de>
+        <20190618114747.GQ3436@hirez.programming.kicks-ass.net>
+        <87k1df28x4.fsf@linutronix.de>
+        <20190626224034.GK2490@worktop.programming.kicks-ass.net>
+        <87mui2ujh2.fsf@linutronix.de> <20190629210528.GA3922@andrea>
+        <87imsnaky1.fsf@linutronix.de> <20190630140855.GA6005@andrea>
+Date:   Tue, 02 Jul 2019 16:13:48 +0200
+In-Reply-To: <20190630140855.GA6005@andrea> (Andrea Parri's message of "Sun,
+        30 Jun 2019 16:08:55 +0200")
+Message-ID: <87ef38cyn7.fsf@linutronix.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Uploading the firmware needs quite a few seconds if done at 115200 kbps. So set
-the operational frequency, usually 3 MHz, before uploading the firmware.
+On 2019-06-30, Andrea Parri <andrea.parri@amarulasolutions.com> wrote:
+>> The significant events for 2 contexts that are accessing the same
+>> addresses of a descriptor are:
+>> 
+>> P0(struct desc *d0)
+>> {
+>>         // adding a new descriptor d0
+>> 
+>>         WRITE_ONCE(d0->next, EOL);               // C
+>>         WRITE_ONCE(d0->seq, X);                  // D
+>>         cmpxchg_release(newest, Y, indexof(d0)); // E
+>> }
+>> 
+>> P1(struct desc *d1)
+>> {
+>>         // adding a new descriptor d1 that comes after d0
+>> 
+>>         struct desc *d0;
+>>         int r0, r1;
+>> 
+>>         r0 = READ_ONCE(newest);                 // A
+>>         d0 = &array[r0];
+>>         r1 = READ_ONCE(d0->seq);                // B
+>>         WRITE_ONCE(d0->next, Z);                // F
+>> }
+>> 
+>> d0 is the same address for P0 and P1. (The values of EOL, X, Y, Z are
+>> unrelated and irrelevant.)
+>
+>   (1) If A reads from E, then B reads from D (or from another store
+>       to ->seq, not reported in the snippet, which overwrites D)
+>
+>   (2) If A reads from E, then F overwrites C
+>
+> This, IIUC, for the informal descriptions of the (intended) guarantees.
+> Back to the pairings in question: AFAICT,
+>
+>   (a) For (1), we rely on the pairing:
+>
+>         RELEASE from D to E  (matching)  ADDRESS DEP. from A to B
+>
+>   (b) For (2), we rely on the pairing:
+>
+>         RELEASE from C to E  (matching)  ADDRESS DEP. from A to F
+>
+> Does this make sense?
 
-I have successfully tested this with a wl1837mod.
+Yes. This is what I needed to see.
 
-Signed-off-by: Philipp Puschmann <philipp.puschmann@emlix.com>
----
- drivers/bluetooth/hci_ll.c | 39 ++++++++++++++++++++------------------
- 1 file changed, 21 insertions(+), 18 deletions(-)
+> IMO (and assuming that what I wrote above makes some sense), (a-b) and
+> (1-2) above, together with the associated annotations of the code/ops,
+> provide all the desired and necessary information to document MB5.
+>
+> For readability purposes, it could be nice to also keep the snippet you
+> provided above (but let me stress, again, that such a snippet should be
+> integrated with additional information as suggested above).
+>
+> As to "where to insert the memory barrier documentation", I really have
+> no suggestion ATM.  I guess someone would split it (say, before A and E)
+> while others could prefer to keep it within a same inline comment.
 
-diff --git a/drivers/bluetooth/hci_ll.c b/drivers/bluetooth/hci_ll.c
-index c04f5f9e1ed0..cbd7bc539d5e 100644
---- a/drivers/bluetooth/hci_ll.c
-+++ b/drivers/bluetooth/hci_ll.c
-@@ -601,6 +601,13 @@ static int ll_setup(struct hci_uart *hu)
- 
- 	serdev_device_set_flow_control(serdev, true);
- 
-+	if (hu->oper_speed)
-+		speed = hu->oper_speed;
-+	else if (hu->proto->oper_speed)
-+		speed = hu->proto->oper_speed;
-+	else
-+		speed = 0;
-+
- 	do {
- 		/* Reset the Bluetooth device */
- 		gpiod_set_value_cansleep(lldev->enable_gpio, 0);
-@@ -612,6 +619,20 @@ static int ll_setup(struct hci_uart *hu)
- 			return err;
- 		}
- 
-+		if (speed) {
-+			__le32 speed_le = cpu_to_le32(speed);
-+			struct sk_buff *skb;
-+
-+			skb = __hci_cmd_sync(hu->hdev,
-+					     HCI_VS_UPDATE_UART_HCI_BAUDRATE,
-+					     sizeof(speed_le), &speed_le,
-+					     HCI_INIT_TIMEOUT);
-+			if (!IS_ERR(skb)) {
-+				kfree_skb(skb);
-+				serdev_device_set_baudrate(serdev, speed);
-+			}
-+		}
-+
- 		err = download_firmware(lldev);
- 		if (!err)
- 			break;
-@@ -636,25 +657,7 @@ static int ll_setup(struct hci_uart *hu)
- 	}
- 
- 	/* Operational speed if any */
--	if (hu->oper_speed)
--		speed = hu->oper_speed;
--	else if (hu->proto->oper_speed)
--		speed = hu->proto->oper_speed;
--	else
--		speed = 0;
--
--	if (speed) {
--		__le32 speed_le = cpu_to_le32(speed);
--		struct sk_buff *skb;
- 
--		skb = __hci_cmd_sync(hu->hdev, HCI_VS_UPDATE_UART_HCI_BAUDRATE,
--				     sizeof(speed_le), &speed_le,
--				     HCI_INIT_TIMEOUT);
--		if (!IS_ERR(skb)) {
--			kfree_skb(skb);
--			serdev_device_set_baudrate(serdev, speed);
--		}
--	}
- 
- 	return 0;
- }
--- 
-2.20.1
+Thank you. This is the level of formalization I've been looking for. I
+will rework the comments (and naming) and post a v3. It is probably best
+for you to wait until then to look at this again. (And after going
+through such formal processes, even _I_ am having difficulties
+understanding what some of my memory barriers are supposed to be
+synchronizing.)
 
+John Ogness
