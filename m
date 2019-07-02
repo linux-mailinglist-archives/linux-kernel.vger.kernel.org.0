@@ -2,106 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 607095CE54
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 13:24:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 676895CE5B
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 13:26:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726733AbfGBLYk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 07:24:40 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:33860 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726150AbfGBLYj (ORCPT
+        id S1726455AbfGBL0f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 07:26:35 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:56648 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725835AbfGBL0f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 07:24:39 -0400
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id D2EC625AEC8;
-        Tue,  2 Jul 2019 21:24:36 +1000 (AEST)
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id CE40F940476; Tue,  2 Jul 2019 13:24:34 +0200 (CEST)
-Date:   Tue, 2 Jul 2019 13:24:34 +0200
-From:   Simon Horman <horms@verge.net.au>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
-        Simon Horman <simon.horman@netronome.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v2] dt-binding: mmc: rename tmio_mmc.txt to
- renesas,sdhi.txt
-Message-ID: <20190702112434.ll3btya7fepkb5tn@verge.net.au>
-References: <20190624070345.20373-1-yamada.masahiro@socionext.com>
+        Tue, 2 Jul 2019 07:26:35 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: ezequiel)
+        with ESMTPSA id B0A022852D9
+Message-ID: <3c68bf286d8b75ac339df0eab43d276667e073c2.camel@collabora.com>
+Subject: Re: [PATCH v2 0/3] RK3288 Gamma LUT
+From:   Ezequiel Garcia <ezequiel@collabora.com>
+To:     Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Cc:     dri-devel@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org,
+        Sandy Huang <hjc@rock-chips.com>, kernel@collabora.com,
+        Sean Paul <seanpaul@chromium.org>,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        Ilia Mirkin <imirkin@alum.mit.edu>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Tue, 02 Jul 2019 08:26:22 -0300
+In-Reply-To: <20190621211346.1324-1-ezequiel@collabora.com>
+References: <20190621211346.1324-1-ezequiel@collabora.com>
+Organization: Collabora
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-1.1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190624070345.20373-1-yamada.masahiro@socionext.com>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 04:03:45PM +0900, Masahiro Yamada wrote:
-> As commit b6147490e6aa ("mmc: tmio: split core functionality, DMA and
-> MFD glue") said, these MMC controllers use the IP from Panasonic.
-> 
-> TMIO (Toshiba Mobile IO) MMC was the first upstreamed user of this IP.
-> The common driver code was split and expanded as 'tmio-mmc-core', then
-> it became historical misnomer since 'tmio' is not the name of this IP.
-> 
-> In the discussion [1], we decide to keep this name as-is at least in
-> Linux driver level because renaming everything is a big churn.
-> 
-> However, DT should not be oriented to a particular project even though
-> it is mainly developed in Linux communities.
-> 
-> This is the misfortune only in Linux. Let's stop exporting it to other
-> projects, where there is no good reason to call this hardware "TMIO".
-> Rename the file to renesas,sdhi.txt. In fact, all the information in
-> this file is specific to the Renesas platform.
-> 
-> This commit also removes the first paragraph entirely. The DT-binding
-> should describe the hardware. It is strange to talk about Linux driver
-> internals such as how the drivers are probed, how platform data are
-> handed off, etc.
-> 
-> [1] https://www.spinics.net/lists/linux-mmc/msg46952.html
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Hi Heiko,
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+On Fri, 2019-06-21 at 18:13 -0300, Ezequiel Garcia wrote:
+> Let's support Gamma LUT configuration on RK3288 SoCs.
+> 
+> In order to do so, this series adds a new and optional
+> address resource.
+>     
+> A separate address resource is required because on this RK3288,
+> the LUT address is after the MMU address, which is requested
+> by the iommu driver. This prevents the DRM driver
+> from requesting an entire register space.
+> 
+> The current implementation works for RGB 10-bit tables, as that
+> is what seems to work on RK3288.
+> 
+> This has been tested on a Rock2 Square board, using
+> a hacked 'modetest' tool, with legacy and atomic APIs. 
+> 
+> Thanks,
+> Eze
+> 
+> Changes from v1:
+> * drop explicit linear LUT after finding a proper
+>   way to disable gamma correction.
+> * avoid setting gamma is the CRTC is not active.
+> * s/int/unsigned int as suggested by Jacopo.
+> * only enable color management and set gamma size
+>   if gamma LUT is supported, suggested by Doug.
+> * drop the reg-names usage, and instead just use indexed reg
+>   specifiers, suggested by Doug.
+> 
+> Changes from RFC:
+> * Request (an optional) address resource for the LUT.
+> * Add devicetree changes.
+> * Drop support for RK3399, which doesn't seem to work
+>   out of the box and needs more research.
+> * Support pass-thru setting when GAMMA_LUT is NULL.
+> * Add a check for the gamma size, as suggested by Ilia.
+> * Move gamma setting to atomic_commit_tail, as pointed
+>   out by Jacopo/Laurent, is the correct way.
+> 
+> Ezequiel Garcia (3):
+>   dt-bindings: display: rockchip: document VOP gamma LUT address
+>   drm/rockchip: Add optional support for CRTC gamma LUT
+>   ARM: dts: rockchip: Add RK3288 VOP gamma LUT address
+> 
+>  .../display/rockchip/rockchip-vop.txt         |   6 +-
+>  arch/arm/boot/dts/rk3288.dtsi                 |   4 +-
+>  drivers/gpu/drm/rockchip/rockchip_drm_fb.c    |   3 +
+>  drivers/gpu/drm/rockchip/rockchip_drm_vop.c   | 114 ++++++++++++++++++
+>  drivers/gpu/drm/rockchip/rockchip_drm_vop.h   |   7 ++
+>  drivers/gpu/drm/rockchip/rockchip_vop_reg.c   |   2 +
+>  6 files changed, 133 insertions(+), 3 deletions(-)
+> 
 
-> ---
-> 
-> Changes in v2:
->  - Rename to renesas,sdhi.txt instead of renesas_sdhi.txt
-> 
->  .../bindings/mmc/{tmio_mmc.txt => renesas,sdhi.txt}   | 11 +----------
->  1 file changed, 1 insertion(+), 10 deletions(-)
->  rename Documentation/devicetree/bindings/mmc/{tmio_mmc.txt => renesas,sdhi.txt} (87%)
-> 
-> diff --git a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt b/Documentation/devicetree/bindings/mmc/renesas,sdhi.txt
-> similarity index 87%
-> rename from Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-> rename to Documentation/devicetree/bindings/mmc/renesas,sdhi.txt
-> index 2b4f17ca9087..dd08d038a65c 100644
-> --- a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-> +++ b/Documentation/devicetree/bindings/mmc/renesas,sdhi.txt
-> @@ -1,13 +1,4 @@
-> -* Toshiba Mobile IO SD/MMC controller
-> -
-> -The tmio-mmc driver doesn't probe its devices actively, instead its binding to
-> -devices is managed by either MFD drivers or by the sh_mobile_sdhi platform
-> -driver. Those drivers supply the tmio-mmc driver with platform data, that either
-> -describe hardware capabilities, known to them, or are obtained by them from
-> -their own platform data or from their DT information. In the latter case all
-> -compulsory and any optional properties, common to all SD/MMC drivers, as
-> -described in mmc.txt, can be used. Additionally the following tmio_mmc-specific
-> -optional bindings can be used.
-> +* Renesas SDHI SD/MMC controller
->  
->  Required properties:
->  - compatible: should contain one or more of the following:
-> -- 
-> 2.17.1
-> 
+Any other feedback on this series? If you are happy with the approach now,
+I am wondering if you can take it or if it's way too late.
+
+Thanks,
+Eze
+
+
