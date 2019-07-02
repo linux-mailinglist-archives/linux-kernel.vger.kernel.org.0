@@ -2,60 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93F165D192
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 16:22:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 541E25CE64
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 13:28:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727111AbfGBOWK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 10:22:10 -0400
-Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:37289 "EHLO
-        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726803AbfGBOWK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 10:22:10 -0400
-X-Greylist: delayed 2725 seconds by postgrey-1.27 at vger.kernel.org; Tue, 02 Jul 2019 10:22:09 EDT
-Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
-        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id x62DZ7Dh025485;
-        Tue, 2 Jul 2019 16:35:07 +0300
-Received: by taln60.nuvoton.co.il (Postfix, from userid 8441)
-        id 75DD761FCC; Tue,  2 Jul 2019 16:35:07 +0300 (IDT)
-From:   Avi Fishman <avifishman70@gmail.com>
-To:     tudor.ambarus@microchip.com, dwmw2@infradead.org,
-        computersforpeace@gmail.com, miquel.raynal@bootlin.com,
-        richard@nod.at, vigneshr@ti.com, linux-mtd@lists.infradead.org
-Cc:     avifishman70@gmail.com, linux-kernel@vger.kernel.org,
-        tmaimon77@gmail.com, openbmc@lists.ozlabs.org
-Subject: [PATCH] mtd: spi-nor: Add Winbond w25q256jvm
-Date:   Tue,  2 Jul 2019 16:34:44 +0300
-Message-Id: <20190702133444.444440-1-avifishman70@gmail.com>
-X-Mailer: git-send-email 2.18.0
+        id S1726636AbfGBL2Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 07:28:16 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:57426 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725867AbfGBL2Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 07:28:16 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 544329EB6D970CEBF76A;
+        Tue,  2 Jul 2019 19:28:09 +0800 (CST)
+Received: from huawei.com (10.175.100.202) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.439.0; Tue, 2 Jul 2019
+ 19:28:00 +0800
+From:   Miaohe Lin <linmiaohe@huawei.com>
+To:     <bhelgaas@google.com>, <andy.shevchenko@gmail.com>,
+        <sebott@linux.ibm.com>, <lukas@wunner.de>,
+        <gustavo@embeddedor.com>, <linux-pci@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <linmiaohe@huawei.com>, <mingfangsen@huawei.com>
+Subject: [PATCH] net: pci: Fix hotplug event timeout with shpchp
+Date:   Tue, 2 Jul 2019 13:35:19 +0000
+Message-ID: <1562074519-205047-1-git-send-email-linmiaohe@huawei.com>
+X-Mailer: git-send-email 1.8.3.4
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.175.100.202]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Similar to w25q256 (besides not supporting QPI mode) but with different ID.
-The "JVM" suffix is in the datasheet.
-The datasheet indicates DUAL and QUAD are supported.
-https://www.winbond.com/resource-files/w25q256jv%20spi%20revi%2010232018%20plus.pdf
+Hotplug a network card would take more than 5 seconds
+in qemu + shpchp scene. It’s because 5 seconds
+delayed_work in func handle_button_press_event with
+case STATIC_STATE. And this will break some
+protocols with timeout within 5 seconds.
 
-Signed-off-by: Avi Fishman <avifishman70@gmail.com>
+Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
 ---
- drivers/mtd/spi-nor/spi-nor.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/pci/hotplug/shpchp_ctrl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-index 0c2ec1c21434..ccb217a24404 100644
---- a/drivers/mtd/spi-nor/spi-nor.c
-+++ b/drivers/mtd/spi-nor/spi-nor.c
-@@ -2120,6 +2120,8 @@ static const struct flash_info spi_nor_ids[] = {
- 	{ "w25q80bl", INFO(0xef4014, 0, 64 * 1024,  16, SECT_4K) },
- 	{ "w25q128", INFO(0xef4018, 0, 64 * 1024, 256, SECT_4K) },
- 	{ "w25q256", INFO(0xef4019, 0, 64 * 1024, 512, SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
-+	{ "w25q256jvm", INFO(0xef7019, 0, 64 * 1024, 512,
-+			SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
- 	{ "w25m512jv", INFO(0xef7119, 0, 64 * 1024, 1024,
- 			SECT_4K | SPI_NOR_QUAD_READ | SPI_NOR_DUAL_READ) },
+diff --git a/drivers/pci/hotplug/shpchp_ctrl.c b/drivers/pci/hotplug/shpchp_ctrl.c
+index 078003dcde5b..cbb00acaba0d 100644
+--- a/drivers/pci/hotplug/shpchp_ctrl.c
++++ b/drivers/pci/hotplug/shpchp_ctrl.c
+@@ -478,7 +478,7 @@ static void handle_button_press_event(struct slot *p_slot)
+ 		p_slot->hpc_ops->green_led_blink(p_slot);
+ 		p_slot->hpc_ops->set_attention_status(p_slot, 0);
  
+-		queue_delayed_work(p_slot->wq, &p_slot->work, 5*HZ);
++		queue_delayed_work(p_slot->wq, &p_slot->work, 0);
+ 		break;
+ 	case BLINKINGOFF_STATE:
+ 	case BLINKINGON_STATE:
 -- 
-2.18.0
+2.21.GIT
 
