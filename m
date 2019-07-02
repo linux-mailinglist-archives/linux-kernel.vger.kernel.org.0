@@ -2,137 +2,223 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FFB85D0E3
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 15:41:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F52A5D0E8
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 15:41:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727192AbfGBNkl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 09:40:41 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:34431 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727035AbfGBNkk (ORCPT
+        id S1727104AbfGBNll (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 09:41:41 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:18603 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726430AbfGBNlk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 09:40:40 -0400
-Received: by mail-pg1-f193.google.com with SMTP id p10so7723544pgn.1;
-        Tue, 02 Jul 2019 06:40:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=TG01TGISb1yaWBogYU6mOa7ow9eBYHJfFmPCCNfkb5M=;
-        b=smcXrkSUJ7rZrYSKdhGuS234aAc2L4NUovI+9Jh5zaHdqd8Lc2ZLImzROrsYAaRluZ
-         hjRjyDZ3IuV7aW2oLPDRhlT38+mFZAoimJPMrL9oa9sI79lrXWiJhK33ucc9HEBRdT/3
-         wdMiB+8W7xVE0UCW2Ajunyn0LUBpXKOI8yf2edhyqZLuAhq70tUNf9tzJkuTa9LSuZii
-         NO9TRqdLZs30F408XkvP507HQaEXLvPDl/OgiA/W15XNKKlgshlaov5KrWLW2T74Wn/y
-         QD7stJDgihpq5zUOuhv0mOX2d14sa3fhvO4BiXEJElF9tk3/FNx3FQU1YOe/RJQPWKuQ
-         /W0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=TG01TGISb1yaWBogYU6mOa7ow9eBYHJfFmPCCNfkb5M=;
-        b=g3W9XBt4B/xAwqnXHFNkMxePezPNRYvzDURcvBNkVWgD10JAQEJmY/eNSpB7zZCqBy
-         K+Xzos7QBBDFQ58PHlTEShaT6Z8LT7OKk59tIZPx2Hms8IlMpIsKa3P9q4+XJuuzOnYM
-         cZX/4HbPU0yCiiuFvcwIlIa2iFYm8vAEbuCPcFRD95/dxqclcZIDW5mN5OXx5GUAgM7L
-         cEmyu/r1mSx3wB3FAG/mUtrcEBRa9U5px1rQIvJQNcwQEpYFVcyKrTcDyg/4rpXxF/ix
-         uN2D+QT/lA3lzY5ObdaWHFZ3XkVRBDdJc0d38TVJ8Kn9rhc8sb/1yr/tohz2giilivEA
-         LvZA==
-X-Gm-Message-State: APjAAAUIa+kRQO/eJ7gThfVHu6WhJOxhZHqLIE1UAznxq2djQPIgOufG
-        Mj5hRtJIbGhqRcv+19o9f9c=
-X-Google-Smtp-Source: APXvYqywgKjj5HcP6LGVDjHKN+eHEzwJaObV/i9U5epabyKIF9WYhMzD1XH0fJ4ei3TIuE7aNAwsyg==
-X-Received: by 2002:a63:4105:: with SMTP id o5mr31798673pga.308.1562074838556;
-        Tue, 02 Jul 2019 06:40:38 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id a3sm17913917pfi.63.2019.07.02.06.40.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 02 Jul 2019 06:40:38 -0700 (PDT)
-Date:   Tue, 2 Jul 2019 06:40:37 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Ken Sloat <KSloat@aampglobal.com>
-Cc:     "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "ludovic.desroches@microchip.com" <ludovic.desroches@microchip.com>,
-        "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/1] watchdog: atmel: atmel-sama5d4-wdt: Disable
- watchdog on system suspend
-Message-ID: <20190702134037.GA23223@roeck-us.net>
-References: <20190614125310.29458-1-ksloat@aampglobal.com>
+        Tue, 2 Jul 2019 09:41:40 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d1b5f110001>; Tue, 02 Jul 2019 06:41:37 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Tue, 02 Jul 2019 06:41:38 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Tue, 02 Jul 2019 06:41:38 -0700
+Received: from [10.21.132.148] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 2 Jul
+ 2019 13:41:35 +0000
+Subject: Re: [PATCH v3] dmaengine: tegra-apb: Support per-burst residue
+ granularity
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Ben Dooks <ben.dooks@codethink.co.uk>
+CC:     <dmaengine@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20190627194728.8948-1-digetx@gmail.com>
+ <dab25158-272c-a18f-a858-433f7f9000e0@nvidia.com>
+ <3a5403fe-b81f-993c-e7c0-407387e001d9@gmail.com>
+ <b50045f9-7d8f-d91a-8629-625bcd7057bc@nvidia.com>
+ <ed84cc7d-08de-dbd7-40e2-bc84c5debe1a@gmail.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <e7199039-c4e5-304d-3d60-58ecd6648771@nvidia.com>
+Date:   Tue, 2 Jul 2019 14:41:33 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190614125310.29458-1-ksloat@aampglobal.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <ed84cc7d-08de-dbd7-40e2-bc84c5debe1a@gmail.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1562074897; bh=oUgLhVtZt+epnYVVZmnX84R+rFX+CGt8GGlI2/HhW4k=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=oX61GCS4lX8/4mID96beL2doeqzWM/L61oxnIEXDzmKyO4T9rQKQVow59wE2od7fX
+         my3/lmtVJrNh8wzRNlDu6RXNXByJwII2Ml87fZmJ5FtiN8F55itL6Ok/aZG7AQIvFz
+         JREX6h2x/9gWdBPzFCDfPpfDXQa+8wCcLx/lP8hH1MSw1FNZ+hsN3pxBAnsynLY3yp
+         DSFmhoTe8QroFakLd1nw5u/jyOfjUgGBiMtLZg7C1yXAY94aJodR4gxfIT8JiolReL
+         5YP/8w9MMePAgkQUf1W4zZHHgRzrXRkgVA5ZagrpDyqruaX8usycy3tqLtke1pW1C4
+         70elBu6cYlMtQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 14, 2019 at 12:53:22PM +0000, Ken Sloat wrote:
-> From: Ken Sloat <ksloat@aampglobal.com>
-> 
-> Currently, the atmel-sama5d4-wdt continues to run after system suspend.
-> Unless the system resumes within the watchdog timeout period so the
-> userspace can kick it, the system will be reset. This change disables
-> the watchdog on suspend if it is active and re-enables on resume. These
-> actions occur during the late and early phases of suspend and resume
-> respectively to minimize chances where a lock could occur while the
-> watchdog is disabled.
-> 
-> Signed-off-by: Ken Sloat <ksloat@aampglobal.com>
-> Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+On 02/07/2019 14:22, Dmitry Osipenko wrote:
+> 02.07.2019 15:54, Jon Hunter =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>
+>> On 02/07/2019 12:37, Dmitry Osipenko wrote:
+>>> 02.07.2019 14:20, Jon Hunter =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>>
+>>>> On 27/06/2019 20:47, Dmitry Osipenko wrote:
+>>>>> Tegra's APB DMA engine updates words counter after each transferred b=
+urst
+>>>>> of data, hence it can report transfer's residual with more fidelity w=
+hich
+>>>>> may be required in cases like audio playback. In particular this fixe=
+s
+>>>>> audio stuttering during playback in a chromium web browser. The patch=
+ is
+>>>>> based on the original work that was made by Ben Dooks and a patch fro=
+m
+>>>>> downstream kernel. It was tested on Tegra20 and Tegra30 devices.
+>>>>>
+>>>>> Link: https://lore.kernel.org/lkml/20190424162348.23692-1-ben.dooks@c=
+odethink.co.uk/
+>>>>> Link: https://nv-tegra.nvidia.com/gitweb/?p=3Dlinux-4.4.git;a=3Dcommi=
+t;h=3Dc7bba40c6846fbf3eaad35c4472dcc7d8bbc02e5
+>>>>> Inspired-by: Ben Dooks <ben.dooks@codethink.co.uk>
+>>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>>>> ---
+>>>>>
+>>>>> Changelog:
+>>>>>
+>>>>> v3:  Added workaround for a hardware design shortcoming that results
+>>>>>      in a words counter wraparound before end-of-transfer bit is set
+>>>>>      in a cyclic mode.
+>>>>>
+>>>>> v2:  Addressed review comments made by Jon Hunter to v1. We won't try
+>>>>>      to get words count if dma_desc is on free list as it will result
+>>>>>      in a NULL dereference because this case wasn't handled properly.
+>>>>>
+>>>>>      The residual value is now updated properly, avoiding potential
+>>>>>      integer overflow by adding the "bytes" to the "bytes_transferred=
+"
+>>>>>      instead of the subtraction.
+>>>>>
+>>>>>  drivers/dma/tegra20-apb-dma.c | 69 +++++++++++++++++++++++++++++++--=
+--
+>>>>>  1 file changed, 62 insertions(+), 7 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-=
+dma.c
+>>>>> index 79e9593815f1..71473eda28ee 100644
+>>>>> --- a/drivers/dma/tegra20-apb-dma.c
+>>>>> +++ b/drivers/dma/tegra20-apb-dma.c
+>>>>> @@ -152,6 +152,7 @@ struct tegra_dma_sg_req {
+>>>>>  	bool				last_sg;
+>>>>>  	struct list_head		node;
+>>>>>  	struct tegra_dma_desc		*dma_desc;
+>>>>> +	unsigned int			words_xferred;
+>>>>>  };
+>>>>> =20
+>>>>>  /*
+>>>>> @@ -496,6 +497,7 @@ static void tegra_dma_configure_for_next(struct t=
+egra_dma_channel *tdc,
+>>>>>  	tdc_write(tdc, TEGRA_APBDMA_CHAN_CSR,
+>>>>>  				nsg_req->ch_regs.csr | TEGRA_APBDMA_CSR_ENB);
+>>>>>  	nsg_req->configured =3D true;
+>>>>> +	nsg_req->words_xferred =3D 0;
+>>>>> =20
+>>>>>  	tegra_dma_resume(tdc);
+>>>>>  }
+>>>>> @@ -511,6 +513,7 @@ static void tdc_start_head_req(struct tegra_dma_c=
+hannel *tdc)
+>>>>>  					typeof(*sg_req), node);
+>>>>>  	tegra_dma_start(tdc, sg_req);
+>>>>>  	sg_req->configured =3D true;
+>>>>> +	sg_req->words_xferred =3D 0;
+>>>>>  	tdc->busy =3D true;
+>>>>>  }
+>>>>> =20
+>>>>> @@ -797,6 +800,61 @@ static int tegra_dma_terminate_all(struct dma_ch=
+an *dc)
+>>>>>  	return 0;
+>>>>>  }
+>>>>> =20
+>>>>> +static unsigned int tegra_dma_sg_bytes_xferred(struct tegra_dma_chan=
+nel *tdc,
+>>>>> +					       struct tegra_dma_sg_req *sg_req)
+>>>>> +{
+>>>>> +	unsigned long status, wcount =3D 0;
+>>>>> +
+>>>>> +	if (!list_is_first(&sg_req->node, &tdc->pending_sg_req))
+>>>>> +		return 0;
+>>>>> +
+>>>>> +	if (tdc->tdma->chip_data->support_separate_wcount_reg)
+>>>>> +		wcount =3D tdc_read(tdc, TEGRA_APBDMA_CHAN_WORD_TRANSFER);
+>>>>> +
+>>>>> +	status =3D tdc_read(tdc, TEGRA_APBDMA_CHAN_STATUS);
+>>>>> +
+>>>>> +	if (!tdc->tdma->chip_data->support_separate_wcount_reg)
+>>>>> +		wcount =3D status;
+>>>>> +
+>>>>> +	if (status & TEGRA_APBDMA_STATUS_ISE_EOC)
+>>>>> +		return sg_req->req_len;
+>>>>> +
+>>>>> +	wcount =3D get_current_xferred_count(tdc, sg_req, wcount);
+>>>>> +
+>>>>> +	if (!wcount) {
+>>>>> +		/*
+>>>>> +		 * If wcount wasn't ever polled for this SG before, then
+>>>>> +		 * simply assume that transfer hasn't started yet.
+>>>>> +		 *
+>>>>> +		 * Otherwise it's the end of the transfer.
+>>>>> +		 *
+>>>>> +		 * The alternative would be to poll the status register
+>>>>> +		 * until EOC bit is set or wcount goes UP. That's so
+>>>>> +		 * because EOC bit is getting set only after the last
+>>>>> +		 * burst's completion and counter is less than the actual
+>>>>> +		 * transfer size by 4 bytes. The counter value wraps around
+>>>>> +		 * in a cyclic mode before EOC is set(!), so we can't easily
+>>>>> +		 * distinguish start of transfer from its end.
+>>>>> +		 */
+>>>>> +		if (sg_req->words_xferred)
+>>>>> +			wcount =3D sg_req->req_len - 4;
+>>>>> +
+>>>>> +	} else if (wcount < sg_req->words_xferred) {
+>>>>> +		/*
+>>>>> +		 * This case shall not ever happen because EOC bit
+>>>>> +		 * must be set once next cyclic transfer is started.
+>>>>
+>>>> I am not sure I follow this and why this condition cannot happen for
+>>>> cyclic transfers. What about non-cyclic transfers?
+>>>
+>>> It cannot happen because the EOC bit will be set in that case. The coun=
+ter wraps
+>>> around when the transfer of a last burst happens, EOC bit is guaranteed=
+ to be set
+>>> after completion of the last burst. That's my observation after a thoro=
+ugh testing,
+>>> it will be very odd if EOC setting happened completely asynchronously.
+>>
+>> I see how you know that the EOC is set. Anyway, you check if the EOC is
+>> set before and if so return sg_req->req_len prior to this test.
+>>
+>> Maybe I am missing something, but what happens if we are mid block when
+>> dmaengine_tx_status() is called? That happen asynchronously right?
+>=20
+>=20
+> Do you mean asynchronously in regards to the ISR? Or something else?
 
-> ---
->  Changes in v2:
->  -Consolidate resume and resume early statements.
-> 
->  drivers/watchdog/sama5d4_wdt.c | 21 ++++++++++++++++++---
->  1 file changed, 18 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/watchdog/sama5d4_wdt.c b/drivers/watchdog/sama5d4_wdt.c
-> index 111695223aae..0d123f8cbcc6 100644
-> --- a/drivers/watchdog/sama5d4_wdt.c
-> +++ b/drivers/watchdog/sama5d4_wdt.c
-> @@ -280,7 +280,17 @@ static const struct of_device_id sama5d4_wdt_of_match[] = {
->  MODULE_DEVICE_TABLE(of, sama5d4_wdt_of_match);
->  
->  #ifdef CONFIG_PM_SLEEP
-> -static int sama5d4_wdt_resume(struct device *dev)
-> +static int sama5d4_wdt_suspend_late(struct device *dev)
-> +{
-> +	struct sama5d4_wdt *wdt = dev_get_drvdata(dev);
-> +
-> +	if (watchdog_active(&wdt->wdd))
-> +		sama5d4_wdt_stop(&wdt->wdd);
-> +
-> +	return 0;
-> +}
-> +
-> +static int sama5d4_wdt_resume_early(struct device *dev)
->  {
->  	struct sama5d4_wdt *wdt = dev_get_drvdata(dev);
->  
-> @@ -291,12 +301,17 @@ static int sama5d4_wdt_resume(struct device *dev)
->  	 */
->  	sama5d4_wdt_init(wdt);
->  
-> +	if (watchdog_active(&wdt->wdd))
-> +		sama5d4_wdt_start(&wdt->wdd);
-> +
->  	return 0;
->  }
->  #endif
->  
-> -static SIMPLE_DEV_PM_OPS(sama5d4_wdt_pm_ops, NULL,
-> -			 sama5d4_wdt_resume);
-> +static const struct dev_pm_ops sama5d4_wdt_pm_ops = {
-> +	SET_LATE_SYSTEM_SLEEP_PM_OPS(sama5d4_wdt_suspend_late,
-> +			sama5d4_wdt_resume_early)
-> +};
->  
->  static struct platform_driver sama5d4_wdt_driver = {
->  	.probe		= sama5d4_wdt_probe,
+In the sense that the client can call dmaengine_tx_status() at anytime
+to check the status of a transfer.
+
+Cheers
+Jon
+
+--=20
+nvpublic
