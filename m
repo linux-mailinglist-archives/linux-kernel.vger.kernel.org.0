@@ -2,129 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B2725D9D0
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:54:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1703B5D9B7
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:51:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727350AbfGCAyg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 20:54:36 -0400
-Received: from mail-ot1-f73.google.com ([209.85.210.73]:44178 "EHLO
-        mail-ot1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727049AbfGCAyf (ORCPT
+        id S1727374AbfGCAvp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 20:51:45 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:43163 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726430AbfGCAvp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 20:54:35 -0400
-Received: by mail-ot1-f73.google.com with SMTP id q16so416254otn.11
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 17:54:35 -0700 (PDT)
+        Tue, 2 Jul 2019 20:51:45 -0400
+Received: by mail-pf1-f194.google.com with SMTP id i189so288765pfg.10
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 17:51:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=R48TQi9q1FK2+H6bY660z2znRHgaYhNpT8f8fUMByQw=;
-        b=mBLQgYkxMEYzGqUznWDGxambBtuhZyiOOJORpyP891jPKRAhRjUBbORNd+4DveyMeD
-         rGZ3DeH9paDarY7J+YcNLIlYdogJBVNEJKYgDw+S6n1p9yHE06ZYNNVgi++pBAmRFG/v
-         rjO2ylNX11c0/iLdV/4/sLLWlx34EOzgETHmr/fYlkrJmVTXymJmHBBZhFl2QT6PpdCU
-         IFOReC8/kxoOUztR6XJtbeONmYjlCu8W0aKlHJKEpIfHJv0Tux8zLMjt2JtmJAp35Mlb
-         d1cbsotsN2YitgBnWkr+C909Etlm7N0KjWV5gNA1tpvHAhnYmcinusuyfNvhKkIgrINt
-         FOkg==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=BbKEAFwQNgdJMuzfiYPMlyXAsoNdsnEp4Uok88ypekU=;
+        b=dzRWt1d0cH9OT8aIY2cfNcZP1PY8roOuwd7uTGeLkG0cZl8zRBQFiUDispqLSA/UuQ
+         7qtogcL/XgZ4GiHoPPdi2jdl9O8tG/VgyjT9Dvw6mhdOaxNhTFFazxDQ55AxHlhv/wMv
+         Zs28goiGB3utYWKBKTNH2WzG18bLyrlTHqcBQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=R48TQi9q1FK2+H6bY660z2znRHgaYhNpT8f8fUMByQw=;
-        b=JOCHvNk+gnuLe1n7FzgfTuVc3h/YqCxkN0ilw1CUWwyKYz9dwOXQYTzBnZECWGU07W
-         iRMTbRa/36xmRGzsiG1BpU08Cb3FFmbzzCmDP98t/wqWtvcOEPuOLp90TUP+G8oyfsOn
-         zvIs3u+/jfByRkLOXhOdVjE3Gz21E9CRWIYdWERB2UmPa/5cZXJDsJGchg3EUglCAc6Y
-         p4Fvy53f40uNHbxSalZ/YSy8crei9gdXAPQ+UWT75wuX7YLItpUEXd8Fcy9z2NED8FhT
-         9j5OGNJO3pNYPezzO7i6/jNNCq21uUR9bd26gAIknc71+yx9XHQ2cgkJfPlXgxcuh0/0
-         jnYQ==
-X-Gm-Message-State: APjAAAUsmaRuHBWDv+ynINvrBPi418RX4fYJaefUDsqAJR/UAgwFxVr/
-        ZqxqwH6J8/hMvq/7LfpjvKp00VaS1w==
-X-Google-Smtp-Source: APXvYqxlTTxA9kVd7nmSx/MlM/hqPfeDUWd1gdGvu4tmxQfmIm2aDz4ezGffhECd1ECKMzycYcMzcnsBww==
-X-Received: by 2002:a63:6c04:: with SMTP id h4mr2529866pgc.94.1562111113724;
- Tue, 02 Jul 2019 16:45:13 -0700 (PDT)
-Date:   Tue,  2 Jul 2019 16:41:35 -0700
-In-Reply-To: <CAJkfWY4yvVVmJoQ0WwyoFBkWYsUJnnQPNU+-g23-m-L3ETe_hQ@mail.gmail.com>
-Message-Id: <20190702234135.78780-1-nhuck@google.com>
-Mime-Version: 1.0
-References: <CAJkfWY4yvVVmJoQ0WwyoFBkWYsUJnnQPNU+-g23-m-L3ETe_hQ@mail.gmail.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=BbKEAFwQNgdJMuzfiYPMlyXAsoNdsnEp4Uok88ypekU=;
+        b=PFeIkvy9uKLgE9w7SUN0roTqL2GAkCwc/AfEW8j3qq7nSZK5QoMGfBSFAHumvUTk//
+         unAbgAJgXv9jot8M7hcgclYibdbo0pFghsC8uSg7XH/BLiDnlLo/ep/H6BaZlZUvQV/N
+         gipb2WI++Gf+JrydTzfdoyYKIgkRUnqjgsynYafApmeZjHPWiTi7Ui8p3IZ5ESa7U9OZ
+         Otav/ncLfNZZIZ/KkfKTxDPUQDKKVr/LUU23k9h+2Z59AZwmIcBekYGebrnd50/Bw2a9
+         IWEHitxsHDkBqUtO4L2GkwM84bzsB/rsfTVKWezcVkpSTtUWxMEaHlwr58kaksSFdyYw
+         lD7A==
+X-Gm-Message-State: APjAAAWTg7dePgOyVktM8ROyVO0mCeEQSmWoqXp+XZKqRoYIdD9MaD34
+        CbZRAKkhibhbyDZaM1cUXULIO5X4EOE=
+X-Google-Smtp-Source: APXvYqzlQqAaaA9TlBYcDIIcItk2Sbug9JeUuEIc7DDU9bCUWN1kFgrxSAljeRrXbuNEk+5pPKxVXA==
+X-Received: by 2002:a17:90a:32c7:: with SMTP id l65mr8573547pjb.1.1562110982720;
+        Tue, 02 Jul 2019 16:43:02 -0700 (PDT)
+Received: from exogeni.mtv.corp.google.com ([2620:15c:202:1:5be8:f2a6:fd7b:7459])
+        by smtp.gmail.com with ESMTPSA id c26sm167611pfr.172.2019.07.02.16.43.00
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 02 Jul 2019 16:43:01 -0700 (PDT)
+From:   Derek Basehore <dbasehore@chromium.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        CK Hu <ck.hu@mediatek.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Derek Basehore <dbasehore@chromium.org>
+Subject: [PATCH v4 0/4] Panel rotation patches
+Date:   Tue,  2 Jul 2019 16:42:54 -0700
+Message-Id: <20190702234258.136349-1-dbasehore@chromium.org>
 X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
-Subject: [PATCH v2] arm64: mm: Fix dead assignment of old_pte
-From:   Nathan Huckleberry <nhuck@google.com>
-To:     catalin.marinas@arm.com, will@kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com,
-        Nathan Huckleberry <nhuck@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When analyzed with the clang static analyzer the
-following warning occurs
+This adds the plumbing for reading panel rotation from the devicetree
+and sets up adding a panel property for the panel orientation on
+Mediatek SoCs when a rotation is present.
 
-line 251, column 2
-Value stored to 'old_pte' is never read
+v4 changes:
+-fixed some changes made to the i915 driver
+-clarified comments on of orientation helper
 
-This warning is repeated every time pgtable.h is
-included by another file and produces ~3500
-extra warnings.
+v3 changes:
+-changed from attach/detach callbacks to directly setting fixed panel
+ values in drm_panel_attach
+-removed update to Documentation
+-added separate function for quirked panel orientation property init
 
-Moving old_pte into preprocessor guard.
+v2 changes:
+fixed build errors in i915
 
-Cc: clang-built-linux@googlegroups.com
-Signed-off-by: Nathan Huckleberry <nhuck@google.com>
----
-Changes from v1 -> v2
-* Added scope to avoid [-Wdeclaration-after-statement]
- arch/arm64/include/asm/pgtable.h | 27 ++++++++++++++++-----------
- 1 file changed, 16 insertions(+), 11 deletions(-)
+Derek Basehore (4):
+  drm/panel: Add helper for reading DT rotation
+  drm/panel: set display info in panel attach
+  drm/connector: Split out orientation quirk detection
+  drm/mtk: add panel orientation property
 
-diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-index fca26759081a..12b7f08db40d 100644
---- a/arch/arm64/include/asm/pgtable.h
-+++ b/arch/arm64/include/asm/pgtable.h
-@@ -238,8 +238,6 @@ extern void __sync_icache_dcache(pte_t pteval);
- static inline void set_pte_at(struct mm_struct *mm, unsigned long addr,
- 			      pte_t *ptep, pte_t pte)
- {
--	pte_t old_pte;
--
- 	if (pte_present(pte) && pte_user_exec(pte) && !pte_special(pte))
- 		__sync_icache_dcache(pte);
- 
-@@ -248,16 +246,23 @@ static inline void set_pte_at(struct mm_struct *mm, unsigned long addr,
- 	 * hardware updates of the pte (ptep_set_access_flags safely changes
- 	 * valid ptes without going through an invalid entry).
- 	 */
--	old_pte = READ_ONCE(*ptep);
--	if (IS_ENABLED(CONFIG_DEBUG_VM) && pte_valid(old_pte) && pte_valid(pte) &&
--	   (mm == current->active_mm || atomic_read(&mm->mm_users) > 1)) {
--		VM_WARN_ONCE(!pte_young(pte),
--			     "%s: racy access flag clearing: 0x%016llx -> 0x%016llx",
--			     __func__, pte_val(old_pte), pte_val(pte));
--		VM_WARN_ONCE(pte_write(old_pte) && !pte_dirty(pte),
--			     "%s: racy dirty state clearing: 0x%016llx -> 0x%016llx",
--			     __func__, pte_val(old_pte), pte_val(pte));
-+	#if IS_ENABLED(CONFIG_DEBUG_VM)
-+	{
-+		pte_t old_pte;
-+
-+		old_pte = READ_ONCE(*ptep);
-+		if (pte_valid(old_pte) && pte_valid(pte) &&
-+		  (mm == current->active_mm ||
-+		   atomic_read(&mm->mm_users) > 1)) {
-+			VM_WARN_ONCE(!pte_young(pte),
-+				     "%s: racy access flag clearing: 0x%016llx -> 0x%016llx",
-+				     __func__, pte_val(old_pte), pte_val(pte));
-+			VM_WARN_ONCE(pte_write(old_pte) && !pte_dirty(pte),
-+				     "%s: racy dirty state clearing: 0x%016llx -> 0x%016llx",
-+				     __func__, pte_val(old_pte), pte_val(pte));
-+		}
- 	}
-+	#endif
- 
- 	set_pte(ptep, pte);
- }
+ drivers/gpu/drm/drm_connector.c    | 45 ++++++++++++++-----
+ drivers/gpu/drm/drm_panel.c        | 70 ++++++++++++++++++++++++++++++
+ drivers/gpu/drm/i915/intel_dp.c    |  4 +-
+ drivers/gpu/drm/i915/vlv_dsi.c     |  5 +--
+ drivers/gpu/drm/mediatek/mtk_dsi.c |  8 ++++
+ include/drm/drm_connector.h        |  2 +
+ include/drm/drm_panel.h            | 21 +++++++++
+ 7 files changed, 138 insertions(+), 17 deletions(-)
+
 -- 
 2.22.0.410.gd8fdbe21b5-goog
 
