@@ -2,120 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A8CC5C6C1
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 03:46:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D0855C6E3
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 04:03:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727055AbfGBBq4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 21:46:56 -0400
-Received: from mga02.intel.com ([134.134.136.20]:23456 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726347AbfGBBq4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 21:46:56 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Jul 2019 18:46:54 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,441,1557212400"; 
-   d="scan'208";a="165505063"
-Received: from chenyu-office.sh.intel.com ([10.239.158.163])
-  by fmsmga007.fm.intel.com with ESMTP; 01 Jul 2019 18:46:52 -0700
-Date:   Tue, 2 Jul 2019 09:57:17 +0800
-From:   Yu Chen <yu.c.chen@intel.com>
-To:     Maximilian Luz <luzmaximilian@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Subject: Re: [PATCH v2 1/2] platform: Fix device check for surfacepro3_button
-Message-ID: <20190702015717.GA20346@chenyu-office.sh.intel.com>
-References: <20190702003740.75970-1-luzmaximilian@gmail.com>
- <20190702003740.75970-2-luzmaximilian@gmail.com>
- <20190702011443.GA19902@chenyu-office.sh.intel.com>
- <91349d00-e7e2-887b-45e5-4689a401aa2f@gmail.com>
- <d7e17f54-4c33-fa8d-be03-9e507da8e495@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d7e17f54-4c33-fa8d-be03-9e507da8e495@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1727050AbfGBCDL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 22:03:11 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:53814 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726486AbfGBCDL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Jul 2019 22:03:11 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id C0FC314DE9791;
+        Mon,  1 Jul 2019 19:03:10 -0700 (PDT)
+Date:   Mon, 01 Jul 2019 19:03:10 -0700 (PDT)
+Message-Id: <20190701.190310.2238828290259478075.davem@davemloft.net>
+To:     linyunsheng@huawei.com
+Cc:     hkallweit1@gmail.com, gregkh@linuxfoundation.org,
+        tglx@linutronix.de, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, pbonzini@redhat.com,
+        rkrcmar@redhat.com, kvm@vger.kernel.org
+Subject: Re: [PATCH v3 net-next] net: link_watch: prevent starvation when
+ processing linkwatch wq
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <1561684399-235123-1-git-send-email-linyunsheng@huawei.com>
+References: <1561684399-235123-1-git-send-email-linyunsheng@huawei.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 01 Jul 2019 19:03:11 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 02, 2019 at 03:33:20AM +0200, Maximilian Luz wrote:
-> On 7/2/19 3:25 AM, Maximilian Luz wrote:
-> > On 7/2/19 3:14 AM, Yu Chen wrote:
-> > > On Tue, Jul 02, 2019 at 02:37:39AM +0200, Maximilian Luz wrote:
-> > > > +/*
-> > > > + * Surface Pro 4 and Surface Book 2 / Surface Pro 2017 use the same device
-> > > > + * ID (MSHW0040) for the power/volume buttons. Make sure this is the right
-> > > > + * device by checking for the _DSM method and OEM Platform Revision.
-> > > > + */
-> > > > +static int surface_button_check_MSHW0040(struct acpi_device *dev)
-> > > > +{
-> > > > +    acpi_handle handle = dev->handle;
-> > > > +    union acpi_object *result;
-> > > > +    u64 oem_platform_rev = 0;
-> > > > +
-> > > > +    // get OEM platform revision
-> > > > +    result = acpi_evaluate_dsm_typed(handle, &MSHW0040_DSM_UUID,
-> > > > +                     MSHW0040_DSM_REVISION,
-> > > > +                     MSHW0040_DSM_GET_OMPR,
-> > > > +                     NULL, ACPI_TYPE_INTEGER);
-> > > > +
-> > > Does it mean, only 5th, 6th and newer platforms have OEM platform revision?
-> > > 3rd/4th will get NULL result? Or the opposite?
-> > 
-> > Correct, from my testing (with limited sample size) and AML code: 5th
-> > and 6th generation devices have a non-zero OEM platform revision,
-> > whereas 3rd and 4th gen. devices do not have any (i.e. result will be
-> > NULL).
-> > 
-> > > > +    if (result) {
-> > > > +        oem_platform_rev = result->integer.value;
-> > > > +        ACPI_FREE(result);
-> > > > +    }
-> > > > +
-> > > > +    dev_dbg(&dev->dev, "OEM Platform Revision %llu\n", oem_platform_rev);
-> > > > +
-> > > > +    return oem_platform_rev == 0 ? 0 : -ENODEV;
-> > > if 3rd/4th do not have this oem rev information while 5th/newer have,
-> > > why the latter returns NODEV(it actually has this info)?
-> > 
-> > Since we always expect a non-zero platform revision (for 5th/6th gen.),
-> > we can initialize it to zero and use that as "unknown"/"not available".
-> > So if it can not be determined, we return NODEV.
-> 
-> Sorry, small mistake here: If it can be determined (i.e. is 5th or 6th
-> gen.) then we return NODEV. Not the other way around.
->
-How about using a boolean, according to the function name, if a mshw0040 revison
-is detected then returns true other wise false. Other than that,
-Acked-by: Chen Yu <yu.c.chen@intel.com>
+From: Yunsheng Lin <linyunsheng@huawei.com>
+Date: Fri, 28 Jun 2019 09:13:19 +0800
 
-Best,
-Chenyu
-> Also to clarify on your last question:
+> When user has configured a large number of virtual netdev, such
+> as 4K vlans, the carrier on/off operation of the real netdev
+> will also cause it's virtual netdev's link state to be processed
+> in linkwatch. Currently, the processing is done in a work queue,
+> which may cause rtnl locking starvation problem and worker
+> starvation problem for other work queue, such as irqfd_inject wq.
 > 
-> On 7/2/19 3:14 AM, Yu Chen wrote:
-> > >   static int surface_button_add(struct acpi_device *device)
-> > >   {
-> > >   	struct surface_button *button;
-> > > @@ -154,6 +188,10 @@ static int surface_button_add(struct acpi_device *device)
-> > >   	    strlen(SURFACE_BUTTON_OBJ_NAME)))
-> > >   		return -ENODEV;
-> > > +	error = surface_button_check_MSHW0040(device);
-> > > +	if (error)
-> > > +		return error;
-> > > +
-> > ditto, 3rd/4th get error=0?
+> This patch releases the cpu when link watch worker has processed
+> a fixed number of netdev' link watch event, and schedule the
+> work queue again when there is still link watch event remaining.
 > 
-> You are correct.
-> 
-> Maximilian
+> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+> ---
+> V2: use cond_resched and rtnl_unlock after processing a fixed
+>     number of events
+> V3: fall back to v1 and change commit log to reflect that.
+
+Applied, thanks.
