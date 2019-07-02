@@ -2,127 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4284C5CCD5
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 11:44:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B7A95CCDC
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 11:48:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726990AbfGBJoJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 05:44:09 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:39605 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726011AbfGBJoJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 05:44:09 -0400
-Received: by mail-ot1-f65.google.com with SMTP id r21so15869833otq.6;
-        Tue, 02 Jul 2019 02:44:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9j8FE0yS4BbQGQXPJ0hZG1mtgrc4IiA+27vNRTbC7BM=;
-        b=MFTUdMwnRK0dv3ncQrDorUTNSubUaJIKovgpe0ebHT/lHHEzS9ley4sjjDyRQ6p9r7
-         /Tu/aApwhLdkmRoSJN5WsN+Zj+FGxxOkIZ+Ap8Dh5tX8qejcx9L+Ki/NkPTTfDg8MQ2f
-         Z7Uyoa8oObRyeCzQF1acxlZRyBDFGcQH5BWg8Hi55T+EFfm+6iKggus2e28roR8iOkfN
-         FTi3LKPJIkMTUWbN+Uanu31H8V+ITbLmIQtLX3/5yeYb4TIsYM6+8tTTLwSJ7SRslVJd
-         rH8D9C5XyvwNH9ihcwuj4BW3YxTGskpa4bT/LdHfr/dyihKV0ygXgKNqLnFjn+yFYtqP
-         aMNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9j8FE0yS4BbQGQXPJ0hZG1mtgrc4IiA+27vNRTbC7BM=;
-        b=eWT9PQqzojqRucB8WPOEvEBkjd3NnPnCBIC14CUryvhQw9JZmLajAfqRLIH5Cit89+
-         Uqnc1IsbhkS/2SsRut9hddJxdDbUHzoaey74rbzNHpN+K97Dc47LtqHw6AvVXWjdmJXQ
-         llqTnmT63/R+NXhqKfLn5CoKs/JLfQ6OVSJ1THS+IxKqPVxkzep3Q5sL84uTsSSz55Aw
-         L/KIszUaMMqyIPE7W0WW4HNXawXzimvtP7muCsTc4MWigwyxlmDxwv7CS5wHrN+CYiPU
-         u6K0x84NNk0EbY5HWDH1YBW8MCFFuorqtMEUQfRSx7w/cP5qLxc1usOjGjzqR3zI3fyd
-         4Hgg==
-X-Gm-Message-State: APjAAAW/4ZuQcTTj10LtKI30bX4JbvBWpq/wzISvMNZUWE2DhHUkkMgY
-        6zeoEbrf5K/l1O6UivlSJj3GB0W52HCeKusChgw=
-X-Google-Smtp-Source: APXvYqwa+Dq/l4kHweyQkXdMAVKhDZdjuNNm0Cj3TNuPwW4T2lv4ATydcstAKkx8Mk73a7zTXAOwyo4ptQ+FeJk3avk=
-X-Received: by 2002:a9d:6312:: with SMTP id q18mr16540158otk.45.1562060648265;
- Tue, 02 Jul 2019 02:44:08 -0700 (PDT)
+        id S1727028AbfGBJsV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 05:48:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59802 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725851AbfGBJsV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 05:48:21 -0400
+Received: from localhost (unknown [49.207.58.199])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B151B206A2;
+        Tue,  2 Jul 2019 09:48:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562060899;
+        bh=1oN3fEDcJOO5WpXrtBAr0DvSdkhuKsbY+w9ryKcRLn0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=zmvf+OAfp3I0frwxgqCBlrfZzDVexs63/Uqe49HhJX70Bk7JuVZ3AxTGrKAAWNeU9
+         1sn66P+Cyd3A5i0tUo3QmGPiA5tEKJuIPjIvrIluHZ99OBdDsHH+nhK70q/jS3p8yy
+         v4BABf0TJvVWysjG8FGsUlWWproq+PylMFlvkDJw=
+Date:   Tue, 2 Jul 2019 15:15:10 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     broonie@kernel.org, robh+dt@kernel.org, devicetree@vger.kernel.org,
+        mark.rutland@arm.com, pierre-louis.bossart@linux.intel.com,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        bgoswami@quicinc.com
+Subject: Re: [RFC PATCH 1/5] dt-bindings: soundwire: add slave bindings
+Message-ID: <20190702094510.GO2911@vkoul-mobl>
+References: <20190611104043.22181-1-srinivas.kandagatla@linaro.org>
+ <20190611104043.22181-2-srinivas.kandagatla@linaro.org>
+ <20190701061155.GJ2911@vkoul-mobl>
+ <ce1e445e-3254-1308-8752-2cb56a7e0cc6@linaro.org>
 MIME-Version: 1.0
-References: <alpine.DEB.2.21.1906250821220.32342@nanos.tec.linutronix.de>
- <f5c36f89-61bf-a82e-3d3b-79720b2da2ef@intel.com> <alpine.DEB.2.21.1906251330330.32342@nanos.tec.linutronix.de>
- <20190628063231.GA7766@shbuild999.sh.intel.com> <alpine.DEB.2.21.1906280929010.32342@nanos.tec.linutronix.de>
- <alpine.DEB.2.21.1906290912390.1802@nanos.tec.linutronix.de>
- <alpine.DEB.2.21.1906301334290.1802@nanos.tec.linutronix.de>
- <20190630130347.GB93752@shbuild999.sh.intel.com> <alpine.DEB.2.21.1906302021320.1802@nanos.tec.linutronix.de>
- <alpine.DEB.2.21.1907010829590.1802@nanos.tec.linutronix.de>
- <20190701083654.GB12486@shbuild999.sh.intel.com> <alpine.DEB.2.21.1907011123220.1802@nanos.tec.linutronix.de>
- <d08d55c5-bb02-f832-4306-9daf234428a8@intel.com> <alpine.DEB.2.21.1907012011460.1802@nanos.tec.linutronix.de>
- <CANRm+CyQy+=fzY7jn6Q=q6C4ucHS-Z37rq87sOJT-yO0ECiHFw@mail.gmail.com> <alpine.DEB.2.21.1907020837020.1802@nanos.tec.linutronix.de>
-In-Reply-To: <alpine.DEB.2.21.1907020837020.1802@nanos.tec.linutronix.de>
-From:   Wanpeng Li <kernellwp@gmail.com>
-Date:   Tue, 2 Jul 2019 17:44:00 +0800
-Message-ID: <CANRm+CwttRaBUgL=OO0MkziD+qkj2GEXaDZfAZ9ZHAcC736kLA@mail.gmail.com>
-Subject: Re: [BUG] kvm: APIC emulation problem - was Re: [LKP] [x86/hotplug] ...
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Rong Chen <rong.a.chen@intel.com>, Feng Tang <feng.tang@intel.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "tipbuild@zytor.com" <tipbuild@zytor.com>,
-        "lkp@01.org" <lkp@01.org>, Ingo Molnar <mingo@kernel.org>,
-        kvm <kvm@vger.kernel.org>, Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Fenghua Yu <fenghua.yu@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ce1e445e-3254-1308-8752-2cb56a7e0cc6@linaro.org>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2 Jul 2019 at 14:40, Thomas Gleixner <tglx@linutronix.de> wrote:
->
-> Wanpeng,
->
-> On Tue, 2 Jul 2019, Wanpeng Li wrote:
-> > On Tue, 2 Jul 2019 at 06:44, Thomas Gleixner <tglx@linutronix.de> wrote:
-> > >
-> > > While that CPU0 hotplug test case is surely an esoteric issue, the APIC
-> > > emulation is still wrong, Even if the play_dead() code would not enable
-> > > interrupts then the pending IRR bit would turn into an ISR .. interrupt
-> > > when the APIC is reenabled on startup.
-> >
-> > >From SDM 10.4.7.2 Local APIC State After It Has Been Software Disabled
-> > * Pending interrupts in the IRR and ISR registers are held and require
-> > masking or handling by the CPU.
->
-> Correct.
->
-> > In your testing, hardware cpu will not respect soft disable APIC when
-> > IRR has already been set or APICv posted-interrupt is in flight, so we
-> > can skip soft disable APIC checking when clearing IRR and set ISR,
-> > continue to respect soft disable APIC when attempting to set IRR.
-> > Could you try below fix?
->
-> > diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-> > index 05d8934..f857a12 100644
-> > --- a/arch/x86/kvm/lapic.c
-> > +++ b/arch/x86/kvm/lapic.c
-> > @@ -2376,7 +2376,7 @@ int kvm_apic_has_interrupt(struct kvm_vcpu *vcpu)
-> >      struct kvm_lapic *apic = vcpu->arch.apic;
-> >      u32 ppr;
-> >
-> > -    if (!apic_enabled(apic))
-> > +    if (!kvm_apic_hw_enabled(apic))
-> >          return -1;
-> >
-> >      __apic_update_ppr(apic, &ppr);
->
-> Yes. That fixes it and works as expected. Thanks for the quick resolution.
+On 02-07-19, 09:22, Srinivas Kandagatla wrote:
+> Thanks Vinod for taking time to review,
+> 
+> On 01/07/2019 07:11, Vinod Koul wrote:
+> > On 11-06-19, 11:40, Srinivas Kandagatla wrote:
+> > > This patch adds bindings for Soundwire Slave devices which includes how
+> > > SoundWire enumeration address is represented in SoundWire slave device
+> > > tree nodes.
+> > > 
+> > > Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> > > ---
+> > >   .../devicetree/bindings/soundwire/bus.txt     | 48 +++++++++++++++++++
+> > >   1 file changed, 48 insertions(+)
+> > >   create mode 100644 Documentation/devicetree/bindings/soundwire/bus.txt
+> > > 
+> > > diff --git a/Documentation/devicetree/bindings/soundwire/bus.txt b/Documentation/devicetree/bindings/soundwire/bus.txt
+> > > new file mode 100644
+> > > index 000000000000..19a672b0d528
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/soundwire/bus.txt
+> > 
+> > The bindings are for slave right and the file is bus.txt?
+> 
+> I tried to follow what I have done for SLIMBus.
+> Do you prefer them to be documented in slave.txt?
 
-No problem. :)
+Would that not be better :) We should have a master.txt for bus things
 
-> I surely stared at that function, but was not sure how to fix
-> it proper.
->
-> Tested-by: Thomas Gleixner <tglx@linutronix.de>
->
-> Please add a Cc: stable... tag when you post the patch.
+> > > @@ -0,0 +1,48 @@
+> > > +SoundWire bus bindings.
+> > > +
+> > > +SoundWire is a 2-pin multi-drop interface with data and clock line.
+> > > +It facilitates development of low cost, efficient, high performance systems.
+> > > +
+> > > +SoundWire controller bindings are very much specific to vendor.
+> > > +
+> > > +Child nodes(SLAVE devices):
+> > > +Every SoundWire controller node can contain zero or more child nodes
+> > > +representing slave devices on the bus. Every SoundWire slave device is
+> > > +uniquely determined by the enumeration address containing 5 fields:
+> > > +SoundWire Version, Instance ID, Manufacturer ID, Part ID and Class ID
+> > > +for a device. Addition to below required properties, child nodes can
+> > > +have device specific bindings.
+> > > +
+> > > +Required property for SoundWire child node if it is present:
+> > > +- compatible:	 "sdwVER,MFD,PID,CID". The textual representation of
+> > > +		  SoundWire Enumeration address comprising SoundWire
+> > > +		  Version, Manufacturer ID, Part ID and Class ID,
+> > > +		  shall be in lower-case hexadecimal with leading
+> > > +		  zeroes suppressed.
+> > > +		  Version number '0x10' represents SoundWire 1.0
+> > > +		  Version number '0x11' represents SoundWire 1.1
+> > > +		  ex: "sdw10,0217,2010,0"
+> > 
+> > any reason why we want to code version number and not say sdw,1.0,...
+> > and so on?
+> 
+> For consistency reasons, as other info in hex.
+> 
+> > 
+> > > +
+> > > +- sdw-instance-id: Should be ('Instance ID') from SoundWire
+> > > +		  Enumeration Address. Instance ID is for the cases
+> > > +		  where multiple Devices of the same type or Class
+> > > +		  are attached to the bus.
+> > 
+> > instance id is part of the 48bit device id, so wont it make sense to add
+> > that to compatible as well?
+> > 
+> So we could have multiple instance of same IP, so adding this to compatible
+> string does not make sense! As driver has to list all the possible
+> compatible strings.
 
-Ok.
+Yes that makes sense.
 
-Regards,
-Wanpeng Li
+-- 
+~Vinod
