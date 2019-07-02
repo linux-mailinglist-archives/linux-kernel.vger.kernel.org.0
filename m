@@ -2,52 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47E215C9AA
+	by mail.lfdr.de (Postfix) with ESMTP id D41145C9AB
 	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 09:00:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726966AbfGBHAd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 03:00:33 -0400
-Received: from mail-ua1-f74.google.com ([209.85.222.74]:33261 "EHLO
-        mail-ua1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726793AbfGBHAb (ORCPT
+        id S1727022AbfGBHAf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 03:00:35 -0400
+Received: from mail-yb1-f201.google.com ([209.85.219.201]:54305 "EHLO
+        mail-yb1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726963AbfGBHAd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 03:00:31 -0400
-Received: by mail-ua1-f74.google.com with SMTP id p19so2908883uar.0
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 00:00:30 -0700 (PDT)
+        Tue, 2 Jul 2019 03:00:33 -0400
+Received: by mail-yb1-f201.google.com with SMTP id v6so1844982ybq.21
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 00:00:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=jkIEDx9lhGbtl8GTNeQPYnayKb1QjpDnYWNlSgnDX2I=;
-        b=RcDlj3ZnKCKLHUAPQvuFulCdmds7/PL25rWSpP2prx7gXDuUu0yQe4mwbTX/BXdk7j
-         zY5EtxwxvOgcKuplH399tndhLLfGykFadpWzABkxYsB5ZgwJUxlXUBqSWMVaewTv/xXS
-         qB1R9i4aq3H+YJQ5WORW1jbWdbYOThRU+2/8r7QBdB5yf0beKje8YniVwbUJMfUSoOcj
-         fdE/hXlDMAViknFH/F8L08npHwi0mJ8Bdx/2fexanmp0Pq+vMVt+3pwwGcSKSHA/awmG
-         vdZ0L9051/4rbbtgkfmJXj0BLLkBsxrZf2xe7lYsvEgZxC0Ov8/tU7Y2AR5hz9g5AMHC
-         qB4Q==
+        bh=10tjRTNiRVQ1maRvXOk6dYP1AuEDzD94FQs+JI5kTik=;
+        b=MdSQvFKpl6vfeOVC0oNfqY2vSaFHpxaFihe0p86f0iXOa/Fz6D3+njFH10Ct8aDp+F
+         nd87drTtqHkQKaIgHSVRt8mJcvqQP16n/sJqeZjgOmSwI5T1laiRy/CDvp7w2j+nh4KM
+         S4jeoGSbCIHPF9PewzQUZFHmiCw6qc9XmgezG3bPXoaM01Fhmf0/kzy/KPywqL5SN07o
+         bj2GF74yHe8fnr+BwEWMhRNHlCAdu8Zk4szfAhe9g5ijwfBBSERlxtEuuXmmnXw4GQoc
+         RMb2xxoH0VFxFIasTJvDkqPjEcz5SPvO61BKNOSb/HhSK0AyFTeX/hjVK50K+8NBtk9I
+         w+ng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=jkIEDx9lhGbtl8GTNeQPYnayKb1QjpDnYWNlSgnDX2I=;
-        b=W/ejUUzwdGq1dHECMF1dXBkkpfVgixGV0U9IyNZlTql2phgod1bK/uts7i0SIXm8Uo
-         JKBeOccII2YoeQMp95jbJvazJmgCjhzS3P88MBt6x7BWFMEeM27OGJDL2hFfyiYWLbk8
-         gGOkCkOYSmFH6f8otujHaHmGoaWEKfISLXWv0oo9lyhV2ohZ8+nsYUjf4EoeKANyzrBt
-         OimxnCBYOYfWOsibJ6Jjwd6qwBakJQBcNHm95HKKaRBikf8GfoHbw88YEUKPT5f/Hkkg
-         nbAfcG0Ty2CycZKvRBvvYATWY70syxeUN773ZL6aqMfbPX1CMsDzHIaPAvSQJmkyCDRV
-         aLYw==
-X-Gm-Message-State: APjAAAWOvNMw7GuwYzDA4Z4HveulBB3sG3SUxlPp7S3xK920n1fo8eEC
-        E1IIfw2LfwJy0k6NcxGUngLkYa6kKUQV
-X-Google-Smtp-Source: APXvYqwF8o3bkjVZ4hA0skprsqG5lUUbJl9am9OSOjO3d17+dYVv33sRwZdy3j0kQisXCm8+QxdZWoDkWU7W
-X-Received: by 2002:a67:d39e:: with SMTP id b30mr16845811vsj.212.1562050830069;
- Tue, 02 Jul 2019 00:00:30 -0700 (PDT)
-Date:   Mon,  1 Jul 2019 23:59:52 -0700
+        bh=10tjRTNiRVQ1maRvXOk6dYP1AuEDzD94FQs+JI5kTik=;
+        b=cP6AE5ma1Xxiul80vkSv9hG1lllhcrldcS+klL2PSrE1qI/KnpPL5aojZnWOnAykr2
+         8lD4Kx+REqnGImX2m39fuVBdf9PSt2nD++3rUwNqpqlacT0l/npkO/otXycOai483UAr
+         BMogrxGe3+sF3J6CADB8BEo6X3Nx967uikHld/Lkudfwe6ZmY2OLV8BE6uRb1AApuSw7
+         Hh064eHBuTUr/nlTgJL8VZhYoupI/2u0iZT47KnnHYBzrjilT6ZUwi9kBFVmyj0jsDcp
+         pzOF+P4axqbZWdIJ7g761mER/ZF/2nkzUxKxo+CVQVfbrhNbSnf3MjagKL3zXq1jApvU
+         bjIg==
+X-Gm-Message-State: APjAAAVE2VEHu0DJBX0l69HfXsIeW4Zsi6nNdxxzUFfHB0o/gyfMdK+O
+        lP4MxwzqNI2C5C03gVjKCNWUkUPvI9l0
+X-Google-Smtp-Source: APXvYqynWg5vmTrx3txlzrQ5nPYrCq+0XOXtJXfFoJTsEtfMeefK65Wx7tiHFdSCcaGC3LW/GhWObZDR6Gnk
+X-Received: by 2002:a81:e8d:: with SMTP id 135mr16332907ywo.213.1562050832566;
+ Tue, 02 Jul 2019 00:00:32 -0700 (PDT)
+Date:   Mon,  1 Jul 2019 23:59:53 -0700
 In-Reply-To: <20190702065955.165738-1-irogers@google.com>
-Message-Id: <20190702065955.165738-5-irogers@google.com>
+Message-Id: <20190702065955.165738-6-irogers@google.com>
 Mime-Version: 1.0
 References: <20190702065955.165738-1-irogers@google.com>
 X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
-Subject: [PATCH 4/7] perf: avoid a bounded set of visit_groups_merge iterators
+Subject: [PATCH 5/7] perf: cache perf_event_groups_first for cgroups
 From:   Ian Rogers <irogers@google.com>
 To:     Peter Zijlstra <peterz@infradead.org>,
         Ingo Molnar <mingo@redhat.com>,
@@ -65,185 +65,305 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Create a per-cpu array of iterators that gets resized when cgroup events
-are added. The size of the array reflects the maximum depth of cgroups,
-although not all cgroups will have events monitored within them. This
-approach avoids added storage cost to perf_event.
+Add a per-CPU cache of the pinned and flexible perf_event_groups_first
+value for a cgroup avoiding an O(log(#perf events)) searches during
+sched_in.
+
+This patch is derived from an original patch by Kan Liang
+<kan.liang@linux.intel.com>
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- include/linux/perf_event.h |  2 +
- kernel/events/core.c       | 94 ++++++++++++++++++++++++++++----------
- 2 files changed, 71 insertions(+), 25 deletions(-)
+ include/linux/perf_event.h |   6 ++
+ kernel/events/core.c       | 142 ++++++++++++++++++++++++++-----------
+ 2 files changed, 106 insertions(+), 42 deletions(-)
 
 diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index 16e38c286d46..5c479f61622c 100644
+index 5c479f61622c..86fb379296cb 100644
 --- a/include/linux/perf_event.h
 +++ b/include/linux/perf_event.h
-@@ -802,6 +802,8 @@ struct perf_cpu_context {
- #ifdef CONFIG_CGROUP_PERF
- 	struct perf_cgroup		*cgrp;
- 	struct list_head		cgrp_cpuctx_entry;
-+	struct perf_event		**visit_groups_merge_iterator_storage;
-+	int			       visit_groups_merge_iterator_storage_size;
- #endif
+@@ -845,6 +845,12 @@ struct perf_cgroup_info {
+ struct perf_cgroup {
+ 	struct cgroup_subsys_state	css;
+ 	struct perf_cgroup_info	__percpu *info;
++	/* A cache of the first event with the perf_cpu_context's
++	 * perf_event_context for the first event in pinned_groups or
++	 * flexible_groups. Avoids an rbtree search during sched_in.
++	 */
++	struct perf_event * __percpu    *pinned_event;
++	struct perf_event * __percpu    *flexible_event;
+ };
  
- 	struct list_head		sched_cb_entry;
+ /*
 diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 396b5ac6dcd4..a2c5ea868de9 100644
+index a2c5ea868de9..7608bd562dac 100644
 --- a/kernel/events/core.c
 +++ b/kernel/events/core.c
-@@ -1711,6 +1711,20 @@ perf_event_groups_next(struct perf_event *event)
- 	return next;
+@@ -1594,6 +1594,25 @@ perf_event_groups_insert(struct perf_event_groups *groups,
+ 
+ 	rb_link_node(&event->group_node, parent, node);
+ 	rb_insert_color(&event->group_node, &groups->tree);
++#ifdef CONFIG_CGROUP_PERF
++	if (is_cgroup_event(event)) {
++		struct perf_event **cgrp_event;
++
++		if (event->attr.pinned)
++			cgrp_event = per_cpu_ptr(event->cgrp->pinned_event,
++						 event->cpu);
++		else
++			cgrp_event = per_cpu_ptr(event->cgrp->flexible_event,
++						 event->cpu);
++		/*
++		 * Cgroup events for the same cgroup on the same CPU will
++		 * always be inserted at the right because of bigger
++		 * @groups->index. Only need to set *cgrp_event when it's NULL.
++		 */
++		if (!*cgrp_event)
++			*cgrp_event = event;
++	}
++#endif
  }
  
-+#ifdef CONFIG_CGROUP_PERF
-+int perf_event_cgroup_depth(struct perf_event *event)
-+{
-+	struct cgroup_subsys_state *css;
-+	struct perf_cgroup *cgrp = event->cgrp;
-+	int depth = 0;
-+
-+	if (cgrp)
-+		for (css = &cgrp->css; css; css = css->parent)
-+			depth++;
-+	return depth;
-+}
-+#endif
+ /*
+@@ -1608,6 +1627,9 @@ add_event_to_groups(struct perf_event *event, struct perf_event_context *ctx)
+ 	perf_event_groups_insert(groups, event);
+ }
+ 
++static struct perf_event *
++perf_event_groups_next(struct perf_event *event);
 +
  /*
-  * Iterate through the whole groups tree.
+  * Delete a group from a tree.
   */
-@@ -2592,6 +2606,7 @@ static int  __perf_install_in_context(void *info)
+@@ -1618,6 +1640,22 @@ perf_event_groups_delete(struct perf_event_groups *groups,
+ 	WARN_ON_ONCE(RB_EMPTY_NODE(&event->group_node) ||
+ 		     RB_EMPTY_ROOT(&groups->tree));
  
- #ifdef CONFIG_CGROUP_PERF
- 	if (is_cgroup_event(event)) {
-+		int max_iterators;
- 		/*
- 		 * If the current cgroup doesn't match the event's
- 		 * cgroup, we should not try to schedule it.
-@@ -2599,6 +2614,30 @@ static int  __perf_install_in_context(void *info)
- 		struct perf_cgroup *cgrp = perf_cgroup_from_task(current, ctx);
- 		reprogram = cgroup_is_descendant(cgrp->css.cgroup,
- 					event->cgrp->css.cgroup);
++#ifdef CONFIG_CGROUP_PERF
++	if (is_cgroup_event(event)) {
++		struct perf_event **cgrp_event;
 +
-+		/*
-+		 * Ensure space for visit_groups_merge iterator storage. With
-+		 * cgroup profiling we may have an event at each depth plus
-+		 * system wide events.
-+		 */
-+		max_iterators = perf_event_cgroup_depth(event) + 1;
-+		if (max_iterators >
-+		    cpuctx->visit_groups_merge_iterator_storage_size) {
-+			struct perf_event **storage =
-+			   krealloc(cpuctx->visit_groups_merge_iterator_storage,
-+				    sizeof(struct perf_event *) * max_iterators,
-+				    GFP_KERNEL);
-+			if (storage) {
-+				cpuctx->visit_groups_merge_iterator_storage
-+						= storage;
-+				cpuctx->visit_groups_merge_iterator_storage_size
-+						= max_iterators;
-+			} else {
-+				WARN_ONCE(1, "Unable to increase iterator "
-+					"storage for perf events with cgroups");
-+				ret = -ENOMEM;
-+			}
-+		}
- 	}
- #endif
++		if (event->attr.pinned)
++			cgrp_event = per_cpu_ptr(event->cgrp->pinned_event,
++						 event->cpu);
++		else
++			cgrp_event = per_cpu_ptr(event->cgrp->flexible_event,
++						 event->cpu);
++
++		if (*cgrp_event == event)
++			*cgrp_event = perf_event_groups_next(event);
++	}
++#endif
++
+ 	rb_erase(&event->group_node, &groups->tree);
+ 	init_event_group(event);
+ }
+@@ -1635,20 +1673,14 @@ del_event_from_groups(struct perf_event *event, struct perf_event_context *ctx)
+ }
  
-@@ -3389,6 +3428,13 @@ static void min_heap_pop_push(struct perf_event_heap *heap,
+ /*
+- * Get the leftmost event in the cpu/cgroup subtree.
++ * Get the leftmost event in the cpu subtree without a cgroup (ie task or
++ * system-wide).
+  */
+ static struct perf_event *
+-perf_event_groups_first(struct perf_event_groups *groups, int cpu,
+-			struct cgroup *cgrp)
++perf_event_groups_first_no_cgroup(struct perf_event_groups *groups, int cpu)
+ {
+ 	struct perf_event *node_event = NULL, *match = NULL;
+ 	struct rb_node *node = groups->tree.rb_node;
+-#ifdef CONFIG_CGROUP_PERF
+-	int node_cgrp_id, cgrp_id = 0;
+-
+-	if (cgrp)
+-		cgrp_id = cgrp->id;
+-#endif
+ 
+ 	while (node) {
+ 		node_event = container_of(node, struct perf_event, group_node);
+@@ -1662,18 +1694,10 @@ perf_event_groups_first(struct perf_event_groups *groups, int cpu,
+ 			continue;
+ 		}
+ #ifdef CONFIG_CGROUP_PERF
+-		node_cgrp_id = 0;
+-		if (node_event->cgrp && node_event->cgrp->css.cgroup)
+-			node_cgrp_id = node_event->cgrp->css.cgroup->id;
+-
+-		if (cgrp_id < node_cgrp_id) {
++		if (node_event->cgrp) {
+ 			node = node->rb_left;
+ 			continue;
+ 		}
+-		if (cgrp_id > node_cgrp_id) {
+-			node = node->rb_right;
+-			continue;
+-		}
+ #endif
+ 		match = node_event;
+ 		node = node->rb_left;
+@@ -3428,6 +3452,13 @@ static void min_heap_pop_push(struct perf_event_heap *heap,
  	}
  }
  
-+
-+/*
-+ * Without cgroups, with a task context, there may be per-CPU and any
-+ * CPU events.
-+ */
-+#define MIN_VISIT_GROUP_MERGE_ITERATORS 2
-+
++static int pinned_sched_in(struct perf_event_context *ctx,
++			   struct perf_cpu_context *cpuctx,
++			   struct perf_event *event);
++static int flexible_sched_in(struct perf_event_context *ctx,
++			     struct perf_cpu_context *cpuctx,
++			     struct perf_event *event,
++			     int *can_add_hw);
+ 
+ /*
+  * Without cgroups, with a task context, there may be per-CPU and any
+@@ -3437,11 +3468,7 @@ static void min_heap_pop_push(struct perf_event_heap *heap,
+ 
  static int visit_groups_merge(struct perf_event_context *ctx,
  			      struct perf_cpu_context *cpuctx,
- 			      struct perf_event_groups *groups,
-@@ -3398,35 +3444,27 @@ static int visit_groups_merge(struct perf_event_context *ctx,
- 					  int *),
+-			      struct perf_event_groups *groups,
+-			      int (*func)(struct perf_event_context *,
+-					  struct perf_cpu_context *,
+-					  struct perf_event *,
+-					  int *),
++			      bool is_pinned,
  			      int *data)
  {
--#ifndef CONFIG_CGROUP_PERF
--	/*
--	 * Without cgroups, with a task context, iterate over per-CPU and any
--	 * CPU events.
--	 */
--	const int max_itrs = 2;
--#else
--	/*
--	 * The depth of cgroups is limited by MAX_PATH. It is unlikely that this
--	 * many parent-child related cgroups will have perf events
--	 * monitored. Limit the number of cgroup iterators to 16.
--	 */
--	const int max_cgroups_with_events_depth = 16;
--	/*
--	 * With cgroups we either iterate for a task context (per-CPU or any CPU
--	 * events) or for per CPU the global and per cgroup events.
--	 */
--	const int max_itrs = max(2, 1 + max_cgroups_with_events_depth);
--#endif
  	/*
- 	 * A set of iterators, the iterator for the visit is chosen by the
- 	 * group_index.
- 	 */
--	struct perf_event *itrs[max_itrs];
-+#ifndef CONFIG_CGROUP_PERF
-+	struct perf_event *itrs[MIN_VISIT_GROUP_MERGE_ITERATORS];
- 	struct perf_event_heap heap = {
- 		.storage = itrs,
- 		.num_elements = 0,
--		.max_elements = max_itrs
-+		.max_elements = MIN_VISIT_GROUP_MERGE_ITERATORS
- 	};
-+#else
-+	/*
-+	 * With cgroups usage space in the CPU context reserved for iterators.
-+	 */
-+	struct perf_event_heap heap = {
-+		.storage = cpuctx->visit_groups_merge_iterator_storage,
-+		.num_elements = 0,
-+		.max_elements = cpuctx->visit_groups_merge_iterator_storage_size
-+	};
-+#endif
+@@ -3467,7 +3494,11 @@ static int visit_groups_merge(struct perf_event_context *ctx,
+ #endif
  	int ret, cpu = smp_processor_id();
  
- 	heap.storage[0] = perf_event_groups_first(groups, cpu, NULL);
-@@ -3461,9 +3499,8 @@ static int visit_groups_merge(struct perf_event_context *ctx,
+-	heap.storage[0] = perf_event_groups_first(groups, cpu, NULL);
++	struct perf_event_groups *groups = is_pinned
++					   ? &ctx->pinned_groups
++					   : &ctx->flexible_groups;
++
++	heap.storage[0] = perf_event_groups_first_no_cgroup(groups, cpu);
+ 	if (heap.storage[0])
+ 		heap.num_elements++;
+ 
+@@ -3477,7 +3508,7 @@ static int visit_groups_merge(struct perf_event_context *ctx,
+ 		 * events.
+ 		 */
+ 		heap.storage[heap.num_elements] =
+-				perf_event_groups_first(groups, -1, NULL);
++				perf_event_groups_first_no_cgroup(groups, -1);
+ 		if (heap.storage[heap.num_elements])
+ 			heap.num_elements++;
+ 	} else {
+@@ -3487,14 +3518,22 @@ static int visit_groups_merge(struct perf_event_context *ctx,
+ 		 * For itrs[1..MAX] add an iterator for each cgroup parent that
+ 		 * has events.
+ 		 */
+-		if (cpuctx->cgrp) {
++		struct perf_cgroup *cgrp = cpuctx->cgrp;
++
++		if (cgrp) {
+ 			struct cgroup_subsys_state *css;
+ 
+-			for (css = &cpuctx->cgrp->css; css; css = css->parent) {
+-				heap.storage[heap.num_elements] =
+-						perf_event_groups_first(groups,
+-								   cpu,
+-								   css->cgroup);
++			for (css = &cgrp->css; css; css = css->parent) {
++				/* root cgroup doesn't have events */
++				if (css->id == 1)
++					break;
++
++				cgrp = container_of(css, struct perf_cgroup,
++						    css);
++				heap.storage[heap.num_elements] = is_pinned
++					? *per_cpu_ptr(cgrp->pinned_event, cpu)
++					: *per_cpu_ptr(cgrp->flexible_event,
++						       cpu);
+ 				if (heap.storage[heap.num_elements]) {
  					heap.num_elements++;
  					if (heap.num_elements ==
- 					    heap.max_elements) {
--						WARN_ONCE(
--				     max_cgroups_with_events_depth,
--				     "Insufficient iterators for cgroup depth");
-+						WARN_ONCE(1,
-+						"per-CPU min-heap under sized");
- 						break;
- 					}
- 				}
-@@ -10155,7 +10192,14 @@ int perf_pmu_register(struct pmu *pmu, const char *name, int type)
- 		lockdep_set_class(&cpuctx->ctx.lock, &cpuctx_lock);
- 		cpuctx->ctx.pmu = pmu;
- 		cpuctx->online = cpumask_test_cpu(cpu, perf_online_mask);
--
-+#ifdef CONFIG_CGROUP_PERF
-+		cpuctx->visit_groups_merge_iterator_storage =
-+				kmalloc_array(MIN_VISIT_GROUP_MERGE_ITERATORS,
-+					      sizeof(struct perf_event *),
-+					      GFP_KERNEL);
-+		cpuctx->visit_groups_merge_iterator_storage_size =
-+				MIN_VISIT_GROUP_MERGE_ITERATORS;
-+#endif
- 		__perf_mux_hrtimer_init(cpuctx, cpu);
- 	}
+@@ -3511,7 +3550,12 @@ static int visit_groups_merge(struct perf_event_context *ctx,
+ 	min_heapify_all(&heap);
  
+ 	while (heap.num_elements > 0) {
+-		ret = func(ctx, cpuctx, heap.storage[0], data);
++		if (is_pinned)
++			ret = pinned_sched_in(ctx, cpuctx, heap.storage[0]);
++		else
++			ret = flexible_sched_in(ctx, cpuctx, heap.storage[0],
++						data);
++
+ 		if (ret)
+ 			return ret;
+ 
+@@ -3524,8 +3568,7 @@ static int visit_groups_merge(struct perf_event_context *ctx,
+ 
+ static int pinned_sched_in(struct perf_event_context *ctx,
+ 			   struct perf_cpu_context *cpuctx,
+-			   struct perf_event *event,
+-			   int *unused)
++			   struct perf_event *event)
+ {
+ 	if (event->state <= PERF_EVENT_STATE_OFF)
+ 		return 0;
+@@ -3578,8 +3621,7 @@ ctx_pinned_sched_in(struct perf_event_context *ctx,
+ {
+ 	visit_groups_merge(ctx,
+ 			   cpuctx,
+-			   &ctx->pinned_groups,
+-			   pinned_sched_in,
++			   /*is_pinned=*/true,
+ 			   NULL);
+ }
+ 
+@@ -3591,8 +3633,7 @@ ctx_flexible_sched_in(struct perf_event_context *ctx,
+ 
+ 	visit_groups_merge(ctx,
+ 			   cpuctx,
+-			   &ctx->flexible_groups,
+-			   flexible_sched_in,
++			   /*is_pinned=*/false,
+ 			   &can_add_hw);
+ }
+ 
+@@ -12374,18 +12415,35 @@ perf_cgroup_css_alloc(struct cgroup_subsys_state *parent_css)
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	jc->info = alloc_percpu(struct perf_cgroup_info);
+-	if (!jc->info) {
+-		kfree(jc);
+-		return ERR_PTR(-ENOMEM);
+-	}
++	if (!jc->info)
++		goto free_jc;
++
++	jc->pinned_event = alloc_percpu(struct perf_event *);
++	if (!jc->pinned_event)
++		goto free_jc_info;
++
++	jc->flexible_event = alloc_percpu(struct perf_event *);
++	if (!jc->flexible_event)
++		goto free_jc_pinned;
+ 
+ 	return &jc->css;
++
++free_jc_pinned:
++	free_percpu(jc->pinned_event);
++free_jc_info:
++	free_percpu(jc->info);
++free_jc:
++	kfree(jc);
++
++	return ERR_PTR(-ENOMEM);
+ }
+ 
+ static void perf_cgroup_css_free(struct cgroup_subsys_state *css)
+ {
+ 	struct perf_cgroup *jc = container_of(css, struct perf_cgroup, css);
+ 
++	free_percpu(jc->pinned_event);
++	free_percpu(jc->flexible_event);
+ 	free_percpu(jc->info);
+ 	kfree(jc);
+ }
 -- 
 2.22.0.410.gd8fdbe21b5-goog
 
