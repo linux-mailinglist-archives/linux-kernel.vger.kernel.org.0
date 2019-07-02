@@ -2,165 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AD085CB8B
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 10:14:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A4D35CBF1
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 10:18:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728494AbfGBIOE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 04:14:04 -0400
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:58267 "EHLO
-        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728121AbfGBIOC (ORCPT
+        id S1727144AbfGBISp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 04:18:45 -0400
+Received: from mail-yb1-f193.google.com ([209.85.219.193]:36293 "EHLO
+        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726160AbfGBISo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 04:14:02 -0400
-X-Originating-IP: 90.89.68.76
-Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 29E16FF807;
-        Tue,  2 Jul 2019 08:13:47 +0000 (UTC)
-Date:   Tue, 2 Jul 2019 10:13:46 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Andrzej Hajda <a.hajda@samsung.com>
-Cc:     Torsten Duwe <duwe@lst.de>, Harald Geyer <harald@ccbib.org>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Sean Paul <seanpaul@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        arm-linux <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 7/7] arm64: dts: allwinner: a64: enable ANX6345 bridge
- on Teres-I
-Message-ID: <20190702081346.4hlb53qcajhz4ckl@flea>
-References: <20190605120237.ekmytfxcwbjaqy3x@flea>
- <E1hYsvP-0000PY-Pz@stardust.g4.wien.funkfeuer.at>
- <20190607062802.m5wslx3imiqooq5a@flea>
- <CGME20190607094103epcas1p4babbb11ec050974a62f2af79bc64d752@epcas1p4.samsung.com>
- <20190607094030.GA12373@lst.de>
- <66707fcc-b48e-02d3-5ed7-6b7e77d53266@samsung.com>
- <20190612152022.c3cfhp4cauhzhfyr@flea>
- <bb2c2c00-b46e-1984-088f-861ac8952331@samsung.com>
- <20190701095842.fvganvycce2cy7jn@flea>
- <64471471-5b4d-3c1f-a0e3-e02ee78ca23c@samsung.com>
+        Tue, 2 Jul 2019 04:18:44 -0400
+Received: by mail-yb1-f193.google.com with SMTP id t10so1023712ybk.3;
+        Tue, 02 Jul 2019 01:18:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=HAdClOUcHZ3IYsbl5G0rdG7nEVZII6d9JlEQ/5XRWdk=;
+        b=FwZV5NXMNI5saJ1G6bx15kCv6z1R0kIQ/OlYpnallmC4052OFYRIMUdar2Pnl7GUFT
+         Q3bKhIRB0X9PALZKZh8ZbQGLPGGBaGTdk3nXfc/IZuBhK2i3ge+qe8vSc+czhI9SiGWm
+         oqj+2aBO/F6z9BoxoDfIJI37e9B7gRULfaQsthCZfuUL5r7pwHHCxQ/nspoLDRVJzrCZ
+         f2aJRey0bxy9ncHKWSneF8WW4QPHPrgarhs9/N/Zwy1bziHC/quawgJGgzu61s5nIMiO
+         RRGAi91FpAYcHZZbHGNcMElnzDj+5BIK9LJpBavEQoVi9ZmQx/vPu4FwOhh1Dk6UfHqV
+         XUhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=HAdClOUcHZ3IYsbl5G0rdG7nEVZII6d9JlEQ/5XRWdk=;
+        b=I2KJ2vC9VrqspMTsQUK6WWHE+4O7upxJTNilMq8vAyXEp8H8apt0hSyV/YK4ep7JCU
+         nomP2noIZFcAGnwnFCtd9RSBj3sxjfUiRW/ehxdlNw+QvgKboDxGRofT/OYbn7tMLKFq
+         tJeSG+RMcUdxpSf72fZDJWH1egvc5ssFAZ9Hg3iqcf832ARSkB3VkRVDPFcv453/e8EU
+         MBuw8IgAN12xcM2QlTbUdACIXFpUS5plAy1k+ZRwWpLK0J7FFiLA21JKdoUXCa3R/PHP
+         2P3AMXrjVHZcdy/koHXKGVb475CfxQOtq65ugx3X2/ZSIGh75cMeQOKe9IEClwcxLAc5
+         Zp7A==
+X-Gm-Message-State: APjAAAUz1sC/srvOzg1VYacCvPxU52+gDG/wW6NLGlnLMDGXTe4kmBJF
+        JgP0ym/X/4gyKwQDDc3HytYZqoaNA/pQN8fJHiw=
+X-Google-Smtp-Source: APXvYqwClpSzv6om5yiHw+9Sq3JuKWwAJ3+EDe4nfSlCRU988YJhWO0Q93wVfyW/7gxXqZfMBwixd3t50uVQ5DNxGB4=
+X-Received: by 2002:a25:9347:: with SMTP id g7mr5943206ybo.277.1562055523517;
+ Tue, 02 Jul 2019 01:18:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ysvumhfqulaacx3l"
-Content-Disposition: inline
-In-Reply-To: <64471471-5b4d-3c1f-a0e3-e02ee78ca23c@samsung.com>
-User-Agent: NeoMutt/20180716
+References: <20190701032342.25971-1-huangfq.daxian@gmail.com> <20190701075255.GD172968@dtor-ws>
+In-Reply-To: <20190701075255.GD172968@dtor-ws>
+From:   Fuqian Huang <huangfq.daxian@gmail.com>
+Date:   Tue, 2 Jul 2019 16:18:32 +0800
+Message-ID: <CABXRUiSO2Fos1V3hR5t3AviZ9Hit_y+E-Tp3PNOQj6-FKUBJBw@mail.gmail.com>
+Subject: Re: [PATCH 2/4] input: keyboard/mouse/touchscreen/misc: Use dev_get_drvdata()
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Olof Johansson <olof@lixom.net>,
+        H Hartley Sweeten <hsweeten@visionengravers.com>,
+        Arnd Bergmann <arnd@arndb.de>, Enrico Weigelt <info@metux.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Richard Fontana <rfontana@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Allison Randal <allison@lohutok.net>,
+        Christian Hoff <christian_hoff@gmx.net>,
+        Tony Lindgren <tony@atomide.com>,
+        Alexios Zavras <alexios.zavras@intel.com>,
+        Gabriel Fernandez <gabriel.fernandez@st.com>,
+        Luca Weiss <luca@z3ntu.xyz>, Rob Herring <robh@kernel.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Brian Masney <masneyb@onstation.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Pascal PAILLET-LME <p.paillet@st.com>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+I am not an expert on this. I just write a coccinelle script to search
+this kind of misuse and fix it in a naive way.
+Could you tell me about how to use the proper bus accessors? Then I
+will fix it up and resend a v2 patch set.
 
---ysvumhfqulaacx3l
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Thanks.
 
-On Mon, Jul 01, 2019 at 02:27:51PM +0200, Andrzej Hajda wrote:
-> On 01.07.2019 11:58, Maxime Ripard wrote:
-> > On Fri, Jun 28, 2019 at 12:39:32PM +0200, Andrzej Hajda wrote:
-> >> On 12.06.2019 17:20, Maxime Ripard wrote:
-> >>>> I am not sure if I understand whole discussion here, but I also do not
-> >>>> understand whole edp-connector thing.
-> >>> The context is this one:
-> >>> https://patchwork.freedesktop.org/patch/257352/?series=51182&rev=1
-> >>> https://patchwork.freedesktop.org/patch/283012/?series=56163&rev=1
-> >>> https://patchwork.freedesktop.org/patch/286468/?series=56776&rev=2
-> >>>
-> >>> TL;DR: This bridge is being used on ARM laptops that can come with
-> >>> different eDP panels. Some of these panels require a regulator to be
-> >>> enabled for the panel to work, and this is obviously something that
-> >>> should be in the DT.
-> >>>
-> >>> However, we can't really describe the panel itself, since the vendor
-> >>> uses several of them and just relies on the eDP bus to do its job at
-> >>> retrieving the EDIDs. A generic panel isn't really working either
-> >>> since that would mean having a generic behaviour for all the panels
-> >>> connected to that bus, which isn't there either.
-> >>>
-> >>> The connector allows to expose this nicely.
-> >> As VESA presentation says[1] eDP is based on DP but is much more
-> >> flexible, it is up to integrator (!!!) how the connection, power
-> >> up/down, initialization sequence should be performed. Trying to cover
-> >> every such case in edp-connector seems to me similar to panel-simple
-> >> attempt failure. Moreover there is no such thing as physical standard
-> >> eDP connector. Till now I though DT connector should describe physical
-> >> connector on the device, now I am lost, are there some DT bindings
-> >> guidelines about definition of a connector?
-> > This might be semantics but I guess we're in some kind of grey area?
+Dmitry Torokhov <dmitry.torokhov@gmail.com> =E6=96=BC 2019=E5=B9=B47=E6=9C=
+=881=E6=97=A5=E9=80=B1=E4=B8=80 =E4=B8=8B=E5=8D=883:52=E5=AF=AB=E9=81=93=EF=
+=BC=9A
+>
+> Hi Fuqian,
+>
+> On Mon, Jul 01, 2019 at 11:23:12AM +0800, Fuqian Huang wrote:
+> > Using dev_get_drvdata directly.
 > >
-> > Like, for eDP, if it's soldered I guess we could say that there's no
-> > connector. But what happens if for some other board, that signal is
-> > routed through a ribbon?
-> >
-> > You could argue that there's no physical connector in both cases, or
-> > that there's one in both, or one for the ribbon and no connector for
-> > the one soldered in.
 >
-> This is not about ribbon vs soldering. It is about usage: this
-> connection is static across the whole life of the device (except
-> exceptional things: repair, non-standard usage, etc).
-
-It doesn't have to be.
-
-> And "the real connector" is (at least for me) something where
-> end-user can connect/disconnect different things: USB, HDMI,
-> ethernet, etc. And obviously to be functional it should be somehow
-> standardized. So even if there could be some grey area, I do not see
-> it here.
-
-Well, if there's a ribbon connector, then you have a physical
-connector, with the end user being able to connect / disconnect
-various displays. It might not be the case with actual products, but
-it's pretty common with SBCs to have that signal routed through a
-connector, and the user has several options to connect a display to
-it.
-
-The line really is blurred.
-
-> >> Maybe instead of edp-connector one would introduce integrator's specific
-> >> connector, for example with compatible "olimex,teres-edp-connector"
-> >> which should follow edp abstract connector rules? This will be at least
-> >> consistent with below presentation[1] - eDP requirements depends on
-> >> integrator. Then if olimex has standard way of dealing with panels
-> >> present in olimex/teres platforms the driver would then create
-> >> drm_panel/drm_connector/drm_bridge(?) according to these rules, I guess.
-> >> Anyway it still looks fishy for me :), maybe because I am not
-> >> familiarized with details of these platforms.
+> I prefer using proper bus accessors.
 >
-> > That makes sense yes
+> Thanks.
 >
-> And what if some panel can be used with this pseudo-connecter and in
-> some different hw directly? Code duplication? DT overlays?
-
-Overlays are a solution, but I would advocate to always have the
-connector.
-
-Maxime
-
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---ysvumhfqulaacx3l
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXRsSOgAKCRDj7w1vZxhR
-xULUAPsGQYzNIZSTC25p24UViIRLulmthcOhzTK4JDdmTudgfAD+LA/mKeRDEVmr
-5I2K+qvDzz8yXwdP9AtgR/XK8mhHSQ8=
-=dLkQ
------END PGP SIGNATURE-----
-
---ysvumhfqulaacx3l--
+> --
+> Dmitry
