@@ -2,108 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 635A05C7FF
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 05:58:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B552F5C6C8
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 03:52:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727043AbfGBD6B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 23:58:01 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:52478 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726434AbfGBD6A (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 23:58:00 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x623sXQN076553;
-        Tue, 2 Jul 2019 03:57:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=5V6Ca9D0YJtlxKjeGSEVk6eiy5PrcguTXF/8goZUOtg=;
- b=jwZHi53VieV6yeulA4hJuxbhy0IKh/zbqGEORo9cRu1QTJkWPNiuoJA6aze04HLjoeBi
- naZWX/mh8TbicbiOQg4g1iZgDI2PnkZ6ohuzNBEG5azuxNqa5Q6oC6AAu/oz1ATUXdQo
- poj19kjAD39o8DM1bU3Qp1Q0fyRgCioMdigrNUKeDi1dYcO07nihu8R/dSC45xb/QHYM
- j8tMkCblTOC/pmC5gC8NMYv2ZRwjNPv33wN1UnuhphBmJTCIPTeLBJHI/euTWUFL2BRU
- dksj+VGLV04M6LelazmSvLOLo7pSLq5o1vBgxLiqTysffG+wKkcgnnnusAsKYUBxmfKp 6Q== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2120.oracle.com with ESMTP id 2te61prvm3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 02 Jul 2019 03:57:12 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x623r96v078875;
-        Tue, 2 Jul 2019 03:57:11 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3020.oracle.com with ESMTP id 2tebku11n2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 02 Jul 2019 03:57:11 +0000
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x623v9xs025185;
-        Tue, 2 Jul 2019 03:57:10 GMT
-Received: from bostrovs-us.us.oracle.com (/10.152.32.65)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 01 Jul 2019 20:57:09 -0700
-Date:   Mon, 1 Jul 2019 23:57:35 -0400
-From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Zhenzhong Duan <zhenzhong.duan@oracle.com>,
-        linux-kernel@vger.kernel.org, Waiman Long <longman@redhat.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Dou Liyang <douly.fnst@cn.fujitsu.com>
-Subject: Re: [PATCH RESEND] Revert "x86/paravirt: Set up the
- virt_spin_lock_key after static keys get initialized"
-Message-ID: <20190702035735.GC8003@bostrovs-us.us.oracle.com>
-References: <1561539429-29436-1-git-send-email-zhenzhong.duan@oracle.com>
- <alpine.DEB.2.21.1906272322481.32342@nanos.tec.linutronix.de>
+        id S1727031AbfGBBw1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 21:52:27 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:60266 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726486AbfGBBw0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Jul 2019 21:52:26 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 290B0A9BBE054957DE66;
+        Tue,  2 Jul 2019 09:52:24 +0800 (CST)
+Received: from huawei.com (10.175.100.202) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.439.0; Tue, 2 Jul 2019
+ 09:52:18 +0800
+From:   Miaohe Lin <linmiaohe@huawei.com>
+To:     <pablo@netfilter.org>, <kadlec@blackhole.kfki.hu>, <fw@strlen.de>,
+        <davem@davemloft.net>, <kuznet@ms2.inr.ac.ru>,
+        <yoshfuji@linux-ipv6.org>, <netfilter-devel@vger.kernel.org>,
+        <coreteam@netfilter.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <linmiaohe@huawei.com>, <mingfangsen@huawei.com>
+Subject: [PATCH v5] net: netfilter: Fix rpfilter dropping vrf packets by mistake
+Date:   Tue, 2 Jul 2019 03:59:36 +0000
+Message-ID: <1562039976-203880-1-git-send-email-linmiaohe@huawei.com>
+X-Mailer: git-send-email 1.8.3.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1906272322481.32342@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.11.3 (2019-02-01)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9305 signatures=668688
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1907020041
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9305 signatures=668688
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1907020041
+Content-Type: text/plain
+X-Originating-IP: [10.175.100.202]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 27, 2019 at 11:24:41PM +0200, Thomas Gleixner wrote:
-> On Wed, 26 Jun 2019, Zhenzhong Duan wrote:
-> 
-> > This reverts commit ca5d376e17072c1b60c3fee66f3be58ef018952d.
-> > 
-> > Commit 8990cac6e5ea ("x86/jump_label: Initialize static branching
-> > early") adds jump_label_init() call in setup_arch() to make static
-> > keys initialized early, so we could use the original simpler code
-> > again.
-> > 
-> > Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
-> > Cc: Waiman Long <longman@redhat.com>
-> > Cc: Peter Zijlstra (Intel) <peterz@infradead.org>
-> > Cc: Thomas Gleixner <tglx@linutronix.de>
-> > Cc: Ingo Molnar <mingo@redhat.com>
-> > Cc: Borislav Petkov <bp@alien8.de>
-> > Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-> 
-> Boris,
-> 
-> want you to pick that up or should I?
-> 
-> In case you take it:
-> 
-> Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+When firewalld is enabled with ipv4/ipv6 rpfilter, vrf
+ipv4/ipv6 packets will be dropped. Vrf device will pass
+through netfilter hook twice. One with enslaved device
+and another one with l3 master device. So in device may
+dismatch witch out device because out device is always
+enslaved device.So failed with the check of the rpfilter
+and drop the packets by mistake.
 
+Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
+---
+ net/ipv4/netfilter/ipt_rpfilter.c  | 1 +
+ net/ipv6/netfilter/ip6t_rpfilter.c | 8 ++++++--
+ 2 files changed, 7 insertions(+), 2 deletions(-)
 
-We will take it via Xen tree, thanks.
+diff --git a/net/ipv4/netfilter/ipt_rpfilter.c b/net/ipv4/netfilter/ipt_rpfilter.c
+index 59031670b16a..cc23f1ce239c 100644
+--- a/net/ipv4/netfilter/ipt_rpfilter.c
++++ b/net/ipv4/netfilter/ipt_rpfilter.c
+@@ -78,6 +78,7 @@ static bool rpfilter_mt(const struct sk_buff *skb, struct xt_action_param *par)
+ 	flow.flowi4_mark = info->flags & XT_RPFILTER_VALID_MARK ? skb->mark : 0;
+ 	flow.flowi4_tos = RT_TOS(iph->tos);
+ 	flow.flowi4_scope = RT_SCOPE_UNIVERSE;
++	flow.flowi4_oif = l3mdev_master_ifindex_rcu(xt_in(par));
+ 
+ 	return rpfilter_lookup_reverse(xt_net(par), &flow, xt_in(par), info->flags) ^ invert;
+ }
+diff --git a/net/ipv6/netfilter/ip6t_rpfilter.c b/net/ipv6/netfilter/ip6t_rpfilter.c
+index 6bcaf7357183..d800801a5dd2 100644
+--- a/net/ipv6/netfilter/ip6t_rpfilter.c
++++ b/net/ipv6/netfilter/ip6t_rpfilter.c
+@@ -55,7 +55,9 @@ static bool rpfilter_lookup_reverse6(struct net *net, const struct sk_buff *skb,
+ 	if (rpfilter_addr_linklocal(&iph->saddr)) {
+ 		lookup_flags |= RT6_LOOKUP_F_IFACE;
+ 		fl6.flowi6_oif = dev->ifindex;
+-	} else if ((flags & XT_RPFILTER_LOOSE) == 0)
++	/* Set flowi6_oif for vrf devices to lookup route in l3mdev domain. */
++	} else if (netif_is_l3_master(dev) || netif_is_l3_slave(dev) ||
++		  (flags & XT_RPFILTER_LOOSE) == 0)
+ 		fl6.flowi6_oif = dev->ifindex;
+ 
+ 	rt = (void *)ip6_route_lookup(net, &fl6, skb, lookup_flags);
+@@ -70,7 +72,9 @@ static bool rpfilter_lookup_reverse6(struct net *net, const struct sk_buff *skb,
+ 		goto out;
+ 	}
+ 
+-	if (rt->rt6i_idev->dev == dev || (flags & XT_RPFILTER_LOOSE))
++	if (rt->rt6i_idev->dev == dev ||
++	    l3mdev_master_ifindex_rcu(rt->rt6i_idev->dev) == dev->ifindex ||
++	    (flags & XT_RPFILTER_LOOSE))
+ 		ret = true;
+  out:
+ 	ip6_rt_put(rt);
+-- 
+2.21.GIT
 
--boris
