@@ -2,85 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AAE8A5D5A4
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 19:50:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 780145D5AF
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 19:53:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726765AbfGBRuo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 13:50:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60830 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726150AbfGBRuo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 13:50:44 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1137F21721;
-        Tue,  2 Jul 2019 17:50:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562089843;
-        bh=S41st5cRffWCwI1px1NAqUx7dKAecFlA2dZOtrgmC3Y=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fgZY7FqHJVIFZg2bWiE/eQXMoLB+ah85jd73eCP2hrWj1D42Gv+rAFfei6zEuyW+K
-         EjN1Ah8vStBEEHprvaSzvdIMyRbaLJGU1mwnabkLyV4OWFkrx4InaKwM66nU2eteFu
-         Pd5P8GUFjtBBvPdTi6iGRXDa01kM7MCIl+Ubz8Nw=
-Date:   Tue, 2 Jul 2019 12:50:40 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Miaohe Lin <linmiaohe@huawei.com>
-Cc:     andy.shevchenko@gmail.com, sebott@linux.ibm.com, lukas@wunner.de,
-        gustavo@embeddedor.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mingfangsen@huawei.com
-Subject: Re: [PATCH] net: pci: Fix hotplug event timeout with shpchp
-Message-ID: <20190702175040.GA128603@google.com>
-References: <1562074519-205047-1-git-send-email-linmiaohe@huawei.com>
+        id S1727002AbfGBRxD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 13:53:03 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:39421 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726150AbfGBRxD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 13:53:03 -0400
+Received: by mail-pf1-f196.google.com with SMTP id j2so8627960pfe.6
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 10:53:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=cUzLBUlR97uqGXzOFylb6nkkxBtyYZ1OhN+qvdTrCD0=;
+        b=roBJOIwXGuFOf1wltfxmsClcFxlkrjzp9+21T7P87pZ44BH/GjP/X/NuZ8mK2FoMzO
+         XotmCr6d6KsdJATAIIUbq5Oy4zR4Azgkp4HhOE4XiupuZAs2/ZBggUQTxGqGQNrNXKUR
+         RK1F2iELvIHqPezIMEexxn9HQjKb0Q7OjYsSgJwmHDUbD4xwBf6WQFlfeS4XFqE89Pff
+         n78AWxKci0ljIJl3H7X5khQxePoPu8jM9jZ95VMb0Zsz46NlIICQ2qPhYIcCIBC8U20Z
+         P1PLSOLwoWTdUhh3getWGZNkHFehqyZ7w/vmIfDcbd6OQGJv5O6KIgY9x4cjlJKaYt87
+         yyiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cUzLBUlR97uqGXzOFylb6nkkxBtyYZ1OhN+qvdTrCD0=;
+        b=W1ZKFau96LjejRocNxwbFsSK/zj9WCblgbjwiDixK45R1rKS9V+XAVOXMq545PJ2Uy
+         331IddEM1yq8NPfd05fcNSL24GHaAByt0XTVeAEO9H+CetWoOHfAW3gFSHws44xX1ynZ
+         N50+NdYlBelNTNOWTosLdpnYc3RyqpMhMsPbumgy4qKz35AIrMrjQaU84HF6QDSPkWQe
+         NTqiVrAa/XyZzB3ae24mUmwuqJDBJKgNlnIbGhotgY9/TaBBx+Q/WccnDwNUG0YtNu9U
+         Txik3b8fwa2z1EvwI0ApGN4wQLSZ65wGy2bmspZPQj8zPW9FOtx3nhID/ItNpf8LS8ik
+         V5qg==
+X-Gm-Message-State: APjAAAVbtmLGyQ64LPAjq7GvzoctbEm+Z11+TDVcgvvI3R+Kn98AidDf
+        O/jWeI2XXjfV3tCKt91CGj9fK6tMcLuvQYPk/YcVUQ==
+X-Google-Smtp-Source: APXvYqw1QIOarVsPwN3Ymzn8KxtORstMAVkiFcCA6YNhVqWiDT/WJraRMIndv08KnJT+5qaDY4tAvp9OnwXy65WsZqM=
+X-Received: by 2002:a63:205f:: with SMTP id r31mr23471478pgm.159.1562089981635;
+ Tue, 02 Jul 2019 10:53:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1562074519-205047-1-git-send-email-linmiaohe@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190617082613.109131-1-brendanhiggins@google.com>
+ <20190617082613.109131-8-brendanhiggins@google.com> <20190625232249.GS19023@42.do-not-panic.com>
+ <CAFd5g46mnd=a0OqFCx0hOHX+DxW+5yA2LXH5Q0gEg8yUZK=4FA@mail.gmail.com>
+In-Reply-To: <CAFd5g46mnd=a0OqFCx0hOHX+DxW+5yA2LXH5Q0gEg8yUZK=4FA@mail.gmail.com>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Tue, 2 Jul 2019 10:52:50 -0700
+Message-ID: <CAFd5g46=7OQDREdLDTiMgVWq-Xj2zfOw8cRhPJEihSbO89MDyA@mail.gmail.com>
+Subject: Re: [PATCH v5 07/18] kunit: test: add initial tests
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Frank Rowand <frowand.list@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Kees Cook <keescook@google.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        shuah <shuah@kernel.org>, "Theodore Ts'o" <tytso@mit.edu>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        kunit-dev@googlegroups.com,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-um@lists.infradead.org,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        "Bird, Timothy" <Tim.Bird@sony.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Knut Omang <knut.omang@oracle.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Petr Mladek <pmladek@suse.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Richard Weinberger <richard@nod.at>,
+        David Rientjes <rientjes@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 02, 2019 at 01:35:19PM +0000, Miaohe Lin wrote:
-> Hotplug a network card would take more than 5 seconds
-> in qemu + shpchp scene. It’s because 5 seconds
-> delayed_work in func handle_button_press_event with
-> case STATIC_STATE. And this will break some
-> protocols with timeout within 5 seconds.
+On Wed, Jun 26, 2019 at 12:53 AM Brendan Higgins
+<brendanhiggins@google.com> wrote:
+>
+> On Tue, Jun 25, 2019 at 4:22 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
+> >
+> > On Mon, Jun 17, 2019 at 01:26:02AM -0700, Brendan Higgins wrote:
+> > > diff --git a/kunit/example-test.c b/kunit/example-test.c
+> > > new file mode 100644
+> > > index 0000000000000..f44b8ece488bb
+> > > --- /dev/null
+> > > +++ b/kunit/example-test.c
+> >
+> > <-- snip -->
+> >
+> > > +/*
+> > > + * This defines a suite or grouping of tests.
+> > > + *
+> > > + * Test cases are defined as belonging to the suite by adding them to
+> > > + * `kunit_cases`.
+> > > + *
+> > > + * Often it is desirable to run some function which will set up things which
+> > > + * will be used by every test; this is accomplished with an `init` function
+> > > + * which runs before each test case is invoked. Similarly, an `exit` function
+> > > + * may be specified which runs after every test case and can be used to for
+> > > + * cleanup. For clarity, running tests in a test module would behave as follows:
+> > > + *
+> >
+> > To be clear this is not the kernel module init, but rather the kunit
+> > module init. I think using kmodule would make this clearer to a reader.
+>
+> Seems reasonable. Will fix in next revision.
+>
+> > > + * module.init(test);
+> > > + * module.test_case[0](test);
+> > > + * module.exit(test);
+> > > + * module.init(test);
+> > > + * module.test_case[1](test);
+> > > + * module.exit(test);
+> > > + * ...;
+> > > + */
 
-I'm dropping this because of the required delay pointed out by Lukas.
-
-If you think we still need to do something here, please clarify the
-situation.  Are you hot-adding?  Hot-swapping?  Since you mention a
-protocol timeout, I suspect the latter, e.g., maybe you had an
-existing device with connections already open, and you want to replace
-it with a new device while preserving those open connections?
-
-We do have to preserve the existing user experience, e.g., delays to
-allow operators to recover from mistaken latch opens or button
-presses.  But if we knew more about what you're trying to do, maybe we
-could figure out another approach.
-
-> Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
-> ---
->  drivers/pci/hotplug/shpchp_ctrl.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/hotplug/shpchp_ctrl.c b/drivers/pci/hotplug/shpchp_ctrl.c
-> index 078003dcde5b..cbb00acaba0d 100644
-> --- a/drivers/pci/hotplug/shpchp_ctrl.c
-> +++ b/drivers/pci/hotplug/shpchp_ctrl.c
-> @@ -478,7 +478,7 @@ static void handle_button_press_event(struct slot *p_slot)
->  		p_slot->hpc_ops->green_led_blink(p_slot);
->  		p_slot->hpc_ops->set_attention_status(p_slot, 0);
->  
-> -		queue_delayed_work(p_slot->wq, &p_slot->work, 5*HZ);
-> +		queue_delayed_work(p_slot->wq, &p_slot->work, 0);
->  		break;
->  	case BLINKINGOFF_STATE:
->  	case BLINKINGON_STATE:
-> -- 
-> 2.21.GIT
-> 
+Do you think it might be clearer yet to rename `struct kunit_module
+*module;` to `struct kunit_suite *suite;`?
