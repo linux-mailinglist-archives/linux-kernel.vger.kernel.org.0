@@ -2,43 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABD245CB6C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 10:13:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46C685CB89
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 10:14:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728210AbfGBIMz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 04:12:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33330 "EHLO mail.kernel.org"
+        id S1728348AbfGBIOC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 04:14:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53444 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727643AbfGBIMu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 04:12:50 -0400
+        id S1728110AbfGBIGi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 04:06:38 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BE07820665;
-        Tue,  2 Jul 2019 08:12:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2BBD921850;
+        Tue,  2 Jul 2019 08:06:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562055169;
-        bh=Z0XCsJ+5mTRDINcSV7Sao44MlHUB4G73F9YpQhFyVMo=;
+        s=default; t=1562054797;
+        bh=DcM6BvikXnZQVDyUoJmwoTLl3k6lVmvyEkQXJvPKY7s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PAo9sP6Vhpan2D4cipYvLJA98aRs+dGHjwf01Eb/vfAs/cfwAFTV7nUeAR2uh8PF5
-         kyS0lXby9HOADL1BI+8UEKl0uSLe6oIaoC1XF7dvdw7Xu8j0vUuPlnaT05Fhl9PsZT
-         kqrYz5Z05TKupE2j0mzcqozYNZw7Nikm/8hO1dow=
+        b=PVEHbgNUz63MUf1GNfrusqMjeHVsAragR6akxjGVrAfBdRhOJVSu+F9VD9upjR++W
+         QRdUpi+f+TaGAvy2cXVku+JajPMJYrmsOSaKmqUH7a3A/+IqEAjCTZjMyJLM767Omw
+         8M06K8/0vlLom63Isrz0BTngXcRZEF1V28ZV34ow=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        "Chen, Jerry T" <jerry.t.chen@intel.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Michal Hocko <mhocko@kernel.org>,
-        Xishi Qiu <xishi.qiuxishi@alibaba-inc.com>,
-        "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
         Andrew Morton <akpm@linux-foundation.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
         Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.19 37/72] mm: hugetlb: soft-offline: dissolve_free_huge_page() return zero on !PageHuge
-Date:   Tue,  2 Jul 2019 10:01:38 +0200
-Message-Id: <20190702080126.593773732@linuxfoundation.org>
+Subject: [PATCH 4.19 38/72] mm/page_idle.c: fix oops because end_pfn is larger than max_pfn
+Date:   Tue,  2 Jul 2019 10:01:39 +0200
+Message-Id: <20190702080126.637385479@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190702080124.564652899@linuxfoundation.org>
 References: <20190702080124.564652899@linuxfoundation.org>
@@ -51,133 +50,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-commit faf53def3b143df11062d87c12afe6afeb6f8cc7 upstream.
+commit 7298e3b0a149c91323b3205d325e942c3b3b9ef6 upstream.
 
-madvise(MADV_SOFT_OFFLINE) often returns -EBUSY when calling soft offline
-for hugepages with overcommitting enabled.  That was caused by the
-suboptimal code in current soft-offline code.  See the following part:
+Currently the calcuation of end_pfn can round up the pfn number to more
+than the actual maximum number of pfns, causing an Oops.  Fix this by
+ensuring end_pfn is never more than max_pfn.
 
-    ret = migrate_pages(&pagelist, new_page, NULL, MPOL_MF_MOVE_ALL,
-                            MIGRATE_SYNC, MR_MEMORY_FAILURE);
-    if (ret) {
-            ...
-    } else {
-            /*
-             * We set PG_hwpoison only when the migration source hugepage
-             * was successfully dissolved, because otherwise hwpoisoned
-             * hugepage remains on free hugepage list, then userspace will
-             * find it as SIGBUS by allocation failure. That's not expected
-             * in soft-offlining.
-             */
-            ret = dissolve_free_huge_page(page);
-            if (!ret) {
-                    if (set_hwpoison_free_buddy_page(page))
-                            num_poisoned_pages_inc();
-            }
-    }
-    return ret;
+This can be easily triggered when on systems where the end_pfn gets
+rounded up to more than max_pfn using the idle-page stress-ng stress test:
 
-Here dissolve_free_huge_page() returns -EBUSY if the migration source page
-was freed into buddy in migrate_pages(), but even in that case we actually
-has a chance that set_hwpoison_free_buddy_page() succeeds.  So that means
-current code gives up offlining too early now.
+sudo stress-ng --idle-page 0
 
-dissolve_free_huge_page() checks that a given hugepage is suitable for
-dissolving, where we should return success for !PageHuge() case because
-the given hugepage is considered as already dissolved.
+  BUG: unable to handle kernel paging request at 00000000000020d8
+  #PF error: [normal kernel read fault]
+  PGD 0 P4D 0
+  Oops: 0000 [#1] SMP PTI
+  CPU: 1 PID: 11039 Comm: stress-ng-idle- Not tainted 5.0.0-5-generic #6-Ubuntu
+  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
+  RIP: 0010:page_idle_get_page+0xc8/0x1a0
+  Code: 0f b1 0a 75 7d 48 8b 03 48 89 c2 48 c1 e8 33 83 e0 07 48 c1 ea 36 48 8d 0c 40 4c 8d 24 88 49 c1 e4 07 4c 03 24 d5 00 89 c3 be <49> 8b 44 24 58 48 8d b8 80 a1 02 00 e8 07 d5 77 00 48 8b 53 08 48
+  RSP: 0018:ffffafd7c672fde8 EFLAGS: 00010202
+  RAX: 0000000000000005 RBX: ffffe36341fff700 RCX: 000000000000000f
+  RDX: 0000000000000284 RSI: 0000000000000275 RDI: 0000000001fff700
+  RBP: ffffafd7c672fe00 R08: ffffa0bc34056410 R09: 0000000000000276
+  R10: ffffa0bc754e9b40 R11: ffffa0bc330f6400 R12: 0000000000002080
+  R13: ffffe36341fff700 R14: 0000000000080000 R15: ffffa0bc330f6400
+  FS: 00007f0ec1ea5740(0000) GS:ffffa0bc7db00000(0000) knlGS:0000000000000000
+  CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+  CR2: 00000000000020d8 CR3: 0000000077d68000 CR4: 00000000000006e0
+  Call Trace:
+    page_idle_bitmap_write+0x8c/0x140
+    sysfs_kf_bin_write+0x5c/0x70
+    kernfs_fop_write+0x12e/0x1b0
+    __vfs_write+0x1b/0x40
+    vfs_write+0xab/0x1b0
+    ksys_write+0x55/0xc0
+    __x64_sys_write+0x1a/0x20
+    do_syscall_64+0x5a/0x110
+    entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-This change also affects other callers of dissolve_free_huge_page(), which
-are cleaned up together.
-
-[n-horiguchi@ah.jp.nec.com: v3]
-  Link: http://lkml.kernel.org/r/1560761476-4651-3-git-send-email-n-horiguchi@ah.jp.nec.comLink: http://lkml.kernel.org/r/1560154686-18497-3-git-send-email-n-horiguchi@ah.jp.nec.com
-Fixes: 6bc9b56433b76 ("mm: fix race on soft-offlining")
-Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Reported-by: Chen, Jerry T <jerry.t.chen@intel.com>
-Tested-by: Chen, Jerry T <jerry.t.chen@intel.com>
-Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Xishi Qiu <xishi.qiuxishi@alibaba-inc.com>
-Cc: "Chen, Jerry T" <jerry.t.chen@intel.com>
-Cc: "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>
-Cc: <stable@vger.kernel.org>	[4.19+]
+Link: http://lkml.kernel.org/r/20190618124352.28307-1-colin.king@canonical.com
+Fixes: 33c3fc71c8cf ("mm: introduce idle page tracking")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Acked-by: Vladimir Davydov <vdavydov.dev@gmail.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc: Mel Gorman <mgorman@techsingularity.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: <stable@vger.kernel.org>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/hugetlb.c        |   29 ++++++++++++++++++++---------
- mm/memory-failure.c |    5 +----
- 2 files changed, 21 insertions(+), 13 deletions(-)
+ mm/page_idle.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -1489,16 +1489,29 @@ static int free_pool_huge_page(struct hs
+--- a/mm/page_idle.c
++++ b/mm/page_idle.c
+@@ -136,7 +136,7 @@ static ssize_t page_idle_bitmap_read(str
  
- /*
-  * Dissolve a given free hugepage into free buddy pages. This function does
-- * nothing for in-use (including surplus) hugepages. Returns -EBUSY if the
-- * dissolution fails because a give page is not a free hugepage, or because
-- * free hugepages are fully reserved.
-+ * nothing for in-use hugepages and non-hugepages.
-+ * This function returns values like below:
-+ *
-+ *  -EBUSY: failed to dissolved free hugepages or the hugepage is in-use
-+ *          (allocated or reserved.)
-+ *       0: successfully dissolved free hugepages or the page is not a
-+ *          hugepage (considered as already dissolved)
-  */
- int dissolve_free_huge_page(struct page *page)
- {
- 	int rc = -EBUSY;
+ 	end_pfn = pfn + count * BITS_PER_BYTE;
+ 	if (end_pfn > max_pfn)
+-		end_pfn = ALIGN(max_pfn, BITMAP_CHUNK_BITS);
++		end_pfn = max_pfn;
  
-+	/* Not to disrupt normal path by vainly holding hugetlb_lock */
-+	if (!PageHuge(page))
-+		return 0;
-+
- 	spin_lock(&hugetlb_lock);
--	if (PageHuge(page) && !page_count(page)) {
-+	if (!PageHuge(page)) {
-+		rc = 0;
-+		goto out;
-+	}
-+
-+	if (!page_count(page)) {
- 		struct page *head = compound_head(page);
- 		struct hstate *h = page_hstate(head);
- 		int nid = page_to_nid(head);
-@@ -1543,11 +1556,9 @@ int dissolve_free_huge_pages(unsigned lo
+ 	for (; pfn < end_pfn; pfn++) {
+ 		bit = pfn % BITMAP_CHUNK_BITS;
+@@ -181,7 +181,7 @@ static ssize_t page_idle_bitmap_write(st
  
- 	for (pfn = start_pfn; pfn < end_pfn; pfn += 1 << minimum_order) {
- 		page = pfn_to_page(pfn);
--		if (PageHuge(page) && !page_count(page)) {
--			rc = dissolve_free_huge_page(page);
--			if (rc)
--				break;
--		}
-+		rc = dissolve_free_huge_page(page);
-+		if (rc)
-+			break;
- 	}
+ 	end_pfn = pfn + count * BITS_PER_BYTE;
+ 	if (end_pfn > max_pfn)
+-		end_pfn = ALIGN(max_pfn, BITMAP_CHUNK_BITS);
++		end_pfn = max_pfn;
  
- 	return rc;
---- a/mm/memory-failure.c
-+++ b/mm/memory-failure.c
-@@ -1857,11 +1857,8 @@ static int soft_offline_in_use_page(stru
- 
- static int soft_offline_free_page(struct page *page)
- {
--	int rc = 0;
--	struct page *head = compound_head(page);
-+	int rc = dissolve_free_huge_page(page);
- 
--	if (PageHuge(head))
--		rc = dissolve_free_huge_page(page);
- 	if (!rc) {
- 		if (set_hwpoison_free_buddy_page(page))
- 			num_poisoned_pages_inc();
+ 	for (; pfn < end_pfn; pfn++) {
+ 		bit = pfn % BITMAP_CHUNK_BITS;
 
 
