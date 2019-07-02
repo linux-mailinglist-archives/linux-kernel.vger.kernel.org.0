@@ -2,115 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39CB55DAFA
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 03:36:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0A7F5D9AC
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:50:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727444AbfGCBgC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 21:36:02 -0400
-Received: from mx3.molgen.mpg.de ([141.14.17.11]:51903 "EHLO mx1.molgen.mpg.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726963AbfGCBgB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 21:36:01 -0400
-Received: from [192.168.0.3] (ip5f5bf2d3.dynamic.kabel-deutschland.de [95.91.242.211])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: pmenzel)
-        by mx.molgen.mpg.de (Postfix) with ESMTPSA id E667F2067CFE0;
-        Tue,  2 Jul 2019 23:59:48 +0200 (CEST)
-Subject: Regression caused by commit c54f24e3 (nfsd: fix performance-limiting
- session calculation)
-From:   Paul Menzel <pmenzel@molgen.mpg.de>
-To:     "J. Bruce Fields" <bfields@redhat.com>,
-        Jeff Layton <jlayton@kernel.org>
-References: <20190702165107.93C8A2067CFDD@mx.molgen.mpg.de>
- <8c3e0249-b17f-4bd2-4a46-afd4d35f4763@molgen.mpg.de>
-Cc:     Chris Tracy <ctracy@engr.scu.edu>, linux-nfs@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>, it+linux-nfs@molgen.mpg.de
-Message-ID: <0b5fdd56-d570-c787-cd56-7e6d0ba65225@molgen.mpg.de>
-Date:   Tue, 2 Jul 2019 23:59:48 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1727392AbfGCAub (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 20:50:31 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:39341 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727040AbfGCAub (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 20:50:31 -0400
+Received: by mail-wr1-f66.google.com with SMTP id x4so696889wrt.6
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 17:50:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=7PbiqxZ6N1zfuiJYD7wJ93Pdo9aQh0IzeX8dcJ4X5FU=;
+        b=pSfYXKs/eqzCFbQjrWkC99dJ2GBbcgfGiqD4o3TT1CTRmGJKlgGUmxb64JYxtewy9i
+         P4m7J1uixRsx52J41BThoDYqSjJKJBBVrDWCyj9I8Ea61Y92rPgjr1pLTBd0RQJPFzmU
+         M7V32ufMqcgtq8htDIXCzupTlkp4UjI9gHxwKnnjp9I5KC8XIMpLESjEz2ky6JmdWBUZ
+         fpUrAlbfT2IsMegG37jVJuagyqNW4pkpQtkIeE58VcZQYGISG+P5AuwWh7z/Nf5nXZpG
+         e0YVm2O6FdZtWrWdqJ8y44qc1Kznwh6KOm+3xKsBu3WKOzbgEmB8k1YSrTXZcEvtEq40
+         T4Ng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=7PbiqxZ6N1zfuiJYD7wJ93Pdo9aQh0IzeX8dcJ4X5FU=;
+        b=IuZCCVqVY+QrTd/wpcv4hmNxncUIbiyKbfGgxlMZPBrIHGmEiEwdBOeTQ34vVZmmIE
+         c8prKu+qoT+3LPObxZz5eK4yNggfmHbLqPBpHrBWOkCGjwvNN5TUopGOJKcilXowZyly
+         /8TFEVbSln9yBqU42A6Nur1djfSVdgRcYrYcmhZ9TSPXA+bv95AGoV7GZ84Q5qlRUZ43
+         p8dkuK1ttP3N/TYNVJV81gEW6u+21djelkV1fXD2bHzBeY+9XP7cdEhcnS1+zPYGIQfL
+         s/sF7tKSRaDEKEe4Wvr1RwkTkrwij+sgTW+GSCImBBT6EI9fzzwcjAsI4wmh44t3BYGB
+         R9Kg==
+X-Gm-Message-State: APjAAAW8JUhmjcBVauMxRgIgH0i1dCao9bIzW/lZzt7117fQ8fVfpdbQ
+        cwYxhO1JjgTlvCzhCBYbkZEFhA==
+X-Google-Smtp-Source: APXvYqxy3HQDztVC6uezZn9eBQs5Zkluz0+aQTRZh5ueKntVlQ8XLFFH3aUcx4MBnkHOUdh7vxHexg==
+X-Received: by 2002:a5d:6182:: with SMTP id j2mr14634480wru.275.1562104795656;
+        Tue, 02 Jul 2019 14:59:55 -0700 (PDT)
+Received: from bivouac.eciton.net (bivouac.eciton.net. [2a00:1098:0:86:1000:23:0:2])
+        by smtp.gmail.com with ESMTPSA id w25sm226281wmk.18.2019.07.02.14.59.54
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 02 Jul 2019 14:59:54 -0700 (PDT)
+Date:   Tue, 2 Jul 2019 22:59:53 +0100
+From:   Leif Lindholm <leif.lindholm@linaro.org>
+To:     Rob Clark <robdclark@gmail.com>
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        aarch64-laptops@lists.linaro.org,
+        Rob Clark <robdclark@chromium.org>,
+        Ingo Molnar <mingo@kernel.org>, Will Deacon <will@kernel.org>,
+        Alexander Graf <agraf@suse.de>,
+        Steve Capper <steve.capper@arm.com>,
+        Lukas Wunner <lukas@wunner.de>,
+        Julien Thierry <julien.thierry@arm.com>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/4] efi/libstub: detect panel-id
+Message-ID: <20190702215953.wdqges66hx3ge4jr@bivouac.eciton.net>
+References: <20190630203614.5290-1-robdclark@gmail.com>
+ <20190630203614.5290-3-robdclark@gmail.com>
+ <CAKv+Gu_8BOt+f8RTspHo+se-=igZba1zL0+jWLV2HuuUXCKYpA@mail.gmail.com>
+ <CAKv+Gu-KhPJxxJA3+J813OPcnoAD4nHq6MhiRTJSd_5y1dPNnw@mail.gmail.com>
+ <CAF6AEGv+uAXVV6Q78n=jP0YRDjYn9OS=Xec9MU0+_7EBirxF5w@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <8c3e0249-b17f-4bd2-4a46-afd4d35f4763@molgen.mpg.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAF6AEGv+uAXVV6Q78n=jP0YRDjYn9OS=Xec9MU0+_7EBirxF5w@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Bruce,
-
-
-Could it be that commit c54f24e3 (nfsd: fix performance-limiting session 
-calculation) causes a regression on big memory machines (1 TB)?
-
-> From c54f24e338ed2a35218f117a4a1afb5f9e2b4e64 Mon Sep 17 00:00:00 2001
-> From: "J. Bruce Fields" <bfields@redhat.com>
-> Date: Thu, 21 Feb 2019 10:47:00 -0500
-> Subject: [PATCH] nfsd: fix performance-limiting session calculation
+On Tue, Jul 02, 2019 at 02:01:49PM -0700, Rob Clark wrote:
+> > > So we are dealing with a platform that violates the UEFI spec, since
+> > > it does not bother to implement variable services at runtime (because
+> > > MS let the vendor get away with this).
+> >
+> > To clarify, the above remark applies to populating the DT from the OS
+> > rather than from the firmware.
 > 
-> We're unintentionally limiting the number of slots per nfsv4.1 session
-> to 10.  Often more than 10 simultaneous RPCs are needed for the best
-> performance.
+> yeah, it isn't pretty, but there *are* some other similar cases where
+> efi-stub is populating DT.. (like update_fdt_memmap() and
+> kaslr-seed)..
+
+The problem isn't with the stub updating the DT, the problem is what
+it updates it with.
+
+update_fdt_memmap() is the stub filling in the information it
+communicates to the main kernel.
+
+kaslr-seed sets a standard property using a standard interface if that
+interface is available to it at the point of execution.
+
+Since what we're doing here is dressing up an ACPI platform to make it
+look like it was a DT platform, and since we have the ability to tweak
+the DT before ever passing it to the kernel, let's just do that.
+
+Yes, I know I said I'd rather not, but it's way nicer than sticking
+platform-specific hacks into the EFI stub.
+
+(If adding it as a DT property is indeed the thing to do.)
+
+> > ... but saving variables at boot time for consumption at runtime is
+> > something that we will likely see more of in the future.
 > 
-> This calculation was meant to prevent any one client from using up more
-> than a third of the limit we set for total memory use across all clients
-> and sessions.  Instead, it's limiting the client to a third of the
-> maximum for a single session.
-> 
-> Fix this.
-> 
-> Reported-by: Chris Tracy <ctracy@engr.scu.edu>
-> Cc: stable@vger.kernel.org
-> Fixes: de766e570413 "nfsd: give out fewer session slots as limit approaches"
-> Signed-off-by: J. Bruce Fields <bfields@redhat.com>
-> ---
->  fs/nfsd/nfs4state.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-> index fb3c9844c82a..6a45fb00c5fc 100644
-> --- a/fs/nfsd/nfs4state.c
-> +++ b/fs/nfsd/nfs4state.c
-> @@ -1544,16 +1544,16 @@ static u32 nfsd4_get_drc_mem(struct nfsd4_channel_attrs *ca)
->  {
->  	u32 slotsize = slot_bytes(ca);
->  	u32 num = ca->maxreqs;
-> -	int avail;
-> +	unsigned long avail, total_avail;
->  
->  	spin_lock(&nfsd_drc_lock);
-> -	avail = min((unsigned long)NFSD_MAX_MEM_PER_SESSION,
-> -		    nfsd_drc_max_mem - nfsd_drc_mem_used);
-> +	total_avail = nfsd_drc_max_mem - nfsd_drc_mem_used;
-> +	avail = min((unsigned long)NFSD_MAX_MEM_PER_SESSION, total_avail);
->  	/*
->  	 * Never use more than a third of the remaining memory,
->  	 * unless it's the only way to give this client a slot:
->  	 */
-> -	avail = clamp_t(int, avail, slotsize, avail/3);
-> +	avail = clamp_t(int, avail, slotsize, total_avail/3);
->  	num = min_t(int, num, avail / slotsize);
->  	nfsd_drc_mem_used += num * slotsize;
->  	spin_unlock(&nfsd_drc_lock);
+> I think this will be nice, but it also doesn't address the need for a
+> quirk to get this into /chosen..  I guess we *could* use a shim or
+> something that runs before the kernel to do this.  But that just seems
+> like a logistical/support nightmare.
+>
+> There is one kernel, and there
+> are N distro's, so debugging a users "I don't get a screen at boot"
+> problem because their distro missed some shim patch really just
+> doesn't seem like a headache I want to have.
 
-Booting a 80 threads, 1 TB server with Linux 4.19.56 and Linux 5.2-rc7 
-causes connections problems for the clients. The problems do not happen 
-on servers with just 96 GB memory for example. Bisecting points to the 
-two commits below (and I can only continue tomorrow).
+The distros should not need to be aware *at all* of the hacks required
+to disguise these platforms as DT platforms.
 
-c54f24e338ed2a35218f117a4a1afb5f9e2b4e64 (nfsd: fix performance-limiting 
-session calculation)
-8127d82705998568b52ac724e28e00941538083d (NFS: Don't recoalesce on error 
-in nfs_pageio_complete_mirror())
+If they do, they're already device-specific installers and have
+already accepted the logistical/support nightmare.
 
-If you have things I could do to verify this besides reverting it
-tomorrow, please tell. It’d be great if it could be fixed before Linux
-5.2 is released.
-
-
-Kind regards,
-
-Paul
+/
+    Leif
