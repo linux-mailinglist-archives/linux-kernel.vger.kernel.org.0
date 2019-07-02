@@ -2,78 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51B235CE4C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 13:21:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B75145CE51
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 13:23:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726780AbfGBLVm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 07:21:42 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:46923 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725972AbfGBLVl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 07:21:41 -0400
-Received: by mail-pf1-f194.google.com with SMTP id 81so8089478pfy.13
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 04:21:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=pqkDeidxnIm5jlSRp9tdCLswGD+bGWvHbKv6nvWzCbk=;
-        b=Sv0XwgzuCyrCk5Ce8cHpSOYYAlkAiiSAOz+g/UjA00bdvvV+S+TFrW9r/PfQdwAC6N
-         wZUHzxbSlwCsc4lfyLb+awi43a++VVVxEdhINejVJyRNp2DJvA6rtbWm2YVtYmR78CR1
-         LSQZ1s4RhyEnZozc9B62YbiklkFgKEfdz4NjsMY6zM/f5dtZZ1ZN8mEuUgrWkO106oyB
-         myjqMhbVkKBd1tWIFapV/3z+mhGLCVYzcWF/TaMM7574w1gC2z68nC/8BV5l1HJgwsDm
-         2UGF5BWFRLC82E2IxXXwlOqji7SpP6zJRPcCgUdA+Dx31xjFId7rraIyJE98N6WRx8Pq
-         1z/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to:content-transfer-encoding;
-        bh=pqkDeidxnIm5jlSRp9tdCLswGD+bGWvHbKv6nvWzCbk=;
-        b=qpjuXKC5/dezT3p38scNaM7D3WTUAY2KZXGSsCqDMIG1looxO3hV6kGhQq48v4cZzb
-         0ggRRpIXfmvgrtzLPtkKIkc5IyHAlSIrry7Ak3+K9CR1kG/MmiSPxgG4JzOXTFhZvb4H
-         2N5wV2aHuE/DObid+QHlY0ORtKfwdn0WlRyqP+U8mICcwJKcW6NXFTvmP9xZm49Qauz3
-         KWylkRv1yK4eR4iQ9JCfF/voNe/Y1FcTI313guUm8H6qcCnYVFxloRdvL/zECXnw5oDL
-         lLewiEn1RGFCSK7A0BcLFcwkbt2/D72eaoZBqCT7n0Bg9SpzdPa6tjWhDBn5pShnZCAK
-         AcYg==
-X-Gm-Message-State: APjAAAUzcr8H1lHWnmOKfCUD2OQH4kds2xw0vynTF6gW3yDmSxp9POi1
-        gYPdIpU872DTsrTH1X6YkG+2L5ESEE+ptl5cGXI=
-X-Google-Smtp-Source: APXvYqyHqLjDn5w9xlg92P1catOZVUQnyzrz9YaXUkZlHKXTEBoCuDk4a9X3PEBfx9NISEUMlCxc+bUxC6MqyWgpIhU=
-X-Received: by 2002:a17:90a:22c6:: with SMTP id s64mr5121077pjc.5.1562066500711;
- Tue, 02 Jul 2019 04:21:40 -0700 (PDT)
+        id S1726483AbfGBLXt convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 2 Jul 2019 07:23:49 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:47714 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726150AbfGBLXt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 07:23:49 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E3C3B59454;
+        Tue,  2 Jul 2019 11:23:38 +0000 (UTC)
+Received: from [10.10.66.2] (ovpn-66-2.rdu2.redhat.com [10.10.66.2])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9FFAD1001B00;
+        Tue,  2 Jul 2019 11:23:33 +0000 (UTC)
+From:   "Benjamin Coddington" <bcodding@redhat.com>
+To:     "Eric Biggers" <ebiggers@kernel.org>
+Cc:     syzbot <syzbot+7fe11b49c1cc30e3fce2@syzkaller.appspotmail.com>,
+        anna.schumaker@netapp.com, linux-kernel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        trond.myklebust@hammerspace.com
+Subject: Re: memory leak in nfs_get_client
+Date:   Tue, 02 Jul 2019 07:23:32 -0400
+Message-ID: <13A4AF36-1649-41C0-A789-DC35853D2FB1@redhat.com>
+In-Reply-To: <20190702063140.GE3054@sol.localdomain>
+References: <000000000000f8a345058b046657@google.com>
+ <223AB0C9-D93E-4D3C-BBBB-4AF40D8EA436@redhat.com>
+ <20190702063140.GE3054@sol.localdomain>
 MIME-Version: 1.0
-Reply-To: zia412@outlook.com
-Received: by 2002:a17:90a:928d:0:0:0:0 with HTTP; Tue, 2 Jul 2019 04:21:39
- -0700 (PDT)
-From:   Ahmed Zama <zaaama250@gmail.com>
-Date:   Tue, 2 Jul 2019 13:21:39 +0200
-X-Google-Sender-Auth: EHHhgI40bJdzdVc7knk2VwtQTYY
-Message-ID: <CAK5X1Sf1sGYetLyiP9O8KMTeYuLSLBWxWuThSETXm+X67yK4iA@mail.gmail.com>
-Subject: Request
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; format=flowed
+Content-Transfer-Encoding: 8BIT
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Tue, 02 Jul 2019 11:23:49 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greetings
+On 2 Jul 2019, at 2:31, Eric Biggers wrote:
 
-I have a profiling amount in an excess of =E2=82=AC15 million which I seek =
-you
-to accommodate for me. You will be rewarded with 30% of the total sum
-for your partnership. Can you handle this? Your assistance and support
-is needed to transfer the =E2=82=AC15 million Euros out of the Bank where I
-work, to your bank account in your Country. Contact  me for more
-detailed information.
+> On Tue, Jun 11, 2019 at 12:23:12PM -0400, Benjamin Coddington wrote:
+>> Ugh.. Now that you can cancel the wait, you have to also handle if 
+>> "new" was
+>> allocated.  I think this needs:
+>>
+>> diff --git a/fs/nfs/client.c b/fs/nfs/client.c
+>> index d7e4f0848e28..4d90f5bf0b0a 100644
+>> --- a/fs/nfs/client.c
+>> +++ b/fs/nfs/client.c
+>> @@ -406,10 +406,10 @@ struct nfs_client *nfs_get_client(const struct
+>> nfs_client_initdata *cl_init)
+>>                 clp = nfs_match_client(cl_init);
+>>                 if (clp) {
+>>                         spin_unlock(&nn->nfs_client_lock);
+>> -                       if (IS_ERR(clp))
+>> -                               return clp;
+>>                         if (new)
+>>                                 new->rpc_ops->free_client(new);
+>> +                       if (IS_ERR(clp))
+>> +                               return clp;
+>>                         return nfs_found_client(cl_init, clp);
+>>                 }
+>>                 if (new) {
+>>
+>> I'll patch/test and send it along.
+>>
+>> Ben
+>
+> Hi Ben, what happened to this patch?
 
-Kindly send me the followings.
+I sent it along:
 
-Full Names
-Address
-Age
-Nationality
-Direct Mobile Lines
-Thanks
-Ahmed Zama
+https://lore.kernel.org/linux-nfs/65b675cec79d140df64bc30def88b1def32bf87e.1560272160.git.bcodding@redhat.com/
+
+I don't think it will go in 5.2.. it's not a huge problem.
+
+Ben
