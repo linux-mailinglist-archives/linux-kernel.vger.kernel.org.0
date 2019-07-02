@@ -2,132 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BD805C9F4
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 09:30:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E3375C627
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 02:01:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726765AbfGBHaM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 03:30:12 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:35052 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725845AbfGBHaM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 03:30:12 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id D5C8F26AC966FD5D207D;
-        Tue,  2 Jul 2019 15:30:08 +0800 (CST)
-Received: from localhost.localdomain (10.175.34.53) by
- DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
- 14.3.439.0; Tue, 2 Jul 2019 15:29:57 +0800
-From:   Xue Chaojing <xuechaojing@huawei.com>
-To:     <davem@davemloft.net>
-CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <luoshaokai@huawei.com>, <cloud.wangxiaoyun@huawei.com>,
-        <xuechaojing@huawei.com>, <chiqijun@huawei.com>,
-        <wulike1@huawei.com>
-Subject: [PATCH net-next] hinic: remove standard netdev stats
-Date:   Mon, 1 Jul 2019 23:40:00 +0000
-Message-ID: <20190701234000.31738-1-xuechaojing@huawei.com>
-X-Mailer: git-send-email 2.17.1
+        id S1727049AbfGBABI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 20:01:08 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:54485 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726866AbfGBABI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Jul 2019 20:01:08 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45d4C43XDPz9s3Z;
+        Tue,  2 Jul 2019 10:01:03 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1562025664;
+        bh=YcxBeD6Q4wC1DnqF2UHDQOk3MwaNCpte8xIEjUbQ1dE=;
+        h=Date:From:To:Cc:Subject:From;
+        b=qPqItKzkQ/pEKh4b82mnrZfkCF7YfOGYQmKnnatD8cvPsrK2lL/AstdIFAEc9XwrH
+         D8CYchYaeW6XpHRF/y9C7CrJb5hKy686TSqcyQKXpzSlMrYZF9gzqKHU7mQTKX2DaM
+         bp+iVirvn2YhHU0Vy7xL4JSkCa3Fng36YH5kmLWQ46zybTiUiwZ0H7iOfPuNjRwX1t
+         GKIaJXBVlXGTVxQpOqnd4jXfFJWZ33+fVVvJJr8YHWFQzRVnMOrghXqPLyk4GMTPf2
+         d1JEb+xsmMdp7YLO1CGE0vSAxaPpd2hSuWkvvRGHr3hznrpKoHreqoXcbY2dSGrFYp
+         zEeiLQ9MeU7Lg==
+Date:   Tue, 2 Jul 2019 10:01:03 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: build failure after merge of the clk tree
+Message-ID: <20190702100103.12c132da@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.34.53]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/4fPfY4dz.zTw+BW=GF3We/A"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch removes standard netdev stats in ethtool -S.
+--Sig_/4fPfY4dz.zTw+BW=GF3We/A
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Suggested-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Signed-off-by: Xue Chaojing <xuechaojing@huawei.com>
+Hi all,
+
+After merging the clk tree, today's linux-next build (arm omap1_defconfig
+and many others) failed like this:
+
+In file included from drivers/clk/clkdev.c:22:0:
+drivers/clk/clk.h:36:23: error: static declaration of '__clk_get_hw' follow=
+s non-static declaration
+include/linux/clk-provider.h:808:16: note: previous declaration of '__clk_g=
+et_hw' was here
+
+Caused by commit
+
+  59fcdce425b7 ("clk: Remove ifdef for COMMON_CLK in clk-provider.h")
+
+This commit exposed the CONFIG_COMMON_CLK version of the __clk_get_hw()
+declaration to non CONFIG_COMMON_CLK code (where there is a static
+declaration of  __clk_get_hw() (which is BTW missing an "inline")
+in drivers/clk/clk.h.
+
+We need something like this (untested):
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 2 Jul 2019 09:58:18 +1000
+Subject: [PATCH] clk: for up for "clk: Remove ifdef for COMMON_CLK in
+ clk-provider.h"
+
+We were getting errors like:
+
+In file included from drivers/clk/clkdev.c:22:0:
+drivers/clk/clk.h:36:23: error: static declaration of '__clk_get_hw' follow=
+s non
+-static declaration
+include/linux/clk-provider.h:808:16: note: previous declaration of '__clk_g=
+et_hw
+' was here
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- .../net/ethernet/huawei/hinic/hinic_ethtool.c | 47 +------------------
- 1 file changed, 1 insertion(+), 46 deletions(-)
+ drivers/clk/clk.h            | 2 +-
+ include/linux/clk-provider.h | 3 +++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/huawei/hinic/hinic_ethtool.c b/drivers/net/ethernet/huawei/hinic/hinic_ethtool.c
-index 8d98f37c88a8..73a20f01ad4c 100644
---- a/drivers/net/ethernet/huawei/hinic/hinic_ethtool.c
-+++ b/drivers/net/ethernet/huawei/hinic/hinic_ethtool.c
-@@ -440,35 +440,6 @@ static u32 hinic_get_rxfh_indir_size(struct net_device *netdev)
- 
- #define ARRAY_LEN(arr) ((int)((int)sizeof(arr) / (int)sizeof(arr[0])))
- 
--#define HINIC_NETDEV_STAT(_stat_item) { \
--	.name = #_stat_item, \
--	.size = FIELD_SIZEOF(struct rtnl_link_stats64, _stat_item), \
--	.offset = offsetof(struct rtnl_link_stats64, _stat_item) \
--}
--
--static struct hinic_stats hinic_netdev_stats[] = {
--	HINIC_NETDEV_STAT(rx_packets),
--	HINIC_NETDEV_STAT(tx_packets),
--	HINIC_NETDEV_STAT(rx_bytes),
--	HINIC_NETDEV_STAT(tx_bytes),
--	HINIC_NETDEV_STAT(rx_errors),
--	HINIC_NETDEV_STAT(tx_errors),
--	HINIC_NETDEV_STAT(rx_dropped),
--	HINIC_NETDEV_STAT(tx_dropped),
--	HINIC_NETDEV_STAT(multicast),
--	HINIC_NETDEV_STAT(collisions),
--	HINIC_NETDEV_STAT(rx_length_errors),
--	HINIC_NETDEV_STAT(rx_over_errors),
--	HINIC_NETDEV_STAT(rx_crc_errors),
--	HINIC_NETDEV_STAT(rx_frame_errors),
--	HINIC_NETDEV_STAT(rx_fifo_errors),
--	HINIC_NETDEV_STAT(rx_missed_errors),
--	HINIC_NETDEV_STAT(tx_aborted_errors),
--	HINIC_NETDEV_STAT(tx_carrier_errors),
--	HINIC_NETDEV_STAT(tx_fifo_errors),
--	HINIC_NETDEV_STAT(tx_heartbeat_errors),
--};
--
- #define HINIC_FUNC_STAT(_stat_item) {	\
- 	.name = #_stat_item, \
- 	.size = FIELD_SIZEOF(struct hinic_vport_stats, _stat_item), \
-@@ -658,20 +629,11 @@ static void hinic_get_ethtool_stats(struct net_device *netdev,
+diff --git a/drivers/clk/clk.h b/drivers/clk/clk.h
+index d8400d623b34..143acac2ec81 100644
+--- a/drivers/clk/clk.h
++++ b/drivers/clk/clk.h
+@@ -33,7 +33,7 @@ clk_hw_create_clk(struct device *dev, struct clk_hw *hw, =
+const char *dev_id,
  {
- 	struct hinic_dev *nic_dev = netdev_priv(netdev);
- 	struct hinic_vport_stats vport_stats = {0};
--	const struct rtnl_link_stats64 *net_stats;
- 	struct hinic_phy_port_stats *port_stats;
--	struct rtnl_link_stats64 temp;
- 	u16 i = 0, j = 0;
- 	char *p;
- 	int err;
- 
--	net_stats = dev_get_stats(netdev, &temp);
--	for (j = 0; j < ARRAY_LEN(hinic_netdev_stats); j++, i++) {
--		p = (char *)net_stats + hinic_netdev_stats[j].offset;
--		data[i] = (hinic_netdev_stats[j].size ==
--				sizeof(u64)) ? *(u64 *)p : *(u32 *)p;
--	}
--
- 	err = hinic_get_vport_stats(nic_dev, &vport_stats);
- 	if (err)
- 		netif_err(nic_dev, drv, netdev,
-@@ -716,8 +678,7 @@ static int hinic_get_sset_count(struct net_device *netdev, int sset)
- 	switch (sset) {
- 	case ETH_SS_STATS:
- 		q_num = nic_dev->num_qps;
--		count = ARRAY_LEN(hinic_netdev_stats) +
--			ARRAY_LEN(hinic_function_stats) +
-+		count = ARRAY_LEN(hinic_function_stats) +
- 			(ARRAY_LEN(hinic_tx_queue_stats) +
- 			ARRAY_LEN(hinic_rx_queue_stats)) * q_num;
- 
-@@ -738,12 +699,6 @@ static void hinic_get_strings(struct net_device *netdev,
- 
- 	switch (stringset) {
- 	case ETH_SS_STATS:
--		for (i = 0; i < ARRAY_LEN(hinic_netdev_stats); i++) {
--			memcpy(p, hinic_netdev_stats[i].name,
--			       ETH_GSTRING_LEN);
--			p += ETH_GSTRING_LEN;
--		}
--
- 		for (i = 0; i < ARRAY_LEN(hinic_function_stats); i++) {
- 			memcpy(p, hinic_function_stats[i].name,
- 			       ETH_GSTRING_LEN);
--- 
-2.17.1
+ 	return (struct clk *)hw;
+ }
+-static struct clk_hw *__clk_get_hw(struct clk *clk)
++static inline struct clk_hw *__clk_get_hw(struct clk *clk)
+ {
+ 	return (struct clk_hw *)clk;
+ }
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 0fbf3ccad849..35c8b1c315b4 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -805,7 +805,10 @@ void devm_clk_hw_unregister(struct device *dev, struct=
+ clk_hw *hw);
+ /* helper functions */
+ const char *__clk_get_name(const struct clk *clk);
+ const char *clk_hw_get_name(const struct clk_hw *hw);
++#ifdef CONFIG_COMON_CLK
++/* There is a !CONFIG_COMMON_CLK static inline for this in drivers/clk/clk=
+.h */
+ struct clk_hw *__clk_get_hw(struct clk *clk);
++#endif
+ unsigned int clk_hw_get_num_parents(const struct clk_hw *hw);
+ struct clk_hw *clk_hw_get_parent(const struct clk_hw *hw);
+ struct clk_hw *clk_hw_get_parent_by_index(const struct clk_hw *hw,
+--=20
+2.20.1
 
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/4fPfY4dz.zTw+BW=GF3We/A
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0anr8ACgkQAVBC80lX
+0GwnlAgAkaEHrBS5hradZaLJY1asTyVxJNrgn14tKqlPFCVnK14lKAHo7lRD8Czg
+aVkJM4IEGawpZE8RuiuztUZ2Oa8DF3m+2qJu4Sila+GA1RdcKo4EfdM/rvDI5ctz
+RsdRSrHP7WMW/LG8UrE0wzeJfuRKfjujCIJIPlg4hw2eqj1YPeWAGVtlx92tVHLw
+pEICjzIHd+NguM5UHEGNVMTn0o8/q0joCSWuG9Hq42acY5eimYUlXou2bhmnmVPG
+Ikck6juC4r//MKJ4W++Gv4RZBosM7bNUcQspzNEj4QNeIGL53YAN57VWR2HCclEe
+ONLcGpsTv8CnsoVAFSDAW0cig2NqEg==
+=peYP
+-----END PGP SIGNATURE-----
+
+--Sig_/4fPfY4dz.zTw+BW=GF3We/A--
