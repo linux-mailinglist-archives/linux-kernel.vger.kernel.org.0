@@ -2,113 +2,232 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3D995CA23
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 09:58:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04D225CA26
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 09:58:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727119AbfGBH6Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 03:58:24 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:34990 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725991AbfGBH6X (ORCPT
+        id S1727167AbfGBH6e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 03:58:34 -0400
+Received: from mail-pf1-f201.google.com ([209.85.210.201]:55066 "EHLO
+        mail-pf1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726627AbfGBH6c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 03:58:23 -0400
-Received: by mail-pf1-f196.google.com with SMTP id d126so7851377pfd.2
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 00:58:23 -0700 (PDT)
+        Tue, 2 Jul 2019 03:58:32 -0400
+Received: by mail-pf1-f201.google.com with SMTP id c17so10411340pfb.21
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 00:58:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=gtR3W8cNK4Xe7N97wr9wNOK1b76MJzoKS2zMLIXyrNY=;
-        b=Z37uH13GxqsV5ei17LUBkHq/pRF9kUmPZx/zdRoCLubYfcmzKio6dtxou1dkO8cAmz
-         wiuqSOipG1hzG2Rn0M66nn7MiTgXl/2GNe9VVT2vsDJ7Nyagw9vsI4ybFTg7sSDckQHk
-         J6/eIc46vuwaxGyR891axLuLnVEFYsY++hJEM5w3q/WpF3SzLh7cHwSka4ds95ixcNL1
-         NFOynlsSvVXvKK8JCcir4+DSERqHIBdiaYbHlzG1RQezseldRGlqRVmPZj4FT3AMUSyG
-         rLsTfum++/7rK35svwkaIApIlikERCG9J8+KHvKb3XGeCx6xcUJm61nbbNl3LX2E8GKp
-         xiWg==
+        d=google.com; s=20161025;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=LIwtDnjBihXXGc0lnqU+ntqrJI81QQ5/J+WaYscOEsc=;
+        b=iaj8cDiPcqJw9MKRhPBTTDf4L7oj0EAwsKPvOFsjQyD54v7IffqNj/mUCrSVo0RM1R
+         xVX6A7SxMjwjcO9Zl0S780e5dZig07n/EJ6xcPGjPotM+ZUVG9TzmTP8jAFmxgdipjSr
+         zDs7W7gN2G0nPCo02sbac1Ft/CFZG8yJoVS1OEtWv0lsOvJwsBntFCGRMQHHKWwl6GYq
+         mMoSeGa+hhXEYPM1tHI+ntLcLwFHcWV/J1kuLkEcmRE6lgrlnEUsAj2+tRZTm7+bN6ji
+         9ZmcvZR5WvOIgMDhNIqHpKHBoKaOSnr+TovllXBPoI7uSe8h27HK1LWjpLHjoY1guKOr
+         HYdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=gtR3W8cNK4Xe7N97wr9wNOK1b76MJzoKS2zMLIXyrNY=;
-        b=iIUQjfNNmJbBPLW7LdNNpHRRYgjrtlUodtl/v43J6aDQT+PXqrfOHOF9tD5srbG6YO
-         0lg7qx3kbKE0cakApjTVJoQtTJstut98i+qAvdzfseZJ5PzFAqKoMLXGs6BMBut70c9S
-         80/FTtGGyHD8PnuVI2TBz2538tHVMlC5C0BrqpFGTUicHyUtGgz4foEBivG//H6qkWLO
-         U82iSsNgAhqMl+il0HSbyi6cLF03w8Q2OtBV6nixQaASs5F7Cg8WuoJ47V8yW7bgp2FX
-         p+KRF/MEMH1W4MHet3fKtoUmiSySpShYSSxZhOTr40vZV/wGAZJXrrbVUyBWaXIM6tMC
-         ssoA==
-X-Gm-Message-State: APjAAAXHaAmIHwtBJD08oifo8xMjybzl9tQb8OdW2iXPUNqC4md+eBv2
-        ttMXk9SLGc+ut7Hkpojba5cCot184iY=
-X-Google-Smtp-Source: APXvYqzVi+Kl60mGgdJZcVwwnWP59gHB7iT7sKTR6H177UgzGpEMHsnrH6ut2TmD1IHNH4sKMfAtWg==
-X-Received: by 2002:a63:f64a:: with SMTP id u10mr29651444pgj.329.1562054303023;
-        Tue, 02 Jul 2019 00:58:23 -0700 (PDT)
-Received: from hfq-skylake.ipads-lab.se.sjtu.edu.cn ([202.120.40.82])
-        by smtp.googlemail.com with ESMTPSA id s20sm12857514pfe.169.2019.07.02.00.58.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 02 Jul 2019 00:58:22 -0700 (PDT)
-From:   Fuqian Huang <huangfq.daxian@gmail.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Fuqian Huang <huangfq.daxian@gmail.com>
-Subject: [PATCH v3 12/27] media: use kzalloc instead of kmalloc and memset
-Date:   Tue,  2 Jul 2019 15:58:18 +0800
-Message-Id: <20190702075818.24066-1-huangfq.daxian@gmail.com>
-X-Mailer: git-send-email 2.11.0
-To:     unlisted-recipients:; (no To-header on input)
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=LIwtDnjBihXXGc0lnqU+ntqrJI81QQ5/J+WaYscOEsc=;
+        b=SrReVMkrHHfYr1O3zaf7Pl1pZg9b6GNjS75aV5rdrF4b6iYrslLn+mXPmdaWOEDYt/
+         65J5dWde+hHDlR0Pe+GH/vI25XrPxRXTMD7U2uYZ3CInDm8Nk4IOT2tzSMpU0Z6Z1DAy
+         dYJ/J7tTnBiYkTkhsYsmCtrrKokKwIa1+z7F1L8lnSx2nbUJE6SbiSGlaxl0h96nHIg0
+         HlrcMbZYHZmixaElfJC+wXsQBK+Jn8VIHnjGPxUKCRyUojMIGDSt/adq3SskzdfcA5JD
+         eabWuAXYsC0te8NKz682M4gNSudny70WQelv84WMzYLIsTIKpnX14727dXQRIAFmpKuY
+         6YQQ==
+X-Gm-Message-State: APjAAAXg2x5d7u6D/j9OBLbnHFFAzpMfH/2UZODHJlJFxAsVGM7xELqc
+        8EZNwehU/FzFBJLDNEiv0NHjpqyQjkA=
+X-Google-Smtp-Source: APXvYqwgcn3e9xpRWPtf+OugsIbSrK4taLVp9UneSvpMkXzjsVJgjRIpqQxPyfjZrTsJ/Ai5gsBXL9TcMz4=
+X-Received: by 2002:a65:4489:: with SMTP id l9mr11694176pgq.207.1562054311611;
+ Tue, 02 Jul 2019 00:58:31 -0700 (PDT)
+Date:   Tue,  2 Jul 2019 00:58:19 -0700
+In-Reply-To: <20190702075819.34787-1-walken@google.com>
+Message-Id: <20190702075819.34787-4-walken@google.com>
+Mime-Version: 1.0
+References: <20190702075819.34787-1-walken@google.com>
+X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
+Subject: [PATCH v2 3/3] augmented rbtree: rework the RB_DECLARE_CALLBACKS
+ macro definition
+From:   Michel Lespinasse <walken@google.com>
+To:     Davidlohr Bueso <dave@stgolabs.net>,
+        Peter Zijlstra <peterz@infradead.org>,
+        David Howells <dhowells@redhat.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Michel Lespinasse <walken@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace kmalloc followed by a memset with kzalloc.
+- Change the definition of the RBCOMPUTE function. The propagate
+  callback repeatedly calls RBCOMPUTE as it moves from leaf to root.
+  it wants to stop recomputing once the augmented subtree information
+  doesn't change. This was previously checked using the == operator,
+  but that only works when the augmented subtree information is a
+  scalar field. This commit modifies the RBCOMPUTE function so that
+  it now sets the augmented subtree information instead of returning it,
+  and returns a boolean value indicating if the propagate callback
+  should stop.
 
-Signed-off-by: Fuqian Huang <huangfq.daxian@gmail.com>
+- Reorder the RB_DECLARE_CALLBACKS macro arguments, following the
+  style of the INTERVAL_TREE_DEFINE macro, so that RBSTATIC and RBNAME
+  are passed last.
+
+The motivation for this change is that I want to introduce augmented rbtree
+uses where the augmented data for the subtree is a struct instead of a scalar.
+
+Signed-off-by: Michel Lespinasse <walken@google.com>
 ---
-Changes in v3:
-  - Resend
+ include/linux/rbtree_augmented.h       | 28 +++++++++++++-------------
+ tools/include/linux/rbtree_augmented.h | 28 +++++++++++++-------------
+ 2 files changed, 28 insertions(+), 28 deletions(-)
 
- drivers/media/usb/pvrusb2/pvrusb2-eeprom.c | 3 +--
- drivers/media/usb/pvrusb2/pvrusb2-hdw.c    | 3 +--
- 2 files changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/media/usb/pvrusb2/pvrusb2-eeprom.c b/drivers/media/usb/pvrusb2/pvrusb2-eeprom.c
-index 79f0e0c6df37..fac90af8b537 100644
---- a/drivers/media/usb/pvrusb2/pvrusb2-eeprom.c
-+++ b/drivers/media/usb/pvrusb2/pvrusb2-eeprom.c
-@@ -39,7 +39,7 @@ static u8 *pvr2_eeprom_fetch(struct pvr2_hdw *hdw)
- 	int ret;
- 	int mode16 = 0;
- 	unsigned pcnt,tcnt;
--	eeprom = kmalloc(EEPROM_SIZE,GFP_KERNEL);
-+	eeprom = kzalloc(EEPROM_SIZE,GFP_KERNEL);
- 	if (!eeprom) {
- 		pvr2_trace(PVR2_TRACE_ERROR_LEGS,
- 			   "Failed to allocate memory required to read eeprom");
-@@ -74,7 +74,6 @@ static u8 *pvr2_eeprom_fetch(struct pvr2_hdw *hdw)
- 	   (1) we're only fetching part of the eeprom, and (2) if we were
- 	   getting the whole thing our I2C driver can't grab it in one
- 	   pass - which is what tveeprom is otherwise going to attempt */
--	memset(eeprom,0,EEPROM_SIZE);
- 	for (tcnt = 0; tcnt < EEPROM_SIZE; tcnt += pcnt) {
- 		pcnt = 16;
- 		if (pcnt + tcnt > EEPROM_SIZE) pcnt = EEPROM_SIZE-tcnt;
-diff --git a/drivers/media/usb/pvrusb2/pvrusb2-hdw.c b/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
-index 70b5cb08d65b..ff75b4a53dfa 100644
---- a/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
-+++ b/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
-@@ -3309,7 +3309,7 @@ static u8 *pvr2_full_eeprom_fetch(struct pvr2_hdw *hdw)
- 	int ret;
- 	int mode16 = 0;
- 	unsigned pcnt,tcnt;
--	eeprom = kmalloc(EEPROM_SIZE,GFP_KERNEL);
-+	eeprom = kzalloc(EEPROM_SIZE,GFP_KERNEL);
- 	if (!eeprom) {
- 		pvr2_trace(PVR2_TRACE_ERROR_LEGS,
- 			   "Failed to allocate memory required to read eeprom");
-@@ -3344,7 +3344,6 @@ static u8 *pvr2_full_eeprom_fetch(struct pvr2_hdw *hdw)
- 	   (1) we're only fetching part of the eeprom, and (2) if we were
- 	   getting the whole thing our I2C driver can't grab it in one
- 	   pass - which is what tveeprom is otherwise going to attempt */
--	memset(eeprom,0,EEPROM_SIZE);
- 	for (tcnt = 0; tcnt < EEPROM_SIZE; tcnt += pcnt) {
- 		pcnt = 16;
- 		if (pcnt + tcnt > EEPROM_SIZE) pcnt = EEPROM_SIZE-tcnt;
+diff --git a/include/linux/rbtree_augmented.h b/include/linux/rbtree_augmented.h
+index a471702c01e7..f8780a67ec04 100644
+--- a/include/linux/rbtree_augmented.h
++++ b/include/linux/rbtree_augmented.h
+@@ -75,26 +75,23 @@ rb_insert_augmented_cached(struct rb_node *node,
+ /*
+  * Template for declaring augmented rbtree callbacks (generic case)
+  *
+- * RBSTATIC:    'static' or empty
+- * RBNAME:      name of the rb_augment_callbacks structure
+  * RBSTRUCT:    struct type of the tree nodes
+  * RBFIELD:     name of struct rb_node field within RBSTRUCT
+- * RBTYPE:      type of the RBAUGMENTED field
+- * RBAUGMENTED: name of RBTYPE field within RBSTRUCT holding data for subtree
++ * RBAUGMENTED: name of field within RBSTRUCT holding data for subtree
+  * RBCOMPUTE:   name of function that recomputes the RBAUGMENTED data
++ * RBSTATIC:    'static' or empty
++ * RBNAME:      name of the rb_augment_callbacks structure
+  */
+ 
+-#define RB_DECLARE_CALLBACKS(RBSTATIC, RBNAME, RBSTRUCT, RBFIELD,	\
+-			     RBTYPE, RBAUGMENTED, RBCOMPUTE)		\
++#define RB_DECLARE_CALLBACKS(RBSTRUCT, RBFIELD, RBAUGMENTED, RBCOMPUTE,	\
++			     RBSTATIC, RBNAME)				\
+ static inline void							\
+ RBNAME ## _propagate(struct rb_node *rb, struct rb_node *stop)		\
+ {									\
+ 	while (rb != stop) {						\
+ 		RBSTRUCT *node = rb_entry(rb, RBSTRUCT, RBFIELD);	\
+-		RBTYPE augmented = RBCOMPUTE(node);			\
+-		if (node->RBAUGMENTED == augmented)			\
++		if (RBCOMPUTE(node, true))				\
+ 			break;						\
+-		node->RBAUGMENTED = augmented;				\
+ 		rb = rb_parent(&node->RBFIELD);				\
+ 	}								\
+ }									\
+@@ -111,7 +108,7 @@ RBNAME ## _rotate(struct rb_node *rb_old, struct rb_node *rb_new)	\
+ 	RBSTRUCT *old = rb_entry(rb_old, RBSTRUCT, RBFIELD);		\
+ 	RBSTRUCT *new = rb_entry(rb_new, RBSTRUCT, RBFIELD);		\
+ 	new->RBAUGMENTED = old->RBAUGMENTED;				\
+-	old->RBAUGMENTED = RBCOMPUTE(old);				\
++	RBCOMPUTE(old, false);						\
+ }									\
+ RBSTATIC const struct rb_augment_callbacks RBNAME = {			\
+ 	.propagate = RBNAME ## _propagate,				\
+@@ -134,7 +131,7 @@ RBSTATIC const struct rb_augment_callbacks RBNAME = {			\
+ 
+ #define RB_DECLARE_CALLBACKS_MAX(RBSTRUCT, RBFIELD, RBTYPE, RBAUGMENTED,      \
+ 			     RBCOMPUTE, RBSTATIC, RBNAME)		      \
+-static inline RBTYPE RBNAME ## _compute_max(RBSTRUCT *node)		      \
++static inline bool RBNAME ## _compute_max(RBSTRUCT *node, bool exit)	      \
+ {									      \
+ 	RBSTRUCT *child;						      \
+ 	RBTYPE max = RBCOMPUTE(node);					      \
+@@ -148,10 +145,13 @@ static inline RBTYPE RBNAME ## _compute_max(RBSTRUCT *node)		      \
+ 		if (child->RBAUGMENTED > max)				      \
+ 			max = child->RBAUGMENTED;			      \
+ 	}								      \
+-	return max;							      \
++	if (exit && node->RBAUGMENTED == max)				      \
++		return true;						      \
++	node->RBAUGMENTED = max;					      \
++	return false;							      \
+ }									      \
+-RB_DECLARE_CALLBACKS(RBSTATIC, RBNAME, RBSTRUCT, RBFIELD,		      \
+-		     RBTYPE, RBAUGMENTED, RBNAME ## _compute_max)
++RB_DECLARE_CALLBACKS(RBSTRUCT, RBFIELD, RBAUGMENTED, RBNAME ## _compute_max,  \
++		     RBSTATIC, RBNAME)
+ 
+ 
+ #define	RB_RED		0
+diff --git a/tools/include/linux/rbtree_augmented.h b/tools/include/linux/rbtree_augmented.h
+index 4db1dcaf90b2..b5845898c2d8 100644
+--- a/tools/include/linux/rbtree_augmented.h
++++ b/tools/include/linux/rbtree_augmented.h
+@@ -77,26 +77,23 @@ rb_insert_augmented_cached(struct rb_node *node,
+ /*
+  * Template for declaring augmented rbtree callbacks (generic case)
+  *
+- * RBSTATIC:    'static' or empty
+- * RBNAME:      name of the rb_augment_callbacks structure
+  * RBSTRUCT:    struct type of the tree nodes
+  * RBFIELD:     name of struct rb_node field within RBSTRUCT
+- * RBTYPE:      type of the RBAUGMENTED field
+- * RBAUGMENTED: name of RBTYPE field within RBSTRUCT holding data for subtree
++ * RBAUGMENTED: name of field within RBSTRUCT holding data for subtree
+  * RBCOMPUTE:   name of function that recomputes the RBAUGMENTED data
++ * RBSTATIC:    'static' or empty
++ * RBNAME:      name of the rb_augment_callbacks structure
+  */
+ 
+-#define RB_DECLARE_CALLBACKS(RBSTATIC, RBNAME, RBSTRUCT, RBFIELD,	\
+-			     RBTYPE, RBAUGMENTED, RBCOMPUTE)		\
++#define RB_DECLARE_CALLBACKS(RBSTRUCT, RBFIELD, RBAUGMENTED, RBCOMPUTE,	\
++			     RBSTATIC, RBNAME)				\
+ static inline void							\
+ RBNAME ## _propagate(struct rb_node *rb, struct rb_node *stop)		\
+ {									\
+ 	while (rb != stop) {						\
+ 		RBSTRUCT *node = rb_entry(rb, RBSTRUCT, RBFIELD);	\
+-		RBTYPE augmented = RBCOMPUTE(node);			\
+-		if (node->RBAUGMENTED == augmented)			\
++		if (RBCOMPUTE(node, true))				\
+ 			break;						\
+-		node->RBAUGMENTED = augmented;				\
+ 		rb = rb_parent(&node->RBFIELD);				\
+ 	}								\
+ }									\
+@@ -113,7 +110,7 @@ RBNAME ## _rotate(struct rb_node *rb_old, struct rb_node *rb_new)	\
+ 	RBSTRUCT *old = rb_entry(rb_old, RBSTRUCT, RBFIELD);		\
+ 	RBSTRUCT *new = rb_entry(rb_new, RBSTRUCT, RBFIELD);		\
+ 	new->RBAUGMENTED = old->RBAUGMENTED;				\
+-	old->RBAUGMENTED = RBCOMPUTE(old);				\
++	RBCOMPUTE(old, false);						\
+ }									\
+ RBSTATIC const struct rb_augment_callbacks RBNAME = {			\
+ 	.propagate = RBNAME ## _propagate,				\
+@@ -136,7 +133,7 @@ RBSTATIC const struct rb_augment_callbacks RBNAME = {			\
+ 
+ #define RB_DECLARE_CALLBACKS_MAX(RBSTRUCT, RBFIELD, RBTYPE, RBAUGMENTED,      \
+ 			     RBCOMPUTE, RBSTATIC, RBNAME)		      \
+-static inline RBTYPE RBNAME ## _compute_max(RBSTRUCT *node)		      \
++static inline bool RBNAME ## _compute_max(RBSTRUCT *node, bool exit)	      \
+ {									      \
+ 	RBSTRUCT *child;						      \
+ 	RBTYPE max = RBCOMPUTE(node);					      \
+@@ -150,10 +147,13 @@ static inline RBTYPE RBNAME ## _compute_max(RBSTRUCT *node)		      \
+ 		if (child->RBAUGMENTED > max)				      \
+ 			max = child->RBAUGMENTED;			      \
+ 	}								      \
+-	return max;							      \
++	if (exit && node->RBAUGMENTED == max)				      \
++		return true;						      \
++	node->RBAUGMENTED = max;					      \
++	return false;							      \
+ }									      \
+-RB_DECLARE_CALLBACKS(RBSTATIC, RBNAME, RBSTRUCT, RBFIELD,		      \
+-		     RBTYPE, RBAUGMENTED, RBNAME ## _compute_max)
++RB_DECLARE_CALLBACKS(RBSTRUCT, RBFIELD, RBAUGMENTED, RBNAME ## _compute_max,  \
++		     RBSTATIC, RBNAME)
+ 
+ 
+ #define	RB_RED		0
 -- 
-2.11.0
+2.22.0.410.gd8fdbe21b5-goog
 
