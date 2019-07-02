@@ -2,77 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7850D5D213
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 16:50:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF5BC5D1E6
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 16:40:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727107AbfGBOuK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 10:50:10 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:8686 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726150AbfGBOuJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 10:50:09 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 3358780BBA68DC0EDB0A;
-        Tue,  2 Jul 2019 22:39:17 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Tue, 2 Jul 2019
- 22:39:07 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <clm@fb.com>, <josef@toxicpanda.com>, <dsterba@suse.com>,
-        <jthumshirn@suse.de>
-CC:     <linux-kernel@vger.kernel.org>, <linux-btrfs@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH] btrfs: Fix build error while LIBCRC32C is module
-Date:   Tue, 2 Jul 2019 22:39:03 +0800
-Message-ID: <20190702143903.49264-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1727124AbfGBOkb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 10:40:31 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:53878 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725940AbfGBOkb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 10:40:31 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1hiJxK-0004Hn-VT; Tue, 02 Jul 2019 14:40:27 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Maya Erez <merez@codeaurora.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, wil6210@qti.qualcomm.com,
+        netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] wil6210: fix wil_cid_valid with negative cid values
+Date:   Tue,  2 Jul 2019 15:40:26 +0100
+Message-Id: <20190702144026.13013-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If CONFIG_BTRFS_FS is y and CONFIG_LIBCRC32C is m,
-building fails:
+From: Colin Ian King <colin.king@canonical.com>
 
-fs/btrfs/super.o: In function `btrfs_mount_root':
-super.c:(.text+0xb7f9): undefined reference to `crc32c_impl'
-fs/btrfs/super.o: In function `init_btrfs_fs':
-super.c:(.init.text+0x3465): undefined reference to `crc32c_impl'
-fs/btrfs/extent-tree.o: In function `hash_extent_data_ref':
-extent-tree.c:(.text+0xe60): undefined reference to `crc32c'
-extent-tree.c:(.text+0xe78): undefined reference to `crc32c'
-extent-tree.c:(.text+0xe8b): undefined reference to `crc32c'
-fs/btrfs/dir-item.o: In function `btrfs_insert_xattr_item':
-dir-item.c:(.text+0x291): undefined reference to `crc32c'
-fs/btrfs/dir-item.o: In function `btrfs_insert_dir_item':
-dir-item.c:(.text+0x429): undefined reference to `crc32c'
+There are several occasions where a negative cid value is passed
+into wil_cid_valid and this is converted into a u8 causing the
+range check of cid >= 0 to always succeed.  Fix this by making
+the cid argument an int to handle any -ve error value of cid.
 
-Select LIBCRC32C to fix it.
+An example of this behaviour is in wil_cfg80211_dump_station,
+where cid is assigned -ENOENT if the call to wil_find_cid_by_idx
+fails, and this -ve value is passed to wil_cid_valid.  I believe
+that the conversion of -ENOENT to the u8 value 254 which is
+greater than wil->max_assoc_sta causes wil_find_cid_by_idx to
+currently work fine, but I think is by luck and not the
+intended behaviour.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Fixes: d5178578bcd4 ("btrfs: directly call into crypto framework for checksumming")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- fs/btrfs/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/wireless/ath/wil6210/wil6210.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/btrfs/Kconfig b/fs/btrfs/Kconfig
-index 2521a24..df4041d 100644
---- a/fs/btrfs/Kconfig
-+++ b/fs/btrfs/Kconfig
-@@ -4,6 +4,7 @@ config BTRFS_FS
- 	tristate "Btrfs filesystem support"
- 	select CRYPTO
- 	select CRYPTO_CRC32C
-+	select LIBCRC32C
- 	select CRYPTO_SHA256
- 	select ZLIB_INFLATE
- 	select ZLIB_DEFLATE
+diff --git a/drivers/net/wireless/ath/wil6210/wil6210.h b/drivers/net/wireless/ath/wil6210/wil6210.h
+index 6f456b311a39..25a1adcb38eb 100644
+--- a/drivers/net/wireless/ath/wil6210/wil6210.h
++++ b/drivers/net/wireless/ath/wil6210/wil6210.h
+@@ -1144,7 +1144,7 @@ static inline void wil_c(struct wil6210_priv *wil, u32 reg, u32 val)
+ /**
+  * wil_cid_valid - check cid is valid
+  */
+-static inline bool wil_cid_valid(struct wil6210_priv *wil, u8 cid)
++static inline bool wil_cid_valid(struct wil6210_priv *wil, int cid)
+ {
+ 	return (cid >= 0 && cid < wil->max_assoc_sta);
+ }
 -- 
-2.7.4
-
+2.20.1
 
