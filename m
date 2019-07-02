@@ -2,158 +2,185 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 644345D988
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:47:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59B7F5DE89
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 09:14:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727207AbfGCAqv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 20:46:51 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:33748 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727040AbfGCAqu (ORCPT
+        id S1727198AbfGCHOE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 3 Jul 2019 03:14:04 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:42908 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726236AbfGCHOD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 20:46:50 -0400
-Received: by mail-ot1-f68.google.com with SMTP id q20so532449otl.0
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 17:46:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Y8CM/kRSfMkCLm6zorYMm+jmWg0Fr4K0UKURUwHLiI0=;
-        b=PfODrLPtL/UekUDd5MyivTx7mO9uIfNsXn1/AL0i36O2i27oA1cIPzJin/uG0IzLpt
-         S5Xx4hNZq+KvGLbjNVEp6xTRbGAEhi4yUzsW8Ess3o3NKkAOE95F2vOSdyhlEcznDyvv
-         xWIqWX+5HZ4QLRhxnRt7fzGhBZa4c+Ajk0dju9VV38wAzvIA9M8anMy41hE5CJCzvwBg
-         c5+JnLVr/aQTZoX0A+1JjZ4QhYcpUFm1qVW/f/D+wGe/TmQIsuVjaKeb/c3hSHeL4/rQ
-         ufoupQW/yrA97DAebmIYhmreBqQP+BMggZbsvGxPifIVEyoan8dMPhjTceDK9vkatgAb
-         W4og==
+        Wed, 3 Jul 2019 03:14:03 -0400
+Received: by mail-pf1-f193.google.com with SMTP id q10so760331pff.9;
+        Wed, 03 Jul 2019 00:14:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Y8CM/kRSfMkCLm6zorYMm+jmWg0Fr4K0UKURUwHLiI0=;
-        b=h/p4P/nL4atA09pGDbnVvmL3njNVvf7880wfxR+Wp5/SFoUswiDwypGKD98luCisEJ
-         fwiMRGmPOZ6f3/olfJorcsE+TCs4IHXKgyQmaxr30/UniXVfGYA1Zeq4RZ1S1Qb/AJLQ
-         cEph1mO/CVnmykCUArVVm2tLz5yLRXoj8+0Zu4ezrjdComgZDWC7WFQh2IQZWK8w5Xwf
-         gP5UsFYuvX/MFF94qVEfK6mcYwerMQ40GKj3WOeMMonouy0Y6X+niYqnHB1CMuYHhbJE
-         ZhyMve26IgIEo/zly9wWljV2/c5aLYllX2LQKNOY3/C9CWqSIrhO/UpYX+oCcpKf44KN
-         XQEg==
-X-Gm-Message-State: APjAAAUCo+A/z9h2xDe55LeV2WyAyt4TbabGIVUy76gXBBJU3X6qz1n/
-        Io02aXwA3pXbwEff8HzVzpYq25B0zLALDrYqlepcvg==
-X-Google-Smtp-Source: APXvYqxPGdi5M83frYcEZkzIV4wjd1HSnqegfLcqSwdA8d9Vo+sKThli7P7OnkwgIwXWNWYlTAlgfzSDd8+mXHOWQbM=
-X-Received: by 2002:a9d:39a6:: with SMTP id y35mr27461252otb.81.1562111509160;
- Tue, 02 Jul 2019 16:51:49 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190701104705.18271-1-narmstrong@baylibre.com> <20190701104705.18271-7-narmstrong@baylibre.com>
-In-Reply-To: <20190701104705.18271-7-narmstrong@baylibre.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Wed, 3 Jul 2019 01:51:38 +0200
-Message-ID: <CAFBinCD8aBVo-WTaKTe7JyxqFyd=cVXDzHpwED4dx=rUtE3Uig@mail.gmail.com>
-Subject: Re: [RFC 06/11] soc: amlogic: clk-measure: Add support for SM1
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     jbrunet@baylibre.com, khilman@baylibre.com,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=B1kQvrQoHFPsOT1yXoo85QIU6lm9lrhuL5yM9gcXKZ0=;
+        b=JxLUAig19YnjUmw6ALYfzgLrHOVjeo17HvEdychfmCmtybaGadTrbQYN3LyWwk7Wh8
+         gNgPlRn+3SP41Nx1QXz+LUkeHziuOMY/GbX7QH5wfBJcMR7AcfmJii3hvOLuUnjZWIdZ
+         ho0UBvwZZA8BLZnx3v3PwhWbM7Wms5kfZqbMjV+Z5pmz7oSMEf9gO53yPQrP1hY9jcbY
+         ptvL0DN5BR51wI6MivzqiXjslUKqLzmo4cpeIlda7hpPYHqS9Po7lOhS8Uz1tlYSpCn6
+         Y2/7CN1uHo+4kFdzY1Uo7Nkfz4Wl0PST7h0XzUv+0oyFZJk5p96mUAzGShaOkFFGuR+j
+         DKQQ==
+X-Gm-Message-State: APjAAAW0I2skziGMJK8aBQE6bg1PWdHIwyLy1hAuwsC5cAbG4spf9Nv5
+        utTeYli6jEnyy/qq675++68=
+X-Google-Smtp-Source: APXvYqwUyamaUZpHybk6nfj2wr4zAu1x6OPqmfFZEMCShOUOWld0YXW8Rb4mD/UbT+YdTI4jAfzbyg==
+X-Received: by 2002:a17:90a:22ef:: with SMTP id s102mr11149274pjc.2.1562138042451;
+        Wed, 03 Jul 2019 00:14:02 -0700 (PDT)
+Received: from sc2-haas01-esx0118.eng.vmware.com ([66.170.99.1])
+        by smtp.gmail.com with ESMTPSA id j21sm1256593pfh.86.2019.07.03.00.14.00
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 03 Jul 2019 00:14:01 -0700 (PDT)
+From:   Nadav Amit <namit@vmware.com>
+To:     Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Nadav Amit <namit@vmware.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Rik van Riel <riel@surriel.com>,
+        Sasha Levin <sashal@kernel.org>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        kvm@vger.kernel.org, linux-hyperv@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        xen-devel@lists.xenproject.org
+Subject: [PATCH v2 0/9] x86: Concurrent TLB flushes
+Date:   Tue,  2 Jul 2019 16:51:42 -0700
+Message-Id: <20190702235151.4377-1-namit@vmware.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Neil,
+Currently, local and remote TLB flushes are not performed concurrently,
+which introduces unnecessary overhead - each INVLPG can take 100s of
+cycles. This patch-set allows TLB flushes to be run concurrently: first
+request the remote CPUs to initiate the flush, then run it locally, and
+finally wait for the remote CPUs to finish their work.
 
-On Mon, Jul 1, 2019 at 12:49 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
->
-> Add the clk-measurer clocks IDs for the Amlogic SM1 SoC family.
->
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> ---
->  drivers/soc/amlogic/meson-clk-measure.c | 134 ++++++++++++++++++++++++
->  1 file changed, 134 insertions(+)
->
-> diff --git a/drivers/soc/amlogic/meson-clk-measure.c b/drivers/soc/amlogic/meson-clk-measure.c
-> index f09b404b39d3..e32e97613000 100644
-> --- a/drivers/soc/amlogic/meson-clk-measure.c
-> +++ b/drivers/soc/amlogic/meson-clk-measure.c
-> @@ -357,6 +357,136 @@ static struct meson_msr_id clk_msr_g12a[CLK_MSR_MAX] = {
->         CLK_MSR_ID(122, "audio_pdm_dclk"),
->  };
->
-> +static struct meson_msr_id clk_msr_sm1[CLK_MSR_MAX] = {
-> +       CLK_MSR_ID(0, "ring_osc_out_ee_0"),
-> +       CLK_MSR_ID(1, "ring_osc_out_ee_1"),
-> +       CLK_MSR_ID(2, "ring_osc_out_ee_2"),
-> +       CLK_MSR_ID(3, "ring_osc_out_ee_3"),
-> +       CLK_MSR_ID(4, "gp0_pll"),
-> +       CLK_MSR_ID(5, "gp1_pll"),
-> +       CLK_MSR_ID(6, "enci"),
-> +       CLK_MSR_ID(7, "clk81"),
-> +       CLK_MSR_ID(8, "encp"),
-> +       CLK_MSR_ID(9, "encl"),
-> +       CLK_MSR_ID(10, "vdac"),
-> +       CLK_MSR_ID(11, "eth_tx"),
-> +       CLK_MSR_ID(12, "hifi_pll"),
-> +       CLK_MSR_ID(13, "mod_tcon"),
-> +       CLK_MSR_ID(14, "fec_0"),
-> +       CLK_MSR_ID(15, "fec_1"),
-> +       CLK_MSR_ID(16, "fec_2"),
-> +       CLK_MSR_ID(17, "sys_pll_div16"),
-> +       CLK_MSR_ID(18, "sys_cpu_div16"),
-> +       CLK_MSR_ID(19, "lcd_an_ph2"),
-> +       CLK_MSR_ID(20, "rtc_osc_out"),
-> +       CLK_MSR_ID(21, "lcd_an_ph3"),
-> +       CLK_MSR_ID(22, "eth_phy_ref"),
-> +       CLK_MSR_ID(23, "mpll_50m"),
-> +       CLK_MSR_ID(24, "eth_125m"),
-> +       CLK_MSR_ID(25, "eth_rmii"),
-> +       CLK_MSR_ID(26, "sc_int"),
-> +       CLK_MSR_ID(27, "in_mac"),
-> +       CLK_MSR_ID(28, "sar_adc"),
-> +       CLK_MSR_ID(29, "pcie_inp"),
-> +       CLK_MSR_ID(30, "pcie_inn"),
-> +       CLK_MSR_ID(31, "mpll_test_out"),
-> +       CLK_MSR_ID(32, "vdec"),
-> +       CLK_MSR_ID(34, "eth_mpll_50m"),
-> +       CLK_MSR_ID(35, "mali"),
-> +       CLK_MSR_ID(36, "hdmi_tx_pixel"),
-> +       CLK_MSR_ID(37, "cdac"),
-> +       CLK_MSR_ID(38, "vdin_meas"),
-> +       CLK_MSR_ID(39, "bt656"),
-> +       CLK_MSR_ID(40, "arm_ring_osc_out_4"),
-> +       CLK_MSR_ID(41, "eth_rx_or_rmii"),
-> +       CLK_MSR_ID(42, "mp0_out"),
-> +       CLK_MSR_ID(43, "fclk_div5"),
-> +       CLK_MSR_ID(44, "pwm_b"),
-> +       CLK_MSR_ID(45, "pwm_a"),
-> +       CLK_MSR_ID(46, "vpu"),
-> +       CLK_MSR_ID(47, "ddr_dpll_pt"),
-> +       CLK_MSR_ID(48, "mp1_out"),
-> +       CLK_MSR_ID(49, "mp2_out"),
-> +       CLK_MSR_ID(50, "mp3_out"),
-> +       CLK_MSR_ID(51, "sd_emmc_c"),
-> +       CLK_MSR_ID(52, "sd_emmc_b"),
-> +       CLK_MSR_ID(53, "sd_emmc_a"),
-> +       CLK_MSR_ID(54, "vpu_clkc"),
-> +       CLK_MSR_ID(55, "vid_pll_div_out"),
-> +       CLK_MSR_ID(56, "wave420l_a"),
-> +       CLK_MSR_ID(57, "wave420l_c"),
-> +       CLK_MSR_ID(58, "wave420l_b"),
-> +       CLK_MSR_ID(59, "hcodec"),
-> +       CLK_MSR_ID(40, "arm_ring_osc_out_5"),
-is this index 40 or 60?
+In addition, there are various small optimizations to avoid unwarranted
+false-sharing and atomic operations.
 
-> +       CLK_MSR_ID(61, "gpio_msr"),
-> +       CLK_MSR_ID(62, "hevcb"),
-> +       CLK_MSR_ID(63, "dsi_meas"),
-> +       CLK_MSR_ID(64, "spicc_1"),
-> +       CLK_MSR_ID(65, "spicc_0"),
-> +       CLK_MSR_ID(66, "vid_lock"),
-> +       CLK_MSR_ID(67, "dsi_phy"),
-> +       CLK_MSR_ID(68, "hdcp22_esm"),
-> +       CLK_MSR_ID(69, "hdcp22_skp"),
-> +       CLK_MSR_ID(70, "pwm_f"),
-> +       CLK_MSR_ID(71, "pwm_e"),
-> +       CLK_MSR_ID(72, "pwm_d"),
-> +       CLK_MSR_ID(73, "pwm_c"),
-> +       CLK_MSR_ID(74, "arm_ring_osc_out_6"),
-> +       CLK_MSR_ID(75, "hevcf"),
-> +       CLK_MSR_ID(74, "arm_ring_osc_out_7"),
-is this index 74 or 76?
+The proposed changes should also improve the performance of other
+invocations of on_each_cpu(). Hopefully, no one has relied on this
+behavior of on_each_cpu() that invoked functions first remotely and only
+then locally [Peter says he remembers someone might do so, but without
+further information it is hard to know how to address it].
+
+Running sysbench on dax/ext4 w/emulated-pmem, write-cache disabled on
+2-socket, 48-logical-cores (24+SMT) Haswell-X, 5 repetitions:
+
+ sysbench fileio --file-total-size=3G --file-test-mode=rndwr \
+  --file-io-mode=mmap --threads=X --file-fsync-mode=fdatasync run
+
+  Th.	tip-jun28 avg (stdev)	+patch-set avg (stdev)	change
+  ---	---------------------	----------------------	------
+  1	1267765 (14146)		1299253 (5715)		+2.4%
+  2	1734644 (11936)		1799225 (19577)		+3.7%
+  4	2821268 (41184)		2919132 (40149)		+3.4%
+  8	4171652 (31243)		4376925 (65416)		+4.9%
+  16	5590729 (24160)		5829866 (8127)		+4.2%
+  24	6250212 (24481)		6522303 (28044)		+4.3%
+  32	3994314 (26606)		4077543 (10685)		+2.0%
+  48	4345177 (28091)		4417821 (41337)		+1.6%
+
+(Note that on configurations with up to 24 threads numactl was used to
+set all threads on socket 1, which explains the drop in performance when
+going to 32 threads).
+
+Running the same benchmark with security mitigations disabled (PTI,
+Spectre, MDS):
+
+  Th.	tip-jun28 avg (stdev)	+patch-set avg (stdev)	change
+  ---	---------------------	----------------------	------
+  1	1598896 (5174)		1607903 (4091)		+0.5%
+  2	2109472 (17827)		2224726 (4372)		+5.4%
+  4	3448587 (11952)		3668551 (30219)		+6.3%
+  8	5425778 (29641)		5606266 (33519)		+3.3%
+  16	6931232 (34677)		7054052 (27873)		+1.7%
+  24	7612473 (23482)		7783138 (13871)		+2.2%
+  32	4296274 (18029)		4283279 (32323)		-0.3%
+  48	4770029 (35541)		4764760 (13575)		-0.1%
+
+Presumably, PTI requires two invalidations of each mapping, which allows
+to get higher benefits from concurrency when PTI is on. At the same
+time, when mitigations are on, other overheads reduce the potential
+speedup.
+
+I tried to reduce the size of the code of the main patch, which required
+restructuring of the series.
+
+v1 -> v2:
+* Removing the patches that Thomas took [tglx]
+* Adding hyper-v, Xen compile-tested implementations [Dave]
+* Removing UV [Andy]
+* Adding lazy optimization, removing inline keyword [Dave]
+* Restructuring patch-set
+
+RFCv2 -> v1:
+* Fix comment on flush_tlb_multi [Juergen]
+* Removing async invalidation optimizations [Andy]
+* Adding KVM support [Paolo]
+
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Haiyang Zhang <haiyangz@microsoft.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: "K. Y. Srinivasan" <kys@microsoft.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Rik van Riel <riel@surriel.com>
+Cc: Sasha Levin <sashal@kernel.org>
+Cc: Stephen Hemminger <sthemmin@microsoft.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: kvm@vger.kernel.org
+Cc: linux-hyperv@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: virtualization@lists.linux-foundation.org
+Cc: x86@kernel.org
+Cc: xen-devel@lists.xenproject.org
+
+Nadav Amit (9):
+  smp: Run functions concurrently in smp_call_function_many()
+  x86/mm/tlb: Remove reason as argument for flush_tlb_func_local()
+  x86/mm/tlb: Open-code on_each_cpu_cond_mask() for tlb_is_not_lazy()
+  x86/mm/tlb: Flush remote and local TLBs concurrently
+  x86/mm/tlb: Privatize cpu_tlbstate
+  x86/mm/tlb: Do not make is_lazy dirty for no reason
+  cpumask: Mark functions as pure
+  x86/mm/tlb: Remove UV special case
+  x86/mm/tlb: Remove unnecessary uses of the inline keyword
+
+ arch/x86/hyperv/mmu.c                 |  13 ++-
+ arch/x86/include/asm/paravirt.h       |   6 +-
+ arch/x86/include/asm/paravirt_types.h |   4 +-
+ arch/x86/include/asm/tlbflush.h       |  48 +++++----
+ arch/x86/include/asm/trace/hyperv.h   |   2 +-
+ arch/x86/kernel/kvm.c                 |  11 +-
+ arch/x86/kernel/paravirt.c            |   2 +-
+ arch/x86/mm/init.c                    |   2 +-
+ arch/x86/mm/tlb.c                     | 147 ++++++++++++++++----------
+ arch/x86/xen/mmu_pv.c                 |  20 ++--
+ include/linux/cpumask.h               |   6 +-
+ include/linux/smp.h                   |  27 +++--
+ include/trace/events/xen.h            |   2 +-
+ kernel/smp.c                          | 133 +++++++++++------------
+ 14 files changed, 245 insertions(+), 178 deletions(-)
+
+-- 
+2.17.1
+
