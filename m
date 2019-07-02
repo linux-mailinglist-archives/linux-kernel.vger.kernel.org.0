@@ -2,86 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 147B85D956
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:41:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46AEE5DB25
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 03:50:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727165AbfGCAlN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 20:41:13 -0400
-Received: from mout.kundenserver.de ([217.72.192.74]:40523 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726963AbfGCAlM (ORCPT
+        id S1727309AbfGCBuW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 21:50:22 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:38685 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726329AbfGCBuV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 20:41:12 -0400
-Received: from [192.168.1.110] ([95.117.57.107]) by mrelayeu.kundenserver.de
- (mreue106 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1M6m1g-1hcKYA3FGQ-008H7u; Tue, 02 Jul 2019 22:26:16 +0200
-Subject: Re: [PATCH] devres: allow const resource arguments
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     Enrico Weigelt <info@metux.net>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        Tue, 2 Jul 2019 21:50:21 -0400
+Received: by mail-qt1-f193.google.com with SMTP id n11so826062qtl.5;
+        Tue, 02 Jul 2019 18:50:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=aM7TEuKumvUMe3SbB3+XmY4I8aQKFrST7xx8ZApBOcM=;
+        b=Y0c3Zbx/HklkB3ZQUMPUnd3cuD2+CXBd/qv6pY0OkEJTg/+z03wi0oF1CvFJYsaUkZ
+         4zHdADC6xI/bjao5kJDJAheklnpxnkP641vjkWWAD6dXp83EK+bgIBqRrhp5R+e9GhCz
+         zCGy7sAlE3XsPTlqcBMQPxFhUYqm5Yg2JhxtQejc7AlhxkxL1xSYYXRVk6l4V/OzXbVr
+         F2N4nVUleb2SyZc8sgC2poSaaQ+CgHZiuCRWIi+78YgA4bpPN5KzS8h7SHnC0qrpdgs/
+         YZxrEttZo98QKBCnwb20wNLc3UgkTsaMpeRea2ivIhOm1ixPyotAxAUbQecsF1pxUnqv
+         E1Mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=aM7TEuKumvUMe3SbB3+XmY4I8aQKFrST7xx8ZApBOcM=;
+        b=WdoTkpU5Tgrc0jYoCvIk/+u664gzb+skwTTi/c56O9eaQZ0+T85W5dskBAOmrnrhNW
+         mfQgDIJHVUpe9uobnMnLfhnocWJMfeaF9CnBnxQQprsFc5NO7wHbKsozH8+KI2Q+etoN
+         /PfKntP/PDmi5mk57UKO+ZZs0BRYCMyfHnVWzYr6u+4JV2oLGt66joD57jBgumVQZm1z
+         rY7J6bHPya7aWFwA548AtRHPMosjHGu7RzguMatpBziJqUT7QK8aZ4kH/dek1Jk6w4wh
+         mpabUIkYEDyzOmsxSHArDDQGuq1/hY6YrvF9IyW6zEVt50vHOceoti00QMIZwzZDR5od
+         TbdQ==
+X-Gm-Message-State: APjAAAXNigybF3xK/JP6c8AdRgkeUEIyJJ0xaWRlauTIljPm6KEN4wFw
+        oCt+VpSIpm+GXzoMEknZrVTKiod2xDnNDg==
+X-Google-Smtp-Source: APXvYqxHJBmk2g0xpgV4VUHGsLMtAzHIfVL3nv7QBsGBAXs8stUf9sYJU+dbtd2Yxf85Z4tgzUX1Cw==
+X-Received: by 2002:a0c:b755:: with SMTP id q21mr27605171qve.92.1562099204529;
+        Tue, 02 Jul 2019 13:26:44 -0700 (PDT)
+Received: from localhost ([2601:184:4780:7861:5010:5849:d76d:b714])
+        by smtp.gmail.com with ESMTPSA id f6sm6267017qkk.79.2019.07.02.13.26.43
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 02 Jul 2019 13:26:44 -0700 (PDT)
+From:   Rob Clark <robdclark@gmail.com>
+To:     iommu@lists.linux-foundation.org, dri-devel@lists.freedesktop.org
+Cc:     aarch64-laptops@lists.linaro.org,
+        Jordan Crouse <jcrouse@codeaurora.org>,
+        Rob Clark <robdclark@chromium.org>,
+        Abhinav Kumar <abhinavk@codeaurora.org>,
         Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Bruce Wang <bzwang@chromium.org>,
+        Daniel Mack <daniel@zonque.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        freedreno@lists.freedesktop.org (open list:DRM DRIVER FOR MSM ADRENO
+        GPU), Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-References: <20190628150049.1108048-1-arnd@arndb.de>
-From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Organization: metux IT consult
-Message-ID: <665cd853-ba34-8913-3b63-a88130eda3f8@metux.net>
-Date:   Tue, 2 Jul 2019 22:26:14 +0200
-User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Jeykumar Sankaran <jsanka@codeaurora.org>,
+        Joe Perches <joe@perches.com>, Joerg Roedel <jroedel@suse.de>,
+        Jonathan Marek <jonathan@marek.ca>,
+        linux-arm-msm@vger.kernel.org (open list:DRM DRIVER FOR MSM ADRENO GPU),
+        linux-kernel@vger.kernel.org (open list),
+        Mamta Shukla <mamtashukla555@gmail.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Sean Paul <seanpaul@chromium.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>
+Subject: [PATCH 0/2] iommu: handle drivers that manage iommu directly
+Date:   Tue,  2 Jul 2019 13:26:17 -0700
+Message-Id: <20190702202631.32148-1-robdclark@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20190628150049.1108048-1-arnd@arndb.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:2EiotxMAAmjsTYjjhHFlQbtCH5AwERUvgcCE1kHa5uHuZFTKNvV
- UGRFM0uhJrjXHwsIbIEcNhcXAMM5vWS1GTm2Umhi1OSz48FFtH46MGI4VZYLopurniDJ+ys
- V5D08p2yqnG8BiqUaAlH3TLx/IyXqlXlzmNYxA9DKsGhUVF8ZsytjCB41D2IgUVoj5H4u0E
- 82k93hZn3uDbROmZYe/4w==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:Rpp3EBnTlec=:HB9r0UmrVG8WVpvM3k4C20
- QGvr1nwEL7xBlydC4AuiBDChCpB6vw0kyzGQLA2B4Qywq8VDHIw5wEAqWrJG73vbxV1dbMHEU
- OUsLrGuuSYyoWXm4W5TvDRlQLwk/yKjD3SD+ysSjcCuyS9kNd1QnAN0/opSSCENNOfZmtAfEN
- IgeMWs78eIGKV+c6ftXRsJStYo6urMr4BYxJqIhT0gWg6hkhe2B/Cr1N0Not1+Pg5zILMb3Fr
- gBOm3ENpVUVr3ttJEzr27XOp/GVMEXJI7pBuBYlAaVLXRwJVqbd14mCbJLBKZnEeEez/fZOPr
- oPManpmN+yYbZyGO1E0YtPtm271K0RhK9mmoWCOKJAIbTS2fSpYaAGeyAPeNJjRwtrixnHf+C
- 0bNv6jtw9bkMl9OeSGhcRuBjdzlpFDrA6Gx7UhDjqwIr+ki792JPMfz3kmrq9rw4Ko+mJPcn2
- PqbQVIrtORcIPVTmmyDdZHzFZ0xtRGBTNofg/rZihQbGHkFgHtk9y2AswdppJn/4sm/N2xUDc
- Iv7OU6KEadrtd29+tPfQ+0btH8XRBOQfbPBRasW8dekDYSIEnMIM60XcS1drkITW0QWUbIqYz
- FURk3NzGRNk4pssIGeWpykiXXFJ3fcBUic8WnvMkinEc2h3bW7fkgyuI98S5bqV5kKV2kEz9z
- htgfcUEPyobB3qc0e3/qD55fjxMx+WMzBpiiw/ZZLNxzrCHJ/yPii5AdTuREUUewianbiBk9q
- W0XO4BK5bE08iIwO8x6GSz9OMptv6AG8ZWibVOkv/dp12weGPNoX1qVsUpg=
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28.06.19 16:59, Arnd Bergmann wrote:
-> devm_ioremap_resource() does not currently take 'const' arguments,
-> which results in a warning from the first driver trying to do it
-> anyway:
-> 
-> drivers/gpio/gpio-amd-fch.c: In function 'amd_fch_gpio_probe':
-> drivers/gpio/gpio-amd-fch.c:171:49: error: passing argument 2 of 'devm_ioremap_resource' discards 'const' qualifier from pointer target type [-Werror=discarded-qualifiers]
->   priv->base = devm_ioremap_resource(&pdev->dev, &amd_fch_gpio_iores);
->                                                  ^~~~~~~~~~~~~~~~~~~
+From: Rob Clark <robdclark@chromium.org>
 
-<snip>
+One of the challenges we need to handle to enable the aarch64 laptops
+upstream is dealing with the fact that the bootloader enables the
+display and takes the corresponding SMMU context-bank out of BYPASS.
+Unfortunately, currently, the IOMMU framework attaches a DMA (or
+potentially an IDENTITY) domain before the driver is probed and has
+a chance to intervene and shutdown[1] scanout.  Which makes things go
+horribly wrong.
 
-I've posted quite the same some time ago - no idea why it got no
-response.
+This also happens to solve a problem that is blocking us from supporting
+per-context pagetables on the GPU, due to domain that is attached before
+driver has a chance to attach it's own domain for the GPU.
 
+But since the driver is managing it's own iommu domains directly, and
+does not use dev->iommu_group->default_domain at all, the simple
+solution to both problems is to just avoid attaching that domain in the
+first place.
 
-Reviwed-By: Enrico Weigelt <info@metux.net>
+[1] Eventually we want to be able to do a seemless transition from
+    efifb to drm/msm... but first step is to get the core (iommu,
+    clk, genpd) pieces in place, so a first step of disabling the
+    display before first modeset enables us to get all of the
+    dependencies outside of drm/msm in place.  And this at least
+    gets us parity with windows (which also appears to do a modeset
+    between bootloader and HLSO).  After that there is a bunch of
+    drm/msm work that is probably not interesting to folks outside
+    of dri-devel.
 
+Rob Clark (2):
+  iommu: add support for drivers that manage iommu explicitly
+  drm/msm: mark devices where iommu is managed by driver
 
---mtx
+ drivers/gpu/drm/msm/adreno/adreno_device.c |  1 +
+ drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c    |  1 +
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c   |  1 +
+ drivers/gpu/drm/msm/msm_drv.c              |  1 +
+ drivers/iommu/iommu.c                      | 11 +++++++++++
+ include/linux/device.h                     |  3 ++-
+ 6 files changed, 17 insertions(+), 1 deletion(-)
 
 -- 
-Enrico Weigelt, metux IT consult
-Free software and Linux embedded engineering
-info@metux.net -- +49-151-27565287
+2.20.1
+
