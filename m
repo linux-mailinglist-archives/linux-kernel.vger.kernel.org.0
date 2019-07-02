@@ -2,156 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CBAC5DB09
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 03:41:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E78B5DB1B
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 03:45:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727107AbfGCBlW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 21:41:22 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:45813 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726329AbfGCBlW (ORCPT
+        id S1727127AbfGCBpJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 21:45:09 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:45317 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726329AbfGCBpI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 21:41:22 -0400
-Received: by mail-lf1-f67.google.com with SMTP id u10so474556lfm.12
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 18:41:20 -0700 (PDT)
+        Tue, 2 Jul 2019 21:45:08 -0400
+Received: by mail-io1-f67.google.com with SMTP id e3so578184ioc.12;
+        Tue, 02 Jul 2019 18:45:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=OtNNYBNm1JpUmlbSXfOacWdVL+xLaEisgn4cxAyFWvc=;
-        b=XkXLcra1GETf+BjtJgZFGGJHgfnyaEAhtVwPsFzqTDtvSzk7K4cYGXdzyMAn0iXhD2
-         jsNS6ZX2Aig66f9lDi2DLk1VyTpg3+i6+S6+juCkqyrX+EgUjwPPgnJtLo2kld0p2Dc8
-         mCYGIjeTEDVqSC1PpMFh9xH34snfD/cCl6XZf5oCIQVG8O8rVciIhMX9NnqexpCU9HN7
-         YUm7aWXL2c54UWB+iwQ6zBqf1j7H3sZwddoqOAoAy7101fVpNGN+EO/kVTsjZ8Tkk6K+
-         +1/1g0WsmEjJnan0VHjp5QH1Y5+G32htVXnLNhAFEtB297GY/1rPX5IZSa01NuqSmvDs
-         RDGA==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=e2dHY1JEDP4p/Iin7PE911+goagiVJlOgF+4JmS/qJI=;
+        b=fyZTRJk1EU58W3X9rMzFfX/rWwLk6qDxZqQwcdvO1B+WhX5Ay/UJIb48NnkcP5NLcS
+         ceblxUmOFxSPlx1GBeqmcDjUbH6sB6hrn9ORIMObg1R8IvxgkKwhM0eHPX8TqeaCFty8
+         N1KWPAjaJlmDjw1YCme0ht1QbwjJUJm/C7jaXTjMhpiThgVwTaGdpllJwhVOfBbta9Qe
+         iEOIk5xCVFOv1RNqmaZTN85pB/FACzYDacf0MfBCtismFZAJ99Yag41k6NHrbx4zHk4l
+         ARNK8o0PJYPNErN/pE8MUBWWxADpIOzOOzbW9BqxwCooNLIvnGGGb//TGKGEF4OATYas
+         R7kg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=OtNNYBNm1JpUmlbSXfOacWdVL+xLaEisgn4cxAyFWvc=;
-        b=gsEy+WkKkVLalu67QpfO5sbFXBZQOfZdBfGC7rl3vAyeDj222RYJDiGXF7QPyDF5eS
-         8OM0mtvJiJHBaEV5hW/foiHyDaWDgybMFDHmaHwpPFtScryQNrm00MGGKSqX7tGzz/0B
-         mUcmkFEueQm+42W8Yrt4aGHDrisU6fO20c8QN7Cwyw0+QJs37AKGN0q7I9g6Ol5zdUd3
-         IobbGX+nGvKUMaerq2fxsq9VgHhUxHkAuAQyN05UgbbG5Xl1L73i6WcaV3vzRuLauvqG
-         mXn4zEibPeXDJW99J62uYYRxvLVUJOysEGZlZUAk0R9lhZw0VkhtlXBLyynpx3M7c/ph
-         oVnA==
-X-Gm-Message-State: APjAAAUsA6GKAwdSAQHTO3UamXJ6baKynDDSsFLHIdkgfEAcY3JIuyyj
-        Rk9TfCBPjw/36ulmPYUyV0o8dyVGi44=
-X-Google-Smtp-Source: APXvYqzEF5k5CVr4U5Ts3OSMxtAglpPUPMGzRm0CSe0eCHDtkMHcNuXCddOhxidOixjNKCUNogmnDg==
-X-Received: by 2002:a19:7912:: with SMTP id u18mr15034634lfc.81.1562099313342;
-        Tue, 02 Jul 2019 13:28:33 -0700 (PDT)
-Received: from khorivan (59-201-94-178.pool.ukrtel.net. [178.94.201.59])
-        by smtp.gmail.com with ESMTPSA id o187sm7642lfa.88.2019.07.02.13.28.32
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 02 Jul 2019 13:28:32 -0700 (PDT)
-Date:   Tue, 2 Jul 2019 23:28:30 +0300
-From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-To:     Jesper Dangaard Brouer <brouer@redhat.com>, netdev@vger.kernel.org,
-        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-        grygorii.strashko@ti.com, jakub.kicinski@netronome.com,
-        daniel@iogearbox.net, john.fastabend@gmail.com, ast@kernel.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
-Subject: Re: [PATCH] net: core: page_pool: add user refcnt and reintroduce
- page_pool_destroy
-Message-ID: <20190702202829.GI4510@khorivan>
-Mail-Followup-To: Jesper Dangaard Brouer <brouer@redhat.com>,
-        netdev@vger.kernel.org,
-        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-        grygorii.strashko@ti.com, jakub.kicinski@netronome.com,
-        daniel@iogearbox.net, john.fastabend@gmail.com, ast@kernel.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
-References: <20190702153902.0e42b0b2@carbon>
- <156207778364.29180.5111562317930943530.stgit@firesoul>
- <20190702144426.GD4510@khorivan>
- <20190702165230.6caa36e3@carbon>
- <20190702145612.GF4510@khorivan>
- <20190702171029.76c60538@carbon>
- <20190702152112.GG4510@khorivan>
- <20190702202907.15fb30ce@carbon>
- <20190702185839.GH4510@khorivan>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=e2dHY1JEDP4p/Iin7PE911+goagiVJlOgF+4JmS/qJI=;
+        b=oOOz2HUqFrPw/wteX/d3dkFmUpo31fqug9S9NZ0/kpIn2yfpB8KPAOaMSEmwVDUiZb
+         ULrjoq28SJ7RVO7tdfbpe8jqFmCyAaVre0/RLIqOdoDNnIrzkNoKIy8g3dyJNZSY1lCZ
+         X42QmC/bqv3gxpH1fJ1RkUEvHO9kXtm+jSMkRnr4x0U4kgg8nzEy7ZPSZ+sWmTnkAzWU
+         5lOWkDOrvpIgQCubD1QUjAEPYrDq0xrGBxX9tLu1gu+I9/I0pLqzLEg64fR1IDrlSQlk
+         8y73Vh2YKYKC8xUgpDivQKl3HbmSYjiqjm605kdJ3MWuIqSbZOth+wU+jbYPSaVMzajh
+         qaiQ==
+X-Gm-Message-State: APjAAAX5cDPVTAkVXWbKHowTP9x2wMJdmi5H18I8Gtga0fgblGR+0WM2
+        9FyMt75IxS3FxZnvi0HpMIe4NTENa9Sb3KXK4K4hOXyl
+X-Google-Smtp-Source: APXvYqwXnBozA4Eg8repxRDmwc7v+ie6ZVutTX66BvuZfbKmO1Vnft8PUGkmnX5djxbfa6rxW7cPYo1M3PTW7hEaw/k=
+X-Received: by 2002:a6b:f607:: with SMTP id n7mr7314656ioh.263.1562099449824;
+ Tue, 02 Jul 2019 13:30:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20190702185839.GH4510@khorivan>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20190630131445.25712-1-robdclark@gmail.com> <20190630131445.25712-4-robdclark@gmail.com>
+In-Reply-To: <20190630131445.25712-4-robdclark@gmail.com>
+From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Date:   Tue, 2 Jul 2019 14:30:39 -0600
+Message-ID: <CAOCk7NpyYSiDHP84E4bQiTA1Wk9Sd4w-F8-Zqu9tKtDoUTsFDw@mail.gmail.com>
+Subject: Re: [Freedreno] [PATCH 3/3] drm/msm/dsi: make sure we have panel or
+ bridge earlier
+To:     Rob Clark <robdclark@gmail.com>
+Cc:     "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        Rob Clark <robdclark@chromium.org>,
+        David Airlie <airlied@linux.ie>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        Jordan Crouse <jcrouse@codeaurora.org>,
+        Abhinav Kumar <abhinavk@codeaurora.org>,
+        lkml <linux-kernel@vger.kernel.org>, Sean Paul <sean@poorly.run>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        Chandan Uddaraju <chandanu@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 02, 2019 at 09:58:40PM +0300, Ivan Khoronzhuk wrote:
->On Tue, Jul 02, 2019 at 08:29:07PM +0200, Jesper Dangaard Brouer wrote:
->>On Tue, 2 Jul 2019 18:21:13 +0300
->>Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org> wrote:
->>
->>>On Tue, Jul 02, 2019 at 05:10:29PM +0200, Jesper Dangaard Brouer wrote:
->>>>On Tue, 2 Jul 2019 17:56:13 +0300
->>>>Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org> wrote:
->>>>
->>>>> On Tue, Jul 02, 2019 at 04:52:30PM +0200, Jesper Dangaard Brouer wrote:
->>>>> >On Tue, 2 Jul 2019 17:44:27 +0300
->>>>> >Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org> wrote:
->>>>> >
->>>>> >> On Tue, Jul 02, 2019 at 04:31:39PM +0200, Jesper Dangaard Brouer wrote:
->>>>> >> >From: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
->>>>> >> >
->>>>> >> >Jesper recently removed page_pool_destroy() (from driver invocation) and
->>>>> >> >moved shutdown and free of page_pool into xdp_rxq_info_unreg(), in-order to
->>>>> >> >handle in-flight packets/pages. This created an asymmetry in drivers
->>>>> >> >create/destroy pairs.
->>>>> >> >
->>>>> >> >This patch add page_pool user refcnt and reintroduce page_pool_destroy.
->>>>> >> >This serves two purposes, (1) simplify drivers error handling as driver now
->>>>> >> >drivers always calls page_pool_destroy() and don't need to track if
->>>>> >> >xdp_rxq_info_reg_mem_model() was unsuccessful. (2) allow special cases
->>>>> >> >where a single RX-queue (with a single page_pool) provides packets for two
->>>>> >> >net_device'es, and thus needs to register the same page_pool twice with two
->>>>> >> >xdp_rxq_info structures.
->>>>> >>
->>>>> >> As I tend to use xdp level patch there is no more reason to mention (2) case
->>>>> >> here. XDP patch serves it better and can prevent not only obj deletion but also
->>>>> >> pool flush, so, this one patch I could better leave only for (1) case.
->>>>> >
->>>>> >I don't understand what you are saying.
->>>>> >
->>>>> >Do you approve this patch, or do you reject this patch?
->>>>> >
->>>>> It's not reject, it's proposition to use both, XDP and page pool patches,
->>>>> each having its goal.
->>>>
->>>>Just to be clear, if you want this patch to get accepted you have to
->>>>reply with your Signed-off-by (as I wrote).
->>>>
->>>>Maybe we should discuss it in another thread, about why you want two
->>>>solutions to the same problem.
->>>
->>>If it solves same problem I propose to reject this one and use this:
->>>https://lkml.org/lkml/2019/7/2/651
->>
->>No, I propose using this one, and rejecting the other one.
+On Sun, Jun 30, 2019 at 7:16 AM Rob Clark <robdclark@gmail.com> wrote:
+> --- a/drivers/gpu/drm/msm/dsi/dsi_host.c
+> +++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
+> @@ -1824,6 +1824,20 @@ int msm_dsi_host_init(struct msm_dsi *msm_dsi)
+>                 goto fail;
+>         }
 >
->There is at least several arguments against this one (related (2) purpose)
->
->It allows:
->- avoid changes to page_pool/mlx5/netsec
->- save not only allocator obj but allocator "page/buffer flush"
->- buffer flush can be present not only in page_pool but for other allocators
-> that can behave differently and not so simple solution.
->- to not limit cpsw/(potentially others) to use "page_pool" allocator only
->....
->
->This patch better leave also, as it simplifies error path for page_pool and
->have more error prone usage comparing with existent one.
->
->Please, don't limit cpsw and potentially other drivers to use only
->page_pool it can be zca or etc... I don't won't to modify each allocator.
->I propose to add both as by fact they solve different problems with common
->solution.
+> +       /*
+> +        * Make sure we have panel or bridge early, before we start
+> +        * touching the hw.  If bootloader enabled the display, we
+> +        * want to be sure to keep it running until the bridge/panel
+> +        * is probed and we are all ready to go.  Otherwise we'll
+> +        * kill the display and then -EPROBE_DEFER
+> +        */
+> +       if (IS_ERR(of_drm_find_panel(msm_host->device_node)) &&
+> +                       !of_drm_find_bridge(msm_host->device_node)) {
+> +               pr_err("%s: no panel or bridge yet\n", __func__);
 
-I can pick up this one but remove description related to (2) and add
-appropriate modifications to cpsw.
+pr_err() doesn't seem right for a probe defer condition.  pr_dbg?
 
--- 
-Regards,
-Ivan Khoronzhuk
+> +               return -EPROBE_DEFER;
+> +       }
+> +
+> +
+
+Tested-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Reviewed-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
