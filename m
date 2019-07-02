@@ -2,40 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1480E5CAE8
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 10:09:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B954B5CAAF
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 10:06:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728640AbfGBIJU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 04:09:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57150 "EHLO mail.kernel.org"
+        id S1728152AbfGBIGs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 04:06:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53660 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728630AbfGBIJT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 04:09:19 -0400
+        id S1728135AbfGBIGr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 04:06:47 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 800A320665;
-        Tue,  2 Jul 2019 08:09:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A18DC21851;
+        Tue,  2 Jul 2019 08:06:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562054958;
-        bh=WagRIhX8U0ebY9ztKqEGO48qRbe5oFbzIDeNsXu6THM=;
+        s=default; t=1562054806;
+        bh=JzhaEiPOMzUPEDdCttlNaZQHACR4FpyS+c4Ey6GXKhw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dWgeDCWYrUDbm3zZSQdJoYw1+JOUABVfmDUFN9zst1VRr9JSbN+73JQST4RpOQowP
-         /+xuOtTN3L2onYi3Ad+z9NxYfqCe1c7eFR9Bms9k5zhO1duD4qcfX88EbPMMNlJ6J4
-         urCFeEkRsIlFE5Aw8wbGaD77CIxm2X4BAlMaNTag=
+        b=SqyRqtOx3do88SYZcz1QFU78yy7LtsAgEUo0nROWbRvMTd8FIXF5UgDKp3JflsGBi
+         XYqg4Zm0nFab9o0mg8UF0xatl0bht5vMzmS0l2umo2xyuKo0fMQmcQV412HumzipKl
+         1PK8udkDULzhXpNXiP/1kykXpPizfJSCX058cOVM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 4.14 02/43] perf help: Remove needless use of strncpy()
+        stable@vger.kernel.org,
+        Alejandro Jimenez <alejandro.j.jimenez@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Liam Merwick <liam.merwick@oracle.com>,
+        Mark Kanda <mark.kanda@oracle.com>,
+        Paolo Bonzini <pbonzini@redhat.com>, bp@alien8.de,
+        rkrcmar@redhat.com, kvm@vger.kernel.org
+Subject: [PATCH 4.19 41/72] x86/speculation: Allow guests to use SSBD even if host does not
 Date:   Tue,  2 Jul 2019 10:01:42 +0200
-Message-Id: <20190702080124.012645432@linuxfoundation.org>
+Message-Id: <20190702080126.783958835@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190702080123.904399496@linuxfoundation.org>
-References: <20190702080123.904399496@linuxfoundation.org>
+In-Reply-To: <20190702080124.564652899@linuxfoundation.org>
+References: <20190702080124.564652899@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,48 +48,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+From: Alejandro Jimenez <alejandro.j.jimenez@oracle.com>
 
-commit b6313899f4ed2e76b8375cf8069556f5b94fbff0 upstream.
+commit c1f7fec1eb6a2c86d01bc22afce772c743451d88 upstream.
 
-Since we make sure the destination buffer has at least strlen(orig) + 1,
-no need to do a strncpy(dest, orig, strlen(orig)), just use strcpy(dest,
-orig).
+The bits set in x86_spec_ctrl_mask are used to calculate the guest's value
+of SPEC_CTRL that is written to the MSR before VMENTRY, and control which
+mitigations the guest can enable.  In the case of SSBD, unless the host has
+enabled SSBD always on mode (by passing "spec_store_bypass_disable=on" in
+the kernel parameters), the SSBD bit is not set in the mask and the guest
+can not properly enable the SSBD always on mitigation mode.
 
-This silences this gcc 8.2 warning on Alpine Linux:
+This has been confirmed by running the SSBD PoC on a guest using the SSBD
+always on mitigation mode (booted with kernel parameter
+"spec_store_bypass_disable=on"), and verifying that the guest is vulnerable
+unless the host is also using SSBD always on mode. In addition, the guest
+OS incorrectly reports the SSB vulnerability as mitigated.
 
-  In function 'add_man_viewer',
-      inlined from 'perf_help_config' at builtin-help.c:284:3:
-  builtin-help.c:192:2: error: 'strncpy' output truncated before terminating nul copying as many bytes from a string as its length [-Werror=stringop-truncation]
-    strncpy((*p)->name, name, len);
-    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  builtin-help.c: In function 'perf_help_config':
-  builtin-help.c:187:15: note: length computed here
-    size_t len = strlen(name);
-                 ^~~~~~~~~~~~
+Always set the SSBD bit in x86_spec_ctrl_mask when the host CPU supports
+it, allowing the guest to use SSBD whether or not the host has chosen to
+enable the mitigation in any of its modes.
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Fixes: 078006012401 ("perf_counter tools: add in basic glue from Git")
-Link: https://lkml.kernel.org/n/tip-2f69l7drca427ob4km8i7kvo@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Fixes: be6fcb5478e9 ("x86/bugs: Rework spec_ctrl base and mask logic")
+Signed-off-by: Alejandro Jimenez <alejandro.j.jimenez@oracle.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Liam Merwick <liam.merwick@oracle.com>
+Reviewed-by: Mark Kanda <mark.kanda@oracle.com>
+Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
+Cc: bp@alien8.de
+Cc: rkrcmar@redhat.com
+Cc: kvm@vger.kernel.org
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/1560187210-11054-1-git-send-email-alejandro.j.jimenez@oracle.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/perf/builtin-help.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/cpu/bugs.c |   11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
---- a/tools/perf/builtin-help.c
-+++ b/tools/perf/builtin-help.c
-@@ -189,7 +189,7 @@ static void add_man_viewer(const char *n
- 	while (*p)
- 		p = &((*p)->next);
- 	*p = zalloc(sizeof(**p) + len + 1);
--	strncpy((*p)->name, name, len);
-+	strcpy((*p)->name, name);
- }
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -821,6 +821,16 @@ static enum ssb_mitigation __init __ssb_
+ 	}
  
- static int supported_man_viewer(const char *name, size_t len)
+ 	/*
++	 * If SSBD is controlled by the SPEC_CTRL MSR, then set the proper
++	 * bit in the mask to allow guests to use the mitigation even in the
++	 * case where the host does not enable it.
++	 */
++	if (static_cpu_has(X86_FEATURE_SPEC_CTRL_SSBD) ||
++	    static_cpu_has(X86_FEATURE_AMD_SSBD)) {
++		x86_spec_ctrl_mask |= SPEC_CTRL_SSBD;
++	}
++
++	/*
+ 	 * We have three CPU feature flags that are in play here:
+ 	 *  - X86_BUG_SPEC_STORE_BYPASS - CPU is susceptible.
+ 	 *  - X86_FEATURE_SSBD - CPU is able to turn off speculative store bypass
+@@ -837,7 +847,6 @@ static enum ssb_mitigation __init __ssb_
+ 			x86_amd_ssb_disable();
+ 		} else {
+ 			x86_spec_ctrl_base |= SPEC_CTRL_SSBD;
+-			x86_spec_ctrl_mask |= SPEC_CTRL_SSBD;
+ 			wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
+ 		}
+ 	}
 
 
