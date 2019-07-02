@@ -2,75 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D862D5D14E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 16:16:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BA075D14B
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 16:16:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727132AbfGBOQS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 10:16:18 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:8685 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726341AbfGBOQR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 10:16:17 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id B363CEA918F6B4BF7E6F;
-        Tue,  2 Jul 2019 22:16:10 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS407-HUB.china.huawei.com
- (10.3.19.207) with Microsoft SMTP Server id 14.3.439.0; Tue, 2 Jul 2019
- 22:16:03 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <clm@fb.com>, <josef@toxicpanda.com>, <dsterba@suse.com>,
-        <nborisov@suse.com>
-CC:     <linux-kernel@vger.kernel.org>, <linux-btrfs@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] btrfs: remove set but not used variable 'offset'
-Date:   Tue, 2 Jul 2019 22:15:21 +0800
-Message-ID: <20190702141521.48932-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1726966AbfGBOQB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 10:16:01 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:47012 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726341AbfGBOQB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 10:16:01 -0400
+Received: by mail-pl1-f196.google.com with SMTP id e5so436633pls.13
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 07:16:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=G8tirXskpMAhNy3e7NClMztjS4SZXfLYl5ZSuLbR4Hk=;
+        b=bFSlFbov+AMUg7OyusaEXkDzPAaG9WIl2+j01Ib4t9nVU2vyX3V5Suc1jxvh0DMj4T
+         osRX55sJ9hfdqs/H2DsXotlaYgrJsTPTosbqaFjZ5Ny7OB/oA1xRiN0mYKeLefCNUYP1
+         WWAcMJ0NsOy+TwuofxTX+Y/wOx+q3P9evixECNzjly7tNVKK2hyZj6BeUQC8pkFgeI+1
+         hsDXQJzau9+X19hrIKQuBv1or+rC7V/lFvHmy3SlA89akP4tMFNmfn07X+mkdDAFiKwx
+         uXtGxoLd6Vjcdocc4x7bqBR8dvoBfmATuNlWtlqxVDvpR8VTTIRwE1atqvT/NAFkaqu5
+         uCGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=G8tirXskpMAhNy3e7NClMztjS4SZXfLYl5ZSuLbR4Hk=;
+        b=qk4SKnAyf3gTDqIPX5tgakeebhpKkcMhLCW5KP8thtqhlNXqGThRqkODPABrLhNnJ0
+         sTAryOEPmVHlMOvJKKAiWlL2wEY88KGFXA84mrYm061KACoF2Rayoz10AoY1iv3c3BUE
+         gtnJ+xeROUSBcRRI7t6nOY1V838Yp5i3+VdpXCqO827WsGR31Q1Uqi2b4r8QVg1hTWY4
+         ThjQvygoWWMq+Xq9SeCbGhhSf2Eu4WzKA/tB9di89GnCyRcC0zHfTSubi+28SSWhQAuW
+         1QGR60GqEs/+DCZwC5lp21OHOfoO3d1DiVoT8jnFnuUN6u4VPsAJTAWvAgtyBvhZj2Zq
+         ZHbg==
+X-Gm-Message-State: APjAAAXrNQeeJKloeOH1aJ2g6OsShv+zjnzD4ItmhRYjXV7nWi671/ac
+        ODC08LMC4WjY72AyjVwaKLM=
+X-Google-Smtp-Source: APXvYqyw7rlsqOd28OgPWdKiHxN2laMuLmyw7e1ts1TJND9GEmV3gyIu2BhBR3m8wSMIlF+J6RscHA==
+X-Received: by 2002:a17:902:b688:: with SMTP id c8mr35129791pls.243.1562076960851;
+        Tue, 02 Jul 2019 07:16:00 -0700 (PDT)
+Received: from localhost.localdomain.localdomain ([2408:823c:c11:648:b8c3:8577:bf2f:2])
+        by smtp.gmail.com with ESMTPSA id a5sm744617pjv.21.2019.07.02.07.15.52
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 02 Jul 2019 07:16:00 -0700 (PDT)
+From:   Pengfei Li <lpf.vector@gmail.com>
+To:     akpm@linux-foundation.org, peterz@infradead.org, urezki@gmail.com
+Cc:     rpenyaev@suse.de, mhocko@suse.com, guro@fb.com,
+        aryabinin@virtuozzo.com, rppt@linux.ibm.com, mingo@kernel.org,
+        rick.p.edgecombe@intel.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Pengfei Li <lpf.vector@gmail.com>
+Subject: [PATCH v2 0/5] mm/vmalloc.c: improve readability and rewrite vmap_area
+Date:   Tue,  2 Jul 2019 22:15:36 +0800
+Message-Id: <20190702141541.12635-1-lpf.vector@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
 
-fs/btrfs/volumes.c: In function __btrfs_map_block:
-fs/btrfs/volumes.c:6023:6: warning:
- variable offset set but not used [-Wunused-but-set-variable]
+v1 -> v2:
+* patch 3: Rename __find_vmap_area to __search_va_in_busy_tree
+           instead of __search_va_from_busy_tree.
+* patch 5: Add motivation and necessary test data to the commit
+           message.
+* patch 5: Let va->flags use only some low bits of va_start
+           instead of completely overwriting va_start.
 
-It is not used any more since commit 343abd1c0ca9 ("btrfs: Use
-btrfs_get_io_geometry appropriately")
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- fs/btrfs/volumes.c | 2 --
- 1 file changed, 2 deletions(-)
+The current implementation of struct vmap_area wasted space. At the
+determined stage, not all members of the structure will be used.
 
-diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-index d1fd910..5d5a9ff 100644
---- a/fs/btrfs/volumes.c
-+++ b/fs/btrfs/volumes.c
-@@ -6020,7 +6020,6 @@ static int __btrfs_map_block(struct btrfs_fs_info *fs_info,
- {
- 	struct extent_map *em;
- 	struct map_lookup *map;
--	u64 offset;
- 	u64 stripe_offset;
- 	u64 stripe_nr;
- 	u64 stripe_len;
-@@ -6055,7 +6054,6 @@ static int __btrfs_map_block(struct btrfs_fs_info *fs_info,
- 	map = em->map_lookup;
- 
- 	*length = geom.len;
--	offset = geom.offset;
- 	stripe_len = geom.stripe_len;
- 	stripe_nr = geom.stripe_nr;
- 	stripe_offset = geom.stripe_offset;
+For this problem, this commit places multiple structural members that
+are not being used at the same time into a union to reduce the size
+of the structure.
+
+And local test results show that this commit will not hurt performance.
+
+After applying this commit, sizeof(struct vmap_area) has been reduced
+from 11 words to 8 words.
+
+Pengfei Li (5):
+  mm/vmalloc.c: Introduce a wrapper function of insert_vmap_area()
+  mm/vmalloc.c: Introduce a wrapper function of
+    insert_vmap_area_augment()
+  mm/vmalloc.c: Rename function __find_vmap_area() for readability
+  mm/vmalloc.c: Modify function merge_or_add_vmap_area() for readability
+  mm/vmalloc.c: Rewrite struct vmap_area to reduce its size
+
+ include/linux/vmalloc.h |  28 +++++---
+ mm/vmalloc.c            | 139 ++++++++++++++++++++++++++++------------
+ 2 files changed, 118 insertions(+), 49 deletions(-)
+
 -- 
-2.7.4
-
+2.21.0
 
