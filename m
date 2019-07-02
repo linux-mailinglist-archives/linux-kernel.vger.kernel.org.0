@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FC505CA72
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 10:04:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 754FE5CB49
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 10:12:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727659AbfGBIET (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 04:04:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49668 "EHLO mail.kernel.org"
+        id S1728576AbfGBIJD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 04:09:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56742 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727113AbfGBIEQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 04:04:16 -0400
+        id S1727175AbfGBIJB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 04:09:01 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5DCD121848;
-        Tue,  2 Jul 2019 08:04:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0B21F2183F;
+        Tue,  2 Jul 2019 08:08:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562054654;
-        bh=+xS1LmssqxErT9qWaTx18oNA8+k4W6Pln922osslIXs=;
+        s=default; t=1562054940;
+        bh=+erWMCoHTiSsklg2eI6FKFJT38mbys5O4ZaxKE9Ogkc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SBtUvZeGXD79EEkW96Zh7hwzxf2fJAbp8t16GBrY5hQp+ewM+Xc+cM5YEJSsuIAbl
-         YjUPQnSq0w1iDz4lftM38+oDhVo80YP7XjYx/iZrTJICWGnfrzKzZgzzPXIWUHd8ha
-         nRbPcsQAkfW6BXaVhNBGez9lbGqkw3OtBXoxe7tc=
+        b=j9nvfWsbOrZEvUGyRUs7LQJiHZQRuT4oWRFCW5BtXU81yiLteWtB4WlHgZP9cZJgC
+         Du6yjg0Gk5+7oOhSXjoPLE+j8LTtVPIpeGbHIou6iWjOBTcK5VaMkrs6zIUiRDFxoI
+         ji6+holHQmzB0StUth1zc6exQU/hTBP44KHbed2Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Daniel Borkmann <daniel@iogearbox.net>
-Subject: [PATCH 5.1 45/55] bpf: lpm_trie: check left child of last leftmost node for NULL
+        stable@vger.kernel.org,
+        =?UTF-8?q?Adeodato=20Sim=C3=B3?= <dato@net.com.org.es>,
+        Dominique Martinet <dominique.martinet@cea.fr>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 13/43] net/9p: include trans_common.h to fix missing prototype warning.
 Date:   Tue,  2 Jul 2019 10:01:53 +0200
-Message-Id: <20190702080126.431826442@linuxfoundation.org>
+Message-Id: <20190702080124.492169633@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190702080124.103022729@linuxfoundation.org>
-References: <20190702080124.103022729@linuxfoundation.org>
+In-Reply-To: <20190702080123.904399496@linuxfoundation.org>
+References: <20190702080123.904399496@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,127 +45,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jonathan Lemon <jonathan.lemon@gmail.com>
+[ Upstream commit 52ad259eaac0454c1ac7123e7148cf8d6e6f5301 ]
 
-commit da2577fdd0932ea4eefe73903f1130ee366767d2 upstream.
+This silences -Wmissing-prototypes when defining p9_release_pages.
 
-If the leftmost parent node of the tree has does not have a child
-on the left side, then trie_get_next_key (and bpftool map dump) will
-not look at the child on the right.  This leads to the traversal
-missing elements.
-
-Lookup is not affected.
-
-Update selftest to handle this case.
-
-Reproducer:
-
- bpftool map create /sys/fs/bpf/lpm type lpm_trie key 6 \
-     value 1 entries 256 name test_lpm flags 1
- bpftool map update pinned /sys/fs/bpf/lpm key  8 0 0 0  0   0 value 1
- bpftool map update pinned /sys/fs/bpf/lpm key 16 0 0 0  0 128 value 2
- bpftool map dump   pinned /sys/fs/bpf/lpm
-
-Returns only 1 element. (2 expected)
-
-Fixes: b471f2f1de8b ("bpf: implement MAP_GET_NEXT_KEY command for LPM_TRIE")
-Signed-off-by: Jonathan Lemon <jonathan.lemon@gmail.com>
-Acked-by: Martin KaFai Lau <kafai@fb.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Link: http://lkml.kernel.org/r/b1c4df8f21689b10d451c28fe38e860722d20e71.1542089696.git.dato@net.com.org.es
+Signed-off-by: Adeodato Simó <dato@net.com.org.es>
+Signed-off-by: Dominique Martinet <dominique.martinet@cea.fr>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/bpf/lpm_trie.c                      |    9 ++++--
- tools/testing/selftests/bpf/test_lpm_map.c |   41 ++++++++++++++++++++++++++---
- 2 files changed, 45 insertions(+), 5 deletions(-)
+ net/9p/trans_common.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/kernel/bpf/lpm_trie.c
-+++ b/kernel/bpf/lpm_trie.c
-@@ -715,9 +715,14 @@ find_leftmost:
- 	 * have exact two children, so this function will never return NULL.
- 	 */
- 	for (node = search_root; node;) {
--		if (!(node->flags & LPM_TREE_NODE_FLAG_IM))
-+		if (node->flags & LPM_TREE_NODE_FLAG_IM) {
-+			node = rcu_dereference(node->child[0]);
-+		} else {
- 			next_node = node;
--		node = rcu_dereference(node->child[0]);
-+			node = rcu_dereference(node->child[0]);
-+			if (!node)
-+				node = rcu_dereference(next_node->child[1]);
-+		}
- 	}
- do_copy:
- 	next_key->prefixlen = next_node->prefixlen;
---- a/tools/testing/selftests/bpf/test_lpm_map.c
-+++ b/tools/testing/selftests/bpf/test_lpm_map.c
-@@ -573,13 +573,13 @@ static void test_lpm_get_next_key(void)
+diff --git a/net/9p/trans_common.c b/net/9p/trans_common.c
+index 38aa6345bdfa..9c0c894b56f8 100644
+--- a/net/9p/trans_common.c
++++ b/net/9p/trans_common.c
+@@ -14,6 +14,7 @@
  
- 	/* add one more element (total two) */
- 	key_p->prefixlen = 24;
--	inet_pton(AF_INET, "192.168.0.0", key_p->data);
-+	inet_pton(AF_INET, "192.168.128.0", key_p->data);
- 	assert(bpf_map_update_elem(map_fd, key_p, &value, 0) == 0);
+ #include <linux/mm.h>
+ #include <linux/module.h>
++#include "trans_common.h"
  
- 	memset(key_p, 0, key_size);
- 	assert(bpf_map_get_next_key(map_fd, NULL, key_p) == 0);
- 	assert(key_p->prefixlen == 24 && key_p->data[0] == 192 &&
--	       key_p->data[1] == 168 && key_p->data[2] == 0);
-+	       key_p->data[1] == 168 && key_p->data[2] == 128);
- 
- 	memset(next_key_p, 0, key_size);
- 	assert(bpf_map_get_next_key(map_fd, key_p, next_key_p) == 0);
-@@ -592,7 +592,7 @@ static void test_lpm_get_next_key(void)
- 
- 	/* Add one more element (total three) */
- 	key_p->prefixlen = 24;
--	inet_pton(AF_INET, "192.168.128.0", key_p->data);
-+	inet_pton(AF_INET, "192.168.0.0", key_p->data);
- 	assert(bpf_map_update_elem(map_fd, key_p, &value, 0) == 0);
- 
- 	memset(key_p, 0, key_size);
-@@ -628,6 +628,41 @@ static void test_lpm_get_next_key(void)
- 	assert(bpf_map_get_next_key(map_fd, key_p, next_key_p) == 0);
- 	assert(next_key_p->prefixlen == 24 && next_key_p->data[0] == 192 &&
- 	       next_key_p->data[1] == 168 && next_key_p->data[2] == 1);
-+
-+	memcpy(key_p, next_key_p, key_size);
-+	assert(bpf_map_get_next_key(map_fd, key_p, next_key_p) == 0);
-+	assert(next_key_p->prefixlen == 24 && next_key_p->data[0] == 192 &&
-+	       next_key_p->data[1] == 168 && next_key_p->data[2] == 128);
-+
-+	memcpy(key_p, next_key_p, key_size);
-+	assert(bpf_map_get_next_key(map_fd, key_p, next_key_p) == 0);
-+	assert(next_key_p->prefixlen == 16 && next_key_p->data[0] == 192 &&
-+	       next_key_p->data[1] == 168);
-+
-+	memcpy(key_p, next_key_p, key_size);
-+	assert(bpf_map_get_next_key(map_fd, key_p, next_key_p) == -1 &&
-+	       errno == ENOENT);
-+
-+	/* Add one more element (total five) */
-+	key_p->prefixlen = 28;
-+	inet_pton(AF_INET, "192.168.1.128", key_p->data);
-+	assert(bpf_map_update_elem(map_fd, key_p, &value, 0) == 0);
-+
-+	memset(key_p, 0, key_size);
-+	assert(bpf_map_get_next_key(map_fd, NULL, key_p) == 0);
-+	assert(key_p->prefixlen == 24 && key_p->data[0] == 192 &&
-+	       key_p->data[1] == 168 && key_p->data[2] == 0);
-+
-+	memset(next_key_p, 0, key_size);
-+	assert(bpf_map_get_next_key(map_fd, key_p, next_key_p) == 0);
-+	assert(next_key_p->prefixlen == 28 && next_key_p->data[0] == 192 &&
-+	       next_key_p->data[1] == 168 && next_key_p->data[2] == 1 &&
-+	       next_key_p->data[3] == 128);
-+
-+	memcpy(key_p, next_key_p, key_size);
-+	assert(bpf_map_get_next_key(map_fd, key_p, next_key_p) == 0);
-+	assert(next_key_p->prefixlen == 24 && next_key_p->data[0] == 192 &&
-+	       next_key_p->data[1] == 168 && next_key_p->data[2] == 1);
- 
- 	memcpy(key_p, next_key_p, key_size);
- 	assert(bpf_map_get_next_key(map_fd, key_p, next_key_p) == 0);
+ /**
+  *  p9_release_req_pages - Release pages after the transaction.
+-- 
+2.20.1
+
 
 
