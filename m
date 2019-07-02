@@ -2,174 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F2FA5D079
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 15:23:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F28C45D0B1
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 15:31:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727119AbfGBNX4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 09:23:56 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:7688 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727083AbfGBNXw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 09:23:52 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id B56142A725E3A147B9F7;
-        Tue,  2 Jul 2019 21:23:49 +0800 (CST)
-Received: from huawei.com (10.90.53.225) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Tue, 2 Jul 2019
- 21:23:42 +0800
-From:   Hou Tao <houtao1@huawei.com>
-To:     <linux-raid@vger.kernel.org>, <songliubraving@fb.com>
-CC:     <neilb@suse.com>, <linux-block@vger.kernel.org>,
-        <snitzer@redhat.com>, <agk@redhat.com>, <dm-devel@redhat.com>,
-        <linux-kernel@vger.kernel.org>, <houtao1@huawei.com>
-Subject: [RFC PATCH 3/3] raid1: export inflight io counters and internal stats in debugfs
-Date:   Tue, 2 Jul 2019 21:29:18 +0800
-Message-ID: <20190702132918.114818-4-houtao1@huawei.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190702132918.114818-1-houtao1@huawei.com>
-References: <20190702132918.114818-1-houtao1@huawei.com>
+        id S1726917AbfGBNbe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 09:31:34 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:44868 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725922AbfGBNbd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 09:31:33 -0400
+Received: by mail-wr1-f67.google.com with SMTP id e3so8306210wrs.11
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 06:31:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:content-transfer-encoding:in-reply-to:references
+         :subject:from:to:cc:message-id:user-agent:date;
+        bh=4VPnLBfnP+yE8XWhPk6Z0NZmIvwwW0UIFWDe0blP3PA=;
+        b=SSHIWLXSCz2J4XKgqcuB4HuhMgP+BgSjUvlvTI1SfIECDv8eAnmm7cP4x6cRFpdbRd
+         e+z2Qtim/Mny+j7W4rH6z1xj4EWXisZqMg5DdWH/AVWl1rbE26SK5Ern1cohCsDP/qBE
+         /SYTm60q5UUSpE5YlgVQciF57ibUm+YAddrQEFsjiS3BSooSXp/9lfufr4CgL6tRF+vM
+         qShTZpZ847UuD/66QU6Dt84odNmrjud0aJrMXVondjAUKB4QHvPBwlo/x0j1jxreVUge
+         D29IP3CehKILhPMAWtxsPXahwDBbpwfIGD6r+h47ZFwVIVG2aBSTLrTCx+tg/SUaJJo+
+         ssuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:content-transfer-encoding
+         :in-reply-to:references:subject:from:to:cc:message-id:user-agent
+         :date;
+        bh=4VPnLBfnP+yE8XWhPk6Z0NZmIvwwW0UIFWDe0blP3PA=;
+        b=OWYak9dqurEr6EZif5sJCI6ej1f0DV8aSZT+kIwPnJtE9hxjUIl7BLSVEMkbZf3q4y
+         GkbbxSFtYCVo8pAkxE2qU/O0CCzipSIbzAuiBHt4UQBwGnKA2zmSfBwRHDrYkPnWG03A
+         J9/b0lirqAjdJO546pZSl1pk2KzjH4nUO0ZxMSwfK4JKivZf6Kl+pbtyjlZuNzD1GY6h
+         gf2GS06YsThcL9VS27PLpCM+c6XcZDfieyzlUm+yURQataCoSQEoK7dzV2I+S+6YQsdh
+         7XkYX/a1l9uyB8rRWdIft8HvIdR5wIUSLIOoyOvgNCQiPu7Kh7US6P/aLqEU5izUp8vx
+         JfvA==
+X-Gm-Message-State: APjAAAWoPASVNR4XNcqB0uaeR19PyGfr45rK4DlBCIGV80+Pdg6BNapt
+        cyBQKbn5XPc1cOnaHzv4Hd0LxHnV
+X-Google-Smtp-Source: APXvYqwq06G0czPEPLmYLoGzD2jqc2jTMs8sD6Gj1glkXKfoUr2VN70FHXc0dZ5zI3VGNbqDHyFU3Q==
+X-Received: by 2002:adf:e5c2:: with SMTP id a2mr1799223wrn.91.1562074291836;
+        Tue, 02 Jul 2019 06:31:31 -0700 (PDT)
+Received: from localhost ([151.237.18.226])
+        by smtp.gmail.com with ESMTPSA id b8sm2412981wmh.46.2019.07.02.06.31.30
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 02 Jul 2019 06:31:31 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.90.53.225]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190702095918.12852-1-ihor.matushchak@foobox.net>
+References: <20190702095918.12852-1-ihor.matushchak@foobox.net>
+Subject: Re: [PATCH] virtio-mmio: add error check for platform_get_irq
+From:   "Ivan T. Ivanov" <iivanov.xz@gmail.com>
+To:     Ihor Matushchak <ihor.matushchak@foobox.net>, mst@redhat.com
+Cc:     jasowang@redhat.com, virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, ihor.matushchak@foobox.net
+Message-ID: <156207429000.5051.5975712347598980745@silver>
+User-Agent: alot/0.8.1
+Date:   Tue, 02 Jul 2019 16:31:30 +0300
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Just like the previous patch which exports debugfs files for md-core,
-this patch exports debugfs file for md-raid1 under
-/sys/kernel/debug/block/mdX/raid1.
 
-Signed-off-by: Hou Tao <houtao1@huawei.com>
----
- drivers/md/raid1.c | 78 ++++++++++++++++++++++++++++++++++++++++++++++
- drivers/md/raid1.h |  1 +
- 2 files changed, 79 insertions(+)
+Hi,
 
-diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-index 2aa36e570e04..da06bb47195b 100644
---- a/drivers/md/raid1.c
-+++ b/drivers/md/raid1.c
-@@ -35,6 +35,7 @@
- #include "md.h"
- #include "raid1.h"
- #include "md-bitmap.h"
-+#include "md-debugfs.h"
- 
- #define UNSUPPORTED_MDDEV_FLAGS		\
- 	((1L << MD_HAS_JOURNAL) |	\
-@@ -2901,6 +2902,80 @@ static sector_t raid1_size(struct mddev *mddev, sector_t sectors, int raid_disks
- 	return mddev->dev_sectors;
- }
- 
-+enum {
-+	IOSTAT_NR_PENDING = 0,
-+	IOSTAT_NR_WAITING,
-+	IOSTAT_NR_QUEUED,
-+	IOSTAT_BARRIER,
-+	IOSTAT_CNT,
-+};
-+
-+static int raid1_dbg_iostat_show(struct seq_file *m, void *data)
-+{
-+	struct r1conf *conf = m->private;
-+	int idx;
-+	int sum[IOSTAT_CNT] = {};
-+
-+	seq_printf(m, "retry_list active %d\n",
-+			!list_empty(&conf->retry_list));
-+	seq_printf(m, "bio_end_io_list active %d\n",
-+			!list_empty(&conf->bio_end_io_list));
-+	seq_printf(m, "pending_bio_list active %d cnt %d\n",
-+			!bio_list_empty(&conf->pending_bio_list),
-+			conf->pending_count);
-+
-+	for (idx = 0; idx < BARRIER_BUCKETS_NR; idx++) {
-+		sum[IOSTAT_NR_PENDING] += atomic_read(&conf->nr_pending[idx]);
-+		sum[IOSTAT_NR_WAITING] += atomic_read(&conf->nr_waiting[idx]);
-+		sum[IOSTAT_NR_QUEUED] += atomic_read(&conf->nr_queued[idx]);
-+		sum[IOSTAT_BARRIER] += atomic_read(&conf->barrier[idx]);
-+	}
-+
-+	seq_printf(m, "sync_pending %d\n", atomic_read(&conf->nr_sync_pending));
-+	seq_printf(m, "nr_pending %d\n", sum[IOSTAT_NR_PENDING]);
-+	seq_printf(m, "nr_waiting %d\n", sum[IOSTAT_NR_WAITING]);
-+	seq_printf(m, "nr_queued %d\n", sum[IOSTAT_NR_QUEUED]);
-+	seq_printf(m, "barrier %d\n", sum[IOSTAT_BARRIER]);
-+
-+	return 0;
-+}
-+
-+static int raid1_dbg_stat_show(struct seq_file *m, void *data)
-+{
-+	struct r1conf *conf = m->private;
-+
-+	seq_printf(m, "array_frozen %d\n", conf->array_frozen);
-+	return 0;
-+}
-+
-+static const struct md_debugfs_file raid1_dbg_files[] = {
-+	{.name = "iostat", .show = raid1_dbg_iostat_show},
-+	{.name = "stat", .show = raid1_dbg_stat_show},
-+	{},
-+};
-+
-+static void raid1_unregister_debugfs(struct r1conf *conf)
-+{
-+	debugfs_remove_recursive(conf->debugfs_dir);
-+}
-+
-+static void raid1_register_debugfs(struct mddev *mddev, struct r1conf *conf)
-+{
-+	struct dentry *dir;
-+
-+	conf->debugfs_dir = NULL;
-+
-+	if (!mddev->debugfs_dir)
-+		return;
-+
-+	dir = debugfs_create_dir("raid1", mddev->debugfs_dir);
-+	if (IS_ERR_OR_NULL(dir))
-+		return;
-+
-+	md_debugfs_create_files(dir, conf, raid1_dbg_files);
-+	conf->debugfs_dir = dir;
-+}
-+
- static struct r1conf *setup_conf(struct mddev *mddev)
- {
- 	struct r1conf *conf;
-@@ -3022,6 +3097,8 @@ static struct r1conf *setup_conf(struct mddev *mddev)
- 	if (!conf->thread)
- 		goto abort;
- 
-+	raid1_register_debugfs(mddev, conf);
-+
- 	return conf;
- 
-  abort:
-@@ -3136,6 +3213,7 @@ static void raid1_free(struct mddev *mddev, void *priv)
- {
- 	struct r1conf *conf = priv;
- 
-+	raid1_unregister_debugfs(conf);
- 	mempool_exit(&conf->r1bio_pool);
- 	kfree(conf->mirrors);
- 	safe_put_page(conf->tmppage);
-diff --git a/drivers/md/raid1.h b/drivers/md/raid1.h
-index e7ccad898736..d627020e92d4 100644
---- a/drivers/md/raid1.h
-+++ b/drivers/md/raid1.h
-@@ -139,6 +139,7 @@ struct r1conf {
- 	sector_t		cluster_sync_low;
- 	sector_t		cluster_sync_high;
- 
-+	struct dentry *debugfs_dir;
- };
- 
- /*
--- 
-2.22.0
+Quoting Ihor Matushchak (2019-07-02 12:59:18)
+> in vm_find_vqs() irq has a wrong type
+> so, in case of no IRQ resource defined,
+> wrong parameter will be passed to request_irq()
+>=20
+> Signed-off-by: Ihor Matushchak <ihor.matushchak@foobox.net>
+> ---
+>  drivers/virtio/virtio_mmio.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/virtio/virtio_mmio.c b/drivers/virtio/virtio_mmio.c
+> index f363fbeb5ab0..60dde8ed163b 100644
+> --- a/drivers/virtio/virtio_mmio.c
+> +++ b/drivers/virtio/virtio_mmio.c
+> @@ -463,9 +463,14 @@ static int vm_find_vqs(struct virtio_device *vdev, u=
+nsigned nvqs,
+>                        struct irq_affinity *desc)
+>  {
+>         struct virtio_mmio_device *vm_dev =3D to_virtio_mmio_device(vdev);
+> -       unsigned int irq =3D platform_get_irq(vm_dev->pdev, 0);
+> +       int irq =3D platform_get_irq(vm_dev->pdev, 0);
+>         int i, err, queue_idx =3D 0;
+> =20
+> +       if (irq < 0) {
+> +               dev_err(&vdev->dev, "no IRQ resource defined\n");
+> +               return -ENODEV;
+
+Don't overwrite error code value. Just return it as it is.
+
+Regards,
+Ivan
 
