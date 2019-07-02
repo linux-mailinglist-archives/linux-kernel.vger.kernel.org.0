@@ -2,227 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A06795CFD5
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 14:55:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FCC25CFDD
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 14:57:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726951AbfGBMy5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 08:54:57 -0400
-Received: from albert.telenet-ops.be ([195.130.137.90]:58286 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726780AbfGBMy5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 08:54:57 -0400
-Received: from ramsan ([84.194.98.4])
-        by albert.telenet-ops.be with bizsmtp
-        id Xoup2000305gfCL06oup4h; Tue, 02 Jul 2019 14:54:54 +0200
-Received: from geert (helo=localhost)
-        by ramsan with local-esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1hiIJ7-0001Wd-2N; Tue, 02 Jul 2019 14:54:49 +0200
-Date:   Tue, 2 Jul 2019 14:54:49 +0200 (CEST)
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-To:     Mahesh Bandewar <maheshb@google.com>
-cc:     Netdev <netdev@vger.kernel.org>,
-        Eric Dumazet <edumazet@google.com>,
-        David Miller <davem@davemloft.net>,
-        Michael Chan <michael.chan@broadcom.com>,
-        Daniel Axtens <dja@axtens.net>,
-        Mahesh Bandewar <mahesh@bandewar.net>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: suspicious RCU usage (was: Re: [PATCHv3 next 1/3] loopback: create
- blackhole net device similar to loopack.)
-In-Reply-To: <20190701213849.102759-1-maheshb@google.com>
-Message-ID: <alpine.DEB.2.21.1907021450320.5764@ramsan.of.borg>
-References: <20190701213849.102759-1-maheshb@google.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1727029AbfGBM5R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 08:57:17 -0400
+Received: from mout.web.de ([212.227.15.14]:50091 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726362AbfGBM5R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 08:57:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1562072222;
+        bh=pVAuHARMLI90BQfldqhr/7I5PIxe6kQyhlRsdBPrcFM=;
+        h=X-UI-Sender-Class:To:From:Subject:Cc:Date;
+        b=CYqLauS/mr8Y29vfwHV9QBGEYW0C9+iogEHQOWyb2fGGMUVFy5fvXh95hfj4H4+Cb
+         hnwwpw04UvSzZISK5J9PDlH47wYeB4iA87yv8CzZ3VoMIaDj9fTXvGHn7RuANDhI0v
+         afP2kmqpo1BtaZB7xVDVVJWu+0R+xb6ETStEdkhI=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([78.48.11.114]) by smtp.web.de (mrweb003
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0MbyJ4-1i0NBo0f2c-00JJS7; Tue, 02
+ Jul 2019 14:57:02 +0200
+To:     linuxppc-dev@lists.ozlabs.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Paul Mackerras <paulus@samba.org>
+From:   Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] powerpc/setup: Adjust six seq_printf() calls in
+ show_cpuinfo()
+Openpgp: preference=signencrypt
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Message-ID: <5b62379e-a35f-4f56-f1b5-6350f76007e7@web.de>
+Date:   Tue, 2 Jul 2019 14:56:46 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:CHSj/T2I1H2IUKUbSut3k3betOz9ySJnjr+q1z0JO5FzO6JDPNu
+ YDIvH23ZFoLROOrSMAWSsuESAfamBVNo1CIY8kllwqdngkMAdNN12HGClZZqq/Fh87OlHZ+
+ kL5yC/NEbuUmHz0kMrBbr/hNXzKXEng4g5YHU6GXIT+9/HsOrFkPvArm2gP21g55giFp2S9
+ TxQNt+sMrJecvThy62wng==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:YdpPka3m940=:7UR228gInjucQ7dIKxxG88
+ JM4Fc/jCvePDzYF8Wsm+7O9DFUNzJx/ctkR2pGrwxWvhazqFCu3syliv4BFo0NwXoEIT/ZOff
+ /5cFDg4NaHTumdCE1k/weP95z1WR/Vc2OOM42DWLCUpQlofgCLZulHDbigQt9Iy98ULQ0tqTG
+ cXDMlaYVgYg7KJ/OlvpFVZ2SnH+m9s+K/gLv2Wf8lllBgzNOpjWcuil5RbTd50FzT39pB2x2V
+ 1PPvo86URns08PZtj9stnN4jcBKUvgYS420cOR8CHC60pfb/gOtaCvYkRVGOEYM7QksAbzSJY
+ lX9KAejJ+cmXHZX0EEaaourKBo6C8i/RZhbQXWuobvika9Meyd85d1i8wNg1Vt+7zdqYIn4By
+ 09xI3rfweulAkXKD9TfVnew93rVnRa9X817FMobBQWf/MclVKOdeRkjYWKAZiWV3VwAJ8zzUt
+ jhb7Dew/Y7fmEv65AM0MOp78jYWDocioiOf+YxXi92HN4Ho+bc6Un0flpyF1RCsf38o1yBH8H
+ 6CvOMyQthwjVNvVyZpJvISh/d7L9G3aS/2yrXk2LABuRTzaHJEnvNZA8lcZkLm3UxgVgsA6b+
+ 8eFDbmCESAKWKzmk5BgsZLSosVszGaa9Fa/cG3saZUOkmS/c6zBFkG0ZKi4OFrSA9IRRYcgl1
+ 2jfD78hYDz9BaFe0dOfysKqA7VcyvbP9NuKSI6kAZuoOCPQWLoqZ3ZWeJbdzsToH5ZbrGoSbw
+ Y6l0+zi7ws4r10Fz49YlYoFcgaEaNYV5odrPmdSJ620bDDhWK2atyGKJfE1Cd05ylVLpiF4xG
+ 3NRkHBUgWyGfAxmmNs6j+W+fcSXPqiNEuQiS7UwToA0bPFqGcrjx6/VmEy6koqHHjgmZDOucT
+ HFJ12B7PTWZs2h/2nZKnjmzsu3cOU6UJxWrBq8fQDeuzMYd30pSfAxrrdHF/ZVwzt2eEYEaCG
+ atnpvd82/GUiqRR3awibyUCAkoSq1zYFTPAv4Vf79y6bDoN/6sV77V+j/cL/W8KN6GM8RUiV9
+ pByBJMLyuwlYbtvtnJcVt2EhPJ3DoP2+ZkjDtQUa+XJ4yRFMxW0+LGn+aak0k5GjlNPVthk/C
+ bCEyh7ENqUq3XfmtZAVaeWCqwoHnVyynZ3Q
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
- 	Hi Mahesh,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 2 Jul 2019 14:41:42 +0200
 
-On Mon, 1 Jul 2019, Mahesh Bandewar wrote:
-> Create a blackhole net device that can be used for "dead"
-> dst entries instead of loopback device. This blackhole device differs
-> from loopback in few aspects: (a) It's not per-ns. (b)  MTU on this
-> device is ETH_MIN_MTU (c) The xmit function is essentially kfree_skb().
-> and (d) since it's not registered it won't have ifindex.
->
-> Lower MTU effectively make the device not pass the MTU check during
-> the route check when a dst associated with the skb is dead.
->
-> Signed-off-by: Mahesh Bandewar <maheshb@google.com>
+A bit of information should be put into a sequence.
+Thus improve the execution speed for this data output by better usage
+of corresponding functions.
 
-This is now commit 4de83b88c66a1e4d ("loopback: create blackhole net
-device similar to loopack.") in net-next, and causes the following
-warning on arm64:
+This issue was detected by using the Coccinelle software.
 
-     WARNING: suspicious RCU usage
-     5.2.0-rc6-arm64-renesas-01699-g4de83b88c66a1e4d #263 Not tainted
-     -----------------------------
-     include/linux/rtnetlink.h:85 suspicious rcu_dereference_protected() usage!
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ arch/powerpc/kernel/setup-common.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-     other info that might help us debug this:
+diff --git a/arch/powerpc/kernel/setup-common.c b/arch/powerpc/kernel/setu=
+p-common.c
+index 1f8db666468d..a381723b11bd 100644
+=2D-- a/arch/powerpc/kernel/setup-common.c
++++ b/arch/powerpc/kernel/setup-common.c
+@@ -239,18 +239,17 @@ static int show_cpuinfo(struct seq_file *m, void *v)
+ 	maj =3D (pvr >> 8) & 0xFF;
+ 	min =3D pvr & 0xFF;
 
+-	seq_printf(m, "processor\t: %lu\n", cpu_id);
+-	seq_printf(m, "cpu\t\t: ");
++	seq_printf(m, "processor\t: %lu\ncpu\t\t: ", cpu_id);
 
-     rcu_scheduler_active = 2, debug_locks = 1
-     no locks held by swapper/0/1.
+ 	if (cur_cpu_spec->pvr_mask && cur_cpu_spec->cpu_name)
+-		seq_printf(m, "%s", cur_cpu_spec->cpu_name);
++		seq_puts(m, cur_cpu_spec->cpu_name);
+ 	else
+ 		seq_printf(m, "unknown (%08x)", pvr);
 
-     stack backtrace:
-     CPU: 2 PID: 1 Comm: swapper/0 Not tainted 5.2.0-rc6-arm64-renesas-01699-g4de83b88c66a1e4d #263
-     Hardware name: Renesas Salvator-X 2nd version board based on r8a7795 ES2.0+ (DT)
-     Call trace:
-      dump_backtrace+0x0/0x148
-      show_stack+0x14/0x20
-      dump_stack+0xd4/0x11c
-      lockdep_rcu_suspicious+0xcc/0x110
-      dev_init_scheduler+0x114/0x150
-      blackhole_netdev_init+0x40/0x80
-      do_one_initcall+0x178/0x37c
-      kernel_init_freeable+0x490/0x530
-      kernel_init+0x10/0x100
-      ret_from_fork+0x10/0x1c
+ 	if (cpu_has_feature(CPU_FTR_ALTIVEC))
+-		seq_printf(m, ", altivec supported");
++		seq_puts(m, ", altivec supported");
 
+-	seq_printf(m, "\n");
++	seq_putc(m, '\n');
 
-> ---
-> v1->v2->v3
->  no change
->
-> drivers/net/loopback.c    | 76 ++++++++++++++++++++++++++++++++++-----
-> include/linux/netdevice.h |  2 ++
-> 2 files changed, 69 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/net/loopback.c b/drivers/net/loopback.c
-> index 87d361666cdd..3b39def5471e 100644
-> --- a/drivers/net/loopback.c
-> +++ b/drivers/net/loopback.c
-> @@ -55,6 +55,13 @@
-> #include <net/net_namespace.h>
-> #include <linux/u64_stats_sync.h>
->
-> +/* blackhole_netdev - a device used for dsts that are marked expired!
-> + * This is global device (instead of per-net-ns) since it's not needed
-> + * to be per-ns and gets initialized at boot time.
-> + */
-> +struct net_device *blackhole_netdev;
-> +EXPORT_SYMBOL(blackhole_netdev);
-> +
-> /* The higher levels take care of making this non-reentrant (it's
->  * called with bh's disabled).
->  */
-> @@ -150,12 +157,14 @@ static const struct net_device_ops loopback_ops = {
-> 	.ndo_set_mac_address = eth_mac_addr,
-> };
->
-> -/* The loopback device is special. There is only one instance
-> - * per network namespace.
-> - */
-> -static void loopback_setup(struct net_device *dev)
-> +static void gen_lo_setup(struct net_device *dev,
-> +			 unsigned int mtu,
-> +			 const struct ethtool_ops *eth_ops,
-> +			 const struct header_ops *hdr_ops,
-> +			 const struct net_device_ops *dev_ops,
-> +			 void (*dev_destructor)(struct net_device *dev))
-> {
-> -	dev->mtu		= 64 * 1024;
-> +	dev->mtu		= mtu;
-> 	dev->hard_header_len	= ETH_HLEN;	/* 14	*/
-> 	dev->min_header_len	= ETH_HLEN;	/* 14	*/
-> 	dev->addr_len		= ETH_ALEN;	/* 6	*/
-> @@ -174,11 +183,20 @@ static void loopback_setup(struct net_device *dev)
-> 		| NETIF_F_NETNS_LOCAL
-> 		| NETIF_F_VLAN_CHALLENGED
-> 		| NETIF_F_LOOPBACK;
-> -	dev->ethtool_ops	= &loopback_ethtool_ops;
-> -	dev->header_ops		= &eth_header_ops;
-> -	dev->netdev_ops		= &loopback_ops;
-> +	dev->ethtool_ops	= eth_ops;
-> +	dev->header_ops		= hdr_ops;
-> +	dev->netdev_ops		= dev_ops;
-> 	dev->needs_free_netdev	= true;
-> -	dev->priv_destructor	= loopback_dev_free;
-> +	dev->priv_destructor	= dev_destructor;
-> +}
-> +
-> +/* The loopback device is special. There is only one instance
-> + * per network namespace.
-> + */
-> +static void loopback_setup(struct net_device *dev)
-> +{
-> +	gen_lo_setup(dev, (64 * 1024), &loopback_ethtool_ops, &eth_header_ops,
-> +		     &loopback_ops, loopback_dev_free);
-> }
->
-> /* Setup and register the loopback device. */
-> @@ -213,3 +231,43 @@ static __net_init int loopback_net_init(struct net *net)
-> struct pernet_operations __net_initdata loopback_net_ops = {
-> 	.init = loopback_net_init,
-> };
-> +
-> +/* blackhole netdevice */
-> +static netdev_tx_t blackhole_netdev_xmit(struct sk_buff *skb,
-> +					 struct net_device *dev)
-> +{
-> +	kfree_skb(skb);
-> +	net_warn_ratelimited("%s(): Dropping skb.\n", __func__);
-> +	return NETDEV_TX_OK;
-> +}
-> +
-> +static const struct net_device_ops blackhole_netdev_ops = {
-> +	.ndo_start_xmit = blackhole_netdev_xmit,
-> +};
-> +
-> +/* This is a dst-dummy device used specifically for invalidated
-> + * DSTs and unlike loopback, this is not per-ns.
-> + */
-> +static void blackhole_netdev_setup(struct net_device *dev)
-> +{
-> +	gen_lo_setup(dev, ETH_MIN_MTU, NULL, NULL, &blackhole_netdev_ops, NULL);
-> +}
-> +
-> +/* Setup and register the blackhole_netdev. */
-> +static int __init blackhole_netdev_init(void)
-> +{
-> +	blackhole_netdev = alloc_netdev(0, "blackhole_dev", NET_NAME_UNKNOWN,
-> +					blackhole_netdev_setup);
-> +	if (!blackhole_netdev)
-> +		return -ENOMEM;
-> +
-> +	dev_init_scheduler(blackhole_netdev);
-> +	dev_activate(blackhole_netdev);
-> +
-> +	blackhole_netdev->flags |= IFF_UP | IFF_RUNNING;
-> +	dev_net_set(blackhole_netdev, &init_net);
-> +
-> +	return 0;
-> +}
-> +
-> +device_initcall(blackhole_netdev_init);
-> diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
-> index eeacebd7debb..88292953aa6f 100644
-> --- a/include/linux/netdevice.h
-> +++ b/include/linux/netdevice.h
-> @@ -4870,4 +4870,6 @@ do {								\
-> #define PTYPE_HASH_SIZE	(16)
-> #define PTYPE_HASH_MASK	(PTYPE_HASH_SIZE - 1)
->
-> +extern struct net_device *blackhole_netdev;
-> +
-> #endif	/* _LINUX_NETDEVICE_H */
->
-Gr{oetje,eeting}s,
+ #ifdef CONFIG_TAU
+ 	if (cpu_has_feature(CPU_FTR_TAU)) {
+@@ -332,7 +331,7 @@ static int show_cpuinfo(struct seq_file *m, void *v)
+ 		seq_printf(m, "bogomips\t: %lu.%02lu\n", loops_per_jiffy / (500000 / HZ=
+),
+ 			   (loops_per_jiffy / (5000 / HZ)) % 100);
 
- 						Geert
+-	seq_printf(m, "\n");
++	seq_putc(m, '\n');
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
- 							    -- Linus Torvalds
+ 	/* If this is the last cpu, print the summary */
+ 	if (cpumask_next(cpu_id, cpu_online_mask) >=3D nr_cpu_ids)
+=2D-
+2.22.0
 
