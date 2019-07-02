@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0083C5CB46
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 10:12:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF9125CABC
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 10:07:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728549AbfGBIIz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 04:08:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56562 "EHLO mail.kernel.org"
+        id S1728247AbfGBIHX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 04:07:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54562 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728539AbfGBIIv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 04:08:51 -0400
+        id S1728232AbfGBIHV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 04:07:21 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A60422183F;
-        Tue,  2 Jul 2019 08:08:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 81C6C21850;
+        Tue,  2 Jul 2019 08:07:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562054931;
-        bh=2bcg2DM1IE8ugKmuof6Mw84sS9E6si19t81ORiMJElU=;
+        s=default; t=1562054841;
+        bh=6BV+tyk1FlETmNpb5Et3b/2RwShbENEEFowjq3hM/Og=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ssAf2mjPIc7LJzYCheLeGTYX1WlVb9NJGTRQ+WJukN1JSEbJRmT/seWDt/LYyHqQm
-         yT1ASjA3SNqkycWzz2E0knxK/XIJzUe0pzTO9N2yfIMtzcPRDqtpU3AEkv8UAC145w
-         E13hu1lAJzSkMtoRqUGilR9tJtGDFzKfCP3r4Jxc=
+        b=VQLMaovhTvIP/4KRXqlt+sEB7qiAbNfdWbTOgtCRONO4cM4aTtncxBgztm5gbcfBq
+         17JwraeLfbyawNOf89D2IVeCGuDIpgbOV8xHBT6uyztD/1VIU2Mli60c/+FbimUz0v
+         YvUhkNpG43D/MXOdYe+oWhN3QS5tPeGgCR7GtBMI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Dominique Martinet <dominique.martinet@cea.fr>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 10/43] 9p: acl: fix uninitialized iattr access
-Date:   Tue,  2 Jul 2019 10:01:50 +0200
-Message-Id: <20190702080124.367821117@linuxfoundation.org>
+        stable@vger.kernel.org, Willem de Bruijn <willemb@google.com>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        Matteo Croce <mcroce@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 50/72] af_packet: Block execution of tasks waiting for transmit to complete in AF_PACKET
+Date:   Tue,  2 Jul 2019 10:01:51 +0200
+Message-Id: <20190702080127.175005474@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190702080123.904399496@linuxfoundation.org>
-References: <20190702080123.904399496@linuxfoundation.org>
+In-Reply-To: <20190702080124.564652899@linuxfoundation.org>
+References: <20190702080124.564652899@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,35 +45,153 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit e02a53d92e197706cad1627bd84705d4aa20a145 ]
+From: Neil Horman <nhorman@tuxdriver.com>
 
-iattr is passed to v9fs_vfs_setattr_dotl which does send various
-values from iattr over the wire, even if it tells the server to
-only look at iattr.ia_valid fields this could leak some stack data.
+[ Upstream commit 89ed5b519004a7706f50b70f611edbd3aaacff2c ]
 
-Link: http://lkml.kernel.org/r/1536339057-21974-2-git-send-email-asmadeus@codewreck.org
-Addresses-Coverity-ID: 1195601 ("Uninitalized scalar variable")
-Signed-off-by: Dominique Martinet <dominique.martinet@cea.fr>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+When an application is run that:
+a) Sets its scheduler to be SCHED_FIFO
+and
+b) Opens a memory mapped AF_PACKET socket, and sends frames with the
+MSG_DONTWAIT flag cleared, its possible for the application to hang
+forever in the kernel.  This occurs because when waiting, the code in
+tpacket_snd calls schedule, which under normal circumstances allows
+other tasks to run, including ksoftirqd, which in some cases is
+responsible for freeing the transmitted skb (which in AF_PACKET calls a
+destructor that flips the status bit of the transmitted frame back to
+available, allowing the transmitting task to complete).
+
+However, when the calling application is SCHED_FIFO, its priority is
+such that the schedule call immediately places the task back on the cpu,
+preventing ksoftirqd from freeing the skb, which in turn prevents the
+transmitting task from detecting that the transmission is complete.
+
+We can fix this by converting the schedule call to a completion
+mechanism.  By using a completion queue, we force the calling task, when
+it detects there are no more frames to send, to schedule itself off the
+cpu until such time as the last transmitted skb is freed, allowing
+forward progress to be made.
+
+Tested by myself and the reporter, with good results
+
+Change Notes:
+
+V1->V2:
+	Enhance the sleep logic to support being interruptible and
+allowing for honoring to SK_SNDTIMEO (Willem de Bruijn)
+
+V2->V3:
+	Rearrage the point at which we wait for the completion queue, to
+avoid needing to check for ph/skb being null at the end of the loop.
+Also move the complete call to the skb destructor to avoid needing to
+modify __packet_set_status.  Also gate calling complete on
+packet_read_pending returning zero to avoid multiple calls to complete.
+(Willem de Bruijn)
+
+	Move timeo computation within loop, to re-fetch the socket
+timeout since we also use the timeo variable to record the return code
+from the wait_for_complete call (Neil Horman)
+
+V3->V4:
+	Willem has requested that the control flow be restored to the
+previous state.  Doing so lets us eliminate the need for the
+po->wait_on_complete flag variable, and lets us get rid of the
+packet_next_frame function, but introduces another complexity.
+Specifically, but using the packet pending count, we can, if an
+applications calls sendmsg multiple times with MSG_DONTWAIT set, each
+set of transmitted frames, when complete, will cause
+tpacket_destruct_skb to issue a complete call, for which there will
+never be a wait_on_completion call.  This imbalance will lead to any
+future call to wait_for_completion here to return early, when the frames
+they sent may not have completed.  To correct this, we need to re-init
+the completion queue on every call to tpacket_snd before we enter the
+loop so as to ensure we wait properly for the frames we send in this
+iteration.
+
+	Change the timeout and interrupted gotos to out_put rather than
+out_status so that we don't try to free a non-existant skb
+	Clean up some extra newlines (Willem de Bruijn)
+
+Reviewed-by: Willem de Bruijn <willemb@google.com>
+Signed-off-by: Neil Horman <nhorman@tuxdriver.com>
+Reported-by: Matteo Croce <mcroce@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/9p/acl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/packet/af_packet.c |   20 +++++++++++++++++---
+ net/packet/internal.h  |    1 +
+ 2 files changed, 18 insertions(+), 3 deletions(-)
 
-diff --git a/fs/9p/acl.c b/fs/9p/acl.c
-index 082d227fa56b..6261719f6f2a 100644
---- a/fs/9p/acl.c
-+++ b/fs/9p/acl.c
-@@ -276,7 +276,7 @@ static int v9fs_xattr_set_acl(const struct xattr_handler *handler,
- 	switch (handler->flags) {
- 	case ACL_TYPE_ACCESS:
- 		if (acl) {
--			struct iattr iattr;
-+			struct iattr iattr = { 0 };
- 			struct posix_acl *old_acl = acl;
+--- a/net/packet/af_packet.c
++++ b/net/packet/af_packet.c
+@@ -2399,6 +2399,9 @@ static void tpacket_destruct_skb(struct
  
- 			retval = posix_acl_update_mode(inode, &iattr.ia_mode, &acl);
--- 
-2.20.1
-
+ 		ts = __packet_set_timestamp(po, ph, skb);
+ 		__packet_set_status(po, ph, TP_STATUS_AVAILABLE | ts);
++
++		if (!packet_read_pending(&po->tx_ring))
++			complete(&po->skb_completion);
+ 	}
+ 
+ 	sock_wfree(skb);
+@@ -2594,7 +2597,7 @@ static int tpacket_parse_header(struct p
+ 
+ static int tpacket_snd(struct packet_sock *po, struct msghdr *msg)
+ {
+-	struct sk_buff *skb;
++	struct sk_buff *skb = NULL;
+ 	struct net_device *dev;
+ 	struct virtio_net_hdr *vnet_hdr = NULL;
+ 	struct sockcm_cookie sockc;
+@@ -2609,6 +2612,7 @@ static int tpacket_snd(struct packet_soc
+ 	int len_sum = 0;
+ 	int status = TP_STATUS_AVAILABLE;
+ 	int hlen, tlen, copylen = 0;
++	long timeo = 0;
+ 
+ 	mutex_lock(&po->pg_vec_lock);
+ 
+@@ -2655,12 +2659,21 @@ static int tpacket_snd(struct packet_soc
+ 	if ((size_max > dev->mtu + reserve + VLAN_HLEN) && !po->has_vnet_hdr)
+ 		size_max = dev->mtu + reserve + VLAN_HLEN;
+ 
++	reinit_completion(&po->skb_completion);
++
+ 	do {
+ 		ph = packet_current_frame(po, &po->tx_ring,
+ 					  TP_STATUS_SEND_REQUEST);
+ 		if (unlikely(ph == NULL)) {
+-			if (need_wait && need_resched())
+-				schedule();
++			if (need_wait && skb) {
++				timeo = sock_sndtimeo(&po->sk, msg->msg_flags & MSG_DONTWAIT);
++				timeo = wait_for_completion_interruptible_timeout(&po->skb_completion, timeo);
++				if (timeo <= 0) {
++					err = !timeo ? -ETIMEDOUT : -ERESTARTSYS;
++					goto out_put;
++				}
++			}
++			/* check for additional frames */
+ 			continue;
+ 		}
+ 
+@@ -3216,6 +3229,7 @@ static int packet_create(struct net *net
+ 	sock_init_data(sock, sk);
+ 
+ 	po = pkt_sk(sk);
++	init_completion(&po->skb_completion);
+ 	sk->sk_family = PF_PACKET;
+ 	po->num = proto;
+ 	po->xmit = dev_queue_xmit;
+--- a/net/packet/internal.h
++++ b/net/packet/internal.h
+@@ -128,6 +128,7 @@ struct packet_sock {
+ 	unsigned int		tp_hdrlen;
+ 	unsigned int		tp_reserve;
+ 	unsigned int		tp_tstamp;
++	struct completion	skb_completion;
+ 	struct net_device __rcu	*cached_dev;
+ 	int			(*xmit)(struct sk_buff *skb);
+ 	struct packet_type	prot_hook ____cacheline_aligned_in_smp;
 
 
