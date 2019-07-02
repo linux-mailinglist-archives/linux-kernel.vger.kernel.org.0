@@ -2,116 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49D9A5DA4A
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 03:08:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C1CD5D9B6
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:51:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727398AbfGCBH4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 21:07:56 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:40213 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726430AbfGCBHy (ORCPT
+        id S1727287AbfGCAvh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 20:51:37 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:42060 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726430AbfGCAvh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 21:07:54 -0400
-Received: by mail-pg1-f194.google.com with SMTP id w10so264257pgj.7
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 18:07:54 -0700 (PDT)
+        Tue, 2 Jul 2019 20:51:37 -0400
+Received: by mail-lj1-f193.google.com with SMTP id t28so463192lje.9
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 17:51:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=+v++TWQepjq+jXcnB/nkSYABP3Yxzhi+VRnwYA7APOc=;
-        b=oMb6uM8LX67HBBPGSfb9AUp3WO62ALREH93oGjCh6lO/52vJU14Whlz5WJTyiSSMrz
-         QjaNY/UQ071B1xHmQllCQ6rr7wCt6LfkVksGvNso68NLioyZLq/CiWF91YNHV3RVc4Tc
-         uKYaHgTqS5g77nWbSFqqtkguGecdLARTlgXwiQcCjSJGW9dNVfB5jAyGp9efviyHfv41
-         FmHQ7ktOdAJy57+EuNl5e0YYpeK5FnzK6KngtCHCVJSKMDnCICS8DqhxsQDvRx7ecso7
-         kROKNQpbpmweFl+TG+cpIQMjO6gH1SGadjtzkB71XIJpb8QrwIg9DBSqOmSvj1+gYjtW
-         PIVQ==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=16juguPwtTD1vWpUNQpyIYEAEOADqNOzx5F+yEENpfM=;
+        b=S/9wjNxzHSQ44lx7QK89mdaRsjoKX1ZHgfg3NuCejeCzRPPew2tWGQF+4K7vlloGvm
+         tyN6KUOOcr3VvGxxqoNTkXQVxwWSdgw6rRxyFAtqS2wmE4uIzfvXER5NQaV0WvTgDSO/
+         G7CftJYBPlUxgiiZGrDHr7XemlK99J37xqC6ZOicBwBXGmkzZiihRX4yIIpvZp2yFexg
+         a7FQYsjQ7dRg4vmj1VZqWbV5+hptW5EvSKIt7hNJxWmqz6RxXpQcQrlL4oP+c+fXuPnm
+         JcF2i68p+gi5kx0i/DM9PMGUD2oVxl7Rs4ZjGSg8mLnFJjXxbx6vHt20X8U5l6/jqpk/
+         XrvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+v++TWQepjq+jXcnB/nkSYABP3Yxzhi+VRnwYA7APOc=;
-        b=d/kVngmucZ0Z0aNWov12KjVoDhkx6+rNUMqBUzTJdX4Llf2fSISn4SKkMdcbZirGYJ
-         U/AZ8YPOfGeoESDyMI+in1lWpfdmosSB7j5NCBywNlgm7l0wW0eSvJoi+WYDmqzWgQ4J
-         2141aZMYkG3mqz1vGjvXbhGqjsslMNvH/UlltQ8JV+1FOWgy6jnRDjJ5NoPxUsQjIcZF
-         BXsJjBTA0aeAg5kAKHNeclHfa7dBxTjZdKS2mMbK1J40gO1bEeD5X+g9yJ+Ji6U5Ci2A
-         6lvYTqBOexS13Ig57Q5fDK6GUNAV1MdU+djbAdfpP4cV4r+Rlk9dCS0klgu48e02+4Ct
-         g33g==
-X-Gm-Message-State: APjAAAXtAXE/4XkxVQ1Cgb2y9T4a6NH3VZs2yUsqwzn7AwFxqOP9Pn+1
-        yYtf/l7GVmddWbCsZPu+4d50dBy2ies=
-X-Google-Smtp-Source: APXvYqx+HGwW+nz/+iPgIThxonkUBijVnsTKXtGANv3oqK0FIvnCQgiB8iPHGgSMuIFGhcqm4pEVDQ==
-X-Received: by 2002:a17:90a:26ea:: with SMTP id m97mr7877414pje.59.1562101418200;
-        Tue, 02 Jul 2019 14:03:38 -0700 (PDT)
-Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id q126sm21796589pfq.123.2019.07.02.14.03.36
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 02 Jul 2019 14:03:37 -0700 (PDT)
-Date:   Tue, 2 Jul 2019 14:04:01 -0700
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iommu/dma: Fix calculation overflow in __finalise_sg()
-Message-ID: <20190702210400.GA14593@Asurada-Nvidia.nvidia.com>
-References: <20190622043814.5003-1-nicoleotsuka@gmail.com>
- <20190701122158.GE8166@8bytes.org>
- <91a389be-fd76-c87f-7613-8cc972b69685@arm.com>
- <20190701215016.GA16247@Asurada-Nvidia.nvidia.com>
- <d4bccb17-2f7a-65e4-6c89-e37cceb6d935@arm.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=16juguPwtTD1vWpUNQpyIYEAEOADqNOzx5F+yEENpfM=;
+        b=QPQQdlTr8JZnnJYJXVRpP5+4ASaGwfWunB0fGS3u7FxPHeTSwN5IlHz445oBzuEoo2
+         G1on/a9VOjLo5hj/V3grQB6EAcAfqxwBPd+pRVPmeh667at1pNi/1icPw65mdMRwfbpa
+         dYz2+Jp5OvfIQINNG5Dg9AJdNKMgL6K2hmzqobhnqa6AK8yNsJOhy9wu1/LF3Lf565qn
+         9FEgcqN/2r2YZUYYl/HQDJDsDo7UsXwecj+euafXfqqxHoV6RX8l1zAgALihMXikBlw7
+         MUF1Rpc8G4CV5DPMRYKxmrJAyKtNIBvZwGsrtH94R86Pinr84QnJMt0SfqKTlO+hLlVJ
+         mV4w==
+X-Gm-Message-State: APjAAAXxfa1MHaHqiQIZZ+mYV+eQDz9k7h0u1TEehvITOIWl4pC6bNNn
+        lUS5Rdp1ESdOKwC1cAEy7Iah9cQnmK6bMlAdvwzO6OrsYnQ=
+X-Google-Smtp-Source: APXvYqzqBXDeMKmpI7HFc6XkzadQ68osH+Li6FhgxXGtJx4NhJW7ZyaamzfpJOk299AcYNEfRxB1ATHZc5WRU8OT9jg=
+X-Received: by 2002:a2e:a0cf:: with SMTP id f15mr18775412ljm.180.1562101588459;
+ Tue, 02 Jul 2019 14:06:28 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d4bccb17-2f7a-65e4-6c89-e37cceb6d935@arm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20190617221134.9930-1-f.fainelli@gmail.com>
+In-Reply-To: <20190617221134.9930-1-f.fainelli@gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 2 Jul 2019 23:06:16 +0200
+Message-ID: <CACRpkdbqW2kJNdPi6JPupaHA_qRTWG-MsUxeCz0c38MRujOSSA@mail.gmail.com>
+Subject: Re: [PATCH v6 0/6] KASan for arm
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Russell King <linux@armlinux.org.uk>, christoffer.dall@arm.com,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Nicolas Pitre <nico@fluxnic.net>,
+        Vladimir Murzin <vladimir.murzin@arm.com>,
+        Kees Cook <keescook@chromium.org>, jinb.park7@gmail.com,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        liuwenliang@huawei.com, Rob Landley <rob@landley.net>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Thomas Gleixner <tglx@linutronix.de>, thgarnie@google.com,
+        David Howells <dhowells@redhat.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Andre Przywara <andre.przywara@arm.com>,
+        julien.thierry@arm.com, drjones@redhat.com, philip@cog.systems,
+        mhocko@suse.com, kirill.shutemov@linux.intel.com,
+        kasan-dev@googlegroups.com,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        kvmarm@lists.cs.columbia.edu,
+        Andrey Ryabinin <ryabinin.a.a@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 02, 2019 at 11:40:02AM +0100, Robin Murphy wrote:
-> On reflection, I don't really think that size_t fits here anyway, since
-> all the members of the incoming struct scatterlist are unsigned int too.
-> Does the patch below work?
+Hi Florian,
 
-Yes.
+On Tue, Jun 18, 2019 at 12:11 AM Florian Fainelli <f.fainelli@gmail.com> wrote:
 
-> ----->8-----
-> From: Robin Murphy <robin.murphy@arm.com>
-> Subject: [PATCH] iommu/dma: Handle SG length overflow better
-> 
-> Since scatterlist dimensions are all unsigned ints, in the relatively
-> rare cases where a device's max_segment_size is set to UINT_MAX, then
-> the "cur_len + s_length <= max_len" check in __finalise_sg() will always
-> return true. As a result, the corner case of such a device mapping an
-> excessively large scatterlist which is mergeable to or beyond a total
-> length of 4GB can lead to overflow and a bogus truncated dma_length in
-> the resulting segment.
-> 
-> As we already assume that any single segment must be no longer than
-> max_len to begin with, this can easily be addressed by reshuffling the
-> comparison.
-> 
-> Fixes: 809eac54cdd6 ("iommu/dma: Implement scatterlist segment merging")
-> Reported-by: Nicolin Chen <nicoleotsuka@gmail.com>
-> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+> Abbott submitted a v5 about a year ago here:
+>
+> and the series was not picked up since then, so I rebased it against
+> v5.2-rc4 and re-tested it on a Brahma-B53 (ARMv8 running AArch32 mode)
+> and Brahma-B15, both LPAE and test-kasan is consistent with the ARM64
+> counter part.
+>
+> We were in a fairly good shape last time with a few different people
+> having tested it, so I am hoping we can get that included for 5.4 if
+> everything goes well.
 
-Tested-by: Nicolin Chen <nicoleotsuka@gmail.com>
+Thanks for picking this up. I was trying out KASan in the past,
+got sidetracked and honestly lost interest a bit because it was
+boring. But I do realize that it is really neat, so I will try to help
+out with some review and test on a bunch of hardware I have.
 
-Thank you!
+At one point I even had this running on the ARMv4 SA1100
+(no joke!) and if I recall correctly, I got stuck because of things
+that might very well have been related to using a very fragile
+Arm testchip that later broke down completely in the l2cache
+when we added the spectre/meltdown fixes.
 
-> ---
->  drivers/iommu/dma-iommu.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-> index 129c4badf9ae..8de6cf623362 100644
-> --- a/drivers/iommu/dma-iommu.c
-> +++ b/drivers/iommu/dma-iommu.c
-> @@ -721,7 +721,7 @@ static int __finalise_sg(struct device *dev, struct scatterlist *sg, int nents,
->  		 * - and wouldn't make the resulting output segment too long
->  		 */
->  		if (cur_len && !s_iova_off && (dma_addr & seg_mask) &&
-> -		    (cur_len + s_length <= max_len)) {
-> +		    (max_len - cur_len >= s_length)) {
->  			/* ...then concatenate it with the previous one */
->  			cur_len += s_length;
->  		} else {
+I start reviewing and testing.
+
+Yours,
+Linus Walleij
