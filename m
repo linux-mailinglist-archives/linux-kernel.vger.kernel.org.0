@@ -2,95 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 604B95D8AF
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:27:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 996DF5DA24
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 03:03:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727158AbfGCA1L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 20:27:11 -0400
-Received: from mail-pl1-f180.google.com ([209.85.214.180]:46492 "EHLO
-        mail-pl1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726150AbfGCA1K (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 20:27:10 -0400
-Received: by mail-pl1-f180.google.com with SMTP id e5so169989pls.13
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 17:27:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GVeYE2lI3WjawRv5ylltj1PK2bEL0Yzgl985bGk3R7M=;
-        b=KvO/SsjqdxRY1GxdPcOT/aUG+OCDqrC5o062EDydJkQwDn15z49XNA58ZDfb6j1t5H
-         kvutHrNu83NbGoz3jDaV9tcr+6KOKbq16/a08aFJ3qBT+oStKFYlyTzDSIgyiMoTkJs0
-         oDkPHlotReORAfGrHzpyWVk1onuPIT6px7Cb2awzWJZAcNDPZfBACr4w/0U69zZ5qKKc
-         wCU86cFAHk5rUUrN2urt3y2FWUt4qK+uiFYhE4jc5q+Vwrtk90O5GgI3KymDbQj6btQR
-         JQPc1tZdI9uTStT+zlmGJt/FgtV+Y98ddtiyN76rSEbSlP74wHDEC1iKmV1NGs1cPphq
-         dGTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GVeYE2lI3WjawRv5ylltj1PK2bEL0Yzgl985bGk3R7M=;
-        b=FAEGMMCnTRWPThIwTHQIK2t/Ea51+gXWDjLJi70j2Hr708vtpDXdoaqFeYKK7clBjT
-         X31hVvaQMlDvaHVOt6yij9Fov2xQerwzNskLIa69zUanjZqS/bTgXAnVPt3udjeLVbJk
-         LrnhmH1LHAcl6hg6BISgebNAt4PJQx3AAwJ8+IdALr0mv+f/nD/PV1V1GGGooCX1xED3
-         1u6TATZ0JdFw27ZfgKpjkhu5uDDkxcdx+JA1hlxmUzfqg86/qvtk1b++Xw5zhj0LLbOL
-         RqzerRzYloAu/Ag9UH61e/SFVN483rCFHBp89+qvk48n6mH+J0gAat7JLVc4tu5mFPtG
-         ISPg==
-X-Gm-Message-State: APjAAAXHm3E9fOm23DkBLgs5u1KSfZS2k+T3GltZ3HgXQQnnYCeSqOlo
-        hXagk4WkZzeH6EdGt1DCBMQsBfW8GlF8WH9s49E8lFEEW+s=
-X-Google-Smtp-Source: APXvYqzNWCKTQ7od3rLKjPwNO09v1yntf67yfperr1BKlEPuIBGnS7KugcRWUK2CbdZZ5sRr5Vlp700rWDEiIIKiiLY=
-X-Received: by 2002:a17:902:4aa3:: with SMTP id x32mr36225620pld.119.1562106849868;
- Tue, 02 Jul 2019 15:34:09 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAKwvOdnGL_9cJ+ETNce89+z7CTDctjACS8DFsLu=ev4+vkVkUw@mail.gmail.com>
- <alpine.DEB.2.21.1907022332000.1802@nanos.tec.linutronix.de>
- <CAKwvOdn-=u1v8B1ni8QqiOXaimhc_tG6O=8kMb4c2vv62=D42g@mail.gmail.com> <alpine.DEB.2.21.1907030018170.1802@nanos.tec.linutronix.de>
-In-Reply-To: <alpine.DEB.2.21.1907030018170.1802@nanos.tec.linutronix.de>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Tue, 2 Jul 2019 15:33:58 -0700
-Message-ID: <CAKwvOdkN8FyvpjiuW+cA0+qGQSNvzSbA0Hop69QxQAbTMqNTMw@mail.gmail.com>
-Subject: Re: objtool warnings in prerelease clang-9
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Kees Cook <keescook@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Craig Topper <craig.topper@intel.com>,
-        Alexander Potapenko <glider@google.com>,
-        Bill Wendling <morbo@google.com>,
-        Stephen Hines <srhines@google.com>,
-        Chandler Carruth <chandlerc@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1727499AbfGCBDJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 21:03:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51748 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727082AbfGCBDF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 21:03:05 -0400
+Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6F38A21904;
+        Tue,  2 Jul 2019 22:35:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562106936;
+        bh=c/MyoEL1y9iSRH8tUqhzcXV9ntk3My2ap/3Dn7awyKw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=l01hbVKK1DS91crh+dWLCuA/4HwJhhjblV3ZmG7+ToSZt2H6+9chb5C6lWKcVbpZT
+         6yf7b0ESc5qYx1xKDTnqLzeOjjZhZFZwE/7x1lR6/PQ/5qZQPNx1I+vWXKWbwacqes
+         0uz8JuzySX1Z2Xp+A47oGKzrXsLwsUNXRd+bPFwo=
+Date:   Tue, 2 Jul 2019 15:35:35 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Jason Gunthorpe <jgg@mellanox.com>,
+        =?ISO-8859-1?Q?J=E9r=F4me?= Glisse <jglisse@redhat.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 16/25] device-dax: use the dev_pagemap internal refcount
+Message-Id: <20190702153535.228365fea7f0063cceec96cd@linux-foundation.org>
+In-Reply-To: <CAPcyv4h90DAVHbZ4bgvJwpfB8wr2K28oEes6HcdQOpf02+NL=g@mail.gmail.com>
+References: <20190626122724.13313-17-hch@lst.de>
+        <20190628153827.GA5373@mellanox.com>
+        <CAPcyv4joSiFMeYq=D08C-QZSkHz0kRpvRfseNQWrN34Rrm+S7g@mail.gmail.com>
+        <20190628170219.GA3608@mellanox.com>
+        <CAPcyv4ja9DVL2zuxuSup8x3VOT_dKAOS8uBQweE9R81vnYRNWg@mail.gmail.com>
+        <CAPcyv4iWTe=vOXUqkr_CguFrFRqgA7hJSt4J0B3RpuP-Okz0Vw@mail.gmail.com>
+        <20190628182922.GA15242@mellanox.com>
+        <CAPcyv4g+zk9pnLcj6Xvwh-svKM+w4hxfYGikcmuoBAFGCr-HAw@mail.gmail.com>
+        <20190628185152.GA9117@lst.de>
+        <CAPcyv4i+b6bKhSF2+z7Wcw4OUAvb1=m289u9QF8zPwLk402JVg@mail.gmail.com>
+        <20190628190207.GA9317@lst.de>
+        <CAPcyv4h90DAVHbZ4bgvJwpfB8wr2K28oEes6HcdQOpf02+NL=g@mail.gmail.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 2, 2019 at 3:20 PM Thomas Gleixner <tglx@linutronix.de> wrote:
->
-> Nick,
->
-> On Tue, 2 Jul 2019, Nick Desaulniers wrote:
-> > On Tue, Jul 2, 2019 at 2:58 PM Thomas Gleixner <tglx@linutronix.de> wrote:
-> > > On Tue, 2 Jul 2019, Nick Desaulniers wrote:
-> >
-> > > > This causes objtool to not find any issues in
-> > > > arch/x86/kernel/cpu/mtrr/generic.o.  I don't observe any duplication
-> > > > in the __jump_table section of the resulting .o file.  It also cuts
-> > > > down the objtool warnings I observe in a defconfig (listed at the
-> > > > beginning of the email) from 4 to 2. (platform-quirks.o predates asm
-> > > > goto,
-> > >
-> > > It does not have asm goto inside :)
-> >
-> > I think you're conflating arch/x86/kernel/cpu/mtrr/generic.o with
-> > arch/x86/kernel/platform-quirks.o.
->
-> Nope. I deliberately split the quote after the platform-quirks part so the
-> reply goes near to it. Seems it wasn't as obvious as I thought :)
+On Fri, 28 Jun 2019 12:14:44 -0700 Dan Williams <dan.j.williams@intel.com> wrote:
 
-Oh yes, sorry, I see now what you meant.
--- 
-Thanks,
-~Nick Desaulniers
+> I believe -mm auto drops patches when they appear in the -next
+> baseline. So it should "just work" to pull it into the series and send
+> it along for -next inclusion.
+
+Yup.  Although it isn't very "auto" - I manually check that the patch
+which turned up in -next was identical to the version which I had.  If
+not, I go find out why...
+
