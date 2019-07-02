@@ -2,54 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECE515CC15
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 10:36:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3777E5CC1B
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 10:37:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726960AbfGBIgf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 04:36:35 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:44540 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725859AbfGBIgf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 04:36:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=sY0UaQf2BxPnJAS0pHMdl/JmZYTYN6LHhMVkukh8JKc=; b=vSztaPJJffSldQkENZB/P6Otf
-        6HhDOoClhCxdbAwH8DRTCI2f+O+oIBOEHPY3en8a04pJ4vsKmsdLqrnHRVmq9gCRj5XJTH3m7RG7J
-        TnErkOXxUNaYxL0d9X7pdh/ifr9ho6LBonQlYNTfy3jy7DCsLdZBWUwQd1YQiXaaiAs/pl+zT1qjz
-        iL+p9amPlFH7qCkg1RCBT6fAzoo8WPg99VK1yiu60xcKauNcTcnRIA/gEYg1XY1zJbfH3nemQXLEa
-        mvXKUWVDuuczK8YvDRBJ14ZLCJ+RGHiWY/I6CkQpLH3IIq6TVReD8t7IVmeLtgpDqUw2RSi9eCcl3
-        jUcmyb1Tw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hiEHC-0005Zo-2Q; Tue, 02 Jul 2019 08:36:34 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id C22FB20ADAD55; Tue,  2 Jul 2019 10:36:32 +0200 (CEST)
-Date:   Tue, 2 Jul 2019 10:36:32 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
-Cc:     linux-kernel@vger.kernel.org
-Subject: Re: Signed-off-by for the fix-late-interrupts patch?
-Message-ID: <20190702083632.GZ3419@hirez.programming.kicks-ass.net>
-References: <20190701213930.GA25736@linux.ibm.com>
+        id S1726765AbfGBIhd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 04:37:33 -0400
+Received: from ns.iliad.fr ([212.27.33.1]:56440 "EHLO ns.iliad.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725940AbfGBIhc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 04:37:32 -0400
+Received: from ns.iliad.fr (localhost [127.0.0.1])
+        by ns.iliad.fr (Postfix) with ESMTP id EC3B720BC5;
+        Tue,  2 Jul 2019 10:37:28 +0200 (CEST)
+Received: from [192.168.108.49] (freebox.vlq16.iliad.fr [213.36.7.13])
+        by ns.iliad.fr (Postfix) with ESMTP id 74BF22079D;
+        Tue,  2 Jul 2019 10:37:28 +0200 (CEST)
+Subject: Re: [PATCH v1] media: si2168: Refactor command setup code
+From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
+To:     Antti Palosaari <crope@iki.fi>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     linux-media <linux-media@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        =?UTF-8?Q?Jonathan_Neusch=c3=a4fer?= <j.neuschaefer@gmx.net>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Brad Love <brad@nextdimension.cc>
+References: <6a8f9a5b-2e88-8c26-440b-76af0d91eda6@free.fr>
+Message-ID: <5cdfcd0d-067b-16f0-1860-36997c1f04ee@free.fr>
+Date:   Tue, 2 Jul 2019 10:37:28 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190701213930.GA25736@linux.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <6a8f9a5b-2e88-8c26-440b-76af0d91eda6@free.fr>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: ClamAV using ClamSMTP ; ns.iliad.fr ; Tue Jul  2 10:37:28 2019 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 01, 2019 at 02:39:31PM -0700, Paul E. McKenney wrote:
-> Hello, Peter,
-> 
-> The patch below from your earlier email is doing fine in my testing.
-> May I please add your Signed-of-by and designate you as author?
+On 01/07/2019 13:44, Marc Gonzalez wrote:
 
-Sure, glad it worked :-)
+> By refactoring the command setup code, we can let the compiler
+> determine the size of each command.
+> 
+> Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
+> ---
+>  drivers/media/dvb-frontends/si2168.c | 142 ++++++++-------------------
+>  1 file changed, 41 insertions(+), 101 deletions(-)
+> 
+> diff --git a/drivers/media/dvb-frontends/si2168.c b/drivers/media/dvb-frontends/si2168.c
+> index 168c503e9154..19398f041c79 100644
+> --- a/drivers/media/dvb-frontends/si2168.c
+> +++ b/drivers/media/dvb-frontends/si2168.c
+> @@ -11,6 +11,12 @@
+>  
+>  static const struct dvb_frontend_ops si2168_ops;
+>  
+> +#define CMD_SETUP(cmd, __args, __rlen) do {	\
+> +	int wlen = sizeof(__args) - 1;		\
+> +	memcpy(cmd.args, __args, wlen);		\
+> +	cmd.wlen = wlen; cmd.rlen = __rlen;	\
+> +} while (0)
+> +
+
+I'm planning on sending a v2 where drivers/media/tuners/si2157.c
+is refactored the same way. Not sure where to store the macro.
+Maybe include/media/dvb_frontend.h ?
+
+Regards.
