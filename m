@@ -2,164 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 944735D59E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 19:48:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F6FC5D5A6
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 19:51:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727084AbfGBRsD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 13:48:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60034 "EHLO mail.kernel.org"
+        id S1726962AbfGBRvM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 13:51:12 -0400
+Received: from mout.web.de ([212.227.17.12]:44431 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726329AbfGBRsC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 13:48:02 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BBB1721721;
-        Tue,  2 Jul 2019 17:48:00 +0000 (UTC)
-Date:   Tue, 2 Jul 2019 13:47:59 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Eiichi Tsukata <devel@etsukata.com>, edwintorok@gmail.com,
-        mingo@redhat.com, bp@alien8.de, hpa@zytor.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
-        Joel Fernandes <joel@joelfernandes.org>
-Subject: Re: [PATCH] x86/stacktrace: Do not access user space memory
- unnecessarily
-Message-ID: <20190702134759.4c147d9b@gandalf.local.home>
-In-Reply-To: <20190702133905.1482b87e@gandalf.local.home>
-References: <20190702053151.26922-1-devel@etsukata.com>
-        <20190702072821.GX3419@hirez.programming.kicks-ass.net>
-        <alpine.DEB.2.21.1907021400350.1802@nanos.tec.linutronix.de>
-        <20190702113355.5be9ebfe@gandalf.local.home>
-        <20190702133905.1482b87e@gandalf.local.home>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726150AbfGBRvL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 13:51:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1562089823;
+        bh=ZY4QJ60SgBCr9rjOeI7wJcWzwyMqawSzvqtqOb7h6q4=;
+        h=X-UI-Sender-Class:To:Cc:From:Subject:Date;
+        b=fOwI16P8ajUtdvLe+XGAGJcfdEPOS7PG1o+jDdIAqX/1dn/rmotgIrrs9acWWeoW8
+         gug8waSyOtGxWMBHoYQ6lNDjzjKmJm1oF+889zutzHcE0nrbpMws9n2fHPClD6ualc
+         31M3eqmtDwYHBVLdbG8vQ1WIILjX+c85vOGRngbE=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([78.48.11.114]) by smtp.web.de (mrweb102
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0LuLxD-1iiD9N3Olz-011lV2; Tue, 02
+ Jul 2019 19:50:22 +0200
+To:     kernel-janitors@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>
+From:   Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] locking/lockdep: Replace two seq_printf() calls by seq_puts()
+ in print_name()
+Openpgp: preference=signencrypt
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Message-ID: <f842ca82-b9f1-6aa6-7868-6b6e8c6b0f76@web.de>
+Date:   Tue, 2 Jul 2019 19:50:20 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:8gK4mIV/I0jwSe9wSxlDCudi9olaFmtW/apz0yi1eNu8s3wH/Gy
+ lU20xTDnm0GicDJkPISRtOBY5DI7O4o03RIRufbxLsc2XaPW7wNIFJ0qxLKaP7llD2Lhn1j
+ i4YZI+2D1ox1ZiubWvXRnmFUZHT2Hq1qsNEL4L+0S5UwNKT2eLs5N5w/f65/R+twHY9I2XF
+ ot07xKqdnzIziOUTXbj/g==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:YuVe9wV9BtM=:jikX841Yovyn82Dxkn1qnX
+ Bo1e5OQoNquOd17BYmZNvwpkfPVDQeZRjR+oPoLyfIwX7K0TvGgSh6/3TmgCVvB4+2LGXodPa
+ uroMGuQRfpSYkNpy+Vu0ogDN5H/KXrjQtlb4X0hHw9JCL4uYRCzZQuj+Im8sBqTjisTxli6sE
+ 0qDMC/FoUBmiM/E8QlgB4HrGOdLEgTCFBICofcSEeX27EG3t8WPnHV5Zd4ALALaB8BtP/wYVc
+ YMyT1j8BnAKH2mDVNoAzupo+gT6uYb1axfqhK8JnI822mc73N9NMqeUTaTHFv8iXMiNzXDwsg
+ ZSdu+DTz0g5tKGefJqbGrhE2TB4de/ZOwX/QBPsYLqhX6E+4PU5eBlHDoPyzKVE5bGf2wzmx6
+ bra/AvxissjoJKhcuTqf5nmXb/iVA1IgrAU555VzN6wsgb+5jtuwipomxgRxvrrnHAuV6e0xM
+ oC1J19LmpQtVnY7T0stvxJip7BZFXJGcsA9kzHywa/xFVaEJY/Yf5LKUmlrXS+GeHyppBhteX
+ HTcib4m2E+oX6qxnte0dyOVn4fK4VICQRsZkt4Mndilw84PaWbT43ol4DlvH2iJmp1ryVAyGO
+ dRggxJr5BswuT2kksOO4BZCX8zgD2jjk81t1kP0FLnIXaa2PImBPT/fL/f3L1sdCF0Pr2pAdb
+ cnEK0h6tpQD+vT/guFjJR1VaoO6bLANeBdWMJvr+sNSXhDsF7EfjDFI1Qfc4iAaXV67TTxqBX
+ bBuH5vZfO8Bg2i4s7mU4dvWOkj12Y+Y3HvU/aqeiW+CnQrw3GN7E7Tot/Q2lJ7RGkVGZGSViv
+ dK441pn6yY0b1AVztO2wG5774VfJnVvyfKLx29SF9TaVaaCpugpyeb/8pJDbODtL46YoGjALY
+ +kYC4gj+hm2Uni2yWIfBtU3gi5bHr9Ew54X9+4WdEFAEzJZKUS3YNjnvkBvaOos0ZtIR7F4Ij
+ 5JkwdDJBmcDhHhS7Tvq63BvHgqI/fp7Qf3nI9ZUt4eysC8FCNFskrbWtz/mdAUT2t0kTTA/TU
+ SJoxECa8xVVtHxMONQ6MVgAnQ2dbh+lZfHGhMrE5vgVqe9hRlYWdgk//QmxLChJ2pBB1SpAW8
+ KTAvGIjNrJAsQ5MjDhac8g0y13ZfxAPGfxJ
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2 Jul 2019 13:39:05 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 2 Jul 2019 19:45:26 +0200
 
-> On Tue, 2 Jul 2019 11:33:55 -0400
-> Steven Rostedt <rostedt@goodmis.org> wrote:
-> 
-> > On Tue, 2 Jul 2019 16:14:05 +0200 (CEST)
-> > Thomas Gleixner <tglx@linutronix.de> wrote:
-> >   
-> > > On Tue, 2 Jul 2019, Peter Zijlstra wrote:
-> > >     
-> > > > On Tue, Jul 02, 2019 at 02:31:51PM +0900, Eiichi Tsukata wrote:      
-> > > > > Put the boundary check before it accesses user space to prevent unnecessary
-> > > > > access which might crash the machine.
-> > > > > 
-> > > > > Especially, ftrace preemptirq/irq_disable event with user stack trace
-> > > > > option can trigger SEGV in pid 1 which leads to panic.      
-> > 
-> > Note, I'm only able to trigger this crash with the irq_disable event.
-> > The irq_enable and preempt_disable/enable events work just fine. This
-> > leads me to believe that the TRACE_IRQS_OFF macro (which uses a thunk
-> > trampoline) may have some issues and is probably the place to look at.  
-> 
-> I figured it out.
-> 
-> It's another "corruption of the cr2" register issue. The following
-> patch makes the issue go away. I'm not suggesting that we use this
-> patch, but it shows where the bug lies.
-> 
-> IIRC, there was patches posted before that fixed this issue. I'll go
-> look to see if I can dig them up. Was it Joel that sent them?
+A string which did not contain a data format specification should be put
+into a sequence. Thus use the corresponding function =E2=80=9Cseq_puts=E2=
+=80=9D.
 
-Although with this patch, I just triggered this:
+This issue was detected by using the Coccinelle software.
 
-[ 1331.706273] WARNING: can't dereference registers at 00000000cb0cab6d for ip interrupt_entry+0xc1/0xf0
-[ 1439.850235] ------------[ cut here ]------------
-[ 1439.854848] General protection fault in user access. Non-canonical address?
-[ 1439.854861] WARNING: CPU: 6 PID: 1620 at arch/x86/mm/extable.c:125 ex_handler_uaccess+0x62/0x70
-[ 1439.870455] Modules linked in: ip6t_REJECT nf_reject_ipv6 xt_state nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ip6table_filter ip6_tables snd_hda_codec_hdmi snd_hda_codec_realtek snd_hda_codec_generic snd_hda_intel i915 snd_hda_codec hp_wmi snd_hwdep wmi_bmof sparse_keymap snd_hda_core rfkill i2c_algo_bit snd_seq iosf_mbi snd_seq_device snd_pcm drm_kms_helper x86_pkg_temp_thermal syscopyarea sysfillrect coretemp sysimgblt snd_timer fb_sys_fops snd drm crc32c_intel tpm_infineon soundcore e1000e ptp tpm_tis pps_core lpc_ich i2c_i801 mfd_core i2c_core tpm_tis_core tpm pcspkr serio_raw wmi video
-[ 1439.922501] CPU: 6 PID: 1620 Comm: dhclient Not tainted 5.2.0-rc1-test+ #8
-[ 1439.929350] Hardware name: Hewlett-Packard HP Compaq Pro 6300 SFF/339A, BIOS K01 v03.03 07/14/2016
-[ 1439.938277] RIP: 0010:ex_handler_uaccess+0x62/0x70
-[ 1439.943055] Code: 80 00 00 00 b8 01 00 00 00 5b 5d 41 5c c3 80 3d 09 f3 ed 01 00 75 c5 48 c7 c7 80 bc 24 82 c6 05 f9 f2 ed 01 01 e8 ea ce 06 00 <0f> 0b eb ae 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 80 3d d9
-[ 1439.961724] RSP: 0018:ffff8880c7fff4f0 EFLAGS: 00010082
-[ 1439.966934] RAX: 0000000000000000 RBX: ffffffff820024b8 RCX: 0000000000000000
-[ 1439.974045] RDX: 0000000000000003 RSI: dffffc0000000000 RDI: ffffffff83e12fc0
-[ 1439.981156] RBP: ffff8880c7fff578 R08: fffffbfff0561631 R09: fffffbfff0561630
-[ 1439.988265] R10: fffffbfff0561630 R11: ffffffff82b0b183 R12: ffffffff820024b8
-[ 1439.995368] R13: 000000000000000d R14: 0000000000000000 R15: 0000000000000000
-[ 1440.002479] FS:  00007fdc180a2e80(0000) GS:ffff8880d4780000(0000) knlGS:0000000000000000
-[ 1440.010537] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[ 1440.016268] CR2: 0000000000001010 CR3: 00000000adad0001 CR4: 00000000001606e0
-[ 1440.023379] Call Trace:
-[ 1440.025827]  ? ex_handler_refcount+0xb0/0xb0
-[ 1440.030089]  fixup_exception+0x60/0x7b
-[ 1440.033837]  do_general_protection+0x68/0x1f0
-[ 1440.038189]  general_protection+0x1e/0x30
-[ 1440.042193] RIP: 0010:arch_stack_walk_user+0x6c/0x110
-[ 1440.047231] Code: d8 22 00 00 48 83 e8 10 49 39 c7 77 44 4d 89 fd 31 db 65 48 8b 04 25 80 ee 01 00 83 80 e8 21 00 00 01 0f 1f 00 0f ae e8 89 d8 <4d> 8b 75 00 85 c0 0f 85 82 00 00 00 49 8b 75 08 0f 1f 00 85 c0 74
-[ 1440.065903] RSP: 0018:ffff8880c7fff620 EFLAGS: 00010002
-[ 1440.071117] RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff811c5258
-[ 1440.078226] RDX: 0000000000000003 RSI: dffffc0000000000 RDI: ffff8880ce9c99c4
-[ 1440.085341] RBP: ffffffff811c5200 R08: 1ffff11019d39338 R09: ffffed1019bf2924
-[ 1440.092449] R10: ffffed1019bf2924 R11: ffff8880cdf94927 R12: ffff8880c7ffff58
-[ 1440.099562] R13: 62696c2f7273752f R14: 62696c2f7273752f R15: 62696c2f7273752f
-[ 1440.106679]  ? profile_setup.cold.11+0xa1/0xa1
-[ 1440.111115]  ? stack_trace_consume_entry+0x58/0x80
-[ 1440.115914]  stack_trace_save_user+0xb6/0xe8
-[ 1440.120180]  ? stack_trace_save_tsk_reliable+0x1c0/0x1c0
-[ 1440.125489]  trace_buffer_unlock_commit_regs+0x286/0x3f0
-[ 1440.130791]  trace_event_buffer_commit+0xd0/0x300
-[ 1440.135482]  ? trace_event_buffer_reserve+0xc6/0xf0
-[ 1440.140353]  ? 0xffffffff81000000
-[ 1440.143662]  trace_event_raw_event_preemptirq_template+0xe1/0x150
-[ 1440.149743]  ? perf_trace_preemptirq_template+0x230/0x230
-[ 1440.155135]  ? rcu_dynticks_curr_cpu_in_eqs+0x46/0x60
-[ 1440.160174]  ? perf_trace_preemptirq_template+0x230/0x230
-[ 1440.165558]  ? ktime_get_coarse_real_ts64+0x7f/0xf0
-[ 1440.170428]  trace_hardirqs_off+0xbb/0x100
-[ 1440.174519]  ktime_get_coarse_real_ts64+0x7f/0xf0
-[ 1440.179217]  current_time+0x68/0xf0
-[ 1440.182706]  ? timespec64_trunc+0x110/0x110
-[ 1440.186902]  ? iov_iter_zero+0x7e0/0x7e0
-[ 1440.190822]  ? preempt_count_sub+0xb0/0x100
-[ 1440.194995]  ? match_held_lock+0x1b/0x230
-[ 1440.199004]  atime_needs_update+0xdf/0x1b0
-[ 1440.203093]  touch_atime+0x91/0x170
-[ 1440.206576]  ? atime_needs_update+0x1b0/0x1b0
-[ 1440.210924]  ? copy_page_to_iter+0x31d/0x560
-[ 1440.215179]  ? pagecache_get_page+0x2f/0x3b0
-[ 1440.219447]  generic_file_read_iter+0xe00/0x1110
-[ 1440.224073]  ? arch_stack_walk+0x92/0xe0
-[ 1440.227996]  ? filemap_write_and_wait_range+0x80/0x80
-[ 1440.233034]  ? xattr_resolve_name+0x107/0x180
-[ 1440.237385]  ? __vfs_getxattr+0xb2/0x100
-[ 1440.241304]  ? __vfs_setxattr+0x110/0x110
-[ 1440.245319]  new_sync_read+0x24f/0x370
-[ 1440.249067]  ? __ia32_sys_llseek+0x1d0/0x1d0
-[ 1440.253332]  ? fsnotify+0x690/0x6d0
-[ 1440.256835]  ? __fsnotify_update_child_dentry_flags.part.4+0x170/0x170
-[ 1440.263389]  vfs_read+0xa6/0x1a0
-[ 1440.266631]  kernel_read+0x69/0xa0
-[ 1440.270048]  prepare_binprm+0x258/0x2c0
-[ 1440.273894]  ? install_exec_creds+0xb0/0xb0
-[ 1440.278081]  __do_execve_file.isra.42+0x990/0xfc0
-[ 1440.282813]  ? copy_strings_kernel+0x90/0x90
-[ 1440.287089]  ? strncpy_from_user+0xd6/0x1f0
-[ 1440.291281]  __x64_sys_execve+0x54/0x60
-[ 1440.295120]  do_syscall_64+0x68/0x190
-[ 1440.298780]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[ 1440.303815] RIP: 0033:0x7fdc18501b0b
-[ 1440.307392] Code: 41 89 01 eb da 66 2e 0f 1f 84 00 00 00 00 00 f7 d8 64 41 89 01 eb d6 0f 1f 84 00 00 00 00 00 f3 0f 1e fa b8 3b 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 4d 63 0f 00 f7 d8 64 89 01 48
-[ 1440.326068] RSP: 002b:00007fff5c5819f8 EFLAGS: 00000202 ORIG_RAX: 000000000000003b
-[ 1440.333610] RAX: ffffffffffffffda RBX: 0000563a5d884f60 RCX: 00007fdc18501b0b
-[ 1440.340724] RDX: 0000563a5d88d4a0 RSI: 00007fff5c581a10 RDI: 00007fff5c584e89
-[ 1440.347825] RBP: 00007fff5c584e89 R08: 0000563a5d832290 R09: 0000000000000001
-[ 1440.354931] R10: 00007fdc180a2e80 R11: 0000000000000202 R12: 0000563a5d88d4a0
-[ 1440.362042] R13: 0000000000000000 R14: 0000563a5bb4fbe0 R15: 0000000000000136
-[ 1440.369166] ---[ end trace e37d5da069ab7362 ]---
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ kernel/locking/lockdep_proc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
--- Steve
+diff --git a/kernel/locking/lockdep_proc.c b/kernel/locking/lockdep_proc.c
+index 9c49ec645d8b..5bc9187e6246 100644
+=2D-- a/kernel/locking/lockdep_proc.c
++++ b/kernel/locking/lockdep_proc.c
+@@ -45,9 +45,9 @@ static void print_name(struct seq_file *m, struct lock_c=
+lass *class)
+
+ 	if (!name) {
+ 		name =3D __get_key_name(class->key, str);
+-		seq_printf(m, "%s", name);
++		seq_puts(m, name);
+ 	} else{
+-		seq_printf(m, "%s", name);
++		seq_puts(m, name);
+ 		if (class->name_version > 1)
+ 			seq_printf(m, "#%d", class->name_version);
+ 		if (class->subclass)
+=2D-
+2.22.0
+
