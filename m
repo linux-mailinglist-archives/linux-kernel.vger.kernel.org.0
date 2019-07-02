@@ -2,62 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 498405CF6B
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 14:28:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 509E55CF51
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 14:22:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726963AbfGBM2h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 08:28:37 -0400
-Received: from bmailout3.hostsharing.net ([176.9.242.62]:47591 "EHLO
-        bmailout3.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725922AbfGBM2g (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 08:28:36 -0400
-X-Greylist: delayed 436 seconds by postgrey-1.27 at vger.kernel.org; Tue, 02 Jul 2019 08:28:35 EDT
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
-        by bmailout3.hostsharing.net (Postfix) with ESMTPS id 787F8100D9405;
-        Tue,  2 Jul 2019 14:21:18 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-        id E20E6132E3E; Tue,  2 Jul 2019 14:21:17 +0200 (CEST)
-Date:   Tue, 2 Jul 2019 14:21:17 +0200
-From:   Lukas Wunner <lukas@wunner.de>
-To:     linmiaohe <linmiaohe@huawei.com>
-Cc:     "bhelgaas@google.com" <bhelgaas@google.com>,
-        "andy.shevchenko@gmail.com" <andy.shevchenko@gmail.com>,
-        "rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mingfangsen <mingfangsen@huawei.com>
-Subject: Re: A question about shpcp.
-Message-ID: <20190702122117.vl2opo55zpsykjf6@wunner.de>
-References: <d87dfa281d0d4e7da3f6bf714a7c2e5a@huawei.com>
+        id S1726658AbfGBMWv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 08:22:51 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7687 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726341AbfGBMWu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 08:22:50 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id AC745EE7D815FCDD5B0E;
+        Tue,  2 Jul 2019 20:22:46 +0800 (CST)
+Received: from [127.0.0.1] (10.74.221.148) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Tue, 2 Jul 2019
+ 20:22:41 +0800
+Subject: Re: linux-next: Tree for Jul 2
+To:     Will Deacon <will@kernel.org>, <joro@8bytes.org>
+References: <20190702195158.79aa5517@canb.auug.org.au>
+ <000f56ac-2abc-bc6a-e2db-5ae38779d276@hisilicon.com>
+ <20190702120321.v3224ofd4aaxvytk@willie-the-truck>
+CC:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+From:   Zhangshaokun <zhangshaokun@hisilicon.com>
+Message-ID: <8a3bea20-fe65-35ea-43f1-d8f085a097e2@hisilicon.com>
+Date:   Tue, 2 Jul 2019 20:22:41 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.1.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d87dfa281d0d4e7da3f6bf714a7c2e5a@huawei.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20190702120321.v3224ofd4aaxvytk@willie-the-truck>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.74.221.148]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 27, 2019 at 12:16:18PM +0000, linmiaohe wrote:
-> In qemu+shpcp+pcie scene, hotplug a network card(virtio) would take more
-> than 5 seconds. It's because 5 seconds delayed_work in func
-> handle_button_press_event with case STATIC_STATE. And this will break some
-> protocols with timeout within 5 seconds.
-> It's very nice of you if you could tell me why is 5*HZ there and if this
-> delay can be reduced?
+Hi Will,
 
-According to Table 2-4 of the PCI Standard Hot-Plug Controller and
-Subsystem Specification, "System software is waiting 5 seconds to
-provide the user with an opportunity to cancel the hot-plug operation."
-(http://drydkim.com/MyDocuments/PCI%20Spec/specifications/shpc1_0.pdf)
+On 2019/7/2 20:03, Will Deacon wrote:
+> [+Joerg]
+> 
+> On Tue, Jul 02, 2019 at 06:40:45PM +0800, Zhangshaokun wrote:
+>> +Cc: Will Deacon
+>>
+>> There is a compiler failure on arm64 platform, as follow:
+>> In file included from ./include/linux/list.h:9:0,
+>>                  from ./include/linux/kobject.h:19,
+>>                  from ./include/linux/of.h:17,
+>>                  from ./include/linux/irqdomain.h:35,
+>>                  from ./include/linux/acpi.h:13,
+>>                  from drivers/iommu/arm-smmu-v3.c:12:
+>> drivers/iommu/arm-smmu-v3.c: In function ‘arm_smmu_device_hw_probe’:
+>> drivers/iommu/arm-smmu-v3.c:194:40: error: ‘CONFIG_CMA_ALIGNMENT’ undeclared (first use in this function)
+>>  #define Q_MAX_SZ_SHIFT   (PAGE_SHIFT + CONFIG_CMA_ALIGNMENT)
+>>                                         ^
+>> It's the commit <d25f6ead162e> ("iommu/arm-smmu-v3: Increase maximum size of queues")
+> 
+> Thanks for the report. I've provided a fix below.
+> 
 
-So the reason the delay can't be reduced or removed is because the spec
-mandates it.
+It works, thanks for the patch,
+Tested-by: Shaokun Zhang <zhangshaokun@hisilicon.com>
 
 Thanks,
+Shaokun
 
-Lukas
+> Joerg -- please can you take this on top of the SMMUv3 patches queued
+> for 5.3?
+> 
+> Cheers,
+> 
+> Will
+> 
+> --->8
+> 
+>>From e8f9d8229e3aaa4817bfb72752e804eec97a3d8d Mon Sep 17 00:00:00 2001
+> From: Will Deacon <will@kernel.org>
+> Date: Tue, 2 Jul 2019 12:53:18 +0100
+> Subject: [PATCH] iommu/arm-smmu-v3: Fix compilation when CONFIG_CMA=n
+> MIME-Version: 1.0
+> Content-Type: text/plain; charset=UTF-8
+> Content-Transfer-Encoding: 8bit
+> 
+> When compiling a kernel without support for CMA, CONFIG_CMA_ALIGNMENT
+> is not defined which results in the following build failure:
+> 
+> In file included from ./include/linux/list.h:9:0
+>                  from ./include/linux/kobject.h:19,
+>                  from ./include/linux/of.h:17
+>                  from ./include/linux/irqdomain.h:35,
+>                  from ./include/linux/acpi.h:13,
+>                  from drivers/iommu/arm-smmu-v3.c:12:
+> drivers/iommu/arm-smmu-v3.c: In function ‘arm_smmu_device_hw_probe’:
+> drivers/iommu/arm-smmu-v3.c:194:40: error: ‘CONFIG_CMA_ALIGNMENT’ undeclared (first use in this function)
+>  #define Q_MAX_SZ_SHIFT   (PAGE_SHIFT + CONFIG_CMA_ALIGNMENT)
+> 
+> Fix the breakage by capping the maximum queue size based on MAX_ORDER
+> when CMA is not enabled.
+> 
+> Reported-by: Zhangshaokun <zhangshaokun@hisilicon.com>
+> Signed-off-by: Will Deacon <will@kernel.org>
+> ---
+>  drivers/iommu/arm-smmu-v3.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+> index 57fb4e080d6b..8e73a7615bf5 100644
+> --- a/drivers/iommu/arm-smmu-v3.c
+> +++ b/drivers/iommu/arm-smmu-v3.c
+> @@ -191,7 +191,13 @@
+>  #define Q_BASE_RWA			(1UL << 62)
+>  #define Q_BASE_ADDR_MASK		GENMASK_ULL(51, 5)
+>  #define Q_BASE_LOG2SIZE			GENMASK(4, 0)
+> +
+> +/* Ensure DMA allocations are naturally aligned */
+> +#ifdef CONFIG_CMA_ALIGNMENT
+>  #define Q_MAX_SZ_SHIFT			(PAGE_SHIFT + CONFIG_CMA_ALIGNMENT)
+> +#else
+> +#define Q_MAX_SZ_SHIFT			(PAGE_SHIFT + MAX_ORDER - 1)
+> +#endif
+>  
+>  /*
+>   * Stream table.
+> 
+
