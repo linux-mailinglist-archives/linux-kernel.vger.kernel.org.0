@@ -2,93 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B552F5C6C8
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 03:52:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED02F5C805
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 06:03:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727031AbfGBBw1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 21:52:27 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:60266 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726486AbfGBBw0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 21:52:26 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 290B0A9BBE054957DE66;
-        Tue,  2 Jul 2019 09:52:24 +0800 (CST)
-Received: from huawei.com (10.175.100.202) by DGGEMS410-HUB.china.huawei.com
- (10.3.19.210) with Microsoft SMTP Server id 14.3.439.0; Tue, 2 Jul 2019
- 09:52:18 +0800
-From:   Miaohe Lin <linmiaohe@huawei.com>
-To:     <pablo@netfilter.org>, <kadlec@blackhole.kfki.hu>, <fw@strlen.de>,
-        <davem@davemloft.net>, <kuznet@ms2.inr.ac.ru>,
-        <yoshfuji@linux-ipv6.org>, <netfilter-devel@vger.kernel.org>,
-        <coreteam@netfilter.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <linmiaohe@huawei.com>, <mingfangsen@huawei.com>
-Subject: [PATCH v5] net: netfilter: Fix rpfilter dropping vrf packets by mistake
-Date:   Tue, 2 Jul 2019 03:59:36 +0000
-Message-ID: <1562039976-203880-1-git-send-email-linmiaohe@huawei.com>
-X-Mailer: git-send-email 1.8.3.4
+        id S1725819AbfGBEDU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 00:03:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58024 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725648AbfGBEDU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 00:03:20 -0400
+Received: from localhost (unknown [37.142.3.125])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 22B2121473;
+        Tue,  2 Jul 2019 04:03:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562040199;
+        bh=jvJL+bPNtg0ZDAv1+LERE9M+MK04DJMUIdOMMXa3QUk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=coz2ue94BQ89zgRbbgS6yrRw9Ol4mzvkavGih9FWLiI6/eauOL0VuHLEorS5FRvZ0
+         0MrXng4sAoHJwCWfiAN3IsJJrOIdOIf7J+jlEDqtSXXP2gWa26fJmOFqCcDCTLm2q5
+         +acB2w3TdRU+hHAyt7kKeZHq8LwEJ48b5wzBBvJM=
+Date:   Tue, 2 Jul 2019 07:03:05 +0300
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Eli Britstein <elibr@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        Bodong Wang <bodong@mellanox.com>
+Subject: Re: linux-next: manual merge of the mlx5-next tree with Linus' tree
+Message-ID: <20190702040305.GO4727@mtr-leonro.mtl.com>
+References: <20190702131327.65dfdcd9@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.100.202]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190702131327.65dfdcd9@canb.auug.org.au>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When firewalld is enabled with ipv4/ipv6 rpfilter, vrf
-ipv4/ipv6 packets will be dropped. Vrf device will pass
-through netfilter hook twice. One with enslaved device
-and another one with l3 master device. So in device may
-dismatch witch out device because out device is always
-enslaved device.So failed with the check of the rpfilter
-and drop the packets by mistake.
+On Tue, Jul 02, 2019 at 01:13:27PM +1000, Stephen Rothwell wrote:
+> Hi all,
+>
+> Today's linux-next merge of the mlx5-next tree got a conflict in:
+>
+>   drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c
+>
+> between commit:
+>
+>   955858009708 ("net/mlx5e: Fix number of vports for ingress ACL configuration")
+>
+> from Linus' tree and commit:
+>
+>   062f4bf4aab5 ("net/mlx5: E-Switch, Consolidate eswitch function number of VFs")
+>
+> from the mlx5-next tree.
+>
+> I fixed it up (I just used the latter version) and can carry the fix as
+> necessary. This is now fixed as far as linux-next is concerned, but any
+> non trivial conflicts should be mentioned to your upstream maintainer
+> when your tree is submitted for merging.  You may also want to consider
+> cooperating with the maintainer of the conflicting tree to minimise any
+> particularly complex conflicts.
 
-Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
----
- net/ipv4/netfilter/ipt_rpfilter.c  | 1 +
- net/ipv6/netfilter/ip6t_rpfilter.c | 8 ++++++--
- 2 files changed, 7 insertions(+), 2 deletions(-)
+Thanks Stephen,
 
-diff --git a/net/ipv4/netfilter/ipt_rpfilter.c b/net/ipv4/netfilter/ipt_rpfilter.c
-index 59031670b16a..cc23f1ce239c 100644
---- a/net/ipv4/netfilter/ipt_rpfilter.c
-+++ b/net/ipv4/netfilter/ipt_rpfilter.c
-@@ -78,6 +78,7 @@ static bool rpfilter_mt(const struct sk_buff *skb, struct xt_action_param *par)
- 	flow.flowi4_mark = info->flags & XT_RPFILTER_VALID_MARK ? skb->mark : 0;
- 	flow.flowi4_tos = RT_TOS(iph->tos);
- 	flow.flowi4_scope = RT_SCOPE_UNIVERSE;
-+	flow.flowi4_oif = l3mdev_master_ifindex_rcu(xt_in(par));
- 
- 	return rpfilter_lookup_reverse(xt_net(par), &flow, xt_in(par), info->flags) ^ invert;
- }
-diff --git a/net/ipv6/netfilter/ip6t_rpfilter.c b/net/ipv6/netfilter/ip6t_rpfilter.c
-index 6bcaf7357183..d800801a5dd2 100644
---- a/net/ipv6/netfilter/ip6t_rpfilter.c
-+++ b/net/ipv6/netfilter/ip6t_rpfilter.c
-@@ -55,7 +55,9 @@ static bool rpfilter_lookup_reverse6(struct net *net, const struct sk_buff *skb,
- 	if (rpfilter_addr_linklocal(&iph->saddr)) {
- 		lookup_flags |= RT6_LOOKUP_F_IFACE;
- 		fl6.flowi6_oif = dev->ifindex;
--	} else if ((flags & XT_RPFILTER_LOOSE) == 0)
-+	/* Set flowi6_oif for vrf devices to lookup route in l3mdev domain. */
-+	} else if (netif_is_l3_master(dev) || netif_is_l3_slave(dev) ||
-+		  (flags & XT_RPFILTER_LOOSE) == 0)
- 		fl6.flowi6_oif = dev->ifindex;
- 
- 	rt = (void *)ip6_route_lookup(net, &fl6, skb, lookup_flags);
-@@ -70,7 +72,9 @@ static bool rpfilter_lookup_reverse6(struct net *net, const struct sk_buff *skb,
- 		goto out;
- 	}
- 
--	if (rt->rt6i_idev->dev == dev || (flags & XT_RPFILTER_LOOSE))
-+	if (rt->rt6i_idev->dev == dev ||
-+	    l3mdev_master_ifindex_rcu(rt->rt6i_idev->dev) == dev->ifindex ||
-+	    (flags & XT_RPFILTER_LOOSE))
- 		ret = true;
-  out:
- 	ip6_rt_put(rt);
--- 
-2.21.GIT
+I expect this conflict will vanish once both rdma and netdev pull
+mlx5-next branch, which is based on -rc2.
+
+Thanks
+
+>
+> --
+> Cheers,
+> Stephen Rothwell
+
 
