@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F9205CAB7
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 10:07:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9087D5CA82
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 10:05:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728214AbfGBIHK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 04:07:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54204 "EHLO mail.kernel.org"
+        id S1727857AbfGBIFA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 04:05:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50740 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728195AbfGBIHH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 04:07:07 -0400
+        id S1727142AbfGBIE5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 04:04:57 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 054082184E;
-        Tue,  2 Jul 2019 08:07:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CB4562184B;
+        Tue,  2 Jul 2019 08:04:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562054826;
-        bh=vxlSxloGy9FiBx6D4K/fVsTHST9rZqG0BZe4InvsPp4=;
+        s=default; t=1562054697;
+        bh=aeMgeXVWW7+InDxJJGPHN3znFKO8Mt06IlVOm7qBbQU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S+moHf9QWVNBp2ZtqwJt8oVrj1dbrWa/AxhoscTw++Tkx7DPk2ThQHU6BMXwe2lCU
-         r+YRJN4gOp8RX3Ze76mDFxcqyOKojLs8R3AAEAvVw8GNnKxX2bqSAzSUdRmHyp+rpf
-         U6GxdRN6X5166f5qmDUya2cXYDIoRBKTa/WXD6ow=
+        b=QPdYajHWAwAne2RX3X8pAr8gXo+2yZsFrHdYHTsXPhiL4rfxvw3YuozeHyEEtK9tl
+         /JxDZ+FW9q4e31+UsP7P4lNmGtmwzr8M+QzdXr5frf1qb0VvGH0m1Z0avoPHDnIPjF
+         4HnxqUpzCMNPVLLeALcCb/55HPzhOyXPWXyKq2pE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Ben Hutchings <ben@decadent.org.uk>
-Subject: [PATCH 4.19 46/72] cpu/speculation: Warn on unsupported mitigations= parameter
+        stable@vger.kernel.org, Jiri Pirko <jiri@resnulli.us>,
+        YueHaibing <yuehaibing@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.1 39/55] team: Always enable vlan tx offload
 Date:   Tue,  2 Jul 2019 10:01:47 +0200
-Message-Id: <20190702080126.998230881@linuxfoundation.org>
+Message-Id: <20190702080126.153070784@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190702080124.564652899@linuxfoundation.org>
-References: <20190702080124.564652899@linuxfoundation.org>
+In-Reply-To: <20190702080124.103022729@linuxfoundation.org>
+References: <20190702080124.103022729@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,47 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Geert Uytterhoeven <geert@linux-m68k.org>
+From: YueHaibing <yuehaibing@huawei.com>
 
-commit 1bf72720281770162c87990697eae1ba2f1d917a upstream.
+[ Upstream commit ee4297420d56a0033a8593e80b33fcc93fda8509 ]
 
-Currently, if the user specifies an unsupported mitigation strategy on the
-kernel command line, it will be ignored silently.  The code will fall back
-to the default strategy, possibly leaving the system more vulnerable than
-expected.
+We should rather have vlan_tci filled all the way down
+to the transmitting netdevice and let it do the hw/sw
+vlan implementation.
 
-This may happen due to e.g. a simple typo, or, for a stable kernel release,
-because not all mitigation strategies have been backported.
-
-Inform the user by printing a message.
-
-Fixes: 98af8452945c5565 ("cpu/speculation: Add 'mitigations=' cmdline option")
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Jiri Kosina <jkosina@suse.cz>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Ben Hutchings <ben@decadent.org.uk>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20190516070935.22546-1-geert@linux-m68k.org
+Suggested-by: Jiri Pirko <jiri@resnulli.us>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- kernel/cpu.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/team/team.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -2289,6 +2289,9 @@ static int __init mitigations_parse_cmdl
- 		cpu_mitigations = CPU_MITIGATIONS_AUTO;
- 	else if (!strcmp(arg, "auto,nosmt"))
- 		cpu_mitigations = CPU_MITIGATIONS_AUTO_NOSMT;
-+	else
-+		pr_crit("Unsupported mitigations=%s, system may still be vulnerable\n",
-+			arg);
+--- a/drivers/net/team/team.c
++++ b/drivers/net/team/team.c
+@@ -2135,12 +2135,12 @@ static void team_setup(struct net_device
+ 	dev->features |= NETIF_F_NETNS_LOCAL;
  
- 	return 0;
+ 	dev->hw_features = TEAM_VLAN_FEATURES |
+-			   NETIF_F_HW_VLAN_CTAG_TX |
+ 			   NETIF_F_HW_VLAN_CTAG_RX |
+ 			   NETIF_F_HW_VLAN_CTAG_FILTER;
+ 
+ 	dev->hw_features |= NETIF_F_GSO_ENCAP_ALL | NETIF_F_GSO_UDP_L4;
+ 	dev->features |= dev->hw_features;
++	dev->features |= NETIF_F_HW_VLAN_CTAG_TX | NETIF_F_HW_VLAN_STAG_TX;
  }
+ 
+ static int team_newlink(struct net *src_net, struct net_device *dev,
 
 
