@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E39C25CAF4
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 10:09:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 951725CACB
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 10:08:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728728AbfGBIJs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 04:09:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57694 "EHLO mail.kernel.org"
+        id S1728344AbfGBIH6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 04:07:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55240 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728091AbfGBIJn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 04:09:43 -0400
+        id S1727269AbfGBIHw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 04:07:52 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 27B5A206A2;
-        Tue,  2 Jul 2019 08:09:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8E25C2184E;
+        Tue,  2 Jul 2019 08:07:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562054982;
-        bh=mEcSQA743o/+5T1M9riLJ9D6Uq5/D9wKIGLRBU3Iwiw=;
+        s=default; t=1562054871;
+        bh=7DQGuESCLaUEs01XjT2ZWgglXaxb0cRNK0S7RFfDxiE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oonXpVsKejcXHekLTKIn/VMyMjZgXllMa39CgvpzeKuyUtx9VJVlaoI444oT7EDz5
-         S3wALHDzBwxjw1LBjzf+1zRPQhXiT8giT6/5TVzvOHNVRYRdM0VCRJ5LH2iHJdJjCg
-         g9cuZD9mAPo4DxxeRtEDvQ7BBkKDe8Okkwfnj8x4=
+        b=DlaoqQX1ClFL33yDerOrfSamVyhLul6ldi1TL6wEWP243zksu0H37Pgdg3tMfRSDr
+         bE54Hmw+55kBiOuskDzlKBLCSuUKib9yauA0DcVmzB0s8C8dMtPD5+Q2RrwEC41stF
+         8VnAjsj5x24b7gTlLUO0uxkul8V2WJ05sNhXLZq8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "zhangyi (F)" <yi.zhang@huawei.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH 4.14 20/43] dm log writes: make sure super sector log updates are written in order
+        stable@vger.kernel.org, Li Shuang <shuali@redhat.com>,
+        Xin Long <lucien.xin@gmail.com>,
+        Jon Maloy <jon.maloy@ericsson.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 59/72] tipc: change to use register_pernet_device
 Date:   Tue,  2 Jul 2019 10:02:00 +0200
-Message-Id: <20190702080124.846911554@linuxfoundation.org>
+Message-Id: <20190702080127.667772181@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190702080123.904399496@linuxfoundation.org>
-References: <20190702080123.904399496@linuxfoundation.org>
+In-Reply-To: <20190702080124.564652899@linuxfoundation.org>
+References: <20190702080124.564652899@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,106 +45,100 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: zhangyi (F) <yi.zhang@huawei.com>
+From: Xin Long <lucien.xin@gmail.com>
 
-commit 211ad4b733037f66f9be0a79eade3da7ab11cbb8 upstream.
+[ Upstream commit c492d4c74dd3f87559883ffa0f94a8f1ae3fe5f5 ]
 
-Currently, although we submit super bios in order (and super.nr_entries
-is incremented by each logged entry), submit_bio() is async so each
-super sector may not be written to log device in order and then the
-final nr_entries may be smaller than it should be.
+This patch is to fix a dst defcnt leak, which can be reproduced by doing:
 
-This problem can be reproduced by the xfstests generic/455 with ext4:
+  # ip net a c; ip net a s; modprobe tipc
+  # ip net e s ip l a n eth1 type veth peer n eth1 netns c
+  # ip net e c ip l s lo up; ip net e c ip l s eth1 up
+  # ip net e s ip l s lo up; ip net e s ip l s eth1 up
+  # ip net e c ip a a 1.1.1.2/8 dev eth1
+  # ip net e s ip a a 1.1.1.1/8 dev eth1
+  # ip net e c tipc b e m udp n u1 localip 1.1.1.2
+  # ip net e s tipc b e m udp n u1 localip 1.1.1.1
+  # ip net d c; ip net d s; rmmod tipc
 
-  QA output created by 455
- -Silence is golden
- +mark 'end' does not exist
+and it will get stuck and keep logging the error:
 
-Fix this by serializing submission of super sectors to make sure each
-is written to the log disk in order.
+  unregister_netdevice: waiting for lo to become free. Usage count = 1
 
-Fixes: 0e9cebe724597 ("dm: add log writes target")
-Cc: stable@vger.kernel.org
-Signed-off-by: zhangyi (F) <yi.zhang@huawei.com>
-Suggested-by: Josef Bacik <josef@toxicpanda.com>
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+The cause is that a dst is held by the udp sock's sk_rx_dst set on udp rx
+path with udp_early_demux == 1, and this dst (eventually holding lo dev)
+can't be released as bearer's removal in tipc pernet .exit happens after
+lo dev's removal, default_device pernet .exit.
+
+ "There are two distinct types of pernet_operations recognized: subsys and
+  device.  At creation all subsys init functions are called before device
+  init functions, and at destruction all device exit functions are called
+  before subsys exit function."
+
+So by calling register_pernet_device instead to register tipc_net_ops, the
+pernet .exit() will be invoked earlier than loopback dev's removal when a
+netns is being destroyed, as fou/gue does.
+
+Note that vxlan and geneve udp tunnels don't have this issue, as the udp
+sock is released in their device ndo_stop().
+
+This fix is also necessary for tipc dst_cache, which will hold dsts on tx
+path and I will introduce in my next patch.
+
+Reported-by: Li Shuang <shuali@redhat.com>
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Acked-by: Jon Maloy <jon.maloy@ericsson.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/md/dm-log-writes.c |   23 +++++++++++++++++++++--
- 1 file changed, 21 insertions(+), 2 deletions(-)
+ net/tipc/core.c |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
---- a/drivers/md/dm-log-writes.c
-+++ b/drivers/md/dm-log-writes.c
-@@ -57,6 +57,7 @@
+--- a/net/tipc/core.c
++++ b/net/tipc/core.c
+@@ -132,7 +132,7 @@ static int __init tipc_init(void)
+ 	if (err)
+ 		goto out_sysctl;
  
- #define WRITE_LOG_VERSION 1ULL
- #define WRITE_LOG_MAGIC 0x6a736677736872ULL
-+#define WRITE_LOG_SUPER_SECTOR 0
+-	err = register_pernet_subsys(&tipc_net_ops);
++	err = register_pernet_device(&tipc_net_ops);
+ 	if (err)
+ 		goto out_pernet;
  
- /*
-  * The disk format for this is braindead simple.
-@@ -112,6 +113,7 @@ struct log_writes_c {
- 	struct list_head logging_blocks;
- 	wait_queue_head_t wait;
- 	struct task_struct *log_kthread;
-+	struct completion super_done;
- };
+@@ -140,7 +140,7 @@ static int __init tipc_init(void)
+ 	if (err)
+ 		goto out_socket;
  
- struct pending_block {
-@@ -177,6 +179,14 @@ static void log_end_io(struct bio *bio)
- 	bio_put(bio);
- }
+-	err = register_pernet_subsys(&tipc_topsrv_net_ops);
++	err = register_pernet_device(&tipc_topsrv_net_ops);
+ 	if (err)
+ 		goto out_pernet_topsrv;
  
-+static void log_end_super(struct bio *bio)
-+{
-+	struct log_writes_c *lc = bio->bi_private;
-+
-+	complete(&lc->super_done);
-+	log_end_io(bio);
-+}
-+
- /*
-  * Meant to be called if there is an error, it will free all the pages
-  * associated with the block.
-@@ -212,7 +222,8 @@ static int write_metadata(struct log_wri
- 	bio->bi_iter.bi_size = 0;
- 	bio->bi_iter.bi_sector = sector;
- 	bio_set_dev(bio, lc->logdev->bdev);
--	bio->bi_end_io = log_end_io;
-+	bio->bi_end_io = (sector == WRITE_LOG_SUPER_SECTOR) ?
-+			  log_end_super : log_end_io;
- 	bio->bi_private = lc;
- 	bio_set_op_attrs(bio, REQ_OP_WRITE, 0);
- 
-@@ -334,11 +345,18 @@ static int log_super(struct log_writes_c
- 	super.nr_entries = cpu_to_le64(lc->logged_entries);
- 	super.sectorsize = cpu_to_le32(lc->sectorsize);
- 
--	if (write_metadata(lc, &super, sizeof(super), NULL, 0, 0)) {
-+	if (write_metadata(lc, &super, sizeof(super), NULL, 0,
-+			   WRITE_LOG_SUPER_SECTOR)) {
- 		DMERR("Couldn't write super");
- 		return -1;
- 	}
- 
-+	/*
-+	 * Super sector should be writen in-order, otherwise the
-+	 * nr_entries could be rewritten incorrectly by an old bio.
-+	 */
-+	wait_for_completion_io(&lc->super_done);
-+
+@@ -151,11 +151,11 @@ static int __init tipc_init(void)
+ 	pr_info("Started in single node mode\n");
  	return 0;
- }
- 
-@@ -447,6 +465,7 @@ static int log_writes_ctr(struct dm_targ
- 	INIT_LIST_HEAD(&lc->unflushed_blocks);
- 	INIT_LIST_HEAD(&lc->logging_blocks);
- 	init_waitqueue_head(&lc->wait);
-+	init_completion(&lc->super_done);
- 	atomic_set(&lc->io_blocks, 0);
- 	atomic_set(&lc->pending_blocks, 0);
- 
+ out_bearer:
+-	unregister_pernet_subsys(&tipc_topsrv_net_ops);
++	unregister_pernet_device(&tipc_topsrv_net_ops);
+ out_pernet_topsrv:
+ 	tipc_socket_stop();
+ out_socket:
+-	unregister_pernet_subsys(&tipc_net_ops);
++	unregister_pernet_device(&tipc_net_ops);
+ out_pernet:
+ 	tipc_unregister_sysctl();
+ out_sysctl:
+@@ -170,9 +170,9 @@ out_netlink:
+ static void __exit tipc_exit(void)
+ {
+ 	tipc_bearer_cleanup();
+-	unregister_pernet_subsys(&tipc_topsrv_net_ops);
++	unregister_pernet_device(&tipc_topsrv_net_ops);
+ 	tipc_socket_stop();
+-	unregister_pernet_subsys(&tipc_net_ops);
++	unregister_pernet_device(&tipc_net_ops);
+ 	tipc_netlink_stop();
+ 	tipc_netlink_compat_stop();
+ 	tipc_unregister_sysctl();
 
 
