@@ -2,250 +2,176 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62FA15D209
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 16:47:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC5075D1FF
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 16:47:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727203AbfGBOrR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 10:47:17 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:46084 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726917AbfGBOrP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 10:47:15 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id C31D760ADE; Tue,  2 Jul 2019 14:47:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1562078834;
-        bh=3KrI789LEGYcOzwd4WxFj41Rh3w9pkSiXtKVAsyXLlI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ef9VmhPeNXxOXMb1B7lAu7cvLmtNEZk2hg0puNtelB4ynPZpcRBij9Hne1MPCEtgs
-         epCpgvNtjxAc0A0xg5u0R9JWMvGJ+TwwbSE957TOO6zGe+lMJn39SGBa/+xZhTlEyi
-         2ZabaZWAjBZthPl8EPpJxyLFkBoXWvfi2YQnMvJE=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from amasule-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        id S1727055AbfGBOrB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 10:47:01 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:43666 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726908AbfGBOrA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 10:47:00 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: amasule@codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2817C60A97;
-        Tue,  2 Jul 2019 14:47:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1562078834;
-        bh=3KrI789LEGYcOzwd4WxFj41Rh3w9pkSiXtKVAsyXLlI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ef9VmhPeNXxOXMb1B7lAu7cvLmtNEZk2hg0puNtelB4ynPZpcRBij9Hne1MPCEtgs
-         epCpgvNtjxAc0A0xg5u0R9JWMvGJ+TwwbSE957TOO6zGe+lMJn39SGBa/+xZhTlEyi
-         2ZabaZWAjBZthPl8EPpJxyLFkBoXWvfi2YQnMvJE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2817C60A97
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=amasule@codeaurora.org
-From:   Aniket Masule <amasule@codeaurora.org>
-To:     linux-media@vger.kernel.org, stanimir.varbanov@linaro.org
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        vgarodia@codeaurora.org, Aniket Masule <amasule@codeaurora.org>
-Subject: [PATCH v4 4/4] media: venus: Update core selection
-Date:   Tue,  2 Jul 2019 20:16:27 +0530
-Message-Id: <1562078787-516-5-git-send-email-amasule@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1562078787-516-1-git-send-email-amasule@codeaurora.org>
-References: <1562078787-516-1-git-send-email-amasule@codeaurora.org>
+        by mx1.redhat.com (Postfix) with ESMTPS id 4BA9B300DA2B;
+        Tue,  2 Jul 2019 14:46:59 +0000 (UTC)
+Received: from carbon (ovpn-200-45.brq.redhat.com [10.40.200.45])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EBDA91001DDC;
+        Tue,  2 Jul 2019 14:46:50 +0000 (UTC)
+Date:   Tue, 2 Jul 2019 16:46:48 +0200
+From:   Jesper Dangaard Brouer <brouer@redhat.com>
+To:     Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+Cc:     grygorii.strashko@ti.com, hawk@kernel.org, davem@davemloft.net,
+        ast@kernel.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, xdp-newbies@vger.kernel.org,
+        ilias.apalodimas@linaro.org, netdev@vger.kernel.org,
+        daniel@iogearbox.net, jakub.kicinski@netronome.com,
+        john.fastabend@gmail.com, brouer@redhat.com
+Subject: Re: [PATCH v5 net-next 1/6] xdp: allow same allocator usage
+Message-ID: <20190702164648.56ff0761@carbon>
+In-Reply-To: <20190702102700.GA4510@khorivan>
+References: <20190630172348.5692-1-ivan.khoronzhuk@linaro.org>
+        <20190630172348.5692-2-ivan.khoronzhuk@linaro.org>
+        <20190701134059.71757892@carbon>
+        <20190702102700.GA4510@khorivan>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Tue, 02 Jul 2019 14:46:59 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Present core assignment is static. Introduced load balancing
-across the cores. Load on earch core is calculated and core
-with minimum load is assigned to given instance.
+On Tue, 2 Jul 2019 13:27:07 +0300
+Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org> wrote:
 
-Signed-off-by: Aniket Masule <amasule@codeaurora.org>
----
- drivers/media/platform/qcom/venus/helpers.c    | 69 +++++++++++++++++++++++---
- drivers/media/platform/qcom/venus/helpers.h    |  2 +-
- drivers/media/platform/qcom/venus/hfi_helper.h |  1 +
- drivers/media/platform/qcom/venus/hfi_parser.h |  5 ++
- drivers/media/platform/qcom/venus/vdec.c       |  2 +-
- drivers/media/platform/qcom/venus/venc.c       |  2 +-
- 6 files changed, 72 insertions(+), 9 deletions(-)
+> On Mon, Jul 01, 2019 at 01:40:59PM +0200, Jesper Dangaard Brouer wrote:
+> >
+> >I'm very skeptical about this approach.
+> >
+> >On Sun, 30 Jun 2019 20:23:43 +0300
+> >Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org> wrote:
+> >  
+> >> XDP rxqs can be same for ndevs running under same rx napi softirq.
+> >> But there is no ability to register same allocator for both rxqs,
+> >> by fact it can same rxq but has different ndev as a reference.  
+> >
+> >This description is not very clear. It can easily be misunderstood.
+> >
+> >It is an absolute requirement that each RX-queue have their own
+> >page_pool object/allocator. (This where the performance comes from) as
+> >the page_pool have NAPI protected array for alloc and XDP_DROP recycle.
+> >
+> >Your driver/hardware seems to have special case, where a single
+> >RX-queue can receive packets for two different net_device'es.
+> >
+> >Do you violate this XDP devmap redirect assumption[1]?
+> >[1] https://github.com/torvalds/linux/blob/v5.2-rc7/kernel/bpf/devmap.c#L324-L329  
+> Seems that yes, but that's used only for trace for now.
+> As it runs under napi and flush clear dev_rx i must do it right in the
+> rx_handler. So next patchset version will have one patch less.
+> 
+> Thanks!
+> 
+> >
+> >  
+> >> Due to last changes allocator destroy can be defered till the moment
+> >> all packets are recycled by destination interface, afterwards it's
+> >> freed. In order to schedule allocator destroy only after all users are
+> >> unregistered, add refcnt to allocator object and schedule to destroy
+> >> only it reaches 0.  
+> >
+> >The guiding principles when designing an API, is to make it easy to
+> >use, but also make it hard to misuse.
+> >
+> >Your API change makes it easy to misuse the API.  As it make it easy to
+> >(re)use the allocator pointer (likely page_pool) for multiple
+> >xdp_rxq_info structs.  It is only valid for your use-case, because you
+> >have hardware where a single RX-queue delivers to two different
+> >net_devices.  For other normal use-cases, this will be a violation.
+> >
+> >If I was a user of this API, and saw your xdp_allocator_get(), then I
+> >would assume that this was the normal case.  As minimum, we need to add
+> >a comment in the code, about this specific/intended use-case.  I
+> >through about detecting the misuse, by adding a queue_index to
+> >xdp_mem_allocator, that can be checked against, when calling
+> >xdp_rxq_info_reg_mem_model() with another xdp_rxq_info struct (to catch
+> >the obvious mistake where queue_index mismatch).  
+> 
+> I can add, but not sure if it has or can have some conflicts with another
+> memory allocators, now or in future. Main here to not became a cornerstone
+> in some not obvious use-cases.
+> 
+> So, for now, let it be in this way:
+> 
+> --- a/include/net/xdp_priv.h
+> +++ b/include/net/xdp_priv.h
+> @@ -19,6 +19,7 @@ struct xdp_mem_allocator {
+>         struct delayed_work defer_wq;
+>         unsigned long defer_warn;
+>         unsigned long refcnt;
+> +       u32 queue_index;
+>  };
+> 
+>  #endif /* __LINUX_NET_XDP_PRIV_H__ */
+> diff --git a/net/core/xdp.c b/net/core/xdp.c
+> index a44621190fdc..c4bf29810f4d 100644
+> --- a/net/core/xdp.c
+> +++ b/net/core/xdp.c
+> @@ -324,7 +324,7 @@ static bool __is_supported_mem_type(enum xdp_mem_type type)
+>         return true;
+>  }
+> 
+> -static struct xdp_mem_allocator *xdp_allocator_get(void *allocator)
+> +static struct xdp_mem_allocator *xdp_allocator_find(void *allocator)
+>  {
+>         struct xdp_mem_allocator *xae, *xa = NULL;
+>         struct rhashtable_iter iter;
+> @@ -336,7 +336,6 @@ static struct xdp_mem_allocator *xdp_allocator_get(void *allocator)
+> 
+>                 while ((xae = rhashtable_walk_next(&iter)) && !IS_ERR(xae)) {
+>                         if (xae->allocator == allocator) {
+> -                               xae->refcnt++;
+>                                 xa = xae;
+>                                 break;
+>                         }
+> @@ -386,9 +385,13 @@ int xdp_rxq_info_reg_mem_model(struct xdp_rxq_info *xdp_rxq,
+>                 }
+>         }
+> 
+> -       xdp_alloc = xdp_allocator_get(allocator);
+> +       xdp_alloc = xdp_allocator_find(allocator);
+>         if (xdp_alloc) {
+> +               if (xdp_alloc->queue_index != xdp_rxq->queue_index)
+> +                       return -EINVAL;
+> +
+>                 xdp_rxq->mem.id = xdp_alloc->mem.id;
+> +               xdp_alloc->refcnt++;
 
-diff --git a/drivers/media/platform/qcom/venus/helpers.c b/drivers/media/platform/qcom/venus/helpers.c
-index 5726d86..321e9f7 100644
---- a/drivers/media/platform/qcom/venus/helpers.c
-+++ b/drivers/media/platform/qcom/venus/helpers.c
-@@ -26,6 +26,7 @@
- #include "helpers.h"
- #include "hfi_helper.h"
- #include "hfi_venus_io.h"
-+#include "hfi_parser.h"
- 
- struct intbuf {
- 	struct list_head list;
-@@ -331,6 +332,24 @@ static u32 load_per_instance(struct venus_inst *inst)
- 	return mbs * inst->fps;
- }
- 
-+static u32 load_per_core(struct venus_core *core, u32 core_id)
-+{
-+	struct venus_inst *inst = NULL;
-+	u32 mbs_per_sec = 0, load = 0;
-+
-+	mutex_lock(&core->lock);
-+	list_for_each_entry(inst, &core->instances, list) {
-+		if (!(inst->clk_data.core_id == core_id))
-+			continue;
-+
-+		mbs_per_sec = load_per_instance(inst);
-+		load = mbs_per_sec * inst->clk_data.codec_freq_data->vpp_freq;
-+	}
-+	mutex_unlock(&core->lock);
-+
-+	return load;
-+}
-+
- static u32 load_per_type(struct venus_core *core, u32 session_type)
- {
- 	struct venus_inst *inst = NULL;
-@@ -505,6 +524,16 @@ static int load_scale_clocks(struct venus_inst *inst)
- 	return scale_clocks(inst);
- }
- 
-+int set_core_usage(struct venus_inst *inst, u32 usage)
-+{
-+	const u32 ptype = HFI_PROPERTY_CONFIG_VIDEOCORES_USAGE;
-+	struct hfi_videocores_usage_type cu;
-+
-+	cu.video_core_enable_mask = usage;
-+
-+	return hfi_session_set_property(inst, ptype, &cu);
-+}
-+
- static void fill_buffer_desc(const struct venus_buffer *buf,
- 			     struct hfi_buffer_desc *bd, bool response)
- {
-@@ -808,19 +837,47 @@ int venus_helper_set_work_mode(struct venus_inst *inst, u32 mode)
- }
- EXPORT_SYMBOL_GPL(venus_helper_set_work_mode);
- 
--int venus_helper_set_core_usage(struct venus_inst *inst, u32 usage)
-+int venus_helper_set_core(struct venus_inst *inst)
- {
--	const u32 ptype = HFI_PROPERTY_CONFIG_VIDEOCORES_USAGE;
--	struct hfi_videocores_usage_type cu;
-+	struct venus_core *core = inst->core;
-+	u32 min_core_id = 0, core1_load = 0, core2_load = 0;
-+	unsigned long min_load, max_freq, cur_inst_load;
-+	u32 cores_max;
-+	int ret;
- 
- 	if (!IS_V4(inst->core))
- 		return 0;
- 
--	cu.video_core_enable_mask = usage;
-+	core1_load = load_per_core(core, VIDC_CORE_ID_1);
-+	core2_load = load_per_core(core, VIDC_CORE_ID_2);
-+	min_core_id = core1_load < core2_load ? VIDC_CORE_ID_1 : VIDC_CORE_ID_2;
-+	min_load = min(core1_load, core2_load);
-+	cores_max = core_num_max(inst);
- 
--	return hfi_session_set_property(inst, ptype, &cu);
-+	if (cores_max < VIDC_CORE_ID_2) {
-+		min_core_id = VIDC_CORE_ID_1;
-+		min_load = core1_load;
-+	}
-+
-+	cur_inst_load = load_per_instance(inst) *
-+		inst->clk_data.codec_freq_data->vpp_freq;
-+	max_freq = core->res->freq_tbl[0].freq;
-+
-+	if ((cur_inst_load + min_load)	> max_freq) {
-+		dev_warn(core->dev, "HW is overloaded, needed: %lu max: %lu\n",
-+			 cur_inst_load, max_freq);
-+		return -EINVAL;
-+	}
-+
-+	ret = set_core_usage(inst, min_core_id);
-+	if (ret)
-+		return ret;
-+
-+	inst->clk_data.core_id = min_core_id;
-+
-+	return 0;
- }
--EXPORT_SYMBOL_GPL(venus_helper_set_core_usage);
-+EXPORT_SYMBOL_GPL(venus_helper_set_core);
- 
- int venus_helper_init_codec_freq_data(struct venus_inst *inst)
- {
-diff --git a/drivers/media/platform/qcom/venus/helpers.h b/drivers/media/platform/qcom/venus/helpers.h
-index 2c13245..1034111 100644
---- a/drivers/media/platform/qcom/venus/helpers.h
-+++ b/drivers/media/platform/qcom/venus/helpers.h
-@@ -42,7 +42,7 @@ int venus_helper_set_output_resolution(struct venus_inst *inst,
- 				       u32 buftype);
- int venus_helper_set_work_mode(struct venus_inst *inst, u32 mode);
- int venus_helper_init_codec_freq_data(struct venus_inst *inst);
--int venus_helper_set_core_usage(struct venus_inst *inst, u32 usage);
-+int venus_helper_set_core(struct venus_inst *inst);
- int venus_helper_set_num_bufs(struct venus_inst *inst, unsigned int input_bufs,
- 			      unsigned int output_bufs,
- 			      unsigned int output2_bufs);
-diff --git a/drivers/media/platform/qcom/venus/hfi_helper.h b/drivers/media/platform/qcom/venus/hfi_helper.h
-index 34ea503..f3d1018 100644
---- a/drivers/media/platform/qcom/venus/hfi_helper.h
-+++ b/drivers/media/platform/qcom/venus/hfi_helper.h
-@@ -559,6 +559,7 @@ struct hfi_bitrate {
- #define HFI_CAPABILITY_LCU_SIZE				0x14
- #define HFI_CAPABILITY_HIER_P_HYBRID_NUM_ENH_LAYERS	0x15
- #define HFI_CAPABILITY_MBS_PER_SECOND_POWERSAVE		0x16
-+#define HFI_CAPABILITY_MAX_VIDEOCORES		0x2B
- 
- struct hfi_capability {
- 	u32 capability_type;
-diff --git a/drivers/media/platform/qcom/venus/hfi_parser.h b/drivers/media/platform/qcom/venus/hfi_parser.h
-index 3e931c7..264e6dd 100644
---- a/drivers/media/platform/qcom/venus/hfi_parser.h
-+++ b/drivers/media/platform/qcom/venus/hfi_parser.h
-@@ -107,4 +107,9 @@ static inline u32 frate_step(struct venus_inst *inst)
- 	return cap_step(inst, HFI_CAPABILITY_FRAMERATE);
- }
- 
-+static inline u32 core_num_max(struct venus_inst *inst)
-+{
-+	return cap_max(inst, HFI_CAPABILITY_MAX_VIDEOCORES);
-+}
-+
- #endif
-diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
-index d037f80..620e060 100644
---- a/drivers/media/platform/qcom/venus/vdec.c
-+++ b/drivers/media/platform/qcom/venus/vdec.c
-@@ -551,7 +551,7 @@ static int vdec_output_conf(struct venus_inst *inst)
- 	if (ret)
- 		return ret;
- 
--	ret = venus_helper_set_core_usage(inst, VIDC_CORE_ID_1);
-+	ret = venus_helper_set_core(inst);
- 	if (ret)
- 		return ret;
- 
-diff --git a/drivers/media/platform/qcom/venus/venc.c b/drivers/media/platform/qcom/venus/venc.c
-index cdddc82..28e76cc 100644
---- a/drivers/media/platform/qcom/venus/venc.c
-+++ b/drivers/media/platform/qcom/venus/venc.c
-@@ -660,7 +660,7 @@ static int venc_set_properties(struct venus_inst *inst)
- 	if (ret)
- 		return ret;
- 
--	ret = venus_helper_set_core_usage(inst, VIDC_CORE_ID_2);
-+	ret = venus_helper_set_core(inst);
- 	if (ret)
- 		return ret;
- 
+This is now adjusted outside lock, not good.
+
+>                 return 0;
+>         }
+> 
+> @@ -406,6 +409,7 @@ int xdp_rxq_info_reg_mem_model(struct xdp_rxq_info *xdp_rxq,
+>         xdp_alloc->mem  = xdp_rxq->mem;
+>         xdp_alloc->allocator = allocator;
+>         xdp_alloc->refcnt = 1;
+> +       xdp_alloc->queue_index = xdp_rxq->queue_index;
+> 
+>         /* Insert allocator into ID lookup table */
+>         ptr = rhashtable_insert_slow(mem_id_ht, &id, &xdp_alloc->node);
+> 
+> Jesper, are you Ok with this version?
+
+Please see my other patch, this is based on our first refcnt attempt.
+I think that other patch is a better way forward.
+
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+Best regards,
+  Jesper Dangaard Brouer
+  MSc.CS, Principal Kernel Engineer at Red Hat
+  LinkedIn: http://www.linkedin.com/in/brouer
