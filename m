@@ -2,109 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7747C5D97A
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 02:44:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4148D5DA2E
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 03:03:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727290AbfGCAoH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 20:44:07 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:40391 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726736AbfGCAoH (ORCPT
+        id S1727523AbfGCBDQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 21:03:16 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:54794 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727082AbfGCBDO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 20:44:07 -0400
-Received: by mail-wr1-f68.google.com with SMTP id p11so683105wre.7
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2019 17:44:05 -0700 (PDT)
+        Tue, 2 Jul 2019 21:03:14 -0400
+Received: by mail-wm1-f66.google.com with SMTP id g135so405872wme.4;
+        Tue, 02 Jul 2019 18:03:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YiKm32fbrJXvadhbbH8R2AC30oRr6R/vtBXdk9UU6tg=;
-        b=rouFNaQrAD+LVzdQfwSGl8KyN3XCFATAsscS1nSiY3nqrVKn88L+2X9hpP8G0LkkWC
-         NbXBVmKrNM2i/FYXzVyY65owea83CsnsL2EYq3GhtYm+wIktVkTqWtRAWOulqc+2Eijb
-         tNZhEVAQRLz89yF0sk+uF/rQSzJNULI8c49x9De777zT65pYsUUSurWdrSNR9lmy2NEt
-         9eY0VkqUb2j+lxdkUSL9dhgUIzql3NanYjEhvjtxJVfIfVj1EIEm0MIgXIiUzfQXV33O
-         rHDGqg4EVcvtwueBiup5u0kebQrjrGClyg1D+nX2fPJPU7N/NtWIDb7JpF1b7OEh92lu
-         QbyA==
+        d=googlemail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=LBWB6uQ0LpQxJc9ymoFNG6XGEMqz0HTQ0I21d3MdiIY=;
+        b=Ob8OAm8l+LEYVwr57X3OufsI0zkT79AT5Jut2x7UTyTugJd7r1yIb8W3bBQrg2Abru
+         3yXhkZtVb6uVC4BJ8Fx9CF87O3PO32pmt8i0eAHJpcLMz0OmL8tmtrlFthK8QgWiNeiP
+         ZtUviQ6hQxJACJ99tQ3I8eyz0zPBl5BO9xQ9tiwkdapagV0XAVHvQ9PWNDOt7W4NZHFi
+         S9umhTYjJH4M8ODI/AkEIxrM0/vWhdyFtPCmI4XA0y/qZP0O2mv/GDPF643CpgFQR5Sy
+         tuCPRygfybpytV0rhxmsfKq5sYMe1la5gSd7Gbz2Rb6s8oPXelTwdj1wjgc/jRlura4V
+         gzIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YiKm32fbrJXvadhbbH8R2AC30oRr6R/vtBXdk9UU6tg=;
-        b=JKr04Y4DRGCkWPLOLqEaC1kMlZUa4uNdrqoGLUETFt+4u1MOf68bJDLER26LwYqe17
-         +TvkgZLt84dnHIEwwVbFsIV9g2U/P3AMsW/oeXRrjU1qUzB2WxUVKBOSNq3DsieJVSjv
-         oq10GR/cnWn3+GAGRtDW/htNB7QwPhN9y2H6cteadCn/sjH3tIRMHSAtcdgI+sf6Vr0p
-         I8M2uRa/tLa1EPy7U7MyHVWfg3OFBi496R0eujP/kPo5zlsfQr+DxN8QtvUiEJe2mSev
-         ZSWnZImq6jY5e9080o6G+AUwgB164iQuLIhknlSHlh0e4/1wJEoDZBhYnyf/dlso64nv
-         xdbQ==
-X-Gm-Message-State: APjAAAWx+Urcjda4n8Si8NBxLEKzPR8m2qqoDhg6sq1/kK4WOC05zyOA
-        tHIorT/9VRHxMp8kXIPCHIBb1lgRzulSyxGu99XU+1a4Z2A=
-X-Google-Smtp-Source: APXvYqyzF5MuwoPkI10B4TbfC/rzEV0YiPHBluGmH1/zHhhFfHwqiAfVyxlK7Fj4GY/VFsoeVVgftVQDaSC75isjmzg=
-X-Received: by 2002:adf:b69a:: with SMTP id j26mr17416154wre.93.1562099731858;
- Tue, 02 Jul 2019 13:35:31 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=LBWB6uQ0LpQxJc9ymoFNG6XGEMqz0HTQ0I21d3MdiIY=;
+        b=Ri4HEi0PY+6ZXToUY7fshGGxErH39rQgZN8VUzaIapZ/1S6pa92NAePgP3lsCzrk+f
+         5ZvFFLq+qcxd81CTVynIEDY0YeEiirSwUkZRw8uca9jvgtnxSIbBLFjqSlGLKv0OykcK
+         EnShwLJ6QNm+XjcELgjYta+tNj8D1foNrCUxG9WfnooIfqKLVGqGOuAVzsnbRJ4NH1Ma
+         M5NiaQWjPchuQiFaIrD/UWga69cE3YZZc6X2aPqtAuRZYu/0WzIbFSjdMK/LOjw2uTTM
+         NmjM3bNSAf18OH6COckc5yy+iHeSpw2BrNYtwKmz/BgnbcX7ZnFnryHuAl8JSOm3jWUE
+         wNIA==
+X-Gm-Message-State: APjAAAWjgvQiUYlcmeRNntJprVdNocjHB/dayNmDV8YVEbIC/Z+3OSJx
+        8LwkAhaN1bRpotdha0I3wCmvUAkv
+X-Google-Smtp-Source: APXvYqxOUC2uNqK6Z/BzGBTWsn4YGIpPODSbFR6VlbGZ1L/KD+v0vnSxOXKnwHJsTkYKaXf58GCbjA==
+X-Received: by 2002:a7b:c3d5:: with SMTP id t21mr4048369wmj.87.1562099728934;
+        Tue, 02 Jul 2019 13:35:28 -0700 (PDT)
+Received: from blackbox.darklights.net (p200300F133D62000A09003363445C98E.dip0.t-ipconnect.de. [2003:f1:33d6:2000:a090:336:3445:c98e])
+        by smtp.googlemail.com with ESMTPSA id s12sm100041wmh.34.2019.07.02.13.35.27
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 02 Jul 2019 13:35:28 -0700 (PDT)
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To:     linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
+        john@phrozen.org, kishon@ti.com, robh+dt@kernel.org
+Cc:     linux-kernel@vger.kernel.org, hauke@hauke-m.de,
+        paul.burton@mips.com, ralf@linux-mips.org, mark.rutland@arm.com,
+        ms@dev.tdt.de,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH 0/4] Lantiq VRX200/ARX300 PCIe PHY driver
+Date:   Tue,  2 Jul 2019 22:35:19 +0200
+Message-Id: <20190702203523.2412-1-martin.blumenstingl@googlemail.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-References: <20190630203614.5290-1-robdclark@gmail.com> <20190630203614.5290-3-robdclark@gmail.com>
- <CAKv+Gu_8BOt+f8RTspHo+se-=igZba1zL0+jWLV2HuuUXCKYpA@mail.gmail.com>
-In-Reply-To: <CAKv+Gu_8BOt+f8RTspHo+se-=igZba1zL0+jWLV2HuuUXCKYpA@mail.gmail.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Tue, 2 Jul 2019 22:35:16 +0200
-Message-ID: <CAKv+Gu-KhPJxxJA3+J813OPcnoAD4nHq6MhiRTJSd_5y1dPNnw@mail.gmail.com>
-Subject: Re: [PATCH 2/4] efi/libstub: detect panel-id
-To:     Rob Clark <robdclark@gmail.com>
-Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        freedreno@lists.freedesktop.org, aarch64-laptops@lists.linaro.org,
-        Rob Clark <robdclark@chromium.org>,
-        Ingo Molnar <mingo@kernel.org>, Will Deacon <will@kernel.org>,
-        Leif Lindholm <leif.lindholm@linaro.org>,
-        Alexander Graf <agraf@suse.de>,
-        Steve Capper <steve.capper@arm.com>,
-        Lukas Wunner <lukas@wunner.de>,
-        Julien Thierry <julien.thierry@arm.com>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2 Jul 2019 at 22:26, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
->
-> On Sun, 30 Jun 2019 at 22:36, Rob Clark <robdclark@gmail.com> wrote:
-> >
-> > From: Rob Clark <robdclark@chromium.org>
-> >
-> > On snapdragon aarch64 laptops, a 'UEFIDisplayInfo' variable is provided
-> > to communicate some information about the display.  Crutially it has the
-> > panel-id, so the appropriate panel driver can be selected.  Read this
-> > out and stash in /chosen/panel-id so that display driver can use it to
-> > pick the appropriate panel.
-> >
-> > Signed-off-by: Rob Clark <robdclark@chromium.org>
->
-> Hi Rob,
->
-> I understand why you are doing this, but this *really* belongs elsewhere.
->
-> So we are dealing with a platform that violates the UEFI spec, since
-> it does not bother to implement variable services at runtime (because
-> MS let the vendor get away with this).
->
+Various Lantiq (now Intel) SoCs contain one or more PCIe controllers
+and PHYs.
+This adds a driver for the PCIe PHYs found on the Lantiq VRX200 and
+ARX300 SoCs. GRX390 should also be supported as far as I can tell,
+but I don't have any of these devices to further verify that.
 
-To clarify, the above remark applies to populating the DT from the OS
-rather than from the firmware.
+I have tested this PCIe PHY driver with the out-of-tree PCIe controller
+driver in OpenWrt: [0]
 
-> First of all, to pass data between the EFI stub and the OS proper, we
-> should use a configuration table rather than a DT property, since the
-> former is ACPI/DT agnostic. Also, I'd like the consumer of the data to
-> actually interpret it, i.e., just dump the whole opaque thing into a
-> config table in the stub, and do the parsing in the OS proper.
->
-> However, I am not thrilled at adding code to the stub that
-> unconditionally looks for some variable with some magic name on all
-> ARM/arm64 EFI systems, so this will need to live under a Kconfig
-> option that depends on ARM64 (and does not default to y)
->
+dependencies for this series:
+none
 
-... but saving variables at boot time for consumption at runtime is
-something that we will likely see more of in the future.
+patches 1-3 should go through the PHY tree
+patch 4 should go through the mips tree
+
+I am aware that this series is too late for the v5.3 development cycle.
+Getting review comments is still appreciated so this can be queued early
+in the v5.4 development cycle.
+
+
+[0] https://github.com/xdarklight/openwrt/commits/lantiq-mainline-pcie-phy-20190702
+
+
+Martin Blumenstingl (4):
+  dt-bindings: phy: add binding for the Lantiq VRX200 and ARX300 PCIe
+    PHYs
+  phy: lantiq: vrx200-pcie: add a driver for the Lantiq VRX200 PCIe PHY
+  phy: enable compile-testing for the Lantiq PHY drivers
+  MIPS: lantiq: update the clock alias' for the mainline PCIe PHY driver
+
+ .../bindings/phy/lantiq,vrx200-pcie-phy.yaml  |  87 +++
+ arch/mips/lantiq/xway/sysctrl.c               |  16 +-
+ drivers/phy/Makefile                          |   2 +-
+ drivers/phy/lantiq/Kconfig                    |  11 +
+ drivers/phy/lantiq/Makefile                   |   1 +
+ drivers/phy/lantiq/phy-lantiq-vrx200-pcie.c   | 495 ++++++++++++++++++
+ .../dt-bindings/phy/phy-lantiq-vrx200-pcie.h  |  11 +
+ 7 files changed, 614 insertions(+), 9 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/phy/lantiq,vrx200-pcie-phy.yaml
+ create mode 100644 drivers/phy/lantiq/phy-lantiq-vrx200-pcie.c
+ create mode 100644 include/dt-bindings/phy/phy-lantiq-vrx200-pcie.h
+
+-- 
+2.22.0
+
