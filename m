@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9473C5CAC9
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 10:07:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD1435CBBE
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 10:16:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728338AbfGBIHx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 04:07:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55202 "EHLO mail.kernel.org"
+        id S1728121AbfGBIPv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 04:15:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50088 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727892AbfGBIHs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 04:07:48 -0400
+        id S1727756AbfGBIEe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 04:04:34 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EA9F22184C;
-        Tue,  2 Jul 2019 08:07:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1B8E821479;
+        Tue,  2 Jul 2019 08:04:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562054868;
-        bh=tDnzVbDbQPPcx+I8iy29VRml9ECUTqMYGj0QLmWN2oQ=;
+        s=default; t=1562054673;
+        bh=FHZuVNPHrPEskjr4ytkC96O85qWn+vClIozAy1WdJBk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=B2aFo35bvpsYjW04OXYZQkCH7G8q4RtPjzsRAhcDjCmU5K2NFnDAlCyvzs0rAccCL
-         Y14XytPmbccPqdVtWW/loWsus24E93nxqooJoKCQbN4Y7zRBH78PiVmd7yhvQ+k7k6
-         OIYKyYirV1kkM0q2NpmhdxIKTaeXrawxmyYvJGg8=
+        b=iZ26FpzoJ8rdCzkCD0stE3YIMp+X90hdY6AyzJFxIHvL6tklWPbOvYAp37cQgvozx
+         P4JSfbRz2WgWebmzhVqmfGmb3lnWdwX86RwiSyyaH2vuYyIUuPRKGuYakpgKC32HfP
+         wj8aZCOc3x5X7xtV7VwkLn59PHR7NU3EP3AQ6n74=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Pirko <jiri@resnulli.us>,
-        YueHaibing <yuehaibing@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 58/72] team: Always enable vlan tx offload
-Date:   Tue,  2 Jul 2019 10:01:59 +0200
-Message-Id: <20190702080127.615793762@linuxfoundation.org>
+        stable@vger.kernel.org, Will Deacon <will.deacon@arm.com>
+Subject: [PATCH 5.1 52/55] futex: Update comments and docs about return values of arch futex code
+Date:   Tue,  2 Jul 2019 10:02:00 +0200
+Message-Id: <20190702080126.770004015@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190702080124.564652899@linuxfoundation.org>
-References: <20190702080124.564652899@linuxfoundation.org>
+In-Reply-To: <20190702080124.103022729@linuxfoundation.org>
+References: <20190702080124.103022729@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,37 +42,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Will Deacon <will.deacon@arm.com>
 
-[ Upstream commit ee4297420d56a0033a8593e80b33fcc93fda8509 ]
+commit 427503519739e779c0db8afe876c1b33f3ac60ae upstream.
 
-We should rather have vlan_tci filled all the way down
-to the transmitting netdevice and let it do the hw/sw
-vlan implementation.
+The architecture implementations of 'arch_futex_atomic_op_inuser()' and
+'futex_atomic_cmpxchg_inatomic()' are permitted to return only -EFAULT,
+-EAGAIN or -ENOSYS in the case of failure.
 
-Suggested-by: Jiri Pirko <jiri@resnulli.us>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Update the comments in the asm-generic/ implementation and also a stray
+reference in the robust futex documentation.
+
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/team/team.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/team/team.c
-+++ b/drivers/net/team/team.c
-@@ -2139,12 +2139,12 @@ static void team_setup(struct net_device
- 	dev->features |= NETIF_F_NETNS_LOCAL;
+---
+ Documentation/robust-futexes.txt |    3 +--
+ include/asm-generic/futex.h      |    8 ++++++--
+ 2 files changed, 7 insertions(+), 4 deletions(-)
+
+--- a/Documentation/robust-futexes.txt
++++ b/Documentation/robust-futexes.txt
+@@ -218,5 +218,4 @@ All other architectures should build jus
+ the new syscalls yet.
  
- 	dev->hw_features = TEAM_VLAN_FEATURES |
--			   NETIF_F_HW_VLAN_CTAG_TX |
- 			   NETIF_F_HW_VLAN_CTAG_RX |
- 			   NETIF_F_HW_VLAN_CTAG_FILTER;
- 
- 	dev->hw_features |= NETIF_F_GSO_ENCAP_ALL | NETIF_F_GSO_UDP_L4;
- 	dev->features |= dev->hw_features;
-+	dev->features |= NETIF_F_HW_VLAN_CTAG_TX | NETIF_F_HW_VLAN_STAG_TX;
- }
- 
- static int team_newlink(struct net *src_net, struct net_device *dev,
+ Architectures need to implement the new futex_atomic_cmpxchg_inatomic()
+-inline function before writing up the syscalls (that function returns
+--ENOSYS right now).
++inline function before writing up the syscalls.
+--- a/include/asm-generic/futex.h
++++ b/include/asm-generic/futex.h
+@@ -23,7 +23,9 @@
+  *
+  * Return:
+  * 0 - On success
+- * <0 - On error
++ * -EFAULT - User access resulted in a page fault
++ * -EAGAIN - Atomic operation was unable to complete due to contention
++ * -ENOSYS - Operation not supported
+  */
+ static inline int
+ arch_futex_atomic_op_inuser(int op, u32 oparg, int *oval, u32 __user *uaddr)
+@@ -85,7 +87,9 @@ out_pagefault_enable:
+  *
+  * Return:
+  * 0 - On success
+- * <0 - On error
++ * -EFAULT - User access resulted in a page fault
++ * -EAGAIN - Atomic operation was unable to complete due to contention
++ * -ENOSYS - Function not implemented (only if !HAVE_FUTEX_CMPXCHG)
+  */
+ static inline int
+ futex_atomic_cmpxchg_inatomic(u32 *uval, u32 __user *uaddr,
 
 
