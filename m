@@ -2,99 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFACA5C6CF
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 03:53:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 091D85C6BE
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 03:46:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727074AbfGBBxT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 21:53:19 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:55886 "EHLO inva020.nxp.com"
+        id S1727025AbfGBBqg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 21:46:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51708 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727025AbfGBBxQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 21:53:16 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 841DF1A0B1E;
-        Tue,  2 Jul 2019 03:53:14 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id AA9A41A0B19;
-        Tue,  2 Jul 2019 03:53:04 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id A0D23402B1;
-        Tue,  2 Jul 2019 09:52:52 +0800 (SGT)
-From:   Anson.Huang@nxp.com
-To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        leonard.crestez@nxp.com, viresh.kumar@linaro.org, ping.bai@nxp.com,
-        daniel.baluta@nxp.com, l.stach@pengutronix.de, abel.vesa@nxp.com,
-        andrew.smirnov@gmail.com, angus@akkea.ca, ccaione@baylibre.com,
-        agx@sigxcpu.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH 2/2] arm64: dts: imx8mm: Add gpio-ranges property
-Date:   Tue,  2 Jul 2019 09:44:00 +0800
-Message-Id: <20190702014400.33554-2-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20190702014400.33554-1-Anson.Huang@nxp.com>
-References: <20190702014400.33554-1-Anson.Huang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726347AbfGBBqf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 1 Jul 2019 21:46:35 -0400
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2567E216C8;
+        Tue,  2 Jul 2019 01:46:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562031994;
+        bh=W6pjPEN1zb8kE6iBBaNfrMROGIiYPyv9aeswfstgqaE=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=tmlLetHX7qUM5gy9CoM0JFxzX9V5kbOpnU8ganfCcWXei3UDuyOEMfvo1WXx0HyUO
+         kUl5dT7nfBQ/umRpSPvl21AqOoTpbRjtTuiLtwhA7ABlAowOj8QRfBBER6Rb0LpAOt
+         MM39r1+NnnEYoPwz9tB+KcstSgOGq3MAj13gUN8k=
+Received: by mail-qk1-f169.google.com with SMTP id a27so12708728qkk.5;
+        Mon, 01 Jul 2019 18:46:34 -0700 (PDT)
+X-Gm-Message-State: APjAAAV4Q49UPHYuvI1nfJJiqVmsOt7kt0IPsSd+cPl/M7RxICeg4HKZ
+        PvMKAIGZ+dr0ywWGi4WRJM0en7fq0rCZz0V4Nw==
+X-Google-Smtp-Source: APXvYqyO4fq7/XDICiyTEmPfX78SUcw7GW0uwDF4z4pRcD+lOjUKdBFtKCIzH5A/3qa6J+VPCJ441+qp0WMnH7PWlmU=
+X-Received: by 2002:a05:620a:1447:: with SMTP id i7mr23718623qkl.254.1562031993399;
+ Mon, 01 Jul 2019 18:46:33 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190702004811.136450-1-saravanak@google.com> <20190702004811.136450-5-saravanak@google.com>
+In-Reply-To: <20190702004811.136450-5-saravanak@google.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Mon, 1 Jul 2019 19:46:22 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKAn2uD4DC2wqJtkqLTFJ54yG_qaQjgfg=YrQfSEhJw+g@mail.gmail.com>
+Message-ID: <CAL_JsqKAn2uD4DC2wqJtkqLTFJ54yG_qaQjgfg=YrQfSEhJw+g@mail.gmail.com>
+Subject: Re: [PATCH v3 4/4] driver core: Add edit_links() callback for drivers
+To:     Saravana Kannan <saravanak@google.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        David Collins <collinsd@codeaurora.org>,
+        Android Kernel Team <kernel-team@android.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anson Huang <Anson.Huang@nxp.com>
+On Mon, Jul 1, 2019 at 6:48 PM Saravana Kannan <saravanak@google.com> wrote:
+>
+> The driver core/bus adding dependencies by default makes sure that
+> suppliers don't sync the hardware state with software state before all the
+> consumers have their drivers loaded (if they are modules) and are probed.
+>
+> However, when the bus incorrectly adds dependencies that it shouldn't have
+> added, the devices might never probe.
+>
+> For example, if device-C is a consumer of device-S and they have phandles
+> to each other in DT, the following could happen:
+>
+> 1.  Device-S get added first.
+> 2.  The bus add_links() callback will (incorrectly) try to link it as
+>     a consumer of device-C.
+> 3.  Since device-C isn't present, device-S will be put in
+>     "waiting-for-supplier" list.
+> 4.  Device-C gets added next.
+> 5.  All devices in "waiting-for-supplier" list are retried for linking.
+> 6.  Device-S gets linked as consumer to Device-C.
+> 7.  The bus add_links() callback will (correctly) try to link it as
+>     a consumer of device-S.
+> 8.  This isn't allowed because it would create a cyclic device links.
+>
+> So neither devices will get probed since the supplier is dependent on a
+> consumer that'll never probe (because it can't get resources from the
+> supplier).
+>
+> Without this patch, things stay in this broken state. However, with this
+> patch, the execution will continue like this:
+>
+> 9.  Device-C's driver is loaded.
+> 10. Device-C's driver removes Device-S as a consumer of Device-C.
+> 11. Device-C's driver adds Device-C as a consumer of Device-S.
+> 12. Device-S probes.
+> 13. Device-S sync_state() isn't called because Device-C hasn't probed yet.
+> 14. Device-C probes.
+> 15. Device-S's sync_state() callback is called.
 
-Add "gpio-ranges" property to establish connections between GPIOs
-and PINs on i.MX8MM pinctrl driver.
+We already have some DT unittests around platform devices. It would be
+nice to extend them to demonstrate this problem. Could be a follow-up
+patch though.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- arch/arm64/boot/dts/freescale/imx8mm.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+In the case a driver hasn't been updated, couldn't the driver core
+just remove all the links of C to S and S to C so that progress can be
+made and we retain the status quo of what we have today? That would
+lessen the chances of breaking platforms and reduce the immediate need
+to fix them.
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mm.dtsi b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-index ea15457..b11fc5e 100644
---- a/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-@@ -312,6 +312,7 @@
- 				#gpio-cells = <2>;
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
-+				gpio-ranges = <&iomuxc 0 10 30>;
- 			};
- 
- 			gpio2: gpio@30210000 {
-@@ -324,6 +325,7 @@
- 				#gpio-cells = <2>;
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
-+				gpio-ranges = <&iomuxc 0 40 21>;
- 			};
- 
- 			gpio3: gpio@30220000 {
-@@ -336,6 +338,7 @@
- 				#gpio-cells = <2>;
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
-+				gpio-ranges = <&iomuxc 0 61 26>;
- 			};
- 
- 			gpio4: gpio@30230000 {
-@@ -348,6 +351,7 @@
- 				#gpio-cells = <2>;
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
-+				gpio-ranges = <&iomuxc 0 87 32>;
- 			};
- 
- 			gpio5: gpio@30240000 {
-@@ -360,6 +364,7 @@
- 				#gpio-cells = <2>;
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
-+				gpio-ranges = <&iomuxc 0 119 30>;
- 			};
- 
- 			wdog1: watchdog@30280000 {
--- 
-2.7.4
-
+Rob
