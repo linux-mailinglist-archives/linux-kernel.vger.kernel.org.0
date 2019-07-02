@@ -2,42 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A072A5CAC7
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 10:07:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 253695CA4F
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 10:03:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728331AbfGBIHu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 04:07:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55138 "EHLO mail.kernel.org"
+        id S1727231AbfGBIC4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 04:02:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47578 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727976AbfGBIHp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 04:07:45 -0400
+        id S1727202AbfGBICy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 04:02:54 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 960022183F;
-        Tue,  2 Jul 2019 08:07:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 74A9121479;
+        Tue,  2 Jul 2019 08:02:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562054865;
-        bh=F0z/Qt1OUgKcq+NpAv5Pu2gellH7RLZ46sZaWd1mOUw=;
+        s=default; t=1562054573;
+        bh=RaKKqX569LuBgmaHBLPgIetwk+japE1Civy0m2rrXQY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QLtJAUVLGFh5g4FcvRAx60T09AI6AY/qjMVxem2RZIVpLsWoJsqgR9pV3jxRwlyjd
-         OO+dn+zgY2XOHPhFSXN3U6n61DeE1aEUZ9bHLcJYLf/hnXSQIbZEBi5fZWtqGpPpyn
-         u4kLIcNCjJktixrCQ0UIbdjMGPvL0ByFxUaGk7Fk=
+        b=kRG3rsI1i5DHovFfmjjqp6lNOKAoSrt7Tz8wDfZ/+h3d/TlJMHbDmie33cgQj5Fob
+         XS1r10H1rwUwegk09Z91GtvzeZ1qBGoD00BQlv3fpkpJ7r/nPqyFJ/vjbY2/YqkhAp
+         O2RAes+ibepIzQSK1Pf44zVz/sKEZm3FHHuPHz4c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+b68605d7fadd21510de1@syzkaller.appspotmail.com,
-        Kristian Evensen <kristian.evensen@gmail.com>,
-        =?UTF-8?q?Bj=C3=B8rn=20Mork?= <bjorn@mork.no>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 22/72] qmi_wwan: Fix out-of-bounds read
-Date:   Tue,  2 Jul 2019 10:01:23 +0200
-Message-Id: <20190702080125.824008218@linuxfoundation.org>
+        stable@vger.kernel.org, "Huang, Ying" <ying.huang@intel.com>,
+        Ming Lei <ming.lei@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Hugh Dickins <hughd@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Rik van Riel <riel@redhat.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 5.1 16/55] mm, swap: fix THP swap out
+Date:   Tue,  2 Jul 2019 10:01:24 +0200
+Message-Id: <20190702080124.884746006@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190702080124.564652899@linuxfoundation.org>
-References: <20190702080124.564652899@linuxfoundation.org>
+In-Reply-To: <20190702080124.103022729@linuxfoundation.org>
+References: <20190702080124.103022729@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,53 +52,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 904d88d743b0c94092c5117955eab695df8109e8 ]
+From: Huang Ying <ying.huang@intel.com>
 
-The syzbot reported
+commit 1a5f439c7c02837d943e528d46501564d4226757 upstream.
 
- Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0xca/0x13e lib/dump_stack.c:113
-  print_address_description+0x67/0x231 mm/kasan/report.c:188
-  __kasan_report.cold+0x1a/0x32 mm/kasan/report.c:317
-  kasan_report+0xe/0x20 mm/kasan/common.c:614
-  qmi_wwan_probe+0x342/0x360 drivers/net/usb/qmi_wwan.c:1417
-  usb_probe_interface+0x305/0x7a0 drivers/usb/core/driver.c:361
-  really_probe+0x281/0x660 drivers/base/dd.c:509
-  driver_probe_device+0x104/0x210 drivers/base/dd.c:670
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:777
-  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
+0-Day test system reported some OOM regressions for several THP
+(Transparent Huge Page) swap test cases.  These regressions are bisected
+to 6861428921b5 ("block: always define BIO_MAX_PAGES as 256").  In the
+commit, BIO_MAX_PAGES is set to 256 even when THP swap is enabled.  So the
+bio_alloc(gfp_flags, 512) in get_swap_bio() may fail when swapping out
+THP.  That causes the OOM.
 
-Caused by too many confusing indirections and casts.
-id->driver_info is a pointer stored in a long.  We want the
-pointer here, not the address of it.
+As in the patch description of 6861428921b5 ("block: always define
+BIO_MAX_PAGES as 256"), THP swap should use multi-page bvec to write THP
+to swap space.  So the issue is fixed via doing that in get_swap_bio().
 
-Thanks-to: Hillf Danton <hdanton@sina.com>
-Reported-by: syzbot+b68605d7fadd21510de1@syzkaller.appspotmail.com
-Cc: Kristian Evensen <kristian.evensen@gmail.com>
-Fixes: e4bf63482c30 ("qmi_wwan: Add quirk for Quectel dynamic config")
-Signed-off-by: Bjørn Mork <bjorn@mork.no>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+BTW: I remember I have checked the THP swap code when 6861428921b5
+("block: always define BIO_MAX_PAGES as 256") was merged, and thought the
+THP swap code needn't to be changed.  But apparently, I was wrong.  I
+should have done this at that time.
+
+Link: http://lkml.kernel.org/r/20190624075515.31040-1-ying.huang@intel.com
+Fixes: 6861428921b5 ("block: always define BIO_MAX_PAGES as 256")
+Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Minchan Kim <minchan@kernel.org>
+Cc: Rik van Riel <riel@redhat.com>
+Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/net/usb/qmi_wwan.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ mm/page_io.c |    7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/usb/qmi_wwan.c b/drivers/net/usb/qmi_wwan.c
-index d9a6699abe59..e657d8947125 100644
---- a/drivers/net/usb/qmi_wwan.c
-+++ b/drivers/net/usb/qmi_wwan.c
-@@ -1412,7 +1412,7 @@ static int qmi_wwan_probe(struct usb_interface *intf,
- 	 * different. Ignore the current interface if the number of endpoints
- 	 * equals the number for the diag interface (two).
- 	 */
--	info = (void *)&id->driver_info;
-+	info = (void *)id->driver_info;
+--- a/mm/page_io.c
++++ b/mm/page_io.c
+@@ -29,10 +29,9 @@
+ static struct bio *get_swap_bio(gfp_t gfp_flags,
+ 				struct page *page, bio_end_io_t end_io)
+ {
+-	int i, nr = hpage_nr_pages(page);
+ 	struct bio *bio;
  
- 	if (info->data & QMI_WWAN_QUIRK_QUECTEL_DYNCFG) {
- 		if (desc->bNumEndpoints == 2)
--- 
-2.20.1
-
+-	bio = bio_alloc(gfp_flags, nr);
++	bio = bio_alloc(gfp_flags, 1);
+ 	if (bio) {
+ 		struct block_device *bdev;
+ 
+@@ -41,9 +40,7 @@ static struct bio *get_swap_bio(gfp_t gf
+ 		bio->bi_iter.bi_sector <<= PAGE_SHIFT - 9;
+ 		bio->bi_end_io = end_io;
+ 
+-		for (i = 0; i < nr; i++)
+-			bio_add_page(bio, page + i, PAGE_SIZE, 0);
+-		VM_BUG_ON(bio->bi_iter.bi_size != PAGE_SIZE * nr);
++		bio_add_page(bio, page, PAGE_SIZE * hpage_nr_pages(page), 0);
+ 	}
+ 	return bio;
+ }
 
 
