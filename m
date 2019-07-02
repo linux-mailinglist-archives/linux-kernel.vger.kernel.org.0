@@ -2,144 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F37D55DA23
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 03:02:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B5C65DA8B
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2019 03:17:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727410AbfGCBCX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 21:02:23 -0400
-Received: from mga04.intel.com ([192.55.52.120]:26635 "EHLO mga04.intel.com"
+        id S1727367AbfGCBRF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 21:17:05 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:47337 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726652AbfGCBCX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 21:02:23 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Jul 2019 14:40:03 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,444,1557212400"; 
-   d="scan'208";a="157772176"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.137])
-  by orsmga008.jf.intel.com with ESMTP; 02 Jul 2019 14:40:03 -0700
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id F34F3301004; Tue,  2 Jul 2019 14:40:02 -0700 (PDT)
-From:   Andi Kleen <andi@firstfloor.org>
-To:     x86@kernel.org
-Cc:     linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
-        Vegard Nossum <vegard.nossum@oracle.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH] x86/fpu: Fix nofxsr regression
-Date:   Tue,  2 Jul 2019 14:39:58 -0700
-Message-Id: <20190702213958.33291-1-andi@firstfloor.org>
-X-Mailer: git-send-email 2.20.1
+        id S1726150AbfGCBRF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 21:17:05 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45dd3V6xTLz9s3Z;
+        Wed,  3 Jul 2019 07:41:26 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1562103688;
+        bh=MorrFaVnjRPpb/j0w/ycYarnWEzNC23UdOM4rLCRAw4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=WMj7A9iQnoAZ9HJYlZX8ZoOWX7U2c1Oqr19Jqz0WawEE/jMP+c5PP0lPDhDcazPgR
+         8NfPtWJJuPpybsTfuK7I6EsXbN9JwQSH4ah5VfrfYCtbAzhlMmwgFKkwBpzgx/l8/l
+         XulffRZCh++zks4Q839C5hpLZ1+e4kPr4FDo8UAbCeNvg7sZRJzcKNet9rku5I7NfI
+         B8NLjJd89BoSH28h5G/mie+6wPxEaHW0TiPYF0Y89pQXhrIZ4wTF3/t9n+n0+Bc0UF
+         xqh56sll8PunE1f6L988lwDdgrvwlXLT+rjFnGypioHp4DSCs4VcYzTFu7jp6984+b
+         s3PHqH3CFklAw==
+Date:   Wed, 3 Jul 2019 07:41:09 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     Joerg Roedel <joro@8bytes.org>,
+        Jean-Philippe Brucker <Jean-Philippe.Brucker@arm.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Suzuki Poulose <Suzuki.Poulose@arm.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Subject: Re: linux-next: manual merge of the char-misc tree with the
+ driver-core tree
+Message-ID: <20190703074109.4b2ca5bc@canb.auug.org.au>
+In-Reply-To: <20190702130511-mutt-send-email-mst@kernel.org>
+References: <20190701190940.7f23ac15@canb.auug.org.au>
+        <20190701200418.GA72724@archlinux-epyc>
+        <20190702141803.GA13685@ostrya.localdomain>
+        <20190702151817.GD3310@8bytes.org>
+        <20190702112125-mutt-send-email-mst@kernel.org>
+        <20190702155851.GF3310@8bytes.org>
+        <20190702130511-mutt-send-email-mst@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/10I6MeCphAWQjths92+eNZc"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andi Kleen <ak@linux.intel.com>
+--Sig_/10I6MeCphAWQjths92+eNZc
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Vegard Nossum reports:
+Hi all,
 
-The commit for this patch in mainline
-(ccb18db2ab9d ("x86/fpu: Make XSAVE check ...")) causes the kernel to hang on
-boot when passing the "nofxsr" option:
+On Tue, 2 Jul 2019 13:05:59 -0400 "Michael S. Tsirkin" <mst@redhat.com> wro=
+te:
+>
+> On Tue, Jul 02, 2019 at 05:58:51PM +0200, Joerg Roedel wrote:
+> > On Tue, Jul 02, 2019 at 11:23:34AM -0400, Michael S. Tsirkin wrote: =20
+> > > I can drop virtio iommu from my tree. Where's yours? I'd like to take=
+ a
+> > > last look and send an ack. =20
+> >=20
+> > It is not in my tree yet, because I was waiting for your ack on the
+> > patches wrt. the spec.
+> >=20
+> > Given that the merge window is pretty close I can't promise to take it
+> > into my tree for v5.3 when you ack it, so if it should go upstream this
+> > time its better to keep it in your tree.
+>=20
+> Hmm. But then the merge build fails. I guess I will have to include the
+> patch in the pull request then?
+>=20
 
-$ kvm -cpu host -kernel arch/x86/boot/bzImage -append "console=ttyS0 nofxsr
-earlyprintk=ttyS0" -serial stdio -display none -smp 2
-early console in extract_kernel
-input_data: 0x0000000001dea276
-input_len: 0x0000000000500704
-output: 0x0000000001000000
-output_len: 0x00000000012c79b4
-kernel_total_size: 0x0000000000f24000
-booted via startup_32()
-Physical KASLR using RDRAND RDTSC...
-Virtual KASLR using RDRAND RDTSC...
+All you (and the driver-core maintainer) need to do is make sure you
+tell Linus that the merge requires the fix ... he can then apply it to
+the merge commit just as I have.  Linus has asked that maintainers do
+not (in general) cross merge to avoid these (semantic) conflicts.
+Sometimes, in more complex cases, it may be necessary for maintainers
+to share a (non changing) subset of their trees, but this case is
+pretty trivial.
 
-Decompressing Linux... Parsing ELF... Performing relocations... done.
-Booting the kernel.
-[..hang..]
+--=20
+Cheers,
+Stephen Rothwell
 
-<<<
+--Sig_/10I6MeCphAWQjths92+eNZc
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Sebastian Siewior did the following analysis:
+-----BEGIN PGP SIGNATURE-----
 
-as a result of nofxsr we do:
-[0]     setup_clear_cpu_cap(X86_FEATURE_FXSR);
-[1]     setup_clear_cpu_cap(X86_FEATURE_FXSR_OPT);
-[2]     setup_clear_cpu_cap(X86_FEATURE_XMM);
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0bz3UACgkQAVBC80lX
+0GzicQf/dn2NLumpiNgDiKhDjQHDmIflcbEz96E8ZDMp2tfw7qndD4faMaO/28aA
+MAp5jUA3oberdrKjDR8PYeNv/x3u0D4zqI/Tgqdof64aeWPeMgdE6T8khMhb4FZI
+onEPyVzZpA926K8unDteO7mfFLEqiyVJi7Iw1Wij2zm2NHTIFjMp5HYmyhaSsLxs
+/hVEm4zaNcHrw+QdE+Rm9tpT5w0NSKzBP+eXISyRsoqm7JVBVzRixApQa14wfnh4
+QknkwsrPSk+Vo4yrFhHciVs4VfweT044j8P5K30CLeNk9SQ8AQOmzcRlZUNw6I/X
+PYQLovVVb4jLn0xV4EfIULcT7gvmqg==
+=JGpW
+-----END PGP SIGNATURE-----
 
-the commit in question removes then XFEATURE_MASK_SSE from
-`xfeatures_mask'.
-Boot stops in fpu__init_cpu_xstate() / xsetbv() due to #GP:
-|If an attempt is made to set XCR0[2:1] to 10b.
-(from Vol. 2C).
-
-[1] is "harmless". Dropping [2] does not fix the issue because [0]
-still clears all three flags due to
-| static const struct cpuid_dep cpuid_deps[] = {
-…
-|      { X86_FEATURE_XMM,              X86_FEATURE_FXSR      },
-
-Clearing additionally XMM2 (and adding the missing bits to
-xsave_cpuid_features/xfeature_names) would boot further.
-Later it crashes in raid6 while probing for AVX/2 code…
-
-Disabling XMM+XMM2 in order get (and fixing it up for AVX+AVX2) would
-give use XSAVE instead of FSAVE.
-This won't work on 64bit userland because it expects SSE to be around
-(and FXSR to save the SSE bits).
-Even my 32bit Debian Wheezy doesn't work because it wants FXSR :)
-
-So if it is unlikely to have XSAVE but no FXSR I would suggest to add
-"fpu__xstate_clear_all_cpu_caps()" to nofxsr and behave like "nofxsr
-noxsave".
-
-<<<
-
-Also nofxsr is useless on 64bit kernels because 64bit user space
-always uses SSE2, and without FXSR there is no SSE support.
-
-This patch:
-- Makes nofxsr 32bit only
-It was already documented to be 32bit only, but not implemented this
-way.
-
-- Implements Sebastian's suggestion of calling
-fpu__xstate_clear_all_cpu_caps() for nofxsr to clear all depending
-bits.
-
-With this a 32bit kernel boots on qemu with nofxsr upto user space
-crashing (I don't have a 32bit image that doesn't need SSE2),
-and a 64bit kernel also fully boots with nofxsr (by ignoring
-the option)
-
-Fixes: ccb18db2ab9d ("x86/fpu: Make XSAVE check ...)
-Reported-by: Vegard Nossum <vegard.nossum@oracle.com>
-Suggested-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
----
- arch/x86/kernel/fpu/init.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/fpu/init.c b/arch/x86/kernel/fpu/init.c
-index ef0030e3fe6b..81c730af7454 100644
---- a/arch/x86/kernel/fpu/init.c
-+++ b/arch/x86/kernel/fpu/init.c
-@@ -255,7 +255,9 @@ static void __init fpu__init_parse_early_param(void)
- 	if (cmdline_find_option_bool(boot_command_line, "no387"))
- 		setup_clear_cpu_cap(X86_FEATURE_FPU);
- 
--	if (cmdline_find_option_bool(boot_command_line, "nofxsr")) {
-+	if (!IS_ENABLED(CONFIG_64BIT) &&
-+		cmdline_find_option_bool(boot_command_line, "nofxsr")) {
-+		fpu__xstate_clear_all_cpu_caps();
- 		setup_clear_cpu_cap(X86_FEATURE_FXSR);
- 		setup_clear_cpu_cap(X86_FEATURE_FXSR_OPT);
- 		setup_clear_cpu_cap(X86_FEATURE_XMM);
--- 
-2.20.1
-
+--Sig_/10I6MeCphAWQjths92+eNZc--
