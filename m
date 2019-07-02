@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 224FD5CBB1
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 10:15:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AFE7F5CAB6
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 10:07:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728240AbfGBIP1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 2 Jul 2019 04:15:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50648 "EHLO mail.kernel.org"
+        id S1728200AbfGBIHH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 2 Jul 2019 04:07:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54124 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727164AbfGBIEz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 2 Jul 2019 04:04:55 -0400
+        id S1728190AbfGBIHD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 2 Jul 2019 04:07:03 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2D5F420659;
-        Tue,  2 Jul 2019 08:04:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8663321852;
+        Tue,  2 Jul 2019 08:07:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562054694;
-        bh=jIOQbsCP4X+3mrOpraffnVNqY8f0gWvNEEoEDdaJRt8=;
+        s=default; t=1562054823;
+        bh=9I0J9Q9BNRma8ZT/GTjIET7njTTlPZtA+u6Uyvd4U58=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VxvUyvpHByVje9LmkQ2WBwt3pKC11e/VDsRcd3ZyKmH/0L0e85IpodulHin9h/ZD9
-         YeIb58WFdixCo+5tn3cwq+2StYHsdFvtYHxta8Pir9fByz7RzxNiwO2hG4tvwUu/tL
-         3Oh6J3dNMnRoKf39bBDOoNBgNsFrryIj+VuNc/y8=
+        b=LD/m4SYMtMeI2b0q8McB9X+sDVJl5WoIiBPUxzBIxDpsRrUOTDwKRG9ihvl1tuxlt
+         Y1u503d3HuuoUhJLheq/KGB1aSOFeCVcinwZlfnGu8oUOJJp8WUzsfA0Kd21sKWon5
+         pGfD41PoYZ/NIkbJC0ChJUfl1fRb40s2ap5YsNCI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+afabda3890cc2f765041@syzkaller.appspotmail.com,
-        syzbot+276ca1c77a19977c0130@syzkaller.appspotmail.com,
-        Xin Long <lucien.xin@gmail.com>,
-        Neil Horman <nhorman@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.1 38/55] sctp: change to hold sk after auth shkey is created successfully
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>
+Subject: [PATCH 4.19 45/72] NFS/flexfiles: Use the correct TCP timeout for flexfiles I/O
 Date:   Tue,  2 Jul 2019 10:01:46 +0200
-Message-Id: <20190702080126.103992090@linuxfoundation.org>
+Message-Id: <20190702080126.958242334@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190702080124.103022729@linuxfoundation.org>
-References: <20190702080124.103022729@linuxfoundation.org>
+In-Reply-To: <20190702080124.564652899@linuxfoundation.org>
+References: <20190702080124.564652899@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,51 +44,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Trond Myklebust <trondmy@gmail.com>
 
-[ Upstream commit 25bff6d5478b2a02368097015b7d8eb727c87e16 ]
+commit 68f461593f76bd5f17e87cdd0bea28f4278c7268 upstream.
 
-Now in sctp_endpoint_init(), it holds the sk then creates auth
-shkey. But when the creation fails, it doesn't release the sk,
-which causes a sk defcnf leak,
+Fix a typo where we're confusing the default TCP retrans value
+(NFS_DEF_TCP_RETRANS) for the default TCP timeout value.
 
-Here to fix it by only holding the sk when auth shkey is created
-successfully.
-
-Fixes: a29a5bd4f5c3 ("[SCTP]: Implement SCTP-AUTH initializations.")
-Reported-by: syzbot+afabda3890cc2f765041@syzkaller.appspotmail.com
-Reported-by: syzbot+276ca1c77a19977c0130@syzkaller.appspotmail.com
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Acked-by: Neil Horman <nhorman@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 15d03055cf39f ("pNFS/flexfiles: Set reasonable default ...")
+Cc: stable@vger.kernel.org # 4.8+
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/sctp/endpointola.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/net/sctp/endpointola.c
-+++ b/net/sctp/endpointola.c
-@@ -133,10 +133,6 @@ static struct sctp_endpoint *sctp_endpoi
- 	/* Initialize the bind addr area */
- 	sctp_bind_addr_init(&ep->base.bind_addr, 0);
+---
+ fs/nfs/flexfilelayout/flexfilelayoutdev.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/fs/nfs/flexfilelayout/flexfilelayoutdev.c
++++ b/fs/nfs/flexfilelayout/flexfilelayoutdev.c
+@@ -18,7 +18,7 @@
  
--	/* Remember who we are attached to.  */
--	ep->base.sk = sk;
--	sock_hold(ep->base.sk);
--
- 	/* Create the lists of associations.  */
- 	INIT_LIST_HEAD(&ep->asocs);
+ #define NFSDBG_FACILITY		NFSDBG_PNFS_LD
  
-@@ -169,6 +165,10 @@ static struct sctp_endpoint *sctp_endpoi
- 	ep->prsctp_enable = net->sctp.prsctp_enable;
- 	ep->reconf_enable = net->sctp.reconf_enable;
+-static unsigned int dataserver_timeo = NFS_DEF_TCP_RETRANS;
++static unsigned int dataserver_timeo = NFS_DEF_TCP_TIMEO;
+ static unsigned int dataserver_retrans;
  
-+	/* Remember who we are attached to.  */
-+	ep->base.sk = sk;
-+	sock_hold(ep->base.sk);
-+
- 	return ep;
- 
- nomem_shkey:
+ static bool ff_layout_has_available_ds(struct pnfs_layout_segment *lseg);
 
 
