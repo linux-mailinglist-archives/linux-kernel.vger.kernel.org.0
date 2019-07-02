@@ -2,76 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90B6C5C69B
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 03:29:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5BFA5C6A0
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2019 03:32:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726970AbfGBB3Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 1 Jul 2019 21:29:24 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:37156 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726347AbfGBB3Y (ORCPT
+        id S1727002AbfGBBcg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 1 Jul 2019 21:32:36 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:33238 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726347AbfGBBcf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 1 Jul 2019 21:29:24 -0400
-Received: by mail-pf1-f196.google.com with SMTP id 19so7422431pfa.4;
-        Mon, 01 Jul 2019 18:29:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=okHXZWy1RC0s+ym/tCWI7Nmsc9E0/K/JlQNwRmoNEmY=;
-        b=pVZtQBpAOxDHgd10sbBXUOHCIDK+DWQYX1vDeFfUtDlnaHFxd5alO9XDxJRkchea5z
-         N5kae3IUDfpY4D8r78Ppo38NWqQdQ1+QsqSOoq9HMSEfRRiELec/7tb+3fSpSukuGwoh
-         WmmMQpF+8V9v/jjIXf2lD7A4cB6f8Dk7g3nXrEyaWGGDbA/3NLvF2Gb8eALkI8sqPlpW
-         0K7hH7NoRKAGOIyngaIirnxoGvsl99mtI50oA9Xhu1iL1DWeMaG/PcpZa0jC6oYSSukj
-         av4Vg4vGzKDNlurzEZo7eyEJ3YyfpIoRUauDIBPnVIovfAz6gUTOh44+a5FC/+UFL6Cd
-         kB6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=okHXZWy1RC0s+ym/tCWI7Nmsc9E0/K/JlQNwRmoNEmY=;
-        b=l9IsqHuAFVyndSosvca86reqkm+PjSxEVGGmeokTbKY3eTQtendre1gkdsuhoyJ9Jh
-         uZuJV61u4DkqI1FgBYko75xSOljxN/kmqByBfSssylGeHiPmn6mFQ1atKqgj48T23MM3
-         ebUzTTmvHLntw8jSRu+pp6QCCP/PQgRYVlCG7y1k9Y+fhHKQnI+q0PtqyzVN2zc+1d1S
-         nJ/cvuWKbhmZ+4Xh4n0of+uVIQ4wi1aA3FoR27Ib5TmK3PXu3gXEaWh2cUpWGMgXuUUp
-         SRT5wml7tGYrc84qXCEN7oA0vtC0TE6BE3VjDnY3P14G76iAoiuCLKnxv9R5dbrPEzYq
-         OXiQ==
-X-Gm-Message-State: APjAAAUByGtzaDzu7LeKXF0z9BdtQQuVdn4gSR6scoYgY8WChfz5QazB
-        HSAZ7ZcpAlF77CV0auFbZDc=
-X-Google-Smtp-Source: APXvYqwLXr0oqFlBH9jkUQd+Yo7ZVrdSGlJ11M/aBH1UN58sKxsdE/cuJlURWIyV9B19ba7PhZ6OPw==
-X-Received: by 2002:a63:7a01:: with SMTP id v1mr24664400pgc.310.1562030963395;
-        Mon, 01 Jul 2019 18:29:23 -0700 (PDT)
-Received: from localhost ([39.7.59.222])
-        by smtp.gmail.com with ESMTPSA id a16sm17634323pfd.68.2019.07.01.18.29.21
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 01 Jul 2019 18:29:22 -0700 (PDT)
-Date:   Tue, 2 Jul 2019 10:29:19 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Steve French <smfrench@gmail.com>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Steve French <sfrench@samba.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        samba-technical <samba-technical@lists.samba.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [PATCH] cifs: fix build by selecting CONFIG_KEYS
-Message-ID: <20190702012919.GA8040@jagdpanzerIV>
-References: <20190701030325.18188-1-sergey.senozhatsky@gmail.com>
- <CAH2r5mutRM0d9oLG0rpRAzTC9DMWL61i0ewbri8v7Lgu1Ud5yQ@mail.gmail.com>
+        Mon, 1 Jul 2019 21:32:35 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x621IeTc170139;
+        Tue, 2 Jul 2019 01:32:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=CTmK2bG4LfuAj+OGk5lCbn5r1g3VskoESmcpOd+WCVk=;
+ b=PHuaCxD02WjFRnUJ0yL8NVZgO4T7q7BEmHAMOV5o9R9/JS8Q+ePLiaUb2NCNYvk/mUMC
+ pQnfRR5Ko7UcMlbnXNbAe2rjXBr62NZHhOpAD5k1aT5bWjazZtUvKheBop1Y/eOMozHO
+ Ub5k3EToCB2v6o4SkEc+JRpDkEUmpW+UEnZoDoqzNyN6oiEQJTD0oGxWUpy7ACDzEk93
+ RkIuy4JL8XIXg6EnfgwGnMa9pxdbyl9yomSdTjoulOmiNs6WTxPf/0AAsDQwa1SlwWCN
+ +9APY4EzjyIUIXo9sumxogh/scE9JS597BkUUtLMOClQsEY2tCVyovnNMCBRFbRfJ3l3 vw== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 2te61prhk2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 02 Jul 2019 01:32:15 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x621N30L022377;
+        Tue, 2 Jul 2019 01:30:15 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3030.oracle.com with ESMTP id 2tebqg7pkm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 02 Jul 2019 01:30:14 +0000
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x621UAkk007677;
+        Tue, 2 Jul 2019 01:30:11 GMT
+Received: from [10.159.132.152] (/10.159.132.152)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 01 Jul 2019 18:30:10 -0700
+Subject: Re: [PATCH] soc: ti: fix irq-ti-sci link error
+To:     Olof Johansson <olof@lixom.net>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Lokesh Vutla <lokeshvutla@ti.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Tony Lindgren <tony@atomide.com>, Nishanth Menon <nm@ti.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>
+References: <20190617130149.1782930-1-arnd@arndb.de>
+ <7a96a4d2-25e7-f9cf-1109-23c5495325a8@oracle.com>
+ <CAOesGMi5urJPF3cKfF+UB_KrK50_VQw+MMS5w_UqKzEMYKeXFA@mail.gmail.com>
+From:   santosh.shilimkar@oracle.com
+Organization: Oracle Corporation
+Message-ID: <f767335b-eed9-13fd-3a85-774bde43eba4@oracle.com>
+Date:   Mon, 1 Jul 2019 18:30:09 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAH2r5mutRM0d9oLG0rpRAzTC9DMWL61i0ewbri8v7Lgu1Ud5yQ@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <CAOesGMi5urJPF3cKfF+UB_KrK50_VQw+MMS5w_UqKzEMYKeXFA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9305 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1907020012
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9305 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1907020012
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (07/01/19 16:04), Steve French wrote:
+On 7/1/19 3:24 PM, Olof Johansson wrote:
+> On Mon, Jul 1, 2019 at 10:36 AM <santosh.shilimkar@oracle.com> wrote:
+>>
+>> On 6/17/19 6:01 AM, Arnd Bergmann wrote:
+>>> The irqchip driver depends on the SoC specific driver, but we want
+>>> to be able to compile-test it elsewhere:
+>>>
+>>> WARNING: unmet direct dependencies detected for TI_SCI_INTA_MSI_DOMAIN
+>>>     Depends on [n]: SOC_TI [=n]
+>>>     Selected by [y]:
+>>>     - TI_SCI_INTA_IRQCHIP [=y] && TI_SCI_PROTOCOL [=y]
+>>>
+>>> drivers/irqchip/irq-ti-sci-inta.o: In function `ti_sci_inta_irq_domain_probe':
+>>> irq-ti-sci-inta.c:(.text+0x204): undefined reference to `ti_sci_inta_msi_create_irq_domain'
+>>>
+>>> Rearrange the Kconfig and Makefile so we build the soc driver whenever
+>>> its users are there, regardless of the SOC_TI option.
+>>>
+>>> Fixes: 49b323157bf1 ("soc: ti: Add MSI domain bus support for Interrupt Aggregator")
+>>> Fixes: f011df6179bd ("irqchip/ti-sci-inta: Add msi domain support")
+>>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>>> ---
+>> Thanks Arnd. Will you be able to add it to your fixes queue.
+>>
+>> FWIW, Acked-by: Santosh Shilimkar <ssantosh@kernle.org>
 > 
-> I had already merged the attached (similar) fix into cifs-2.6.git for-next
+> Cc:ing to arm@kernel.org is the best way to make sure it surfaces.
+> 
+> Also, please do Acked-by on separate line so the tools catch it next
+Will do..
 
-Yup, just got it with linux-next 20190701.
+> time (also, check for typos. :)
+> 
+:- )
 
-	-ss
+> Applying to fixes.
+Thanks for picking it up.
